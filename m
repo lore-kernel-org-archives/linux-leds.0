@@ -1,46 +1,277 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] media: leds: as3645a: add V4L2_FLASH_LED_CLASS depdendency
-Date: Tue,  5 Sep 2017 09:13:20 +0200
-Message-ID: <20170905071345.3807685-1-arnd@arndb.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [patch v4 2/2] mfd: Add Mellanox regmap I2C driver
+Date: Tue, 5 Sep 2017 08:35:40 +0100
+Message-ID: <20170905073540.uxqhchcveu5d6vtk@dell>
+References: <1504029616-192277-1-git-send-email-vadimp@mellanox.com>
+ <1504029616-192277-3-git-send-email-vadimp@mellanox.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1504029616-192277-3-git-send-email-vadimp@mellanox.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Vadim Pasternak <vadimp@mellanox.com>
+Cc: robh+dt@kernel.org, pavel@ucw.cz, devicetree@vger.kernel.org, j.anaszewski@samsung.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, jiri@resnulli.us, gregkh@linuxfoundation.org, platform-driver-x86@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-We get a link error when V4L2_FLASH_LED_CLASS=m and AS3645A is built-in:
+On Tue, 29 Aug 2017, Vadim Pasternak wrote:
 
-drivers/leds/leds-as3645a.o: In function `as3645a_v4l2_setup':
-leds-as3645a.c:(.text+0x258): undefined reference to `v4l2_flash_init'
-leds-as3645a.c:(.text+0x284): undefined reference to `v4l2_flash_indicator_init'
-leds-as3645a.c:(.text+0x2a4): undefined reference to `v4l2_flash_release'
-drivers/leds/leds-as3645a.o: In function `as3645a_remove':
-leds-as3645a.c:(.text+0x784): undefined reference to `v4l2_flash_release'
+> This patch adds I2C regmap driver for Mellanox BMC cards with the
+> programmable devices attached to I2C interface. It allows support
+> for CPLD devices with one and two bytes address space.
+> 
+> Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> ---
+>  MAINTAINERS              |   1 +
+>  drivers/mfd/Kconfig      |  13 ++++
+>  drivers/mfd/Makefile     |   1 +
+>  drivers/mfd/mlxreg-i2c.c | 183 +++++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 198 insertions(+)
+>  create mode 100644 drivers/mfd/mlxreg-i2c.c
 
-This adds the same Kconfig dependency that the other V4L2 flash
-drivers in drivers/leds use, to avoid that broken configuration.
+I don't know what this is, but it is not an MFD driver.  Please find
+somewhere more appropriate to locate it.  MFD is not a dumping ground
+for drivers which do not fit anywhere else.
 
-Fixes: a56ba8fbcb55 ("media: leds: as3645a: Add LED flash class driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/leds/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index bcb7f45..86a5f8f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8299,6 +8299,7 @@ M:	Vadim Pasternak <vadimp@mellanox.com>
+>  S:	Supported
+>  F:	Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core
+>  F:	drivers/mfd/mlxreg-core.c
+> +F:	drivers/mfd/mlxreg-i2c.c
+>  F:	include/linux/platform_data/mlxreg.h
+>  
+>  MELLANOX ETHERNET DRIVER (mlx4_en)
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index fa1562f..453afcb 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1709,6 +1709,19 @@ config MFD_MLXREG_CORE
+>  	  This driver can also be built as a module. If so the module
+>  	  will be called mlxreg-core.
+>  
+> +config MFD_MLXREG_I2C
+> +	bool "Mellanox programmable device with I2C interface"
+> +	depends on I2C && REGMAP_I2C
+> +	depends on MFD_MLXREG_CORE
+> +	help
+> +	  Support for the Mellanox BMC card with hardware control by a
+> +	  programmable device. This option enables core support for the
+> +	  programmable devices with I2C interface. It allows support for
+> +	  the devices with address space 1 and 2 bytes.
+> +
+> +	  This driver can also be built as a module. If so the module
+> +	  will be called mlxreg-i2c.
+> +
+>  menu "Multimedia Capabilities Port drivers"
+>  	depends on ARCH_SA1100
+>  
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 9661ee2..b76c5b2 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -222,3 +222,4 @@ obj-$(CONFIG_MFD_SUN4I_GPADC)	+= sun4i-gpadc.o
+>  obj-$(CONFIG_MFD_STM32_TIMERS) 	+= stm32-timers.o
+>  obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
+>  obj-$(CONFIG_MFD_MLXREG_CORE)	+= mlxreg-core.o
+> +obj-$(CONFIG_MFD_MLXREG_I2C)	+= mlxreg-i2c.o
+> diff --git a/drivers/mfd/mlxreg-i2c.c b/drivers/mfd/mlxreg-i2c.c
+> new file mode 100644
+> index 0000000..04823b5
+> --- /dev/null
+> +++ b/drivers/mfd/mlxreg-i2c.c
+> @@ -0,0 +1,183 @@
+> +/*
+> + * Copyright (c) 2017 Mellanox Technologies. All rights reserved.
+> + * Copyright (c) 2017 Vadim Pasternak <vadimp@mellanox.com>
+> + *
+> + * Redistribution and use in source and binary forms, with or without
+> + * modification, are permitted provided that the following conditions are met:
+> + *
+> + * 1. Redistributions of source code must retain the above copyright
+> + *    notice, this list of conditions and the following disclaimer.
+> + * 2. Redistributions in binary form must reproduce the above copyright
+> + *    notice, this list of conditions and the following disclaimer in the
+> + *    documentation and/or other materials provided with the distribution.
+> + * 3. Neither the names of the copyright holders nor the names of its
+> + *    contributors may be used to endorse or promote products derived from
+> + *    this software without specific prior written permission.
+> + *
+> + * Alternatively, this software may be distributed under the terms of the
+> + * GNU General Public License ("GPL") version 2 as published by the Free
+> + * Software Foundation.
+> + *
+> + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+> + * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+> + * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+> + * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+> + * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+> + * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+> + * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+> + * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+> + * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+> + * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+> + * POSSIBILITY OF SUCH DAMAGE.
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +/**
+> + * enum mlxreg_i2c_type - driver flavours:
+> + *
+> + * @MLXREG_8BIT: type for I2C CPLD control with 1 byte address space;
+> + * @MLXREG_16BIT: type for I2C CPLD control with 2 bytes address space;
+> + */
+> +enum mlxreg_i2c_type {
+> +	MLXREG_8BIT,
+> +	MLXREG_16BIT,
+> +};
+> +
+> +/**
+> + * Configuration for the register map of a device with 1 byte address space.
+> + */
+> +static const struct regmap_config mlxreg_i2c_regmap8_conf = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = 255,
+> +};
+> +
+> +/**
+> + * Configuration for the register map of a device with 2 bytes address space.
+> + */
+> +static const struct regmap_config mlxreg_i2c_regmap16_conf = {
+> +	.reg_bits = 16,
+> +	.val_bits = 16,
+> +	.max_register = 1023,
+> +};
+> +
+> +static struct resource mlxreg_i2c_resources[] = {
+> +	[0] = DEFINE_RES_IRQ_NAMED(-1, "mlxcpld-ctrl-2c"),
+> +};
+> +
+> +static int
+> +mlxreg_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id)
+> +{
+> +	struct device_node *child, *np = client->dev.of_node;
+> +	struct platform_device *pdev;
+> +	struct i2c_adapter *adapter;
+> +	struct regmap *regmap;
+> +	int err = 0;
+> +
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	if (!of_device_is_compatible(np, "mellanox,mlxreg-i2c"))
+> +		return -ENODEV;
+> +
+> +	child = of_parse_phandle(np, "deferred", 0);
+> +	if (child) {
+> +		adapter = of_find_i2c_adapter_by_node(child);
+> +		of_node_put(child);
+> +		if (!adapter)
+> +			return -EPROBE_DEFER;
+> +	}
+> +
+> +	if (!i2c_check_functionality(client->adapter,
+> +				     I2C_FUNC_SMBUS_BYTE_DATA |
+> +				     I2C_FUNC_SMBUS_WORD_DATA |
+> +				     I2C_FUNC_SMBUS_I2C_BLOCK))
+> +		return -ENODEV;
+> +
+> +	switch (id->driver_data) {
+> +	case MLXREG_8BIT:
+> +		regmap = devm_regmap_init_i2c(client,
+> +					      &mlxreg_i2c_regmap8_conf);
+> +		break;
+> +	case MLXREG_16BIT:
+> +		regmap = devm_regmap_init_i2c(client,
+> +					      &mlxreg_i2c_regmap16_conf);
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	pdev = platform_device_alloc("mlxreg-core", (client->adapter->nr << 8)
+> +				     | client->addr);
+> +	if (!pdev)
+> +		return -ENOMEM;
+> +
+> +	i2c_set_clientdata(client, pdev);
+> +	pdev->dev.parent = &client->dev;
+> +	pdev->dev.of_node = client->dev.of_node;
+> +	pdev->dev.platform_data = regmap;
+> +
+> +	if (client->irq) {
+> +		mlxreg_i2c_resources[0].start = client->irq;
+> +		err = platform_device_add_resources(pdev,
+> +				mlxreg_i2c_resources,
+> +				ARRAY_SIZE(mlxreg_i2c_resources));
+> +	}
+> +
+> +	err = err ? err : platform_device_add(pdev);
+> +
+> +	if (err)
+> +		platform_device_put(pdev);
+> +
+> +	return err;
+> +}
+> +
+> +static int mlxreg_i2c_remove(struct i2c_client *client)
+> +{
+> +	struct platform_device *pdev = i2c_get_clientdata(client);
+> +
+> +	platform_device_unregister(pdev);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id mlxreg_i2c_id[] = {
+> +	{ "mlxreg-i2c", MLXREG_8BIT },
+> +	{ "mlxreg-i2c-16", MLXREG_16BIT },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(i2c, mlxreg_i2c_id);
+> +
+> +static const struct of_device_id mlxreg_i2c_dt_match[] = {
+> +	{ .compatible = "mellanox,mlxreg-i2c" },
+> +	{ .compatible = "mellanox,mlxreg-i2c-16" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, mlxreg_i2c_dt_match);
+> +
+> +static struct i2c_driver mlxreg_i2c_driver = {
+> +	.class = I2C_CLASS_HWMON,
+> +	.driver = {
+> +	    .name = "mlxreg-i2c",
+> +	    .of_match_table = of_match_ptr(mlxreg_i2c_dt_match),
+> +	},
+> +	.probe = mlxreg_i2c_probe,
+> +	.remove = mlxreg_i2c_remove,
+> +	.id_table = mlxreg_i2c_id,
+> +};
+> +
+> +module_i2c_driver(mlxreg_i2c_driver);
+> +
+> +MODULE_AUTHOR("Vadim Pasternak <vadimp@mellanox.com>");
+> +MODULE_DESCRIPTION("Mellanox CPLD control I2C driver");
+> +MODULE_LICENSE("Dual BSD/GPL");
+> +MODULE_ALIAS("mlxreg-i2c");
 
-The patch that caused the problem is currently in the v4l git tree,
-rather than the leds tree. Please merge this through an appropriate
-path, either v4l or led, depending on the timing.
-
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 0bf022bcb6ac..52ea34e337cd 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -61,6 +61,7 @@ config LEDS_AAT1290
- config LEDS_AS3645A
- 	tristate "AS3645A LED flash controller support"
- 	depends on I2C && LEDS_CLASS_FLASH
-+	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
- 	help
- 	  Enable LED flash class support for AS3645A LED flash
- 	  controller. V4L2 flash API is provided as well if
 -- 
-2.9.0
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
