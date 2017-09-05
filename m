@@ -1,92 +1,65 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: leds: gpio: Add optional
- retain-state-shutdown property
-Date: Tue, 5 Sep 2017 21:10:49 +0200
-Message-ID: <43133266-01c1-4ec7-893e-a7b0544f7720@gmail.com>
-References: <20170828001711.19662-1-andrew@aj.id.au>
- <20170828001711.19662-2-andrew@aj.id.au>
- <20170831212840.ecr2p4nra52xvzrz@rob-hp-laptop>
- <1504220536.5933.32.camel@aj.id.au>
+Subject: Re: [PATCH] media: leds: as3645a: add V4L2_FLASH_LED_CLASS
+ depdendency
+Date: Tue, 5 Sep 2017 21:24:10 +0200
+Message-ID: <ffbecf66-df9d-d8cf-8820-a119c76d8145@gmail.com>
+References: <20170905071345.3807685-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1504220536.5933.32.camel@aj.id.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh@kernel.org>
-Cc: linux-leds@vger.kernel.org, rpurdie@rpsys.net, pavel@ucw.cz, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, joel@jms.id.au, openbmc@lists.ozlabs.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36106 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752300AbdIETZB (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 5 Sep 2017 15:25:01 -0400
+In-Reply-To: <20170905071345.3807685-1-arnd@arndb.de>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Andrew and Rob,
+Hi Arnd,
 
-On 09/01/2017 01:02 AM, Andrew Jeffery wrote:
-> Hi Rob,
-> 
-> On Thu, 2017-08-31 at 16:28 -0500, Rob Herring wrote:
->> On Mon, Aug 28, 2017 at 09:47:10AM +0930, Andrew Jeffery wrote:
->>> On Baseboard Management Controller (BMC) systems it's sometimes
->>> necessary for a LED to retain its state across a BMC reset (which is
->>> independent of the host system state). Add a devicetree property to
->>> describe this behaviour. The property would typically be used in
->>> conjunction with 'default-state = "keep"'.
->>  
->> A bit quick on the applying of this...
->>  
->> I don't understand how this works. The BMC usecase is interesting but 
->> that's fairly irrelevant to the binding. How do you know the GPIO state 
->> thru a reset?
-> 
-> The answer to that is a property of the system design in my opinion.
-> 
->> You're doing a core reset, but not reseting the GPIO 
->> controller?
-> 
-> Well, in my specific case, the GPIO controller in question isn't on the SoC,
-> it's off-chip behind an I2C bus. Powering off a BMC doesn't necessarily mean
-> removing power from its peripherals, so in this case the their state is
-> maintained.
-> 
-> Alternatively, and again in my specific (Aspeed) case, the on-SoC GPIO
-> controller can be selectively reset with respect to the rest of the SoC, or
-> individual GPIO lines can be marked as reset-tolerant. This gives the same
-> capability and is what you've suggested above.
-> 
->>  
->> When you use 'default-state = "keep"' but not this property? Seems like  the
->> same thing to me.
-> 
-> Is that not also true of retain-state-suspend?
-> 
-> The existing behaviour of leds-gpio was to turn the managed LEDs off in the
-> remove() path. To me this was unexpected behaviour, but it is what it is. My
-> first pass at the patch (before I sent it out) was to do as you suggest and
-> only turn it off in the absence of 'default-state = "keep"'.  However there
-> were quite a number of users of that configuration, and this could be an
-> unexpected change of behaviour. Given retain-state-suspend was already defined,
-> it seemed that the non-breaking way to get the behaviour I desired was to
-> introduce retain-state-shutdown.
-> 
-> Sure, this is dealing with problems in the driver and not describing hardware,
-> but at this point the behaviour is already in place and people might be relying
-> on it.
-> 
->> Presumably the bootloader would just distinguish  between a
->> warm and cold reset to decide whether to re-init the state.
->>  
->> Finally, if we do have this property, why is it GPIO specific. You could 
->> just as easily have a LED controller IC and want to do the same thing.
-> 
-> I don't think we're precluded from making it more general even if it's
-> submitted as specific to leds-gpio? I don't have anything against making it
-> more generic. I was tossing up about doing so, but went for the specific case
-> first because we could make it more generic without problems. Going the other
-> way is harder.
+Thanks for the patch.
 
-This explanation looks reasonable. I'll wait two more days before
-sending LED 4.14 updates upstream.
+On 09/05/2017 09:13 AM, Arnd Bergmann wrote:
+> We get a link error when V4L2_FLASH_LED_CLASS=m and AS3645A is built-in:
+> 
+> drivers/leds/leds-as3645a.o: In function `as3645a_v4l2_setup':
+> leds-as3645a.c:(.text+0x258): undefined reference to `v4l2_flash_init'
+> leds-as3645a.c:(.text+0x284): undefined reference to `v4l2_flash_indicator_init'
+> leds-as3645a.c:(.text+0x2a4): undefined reference to `v4l2_flash_release'
+> drivers/leds/leds-as3645a.o: In function `as3645a_remove':
+> leds-as3645a.c:(.text+0x784): undefined reference to `v4l2_flash_release'
+> 
+> This adds the same Kconfig dependency that the other V4L2 flash
+> drivers in drivers/leds use, to avoid that broken configuration.
+> 
+> Fixes: a56ba8fbcb55 ("media: leds: as3645a: Add LED flash class driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/leds/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> The patch that caused the problem is currently in the v4l git tree,
+> rather than the leds tree. Please merge this through an appropriate
+> path, either v4l or led, depending on the timing.
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 0bf022bcb6ac..52ea34e337cd 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -61,6 +61,7 @@ config LEDS_AAT1290
+>  config LEDS_AS3645A
+>  	tristate "AS3645A LED flash controller support"
+>  	depends on I2C && LEDS_CLASS_FLASH
+> +	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
+>  	help
+>  	  Enable LED flash class support for AS3645A LED flash
+>  	  controller. V4L2 flash API is provided as well if
+> 
 
-It would be nice to have clear Rob's statement about this patch set -
-either ack or NACK.
+Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
 -- 
 Best regards,
