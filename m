@@ -1,277 +1,202 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [patch v4 2/2] mfd: Add Mellanox regmap I2C driver
-Date: Tue, 5 Sep 2017 08:35:40 +0100
-Message-ID: <20170905073540.uxqhchcveu5d6vtk@dell>
+From: Vadim Pasternak <vadimp@mellanox.com>
+Subject: RE: [patch v4 2/2] mfd: Add Mellanox regmap I2C driver
+Date: Tue, 5 Sep 2017 07:56:11 +0000
+Message-ID: <AM4PR05MB333008AD8B8B9FC8BEBE2411A2960@AM4PR05MB3330.eurprd05.prod.outlook.com>
 References: <1504029616-192277-1-git-send-email-vadimp@mellanox.com>
  <1504029616-192277-3-git-send-email-vadimp@mellanox.com>
+ <20170905073540.uxqhchcveu5d6vtk@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1504029616-192277-3-git-send-email-vadimp@mellanox.com>
+In-Reply-To: <20170905073540.uxqhchcveu5d6vtk@dell>
+Content-Language: en-US
 Sender: platform-driver-x86-owner@vger.kernel.org
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: robh+dt@kernel.org, pavel@ucw.cz, devicetree@vger.kernel.org, j.anaszewski@samsung.com, rpurdie@rpsys.net, linux-leds@vger.kernel.org, jiri@resnulli.us, gregkh@linuxfoundation.org, platform-driver-x86@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, "pavel@ucw.cz" <pavel@ucw.cz>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "j.anaszewski@samsung.com" <j.anaszewski@samsung.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "jiri@resnulli.us" <jiri@resnulli.us>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, 29 Aug 2017, Vadim Pasternak wrote:
-
-> This patch adds I2C regmap driver for Mellanox BMC cards with the
-> programmable devices attached to I2C interface. It allows support
-> for CPLD devices with one and two bytes address space.
-> 
-> Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> ---
->  MAINTAINERS              |   1 +
->  drivers/mfd/Kconfig      |  13 ++++
->  drivers/mfd/Makefile     |   1 +
->  drivers/mfd/mlxreg-i2c.c | 183 +++++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 198 insertions(+)
->  create mode 100644 drivers/mfd/mlxreg-i2c.c
-
-I don't know what this is, but it is not an MFD driver.  Please find
-somewhere more appropriate to locate it.  MFD is not a dumping ground
-for drivers which do not fit anywhere else.
-
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index bcb7f45..86a5f8f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8299,6 +8299,7 @@ M:	Vadim Pasternak <vadimp@mellanox.com>
->  S:	Supported
->  F:	Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core
->  F:	drivers/mfd/mlxreg-core.c
-> +F:	drivers/mfd/mlxreg-i2c.c
->  F:	include/linux/platform_data/mlxreg.h
->  
->  MELLANOX ETHERNET DRIVER (mlx4_en)
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index fa1562f..453afcb 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1709,6 +1709,19 @@ config MFD_MLXREG_CORE
->  	  This driver can also be built as a module. If so the module
->  	  will be called mlxreg-core.
->  
-> +config MFD_MLXREG_I2C
-> +	bool "Mellanox programmable device with I2C interface"
-> +	depends on I2C && REGMAP_I2C
-> +	depends on MFD_MLXREG_CORE
-> +	help
-> +	  Support for the Mellanox BMC card with hardware control by a
-> +	  programmable device. This option enables core support for the
-> +	  programmable devices with I2C interface. It allows support for
-> +	  the devices with address space 1 and 2 bytes.
-> +
-> +	  This driver can also be built as a module. If so the module
-> +	  will be called mlxreg-i2c.
-> +
->  menu "Multimedia Capabilities Port drivers"
->  	depends on ARCH_SA1100
->  
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 9661ee2..b76c5b2 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -222,3 +222,4 @@ obj-$(CONFIG_MFD_SUN4I_GPADC)	+= sun4i-gpadc.o
->  obj-$(CONFIG_MFD_STM32_TIMERS) 	+= stm32-timers.o
->  obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
->  obj-$(CONFIG_MFD_MLXREG_CORE)	+= mlxreg-core.o
-> +obj-$(CONFIG_MFD_MLXREG_I2C)	+= mlxreg-i2c.o
-> diff --git a/drivers/mfd/mlxreg-i2c.c b/drivers/mfd/mlxreg-i2c.c
-> new file mode 100644
-> index 0000000..04823b5
-> --- /dev/null
-> +++ b/drivers/mfd/mlxreg-i2c.c
-> @@ -0,0 +1,183 @@
-> +/*
-> + * Copyright (c) 2017 Mellanox Technologies. All rights reserved.
-> + * Copyright (c) 2017 Vadim Pasternak <vadimp@mellanox.com>
-> + *
-> + * Redistribution and use in source and binary forms, with or without
-> + * modification, are permitted provided that the following conditions are met:
-> + *
-> + * 1. Redistributions of source code must retain the above copyright
-> + *    notice, this list of conditions and the following disclaimer.
-> + * 2. Redistributions in binary form must reproduce the above copyright
-> + *    notice, this list of conditions and the following disclaimer in the
-> + *    documentation and/or other materials provided with the distribution.
-> + * 3. Neither the names of the copyright holders nor the names of its
-> + *    contributors may be used to endorse or promote products derived from
-> + *    this software without specific prior written permission.
-> + *
-> + * Alternatively, this software may be distributed under the terms of the
-> + * GNU General Public License ("GPL") version 2 as published by the Free
-> + * Software Foundation.
-> + *
-> + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-> + * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-> + * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-> + * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-> + * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-> + * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-> + * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-> + * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-> + * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-> + * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-> + * POSSIBILITY OF SUCH DAMAGE.
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +/**
-> + * enum mlxreg_i2c_type - driver flavours:
-> + *
-> + * @MLXREG_8BIT: type for I2C CPLD control with 1 byte address space;
-> + * @MLXREG_16BIT: type for I2C CPLD control with 2 bytes address space;
-> + */
-> +enum mlxreg_i2c_type {
-> +	MLXREG_8BIT,
-> +	MLXREG_16BIT,
-> +};
-> +
-> +/**
-> + * Configuration for the register map of a device with 1 byte address space.
-> + */
-> +static const struct regmap_config mlxreg_i2c_regmap8_conf = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.max_register = 255,
-> +};
-> +
-> +/**
-> + * Configuration for the register map of a device with 2 bytes address space.
-> + */
-> +static const struct regmap_config mlxreg_i2c_regmap16_conf = {
-> +	.reg_bits = 16,
-> +	.val_bits = 16,
-> +	.max_register = 1023,
-> +};
-> +
-> +static struct resource mlxreg_i2c_resources[] = {
-> +	[0] = DEFINE_RES_IRQ_NAMED(-1, "mlxcpld-ctrl-2c"),
-> +};
-> +
-> +static int
-> +mlxreg_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id)
-> +{
-> +	struct device_node *child, *np = client->dev.of_node;
-> +	struct platform_device *pdev;
-> +	struct i2c_adapter *adapter;
-> +	struct regmap *regmap;
-> +	int err = 0;
-> +
-> +	if (!np)
-> +		return -ENODEV;
-> +
-> +	if (!of_device_is_compatible(np, "mellanox,mlxreg-i2c"))
-> +		return -ENODEV;
-> +
-> +	child = of_parse_phandle(np, "deferred", 0);
-> +	if (child) {
-> +		adapter = of_find_i2c_adapter_by_node(child);
-> +		of_node_put(child);
-> +		if (!adapter)
-> +			return -EPROBE_DEFER;
-> +	}
-> +
-> +	if (!i2c_check_functionality(client->adapter,
-> +				     I2C_FUNC_SMBUS_BYTE_DATA |
-> +				     I2C_FUNC_SMBUS_WORD_DATA |
-> +				     I2C_FUNC_SMBUS_I2C_BLOCK))
-> +		return -ENODEV;
-> +
-> +	switch (id->driver_data) {
-> +	case MLXREG_8BIT:
-> +		regmap = devm_regmap_init_i2c(client,
-> +					      &mlxreg_i2c_regmap8_conf);
-> +		break;
-> +	case MLXREG_16BIT:
-> +		regmap = devm_regmap_init_i2c(client,
-> +					      &mlxreg_i2c_regmap16_conf);
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	pdev = platform_device_alloc("mlxreg-core", (client->adapter->nr << 8)
-> +				     | client->addr);
-> +	if (!pdev)
-> +		return -ENOMEM;
-> +
-> +	i2c_set_clientdata(client, pdev);
-> +	pdev->dev.parent = &client->dev;
-> +	pdev->dev.of_node = client->dev.of_node;
-> +	pdev->dev.platform_data = regmap;
-> +
-> +	if (client->irq) {
-> +		mlxreg_i2c_resources[0].start = client->irq;
-> +		err = platform_device_add_resources(pdev,
-> +				mlxreg_i2c_resources,
-> +				ARRAY_SIZE(mlxreg_i2c_resources));
-> +	}
-> +
-> +	err = err ? err : platform_device_add(pdev);
-> +
-> +	if (err)
-> +		platform_device_put(pdev);
-> +
-> +	return err;
-> +}
-> +
-> +static int mlxreg_i2c_remove(struct i2c_client *client)
-> +{
-> +	struct platform_device *pdev = i2c_get_clientdata(client);
-> +
-> +	platform_device_unregister(pdev);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct i2c_device_id mlxreg_i2c_id[] = {
-> +	{ "mlxreg-i2c", MLXREG_8BIT },
-> +	{ "mlxreg-i2c-16", MLXREG_16BIT },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(i2c, mlxreg_i2c_id);
-> +
-> +static const struct of_device_id mlxreg_i2c_dt_match[] = {
-> +	{ .compatible = "mellanox,mlxreg-i2c" },
-> +	{ .compatible = "mellanox,mlxreg-i2c-16" },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, mlxreg_i2c_dt_match);
-> +
-> +static struct i2c_driver mlxreg_i2c_driver = {
-> +	.class = I2C_CLASS_HWMON,
-> +	.driver = {
-> +	    .name = "mlxreg-i2c",
-> +	    .of_match_table = of_match_ptr(mlxreg_i2c_dt_match),
-> +	},
-> +	.probe = mlxreg_i2c_probe,
-> +	.remove = mlxreg_i2c_remove,
-> +	.id_table = mlxreg_i2c_id,
-> +};
-> +
-> +module_i2c_driver(mlxreg_i2c_driver);
-> +
-> +MODULE_AUTHOR("Vadim Pasternak <vadimp@mellanox.com>");
-> +MODULE_DESCRIPTION("Mellanox CPLD control I2C driver");
-> +MODULE_LICENSE("Dual BSD/GPL");
-> +MODULE_ALIAS("mlxreg-i2c");
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGVlIEpvbmVzIFttYWls
+dG86bGVlLmpvbmVzQGxpbmFyby5vcmddDQo+IFNlbnQ6IFR1ZXNkYXksIFNlcHRlbWJlciAwNSwg
+MjAxNyAxMDozNiBBTQ0KPiBUbzogVmFkaW0gUGFzdGVybmFrIDx2YWRpbXBAbWVsbGFub3guY29t
+Pg0KPiBDYzogcm9iaCtkdEBrZXJuZWwub3JnOyBwYXZlbEB1Y3cuY3o7IGRldmljZXRyZWVAdmdl
+ci5rZXJuZWwub3JnOw0KPiBqLmFuYXN6ZXdza2lAc2Ftc3VuZy5jb207IHJwdXJkaWVAcnBzeXMu
+bmV0OyBsaW51eC1sZWRzQHZnZXIua2VybmVsLm9yZzsNCj4gamlyaUByZXNudWxsaS51czsgZ3Jl
+Z2toQGxpbnV4Zm91bmRhdGlvbi5vcmc7IHBsYXRmb3JtLWRyaXZlci0NCj4geDg2QHZnZXIua2Vy
+bmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW3BhdGNoIHY0IDIvMl0gbWZkOiBBZGQgTWVsbGFub3gg
+cmVnbWFwIEkyQyBkcml2ZXINCj4gDQo+IE9uIFR1ZSwgMjkgQXVnIDIwMTcsIFZhZGltIFBhc3Rl
+cm5hayB3cm90ZToNCj4gDQo+ID4gVGhpcyBwYXRjaCBhZGRzIEkyQyByZWdtYXAgZHJpdmVyIGZv
+ciBNZWxsYW5veCBCTUMgY2FyZHMgd2l0aCB0aGUNCj4gPiBwcm9ncmFtbWFibGUgZGV2aWNlcyBh
+dHRhY2hlZCB0byBJMkMgaW50ZXJmYWNlLiBJdCBhbGxvd3Mgc3VwcG9ydCBmb3INCj4gPiBDUExE
+IGRldmljZXMgd2l0aCBvbmUgYW5kIHR3byBieXRlcyBhZGRyZXNzIHNwYWNlLg0KPiA+DQo+ID4g
+U2lnbmVkLW9mZi1ieTogVmFkaW0gUGFzdGVybmFrIDx2YWRpbXBAbWVsbGFub3guY29tPg0KPiA+
+IEFja2VkLWJ5OiBQYXZlbCBNYWNoZWsgPHBhdmVsQHVjdy5jej4NCj4gPiAtLS0NCj4gPiAgTUFJ
+TlRBSU5FUlMgICAgICAgICAgICAgIHwgICAxICsNCj4gPiAgZHJpdmVycy9tZmQvS2NvbmZpZyAg
+ICAgIHwgIDEzICsrKysNCj4gPiAgZHJpdmVycy9tZmQvTWFrZWZpbGUgICAgIHwgICAxICsNCj4g
+PiAgZHJpdmVycy9tZmQvbWx4cmVnLWkyYy5jIHwgMTgzDQo+ID4gKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiAgNCBmaWxlcyBjaGFuZ2VkLCAxOTgg
+aW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tZmQvbWx4cmVn
+LWkyYy5jDQo+IA0KPiBJIGRvbid0IGtub3cgd2hhdCB0aGlzIGlzLCBidXQgaXQgaXMgbm90IGFu
+IE1GRCBkcml2ZXIuICBQbGVhc2UgZmluZCBzb21ld2hlcmUNCj4gbW9yZSBhcHByb3ByaWF0ZSB0
+byBsb2NhdGUgaXQuICBNRkQgaXMgbm90IGEgZHVtcGluZyBncm91bmQgZm9yIGRyaXZlcnMNCj4g
+d2hpY2ggZG8gbm90IGZpdCBhbnl3aGVyZSBlbHNlLg0KDQpIaSBMZWUsDQoNCkFzIGFjY29yZGlu
+ZyB5b3VyIHByZXZpb3VzIG5vdGVzIEkgYW0gc3BsaXR0aW5nIGhvdHBsdWcgZHJpdmVyICBhbmQg
+bW92aW5nIGl0IHRvIG5ldyANCmZvbGRlciBkcml2ZXJzL3BsYXRmb3JtL21lbGxhbm94LywgcG9z
+c2libHkgaXQgd291bGQgYmUgdGhlIGJlc3QgcGxhY2UgdG8gcmVsb2NhdGUgaXQNCnRoZXJlLiBJ
+IGFsc28gaW50ZW5kIHRvIGhhdmUgaW4gdGhlIGZ1dHVyZSBzbWFsbCBkcml2ZXJzIG1seHJlZy1z
+cGksIG1seHJlZy1tbWlvIGFuZA0KbWF5YmUgaXQgd291bGQgYmUgY29ycmVjdCB0byB0byB1c2Ug
+dGhlc2UgbmV3IGZvbGRlciBmb3IgYWxsIG9mIHRoZW0/DQoNClRoYW5rcywNClZhZGltLg0KDQo+
+IA0KPiA+IGRpZmYgLS1naXQgYS9NQUlOVEFJTkVSUyBiL01BSU5UQUlORVJTIGluZGV4IGJjYjdm
+NDUuLjg2YTVmOGYgMTAwNjQ0DQo+ID4gLS0tIGEvTUFJTlRBSU5FUlMNCj4gPiArKysgYi9NQUlO
+VEFJTkVSUw0KPiA+IEBAIC04Mjk5LDYgKzgyOTksNyBAQCBNOglWYWRpbSBQYXN0ZXJuYWsgPHZh
+ZGltcEBtZWxsYW5veC5jb20+DQo+ID4gIFM6CVN1cHBvcnRlZA0KPiA+ICBGOglEb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL21lbGxhbm94LG1seHJlZy1jb3JlDQo+ID4gIEY6
+CWRyaXZlcnMvbWZkL21seHJlZy1jb3JlLmMNCj4gPiArRjoJZHJpdmVycy9tZmQvbWx4cmVnLWky
+Yy5jDQo+ID4gIEY6CWluY2x1ZGUvbGludXgvcGxhdGZvcm1fZGF0YS9tbHhyZWcuaA0KPiA+DQo+
+ID4gIE1FTExBTk9YIEVUSEVSTkVUIERSSVZFUiAobWx4NF9lbikNCj4gPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9tZmQvS2NvbmZpZyBiL2RyaXZlcnMvbWZkL0tjb25maWcgaW5kZXgNCj4gPiBmYTE1
+NjJmLi40NTNhZmNiIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbWZkL0tjb25maWcNCj4gPiAr
+KysgYi9kcml2ZXJzL21mZC9LY29uZmlnDQo+ID4gQEAgLTE3MDksNiArMTcwOSwxOSBAQCBjb25m
+aWcgTUZEX01MWFJFR19DT1JFDQo+ID4gIAkgIFRoaXMgZHJpdmVyIGNhbiBhbHNvIGJlIGJ1aWx0
+IGFzIGEgbW9kdWxlLiBJZiBzbyB0aGUgbW9kdWxlDQo+ID4gIAkgIHdpbGwgYmUgY2FsbGVkIG1s
+eHJlZy1jb3JlLg0KPiA+DQo+ID4gK2NvbmZpZyBNRkRfTUxYUkVHX0kyQw0KPiA+ICsJYm9vbCAi
+TWVsbGFub3ggcHJvZ3JhbW1hYmxlIGRldmljZSB3aXRoIEkyQyBpbnRlcmZhY2UiDQo+ID4gKwlk
+ZXBlbmRzIG9uIEkyQyAmJiBSRUdNQVBfSTJDDQo+ID4gKwlkZXBlbmRzIG9uIE1GRF9NTFhSRUdf
+Q09SRQ0KPiA+ICsJaGVscA0KPiA+ICsJICBTdXBwb3J0IGZvciB0aGUgTWVsbGFub3ggQk1DIGNh
+cmQgd2l0aCBoYXJkd2FyZSBjb250cm9sIGJ5IGENCj4gPiArCSAgcHJvZ3JhbW1hYmxlIGRldmlj
+ZS4gVGhpcyBvcHRpb24gZW5hYmxlcyBjb3JlIHN1cHBvcnQgZm9yIHRoZQ0KPiA+ICsJICBwcm9n
+cmFtbWFibGUgZGV2aWNlcyB3aXRoIEkyQyBpbnRlcmZhY2UuIEl0IGFsbG93cyBzdXBwb3J0IGZv
+cg0KPiA+ICsJICB0aGUgZGV2aWNlcyB3aXRoIGFkZHJlc3Mgc3BhY2UgMSBhbmQgMiBieXRlcy4N
+Cj4gPiArDQo+ID4gKwkgIFRoaXMgZHJpdmVyIGNhbiBhbHNvIGJlIGJ1aWx0IGFzIGEgbW9kdWxl
+LiBJZiBzbyB0aGUgbW9kdWxlDQo+ID4gKwkgIHdpbGwgYmUgY2FsbGVkIG1seHJlZy1pMmMuDQo+
+ID4gKw0KPiA+ICBtZW51ICJNdWx0aW1lZGlhIENhcGFiaWxpdGllcyBQb3J0IGRyaXZlcnMiDQo+
+ID4gIAlkZXBlbmRzIG9uIEFSQ0hfU0ExMTAwDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9tZmQvTWFrZWZpbGUgYi9kcml2ZXJzL21mZC9NYWtlZmlsZSBpbmRleA0KPiA+IDk2NjFlZTIu
+LmI3NmM1YjIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9tZmQvTWFrZWZpbGUNCj4gPiArKysg
+Yi9kcml2ZXJzL21mZC9NYWtlZmlsZQ0KPiA+IEBAIC0yMjIsMyArMjIyLDQgQEAgb2JqLSQoQ09O
+RklHX01GRF9TVU40SV9HUEFEQykJKz0gc3VuNGktDQo+IGdwYWRjLm8NCj4gPiAgb2JqLSQoQ09O
+RklHX01GRF9TVE0zMl9USU1FUlMpIAkrPSBzdG0zMi10aW1lcnMubw0KPiA+ICBvYmotJChDT05G
+SUdfTUZEX01YU19MUkFEQykgICAgICs9IG14cy1scmFkYy5vDQo+ID4gIG9iai0kKENPTkZJR19N
+RkRfTUxYUkVHX0NPUkUpCSs9IG1seHJlZy1jb3JlLm8NCj4gPiArb2JqLSQoQ09ORklHX01GRF9N
+TFhSRUdfSTJDKQkrPSBtbHhyZWctaTJjLm8NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQv
+bWx4cmVnLWkyYy5jIGIvZHJpdmVycy9tZmQvbWx4cmVnLWkyYy5jIG5ldw0KPiA+IGZpbGUgbW9k
+ZSAxMDA2NDQgaW5kZXggMDAwMDAwMC4uMDQ4MjNiNQ0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiAr
+KysgYi9kcml2ZXJzL21mZC9tbHhyZWctaTJjLmMNCj4gPiBAQCAtMCwwICsxLDE4MyBAQA0KPiA+
+ICsvKg0KPiA+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMTcgTWVsbGFub3ggVGVjaG5vbG9naWVzLiBB
+bGwgcmlnaHRzIHJlc2VydmVkLg0KPiA+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMTcgVmFkaW0gUGFz
+dGVybmFrIDx2YWRpbXBAbWVsbGFub3guY29tPg0KPiA+ICsgKg0KPiA+ICsgKiBSZWRpc3RyaWJ1
+dGlvbiBhbmQgdXNlIGluIHNvdXJjZSBhbmQgYmluYXJ5IGZvcm1zLCB3aXRoIG9yIHdpdGhvdXQN
+Cj4gPiArICogbW9kaWZpY2F0aW9uLCBhcmUgcGVybWl0dGVkIHByb3ZpZGVkIHRoYXQgdGhlIGZv
+bGxvd2luZyBjb25kaXRpb25zIGFyZQ0KPiBtZXQ6DQo+ID4gKyAqDQo+ID4gKyAqIDEuIFJlZGlz
+dHJpYnV0aW9ucyBvZiBzb3VyY2UgY29kZSBtdXN0IHJldGFpbiB0aGUgYWJvdmUgY29weXJpZ2h0
+DQo+ID4gKyAqICAgIG5vdGljZSwgdGhpcyBsaXN0IG9mIGNvbmRpdGlvbnMgYW5kIHRoZSBmb2xs
+b3dpbmcgZGlzY2xhaW1lci4NCj4gPiArICogMi4gUmVkaXN0cmlidXRpb25zIGluIGJpbmFyeSBm
+b3JtIG11c3QgcmVwcm9kdWNlIHRoZSBhYm92ZSBjb3B5cmlnaHQNCj4gPiArICogICAgbm90aWNl
+LCB0aGlzIGxpc3Qgb2YgY29uZGl0aW9ucyBhbmQgdGhlIGZvbGxvd2luZyBkaXNjbGFpbWVyIGlu
+IHRoZQ0KPiA+ICsgKiAgICBkb2N1bWVudGF0aW9uIGFuZC9vciBvdGhlciBtYXRlcmlhbHMgcHJv
+dmlkZWQgd2l0aCB0aGUNCj4gZGlzdHJpYnV0aW9uLg0KPiA+ICsgKiAzLiBOZWl0aGVyIHRoZSBu
+YW1lcyBvZiB0aGUgY29weXJpZ2h0IGhvbGRlcnMgbm9yIHRoZSBuYW1lcyBvZiBpdHMNCj4gPiAr
+ICogICAgY29udHJpYnV0b3JzIG1heSBiZSB1c2VkIHRvIGVuZG9yc2Ugb3IgcHJvbW90ZSBwcm9k
+dWN0cyBkZXJpdmVkDQo+IGZyb20NCj4gPiArICogICAgdGhpcyBzb2Z0d2FyZSB3aXRob3V0IHNw
+ZWNpZmljIHByaW9yIHdyaXR0ZW4gcGVybWlzc2lvbi4NCj4gPiArICoNCj4gPiArICogQWx0ZXJu
+YXRpdmVseSwgdGhpcyBzb2Z0d2FyZSBtYXkgYmUgZGlzdHJpYnV0ZWQgdW5kZXIgdGhlIHRlcm1z
+IG9mDQo+ID4gK3RoZQ0KPiA+ICsgKiBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSAoIkdQTCIp
+IHZlcnNpb24gMiBhcyBwdWJsaXNoZWQgYnkgdGhlDQo+ID4gK0ZyZWUNCj4gPiArICogU29mdHdh
+cmUgRm91bmRhdGlvbi4NCj4gPiArICoNCj4gPiArICogVEhJUyBTT0ZUV0FSRSBJUyBQUk9WSURF
+RCBCWSBUSEUgQ09QWVJJR0hUIEhPTERFUlMgQU5EDQo+IENPTlRSSUJVVE9SUyAiQVMgSVMiDQo+
+ID4gKyAqIEFORCBBTlkgRVhQUkVTUyBPUiBJTVBMSUVEIFdBUlJBTlRJRVMsIElOQ0xVRElORywg
+QlVUIE5PVA0KPiBMSU1JVEVEDQo+ID4gK1RPLCBUSEUNCj4gPiArICogSU1QTElFRCBXQVJSQU5U
+SUVTIE9GIE1FUkNIQU5UQUJJTElUWSBBTkQgRklUTkVTUyBGT1IgQQ0KPiBQQVJUSUNVTEFSDQo+
+ID4gK1BVUlBPU0UNCj4gPiArICogQVJFIERJU0NMQUlNRUQuIElOIE5PIEVWRU5UIFNIQUxMIFRI
+RSBDT1BZUklHSFQgT1dORVIgT1INCj4gPiArQ09OVFJJQlVUT1JTIEJFDQo+ID4gKyAqIExJQUJM
+RSBGT1IgQU5ZIERJUkVDVCwgSU5ESVJFQ1QsIElOQ0lERU5UQUwsIFNQRUNJQUwsIEVYRU1QTEFS
+WSwNCj4gPiArT1INCj4gPiArICogQ09OU0VRVUVOVElBTCBEQU1BR0VTIChJTkNMVURJTkcsIEJV
+VCBOT1QgTElNSVRFRCBUTywNCj4gUFJPQ1VSRU1FTlQNCj4gPiArT0YNCj4gPiArICogU1VCU1RJ
+VFVURSBHT09EUyBPUiBTRVJWSUNFUzsgTE9TUyBPRiBVU0UsIERBVEEsIE9SIFBST0ZJVFM7IE9S
+DQo+ID4gK0JVU0lORVNTDQo+ID4gKyAqIElOVEVSUlVQVElPTikgSE9XRVZFUiBDQVVTRUQgQU5E
+IE9OIEFOWSBUSEVPUlkgT0YgTElBQklMSVRZLA0KPiA+ICtXSEVUSEVSIElODQo+ID4gKyAqIENP
+TlRSQUNULCBTVFJJQ1QgTElBQklMSVRZLCBPUiBUT1JUIChJTkNMVURJTkcgTkVHTElHRU5DRSBP
+Ug0KPiA+ICtPVEhFUldJU0UpDQo+ID4gKyAqIEFSSVNJTkcgSU4gQU5ZIFdBWSBPVVQgT0YgVEhF
+IFVTRSBPRiBUSElTIFNPRlRXQVJFLCBFVkVOIElGDQo+ID4gK0FEVklTRUQgT0YgVEhFDQo+ID4g
+KyAqIFBPU1NJQklMSVRZIE9GIFNVQ0ggREFNQUdFLg0KPiA+ICsgKi8NCj4gPiArDQo+ID4gKyNp
+bmNsdWRlIDxsaW51eC9kZXZpY2UuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L2kyYy5oPg0KPiA+
+ICsjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9vZl9kZXZp
+Y2UuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPg0KPiA+ICsjaW5j
+bHVkZSA8bGludXgvcmVnbWFwLmg+DQo+ID4gKw0KPiA+ICsvKioNCj4gPiArICogZW51bSBtbHhy
+ZWdfaTJjX3R5cGUgLSBkcml2ZXIgZmxhdm91cnM6DQo+ID4gKyAqDQo+ID4gKyAqIEBNTFhSRUdf
+OEJJVDogdHlwZSBmb3IgSTJDIENQTEQgY29udHJvbCB3aXRoIDEgYnl0ZSBhZGRyZXNzIHNwYWNl
+Ow0KPiA+ICsgKiBATUxYUkVHXzE2QklUOiB0eXBlIGZvciBJMkMgQ1BMRCBjb250cm9sIHdpdGgg
+MiBieXRlcyBhZGRyZXNzDQo+ID4gK3NwYWNlOyAgKi8gZW51bSBtbHhyZWdfaTJjX3R5cGUgew0K
+PiA+ICsJTUxYUkVHXzhCSVQsDQo+ID4gKwlNTFhSRUdfMTZCSVQsDQo+ID4gK307DQo+ID4gKw0K
+PiA+ICsvKioNCj4gPiArICogQ29uZmlndXJhdGlvbiBmb3IgdGhlIHJlZ2lzdGVyIG1hcCBvZiBh
+IGRldmljZSB3aXRoIDEgYnl0ZSBhZGRyZXNzDQo+IHNwYWNlLg0KPiA+ICsgKi8NCj4gPiArc3Rh
+dGljIGNvbnN0IHN0cnVjdCByZWdtYXBfY29uZmlnIG1seHJlZ19pMmNfcmVnbWFwOF9jb25mID0g
+ew0KPiA+ICsJLnJlZ19iaXRzID0gOCwNCj4gPiArCS52YWxfYml0cyA9IDgsDQo+ID4gKwkubWF4
+X3JlZ2lzdGVyID0gMjU1LA0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArLyoqDQo+ID4gKyAqIENvbmZp
+Z3VyYXRpb24gZm9yIHRoZSByZWdpc3RlciBtYXAgb2YgYSBkZXZpY2Ugd2l0aCAyIGJ5dGVzIGFk
+ZHJlc3MNCj4gc3BhY2UuDQo+ID4gKyAqLw0KPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHJlZ21h
+cF9jb25maWcgbWx4cmVnX2kyY19yZWdtYXAxNl9jb25mID0gew0KPiA+ICsJLnJlZ19iaXRzID0g
+MTYsDQo+ID4gKwkudmFsX2JpdHMgPSAxNiwNCj4gPiArCS5tYXhfcmVnaXN0ZXIgPSAxMDIzLA0K
+PiA+ICt9Ow0KPiA+ICsNCj4gPiArc3RhdGljIHN0cnVjdCByZXNvdXJjZSBtbHhyZWdfaTJjX3Jl
+c291cmNlc1tdID0gew0KPiA+ICsJWzBdID0gREVGSU5FX1JFU19JUlFfTkFNRUQoLTEsICJtbHhj
+cGxkLWN0cmwtMmMiKSwgfTsNCj4gPiArDQo+ID4gK3N0YXRpYyBpbnQNCj4gPiArbWx4cmVnX2ky
+Y19wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LCBjb25zdCBzdHJ1Y3QNCj4gPiAraTJj
+X2RldmljZV9pZCAqaWQpIHsNCj4gPiArCXN0cnVjdCBkZXZpY2Vfbm9kZSAqY2hpbGQsICpucCA9
+IGNsaWVudC0+ZGV2Lm9mX25vZGU7DQo+ID4gKwlzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
+Ow0KPiA+ICsJc3RydWN0IGkyY19hZGFwdGVyICphZGFwdGVyOw0KPiA+ICsJc3RydWN0IHJlZ21h
+cCAqcmVnbWFwOw0KPiA+ICsJaW50IGVyciA9IDA7DQo+ID4gKw0KPiA+ICsJaWYgKCFucCkNCj4g
+PiArCQlyZXR1cm4gLUVOT0RFVjsNCj4gPiArDQo+ID4gKwlpZiAoIW9mX2RldmljZV9pc19jb21w
+YXRpYmxlKG5wLCAibWVsbGFub3gsbWx4cmVnLWkyYyIpKQ0KPiA+ICsJCXJldHVybiAtRU5PREVW
+Ow0KPiA+ICsNCj4gPiArCWNoaWxkID0gb2ZfcGFyc2VfcGhhbmRsZShucCwgImRlZmVycmVkIiwg
+MCk7DQo+ID4gKwlpZiAoY2hpbGQpIHsNCj4gPiArCQlhZGFwdGVyID0gb2ZfZmluZF9pMmNfYWRh
+cHRlcl9ieV9ub2RlKGNoaWxkKTsNCj4gPiArCQlvZl9ub2RlX3B1dChjaGlsZCk7DQo+ID4gKwkJ
+aWYgKCFhZGFwdGVyKQ0KPiA+ICsJCQlyZXR1cm4gLUVQUk9CRV9ERUZFUjsNCj4gPiArCX0NCj4g
+PiArDQo+ID4gKwlpZiAoIWkyY19jaGVja19mdW5jdGlvbmFsaXR5KGNsaWVudC0+YWRhcHRlciwN
+Cj4gPiArCQkJCSAgICAgSTJDX0ZVTkNfU01CVVNfQllURV9EQVRBIHwNCj4gPiArCQkJCSAgICAg
+STJDX0ZVTkNfU01CVVNfV09SRF9EQVRBIHwNCj4gPiArCQkJCSAgICAgSTJDX0ZVTkNfU01CVVNf
+STJDX0JMT0NLKSkNCj4gPiArCQlyZXR1cm4gLUVOT0RFVjsNCj4gPiArDQo+ID4gKwlzd2l0Y2gg
+KGlkLT5kcml2ZXJfZGF0YSkgew0KPiA+ICsJY2FzZSBNTFhSRUdfOEJJVDoNCj4gPiArCQlyZWdt
+YXAgPSBkZXZtX3JlZ21hcF9pbml0X2kyYyhjbGllbnQsDQo+ID4gKwkJCQkJICAgICAgJm1seHJl
+Z19pMmNfcmVnbWFwOF9jb25mKTsNCj4gPiArCQlicmVhazsNCj4gPiArCWNhc2UgTUxYUkVHXzE2
+QklUOg0KPiA+ICsJCXJlZ21hcCA9IGRldm1fcmVnbWFwX2luaXRfaTJjKGNsaWVudCwNCj4gPiAr
+CQkJCQkgICAgICAmbWx4cmVnX2kyY19yZWdtYXAxNl9jb25mKTsNCj4gPiArCQlicmVhazsNCj4g
+PiArCWRlZmF1bHQ6DQo+ID4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ID4gKwl9DQo+ID4gKw0KPiA+
+ICsJaWYgKElTX0VSUihyZWdtYXApKQ0KPiA+ICsJCXJldHVybiBQVFJfRVJSKHJlZ21hcCk7DQo+
+ID4gKw0KPiA+ICsJcGRldiA9IHBsYXRmb3JtX2RldmljZV9hbGxvYygibWx4cmVnLWNvcmUiLCAo
+Y2xpZW50LT5hZGFwdGVyLT5uciA8PA0KPiA4KQ0KPiA+ICsJCQkJICAgICB8IGNsaWVudC0+YWRk
+cik7DQo+ID4gKwlpZiAoIXBkZXYpDQo+ID4gKwkJcmV0dXJuIC1FTk9NRU07DQo+ID4gKw0KPiA+
+ICsJaTJjX3NldF9jbGllbnRkYXRhKGNsaWVudCwgcGRldik7DQo+ID4gKwlwZGV2LT5kZXYucGFy
+ZW50ID0gJmNsaWVudC0+ZGV2Ow0KPiA+ICsJcGRldi0+ZGV2Lm9mX25vZGUgPSBjbGllbnQtPmRl
+di5vZl9ub2RlOw0KPiA+ICsJcGRldi0+ZGV2LnBsYXRmb3JtX2RhdGEgPSByZWdtYXA7DQo+ID4g
+Kw0KPiA+ICsJaWYgKGNsaWVudC0+aXJxKSB7DQo+ID4gKwkJbWx4cmVnX2kyY19yZXNvdXJjZXNb
+MF0uc3RhcnQgPSBjbGllbnQtPmlycTsNCj4gPiArCQllcnIgPSBwbGF0Zm9ybV9kZXZpY2VfYWRk
+X3Jlc291cmNlcyhwZGV2LA0KPiA+ICsJCQkJbWx4cmVnX2kyY19yZXNvdXJjZXMsDQo+ID4gKwkJ
+CQlBUlJBWV9TSVpFKG1seHJlZ19pMmNfcmVzb3VyY2VzKSk7DQo+ID4gKwl9DQo+ID4gKw0KPiA+
+ICsJZXJyID0gZXJyID8gZXJyIDogcGxhdGZvcm1fZGV2aWNlX2FkZChwZGV2KTsNCj4gPiArDQo+
+ID4gKwlpZiAoZXJyKQ0KPiA+ICsJCXBsYXRmb3JtX2RldmljZV9wdXQocGRldik7DQo+ID4gKw0K
+PiA+ICsJcmV0dXJuIGVycjsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGludCBtbHhyZWdf
+aTJjX3JlbW92ZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50KSB7DQo+ID4gKwlzdHJ1Y3QgcGxh
+dGZvcm1fZGV2aWNlICpwZGV2ID0gaTJjX2dldF9jbGllbnRkYXRhKGNsaWVudCk7DQo+ID4gKw0K
+PiA+ICsJcGxhdGZvcm1fZGV2aWNlX3VucmVnaXN0ZXIocGRldik7DQo+ID4gKw0KPiA+ICsJcmV0
+dXJuIDA7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgaTJjX2Rldmlj
+ZV9pZCBtbHhyZWdfaTJjX2lkW10gPSB7DQo+ID4gKwl7ICJtbHhyZWctaTJjIiwgTUxYUkVHXzhC
+SVQgfSwNCj4gPiArCXsgIm1seHJlZy1pMmMtMTYiLCBNTFhSRUdfMTZCSVQgfSwNCj4gPiArCXsg
+fSwNCj4gPiArfTsNCj4gPiArTU9EVUxFX0RFVklDRV9UQUJMRShpMmMsIG1seHJlZ19pMmNfaWQp
+Ow0KPiA+ICsNCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgbWx4cmVnX2ky
+Y19kdF9tYXRjaFtdID0gew0KPiA+ICsJeyAuY29tcGF0aWJsZSA9ICJtZWxsYW5veCxtbHhyZWct
+aTJjIiB9LA0KPiA+ICsJeyAuY29tcGF0aWJsZSA9ICJtZWxsYW5veCxtbHhyZWctaTJjLTE2IiB9
+LA0KPiA+ICsJeyB9LA0KPiA+ICt9Ow0KPiA+ICtNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBtbHhy
+ZWdfaTJjX2R0X21hdGNoKTsNCj4gPiArDQo+ID4gK3N0YXRpYyBzdHJ1Y3QgaTJjX2RyaXZlciBt
+bHhyZWdfaTJjX2RyaXZlciA9IHsNCj4gPiArCS5jbGFzcyA9IEkyQ19DTEFTU19IV01PTiwNCj4g
+PiArCS5kcml2ZXIgPSB7DQo+ID4gKwkgICAgLm5hbWUgPSAibWx4cmVnLWkyYyIsDQo+ID4gKwkg
+ICAgLm9mX21hdGNoX3RhYmxlID0gb2ZfbWF0Y2hfcHRyKG1seHJlZ19pMmNfZHRfbWF0Y2gpLA0K
+PiA+ICsJfSwNCj4gPiArCS5wcm9iZSA9IG1seHJlZ19pMmNfcHJvYmUsDQo+ID4gKwkucmVtb3Zl
+ID0gbWx4cmVnX2kyY19yZW1vdmUsDQo+ID4gKwkuaWRfdGFibGUgPSBtbHhyZWdfaTJjX2lkLA0K
+PiA+ICt9Ow0KPiA+ICsNCj4gPiArbW9kdWxlX2kyY19kcml2ZXIobWx4cmVnX2kyY19kcml2ZXIp
+Ow0KPiA+ICsNCj4gPiArTU9EVUxFX0FVVEhPUigiVmFkaW0gUGFzdGVybmFrIDx2YWRpbXBAbWVs
+bGFub3guY29tPiIpOw0KPiA+ICtNT0RVTEVfREVTQ1JJUFRJT04oIk1lbGxhbm94IENQTEQgY29u
+dHJvbCBJMkMgZHJpdmVyIik7DQo+ID4gK01PRFVMRV9MSUNFTlNFKCJEdWFsIEJTRC9HUEwiKTsg
+TU9EVUxFX0FMSUFTKCJtbHhyZWctaTJjIik7DQo+IA0KPiAtLQ0KPiBMZWUgSm9uZXMNCj4gTGlu
+YXJvIFNUTWljcm9lbGVjdHJvbmljcyBMYW5kaW5nIFRlYW0gTGVhZCBMaW5hcm8ub3JnIOKUgiBP
+cGVuIHNvdXJjZQ0KPiBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MgRm9sbG93IExpbmFybzogRmFjZWJv
+b2sgfCBUd2l0dGVyIHwgQmxvZw0K
