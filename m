@@ -1,126 +1,93 @@
-From: Vadim Pasternak <vadimp@mellanox.com>
-Subject: RE: [patch v4 1/2] mfd: Add Mellanox regmap core driver
-Date: Tue, 5 Sep 2017 18:21:27 +0000
-Message-ID: <AM4PR05MB333091C928607B676067B325A2960@AM4PR05MB3330.eurprd05.prod.outlook.com>
-References: <1504029616-192277-1-git-send-email-vadimp@mellanox.com>
- <1504029616-192277-2-git-send-email-vadimp@mellanox.com>
- <20170901161433.gpkrpjx53pjv4mid@rob-hp-laptop>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: gpio: Add optional
+ retain-state-shutdown property
+Date: Tue, 5 Sep 2017 21:10:49 +0200
+Message-ID: <43133266-01c1-4ec7-893e-a7b0544f7720@gmail.com>
+References: <20170828001711.19662-1-andrew@aj.id.au>
+ <20170828001711.19662-2-andrew@aj.id.au>
+ <20170831212840.ecr2p4nra52xvzrz@rob-hp-laptop>
+ <1504220536.5933.32.camel@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <20170901161433.gpkrpjx53pjv4mid@rob-hp-laptop>
-Content-Language: en-US
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: "lee.jones@linaro.org" <lee.jones@linaro.org>, "pavel@ucw.cz" <pavel@ucw.cz>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "j.anaszewski@samsung.com" <j.anaszewski@samsung.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "jiri@resnulli.us" <jiri@resnulli.us>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1504220536.5933.32.camel@aj.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh@kernel.org>
+Cc: linux-leds@vger.kernel.org, rpurdie@rpsys.net, pavel@ucw.cz, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, joel@jms.id.au, openbmc@lists.ozlabs.org
 List-Id: linux-leds@vger.kernel.org
 
+Hi Andrew and Rob,
 
+On 09/01/2017 01:02 AM, Andrew Jeffery wrote:
+> Hi Rob,
+> 
+> On Thu, 2017-08-31 at 16:28 -0500, Rob Herring wrote:
+>> On Mon, Aug 28, 2017 at 09:47:10AM +0930, Andrew Jeffery wrote:
+>>> On Baseboard Management Controller (BMC) systems it's sometimes
+>>> necessary for a LED to retain its state across a BMC reset (which is
+>>> independent of the host system state). Add a devicetree property to
+>>> describe this behaviour. The property would typically be used in
+>>> conjunction with 'default-state = "keep"'.
+>>  
+>> A bit quick on the applying of this...
+>>  
+>> I don't understand how this works. The BMC usecase is interesting but 
+>> that's fairly irrelevant to the binding. How do you know the GPIO state 
+>> thru a reset?
+> 
+> The answer to that is a property of the system design in my opinion.
+> 
+>> You're doing a core reset, but not reseting the GPIO 
+>> controller?
+> 
+> Well, in my specific case, the GPIO controller in question isn't on the SoC,
+> it's off-chip behind an I2C bus. Powering off a BMC doesn't necessarily mean
+> removing power from its peripherals, so in this case the their state is
+> maintained.
+> 
+> Alternatively, and again in my specific (Aspeed) case, the on-SoC GPIO
+> controller can be selectively reset with respect to the rest of the SoC, or
+> individual GPIO lines can be marked as reset-tolerant. This gives the same
+> capability and is what you've suggested above.
+> 
+>>  
+>> When you use 'default-state = "keep"' but not this property? Seems like  the
+>> same thing to me.
+> 
+> Is that not also true of retain-state-suspend?
+> 
+> The existing behaviour of leds-gpio was to turn the managed LEDs off in the
+> remove() path. To me this was unexpected behaviour, but it is what it is. My
+> first pass at the patch (before I sent it out) was to do as you suggest and
+> only turn it off in the absence of 'default-state = "keep"'.  However there
+> were quite a number of users of that configuration, and this could be an
+> unexpected change of behaviour. Given retain-state-suspend was already defined,
+> it seemed that the non-breaking way to get the behaviour I desired was to
+> introduce retain-state-shutdown.
+> 
+> Sure, this is dealing with problems in the driver and not describing hardware,
+> but at this point the behaviour is already in place and people might be relying
+> on it.
+> 
+>> Presumably the bootloader would just distinguish  between a
+>> warm and cold reset to decide whether to re-init the state.
+>>  
+>> Finally, if we do have this property, why is it GPIO specific. You could 
+>> just as easily have a LED controller IC and want to do the same thing.
+> 
+> I don't think we're precluded from making it more general even if it's
+> submitted as specific to leds-gpio? I don't have anything against making it
+> more generic. I was tossing up about doing so, but went for the specific case
+> first because we could make it more generic without problems. Going the other
+> way is harder.
 
-> > folder;  Comments pointed out by Rob:
-> >  - Make a separate patch /devicetree/bindings/vendor-prefixes.txt;
-> >  - Add .txt to Documentation/devicetree/bindings/mfd/mellanox,mlxreg-
-> core
-> >    and send it within this series;
->=20
-> Why did you combine this? Bindings should be separate patches.
+This explanation looks reasonable. I'll wait two more days before
+sending LED 4.14 updates upstream.
 
-Ack.
+It would be nice to have clear Rob's statement about this patch set -
+either ack or NACK.
 
->=20
-> > +			spi_burn_bios_ci {
-> > +				reg =3D <0x32>;
-> > +				mask =3D <0xfe>;
-> > +				bit =3D <0x00>;
-> > +				phandles =3D <&spi2>;
-> > +			};
-> > +			spi_burn_ncsi {
-> > +				reg =3D <0x32>;
->=20
-> You can't have duplicate reg values. This will also generate warnings.
-> Build your dtb with "W=3D2".
-
-Can I use some logical name for unit, like below?
-			spi_burn_bios_ci: mux@1 {
-				reg =3D <0x32>;
-				mask =3D <0xfe>;
-				bit =3D <0x00>;
-				hotplugs =3D <&spi2>;
-			};
-			spi_burn_ncsi: mux@2 {
-				reg =3D <0x32>;
-				mask =3D <0xfd>;
-				bit =3D <0x00>;
-				hotplugs =3D <&spi2>;
-			};
-
-I verified it with "W=3D2". Also I am running with CONFIG_OF_UNITTEST and
-I don't have unites issues.
-
->=20
-> Again, this all looks too low level to me. You described the high level
-> differences in terms of number of cards, fans, PSUs, etc., but I don't se=
-e that
-> here. This isn't reviewable for anyone not familiar with your systems.
-
-The below should describe signals, which triggers hotplugable device
-Insertion or removal.
-		pwr: hotplugs@1 {
-			aggr =3D <0x08>;
-			reg =3D <0x64>;
-			mask =3D <0x03>;
-			hotplugs =3D <&psu1_ctrl &psu2_ctrl>;
-		};
-
-		asic: hotplugs@3 {
-			aggr =3D <0x01>;
-			regs =3D <0x50>;
-			mask =3D <0x03>;
-			hotplugs =3D <&asic_thermal>;
-		};
-In DTS I have description for such devices in disabled state and they are
-Connected or disconnected dynamically:
-&i2c3 {
-...
-	psu1_ctrl: dps460@59 {
-		compatible =3D "dps460";
-		reg =3D <0x59>;
-		status =3D "disabled";
-	};
-''
-
-&i2c12 {
-...
-	asic_thermal: mlxsw_minimal@48 {
-		compatible =3D "mlxsw_minimal";
-		reg =3D <0x48>;
-		status =3D "disabled";
-             ...
-
-And the same way I'd like to add spine and leaf cards, but I still don't
-Have support for them in my drivers.
-
->=20
-> > +				mask =3D <0xfd>;
-> > +				bit =3D <0x00>;
-> > +				phandles =3D <&spi2>;
->=20
-> Not a good name other than giving type information. Name it for what
-> function is being provided (e.g. clocks, interrupts, gpios).
-
-Would it be OK if to use hotplugs instead of phandles?
-It could be f.e. FAN EEPROM, PSU controller, ASIC, spine or leaf card, all =
-these=20
-are hotplugable device, which could be inserted or removed.
-It could be remote flashes, which are getting available after mux selection=
-, like
-in the above example for spi_burn_bios_ci and spi_burn_ncsi.
-Or it could be some other device at the remote side, which is getting avail=
-able to
-BMC, only when remote side (f.e. COMEX) is getting power good.
-
-Thanks,
-Vadim.
-=20
-=20
+-- 
+Best regards,
+Jacek Anaszewski
