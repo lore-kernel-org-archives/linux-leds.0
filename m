@@ -1,70 +1,65 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [patch v4 2/2] mfd: Add Mellanox regmap I2C driver
-Date: Tue, 5 Sep 2017 09:13:57 +0100
-Message-ID: <20170905081357.odg56cf3pkmze6cm@dell>
-References: <1504029616-192277-1-git-send-email-vadimp@mellanox.com>
- <1504029616-192277-3-git-send-email-vadimp@mellanox.com>
- <20170905073540.uxqhchcveu5d6vtk@dell>
- <AM4PR05MB333008AD8B8B9FC8BEBE2411A2960@AM4PR05MB3330.eurprd05.prod.outlook.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [RFC 0/2] backlight: pwm_bl: support linear brightness to human
+ eye
+Date: Tue, 5 Sep 2017 12:05:45 +0100
+Message-ID: <239c9153-c0ea-319c-b554-3c727b75c8cd@linaro.org>
+References: <20170904153504.27963-1-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <AM4PR05MB333008AD8B8B9FC8BEBE2411A2960@AM4PR05MB3330.eurprd05.prod.outlook.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, "pavel@ucw.cz" <pavel@ucw.cz>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "j.anaszewski@samsung.com" <j.anaszewski@samsung.com>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "jiri@resnulli.us" <jiri@resnulli.us>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170904153504.27963-1-enric.balletbo@collabora.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Doug Anderson <dianders@google.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, 05 Sep 2017, Vadim Pasternak wrote:
-> > -----Original Message-----
-> > From: Lee Jones [mailto:lee.jones@linaro.org]
-> > Sent: Tuesday, September 05, 2017 10:36 AM
-> > To: Vadim Pasternak <vadimp@mellanox.com>
-> > Cc: robh+dt@kernel.org; pavel@ucw.cz; devicetree@vger.kernel.org;
-> > j.anaszewski@samsung.com; rpurdie@rpsys.net; linux-leds@vger.kernel.org;
-> > jiri@resnulli.us; gregkh@linuxfoundation.org; platform-driver-
-> > x86@vger.kernel.org
-> > Subject: Re: [patch v4 2/2] mfd: Add Mellanox regmap I2C driver
-
-This should not appear in your replies.
-
-Please fix your mailer.
-
-> > On Tue, 29 Aug 2017, Vadim Pasternak wrote:
-> > 
-> > > This patch adds I2C regmap driver for Mellanox BMC cards with the
-> > > programmable devices attached to I2C interface. It allows support for
-> > > CPLD devices with one and two bytes address space.
-> > >
-> > > Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-> > > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > > ---
-> > >  MAINTAINERS              |   1 +
-> > >  drivers/mfd/Kconfig      |  13 ++++
-> > >  drivers/mfd/Makefile     |   1 +
-> > >  drivers/mfd/mlxreg-i2c.c | 183
-> > > +++++++++++++++++++++++++++++++++++++++++++++++
-> > >  4 files changed, 198 insertions(+)
-> > >  create mode 100644 drivers/mfd/mlxreg-i2c.c
-> > 
-> > I don't know what this is, but it is not an MFD driver.  Please find somewhere
-> > more appropriate to locate it.  MFD is not a dumping ground for drivers
-> > which do not fit anywhere else.
+On 04/09/17 16:35, Enric Balletbo i Serra wrote:
+> Dear all,
 > 
-> Hi Lee,
+> This patch series is a first RFC to know your opinion about implement
+> support to create brightness levels tables dinamically. I tried to argue
+> in every patch the specific reasons we think this can be interesting, to
+> sumup, the idea behind these patches is be able to pass via device tree
+> two parameters to the driver so it can calculate the brightness levels
+> based on the CIE 1931 lightness formula, which is what actually describes
+> how we perceive light.
 > 
-> As according your previous notes I am splitting hotplug driver  and moving it to new 
-> folder drivers/platform/mellanox/, possibly it would be the best place to relocate it
-> there. I also intend to have in the future small drivers mlxreg-spi, mlxreg-mmio and
-> maybe it would be correct to to use these new folder for all of them?
+> I think that at least the maths involved can be improved, and I've still
+> some doubts. With current code if you create a table with a max PWM
+> value of 255 and 127 steps, the first numbers are repeated so I'm thinking > that maybe we should skip/remove the repeated values. i.e. have a table
+> like this,
+> 
+> [0, 1, 2, 3  ...  235, 240, 245, 250, 255]
+> 
+> instead of
+> 
+> [0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3  ...  235, 240, 245, 250, 255]
+> 
+> Well, I know there are things to improve but lets see your feedback first
+> before dedicate more time on it. The patches were tested on a couple of
+> devices but I'll test on more devices meanwhile we discuss about it.
 
-I'm afraid I don't have the topology of the driver in my mind.  I
-guess those decisions will be best taken by the Platform maintainer.
+I'm not fully decided on this one but my initial reaction isn't to 
+question the concept so much as to ask why the number of levels should 
+go in the devicetree at all! We could just make brightness-levels 
+optional and get the driver to pick sane curves by default.
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I'm sure we can debate what "sane" means for a couple of e-mails yet but 
+in principle, given it knows the PWM max counter value, the driver 
+should be able to calculate the "right" number of steps too. If we have 
+that your core code remains but we don't have to complexify the device
+
+<strawman>
+Basically we prefer X (?100 like some of the Intel DRM drivers do for 
+connector properties?) steps but we reduce the number of steps if the 
+PWM is rather course and we can't get sufficiently different steps.
+</strawman>
+
+I guess the summary of what I'm saying is that if we can 
+programmatically derive brightness curves then the number of steps is 
+not really a property of the hardware and doesn't belong in devicetree.
+
+
+Daniel.
