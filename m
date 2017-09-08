@@ -1,65 +1,98 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] media: leds: as3645a: add V4L2_FLASH_LED_CLASS
- depdendency
-Date: Fri, 8 Sep 2017 14:35:13 +0200
-Message-ID: <20170908123513.GM18365@amd>
-References: <20170905071345.3807685-1-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3FyYKcuUbgqNYeqV"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40442 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754713AbdIHMfO (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 8 Sep 2017 08:35:14 -0400
-Content-Disposition: inline
-In-Reply-To: <20170905071345.3807685-1-arnd@arndb.de>
-Sender: linux-leds-owner@vger.kernel.org
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: [PATCH 2/3] dt: bindings: as3645a: Use LED number to refer to LEDs
+Date: Fri,  8 Sep 2017 15:42:12 +0300
+Message-ID: <20170908124213.18904-3-sakari.ailus@linux.intel.com>
+References: <20170908124213.18904-1-sakari.ailus@linux.intel.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20170908124213.18904-1-sakari.ailus@linux.intel.com>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Use integers (reg property) to tell the number of the LED to the driver
+instead of the node name. While both of these approaches are currently
+used by the LED bindings, using integers will require less driver changes
+for ACPI support. Additionally, it will make possible LED naming using
+chip and LED node names, effectively making the label property most useful
+for human-readable names only.
 
---3FyYKcuUbgqNYeqV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ .../devicetree/bindings/leds/ams,as3645a.txt       | 28 ++++++++++++++--------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
-On Tue 2017-09-05 09:13:20, Arnd Bergmann wrote:
-> We get a link error when V4L2_FLASH_LED_CLASS=3Dm and AS3645A is built-in:
->=20
-> drivers/leds/leds-as3645a.o: In function `as3645a_v4l2_setup':
-> leds-as3645a.c:(.text+0x258): undefined reference to `v4l2_flash_init'
-> leds-as3645a.c:(.text+0x284): undefined reference to `v4l2_flash_indicato=
-r_init'
-> leds-as3645a.c:(.text+0x2a4): undefined reference to `v4l2_flash_release'
-> drivers/leds/leds-as3645a.o: In function `as3645a_remove':
-> leds-as3645a.c:(.text+0x784): undefined reference to `v4l2_flash_release'
->=20
-> This adds the same Kconfig dependency that the other V4L2 flash
-> drivers in drivers/leds use, to avoid that broken configuration.
->=20
-> Fixes: a56ba8fbcb55 ("media: leds: as3645a: Add LED flash class driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Acked-by: Pavel Machek <pavel@ucw.cz>
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---3FyYKcuUbgqNYeqV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlmyjoEACgkQMOfwapXb+vIb2ACfYo10uOC1BPbHjDgt5+efk/5D
-thcAn27J8L9HwfrGZ+46Aqxh6aYIq/ei
-=D8rt
------END PGP SIGNATURE-----
-
---3FyYKcuUbgqNYeqV--
+diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+index 12c5ef26ec73..fdc40e354a64 100644
+--- a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
++++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+@@ -15,11 +15,14 @@ Required properties
+ 
+ compatible	: Must be "ams,as3645a".
+ reg		: The I2C address of the device. Typically 0x30.
++#address-cells	: 1
++#size-cells	: 0
+ 
+ 
+-Required properties of the "flash" child node
+-=============================================
++Required properties of the flash child node (0)
++===============================================
+ 
++reg: 0
+ flash-timeout-us: Flash timeout in microseconds. The value must be in
+ 		  the range [100000, 850000] and divisible by 50000.
+ flash-max-microamp: Maximum flash current in microamperes. Has to be
+@@ -33,20 +36,21 @@ ams,input-max-microamp: Maximum flash controller input current. The
+ 			and divisible by 50000.
+ 
+ 
+-Optional properties of the "flash" child node
+-=============================================
++Optional properties of the flash child node
++===========================================
+ 
+ label		: The label of the flash LED.
+ 
+ 
+-Required properties of the "indicator" child node
+-=================================================
++Required properties of the indicator child node (1)
++===================================================
+ 
++reg: 1
+ led-max-microamp: Maximum indicator current. The allowed values are
+ 		  2500, 5000, 7500 and 10000.
+ 
+-Optional properties of the "indicator" child node
+-=================================================
++Optional properties of the indicator child node
++===============================================
+ 
+ label		: The label of the indicator LED.
+ 
+@@ -55,16 +59,20 @@ Example
+ =======
+ 
+ 	as3645a@30 {
++		#address-cells: 1
++		#size-cells: 0
+ 		reg = <0x30>;
+ 		compatible = "ams,as3645a";
+-		flash {
++		flash@0 {
++			reg = <0x0>;
+ 			flash-timeout-us = <150000>;
+ 			flash-max-microamp = <320000>;
+ 			led-max-microamp = <60000>;
+ 			ams,input-max-microamp = <1750000>;
+ 			label = "as3645a:flash";
+ 		};
+-		indicator {
++		indicator@1 {
++			reg = <0x1>;
+ 			led-max-microamp = <10000>;
+ 			label = "as3645a:indicator";
+ 		};
+-- 
+2.11.0
