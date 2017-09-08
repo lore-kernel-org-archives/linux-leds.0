@@ -1,98 +1,56 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH 2/3] dt: bindings: as3645a: Use LED number to refer to LEDs
-Date: Fri,  8 Sep 2017 15:42:12 +0300
-Message-ID: <20170908124213.18904-3-sakari.ailus@linux.intel.com>
+From: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: [PATCH 1/3] as3645a: Use ams,input-max-microamp as documented in DT bindings
+Date: Fri,  8 Sep 2017 15:42:11 +0300
+Message-ID: <20170908124213.18904-2-sakari.ailus@linux.intel.com>
 References: <20170908124213.18904-1-sakari.ailus@linux.intel.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20170908124213.18904-1-sakari.ailus@linux.intel.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170908124213.18904-1-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-Use integers (reg property) to tell the number of the LED to the driver
-instead of the node name. While both of these approaches are currently
-used by the LED bindings, using integers will require less driver changes
-for ACPI support. Additionally, it will make possible LED naming using
-chip and LED node names, effectively making the label property most useful
-for human-readable names only.
+DT bindings document the property "ams,input-max-microamp" that limits the
+chip's maximum input current. The driver and the DTS however used
+"peak-current-limit" property. Fix this by using the property documented
+in DT binding documentation.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 ---
- .../devicetree/bindings/leds/ams,as3645a.txt       | 28 ++++++++++++++--------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ arch/arm/boot/dts/omap3-n950-n9.dtsi | 2 +-
+ drivers/leds/leds-as3645a.c          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-index 12c5ef26ec73..fdc40e354a64 100644
---- a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-+++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-@@ -15,11 +15,14 @@ Required properties
- 
- compatible	: Must be "ams,as3645a".
- reg		: The I2C address of the device. Typically 0x30.
-+#address-cells	: 1
-+#size-cells	: 0
- 
- 
--Required properties of the "flash" child node
--=============================================
-+Required properties of the flash child node (0)
-+===============================================
- 
-+reg: 0
- flash-timeout-us: Flash timeout in microseconds. The value must be in
- 		  the range [100000, 850000] and divisible by 50000.
- flash-max-microamp: Maximum flash current in microamperes. Has to be
-@@ -33,20 +36,21 @@ ams,input-max-microamp: Maximum flash controller input current. The
- 			and divisible by 50000.
- 
- 
--Optional properties of the "flash" child node
--=============================================
-+Optional properties of the flash child node
-+===========================================
- 
- label		: The label of the flash LED.
- 
- 
--Required properties of the "indicator" child node
--=================================================
-+Required properties of the indicator child node (1)
-+===================================================
- 
-+reg: 1
- led-max-microamp: Maximum indicator current. The allowed values are
- 		  2500, 5000, 7500 and 10000.
- 
--Optional properties of the "indicator" child node
--=================================================
-+Optional properties of the indicator child node
-+===============================================
- 
- label		: The label of the indicator LED.
- 
-@@ -55,16 +59,20 @@ Example
- =======
- 
- 	as3645a@30 {
-+		#address-cells: 1
-+		#size-cells: 0
- 		reg = <0x30>;
- 		compatible = "ams,as3645a";
--		flash {
-+		flash@0 {
-+			reg = <0x0>;
+diff --git a/arch/arm/boot/dts/omap3-n950-n9.dtsi b/arch/arm/boot/dts/omap3-n950-n9.dtsi
+index cb47ae79a5f9..b86fc83a5a65 100644
+--- a/arch/arm/boot/dts/omap3-n950-n9.dtsi
++++ b/arch/arm/boot/dts/omap3-n950-n9.dtsi
+@@ -273,7 +273,7 @@
  			flash-timeout-us = <150000>;
  			flash-max-microamp = <320000>;
  			led-max-microamp = <60000>;
- 			ams,input-max-microamp = <1750000>;
- 			label = "as3645a:flash";
+-			peak-current-limit = <1750000>;
++			ams,input-max-microamp = <1750000>;
  		};
--		indicator {
-+		indicator@1 {
-+			reg = <0x1>;
+ 		indicator {
  			led-max-microamp = <10000>;
- 			label = "as3645a:indicator";
- 		};
+diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+index bbbbe0898233..e3f89c6130d2 100644
+--- a/drivers/leds/leds-as3645a.c
++++ b/drivers/leds/leds-as3645a.c
+@@ -534,7 +534,7 @@ static int as3645a_parse_node(struct as3645a *flash,
+ 	of_property_read_u32(flash->flash_node, "voltage-reference",
+ 			     &cfg->voltage_reference);
+ 
+-	of_property_read_u32(flash->flash_node, "peak-current-limit",
++	of_property_read_u32(flash->flash_node, "ams,input-max-microamp",
+ 			     &cfg->peak);
+ 	cfg->peak = AS_PEAK_mA_TO_REG(cfg->peak);
+ 
 -- 
 2.11.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
