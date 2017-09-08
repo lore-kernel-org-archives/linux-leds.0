@@ -1,107 +1,52 @@
-From: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: [PATCH 3/3] as3645a: Use integer numbers for parsing LEDs
-Date: Fri,  8 Sep 2017 15:42:13 +0300
-Message-ID: <20170908124213.18904-4-sakari.ailus@linux.intel.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 1/3] as3645a: Use ams,input-max-microamp as documented in
+ DT bindings
+Date: Fri, 8 Sep 2017 15:14:46 +0200
+Message-ID: <20170908131446.GP18365@amd>
 References: <20170908124213.18904-1-sakari.ailus@linux.intel.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170908124213.18904-1-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+ <20170908124213.18904-2-sakari.ailus@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="1BKOZKwX7DAU5odC"
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170908124213.18904-2-sakari.ailus@linux.intel.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Use integer numbers for LEDs, 0 is the flash and 1 is the indicator.
 
-Signed-off-by: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
----
- arch/arm/boot/dts/omap3-n950-n9.dtsi |  8 ++++++--
- drivers/leds/leds-as3645a.c          | 26 ++++++++++++++++++++++++--
- 2 files changed, 30 insertions(+), 4 deletions(-)
+--1BKOZKwX7DAU5odC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/omap3-n950-n9.dtsi b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-index b86fc83a5a65..1b0bd72945f2 100644
---- a/arch/arm/boot/dts/omap3-n950-n9.dtsi
-+++ b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-@@ -267,15 +267,19 @@
- 	clock-frequency = <400000>;
- 
- 	as3645a@30 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		reg = <0x30>;
- 		compatible = "ams,as3645a";
--		flash {
-+		flash@0 {
-+			reg = <0x0>;
- 			flash-timeout-us = <150000>;
- 			flash-max-microamp = <320000>;
- 			led-max-microamp = <60000>;
- 			ams,input-max-microamp = <1750000>;
- 		};
--		indicator {
-+		indicator@1 {
-+			reg = <0x1>;
- 			led-max-microamp = <10000>;
- 		};
- 	};
-diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-index e3f89c6130d2..605e0c64e974 100644
---- a/drivers/leds/leds-as3645a.c
-+++ b/drivers/leds/leds-as3645a.c
-@@ -112,6 +112,10 @@
- #define AS_PEAK_mA_TO_REG(a) \
- 	((min_t(u32, AS_PEAK_mA_MAX, a) - 1250) / 250)
- 
-+/* LED numbers for Devicetree */
-+#define AS_LED_FLASH				0
-+#define AS_LED_INDICATOR			1
-+
- enum as_mode {
- 	AS_MODE_EXT_TORCH = 0 << AS_CONTROL_MODE_SETTING_SHIFT,
- 	AS_MODE_INDICATOR = 1 << AS_CONTROL_MODE_SETTING_SHIFT,
-@@ -491,10 +495,29 @@ static int as3645a_parse_node(struct as3645a *flash,
- 			      struct device_node *node)
- {
- 	struct as3645a_config *cfg = &flash->cfg;
-+	struct device_node *child;
- 	const char *name;
- 	int rval;
- 
--	flash->flash_node = of_get_child_by_name(node, "flash");
-+	for_each_child_of_node(node, child) {
-+		u32 id = 0;
-+
-+		of_property_read_u32(child, "reg", &id);
-+
-+		switch (id) {
-+		case AS_LED_FLASH:
-+			flash->flash_node = of_node_get(child);
-+			break;
-+		case AS_LED_INDICATOR:
-+			flash->indicator_node = of_node_get(child);
-+			break;
-+		default:
-+			dev_warn(&flash->client->dev,
-+				 "unknown LED %u encountered, ignoring\n", id);
-+			break;
-+		}
-+	}
-+
- 	if (!flash->flash_node) {
- 		dev_err(&flash->client->dev, "can't find flash node\n");
- 		return -ENODEV;
-@@ -538,7 +561,6 @@ static int as3645a_parse_node(struct as3645a *flash,
- 			     &cfg->peak);
- 	cfg->peak = AS_PEAK_mA_TO_REG(cfg->peak);
- 
--	flash->indicator_node = of_get_child_by_name(node, "indicator");
- 	if (!flash->indicator_node) {
- 		dev_warn(&flash->client->dev,
- 			 "can't find indicator node\n");
--- 
-2.11.0
+On Fri 2017-09-08 15:42:11, Sakari Ailus wrote:
+> DT bindings document the property "ams,input-max-microamp" that limits the
+> chip's maximum input current. The driver and the DTS however used
+> "peak-current-limit" property. Fix this by using the property documented
+> in DT binding documentation.
+>=20
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--1BKOZKwX7DAU5odC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlmyl8YACgkQMOfwapXb+vLVdgCgiln3J3aNM5Q3QjTZyMgLyXcL
+mVcAnR2KFrhC3QzUMquZthXFgPhrV3dx
+=pSsB
+-----END PGP SIGNATURE-----
+
+--1BKOZKwX7DAU5odC--
