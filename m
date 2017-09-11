@@ -1,93 +1,284 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: as3645a flash userland interface
-Date: Tue, 12 Sep 2017 23:55:29 +0200
-Message-ID: <20170912215529.GA17218@amd>
-References: <20170912084236.1154-1-sakari.ailus@linux.intel.com>
- <20170912084236.1154-25-sakari.ailus@linux.intel.com>
- <20170912103628.GB27117@amd>
- <7b679cb3-ce58-e1d1-60bf-995896bf46eb@gmail.com>
+From: Alan Mizrahi <alan@mizrahi.com.ve>
+Subject: PC Engines APU/APU2 led driver
+Date: Mon, 11 Sep 2017 14:35:38 +0900
+Message-ID: <1c59aa68-cc27-c577-312a-14f58b62dd89@mizrahi.com.ve>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+Content-Type: multipart/mixed;
+ boundary="------------2538C27BD7FF38387299A06C"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41301 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751018AbdILVzb (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Sep 2017 17:55:31 -0400
-Content-Disposition: inline
-In-Reply-To: <7b679cb3-ce58-e1d1-60bf-995896bf46eb@gmail.com>
+Received: from mail01.asahi-net.or.jp ([202.224.55.13]:60367 "EHLO
+        mail01.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbdIKFox (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 11 Sep 2017 01:44:53 -0400
+Received: from poseidon (y126207.ppp.asahi-net.or.jp [118.243.126.207])
+        by mail01.asahi-net.or.jp (Postfix) with ESMTP id AC04BCE2
+        for <linux-leds@vger.kernel.org>; Mon, 11 Sep 2017 14:38:25 +0900 (JST)
+Received: from [10.6.0.254]
+        by poseidon with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.89)
+        (envelope-from <alan@mizrahi.com.ve>)
+        id 1drHQP-0004iV-9m
+        for linux-leds@vger.kernel.org; Mon, 11 Sep 2017 14:38:25 +0900
+Content-Language: en-US
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, niklas.soderlund@ragnatech.se, robh@kernel.org, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org, sre@kernel.org
+To: linux-leds@vger.kernel.org
+
+This is a multi-part message in MIME format.
+--------------2538C27BD7FF38387299A06C
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+Hello,
+
+I am writing a driver for the leds in PC Engines APU and APU2 boards
+(see the attachment).
+
+There was an attempt at this before (see
+https://www.spinics.net/lists/linux-leds/msg07904.html), but it was not
+accepted due to several issues.
+So I tried to rewrite it completely, using leds-mlxpld.c as a base, and
+it seems to be working.
+
+But I'm getting this oops when trying to rmmod the module:
+
+[52615.090143] BUG: unable to handle kernel paging request at
+ffffc900000c5618
+[52615.097435] IP: [<ffffffff811dd099>] ioread32+0x29/0x30
+[52615.102835] PGD 11a00e067
+[52615.105461] PUD 11a00f067
+[52615.108251] PMD 11a014067
+[52615.109543] PTE 0
+
+[52615.113072] Oops: 0000 [#1] PREEMPT SMP
+[52615.117150] Modules linked in: ledtrig_heartbeat arc4 ath10k_pci
+ath10k_core ath mac80211 crct10dif_pclmul crc32_pclmul crc32c_intel
+ghash_clmulni_intel aesni_
+intel leds_apu(-) aes_x86_64 lrw gf128mul glue_helper ablk_helper cryptd
+ccp sdhci_pci sdhci cfg80211 mmc_core led_class sha256_generic
+sha1_generic rng_core
+[52615.146823] CPU: 1 PID: 892 Comm: rmmod Not tainted 4.9.47 #37
+[52615.152864] Hardware name: PC Engines APU2/APU2, BIOS 4.0.7 02/28/2017
+[52615.159656] task: ffff880118538b40 task.stack: ffffc90001480000
+[52615.165917] RIP: 0010:[<ffffffff811dd099>]  [<ffffffff811dd099>]
+ioread32+0x29/0x30
+[52615.173967] RSP: 0018:ffffc90001483dd0  EFLAGS: 00010292
+[52615.179479] RAX: 0000000000000000 RBX: ffff8801185292c8 RCX:
+000000018080007d
+[52615.186933] RDX: 0000000000000001 RSI: 0000000000000000 RDI:
+ffffc900000c5618
+[52615.194342] RBP: 0000000000000000 R08: 0000000000000001 R09:
+ffff88011ec0e8c0
+[52615.201709] R10: ffff88011a004460 R11: ffff88011a001c00 R12:
+0000000000000008
+[52615.209057] R13: ffff88011a004440 R14: ffff88011a0042c0 R15:
+00000000024ae010
+[52615.216527] FS:  00007f665d212700(0000) GS:ffff88011ec80000(0000)
+knlGS:0000000000000000
+[52615.224873] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[52615.230828] CR2: ffffc900000c5618 CR3: 00000001180bc000 CR4:
+00000000000406e0
+[52615.238273] Stack:
+[52615.240306]  ffffffffa0101023 ffff8801185292c8 ffff8801185293a0
+ffffffffa0010076
+[52615.248041]  ffffc90001483e08 ffff8801185f8010 ffffffff812923c0
+ffff88011a312f00
+[52615.255846]  ffff88011a004460 ffff8801185f8010 ffffffffa01011e8
+ffffffff816370e0
+[52615.263610] Call Trace:
+[52615.266136]  [<ffffffffa0101023>] ? apu2_led_brightness_set+0x23/0x58
+[leds_apu]
+[52615.273805]  [<ffffffffa0010076>] ? led_classdev_unregister+0x46/0xa0
+[led_class]
+[52615.281594]  [<ffffffff812923c0>] ? release_nodes+0xf0/0x1b8
+[52615.287483]  [<ffffffff8128f615>] ? __device_release_driver+0x9d/0x140
+[52615.294381]  [<ffffffff8128fe41>] ? device_release_driver+0x19/0x28
+[52615.300799]  [<ffffffff8128eabb>] ? bus_remove_device+0xeb/0x130
+[52615.307016]  [<ffffffff8128bb79>] ? device_del+0x121/0x258
+[52615.312729]  [<ffffffff8129158e>] ? platform_device_del+0x1e/0x70
+[52615.319110]  [<ffffffff812915e9>] ? platform_device_unregister+0x9/0x20
+[52615.325925]  [<ffffffffa01010b1>] ? apu_led_exit+0xf/0x1b [leds_apu]
+[52615.332471]  [<ffffffff810919dc>] ? SyS_delete_module+0x18c/0x1d0
+[52615.338761]  [<ffffffff810010b6>] ? exit_to_usermode_loop+0x66/0x70
+[52615.345245]  [<ffffffff813fb560>] ? entry_SYSCALL_64_fastpath+0x13/0x94
+[52615.352092] Code: 40 00 48 81 ff ff ff 03 00 77 20 48 81 ff 00 00 01
+00 76 05 0f b7 d7 ed c3 48 c7 c6 fc df 4d 81 e8 35 ff ff ff b8 ff ff ff
+ff c3 <8b> 07 c3 0f 1f 40 00 48 81 fe ff ff 03 00 48 89 f2 77 1f 48 81
+[52615.373340] RIP  [<ffffffff811dd099>] ioread32+0x29/0x30
+[52615.378891]  RSP <ffffc90001483dd0>
+[52615.382547] CR2: ffffc900000c5618
+[52615.385932] ---[ end trace 88328a1715960e7c ]---
+[52615.390731] note: rmmod[892] exited with preempt_count 1
 
 
---7AUc2qLy4jB3hD7Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Any ideas and recommendations would be greatly appreciated.
 
-On Tue 2017-09-12 20:53:33, Jacek Anaszewski wrote:
-> Hi Pavel,
->=20
-> On 09/12/2017 12:36 PM, Pavel Machek wrote:
-> > Hi!
-> >=20
-> > There were some changes to as3645a flash controller. Before we have
-> > stable interface we have to keep forever I want to ask:
->=20
-> Note that we have already two LED flash class drivers - leds-max77693
-> and leds-aat1290. They have been present in mainline for over two years
-> now.
+Best regards,
 
-Well.. that's ok. No change there is neccessary.
+Alan
 
-> > What directory are the flash controls in?
-> >=20
-> > /sys/class/leds/led-controller:flash ?
-> >=20
-> > Could we arrange for something less generic, like
-> >=20
-> > /sys/class/leds/main-camera:flash ?
->=20
-> I'd rather avoid overcomplicating this. LED class device name pattern
-> is well defined to devicename:colour:function
-> (see Documentation/leds/leds-class.txt, "LED Device Naming" section).
->=20
-> In this case "flash" in place of the "function" segment makes the
-> things clear enough I suppose.
 
-It does not.
+--------------2538C27BD7FF38387299A06C
+Content-Type: text/plain; charset=UTF-8;
+ name="leds-apu.c"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="leds-apu.c"
 
-Phones usually have two cameras, front and back, and these days both
-cameras have their flash.
-
-And poor userspace flashlight application can not know if as3645
-drivers front LED or back LED. Thus, I'd set devicename to
-front-camera or main-camera -- because that's what it is associated
-with. Userspace does not care what hardware drives the LED, but needs
-to know if it is front or back camera.
-
-If LEDs control keyboard backlight, I'd expect the LED name to be
-"keyboard::backlight", not "i2c-0020-adp1643::backlight".
-
-Thanks,
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---7AUc2qLy4jB3hD7Z
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlm4V9EACgkQMOfwapXb+vLdcwCgk3Ik5igvylPGOQXku9KF7w7L
-tB0AnjFAMGKZiq1ZG5rx1o0WYkF5vDWu
-=xQx3
------END PGP SIGNATURE-----
-
---7AUc2qLy4jB3hD7Z--
+LyoKICogZHJpdmVycy9sZWRzL2xlZHMtYXB1LmMKICogQ29weXJpZ2h0IChDKSAyMDE3IEFs
+YW4gTWl6cmFoaSwgYWxhbiBhdCBtaXpyYWhpIGRvdCBjb20gZG90IHZlCiAqCiAqIFJlZGlz
+dHJpYnV0aW9uIGFuZCB1c2UgaW4gc291cmNlIGFuZCBiaW5hcnkgZm9ybXMsIHdpdGggb3Ig
+d2l0aG91dAogKiBtb2RpZmljYXRpb24sIGFyZSBwZXJtaXR0ZWQgcHJvdmlkZWQgdGhhdCB0
+aGUgZm9sbG93aW5nIGNvbmRpdGlvbnMgYXJlIG1ldDoKICoKICogMS4gUmVkaXN0cmlidXRp
+b25zIG9mIHNvdXJjZSBjb2RlIG11c3QgcmV0YWluIHRoZSBhYm92ZSBjb3B5cmlnaHQKICog
+ICAgbm90aWNlLCB0aGlzIGxpc3Qgb2YgY29uZGl0aW9ucyBhbmQgdGhlIGZvbGxvd2luZyBk
+aXNjbGFpbWVyLgogKiAyLiBSZWRpc3RyaWJ1dGlvbnMgaW4gYmluYXJ5IGZvcm0gbXVzdCBy
+ZXByb2R1Y2UgdGhlIGFib3ZlIGNvcHlyaWdodAogKiAgICBub3RpY2UsIHRoaXMgbGlzdCBv
+ZiBjb25kaXRpb25zIGFuZCB0aGUgZm9sbG93aW5nIGRpc2NsYWltZXIgaW4gdGhlCiAqICAg
+IGRvY3VtZW50YXRpb24gYW5kL29yIG90aGVyIG1hdGVyaWFscyBwcm92aWRlZCB3aXRoIHRo
+ZSBkaXN0cmlidXRpb24uCiAqIDMuIE5laXRoZXIgdGhlIG5hbWVzIG9mIHRoZSBjb3B5cmln
+aHQgaG9sZGVycyBub3IgdGhlIG5hbWVzIG9mIGl0cwogKiAgICBjb250cmlidXRvcnMgbWF5
+IGJlIHVzZWQgdG8gZW5kb3JzZSBvciBwcm9tb3RlIHByb2R1Y3RzIGRlcml2ZWQgZnJvbQog
+KiAgICB0aGlzIHNvZnR3YXJlIHdpdGhvdXQgc3BlY2lmaWMgcHJpb3Igd3JpdHRlbiBwZXJt
+aXNzaW9uLgogKgogKiBBbHRlcm5hdGl2ZWx5LCB0aGlzIHNvZnR3YXJlIG1heSBiZSBkaXN0
+cmlidXRlZCB1bmRlciB0aGUgdGVybXMgb2YgdGhlCiAqIEdOVSBHZW5lcmFsIFB1YmxpYyBM
+aWNlbnNlICgiR1BMIikgdmVyc2lvbiAyIGFzIHB1Ymxpc2hlZCBieSB0aGUgRnJlZQogKiBT
+b2Z0d2FyZSBGb3VuZGF0aW9uLgogKgogKiBUSElTIFNPRlRXQVJFIElTIFBST1ZJREVEIEJZ
+IFRIRSBDT1BZUklHSFQgSE9MREVSUyBBTkQgQ09OVFJJQlVUT1JTICJBUyBJUyIKICogQU5E
+IEFOWSBFWFBSRVNTIE9SIElNUExJRUQgV0FSUkFOVElFUywgSU5DTFVESU5HLCBCVVQgTk9U
+IExJTUlURUQgVE8sIFRIRQogKiBJTVBMSUVEIFdBUlJBTlRJRVMgT0YgTUVSQ0hBTlRBQklM
+SVRZIEFORCBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRQogKiBBUkUgRElTQ0xB
+SU1FRC4gSU4gTk8gRVZFTlQgU0hBTEwgVEhFIENPUFlSSUdIVCBPV05FUiBPUiBDT05UUklC
+VVRPUlMgQkUKICogTElBQkxFIEZPUiBBTlkgRElSRUNULCBJTkRJUkVDVCwgSU5DSURFTlRB
+TCwgU1BFQ0lBTCwgRVhFTVBMQVJZLCBPUgogKiBDT05TRVFVRU5USUFMIERBTUFHRVMgKElO
+Q0xVRElORywgQlVUIE5PVCBMSU1JVEVEIFRPLCBQUk9DVVJFTUVOVCBPRgogKiBTVUJTVElU
+VVRFIEdPT0RTIE9SIFNFUlZJQ0VTOyBMT1NTIE9GIFVTRSwgREFUQSwgT1IgUFJPRklUUzsg
+T1IgQlVTSU5FU1MKICogSU5URVJSVVBUSU9OKSBIT1dFVkVSIENBVVNFRCBBTkQgT04gQU5Z
+IFRIRU9SWSBPRiBMSUFCSUxJVFksIFdIRVRIRVIgSU4KICogQ09OVFJBQ1QsIFNUUklDVCBM
+SUFCSUxJVFksIE9SIFRPUlQgKElOQ0xVRElORyBORUdMSUdFTkNFIE9SIE9USEVSV0lTRSkK
+ICogQVJJU0lORyBJTiBBTlkgV0FZIE9VVCBPRiBUSEUgVVNFIE9GIFRISVMgU09GVFdBUkUs
+IEVWRU4gSUYgQURWSVNFRCBPRiBUSEUKICogUE9TU0lCSUxJVFkgT0YgU1VDSCBEQU1BR0Uu
+CiAqLwoKI2luY2x1ZGUgPGxpbnV4L2RtaS5oPgojaW5jbHVkZSA8bGludXgvZXJyLmg+CiNp
+bmNsdWRlIDxsaW51eC9pbml0Lmg+CiNpbmNsdWRlIDxsaW51eC9pby5oPgojaW5jbHVkZSA8
+bGludXgva2VybmVsLmg+CiNpbmNsdWRlIDxsaW51eC9sZWRzLmg+CiNpbmNsdWRlIDxsaW51
+eC9tb2R1bGUuaD4KI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgoKI2RlZmlu
+ZSBBUFUxX0ZDSF9BQ1BJX01NSU9fQkFTRSAweEZFRDgwMDAwCiNkZWZpbmUgQVBVMV9GQ0hf
+R1BJT19CQVNFICAgICAgKEFQVTFfRkNIX0FDUElfTU1JT19CQVNFICsgMHgxQkQpCiNkZWZp
+bmUgQVBVMV9MRURPTiAgICAgICAgICAgICAgMHgwOAojZGVmaW5lIEFQVTFfTEVET0ZGICAg
+ICAgICAgICAgIDB4QzgKI2RlZmluZSBBUFUxX05VTV9HUElPICAgICAgICAgICAzCiNkZWZp
+bmUgQVBVMV9JT1NJWkUgICAgICAgICAgICAgc2l6ZW9mKHU4KQoKI2RlZmluZSBBUFUyX0ZD
+SF9BQ1BJX01NSU9fQkFTRSAweEZFRDgwMDAwCiNkZWZpbmUgQVBVMl9GQ0hfR1BJT19CQVNF
+ICAgICAgKEFQVTJfRkNIX0FDUElfTU1JT19CQVNFICsgMHgxNTAwKQojZGVmaW5lIEFQVTJf
+R1BJT19CSVRfV1JJVEUgICAgIDIyCiNkZWZpbmUgQVBVMl9BUFUyX05VTV9HUElPICAgICAg
+NAojZGVmaW5lIEFQVTJfSU9TSVpFICAgICAgICAgICAgIHNpemVvZih1MzIpCgovKiBMRUQg
+YWNjZXNzIHBhcmFtZXRlcnMgKi8Kc3RydWN0IGFwdV9wYXJhbSB7Cgl2b2lkIF9faW9tZW0g
+KmFkZHI7IC8qIGZvciBpb3JlYWQvaW93cml0ZSAqLwp9OwoKLyogTEVEIHByaXZhdGUgZGF0
+YSAqLwpzdHJ1Y3QgYXB1X2xlZF9wcml2IHsKCXN0cnVjdCBsZWRfY2xhc3NkZXYgY2RldjsK
+CXN0cnVjdCBhcHVfcGFyYW0gcGFyYW07Cn07CiNkZWZpbmUgY2Rldl90b19wcml2KGMpIGNv
+bnRhaW5lcl9vZihjLCBzdHJ1Y3QgYXB1X2xlZF9wcml2LCBjZGV2KQoKLyogTEVEIHByb2Zp
+bGUgKi8Kc3RydWN0IGFwdV9sZWRfcHJvZmlsZSB7Cgljb25zdCBjaGFyICpuYW1lOwoJZW51
+bSBsZWRfYnJpZ2h0bmVzcyBicmlnaHRuZXNzOwoJdW5zaWduZWQgbG9uZyBvZmZzZXQ7IC8q
+IGZvciBkZXZtX2lvcmVtYXAgKi8KfTsKCi8qIFN1cHBvcnRlZCBwbGF0Zm9ybSB0eXBlcyAq
+LwplbnVtIGFwdV9sZWRfcGxhdGZvcm1fdHlwZXMgewoJTEVEX1BMQVRGT1JNX0FQVTEsCglM
+RURfUExBVEZPUk1fQVBVMiwKfTsKCnN0cnVjdCBhcHVfbGVkX3BkYXRhIHsKCXN0cnVjdCBw
+bGF0Zm9ybV9kZXZpY2UgKnBkZXY7CglzdHJ1Y3QgYXB1X2xlZF9wcml2ICpwbGVkOwoJc3Ry
+dWN0IGFwdV9sZWRfcHJvZmlsZSAqcHJvZmlsZTsKCWVudW0gYXB1X2xlZF9wbGF0Zm9ybV90
+eXBlcyBwbGF0Zm9ybTsKCWludCBudW1fbGVkX2luc3RhbmNlczsKCWludCBpb3NpemU7IC8q
+IGZvciBkZXZtX2lvcmVtYXAoKSAqLwoJc3BpbmxvY2tfdCBsb2NrOwp9OwoKc3RhdGljIHN0
+cnVjdCBhcHVfbGVkX3BkYXRhICphcHVfbGVkOwoKc3RhdGljIHN0cnVjdCBhcHVfbGVkX3By
+b2ZpbGUgYXB1MV9sZWRfcHJvZmlsZVtdID0gewoJeyAiYXB1OjEiLCAxLCAgICAgICBBUFUx
+X0ZDSF9HUElPX0JBU0UgKyAwICogQVBVMV9JT1NJWkUgfSwKCXsgImFwdToyIiwgTEVEX09G
+RiwgQVBVMV9GQ0hfR1BJT19CQVNFICsgMSAqIEFQVTFfSU9TSVpFIH0sCgl7ICJhcHU6MyIs
+IExFRF9PRkYsIEFQVTFfRkNIX0dQSU9fQkFTRSArIDIgKiBBUFUxX0lPU0laRSB9LAp9OwoK
+c3RhdGljIHN0cnVjdCBhcHVfbGVkX3Byb2ZpbGUgYXB1Ml9sZWRfcHJvZmlsZVtdID0gewoJ
+eyAiYXB1MjoxIiwgMSwgICAgICAgQVBVMl9GQ0hfR1BJT19CQVNFICsgNjggKiBBUFUyX0lP
+U0laRSB9LAoJeyAiYXB1MjoyIiwgTEVEX09GRiwgQVBVMl9GQ0hfR1BJT19CQVNFICsgNjkg
+KiBBUFUyX0lPU0laRSB9LAoJeyAiYXB1MjozIiwgTEVEX09GRiwgQVBVMl9GQ0hfR1BJT19C
+QVNFICsgNzAgKiBBUFUyX0lPU0laRSB9LAp9OwoKc3RhdGljIHN0cnVjdCBkbWlfc3lzdGVt
+X2lkIGFwdV9sZWRfZG1pX3RhYmxlW10gX19pbml0ZGF0YSA9IHsKCXsKCQkuaWRlbnQgPSAi
+YXB1IiwKCQkubWF0Y2hlcyA9IHsKCQkJRE1JX01BVENIKERNSV9TWVNfVkVORE9SLCAiUEMg
+RW5naW5lcyIpLAoJCQlETUlfTUFUQ0goRE1JX1BST0RVQ1RfTkFNRSwgIkFQVSIpCgkJfQoJ
+fSwKCXsKCQkuaWRlbnQgPSAiYXB1MiIsCgkJLm1hdGNoZXMgPSB7CgkJCURNSV9NQVRDSChE
+TUlfU1lTX1ZFTkRPUiwgIlBDIEVuZ2luZXMiKSwKCQkJRE1JX01BVENIKERNSV9CT0FSRF9O
+QU1FLCAiQVBVMiIpCgkJfQoJfSwKCXt9Cn07Ck1PRFVMRV9ERVZJQ0VfVEFCTEUoZG1pLCBh
+cHVfbGVkX2RtaV90YWJsZSk7CgpzdGF0aWMgdm9pZCBhcHUxX2xlZF9icmlnaHRuZXNzX3Nl
+dChzdHJ1Y3QgbGVkX2NsYXNzZGV2ICpsZWQsIGVudW0gbGVkX2JyaWdodG5lc3MgdmFsdWUp
+CnsKCXN0cnVjdCBhcHVfbGVkX3ByaXYgKnBsZWQgPSBjZGV2X3RvX3ByaXYobGVkKTsKCglz
+cGluX2xvY2soJmFwdV9sZWQtPmxvY2spOwoJaW93cml0ZTgodmFsdWUgPyBBUFUxX0xFRE9O
+IDogQVBVMV9MRURPRkYsIHBsZWQtPnBhcmFtLmFkZHIpOwoJc3Bpbl91bmxvY2soJmFwdV9s
+ZWQtPmxvY2spOwoKCXJldHVybjsKfQoKc3RhdGljIHZvaWQgYXB1Ml9sZWRfYnJpZ2h0bmVz
+c19zZXQoc3RydWN0IGxlZF9jbGFzc2RldiAqbGVkLCBlbnVtIGxlZF9icmlnaHRuZXNzIHZh
+bHVlKQp7CglzdHJ1Y3QgYXB1X2xlZF9wcml2ICpwbGVkID0gY2Rldl90b19wcml2KGxlZCk7
+Cgl1MzIgdmFsdWVfbmV3OwoKCXNwaW5fbG9jaygmYXB1X2xlZC0+bG9jayk7CgoJdmFsdWVf
+bmV3ID0gaW9yZWFkMzIocGxlZC0+cGFyYW0uYWRkcik7CgoJaWYgKHZhbHVlKQoJCXZhbHVl
+X25ldyAmPSB+QklUKEFQVTJfR1BJT19CSVRfV1JJVEUpOwoJZWxzZQoJCXZhbHVlX25ldyB8
+PSBCSVQoQVBVMl9HUElPX0JJVF9XUklURSk7CgoJaW93cml0ZTMyKHZhbHVlX25ldywgcGxl
+ZC0+cGFyYW0uYWRkcik7CgoJc3Bpbl91bmxvY2soJmFwdV9sZWQtPmxvY2spOwoJcmV0dXJu
+Owp9CgovKgogKiBEb2VzIHRoZSBoYXJkd2FyZSBzdXBwb3J0IHRoaXM/CiAqCnN0YXRpYyBp
+bnQgYXB1MV9sZWRfYmxpbmtfc2V0KHN0cnVjdCBsZWRfY2xhc3NkZXYgKmxlZCwgdW5zaWdu
+ZWQgbG9uZyAqZGVsYXlfb24sIHVuc2lnbmVkIGxvbmcgKmRlbGF5X29mZikKewoJc3RydWN0
+IGFwdV9sZWRfcHJpdiAqcGxlZCA9IGNkZXZfdG9fcHJpdihsZWQpOwoJcmV0dXJuIDA7Cn0K
+c3RhdGljIGludCBhcHUyX2xlZF9ibGlua19zZXQoc3RydWN0IGxlZF9jbGFzc2RldiAqbGVk
+LCB1bnNpZ25lZCBsb25nICpkZWxheV9vbiwgdW5zaWduZWQgbG9uZyAqZGVsYXlfb2ZmKQp7
+CglzdHJ1Y3QgYXB1X2xlZF9wcml2ICpwbGVkID0gY2Rldl90b19wcml2KGxlZCk7CglyZXR1
+cm4gMDsKfQoqLwoKc3RhdGljIGludCBhcHVfbGVkX2NvbmZpZyhzdHJ1Y3QgZGV2aWNlICpk
+ZXYsIHN0cnVjdCBhcHVfbGVkX3BkYXRhICphcHVsZCkKewoJaW50IGk7CglpbnQgZXJyOwoK
+CWFwdV9sZWQtPnBsZWQgPSBkZXZtX2t6YWxsb2MoZGV2LCBzaXplb2Yoc3RydWN0IGFwdV9s
+ZWRfcHJpdikgKiBhcHVfbGVkLT5udW1fbGVkX2luc3RhbmNlcywgR0ZQX0tFUk5FTCk7CgoJ
+aWYgKCFhcHVfbGVkLT5wbGVkKQoJCXJldHVybiAtRU5PTUVNOwoKCWZvciAoaSA9IDA7IGkg
+PCBhcHVfbGVkLT5udW1fbGVkX2luc3RhbmNlczsgaSsrKSB7CgkJYXB1X2xlZC0+cGxlZFtp
+XS5jZGV2Lm5hbWUgPSBhcHVfbGVkLT5wcm9maWxlW2ldLm5hbWU7CgkJYXB1X2xlZC0+cGxl
+ZFtpXS5jZGV2LmJyaWdodG5lc3MgPSBhcHVfbGVkLT5wcm9maWxlW2ldLmJyaWdodG5lc3M7
+CgkJYXB1X2xlZC0+cGxlZFtpXS5jZGV2Lm1heF9icmlnaHRuZXNzID0gMTsKCQlpZiAoYXB1
+X2xlZC0+cGxhdGZvcm0gPT0gTEVEX1BMQVRGT1JNX0FQVTEpIHsKCQkJYXB1X2xlZC0+cGxl
+ZFtpXS5jZGV2LmJyaWdodG5lc3Nfc2V0ID0gYXB1MV9sZWRfYnJpZ2h0bmVzc19zZXQ7CgkJ
+CS8qIGFwdV9sZWQtPnBsZWRbaV0uY2Rldi5ibGlua19zZXQgICA9IGFwdTFfbGVkX2JsaW5r
+X3NldDsgKi8KCQl9IGVsc2UgaWYgKGFwdV9sZWQtPnBsYXRmb3JtID09IExFRF9QTEFURk9S
+TV9BUFUyKSB7CgkJCWFwdV9sZWQtPnBsZWRbaV0uY2Rldi5icmlnaHRuZXNzX3NldCA9IGFw
+dTJfbGVkX2JyaWdodG5lc3Nfc2V0OwoJCQkvKiBhcHVfbGVkLT5wbGVkW2ldLmNkZXYuYmxp
+bmtfc2V0ICAgPSBhcHUyX2xlZF9ibGlua19zZXQ7ICovCgkJfQoJCWFwdV9sZWQtPnBsZWRb
+aV0uY2Rldi5mbGFncyA9IExFRF9DT1JFX1NVU1BFTkRSRVNVTUU7CgoJCWVyciA9IGRldm1f
+bGVkX2NsYXNzZGV2X3JlZ2lzdGVyKGRldiwgJmFwdV9sZWQtPnBsZWRbaV0uY2Rldik7CgkJ
+aWYgKGVycikKCQkJcmV0dXJuIGVycjsKCgkJYXB1X2xlZC0+cGxlZFtpXS5wYXJhbS5hZGRy
+ID0gZGV2bV9pb3JlbWFwKGRldiwgYXB1X2xlZC0+cHJvZmlsZVtpXS5vZmZzZXQsIGFwdV9s
+ZWQtPmlvc2l6ZSk7CgkJaWYgKCFhcHVfbGVkLT5wbGVkW2ldLnBhcmFtLmFkZHIpCgkJCXJl
+dHVybiAtRU5PTUVNOwoKCQlpZiAoYXB1X2xlZC0+cHJvZmlsZVtpXS5icmlnaHRuZXNzKQoJ
+CQlhcHVfbGVkLT5wbGVkW2ldLmNkZXYuYnJpZ2h0bmVzc19zZXQoJmFwdV9sZWQtPnBsZWRb
+aV0uY2RldiwgYXB1X2xlZC0+cHJvZmlsZVtpXS5icmlnaHRuZXNzKTsKCX0KCglyZXR1cm4g
+MDsKfQoKc3RhdGljIGludCBfX2luaXQgYXB1X2xlZF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1f
+ZGV2aWNlICpwZGV2KQp7CglhcHVfbGVkID0gZGV2bV9remFsbG9jKCZwZGV2LT5kZXYsIHNp
+emVvZigqYXB1X2xlZCksIEdGUF9LRVJORUwpOwoKCWlmICghYXB1X2xlZCkKCQlyZXR1cm4g
+LUVOT01FTTsKCglhcHVfbGVkLT5wZGV2ID0gcGRldjsKCglpZiAoZG1pX21hdGNoKERNSV9C
+T0FSRF9OQU1FLCAiQVBVIikpIHsKCQlhcHVfbGVkLT5wcm9maWxlID0gYXB1MV9sZWRfcHJv
+ZmlsZTsKCQlhcHVfbGVkLT5wbGF0Zm9ybSA9IExFRF9QTEFURk9STV9BUFUxOwoJCWFwdV9s
+ZWQtPm51bV9sZWRfaW5zdGFuY2VzID0gQVJSQVlfU0laRShhcHUxX2xlZF9wcm9maWxlKTsK
+CQlhcHVfbGVkLT5pb3NpemUgPSBBUFUxX0lPU0laRTsKCX0gZWxzZSBpZiAoZG1pX21hdGNo
+KERNSV9CT0FSRF9OQU1FLCAiQVBVMiIpKSB7CgkJYXB1X2xlZC0+cHJvZmlsZSA9IGFwdTJf
+bGVkX3Byb2ZpbGU7CgkJYXB1X2xlZC0+cGxhdGZvcm0gPSBMRURfUExBVEZPUk1fQVBVMjsK
+CQlhcHVfbGVkLT5udW1fbGVkX2luc3RhbmNlcyA9IEFSUkFZX1NJWkUoYXB1Ml9sZWRfcHJv
+ZmlsZSk7CgkJYXB1X2xlZC0+aW9zaXplID0gQVBVMl9JT1NJWkU7Cgl9CgoJc3Bpbl9sb2Nr
+X2luaXQoJmFwdV9sZWQtPmxvY2spOwoJcmV0dXJuIGFwdV9sZWRfY29uZmlnKCZwZGV2LT5k
+ZXYsIGFwdV9sZWQpOwp9CgpzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBhcHVfbGVk
+X2RyaXZlciA9IHsKCS5kcml2ZXIgPSB7CgkJLm5hbWUgPSBLQlVJTERfTU9ETkFNRSwKCX0s
+Cn07CgpzdGF0aWMgaW50IF9faW5pdCBhcHVfbGVkX2luaXQodm9pZCkKewoJc3RydWN0IHBs
+YXRmb3JtX2RldmljZSAqcGRldjsKCWludCBlcnI7CgoJaWYgKCFkbWlfbWF0Y2goRE1JX1NZ
+U19WRU5ET1IsICJQQyBFbmdpbmVzIikpIHsKCQlwcl9lcnIoIk5vIFBDIEVuZ2luZXMgYm9h
+cmQgZGV0ZWN0ZWRcbiIpOwoJCXJldHVybiAtRU5PREVWOwoJfQoJaWYgKCEoZG1pX21hdGNo
+KERNSV9QUk9EVUNUX05BTUUsICJBUFUiKSB8fCBkbWlfbWF0Y2goRE1JX1BST0RVQ1RfTkFN
+RSwgIkFQVTIiKSkpIHsKCQlwcmludGsoS0VSTl9FUlIgIlVua25vd24gUEMgRW5naW5lcyBi
+b2FyZDogJXNcbiIsIGRtaV9nZXRfc3lzdGVtX2luZm8oRE1JX1BST0RVQ1RfTkFNRSkpOwoJ
+CXJldHVybiAtRU5PREVWOwoJfQoKCXBkZXYgPSBwbGF0Zm9ybV9kZXZpY2VfcmVnaXN0ZXJf
+c2ltcGxlKEtCVUlMRF9NT0ROQU1FLCAtMSwgTlVMTCwgMCk7CglpZiAoSVNfRVJSKHBkZXYp
+KSB7CgkJcHJfZXJyKCJEZXZpY2UgYWxsb2NhdGlvbiBmYWlsZWRcbiIpOwoJCXJldHVybiBQ
+VFJfRVJSKHBkZXYpOwoJfQoKCWVyciA9IHBsYXRmb3JtX2RyaXZlcl9wcm9iZSgmYXB1X2xl
+ZF9kcml2ZXIsIGFwdV9sZWRfcHJvYmUpOwoJaWYgKGVycikgewoJCXByX2VycigiUHJvYmUg
+cGxhdGZvcm0gZHJpdmVyIGZhaWxlZFxuIik7CgkJcGxhdGZvcm1fZGV2aWNlX3VucmVnaXN0
+ZXIocGRldik7Cgl9CgoJcmV0dXJuIGVycjsKfQoKc3RhdGljIHZvaWQgX19leGl0IGFwdV9s
+ZWRfZXhpdCh2b2lkKQp7CglwbGF0Zm9ybV9kZXZpY2VfdW5yZWdpc3RlcihhcHVfbGVkLT5w
+ZGV2KTsKCXBsYXRmb3JtX2RyaXZlcl91bnJlZ2lzdGVyKCZhcHVfbGVkX2RyaXZlcik7Cn0K
+Cm1vZHVsZV9pbml0KGFwdV9sZWRfaW5pdCk7Cm1vZHVsZV9leGl0KGFwdV9sZWRfZXhpdCk7
+CgpNT0RVTEVfQVVUSE9SKCJBbGFuIE1penJhaGksIGFsYW4gYXQgbWl6cmFoaSBkb3QgY29t
+IGRvdCB2ZSIpOwpNT0RVTEVfREVTQ1JJUFRJT04oIlBDIEVuZ2luZXMgQVBVIGZhbWlseSBM
+RUQgZHJpdmVyIik7Ck1PRFVMRV9MSUNFTlNFKCJHUEwgdjIiKTsKTU9EVUxFX0FMSUFTKCJw
+bGF0Zm9ybTpsZWRzX2FwdSIpOwo=
+--------------2538C27BD7FF38387299A06C--
