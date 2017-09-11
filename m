@@ -1,45 +1,87 @@
-From: <sean.wang@mediatek.com>
-Subject: [PATCH] MAINTAINERS: add entry for MediaTek PMIC LED driver
-Date: Sat, 9 Sep 2017 20:37:03 +0800
-Message-ID: <6ca394e75ef29089eef773b5856366be10745bb4.1504960075.git.sean.wang@mediatek.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: PC Engines APU/APU2 led driver
+Date: Mon, 11 Sep 2017 08:15:14 +0200
+Message-ID: <20170911061514.GA25933@amd>
+References: <1c59aa68-cc27-c577-312a-14f58b62dd89@mizrahi.com.ve>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:1514 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753519AbdIIMhO (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 9 Sep 2017 08:37:14 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42808 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750807AbdIKGPP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 11 Sep 2017 02:15:15 -0400
+Content-Disposition: inline
+In-Reply-To: <1c59aa68-cc27-c577-312a-14f58b62dd89@mizrahi.com.ve>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: linux-leds@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>
+To: Alan Mizrahi <alan@mizrahi.com.ve>
+Cc: linux-leds@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
 
-Add me as maintainers to support existing SoCs and push forward
-following MediaTek PMICs with LEDs to reuse the driver.
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+Hi!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2021738..65185bb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8648,6 +8648,12 @@ M:	Sean Wang <sean.wang@mediatek.com>
- S:	Maintained
- F:	drivers/media/rc/mtk-cir.c
- 
-+MEDIATEK PMIC LED DRIVER
-+M:	Sean Wang <sean.wang@mediatek.com>
-+S:	Maintained
-+F:	drivers/leds/leds-mt6323.c
-+F:	Documentation/devicetree/bindings/leds/leds-mt6323.txt
-+
- MEDIATEK RANDOM NUMBER GENERATOR SUPPORT
- M:	Sean Wang <sean.wang@mediatek.com>
- S:	Maintained
--- 
-2.7.4
+> static int __init apu_led_init(void)
+> {
+> 	struct platform_device *pdev;
+> 	int err;
+>=20
+> 	if (!dmi_match(DMI_SYS_VENDOR, "PC Engines")) {
+> 		pr_err("No PC Engines board detected\n");
+> 		return -ENODEV;
+> 	}
+> 	if (!(dmi_match(DMI_PRODUCT_NAME, "APU") || dmi_match(DMI_PRODUCT_NAME, =
+"APU2"))) {
+> 		printk(KERN_ERR "Unknown PC Engines board: %s\n", dmi_get_system_info(D=
+MI_PRODUCT_NAME));
+> 		return -ENODEV;
+> 	}
+>=20
+> 	pdev =3D platform_device_register_simple(KBUILD_MODNAME, -1, NULL, 0);
+> 	if (IS_ERR(pdev)) {
+> 		pr_err("Device allocation failed\n");
+> 		return PTR_ERR(pdev);
+> 	}
+>=20
+> 	err =3D platform_driver_probe(&apu_led_driver, apu_led_probe);
+> 	if (err) {
+> 		pr_err("Probe platform driver failed\n");
+> 		platform_device_unregister(pdev);
+> 	}
+>=20
+> 	return err;
+> }
+>=20
+> static void __exit apu_led_exit(void)
+> {
+> 	platform_device_unregister(apu_led->pdev);
+> 	platform_driver_unregister(&apu_led_driver);
+> }
+
+Normally, I'd expect _exit() to be 'reverse' of _init(). That is I'd
+expect reverese order there.
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--ReaqsoxgOBHFXBhH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlm2KfIACgkQMOfwapXb+vJBggCcDgM2HLQnjo6H+uCHGlLmhK/U
+itsAn2PFEHTUvUerTf7vzErTEYJDwM+t
+=ipS/
+-----END PGP SIGNATURE-----
+
+--ReaqsoxgOBHFXBhH--
