@@ -1,88 +1,49 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: as3645a flash userland interface
-Date: Tue, 12 Sep 2017 15:04:47 +0300
-Message-ID: <20170912120447.yqdwbdfgd7ac4xpn@valkosipuli.retiisi.org.uk>
-References: <20170912084236.1154-1-sakari.ailus@linux.intel.com>
- <20170912084236.1154-25-sakari.ailus@linux.intel.com>
- <20170912103628.GB27117@amd>
- <20170912104720.ifyouc5pa5et6gzk@valkosipuli.retiisi.org.uk>
- <20170912114051.GA1655@amd>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Splitting led drivers to subdirectories?
+Date: Tue, 12 Sep 2017 14:54:08 +0200
+Message-ID: <20170912125408.GA4074@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="9amGYk9869ThD9tj"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49393 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751381AbdILMyK (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Sep 2017 08:54:10 -0400
 Content-Disposition: inline
-In-Reply-To: <20170912114051.GA1655@amd>
-Sender: linux-media-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, niklas.soderlund@ragnatech.se, robh@kernel.org, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org, sre@kernel.org
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>
 
-Ahoy!
 
-On Tue, Sep 12, 2017 at 01:40:51PM +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > On Tue, Sep 12, 2017 at 12:36:28PM +0200, Pavel Machek wrote:
-> > > Hi!
-> > > 
-> > > There were some changes to as3645a flash controller. Before we have
-> > > stable interface we have to keep forever I want to ask:
-> > > 
-> > > What directory are the flash controls in?
-> > > 
-> > > /sys/class/leds/led-controller:flash ?
-> > > 
-> > > Could we arrange for something less generic, like
-> > > 
-> > > /sys/class/leds/main-camera:flash ?
-> > > 
-> > > Thanks,
-> > 
-> > The LEDs are called as3645a:flash and as3645a:indicator currently, based on
-> > the name of the LED controller's device node. There are no patches related
-> > to this set though; these have already been merged.
-> > 
-> > The label should be a "human readable string describing the device" (from
-> > ePAPR, please excuse me for not having a newer spec), and the led common
-> > bindings define it as:
-> > 
-> > - label : The label for this LED. If omitted, the label is taken from the node
-> >           name (excluding the unit address). It has to uniquely identify
-> >           a device, i.e. no other LED class device can be assigned the same
-> >           label.
-> 
-> Ok, can we set the label to "main_camera" for N9 and n950 cases?
-> 
-> "as3645a:flash" is really wrong name for a LED. Information that
-> as3645 is already present elsewhere in /sys. Information where the LED
-> is and what it does is not.
-> 
-> I'd like to have torch application that just writes
-> /sys/class/leds/main_camera:white:flash/brightness . It should not
-> need to know hardware details of differnet phones.
+--9amGYk9869ThD9tj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hmm. There don't seem to be a uniform way to form labels.
+Hi!
 
-What I'd do is to look up a LED that implements LED flash class and use
-that; it's a flash LED and is likely to be the most powerful in the system.
-There could be several as well, some more recent flash controllers have
-more than one.
+Is it time to start splitting drivers into subdirectories?
 
-I wonder what Jacek thinks.
+I'd quite like to see drivers/leds/i2c/ and drivers/leds/flash/ . That
+way it is easier to look at related drivers for inspiration...
 
-> 
-> > I don't think that you should be looking to use this to associate it with
-> > the camera as such. The association information with the sensor is
-> > available to the kernel but there's no interface that could meaningfully
-> > expose it to the user right now.
-> 
-> Yeah, I'm not looking for sensor association. I'm looking for
-> reasonable userland interface.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Ack. Hopefully we can provide the association some day, too...
+--9amGYk9869ThD9tj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
--- 
-Kind regards,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+iEYEARECAAYFAlm32PAACgkQMOfwapXb+vJLgACgg0NDZepQtup7KKX5EiV3yGmf
+vr4AoLCGbPgS63QcgiaBUiqEDk8c2sUO
+=YTrL
+-----END PGP SIGNATURE-----
+
+--9amGYk9869ThD9tj--
