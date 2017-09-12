@@ -1,62 +1,63 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: as3645a flash userland interface
-Date: Tue, 12 Sep 2017 12:36:28 +0200
-Message-ID: <20170912103628.GB27117@amd>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: as3645a flash userland interface
+Date: Tue, 12 Sep 2017 13:47:20 +0300
+Message-ID: <20170912104720.ifyouc5pa5et6gzk@valkosipuli.retiisi.org.uk>
 References: <20170912084236.1154-1-sakari.ailus@linux.intel.com>
  <20170912084236.1154-25-sakari.ailus@linux.intel.com>
+ <20170912103628.GB27117@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="qlTNgmc+xy1dBmNv"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170912084236.1154-25-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, niklas.soderlund-1zkq55x86MTxsAP9Fp7wbw@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-List-Id: linux-leds@vger.kernel.org
-
-
---qlTNgmc+xy1dBmNv
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:34920 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751381AbdILKrY (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 12 Sep 2017 06:47:24 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20170912103628.GB27117@amd>
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, niklas.soderlund@ragnatech.se, robh@kernel.org, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org, sre@kernel.org
 
-Hi!
+Hi Pavel,
 
-There were some changes to as3645a flash controller. Before we have
-stable interface we have to keep forever I want to ask:
+On Tue, Sep 12, 2017 at 12:36:28PM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> There were some changes to as3645a flash controller. Before we have
+> stable interface we have to keep forever I want to ask:
+> 
+> What directory are the flash controls in?
+> 
+> /sys/class/leds/led-controller:flash ?
+> 
+> Could we arrange for something less generic, like
+> 
+> /sys/class/leds/main-camera:flash ?
+> 
+> Thanks,
 
-What directory are the flash controls in?
+The LEDs are called as3645a:flash and as3645a:indicator currently, based on
+the name of the LED controller's device node. There are no patches related
+to this set though; these have already been merged.
 
-/sys/class/leds/led-controller:flash ?
+The label should be a "human readable string describing the device" (from
+ePAPR, please excuse me for not having a newer spec), and the led common
+bindings define it as:
 
-Could we arrange for something less generic, like
+- label : The label for this LED. If omitted, the label is taken from the node
+          name (excluding the unit address). It has to uniquely identify
+          a device, i.e. no other LED class device can be assigned the same
+          label.
 
-/sys/class/leds/main-camera:flash ?
+I don't think that you should be looking to use this to associate it with
+the camera as such. The association information with the sensor is
+available to the kernel but there's no interface that could meaningfully
+expose it to the user right now.
 
-Thanks,
+-- 
+Regards,
 
-								Pavel
-=20
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---qlTNgmc+xy1dBmNv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlm3uKwACgkQMOfwapXb+vJPfgCeLdm+wTd1viKglG6R8BQjKjTD
-blMAoJYrcN99yInNIYjMns2TfvaDE3TD
-=yPWq
------END PGP SIGNATURE-----
-
---qlTNgmc+xy1dBmNv--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
