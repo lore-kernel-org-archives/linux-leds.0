@@ -1,98 +1,77 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [patch v5 2/2] dt-bindings: mfd: Add Device Tree bindings for
- Mellanox programmable devices
-Date: Thu, 14 Sep 2017 13:51:40 +0100
-Message-ID: <20170914125140.2a7cwmgm7pzk6zuk@dell>
-References: <1505371738-128683-1-git-send-email-vadimp@mellanox.com>
- <1505371738-128683-3-git-send-email-vadimp@mellanox.com>
- <20170914123824.us56wefi3di345mh@dell>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: as3645a flash userland interface
+Date: Thu, 14 Sep 2017 15:16:29 +0200
+Message-ID: <82a4a519-e402-8eae-0352-e3e287fc508f@samsung.com>
+References: <20170912084236.1154-1-sakari.ailus@linux.intel.com>
+        <20170912084236.1154-25-sakari.ailus@linux.intel.com>
+        <20170912103628.GB27117@amd>
+        <7b679cb3-ce58-e1d1-60bf-995896bf46eb@gmail.com>
+        <20170912215529.GA17218@amd>
+        <21824758-28a1-7007-6db5-86a900025d14@gmail.com>
+        <CGME20170914092415epcas2p26c049a698851778673034c16afb290b9@epcas2p2.samsung.com>
+        <4bf12e8e-beff-0199-cdee-4a52ebe7cdaf@samsung.com>
+        <20170914100718.GA3843@amd>
+        <1f34a891-edb1-251c-86a8-ba4a90c485d3@samsung.com>
+        <20170914115323.GA1850@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170914123824.us56wefi3di345mh@dell>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: robh+dt@kernel.org, pavel@ucw.cz, devicetree@vger.kernel.org, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, jiri@resnulli.us, gregkh@linuxfoundation.org, andy.shevchenko@gmail.com, platform-driver-x86@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:57411 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751131AbdINNQh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 14 Sep 2017 09:16:37 -0400
+In-reply-to: <20170914115323.GA1850@amd>
+Content-language: en-GB
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, niklas.soderlund@ragnatech.se, robh@kernel.org, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org, sre@kernel.org
 
-On Thu, 14 Sep 2017, Lee Jones wrote:
+On 09/14/2017 01:53 PM, Pavel Machek wrote:
+> On Thu 2017-09-14 13:01:19, Sylwester Nawrocki wrote:
+>> On 09/14/2017 12:07 PM, Pavel Machek wrote:
+>>>> Isn't the V4L2 subdev/Media Controller API supposed to provide means
+>>>> for associating flash LEDs with camera sensors? You seem to be insisting
+>>>> on using the sysfs leds interface for that, which is not a primary
+>>>> interface for camera flash AFAICT.
+>>>
+>>> a) subdev/media controller API currently does not provide such means.
+>>
+>> Yes, but it should, that's what it was designed for AFAIK.
+>>
+>>> b) if we have /sys/class/leds interface to userland, it should be
+>>> useful.
+>>
+>> At the same time we shouldn't overcomplicate it with the camera
+>> functionality.
+> 
+> I'm advocating adding label = "main_camera" into the .dts. That's all.
+> 
+>>> c) having flashlight application going through media controller API is
+>>> a bad joke.
+>>
+>> It doesn't have to, maybe I misunderstood what you exactly ask for.
+>> Nevertheless what's missing is some user visible name/label for each
+>> flash LED, right? Currently enumerating flash LEDs can be done by looking
+>> at the function part of /sys/class/leds/<led-controller>:<colour>:
+>> <function> path.
+>>
+>> Could additional information be appended to the <function> part, so
+>> user can identify which LED is which? E.g. "flash(rear)", "flash(front)",
+>> etc. This could be achieved by simply adding label property in DT.
+>> Or is the list of supported <function> strings already standardized?
+> 
+> label = "flash_main_camera" would work for me, yes. And yes, I'd
+> prefer to do this before 4.14 release, so that userland-visible
+> interface does not change.
 
-> On Thu, 14 Sep 2017, Vadim Pasternak wrote:
-> 
-> > The mlxreg a multifunction device driver handling LEDs, events, exposing
-> > through sysfs reset signal, and reset causes info. These components share
-> > a common register space.
-> > 
-> > Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-> > ---
-> > v4->v5:
-> >  Comments pointed out by Rob:
-> >  - Avoid duplications in reg;
-> >  - Remove unnecessary details in description;
-> >  - Do not use names like phandels;
-> >  Changes added by Vadim:
-> >  - Combine hotplug nodes interrupt aggregation, register offset and mask
-> >    properties into hotplug-spec properties;
-> >  - Combine reset, cause, etc subnodes register offset, mask and effective
-> >    bit properties into attr-spec properties;
-> > v3->v4:
-> >  Comments pointed out by Rob:
-> >  - Make a separate patch /devicetree/bindings/vendor-prefixes.txt;
-> >  - Add .txt to Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core
-> >    and send it within this series;
-> >  - Modify "compatible" property;
-> >  - Modify explanation for "deferred" property;
-> >  - Describe each subnode by its own section;
-> >  - Don't use underscore in attribute names;
-> > ---
-> >  .../bindings/mfd/mellanox,mlxreg-core.txt          | 165 +++++++++++++++++++++
-> >  1 file changed, 165 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core.txt
-> 
-> Wow!  I have never seen a binding like this before.
-> 
-> > diff --git a/Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core.txt b/Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core.txt
-> > new file mode 100644
-> > index 0000000..1e3cce5
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core.txt
-> > @@ -0,0 +1,165 @@
-> > +Mellanox programmable device control.
-> > +-------------------------------------
-> > +This binding defines the device control interface over for Mellanox BMC based
-> > +switches.
-> > +
-> > +Required properties:
-> > +- compatible =  "mellanox,mlxreg-i2c" or
-> > +		"mellanox,mlxreg-i2c-16"
-> > +
-> > +- #address-cells : must be 1;
-> > +- #size-cells : must be 0;
-> > +- reg : I2C address;
-> > +
-> > +Optional properties:
-> > +- interrupt-parent : phandle of parent interrupt controller;
-> > +- interrupts : interrupt line;
-> > +- deferred : I2C deferred bus phandle;
-> > +	     I2C bus activation order enforce for the cases when hot-plug
-> > +	     devices are attached to I2C bus, which is initialized after the
-> > +	     I2C bus, where programmable device is attached;
-> 
-> Dependencies aren't usually expressed in DT.
-> 
-> Why can't this be done pragmatically?
-> 
-> Usually we try to interrogate a device that we depend on and if it's
-> not present, we return -EPROBE_DEFER and try again latter.
-
-Actually, thinking about this.  Are these hierarchical?
-
-If so, they would be better represented as a sub-node.
+Looking at existing label entries in DT (git grep label.*led
+-- arch/arm/boot/dts | sed 's\^.*label\label\' | sort | uniq)
+I can't see why something like this couldn't be added.
+Or label = "as3645a::flash_main_camera" so we abide the LED device
+naming rules described in Documentation/leds/leds-class.txt.
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Regards,
+Sylwester
