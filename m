@@ -1,131 +1,99 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [patch v5 1/2] mfd: Add Mellanox regmap core driver
-Date: Thu, 14 Sep 2017 10:43:14 +0100
-Message-ID: <20170914094314.qadkjvc6kup2nchx@dell>
-References: <1505371738-128683-1-git-send-email-vadimp@mellanox.com>
- <1505371738-128683-2-git-send-email-vadimp@mellanox.com>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: as3645a flash userland interface
+Date: Thu, 14 Sep 2017 12:07:18 +0200
+Message-ID: <20170914100718.GA3843@amd>
+References: <20170912084236.1154-1-sakari.ailus@linux.intel.com>
+ <20170912084236.1154-25-sakari.ailus@linux.intel.com>
+ <20170912103628.GB27117@amd>
+ <7b679cb3-ce58-e1d1-60bf-995896bf46eb@gmail.com>
+ <20170912215529.GA17218@amd>
+ <21824758-28a1-7007-6db5-86a900025d14@gmail.com>
+ <CGME20170914092415epcas2p26c049a698851778673034c16afb290b9@epcas2p2.samsung.com>
+ <4bf12e8e-beff-0199-cdee-4a52ebe7cdaf@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:45202 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbdINJnS (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 14 Sep 2017 05:43:18 -0400
-Received: by mail-wm0-f53.google.com with SMTP id g206so9166158wme.0
-        for <linux-leds@vger.kernel.org>; Thu, 14 Sep 2017 02:43:17 -0700 (PDT)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1505371738-128683-2-git-send-email-vadimp@mellanox.com>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <4bf12e8e-beff-0199-cdee-4a52ebe7cdaf-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, niklas.soderlund-1zkq55x86MTxsAP9Fp7wbw@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: robh+dt@kernel.org, pavel@ucw.cz, devicetree@vger.kernel.org, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, jiri@resnulli.us, gregkh@linuxfoundation.org, andy.shevchenko@gmail.com, platform-driver-x86@vger.kernel.org
 
-On Thu, 14 Sep 2017, Vadim Pasternak wrote:
 
-> This patch adds core regmap platform driver for Mellanox BMC cards with
-> the programmable devices based chassis control. The device logics,
-> controlled by software includes:
-> - Interrupt handling for chassis, ASIC, CPU events;
-> - LED handling;
-> - Exposes through sysfs mux, reset signals, reset cause notification;
-> The patch provides support for the access to programmable device through
-> the register map and allows dynamic device tree manipulation at runtime
-> for removable devices.
-> 
-> This driver requires activator driver, which responsibility is to create
-> register map and pass it to regmap core. Such activator could be based for
-> example on I2C, SPI or MMIO interface.
-> 
-> Drivers exposes the number of hwmon attributes to sysfs according to the
-> attribute groups, defined in the device tree. These attributes will be
-> located for example in /sys/class/hwmon/hwmonX folder, which is a symbolic
-> link to for example:
-> /sys/bus/i2c/devices/4-0072/mlxreg-core.1138/hwmon/hwmon10.
-> The attributes are divided to the groups, like in the below example:
->  MUX nodes
->  - safe_bios_disable
->  - spi_burn_bios_ci
->  - spi_burn_ncsi
->  - uart_sel
->  Reset nodes:
->  - sys_power_cycle
->  - bmc_upgrade
->  - asic_reset
->  Cause of reset nodes:
->  - cpu_kernel_panic
->  - cpu_shutdown
->  - bmc_warm_reset
->  General purpose RW nodes:
->  - version
-> 
-> Drivers also probes LED and hotplug drivers, in case device tree
-> description contains LED and hotplug nodes.
-> 
-> Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-> ---
-> v4->v5:
->  Comments pointed out by Lee:
->  - Remove mlxreg-i2c module from the patchset;
->  Changes added by Vadim:
->  - Remove include/linux/platform_data/mlxreg.h from the patcheset, since
->    it have been sent with
->  - Modify dts parsing routines;
->  - Disable compliation of_update_property if CONFIG_COMPILE_TEST is set;
-> v3->v4:
->  Comments pointed out by Lee:
->  - Split interrupt related logic into separate module and place this logic
->    within the existing Mellanox hotplug driver. Move for this reason this
->    driver from drivers/platform/x86 to drivers/platform/mellanox folder;
->  Comments pointed out by Rob:
->  - Make a separate patch /devicetree/bindings/vendor-prefixes.txt;
->  - Add .txt to Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core
->    and send it within this series;
->  - Modify "compatible" property;
->  - Modify explanation for "deferred" property;
->  - Describe each subnode by its own section;
->  - Don't use underscore in attribute names;
->  Changes added by Vadim:
->  - Add mlxreg_hotplug_device and mlxreg_core_item structures to mlxreg.h
->    and modify mlxreg_core_led_platform_data structure;
-> v2->v3:
->  Changes added by Vadim:
->  - Change name of field led data in struct mlxreg_core_led_platform_data
->    in mlxreg.h;
->  - fix data position assignment in mlxreg_core_get;
->  - update name of field led data in mlxreg_core_set_led;
-> v1->v2:
->  Comments pointed out by Pavel:
->  - Remove extra new line in mellanox,mlxreg-core;
->  - Replace three NOT with one in mlxreg_core_attr_show;
->  - Make error message in mlxreg_core_work_helper shorter;
->  - Make attribute assignment more readable;
->  - Separate mellanox,mlxreg-core file for sending to DT maintainers.
->  Comments pointed out by Jacek:
->  - Since  brightness_set_blocking is used instead of
->    brightness_set, three fields from mlxreg_core_led_data are removed.
-> ---
->  MAINTAINERS               |   6 +
->  drivers/mfd/Kconfig       |  14 +
->  drivers/mfd/Makefile      |   1 +
->  drivers/mfd/mlxreg-core.c | 843 ++++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 864 insertions(+)
->  create mode 100644 drivers/mfd/mlxreg-core.c
+--sm4nu43k4a2Rpi4c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I thought we agreed that this was not an MFD driver?
+Hi!
 
-If it doesn't use the MFD framework, it's not an MFD driver.
+> >>>>What directory are the flash controls in?
+> >>>>
+> >>>>/sys/class/leds/led-controller:flash ?
+> >>>>
+> >>>>Could we arrange for something less generic, like
+> >>>>
+> >>>>/sys/class/leds/main-camera:flash ?
+> >>>
+> >>>I'd rather avoid overcomplicating this. LED class device name pattern
+> >>>is well defined to devicename:colour:function
+> >>>(see Documentation/leds/leds-class.txt, "LED Device Naming" section).
+> >>>
+> >>>In this case "flash" in place of the "function" segment makes the
+> >>>things clear enough I suppose.
+> >>
+> >>It does not.
+> >>
+> >>Phones usually have two cameras, front and back, and these days both
+> >>cameras have their flash.
+> >>
+> >>And poor userspace flashlight application can not know if as3645
+> >>drivers front LED or back LED. Thus, I'd set devicename to
+> >>front-camera or main-camera -- because that's what it is associated
+> >>with. Userspace does not care what hardware drives the LED, but needs
+> >>to know if it is front or back camera.
+> >
+> >The name of a LED flash class device isn't fixed and is derived
+> >from DT label property. Name in the example of some DT bindings
+> >will not force people to apply similar pattern for the other
+> >drivers and even for the related one. No worry about having
+> >to keep anything forever basing on that.
+>=20
+> Isn't the V4L2 subdev/Media Controller API supposed to provide means
+> for associating flash LEDs with camera sensors? You seem to be insisting
+> on using the sysfs leds interface for that, which is not a primary
+> interface for camera flash AFAICT.
 
-Looking at it very briefly, it appears at though it should actually be
-split up.  In your commit message you say that this is a platform
-driver that does LED handling and deals with the regmap and HWMON
-subsystem.
+a) subdev/media controller API currently does not provide such means.
 
-I suggest moving the core code into /drivers/platform/* and split the
-other sections into their own drivers within their own subsystems.
+b) if we have /sys/class/leds interface to userland, it should be
+useful.
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+c) having flashlight application going through media controller API is
+a bad joke.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--sm4nu43k4a2Rpi4c
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlm6VNYACgkQMOfwapXb+vIu4wCfcERX0wrdAVt5HeogfBdgba5W
+SnIAnReSCKgIbWpDTsfX3/BRFNgx6t/C
+=MD5V
+-----END PGP SIGNATURE-----
+
+--sm4nu43k4a2Rpi4c--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
