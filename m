@@ -1,96 +1,90 @@
-From: Vadim Pasternak <vadimp-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Subject: RE: [patch v5 1/2] mfd: Add Mellanox regmap core driver
-Date: Thu, 14 Sep 2017 11:13:40 +0000
-Message-ID: <AM4PR05MB3330C8A2EC48D27BC66C7FB4A26F0@AM4PR05MB3330.eurprd05.prod.outlook.com>
-References: <1505371738-128683-1-git-send-email-vadimp@mellanox.com>
- <1505371738-128683-2-git-send-email-vadimp@mellanox.com>
- <20170914094314.qadkjvc6kup2nchx@dell>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: as3645a flash userland interface
+Date: Thu, 14 Sep 2017 13:53:23 +0200
+Message-ID: <20170914115323.GA1850@amd>
+References: <20170912084236.1154-1-sakari.ailus@linux.intel.com>
+ <20170912084236.1154-25-sakari.ailus@linux.intel.com>
+ <20170912103628.GB27117@amd>
+ <7b679cb3-ce58-e1d1-60bf-995896bf46eb@gmail.com>
+ <20170912215529.GA17218@amd>
+ <21824758-28a1-7007-6db5-86a900025d14@gmail.com>
+ <CGME20170914092415epcas2p26c049a698851778673034c16afb290b9@epcas2p2.samsung.com>
+ <4bf12e8e-beff-0199-cdee-4a52ebe7cdaf@samsung.com>
+ <20170914100718.GA3843@amd>
+ <1f34a891-edb1-251c-86a8-ba4a90c485d3@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170914094314.qadkjvc6kup2nchx@dell>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1f34a891-edb1-251c-86a8-ba4a90c485d3-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "pavel-+ZI9xUNit7I@public.gmane.org" <pavel-+ZI9xUNit7I@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "jiri-rHqAuBHg3fBzbRFIqnYvSA@public.gmane.org" <jiri-rHqAuBHg3fBzbRFIqnYvSA@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, niklas.soderlund-1zkq55x86MTxsAP9Fp7wbw@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-DQo+ID4gdjQtPnY1Og0KPiA+ICBDb21tZW50cyBwb2ludGVkIG91dCBieSBMZWU6DQo+ID4gIC0g
-UmVtb3ZlIG1seHJlZy1pMmMgbW9kdWxlIGZyb20gdGhlIHBhdGNoc2V0OyAgQ2hhbmdlcyBhZGRl
-ZCBieQ0KPiA+IFZhZGltOg0KPiA+ICAtIFJlbW92ZSBpbmNsdWRlL2xpbnV4L3BsYXRmb3JtX2Rh
-dGEvbWx4cmVnLmggZnJvbSB0aGUgcGF0Y2hlc2V0LCBzaW5jZQ0KPiA+ICAgIGl0IGhhdmUgYmVl
-biBzZW50IHdpdGgNCj4gPiAgLSBNb2RpZnkgZHRzIHBhcnNpbmcgcm91dGluZXM7DQo+ID4gIC0g
-RGlzYWJsZSBjb21wbGlhdGlvbiBvZl91cGRhdGVfcHJvcGVydHkgaWYgQ09ORklHX0NPTVBJTEVf
-VEVTVCBpcw0KPiA+IHNldDsNCj4gPiB2My0+djQ6DQo+ID4gIENvbW1lbnRzIHBvaW50ZWQgb3V0
-IGJ5IExlZToNCj4gPiAgLSBTcGxpdCBpbnRlcnJ1cHQgcmVsYXRlZCBsb2dpYyBpbnRvIHNlcGFy
-YXRlIG1vZHVsZSBhbmQgcGxhY2UgdGhpcyBsb2dpYw0KPiA+ICAgIHdpdGhpbiB0aGUgZXhpc3Rp
-bmcgTWVsbGFub3ggaG90cGx1ZyBkcml2ZXIuIE1vdmUgZm9yIHRoaXMgcmVhc29uIHRoaXMNCj4g
-PiAgICBkcml2ZXIgZnJvbSBkcml2ZXJzL3BsYXRmb3JtL3g4NiB0byBkcml2ZXJzL3BsYXRmb3Jt
-L21lbGxhbm94DQo+ID4gZm9sZGVyOyAgQ29tbWVudHMgcG9pbnRlZCBvdXQgYnkgUm9iOg0KPiA+
-ICAtIE1ha2UgYSBzZXBhcmF0ZSBwYXRjaCAvZGV2aWNldHJlZS9iaW5kaW5ncy92ZW5kb3ItcHJl
-Zml4ZXMudHh0Ow0KPiA+ICAtIEFkZCAudHh0IHRvIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9tZmQvbWVsbGFub3gsbWx4cmVnLQ0KPiBjb3JlDQo+ID4gICAgYW5kIHNlbmQgaXQg
-d2l0aGluIHRoaXMgc2VyaWVzOw0KPiA+ICAtIE1vZGlmeSAiY29tcGF0aWJsZSIgcHJvcGVydHk7
-DQo+ID4gIC0gTW9kaWZ5IGV4cGxhbmF0aW9uIGZvciAiZGVmZXJyZWQiIHByb3BlcnR5Ow0KPiA+
-ICAtIERlc2NyaWJlIGVhY2ggc3Vibm9kZSBieSBpdHMgb3duIHNlY3Rpb247DQo+ID4gIC0gRG9u
-J3QgdXNlIHVuZGVyc2NvcmUgaW4gYXR0cmlidXRlIG5hbWVzOyAgQ2hhbmdlcyBhZGRlZCBieSBW
-YWRpbToNCj4gPiAgLSBBZGQgbWx4cmVnX2hvdHBsdWdfZGV2aWNlIGFuZCBtbHhyZWdfY29yZV9p
-dGVtIHN0cnVjdHVyZXMgdG8gbWx4cmVnLmgNCj4gPiAgICBhbmQgbW9kaWZ5IG1seHJlZ19jb3Jl
-X2xlZF9wbGF0Zm9ybV9kYXRhIHN0cnVjdHVyZTsNCj4gPiB2Mi0+djM6DQo+ID4gIENoYW5nZXMg
-YWRkZWQgYnkgVmFkaW06DQo+ID4gIC0gQ2hhbmdlIG5hbWUgb2YgZmllbGQgbGVkIGRhdGEgaW4g
-c3RydWN0IG1seHJlZ19jb3JlX2xlZF9wbGF0Zm9ybV9kYXRhDQo+ID4gICAgaW4gbWx4cmVnLmg7
-DQo+ID4gIC0gZml4IGRhdGEgcG9zaXRpb24gYXNzaWdubWVudCBpbiBtbHhyZWdfY29yZV9nZXQ7
-DQo+ID4gIC0gdXBkYXRlIG5hbWUgb2YgZmllbGQgbGVkIGRhdGEgaW4gbWx4cmVnX2NvcmVfc2V0
-X2xlZDsNCj4gPiB2MS0+djI6DQo+ID4gIENvbW1lbnRzIHBvaW50ZWQgb3V0IGJ5IFBhdmVsOg0K
-PiA+ICAtIFJlbW92ZSBleHRyYSBuZXcgbGluZSBpbiBtZWxsYW5veCxtbHhyZWctY29yZTsNCj4g
-PiAgLSBSZXBsYWNlIHRocmVlIE5PVCB3aXRoIG9uZSBpbiBtbHhyZWdfY29yZV9hdHRyX3Nob3c7
-DQo+ID4gIC0gTWFrZSBlcnJvciBtZXNzYWdlIGluIG1seHJlZ19jb3JlX3dvcmtfaGVscGVyIHNo
-b3J0ZXI7DQo+ID4gIC0gTWFrZSBhdHRyaWJ1dGUgYXNzaWdubWVudCBtb3JlIHJlYWRhYmxlOw0K
-PiA+ICAtIFNlcGFyYXRlIG1lbGxhbm94LG1seHJlZy1jb3JlIGZpbGUgZm9yIHNlbmRpbmcgdG8g
-RFQgbWFpbnRhaW5lcnMuDQo+ID4gIENvbW1lbnRzIHBvaW50ZWQgb3V0IGJ5IEphY2VrOg0KPiA+
-ICAtIFNpbmNlICBicmlnaHRuZXNzX3NldF9ibG9ja2luZyBpcyB1c2VkIGluc3RlYWQgb2YNCj4g
-PiAgICBicmlnaHRuZXNzX3NldCwgdGhyZWUgZmllbGRzIGZyb20gbWx4cmVnX2NvcmVfbGVkX2Rh
-dGEgYXJlIHJlbW92ZWQuDQo+ID4gLS0tDQo+ID4gIE1BSU5UQUlORVJTICAgICAgICAgICAgICAg
-fCAgIDYgKw0KPiA+ICBkcml2ZXJzL21mZC9LY29uZmlnICAgICAgIHwgIDE0ICsNCj4gPiAgZHJp
-dmVycy9tZmQvTWFrZWZpbGUgICAgICB8ICAgMSArDQo+ID4gIGRyaXZlcnMvbWZkL21seHJlZy1j
-b3JlLmMgfCA4NDMNCj4gPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrDQo+ID4gIDQgZmlsZXMgY2hhbmdlZCwgODY0IGluc2VydGlvbnMoKykNCj4gPiAgY3Jl
-YXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbWZkL21seHJlZy1jb3JlLmMNCj4gDQo+IEkgdGhvdWdo
-dCB3ZSBhZ3JlZWQgdGhhdCB0aGlzIHdhcyBub3QgYW4gTUZEIGRyaXZlcj8NCg0KWW91ciBjb21t
-ZW50IHdhcyByZWdhcmRpbmcgbWx4cmVnLWkyYyBtb2R1bGUsIHdoaWNoIEkgcmVtb3ZlZCBmcm9t
-IHRoZQ0KcGF0Y2hzZXQuIFNvIEkgd2FzIHVuZGVyIGltcHJlc3Npb24gdGhhdCB3ZSBhZ3JlZWQg
-YWJvdXQgbWx4IHJlZy1pMmMsIGJ1dCBub3QNCmFib3V0IG1seHJlZy1jb3JlLg0KDQo+IA0KPiBJ
-ZiBpdCBkb2Vzbid0IHVzZSB0aGUgTUZEIGZyYW1ld29yaywgaXQncyBub3QgYW4gTUZEIGRyaXZl
-ci4NCj4gDQo+IExvb2tpbmcgYXQgaXQgdmVyeSBicmllZmx5LCBpdCBhcHBlYXJzIGF0IHRob3Vn
-aCBpdCBzaG91bGQgYWN0dWFsbHkgYmUgc3BsaXQgdXAuDQo+IEluIHlvdXIgY29tbWl0IG1lc3Nh
-Z2UgeW91IHNheSB0aGF0IHRoaXMgaXMgYSBwbGF0Zm9ybSBkcml2ZXIgdGhhdCBkb2VzIExFRA0K
-PiBoYW5kbGluZyBhbmQgZGVhbHMgd2l0aCB0aGUgcmVnbWFwIGFuZCBIV01PTiBzdWJzeXN0ZW0u
-DQo+IA0KPiBJIHN1Z2dlc3QgbW92aW5nIHRoZSBjb3JlIGNvZGUgaW50byAvZHJpdmVycy9wbGF0
-Zm9ybS8qIGFuZCBzcGxpdCB0aGUgb3RoZXINCj4gc2VjdGlvbnMgaW50byB0aGVpciBvd24gZHJp
-dmVycyB3aXRoaW4gdGhlaXIgb3duIHN1YnN5c3RlbXMuDQoNCkFjY29yZGluZyB0byB5b3VyIHN1
-Z2dlc3Rpb24gZm9yIHBhdGNoIHYyIElDIHJlbGF0ZWQgY29kZSB3YXMgc3BsaXR0ZWQgaW4gdjMs
-DQp3aGlsZSBMRUQgZHJpdmVyIGhhcyBiZWVuIHNlcGFyYXRlZCBpbiBpbml0aWFsIHBhdGNoc2V0
-IHZlcnNpb24uDQpXaGljaCBvdGhlciBzZWN0aW9ucyB5b3Ugc3VnZ2VzdGVkIHRvIHNwbGl0Pw0K
-VGhlcmUgaXMgbm93IGh3bW9uIGRyaXZlciBmdW5jdGlvbmFsaXR5IHdpdGhpbiBtbHhyZWctY29y
-ZS4gSXQgZXhwb3NlIHNvbWUNClJlZ2lzdGVycyB3aXRoLCBmLmUuIHJlc2V0IGFuZCByZXNldCBj
-YXVzZSBpbmZvIHRvIHRoZSB1c2VyIHNwYWNlIHRocm91Z2ggc3lzZnMuIA0KQWxzbyByZWdtYXAg
-aXMganVzdCB0aGUgY29tbW9uIGludGVyZmFjZSwgd2hpY2ggaXMgdXNlZCBieSBkcml2ZXIuDQoN
-ClRoaXMgZHJpdmVyLCBMRUQsIElDIGFuZCBhcyBJIHdyb3RlIGJlZm9yZSwgdGhlcmUgaXMgYSBw
-bGFuIHRvIGV4dGVuZCBpdCB3aXRoIFdEDQphbmQgUFdNIGRyaXZlcnMgd29yayBhZ2FpbnN0IHRo
-ZSBzYW1lIHByb2dyYW1tYWJsZSBkZXZpY2UuDQpTbyBhdCB0aGUgbW9tZW50IEkgcHJvdmlkZWQg
-dHdvIGNoaWxkIGRldmljZXMgZm9yIGxlZCBhbmQgcGxhdGZvcm0gc3Vic3lzdGVtcw0KYW5kIHBs
-YW5uZWQgdG8gYWRkICB0d28gbW9yZSBmb3IgaHdtb24gb3IgcHdtIGFuZCB3YXRjaGRvZyBzdWJz
-eXN0ZW1zLg0KDQpBbmQgYWxsIG9mIHRoZW0gdXNlcyB0aGUgc2FtZSByZWdpc3RlciBzcGFjZSwg
-YWNjZXNzaWJsZSB0aHJvdWdoIHJlZ21hcA0KSW50ZXJmYWNlLg0KQmFzZWQgb24gdGhlIGFib3Zl
-IEkgY29uc2lkZXJlZCBzdWNoIGRyaXZlciBhcyBNRkQuDQoNCldoeSBkbyB5b3UgdGhpbmsgdGhh
-dCBkcml2ZXJzL3BsYXRmb3JtIGlzIG1vcmUgc3VpdGFibGUgbG9jYXRpb24sIGlzIGl0IGJlY2F1
-c2UNCkkgYW0gdXNpbmcgZm9yIHN1YnN5c3RlbSBkcml2ZXJzIGFjdGl2YXRpb24gcGxhdGZvcm1f
-ZGV2aWNlX2FkZCBhbmQgbm90DQptZmRfYWRkX2RldmljZXM/DQpPciB0aGVyZSBhcmUgc29tZSBv
-dGhlcnMgY29uc2lkZXJhdGlvbnM/DQoNClRoYW5rcywNClZhZGltLg0KDQo+IA0KPiAtLQ0KPiBM
-ZWUgSm9uZXMNCj4gTGluYXJvIFNUTWljcm9lbGVjdHJvbmljcyBMYW5kaW5nIFRlYW0gTGVhZCBM
-aW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZQ0KPiBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MgRm9sbG93
-IExpbmFybzogRmFjZWJvb2sgfCBUd2l0dGVyIHwgQmxvZw0K
+
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu 2017-09-14 13:01:19, Sylwester Nawrocki wrote:
+> On 09/14/2017 12:07 PM, Pavel Machek wrote:
+> >>Isn't the V4L2 subdev/Media Controller API supposed to provide means
+> >>for associating flash LEDs with camera sensors? You seem to be insisting
+> >>on using the sysfs leds interface for that, which is not a primary
+> >>interface for camera flash AFAICT.
+> >
+> >a) subdev/media controller API currently does not provide such means.
+>=20
+> Yes, but it should, that's what it was designed for AFAIK.
+>=20
+> >b) if we have /sys/class/leds interface to userland, it should be
+> >useful.
+>=20
+> At the same time we shouldn't overcomplicate it with the camera
+> functionality.
+
+I'm advocating adding label =3D "main_camera" into the .dts. That's all.
+
+> >c) having flashlight application going through media controller API is
+> >a bad joke.
+>=20
+> It doesn't have to, maybe I misunderstood what you exactly ask for.
+> Nevertheless what's missing is some user visible name/label for each
+> flash LED, right? Currently enumerating flash LEDs can be done by looking
+> at the function part of /sys/class/leds/<led-controller>:<colour>:
+> <function> path.
+>=20
+> Could additional information be appended to the <function> part, so
+> user can identify which LED is which? E.g. "flash(rear)", "flash(front)",
+> etc. This could be achieved by simply adding label property in DT.
+> Or is the list of supported <function> strings already standardized?
+
+label =3D "flash_main_camera" would work for me, yes. And yes, I'd
+prefer to do this before 4.14 release, so that userland-visible
+interface does not change.
+
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--+HP7ph2BbKc20aGI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlm6bbMACgkQMOfwapXb+vLs5ACfSHGpLyqkbp6oPuWYh9pfwq6S
+9RkAmwabXDg4cqAZMqZP9Si2IOvyxCDb
+=yM0y
+-----END PGP SIGNATURE-----
+
+--+HP7ph2BbKc20aGI--
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
