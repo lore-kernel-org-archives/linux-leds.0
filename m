@@ -1,127 +1,263 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [patch v5 1/2] mfd: Add Mellanox regmap core driver
-Date: Thu, 14 Sep 2017 13:12:19 +0100
-Message-ID: <20170914121219.bgk77tbv7w3qaay6@dell>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [patch v5 2/2] dt-bindings: mfd: Add Device Tree bindings for
+ Mellanox programmable devices
+Date: Thu, 14 Sep 2017 13:38:24 +0100
+Message-ID: <20170914123824.us56wefi3di345mh@dell>
 References: <1505371738-128683-1-git-send-email-vadimp@mellanox.com>
- <1505371738-128683-2-git-send-email-vadimp@mellanox.com>
- <20170914094314.qadkjvc6kup2nchx@dell>
- <AM4PR05MB3330C8A2EC48D27BC66C7FB4A26F0@AM4PR05MB3330.eurprd05.prod.outlook.com>
+ <1505371738-128683-3-git-send-email-vadimp@mellanox.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <AM4PR05MB3330C8A2EC48D27BC66C7FB4A26F0@AM4PR05MB3330.eurprd05.prod.outlook.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, "pavel@ucw.cz" <pavel@ucw.cz>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "jiri@resnulli.us" <jiri@resnulli.us>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
+In-Reply-To: <1505371738-128683-3-git-send-email-vadimp-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vadim Pasternak <vadimp-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jiri-rHqAuBHg3fBzbRFIqnYvSA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
 On Thu, 14 Sep 2017, Vadim Pasternak wrote:
 
+> The mlxreg a multifunction device driver handling LEDs, events, exposing
+> through sysfs reset signal, and reset causes info. These components share
+> a common register space.
 > 
-> > > v4->v5:
-> > >  Comments pointed out by Lee:
-> > >  - Remove mlxreg-i2c module from the patchset;  Changes added by
-> > > Vadim:
-> > >  - Remove include/linux/platform_data/mlxreg.h from the patcheset, since
-> > >    it have been sent with
-> > >  - Modify dts parsing routines;
-> > >  - Disable compliation of_update_property if CONFIG_COMPILE_TEST is
-> > > set;
-> > > v3->v4:
-> > >  Comments pointed out by Lee:
-> > >  - Split interrupt related logic into separate module and place this logic
-> > >    within the existing Mellanox hotplug driver. Move for this reason this
-> > >    driver from drivers/platform/x86 to drivers/platform/mellanox
-> > > folder;  Comments pointed out by Rob:
-> > >  - Make a separate patch /devicetree/bindings/vendor-prefixes.txt;
-> > >  - Add .txt to Documentation/devicetree/bindings/mfd/mellanox,mlxreg-
-> > core
-> > >    and send it within this series;
-> > >  - Modify "compatible" property;
-> > >  - Modify explanation for "deferred" property;
-> > >  - Describe each subnode by its own section;
-> > >  - Don't use underscore in attribute names;  Changes added by Vadim:
-> > >  - Add mlxreg_hotplug_device and mlxreg_core_item structures to mlxreg.h
-> > >    and modify mlxreg_core_led_platform_data structure;
-> > > v2->v3:
-> > >  Changes added by Vadim:
-> > >  - Change name of field led data in struct mlxreg_core_led_platform_data
-> > >    in mlxreg.h;
-> > >  - fix data position assignment in mlxreg_core_get;
-> > >  - update name of field led data in mlxreg_core_set_led;
-> > > v1->v2:
-> > >  Comments pointed out by Pavel:
-> > >  - Remove extra new line in mellanox,mlxreg-core;
-> > >  - Replace three NOT with one in mlxreg_core_attr_show;
-> > >  - Make error message in mlxreg_core_work_helper shorter;
-> > >  - Make attribute assignment more readable;
-> > >  - Separate mellanox,mlxreg-core file for sending to DT maintainers.
-> > >  Comments pointed out by Jacek:
-> > >  - Since  brightness_set_blocking is used instead of
-> > >    brightness_set, three fields from mlxreg_core_led_data are removed.
-> > > ---
-> > >  MAINTAINERS               |   6 +
-> > >  drivers/mfd/Kconfig       |  14 +
-> > >  drivers/mfd/Makefile      |   1 +
-> > >  drivers/mfd/mlxreg-core.c | 843
-> > > ++++++++++++++++++++++++++++++++++++++++++++++
-> > >  4 files changed, 864 insertions(+)
-> > >  create mode 100644 drivers/mfd/mlxreg-core.c
-> > 
-> > I thought we agreed that this was not an MFD driver?
-> 
-> Your comment was regarding mlxreg-i2c module, which I removed from the
-> patchset. So I was under impression that we agreed about mlx reg-i2c, but not
-> about mlxreg-core.
-> 
-> > 
-> > If it doesn't use the MFD framework, it's not an MFD driver.
-> > 
-> > Looking at it very briefly, it appears at though it should actually be split up.
-> > In your commit message you say that this is a platform driver that does LED
-> > handling and deals with the regmap and HWMON subsystem.
-> > 
-> > I suggest moving the core code into /drivers/platform/* and split the other
-> > sections into their own drivers within their own subsystems.
-> 
-> According to your suggestion for patch v2 IC related code was splitted in v3,
-> while LED driver has been separated in initial patchset version.
-> Which other sections you suggested to split?
-> There is now hwmon driver functionality within mlxreg-core. It expose some
-> Registers with, f.e. reset and reset cause info to the user space through sysfs. 
-> Also regmap is just the common interface, which is used by driver.
-> 
-> This driver, LED, IC and as I wrote before, there is a plan to extend it with WD
-> and PWM drivers work against the same programmable device.
-> So at the moment I provided two child devices for led and platform subsystems
-> and planned to add  two more for hwmon or pwm and watchdog subsystems.
-> 
-> And all of them uses the same register space, accessible through regmap
-> Interface.
-> Based on the above I considered such driver as MFD.
-> 
-> Why do you think that drivers/platform is more suitable location, is it because
-> I am using for subsystem drivers activation platform_device_add and not
-> mfd_add_devices?
-> Or there are some others considerations?
+> Signed-off-by: Vadim Pasternak <vadimp-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+> ---
+> v4->v5:
+>  Comments pointed out by Rob:
+>  - Avoid duplications in reg;
+>  - Remove unnecessary details in description;
+>  - Do not use names like phandels;
+>  Changes added by Vadim:
+>  - Combine hotplug nodes interrupt aggregation, register offset and mask
+>    properties into hotplug-spec properties;
+>  - Combine reset, cause, etc subnodes register offset, mask and effective
+>    bit properties into attr-spec properties;
+> v3->v4:
+>  Comments pointed out by Rob:
+>  - Make a separate patch /devicetree/bindings/vendor-prefixes.txt;
+>  - Add .txt to Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core
+>    and send it within this series;
+>  - Modify "compatible" property;
+>  - Modify explanation for "deferred" property;
+>  - Describe each subnode by its own section;
+>  - Don't use underscore in attribute names;
+> ---
+>  .../bindings/mfd/mellanox,mlxreg-core.txt          | 165 +++++++++++++++++++++
+>  1 file changed, 165 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core.txt
 
-After a closer look, it seems as though some of it could be converted
-into an MFD driver, but my prediction is that it's going to require
-almost a complete re-write and we're going to need to re-work it over
-several submissions.
+Wow!  I have never seen a binding like this before.
 
-The first thing you need to do is convert all of the hand rolled
-platform device registration over to the MFD API.
+> diff --git a/Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core.txt b/Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core.txt
+> new file mode 100644
+> index 0000000..1e3cce5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core.txt
+> @@ -0,0 +1,165 @@
+> +Mellanox programmable device control.
+> +-------------------------------------
+> +This binding defines the device control interface over for Mellanox BMC based
+> +switches.
+> +
+> +Required properties:
+> +- compatible =  "mellanox,mlxreg-i2c" or
+> +		"mellanox,mlxreg-i2c-16"
+> +
+> +- #address-cells : must be 1;
+> +- #size-cells : must be 0;
+> +- reg : I2C address;
+> +
+> +Optional properties:
+> +- interrupt-parent : phandle of parent interrupt controller;
+> +- interrupts : interrupt line;
+> +- deferred : I2C deferred bus phandle;
+> +	     I2C bus activation order enforce for the cases when hot-plug
+> +	     devices are attached to I2C bus, which is initialized after the
+> +	     I2C bus, where programmable device is attached;
 
-The rest of the code is a mess.  It's over-complicated and mostly
-unreadable.  What is it that you're trying to achieve?  What does the
-device do and how does it function?  Do you have a datasheet that
-you're working from?
+Dependencies aren't usually expressed in DT.
+
+Why can't this be done pragmatically?
+
+Usually we try to interrogate a device that we depend on and if it's
+not present, we return -EPROBE_DEFER and try again latter.
+
+> +- hotplug-spec <aggr mask>:
+> +	- aggr : interrupt top aggregation register offset;
+> +	- mask : interrupt top aggregation register mask;
+
+What is this?  Are you describing register layout in DT?
+
+You should use the 'reg' property to describe registers.
+
+Bit masks are usually defined in C.
+
+> +Optional nodes and their properties:
+> + - psu : power supply unit nodes:
+> +	Required properties:
+> +	- hotplug-spec <aggr reg mask>:
+> +		- aggr : effective bit in aggregation interrupt mask;
+> +		- reg : interrupt status register offset for all group members;
+> +		- mask : interrupt register mask;
+> +	- hotplugs - list of relevant dynamic device nodes;
+
+What is a dynamic device node?
+
+I think I saw the code for this?  Are you attempting to 'enable' and
+'disable' nodes on-the-fly?  That's not really what the status
+property is for.  Usually we disable nodes in DTS(I) files which cover
+many devices, then enable them in more specific device files if they
+are located on that device.
+
+They are not to be used as a flag you just toggle on and off.  That's
+a hack.
+
+> + - fan : fan unit nodes:
+> +	Required properties:
+> +	- hotplug-spec <aggr reg mask>:
+> +		- aggr : effective bit in aggregation interrupt mask;
+> +		- reg : interrupt status register offset for all group members;
+> +		- mask : interrupt register mask;
+> +	- hotplugs - list of relevant dynamic device nodes;
+> + - pwr : power cable nodes:
+> +	Required properties:
+> +	- hotplug-spec <aggr reg mask>:
+> +		- aggr : effective bit in aggregation interrupt mask;
+> +		- reg : interrupt status register offset for all group members;
+> +		- mask : interrupt register mask;
+> +	- hotplugs : list of relevant dynamic device nodes;
+> + - host : host side nodes (CPU host side for BMC):
+> +	Required properties:
+> +	- hotplug-spec <aggr reg mask>:
+> +		- aggr : effective bit in aggregation interrupt mask;
+> +		- reg : interrupt status register offset for all group members;
+> +		- mask : interrupt register mask;
+> +	- hotplugs : list of relevant dynamic device nodes;
+> + - asic : asic nodes:
+> +	Required properties:
+> +	- hotplug-spec <aggr reg mask>:
+> +		- aggr : effective bit in aggregation interrupt mask;
+> +		- reg : interrupt status register offsets array per group member;
+> +		- mask : interrupt register mask;
+> +	- hotplugs : list of relevant device nodes;
+> + - reset : reset nodes for system reset operations:
+> +	Required properties:
+> +	- reset control subnodes:
+> +		Required properties:
+> +		- attr-spec <reg mask>:
+
+This property is not defined, but again, 'reg' is the correct property
+to use.  Masks are usually defined in C code.
+
+> +			- reg : register offset;
+> +			- mask : attribute mask;
+> + - cause - reset cause nodes for reading system reset cause:
+> +	Required properties:
+> +	- cause info subnodes:
+> +		Required properties:
+> +		- attr-spec <reg mask>:
+> +			- reg : register offset;
+> +			- mask : attribute mask;
+> + - mux - mux nodes:
+> +	Required properties:
+> +	- mux control subnodes for hardware select operations:
+> +		Required properties:
+> +		- attr-spec <reg mask bit>:
+> +			- reg : register offset;
+> +			- mask : attribute mask;
+> +			- bit : effective bit;
+> +		Optional property:
+> +		- hotplugs : dynamic device node selected by mux;
+> + - gprw - general purpose read-write register nodes:
+> +	Required properties:
+> +	- general purpose read-write register subnodes:
+> +		Required properties:
+> +		- attr-spec <reg mask>:
+> +			- reg : register offset;
+> +			- mask : attribute mask;
+> + - gpro - general purpose read only register nodes:
+> +	Required properties:
+> +	- general purpose read only register subnodes:
+> +		Required properties:
+> +		- attr-spec <reg mask>:
+> +			- reg : register offset.
+> +			- mask : attribute mask.
+> + - led - led nodes for led operations control:
+> +	Required properties:
+> +	- led control nodes:
+> +		Required properties:
+> +		- attr-spec <reg mask>:
+> +			- reg : register offset;
+> +			- mask : attribute mask;
+> +
+> +Example:
+> +	mlxcpld-mng-ctrl@71 {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		interrupt-parent = <&gpio>;
+> +		interrupts = <ASPEED_GPIO(S, 1) 2>;
+> +		compatible = "mellanox,mlxcpld-ctrl-i2c";
+> +		reg = <0x71>;
+> +		deferred = <&i2c6>;
+> +		hotplug-spec = <0x3a 0x4c>;
+> +
+> +		pwr: {
+> +			hotplug-spec = <0x08 0x64 0x03>;
+> +			hotplugs = <&psu1_ctrl &psu2_ctrl>;
+> +		};
+> +
+> +		mux {
+> +			spi_burn_bios_ci {
+> +				attr-spec = <0x32 0xfe 0x00>;
+> +				hotplugs = <&spi2>;
+> +			};
+> +		};
+> +
+> +		led {
+> +			status-green {
+> +				attr-spec = <0x20 0xf0>;
+> +			};
+> +			status-red {
+> +				attr-spec = <0x20 0xf0>;
+> +			};
+> +		};
+> +
+> +		reset {
+> +			sys_power_cycle {
+> +				attr-spec = <0x30 0xfb>;
+> +			};
+> +		};
+> +
+> +		cause {
+> +			ac_power_cycle {
+> +				attr-spec = <0x1d 0xfe>;
+> +			};
+> +			sys_pwr_cycle: {
+> +				attr-spec = <0x1e 0xfb>;
+> +			};
+> +		};
+> +
+> +		gpro {
+> +			cpld_mng_version {
+> +				attr-spec <0x00 0xff 0xff>;
+> +			};
+> +		};
+> +
+> +		gprw {
+> +			sw_reset_cause {
+> +				attr-spec = <0x37 0x0f 0x0f>;
+> +			};
+> +		};
+> +	};
 
 -- 
 Lee Jones
 Linaro STMicroelectronics Landing Team Lead
 Linaro.org │ Open source software for ARM SoCs
 Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
