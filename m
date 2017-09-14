@@ -1,82 +1,44 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 0/3] led: ledtrig-transient: add support for hrtimer
-Date: Wed, 13 Sep 2017 23:34:24 +0200
-Message-ID: <20170913213424.GA2493@amd>
-References: <20170913175400.42744-1-dtwlin@google.com>
- <20170913202032.GA30844@amd>
- <CAPzFB+U_d+Jz4MFPJgpF3gbPt7hE_DhSjcz0LTF8csMgjdA5dw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAPzFB+U_d+Jz4MFPJgpF3gbPt7hE_DhSjcz0LTF8csMgjdA5dw@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: David Lin <dtwlin@google.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, rpurdie@rpsys.net, Jacek Anaszewski <jacek.anaszewski@gmail.com>, hdegoede@redhat.com, Greg KH <gregkh@linuxfoundation.org>, robh@kernel.org, Rom Lemarchand <romlem@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+From: Vadim Pasternak <vadimp@mellanox.com>
+Subject: [patch v5 0/2] Introduce support for mlxreg mfd core driver
+Date: Thu, 14 Sep 2017 06:48:56 +0000
+Message-ID: <1505371738-128683-1-git-send-email-vadimp@mellanox.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:56222 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750760AbdINEwD (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 14 Sep 2017 00:52:03 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: lee.jones@linaro.org, robh+dt@kernel.org
+Cc: pavel@ucw.cz, devicetree@vger.kernel.org, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, jiri@resnulli.us, gregkh@linuxfoundation.org, andy.shevchenko@gmail.com, platform-driver-x86@vger.kernel.org, Vadim Pasternak <vadimp@mellanox.com>
 
+This patch adds support for the Mellanox BMC card equipped with the
+programmable devices controlling hardware.
+The support includes:
+- signal handling for chassis, ASIC, CPU events;
+- LED control;
+- exposing sysfs interface for reset control, reset monitoring and mux
+  selection for the access to remote devices at the host side.
+- device tree binding documentation;
 
---gBBFr7Ir9EOA20Yy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch depends on previously sent:
+[patch v3 1/3] platform/mellanox: Introduce Mellanox hardware
+ platform hotplug driver
+because it includes include/linux/platform_data/mlxreg.h from this patch.
 
-On Wed 2017-09-13 14:20:58, David Lin wrote:
-> On Wed, Sep 13, 2017 at 1:20 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> >
-> > Hi!
-> >
-> > > These patch series add the LED_BRIGHTNESS_FAST flag support for
-> > > ledtrig-transient to use hrtimer so that platforms with high-resoluti=
-on timer
-> > > support can have better accuracy in the trigger duration timing. The =
-need for
-> > > this support is driven by the fact that Android has removed the timed=
-_ouput [1]
-> > > and is now using led-trigger for handling vibrator control which requ=
-ires the
-> > > timer to be accurate up to a millisecond. However, this flag support =
-would also
-> > > allow hrtimer to co-exist with the ktimer without causing warning to =
-the
-> > > existing drivers [2].
-> >
-> > NAK.
-> >
-> > LEDs do not need extra overhead, and vibrator control should not go
-> > through LED subsystem.
-> >
-> > Input subsystem includes support for vibrations and force
-> > feedback. Please use that instead.
->=20
-> I thought we are already over this discussion. As of now, the support
-> of vibrator through ledtrig is documented
-> (Documentation/leds/ledtrig-transient.txt) and there are users using
-> it.
+Vadim Pasternak (2):
+  mfd: Add Mellanox regmap core driver
+  dt-bindings: mfd: Add Device Tree bindings for Mellanox programmable
+    devices
 
-I also thought we are over with that discussion.
+ .../bindings/mfd/mellanox,mlxreg-core.txt          | 165 ++++
+ MAINTAINERS                                        |   6 +
+ drivers/mfd/Kconfig                                |  14 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/mlxreg-core.c                          | 843 +++++++++++++++++++++
+ 5 files changed, 1029 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/mellanox,mlxreg-core.txt
+ create mode 100644 drivers/mfd/mlxreg-core.c
 
-Yes, I'm working on fixing the docs.
-
-What mainline users are doing that?
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---gBBFr7Ir9EOA20Yy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlm5pGAACgkQMOfwapXb+vLsQgCgm+d8OBMBssGf1X8bBhjcpHoA
-CxIAnRj3oY4psS4bQNOaZr2vzYPiQXkL
-=M/MU
------END PGP SIGNATURE-----
-
---gBBFr7Ir9EOA20Yy--
+-- 
+2.1.4
