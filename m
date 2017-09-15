@@ -1,7 +1,7 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH 1/2] ACPI: Document how to refer to LEDs from remote nodes
-Date: Fri, 15 Sep 2017 17:40:51 +0300
-Message-ID: <20170915144052.25903-2-sakari.ailus@linux.intel.com>
+Subject: [PATCH 2/2] as3645a: Switch to fwnode property API
+Date: Fri, 15 Sep 2017 17:40:52 +0300
+Message-ID: <20170915144052.25903-3-sakari.ailus@linux.intel.com>
 References: <20170915144052.25903-1-sakari.ailus@linux.intel.com>
 Return-path: <linux-acpi-owner@vger.kernel.org>
 In-Reply-To: <20170915144052.25903-1-sakari.ailus@linux.intel.com>
@@ -10,115 +10,227 @@ To: linux-leds@vger.kernel.org
 Cc: linux-acpi@vger.kernel.org, devicetree@vger.kernel.org, jacek.anaszewski@gmail.com, mika.westerberg@intel.com, rafael@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Document referring to LEDs from remote device nodes, such as from camera
-sensors.
+Switch the as3645a from OF to the fwnode property API. Also add ACPI
+support.
 
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
- Documentation/acpi/dsd/leds.txt | 94 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
- create mode 100644 Documentation/acpi/dsd/leds.txt
+ drivers/leds/leds-as3645a.c | 81 +++++++++++++++++++++++++--------------------
+ 1 file changed, 46 insertions(+), 35 deletions(-)
 
-diff --git a/Documentation/acpi/dsd/leds.txt b/Documentation/acpi/dsd/leds.txt
-new file mode 100644
-index 000000000000..894c82274f53
---- /dev/null
-+++ b/Documentation/acpi/dsd/leds.txt
-@@ -0,0 +1,94 @@
-+Describing and referring to LEDs in ACPI
-+
-+Individual LEDs are described by hierarchical data extension [6] nodes
-+under the device node, the LED driver chip. The "led" property in the
-+LED specific nodes tells the numerical ID of each individual LED. The
-+"led" property is used here in a similar fashion as the "reg" property
-+in DT. [3]
-+
-+Referring to LEDs in Device tree is documented in [4], in "flash-leds"
-+property documentation. In short, LEDs are directly referred to by
-+using phandles.
-+
-+While Device tree allows referring to any node in the tree[1], in ACPI
-+references are limited to device nodes only [2]. For this reason using
-+the same mechanism on ACPI is not possible.
-+
-+ACPI allows (as does DT) using integer arguments after the reference.
-+A combination of the LED driver device reference and an integer
-+argument, referring to the "led" property of the relevant LED, are
-+use to individual LEDs. The value of the LED property is a contract
-+between the firmware and software, it uniquely identifies the LED
-+driver outputs.
-+
-+An ASL example of a camera sensor device and a LED driver device for two
-+LEDs. Objects not relevant for LEDs or the references to them have been
-+omitted.
-+
-+	Device (LED)
-+	{
-+		Name (_DSD, Package () {
-+			ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-+			Package () {
-+				Package () { "led0", LED0 },
-+				Package () { "led1", LED1 },
-+			}
-+		})
-+		Name (LED0, Package () {
-+			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-+			Package () {
-+				Package () { "led", 0 },
-+				Package () { "flash-max-microamp", 1000000 },
-+				Package () { "flash-timeout-us", 200000 },
-+				Package () { "led-max-microamp", 100000 },
-+				Package () { "label", "led:salama" },
-+			}
-+		})
-+		Name (LED1, Package () {
-+			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-+			Package () {
-+				Package () { "led", 1 },
-+				Package () { "led-max-microamp", 10000 },
-+				Package () { "label", "led:huomiovalo" },
-+			}
-+		})
+diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+index 605e0c64e974..2e73c3f818f1 100644
+--- a/drivers/leds/leds-as3645a.c
++++ b/drivers/leds/leds-as3645a.c
+@@ -25,7 +25,7 @@
+ #include <linux/leds.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+-#include <linux/of.h>
++#include <linux/property.h>
+ #include <linux/slab.h>
+ 
+ #include <media/v4l2-flash-led-class.h>
+@@ -148,8 +148,8 @@ struct as3645a {
+ 	struct v4l2_flash *vf;
+ 	struct v4l2_flash *vfind;
+ 
+-	struct device_node *flash_node;
+-	struct device_node *indicator_node;
++	struct fwnode_handle *flash_node;
++	struct fwnode_handle *indicator_node;
+ 
+ 	struct as3645a_config cfg;
+ 
+@@ -492,30 +492,33 @@ static int as3645a_detect(struct as3645a *flash)
+ 
+ static int as3645a_parse_node(struct as3645a *flash,
+ 			      struct as3645a_names *names,
+-			      struct device_node *node)
++			      struct fwnode_handle *fwnode)
+ {
+ 	struct as3645a_config *cfg = &flash->cfg;
+-	struct device_node *child;
++	struct fwnode_handle *child;
+ 	const char *name;
++	const char *str;
+ 	int rval;
+ 
+-	for_each_child_of_node(node, child) {
++	fwnode_for_each_child_node(fwnode, child) {
+ 		u32 id = 0;
+ 
+-		of_property_read_u32(child, "reg", &id);
++		fwnode_property_read_u32(
++			child, is_of_node(child) ? "reg" : "led", &id);
+ 
+ 		switch (id) {
+ 		case AS_LED_FLASH:
+-			flash->flash_node = of_node_get(child);
++			flash->flash_node = child;
+ 			break;
+ 		case AS_LED_INDICATOR:
+-			flash->indicator_node = of_node_get(child);
++			flash->indicator_node = child;
+ 			break;
+ 		default:
+ 			dev_warn(&flash->client->dev,
+ 				 "unknown LED %u encountered, ignoring\n", id);
+ 			break;
+ 		}
++		fwnode_handle_get(child);
+ 	}
+ 
+ 	if (!flash->flash_node) {
+@@ -523,14 +526,18 @@ static int as3645a_parse_node(struct as3645a *flash,
+ 		return -ENODEV;
+ 	}
+ 
+-	rval = of_property_read_string(flash->flash_node, "label", &name);
+-	if (!rval)
++	rval = fwnode_property_read_string(flash->flash_node, "label", &name);
++	if (!rval) {
+ 		strlcpy(names->flash, name, sizeof(names->flash));
+-	else
++	} else if (is_of_node(fwnode)) {
+ 		snprintf(names->flash, sizeof(names->flash),
+-			 "%s:flash", node->name);
++			 "%s:flash", to_of_node(fwnode)->name);
++	} else {
++		dev_err(&flash->client->dev, "flash node has no label!\n");
++		return -EINVAL;
 +	}
-+
-+	Device (SEN)
-+	{
-+		Name (_DSD, Package () {
-+			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-+			Package () {
-+				Package () {
-+					"flash-leds",
-+					Package () { ^LED, 0, ^LED, 1 },
-+				}
-+			}
-+		})
+ 
+-	rval = of_property_read_u32(flash->flash_node, "flash-timeout-us",
++	rval = fwnode_property_read_u32(flash->flash_node, "flash-timeout-us",
+ 				    &cfg->flash_timeout_us);
+ 	if (rval < 0) {
+ 		dev_err(&flash->client->dev,
+@@ -538,7 +545,7 @@ static int as3645a_parse_node(struct as3645a *flash,
+ 		goto out_err;
+ 	}
+ 
+-	rval = of_property_read_u32(flash->flash_node, "flash-max-microamp",
++	rval = fwnode_property_read_u32(flash->flash_node, "flash-max-microamp",
+ 				    &cfg->flash_max_ua);
+ 	if (rval < 0) {
+ 		dev_err(&flash->client->dev,
+@@ -546,7 +553,7 @@ static int as3645a_parse_node(struct as3645a *flash,
+ 		goto out_err;
+ 	}
+ 
+-	rval = of_property_read_u32(flash->flash_node, "led-max-microamp",
++	rval = fwnode_property_read_u32(flash->flash_node, "led-max-microamp",
+ 				    &cfg->assist_max_ua);
+ 	if (rval < 0) {
+ 		dev_err(&flash->client->dev,
+@@ -554,10 +561,10 @@ static int as3645a_parse_node(struct as3645a *flash,
+ 		goto out_err;
+ 	}
+ 
+-	of_property_read_u32(flash->flash_node, "voltage-reference",
++	fwnode_property_read_u32(flash->flash_node, "voltage-reference",
+ 			     &cfg->voltage_reference);
+ 
+-	of_property_read_u32(flash->flash_node, "ams,input-max-microamp",
++	fwnode_property_read_u32(flash->flash_node, "ams,input-max-microamp",
+ 			     &cfg->peak);
+ 	cfg->peak = AS_PEAK_mA_TO_REG(cfg->peak);
+ 
+@@ -567,14 +574,18 @@ static int as3645a_parse_node(struct as3645a *flash,
+ 		goto out_err;
+ 	}
+ 
+-	rval = of_property_read_string(flash->indicator_node, "label", &name);
+-	if (!rval)
++	rval = fwnode_property_read_string(flash->indicator_node, "label", &name);
++	if (!rval) {
+ 		strlcpy(names->indicator, name, sizeof(names->indicator));
+-	else
++	} else if (is_of_node(fwnode)) {
+ 		snprintf(names->indicator, sizeof(names->indicator),
+-			 "%s:indicator", node->name);
++			 "%s:indicator", to_of_node(fwnode)->name);
++	} else {
++		dev_err(&flash->client->dev, "flash node has no label!\n");
++		return -EINVAL;
 +	}
-+
-+where
-+
-+	LED	LED driver device
-+	LED0	First LED
-+	LED1	Second LED
-+	SEN	Camera sensor device (or another device the LED is
-+		related to)
-+
-+[1] Device tree. <URL:http://www.devicetree.org>, referenced 2016-10-03.
-+
-+[2] Advanced Configuration and Power Interface Specification.
-+    <URL:http://www.uefi.org/sites/default/files/resources/ACPI_6_1.pdf>,
-+    referenced 2016-10-04.
-+
-+[3] Documentation/devicetree/bindings/leds/common.txt
-+
-+[4] Documentation/devicetree/bindings/media/video-interfaces.txt
-+
-+[5] Device Properties UUID For _DSD.
-+    <URL:http://www.uefi.org/sites/default/files/resources/_DSD-device-properties-UUID.pdf>,
-+    referenced 2016-10-04.
-+
-+[6] Hierarchical Data Extension UUID For _DSD.
-+    <URL:http://www.uefi.org/sites/default/files/resources/_DSD-hierarchical-data-extension-UUID-v1.pdf>,
-+    referenced 2016-10-04.
+ 
+-	rval = of_property_read_u32(flash->indicator_node, "led-max-microamp",
++	rval = fwnode_property_read_u32(flash->indicator_node, "led-max-microamp",
+ 				    &cfg->indicator_max_ua);
+ 	if (rval < 0) {
+ 		dev_err(&flash->client->dev,
+@@ -585,8 +596,8 @@ static int as3645a_parse_node(struct as3645a *flash,
+ 	return 0;
+ 
+ out_err:
+-	of_node_put(flash->flash_node);
+-	of_node_put(flash->indicator_node);
++	fwnode_handle_put(flash->flash_node);
++	fwnode_handle_put(flash->indicator_node);
+ 
+ 	return rval;
+ }
+@@ -667,14 +678,14 @@ static int as3645a_v4l2_setup(struct as3645a *flash)
+ 	strlcpy(cfgind.dev_name, flash->iled_cdev.name, sizeof(cfg.dev_name));
+ 
+ 	flash->vf = v4l2_flash_init(
+-		&flash->client->dev, of_fwnode_handle(flash->flash_node),
+-		&flash->fled, NULL, &cfg);
++		&flash->client->dev, flash->flash_node, &flash->fled, NULL,
++		&cfg);
+ 	if (IS_ERR(flash->vf))
+ 		return PTR_ERR(flash->vf);
+ 
+ 	flash->vfind = v4l2_flash_indicator_init(
+-		&flash->client->dev, of_fwnode_handle(flash->indicator_node),
+-		&flash->iled_cdev, &cfgind);
++		&flash->client->dev, flash->indicator_node, &flash->iled_cdev,
++		&cfgind);
+ 	if (IS_ERR(flash->vfind)) {
+ 		v4l2_flash_release(flash->vf);
+ 		return PTR_ERR(flash->vfind);
+@@ -689,7 +700,7 @@ static int as3645a_probe(struct i2c_client *client)
+ 	struct as3645a *flash;
+ 	int rval;
+ 
+-	if (client->dev.of_node == NULL)
++	if (!dev_fwnode(&client->dev))
+ 		return -ENODEV;
+ 
+ 	flash = devm_kzalloc(&client->dev, sizeof(*flash), GFP_KERNEL);
+@@ -698,7 +709,7 @@ static int as3645a_probe(struct i2c_client *client)
+ 
+ 	flash->client = client;
+ 
+-	rval = as3645a_parse_node(flash, &names, client->dev.of_node);
++	rval = as3645a_parse_node(flash, &names, dev_fwnode(&client->dev));
+ 	if (rval < 0)
+ 		return rval;
+ 
+@@ -730,8 +741,8 @@ static int as3645a_probe(struct i2c_client *client)
+ 	mutex_destroy(&flash->mutex);
+ 
+ out_put_nodes:
+-	of_node_put(flash->flash_node);
+-	of_node_put(flash->indicator_node);
++	fwnode_handle_put(flash->flash_node);
++	fwnode_handle_put(flash->indicator_node);
+ 
+ 	return rval;
+ }
+@@ -749,8 +760,8 @@ static int as3645a_remove(struct i2c_client *client)
+ 
+ 	mutex_destroy(&flash->mutex);
+ 
+-	of_node_put(flash->flash_node);
+-	of_node_put(flash->indicator_node);
++	fwnode_handle_put(flash->flash_node);
++	fwnode_handle_put(flash->indicator_node);
+ 
+ 	return 0;
+ }
 -- 
 2.11.0
 
