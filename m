@@ -1,236 +1,82 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH 2/2] as3645a: Switch to fwnode property API
-Date: Fri, 15 Sep 2017 17:40:52 +0300
-Message-ID: <20170915144052.25903-3-sakari.ailus@linux.intel.com>
-References: <20170915144052.25903-1-sakari.ailus@linux.intel.com>
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170915144052.25903-1-sakari.ailus@linux.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: linux-acpi@vger.kernel.org, devicetree@vger.kernel.org, jacek.anaszewski@gmail.com, mika.westerberg@intel.com, rafael@kernel.org
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: Vibrations in input vs. LED was Re: [PATCH v2 0/3] led:
+ ledtrig-transient: add support for hrtimer
+Date: Fri, 15 Sep 2017 11:34:16 -0700
+Message-ID: <CAKdAkRTJTYsJuAsjOt2Bgutsg6zwhU0LHmNOH9UXsHB3PkLCbw@mail.gmail.com>
+References: <20170913175400.42744-1-dtwlin@google.com> <20170913202032.GA30844@amd>
+ <9c75c3a9-4123-c7f3-7725-45ba752d672a@gmail.com> <20170914205804.GA24339@amd>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170914205804.GA24339@amd>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, David Lin <dtwlin@google.com>, Jonathan Corbet <corbet@lwn.net>, Richard Purdie <rpurdie@rpsys.net>, Hans de Goede <hdegoede@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Rom Lemarchand <romlem@google.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Switch the as3645a from OF to the fwnode property API. Also add ACPI
-support.
+On Thu, Sep 14, 2017 at 1:58 PM, Pavel Machek <pavel@ucw.cz> wrote:
+> On Thu 2017-09-14 21:31:31, Jacek Anaszewski wrote:
+>> Hi David and Pavel,
+>>
+>> On 09/13/2017 10:20 PM, Pavel Machek wrote:
+>> > Hi!
+>> >
+>> >> These patch series add the LED_BRIGHTNESS_FAST flag support for
+>> >> ledtrig-transient to use hrtimer so that platforms with high-resolution timer
+>> >> support can have better accuracy in the trigger duration timing. The need for
+>> >> this support is driven by the fact that Android has removed the timed_ouput [1]
+>> >> and is now using led-trigger for handling vibrator control which requires the
+>> >> timer to be accurate up to a millisecond. However, this flag support would also
+>> >> allow hrtimer to co-exist with the ktimer without causing warning to the
+>> >> existing drivers [2].
+>> >
+>> > NAK.
+>> >
+>> > LEDs do not need extra overhead, and vibrator control should not go
+>> > through LED subsystem.
+>> >
+>> > Input subsystem includes support for vibrations and force
+>> > feedback. Please use that instead.
+>>
+>> I think that most vital criterion here is the usability of the
+>> interface. If it can be harnessed for doing the work seemingly
+>> unrelated to the primary subsystem's purpose, that's fine.
+>> Moreover, it is extremely easy to use in comparison to the force
+>> feedback one.
+>
+> Well, no.
+>
+> Kernel is supposed to provide hardware abstraction, that means it
+> should hide differences between different devices.
+>
+> And we already have devices using input as designed. We don't want to
+> have situation where "on phones A, D and E, vibrations are handled via
+> input, while on B, C and F, they are handled via /sys/class/leds".
+>
+> If we want to have discussion "how to make vibrations in input
+> easier to use", well that's fair. But I don't think it is particulary hard.
+>
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/leds/leds-as3645a.c | 81 +++++++++++++++++++++++++--------------------
- 1 file changed, 46 insertions(+), 35 deletions(-)
+I would like to know more about why you find the FF interface hard,
+given that for rumble you need calls - one ioctl to set up rumble
+parameters, and a write to start the playback. The FF core should take
+care of handling duration of the effect, ramping it up and decaying,
+if desired, and we make sure to automatically stop effects when
+userspace closes the fd (because of ordinary exit or crash or FD being
+revoked).
 
-diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-index 605e0c64e974..2e73c3f818f1 100644
---- a/drivers/leds/leds-as3645a.c
-+++ b/drivers/leds/leds-as3645a.c
-@@ -25,7 +25,7 @@
- #include <linux/leds.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
--#include <linux/of.h>
-+#include <linux/property.h>
- #include <linux/slab.h>
- 
- #include <media/v4l2-flash-led-class.h>
-@@ -148,8 +148,8 @@ struct as3645a {
- 	struct v4l2_flash *vf;
- 	struct v4l2_flash *vfind;
- 
--	struct device_node *flash_node;
--	struct device_node *indicator_node;
-+	struct fwnode_handle *flash_node;
-+	struct fwnode_handle *indicator_node;
- 
- 	struct as3645a_config cfg;
- 
-@@ -492,30 +492,33 @@ static int as3645a_detect(struct as3645a *flash)
- 
- static int as3645a_parse_node(struct as3645a *flash,
- 			      struct as3645a_names *names,
--			      struct device_node *node)
-+			      struct fwnode_handle *fwnode)
- {
- 	struct as3645a_config *cfg = &flash->cfg;
--	struct device_node *child;
-+	struct fwnode_handle *child;
- 	const char *name;
-+	const char *str;
- 	int rval;
- 
--	for_each_child_of_node(node, child) {
-+	fwnode_for_each_child_node(fwnode, child) {
- 		u32 id = 0;
- 
--		of_property_read_u32(child, "reg", &id);
-+		fwnode_property_read_u32(
-+			child, is_of_node(child) ? "reg" : "led", &id);
- 
- 		switch (id) {
- 		case AS_LED_FLASH:
--			flash->flash_node = of_node_get(child);
-+			flash->flash_node = child;
- 			break;
- 		case AS_LED_INDICATOR:
--			flash->indicator_node = of_node_get(child);
-+			flash->indicator_node = child;
- 			break;
- 		default:
- 			dev_warn(&flash->client->dev,
- 				 "unknown LED %u encountered, ignoring\n", id);
- 			break;
- 		}
-+		fwnode_handle_get(child);
- 	}
- 
- 	if (!flash->flash_node) {
-@@ -523,14 +526,18 @@ static int as3645a_parse_node(struct as3645a *flash,
- 		return -ENODEV;
- 	}
- 
--	rval = of_property_read_string(flash->flash_node, "label", &name);
--	if (!rval)
-+	rval = fwnode_property_read_string(flash->flash_node, "label", &name);
-+	if (!rval) {
- 		strlcpy(names->flash, name, sizeof(names->flash));
--	else
-+	} else if (is_of_node(fwnode)) {
- 		snprintf(names->flash, sizeof(names->flash),
--			 "%s:flash", node->name);
-+			 "%s:flash", to_of_node(fwnode)->name);
-+	} else {
-+		dev_err(&flash->client->dev, "flash node has no label!\n");
-+		return -EINVAL;
-+	}
- 
--	rval = of_property_read_u32(flash->flash_node, "flash-timeout-us",
-+	rval = fwnode_property_read_u32(flash->flash_node, "flash-timeout-us",
- 				    &cfg->flash_timeout_us);
- 	if (rval < 0) {
- 		dev_err(&flash->client->dev,
-@@ -538,7 +545,7 @@ static int as3645a_parse_node(struct as3645a *flash,
- 		goto out_err;
- 	}
- 
--	rval = of_property_read_u32(flash->flash_node, "flash-max-microamp",
-+	rval = fwnode_property_read_u32(flash->flash_node, "flash-max-microamp",
- 				    &cfg->flash_max_ua);
- 	if (rval < 0) {
- 		dev_err(&flash->client->dev,
-@@ -546,7 +553,7 @@ static int as3645a_parse_node(struct as3645a *flash,
- 		goto out_err;
- 	}
- 
--	rval = of_property_read_u32(flash->flash_node, "led-max-microamp",
-+	rval = fwnode_property_read_u32(flash->flash_node, "led-max-microamp",
- 				    &cfg->assist_max_ua);
- 	if (rval < 0) {
- 		dev_err(&flash->client->dev,
-@@ -554,10 +561,10 @@ static int as3645a_parse_node(struct as3645a *flash,
- 		goto out_err;
- 	}
- 
--	of_property_read_u32(flash->flash_node, "voltage-reference",
-+	fwnode_property_read_u32(flash->flash_node, "voltage-reference",
- 			     &cfg->voltage_reference);
- 
--	of_property_read_u32(flash->flash_node, "ams,input-max-microamp",
-+	fwnode_property_read_u32(flash->flash_node, "ams,input-max-microamp",
- 			     &cfg->peak);
- 	cfg->peak = AS_PEAK_mA_TO_REG(cfg->peak);
- 
-@@ -567,14 +574,18 @@ static int as3645a_parse_node(struct as3645a *flash,
- 		goto out_err;
- 	}
- 
--	rval = of_property_read_string(flash->indicator_node, "label", &name);
--	if (!rval)
-+	rval = fwnode_property_read_string(flash->indicator_node, "label", &name);
-+	if (!rval) {
- 		strlcpy(names->indicator, name, sizeof(names->indicator));
--	else
-+	} else if (is_of_node(fwnode)) {
- 		snprintf(names->indicator, sizeof(names->indicator),
--			 "%s:indicator", node->name);
-+			 "%s:indicator", to_of_node(fwnode)->name);
-+	} else {
-+		dev_err(&flash->client->dev, "flash node has no label!\n");
-+		return -EINVAL;
-+	}
- 
--	rval = of_property_read_u32(flash->indicator_node, "led-max-microamp",
-+	rval = fwnode_property_read_u32(flash->indicator_node, "led-max-microamp",
- 				    &cfg->indicator_max_ua);
- 	if (rval < 0) {
- 		dev_err(&flash->client->dev,
-@@ -585,8 +596,8 @@ static int as3645a_parse_node(struct as3645a *flash,
- 	return 0;
- 
- out_err:
--	of_node_put(flash->flash_node);
--	of_node_put(flash->indicator_node);
-+	fwnode_handle_put(flash->flash_node);
-+	fwnode_handle_put(flash->indicator_node);
- 
- 	return rval;
- }
-@@ -667,14 +678,14 @@ static int as3645a_v4l2_setup(struct as3645a *flash)
- 	strlcpy(cfgind.dev_name, flash->iled_cdev.name, sizeof(cfg.dev_name));
- 
- 	flash->vf = v4l2_flash_init(
--		&flash->client->dev, of_fwnode_handle(flash->flash_node),
--		&flash->fled, NULL, &cfg);
-+		&flash->client->dev, flash->flash_node, &flash->fled, NULL,
-+		&cfg);
- 	if (IS_ERR(flash->vf))
- 		return PTR_ERR(flash->vf);
- 
- 	flash->vfind = v4l2_flash_indicator_init(
--		&flash->client->dev, of_fwnode_handle(flash->indicator_node),
--		&flash->iled_cdev, &cfgind);
-+		&flash->client->dev, flash->indicator_node, &flash->iled_cdev,
-+		&cfgind);
- 	if (IS_ERR(flash->vfind)) {
- 		v4l2_flash_release(flash->vf);
- 		return PTR_ERR(flash->vfind);
-@@ -689,7 +700,7 @@ static int as3645a_probe(struct i2c_client *client)
- 	struct as3645a *flash;
- 	int rval;
- 
--	if (client->dev.of_node == NULL)
-+	if (!dev_fwnode(&client->dev))
- 		return -ENODEV;
- 
- 	flash = devm_kzalloc(&client->dev, sizeof(*flash), GFP_KERNEL);
-@@ -698,7 +709,7 @@ static int as3645a_probe(struct i2c_client *client)
- 
- 	flash->client = client;
- 
--	rval = as3645a_parse_node(flash, &names, client->dev.of_node);
-+	rval = as3645a_parse_node(flash, &names, dev_fwnode(&client->dev));
- 	if (rval < 0)
- 		return rval;
- 
-@@ -730,8 +741,8 @@ static int as3645a_probe(struct i2c_client *client)
- 	mutex_destroy(&flash->mutex);
- 
- out_put_nodes:
--	of_node_put(flash->flash_node);
--	of_node_put(flash->indicator_node);
-+	fwnode_handle_put(flash->flash_node);
-+	fwnode_handle_put(flash->indicator_node);
- 
- 	return rval;
- }
-@@ -749,8 +760,8 @@ static int as3645a_remove(struct i2c_client *client)
- 
- 	mutex_destroy(&flash->mutex);
- 
--	of_node_put(flash->flash_node);
--	of_node_put(flash->indicator_node);
-+	fwnode_handle_put(flash->flash_node);
-+	fwnode_handle_put(flash->indicator_node);
- 
- 	return 0;
- }
+> If we want to say "lets move all vibrations from input to LED
+> subsystem"... I don't think that is good idea, but its a valid
+> discussion. Some good reasons would be needed.
+>
+> But having half devices use one interface and half use different one
+> is just bad...
+
+Completely agree here. I just merged PWM vibra driver from Sebastian
+Reichel, we already had regulator-haptic driver, do we need gpio-based
+one? Or make regulator-based one working with fixed regulators?
+
+Thanks.
+
 -- 
-2.11.0
-
+Dmitry
