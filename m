@@ -1,81 +1,60 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 1/1] leds: Add driver for PC Engines APU/APU2 LEDs
-Date: Sun, 17 Sep 2017 20:23:59 +0200
-Message-ID: <20170917182359.GB15328@amd>
-References: <20170917033529.GA12375@olympus.mizrahi.com.ve>
- <20170917092628.GA6107@amd>
- <ace2a1ab-2582-bf40-9de9-715785d73562@mizrahi.com.ve>
+Subject: Re: Vibrations in input vs. LED was Re: [PATCH v2 0/3] led:
+ ledtrig-transient: add support for hrtimer
+Date: Sun, 17 Sep 2017 23:15:36 +0200
+Message-ID: <20170917211536.GA28812@amd>
+References: <20170913175400.42744-1-dtwlin@google.com>
+ <20170913202032.GA30844@amd>
+ <9c75c3a9-4123-c7f3-7725-45ba752d672a@gmail.com>
+ <20170914205804.GA24339@amd>
+ <CAKdAkRTJTYsJuAsjOt2Bgutsg6zwhU0LHmNOH9UXsHB3PkLCbw@mail.gmail.com>
+ <7a611993-ebaa-08bb-b10c-ebe4fb9ca33a@gmail.com>
+ <CAKdAkRT4MBKq-g9BfMVRENcTeoYRL+nvWfEtf578ySXmxap-Cg@mail.gmail.com>
+ <0076adca-f843-f99f-09ce-b9839b3e7706@gmail.com>
+ <20170917182251.GA15328@amd>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vGgW1X5XWziG23Ko"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40284 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751672AbdIQSYB (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 17 Sep 2017 14:24:01 -0400
+        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <ace2a1ab-2582-bf40-9de9-715785d73562@mizrahi.com.ve>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <20170917182251.GA15328@amd>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, David Lin <dtwlin@google.com>, Jonathan Corbet <corbet@lwn.net>, Richard Purdie <rpurdie@rpsys.net>, Hans de Goede <hdegoede@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Rom Lemarchand <romlem@google.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Alan Mizrahi <alan@mizrahi.com.ve>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
 
 
---vGgW1X5XWziG23Ko
+--ZPt4rx8FFjLCG7dd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun 2017-09-17 21:17:04, Alan Mizrahi wrote:
-> On 2017-09-17 18:26, Pavel Machek wrote:
-> > On Sun 2017-09-17 12:35:29, Alan Mizrahi wrote:
-> >> ---
-> >=20
-> > Some kind of changeset comment would be nice here.
->=20
-> That's true, sorry about that.
->=20
-> > Did you solve the crashes? What was the problem?
->=20
-> The problem was gone after using led_classdev_unregister(), as suggested
-> by Jacek.  Thanks for the hint!
->=20
-> >> +static struct apu_led_profile apu1_led_profile[] =3D {
-> >> +	{ "apu:1", 1,       APU1_FCH_GPIO_BASE + 0 * APU1_IOSIZE },
-> >> +	{ "apu:2", LED_OFF, APU1_FCH_GPIO_BASE + 1 * APU1_IOSIZE },
-> >> +	{ "apu:3", LED_OFF, APU1_FCH_GPIO_BASE + 2 * APU1_IOSIZE },
-> >> +};
-> >> +
-> >> +static struct apu_led_profile apu2_led_profile[] =3D {
-> >> +	{ "apu2:1", 1,       APU2_FCH_GPIO_BASE + 68 * APU2_IOSIZE },
-> >> +	{ "apu2:2", LED_OFF, APU2_FCH_GPIO_BASE + 69 * APU2_IOSIZE },
-> >> +	{ "apu2:3", LED_OFF, APU2_FCH_GPIO_BASE + 70 * APU2_IOSIZE },
-> >> +};
-> >=20
-> > Do the leds have better names than 1/2/3? Are colors known?
->=20
-> There are some drivers out there and they all used these names. I think
-> using them would prevent confusions.  The enclosures for these devices
-> don't have any labels for the leds such as "on" or "error", it's very
-> generic.  They are all green.
+Hi!
 
-Ok then, perhaps led can be named apu:green:1 ...?
-									Pavel
+> > However only if following conditions are met:
+> > - force feedback driver supports gpio driven devices
+
+INPUT_PWM_VIBRA option was just merged into v4.14.
+
+ 									Pavel
+
+
+
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---vGgW1X5XWziG23Ko
+--ZPt4rx8FFjLCG7dd
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlm+vb8ACgkQMOfwapXb+vKd3ACfYXnd2vM+jchdJvrkausOJrd9
-3sQAn39uzUIxGIQXB6G9M0ivLydA7eMa
-=6LMj
+iEYEARECAAYFAlm+5fgACgkQMOfwapXb+vJU+gCeJh4QwWPCaH1UbrJfJBOV3jAV
+fPwAn3Qsx128vg1mgeHN6p4hNszGOxUw
+=hg0Q
 -----END PGP SIGNATURE-----
 
---vGgW1X5XWziG23Ko--
+--ZPt4rx8FFjLCG7dd--
