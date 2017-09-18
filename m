@@ -1,44 +1,39 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v2 0/6] AS3645A fixes
-Date: Mon, 18 Sep 2017 13:17:50 +0300
-Message-ID: <20170918101756.8562-1-sakari.ailus@linux.intel.com>
+Subject: [PATCH v2 6/6] as3645a: Unregister indicator LED on device unbind
+Date: Mon, 18 Sep 2017 13:17:56 +0300
+Message-ID: <20170918101756.8562-7-sakari.ailus@linux.intel.com>
+References: <20170918101756.8562-1-sakari.ailus@linux.intel.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:45384 "EHLO
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:45408 "EHLO
         hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751622AbdIRKR7 (ORCPT
+        by vger.kernel.org with ESMTP id S1753137AbdIRKSB (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 18 Sep 2017 06:17:59 -0400
+        Mon, 18 Sep 2017 06:18:01 -0400
+In-Reply-To: <20170918101756.8562-1-sakari.ailus@linux.intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
 Cc: linux-media@vger.kernel.rg, devicetree@vger.kernel.org, pavel@ucw.cz
 
-Hi folks,
+The indicator LED was registered in probe but was not removed in driver
+remove callback. Fix this.
 
-Here are a few fixes for the as3645a DTS as well as changes in bindings.
-The driver is not in a release yet. I'd like to get these in as through
-the media tree fixes branch.
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ drivers/leds/leds-as3645a.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-since v1:
-
-- Add LED colour to the name of the LED, this adds two patches to the set.
-
-- Add a patch to unregister the indicator LED in driver remove function.
-
-- No changes to v1 patches.
-
-Sakari Ailus (6):
-  as3645a: Use ams,input-max-microamp as documented in DT bindings
-  dt: bindings: as3645a: Use LED number to refer to LEDs
-  as3645a: Use integer numbers for parsing LEDs
-  dt: bindings: as3645a: Improve label documentation, DT example
-  as3645a: Add colour to LED name
-  as3645a: Unregister indicator LED on device unbind
-
- .../devicetree/bindings/leds/ams,as3645a.txt       | 40 ++++++++++++++--------
- arch/arm/boot/dts/omap3-n950-n9.dtsi               | 10 ++++--
- drivers/leds/leds-as3645a.c                        | 33 +++++++++++++++---
- 3 files changed, 61 insertions(+), 22 deletions(-)
-
+diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+index edeb0a499f6c..9494ba26c64b 100644
+--- a/drivers/leds/leds-as3645a.c
++++ b/drivers/leds/leds-as3645a.c
+@@ -743,6 +743,7 @@ static int as3645a_remove(struct i2c_client *client)
+ 	as3645a_set_control(flash, AS_MODE_EXT_TORCH, false);
+ 
+ 	v4l2_flash_release(flash->vf);
++	v4l2_flash_release(flash->vfind);
+ 
+ 	led_classdev_flash_unregister(&flash->fled);
+ 	led_classdev_unregister(&flash->iled_cdev);
 -- 
 2.11.0
