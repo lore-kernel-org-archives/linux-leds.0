@@ -1,110 +1,107 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [RESEND PATCH v2 4/6] dt: bindings: as3645a: Improve label
- documentation, DT example
-Date: Mon, 18 Sep 2017 22:54:07 +0200
-Message-ID: <20170918205407.GA1849@amd>
-References: <20170918102349.8935-1-sakari.ailus@linux.intel.com>
- <20170918102349.8935-5-sakari.ailus@linux.intel.com>
- <20170918105655.GA14591@amd>
- <20170918144923.dnhrxkirle3fvdfo@valkosipuli.retiisi.org.uk>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: Vibrations in input vs. LED was Re: [PATCH v2 0/3] led:
+ ledtrig-transient: add support for hrtimer
+Date: Mon, 18 Sep 2017 15:29:22 -0700
+Message-ID: <CAKdAkRRsn+bV34yq9=Qqnp3D+DjWtGfrLAmF6pJCgvbyBqz2Cw@mail.gmail.com>
+References: <20170913175400.42744-1-dtwlin@google.com> <20170913202032.GA30844@amd>
+ <9c75c3a9-4123-c7f3-7725-45ba752d672a@gmail.com> <20170914205804.GA24339@amd>
+ <CAKdAkRTJTYsJuAsjOt2Bgutsg6zwhU0LHmNOH9UXsHB3PkLCbw@mail.gmail.com>
+ <7a611993-ebaa-08bb-b10c-ebe4fb9ca33a@gmail.com> <CAKdAkRT4MBKq-g9BfMVRENcTeoYRL+nvWfEtf578ySXmxap-Cg@mail.gmail.com>
+ <0076adca-f843-f99f-09ce-b9839b3e7706@gmail.com> <20170917182251.GA15328@amd> <9d5d045e-5019-e132-9449-7fb40b1b7895@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53792 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750714AbdIRUyJ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 18 Sep 2017 16:54:09 -0400
-Content-Disposition: inline
-In-Reply-To: <20170918144923.dnhrxkirle3fvdfo@valkosipuli.retiisi.org.uk>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <9d5d045e-5019-e132-9449-7fb40b1b7895@gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, David Lin <dtwlin@google.com>, Jonathan Corbet <corbet@lwn.net>, Richard Purdie <rpurdie@rpsys.net>, Hans de Goede <hdegoede@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Rom Lemarchand <romlem@google.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, jacek.anaszewski@gmail.com
 
+On Mon, Sep 18, 2017 at 1:50 PM, Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+> Hi,
+>
+> On 09/17/2017 08:22 PM, Pavel Machek wrote:
+>> Hi!
+>>
+>>>> If your objection is that FF is not easily engaged from the shell -
+>>>> yes, but I do not think that actual users who want to do vibration do
+>>>> that via shell either. On the other hand, can you drop privileges and
+>>>> still allow a certain process control your vibrator via LED interface?
+>>>> With FF you can pass an FD to whoever you deem worthy and later revoke
+>>>> access.
+>>>>
+>>>> IOW sysfs interfaces are nice for quick hacks, but when you want to
+>>>> use them in real frameworks, where you need to think about proper
+>>>> namespaces, isolation, etc, etc, other kinds of interfaces might suit
+>>>> better.
+>>>
+>>> I'd leave the decision to the user. We could add a note to the
+>>> Documentation/leds/ledtrig-transient.txt that force feedback interface
+>>> should be preferable choice for driving vibrate devices.
+>>
+>> We don't want to leave decision to the user; because then we'll end up
+>> with userland applications having to support _both_ interfaces.
+>
+> This state has lasted for five years now. I don't recall any
+> complaints. Do you?
 
---oyUTqETQ0mS9luUI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I was telling Shuah 5 years ago that using LED for what she wanted was
+not the right idea. I even made a patch for her implementing the
+functionality they were after: https://lkml.org/lkml/2012/4/10/41
 
-On Mon 2017-09-18 17:49:23, Sakari Ailus wrote:
-> Hi Pavel,
->=20
-> On Mon, Sep 18, 2017 at 12:56:55PM +0200, Pavel Machek wrote:
-> > Hi!
-> >=20
-> > > Specify the exact label used if the label property is omitted in DT, =
-as
-> > > well as use label in the example that conforms to LED device naming.
-> > >=20
-> > > @@ -69,11 +73,11 @@ Example
-> > >  			flash-max-microamp =3D <320000>;
-> > >  			led-max-microamp =3D <60000>;
-> > >  			ams,input-max-microamp =3D <1750000>;
-> > > -			label =3D "as3645a:flash";
-> > > +			label =3D "as3645a:white:flash";
-> > >  		};
-> > >  		indicator@1 {
-> > >  			reg =3D <0x1>;
-> > >  			led-max-microamp =3D <10000>;
-> > > -			label =3D "as3645a:indicator";
-> > > +			label =3D "as3645a:red:indicator";
-> > >  		};
-> > >  	};
-> >=20
-> > Ok, but userspace still has no chance to determine if this is flash
-> > from main camera or flash for front camera; todays smartphones have
-> > flashes on both cameras.
-> >=20
-> > So.. Can I suggset as3645a:white:main_camera_flash or main_flash or
-> > ....?
->=20
-> If there's just a single one in the device, could you use that?
->=20
-> Even if we name this so for N9 (and N900), the application still would on=
-ly
-> work with the two devices.
+Unfortunately this still somehow made it into the kernel. I guess the
+angle of having LEDs auto-shutoff makes sense still; using it for
+haptics does not.
 
-Well, I'd plan to name it on other devices, too.
+>
+>> Plus, it is not really your decision. Dmitry is maintainer of input
+>> subsystem, input was doing force feedback for 10+ years, and he
+>> already made a decision.
+>
+> It seems that you applied a fait accompli method here.
+>
+> Actually could you share what the decision is? AFAIK we're not
+> discussing here any patch for the input subsystem?
 
-> My suggestion would be to look for a flash LED, and perhaps the maximum
-> current as well. That should generally work better than assumptions on the
-> label.
+No, we are discussing if it makes sense encouraging 2nd interface for
+haptic. We are also discussing whether it makes sense to implement new
+features in LED subsystem that seem to be only beneficial for this
+interface (I assume the "normal" LEDs do not need that kind of
+precision?).
 
-If you just look for flash LED, you don't know if it is front one or
-back one. Its true that if you have just one flash it is usually on
-the back camera, but you can't know if maybe driver is not available
-for the main flash.
+>
+>>> However only if following conditions are met:
+>>> - force feedback driver supports gpio driven devices
+>>> - there is sample application in tools/input showing how to
+>>>   setup gpio driven vibrate device with use of ff interface
+>>> - it will be possible to setup vibrate interval with 1ms accuracy,
+>>>   similarly to what the discussed patch allows to do
+>>
+>> I agree these would be nice. Interested parties are welcome to help
+>> there. But I don't think this should have any impact on LED
+>> susbystem. Force feedback just does not belong to LED subsystem.
+>
+> You cut off important piece of my text from the beginning of this
+> paragraph. It was:
+>
+>> I'd leave the decision to the user. We could add a note to the
+>> Documentation/leds/ledtrig-transient.txt that force feedback interface
+>> should be preferable choice for driving vibrate devices.
+>> However only if following conditions are met:
+>
+> What I meant is that it is my decision, as a LED subsystem maintainer,
+> to accept the addition of a note about some other subsystem offering
+> an equivalent or even better substitute of the feature being available
+> in the subsystem I am responsible for. And I will accept such a patch
+> only if mentioned conditions are met.
 
-Lets get this right, please "main_camera_flash" is 12 bytes more than
-"flash", and it saves application logic.. more than 12 bytes, I'm sure.=20
+Having the wording in documentation does not in any way stops Android
+folks from continuing [ab]using the transient trigger. But this is
+their choice. The purpose of documentation is to document the best
+practices, not all possible crazy solutions one can come up with.
 
-> For association with a particular camera --- in the long run I'd propose =
-to
-> use Media controller / property API for that in the long run. We don't ha=
-ve
-> that yet though.
+Thanks.
 
-We don't have that yet. Plus simple applications may not want to talk
-v4l2 ioctls....
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---oyUTqETQ0mS9luUI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlnAMm8ACgkQMOfwapXb+vKPigCaAx2L6G1ehx1bKrHjBe6YxTfb
-KrUAoIx20jUf7Eo83qf+6CdWJ6Ea49gq
-=z1/K
------END PGP SIGNATURE-----
-
---oyUTqETQ0mS9luUI--
+-- 
+Dmitry
