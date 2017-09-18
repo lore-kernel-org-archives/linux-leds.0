@@ -1,39 +1,105 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v2 6/6] as3645a: Unregister indicator LED on device unbind
-Date: Mon, 18 Sep 2017 13:17:56 +0300
-Message-ID: <20170918101756.8562-7-sakari.ailus@linux.intel.com>
+Subject: [PATCH v2 2/6] dt: bindings: as3645a: Use LED number to refer to LEDs
+Date: Mon, 18 Sep 2017 13:17:52 +0300
+Message-ID: <20170918101756.8562-3-sakari.ailus@linux.intel.com>
 References: <20170918101756.8562-1-sakari.ailus@linux.intel.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:45408 "EHLO
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:45392 "EHLO
         hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753137AbdIRKSB (ORCPT
+        by vger.kernel.org with ESMTP id S1752157AbdIRKR7 (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 18 Sep 2017 06:18:01 -0400
+        Mon, 18 Sep 2017 06:17:59 -0400
 In-Reply-To: <20170918101756.8562-1-sakari.ailus@linux.intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org
 Cc: linux-media@vger.kernel.rg, devicetree@vger.kernel.org, pavel@ucw.cz
 
-The indicator LED was registered in probe but was not removed in driver
-remove callback. Fix this.
+Use integers (reg property) to tell the number of the LED to the driver
+instead of the node name. While both of these approaches are currently
+used by the LED bindings, using integers will require less driver changes
+for ACPI support. Additionally, it will make possible LED naming using
+chip and LED node names, effectively making the label property most useful
+for human-readable names only.
 
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/leds/leds-as3645a.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/leds/ams,as3645a.txt       | 28 ++++++++++++++--------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-index edeb0a499f6c..9494ba26c64b 100644
---- a/drivers/leds/leds-as3645a.c
-+++ b/drivers/leds/leds-as3645a.c
-@@ -743,6 +743,7 @@ static int as3645a_remove(struct i2c_client *client)
- 	as3645a_set_control(flash, AS_MODE_EXT_TORCH, false);
+diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+index 12c5ef26ec73..fdc40e354a64 100644
+--- a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
++++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+@@ -15,11 +15,14 @@ Required properties
  
- 	v4l2_flash_release(flash->vf);
-+	v4l2_flash_release(flash->vfind);
+ compatible	: Must be "ams,as3645a".
+ reg		: The I2C address of the device. Typically 0x30.
++#address-cells	: 1
++#size-cells	: 0
  
- 	led_classdev_flash_unregister(&flash->fled);
- 	led_classdev_unregister(&flash->iled_cdev);
+ 
+-Required properties of the "flash" child node
+-=============================================
++Required properties of the flash child node (0)
++===============================================
+ 
++reg: 0
+ flash-timeout-us: Flash timeout in microseconds. The value must be in
+ 		  the range [100000, 850000] and divisible by 50000.
+ flash-max-microamp: Maximum flash current in microamperes. Has to be
+@@ -33,20 +36,21 @@ ams,input-max-microamp: Maximum flash controller input current. The
+ 			and divisible by 50000.
+ 
+ 
+-Optional properties of the "flash" child node
+-=============================================
++Optional properties of the flash child node
++===========================================
+ 
+ label		: The label of the flash LED.
+ 
+ 
+-Required properties of the "indicator" child node
+-=================================================
++Required properties of the indicator child node (1)
++===================================================
+ 
++reg: 1
+ led-max-microamp: Maximum indicator current. The allowed values are
+ 		  2500, 5000, 7500 and 10000.
+ 
+-Optional properties of the "indicator" child node
+-=================================================
++Optional properties of the indicator child node
++===============================================
+ 
+ label		: The label of the indicator LED.
+ 
+@@ -55,16 +59,20 @@ Example
+ =======
+ 
+ 	as3645a@30 {
++		#address-cells: 1
++		#size-cells: 0
+ 		reg = <0x30>;
+ 		compatible = "ams,as3645a";
+-		flash {
++		flash@0 {
++			reg = <0x0>;
+ 			flash-timeout-us = <150000>;
+ 			flash-max-microamp = <320000>;
+ 			led-max-microamp = <60000>;
+ 			ams,input-max-microamp = <1750000>;
+ 			label = "as3645a:flash";
+ 		};
+-		indicator {
++		indicator@1 {
++			reg = <0x1>;
+ 			led-max-microamp = <10000>;
+ 			label = "as3645a:indicator";
+ 		};
 -- 
 2.11.0
