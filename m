@@ -1,62 +1,44 @@
-From: Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
-Subject: Re: as3645a flash userland interface
-Date: Mon, 18 Sep 2017 12:12:04 +0300
-Message-ID: <20170918091204.245dewmyruxtfhyb@valkosipuli.retiisi.org.uk>
-References: <20170912084236.1154-1-sakari.ailus@linux.intel.com>
- <20170912084236.1154-25-sakari.ailus@linux.intel.com>
- <20170912103628.GB27117@amd>
- <7b679cb3-ce58-e1d1-60bf-995896bf46eb@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <7b679cb3-ce58-e1d1-60bf-995896bf46eb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, niklas.soderlund-1zkq55x86MTxsAP9Fp7wbw@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: [PATCH v2 0/6] AS3645A fixes
+Date: Mon, 18 Sep 2017 13:17:50 +0300
+Message-ID: <20170918101756.8562-1-sakari.ailus@linux.intel.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:45384 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751622AbdIRKR7 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 18 Sep 2017 06:17:59 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: linux-media@vger.kernel.rg, devicetree@vger.kernel.org, pavel@ucw.cz
 
-Hi Jacek,
+Hi folks,
 
-On Tue, Sep 12, 2017 at 08:53:33PM +0200, Jacek Anaszewski wrote:
-> Hi Pavel,
-> 
-> On 09/12/2017 12:36 PM, Pavel Machek wrote:
-> > Hi!
-> > 
-> > There were some changes to as3645a flash controller. Before we have
-> > stable interface we have to keep forever I want to ask:
-> 
-> Note that we have already two LED flash class drivers - leds-max77693
-> and leds-aat1290. They have been present in mainline for over two years
-> now.
-> 
-> > What directory are the flash controls in?
-> > 
-> > /sys/class/leds/led-controller:flash ?
-> > 
-> > Could we arrange for something less generic, like
-> > 
-> > /sys/class/leds/main-camera:flash ?
-> 
-> I'd rather avoid overcomplicating this. LED class device name pattern
-> is well defined to devicename:colour:function
-> (see Documentation/leds/leds-class.txt, "LED Device Naming" section).
-> 
-> In this case "flash" in place of the "function" segment makes the
-> things clear enough I suppose.
+Here are a few fixes for the as3645a DTS as well as changes in bindings.
+The driver is not in a release yet. I'd like to get these in as through
+the media tree fixes branch.
 
-Oh. I have to admit I've completely missed this. :-o
+since v1:
 
-I'll address this in v2 of the as3645a fixes, plus submit related V4L2
-flash class documentation fixes a little later.
+- Add LED colour to the name of the LED, this adds two patches to the set.
+
+- Add a patch to unregister the indicator LED in driver remove function.
+
+- No changes to v1 patches.
+
+Sakari Ailus (6):
+  as3645a: Use ams,input-max-microamp as documented in DT bindings
+  dt: bindings: as3645a: Use LED number to refer to LEDs
+  as3645a: Use integer numbers for parsing LEDs
+  dt: bindings: as3645a: Improve label documentation, DT example
+  as3645a: Add colour to LED name
+  as3645a: Unregister indicator LED on device unbind
+
+ .../devicetree/bindings/leds/ams,as3645a.txt       | 40 ++++++++++++++--------
+ arch/arm/boot/dts/omap3-n950-n9.dtsi               | 10 ++++--
+ drivers/leds/leds-as3645a.c                        | 33 +++++++++++++++---
+ 3 files changed, 61 insertions(+), 22 deletions(-)
 
 -- 
-Regards,
-
-Sakari Ailus
-e-mail: sakari.ailus-X3B1VOXEql0@public.gmane.org
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.11.0
