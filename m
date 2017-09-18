@@ -1,7 +1,7 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [RESEND PATCH v2 3/6] as3645a: Use integer numbers for parsing LEDs
-Date: Mon, 18 Sep 2017 13:23:46 +0300
-Message-ID: <20170918102349.8935-4-sakari.ailus@linux.intel.com>
+Subject: [RESEND PATCH v2 2/6] dt: bindings: as3645a: Use LED number to refer to LEDs
+Date: Mon, 18 Sep 2017 13:23:45 +0300
+Message-ID: <20170918102349.8935-3-sakari.ailus@linux.intel.com>
 References: <20170918102349.8935-1-sakari.ailus@linux.intel.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <20170918102349.8935-1-sakari.ailus@linux.intel.com>
@@ -10,26 +10,75 @@ To: linux-leds@vger.kernel.org
 Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, pavel@ucw.cz
 List-Id: linux-leds@vger.kernel.org
 
-Use integer numbers for LEDs, 0 is the flash and 1 is the indicator.
+Use integers (reg property) to tell the number of the LED to the driver
+instead of the node name. While both of these approaches are currently
+used by the LED bindings, using integers will require less driver changes
+for ACPI support. Additionally, it will make possible LED naming using
+chip and LED node names, effectively making the label property most useful
+for human-readable names only.
 
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
 Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm/boot/dts/omap3-n950-n9.dtsi |  8 ++++++--
- drivers/leds/leds-as3645a.c          | 26 ++++++++++++++++++++++++--
- 2 files changed, 30 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/leds/ams,as3645a.txt       | 28 ++++++++++++++--------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/omap3-n950-n9.dtsi b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-index b86fc83a5a65..1b0bd72945f2 100644
---- a/arch/arm/boot/dts/omap3-n950-n9.dtsi
-+++ b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-@@ -267,15 +267,19 @@
- 	clock-frequency = <400000>;
+diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+index 12c5ef26ec73..fdc40e354a64 100644
+--- a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
++++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+@@ -15,11 +15,14 @@ Required properties
+ 
+ compatible	: Must be "ams,as3645a".
+ reg		: The I2C address of the device. Typically 0x30.
++#address-cells	: 1
++#size-cells	: 0
+ 
+ 
+-Required properties of the "flash" child node
+-=============================================
++Required properties of the flash child node (0)
++===============================================
+ 
++reg: 0
+ flash-timeout-us: Flash timeout in microseconds. The value must be in
+ 		  the range [100000, 850000] and divisible by 50000.
+ flash-max-microamp: Maximum flash current in microamperes. Has to be
+@@ -33,20 +36,21 @@ ams,input-max-microamp: Maximum flash controller input current. The
+ 			and divisible by 50000.
+ 
+ 
+-Optional properties of the "flash" child node
+-=============================================
++Optional properties of the flash child node
++===========================================
+ 
+ label		: The label of the flash LED.
+ 
+ 
+-Required properties of the "indicator" child node
+-=================================================
++Required properties of the indicator child node (1)
++===================================================
+ 
++reg: 1
+ led-max-microamp: Maximum indicator current. The allowed values are
+ 		  2500, 5000, 7500 and 10000.
+ 
+-Optional properties of the "indicator" child node
+-=================================================
++Optional properties of the indicator child node
++===============================================
+ 
+ label		: The label of the indicator LED.
+ 
+@@ -55,16 +59,20 @@ Example
+ =======
  
  	as3645a@30 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++		#address-cells: 1
++		#size-cells: 0
  		reg = <0x30>;
  		compatible = "ams,as3645a";
 -		flash {
@@ -39,66 +88,13 @@ index b86fc83a5a65..1b0bd72945f2 100644
  			flash-max-microamp = <320000>;
  			led-max-microamp = <60000>;
  			ams,input-max-microamp = <1750000>;
+ 			label = "as3645a:flash";
  		};
 -		indicator {
 +		indicator@1 {
 +			reg = <0x1>;
  			led-max-microamp = <10000>;
+ 			label = "as3645a:indicator";
  		};
- 	};
-diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-index e3f89c6130d2..605e0c64e974 100644
---- a/drivers/leds/leds-as3645a.c
-+++ b/drivers/leds/leds-as3645a.c
-@@ -112,6 +112,10 @@
- #define AS_PEAK_mA_TO_REG(a) \
- 	((min_t(u32, AS_PEAK_mA_MAX, a) - 1250) / 250)
- 
-+/* LED numbers for Devicetree */
-+#define AS_LED_FLASH				0
-+#define AS_LED_INDICATOR			1
-+
- enum as_mode {
- 	AS_MODE_EXT_TORCH = 0 << AS_CONTROL_MODE_SETTING_SHIFT,
- 	AS_MODE_INDICATOR = 1 << AS_CONTROL_MODE_SETTING_SHIFT,
-@@ -491,10 +495,29 @@ static int as3645a_parse_node(struct as3645a *flash,
- 			      struct device_node *node)
- {
- 	struct as3645a_config *cfg = &flash->cfg;
-+	struct device_node *child;
- 	const char *name;
- 	int rval;
- 
--	flash->flash_node = of_get_child_by_name(node, "flash");
-+	for_each_child_of_node(node, child) {
-+		u32 id = 0;
-+
-+		of_property_read_u32(child, "reg", &id);
-+
-+		switch (id) {
-+		case AS_LED_FLASH:
-+			flash->flash_node = of_node_get(child);
-+			break;
-+		case AS_LED_INDICATOR:
-+			flash->indicator_node = of_node_get(child);
-+			break;
-+		default:
-+			dev_warn(&flash->client->dev,
-+				 "unknown LED %u encountered, ignoring\n", id);
-+			break;
-+		}
-+	}
-+
- 	if (!flash->flash_node) {
- 		dev_err(&flash->client->dev, "can't find flash node\n");
- 		return -ENODEV;
-@@ -538,7 +561,6 @@ static int as3645a_parse_node(struct as3645a *flash,
- 			     &cfg->peak);
- 	cfg->peak = AS_PEAK_mA_TO_REG(cfg->peak);
- 
--	flash->indicator_node = of_get_child_by_name(node, "indicator");
- 	if (!flash->indicator_node) {
- 		dev_warn(&flash->client->dev,
- 			 "can't find indicator node\n");
 -- 
 2.11.0
