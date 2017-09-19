@@ -1,85 +1,103 @@
-From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RESEND PATCH v2 4/6] dt: bindings: as3645a: Improve label
- documentation, DT example
-Date: Tue, 19 Sep 2017 23:01:02 +0200
-Message-ID: <809f7590-7641-e8bc-c009-4fed05d5827c@gmail.com>
-References: <20170918102349.8935-1-sakari.ailus@linux.intel.com>
- <20170918102349.8935-5-sakari.ailus@linux.intel.com>
- <20170918105655.GA14591@amd>
- <20170918144923.dnhrxkirle3fvdfo@valkosipuli.retiisi.org.uk>
- <20170918205407.GA1849@amd>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: Vibrations in input vs. LED was Re: [PATCH v2 0/3] led:
+ ledtrig-transient: add support for hrtimer
+Date: Tue, 19 Sep 2017 14:07:21 -0700
+Message-ID: <CAKdAkRSfV2nHUMGJfkzHQcRK4sXOgREb0QZe2WQ6Hce0N8iSgQ@mail.gmail.com>
+References: <20170913175400.42744-1-dtwlin@google.com> <20170913202032.GA30844@amd>
+ <9c75c3a9-4123-c7f3-7725-45ba752d672a@gmail.com> <20170914205804.GA24339@amd>
+ <CAKdAkRTJTYsJuAsjOt2Bgutsg6zwhU0LHmNOH9UXsHB3PkLCbw@mail.gmail.com>
+ <7a611993-ebaa-08bb-b10c-ebe4fb9ca33a@gmail.com> <CAKdAkRT4MBKq-g9BfMVRENcTeoYRL+nvWfEtf578ySXmxap-Cg@mail.gmail.com>
+ <0076adca-f843-f99f-09ce-b9839b3e7706@gmail.com> <20170917182251.GA15328@amd>
+ <9d5d045e-5019-e132-9449-7fb40b1b7895@gmail.com> <CAKdAkRRsn+bV34yq9=Qqnp3D+DjWtGfrLAmF6pJCgvbyBqz2Cw@mail.gmail.com>
+ <4226b524-35e1-16c0-f6ca-e339dd2eab1d@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170918205407.GA1849@amd>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>
-Cc: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <4226b524-35e1-16c0-f6ca-e339dd2eab1d@gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, David Lin <dtwlin@google.com>, Jonathan Corbet <corbet@lwn.net>, Richard Purdie <rpurdie@rpsys.net>, Hans de Goede <hdegoede@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Rom Lemarchand <romlem@google.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Pavel,
-
-On 09/18/2017 10:54 PM, Pavel Machek wrote:
-> On Mon 2017-09-18 17:49:23, Sakari Ailus wrote:
->> Hi Pavel,
->>
->> On Mon, Sep 18, 2017 at 12:56:55PM +0200, Pavel Machek wrote:
->>> Hi!
+On Tue, Sep 19, 2017 at 1:45 PM, Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+> On 09/19/2017 12:29 AM, Dmitry Torokhov wrote:
+>> On Mon, Sep 18, 2017 at 1:50 PM, Jacek Anaszewski
+>> <jacek.anaszewski@gmail.com> wrote:
+>>> Hi,
 >>>
->>>> Specify the exact label used if the label property is omitted in DT, as
->>>> well as use label in the example that conforms to LED device naming.
+>>> On 09/17/2017 08:22 PM, Pavel Machek wrote:
+>>>> Hi!
 >>>>
->>>> @@ -69,11 +73,11 @@ Example
->>>>  			flash-max-microamp = <320000>;
->>>>  			led-max-microamp = <60000>;
->>>>  			ams,input-max-microamp = <1750000>;
->>>> -			label = "as3645a:flash";
->>>> +			label = "as3645a:white:flash";
->>>>  		};
->>>>  		indicator@1 {
->>>>  			reg = <0x1>;
->>>>  			led-max-microamp = <10000>;
->>>> -			label = "as3645a:indicator";
->>>> +			label = "as3645a:red:indicator";
->>>>  		};
->>>>  	};
+>>>>>> If your objection is that FF is not easily engaged from the shell -
+>>>>>> yes, but I do not think that actual users who want to do vibration do
+>>>>>> that via shell either. On the other hand, can you drop privileges and
+>>>>>> still allow a certain process control your vibrator via LED interface?
+>>>>>> With FF you can pass an FD to whoever you deem worthy and later revoke
+>>>>>> access.
+>>>>>>
+>>>>>> IOW sysfs interfaces are nice for quick hacks, but when you want to
+>>>>>> use them in real frameworks, where you need to think about proper
+>>>>>> namespaces, isolation, etc, etc, other kinds of interfaces might suit
+>>>>>> better.
+>>>>>
+>>>>> I'd leave the decision to the user. We could add a note to the
+>>>>> Documentation/leds/ledtrig-transient.txt that force feedback interface
+>>>>> should be preferable choice for driving vibrate devices.
+>>>>
+>>>> We don't want to leave decision to the user; because then we'll end up
+>>>> with userland applications having to support _both_ interfaces.
 >>>
->>> Ok, but userspace still has no chance to determine if this is flash
->>> from main camera or flash for front camera; todays smartphones have
->>> flashes on both cameras.
+>>> This state has lasted for five years now. I don't recall any
+>>> complaints. Do you?
+>>
+>> I was telling Shuah 5 years ago that using LED for what she wanted was
+>> not the right idea. I even made a patch for her implementing the
+>> functionality they were after: https://lkml.org/lkml/2012/4/10/41
+>>
+>> Unfortunately this still somehow made it into the kernel. I guess the
+>> angle of having LEDs auto-shutoff makes sense still; using it for
+>> haptics does not.
+>
+> Thanks for the pointer.
+>
 >>>
->>> So.. Can I suggset as3645a:white:main_camera_flash or main_flash or
->>> ....?
+>>>> Plus, it is not really your decision. Dmitry is maintainer of input
+>>>> subsystem, input was doing force feedback for 10+ years, and he
+>>>> already made a decision.
+>>>
+>>> It seems that you applied a fait accompli method here.
+>>>
+>>> Actually could you share what the decision is? AFAIK we're not
+>>> discussing here any patch for the input subsystem?
 >>
->> If there's just a single one in the device, could you use that?
->>
->> Even if we name this so for N9 (and N900), the application still would only
->> work with the two devices.
-> 
-> Well, I'd plan to name it on other devices, too.
-> 
->> My suggestion would be to look for a flash LED, and perhaps the maximum
->> current as well. That should generally work better than assumptions on the
->> label.
-> 
-> If you just look for flash LED, you don't know if it is front one or
-> back one. Its true that if you have just one flash it is usually on
-> the back camera, but you can't know if maybe driver is not available
-> for the main flash.
-> 
-> Lets get this right, please "main_camera_flash" is 12 bytes more than
-> "flash", and it saves application logic.. more than 12 bytes, I'm sure. 
+>> No, we are discussing if it makes sense encouraging 2nd interface for
+>> haptic. We are also discussing whether it makes sense to implement new
+>> features in LED subsystem that seem to be only beneficial for this
+>> interface (I assume the "normal" LEDs do not need that kind of
+>> precision?).
+>
+> As you noticed in one of the previous messages, thanks to the leds-gpio
+> driver we can drive a wide range of devices from the level of
+> LED subsystem.
 
-What you are trying to introduce is yet another level of LED class
-device naming standard, one level below devicename:colour:function.
-It seems you want also to come up with the set of standarized LED
-function names. This would certainly have to be covered for consistency.
+Yes, you can create whatever. It goes normally as this: crap, we need
+to ship something really soon, factory build is a week from now and we
+have absolutely no time to think about proper interface. Hey, let's
+quickly bolt on some quirk on an unrelated interface, it almost does
+what we want. We do not care that out use case does not really fit
+here, our custom one-off userspace will know how to deal with it.
+
+> LED trigger mechanism makes it even more versatile,
+> and, in this area, even somehow akin to the GPIO subsystem. In the
+> future we could think of making this trigger mechanism accessible by
+> the two and thus any initiative aiming at enhancing it shouldn't be
+> discouraged.
+
+If there is a use case that would benefit from this functionality:
+certainly. Do you have one in mind?
+
+Thanks.
 
 -- 
-Best regards,
-Jacek Anaszewski
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Dmitry
