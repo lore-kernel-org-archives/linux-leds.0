@@ -1,58 +1,39 @@
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v3 1/4] as3645a: Use ams,input-max-microamp as documented in DT bindings
-Date: Fri, 22 Sep 2017 12:32:35 +0300
-Message-ID: <20170922093238.13070-2-sakari.ailus@linux.intel.com>
+Subject: [PATCH v3 4/4] as3645a: Unregister indicator LED on device unbind
+Date: Fri, 22 Sep 2017 12:32:38 +0300
+Message-ID: <20170922093238.13070-5-sakari.ailus@linux.intel.com>
 References: <20170922093238.13070-1-sakari.ailus@linux.intel.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:42318 "EHLO
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:42336 "EHLO
         hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751832AbdIVJck (ORCPT
+        by vger.kernel.org with ESMTP id S1751868AbdIVJcl (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 22 Sep 2017 05:32:40 -0400
+        Fri, 22 Sep 2017 05:32:41 -0400
 In-Reply-To: <20170922093238.13070-1-sakari.ailus@linux.intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com
 Cc: linux-media@vger.kernel.org, devicetree@kernel.org
 
-DT bindings document the property "ams,input-max-microamp" that limits the
-chip's maximum input current. The driver and the DTS however used
-"peak-current-limit" property. Fix this by using the property documented
-in DT binding documentation.
+The indicator LED was registered in probe but was not removed in driver
+remove callback. Fix this.
 
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 ---
- arch/arm/boot/dts/omap3-n950-n9.dtsi | 2 +-
- drivers/leds/leds-as3645a.c          | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/leds/leds-as3645a.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/omap3-n950-n9.dtsi b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-index cb47ae79a5f9..b86fc83a5a65 100644
---- a/arch/arm/boot/dts/omap3-n950-n9.dtsi
-+++ b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-@@ -273,7 +273,7 @@
- 			flash-timeout-us = <150000>;
- 			flash-max-microamp = <320000>;
- 			led-max-microamp = <60000>;
--			peak-current-limit = <1750000>;
-+			ams,input-max-microamp = <1750000>;
- 		};
- 		indicator {
- 			led-max-microamp = <10000>;
 diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-index bbbbe0898233..e3f89c6130d2 100644
+index 605e0c64e974..9a257f969300 100644
 --- a/drivers/leds/leds-as3645a.c
 +++ b/drivers/leds/leds-as3645a.c
-@@ -534,7 +534,7 @@ static int as3645a_parse_node(struct as3645a *flash,
- 	of_property_read_u32(flash->flash_node, "voltage-reference",
- 			     &cfg->voltage_reference);
+@@ -743,6 +743,7 @@ static int as3645a_remove(struct i2c_client *client)
+ 	as3645a_set_control(flash, AS_MODE_EXT_TORCH, false);
  
--	of_property_read_u32(flash->flash_node, "peak-current-limit",
-+	of_property_read_u32(flash->flash_node, "ams,input-max-microamp",
- 			     &cfg->peak);
- 	cfg->peak = AS_PEAK_mA_TO_REG(cfg->peak);
+ 	v4l2_flash_release(flash->vf);
++	v4l2_flash_release(flash->vfind);
  
+ 	led_classdev_flash_unregister(&flash->fled);
+ 	led_classdev_unregister(&flash->iled_cdev);
 -- 
 2.11.0
