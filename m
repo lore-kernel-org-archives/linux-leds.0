@@ -1,30 +1,385 @@
-From: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH v3 0/4] AS3645A fixes
-Date: Sun, 24 Sep 2017 16:56:55 +0300
-Message-ID: <95877949-8c9d-84b4-2f55-bf976c6b6c67@linux.intel.com>
-References: <20170922093238.13070-1-sakari.ailus@linux.intel.com>
- <650b7cb3-f7dd-5959-3147-df7284415521@gmail.com>
- <076725cc-ef46-898d-34e5-099ece5d50b4@linux.intel.com>
- <a15c166f-48ec-faf8-a500-940fd912813a@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v2 1/1] leds: Add driver for PC Engines APU/APU2 LEDs
+Date: Mon, 25 Sep 2017 21:18:18 +0200
+Message-ID: <43fb75c0-4d2e-5008-9cac-f6d7d8355330@gmail.com>
+References: <20170924003701.GA6966@olympus.mizrahi.com.ve>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a15c166f-48ec-faf8-a500-940fd912813a-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34131 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965723AbdIYTTO (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 25 Sep 2017 15:19:14 -0400
+Received: by mail-wm0-f66.google.com with SMTP id i131so7787675wma.1
+        for <linux-leds@vger.kernel.org>; Mon, 25 Sep 2017 12:19:14 -0700 (PDT)
+In-Reply-To: <20170924003701.GA6966@olympus.mizrahi.com.ve>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Alan Mizrahi <alan@mizrahi.com.ve>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org
 
-Jacek Anaszewski wrote:
-> Patch set applied to the fixes-4.14-rc3 branch of linux-leds.git.
+Hi Alan,
 
-Thanks, Jacek!
+Thanks for the update.
+
+There is still some room for improvement:
+
+- commit message is mandatory, now you have only a commit title.
+- checkpatch.pl still has much to say about this patch,
+  please stick to the 80 character line limit
+
+Please refer below for the rest of remarks.
+
+On 09/24/2017 02:37 AM, Alan Mizrahi wrote:
+> ---
+>  drivers/leds/Kconfig    |  11 ++
+>  drivers/leds/Makefile   |   1 +
+>  drivers/leds/leds-apu.c | 272 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 284 insertions(+)
+>  create mode 100644 drivers/leds/leds-apu.c
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 52ea34e..7922851 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -58,6 +58,17 @@ config LEDS_AAT1290
+>  	help
+>  	 This option enables support for the LEDs on the AAT1290.
+>  
+> +config LEDS_APU
+> +	tristate "Front panel LED support for PC Engines APU/APU2 boards"
+> +	depends on LEDS_CLASS
+> +	depends on X86 && DMI
+> +	help
+> +	  This driver makes the PC Engines APU/APU2 front panel LEDs
+> +	  accessible from userspace programs through the LED subsystem.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called leds-apu.
+> +
+>  config LEDS_AS3645A
+>  	tristate "AS3645A LED flash controller support"
+>  	depends on I2C && LEDS_CLASS_FLASH
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 7d7b265..69bc0bc 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -9,6 +9,7 @@ obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
+>  obj-$(CONFIG_LEDS_88PM860X)		+= leds-88pm860x.o
+>  obj-$(CONFIG_LEDS_AAT1290)		+= leds-aat1290.o
+>  obj-$(CONFIG_LEDS_AS3645A)		+= leds-as3645a.o
+> +obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
+>  obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
+>  obj-$(CONFIG_LEDS_BCM6358)		+= leds-bcm6358.o
+>  obj-$(CONFIG_LEDS_BD2802)		+= leds-bd2802.o
+> diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
+> new file mode 100644
+> index 0000000..22f7fac
+> --- /dev/null
+> +++ b/drivers/leds/leds-apu.c
+> @@ -0,0 +1,272 @@
+> +/*
+> + * drivers/leds/leds-apu.c
+> + * Copyright (C) 2017 Alan Mizrahi, alan at mizrahi dot com dot ve
+> + *
+> + * Redistribution and use in source and binary forms, with or without
+> + * modification, are permitted provided that the following conditions are met:
+> + *
+> + * 1. Redistributions of source code must retain the above copyright
+> + *    notice, this list of conditions and the following disclaimer.
+> + * 2. Redistributions in binary form must reproduce the above copyright
+> + *    notice, this list of conditions and the following disclaimer in the
+> + *    documentation and/or other materials provided with the distribution.
+> + * 3. Neither the names of the copyright holders nor the names of its
+> + *    contributors may be used to endorse or promote products derived from
+> + *    this software without specific prior written permission.
+> + *
+> + * Alternatively, this software may be distributed under the terms of the
+> + * GNU General Public License ("GPL") version 2 as published by the Free
+> + * Software Foundation.
+> + *
+> + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+> + * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+> + * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+> + * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+> + * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+> + * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+> + * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+> + * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+> + * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+> + * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+> + * POSSIBILITY OF SUCH DAMAGE.
+> + */
+> +
+> +#include <linux/dmi.h>
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define APU1_FCH_ACPI_MMIO_BASE 0xFED80000
+> +#define APU1_FCH_GPIO_BASE      (APU1_FCH_ACPI_MMIO_BASE + 0x01BD)
+> +#define APU1_LEDON              0x08
+> +#define APU1_LEDOFF             0xC8
+> +#define APU1_NUM_GPIO           3
+> +#define APU1_IOSIZE             sizeof(u8)
+> +
+> +#define APU2_FCH_ACPI_MMIO_BASE 0xFED80000
+> +#define APU2_FCH_GPIO_BASE      (APU2_FCH_ACPI_MMIO_BASE + 0x1500)
+> +#define APU2_GPIO_BIT_WRITE     22
+> +#define APU2_APU2_NUM_GPIO      4
+> +#define APU2_IOSIZE             sizeof(u32)
+> +
+> +/* LED access parameters */
+> +struct apu_param {
+> +	void __iomem *addr; /* for ioread/iowrite */
+> +};
+> +
+> +/* LED private data */
+> +struct apu_led_priv {
+> +	struct led_classdev cdev;
+> +	struct apu_param param;
+> +};
+> +#define cdev_to_priv(c) container_of(c, struct apu_led_priv, cdev)
+> +
+> +/* LED profile */
+> +struct apu_led_profile {
+> +	const char *name;
+> +	enum led_brightness brightness;
+> +	unsigned long offset; /* for devm_ioremap */
+> +};
+> +
+> +/* Supported platform types */
+> +enum apu_led_platform_types {
+> +	APU1_LED_PLATFORM,
+> +	APU2_LED_PLATFORM,
+> +};
+> +
+> +struct apu_led_pdata {
+> +	struct platform_device *pdev;
+> +	struct apu_led_priv *pled;
+> +	struct apu_led_profile *profile;
+> +	enum apu_led_platform_types platform;
+> +	int num_led_instances;
+> +	int iosize; /* for devm_ioremap() */
+> +	spinlock_t lock;
+> +};
+> +
+> +static struct apu_led_pdata *apu_led;
+> +
+> +static struct apu_led_profile apu1_led_profile[] = {
+> +	{ "apu:green:1", 1,       APU1_FCH_GPIO_BASE + 0 * APU1_IOSIZE },
+
+I missed this "1" brightness initializer. We now have LED_ON enum
+for that purpose.
+
+> +	{ "apu:green:2", LED_OFF, APU1_FCH_GPIO_BASE + 1 * APU1_IOSIZE },
+> +	{ "apu:green:3", LED_OFF, APU1_FCH_GPIO_BASE + 2 * APU1_IOSIZE },
+> +};
+> +
+> +static struct apu_led_profile apu2_led_profile[] = {
+> +	{ "apu2:green:1", 1,       APU2_FCH_GPIO_BASE + 68 * APU2_IOSIZE },
+
+Ditto.
+
+> +	{ "apu2:green:2", LED_OFF, APU2_FCH_GPIO_BASE + 69 * APU2_IOSIZE },
+> +	{ "apu2:green:3", LED_OFF, APU2_FCH_GPIO_BASE + 70 * APU2_IOSIZE },
+> +};
+> +
+> +static struct dmi_system_id apu_led_dmi_table[] __initdata = {
+> +	{
+> +		.ident = "apu",
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "APU")
+> +		}
+> +	},
+> +	{
+> +		.ident = "apu2",
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
+> +			DMI_MATCH(DMI_BOARD_NAME, "APU2")
+> +		}
+> +	},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(dmi, apu_led_dmi_table);
+
+This array seems to be redundant. Did you preserve it for a reason?
+
+> +static void apu1_led_brightness_set(struct led_classdev *led, enum led_brightness value)
+> +{
+> +	struct apu_led_priv *pled = cdev_to_priv(led);
+> +
+> +	spin_lock(&apu_led->lock);
+> +	iowrite8(value ? APU1_LEDON : APU1_LEDOFF, pled->param.addr);
+> +	spin_unlock(&apu_led->lock);
+> +}
+> +
+> +static void apu2_led_brightness_set(struct led_classdev *led, enum led_brightness value)
+> +{
+> +	struct apu_led_priv *pled = cdev_to_priv(led);
+> +	u32 value_new;
+> +
+> +	spin_lock(&apu_led->lock);
+> +
+> +	value_new = ioread32(pled->param.addr);
+> +
+> +	if (value)
+> +		value_new &= ~BIT(APU2_GPIO_BIT_WRITE);
+> +	else
+> +		value_new |= BIT(APU2_GPIO_BIT_WRITE);
+> +
+> +	iowrite32(value_new, pled->param.addr);
+> +
+> +	spin_unlock(&apu_led->lock);
+> +}
+> +
+> +static int apu_led_config(struct device *dev, struct apu_led_pdata *apuld)
+> +{
+> +	int i;
+> +	int err;
+> +
+> +	apu_led->pled = devm_kzalloc(dev, sizeof(struct apu_led_priv) * apu_led->num_led_instances, GFP_KERNEL);
+> +
+> +	if (!apu_led->pled)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < apu_led->num_led_instances; i++) {
+> +		apu_led->pled[i].cdev.name = apu_led->profile[i].name;
+
+Copy-paste from the v1 review:
+
+It would improve readability if you used intermediary variables like:
+
+struct apu_led_priv *pled = &apu_led->pled[i];
+struct led_classdev *led_cdev = &pled->led_cdev;
+
+led_cdev->name = apu_led->profile[i].name
+
+and so on..
+
+> +		apu_led->pled[i].cdev.brightness = apu_led->profile[i].brightness;
+> +		apu_led->pled[i].cdev.max_brightness = 1;
+> +		if (apu_led->platform == APU1_LED_PLATFORM) {
+> +			apu_led->pled[i].cdev.brightness_set = apu1_led_brightness_set;
+> +		} else if (apu_led->platform == APU2_LED_PLATFORM) {
+> +			apu_led->pled[i].cdev.brightness_set = apu2_led_brightness_set;
+> +		}
+
+{} braces are redundant in this condition.
+
+> +		apu_led->pled[i].cdev.flags = LED_CORE_SUSPENDRESUME;
+> +
+> +		apu_led->pled[i].param.addr = devm_ioremap(dev, apu_led->profile[i].offset, apu_led->iosize);
+> +		if (!apu_led->pled[i].param.addr) {
+> +			err = -ENOMEM;
+> +			goto error;
+> +		}
+> +
+> +		err = led_classdev_register(dev, &apu_led->pled[i].cdev);
+> +		if (err)
+> +			goto error;
+> +
+> +		apu_led->pled[i].cdev.brightness_set(&apu_led->pled[i].cdev, apu_led->profile[i].brightness);
+> +	}
+> +
+> +	return 0;
+> +
+> +error:
+> +	while (i-- > 0)
+> +		led_classdev_unregister(&apu_led->pled[i].cdev);
+> +
+> +	return err;
+> +}
+> +
+> +static int __init apu_led_probe(struct platform_device *pdev)
+> +{
+> +	apu_led = devm_kzalloc(&pdev->dev, sizeof(*apu_led), GFP_KERNEL);
+> +
+> +	if (!apu_led)
+> +		return -ENOMEM;
+> +
+> +	apu_led->pdev = pdev;
+> +
+> +	if (dmi_match(DMI_BOARD_NAME, "APU")) {
+> +		apu_led->profile = apu1_led_profile;
+> +		apu_led->platform = APU1_LED_PLATFORM;
+> +		apu_led->num_led_instances = ARRAY_SIZE(apu1_led_profile);
+> +		apu_led->iosize = APU1_IOSIZE;
+> +	} else if (dmi_match(DMI_BOARD_NAME, "APU2")) {
+> +		apu_led->profile = apu2_led_profile;
+> +		apu_led->platform = APU2_LED_PLATFORM;
+> +		apu_led->num_led_instances = ARRAY_SIZE(apu2_led_profile);
+> +		apu_led->iosize = APU2_IOSIZE;
+> +	}
+> +
+> +	spin_lock_init(&apu_led->lock);
+> +	return apu_led_config(&pdev->dev, apu_led);
+> +}
+> +
+> +static struct platform_driver apu_led_driver = {
+> +	.driver = {
+> +		.name = KBUILD_MODNAME,
+> +	},
+> +};
+> +
+> +static int __init apu_led_init(void)
+> +{
+> +	struct platform_device *pdev;
+> +	int err;
+> +
+> +	if (!dmi_match(DMI_SYS_VENDOR, "PC Engines")) {
+> +		pr_err("No PC Engines board detected\n");
+> +		return -ENODEV;
+> +	}
+> +	if (!(dmi_match(DMI_PRODUCT_NAME, "APU") || dmi_match(DMI_PRODUCT_NAME, "APU2"))) {
+> +		printk(KERN_ERR "Unknown PC Engines board: %s\n", dmi_get_system_info(DMI_PRODUCT_NAME));
+
+s/printk/pr_err/
+
+> +		return -ENODEV;
+> +	}
+> +
+> +	pdev = platform_device_register_simple(KBUILD_MODNAME, -1, NULL, 0);
+> +	if (IS_ERR(pdev)) {
+> +		pr_err("Device allocation failed\n");
+> +		return PTR_ERR(pdev);
+> +	}
+> +
+> +	err = platform_driver_probe(&apu_led_driver, apu_led_probe);
+> +	if (err) {
+> +		pr_err("Probe platform driver failed\n");
+> +		platform_device_unregister(pdev);
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +static void __exit apu_led_exit(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < apu_led->num_led_instances; i++)
+> +		led_classdev_unregister(&apu_led->pled[i].cdev);
+> +
+> +	platform_device_unregister(apu_led->pdev);
+> +	platform_driver_unregister(&apu_led_driver);
+> +}
+> +
+> +module_init(apu_led_init);
+> +module_exit(apu_led_exit);
+> +
+> +MODULE_AUTHOR("Alan Mizrahi");
+> +MODULE_DESCRIPTION("PC Engines APU family LED driver");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:leds_apu");
+> 
 
 -- 
-Sakari Ailus
-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Jacek Anaszewski
