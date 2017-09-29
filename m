@@ -1,52 +1,153 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL] LED fixes for 4.14-rc3
-Date: Fri, 29 Sep 2017 22:51:02 +0200
-Message-ID: <1506718262-5494-1-git-send-email-jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 1/1] leds: Add driver for PC Engines APU/APU2 LEDs
+Date: Fri, 29 Sep 2017 23:28:56 +0200
+Message-ID: <6d3b3456-ccdd-6fa2-23d1-0b79353c5cb8@gmail.com>
+References: <20170917033529.GA12375@olympus.mizrahi.com.ve>
+ <5803b209-f857-d339-a98b-6e3d6b1dca6c@gmail.com>
+ <4164e198-dd03-e61d-ab67-2b429c908b2f@mizrahi.com.ve>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35877 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752123AbdI2Uwy (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 29 Sep 2017 16:52:54 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33490 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751667AbdI2V3v (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 29 Sep 2017 17:29:51 -0400
+Received: by mail-wr0-f194.google.com with SMTP id 97so397969wrb.0
+        for <linux-leds@vger.kernel.org>; Fri, 29 Sep 2017 14:29:50 -0700 (PDT)
+In-Reply-To: <4164e198-dd03-e61d-ab67-2b429c908b2f@mizrahi.com.ve>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, sakari.ailus@linux.intel.com, sean.wang@mediatek.com
+To: Alan Mizrahi <alan@mizrahi.com.ve>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org
 
-Hi Linus,
+Hi Alan,
 
-Please pull four fixes for as3645a LED flash controller and
-one update to MAINTAINERS.
+Sorry for my late reply, but I've been experiencing problems
+with my email account for last few days. I saw your last message
+but it got lost somehow from my mailbox, so I'm replying to this one.
 
-The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+On 09/24/2017 02:30 AM, Alan Mizrahi wrote:
+> On 2017-09-22 05:46, Jacek Anaszewski wrote:
+>> Hi Alan,
+>>
+>> Thanks for the patch. I have some comments in the code below,
+>> please take a look.
+> 
+> Thanks for your comments.  I'll make the necessary changes and also
+> rename the LEDs to include "green", as suggested by Pavel.
+> 
+>> On 09/17/2017 05:35 AM, Alan Mizrahi wrote:
+>>> +};
+>>> +
+>>> +struct apu_led_pdata {
+>>> +	struct platform_device *pdev;
+>>> +	struct apu_led_priv *pled;
+>>> +	struct apu_led_profile *profile;
+>>> +	enum apu_led_platform_types platform;
+>>> +	int num_led_instances;
+>>> +	int iosize; /* for devm_ioremap() */
+>>> +	spinlock_t lock;
+>>> +};
+>>> +
+>>> +static struct apu_led_pdata *apu_led;
+>>> +
+>>> +static struct apu_led_profile apu1_led_profile[] = {
+>>> +	{ "apu:1", 1,       APU1_FCH_GPIO_BASE + 0 * APU1_IOSIZE },
+>>> +	{ "apu:2", LED_OFF, APU1_FCH_GPIO_BASE + 1 * APU1_IOSIZE },
+>>> +	{ "apu:3", LED_OFF, APU1_FCH_GPIO_BASE + 2 * APU1_IOSIZE },
+>>> +};
+>>
+>> Is brightness property needed at all in the struct apu_led_profile?
+>> It is always initialized to LED_OFF.
+> 
+> Not all of them, the first one is on by default.
+> 
+>>> +
+>>> +static struct apu_led_profile apu2_led_profile[] = {
+>>> +	{ "apu2:1", 1,       APU2_FCH_GPIO_BASE + 68 * APU2_IOSIZE },
+>>> +	{ "apu2:2", LED_OFF, APU2_FCH_GPIO_BASE + 69 * APU2_IOSIZE },
+>>> +	{ "apu2:3", LED_OFF, APU2_FCH_GPIO_BASE + 70 * APU2_IOSIZE },
+>>> +};
+>>> +
+>>> +static struct dmi_system_id apu_led_dmi_table[] __initdata = {
+>>> +	{
+>>> +		.ident = "apu",
+>>> +		.matches = {
+>>> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
+>>> +			DMI_MATCH(DMI_PRODUCT_NAME, "APU")
+>>> +		}
+>>> +	},
+>>> +	{
+>>> +		.ident = "apu2",
+>>> +		.matches = {
+>>> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
+>>> +			DMI_MATCH(DMI_BOARD_NAME, "APU2")
+>>> +		}
+>>> +	},
+>>> +	{}
+>>> +};
+>>> +MODULE_DEVICE_TABLE(dmi, apu_led_dmi_table);
+>>
+>> You're currently not using this array anywhere. It is required when
+>> dmi_check_system() is used in the driver.
+> 
+> Without it the module information won't be written to modules.alias, and
+> won't be loaded automatically at boot time.
 
-  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+Ack.
 
-are available in the git repository at:
+>>> +
+>>> +static int apu_led_config(struct device *dev, struct apu_led_pdata *apuld)
+>>> +{
+>>> +	int i;
+>>> +	int err;
+>>> +
+>>> +	apu_led->pled = devm_kzalloc(dev, sizeof(struct apu_led_priv) * apu_led->num_led_instances, GFP_KERNEL);
+>>> +
+>>> +	if (!apu_led->pled)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	for (i = 0; i < apu_led->num_led_instances; i++) {
+>>> +		apu_led->pled[i].cdev.name = apu_led->profile[i].name;
+>>
+>> It would improve readability if you used intermediary variables like:
+>>
+>> struct apu_led_priv *pled = &apu_led->pled[i];
+>> struct led_classdev *led_cdev = &pled->led_cdev;
+>>
+>> led_cdev->name = apu_led->profile[i].name
+>>
+>> and so on...
+> 
+> I tried that but it ends up being harder, I think this is subjective.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led_fixes-4.14-rc3
+Why do you find it harder? You can replace every:
 
-for you to fetch changes up to f3a0c7b3fa7cdf6783827c245c62772687f8b3ac:
+apu_led->pled[i].cdev.
 
-  MAINTAINERS: Add entry for MediaTek PMIC LED driver (2017-09-25 21:33:43 +0200)
+with more straightforward:
 
-Thanks,
+led_cdev->
+
+at a cost of two additional lines.
+
+>>> +		apu_led->pled[i].cdev.brightness = apu_led->profile[i].brightness;
+>>> +		apu_led->pled[i].cdev.max_brightness = 1;
+>>> +		if (apu_led->platform == LED_PLATFORM_APU1) {
+>>> +			apu_led->pled[i].cdev.brightness_set = apu1_led_brightness_set;
+>>> +			/* apu_led->pled[i].cdev.blink_set   = apu1_led_blink_set; */
+>>
+>> Why are you leaving this unimplemented actually? Is hw blinking feature
+>> documented but doesn't work as advertised or so?
+> 
+> After contacting the makers of these boards it looks like there is no
+> way to do this, so I'll remove it.
+
+Thanks.
+
+And regarding line lengths - you can apply 105 column limit.
+
+-- 
+Best regards,
 Jacek Anaszewski
-
-----------------------------------------------------------------
-LED fixes for 4.14-rc3
-
-----------------------------------------------------------------
-Sakari Ailus (4):
-      as3645a: Use ams,input-max-microamp as documented in DT bindings
-      dt: bindings: as3645a: Use LED number to refer to LEDs
-      as3645a: Use integer numbers for parsing LEDs
-      as3645a: Unregister indicator LED on device unbind
-
-Sean Wang (1):
-      MAINTAINERS: Add entry for MediaTek PMIC LED driver
-
- .../devicetree/bindings/leds/ams,as3645a.txt       | 28 +++++++++++++--------
- MAINTAINERS                                        |  6 +++++
- arch/arm/boot/dts/omap3-n950-n9.dtsi               | 10 +++++---
- drivers/leds/leds-as3645a.c                        | 29 +++++++++++++++++++---
- 4 files changed, 57 insertions(+), 16 deletions(-)
