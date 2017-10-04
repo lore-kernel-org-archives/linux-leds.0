@@ -1,153 +1,66 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 1/1] leds: Add driver for PC Engines APU/APU2 LEDs
-Date: Fri, 29 Sep 2017 23:28:56 +0200
-Message-ID: <6d3b3456-ccdd-6fa2-23d1-0b79353c5cb8@gmail.com>
-References: <20170917033529.GA12375@olympus.mizrahi.com.ve>
- <5803b209-f857-d339-a98b-6e3d6b1dca6c@gmail.com>
- <4164e198-dd03-e61d-ab67-2b429c908b2f@mizrahi.com.ve>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH for 4.15] leds: pca955x: Fix configuration on GPIO request for input
+Date: Wed,  4 Oct 2017 17:57:01 +1030
+Message-ID: <20171004072701.25782-1-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:33490 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751667AbdI2V3v (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 29 Sep 2017 17:29:51 -0400
-Received: by mail-wr0-f194.google.com with SMTP id 97so397969wrb.0
-        for <linux-leds@vger.kernel.org>; Fri, 29 Sep 2017 14:29:50 -0700 (PDT)
-In-Reply-To: <4164e198-dd03-e61d-ab67-2b429c908b2f@mizrahi.com.ve>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Andrew Jeffery <andrew@aj.id.au>, jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>, Joel Stanley <joel@jms.id.au>
 List-Id: linux-leds@vger.kernel.org
-To: Alan Mizrahi <alan@mizrahi.com.ve>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org
 
-Hi Alan,
+The prior patch which fixed the problem with output inversion failed to
+account for a necessary change to requesting a pin for input, which is
+affected by the open-drain nature of the hardware.
 
-Sorry for my late reply, but I've been experiencing problems
-with my email account for last few days. I saw your last message
-but it got lost somehow from my mailbox, so I'm replying to this one.
+Previously pca955x_gpio_direction_input() called through
+pca955x_set_value() to configure the direction, however continuing down
+this route lead to a brain-hemorrhaging level of necessary inversions.
+Instead, remove one layer by calling directly into pca955x_led_set(),
+and define PCA955X_GPIO_INPUT to paper over the rest of the confusion.
 
-On 09/24/2017 02:30 AM, Alan Mizrahi wrote:
-> On 2017-09-22 05:46, Jacek Anaszewski wrote:
->> Hi Alan,
->>
->> Thanks for the patch. I have some comments in the code below,
->> please take a look.
-> 
-> Thanks for your comments.  I'll make the necessary changes and also
-> rename the LEDs to include "green", as suggested by Pavel.
-> 
->> On 09/17/2017 05:35 AM, Alan Mizrahi wrote:
->>> +};
->>> +
->>> +struct apu_led_pdata {
->>> +	struct platform_device *pdev;
->>> +	struct apu_led_priv *pled;
->>> +	struct apu_led_profile *profile;
->>> +	enum apu_led_platform_types platform;
->>> +	int num_led_instances;
->>> +	int iosize; /* for devm_ioremap() */
->>> +	spinlock_t lock;
->>> +};
->>> +
->>> +static struct apu_led_pdata *apu_led;
->>> +
->>> +static struct apu_led_profile apu1_led_profile[] = {
->>> +	{ "apu:1", 1,       APU1_FCH_GPIO_BASE + 0 * APU1_IOSIZE },
->>> +	{ "apu:2", LED_OFF, APU1_FCH_GPIO_BASE + 1 * APU1_IOSIZE },
->>> +	{ "apu:3", LED_OFF, APU1_FCH_GPIO_BASE + 2 * APU1_IOSIZE },
->>> +};
->>
->> Is brightness property needed at all in the struct apu_led_profile?
->> It is always initialized to LED_OFF.
-> 
-> Not all of them, the first one is on by default.
-> 
->>> +
->>> +static struct apu_led_profile apu2_led_profile[] = {
->>> +	{ "apu2:1", 1,       APU2_FCH_GPIO_BASE + 68 * APU2_IOSIZE },
->>> +	{ "apu2:2", LED_OFF, APU2_FCH_GPIO_BASE + 69 * APU2_IOSIZE },
->>> +	{ "apu2:3", LED_OFF, APU2_FCH_GPIO_BASE + 70 * APU2_IOSIZE },
->>> +};
->>> +
->>> +static struct dmi_system_id apu_led_dmi_table[] __initdata = {
->>> +	{
->>> +		.ident = "apu",
->>> +		.matches = {
->>> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
->>> +			DMI_MATCH(DMI_PRODUCT_NAME, "APU")
->>> +		}
->>> +	},
->>> +	{
->>> +		.ident = "apu2",
->>> +		.matches = {
->>> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
->>> +			DMI_MATCH(DMI_BOARD_NAME, "APU2")
->>> +		}
->>> +	},
->>> +	{}
->>> +};
->>> +MODULE_DEVICE_TABLE(dmi, apu_led_dmi_table);
->>
->> You're currently not using this array anywhere. It is required when
->> dmi_check_system() is used in the driver.
-> 
-> Without it the module information won't be written to modules.alias, and
-> won't be loaded automatically at boot time.
+Cc: Cédric Le Goater <clg@kaod.org>
+Cc: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+Tested-by: Matt Spinler <mspinler@linux.vnet.ibm.com>
+---
+Jacek:
 
-Ack.
+The prior patch called out above is "eae1693fb026 leds: pca955x: Don't
+invert requested value in pca955x_gpio_set_value()" (at the time of sending). I
+think I've seen the leds tree be rebased in the past, so feel free to squash
+this change in if desired.
 
->>> +
->>> +static int apu_led_config(struct device *dev, struct apu_led_pdata *apuld)
->>> +{
->>> +	int i;
->>> +	int err;
->>> +
->>> +	apu_led->pled = devm_kzalloc(dev, sizeof(struct apu_led_priv) * apu_led->num_led_instances, GFP_KERNEL);
->>> +
->>> +	if (!apu_led->pled)
->>> +		return -ENOMEM;
->>> +
->>> +	for (i = 0; i < apu_led->num_led_instances; i++) {
->>> +		apu_led->pled[i].cdev.name = apu_led->profile[i].name;
->>
->> It would improve readability if you used intermediary variables like:
->>
->> struct apu_led_priv *pled = &apu_led->pled[i];
->> struct led_classdev *led_cdev = &pled->led_cdev;
->>
->> led_cdev->name = apu_led->profile[i].name
->>
->> and so on...
-> 
-> I tried that but it ends up being harder, I think this is subjective.
+ drivers/leds/leds-pca955x.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Why do you find it harder? You can replace every:
-
-apu_led->pled[i].cdev.
-
-with more straightforward:
-
-led_cdev->
-
-at a cost of two additional lines.
-
->>> +		apu_led->pled[i].cdev.brightness = apu_led->profile[i].brightness;
->>> +		apu_led->pled[i].cdev.max_brightness = 1;
->>> +		if (apu_led->platform == LED_PLATFORM_APU1) {
->>> +			apu_led->pled[i].cdev.brightness_set = apu1_led_brightness_set;
->>> +			/* apu_led->pled[i].cdev.blink_set   = apu1_led_blink_set; */
->>
->> Why are you leaving this unimplemented actually? Is hw blinking feature
->> documented but doesn't work as advertised or so?
-> 
-> After contacting the makers of these boards it looks like there is no
-> way to do this, so I'll remove it.
-
-Thanks.
-
-And regarding line lengths - you can apply 105 column limit.
-
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index 6dcd2d7cc6a4..78183f90820e 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -61,6 +61,7 @@
+ #define PCA955X_LS_BLINK0	0x2	/* Blink at PWM0 rate */
+ #define PCA955X_LS_BLINK1	0x3	/* Blink at PWM1 rate */
+ 
++#define PCA955X_GPIO_INPUT	LED_OFF
+ #define PCA955X_GPIO_HIGH	LED_OFF
+ #define PCA955X_GPIO_LOW	LED_FULL
+ 
+@@ -358,8 +359,11 @@ static int pca955x_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
+ static int pca955x_gpio_direction_input(struct gpio_chip *gc,
+ 					unsigned int offset)
+ {
+-	/* To use as input ensure pin is not driven */
+-	return pca955x_set_value(gc, offset, 0);
++	struct pca955x *pca955x = gpiochip_get_data(gc);
++	struct pca955x_led *led = &pca955x->leds[offset];
++
++	/* To use as input ensure pin is not driven. */
++	return pca955x_led_set(&led->led_cdev, PCA955X_GPIO_INPUT);
+ }
+ 
+ static int pca955x_gpio_direction_output(struct gpio_chip *gc,
 -- 
-Best regards,
-Jacek Anaszewski
+2.11.0
