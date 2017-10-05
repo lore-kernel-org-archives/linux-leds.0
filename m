@@ -1,78 +1,57 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH for 4.15] leds: pca955x: Fix configuration on GPIO request
- for input
-Date: Wed, 4 Oct 2017 21:08:38 +0200
-Message-ID: <80a419c1-9ccc-c477-fe48-641a527baaa5@gmail.com>
-References: <20171004072701.25782-1-andrew@aj.id.au>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: Vibrations in input vs. LED was Re: [PATCH v2 0/3] led:
+ ledtrig-transient: add support for hrtimer
+Date: Wed, 4 Oct 2017 17:40:45 -0700
+Message-ID: <20171005004045.GD16508@dtor-ws>
+References: <20170913175400.42744-1-dtwlin@google.com>
+ <20170913202032.GA30844@amd>
+ <9c75c3a9-4123-c7f3-7725-45ba752d672a@gmail.com>
+ <20170914205804.GA24339@amd>
+ <CAKdAkRTJTYsJuAsjOt2Bgutsg6zwhU0LHmNOH9UXsHB3PkLCbw@mail.gmail.com>
+ <7a611993-ebaa-08bb-b10c-ebe4fb9ca33a@gmail.com>
+ <CAKdAkRT4MBKq-g9BfMVRENcTeoYRL+nvWfEtf578ySXmxap-Cg@mail.gmail.com>
+ <CAPzFB+XZopNPTuOD-xttq-0dqEF2hSXLftQvzfDHLhJ+9ZuB-Q@mail.gmail.com>
+ <744568EA-8FEE-4A0E-B431-F054B0827261@gmail.com>
+ <CAPzFB+U-mCj7N2dM2HHQTCxxWeEBT4zpQ3zc_H6y1mmQFwqB_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171004072701.25782-1-andrew@aj.id.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>, linux-leds@vger.kernel.org
-Cc: pavel@ucw.cz, linux-kernel@vger.kernel.org, =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>, Joel Stanley <joel@jms.id.au>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAPzFB+U-mCj7N2dM2HHQTCxxWeEBT4zpQ3zc_H6y1mmQFwqB_w@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: David Lin <dtwlin@google.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Richard Purdie <rpurdie@rpsys.net>, Hans de Goede <hdegoede@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Rom Lemarchand <romlem@google.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Andrew,
-
-Thanks for the fix.
-
-On 10/04/2017 09:27 AM, Andrew Jeffery wrote:
-> The prior patch which fixed the problem with output inversion failed to
-> account for a necessary change to requesting a pin for input, which is
-> affected by the open-drain nature of the hardware.
+On Thu, Sep 28, 2017 at 12:22:13PM -0700, David Lin wrote:
+> On Wed, Sep 27, 2017 at 10:43 PM, Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> >>One thing I noticed is that input_ff_create_memless() also does not
+> >>use high-resolution timer hence it also does not have the stop-time
+> >>precision that I'm looking for.
+> >
+> > I'll take patches for high resolution timers in ff memless, they should also help with more accurate scheduling of ramping up and fading of events.
 > 
-> Previously pca955x_gpio_direction_input() called through
-> pca955x_set_value() to configure the direction, however continuing down
-> this route lead to a brain-hemorrhaging level of necessary inversions.
-> Instead, remove one layer by calling directly into pca955x_led_set(),
-> and define PCA955X_GPIO_INPUT to paper over the rest of the confusion.
+> Thanks.
 > 
-> Cc: Cédric Le Goater <clg@kaod.org>
-> Cc: Joel Stanley <joel@jms.id.au>
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> Tested-by: Matt Spinler <mspinler@linux.vnet.ibm.com>
-> ---
-> Jacek:
+> >
+> >>
+> >>Another thing is that ff_reply duration value is maxed-out at 32767 ms
+> >>(u16) while the Android/userspace requires size long for performing
+> >>long notification alert.
+> >>
+> >
+> > You need unattended vibrations lasting longer than 30 seconds? Anyway, replay.length == 0 means endless IIRC, so you only need to schedule stopping. We still will clean up properly if your process crashes or exits or closes the fd.
 > 
-> The prior patch called out above is "eae1693fb026 leds: pca955x: Don't
-> invert requested value in pca955x_gpio_set_value()" (at the time of sending). I
-> think I've seen the leds tree be rebased in the past, so feel free to squash
-> this change in if desired.
+> Yes, it's up to the application to vibrate for as long as it requires.
+> Is there any concern making the duration variable a type long? [If
+> this is getting off-topic, I'll follow up with another email]
 
-Squashed this patch into the original fix on the for-next branch.
+Yes, given ABI constraints that is not really feasible. I think for
+effects longer than 30 seconds you'd have to handle it in the framework
+by using replay.length 0 and cancelling the effect some time later.
 
-Thanks,
-Jacek Anaszewski
+Thanks.
 
->  drivers/leds/leds-pca955x.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-> index 6dcd2d7cc6a4..78183f90820e 100644
-> --- a/drivers/leds/leds-pca955x.c
-> +++ b/drivers/leds/leds-pca955x.c
-> @@ -61,6 +61,7 @@
->  #define PCA955X_LS_BLINK0	0x2	/* Blink at PWM0 rate */
->  #define PCA955X_LS_BLINK1	0x3	/* Blink at PWM1 rate */
->  
-> +#define PCA955X_GPIO_INPUT	LED_OFF
->  #define PCA955X_GPIO_HIGH	LED_OFF
->  #define PCA955X_GPIO_LOW	LED_FULL
->  
-> @@ -358,8 +359,11 @@ static int pca955x_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
->  static int pca955x_gpio_direction_input(struct gpio_chip *gc,
->  					unsigned int offset)
->  {
-> -	/* To use as input ensure pin is not driven */
-> -	return pca955x_set_value(gc, offset, 0);
-> +	struct pca955x *pca955x = gpiochip_get_data(gc);
-> +	struct pca955x_led *led = &pca955x->leds[offset];
-> +
-> +	/* To use as input ensure pin is not driven. */
-> +	return pca955x_led_set(&led->led_cdev, PCA955X_GPIO_INPUT);
->  }
->  
->  static int pca955x_gpio_direction_output(struct gpio_chip *gc,
-> 
+-- 
+Dmitry
