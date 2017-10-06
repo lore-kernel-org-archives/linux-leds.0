@@ -1,116 +1,81 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] led/ledtrig-heartbeat: Convert timers to use
-Date: Fri, 6 Oct 2017 13:21:50 -0700
-Message-ID: <CAGXu5jKFhz6KEFB0QDkrrhCBO3eRF8xAAq+MP_ZBHDxZk6QN8A@mail.gmail.com>
-References: <20171005004934.GA23081@beast> <f242a0d2-c14c-778c-27bc-89b01766cdfa@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: Vibrations in input vs. LED was Re: [PATCH v2 0/3] led:
+ ledtrig-transient: add support for hrtimer
+Date: Fri, 6 Oct 2017 22:57:45 +0200
+Message-ID: <96525800-9dcf-da40-c4c8-a1e86da2c52f@gmail.com>
+References: <CAKdAkRTJTYsJuAsjOt2Bgutsg6zwhU0LHmNOH9UXsHB3PkLCbw@mail.gmail.com>
+ <7a611993-ebaa-08bb-b10c-ebe4fb9ca33a@gmail.com>
+ <CAKdAkRT4MBKq-g9BfMVRENcTeoYRL+nvWfEtf578ySXmxap-Cg@mail.gmail.com>
+ <0076adca-f843-f99f-09ce-b9839b3e7706@gmail.com> <20170917182251.GA15328@amd>
+ <9d5d045e-5019-e132-9449-7fb40b1b7895@gmail.com>
+ <CAKdAkRRsn+bV34yq9=Qqnp3D+DjWtGfrLAmF6pJCgvbyBqz2Cw@mail.gmail.com>
+ <4226b524-35e1-16c0-f6ca-e339dd2eab1d@gmail.com> <20170920112940.GB4283@amd>
+ <78217fe0-b61d-249c-bf30-787642317255@gmail.com> <20171006114859.GE9497@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f242a0d2-c14c-778c-27bc-89b01766cdfa@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Zhang Bo <bo.zhang@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, Ingo Molnar <mingo@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20171006114859.GE9497@amd>
+Sender: linux-doc-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, David Lin <dtwlin@google.com>, Jonathan Corbet <corbet@lwn.net>, Richard Purdie <rpurdie@rpsys.net>, Hans de Goede <hdegoede@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Rom Lemarchand <romlem@google.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Fri, Oct 6, 2017 at 1:18 PM, Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
-> Hi Kees,
->
-> Thanks for the patch.
->
-> On 10/05/2017 02:49 AM, Kees Cook wrote:
->> Instead of using .data directly, convert to from_timer. Since the
->> trigger_data is allocated separately, the led_cdev must be explicitly
->> tracked for the callback.
+On 10/06/2017 01:48 PM, Pavel Machek wrote:
+> On Wed 2017-09-20 22:08:42, Jacek Anaszewski wrote:
+>> On 09/20/2017 01:29 PM, Pavel Machek wrote:
+>>>>>>> I'd leave the decision to the user. We could add a note to the
+>>>>>>> Documentation/leds/ledtrig-transient.txt that force feedback interface
+>>>>>>> should be preferable choice for driving vibrate devices.
+>>>>>>> However only if following conditions are met:
+>>>>>>
+>>>>>> What I meant is that it is my decision, as a LED subsystem maintainer,
+>>>>>> to accept the addition of a note about some other subsystem offering
+>>>>>> an equivalent or even better substitute of the feature being available
+>>>>>> in the subsystem I am responsible for. And I will accept such a patch
+>>>>>> only if mentioned conditions are met.
+>>>>>
+>>>>> Having the wording in documentation does not in any way stops Android
+>>>>> folks from continuing [ab]using the transient trigger. But this is
+>>>>> their choice. The purpose of documentation is to document the best
+>>>>> practices, not all possible crazy solutions one can come up with.
+>>>>
+>>>> Yes. but if the information has been in place for years, we can't
+>>>> just remove it without giving an instruction on how to use the
+>>>> substitute.
+>>>
+>>> I gave you information how to use the substitute.
 >>
->> Cc: Richard Purdie <rpurdie@rpsys.net>
->> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->> Cc: Pavel Machek <pavel@ucw.cz>
->> Cc: Zhang Bo <bo.zhang@nxp.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Ingo Molnar <mingo@kernel.org>
->> Cc: linux-leds@vger.kernel.org
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->> ---
->> This requires commit 686fef928bba ("timer: Prepare to change timer
->> callback argument type") in v4.14-rc3, but should be otherwise
->> stand-alone.
->> ---
->>  drivers/leds/trigger/ledtrig-heartbeat.c | 16 ++++++++++------
->>  1 file changed, 10 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
->> index e95ea65380c8..f0896de410b8 100644
->> --- a/drivers/leds/trigger/ledtrig-heartbeat.c
->> +++ b/drivers/leds/trigger/ledtrig-heartbeat.c
->> @@ -25,19 +25,23 @@
->>  static int panic_heartbeats;
->>
->>  struct heartbeat_trig_data {
->> +     struct led_classdev *led_cdev;
->>       unsigned int phase;
->>       unsigned int period;
->>       struct timer_list timer;
->>       unsigned int invert;
->>  };
->>
->> -static void led_heartbeat_function(unsigned long data)
->> +static void led_heartbeat_function(struct timer_list *t)
->>  {
->> -     struct led_classdev *led_cdev = (struct led_classdev *) data;
->> -     struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
->> +     struct heartbeat_trig_data *heartbeat_data =
->> +             from_timer(heartbeat_data, t, timer);
->> +     struct led_classdev *led_cdev;
->>       unsigned long brightness = LED_OFF;
->>       unsigned long delay = 0;
->>
->> +     led_cdev = heartbeat_data->led_cdev;
->> +
->>       if (unlikely(panic_heartbeats)) {
->>               led_set_brightness_nosleep(led_cdev, LED_OFF);
->>               return;
->> @@ -127,18 +131,18 @@ static void heartbeat_trig_activate(struct led_classdev *led_cdev)
->>               return;
->>
->>       led_cdev->trigger_data = heartbeat_data;
->> +     heartbeat_data->led_cdev = led_cdev;
->>       rc = device_create_file(led_cdev->dev, &dev_attr_invert);
->>       if (rc) {
->>               kfree(led_cdev->trigger_data);
->>               return;
->>       }
->>
->> -     setup_timer(&heartbeat_data->timer,
->> -                 led_heartbeat_function, (unsigned long) led_cdev);
->> +     timer_setup(&heartbeat_data->timer, led_heartbeat_function, 0);
->>       heartbeat_data->phase = 0;
->>       if (!led_cdev->blink_brightness)
->>               led_cdev->blink_brightness = led_cdev->max_brightness;
->> -     led_heartbeat_function(heartbeat_data->timer.data);
->> +     led_heartbeat_function(&heartbeat_data->timer);
->>       set_bit(LED_BLINK_SW, &led_cdev->work_flags);
->>       led_cdev->activated = true;
->>  }
->>
->
-> It seems that the patch title is somewhat incomplete, so I amended
-> it as follows:
->
-> s/to use/to use timer_setup()/
+>> That information was quite vague. I'd like to see a sample application
+>> in tools/input.
+> 
+> So please write it.
 
-Yeah, thanks for fixing that. This got pointed out elsewhere and I've
-since hunted down and fixed my scripts to not accidentally truncate
-subjects. *sigh* :)
+This is my demand as a reviewer. I've already laid out the conditions
+under which I'll accept the patch. It seems that you're proficient
+in the subject enough to cope with this task.
 
-> and applied to the for-next branch of linux-leds.git after rebasing
-> it onto 4.14-rc3.
+>>> I already suggested patch to documentation. If you do the same, maybe
+>>> we can agree on documentation update.
+>>
+>> Your patch was just removing few lines of documentation. I'd expect more
+>> empathic approach to the current users, i.e.:
+>>
+>> - pointer to the sample application in tools/input showing how to
+>>   setup gpio driven vibrate device with use of ff interface with
+>>   1kHz vibration frequency.
+> 
+> Yes, my patch is removing dangerously misleading documentation about
+> LED subsystem.
 
-Thanks!
+It's neither dangerous nor misleading.
 
--Kees
+> Please apply it.
+
+Right after I'll get the patch with the tool showing how to use
+input subsystem to achieve the same effect as with use of
+ledtrig-transient.
 
 -- 
-Kees Cook
-Pixel Security
+Best regards,
+Jacek Anaszewski
