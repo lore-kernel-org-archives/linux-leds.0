@@ -1,100 +1,101 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: [PATCH] led/ledtrig-heartbeat: Convert timers to use
-Date: Wed, 4 Oct 2017 17:49:34 -0700
-Message-ID: <20171005004934.GA23081@beast>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: Vibrations in input vs. LED was Re: [PATCH v2 0/3] led:
+ ledtrig-transient: add support for hrtimer
+Date: Fri, 6 Oct 2017 13:48:59 +0200
+Message-ID: <20171006114859.GE9497@amd>
+References: <CAKdAkRTJTYsJuAsjOt2Bgutsg6zwhU0LHmNOH9UXsHB3PkLCbw@mail.gmail.com>
+ <7a611993-ebaa-08bb-b10c-ebe4fb9ca33a@gmail.com>
+ <CAKdAkRT4MBKq-g9BfMVRENcTeoYRL+nvWfEtf578ySXmxap-Cg@mail.gmail.com>
+ <0076adca-f843-f99f-09ce-b9839b3e7706@gmail.com>
+ <20170917182251.GA15328@amd>
+ <9d5d045e-5019-e132-9449-7fb40b1b7895@gmail.com>
+ <CAKdAkRRsn+bV34yq9=Qqnp3D+DjWtGfrLAmF6pJCgvbyBqz2Cw@mail.gmail.com>
+ <4226b524-35e1-16c0-f6ca-e339dd2eab1d@gmail.com>
+ <20170920112940.GB4283@amd>
+ <78217fe0-b61d-249c-bf30-787642317255@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="7CZp05NP8/gJM8Cl"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:48207 "EHLO
-        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752137AbdJEAtg (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 4 Oct 2017 20:49:36 -0400
-Received: by mail-pf0-f176.google.com with SMTP id n24so7121581pfk.5
-        for <linux-leds@vger.kernel.org>; Wed, 04 Oct 2017 17:49:36 -0700 (PDT)
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50745 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750967AbdJFLtC (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 6 Oct 2017 07:49:02 -0400
 Content-Disposition: inline
+In-Reply-To: <78217fe0-b61d-249c-bf30-787642317255@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Zhang Bo <bo.zhang@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, Ingo Molnar <mingo@kernel.org>, linux-leds@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-
-Instead of using .data directly, convert to from_timer. Since the
-trigger_data is allocated separately, the led_cdev must be explicitly
-tracked for the callback.
-
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Zhang Bo <bo.zhang@nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: linux-leds@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-This requires commit 686fef928bba ("timer: Prepare to change timer
-callback argument type") in v4.14-rc3, but should be otherwise
-stand-alone.
----
- drivers/leds/trigger/ledtrig-heartbeat.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/leds/trigger/ledtrig-heartbeat.c b/drivers/leds/trigger/ledtrig-heartbeat.c
-index e95ea65380c8..f0896de410b8 100644
---- a/drivers/leds/trigger/ledtrig-heartbeat.c
-+++ b/drivers/leds/trigger/ledtrig-heartbeat.c
-@@ -25,19 +25,23 @@
- static int panic_heartbeats;
- 
- struct heartbeat_trig_data {
-+	struct led_classdev *led_cdev;
- 	unsigned int phase;
- 	unsigned int period;
- 	struct timer_list timer;
- 	unsigned int invert;
- };
- 
--static void led_heartbeat_function(unsigned long data)
-+static void led_heartbeat_function(struct timer_list *t)
- {
--	struct led_classdev *led_cdev = (struct led_classdev *) data;
--	struct heartbeat_trig_data *heartbeat_data = led_cdev->trigger_data;
-+	struct heartbeat_trig_data *heartbeat_data =
-+		from_timer(heartbeat_data, t, timer);
-+	struct led_classdev *led_cdev;
- 	unsigned long brightness = LED_OFF;
- 	unsigned long delay = 0;
- 
-+	led_cdev = heartbeat_data->led_cdev;
-+
- 	if (unlikely(panic_heartbeats)) {
- 		led_set_brightness_nosleep(led_cdev, LED_OFF);
- 		return;
-@@ -127,18 +131,18 @@ static void heartbeat_trig_activate(struct led_classdev *led_cdev)
- 		return;
- 
- 	led_cdev->trigger_data = heartbeat_data;
-+	heartbeat_data->led_cdev = led_cdev;
- 	rc = device_create_file(led_cdev->dev, &dev_attr_invert);
- 	if (rc) {
- 		kfree(led_cdev->trigger_data);
- 		return;
- 	}
- 
--	setup_timer(&heartbeat_data->timer,
--		    led_heartbeat_function, (unsigned long) led_cdev);
-+	timer_setup(&heartbeat_data->timer, led_heartbeat_function, 0);
- 	heartbeat_data->phase = 0;
- 	if (!led_cdev->blink_brightness)
- 		led_cdev->blink_brightness = led_cdev->max_brightness;
--	led_heartbeat_function(heartbeat_data->timer.data);
-+	led_heartbeat_function(&heartbeat_data->timer);
- 	set_bit(LED_BLINK_SW, &led_cdev->work_flags);
- 	led_cdev->activated = true;
- }
--- 
-2.7.4
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, David Lin <dtwlin@google.com>, Jonathan Corbet <corbet@lwn.net>, Richard Purdie <rpurdie@rpsys.net>, Hans de Goede <hdegoede@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Rom Lemarchand <romlem@google.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
 
--- 
-Kees Cook
-Pixel Security
+--7CZp05NP8/gJM8Cl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed 2017-09-20 22:08:42, Jacek Anaszewski wrote:
+> On 09/20/2017 01:29 PM, Pavel Machek wrote:
+> >>>>> I'd leave the decision to the user. We could add a note to the
+> >>>>> Documentation/leds/ledtrig-transient.txt that force feedback interf=
+ace
+> >>>>> should be preferable choice for driving vibrate devices.
+> >>>>> However only if following conditions are met:
+> >>>>
+> >>>> What I meant is that it is my decision, as a LED subsystem maintaine=
+r,
+> >>>> to accept the addition of a note about some other subsystem offering
+> >>>> an equivalent or even better substitute of the feature being availab=
+le
+> >>>> in the subsystem I am responsible for. And I will accept such a patch
+> >>>> only if mentioned conditions are met.
+> >>>
+> >>> Having the wording in documentation does not in any way stops Android
+> >>> folks from continuing [ab]using the transient trigger. But this is
+> >>> their choice. The purpose of documentation is to document the best
+> >>> practices, not all possible crazy solutions one can come up with.
+> >>
+> >> Yes. but if the information has been in place for years, we can't
+> >> just remove it without giving an instruction on how to use the
+> >> substitute.
+> >=20
+> > I gave you information how to use the substitute.
+>=20
+> That information was quite vague. I'd like to see a sample application
+> in tools/input.
+
+So please write it.
+
+> > I already suggested patch to documentation. If you do the same, maybe
+> > we can agree on documentation update.
+>=20
+> Your patch was just removing few lines of documentation. I'd expect more
+> empathic approach to the current users, i.e.:
+>=20
+> - pointer to the sample application in tools/input showing how to
+>   setup gpio driven vibrate device with use of ff interface with
+>   1kHz vibration frequency.
+
+Yes, my patch is removing dangerously misleading documentation about
+LED subsystem.
+
+Please apply it.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--7CZp05NP8/gJM8Cl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlnXbasACgkQMOfwapXb+vIEpwCfewgvt/SA7xTsOKoaT/6LDykz
+j08AnRlLR6DUJZg95QUK4Rl596NvGqry
+=9pNA
+-----END PGP SIGNATURE-----
+
+--7CZp05NP8/gJM8Cl--
