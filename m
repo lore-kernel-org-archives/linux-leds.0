@@ -1,82 +1,94 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: [patch v3 0/3] drivers/platform: replace module
- x86/mlxcpld-hotplug with mellanox/mlxreg-hotplug
-Date: Mon, 16 Oct 2017 13:42:11 -0700
-Message-ID: <20171016204211.GA14419@fury>
-References: <1505142759-160534-1-git-send-email-vadimp@mellanox.com>
+From: Andrea Scian - DAVE Embedded Systems <andrea.scian@dave.eu>
+Subject: about pca955x led driver gpio management
+Date: Tue, 17 Oct 2017 09:36:07 +0200
+Message-ID: <f4a6919a-83c8-79c9-94ed-48f803a3191f@dave.eu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:34499 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752892AbdJPUmO (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 16 Oct 2017 16:42:14 -0400
-Content-Disposition: inline
-In-Reply-To: <1505142759-160534-1-git-send-email-vadimp@mellanox.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: gregkh@linuxfoundation.org, andy.shevchenko@gmail.com, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org, jiri@resnulli.us, pavel@ucw.cz
 
-On Mon, Sep 11, 2017 at 03:12:36PM +0000, Vadim Pasternak wrote:
-> The patchset modifies x86/mlxcpld-hotplug.c for making it architecture
-> independent, renames to mlxreg-hotplug and moves it from
-> drivers/platform/x86 folder to new drivers/platform/mellanox folder.
-> This modification also introduces regmap interface for mlxreg-hotplug
-> driver to allow hotplug event functionality over programmable devices
-> logic, when these devices can be attached to different interfaces types,
-> like I2C, LPC, SPI.
-> Module include/linux/platform_data/mlxcpld-hotplug.h is removed and new
-> module include/linux/platform_data/mlxreg.h is to be used instead.
-> Driver drivers/platform/x86/mlx-platform.c is updated according to new
-> interface.
-> Relevant Makefile and Kconfig are updated.
-> 
+Dear all,
 
-Hi Vadim,
+I'm working on an iMX6 based board with a PCA9555 which is used both to 
+drive LEDs and manage some GPIOs.
 
-This didn't really land under anyone's maintainer domain. Apologies for
-the long response time here.
+My current kernel is quite old (4.1.15) but I've found Cédric patches on 
+mainline and backported to this old revision.
 
-I am happy to include the new platform/mellanox tree within the
-platform-driver-x86 purvue, as we have done with platform/chrome. If
-anyone objects, or would prefer to take this through their tree - please
-let me know.
+I'm facing an issue with it, because it seems that it fails when it's 
+used in a mixed (led/gpios) environment.
 
-With respect to the series itself, the patches are not done in a way
-that lend themselves to incremental review. The cover letter above says
-the mlxcpld-hotplug driver is:
+E.g.: let's say that I have one led connected to LED0 output and one 
+GPIO connected at LED1 output.
 
-1) made architecture independent 2) renamed to mlxreg-hotplug 3) Moved
-to platform/mellanox/
+I define it as
 
-But the series does the following:
+                         pca9551: pca9551@60 {
+                                 compatible = "nxp,pca9551";
+                                 reg = <0x60>;
+                                 #address-cells = <1>;
+                                 #size-cells = <0>;
+                                 #gpio-cells = <1>;
 
-1) Create a new platform/mellanox/mlxreg-hotplug driver 2) Modify
-mlx-platform to use the new driver 3) Delete mlxcpld-hotplug driver
+                                 led@0 {
+                                         label = "led0";
+                                         reg = <0>;
+                                         linux,default-trigger = "none";
+                                 };
+                                 gpio@1 {
+                                         label = "gpio1";
+                                         reg = <1>;
+                                         type = <2>; /* GPIO */
+                                 };
+                 };
 
-This makes it very difficult to review the incremental changes to the
-hotplug driver. Please refactor the patches to take the follow approach:
+At boot it's probed as
 
-1) Use git-mv to move x86/mlxcpld-hotplug to mellanox/mlxreg-hotplug,
-add the necessary Kconfig and Makefile entries, and update mlx-platform
-to use the correct header. No functional changes. This gives us a
-starting point for the next steps.
+root@sbc-lynx:~# dmesg | grep pca
+[    5.315425] leds-pca955x 5-0060: leds-pca955x: Using pca9551 8-bit 
+LED driver at slave address 0x60
+[    5.350349] leds-pca955x 5-0060: gpios 511...511
 
-2) Make mlxreg-hotplug architecture independent 3) Add the new regmap
-interface
+But I cannot access it:
 
-Give some thought to what the incremental functional changes should be
-(2,3 above are just an example). This will become more apparent to the
-reviewer once the changes come in after the mv.
+root@sbc-lynx:~# echo 511 > /sys/class/gpio/export
+-sh: echo: write error: Device or resource busy
 
-You'll want to add Andy and Myself and the platform-driver-x86 mailing
-list to the MAINTAINERS file for platform/mellanox as we will still be
-responsible for reviewing the patches and submitting the pull requests
-to Linus.
+Because for pca955x_gpio_request_pin() this is at offset 0 (in fact is 
+the first gpio registered of this gpio_chip) but it's the index 1 inside 
+pca955x->leds[]
 
-Thanks,
+Am I missing something? (maybe I made a mistake in my backport and/or 
+I'm missing some patches about the GPIO subsystems).
+
+If I'm right I think I can send a patch to fix this (I'm thinking about 
+having an array of GPIO index to map offset -> pca955x->leds[] index or 
+just register all pins as GPIOs and then just report the busy state)
+
+WDYT?
+
+Kind Regards,
 
 -- 
-Darren Hart
-VMware Open Source Technology Center
+
+
+Andrea SCIAN
+
+
+
+*DAVE Embedded Systems*
+
+via Talponedo 29/A 33080 Porcia (PN) - Italy
+Telephone: +39.0434.921215
+Telefax: +39.0434.1994030
+web: www.dave.eu <http://www.dave.eu>
+
+get in touch:
+<https://twitter.com/DAVE_Embedded> 
+<https://www.linkedin.com/company/dave-embedded-systems?trk=nav_account_sub_nav_company_admin> 
+<http://wiki.dave.eu/index.php/Main_Page>
