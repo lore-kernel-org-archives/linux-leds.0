@@ -1,74 +1,53 @@
-From: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-Subject: Re: about pca955x led driver gpio management
-Date: Tue, 17 Oct 2017 10:18:10 +0200
-Message-ID: <ea6795ac-806e-4e15-c18b-8cf4aab95ca8@kaod.org>
-References: <f4a6919a-83c8-79c9-94ed-48f803a3191f@dave.eu>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH] Documentation: leds: Update 00-INDEX file
+Date: Mon, 23 Oct 2017 11:31:14 +0200
+Message-ID: <20171023093114.GJ32228@amd>
+References: <1507576203-27633-1-git-send-email-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="gBdJBemW82xJqIAr"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f4a6919a-83c8-79c9-94ed-48f803a3191f@dave.eu>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1507576203-27633-1-git-send-email-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrea Scian - DAVE Embedded Systems <andrea.scian@dave.eu>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 10/17/2017 09:36 AM, Andrea Scian - DAVE Embedded Systems wrote:
-> Dear all,
-> 
-> I'm working on an iMX6 based board with a PCA9555 which is used both to drive LEDs and manage some GPIOs.
 
-The PCA9555 chip and the PCA955[0-3] chips have different control 
-registers. You need a different led driver for it.
+--gBdJBemW82xJqIAr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-C.  
+On Mon 2017-10-09 21:10:03, Jacek Anaszewski wrote:
+> Add missing entries for the following documentation files:
+>=20
+> - leds-class-flash.txt
+> - leds-lm3556.txt
+> - leds-mlxcpld.txt
+> - ledtrig-usbport.txt
+> - uleds.txt
+>=20
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-> My current kernel is quite old (4.1.15) but I've found Cédric patches on mainline and backported to this old revision.
-> 
-> I'm facing an issue with it, because it seems that it fails when it's used in a mixed (led/gpios) environment.
-> 
-> E.g.: let's say that I have one led connected to LED0 output and one GPIO connected at LED1 output.
-> 
-> I define it as
-> 
->                         pca9551: pca9551@60 {
->                                 compatible = "nxp,pca9551";
->                                 reg = <0x60>;
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 #gpio-cells = <1>;
-> 
->                                 led@0 {
->                                         label = "led0";
->                                         reg = <0>;
->                                         linux,default-trigger = "none";
->                                 };
->                                 gpio@1 {
->                                         label = "gpio1";
->                                         reg = <1>;
->                                         type = <2>; /* GPIO */
->                                 };
->                 };
-> 
-> At boot it's probed as
-> 
-> root@sbc-lynx:~# dmesg | grep pca
-> [    5.315425] leds-pca955x 5-0060: leds-pca955x: Using pca9551 8-bit LED driver at slave address 0x60
-> [    5.350349] leds-pca955x 5-0060: gpios 511...511
-> 
-> But I cannot access it:
-> 
-> root@sbc-lynx:~# echo 511 > /sys/class/gpio/export
-> -sh: echo: write error: Device or resource busy
-> 
-> Because for pca955x_gpio_request_pin() this is at offset 0 (in fact is the first gpio registered of this gpio_chip) but it's the index 1 inside pca955x->leds[]
-> 
-> Am I missing something? (maybe I made a mistake in my backport and/or I'm missing some patches about the GPIO subsystems).
-> 
-> If I'm right I think I can send a patch to fix this (I'm thinking about having an array of GPIO index to map offset -> pca955x->leds[] index or just register all pins as GPIOs and then just report the busy state)
-> 
-> WDYT?
-> 
-> Kind Regards,
-> 
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--gBdJBemW82xJqIAr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlnttuIACgkQMOfwapXb+vKvKwCgpnzYUeLkc7sExN7rvDAX68LB
+OBAAn3yrRTrheOzz3wQ/SIYH++fwuS4T
+=zAPf
+-----END PGP SIGNATURE-----
+
+--gBdJBemW82xJqIAr--
