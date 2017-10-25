@@ -1,100 +1,150 @@
-From: =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-Subject: Re: about pca955x led driver gpio management
-Date: Wed, 25 Oct 2017 10:18:24 +0200
-Message-ID: <16a53265-bc57-ac77-ed69-1fc3805af15f@kaod.org>
-References: <f4a6919a-83c8-79c9-94ed-48f803a3191f@dave.eu>
- <ea6795ac-806e-4e15-c18b-8cf4aab95ca8@kaod.org>
- <f5b716ff-0b9b-982b-2236-970333dcbb0a@dave.eu>
- <998d7654-f69a-1a99-d4e7-19abd0a54da0@kaod.org>
- <4ac527f2-c59e-70a2-efd4-da52370ea557@dave.eu>
- <36851faf-6236-3717-f75d-cbec9bded7b7@kaod.org>
- <7c7304df-9a08-4343-8c73-da2d54436d77@dave.eu>
+From: Kees Cook <keescook@chromium.org>
+Subject: [PATCH] leds: Convert timers to use timer_setup()
+Date: Wed, 25 Oct 2017 03:30:01 -0700
+Message-ID: <20171025103001.GA145942@beast>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7c7304df-9a08-4343-8c73-da2d54436d77@dave.eu>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrea Scian - DAVE Embedded Systems <andrea.scian@dave.eu>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Andrew Jeffery <andrew@aj.id.au>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:50613 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932373AbdJYKaD (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 25 Oct 2017 06:30:03 -0400
+Received: by mail-pg0-f67.google.com with SMTP id y5so9140057pgq.7
+        for <linux-leds@vger.kernel.org>; Wed, 25 Oct 2017 03:30:03 -0700 (PDT)
+Content-Disposition: inline
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Willy Tarreau <w@1wt.eu>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/25/2017 12:36 AM, Andrea Scian - DAVE Embedded Systems wrote:
-> 
-> Il 24/10/2017 07:51, Cédric Le Goater ha scritto:
->> On 10/17/2017 11:16 AM, Andrea Scian - DAVE Embedded Systems wrote:
->>>
->>>> On 10/17/2017 10:20 AM, Andrea Scian - DAVE Embedded Systems wrote:
->>>>>
->>>>> Il 17/10/2017 10:18, Cédric Le Goater ha scritto:
->>>>>> On 10/17/2017 09:36 AM, Andrea Scian - DAVE Embedded Systems wrote:
->>>>>>> Dear all,
->>>>>>>
->>>>>>> I'm working on an iMX6 based board with a PCA9555 which is used both to drive LEDs and manage some GPIOs.
->>>>>> The PCA9555 chip and the PCA955[0-3] chips have different control
->>>>>> registers. You need a different led driver for it.
->>>>>
->>>>> My typo sorry, as you can see in the device tree below, I'm using pca9551
->>>>
->>>> ok.
->>>>
->>>> You might want to take a look at how we mixed gpios and leds on the witherspoon
->>>> system using pca9552 chips. we added a gpio-leds binding.
->>>>
->>>> https://github.com/openbmc/linux/blob/dev-4.10/arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts
->>>
->>> understood: you configure all pins of PCA955x as GPIOs and the map the one you need as led with gpio-leds binding.
->>
->> Sorry I got distracted.
->>
->>> However to me this is a kind of workaround or, at least, there's nothing about this limitation into the devicetree binding (in fact, IMHO, the device tree binding example will just fail)
->>
->> euh ? what do you mean. There is a real system using this device tree.
->> I think we would know about it if it didn't work. Please explain
->>
-> 
-> I mean that, for what I understand, your configuration is working because all pin of 9551 are configured as GPIOs (and the binded back as led)
-> In my configuration I have some pins configured as led and some as GPIOs, and this is not working.
+In preparation for unconditionally passing the struct timer_list pointer to
+all timer callbacks, switch to using the new timer_setup() and from_timer()
+to pass the timer pointer explicitly.
 
-ok. That might the case. 
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: linux-leds@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ drivers/leds/led-core.c                  |  7 +++----
+ drivers/leds/trigger/ledtrig-activity.c  | 14 ++++++++------
+ drivers/leds/trigger/ledtrig-transient.c | 12 +++++++-----
+ 3 files changed, 18 insertions(+), 15 deletions(-)
 
-We have declared all pins as GPIOs on pca0 then used on top :  
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index ef1360445413..fd83c7f77a95 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -45,9 +45,9 @@ static int __led_set_brightness_blocking(struct led_classdev *led_cdev,
+ 	return led_cdev->brightness_set_blocking(led_cdev, value);
+ }
+ 
+-static void led_timer_function(unsigned long data)
++static void led_timer_function(struct timer_list *t)
+ {
+-	struct led_classdev *led_cdev = (void *)data;
++	struct led_classdev *led_cdev = from_timer(led_cdev, t, blink_timer);
+ 	unsigned long brightness;
+ 	unsigned long delay;
+ 
+@@ -178,8 +178,7 @@ void led_init_core(struct led_classdev *led_cdev)
+ {
+ 	INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
+ 
+-	setup_timer(&led_cdev->blink_timer, led_timer_function,
+-		    (unsigned long)led_cdev);
++	timer_setup(&led_cdev->blink_timer, led_timer_function, 0);
+ }
+ EXPORT_SYMBOL_GPL(led_init_core);
+ 
+diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
+index c6635c5e227a..5081894082bd 100644
+--- a/drivers/leds/trigger/ledtrig-activity.c
++++ b/drivers/leds/trigger/ledtrig-activity.c
+@@ -24,6 +24,7 @@ static int panic_detected;
+ 
+ struct activity_data {
+ 	struct timer_list timer;
++	struct led_classdev *led_cdev;
+ 	u64 last_used;
+ 	u64 last_boot;
+ 	int time_left;
+@@ -31,10 +32,11 @@ struct activity_data {
+ 	int invert;
+ };
+ 
+-static void led_activity_function(unsigned long data)
++static void led_activity_function(struct timer_list *t)
+ {
+-	struct led_classdev *led_cdev = (struct led_classdev *)data;
+-	struct activity_data *activity_data = led_cdev->trigger_data;
++	struct activity_data *activity_data = from_timer(activity_data, t,
++							 timer);
++	struct led_classdev *led_cdev = activity_data->led_cdev;
+ 	struct timespec boot_time;
+ 	unsigned int target;
+ 	unsigned int usage;
+@@ -195,11 +197,11 @@ static void activity_activate(struct led_classdev *led_cdev)
+ 		return;
+ 	}
+ 
+-	setup_timer(&activity_data->timer,
+-		    led_activity_function, (unsigned long)led_cdev);
++	activity_data->led_cdev = led_cdev;
++	timer_setup(&activity_data->timer, led_activity_function, 0);
+ 	if (!led_cdev->blink_brightness)
+ 		led_cdev->blink_brightness = led_cdev->max_brightness;
+-	led_activity_function(activity_data->timer.data);
++	led_activity_function(&activity_data->timer);
+ 	set_bit(LED_BLINK_SW, &led_cdev->work_flags);
+ 	led_cdev->activated = true;
+ }
+diff --git a/drivers/leds/trigger/ledtrig-transient.c b/drivers/leds/trigger/ledtrig-transient.c
+index 7e6011bd3646..7acce64b692a 100644
+--- a/drivers/leds/trigger/ledtrig-transient.c
++++ b/drivers/leds/trigger/ledtrig-transient.c
+@@ -33,12 +33,14 @@ struct transient_trig_data {
+ 	int restore_state;
+ 	unsigned long duration;
+ 	struct timer_list timer;
++	struct led_classdev *led_cdev;
+ };
+ 
+-static void transient_timer_function(unsigned long data)
++static void transient_timer_function(struct timer_list *t)
+ {
+-	struct led_classdev *led_cdev = (struct led_classdev *) data;
+-	struct transient_trig_data *transient_data = led_cdev->trigger_data;
++	struct transient_trig_data *transient_data =
++		from_timer(transient_data, t, timer);
++	struct led_classdev *led_cdev = transient_data->led_cdev;
+ 
+ 	transient_data->activate = 0;
+ 	led_set_brightness_nosleep(led_cdev, transient_data->restore_state);
+@@ -169,6 +171,7 @@ static void transient_trig_activate(struct led_classdev *led_cdev)
+ 		return;
+ 	}
+ 	led_cdev->trigger_data = tdata;
++	tdata->led_cdev = led_cdev;
+ 
+ 	rc = device_create_file(led_cdev->dev, &dev_attr_activate);
+ 	if (rc)
+@@ -182,8 +185,7 @@ static void transient_trig_activate(struct led_classdev *led_cdev)
+ 	if (rc)
+ 		goto err_out_state;
+ 
+-	setup_timer(&tdata->timer, transient_timer_function,
+-		    (unsigned long) led_cdev);
++	timer_setup(&tdata->timer, transient_timer_function, 0);
+ 	led_cdev->activated = true;
+ 
+ 	return;
+-- 
+2.7.4
 
-	gpio-keys-polled {
-		compatible = "gpio-keys-polled";
-		...
-	}
 
-and
-
-	leds {
-		compatible = "gpio-leds";
-		...
-	}
-
-which works perfecty fine.
-
-
->>> I wrote the attached patch which should fix the issue and allow a more generic approach. WDYT?
->>>
->>> (in case it looks good, I'll send the patch in the correct way)
->>
->> Please send the patch to discuss, add Andrew Jeffery <andrew@aj.id.au>
->> in cc:
->>
-> 
-> Sorry for the delay but I'm busy in Prague with OSSummit and ELCE. 
-> I 'll send a proper patch 
-> and more comments, if needed, by the begin of next week.
-
-ok thanks, I have not seen anything wrong with it. I will see if we can 
-get it tested on our systems.
-
-> (BTW, if some of you are here, drop me a line and have a beer together! ;-) )
-
-Nah, not this time. Enjoy :)
-
-Cheers,
-
-C.
+-- 
+Kees Cook
+Pixel Security
