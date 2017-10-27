@@ -1,155 +1,49 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: Convert timers to use timer_setup()
-Date: Thu, 26 Oct 2017 20:38:48 +0200
-Message-ID: <b4872e92-7a73-a86b-7ec2-ba7a79603dae@gmail.com>
-References: <20171025103001.GA145942@beast>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/2] backlight: pwm_bl: add configurable delay between
+ re-enabling PWM and switching backlight power on
+Date: Fri, 27 Oct 2017 09:38:11 -0500
+Message-ID: <20171027140307.x7mtgvy5py7l5nqf@rob-hp-laptop>
+References: <1509022186-19636-1-git-send-email-LW@KARO-electronics.de>
+ <1509022186-19636-4-git-send-email-LW@KARO-electronics.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:46585 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932334AbdJZSjr (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 26 Oct 2017 14:39:47 -0400
-In-Reply-To: <20171025103001.GA145942@beast>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1509022186-19636-4-git-send-email-LW@KARO-electronics.de>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Thompson <daniel.thompson@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Willy Tarreau <w@1wt.eu>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Kees,
-
-Thanks for the patch.
-
-On 10/25/2017 12:30 PM, Kees Cook wrote:
-> In preparation for unconditionally passing the struct timer_list pointer to
-> all timer callbacks, switch to using the new timer_setup() and from_timer()
-> to pass the timer pointer explicitly.
+On Thu, Oct 26, 2017 at 02:49:46PM +0200, Lothar Waﬂmann wrote:
+> When switching the backlight on, the LCD may need some time to adjust
+> to the configured PWM duty cycle. Add a configurable delay between
+> configuring the PWM and enabling the backlight regulator to account
+> for this.
 > 
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Willy Tarreau <w@1wt.eu>
-> Cc: linux-leds@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Lothar Waﬂmann <LW@KARO-electronics.de>
 > ---
->  drivers/leds/led-core.c                  |  7 +++----
->  drivers/leds/trigger/ledtrig-activity.c  | 14 ++++++++------
->  drivers/leds/trigger/ledtrig-transient.c | 12 +++++++-----
->  3 files changed, 18 insertions(+), 15 deletions(-)
+>  .../bindings/leds/backlight/pwm-backlight.txt      |  4 ++++
+>  drivers/video/backlight/pwm_bl.c                   | 22 +++++++++++++++++++---
+>  2 files changed, 23 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index ef1360445413..fd83c7f77a95 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -45,9 +45,9 @@ static int __led_set_brightness_blocking(struct led_classdev *led_cdev,
->  	return led_cdev->brightness_set_blocking(led_cdev, value);
->  }
->  
-> -static void led_timer_function(unsigned long data)
-> +static void led_timer_function(struct timer_list *t)
->  {
-> -	struct led_classdev *led_cdev = (void *)data;
-> +	struct led_classdev *led_cdev = from_timer(led_cdev, t, blink_timer);
->  	unsigned long brightness;
->  	unsigned long delay;
->  
-> @@ -178,8 +178,7 @@ void led_init_core(struct led_classdev *led_cdev)
->  {
->  	INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
->  
-> -	setup_timer(&led_cdev->blink_timer, led_timer_function,
-> -		    (unsigned long)led_cdev);
-> +	timer_setup(&led_cdev->blink_timer, led_timer_function, 0);
->  }
->  EXPORT_SYMBOL_GPL(led_init_core);
->  
-> diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
-> index c6635c5e227a..5081894082bd 100644
-> --- a/drivers/leds/trigger/ledtrig-activity.c
-> +++ b/drivers/leds/trigger/ledtrig-activity.c
-> @@ -24,6 +24,7 @@ static int panic_detected;
->  
->  struct activity_data {
->  	struct timer_list timer;
-> +	struct led_classdev *led_cdev;
->  	u64 last_used;
->  	u64 last_boot;
->  	int time_left;
-> @@ -31,10 +32,11 @@ struct activity_data {
->  	int invert;
->  };
->  
-> -static void led_activity_function(unsigned long data)
-> +static void led_activity_function(struct timer_list *t)
->  {
-> -	struct led_classdev *led_cdev = (struct led_classdev *)data;
-> -	struct activity_data *activity_data = led_cdev->trigger_data;
-> +	struct activity_data *activity_data = from_timer(activity_data, t,
-> +							 timer);
-> +	struct led_classdev *led_cdev = activity_data->led_cdev;
->  	struct timespec boot_time;
->  	unsigned int target;
->  	unsigned int usage;
-> @@ -195,11 +197,11 @@ static void activity_activate(struct led_classdev *led_cdev)
->  		return;
->  	}
->  
-> -	setup_timer(&activity_data->timer,
-> -		    led_activity_function, (unsigned long)led_cdev);
-> +	activity_data->led_cdev = led_cdev;
-> +	timer_setup(&activity_data->timer, led_activity_function, 0);
->  	if (!led_cdev->blink_brightness)
->  		led_cdev->blink_brightness = led_cdev->max_brightness;
-> -	led_activity_function(activity_data->timer.data);
-> +	led_activity_function(&activity_data->timer);
->  	set_bit(LED_BLINK_SW, &led_cdev->work_flags);
->  	led_cdev->activated = true;
->  }
-> diff --git a/drivers/leds/trigger/ledtrig-transient.c b/drivers/leds/trigger/ledtrig-transient.c
-> index 7e6011bd3646..7acce64b692a 100644
-> --- a/drivers/leds/trigger/ledtrig-transient.c
-> +++ b/drivers/leds/trigger/ledtrig-transient.c
-> @@ -33,12 +33,14 @@ struct transient_trig_data {
->  	int restore_state;
->  	unsigned long duration;
->  	struct timer_list timer;
-> +	struct led_classdev *led_cdev;
->  };
->  
-> -static void transient_timer_function(unsigned long data)
-> +static void transient_timer_function(struct timer_list *t)
->  {
-> -	struct led_classdev *led_cdev = (struct led_classdev *) data;
-> -	struct transient_trig_data *transient_data = led_cdev->trigger_data;
-> +	struct transient_trig_data *transient_data =
-> +		from_timer(transient_data, t, timer);
-> +	struct led_classdev *led_cdev = transient_data->led_cdev;
->  
->  	transient_data->activate = 0;
->  	led_set_brightness_nosleep(led_cdev, transient_data->restore_state);
-> @@ -169,6 +171,7 @@ static void transient_trig_activate(struct led_classdev *led_cdev)
->  		return;
->  	}
->  	led_cdev->trigger_data = tdata;
-> +	tdata->led_cdev = led_cdev;
->  
->  	rc = device_create_file(led_cdev->dev, &dev_attr_activate);
->  	if (rc)
-> @@ -182,8 +185,7 @@ static void transient_trig_activate(struct led_classdev *led_cdev)
->  	if (rc)
->  		goto err_out_state;
->  
-> -	setup_timer(&tdata->timer, transient_timer_function,
-> -		    (unsigned long) led_cdev);
-> +	timer_setup(&tdata->timer, transient_timer_function, 0);
->  	led_cdev->activated = true;
->  
->  	return;
-> 
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+> index 764db86..95594c3 100644
+> --- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+> +++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+> @@ -17,6 +17,10 @@ Optional properties:
+>                 "pwms" property (see PWM binding[0])
+>    - enable-gpios: contains a single GPIO specifier for the GPIO which enables
+>                    and disables the backlight (see GPIO binding[1])
+> +  - turn-on-delay-ms: delay in milliseconds between configuring the PWM
+> +		  and switching PWM on. This may be required to eliminate
+> +		  flicker when switching the PWM on after it has been
+> +		  disabled.
 
-Applied.
+The subject talks about turning on the backlight regulator, but this 
+only talks about the PWM.
 
--- 
-Best regards,
-Jacek Anaszewski
+>  
+>  [0]: Documentation/devicetree/bindings/pwm/pwm.txt
+>  [1]: Documentation/devicetree/bindings/gpio/gpio.txt
