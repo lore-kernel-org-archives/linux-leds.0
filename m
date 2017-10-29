@@ -1,49 +1,36 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/2] backlight: pwm_bl: add configurable delay between
- re-enabling PWM and switching backlight power on
-Date: Fri, 27 Oct 2017 09:38:11 -0500
-Message-ID: <20171027140307.x7mtgvy5py7l5nqf@rob-hp-laptop>
-References: <1509022186-19636-1-git-send-email-LW@KARO-electronics.de>
- <1509022186-19636-4-git-send-email-LW@KARO-electronics.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1509022186-19636-4-git-send-email-LW@KARO-electronics.de>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Thompson <daniel.thompson@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] leds: lp55xx: fix spelling mistake: 'cound' -> 'could'
+Date: Sun, 29 Oct 2017 11:25:47 +0530
+Message-ID: <429d064a947efc6e55b057ead58ac0b0a598e391.1509256447.git.arvind.yadav.cs@gmail.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:56599 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751487AbdJ2F4C (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 29 Oct 2017 01:56:02 -0400
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-On Thu, Oct 26, 2017 at 02:49:46PM +0200, Lothar Waﬂmann wrote:
-> When switching the backlight on, the LCD may need some time to adjust
-> to the configured PWM duty cycle. Add a configurable delay between
-> configuring the PWM and enabling the backlight regulator to account
-> for this.
-> 
-> Signed-off-by: Lothar Waﬂmann <LW@KARO-electronics.de>
-> ---
->  .../bindings/leds/backlight/pwm-backlight.txt      |  4 ++++
->  drivers/video/backlight/pwm_bl.c                   | 22 +++++++++++++++++++---
->  2 files changed, 23 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> index 764db86..95594c3 100644
-> --- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> +++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> @@ -17,6 +17,10 @@ Optional properties:
->                 "pwms" property (see PWM binding[0])
->    - enable-gpios: contains a single GPIO specifier for the GPIO which enables
->                    and disables the backlight (see GPIO binding[1])
-> +  - turn-on-delay-ms: delay in milliseconds between configuring the PWM
-> +		  and switching PWM on. This may be required to eliminate
-> +		  flicker when switching the PWM on after it has been
-> +		  disabled.
+Trivial fix to spelling mistakes in 'lp5523_init_program_engine'.
 
-The subject talks about turning on the backlight regulator, but this 
-only talks about the PWM.
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/leds/leds-lp5523.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  
->  [0]: Documentation/devicetree/bindings/pwm/pwm.txt
->  [1]: Documentation/devicetree/bindings/gpio/gpio.txt
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index 924e50a..52b6f529 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -323,7 +323,7 @@ static int lp5523_init_program_engine(struct lp55xx_chip *chip)
+ 
+ 	if (status != LP5523_ENG_STATUS_MASK) {
+ 		dev_err(&chip->cl->dev,
+-			"cound not configure LED engine, status = 0x%.2x\n",
++			"could not configure LED engine, status = 0x%.2x\n",
+ 			status);
+ 		ret = -1;
+ 	}
+-- 
+2.7.4
