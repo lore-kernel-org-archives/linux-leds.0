@@ -1,364 +1,42 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+From: Alan Mizrahi <alan@mizrahi.com.ve>
 Subject: Re: [PATCH v4 1/1] leds: Add driver for PC Engines APU/APU2 LEDs
-Date: Fri, 3 Nov 2017 20:48:23 +0100
-Message-ID: <4ec288c4-2d03-fb2a-04ae-9c901c74219f@gmail.com>
+Date: Sat, 4 Nov 2017 10:21:28 +0900
+Message-ID: <545b36bf-9577-c2bf-4896-1d19b50f9f9e@mizrahi.com.ve>
 References: <20171103013807.GA13284@poseidon>
+ <4ec288c4-2d03-fb2a-04ae-9c901c74219f@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:56926 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751907AbdKCTtX (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 3 Nov 2017 15:49:23 -0400
-Received: by mail-wr0-f193.google.com with SMTP id r79so3426458wrb.13
-        for <linux-leds@vger.kernel.org>; Fri, 03 Nov 2017 12:49:22 -0700 (PDT)
-In-Reply-To: <20171103013807.GA13284@poseidon>
+Received: from mail01.asahi-net.or.jp ([202.224.55.13]:51513 "EHLO
+        mail01.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751805AbdKDBY0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 3 Nov 2017 21:24:26 -0400
+In-Reply-To: <4ec288c4-2d03-fb2a-04ae-9c901c74219f@gmail.com>
+Content-Language: en-US
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Alan Mizrahi <alan@mizrahi.com.ve>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
 Cc: linux-leds@vger.kernel.org
 
-Hi Alan,
-
-Thanks for addressing my remarks.
-You omitted one detail, though. Please refer below.
-
-On 11/03/2017 02:38 AM, Alan Mizrahi wrote:
-> This patch implements the driver to support the front panel LEDs
-> for PC Engines APU and APU2 boards.
+On 2017-11-04 04:48, Jacek Anaszewski wrote:
+> Hi Alan,
 > 
-> Signed-off-by: Alan Mizrahi <alan@mizrahi.com.ve>
-> ---
->  drivers/leds/Kconfig    |  10 ++
->  drivers/leds/Makefile   |   1 +
->  drivers/leds/leds-apu.c | 278 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 289 insertions(+)
->  create mode 100644 drivers/leds/leds-apu.c
+> Thanks for addressing my remarks.
+> You omitted one detail, though. Please refer below.
 > 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 52ea34e..318a28f 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -57,6 +57,16 @@ config LEDS_AAT1290
->  	depends on PINCTRL
->  	help
->  	 This option enables support for the LEDs on the AAT1290.
-> +config LEDS_APU
-> +	tristate "Front panel LED support for PC Engines APU/APU2 boards"
-> +	depends on LEDS_CLASS
-> +	depends on X86 && DMI
-> +	help
-> +	  This driver makes the PC Engines APU/APU2 front panel LEDs
-> +	  accessible from userspace programs through the LED subsystem.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called leds-apu.
->  
->  config LEDS_AS3645A
->  	tristate "AS3645A LED flash controller support"
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 7d7b265..6de4979 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -8,6 +8,7 @@ obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
->  # LED Platform Drivers
->  obj-$(CONFIG_LEDS_88PM860X)		+= leds-88pm860x.o
->  obj-$(CONFIG_LEDS_AAT1290)		+= leds-aat1290.o
-> +obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
->  obj-$(CONFIG_LEDS_AS3645A)		+= leds-as3645a.o
->  obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
->  obj-$(CONFIG_LEDS_BCM6358)		+= leds-bcm6358.o
-> diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
-> new file mode 100644
-> index 0000000..7cce940
-> --- /dev/null
-> +++ b/drivers/leds/leds-apu.c
-> @@ -0,0 +1,278 @@
-> +/*
-> + * drivers/leds/leds-apu.c
-> + * Copyright (C) 2017 Alan Mizrahi, alan at mizrahi dot com dot ve
-> + *
-> + * Redistribution and use in source and binary forms, with or without
-> + * modification, are permitted provided that the following conditions are met:
-> + *
-> + * 1. Redistributions of source code must retain the above copyright
-> + *    notice, this list of conditions and the following disclaimer.
-> + * 2. Redistributions in binary form must reproduce the above copyright
-> + *    notice, this list of conditions and the following disclaimer in the
-> + *    documentation and/or other materials provided with the distribution.
-> + * 3. Neither the names of the copyright holders nor the names of its
-> + *    contributors may be used to endorse or promote products derived from
-> + *    this software without specific prior written permission.
-> + *
-> + * Alternatively, this software may be distributed under the terms of the
-> + * GNU General Public License ("GPL") version 2 as published by the Free
-> + * Software Foundation.
-> + *
-> + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-> + * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-> + * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-> + * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-> + * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-> + * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-> + * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-> + * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-> + * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-> + * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-> + * POSSIBILITY OF SUCH DAMAGE.
-> + */
-> +
-> +#include <linux/dmi.h>
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +
-> +#define APU1_FCH_ACPI_MMIO_BASE 0xFED80000
-> +#define APU1_FCH_GPIO_BASE      (APU1_FCH_ACPI_MMIO_BASE + 0x01BD)
-> +#define APU1_LEDON              0x08
-> +#define APU1_LEDOFF             0xC8
-> +#define APU1_NUM_GPIO           3
-> +#define APU1_IOSIZE             sizeof(u8)
-> +
-> +#define APU2_FCH_ACPI_MMIO_BASE 0xFED80000
-> +#define APU2_FCH_GPIO_BASE      (APU2_FCH_ACPI_MMIO_BASE + 0x1500)
-> +#define APU2_GPIO_BIT_WRITE     22
-> +#define APU2_APU2_NUM_GPIO      4
-> +#define APU2_IOSIZE             sizeof(u32)
-> +
-> +/* LED access parameters */
-> +struct apu_param {
-> +	void __iomem *addr; /* for ioread/iowrite */
-> +};
-> +
-> +/* LED private data */
-> +struct apu_led_priv {
-> +	struct led_classdev cdev;
-> +	struct apu_param param;
-> +};
-> +#define cdev_to_priv(c) container_of(c, struct apu_led_priv, cdev)
-> +
-> +/* LED profile */
-> +struct apu_led_profile {
-> +	const char *name;
-> +	enum led_brightness brightness;
-> +	unsigned long offset; /* for devm_ioremap */
-> +};
-> +
-> +/* Supported platform types */
-> +enum apu_led_platform_types {
-> +	APU1_LED_PLATFORM,
-> +	APU2_LED_PLATFORM,
-> +};
-> +
-> +struct apu_led_pdata {
-> +	struct platform_device *pdev;
-> +	struct apu_led_priv *pled;
-> +	const struct apu_led_profile *profile;
-> +	enum apu_led_platform_types platform;
-> +	int num_led_instances;
-> +	int iosize; /* for devm_ioremap() */
-> +	spinlock_t lock;
-> +};
-> +
-> +static struct apu_led_pdata *apu_led;
-> +
-> +static const struct apu_led_profile apu1_led_profile[] = {
-> +	{ "apu:green:1", LED_ON,  APU1_FCH_GPIO_BASE + 0 * APU1_IOSIZE },
-> +	{ "apu:green:2", LED_OFF, APU1_FCH_GPIO_BASE + 1 * APU1_IOSIZE },
-> +	{ "apu:green:3", LED_OFF, APU1_FCH_GPIO_BASE + 2 * APU1_IOSIZE },
-> +};
-> +
-> +static const struct apu_led_profile apu2_led_profile[] = {
-> +	{ "apu2:green:1", LED_ON,  APU2_FCH_GPIO_BASE + 68 * APU2_IOSIZE },
-> +	{ "apu2:green:2", LED_OFF, APU2_FCH_GPIO_BASE + 69 * APU2_IOSIZE },
-> +	{ "apu2:green:3", LED_OFF, APU2_FCH_GPIO_BASE + 70 * APU2_IOSIZE },
-> +};
-> +
-> +static const struct dmi_system_id apu_led_dmi_table[] __initdata = {
+> On 11/03/2017 02:38 AM, Alan Mizrahi wrote:
 
-s/__initdata/__initconst/
+>> +static const struct dmi_system_id apu_led_dmi_table[] __initdata = {
 
-I can fix it up by myself, if you agree.
-
-Thanks,
-Jacek Anaszewski
-
-> +	{
-> +		.ident = "apu",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "APU")
-> +		}
-> +	},
-> +	{
-> +		.ident = "apu2",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +			DMI_MATCH(DMI_BOARD_NAME, "APU2")
-> +		}
-> +	},
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(dmi, apu_led_dmi_table);
-> +
-> +static void apu1_led_brightness_set(struct led_classdev *led, enum led_brightness value)
-> +{
-> +	struct apu_led_priv *pled = cdev_to_priv(led);
-> +
-> +	spin_lock(&apu_led->lock);
-> +	iowrite8(value ? APU1_LEDON : APU1_LEDOFF, pled->param.addr);
-> +	spin_unlock(&apu_led->lock);
-> +}
-> +
-> +static void apu2_led_brightness_set(struct led_classdev *led, enum led_brightness value)
-> +{
-> +	struct apu_led_priv *pled = cdev_to_priv(led);
-> +	u32 value_new;
-> +
-> +	spin_lock(&apu_led->lock);
-> +
-> +	value_new = ioread32(pled->param.addr);
-> +
-> +	if (value)
-> +		value_new &= ~BIT(APU2_GPIO_BIT_WRITE);
-> +	else
-> +		value_new |= BIT(APU2_GPIO_BIT_WRITE);
-> +
-> +	iowrite32(value_new, pled->param.addr);
-> +
-> +	spin_unlock(&apu_led->lock);
-> +}
-> +
-> +static int apu_led_config(struct device *dev, struct apu_led_pdata *apuld)
-> +{
-> +	int i;
-> +	int err;
-> +
-> +	apu_led->pled = devm_kzalloc(dev,
-> +		sizeof(struct apu_led_priv) * apu_led->num_led_instances,
-> +		GFP_KERNEL);
-> +
-> +	if (!apu_led->pled)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < apu_led->num_led_instances; i++) {
-> +		struct apu_led_priv *pled = &apu_led->pled[i];
-> +		struct led_classdev *led_cdev = &pled->cdev;
-> +
-> +		led_cdev->name = apu_led->profile[i].name;
-> +		led_cdev->brightness = apu_led->profile[i].brightness;
-> +		led_cdev->max_brightness = 1;
-> +		led_cdev->flags = LED_CORE_SUSPENDRESUME;
-> +		if (apu_led->platform == APU1_LED_PLATFORM)
-> +			led_cdev->brightness_set = apu1_led_brightness_set;
-> +		else if (apu_led->platform == APU2_LED_PLATFORM)
-> +			led_cdev->brightness_set = apu2_led_brightness_set;
-> +
-> +		pled->param.addr = devm_ioremap(dev,
-> +				apu_led->profile[i].offset, apu_led->iosize);
-> +		if (!pled->param.addr) {
-> +			err = -ENOMEM;
-> +			goto error;
-> +		}
-> +
-> +		err = led_classdev_register(dev, led_cdev);
-> +		if (err)
-> +			goto error;
-> +
-> +		led_cdev->brightness_set(led_cdev, apu_led->profile[i].brightness);
-> +	}
-> +
-> +	return 0;
-> +
-> +error:
-> +	while (i-- > 0)
-> +		led_classdev_unregister(&apu_led->pled[i].cdev);
-> +
-> +	return err;
-> +}
-> +
-> +static int __init apu_led_probe(struct platform_device *pdev)
-> +{
-> +	apu_led = devm_kzalloc(&pdev->dev, sizeof(*apu_led), GFP_KERNEL);
-> +
-> +	if (!apu_led)
-> +		return -ENOMEM;
-> +
-> +	apu_led->pdev = pdev;
-> +
-> +	if (dmi_match(DMI_BOARD_NAME, "APU")) {
-> +		apu_led->profile = apu1_led_profile;
-> +		apu_led->platform = APU1_LED_PLATFORM;
-> +		apu_led->num_led_instances = ARRAY_SIZE(apu1_led_profile);
-> +		apu_led->iosize = APU1_IOSIZE;
-> +	} else if (dmi_match(DMI_BOARD_NAME, "APU2")) {
-> +		apu_led->profile = apu2_led_profile;
-> +		apu_led->platform = APU2_LED_PLATFORM;
-> +		apu_led->num_led_instances = ARRAY_SIZE(apu2_led_profile);
-> +		apu_led->iosize = APU2_IOSIZE;
-> +	}
-> +
-> +	spin_lock_init(&apu_led->lock);
-> +	return apu_led_config(&pdev->dev, apu_led);
-> +}
-> +
-> +static struct platform_driver apu_led_driver = {
-> +	.driver = {
-> +		.name = KBUILD_MODNAME,
-> +	},
-> +};
-> +
-> +static int __init apu_led_init(void)
-> +{
-> +	struct platform_device *pdev;
-> +	int err;
-> +
-> +	if (!dmi_match(DMI_SYS_VENDOR, "PC Engines")) {
-> +		pr_err("No PC Engines board detected\n");
-> +		return -ENODEV;
-> +	}
-> +	if (!(dmi_match(DMI_PRODUCT_NAME, "APU") || dmi_match(DMI_PRODUCT_NAME, "APU2"))) {
-> +		pr_err("Unknown PC Engines board: %s\n",
-> +				dmi_get_system_info(DMI_PRODUCT_NAME));
-> +		return -ENODEV;
-> +	}
-> +
-> +	pdev = platform_device_register_simple(KBUILD_MODNAME, -1, NULL, 0);
-> +	if (IS_ERR(pdev)) {
-> +		pr_err("Device allocation failed\n");
-> +		return PTR_ERR(pdev);
-> +	}
-> +
-> +	err = platform_driver_probe(&apu_led_driver, apu_led_probe);
-> +	if (err) {
-> +		pr_err("Probe platform driver failed\n");
-> +		platform_device_unregister(pdev);
-> +	}
-> +
-> +	return err;
-> +}
-> +
-> +static void __exit apu_led_exit(void)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < apu_led->num_led_instances; i++)
-> +		led_classdev_unregister(&apu_led->pled[i].cdev);
-> +
-> +	platform_device_unregister(apu_led->pdev);
-> +	platform_driver_unregister(&apu_led_driver);
-> +}
-> +
-> +module_init(apu_led_init);
-> +module_exit(apu_led_exit);
-> +
-> +MODULE_AUTHOR("Alan Mizrahi");
-> +MODULE_DESCRIPTION("PC Engines APU family LED driver");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:leds_apu");
 > 
+> s/__initdata/__initconst/
+> 
+> I can fix it up by myself, if you agree.
+
+I missed that one.
+I'm fine either way, I can also submit another patch if you prefer.
+
+Best regards,
+
+Alan Mizrahi
