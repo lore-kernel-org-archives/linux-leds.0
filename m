@@ -1,42 +1,47 @@
-From: Alan Mizrahi <alan@mizrahi.com.ve>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [PATCH v4 1/1] leds: Add driver for PC Engines APU/APU2 LEDs
-Date: Sat, 4 Nov 2017 10:21:28 +0900
-Message-ID: <545b36bf-9577-c2bf-4896-1d19b50f9f9e@mizrahi.com.ve>
+Date: Mon, 6 Nov 2017 22:11:18 +0100
+Message-ID: <d230be9f-e47c-35d5-5942-a1b4d65d536b@gmail.com>
 References: <20171103013807.GA13284@poseidon>
  <4ec288c4-2d03-fb2a-04ae-9c901c74219f@gmail.com>
+ <545b36bf-9577-c2bf-4896-1d19b50f9f9e@mizrahi.com.ve>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail01.asahi-net.or.jp ([202.224.55.13]:51513 "EHLO
-        mail01.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751805AbdKDBY0 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 3 Nov 2017 21:24:26 -0400
-In-Reply-To: <4ec288c4-2d03-fb2a-04ae-9c901c74219f@gmail.com>
-Content-Language: en-US
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:55590 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753442AbdKFVMR (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Nov 2017 16:12:17 -0500
+Received: by mail-wr0-f196.google.com with SMTP id l8so9920559wre.12
+        for <linux-leds@vger.kernel.org>; Mon, 06 Nov 2017 13:12:17 -0800 (PST)
+In-Reply-To: <545b36bf-9577-c2bf-4896-1d19b50f9f9e@mizrahi.com.ve>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
+To: Alan Mizrahi <alan@mizrahi.com.ve>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
 Cc: linux-leds@vger.kernel.org
 
-On 2017-11-04 04:48, Jacek Anaszewski wrote:
-> Hi Alan,
+On 11/04/2017 02:21 AM, Alan Mizrahi wrote:
+> On 2017-11-04 04:48, Jacek Anaszewski wrote:
+>> Hi Alan,
+>>
+>> Thanks for addressing my remarks.
+>> You omitted one detail, though. Please refer below.
+>>
+>> On 11/03/2017 02:38 AM, Alan Mizrahi wrote:
 > 
-> Thanks for addressing my remarks.
-> You omitted one detail, though. Please refer below.
+>>> +static const struct dmi_system_id apu_led_dmi_table[] __initdata = {
 > 
-> On 11/03/2017 02:38 AM, Alan Mizrahi wrote:
-
->> +static const struct dmi_system_id apu_led_dmi_table[] __initdata = {
-
+>>
+>> s/__initdata/__initconst/
+>>
+>> I can fix it up by myself, if you agree.
 > 
-> s/__initdata/__initconst/
-> 
-> I can fix it up by myself, if you agree.
+> I missed that one.
+> I'm fine either way, I can also submit another patch if you prefer.
 
-I missed that one.
-I'm fine either way, I can also submit another patch if you prefer.
+Fixed it up and applied to the for-next branch of linux-leds.git.
 
+-- 
 Best regards,
-
-Alan Mizrahi
+Jacek Anaszewski
