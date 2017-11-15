@@ -1,26 +1,23 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v2 1/2] dt: bindings: lm3692x: Add bindings for lm3692x LED driver
-Date: Wed, 15 Nov 2017 13:30:30 -0600
-Message-ID: <20171115193031.28781-1-dmurphy@ti.com>
+From: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH v3 1/2] dt: bindings: lm3692x: Add bindings for lm3692x LED driver
+Date: Wed, 15 Nov 2017 13:42:02 -0600
+Message-ID: <20171115194203.13572-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:41047 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933071AbdKOTbM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 15 Nov 2017 14:31:12 -0500
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 
 This adds the devicetree bindings for the LM3692x
 I2C LED string driver.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
+Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
 ---
 
+v3 - No changes
 v2 - No changes - https://patchwork.kernel.org/patch/10056677/
 
  .../devicetree/bindings/leds/leds-lm3692x.txt      | 28 ++++++++++++++++++++++
@@ -63,3 +60,8 @@ index 000000000000..cfef67bd4100
 +http://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
 -- 
 2.15.0.124.g7668cbc60
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
