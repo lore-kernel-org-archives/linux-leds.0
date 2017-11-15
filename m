@@ -1,79 +1,49 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 2/2] leds: lp8860: Add regulator enable during init
-Date: Wed, 15 Nov 2017 13:52:13 -0600
-Message-ID: <20171115195213.8404-2-dmurphy@ti.com>
-References: <20171115195213.8404-1-dmurphy@ti.com>
+Subject: Re: [PATCH v2 2/2] leds: lm3692x: Introduce LM3692x dual string
+ driver
+Date: Wed, 15 Nov 2017 14:12:13 -0600
+Message-ID: <32edafdd-1d77-0063-6ad2-b59e2388e3cf@ti.com>
+References: <20171115193031.28781-1-dmurphy@ti.com>
+ <20171115193031.28781-2-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:58574 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755666AbdKOTwq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 15 Nov 2017 14:52:46 -0500
-In-Reply-To: <20171115195213.8404-1-dmurphy@ti.com>
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:43134 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751455AbdKOUMu (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 15 Nov 2017 15:12:50 -0500
+In-Reply-To: <20171115193031.28781-2-dmurphy@ti.com>
+Content-Language: en-US
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-Add the regulator enable call during initialization.
-If init fails then disable the regulator.
+On 11/15/2017 01:30 PM, Dan Murphy wrote:
+> Introducing the LM3692x Dual-String white LED driver.
+> 
+> Data sheet is located
+> http://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+> 
+> v2 - Added data sheet link, fixed linuxdoc format, returned on failure in init
+> routine, return on fault_check failure, updated brightness calculation and
+> fixed capitalization issue - https://patchwork.kernel.org/patch/10056675/
+> 
+>  drivers/leds/leds-lm3692x.c | 390 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 390 insertions(+)
+>  create mode 100644 drivers/leds/leds-lm3692x.c
+> 
+> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+> new file mode 100644
+> index 000000000000..9fa7f5a20466
 
-Also during init the gpio gets set low even
-on a passing case so add if everything passes
-then return.
+Forgot to add the Makefile and Kconfig so submitting v3 with them included.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/leds/leds-lp8860.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-index 91b6c5fbd361..f91a4fe25168 100644
---- a/drivers/leds/leds-lp8860.c
-+++ b/drivers/leds/leds-lp8860.c
-@@ -247,6 +247,15 @@ static int lp8860_init(struct lp8860_led *led)
- 	unsigned int read_buf;
- 	int ret, i, reg_count;
- 
-+	if (led->regulator) {
-+		ret = regulator_enable(led->regulator);
-+		if (ret) {
-+			dev_err(&led->client->dev,
-+				"Failed to enable regulator\n");
-+			return ret;
-+		}
-+	}
-+
- 	if (led->enable_gpio)
- 		gpiod_direction_output(led->enable_gpio, 1);
- 
-@@ -282,12 +291,25 @@ static int lp8860_init(struct lp8860_led *led)
- 	ret = regmap_write(led->regmap,
- 			LP8860_EEPROM_CNTRL,
- 			LP8860_PROGRAM_EEPROM);
--	if (ret)
-+	if (ret) {
- 		dev_err(&led->client->dev, "Failed programming EEPROM\n");
-+		goto out;
-+	}
-+
-+	return ret;
-+
- out:
- 	if (ret)
- 		if (led->enable_gpio)
- 			gpiod_direction_output(led->enable_gpio, 0);
-+
-+	if (led->regulator) {
-+		ret = regulator_disable(led->regulator);
-+		if (ret)
-+			dev_err(&led->client->dev,
-+				"Failed to disable regulator\n");
-+	}
-+
- 	return ret;
- }
- 
+<snip>
 -- 
-2.15.0.124.g7668cbc60
+------------------
+Dan Murphy
