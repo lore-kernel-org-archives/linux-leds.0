@@ -1,109 +1,65 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v3 3/3] DT: leds: Add Qualcomm Light Pulse Generator binding
-Date: Tue, 14 Nov 2017 23:13:45 -0800
-Message-ID: <20171115071345.24331-4-bjorn.andersson@linaro.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH v3 1/3] leds: core: Introduce generic pattern interface
+Date: Wed, 15 Nov 2017 08:36:42 +0100
+Message-ID: <20171115073642.GA21307@kroah.com>
 References: <20171115071345.24331-1-bjorn.andersson@linaro.org>
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <20171115071345.24331-1-bjorn.andersson@linaro.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
+ <20171115071345.24331-2-bjorn.andersson@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:43465 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750962AbdKOHgh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 15 Nov 2017 02:36:37 -0500
+Content-Disposition: inline
+In-Reply-To: <20171115071345.24331-2-bjorn.andersson@linaro.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
 
-This adds the binding document describing the three hardware blocks
-related to the Light Pulse Generator found in a wide range of Qualcomm
-PMICs.
+On Tue, Nov 14, 2017 at 11:13:43PM -0800, Bjorn Andersson wrote:
+> Some LED controllers have support for autonomously controlling
+> brightness over time, according to some preprogrammed pattern or
+> function.
+> 
+> This adds a new optional operator that LED class drivers can implement
+> if they support such functionality as well as a new device attribute to
+> configure the pattern for a given LED.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
+> Changes since v2:
+> - None
+> 
+> Changes since v1:
+> - New patch, based on discussions following v1
+> 
+>  Documentation/ABI/testing/sysfs-class-led |  20 ++++
+>  drivers/leds/led-class.c                  | 150 ++++++++++++++++++++++++++++++
+>  include/linux/leds.h                      |  21 +++++
+>  3 files changed, 191 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+> index 5f67f7ab277b..74a7f5b1f89b 100644
+> --- a/Documentation/ABI/testing/sysfs-class-led
+> +++ b/Documentation/ABI/testing/sysfs-class-led
+> @@ -61,3 +61,23 @@ Description:
+>  		gpio and backlight triggers. In case of the backlight trigger,
+>  		it is useful when driving a LED which is intended to indicate
+>  		a device in a standby like state.
+> +
+> +What:		/sys/class/leds/<led>/pattern
+> +Date:		July 2017
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+That was many months ago :)
 
-Changes since v2:
-- Squashed all things into one node
-- Removed quirks from the binding, compatible implies number of channels, their
-  configuration etc.
-- Binding describes LEDs connected as child nodes
-- Support describing multi-channel LEDs
-- Change style of the binding document, to match other LED bindings
+> +KernelVersion:	4.14
 
-Changes since v1:
-- Dropped custom pattern properties
-- Renamed cell-index to qcom,lpg-channel to clarify its purpose
+And that kernel version is long since released :)
 
- .../devicetree/bindings/leds/leds-qcom-lpg.txt     | 66 ++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
+thanks,
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
-new file mode 100644
-index 000000000000..9cee6f9f543c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.txt
-@@ -0,0 +1,66 @@
-+Binding for Qualcomm Light Pulse Generator
-+
-+The Qualcomm Light Pulse Generator consists of three different hardware blocks;
-+a ramp generator with lookup table, the light pulse generator and a three
-+channel current sink. These blocks are found in a wide range of Qualcomm PMICs.
-+
-+Required properties:
-+- compatible: one of:
-+	      "qcom,pm8916-pwm",
-+	      "qcom,pm8941-lpg",
-+	      "qcom,pm8994-lpg",
-+	      "qcom,pmi8994-lpg",
-+	      "qcom,pmi8998-lpg",
-+
-+Optional properties:
-+- qcom,power-source: power-source used to drive the output, as defined in the
-+		     datasheet. Should be specified if the TRILED block is
-+		     present
-+- qcom,dtest: configures the output into an internal test line of the
-+	      pmic. Specified by a list of u32 pairs, one pair per channel,
-+	      where each pair denotes the test line to drive and the second
-+	      configures how the value should be outputed, as defined in the
-+	      datasheet
-+- #pwm-cells: should be 2, see ../pwm/pwm.txt
-+
-+LED subnodes:
-+A set of subnodes can be used to specify LEDs connected to the LPG. Channels
-+not associated with a LED are available as pwm channels, see ../pwm/pwm.txt.
-+
-+Required properties:
-+- led-sources: list of channels associated with this LED, starting at 1 for the
-+	       first LPG channel
-+
-+Optional properties:
-+- label: see Documentation/devicetree/bindings/leds/common.txt
-+- default-state: see Documentation/devicetree/bindings/leds/common.txt
-+- linux,default-trigger: see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example:
-+The following example defines a RGB LED attached to the PM8941.
-+
-+&spmi_bus {
-+	pm8941@1 {
-+		lpg {
-+			compatible = "qcom,pm8941-lpg";
-+			qcom,power-source = <1>;
-+
-+			rgb {
-+				led-sources = <7 6 5>;
-+			};
-+		};
-+	};
-+};
-+
-+The following example defines the single PWM channel of the PM8916, which can
-+be muxed by the MPP4 as a current sink.
-+
-+&spmi_bus {
-+	pm8916@1 {
-+		pm8916_pwm: pwm {
-+			compatible = "qcom,pm8916-pwm";
-+
-+			#pwm-cells = <2>;
-+		};
-+	};
-+};
--- 
-2.15.0
+greg k-h
