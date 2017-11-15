@@ -1,128 +1,74 @@
-From: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] leds: lm3692x: Introduce LM3692x dual string
- driver
-Date: Wed, 15 Nov 2017 15:25:42 -0600
-Message-ID: <abe5f2cc-9216-6f0b-8063-8a0079557ecf@ti.com>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: [PATCH v3 1/2] dt: bindings: lm3692x: Add bindings for lm3692x
+ LED driver
+Date: Wed, 15 Nov 2017 23:23:25 +0100
+Message-ID: <20171115222323.GA18290@amd>
 References: <20171115194203.13572-1-dmurphy@ti.com>
- <20171115194203.13572-2-dmurphy@ti.com> <20171115211236.GD6183@amd>
+ <cb5c5a65-d5a0-86a3-36b4-cf06baae9ec4@gmail.com>
+ <0a78c883-f074-cc19-3c0c-fc05607400e9@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171115211236.GD6183@amd>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <0a78c883-f074-cc19-3c0c-fc05607400e9-l0cyMroinI0@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+Cc: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-Pavel
 
-On 11/15/2017 03:12 PM, Pavel Machek wrote:
-> Hi!
-> 
->> Introducing the LM3692x Dual-String white LED driver.
->>
->> Data sheet is located
-> 
-> "located at"? (Twice.)
+--mYCpIKhGyMATD0i+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Actually it is 3x since I call it out in the dt binding as well.
+Hi!
 
-So what to eliminate?
+> > Shouldn't the driver be targeted for backlight subsystem then?
+> >=20
+> > Adding backlight maintainers.
+> >=20
+>=20
+> Great point!  I was not aware of the backlight subsystem.
+>=20
+> Looks like I need to create a back light version as well.
+>=20
+> Like the lp8788 did since this can be used as a LED driver beyond
+> display back lighting.
 
-> 
->> http://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
->>
->> Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
-> 
->> +config LEDS_LM3692X
->> +	tristate "LED support for LM3692x Chips"
->> +	depends on LEDS_CLASS && I2C
->> +	select REGMAP_I2C
->> +	help
->> +	  This option enables support for the TI LM3692x family
->> +	  of LED drivers.
-> 
-> "If unsure ..., module will be named..."
-> 
-> Might want to say this is for backlight LEDs here.
+No, definitely not two drivers for lp8788 hardware.
 
-AcK
+If that does not yet exist... you want to create glue layer to be able
+to use LED as a display backlight. (It may already exist, no idea).
 
-> 
->> +static int lm3692x_fault_check(struct lm3692x_led *led)
->> +{
->> +	int ret, fault;
->> +	unsigned int read_buf;
->> +
->> +	ret = regmap_read(led->regmap, LM3692X_FAULT_FLAGS, &read_buf);
->> +	if (ret)
->> +		return ret;
->> +
->> +	fault = read_buf;
->> +
->> +	if (fault)
->> +		dev_err(&led->client->dev, "Detected a fault 0x%X\n",
->> +			fault);
->> +
->> +	return ret;
->> +}
-> 
-> Get rid of "fault" variable?
-> 
-> Does fault need to be propagated to the caller?
+=2E..
 
-I should probably set ret to fail if I see a fault or as you suggest propagate the fault
+Actually or maybe a LED trigger. Just set LED's trigger to "this is
+display backlight".
 
-> 
-> 
->> +static int lm3692x_init(struct lm3692x_led *led)
->> +{
->> +	int ret;
->> +
->> +	if (led->regulator) {
->> +		ret = regulator_enable(led->regulator);
->> +		if (ret)
->> +			dev_err(&led->client->dev,
->> +				"Failed to enable regulator\n");
->> +			goto out;
->> +	}
->> +
->> +	if (led->enable_gpio)
->> +		gpiod_direction_output(led->enable_gpio, 1);
->> +
->> +	ret = lm3692x_fault_check(led);
->> +	if (ret) {
->> +		dev_err(&led->client->dev, "Cannot read/clear faults\n");
->> +		goto out;
->> +	}
->> +
->> +	ret = regmap_write(led->regmap, LM3692X_BRT_CTRL, 0x00);
->> +	if (ret) {
->> +		dev_err(&led->client->dev, "Fail writing BRT CTRL\n");
->> +		goto out;
->> +	}
-> 
-> How often are those fails reached? Maybe regmap wrapper that would
-> print "reading/writing register XY failed" would be enough?
+Other solutions are acceptable, but not two hardware drivers.
 
-Or maybe in the out label I can just dev_err once saying initializing the device failed.
-These are really only called at probe time.  Its the only time init is called.
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Dan
+--mYCpIKhGyMATD0i+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> 
-> Otherwise looks good,
-> 
-> Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-> 									Pavel
-> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
+iEYEARECAAYFAloMvloACgkQMOfwapXb+vIvXACfTbGt5pm5s67EQxI9SVDvQ0Rw
+YiEAnjEdVh4CvaRhKK0cOH+6SNK7ncls
+=Hb2x
+-----END PGP SIGNATURE-----
 
--- 
-------------------
-Dan Murphy
+--mYCpIKhGyMATD0i+--
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
