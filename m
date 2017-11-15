@@ -1,74 +1,127 @@
-From: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] dt: bindings: lm3692x: Add bindings for lm3692x
- LED driver
-Date: Wed, 15 Nov 2017 14:31:33 -0600
-Message-ID: <0a78c883-f074-cc19-3c0c-fc05607400e9@ti.com>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: [PATCH v3 2/2] leds: lm3692x: Introduce LM3692x dual string
+ driver
+Date: Wed, 15 Nov 2017 22:12:36 +0100
+Message-ID: <20171115211236.GD6183@amd>
 References: <20171115194203.13572-1-dmurphy@ti.com>
- <cb5c5a65-d5a0-86a3-36b4-cf06baae9ec4@gmail.com>
+ <20171115194203.13572-2-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="+SfteS7bOf3dGlBC"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cb5c5a65-d5a0-86a3-36b4-cf06baae9ec4-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20171115194203.13572-2-dmurphy-l0cyMroinI0@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
 
-On 11/15/2017 02:15 PM, Jacek Anaszewski wrote:
-> Hi Dan,
-> 
-> Thanks for the patch.
-> 
-> On 11/15/2017 08:42 PM, Dan Murphy wrote:
->> This adds the devicetree bindings for the LM3692x
->> I2C LED string driver.
->>
->> Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
->> Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
->> ---
->>
->> v3 - No changes
->> v2 - No changes - https://patchwork.kernel.org/patch/10056677/
->>
->>  .../devicetree/bindings/leds/leds-lm3692x.txt      | 28 ++++++++++++++++++++++
->>  1 file changed, 28 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3692x.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
->> new file mode 100644
->> index 000000000000..cfef67bd4100
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
->> @@ -0,0 +1,28 @@
->> +* Texas Instruments - LM3692x Highly Efficient Dual-String White LED Driver
->> +
->> +The LM36922 is an ultra-compact, highly efficient,
->> +two string white-LED driver designed for LCD display
->> +backlighting.
-> 
-> Shouldn't the driver be targeted for backlight subsystem then?
-> 
-> Adding backlight maintainers.
-> 
+--+SfteS7bOf3dGlBC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Great point!  I was not aware of the backlight subsystem.
+Hi!
 
-Looks like I need to create a back light version as well.
+> Introducing the LM3692x Dual-String white LED driver.
+>=20
+> Data sheet is located
 
-Like the lp8788 did since this can be used as a LED driver beyond display back lighting.
+"located at"? (Twice.)
 
-Unless the maintainers don't want it.
+> http://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
+>=20
+> Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
 
-Dan
+> +config LEDS_LM3692X
+> +	tristate "LED support for LM3692x Chips"
+> +	depends on LEDS_CLASS && I2C
+> +	select REGMAP_I2C
+> +	help
+> +	  This option enables support for the TI LM3692x family
+> +	  of LED drivers.
+
+"If unsure ..., module will be named..."
+
+Might want to say this is for backlight LEDs here.
+
+> +static int lm3692x_fault_check(struct lm3692x_led *led)
+> +{
+> +	int ret, fault;
+> +	unsigned int read_buf;
+> +
+> +	ret =3D regmap_read(led->regmap, LM3692X_FAULT_FLAGS, &read_buf);
+> +	if (ret)
+> +		return ret;
+> +
+> +	fault =3D read_buf;
+> +
+> +	if (fault)
+> +		dev_err(&led->client->dev, "Detected a fault 0x%X\n",
+> +			fault);
+> +
+> +	return ret;
+> +}
+
+Get rid of "fault" variable?
+
+Does fault need to be propagated to the caller?
 
 
--- 
-------------------
-Dan Murphy
+> +static int lm3692x_init(struct lm3692x_led *led)
+> +{
+> +	int ret;
+> +
+> +	if (led->regulator) {
+> +		ret =3D regulator_enable(led->regulator);
+> +		if (ret)
+> +			dev_err(&led->client->dev,
+> +				"Failed to enable regulator\n");
+> +			goto out;
+> +	}
+> +
+> +	if (led->enable_gpio)
+> +		gpiod_direction_output(led->enable_gpio, 1);
+> +
+> +	ret =3D lm3692x_fault_check(led);
+> +	if (ret) {
+> +		dev_err(&led->client->dev, "Cannot read/clear faults\n");
+> +		goto out;
+> +	}
+> +
+> +	ret =3D regmap_write(led->regmap, LM3692X_BRT_CTRL, 0x00);
+> +	if (ret) {
+> +		dev_err(&led->client->dev, "Fail writing BRT CTRL\n");
+> +		goto out;
+> +	}
+
+How often are those fails reached? Maybe regmap wrapper that would
+print "reading/writing register XY failed" would be enough?
+
+Otherwise looks good,
+
+Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--+SfteS7bOf3dGlBC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEUEARECAAYFAloMrcQACgkQMOfwapXb+vLJCwCguccgCwBrhXD6hW8vFlhgzqv+
+1SQAl09TEinO3lEwreCz4cLAZzZd38M=
+=AiUT
+-----END PGP SIGNATURE-----
+
+--+SfteS7bOf3dGlBC--
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
