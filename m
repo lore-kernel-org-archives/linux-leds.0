@@ -1,223 +1,147 @@
 From: Kiran Gunda <kgunda@codeaurora.org>
-Subject: [PATCH V1 2/4] qcom: spmi-wled: Add support for short circuit handling
-Date: Thu, 16 Nov 2017 17:48:35 +0530
-Message-ID: <1510834717-21765-3-git-send-email-kgunda@codeaurora.org>
+Subject: [PATCH V1 3/4] qcom: spmi-wled: Add support for OVP interrupt handling
+Date: Thu, 16 Nov 2017 17:48:36 +0530
+Message-ID: <1510834717-21765-4-git-send-email-kgunda@codeaurora.org>
 References: <1510834717-21765-1-git-send-email-kgunda@codeaurora.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
 In-Reply-To: <1510834717-21765-1-git-send-email-kgunda@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-arm-msm-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
 Cc: linux-arm-msm-owner@vger.kernel.org, Kiran Gunda <kgunda@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-Handle the short circuit(SC) interrupt and check if the SC interrupt
-is valid. Re-enable the module to check if it goes away. Disable the
-module altogether if the SC event persists.
+WLED peripheral has over voltage protection(OVP) circuitry and the OVP
+fault is notified through an interrupt. Though this fault condition rising
+is due to an incorrect hardware configuration is mitigated in the hardware,
+it still needs to be detected and handled. Add support for it.
+
+When WLED module is enabled, keep OVP fault interrupt disabled for 10 ms to
+account for soft start delay.
 
 Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
 ---
- .../bindings/leds/backlight/qcom-spmi-wled.txt     |  22 ++++
- drivers/video/backlight/qcom-spmi-wled.c           | 126 ++++++++++++++++++++-
- 2 files changed, 142 insertions(+), 6 deletions(-)
+ .../bindings/leds/backlight/qcom-spmi-wled.txt     |  7 +-
+ drivers/video/backlight/qcom-spmi-wled.c           | 83 ++++++++++++++++++++++
+ 2 files changed, 87 insertions(+), 3 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt b/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
-index f1ea25b..768608c 100644
+index 768608c..d39ee93 100644
 --- a/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
 +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
-@@ -74,6 +74,26 @@ The PMIC is connected to the host processor via SPMI bus.
- 	Definition: Specify if cabc (content adaptive backlight control) is
- 		    needed.
+@@ -92,7 +92,7 @@ The PMIC is connected to the host processor via SPMI bus.
+ 	Usage:      optional
+ 	Value type: <string>
+ 	Definition: Interrupt names associated with the interrupts.
+-		    Must be "sc-irq".
++		    Currently supported interrupts are "sc-irq" and "ovp-irq".
  
-+- qcom,ext-pfet-sc-pro-en
-+	Usage:      optional
-+	Value type: <bool>
-+	Definition: Specify if external PFET control for short circuit
-+		    protection is needed.
-+
-+- interrupts
-+	Usage:      optional
-+	Value type: <prop encoded array>
-+	Definition: Interrupts associated with WLED. Interrupts can be
-+		    specified as per the encoding listed under
-+		    Documentation/devicetree/bindings/spmi/
-+		    qcom,spmi-pmic-arb.txt.
-+
-+- interrupt-names
-+	Usage:      optional
-+	Value type: <string>
-+	Definition: Interrupt names associated with the interrupts.
-+		    Must be "sc-irq".
-+
  Example:
  
- qcom-wled@d800 {
-@@ -82,6 +102,8 @@ qcom-wled@d800 {
+@@ -102,8 +102,9 @@ qcom-wled@d800 {
  	reg-names = "qcom-wled-ctrl-base", "qcom-wled-sink-base";
  	label = "backlight";
  
-+	interrupts = <0x3 0xd8 0x2 IRQ_TYPE_EDGE_RISING>;
-+	interrupt-names = "sc-irq";
+-	interrupts = <0x3 0xd8 0x2 IRQ_TYPE_EDGE_RISING>;
+-	interrupt-names = "sc-irq";
++	interrupts = <0x3 0xd8 0x2 IRQ_TYPE_EDGE_RISING>,
++			<0x3 0xd8 0x1 IRQ_TYPE_EDGE_RISING>;
++	interrupt-names = "sc-irq", "ovp-irq";
  	qcom,fs-current-limit = <25000>;
  	qcom,current-boost-limit = <970>;
  	qcom,switching-freq = <800>;
 diff --git a/drivers/video/backlight/qcom-spmi-wled.c b/drivers/video/backlight/qcom-spmi-wled.c
-index 14c3adc..7dbaaa7 100644
+index 7dbaaa7..8b2a77a 100644
 --- a/drivers/video/backlight/qcom-spmi-wled.c
 +++ b/drivers/video/backlight/qcom-spmi-wled.c
-@@ -11,6 +11,9 @@
-  * GNU General Public License for more details.
-  */
+@@ -29,9 +29,15 @@
+ #define QCOM_WLED_SC_DLY_MS			20
+ #define QCOM_WLED_SC_CNT_MAX			5
+ #define QCOM_WLED_SC_RESET_CNT_DLY_US		1000000
++#define QCOM_WLED_SOFT_START_DLY_US		10000
  
-+#include <linux/delay.h>
-+#include <linux/interrupt.h>
-+#include <linux/ktime.h>
- #include <linux/kernel.h>
- #include <linux/backlight.h>
- #include <linux/module.h>
-@@ -23,7 +26,13 @@
- #define QCOM_WLED_DEFAULT_BRIGHTNESS		2048
- #define  QCOM_WLED_MAX_BRIGHTNESS		4095
- 
-+#define QCOM_WLED_SC_DLY_MS			20
-+#define QCOM_WLED_SC_CNT_MAX			5
-+#define QCOM_WLED_SC_RESET_CNT_DLY_US		1000000
-+
  /* WLED control registers */
-+#define QCOM_WLED_CTRL_FAULT_STATUS		0x08
+ #define QCOM_WLED_CTRL_FAULT_STATUS		0x08
++#define  QCOM_WLED_CTRL_ILIM_FAULT_BIT		BIT(0)
++#define  QCOM_WLED_CTRL_OVP_FAULT_BIT		BIT(1)
++#define  QCOM_WLED_CTRL_SC_FAULT_BIT		BIT(2)
 +
++#define QCOM_WLED_CTRL_INT_RT_STS		0x10
+ 
  #define QCOM_WLED_CTRL_MOD_ENABLE		0x46
  #define  QCOM_WLED_CTRL_MOD_EN_MASK		BIT(7)
- #define  QCOM_WLED_CTRL_MODULE_EN_SHIFT		7
-@@ -37,6 +46,15 @@
- #define QCOM_WLED_CTRL_ILIM			0x4e
- #define  QCOM_WLED_CTRL_ILIM_MASK		GENMASK(2, 0)
- 
-+#define QCOM_WLED_CTRL_SHORT_PROTECT		0x5e
-+#define  QCOM_WLED_CTRL_SHORT_EN_MASK		BIT(7)
-+
-+#define QCOM_WLED_CTRL_SEC_ACCESS		0xd0
-+#define  QCOM_WLED_CTRL_SEC_UNLOCK		0xa5
-+
-+#define QCOM_WLED_CTRL_TEST1			0xe2
-+#define  QCOM_WLED_EXT_FET_DTEST2		0x09
-+
- /* WLED sink registers */
- #define QCOM_WLED_SINK_CURR_SINK_EN		0x46
- #define  QCOM_WLED_SINK_CURR_SINK_MASK		GENMASK(7, 4)
-@@ -71,19 +89,23 @@ struct qcom_wled_config {
- 	u32 switch_freq;
+@@ -90,6 +96,7 @@ struct qcom_wled_config {
  	u32 fs_current;
  	u32 string_cfg;
-+	int sc_irq;
+ 	int sc_irq;
++	int ovp_irq;
  	bool en_cabc;
-+	bool ext_pfet_sc_pro_en;
+ 	bool ext_pfet_sc_pro_en;
  };
- 
- struct qcom_wled {
- 	const char *name;
- 	struct platform_device *pdev;
- 	struct regmap *regmap;
-+	struct mutex lock;
-+	struct qcom_wled_config cfg;
-+	ktime_t last_sc_event_time;
- 	u16 sink_addr;
- 	u16 ctrl_addr;
+@@ -106,6 +113,7 @@ struct qcom_wled {
  	u32 brightness;
-+	u32 sc_count;
+ 	u32 sc_count;
  	bool prev_state;
--
--	struct qcom_wled_config cfg;
++	bool ovp_irq_disabled;
  };
  
  static int qcom_wled_module_enable(struct qcom_wled *wled, int val)
-@@ -157,25 +179,26 @@ static int qcom_wled_update_status(struct backlight_device *bl)
- 	    bl->props.state & BL_CORE_FBBLANK)
- 		brightness = 0;
- 
-+	mutex_lock(&wled->lock);
- 	if (brightness) {
- 		rc = qcom_wled_set_brightness(wled, brightness);
- 		if (rc < 0) {
- 			pr_err("wled failed to set brightness rc:%d\n", rc);
--			return rc;
-+			goto unlock_mutex;
- 		}
- 
- 		if (!!brightness != wled->prev_state) {
- 			rc = qcom_wled_module_enable(wled, !!brightness);
- 			if (rc < 0) {
- 				pr_err("wled enable failed rc:%d\n", rc);
--				return rc;
-+				goto unlock_mutex;
- 			}
- 		}
- 	} else {
- 		rc = qcom_wled_module_enable(wled, brightness);
- 		if (rc < 0) {
- 			pr_err("wled disable failed rc:%d\n", rc);
--			return rc;
-+			goto unlock_mutex;
- 		}
- 	}
- 
-@@ -184,19 +207,69 @@ static int qcom_wled_update_status(struct backlight_device *bl)
- 	rc = qcom_wled_sync_toggle(wled);
- 	if (rc < 0) {
- 		pr_err("wled sync failed rc:%d\n", rc);
--		return rc;
-+		goto unlock_mutex;
- 	}
- 
- 	wled->brightness = brightness;
- 
-+unlock_mutex:
-+	mutex_unlock(&wled->lock);
+@@ -115,6 +123,28 @@ static int qcom_wled_module_enable(struct qcom_wled *wled, int val)
+ 	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
+ 			QCOM_WLED_CTRL_MOD_ENABLE, QCOM_WLED_CTRL_MOD_EN_MASK,
+ 			val << QCOM_WLED_CTRL_MODULE_EN_SHIFT);
++	if (rc < 0)
++		return rc;
++	/*
++	 * Wait for at least 10ms before enabling OVP fault interrupt after
++	 * enabling the module so that soft start is completed. Keep the OVP
++	 * interrupt disabled when the module is disabled.
++	 */
++	if (val) {
++		usleep_range(QCOM_WLED_SOFT_START_DLY_US,
++				QCOM_WLED_SOFT_START_DLY_US + 1000);
++
++		if (wled->cfg.ovp_irq > 0 && wled->ovp_irq_disabled) {
++			enable_irq(wled->cfg.ovp_irq);
++			wled->ovp_irq_disabled = false;
++		}
++	} else {
++		if (wled->cfg.ovp_irq > 0 && !wled->ovp_irq_disabled) {
++			disable_irq(wled->cfg.ovp_irq);
++			wled->ovp_irq_disabled = true;
++		}
++	}
++
  	return rc;
  }
  
-+static irqreturn_t qcom_wled_sc_irq_handler(int irq, void *_wled)
+@@ -264,12 +294,42 @@ static irqreturn_t qcom_wled_sc_irq_handler(int irq, void *_wled)
+ 	return IRQ_HANDLED;
+ }
+ 
++static irqreturn_t qcom_wled_ovp_irq_handler(int irq, void *_wled)
 +{
 +	struct qcom_wled *wled = _wled;
 +	int rc;
-+	u32 val;
-+	s64 elapsed_time;
++	u32 int_sts, fault_sts;
 +
 +	rc = regmap_read(wled->regmap,
-+		wled->ctrl_addr + QCOM_WLED_CTRL_FAULT_STATUS, &val);
++			wled->ctrl_addr + QCOM_WLED_CTRL_INT_RT_STS, &int_sts);
++	if (rc < 0) {
++		pr_err("Error in reading WLED_INT_RT_STS rc=%d\n", rc);
++		return IRQ_HANDLED;
++	}
++
++	rc = regmap_read(wled->regmap, wled->ctrl_addr +
++			QCOM_WLED_CTRL_FAULT_STATUS, &fault_sts);
 +	if (rc < 0) {
 +		pr_err("Error in reading WLED_FAULT_STATUS rc=%d\n", rc);
 +		return IRQ_HANDLED;
 +	}
 +
-+	wled->sc_count++;
-+	pr_err("WLED short circuit detected %d times fault_status=%x\n",
-+		wled->sc_count, val);
-+	mutex_lock(&wled->lock);
-+	rc = qcom_wled_module_enable(wled, false);
-+	if (rc < 0) {
-+		pr_err("wled disable failed rc:%d\n", rc);
-+		goto unlock_mutex;
-+	}
-+
-+	elapsed_time = ktime_us_delta(ktime_get(),
-+				wled->last_sc_event_time);
-+	if (elapsed_time > QCOM_WLED_SC_RESET_CNT_DLY_US) {
-+		wled->sc_count = 0;
-+	} else if (wled->sc_count > QCOM_WLED_SC_CNT_MAX) {
-+		pr_err("SC trigged %d times, disabling WLED forever!\n",
-+			wled->sc_count);
-+		goto unlock_mutex;
-+	}
-+
-+	wled->last_sc_event_time = ktime_get();
-+
-+	msleep(QCOM_WLED_SC_DLY_MS);
-+	rc = qcom_wled_module_enable(wled, true);
-+	if (rc < 0)
-+		pr_err("wled enable failed rc:%d\n", rc);
-+
-+unlock_mutex:
-+	mutex_unlock(&wled->lock);
++	if (fault_sts &
++		(QCOM_WLED_CTRL_OVP_FAULT_BIT | QCOM_WLED_CTRL_ILIM_FAULT_BIT))
++		pr_err("WLED OVP fault detected, int_sts=%x fault_sts= %x\n",
++			int_sts, fault_sts);
 +
 +	return IRQ_HANDLED;
 +}
@@ -226,87 +150,50 @@ index 14c3adc..7dbaaa7 100644
  {
  	int rc, temp, i;
  	u8 sink_en = 0;
++	u32 val;
  	u8 string_cfg = wled->cfg.string_cfg;
-+	int sc_irq = wled->cfg.sc_irq;
+ 	int sc_irq = wled->cfg.sc_irq;
++	int ovp_irq = wled->cfg.ovp_irq;
  
  	rc = regmap_update_bits(wled->regmap,
  			wled->ctrl_addr + QCOM_WLED_CTRL_OVP,
-@@ -261,6 +334,39 @@ static int qcom_wled_setup(struct qcom_wled *wled)
- 		return rc;
+@@ -367,6 +427,25 @@ static int qcom_wled_setup(struct qcom_wled *wled)
+ 		}
  	}
  
-+	if (sc_irq >= 0) {
-+		rc = devm_request_threaded_irq(&wled->pdev->dev, sc_irq,
-+				NULL, qcom_wled_sc_irq_handler, IRQF_ONESHOT,
-+				"qcom_wled_sc_irq", wled);
++	if (ovp_irq >= 0) {
++		rc = devm_request_threaded_irq(&wled->pdev->dev, ovp_irq,
++				NULL, qcom_wled_ovp_irq_handler, IRQF_ONESHOT,
++				"qcom_wled_ovp_irq", wled);
 +		if (rc < 0) {
-+			pr_err("Unable to request sc(%d) IRQ(err:%d)\n",
-+				sc_irq, rc);
++			dev_err(&wled->pdev->dev, "Unable to request ovp(%d) IRQ(err:%d)\n",
++				ovp_irq, rc);
 +			return rc;
 +		}
 +
-+		rc = regmap_update_bits(wled->regmap,
-+				wled->ctrl_addr + QCOM_WLED_CTRL_SHORT_PROTECT,
-+				QCOM_WLED_CTRL_SHORT_EN_MASK,
-+				QCOM_WLED_CTRL_SHORT_EN_MASK);
-+		if (rc < 0)
-+			return rc;
-+
-+		if (wled->cfg.ext_pfet_sc_pro_en) {
-+			/* unlock the secure access regisetr */
-+			rc = regmap_write(wled->regmap, wled->ctrl_addr +
-+					QCOM_WLED_CTRL_SEC_ACCESS,
-+					QCOM_WLED_CTRL_SEC_UNLOCK);
-+			if (rc < 0)
-+				return rc;
-+
-+			rc = regmap_write(wled->regmap,
-+					wled->ctrl_addr + QCOM_WLED_CTRL_TEST1,
-+					QCOM_WLED_EXT_FET_DTEST2);
-+			if (rc < 0)
-+				return rc;
++		rc = regmap_read(wled->regmap, wled->ctrl_addr +
++				QCOM_WLED_CTRL_MOD_ENABLE, &val);
++		/* disable the OVP irq only if the module is not enabled */
++		if (!rc && !(val & QCOM_WLED_CTRL_MOD_EN_MASK)) {
++			disable_irq(ovp_irq);
++			wled->ovp_irq_disabled = true;
 +		}
 +	}
 +
  	return 0;
  }
  
-@@ -271,6 +377,7 @@ static int qcom_wled_setup(struct qcom_wled *wled)
- 	.switch_freq = 11,
- 	.string_cfg = 0xf,
- 	.en_cabc = 0,
-+	.ext_pfet_sc_pro_en = 1,
- };
+@@ -539,6 +618,10 @@ static int qcom_wled_configure(struct qcom_wled *wled, struct device *dev)
+ 	if (wled->cfg.sc_irq < 0)
+ 		dev_dbg(&wled->pdev->dev, "sc irq is not used\n");
  
- struct qcom_wled_var_cfg {
-@@ -376,6 +483,7 @@ static int qcom_wled_configure(struct qcom_wled *wled, struct device *dev)
- 		bool *val_ptr;
- 	} bool_opts[] = {
- 		{ "qcom,en-cabc", &cfg->en_cabc, },
-+		{ "qcom,ext-pfet-sc-pro", &cfg->ext_pfet_sc_pro_en, },
- 	};
- 
- 	prop_addr = of_get_address(dev->of_node, 0, NULL, NULL);
-@@ -427,6 +535,10 @@ static int qcom_wled_configure(struct qcom_wled *wled, struct device *dev)
- 			*bool_opts[i].val_ptr = true;
- 	}
- 
-+	wled->cfg.sc_irq = platform_get_irq_byname(wled->pdev, "sc-irq");
-+	if (wled->cfg.sc_irq < 0)
-+		dev_dbg(&wled->pdev->dev, "sc irq is not used\n");
++	wled->cfg.ovp_irq = platform_get_irq_byname(wled->pdev, "ovp-irq");
++	if (wled->cfg.ovp_irq < 0)
++		dev_dbg(&wled->pdev->dev, "ovp irq is not used\n");
 +
  	return 0;
  }
  
-@@ -469,6 +581,8 @@ static int qcom_wled_probe(struct platform_device *pdev)
- 		return rc;
- 	}
- 
-+	mutex_init(&wled->lock);
-+
- 	val = QCOM_WLED_DEFAULT_BRIGHTNESS;
- 	of_property_read_u32(pdev->dev.of_node, "default-brightness", &val);
- 	wled->brightness = val;
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
