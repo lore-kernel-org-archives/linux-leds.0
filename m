@@ -1,70 +1,47 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v3 1/2] dt: bindings: lm3692x: Add bindings for lm3692x
- LED driver
-Date: Thu, 16 Nov 2017 21:14:13 +0100
-Message-ID: <82336eb7-2b89-d37b-d688-4e4302766346@gmail.com>
-References: <20171115194203.13572-1-dmurphy@ti.com>
- <cb5c5a65-d5a0-86a3-36b4-cf06baae9ec4@gmail.com>
- <0a78c883-f074-cc19-3c0c-fc05607400e9@ti.com> <20171115222323.GA18290@amd>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: dts: fun with chip names Re: [PATCH v3 1/2] dt: bindings:
+ lm3692x: Add bindings for lm3692x LED driver
+Date: Thu, 16 Nov 2017 14:36:01 -0600
+Message-ID: <CAL_Jsq+aysVR9U2Wquwwv7cjjO7wO8EXBg1Ja82u6s5t1yeJUw@mail.gmail.com>
+References: <20171115194203.13572-1-dmurphy@ti.com> <20171116154139.wed7qmpmv2ffyzv2@rob-hp-laptop>
+ <d3483e49-650d-1d68-bec6-eeb84d8ac48a@ti.com> <20171116201121.GA28848@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:45244 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932144AbdKPUPM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 16 Nov 2017 15:15:12 -0500
-In-Reply-To: <20171115222323.GA18290@amd>
+Received: from mail.kernel.org ([198.145.29.99]:58484 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1759251AbdKPUgX (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 16 Nov 2017 15:36:23 -0500
+In-Reply-To: <20171116201121.GA28848@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Dan Murphy <dmurphy@ti.com>, Mark Rutland <mark.rutland@arm.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Hi Dan and Pavel,
-
-On 11/15/2017 11:23 PM, Pavel Machek wrote:
+On Thu, Nov 16, 2017 at 2:11 PM, Pavel Machek <pavel@ucw.cz> wrote:
 > Hi!
-> 
->>> Shouldn't the driver be targeted for backlight subsystem then?
->>>
->>> Adding backlight maintainers.
->>>
+>
+>> >> +Required properties:
+>> >> +  - compatible:
+>> >> +          "ti,lm3692x"
+>> >
+>> > Don't use wildcards in compatible strings.
 >>
->> Great point!  I was not aware of the backlight subsystem.
->>
->> Looks like I need to create a back light version as well.
->>
->> Like the lp8788 did since this can be used as a LED driver beyond
->> display back lighting.
-> 
-> No, definitely not two drivers for lp8788 hardware.
+>> Do you mean to remove the x?  How do we denote a family of parts
+>> then?
+>
+> I guess you should specify the exact chip.
+>
+> Which will present interesting problem for me on Nokia N9/N950; in one
+> case, compatible chip is produced by two companies, and it looks like
+> some machines have one and some have the other; but we'd like to share
+> the dts as user has no chance telling them apart (and it is not
+> important, anyway).
+>
+> In second case, chip is refered as APDS990X and I don't know where to
+> get more exact data.
 
-I agree.
+There's always exceptions to rules. Just make the case for it. IIRC,
+there was the same case for the BT chip.
 
-> If that does not yet exist... you want to create glue layer to be able
-> to use LED as a display backlight. (It may already exist, no idea).
-> 
-> ...
-> 
-> Actually or maybe a LED trigger. Just set LED's trigger to "this is
-> display backlight".
-
-There is one already:
-
-drivers/leds/trigger/ledtrig-backlight.c
-
-It adds a LED class device to the fb_notifier_list
-(drivers/video/fbdev/core/fb_notify.c)
-
-using fb_register_client(). The same is used in
-backlight_device_register (drivers/video/backlight/backlight.c).
-
-Actually why do you want to have this driver in the LED subsystem,
-if it is advertised as "designed for LCD display backlighting"?
-
-As a side note I can say that I've been always wondering why the two
-subsystems for similar type of hardware.
-
--- 
-Best regards,
-Jacek Anaszewski
+Rob
