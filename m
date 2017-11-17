@@ -1,42 +1,80 @@
 From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: pwm-led turns on during suspend
-Date: Fri, 17 Nov 2017 11:27:32 -0200
-Message-ID: <CAOMZO5D66OW+pxC-11LVLnxoZ2=kCXRrJZkO1v+FbQpw0=qxFw@mail.gmail.com>
-References: <CAOMZO5BukO0LmYL7D+nyozGJzkDZiqUo_bNAUJT7RkkYkJUvhw@mail.gmail.com>
- <20171117124505.GP31757@n2100.armlinux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH] leds: pwm: Allow changing the pinctrl state
+Date: Fri, 17 Nov 2017 12:32:06 -0200
+Message-ID: <1510929126-9813-1-git-send-email-festevam@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-ot0-f181.google.com ([74.125.82.181]:46830 "EHLO
-        mail-ot0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933859AbdKQN1d (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 17 Nov 2017 08:27:33 -0500
-Received: by mail-ot0-f181.google.com with SMTP id j29so1973261oth.13
-        for <linux-leds@vger.kernel.org>; Fri, 17 Nov 2017 05:27:33 -0800 (PST)
-In-Reply-To: <20171117124505.GP31757@n2100.armlinux.org.uk>
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:43660 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030277AbdKQOcV (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 17 Nov 2017 09:32:21 -0500
+Received: by mail-qt0-f193.google.com with SMTP id n61so6413391qte.10
+        for <linux-leds@vger.kernel.org>; Fri, 17 Nov 2017 06:32:20 -0800 (PST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: jacek.anaszewski@gmail.com, Richard Purdie <rpurdie@rpsys.net>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+To: jacek.anaszewski@gmail.com
+Cc: rpurdie@rpsys.net, pavel@ucw.cz, linux@arm.linux.org.uk, linux-leds@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>
 
-Hi Russell,
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-On Fri, Nov 17, 2017 at 10:45 AM, Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
+Add suspend/resume pm hooks, so that the pinctrl state could be changed.
 
-> The LED is wired to the 3.3V supply, and most likely the PWM output goes
-> low when the SoC suspends.  As SolidRun boards don't have support for
-> powering down the board supplies, the 3.3V supply does not collapse on
-> suspend.
+The motivation for doing this was to solve a problem on a imx6-cubox-i
+board, where there is a GPIO controlled via pwm-leds that keeps turned on
+when the system goes into suspend. Such behaviour is not what we expect
+from a system going into suspend.
 
-I managed to fix this by introducing pinctrl_pm_select_sleep_state()
-support into drivers/leds/leds-pwm.c.
+In order to solve this problem add the suspend/resume pm hooks where
+the pinctrl state can be changed accordingly.
 
-Here is the complete change:
-https://pastebin.com/FCsLMuW1
+This allows to add an extra 'sleep' entry into the pinctrl node, where
+the pinctrl can be changed from PWM to GPIO and pull up/pull down can be
+configured to turn off the LED during suspend mode.
 
-Now I can get the LED to be turned off during suspend.
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ drivers/leds/leds-pwm.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-I will separate the changes and submit the patches.
-
-Thanks
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index 8d456dc6..ff21aa2 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -14,6 +14,7 @@
+ 
+ #include <linux/module.h>
+ #include <linux/kernel.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/of_platform.h>
+ #include <linux/fb.h>
+@@ -210,6 +211,20 @@ static int led_pwm_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int __maybe_unused led_pwm_suspend(struct device *dev)
++{
++	return pinctrl_pm_select_sleep_state(dev);
++}
++
++static int __maybe_unused led_pwm_resume(struct device *dev)
++{
++	return pinctrl_pm_select_default_state(dev);
++}
++
++static const struct dev_pm_ops led_pwm_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(led_pwm_suspend, led_pwm_resume)
++};
++
+ static const struct of_device_id of_pwm_leds_match[] = {
+ 	{ .compatible = "pwm-leds", },
+ 	{},
+@@ -222,6 +237,7 @@ static struct platform_driver led_pwm_driver = {
+ 	.driver		= {
+ 		.name	= "leds_pwm",
+ 		.of_match_table = of_pwm_leds_match,
++		.pm = &led_pwm_pm_ops,
+ 	},
+ };
+ 
+-- 
+2.7.4
