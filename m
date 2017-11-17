@@ -1,32 +1,35 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH V1 1/4] qcom: spmi-wled: Add support for qcom wled driver
-Date: Fri, 17 Nov 2017 14:28:34 -0600
-Message-ID: <20171117202834.mqe26lslox3nlsfo@rob-hp-laptop>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V1 2/4] qcom: spmi-wled: Add support for short circuit
+ handling
+Date: Fri, 17 Nov 2017 14:30:14 -0600
+Message-ID: <20171117203014.66r2n6x5mwuc6doe@rob-hp-laptop>
 References: <1510834717-21765-1-git-send-email-kgunda@codeaurora.org>
- <1510834717-21765-2-git-send-email-kgunda@codeaurora.org>
+ <1510834717-21765-3-git-send-email-kgunda@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1510834717-21765-2-git-send-email-kgunda@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Kiran Gunda <kgunda@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+In-Reply-To: <1510834717-21765-3-git-send-email-kgunda-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kiran Gunda <kgunda-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Nov 16, 2017 at 05:48:34PM +0530, Kiran Gunda wrote:
-> WLED driver provides the interface to the display driver to
-> adjust the brightness of the display backlight.
+On Thu, Nov 16, 2017 at 05:48:35PM +0530, Kiran Gunda wrote:
+> Handle the short circuit(SC) interrupt and check if the SC interrupt
+> is valid. Re-enable the module to check if it goes away. Disable the
+> module altogether if the SC event persists.
 > 
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+> Signed-off-by: Kiran Gunda <kgunda-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 > ---
->  .../bindings/leds/backlight/qcom-spmi-wled.txt     |  90 ++++
+>  .../bindings/leds/backlight/qcom-spmi-wled.txt     |  22 ++++
 
-Please split bindings to separate patch.
+... and also put all the binding in one patch. I want to review the full 
+view of the h/w, not piecemeal.
 
->  drivers/video/backlight/Kconfig                    |   9 +
->  drivers/video/backlight/Makefile                   |   1 +
->  drivers/video/backlight/qcom-spmi-wled.c           | 504 +++++++++++++++++++++
->  4 files changed, 604 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
->  create mode 100644 drivers/video/backlight/qcom-spmi-wled.c
+>  drivers/video/backlight/qcom-spmi-wled.c           | 126 ++++++++++++++++++++-
+>  2 files changed, 142 insertions(+), 6 deletions(-)
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
