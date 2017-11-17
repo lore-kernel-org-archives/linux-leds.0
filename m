@@ -1,66 +1,70 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH] leds: pwm: Allow changing the pinctrl state
-Date: Fri, 17 Nov 2017 19:34:47 -0200
-Message-ID: <CAOMZO5BVXEUM2_EbtqENcmFeL=9E+epBUZybS=iDHX5aO92Nqw@mail.gmail.com>
-References: <1510929126-9813-1-git-send-email-festevam@gmail.com> <05a98e78-0773-7108-6d42-4c680002a7ad@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v3 1/2] dt: bindings: lm3692x: Add bindings for lm3692x
+ LED driver
+Date: Sat, 18 Nov 2017 00:58:11 +0100
+Message-ID: <20171117235811.GA26296@amd>
+References: <20171115194203.13572-1-dmurphy@ti.com>
+ <cb5c5a65-d5a0-86a3-36b4-cf06baae9ec4@gmail.com>
+ <0a78c883-f074-cc19-3c0c-fc05607400e9@ti.com>
+ <20171115222323.GA18290@amd>
+ <82336eb7-2b89-d37b-d688-4e4302766346@gmail.com>
+ <16189eab-5541-9550-c027-1c9d2b5fa6d7@ti.com>
+ <20171117112032.GA13855@amd>
+ <000b01d35fc1$57ad0500$07070f00$@gmail.com>
+ <17b8e1ce-092a-0449-4733-533162b26499@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:42875 "EHLO
-        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755058AbdKQVet (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 17 Nov 2017 16:34:49 -0500
-Received: by mail-oi0-f41.google.com with SMTP id r128so2587702oig.9
-        for <linux-leds@vger.kernel.org>; Fri, 17 Nov 2017 13:34:48 -0800 (PST)
-In-Reply-To: <05a98e78-0773-7108-6d42-4c680002a7ad@gmail.com>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55774 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965723AbdKQX6P (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 17 Nov 2017 18:58:15 -0500
+Content-Disposition: inline
+In-Reply-To: <17b8e1ce-092a-0449-4733-533162b26499@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, Russell King <linux@arm.linux.org.uk>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, 'Jacek Anaszewski' <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 'Lee Jones' <lee.jones@linaro.org>, 'Daniel Thompson' <daniel.thompson@linaro.org>
 
-Hi Jacek,
 
-On Fri, Nov 17, 2017 at 6:51 PM, Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On power down event brightness is set to 0 on each registered
-> LED class device that set LED_CORE_SUSPENDRESUME flag (leds-pwm does).
->
-> It may be the case that pwm subsystem (or underlaying bus used by
-> particular controller) is suspended before LED subsystem, or the
-> culprit is the generic LED subsystem workqueue in which brightness
-> setting events are queued for drivers that use brightness_set_blocking
-> op (leds-pwm case).
+Hi!
 
-Thanks for your comments.
+> >> Well.. if it can control other LEDs than just backlight, I believe it
+> >> can stay in the LED subsystem.
+> >=20
+> > I also agree with your opinion.
+>=20
+> I will make the necessary changes for v4.
 
-I realized that this issue can be fixed inside drivers/pwm/pwm-imx.c :
+I'm not sure if you need to make any changes. Just add default trigger
+to the dts and you should be done.
 
---- a/drivers/pwm/pwm-imx.c
-+++ b/drivers/pwm/pwm-imx.c
-@@ -35,6 +35,7 @@
- #define MX3_PWMSAR                     0x0C    /* PWM Sample Register */
- #define MX3_PWMPR                      0x10    /* PWM Period Register */
- #define MX3_PWMCR_PRESCALER(x)         ((((x) - 1) & 0xFFF) << 4)
-+#define MX3_PWMCR_STOPEN               (1 << 25)
- #define MX3_PWMCR_DOZEEN               (1 << 24)
- #define MX3_PWMCR_WAITEN               (1 << 23)
- #define MX3_PWMCR_DBGEN                        (1 << 22)
-@@ -209,7 +210,7 @@ static int imx_pwm_apply_v2(struct pwm_chip *chip,
-struct pwm_device *pwm,
-                writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
-                writel(period_cycles, imx->mmio_base + MX3_PWMPR);
+> Just a heads up I won't be posting v4 until after the US holiday so you
+> don't think I abandoned everything.
 
--               cr = MX3_PWMCR_PRESCALER(prescale) |
-+               cr = MX3_PWMCR_PRESCALER(prescale) | MX3_PWMCR_STOPEN |
-                     MX3_PWMCR_DOZEEN | MX3_PWMCR_WAITEN |
-                     MX3_PWMCR_DBGEN | MX3_PWMCR_CLKSRC_IPG_HIGH |
-                     MX3_PWMCR_EN;
+:-)
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Setting the STOPEN bit, which "keeps PWM functional while in stop
-mode" does the trick.
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Maybe I will convert this into an optional device tree property to
-keep the original behavior.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Thanks
+iEYEARECAAYFAloPd5MACgkQMOfwapXb+vI/HACgr9uF8gGupUn6i50N/pEOUEZf
+9GoAoI5zJErfVPAxa9gXiD2yPJgxhuMg
+=5lKN
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
