@@ -1,40 +1,55 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: [PATCH] leds: pwm: Remove unneeded header file
-Date: Sat, 18 Nov 2017 18:22:46 -0200
-Message-ID: <1511036566-25369-1-git-send-email-festevam@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] leds: pwm: Remove unneeded header file
+Date: Sat, 18 Nov 2017 21:32:44 +0100
+Message-ID: <ba174690-fbe0-fc17-d798-79f7324689c8@gmail.com>
+References: <1511036566-25369-1-git-send-email-festevam@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:43053 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967477AbdKRUXA (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 18 Nov 2017 15:23:00 -0500
-Received: by mail-qk0-f196.google.com with SMTP id j202so3311669qke.10
-        for <linux-leds@vger.kernel.org>; Sat, 18 Nov 2017 12:23:00 -0800 (PST)
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:43549 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423431AbdKRUdo (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 18 Nov 2017 15:33:44 -0500
+Received: by mail-wm0-f67.google.com with SMTP id x63so12231645wmf.2
+        for <linux-leds@vger.kernel.org>; Sat, 18 Nov 2017 12:33:43 -0800 (PST)
+In-Reply-To: <1511036566-25369-1-git-send-email-festevam@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: jacek.anaszewski@gmail.com
+To: Fabio Estevam <festevam@gmail.com>
 Cc: linux-leds@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+Hi Fabio,
 
-There is nothing provided by <linux/fb.h> that is used here,
-so remove this unneeded header file.
+Thanks for the patch.
 
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
----
- drivers/leds/leds-pwm.c | 1 -
- 1 file changed, 1 deletion(-)
+On 11/18/2017 09:22 PM, Fabio Estevam wrote:
+> From: Fabio Estevam <fabio.estevam@nxp.com>
+> 
+> There is nothing provided by <linux/fb.h> that is used here,
+> so remove this unneeded header file.
+> 
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
+>  drivers/leds/leds-pwm.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index 8d456dc6..df80c89 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -16,7 +16,6 @@
+>  #include <linux/kernel.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/of_platform.h>
+> -#include <linux/fb.h>
+>  #include <linux/leds.h>
+>  #include <linux/err.h>
+>  #include <linux/pwm.h>
+> 
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 8d456dc6..df80c89 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -16,7 +16,6 @@
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
- #include <linux/of_platform.h>
--#include <linux/fb.h>
- #include <linux/leds.h>
- #include <linux/err.h>
- #include <linux/pwm.h>
+Applied to the for-4.16 branch of linux-leds.git.
+
 -- 
-2.7.4
+Best regards,
+Jacek Anaszewski
