@@ -1,97 +1,88 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v3 1/3] leds: core: Introduce generic pattern interface
-Date: Tue, 21 Nov 2017 00:20:15 +0100
-Message-ID: <20171120232015.GB13906@amd>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: [PATCH v3 2/3] leds: Add driver for Qualcomm LPG
+Date: Tue, 21 Nov 2017 00:22:11 +0100
+Message-ID: <20171120232211.GC13906@amd>
 References: <20171115071345.24331-1-bjorn.andersson@linaro.org>
- <20171115071345.24331-2-bjorn.andersson@linaro.org>
- <20171115073642.GA21307@kroah.com>
+ <20171115071345.24331-3-bjorn.andersson@linaro.org>
+ <19018aa2-c460-1d5e-8dd2-1cfa557be2f2@gmail.com>
+ <20171120211033.GZ28761@minitux>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34341 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751159AbdKTXUR (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 20 Nov 2017 18:20:17 -0500
+        protocol="application/pgp-signature"; boundary="DSayHWYpDlRfCAAQ"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20171115073642.GA21307@kroah.com>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <20171120211033.GZ28761@minitux>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
 
 
---rS8CxjVDS/+yyDmU
+--DSayHWYpDlRfCAAQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2017-11-15 08:36:42, Greg KH wrote:
-> On Tue, Nov 14, 2017 at 11:13:43PM -0800, Bjorn Andersson wrote:
-> > Some LED controllers have support for autonomously controlling
-> > brightness over time, according to some preprogrammed pattern or
-> > function.
-> >=20
-> > This adds a new optional operator that LED class drivers can implement
-> > if they support such functionality as well as a new device attribute to
-> > configure the pattern for a given LED.
-> >=20
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >=20
-> > Changes since v2:
-> > - None
-> >=20
-> > Changes since v1:
-> > - New patch, based on discussions following v1
-> >=20
-> >  Documentation/ABI/testing/sysfs-class-led |  20 ++++
-> >  drivers/leds/led-class.c                  | 150 ++++++++++++++++++++++=
-++++++++
-> >  include/linux/leds.h                      |  21 +++++
-> >  3 files changed, 191 insertions(+)
-> >=20
-> > diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/=
-ABI/testing/sysfs-class-led
-> > index 5f67f7ab277b..74a7f5b1f89b 100644
-> > --- a/Documentation/ABI/testing/sysfs-class-led
-> > +++ b/Documentation/ABI/testing/sysfs-class-led
-> > @@ -61,3 +61,23 @@ Description:
-> >  		gpio and backlight triggers. In case of the backlight trigger,
-> >  		it is useful when driving a LED which is intended to indicate
-> >  		a device in a standby like state.
-> > +
-> > +What:		/sys/class/leds/<led>/pattern
-> > +Date:		July 2017
+On Mon 2017-11-20 13:10:33, Bjorn Andersson wrote:
+> On Sun 19 Nov 13:36 PST 2017, Jacek Anaszewski wrote:
 >=20
-> That was many months ago :)
+> > Hi Bjorn,
+> >=20
+> > Thanks for the patch. Please refer to my comments in the code.
+> >=20
+> > On 11/15/2017 08:13 AM, Bjorn Andersson wrote:
+> [..]
+> > > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> > > index 52ea34e337cd..ccc3aa4b2474 100644
+> > > --- a/drivers/leds/Kconfig
+> > > +++ b/drivers/leds/Kconfig
+> > > @@ -651,6 +651,13 @@ config LEDS_POWERNV
+> > >  	  To compile this driver as a module, choose 'm' here: the module
+> > >  	  will be called leds-powernv.
+> > > =20
+> > > +config LEDS_QCOM_LPG
+> > > +	tristate "LED support for Qualcomm LPG"
+> > > +	depends on LEDS_CLASS
+> >=20
+> > You were mentioning that this driver is for a MFD child block,
+> > so we should probably depend on the parent MFD driver?
+> >=20
 >=20
-> > +KernelVersion:	4.14
+> There's no build time dependency between the two, so it's not strictly
+> necessary.
 >=20
-> And that kernel version is long since released :)
+> Adding a dependency on MFD_SPMI_PMIC would indirectly add a dependency
+> on ARCH_QCOM, which limit build testing and stop some static code
+> checkers to check the driver.
+>=20
+> So, unless you strongly object I would prefer not to mention the
+> MFD.
 
-Yeah, the other problem is it has some interesting format with ":|"
-marking repeat, and is not really suitable for RGB LEDs...
+OTOH, this way even users that can't have qualcom LPG are asked the
+question.
 
-I'd really prefer to get driver in first, and add pattern interface
-later.
+So right way is depends on LEdS_CLASS && (BUILD_TEST || MFD_SPMI_PMIC).
 
-									Pavel
+								Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---rS8CxjVDS/+yyDmU
+--DSayHWYpDlRfCAAQ
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAloTYy8ACgkQMOfwapXb+vKL8wCfcWjEhnOYfTajF6bcNU1XGLnP
-+9IAnipZ5djx8KAr64swV/T+mJttvlFZ
-=2fS/
+iEYEARECAAYFAloTY6MACgkQMOfwapXb+vJ7NgCgqqmrZYp6fAYBRo9TKgPfuNto
+qy4AnjskseY9GyVshFleQvxjAnMfVOO5
+=+L2Z
 -----END PGP SIGNATURE-----
 
---rS8CxjVDS/+yyDmU--
+--DSayHWYpDlRfCAAQ--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
