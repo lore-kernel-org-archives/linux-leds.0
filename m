@@ -1,307 +1,276 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v3 1/3] leds: core: Introduce generic pattern interface
-Date: Tue, 21 Nov 2017 21:33:37 +0100
-Message-ID: <3ae8518d-dd3e-b9ee-9d71-5ba05856fc2a@gmail.com>
+Subject: Re: [PATCH v3 2/3] leds: Add driver for Qualcomm LPG
+Date: Tue, 21 Nov 2017 23:00:42 +0100
+Message-ID: <5fac62f1-4324-b488-736b-7fe66afc4f01@gmail.com>
 References: <20171115071345.24331-1-bjorn.andersson@linaro.org>
- <20171115071345.24331-2-bjorn.andersson@linaro.org>
+ <20171115071345.24331-3-bjorn.andersson@linaro.org>
+ <19018aa2-c460-1d5e-8dd2-1cfa557be2f2@gmail.com>
+ <20171120211033.GZ28761@minitux>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <20171115071345.24331-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20171120211033.GZ28761@minitux>
 Sender: linux-arm-msm-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Bjorn,
-
-I have one general remark below.
-
-On 11/15/2017 08:13 AM, Bjorn Andersson wrote:
-> Some LED controllers have support for autonomously controlling
-> brightness over time, according to some preprogrammed pattern or
-> function.
+On 11/20/2017 10:10 PM, Bjorn Andersson wrote:
+> On Sun 19 Nov 13:36 PST 2017, Jacek Anaszewski wrote:
 > 
-> This adds a new optional operator that LED class drivers can implement
-> if they support such functionality as well as a new device attribute to
-> configure the pattern for a given LED.
+>> Hi Bjorn,
+>>
+>> Thanks for the patch. Please refer to my comments in the code.
+>>
+>> On 11/15/2017 08:13 AM, Bjorn Andersson wrote:
+> [..]
+>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>>> index 52ea34e337cd..ccc3aa4b2474 100644
+>>> --- a/drivers/leds/Kconfig
+>>> +++ b/drivers/leds/Kconfig
+>>> @@ -651,6 +651,13 @@ config LEDS_POWERNV
+>>>  	  To compile this driver as a module, choose 'm' here: the module
+>>>  	  will be called leds-powernv.
+>>>  
+>>> +config LEDS_QCOM_LPG
+>>> +	tristate "LED support for Qualcomm LPG"
+>>> +	depends on LEDS_CLASS
+>>
+>> You were mentioning that this driver is for a MFD child block,
+>> so we should probably depend on the parent MFD driver?
+>>
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
+> There's no build time dependency between the two, so it's not strictly
+> necessary.
 > 
-> Changes since v2:
-> - None
+> Adding a dependency on MFD_SPMI_PMIC would indirectly add a dependency
+> on ARCH_QCOM, which limit build testing and stop some static code
+> checkers to check the driver.
 > 
-> Changes since v1:
-> - New patch, based on discussions following v1
+> So, unless you strongly object I would prefer not to mention the MFD.
 > 
->  Documentation/ABI/testing/sysfs-class-led |  20 ++++
->  drivers/leds/led-class.c                  | 150 ++++++++++++++++++++++++++++++
->  include/linux/leds.h                      |  21 +++++
->  3 files changed, 191 insertions(+)
+>>> +	help
+>>> +	  This option enables support for the Light Pulse Generator found in a
+>>> +	  wide variety of Qualcomm PMICs.
+>>> +
+> [..]
+>>> diff --git a/drivers/leds/leds-qcom-lpg.c b/drivers/leds/leds-qcom-lpg.c
+> [..]
+>>> +#define LPG_PATTERN_CONFIG_REG	0x40
+>>> +#define LPG_SIZE_CLK_REG	0x41
+>>> +#define LPG_PREDIV_CLK_REG	0x42
+>>> +#define PWM_TYPE_CONFIG_REG	0x43
+>>> +#define PWM_VALUE_REG		0x44
+>>> +#define PWM_ENABLE_CONTROL_REG	0x46
+>>> +#define PWM_SYNC_REG		0x47
+>>> +#define LPG_RAMP_DURATION_REG	0x50
+>>> +#define LPG_HI_PAUSE_REG	0x52
+>>> +#define LPG_LO_PAUSE_REG	0x54
+>>> +#define LPG_HI_IDX_REG		0x56
+>>> +#define LPG_LO_IDX_REG		0x57
+>>> +#define PWM_SEC_ACCESS_REG	0xd0
+>>> +#define PWM_DTEST_REG(x)	(0xe2 + (x) - 1)
+>>> +
+>>> +#define TRI_LED_SRC_SEL		0x45
+>>> +#define TRI_LED_EN_CTL		0x46
+>>> +#define TRI_LED_ATC_CTL		0x47
+>>> +
+>>> +#define LPG_LUT_REG(x)		(0x40 + (x) * 2)
+>>> +#define RAMP_CONTROL_REG	0xc8
+>>
+>> Please add QCOM_ namespacing prefix to the macros.
+>> At least PWM prefix is reserved for pwm subsystem.
+>>
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-> index 5f67f7ab277b..74a7f5b1f89b 100644
-> --- a/Documentation/ABI/testing/sysfs-class-led
-> +++ b/Documentation/ABI/testing/sysfs-class-led
-> @@ -61,3 +61,23 @@ Description:
->  		gpio and backlight triggers. In case of the backlight trigger,
->  		it is useful when driving a LED which is intended to indicate
->  		a device in a standby like state.
-> +
-> +What:		/sys/class/leds/<led>/pattern
-> +Date:		July 2017
-> +KernelVersion:	4.14
-> +Description:
-> +		Specify a pattern for the LED, for LED hardware that support
-> +		altering the brightness as a function of time.
-> +
-> +		The pattern is given by a series of tuples, of brightness and
-> +		duration (ms). The LED is expected to traverse the series and
-> +		each brightness value for the specified duration.
-> +
-> +		Additionally a repeat marker ":|" can be appended to the
-> +		series, which should cause the pattern to be repeated
-> +		endlessly.
-> +
-> +		As LED hardware might have different capabilities and precision
-> +		the requested pattern might be slighly adjusted by the driver
-> +		and the resulting pattern of such operation should be returned
-> +		when this file is read.
+> Will fix.
+> 
+> [..]
+>>> +static void lpg_calc_freq(struct lpg_channel *chan, unsigned int period_us)
+>>> +{
+>>> +	int             n, m, clk, div;
+>>> +	int             best_m, best_div, best_clk;
+>>> +	unsigned int    last_err, cur_err, min_err;
+>>> +	unsigned int    tmp_p, period_n;
+>>> +
+>>> +	if (period_us == chan->period_us)
+>>> +		return;
+>>> +
+>>> +	/* PWM Period / N */
+>>> +	if (period_us < ((unsigned int)(-1) / NSEC_PER_USEC)) {
+>>> +		period_n = (period_us * NSEC_PER_USEC) >> 6;
+>>> +		n = 6;
+>>> +	} else {
+>>> +		period_n = (period_us >> 9) * NSEC_PER_USEC;
+>>> +		n = 9;
+>>> +	}
+>>
+>> Please provide macros for 6 and 9 magic numbers.
+>>
+> 
+> They really aren't magic numbers, they represent the number of bits of
+> resolution, referred to as "size" in the rest of the driver.
+> 
+> I'll replace "n" with "pwm_size" to clarify this. Ok?
 
-I'd prefer to implement this file in a trigger, similarly to
-ledtrig-timer's delay_on/delay_off files.
+OK.
 
-The trigger would use new pattern ops instead of blink_set(). This way
-we will not make the pattern interface fixed once for good. It will be
-possible to implement in the future other types of pattern triggers
-accepting other pattern formats.
+> [..]
+>>> +static void lpg_apply_freq(struct lpg_channel *chan)
+>>> +{
+>>> +	unsigned long val;
+>>> +	struct lpg *lpg = chan->lpg;
+>>> +
+>>> +	if (!chan->enabled)
+>>> +		return;
+>>> +
+>>> +	/* Clock register values are off-by-one from lpg_clk_table */
+>>> +	val = chan->clk + 1;
+>>> +
+>>> +	if (chan->pwm_size == 9)
+>>> +		val |= lpg->data->pwm_9bit_mask;
+>>> +
+>>> +	regmap_write(lpg->map, chan->base + LPG_SIZE_CLK_REG, val);
+>>> +
+>>> +	val = chan->pre_div << 5 | chan->pre_div_exp;
+>>> +	regmap_write(lpg->map, chan->base + LPG_PREDIV_CLK_REG, val);
+>>
+>> Please provide macros for 5 and 9.
+>>
+> 
+> 5 definitely deserves a macro.
+> 
+> 9 is, as above, the number of bits of resolution (or "size of the pwm").
+> Is there a name different than "pwm_size" that would make this more
+> obvious?
 
-In order to avoid the need for implementing software fallback a new
-mechanism would have to be added for checking whether given LED class
-driver supports selected type of pattern trigger and fail on write to
-triggers file if not. Drivers could just set the relevant flag to be
-defined in linux/leds.h
+pwm_res_bits or maybe you could use directly the register bit field
+name from the documentation?
 
+> [..]
+>>> +static void lpg_brightness_set(struct led_classdev *cdev,
+>>> +			      enum led_brightness value)
+>>> +{
+> [..]
+>>> +	/* Trigger start of ramp generator(s) */
+>>> +	if (lut_mask)
+>>> +		lpg_lut_sync(lpg, lut_mask);
+>>
+>> We need some synchronization while changing device state in
+>> few steps, to prevent troubles when we are preempted by other
+>> process in the middle. spin_lock() in this case since it seems
+>> that we are not going to sleep while accessing device registers.
+>>
+> 
+> You're right, we need to protect the TRILED during the read-modify-write
+> of the enable bits and we also need a lock around the allocation of bits
+> in the LUT block. Will fix this.
+> 
+> As far as I can see the framework is expected to protect me from
+> concurrent accesses on the same LED though.
+
+Access from sysfs is synchronized but LED subsystem API can be
+called from atomic context (e.g. from hard/soft irqs), which
+entails issues for drivers that sleep while setting brightness -
+proper locking method has to be chosen in the driver (mutex or
+spin_lock).
+
+That's why brightness_set_blocking op was provided for drivers
+sleeping on brightness setting - they can safely use mutex_lock
+and the rest using spin_lock implement old brightness_set.
+
+Before introduction of brightness_set_blocking op drivers had
+to use workqueue on their own, now this is handled by the LED core.
+
+The mutex protection in LED class sysfs interface accessors was
+introduced rather to allow for locking LED subsystem sysfs interface
+when v4l2-flash device controls a flash LED.
+
+> [..]
+>>> +static int lpg_add_led(struct lpg *lpg, struct device_node *np)
+>>> +{
+>>> +	struct lpg_led *led;
+>>> +	const char *state;
+>>> +	int sources;
+>>> +	int size;
+>>> +	u32 chan;
+>>> +	int ret;
+>>> +	int i;
+>>> +
+>>> +	sources = of_property_count_u32_elems(np, "led-sources");
+>>> +	if (sources <= 0) {
+>>> +		dev_err(lpg->dev, "invalid led-sources of %s\n",
+>>> +			np->name);
+>>> +		return -EINVAL;
+>>> +	}
+>>> +
+>>> +	size = sizeof(*led) + sources * sizeof(struct lpg_channel*);
+>>
+>> To fix checkpatch.pl complaint:
+>>
+>> s/lpg_channel*/lpg_channel */
+>>
+> 
+> Sorry, will fix.
+> 
+>>> +	led = devm_kzalloc(lpg->dev, size, GFP_KERNEL);
+>>> +	if (!led)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	led->lpg = lpg;
+>>> +	led->num_channels = sources;
+>>> +
+>>> +	for (i = 0; i < sources; i++) {
+>>> +		ret = of_property_read_u32_index(np, "led-sources",
+>>> +						 i, &chan);
+>>> +		if (ret || !chan || chan > lpg->num_channels) {
+>>> +			dev_err(lpg->dev,
+>>> +				"invalid led-sources of %s\n",
+>>> +				np->name);
+>>> +			return -EINVAL;
+>>> +		}
+>>> +
+>>> +		led->channels[i] = &lpg->channels[chan - 1];
+>>> +
+>>> +		led->channels[i]->in_use = true;
+>>> +	}
+>>> +
+>>> +	/* Use label else node name */
+>>> +	led->cdev.name = of_get_property(np, "label", NULL) ? : np->name;
+>>
+>> Documentation/leds/leds-class.txt states that LED class device name
+>> pattern is devicename:colour:function.
+>>
+>> This is not explicitly stated in the common LED DT bindings, but label
+>> should be prepended with devicename by the driver.
+> 
+> I was under the impression that "devicename" referred to the board name,
+> but I presume then that this refer to the name of the "LED hardware"?
+
+
+Right.
+
+> 
+>> Not all LED class drivers adhere to this rule and we have some mess in
+>> this area currently, but we will fix it soon I hope.
+>>
+> 
+> I presume the default name should be built on the form of
+> dev_name(dev)::of_node->name then?
+> 
+> Unfortunately I can't find a single driver that does this, so please
+> let me know the format you would like and I'll update the driver with
+> this.
+
+Currently the best approach is shown in the drivers/leds/leds-as3645a.c
+I believe, i.e. in case label is absent, devicename is taken from the
+parent DT node and function from per-LED child DT node. Please also
+refer to the patch [0], which improves the code present in mainline
+but has not been applied yet due to some flash LED controller related
+decisions to be taken yet.
+
+[0] https://patchwork.linuxtv.org/patch/44275/
+
+-- 
 Best regards,
 Jacek Anaszewski
-
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index b0e2d55acbd6..bd630e2ae967 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -74,6 +74,154 @@ static ssize_t max_brightness_show(struct device *dev,
->  }
->  static DEVICE_ATTR_RO(max_brightness);
->  
-> +static ssize_t pattern_show(struct device *dev,
-> +			    struct device_attribute *attr, char *buf)
-> +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +	struct led_pattern *pattern;
-> +	size_t offset = 0;
-> +	size_t count;
-> +	bool repeat;
-> +	size_t i;
-> +	int n;
-> +
-> +	if (!led_cdev->pattern_get)
-> +		return -EOPNOTSUPP;
-> +
-> +	pattern = led_cdev->pattern_get(led_cdev, &count, &repeat);
-> +	if (IS_ERR_OR_NULL(pattern))
-> +		return PTR_ERR(pattern);
-> +
-> +	for (i = 0; i < count; i++) {
-> +		n = snprintf(buf + offset, PAGE_SIZE - offset, "%d %d",
-> +			     pattern[i].brightness, pattern[i].delta_t);
-> +
-> +		if (offset + n >= PAGE_SIZE)
-> +			goto err_nospc;
-> +
-> +		offset += n;
-> +
-> +		if (i < count - 1)
-> +			buf[offset++] = ' ';
-> +	}
-> +
-> +	if (repeat) {
-> +		if (offset + 4 >= PAGE_SIZE)
-> +			goto err_nospc;
-> +
-> +		memcpy(buf + offset, " :|", 3);
-> +		offset += 3;
-> +	}
-> +
-> +	if (offset + 1 >= PAGE_SIZE)
-> +		goto err_nospc;
-> +
-> +	buf[offset++] = '\n';
-> +
-> +	kfree(pattern);
-> +	return offset;
-> +
-> +err_nospc:
-> +	kfree(pattern);
-> +	return -ENOSPC;
-> +}
-> +
-> +static ssize_t pattern_store(struct device *dev,
-> +			     struct device_attribute *attr,
-> +			     const char *buf, size_t size)
-> +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +	struct led_pattern *pattern = NULL;
-> +	unsigned long val;
-> +	char *sbegin;
-> +	char *elem;
-> +	char *s;
-> +	int len = 0;
-> +	int ret = 0;
-> +	bool odd = true;
-> +	bool repeat = false;
-> +
-> +	s = sbegin = kstrndup(buf, size, GFP_KERNEL);
-> +	if (!s)
-> +		return -ENOMEM;
-> +
-> +	/* Trim trailing newline */
-> +	s[strcspn(s, "\n")] = '\0';
-> +
-> +	/* If the remaining string is empty, clear the pattern */
-> +	if (!s[0]) {
-> +		ret = led_cdev->pattern_clear(led_cdev);
-> +		goto out;
-> +	}
-> +
-> +	pattern = kcalloc(size, sizeof(*pattern), GFP_KERNEL);
-> +	if (!pattern) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	/* Parse out the brightness & delta_t touples and check for repeat */
-> +	while ((elem = strsep(&s, " ")) != NULL) {
-> +		if (!strcmp(elem, ":|")) {
-> +			repeat = true;
-> +			break;
-> +		}
-> +
-> +		ret = kstrtoul(elem, 10, &val);
-> +		if (ret)
-> +			goto out;
-> +
-> +		if (odd) {
-> +			pattern[len].brightness = val;
-> +		} else {
-> +			/* Ensure we don't have any delta_t == 0 */
-> +			if (!val) {
-> +				ret = -EINVAL;
-> +				goto out;
-> +			}
-> +
-> +			pattern[len].delta_t = val;
-> +			len++;
-> +		}
-> +
-> +		odd = !odd;
-> +	}
-> +
-> +	/*
-> +	 * Fail if we didn't find any data points or last data point was partial
-> +	 */
-> +	if (!len || !odd) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	ret = led_cdev->pattern_set(led_cdev, pattern, len, repeat);
-> +
-> +out:
-> +	kfree(pattern);
-> +	kfree(sbegin);
-> +	return ret < 0 ? ret : size;
-> +}
-> +
-> +static DEVICE_ATTR_RW(pattern);
-> +
-> +static umode_t led_class_attrs_mode(struct kobject *kobj,
-> +				    struct attribute *attr,
-> +				    int index)
-> +{
-> +	struct device *dev = container_of(kobj, struct device, kobj);
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +
-> +	if (attr == &dev_attr_brightness.attr)
-> +		return attr->mode;
-> +	if (attr == &dev_attr_max_brightness.attr)
-> +		return attr->mode;
-> +	if (attr == &dev_attr_pattern.attr && led_cdev->pattern_set)
-> +		return attr->mode;
-> +
-> +	return 0;
-> +}
-> +
->  #ifdef CONFIG_LEDS_TRIGGERS
->  static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
->  static struct attribute *led_trigger_attrs[] = {
-> @@ -88,11 +236,13 @@ static const struct attribute_group led_trigger_group = {
->  static struct attribute *led_class_attrs[] = {
->  	&dev_attr_brightness.attr,
->  	&dev_attr_max_brightness.attr,
-> +	&dev_attr_pattern.attr,
->  	NULL,
->  };
->  
->  static const struct attribute_group led_group = {
->  	.attrs = led_class_attrs,
-> +	.is_visible = led_class_attrs_mode,
->  };
->  
->  static const struct attribute_group *led_groups[] = {
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index bf6db4fe895b..584c79ff5bb5 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -33,6 +33,8 @@ enum led_brightness {
->  	LED_FULL	= 255,
->  };
->  
-> +struct led_pattern;
-> +
->  struct led_classdev {
->  	const char		*name;
->  	enum led_brightness	 brightness;
-> @@ -88,6 +90,15 @@ struct led_classdev {
->  				     unsigned long *delay_on,
->  				     unsigned long *delay_off);
->  
-> +	int		(*pattern_set)(struct led_classdev *led_cdev,
-> +				       struct led_pattern *pattern, int len,
-> +				       bool repeat);
-> +
-> +	int		(*pattern_clear)(struct led_classdev *led_cdev);
-> +
-> +	struct led_pattern *(*pattern_get)(struct led_classdev *led_cdev,
-> +					   size_t *len, bool *repeat);
-> +
->  	struct device		*dev;
->  	const struct attribute_group	**groups;
->  
-> @@ -446,4 +457,14 @@ static inline void led_classdev_notify_brightness_hw_changed(
->  	struct led_classdev *led_cdev, enum led_brightness brightness) { }
->  #endif
->  
-> +/**
-> + * struct led_pattern - brigheness value in a pattern
-> + * @delta_t:	delay until next entry, in milliseconds
-> + * @brightness:	brightness at time = 0
-> + */
-> +struct led_pattern {
-> +	int delta_t;
-> +	int brightness;
-> +};
-> +
->  #endif		/* __LINUX_LEDS_H_INCLUDED */
-> 
