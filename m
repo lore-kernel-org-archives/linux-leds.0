@@ -1,172 +1,84 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: Bug when using both "set" and "blink" functions
-Date: Mon, 27 Nov 2017 20:26:42 +0100
-Message-ID: <d1bdbb28-6575-e4c1-6137-83c532714168@gmail.com>
-References: <5c59633100dd45e2b28e46d78cbf930c@innerrange.com.au>
- <c967ba03-320e-8abd-6b6a-f2380ab2752b@gmail.com>
- <7d558c3c1f374177b441e4070f0b6665@innerrange.com.au>
+From: Doug Anderson <dianders@google.com>
+Subject: Re: [RFC v2 1/2] backlight: pwm_bl: linear interpolation between
+ values of brightness-levels
+Date: Mon, 27 Nov 2017 15:52:37 -0800
+Message-ID: <CAD=FV=XfXk3xSAf3p64z2cJJGRG+7Fvq=ez=f1opD+KH_b7kHA@mail.gmail.com>
+References: <20171116141151.21171-1-enric.balletbo@collabora.com> <20171116141151.21171-2-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:40433 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751673AbdK0T1n (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 27 Nov 2017 14:27:43 -0500
-Received: by mail-wm0-f46.google.com with SMTP id b189so37164377wmd.5
-        for <linux-leds@vger.kernel.org>; Mon, 27 Nov 2017 11:27:42 -0800 (PST)
-In-Reply-To: <7d558c3c1f374177b441e4070f0b6665@innerrange.com.au>
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:35424 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753237AbdK0Xwj (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 27 Nov 2017 18:52:39 -0500
+Received: by mail-vk0-f67.google.com with SMTP id n63so18614470vkf.2
+        for <linux-leds@vger.kernel.org>; Mon, 27 Nov 2017 15:52:39 -0800 (PST)
+In-Reply-To: <20171116141151.21171-2-enric.balletbo@collabora.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Craig McQueen <craig.mcqueen@innerrange.com.au>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 11/27/2017 07:51 AM, Craig McQueen wrote:
-> Jacek Anaszewski wrote:
->> On 11/22/2017 01:55 AM, Craig McQueen wrote:
->>> I'd like to control a LED to possibly be any of:
->>>
->>> * Off
->>> * On
->>> * Blinking
->>>
->>> I've had this working fine in 3.14.x kernel.
->>>
->>> But when upgrading to 4.4.x, I found that the transition from "blinking" to
->> "on" didn't work. Namely, if it's blinking and then I call
->> led_set_brightness(led_cdev, LED_FULL), then it wouldn't work (I can't
->> remember if it turned off, or remained blinking; it wasn't on anyway). I
->> worked around it by calling led_set_brightness(led_cdev, LED_OFF) just
->> before led_set_brightness(led_cdev, LED_FULL).
->>
->> Could you please check it with 4.14?
-> 
-> It isn't easy for me to try 4.14 in my current setup (Yocto build with meta-ti).
+Hi,
 
-You could backport related led-core.c patches.
-They don't have out-of-LED tree dependencies AFAIR.
+On Thu, Nov 16, 2017 at 6:11 AM, Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+> Setting use-linear-interpolation in the dts will allow you to have linear
+> interpolation between values of brightness-levels.
+>
+> There are now 256 between each of the values of brightness-levels. If
+> something is requested halfway between 2 values, we'll use linear
+> interpolation.
+>
+> This way a high resolution pwm duty cycle can be used without having to
+> list out every possible value in the dts. This system also allows for
+> gamma corrected values (eg: "brightness-levels = <0 2 4 8 16 32>;").
+>
+> Patch based on the Alexandru M Stan work done for ChromeOS kernels.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+>  .../bindings/leds/backlight/pwm-backlight.txt      |  2 +
+>  drivers/video/backlight/pwm_bl.c                   | 55 +++++++++++++++++-----
+>  include/linux/pwm_backlight.h                      |  2 +
+>  3 files changed, 47 insertions(+), 12 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+> index 764db86..7c48f20 100644
+> --- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+> +++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+> @@ -17,6 +17,8 @@ Optional properties:
+>                 "pwms" property (see PWM binding[0])
+>    - enable-gpios: contains a single GPIO specifier for the GPIO which enables
+>                    and disables the backlight (see GPIO binding[1])
+> +  - use-linear-interpolation: set this propriety to enable linear interpolation
+> +                              between each of the values of brightness-levels.
+>
+>  [0]: Documentation/devicetree/bindings/pwm/pwm.txt
+>  [1]: Documentation/devicetree/bindings/gpio/gpio.txt
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> index 9bd1768..59b1bfb 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -24,6 +24,8 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/slab.h>
+>
+> +#define NSTEPS 256
 
->> The expected behavior in 4.14 is:
->>
->> use case 1: led_set_brightness(led_cdev, LED_OFF) while timer trigger
->>             is active.
->> expected result: LED is off, trigger is deactivated.
->>
->> use case 2: led_set_brightness(led_cdev, LED_FULL) while timer trigger
->>             is active.
->> expected result: LED blink brightness is LED_FULL, trigger remains active.
-> 
-> Yes, I understand that API design.
-> 
->>> Now I have upgraded to 4.9.x, and found that the transition from "blinking"
->> to "on" again isn't working. The LED ends up being off instead of on.
->>
->> Could you provide the exact steps to reproduce this case?
->> LED shouldn't be in any way off after setting brightness to non-zero value
->> when blinking.
-> 
-> I'm using a custom kernel driver that tries to go from blinking to steady-on using these function calls:
-> 
-> 		led_trigger_event(trigger, LED_OFF);
-> 		led_trigger_event(trigger, LED_FULL);
-> 
->> There were indeed changes in 4.9 in this area, that modified semantics of
->> setting brightness to non-zero value when blinking. See the
->> reasoning:
->>
->> commit 7cfe749fad5158247282f2fee30773fd454029ab
->> Author: Tony Makkiel <tony.makkiel@daqri.com>
->> Date:   Wed May 18 17:22:45 2016 +0100
->>
->>     leds: core: Fix brightness setting upon hardware blinking enabled
->>
->>     Commit 76931edd54f8 ("leds: fix brightness changing when software
->> blinking
->>     is active") changed the semantics of led_set_brightness() which according
->>     to the documentation should disable blinking upon any brightness setting.
->>     Moreover it made it different for soft blink case, where it was possible
->>     to change blink brightness, and for hardware blink case, where setting
->>     any brightness greater than 0 was ignored.
->>
->>     While the change itself is against the documentation claims, it was driven
->>     also by the fact that timer trigger remained active after turning blinking
->>     off. Fixing that would have required major refactoring in the led-core,
->>     led-class, and led-triggers because of cyclic dependencies.
->>
->>     Finally, it has been decided that allowing for brightness change during
->>     blinking is beneficial as it can be accomplished without disturbing
->>     blink rhythm.
->>
->>     The change in brightness setting semantics will not affect existing
->>     LED class drivers that implement blink_set op thanks to the LED_BLINK_SW
->>     flag introduced by this patch. The flag state will be from now on checked
->>     in led_set_brightness() which will allow to distinguish between software
->>     and hardware blink mode. In the latter case the control will be passed
->>     directly to the drivers which apply their semantics on brightness set,
->>     which is disable the blinking in case of most such drivers. New drivers
->>     will apply new semantics and just change the brightness while hardware
->>     blinking is on, if possible.
->>
->>     The issue was smuggled by subsequent LED core improvements, which
->> modified
->>     the code that originally introduced the problem.
->>
->>
->>
->>> Examining the code of led_set_brightness():
->>>
->>> * Behaviour is different depending on whether the brightness is LED_OFF
->> (it schedules the blink to be turned off "soon") or other (it alters the
->> brightness of subsequent blinks).
->>> * It looks as though there are race conditions in the transition from blinking
->> to steady off -- it schedules the blink to be turned off "soon", so it's difficult
->> to guarantee a reliable transition from blinking to on/off.
->>>
->>> The combination of the above two points makes it seem difficult to
->> robustly go from blinking to off/on.
->>>
->>> So, my questions are:
->>>
->>> * What is the correct way to use the API to reliably control an LED for a
->> combination of off/on/blinking?
->>> * Is my above analysis of the code correct, so that there are indeed race
->> conditions going from blinking to off, leading to undefined behaviour? Can
->> that be fixed?
->>
->> I checked earlier discussed case i.e. disabling trigger and immediately setting
->> brightness to non-zero value and it seems to work fine. Checked with uleds
->> driver:
->>
->> # echo "timer" > trigger
->> # echo 0 > brightness; echo 100 > brightness
->>
->> Brightness always is 100 after that, even when setting delay_on/off to 1.
-> 
-> I still think there's a race condition, but you don't discover it when using userspace, because there's sufficient time between setting the brightness to 0 and later 100, for LED_BLINK_DISABLE to be processed in-between.
-> 
-> But I'm using a custom kernel driver that tries to go from blinking to steady-on using these function calls:
-> 
-> 		led_trigger_event(trigger, LED_OFF);   /* which calls led_set_brightness(led_cdev, LED_OFF) */
-> 		led_trigger_event(trigger, LED_FULL);  /* which calls led_set_brightness(led_cdev, LED_FULL) */
-> 
-> In this case, LED_BLINK_DISABLE is not yet processed before the second function call, so the second function call becomes ineffective, because the pending LED_BLINK_DISABLE is later processed, turning off the LED and leaving it off.
+I'm not sure this is quite the ideal way to specify it.  I could sorta
+imagine wanting to specify just:
 
-Have you verified it by inserting printks in the led_set_brightness()
-and brightness_set op of your driver?
+  brightness-levels = <0 65535>
 
-If there is a race then the call order should be as follows:
+...and in such a case you'll only give 256 steps in between.  256
+isn't quite granular enough and the human eye can notice each step.  I
+could fake it by putting this in the device tree:
 
-led_set_brightness LED_OFF
-led_set_brightness LED_FULL
-brightness_set LED_FULL
-brightness_set LED_OFF
+  brightness-levels = <0 4095 8191 ... ... 61439 65535>
 
-Regardless of that, I strongly advise backporting the mainline patches.
-If that doesn't help then make sure that brightness_set op of your
-driver implements proper locking scheme. If that doesn't help too, then
-you could try to come up with your patch for the LED core, that fixes
-the issue for you. It can be hard to address your particular case
-otherwise.
-
--- 
-Best regards,
-Jacek Anaszewski
+...but that's kinda silly.  I'd rather just say that when we're using
+interpolation we just say that there will be a certain number of steps
+(like 32768).  Is there really a huge advantage of picking 256 steps
+between each specified value instead of just picking a fixed number of
+brightness levels?
