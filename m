@@ -1,20 +1,20 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [PATCH] led-triggers: allow writing 'default' to sysfs trigger
  attr
-Date: Tue, 28 Nov 2017 20:38:39 +0100
-Message-ID: <93d68328-69aa-86ce-6635-2f1fd227acfe@gmail.com>
+Date: Tue, 28 Nov 2017 20:38:51 +0100
+Message-ID: <33acbe88-efb0-28b2-cc27-c5a8dafdceb0@gmail.com>
 References: <20171128063820.87534-1-craig.mcqueen@innerrange.com>
  <20171128120752.GA14905@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35632 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754056AbdK1Tjk (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Nov 2017 14:39:40 -0500
-Received: by mail-wr0-f195.google.com with SMTP id g53so1217894wra.2
-        for <linux-leds@vger.kernel.org>; Tue, 28 Nov 2017 11:39:39 -0800 (PST)
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:42325 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752618AbdK1Tjv (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Nov 2017 14:39:51 -0500
+Received: by mail-wm0-f66.google.com with SMTP id l141so1811158wmg.1
+        for <linux-leds@vger.kernel.org>; Tue, 28 Nov 2017 11:39:51 -0800 (PST)
 In-Reply-To: <20171128120752.GA14905@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
@@ -50,7 +50,7 @@ I agree - Documentation/ABI/testing/sysfs-class-led will need an update.
 In an addition to that I'd extend led_trigger_show() to
 list also "default" among available triggers if a LED class
 device has its default_trigger property initialized and the
-trigger is registered.
+trigger has been registered.
 
 -- 
 Best regards,
