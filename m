@@ -1,150 +1,35 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: Bug when using both "set" and "blink" functions
-Date: Tue, 28 Nov 2017 22:44:22 +0100
-Message-ID: <2eb5e0dc-dfc0-97f1-319b-5e8e0507528f@gmail.com>
-References: <5c59633100dd45e2b28e46d78cbf930c@innerrange.com.au>
- <c967ba03-320e-8abd-6b6a-f2380ab2752b@gmail.com>
- <7d558c3c1f374177b441e4070f0b6665@innerrange.com.au>
- <d1bdbb28-6575-e4c1-6137-83c532714168@gmail.com>
- <d17eaa11b9d746d1aa12648f8c8ea4dd@innerrange.com.au>
- <011b27bc-69bd-b06a-0dc5-af529fa9ff6d@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:46710 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752219AbdK1VpW (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Nov 2017 16:45:22 -0500
-Received: by mail-wm0-f65.google.com with SMTP id r78so2354271wme.5
-        for <linux-leds@vger.kernel.org>; Tue, 28 Nov 2017 13:45:22 -0800 (PST)
-In-Reply-To: <011b27bc-69bd-b06a-0dc5-af529fa9ff6d@gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
+From: Ben Whitten <ben.whitten@gmail.com>
+Subject: [PATCH] Introduce a NETDEV LED trigger
+Date: Tue, 28 Nov 2017 21:54:17 +0000
+Message-ID: <1511906058-30649-1-git-send-email-ben.whitten@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Ben Whitten <ben.whitten@gmail.com>
 List-Id: linux-leds@vger.kernel.org
-To: Craig McQueen <craig.mcqueen@innerrange.com.au>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On 11/28/2017 10:35 PM, Jacek Anaszewski wrote:
-> On 11/28/2017 05:32 AM, Craig McQueen wrote:
->> Jacek Anaszewski wrote:
->>> On 11/27/2017 07:51 AM, Craig McQueen wrote:
->>>> Jacek Anaszewski wrote:
->>>>> I checked earlier discussed case i.e. disabling trigger and
->>>>> immediately setting brightness to non-zero value and it seems to work
->>>>> fine. Checked with uleds
->>>>> driver:
->>>>>
->>>>> # echo "timer" > trigger
->>>>> # echo 0 > brightness; echo 100 > brightness
->>>>>
->>>>> Brightness always is 100 after that, even when setting delay_on/off to 1.
->>>>
->>>> I still think there's a race condition, but you don't discover it when using
->>> userspace, because there's sufficient time between setting the brightness to
->>> 0 and later 100, for LED_BLINK_DISABLE to be processed in-between.
->>>>
->>>> But I'm using a custom kernel driver that tries to go from blinking to steady-
->>> on using these function calls:
->>>>
->>>> 		led_trigger_event(trigger, LED_OFF);   /* which calls
->>> led_set_brightness(led_cdev, LED_OFF) */
->>>> 		led_trigger_event(trigger, LED_FULL);  /* which calls
->>>> led_set_brightness(led_cdev, LED_FULL) */
->>>>
->>>> In this case, LED_BLINK_DISABLE is not yet processed before the second
->>> function call, so the second function call becomes ineffective, because the
->>> pending LED_BLINK_DISABLE is later processed, turning off the LED and
->>> leaving it off.
->>>
->>> Have you verified it by inserting printks in the led_set_brightness() and
->>> brightness_set op of your driver?
->>
->> No, I didn't verify it. I deduced it by code review of led-core.c, and its use of LED_BLINK_DISABLE in led_set_brightness() and set_brightness_delayed().
->>
->> Then, I made a patch (in an earlier email) which modified led_set_brightness(), and that fixed the issue. However, I was concerned that there still could be a race condition if set_brightness_delayed() happened to run in the middle of a call to led_set_brightness(led_cdev, LED_FULL). In that case, the call led_set_brightness(led_cdev, LED_FULL) could still fail.
->>
->>> Regardless of that, I strongly advise backporting the mainline patches.
->>> If that doesn't help then make sure that brightness_set op of your driver
->>> implements proper locking scheme.
->>
->> The problem seems to be nothing to do with the brightness_set op of the driver.
->>
->>> If that doesn't help too, then you could
->>> try to come up with your patch for the LED core, that fixes the issue for you.
->>> It can be hard to address your particular case otherwise.
->>
->> This code in led-core.c seems quite tricky to avoid any race conditions, without using a spinlock or semaphore. Here is another proposal which I am considering:
->>
->> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
->> index ef1360445413..5fe7826deab2 100644
->> --- a/drivers/leds/led-core.c
->> +++ b/drivers/leds/led-core.c
->> @@ -109,8 +109,8 @@ static void set_brightness_delayed(struct work_struct *ws)
->>         int ret = 0;
->>  
->>         if (test_and_clear_bit(LED_BLINK_DISABLE, &led_cdev->work_flags)) {
->> -               led_cdev->delayed_set_value = LED_OFF;
->>                 led_stop_software_blink(led_cdev);
->> +               led_cdev->delayed_set_value = led_cdev->new_blink_brightness;
->>         }
->>  
->>         ret = __led_set_brightness(led_cdev, led_cdev->delayed_set_value);
->> @@ -239,15 +239,24 @@ void led_set_brightness(struct led_classdev *led_cdev,
->>                  * work queue task to avoid problems in case we are called
->>                  * from hard irq context.
->>                  */
->> +               led_cdev->new_blink_brightness = brightness;
->>                 if (brightness == LED_OFF) {
->>                         set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
->>                         schedule_work(&led_cdev->set_brightness_work);
->>                 } else {
->>                         set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
->>                                 &led_cdev->work_flags);
->> -                       led_cdev->new_blink_brightness = brightness;
->>                 }
->> -               return;
->> +
->> +               if (test_bit(LED_BLINK_SW, &led_cdev->work_flags)) {
->> +                       /*
->> +                        * Test LED_BLINK_SW again, to handle race condition
->> +                        * with set_brightness_delayed(). If it's no longer
->> +                        * set, then blink has just been stopped, so continue
->> +                        * with led_set_brightness_nosleep() below.
->> +                        */
->> +                       return;
->> +               }
->>         }
->>  
->>         led_set_brightness_nosleep(led_cdev, brightness);
-> 
-> It will be also prone to races. Every solution not employing
-> mutual exclusive section will be. I'm starting to think if the
-> best we can do isn't just preventing brightness setting when
-> blink disable is pending.
-> 
-> 
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index fd83c7f..9c775a2 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -228,6 +228,11 @@ EXPORT_SYMBOL_GPL(led_stop_software_blink);
->  void led_set_brightness(struct led_classdev *led_cdev,
->                         enum led_brightness brightness)
->  {
-> +       if (test_bit(LED_BLINK_DISABLE, &led_cdev->work_flags)) {
-> +               dev_err(led_cdev->dev,
-> +                       "Setting an LED's brightness failed - blink
-> disable pending\n");
-> +               return;
-> +       }
+It's quite useful to be able to trigger LEDs based on network activity,
+similar mechanisms exist in routers and gateway devices.
+I am looking to mainline a patch that has existed out of tree for
+some time in OpenWRT/LEDE.
+The patch has been updated and restructured and most of the issues raised
+in the initial submission have been addressed [1].
 
-Of course it will not work too since we can be preempted here
-by the other process that will set LED_BLINK_DISABLE.
-After waking up this one will not be aware of the flag state
-change.
+I am also including the netdev mailing list as it was suggested previously
+that if there is no activity the interval will still run and is wasteful
 
->         /*
->          * If software blink is active, delay brightness setting
->          * until the next timer tick.
-> 
-> 
-> 
+[1] https://lkml.org/lkml/2010/11/14/116
+
+Ben Whitten (1):
+  leds: trigger: Introduce a NETDEV trigger
+
+ .../ABI/testing/sysfs-class-led-trigger-netdev     |  45 +++
+ drivers/leds/trigger/Kconfig                       |   7 +
+ drivers/leds/trigger/Makefile                      |   1 +
+ drivers/leds/trigger/ledtrig-netdev.c              | 428 +++++++++++++++++++++
+ 4 files changed, 481 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-netdev
+ create mode 100644 drivers/leds/trigger/ledtrig-netdev.c
+
+-- 
+2.7.4
