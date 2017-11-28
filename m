@@ -1,87 +1,116 @@
-From: Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC v2 1/2] backlight: pwm_bl: linear interpolation between
- values of brightness-levels
-Date: Mon, 27 Nov 2017 15:55:19 -0800
-Message-ID: <CAD=FV=XHT_iEU918NVYHf26Xe=4UE0WO0oxBNy_VUfi2FdYGVA@mail.gmail.com>
-References: <20171116141151.21171-1-enric.balletbo@collabora.com>
- <20171116141151.21171-2-enric.balletbo@collabora.com> <20171120185835.r4ded43i62wnu3jo@rob-hp-laptop>
- <CAFqH_50VqFJ-p=gRp9md4eHDHM5NpD6zPFfjwPY4LKTh2x6sHQ@mail.gmail.com>
+From: Craig McQueen <craig.mcqueen@innerrange.com.au>
+Subject: RE: Bug when using both "set" and "blink" functions
+Date: Tue, 28 Nov 2017 04:32:03 +0000
+Message-ID: <d17eaa11b9d746d1aa12648f8c8ea4dd@innerrange.com.au>
+References: <5c59633100dd45e2b28e46d78cbf930c@innerrange.com.au>
+ <c967ba03-320e-8abd-6b6a-f2380ab2752b@gmail.com>
+ <7d558c3c1f374177b441e4070f0b6665@innerrange.com.au>
+ <d1bdbb28-6575-e4c1-6137-83c532714168@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAFqH_50VqFJ-p=gRp9md4eHDHM5NpD6zPFfjwPY4LKTh2x6sHQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Enric Balletbo Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Brian Norris <briannorris-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Guenter Roeck <groeck-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandru Stan <amstan-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail.innerrange.com.au ([203.222.77.226]:44560 "EHLO
+        mail.innerrange.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752488AbdK1EcI (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 27 Nov 2017 23:32:08 -0500
+In-Reply-To: <d1bdbb28-6575-e4c1-6137-83c532714168@gmail.com>
+Content-Language: en-US
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Hi,
+Jacek Anaszewski wrote:
+> On 11/27/2017 07:51 AM, Craig McQueen wrote:
+> > Jacek Anaszewski wrote:
+> >> I checked earlier discussed case i.e. disabling trigger and
+> >> immediately setting brightness to non-zero value and it seems to work
+> >> fine. Checked with uleds
+> >> driver:
+> >>
+> >> # echo "timer" > trigger
+> >> # echo 0 > brightness; echo 100 > brightness
+> >>
+> >> Brightness always is 100 after that, even when setting delay_on/off to 1.
+> >
+> > I still think there's a race condition, but you don't discover it when using
+> userspace, because there's sufficient time between setting the brightness to
+> 0 and later 100, for LED_BLINK_DISABLE to be processed in-between.
+> >
+> > But I'm using a custom kernel driver that tries to go from blinking to steady-
+> on using these function calls:
+> >
+> > 		led_trigger_event(trigger, LED_OFF);   /* which calls
+> led_set_brightness(led_cdev, LED_OFF) */
+> > 		led_trigger_event(trigger, LED_FULL);  /* which calls
+> > led_set_brightness(led_cdev, LED_FULL) */
+> >
+> > In this case, LED_BLINK_DISABLE is not yet processed before the second
+> function call, so the second function call becomes ineffective, because the
+> pending LED_BLINK_DISABLE is later processed, turning off the LED and
+> leaving it off.
+> 
+> Have you verified it by inserting printks in the led_set_brightness() and
+> brightness_set op of your driver?
 
-On Mon, Nov 27, 2017 at 3:21 AM, Enric Balletbo Serra
-<eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hi Rob,
->
-> 2017-11-20 19:58 GMT+01:00 Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
->> On Thu, Nov 16, 2017 at 03:11:50PM +0100, Enric Balletbo i Serra wrote:
->>> Setting use-linear-interpolation in the dts will allow you to have linear
->>> interpolation between values of brightness-levels.
->>>
->>> There are now 256 between each of the values of brightness-levels. If
->>> something is requested halfway between 2 values, we'll use linear
->>> interpolation.
->>>
->>> This way a high resolution pwm duty cycle can be used without having to
->>> list out every possible value in the dts.
->>
->> I thought we already had a way to do that.
->>
->>> This system also allows for
->>> gamma corrected values (eg: "brightness-levels = <0 2 4 8 16 32>;").
->>>
->>> Patch based on the Alexandru M Stan work done for ChromeOS kernels.
->>>
->>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->>> ---
->>>  .../bindings/leds/backlight/pwm-backlight.txt      |  2 +
->>>  drivers/video/backlight/pwm_bl.c                   | 55 +++++++++++++++++-----
->>>  include/linux/pwm_backlight.h                      |  2 +
->>>  3 files changed, 47 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
->>> index 764db86..7c48f20 100644
->>> --- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
->>> +++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
->>> @@ -17,6 +17,8 @@ Optional properties:
->>>                 "pwms" property (see PWM binding[0])
->>>    - enable-gpios: contains a single GPIO specifier for the GPIO which enables
->>>                    and disables the backlight (see GPIO binding[1])
->>> +  - use-linear-interpolation: set this propriety to enable linear interpolation
->>> +                              between each of the values of brightness-levels.
->>
->> Isn't this really just whether you allow values not listed because what
->> other kind of interpolation would you do?
->
-> Yes, the idea behind this is just allow values not listed.
->
->> Seems like you should just be
->> able to query the resolution of the PWM and decide if it can take more
->> values than listed.
->>
->
-> Without using a new DT propriety and let decide the driver when use
-> intepolation and when not? Shouldn't this break current behavior then?
-> You can have a high resolution PWM but I'm not sure if you want allow
-> always more values than listed.
+No, I didn't verify it. I deduced it by code review of led-core.c, and its use of LED_BLINK_DISABLE in led_set_brightness() and set_brightness_delayed().
 
-Right.  The assumption is that it's _possible_ that only the exact
-values listed are valid duty cycles.  We don't want to break old
-hardware by suddenly allowing other duty cycles to be used.  However,
-it's expected that on most hardware you can simply use any duty cycle
-between any of the specified ones and it should be fine.  Anyone
-specifying this property would say that's OK for their hardware.
+Then, I made a patch (in an earlier email) which modified led_set_brightness(), and that fixed the issue. However, I was concerned that there still could be a race condition if set_brightness_delayed() happened to run in the middle of a call to led_set_brightness(led_cdev, LED_FULL). In that case, the call led_set_brightness(led_cdev, LED_FULL) could still fail.
 
--Doug
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Regardless of that, I strongly advise backporting the mainline patches.
+> If that doesn't help then make sure that brightness_set op of your driver
+> implements proper locking scheme.
+
+The problem seems to be nothing to do with the brightness_set op of the driver.
+
+> If that doesn't help too, then you could
+> try to come up with your patch for the LED core, that fixes the issue for you.
+> It can be hard to address your particular case otherwise.
+
+This code in led-core.c seems quite tricky to avoid any race conditions, without using a spinlock or semaphore. Here is another proposal which I am considering:
+
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index ef1360445413..5fe7826deab2 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -109,8 +109,8 @@ static void set_brightness_delayed(struct work_struct *ws)
+        int ret = 0;
+ 
+        if (test_and_clear_bit(LED_BLINK_DISABLE, &led_cdev->work_flags)) {
+-               led_cdev->delayed_set_value = LED_OFF;
+                led_stop_software_blink(led_cdev);
++               led_cdev->delayed_set_value = led_cdev->new_blink_brightness;
+        }
+ 
+        ret = __led_set_brightness(led_cdev, led_cdev->delayed_set_value);
+@@ -239,15 +239,24 @@ void led_set_brightness(struct led_classdev *led_cdev,
+                 * work queue task to avoid problems in case we are called
+                 * from hard irq context.
+                 */
++               led_cdev->new_blink_brightness = brightness;
+                if (brightness == LED_OFF) {
+                        set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
+                        schedule_work(&led_cdev->set_brightness_work);
+                } else {
+                        set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
+                                &led_cdev->work_flags);
+-                       led_cdev->new_blink_brightness = brightness;
+                }
+-               return;
++
++               if (test_bit(LED_BLINK_SW, &led_cdev->work_flags)) {
++                       /*
++                        * Test LED_BLINK_SW again, to handle race condition
++                        * with set_brightness_delayed(). If it's no longer
++                        * set, then blink has just been stopped, so continue
++                        * with led_set_brightness_nosleep() below.
++                        */
++                       return;
++               }
+        }
+ 
+        led_set_brightness_nosleep(led_cdev, brightness);
+
+
+-- 
+Craig McQueen
