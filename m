@@ -1,206 +1,499 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: Bug when using both "set" and "blink" functions
-Date: Wed, 29 Nov 2017 21:45:40 +0100
-Message-ID: <bb2f1306-f44b-a8a0-a9c7-edc36cfb4d84@gmail.com>
-References: <5c59633100dd45e2b28e46d78cbf930c@innerrange.com.au>
- <c967ba03-320e-8abd-6b6a-f2380ab2752b@gmail.com>
- <7d558c3c1f374177b441e4070f0b6665@innerrange.com.au>
- <d1bdbb28-6575-e4c1-6137-83c532714168@gmail.com>
- <d17eaa11b9d746d1aa12648f8c8ea4dd@innerrange.com.au>
- <011b27bc-69bd-b06a-0dc5-af529fa9ff6d@gmail.com>
- <2eb5e0dc-dfc0-97f1-319b-5e8e0507528f@gmail.com>
- <8154b8b552d44f88b6535e08a693e21a@innerrange.com.au>
+Subject: Re: [PATCH v4 2/2] leds: lm3692x: Introduce LM3692x dual string
+ driver
+Date: Wed, 29 Nov 2017 22:52:17 +0100
+Message-ID: <269c1204-f142-14cf-40d8-e65fe46ef770@gmail.com>
+References: <20171128204021.12699-1-dmurphy@ti.com>
+ <20171128204021.12699-2-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:37559 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751960AbdK2Uql (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 29 Nov 2017 15:46:41 -0500
-Received: by mail-wm0-f51.google.com with SMTP id f140so8503892wmd.2
-        for <linux-leds@vger.kernel.org>; Wed, 29 Nov 2017 12:46:40 -0800 (PST)
-In-Reply-To: <8154b8b552d44f88b6535e08a693e21a@innerrange.com.au>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39157 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751770AbdK2VxS (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 29 Nov 2017 16:53:18 -0500
+In-Reply-To: <20171128204021.12699-2-dmurphy@ti.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Craig McQueen <craig.mcqueen@innerrange.com.au>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: Dan Murphy <dmurphy@ti.com>, rpurdie@rpsys.net, pavel@ucw.cz
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11/29/2017 12:40 AM, Craig McQueen wrote:
-> Jacek Anaszewski wrote:
->> On 11/28/2017 10:35 PM, Jacek Anaszewski wrote:
->>> On 11/28/2017 05:32 AM, Craig McQueen wrote:
->>>> Jacek Anaszewski wrote:
->>>>> On 11/27/2017 07:51 AM, Craig McQueen wrote:
->>>>>> Jacek Anaszewski wrote:
->>>>>>> I checked earlier discussed case i.e. disabling trigger and
->>>>>>> immediately setting brightness to non-zero value and it seems to
->>>>>>> work fine. Checked with uleds
->>>>>>> driver:
->>>>>>>
->>>>>>> # echo "timer" > trigger
->>>>>>> # echo 0 > brightness; echo 100 > brightness
->>>>>>>
->>>>>>> Brightness always is 100 after that, even when setting delay_on/off to
->> 1.
->>>>>>
->>>>>> I still think there's a race condition, but you don't discover it
->>>>>> when using
->>>>> userspace, because there's sufficient time between setting the
->>>>> brightness to
->>>>> 0 and later 100, for LED_BLINK_DISABLE to be processed in-between.
->>>>>>
->>>>>> But I'm using a custom kernel driver that tries to go from blinking
->>>>>> to steady-
->>>>> on using these function calls:
->>>>>>
->>>>>> 		led_trigger_event(trigger, LED_OFF);   /* which calls
->>>>> led_set_brightness(led_cdev, LED_OFF) */
->>>>>> 		led_trigger_event(trigger, LED_FULL);  /* which calls
->>>>>> led_set_brightness(led_cdev, LED_FULL) */
->>>>>>
->>>>>> In this case, LED_BLINK_DISABLE is not yet processed before the
->>>>>> second
->>>>> function call, so the second function call becomes ineffective,
->>>>> because the pending LED_BLINK_DISABLE is later processed, turning
->>>>> off the LED and leaving it off.
->>>>>
->>>>> Have you verified it by inserting printks in the
->>>>> led_set_brightness() and brightness_set op of your driver?
->>>>
->>>> No, I didn't verify it. I deduced it by code review of led-core.c, and its use
->> of LED_BLINK_DISABLE in led_set_brightness() and
->> set_brightness_delayed().
->>>>
->>>> Then, I made a patch (in an earlier email) which modified
->> led_set_brightness(), and that fixed the issue. However, I was concerned
->> that there still could be a race condition if set_brightness_delayed()
->> happened to run in the middle of a call to led_set_brightness(led_cdev,
->> LED_FULL). In that case, the call led_set_brightness(led_cdev, LED_FULL)
->> could still fail.
->>>>
->>>>> Regardless of that, I strongly advise backporting the mainline patches.
->>>>> If that doesn't help then make sure that brightness_set op of your
->>>>> driver implements proper locking scheme.
->>>>
->>>> The problem seems to be nothing to do with the brightness_set op of the
->> driver.
->>>>
->>>>> If that doesn't help too, then you could try to come up with your
->>>>> patch for the LED core, that fixes the issue for you.
->>>>> It can be hard to address your particular case otherwise.
->>>>
->>>> This code in led-core.c seems quite tricky to avoid any race conditions,
->> without using a spinlock or semaphore. Here is another proposal which I am
->> considering:
->>>>
->>>> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c index
->>>> ef1360445413..5fe7826deab2 100644
->>>> --- a/drivers/leds/led-core.c
->>>> +++ b/drivers/leds/led-core.c
->>>> @@ -109,8 +109,8 @@ static void set_brightness_delayed(struct
->> work_struct *ws)
->>>>         int ret = 0;
->>>>
->>>>         if (test_and_clear_bit(LED_BLINK_DISABLE, &led_cdev->work_flags))
->> {
->>>> -               led_cdev->delayed_set_value = LED_OFF;
->>>>                 led_stop_software_blink(led_cdev);
->>>> +               led_cdev->delayed_set_value =
->>>> + led_cdev->new_blink_brightness;
->>>>         }
->>>>
->>>>         ret = __led_set_brightness(led_cdev,
->>>> led_cdev->delayed_set_value); @@ -239,15 +239,24 @@ void
->> led_set_brightness(struct led_classdev *led_cdev,
->>>>                  * work queue task to avoid problems in case we are called
->>>>                  * from hard irq context.
->>>>                  */
->>>> +               led_cdev->new_blink_brightness = brightness;
->>>>                 if (brightness == LED_OFF) {
->>>>                         set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
->>>>                         schedule_work(&led_cdev->set_brightness_work);
->>>>                 } else {
->>>>                         set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
->>>>                                 &led_cdev->work_flags);
->>>> -                       led_cdev->new_blink_brightness = brightness;
->>>>                 }
->>>> -               return;
->>>> +
->>>> +               if (test_bit(LED_BLINK_SW, &led_cdev->work_flags)) {
->>>> +                       /*
->>>> +                        * Test LED_BLINK_SW again, to handle race condition
->>>> +                        * with set_brightness_delayed(). If it's no longer
->>>> +                        * set, then blink has just been stopped, so continue
->>>> +                        * with led_set_brightness_nosleep() below.
->>>> +                        */
->>>> +                       return;
->>>> +               }
->>>>         }
->>>>
->>>>         led_set_brightness_nosleep(led_cdev, brightness);
->>>
->>> It will be also prone to races. Every solution not employing mutual
->>> exclusive section will be. I'm starting to think if the best we can do
->>> isn't just preventing brightness setting when blink disable is
->>> pending.
+Hi Dan,
+
+Thanks for the update.
+
+On 11/28/2017 09:40 PM, Dan Murphy wrote:
+> Introducing the LM3692x Dual-String white LED driver.
 > 
-> It's not good behaviour to prevent brightness setting when blink disable is pending. That would be an API that "may or may not" do what the caller wants, depending on indeterminate timing. That would force the caller to insert an indeterminate delay between led_set_brightness(led_cdev, LED_OFF) and led_set_brightness(led_cdev, LED_FULL), to achieve a transition from flashing to steady-on. That would be an unwieldy API.
-
-I agree.
-
-> I think this is about as good as I can manage with a minimal change to the existing code, without using a spinlock. Honestly, I think led-core.c needs to be reworked to use a spinlock for led_set_brightness(), led_blink_set() et al. The code as it stands is very difficult to analyse/maintain confidently with its absence of any locking.
-
-OK, so maybe this is a good opportunity to get rid of this painful
-design allowing for calling led_set_brightness() from hard irq
-context. AFAIK there are no mainline drivers doing that, and if there
-are some, it should not be a problem to rework them to defer LED
-brightness setting. This is to be checked, and all such drivers would
-have to be updated in the same patch as the change to the led-core.c
-
-The modifications would have to include:
-- addition of spin_lock_bh() sections to:
-	* led_timer_function()
-	* set_brightness_delayed()
-	* led_blink_set()
-	* led_blink_set_oneshot()
-	* led_stop_software_blink()
-	* led_set_brightness()
-	* led_set_brightness_nopm()
-- reworking some of the above functions to simplify the code:
-	* at least LED_BLINK_DISABLE flag won't be longer needed
-        * add BUG_ON(in_irq()) to led_set_brightness()
-
->>> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c index
->>> fd83c7f..9c775a2 100644
->>> --- a/drivers/leds/led-core.c
->>> +++ b/drivers/leds/led-core.c
->>> @@ -228,6 +228,11 @@ EXPORT_SYMBOL_GPL(led_stop_software_blink);
->>>  void led_set_brightness(struct led_classdev *led_cdev,
->>>                         enum led_brightness brightness)  {
->>> +       if (test_bit(LED_BLINK_DISABLE, &led_cdev->work_flags)) {
->>> +               dev_err(led_cdev->dev,
->>> +                       "Setting an LED's brightness failed - blink
->>> disable pending\n");
->>> +               return;
->>> +       }
->>
->> Of course it will not work too since we can be preempted here by the other
->> process that will set LED_BLINK_DISABLE.
->> After waking up this one will not be aware of the flag state change.
+> Data sheet is located
+> http://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
 > 
-> That could only occur if led_set_brightness() is being called from more than one process. Is that a practical scenario? It doesn't seem sensible to have multiple processes controlling one LED.
-
-Think of LED triggers. More than one driver can call
-led_trigger_event() for the same trigger..
-
-> Or, do you mean preempted by set_brightness_delayed(), which _clears_ LED_BLINK_DISABLE? In that case, it would also clear LED_BLINK_SW (via the call to led_stop_software_blink()). So I think it would behave as expected. It's more difficult to analyse in an SMP system, but I think in that case the worst that can happen is __led_set_brightness() gets called twice, redundantly.
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+> v4 - Converted to devm led class register, changed MODULE_LICENSE to GPL v2, 
+> set the led name based on child node name or label entry, removed fault and
+> returned read_buf for fault checking, added mutex_destroy to remove function,
+> and removed LED_FULL - https://patchwork.kernel.org/patch/10060109/
 > 
->>>         /*
->>>          * If software blink is active, delay brightness setting
->>>          * until the next timer tick.
->>>
+> v3 - Add missing Makefile and Kconfig from v1 and v2 - https://patchwork.kernel.org/patch/10060075/
+> v2 - Added data sheet link, fixed linuxdoc format, returned on failure in init
+> routine, return on fault_check failure, updated brightness calculation and
+> fixed capitalization issue - https://patchwork.kernel.org/patch/10056675/
 > 
+>  drivers/leds/Kconfig        |   7 +
+>  drivers/leds/Makefile       |   1 +
+>  drivers/leds/leds-lm3692x.c | 382 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 390 insertions(+)
+>  create mode 100644 drivers/leds/leds-lm3692x.c
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 318a28fd58fe..c0583f1bc8ea 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -137,6 +137,13 @@ config LEDS_LM3642
+>  	  converter plus 1.5A constant current driver for a high-current
+>  	  white LED.
+>  
+> +config LEDS_LM3692X
+> +	tristate "LED support for LM3692x Chips"
+> +	depends on LEDS_CLASS && I2C
+> +	select REGMAP_I2C
+> +	help
+> +	  This option enables support for the TI LM3692x family
+> +	  of white LED string drivers used for backlighting.
+>  
+>  config LEDS_LOCOMO
+>  	tristate "LED Support for Locomo device"
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index a2a6b5a4f86d..987884a5b9a5 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -74,6 +74,7 @@ obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
+>  obj-$(CONFIG_LEDS_MLXCPLD)		+= leds-mlxcpld.o
+>  obj-$(CONFIG_LEDS_NIC78BX)		+= leds-nic78bx.o
+>  obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
+> +obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
+>  
+>  # LED SPI Drivers
+>  obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+> new file mode 100644
+> index 000000000000..fcf0573fb985
+> --- /dev/null
+> +++ b/drivers/leds/leds-lm3692x.c
+> @@ -0,0 +1,382 @@
+> +/*
+> + * TI lm3692x LED Driver
+> + *
+> + * Copyright (C) 2017 Texas Instruments
+> + *
+> + * Author: Dan Murphy <dmurphy@ti.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * version 2 as published by the Free Software Foundation.
+> + *
+> + * Data sheet is located
+> + * http://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
+> + */
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/init.h>
+> +#include <linux/leds.h>
+> +#include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/slab.h>
+> +
+> +#define LM3692X_REV		0x0
+> +#define LM3692X_RESET		0x1
+> +#define LM3692X_EN		0x10
+> +#define LM3692X_BRT_CTRL	0x11
+> +#define LM3692X_PWM_CTRL	0x12
+> +#define LM3692X_BOOST_CTRL	0x13
+> +#define LM3692X_AUTO_FREQ_HI	0x15
+> +#define LM3692X_AUTO_FREQ_LO	0x16
+> +#define LM3692X_BL_ADJ_THRESH	0x17
+> +#define LM3692X_BRT_LSB		0x18
+> +#define LM3692X_BRT_MSB		0x19
+> +#define LM3692X_FAULT_CTRL	0x1e
+> +#define LM3692X_FAULT_FLAGS	0x1f
+> +
+> +#define LM3692X_SW_RESET	BIT(0)
+> +#define LM3692X_DEVICE_EN	BIT(0)
+> +#define LM3692X_LED1_EN		BIT(1)
+> +#define LM3692X_LED2_EN		BIT(2)
+> +
+> +/* Brightness Control Bits */
+> +#define LM3692X_BL_ADJ_POL	BIT(0)
+> +#define LM3692X_RAMP_RATE_125us	0x00
+> +#define LM3692X_RAMP_RATE_250us	BIT(1)
+> +#define LM3692X_RAMP_RATE_500us BIT(2)
+> +#define LM3692X_RAMP_RATE_1ms	(BIT(1) | BIT(2))
+> +#define LM3692X_RAMP_RATE_2ms	BIT(3)
+> +#define LM3692X_RAMP_RATE_4ms	(BIT(3) | BIT(1))
+> +#define LM3692X_RAMP_RATE_8ms	(BIT(2) | BIT(3))
+> +#define LM3692X_RAMP_RATE_16ms	(BIT(1) | BIT(2) | BIT(3))
+> +#define LM3692X_RAMP_EN		BIT(4)
+> +#define LM3692X_BRHT_MODE_REG	0x00
+> +#define LM3692X_BRHT_MODE_PWM	BIT(5)
+> +#define LM3692X_BRHT_MODE_MULTI_RAMP BIT(6)
+> +#define LM3692X_BRHT_MODE_RAMP_MULTI (BIT(5) | BIT(6))
+> +#define LM3692X_MAP_MODE_EXP	BIT(7)
+> +
+> +/* PWM Register Bits */
+> +#define LM3692X_PWM_FILTER_100	BIT(0)
+> +#define LM3692X_PWM_FILTER_150	BIT(1)
+> +#define LM3692X_PWM_FILTER_200	(BIT(0) | BIT(1))
+> +#define LM3692X_PWM_HYSTER_1LSB BIT(2)
+> +#define LM3692X_PWM_HYSTER_2LSB	BIT(3)
+> +#define LM3692X_PWM_HYSTER_3LSB (BIT(3) | BIT(2))
+> +#define LM3692X_PWM_HYSTER_4LSB BIT(4)
+> +#define LM3692X_PWM_HYSTER_5LSB (BIT(4) | BIT(2))
+> +#define LM3692X_PWM_HYSTER_6LSB (BIT(4) | BIT(3))
+> +#define LM3692X_PWM_POLARITY	BIT(5)
+> +#define LM3692X_PWM_SAMP_4MHZ	BIT(6)
+> +#define LM3692X_PWM_SAMP_24MHZ	BIT(7)
+> +
+> +/* Boost Control Bits */
+> +#define LM3692X_OCP_PROT_1A	BIT(0)
+> +#define LM3692X_OCP_PROT_1_25A	BIT(1)
+> +#define LM3692X_OCP_PROT_1_5A	(BIT(0) | BIT(1))
+> +#define LM3692X_OVP_21V		BIT(2)
+> +#define LM3692X_OVP_25V		BIT(3)
+> +#define LM3692X_OVP_29V		(BIT(2) | BIT(3))
+> +#define LM3692X_MIN_IND_22UH	BIT(4)
+> +#define LM3692X_BOOST_SW_1MHZ	BIT(5)
+> +#define LM3692X_BOOST_SW_NO_SHIFT	BIT(6)
+> +
+> +/* Fault Control Bits */
+> +#define LM3692X_FAULT_CTRL_OVP BIT(0)
+> +#define LM3692X_FAULT_CTRL_OCP BIT(1)
+> +#define LM3692X_FAULT_CTRL_TSD BIT(2)
+> +#define LM3692X_FAULT_CTRL_OPEN BIT(3)
+> +
+> +/* Fault Flag Bits */
+> +#define LM3692X_FAULT_FLAG_OVP BIT(0)
+> +#define LM3692X_FAULT_FLAG_OCP BIT(1)
+> +#define LM3692X_FAULT_FLAG_TSD BIT(2)
+> +#define LM3692X_FAULT_FLAG_SHRT BIT(3)
+> +#define LM3692X_FAULT_FLAG_OPEN BIT(4)
+> +
+> +/**
+> + * struct lm3692x_led -
+> + * @lock - Lock for reading/writing the device
+> + * @client - Pointer to the I2C client
+> + * @led_dev - led class device pointer
+
+s/led class/LED class/
+
+> + * @regmap - Devices register map
+> + * @enable_gpio - VDDIO/EN gpio to enable communication interface
+> + * @regulator - LED supply regulator pointer
+> + * @label - LED label
+> + */
+> +struct lm3692x_led {
+> +	struct mutex lock;
+> +	struct i2c_client *client;
+> +	struct led_classdev led_dev;
+> +	struct regmap *regmap;
+> +	struct gpio_desc *enable_gpio;
+> +	struct regulator *regulator;
+> +	const char *label;
+> +};
+> +
+> +static const struct reg_default lm3692x_reg_defs[] = {
+> +	{LM3692X_EN, 0xf},
+> +	{LM3692X_BRT_CTRL, 0x61},
+> +	{LM3692X_PWM_CTRL, 0x73},
+> +	{LM3692X_BOOST_CTRL, 0x6f},
+> +	{LM3692X_AUTO_FREQ_HI, 0x0},
+> +	{LM3692X_AUTO_FREQ_LO, 0x0},
+> +	{LM3692X_BL_ADJ_THRESH, 0x0},
+> +	{LM3692X_BRT_LSB, 0x7},
+> +	{LM3692X_BRT_MSB, 0xff},
+> +	{LM3692X_FAULT_CTRL, 0x7},
+> +};
+> +
+> +static const struct regmap_config lm3692x_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = LM3692X_FAULT_FLAGS,
+> +	.reg_defaults = lm3692x_reg_defs,
+> +	.num_reg_defaults = ARRAY_SIZE(lm3692x_reg_defs),
+> +	.cache_type = REGCACHE_RBTREE,
+> +};
+> +
+> +static int lm3692x_fault_check(struct lm3692x_led *led)
+> +{
+> +	int ret;
+> +	unsigned int read_buf;
+> +
+> +	ret = regmap_read(led->regmap, LM3692X_FAULT_FLAGS, &read_buf);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (read_buf)
+> +		dev_err(&led->client->dev, "Detected a fault 0x%X\n",
+> +			read_buf);
+> +
+> +	return read_buf;
+> +}
+> +
+> +static int lm3692x_brightness_set(struct led_classdev *led_cdev,
+> +				enum led_brightness brt_val)
+> +{
+> +	struct lm3692x_led *led =
+> +			container_of(led_cdev, struct lm3692x_led, led_dev);
+> +	int ret;
+> +	int led_brightness_lsb = (brt_val >> 5);
+> +
+> +	mutex_lock(&led->lock);
+> +
+> +	ret = lm3692x_fault_check(led);
+> +	if (ret) {
+> +		dev_err(&led->client->dev, "Cannot read/clear faults\n");
+> +		goto out;
+> +	}
+> +
+> +	ret = regmap_write(led->regmap, LM3692X_BRT_MSB, brt_val);
+> +	if (ret) {
+> +		dev_err(&led->client->dev, "Cannot write MSB\n");
+> +		goto out;
+> +	}
+> +
+> +	ret = regmap_write(led->regmap, LM3692X_BRT_LSB, led_brightness_lsb);
+> +	if (ret) {
+> +		dev_err(&led->client->dev, "Cannot write LSB\n");
+> +		goto out;
+> +	}
+> +out:
+> +	mutex_unlock(&led->lock);
+> +	return ret;
+> +}
+> +
+> +static int lm3692x_init(struct lm3692x_led *led)
+> +{
+> +	int ret;
+> +
+> +	if (led->regulator) {
+> +		ret = regulator_enable(led->regulator);
+> +		if (ret) {
+> +			dev_err(&led->client->dev,
+> +				"Failed to enable regulator\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	if (led->enable_gpio)
+> +		gpiod_direction_output(led->enable_gpio, 1);
+> +
+> +	ret = lm3692x_fault_check(led);
+> +	if (ret) {
+> +		dev_err(&led->client->dev, "Cannot read/clear faults\n");
+> +		goto out;
+> +	}
+> +
+> +	ret = regmap_write(led->regmap, LM3692X_BRT_CTRL, 0x00);
+> +	if (ret)
+> +		goto out;
+> +
+> +	/*
+> +	 * For glitch free operation, the following data should
+> +	 * only be written while device enable bit is 0
+> +	 * per Section 7.5.14 of the data sheet
+> +	 */
+> +	ret = regmap_write(led->regmap, LM3692X_PWM_CTRL,
+> +		LM3692X_PWM_FILTER_100 | LM3692X_PWM_SAMP_24MHZ);
+> +	if (ret)
+> +		goto out;
+> +
+> +	ret = regmap_write(led->regmap, LM3692X_BOOST_CTRL,
+> +			LM3692X_BRHT_MODE_RAMP_MULTI |
+> +			LM3692X_BL_ADJ_POL |
+> +			LM3692X_RAMP_RATE_250us);
+> +	if (ret)
+> +		goto out;
+> +
+> +	ret = regmap_write(led->regmap, LM3692X_AUTO_FREQ_HI, 0x00);
+> +	if (ret)
+> +		goto out;
+> +
+> +	ret = regmap_write(led->regmap, LM3692X_AUTO_FREQ_LO, 0x00);
+> +	if (ret)
+> +		goto out;
+> +
+> +	ret = regmap_write(led->regmap, LM3692X_BL_ADJ_THRESH, 0x00);
+> +	if (ret)
+> +		goto out;
+> +
+> +	ret = regmap_write(led->regmap, LM3692X_BRT_CTRL,
+> +			LM3692X_BL_ADJ_POL | LM3692X_PWM_HYSTER_4LSB);
+> +	if (ret)
+> +		goto out;
+> +
+> +	return ret;
+> +out:
+> +	dev_err(&led->client->dev, "Fail writing initialization values\n");
+> +
+> +	if (led->enable_gpio)
+> +		gpiod_direction_output(led->enable_gpio, 0);
+> +
+> +	if (led->regulator) {
+> +		ret = regulator_disable(led->regulator);
+> +		if (ret)
+> +			dev_err(&led->client->dev,
+> +				"Failed to disable regulator\n");
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int lm3692x_probe(struct i2c_client *client,
+> +			const struct i2c_device_id *id)
+> +{
+> +	int ret;
+> +	struct lm3692x_led *led;
+> +	struct device_node *np = client->dev.of_node;
+> +	struct device_node *child_node;
+> +
+> +	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
+> +	if (!led)
+> +		return -ENOMEM;
+> +
+> +	for_each_available_child_of_node(np, child_node) {
+> +		led->led_dev.name = of_get_property(child_node, "label", NULL) ? :
+> +						 child_node->name;
+
+You need also devicename segment in the LED class device name.
+You can take it from the parent node name. Please follow what has been
+done for drivers/leds/leds-as3645a.c, with a reservation that your
+DT binding is correct, as it doesn't contain devicename segment,
+which turned out to be against DT specification. So you'll need
+to tweak a bit leds-as3645a.c way of composing LED class device
+name to take devicename from parent DT node also for the case
+when DT label property is present.
+
+I will be convenient to create some generic LED core function
+for composing LED class device name basing on DT data.
+
+All these findings are quite recent, that's why there is no
+well established approach to the problem.
+
+> +
+> +		led->led_dev.default_trigger = of_get_property(child_node,
+> +						    "linux,default-trigger",
+> +						    NULL);
+> +	};
+> +
+> +	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
+> +						   "enable", GPIOD_OUT_LOW);
+> +	if (IS_ERR(led->enable_gpio)) {
+> +		ret = PTR_ERR(led->enable_gpio);
+> +		dev_err(&client->dev, "Failed to get enable gpio: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	led->regulator = devm_regulator_get(&client->dev, "vled");
+> +	if (IS_ERR(led->regulator))
+> +		led->regulator = NULL;
+> +
+> +	led->client = client;
+> +	led->led_dev.brightness_set_blocking = lm3692x_brightness_set;
+> +
+> +	mutex_init(&led->lock);
+> +
+> +	i2c_set_clientdata(client, led);
+> +
+> +	led->regmap = devm_regmap_init_i2c(client, &lm3692x_regmap_config);
+> +	if (IS_ERR(led->regmap)) {
+> +		ret = PTR_ERR(led->regmap);
+> +		dev_err(&client->dev, "Failed to allocate register map: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = lm3692x_init(led);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
+> +	if (ret) {
+> +		dev_err(&client->dev, "led register err: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int lm3692x_remove(struct i2c_client *client)
+> +{
+> +	struct lm3692x_led *led = i2c_get_clientdata(client);
+> +	int ret;
+> +
+> +	led_classdev_unregister(&led->led_dev);
+
+You don't need it if registering with devm* API.
+
+> +
+> +	if (led->enable_gpio)
+> +		gpiod_direction_output(led->enable_gpio, 0);
+> +
+> +	if (led->regulator) {
+> +		ret = regulator_disable(led->regulator);
+> +		if (ret)
+> +			dev_err(&led->client->dev,
+> +				"Failed to disable regulator\n");
+> +	}
+> +
+> +	mutex_destroy(&led->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id lm3692x_id[] = {
+> +	{ "lm36922", 0 },
+> +	{ "lm36923", 1 },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, lm3692x_id);
+> +
+> +#ifdef CONFIG_OF
+
+We seem to entirely rely on OF.
+Let's drop this guard and add OF dependency to Kconfig.
+
+> +static const struct of_device_id of_lm3692x_leds_match[] = {
+> +	{ .compatible = "ti,lm36922", },
+> +	{ .compatible = "ti,lm36923", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, of_lm3692x_leds_match);
+> +#endif
+> +
+> +static struct i2c_driver lm3692x_driver = {
+> +	.driver = {
+> +		.name	= "lm3692x",
+> +		.of_match_table = of_match_ptr(of_lm3692x_leds_match),
+
+Also of_match_ptr() will be redundant then.
+
+> +	},
+> +	.probe		= lm3692x_probe,
+> +	.remove		= lm3692x_remove,
+> +	.id_table	= lm3692x_id,
+> +};
+> +module_i2c_driver(lm3692x_driver);
+> +
+> +MODULE_DESCRIPTION("Texas Instruments LM3692X LED driver");
+> +MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
+> +MODULE_LICENSE("GPL v2");
 > 
 
 -- 
