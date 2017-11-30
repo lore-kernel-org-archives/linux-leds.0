@@ -1,72 +1,50 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [PATCH] leds: pm8058: Make ledtype pointer sized type
-Date: Thu, 30 Nov 2017 22:58:55 +0100
-Message-ID: <545eb1a6-3235-9fe6-1d0d-958aa13e5170@gmail.com>
+Date: Thu, 30 Nov 2017 23:02:51 +0100
+Message-ID: <661e011e-d7d2-4947-6648-8e76e3426aaa@gmail.com>
 References: <20171130113516.42c8bde2@canb.auug.org.au>
  <20171130030543.1071-1-bjorn.andersson@linaro.org>
- <20171130094019.GA21887@amd>
+ <20171130082940.5mzslaxv53dlu3t2@dell> <20171130083131.kjgehcutqsbkjxr5@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-In-Reply-To: <20171130094019.GA21887@amd>
-Sender: linux-next-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171130083131.kjgehcutqsbkjxr5@dell>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 11/30/2017 10:40 AM, Pavel Machek wrote:
-> On Wed 2017-11-29 19:05:43, Bjorn Andersson wrote:
->> The pointer returned by of_device_get_match_data() doesn't have the same
->> size as u32 on 64-bit architectures, causing issues when compile testing
->> the driver on such platform. Make ledtype unsigned long instead, to
->> solve this problem.
+On 11/30/2017 09:31 AM, Lee Jones wrote:
+> On Thu, 30 Nov 2017, Lee Jones wrote:
+> 
+>> On Wed, 29 Nov 2017, Bjorn Andersson wrote:
 >>
->> Fixes: 7f866986e705 ("leds: add PM8058 LEDs driver")
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>> The pointer returned by of_device_get_match_data() doesn't have the same
+>>> size as u32 on 64-bit architectures, causing issues when compile testing
+>>> the driver on such platform. Make ledtype unsigned long instead, to
+>>> solve this problem.
+>>>
+>>> Fixes: 7f866986e705 ("leds: add PM8058 LEDs driver")
+>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>> ---
+>>>  drivers/leds/leds-pm8058.c | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> Hi Bjorn,
+>>
+>> (Nice to see you) :)
+>>
+>> I'm going to apply this *before* Linus' fix.
+>>
+>> Applied, thanks.
 > 
-> Ummm... no?
+> After I rx an Ack from Richard, Jacek or Pavel of course. :)
 > 
-> extern const void *of_device_get_match_data(const struct device *dev);
-> 
-> 
->> diff --git a/drivers/leds/leds-pm8058.c b/drivers/leds/leds-pm8058.c
->> index a52674327857..cc2afe81720d 100644
->> --- a/drivers/leds/leds-pm8058.c
->> +++ b/drivers/leds/leds-pm8058.c
->> @@ -29,7 +29,7 @@
->>  struct pm8058_led {
->>  	struct regmap *map;
->>  	u32 reg;
->> -	u32 ledtype;
->> +	unsigned long ledtype;
-> 
-> Make it void *. u32 is buggy. unsigned long is merely ugly code. void
-> * is not nice, but certainly better than unsigned long.
+> Will send a pull-request.
 
-unsigned long is correct, see below:
-
-static const struct of_device_id pm8058_leds_id_table[] = {
-        {
-                .compatible = "qcom,pm8058-led",
-                .data = (void *)PM8058_LED_TYPE_COMMON
-        },
-        {
-                .compatible = "qcom,pm8058-keypad-led",
-                .data = (void *)PM8058_LED_TYPE_KEYPAD
-        },
-        {
-                .compatible = "qcom,pm8058-flash-led",
-                .data = (void *)PM8058_LED_TYPE_FLASH
-        },
-        { },
-};
-
-of_device_get_match_data will return PM8058_LED_TYPE_*
-which clearly is a led type identifier.
-
-Thus unsigned long looks reasonable.
+Huh? This is for LED subsystem AFAICS.
 
 -- 
 Best regards,
