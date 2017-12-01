@@ -1,50 +1,47 @@
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] leds: pm8058: Make ledtype pointer sized type
-Date: Thu, 30 Nov 2017 21:10:52 -0800
-Message-ID: <20171201051052.GX28761@minitux>
+Subject: [PATCH v2] leds: pm8058: Silence pointer to integer size warning
+Date: Thu, 30 Nov 2017 21:16:56 -0800
+Message-ID: <20171201051656.31694-1-bjorn.andersson@linaro.org>
 References: <20171130113516.42c8bde2@canb.auug.org.au>
- <20171130030543.1071-1-bjorn.andersson@linaro.org>
- <20171130094019.GA21887@amd>
- <545eb1a6-3235-9fe6-1d0d-958aa13e5170@gmail.com>
- <20171130223406.GC2808@amd>
- <20171201101351.3e57f2b1@canb.auug.org.au>
- <20171201002858.GD2808@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171201002858.GD2808@amd>
-Sender: linux-next-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39653 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750892AbdLAFRC (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 1 Dec 2017 00:17:02 -0500
+Received: by mail-pl0-f65.google.com with SMTP id bi12so5656438plb.6
+        for <linux-leds@vger.kernel.org>; Thu, 30 Nov 2017 21:17:02 -0800 (PST)
+In-Reply-To: <20171130113516.42c8bde2@canb.auug.org.au>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
 
-On Thu 30 Nov 16:28 PST 2017, Pavel Machek wrote:
+The pointer returned by of_device_get_match_data() doesn't have the same
+size as u32 on 64-bit architectures, causing a compile warning when
+compile-testing the driver on such platform.
 
-> Hi!
-> 
-> > > > of_device_get_match_data will return PM8058_LED_TYPE_*
-> > > > which clearly is a led type identifier.
-> > > > 
-> > > > Thus unsigned long looks reasonable.  
-> > > 
-> > > Hmm. Ok. So u32 would actually make even more sense there (because
-> > > PM8058_LED_TYPE_* does not really need to be 64-bit), but it would
-> > > cause a warning.
-> > > 
-> > > I don't like this. This fix actually makes code waste memory and is
-> > > uglier.
-> > > 
-> > > ...but we get a warning fix. So I don't like the patch, but it is an
-> > > improvement...
-> > 
-> > I *think* you can get away with (u32)(unsigned long)ptr ...
-> 
-> Yes, that should work. It would actually be my preferred solution.
-> 
+Cast the return value of of_device_get_match_data() to unsigned long and
+then to u32 to silence this warning.
 
-I'm fine with this suggestion, and it silence the warning. I will update
-and resend the patch.
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 7f866986e705 ("leds: add PM8058 LEDs driver")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/leds/leds-pm8058.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Bjorn
+diff --git a/drivers/leds/leds-pm8058.c b/drivers/leds/leds-pm8058.c
+index a52674327857..8988ba3b2d65 100644
+--- a/drivers/leds/leds-pm8058.c
++++ b/drivers/leds/leds-pm8058.c
+@@ -106,7 +106,7 @@ static int pm8058_led_probe(struct platform_device *pdev)
+ 	if (!led)
+ 		return -ENOMEM;
+ 
+-	led->ledtype = (u32)of_device_get_match_data(&pdev->dev);
++	led->ledtype = (u32)(unsigned long)of_device_get_match_data(&pdev->dev);
+ 
+ 	map = dev_get_regmap(pdev->dev.parent, NULL);
+ 	if (!map) {
+-- 
+2.15.0
