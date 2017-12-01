@@ -1,102 +1,125 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v6 6/6] leds: as3645a: Update the LED label generation
-Date: Fri, 1 Dec 2017 10:58:19 -0600
-Message-ID: <b11338fc-153b-e740-990f-509f82ee2100@ti.com>
+Subject: Re: [PATCH v6 5/6] leds: lp8860: Update the LED label generation
+Date: Fri, 1 Dec 2017 10:59:48 -0600
+Message-ID: <d6fc95d0-4b8a-bc1f-e708-1ba5e591d35e@ti.com>
 References: <20171201165613.10358-1-dmurphy@ti.com>
- <20171201165613.10358-6-dmurphy@ti.com>
+ <20171201165613.10358-5-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:22896 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750975AbdLAQ6f (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 1 Dec 2017 11:58:35 -0500
-In-Reply-To: <20171201165613.10358-6-dmurphy@ti.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171201165613.10358-5-dmurphy@ti.com>
 Content-Language: en-US
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
 Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
 On 12/01/2017 10:56 AM, Dan Murphy wrote:
-> Update the LED label creationg to call the
-
-s/creationg/creation
-
-> of_led_compose_name api to generate a label.
+> Fix the LED label generation for the LP8860 to
+> conform with the
+> 
+> Documentation/devicetree/bindings/leds/common.txt
+> 
+> document indicating the LED label should be part of a
+> child node to the device parent.  If no label is
+> in the child node then the LED label is created based
+> on the parent node name and the alternate name passed in.
 > 
 > Signed-off-by: Dan Murphy <dmurphy@ti.com>
 > ---
 > 
 > v6 - New patch to use the new LED class API
 > 
->  drivers/leds/leds-as3645a.c | 24 +++++++++---------------
->  1 file changed, 9 insertions(+), 15 deletions(-)
+>  drivers/leds/leds-lp8860.c | 27 +++++++++++++++------------
+>  1 file changed, 15 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-> index 9a257f969300..5a29db115277 100644
-> --- a/drivers/leds/leds-as3645a.c
-> +++ b/drivers/leds/leds-as3645a.c
-> @@ -27,6 +27,7 @@
->  #include <linux/mutex.h>
->  #include <linux/of.h>
+> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+> index 3e70775a2d54..26bbfa144402 100644
+> --- a/drivers/leds/leds-lp8860.c
+> +++ b/drivers/leds/leds-lp8860.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/of_gpio.h>
+>  #include <linux/gpio/consumer.h>
 >  #include <linux/slab.h>
 > +#include <uapi/linux/uleds.h>
 >  
->  #include <media/v4l2-flash-led-class.h>
+>  #define LP8860_DISP_CL1_BRT_MSB		0x00
+>  #define LP8860_DISP_CL1_BRT_LSB		0x01
+> @@ -86,8 +87,6 @@
 >  
-> @@ -133,8 +134,8 @@ struct as3645a_config {
+>  #define LP8860_CLEAR_FAULTS		0x01
+>  
+> -#define LP8860_DISP_LED_NAME		"display_cluster"
+> -
+>  /**
+>   * struct lp8860_led -
+>   * @lock - Lock for reading/writing the device
+> @@ -107,7 +106,7 @@ struct lp8860_led {
+>  	struct regmap *eeprom_regmap;
+>  	struct gpio_desc *enable_gpio;
+>  	struct regulator *regulator;
+> -	const char *label;
+> +	char label[LED_MAX_NAME_SIZE];
 >  };
 >  
->  struct as3645a_names {
-> -	char flash[32];
-> -	char indicator[32];
-> +	char flash[LED_MAX_NAME_SIZE];
-> +	char indicator[LED_MAX_NAME_SIZE];
+>  struct lp8860_eeprom_reg {
+> @@ -318,7 +317,7 @@ static const struct regmap_config lp8860_regmap_config = {
+>  	.max_register = LP8860_EEPROM_UNLOCK,
+>  	.reg_defaults = lp8860_reg_defs,
+>  	.num_reg_defaults = ARRAY_SIZE(lp8860_reg_defs),
+> -	.cache_type = REGCACHE_NONE,
+> +	.cache_type = REGCACHE_RBTREE,
 >  };
 >  
->  struct as3645a {
-> @@ -496,7 +497,6 @@ static int as3645a_parse_node(struct as3645a *flash,
->  {
->  	struct as3645a_config *cfg = &flash->cfg;
->  	struct device_node *child;
-> -	const char *name;
->  	int rval;
+>  static const struct reg_default lp8860_eeprom_defs[] = {
+> @@ -356,7 +355,7 @@ static const struct regmap_config lp8860_eeprom_regmap_config = {
+>  	.max_register = LP8860_EEPROM_REG_24,
+>  	.reg_defaults = lp8860_eeprom_defs,
+>  	.num_reg_defaults = ARRAY_SIZE(lp8860_eeprom_defs),
+> -	.cache_type = REGCACHE_NONE,
+> +	.cache_type = REGCACHE_RBTREE,
+>  };
 >  
->  	for_each_child_of_node(node, child) {
-> @@ -523,12 +523,9 @@ static int as3645a_parse_node(struct as3645a *flash,
->  		return -ENODEV;
+>  static int lp8860_probe(struct i2c_client *client,
+> @@ -365,19 +364,23 @@ static int lp8860_probe(struct i2c_client *client,
+>  	int ret;
+>  	struct lp8860_led *led;
+>  	struct device_node *np = client->dev.of_node;
+> +	struct device_node *child_node;
+> +
+> +	if (!client->dev.of_node)
+> +		return -ENODEV;
+
+This is actually a bug in the driver.  I can submit this independently or keep this here
+
+>  
+>  	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
+>  	if (!led)
+>  		return -ENOMEM;
+>  
+> -	led->label = LP8860_DISP_LED_NAME;
+> +	for_each_available_child_of_node(np, child_node) {
+> +		led->led_dev.default_trigger = of_get_property(child_node,
+> +						    "linux,default-trigger",
+> +						    NULL);
+
+Not sure if you want me to pull this out into a different patch or just add it to the
+commit message
+
+>  
+> -	if (client->dev.of_node) {
+> -		ret = of_property_read_string(np, "label", &led->label);
+> -		if (ret) {
+> -			dev_err(&client->dev, "Missing label in dt\n");
+> -			return -EINVAL;
+> -		}
+> +		of_led_compose_name(np, child_node, "white:backlight",
+> +				sizeof("white:backlight"),
+> +				led->label);
 >  	}
 >  
-> -	rval = of_property_read_string(flash->flash_node, "label", &name);
-> -	if (!rval)
-> -		strlcpy(names->flash, name, sizeof(names->flash));
-> -	else
-> -		snprintf(names->flash, sizeof(names->flash),
-> -			 "%s:flash", node->name);
-> +	of_led_compose_name(node, flash->flash_node, "flash",
-> +				sizeof("flash"),
-> +				names->flash);
->  
->  	rval = of_property_read_u32(flash->flash_node, "flash-timeout-us",
->  				    &cfg->flash_timeout_us);
-> @@ -567,12 +564,9 @@ static int as3645a_parse_node(struct as3645a *flash,
->  		goto out_err;
->  	}
->  
-> -	rval = of_property_read_string(flash->indicator_node, "label", &name);
-> -	if (!rval)
-> -		strlcpy(names->indicator, name, sizeof(names->indicator));
-> -	else
-> -		snprintf(names->indicator, sizeof(names->indicator),
-> -			 "%s:indicator", node->name);
-> +	of_led_compose_name(node, flash->indicator_node, "indicator",
-> +				sizeof("indicator"),
-> +				names->indicator);
->  
->  	rval = of_property_read_u32(flash->indicator_node, "led-max-microamp",
->  				    &cfg->indicator_max_ua);
+>  	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
 > 
 
 
