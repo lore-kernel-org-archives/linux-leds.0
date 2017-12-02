@@ -1,75 +1,50 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: pm8058: Make ledtype pointer sized type
-Date: Fri, 1 Dec 2017 21:35:16 +0100
-Message-ID: <44fd0b17-67af-63cf-cca9-da64daad40a3@gmail.com>
-References: <20171130113516.42c8bde2@canb.auug.org.au>
- <20171130030543.1071-1-bjorn.andersson@linaro.org>
- <20171130082940.5mzslaxv53dlu3t2@dell> <20171130083131.kjgehcutqsbkjxr5@dell>
- <661e011e-d7d2-4947-6648-8e76e3426aaa@gmail.com>
- <20171201075613.vvwvrkl73pd7rg62@dell>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH/RFC] DT: leds: Fix 'label' property description and add 'colour' property
+Date: Sat,  2 Dec 2017 22:50:10 +0100
+Message-ID: <1512251410-6084-1-git-send-email-jacek.anaszewski@gmail.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:47007 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750968AbdLAUgP (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 1 Dec 2017 15:36:15 -0500
-In-Reply-To: <20171201075613.vvwvrkl73pd7rg62@dell>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:32958 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752272AbdLBVvO (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 2 Dec 2017 16:51:14 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+To: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: robh@kernel.org, pavel@ucw.cz, sakari.ailus@iki.fi, dmurphy@ti.com, jacek.anaszewski@gmail.com
 
-On 12/01/2017 08:56 AM, Lee Jones wrote:
-> On Thu, 30 Nov 2017, Jacek Anaszewski wrote:
-> 
->> On 11/30/2017 09:31 AM, Lee Jones wrote:
->>> On Thu, 30 Nov 2017, Lee Jones wrote:
->>>
->>>> On Wed, 29 Nov 2017, Bjorn Andersson wrote:
->>>>
->>>>> The pointer returned by of_device_get_match_data() doesn't have the same
->>>>> size as u32 on 64-bit architectures, causing issues when compile testing
->>>>> the driver on such platform. Make ledtype unsigned long instead, to
->>>>> solve this problem.
->>>>>
->>>>> Fixes: 7f866986e705 ("leds: add PM8058 LEDs driver")
->>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>>> ---
->>>>>  drivers/leds/leds-pm8058.c | 4 ++--
->>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> Hi Bjorn,
->>>>
->>>> (Nice to see you) :)
->>>>
->>>> I'm going to apply this *before* Linus' fix.
->>>>
->>>> Applied, thanks.
->>>
->>> After I rx an Ack from Richard, Jacek or Pavel of course. :)
->>>
->>> Will send a pull-request.
->>
->> Huh? This is for LED subsystem AFAICS.
-> 
-> Right, hence why I said I'd sent out a pull-request.
-> 
-> The problem, however, arose due to a change in its parent driver's
-> Kconfig entry, which has been applied to the MFD tree.  We need to
-> ensure this patch is applied *before* the other 'fix' to quash the
-> warning before it starts, so to speak.
+Label property was imposed a uniqueness requirement, which was erroneous,
+since ePAPR defines it to "a human readable string describing a device".
 
-Ah, I hadn't seen the MFD patch and understood that you was
-talking about pull request for 4.15-rc2, which looked a bit
-strange out of context.
+Also the binding description misleadingly suggested direct usage of label
+for LED class device name, whereas it should only define a LED function.
 
-For v2:
+Therefore an additional 'colour' property is being introduced, which together
+with the parent DT node name used for devicename shall be used for naming LED
+class device according to the patterh <devicename>:<colour>:<function>.
 
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Fixes: 116b8e164116 ("DT: leds: Add uniqueness requirement for 'label' property")
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+---
+ Documentation/devicetree/bindings/leds/common.txt | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+index 1d4afe9..16973ee 100644
+--- a/Documentation/devicetree/bindings/leds/common.txt
++++ b/Documentation/devicetree/bindings/leds/common.txt
+@@ -14,10 +14,9 @@ Optional properties for child nodes:
+ - led-sources : List of device current outputs the LED is connected to. The
+ 		outputs are identified by the numbers that must be defined
+ 		in the LED device binding documentation.
+-- label : The label for this LED. If omitted, the label is taken from the node
+-	  name (excluding the unit address). It has to uniquely identify
+-	  a device, i.e. no other LED class device can be assigned the same
+-	  label.
++- label : The label for this LED. It should describe its function. If omitted,
++          the label is taken from the node name (excluding the unit address).
++- colour : Colour of the LED.
+ 
+ - default-state : The initial state of the LED. Valid values are "on", "off",
+   and "keep". If the LED is already on or off and the default-state property is
 -- 
-Best regards,
-Jacek Anaszewski
+2.1.4
