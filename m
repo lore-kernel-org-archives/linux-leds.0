@@ -1,143 +1,82 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v6 1/6] leds: Add new API to derive a LED name
-Date: Sun, 3 Dec 2017 14:27:01 +0100
-Message-ID: <1c6f0b40-7790-ae94-a65c-d6765c60e4f0@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 4/6] dt: bindings: lp8860: Update the bindings to the
+ standard
+Date: Sun, 3 Dec 2017 14:27:20 +0100
+Message-ID: <a07f883c-4c4c-780d-2dac-f023907a2629@gmail.com>
 References: <20171201165613.10358-1-dmurphy@ti.com>
+ <20171201165613.10358-4-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36764 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbdLCN17 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 3 Dec 2017 08:27:59 -0500
-In-Reply-To: <20171201165613.10358-1-dmurphy@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171201165613.10358-4-dmurphy-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org
+Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, rpurdie@rpsys.net, pavel@ucw.cz
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Dan,
 
 On 12/01/2017 05:56 PM, Dan Murphy wrote:
-> Create an API that is called to derive the
-> LED name from either the DT label in the child
-> node or if that does not exist from the parent
-> node name and an alternate label that is passed in.
+> Update the lp8860 dt binding to the LED standard where
+> the LED should have a child node and also adding a
+> LED trigger entry.
 > 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
 > ---
 > 
-> v6 - New patch to add the api to generate a LED label
+> v6 - New patch to fix binding documentation
 > 
->  drivers/leds/led-class.c | 34 ++++++++++++++++++++++++++++++++++
->  include/linux/leds.h     |  6 ++++++
->  2 files changed, 40 insertions(+)
+>  Documentation/devicetree/bindings/leds/leds-lp8860.txt | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index b0e2d55acbd6..d3e035488737 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -17,6 +17,7 @@
->  #include <linux/leds.h>
->  #include <linux/list.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
->  #include <linux/timer.h>
-> @@ -243,6 +244,39 @@ static int led_classdev_next_name(const char *init_name, char *name,
->  	return i;
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lp8860.txt b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+> index aad38dd94d4b..4cf396de6eba 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+> +++ b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+> @@ -12,17 +12,24 @@ Required properties:
+>  	- label - Used for naming LEDs
+>  
+>  Optional properties:
+> -	- enable-gpio - gpio pin to enable/disable the device.
+> -	- supply - "vled" - LED supply
+> +	- enable-gpios : gpio pin to enable/disable the device.
+> +	- vled-supply : LED supply
+> +	- label : see Documentation/devicetree/bindings/leds/common.txt
+> +	- linux,default-trigger : (optional)
+> +	   see Documentation/devicetree/bindings/leds/common.txt
+>  
+>  Example:
+>  
+> -leds: leds@6 {
+> +lp8860@2d {
+>  	compatible = "ti,lp8860";
+>  	reg = <0x2d>;
+> -	label = "display_cluster";
+>  	enable-gpio = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>  	vled-supply = <&vbatt>;
+> +
+> +	backlight: backlight@0 {
+> +		label = "backlight_cluster";
+
+You'll need to change this to:
+
+label = "white:backlight_cluster"
+
+Please always cc your patches with DT bindings to
+devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org and related maintainers.
+
+> +		linux,default-trigger = "backlight";
+> +	};
 >  }
 >  
-> +/**
-> + * of_led_compose_name - derive the LED name based on DT or alternate name.
-> + *
-> + * @parent: parent of LED device
-> + * @child: child node of LED device
-> + * @alt_name: an alternate name if the label node is not found
-> + * @len: length of the alt_name
-> + * @led_name: derived name from either DT label or alt_name
-> + */
-> +void of_led_compose_name(struct device_node *parent,
-> +                     struct device_node *child,
-> +		     const char *alt_name,
-> +		     size_t len,
-> +		     char *led_name)
-> +{
-> +	int ret;
-> +	int length;
-> +	const char *name;
-> +
-> +	if (len == 0 || alt_name == NULL)
-> +		return;
-> +
-> +	ret = of_property_read_string(child, "label", &name);
-> +	if (!ret) {
-> +		strlcpy(led_name, name, sizeof(led_name));
-> +	} else {
-> +		length = len + strlen(parent->name) + 1;
-> +		snprintf(led_name, len, "%s:%s", parent->name, alt_name);
-> +	}
-
-
-It looks different from what I meant, i.e. that devicename
-segment shouldn't be present in the label, but derived
-from the parent DT node name.
-
-This is however to be decided whether it wouldn't be better to leave
-the decision to the driver on how to obtain devicename  - from parent
-DT node or from the driver hardcoded string. Some LED class drivers
-prefer the latter way, so if their parent node name differs a bit from
-the string they currently use for devicename, then the resulting
-LED class device name will change after switching to using this
-new API. In order to avoid that we would have to modify related
-DT node names in *.dts files, which would make unnecessary noise.
-
-Since it may take a while to agree on the final semantics
-of this new API, especially after my recent patch [0], I propose
-to put below piece of code directly in the driver:
-
-
-ret = of_property_read_string(child_node, "label", &name);
-if (!ret)
-    snprintf(led->label, sizeof(led->label), "%s:%s",
-			np->name, name)
-else
-    snprintf(led->label, sizeof(led->label),
-             "%s::%s", np->name, name)
-
-Please note that "::" means leaving colour section blank,
-because we don't know the LED colour if label DT property was not
-provided.
-
-> +}
-> +EXPORT_SYMBOL_GPL(of_led_compose_name);
-> +
->  /**
->   * of_led_classdev_register - register a new object of led_classdev class.
->   *
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 5579c64c8fd6..9e18dbe196e2 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -123,6 +123,12 @@ struct led_classdev {
->  	struct mutex		led_access;
->  };
->  
-> +extern void of_led_compose_name(struct device_node *parent,
-> +                     struct device_node *child,
-> +		     const char *alt_name,
-> +		     size_t len,
-> +		     char *led_name);
-> +
->  extern int of_led_classdev_register(struct device *parent,
->  				    struct device_node *np,
->  				    struct led_classdev *led_cdev);
+>  For more product information please see the link below:
 > 
-
-[0] https://patchwork.kernel.org/patch/10089047
 
 -- 
 Best regards,
 Jacek Anaszewski
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
