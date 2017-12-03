@@ -1,83 +1,593 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v6 4/6] dt: bindings: lp8860: Update the bindings to the
- standard
-Date: Sun, 3 Dec 2017 15:34:54 +0100
-Message-ID: <e7ad5d50-dfd4-92eb-382c-f6534e089b8b@gmail.com>
-References: <20171201165613.10358-1-dmurphy@ti.com>
- <20171201165613.10358-4-dmurphy@ti.com>
- <7a1f392c-9e2c-0a47-c10b-a2330228f52f@gmail.com>
+Subject: Re: [PATCH] leds: trigger: Introduce a NETDEV trigger
+Date: Sun, 3 Dec 2017 22:09:24 +0100
+Message-ID: <fdc16216-4acc-b87b-1d75-6db33c3fb389@gmail.com>
+References: <1511906058-30649-1-git-send-email-ben.whitten@gmail.com>
+ <1511906058-30649-2-git-send-email-ben.whitten@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38621 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751528AbdLCOfv (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 3 Dec 2017 09:35:51 -0500
-In-Reply-To: <7a1f392c-9e2c-0a47-c10b-a2330228f52f@gmail.com>
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:38794 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752156AbdLCVKX (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 3 Dec 2017 16:10:23 -0500
+In-Reply-To: <1511906058-30649-2-git-send-email-ben.whitten@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, rpurdie@rpsys.net, pavel@ucw.cz
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ben Whitten <ben.whitten@gmail.com>, rpurdie@rpsys.net, pavel@ucw.cz
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
-On 12/03/2017 02:49 PM, Jacek Anaszewski wrote:
-> Hi Dan,
-> 
-> Thanks for the patch.
-> 
-> On 12/01/2017 05:56 PM, Dan Murphy wrote:
->> Update the lp8860 dt binding to the LED standard where
->> the LED should have a child node and also adding a
->> LED trigger entry.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>
->> v6 - New patch to fix binding documentation
->>
->>  Documentation/devicetree/bindings/leds/leds-lp8860.txt | 15 +++++++++++----
->>  1 file changed, 11 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-lp8860.txt b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
->> index aad38dd94d4b..4cf396de6eba 100644
->> --- a/Documentation/devicetree/bindings/leds/leds-lp8860.txt
->> +++ b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
->> @@ -12,17 +12,24 @@ Required properties:
->>  	- label - Used for naming LEDs
->>  
->>  Optional properties:
->> -	- enable-gpio - gpio pin to enable/disable the device.
->> -	- supply - "vled" - LED supply
->> +	- enable-gpios : gpio pin to enable/disable the device.
->> +	- vled-supply : LED supply
->> +	- label : see Documentation/devicetree/bindings/leds/common.txt
->> +	- linux,default-trigger : (optional)
->> +	   see Documentation/devicetree/bindings/leds/common.txt
-> 
-> Related driver doesn't parse this DT property AFAICS.
+Hi Ben,
 
-Ah, I missed that you're adding it in 5/6.
+Thanks for the patch. I have some comments in the code below.
+Please take a look.
 
+On 11/28/2017 10:54 PM, Ben Whitten wrote:
+> This commit introduces a NETDEV trigger for named device
+> activity. Available triggers are link, rx, and tx.
 > 
->>  Example:
->>  
->> -leds: leds@6 {
->> +lp8860@2d {
->>  	compatible = "ti,lp8860";
->>  	reg = <0x2d>;
->> -	label = "display_cluster";
->>  	enable-gpio = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+> Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
+> ---
+>  .../ABI/testing/sysfs-class-led-trigger-netdev     |  45 +++
+>  drivers/leds/trigger/Kconfig                       |   7 +
+>  drivers/leds/trigger/Makefile                      |   1 +
+>  drivers/leds/trigger/ledtrig-netdev.c              | 428 +++++++++++++++++++++
+>  4 files changed, 481 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-netdev
+>  create mode 100644 drivers/leds/trigger/ledtrig-netdev.c
 > 
-> s/gpio/gpios/
-> 
->>  	vled-supply = <&vbatt>;
->> +
->> +	backlight: backlight@0 {
->> +		label = "backlight_cluster";
->> +		linux,default-trigger = "backlight";
->> +	};
->>  }
->>  
->>  For more product information please see the link below:
->>
-> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-netdev b/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
+> new file mode 100644
+> index 0000000..2c917df
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
+> @@ -0,0 +1,45 @@
+> +What:		/sys/class/leds/<led>/device_name
+> +Date:		Nov 2017
+> +KernelVersion:	4.15
+
+Now it will be 4.16 presumably.
+
+> +Contact:	linux-leds@vger.kernel.org
+> +Description:
+> +		Specifies the network device name to monitor.
+> +
+> +What:		/sys/class/leds/<led>/interval
+> +Date:		Nov 2017
+> +KernelVersion:	4.15
+> +Contact:	linux-leds@vger.kernel.org
+> +Description:
+> +		Specifies the duration of the LED blink in milliseconds.
+> +		Defaults to 50 ms.
+> +
+> +What:		/sys/class/leds/<led>/link
+> +Date:		Nov 2017
+> +KernelVersion:	4.15
+> +Contact:	linux-leds@vger.kernel.org
+> +Description:
+> +		Signal the link state of the named network device.
+> +		If set to 0 (default), the LED's normal state is off.
+> +		If set to 1, the LED's normal state reflects the link state
+> +		of the named network device.
+> +		Setting this value also immediately changes the LED state.
+> +
+> +What:		/sys/class/leds/<led>/tx
+> +Date:		Nov 2017
+> +KernelVersion:	4.15
+> +Contact:	linux-leds@vger.kernel.org
+> +Description:
+> +		Signal transmission of data on the named network device.
+> +		If set to 0 (default), the LED will not blink on transmission.
+> +		If set to 1, the LED will blink for the milliseconds specified
+> +		in interval to signal transmission.
+> +
+> +What:		/sys/class/leds/<led>/rx
+> +Date:		Nov 2017
+> +KernelVersion:	4.15
+> +Contact:	linux-leds@vger.kernel.org
+> +Description:
+> +		Signal reception of data on the named network device.
+> +		If set to 0 (default), the LED will not blink on reception.
+> +		If set to 1, the LED will blink for the milliseconds specified
+> +		in interval to signal reception.
+> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+> index 3f9ddb9..4ec1853 100644
+> --- a/drivers/leds/trigger/Kconfig
+> +++ b/drivers/leds/trigger/Kconfig
+> @@ -126,4 +126,11 @@ config LEDS_TRIGGER_PANIC
+>  	  a different trigger.
+>  	  If unsure, say Y.
+>  
+> +config LEDS_TRIGGER_NETDEV
+> +	tristate "LED Netdev Trigger"
+> +	depends on NET && LEDS_TRIGGERS
+> +	help
+> +	  This allows LEDs to be controlled by network device activity.
+> +	  If unsure, say Y.
+> +
+>  endif # LEDS_TRIGGERS
+> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+> index 9f2e868..59e163d 100644
+> --- a/drivers/leds/trigger/Makefile
+> +++ b/drivers/leds/trigger/Makefile
+> @@ -11,3 +11,4 @@ obj-$(CONFIG_LEDS_TRIGGER_DEFAULT_ON)	+= ledtrig-default-on.o
+>  obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
+>  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
+>  obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
+> +obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
+> diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
+> new file mode 100644
+> index 0000000..2953b41
+> --- /dev/null
+> +++ b/drivers/leds/trigger/ledtrig-netdev.c
+> @@ -0,0 +1,428 @@
+> +/*
+> + * LED Kernel Netdev Trigger
+> + *
+> + * Toggles the LED to reflect the link and traffic state of a named net device
+> + *
+> + * Copyright 2017 Ben Whitten <ben.whitten@gmail.com>
+> + *
+> + * Copyright 2007 Oliver Jowett <oliver@opencloud.com>
+> + *
+> + * Derived from ledtrig-timer.c which is:
+> + *  Copyright 2005-2006 Openedhand Ltd.
+> + *  Author: Richard Purdie <rpurdie@openedhand.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/jiffies.h>
+> +#include <linux/kernel.h>
+> +#include <linux/init.h>
+> +#include <linux/list.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/device.h>
+> +#include <linux/netdevice.h>
+> +#include <linux/timer.h>
+> +#include <linux/ctype.h>
+> +#include <linux/atomic.h>
+> +#include <linux/leds.h>
+
+Please sort includes lexicographically.
+
+> +/*
+> + * Configurable sysfs attributes:
+> + *
+> + * device_name - network device name to monitor
+> + *
+
+Redundant empty line.
+
+> + * interval - duration of LED blink, in milliseconds
+> + *
+
+Ditto.
+
+> + * link -  LED's normal state reflects whether the link is up
+> + *         (has carrier) or not
+> + * tx -  LED blinks on transmitted data
+> + * rx -  LED blinks on receive data
+> + *
+> + */
+> +
+> +struct led_netdev_data {
+> +	spinlock_t lock;
+> +
+> +	struct delayed_work work;
+> +	struct notifier_block notifier;
+> +
+> +	struct led_classdev *led_cdev;
+> +	struct net_device *net_dev;
+> +
+> +	char device_name[IFNAMSIZ];
+> +	atomic_t interval;
+> +	unsigned int last_activity;
+> +
+> +	unsigned long mode;
+> +#define LED_BLINK_link	0
+> +#define LED_BLINK_tx	1
+> +#define LED_BLINK_rx	2
+
+LED core already has LED_BLINK* family of macros. Please come up
+with the prefix specific for this trigger e.g. NETDEV_LED.
+Also let's use uppercase for the whole macro name.
+
+> +#define LED_MODE_LINKUP	3
+
+s/LED/NETDEV_LED/
+
+> +};
+> +
+> +static void set_baseline_state(struct led_netdev_data *trigger_data)
+> +{
+> +	if (!test_bit(LED_MODE_LINKUP, &trigger_data->mode))
+> +		led_set_brightness(trigger_data->led_cdev, LED_OFF);
+> +	else {
+> +		if (test_bit(LED_BLINK_link, &trigger_data->mode))
+> +			led_set_brightness(trigger_data->led_cdev, LED_FULL);
+> +
+> +		if (test_bit(LED_BLINK_tx, &trigger_data->mode) ||
+> +		    test_bit(LED_BLINK_rx, &trigger_data->mode))
+> +			schedule_delayed_work(&trigger_data->work,
+> +				atomic_read(&trigger_data->interval));
+
+Now we have blink support in the LED core. Please use
+led_blink_set_oneshot() instead.
+
+Generally you can compare how ledtrig-timer is now implemented.
+
+> +	}
+> +}
+> +
+> +static ssize_t device_name_show(struct device *dev,
+> +				struct device_attribute *attr, char *buf)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct led_netdev_data *trigger_data = led_cdev->trigger_data;
+> +	ssize_t len;
+> +
+> +	spin_lock_bh(&trigger_data->lock);
+> +	len = sprintf(buf, "%s\n", trigger_data->device_name);
+> +	spin_unlock_bh(&trigger_data->lock);
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t device_name_store(struct device *dev,
+> +				 struct device_attribute *attr, const char *buf,
+> +				 size_t size)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct led_netdev_data *trigger_data = led_cdev->trigger_data;
+> +
+> +	if (size >= IFNAMSIZ)
+> +		return -EINVAL;
+> +
+> +	cancel_delayed_work_sync(&trigger_data->work);
+> +
+> +	spin_lock_bh(&trigger_data->lock);
+> +
+> +	if (trigger_data->net_dev) {
+> +		dev_put(trigger_data->net_dev);
+> +		trigger_data->net_dev = NULL;
+> +	}
+> +
+> +	strncpy(trigger_data->device_name, buf, size);
+> +	if (size > 0 && trigger_data->device_name[size - 1] == '\n')
+> +		trigger_data->device_name[size - 1] = 0;
+> +
+> +	if (trigger_data->device_name[0] != 0)
+> +		trigger_data->net_dev =
+> +		    dev_get_by_name(&init_net, trigger_data->device_name);
+> +
+> +	clear_bit(LED_MODE_LINKUP, &trigger_data->mode);
+> +	if (trigger_data->net_dev != NULL)
+> +		if (netif_carrier_ok(trigger_data->net_dev))
+> +			set_bit(LED_MODE_LINKUP, &trigger_data->mode);
+> +
+> +	trigger_data->last_activity = 0;
+> +
+> +	set_baseline_state(trigger_data);
+> +	spin_unlock_bh(&trigger_data->lock);
+> +
+> +	return size;
+> +}
+> +
+> +static DEVICE_ATTR_RW(device_name);
+> +
+> +#define led_mode_flags_attr(field)					\
+> +static ssize_t field##_show(struct device *dev,				\
+> +	struct device_attribute *attr, char *buf)			\
+> +{									\
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);		\
+> +	struct led_netdev_data *trigger_data = led_cdev->trigger_data;	\
+> +									\
+> +	return sprintf(buf, "%u\n", test_bit(LED_BLINK_##field,		\
+> +					&trigger_data->mode));		\
+> +}									\
+> +static ssize_t field##_store(struct device *dev,			\
+> +	struct device_attribute *attr, const char *buf, size_t size)	\
+> +{									\
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);		\
+> +	struct led_netdev_data *trigger_data = led_cdev->trigger_data;	\
+> +	unsigned long state;						\
+> +	int ret;							\
+> +									\
+> +	ret = kstrtoul(buf, 0, &state);					\
+> +	if (ret)							\
+> +		return ret;						\
+> +									\
+> +	cancel_delayed_work_sync(&trigger_data->work);			\
+> +									\
+> +	if (state)							\
+> +		set_bit(LED_BLINK_##field, &trigger_data->mode);	\
+> +	else								\
+> +		clear_bit(LED_BLINK_##field, &trigger_data->mode);	\
+> +									\
+> +	set_baseline_state(trigger_data);				\
+> +									\
+> +	return size;							\
+> +}									\
+> +static DEVICE_ATTR_RW(field);
+
+In order to get rid of this macro and avoid the need for camel case
+macro name we could have one function that would accept an enum e.g.
+
+enum netdev_led_attr {
+	NETDEV_ATTR_LINK,
+	NETDEV_ATTR_RX,
+	NETDEV_ATTR_TX
+};
+
+The function would be called from each sysfs attr callback with the
+related enum, and would alter the state of the related bit.
+
+> +led_mode_flags_attr(link);
+> +led_mode_flags_attr(rx);
+> +led_mode_flags_attr(tx);
+> +
+> +static ssize_t interval_show(struct device *dev,
+> +			     struct device_attribute *attr, char *buf)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct led_netdev_data *trigger_data = led_cdev->trigger_data;
+> +
+> +	return sprintf(buf, "%u\n",
+> +		       jiffies_to_msecs(atomic_read(&trigger_data->interval)));
+> +}
+> +
+> +static ssize_t interval_store(struct device *dev,
+> +			      struct device_attribute *attr, const char *buf,
+> +			      size_t size)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct led_netdev_data *trigger_data = led_cdev->trigger_data;
+> +	unsigned long value;
+> +	int ret;
+> +
+> +	ret = kstrtoul(buf, 0, &value);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* impose some basic bounds on the timer interval */
+> +	if (value >= 5 && value <= 10000) {
+> +		cancel_delayed_work_sync(&trigger_data->work);
+> +
+> +		atomic_set(&trigger_data->interval, msecs_to_jiffies(value));
+> +		set_baseline_state(trigger_data);	/* resets timer */
+> +	}
+> +
+> +	return size;
+> +}
+> +
+> +static DEVICE_ATTR_RW(interval);
+> +
+> +static int netdev_trig_notify(struct notifier_block *nb,
+> +			      unsigned long evt, void *dv)
+> +{
+> +	struct net_device *dev =
+> +		netdev_notifier_info_to_dev((struct netdev_notifier_info *)dv);
+> +	struct led_netdev_data *trigger_data = container_of(nb,
+> +							    struct
+> +							    led_netdev_data,
+> +							    notifier);
+> +
+> +	if (evt != NETDEV_UP && evt != NETDEV_DOWN && evt != NETDEV_CHANGE
+> +	    && evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER
+> +	    && evt != NETDEV_CHANGENAME)
+> +		return NOTIFY_DONE;
+> +
+> +	if (strcmp(dev->name, trigger_data->device_name))
+> +		return NOTIFY_DONE;
+> +
+> +	cancel_delayed_work_sync(&trigger_data->work);
+> +
+> +	spin_lock_bh(&trigger_data->lock);
+> +
+> +	clear_bit(LED_MODE_LINKUP, &trigger_data->mode);
+> +	switch (evt) {
+> +	case NETDEV_REGISTER:
+> +		if (trigger_data->net_dev)
+> +			dev_put(trigger_data->net_dev);
+> +		dev_hold(dev);
+> +		trigger_data->net_dev = dev;
+> +		break;
+> +	case NETDEV_CHANGENAME:
+> +	case NETDEV_UNREGISTER:
+> +		if (trigger_data->net_dev) {
+> +			dev_put(trigger_data->net_dev);
+> +			trigger_data->net_dev = NULL;
+> +		}
+> +		break;
+> +	case NETDEV_UP:
+> +	case NETDEV_CHANGE:
+> +		if (netif_carrier_ok(dev))
+> +			set_bit(LED_MODE_LINKUP, &trigger_data->mode);
+> +		break;
+> +	}
+> +
+> +	set_baseline_state(trigger_data);
+> +
+> +	spin_unlock_bh(&trigger_data->lock);
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +/* here's the real work! */
+> +static void netdev_trig_work(struct work_struct *work)
+> +{
+> +	struct led_netdev_data *trigger_data = container_of(work,
+> +							    struct
+> +							    led_netdev_data,
+> +							    work.work);
+> +	struct rtnl_link_stats64 *dev_stats;
+> +	unsigned int new_activity;
+> +	struct rtnl_link_stats64 temp;
+> +
+> +	if (!test_bit(LED_MODE_LINKUP, &trigger_data->mode) ||
+> +	    !trigger_data->net_dev ||
+> +	    (!test_bit(LED_BLINK_tx, &trigger_data->mode) &&
+> +	     !test_bit(LED_BLINK_rx, &trigger_data->mode))) {
+> +		/* we don't need to do timer work, just reflect link state. */
+> +		led_set_brightness(trigger_data->led_cdev,
+> +				   (test_bit
+> +				    (LED_BLINK_link, &trigger_data->mode)
+> +				    && test_bit(LED_MODE_LINKUP,
+> +						&trigger_data->mode
+> +						) ? LED_FULL : LED_OFF));
+> +		return;
+> +	}
+> +
+> +	dev_stats = dev_get_stats(trigger_data->net_dev, &temp);
+> +	new_activity =
+> +	    (test_bit(LED_BLINK_tx, &trigger_data->mode) ?
+> +		dev_stats->tx_packets : 0) +
+> +	    (test_bit(LED_BLINK_rx, &trigger_data->mode) ?
+> +		dev_stats->rx_packets : 0);
+> +
+> +	if (test_bit(LED_BLINK_link, &trigger_data->mode)) {
+> +		/* base state is ON (link present) */
+> +		/* if there's no link, we don't get this far and
+> +		 * the LED is off
+> +		 */
+> +
+> +		/* OFF -> ON always */
+> +		/* ON -> OFF on activity */
+> +		if (trigger_data->led_cdev->brightness == LED_OFF)
+> +			led_set_brightness(trigger_data->led_cdev, LED_FULL);
+> +		else if (trigger_data->last_activity != new_activity)
+> +			led_set_brightness(trigger_data->led_cdev, LED_OFF);
+> +	} else {
+> +		/* base state is OFF */
+> +		/* ON -> OFF always */
+> +		/* OFF -> ON on activity */
+> +		if (trigger_data->led_cdev->brightness == LED_FULL)
+> +			led_set_brightness(trigger_data->led_cdev, LED_OFF);
+> +		else if (trigger_data->last_activity != new_activity)
+> +			led_set_brightness(trigger_data->led_cdev, LED_FULL);
+> +	}
+> +
+> +	trigger_data->last_activity = new_activity;
+> +	schedule_delayed_work(&trigger_data->work,
+> +			      atomic_read(&trigger_data->interval));
+> +}
+> +
+> +static void netdev_trig_activate(struct led_classdev *led_cdev)
+> +{
+> +	struct led_netdev_data *trigger_data;
+> +	int rc;
+> +
+> +	trigger_data = kzalloc(sizeof(struct led_netdev_data), GFP_KERNEL);
+> +	if (!trigger_data)
+> +		return;
+> +
+> +	spin_lock_init(&trigger_data->lock);
+> +
+> +	trigger_data->notifier.notifier_call = netdev_trig_notify;
+> +	trigger_data->notifier.priority = 10;
+> +
+> +	INIT_DELAYED_WORK(&trigger_data->work, netdev_trig_work);
+> +
+> +	trigger_data->led_cdev = led_cdev;
+> +	trigger_data->net_dev = NULL;
+> +	trigger_data->device_name[0] = 0;
+> +
+> +	trigger_data->mode = 0;
+> +	atomic_set(&trigger_data->interval, msecs_to_jiffies(50));
+> +	trigger_data->last_activity = 0;
+> +
+> +	led_cdev->trigger_data = trigger_data;
+> +
+> +	rc = device_create_file(led_cdev->dev, &dev_attr_device_name);
+> +	if (rc)
+> +		goto err_out;
+> +	rc = device_create_file(led_cdev->dev, &dev_attr_link);
+> +	if (rc)
+> +		goto err_out_device_name;
+> +	rc = device_create_file(led_cdev->dev, &dev_attr_rx);
+> +	if (rc)
+> +		goto err_out_link;
+> +	rc = device_create_file(led_cdev->dev, &dev_attr_tx);
+> +	if (rc)
+> +		goto err_out_rx;
+> +	rc = device_create_file(led_cdev->dev, &dev_attr_interval);
+> +	if (rc)
+> +		goto err_out_tx;
+> +	rc = register_netdevice_notifier(&trigger_data->notifier);
+> +	if (rc)
+> +		goto err_out_interval;
+> +	return;
+> +
+> +err_out_interval:
+> +	device_remove_file(led_cdev->dev, &dev_attr_interval);
+> +err_out_tx:
+> +	device_remove_file(led_cdev->dev, &dev_attr_tx);
+> +err_out_rx:
+> +	device_remove_file(led_cdev->dev, &dev_attr_rx);
+> +err_out_link:
+> +	device_remove_file(led_cdev->dev, &dev_attr_link);
+> +err_out_device_name:
+> +	device_remove_file(led_cdev->dev, &dev_attr_device_name);
+> +err_out:
+> +	led_cdev->trigger_data = NULL;
+> +	kfree(trigger_data);
+> +}
+> +
+> +static void netdev_trig_deactivate(struct led_classdev *led_cdev)
+> +{
+> +	struct led_netdev_data *trigger_data = led_cdev->trigger_data;
+> +
+> +	if (trigger_data) {
+> +		unregister_netdevice_notifier(&trigger_data->notifier);
+> +
+> +		device_remove_file(led_cdev->dev, &dev_attr_device_name);
+> +		device_remove_file(led_cdev->dev, &dev_attr_link);
+> +		device_remove_file(led_cdev->dev, &dev_attr_rx);
+> +		device_remove_file(led_cdev->dev, &dev_attr_tx);
+> +		device_remove_file(led_cdev->dev, &dev_attr_interval);
+> +
+> +		cancel_delayed_work_sync(&trigger_data->work);
+> +
+> +		if (trigger_data->net_dev)
+> +			dev_put(trigger_data->net_dev);
+> +
+> +		kfree(trigger_data);
+> +	}
+> +}
+> +
+> +static struct led_trigger netdev_led_trigger = {
+> +	.name = "netdev",
+> +	.activate = netdev_trig_activate,
+> +	.deactivate = netdev_trig_deactivate,
+> +};
+> +
+> +static int __init netdev_trig_init(void)
+> +{
+> +	return led_trigger_register(&netdev_led_trigger);
+> +}
+> +
+> +static void __exit netdev_trig_exit(void)
+> +{
+> +	led_trigger_unregister(&netdev_led_trigger);
+> +}
+> +
+> +module_init(netdev_trig_init);
+> +module_exit(netdev_trig_exit);
+> +
+> +MODULE_AUTHOR("Ben Whitten <ben.whitten@gmail.com>");
+> +MODULE_AUTHOR("Oliver Jowett <oliver@opencloud.com>");
+> +MODULE_DESCRIPTION("Netdev LED trigger");
+> +MODULE_LICENSE("GPL");
+
+"GPL v2" according to the licensing information from the top
+of the file.
+
+-- 
+Best regards,
+Jacek Anaszewski
