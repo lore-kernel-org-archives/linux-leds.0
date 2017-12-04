@@ -1,55 +1,68 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 0/5] Numerous fixes for LP8860
-Date: Mon, 4 Dec 2017 15:20:21 -0600
-Message-ID: <20171204212026.14214-1-dmurphy@ti.com>
+From: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH 3/5] dt: bindings: lp8860: Add trigger binding to the lp8860
+Date: Mon, 4 Dec 2017 15:20:24 -0600
+Message-ID: <20171204212026.14214-4-dmurphy@ti.com>
+References: <20171204212026.14214-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:37644 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752481AbdLDVVv (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 4 Dec 2017 16:21:51 -0500
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171204212026.14214-1-dmurphy-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 
-All
+Add a default trigger optional node to the child node.
+This will allow the driver to set the trigger for a backlight.
 
-After creating a new LED driver for the LM3692x device I went back to the
-LP8860 driver that I authored and found some updates that need to be applied.
+Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+---
+ Documentation/devicetree/bindings/leds/leds-lp8860.txt | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-First the way the LP8860 retrieved the label from the DT was incorrect as the
-label should have been from a child node as opposed to the parent.  This is now
-fixed with this series.
-
-Second, since that device can be used to as either a backlight driver or as a
-string agnostic driver a trigger to the backlight needed to be added.
-
-Finally there are changes to the driver that need to be made as either
-unnoticed bugs or updates to the driver to align with the current LED
-framework.  For instance moving to the devm LED class registration, destroying
-the mutex upon driver removal and removing the in driver dependency on CONFIG_OF
-and moving it to the Kconfig.
-
-With these changes this should at least bring the driver into a better shape.
-
-There are additional changes coming for this driver but I wanted to get the
-driver up to snuff before adding a feature to it.
-
-Dan
-
-Dan Murphy (5):
-  dt: bindings: lp8860: Update DT label binding
-  leds: lp8860: Update the dt parsing for LED labeling
-  dt: bindings: lp8860: Add trigger binding to the lp8860
-  leds: lp8860: Add DT parsing to retrieve the trigger node
-  leds: lp8860: Various fixes to align with LED framework
-
- .../devicetree/bindings/leds/leds-lp8860.txt       | 20 +++++++----
- drivers/leds/Kconfig                               |  2 +-
- drivers/leds/leds-lp8860.c                         | 40 ++++++++++++----------
- 3 files changed, 35 insertions(+), 27 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp8860.txt b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+index e3a5e91f965b..40543e62da48 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp8860.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+@@ -6,25 +6,28 @@ current sinks that can be controlled by a PWM input
+ signal, a SPI/I2C master, or both.
+ 
+ Required properties:
+-	- compatible:
++	- compatible :
+ 		"ti,lp8860"
+-	- reg -  I2C slave address
++	- reg :  I2C slave address
+ 
+ Optional properties:
+ 	- label : see Documentation/devicetree/bindings/leds/common.txt
+-	- enable-gpio - gpio pin to enable/disable the device.
+-	- supply - "vled" - LED supply
++	- enable-gpios : gpio pin to enable/disable the device.
++	- supply : "vled" - LED supply
++	- linux,default-trigger : (optional)
++	   see Documentation/devicetree/bindings/leds/common.txt
+ 
+ Example:
+ 
+ leds: leds@6 {
+ 	compatible = "ti,lp8860";
+ 	reg = <0x2d>;
+-	enable-gpio = <&gpio1 28 GPIO_ACTIVE_HIGH>;
++	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+ 	vled-supply = <&vbatt>;
+ 
+ 	display_cluster: display_cluster@0 {
+ 		label = "display_cluster";
++		linux,default-trigger = "backlight";
+ 	};
+ }
+ 
 -- 
 2.15.0.124.g7668cbc60
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
