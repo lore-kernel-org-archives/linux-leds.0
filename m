@@ -1,61 +1,90 @@
-From: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH 1/5] dt: bindings: lp8860: Update DT label binding
-Date: Mon, 4 Dec 2017 15:20:22 -0600
-Message-ID: <20171204212026.14214-2-dmurphy@ti.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH 2/5] leds: lp8860: Update the dt parsing for LED labeling
+Date: Mon, 4 Dec 2017 15:20:23 -0600
+Message-ID: <20171204212026.14214-3-dmurphy@ti.com>
 References: <20171204212026.14214-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171204212026.14214-1-dmurphy-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171204212026.14214-1-dmurphy@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-Update the lp8860 label binding to the LED
-standard as documented in
+Update the DT parsing for the label node so that
+the label is retrieved from the device child as
+opposed to being part of the parent.
+
+This will align this driver with the LED
+binding documentation
 
 Documentation/devicetree/bindings/leds/common.txt
 
-Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
-cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- Documentation/devicetree/bindings/leds/leds-lp8860.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/leds/leds-lp8860.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lp8860.txt b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-index aad38dd94d4b..e3a5e91f965b 100644
---- a/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-@@ -9,9 +9,9 @@ Required properties:
- 	- compatible:
- 		"ti,lp8860"
- 	- reg -  I2C slave address
--	- label - Used for naming LEDs
+diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+index 3e70775a2d54..13d6210cba85 100644
+--- a/drivers/leds/leds-lp8860.c
++++ b/drivers/leds/leds-lp8860.c
+@@ -22,6 +22,7 @@
+ #include <linux/of_gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
++#include <uapi/linux/uleds.h>
  
- Optional properties:
-+	- label : see Documentation/devicetree/bindings/leds/common.txt
- 	- enable-gpio - gpio pin to enable/disable the device.
- 	- supply - "vled" - LED supply
+ #define LP8860_DISP_CL1_BRT_MSB		0x00
+ #define LP8860_DISP_CL1_BRT_LSB		0x01
+@@ -86,8 +87,6 @@
  
-@@ -20,9 +20,12 @@ Example:
- leds: leds@6 {
- 	compatible = "ti,lp8860";
- 	reg = <0x2d>;
--	label = "display_cluster";
- 	enable-gpio = <&gpio1 28 GPIO_ACTIVE_HIGH>;
- 	vled-supply = <&vbatt>;
-+
-+	display_cluster: display_cluster@0 {
-+		label = "display_cluster";
-+	};
- }
+ #define LP8860_CLEAR_FAULTS		0x01
  
- For more product information please see the link below:
+-#define LP8860_DISP_LED_NAME		"display_cluster"
+-
+ /**
+  * struct lp8860_led -
+  * @lock - Lock for reading/writing the device
+@@ -107,7 +106,7 @@ struct lp8860_led {
+ 	struct regmap *eeprom_regmap;
+ 	struct gpio_desc *enable_gpio;
+ 	struct regulator *regulator;
+-	const char *label;
++	char label[LED_MAX_NAME_SIZE];
+ };
+ 
+ struct lp8860_eeprom_reg {
+@@ -365,19 +364,21 @@ static int lp8860_probe(struct i2c_client *client,
+ 	int ret;
+ 	struct lp8860_led *led;
+ 	struct device_node *np = client->dev.of_node;
++	struct device_node *child_node;
++	const char *name;
+ 
+ 	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
+ 	if (!led)
+ 		return -ENOMEM;
+ 
+-	led->label = LP8860_DISP_LED_NAME;
+-
+-	if (client->dev.of_node) {
+-		ret = of_property_read_string(np, "label", &led->label);
+-		if (ret) {
+-			dev_err(&client->dev, "Missing label in dt\n");
+-			return -EINVAL;
+-		}
++	for_each_available_child_of_node(np, child_node) {
++		ret = of_property_read_string(child_node, "label", &name);
++		if (!ret)
++		    snprintf(led->label, sizeof(led->label), "%s:%s",
++					np->name, name);
++		else
++		    snprintf(led->label, sizeof(led->label),
++			     "%s::display_cluster", np->name);
+ 	}
+ 
+ 	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
 -- 
 2.15.0.124.g7668cbc60
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
