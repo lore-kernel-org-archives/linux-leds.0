@@ -1,7 +1,7 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 2/5] leds: lp8860: Update the dt parsing for LED labeling
-Date: Mon, 4 Dec 2017 15:20:23 -0600
-Message-ID: <20171204212026.14214-3-dmurphy@ti.com>
+Subject: [PATCH 5/5] leds: lp8860: Various fixes to align with LED framework
+Date: Mon, 4 Dec 2017 15:20:26 -0600
+Message-ID: <20171204212026.14214-6-dmurphy@ti.com>
 References: <20171204212026.14214-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,79 +12,98 @@ To: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewsk
 Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-Update the DT parsing for the label node so that
-the label is retrieved from the device child as
-opposed to being part of the parent.
-
-This will align this driver with the LED
-binding documentation
-
-Documentation/devicetree/bindings/leds/common.txt
+Update the driver to conform with the LED framework.
+Use devm_led_classdev_register
+Destroy mutex on exit
+Remove dependency on CONFIG_OF in the driver and move
+to the Kconfig
+Update the MODULE_LICENSE to GPL v2
+Remove setting of MAX brightness as the LED framework
+does this.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-lp8860.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ drivers/leds/Kconfig       |  2 +-
+ drivers/leds/leds-lp8860.c | 13 +++++--------
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 318a28fd58fe..ac4d9d8bf96b 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -347,7 +347,7 @@ config LEDS_LP8788
+ 
+ config LEDS_LP8860
+ 	tristate "LED support for the TI LP8860 4 channel LED driver"
+-	depends on LEDS_CLASS && I2C
++	depends on LEDS_CLASS && I2C && OF
+ 	select REGMAP_I2C
+ 	help
+ 	  If you say yes here you get support for the TI LP8860 4 channel
 diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-index 3e70775a2d54..13d6210cba85 100644
+index 4fed603ee728..e94041e0e693 100644
 --- a/drivers/leds/leds-lp8860.c
 +++ b/drivers/leds/leds-lp8860.c
-@@ -22,6 +22,7 @@
- #include <linux/of_gpio.h>
- #include <linux/gpio/consumer.h>
- #include <linux/slab.h>
-+#include <uapi/linux/uleds.h>
+@@ -399,7 +399,6 @@ static int lp8860_probe(struct i2c_client *client,
  
- #define LP8860_DISP_CL1_BRT_MSB		0x00
- #define LP8860_DISP_CL1_BRT_LSB		0x01
-@@ -86,8 +87,6 @@
+ 	led->client = client;
+ 	led->led_dev.name = led->label;
+-	led->led_dev.max_brightness = LED_FULL;
+ 	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
  
- #define LP8860_CLEAR_FAULTS		0x01
+ 	mutex_init(&led->lock);
+@@ -426,7 +425,7 @@ static int lp8860_probe(struct i2c_client *client,
+ 	if (ret)
+ 		return ret;
  
--#define LP8860_DISP_LED_NAME		"display_cluster"
--
- /**
-  * struct lp8860_led -
-  * @lock - Lock for reading/writing the device
-@@ -107,7 +106,7 @@ struct lp8860_led {
- 	struct regmap *eeprom_regmap;
- 	struct gpio_desc *enable_gpio;
- 	struct regulator *regulator;
--	const char *label;
-+	char label[LED_MAX_NAME_SIZE];
- };
- 
- struct lp8860_eeprom_reg {
-@@ -365,19 +364,21 @@ static int lp8860_probe(struct i2c_client *client,
+-	ret = led_classdev_register(&client->dev, &led->led_dev);
++	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
+ 	if (ret) {
+ 		dev_err(&client->dev, "led register err: %d\n", ret);
+ 		return ret;
+@@ -440,8 +439,6 @@ static int lp8860_remove(struct i2c_client *client)
+ 	struct lp8860_led *led = i2c_get_clientdata(client);
  	int ret;
- 	struct lp8860_led *led;
- 	struct device_node *np = client->dev.of_node;
-+	struct device_node *child_node;
-+	const char *name;
  
- 	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
- 	if (!led)
- 		return -ENOMEM;
- 
--	led->label = LP8860_DISP_LED_NAME;
+-	led_classdev_unregister(&led->led_dev);
 -
--	if (client->dev.of_node) {
--		ret = of_property_read_string(np, "label", &led->label);
--		if (ret) {
--			dev_err(&client->dev, "Missing label in dt\n");
--			return -EINVAL;
--		}
-+	for_each_available_child_of_node(np, child_node) {
-+		ret = of_property_read_string(child_node, "label", &name);
-+		if (!ret)
-+		    snprintf(led->label, sizeof(led->label), "%s:%s",
-+					np->name, name);
-+		else
-+		    snprintf(led->label, sizeof(led->label),
-+			     "%s::display_cluster", np->name);
+ 	if (led->enable_gpio)
+ 		gpiod_direction_output(led->enable_gpio, 0);
+ 
+@@ -452,6 +449,8 @@ static int lp8860_remove(struct i2c_client *client)
+ 				"Failed to disable regulator\n");
  	}
  
- 	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
++	mutex_destroy(&led->lock);
++
+ 	return 0;
+ }
+ 
+@@ -461,18 +460,16 @@ static const struct i2c_device_id lp8860_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, lp8860_id);
+ 
+-#ifdef CONFIG_OF
+ static const struct of_device_id of_lp8860_leds_match[] = {
+ 	{ .compatible = "ti,lp8860", },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, of_lp8860_leds_match);
+-#endif
+ 
+ static struct i2c_driver lp8860_driver = {
+ 	.driver = {
+ 		.name	= "lp8860",
+-		.of_match_table = of_match_ptr(of_lp8860_leds_match),
++		.of_match_table = of_lp8860_leds_match,
+ 	},
+ 	.probe		= lp8860_probe,
+ 	.remove		= lp8860_remove,
+@@ -482,4 +479,4 @@ module_i2c_driver(lp8860_driver);
+ 
+ MODULE_DESCRIPTION("Texas Instruments LP8860 LED driver");
+ MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
+-MODULE_LICENSE("GPL");
++MODULE_LICENSE("GPL v2");
 -- 
 2.15.0.124.g7668cbc60
