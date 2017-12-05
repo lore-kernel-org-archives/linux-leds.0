@@ -1,153 +1,504 @@
-From: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V1 3/4] qcom: spmi-wled: Add support for OVP interrupt
- handling
-Date: Mon, 4 Dec 2017 20:45:23 -0800
-Message-ID: <20171205044523.GF28761@minitux>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH V1 4/4] qcom: spmi-wled: Add auto-calibration logic
+ support
+Date: Mon, 4 Dec 2017 21:40:04 -0800
+Message-ID: <20171205054004.GG28761@minitux>
 References: <1510834717-21765-1-git-send-email-kgunda@codeaurora.org>
- <1510834717-21765-4-git-send-email-kgunda@codeaurora.org>
+ <1510834717-21765-5-git-send-email-kgunda@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:35985 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751255AbdLEFkJ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 5 Dec 2017 00:40:09 -0500
+Received: by mail-pg0-f65.google.com with SMTP id k134so9966810pga.3
+        for <linux-leds@vger.kernel.org>; Mon, 04 Dec 2017 21:40:08 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1510834717-21765-4-git-send-email-kgunda-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kiran Gunda <kgunda-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1510834717-21765-5-git-send-email-kgunda@codeaurora.org>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Kiran Gunda <kgunda@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
 
 On Thu 16 Nov 04:18 PST 2017, Kiran Gunda wrote:
 
-> WLED peripheral has over voltage protection(OVP) circuitry and the OVP
-> fault is notified through an interrupt. Though this fault condition rising
-> is due to an incorrect hardware configuration is mitigated in the hardware,
-> it still needs to be detected and handled. Add support for it.
+> The auto-calibration algorithm checks if the current WLED sink
+> configuration is valid. It tries enabling every sink and checks
+> if the OVP fault is observed. Based on this information it
+> detects and enables the valid sink configuration. Auto calibration
+> will be triggered when the OVP fault interrupts are seen frequently
+> thereby it tries to fix the sink configuration.
 > 
-> When WLED module is enabled, keep OVP fault interrupt disabled for 10 ms to
-> account for soft start delay.
-> 
-> Signed-off-by: Kiran Gunda <kgunda-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+
+So it's not auto "calibration" it's auto "detection" of strings?
+
+When is this feature needed?
+
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
 > ---
->  .../bindings/leds/backlight/qcom-spmi-wled.txt     |  7 +-
->  drivers/video/backlight/qcom-spmi-wled.c           | 83 ++++++++++++++++++++++
->  2 files changed, 87 insertions(+), 3 deletions(-)
+>  .../bindings/leds/backlight/qcom-spmi-wled.txt     |   5 +
+>  drivers/video/backlight/qcom-spmi-wled.c           | 304 ++++++++++++++++++++-
+>  2 files changed, 306 insertions(+), 3 deletions(-)
 > 
 > diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt b/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
-> index 768608c..d39ee93 100644
+> index d39ee93..f06c0cd 100644
 > --- a/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
 > +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
-> @@ -92,7 +92,7 @@ The PMIC is connected to the host processor via SPMI bus.
->  	Usage:      optional
->  	Value type: <string>
+> @@ -94,6 +94,11 @@ The PMIC is connected to the host processor via SPMI bus.
 >  	Definition: Interrupt names associated with the interrupts.
-> -		    Must be "sc-irq".
-> +		    Currently supported interrupts are "sc-irq" and "ovp-irq".
+>  		    Currently supported interrupts are "sc-irq" and "ovp-irq".
 >  
+> +- qcom,auto-calibration
 
-As before, we know this is an IRQ, so omit the -irq from the name.
+qcom,auto-string-detect?
 
-[..]
+> +	Usage:      optional
+> +	Value type: <bool>
+> +	Definition: Enables auto-calibration of the WLED sink configuration.
+> +
+>  Example:
+>  
+>  qcom-wled@d800 {
 > diff --git a/drivers/video/backlight/qcom-spmi-wled.c b/drivers/video/backlight/qcom-spmi-wled.c
-[..]
-> @@ -115,6 +123,28 @@ static int qcom_wled_module_enable(struct qcom_wled *wled, int val)
+> index 8b2a77a..aee5c56 100644
+> --- a/drivers/video/backlight/qcom-spmi-wled.c
+> +++ b/drivers/video/backlight/qcom-spmi-wled.c
+> @@ -38,11 +38,14 @@
+>  #define  QCOM_WLED_CTRL_SC_FAULT_BIT		BIT(2)
+>  
+>  #define QCOM_WLED_CTRL_INT_RT_STS		0x10
+> +#define  QCOM_WLED_CTRL_OVP_FLT_RT_STS_BIT	BIT(1)
+
+The use of BIT() makes this a mask and not a bit number, so if you just
+drop that you can afford to spell out the "FAULT" like the data sheet
+does. Perhaps even making it QCOM_WLED_CTRL_OVP_FAULT_STATUS ?
+
+>  
+>  #define QCOM_WLED_CTRL_MOD_ENABLE		0x46
+>  #define  QCOM_WLED_CTRL_MOD_EN_MASK		BIT(7)
+>  #define  QCOM_WLED_CTRL_MODULE_EN_SHIFT		7
+>  
+> +#define QCOM_WLED_CTRL_FDBK_OP			0x48
+
+This is called WLED_CTRL_FEEDBACK_CONTROL, why the need to make it
+unreadable?
+
+> +
+>  #define QCOM_WLED_CTRL_SWITCH_FREQ		0x4c
+>  #define  QCOM_WLED_CTRL_SWITCH_FREQ_MASK	GENMASK(3, 0)
+>  
+> @@ -99,6 +102,7 @@ struct qcom_wled_config {
+>  	int ovp_irq;
+>  	bool en_cabc;
+>  	bool ext_pfet_sc_pro_en;
+> +	bool auto_calib_enabled;
+>  };
+>  
+>  struct qcom_wled {
+> @@ -108,18 +112,25 @@ struct qcom_wled {
+>  	struct mutex lock;
+>  	struct qcom_wled_config cfg;
+>  	ktime_t last_sc_event_time;
+> +	ktime_t start_ovp_fault_time;
+>  	u16 sink_addr;
+>  	u16 ctrl_addr;
+> +	u16 auto_calibration_ovp_count;
+>  	u32 brightness;
+>  	u32 sc_count;
+>  	bool prev_state;
+>  	bool ovp_irq_disabled;
+> +	bool auto_calib_done;
+> +	bool force_mod_disable;
+>  };
+>  
+>  static int qcom_wled_module_enable(struct qcom_wled *wled, int val)
+>  {
+>  	int rc;
+>  
+> +	if (wled->force_mod_disable)
+> +		return 0;
+> +
 >  	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
 >  			QCOM_WLED_CTRL_MOD_ENABLE, QCOM_WLED_CTRL_MOD_EN_MASK,
 >  			val << QCOM_WLED_CTRL_MODULE_EN_SHIFT);
-> +	if (rc < 0)
-> +		return rc;
-> +	/*
-> +	 * Wait for at least 10ms before enabling OVP fault interrupt after
-> +	 * enabling the module so that soft start is completed. Keep the OVP
-> +	 * interrupt disabled when the module is disabled.
-> +	 */
-> +	if (val) {
-> +		usleep_range(QCOM_WLED_SOFT_START_DLY_US,
-> +				QCOM_WLED_SOFT_START_DLY_US + 1000);
-
-This is sleeping in the brightness/enable code path, can you
-schedule_delayed_work() instead to not block this code path
-unnecessarily?
-
-> +
-> +		if (wled->cfg.ovp_irq > 0 && wled->ovp_irq_disabled) {
-> +			enable_irq(wled->cfg.ovp_irq);
-> +			wled->ovp_irq_disabled = false;
-> +		}
-> +	} else {
-> +		if (wled->cfg.ovp_irq > 0 && !wled->ovp_irq_disabled) {
-> +			disable_irq(wled->cfg.ovp_irq);
-> +			wled->ovp_irq_disabled = true;
-> +		}
-> +	}
-> +
->  	return rc;
->  }
+> @@ -187,12 +198,10 @@ static int qcom_wled_set_brightness(struct qcom_wled *wled, u16 brightness)
+>  	v[1] = (brightness >> 8) & 0xf;
 >  
-> @@ -264,12 +294,42 @@ static irqreturn_t qcom_wled_sc_irq_handler(int irq, void *_wled)
+>  	for (i = 0; (string_cfg >> i) != 0; i++) {
+> -		if (string_cfg & BIT(i)) {
+
+Why was this check here in the first place, if it's now fine to
+configure the brightness of all strings?
+
+Also, a single-string config of 0b0001 will only set brightness on the
+first string, while 0b1000 will set brightness on all strings.
+
+>  			rc = regmap_bulk_write(wled->regmap, wled->sink_addr +
+>  					QCOM_WLED_SINK_BRIGHT_LSB_REG(i), v, 2);
+>  			if (rc < 0)
+>  				return rc;
+> -		}
+>  	}
+>  
+>  	return 0;
+> @@ -294,6 +303,262 @@ static irqreturn_t qcom_wled_sc_irq_handler(int irq, void *_wled)
 >  	return IRQ_HANDLED;
 >  }
 >  
-> +static irqreturn_t qcom_wled_ovp_irq_handler(int irq, void *_wled)
+> +#define AUTO_CALIB_BRIGHTNESS		200
+> +static int qcom_wled_auto_calibrate(struct qcom_wled *wled)
 > +{
-> +	struct qcom_wled *wled = _wled;
-> +	int rc;
-> +	u32 int_sts, fault_sts;
+> +	int rc = 0, i;
+> +	u32 sink_config = 0, int_sts;
+> +	u8 reg = 0, sink_test = 0, sink_valid = 0;
+> +	u8 string_cfg = wled->cfg.string_cfg;
 > +
-> +	rc = regmap_read(wled->regmap,
-> +			wled->ctrl_addr + QCOM_WLED_CTRL_INT_RT_STS, &int_sts);
+> +	/* read configured sink configuration */
+> +	rc = regmap_read(wled->regmap, wled->sink_addr +
+> +			QCOM_WLED_SINK_CURR_SINK_EN, &sink_config);
 > +	if (rc < 0) {
-> +		pr_err("Error in reading WLED_INT_RT_STS rc=%d\n", rc);
-> +		return IRQ_HANDLED;
+> +		pr_err("Failed to read SINK configuration rc=%d\n", rc);
+> +		goto failed_calib;
 > +	}
 > +
-> +	rc = regmap_read(wled->regmap, wled->ctrl_addr +
-> +			QCOM_WLED_CTRL_FAULT_STATUS, &fault_sts);
+> +	/* disable the module before starting calibration */
+> +	rc = regmap_update_bits(wled->regmap,
+> +			wled->ctrl_addr + QCOM_WLED_CTRL_MOD_ENABLE,
+> +			QCOM_WLED_CTRL_MOD_EN_MASK, 0);
 > +	if (rc < 0) {
-> +		pr_err("Error in reading WLED_FAULT_STATUS rc=%d\n", rc);
-> +		return IRQ_HANDLED;
+> +		pr_err("Failed to disable WLED module rc=%d\n",	rc);
+> +		goto failed_calib;
+> +	}
+
+Any error handling beyond this point seems to leave the backlight off
+(indefinitely?), this does seem like potentially bad user experience...
+
+In particular I wonder about the case when this would happen at some
+random time, minutes, hours, days, months after the device was booted.
+
+> +
+> +	/* set low brightness across all sinks */
+> +	rc = qcom_wled_set_brightness(wled, AUTO_CALIB_BRIGHTNESS);
+> +	if (rc < 0) {
+> +		pr_err("Failed to set brightness for calibration rc=%d\n", rc);
+> +		goto failed_calib;
 > +	}
 > +
-> +	if (fault_sts &
-> +		(QCOM_WLED_CTRL_OVP_FAULT_BIT | QCOM_WLED_CTRL_ILIM_FAULT_BIT))
-> +		pr_err("WLED OVP fault detected, int_sts=%x fault_sts= %x\n",
-> +			int_sts, fault_sts);
+> +	if (wled->cfg.en_cabc) {
+> +		for (i = 0; (string_cfg >> i) != 0; i++) {
+> +			reg = 0;
+> +			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
+> +					QCOM_WLED_SINK_CABC_REG(i),
+> +					QCOM_WLED_SINK_CABC_MASK, reg);
 
-All this function does is print things to the log. When is this
-information consumed and by whom? dev_dbg() instead?
+Just replace "reg" with 0.
+
+> +			if (rc < 0)
+> +				goto failed_calib;
+> +		}
+> +	}
+> +
+> +	/* disable all sinks */
+> +	rc = regmap_write(wled->regmap,
+> +			wled->sink_addr + QCOM_WLED_SINK_CURR_SINK_EN, 0);
+> +	if (rc < 0) {
+> +		pr_err("Failed to disable all sinks rc=%d\n", rc);
+> +		goto failed_calib;
+> +	}
+> +
+> +	/* iterate through the strings one by one */
+> +	for (i = 0; (string_cfg >> i) != 0; i++) {
+> +		sink_test = 1 << (QCOM_WLED_SINK_CURR_SINK_SHFT + i);
+
+BIT(QCOM_WLED_SINK_CURR_SINK_SHFT + i);
 
 > +
-> +	return IRQ_HANDLED;
+> +		/* Enable feedback control */
+> +		rc = regmap_write(wled->regmap, wled->ctrl_addr +
+> +				QCOM_WLED_CTRL_FDBK_OP, i + 1);
+> +		if (rc < 0) {
+> +			pr_err("Failed to enable feedback for SINK %d rc = %d\n",
+> +				i + 1, rc);
+> +			goto failed_calib;
+> +		}
+> +
+> +		/* enable the sink */
+> +		rc = regmap_write(wled->regmap, wled->sink_addr +
+> +				QCOM_WLED_SINK_CURR_SINK_EN, sink_test);
+> +		if (rc < 0) {
+> +			pr_err("Failed to configure SINK %d rc=%d\n",
+> +						i + 1, rc);
+> +			goto failed_calib;
+> +		}
+> +
+> +		/* Enable the module */
+> +		rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
+> +				QCOM_WLED_CTRL_MOD_ENABLE,
+> +				QCOM_WLED_CTRL_MOD_EN_MASK,
+> +				QCOM_WLED_CTRL_MOD_EN_MASK);
+
+I like the use of regmap_update_bits(..., MASK, MASK) it's clean, but
+makes me wonder why it's done differently in qcom_wled_module_enable().
+
+> +		if (rc < 0) {
+> +			pr_err("Failed to enable WLED module rc=%d\n", rc);
+> +			goto failed_calib;
+> +		}
+> +
+> +		usleep_range(QCOM_WLED_SOFT_START_DLY_US,
+> +				QCOM_WLED_SOFT_START_DLY_US + 1000);
+> +
+> +		rc = regmap_read(wled->regmap, wled->ctrl_addr +
+> +				QCOM_WLED_CTRL_INT_RT_STS, &int_sts);
+> +		if (rc < 0) {
+> +			pr_err("Error in reading WLED_INT_RT_STS rc=%d\n", rc);
+> +			goto failed_calib;
+> +		}
+> +
+> +		if (int_sts & QCOM_WLED_CTRL_OVP_FAULT_BIT)
+> +			pr_debug("WLED OVP fault detected with SINK %d\n",
+> +						i + 1);
+> +		else
+> +			sink_valid |= sink_test;
+> +
+> +		/* Disable the module */
+> +		rc = regmap_update_bits(wled->regmap,
+> +				wled->ctrl_addr + QCOM_WLED_CTRL_MOD_ENABLE,
+> +				QCOM_WLED_CTRL_MOD_EN_MASK, 0);
+> +		if (rc < 0) {
+> +			pr_err("Failed to disable WLED module rc=%d\n", rc);
+> +			goto failed_calib;
+> +		}
+> +	}
+> +
+> +	if (sink_valid == sink_config) {
+> +		pr_debug("WLED auto-calibration complete, default sink-config=%x OK!\n",
+> +						sink_config);
+> +	} else {
+> +		pr_warn("Invalid WLED default sink config=%x changing it to=%x\n",
+> +						sink_config, sink_valid);
+> +		sink_config = sink_valid;
+> +	}
+> +
+> +	if (!sink_config) {
+> +		pr_warn("No valid WLED sinks found\n");
+> +		wled->force_mod_disable = true;
+> +		goto failed_calib;
+> +	}
+> +
+> +	/* write the new sink configuration */
+> +	rc = regmap_write(wled->regmap,
+> +			wled->sink_addr + QCOM_WLED_SINK_CURR_SINK_EN,
+> +			sink_config);
+> +	if (rc < 0) {
+> +		pr_err("Failed to reconfigure the default sink rc=%d\n", rc);
+> +		goto failed_calib;
+> +	}
+> +
+> +	/* MODULATOR_EN setting for valid sinks */
+
+"Enable valid sinks"
+
+> +	for (i = 0; (string_cfg >> i) != 0; i++) {
+> +		if (wled->cfg.en_cabc) {
+> +			reg = QCOM_WLED_SINK_CABC_EN;
+
+"reg" is a bad name of a variable holding the "value" to be written to a
+register.
+
+> +			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
+> +					QCOM_WLED_SINK_CABC_REG(i),
+> +					QCOM_WLED_SINK_CABC_MASK, reg);
+
+Again, just inline the value in the function call.
+
+> +			if (rc < 0)
+> +				goto failed_calib;
+> +		}
+> +
+> +		if (sink_config & (1 << (QCOM_WLED_SINK_CURR_SINK_SHFT + i)))
+
+BIT(QCOM_WLED_SINK_CURR_SINK_SHFT + i)
+
+> +			reg = QCOM_WLED_SINK_REG_STR_MOD_EN;
+> +		else
+> +			reg = 0x0; /* disable modulator_en for unused sink */
+> +
+> +		rc = regmap_write(wled->regmap, wled->sink_addr +
+> +				QCOM_WLED_SINK_MOD_EN_REG(i), reg);
+> +		if (rc < 0) {
+> +			pr_err("Failed to configure MODULATOR_EN rc=%d\n", rc);
+> +			goto failed_calib;
+> +		}
+> +	}
+> +
+> +	/* restore the feedback setting */
+> +	rc = regmap_write(wled->regmap,
+> +			wled->ctrl_addr + QCOM_WLED_CTRL_FDBK_OP, 0);
+> +	if (rc < 0) {
+> +		pr_err("Failed to restore feedback setting rc=%d\n", rc);
+> +		goto failed_calib;
+> +	}
+> +
+> +	/* restore  brightness */
+> +	rc = qcom_wled_set_brightness(wled, wled->brightness);
+> +	if (rc < 0) {
+> +		pr_err("Failed to set brightness after calibration rc=%d\n",
+> +			rc);
+> +		goto failed_calib;
+> +	}
+> +
+> +	rc = regmap_update_bits(wled->regmap,
+> +			wled->ctrl_addr + QCOM_WLED_CTRL_MOD_ENABLE,
+> +			QCOM_WLED_CTRL_MOD_EN_MASK,
+> +			QCOM_WLED_CTRL_MOD_EN_MASK);
+> +	if (rc < 0) {
+> +		pr_err("Failed to enable WLED module rc=%d\n", rc);
+> +		goto failed_calib;
+> +	}
+> +
+> +	/* delay for WLED soft-start */
+
+What comes after this that you want to delay?
+
+This delay is used to make the OVP IRQ not fire immediately, but as
+we've now successfully executed the string auto detection run we're
+never going to do anything in the OVP handler.
+
+> +	usleep_range(QCOM_WLED_SOFT_START_DLY_US,
+> +			QCOM_WLED_SOFT_START_DLY_US + 1000);
+> +
+> +failed_calib:
+> +	return rc;
 > +}
 > +
->  static int qcom_wled_setup(struct qcom_wled *wled)
+> +#define WLED_AUTO_CAL_OVP_COUNT		5
+> +#define WLED_AUTO_CAL_CNT_DLY_US	1000000	/* 1 second */
+> +static bool qcom_wled_auto_cal_required(struct qcom_wled *wled)
+> +{
+> +	s64 elapsed_time_us;
+> +
+> +	/*
+> +	 * Check if the OVP fault was an occasional one
+> +	 * or if its firing continuously, the latter qualifies
+> +	 * for an auto-calibration check.
+> +	 */
+> +	if (!wled->auto_calibration_ovp_count) {
+> +		wled->start_ovp_fault_time = ktime_get();
+> +		wled->auto_calibration_ovp_count++;
+> +	} else {
+> +		elapsed_time_us = ktime_us_delta(ktime_get(),
+> +				wled->start_ovp_fault_time);
+> +		if (elapsed_time_us > WLED_AUTO_CAL_CNT_DLY_US)
+> +			wled->auto_calibration_ovp_count = 0;
+> +		else
+> +			wled->auto_calibration_ovp_count++;
+> +
+> +		if (wled->auto_calibration_ovp_count >=
+> +				WLED_AUTO_CAL_OVP_COUNT) {
+> +			wled->auto_calibration_ovp_count = 0;
+> +			return true;
+> +		}
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +static int qcom_wled_auto_calibrate_at_init(struct qcom_wled *wled)
+
+I presume this function is expected to detect if there is a invalid
+configuration at boot and try to figure out which strings are actually
+wired.
+
+> +{
+> +	int rc;
+> +	u32 fault_status = 0, rt_status = 0;
+> +
+> +	if (!wled->cfg.auto_calib_enabled)
+> +		return 0;
+> +
+> +	rc = regmap_read(wled->regmap,
+> +			wled->ctrl_addr + QCOM_WLED_CTRL_INT_RT_STS,
+> +			&rt_status);
+> +	if (rc < 0)
+> +		pr_err("Failed to read RT status rc=%d\n", rc);
+> +
+> +	rc = regmap_read(wled->regmap,
+> +			wled->ctrl_addr + QCOM_WLED_CTRL_FAULT_STATUS,
+> +			&fault_status);
+> +	if (rc < 0)
+> +		pr_err("Failed to read fault status rc=%d\n", rc);
+> +
+> +	if ((rt_status & QCOM_WLED_CTRL_OVP_FLT_RT_STS_BIT) ||
+> +			(fault_status & QCOM_WLED_CTRL_OVP_FAULT_BIT)) {
+
+You should be able to drop the extra () around these.
+
+> +		mutex_lock(&wled->lock);
+> +		rc = qcom_wled_auto_calibrate(wled);
+> +		if (rc < 0)
+> +			pr_err("Failed auto-calibration rc=%d\n", rc);
+
+qcom_wled_auto_calibrate() did already print, no need to repeat this.
+
+> +		else
+> +			wled->auto_calib_done = true;
+> +		mutex_unlock(&wled->lock);
+> +	}
+> +
+> +	return rc;
+> +}
+> +
+>  static irqreturn_t qcom_wled_ovp_irq_handler(int irq, void *_wled)
 >  {
->  	int rc, temp, i;
->  	u8 sink_en = 0;
-> +	u32 val;
->  	u8 string_cfg = wled->cfg.string_cfg;
->  	int sc_irq = wled->cfg.sc_irq;
-> +	int ovp_irq = wled->cfg.ovp_irq;
+>  	struct qcom_wled *wled = _wled;
+> @@ -319,6 +584,33 @@ static irqreturn_t qcom_wled_ovp_irq_handler(int irq, void *_wled)
+>  		pr_err("WLED OVP fault detected, int_sts=%x fault_sts= %x\n",
+>  			int_sts, fault_sts);
 >  
->  	rc = regmap_update_bits(wled->regmap,
->  			wled->ctrl_addr + QCOM_WLED_CTRL_OVP,
-> @@ -367,6 +427,25 @@ static int qcom_wled_setup(struct qcom_wled *wled)
->  		}
->  	}
->  
-> +	if (ovp_irq >= 0) {
+> +	if (fault_sts & QCOM_WLED_CTRL_OVP_FAULT_BIT) {
+> +		if (wled->cfg.auto_calib_enabled && !wled->auto_calib_done) {
+> +			if (qcom_wled_auto_cal_required(wled)) {
 
-As with the previous patch.
+So this will be invoked only once, iff we didn't boot with a faulty
+configuration in which case the qcom_wled_auto_calibrate_at_init() has
+already done this step and set auto_calib_done.
 
-[..]
-> @@ -539,6 +618,10 @@ static int qcom_wled_configure(struct qcom_wled *wled, struct device *dev)
-[..]
-> +	wled->cfg.ovp_irq = platform_get_irq_byname(wled->pdev, "ovp-irq");
-> +	if (wled->cfg.ovp_irq < 0)
-> +		dev_dbg(&wled->pdev->dev, "ovp irq is not used\n");
+
+Which also would mean that all logic in this handler, beyond the
+printouts, are only ever going to be executed zero or one times.
+
+Why don't you just do auto-detection during probe (iff the flag is set
+in DT) and you can remove all this extra logic?
+
+> +				mutex_lock(&wled->lock);
+> +				if (wled->cfg.ovp_irq > 0 &&
+> +						!wled->ovp_irq_disabled) {
+> +					disable_irq_nosync(wled->cfg.ovp_irq);
+> +					wled->ovp_irq_disabled = true;
+> +				}
+> +
+> +				rc = qcom_wled_auto_calibrate(wled);
+> +				if (rc < 0)
+> +					pr_err("Failed auto-calibration rc=%d\n",
+> +						rc);
+
+qcom_wled_auto_calibrate() did already print.
+
+> +				else
+> +					wled->auto_calib_done = true;
+> +
+> +				if (wled->cfg.ovp_irq > 0 &&
+> +						wled->ovp_irq_disabled) {
+> +					enable_irq(wled->cfg.ovp_irq);
+> +					wled->ovp_irq_disabled = false;
+> +				}
+> +				mutex_unlock(&wled->lock);
+> +			}
+> +		}
+> +	}
 > +
 
 Regards,
 Bjorn
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
