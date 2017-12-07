@@ -1,66 +1,58 @@
-From: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH] dt: bindings: as3645a: Fix the example node
-Date: Wed, 6 Dec 2017 16:32:36 -0600
-Message-ID: <2c2b1fc0-6156-2897-b597-6911fee64556@ti.com>
-References: <20171205133637.30022-1-dmurphy@ti.com>
- <20171206215204.7qyjjd2oue7n7l37@rob-hp-laptop>
+From: Ben Whitten <ben.whitten@gmail.com>
+Subject: Re: [PATCH/RFC v2] leds: trigger: Introduce a NETDEV trigger
+Date: Thu, 7 Dec 2017 11:35:45 +0000
+Message-ID: <CAF3==it1X9KD+x3t0McS6q1QuLsYjw2rNZK9KcK+5oOaLndEUg@mail.gmail.com>
+References: <1512472751-10928-1-git-send-email-ben.whitten@lairdtech.com>
+ <6cad314f-3cef-ec74-b55e-cccae28da4ab@gmail.com> <CAF3==iviGYd6q1FSjYarJ46ODgPMUN8dby==02Yk5fHztTdd5w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171206215204.7qyjjd2oue7n7l37@rob-hp-laptop>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAF3==iviGYd6q1FSjYarJ46ODgPMUN8dby==02Yk5fHztTdd5w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: rpurdie@rpsys.net, pavel@ucw.cz, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Rob
-
-On 12/06/2017 03:52 PM, Rob Herring wrote:
-> On Tue, Dec 05, 2017 at 07:36:37AM -0600, Dan Murphy wrote:
->> Fix the address-cells and size-cells example node
->> to reflect to the correct representation.
+On 6 December 2017 at 20:07, Ben Whitten <ben.whitten@gmail.com> wrote:
+> Hi Jacek,
+>
+> On 5 December 2017 at 20:38, Jacek Anaszewski
+> <jacek.anaszewski@gmail.com> wrote:
+>> Hi Ben,
 >>
->> Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
->> ---
->>  Documentation/devicetree/bindings/leds/ams,as3645a.txt | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
+>> On 12/05/2017 12:19 PM, Ben Whitten wrote:
+>>> From: Ben Whitten <ben.whitten@gmail.com>
+>>>
+>>> The patch was converted to led_blink_oneshot, in doing so we find that the
+>>> behaviour has changed. As I dont want to break 'userspace' led behaviour this
+>>> patch shouldn't be merged as is. Open to suggestions.
+>>>
+>>> Given an interval of 50ms and heavy throughput, the previous implementation
+>>> produced a blink with 100ms period and 50% dutycycle. The led_blink_oneshot
+>>> version produces a blink with 140ms period and 57% dutycycle.
 >>
->> diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
->> index fdc40e354a64..8a49ccfec29b 100644
->> --- a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
->> +++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
->> @@ -59,8 +59,8 @@ Example
->>  =======
->>  
->>  	as3645a@30 {
->> -		#address-cells: 1
->> -		#size-cells: 0
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->>  		reg = <0x30>;
->>  		compatible = "ams,as3645a";
-> 
-> Convention is also we put compatible first.
-> 
+>> Please check if the LED class driver you're testing the trigger with
+>> implements blink_set op. If yes it would be good to check if it doesn't
+>> align the delay intervals to the hardware capabilities instead of
+>> failing and relying on a LED core software blink fallback.
+>
+> The led are using gpio-led set from device tree on an embedded system, sama5
+> based. So as far as I can tell blink_op is NULL in this case and it
+> then relies on
+> software for the blink in the form of timers.
+> I assume its the jiffies playing a part here, taking a jiffy or two to
+> queue up a flash
+> may add 10ms to the desired 50ms delay_on/delay_off that I am seeing. Then the
+> extra time may be due to the stats workqueue not aligning with the
+> blink timer to
+> kick it off again.
 
-OK I will move that too for v2.
+I have found a solution. As oneshot appears run in software regardless
+based on the
+check in led_blink_setup, cancelling the software timer in the stats
+worker allows for
+an immidiate requeue. This brings the period back down to 110ms and looks
+identical to the previous implementation.
 
-Can that be in the same patch or do you want a separate patch?
-
-Dan
-
->>  		flash@0 {
->> -- 
->> 2.15.0.124.g7668cbc60
->>
-
-
--- 
-------------------
-Dan Murphy
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Ben
