@@ -1,76 +1,57 @@
-From: Ben Whitten <ben.whitten@gmail.com>
-Subject: Re: [PATCH v3] leds: trigger: Introduce a NETDEV trigger
-Date: Thu, 7 Dec 2017 14:19:46 +0000
-Message-ID: <CAF3==isuPt1VAtpZBtAk4iKWKy+KG_DMqO2_ZcW6o6yakruAdw@mail.gmail.com>
-References: <1512647169-11796-1-git-send-email-ben.whitten@lairdtech.com> <CAOFm3uGxzg45ZGmE4GRwy=oiaNERtq7tYdG4VwgZc0xgvXG6Pg@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] dt: bindings: as3645a: Fix the example node
+Date: Thu, 7 Dec 2017 09:42:29 -0600
+Message-ID: <CAL_JsqKG2TWLTREqNecy_3pOqLFJWa4SM4G4yzyKsZqW7opDvw@mail.gmail.com>
+References: <20171205133637.30022-1-dmurphy@ti.com> <20171206215204.7qyjjd2oue7n7l37@rob-hp-laptop>
+ <2c2b1fc0-6156-2897-b597-6911fee64556@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOFm3uGxzg45ZGmE4GRwy=oiaNERtq7tYdG4VwgZc0xgvXG6Pg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: rpurdie@rpsys.net, Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:45334 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754142AbdLGPmv (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 7 Dec 2017 10:42:51 -0500
+In-Reply-To: <2c2b1fc0-6156-2897-b597-6911fee64556@ti.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 
-Philippe,
-
-On 7 December 2017 at 13:01, Philippe Ombredanne <pombredanne@nexb.com> wrote:
-> Ben,
+On Wed, Dec 6, 2017 at 4:32 PM, Dan Murphy <dmurphy@ti.com> wrote:
+> Rob
 >
-> On Thu, Dec 7, 2017 at 12:46 PM, Ben Whitten <ben.whitten@gmail.com> wrote:
->> From: Ben Whitten <ben.whitten@gmail.com>
+> On 12/06/2017 03:52 PM, Rob Herring wrote:
+>> On Tue, Dec 05, 2017 at 07:36:37AM -0600, Dan Murphy wrote:
+>>> Fix the address-cells and size-cells example node
+>>> to reflect to the correct representation.
+>>>
+>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/leds/ams,as3645a.txt | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+>>> index fdc40e354a64..8a49ccfec29b 100644
+>>> --- a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+>>> +++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+>>> @@ -59,8 +59,8 @@ Example
+>>>  =======
+>>>
+>>>      as3645a@30 {
+>>> -            #address-cells: 1
+>>> -            #size-cells: 0
+>>> +            #address-cells = <1>;
+>>> +            #size-cells = <0>;
+>>>              reg = <0x30>;
+>>>              compatible = "ams,as3645a";
 >>
->> This commit introduces a NETDEV trigger for named device
->> activity. Available triggers are link, rx, and tx.
+>> Convention is also we put compatible first.
 >>
->> Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
-> []
->> --- /dev/null
->> +++ b/drivers/leds/trigger/ledtrig-netdev.c
->> @@ -0,0 +1,503 @@
->> +/*
->> + * LED Kernel Netdev Trigger
->> + *
->> + * Toggles the LED to reflect the link and traffic state of a named net device
->> + *
->> + * Copyright 2017 Ben Whitten <ben.whitten@gmail.com>
->> + *
->> + * Copyright 2007 Oliver Jowett <oliver@opencloud.com>
->> + *
->> + * Derived from ledtrig-timer.c which is:
->> + *  Copyright 2005-2006 Openedhand Ltd.
->> + *  Author: Richard Purdie <rpurdie@openedhand.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + */
 >
-> Have you considered using the new SPDX id instead ? See Thomas doc
-> patches and Greg and Linus comments on the topic
-> Here this would likely come out this way (yes, using a C++ comment at the top):
+> OK I will move that too for v2.
 >
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * LED Kernel Netdev Trigger
->> + *
->> + * Toggles the LED to reflect the link and traffic state of a named net device
->> + *
->> + * Copyright 2017 Ben Whitten <ben.whitten@gmail.com>
->> + *
->> + * Copyright 2007 Oliver Jowett <oliver@opencloud.com>
->> + *
->> + * Derived from ledtrig-timer.c which is:
->> + *  Copyright 2005-2006 Openedhand Ltd.
->> + *  Author: Richard Purdie <rpurdie@openedhand.com>
->> + *
->> + */
->
->
-> This is cleaner and simpler, don't you think?
+> Can that be in the same patch or do you want a separate patch?
 
-Much cleaner. Thank you for the suggestion, I was unaware of this.
+Same patch is fine.
 
-Kind regards,
-Ben Whitten
+Rob
