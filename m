@@ -1,125 +1,124 @@
-From: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v8 1/2] dt: bindings: lm3692x: Add bindings for lm3692x
- LED driver
-Date: Thu, 7 Dec 2017 17:04:47 -0600
-Message-ID: <c354b66d-f501-99bc-5928-efcfe33dbd06@ti.com>
-References: <20171205204630.12267-1-dmurphy@ti.com>
- <20171207224938.6nvy63ghxe5vwvk4@rob-hp-laptop>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v2 1/6] dt: bindings: lp8860: Update bindings for lp8860
+Date: Thu, 7 Dec 2017 17:07:56 -0600
+Message-ID: <c981cd96-e508-4b7a-ebfc-fe99eb1f46fc@ti.com>
+References: <20171205204327.12111-1-dmurphy@ti.com>
+ <20171205204327.12111-2-dmurphy@ti.com>
+ <20171207224229.wd6nc4ukiksebxw4@rob-hp-laptop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171207224938.6nvy63ghxe5vwvk4@rob-hp-laptop>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:31100 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750973AbdLGXIM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 7 Dec 2017 18:08:12 -0500
+In-Reply-To: <20171207224229.wd6nc4ukiksebxw4@rob-hp-laptop>
 Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
 Rob
 
+Thanks
 
-On 12/07/2017 04:49 PM, Rob Herring wrote:
-> On Tue, Dec 05, 2017 at 02:46:29PM -0600, Dan Murphy wrote:
->> This adds the devicetree bindings for the LM3692x
->> I2C LED string driver.
+On 12/07/2017 04:42 PM, Rob Herring wrote:
+> gOn Tue, Dec 05, 2017 at 02:43:22PM -0600, Dan Murphy wrote:
+>> Update the lp8860 bindings to fix various issues
+>> found.  Add address-cells and size-cells, rename
+>> enable-gpio to enable-gpios, update the node name
+>> to the device name and indent the node example.
 >>
->> Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
->> Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
 >> ---
 >>
->> v8 - Added address-cells and size-cells as well as child node reg - https://patchwork.kernel.org/patch/10091259/
->> v7 - No changes - https://patchwork.kernel.org/patch/10087475/
->> v6 - No changes -https://patchwork.kernel.org/patch/10085567/
->> v5 - No Changes - https://patchwork.kernel.org/patch/10081071/
->> v4 - Fix example node, added trigger entry, removed ambiguous x for compatible and
->> added common.txt pointer for label - https://patchwork.kernel.org/patch/10060107
->> v3 - No changes
->> v2 - No changes - https://patchwork.kernel.org/patch/10056677/
+>> v2 - New patch
 >>
->>  .../devicetree/bindings/leds/leds-lm3692x.txt      | 47 ++++++++++++++++++++++
->>  1 file changed, 47 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+>>  .../devicetree/bindings/leds/leds-lp8860.txt       | 28 ++++++++++++----------
+>>  1 file changed, 16 insertions(+), 12 deletions(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
->> new file mode 100644
->> index 000000000000..84f69342d879
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
->> @@ -0,0 +1,47 @@
->> +* Texas Instruments - LM3692x Highly Efficient White LED Driver
->> +
->> +The LM3692x is an ultra-compact, highly efficient,
->> +white-LED driver designed for LCD display backlighting.
->> +
->> +The main difference between the LM36922 and LM36923 is the number of
->> +LED strings it supports.  The LM36922 supports two strings while the LM36923
->> +supports three strings.
->> +
->> +Required properties:
->> +	- compatible:
->> +		"ti,lm36922"
->> +		"ti,lm36923"
->> +	- reg :  I2C slave address
+>> diff --git a/Documentation/devicetree/bindings/leds/leds-lp8860.txt b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+>> index aad38dd94d4b..1b2fab05ec6a 100644
+>> --- a/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+>> +++ b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+>> @@ -6,24 +6,28 @@ current sinks that can be controlled by a PWM input
+>>  signal, a SPI/I2C master, or both.
+>>  
+>>  Required properties:
+>> -	- compatible:
+>> +	- compatible :
+>>  		"ti,lp8860"
+>> -	- reg -  I2C slave address
+>> -	- label - Used for naming LEDs
+>> +	- reg : I2C slave address
+>> +	- label : Used for naming LEDs
 >> +	- #address-cells : 1
 >> +	- #size-cells : 0
->> +
->> +Optional properties:
->> +	- label : see Documentation/devicetree/bindings/leds/common.txt
-> 
-> Should be a child prop.
-
-Thanks I forgot to move this to Optional Child Properties.
-
-> 
+>>  
+>>  Optional properties:
+>> -	- enable-gpio - gpio pin to enable/disable the device.
+>> -	- supply - "vled" - LED supply
 >> +	- enable-gpios : gpio pin to enable/disable the device.
->> +	- vled-supply : LED supply
->> +	- linux,default-trigger : (optional)
->> +	   see Documentation/devicetree/bindings/leds/common.txt
 > 
-> Ditto.
+> Needs to state active high or low.
 
 Ack
 
 > 
->> +
->> +Required child properties:
->> +	- reg : 0
->> +
->> +Example:
->> +
->> +lm3692x@36 {
+>> +	- supply : "vled" - LED supply
 > 
-> leds@36
+> "vled-supply : ..."
+> 
 
-Rob why does this need to be leds?  Is this because it would be a child of an I2C node?
+Ack
 
-Jacek
-Would this not cause and issue for your proposal to take the parent node name as part of the LED label?
+>>  
+>>  Example:
+>>  
+>> -leds: leds@6 {
+>> -	compatible = "ti,lp8860";
+>> -	reg = <0x2d>;
+>> -	label = "display_cluster";
+>> -	enable-gpio = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>> -	vled-supply = <&vbatt>;
+>> -}
+>> +	lp8860@2d {
+> 
+> leds@2d
+> 
+> There's not really any point in adding the indentation.
+
+OK I was just following convention of other child node LED bindings
+
+I can remove the indents.
+
+> 
+>> +		compatible = "ti,lp8860";
+> 
+>> +		#address-cells: 1
+>> +		#size-cells: 0
+> 
+> s/:/=/
+> 
+> Though, these aren't necessary without any child nodes. Is there more 
+> than 1 LED channel/driver?
+> 
+
+Yes this device can be used to drive at least 4 different LED strings as well
+I will be adding this feature once I get this driver and binding cleaned up.
 
 Dan
 
-> 
-> It looks like you could just add the compatible strings to the existing 
-> binding you're modifying?
-> 
->> +	compatible = "ti,lm3692x";
->> +	reg = <0x36>;
->> +	#address-cells = <1>;
->> +	#size-cells = <0>;
->> +
->> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
->> +	vled-supply = <&vbatt>;
->> +
->> +	backlight: backlight@0 {
->> +		reg = <0>;
->> +		label = "backlight_cluster";
->> +		linux,default-trigger = "backlight";
->> +	};
->> +}
->> +
->> +For more product information please see the link below:
->> +http://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
+>> +		reg = <0x2d>;
+>> +		label = "display_cluster";
+>> +		enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>> +		vled-supply = <&vbatt>;
+>> +	}
+>>  
+>>  For more product information please see the link below:
+>>  http://www.ti.com/product/lp8860-q1
 >> -- 
 >> 2.15.0.124.g7668cbc60
 >>
@@ -128,7 +127,3 @@ Dan
 -- 
 ------------------
 Dan Murphy
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
