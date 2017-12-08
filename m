@@ -1,65 +1,77 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [RESEND PATCH v2] dt: bindings: as3645a: Fix the example node
-Date: Fri, 8 Dec 2017 09:56:18 -0600
-Message-ID: <50214549-63d1-f92e-d4e7-dc6533477d83@ti.com>
-References: <20171208155514.7696-1-dmurphy@ti.com>
+Subject: Re: [PATCH/RFC] DT: leds: Fix 'label' property description and add
+ 'colour' property
+Date: Fri, 8 Dec 2017 10:01:45 -0600
+Message-ID: <1c741846-63d3-f940-4888-1b1899147ab0@ti.com>
+References: <1512251410-6084-1-git-send-email-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:28674 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753954AbdLHP4d (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 8 Dec 2017 10:56:33 -0500
-In-Reply-To: <20171208155514.7696-1-dmurphy@ti.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1512251410-6084-1-git-send-email-jacek.anaszewski@gmail.com>
 Content-Language: en-US
-Sender: linux-leds-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: robh@kernel.org, pavel@ucw.cz, sakari.ailus@iki.fi
 List-Id: linux-leds@vger.kernel.org
-To: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-Resent to include DT maintainers
+Jacek
 
-On 12/08/2017 09:55 AM, Dan Murphy wrote:
-> Fix the address-cells and size-cells example node
-> to reflect to the correct representation.
+On 12/02/2017 03:50 PM, Jacek Anaszewski wrote:
+> Label property was imposed a uniqueness requirement, which was erroneous,
+> since ePAPR defines it to "a human readable string describing a device".
 > 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> ---
+> Also the binding description misleadingly suggested direct usage of label
+> for LED class device name, whereas it should only define a LED function.
 > 
-> v2 - Moved compatible to be first in the node - https://patchwork.kernel.org/patch/10092937/
+> Therefore an additional 'colour' property is being introduced, which together
+> with the parent DT node name used for devicename shall be used for naming LED
+> class device according to the patterh <devicename>:<colour>:<function>.
 > 
->  Documentation/devicetree/bindings/leds/ams,as3645a.txt | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> index fdc40e354a64..fc7f5f9f234c 100644
-> --- a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> +++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> @@ -59,10 +59,10 @@ Example
->  =======
->  
->  	as3645a@30 {
 
-Rob
+In submitting updated DT bindings the maintainers are requesting all device parent
+LED nodes be 
 
-Here is an example of the device name being part of the node name.
+leds@xx {
 
-Should this be changed as well to leds@30?
+Now this will make every LED class devicename
+
+leds:<colour>:<function>
+
+So either we cannot use the devicename or we need need to use the compatible string instead.
+
+So an example would be
+
+ti,lp8860:white:backlight
+
+You should be on these patches.
 
 Dan
 
-> -		#address-cells: 1
-> -		#size-cells: 0
-> -		reg = <0x30>;
->  		compatible = "ams,as3645a";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		reg = <0x30>;
->  		flash@0 {
->  			reg = <0x0>;
->  			flash-timeout-us = <150000>;
+> Fixes: 116b8e164116 ("DT: leds: Add uniqueness requirement for 'label' property")
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/leds/common.txt | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index 1d4afe9..16973ee 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -14,10 +14,9 @@ Optional properties for child nodes:
+>  - led-sources : List of device current outputs the LED is connected to. The
+>  		outputs are identified by the numbers that must be defined
+>  		in the LED device binding documentation.
+> -- label : The label for this LED. If omitted, the label is taken from the node
+> -	  name (excluding the unit address). It has to uniquely identify
+> -	  a device, i.e. no other LED class device can be assigned the same
+> -	  label.
+> +- label : The label for this LED. It should describe its function. If omitted,
+> +          the label is taken from the node name (excluding the unit address).
+> +- colour : Colour of the LED.
+>  
+>  - default-state : The initial state of the LED. Valid values are "on", "off",
+>    and "keep". If the LED is already on or off and the default-state property is
 > 
 
 
