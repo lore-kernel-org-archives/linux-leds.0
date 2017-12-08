@@ -1,64 +1,70 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2] dt: bindings: as3645a: Fix the example node
-Date: Fri, 8 Dec 2017 15:27:22 +0100
-Message-ID: <20171208142722.GC7793@amd>
-References: <20171207125012.5765-1-dmurphy@ti.com>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: [PATCH v3 1/3] leds: core: Introduce generic pattern interface
+Date: Fri, 8 Dec 2017 15:27:55 +0100
+Message-ID: <20171208142755.GE7793@amd>
+References: <20171115071345.24331-1-bjorn.andersson@linaro.org>
+ <20171115071345.24331-2-bjorn.andersson@linaro.org>
+ <20171115073642.GA21307@kroah.com>
+ <20171120232015.GB13906@amd>
+ <20171121002102.GD28761@minitux>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="z4+8/lEcDcG5Ke9S"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="CGDBiGfvSTbxKZlW"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20171207125012.5765-1-dmurphy@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: sakari.ailus@iki.fi, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20171121002102.GD28761@minitux>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
 
---z4+8/lEcDcG5Ke9S
+--CGDBiGfvSTbxKZlW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu 2017-12-07 06:50:12, Dan Murphy wrote:
-> Fix the address-cells and size-cells example node
-> to reflect to the correct representation.
+Hi!
+
+> > > > +KernelVersion:	4.14
+> > >=20
+> > > And that kernel version is long since released :)
+> >=20
+> > Yeah, the other problem is it has some interesting format with ":|"
+> > marking repeat,
 >=20
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> So what would you prefer?
+>=20
+> We can either add another file ("pattern_repeat"?) that allows you to
+> describe this separately or some other symbol.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+pattern_repeat should work, yes. And we can make it =3D=3D 0: repeat
+forever. =3D=3D 1 ... repeat just once. =3D=3D n, repeat n times.
 
-> +++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> @@ -59,10 +59,10 @@ Example
->  =3D=3D=3D=3D=3D=3D=3D
-> =20
->  	as3645a@30 {
-> -		#address-cells: 1
-> -		#size-cells: 0
-> -		reg =3D <0x30>;
->  		compatible =3D "ams,as3645a";
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +		reg =3D <0x30>;
->  		flash@0 {
->  			reg =3D <0x0>;
->  			flash-timeout-us =3D <150000>;
+Some leds can support that in hardware.
+
+Thanks,
+									Pavel
 
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---z4+8/lEcDcG5Ke9S
+--CGDBiGfvSTbxKZlW
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAloqoUoACgkQMOfwapXb+vJ8DACfchuh/0ziMCbz7lRIeFElNPsb
-yHsAn1IGmHUuiwRLxHqS9SV49EdySeGi
-=UFPa
+iEYEARECAAYFAloqoWsACgkQMOfwapXb+vJHYACgv3fwEOoYmCHICIx9m2llP5kV
+9n4AmwXaGwtR1EXO60RzRioMV8JMGDG6
+=X/AB
 -----END PGP SIGNATURE-----
 
---z4+8/lEcDcG5Ke9S--
+--CGDBiGfvSTbxKZlW--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
