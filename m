@@ -1,70 +1,109 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [PATCH v3 1/3] leds: core: Introduce generic pattern interface
-Date: Fri, 8 Dec 2017 15:27:55 +0100
-Message-ID: <20171208142755.GE7793@amd>
-References: <20171115071345.24331-1-bjorn.andersson@linaro.org>
- <20171115071345.24331-2-bjorn.andersson@linaro.org>
- <20171115073642.GA21307@kroah.com>
- <20171120232015.GB13906@amd>
- <20171121002102.GD28761@minitux>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Subject: Re: [PATCH v3] leds: trigger: Introduce a NETDEV trigger
+Date: Fri, 8 Dec 2017 15:32:18 +0100
+Message-ID: <CAOFm3uFgfRzNwpFE70QtkR0SuccqQ_k9-Av5vkhqKEaK476oLA@mail.gmail.com>
+References: <1512647169-11796-1-git-send-email-ben.whitten@lairdtech.com>
+ <CAOFm3uGxzg45ZGmE4GRwy=oiaNERtq7tYdG4VwgZc0xgvXG6Pg@mail.gmail.com> <20171208142707.GA7793@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="CGDBiGfvSTbxKZlW"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171121002102.GD28761@minitux>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171208142707.GA7793@amd>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Ben Whitten <ben.whitten@gmail.com>, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+Pavel,
 
---CGDBiGfvSTbxKZlW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Dec 8, 2017 at 3:27 PM, Pavel Machek <pavel@ucw.cz> wrote:
+> On Thu 2017-12-07 14:01:39, Philippe Ombredanne wrote:
+>> Ben,
+>>
+>> On Thu, Dec 7, 2017 at 12:46 PM, Ben Whitten <ben.whitten@gmail.com> wrote:
+>> > From: Ben Whitten <ben.whitten@gmail.com>
+>> >
+>> > This commit introduces a NETDEV trigger for named device
+>> > activity. Available triggers are link, rx, and tx.
+>> >
+>> > Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
+>> []
+>> > --- /dev/null
+>> > +++ b/drivers/leds/trigger/ledtrig-netdev.c
+>> > @@ -0,0 +1,503 @@
+>> > +/*
+>> > + * LED Kernel Netdev Trigger
+>> > + *
+>> > + * Toggles the LED to reflect the link and traffic state of a named net device
+>> > + *
+>> > + * Copyright 2017 Ben Whitten <ben.whitten@gmail.com>
+>> > + *
+>> > + * Copyright 2007 Oliver Jowett <oliver@opencloud.com>
+>> > + *
+>> > + * Derived from ledtrig-timer.c which is:
+>> > + *  Copyright 2005-2006 Openedhand Ltd.
+>> > + *  Author: Richard Purdie <rpurdie@openedhand.com>
+>> > + *
+>> > + * This program is free software; you can redistribute it and/or modify
+>> > + * it under the terms of the GNU General Public License version 2 as
+>> > + * published by the Free Software Foundation.
+>> > + *
+>> > + */
+>>
+>> Have you considered using the new SPDX id instead ? See Thomas doc
+>> patches and Greg and Linus comments on the topic
+>> Here this would likely come out this way (yes, using a C++ comment at the top):
+>>
+>> > +// SPDX-License-Identifier: GPL-2.0
+>> > +/*
+>> > + * LED Kernel Netdev Trigger
+>> > + *
+>> > + * Toggles the LED to reflect the link and traffic state of a named net device
+>> > + *
+>> > + * Copyright 2017 Ben Whitten <ben.whitten@gmail.com>
+>> > + *
+>> > + * Copyright 2007 Oliver Jowett <oliver@opencloud.com>
+>> > + *
+>> > + * Derived from ledtrig-timer.c which is:
+>> > + *  Copyright 2005-2006 Openedhand Ltd.
+>> > + *  Author: Richard Purdie <rpurdie@openedhand.com>
+>> > + *
+>> > + */
+>>
+>>
+>> This is cleaner and simpler, don't you think?
+>
+> Please consider putting SPDX where it logically belongs -- near the
+> copyright.
 
-Hi!
+Linus wants it on the first line. So you could write this way alright:
 
-> > > > +KernelVersion:	4.14
-> > >=20
-> > > And that kernel version is long since released :)
-> >=20
-> > Yeah, the other problem is it has some interesting format with ":|"
-> > marking repeat,
->=20
-> So what would you prefer?
->=20
-> We can either add another file ("pattern_repeat"?) that allows you to
-> describe this separately or some other symbol.
+>> > +// SPDX-License-Identifier: GPL-2.0
+>> > +// Copyright 2017 Ben Whitten <ben.whitten@gmail.com>
+>> > +// Copyright 2007 Oliver Jowett <oliver@opencloud.com>
+>> > +/*
+>> > + * LED Kernel Netdev Trigger
+>> > + *
+>> > + * Toggles the LED to reflect the link and traffic state of a named net device
+>> > + *
+>> > + * Derived from ledtrig-timer.c which is:
+>> > + *  Copyright 2005-2006 Openedhand Ltd.
+>> > + *  Author: Richard Purdie <rpurdie@openedhand.com>
+>> > + *
+>> > + */
 
-pattern_repeat should work, yes. And we can make it =3D=3D 0: repeat
-forever. =3D=3D 1 ... repeat just once. =3D=3D n, repeat n times.
+For  reference please check Linus [1][2][3], Thomas [4] and Greg [5]
+comments on the topic of C++ style // comments and first line placement.
 
-Some leds can support that in hardware.
+Jonathan also wrote a nice background article on the SPDXification
+topic at LWN [6]
 
-Thanks,
-									Pavel
+[1] https://lkml.org/lkml/2017/11/2/715
+[2] https://lkml.org/lkml/2017/11/25/125
+[3] https://lkml.org/lkml/2017/11/25/133
+[4] https://lkml.org/lkml/2017/11/2/805
+[5] https://lkml.org/lkml/2017/10/19/165
+[6] https://lwn.net/Articles/739183/
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---CGDBiGfvSTbxKZlW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAloqoWsACgkQMOfwapXb+vJHYACgv3fwEOoYmCHICIx9m2llP5kV
-9n4AmwXaGwtR1EXO60RzRioMV8JMGDG6
-=X/AB
------END PGP SIGNATURE-----
-
---CGDBiGfvSTbxKZlW--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Cordially
+Philippe Ombredanne
