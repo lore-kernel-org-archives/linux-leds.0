@@ -1,115 +1,79 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v8 1/2] dt: bindings: lm3692x: Add bindings for lm3692x
- LED driver
-Date: Mon, 11 Dec 2017 10:05:42 -0600
-Message-ID: <CAL_JsqJHdPgnd7rwqVH_43FN1go3Sorw3Kexz=NSKF5FpOkKxA@mail.gmail.com>
-References: <20171205204630.12267-1-dmurphy@ti.com> <20171207224938.6nvy63ghxe5vwvk4@rob-hp-laptop>
- <c354b66d-f501-99bc-5928-efcfe33dbd06@ti.com> <CAL_JsqLE_qNjZ9qPUKsc3o5LVOimTKz80sd-mUsLNLdrwjHi2w@mail.gmail.com>
+Subject: Re: [PATCH/RFC] DT: leds: Fix 'label' property description and add
+ 'colour' property
+Date: Mon, 11 Dec 2017 10:27:19 -0600
+Message-ID: <CAL_JsqL=aN6YSH30HSuUKS86Bsb2KPMdT0dyheYjs9Z=w3hH0Q@mail.gmail.com>
+References: <1512251410-6084-1-git-send-email-jacek.anaszewski@gmail.com> <20171204104351.GA6611@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqLE_qNjZ9qPUKsc3o5LVOimTKz80sd-mUsLNLdrwjHi2w@mail.gmail.com>
+In-Reply-To: <20171204104351.GA6611@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sakari Ailus <sakari.ailus@iki.fi>, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Dec 11, 2017 at 9:51 AM, Rob Herring <robh@kernel.org> wrote:
-> On Thu, Dec 7, 2017 at 5:04 PM, Dan Murphy <dmurphy@ti.com> wrote:
->> Rob
->>
->>
->> On 12/07/2017 04:49 PM, Rob Herring wrote:
->>> On Tue, Dec 05, 2017 at 02:46:29PM -0600, Dan Murphy wrote:
->>>> This adds the devicetree bindings for the LM3692x
->>>> I2C LED string driver.
->>>>
->>>> Acked-by: Pavel Machek <pavel@ucw.cz>
->>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>>> ---
->>>>
->>>> v8 - Added address-cells and size-cells as well as child node reg - https://patchwork.kernel.org/patch/10091259/
->>>> v7 - No changes - https://patchwork.kernel.org/patch/10087475/
->>>> v6 - No changes -https://patchwork.kernel.org/patch/10085567/
->>>> v5 - No Changes - https://patchwork.kernel.org/patch/10081071/
->>>> v4 - Fix example node, added trigger entry, removed ambiguous x for compatible and
->>>> added common.txt pointer for label - https://patchwork.kernel.org/patch/10060107
->>>> v3 - No changes
->>>> v2 - No changes - https://patchwork.kernel.org/patch/10056677/
->>>>
->>>>  .../devicetree/bindings/leds/leds-lm3692x.txt      | 47 ++++++++++++++++++++++
->>>>  1 file changed, 47 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3692x.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
->>>> new file mode 100644
->>>> index 000000000000..84f69342d879
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
->>>> @@ -0,0 +1,47 @@
->>>> +* Texas Instruments - LM3692x Highly Efficient White LED Driver
->>>> +
->>>> +The LM3692x is an ultra-compact, highly efficient,
->>>> +white-LED driver designed for LCD display backlighting.
->>>> +
->>>> +The main difference between the LM36922 and LM36923 is the number of
->>>> +LED strings it supports.  The LM36922 supports two strings while the LM36923
->>>> +supports three strings.
->>>> +
->>>> +Required properties:
->>>> +    - compatible:
->>>> +            "ti,lm36922"
->>>> +            "ti,lm36923"
->>>> +    - reg :  I2C slave address
->>>> +    - #address-cells : 1
->>>> +    - #size-cells : 0
->>>> +
->>>> +Optional properties:
->>>> +    - label : see Documentation/devicetree/bindings/leds/common.txt
->>>
->>> Should be a child prop.
->>
->> Thanks I forgot to move this to Optional Child Properties.
->>
->>>
->>>> +    - enable-gpios : gpio pin to enable/disable the device.
->>>> +    - vled-supply : LED supply
->>>> +    - linux,default-trigger : (optional)
->>>> +       see Documentation/devicetree/bindings/leds/common.txt
->>>
->>> Ditto.
->>
->> Ack
->>
->>>
->>>> +
->>>> +Required child properties:
->>>> +    - reg : 0
->>>> +
->>>> +Example:
->>>> +
->>>> +lm3692x@36 {
->>>
->>> leds@36
->>
->> Rob why does this need to be leds?  Is this because it would be a child of an I2C node?
+On Mon, Dec 4, 2017 at 4:43 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> Hi!
 >
-> Because node names are supposed to follow the generic type of device
-> they are (e.g. serial, ethernet, bus, etc.), not the model of device.
-> And yes, there are many examples that don't follow this.
+>> Label property was imposed a uniqueness requirement, which was erroneous,
+>> since ePAPR defines it to "a human readable string describing a device".
 
-Actually, it should be led-controller and led or leds be used for the
-LED child nodes (and gpio-led or pwd-led bindings), so like this:
+But it still needs to be unique to be useful. It's just unique from a
+different perspective. Ideally, if you had a block diagram level
+drawing of a device or board showing LEDs (and displays with
+backlights), you would simply take the labels from that drawing.
 
-led-controller@12 {
-  reg = <12>;
+>> Also the binding description misleadingly suggested direct usage of label
+>> for LED class device name, whereas it should only define a LED function.
+>>
+>> Therefore an additional 'colour' property is being introduced, which together
+>> with the parent DT node name used for devicename shall be used for naming LED
+>> class device according to the patterh
+>> <devicename>:<colour>:<function>.
+>
+>
+>> -- label : The label for this LED. If omitted, the label is taken from the node
+>> -       name (excluding the unit address). It has to uniquely identify
+>> -       a device, i.e. no other LED class device can be assigned the same
+>> -       label.
+>> +- label : The label for this LED. It should describe its function. If omitted,
+>> +          the label is taken from the node name (excluding the unit address).
+>
+> So the label contains "as1235:green:capslock"? I guess it might be
+> nice to mention that. Or just the "capslock" part?
+>
+> Also.. it would be good to start pushing for more consistency in the
+> labels: I have these on the thinkpad:
+>
+> input5::scrolllock/   tpacpi::dock_status2/ tpacpi::unknown_led/
+> mmc0::/               tpacpi:green:batt/    tpacpi::unknown_led2/
+> phy0-led/             tpacpi:orange:batt/   tpacpi::unknown_led3/
+> tpacpi::bay_active/   tpacpi::power/
+>
+> On embedded system, I'd like to see <devicename> to corespond
+> to.. device the led belongs to, as opposed to name of the chip that
+> drives the led. Maybe we should do 'main_camera:white:flash' instead of
+> 'as4132:white:flash' because userspace already has information on what
+> chip it is (sysfs paths), but can not easily figure out to which
+> device the flash belongs.
 
-  led@0 {
-    reg = <0>;
-  };
-  led@1 {
-    reg = <1>;
-  };
-};
+A couple of points:
+
+I already mentioned DT node naming policies in the lm3692x thread, so
+I won't repeat here.
+
+Using the node name is not going to guarantee uniqueness in the names.
+Even if you added the unit address it would still not. I can easily
+have 2 or more LED driver chips at the same I2C address on different
+buses. The only guaranteed unique name is the full DT path. Once
+you've added some OS specific numbering to make device names unique,
+then I'm not sure there's a lot of value in naming things after what
+drives them. You can walk the sysfs hierarchy to determine that
+anyway.
+
+A case I care about is I have a family of boards that all have a
+common defined set of 4 LEDs. They could be driven by anything, but I
+want the same interface presented to userspace across boards.
 
 Rob
