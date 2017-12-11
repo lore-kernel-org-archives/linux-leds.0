@@ -1,22 +1,27 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
 Subject: Re: [PATCH v8 1/2] dt: bindings: lm3692x: Add bindings for lm3692x
  LED driver
-Date: Mon, 11 Dec 2017 09:56:47 -0600
-Message-ID: <CAL_JsqJngcPWRbsfqYb83np7fPkR_5EUCVSg0=ghnukCuc08Cw@mail.gmail.com>
-References: <20171205204630.12267-1-dmurphy@ti.com> <20171207224938.6nvy63ghxe5vwvk4@rob-hp-laptop>
- <c354b66d-f501-99bc-5928-efcfe33dbd06@ti.com> <a6f2c0a6-4166-383a-95ce-8e55b8bff40c@gmail.com>
+Date: Mon, 11 Dec 2017 09:59:28 -0600
+Message-ID: <cba14d9b-baf7-d89d-a099-ec0a2e1dc186@ti.com>
+References: <20171205204630.12267-1-dmurphy@ti.com>
+ <20171207224938.6nvy63ghxe5vwvk4@rob-hp-laptop>
+ <c354b66d-f501-99bc-5928-efcfe33dbd06@ti.com>
+ <CAL_JsqLE_qNjZ9qPUKsc3o5LVOimTKz80sd-mUsLNLdrwjHi2w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a6f2c0a6-4166-383a-95ce-8e55b8bff40c-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <CAL_JsqLE_qNjZ9qPUKsc3o5LVOimTKz80sd-mUsLNLdrwjHi2w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Sat, Dec 9, 2017 at 3:21 PM, Jacek Anaszewski
-<jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On 12/08/2017 12:04 AM, Dan Murphy wrote:
+Rob
+
+On 12/11/2017 09:51 AM, Rob Herring wrote:
+> On Thu, Dec 7, 2017 at 5:04 PM, Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org> wrote:
 >> Rob
 >>
 >>
@@ -58,25 +63,25 @@ On Sat, Dec 9, 2017 at 3:21 PM, Jacek Anaszewski
 >>>> +supports three strings.
 >>>> +
 >>>> +Required properties:
->>>> +   - compatible:
->>>> +           "ti,lm36922"
->>>> +           "ti,lm36923"
->>>> +   - reg :  I2C slave address
->>>> +   - #address-cells : 1
->>>> +   - #size-cells : 0
+>>>> +    - compatible:
+>>>> +            "ti,lm36922"
+>>>> +            "ti,lm36923"
+>>>> +    - reg :  I2C slave address
+>>>> +    - #address-cells : 1
+>>>> +    - #size-cells : 0
 >>>> +
 >>>> +Optional properties:
->>>> +   - label : see Documentation/devicetree/bindings/leds/common.txt
+>>>> +    - label : see Documentation/devicetree/bindings/leds/common.txt
 >>>
 >>> Should be a child prop.
 >>
 >> Thanks I forgot to move this to Optional Child Properties.
 >>
 >>>
->>>> +   - enable-gpios : gpio pin to enable/disable the device.
->>>> +   - vled-supply : LED supply
->>>> +   - linux,default-trigger : (optional)
->>>> +      see Documentation/devicetree/bindings/leds/common.txt
+>>>> +    - enable-gpios : gpio pin to enable/disable the device.
+>>>> +    - vled-supply : LED supply
+>>>> +    - linux,default-trigger : (optional)
+>>>> +       see Documentation/devicetree/bindings/leds/common.txt
 >>>
 >>> Ditto.
 >>
@@ -85,7 +90,7 @@ On Sat, Dec 9, 2017 at 3:21 PM, Jacek Anaszewski
 >>>
 >>>> +
 >>>> +Required child properties:
->>>> +   - reg : 0
+>>>> +    - reg : 0
 >>>> +
 >>>> +Example:
 >>>> +
@@ -94,32 +99,32 @@ On Sat, Dec 9, 2017 at 3:21 PM, Jacek Anaszewski
 >>> leds@36
 >>
 >> Rob why does this need to be leds?  Is this because it would be a child of an I2C node?
->>
+> 
+> Because node names are supposed to follow the generic type of device
+> they are (e.g. serial, ethernet, bus, etc.), not the model of device.
+> And yes, there are many examples that don't follow this.
+> 
+
+OK.  I guess I will need to update the code to take the compatible or for my case the extract the name from
+the struct i2c_device_id.
+
+Jacek
+
+I am going to have to update the code to extract the name differently when there is no label.  I don't think
+pulling the parent node name will scale in the future.
+
+
+Dan
+
 >> Jacek
 >> Would this not cause and issue for your proposal to take the parent node name as part of the LED label?
->
-> Yes, it would.
->
-> Rob, does something prevent us from adding a requirement that
-> LED controller DT node has to contain the chip name (besides the
-> unit address)? Many current LED controller nodes apply this pattern.
+>>
+>> Dan
 
-Only because we've been lax on the naming. We want to use generic
-names because the DT spec says to and it provides a way to match nodes
-to validation checks.
 
-I only think we should use the chip name if the device doesn't fit
-some standard class.
-
-> Also, I would appreciate if you could express your opinion on
-> the patch [0].
->
-> [0] https://patchwork.kernel.org/patch/10089047/
-
-I'll have to go find it. It is not in my queue, so it wasn't sent to
-the DT list.
-
-Rob
+-- 
+------------------
+Dan Murphy
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
