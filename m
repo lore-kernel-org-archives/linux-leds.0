@@ -1,102 +1,56 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v4 3/6] leds: lp8860: Update the dt parsing for LED labeling
-Date: Tue, 12 Dec 2017 16:01:40 -0600
-Message-ID: <20171212220143.31210-4-dmurphy@ti.com>
+From: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH v4 4/6] dt: bindings: lp8860: Add trigger binding to the lp8860
+Date: Tue, 12 Dec 2017 16:01:41 -0600
+Message-ID: <20171212220143.31210-5-dmurphy@ti.com>
 References: <20171212220143.31210-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:24954 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752658AbdLLWCD (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Dec 2017 17:02:03 -0500
-In-Reply-To: <20171212220143.31210-1-dmurphy@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171212220143.31210-1-dmurphy-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 
-Update the DT parsing for the label node so that
-the label is retrieved from the device child as
-opposed to being part of the parent.
+Add a default trigger optional node to the child node.
+This will allow the driver to set the trigger for a backlight.
 
-This will align this driver with the LED
-binding documentation
-
-Documentation/devicetree/bindings/leds/common.txt
-
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
+Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
 ---
 
-v4 - Fix checkpatch warning for code indentation - https://patchwork.kernel.org/patch/10108157/
+v4 - No changes
 
-v3 - Changed the label generation to pull the name from the i2c device id 
-as opposed to pulling the id from the parent dt node since that will just be 
-led-controller - https://patchwork.kernel.org/patch/10093753/
-v2 - no changes
+v3 - Removed optional and rebased - https://patchwork.kernel.org/patch/10093755/
+v2 - Moved binding changes to first patch in the series.
 
- drivers/leds/leds-lp8860.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-lp8860.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-index 3e70775a2d54..46578fbc36be 100644
---- a/drivers/leds/leds-lp8860.c
-+++ b/drivers/leds/leds-lp8860.c
-@@ -22,6 +22,7 @@
- #include <linux/of_gpio.h>
- #include <linux/gpio/consumer.h>
- #include <linux/slab.h>
-+#include <uapi/linux/uleds.h>
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp8860.txt b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+index c3d64ade1e26..cdb9e12bd0aa 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp8860.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+@@ -21,6 +21,8 @@ Required child properties:
  
- #define LP8860_DISP_CL1_BRT_MSB		0x00
- #define LP8860_DISP_CL1_BRT_LSB		0x01
-@@ -86,8 +87,6 @@
+ Optional child properties:
+ 	- label : see Documentation/devicetree/bindings/leds/common.txt
++	- linux,default-trigger :
++	   see Documentation/devicetree/bindings/leds/common.txt
  
- #define LP8860_CLEAR_FAULTS		0x01
+ Example:
  
--#define LP8860_DISP_LED_NAME		"display_cluster"
--
- /**
-  * struct lp8860_led -
-  * @lock - Lock for reading/writing the device
-@@ -107,7 +106,7 @@ struct lp8860_led {
- 	struct regmap *eeprom_regmap;
- 	struct gpio_desc *enable_gpio;
- 	struct regulator *regulator;
--	const char *label;
-+	char label[LED_MAX_NAME_SIZE];
- };
+@@ -35,6 +37,7 @@ led-controller@2d {
+ 	led@0 {
+ 		reg = <0>;
+ 		label = "white:display_cluster";
++		linux,default-trigger = "backlight";
+ 	};
+ }
  
- struct lp8860_eeprom_reg {
-@@ -365,19 +364,21 @@ static int lp8860_probe(struct i2c_client *client,
- 	int ret;
- 	struct lp8860_led *led;
- 	struct device_node *np = client->dev.of_node;
-+	struct device_node *child_node;
-+	const char *name;
- 
- 	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
- 	if (!led)
- 		return -ENOMEM;
- 
--	led->label = LP8860_DISP_LED_NAME;
--
--	if (client->dev.of_node) {
--		ret = of_property_read_string(np, "label", &led->label);
--		if (ret) {
--			dev_err(&client->dev, "Missing label in dt\n");
--			return -EINVAL;
--		}
-+	for_each_available_child_of_node(np, child_node) {
-+		ret = of_property_read_string(child_node, "label", &name);
-+		if (!ret)
-+			snprintf(led->label, sizeof(led->label), "%s:%s",
-+				 id->name, name);
-+		else
-+			snprintf(led->label, sizeof(led->label),
-+				"%s::display_cluster", id->name);
- 	}
- 
- 	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
 -- 
 2.15.0.124.g7668cbc60
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
