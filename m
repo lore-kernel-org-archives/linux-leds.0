@@ -1,67 +1,113 @@
-From: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH v3 0/6] Updated LP8860 driver series
-Date: Tue, 12 Dec 2017 12:58:02 -0600
-Message-ID: <20171212185809.23880-1-dmurphy@ti.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v3 1/1] leds: lp8860: Various fixes to align with LED framework
+Date: Tue, 12 Dec 2017 12:58:04 -0600
+Message-ID: <20171212185809.23880-3-dmurphy@ti.com>
+References: <20171212185809.23880-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:30790 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752204AbdLLS62 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Dec 2017 13:58:28 -0500
+In-Reply-To: <20171212185809.23880-1-dmurphy@ti.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 
-All
+Update the driver to conform with the LED framework.
+Use devm_led_classdev_register
+Destroy mutex on exit
+Remove dependency on CONFIG_OF in the driver and move
+to the Kconfig
+Update the MODULE_LICENSE to GPL v2
+Remove setting of MAX brightness as the LED framework
+does this.
 
-v3 - Made changes to the patch set to address concerns on DT node naming conventions
-based on discussion in the RFC patch https://patchwork.kernel.org/patch/10089047/
-also made requested changes to the DT and driver based on feedback.  Patchworks
-links in each patch.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ drivers/leds/Kconfig       |  2 +-
+ drivers/leds/leds-lp8860.c | 13 +++++--------
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
-v2 - Added an initial patch to bring the DT binding up to standard prior to adding
-the changes for the label and triggers.
-
-v1 Cover letter repeat below
-
-After creating a new LED driver for the LM3692x device I went back to the
-LP8860 driver that I authored and found some updates that need to be applied.
-
-First the way the LP8860 retrieved the label from the DT was incorrect as the
-label should have been from a child node as opposed to the parent.  This is now
-fixed with this series.
-
-Second, since that device can be used to as either a backlight driver or as a
-string agnostic driver a trigger to the backlight needed to be added.
-
-Finally there are changes to the driver that need to be made as either
-unnoticed bugs or updates to the driver to align with the current LED
-framework.  For instance moving to the devm LED class registration, destroying
-the mutex upon driver removal and removing the in driver dependency on CONFIG_OF
-and moving it to the Kconfig.
-
-With these changes this should at least bring the driver into a better shape.
-
-There are additional changes coming for this driver but I wanted to get the
-driver up to snuff before adding a feature to it.
-
-Dan
-
-Dan Murphy (6):
-  dt: bindings: lp8860: Update bindings for lp8860
-  dt: bindings: lp8860: Update DT label binding
-  leds: lp8860: Update the dt parsing for LED labeling
-  dt: bindings: lp8860: Add trigger binding to the lp8860
-  leds: lp8860: Add DT parsing to retrieve the trigger node
-  leds: lp8860: Various fixes to align with LED framework
-
- .../devicetree/bindings/leds/leds-lp8860.txt       | 32 ++++++++++++-----
- drivers/leds/Kconfig                               |  2 +-
- drivers/leds/leds-lp8860.c                         | 40 ++++++++++++----------
- 3 files changed, 46 insertions(+), 28 deletions(-)
-
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 318a28fd58fe..ac4d9d8bf96b 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -347,7 +347,7 @@ config LEDS_LP8788
+ 
+ config LEDS_LP8860
+ 	tristate "LED support for the TI LP8860 4 channel LED driver"
+-	depends on LEDS_CLASS && I2C
++	depends on LEDS_CLASS && I2C && OF
+ 	select REGMAP_I2C
+ 	help
+ 	  If you say yes here you get support for the TI LP8860 4 channel
+diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+index 309a73a0c2dd..f38531c30185 100644
+--- a/drivers/leds/leds-lp8860.c
++++ b/drivers/leds/leds-lp8860.c
+@@ -399,7 +399,6 @@ static int lp8860_probe(struct i2c_client *client,
+ 
+ 	led->client = client;
+ 	led->led_dev.name = led->label;
+-	led->led_dev.max_brightness = LED_FULL;
+ 	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
+ 
+ 	mutex_init(&led->lock);
+@@ -426,7 +425,7 @@ static int lp8860_probe(struct i2c_client *client,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = led_classdev_register(&client->dev, &led->led_dev);
++	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
+ 	if (ret) {
+ 		dev_err(&client->dev, "led register err: %d\n", ret);
+ 		return ret;
+@@ -440,8 +439,6 @@ static int lp8860_remove(struct i2c_client *client)
+ 	struct lp8860_led *led = i2c_get_clientdata(client);
+ 	int ret;
+ 
+-	led_classdev_unregister(&led->led_dev);
+-
+ 	if (led->enable_gpio)
+ 		gpiod_direction_output(led->enable_gpio, 0);
+ 
+@@ -452,6 +449,8 @@ static int lp8860_remove(struct i2c_client *client)
+ 				"Failed to disable regulator\n");
+ 	}
+ 
++	mutex_destroy(&led->lock);
++
+ 	return 0;
+ }
+ 
+@@ -461,18 +460,16 @@ static const struct i2c_device_id lp8860_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, lp8860_id);
+ 
+-#ifdef CONFIG_OF
+ static const struct of_device_id of_lp8860_leds_match[] = {
+ 	{ .compatible = "ti,lp8860", },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, of_lp8860_leds_match);
+-#endif
+ 
+ static struct i2c_driver lp8860_driver = {
+ 	.driver = {
+ 		.name	= "lp8860",
+-		.of_match_table = of_match_ptr(of_lp8860_leds_match),
++		.of_match_table = of_lp8860_leds_match,
+ 	},
+ 	.probe		= lp8860_probe,
+ 	.remove		= lp8860_remove,
+@@ -482,4 +479,4 @@ module_i2c_driver(lp8860_driver);
+ 
+ MODULE_DESCRIPTION("Texas Instruments LP8860 LED driver");
+ MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
+-MODULE_LICENSE("GPL");
++MODULE_LICENSE("GPL v2");
 -- 
 2.15.0.124.g7668cbc60
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
