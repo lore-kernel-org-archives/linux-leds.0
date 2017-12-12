@@ -1,70 +1,71 @@
-From: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH v4 0/6] Updated LP8860 driver series
-Date: Tue, 12 Dec 2017 16:01:37 -0600
-Message-ID: <20171212220143.31210-1-dmurphy@ti.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v4 1/6] dt: bindings: lp8860: Update bindings for lp8860
+Date: Tue, 12 Dec 2017 16:01:38 -0600
+Message-ID: <20171212220143.31210-2-dmurphy@ti.com>
+References: <20171212220143.31210-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:38457 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752679AbdLLWCD (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Dec 2017 17:02:03 -0500
+In-Reply-To: <20171212220143.31210-1-dmurphy@ti.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 
-All
+Update the lp8860 bindings to fix various issues
+found.  Add address-cells and size-cells, rename
+enable-gpio to enable-gpios, update the node name
+to the device name and indent the node example.
 
-v4 - Fix checkpatch warning for code indentation on the
-leds: lp8860: Update the dt parsing for LED labeling patch.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
 
-v3 - Made changes to the patch set to address concerns on DT node naming conventions
-based on discussion in the RFC patch https://patchwork.kernel.org/patch/10089047/
-also made requested changes to the DT and driver based on feedback.  Patchworks
-links in each patch.
+v4 - No changes
 
-v2 - Added an initial patch to bring the DT binding up to standard prior to adding
-the changes for the label and triggers.
+v3 - Indicatd enable-gpios is active high, moved address and size cells to child
+node patch and updated parent DT node name - https://patchwork.kernel.org/patch/10093745/
+v2 - New patch
 
-v1 Cover letter repeat below
+ Documentation/devicetree/bindings/leds/leds-lp8860.txt | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-After creating a new LED driver for the LM3692x device I went back to the
-LP8860 driver that I authored and found some updates that need to be applied.
-
-First the way the LP8860 retrieved the label from the DT was incorrect as the
-label should have been from a child node as opposed to the parent.  This is now
-fixed with this series.
-
-Second, since that device can be used to as either a backlight driver or as a
-string agnostic driver a trigger to the backlight needed to be added.
-
-Finally there are changes to the driver that need to be made as either
-unnoticed bugs or updates to the driver to align with the current LED
-framework.  For instance moving to the devm LED class registration, destroying
-the mutex upon driver removal and removing the in driver dependency on CONFIG_OF
-and moving it to the Kconfig.
-
-With these changes this should at least bring the driver into a better shape.
-
-There are additional changes coming for this driver but I wanted to get the
-driver up to snuff before adding a feature to it.
-
-Dan
-
-Dan Murphy (6):
-  dt: bindings: lp8860: Update bindings for lp8860
-  dt: bindings: lp8860: Update DT label binding
-  leds: lp8860: Update the dt parsing for LED labeling
-  dt: bindings: lp8860: Add trigger binding to the lp8860
-  leds: lp8860: Add DT parsing to retrieve the trigger node
-  leds: lp8860: Various fixes to align with LED framework
-
- .../devicetree/bindings/leds/leds-lp8860.txt       | 32 ++++++++++++-----
- drivers/leds/Kconfig                               |  2 +-
- drivers/leds/leds-lp8860.c                         | 40 ++++++++++++----------
- 3 files changed, 46 insertions(+), 28 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp8860.txt b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+index aad38dd94d4b..b9d09acbaa73 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp8860.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+@@ -6,22 +6,22 @@ current sinks that can be controlled by a PWM input
+ signal, a SPI/I2C master, or both.
+ 
+ Required properties:
+-	- compatible:
++	- compatible :
+ 		"ti,lp8860"
+-	- reg -  I2C slave address
+-	- label - Used for naming LEDs
++	- reg : I2C slave address
++	- label : Used for naming LEDs
+ 
+ Optional properties:
+-	- enable-gpio - gpio pin to enable/disable the device.
+-	- supply - "vled" - LED supply
++	- enable-gpios : gpio pin to enable (active high)/disable the device.
++	- vled-supply : LED supply
+ 
+ Example:
+ 
+-leds: leds@6 {
++led-controller@2d {
+ 	compatible = "ti,lp8860";
+ 	reg = <0x2d>;
+ 	label = "display_cluster";
+-	enable-gpio = <&gpio1 28 GPIO_ACTIVE_HIGH>;
++	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+ 	vled-supply = <&vbatt>;
+ }
+ 
 -- 
 2.15.0.124.g7668cbc60
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
