@@ -1,60 +1,93 @@
-From: Matthieu CASTET <matthieu.castet@parrot.com>
-Subject: [PATCH] led: core: Fix brightness setting when setting active_off=0
-Date: Tue, 12 Dec 2017 11:10:44 +0100
-Message-ID: <20171212101044.22596-1-matthieu.castet@parrot.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34324 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbdLLKK5 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Dec 2017 05:10:57 -0500
-Received: by mail-wr0-f195.google.com with SMTP id y21so20526413wrc.1
-        for <linux-leds@vger.kernel.org>; Tue, 12 Dec 2017 02:10:57 -0800 (PST)
-Sender: linux-leds-owner@vger.kernel.org
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v10 1/2] dt: bindings: lm3692x: Add bindings for lm3692x LED driver
+Date: Tue, 12 Dec 2017 11:00:39 -0600
+Message-ID: <20171212170040.16777-1-dmurphy@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Matthieu CASTET <matthieu.castet@parrot.com>, linux-leds@vger.kernel.org
 
-With the current code, the following sequence won't work :
-echo timer > trigger
+This adds the devicetree bindings for the LM3692x
+I2C LED string driver.
 
-echo 0 >  delay_off
-* at this point we call
-** led_delay_off_store
-** led_blink_set
-*** stop timer
-** led_blink_setup
-** led_set_software_blink
-*** if !delay_on, led off
-*** if !delay_off, set led_set_brightness_nosleep <--- LED_BLINK_SW is set but timer is stop
-*** otherwise start timer/set LED_BLINK_SW flag
-
-echo xxx > brightness
-* led_set_brightness
-** if LED_BLINK_SW
-*** if brightness=0, led off
-*** else apply brightness if next timer <--- timer is stop, and will never apply new setting
-** otherwise set led_set_brightness_nosleep
-
-To fix that, when we delete the timer, we should clear LED_BLINK_SW.
-
-Cc: linux-leds@vger.kernel.org
-Signed-off-by: Matthieu CASTET <matthieu.castet@parrot.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/led-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index fd83c7f77a95..f3654fd2eaf3 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -186,7 +186,7 @@ void led_blink_set(struct led_classdev *led_cdev,
- 		   unsigned long *delay_on,
- 		   unsigned long *delay_off)
- {
--	del_timer_sync(&led_cdev->blink_timer);
-+	led_stop_software_blink(led_cdev);
- 
- 	clear_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags);
- 	clear_bit(LED_BLINK_ONESHOT_STOP, &led_cdev->work_flags);
+v10 - Changed label to add color - https://patchwork.kernel.org/patch/10105649/
+
+v9 - Moved 2 nodes to Optional Child and renamed node names to device type
+https://patchwork.kernel.org/patch/10093757/
+v8 - Added address-cells and size-cells as well as child node reg - https://patchwork.kernel.org/patch/10091259/
+v7 - No changes - https://patchwork.kernel.org/patch/10087475/
+v6 - No changes -https://patchwork.kernel.org/patch/10085567/
+v5 - No Changes - https://patchwork.kernel.org/patch/10081071/
+v4 - Fix example node, added trigger entry, removed ambiguous x for compatible and
+added common.txt pointer for label - https://patchwork.kernel.org/patch/10060107
+v3 - No changes
+v2 - No changes - https://patchwork.kernel.org/patch/10056677/
+
+ .../devicetree/bindings/leds/leds-lm3692x.txt      | 49 ++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+new file mode 100644
+index 000000000000..6c9074f84a51
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+@@ -0,0 +1,49 @@
++* Texas Instruments - LM3692x Highly Efficient White LED Driver
++
++The LM3692x is an ultra-compact, highly efficient,
++white-LED driver designed for LCD display backlighting.
++
++The main difference between the LM36922 and LM36923 is the number of
++LED strings it supports.  The LM36922 supports two strings while the LM36923
++supports three strings.
++
++Required properties:
++	- compatible:
++		"ti,lm36922"
++		"ti,lm36923"
++	- reg :  I2C slave address
++	- #address-cells : 1
++	- #size-cells : 0
++
++Optional properties:
++	- enable-gpios : gpio pin to enable/disable the device.
++	- vled-supply : LED supply
++
++Required child properties:
++	- reg : 0
++
++Optional child properties:
++	- label : see Documentation/devicetree/bindings/leds/common.txt
++	- linux,default-trigger :
++	   see Documentation/devicetree/bindings/leds/common.txt
++
++Example:
++
++led-controller@36 {
++	compatible = "ti,lm3692x";
++	reg = <0x36>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
++	vled-supply = <&vbatt>;
++
++	led@0 {
++		reg = <0>;
++		label = "white:backlight_cluster";
++		linux,default-trigger = "backlight";
++	};
++}
++
++For more product information please see the link below:
++http://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
 -- 
-2.15.0
+2.15.0.124.g7668cbc60
