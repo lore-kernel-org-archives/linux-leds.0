@@ -1,54 +1,43 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v3 4/6] dt: bindings: lp8860: Add trigger binding to the lp8860
-Date: Tue, 12 Dec 2017 12:58:07 -0600
-Message-ID: <20171212185809.23880-6-dmurphy@ti.com>
+Subject: [PATCH v3 5/6] leds: lp8860: Add DT parsing to retrieve the trigger node
+Date: Tue, 12 Dec 2017 12:58:08 -0600
+Message-ID: <20171212185809.23880-7-dmurphy@ti.com>
 References: <20171212185809.23880-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:59512 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752408AbdLLS6c (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Dec 2017 13:58:32 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20171212185809.23880-1-dmurphy@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+List-Id: linux-leds@vger.kernel.org
 
-Add a default trigger optional node to the child node.
-This will allow the driver to set the trigger for a backlight.
+Add the ability to parse the DT and set the default
+trigger mode for the LED.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
 
-v3 - Removed optional and rebased - https://patchwork.kernel.org/patch/10093755/
+v3 - no changes - https://patchwork.kernel.org/patch/10093751/
+v2 - no changes
 
-v2 - Moved binding changes to first patch in the series.
+ drivers/leds/leds-lp8860.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- Documentation/devicetree/bindings/leds/leds-lp8860.txt | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/leds/leds-lp8860.txt b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-index c3d64ade1e26..cdb9e12bd0aa 100644
---- a/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-@@ -21,6 +21,8 @@ Required child properties:
+diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+index bc432764c99d..309a73a0c2dd 100644
+--- a/drivers/leds/leds-lp8860.c
++++ b/drivers/leds/leds-lp8860.c
+@@ -372,6 +372,10 @@ static int lp8860_probe(struct i2c_client *client,
+ 		return -ENOMEM;
  
- Optional child properties:
- 	- label : see Documentation/devicetree/bindings/leds/common.txt
-+	- linux,default-trigger :
-+	   see Documentation/devicetree/bindings/leds/common.txt
- 
- Example:
- 
-@@ -35,6 +37,7 @@ led-controller@2d {
- 	led@0 {
- 		reg = <0>;
- 		label = "white:display_cluster";
-+		linux,default-trigger = "backlight";
- 	};
- }
- 
+ 	for_each_available_child_of_node(np, child_node) {
++		led->led_dev.default_trigger = of_get_property(child_node,
++						    "linux,default-trigger",
++						    NULL);
++
+ 		ret = of_property_read_string(child_node, "label", &name);
+ 		if (!ret)
+ 		    snprintf(led->label, sizeof(led->label), "%s:%s",
 -- 
 2.15.0.124.g7668cbc60
