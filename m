@@ -1,127 +1,77 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v3 3/6] leds: lp8860: Update the dt parsing for LED
- labeling
-Date: Tue, 12 Dec 2017 15:27:01 -0600
-Message-ID: <2ea30a5d-d013-1015-3882-a03e4ae540d3@ti.com>
-References: <20171212185809.23880-1-dmurphy@ti.com>
- <20171212185809.23880-5-dmurphy@ti.com>
- <f191482b-65a0-1520-8d72-d7626ca1b0b6@gmail.com>
+Subject: [RFC PATCH 1/2] dt: bindings: as3645a: Update dt node example with standard
+Date: Tue, 12 Dec 2017 15:50:23 -0600
+Message-ID: <20171212215024.30116-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:54920 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752415AbdLLV2Y (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Dec 2017 16:28:24 -0500
-In-Reply-To: <f191482b-65a0-1520-8d72-d7626ca1b0b6@gmail.com>
-Content-Language: en-US
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:65317 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752564AbdLLVu4 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Dec 2017 16:50:56 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, pavel@ucw.cz
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, sakari.ailus@iki.fi, laurent.pinchart@ideasonboard.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 
-Jacek
+Update the DT binding to remove the device name from
+the DT parent node as well as removing the device
+name from the label.  The LED label will be generated
+based off the id name stored in the local driver so
+the LED function can be indicated in the label DT
+entry.
 
-On 12/12/2017 03:13 PM, Jacek Anaszewski wrote:
-> Hi Dan,
-> 
-> Thanks for the patch set.
-> 
-> On 12/12/2017 07:58 PM, Dan Murphy wrote:
->> Update the DT parsing for the label node so that
->> the label is retrieved from the device child as
->> opposed to being part of the parent.
->>
->> This will align this driver with the LED
->> binding documentation
->>
->> Documentation/devicetree/bindings/leds/common.txt
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>
->> v3 - Changed the label generation to pull the name from the i2c device id 
->> as opposed to pulling the id from the parent dt node since that will just be 
->> led-controller - https://patchwork.kernel.org/patch/10093753/
->>
->> v2 - no changes
->>
->>  drivers/leds/leds-lp8860.c | 23 ++++++++++++-----------
->>  1 file changed, 12 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
->> index 3e70775a2d54..bc432764c99d 100644
->> --- a/drivers/leds/leds-lp8860.c
->> +++ b/drivers/leds/leds-lp8860.c
->> @@ -22,6 +22,7 @@
->>  #include <linux/of_gpio.h>
->>  #include <linux/gpio/consumer.h>
->>  #include <linux/slab.h>
->> +#include <uapi/linux/uleds.h>
->>  
->>  #define LP8860_DISP_CL1_BRT_MSB		0x00
->>  #define LP8860_DISP_CL1_BRT_LSB		0x01
->> @@ -86,8 +87,6 @@
->>  
->>  #define LP8860_CLEAR_FAULTS		0x01
->>  
->> -#define LP8860_DISP_LED_NAME		"display_cluster"
->> -
->>  /**
->>   * struct lp8860_led -
->>   * @lock - Lock for reading/writing the device
->> @@ -107,7 +106,7 @@ struct lp8860_led {
->>  	struct regmap *eeprom_regmap;
->>  	struct gpio_desc *enable_gpio;
->>  	struct regulator *regulator;
->> -	const char *label;
->> +	char label[LED_MAX_NAME_SIZE];
->>  };
->>  
->>  struct lp8860_eeprom_reg {
->> @@ -365,19 +364,21 @@ static int lp8860_probe(struct i2c_client *client,
->>  	int ret;
->>  	struct lp8860_led *led;
->>  	struct device_node *np = client->dev.of_node;
->> +	struct device_node *child_node;
->> +	const char *name;
->>  
->>  	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
->>  	if (!led)
->>  		return -ENOMEM;
->>  
->> -	led->label = LP8860_DISP_LED_NAME;
->> -
->> -	if (client->dev.of_node) {
->> -		ret = of_property_read_string(np, "label", &led->label);
->> -		if (ret) {
->> -			dev_err(&client->dev, "Missing label in dt\n");
->> -			return -EINVAL;
->> -		}
->> +	for_each_available_child_of_node(np, child_node) {
->> +		ret = of_property_read_string(child_node, "label", &name);
->> +		if (!ret)
->> +		    snprintf(led->label, sizeof(led->label), "%s:%s",
->> +					id->name, name);
->> +		else
->> +		    snprintf(led->label, sizeof(led->label),
->> +			     "%s::display_cluster", id->name);
-> 
-> Here we have the same indentation problem as in case of leds-lm3692x.c
+Also removed the indentation on the example.
 
-I will fix it up and re-send.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ .../devicetree/bindings/leds/ams,as3645a.txt       | 36 +++++++++++-----------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
-Dan
-
-> 
->>  	}
->>  
->>  	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
->>
-> 
-
-
+diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+index fc7f5f9f234c..122aa7165cf3 100644
+--- a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
++++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+@@ -58,22 +58,22 @@ label		: The label of the indicator LED.
+ Example
+ =======
+ 
+-	as3645a@30 {
+-		compatible = "ams,as3645a";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		reg = <0x30>;
+-		flash@0 {
+-			reg = <0x0>;
+-			flash-timeout-us = <150000>;
+-			flash-max-microamp = <320000>;
+-			led-max-microamp = <60000>;
+-			ams,input-max-microamp = <1750000>;
+-			label = "as3645a:flash";
+-		};
+-		indicator@1 {
+-			reg = <0x1>;
+-			led-max-microamp = <10000>;
+-			label = "as3645a:indicator";
+-		};
++led-controller@30 {
++	compatible = "ams,as3645a";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x30>;
++	led@0 {
++		reg = <0x0>;
++		flash-timeout-us = <150000>;
++		flash-max-microamp = <320000>;
++		led-max-microamp = <60000>;
++		ams,input-max-microamp = <1750000>;
++		label = "flash";
+ 	};
++	led@1 {
++		reg = <0x1>;
++		led-max-microamp = <10000>;
++		label = "indicator";
++	};
++};
 -- 
-------------------
-Dan Murphy
+2.15.0.124.g7668cbc60
