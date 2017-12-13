@@ -1,85 +1,131 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [PATCH] leds: as3645a: Fix checkpatch warnings
-Date: Wed, 13 Dec 2017 13:56:46 +0100
-Message-ID: <20171213125646.GB18897@amd>
-References: <20171212215011.30066-1-dmurphy@ti.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [RFC PATCH 1/2] dt: bindings: as3645a: Update dt node example
+ with standard
+Date: Wed, 13 Dec 2017 06:55:03 -0600
+Message-ID: <90a1c908-3170-6956-8983-f9d88234cc07@ti.com>
+References: <20171212215024.30116-1-dmurphy@ti.com>
+ <4192002.yKJgEXTVKE@avalon>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="BwCQnh7xodEAoBMC"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171212215011.30066-1-dmurphy-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:29117 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753057AbdLMM5D (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 13 Dec 2017 07:57:03 -0500
+In-Reply-To: <4192002.yKJgEXTVKE@avalon>
+Content-Language: en-US
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, sakari.ailus@iki.fi, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+
+Laurent
+
+On 12/13/2017 02:09 AM, Laurent Pinchart wrote:
+> Hi Dan,
+> 
+> Thank you for the patch.
+> 
+> On Tuesday, 12 December 2017 23:50:23 EET Dan Murphy wrote:
+>> Update the DT binding to remove the device name from
+>> the DT parent node as well as removing the device
+>> name from the label.  The LED label will be generated
+>> based off the id name stored in the local driver so
+>> the LED function can be indicated in the label DT
+>> entry.
+>>
+>> Also removed the indentation on the example.
+> 
+> This makes the patch a bit harder to review and seems to be a matter of style.
+> 
+
+I debated whether to remove the extra tabs.  The changes below came from comments
+from a recent LED driver I submitted.
+
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>  .../devicetree/bindings/leds/ams,as3645a.txt       | 36 ++++++++++---------
+>>  1 file changed, 18 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+>> b/Documentation/devicetree/bindings/leds/ams,as3645a.txt index
+>> fc7f5f9f234c..122aa7165cf3 100644
+>> --- a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+>> +++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+>> @@ -58,22 +58,22 @@ label		: The label of the indicator LED.
+> 
+> I believe you should expand the documentation of the label property to detail 
+> how it should be formed. It's nice to update the example, but the bindings 
+> should be understandable without it.
+
+OK. I will add a reference to Documentation/devicetree/bindings/leds/common.txt
+
+label formation will be undergoing some changes.  I wanted to make sure there were
+some good examples in the LED tree for other developers to reference.
+
+> 
+>>  Example
+>>  =======
+>>
+>> -	as3645a@30 {
+>> -		compatible = "ams,as3645a";
+>> -		#address-cells = <1>;
+>> -		#size-cells = <0>;
+>> -		reg = <0x30>;
+>> -		flash@0 {
+>> -			reg = <0x0>;
+>> -			flash-timeout-us = <150000>;
+>> -			flash-max-microamp = <320000>;
+>> -			led-max-microamp = <60000>;
+>> -			ams,input-max-microamp = <1750000>;
+>> -			label = "as3645a:flash";
+>> -		};
+>> -		indicator@1 {
+>> -			reg = <0x1>;
+>> -			led-max-microamp = <10000>;
+>> -			label = "as3645a:indicator";
+>> -		};
+>> +led-controller@30 {
+> 
+> This change looks fine to me.
+> 
+>> +	compatible = "ams,as3645a";
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	reg = <0x30>;
+>> +	led@0 {
+> 
+> What's the rationale for changing the node name here ? It should be explained 
+> in the commit message, and in the DT bindings documentation.
+
+In my patch to the DT maintainers Rob H indicated 
+
+"Actually, it should be led-controller and led or leds be used for the
+LED child nodes (and gpio-led or pwd-led bindings)"
+
+Here is the patch that the node naming conventions took place
+
+https://patchwork.kernel.org/patch/10093757
 
 
---BwCQnh7xodEAoBMC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue 2017-12-12 15:50:11, Dan Murphy wrote:
-> Fix two checkpatch warnings for 80 char
-> length and for a quoted string across multiple
-> line warnings.
->=20
-> Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
-
-Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-
-> ---
->  drivers/leds/leds-as3645a.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-> index 9a257f969300..f883616d9e60 100644
-> --- a/drivers/leds/leds-as3645a.c
-> +++ b/drivers/leds/leds-as3645a.c
-> @@ -360,7 +360,8 @@ static int as3645a_set_flash_brightness(struct led_cl=
-assdev_flash *fled,
->  {
->  	struct as3645a *flash =3D fled_to_as3645a(fled);
-> =20
-> -	flash->flash_current =3D as3645a_current_to_reg(flash, true, brightness=
-_ua);
-> +	flash->flash_current =3D as3645a_current_to_reg(flash, true,
-> +						      brightness_ua);
-> =20
->  	return as3645a_set_current(flash);
->  }
-> @@ -455,8 +456,8 @@ static int as3645a_detect(struct as3645a *flash)
-> =20
->  	/* Verify the chip model and version. */
->  	if (model !=3D 0x01 || rfu !=3D 0x00) {
-> -		dev_err(dev, "AS3645A not detected "
-> -			"(model %d rfu %d)\n", model, rfu);
-> +		dev_err(dev, "AS3645A not detected (model %d rfu %d)\n",
-> +			model, rfu);
->  		return -ENODEV;
->  	}
-> =20
+> 
+>> +		reg = <0x0>;
+>> +		flash-timeout-us = <150000>;
+>> +		flash-max-microamp = <320000>;
+>> +		led-max-microamp = <60000>;
+>> +		ams,input-max-microamp = <1750000>;
+>> +		label = "flash";
+>>  	};
+>> +	led@1 {
+>> +		reg = <0x1>;
+>> +		led-max-microamp = <10000>;
+>> +		label = "indicator";
+>> +	};
+>> +};
+> 
 
 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---BwCQnh7xodEAoBMC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAloxI44ACgkQMOfwapXb+vI9/ACeMr6B9vt2r3VKOKq4tndatnEw
-Z8kAoLL4A3F+MHldRuqfN6UIuTw9acHK
-=PjMp
------END PGP SIGNATURE-----
-
---BwCQnh7xodEAoBMC--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+------------------
+Dan Murphy
