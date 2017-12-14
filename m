@@ -1,84 +1,35 @@
 From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [RFC PATCH 2/2] leds: as3645a: Update LED label generation
-Date: Thu, 14 Dec 2017 20:03:36 +0200
-Message-ID: <20171214180335.j6qk2rrge77gpbba@valkosipuli.retiisi.org.uk>
-References: <20171212215024.30116-1-dmurphy@ti.com>
- <20171212215024.30116-2-dmurphy@ti.com>
+Subject: Re: [PATCH v2 1/2] leds: as3645a: Fix quoted string split warning
+Date: Thu, 14 Dec 2017 20:04:44 +0200
+Message-ID: <20171214180443.z5fghwlj2ncfkaan@valkosipuli.retiisi.org.uk>
+References: <20171214173727.10070-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:39876 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753684AbdLNSDk (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 14 Dec 2017 13:03:40 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171212215024.30116-2-dmurphy@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+In-Reply-To: <20171214173727.10070-1-dmurphy@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Dan Murphy <dmurphy@ti.com>
 Cc: robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
-Hi Dan,
-
-Thanks for the patchset.
-
-On Tue, Dec 12, 2017 at 03:50:24PM -0600, Dan Murphy wrote:
-> Generate the LED label based off either the
-> DT label node or off the I2C ID in the
-> i2c device id struct.
+On Thu, Dec 14, 2017 at 11:37:26AM -0600, Dan Murphy wrote:
+> Fix a warning for a split quoted string across
+> lines.
 > 
-> If the label is used then this should denote
-> the LED function.  As an example it would
-> be as3645a:<function>
+> WARNING: quoted string split across lines
+> 459: FILE: drivers/leds/leds-as3645a.c:459:
+> 		dev_err(dev, "AS3645A not detected "
+> 			"(model %d rfu %d)\n", model, rfu);
 > 
->  Otherwise if the label is not
-> used the LED label will be as3645a:flash and
-> as3645a:indicator.
-
-Which tree the patch is for? I see "id" is a u32 in what I have, and
-also not defined in this scope.
-
-> 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  drivers/leds/leds-as3645a.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-> index f883616d9e60..197acd69ddcc 100644
-> --- a/drivers/leds/leds-as3645a.c
-> +++ b/drivers/leds/leds-as3645a.c
-> @@ -526,10 +526,11 @@ static int as3645a_parse_node(struct as3645a *flash,
->  
->  	rval = of_property_read_string(flash->flash_node, "label", &name);
->  	if (!rval)
-> -		strlcpy(names->flash, name, sizeof(names->flash));
-> +		snprintf(names->flash, sizeof(names->flash), "%s:%s",
-> +			 id->name, name);
->  	else
->  		snprintf(names->flash, sizeof(names->flash),
-> -			 "%s:flash", node->name);
-> +			 "%s:flash", id->name);
->  
->  	rval = of_property_read_u32(flash->flash_node, "flash-timeout-us",
->  				    &cfg->flash_timeout_us);
-> @@ -570,10 +571,11 @@ static int as3645a_parse_node(struct as3645a *flash,
->  
->  	rval = of_property_read_string(flash->indicator_node, "label", &name);
->  	if (!rval)
-> -		strlcpy(names->indicator, name, sizeof(names->indicator));
-> +		snprintf(names->indicator, sizeof(names->indicator), "%s:%s",
-> +			 id->name, name);
->  	else
->  		snprintf(names->indicator, sizeof(names->indicator),
-> -			 "%s:indicator", node->name);
-> +			 "%s:indicator", id->name);
->  
->  	rval = of_property_read_u32(flash->indicator_node, "led-max-microamp",
->  				    &cfg->indicator_max_ua);
 
+Thanks!
 
+For both:
+
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
 -- 
 Sakari Ailus
