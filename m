@@ -1,61 +1,51 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] leds: as3645a: Fix checkpatch warnings
-Date: Wed, 13 Dec 2017 23:32:18 +0200
-Message-ID: <11486565.PIGBh3m9bD@avalon>
-References: <20171212215011.30066-1-dmurphy@ti.com> <98df06ef-9ee4-02b1-6d6b-f10b911a8d71@gmail.com> <799ae164-701a-87ce-fadf-8278f01c10d6@ti.com>
+From: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH v2 2/2] leds: as3645a: Fix line over 80 characters
+Date: Thu, 14 Dec 2017 11:37:27 -0600
+Message-ID: <20171214173727.10070-2-dmurphy@ti.com>
+References: <20171214173727.10070-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:47560 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753744AbdLMVcO (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 13 Dec 2017 16:32:14 -0500
-In-Reply-To: <799ae164-701a-87ce-fadf-8278f01c10d6@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171214173727.10070-1-dmurphy-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, mark.rutland@arm.com, rpurdie@rpsys.net, pavel@ucw.cz, sakari.ailus@iki.fi, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-Hi Dan,
+Fix the warning for line over 80 characters.
 
-On Wednesday, 13 December 2017 22:49:38 EET Dan Murphy wrote:
-> On 12/13/2017 02:43 PM, Jacek Anaszewski wrote:
-> > On 12/13/2017 09:41 PM, Dan Murphy wrote:
-> >> On 12/13/2017 02:29 PM, Jacek Anaszewski wrote:
-> >>> Hi Dan,
-> >>> 
-> >>> checkpatch.pl doesn't want to be mentioned in the patch subject :-)
-> >> 
-> >> Ack
-> >> 
-> >>> "WARNING: A patch subject line should describe the change not the tool
-> >>> that found it"
-> >>> 
-> >>> Preferably I'd see two separate patches.
-> >> 
-> >> So you want me to split them up? I have no issue with that.
-> > 
-> > Yeah, it will be easier to come up with concise but meaningful
-> > subjects.
+WARNING: line over 80 characters
+363: FILE: drivers/leds/leds-as3645a.c:363:
+	flash->flash_current = as3645a_current_to_reg(flash, true, brightness_ua);
 
-Well, given that one change splits a line that is too long and the other one 
-merges two lines that fit within the limit we could come up with a message 
-that covers both :-) This is nitpicking though, it doesn't matter much. I have 
-no issue with a patch that has some "while at it" portion anyway as long as 
-it's minor (I personally include white space fixes in patches that touch the 
-related code for instance).
+Acked-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+---
 
-> When I split these up can I add your Acked-by to each patch or would you
-> prefer to resend your Acked-by for each patch?
+v2 - Split the warning fixes into 2 patches and fixed commit message - 
+https://patchwork.kernel.org/patch/10108325/
 
-Assuming you make no mistake, you can keep my ack :-) It will of course not 
-cover the commit message then.
+ drivers/leds/leds-as3645a.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> >>> Also, line length limit for the commit description is 75 characters.
-> >>> Please use whole available space.
-
+diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+index 49fdd7c0a6f6..f883616d9e60 100644
+--- a/drivers/leds/leds-as3645a.c
++++ b/drivers/leds/leds-as3645a.c
+@@ -360,7 +360,8 @@ static int as3645a_set_flash_brightness(struct led_classdev_flash *fled,
+ {
+ 	struct as3645a *flash = fled_to_as3645a(fled);
+ 
+-	flash->flash_current = as3645a_current_to_reg(flash, true, brightness_ua);
++	flash->flash_current = as3645a_current_to_reg(flash, true,
++						      brightness_ua);
+ 
+ 	return as3645a_set_current(flash);
+ }
 -- 
-Regards,
+2.15.0.124.g7668cbc60
 
-Laurent Pinchart
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
