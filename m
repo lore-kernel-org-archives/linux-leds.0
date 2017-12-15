@@ -1,41 +1,39 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 1/2] dt: bindings: as3645a: Update dt node example
- with standard
-Date: Fri, 15 Dec 2017 16:54:12 -0600
-Message-ID: <20171215225412.x5awuc5vulornvfr@rob-hp-laptop>
-References: <20171212215024.30116-1-dmurphy@ti.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 1/6] dt: bindings: lp8860: Update bindings for lp8860
+Date: Fri, 15 Dec 2017 16:56:43 -0600
+Message-ID: <20171215225643.areokv4hpa2r5wkl@rob-hp-laptop>
+References: <20171212220143.31210-1-dmurphy@ti.com>
+ <20171212220143.31210-2-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:40797 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755824AbdLOW4p (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 15 Dec 2017 17:56:45 -0500
 Content-Disposition: inline
-In-Reply-To: <20171212215024.30116-1-dmurphy-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pavel-+ZI9xUNit7I@public.gmane.org, sakari.ailus-X3B1VOXEql0@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20171212220143.31210-2-dmurphy@ti.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>
+Cc: mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-On Tue, Dec 12, 2017 at 03:50:23PM -0600, Dan Murphy wrote:
-> Update the DT binding to remove the device name from
-> the DT parent node as well as removing the device
-> name from the label.  The LED label will be generated
-> based off the id name stored in the local driver so
-> the LED function can be indicated in the label DT
-> entry.
-
-The subject seems incomplete "... with standard ?"
-
+On Tue, Dec 12, 2017 at 04:01:38PM -0600, Dan Murphy wrote:
+> Update the lp8860 bindings to fix various issues
+> found.  Add address-cells and size-cells, rename
+> enable-gpio to enable-gpios, update the node name
+> to the device name and indent the node example.
 > 
-> Also removed the indentation on the example.
-> 
-> Signed-off-by: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
 > ---
->  .../devicetree/bindings/leds/ams,as3645a.txt       | 36 +++++++++++-----------
->  1 file changed, 18 insertions(+), 18 deletions(-)
+> 
+> v4 - No changes
+> 
+> v3 - Indicatd enable-gpios is active high, moved address and size cells to child
+> node patch and updated parent DT node name - https://patchwork.kernel.org/patch/10093745/
+> v2 - New patch
+> 
+>  Documentation/devicetree/bindings/leds/leds-lp8860.txt | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 
-Otherwise,
-
-Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Rob Herring <robh@kernel.org>
