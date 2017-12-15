@@ -1,69 +1,81 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [RFC v2 2/2] backlight: pwm_bl: compute brightness of LED
- linearly to human eye.
-Date: Fri, 15 Dec 2017 21:57:35 +0100
-Message-ID: <20171215205735.GB19442@amd>
-References: <20171116141151.21171-1-enric.balletbo@collabora.com>
- <20171116141151.21171-3-enric.balletbo@collabora.com>
- <CAD=FV=WY-2MmjRxGGaJrQjyeWt+k4_k7j12M4LxAnnZxJF7sXw@mail.gmail.com>
- <c6450f50-5c12-dc52-4340-b068c0b38c54@linaro.org>
- <CAFqH_50qgvntzwvZ_n3qhpw+BA2SpYqiJgsxfCMt1piNWzgDmA@mail.gmail.com>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: [PATCH v4 4/6] dt: bindings: lp8860: Add trigger binding to the
+ lp8860
+Date: Fri, 15 Dec 2017 22:00:42 +0100
+Message-ID: <20171215210042.GC19442@amd>
+References: <20171212220143.31210-1-dmurphy@ti.com>
+ <20171212220143.31210-5-dmurphy@ti.com>
+ <20171215090903.GC8221@amd>
+ <76329432-f96e-93ab-ed9b-ade22c8735c9@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="neYutvxvOLaeuPCA"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="/e2eDi0V/xtL+Mc8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAFqH_50qgvntzwvZ_n3qhpw+BA2SpYqiJgsxfCMt1piNWzgDmA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>, Doug Anderson <dianders@google.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <76329432-f96e-93ab-ed9b-ade22c8735c9-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
 
---neYutvxvOLaeuPCA
+--/e2eDi0V/xtL+Mc8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Fri 2017-12-15 11:22:24, Dan Murphy wrote:
+> Pavel
+>=20
+> On 12/15/2017 03:09 AM, Pavel Machek wrote:
+> > Hi!
+> >=20
+> >> @@ -35,6 +37,7 @@ led-controller@2d {
+> >>  	led@0 {
+> >>  		reg =3D <0>;
+> >>  		label =3D "white:display_cluster";
+> >> +		linux,default-trigger =3D "backlight";
+> >>  	};
+> >>  }
+> >=20
+> > What is "display_cluster"? Is it display backlight?
+> >=20
+>=20
+> This device can be configured to drive all 4 LED strings in display mode
+> so that all 4 strings have the same brightness controlled either through =
+PWM or
+> through the brightness register=20
+>=20
+> or
+>=20
+> As cluster string where the brightness of individual strings or clustered=
+ strings
+> can be controlled via independent brightness control registers.  I am cur=
+rently working
+> on adding this support to the driver.
 
-> Yes, I think that how you describe luminance and lightness is right,
-> and sounds good improve the doc.
->=20
-> To be clear the correction table for PWM values can be calculated with
-> this code.
->=20
-> OUTPUT_SIZE =3D 65535      # Output integer size
-> INPUT_SIZE =3D 2047
->=20
-> def cie1931(L):
->     L =3D L*100.0
->     if L <=3D 8:
->         return (L/902.3)
->     else:
->         return ((L+16.0)/116.0)**3
->=20
-> x =3D range(0,int(INPUT_SIZE+1))
-> y =3D [int(round(cie1931(float(L)/INPUT_SIZE)*(OUTPUT_SIZE))) for L in x]
+Ok; but I guess I'd like to keep this implementation detail away from
+kernel, and just expose as display:white:backlight or something like that.
 
-Can we just generate the table on the fly? Should not be hard to do in
-fixed point, right?
-									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---neYutvxvOLaeuPCA
+--/e2eDi0V/xtL+Mc8
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlo0Nz8ACgkQMOfwapXb+vLmAQCfZ/eCnsMCbiLrCZ2klKjeLoF1
-1TgAnjhGLjdHwXQiirMX6DAAK4tef9Ut
-=LWQK
+iEYEARECAAYFAlo0N/oACgkQMOfwapXb+vLV0QCeJLKBRHmCeurE3wZWkv8TPawl
+lrEAmwdW33nq4IC7W55zhTigp7Lec22w
+=kdTc
 -----END PGP SIGNATURE-----
 
---neYutvxvOLaeuPCA--
+--/e2eDi0V/xtL+Mc8--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
