@@ -1,56 +1,120 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [RESEND PATCH v2] dt: bindings: as3645a: Fix the example node
-Date: Fri, 15 Dec 2017 14:26:46 -0600
-Message-ID: <20171215202646.4l2swy4h7ruhqu3m@rob-hp-laptop>
-References: <20171208155514.7696-1-dmurphy@ti.com>
- <50214549-63d1-f92e-d4e7-dc6533477d83@ti.com>
+From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Subject: Re: [PATCH V1 1/4] qcom: spmi-wled: Add support for qcom wled driver
+Date: Fri, 15 Dec 2017 21:30:26 +0100
+Message-ID: <20171215203026.GA19442@amd>
+References: <1510834717-21765-1-git-send-email-kgunda@codeaurora.org>
+ <1510834717-21765-2-git-send-email-kgunda@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:45655 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755650AbdLOU0s (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 15 Dec 2017 15:26:48 -0500
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <50214549-63d1-f92e-d4e7-dc6533477d83@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
+In-Reply-To: <1510834717-21765-2-git-send-email-kgunda-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kiran Gunda <kgunda-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 
-On Fri, Dec 08, 2017 at 09:56:18AM -0600, Dan Murphy wrote:
-> Resent to include DT maintainers
-> 
-> On 12/08/2017 09:55 AM, Dan Murphy wrote:
-> > Fix the address-cells and size-cells example node
-> > to reflect to the correct representation.
-> > 
-> > Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > ---
-> > 
-> > v2 - Moved compatible to be first in the node - https://patchwork.kernel.org/patch/10092937/
-> > 
-> >  Documentation/devicetree/bindings/leds/ams,as3645a.txt | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> > index fdc40e354a64..fc7f5f9f234c 100644
-> > --- a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> > +++ b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
-> > @@ -59,10 +59,10 @@ Example
-> >  =======
-> >  
-> >  	as3645a@30 {
-> 
-> Rob
-> 
-> Here is an example of the device name being part of the node name.
-> 
-> Should this be changed as well to leds@30?
 
-Yes, but I misspoke earlier and it should be "led-controller@30"
+--x+6KMIRAuhnl3hBn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That can be a separate patch though, so for this one:
+On Thu 2017-11-16 17:48:34, Kiran Gunda wrote:
+> WLED driver provides the interface to the display driver to
+> adjust the brightness of the display backlight.
+>=20
+> Signed-off-by: Kiran Gunda <kgunda-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> ---
+>  .../bindings/leds/backlight/qcom-spmi-wled.txt     |  90 ++++
+>  drivers/video/backlight/Kconfig                    |   9 +
+>  drivers/video/backlight/Makefile                   |   1 +
+>  drivers/video/backlight/qcom-spmi-wled.c           | 504 +++++++++++++++=
+++++++
+>  4 files changed, 604 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/backlight/qcom=
+-spmi-wled.txt
+>  create mode 100644 drivers/video/backlight/qcom-spmi-wled.c
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-w=
+led.txt b/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.t=
+xt
+> new file mode 100644
+> index 0000000..f1ea25b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
+> @@ -0,0 +1,90 @@
+> +Binding for Qualcomm WLED driver
+> +
+> +WLED (White Light Emitting Diode) driver is used for controlling display
+> +backlight that is part of PMIC on Qualcomm Technologies reference platfo=
+rms.
+> +The PMIC is connected to the host processor via SPMI bus.
+> +
+> +- compatible
+> +	Usage:      required
+> +	Value type: <string>
+> +	Definition: should be "qcom,pm8998-spmi-wled".
+> +
+> +- reg
+> +	Usage:      required
+> +	Value type: <prop-encoded-array>
+> +	Definition:  Base address and size of the WLED modules.
+> +
+> +- reg-names
+> +	Usage:      required
+> +	Value type: <string>
+> +	Definition:  Names associated with base addresses. should be
+> +		     "qcom-wled-ctrl-base", "qcom-wled-sink-base".
+> +
+> +- label
+> +	Usage:      required
+> +	Value type: <string>
+> +	Definition: The name of the backlight device.
+> +
+> +- default-brightness
+> +	Usage:      optional
+> +	Value type: <u32>
+> +	Definition: brightness value on boot, value from: 0-4095
+> +		    default: 2048
+> +
+> +- qcom,fs-current-limit
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I'd add "-uA" suffix here.
+
+> +	Usage:      optional
+> +	Value type: <u32>
+> +	Definition: per-string full scale current limit in uA. value from
+> +		    0 to 30000 with 5000 uA resolution. default: 25000 uA
+> +
+> +- qcom,current-boost-limit
+
+And -mA suffix here. Similar for other units.
+
+Thanks,
+								Pavel
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--x+6KMIRAuhnl3hBn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlo0MOIACgkQMOfwapXb+vJhwACfR1k70Lve5If7KoLwAZfAlQ2V
+6z4AoI/uaT+pl3chUKAcZqRd9ytgPGt1
+=wLJn
+-----END PGP SIGNATURE-----
+
+--x+6KMIRAuhnl3hBn--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
