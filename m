@@ -1,122 +1,195 @@
-From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH/RFC] DT: leds: Fix 'label' property description and add
- 'colour' property
-Date: Sun, 17 Dec 2017 13:49:45 +0100
-Message-ID: <b7d60158-35e7-3121-185e-24c6c4d02eee@gmail.com>
-References: <1512251410-6084-1-git-send-email-jacek.anaszewski@gmail.com>
- <20171204104351.GA6611@amd>
- <CAL_JsqL=aN6YSH30HSuUKS86Bsb2KPMdT0dyheYjs9Z=w3hH0Q@mail.gmail.com>
- <82dc0ed3-f4fe-d8a2-65ea-4212770b78e7@gmail.com>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Subject: Re: [RFC v2 1/2] backlight: pwm_bl: linear interpolation between
+ values of brightness-levels
+Date: Mon, 18 Dec 2017 10:47:24 +0100
+Message-ID: <CAFqH_51O5zqDUJiRp5nktM-ks=URkgCwMSy9fhbZG6D0qarJrg@mail.gmail.com>
+References: <20171116141151.21171-1-enric.balletbo@collabora.com>
+ <20171116141151.21171-2-enric.balletbo@collabora.com> <20171215144052.3b62gd3bkiqtuvk7@oak.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <82dc0ed3-f4fe-d8a2-65ea-4212770b78e7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>, Dan Murphy <dmurphy-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171215144052.3b62gd3bkiqtuvk7@oak.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Doug Anderson <dianders@google.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-cc devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Hi Daniel,
 
-On 12/14/2017 10:35 PM, Jacek Anaszewski wrote:
-> On 12/11/2017 05:27 PM, Rob Herring wrote:
->> On Mon, Dec 4, 2017 at 4:43 AM, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org> wrote:
->>> Hi!
->>>
->>>> Label property was imposed a uniqueness requirement, which was erroneous,
->>>> since ePAPR defines it to "a human readable string describing a device".
+2017-12-15 15:40 GMT+01:00 Daniel Thompson <daniel.thompson@linaro.org>:
+> On Thu, Nov 16, 2017 at 03:11:50PM +0100, Enric Balletbo i Serra wrote:
 >>
->> But it still needs to be unique to be useful. It's just unique from a
-> 
-> This patch is a follow-up of your following statement from [0]:
-> 
->>>>>>>>
-> I really dislike how this naming convention is used for label. label is
-> supposed to be the phyically identifiable name. Having the devicename
-> defeats that. Perhaps color, too. We'd be better off with a color
-> property. It seems we're overloading the naming with too many things.
-> Now we're adding device association.
-> <<<<<<<
-> 
-> 
-> In effect, I intended to remove the uniqueness requirement for the
-> label since the label alone doesn't make a LED class device name
-> in case of many current LED class drivers.
-> 
-> Instead I inferred from your message that label should contain only
-> LED function. Therefore I'm splitting colour (maybe color would fit
-> better here, but adopted the spelling from
-> Documentation/leds/leds-class.txt, to be decided which one fits better.)
-> 
-> But see below.
-> 
->> different perspective. Ideally, if you had a block diagram level
->> drawing of a device or board showing LEDs (and displays with
->> backlights), you would simply take the labels from that drawing.
+>> Setting use-linear-interpolation in the dts will allow you to have linear
+>> interpolation between values of brightness-levels.
 >>
->>>> Also the binding description misleadingly suggested direct usage of label
->>>> for LED class device name, whereas it should only define a LED function.
->>>>
->>>> Therefore an additional 'colour' property is being introduced, which together
->>>> with the parent DT node name used for devicename shall be used for naming LED
->>>> class device according to the patterh
->>>> <devicename>:<colour>:<function>.
->>>
->>>
->>>> -- label : The label for this LED. If omitted, the label is taken from the node
->>>> -       name (excluding the unit address). It has to uniquely identify
->>>> -       a device, i.e. no other LED class device can be assigned the same
->>>> -       label.
->>>> +- label : The label for this LED. It should describe its function. If omitted,
->>>> +          the label is taken from the node name (excluding the unit address).
->>>
->>> So the label contains "as1235:green:capslock"? I guess it might be
->>> nice to mention that. Or just the "capslock" part?
->>>
->>> Also.. it would be good to start pushing for more consistency in the
->>> labels: I have these on the thinkpad:
->>>
->>> input5::scrolllock/   tpacpi::dock_status2/ tpacpi::unknown_led/
->>> mmc0::/               tpacpi:green:batt/    tpacpi::unknown_led2/
->>> phy0-led/             tpacpi:orange:batt/   tpacpi::unknown_led3/
->>> tpacpi::bay_active/   tpacpi::power/
->>>
->>> On embedded system, I'd like to see <devicename> to corespond
->>> to.. device the led belongs to, as opposed to name of the chip that
->>> drives the led. Maybe we should do 'main_camera:white:flash' instead of
->>> 'as4132:white:flash' because userspace already has information on what
->>> chip it is (sysfs paths), but can not easily figure out to which
->>> device the flash belongs.
+>> There are now 256 between each of the values of brightness-levels. If
+>> something is requested halfway between 2 values, we'll use linear
+>> interpolation.
+>
+> Why 256?
+
+To be honest there isn't a strong reason, I thought that 256 was a
+good value because is the minimum number of steps possible (8 bits
+pwm). But yeah, guess the discussion is more if this value should be
+calculated, or specified in the the DT more than the value itself.
+
 >>
->> A couple of points:
+>> This way a high resolution pwm duty cycle can be used without having to
+>> list out every possible value in the dts. This system also allows for
+>> gamma corrected values (eg: "brightness-levels = <0 2 4 8 16 32>;").
 >>
->> I already mentioned DT node naming policies in the lm3692x thread, so
->> I won't repeat here.
+>> Patch based on the Alexandru M Stan work done for ChromeOS kernels.
 >>
->> Using the node name is not going to guarantee uniqueness in the names.
->> Even if you added the unit address it would still not. I can easily
->> have 2 or more LED driver chips at the same I2C address on different
->> buses. The only guaranteed unique name is the full DT path. Once
->> you've added some OS specific numbering to make device names unique,
->> then I'm not sure there's a lot of value in naming things after what
->> drives them. You can walk the sysfs hierarchy to determine that
->> anyway.
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> ---
+>>  .../bindings/leds/backlight/pwm-backlight.txt      |  2 +
+>>  drivers/video/backlight/pwm_bl.c                   | 55 +++++++++++++++++-----
+>>  include/linux/pwm_backlight.h                      |  2 +
+>>  3 files changed, 47 insertions(+), 12 deletions(-)
 >>
->> A case I care about is I have a family of boards that all have a
->> common defined set of 4 LEDs. They could be driven by anything, but I
->> want the same interface presented to userspace across boards.
-> 
-> In effect it looks like we should drop devicename section from
-> the LED class devicename pattern, label should describe only
-> LED function and additional color property could be introduced,
-> to be concatenated with LED function as a final LED class device
-> name.
-> 
-> 
-> [0] https://www.mail-archive.com/linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg119473.html
-> 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+>> index 764db86..7c48f20 100644
+>> --- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+>> +++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+>> @@ -17,6 +17,8 @@ Optional properties:
+>>                 "pwms" property (see PWM binding[0])
+>>    - enable-gpios: contains a single GPIO specifier for the GPIO which enables
+>>                    and disables the backlight (see GPIO binding[1])
+>> +  - use-linear-interpolation: set this propriety to enable linear interpolation
+>> +                              between each of the values of brightness-levels.
+>
+> Deciding whether or not this deployment of interpolation is a property
+> of the hardware is a finely balanced judgement. On the whole I conclude
+> that since the lookup table is a property of the hardware so too is the
+> deployment of interpolation.
+>
+> Following up on the "why 256?" comment. IMHO either the number of
+> interpolated steps should be calculated from the underlying PWM
+> resolution or it could simply be specified in the DT (e.g. replace
+> use-linear-interpolation with num-interpolated-steps).
+>
+
+Personally I like the idea to have the possibility to specify the
+number of interpolated steps in the DT, I think that will be more
+flexible for the user. If it's ok let me send a first version using
+num-interpolated-steps, and continue the discussion about if makes
+sense to have that in the DT or not.
+
+>
+>>  [0]: Documentation/devicetree/bindings/pwm/pwm.txt
+>>  [1]: Documentation/devicetree/bindings/gpio/gpio.txt
+>> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+>> index 9bd1768..59b1bfb 100644
+>> --- a/drivers/video/backlight/pwm_bl.c
+>> +++ b/drivers/video/backlight/pwm_bl.c
+>> @@ -24,6 +24,8 @@
+>>  #include <linux/regulator/consumer.h>
+>>  #include <linux/slab.h>
+>>
+>> +#define NSTEPS       256
+>> +
+>>  struct pwm_bl_data {
+>>       struct pwm_device       *pwm;
+>>       struct device           *dev;
+>> @@ -35,6 +37,7 @@ struct pwm_bl_data {
+>>       struct gpio_desc        *enable_gpio;
+>>       unsigned int            scale;
+>>       bool                    legacy;
+>> +     bool                    piecewise;
+>>       int                     (*notify)(struct device *,
+>>                                         int brightness);
+>>       void                    (*notify_after)(struct device *,
+>> @@ -76,17 +79,36 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
+>>       pb->enabled = false;
+>>  }
+>>
+>> -static int compute_duty_cycle(struct pwm_bl_data *pb, int brightness)
+>> +static int scale(struct pwm_bl_data *pb, int x)
+>>  {
+>>       unsigned int lth = pb->lth_brightness;
+>> +
+>> +     return (x * (pb->period - lth) / pb->scale) + lth;
+>> +}
+>> +
+>> +static int compute_duty_cycle(struct pwm_bl_data *pb, int brightness)
+>> +{
+>> +     int coarse = brightness / NSTEPS;
+>> +     int fine = brightness % NSTEPS;
+>>       int duty_cycle;
+>>
+>> -     if (pb->levels)
+>> -             duty_cycle = pb->levels[brightness];
+>> -     else
+>> -             duty_cycle = brightness;
+>> +     if (pb->levels) {
+>> +             if (pb->piecewise) {
+>> +                     duty_cycle = scale(pb, pb->levels[coarse]);
+>> +                     if (fine > 0)
+>> +                             duty_cycle += (scale(pb, pb->levels[coarse + 1])
+>> +                                            - scale(pb, pb->levels[coarse]))
+>> +                                            * fine / NSTEPS;
+>> +                     dev_dbg(pb->dev, "brightness=%d coarse=%d fine=%d\n",
+>> +                             brightness, coarse, fine);
+>> +             } else {
+>> +                     duty_cycle = scale(pb, pb->levels[brightness]);
+>> +             }
+>> +     } else {
+>> +             duty_cycle = scale(pb, brightness);
+>> +     }
+>>
+>> -     return (duty_cycle * (pb->period - lth) / pb->scale) + lth;
+>> +     return duty_cycle;
+>>  }
+>>
+>>  static int pwm_backlight_update_status(struct backlight_device *bl)
+>> @@ -149,11 +171,11 @@ static int pwm_backlight_parse_dt(struct device *dev,
+>>       if (!prop)
+>>               return -EINVAL;
+>>
+>> -     data->max_brightness = length / sizeof(u32);
+>> +     data->levels_count = length / sizeof(u32);
+>>
+>>       /* read brightness levels from DT property */
+>> -     if (data->max_brightness > 0) {
+>> -             size_t size = sizeof(*data->levels) * data->max_brightness;
+>> +     if (data->levels_count > 0) {
+>> +             size_t size = sizeof(*data->levels) * data->levels_count;
+>>
+>>               data->levels = devm_kzalloc(dev, size, GFP_KERNEL);
+>>               if (!data->levels)
+>> @@ -161,7 +183,7 @@ static int pwm_backlight_parse_dt(struct device *dev,
+>>
+>>               ret = of_property_read_u32_array(node, "brightness-levels",
+>>                                                data->levels,
+>> -                                              data->max_brightness);
+>> +                                              data->levels_count);
+>>               if (ret < 0)
+>>                       return ret;
+>>
+>> @@ -170,10 +192,18 @@ static int pwm_backlight_parse_dt(struct device *dev,
+>>               if (ret < 0)
+>>                       return ret;
+>>
+>> +             data->piecewise = of_property_read_bool(node,
+>> +                                                 "use-linear-interpolation");
+>> +
+>>               data->dft_brightness = value;
+>> -             data->max_brightness--;
+>> +             data->levels_count--;
+>>       }
+>>
+>> +     if (data->piecewise)
+>> +             data->max_brightness = data->levels_count * NSTEPS;
+>> +     else
+>> +             data->max_brightness = data->levels_count;
+>
+> I think we lost a -1 here?
+>
+
+Good catch, I think so.
+
+Regards,
+ Enric
+
+>
+> Daniel.
