@@ -1,41 +1,34 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 2/6] dt: bindings: lp8860: Update DT label binding
-Date: Wed, 20 Dec 2017 12:28:48 -0600
-Message-ID: <20171220182848.xxqbhfdn6uu377pm@rob-hp-laptop>
+Subject: Re: [PATCH v5 4/6] dt: bindings: lp8860: Add trigger binding to the
+ lp8860
+Date: Wed, 20 Dec 2017 12:29:11 -0600
+Message-ID: <20171220182911.ivsr6uzf5vq6clkh@rob-hp-laptop>
 References: <20171218202307.4913-1-dmurphy@ti.com>
- <20171218202307.4913-2-dmurphy@ti.com>
+ <20171218202307.4913-4-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33705 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755292AbdLTS2u (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 20 Dec 2017 13:28:50 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171218202307.4913-2-dmurphy@ti.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+In-Reply-To: <20171218202307.4913-4-dmurphy@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Dan Murphy <dmurphy@ti.com>
 Cc: mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
-On Mon, Dec 18, 2017 at 02:23:03PM -0600, Dan Murphy wrote:
-> Update the lp8860 label binding to the LED
-> standard as documented in
-> 
-> Documentation/devicetree/bindings/leds/common.txt
+On Mon, Dec 18, 2017 at 02:23:05PM -0600, Dan Murphy wrote:
+> Add a default trigger optional node to the child node.
+> This will allow the driver to set the trigger for a backlight.
 > 
 > Signed-off-by: Dan Murphy <dmurphy@ti.com>
 > ---
 > 
-> v5 - Renamed label to just white:backlight - https://patchwork.kernel.org/patch/10108361
-> Comment was made on patch 4 https://patchwork.kernel.org/patch/10108351/
+> v5 - No changes
 > 
 > v4 - No changes
-> v3 - Added address and size cells, updated label with color and inserted spaces
-> around the reg node - https://patchwork.kernel.org/patch/10093749/
-> v2 - Added reg to child node and made it required
+> v3 - Removed optional and rebased - https://patchwork.kernel.org/patch/10093755/
+> v2 - Moved binding changes to first patch in the series.
 > 
->  Documentation/devicetree/bindings/leds/leds-lp8860.txt | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/leds/leds-lp8860.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
