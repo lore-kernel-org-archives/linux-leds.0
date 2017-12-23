@@ -1,34 +1,85 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 4/6] dt: bindings: lp8860: Add trigger binding to the
- lp8860
-Date: Wed, 20 Dec 2017 12:29:11 -0600
-Message-ID: <20171220182911.ivsr6uzf5vq6clkh@rob-hp-laptop>
-References: <20171218202307.4913-1-dmurphy@ti.com>
- <20171218202307.4913-4-dmurphy@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] led: core: Fix brightness setting when setting
+ active_off=0
+Date: Sat, 23 Dec 2017 11:33:40 +0100
+Message-ID: <a097e3df-1803-4496-0df6-0c4d7f8a54b0@gmail.com>
+References: <20171212101044.22596-1-matthieu.castet@parrot.com>
+ <95b148d6-6b21-ef67-ff69-ab471222c51d@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171218202307.4913-4-dmurphy@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: mark.rutland@arm.com, rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:45836 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750713AbdLWKei (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 23 Dec 2017 05:34:38 -0500
+Received: by mail-wr0-f196.google.com with SMTP id h1so29780988wre.12
+        for <linux-leds@vger.kernel.org>; Sat, 23 Dec 2017 02:34:38 -0800 (PST)
+In-Reply-To: <95b148d6-6b21-ef67-ff69-ab471222c51d@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Matthieu CASTET <matthieu.castet@parrot.com>
+Cc: linux-leds@vger.kernel.org
 
-On Mon, Dec 18, 2017 at 02:23:05PM -0600, Dan Murphy wrote:
-> Add a default trigger optional node to the child node.
-> This will allow the driver to set the trigger for a backlight.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
-> 
-> v5 - No changes
-> 
-> v4 - No changes
-> v3 - Removed optional and rebased - https://patchwork.kernel.org/patch/10093755/
-> v2 - Moved binding changes to first patch in the series.
-> 
->  Documentation/devicetree/bindings/leds/leds-lp8860.txt | 3 +++
->  1 file changed, 3 insertions(+)
+Hi Matthieu,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I was to send this fix for 4.15-rc5, but just realized the
+possible mistake in the subject. Would you mind if I did
+the following amendment?:
+
+s/active_off/delay_off/
+
+-- 
+Best regards,
+Jacek Anaszewski
+
+On 12/13/2017 09:16 PM, Jacek Anaszewski wrote:
+> Hi Matthieu,
+> 
+> Thanks for catching this. Applied.
+> 
+> On 12/12/2017 11:10 AM, Matthieu CASTET wrote:
+>> With the current code, the following sequence won't work :
+>> echo timer > trigger
+>>
+>> echo 0 >  delay_off
+>> * at this point we call
+>> ** led_delay_off_store
+>> ** led_blink_set
+>> *** stop timer
+>> ** led_blink_setup
+>> ** led_set_software_blink
+>> *** if !delay_on, led off
+>> *** if !delay_off, set led_set_brightness_nosleep <--- LED_BLINK_SW is set but timer is stop
+>> *** otherwise start timer/set LED_BLINK_SW flag
+>>
+>> echo xxx > brightness
+>> * led_set_brightness
+>> ** if LED_BLINK_SW
+>> *** if brightness=0, led off
+>> *** else apply brightness if next timer <--- timer is stop, and will never apply new setting
+>> ** otherwise set led_set_brightness_nosleep
+>>
+>> To fix that, when we delete the timer, we should clear LED_BLINK_SW.
+>>
+>> Cc: linux-leds@vger.kernel.org
+>> Signed-off-by: Matthieu CASTET <matthieu.castet@parrot.com>
+>> ---
+>>  drivers/leds/led-core.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+>> index fd83c7f77a95..f3654fd2eaf3 100644
+>> --- a/drivers/leds/led-core.c
+>> +++ b/drivers/leds/led-core.c
+>> @@ -186,7 +186,7 @@ void led_blink_set(struct led_classdev *led_cdev,
+>>  		   unsigned long *delay_on,
+>>  		   unsigned long *delay_off)
+>>  {
+>> -	del_timer_sync(&led_cdev->blink_timer);
+>> +	led_stop_software_blink(led_cdev);
+>>  
+>>  	clear_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags);
+>>  	clear_bit(LED_BLINK_ONESHOT_STOP, &led_cdev->work_flags);
+>>
+> 
