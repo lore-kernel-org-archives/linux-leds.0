@@ -1,38 +1,32 @@
-From: Matthieu CASTET <matthieu.castet@parrot.com>
-Subject: Re: [PATCH] led: core: Fix brightness setting when setting
- active_off=0
-Date: Wed, 27 Dec 2017 10:16:57 +0100
-Message-ID: <20171227101657.1f00ecd3@perruche.parrot.biz>
-References: <20171212101044.22596-1-matthieu.castet@parrot.com>
-        <95b148d6-6b21-ef67-ff69-ab471222c51d@gmail.com>
-        <a097e3df-1803-4496-0df6-0c4d7f8a54b0@gmail.com>
+From: "Sra. Angel Rania" <sra.angelrania83@gmail.com>
+Subject: Re: You will definetely be interested...
+Date: Wed, 27 Dec 2017 10:17:06 +0000
+Message-ID: <CAKx+QTtL6hVN3Sv0baZHHBnMxgEeMprK=PALd6GuhxU+MNPauw__27861.6923060783$1514369768$gmane$org@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-eopbgr30042.outbound.protection.outlook.com ([40.107.3.42]:29943
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750908AbdL0JRF (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 27 Dec 2017 04:17:05 -0500
-In-Reply-To: <a097e3df-1803-4496-0df6-0c4d7f8a54b0@gmail.com>
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:38275 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751954AbdL0KRM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 27 Dec 2017 05:17:12 -0500
+Received: by mail-qk0-f194.google.com with SMTP id l19so11734229qke.5
+        for <linux-leds@vger.kernel.org>; Wed, 27 Dec 2017 02:17:12 -0800 (PST)
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org
 
-Hi Jacek,
+Hi Dear,
 
-Le Sat, 23 Dec 2017 11:33:40 +0100,
-Jacek Anaszewski <jacek.anaszewski@gmail.com> a =C3=A9crit :
+Reading your profile has given me courage in search of a reasponsable
+and trust worthy Fellow. The past has treated me so awfully but now I
+am ready to move on despite of my health condition. I will like to
+have a sincere and important discussion with you that will be in your
+favor likewise to you and your environment especially to your close
+family. Endeavor to reply me and I have attached my picture in case
+you long to know who emailed you. I will be waiting to hear from you
+as soon as possble.
+Thanks for paying attention to my mail and will appreciate so much if
+I receive a reply from you for understable details.
 
-> Hi Matthieu,
->=20
-> I was to send this fix for 4.15-rc5, but just realized the
-> possible mistake in the subject. Would you mind if I did
-> the following amendment?:
->=20
-> s/active_off/delay_off/
->=20
+Thanks,
 
-No problem ;)
+Mrs. Rania Hassan
