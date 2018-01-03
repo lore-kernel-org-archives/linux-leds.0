@@ -1,41 +1,74 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL] LED fix for 4.15-rc6
-Date: Thu, 28 Dec 2017 22:25:50 +0100
-Message-ID: <1514496350-3229-1-git-send-email-jacek.anaszewski@gmail.com>
+From: Oleksij Rempel <linux@rempel-privat.de>
+Subject: proper framework for meter sink?
+Date: Wed, 3 Jan 2018 12:48:36 +0100
+Message-ID: <649fa764-6598-8f05-90c0-e10a4d36b08f@rempel-privat.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="2VSFfMUdyK0OJWUMrMhKuov9fsqKowNdS"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:46384 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751220AbdL1V1A (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 28 Dec 2017 16:27:00 -0500
+Received: from mout.gmx.net ([212.227.15.15]:51499 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751428AbeACLtA (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 3 Jan 2018 06:49:00 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, matthieu.castet@parrot.com
+To: linux-leds@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>, linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Paul Fertser <fercerpav@gmail.com>
 
-Hi Linus,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--2VSFfMUdyK0OJWUMrMhKuov9fsqKowNdS
+Content-Type: multipart/mixed; boundary="5JXIsWezL3qkDygrxiIJimxXE5eMClgGC";
+ protected-headers="v1"
+From: Oleksij Rempel <linux@rempel-privat.de>
+To: linux-leds@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>,
+ linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+ Paul Fertser <fercerpav@gmail.com>
+Message-ID: <649fa764-6598-8f05-90c0-e10a4d36b08f@rempel-privat.de>
+Subject: proper framework for meter sink?
 
-Please pull a single LED fix for brightness setting when delay_off is 0.
+--5JXIsWezL3qkDygrxiIJimxXE5eMClgGC
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+Hallo all,
 
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+I wont to use existing LED triggers by setting multiple LEDs on trigger.
+The triggers should use brightness value by different trigger intensity
+and the driver should set different amount of LEDs depending on
+brightness value.
+With other words LED meter controller by kernel LED framework. It should
+be possible to configure LED arrays by Device Tree.
+Initially i was thinking about some kind of extended leds-gpio.c driver
+which will convert brightness value to LED position. But one my friend
+pointed me that metes exist in different configurations and it make no
+sense to bind it to LED framework.
 
-are available in the git repository at:
+Do you have any ideas, suggestions, tips? I know there are lot of user
+space based variants. On other hand kernel already have almost every
+thing what I need.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led_fixes_for_4.15-rc6
+--=20
+Regards,
+Oleksij
 
-for you to fetch changes up to 2b83ff96f51d0b039c4561b9f95c824d7bddb85c:
 
-  led: core: Fix brightness setting when setting delay_off=0 (2017-12-27 20:45:07 +0100)
+--5JXIsWezL3qkDygrxiIJimxXE5eMClgGC--
 
-Thanks,
-Jacek Anaszewski
+--2VSFfMUdyK0OJWUMrMhKuov9fsqKowNdS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-----------------------------------------------------------------
-LED fix for 4.15-rc6
-----------------------------------------------------------------
-Matthieu CASTET (1):
-      led: core: Fix brightness setting when setting delay_off=0
+-----BEGIN PGP SIGNATURE-----
 
- drivers/leds/led-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+iF4EAREIAAYFAlpMwxQACgkQHwImuRkmbWnQXAD/TY+IhQq9eFM9bkRSLWXb4/rA
+tmeHUjVPtwJfH4H4PPoA/3kyNOJvzLo2u+fuUl2xa8bX6IR2n76FMe4DlAD2kzw0
+=QsCB
+-----END PGP SIGNATURE-----
+
+--2VSFfMUdyK0OJWUMrMhKuov9fsqKowNdS--
