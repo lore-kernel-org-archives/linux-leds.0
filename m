@@ -1,69 +1,37 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: proper framework for meter sink?
-Date: Wed, 3 Jan 2018 13:23:26 +0100
-Message-ID: <20180103122326.GB28083@amd>
-References: <649fa764-6598-8f05-90c0-e10a4d36b08f@rempel-privat.de>
+From: =?UTF-8?Q?Ga=c3=abtan_Carlier?= <gcembed@gmail.com>
+Subject: Add driver for MCP45HV51 (digital potentiometer)
+Date: Wed, 3 Jan 2018 17:08:42 +0100
+Message-ID: <17da226a-247b-153a-6743-3e33264a1f0c@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="A6N2fC+uXW/VQSAv"
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <649fa764-6598-8f05-90c0-e10a4d36b08f-YEK0n+YFykbzxQdaRaTXBw@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Oleksij Rempel <linux-YEK0n+YFykbzxQdaRaTXBw@public.gmane.org>
-Cc: linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sakari Ailus <sakari.ailus-X3B1VOXEql0@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Oleksij Rempel <o.rempel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Paul Fertser <fercerpav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:37796 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751833AbeACQIp (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 3 Jan 2018 11:08:45 -0500
+Received: by mail-wm0-f49.google.com with SMTP id f140so3499049wmd.2
+        for <linux-leds@vger.kernel.org>; Wed, 03 Jan 2018 08:08:45 -0800 (PST)
+Received: from [10.0.4.19] (34.16-66-87.adsl-static.isp.belgacom.be. [87.66.16.34])
+        by smtp.googlemail.com with ESMTPSA id g7sm893186edf.50.2018.01.03.08.08.43
+        for <linux-leds@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Jan 2018 08:08:43 -0800 (PST)
+Content-Language: en-US
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
 
+Dear,
+I want to integrate MCP45HV51 I2C device to Linux kernel. It is a 
+digital potentiometer.
+I have several questions:
+- Is "leds driver" the correct section ?
+- On which existing I2C leds driver should I base my code to use the 
+most recent API/pratice ?
+- Maybe it is not needed to write a C driver and everything can be done 
+via devicetree ?
 
---A6N2fC+uXW/VQSAv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> I wont to use existing LED triggers by setting multiple LEDs on trigger.
-> The triggers should use brightness value by different trigger intensity
-> and the driver should set different amount of LEDs depending on
-> brightness value.
-
-Well... we don't really have "trigger intensities" inside the kernel.
-
-Are you sure this is something kernel should do?
-
-> With other words LED meter controller by kernel LED framework. It should
-> be possible to configure LED arrays by Device Tree.
-> Initially i was thinking about some kind of extended leds-gpio.c driver
-> which will convert brightness value to LED position. But one my friend
-> pointed me that metes exist in different configurations and it make no
-> sense to bind it to LED framework.
->=20
-> Do you have any ideas, suggestions, tips? I know there are lot of user
-> space based variants. On other hand kernel already have almost every
-> thing what I need.
-
-
-We could have triggers like "on if value is above X", and then you
-could use few of them to implement a meter.
-
-But I guess this would be better done in userspace... Why not do it there?
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---A6N2fC+uXW/VQSAv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlpMyz4ACgkQMOfwapXb+vKg2ACgtxQ8CUOsZWhW/qSNkZYb6Fse
-gHkAoIcT+NOac4gNX91gPWMP/qBRYB5k
-=xUFR
------END PGP SIGNATURE-----
-
---A6N2fC+uXW/VQSAv--
+Thank you for your help.
+Best regards,
+Gaëtan.
