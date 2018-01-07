@@ -1,47 +1,46 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH] leds: core: Fix regression caused by commit 2b83ff96f51d
-Date: Wed,  3 Jan 2018 22:40:14 +0100
-Message-ID: <1515015614-3178-1-git-send-email-jacek.anaszewski@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, matthieu.castet@parrot.com, jacek.anaszewski@gmail.com
+Subject: [GIT PULL] LED fix for 4.15-rc7
+Date: Sun,  7 Jan 2018 14:13:58 +0100
+Message-ID: <1515330838-4044-1-git-send-email-jacek.anaszewski@gmail.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38719 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753283AbeAGNPF (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 7 Jan 2018 08:15:05 -0500
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com
 
-Commit 2b83ff96f51d ("led: core: Fix brightness setting when setting delay_off=0")
-replaced del_timer_sync(&led_cdev->blink_timer) with led_stop_software_blink(),
-which in addition to the former also clears LED_BLINK_SW flag.
+Hi Linus,
 
-The fact that the function clears also blink_delay_on and blink_delay_off
-properties of struct led_classdev wasn't considered harmful but it turned out
-to be so in case when pointer to one or both props is passed to led_blink_set()
-like in the ledtrig-timer.c. In such cases zeroes are passed in delay_on and/or
-delay_off arguments to led_blink_setup(), which results either in stopping the
-software blinking or setting blinking frequency always to 1Hz.
+Please pull LED regression fix for 4.15-rc7.
 
-Avoid using led_stop_software_blink() and add a single call required
-to clear LED_BLINK_SW flag, which was the only required modification to
-fix the original issue.
+The commit 2b83ff96f51d for 4.15-rc6, which was fixing LED brightness
+setting after clearing delay_off broke the behavior on any alteration
+of delay_on{off} properties, due to use of a LED core helper that does
+too much for this particular case.
 
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
----
+The following changes since commit 30a7acd573899fd8b8ac39236eff6468b195ac7d:
+
+  Linux 4.15-rc6 (2017-12-31 14:47:43 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led_fixes_for_4.15-rc7
+
+for you to fetch changes up to 7b6af2c53192f1766892ef40c8f48a413509ed72:
+
+  leds: core: Fix regression caused by commit 2b83ff96f51d (2018-01-07 13:27:07 +0100)
+
+Thanks,
+Jacek Anaszewski
+
+----------------------------------------------------------------
+LED fix for 4.15-rc7
+----------------------------------------------------------------
+Jacek Anaszewski (1):
+      leds: core: Fix regression caused by commit 2b83ff96f51d
+
  drivers/leds/led-core.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index f3654fd..ede4fa0 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -186,8 +186,9 @@ void led_blink_set(struct led_classdev *led_cdev,
- 		   unsigned long *delay_on,
- 		   unsigned long *delay_off)
- {
--	led_stop_software_blink(led_cdev);
-+	del_timer_sync(&led_cdev->blink_timer);
- 
-+	clear_bit(LED_BLINK_SW, &led_cdev->work_flags);
- 	clear_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags);
- 	clear_bit(LED_BLINK_ONESHOT_STOP, &led_cdev->work_flags);
- 
--- 
-2.1.4
