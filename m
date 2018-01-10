@@ -1,67 +1,57 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: ledtrig-transient: Add SPDX license identifiers
-Date: Wed, 10 Jan 2018 21:40:43 +0100
-Message-ID: <d1c6aab4-735d-565d-1bc4-9fd77e82e589@gmail.com>
-References: <20180110163540.8396-1-shuahkh@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180110163540.8396-1-shuahkh@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Shuah Khan <shuahkh@osg.samsung.com>, rpurdie@rpsys.net, pavel@ucw.cz, keescook@chromium.org, shuah@kernel.org
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH 0/4] backlight: pwm_bl: support linear interpolation and brightness to human eye
+Date: Wed, 10 Jan 2018 23:30:42 +0100
+Message-ID: <20180110223046.17696-1-enric.balletbo@collabora.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:36944 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751733AbeAJWaz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 Jan 2018 17:30:55 -0500
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: Daniel Thompson <daniel.thompson@linaro.org>, Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Shuah,
+Dear all,
 
-Thanks for the patch.
+This series is a first patchset based on the discussion of two previous RFCs
+[1] and [2].
 
-On 01/10/2018 05:35 PM, Shuah Khan wrote:
-> Replace GPL license statements with SPDX GPL-2.0 license identifiers
-> and and correct the module license to GPLv2.
-> 
-> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-> ---
->  drivers/leds/trigger/ledtrig-transient.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/leds/trigger/ledtrig-transient.c b/drivers/leds/trigger/ledtrig-transient.c
-> index 7acce64b692a..f0578af858e7 100644
-> --- a/drivers/leds/trigger/ledtrig-transient.c
-> +++ b/drivers/leds/trigger/ledtrig-transient.c
-> @@ -1,3 +1,4 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
->  /*
+The first and second patch what tries to solve is the problem of granularity
+for high resolution PWMs. The idea is simple interpolate between 2
+brightness values so we can have a high PWM duty cycle (a 16 bits PWM is up
+to 65535 possible steps) without having to list out every possible value in
+the dts. I think that this patch is required to not break backward
+compability, to be more flexible and also extend the functionality to be
+able to use high resolution PWM with enough steps to have a good UI
+experience in userspace.
 
-How about changing this whole block comment to "//"?
-We did it already for drivers/leds/trigger/ledtrig-netdev.c,
-present in linux-next. See related discussion with reference
-to relevant Linus' guidelines in this matter [0].
+The thirth and fourth patch is a bit more ambicious, the idea is let decide
+the driver the brightness-levels required in function of the PWM resolution.
+To do this create a brightness-levels table filled with the CIE 1931
+algorithm values to convert brightness to PWM duty cycle.
 
->   * LED Kernel Transient Trigger
->   *
-> @@ -8,10 +9,6 @@
->   * Design and use-case input from Jonas Bonn <jonas@southpole.se> and
->   * Neil Brown <neilb@suse.de>
->   *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - *
->   */
->  /*
->   * Transient trigger allows one shot timer activation. Please refer to
-> @@ -238,4 +235,4 @@ module_exit(transient_trig_exit);
->  
->  MODULE_AUTHOR("Shuah Khan <shuahkhan@gmail.com>");
->  MODULE_DESCRIPTION("Transient LED trigger");
-> -MODULE_LICENSE("GPL");
-> +MODULE_LICENSE("GPL v2");
-> 
+More detailed info is available in the commit message of every patch.
 
-[0] https://www.mail-archive.com/netdev@vger.kernel.org/msg204598.html
+Both functionalities were tested on a Samsung Chromebook Plus (that has a
+16 bits PWM) and a SL50 device (with a 8 bits PWM)
+
+Waiting for your feedback.
+
+[1] http://www.spinics.net/lists/devicetree/msg193262.html
+[2] https://lkml.org/lkml/2017/11/16/301
+
+Best regards,
+
+Enric Balletbo i Serra (4):
+  backlight: pwm_bl: linear interpolation between brightness-levels
+  dt-bindings: pwm-backlight: add a num-interpolation-steps property.
+  backlight: pwm_bl: compute brightness of LED linearly to human eye.
+  dt-bindings: pwm-backlight: move brightness-levels to optional.
+
+ .../bindings/leds/backlight/pwm-backlight.txt      |  36 +++-
+ drivers/video/backlight/pwm_bl.c                   | 237 +++++++++++++++++++--
+ 2 files changed, 253 insertions(+), 20 deletions(-)
 
 -- 
-Best regards,
-Jacek Anaszewski
+2.15.1
