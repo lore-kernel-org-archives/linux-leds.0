@@ -1,176 +1,73 @@
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH 1/4] backlight: pwm_bl: linear interpolation between brightness-levels
-Date: Wed, 10 Jan 2018 23:30:43 +0100
-Message-ID: <20180110223046.17696-2-enric.balletbo@collabora.com>
-References: <20180110223046.17696-1-enric.balletbo@collabora.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH v2] leds: ledtrig-transient: Add SPDX license identifiers
+Date: Wed, 10 Jan 2018 15:42:05 -0700
+Message-ID: <20180110224205.21926-1-shuahkh@osg.samsung.com>
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:36962 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751834AbeAJWa4 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 Jan 2018 17:30:56 -0500
-In-Reply-To: <20180110223046.17696-1-enric.balletbo@collabora.com>
+Received: from osg.samsung.com ([64.30.133.232]:54123 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751975AbeAJWmd (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 10 Jan 2018 17:42:33 -0500
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>, Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz, keescook@chromium.org, shuah@kernel.org
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Setting num-interpolated-steps in the dts will allow you to have linear
-interpolation between values of brightness-levels. This way a high
-resolution pwm duty cycle can be used without having to list out every
-possible value in the dts. This system also allows for gamma corrected
-values.
+Replace GPL license statements with SPDX GPL-2.0 license identifiers
+and and correct the module license to GPLv2.
 
-The most simple example is interpolate between two brightness values a
-number of steps, this can be done setting the following in the dts:
-
-  brightness-levels = <0 65535>;
-  num-interpolated-steps = <1024>;
-  default-brightness-level = <512>;
-
-This will create a brightness-level table with the following values:
-
-  <0 63 126 189 252 315 378 441 ... 64260 64323 64386 64449 65535>
-
-Another use case can be describe a gamma corrected curve, as we have
-better sensitivity at low luminance than high luminance we probably
-want have smaller steps for low brightness levels values and bigger
-steps for high brightness levels values. This can be achieved with
-the following in the dts:
-
-  brightness-levels = <0 4096 65535>;
-  num-interpolated-steps = <1024>;
-  default-brightness-level = <512>;
-
-This will create a brightness-levels table with the following values:
-
-  <0 4 8 12 16 20 ... 4096 4156 4216 4276 ... 65535>
-
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
-Changes since RFCv2:
-- Replace use-linear-interpolation for num-interpolated-steps so it's
-  more flexible to specify any kind of curve to the user.
-- Reworked the code to interpolate between two points.
-  - Pre-compute the brightness-levels table at boot.
-Changes since RFCv1:
-- Add linear interpolation for high resolution PWM.
+Changes since v1:
+- Changed comment format and updated the entire block to match the
+  comment format based on Jacek's review.
 
- drivers/video/backlight/pwm_bl.c | 88 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 88 insertions(+)
+ drivers/leds/trigger/ledtrig-transient.c | 33 +++++++++++++-------------------
+ 1 file changed, 13 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 8e3f1245f5c5..eabe0a4462af 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -147,7 +147,11 @@ static int pwm_backlight_parse_dt(struct device *dev,
- 				  struct platform_pwm_backlight_data *data)
- {
- 	struct device_node *node = dev->of_node;
-+	unsigned int num_levels = 0;
-+	unsigned int levels_count;
-+	unsigned int num_steps;
- 	struct property *prop;
-+	unsigned int *table;
- 	int length;
- 	u32 value;
- 	int ret;
-@@ -167,6 +171,7 @@ static int pwm_backlight_parse_dt(struct device *dev,
- 	/* read brightness levels from DT property */
- 	if (data->max_brightness > 0) {
- 		size_t size = sizeof(*data->levels) * data->max_brightness;
-+		unsigned int i, j, n = 0;
+diff --git a/drivers/leds/trigger/ledtrig-transient.c b/drivers/leds/trigger/ledtrig-transient.c
+index 7acce64b692a..9d1769073562 100644
+--- a/drivers/leds/trigger/ledtrig-transient.c
++++ b/drivers/leds/trigger/ledtrig-transient.c
+@@ -1,22 +1,15 @@
+-/*
+- * LED Kernel Transient Trigger
+- *
+- * Copyright (C) 2012 Shuah Khan <shuahkhan@gmail.com>
+- *
+- * Based on Richard Purdie's ledtrig-timer.c and Atsushi Nemoto's
+- * ledtrig-heartbeat.c
+- * Design and use-case input from Jonas Bonn <jonas@southpole.se> and
+- * Neil Brown <neilb@suse.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- */
+-/*
+- * Transient trigger allows one shot timer activation. Please refer to
+- * Documentation/leds/ledtrig-transient.txt for details
+-*/
++// SPDX-License-Identifier: GPL-2.0
++//
++// LED Kernel Transient Trigger
++//
++// Transient trigger allows one shot timer activation. Please refer to
++// Documentation/leds/ledtrig-transient.txt for details
++// Copyright (C) 2012 Shuah Khan <shuahkhan@gmail.com>
++//
++// Based on Richard Purdie's ledtrig-timer.c and Atsushi Nemoto's
++// ledtrig-heartbeat.c
++// Design and use-case input from Jonas Bonn <jonas@southpole.se> and
++// Neil Brown <neilb@suse.de>
  
- 		data->levels = devm_kzalloc(dev, size, GFP_KERNEL);
- 		if (!data->levels)
-@@ -184,6 +189,89 @@ static int pwm_backlight_parse_dt(struct device *dev,
- 			return ret;
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+@@ -238,4 +231,4 @@ module_exit(transient_trig_exit);
  
- 		data->dft_brightness = value;
-+
-+		/*
-+		 * This property is optional, if is set enables linear
-+		 * interpolation between each of the values of brightness levels
-+		 * and creates a new pre-computed table.
-+		 */
-+		ret = of_property_read_u32(node, "num-interpolated-steps",
-+					   &num_steps);
-+		if (ret < 0)
-+			return ret;
-+
-+		/*
-+		 * Make sure that there is at least two entries in the
-+		 * brightness-levels table, otherwise we can't interpolate
-+		 * between two points.
-+		 */
-+		if (num_steps) {
-+			if (data->max_brightness < 2) {
-+				dev_err(dev, "can't interpolate\n");
-+				return -EINVAL;
-+			}
-+
-+			/*
-+			 * Recalculate the number of brightness levels, now
-+			 * taking in consideration the number of interpolated
-+			 * steps between two levels.
-+			 */
-+			for (i = 0; i < data->max_brightness - 1; i++) {
-+				if ((data->levels[i + 1] - data->levels[i]) /
-+				   num_steps)
-+					num_levels += num_steps;
-+				else
-+					num_levels++;
-+			}
-+			num_levels++;
-+			dev_dbg(dev, "new number of brightness levels: %d\n",
-+				num_levels);
-+
-+			/*
-+			 * Create a new table of brightness levels with all the
-+			 * interpolated steps.
-+			 */
-+			table = kcalloc(num_levels, sizeof(*table), GFP_KERNEL);
-+			if (!table)
-+				return -ENOMEM;
-+
-+			/* Fill the interpolated table. */
-+			levels_count = 0;
-+			for (i = 0; i < data->max_brightness - 1; i++) {
-+				value = data->levels[i];
-+				n = (data->levels[i + 1] - value) / num_steps;
-+				if (n > 0) {
-+					for (j = 0; j < num_steps; j++) {
-+						table[levels_count] = value;
-+						value += n;
-+						levels_count++;
-+					}
-+				} else {
-+					table[levels_count] = data->levels[i];
-+					levels_count++;
-+				}
-+			}
-+			table[levels_count] = data->levels[i];
-+
-+			/*
-+			 * As we use interpolation lets remove current
-+			 * brightness levels table for the new interpolated
-+			 * table.
-+			 */
-+			devm_kfree(dev, data->levels);
-+			data->levels = devm_kcalloc(dev, num_levels,
-+						    sizeof(*data->levels),
-+						    GFP_KERNEL);
-+			memcpy(data->levels, table,
-+			       num_levels * sizeof(*table));
-+			kfree(table);
-+			/*
-+			 * Reassign max_brightness value to the new total number
-+			 * of brightness levels.
-+			 */
-+			data->max_brightness = num_levels;
-+		}
-+
- 		data->max_brightness--;
- 	}
- 
+ MODULE_AUTHOR("Shuah Khan <shuahkhan@gmail.com>");
+ MODULE_DESCRIPTION("Transient LED trigger");
+-MODULE_LICENSE("GPL");
++MODULE_LICENSE("GPL v2");
 -- 
-2.15.1
+2.14.1
