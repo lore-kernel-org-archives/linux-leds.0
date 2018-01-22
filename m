@@ -1,40 +1,80 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 4/4] dt-bindings: pwm-backlight: move brightness-levels
- to optional.
-Date: Fri, 19 Jan 2018 14:57:01 -0600
-Message-ID: <20180119205701.xbsgixzcfuvu4yvb@rob-hp-laptop>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH 2/4] dt-bindings: pwm-backlight: add a
+ num-interpolation-steps property.
+Date: Mon, 22 Jan 2018 09:16:13 +0000
+Message-ID: <20180122091613.oyjjzwci3mmfc7j2@oak.lan>
 References: <20180110223046.17696-1-enric.balletbo@collabora.com>
- <20180110223046.17696-5-enric.balletbo@collabora.com>
+ <20180110223046.17696-3-enric.balletbo@collabora.com>
+ <20180119205249.fcbdyu6652ffsdmg@rob-hp-laptop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180110223046.17696-5-enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Brian Norris <briannorris-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Guenter Roeck <groeck-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandru Stan <amstan-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20180119205249.fcbdyu6652ffsdmg@rob-hp-laptop>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Jan 10, 2018 at 11:30:46PM +0100, Enric Balletbo i Serra wrote:
-> The patch 'backlight: pwm_bl: compute brightness of LED linearly to
-> human eye' introduced a default brightness-levels table that is used
-> when brightness-levels is not availablel in the dts so move move
-
-s/availablel/available/
-
-Perhaps "so move..." should be a new sentence.
-
-> brightness-levels and default-brightness-level to be optional.
+On Fri, Jan 19, 2018 at 02:52:49PM -0600, Rob Herring wrote:
+> On Wed, Jan 10, 2018 at 11:30:44PM +0100, Enric Balletbo i Serra wrote:
+> > The num-interpolated-steps property specifies the number of
+> > interpolated steps between each value of brightness-level table. This is
+> > useful for high resolution PWMs to not have to list out every possible
+> > value in the brightness-level array.
+> > 
+> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > ---
+> >  .../bindings/leds/backlight/pwm-backlight.txt       | 21 +++++++++++++++++++++
+> >  1 file changed, 21 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+> > index 310810906613..605432c910c5 100644
+> > --- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+> > +++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
+> > @@ -21,6 +21,11 @@ Optional properties:
+> >                            and enabling the backlight using GPIO.
+> >    - pwm-off-delay-ms: Delay in ms between disabling the backlight using GPIO
+> >                        and setting PWM value to 0.
+> > +  - num-interpolated-steps: Number of interpolated steps between each value
+> > +                            of brightness-levels table. This way a high
+> > +                            resolution pwm duty cycle can be used without
+> > +                            having to list out every possible value in the
+> > +                            brightness-level array.
+> >  
+> >  [0]: Documentation/devicetree/bindings/pwm/pwm.txt
+> >  [1]: Documentation/devicetree/bindings/gpio/gpio.txt
+> > @@ -39,3 +44,19 @@ Example:
+> >  		post-pwm-on-delay-ms = <10>;
+> >  		pwm-off-delay-ms = <10>;
+> >  	};
+> > +
+> > +Example using num-interpolation-steps:
+> > +
+> > +	backlight {
+> > +		compatible = "pwm-backlight";
+> > +		pwms = <&pwm 0 5000000>;
+> > +
+> > +		brightness-levels = <0 65535>;
+> > +		num-interpolated-steps = <4096>;
 > 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> ---
->  .../devicetree/bindings/leds/backlight/pwm-backlight.txt  | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
+> How does this make sense with only 2 defined levels other than having 
+> fewer steps? I thought the purpose of this was to have a piecewise 
+> linear curve. 
 
-With that,
+It's not wrong as such, this is how a device with a linear (or nearly
+linear) response could be compactly described.
 
-Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Nevertheless I agree!  An example with a small but realistic curve 
+would be better... we know that copy 'n paste exists so I'd rather 
+see a simple curve than no curve.
+
+
+Daniel.
+
+
+> > +		default-brightness-level = <6>;
+> 
+> Aren't valid values 0, 16, 32, 48, etc.?
+> 
+> Rob
