@@ -1,41 +1,33 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Subject: Re: [PATCH v1] leds: Clarify supported chips by LM355x driver
-Date: Sat, 27 Jan 2018 00:07:54 +0200
-Message-ID: <20180126220754.5x2eog7ztdcemvc6@valkosipuli.retiisi.org.uk>
+Date: Sun, 28 Jan 2018 16:18:54 +0200
+Message-ID: <1517149134.7000.1284.camel@linux.intel.com>
 References: <20180126073828.70597-1-andriy.shevchenko@linux.intel.com>
- <20180126102507.GA13775@amd>
- <20180126213238.GA10985@amd>
+         <20180126102507.GA13775@amd> <20180126213238.GA10985@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:44318 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751257AbeAZWH6 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 26 Jan 2018 17:07:58 -0500
-Content-Disposition: inline
+Received: from mga18.intel.com ([134.134.136.126]:63140 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751699AbeA1O22 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 28 Jan 2018 09:28:28 -0500
 In-Reply-To: <20180126213238.GA10985@amd>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, sakari.ailus@iki.fi
 
-Hi Pavel,
-
-On Fri, Jan 26, 2018 at 10:32:39PM +0100, Pavel Machek wrote:
+On Fri, 2018-01-26 at 22:32 +0100, Pavel Machek wrote:
 > On Fri 2018-01-26 11:25:07, Pavel Machek wrote:
-> > On Fri 2018-01-26 09:38:28, Andy Shevchenko wrote:
-> > > LM3555 is supported by AS3645A.
-> > > Clarify this in Kconfig by referencing to AS3645A.
-> > > 
-> > > No functional change.
-> > > 
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > ---
-> > >  drivers/leds/Kconfig | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> 
+
 > Actually, what about this?
+
+Works for me:
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Though one typo below.
+
 > 
 > Signed-off-by: Pavel Machek <pavel@ucw.cz>
 > 
@@ -49,6 +41,9 @@ On Fri, Jan 26, 2018 at 10:32:39PM +0100, Pavel Machek wrote:
 >  config LEDS_AS3645A
 > -	tristate "AS3645A LED flash controller support"
 > +	tristate "AS3645A and LM3555 LED flash controller support"
+
+controller -> controllers
+
 >  	depends on I2C && LEDS_CLASS_FLASH
 >  	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
 >  	help
@@ -64,16 +59,18 @@ On Fri, Jan 26, 2018 at 10:32:39PM +0100, Pavel Machek wrote:
 > -	  This option enables support for LEDs connected to LM355x.
 > -	  LM355x includes Torch, Flash and Indicator functions.
 > +	  This option enables support for LEDs connected to LM3554
-> +	  and lM3556. It includes Torch, Flash and Indicator functions.
-
-s/l/L/
-
+> +	  and lM3556. It includes Torch, Flash and Indicator
+> functions.
 >  
 >  config LEDS_OT200
 >  	tristate "LED support for the Bachmann OT200"
-
-Could you submit a patch to linux-leds, please?
+> 
+> 
+> 
+> 
+> 
+> 
 
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
