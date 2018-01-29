@@ -1,99 +1,74 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL] LED updates for 4.16-rc1
-Date: Mon, 29 Jan 2018 22:34:36 +0100
-Message-ID: <1517261676-4352-1-git-send-email-jacek.anaszewski@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, arnd@arndb.de, ben.whitten@gmail.com, dmurphy@ti.com, fabio.estevam@nxp.com, geert+renesas@glider.be, shuahkh@osg.samsung.com
+From: 0v3rdr0n3@gmail.com
+Subject: [PATCH] leds: use QoS to control LED suspend behavior from userspace
+Date: Mon, 29 Jan 2018 19:49:47 +0000
+Message-ID: <20180129194947.11071-1-0v3rdr0n3@gmail.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org, linux-leds@vger.kernel.org
+Cc: samorris@lexmark.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi Linus,
+From: Samuel Morris <samorris@lexmark.com>
 
-Please pull LED updates for 4.16-rc1.
+Signed-off-by: Samuel Morris <samorris@lexmark.com>
+---
+ drivers/leds/led-class.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-New LED class driver:
-  - Introduce LM3692x dual string driver
-
-New LED trigger:
-  - Introduce a NETDEV trigger
-
-leds-lp8860:
-  - Various fixes to align with LED framework
-  - Add regulator enable during init
-  - DT support related improvements
-
-Minor fixes and cleanups to the LED class drivers:
-  - leds-pwm
-  - ledtrig-activity
-  - leds-blinkm
-  - leds-as3645a
-  - ledtrig-transient
-
-
-The following changes since commit b2cd1df66037e7c4697c7e40496bf7e4a5e16a2d:
-
-  Linux 4.15-rc7 (2018-01-07 14:22:41 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds_for_4.16-rc1
-
-for you to fetch changes up to 6a836631e303cec7fd9469ae53a4d97d0360eb38:
-
-  leds: ledtrig-transient: Add SPDX license identifiers (2018-01-11 21:24:17 +0100)
-
-Thanks,
-Jacek Anaszewski
-
-----------------------------------------------------------------
-LED updates for 4.16-rc1
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      leds: blinkm: avoid uninitialized data use
-
-Ben Whitten (1):
-      leds: trigger: Introduce a NETDEV trigger
-
-Dan Murphy (12):
-      leds: lp8860: Fix linuxdoc format for structure
-      leds: lp8860: Add regulator enable during init
-      dt: bindings: lm3692x: Add bindings for lm3692x LED driver
-      leds: lm3692x: Introduce LM3692x dual string driver
-      leds: as3645a: Fix quoted string split warning
-      leds: as3645a: Fix line over 80 characters
-      dt: bindings: lp8860: Update bindings for lp8860
-      dt: bindings: lp8860: Update DT label binding
-      leds: lp8860: Update the dt parsing for LED labeling
-      dt: bindings: lp8860: Add trigger binding to the lp8860
-      leds: lp8860: Add DT parsing to retrieve the trigger node
-      leds: lp8860: Various fixes to align with LED framework
-
-Fabio Estevam (1):
-      leds: pwm: Remove unneeded header file
-
-Geert Uytterhoeven (1):
-      ledtrig-activity: Grammar s/a immediate/an immediate/
-
-Shuah Khan (1):
-      leds: ledtrig-transient: Add SPDX license identifiers
-
- .../ABI/testing/sysfs-class-led-trigger-netdev     |  45 ++
- .../devicetree/bindings/leds/leds-lm3692x.txt      |  49 ++
- .../devicetree/bindings/leds/leds-lp8860.txt       |  32 +-
- drivers/leds/Kconfig                               |   9 +-
- drivers/leds/Makefile                              |   1 +
- drivers/leds/leds-as3645a.c                        |   7 +-
- drivers/leds/leds-blinkm.c                         |   4 +
- drivers/leds/leds-lm3692x.c                        | 393 ++++++++++++++++
- drivers/leds/leds-lp8860.c                         |  66 ++-
- drivers/leds/leds-pwm.c                            |   1 -
- drivers/leds/trigger/Kconfig                       |   9 +-
- drivers/leds/trigger/Makefile                      |   1 +
- drivers/leds/trigger/ledtrig-netdev.c              | 496 +++++++++++++++++++++
- drivers/leds/trigger/ledtrig-transient.c           |  33 +-
- 14 files changed, 1091 insertions(+), 55 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-netdev
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3692x.txt
- create mode 100644 drivers/leds/leds-lm3692x.c
- create mode 100644 drivers/leds/trigger/ledtrig-netdev.c
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index f2b0a80..9e9e265 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -20,6 +20,7 @@
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/timer.h>
++#include <linux/pm_qos.h>
+ #include <uapi/linux/uleds.h>
+ #include "leds.h"
+ 
+@@ -196,6 +197,11 @@ static int led_suspend(struct device *dev)
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+ 
++	if(dev_pm_qos_flags(dev, PM_QOS_FLAG_NO_POWER_OFF) ==
++			PM_QOS_FLAGS_ALL) {
++		return 0;
++	}
++
+ 	if (led_cdev->flags & LED_CORE_SUSPENDRESUME)
+ 		led_classdev_suspend(led_cdev);
+ 
+@@ -206,6 +212,11 @@ static int led_resume(struct device *dev)
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+ 
++	if(dev_pm_qos_flags(dev, PM_QOS_FLAG_NO_POWER_OFF) ==
++			PM_QOS_FLAGS_ALL) {
++		return 0;
++	}
++
+ 	if (led_cdev->flags & LED_CORE_SUSPENDRESUME)
+ 		led_classdev_resume(led_cdev);
+ 
+@@ -287,6 +298,18 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+ 	list_add_tail(&led_cdev->node, &leds_list);
+ 	up_write(&leds_list_lock);
+ 
++	/* Attempt to let userspace take over the policy. */
++	ret = dev_pm_qos_expose_flags(led_cdev->dev,
++			PM_QOS_FLAG_NO_POWER_OFF);
++	if (ret < 0) {
++		dev_warn(led_cdev->dev, "failed to expose pm_qos_no_poweroff\n");
++		return 0;
++	}
++
++	ret = dev_pm_qos_update_flags(led_cdev->dev,
++			PM_QOS_FLAG_NO_POWER_OFF,
++			0);
++
+ 	if (!led_cdev->max_brightness)
+ 		led_cdev->max_brightness = LED_FULL;
+ 
+-- 
+1.9.3
