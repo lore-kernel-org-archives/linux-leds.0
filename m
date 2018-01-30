@@ -1,118 +1,86 @@
-From: Samuel Morris <samorris@lexmark.com>
-Subject: Re: [PATCH] leds: use QoS to control LED suspend behavior from userspace
-Date: Tue, 30 Jan 2018 09:55:27 -0500
-Message-ID: <CAFY_6qqX9x-DQ+CQRS0Q6DGwzF-zJ6w++OxgU8-+kL_fjXnN_w@mail.gmail.com>
-References: <20180129194947.11071-1-0v3rdr0n3@gmail.com> <20180130082817.GA4136@amd>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v1] leds: Clarify supported chips by LM355x driver
+Date: Tue, 30 Jan 2018 21:04:30 +0100
+Message-ID: <15971fbb-2c6d-5c15-d5d7-1718af904ebb@gmail.com>
+References: <20180126073828.70597-1-andriy.shevchenko@linux.intel.com>
+ <0bbb47ba-4b4f-263f-a8f3-aad13d7bd753@gmail.com>
+ <1517149809.7000.1288.camel@linux.intel.com>
+ <5968dfb2-8bf9-917f-4299-47bf1cd97124@gmail.com>
+ <1517310500.7000.1319.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-qk0-f175.google.com ([209.85.220.175]:38454 "EHLO
-        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751584AbeA3O4I (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 30 Jan 2018 09:56:08 -0500
-Received: by mail-qk0-f175.google.com with SMTP id t134so10412029qke.5
-        for <linux-leds@vger.kernel.org>; Tue, 30 Jan 2018 06:56:08 -0800 (PST)
-In-Reply-To: <20180130082817.GA4136@amd>
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:34042 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752793AbeA3UFp (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 30 Jan 2018 15:05:45 -0500
+Received: by mail-wm0-f45.google.com with SMTP id j21so5225929wmh.1
+        for <linux-leds@vger.kernel.org>; Tue, 30 Jan 2018 12:05:44 -0800 (PST)
+In-Reply-To: <1517310500.7000.1319.camel@linux.intel.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: 0v3rdr0n3@gmail.com, Linux PM <linux-pm@vger.kernel.org>, linux-leds@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
 
-On Tue, Jan 30, 2018 at 3:28 AM, Pavel Machek <pavel@ucw.cz> wrote:
-> On Mon 2018-01-29 19:49:47, 0v3rdr0n3@gmail.com wrote:
->> From: Samuel Morris <samorris@lexmark.com>
+On 01/30/2018 12:08 PM, Andy Shevchenko wrote:
+> On Mon, 2018-01-29 at 21:46 +0100, Jacek Anaszewski wrote:
+>> On 01/28/2018 03:30 PM, Andy Shevchenko wrote:
+>>> On Fri, 2018-01-26 at 21:39 +0100, Jacek Anaszewski wrote:
+>>>> On 01/26/2018 08:38 AM, Andy Shevchenko wrote:
+>>>>> +	  Note, LM3555 is driven by AS3645A.
+>>>>
+>>>> Could you please provide more details on this relationship?
+>>>> Looking at the datasheet it seems that both chips are standalone
+>>>> and controlled via I2C and/or via GPIO in case of LM3555.
+>>>
+>>> The only difference I see looking in datasheets again that AS3645A
+>>> supports dual-led mode, by using STROBE signal in case of parallel
+>>> interface or thru additional bits in I2C mode.
+>>>
+>>> Can you be more specific what exactly makes you feel that they are
+>>> not
+>>> compatible?
 >>
->> Signed-off-by: Samuel Morris <samorris@lexmark.com>
->
-> But... we'll really need description what this is supposed to do.
-
-I have an LED that indicates to the user that the machine is still
-powered when in suspend, so it needs to remain powered. This LED uses
-the leds-pwm driver, but it may use a different driver on future
-products, so making this change in that driver only would not be
-ideal. I asked linux-pm a related question a week or two ago, and
-Raphael Wysocki suggested looking into the PM_QOS_FLAG_NO_POWER_OFF
-flag. This is what I came up with. I realize this is a pretty broad
-change, but I figured I'd try the most general thing first.
-
->
-> Because at least some LEDs (keyboard LEDs on PC) can't be powered on
-> during suspend.
-
-That is why I set the default behavior to PM_QOS_FLAG_NO_POWER_OFF=0 on probe.
-
->
-> Does this work for your LEDs? Do we need a way for userspace to tell
-> if LED supports it or not?
-
-Yes, this fixes my problem. I could try testing on other LEDs as well
-that use different drivers if need be.
-
-I didn't see any reason not to make this userspace configurable. I
-imagine for some LEDs, the switch just won't work. Are you aware of
-any cases where attempting to keep an LED on would cause outright
-breakage? I would like these QoS parameters to be device tree, or
-otherwise per-board configurable, but I'm not aware of a standard way
-to do that. Maybe someone from linux-pm has an idea. Something like
-that might be more reasonable than allowing default userspace
-configurability.
-
->
->> @@ -196,6 +197,11 @@ static int led_suspend(struct device *dev)
->>  {
->>       struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>> The expression "LM3555 is driven by AS3645A" brings on mind rather
+>> some type of hardware dependency between chips than drivers
+>> similarity.
 >>
->> +     if(dev_pm_qos_flags(dev, PM_QOS_FLAG_NO_POWER_OFF) ==
->> +                     PM_QOS_FLAGS_ALL) {
->> +             return 0;
->> +     }
->
-> "if (". No need for { } s.
+>> Now I understand that you meant that both devices can be driven by any
+>> of leds-lm355x or leds-as3645a driver, am I right?
+> 
+> No. The chip in question is LM3555, and it's handled only in as3645a
+> driver.
+> 
+>> I suspected that I got something entirely wrong here, especially
+>> that both you and Pavel agreed.
+>>
+>> But, given that it turned out that leds-lm355x.c doesn't support
+>> LM3555 and its documentation [3] indeed shows the affinity with
+>> AS3645, I suppose that this patch is a result of a premature
+>> conclusion drawn basing on the driver's description rather than its
+>> capabilities.
+>>
+>> [3] http://www.ti.com/lit/ds/symlink/lm3555.pdf
+>>
+>> Effectively, the only sensible change seems to be:
+>>
+>> -	tristate "LED support for LM355x Chips, LM3554 and LM3556"
+>> +	tristate "LED support for LM3554 and LM3556 chips"
+>>  	depends on LEDS_CLASS && I2C
+>>  	select REGMAP_I2C
+>>  	help
+>> -	  This option enables support for LEDs connected to LM355x.
+>> -	  LM355x includes Torch, Flash and Indicator functions.
+>> +	  This option enables support for LEDs connected to LM3554
+>> +	  and LM3556. It includes Torch, Flash and Indicator
+>> functions.
+> 
+> I like patch Pavel sent previously. It feels more comprehensive than
+> this one.
 
-Ok, I'll generate a new patch later if this seems likely to be integrated.
+Right. The patch subject and description will have to be tweaked a bit
+then. I'll apply it once it is officially submitted.
 
->
->> +
->>       if (led_cdev->flags & LED_CORE_SUSPENDRESUME)
->>               led_classdev_suspend(led_cdev);
->>
->> @@ -206,6 +212,11 @@ static int led_resume(struct device *dev)
->>  {
->>       struct led_classdev *led_cdev = dev_get_drvdata(dev);
->>
->> +     if(dev_pm_qos_flags(dev, PM_QOS_FLAG_NO_POWER_OFF) ==
->> +                     PM_QOS_FLAGS_ALL) {
->> +             return 0;
->> +     }
->> +
->>       if (led_cdev->flags & LED_CORE_SUSPENDRESUME)
->>               led_classdev_resume(led_cdev);
->>
->> @@ -287,6 +298,18 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
->>       list_add_tail(&led_cdev->node, &leds_list);
->>       up_write(&leds_list_lock);
->>
->> +     /* Attempt to let userspace take over the policy. */
->> +     ret = dev_pm_qos_expose_flags(led_cdev->dev,
->> +                     PM_QOS_FLAG_NO_POWER_OFF);
->> +     if (ret < 0) {
->> +             dev_warn(led_cdev->dev, "failed to expose pm_qos_no_poweroff\n");
->> +             return 0;
->> +     }
->> +
->> +     ret = dev_pm_qos_update_flags(led_cdev->dev,
->> +                     PM_QOS_FLAG_NO_POWER_OFF,
->> +                     0);
->> +
->>       if (!led_cdev->max_brightness)
->>               led_cdev->max_brightness = LED_FULL;
->>
->
-> Best regards,
->                                                                         Pavel
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
-
-thanks,
-Sam
+-- 
+Best regards,
+Jacek Anaszewski
