@@ -1,85 +1,151 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v2] leds: Clarify supported chips by LM355x driver
-Date: Thu, 1 Feb 2018 21:26:34 +0100
-Message-ID: <20180201202634.GA29617@amd>
-References: <20180126073828.70597-1-andriy.shevchenko@linux.intel.com>
- <0bbb47ba-4b4f-263f-a8f3-aad13d7bd753@gmail.com>
- <1517149809.7000.1288.camel@linux.intel.com>
- <5968dfb2-8bf9-917f-4299-47bf1cd97124@gmail.com>
- <1517310500.7000.1319.camel@linux.intel.com>
- <15971fbb-2c6d-5c15-d5d7-1718af904ebb@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] leds: use QoS to control LED suspend behavior from
+ userspace
+Date: Thu, 1 Feb 2018 22:29:37 +0100
+Message-ID: <fbebed0e-22ec-a13a-0bdd-7b241c21ab30@gmail.com>
+References: <20180129194947.11071-1-0v3rdr0n3@gmail.com>
+ <20180130082817.GA4136@amd>
+ <CAFY_6qqX9x-DQ+CQRS0Q6DGwzF-zJ6w++OxgU8-+kL_fjXnN_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59508 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754954AbeBAU0g (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Feb 2018 15:26:36 -0500
-Content-Disposition: inline
-In-Reply-To: <15971fbb-2c6d-5c15-d5d7-1718af904ebb@gmail.com>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37171 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751715AbeBAVav (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Feb 2018 16:30:51 -0500
+In-Reply-To: <CAFY_6qqX9x-DQ+CQRS0Q6DGwzF-zJ6w++OxgU8-+kL_fjXnN_w@mail.gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
+To: Samuel Morris <samorris@lexmark.com>, Pavel Machek <pavel@ucw.cz>
+Cc: 0v3rdr0n3@gmail.com, Linux PM <linux-pm@vger.kernel.org>, linux-leds@vger.kernel.org
 
+Hi Samuel,
 
---envbJBWh7q8WU6mo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the patch.
 
-Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On 01/30/2018 03:55 PM, Samuel Morris wrote:
+> On Tue, Jan 30, 2018 at 3:28 AM, Pavel Machek <pavel@ucw.cz> wrote:
+>> On Mon 2018-01-29 19:49:47, 0v3rdr0n3@gmail.com wrote:
+>>> From: Samuel Morris <samorris@lexmark.com>
+>>>
+>>> Signed-off-by: Samuel Morris <samorris@lexmark.com>
+>>
+>> But... we'll really need description what this is supposed to do.
+> 
+> I have an LED that indicates to the user that the machine is still
+> powered when in suspend, so it needs to remain powered. This LED uses
+> the leds-pwm driver, but it may use a different driver on future
+> products, so making this change in that driver only would not be
+> ideal. I asked linux-pm a related question a week or two ago, and
+> Raphael Wysocki suggested looking into the PM_QOS_FLAG_NO_POWER_OFF
+> flag. This is what I came up with. I realize this is a pretty broad
+> change, but I figured I'd try the most general thing first.
+> 
+>>
+>> Because at least some LEDs (keyboard LEDs on PC) can't be powered on
+>> during suspend.
+> 
+> That is why I set the default behavior to PM_QOS_FLAG_NO_POWER_OFF=0 on probe.
+> 
+>>
+>> Does this work for your LEDs? Do we need a way for userspace to tell
+>> if LED supports it or not?
+> 
+> Yes, this fixes my problem. I could try testing on other LEDs as well
+> that use different drivers if need be.
+> 
+> I didn't see any reason not to make this userspace configurable. I
+> imagine for some LEDs, the switch just won't work. Are you aware of
+> any cases where attempting to keep an LED on would cause outright
+> breakage? I would like these QoS parameters to be device tree, or
+> otherwise per-board configurable, but I'm not aware of a standard way
+> to do that. Maybe someone from linux-pm has an idea. Something like
+> that might be more reasonable than allowing default userspace
+> configurability.
 
-Clarify which controllers are supported by which driver.
+There is already retain-state-suspended property defined in
+Documentation/devicetree/bindings/leds/leds-gpio.txt and used
+in drivers/leds/leds-gpio.c. Now if we are going to add generic
+pm_qos support to the LED core, the DT property should be made generic
+too and moved to the Documentation/devicetree/bindings/leds/common.txt.
 
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Then, if the property is present, we shouldn't expose this setting
+to the userspace, see below.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 318a28f..9a538de 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -69,7 +69,7 @@ config LEDS_APU
- 	  module will be called leds-apu.
-=20
- config LEDS_AS3645A
--	tristate "AS3645A LED flash controller support"
-+	tristate "AS3645A and LM3555 LED flash controllers support"
- 	depends on I2C && LEDS_CLASS_FLASH
- 	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
- 	help
-@@ -587,12 +587,12 @@ config LEDS_MAX8997
- 	  MAXIM MAX8997 PMIC.
-=20
- config LEDS_LM355x
--	tristate "LED support for LM355x Chips, LM3554 and LM3556"
-+	tristate "LED support for LM3554 and LM3556 chips"
- 	depends on LEDS_CLASS && I2C
- 	select REGMAP_I2C
- 	help
--	  This option enables support for LEDs connected to LM355x.
--	  LM355x includes Torch, Flash and Indicator functions.
-+	  This option enables support for LEDs connected to LM3554
-+	  and LM3556. It includes Torch, Flash and Indicator functions.
-=20
- config LEDS_OT200
- 	tristate "LED support for the Bachmann OT200"
+>>
+>>> @@ -196,6 +197,11 @@ static int led_suspend(struct device *dev)
+>>>  {
+>>>       struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>>>
+>>> +     if(dev_pm_qos_flags(dev, PM_QOS_FLAG_NO_POWER_OFF) ==
+>>> +                     PM_QOS_FLAGS_ALL) {
+>>> +             return 0;
+>>> +     }
+>>
+>> "if (". No need for { } s.
+> 
+> Ok, I'll generate a new patch later if this seems likely to be integrated.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Please also address problems detected by build bot [0].
 
---envbJBWh7q8WU6mo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+>>> +
+>>>       if (led_cdev->flags & LED_CORE_SUSPENDRESUME)
+>>>               led_classdev_suspend(led_cdev);
+>>>
+>>> @@ -206,6 +212,11 @@ static int led_resume(struct device *dev)
+>>>  {
+>>>       struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>>>
+>>> +     if(dev_pm_qos_flags(dev, PM_QOS_FLAG_NO_POWER_OFF) ==
+>>> +                     PM_QOS_FLAGS_ALL) {
+>>> +             return 0;
+>>> +     }
+>>> +
+>>>       if (led_cdev->flags & LED_CORE_SUSPENDRESUME)
+>>>               led_classdev_resume(led_cdev);
+>>>
+>>> @@ -287,6 +298,18 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+>>>       list_add_tail(&led_cdev->node, &leds_list);
+>>>       up_write(&leds_list_lock);
+>>>
+>>> +     /* Attempt to let userspace take over the policy. */
+>>> +     ret = dev_pm_qos_expose_flags(led_cdev->dev,
+>>> +                     PM_QOS_FLAG_NO_POWER_OFF);
+>>> +     if (ret < 0) {
+>>> +             dev_warn(led_cdev->dev, "failed to expose pm_qos_no_poweroff\n");
+>>> +             return 0;
+>>> +     }
+>>> +
+>>> +     ret = dev_pm_qos_update_flags(led_cdev->dev,
+>>> +                     PM_QOS_FLAG_NO_POWER_OFF,
+>>> +                     0);
+>>> +
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+So this part should be executed conditionally only if
+retain-state-suspended wasn't defined. BTW you will have
+to rebase your code onto some more recent code base.
 
-iEYEARECAAYFAlpzd/oACgkQMOfwapXb+vKNmQCfX71sdM9ZFqvDu8MrMuvXMXyJ
-uSoAn0nlBrOLIUWCBje21mpdxn/tpx++
-=mlvi
------END PGP SIGNATURE-----
+led_classdev_register() was renamed to of_led_classdev_register()
+in 4.12 and it now accepts struct device_node. leds-gpio.c was
+already changed to use it so it will be convenient to test the use case
+with retain-state-suspended DT property.
 
---envbJBWh7q8WU6mo--
+>>>       if (!led_cdev->max_brightness)
+>>>               led_cdev->max_brightness = LED_FULL;
+>>
+>> Best regards,
+>>                                                                         Pavel
+>> --
+>> (english) http://www.livejournal.com/~pavelmachek
+>> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+> 
+> thanks,
+> Sam
+> 
+
+[0] https://www.spinics.net/lists/linux-leds/msg09031.html
+
+-- 
+Best regards,
+Jacek Anaszewski
