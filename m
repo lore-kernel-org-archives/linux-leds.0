@@ -1,54 +1,85 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 1/1] leds: leds-mlxcpld: Allow compilation for 32 bit arch
-Date: Thu, 1 Feb 2018 20:34:01 +0100
-Message-ID: <8f2c62c9-c25f-7b04-84af-d025cbdb6ea2@gmail.com>
-References: <1517472634-110307-1-git-send-email-vadimp@mellanox.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH v2] leds: Clarify supported chips by LM355x driver
+Date: Thu, 1 Feb 2018 21:26:34 +0100
+Message-ID: <20180201202634.GA29617@amd>
+References: <20180126073828.70597-1-andriy.shevchenko@linux.intel.com>
+ <0bbb47ba-4b4f-263f-a8f3-aad13d7bd753@gmail.com>
+ <1517149809.7000.1288.camel@linux.intel.com>
+ <5968dfb2-8bf9-917f-4299-47bf1cd97124@gmail.com>
+ <1517310500.7000.1319.camel@linux.intel.com>
+ <15971fbb-2c6d-5c15-d5d7-1718af904ebb@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35841 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754606AbeBATfO (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Feb 2018 14:35:14 -0500
-Received: by mail-wr0-f195.google.com with SMTP id y3so10413061wrh.3
-        for <linux-leds@vger.kernel.org>; Thu, 01 Feb 2018 11:35:14 -0800 (PST)
-In-Reply-To: <1517472634-110307-1-git-send-email-vadimp@mellanox.com>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59508 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754954AbeBAU0g (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Feb 2018 15:26:36 -0500
+Content-Disposition: inline
+In-Reply-To: <15971fbb-2c6d-5c15-d5d7-1718af904ebb@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Vadim Pasternak <vadimp@mellanox.com>, rpurdie@rpsys.net
-Cc: linux-leds@vger.kernel.org, jiri@resnulli.us
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
 
-Hi Vadim,
 
-Thanks for the patch.
+--envbJBWh7q8WU6mo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 02/01/2018 09:10 AM, Vadim Pasternak wrote:
-> It makes leds-mlxcpld available for 32 bit architecture.
-> 
-> Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-> Reported-by: Jiri Pirko <jiri@mellanox.com>
-> ---
->  drivers/leds/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 3e763d2..fe52436a7 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -688,7 +688,7 @@ config LEDS_PM8058
->  
->  config LEDS_MLXCPLD
->  	tristate "LED support for the Mellanox boards"
-> -	depends on X86_64 && DMI
-> +	depends on X86 && DMI
->  	depends on LEDS_CLASS
->  	help
->  	  This option enabled support for the LEDs on the Mellanox
-> 
+Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Applied to the for-4.17 branch of linux-leds.git.
+Clarify which controllers are supported by which driver.
 
--- 
-Best regards,
-Jacek Anaszewski
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 318a28f..9a538de 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -69,7 +69,7 @@ config LEDS_APU
+ 	  module will be called leds-apu.
+=20
+ config LEDS_AS3645A
+-	tristate "AS3645A LED flash controller support"
++	tristate "AS3645A and LM3555 LED flash controllers support"
+ 	depends on I2C && LEDS_CLASS_FLASH
+ 	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
+ 	help
+@@ -587,12 +587,12 @@ config LEDS_MAX8997
+ 	  MAXIM MAX8997 PMIC.
+=20
+ config LEDS_LM355x
+-	tristate "LED support for LM355x Chips, LM3554 and LM3556"
++	tristate "LED support for LM3554 and LM3556 chips"
+ 	depends on LEDS_CLASS && I2C
+ 	select REGMAP_I2C
+ 	help
+-	  This option enables support for LEDs connected to LM355x.
+-	  LM355x includes Torch, Flash and Indicator functions.
++	  This option enables support for LEDs connected to LM3554
++	  and LM3556. It includes Torch, Flash and Indicator functions.
+=20
+ config LEDS_OT200
+ 	tristate "LED support for the Bachmann OT200"
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--envbJBWh7q8WU6mo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlpzd/oACgkQMOfwapXb+vKNmQCfX71sdM9ZFqvDu8MrMuvXMXyJ
+uSoAn0nlBrOLIUWCBje21mpdxn/tpx++
+=mlvi
+-----END PGP SIGNATURE-----
+
+--envbJBWh7q8WU6mo--
