@@ -1,19 +1,24 @@
 From: Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 3.18 11/24] led: core: Fix brightness setting when
+Subject: [PATCH AUTOSEL for 4.4 15/32] led: core: Fix brightness setting when
  setting delay_off=0
-Date: Sat, 3 Feb 2018 18:05:04 +0000
-Message-ID: <20180203180444.10801-11-alexander.levin@microsoft.com>
-References: <20180203180444.10801-1-alexander.levin@microsoft.com>
+Date: Sat, 3 Feb 2018 18:04:32 +0000
+Message-ID: <20180203180413.7438-15-alexander.levin@microsoft.com>
+References: <20180203180413.7438-1-alexander.levin@microsoft.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180203180444.10801-1-alexander.levin@microsoft.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from mail-co1nam03on0108.outbound.protection.outlook.com ([104.47.40.108]:59967
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753260AbeBCSGA (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sat, 3 Feb 2018 13:06:00 -0500
+In-Reply-To: <20180203180413.7438-1-alexander.levin@microsoft.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-leds-owner@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
 Cc: Matthieu CASTET <matthieu.castet@parrot.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <Alexander.Levin@microsoft.com>
-List-Id: linux-leds@vger.kernel.org
 
 From: Matthieu CASTET <matthieu.castet@parrot.com>
 
@@ -53,10 +58,10 @@ Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index aaa8eba9099f..0633cf033645 100644
+index c1c3af089634..92b6798ef5b3 100644
 --- a/drivers/leds/led-core.c
 +++ b/drivers/leds/led-core.c
-@@ -76,7 +76,7 @@ void led_blink_set(struct led_classdev *led_cdev,
+@@ -149,7 +149,7 @@ void led_blink_set(struct led_classdev *led_cdev,
  		   unsigned long *delay_on,
  		   unsigned long *delay_off)
  {
