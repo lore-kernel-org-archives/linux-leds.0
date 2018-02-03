@@ -1,19 +1,19 @@
 From: Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 15/32] led: core: Fix brightness setting when
+Subject: [PATCH AUTOSEL for 4.9 28/52] led: core: Fix brightness setting when
  setting delay_off=0
-Date: Sat, 3 Feb 2018 18:04:32 +0000
-Message-ID: <20180203180413.7438-15-alexander.levin@microsoft.com>
-References: <20180203180413.7438-1-alexander.levin@microsoft.com>
+Date: Sat, 3 Feb 2018 18:03:49 +0000
+Message-ID: <20180203180303.8490-28-alexander.levin@microsoft.com>
+References: <20180203180303.8490-1-alexander.levin@microsoft.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-co1nam03on0108.outbound.protection.outlook.com ([104.47.40.108]:59967
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+Received: from mail-bl2nam02on0139.outbound.protection.outlook.com ([104.47.38.139]:53600
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753260AbeBCSGA (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sat, 3 Feb 2018 13:06:00 -0500
-In-Reply-To: <20180203180413.7438-1-alexander.levin@microsoft.com>
+        id S1752788AbeBCSEX (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sat, 3 Feb 2018 13:04:23 -0500
+In-Reply-To: <20180203180303.8490-1-alexander.levin@microsoft.com>
 Content-Language: en-US
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
@@ -58,10 +58,10 @@ Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index c1c3af089634..92b6798ef5b3 100644
+index 3bce44893021..d70d4a5273b8 100644
 --- a/drivers/leds/led-core.c
 +++ b/drivers/leds/led-core.c
-@@ -149,7 +149,7 @@ void led_blink_set(struct led_classdev *led_cdev,
+@@ -186,7 +186,7 @@ void led_blink_set(struct led_classdev *led_cdev,
  		   unsigned long *delay_on,
  		   unsigned long *delay_off)
  {
