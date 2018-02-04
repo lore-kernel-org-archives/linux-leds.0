@@ -1,87 +1,59 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH AUTOSEL for 4.14 065/110] led: core: Fix brightness
- setting when setting delay_off=0
-Date: Sun, 4 Feb 2018 10:05:31 +0100
-Message-ID: <20180204090531.GA29468@amd>
-References: <20180203180015.29073-1-alexander.levin@microsoft.com>
- <20180203180015.29073-65-alexander.levin@microsoft.com>
- <20180203203525.GA5860@amd>
- <20180204003029.2lkcmh6wvzpnlrls@sasha-lappy>
+From: Matthias Schmitz <matthias@sigxcpu.org>
+Subject: Migrate documentation for LED subsystem to ReStructured text?
+Date: Sun, 4 Feb 2018 11:36:20 +0100
+Message-ID: <20180204113620.384268ef@x200.unterwegs.lan>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180204003029.2lkcmh6wvzpnlrls@sasha-lappy>
-Sender: stable-owner@vger.kernel.org
-To: Sasha Levin <Alexander.Levin@microsoft.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, Matthieu CASTET <matthieu.castet@parrot.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/o1lOdENZPRdD6wxUyrL8N3Y"; protocol="application/pgp-signature"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Received: from honk.sigxcpu.org ([24.134.29.49]:45816 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750818AbeBDKnW (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 4 Feb 2018 05:43:22 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id DC084FB03
+        for <linux-leds@vger.kernel.org>; Sun,  4 Feb 2018 11:36:32 +0100 (CET)
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id sOnifkSfpsuV for <linux-leds@vger.kernel.org>;
+        Sun,  4 Feb 2018 11:36:32 +0100 (CET)
+Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
+To: linux-leds@vger.kernel.org
 
-
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/o1lOdENZPRdD6wxUyrL8N3Y
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sun 2018-02-04 00:30:36, Sasha Levin wrote:
-> On Sat, Feb 03, 2018 at 09:35:26PM +0100, Pavel Machek wrote:
-> >On Sat 2018-02-03 18:00:59, Sasha Levin wrote:
-> >> From: Matthieu CASTET <matthieu.castet@parrot.com>
-> >>
-> >> [ Upstream commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c ]
-> >>
-> >> With the current code, the following sequence won't work :
-> >> echo timer > trigger
-> >>
-> >> echo 0 >  delay_off
-> >> * at this point we call
-> >> ** led_delay_off_store
-> >> ** led_blink_set
-> >> *** stop timer
-> >> ** led_blink_setup
-> >> ** led_set_software_blink
-> >> *** if !delay_on, led off
-> >> *** if !delay_off, set led_set_brightness_nosleep <--- LED_BLINK_SW is=
- set but timer is stop
-> >> *** otherwise start timer/set LED_BLINK_SW flag
-> >>
-> >> echo xxx > brightness
-> >> * led_set_brightness
-> >> ** if LED_BLINK_SW
-> >> *** if brightness=3D0, led off
-> >> *** else apply brightness if next timer <--- timer is stop, and will n=
-ever apply new setting
-> >> ** otherwise set led_set_brightness_nosleep
-> >>
-> >> To fix that, when we delete the timer, we should clear LED_BLINK_SW.
-> >
-> >Can you run the tests on the affected stable kernels? I have feeling
-> >that the problem described might not be present there.
->=20
-> Hm, I don't seem to have HW to test that out. Maybe someone else does?
+Hello,
 
-Why are you submitting patches you have no way to test?
+while reading the documentation about led triggers in the kernel i
+wondered if the docs could migrated to rst to be able to create
+nice html pages from it. I volunteer to migrate the docs
+(Documentation/leds/ etc) if the subsystem maintainers agree :).=20
 
-Plus... you don't have PC keyboard? You don't have thinkpad notebook?
+Best wishes,
+Matthias Schmitz
 
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---/04w6evG8XlLl3ft
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_/o1lOdENZPRdD6wxUyrL8N3Y
+Content-Type: application/pgp-signature
+Content-Description: Digitale Signatur von OpenPGP
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEYEARECAAYFAlp2zNsACgkQMOfwapXb+vId9QCgmDzJ8JPcYRsb7DlBiGAuLgEN
-saUAn2lRJlxZVmsUJ61Rt/U4wdJIAbpw
-=J69y
+iQIzBAEBCAAdFiEEbqpVmUhAzjTfUG9YuiBmYtH6x38FAlp24iQACgkQuiBmYtH6
+x38hVQ/+NQ7zj2IKfm120h0XcbQWZkL63jumn9+ieDIHux5ofnmjBcqhUbHmm58z
+mglGr7RtZsXxCkGAkOQUnA3CNjptYQuT843eOwfDAek0fssQt0IC11XU1PJvGRRV
++0+DV7PUgEEMIQWr1ZhcR9DBu02SyMHem7CG8crZdSJN+a9KQpJPtGeS3YH0U1k1
+3Wvmdi2mMCbUEk860BeAXXEaJaagOF3gvJlhqwyVo/wuc0Vw80hL3xjytmt1SrK8
+VDFaQoeon/TPgP/vEtCbUI6h5tYMAq6R1Q9/3XfqML8HF6v5E3qCPl+YD36vrZdb
+Y/MnQ5+ReSLIl8iZKpA7TdOzQxO9L+P3F97ZxhQuc9Dh5VG1izDLXcmsHibryLwF
+atFUBd5ef+wN24CElVCGO5S0IpflrUAjb/eKv841Q43U32IUjwbBj/FbxY8koDxF
+Jzx4GJm+zuly0AKMHM1FBcosxTA9pzHQ/00wbpKB70ajthtJTTXSVFGKYIRwi2XV
+uiVwE/H0Y50F1PQ/XiSVdgTtyt0V+HEWOriIe1gVCLX+4ktyC19p7JFrQlHYQw/E
+t5CSgPMpTpXfvHqu+Qf0/OEkffK8o1U1eH6kn/482UvSfyoOI5Qei9Lh32GWDwQ3
+qjEIrPa8XnpAZSOJGWOb6shhBFfzi87D9kQv2IwFDIHvicwasw8=
+=q7Lf
 -----END PGP SIGNATURE-----
 
---/04w6evG8XlLl3ft--
+--Sig_/o1lOdENZPRdD6wxUyrL8N3Y--
