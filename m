@@ -1,53 +1,165 @@
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v2 0/4] backlight: pwm_bl: support linear interpolation and brightness to human eye
-Date: Wed,  7 Feb 2018 15:13:33 +0100
-Message-ID: <20180207141337.22247-1-enric.balletbo@collabora.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41494 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754258AbeBGONr (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 7 Feb 2018 09:13:47 -0500
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Subject: [PATCH v2 1/4] backlight: pwm_bl: linear interpolation between brightness-levels
+Date: Wed,  7 Feb 2018 15:13:34 +0100
+Message-ID: <20180207141337.22247-2-enric.balletbo@collabora.com>
+References: <20180207141337.22247-1-enric.balletbo@collabora.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180207141337.22247-1-enric.balletbo@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Daniel Thompson <daniel.thompson@linaro.org>, Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>
 Cc: Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-leds@vger.kernel.org
 
-Dear all,
+Setting num-interpolated-steps in the dts will allow you to have linear
+interpolation between values of brightness-levels. This way a high
+resolution pwm duty cycle can be used without having to list out every
+possible value in the dts. This system also allows for gamma corrected
+values.
 
-This series is a second patchset integrating the requested changes.
+The most simple example is interpolate between two brightness values a
+number of steps, this can be done setting the following in the dts:
 
-The first and second patch what tries to solve is the problem of
-granularity for high resolution PWMs. The idea is simple interpolate
-between 2 brightness values so we can have a high PWM duty cycle (a
-16 bits PWM is up to 65535 possible steps) without having to list
-out every possible value in the dts. I think that this patch is
-required to not break backward compability, to be more flexible and
-also extend the functionality to be able to use high resolution PWM
-with enough steps to have a good UI experience in userspace.
+  brightness-levels = <0 65535>;
+  num-interpolated-steps = <1024>;
+  default-brightness-level = <512>;
 
-The thirth and fourth patch is a bit more ambicious, the idea is let
-decide the driver the brightness-levels required in function of the PWM
-resolution. To do this create a brightness-levels table filled with the
-CIE 1931 algorithm values to convert brightness to PWM duty cycle.
+This will create a brightness-level table with the following values:
 
-More detailed info is available in the commit message of every patch.
+  <0 63 126 189 252 315 378 441 ... 64260 64323 64386 64449 65535>
 
-Both functionalities were tested on a Samsung Chromebook Plus (that has
-a 16 bits PWM) and a SL50 device (with a 8 bits PWM)
+Another use case can be describe a gamma corrected curve, as we have
+better sensitivity at low luminance than high luminance we probably
+want have smaller steps for low brightness levels values and bigger
+steps for high brightness levels values. This can be achieved with
+the following in the dts:
 
-Waiting for your feedback.
+  brightness-levels = <0 4096 65535>;
+  num-interpolated-steps = <1024>;
+  default-brightness-level = <512>;
 
-Best regards,
+This will create a brightness-levels table with the following values:
 
-Enric Balletbo i Serra (4):
-  backlight: pwm_bl: linear interpolation between brightness-levels
-  dt-bindings: pwm-backlight: add a num-interpolation-steps property.
-  backlight: pwm_bl: compute brightness of LED linearly to human eye.
-  dt-bindings: pwm-backlight: move brightness-levels to optional.
+  <0 4 8 12 16 20 ... 4096 4156 4216 4276 ... 65535>
 
- .../bindings/leds/backlight/pwm-backlight.txt      |  34 ++-
- drivers/video/backlight/pwm_bl.c                   | 235 +++++++++++++++++++--
- 2 files changed, 249 insertions(+), 20 deletions(-)
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+Changes since v1:
+- None.
 
+ drivers/video/backlight/pwm_bl.c | 86 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 8e3f1245f5c5..9dbf0b3e806f 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -147,7 +147,11 @@ static int pwm_backlight_parse_dt(struct device *dev,
+ 				  struct platform_pwm_backlight_data *data)
+ {
+ 	struct device_node *node = dev->of_node;
++	unsigned int num_levels = 0;
++	unsigned int levels_count;
++	unsigned int num_steps;
+ 	struct property *prop;
++	unsigned int *table;
+ 	int length;
+ 	u32 value;
+ 	int ret;
+@@ -167,6 +171,7 @@ static int pwm_backlight_parse_dt(struct device *dev,
+ 	/* read brightness levels from DT property */
+ 	if (data->max_brightness > 0) {
+ 		size_t size = sizeof(*data->levels) * data->max_brightness;
++		unsigned int i, j, n = 0;
+ 
+ 		data->levels = devm_kzalloc(dev, size, GFP_KERNEL);
+ 		if (!data->levels)
+@@ -184,6 +189,87 @@ static int pwm_backlight_parse_dt(struct device *dev,
+ 			return ret;
+ 
+ 		data->dft_brightness = value;
++
++		/*
++		 * This property is optional, if is set enables linear
++		 * interpolation between each of the values of brightness levels
++		 * and creates a new pre-computed table.
++		 */
++		of_property_read_u32(node, "num-interpolated-steps",
++				     &num_steps);
++
++		/*
++		 * Make sure that there is at least two entries in the
++		 * brightness-levels table, otherwise we can't interpolate
++		 * between two points.
++		 */
++		if (num_steps) {
++			if (data->max_brightness < 2) {
++				dev_err(dev, "can't interpolate\n");
++				return -EINVAL;
++			}
++
++			/*
++			 * Recalculate the number of brightness levels, now
++			 * taking in consideration the number of interpolated
++			 * steps between two levels.
++			 */
++			for (i = 0; i < data->max_brightness - 1; i++) {
++				if ((data->levels[i + 1] - data->levels[i]) /
++				   num_steps)
++					num_levels += num_steps;
++				else
++					num_levels++;
++			}
++			num_levels++;
++			dev_dbg(dev, "new number of brightness levels: %d\n",
++				num_levels);
++
++			/*
++			 * Create a new table of brightness levels with all the
++			 * interpolated steps.
++			 */
++			table = kcalloc(num_levels, sizeof(*table), GFP_KERNEL);
++			if (!table)
++				return -ENOMEM;
++
++			/* Fill the interpolated table. */
++			levels_count = 0;
++			for (i = 0; i < data->max_brightness - 1; i++) {
++				value = data->levels[i];
++				n = (data->levels[i + 1] - value) / num_steps;
++				if (n > 0) {
++					for (j = 0; j < num_steps; j++) {
++						table[levels_count] = value;
++						value += n;
++						levels_count++;
++					}
++				} else {
++					table[levels_count] = data->levels[i];
++					levels_count++;
++				}
++			}
++			table[levels_count] = data->levels[i];
++
++			/*
++			 * As we use interpolation lets remove current
++			 * brightness levels table for the new interpolated
++			 * table.
++			 */
++			devm_kfree(dev, data->levels);
++			data->levels = devm_kcalloc(dev, num_levels,
++						    sizeof(*data->levels),
++						    GFP_KERNEL);
++			memcpy(data->levels, table,
++			       num_levels * sizeof(*table));
++			kfree(table);
++			/*
++			 * Reassign max_brightness value to the new total number
++			 * of brightness levels.
++			 */
++			data->max_brightness = num_levels;
++		}
++
+ 		data->max_brightness--;
+ 	}
+ 
 -- 
 2.15.1
