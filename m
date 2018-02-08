@@ -1,71 +1,54 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Subject: Re: [PATCH v2 2/4] dt-bindings: pwm-backlight: add a
- num-interpolation-steps property.
-Date: Wed, 7 Feb 2018 16:11:40 +0000
-Message-ID: <20180207161140.irxnsv6dwwmuwczu@oak.lan>
-References: <20180207141337.22247-1-enric.balletbo@collabora.com>
- <20180207141337.22247-3-enric.balletbo@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180207141337.22247-3-enric.balletbo@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH v3 0/4] backlight: pwm_bl: support linear interpolation and brightness to human eye
+Date: Thu,  8 Feb 2018 12:30:28 +0100
+Message-ID: <20180208113032.27810-1-enric.balletbo@collabora.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Brian Norris <briannorris-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Guenter Roeck <groeck-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandru Stan <amstan-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 03:13:35PM +0100, Enric Balletbo i Serra wrote:
-> The num-interpolated-steps property specifies the number of
-> interpolated steps between each value of brightness-level table. This is
-> useful for high resolution PWMs to not have to list out every possible
-> value in the brightness-level array.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Dear all,
 
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> ---
-> Changes since v1:
-> - Add an example with a small but realistic curve. Suggested by Rob and
->   Daniel
-> 
->  .../bindings/leds/backlight/pwm-backlight.txt         | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> index 310810906613..ce9b5746b774 100644
-> --- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> +++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> @@ -21,6 +21,11 @@ Optional properties:
->                            and enabling the backlight using GPIO.
->    - pwm-off-delay-ms: Delay in ms between disabling the backlight using GPIO
->                        and setting PWM value to 0.
-> +  - num-interpolated-steps: Number of interpolated steps between each value
-> +                            of brightness-levels table. This way a high
-> +                            resolution pwm duty cycle can be used without
-> +                            having to list out every possible value in the
-> +                            brightness-level array.
->  
->  [0]: Documentation/devicetree/bindings/pwm/pwm.txt
->  [1]: Documentation/devicetree/bindings/gpio/gpio.txt
-> @@ -39,3 +44,17 @@ Example:
->  		post-pwm-on-delay-ms = <10>;
->  		pwm-off-delay-ms = <10>;
->  	};
-> +
-> +Example using num-interpolation-steps:
-> +
-> +	backlight {
-> +		compatible = "pwm-backlight";
-> +		pwms = <&pwm 0 5000000>;
-> +
-> +		brightness-levels = <0 2048 4096 8192 16384 65535>;
-> +		num-interpolated-steps = <2048>;
-> +		default-brightness-level = <4096>;
-> +
-> +		power-supply = <&vdd_bl_reg>;
-> +		enable-gpios = <&gpio 58 0>;
-> +	};
-> -- 
-> 2.15.1
-> 
+This series is a third patchset integrating the requested changes.
+
+The first and second patch what tries to solve is the problem of
+granularity for high resolution PWMs. The idea is simple interpolate
+between 2 brightness values so we can have a high PWM duty cycle (a
+16 bits PWM is up to 65535 possible steps) without having to list
+out every possible value in the dts. I think that this patch is
+required to not break backward compability, to be more flexible and
+also extend the functionality to be able to use high resolution PWM
+with enough steps to have a good UI experience in userspace.
+
+The thirth and fourth patch is a bit more ambicious, the idea is let
+decide the driver the brightness-levels required in function of the PWM
+resolution. To do this create a brightness-levels table filled with the
+CIE 1931 algorithm values to convert brightness to PWM duty cycle.
+
+More detailed info is available in the commit message of every patch.
+
+Both functionalities were tested on a Samsung Chromebook Plus (that has
+a 16 bits PWM) and a SL50 device (with a 8 bits PWM)
+
+Waiting for your feedback.
+
+Best regards,
+
+Enric Balletbo i Serra (4):
+  backlight: pwm_bl: linear interpolation between brightness-levels
+  dt-bindings: pwm-backlight: add a num-interpolation-steps property.
+  backlight: pwm_bl: compute brightness of LED linearly to human eye.
+  dt-bindings: pwm-backlight: move brightness-levels to optional.
+
+ .../bindings/leds/backlight/pwm-backlight.txt      |  34 ++-
+ drivers/video/backlight/pwm_bl.c                   | 232 +++++++++++++++++++--
+ 2 files changed, 246 insertions(+), 20 deletions(-)
+
+-- 
+2.15.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
