@@ -1,69 +1,241 @@
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v3 2/4] dt-bindings: pwm-backlight: add a num-interpolation-steps property.
-Date: Thu,  8 Feb 2018 12:30:30 +0100
-Message-ID: <20180208113032.27810-3-enric.balletbo@collabora.com>
+Subject: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED linearly to human eye.
+Date: Thu,  8 Feb 2018 12:30:31 +0100
+Message-ID: <20180208113032.27810-4-enric.balletbo@collabora.com>
 References: <20180208113032.27810-1-enric.balletbo@collabora.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:46266 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751014AbeBHLam (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 8 Feb 2018 06:30:42 -0500
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180208113032.27810-1-enric.balletbo@collabora.com>
-Sender: linux-leds-owner@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Daniel Thompson <daniel.thompson@linaro.org>, Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>
 Cc: Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com
+List-Id: linux-leds@vger.kernel.org
 
-The num-interpolated-steps property specifies the number of
-interpolated steps between each value of brightness-level table. This is
-useful for high resolution PWMs to not have to list out every possible
-value in the brightness-level array.
+When you want to change the brightness using a PWM signal, one thing you
+need to consider is how human perceive the brightness. Human perceive
+the brightness change non-linearly, we have better sensitivity at low
+luminance than high luminance, so to achieve perceived linear dimming,
+the brightness must be matches to the way our eyes behave. The CIE 1931
+lightness formula is what actually describes how we perceive light.
+
+This patch computes a default table with the brightness levels filled
+with the numbers provided by the CIE 1931 algorithm, the number of the
+brightness levels is calculated based on the PWM resolution.
+
+The calculation of the table using the CIE 1931 algorithm is enabled by
+default when you do not define the 'brightness-levels' propriety in your
+device tree.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 ---
 Changes since v2:
-- Add Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+- None
 Changes since v1:
-- Add an example with a small but realistic curve. Suggested by Rob and
-  Daniel
+- Fix an horrible and unjustifiable mistake a missing { fortunately
+  catched very quick.
 
- .../bindings/leds/backlight/pwm-backlight.txt         | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/video/backlight/pwm_bl.c | 149 +++++++++++++++++++++++++++++++++++----
+ 1 file changed, 136 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-index 310810906613..ce9b5746b774 100644
---- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-+++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-@@ -21,6 +21,11 @@ Optional properties:
-                           and enabling the backlight using GPIO.
-   - pwm-off-delay-ms: Delay in ms between disabling the backlight using GPIO
-                       and setting PWM value to 0.
-+  - num-interpolated-steps: Number of interpolated steps between each value
-+                            of brightness-levels table. This way a high
-+                            resolution pwm duty cycle can be used without
-+                            having to list out every possible value in the
-+                            brightness-level array.
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index f0a108ab570a..d047d875f251 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -143,6 +143,107 @@ static const struct backlight_ops pwm_backlight_ops = {
+ };
  
- [0]: Documentation/devicetree/bindings/pwm/pwm.txt
- [1]: Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -39,3 +44,17 @@ Example:
- 		post-pwm-on-delay-ms = <10>;
- 		pwm-off-delay-ms = <10>;
- 	};
+ #ifdef CONFIG_OF
++#define PWM_LUMINANCE_SCALE	10000 /* luminance scale */
 +
-+Example using num-interpolation-steps:
++/* An integer based power function */
++static u64 int_pow(u64 base, int exp)
++{
++	u64 result = 1;
 +
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 5000000>;
++	while (exp) {
++		if (exp & 1)
++			result *= base;
++		exp >>= 1;
++		base *= base;
++	}
 +
-+		brightness-levels = <0 2048 4096 8192 16384 65535>;
-+		num-interpolated-steps = <2048>;
-+		default-brightness-level = <4096>;
++	return result;
++}
 +
-+		power-supply = <&vdd_bl_reg>;
-+		enable-gpios = <&gpio 58 0>;
-+	};
++/*
++ * CIE lightness to PWM conversion.
++ *
++ * The CIE 1931 lightness formula is what actually describes how we perceive
++ * light:
++ *          Y = (L* / 902.3)           if L* ≤ 0.08856
++ *          Y = ((L* + 16) / 116)^3    if L* > 0.08856
++ *
++ * Where Y is the luminance, the amount of light coming out of the screen, and
++ * is a number between 0.0 and 1.0; and L* is the lightness, how bright a human
++ * perceives the screen to be, and is a number between 0 and 100.
++ *
++ * The following function does the fixed point maths needed to implement the
++ * above formula.
++ */
++static u64 cie1931(unsigned int lightness, unsigned int scale)
++{
++	u64 retval;
++
++	lightness *= 100;
++	if (lightness <= (8 * scale)) {
++		retval = DIV_ROUND_CLOSEST_ULL(lightness * 10, 9023);
++	} else {
++		retval = int_pow((lightness + (16 * scale)) / 116, 3);
++		retval = DIV_ROUND_CLOSEST_ULL(retval, (scale * scale));
++	}
++
++	return retval;
++}
++
++/*
++ * Create a default correction table for PWM values to create linear brightness
++ * for LED based backlights using the CIE1931 algorithm.
++ */
++static
++int pwm_backlight_brightness_default(struct device *dev,
++				     struct platform_pwm_backlight_data *data,
++				     unsigned int period)
++{
++	unsigned int counter = 0;
++	unsigned int i, n;
++	u64 retval;
++
++	/*
++	 * Count the number of bits needed to represent the period number. The
++	 * number of bits is used to calculate the number of levels used for the
++	 * brightness-levels table, the purpose of this calculation is have a
++	 * pre-computed table with enough levels to get linear brightness
++	 * perception. The period is divided by the number of bits so for a
++	 * 8-bit PWM we have 255 / 8 = 32 brightness levels or for a 16-bit PWM
++	 * we have 65535 / 16 = 4096 brightness levels.
++	 *
++	 * Note that this method is based on empirical testing on different
++	 * devices with PWM of 8 and 16 bits of resolution.
++	 */
++	n = period;
++	while (n) {
++		counter += n % 2;
++		n >>= 1;
++	}
++
++	data->max_brightness = DIV_ROUND_UP(period, counter);
++	data->levels = devm_kcalloc(dev, data->max_brightness,
++				    sizeof(*data->levels), GFP_KERNEL);
++	if (!data->levels)
++		return -ENOMEM;
++
++	/* Fill the table using the cie1931 algorithm */
++	for (i = 0; i < data->max_brightness; i++) {
++		retval = cie1931((i * PWM_LUMINANCE_SCALE) /
++				 data->max_brightness, PWM_LUMINANCE_SCALE) *
++				 period;
++		retval = DIV_ROUND_CLOSEST_ULL(retval, PWM_LUMINANCE_SCALE);
++		if (retval > UINT_MAX)
++			return -EINVAL;
++		data->levels[i] = (unsigned int)retval;
++	}
++
++	data->dft_brightness = data->max_brightness / 2;
++	data->max_brightness--;
++
++	return 0;
++}
++
+ static int pwm_backlight_parse_dt(struct device *dev,
+ 				  struct platform_pwm_backlight_data *data)
+ {
+@@ -161,10 +262,13 @@ static int pwm_backlight_parse_dt(struct device *dev,
+ 
+ 	memset(data, 0, sizeof(*data));
+ 
+-	/* determine the number of brightness levels */
++	/*
++	 * Determine the number of brightness levels, if this property is not
++	 * set a default table of brightness levels will be used.
++	 */
+ 	prop = of_find_property(node, "brightness-levels", &length);
+ 	if (!prop)
+-		return -EINVAL;
++		return 0;
+ 
+ 	data->max_brightness = length / sizeof(u32);
+ 
+@@ -294,6 +398,14 @@ static int pwm_backlight_parse_dt(struct device *dev,
+ {
+ 	return -ENODEV;
+ }
++
++static
++int pwm_backlight_brightness_default(struct device *dev,
++				     struct platform_pwm_backlight_data *data,
++				     unsigned int period)
++{
++	return -ENODEV;
++}
+ #endif
+ 
+ static int pwm_backlight_initial_power_state(const struct pwm_bl_data *pb)
+@@ -334,7 +446,9 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 	struct backlight_device *bl;
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct pwm_bl_data *pb;
++	struct pwm_state state;
+ 	struct pwm_args pargs;
++	unsigned int i;
+ 	int ret;
+ 
+ 	if (!data) {
+@@ -359,17 +473,6 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 		goto err_alloc;
+ 	}
+ 
+-	if (data->levels) {
+-		unsigned int i;
+-
+-		for (i = 0; i <= data->max_brightness; i++)
+-			if (data->levels[i] > pb->scale)
+-				pb->scale = data->levels[i];
+-
+-		pb->levels = data->levels;
+-	} else
+-		pb->scale = data->max_brightness;
+-
+ 	pb->notify = data->notify;
+ 	pb->notify_after = data->notify_after;
+ 	pb->check_fb = data->check_fb;
+@@ -436,6 +539,26 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 
+ 	dev_dbg(&pdev->dev, "got pwm for backlight\n");
+ 
++	if (!data->levels) {
++		/* Get the PWM period (in nanoseconds) */
++		pwm_get_state(pb->pwm, &state);
++
++		ret = pwm_backlight_brightness_default(&pdev->dev, data,
++						       state.period);
++		if (ret < 0) {
++			dev_err(&pdev->dev,
++				"failed to setup default brightness table\n");
++			goto err_alloc;
++		}
++	}
++
++	for (i = 0; i <= data->max_brightness; i++) {
++		if (data->levels[i] > pb->scale)
++			pb->scale = data->levels[i];
++
++		pb->levels = data->levels;
++	}
++
+ 	/*
+ 	 * FIXME: pwm_apply_args() should be removed when switching to
+ 	 * the atomic PWM API.
 -- 
 2.15.1
