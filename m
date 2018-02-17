@@ -1,122 +1,104 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v9 2/2] leds: add driver for support Mellanox regmap LEDs
- for BMC and x86 platform
-Date: Sat, 17 Feb 2018 22:55:00 +0100
-Message-ID: <45298ab7-9558-3df4-57e7-c3c198a805b8@gmail.com>
-References: <1518737870-73290-1-git-send-email-vadimp@mellanox.com>
- <fadb3132-9cc9-745e-2852-52b145f1a7ee@gmail.com> <20180216222558.GA5265@amd>
+Subject: Re: [PATCH] leds: Add more product/board names for PC Engines APU2
+Date: Sat, 17 Feb 2018 23:06:55 +0100
+Message-ID: <d234bb00-41fe-d12f-2d38-5d5d3fd70e18@gmail.com>
+References: <416353feea21248a8e3de5a91c5349a4e9047519.1518690096.git.tredaelli@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-leds-owner@vger.kernel.org>
-Received: from mail-wr0-f178.google.com ([209.85.128.178]:40921 "EHLO
-        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751214AbeBQV4Q (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 17 Feb 2018 16:56:16 -0500
-Received: by mail-wr0-f178.google.com with SMTP id o76so6088385wrb.7
-        for <linux-leds@vger.kernel.org>; Sat, 17 Feb 2018 13:56:16 -0800 (PST)
-In-Reply-To: <20180216222558.GA5265@amd>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55229 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751213AbeBQWIJ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 17 Feb 2018 17:08:09 -0500
+Received: by mail-wm0-f65.google.com with SMTP id z81so8899977wmb.4
+        for <linux-leds@vger.kernel.org>; Sat, 17 Feb 2018 14:08:08 -0800 (PST)
+In-Reply-To: <416353feea21248a8e3de5a91c5349a4e9047519.1518690096.git.tredaelli@redhat.com>
 Sender: linux-leds-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Vadim Pasternak <vadimp@mellanox.com>, rpurdie@rpsys.net, linux-leds@vger.kernel.org, jiri@resnulli.us
+To: Timothy Redaelli <tredaelli@redhat.com>, linux-leds@vger.kernel.org
+Cc: Pavel Machek <pavel@ucw.cz>, Richard Purdie <rpurdie@rpsys.net>
 
-On 02/16/2018 11:25 PM, Pavel Machek wrote:
-> Hi!
+Hi Timothy,
+
+Thank you for the patch.
+
+On 02/15/2018 11:21 AM, Timothy Redaelli wrote:
+> PC Engines "legacy" coreboot 4.0.8 changed the product/board name from "APU2"
+> to "apu2".
+> PC Engines "mainline" coreboot uses, instead, "PC Engines apu2" as
+> product/board name.
 > 
->>> +++ b/drivers/leds/leds-mlxreg.c
->>> @@ -0,0 +1,309 @@
->>> +/*
->>> + * Copyright (c) 2018 Mellanox Technologies. All rights reserved.
->>> + * Copyright (c) 2018 Vadim Pasternak <vadimp@mellanox.com>
->>> + *
->>> + * Redistribution and use in source and binary forms, with or without
->>> + * modification, are permitted provided that the following conditions are met:
->>> + *
->>> + * 1. Redistributions of source code must retain the above copyright
->>> + *    notice, this list of conditions and the following disclaimer.
->>> + * 2. Redistributions in binary form must reproduce the above copyright
->>> + *    notice, this list of conditions and the following disclaimer in the
->>> + *    documentation and/or other materials provided with the distribution.
->>> + * 3. Neither the names of the copyright holders nor the names of its
->>> + *    contributors may be used to endorse or promote products derived from
->>> + *    this software without specific prior written permission.
->>> + *
->>> + * Alternatively, this software may be distributed under the terms of the
->>> + * GNU General Public License ("GPL") version 2 as published by the Free
->>> + * Software Foundation.
->>> + *
->>> + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
->>> + * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
->>> + * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
->>> + * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
->>> + * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
->>> + * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
->>> + * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
->>> + * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
->>> + * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
->>> + * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
->>> + * POSSIBILITY OF SUCH DAMAGE.
->>> + */
+> This commit adds the 2 variants ("apu2" and "PC Engines apu2") of product/board
+> name to be compatible with all the APU2 BIOSes.
 > 
-> You may want to switch on to spdx next time you update the driver...
-> 										Pavel
-> 										
+> Fixes: 3faee9423ce0 ("leds: Add driver for PC Engines APU/APU2 LEDs")
+> Signed-off-by: Timothy Redaelli <tredaelli@redhat.com>
+> ---
+>  drivers/leds/leds-apu.c | 26 ++++++++++++++++++++++++--
+>  1 file changed, 24 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
+> index 74820aab9497..311e98b1823f 100644
+> --- a/drivers/leds/leds-apu.c
+> +++ b/drivers/leds/leds-apu.c
+> @@ -110,6 +110,7 @@ static const struct dmi_system_id apu_led_dmi_table[] __initconst = {
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "APU")
+>  		}
+>  	},
+> +	/* PC Engines APU2 with "Legacy" bios < 4.0.8 */
+>  	{
+>  		.ident = "apu2",
+>  		.matches = {
+> @@ -117,6 +118,22 @@ static const struct dmi_system_id apu_led_dmi_table[] __initconst = {
+>  			DMI_MATCH(DMI_BOARD_NAME, "APU2")
+>  		}
+>  	},
+> +	/* PC Engines APU2 with "Legacy" bios >= 4.0.8 */
+> +	{
+> +		.ident = "apu2",
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
+> +			DMI_MATCH(DMI_BOARD_NAME, "apu2")
+> +		}
+> +	},
+> +	/* PC Engines APU2 with "Mainline" bios */
+> +	{
+> +		.ident = "apu2",
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
+> +			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
+> +		}
+> +	},
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(dmi, apu_led_dmi_table);
+> @@ -211,7 +228,9 @@ static int __init apu_led_probe(struct platform_device *pdev)
+>  		apu_led->platform = APU1_LED_PLATFORM;
+>  		apu_led->num_led_instances = ARRAY_SIZE(apu1_led_profile);
+>  		apu_led->iosize = APU1_IOSIZE;
+> -	} else if (dmi_match(DMI_BOARD_NAME, "APU2")) {
+> +	} else if (dmi_match(DMI_BOARD_NAME, "APU2") ||
+> +		   dmi_match(DMI_BOARD_NAME, "apu2") ||
+> +		   dmi_match(DMI_BOARD_NAME, "PC Engines apu2")) {
+>  		apu_led->profile = apu2_led_profile;
+>  		apu_led->platform = APU2_LED_PLATFORM;
+>  		apu_led->num_led_instances = ARRAY_SIZE(apu2_led_profile);
+> @@ -237,7 +256,10 @@ static int __init apu_led_init(void)
+>  		pr_err("No PC Engines board detected\n");
+>  		return -ENODEV;
+>  	}
+> -	if (!(dmi_match(DMI_PRODUCT_NAME, "APU") || dmi_match(DMI_PRODUCT_NAME, "APU2"))) {
+> +	if (!(dmi_match(DMI_PRODUCT_NAME, "APU") ||
+> +	      dmi_match(DMI_PRODUCT_NAME, "APU2") ||
+> +	      dmi_match(DMI_PRODUCT_NAME, "apu2") ||
+> +	      dmi_match(DMI_PRODUCT_NAME, "PC Engines apu2"))) {
+>  		pr_err("Unknown PC Engines board: %s\n",
+>  				dmi_get_system_info(DMI_PRODUCT_NAME));
+>  		return -ENODEV;
 > 
 
-Right, so I propose the following modification:
-
-diff --git a/drivers/leds/leds-mlxreg.c b/drivers/leds/leds-mlxreg.c
-index cc9f297..56d6f30 100644
---- a/drivers/leds/leds-mlxreg.c
-+++ b/drivers/leds/leds-mlxreg.c
-@@ -1,35 +1,7 @@
--/*
-- * Copyright (c) 2018 Mellanox Technologies. All rights reserved.
-- * Copyright (c) 2018 Vadim Pasternak <vadimp@mellanox.com>
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-are met:
-- *
-- * 1. Redistributions of source code must retain the above copyright
-- *    notice, this list of conditions and the following disclaimer.
-- * 2. Redistributions in binary form must reproduce the above copyright
-- *    notice, this list of conditions and the following disclaimer in the
-- *    documentation and/or other materials provided with the distribution.
-- * 3. Neither the names of the copyright holders nor the names of its
-- *    contributors may be used to endorse or promote products derived from
-- *    this software without specific prior written permission.
-- *
-- * Alternatively, this software may be distributed under the terms of the
-- * GNU General Public License ("GPL") version 2 as published by the Free
-- * Software Foundation.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS"
-- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-TO, THE
-- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE
-- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-OF THE
-- * POSSIBILITY OF SUCH DAMAGE.
-- */
-+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-+//
-+// Copyright (c) 2018 Mellanox Technologies. All rights reserved.
-+// Copyright (c) 2018 Vadim Pasternak <vadimp@mellanox.com>
-
-
-
-If everyone agrees I can fix the original commit in the linux-leds.git
-by myself.
+Applied to the for-next branch of linux-leds.git.
 
 -- 
 Best regards,
