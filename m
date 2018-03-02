@@ -1,74 +1,66 @@
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-Date: Fri, 2 Mar 2018 11:19:43 +0200
-Message-ID: <0c3fc3ba-8640-0b2c-a9ec-ab848227c92d@microchip.com>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
- <20180228194429.GD22932@mithrandir>
+From: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Subject: Re: [PATCH v12] ath10k: add LED and GPIO controlling support for
+ various chipsets
+Date: Fri, 2 Mar 2018 10:22:14 +0100
+Message-ID: <e77d25d4-a824-380a-c51a-e81175ba6205@dd-wrt.com>
+References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
+ <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
+ <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com>
+ <20180302090312.GA30267@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180228194429.GD22932@mithrandir>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: mark.rutland@arm.com, milo.kim@ti.com, linux-fbdev@vger.kernel.org, sean@mess.org, devicetree@vger.kernel.org, airlied@linux.ie, mturquette@baylibre.com, joonas.lahtinen@linux.intel.com, kamil@wypas.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, alexandre.belloni@free-electrons.com, pavel@ucw.cz, lee.jones@linaro.org, linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, daniel.thompson@linaro.org, linux-samsung-soc@vger.kernel.org, shc_work@mail.ru, corbet@lwn.net, linux-doc@vger.kernel.org, linux@armlinux.org.uk, krzk@kernel.org, kgene@kernel.org, linux-input@vger.kernel.org, linux@roeck-us.net, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, jdelvare@suse.com, b.zolnierkie@samsung.com, intel-gfx@lists.freedesktop.org, jani.nikula@linux.intel.com, robh+dt@kernel.org, jacek.anaszewski@gmail.com, rodrigo.vivi@intel.com, mchehab@kernel.orgl
+Content-Type: text/plain; charset="windows-1252"; Format="flowed"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180302090312.GA30267@amd>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/ath10k/>
+List-Post: <mailto:ath10k@lists.infradead.org>
+List-Help: <mailto:ath10k-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=subscribe>
+Sender: "ath10k" <ath10k-bounces@lists.infradead.org>
+Errors-To: ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, ath10k@lists.infradead.org, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Sebastian Gottschall <s.gottschall@newmedia-net.de>, Kalle Valo <kvalo@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
+>> leds-gpio is crap and limited. you can just register one platform data at
+>> kernel runtime since its identified by its object name "led-gpio" but the
+>> kernel forbidds to register 2 platform datas with the same name
+>> consider the ar71xx devices with qca988x wifi chipsets. they all have
+>> already a led platform data registered
+>> at boottime. a second can't be registered anymore so gpio_led is useless=
+ at
+>> all for most developers on such platforms. its mainly used for early ker=
+nel
+>> platform data initialisation for system leds.
+> If leds-gpio has limitations, please fix those, rather then
+> introducing duplicated code.
+there is no duplicated code introduced and there is no solution for it. =
+
+consider that all wifi drivers with softled support
+are going that way with registering a own led driver. see ath9k for =
+
+instance. gpio-led cannot be used for it and there is no way to
+support multiple platform datas with the same name. its a kernel limitation
+
+Sebastian
+>
+> NAK.
+> 									Pavel
 
 
-On 28.02.2018 21:44, Thierry Reding wrote:
-> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
->> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
->> were adapted to this change.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
->> ---
->>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
->>  drivers/bus/ts-nbus.c                |  2 +-
->>  drivers/clk/clk-pwm.c                |  3 ++-
->>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
->>  drivers/hwmon/pwm-fan.c              |  2 +-
->>  drivers/input/misc/max77693-haptic.c |  2 +-
->>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
->>  drivers/leds/leds-pwm.c              |  5 ++++-
->>  drivers/media/rc/ir-rx51.c           |  5 ++++-
->>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
->>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
->>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
->>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
->>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
->>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
->>  include/linux/pwm.h                  |  6 ++++--
->>  16 files changed, 70 insertions(+), 21 deletions(-)
-> 
-> I don't think it makes sense to leak mode support into the legacy API.
-> The pwm_config() function is considered legacy
-I missed this aspect.
+-- =
 
- and should eventually go
-> away. As such it doesn't make sense to integrate a new feature such as
-> PWM modes into it. 
-Agree.
+Mit freundlichen Gr=FCssen / Regards
 
-All users of pwm_config() assume normal mode, and
-> that's what pwm_config() should provide.
-Agree.
+Sebastian Gottschall / CTO
 
-> 
-> Anyone that needs something other than normal mode should use the new
-> atomic PWM API.
-Agree.
-
-> 
-> Thierry
-> 
+NewMedia-NET GmbH - DD-WRT
+Firmensitz:  Stubenwaldallee 21a, 64625 Bensheim
+Registergericht: Amtsgericht Darmstadt, HRB 25473
+Gesch=E4ftsf=FChrer: Peter Steinh=E4user, Christian Scheele
+http://www.dd-wrt.com
+email: s.gottschall@dd-wrt.com
+Tel.: +496251-582650 / Fax: +496251-5826565
