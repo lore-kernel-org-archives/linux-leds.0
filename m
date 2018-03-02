@@ -1,35 +1,96 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-Date: Wed, 28 Feb 2018 22:04:52 +0200
-Message-ID: <87r2p4hod7.fsf@intel.com>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
- <20180228194429.GD22932@mithrandir>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v12] ath10k: add LED and GPIO controlling support for
+ various chipsets
+Date: Fri, 2 Mar 2018 10:03:12 +0100
+Message-ID: <20180302090312.GA30267@amd>
+References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
+ <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
+ <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180228194429.GD22932@mithrandir>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: mark.rutland@arm.com, milo.kim@ti.com, linux-fbdev@vger.kernel.org, sean@mess.org, devicetree@vger.kernel.org, airlied@linux.ie, mturquette@baylibre.com, kamil@wypas.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, alexandre.belloni@free-electrons.com, pavel@ucw.cz, lee.jones@linaro.org, linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, daniel.thompson@linaro.org, linux-samsung-soc@vger.kernel.org, shc_work@mail.ru, corbet@lwn.net, linux-doc@vger.kernel.org, linux@armlinux.org.uk, krzk@kernel.org, kgene@kernel.org, linux-input@vger.kernel.org, linux@roeck-us.net, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, jdelvare@suse.com, b.zolnierkie@samsung.com, intel-gfx@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, rodrigo.vivi@intel.com, mchehab@kernel.org, linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.or
+Content-Type: multipart/mixed; boundary="===============1409271423037332912=="
+Return-path: <ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org>
+In-Reply-To: <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/ath10k/>
+List-Post: <mailto:ath10k@lists.infradead.org>
+List-Help: <mailto:ath10k-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=subscribe>
+Sender: "ath10k" <ath10k-bounces@lists.infradead.org>
+Errors-To: ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org
+To: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, ath10k@lists.infradead.org, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Sebastian Gottschall <s.gottschall@newmedia-net.de>, Kalle Valo <kvalo@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-T24gV2VkLCAyOCBGZWIgMjAxOCwgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWls
-LmNvbT4gd3JvdGU6Cj4gQW55b25lIHRoYXQgbmVlZHMgc29tZXRoaW5nIG90aGVyIHRoYW4gbm9y
-bWFsIG1vZGUgc2hvdWxkIHVzZSB0aGUgbmV3Cj4gYXRvbWljIFBXTSBBUEkuCgpBdCB0aGUgcmlz
-ayBvZiByZXZlYWxpbmcgbXkgdHJ1ZSBpZ25vcmFuY2UsIHdoYXQgaXMgdGhlIG5ldyBhdG9taWMg
-UFdNCkFQST8gV2hlcmU/IEV4YW1wbGVzIG9mIGhvdyBvbmUgd291bGQgY29udmVydCBvbGQgY29k
-ZSBvdmVyIHRvIHRoZSBuZXcKQVBJPwoKQlIsCkphbmkuCgotLSAKSmFuaSBOaWt1bGEsIEludGVs
-IE9wZW4gU291cmNlIFRlY2hub2xvZ3kgQ2VudGVyCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+--===============1409271423037332912==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
+Content-Disposition: inline
+
+
+--pWyiEgJYm5f9v55/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> >>adds also debugfs interface for gpio control.
+> >Hi Sebastian,
+> >
+> >I just noticed this patch and have one question. It seems you register
+> >GPIO chip and that WiFi LED is controller by a GPIO. Shouldn't you use
+> >leds-gpio driver and just register platform device with
+> >gpio_led_platform_data? That way you could avoid some code duplication
+> >I think? It seems to be the purpose of leds-gpio driver.
+
+> leds-gpio is crap and limited. you can just register one platform data at
+> kernel runtime since its identified by its object name "led-gpio" but the
+> kernel forbidds to register 2 platform datas with the same name
+> consider the ar71xx devices with qca988x wifi chipsets. they all have
+> already a led platform data registered
+> at boottime. a second can't be registered anymore so gpio_led is useless =
+at
+> all for most developers on such platforms. its mainly used for early kern=
+el
+> platform data initialisation for system leds.
+
+If leds-gpio has limitations, please fix those, rather then
+introducing duplicated code.
+
+NAK.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--pWyiEgJYm5f9v55/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqZE1AACgkQMOfwapXb+vIeLQCfc0gqxgg5FfWUqBHeEy5lb4Ia
+SNYAn1e8wy+tzVSTus6fTnA8FMLkNUXx
+=5wqF
+-----END PGP SIGNATURE-----
+
+--pWyiEgJYm5f9v55/--
+
+
+--===============1409271423037332912==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+ath10k mailing list
+ath10k@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/ath10k
+
+--===============1409271423037332912==--
