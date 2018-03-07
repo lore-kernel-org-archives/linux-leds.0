@@ -1,33 +1,48 @@
-From: Hans Ulli Kroll <ulli.kroll@googlemail.com>
-Subject: [PATCH] leds: fix wrong dmi_match on PC Engines APU LEDs
-Date: Mon,  5 Mar 2018 18:09:10 +0100
-Message-ID: <20180305170910.8905-1-ulli.kroll@googlemail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alan Mizrahi <alan@mizrahi.com.ve>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Ulli Kroll <ulli.kroll@googlemail.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: Re: [PATCH 4.4 16/34] led: core: Fix brightness setting when
+ setting delay_off=0
+Date: Wed, 07 Mar 2018 15:32:23 +0000
+Message-ID: <1520436743.23626.33.camel@codethink.co.uk>
+References: <20180302084435.842679610@linuxfoundation.org>
+         <20180302084437.007951262@linuxfoundation.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20180302084437.007951262@linuxfoundation.org>
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Matthieu CASTET <matthieu.castet@parrot.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: stable@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-APU has compared to APU2 no DMI_BOARD_NAME.
-Use DMI_PRODUCT_NAME instead.
+On Fri, 2018-03-02 at 09:51 +0100, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me
+> know.
+> 
+> ------------------
+> 
+> From: Matthieu CASTET <matthieu.castet@parrot.com>
+> 
+> 
+> [ Upstream commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c ]
+> 
+> With the current code, the following sequence won't work :
+> echo timer > trigger
+> 
+> echo 0 >  delay_off
+> * at this point we call
+> ** led_delay_off_store
+> ** led_blink_set
+[...]
 
-Signed-off-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
----
- drivers/leds/leds-apu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The commit message got cut truncated here, which resulted in addresses
+being omitted when it was sent out for review.  The upstream commit
+message refers to a LED_BLINK_SW flag which is not used in 4.4.  So
+this fix probably isn't needed, though I can't tell whether it does any
+harm.
 
-diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
-index 74820aab9497..5bbf5c31413e 100644
---- a/drivers/leds/leds-apu.c
-+++ b/drivers/leds/leds-apu.c
-@@ -206,7 +206,7 @@ static int __init apu_led_probe(struct platform_device *pdev)
- 
- 	apu_led->pdev = pdev;
- 
--	if (dmi_match(DMI_BOARD_NAME, "APU")) {
-+	if (dmi_match(DMI_PRODUCT_NAME, "APU")) {
- 		apu_led->profile = apu1_led_profile;
- 		apu_led->platform = APU1_LED_PLATFORM;
- 		apu_led->num_led_instances = ARRAY_SIZE(apu1_led_profile);
+Ben.
+
 -- 
-2.16.2
+Ben Hutchings
+Software Developer, Codethink Ltd.
