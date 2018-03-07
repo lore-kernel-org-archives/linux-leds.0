@@ -1,78 +1,56 @@
-From: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Subject: Re: [PATCH v12] ath10k: add LED and GPIO controlling support for
- various chipsets
-Date: Wed, 7 Mar 2018 18:54:41 +0100
-Message-ID: <890a4dcc-f549-6487-2ce5-3b62874cd266@dd-wrt.com>
-References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
- <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
- <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com>
- <20180302090312.GA30267@amd>
- <e77d25d4-a824-380a-c51a-e81175ba6205@dd-wrt.com>
- <CACna6rys85VEkzRGDVUAkBy7KgHS2y0DET7YvedboX-YEQHrkg@mail.gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 4.4 16/34] led: core: Fix brightness setting when setting
+ delay_off=0
+Date: Wed, 7 Mar 2018 21:39:08 +0100
+Message-ID: <86d4536e-11d5-40c4-4186-21955f809005@gmail.com>
+References: <20180302084435.842679610@linuxfoundation.org>
+ <20180302084437.007951262@linuxfoundation.org>
+ <1520436743.23626.33.camel@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACna6rys85VEkzRGDVUAkBy7KgHS2y0DET7YvedboX-YEQHrkg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/ath10k>,
- <mailto:ath10k-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/ath10k/>
-List-Post: <mailto:ath10k@lists.infradead.org>
-List-Help: <mailto:ath10k-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/ath10k>,
- <mailto:ath10k-request@lists.infradead.org?subject=subscribe>
-Sender: "ath10k" <ath10k-bounces@lists.infradead.org>
-Errors-To: ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, ath10k@lists.infradead.org, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>, Sebastian Gottschall <s.gottschall@newmedia-net.de>, Kalle Valo <kvalo@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1520436743.23626.33.camel@codethink.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ben Hutchings <ben.hutchings@codethink.co.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Matthieu CASTET <matthieu.castet@parrot.com>
+Cc: stable@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-QW0gMDcuMDMuMjAxOCB1bSAxNzoyMiBzY2hyaWViIFJhZmHFgiBNacWCZWNraToKPiBPbiAyIE1h
-cmNoIDIwMTggYXQgMTA6MjIsIFNlYmFzdGlhbiBHb3R0c2NoYWxsIDxzLmdvdHRzY2hhbGxAZGQt
-d3J0LmNvbT4gd3JvdGU6Cj4+Pj4gbGVkcy1ncGlvIGlzIGNyYXAgYW5kIGxpbWl0ZWQuIHlvdSBj
-YW4ganVzdCByZWdpc3RlciBvbmUgcGxhdGZvcm0gZGF0YSBhdAo+Pj4+IGtlcm5lbCBydW50aW1l
-IHNpbmNlIGl0cyBpZGVudGlmaWVkIGJ5IGl0cyBvYmplY3QgbmFtZSAibGVkLWdwaW8iIGJ1dCB0
-aGUKPj4+PiBrZXJuZWwgZm9yYmlkZHMgdG8gcmVnaXN0ZXIgMiBwbGF0Zm9ybSBkYXRhcyB3aXRo
-IHRoZSBzYW1lIG5hbWUKPj4+PiBjb25zaWRlciB0aGUgYXI3MXh4IGRldmljZXMgd2l0aCBxY2E5
-ODh4IHdpZmkgY2hpcHNldHMuIHRoZXkgYWxsIGhhdmUKPj4+PiBhbHJlYWR5IGEgbGVkIHBsYXRm
-b3JtIGRhdGEgcmVnaXN0ZXJlZAo+Pj4+IGF0IGJvb3R0aW1lLiBhIHNlY29uZCBjYW4ndCBiZSBy
-ZWdpc3RlcmVkIGFueW1vcmUgc28gZ3Bpb19sZWQgaXMgdXNlbGVzcwo+Pj4+IGF0Cj4+Pj4gYWxs
-IGZvciBtb3N0IGRldmVsb3BlcnMgb24gc3VjaCBwbGF0Zm9ybXMuIGl0cyBtYWlubHkgdXNlZCBm
-b3IgZWFybHkKPj4+PiBrZXJuZWwKPj4+PiBwbGF0Zm9ybSBkYXRhIGluaXRpYWxpc2F0aW9uIGZv
-ciBzeXN0ZW0gbGVkcy4KPj4+IElmIGxlZHMtZ3BpbyBoYXMgbGltaXRhdGlvbnMsIHBsZWFzZSBm
-aXggdGhvc2UsIHJhdGhlciB0aGVuCj4+PiBpbnRyb2R1Y2luZyBkdXBsaWNhdGVkIGNvZGUuCj4+
-IHRoZXJlIGlzIG5vIGR1cGxpY2F0ZWQgY29kZSBpbnRyb2R1Y2VkIGFuZCB0aGVyZSBpcyBubyBz
-b2x1dGlvbiBmb3IgaXQuCj4+IGNvbnNpZGVyIHRoYXQgYWxsIHdpZmkgZHJpdmVycyB3aXRoIHNv
-ZnRsZWQgc3VwcG9ydAo+PiBhcmUgZ29pbmcgdGhhdCB3YXkgd2l0aCByZWdpc3RlcmluZyBhIG93
-biBsZWQgZHJpdmVyLiBzZWUgYXRoOWsgZm9yCj4+IGluc3RhbmNlLiBncGlvLWxlZCBjYW5ub3Qg
-YmUgdXNlZCBmb3IgaXQgYW5kIHRoZXJlIGlzIG5vIHdheSB0bwo+PiBzdXBwb3J0IG11bHRpcGxl
-IHBsYXRmb3JtIGRhdGFzIHdpdGggdGhlIHNhbWUgbmFtZS4gaXRzIGEga2VybmVsIGxpbWl0YXRp
-b24KPiBJIGp1c3QgcmV2aWV3ZWQgc29tZSBtaXBzIGFyY2ggcGF0Y2ggYWRkaW5nIHN1cHBvcnQg
-Zm9yIG1vcmUgTEVEcyBmb3IKPiBzZWxlY3RlZCBkZXZpY2VzOgo+IFtQQVRDSF0gTUlQUzogQkNN
-NDdYWDogQWRkIEx1eHVsIFhBUDE1MDAvWFdSMTc1MCBXaUZpIExFRHMKPiBodHRwczovL3BhdGNo
-d29yay5saW51eC1taXBzLm9yZy9wYXRjaC8xODY4MS8KPgo+IEl0IHNlZW1zIHRvIGJlIHNpbXBs
-eSBhZGRpbmcgYW5vdGhlciBjYWxsIHRvIHRoZQo+IGdwaW9fbGVkX3JlZ2lzdGVyX2RldmljZSgp
-LiBJdCBzZWVtcyB0byBtZSB5b3UgY2FuIGNhbGwgdGhhdCBmdW5jdGlvbgo+IG11bHRpcGxlIHRp
-bWVzIGFuZCByZWdpc3RlciBtdWx0aXBsZSBzdHJ1Y3RzIHdpdGggTEVEcy4KPgo+IElzbid0IGFs
-bCB5b3UgbmVlZCBzb21ldGhpbmcgbGlrZSB0aGlzPwo+Cj4gc3RhdGljIGNvbnN0IHN0cnVjdCBn
-cGlvX2xlZCBhdGgxMGtfbGVkc1tdID0gewo+ICAgICAgICAgIHsKPiAgICAgICAgICAgICAgICAg
-IC5uYW1lID0gImF0aDEwazpjb2xvcjpmdW5jdGlvbiIsCj4gICAgICAgICAgICAgICAgICAuYWN0
-aXZlX2xvdyA9IDEsCj4gICAgICAgICAgICAgICAgICAuZGVmYXVsdF9zdGF0ZSA9IExFRFNfR1BJ
-T19ERUZTVEFURV9LRUVQLAo+ICAgICAgICAgIH0KPiB9Owo+Cj4gc3RhdGljIHN0cnVjdCBncGlv
-X2xlZF9wbGF0Zm9ybV9kYXRhIGJjbTQ3eHhfbGVkc19wZGF0YV9leHRyYSA9IHsKPiAgICAgICAg
-ICBsZWRzID0gYXRoMTBrX2xlZHM7Cj4gICAgICAgICAgbnVtX2xlZHMgPSBBUlJBWV9TSVpFKGF0
-aDEwa19sZWRzKTsKPiB9Owo+Cj4gYXRoMTBrX2xlZHMuZ3BpbyA9IGFyLT5od19wYXJhbXMubGVk
-X3BpbjsKPiBncGlvX2xlZF9yZWdpc3Rlcl9kZXZpY2UoMCwgJmF0aDEwa19sZWRzKTsKdGhlIHBy
-b2JsZW0gYXJlIG90aGVyIGFyY2hpdGVjdHVyZXMgd2hpY2ggaGF2ZSBhbHJlYWR5IHJlZ2lzdGVy
-ZWQgCmdwaW9fbGVkIGF0IHN5c3RlbSBzdGFydCBsaWtlIGFyNzF4eAp5b3UgY2Fubm90IHJlZ2lz
-dGVyIGEgc2Vjb25kIG9uZS4gc28gYSBpbmRlcGVuZGVuZCBsZWQgZHJpdmVyIGlzIGEgCnJlcXVp
-cmVtZW50IGZvciBkaXJlY3QgY29udHJvbAoKU2ViYXN0aWFuCj4KCi0tIApNaXQgZnJldW5kbGlj
-aGVuIEdyw7xzc2VuIC8gUmVnYXJkcwoKU2ViYXN0aWFuIEdvdHRzY2hhbGwgLyBDVE8KCk5ld01l
-ZGlhLU5FVCBHbWJIIC0gREQtV1JUCkZpcm1lbnNpdHo6ICBTdHViZW53YWxkYWxsZWUgMjFhLCA2
-NDYyNSBCZW5zaGVpbQpSZWdpc3RlcmdlcmljaHQ6IEFtdHNnZXJpY2h0IERhcm1zdGFkdCwgSFJC
-IDI1NDczCkdlc2Now6RmdHNmw7xocmVyOiBQZXRlciBTdGVpbmjDpHVzZXIsIENocmlzdGlhbiBT
-Y2hlZWxlCmh0dHA6Ly93d3cuZGQtd3J0LmNvbQplbWFpbDogcy5nb3R0c2NoYWxsQGRkLXdydC5j
-b20KVGVsLjogKzQ5NjI1MS01ODI2NTAgLyBGYXg6ICs0OTYyNTEtNTgyNjU2NQoKCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmF0aDEwayBtYWlsaW5nIGxp
-c3QKYXRoMTBrQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9hdGgxMGsK
+Hi Ben,
+
+On 03/07/2018 04:32 PM, Ben Hutchings wrote:
+> On Fri, 2018-03-02 at 09:51 +0100, Greg Kroah-Hartman wrote:
+>> 4.4-stable review patch.  If anyone has any objections, please let me
+>> know.
+>>
+>> ------------------
+>>
+>> From: Matthieu CASTET <matthieu.castet@parrot.com>
+>>
+>>
+>> [ Upstream commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c ]
+>>
+>> With the current code, the following sequence won't work :
+>> echo timer > trigger
+>>
+>> echo 0 >  delay_off
+>> * at this point we call
+>> ** led_delay_off_store
+>> ** led_blink_set
+> [...]
+> 
+> The commit message got cut truncated here, which resulted in addresses
+> being omitted when it was sent out for review.  The upstream commit
+> message refers to a LED_BLINK_SW flag which is not used in 4.4.  So
+> this fix probably isn't needed, though I can't tell whether it does any
+> harm.
+
+We discussed it in [0]. This patch is not needed for 4.4 and what's
+more more it is harmful. It introduces a bug, fixed in [1].
+
+[0] https://lkml.org/lkml/2018/2/6/726
+[1[ https://patchwork.kernel.org/patch/10253933/
+
+-- 
+Best regards,
+Jacek Anaszewski
