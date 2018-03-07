@@ -1,48 +1,64 @@
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: Re: [PATCH 4.4 16/34] led: core: Fix brightness setting when
- setting delay_off=0
-Date: Wed, 07 Mar 2018 15:32:23 +0000
-Message-ID: <1520436743.23626.33.camel@codethink.co.uk>
-References: <20180302084435.842679610@linuxfoundation.org>
-         <20180302084437.007951262@linuxfoundation.org>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Subject: Re: [PATCH v12] ath10k: add LED and GPIO controlling support for
+ various chipsets
+Date: Wed, 7 Mar 2018 17:22:53 +0100
+Message-ID: <CACna6rys85VEkzRGDVUAkBy7KgHS2y0DET7YvedboX-YEQHrkg@mail.gmail.com>
+References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
+ <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
+ <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com> <20180302090312.GA30267@amd>
+ <e77d25d4-a824-380a-c51a-e81175ba6205@dd-wrt.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20180302084437.007951262@linuxfoundation.org>
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Matthieu CASTET <matthieu.castet@parrot.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: stable@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org>
+In-Reply-To: <e77d25d4-a824-380a-c51a-e81175ba6205@dd-wrt.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/ath10k/>
+List-Post: <mailto:ath10k@lists.infradead.org>
+List-Help: <mailto:ath10k-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=subscribe>
+Sender: "ath10k" <ath10k-bounces@lists.infradead.org>
+Errors-To: ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org
+To: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, ath10k@lists.infradead.org, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>, Sebastian Gottschall <s.gottschall@newmedia-net.de>, Kalle Valo <kvalo@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Fri, 2018-03-02 at 09:51 +0100, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me
-> know.
-> 
-> ------------------
-> 
-> From: Matthieu CASTET <matthieu.castet@parrot.com>
-> 
-> 
-> [ Upstream commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c ]
-> 
-> With the current code, the following sequence won't work :
-> echo timer > trigger
-> 
-> echo 0 >  delay_off
-> * at this point we call
-> ** led_delay_off_store
-> ** led_blink_set
-[...]
-
-The commit message got cut truncated here, which resulted in addresses
-being omitted when it was sent out for review.  The upstream commit
-message refers to a LED_BLINK_SW flag which is not used in 4.4.  So
-this fix probably isn't needed, though I can't tell whether it does any
-harm.
-
-Ben.
-
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+T24gMiBNYXJjaCAyMDE4IGF0IDEwOjIyLCBTZWJhc3RpYW4gR290dHNjaGFsbCA8cy5nb3R0c2No
+YWxsQGRkLXdydC5jb20+IHdyb3RlOgo+Pj4gbGVkcy1ncGlvIGlzIGNyYXAgYW5kIGxpbWl0ZWQu
+IHlvdSBjYW4ganVzdCByZWdpc3RlciBvbmUgcGxhdGZvcm0gZGF0YSBhdAo+Pj4ga2VybmVsIHJ1
+bnRpbWUgc2luY2UgaXRzIGlkZW50aWZpZWQgYnkgaXRzIG9iamVjdCBuYW1lICJsZWQtZ3BpbyIg
+YnV0IHRoZQo+Pj4ga2VybmVsIGZvcmJpZGRzIHRvIHJlZ2lzdGVyIDIgcGxhdGZvcm0gZGF0YXMg
+d2l0aCB0aGUgc2FtZSBuYW1lCj4+PiBjb25zaWRlciB0aGUgYXI3MXh4IGRldmljZXMgd2l0aCBx
+Y2E5ODh4IHdpZmkgY2hpcHNldHMuIHRoZXkgYWxsIGhhdmUKPj4+IGFscmVhZHkgYSBsZWQgcGxh
+dGZvcm0gZGF0YSByZWdpc3RlcmVkCj4+PiBhdCBib290dGltZS4gYSBzZWNvbmQgY2FuJ3QgYmUg
+cmVnaXN0ZXJlZCBhbnltb3JlIHNvIGdwaW9fbGVkIGlzIHVzZWxlc3MKPj4+IGF0Cj4+PiBhbGwg
+Zm9yIG1vc3QgZGV2ZWxvcGVycyBvbiBzdWNoIHBsYXRmb3Jtcy4gaXRzIG1haW5seSB1c2VkIGZv
+ciBlYXJseQo+Pj4ga2VybmVsCj4+PiBwbGF0Zm9ybSBkYXRhIGluaXRpYWxpc2F0aW9uIGZvciBz
+eXN0ZW0gbGVkcy4KPj4KPj4gSWYgbGVkcy1ncGlvIGhhcyBsaW1pdGF0aW9ucywgcGxlYXNlIGZp
+eCB0aG9zZSwgcmF0aGVyIHRoZW4KPj4gaW50cm9kdWNpbmcgZHVwbGljYXRlZCBjb2RlLgo+Cj4g
+dGhlcmUgaXMgbm8gZHVwbGljYXRlZCBjb2RlIGludHJvZHVjZWQgYW5kIHRoZXJlIGlzIG5vIHNv
+bHV0aW9uIGZvciBpdC4KPiBjb25zaWRlciB0aGF0IGFsbCB3aWZpIGRyaXZlcnMgd2l0aCBzb2Z0
+bGVkIHN1cHBvcnQKPiBhcmUgZ29pbmcgdGhhdCB3YXkgd2l0aCByZWdpc3RlcmluZyBhIG93biBs
+ZWQgZHJpdmVyLiBzZWUgYXRoOWsgZm9yCj4gaW5zdGFuY2UuIGdwaW8tbGVkIGNhbm5vdCBiZSB1
+c2VkIGZvciBpdCBhbmQgdGhlcmUgaXMgbm8gd2F5IHRvCj4gc3VwcG9ydCBtdWx0aXBsZSBwbGF0
+Zm9ybSBkYXRhcyB3aXRoIHRoZSBzYW1lIG5hbWUuIGl0cyBhIGtlcm5lbCBsaW1pdGF0aW9uCgpJ
+IGp1c3QgcmV2aWV3ZWQgc29tZSBtaXBzIGFyY2ggcGF0Y2ggYWRkaW5nIHN1cHBvcnQgZm9yIG1v
+cmUgTEVEcyBmb3IKc2VsZWN0ZWQgZGV2aWNlczoKW1BBVENIXSBNSVBTOiBCQ000N1hYOiBBZGQg
+THV4dWwgWEFQMTUwMC9YV1IxNzUwIFdpRmkgTEVEcwpodHRwczovL3BhdGNod29yay5saW51eC1t
+aXBzLm9yZy9wYXRjaC8xODY4MS8KCkl0IHNlZW1zIHRvIGJlIHNpbXBseSBhZGRpbmcgYW5vdGhl
+ciBjYWxsIHRvIHRoZQpncGlvX2xlZF9yZWdpc3Rlcl9kZXZpY2UoKS4gSXQgc2VlbXMgdG8gbWUg
+eW91IGNhbiBjYWxsIHRoYXQgZnVuY3Rpb24KbXVsdGlwbGUgdGltZXMgYW5kIHJlZ2lzdGVyIG11
+bHRpcGxlIHN0cnVjdHMgd2l0aCBMRURzLgoKSXNuJ3QgYWxsIHlvdSBuZWVkIHNvbWV0aGluZyBs
+aWtlIHRoaXM/CgpzdGF0aWMgY29uc3Qgc3RydWN0IGdwaW9fbGVkIGF0aDEwa19sZWRzW10gPSB7
+CiAgICAgICAgewogICAgICAgICAgICAgICAgLm5hbWUgPSAiYXRoMTBrOmNvbG9yOmZ1bmN0aW9u
+IiwKICAgICAgICAgICAgICAgIC5hY3RpdmVfbG93ID0gMSwKICAgICAgICAgICAgICAgIC5kZWZh
+dWx0X3N0YXRlID0gTEVEU19HUElPX0RFRlNUQVRFX0tFRVAsCiAgICAgICAgfQp9OwoKc3RhdGlj
+IHN0cnVjdCBncGlvX2xlZF9wbGF0Zm9ybV9kYXRhIGJjbTQ3eHhfbGVkc19wZGF0YV9leHRyYSA9
+IHsKICAgICAgICBsZWRzID0gYXRoMTBrX2xlZHM7CiAgICAgICAgbnVtX2xlZHMgPSBBUlJBWV9T
+SVpFKGF0aDEwa19sZWRzKTsKfTsKCmF0aDEwa19sZWRzLmdwaW8gPSBhci0+aHdfcGFyYW1zLmxl
+ZF9waW47CmdwaW9fbGVkX3JlZ2lzdGVyX2RldmljZSgwLCAmYXRoMTBrX2xlZHMpOwoKLS0gClJh
+ZmHFggoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KYXRo
+MTBrIG1haWxpbmcgbGlzdAphdGgxMGtAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMu
+aW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2F0aDEwawo=
