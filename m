@@ -1,56 +1,133 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 4.4 16/34] led: core: Fix brightness setting when setting
- delay_off=0
-Date: Wed, 7 Mar 2018 21:39:08 +0100
-Message-ID: <86d4536e-11d5-40c4-4186-21955f809005@gmail.com>
-References: <20180302084435.842679610@linuxfoundation.org>
- <20180302084437.007951262@linuxfoundation.org>
- <1520436743.23626.33.camel@codethink.co.uk>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v12] ath10k: add LED and GPIO controlling support for
+ various chipsets
+Date: Thu, 8 Mar 2018 10:02:16 +0100
+Message-ID: <20180308090216.GC17761@amd>
+References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
+ <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
+ <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com>
+ <20180302090312.GA30267@amd>
+ <e77d25d4-a824-380a-c51a-e81175ba6205@dd-wrt.com>
+ <CACna6rys85VEkzRGDVUAkBy7KgHS2y0DET7YvedboX-YEQHrkg@mail.gmail.com>
+ <890a4dcc-f549-6487-2ce5-3b62874cd266@dd-wrt.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1520436743.23626.33.camel@codethink.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Matthieu CASTET <matthieu.castet@parrot.com>
-Cc: stable@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============3907696512904922257=="
+Return-path: <ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org>
+In-Reply-To: <890a4dcc-f549-6487-2ce5-3b62874cd266@dd-wrt.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/ath10k/>
+List-Post: <mailto:ath10k@lists.infradead.org>
+List-Help: <mailto:ath10k-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=subscribe>
+Sender: "ath10k" <ath10k-bounces@lists.infradead.org>
+Errors-To: ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org
+To: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, ath10k@lists.infradead.org, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Sebastian Gottschall <s.gottschall@newmedia-net.de>, Kalle Valo <kvalo@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Ben,
 
-On 03/07/2018 04:32 PM, Ben Hutchings wrote:
-> On Fri, 2018-03-02 at 09:51 +0100, Greg Kroah-Hartman wrote:
->> 4.4-stable review patch.  If anyone has any objections, please let me
->> know.
->>
->> ------------------
->>
->> From: Matthieu CASTET <matthieu.castet@parrot.com>
->>
->>
->> [ Upstream commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c ]
->>
->> With the current code, the following sequence won't work :
->> echo timer > trigger
->>
->> echo 0 >  delay_off
->> * at this point we call
->> ** led_delay_off_store
->> ** led_blink_set
-> [...]
-> 
-> The commit message got cut truncated here, which resulted in addresses
-> being omitted when it was sent out for review.  The upstream commit
-> message refers to a LED_BLINK_SW flag which is not used in 4.4.  So
-> this fix probably isn't needed, though I can't tell whether it does any
-> harm.
+--===============3907696512904922257==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="B4IIlcmfBL/1gGOG"
+Content-Disposition: inline
 
-We discussed it in [0]. This patch is not needed for 4.4 and what's
-more more it is harmful. It introduces a bug, fixed in [1].
 
-[0] https://lkml.org/lkml/2018/2/6/726
-[1[ https://patchwork.kernel.org/patch/10253933/
+--B4IIlcmfBL/1gGOG
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Best regards,
-Jacek Anaszewski
+On Wed 2018-03-07 18:54:41, Sebastian Gottschall wrote:
+> Am 07.03.2018 um 17:22 schrieb Rafa=C5=82 Mi=C5=82ecki:
+> >On 2 March 2018 at 10:22, Sebastian Gottschall <s.gottschall@dd-wrt.com>=
+ wrote:
+> >>>>leds-gpio is crap and limited. you can just register one platform dat=
+a at
+> >>>>kernel runtime since its identified by its object name "led-gpio" but=
+ the
+> >>>>kernel forbidds to register 2 platform datas with the same name
+> >>>>consider the ar71xx devices with qca988x wifi chipsets. they all have
+> >>>>already a led platform data registered
+> >>>>at boottime. a second can't be registered anymore so gpio_led is usel=
+ess
+> >>>>at
+> >>>>all for most developers on such platforms. its mainly used for early
+> >>>>kernel
+> >>>>platform data initialisation for system leds.
+> >>>If leds-gpio has limitations, please fix those, rather then
+> >>>introducing duplicated code.
+> >>there is no duplicated code introduced and there is no solution for it.
+> >>consider that all wifi drivers with softled support
+> >>are going that way with registering a own led driver. see ath9k for
+> >>instance. gpio-led cannot be used for it and there is no way to
+> >>support multiple platform datas with the same name. its a kernel limita=
+tion
+> >I just reviewed some mips arch patch adding support for more LEDs for
+> >selected devices:
+> >[PATCH] MIPS: BCM47XX: Add Luxul XAP1500/XWR1750 WiFi LEDs
+> >https://patchwork.linux-mips.org/patch/18681/
+> >
+> >It seems to be simply adding another call to the
+> >gpio_led_register_device(). It seems to me you can call that function
+> >multiple times and register multiple structs with LEDs.
+> >
+> >Isn't all you need something like this?
+> >
+> >static const struct gpio_led ath10k_leds[] =3D {
+> >         {
+> >                 .name =3D "ath10k:color:function",
+> >                 .active_low =3D 1,
+> >                 .default_state =3D LEDS_GPIO_DEFSTATE_KEEP,
+> >         }
+> >};
+> >
+> >static struct gpio_led_platform_data bcm47xx_leds_pdata_extra =3D {
+> >         leds =3D ath10k_leds;
+> >         num_leds =3D ARRAY_SIZE(ath10k_leds);
+> >};
+> >
+> >ath10k_leds.gpio =3D ar->hw_params.led_pin;
+> >gpio_led_register_device(0, &ath10k_leds);
+> the problem are other architectures which have already registered gpio_led
+> at system start like ar71xx
+> you cannot register a second one. so a independend led driver is a
+> requirement for direct control
+
+If the limitation indeed exists, please fix the limitation rather than
+working around it in each and every driver.
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--B4IIlcmfBL/1gGOG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqg/BgACgkQMOfwapXb+vKFTACfdAlCxTIZdugucfyiKtdULBKM
+hNgAniR8fH5pWZJQ21aAEP3MrAQSszOO
+=A/Xe
+-----END PGP SIGNATURE-----
+
+--B4IIlcmfBL/1gGOG--
+
+
+--===============3907696512904922257==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+ath10k mailing list
+ath10k@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/ath10k
+
+--===============3907696512904922257==--
