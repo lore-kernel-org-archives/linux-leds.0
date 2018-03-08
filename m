@@ -1,8 +1,8 @@
-From: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH v12] ath10k: add LED and GPIO controlling support for
  various chipsets
-Date: Thu, 8 Mar 2018 13:33:29 +0100
-Message-ID: <d443856e-cfc8-2d50-900d-edf22e5360e3@dd-wrt.com>
+Date: Thu, 8 Mar 2018 15:05:16 +0100
+Message-ID: <20180308140515.GA4889@amd>
 References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
  <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
  <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com>
@@ -11,11 +11,11 @@ References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
  <CACna6rys85VEkzRGDVUAkBy7KgHS2y0DET7YvedboX-YEQHrkg@mail.gmail.com>
  <890a4dcc-f549-6487-2ce5-3b62874cd266@dd-wrt.com>
  <20180308090216.GC17761@amd>
+ <d443856e-cfc8-2d50-900d-edf22e5360e3@dd-wrt.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============6154827131198886836=="
 Return-path: <ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180308090216.GC17761@amd>
+In-Reply-To: <d443856e-cfc8-2d50-900d-edf22e5360e3@dd-wrt.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/ath10k>,
  <mailto:ath10k-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/ath10k/>
@@ -25,68 +25,133 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/ath10k>,
  <mailto:ath10k-request@lists.infradead.org?subject=subscribe>
 Sender: "ath10k" <ath10k-bounces@lists.infradead.org>
 Errors-To: ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, ath10k@lists.infradead.org, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Sebastian Gottschall <s.gottschall@newmedia-net.de>, Kalle Valo <kvalo@codeaurora.org>
+To: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, ath10k@lists.infradead.org, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Sebastian Gottschall <s.gottschall@newmedia-net.de>, Kalle Valo <kvalo@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-QW0gMDguMDMuMjAxOCB1bSAxMDowMiBzY2hyaWViIFBhdmVsIE1hY2hlazoKPiBPbiBXZWQgMjAx
-OC0wMy0wNyAxODo1NDo0MSwgU2ViYXN0aWFuIEdvdHRzY2hhbGwgd3JvdGU6Cj4+IEFtIDA3LjAz
-LjIwMTggdW0gMTc6MjIgc2NocmllYiBSYWZhxYIgTWnFgmVja2k6Cj4+PiBPbiAyIE1hcmNoIDIw
-MTggYXQgMTA6MjIsIFNlYmFzdGlhbiBHb3R0c2NoYWxsIDxzLmdvdHRzY2hhbGxAZGQtd3J0LmNv
-bT4gd3JvdGU6Cj4+Pj4+PiBsZWRzLWdwaW8gaXMgY3JhcCBhbmQgbGltaXRlZC4geW91IGNhbiBq
-dXN0IHJlZ2lzdGVyIG9uZSBwbGF0Zm9ybSBkYXRhIGF0Cj4+Pj4+PiBrZXJuZWwgcnVudGltZSBz
-aW5jZSBpdHMgaWRlbnRpZmllZCBieSBpdHMgb2JqZWN0IG5hbWUgImxlZC1ncGlvIiBidXQgdGhl
-Cj4+Pj4+PiBrZXJuZWwgZm9yYmlkZHMgdG8gcmVnaXN0ZXIgMiBwbGF0Zm9ybSBkYXRhcyB3aXRo
-IHRoZSBzYW1lIG5hbWUKPj4+Pj4+IGNvbnNpZGVyIHRoZSBhcjcxeHggZGV2aWNlcyB3aXRoIHFj
-YTk4OHggd2lmaSBjaGlwc2V0cy4gdGhleSBhbGwgaGF2ZQo+Pj4+Pj4gYWxyZWFkeSBhIGxlZCBw
-bGF0Zm9ybSBkYXRhIHJlZ2lzdGVyZWQKPj4+Pj4+IGF0IGJvb3R0aW1lLiBhIHNlY29uZCBjYW4n
-dCBiZSByZWdpc3RlcmVkIGFueW1vcmUgc28gZ3Bpb19sZWQgaXMgdXNlbGVzcwo+Pj4+Pj4gYXQK
-Pj4+Pj4+IGFsbCBmb3IgbW9zdCBkZXZlbG9wZXJzIG9uIHN1Y2ggcGxhdGZvcm1zLiBpdHMgbWFp
-bmx5IHVzZWQgZm9yIGVhcmx5Cj4+Pj4+PiBrZXJuZWwKPj4+Pj4+IHBsYXRmb3JtIGRhdGEgaW5p
-dGlhbGlzYXRpb24gZm9yIHN5c3RlbSBsZWRzLgo+Pj4+PiBJZiBsZWRzLWdwaW8gaGFzIGxpbWl0
-YXRpb25zLCBwbGVhc2UgZml4IHRob3NlLCByYXRoZXIgdGhlbgo+Pj4+PiBpbnRyb2R1Y2luZyBk
-dXBsaWNhdGVkIGNvZGUuCj4+Pj4gdGhlcmUgaXMgbm8gZHVwbGljYXRlZCBjb2RlIGludHJvZHVj
-ZWQgYW5kIHRoZXJlIGlzIG5vIHNvbHV0aW9uIGZvciBpdC4KPj4+PiBjb25zaWRlciB0aGF0IGFs
-bCB3aWZpIGRyaXZlcnMgd2l0aCBzb2Z0bGVkIHN1cHBvcnQKPj4+PiBhcmUgZ29pbmcgdGhhdCB3
-YXkgd2l0aCByZWdpc3RlcmluZyBhIG93biBsZWQgZHJpdmVyLiBzZWUgYXRoOWsgZm9yCj4+Pj4g
-aW5zdGFuY2UuIGdwaW8tbGVkIGNhbm5vdCBiZSB1c2VkIGZvciBpdCBhbmQgdGhlcmUgaXMgbm8g
-d2F5IHRvCj4+Pj4gc3VwcG9ydCBtdWx0aXBsZSBwbGF0Zm9ybSBkYXRhcyB3aXRoIHRoZSBzYW1l
-IG5hbWUuIGl0cyBhIGtlcm5lbCBsaW1pdGF0aW9uCj4+PiBJIGp1c3QgcmV2aWV3ZWQgc29tZSBt
-aXBzIGFyY2ggcGF0Y2ggYWRkaW5nIHN1cHBvcnQgZm9yIG1vcmUgTEVEcyBmb3IKPj4+IHNlbGVj
-dGVkIGRldmljZXM6Cj4+PiBbUEFUQ0hdIE1JUFM6IEJDTTQ3WFg6IEFkZCBMdXh1bCBYQVAxNTAw
-L1hXUjE3NTAgV2lGaSBMRURzCj4+PiBodHRwczovL3BhdGNod29yay5saW51eC1taXBzLm9yZy9w
-YXRjaC8xODY4MS8KPj4+Cj4+PiBJdCBzZWVtcyB0byBiZSBzaW1wbHkgYWRkaW5nIGFub3RoZXIg
-Y2FsbCB0byB0aGUKPj4+IGdwaW9fbGVkX3JlZ2lzdGVyX2RldmljZSgpLiBJdCBzZWVtcyB0byBt
-ZSB5b3UgY2FuIGNhbGwgdGhhdCBmdW5jdGlvbgo+Pj4gbXVsdGlwbGUgdGltZXMgYW5kIHJlZ2lz
-dGVyIG11bHRpcGxlIHN0cnVjdHMgd2l0aCBMRURzLgo+Pj4KPj4+IElzbid0IGFsbCB5b3UgbmVl
-ZCBzb21ldGhpbmcgbGlrZSB0aGlzPwo+Pj4KPj4+IHN0YXRpYyBjb25zdCBzdHJ1Y3QgZ3Bpb19s
-ZWQgYXRoMTBrX2xlZHNbXSA9IHsKPj4+ICAgICAgICAgIHsKPj4+ICAgICAgICAgICAgICAgICAg
-Lm5hbWUgPSAiYXRoMTBrOmNvbG9yOmZ1bmN0aW9uIiwKPj4+ICAgICAgICAgICAgICAgICAgLmFj
-dGl2ZV9sb3cgPSAxLAo+Pj4gICAgICAgICAgICAgICAgICAuZGVmYXVsdF9zdGF0ZSA9IExFRFNf
-R1BJT19ERUZTVEFURV9LRUVQLAo+Pj4gICAgICAgICAgfQo+Pj4gfTsKPj4+Cj4+PiBzdGF0aWMg
-c3RydWN0IGdwaW9fbGVkX3BsYXRmb3JtX2RhdGEgYmNtNDd4eF9sZWRzX3BkYXRhX2V4dHJhID0g
-ewo+Pj4gICAgICAgICAgbGVkcyA9IGF0aDEwa19sZWRzOwo+Pj4gICAgICAgICAgbnVtX2xlZHMg
-PSBBUlJBWV9TSVpFKGF0aDEwa19sZWRzKTsKPj4+IH07Cj4+Pgo+Pj4gYXRoMTBrX2xlZHMuZ3Bp
-byA9IGFyLT5od19wYXJhbXMubGVkX3BpbjsKPj4+IGdwaW9fbGVkX3JlZ2lzdGVyX2RldmljZSgw
-LCAmYXRoMTBrX2xlZHMpOwo+PiB0aGUgcHJvYmxlbSBhcmUgb3RoZXIgYXJjaGl0ZWN0dXJlcyB3
-aGljaCBoYXZlIGFscmVhZHkgcmVnaXN0ZXJlZCBncGlvX2xlZAo+PiBhdCBzeXN0ZW0gc3RhcnQg
-bGlrZSBhcjcxeHgKPj4geW91IGNhbm5vdCByZWdpc3RlciBhIHNlY29uZCBvbmUuIHNvIGEgaW5k
-ZXBlbmRlbmQgbGVkIGRyaXZlciBpcyBhCj4+IHJlcXVpcmVtZW50IGZvciBkaXJlY3QgY29udHJv
-bAo+IElmIHRoZSBsaW1pdGF0aW9uIGluZGVlZCBleGlzdHMsIHBsZWFzZSBmaXggdGhlIGxpbWl0
-YXRpb24gcmF0aGVyIHRoYW4KPiB3b3JraW5nIGFyb3VuZCBpdCBpbiBlYWNoIGFuZCBldmVyeSBk
-cml2ZXIuCnNlZSBhdGg5ay4gaXRzIGV4YWN0IHRoZSBzYW1lIGltcGxlbWVudGF0aW9uLgppbiBh
-ZGRpdGlvbiBteSB2YXJpYW50IGRvZXMgYWxzbyB3b3JrIHdpdGhvdXQgZ3Bpb2xpYiBzdXBwb3J0
-LiBzbyBpdCBjYW4gCmJlIHVzZWQgZXZlbiBpZiB0aGUga2VybmVsIGlzIGNvbmZpZ3VyZWQKd2l0
-aG91dCBncGlvIHN1cHBvcnQuCmFuZCBub3QgdG8gZm9yZ2V0LCB1c2luZyBhIG93biBsZWQgZHJp
-dmVyIGlzIG1vcmUgbGlndGh3ZWlnaHQgZnJvbSB0aGUgCmNhbGwgcGF0aCBmb3IgZWFjaCBsZWQg
-b24gLyBvZmYgZXZlbnQgd2hpY2ggaXMgaW1wb3J0YW50IGZvcgpsb3cgcGVyZm9ybWFuY2UgZW1i
-ZWRkZWQgZGV2aWNlcwoKClNlYmFzdGlhbgo+IAkJCQkJCQkJCVBhdmVsCj4KCi0tIApNaXQgZnJl
-dW5kbGljaGVuIEdyw7xzc2VuIC8gUmVnYXJkcwoKU2ViYXN0aWFuIEdvdHRzY2hhbGwgLyBDVE8K
-Ck5ld01lZGlhLU5FVCBHbWJIIC0gREQtV1JUCkZpcm1lbnNpdHo6ICBTdHViZW53YWxkYWxsZWUg
-MjFhLCA2NDYyNSBCZW5zaGVpbQpSZWdpc3RlcmdlcmljaHQ6IEFtdHNnZXJpY2h0IERhcm1zdGFk
-dCwgSFJCIDI1NDczCkdlc2Now6RmdHNmw7xocmVyOiBQZXRlciBTdGVpbmjDpHVzZXIsIENocmlz
-dGlhbiBTY2hlZWxlCmh0dHA6Ly93d3cuZGQtd3J0LmNvbQplbWFpbDogcy5nb3R0c2NoYWxsQGRk
-LXdydC5jb20KVGVsLjogKzQ5NjI1MS01ODI2NTAgLyBGYXg6ICs0OTYyNTEtNTgyNjU2NQoKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmF0aDEwayBtYWls
-aW5nIGxpc3QKYXRoMTBrQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVh
-ZC5vcmcvbWFpbG1hbi9saXN0aW5mby9hdGgxMGsK
+
+--===============6154827131198886836==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
+Content-Disposition: inline
+
+
+--envbJBWh7q8WU6mo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu 2018-03-08 13:33:29, Sebastian Gottschall wrote:
+> Am 08.03.2018 um 10:02 schrieb Pavel Machek:
+> >On Wed 2018-03-07 18:54:41, Sebastian Gottschall wrote:
+> >>Am 07.03.2018 um 17:22 schrieb Rafa=C5=82 Mi=C5=82ecki:
+> >>>On 2 March 2018 at 10:22, Sebastian Gottschall <s.gottschall@dd-wrt.co=
+m> wrote:
+> >>>>>>leds-gpio is crap and limited. you can just register one platform d=
+ata at
+> >>>>>>kernel runtime since its identified by its object name "led-gpio" b=
+ut the
+> >>>>>>kernel forbidds to register 2 platform datas with the same name
+> >>>>>>consider the ar71xx devices with qca988x wifi chipsets. they all ha=
+ve
+> >>>>>>already a led platform data registered
+> >>>>>>at boottime. a second can't be registered anymore so gpio_led is us=
+eless
+> >>>>>>at
+> >>>>>>all for most developers on such platforms. its mainly used for early
+> >>>>>>kernel
+> >>>>>>platform data initialisation for system leds.
+> >>>>>If leds-gpio has limitations, please fix those, rather then
+> >>>>>introducing duplicated code.
+> >>>>there is no duplicated code introduced and there is no solution for i=
+t.
+> >>>>consider that all wifi drivers with softled support
+> >>>>are going that way with registering a own led driver. see ath9k for
+> >>>>instance. gpio-led cannot be used for it and there is no way to
+> >>>>support multiple platform datas with the same name. its a kernel limi=
+tation
+> >>>I just reviewed some mips arch patch adding support for more LEDs for
+> >>>selected devices:
+> >>>[PATCH] MIPS: BCM47XX: Add Luxul XAP1500/XWR1750 WiFi LEDs
+> >>>https://patchwork.linux-mips.org/patch/18681/
+> >>>
+> >>>It seems to be simply adding another call to the
+> >>>gpio_led_register_device(). It seems to me you can call that function
+> >>>multiple times and register multiple structs with LEDs.
+> >>>
+> >>>Isn't all you need something like this?
+> >>>
+> >>>static const struct gpio_led ath10k_leds[] =3D {
+> >>>         {
+> >>>                 .name =3D "ath10k:color:function",
+> >>>                 .active_low =3D 1,
+> >>>                 .default_state =3D LEDS_GPIO_DEFSTATE_KEEP,
+> >>>         }
+> >>>};
+> >>>
+> >>>static struct gpio_led_platform_data bcm47xx_leds_pdata_extra =3D {
+> >>>         leds =3D ath10k_leds;
+> >>>         num_leds =3D ARRAY_SIZE(ath10k_leds);
+> >>>};
+> >>>
+> >>>ath10k_leds.gpio =3D ar->hw_params.led_pin;
+> >>>gpio_led_register_device(0, &ath10k_leds);
+> >>the problem are other architectures which have already registered gpio_=
+led
+> >>at system start like ar71xx
+> >>you cannot register a second one. so a independend led driver is a
+> >>requirement for direct control
+> >If the limitation indeed exists, please fix the limitation rather than
+> >working around it in each and every driver.
+> see ath9k. its exact the same implementation.
+
+Ok, so one more driver to fix.
+
+> in addition my variant does also work without gpiolib support. so it can =
+be
+> used even if the kernel is configured
+> without gpio support.
+> and not to forget, using a own led driver is more ligthweight from the ca=
+ll
+> path for each led on / off event which is important for
+> low performance embedded devices
+
+We are not going to copy&paste code because such code works without
+libraries, and we are not going to copy&paste code because that uses
+less cache during calls. Sorry.
+
+NAK. Please fix your patch.=20
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--envbJBWh7q8WU6mo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqhQxsACgkQMOfwapXb+vLTpgCgks8J+FoLFdyIZz4Vq9wn2xuK
+6ZsAmgPcfT2bOWZcTAIXWKEx1/ySKQdW
+=zvis
+-----END PGP SIGNATURE-----
+
+--envbJBWh7q8WU6mo--
+
+
+--===============6154827131198886836==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+ath10k mailing list
+ath10k@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/ath10k
+
+--===============6154827131198886836==--
