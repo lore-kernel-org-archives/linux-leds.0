@@ -1,23 +1,24 @@
-From: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH v12] ath10k: add LED and GPIO controlling support for
  various chipsets
-Date: Thu, 8 Mar 2018 15:43:40 +0100
-Message-ID: <002c7d68-78cd-a3ef-5b60-b69d8c554fd3@dd-wrt.com>
-References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
- <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
+Date: Thu, 8 Mar 2018 16:04:31 +0100
+Message-ID: <20180308150431.GA12475@localhost>
+References: <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
  <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com>
  <20180302090312.GA30267@amd>
  <e77d25d4-a824-380a-c51a-e81175ba6205@dd-wrt.com>
  <CACna6rys85VEkzRGDVUAkBy7KgHS2y0DET7YvedboX-YEQHrkg@mail.gmail.com>
  <890a4dcc-f549-6487-2ce5-3b62874cd266@dd-wrt.com>
  <20180308090216.GC17761@amd>
- <d443856e-cfc8-2d50-900d-edf22e5360e3@dd-wrt.com> <20180308140515.GA4889@amd>
- <87371ahc8f.fsf@kamboji.qca.qualcomm.com>
+ <d443856e-cfc8-2d50-900d-edf22e5360e3@dd-wrt.com>
+ <20180308140515.GA4889@amd>
+ <c2d75791-5822-ac55-35ad-734947e22d45@dd-wrt.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org>
-In-Reply-To: <87371ahc8f.fsf@kamboji.qca.qualcomm.com>
+Content-Disposition: inline
+In-Reply-To: <c2d75791-5822-ac55-35ad-734947e22d45@dd-wrt.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/ath10k>,
  <mailto:ath10k-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/ath10k/>
@@ -27,58 +28,23 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/ath10k>,
  <mailto:ath10k-request@lists.infradead.org?subject=subscribe>
 Sender: "ath10k" <ath10k-bounces@lists.infradead.org>
 Errors-To: ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org
-To: Kalle Valo <kvalo@codeaurora.org>, Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Gottschall <s.gottschall@newmedia-net.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, ath10k@lists.infradead.org, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
+To: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Cc: Rafa?? Mi??ecki <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, ath10k@lists.infradead.org, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Sebastian Gottschall <s.gottschall@newmedia-net.de>, Kalle Valo <kvalo@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-QW0gMDguMDMuMjAxOCB1bSAxNToyOSBzY2hyaWViIEthbGxlIFZhbG86Cj4gUGF2ZWwgTWFjaGVr
-IDxwYXZlbEB1Y3cuY3o+IHdyaXRlczoKPgo+Pj4+Pj4gYXRoMTBrX2xlZHMuZ3BpbyA9IGFyLT5o
-d19wYXJhbXMubGVkX3BpbjsKPj4+Pj4+IGdwaW9fbGVkX3JlZ2lzdGVyX2RldmljZSgwLCAmYXRo
-MTBrX2xlZHMpOwo+Pj4+PiB0aGUgcHJvYmxlbSBhcmUgb3RoZXIgYXJjaGl0ZWN0dXJlcyB3aGlj
-aCBoYXZlIGFscmVhZHkgcmVnaXN0ZXJlZCBncGlvX2xlZAo+Pj4+PiBhdCBzeXN0ZW0gc3RhcnQg
-bGlrZSBhcjcxeHgKPj4+Pj4geW91IGNhbm5vdCByZWdpc3RlciBhIHNlY29uZCBvbmUuIHNvIGEg
-aW5kZXBlbmRlbmQgbGVkIGRyaXZlciBpcyBhCj4+Pj4+IHJlcXVpcmVtZW50IGZvciBkaXJlY3Qg
-Y29udHJvbAo+Pj4+IElmIHRoZSBsaW1pdGF0aW9uIGluZGVlZCBleGlzdHMsIHBsZWFzZSBmaXgg
-dGhlIGxpbWl0YXRpb24gcmF0aGVyIHRoYW4KPj4+PiB3b3JraW5nIGFyb3VuZCBpdCBpbiBlYWNo
-IGFuZCBldmVyeSBkcml2ZXIuCj4+PiBzZWUgYXRoOWsuIGl0cyBleGFjdCB0aGUgc2FtZSBpbXBs
-ZW1lbnRhdGlvbi4KPj4gT2ssIHNvIG9uZSBtb3JlIGRyaXZlciB0byBmaXguCj4+Cj4+PiBpbiBh
-ZGRpdGlvbiBteSB2YXJpYW50IGRvZXMgYWxzbyB3b3JrIHdpdGhvdXQgZ3Bpb2xpYiBzdXBwb3J0
-LiBzbyBpdAo+Pj4gY2FuIGJlIHVzZWQgZXZlbiBpZiB0aGUga2VybmVsIGlzIGNvbmZpZ3VyZWQg
-d2l0aG91dCBncGlvIHN1cHBvcnQuCj4+PiBhbmQgbm90IHRvIGZvcmdldCwgdXNpbmcgYSBvd24g
-bGVkIGRyaXZlciBpcyBtb3JlIGxpZ3Rod2VpZ2h0IGZyb20KPj4+IHRoZSBjYWxsIHBhdGggZm9y
-IGVhY2ggbGVkIG9uIC8gb2ZmIGV2ZW50IHdoaWNoIGlzIGltcG9ydGFudCBmb3IgbG93Cj4+PiBw
-ZXJmb3JtYW5jZSBlbWJlZGRlZCBkZXZpY2VzCj4+IFdlIGFyZSBub3QgZ29pbmcgdG8gY29weSZw
-YXN0ZSBjb2RlIGJlY2F1c2Ugc3VjaCBjb2RlIHdvcmtzIHdpdGhvdXQKPj4gbGlicmFyaWVzLCBh
-bmQgd2UgYXJlIG5vdCBnb2luZyB0byBjb3B5JnBhc3RlIGNvZGUgYmVjYXVzZSB0aGF0IHVzZXMK
-Pj4gbGVzcyBjYWNoZSBkdXJpbmcgY2FsbHMuIFNvcnJ5Lgo+Pgo+PiBOQUsuIFBsZWFzZSBmaXgg
-eW91ciBwYXRjaC4KPiBUbyBtZSBpdCdzIG5vdCB0aGF0IGJsYWNrIGFuZCB3aGl0ZSwgc29tZXRp
-bWVzIGNvcHlpbmcgY29kZSBpcyBzaW1wbGVyCj4gdGhhbiB0cnlpbmcgdG8gYnJpbmcgdXAgY29t
-cGxpY2F0ZWQgb3IgcmVzdHJpY3RpbmcgZnJhbWV3b3JrcyAodGFsa2luZwo+IGluIGdlbmVyYWwg
-aGVyZSkuCj4KPiBJIGhhdmVuJ3QgYmVlbiBhYmxlIHRvIHJldmlldyB0aGlzIHBhdGNoIGluIGRl
-dGFpbCB5ZXQgYnV0IGZyb20gYSBxdWljawo+IGxvb2sgbW9zdCBvZiB0aGUgY29kZSBpcyBhYm91
-dCBzdGFuZGFyZCBhdGgxMGsgaW5mcmFzdHJ1Y3R1cmUgY29kZS4gSG93Cj4gbWFueSBsaW5lcyBv
-ZiBjb2RlIHdvdWxkIHVzaW5nIGxlZHMtZ3BpbyBzYXZlPwpub3RoaW5nLiB0aGUgbGVkIGRyaXZl
-ciBjb2RlIGlzIGFscmVhZHkgdmVyeSBzbWFsbC4gKHNlZSBncGlvLmMgaW4gdGhlIApwYXRjaCkg
-aSBoYWQgYSBsZWRzLWdwaW8gaW1wbGVtZW50YXRpb24gYnV0IGl0IHdpbGwgbm90IHdvcmsgc2lu
-Y2UgYSAKcGxhdGZvcm0gZGF0YSB3aXRoIHRoZSBuYW1lICJsZWRzLWdwaW8iIGRvZXMgYWxyZWFk
-eSBleGlzdCBvbiB2YXJpb3VzIApwbGF0Zm9ybXMgKGF0aDc5IGZvciBpbnN0YW5jZSkKc28gYSBz
-ZWNvbmQgbGVkcy1ncGlvIGNhbid0IGJlIHJlZ2lzdGVyZWQuIHNvIHRoaXMgc29sdXRpb24gZG9l
-cyBzaW1wbHkgCm5vdCB3b3JrIGFuZCBhc2tpbmcgbWUgZm9yIGZpeGluZyB0aGUga2VybmVsIGdl
-bmVyaWMgcGxhdGZvcm0gZGF0YSAKaGFuZGxpbmcgbGlrZSBwYXZlbCBkaWQsIGlzIHJlYWxseSBv
-dXQgb2YgbWluZAphbmQgYSBvd24gbGVkIGRyaXZlciBoYXMgYWxzbyBiZXR0ZXIgcGVyZm9ybWFu
-Y2UgdGhhbiB1c2luZyB0aGUgCmxlZHMtZ3Bpby0+Z3Bpb2xpYi0+YXRoMTBrIGdwaW8gZHJpdmVy
-IGNhbGxwYXRoLgppZiBzb21lb25lIGlzIHN0aWxsIGNvbXBsYWluaW5nIHRoYXQgaSBhZGRlZCBh
-IGdwaW8gZmVhdHVyZSBkcml2ZXIgYXMgCndlbGwgdG8gbXkgcGF0Y2gsIGkgY2FuIHNpbXBseSBy
-ZW1vdmUgdGhhdCB1c2VmdWxsIGZlYXR1cmUgYW5kIGFsbCB3b3VsZCAKYmUgaGFwcHkuIGJ1dCBp
-IHRoaW5rIGhhdmluZyBhY2Nlc3MgdG8gYWxsIGdwaW9zIG9mIHRoZSBjYXJkCmluc3RlYWQgb2Yg
-anVzdCB0aGUgbGVkIGdwaW8gbWFrZXMgc2Vuc2UgdG8uIHRoYXRzIHdoeSBpIGltcGxlbWVudGVk
-IGEgCmdwaW9saWIgZHJpdmVyIGFzIHdlbGwKClNlYmFzdGlhbgoKCi0tIApNaXQgZnJldW5kbGlj
-aGVuIEdyw7xzc2VuIC8gUmVnYXJkcwoKU2ViYXN0aWFuIEdvdHRzY2hhbGwgLyBDVE8KCk5ld01l
-ZGlhLU5FVCBHbWJIIC0gREQtV1JUCkZpcm1lbnNpdHo6ICBTdHViZW53YWxkYWxsZWUgMjFhLCA2
-NDYyNSBCZW5zaGVpbQpSZWdpc3RlcmdlcmljaHQ6IEFtdHNnZXJpY2h0IERhcm1zdGFkdCwgSFJC
-IDI1NDczCkdlc2Now6RmdHNmw7xocmVyOiBQZXRlciBTdGVpbmjDpHVzZXIsIENocmlzdGlhbiBT
-Y2hlZWxlCmh0dHA6Ly93d3cuZGQtd3J0LmNvbQplbWFpbDogcy5nb3R0c2NoYWxsQGRkLXdydC5j
-b20KVGVsLjogKzQ5NjI1MS01ODI2NTAgLyBGYXg6ICs0OTYyNTEtNTgyNjU2NQoKCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmF0aDEwayBtYWlsaW5nIGxp
-c3QKYXRoMTBrQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9hdGgxMGsK
+Hi!
+
+> show me a proof that its copy & paste. because its not
+
+I don't have to prove you anything. Sorry.
+
+But you said:
+
+> >>see ath9k. its exact the same implementation.
+
+We don't want to have exact same code multiple times in the tree.
+ 
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
