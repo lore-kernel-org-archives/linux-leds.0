@@ -1,8 +1,8 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Kalle Valo <kvalo@codeaurora.org>
 Subject: Re: [PATCH v12] ath10k: add LED and GPIO controlling support for
  various chipsets
-Date: Thu, 8 Mar 2018 15:05:16 +0100
-Message-ID: <20180308140515.GA4889@amd>
+Date: Thu, 08 Mar 2018 16:29:36 +0200
+Message-ID: <87371ahc8f.fsf@kamboji.qca.qualcomm.com>
 References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
  <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
  <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com>
@@ -12,10 +12,13 @@ References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
  <890a4dcc-f549-6487-2ce5-3b62874cd266@dd-wrt.com>
  <20180308090216.GC17761@amd>
  <d443856e-cfc8-2d50-900d-edf22e5360e3@dd-wrt.com>
+ <20180308140515.GA4889@amd>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6154827131198886836=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org>
-In-Reply-To: <d443856e-cfc8-2d50-900d-edf22e5360e3@dd-wrt.com>
+In-Reply-To: <20180308140515.GA4889@amd> (Pavel Machek's message of "Thu, 8
+ Mar 2018 15:05:16 +0100")
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/ath10k>,
  <mailto:ath10k-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/ath10k/>
@@ -25,133 +28,45 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/ath10k>,
  <mailto:ath10k-request@lists.infradead.org?subject=subscribe>
 Sender: "ath10k" <ath10k-bounces@lists.infradead.org>
 Errors-To: ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org
-To: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, ath10k@lists.infradead.org, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Sebastian Gottschall <s.gottschall@newmedia-net.de>, Kalle Valo <kvalo@codeaurora.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: =?utf-8?Q?Rafa=C5=82?= =?utf-8?Q?_Mi=C5=82ecki?= <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, ath10k@lists.infradead.org, Sebastian Gottschall <s.gottschall@dd-wrt.com>, Sebastian Gottschall <s.gottschall@newmedia-net.de>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
+Pavel Machek <pavel@ucw.cz> writes:
 
---===============6154827131198886836==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
-Content-Disposition: inline
+>> >>>ath10k_leds.gpio = ar->hw_params.led_pin;
+>> >>>gpio_led_register_device(0, &ath10k_leds);
+>> >>
+>> >>the problem are other architectures which have already registered gpio_led
+>> >>at system start like ar71xx
+>> >>you cannot register a second one. so a independend led driver is a
+>> >>requirement for direct control
+>> >
+>> >If the limitation indeed exists, please fix the limitation rather than
+>> >working around it in each and every driver.
+>> see ath9k. its exact the same implementation.
+>
+> Ok, so one more driver to fix.
+>
+>> in addition my variant does also work without gpiolib support. so it
+>> can be used even if the kernel is configured without gpio support.
+>> and not to forget, using a own led driver is more ligthweight from
+>> the call path for each led on / off event which is important for low
+>> performance embedded devices
+>
+> We are not going to copy&paste code because such code works without
+> libraries, and we are not going to copy&paste code because that uses
+> less cache during calls. Sorry.
+>
+> NAK. Please fix your patch. 
 
+To me it's not that black and white, sometimes copying code is simpler
+than trying to bring up complicated or restricting frameworks (talking
+in general here).
 
---envbJBWh7q8WU6mo
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I haven't been able to review this patch in detail yet but from a quick
+look most of the code is about standard ath10k infrastructure code. How
+many lines of code would using leds-gpio save?
 
-On Thu 2018-03-08 13:33:29, Sebastian Gottschall wrote:
-> Am 08.03.2018 um 10:02 schrieb Pavel Machek:
-> >On Wed 2018-03-07 18:54:41, Sebastian Gottschall wrote:
-> >>Am 07.03.2018 um 17:22 schrieb Rafa=C5=82 Mi=C5=82ecki:
-> >>>On 2 March 2018 at 10:22, Sebastian Gottschall <s.gottschall@dd-wrt.co=
-m> wrote:
-> >>>>>>leds-gpio is crap and limited. you can just register one platform d=
-ata at
-> >>>>>>kernel runtime since its identified by its object name "led-gpio" b=
-ut the
-> >>>>>>kernel forbidds to register 2 platform datas with the same name
-> >>>>>>consider the ar71xx devices with qca988x wifi chipsets. they all ha=
-ve
-> >>>>>>already a led platform data registered
-> >>>>>>at boottime. a second can't be registered anymore so gpio_led is us=
-eless
-> >>>>>>at
-> >>>>>>all for most developers on such platforms. its mainly used for early
-> >>>>>>kernel
-> >>>>>>platform data initialisation for system leds.
-> >>>>>If leds-gpio has limitations, please fix those, rather then
-> >>>>>introducing duplicated code.
-> >>>>there is no duplicated code introduced and there is no solution for i=
-t.
-> >>>>consider that all wifi drivers with softled support
-> >>>>are going that way with registering a own led driver. see ath9k for
-> >>>>instance. gpio-led cannot be used for it and there is no way to
-> >>>>support multiple platform datas with the same name. its a kernel limi=
-tation
-> >>>I just reviewed some mips arch patch adding support for more LEDs for
-> >>>selected devices:
-> >>>[PATCH] MIPS: BCM47XX: Add Luxul XAP1500/XWR1750 WiFi LEDs
-> >>>https://patchwork.linux-mips.org/patch/18681/
-> >>>
-> >>>It seems to be simply adding another call to the
-> >>>gpio_led_register_device(). It seems to me you can call that function
-> >>>multiple times and register multiple structs with LEDs.
-> >>>
-> >>>Isn't all you need something like this?
-> >>>
-> >>>static const struct gpio_led ath10k_leds[] =3D {
-> >>>         {
-> >>>                 .name =3D "ath10k:color:function",
-> >>>                 .active_low =3D 1,
-> >>>                 .default_state =3D LEDS_GPIO_DEFSTATE_KEEP,
-> >>>         }
-> >>>};
-> >>>
-> >>>static struct gpio_led_platform_data bcm47xx_leds_pdata_extra =3D {
-> >>>         leds =3D ath10k_leds;
-> >>>         num_leds =3D ARRAY_SIZE(ath10k_leds);
-> >>>};
-> >>>
-> >>>ath10k_leds.gpio =3D ar->hw_params.led_pin;
-> >>>gpio_led_register_device(0, &ath10k_leds);
-> >>the problem are other architectures which have already registered gpio_=
-led
-> >>at system start like ar71xx
-> >>you cannot register a second one. so a independend led driver is a
-> >>requirement for direct control
-> >If the limitation indeed exists, please fix the limitation rather than
-> >working around it in each and every driver.
-> see ath9k. its exact the same implementation.
-
-Ok, so one more driver to fix.
-
-> in addition my variant does also work without gpiolib support. so it can =
-be
-> used even if the kernel is configured
-> without gpio support.
-> and not to forget, using a own led driver is more ligthweight from the ca=
-ll
-> path for each led on / off event which is important for
-> low performance embedded devices
-
-We are not going to copy&paste code because such code works without
-libraries, and we are not going to copy&paste code because that uses
-less cache during calls. Sorry.
-
-NAK. Please fix your patch.=20
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---envbJBWh7q8WU6mo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqhQxsACgkQMOfwapXb+vLTpgCgks8J+FoLFdyIZz4Vq9wn2xuK
-6ZsAmgPcfT2bOWZcTAIXWKEx1/ySKQdW
-=zvis
------END PGP SIGNATURE-----
-
---envbJBWh7q8WU6mo--
-
-
---===============6154827131198886836==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-ath10k mailing list
-ath10k@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/ath10k
-
---===============6154827131198886836==--
+-- 
+Kalle Valo
