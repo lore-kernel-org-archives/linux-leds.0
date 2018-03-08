@@ -1,8 +1,8 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Sebastian Gottschall <s.gottschall@dd-wrt.com>
 Subject: Re: [PATCH v12] ath10k: add LED and GPIO controlling support for
  various chipsets
-Date: Thu, 8 Mar 2018 16:04:31 +0100
-Message-ID: <20180308150431.GA12475@localhost>
+Date: Thu, 8 Mar 2018 16:31:52 +0100
+Message-ID: <d7f09cd5-c434-a2bb-c721-68e90c0c72b6@dd-wrt.com>
 References: <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
  <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com>
  <20180302090312.GA30267@amd>
@@ -10,15 +10,14 @@ References: <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
  <CACna6rys85VEkzRGDVUAkBy7KgHS2y0DET7YvedboX-YEQHrkg@mail.gmail.com>
  <890a4dcc-f549-6487-2ce5-3b62874cd266@dd-wrt.com>
  <20180308090216.GC17761@amd>
- <d443856e-cfc8-2d50-900d-edf22e5360e3@dd-wrt.com>
- <20180308140515.GA4889@amd>
+ <d443856e-cfc8-2d50-900d-edf22e5360e3@dd-wrt.com> <20180308140515.GA4889@amd>
  <c2d75791-5822-ac55-35ad-734947e22d45@dd-wrt.com>
+ <20180308150431.GA12475@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <c2d75791-5822-ac55-35ad-734947e22d45@dd-wrt.com>
+In-Reply-To: <20180308150431.GA12475@localhost>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/ath10k>,
  <mailto:ath10k-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/ath10k/>
@@ -28,23 +27,56 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/ath10k>,
  <mailto:ath10k-request@lists.infradead.org?subject=subscribe>
 Sender: "ath10k" <ath10k-bounces@lists.infradead.org>
 Errors-To: ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org
-To: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+To: Pavel Machek <pavel@ucw.cz>
 Cc: Rafa?? Mi??ecki <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, ath10k@lists.infradead.org, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Sebastian Gottschall <s.gottschall@newmedia-net.de>, Kalle Valo <kvalo@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi!
-
-> show me a proof that its copy & paste. because its not
-
-I don't have to prove you anything. Sorry.
-
-But you said:
-
-> >>see ath9k. its exact the same implementation.
-
-We don't want to have exact same code multiple times in the tree.
- 
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+QW0gMDguMDMuMjAxOCB1bSAxNjowNCBzY2hyaWViIFBhdmVsIE1hY2hlazoKPiBIaSEKPgo+PiBz
+aG93IG1lIGEgcHJvb2YgdGhhdCBpdHMgY29weSAmIHBhc3RlLiBiZWNhdXNlIGl0cyBub3QKPiBJ
+IGRvbid0IGhhdmUgdG8gcHJvdmUgeW91IGFueXRoaW5nLiBTb3JyeS4KdGhlbiBpIHdpbGwgZGVu
+eSB5b3VyIGFyZ3VtZW50IGJlY2F1c2UgaXRzIGZhbHNlLgo+Cj4gQnV0IHlvdSBzYWlkOgo+Cj4+
+Pj4gc2VlIGF0aDlrLiBpdHMgZXhhY3QgdGhlIHNhbWUgaW1wbGVtZW50YXRpb24uCj4gV2UgZG9u
+J3Qgd2FudCB0byBoYXZlIGV4YWN0IHNhbWUgY29kZSBtdWx0aXBsZSB0aW1lcyBpbiB0aGUgdHJl
+ZS4KaXQgaXNudCB0aGUgZXhhY3Qgc2FtZSBjb2RlLCBpdHMganVzdCB0aGUgd2F5IGl0cyBkb25l
+LiBpIG1lYW4gCnJlZ2lzdGVyaW5nIGEgbGVkIGRyaXZlciBmdW5jdGlvbiBoYXBwZW5zIG11bHRp
+cGxlIHRpbWVzIGluIHRoZSBrZXJuZWwKeW91IGNhbm5vdCBzYXkgdGhhdCBjYWxsaW5nIGxlZF9j
+bGFzc2Rldl9yZWdpc3RlciB3aXRoIHRoZSByZXF1aXJlZCAKcGFyYW1ldGVycyBhbmQgZnVuY3Rp
+b24gaW1wbGVtZW50YXRpb24gaXMgYSBjYXNlIG9mIGNvZGUgZHVwbGljYXRpb24uCnRoZW4gaSB3
+b3VsZCBqdXN0IHNheSB1c2luZyBvZiAicHJpbnRrIiBpcyBhIGNhc2Ugb2YgY29kZSBkdXBsaWNh
+dGlvbi4KcmVnaXN0ZXJpbmcgYSBsZWQgZHJpdmVyIGlzIG5vdGhpbmcgdW51c3VhbCwgdGhlIGlt
+cGxlbWVudGF0aW9uIG9mIHRoZSAKbGVkIGRyaXZlciBpcyBkaWZmZXJlbnQgZWFjaCB0aW1lLiB0
+aGUgaW1wbGVtZW50YXRpb24gZm9yIGxlZF9icmlnaHRuZXNzIAppcyB2ZXJ5IGRpZmZlcmVudAp0
+aGVyZSBhcmUgbWFueSBsZWQgZHJpdmVycyBpbiB0aGUga2VybmVsLiBhbGwgYXJlIGdvaW5nIHRo
+ZSBzYW1lIHdheS4KCmkgY2hlY2tlZCB0aGUga2VybmVsIGRyaXZlcnMganVzdCByaWdodCBub3cu
+IGFsbW9zdCBhbGwgbWFqb3Igd2lyZWxlc3MgCmRyaXZlcnMgYXJlIGNvbW1pbmcgd2l0aCBhIGxl
+ZCBkcml2ZXIgd2l0aG91dCB1c2luZyBncGlvbGliCnlvdXIgd2F5IGlzIGEgY2FzZSBvZiBjb2Rl
+YmxvYXRpbmcgc2luY2UgYSByZWdpc3RlcmluZyBncGlvLWxlZHMgCnJlcXVpcmVzIGEgZ3BpbyBk
+cml2ZXIgZm9yIGVhY2ggd2lyZWxlc3MgZHJpdmVyLCBldmVuIGlmIGl0cyBzb21ldGltZXMgCmp1
+c3QgYSBzaW5nbGUgcmVnaXN0ZXIgd3JpdGUgZm9yIGEgbGVkwqAgYW5kIG5vIHJlYWwgZ3Bpby4K
+YSBncGlvIGRyaXZlciBpcyBtb3JlIGNvbXBsZXggYW5kIGJpZ2dlciB0aGFuIGp1c3QgYSBsZWQg
+ZHJpdmVyLiBpIGp1c3QgCndyb3RlIGEgb3B0aW9uYWwgZ3BpbyBkcml2ZXIgdG8gZ2V0IGFjY2Vz
+cyB0byBhbGwgZ3Bpb3MgYXZhaWxhYmxlIG9uIHRoZSAKY2FyZC4gc29tZSB2ZW5kb3JzIGFyZSB1
+c2luZyB0aGVzZSBpbiBhIHVudXN1YWwgd2F5CmkgaGF2ZSBzZWVuIHRoYXQgdmVuZG9ycyB1c2Vk
+IHRoZW0gZm9yIHJlc2V0IGJ1dHRvbiBpbnB1dCBldGMuIHRoaXMgaXMgCndoeSBpIG1hZGUgaXQu
+IHNvIGRvbnQgdGFrZSB0aGlzIGFzIGEgYXJndW1lbnQgZm9yIGdvaW5nIGEgaW1wb3NzaWJsZSAK
+d2F5IChhZ2Fpbi4gdGhlIGtlcm5lbCBkb2VzIG5vdCBzdXBwb3J0IG11bHRpcGxlIHBsYXRmb3Jt
+IGRhdGFzIHdpdGggdGhlIApzYW1lIG5hbWUKVEhFIEtFUk5FTCBub3QgbGVkcy1ncGlvLiBzbyBv
+bmNlIGEgbGVkcy1ncGlvIHBsYXRmb3JtIGRhdGEgaXMgCnJlZ2lzdGVyZWQsIG5vIG90aGVyIGRy
+aXZlciBjYW4gcmVnaXN0ZXIgYSBuZXcgb25lLgppbiBhZGRpdGlvbiB0aGUga2VybmVsIG11c3Qg
+aGF2ZSBncGlvbGliIHN1cHBvcnQgd2hpY2ggaW5jcmVhc2VzIHRoZSAKa2VybmVsIHNpemUuIHRo
+ZSBiZXN0IHdheSBpcyBhbHdheXMgdGhlIG1vc3Qgc2ltcGxlIHdheSBhbmQgdGhlIHNtYWxsZXN0
+IApwZXJmb3JtYW50IHdheS4KCmFuZCBhZ2Fpbi4gaSBkaWQgbm90IGR1cGxpY2F0ZSB0aGUgY29k
+ZSBvZiBhdGg5aywgaSBqdXN0IHVzZWQgaXQgYXMgCmRvY3VtZW50YXRpb24gdG8gd3JpdGUgYSBv
+d24gbGVkIGRyaXZlciBpbiBhIHNpbXBsZSB3YXkKCm5vdyBhIGxpc3Qgb2Ygd2lyZWxlc3MgZHJp
+dmVycyB3aXRoIGEgbGVkIGRyaXZlcgppbnRlcnNpbApjYXJsOTE3MAphdGg1awpydDJ4MDAKYjQz
+bGVnYWN5CmI0Mwppd2xlZ2FjeQpydGw4MTg3CmJyY21zbWFjCml3bHdpZmkKClNlYmFzdGlhbgoK
+PiAgIAo+IAkJCQkJCQkJCVBhdmVsCgoKLS0gCk1pdCBmcmV1bmRsaWNoZW4gR3LDvHNzZW4gLyBS
+ZWdhcmRzCgpTZWJhc3RpYW4gR290dHNjaGFsbCAvIENUTwoKTmV3TWVkaWEtTkVUIEdtYkggLSBE
+RC1XUlQKRmlybWVuc2l0ejogIFN0dWJlbndhbGRhbGxlZSAyMWEsIDY0NjI1IEJlbnNoZWltClJl
+Z2lzdGVyZ2VyaWNodDogQW10c2dlcmljaHQgRGFybXN0YWR0LCBIUkIgMjU0NzMKR2VzY2jDpGZ0
+c2bDvGhyZXI6IFBldGVyIFN0ZWluaMOkdXNlciwgQ2hyaXN0aWFuIFNjaGVlbGUKaHR0cDovL3d3
+dy5kZC13cnQuY29tCmVtYWlsOiBzLmdvdHRzY2hhbGxAZGQtd3J0LmNvbQpUZWwuOiArNDk2MjUx
+LTU4MjY1MCAvIEZheDogKzQ5NjI1MS01ODI2NTY1CgoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KYXRoMTBrIG1haWxpbmcgbGlzdAphdGgxMGtAbGlzdHMu
+aW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2F0aDEwawo=
