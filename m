@@ -1,74 +1,109 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 4.4 16/34] led: core: Fix brightness setting when setting
- delay_off=0
-Date: Thu, 8 Mar 2018 17:09:28 -0800
-Message-ID: <20180309010928.GB24548@kroah.com>
-References: <20180302084435.842679610@linuxfoundation.org>
- <20180302084437.007951262@linuxfoundation.org>
- <1520436743.23626.33.camel@codethink.co.uk>
- <86d4536e-11d5-40c4-4186-21955f809005@gmail.com>
- <20180308172401.GB22224@kroah.com>
- <57e2a60a-34c6-cd8d-adaa-dedcd8e5257c@gmail.com>
+From: Julian Calaby <julian.calaby@gmail.com>
+Subject: Re: [PATCH v12] ath10k: add LED and GPIO controlling support for
+ various chipsets
+Date: Sat, 10 Mar 2018 18:44:34 +1100
+Message-ID: <CAGRGNgWSnObB8PomPPEGs533dmFyQQkOEsvxzyJ=BfBBcWT2Ug@mail.gmail.com>
+References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
+ <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
+ <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com> <20180302090312.GA30267@amd>
+ <e77d25d4-a824-380a-c51a-e81175ba6205@dd-wrt.com>
+ <CACna6rys85VEkzRGDVUAkBy7KgHS2y0DET7YvedboX-YEQHrkg@mail.gmail.com>
+ <890a4dcc-f549-6487-2ce5-3b62874cd266@dd-wrt.com> <20180308090216.GC17761@amd>
+ <d443856e-cfc8-2d50-900d-edf22e5360e3@dd-wrt.com> <20180308140515.GA4889@amd>
+ <1b1f6344-d588-d2f2-4b3d-a0a4043e801f@nbd.name>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <57e2a60a-34c6-cd8d-adaa-dedcd8e5257c@gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Matthieu CASTET <matthieu.castet@parrot.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1b1f6344-d588-d2f2-4b3d-a0a4043e801f@nbd.name>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/ath10k/>
+List-Post: <mailto:ath10k@lists.infradead.org>
+List-Help: <mailto:ath10k-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=subscribe>
+Sender: "ath10k" <ath10k-bounces@lists.infradead.org>
+Errors-To: ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org
+To: Felix Fietkau <nbd@nbd.name>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Sebastian Gottschall <s.gottschall@dd-wrt.com>, ath10k@lists.infradead.org, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>, Sebastian Gottschall <s.gottschall@newmedia-net.de>, Kalle Valo <kvalo@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 09:48:08PM +0100, Jacek Anaszewski wrote:
-> On 03/08/2018 06:24 PM, Greg Kroah-Hartman wrote:
-> > On Wed, Mar 07, 2018 at 09:39:08PM +0100, Jacek Anaszewski wrote:
-> >> Hi Ben,
-> >>
-> >> On 03/07/2018 04:32 PM, Ben Hutchings wrote:
-> >>> On Fri, 2018-03-02 at 09:51 +0100, Greg Kroah-Hartman wrote:
-> >>>> 4.4-stable review patch.  If anyone has any objections, please let me
-> >>>> know.
-> >>>>
-> >>>> ------------------
-> >>>>
-> >>>> From: Matthieu CASTET <matthieu.castet@parrot.com>
-> >>>>
-> >>>>
-> >>>> [ Upstream commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c ]
-> >>>>
-> >>>> With the current code, the following sequence won't work :
-> >>>> echo timer > trigger
-> >>>>
-> >>>> echo 0 >  delay_off
-> >>>> * at this point we call
-> >>>> ** led_delay_off_store
-> >>>> ** led_blink_set
-> >>> [...]
-> >>>
-> >>> The commit message got cut truncated here, which resulted in addresses
-> >>> being omitted when it was sent out for review.  The upstream commit
-> >>> message refers to a LED_BLINK_SW flag which is not used in 4.4.  So
-> >>> this fix probably isn't needed, though I can't tell whether it does any
-> >>> harm.
-> >>
-> >> We discussed it in [0]. This patch is not needed for 4.4 and what's
-> >> more more it is harmful. It introduces a bug, fixed in [1].
-> >>
-> >> [0] https://lkml.org/lkml/2018/2/6/726
-> >> [1[ https://patchwork.kernel.org/patch/10253933/
-> > 
-> > So, did I mess something up here?  Am I missing some patch that I need
-> > to apply, or do I need to revert something?
-> > 
-> > confused,
-> 
-> It needs to be reverted in 4.4-stable, and Ben's patch [0] does what's
-> needed.
-> 
-> [0] https://www.spinics.net/lists/stable/msg223656.html
-
-Ah great, that's now queued up.
-
-thanks,
-
-greg k-h
+SGkgRmVsaXgsCgpPbiBGcmksIE1hciA5LCAyMDE4IGF0IDI6NDYgQU0sIEZlbGl4IEZpZXRrYXUg
+PG5iZEBuYmQubmFtZT4gd3JvdGU6Cj4gT24gMjAxOC0wMy0wOCAxNTowNSwgUGF2ZWwgTWFjaGVr
+IHdyb3RlOgo+PiBPbiBUaHUgMjAxOC0wMy0wOCAxMzozMzoyOSwgU2ViYXN0aWFuIEdvdHRzY2hh
+bGwgd3JvdGU6Cj4+PiBBbSAwOC4wMy4yMDE4IHVtIDEwOjAyIHNjaHJpZWIgUGF2ZWwgTWFjaGVr
+Ogo+Pj4gPk9uIFdlZCAyMDE4LTAzLTA3IDE4OjU0OjQxLCBTZWJhc3RpYW4gR290dHNjaGFsbCB3
+cm90ZToKPj4+ID4+QW0gMDcuMDMuMjAxOCB1bSAxNzoyMiBzY2hyaWViIFJhZmHFgiBNacWCZWNr
+aToKPj4+ID4+Pk9uIDIgTWFyY2ggMjAxOCBhdCAxMDoyMiwgU2ViYXN0aWFuIEdvdHRzY2hhbGwg
+PHMuZ290dHNjaGFsbEBkZC13cnQuY29tPiB3cm90ZToKPj4+ID4+Pj4+PmxlZHMtZ3BpbyBpcyBj
+cmFwIGFuZCBsaW1pdGVkLiB5b3UgY2FuIGp1c3QgcmVnaXN0ZXIgb25lIHBsYXRmb3JtIGRhdGEg
+YXQKPj4+ID4+Pj4+Pmtlcm5lbCBydW50aW1lIHNpbmNlIGl0cyBpZGVudGlmaWVkIGJ5IGl0cyBv
+YmplY3QgbmFtZSAibGVkLWdwaW8iIGJ1dCB0aGUKPj4+ID4+Pj4+Pmtlcm5lbCBmb3JiaWRkcyB0
+byByZWdpc3RlciAyIHBsYXRmb3JtIGRhdGFzIHdpdGggdGhlIHNhbWUgbmFtZQo+Pj4gPj4+Pj4+
+Y29uc2lkZXIgdGhlIGFyNzF4eCBkZXZpY2VzIHdpdGggcWNhOTg4eCB3aWZpIGNoaXBzZXRzLiB0
+aGV5IGFsbCBoYXZlCj4+PiA+Pj4+Pj5hbHJlYWR5IGEgbGVkIHBsYXRmb3JtIGRhdGEgcmVnaXN0
+ZXJlZAo+Pj4gPj4+Pj4+YXQgYm9vdHRpbWUuIGEgc2Vjb25kIGNhbid0IGJlIHJlZ2lzdGVyZWQg
+YW55bW9yZSBzbyBncGlvX2xlZCBpcyB1c2VsZXNzCj4+PiA+Pj4+Pj5hdAo+Pj4gPj4+Pj4+YWxs
+IGZvciBtb3N0IGRldmVsb3BlcnMgb24gc3VjaCBwbGF0Zm9ybXMuIGl0cyBtYWlubHkgdXNlZCBm
+b3IgZWFybHkKPj4+ID4+Pj4+Pmtlcm5lbAo+Pj4gPj4+Pj4+cGxhdGZvcm0gZGF0YSBpbml0aWFs
+aXNhdGlvbiBmb3Igc3lzdGVtIGxlZHMuCj4+PiA+Pj4+PklmIGxlZHMtZ3BpbyBoYXMgbGltaXRh
+dGlvbnMsIHBsZWFzZSBmaXggdGhvc2UsIHJhdGhlciB0aGVuCj4+PiA+Pj4+PmludHJvZHVjaW5n
+IGR1cGxpY2F0ZWQgY29kZS4KPj4+ID4+Pj50aGVyZSBpcyBubyBkdXBsaWNhdGVkIGNvZGUgaW50
+cm9kdWNlZCBhbmQgdGhlcmUgaXMgbm8gc29sdXRpb24gZm9yIGl0Lgo+Pj4gPj4+PmNvbnNpZGVy
+IHRoYXQgYWxsIHdpZmkgZHJpdmVycyB3aXRoIHNvZnRsZWQgc3VwcG9ydAo+Pj4gPj4+PmFyZSBn
+b2luZyB0aGF0IHdheSB3aXRoIHJlZ2lzdGVyaW5nIGEgb3duIGxlZCBkcml2ZXIuIHNlZSBhdGg5
+ayBmb3IKPj4+ID4+Pj5pbnN0YW5jZS4gZ3Bpby1sZWQgY2Fubm90IGJlIHVzZWQgZm9yIGl0IGFu
+ZCB0aGVyZSBpcyBubyB3YXkgdG8KPj4+ID4+Pj5zdXBwb3J0IG11bHRpcGxlIHBsYXRmb3JtIGRh
+dGFzIHdpdGggdGhlIHNhbWUgbmFtZS4gaXRzIGEga2VybmVsIGxpbWl0YXRpb24KPj4+ID4+Pkkg
+anVzdCByZXZpZXdlZCBzb21lIG1pcHMgYXJjaCBwYXRjaCBhZGRpbmcgc3VwcG9ydCBmb3IgbW9y
+ZSBMRURzIGZvcgo+Pj4gPj4+c2VsZWN0ZWQgZGV2aWNlczoKPj4+ID4+PltQQVRDSF0gTUlQUzog
+QkNNNDdYWDogQWRkIEx1eHVsIFhBUDE1MDAvWFdSMTc1MCBXaUZpIExFRHMKPj4+ID4+Pmh0dHBz
+Oi8vcGF0Y2h3b3JrLmxpbnV4LW1pcHMub3JnL3BhdGNoLzE4NjgxLwo+Pj4gPj4+Cj4+PiA+Pj5J
+dCBzZWVtcyB0byBiZSBzaW1wbHkgYWRkaW5nIGFub3RoZXIgY2FsbCB0byB0aGUKPj4+ID4+Pmdw
+aW9fbGVkX3JlZ2lzdGVyX2RldmljZSgpLiBJdCBzZWVtcyB0byBtZSB5b3UgY2FuIGNhbGwgdGhh
+dCBmdW5jdGlvbgo+Pj4gPj4+bXVsdGlwbGUgdGltZXMgYW5kIHJlZ2lzdGVyIG11bHRpcGxlIHN0
+cnVjdHMgd2l0aCBMRURzLgo+Pj4gPj4+Cj4+PiA+Pj5Jc24ndCBhbGwgeW91IG5lZWQgc29tZXRo
+aW5nIGxpa2UgdGhpcz8KPj4+ID4+Pgo+Pj4gPj4+c3RhdGljIGNvbnN0IHN0cnVjdCBncGlvX2xl
+ZCBhdGgxMGtfbGVkc1tdID0gewo+Pj4gPj4+ICAgICAgICAgewo+Pj4gPj4+ICAgICAgICAgICAg
+ICAgICAubmFtZSA9ICJhdGgxMGs6Y29sb3I6ZnVuY3Rpb24iLAo+Pj4gPj4+ICAgICAgICAgICAg
+ICAgICAuYWN0aXZlX2xvdyA9IDEsCj4+PiA+Pj4gICAgICAgICAgICAgICAgIC5kZWZhdWx0X3N0
+YXRlID0gTEVEU19HUElPX0RFRlNUQVRFX0tFRVAsCj4+PiA+Pj4gICAgICAgICB9Cj4+PiA+Pj59
+Owo+Pj4gPj4+Cj4+PiA+Pj5zdGF0aWMgc3RydWN0IGdwaW9fbGVkX3BsYXRmb3JtX2RhdGEgYmNt
+NDd4eF9sZWRzX3BkYXRhX2V4dHJhID0gewo+Pj4gPj4+ICAgICAgICAgbGVkcyA9IGF0aDEwa19s
+ZWRzOwo+Pj4gPj4+ICAgICAgICAgbnVtX2xlZHMgPSBBUlJBWV9TSVpFKGF0aDEwa19sZWRzKTsK
+Pj4+ID4+Pn07Cj4+PiA+Pj4KPj4+ID4+PmF0aDEwa19sZWRzLmdwaW8gPSBhci0+aHdfcGFyYW1z
+LmxlZF9waW47Cj4+PiA+Pj5ncGlvX2xlZF9yZWdpc3Rlcl9kZXZpY2UoMCwgJmF0aDEwa19sZWRz
+KTsKPj4+ID4+dGhlIHByb2JsZW0gYXJlIG90aGVyIGFyY2hpdGVjdHVyZXMgd2hpY2ggaGF2ZSBh
+bHJlYWR5IHJlZ2lzdGVyZWQgZ3Bpb19sZWQKPj4+ID4+YXQgc3lzdGVtIHN0YXJ0IGxpa2UgYXI3
+MXh4Cj4+PiA+PnlvdSBjYW5ub3QgcmVnaXN0ZXIgYSBzZWNvbmQgb25lLiBzbyBhIGluZGVwZW5k
+ZW5kIGxlZCBkcml2ZXIgaXMgYQo+Pj4gPj5yZXF1aXJlbWVudCBmb3IgZGlyZWN0IGNvbnRyb2wK
+Pj4+ID5JZiB0aGUgbGltaXRhdGlvbiBpbmRlZWQgZXhpc3RzLCBwbGVhc2UgZml4IHRoZSBsaW1p
+dGF0aW9uIHJhdGhlciB0aGFuCj4+PiA+d29ya2luZyBhcm91bmQgaXQgaW4gZWFjaCBhbmQgZXZl
+cnkgZHJpdmVyLgo+Pj4gc2VlIGF0aDlrLiBpdHMgZXhhY3QgdGhlIHNhbWUgaW1wbGVtZW50YXRp
+b24uCj4+Cj4+IE9rLCBzbyBvbmUgbW9yZSBkcml2ZXIgdG8gZml4Lgo+Pgo+Pj4gaW4gYWRkaXRp
+b24gbXkgdmFyaWFudCBkb2VzIGFsc28gd29yayB3aXRob3V0IGdwaW9saWIgc3VwcG9ydC4gc28g
+aXQgY2FuIGJlCj4+PiB1c2VkIGV2ZW4gaWYgdGhlIGtlcm5lbCBpcyBjb25maWd1cmVkCj4+PiB3
+aXRob3V0IGdwaW8gc3VwcG9ydC4KPj4+IGFuZCBub3QgdG8gZm9yZ2V0LCB1c2luZyBhIG93biBs
+ZWQgZHJpdmVyIGlzIG1vcmUgbGlndGh3ZWlnaHQgZnJvbSB0aGUgY2FsbAo+Pj4gcGF0aCBmb3Ig
+ZWFjaCBsZWQgb24gLyBvZmYgZXZlbnQgd2hpY2ggaXMgaW1wb3J0YW50IGZvcgo+Pj4gbG93IHBl
+cmZvcm1hbmNlIGVtYmVkZGVkIGRldmljZXMKPj4KPj4gV2UgYXJlIG5vdCBnb2luZyB0byBjb3B5
+JnBhc3RlIGNvZGUgYmVjYXVzZSBzdWNoIGNvZGUgd29ya3Mgd2l0aG91dAo+PiBsaWJyYXJpZXMs
+IGFuZCB3ZSBhcmUgbm90IGdvaW5nIHRvIGNvcHkmcGFzdGUgY29kZSBiZWNhdXNlIHRoYXQgdXNl
+cwo+PiBsZXNzIGNhY2hlIGR1cmluZyBjYWxscy4gU29ycnkuCj4+Cj4+IE5BSy4gUGxlYXNlIGZp
+eCB5b3VyIHBhdGNoLiBTaW5jZSB0aGlzIGRpc2N1c3Npb24gc2VlbXMgdG8gaGF2ZSB0YWtlbiBh
+IHJhdGhlciB3ZWlyZCB0dXJuLCBJJ3ZlCj4gdGFrZW4gYSBsb29rIGF0IHRoZSBzcGVjaWZpYyBj
+b2RlLCBhbmQgZnJvbSBteSBwb2ludCBvZiB2aWV3IHRoZSBjb2RlCj4gdGhhdCBzZXRzIHVwIHRo
+ZSBMRUQgKGluY2x1ZGluZyBjYWxsYmFjaykgaXMgc28gdHJpdmlhbCB0aGF0IGl0J3Mgc2ltcGx5
+Cj4gbm90IHdvcnRoIGRlYWxpbmcgd2l0aCBhZGRpbmcgdGhlIGxlZHMtZ3BpbyBkcml2ZXIgdG8g
+dGhlIG1peC4KPiBJdCBhZGRzIGV4dHJhIGNvbXBsZXhpdHkgYW5kIGFuIGV4dHJhIGRlcGVuZGVu
+Y3kgZm9yIG5vIHJlYXNvbiBhdCBhbGwuCj4gVGhlcmUncyBubyBleHRyYSBmdW5jdGlvbmFsaXR5
+IHRvIGJlIGdhaW5lZCBieSB1c2luZyBpdC4KClN0dXBpZCBxdWVzdGlvbjogSWYgdGhlIExFRCBk
+cml2ZXIgaXNuJ3QgdXNpbmcgdGhlIEdQSU8gc3Vic3lzdGVtCih3aGVuIGVuYWJsZWQpLCB3aGF0
+IGhhcHBlbnMgaWYgdGhlIHVzZXIgdXNlcyB0aGUgR1BJTyBzdWJzeXN0ZW0gdG8KZmlkZGxlIHdp
+dGggdGhlIHBpbiB0aGUgTEVEIGlzIGNvbm5lY3RlZCB0bz8KClRoYW5rcywKCi0tIApKdWxpYW4g
+Q2FsYWJ5CgpFbWFpbDoganVsaWFuLmNhbGFieUBnbWFpbC5jb20KUHJvZmlsZTogaHR0cDovL3d3
+dy5nb29nbGUuY29tL3Byb2ZpbGVzL2p1bGlhbi5jYWxhYnkvCgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwphdGgxMGsgbWFpbGluZyBsaXN0CmF0aDEwa0Bs
+aXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlz
+dGluZm8vYXRoMTBrCg==
