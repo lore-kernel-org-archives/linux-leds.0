@@ -1,157 +1,162 @@
-From: Sebastian Gottschall <s.gottschall-t37Kgv3TaIPQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v12] ath10k: add LED and GPIO controlling support for
- various chipsets
-Date: Mon, 12 Mar 2018 10:09:40 +0100
-Message-ID: <a8b22f42-7953-bc60-c5f9-91469caa50b1@dd-wrt.com>
-References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
- <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
- <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com>
- <20180302090312.GA30267@amd>
- <e77d25d4-a824-380a-c51a-e81175ba6205@dd-wrt.com>
- <CACna6rys85VEkzRGDVUAkBy7KgHS2y0DET7YvedboX-YEQHrkg@mail.gmail.com>
- <890a4dcc-f549-6487-2ce5-3b62874cd266@dd-wrt.com>
- <20180308090216.GC17761@amd>
- <d443856e-cfc8-2d50-900d-edf22e5360e3@dd-wrt.com> <20180308140515.GA4889@amd>
- <1b1f6344-d588-d2f2-4b3d-a0a4043e801f@nbd.name>
- <CAGRGNgWSnObB8PomPPEGs533dmFyQQkOEsvxzyJ=BfBBcWT2Ug@mail.gmail.com>
- <40dc5bc3-d77e-397d-f3db-2efb70ff82ae@dd-wrt.com>
- <4345c367-e786-ef44-fed7-8658f519a689@kresin.me>
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Subject: Re: [PATCH AUTOSEL for 4.14 065/110] led: core: Fix brightness
+ setting when setting delay_off=0
+Date: Mon, 12 Mar 2018 16:00:01 +0100
+Message-ID: <f072a5c1-95f1-e81b-c629-ebdea723e6f4@universe-factory.net>
+References: <20180203180015.29073-1-alexander.levin@microsoft.com>
+ <20180203180015.29073-65-alexander.levin@microsoft.com>
+ <20180203203525.GA5860@amd> <20180204003029.2lkcmh6wvzpnlrls@sasha-lappy>
+ <20180204090531.GA29468@amd> <20180204111500.GB14797@kroah.com>
+ <20180204171736.GA1388@amd> <20180206020210.m6gl7vai4p6azb6s@sasha-lappy>
+ <713113d8-7662-d80c-c62f-af020469d0bf@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4345c367-e786-ef44-fed7-8658f519a689-zg6vgJgm1sizQB+pC5nmwQ@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mathias Kresin <dev-zg6vgJgm1sizQB+pC5nmwQ@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felix Fietkau <nbd-Vt+b4OUoWG0@public.gmane.org>
-Cc: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "open list:LED SUBSYSTEM" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, ath10k-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sebastian Gottschall <s.gottschall-9LViYcISHtuk6R/r8kmGfQ@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="VzJpYh3I0nuxSbH70Xnayo0eenXt5HtFM"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <713113d8-7662-d80c-c62f-af020469d0bf@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <Alexander.Levin@microsoft.com>, Pavel Machek <pavel@ucw.cz>
+Cc: Greg KH <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, Matthieu CASTET <matthieu.castet@parrot.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Am 12.03.2018 um 08:53 schrieb Mathias Kresin:
-> 10.03.2018 08:56, Sebastian Gottschall:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--VzJpYh3I0nuxSbH70Xnayo0eenXt5HtFM
+Content-Type: multipart/mixed; boundary="jhuxeFKxzYQQngyk8N8bQRSGy9wMvbJdg";
+ protected-headers="v1"
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+ Sasha Levin <Alexander.Levin@microsoft.com>, Pavel Machek <pavel@ucw.cz>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ Matthieu CASTET <matthieu.castet@parrot.com>,
+ "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Message-ID: <f072a5c1-95f1-e81b-c629-ebdea723e6f4@universe-factory.net>
+Subject: Re: [PATCH AUTOSEL for 4.14 065/110] led: core: Fix brightness
+ setting when setting delay_off=0
+References: <20180203180015.29073-1-alexander.levin@microsoft.com>
+ <20180203180015.29073-65-alexander.levin@microsoft.com>
+ <20180203203525.GA5860@amd> <20180204003029.2lkcmh6wvzpnlrls@sasha-lappy>
+ <20180204090531.GA29468@amd> <20180204111500.GB14797@kroah.com>
+ <20180204171736.GA1388@amd> <20180206020210.m6gl7vai4p6azb6s@sasha-lappy>
+ <713113d8-7662-d80c-c62f-af020469d0bf@gmail.com>
+In-Reply-To: <713113d8-7662-d80c-c62f-af020469d0bf@gmail.com>
+
+--jhuxeFKxzYQQngyk8N8bQRSGy9wMvbJdg
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+On 02/06/2018 09:44 PM, Jacek Anaszewski wrote:
+> On 02/06/2018 03:02 AM, Sasha Levin wrote:
+>> On Sun, Feb 04, 2018 at 06:17:36PM +0100, Pavel Machek wrote:
+>>>
+>>>>>>>> *** if brightness=3D0, led off
+>>>>>>>> *** else apply brightness if next timer <--- timer is stop, and =
+will never apply new setting
+>>>>>>>> ** otherwise set led_set_brightness_nosleep
+>>>>>>>>
+>>>>>>>> To fix that, when we delete the timer, we should clear LED_BLINK=
+_SW.
+>>>>>>>
+>>>>>>> Can you run the tests on the affected stable kernels? I have feel=
+ing
+>>>>>>> that the problem described might not be present there.
+>>>>>>
+>>>>>> Hm, I don't seem to have HW to test that out. Maybe someone else d=
+oes?
+>>>>>
+>>>>> Why are you submitting patches you have no way to test?
+>>>>
+>>>> What?  This is stable tree backporting, why are you trying to make a=
+
+>>>> requirement for something that we have never had before?
+>>>
+>>> I don't think random patches should be sent to stable just because
+>>> they appeared in mainline. Plus, I don't think I'm making new rules:
+>>>
+>>> submit-checklist.rst:
+>>>
+>>> 13) Has been build- and runtime tested with and without ``CONFIG_SMP`=
+`
+>>> and
+>>>    ``CONFIG_PREEMPT.``
+>>>
+>>> stable-kernel-rules.rst:
+>>>
+>>> Rules on what kind of patches are accepted, and which ones are not,
+>>> into the "-stable" tree:
+>>>
+>>> - It must be obviously correct and tested.
+>>> - It must fix a real bug that bothers people (not a, "This could be a=
+
+>>>   problem..." type thing).
 >>
->>>> taken a look at the specific code, and from my point of view the code
->>>> that sets up the LED (including callback) is so trivial that it's 
->>>> simply
->>>> not worth dealing with adding the leds-gpio driver to the mix.
->>>> It adds extra complexity and an extra dependency for no reason at all.
->>>> There's no extra functionality to be gained by using it.
->>> Stupid question: If the LED driver isn't using the GPIO subsystem
->>> (when enabled), what happens if the user uses the GPIO subsystem to
->>> fiddle with the pin the LED is connected to?
+>> So you're saying that this doesn't qualify as a bug?
 >>
->> in our case here it can coexist and will not have a negative effect 
->> since the led will still run. (except if you reconfigure the gpio to 
->> input)
->> for sure it makes no sense.
->
-> Well, it will have negative effects as I noticed in OpenWrt. If the 
-> same GPIO is controlled by the internal LED function it can't be 
-> really used via the GPIO controller as there will be "bogus" changes 
-> of the GPIO pin state.
-yes, it will have bogus changes, but it will not raise any other issues 
-than the bogus changes your forcefully triggered. why disallowing 
-something, if there is no reason for.
-but i give you a example for a use.
-if the wifi interface is down or not used, you can still take control 
-about the led. so set the led to any state you want, no matter if the 
-trigger is still installed
->
->> but however i can block the gpio for beeing reused if the led driver 
->> took it. this has been made in ath9k for instance.
->
-> Most likely I'm not aware of the upstream code you are talking about. 
-> But OpenWrt has a custom patch which registers the ath9k pins as GPIO 
-> controller.
-thats the code i'm talking about, but as far as i know this code is 
-upstream.
->
-> As soon as there are pins, manufactures will use them and the 
-> assumption about a default led connected to a specific pin will fail.
-nope. manufactures are mainly using the qca propertiery driver and this 
-qca driver uses fixed hardcoded led pins.
-1 for qca988x and 17 for everything else. the led pins i assigned are 
-following the qca specification for this chipsets and not to forget
-i tested it on many devices
->
-> I've seen (home)routers routers using the "default" ath9k LED pin as 
-> button or for LEDs with a different purpose than "wireless". I never 
-> was able to find any kind of information which explains why exactly 
-> this specific pin is used for the ath9k-led. But that's another story.
-i know. but thats not the case for ath10k so far and i'm following exact 
-the same way qca is doing by themself.
-i just know 2 cases. vendors to use the led pin of the chipset or they 
-dont and use standard system leds with any assignment
-and in all cases with no exception the default led pin was used.
->
-> My solution for OpenWrt was a patch which prevents the creation of the 
-> ath9k-led if the "default" pin is used as GPIO.
-i have seen that code, but decided no to follow it since any developer 
-is responsible for configuring whatever he wants. if it doesnt lead to a 
-crash i see no reason for preventing it.
-but thats my philosophy.
->
-> If mach files are used, the ath9k led isn't created (ath9k led pin is 
-> set to -1) in case the platform data have a button or led using the 
-> same pin. If the device tree is used, the ath9k led isn't created 
-> (ath9k led pin is set to -1) if the devicetree node for the ath9k 
-> device has the gpio-controller property. I'm not really proud of the 
-> code and it can be most likely done better, but it fixes the issue 
-> outlined above.
-sounds very inflexible or better "intransparent". from the black box 
-view its hard to understand how its handled without reading the code. 
-its has no clean logic.
-and your issue above is no issue. if a dev wants to make stupid things, 
-let him do. he learns from his misstakes and he does not harm the 
-hardware nor the stability.
-there is no reason for extra hyper security barriers to guide someone 
-how todo it. but here are samples to reuse a gpio from 2 points as i 
-explained at the beginning.
-i could imagine todo a manual error blinking or something if a interface 
-is down. not sure, but other people might be more creative here.
->
-> I've done it this way since the use of the GPIO controller should 
-> always override any kind of default LEDs.
->
-> In the end ath[0|10]k-led is only required for hardware configurations 
-> where the wireless isn't fixed like with miniPCIe, USB ... wireless 
-> cards. If the configuration is fixed - like it is for most of the 
-> (home)routers - the GPIO controller can be registered via the 
-> devicetree and gpio-leds can be used. Something similar can be most 
-> likely done via mach files (I barely touch mach files).
-ath79 uses mach files and no dts yet. qca ipq platforms are using dts.
-and i have a mikrotik minipcie cards with wireless leds :-)
+>>>> This is a backport of a patch that is already upstream.  If it doesn=
+'t
+>>>> belong in a stable tree, great, let us know that, saying why it is s=
+o.
+>>>
+>>> See jacek.anaszewski@gmail.com 's explanation.
+>>
+>> I might be missing something, but Jacek suggested I pull another patch=
 
-all 3 ways are valid.
-and i have to note that i wrote that patch for embedded devices like 
-openwrt does.
-this code is a requirement to get the leds to work on several devices 
-supported by openwrt.
->
-> I'm aware of the issue since the first version of your patch. But 
-> since I'm very interested in getting the ath10k pins exposed as gpio 
-> controller, I planned to add a workaround similar to what we have for 
-> ath9k to OpenWrt.
-feel free to make any addition patch. but consider that the driver 
-already contains a gpio controler. but in that case just avoid using of 
-the led trigger.
-but for universal use the gpio controler isnt enough unfortunatly. 
-(ath79 for instance)
-i mean creating a additional platformdata for ath10k to initialize the 
-pin in mach files is really not usefull if it can be done from userspace 
-in sysfs
->
-> Mathias
->
+>> before this one?
+>=20
+> Just to clarify:
+>=20
+> For 4.14 below patches are chosen correctly:
+>=20
+> [PATCH AUTOSEL for 4.14 065/110] led: core: Fix brightness setting when=
 
--- 
-Mit freundlichen Grüssen / Regards
+> setting delay_off=3D0
+> [PATCH AUTOSEL for 4.14 094/110] leds: core: Fix regression caused by
+> commit 2b83ff96f51d
+>=20
+> For 4.9 both above patches are needed preceded by:
+>=20
+> eb1610b4c273 ("led: core: Fix blink_brightness setting race")
+>=20
+> The issue the patch [PATCH AUTOSEL for 4.14 065/110] fixes was
+> introduced in 4.7, and thus it should be removed from the series
+> for 3.18 and 4.4.
+>=20
 
-Sebastian Gottschall / CTO
+It seems only "led: core: Fix brightness setting when setting delay_off=3D=
+0"
+was applied to 4.9. Could we get the regression fixes backported to 4.9 a=
+s
+well?
 
-NewMedia-NET GmbH - DD-WRT
-Firmensitz:  Stubenwaldallee 21a, 64625 Bensheim
-Registergericht: Amtsgericht Darmstadt, HRB 25473
-Geschäftsführer: Peter Steinhäuser, Christian Scheele
-http://www.dd-wrt.com
-email: s.gottschall-t37Kgv3TaIPQT0dZR+AlfA@public.gmane.org
-Tel.: +496251-582650 / Fax: +496251-5826565
+Thanks,
+Matthias
+
+
+--jhuxeFKxzYQQngyk8N8bQRSGy9wMvbJdg--
+
+--VzJpYh3I0nuxSbH70Xnayo0eenXt5HtFM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEZmTnvaa2aYgexS51Fu8/ZMsgHZwFAlqmlfEACgkQFu8/ZMsg
+HZxQDw/6AusA9QLwju+ge7yf6QF1nTkXvFUUQGfwRzAjQfjqNTsPYN3aRqt5+2sZ
+Cy97IDFxLItbNjYu/reoDEijLbgxEAaQJYJZcAUKEOZ3LZC1a+n6idRgO4MQoARK
+RCjs9TeYomkO2g83GyWkjYCV+5oafh01Ir3zXz9B2kfWZfSO0cwWaxAP4ecIq/VN
+pP3MeoRyV6dKQBq49UBgw8GvvR/rakCFz0+S2OEStakHP0vziFVEFaKp3MQEznNx
+j8GveFtfsEd5+z1jCtj06328Oht7XgTPXmakqIkkBBZoWfgMGc2laYM4UhUSsqEN
+TiBCz4Yg4cnycSzgWZiJi2GXOX5k/lfbOHi6U8Twa1PieRDqZGofPLRrzDgGK2Sx
+H5501US9r07maCNuTcOaMrZnHRSOED8xWNDdz/q3k1lbk5URHEUnTU4eXuS1OSPc
+FuYKXCg81xhEHamTRU95ljDbujE49pHzSOka9N2PYKiCkbwEqmFF8U6Et7SPD/vv
+34+Ix31UarekNXjDfxK07JkfVDYn8fXt7H0UU4a8FSs/D4knI0G39+5xCjh6TRk1
+AMx62WRaPvGYG6LsyucDRDQ/CzWIMMafRnek9ARON0Q4ILoYHGF6qnSBh8z5cyIW
+wAOtHd8hoGV/7A4RuUvI9BKZzajq+KUV9YcScxyZfRuhaAUNLU0=
+=Li5/
+-----END PGP SIGNATURE-----
+
+--VzJpYh3I0nuxSbH70Xnayo0eenXt5HtFM--
