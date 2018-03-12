@@ -1,53 +1,89 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: fix wrong dmi_match on PC Engines APU LEDs
-Date: Sat, 10 Mar 2018 22:13:55 +0100
-Message-ID: <b51f1f41-e06e-25e6-30f8-a2b9f7e8ffb8@gmail.com>
-References: <20180305170910.8905-1-ulli.kroll@googlemail.com>
+From: Mathias Kresin <dev-zg6vgJgm1sizQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH v12] ath10k: add LED and GPIO controlling support for
+ various chipsets
+Date: Mon, 12 Mar 2018 08:53:50 +0100
+Message-ID: <4345c367-e786-ef44-fed7-8658f519a689@kresin.me>
+References: <20180226084406.2093-1-s.gottschall@dd-wrt.com>
+ <CACna6rzD6z3DC6yjMCgBxgxx+DF+GGu69Ot5QA6xpJ41Ewb2=A@mail.gmail.com>
+ <82d8ac0c-b391-6099-4c7f-991cc35445aa@dd-wrt.com>
+ <20180302090312.GA30267@amd>
+ <e77d25d4-a824-380a-c51a-e81175ba6205@dd-wrt.com>
+ <CACna6rys85VEkzRGDVUAkBy7KgHS2y0DET7YvedboX-YEQHrkg@mail.gmail.com>
+ <890a4dcc-f549-6487-2ce5-3b62874cd266@dd-wrt.com>
+ <20180308090216.GC17761@amd>
+ <d443856e-cfc8-2d50-900d-edf22e5360e3@dd-wrt.com> <20180308140515.GA4889@amd>
+ <1b1f6344-d588-d2f2-4b3d-a0a4043e801f@nbd.name>
+ <CAGRGNgWSnObB8PomPPEGs533dmFyQQkOEsvxzyJ=BfBBcWT2Ug@mail.gmail.com>
+ <40dc5bc3-d77e-397d-f3db-2efb70ff82ae@dd-wrt.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180305170910.8905-1-ulli.kroll@googlemail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hans Ulli Kroll <ulli.kroll@googlemail.com>, Alan Mizrahi <alan@mizrahi.com.ve>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <40dc5bc3-d77e-397d-f3db-2efb70ff82ae-t37Kgv3TaIPQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-GB
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sebastian Gottschall <s.gottschall-t37Kgv3TaIPQT0dZR+AlfA@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felix Fietkau <nbd-Vt+b4OUoWG0@public.gmane.org>
+Cc: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "open list:LED SUBSYSTEM" <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, ath10k-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sebastian Gottschall <s.gottschall-9LViYcISHtuk6R/r8kmGfQ@public.gmane.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Hans,
-
-Thank you for the patch.
-
-On 03/05/2018 06:09 PM, Hans Ulli Kroll wrote:
-> APU has compared to APU2 no DMI_BOARD_NAME.
-> Use DMI_PRODUCT_NAME instead.
-
-Could we have the commit message more expressive?
-
-Is it that now this driver doesn't work for APU board?
-
-> Signed-off-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
-> ---
->  drivers/leds/leds-apu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+10.03.2018 08:56, Sebastian Gottschall:
 > 
-> diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
-> index 74820aab9497..5bbf5c31413e 100644
-> --- a/drivers/leds/leds-apu.c
-> +++ b/drivers/leds/leds-apu.c
-> @@ -206,7 +206,7 @@ static int __init apu_led_probe(struct platform_device *pdev)
->  
->  	apu_led->pdev = pdev;
->  
-> -	if (dmi_match(DMI_BOARD_NAME, "APU")) {
-> +	if (dmi_match(DMI_PRODUCT_NAME, "APU")) {
->  		apu_led->profile = apu1_led_profile;
->  		apu_led->platform = APU1_LED_PLATFORM;
->  		apu_led->num_led_instances = ARRAY_SIZE(apu1_led_profile);
+>>> taken a look at the specific code, and from my point of view the code
+>>> that sets up the LED (including callback) is so trivial that it's simply
+>>> not worth dealing with adding the leds-gpio driver to the mix.
+>>> It adds extra complexity and an extra dependency for no reason at all.
+>>> There's no extra functionality to be gained by using it.
+>> Stupid question: If the LED driver isn't using the GPIO subsystem
+>> (when enabled), what happens if the user uses the GPIO subsystem to
+>> fiddle with the pin the LED is connected to?
 > 
+> in our case here it can coexist and will not have a negative effect 
+> since the led will still run. (except if you reconfigure the gpio to input)
+> for sure it makes no sense.
 
-If it fails here, then how it is possible that it succeeds
-in the apu_led_init() ?
+Well, it will have negative effects as I noticed in OpenWrt. If the same 
+GPIO is controlled by the internal LED function it can't be really used 
+via the GPIO controller as there will be "bogus" changes of the GPIO pin 
+state.
 
--- 
-Best regards,
-Jacek Anaszewski
+> but however i can block the gpio for beeing reused if the led driver 
+> took it. this has been made in ath9k for instance.
+
+Most likely I'm not aware of the upstream code you are talking about. 
+But OpenWrt has a custom patch which registers the ath9k pins as GPIO 
+controller.
+
+As soon as there are pins, manufactures will use them and the assumption 
+about a default led connected to a specific pin will fail.
+
+I've seen (home)routers routers using the "default" ath9k LED pin as 
+button or for LEDs with a different purpose than "wireless". I never was 
+able to find any kind of information which explains why exactly this 
+specific pin is used for the ath9k-led. But that's another story.
+
+My solution for OpenWrt was a patch which prevents the creation of the 
+ath9k-led if the "default" pin is used as GPIO.
+
+If mach files are used, the ath9k led isn't created (ath9k led pin is 
+set to -1) in case the platform data have a button or led using the same 
+pin. If the device tree is used, the ath9k led isn't created (ath9k led 
+pin is set to -1) if the devicetree node for the ath9k device has the 
+gpio-controller property. I'm not really proud of the code and it can be 
+most likely done better, but it fixes the issue outlined above.
+
+I've done it this way since the use of the GPIO controller should always 
+override any kind of default LEDs.
+
+In the end ath[0|10]k-led is only required for hardware configurations 
+where the wireless isn't fixed like with miniPCIe, USB ... wireless 
+cards. If the configuration is fixed - like it is for most of the 
+(home)routers - the GPIO controller can be registered via the devicetree 
+and gpio-leds can be used. Something similar can be most likely done via 
+mach files (I barely touch mach files).
+
+I'm aware of the issue since the first version of your patch. But since 
+I'm very interested in getting the ath10k pins exposed as gpio 
+controller, I planned to add a workaround similar to what we have for 
+ath9k to OpenWrt.
+
+Mathias
