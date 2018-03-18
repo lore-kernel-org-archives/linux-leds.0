@@ -1,98 +1,91 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH AUTOSEL for 4.14 065/110] led: core: Fix brightness
- setting when setting delay_off=0
-Date: Fri, 16 Mar 2018 13:46:38 +0100
-Message-ID: <20180316124638.GA5788@kroah.com>
-References: <20180204171736.GA1388@amd>
- <20180206020210.m6gl7vai4p6azb6s@sasha-lappy>
- <713113d8-7662-d80c-c62f-af020469d0bf@gmail.com>
- <f072a5c1-95f1-e81b-c629-ebdea723e6f4@universe-factory.net>
- <20180312152811.GB16944@kroah.com>
- <5747831a-b237-aa2c-cb47-9773cd2b5956@universe-factory.net>
- <0cd72fe4-2b98-e6f7-6ae7-530524786cec@gmail.com>
- <20180313093703.GB27669@kroah.com>
- <20180313132748.GA20246@amd>
- <7a59c129-60be-9c4b-6002-242b873e8468@gmail.com>
+From: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+Subject: Re: [PATCH] leds: fix wrong dmi_match on PC Engines APU LEDs
+Date: Sun, 18 Mar 2018 15:24:57 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1803181509330.7595@T420s>
+References: <20180305170910.8905-1-ulli.kroll@googlemail.com> <b51f1f41-e06e-25e6-30f8-a2b9f7e8ffb8@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <7a59c129-60be-9c4b-6002-242b873e8468@gmail.com>
-Sender: stable-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <b51f1f41-e06e-25e6-30f8-a2b9f7e8ffb8@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Matthias Schiffer <mschiffer@universe-factory.net>, Sasha Levin <Alexander.Levin@microsoft.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, Matthieu CASTET <matthieu.castet@parrot.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Cc: Hans Ulli Kroll <ulli.kroll@googlemail.com>, Alan Mizrahi <alan@mizrahi.com.ve>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 08:44:49PM +0100, Jacek Anaszewski wrote:
-> On 03/13/2018 02:27 PM, Pavel Machek wrote:
-> > Hi!
-> > 
-> >>>> At least 7b6af2c531 ("leds: core: Fix regression caused by commit
-> >>>> 2b83ff96f51d") is missing, causing visible regressions (LEDs not working at
-> >>>> all) on some OpenWrt devices. This was fixed in 4.4.121 by reverting the
-> >>>> offending commit, but if I followed the discussion correctly, 4.9 should
-> >>>> get the follow-up commit 7b6af2c531 instead (like 4.14 already did).
-> >>>>
-> >>>> Jacek's mail I replied to mentions that eb1610b4c273 ("led: core: Fix
-> >>>> blink_brightness setting race") should be included in 4.9 as well, but I
-> >>>> don't know the impact of the issue it fixes.
-> >>>
-> >>> It doesn't fix any reported issue, but is just an improvement
-> >>> aiming at preventing potential races while changing blink brightness.
-> >>>
-> >>> After taking closer look it turns out that for the patches in question
-> >>> to apply cleanly we need in 4.9 also a patch which introduces atomic
-> >>> bit fields for blink flags.
-> >>>
-> >>> Effectively, here is the list of patches required in 4.9 stable:
-> >>>
-> >>> Revert "led: core: Fix brightness setting when setting delay_off=0"
-> >>>
-> >>> followed by:
-> >>>
-> >>> a9c6ce57ec ("led: core: Use atomic bit-field for the blink-flags")
-> >>> eb1610b4c2 ("led: core: Fix blink_brightness setting race")
-> >>> 2b83ff96f5 ("led: core: Fix brightness setting when setting delay_off=0")
-> >>> 7b6af2c531 ("leds: core: Fix regression caused by commit 2b83ff96f51d")
-> >>
-> >> Odd, I just got another report that the 4.9.87 release fixed some
-> >> reported LED issues, so why do I need all of these?
-> 
-> Because 2b83ff96f5 introduces another bug, fixed in 7b6af2c531.
-> 7b6af2c531 in turn uses atomic blink flags introduced in a9c6ce57ec.
-> 
-> eb1610b4c2 fixes theoretical races, actually we can do without it
-> in stable.
-> 
-> In order to avoid applying patch a9c6ce57ec, we could come up with the
-> below change which does exactly what 7b6af2c531 intended, but without
-> atomic blink flags, which are irrelevant for this bug.
-> 
-> 
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index 3bce448..454ed4d 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -188,6 +188,7 @@ void led_blink_set(struct led_classdev *led_cdev,
->  {
->         del_timer_sync(&led_cdev->blink_timer);
-> 
-> +       led_cdev->flags &= ~LED_BLINK_SW;
->         led_cdev->flags &= ~LED_BLINK_ONESHOT;
->         led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
-> 
-> 
-> I can submit it to stable if it is preferred.
-> 
-> In every case tha patch 2b83ff96f5 needs to be reverted beforehand,
-> since otherwise none of the discussed patches will apply cleanly
-> (besides the aforementioned reasoning it has a truncated commit
-> message).
+Hi Jacek
 
-Yes, please submit it to stable, along with a very simple "please
-add/revert these patches" so I know what in the world to do as this
-thread is really confusing at the moment :)
+On Sat, 10 Mar 2018, Jacek Anaszewski wrote:
 
-thanks,
+> Hi Hans,
+> 
+> Thank you for the patch.
+> 
+> On 03/05/2018 06:09 PM, Hans Ulli Kroll wrote:
+> > APU has compared to APU2 no DMI_BOARD_NAME.
+> > Use DMI_PRODUCT_NAME instead.
+> 
+> Could we have the commit message more expressive?
+> 
+> Is it that now this driver doesn't work for APU board?
 
-greg k-h
+Yes it doesn't work for my APU board.
+I've already checked the updated driver in -next
+
+As you can see here
+# grep . /sys/class/dmi/id/*
+/sys/class/dmi/id/bios_date:04/05/2014
+/sys/class/dmi/id/bios_vendor:coreboot
+/sys/class/dmi/id/bios_version:SageBios_PCEngines_APU-45
+/sys/class/dmi/id/chassis_type:3
+/sys/class/dmi/id/chassis_vendor:PC Engines
+/sys/class/dmi/id/modalias:dmi:bvncoreboot:bvrSageBios_PCEngines_APU-45:bd04/05/2014:svnPCEngines:pnAPU:pvr1.0:cvnPCEngines:ct3:cvr:
+/sys/class/dmi/id/product_family:None Provided
+/sys/class/dmi/id/product_name:APU
+/sys/class/dmi/id/product_serial:XXXXXXX
+/sys/class/dmi/id/product_version:1.0
+/sys/class/dmi/id/sys_vendor:PC Engines
+/sys/class/dmi/id/uevent:MODALIAS=dmi:bvncoreboot:bvrSageBios_PCEngines_APU-45:bd04/05/2014:svnPCEngines:pnAPU:pvr1.0:cvnPCEngines:ct3:cvr:
+
+there is no board name on APU.
+
+here is the output from my APU2 board
+# grep . /sys/class/dmi/id/*
+/sys/class/dmi/id/bios_date:02/28/2017
+/sys/class/dmi/id/bios_vendor:coreboot
+/sys/class/dmi/id/bios_version:4.0.7
+/sys/class/dmi/id/board_name:APU2
+/sys/class/dmi/id/board_serial:XXXXXXX
+/sys/class/dmi/id/board_vendor:PC Engines
+/sys/class/dmi/id/board_version:1.0
+/sys/class/dmi/id/chassis_type:3
+/sys/class/dmi/id/chassis_vendor:PC Engines
+/sys/class/dmi/id/modalias:dmi:bvncoreboot:bvr4.0.7:bd02/28/2017:svnPCEngines:pnAPU2:pvr1.0:rvnPCEngines:rnAPU2:rvr1.0:cvnPCEngines:ct3:cvr:
+/sys/class/dmi/id/product_name:APU2
+/sys/class/dmi/id/product_serial:XXXXXX
+/sys/class/dmi/id/product_version:1.0
+/sys/class/dmi/id/sys_vendor:PC Engines
+/sys/class/dmi/id/uevent:MODALIAS=dmi:bvncoreboot:bvr4.0.7:bd02/28/2017:svnPCEngines:pnAPU2:pvr1.0:rvnPCEngines:rnAPU2:rvr1.0:cvnPCEngines:ct3:cvr:
+
+As you can see here for APU2 the board_name is set.
+
+> 
+> If it fails here, then how it is possible that it succeeds
+> in the apu_led_init() ?
+> 
+
+in apu_led_init() is a check for product_name for both both boards.
+Ans this succeeds
+
+Thus the fix here
+> -     if (dmi_match(DMI_BOARD_NAME, "APU")) {
+> +     if (dmi_match(DMI_PRODUCT_NAME, "APU")) {
+
+I can rewrite the patch to catch both board_name and product_name for the 
+APU board, and add a better commit log.
+
+They are more recent bios updates for this board, but the are specified as 
+"beta" so I'm afraid of an update. I have no hardware to recover a 
+"damaged" SPI flash chip.
+
+Greetings
+Hans Ulli Kroll
