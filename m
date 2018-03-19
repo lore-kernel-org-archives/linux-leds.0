@@ -1,91 +1,65 @@
-From: Hans Ulli Kroll <ulli.kroll@googlemail.com>
-Subject: Re: [PATCH] leds: fix wrong dmi_match on PC Engines APU LEDs
-Date: Sun, 18 Mar 2018 15:24:57 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1803181509330.7595@T420s>
-References: <20180305170910.8905-1-ulli.kroll@googlemail.com> <b51f1f41-e06e-25e6-30f8-a2b9f7e8ffb8@gmail.com>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Subject: Re: [PATCH v3 0/4] backlight: pwm_bl: support linear interpolation
+ and brightness to human eye
+Date: Mon, 19 Mar 2018 17:04:31 +0100
+Message-ID: <CAFqH_52bXq76TnQLfnD0mohgr0d5iAcrHBcPefwnRB8gdbaYFQ@mail.gmail.com>
+References: <20180208113032.27810-1-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b51f1f41-e06e-25e6-30f8-a2b9f7e8ffb8@gmail.com>
+In-Reply-To: <20180208113032.27810-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Hans Ulli Kroll <ulli.kroll@googlemail.com>, Alan Mizrahi <alan@mizrahi.com.ve>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>, Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi Jacek
+Hi Daniel,
 
-On Sat, 10 Mar 2018, Jacek Anaszewski wrote:
+Gentle ping for this series, there is any possibility you have a
+chance to review it? Let me know if you want I change something.
 
-> Hi Hans,
-> 
-> Thank you for the patch.
-> 
-> On 03/05/2018 06:09 PM, Hans Ulli Kroll wrote:
-> > APU has compared to APU2 no DMI_BOARD_NAME.
-> > Use DMI_PRODUCT_NAME instead.
-> 
-> Could we have the commit message more expressive?
-> 
-> Is it that now this driver doesn't work for APU board?
+Thanks,
+  Enric
 
-Yes it doesn't work for my APU board.
-I've already checked the updated driver in -next
-
-As you can see here
-# grep . /sys/class/dmi/id/*
-/sys/class/dmi/id/bios_date:04/05/2014
-/sys/class/dmi/id/bios_vendor:coreboot
-/sys/class/dmi/id/bios_version:SageBios_PCEngines_APU-45
-/sys/class/dmi/id/chassis_type:3
-/sys/class/dmi/id/chassis_vendor:PC Engines
-/sys/class/dmi/id/modalias:dmi:bvncoreboot:bvrSageBios_PCEngines_APU-45:bd04/05/2014:svnPCEngines:pnAPU:pvr1.0:cvnPCEngines:ct3:cvr:
-/sys/class/dmi/id/product_family:None Provided
-/sys/class/dmi/id/product_name:APU
-/sys/class/dmi/id/product_serial:XXXXXXX
-/sys/class/dmi/id/product_version:1.0
-/sys/class/dmi/id/sys_vendor:PC Engines
-/sys/class/dmi/id/uevent:MODALIAS=dmi:bvncoreboot:bvrSageBios_PCEngines_APU-45:bd04/05/2014:svnPCEngines:pnAPU:pvr1.0:cvnPCEngines:ct3:cvr:
-
-there is no board name on APU.
-
-here is the output from my APU2 board
-# grep . /sys/class/dmi/id/*
-/sys/class/dmi/id/bios_date:02/28/2017
-/sys/class/dmi/id/bios_vendor:coreboot
-/sys/class/dmi/id/bios_version:4.0.7
-/sys/class/dmi/id/board_name:APU2
-/sys/class/dmi/id/board_serial:XXXXXXX
-/sys/class/dmi/id/board_vendor:PC Engines
-/sys/class/dmi/id/board_version:1.0
-/sys/class/dmi/id/chassis_type:3
-/sys/class/dmi/id/chassis_vendor:PC Engines
-/sys/class/dmi/id/modalias:dmi:bvncoreboot:bvr4.0.7:bd02/28/2017:svnPCEngines:pnAPU2:pvr1.0:rvnPCEngines:rnAPU2:rvr1.0:cvnPCEngines:ct3:cvr:
-/sys/class/dmi/id/product_name:APU2
-/sys/class/dmi/id/product_serial:XXXXXX
-/sys/class/dmi/id/product_version:1.0
-/sys/class/dmi/id/sys_vendor:PC Engines
-/sys/class/dmi/id/uevent:MODALIAS=dmi:bvncoreboot:bvr4.0.7:bd02/28/2017:svnPCEngines:pnAPU2:pvr1.0:rvnPCEngines:rnAPU2:rvr1.0:cvnPCEngines:ct3:cvr:
-
-As you can see here for APU2 the board_name is set.
-
-> 
-> If it fails here, then how it is possible that it succeeds
-> in the apu_led_init() ?
-> 
-
-in apu_led_init() is a check for product_name for both both boards.
-Ans this succeeds
-
-Thus the fix here
-> -     if (dmi_match(DMI_BOARD_NAME, "APU")) {
-> +     if (dmi_match(DMI_PRODUCT_NAME, "APU")) {
-
-I can rewrite the patch to catch both board_name and product_name for the 
-APU board, and add a better commit log.
-
-They are more recent bios updates for this board, but the are specified as 
-"beta" so I'm afraid of an update. I have no hardware to recover a 
-"damaged" SPI flash chip.
-
-Greetings
-Hans Ulli Kroll
+2018-02-08 12:30 GMT+01:00 Enric Balletbo i Serra
+<enric.balletbo@collabora.com>:
+> Dear all,
+>
+> This series is a third patchset integrating the requested changes.
+>
+> The first and second patch what tries to solve is the problem of
+> granularity for high resolution PWMs. The idea is simple interpolate
+> between 2 brightness values so we can have a high PWM duty cycle (a
+> 16 bits PWM is up to 65535 possible steps) without having to list
+> out every possible value in the dts. I think that this patch is
+> required to not break backward compability, to be more flexible and
+> also extend the functionality to be able to use high resolution PWM
+> with enough steps to have a good UI experience in userspace.
+>
+> The thirth and fourth patch is a bit more ambicious, the idea is let
+> decide the driver the brightness-levels required in function of the PWM
+> resolution. To do this create a brightness-levels table filled with the
+> CIE 1931 algorithm values to convert brightness to PWM duty cycle.
+>
+> More detailed info is available in the commit message of every patch.
+>
+> Both functionalities were tested on a Samsung Chromebook Plus (that has
+> a 16 bits PWM) and a SL50 device (with a 8 bits PWM)
+>
+> Waiting for your feedback.
+>
+> Best regards,
+>
+> Enric Balletbo i Serra (4):
+>   backlight: pwm_bl: linear interpolation between brightness-levels
+>   dt-bindings: pwm-backlight: add a num-interpolation-steps property.
+>   backlight: pwm_bl: compute brightness of LED linearly to human eye.
+>   dt-bindings: pwm-backlight: move brightness-levels to optional.
+>
+>  .../bindings/leds/backlight/pwm-backlight.txt      |  34 ++-
+>  drivers/video/backlight/pwm_bl.c                   | 232 +++++++++++++++++++--
+>  2 files changed, 246 insertions(+), 20 deletions(-)
+>
+> --
+> 2.15.1
+>
