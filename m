@@ -1,94 +1,116 @@
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Subject: Re: [PATCH v3 0/4] backlight: pwm_bl: support linear interpolation
- and brightness to human eye
-Date: Tue, 20 Mar 2018 13:13:20 +0100
-Message-ID: <CAFqH_51E+9L2fuTY7Zo3=B2fUmL=pJtg7wz3GdN5wxhpqV8p0g@mail.gmail.com>
-References: <20180208113032.27810-1-enric.balletbo@collabora.com>
- <CAFqH_52bXq76TnQLfnD0mohgr0d5iAcrHBcPefwnRB8gdbaYFQ@mail.gmail.com> <20180320112212.2mwthxug3pu7uqgg@holly.lan>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] leds: fix wrong dmi_match on PC Engines APU LEDs
+Date: Tue, 20 Mar 2018 20:40:45 +0100
+Message-ID: <1fd03089-2e39-1463-31bb-26de1f63c046@gmail.com>
+References: <20180305170910.8905-1-ulli.kroll@googlemail.com>
+ <b51f1f41-e06e-25e6-30f8-a2b9f7e8ffb8@gmail.com>
+ <alpine.LNX.2.00.1803181509330.7595@T420s>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180320112212.2mwthxug3pu7uqgg@holly.lan>
+In-Reply-To: <alpine.LNX.2.00.1803181509330.7595@T420s>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
+To: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+Cc: Alan Mizrahi <alan@mizrahi.com.ve>, Richard Purdie <rpurdie@rpsys.net>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Daniel,
+Hi Hans,
 
-
-2018-03-20 12:22 GMT+01:00 Daniel Thompson <daniel.thompson@linaro.org>:
-> On Mon, Mar 19, 2018 at 05:04:31PM +0100, Enric Balletbo Serra wrote:
->> Hi Daniel,
+On 03/18/2018 03:24 PM, Hans Ulli Kroll wrote:
+> Hi Jacek
+> 
+> On Sat, 10 Mar 2018, Jacek Anaszewski wrote:
+> 
+>> Hi Hans,
 >>
->> Gentle ping for this series, there is any possibility you have a
->> chance to review it? Let me know if you want I change something.
->
-> I haven't got it in my TODO backlog... which means either I mistakenly
-> deleted it when it went through originally or that I deliberately deleted
-> it because I thought a v4 was coming along soon.
->
-> I could go diving through the archives if I need to but were there other
-> pending changes for this patchset?
->
-
-Unless I am missing something there isn't pending changes requested.
-
-1/4 I addressed your latest comments in this version.
-2/4 Has been acked by Rob Herring
-3/4 I did not receive feedback but iirc we agreed to use a pre-computed table.
-4/4 Is already acked by you.
-
-Regards,
- Enric
-
->
-> Daniel.
->
->
+>> Thank you for the patch.
 >>
->> Thanks,
->>   Enric
+>> On 03/05/2018 06:09 PM, Hans Ulli Kroll wrote:
+>>> APU has compared to APU2 no DMI_BOARD_NAME.
+>>> Use DMI_PRODUCT_NAME instead.
 >>
->> 2018-02-08 12:30 GMT+01:00 Enric Balletbo i Serra
->> <enric.balletbo@collabora.com>:
->> > Dear all,
->> >
->> > This series is a third patchset integrating the requested changes.
->> >
->> > The first and second patch what tries to solve is the problem of
->> > granularity for high resolution PWMs. The idea is simple interpolate
->> > between 2 brightness values so we can have a high PWM duty cycle (a
->> > 16 bits PWM is up to 65535 possible steps) without having to list
->> > out every possible value in the dts. I think that this patch is
->> > required to not break backward compability, to be more flexible and
->> > also extend the functionality to be able to use high resolution PWM
->> > with enough steps to have a good UI experience in userspace.
->> >
->> > The thirth and fourth patch is a bit more ambicious, the idea is let
->> > decide the driver the brightness-levels required in function of the PWM
->> > resolution. To do this create a brightness-levels table filled with the
->> > CIE 1931 algorithm values to convert brightness to PWM duty cycle.
->> >
->> > More detailed info is available in the commit message of every patch.
->> >
->> > Both functionalities were tested on a Samsung Chromebook Plus (that has
->> > a 16 bits PWM) and a SL50 device (with a 8 bits PWM)
->> >
->> > Waiting for your feedback.
->> >
->> > Best regards,
->> >
->> > Enric Balletbo i Serra (4):
->> >   backlight: pwm_bl: linear interpolation between brightness-levels
->> >   dt-bindings: pwm-backlight: add a num-interpolation-steps property.
->> >   backlight: pwm_bl: compute brightness of LED linearly to human eye.
->> >   dt-bindings: pwm-backlight: move brightness-levels to optional.
->> >
->> >  .../bindings/leds/backlight/pwm-backlight.txt      |  34 ++-
->> >  drivers/video/backlight/pwm_bl.c                   | 232 +++++++++++++++++++--
->> >  2 files changed, 246 insertions(+), 20 deletions(-)
->> >
->> > --
->> > 2.15.1
->> >
+>> Could we have the commit message more expressive?
+>>
+>> Is it that now this driver doesn't work for APU board?
+> 
+> Yes it doesn't work for my APU board.
+> I've already checked the updated driver in -next
+> 
+> As you can see here
+> # grep . /sys/class/dmi/id/*
+> /sys/class/dmi/id/bios_date:04/05/2014
+> /sys/class/dmi/id/bios_vendor:coreboot
+> /sys/class/dmi/id/bios_version:SageBios_PCEngines_APU-45
+> /sys/class/dmi/id/chassis_type:3
+> /sys/class/dmi/id/chassis_vendor:PC Engines
+> /sys/class/dmi/id/modalias:dmi:bvncoreboot:bvrSageBios_PCEngines_APU-45:bd04/05/2014:svnPCEngines:pnAPU:pvr1.0:cvnPCEngines:ct3:cvr:
+> /sys/class/dmi/id/product_family:None Provided
+> /sys/class/dmi/id/product_name:APU
+> /sys/class/dmi/id/product_serial:XXXXXXX
+> /sys/class/dmi/id/product_version:1.0
+> /sys/class/dmi/id/sys_vendor:PC Engines
+> /sys/class/dmi/id/uevent:MODALIAS=dmi:bvncoreboot:bvrSageBios_PCEngines_APU-45:bd04/05/2014:svnPCEngines:pnAPU:pvr1.0:cvnPCEngines:ct3:cvr:
+> 
+> there is no board name on APU.
+> 
+> here is the output from my APU2 board
+> # grep . /sys/class/dmi/id/*
+> /sys/class/dmi/id/bios_date:02/28/2017
+> /sys/class/dmi/id/bios_vendor:coreboot
+> /sys/class/dmi/id/bios_version:4.0.7
+> /sys/class/dmi/id/board_name:APU2
+> /sys/class/dmi/id/board_serial:XXXXXXX
+> /sys/class/dmi/id/board_vendor:PC Engines
+> /sys/class/dmi/id/board_version:1.0
+> /sys/class/dmi/id/chassis_type:3
+> /sys/class/dmi/id/chassis_vendor:PC Engines
+> /sys/class/dmi/id/modalias:dmi:bvncoreboot:bvr4.0.7:bd02/28/2017:svnPCEngines:pnAPU2:pvr1.0:rvnPCEngines:rnAPU2:rvr1.0:cvnPCEngines:ct3:cvr:
+> /sys/class/dmi/id/product_name:APU2
+> /sys/class/dmi/id/product_serial:XXXXXX
+> /sys/class/dmi/id/product_version:1.0
+> /sys/class/dmi/id/sys_vendor:PC Engines
+> /sys/class/dmi/id/uevent:MODALIAS=dmi:bvncoreboot:bvr4.0.7:bd02/28/2017:svnPCEngines:pnAPU2:pvr1.0:rvnPCEngines:rnAPU2:rvr1.0:cvnPCEngines:ct3:cvr:
+> 
+> As you can see here for APU2 the board_name is set.
+
+Thanks for this explanation. I modified the commit message
+accordingly and applied the patch to the for-next branch
+in the following form:
+
+commit 92d7ec1d71e351f11ba503369eb78225510cfcc7
+Author: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+Date:   Mon Mar 5 18:09:10 2018 +0100
+
+    leds: Fix wrong dmi_match on PC Engines APU LEDs
+
+    BIOS on APU board doesn't expose board_name property, and thus
+    we have to rely on the product_name instead.
+
+    Signed-off-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+    Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+
+
+Please let me know if you have any comments.
+
+Best regards,
+Jacek Anaszewski
+
+>>
+>> If it fails here, then how it is possible that it succeeds
+>> in the apu_led_init() ?
+>>
+> 
+> in apu_led_init() is a check for product_name for both both boards.
+> Ans this succeeds
+> 
+> Thus the fix here
+>> -     if (dmi_match(DMI_BOARD_NAME, "APU")) {
+>> +     if (dmi_match(DMI_PRODUCT_NAME, "APU")) {
+> 
+> I can rewrite the patch to catch both board_name and product_name for the 
+> APU board, and add a better commit log.
+> 
+> They are more recent bios updates for this board, but the are specified as 
+> "beta" so I'm afraid of an update. I have no hardware to recover a 
+> "damaged" SPI flash chip.
