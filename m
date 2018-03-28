@@ -1,48 +1,64 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v6 2/5] dt-bindings: pwm-backlight: add PWM delay
- proprieties.
-Date: Tue, 27 Mar 2018 10:08:27 -0500
-Message-ID: <20180327150827.i7b4urmjrf2mqj3t@rob-hp-laptop>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v6 1/5] pwm-backlight: enable/disable the PWM
+ before/after LCD enable toggle.
+Date: Wed, 28 Mar 2018 12:12:09 +0100
+Message-ID: <20180328111209.qnce2tkisy5txbhj@dell>
 References: <20180326095213.18362-1-enric.balletbo@collabora.com>
- <20180326095213.18362-2-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180326095213.18362-2-enric.balletbo@collabora.com>
+In-Reply-To: <20180326095213.18362-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, groeck@chromium.org, linux-rockchip@lists.infradead.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, kernel@collabora.com
+Cc: Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, groeck@chromium.org, linux-rockchip@lists.infradead.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, kernel@collabora.com
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 11:52:10AM +0200, Enric Balletbo i Serra wrote:
-> Hardware needs a delay between setting an initial (non-zero) PWM and
-> enabling the backlight using GPIO. The post-pwm-on-delay-ms specifies
-> this delay in milli seconds. Hardware also needs a delay between disabing
-> the backlight using GPIO and setting PWM value to 0. The pwm-off-delay-ms
-> is this delay in milli seconds.
+On Mon, 26 Mar 2018, Enric Balletbo i Serra wrote:
+
+> Before this patch the enable signal was set before the PWM signal and
+> vice-versa on power off. This sequence is wrong, at least, it is on
+> the different panels datasheets that I checked, so I inverted the sequence
+> to follow the specs.
+> 
+> For reference the following panels have the mentioned sequence:
+>   - N133HSE-EA1 (Innolux)
+>   - N116BGE (Innolux)
+>   - N156BGE-L21 (Innolux)
+>   - B101EAN0 (Auo)
+>   - B101AW03 (Auo)
+>   - LTN101NT05 (Samsung)
+>   - CLAA101WA01A (Chunghwa)
 > 
 > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Acked-by: Jingoo Han <jingoohan1@gmail.com>
 > Acked-by: Thierry Reding <thierry.reding@gmail.com>
 > ---
-> Based on the original Huang Lin <hl@rock-chips.com> work.
 > Changes since v5:
 >  - Add Acked-by: Thierry Reding <thierry.reding@gmail.com>
->  - CC DT mainling list (for some reason dropped at some point, my
->    fault)
 > Changes since v4:
 >  - Rebase on top of mainline.
+>  - Add the acks from Daniel Thompson and Jingoo Han.
 > Changes since v3:
->  - Replace us for ms.
->  - Add Acked-by: Pavel Machek <pavel@ucw.cz>
+>  - List the part numbers for the panel checked (Daniel Thompson)
 > Changes since v2:
->  - Use separate properties (Rob Herring)
+>  - Add this as a separate patch (Thierry Reding)
 > Changes since v1:
->  - As suggested by Daniel Thompson
->    - Do not assume power-on delay and power-off delay will be the same
+>  - None
 > ---
->  Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  drivers/video/backlight/pwm_bl.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 
-Reviewed-by: Rob Herring <robh@kernel.org> 
+Enric,
+
+Please collect all of your Acks and submit a RESEND.
+
+I will then apply the set.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
