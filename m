@@ -1,58 +1,73 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RESEND PATCH v6 3/5] pwm-backlight: add support for PWM delays
- proprieties.
-Date: Tue, 3 Apr 2018 10:19:07 +0100
-Message-ID: <20180403091907.rfupwgx4ryy66ebu@dell>
-References: <20180328170327.5395-1-enric.balletbo@collabora.com>
- <20180328170327.5395-3-enric.balletbo@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [GIT PULL] LED updates for 4.17-rc1
+Date: Tue,  3 Apr 2018 21:09:53 +0200
+Message-ID: <1522782593-3782-1-git-send-email-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180328170327.5395-3-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, groeck@chromium.org, linux-rockchip@lists.infradead.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, kernel@collabora.com
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linus.walleij@linaro.org, pavel@ucw.cz, tredaelli@redhat.com, ulli.kroll@googlemail.com, vadimp@mellanox.com
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, 28 Mar 2018, Enric Balletbo i Serra wrote:
+Hi Linus,
 
-> Some panels (i.e. N116BGE-L41), in their power sequence specifications,
-> request a delay between set the PWM signal and enable the backlight and
-> between clear the PWM signal and disable the backlight. Add support for
-> the new post-pwm-on-delay-ms and pwm-off-delay-ms proprieties to meet
-> the timings.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Acked-by: Jingoo Han <jingoohan1@gmail.com>
-> Acked-by: Thierry Reding <thierry.reding@gmail.com>
-> ---
-> Changes since v5:
->  - Add Acked-by: Thierry Reding <thierry.reding@gmail.com>
-> Changes since v4:
->  - Rebased on top of mainline.
->  - Added the acks from Pavel Machek, Daniel thompson and Jingoo Han
-> Changes since v3:
->  - Use two named members instead of pwm_delay[] (Daniel and Pavel)
->  - Use msleep instead of usleep_range. (Pavel)
-> Changes since v2:
->  - Move the pwm/enable sequence to another patch (Thierry Reding)
-> Changes since v1:
->  - As suggested by Daniel Thompson
->    - Do not assume power-on delay and power-off delay will be the same
->  - Move the check of dt property to the parse dt function.
-> ---
->  drivers/video/backlight/pwm_bl.c | 19 +++++++++++++++++++
->  include/linux/pwm_backlight.h    |  2 ++
->  2 files changed, 21 insertions(+)
+Please pull LED updates for 4.17-rc1:
 
-Applied, thanks.
+New LED class driver:
+  - add driver for Mellanox regmap LEDs
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Improvement to ledtrig-activity:
+  - extend disk trigger for reads and writes
+
+Improvements and fixes to existing LED class drivers:
+  - add more product/board names for PC Engines APU2
+  - fix wrong dmi_match on PC Engines APU LEDs
+  - clarify chips supported by LM355x driver
+  - fix Kconfig text for MLXCPLD, SYSCON, MC13783, NETXBIG
+  - allow leds-mlxcpld compilation for 32 bit arch
+
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds_for_4.17-rc1
+
+for you to fetch changes up to 92d7ec1d71e351f11ba503369eb78225510cfcc7:
+
+  leds: Fix wrong dmi_match on PC Engines APU LEDs (2018-03-20 20:28:00 +0100)
+
+Thanks,
+Jacek Anaszewski
+
+----------------------------------------------------------------
+LED updates for 4.17-rc1
+----------------------------------------------------------------
+Hans Ulli Kroll (1):
+      leds: Fix wrong dmi_match on PC Engines APU LEDs
+
+Linus Walleij (1):
+      leds: Extends disk trigger for reads and writes
+
+Pavel Machek (1):
+      leds: Clarify supported chips by LM355x driver
+
+Timothy Redaelli (1):
+      leds: Add more product/board names for PC Engines APU2
+
+Vadim Pasternak (3):
+      leds: leds-mlxcpld: Allow compilation for 32 bit arch
+      leds: fix Kconfig text for MLXCPLD, SYSCON, MC13783, NETXBIG
+      leds: add driver for support Mellanox regmap LEDs for BMC and x86 platform
+
+ MAINTAINERS                         |   1 +
+ drivers/ata/libata-core.c           |   2 +-
+ drivers/ide/ide-disk.c              |   2 +-
+ drivers/leds/Kconfig                |  29 ++--
+ drivers/leds/Makefile               |   1 +
+ drivers/leds/leds-apu.c             |  28 +++-
+ drivers/leds/leds-mlxreg.c          | 281 ++++++++++++++++++++++++++++++++++++
+ drivers/leds/trigger/ledtrig-disk.c |  12 +-
+ include/linux/leds.h                |   4 +-
+ 9 files changed, 342 insertions(+), 18 deletions(-)
+ create mode 100644 drivers/leds/leds-mlxreg.c
