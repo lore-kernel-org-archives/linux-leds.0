@@ -1,87 +1,176 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [GIT PULL] LED updates for 4.17-rc1
-Date: Tue, 3 Apr 2018 21:14:43 +0200
-Message-ID: <6f46bc83-dc2a-722b-5a3a-cd62a9dcfde8@gmail.com>
-References: <1522782593-3782-1-git-send-email-jacek.anaszewski@gmail.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH v3 1/4] backlight: pwm_bl: linear interpolation between
+ brightness-levels
+Date: Fri, 6 Apr 2018 16:46:32 +0100
+Message-ID: <20180406154632.ttt5qgsbwsveipwh@holly.lan>
+References: <20180208113032.27810-1-enric.balletbo@collabora.com>
+ <20180208113032.27810-2-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1522782593-3782-1-git-send-email-jacek.anaszewski@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20180208113032.27810-2-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linus.walleij@linaro.org, pavel@ucw.cz, tredaelli@redhat.com, ulli.kroll@googlemail.com, vadimp@mellanox.com
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com
 List-Id: linux-leds@vger.kernel.org
 
-On 04/03/2018 09:09 PM, Jacek Anaszewski wrote:
-> Hi Linus,
+On Thu, Feb 08, 2018 at 12:30:29PM +0100, Enric Balletbo i Serra wrote:
+> Setting num-interpolated-steps in the dts will allow you to have linear
+> interpolation between values of brightness-levels. This way a high
+> resolution pwm duty cycle can be used without having to list out every
+> possible value in the dts. This system also allows for gamma corrected
+> values.
 > 
-> Please pull LED updates for 4.17-rc1:
+> The most simple example is interpolate between two brightness values a
+> number of steps, this can be done setting the following in the dts:
 > 
-> New LED class driver:
->   - add driver for Mellanox regmap LEDs
+>   brightness-levels = <0 65535>;
+>   num-interpolated-steps = <1024>;
+>   default-brightness-level = <512>;
 > 
-> Improvement to ledtrig-activity:
+> This will create a brightness-level table with the following values:
+> 
+>   <0 63 126 189 252 315 378 441 ... 64260 64323 64386 64449 65535>
+> 
+> Another use case can be describe a gamma corrected curve, as we have
+> better sensitivity at low luminance than high luminance we probably
+> want have smaller steps for low brightness levels values and bigger
+> steps for high brightness levels values. This can be achieved with
+> the following in the dts:
+> 
+>   brightness-levels = <0 4096 65535>;
+>   num-interpolated-steps = <1024>;
+>   default-brightness-level = <512>;
+> 
+> This will create a brightness-levels table with the following values:
+> 
+>   <0 4 8 12 16 20 ... 4096 4156 4216 4276 ... 65535>
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-It should be of course: "Improvement to ledtrig-disk".
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 
->   - extend disk trigger for reads and writes
+> ---
+> Changes since v2:
+> Requested by Daniel Thompson:
+>  - Use a devres alloc for table creatiion and then just swap pointers.
+>  - No need to use calloc because the loop initializes every element.
+> Changes since v1:
+> - None.
 > 
-> Improvements and fixes to existing LED class drivers:
->   - add more product/board names for PC Engines APU2
->   - fix wrong dmi_match on PC Engines APU LEDs
->   - clarify chips supported by LM355x driver
->   - fix Kconfig text for MLXCPLD, SYSCON, MC13783, NETXBIG
->   - allow leds-mlxcpld compilation for 32 bit arch
+>  drivers/video/backlight/pwm_bl.c | 83 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 83 insertions(+)
 > 
-> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> index 8e3f1245f5c5..f0a108ab570a 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -147,7 +147,11 @@ static int pwm_backlight_parse_dt(struct device *dev,
+>  				  struct platform_pwm_backlight_data *data)
+>  {
+>  	struct device_node *node = dev->of_node;
+> +	unsigned int num_levels = 0;
+> +	unsigned int levels_count;
+> +	unsigned int num_steps;
+>  	struct property *prop;
+> +	unsigned int *table;
+>  	int length;
+>  	u32 value;
+>  	int ret;
+> @@ -167,6 +171,7 @@ static int pwm_backlight_parse_dt(struct device *dev,
+>  	/* read brightness levels from DT property */
+>  	if (data->max_brightness > 0) {
+>  		size_t size = sizeof(*data->levels) * data->max_brightness;
+> +		unsigned int i, j, n = 0;
+>  
+>  		data->levels = devm_kzalloc(dev, size, GFP_KERNEL);
+>  		if (!data->levels)
+> @@ -184,6 +189,84 @@ static int pwm_backlight_parse_dt(struct device *dev,
+>  			return ret;
+>  
+>  		data->dft_brightness = value;
+> +
+> +		/*
+> +		 * This property is optional, if is set enables linear
+> +		 * interpolation between each of the values of brightness levels
+> +		 * and creates a new pre-computed table.
+> +		 */
+> +		of_property_read_u32(node, "num-interpolated-steps",
+> +				     &num_steps);
+> +
+> +		/*
+> +		 * Make sure that there is at least two entries in the
+> +		 * brightness-levels table, otherwise we can't interpolate
+> +		 * between two points.
+> +		 */
+> +		if (num_steps) {
+> +			if (data->max_brightness < 2) {
+> +				dev_err(dev, "can't interpolate\n");
+> +				return -EINVAL;
+> +			}
+> +
+> +			/*
+> +			 * Recalculate the number of brightness levels, now
+> +			 * taking in consideration the number of interpolated
+> +			 * steps between two levels.
+> +			 */
+> +			for (i = 0; i < data->max_brightness - 1; i++) {
+> +				if ((data->levels[i + 1] - data->levels[i]) /
+> +				   num_steps)
+> +					num_levels += num_steps;
+> +				else
+> +					num_levels++;
+> +			}
+> +			num_levels++;
+> +			dev_dbg(dev, "new number of brightness levels: %d\n",
+> +				num_levels);
+> +
+> +			/*
+> +			 * Create a new table of brightness levels with all the
+> +			 * interpolated steps.
+> +			 */
+> +			size = sizeof(*table) * num_levels;
+> +			table = devm_kzalloc(dev, size, GFP_KERNEL);
+> +			if (!table)
+> +				return -ENOMEM;
+> +
+> +			/* Fill the interpolated table. */
+> +			levels_count = 0;
+> +			for (i = 0; i < data->max_brightness - 1; i++) {
+> +				value = data->levels[i];
+> +				n = (data->levels[i + 1] - value) / num_steps;
+> +				if (n > 0) {
+> +					for (j = 0; j < num_steps; j++) {
+> +						table[levels_count] = value;
+> +						value += n;
+> +						levels_count++;
+> +					}
+> +				} else {
+> +					table[levels_count] = data->levels[i];
+> +					levels_count++;
+> +				}
+> +			}
+> +			table[levels_count] = data->levels[i];
+> +
+> +			/*
+> +			 * As we use interpolation lets remove current
+> +			 * brightness levels table and replace for the
+> +			 * new interpolated table.
+> +			 */
+> +			devm_kfree(dev, data->levels);
+> +			data->levels = table;
+> +
+> +			/*
+> +			 * Reassign max_brightness value to the new total number
+> +			 * of brightness levels.
+> +			 */
+> +			data->max_brightness = num_levels;
+> +		}
+> +
+>  		data->max_brightness--;
+>  	}
+>  
+> -- 
+> 2.15.1
 > 
->   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds_for_4.17-rc1
-> 
-> for you to fetch changes up to 92d7ec1d71e351f11ba503369eb78225510cfcc7:
-> 
->   leds: Fix wrong dmi_match on PC Engines APU LEDs (2018-03-20 20:28:00 +0100)
-> 
-> Thanks,
-> Jacek Anaszewski
-> 
-> ----------------------------------------------------------------
-> LED updates for 4.17-rc1
-> ----------------------------------------------------------------
-> Hans Ulli Kroll (1):
->       leds: Fix wrong dmi_match on PC Engines APU LEDs
-> 
-> Linus Walleij (1):
->       leds: Extends disk trigger for reads and writes
-> 
-> Pavel Machek (1):
->       leds: Clarify supported chips by LM355x driver
-> 
-> Timothy Redaelli (1):
->       leds: Add more product/board names for PC Engines APU2
-> 
-> Vadim Pasternak (3):
->       leds: leds-mlxcpld: Allow compilation for 32 bit arch
->       leds: fix Kconfig text for MLXCPLD, SYSCON, MC13783, NETXBIG
->       leds: add driver for support Mellanox regmap LEDs for BMC and x86 platform
-> 
->  MAINTAINERS                         |   1 +
->  drivers/ata/libata-core.c           |   2 +-
->  drivers/ide/ide-disk.c              |   2 +-
->  drivers/leds/Kconfig                |  29 ++--
->  drivers/leds/Makefile               |   1 +
->  drivers/leds/leds-apu.c             |  28 +++-
->  drivers/leds/leds-mlxreg.c          | 281 ++++++++++++++++++++++++++++++++++++
->  drivers/leds/trigger/ledtrig-disk.c |  12 +-
->  include/linux/leds.h                |   4 +-
->  9 files changed, 342 insertions(+), 18 deletions(-)
->  create mode 100644 drivers/leds/leds-mlxreg.c
-> 
-
--- 
-Best regards,
-Jacek Anaszewski
