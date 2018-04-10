@@ -1,60 +1,29 @@
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [RESEND PATCH v3 2/4] dt-bindings: pwm-backlight: add a num-interpolation-steps property.
-Date: Mon,  9 Apr 2018 10:33:31 +0200
-Message-ID: <20180409083333.1249-3-enric.balletbo@collabora.com>
-References: <20180409083333.1249-1-enric.balletbo@collabora.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [RESEND PATCH v6 4/5] ARM: dts: rockchip: set PWM delay backlight settings for Veyron.
+Date: Tue, 10 Apr 2018 15:04:06 +0200
+Message-ID: <4925136.8dMFCuW7Px@phil>
+References: <20180328170327.5395-1-enric.balletbo@collabora.com> <20180328170327.5395-4-enric.balletbo@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180409083333.1249-1-enric.balletbo@collabora.com>
+In-Reply-To: <20180328170327.5395-4-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>, Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, groeck@chromium.org, linux-rockchip@lists.infradead.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, kernel@collabora.com
 List-Id: linux-leds@vger.kernel.org
 
-The num-interpolated-steps property specifies the number of
-interpolated steps between each value of brightness-level table. This is
-useful for high resolution PWMs to not have to list out every possible
-value in the brightness-level array.
+Am Mittwoch, 28. März 2018, 19:03:26 CEST schrieb Enric Balletbo i Serra:
+> For veyron the binding should provide both PWM timings, the delay between
+> you enable the PWM and set the enable signal, and the delay between you
+> disable the PWM signal and clear the enable signal. Update the binding
+> accordingly, in this case the panels connected to the veyron boards have
+> a symmetric power sequence, hence the same value is used.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/leds/backlight/pwm-backlight.txt         | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+applied for 4.18
 
-diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-index 310810906613..ce9b5746b774 100644
---- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-+++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-@@ -21,6 +21,11 @@ Optional properties:
-                           and enabling the backlight using GPIO.
-   - pwm-off-delay-ms: Delay in ms between disabling the backlight using GPIO
-                       and setting PWM value to 0.
-+  - num-interpolated-steps: Number of interpolated steps between each value
-+                            of brightness-levels table. This way a high
-+                            resolution pwm duty cycle can be used without
-+                            having to list out every possible value in the
-+                            brightness-level array.
- 
- [0]: Documentation/devicetree/bindings/pwm/pwm.txt
- [1]: Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -39,3 +44,17 @@ Example:
- 		post-pwm-on-delay-ms = <10>;
- 		pwm-off-delay-ms = <10>;
- 	};
-+
-+Example using num-interpolation-steps:
-+
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 5000000>;
-+
-+		brightness-levels = <0 2048 4096 8192 16384 65535>;
-+		num-interpolated-steps = <2048>;
-+		default-brightness-level = <4096>;
-+
-+		power-supply = <&vdd_bl_reg>;
-+		enable-gpios = <&gpio 58 0>;
-+	};
--- 
-2.16.3
+Thanks
+Heiko
