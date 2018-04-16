@@ -1,28 +1,60 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [RESEND PATCH v6 5/5] ARM: dts: rockchip: set PWM delay backlight settings for Minnie
-Date: Tue, 10 Apr 2018 15:04:22 +0200
-Message-ID: <217634691.qDbm1hq3Bz@phil>
-References: <20180328170327.5395-1-enric.balletbo@collabora.com> <20180328170327.5395-5-enric.balletbo@collabora.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RESEND PATCH v6 1/5] pwm-backlight: enable/disable the PWM
+ before/after LCD enable toggle.
+Date: Mon, 16 Apr 2018 15:43:32 +0100
+Message-ID: <20180416144332.caww5vttzrzjlnkt@dell>
+References: <20180328170327.5395-1-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180328170327.5395-5-enric.balletbo@collabora.com>
+Content-Disposition: inline
+In-Reply-To: <20180328170327.5395-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, groeck@chromium.org, linux-rockchip@lists.infradead.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, kernel@collabora.com
+Cc: Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, groeck@chromium.org, linux-rockchip@lists.infradead.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, kernel@collabora.com
 List-Id: linux-leds@vger.kernel.org
 
-Am Mittwoch, 28. M�rz 2018, 19:03:27 CEST schrieb Enric Balletbo i Serra:
-> The minnie devices comes with an AUO B101EAN01 panel which is different
-> from default veyron devices, thus the power on/off timing sequence is
-> slightly different. The datasheet specifies a pwm delay of 200 ms, so
-> update the PMW delay proprieties accordingly.
+On Wed, 28 Mar 2018, Enric Balletbo i Serra wrote:
+
+> Before this patch the enable signal was set before the PWM signal and
+> vice-versa on power off. This sequence is wrong, at least, it is on
+> the different panels datasheets that I checked, so I inverted the sequence
+> to follow the specs.
+> 
+> For reference the following panels have the mentioned sequence:
+>   - N133HSE-EA1 (Innolux)
+>   - N116BGE (Innolux)
+>   - N156BGE-L21 (Innolux)
+>   - B101EAN0 (Auo)
+>   - B101AW03 (Auo)
+>   - LTN101NT05 (Samsung)
+>   - CLAA101WA01A (Chunghwa)
 > 
 > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Acked-by: Jingoo Han <jingoohan1@gmail.com>
+> Acked-by: Thierry Reding <thierry.reding@gmail.com>
+> ---
+> Changes since v5:
+>  - Add Acked-by: Thierry Reding <thierry.reding@gmail.com>
+> Changes since v4:
+>  - Rebase on top of mainline.
+>  - Add the acks from Daniel Thompson and Jingoo Han.
+> Changes since v3:
+>  - List the part numbers for the panel checked (Daniel Thompson)
+> Changes since v2:
+>  - Add this as a separate patch (Thierry Reding)
+> Changes since v1:
+>  - None
+> ---
+>  drivers/video/backlight/pwm_bl.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 
-applied for 4.18
+Applied, thanks.
 
-Thanks
-Heiko
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
