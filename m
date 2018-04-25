@@ -1,56 +1,46 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
-Date: Wed, 25 Apr 2018 09:04:05 +0200
-Message-ID: <20180425070405.GA14812@amd>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [RFC PATCH RESEND 1/3] mfd: upboard: Add UP2 platform controller
+ driver
+Date: Wed, 25 Apr 2018 12:51:41 +0300
+Message-ID: <20180425095141.GL2173@lahna.fi.intel.com>
 References: <20180421085009.28773-1-javier@emutex.com>
- <20180421085009.28773-3-javier@emutex.com>
- <20180425064133.GC5352@amd>
- <20180425070227.exixjo64spvt36vo@localhost>
+ <20180421085009.28773-2-javier@emutex.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180425070227.exixjo64spvt36vo@localhost>
+In-Reply-To: <20180421085009.28773-2-javier@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Javier Arteaga <javier@emutex.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan O'Donovan <dan@emutex.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Lee Jones <lee.jones@linaro.org>, Dan O'Donovan <dan@emutex.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+On Sat, Apr 21, 2018 at 09:50:07AM +0100, Javier Arteaga wrote:
+> +static const struct acpi_device_id upboard_acpi_match[] = {
+> +	{ "AANT0F01", (kernel_ulong_t) &upboard_up2_data },
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No space after cast so write it like,
 
-Hi!
+	{ "AANT0F01", (kernel_ulong_t)&upboard_up2_data },
 
-> > If it is single bit, max_brightness should be one, and !=3D LED_OFF test
-> > should not be needed.
->=20
-> Got it. Will do for v2.
 
-Good, you can add
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(acpi, upboard_acpi_match);
+> +
+> +static int upboard_probe(struct platform_device *pdev)
+> +{
+> +	struct upboard *upboard;
+> +	const struct acpi_device_id *id;
+> +	const struct upboard_data *upboard_data;
+> +	int ret;
+> +
+> +	id = acpi_match_device(upboard_acpi_match, &pdev->dev);
+> +	if (!id)
+> +		return -ENODEV;
+> +
+> +	upboard_data = (const struct upboard_data *) id->driver_data;
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Ditto and to other places.
 
-for the v2.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrgKGUACgkQMOfwapXb+vJa0QCcDZ6hrzV/KPjfZ5qINA6vGjkE
-IkIAmQEjRa7yoPt6+B3cCIPvum7ed92j
-=DB99
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
+Otherwise looks good to me.
