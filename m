@@ -1,164 +1,198 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [RFC PATCH RESEND 3/3] pinctrl: upboard: Add UP2 pinctrl and
- gpio driver
-Date: Wed, 25 Apr 2018 19:49:12 +0300
-Message-ID: <1524674952.21176.610.camel@linux.intel.com>
+From: Javier Arteaga <javier@emutex.com>
+Subject: Re: [RFC PATCH RESEND 1/3] mfd: upboard: Add UP2 platform controller
+ driver
+Date: Thu, 26 Apr 2018 03:33:37 +0100
+Message-ID: <20180426023337.u2d6azqcjmjsur5c@localhost>
 References: <20180421085009.28773-1-javier@emutex.com>
-         <20180421085009.28773-4-javier@emutex.com>
+ <20180421085009.28773-2-javier@emutex.com>
+ <1524671850.21176.585.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180421085009.28773-4-javier@emutex.com>
+Content-Disposition: inline
+In-Reply-To: <1524671850.21176.585.camel@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Arteaga <javier@emutex.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Dan O'Donovan <dan@emutex.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Dan O'Donovan <dan@emutex.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Sat, 2018-04-21 at 09:50 +0100, Javier Arteaga wrote:
-> The UP2 board features a Raspberry Pi compatible pin header (HAT) and
-> a
-> board-specific expansion connector (EXHAT). Both expose assorted
-> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or
-> other
-> on-board devices (ADC, FPGA IP blocks...).
+Hi Andy,
+
+First off, many thanks for your thorough review! Replies inline.
+
+On Wed, Apr 25, 2018 at 06:57:30PM +0300, Andy Shevchenko wrote:
+> > +config MFD_UPBOARD
+> > +	tristate "UP Squared"
+> > +	depends on ACPI
+> > +	depends on GPIOLIB
+> > +	select MFD_CORE
+> > +	select REGMAP
+> > +	help
+> > +	  If you say yes here you get support for the platform
+> > controller
+> > +	  of the UP Squared single-board computer.
+> > +
+> > +	  This driver provides common support for accessing the
+> > device,
+> > +	  additional drivers must be enabled in order to use the
+> > +	  functionality of the device.
+> > +
+> > +	  This driver can also be built as a module. If so, the
+> > module
+> > +	  will be called upboard.
 > 
-> These lines are routed through an on-board FPGA. The platform
-> controller
-> in its stock firmware provides register fields to change:
+> "upboard"
+
+The module name in quotes reads better to me too, but the majority of
+Kconfig entries do it this way, looks like:
+
+linux $ rg 'module will be called [^"]' | wc -l
+1275
+linux $ rg 'module will be called "' | wc -l
+5
+
+> > +static int upboard_read(void *context, unsigned int reg, unsigned int
+> > *val)
+> Can't you rewrite this like
 > 
-> - Line enable (FPGA pins enabled / high impedance)
-> - Line direction (SoC driven / FPGA driven)
+> for (addr) {
+>  strobe(0)
+>  data(x)
+>  strobe(1)
+> }
 > 
-> To enable using SoC GPIOs on the pin header, this arrangement requires
-> both configuring the platform controller, and updating the SoC pad
-> registers in sync.
+> for (register) {
+>  strobe(0)
+>  val = data(x)
+>  strobe(1)
+> }
 > 
-> Add a frontend pinctrl/GPIO driver that registers a new set of GPIO
-> lines for the header pins. When these are requested, the driver
-> propagates this request to the backend SoC pinctrl/GPIO driver by
-> grabbing a GPIO descriptor for the matching SoC GPIO line. The needed
-> mapping for this is retrieved via ACPI properties.
+> val &= BIT(register_size);
+> strobe(0)
 > 
+> ?
+
+> > +static int upboard_write(void *context, unsigned int reg, unsigned
+> > int val)
+> Similar here:
 > 
+> for (addr) {
+>  strobe(0)
+>  data(x)
+>  strobe(1)
+> }
+> 
+> for (register) {
+>  strobe(0)
+>  data(x)
+>  strobe(1)
+> }
+> 
+> strobe(0)
+> strobe(1)
+> 
+> ?
 
-> For reference, here's the relevant ASL from the UP2 platform
-> controller.
+> Moreover these two functions have duplications, i.e.
+> 
+> static ... upboard_clear()
+> {
+>  clear(0)
+>  clear(1)
+> }
+> 
+> static ... upboard_set_address()
+> {
+>  for (addr) {
+>   ...
+>  }
+> }
 
-It should be in Documentation file or in commit message.
+I'll look into making these R/W functions more compact.
 
+> Additional question is about spi-bitbang and i2c-gpio. Can one of them
+> be utilized here? Why not?
 
->  static const struct mfd_cell upboard_up2_mfd_cells[] = {
-> +	{ .name = "upboard-pinctrl" },
+i2c-gpio would be closest, but unfortunately this isn't quite I2C:
 
-I guess it should be 3 lines.
+- two in/out GPIOs instead of a single SDA line,
+- R/W sequence start is signaled from yet _another_ line,
+- ACK implicit in last rising edge of the address instead of an ACK pulse,
+- etc...
 
->  	UPBOARD_LED_CELL(upboard_up2_led_data, 0),
->  	UPBOARD_LED_CELL(upboard_up2_led_data, 1),
->  	UPBOARD_LED_CELL(upboard_up2_led_data, 2),
+Probably should explain this in a comment too.
 
-...and honestly I would not use this macro and put 4 cells explicitly
-here.
+> > +static int upboard_init_gpio(struct upboard *upboard)
+> > +{
+> > +	struct gpio_desc *enable_gpio;
+> > +
+> > +	enable_gpio = devm_gpiod_get(upboard->dev, "enable",
+> > GPIOD_OUT_LOW);
+> > +	if (IS_ERR(enable_gpio))
+> > +		return PTR_ERR(enable_gpio);
+> 
+> > +	gpiod_set_value(enable_gpio, 1);
+> 
+> When do you disable it? Why not?
 
-> +static int upboard_gpio_request_enable(struct pinctrl_dev *pctldev,
-> +				       struct pinctrl_gpio_range
-> *range,
-> +				       unsigned int pin)
-> +{
-> +	const struct pin_desc * const pd = pin_desc_get(pctldev,
-> pin);
-> +	const struct upboard_pin *p;
-> +	int ret;
-> +
+enable = 0/1 sets all FPGA pins for FPGA-routed lines Hi-Z/active. It's
+probably safer to set enable = 0 on unload.
 
-> +	if (!pd)
-> +		return -EINVAL;
+I'll go over this again (and add comments in any case).
 
-When it's possible?
+> > +static int upboard_check_supported(struct upboard *upboard)
+> > +{
+> 
+> > +	const unsigned int AAEON_MANUFACTURER_ID = 0x01;
+> > +	const unsigned int SUPPORTED_FW_MAJOR = 0x0;
+> 
+> Why to hide here instead of putting at the top of file as defined
+> constants?
 
-> +	p = pd->drv_data;
+No strong reason. I'll move them to the top.
 
-> +	return 0;
-> +};
+> > +	build = (firmware_id >> 12) & 0xf;
+> > +	major = (firmware_id >> 8) & 0xf;
+> > +	minor = (firmware_id >> 4) & 0xf;
+> 
+> > +	patch = firmware_id & 0xf;
+> 
+> For style purposes you can use
+> (firmware >> 0) & 0xf here
 
-> +	if (!pd)
-> +		return -EINVAL;
+Sure, why not.
 
-Ditto.
+> > +static int upboard_probe(struct platform_device *pdev)
+> > +{
+> > +	struct upboard *upboard;
+> > +	const struct acpi_device_id *id;
+> > +	const struct upboard_data *upboard_data;
+> > +	int ret;
+> 
+> > +	id = acpi_match_device(upboard_acpi_match, &pdev->dev);
+> > +	if (!id)
+> > +		return -ENODEV;
+> > +
+> > +	upboard_data = (const struct upboard_data *) id->driver_data;
+> 
+> Use new API for that.
 
-> +	struct upboard_pinctrl *pctrl =
-> +		container_of(gc, struct upboard_pinctrl, chip);
+Will do.
 
-Do define and use to_upboard_pinctrl().
+> > +MODULE_LICENSE("GPL");
+> 
+> License mismatch.
 
-> +	if (offset + 1 > pctrl->nsoc_gpios || !pctrl-
-> >soc_gpios[offset])
-> +		return ERR_PTR(-ENODEV);
+True, it should read "GPL v2". I'll update these.
 
-When this is a case?
+> > +#define UPBOARD_ADDRESS_SIZE  7
+> > +#define UPBOARD_REGISTER_SIZE 16
+> 
+> > +#define UPBOARD_READ_FLAG     BIT(UPBOARD_ADDRESS_SIZE)
+> 
+> It's not clear why this one is defined in this way.
+> Comment is needed.
 
-> +static int upboard_gpio_get_direction(struct gpio_chip *gc, unsigned
-> int offset)
-> +{
-> +	struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc,
-> offset);
-> +
-
-Split above to definition and assignment pieces. Put assignment
-immediately before condition.
-
-> +	if (IS_ERR(desc))
-> +		return PTR_ERR(desc);
-
-
-> +
-> +	return gpiod_get_direction(desc);
-> +}
-
-> +static struct regmap_field * __init upboard_field_alloc(struct device
-> *dev,
-> +							struct regmap
-> *regmap,
-> +							unsigned int
-> base,
-> +							unsigned int
-> number)
-
-You should really understand what __init means and when it's appropriate
-to use it.
-
-> +static int __init upboard_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	struct acpi_device * const adev = ACPI_COMPANION(&pdev->dev);
-
-Huh, const in that place? Why?
-
-> +	if (!pdev->dev.parent)
-> +		return -EINVAL;
-> +
-> +	upboard = dev_get_drvdata(pdev->dev.parent);
-> +	if (!upboard)
-> +		return -EINVAL;
-
-Same comment as per LED driver.
-
-> +	if (strcmp(acpi_device_hid(adev), "AANT0F01"))
-> +		return -ENODEV;
-
-Huh?
-
-> +		((struct pinctrl_pin_desc *)pd)->drv_data = pin;
-
-What is that?! I mean ugly casting.
-
-> +	}
-
-> +}
-
-> +MODULE_LICENSE("GPL");
-
-License mismatch.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+It means that the RW flag comes after the last bit of the address, like
+in I2C. I'll likely drop this #define and make this clearer next
+iteration.
