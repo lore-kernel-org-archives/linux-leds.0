@@ -1,165 +1,75 @@
-From: Javier Arteaga <javier@emutex.com>
+From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: [RFC PATCH RESEND 3/3] pinctrl: upboard: Add UP2 pinctrl and
  gpio driver
-Date: Thu, 26 Apr 2018 03:38:36 +0100
-Message-ID: <20180426023836.udbeoocp76tsv7vu@localhost>
+Date: Thu, 26 Apr 2018 07:50:28 +0100
+Message-ID: <20180426065028.fvdf7ke5va2kacmv@dell>
 References: <20180421085009.28773-1-javier@emutex.com>
  <20180421085009.28773-4-javier@emutex.com>
- <1524674952.21176.610.camel@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1524674952.21176.610.camel@linux.intel.com>
+In-Reply-To: <20180421085009.28773-4-javier@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Dan O'Donovan <dan@emutex.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Javier Arteaga <javier@emutex.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Dan O'Donovan <dan@emutex.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 07:49:12PM +0300, Andy Shevchenko wrote:
-> > For reference, here's the relevant ASL from the UP2 platform
-> > controller.
+On Sat, 21 Apr 2018, Javier Arteaga wrote:
+
+> The UP2 board features a Raspberry Pi compatible pin header (HAT) and a
+> board-specific expansion connector (EXHAT). Both expose assorted
+> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or other
+> on-board devices (ADC, FPGA IP blocks...).
 > 
-> It should be in Documentation file or in commit message.
-
-Perfect, I just wasn't sure whether dumping ASL this way would be
-acceptable in commit history. In that case, I think I prefer the commit
-body over keeping a Documentation/ file elsewhere that's easy to miss.
-
-> >  static const struct mfd_cell upboard_up2_mfd_cells[] = {
-> > +	{ .name = "upboard-pinctrl" },
+> These lines are routed through an on-board FPGA. The platform controller
+> in its stock firmware provides register fields to change:
 > 
-> I guess it should be 3 lines.
-
+> - Line enable (FPGA pins enabled / high impedance)
+> - Line direction (SoC driven / FPGA driven)
 > 
-> >  	UPBOARD_LED_CELL(upboard_up2_led_data, 0),
-> >  	UPBOARD_LED_CELL(upboard_up2_led_data, 1),
-> >  	UPBOARD_LED_CELL(upboard_up2_led_data, 2),
+> To enable using SoC GPIOs on the pin header, this arrangement requires
+> both configuring the platform controller, and updating the SoC pad
+> registers in sync.
 > 
-> ...and honestly I would not use this macro and put 4 cells explicitly
-> here.
-
-The idea was to avoid repeating .platform_data + .pdata_size over and
-over as there's a few LEDs per board, but explicit is good too.
-
-May just go with your suggestion as that seems to be more popular than
-macros in other mfd drivers.
-
-> > +static int upboard_gpio_request_enable(struct pinctrl_dev *pctldev,
-> > +				       struct pinctrl_gpio_range
-> > *range,
-> > +				       unsigned int pin)
-> > +{
-> > +	const struct pin_desc * const pd = pin_desc_get(pctldev,
-> > pin);
-> > +	const struct upboard_pin *p;
-> > +	int ret;
-> > +
+> Add a frontend pinctrl/GPIO driver that registers a new set of GPIO
+> lines for the header pins. When these are requested, the driver
+> propagates this request to the backend SoC pinctrl/GPIO driver by
+> grabbing a GPIO descriptor for the matching SoC GPIO line. The needed
+> mapping for this is retrieved via ACPI properties.
 > 
-> > +	if (!pd)
-> > +		return -EINVAL;
+> Signed-off-by: Javier Arteaga <javier@emutex.com>
+> ---
+
+[...]
 > 
-> When it's possible?
-
-Just reread pin_request() from pinctrl core. You're right, it isn't.
-I'll take out the check.
-
-> > +	if (!pd)
-> > +		return -EINVAL;
+>  drivers/mfd/upboard.c             |   1 +
+>  drivers/pinctrl/Kconfig           |  13 +
+>  drivers/pinctrl/Makefile          |   1 +
+>  drivers/pinctrl/pinctrl-upboard.c | 523 ++++++++++++++++++++++++++++++
+>  4 files changed, 538 insertions(+)
+>  create mode 100644 drivers/pinctrl/pinctrl-upboard.c
 > 
-> Ditto.
+> diff --git a/drivers/mfd/upboard.c b/drivers/mfd/upboard.c
+> index 6e4767e4dc41..35111981dfdf 100644
+> --- a/drivers/mfd/upboard.c
+> +++ b/drivers/mfd/upboard.c
+> @@ -132,6 +132,7 @@ static struct upboard_led_data upboard_up2_led_data[] = {
+>  };
+>  
+>  static const struct mfd_cell upboard_up2_mfd_cells[] = {
+> +	{ .name = "upboard-pinctrl" },
+>  	UPBOARD_LED_CELL(upboard_up2_led_data, 0),
+>  	UPBOARD_LED_CELL(upboard_up2_led_data, 1),
+>  	UPBOARD_LED_CELL(upboard_up2_led_data, 2),
 
-As above.
+Please made this a separate patch.
 
-> 
-> > +	struct upboard_pinctrl *pctrl =
-> > +		container_of(gc, struct upboard_pinctrl, chip);
-> 
-> Do define and use to_upboard_pinctrl().
+There aren't any build dependencies between the files.
 
-Will do.
-
-> > +	if (offset + 1 > pctrl->nsoc_gpios || !pctrl-
-> > >soc_gpios[offset])
-> > +		return ERR_PTR(-ENODEV);
-> 
-> When this is a case?
-
-Another unnecessary check if gpiolib already guarantees valid inputs.
-
-> > +static int upboard_gpio_get_direction(struct gpio_chip *gc, unsigned
-> > int offset)
-> > +{
-> > +	struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc,
-> > offset);
-> > +
-> 
-> Split above to definition and assignment pieces. Put assignment
-> immediately before condition.
-> 
-> > +	if (IS_ERR(desc))
-> > +		return PTR_ERR(desc);
-
-I'll do that.
-
-> > +static struct regmap_field * __init upboard_field_alloc(struct device
-> > *dev,
-> > +							struct regmap
-> > *regmap,
-> > +							unsigned int
-> > base,
-> > +							unsigned int
-> > number)
-> 
-> You should really understand what __init means and when it's appropriate
-> to use it.
-
-As in the other email: the intention was to drop probe() and funcs only
-used on module init, but I appear to have misunderstood something here.
-
-> > +static int __init upboard_pinctrl_probe(struct platform_device *pdev)
-> > +{
-> > +	struct acpi_device * const adev = ACPI_COMPANION(&pdev->dev);
-> 
-> Huh, const in that place? Why?
-
-You're right, it isn't a usual pattern. Dropped.
-
-> > +	if (!pdev->dev.parent)
-> > +		return -EINVAL;
-> > +
-> > +	upboard = dev_get_drvdata(pdev->dev.parent);
-> > +	if (!upboard)
-> > +		return -EINVAL;
-> 
-> Same comment as per LED driver.
-
-I'll address that too.
-
-> > +	if (strcmp(acpi_device_hid(adev), "AANT0F01"))
-> > +		return -ENODEV;
-> 
-> Huh?
-
-Ugh, this is left over from a bit of code that selected the right
-pinctrl_desc* for each UP HID. Of course, it doesn't make sense now.
-
-I'll take that out.
-
-> > +		((struct pinctrl_pin_desc *)pd)->drv_data = pin;
-> 
-> What is that?! I mean ugly casting.
-
-I agree, it's an eyesore. The intention was to drop const from
-pinctrl_desc->pins as we're replacing the pins' drv_data on init.
-
-It does look like I'm going at this the wrong way though. I'll take
-another stab at it (pointers welcome of course).
-
-> > +MODULE_LICENSE("GPL");
-> 
-> License mismatch.
-
-Will fix.
-
-Thanks again for your time Andy! I really appreciate your help :)
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
