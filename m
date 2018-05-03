@@ -1,40 +1,81 @@
 From: Kiran Gunda <kgunda@codeaurora.org>
-Subject: [PATCH V1 0/5] backlight: qcom-wled: Support for QCOM wled driver
-Date: Thu,  3 May 2018 15:27:07 +0530
-Message-ID: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
+Subject: [PATCH V1 1/5] qcom: wled: Rename pm8941-wled.c to qcom-wled.c
+Date: Thu,  3 May 2018 15:27:08 +0530
+Message-ID: <1525341432-15818-2-git-send-email-kgunda@codeaurora.org>
+References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Kiran Gunda <kgunda@codeaurora.org>
+To: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org, Kiran Gunda <kgunda@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-This patch series renames the pm8941-wled.c driver to qcom-wled.c to add
-the support for multiple PMICs supported by qualcomm. This patch series
-supports both PM8941 and PMI8998 WLED. The PMI8998 WLED has the support
-to handle the OVP (over voltage protection) and the SC (short circuit protection)
-interrupts. It also has the auto calibration algorithm support to
-configure the right strings if the user specified string configuration
-is in-correct. These three features are added in this series for PMI8998.
+pm8941-wled.c driver is supporting the WLED peripheral
+on pm8941. Rename it to qcom-wled.c so that it can support
+WLED on multiple PMICs.
 
-Kiran Gunda (5):
-  qcom: wled: Rename pm8941-wled.c to qcom-wled.c
-  backlight: qcom-wled: Add support for WLED4 peripheral
-  backlight: qcom-wled: Add support for short circuit handling
-  backlight: qcom-wled: Add support for OVP interrupt handling
-  backlight: qcom-wled: Add auto string detection logic
+Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+---
+ .../bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt}    | 2 +-
+ drivers/video/backlight/Kconfig                                   | 8 ++++----
+ drivers/video/backlight/Makefile                                  | 2 +-
+ drivers/video/backlight/{pm8941-wled.c => qcom-wled.c}            | 0
+ 4 files changed, 6 insertions(+), 6 deletions(-)
+ rename Documentation/devicetree/bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt} (95%)
+ rename drivers/video/backlight/{pm8941-wled.c => qcom-wled.c} (100%)
 
- .../bindings/leds/backlight/pm8941-wled.txt        |   42 -
- .../bindings/leds/backlight/qcom-wled.txt          |  158 +++
- drivers/video/backlight/Kconfig                    |    8 +-
- drivers/video/backlight/Makefile                   |    2 +-
- drivers/video/backlight/pm8941-wled.c              |  432 -------
- drivers/video/backlight/qcom-wled.c                | 1329 ++++++++++++++++++++
- 6 files changed, 1492 insertions(+), 479 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
- create mode 100644 Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
- delete mode 100644 drivers/video/backlight/pm8941-wled.c
- create mode 100644 drivers/video/backlight/qcom-wled.c
-
+diff --git a/Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+similarity index 95%
+rename from Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
+rename to Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+index e5b294d..fb39e32 100644
+--- a/Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
++++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+@@ -1,4 +1,4 @@
+-Binding for Qualcomm PM8941 WLED driver
++Binding for Qualcomm Technologies, Inc. WLED driver
+ 
+ Required properties:
+ - compatible: should be "qcom,pm8941-wled"
+diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+index 4e1d2ad..8c095e3 100644
+--- a/drivers/video/backlight/Kconfig
++++ b/drivers/video/backlight/Kconfig
+@@ -299,12 +299,12 @@ config BACKLIGHT_TOSA
+ 	  If you have an Sharp SL-6000 Zaurus say Y to enable a driver
+ 	  for its backlight
+ 
+-config BACKLIGHT_PM8941_WLED
+-	tristate "Qualcomm PM8941 WLED Driver"
++config BACKLIGHT_QCOM_WLED
++	tristate "Qualcomm PMIC WLED Driver"
+ 	select REGMAP
+ 	help
+-	  If you have the Qualcomm PM8941, say Y to enable a driver for the
+-	  WLED block.
++	  If you have the Qualcomm PMIC, say Y to enable a driver for the
++	  WLED block. Currently it supports PM8941 and PMI8998.
+ 
+ config BACKLIGHT_SAHARA
+ 	tristate "Tabletkiosk Sahara Touch-iT Backlight Driver"
+diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
+index 5e28f01..6fd76ef 100644
+--- a/drivers/video/backlight/Makefile
++++ b/drivers/video/backlight/Makefile
+@@ -49,8 +49,8 @@ obj-$(CONFIG_BACKLIGHT_OMAP1)		+= omap1_bl.o
+ obj-$(CONFIG_BACKLIGHT_OT200)		+= ot200_bl.o
+ obj-$(CONFIG_BACKLIGHT_PANDORA)		+= pandora_bl.o
+ obj-$(CONFIG_BACKLIGHT_PCF50633)	+= pcf50633-backlight.o
+-obj-$(CONFIG_BACKLIGHT_PM8941_WLED)	+= pm8941-wled.o
+ obj-$(CONFIG_BACKLIGHT_PWM)		+= pwm_bl.o
++obj-$(CONFIG_BACKLIGHT_QCOM_WLED)	+= qcom-wled.o
+ obj-$(CONFIG_BACKLIGHT_SAHARA)		+= kb3886_bl.o
+ obj-$(CONFIG_BACKLIGHT_SKY81452)	+= sky81452-backlight.o
+ obj-$(CONFIG_BACKLIGHT_TOSA)		+= tosa_bl.o
+diff --git a/drivers/video/backlight/pm8941-wled.c b/drivers/video/backlight/qcom-wled.c
+similarity index 100%
+rename from drivers/video/backlight/pm8941-wled.c
+rename to drivers/video/backlight/qcom-wled.c
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
