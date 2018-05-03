@@ -1,65 +1,40 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
-Date: Wed, 02 May 2018 16:55:17 +0300
-Message-ID: <1525269317.21176.625.camel@linux.intel.com>
-References: <20180421085009.28773-1-javier@emutex.com>
-         <20180421085009.28773-3-javier@emutex.com>
-         <1524672945.21176.594.camel@linux.intel.com>
-         <20180426023441.f2a7337sjlyd6xhf@localhost>
-         <1524729349.21176.614.camel@linux.intel.com>
-         <20180426124922.haddppocljgnj2ei@localhost>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Kiran Gunda <kgunda@codeaurora.org>
+Subject: [PATCH V1 0/5] backlight: qcom-wled: Support for QCOM wled driver
+Date: Thu,  3 May 2018 15:27:07 +0530
+Message-ID: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180426124922.haddppocljgnj2ei@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Arteaga <javier@emutex.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan O'Donovan <dan@emutex.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: bjorn.andersson@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Kiran Gunda <kgunda@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, 2018-04-26 at 13:49 +0100, Javier Arteaga wrote:
-> On Thu, Apr 26, 2018 at 10:55:49AM +0300, Andy Shevchenko wrote:
-> > On Thu, 2018-04-26 at 03:34 +0100, Javier Arteaga wrote:
-> > > My understanding was that in this context, __init allows this
-> > > probe()
-> > > to
-> > > be dropped from memory after module load.
-> > > 
-> > > What am I doing wrong there?
-> > 
-> > Just give another thought about it. The keyword(s) here is(are):
-> > time to
-> > live of the objects in question. It's good to get knowing what
-> > unbind-
-> > bind means (for built-in drivers).
-> 
-> So this is the bit that I _believed_ applied to the platform drivers
-> for
-> these MFD-registered devices (from driver-model/platform.txt):
-> 
->   Or, in common situations where the device is known not to be hot-
-> pluggable,
->   the probe() routine can live in an init section to reduce the
-> driver's
->   runtime memory footprint:
-> 
->   	int platform_driver_probe(struct platform_driver *drv,
->   			  int (*probe)(struct platform_device *))
-> 
-> I'm thinking my misunderstanding probably stems from assuming that
-> these
-> leds/pinctrl drivers will always find all devices registered at init
-> time. Can't say I've validated that assumption - I just didn't see
-> anything obviously blowing up in my tests so far :)
-> 
-> I'll keep reading and test out a few more things so I fully
-> understand.
-> Until then, I've taken out __init annotations from next version.
+This patch series renames the pm8941-wled.c driver to qcom-wled.c to add
+the support for multiple PMICs supported by qualcomm. This patch series
+supports both PM8941 and PMI8998 WLED. The PMI8998 WLED has the support
+to handle the OVP (over voltage protection) and the SC (short circuit protection)
+interrupts. It also has the auto calibration algorithm support to
+configure the right strings if the user specified string configuration
+is in-correct. These three features are added in this series for PMI8998.
 
-Just do one small test. Try to unbind the (built-in) driver and bind it
-back. Would it work? Would kernel survive this?
+Kiran Gunda (5):
+  qcom: wled: Rename pm8941-wled.c to qcom-wled.c
+  backlight: qcom-wled: Add support for WLED4 peripheral
+  backlight: qcom-wled: Add support for short circuit handling
+  backlight: qcom-wled: Add support for OVP interrupt handling
+  backlight: qcom-wled: Add auto string detection logic
+
+ .../bindings/leds/backlight/pm8941-wled.txt        |   42 -
+ .../bindings/leds/backlight/qcom-wled.txt          |  158 +++
+ drivers/video/backlight/Kconfig                    |    8 +-
+ drivers/video/backlight/Makefile                   |    2 +-
+ drivers/video/backlight/pm8941-wled.c              |  432 -------
+ drivers/video/backlight/qcom-wled.c                | 1329 ++++++++++++++++++++
+ 6 files changed, 1492 insertions(+), 479 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+ delete mode 100644 drivers/video/backlight/pm8941-wled.c
+ create mode 100644 drivers/video/backlight/qcom-wled.c
 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
