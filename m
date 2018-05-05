@@ -1,95 +1,88 @@
-From: "Jingoo Han" <jingoohan1@gmail.com>
-Subject: Re: [PATCH V2 1/5] backlight: qcom-wled: Rename pm8941-wled.c to
- qcom-wled.c
-Date: Fri, 4 May 2018 11:55:17 -0400
-Message-ID: <000201d3e3c0$4cdf87a0$e69e96e0$@gmail.com>
-References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
- <1525342352-25072-2-git-send-email-kgunda@codeaurora.org>
+From: kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH 2/2] leds: Add Spreadtrum SC27xx breathing light
+ controller driver
+Date: Sat, 5 May 2018 13:26:42 +0800
+Message-ID: <201805051300.jy5SNVta%fengguang.wu@intel.com>
+References: <1bf5bc3e007d237477d740f47ed63f05aa71b348.1525427961.git.baolin.wang@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1525342352-25072-2-git-send-email-kgunda@codeaurora.org>
-Content-Language: en-us
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: 'Kiran Gunda' <kgunda@codeaurora.org>, bjorn.andersson@linaro.org, 'Lee Jones' <lee.jones@linaro.org>, 'Daniel Thompson' <daniel.thompson@linaro.org>, 'Jacek Anaszewski' <jacek.anaszewski@gmail.com>, 'Pavel Machek' <pavel@ucw.cz>, 'Rob Herring' <robh+dt@kernel.org>, 'Mark Rutland' <mark.rutland@arm.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1bf5bc3e007d237477d740f47ed63f05aa71b348.1525427961.git.baolin.wang@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: kbuild-all@01.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, xiaotong.lu@spreadtrum.com, baolin.wang@linaro.org, broonie@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-T24gVGh1cnNkYXksIE1heSAzLCAyMDE4IDY6MTIgQU0sIEtpcmFuIEd1bmRhIHdyb3RlOgoKSWYg
-eW91IHJlYWxseSB3YW50IHNvbWVvbmUgdG8gcmV2aWV3IHlvdXIgcGF0Y2gsIHBsZWFzZSBhZGQg
-bW9yZSBkZXRhaWxlZApleHBsYW5hdGlvbnMuCgoxLiBQbGVhc2UgYWRkIDB0aCBwYXRjaC4KMi4g
-UGxlYXNlIGFkZCB3aGF0IHRoZSBkaWZmZXJlbmNlIGlzIGJldHdlZW4gVjEgYW5kIFYyIHBhdGNo
-ZXMuCgpJZiB5b3UgY2Fubm90IHVuZGVyc3RhbmQgd2hhdCBJIGFtIHNheWluZywganVzdCBhc2sg
-YW5vdGhlciBwZXJzb24gd2hvIGhhdmUKYW4gZXhwZXJpZW5jZSB0byBzZW5kIHBhdGNoZXMgdG8g
-TGludXggbWFpbGluZy1saXN0LgoKQmVzdCByZWdhcmRzLApKaW5nb28gSGFuCgo+IAo+IHBtODk0
-MS13bGVkLmMgZHJpdmVyIGlzIHN1cHBvcnRpbmcgdGhlIFdMRUQgcGVyaXBoZXJhbAo+IG9uIHBt
-ODk0MS4gUmVuYW1lIGl0IHRvIHFjb20td2xlZC5jIHNvIHRoYXQgaXQgY2FuIHN1cHBvcnQKPiBX
-TEVEIG9uIG11bHRpcGxlIFBNSUNzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEtpcmFuIEd1bmRhIDxr
-Z3VuZGFAY29kZWF1cm9yYS5vcmc+Cj4gLS0tCj4gIC4uLi9iaW5kaW5ncy9sZWRzL2JhY2tsaWdo
-dC97cG04OTQxLXdsZWQudHh0ID0+IHFjb20td2xlZC50eHR9ICAgIHwgMiArLQo+ICBkcml2ZXJz
-L3ZpZGVvL2JhY2tsaWdodC9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICB8IDgKKysrKy0tLS0KPiAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQvTWFrZWZpbGUgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAyICstCj4gIGRyaXZlcnMvdmlkZW8vYmFja2xp
-Z2h0L3twbTg5NDEtd2xlZC5jID0+IHFjb20td2xlZC5jfSAgICAgICAgICAgIHwgMAo+ICA0IGZp
-bGVzIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKPiAgcmVuYW1lIERv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC97cG04OTQxLXds
-ZWQudHh0Cj4gPT4gcWNvbS13bGVkLnR4dH0gKDk1JSkKPiAgcmVuYW1lIGRyaXZlcnMvdmlkZW8v
-YmFja2xpZ2h0L3twbTg5NDEtd2xlZC5jID0+IHFjb20td2xlZC5jfSAoMTAwJSkKPiAKPiBkaWZm
-IC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0
-L3BtODk0MS0KPiB3bGVkLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9s
-ZWRzL2JhY2tsaWdodC9xY29tLXdsZWQudHh0Cj4gc2ltaWxhcml0eSBpbmRleCA5NSUKPiByZW5h
-bWUgZnJvbSBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQv
-cG04OTQxLQo+IHdsZWQudHh0Cj4gcmVuYW1lIHRvIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9sZWRzL2JhY2tsaWdodC9xY29tLXdsZWQudHh0Cj4gaW5kZXggZTViMjk0ZC4uZmIz
-OWUzMiAxMDA2NDQKPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVk
-cy9iYWNrbGlnaHQvcG04OTQxLXdsZWQudHh0Cj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L3Fjb20td2xlZC50eHQKPiBAQCAtMSw0ICsxLDQg
-QEAKPiAtQmluZGluZyBmb3IgUXVhbGNvbW0gUE04OTQxIFdMRUQgZHJpdmVyCj4gK0JpbmRpbmcg
-Zm9yIFF1YWxjb21tIFRlY2hub2xvZ2llcywgSW5jLiBXTEVEIGRyaXZlcgo+IAo+ICBSZXF1aXJl
-ZCBwcm9wZXJ0aWVzOgo+ICAtIGNvbXBhdGlibGU6IHNob3VsZCBiZSAicWNvbSxwbTg5NDEtd2xl
-ZCIKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvS2NvbmZpZwo+IGIvZHJp
-dmVycy92aWRlby9iYWNrbGlnaHQvS2NvbmZpZwo+IGluZGV4IDRlMWQyYWQuLjhjMDk1ZTMgMTAw
-NjQ0Cj4gLS0tIGEvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvS2NvbmZpZwo+ICsrKyBiL2RyaXZl
-cnMvdmlkZW8vYmFja2xpZ2h0L0tjb25maWcKPiBAQCAtMjk5LDEyICsyOTksMTIgQEAgY29uZmln
-IEJBQ0tMSUdIVF9UT1NBCj4gIAkgIElmIHlvdSBoYXZlIGFuIFNoYXJwIFNMLTYwMDAgWmF1cnVz
-IHNheSBZIHRvIGVuYWJsZSBhIGRyaXZlcgo+ICAJICBmb3IgaXRzIGJhY2tsaWdodAo+IAo+IC1j
-b25maWcgQkFDS0xJR0hUX1BNODk0MV9XTEVECj4gLQl0cmlzdGF0ZSAiUXVhbGNvbW0gUE04OTQx
-IFdMRUQgRHJpdmVyIgo+ICtjb25maWcgQkFDS0xJR0hUX1FDT01fV0xFRAo+ICsJdHJpc3RhdGUg
-IlF1YWxjb21tIFBNSUMgV0xFRCBEcml2ZXIiCj4gIAlzZWxlY3QgUkVHTUFQCj4gIAloZWxwCj4g
-LQkgIElmIHlvdSBoYXZlIHRoZSBRdWFsY29tbSBQTTg5NDEsIHNheSBZIHRvIGVuYWJsZSBhIGRy
-aXZlciBmb3IgdGhlCj4gLQkgIFdMRUQgYmxvY2suCj4gKwkgIElmIHlvdSBoYXZlIHRoZSBRdWFs
-Y29tbSBQTUlDLCBzYXkgWSB0byBlbmFibGUgYSBkcml2ZXIgZm9yIHRoZQo+ICsJICBXTEVEIGJs
-b2NrLiBDdXJyZW50bHkgaXQgc3VwcG9ydHMgUE04OTQxIGFuZCBQTUk4OTk4Lgo+IAo+ICBjb25m
-aWcgQkFDS0xJR0hUX1NBSEFSQQo+ICAJdHJpc3RhdGUgIlRhYmxldGtpb3NrIFNhaGFyYSBUb3Vj
-aC1pVCBCYWNrbGlnaHQgRHJpdmVyIgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVvL2JhY2ts
-aWdodC9NYWtlZmlsZQo+IGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvTWFrZWZpbGUKPiBpbmRl
-eCA1ZTI4ZjAxLi42ZmQ3NmVmIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0
-L01ha2VmaWxlCj4gKysrIGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvTWFrZWZpbGUKPiBAQCAt
-NDksOCArNDksOCBAQCBvYmotJChDT05GSUdfQkFDS0xJR0hUX09NQVAxKQkJKz0Kb21hcDFfYmwu
-bwo+ICBvYmotJChDT05GSUdfQkFDS0xJR0hUX09UMjAwKQkJKz0gb3QyMDBfYmwubwo+ICBvYmot
-JChDT05GSUdfQkFDS0xJR0hUX1BBTkRPUkEpCQkrPSBwYW5kb3JhX2JsLm8KPiAgb2JqLSQoQ09O
-RklHX0JBQ0tMSUdIVF9QQ0Y1MDYzMykJKz0gcGNmNTA2MzMtYmFja2xpZ2h0Lm8KPiAtb2JqLSQo
-Q09ORklHX0JBQ0tMSUdIVF9QTTg5NDFfV0xFRCkJKz0gcG04OTQxLXdsZWQubwo+ICBvYmotJChD
-T05GSUdfQkFDS0xJR0hUX1BXTSkJCSs9IHB3bV9ibC5vCj4gK29iai0kKENPTkZJR19CQUNLTElH
-SFRfUUNPTV9XTEVEKQkrPSBxY29tLXdsZWQubwo+ICBvYmotJChDT05GSUdfQkFDS0xJR0hUX1NB
-SEFSQSkJCSs9IGtiMzg4Nl9ibC5vCj4gIG9iai0kKENPTkZJR19CQUNLTElHSFRfU0tZODE0NTIp
-CSs9IHNreTgxNDUyLWJhY2tsaWdodC5vCj4gIG9iai0kKENPTkZJR19CQUNLTElHSFRfVE9TQSkJ
-CSs9IHRvc2FfYmwubwo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9wbTg5
-NDEtd2xlZC5jCj4gYi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9xY29tLXdsZWQuYwo+IHNpbWls
-YXJpdHkgaW5kZXggMTAwJQo+IHJlbmFtZSBmcm9tIGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3Bt
-ODk0MS13bGVkLmMKPiByZW5hbWUgdG8gZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcWNvbS13bGVk
-LmMKPiAtLQo+IFRoZSBRdWFsY29tbSBJbm5vdmF0aW9uIENlbnRlciwgSW5jLiBpcyBhIG1lbWJl
-ciBvZiB0aGUgQ29kZSBBdXJvcmEgRm9ydW0sCj4gIGEgTGludXggRm91bmRhdGlvbiBDb2xsYWJv
-cmF0aXZlIFByb2plY3QKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+Hi Xiaotong,
+
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on v4.17-rc3 next-20180504]
+[cannot apply to j.anaszewski-leds/for-next]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Baolin-Wang/dt-bindings-leds-Add-SC27xx-breathing-light-controller-documentation/20180504-200830
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+
+smatch warnings:
+drivers/leds/leds-sc27xx-bltc.c:337 sc27xx_led_probe() warn: unsigned 'reg' is never less than zero.
+
+vim +/reg +337 drivers/leds/leds-sc27xx-bltc.c
+
+   299	
+   300	static int sc27xx_led_probe(struct platform_device *pdev)
+   301	{
+   302		struct device *dev = &pdev->dev;
+   303		struct device_node *np = dev->of_node, *child;
+   304		struct sc27xx_led_priv *priv;
+   305		u32 base, count, reg;
+   306		int err;
+   307	
+   308		count = of_get_child_count(np);
+   309		if (!count || count > SC27XX_LEDS_MAX)
+   310			return -EINVAL;
+   311	
+   312		err = of_property_read_u32(np, "reg", &base);
+   313		if (err) {
+   314			dev_err(dev, "fail to get reg of property\n");
+   315			return err;
+   316		}
+   317	
+   318		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+   319		if (!priv)
+   320			return -ENOMEM;
+   321	
+   322		priv->base = base;
+   323		priv->regmap = dev_get_regmap(dev->parent, NULL);
+   324		if (IS_ERR(priv->regmap)) {
+   325			err = PTR_ERR(priv->regmap);
+   326			dev_err(dev, "failed to get regmap: %d\n", err);
+   327			return err;
+   328		}
+   329	
+   330		for_each_child_of_node(np, child) {
+   331			err = of_property_read_u32(child, "reg", &reg);
+   332			if (err) {
+   333				of_node_put(child);
+   334				return err;
+   335			}
+   336	
+ > 337			if (reg < 0 || reg >= SC27XX_LEDS_MAX
+   338			    || priv->leds[reg].active) {
+   339				of_node_put(child);
+   340				return -EINVAL;
+   341			}
+   342	
+   343			priv->leds[reg].active = true;
+   344			priv->leds[reg].ldev.name =
+   345				of_get_property(child, "label", NULL) ? : child->name;
+   346		}
+   347	
+   348		return sc27xx_led_register(dev, priv);
+   349	}
+   350	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
