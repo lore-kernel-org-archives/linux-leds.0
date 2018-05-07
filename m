@@ -1,76 +1,140 @@
-From: =?utf-8?B?WGlhb3RvbmcgTHUgKOWNouWwj+mAmik=?=
-        <xiaotong.lu@unisoc.com>
-Subject: RE: [PATCH 2/2] leds: Add Spreadtrum SC27xx breathing light
- controller driver
-Date: Sat, 5 May 2018 06:04:28 +0000
-Message-ID: <f873ec8f7bcc4f598681f2e0d8776531@SHMBX03.spreadtrum.com>
-References: <1bf5bc3e007d237477d740f47ed63f05aa71b348.1525427961.git.baolin.wang@linaro.org>
- <201805051300.jy5SNVta%fengguang.wu@intel.com>
+From: kgunda@codeaurora.org
+Subject: Re: [PATCH V2 1/5] backlight: qcom-wled: Rename pm8941-wled.c to
+ qcom-wled.c
+Date: Mon, 07 May 2018 11:26:59 +0530
+Message-ID: <a9faa8c2866f44b46c3733c8165f6bae@codeaurora.org>
+References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
+ <1525342352-25072-2-git-send-email-kgunda@codeaurora.org>
+ <000201d3e3c0$4cdf87a0$e69e96e0$@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201805051300.jy5SNVta%fengguang.wu@intel.com>
-Content-Language: zh-CN
+In-Reply-To: <000201d3e3c0$4cdf87a0$e69e96e0$@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>
-Cc: "kbuild-all@01.org" <kbuild-all@01.org>, "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "baolin.wang@linaro.org" <baolin.wang@linaro.org>, "broonie@kernel.org" <broonie@kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jingoo Han <jingoohan1@gmail.com>
+Cc: bjorn.andersson@linaro.org, 'Lee Jones' <lee.jones@linaro.org>, 'Daniel Thompson' <daniel.thompson@linaro.org>, 'Jacek Anaszewski' <jacek.anaszewski@gmail.com>, 'Pavel Machek' <pavel@ucw.cz>, 'Rob Herring' <robh+dt@kernel.org>, 'Mark Rutland' <mark.rutland@arm.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-SGkgbGtwLA0KVGhhbmtzIGZvciB5b3VyIGFkdmlzZS4gSSB3aWxsIGltcHJvdmUgaW4gbmV4dCB2
-ZXJzaW9uLg0KDQpCZXN0IFJlZ2FyZHMsDQrljaLlsI/pgJogWGlhb3RvbmcgTHUNCkNQU0QgRGVw
-dC4NClVuaWdyb3VwIFNwcmVhZHRydW0gJlJEQSBUZWNobm9sb2dpZXMgQ28uLEx0ZC4NClRlbDrC
-oCA4Ni0yMS0yMDM2MDYwMCBFeHQuIDI0OTYNCkZheDogODYtMjEtMjAzNjA3MDANCkUtbWFpbDog
-eGlhb3RvbmcubHVAdW5pc29jLmNvbQ0KSHR0cDovL3d3dy5zcHJlYWR0cnVtLmNvbSANCg0KDQot
-LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbToga2J1aWxkIHRlc3Qgcm9ib3QgW21haWx0
-bzpsa3BAaW50ZWwuY29tXSANClNlbnQ6IFNhdHVyZGF5LCBNYXkgMDUsIDIwMTggMToyNyBQTQ0K
-VG86IEJhb2xpbiBXYW5nDQpDYzoga2J1aWxkLWFsbEAwMS5vcmc7IGphY2VrLmFuYXN6ZXdza2lA
-Z21haWwuY29tOyBwYXZlbEB1Y3cuY3o7IHJvYmgrZHRAa2VybmVsLm9yZzsgbWFyay5ydXRsYW5k
-QGFybS5jb207IFhpYW90b25nIEx1ICjljaLlsI/pgJopOyBiYW9saW4ud2FuZ0BsaW5hcm8ub3Jn
-OyBicm9vbmllQGtlcm5lbC5vcmc7IGxpbnV4LWxlZHNAdmdlci5rZXJuZWwub3JnOyBkZXZpY2V0
-cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KU3ViamVj
-dDogUmU6IFtQQVRDSCAyLzJdIGxlZHM6IEFkZCBTcHJlYWR0cnVtIFNDMjd4eCBicmVhdGhpbmcg
-bGlnaHQgY29udHJvbGxlciBkcml2ZXINCg0KSGkgWGlhb3RvbmcsDQoNClRoYW5rIHlvdSBmb3Ig
-dGhlIHBhdGNoISBQZXJoYXBzIHNvbWV0aGluZyB0byBpbXByb3ZlOg0KDQpbYXV0byBidWlsZCB0
-ZXN0IFdBUk5JTkcgb24gcm9iaC9mb3ItbmV4dF0gW2Fsc28gYnVpbGQgdGVzdCBXQVJOSU5HIG9u
-IHY0LjE3LXJjMyBuZXh0LTIwMTgwNTA0XSBbY2Fubm90IGFwcGx5IHRvIGouYW5hc3pld3NraS1s
-ZWRzL2Zvci1uZXh0XSBbaWYgeW91ciBwYXRjaCBpcyBhcHBsaWVkIHRvIHRoZSB3cm9uZyBnaXQg
-dHJlZSwgcGxlYXNlIGRyb3AgdXMgYSBub3RlIHRvIGhlbHAgaW1wcm92ZSB0aGUgc3lzdGVtXQ0K
-DQp1cmw6ICAgIGh0dHBzOi8vZ2l0aHViLmNvbS8wZGF5LWNpL2xpbnV4L2NvbW1pdHMvQmFvbGlu
-LVdhbmcvZHQtYmluZGluZ3MtbGVkcy1BZGQtU0MyN3h4LWJyZWF0aGluZy1saWdodC1jb250cm9s
-bGVyLWRvY3VtZW50YXRpb24vMjAxODA1MDQtMjAwODMwDQpiYXNlOiAgIGh0dHBzOi8vZ2l0Lmtl
-cm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3JvYmgvbGludXguZ2l0IGZvci1uZXh0
-DQoNCnNtYXRjaCB3YXJuaW5nczoNCmRyaXZlcnMvbGVkcy9sZWRzLXNjMjd4eC1ibHRjLmM6MzM3
-IHNjMjd4eF9sZWRfcHJvYmUoKSB3YXJuOiB1bnNpZ25lZCAncmVnJyBpcyBuZXZlciBsZXNzIHRo
-YW4gemVyby4NCg0KdmltICsvcmVnICszMzcgZHJpdmVycy9sZWRzL2xlZHMtc2MyN3h4LWJsdGMu
-Yw0KDQogICAyOTkJDQogICAzMDAJc3RhdGljIGludCBzYzI3eHhfbGVkX3Byb2JlKHN0cnVjdCBw
-bGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQogICAzMDEJew0KICAgMzAyCQlzdHJ1Y3QgZGV2aWNlICpk
-ZXYgPSAmcGRldi0+ZGV2Ow0KICAgMzAzCQlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wID0gZGV2LT5v
-Zl9ub2RlLCAqY2hpbGQ7DQogICAzMDQJCXN0cnVjdCBzYzI3eHhfbGVkX3ByaXYgKnByaXY7DQog
-ICAzMDUJCXUzMiBiYXNlLCBjb3VudCwgcmVnOw0KICAgMzA2CQlpbnQgZXJyOw0KICAgMzA3CQ0K
-ICAgMzA4CQljb3VudCA9IG9mX2dldF9jaGlsZF9jb3VudChucCk7DQogICAzMDkJCWlmICghY291
-bnQgfHwgY291bnQgPiBTQzI3WFhfTEVEU19NQVgpDQogICAzMTAJCQlyZXR1cm4gLUVJTlZBTDsN
-CiAgIDMxMQkNCiAgIDMxMgkJZXJyID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobnAsICJyZWciLCAm
-YmFzZSk7DQogICAzMTMJCWlmIChlcnIpIHsNCiAgIDMxNAkJCWRldl9lcnIoZGV2LCAiZmFpbCB0
-byBnZXQgcmVnIG9mIHByb3BlcnR5XG4iKTsNCiAgIDMxNQkJCXJldHVybiBlcnI7DQogICAzMTYJ
-CX0NCiAgIDMxNwkNCiAgIDMxOAkJcHJpdiA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqcHJp
-diksIEdGUF9LRVJORUwpOw0KICAgMzE5CQlpZiAoIXByaXYpDQogICAzMjAJCQlyZXR1cm4gLUVO
-T01FTTsNCiAgIDMyMQkNCiAgIDMyMgkJcHJpdi0+YmFzZSA9IGJhc2U7DQogICAzMjMJCXByaXYt
-PnJlZ21hcCA9IGRldl9nZXRfcmVnbWFwKGRldi0+cGFyZW50LCBOVUxMKTsNCiAgIDMyNAkJaWYg
-KElTX0VSUihwcml2LT5yZWdtYXApKSB7DQogICAzMjUJCQllcnIgPSBQVFJfRVJSKHByaXYtPnJl
-Z21hcCk7DQogICAzMjYJCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBnZXQgcmVnbWFwOiAlZFxu
-IiwgZXJyKTsNCiAgIDMyNwkJCXJldHVybiBlcnI7DQogICAzMjgJCX0NCiAgIDMyOQkNCiAgIDMz
-MAkJZm9yX2VhY2hfY2hpbGRfb2Zfbm9kZShucCwgY2hpbGQpIHsNCiAgIDMzMQkJCWVyciA9IG9m
-X3Byb3BlcnR5X3JlYWRfdTMyKGNoaWxkLCAicmVnIiwgJnJlZyk7DQogICAzMzIJCQlpZiAoZXJy
-KSB7DQogICAzMzMJCQkJb2Zfbm9kZV9wdXQoY2hpbGQpOw0KICAgMzM0CQkJCXJldHVybiBlcnI7
-DQogICAzMzUJCQl9DQogICAzMzYJDQogPiAzMzcJCQlpZiAocmVnIDwgMCB8fCByZWcgPj0gU0My
-N1hYX0xFRFNfTUFYDQogICAzMzgJCQkgICAgfHwgcHJpdi0+bGVkc1tyZWddLmFjdGl2ZSkgew0K
-ICAgMzM5CQkJCW9mX25vZGVfcHV0KGNoaWxkKTsNCiAgIDM0MAkJCQlyZXR1cm4gLUVJTlZBTDsN
-CiAgIDM0MQkJCX0NCiAgIDM0MgkNCiAgIDM0MwkJCXByaXYtPmxlZHNbcmVnXS5hY3RpdmUgPSB0
-cnVlOw0KICAgMzQ0CQkJcHJpdi0+bGVkc1tyZWddLmxkZXYubmFtZSA9DQogICAzNDUJCQkJb2Zf
-Z2V0X3Byb3BlcnR5KGNoaWxkLCAibGFiZWwiLCBOVUxMKSA/IDogY2hpbGQtPm5hbWU7DQogICAz
-NDYJCX0NCiAgIDM0NwkNCiAgIDM0OAkJcmV0dXJuIHNjMjd4eF9sZWRfcmVnaXN0ZXIoZGV2LCBw
-cml2KTsNCiAgIDM0OQl9DQogICAzNTAJDQoNCi0tLQ0KMC1EQVkga2VybmVsIHRlc3QgaW5mcmFz
-dHJ1Y3R1cmUgICAgICAgICAgICAgICAgT3BlbiBTb3VyY2UgVGVjaG5vbG9neSBDZW50ZXINCmh0
-dHBzOi8vbGlzdHMuMDEub3JnL3BpcGVybWFpbC9rYnVpbGQtYWxsICAgICAgICAgICAgICAgICAg
-IEludGVsIENvcnBvcmF0aW9uDQo=
+Hi Jingoo Han,
+Thanks for the response.
+
+Thanks,
+Kiran
+On 2018-05-04 21:25, Jingoo Han wrote:
+> On Thursday, May 3, 2018 6:12 AM, Kiran Gunda wrote:
+> 
+> If you really want someone to review your patch, please add more 
+> detailed
+> explanations.
+> 
+> 1. Please add 0th patch.
+I have already added the 0th patch (cover letter). Following is the 
+subject for the same.
+forwarding the same to you.
+[PATCH V2 0/5] backlight: qcom-wled: Support for QCOM wled driver
+
+> 2. Please add what the difference is between V1 and V2 patches.
+> 
+Already added the difference between V1 and V2 in the cover letter (0th 
+patch).
+Please let me know if you are looking for any other info. Following is 
+the difference
+added between v1 and v2.
+>>> 
+changes from v1:
+     Fixed the commit message for
+     backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
+
+> If you cannot understand what I am saying, just ask another person who 
+> have
+> an experience to send patches to Linux mailing-list.
+> 
+> Best regards,
+> Jingoo Han
+> 
+>> 
+>> pm8941-wled.c driver is supporting the WLED peripheral
+>> on pm8941. Rename it to qcom-wled.c so that it can support
+>> WLED on multiple PMICs.
+>> 
+>> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>> ---
+>>  .../bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt}    | 2 
+>> +-
+>>  drivers/video/backlight/Kconfig                                   | 8
+> ++++----
+>>  drivers/video/backlight/Makefile                                  | 2 
+>> +-
+>>  drivers/video/backlight/{pm8941-wled.c => qcom-wled.c}            | 0
+>>  4 files changed, 6 insertions(+), 6 deletions(-)
+>>  rename 
+>> Documentation/devicetree/bindings/leds/backlight/{pm8941-wled.txt
+>> => qcom-wled.txt} (95%)
+>>  rename drivers/video/backlight/{pm8941-wled.c => qcom-wled.c} (100%)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/leds/backlight/pm8941-
+>> wled.txt 
+>> b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>> similarity index 95%
+>> rename from Documentation/devicetree/bindings/leds/backlight/pm8941-
+>> wled.txt
+>> rename to 
+>> Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>> index e5b294d..fb39e32 100644
+>> --- a/Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
+>> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>> @@ -1,4 +1,4 @@
+>> -Binding for Qualcomm PM8941 WLED driver
+>> +Binding for Qualcomm Technologies, Inc. WLED driver
+>> 
+>>  Required properties:
+>>  - compatible: should be "qcom,pm8941-wled"
+>> diff --git a/drivers/video/backlight/Kconfig
+>> b/drivers/video/backlight/Kconfig
+>> index 4e1d2ad..8c095e3 100644
+>> --- a/drivers/video/backlight/Kconfig
+>> +++ b/drivers/video/backlight/Kconfig
+>> @@ -299,12 +299,12 @@ config BACKLIGHT_TOSA
+>>  	  If you have an Sharp SL-6000 Zaurus say Y to enable a driver
+>>  	  for its backlight
+>> 
+>> -config BACKLIGHT_PM8941_WLED
+>> -	tristate "Qualcomm PM8941 WLED Driver"
+>> +config BACKLIGHT_QCOM_WLED
+>> +	tristate "Qualcomm PMIC WLED Driver"
+>>  	select REGMAP
+>>  	help
+>> -	  If you have the Qualcomm PM8941, say Y to enable a driver for the
+>> -	  WLED block.
+>> +	  If you have the Qualcomm PMIC, say Y to enable a driver for the
+>> +	  WLED block. Currently it supports PM8941 and PMI8998.
+>> 
+>>  config BACKLIGHT_SAHARA
+>>  	tristate "Tabletkiosk Sahara Touch-iT Backlight Driver"
+>> diff --git a/drivers/video/backlight/Makefile
+>> b/drivers/video/backlight/Makefile
+>> index 5e28f01..6fd76ef 100644
+>> --- a/drivers/video/backlight/Makefile
+>> +++ b/drivers/video/backlight/Makefile
+>> @@ -49,8 +49,8 @@ obj-$(CONFIG_BACKLIGHT_OMAP1)		+=
+> omap1_bl.o
+>>  obj-$(CONFIG_BACKLIGHT_OT200)		+= ot200_bl.o
+>>  obj-$(CONFIG_BACKLIGHT_PANDORA)		+= pandora_bl.o
+>>  obj-$(CONFIG_BACKLIGHT_PCF50633)	+= pcf50633-backlight.o
+>> -obj-$(CONFIG_BACKLIGHT_PM8941_WLED)	+= pm8941-wled.o
+>>  obj-$(CONFIG_BACKLIGHT_PWM)		+= pwm_bl.o
+>> +obj-$(CONFIG_BACKLIGHT_QCOM_WLED)	+= qcom-wled.o
+>>  obj-$(CONFIG_BACKLIGHT_SAHARA)		+= kb3886_bl.o
+>>  obj-$(CONFIG_BACKLIGHT_SKY81452)	+= sky81452-backlight.o
+>>  obj-$(CONFIG_BACKLIGHT_TOSA)		+= tosa_bl.o
+>> diff --git a/drivers/video/backlight/pm8941-wled.c
+>> b/drivers/video/backlight/qcom-wled.c
+>> similarity index 100%
+>> rename from drivers/video/backlight/pm8941-wled.c
+>> rename to drivers/video/backlight/qcom-wled.c
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>> Forum,
+>>  a Linux Foundation Collaborative Project
