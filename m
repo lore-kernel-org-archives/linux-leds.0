@@ -1,146 +1,94 @@
-From: kgunda@codeaurora.org
-Subject: Re: [PATCH V1 3/5] backlight: qcom-wled: Add support for short
- circuit handling
-Date: Mon, 07 May 2018 14:38:20 +0530
-Message-ID: <4bd09b09c514825785c3e9486b3d6c78@codeaurora.org>
-References: <20180507080638.enmel5keygu5ag3h@mwanda>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH V1 1/5] qcom: wled: Rename pm8941-wled.c to qcom-wled.c
+Date: Mon, 7 May 2018 08:41:35 -0700
+Message-ID: <20180507154135.GA2259@tuxbook-pro>
+References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
+ <1525341432-15818-2-git-send-email-kgunda@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180507080638.enmel5keygu5ag3h@mwanda>
+Content-Disposition: inline
+In-Reply-To: <1525341432-15818-2-git-send-email-kgunda@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kbuild@01.org, kbuild-all@01.org, bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+To: Kiran Gunda <kgunda@codeaurora.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 2018-05-07 13:36, Dan Carpenter wrote:
-> Hi Kiran,
+On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
+
+> pm8941-wled.c driver is supporting the WLED peripheral
+> on pm8941. Rename it to qcom-wled.c so that it can support
+> WLED on multiple PMICs.
 > 
-> Thank you for the patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on backlight/for-backlight-next]
-> [also build test WARNING on v4.17-rc3 next-20180504]
-> [if your patch is applied to the wrong git tree, please drop us a note
-> to help improve the system]
-> 
-> url:
-> https://github.com/0day-ci/linux/commits/Kiran-Gunda/backlight-qcom-wled-Support-for-QCOM-wled-driver/20180504-011042
-> base:
-> https://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git
-> for-backlight-next
-> 
-> smatch warnings:
-> drivers/video/backlight/qcom-wled.c:304 wled_update_status() warn:
-> inconsistent returns 'mutex:&wled->lock'.
->   Locked on:   line 287
->   Unlocked on: line 304
-> 
-Will fix it in the next series.
-> #
-> https://github.com/0day-ci/linux/commit/3856199804123df89ef9a712f0740978ec71ddf6
-> git remote add linux-review https://github.com/0day-ci/linux
-> git remote update linux-review
-> git checkout 3856199804123df89ef9a712f0740978ec71ddf6
-> vim +304 drivers/video/backlight/qcom-wled.c
-> 
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 263
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  264  static int wled_update_status(struct backlight_device *bl)
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 265  {
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  266  	struct wled *wled = bl_get_data(bl);
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  267  	u16 brightness = bl->props.brightness;
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  268  	int rc = 0;
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 269
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  270  	if (bl->props.power != FB_BLANK_UNBLANK ||
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  271  	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  272  	    bl->props.state & BL_CORE_FBBLANK)
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  273  		brightness = 0;
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 274
-> 38561998 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  275  	mutex_lock(&wled->lock);
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  276  	if (brightness) {
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  277  		rc = wled->wled_set_brightness(wled, brightness);
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  278  		if (rc < 0) {
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  279  			dev_err(wled->dev, "wled failed to set brightness rc:%d\n",
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  280  				rc);
-> 38561998 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  281  			goto unlock_mutex;
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 282  		}
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 283
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  284  		rc = wled->wled_sync_toggle(wled);
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  285  		if (rc < 0) {
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  286  			dev_err(wled->dev, "wled sync failed rc:%d\n", rc);
-> 93c64f1e drivers/leds/leds-pm8941-wled.c     Courtney Cavin 2015-03-12
->  287  			return rc;
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 288  		}
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 289  	}
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 290
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  291  	if (!!brightness != !!wled->brightness) {
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  292  		rc = wled_module_enable(wled, !!brightness);
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  293  		if (rc < 0) {
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  294  			dev_err(wled->dev, "wled enable failed rc:%d\n", rc);
-> 38561998 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  295  			goto unlock_mutex;
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 296  		}
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 297  	}
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 298
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  299  	wled->brightness = brightness;
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 300
-> 38561998 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  301  unlock_mutex:
-> 38561998 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
->  302  	mutex_unlock(&wled->lock);
-> 38561998 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 303
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03
-> @304  	return rc;
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 305  }
-> 18e7abb8 drivers/video/backlight/qcom-wled.c Kiran Gunda    2018-05-03  
-> 306
-> 
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology 
-> Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel 
-> Corporation
-> --
-> To unsubscribe from this list: send the line "unsubscribe 
-> linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  .../bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt}    | 2 +-
+>  drivers/video/backlight/Kconfig                                   | 8 ++++----
+>  drivers/video/backlight/Makefile                                  | 2 +-
+>  drivers/video/backlight/{pm8941-wled.c => qcom-wled.c}            | 0
+>  4 files changed, 6 insertions(+), 6 deletions(-)
+>  rename Documentation/devicetree/bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt} (95%)
+>  rename drivers/video/backlight/{pm8941-wled.c => qcom-wled.c} (100%)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+> similarity index 95%
+> rename from Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
+> rename to Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+> index e5b294d..fb39e32 100644
+> --- a/Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
+> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+> @@ -1,4 +1,4 @@
+> -Binding for Qualcomm PM8941 WLED driver
+> +Binding for Qualcomm Technologies, Inc. WLED driver
+>  
+>  Required properties:
+>  - compatible: should be "qcom,pm8941-wled"
+> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+> index 4e1d2ad..8c095e3 100644
+> --- a/drivers/video/backlight/Kconfig
+> +++ b/drivers/video/backlight/Kconfig
+> @@ -299,12 +299,12 @@ config BACKLIGHT_TOSA
+>  	  If you have an Sharp SL-6000 Zaurus say Y to enable a driver
+>  	  for its backlight
+>  
+> -config BACKLIGHT_PM8941_WLED
+> -	tristate "Qualcomm PM8941 WLED Driver"
+> +config BACKLIGHT_QCOM_WLED
+> +	tristate "Qualcomm PMIC WLED Driver"
+>  	select REGMAP
+>  	help
+> -	  If you have the Qualcomm PM8941, say Y to enable a driver for the
+> -	  WLED block.
+> +	  If you have the Qualcomm PMIC, say Y to enable a driver for the
+> +	  WLED block. Currently it supports PM8941 and PMI8998.
+>  
+>  config BACKLIGHT_SAHARA
+>  	tristate "Tabletkiosk Sahara Touch-iT Backlight Driver"
+> diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
+> index 5e28f01..6fd76ef 100644
+> --- a/drivers/video/backlight/Makefile
+> +++ b/drivers/video/backlight/Makefile
+> @@ -49,8 +49,8 @@ obj-$(CONFIG_BACKLIGHT_OMAP1)		+= omap1_bl.o
+>  obj-$(CONFIG_BACKLIGHT_OT200)		+= ot200_bl.o
+>  obj-$(CONFIG_BACKLIGHT_PANDORA)		+= pandora_bl.o
+>  obj-$(CONFIG_BACKLIGHT_PCF50633)	+= pcf50633-backlight.o
+> -obj-$(CONFIG_BACKLIGHT_PM8941_WLED)	+= pm8941-wled.o
+>  obj-$(CONFIG_BACKLIGHT_PWM)		+= pwm_bl.o
+> +obj-$(CONFIG_BACKLIGHT_QCOM_WLED)	+= qcom-wled.o
+>  obj-$(CONFIG_BACKLIGHT_SAHARA)		+= kb3886_bl.o
+>  obj-$(CONFIG_BACKLIGHT_SKY81452)	+= sky81452-backlight.o
+>  obj-$(CONFIG_BACKLIGHT_TOSA)		+= tosa_bl.o
+> diff --git a/drivers/video/backlight/pm8941-wled.c b/drivers/video/backlight/qcom-wled.c
+> similarity index 100%
+> rename from drivers/video/backlight/pm8941-wled.c
+> rename to drivers/video/backlight/qcom-wled.c
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
