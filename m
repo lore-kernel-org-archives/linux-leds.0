@@ -1,98 +1,57 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
+From: kgunda@codeaurora.org
 Subject: Re: [PATCH V2 1/5] backlight: qcom-wled: Rename pm8941-wled.c to
  qcom-wled.c
-Date: Tue, 8 May 2018 09:43:13 +0100
-Message-ID: <20180508084313.fzkpnr4hr7iy52oh@holly.lan>
+Date: Tue, 08 May 2018 15:23:15 +0530
+Message-ID: <19e02b14f0b828b9470eb863ab9f3a11@codeaurora.org>
 References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
  <1525342352-25072-2-git-send-email-kgunda@codeaurora.org>
+ <000201d3e3c0$4cdf87a0$e69e96e0$@gmail.com>
+ <a9faa8c2866f44b46c3733c8165f6bae@codeaurora.org>
+ <20180508083658.mc7x7izthxjrv5ey@holly.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1525342352-25072-2-git-send-email-kgunda@codeaurora.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kiran Gunda <kgunda@codeaurora.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, bjorn.andersson@linaro.org, Rob Herring <robh+dt@kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-arm-msm@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180508083658.mc7x7izthxjrv5ey@holly.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>, bjorn.andersson@linaro.org, 'Lee Jones' <lee.jones@linaro.org>, 'Jacek Anaszewski' <jacek.anaszewski@gmail.com>, 'Pavel Machek' <pavel@ucw.cz>, 'Rob Herring' <robh+dt@kernel.org>, 'Mark Rutland' <mark.rutland@arm.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-T24gVGh1LCBNYXkgMDMsIDIwMTggYXQgMDM6NDI6MjhQTSArMDUzMCwgS2lyYW4gR3VuZGEgd3Jv
-dGU6Cj4gcG04OTQxLXdsZWQuYyBkcml2ZXIgaXMgc3VwcG9ydGluZyB0aGUgV0xFRCBwZXJpcGhl
-cmFsCj4gb24gcG04OTQxLiBSZW5hbWUgaXQgdG8gcWNvbS13bGVkLmMgc28gdGhhdCBpdCBjYW4g
-c3VwcG9ydAo+IFdMRUQgb24gbXVsdGlwbGUgUE1JQ3MuCj4gCj4gU2lnbmVkLW9mZi1ieTogS2ly
-YW4gR3VuZGEgPGtndW5kYUBjb2RlYXVyb3JhLm9yZz4KPiAtLS0KPiAgLi4uL2JpbmRpbmdzL2xl
-ZHMvYmFja2xpZ2h0L3twbTg5NDEtd2xlZC50eHQgPT4gcWNvbS13bGVkLnR4dH0gICAgfCAyICst
-Cj4gIGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L0tjb25maWcgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIHwgOCArKysrLS0tLQo+ICBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9NYWtl
-ZmlsZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDIgKy0KPiAgZHJpdmVycy92
-aWRlby9iYWNrbGlnaHQve3BtODk0MS13bGVkLmMgPT4gcWNvbS13bGVkLmN9ICAgICAgICAgICAg
-fCAwCgpGb3IgbWUgdGhpcyBob3ZlcnMgZXh0cmVtZWx5IGNsb3NlIHRvIGJlaW5nIGEgZ3JhdHVp
-dG91cyByZW5hbWluZwplc3BlY2lhbGx5IHdpdGggbm8gZWZmb3J0IHRvIGJyaWRnZSB0aGUgZ2Fw
-IGJldHdlZW4gb2xkIGFuZCBuZXcgbmFtZXMuCgpPbiB0aGUgb3RoZXIgaGFuZCwgbm8gY3VycmVu
-dCBkZWZjb25maWcgZW5hYmxlcyBCQUNLTElHSFRfUE04OTQxX1dMRUQsCml0IGlzIGNvbmZpZ3Vy
-ZWQgYnkgRFQgKHNvIG1vZHVsZXMuY29uZiB0cmlja3MgYXJlIHVubGlrZWx5KSBhbmQgYW55IGRp
-c3Ryb3MKdGhhdCBhbHJlYWR5IGhhdmUgaXQgZW5hYmxlcyBhcmUgbGlrZWx5IHRvIGJlIGFnZ3Jl
-c3NpdmUgaW4gZW5hYmxpbmcKZHJpdmVycyAoc28gd2lsbCBwcm9iYWJseSB0dXJuIG9uIEJBQ0tM
-SUdIVF9RQ09NX1dMRUQgYXMgc29vbiBhcyBpdAphcHBlYXJzKS4KCk9uIHRoYXQgYmFzaXMgSSBj
-YW4gbGl2ZSB3aXRoIHRoaXMuLi4gYnV0IHdpbGwgYWxzbyBsaXN0ZW4gZm9yIGFueQpjb21wbGFp
-bnRzIQoKCkRhbmllbC4KCj4gIDQgZmlsZXMgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCA2IGRl
-bGV0aW9ucygtKQo+ICByZW5hbWUgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2xl
-ZHMvYmFja2xpZ2h0L3twbTg5NDEtd2xlZC50eHQgPT4gcWNvbS13bGVkLnR4dH0gKDk1JSkKPiAg
-cmVuYW1lIGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3twbTg5NDEtd2xlZC5jID0+IHFjb20td2xl
-ZC5jfSAoMTAwJSkKPiAKPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL2xlZHMvYmFja2xpZ2h0L3BtODk0MS13bGVkLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9xY29tLXdsZWQudHh0Cj4gc2ltaWxhcml0
-eSBpbmRleCA5NSUKPiByZW5hbWUgZnJvbSBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvbGVkcy9iYWNrbGlnaHQvcG04OTQxLXdsZWQudHh0Cj4gcmVuYW1lIHRvIERvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9xY29tLXdsZWQudHh0Cj4gaW5k
-ZXggZTViMjk0ZC4uZmIzOWUzMiAxMDA2NDQKPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvcG04OTQxLXdsZWQudHh0Cj4gKysrIGIvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L3Fjb20td2xlZC50eHQK
-PiBAQCAtMSw0ICsxLDQgQEAKPiAtQmluZGluZyBmb3IgUXVhbGNvbW0gUE04OTQxIFdMRUQgZHJp
-dmVyCj4gK0JpbmRpbmcgZm9yIFF1YWxjb21tIFRlY2hub2xvZ2llcywgSW5jLiBXTEVEIGRyaXZl
-cgo+ICAKPiAgUmVxdWlyZWQgcHJvcGVydGllczoKPiAgLSBjb21wYXRpYmxlOiBzaG91bGQgYmUg
-InFjb20scG04OTQxLXdsZWQiCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0
-L0tjb25maWcgYi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9LY29uZmlnCj4gaW5kZXggNGUxZDJh
-ZC4uOGMwOTVlMyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9LY29uZmln
-Cj4gKysrIGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvS2NvbmZpZwo+IEBAIC0yOTksMTIgKzI5
-OSwxMiBAQCBjb25maWcgQkFDS0xJR0hUX1RPU0EKPiAgCSAgSWYgeW91IGhhdmUgYW4gU2hhcnAg
-U0wtNjAwMCBaYXVydXMgc2F5IFkgdG8gZW5hYmxlIGEgZHJpdmVyCj4gIAkgIGZvciBpdHMgYmFj
-a2xpZ2h0Cj4gIAo+IC1jb25maWcgQkFDS0xJR0hUX1BNODk0MV9XTEVECj4gLQl0cmlzdGF0ZSAi
-UXVhbGNvbW0gUE04OTQxIFdMRUQgRHJpdmVyIgo+ICtjb25maWcgQkFDS0xJR0hUX1FDT01fV0xF
-RAo+ICsJdHJpc3RhdGUgIlF1YWxjb21tIFBNSUMgV0xFRCBEcml2ZXIiCj4gIAlzZWxlY3QgUkVH
-TUFQCj4gIAloZWxwCj4gLQkgIElmIHlvdSBoYXZlIHRoZSBRdWFsY29tbSBQTTg5NDEsIHNheSBZ
-IHRvIGVuYWJsZSBhIGRyaXZlciBmb3IgdGhlCj4gLQkgIFdMRUQgYmxvY2suCj4gKwkgIElmIHlv
-dSBoYXZlIHRoZSBRdWFsY29tbSBQTUlDLCBzYXkgWSB0byBlbmFibGUgYSBkcml2ZXIgZm9yIHRo
-ZQo+ICsJICBXTEVEIGJsb2NrLiBDdXJyZW50bHkgaXQgc3VwcG9ydHMgUE04OTQxIGFuZCBQTUk4
-OTk4Lgo+ICAKPiAgY29uZmlnIEJBQ0tMSUdIVF9TQUhBUkEKPiAgCXRyaXN0YXRlICJUYWJsZXRr
-aW9zayBTYWhhcmEgVG91Y2gtaVQgQmFja2xpZ2h0IERyaXZlciIKPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy92aWRlby9iYWNrbGlnaHQvTWFrZWZpbGUgYi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9N
-YWtlZmlsZQo+IGluZGV4IDVlMjhmMDEuLjZmZDc2ZWYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy92
-aWRlby9iYWNrbGlnaHQvTWFrZWZpbGUKPiArKysgYi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9N
-YWtlZmlsZQo+IEBAIC00OSw4ICs0OSw4IEBAIG9iai0kKENPTkZJR19CQUNLTElHSFRfT01BUDEp
-CQkrPSBvbWFwMV9ibC5vCj4gIG9iai0kKENPTkZJR19CQUNLTElHSFRfT1QyMDApCQkrPSBvdDIw
-MF9ibC5vCj4gIG9iai0kKENPTkZJR19CQUNLTElHSFRfUEFORE9SQSkJCSs9IHBhbmRvcmFfYmwu
-bwo+ICBvYmotJChDT05GSUdfQkFDS0xJR0hUX1BDRjUwNjMzKQkrPSBwY2Y1MDYzMy1iYWNrbGln
-aHQubwo+IC1vYmotJChDT05GSUdfQkFDS0xJR0hUX1BNODk0MV9XTEVEKQkrPSBwbTg5NDEtd2xl
-ZC5vCj4gIG9iai0kKENPTkZJR19CQUNLTElHSFRfUFdNKQkJKz0gcHdtX2JsLm8KPiArb2JqLSQo
-Q09ORklHX0JBQ0tMSUdIVF9RQ09NX1dMRUQpCSs9IHFjb20td2xlZC5vCj4gIG9iai0kKENPTkZJ
-R19CQUNLTElHSFRfU0FIQVJBKQkJKz0ga2IzODg2X2JsLm8KPiAgb2JqLSQoQ09ORklHX0JBQ0tM
-SUdIVF9TS1k4MTQ1MikJKz0gc2t5ODE0NTItYmFja2xpZ2h0Lm8KPiAgb2JqLSQoQ09ORklHX0JB
-Q0tMSUdIVF9UT1NBKQkJKz0gdG9zYV9ibC5vCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlkZW8v
-YmFja2xpZ2h0L3BtODk0MS13bGVkLmMgYi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9xY29tLXds
-ZWQuYwo+IHNpbWlsYXJpdHkgaW5kZXggMTAwJQo+IHJlbmFtZSBmcm9tIGRyaXZlcnMvdmlkZW8v
-YmFja2xpZ2h0L3BtODk0MS13bGVkLmMKPiByZW5hbWUgdG8gZHJpdmVycy92aWRlby9iYWNrbGln
-aHQvcWNvbS13bGVkLmMKPiAtLSAKPiBUaGUgUXVhbGNvbW0gSW5ub3ZhdGlvbiBDZW50ZXIsIElu
-Yy4gaXMgYSBtZW1iZXIgb2YgdGhlIENvZGUgQXVyb3JhIEZvcnVtLAo+ICBhIExpbnV4IEZvdW5k
-YXRpb24gQ29sbGFib3JhdGl2ZSBQcm9qZWN0Cj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 2018-05-08 14:06, Daniel Thompson wrote:
+> On Mon, May 07, 2018 at 11:26:59AM +0530, kgunda@codeaurora.org wrote:
+>> Hi Jingoo Han,
+>> Thanks for the response.
+>> 
+>> Thanks,
+>> Kiran
+>> On 2018-05-04 21:25, Jingoo Han wrote:
+>> > On Thursday, May 3, 2018 6:12 AM, Kiran Gunda wrote:
+>> >
+>> > If you really want someone to review your patch, please add more
+>> > detailed
+>> > explanations.
+>> >
+>> > 1. Please add 0th patch.
+>> I have already added the 0th patch (cover letter). Following is the 
+>> subject
+>> for the same.
+>> forwarding the same to you.
+>> [PATCH V2 0/5] backlight: qcom-wled: Support for QCOM wled driver
+> 
+> Perhaps you should interpret Jingoo's comment as a request to improve
+> the To: and Cc: list on the 0th patch the next time you circulate it.
+> 
+> Many maintainers configure their mailers to give patches where they are
+> in the To: or Cc: list special treatment so it confusing when a series
+> arrives with a spartan set of recipients for the 0th patch (and doubly
+> confusing when every patch in the set targets the same driver).
+> 
+> 
+> Daniel.
+Ok. Got it. Not sure how the To: Cc: list on the 0th patch got shrink, 
+while I was
+using the To: Cc: list same for all the patches. Anyways, will double 
+check of it while
+circulating the next series.
