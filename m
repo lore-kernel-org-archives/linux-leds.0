@@ -1,57 +1,44 @@
 From: kgunda@codeaurora.org
-Subject: Re: [PATCH V2 1/5] backlight: qcom-wled: Rename pm8941-wled.c to
- qcom-wled.c
-Date: Tue, 08 May 2018 15:23:15 +0530
-Message-ID: <19e02b14f0b828b9470eb863ab9f3a11@codeaurora.org>
+Subject: Re: [PATCH V2 2/5] backlight: qcom-wled: Add support for WLED4
+ peripheral
+Date: Tue, 08 May 2018 15:34:19 +0530
+Message-ID: <398b0fafebdcad8072d592c2ab812286@codeaurora.org>
 References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
- <1525342352-25072-2-git-send-email-kgunda@codeaurora.org>
- <000201d3e3c0$4cdf87a0$e69e96e0$@gmail.com>
- <a9faa8c2866f44b46c3733c8165f6bae@codeaurora.org>
- <20180508083658.mc7x7izthxjrv5ey@holly.lan>
+ <1525342352-25072-3-git-send-email-kgunda@codeaurora.org>
+ <20180507164534.GB21042@rob-hp-laptop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180508083658.mc7x7izthxjrv5ey@holly.lan>
+In-Reply-To: <20180507164534.GB21042@rob-hp-laptop>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>, bjorn.andersson@linaro.org, 'Lee Jones' <lee.jones@linaro.org>, 'Jacek Anaszewski' <jacek.anaszewski@gmail.com>, 'Pavel Machek' <pavel@ucw.cz>, 'Rob Herring' <robh+dt@kernel.org>, 'Mark Rutland' <mark.rutland@arm.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 2018-05-08 14:06, Daniel Thompson wrote:
-> On Mon, May 07, 2018 at 11:26:59AM +0530, kgunda@codeaurora.org wrote:
->> Hi Jingoo Han,
->> Thanks for the response.
+On 2018-05-07 22:15, Rob Herring wrote:
+> On Thu, May 03, 2018 at 03:42:29PM +0530, Kiran Gunda wrote:
+>> WLED4 peripheral is present on some PMICs like pmi8998
+>> and pm660l. It has a different register map and also
+>> configurations are different. Add support for it.
 >> 
->> Thanks,
->> Kiran
->> On 2018-05-04 21:25, Jingoo Han wrote:
->> > On Thursday, May 3, 2018 6:12 AM, Kiran Gunda wrote:
->> >
->> > If you really want someone to review your patch, please add more
->> > detailed
->> > explanations.
->> >
->> > 1. Please add 0th patch.
->> I have already added the 0th patch (cover letter). Following is the 
->> subject
->> for the same.
->> forwarding the same to you.
->> [PATCH V2 0/5] backlight: qcom-wled: Support for QCOM wled driver
+>> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>> ---
+>>  .../bindings/leds/backlight/qcom-wled.txt          | 172 ++++-
 > 
-> Perhaps you should interpret Jingoo's comment as a request to improve
-> the To: and Cc: list on the 0th patch the next time you circulate it.
+> Please split bindings to a separate patch.
 > 
-> Many maintainers configure their mailers to give patches where they are
-> in the To: or Cc: list special treatment so it confusing when a series
-> arrives with a spartan set of recipients for the 0th patch (and doubly
-> confusing when every patch in the set targets the same driver).
+> This is also a whole lot of churn re-formatting. That is fine, but 
+> don't
+> mix actual changes to the binding with re-formatting. You can do 2
+> patches in this case:
 > 
+> - move and reformat (as long as the move shows up as a move
+> and not a remove and add)
+> - additions for new chips
 > 
-> Daniel.
-Ok. Got it. Not sure how the To: Cc: list on the 0th patch got shrink, 
-while I was
-using the To: Cc: list same for all the patches. Anyways, will double 
-check of it while
-circulating the next series.
+Sure. I will do it in the next series.
+>>  drivers/video/backlight/qcom-wled.c                | 749 
+>> +++++++++++++++------
+>>  2 files changed, 696 insertions(+), 225 deletions(-)
