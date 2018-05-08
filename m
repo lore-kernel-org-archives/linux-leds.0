@@ -1,230 +1,83 @@
-From: kgunda@codeaurora.org
-Subject: Re: [PATCH V1 4/5] backlight: qcom-wled: Add support for OVP
- interrupt handling
-Date: Tue, 08 May 2018 17:56:04 +0530
-Message-ID: <3736480b2712e2dd401fed0a635a25d7@codeaurora.org>
-References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
- <1525341432-15818-5-git-send-email-kgunda@codeaurora.org>
- <20180507172152.GD2259@tuxbook-pro>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v2 1/2] dt: bindings: lm3601x: Introduce the lm3601x driver
+Date: Tue, 8 May 2018 09:17:03 -0500
+Message-ID: <20180508141704.24271-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180507172152.GD2259@tuxbook-pro>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-On 2018-05-07 22:51, Bjorn Andersson wrote:
-> On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
-> 
->> WLED peripheral has over voltage protection(OVP) circuitry and the OVP
->> fault is notified through an interrupt. Though this fault condition 
->> rising
->> is due to an incorrect hardware configuration is mitigated in the 
->> hardware,
->> it still needs to be detected and handled. Add support for it.
->> 
->> When WLED module is enabled, keep OVP fault interrupt disabled for 10 
->> ms to
->> account for soft start delay.
->> 
->> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
->> ---
->>  drivers/video/backlight/qcom-wled.c | 118 
->> +++++++++++++++++++++++++++++++++++-
->>  1 file changed, 116 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/video/backlight/qcom-wled.c 
->> b/drivers/video/backlight/qcom-wled.c
->> index 2cfba77..80ae084 100644
->> --- a/drivers/video/backlight/qcom-wled.c
->> +++ b/drivers/video/backlight/qcom-wled.c
->> @@ -23,14 +23,20 @@
->> 
->>  /* From DT binding */
->>  #define WLED_DEFAULT_BRIGHTNESS				2048
->> -
->> +#define WLED_SOFT_START_DLY_US				10000
->>  #define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
->> 
->>  /* WLED3 Control registers */
->>  #define WLED3_CTRL_REG_FAULT_STATUS			0x08
->> +#define  WLED3_CTRL_REG_ILIM_FAULT_BIT			BIT(0)
->> +#define  WLED3_CTRL_REG_OVP_FAULT_BIT			BIT(1)
->> +#define  WLED4_CTRL_REG_SC_FAULT_BIT			BIT(2)
->> +
->> +#define WLED3_CTRL_REG_INT_RT_STS			0x10
->> 
->>  #define WLED3_CTRL_REG_MOD_EN				0x46
->>  #define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
->> +#define  WLED3_CTRL_REG_MOD_EN_BIT			BIT(7)
-> 
-> "BIT(7)" is not a "bit" it's a "mask", so perhaps you could use the
-> define with that name...which has the same value?
-> 
-Sure. I will change it in next series.
->> 
->>  #define WLED3_CTRL_REG_FREQ				0x4c
->>  #define  WLED3_CTRL_REG_FREQ_MASK			GENMASK(3, 0)
->> @@ -161,9 +167,12 @@ struct wled {
->>  	u32 short_count;
->>  	const int *version;
->>  	int short_irq;
->> +	int ovp_irq;
->>  	bool force_mod_disable;
->> +	bool ovp_irq_disabled;
->> 
->>  	struct wled_config cfg;
->> +	struct delayed_work ovp_work;
->>  	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
->>  	int (*wled_sync_toggle)(struct wled *wled);
->>  };
->> @@ -209,6 +218,32 @@ static int wled4_set_brightness(struct wled 
->> *wled, u16 brightness)
->>  	return 0;
->>  }
->> 
->> +static void wled_ovp_work(struct work_struct *work)
->> +{
->> +	u32 val;
->> +	int rc;
->> +
->> +	struct wled *wled = container_of(work,
->> +					 struct wled, ovp_work.work);
->> +
->> +	rc = regmap_read(wled->regmap, wled->ctrl_addr + 
->> WLED3_CTRL_REG_MOD_EN,
->> +			 &val);
->> +	if (rc < 0)
->> +		return;
->> +
->> +	if (val & WLED3_CTRL_REG_MOD_EN_BIT) {
->> +		if (wled->ovp_irq > 0 && wled->ovp_irq_disabled) {
->> +			enable_irq(wled->ovp_irq);
->> +			wled->ovp_irq_disabled = false;
->> +		}
->> +	} else {
->> +		if (wled->ovp_irq > 0 && !wled->ovp_irq_disabled) {
->> +			disable_irq(wled->ovp_irq);
->> +			wled->ovp_irq_disabled = true;
->> +		}
->> +	}
->> +}
->> +
->>  static int wled_module_enable(struct wled *wled, int val)
->>  {
->>  	int rc;
->> @@ -220,7 +255,12 @@ static int wled_module_enable(struct wled *wled, 
->> int val)
->>  				WLED3_CTRL_REG_MOD_EN,
->>  				WLED3_CTRL_REG_MOD_EN_MASK,
->>  				WLED3_CTRL_REG_MOD_EN_MASK);
->> -	return rc;
->> +	if (rc < 0)
->> +		return rc;
->> +
->> +	schedule_delayed_work(&wled->ovp_work, WLED_SOFT_START_DLY_US);
-> 
-> Do you really want to delay the work on disable?
-> 
-> Wouldn't it be better to use a delay worker for the enablement and in
-> the disable case you cancel the work and just disable_irq() directly
-> here.
-> 
-Sure. Will do it in the next series.
-> But more importantly, if this is only related to auto detection, do you
-> really want to enable/disable the ovp_irq after you have detected the
-> string configuration?
-> 
-Ok. This is used for the genuine OVP detection and for the auto 
-detection as well.
->> +
->> +	return 0;
->>  }
->> 
->>  static int wled3_sync_toggle(struct wled *wled)
->> @@ -346,6 +386,36 @@ static irqreturn_t wled_short_irq_handler(int 
->> irq, void *_wled)
->>  	return IRQ_HANDLED;
->>  }
->> 
->> +static irqreturn_t wled_ovp_irq_handler(int irq, void *_wled)
->> +{
->> +	struct wled *wled = _wled;
->> +	int rc;
->> +	u32 int_sts, fault_sts;
->> +
->> +	rc = regmap_read(wled->regmap,
->> +			 wled->ctrl_addr + WLED3_CTRL_REG_INT_RT_STS, &int_sts);
->> +	if (rc < 0) {
->> +		dev_err(wled->dev, "Error in reading WLED3_INT_RT_STS rc=%d\n",
->> +			rc);
->> +		return IRQ_HANDLED;
->> +	}
->> +
->> +	rc = regmap_read(wled->regmap, wled->ctrl_addr +
->> +			 WLED3_CTRL_REG_FAULT_STATUS, &fault_sts);
->> +	if (rc < 0) {
->> +		dev_err(wled->dev, "Error in reading WLED_FAULT_STATUS rc=%d\n",
->> +			rc);
->> +		return IRQ_HANDLED;
->> +	}
->> +
->> +	if (fault_sts &
->> +		(WLED3_CTRL_REG_OVP_FAULT_BIT | WLED3_CTRL_REG_ILIM_FAULT_BIT))
->> +		dev_dbg(wled->dev, "WLED OVP fault detected, int_sts=%x fault_sts= 
->> %x\n",
->> +			int_sts, fault_sts);
->> +
-> 
-> It's hard to give a good review on this, as the actual logic comes in
-> the next patch. And as these two patches both implement auto detection
-> (without a clear separation) I think you should squash them.
-> Ok. I will squash them in the next series.
->> +	return IRQ_HANDLED;
->> +}
->> +
->>  static int wled3_setup(struct wled *wled)
->>  {
->>  	u16 addr;
->> @@ -821,6 +891,44 @@ static int wled_configure_short_irq(struct wled 
->> *wled,
->>  	return rc;
->>  }
->> 
->> +static int wled_configure_ovp_irq(struct wled *wled,
->> +				  struct platform_device *pdev)
->> +{
->> +	int rc = 0;
->> +	u32 val;
->> +
->> +	if (*wled->version == WLED_PM8941)
->> +		return 0;
->> +
->> +	wled->ovp_irq = platform_get_irq_byname(pdev, "ovp");
->> +	if (wled->ovp_irq < 0) {
->> +		dev_dbg(&pdev->dev, "ovp irq is not used\n");
->> +		return 0;
->> +	}
->> +
->> +	rc = devm_request_threaded_irq(wled->dev, wled->ovp_irq, NULL,
->> +				       wled_ovp_irq_handler, IRQF_ONESHOT,
->> +				       "wled_ovp_irq", wled);
->> +	if (rc < 0) {
->> +		dev_err(wled->dev, "Unable to request ovp_irq (err:%d)\n",
->> +			rc);
-> 
-> wled->ovp_irq might be > 0 here which means wled_ovp_work() will find 
-> it
-> valid and call enabled_irq()/disable_irq() on it.
-> 
-Ok. I will make it '0' if the "request_threaded_irq" fails.
->> +		return 0;
->> +	}
->> +
-> 
-> Regards,
-> Bjorn
+Introduce the device tree bindings for the lm3601x
+family of LED torch, flash and IR drivers.
+
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+
+v2 - No changes - https://patchwork.kernel.org/patch/10384587/
+
+ .../devicetree/bindings/leds/leds-lm3601x.txt | 51 +++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+new file mode 100644
+index 000000000000..38cdabf6ca7e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+@@ -0,0 +1,51 @@
++* Texas Instruments - lm3601x Single-LED Flash Driver
++
++The LM3601X are ultra-small LED flash drivers that
++provides a high level of adjustability.
++
++Required properties:
++	- compatible : Can be one of the following
++		"ti,lm3601x"
++		"ti,lm36010"
++		"ti,lm36011"
++	- reg : I2C slave address
++	- #address-cells : 1
++	- #size-cells : 0
++
++Required child properties:
++	- reg : 0 - Indicates to support and register a torch interface
++		1 - Indicates to support and register a strobe interface
++		2 - Indicates to support and register an ir interface
++
++Optional child properties:
++	- label : see Documentation/devicetree/bindings/leds/common.txt
++
++Example:
++led-controller@64 {
++	compatible = "ti,lm3601x";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x64>;
++
++	led@0 {
++		reg = <0>;
++		label = "white:torch";
++		led-max-microamp=<10000>;
++	};
++
++	led@1 {
++		reg = <1>;
++		label = "white:strobe";
++		flash-max-microamp=<10000>;
++		flash-max-timeout-us=<800>;
++	};
++
++	led@2 {
++		reg = <2>;
++		label = "invisible:ir";
++	};
++}
++
++For more product information please see the links below:
++http://www.ti.com/product/LM36010
++http://www.ti.com/product/LM36011
+-- 
+2.17.0.252.gfe0a9eaf3
