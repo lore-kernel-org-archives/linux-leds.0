@@ -1,98 +1,33 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH v2 1/2] dt: bindings: lm3601x: Introduce the lm3601x
- driver
-Date: Tue, 8 May 2018 10:32:59 -0500
-Message-ID: <554b283f-7c27-e2de-3052-e5119dba9396@ti.com>
-References: <20180508141704.24271-1-dmurphy@ti.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: Add SC27xx breathing light
+ controller documentation
+Date: Tue, 8 May 2018 10:43:53 -0500
+Message-ID: <20180508154353.GA28859@rob-hp-laptop>
+References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180508141704.24271-1-dmurphy@ti.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, mark.rutland@arm.com, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, xiaotong.lu@spreadtrum.com, broonie@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 05/08/2018 09:17 AM, Dan Murphy wrote:
-> Introduce the device tree bindings for the lm3601x
-> family of LED torch, flash and IR drivers.
+On Tue, May 08, 2018 at 01:39:44PM +0800, Baolin Wang wrote:
+> This patch adds the binding documentation for Spreadtrum SC27xx series
+> breathing light controller, which supports 3 outputs: red LED, green
+> LED and blue LED.
 > 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 > ---
-> 
-> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
-> 
->  .../devicetree/bindings/leds/leds-lm3601x.txt | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-> new file mode 100644
-> index 000000000000..38cdabf6ca7e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-> @@ -0,0 +1,51 @@
-> +* Texas Instruments - lm3601x Single-LED Flash Driver
-> +
-> +The LM3601X are ultra-small LED flash drivers that
-> +provides a high level of adjustability.
-> +
-> +Required properties:
-> +	- compatible : Can be one of the following
-> +		"ti,lm3601x"
+> Changes since v1:
+>  - Change the compatible string to be one explicit SoC name.
+>  - Change the child node name.
+>  - Change to be upper case for the first character.
+> ---
+>  .../devicetree/bindings/leds/leds-sc27xx-bltc.txt  |   41 ++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
 
-
-No wildcard compatibles, drop this.
-
-
-> +		"ti,lm36010"
-> +		"ti,lm36011"
-> +	- reg : I2C slave address
-> +	- #address-cells : 1
-> +	- #size-cells : 0
-> +
-> +Required child properties:
-> +	- reg : 0 - Indicates to support and register a torch interface
-> +		1 - Indicates to support and register a strobe interface
-> +		2 - Indicates to support and register an ir interface
-> +
-> +Optional child properties:
-> +	- label : see Documentation/devicetree/bindings/leds/common.txt
-> +
-
-
-Relative path might work better here.
-
-
-> +Example:
-> +led-controller@64 {
-> +	compatible = "ti,lm3601x";
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	reg = <0x64>;
-> +
-> +	led@0 {
-> +		reg = <0>;
-> +		label = "white:torch";
-> +		led-max-microamp=<10000>;
-> +	};
-> +
-> +	led@1 {
-> +		reg = <1>;
-> +		label = "white:strobe";
-> +		flash-max-microamp=<10000>;
-> +		flash-max-timeout-us=<800>;
-> +	};
-> +
-> +	led@2 {
-> +		reg = <2>;
-> +		label = "invisible:ir";
-> +	};
-> +}
-> +
-> +For more product information please see the links below:
-> +http://www.ti.com/product/LM36010
-> +http://www.ti.com/product/LM36011
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
