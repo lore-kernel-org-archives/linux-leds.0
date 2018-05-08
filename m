@@ -1,355 +1,164 @@
-From: kgunda@codeaurora.org
-Subject: Re: [PATCH V1 3/5] backlight: qcom-wled: Add support for short
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH V2 3/5] backlight: qcom-wled: Add support for short
  circuit handling
-Date: Tue, 08 May 2018 16:05:37 +0530
-Message-ID: <ddce683359d03dc7cf0ef3f032f3820b@codeaurora.org>
-References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
- <1525341432-15818-4-git-send-email-kgunda@codeaurora.org>
- <20180507170652.GC2259@tuxbook-pro>
+Date: Tue, 8 May 2018 11:35:47 +0100
+Message-ID: <20180508103547.kv4bbrwxui6yihvs@holly.lan>
+References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
+ <1525342352-25072-4-git-send-email-kgunda@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180507170652.GC2259@tuxbook-pro>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1525342352-25072-4-git-send-email-kgunda@codeaurora.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Kiran Gunda <kgunda@codeaurora.org>
+Cc: linux-fbdev@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 2018-05-07 22:36, Bjorn Andersson wrote:
-> On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
-> 
->> Handle the short circuit interrupt and check if the short circuit
->> interrupt is valid. Re-enable the module to check if it goes
->> away. Disable the module altogether if the short circuit event
->> persists.
->> 
->> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
->> ---
->>  drivers/video/backlight/qcom-wled.c | 134 
->> ++++++++++++++++++++++++++++++++++--
->>  1 file changed, 130 insertions(+), 4 deletions(-)
->> 
->> diff --git a/drivers/video/backlight/qcom-wled.c 
->> b/drivers/video/backlight/qcom-wled.c
->> index be8b8d3..2cfba77 100644
->> --- a/drivers/video/backlight/qcom-wled.c
->> +++ b/drivers/video/backlight/qcom-wled.c
->> @@ -10,6 +10,9 @@
->>   * GNU General Public License for more details.
->>   */
->> 
->> +#include <linux/delay.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/ktime.h>
->>  #include <linux/kernel.h>
->>  #include <linux/backlight.h>
->>  #include <linux/module.h>
->> @@ -23,7 +26,9 @@
->> 
->>  #define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
->> 
->> -/* Control registers */
->> +/* WLED3 Control registers */
-> 
-> Minor nit, please move the change of this comment to the previous 
-> patch.
-> 
-Ok. Will do it the next series.
->> +#define WLED3_CTRL_REG_FAULT_STATUS			0x08
-> 
-> Unused.
-> 
-Will remove it in the next series.
->> +
->>  #define WLED3_CTRL_REG_MOD_EN				0x46
->>  #define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
->> 
->> @@ -36,7 +41,17 @@
->>  #define WLED3_CTRL_REG_ILIMIT				0x4e
->>  #define  WLED3_CTRL_REG_ILIMIT_MASK			GENMASK(2, 0)
->> 
->> -/* sink registers */
-> 
-> Please move comment change to previous commit.
-> 
-Will remove it in the next series.
->> +/* WLED4 control registers */
->> +#define WLED4_CTRL_REG_SHORT_PROTECT			0x5e
->> +#define  WLED4_CTRL_REG_SHORT_EN_MASK			BIT(7)
->> +
->> +#define WLED4_CTRL_REG_SEC_ACCESS			0xd0
->> +#define  WLED4_CTRL_REG_SEC_UNLOCK			0xa5
->> +
->> +#define WLED4_CTRL_REG_TEST1				0xe2
->> +#define  WLED4_CTRL_REG_TEST1_EXT_FET_DTEST2		0x09
->> +
->> +/* WLED3 sink registers */
->>  #define WLED3_SINK_REG_SYNC				0x47
->>  #define  WLED3_SINK_REG_SYNC_MASK			GENMASK(2, 0)
->>  #define  WLED4_SINK_REG_SYNC_MASK			GENMASK(3, 0)
->> @@ -130,17 +145,23 @@ struct wled_config {
->>  	bool cs_out_en;
->>  	bool ext_gen;
->>  	bool cabc;
->> +	bool external_pfet;
->>  };
->> 
->>  struct wled {
->>  	const char *name;
->>  	struct device *dev;
->>  	struct regmap *regmap;
->> +	struct mutex lock;	/* Lock to avoid race from ISR */
->> +	ktime_t last_short_event;
->>  	u16 ctrl_addr;
->>  	u16 sink_addr;
->>  	u32 brightness;
->>  	u32 max_brightness;
->> +	u32 short_count;
->>  	const int *version;
->> +	int short_irq;
->> +	bool force_mod_disable;
-> 
-> "bool disabled_by_short" would describe what's going on better.
-> 
-Will rename it in the next series.
->> 
->>  	struct wled_config cfg;
->>  	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
->> @@ -192,6 +213,9 @@ static int wled_module_enable(struct wled *wled, 
->> int val)
->>  {
->>  	int rc;
->> 
->> +	if (wled->force_mod_disable)
->> +		return 0;
->> +
-> 
-> I don't fancy the idea of not telling user space that it's request to
-> turn on the backlight is ignored. Can we return some error here so that
-> it's possible for something to do something about this problem?
-> 
-Sure. Will do it in the next series.
->>  	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
->>  				WLED3_CTRL_REG_MOD_EN,
->>  				WLED3_CTRL_REG_MOD_EN_MASK,
->> @@ -248,12 +272,13 @@ static int wled_update_status(struct 
->> backlight_device *bl)
->>  	    bl->props.state & BL_CORE_FBBLANK)
->>  		brightness = 0;
->> 
->> +	mutex_lock(&wled->lock);
->>  	if (brightness) {
->>  		rc = wled->wled_set_brightness(wled, brightness);
->>  		if (rc < 0) {
->>  			dev_err(wled->dev, "wled failed to set brightness rc:%d\n",
->>  				rc);
->> -			return rc;
->> +			goto unlock_mutex;
->>  		}
->> 
->>  		rc = wled->wled_sync_toggle(wled);
->> @@ -267,15 +292,60 @@ static int wled_update_status(struct 
->> backlight_device *bl)
->>  		rc = wled_module_enable(wled, !!brightness);
->>  		if (rc < 0) {
->>  			dev_err(wled->dev, "wled enable failed rc:%d\n", rc);
->> -			return rc;
->> +			goto unlock_mutex;
->>  		}
->>  	}
->> 
->>  	wled->brightness = brightness;
->> 
->> +unlock_mutex:
->> +	mutex_unlock(&wled->lock);
->> +
->>  	return rc;
->>  }
->> 
->> +#define WLED_SHORT_DLY_MS			20
->> +#define WLED_SHORT_CNT_MAX			5
->> +#define WLED_SHORT_RESET_CNT_DLY_US	HZ
-> 
-> HZ is in the unit of jiffies, not micro seconds.
-> 
-Will address in next series.
->> +static irqreturn_t wled_short_irq_handler(int irq, void *_wled)
->> +{
->> +	struct wled *wled = _wled;
->> +	int rc;
->> +	s64 elapsed_time;
->> +
->> +	wled->short_count++;
->> +	mutex_lock(&wled->lock);
->> +	rc = wled_module_enable(wled, false);
->> +	if (rc < 0) {
->> +		dev_err(wled->dev, "wled disable failed rc:%d\n", rc);
->> +		goto unlock_mutex;
->> +	}
->> +
->> +	elapsed_time = ktime_us_delta(ktime_get(),
->> +				      wled->last_short_event);
->> +	if (elapsed_time > WLED_SHORT_RESET_CNT_DLY_US)
->> +		wled->short_count = 0;
->> +
->> +	if (wled->short_count > WLED_SHORT_CNT_MAX) {
->> +		dev_err(wled->dev, "Short trigged %d times, disabling WLED 
->> forever!\n",
->> +			wled->short_count);
->> +		wled->force_mod_disable = true;
->> +		goto unlock_mutex;
->> +	}
->> +
->> +	wled->last_short_event = ktime_get();
->> +
->> +	msleep(WLED_SHORT_DLY_MS);
->> +	rc = wled_module_enable(wled, true);
->> +	if (rc < 0)
->> +		dev_err(wled->dev, "wled enable failed rc:%d\n", rc);
->> +
->> +unlock_mutex:
->> +	mutex_unlock(&wled->lock);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->>  static int wled3_setup(struct wled *wled)
->>  {
->>  	u16 addr;
->> @@ -435,6 +505,21 @@ static int wled4_setup(struct wled *wled)
->>  		return rc;
->>  	}
->> 
->> +	if (wled->cfg.external_pfet) {
->> +		/* Unlock the secure register access */
->> +		rc = regmap_write(wled->regmap, wled->ctrl_addr +
->> +				  WLED4_CTRL_REG_SEC_ACCESS,
->> +				  WLED4_CTRL_REG_SEC_UNLOCK);
->> +		if (rc < 0)
->> +			return rc;
->> +
->> +		rc = regmap_write(wled->regmap,
->> +				  wled->ctrl_addr + WLED4_CTRL_REG_TEST1,
->> +				  WLED4_CTRL_REG_TEST1_EXT_FET_DTEST2);
->> +		if (rc < 0)
->> +			return rc;
->> +	}
->> +
->>  	return 0;
->>  }
->> 
->> @@ -446,6 +531,7 @@ static int wled4_setup(struct wled *wled)
->>  	.switch_freq = 11,
->>  	.enabled_strings = 0xf,
->>  	.cabc = false,
->> +	.external_pfet = true,
-> 
-> You added the "qcom,external-pfet" boolean to dt, but this forces it to
-> always be set - i.e. this is either wrong or you can omit the new dt
-> property.
-> 
-I will make it to false in the next series.
->>  };
->> 
->>  static const u32 wled3_boost_i_limit_values[] = {
->> @@ -628,6 +714,7 @@ static int wled_configure(struct wled *wled)
->>  		{ "qcom,cs-out", &cfg->cs_out_en, },
->>  		{ "qcom,ext-gen", &cfg->ext_gen, },
->>  		{ "qcom,cabc", &cfg->cabc, },
->> +		{ "qcom,external-pfet", &cfg->external_pfet, },
->>  	};
->> 
->>  	prop_addr = of_get_address(dev->of_node, 0, NULL, NULL);
->> @@ -701,6 +788,39 @@ static int wled_configure(struct wled *wled)
->>  	return 0;
->>  }
->> 
->> +static int wled_configure_short_irq(struct wled *wled,
->> +				    struct platform_device *pdev)
->> +{
->> +	int rc = 0;
->> +
->> +	/* PM8941 doesn't have the short detection support */
->> +	if (*wled->version == WLED_PM8941)
->> +		return 0;
-> 
-> If you attempt to acquire the "short" irq first in this function you
-> don't need this check - as "short" won't exist on pm8941.
-> 
-> Otherwise, it would be better if you add a "bool has_short_detect" to
-> the wled struct and check that, rather than sprinkling version checks
-> throughout.
-> 
-> 
-> Or...is cfg->external_pfet already denoting this?
-> 
-I think it is better to add the has_short_detect variable, as the 
-external_pfet is
-only specific to PMI8998.
->> +
->> +	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
->> +				WLED4_CTRL_REG_SHORT_PROTECT,
->> +				WLED4_CTRL_REG_SHORT_EN_MASK,
->> +				WLED4_CTRL_REG_SHORT_EN_MASK);
-> 
-> Do you really want to enable the short protect thing before figuring 
-> out
-> if you have a "short" irq.
-> 
-Yes. Irrespective of the interrupt, the short circuit detection should 
-be enabled
-to protect the HW from the short circuit.
->> +	if (rc < 0)
->> +		return rc;
->> +
->> +	wled->short_irq = platform_get_irq_byname(pdev, "short");
-> 
-> short_irq isn't used outside this function, so preferably you turn it
-> into a local variable.
-> 
-Ok. Will do that in the next series.
->> +	if (wled->short_irq < 0) {
->> +		dev_dbg(&pdev->dev, "short irq is not used\n");
->> +		return 0;
->> +	}
->> +
->> +	rc = devm_request_threaded_irq(wled->dev, wled->short_irq,
->> +				       NULL, wled_short_irq_handler,
->> +				       IRQF_ONESHOT,
->> +				       "wled_short_irq", wled);
->> +	if (rc < 0)
->> +		dev_err(wled->dev, "Unable to request short_irq (err:%d)\n",
->> +			rc);
->> +
->> +	return rc;
->> +}
->> +
->>  static const struct backlight_ops wled_ops = {
->>  	.update_status = wled_update_status,
->>  };
->> @@ -733,6 +853,8 @@ static int wled_probe(struct platform_device 
->> *pdev)
->>  		return -ENODEV;
->>  	}
->> 
->> +	mutex_init(&wled->lock);
->> +
->>  	rc = wled_configure(wled);
->>  	if (rc)
->>  		return rc;
->> @@ -752,6 +874,10 @@ static int wled_probe(struct platform_device 
->> *pdev)
->>  		}
->>  	}
->> 
->> +	rc = wled_configure_short_irq(wled, pdev);
->> +	if (rc < 0)
->> +		return rc;
->> +
->>  	val = WLED_DEFAULT_BRIGHTNESS;
->>  	of_property_read_u32(pdev->dev.of_node, "default-brightness", &val);
-> 
-> Regards,
-> Bjorn
+T24gVGh1LCBNYXkgMDMsIDIwMTggYXQgMDM6NDI6MzBQTSArMDUzMCwgS2lyYW4gR3VuZGEgd3Jv
+dGU6Cj4gSGFuZGxlIHRoZSBzaG9ydCBjaXJjdWl0IGludGVycnVwdCBhbmQgY2hlY2sgaWYgdGhl
+IHNob3J0IGNpcmN1aXQKPiBpbnRlcnJ1cHQgaXMgdmFsaWQuIFJlLWVuYWJsZSB0aGUgbW9kdWxl
+IHRvIGNoZWNrIGlmIGl0IGdvZXMKPiBhd2F5LiBEaXNhYmxlIHRoZSBtb2R1bGUgYWx0b2dldGhl
+ciBpZiB0aGUgc2hvcnQgY2lyY3VpdCBldmVudAo+IHBlcnNpc3RzLgo+IAo+IFNpZ25lZC1vZmYt
+Ynk6IEtpcmFuIEd1bmRhIDxrZ3VuZGFAY29kZWF1cm9yYS5vcmc+Cj4gLS0tCj4gIGRyaXZlcnMv
+dmlkZW8vYmFja2xpZ2h0L3Fjb20td2xlZC5jIHwgMTM0ICsrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKystLQo+ICAxIGZpbGUgY2hhbmdlZCwgMTMwIGluc2VydGlvbnMoKyksIDQgZGVs
+ZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3Fjb20t
+d2xlZC5jIGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcWNvbS13bGVkLmMKPiBpbmRleCBiZThi
+OGQzLi4yY2ZiYTc3IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3Fjb20t
+d2xlZC5jCj4gKysrIGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcWNvbS13bGVkLmMKPiBAQCAt
+MTAsNiArMTAsOSBAQAo+ICAgKiBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBmb3IgbW9yZSBk
+ZXRhaWxzLgo+ICAgKi8KPiAgCj4gKyNpbmNsdWRlIDxsaW51eC9kZWxheS5oPgo+ICsjaW5jbHVk
+ZSA8bGludXgvaW50ZXJydXB0Lmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9rdGltZS5oPgo+ICAjaW5j
+bHVkZSA8bGludXgva2VybmVsLmg+Cj4gICNpbmNsdWRlIDxsaW51eC9iYWNrbGlnaHQuaD4KPiAg
+I2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPgo+IEBAIC0yMyw3ICsyNiw5IEBACj4gIAo+ICAjZGVm
+aW5lIFdMRUQzX1NJTktfUkVHX0JSSUdIVF9NQVgJCQkweEZGRgo+ICAKPiAtLyogQ29udHJvbCBy
+ZWdpc3RlcnMgKi8KPiArLyogV0xFRDMgQ29udHJvbCByZWdpc3RlcnMgKi8KPiArI2RlZmluZSBX
+TEVEM19DVFJMX1JFR19GQVVMVF9TVEFUVVMJCQkweDA4Cj4gKwo+ICAjZGVmaW5lIFdMRUQzX0NU
+UkxfUkVHX01PRF9FTgkJCQkweDQ2Cj4gICNkZWZpbmUgIFdMRUQzX0NUUkxfUkVHX01PRF9FTl9N
+QVNLCQkJQklUKDcpCj4gIAo+IEBAIC0zNiw3ICs0MSwxNyBAQAo+ICAjZGVmaW5lIFdMRUQzX0NU
+UkxfUkVHX0lMSU1JVAkJCQkweDRlCj4gICNkZWZpbmUgIFdMRUQzX0NUUkxfUkVHX0lMSU1JVF9N
+QVNLCQkJR0VOTUFTSygyLCAwKQo+ICAKPiAtLyogc2luayByZWdpc3RlcnMgKi8KPiArLyogV0xF
+RDQgY29udHJvbCByZWdpc3RlcnMgKi8KPiArI2RlZmluZSBXTEVENF9DVFJMX1JFR19TSE9SVF9Q
+Uk9URUNUCQkJMHg1ZQo+ICsjZGVmaW5lICBXTEVENF9DVFJMX1JFR19TSE9SVF9FTl9NQVNLCQkJ
+QklUKDcpCj4gKwo+ICsjZGVmaW5lIFdMRUQ0X0NUUkxfUkVHX1NFQ19BQ0NFU1MJCQkweGQwCj4g
+KyNkZWZpbmUgIFdMRUQ0X0NUUkxfUkVHX1NFQ19VTkxPQ0sJCQkweGE1Cj4gKwo+ICsjZGVmaW5l
+IFdMRUQ0X0NUUkxfUkVHX1RFU1QxCQkJCTB4ZTIKPiArI2RlZmluZSAgV0xFRDRfQ1RSTF9SRUdf
+VEVTVDFfRVhUX0ZFVF9EVEVTVDIJCTB4MDkKPiArCj4gKy8qIFdMRUQzIHNpbmsgcmVnaXN0ZXJz
+ICovCj4gICNkZWZpbmUgV0xFRDNfU0lOS19SRUdfU1lOQwkJCQkweDQ3Cj4gICNkZWZpbmUgIFdM
+RUQzX1NJTktfUkVHX1NZTkNfTUFTSwkJCUdFTk1BU0soMiwgMCkKPiAgI2RlZmluZSAgV0xFRDRf
+U0lOS19SRUdfU1lOQ19NQVNLCQkJR0VOTUFTSygzLCAwKQo+IEBAIC0xMzAsMTcgKzE0NSwyMyBA
+QCBzdHJ1Y3Qgd2xlZF9jb25maWcgewo+ICAJYm9vbCBjc19vdXRfZW47Cj4gIAlib29sIGV4dF9n
+ZW47Cj4gIAlib29sIGNhYmM7Cj4gKwlib29sIGV4dGVybmFsX3BmZXQ7Cj4gIH07Cj4gIAo+ICBz
+dHJ1Y3Qgd2xlZCB7Cj4gIAljb25zdCBjaGFyICpuYW1lOwo+ICAJc3RydWN0IGRldmljZSAqZGV2
+Owo+ICAJc3RydWN0IHJlZ21hcCAqcmVnbWFwOwo+ICsJc3RydWN0IG11dGV4IGxvY2s7CS8qIExv
+Y2sgdG8gYXZvaWQgcmFjZSBmcm9tIElTUiAqLwo+ICsJa3RpbWVfdCBsYXN0X3Nob3J0X2V2ZW50
+Owo+ICAJdTE2IGN0cmxfYWRkcjsKPiAgCXUxNiBzaW5rX2FkZHI7Cj4gIAl1MzIgYnJpZ2h0bmVz
+czsKPiAgCXUzMiBtYXhfYnJpZ2h0bmVzczsKPiArCXUzMiBzaG9ydF9jb3VudDsKPiAgCWNvbnN0
+IGludCAqdmVyc2lvbjsKPiArCWludCBzaG9ydF9pcnE7Cj4gKwlib29sIGZvcmNlX21vZF9kaXNh
+YmxlOwo+ICAKPiAgCXN0cnVjdCB3bGVkX2NvbmZpZyBjZmc7Cj4gIAlpbnQgKCp3bGVkX3NldF9i
+cmlnaHRuZXNzKShzdHJ1Y3Qgd2xlZCAqd2xlZCwgdTE2IGJyaWdodG5lc3MpOwo+IEBAIC0xOTIs
+NiArMjEzLDkgQEAgc3RhdGljIGludCB3bGVkX21vZHVsZV9lbmFibGUoc3RydWN0IHdsZWQgKnds
+ZWQsIGludCB2YWwpCj4gIHsKPiAgCWludCByYzsKPiAgCj4gKwlpZiAod2xlZC0+Zm9yY2VfbW9k
+X2Rpc2FibGUpCj4gKwkJcmV0dXJuIDA7Cj4gKwo+ICAJcmMgPSByZWdtYXBfdXBkYXRlX2JpdHMo
+d2xlZC0+cmVnbWFwLCB3bGVkLT5jdHJsX2FkZHIgKwo+ICAJCQkJV0xFRDNfQ1RSTF9SRUdfTU9E
+X0VOLAo+ICAJCQkJV0xFRDNfQ1RSTF9SRUdfTU9EX0VOX01BU0ssCj4gQEAgLTI0OCwxMiArMjcy
+LDEzIEBAIHN0YXRpYyBpbnQgd2xlZF91cGRhdGVfc3RhdHVzKHN0cnVjdCBiYWNrbGlnaHRfZGV2
+aWNlICpibCkKPiAgCSAgICBibC0+cHJvcHMuc3RhdGUgJiBCTF9DT1JFX0ZCQkxBTkspCj4gIAkJ
+YnJpZ2h0bmVzcyA9IDA7Cj4gIAo+ICsJbXV0ZXhfbG9jaygmd2xlZC0+bG9jayk7Cj4gIAlpZiAo
+YnJpZ2h0bmVzcykgewo+ICAJCXJjID0gd2xlZC0+d2xlZF9zZXRfYnJpZ2h0bmVzcyh3bGVkLCBi
+cmlnaHRuZXNzKTsKPiAgCQlpZiAocmMgPCAwKSB7Cj4gIAkJCWRldl9lcnIod2xlZC0+ZGV2LCAi
+d2xlZCBmYWlsZWQgdG8gc2V0IGJyaWdodG5lc3MgcmM6JWRcbiIsCj4gIAkJCQlyYyk7Cj4gLQkJ
+CXJldHVybiByYzsKPiArCQkJZ290byB1bmxvY2tfbXV0ZXg7Cj4gIAkJfQo+ICAKPiAgCQlyYyA9
+IHdsZWQtPndsZWRfc3luY190b2dnbGUod2xlZCk7Cj4gQEAgLTI2NywxNSArMjkyLDYwIEBAIHN0
+YXRpYyBpbnQgd2xlZF91cGRhdGVfc3RhdHVzKHN0cnVjdCBiYWNrbGlnaHRfZGV2aWNlICpibCkK
+PiAgCQlyYyA9IHdsZWRfbW9kdWxlX2VuYWJsZSh3bGVkLCAhIWJyaWdodG5lc3MpOwo+ICAJCWlm
+IChyYyA8IDApIHsKPiAgCQkJZGV2X2Vycih3bGVkLT5kZXYsICJ3bGVkIGVuYWJsZSBmYWlsZWQg
+cmM6JWRcbiIsIHJjKTsKPiAtCQkJcmV0dXJuIHJjOwo+ICsJCQlnb3RvIHVubG9ja19tdXRleDsK
+PiAgCQl9Cj4gIAl9Cj4gIAo+ICAJd2xlZC0+YnJpZ2h0bmVzcyA9IGJyaWdodG5lc3M7Cj4gIAo+
+ICt1bmxvY2tfbXV0ZXg6Cj4gKwltdXRleF91bmxvY2soJndsZWQtPmxvY2spOwo+ICsKPiAgCXJl
+dHVybiByYzsKPiAgfQo+ICAKPiArI2RlZmluZSBXTEVEX1NIT1JUX0RMWV9NUwkJCTIwCj4gKyNk
+ZWZpbmUgV0xFRF9TSE9SVF9DTlRfTUFYCQkJNQo+ICsjZGVmaW5lIFdMRURfU0hPUlRfUkVTRVRf
+Q05UX0RMWV9VUwlIWgoKU28gd2UgdGhpbmsgYSBzaG9ydCByZXBvcnQgZXZlcnkgcXVhcnRlciBz
+ZWNvbmQgaXMgaGFybWxlc3M/CgoKPiArc3RhdGljIGlycXJldHVybl90IHdsZWRfc2hvcnRfaXJx
+X2hhbmRsZXIoaW50IGlycSwgdm9pZCAqX3dsZWQpCj4gK3sKPiArCXN0cnVjdCB3bGVkICp3bGVk
+ID0gX3dsZWQ7Cj4gKwlpbnQgcmM7Cj4gKwlzNjQgZWxhcHNlZF90aW1lOwo+ICsKPiArCXdsZWQt
+PnNob3J0X2NvdW50Kys7Cj4gKwltdXRleF9sb2NrKCZ3bGVkLT5sb2NrKTsKPiArCXJjID0gd2xl
+ZF9tb2R1bGVfZW5hYmxlKHdsZWQsIGZhbHNlKTsKPiArCWlmIChyYyA8IDApIHsKPiArCQlkZXZf
+ZXJyKHdsZWQtPmRldiwgIndsZWQgZGlzYWJsZSBmYWlsZWQgcmM6JWRcbiIsIHJjKTsKPiArCQln
+b3RvIHVubG9ja19tdXRleDsKPiArCX0KPiArCj4gKwllbGFwc2VkX3RpbWUgPSBrdGltZV91c19k
+ZWx0YShrdGltZV9nZXQoKSwKPiArCQkJCSAgICAgIHdsZWQtPmxhc3Rfc2hvcnRfZXZlbnQpOwo+
+ICsJaWYgKGVsYXBzZWRfdGltZSA+IFdMRURfU0hPUlRfUkVTRVRfQ05UX0RMWV9VUykKPiArCQl3
+bGVkLT5zaG9ydF9jb3VudCA9IDA7Cj4gKwo+ICsJaWYgKHdsZWQtPnNob3J0X2NvdW50ID4gV0xF
+RF9TSE9SVF9DTlRfTUFYKSB7Cj4gKwkJZGV2X2Vycih3bGVkLT5kZXYsICJTaG9ydCB0cmlnZ2Vk
+ICVkIHRpbWVzLCBkaXNhYmxpbmcgV0xFRCBmb3JldmVyIVxuIiwKPiArCQkJd2xlZC0+c2hvcnRf
+Y291bnQpOwo+ICsJCXdsZWQtPmZvcmNlX21vZF9kaXNhYmxlID0gdHJ1ZTsKPiArCQlnb3RvIHVu
+bG9ja19tdXRleDsKPiArCX0KPiArCj4gKwl3bGVkLT5sYXN0X3Nob3J0X2V2ZW50ID0ga3RpbWVf
+Z2V0KCk7Cj4gKwo+ICsJbXNsZWVwKFdMRURfU0hPUlRfRExZX01TKTsKPiArCXJjID0gd2xlZF9t
+b2R1bGVfZW5hYmxlKHdsZWQsIHRydWUpOwo+ICsJaWYgKHJjIDwgMCkKPiArCQlkZXZfZXJyKHds
+ZWQtPmRldiwgIndsZWQgZW5hYmxlIGZhaWxlZCByYzolZFxuIiwgcmMpOwo+ICsKPiArdW5sb2Nr
+X211dGV4Ogo+ICsJbXV0ZXhfdW5sb2NrKCZ3bGVkLT5sb2NrKTsKPiArCj4gKwlyZXR1cm4gSVJR
+X0hBTkRMRUQ7Cj4gK30KPiArCj4gIHN0YXRpYyBpbnQgd2xlZDNfc2V0dXAoc3RydWN0IHdsZWQg
+KndsZWQpCj4gIHsKPiAgCXUxNiBhZGRyOwo+IEBAIC00MzUsNiArNTA1LDIxIEBAIHN0YXRpYyBp
+bnQgd2xlZDRfc2V0dXAoc3RydWN0IHdsZWQgKndsZWQpCj4gIAkJcmV0dXJuIHJjOwo+ICAJfQo+
+ICAKPiArCWlmICh3bGVkLT5jZmcuZXh0ZXJuYWxfcGZldCkgewo+ICsJCS8qIFVubG9jayB0aGUg
+c2VjdXJlIHJlZ2lzdGVyIGFjY2VzcyAqLwo+ICsJCXJjID0gcmVnbWFwX3dyaXRlKHdsZWQtPnJl
+Z21hcCwgd2xlZC0+Y3RybF9hZGRyICsKPiArCQkJCSAgV0xFRDRfQ1RSTF9SRUdfU0VDX0FDQ0VT
+UywKPiArCQkJCSAgV0xFRDRfQ1RSTF9SRUdfU0VDX1VOTE9DSyk7Cj4gKwkJaWYgKHJjIDwgMCkK
+PiArCQkJcmV0dXJuIHJjOwo+ICsKPiArCQlyYyA9IHJlZ21hcF93cml0ZSh3bGVkLT5yZWdtYXAs
+Cj4gKwkJCQkgIHdsZWQtPmN0cmxfYWRkciArIFdMRUQ0X0NUUkxfUkVHX1RFU1QxLAo+ICsJCQkJ
+ICBXTEVENF9DVFJMX1JFR19URVNUMV9FWFRfRkVUX0RURVNUMik7Cj4gKwkJaWYgKHJjIDwgMCkK
+PiArCQkJcmV0dXJuIHJjOwo+ICsJfQo+ICsKPiAgCXJldHVybiAwOwo+ICB9Cj4gIAo+IEBAIC00
+NDYsNiArNTMxLDcgQEAgc3RhdGljIGludCB3bGVkNF9zZXR1cChzdHJ1Y3Qgd2xlZCAqd2xlZCkK
+PiAgCS5zd2l0Y2hfZnJlcSA9IDExLAo+ICAJLmVuYWJsZWRfc3RyaW5ncyA9IDB4ZiwKPiAgCS5j
+YWJjID0gZmFsc2UsCj4gKwkuZXh0ZXJuYWxfcGZldCA9IHRydWUsCj4gIH07Cj4gIAo+ICBzdGF0
+aWMgY29uc3QgdTMyIHdsZWQzX2Jvb3N0X2lfbGltaXRfdmFsdWVzW10gPSB7Cj4gQEAgLTYyOCw2
+ICs3MTQsNyBAQCBzdGF0aWMgaW50IHdsZWRfY29uZmlndXJlKHN0cnVjdCB3bGVkICp3bGVkKQo+
+ICAJCXsgInFjb20sY3Mtb3V0IiwgJmNmZy0+Y3Nfb3V0X2VuLCB9LAo+ICAJCXsgInFjb20sZXh0
+LWdlbiIsICZjZmctPmV4dF9nZW4sIH0sCj4gIAkJeyAicWNvbSxjYWJjIiwgJmNmZy0+Y2FiYywg
+fSwKPiArCQl7ICJxY29tLGV4dGVybmFsLXBmZXQiLCAmY2ZnLT5leHRlcm5hbF9wZmV0LCB9LAo+
+ICAJfTsKPiAgCj4gIAlwcm9wX2FkZHIgPSBvZl9nZXRfYWRkcmVzcyhkZXYtPm9mX25vZGUsIDAs
+IE5VTEwsIE5VTEwpOwo+IEBAIC03MDEsNiArNzg4LDM5IEBAIHN0YXRpYyBpbnQgd2xlZF9jb25m
+aWd1cmUoc3RydWN0IHdsZWQgKndsZWQpCj4gIAlyZXR1cm4gMDsKPiAgfQo+ICAKPiArc3RhdGlj
+IGludCB3bGVkX2NvbmZpZ3VyZV9zaG9ydF9pcnEoc3RydWN0IHdsZWQgKndsZWQsCj4gKwkJCQkg
+ICAgc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiArewo+ICsJaW50IHJjID0gMDsKPiAr
+Cj4gKwkvKiBQTTg5NDEgZG9lc24ndCBoYXZlIHRoZSBzaG9ydCBkZXRlY3Rpb24gc3VwcG9ydCAq
+Lwo+ICsJaWYgKCp3bGVkLT52ZXJzaW9uID09IFdMRURfUE04OTQxKQo+ICsJCXJldHVybiAwOwo+
+ICsKPiArCXJjID0gcmVnbWFwX3VwZGF0ZV9iaXRzKHdsZWQtPnJlZ21hcCwgd2xlZC0+Y3RybF9h
+ZGRyICsKPiArCQkJCVdMRUQ0X0NUUkxfUkVHX1NIT1JUX1BST1RFQ1QsCj4gKwkJCQlXTEVENF9D
+VFJMX1JFR19TSE9SVF9FTl9NQVNLLAo+ICsJCQkJV0xFRDRfQ1RSTF9SRUdfU0hPUlRfRU5fTUFT
+Syk7Cj4gKwlpZiAocmMgPCAwKQo+ICsJCXJldHVybiByYzsKPiArCj4gKwl3bGVkLT5zaG9ydF9p
+cnEgPSBwbGF0Zm9ybV9nZXRfaXJxX2J5bmFtZShwZGV2LCAic2hvcnQiKTsKPiArCWlmICh3bGVk
+LT5zaG9ydF9pcnEgPCAwKSB7Cj4gKwkJZGV2X2RiZygmcGRldi0+ZGV2LCAic2hvcnQgaXJxIGlz
+IG5vdCB1c2VkXG4iKTsKPiArCQlyZXR1cm4gMDsKPiArCX0KPiArCj4gKwlyYyA9IGRldm1fcmVx
+dWVzdF90aHJlYWRlZF9pcnEod2xlZC0+ZGV2LCB3bGVkLT5zaG9ydF9pcnEsCj4gKwkJCQkgICAg
+ICAgTlVMTCwgd2xlZF9zaG9ydF9pcnFfaGFuZGxlciwKCk5VTEw/IFRoZXJlJ3Mgbm8gcmVnaXN0
+ZXIgd2UgY2FuIGNoZWNrIHRvIG1ha2Ugc3VyZSB0aGUgaW50ZXJydXB0CmhhbmRsZXIgZGlkIG5v
+dCBlbnRlciBzcHVyaW91c2x5PwoKCj4gKwkJCQkgICAgICAgSVJRRl9PTkVTSE9ULAo+ICsJCQkJ
+ICAgICAgICJ3bGVkX3Nob3J0X2lycSIsIHdsZWQpOwo+ICsJaWYgKHJjIDwgMCkKPiArCQlkZXZf
+ZXJyKHdsZWQtPmRldiwgIlVuYWJsZSB0byByZXF1ZXN0IHNob3J0X2lycSAoZXJyOiVkKVxuIiwK
+PiArCQkJcmMpOwo+ICsKPiArCXJldHVybiByYzsKPiArfQo+ICsKPiAgc3RhdGljIGNvbnN0IHN0
+cnVjdCBiYWNrbGlnaHRfb3BzIHdsZWRfb3BzID0gewo+ICAJLnVwZGF0ZV9zdGF0dXMgPSB3bGVk
+X3VwZGF0ZV9zdGF0dXMsCj4gIH07Cj4gQEAgLTczMyw2ICs4NTMsOCBAQCBzdGF0aWMgaW50IHds
+ZWRfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgCQlyZXR1cm4gLUVOT0RF
+VjsKPiAgCX0KPiAgCj4gKwltdXRleF9pbml0KCZ3bGVkLT5sb2NrKTsKPiArCj4gIAlyYyA9IHds
+ZWRfY29uZmlndXJlKHdsZWQpOwo+ICAJaWYgKHJjKQo+ICAJCXJldHVybiByYzsKPiBAQCAtNzUy
+LDYgKzg3NCwxMCBAQCBzdGF0aWMgaW50IHdsZWRfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rldmlj
+ZSAqcGRldikKPiAgCQl9Cj4gIAl9Cj4gIAo+ICsJcmMgPSB3bGVkX2NvbmZpZ3VyZV9zaG9ydF9p
+cnEod2xlZCwgcGRldik7Cj4gKwlpZiAocmMgPCAwKQo+ICsJCXJldHVybiByYzsKPiArCj4gIAl2
+YWwgPSBXTEVEX0RFRkFVTFRfQlJJR0hUTkVTUzsKPiAgCW9mX3Byb3BlcnR5X3JlYWRfdTMyKHBk
+ZXYtPmRldi5vZl9ub2RlLCAiZGVmYXVsdC1icmlnaHRuZXNzIiwgJnZhbCk7Cj4gIAo+IC0tIAo+
+IFRoZSBRdWFsY29tbSBJbm5vdmF0aW9uIENlbnRlciwgSW5jLiBpcyBhIG1lbWJlciBvZiB0aGUg
+Q29kZSBBdXJvcmEgRm9ydW0sCj4gIGEgTGludXggRm91bmRhdGlvbiBDb2xsYWJvcmF0aXZlIFBy
+b2plY3QKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
