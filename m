@@ -1,98 +1,86 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
- controller driver
-Date: Wed, 9 May 2018 16:25:39 +0200
-Message-ID: <20180509142539.GB25131@amd>
-References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
- <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
+From: kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+Date: Thu, 10 May 2018 03:13:42 +0800
+Message-ID: <201805100310.5poORgcq%fengguang.wu@intel.com>
+References: <20180509115727.12070-2-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="JP+T4n/bALQSJXh8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
+In-Reply-To: <20180509115727.12070-2-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: jacek.anaszewski@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, xiaotong.lu@spreadtrum.com, broonie@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kbuild-all@01.org, robh+dt@kernel.org, mark.rutland@arm.com, jacek.anaszewski@gmail.com, pavel@ucw.cz, afd@ti.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
+Hi Dan,
 
---JP+T4n/bALQSJXh8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the patch! Perhaps something to improve:
 
-On Tue 2018-05-08 13:39:45, Baolin Wang wrote:
-> From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
->=20
-> This patch adds Spreadtrum SC27xx PMIC series breathing light controller
-> driver, which can support 3 LEDs. Each LED can work at normal PWM mode
-> and breathing mode.
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Do=
-cumentation/ABI/testing/sysfs-class-led-driver-sc27xx
-> new file mode 100644
-> index 0000000..22166fb
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-> @@ -0,0 +1,19 @@
-> +What:		/sys/class/leds/<led>/rise_time
-> +What:		/sys/class/leds/<led>/high_time
-> +What:		/sys/class/leds/<led>/fall_time
-> +What:		/sys/class/leds/<led>/low_time
-> +Date:		May 2018
-> +KernelVersion:	4.18
-> +Contact:	Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-> +Description:
-> +		Set the pattern generator rise, high, fall and low
-> +		times (0..63). It's unit is 0.125s, it should be > 0.
-> +
-> +		1 - 125 ms
-> +		2 - 250 ms
-> +		3 - 375 ms
-> +		...
-> +		...
-> +		...
-> +		62 - 7.75 s
-> +		63 - 7.875 s
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on v4.17-rc4 next-20180509]
+[cannot apply to j.anaszewski-leds/for-next]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-How does this interact with triggers? With manually setting
-brightness? Are the pattern generators independend for the LEDs?
+url:    https://github.com/0day-ci/linux/commits/Dan-Murphy/dt-bindings-lm3601x-Introduce-the-lm3601x-driver/20180509-232022
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
 
-Can you generate white breathing pattern? If so, how?
 
-How do you select between normal and breathing modes?
+coccinelle warnings: (new ones prefixed by >>)
 
-I'd specify times in miliseconds or something, this is way too
-hardware specific.
+>> drivers/leds/leds-lm3601x.c:241:35-36: WARNING: Use ARRAY_SIZE
 
-Now... functionality like this is common between many LED
-controllers. N900 could do this kind of "breathing", too, and it also
-supports other patterns.
+vim +241 drivers/leds/leds-lm3601x.c
 
-I believe we need interface common between different LED controllers.
+   224	
+   225	static int lm3601x_strobe_set(struct led_classdev_flash *fled_cdev,
+   226					bool state)
+   227	{
+   228		struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+   229		int ret;
+   230		int current_timeout;
+   231		int reg_count;
+   232		int i;
+   233		int timeout_reg_val = 0;
+   234	
+   235		mutex_lock(&led->lock);
+   236	
+   237		ret = regmap_read(led->regmap, LM3601X_CFG_REG, &current_timeout);
+   238		if (ret < 0)
+   239			goto out;
+   240	
+ > 241		reg_count = sizeof(strobe_timeouts) / sizeof(strobe_timeouts[0]);
+   242		for (i = 0; i < reg_count; i++) {
+   243			if (led->strobe_timeout > strobe_timeouts[i].timeout)
+   244				continue;
+   245	
+   246			if (led->strobe_timeout <= strobe_timeouts[i].timeout) {
+   247				timeout_reg_val = (strobe_timeouts[i].reg_val << 1);
+   248				break;
+   249			}
+   250	
+   251			ret = -EINVAL;
+   252			goto out;
+   253		}
+   254	
+   255		if (led->strobe_timeout != current_timeout)
+   256			ret = regmap_update_bits(led->regmap, LM3601X_CFG_REG,
+   257						0x1e, timeout_reg_val);
+   258	
+   259		if (state)
+   260			ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+   261						LM3601X_MODE_STROBE,
+   262						LM3601X_MODE_STROBE);
+   263		else
+   264			ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+   265						LM3601X_MODE_STROBE, LED_OFF);
+   266	
+   267		ret = lm3601x_read_faults(led);
+   268	out:
+   269		mutex_unlock(&led->lock);
+   270		return ret;
+   271	}
+   272	
 
-And I guess it would be easiest if you dropped this part from initial
-merge.
-
-Thanks and best regards,
-
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---JP+T4n/bALQSJXh8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrzBOMACgkQMOfwapXb+vJ6AgCgntQ+iS7NFuZ6HniFO9sNh7eS
-gyYAoJvq31PEZSnLU83UWVqOv700hzMp
-=dNHU
------END PGP SIGNATURE-----
-
---JP+T4n/bALQSJXh8--
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
