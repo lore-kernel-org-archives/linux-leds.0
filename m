@@ -1,93 +1,63 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
- controller driver
-Date: Wed, 9 May 2018 21:40:35 +0200
-Message-ID: <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
-References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
- <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
- <20180509142539.GB25131@amd>
+Subject: Re: [PATCH v3 1/3] leds: triggers: provide
+ led_trigger_register_format()
+Date: Wed, 9 May 2018 21:57:15 +0200
+Message-ID: <906d2b27-2e8b-92a9-13ff-2676f48142f4@gmail.com>
+References: <20180508100543.12559-1-u.kleine-koenig@pengutronix.de>
+ <20180508100543.12559-2-u.kleine-koenig@pengutronix.de>
+ <ea34ce99-d446-03d2-b38d-d40a22480337@gmail.com>
+ <20180508201725.3alpkcpaxebupzqv@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180509142539.GB25131@amd>
+In-Reply-To: <20180508201725.3alpkcpaxebupzqv@pengutronix.de>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, Baolin Wang <baolin.wang@linaro.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, xiaotong.lu@spreadtrum.com, broonie@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Marc Kleine-Budde <m.kleine-budde@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>, Pavel Machek <pavel@ucw.cz>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Florian Fainelli <f.fainelli@gmail.com>, linux-serial@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org, linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Robin Murphy <robin.murphy@arm.com>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
+Hi Uwe,
 
-On 05/09/2018 04:25 PM, Pavel Machek wrote:
-> On Tue 2018-05-08 13:39:45, Baolin Wang wrote:
->> From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
->>
->> This patch adds Spreadtrum SC27xx PMIC series breathing light controller
->> driver, which can support 3 LEDs. Each LED can work at normal PWM mode
->> and breathing mode.
->>
->> diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
->> new file mode 100644
->> index 0000000..22166fb
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
->> @@ -0,0 +1,19 @@
->> +What:		/sys/class/leds/<led>/rise_time
->> +What:		/sys/class/leds/<led>/high_time
->> +What:		/sys/class/leds/<led>/fall_time
->> +What:		/sys/class/leds/<led>/low_time
->> +Date:		May 2018
->> +KernelVersion:	4.18
->> +Contact:	Xiaotong Lu <xiaotong.lu@spreadtrum.com>
->> +Description:
->> +		Set the pattern generator rise, high, fall and low
->> +		times (0..63). It's unit is 0.125s, it should be > 0.
->> +
->> +		1 - 125 ms
->> +		2 - 250 ms
->> +		3 - 375 ms
->> +		...
->> +		...
->> +		...
->> +		62 - 7.75 s
->> +		63 - 7.875 s
+On 05/08/2018 10:17 PM, Uwe Kleine-König wrote:
+> Hello Jacek,
 > 
-> How does this interact with triggers? With manually setting
-> brightness? Are the pattern generators independend for the LEDs?
+> On Tue, May 08, 2018 at 09:33:14PM +0200, Jacek Anaszewski wrote:
+>> Thank you for the patch. It looks fine, but please split
+>> the drivers/net/can/led.c related changes into a separate one.
 > 
-> Can you generate white breathing pattern? If so, how?
+> I renamed led_trigger_rename_static() to led_trigger_rename() (and
+> changed the parameters). The can change just adapts the only user of
+> led_trigger_rename_static() to use the new one.
 > 
-> How do you select between normal and breathing modes?
+> It's not impossible to separate this patches, but I wonder if it's worth
+> the effort.
 > 
-> I'd specify times in miliseconds or something, this is way too
-> hardware specific.
-
-Agreed.
-
-> Now... functionality like this is common between many LED
-> controllers. N900 could do this kind of "breathing", too, and it also
-> supports other patterns.
+> The first patch would be like the patch under discussion, just without
+> the can bits and introducing something like:
 > 
-> I believe we need interface common between different LED controllers.
+> 	/*
+> 	 * compat stuff to be removed once the only caller is converted
+> 	 */
+> 	static inline led_trigger_rename_static(const char *name, struct led_trigger *trig)
+> 	{
+> 		(void)led_trigger_rename(trig, "%s", name);
+> 	}
 > 
-> And I guess it would be easiest if you dropped this part from initial
-> merge.
+> Then the second patch would just be the 6-line can hunk. And a third
+> patch would remove the compat function. (Maybe I'd choose to squash the
+> two can patches together then, but this doesn't reduce the overhead
+> considerably.) The only upside I can see here is that it increases my
+> patch count, but it's otherwise not worth the effort for such an easy
+> change. Further more as there is a strict dependency on these three
+> patches this either delays the cleanup or (IMHO more likely) the can
+> change would go in via the led tree anyhow.  (Mark already acked patch 2
+> of this series and in private confirmed that the agrees to let this
+> change go in via the led tree, too.)
 
-I disagree here. We already had the same discussion at the occasion
-of the patch [0] and it turned out to be a dead-end [1]. Now we have
-neither the driver nor the generic pattern interface.
-
-We also already have some older LED class drivers that implement custom
-pattern interfaces (e.g. drivers/leds/leds-lm3533.c) and the same
-approach can be applied in this case.
-
-Regarding interaction with triggers - we could disable pattern
-on setting any trigger and return -EBUSY from the pattern
-interface if led_cdev->trigger is not NULL.
-
-[0] https://lkml.org/lkml/2017/3/23/33
-[1] https://lkml.org/lkml/2017/11/15/27
+OK, makes sense. I'll wait also for ack on 3/3 since it should
+go through the LED tree as well - uses a new led_trigger_register_format().
 
 -- 
 Best regards,
