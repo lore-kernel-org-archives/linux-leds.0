@@ -1,14 +1,15 @@
 From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: leds: Add SC27xx breathing light
- controller documentation
-Date: Thu, 10 May 2018 09:55:52 +0800
-Message-ID: <CAMz4kuLar4jxPkX2GZi4UD_VgacXcmy+VJPWGyc7UrrLX_JW2Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
+ controller driver
+Date: Thu, 10 May 2018 11:12:32 +0800
+Message-ID: <CAMz4kuLYP1aHTAsgN0rkqV8Zj12V4-d1pECTn8x537a9fLRndw@mail.gmail.com>
 References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
- <20180509142526.GA25131@amd>
+ <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
+ <20180509142539.GB25131@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180509142526.GA25131@amd>
+In-Reply-To: <20180509142539.GB25131@amd>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
 Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, xiaotong.lu@spreadtrum.com, Mark Brown <broonie@kernel.org>, linux-leds@vger.kernel.org, DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
@@ -17,66 +18,89 @@ List-Id: linux-leds@vger.kernel.org
 Hi Pavel,
 
 On 9 May 2018 at 22:25, Pavel Machek <pavel@ucw.cz> wrote:
-> Hi!
->
->> This patch adds the binding documentation for Spreadtrum SC27xx series
->> breathing light controller, which supports 3 outputs: red LED, green
->> LED and blue LED.
+> On Tue 2018-05-08 13:39:45, Baolin Wang wrote:
+>> From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 >>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->> Changes since v1:
->>  - Change the compatible string to be one explicit SoC name.
->>  - Change the child node name.
->>  - Change to be upper case for the first character.
->> ---
->>  .../devicetree/bindings/leds/leds-sc27xx-bltc.txt  |   41 ++++++++++++++++++++
->>  1 file changed, 41 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+>> This patch adds Spreadtrum SC27xx PMIC series breathing light controller
+>> driver, which can support 3 LEDs. Each LED can work at normal PWM mode
+>> and breathing mode.
 >>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+>> diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
 >> new file mode 100644
->> index 0000000..b3de7fc
+>> index 0000000..22166fb
 >> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
->> @@ -0,0 +1,41 @@
->> +LEDs connected to Spreadtrum SC27XX PMIC breathing light controller
+>> +++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> @@ -0,0 +1,19 @@
+>> +What:                /sys/class/leds/<led>/rise_time
+>> +What:                /sys/class/leds/<led>/high_time
+>> +What:                /sys/class/leds/<led>/fall_time
+>> +What:                /sys/class/leds/<led>/low_time
+>> +Date:                May 2018
+>> +KernelVersion:       4.18
+>> +Contact:     Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+>> +Description:
+>> +             Set the pattern generator rise, high, fall and low
+>> +             times (0..63). It's unit is 0.125s, it should be > 0.
 >> +
->> +The SC27xx breathing light controller supports to 3 outputs:
->> +red LED, green LED and blue LED. Each LED can work at normal
->> +PWM mode or breath light mode.
+>> +             1 - 125 ms
+>> +             2 - 250 ms
+>> +             3 - 375 ms
+>> +             ...
+>> +             ...
+>> +             ...
+>> +             62 - 7.75 s
+>> +             63 - 7.875 s
 >
->> +Required properties:
->> +- compatible: Should be "sprd,sc2731-bltc".
->
-> If this is for 2731, I'd say so in the title and the filename...?
+> How does this interact with triggers? With manually setting
+> brightness? Are the pattern generators independend for the LEDs?
 
-I agree with Jacek's comments. We will add other PMICs belonging to
-sc27xx series in future.
+With depending on what mode user selected. If user set the
+raise/high/fall/low time values, that means the LED will work at
+breathing mode, and we set brightness to turn on/off the breathing
+mode LED.
 
->
->> +- #address-cells: Must be 1.
->> +- #size-cells: Must be 0.
->> +- reg: Specify controller address.
->
-> the controller...
-
-Will fix.
+Yes, they are independent for each LED.
 
 >
->> +Required child properties:
->> +- reg: Number of LED line (could be from 0 to 2).
->
-> Uff. "Port this LED is connected to"?
+> Can you generate white breathing pattern? If so, how?
 
-Will fix.
+Yes, firstly we should set the raise/high/fall/low time values for red
+LED, blue LED and green LED (each LED time values are same), then set
+one brightness value to turn on the red LED, blue LED and green LED.
 
 >
-> With that fixed...
->
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+> How do you select between normal and breathing modes?
 
-Thanks for your comments.
+As I explained, when user set the raise/high/fall/low time values,
+that means user selects the breathing mode of the LED. Otherwise the
+LED works at normal mode.
+
+>
+> I'd specify times in miliseconds or something, this is way too
+> hardware specific.
+
+But our hardware specification defines magic numbers, not times values
+in milliseconds. So I think we should follow our specification's
+definition, and user should also follow the same rules.
+
+>
+> Now... functionality like this is common between many LED
+> controllers. N900 could do this kind of "breathing", too, and it also
+> supports other patterns.
+>
+> I believe we need interface common between different LED controllers.
+>
+> And I guess it would be easiest if you dropped this part from initial
+> merge.
+>
+> Thanks and best regards,
+>
+>                                                                 Pavel
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+
+
 
 -- 
 Baolin.wang
