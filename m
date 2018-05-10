@@ -1,88 +1,127 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v3 1/3] leds: triggers: provide
- led_trigger_register_format()
-Date: Thu, 10 May 2018 13:22:29 +0200
-Message-ID: <20180510112229.GE6977@amd>
-References: <20180508100543.12559-1-u.kleine-koenig@pengutronix.de>
- <20180508100543.12559-2-u.kleine-koenig@pengutronix.de>
- <20180510112101.GD6977@amd>
+Subject: Re: [PATCH v2 1/2] dt: bindings: lm3601x: Introduce the lm3601x
+ driver
+Date: Thu, 10 May 2018 13:28:07 +0200
+Message-ID: <20180510112807.GF6977@amd>
+References: <20180508141704.24271-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="maH1Gajj2nflutpK"
+        protocol="application/pgp-signature"; boundary="pyE8wggRBhVBcj8z"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180510112101.GD6977@amd>
+In-Reply-To: <20180508141704.24271-1-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-serial@vger.kernel.org, linux-leds@vger.kernel.org, linux-can@vger.kernel.org, kernel@pengutronix.de, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Florian Fainelli <f.fainelli@gmail.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, linux-arm-kernel@lists.infradead.org
+To: Dan Murphy <dmurphy@ti.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 
---maH1Gajj2nflutpK
+--pyE8wggRBhVBcj8z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu 2018-05-10 13:21:01, Pavel Machek wrote:
-> Hi!
+On Tue 2018-05-08 09:17:03, Dan Murphy wrote:
+> Introduce the device tree bindings for the lm3601x
+> family of LED torch, flash and IR drivers.
 >=20
-> > This allows one to simplify drivers that provide a trigger with a
-> > non-constant name (e.g. one trigger per device with the trigger name
-> > depending on the device's name).
-> >=20
-> > Internally the memory the name member of struct led_trigger points to
-> > now always allocated dynamically instead of just taken from the caller.
-> >=20
-> > The function led_trigger_rename_static() must be changed accordingly and
-> > was renamed to led_trigger_rename() for consistency, with the only user
-> > adapted.
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
 >=20
-> Well, I'm not sure if we want to have _that_ many trigger. Trigger
-> interface is going to become.. "interesting".
+> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
 >=20
-> We have 4K limit on total number of triggers. We use rather strange
-> interface to select trigger.
+>  .../devicetree/bindings/leds/leds-lm3601x.txt | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.t=
+xt
 >=20
-> > @@ -115,13 +115,13 @@ static int can_led_notifier(struct notifier_block=
- *nb, unsigned long msg,
-> > =20
-> >  	if (msg =3D=3D NETDEV_CHANGENAME) {
-> >  		snprintf(name, sizeof(name), "%s-tx", netdev->name);
-> > -		led_trigger_rename_static(name, priv->tx_led_trig);
-> > +		led_trigger_rename(priv->tx_led_trig, name);
-> > =20
-> >  		snprintf(name, sizeof(name), "%s-rx", netdev->name);
-> > -		led_trigger_rename_static(name, priv->rx_led_trig);
-> > +		led_trigger_rename(priv->rx_led_trig, name);
-> > =20
-> >  		snprintf(name, sizeof(name), "%s-rxtx", netdev->name);
-> > -		led_trigger_rename_static(name, priv->rxtx_led_trig);
-> > +		led_trigger_rename(priv->rxtx_led_trig, name);
-> >  	}
-> > =20
->=20
-> I know this is not your fault, but if you have a space or "[]" in
-> netdev names, confusing things will happen.
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Do=
+cumentation/devicetree/bindings/leds/leds-lm3601x.txt
+> new file mode 100644
+> index 000000000000..38cdabf6ca7e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+> @@ -0,0 +1,51 @@
+> +* Texas Instruments - lm3601x Single-LED Flash Driver
+> +
+> +The LM3601X are ultra-small LED flash drivers that
+> +provides a high level of adjustability.
 
-Hmm. If we are doing this we really should check trigger names for
-forbidden characters. At least "[] " should be forbidden.
-								Pavel
+"provide".
 
+> +Required properties:
+> +	- compatible : Can be one of the following
+> +		"ti,lm3601x"
+> +		"ti,lm36010"
+> +		"ti,lm36011"
+> +	- reg : I2C slave address
+> +	- #address-cells : 1
+> +	- #size-cells : 0
+> +
+> +Required child properties:
+> +	- reg : 0 - Indicates to support and register a torch interface
+> +		1 - Indicates to support and register a strobe interface
+> +		2 - Indicates to support and register an ir interface
+
+I'd delete "to support and register" -- we are describing hardware here.
+
+> +Optional child properties:
+> +	- label : see Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Example:
+> +led-controller@64 {
+> +	compatible =3D "ti,lm3601x";
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <0>;
+> +	reg =3D <0x64>;
+> +
+> +	led@0 {
+> +		reg =3D <0>;
+> +		label =3D "white:torch";
+> +		led-max-microamp=3D<10000>;
+> +	};
+> +
+> +	led@1 {
+> +		reg =3D <1>;
+> +		label =3D "white:strobe";
+> +		flash-max-microamp=3D<10000>;
+> +		flash-max-timeout-us=3D<800>;
+> +	};
+> +
+> +	led@2 {
+> +		reg =3D <2>;
+> +		label =3D "invisible:ir";
+> +	};
+> +}
+
+Title says this is single-LED driver chip, but it controls three chips
+in this example?
+
+I'd put " " around "=3D" for consistency.
+
+We use "flash" elsewhere, I'd replace "strobe" with that. Userspace
+would like consistency, too.
+
+What is the IR led good for? Taking videos in the dark?
+
+I guess for consistency, it is "ir:torch" :-).
+
+									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---maH1Gajj2nflutpK
+--pyE8wggRBhVBcj8z
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlr0K3UACgkQMOfwapXb+vKCHQCeIzCRd6sZWya59FEb/WCapyef
-ChwAoLknzNtCk/JAfalkPnkseQxKoshk
-=BEdK
+iEYEARECAAYFAlr0LMcACgkQMOfwapXb+vI1igCfR3PBrzknyo2zuV5qghdEPA9j
+bZUAoIDk6ULSlOTimfVCCCsVoA+hZga/
+=kSWL
 -----END PGP SIGNATURE-----
 
---maH1Gajj2nflutpK--
+--pyE8wggRBhVBcj8z--
