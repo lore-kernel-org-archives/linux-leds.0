@@ -1,110 +1,105 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 1/2] dt: bindings: lm3601x: Introduce the lm3601x
- driver
-Date: Thu, 10 May 2018 13:28:07 +0200
-Message-ID: <20180510112807.GF6977@amd>
-References: <20180508141704.24271-1-dmurphy@ti.com>
+Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
+ controller driver
+Date: Thu, 10 May 2018 13:37:49 +0200
+Message-ID: <20180510113749.GG6977@amd>
+References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
+ <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
+ <20180509142539.GB25131@amd>
+ <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="pyE8wggRBhVBcj8z"
+        protocol="application/pgp-signature"; boundary="p7qwJlK53pWzbayA"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180508141704.24271-1-dmurphy@ti.com>
+In-Reply-To: <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Baolin Wang <baolin.wang@linaro.org>, robh+dt@kernel.org, mark.rutland@arm.com, xiaotong.lu@spreadtrum.com, broonie@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 
---pyE8wggRBhVBcj8z
+--p7qwJlK53pWzbayA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue 2018-05-08 09:17:03, Dan Murphy wrote:
-> Introduce the device tree bindings for the lm3601x
-> family of LED torch, flash and IR drivers.
+Hi!
+
+> >>This patch adds Spreadtrum SC27xx PMIC series breathing light controller
+> >>driver, which can support 3 LEDs. Each LED can work at normal PWM mode
+> >>and breathing mode.
+> >>
+> >>diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/=
+Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+> >>new file mode 100644
+> >>index 0000000..22166fb
+> >>--- /dev/null
+> >>+++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+> >>@@ -0,0 +1,19 @@
+> >>+What:		/sys/class/leds/<led>/rise_time
+> >>+What:		/sys/class/leds/<led>/high_time
+> >>+What:		/sys/class/leds/<led>/fall_time
+> >>+What:		/sys/class/leds/<led>/low_time
+> >>+Date:		May 2018
+> >>+KernelVersion:	4.18
+> >>+Contact:	Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+> >>+Description:
+> >>+		Set the pattern generator rise, high, fall and low
+> >>+		times (0..63). It's unit is 0.125s, it should be > 0.
+> >>+
+> >>+		1 - 125 ms
+> >>+		2 - 250 ms
+> >>+		3 - 375 ms
+> >>+		...
+> >>+		...
+> >>+		...
+> >>+		62 - 7.75 s
+> >>+		63 - 7.875 s
+> >
+> >How does this interact with triggers? With manually setting
+> >brightness? Are the pattern generators independend for the LEDs?
+> >
+> >Can you generate white breathing pattern? If so, how?
+> >
+> >How do you select between normal and breathing modes?
+> >
+> >I'd specify times in miliseconds or something, this is way too
+> >hardware specific.
 >=20
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
+> Agreed.
 >=20
-> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
+> >Now... functionality like this is common between many LED
+> >controllers. N900 could do this kind of "breathing", too, and it also
+> >supports other patterns.
+> >
+> >I believe we need interface common between different LED controllers.
+> >
+> >And I guess it would be easiest if you dropped this part from initial
+> >merge.
 >=20
->  .../devicetree/bindings/leds/leds-lm3601x.txt | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.t=
-xt
+> I disagree here. We already had the same discussion at the occasion
+> of the patch [0] and it turned out to be a dead-end [1]. Now we have
+> neither the driver nor the generic pattern interface.
 >=20
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Do=
-cumentation/devicetree/bindings/leds/leds-lm3601x.txt
-> new file mode 100644
-> index 000000000000..38cdabf6ca7e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-> @@ -0,0 +1,51 @@
-> +* Texas Instruments - lm3601x Single-LED Flash Driver
-> +
-> +The LM3601X are ultra-small LED flash drivers that
-> +provides a high level of adjustability.
+> We also already have some older LED class drivers that implement custom
+> pattern interfaces (e.g. drivers/leds/leds-lm3533.c) and the same
+> approach can be applied in this case.
 
-"provide".
+Please don't. It was mistake to implement custom pattern interfaces
+back then, it is still mistake now.
+=20
+If we really need solution now, I'd recommend "pattern" file with
 
-> +Required properties:
-> +	- compatible : Can be one of the following
-> +		"ti,lm3601x"
-> +		"ti,lm36010"
-> +		"ti,lm36011"
-> +	- reg : I2C slave address
-> +	- #address-cells : 1
-> +	- #size-cells : 0
-> +
-> +Required child properties:
-> +	- reg : 0 - Indicates to support and register a torch interface
-> +		1 - Indicates to support and register a strobe interface
-> +		2 - Indicates to support and register an ir interface
+"<delta time> <brightness> <delta time> <brightness>".
 
-I'd delete "to support and register" -- we are describing hardware here.
+In this specific case, hardware only supports patterns in this format:
 
-> +Optional child properties:
-> +	- label : see Documentation/devicetree/bindings/leds/common.txt
-> +
-> +Example:
-> +led-controller@64 {
-> +	compatible =3D "ti,lm3601x";
-> +	#address-cells =3D <1>;
-> +	#size-cells =3D <0>;
-> +	reg =3D <0x64>;
-> +
-> +	led@0 {
-> +		reg =3D <0>;
-> +		label =3D "white:torch";
-> +		led-max-microamp=3D<10000>;
-> +	};
-> +
-> +	led@1 {
-> +		reg =3D <1>;
-> +		label =3D "white:strobe";
-> +		flash-max-microamp=3D<10000>;
-> +		flash-max-timeout-us=3D<800>;
-> +	};
-> +
-> +	led@2 {
-> +		reg =3D <2>;
-> +		label =3D "invisible:ir";
-> +	};
-> +}
+low_time 0 rise_time 255 high_time 255 fall_time 0
 
-Title says this is single-LED driver chip, but it controls three chips
-in this example?
+so driver would simply -EINVAL on anything else.
 
-I'd put " " around "=3D" for consistency.
-
-We use "flash" elsewhere, I'd replace "strobe" with that. Userspace
-would like consistency, too.
-
-What is the IR led good for? Taking videos in the dark?
-
-I guess for consistency, it is "ir:torch" :-).
+Best regards,
 
 									Pavel
 --=20
@@ -112,16 +107,16 @@ I guess for consistency, it is "ir:torch" :-).
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---pyE8wggRBhVBcj8z
+--p7qwJlK53pWzbayA
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlr0LMcACgkQMOfwapXb+vI1igCfR3PBrzknyo2zuV5qghdEPA9j
-bZUAoIDk6ULSlOTimfVCCCsVoA+hZga/
-=kSWL
+iEYEARECAAYFAlr0Lw0ACgkQMOfwapXb+vIRVACgwnjEX9KbjsguxrZHENVrg85k
+DzEAoLHGFNDSqR/bS/Z/JhEioFUQBHOn
+=v++i
 -----END PGP SIGNATURE-----
 
---pyE8wggRBhVBcj8z--
+--p7qwJlK53pWzbayA--
