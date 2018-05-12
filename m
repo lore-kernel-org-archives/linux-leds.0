@@ -1,99 +1,83 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
- controller driver
-Date: Sat, 12 May 2018 10:35:59 +0200
-Message-ID: <20180512083559.GB8944@amd>
-References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
- <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
- <20180509142539.GB25131@amd>
- <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
- <20180510113749.GG6977@amd>
- <6289571e-7224-ca5e-1acf-5b099be57302@gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v3 1/3] leds: triggers: provide
+ led_trigger_register_format()
+Date: Sat, 12 May 2018 20:59:28 +0200
+Message-ID: <20180512185928.nzeyvxqnvfefqnzj@pengutronix.de>
+References: <20180508100543.12559-1-u.kleine-koenig@pengutronix.de>
+ <20180508100543.12559-2-u.kleine-koenig@pengutronix.de>
+ <20180510112101.GD6977@amd>
+ <20180510112229.GE6977@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="v9Ux+11Zm5mwPlX6"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <6289571e-7224-ca5e-1acf-5b099be57302@gmail.com>
+In-Reply-To: <20180510112229.GE6977@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Baolin Wang <baolin.wang@linaro.org>, robh+dt@kernel.org, mark.rutland@arm.com, xiaotong.lu@spreadtrum.com, broonie@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: linux-arm-kernel@lists.infradead.org, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org, kernel@pengutronix.de, Mathieu Poirier <mathieu.poirier@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, linux-can@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, Robin Murphy <robin.murphy@arm.com>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+On Thu, May 10, 2018 at 01:22:29PM +0200, Pavel Machek wrote:
+> On Thu 2018-05-10 13:21:01, Pavel Machek wrote:
+> > Hi!
+> > 
+> > > This allows one to simplify drivers that provide a trigger with a
+> > > non-constant name (e.g. one trigger per device with the trigger name
+> > > depending on the device's name).
+> > > 
+> > > Internally the memory the name member of struct led_trigger points to
+> > > now always allocated dynamically instead of just taken from the caller.
+> > > 
+> > > The function led_trigger_rename_static() must be changed accordingly and
+> > > was renamed to led_trigger_rename() for consistency, with the only user
+> > > adapted.
+> > 
+> > Well, I'm not sure if we want to have _that_ many trigger. Trigger
+> > interface is going to become.. "interesting".
+> > 
+> > We have 4K limit on total number of triggers. We use rather strange
+> > interface to select trigger.
+> > 
+> > > @@ -115,13 +115,13 @@ static int can_led_notifier(struct notifier_block *nb, unsigned long msg,
+> > >  
+> > >  	if (msg == NETDEV_CHANGENAME) {
+> > >  		snprintf(name, sizeof(name), "%s-tx", netdev->name);
+> > > -		led_trigger_rename_static(name, priv->tx_led_trig);
+> > > +		led_trigger_rename(priv->tx_led_trig, name);
+> > >  
+> > >  		snprintf(name, sizeof(name), "%s-rx", netdev->name);
+> > > -		led_trigger_rename_static(name, priv->rx_led_trig);
+> > > +		led_trigger_rename(priv->rx_led_trig, name);
+> > >  
+> > >  		snprintf(name, sizeof(name), "%s-rxtx", netdev->name);
+> > > -		led_trigger_rename_static(name, priv->rxtx_led_trig);
+> > > +		led_trigger_rename(priv->rxtx_led_trig, name);
+> > >  	}
+> > >  
+> > 
+> > I know this is not your fault, but if you have a space or "[]" in
+> > netdev names, confusing things will happen.
+> 
+> Hmm. If we are doing this we really should check trigger names for
+> forbidden characters. At least "[] " should be forbidden.
 
---v9Ux+11Zm5mwPlX6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think you don't expect me to change the patch, but to make this
+explicit: My patch doesn't make this problem worse, so this would be an
+orthogonal change and doesn't affect this one.
 
-Hi!
+Spaces don't seem to be allowed in netdev names:
 
-> >>I disagree here. We already had the same discussion at the occasion
-> >>of the patch [0] and it turned out to be a dead-end [1]. Now we have
-> >>neither the driver nor the generic pattern interface.
-> >>
-> >>We also already have some older LED class drivers that implement custom
-> >>pattern interfaces (e.g. drivers/leds/leds-lm3533.c) and the same
-> >>approach can be applied in this case.
-> >
-> >Please don't. It was mistake to implement custom pattern interfaces
-> >back then, it is still mistake now.
->=20
-> It turned out to be really hard to cover all known pattern generator
-> implementations with generic interface. Sure, it would be nice to have
-> one, but the whole discussion around [0] only unveiled the diversity of
-> parameters to cover. And still new devices appear on the market.
->=20
-> We would have to propose a set of pattern schemes and allow to
-> add new ones to it.
+uwe@taurus:~$ sudo ip link set wlp3s0 name 'la la'
+Error: argument "la la" is wrong: "name" not a valid ifname
 
-I believe that what I'm proposing below is close enough to universal.
+(Didn't check if only ip forbids that, of if that is a kernel policy.) I
+could rename my device to "lala[]" though.
 
-> >If we really need solution now, I'd recommend "pattern" file with
-> >
-> >"<delta time> <brightness> <delta time> <brightness>".
-> >
-> >In this specific case, hardware only supports patterns in this format:
-> >
-> >low_time 0 rise_time 255 high_time 255 fall_time 0
-> >
-> >so driver would simply -EINVAL on anything else.
->=20
-> I'm fine with the pattern file, but the pattern format would have
-> to be defined in the per-driver ABI documentation. It wouldn't much
-> differ from the custom pattern approach though, unless I'm missing some
-> gain of having pattern setting in a uniformly named single sysfs file
-> (with semantics differing from driver to driver).
+Best regards
+Uwe
 
-I'm proposing "<delta time> <brightness> ..." sysfs file. It certainly
-covers this hardware, it would be enough to cover the Qualcomm Pulse
-generator (IIRC), and it would cover most uses cases of Nokia N900's
-LED.
-
-Yes, we would need to document limitations of each chip. But it should
-be easily possible to run pattern designed for Spreadtrum on N900,
-even if it would not work the other way around.
-
-(If someone really wants to run complex patterns on simple hardware,
-we can provide software emulation using same file format. I believe I
-still have that patch somewhere.)
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---v9Ux+11Zm5mwPlX6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlr2p28ACgkQMOfwapXb+vIf9gCfbc7J1DbeydXSF6VfCfDj6MY8
-6JMAoMAEpqFV5gkVpTTIJ/6wvGYtGh0s
-=FSXM
------END PGP SIGNATURE-----
-
---v9Ux+11Zm5mwPlX6--
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
