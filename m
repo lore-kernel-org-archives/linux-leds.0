@@ -1,101 +1,36 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
- controller driver
-Date: Sun, 13 May 2018 10:19:37 +0800
-Message-ID: <CAMz4kuLJbq0G4TGoRp_if1mwe_4pa69haJvmT9SoRJ-UwGDa_g@mail.gmail.com>
-References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
- <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
- <20180509142539.GB25131@amd> <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
- <20180510113749.GG6977@amd> <6289571e-7224-ca5e-1acf-5b099be57302@gmail.com>
- <20180512083559.GB8944@amd> <7c9d5eec-4e6b-9b26-470c-f8002cca5f27@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v3 3/3] tty: implement led triggers
+Date: Sun, 13 May 2018 17:23:34 +0300
+Message-ID: <CAHp75Vf0RmAU8Qvk13JkFJob95pBEv27o4k8FVKo+0vs-SxYRg@mail.gmail.com>
+References: <20180508100543.12559-1-u.kleine-koenig@pengutronix.de> <20180508100543.12559-4-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7c9d5eec-4e6b-9b26-470c-f8002cca5f27@gmail.com>
+In-Reply-To: <20180508100543.12559-4-u.kleine-koenig@pengutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, xiaotong.lu@spreadtrum.com, Mark Brown <broonie@kernel.org>, linux-leds@vger.kernel.org, DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-can@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Florian Fainelli <f.fainelli@gmail.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Robin Murphy <robin.murphy@arm.com>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Jacek and Pavel,
+On Tue, May 8, 2018 at 1:05 PM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+> The rx trigger fires when data is pushed to the ldisc by the driver. This
+> is a bit later than the actual receiving of data but has the nice benefit
+> that it doesn't need adaption for each driver and isn't in the hot path.
+>
+> Similarly the tx trigger fires when data was copied from userspace and is
+> given to the ldisc.
 
-On 13 May 2018 at 04:44, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
-> Hi Pavel,
->
->
-> On 05/12/2018 10:35 AM, Pavel Machek wrote:
->>
->> Hi!
->>
->>>>> I disagree here. We already had the same discussion at the occasion
->>>>> of the patch [0] and it turned out to be a dead-end [1]. Now we have
->>>>> neither the driver nor the generic pattern interface.
->>>>>
->>>>> We also already have some older LED class drivers that implement custom
->>>>> pattern interfaces (e.g. drivers/leds/leds-lm3533.c) and the same
->>>>> approach can be applied in this case.
->>>>
->>>>
->>>> Please don't. It was mistake to implement custom pattern interfaces
->>>> back then, it is still mistake now.
->>>
->>>
->>> It turned out to be really hard to cover all known pattern generator
->>> implementations with generic interface. Sure, it would be nice to have
->>> one, but the whole discussion around [0] only unveiled the diversity of
->>> parameters to cover. And still new devices appear on the market.
->>>
->>> We would have to propose a set of pattern schemes and allow to
->>> add new ones to it.
->>
->>
->> I believe that what I'm proposing below is close enough to universal.
->>
->>>> If we really need solution now, I'd recommend "pattern" file with
->>>>
->>>> "<delta time> <brightness> <delta time> <brightness>".
->>>>
->>>> In this specific case, hardware only supports patterns in this format:
->>>>
->>>> low_time 0 rise_time 255 high_time 255 fall_time 0
->>>>
->>>> so driver would simply -EINVAL on anything else.
->>>
->>>
->>> I'm fine with the pattern file, but the pattern format would have
->>> to be defined in the per-driver ABI documentation. It wouldn't much
->>> differ from the custom pattern approach though, unless I'm missing some
->>> gain of having pattern setting in a uniformly named single sysfs file
->>> (with semantics differing from driver to driver).
->>
->>
->> I'm proposing "<delta time> <brightness> ..." sysfs file. It certainly
->> covers this hardware, it would be enough to cover the Qualcomm Pulse
->> generator (IIRC), and it would cover most uses cases of Nokia N900's
->> LED.
->>
->> Yes, we would need to document limitations of each chip. But it should
->> be easily possible to run pattern designed for Spreadtrum on N900,
->> even if it would not work the other way around.
->>
->> (If someone really wants to run complex patterns on simple hardware,
->> we can provide software emulation using same file format. I believe I
->> still have that patch somewhere.)
->
->
-> OK, I've revised the discussion under Qualcomm LPG patch set and
-> it seems that we have almost ready solution in [0], except the
-> pattern_repeat file you mention in [1]. So probably Baolin could
-> address your remarks from [1] and add pattern_repeat file to the
-> patch that begins thread [0].
->
-> [0] https://lkml.org/lkml/2017/11/15/27
-> [1] https://lkml.org/lkml/2017/12/8/470
+>  #include <uapi/linux/tty.h>
+>  #include <linux/rwsem.h>
+>  #include <linux/llist.h>
+> +#include <linux/leds.h>
 
-Thanks for your suggestion. So I will remove the sysfs part from the
-new driver, then send incremental patches when introducing some common
-LED interfaces.
+Even for unordered lists of inclusions I would still try to put new
+lines in "somehow" ordered positions.
+For example here, I would rather put it before llist.h.
 
--- 
-Baolin.wang
-Best Regards
+--=20
+With Best Regards,
+Andy Shevchenko
