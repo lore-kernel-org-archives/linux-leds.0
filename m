@@ -1,56 +1,83 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH V1 5/5] backlight: qcom-wled: Add auto string detection
- logic
-Date: Mon, 14 May 2018 10:02:37 -0700
-Message-ID: <20180514170237.GL14924@minitux>
-References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
- <1525341432-15818-6-git-send-email-kgunda@codeaurora.org>
- <20180507181044.GE2259@tuxbook-pro>
- <abe98bd822f8c7bab80f9ec9afb34d9b@codeaurora.org>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v5 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+Date: Mon, 14 May 2018 14:40:29 -0500
+Message-ID: <86c2bc2f-e622-9447-e4bb-b4ee37e2d44a@ti.com>
+References: <20180510174717.26540-1-dmurphy@ti.com>
+ <20180510174717.26540-2-dmurphy@ti.com>
+ <41267191-1308-6b9b-78fa-2893a525b49a@gmail.com>
+ <17630aca-1225-df61-7a5d-a921ecd9c78c@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <abe98bd822f8c7bab80f9ec9afb34d9b@codeaurora.org>
+In-Reply-To: <17630aca-1225-df61-7a5d-a921ecd9c78c@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: kgunda@codeaurora.org
-Cc: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, mark.rutland@arm.com, pavel@ucw.cz, afd@ti.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed 09 May 00:14 PDT 2018, kgunda@codeaurora.org wrote:
+Jacek
 
-> On 2018-05-07 23:40, Bjorn Andersson wrote:
-> > On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
-> > 
-> > [..]
-> > > +
-> > > +#define WLED_AUTO_DETECT_OVP_COUNT		5
-> > > +#define WLED_AUTO_DETECT_CNT_DLY_US		HZ /* 1 second */
-> > > +static bool wled_auto_detection_required(struct wled *wled)
-> > 
-> > So cfg.auto_detection_enabled is set, but we didn't have a fault during
-> > wled_auto_detection_at_init(), which I presume indicates that the boot
-> > loader configured the strings appropriately (or didn't enable the BL).
-> > Then first time we try to enable the backlight we will hit the ovp irq,
-> > which will  enter here a few times to figure out that the strings are
-> > incorrectly configured and then we will do the same thing that would
-> > have been done if we probed with a fault.
-> > 
-> > This is convoluted!
-> > 
-> > If auto-detection is a feature allowing the developer to omit the string
-> > configuration then just do the auto detection explicitly in probe when
-> > the developer did so and then never do it again.
-> > 
-> As explained in the previous patch, the auto-detection is needed later,
-> because are also cases where one/more of the connected LED string of the
-> display-backlight is malfunctioning (because of damage) and requires the
-> damaged string to be turned off to prevent the complete panel and/or board
-> from being damaged.
+On 05/11/2018 06:56 AM, Dan Murphy wrote:
+<snip>
 
-Okay, that sounds very reasonable. Please ensure that it's clearly
-described in the commit message, so that we have this documented if
-someone wonders in the future.
+>>> +    }
+>>> +
+>>> +    if (led->strobe_node) {
+>>> +        ret = of_property_read_string(led->strobe_node, "label", &name);
+>>> +        if (!ret)
+>>> +            snprintf(led->strobe, sizeof(led->strobe),
+>>> +                "%s:%s", led->strobe_node->name, name);
+>>> +        else
+>>> +            snprintf(led->strobe, sizeof(led->strobe),
+>>> +                "%s::strobe", led->strobe_node->name);
+>>> +
+>>> +        ret = of_property_read_u32(led->strobe_node,
+>>> +                    "flash-max-microamp",
+>>> +                    &led->strobe_current_max);
+>>> +        if (ret < 0) {
+>>> +            led->strobe_current_max = LM3601X_MIN_STROBE_I_MA;
+>>> +            dev_warn(&led->client->dev,
+>>> +                 "flash-max-microamp DT property missing\n");
+>>> +        }
+>>> +
+>>> +        ret = of_property_read_u32(led->strobe_node,
+>>> +                    "flash-max-timeout-us",
+>>> +                    &led->max_strobe_timeout);
+>>> +        if (ret < 0) {
+>>> +            led->max_strobe_timeout = strobe_timeouts[0].reg_val;
+>>> +            dev_warn(&led->client->dev,
+>>> +                 "flash-max-timeout-us DT property missing\n");
+>>> +        }
+>>
+>> Common LED bindings state that flash-max-microamp and
+>> flash-max-timeout-us properties are mandatory.
+> 
+> OK.
 
-Regards,
-Bjorn
+OK I looked at the max776973 driver and well if the flash-max-microamp and
+flash-max-timeout-us nodes are missing it sets a default value for each if the
+node is not present.
+
+So should we remove this code from the Max77693 driver too and fail probe as being asked
+in this driver?
+
+Dan
+
+> 
+>>
+>>> +
+>>> +        lm3601x_init_flash_timeout(led);
+
+<snip>
+
+>>>
+>>
+> 
+> 
+
+
+-- 
+------------------
+Dan Murphy
