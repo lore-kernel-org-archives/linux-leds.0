@@ -1,28 +1,56 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v4 2/2] leds: Add Spreadtrum SC27xx breathing light
- controller driver
-Date: Mon, 14 May 2018 18:58:22 +0200
-Message-ID: <20180514165822.GC27984@xo-6d-61-c0.localdomain>
-References: <392631974080542c43b8e280a225d430d73b5ed4.1526279287.git.baolin.wang@linaro.org>
- <f20d9b010a256b695dbaefedacdf3d29fd4b9674.1526279287.git.baolin.wang@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH V1 5/5] backlight: qcom-wled: Add auto string detection
+ logic
+Date: Mon, 14 May 2018 10:02:37 -0700
+Message-ID: <20180514170237.GL14924@minitux>
+References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
+ <1525341432-15818-6-git-send-email-kgunda@codeaurora.org>
+ <20180507181044.GE2259@tuxbook-pro>
+ <abe98bd822f8c7bab80f9ec9afb34d9b@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <f20d9b010a256b695dbaefedacdf3d29fd4b9674.1526279287.git.baolin.wang@linaro.org>
+In-Reply-To: <abe98bd822f8c7bab80f9ec9afb34d9b@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: jacek.anaszewski@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, xiaotong.lu@spreadtrum.com, broonie@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kgunda@codeaurora.org
+Cc: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Mon 2018-05-14 14:34:51, Baolin Wang wrote:
-> This patch adds Spreadtrum SC27xx PMIC series breathing light controller
-> driver, which can support 3 LEDs. Each LED can work at normal PWM mode
-> and breathing mode.
-> 
-> Signed-off-by: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+On Wed 09 May 00:14 PDT 2018, kgunda@codeaurora.org wrote:
 
-ACK.
+> On 2018-05-07 23:40, Bjorn Andersson wrote:
+> > On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
+> > 
+> > [..]
+> > > +
+> > > +#define WLED_AUTO_DETECT_OVP_COUNT		5
+> > > +#define WLED_AUTO_DETECT_CNT_DLY_US		HZ /* 1 second */
+> > > +static bool wled_auto_detection_required(struct wled *wled)
+> > 
+> > So cfg.auto_detection_enabled is set, but we didn't have a fault during
+> > wled_auto_detection_at_init(), which I presume indicates that the boot
+> > loader configured the strings appropriately (or didn't enable the BL).
+> > Then first time we try to enable the backlight we will hit the ovp irq,
+> > which will  enter here a few times to figure out that the strings are
+> > incorrectly configured and then we will do the same thing that would
+> > have been done if we probed with a fault.
+> > 
+> > This is convoluted!
+> > 
+> > If auto-detection is a feature allowing the developer to omit the string
+> > configuration then just do the auto detection explicitly in probe when
+> > the developer did so and then never do it again.
+> > 
+> As explained in the previous patch, the auto-detection is needed later,
+> because are also cases where one/more of the connected LED string of the
+> display-backlight is malfunctioning (because of damage) and requires the
+> damaged string to be turned off to prevent the complete panel and/or board
+> from being damaged.
 
-									Pavel
+Okay, that sounds very reasonable. Please ensure that it's clearly
+described in the commit message, so that we have this documented if
+someone wonders in the future.
+
+Regards,
+Bjorn
