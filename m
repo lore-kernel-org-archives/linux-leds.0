@@ -1,30 +1,83 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v3 1/3] leds: triggers: provide led_trigger_register_format()
-Date: Sun, 13 May 2018 17:34:42 +0300
-Message-ID: <CAHp75VeWsbT+XuacdrKM6drzcxwx0inAUjtyU0WBX_SUTg6Lbg@mail.gmail.com>
-References: <20180508100543.12559-1-u.kleine-koenig@pengutronix.de>
- <20180508100543.12559-2-u.kleine-koenig@pengutronix.de> <20180510112101.GD6977@amd>
- <20180510112229.GE6977@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH v4 1/2] dt-bindings: leds: Add SC27xx breathing light controller documentation
+Date: Mon, 14 May 2018 14:34:50 +0800
+Message-ID: <392631974080542c43b8e280a225d430d73b5ed4.1526279287.git.baolin.wang@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180510112229.GE6977@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, linux-can@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Florian Fainelli <f.fainelli@gmail.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Robin Murphy <robin.murphy@arm.com>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: xiaotong.lu@spreadtrum.com, baolin.wang@linaro.org, broonie@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, May 10, 2018 at 2:22 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> On Thu 2018-05-10 13:21:01, Pavel Machek wrote:
+This patch adds the binding documentation for Spreadtrum SC27xx series
+breathing light controller, which supports 3 outputs: red LED, green
+LED and blue LED.
 
->> I know this is not your fault, but if you have a space or "[]" in
->> netdev names, confusing things will happen.
->
-> Hmm. If we are doing this we really should check trigger names for
-> forbidden characters. At least "[] " should be forbidden.
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+---
+Changes since v3:
+ - Fix some grammar issues.
+ - Add acked-by from Pavel.
 
-So, string_escape_mem() is your helper here.
+Changes since v2:
+ - Add reviewed-tag from Rob.
 
+Changes since v1:
+ - Change the compatible string to be one explicit SoC name.
+ - Change the child node name.
+ - Change to be upper case for the first character.
+---
+ .../devicetree/bindings/leds/leds-sc27xx-bltc.txt  |   41 ++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+new file mode 100644
+index 0000000..dddf84f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+@@ -0,0 +1,41 @@
++LEDs connected to Spreadtrum SC27XX PMIC breathing light controller
++
++The SC27xx breathing light controller supports to 3 outputs:
++red LED, green LED and blue LED. Each LED can work at normal
++PWM mode or breath light mode.
++
++Required properties:
++- compatible: Should be "sprd,sc2731-bltc".
++- #address-cells: Must be 1.
++- #size-cells: Must be 0.
++- reg: Specify the controller address.
++
++Required child properties:
++- reg: Port this LED is connected to.
++
++Optional child properties:
++- label: See Documentation/devicetree/bindings/leds/common.txt.
++
++Examples:
++
++led-controller@200 {
++	compatible = "sprd,sc2731-bltc";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x200>;
++
++	led@0 {
++		label = "red";
++		reg = <0x0>;
++	};
++
++	led@1 {
++		label = "green";
++		reg = <0x1>;
++	};
++
++	led@2 {
++		label = "blue";
++		reg = <0x2>;
++	};
++};
 -- 
-With Best Regards,
-Andy Shevchenko
+1.7.9.5
