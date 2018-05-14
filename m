@@ -1,45 +1,66 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH v5 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-Date: Mon, 14 May 2018 22:49:51 +0300
-Message-ID: <CAHp75VcFR4zUOhRjNLN1nMirirVaK-WjYa5Kwa9dL__-bjnLuA@mail.gmail.com>
-References: <20180510174717.26540-1-dmurphy@ti.com> <20180510174717.26540-2-dmurphy@ti.com>
- <41267191-1308-6b9b-78fa-2893a525b49a@gmail.com> <17630aca-1225-df61-7a5d-a921ecd9c78c@ti.com>
+Date: Mon, 14 May 2018 22:05:03 +0200
+Message-ID: <20180514200503.GB3276@amd>
+References: <20180510174717.26540-1-dmurphy@ti.com>
+ <20180510174717.26540-2-dmurphy@ti.com>
+ <41267191-1308-6b9b-78fa-2893a525b49a@gmail.com>
+ <17630aca-1225-df61-7a5d-a921ecd9c78c@ti.com>
  <86c2bc2f-e622-9447-e4bb-b4ee37e2d44a@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="8P1HSweYDcXXzwPJ"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <86c2bc2f-e622-9447-e4bb-b4ee37e2d44a@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dan Murphy <dmurphy@ti.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pavel Machek <pavel@ucw.cz>, "Andrew F. Davis" <afd@ti.com>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, mark.rutland@arm.com, afd@ti.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, May 14, 2018 at 10:40 PM, Dan Murphy <dmurphy@ti.com> wrote:
-> On 05/11/2018 06:56 AM, Dan Murphy wrote:
 
->>>> +        ret = of_property_read_string(led->strobe_node, "label", &name);
+--8P1HSweYDcXXzwPJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>>> +        ret = of_property_read_u32(led->strobe_node,
+Hi!
 
->>>> +        ret = of_property_read_u32(led->strobe_node,
-
->>> Common LED bindings state that flash-max-microamp and
->>> flash-max-timeout-us properties are mandatory.
->>
->> OK.
->
+> > OK.
+>=20
 > OK I looked at the max776973 driver and well if the flash-max-microamp and
-> flash-max-timeout-us nodes are missing it sets a default value for each if the
+> flash-max-timeout-us nodes are missing it sets a default value for each i=
+f the
 > node is not present.
->
-> So should we remove this code from the Max77693 driver too and fail probe as being asked
+>=20
+> So should we remove this code from the Max77693 driver too and fail probe=
+ as being asked
 > in this driver?
 
-I would also add that using device_property_*() API is much better
-then using OF specific one. It will help IoT / DIY entusiasts use them
-on non-DT platforms.
+Well, modifying driver without access to the hardware is tricky
+:-(. If it does something stupid (like using other than minimum values
+for the flash-max-microamp/flash-max-timeout-us), it needs to be
+fixed.
 
+And maybe comment "don't copy this, its wrong" would be in order...
 
--- 
-With Best Regards,
-Andy Shevchenko
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--8P1HSweYDcXXzwPJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlr56+8ACgkQMOfwapXb+vJsdACfbufxCmhkivW0rFmmNq5c24UX
+UE0AoJLP7Fh8r2XQl+xn0dACfvFZcHnz
+=mKky
+-----END PGP SIGNATURE-----
+
+--8P1HSweYDcXXzwPJ--
