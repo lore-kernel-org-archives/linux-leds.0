@@ -1,74 +1,87 @@
-From: kgunda@codeaurora.org
-Subject: Re: [PATCH V1 2/5] backlight: qcom-wled: Add support for WLED4
- peripheral
-Date: Tue, 15 May 2018 10:25:55 +0530
-Message-ID: <e7e26e85a7b95d1d0cb67e0d6197e897@codeaurora.org>
-References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
- <1525341432-15818-3-git-send-email-kgunda@codeaurora.org>
- <20180514165755.GB27984@xo-6d-61-c0.localdomain>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v6 1/2] dt: bindings: lm3601x: Introduce the lm3601x driver
+Date: Tue, 15 May 2018 10:43:51 -0500
+Message-ID: <20180515154352.20263-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180514165755.GB27984@xo-6d-61-c0.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-On 2018-05-14 22:27, Pavel Machek wrote:
-> Hi!
-> 
->> WLED4 peripheral is present on some PMICs like pmi8998
->> and pm660l. It has a different register map and also
->> configurations are different. Add support for it.
->> 
->> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
->> ---
->>  .../bindings/leds/backlight/qcom-wled.txt          | 172 ++++-
->>  drivers/video/backlight/qcom-wled.c                | 749 
->> +++++++++++++++------
->>  2 files changed, 696 insertions(+), 225 deletions(-)
->> 
->> diff --git 
->> a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt 
->> b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> index fb39e32..0ceffa1 100644
->> --- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> @@ -1,30 +1,129 @@
->>  Binding for Qualcomm Technologies, Inc. WLED driver
->> 
->> -Required properties:
->> -- compatible: should be "qcom,pm8941-wled"
->> -- reg: slave address
->> -
->> -Optional properties:
->> -- default-brightness: brightness value on boot, value from: 0-4095
->> -	default: 2048
->> +- compatible
->> +	Usage:        required
->> +	Value type:   <string>
->> +	Definition:   should be "qcom,pm8941-wled" or "qcom,pmi8998-wled".
->> +		      or "qcom,pm660l-wled".
->> +
->> +- reg
->> +	Usage:        required
->> +	Value type:   <prop encoded array>
->> +	Definition:   Base address of the WLED modules.
-> 
-> I'm not sure if this change of format is good idea here...
-> 
-> 									Pavel
-> --
-This format is clean and easily readable. That's why I have moved to 
-this format.
-To avoid confusion, I will move out the existing properties 
-(pm8941-wled.c) to other
-patch. So that it will be easy to review.
+Introduce the device tree bindings for the lm3601x
+family of LED torch, flash and IR drivers.
 
-> To unsubscribe from this list: send the line "unsubscribe 
-> linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+
+v6 - Removed multiple led child nodes, fixed example to display micro ranges
+for corresponding child nodes and added led-sources to define the current driver -
+https://patchwork.kernel.org/patch/10392121/
+
+v5 - No changes - https://patchwork.kernel.org/patch/10391743/
+v4 - Added " " around "=", changed strobe to flash on label, removed "support and
+register" comment and change ir lable to ir:torch - See v2 patchworks for comments
+v3 - Removed wildcard compatible - https://patchwork.kernel.org/patch/10386241/
+v2 - No changes - https://patchwork.kernel.org/patch/10384587/
+
+ .../devicetree/bindings/leds/leds-lm3601x.txt | 47 +++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+new file mode 100644
+index 000000000000..27930a89e9a5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+@@ -0,0 +1,47 @@
++* Texas Instruments - lm3601x Single-LED Flash Driver
++
++The LM3601X are ultra-small LED flash drivers that
++provide a high level of adjustability.
++
++Required properties:
++	- compatible : Can be one of the following
++		"ti,lm36010"
++		"ti,lm36011"
++	- reg : I2C slave address
++	- #address-cells : 1
++	- #size-cells : 0
++
++Required child properties:
++	- reg : 0
++	- led-sources:	0 - Indicates a IR mode
++			1 - Indicates a Torch (white LED) mode
++
++Required properties for flash LED child nodes:
++	See Documentation/devicetree/bindings/leds/common.txt
++	- flash-max-microamp : Range from 11mA -> 1.5A
++	- flash-max-timeout-us : Range from 40ms -> 1600ms
++	- led-max-microamp : Range from 2.4mA -> 376mA
++
++Optional child properties:
++	- label : see Documentation/devicetree/bindings/leds/common.txt
++
++Example:
++led-controller@64 {
++	compatible = "ti,lm36010";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x64>;
++
++	led@0 {
++		reg = <0>;
++		label = "white:torch";
++		led-max-microamp = <376000>;
++		flash-max-microamp = <1500000>;
++		flash-max-timeout-us = <1600000>;
++		led-sources = <1>;
++	};
++}
++
++For more product information please see the links below:
++http://www.ti.com/product/LM36010
++http://www.ti.com/product/LM36011
+-- 
+2.17.0.582.gccdcbd54c
