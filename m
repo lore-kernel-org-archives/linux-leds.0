@@ -1,57 +1,108 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v6 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-Date: Wed, 16 May 2018 01:27:12 +0300
-Message-ID: <CAHp75Vcytc+=3enLdMVz0Dzf1PH8ZB6fcRxOpW7rgf5vuFU2Zg@mail.gmail.com>
-References: <20180515154352.20263-1-dmurphy@ti.com> <20180515154352.20263-2-dmurphy@ti.com>
- <CAHp75VegjkiiD1qTGpi9rr6cg=72t9kSwDrG=sUpUWFVO58M4A@mail.gmail.com>
- <08dda10d-f865-9cf2-b9a5-c79cbab5da98@ti.com> <CAHp75Vcz08zrs3bgMFcvYwRrN_A43D=Nvt5cFDQf8m9whB=yhA@mail.gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v6 1/2] dt: bindings: lm3601x: Introduce the lm3601x
+ driver
+Date: Wed, 16 May 2018 22:10:14 +0200
+Message-ID: <03934462-13ef-59c0-aa27-01a003bf7baa@gmail.com>
+References: <20180515154352.20263-1-dmurphy@ti.com>
+ <98319f30-2abe-158c-1b51-33d1df80e185@gmail.com>
+ <c72494c9-e513-f3d0-3098-83f47aa9367c@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Vcz08zrs3bgMFcvYwRrN_A43D=Nvt5cFDQf8m9whB=yhA@mail.gmail.com>
+In-Reply-To: <c72494c9-e513-f3d0-3098-83f47aa9367c@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, mark.rutland@arm.com, pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, May 16, 2018 at 1:24 AM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Wed, May 16, 2018 at 1:08 AM, Dan Murphy <dmurphy@ti.com> wrote:
->> On 05/15/2018 04:56 PM, Andy Shevchenko wrote:
+Dan,
 
->>>> +static const struct lm3601x_max_timeouts strobe_timeouts[] = {
->>>> +       { 40000, 0x00 },
->>>> +       { 80000, 0x01 },
->>>> +       { 120000, 0x02 },
->>>> +       { 160000, 0x03 },
->>>> +       { 200000, 0x04 },
->>>> +       { 240000, 0x05 },
->>>> +       { 280000, 0x06 },
->>>> +       { 320000, 0x07 },
->>>> +       { 360000, 0x08 },
->>>> +       { 400000, 0x09 },
->>>> +       { 600000, 0x0a },
->>>> +       { 800000, 0x0b },
->>>> +       { 1000000, 0x0c },
->>>> +       { 1200000, 0x0d },
->>>> +       { 1400000, 0x0e },
->>>> +       { 1600000, 0x0f },
-
->>> strobe_timeout = (x + 1) * 40 * MSECS_IN_SEC;
+On 05/15/2018 11:29 PM, Dan Murphy wrote:
+> Jacek
+> 
+> On 05/15/2018 04:13 PM, Jacek Anaszewski wrote:
+>> Hi Dan,
 >>
->> Not sure what equation you are trying to point out here.  But if you are trying to apply
->> a timeout step you cannot do this with this part.  As pointed out in the DT doc the timeout
->> step is not linear.
->
-> Yeah, I know people are more than often too lazy to think.
->
-> if (x < 9)
->  strobe_timeout = (x + 1) * 40 * MSECS_IN_SEC;
-> else
->  strobe_timeout = (400 + (x - 9) * 200) * MSECS_IN_SEC;
+>> Thanks for the update.
+>>
+>> On 05/15/2018 05:43 PM, Dan Murphy wrote:
+>>> Introduce the device tree bindings for the lm3601x
+>>> family of LED torch, flash and IR drivers.
+>>>
+>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>> ---
+>>>
+>>> v6 - Removed multiple led child nodes, fixed example to display micro ranges
+>>> for corresponding child nodes and added led-sources to define the current driver -
+>>> https://patchwork.kernel.org/patch/10392121/
+>>>
+>>> v5 - No changes - https://patchwork.kernel.org/patch/10391743/
+>>> v4 - Added " " around "=", changed strobe to flash on label, removed "support and
+>>> register" comment and change ir lable to ir:torch - See v2 patchworks for comments
+>>> v3 - Removed wildcard compatible - https://patchwork.kernel.org/patch/10386241/
+>>> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
+>>>
+>>>    .../devicetree/bindings/leds/leds-lm3601x.txt | 47 +++++++++++++++++++
+>>>    1 file changed, 47 insertions(+)
+>>>    create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+>>> new file mode 100644
+>>> index 000000000000..27930a89e9a5
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+>>> @@ -0,0 +1,47 @@
+>>> +* Texas Instruments - lm3601x Single-LED Flash Driver
+>>> +
+>>> +The LM3601X are ultra-small LED flash drivers that
+>>> +provide a high level of adjustability.
+>>> +
+>>> +Required properties:
+>>> +    - compatible : Can be one of the following
+>>> +        "ti,lm36010"
+>>> +        "ti,lm36011"
+>>> +    - reg : I2C slave address
+>>> +    - #address-cells : 1
+>>> +    - #size-cells : 0
+>>> +
+>>> +Required child properties:
+>>> +    - reg : 0
+>>> +    - led-sources:    0 - Indicates a IR mode
+>>> +            1 - Indicates a Torch (white LED) mode
+>>
+>> You don't need led-sources at all. Please use reg as in
+>> the previous version. led-sources is useful for describing
+>> more complex arrangements. Here reg will do.
+> 
+> OK.  Thought we would keep consistent with the max IC.
+> 
+>>
+>>> +
+>>> +Required properties for flash LED child nodes:
+>>> +    See Documentation/devicetree/bindings/leds/common.txt
+>>> +    - flash-max-microamp : Range from 11mA -> 1.5A
+>>> +    - flash-max-timeout-us : Range from 40ms -> 1600ms
+>>> +    - led-max-microamp : Range from 2.4mA -> 376mA
+>>
+>> Please give also a step in the format like below
+>> (taken from max77693):
+>>
+>>      Valid values: 62500 - 1000000, step by 62500 (rounded down)
+> 
+> I would do this but the step is not linear.  The step is 40ms from 40 -> 400.
+> after that the step goes to 200ms from 400->1600.
+> 
+> same with the current ranges.
 
-Even just (x - 7) * 200 * ...
+If you're going to apply Andy's formula in the driver, then you can
+present it also here. Anyway, please avoid using non-standard "->"
+symbol in favor of "to" if you're using "from".
+
+Or even better I propose to list allowed values - there are not
+so many of them.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Best regards,
+Jacek Anaszewski
