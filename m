@@ -1,132 +1,69 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH V1 2/5] backlight: qcom-wled: Add support for WLED4
- peripheral
-Date: Thu, 17 May 2018 07:31:35 -0500
-Message-ID: <CAL_JsqLQvSpB3CiS1sA5AXwbvC0xkd1HqEYsjY+=oripMXSwuA@mail.gmail.com>
-References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
- <1525341432-15818-3-git-send-email-kgunda@codeaurora.org>
- <20180507162004.GB2259@tuxbook-pro>
- <f970143860bd64624e7fad58333df1be@codeaurora.org>
- <82fa847760309cb3382bf0a8da50162c@codeaurora.org>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v6 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+Date: Thu, 17 May 2018 09:34:37 -0500
+Message-ID: <54dcb6cc-7765-f64c-33fd-2920f3865153@ti.com>
+References: <20180515154352.20263-1-dmurphy@ti.com>
+ <20180515154352.20263-2-dmurphy@ti.com>
+ <CAHp75VegjkiiD1qTGpi9rr6cg=72t9kSwDrG=sUpUWFVO58M4A@mail.gmail.com>
+ <08dda10d-f865-9cf2-b9a5-c79cbab5da98@ti.com>
+ <CAHp75Vcz08zrs3bgMFcvYwRrN_A43D=Nvt5cFDQf8m9whB=yhA@mail.gmail.com>
+ <f46e4b54-c463-6ef0-4155-a5dfb9dc4c2b@gmail.com>
+ <52380a68-9e33-f52a-134d-5d4a928b5383@ti.com>
+ <f155e9da-e41d-1201-a9f9-c321654be42e@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <82fa847760309cb3382bf0a8da50162c@codeaurora.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kiran Gunda <kgunda@codeaurora.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-fbdev@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f155e9da-e41d-1201-a9f9-c321654be42e@ti.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pavel Machek <pavel@ucw.cz>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-T24gVGh1LCBNYXkgMTcsIDIwMTggYXQgNDo0NyBBTSwgIDxrZ3VuZGFAY29kZWF1cm9yYS5vcmc+
-IHdyb3RlOgo+IE9uIDIwMTgtMDUtMDggMTU6NTUsIGtndW5kYUBjb2RlYXVyb3JhLm9yZyB3cm90
-ZToKPj4KPj4gT24gMjAxOC0wNS0wNyAyMTo1MCwgQmpvcm4gQW5kZXJzc29uIHdyb3RlOgo+Pj4K
-Pj4+IE9uIFRodSAwMyBNYXkgMDI6NTcgUERUIDIwMTgsIEtpcmFuIEd1bmRhIHdyb3RlOgo+Pj4K
-Pj4+PiBXTEVENCBwZXJpcGhlcmFsIGlzIHByZXNlbnQgb24gc29tZSBQTUlDcyBsaWtlIHBtaTg5
-OTgKPj4+PiBhbmQgcG02NjBsLiBJdCBoYXMgYSBkaWZmZXJlbnQgcmVnaXN0ZXIgbWFwIGFuZCBh
-bHNvCj4+Pj4gY29uZmlndXJhdGlvbnMgYXJlIGRpZmZlcmVudC4gQWRkIHN1cHBvcnQgZm9yIGl0
-Lgo+Pj4+Cj4+Pgo+Pj4gU2V2ZXJhbCB0aGluZ3MgYXJlIGdvaW5nIG9uIGluIHRoaXMgcGF0Y2gs
-IGl0IG5lZWRzIHRvIGJlIHNwbGl0IHRvCj4+PiBub3QgaGlkZSB0aGUgZnVuY3Rpb25hbCBjaGFu
-Z2VzIGZyb20gdGhlIHN0cnVjdHVyYWwvcmVuYW1lcy4KPj4+Cj4+IE9rLiBJIHdpbGwgc3BsaXQg
-aXQgaW4gdGhlIG5leHQgc2VyaWVzLgo+Pj4+Cj4+Pj4gU2lnbmVkLW9mZi1ieTogS2lyYW4gR3Vu
-ZGEgPGtndW5kYUBjb2RlYXVyb3JhLm9yZz4KPj4+PiAtLS0KPj4+PiAgLi4uL2JpbmRpbmdzL2xl
-ZHMvYmFja2xpZ2h0L3Fjb20td2xlZC50eHQgICAgICAgICAgfCAxNzIgKysrKy0KPj4+PiAgZHJp
-dmVycy92aWRlby9iYWNrbGlnaHQvcWNvbS13bGVkLmMgICAgICAgICAgICAgICAgfCA3NDkKPj4+
-PiArKysrKysrKysrKysrKystLS0tLS0KPj4+PiAgMiBmaWxlcyBjaGFuZ2VkLCA2OTYgaW5zZXJ0
-aW9ucygrKSwgMjI1IGRlbGV0aW9ucygtKQo+Pj4+Cj4+Pj4gZGlmZiAtLWdpdAo+Pj4+IGEvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L3Fjb20td2xlZC50
-eHQKPj4+PiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdo
-dC9xY29tLXdsZWQudHh0Cj4+Pj4gaW5kZXggZmIzOWUzMi4uMGNlZmZhMSAxMDA2NDQKPj4+PiAt
-LS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvcWNv
-bS13bGVkLnR4dAo+Pj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9s
-ZWRzL2JhY2tsaWdodC9xY29tLXdsZWQudHh0Cj4+Pj4gQEAgLTEsMzAgKzEsMTI5IEBACj4+Pj4g
-IEJpbmRpbmcgZm9yIFF1YWxjb21tIFRlY2hub2xvZ2llcywgSW5jLiBXTEVEIGRyaXZlcgo+Pj4+
-Cj4+Pj4gLVJlcXVpcmVkIHByb3BlcnRpZXM6Cj4+Pj4gLS0gY29tcGF0aWJsZTogc2hvdWxkIGJl
-ICJxY29tLHBtODk0MS13bGVkIgo+Pj4+IC0tIHJlZzogc2xhdmUgYWRkcmVzcwo+Pj4+IC0KPj4+
-PiAtT3B0aW9uYWwgcHJvcGVydGllczoKPj4+PiAtLSBkZWZhdWx0LWJyaWdodG5lc3M6IGJyaWdo
-dG5lc3MgdmFsdWUgb24gYm9vdCwgdmFsdWUgZnJvbTogMC00MDk1Cj4+Pj4gLSAgICAgICBkZWZh
-dWx0OiAyMDQ4Cj4+Pj4gLS0gbGFiZWw6IFRoZSBuYW1lIG9mIHRoZSBiYWNrbGlnaHQgZGV2aWNl
-Cj4+Pj4gLS0gcWNvbSxjcy1vdXQ6IGJvb2w7IGVuYWJsZSBjdXJyZW50IHNpbmsgb3V0cHV0Cj4+
-Pj4gLS0gcWNvbSxjYWJjOiBib29sOyBlbmFibGUgY29udGVudCBhZGFwdGl2ZSBiYWNrbGlnaHQg
-Y29udHJvbAo+Pj4+IC0tIHFjb20sZXh0LWdlbjogYm9vbDsgdXNlIGV4dGVybmFsbHkgZ2VuZXJh
-dGVkIG1vZHVsYXRvciBzaWduYWwgdG8gZGltCj4+Pj4gLS0gcWNvbSxjdXJyZW50LWxpbWl0OiBt
-QTsgcGVyLXN0cmluZyBjdXJyZW50IGxpbWl0OyB2YWx1ZSBmcm9tIDAgdG8gMjUKPj4+PiAtICAg
-ICAgIGRlZmF1bHQ6IDIwbUEKPj4+PiAtLSBxY29tLGN1cnJlbnQtYm9vc3QtbGltaXQ6IG1BOyBi
-b29zdCBjdXJyZW50IGxpbWl0OyBvbmUgb2Y6Cj4+Pj4gLSAgICAgICAxMDUsIDM4NSwgNTI1LCA4
-MDUsIDk4MCwgMTI2MCwgMTQwMCwgMTY4MAo+Pj4+IC0gICAgICAgZGVmYXVsdDogODA1bUEKPj4+
-PiAtLSBxY29tLHN3aXRjaGluZy1mcmVxOiBrSHo7IHN3aXRjaGluZyBmcmVxdWVuY3k7IG9uZSBv
-ZjoKPj4+PiAtICAgICAgIDYwMCwgNjQwLCA2ODUsIDczOCwgODAwLCA4NzIsIDk2MCwgMTA2Niwg
-MTIwMCwgMTM3MSwKPj4+PiAtICAgICAgIDE2MDAsIDE5MjAsIDI0MDAsIDMyMDAsIDQ4MDAsIDk2
-MDAsCj4+Pj4gLSAgICAgICBkZWZhdWx0OiAxNjAwa0h6Cj4+Pj4gLS0gcWNvbSxvdnA6IFY7IE92
-ZXItdm9sdGFnZSBwcm90ZWN0aW9uIGxpbWl0OyBvbmUgb2Y6Cj4+Pj4gLSAgICAgICAyNywgMjks
-IDMyLCAzNQo+Pj4+IC0gICAgICAgZGVmYXVsdDogMjlWCj4+Pj4gLS0gcWNvbSxudW0tc3RyaW5n
-czogIzsgbnVtYmVyIG9mIGxlZCBzdHJpbmdzIGF0dGFjaGVkOyB2YWx1ZSBmcm9tIDEgdG8KPj4+
-PiAzCj4+Pj4gLSAgICAgICBkZWZhdWx0OiAyCj4+Pj4gK1dMRUQgKFdoaXRlIExpZ2h0IEVtaXR0
-aW5nIERpb2RlKSBkcml2ZXIgaXMgdXNlZCBmb3IgY29udHJvbGxpbmcKPj4+PiBkaXNwbGF5Cj4+
-Pj4gK2JhY2tsaWdodCB0aGF0IGlzIHBhcnQgb2YgUE1JQyBvbiBRdWFsY29tbSBUZWNobm9sb2dp
-ZXMsIEluYy4gcmVmZXJlbmNlCj4+Pj4gK3BsYXRmb3Jtcy4gVGhlIFBNSUMgaXMgY29ubmVjdGVk
-IHRvIHRoZSBob3N0IHByb2Nlc3NvciB2aWEgU1BNSSBidXMuCj4+Pj4gKwo+Pj4+ICstIGNvbXBh
-dGlibGUKPj4+PiArICAgICAgIFVzYWdlOiAgICAgICAgcmVxdWlyZWQKPj4+PiArICAgICAgIFZh
-bHVlIHR5cGU6ICAgPHN0cmluZz4KPj4+PiArICAgICAgIERlZmluaXRpb246ICAgc2hvdWxkIGJl
-ICJxY29tLHBtODk0MS13bGVkIiBvcgo+Pj4+ICJxY29tLHBtaTg5OTgtd2xlZCIuCj4+Pj4gKyAg
-ICAgICAgICAgICAgICAgICAgIG9yICJxY29tLHBtNjYwbC13bGVkIi4KPj4+Cj4+Pgo+Pj4gQmV0
-dGVyIHdyaXR0ZW4gYXMKPj4+Cj4+PiAgICAgICAgICAgICAgICAgc2hvdWxkIGJlIG9uZSBvZjoK
-Pj4+ICAgICAgICAgICAgICAgICAgICAgICAgIFgKPj4+ICAgICAgICAgICAgICAgICAgICAgICAg
-IFkKPj4+ICAgICAgICAgICAgICAgICAgICAgICAgIFoKPj4+Cj4+IFdpbGwgZG8gaXQgaW4gdGhl
-IG5leHQgc2VyaWVzLgo+Pj4+Cj4+Pj4gKwo+Pj4+ICstIHJlZwo+Pj4+ICsgICAgICAgVXNhZ2U6
-ICAgICAgICByZXF1aXJlZAo+Pj4+ICsgICAgICAgVmFsdWUgdHlwZTogICA8cHJvcCBlbmNvZGVk
-IGFycmF5Pgo+Pj4+ICsgICAgICAgRGVmaW5pdGlvbjogICBCYXNlIGFkZHJlc3Mgb2YgdGhlIFdM
-RUQgbW9kdWxlcy4KPj4+PiArCj4+Pj4gKy0gaW50ZXJydXB0cwo+Pj4+ICsgICAgICAgVXNhZ2U6
-ICAgICAgICBvcHRpb25hbAo+Pj4+ICsgICAgICAgVmFsdWUgdHlwZTogICA8cHJvcCBlbmNvZGVk
-IGFycmF5Pgo+Pj4+ICsgICAgICAgRGVmaW5pdGlvbjogICBJbnRlcnJ1cHRzIGFzc29jaWF0ZWQg
-d2l0aCBXTEVELiBJbnRlcnJ1cHRzIGNhbiBiZQo+Pj4+ICsgICAgICAgICAgICAgICAgICAgICBz
-cGVjaWZpZWQgYXMgcGVyIHRoZSBlbmNvZGluZyBsaXN0ZWQgdW5kZXIKPj4+PiArICAgICAgICAg
-ICAgICAgICAgICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NwbWkvCj4+Pj4g
-KyAgICAgICAgICAgICAgICAgICAgIHFjb20sc3BtaS1wbWljLWFyYi50eHQuCj4+Pgo+Pj4KPj4+
-IEJldHRlciB0byBkZXNjcmliZSB0aGF0IHRoaXMgc2hvdWxkIGJlIHRoZSAic2hvcnQiIGFuZCAi
-b3ZwIiBpbnRlcnJ1cHRzCj4+PiBpbiB0aGlzIHByb3BlcnR5IHRoYW4gaW4gdGhlIGludGVycnVw
-dC1uYW1lcy4KPj4+Cj4+IE9rLiBJIHdpbGwgZG8gaXQgaW4gdGhlIG5leHQgc2VyaWVzLgo+Pj4+
-Cj4+Pj4gKwo+Pj4+ICstIGludGVycnVwdC1uYW1lcwo+Pj4+ICsgICAgICAgVXNhZ2U6ICAgICAg
-ICBvcHRpb25hbAo+Pj4+ICsgICAgICAgVmFsdWUgdHlwZTogICA8c3RyaW5nPgo+Pj4+ICsgICAg
-ICAgRGVmaW5pdGlvbjogICBJbnRlcnJ1cHQgbmFtZXMgYXNzb2NpYXRlZCB3aXRoIHRoZSBpbnRl
-cnJ1cHRzLgo+Pj4+ICsgICAgICAgICAgICAgICAgICAgICBNdXN0IGJlICJzaG9ydCIgYW5kICJv
-dnAiLiBUaGUgc2hvcnQgY2lyY3VpdAo+Pj4+IGRldGVjdGlvbgo+Pj4+ICsgICAgICAgICAgICAg
-ICAgICAgICBpcyBub3Qgc3VwcG9ydGVkIGZvciBQTTg5NDEuCj4+Pj4gKwo+Pj4+ICstIGxhYmVs
-Cj4+Pj4gKyAgICAgICBVc2FnZTogICAgICAgIHJlcXVpcmVkCj4+Pj4gKyAgICAgICBWYWx1ZSB0
-eXBlOiAgIDxzdHJpbmc+Cj4+Pj4gKyAgICAgICBEZWZpbml0aW9uOiAgIFRoZSBuYW1lIG9mIHRo
-ZSBiYWNrbGlnaHQgZGV2aWNlCj4+Pj4gKwo+Pj4+ICstIGRlZmF1bHQtYnJpZ2h0bmVzcwo+Pj4+
-ICsgICAgICAgVXNhZ2U6ICAgICAgICBvcHRpb25hbAo+Pj4+ICsgICAgICAgVmFsdWUgdHlwZTog
-ICA8dTMyPgo+Pj4+ICsgICAgICAgRGVmaW5pdGlvbjogICBicmlnaHRuZXNzIHZhbHVlIG9uIGJv
-b3QsIHZhbHVlIGZyb206IDAtNDA5NQo+Pj4+ICsgICAgICAgICAgICAgICAgICAgICBEZWZhdWx0
-OiAyMDQ4Cj4+Pj4gKwo+Pj4+ICstIHFjb20sY3VycmVudC1saW1pdAo+Pj4+ICsgICAgICAgVXNh
-Z2U6ICAgICAgICBvcHRpb25hbAo+Pj4+ICsgICAgICAgVmFsdWUgdHlwZTogICA8dTMyPgo+Pj4+
-ICsgICAgICAgRGVmaW5pdGlvbjogICB1QTsgcGVyLXN0cmluZyBjdXJyZW50IGxpbWl0Cj4+Pgo+
-Pj4KPj4+IFlvdSBjYW4ndCBjaGFuZ2UgdW5pdCBvbiBhbiBleGlzdGluZyBwcm9wZXJ0eSwgdGhh
-dCBicmVha3MgYW55IGV4aXN0aW5nCj4+PiBkdHMgdXNpbmcgdGhlIHFjb20scG04OTQxLXdsZWQg
-Y29tcGF0aWJsZS4KPj4+Cj4+Cj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgIHZhbHVlOgo+Pj4+
-ICsgICAgICAgICAgICAgICAgICAgICBGb3IgcG04OTQxOiBmcm9tIDAgdG8gMjUwMDAgd2l0aCA1
-MDAwIHVhIHN0ZXAKPj4+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgRGVmYXVs
-dCAyMDAwMCB1QQo+Pj4+ICsgICAgICAgICAgICAgICAgICAgICBGb3IgcG1pODk5ODogZnJvbSAw
-IHRvIDMwMDAwIHdpdGggNTAwMCB1YSBzdGVwCj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBEZWZhdWx0IDI1MDAwIHVBLgo+Pj4KPj4+Cj4+PiBUaGVzZSB2YWx1ZXMgY291
-bGQgYmUgZGVzY3JpYmVkIGp1c3QgYXMgd2VsbCBpbiBtQSwgc28ga2VlcCB0aGUgb3JpZ2luYWwK
-Pj4+IHVuaXQgLSBpbiBwYXJ0aWN1bGFyIHNpbmNlIHRoZSBib290LWxpbWl0IGlzIGluIG1BLi4u
-Cj4+Pgo+PiBPay4gV2lsbCBrZWVwIHRoZSBvcmlnaW5hbCBhcyBpcyBpbiB0aGUgbmV4dCBzZXJp
-ZXMuCj4KPiBIZXJlLCBJIG1heSBoYXZlIHRvIGdvIHdpdGggdGhlIGFwcHJvYWNoIGFzIGluICJx
-Y29tLG92cCIuIEJlY2F1c2UgZm9yCj4gcG04OTQxCj4gdGhlIGN1cnJlbnQgc3RlcCBpcyAxIG1B
-IChJIGhhdmUgd3JvbmdseSBtZW50aW9uZWQgYXMgNTAwMHVBIGhlcmUpIGFuZCBmb3IKPiBQTUk4
-OTk4Cj4gdGhlIGN1cnJlbnQgc3RlcCBpcyAyLjUgbUEuIEhlbmNlLCBJIHdpbGwgYWRkIGFub3Ro
-ZXIgdmFyaWFibGUKPiAicWNvbSxjdXJyZW50LWxpbWl0LXVhIgo+IGp1c3QgbGlrZSAicWNvbSxv
-dnAtbXYiLgoKVXNlIHVuaXQgc3VmZml4ZXMgZGVmaW5lZCBpbiBiaW5kaW5ncy9wcm9wZXJ0eS11
-bml0cy50eHQuCgpSb2IKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+Jacek
+
+On 05/16/2018 04:17 PM, Dan Murphy wrote:
+<snip>
+
+>>>>
+>>>>
+>>>>>>> +               if (!ret)
+>>>>>>
+>>>>>> if (ret) sounds more natural. And better just to split
+>>>>>>
+>>>>>>> +                       snprintf(led->led_name, sizeof(led->led_name),
+>>>>>>> +                               "%s:%s", led->led_node->name, name);
+>>>>>>> +               else
+>>>>>>> +                       snprintf(led->led_name, sizeof(led->led_name),
+>>>>>>> +                               "%s:torch", led->led_node->name);
+>>>>>>
+>>>>>> const char *tmp;
+>>>>>>
+>>>>>> ret = device_property_read_...(&tmp);
+>>>>>> if (ret)
+>>>>>>   tmp = ...
+>>>>>> sprintf(...);
+>>>
+>>> We're no longer taking devicename section of a LED class device name
+>>> from DT, so it will look differently anyway.
+>>>
+
+So in adding the device_property code I think we again are reaching the LED label issue.
+In ARM with DT we would take the parent device node name and append it to the label
+if the optional label property was not available.  In migrating to the device_property
+APIs we don't or can't depend on that parent node anymore.
+
+So for the case where the label property does not exist should we use a hard coded name
+or should we try to use the name from a device_id table.
+
+This is how we did this for the leds-lp8860 driver.  If the label did not exist we used the
+i2c_device_id table and pulled the string from there.
+
+Thoughts?
+
+<snip>
+
+-- 
+------------------
+Dan Murphy
