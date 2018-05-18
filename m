@@ -1,84 +1,65 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v6 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-Date: Thu, 17 May 2018 23:26:45 +0200
-Message-ID: <f8147f95-b7e3-4a78-90d7-59888b20fd60@gmail.com>
-References: <20180515154352.20263-1-dmurphy@ti.com>
- <20180515154352.20263-2-dmurphy@ti.com>
- <CAHp75VegjkiiD1qTGpi9rr6cg=72t9kSwDrG=sUpUWFVO58M4A@mail.gmail.com>
- <08dda10d-f865-9cf2-b9a5-c79cbab5da98@ti.com>
- <CAHp75Vcz08zrs3bgMFcvYwRrN_A43D=Nvt5cFDQf8m9whB=yhA@mail.gmail.com>
- <f46e4b54-c463-6ef0-4155-a5dfb9dc4c2b@gmail.com>
- <52380a68-9e33-f52a-134d-5d4a928b5383@ti.com>
- <f155e9da-e41d-1201-a9f9-c321654be42e@ti.com>
- <54dcb6cc-7765-f64c-33fd-2920f3865153@ti.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH V1 2/5] backlight: qcom-wled: Add support for WLED4
+ peripheral
+Date: Fri, 18 May 2018 07:20:44 -0500
+Message-ID: <CAL_JsqJtn9hZJuF2uHC-jDMyM2HS2McBs4fy7JoS_rYj9h0j_w@mail.gmail.com>
+References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
+ <1525341432-15818-3-git-send-email-kgunda@codeaurora.org>
+ <20180507162004.GB2259@tuxbook-pro>
+ <f970143860bd64624e7fad58333df1be@codeaurora.org>
+ <82fa847760309cb3382bf0a8da50162c@codeaurora.org>
+ <CAL_JsqLQvSpB3CiS1sA5AXwbvC0xkd1HqEYsjY+=oripMXSwuA@mail.gmail.com>
+ <7143faaec2d0b7b0fd7e0f3b512839d8@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54dcb6cc-7765-f64c-33fd-2920f3865153@ti.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pavel Machek <pavel@ucw.cz>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <7143faaec2d0b7b0fd7e0f3b512839d8@codeaurora.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Kiran Gunda <kgunda@codeaurora.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-fbdev@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, linux-arm-msm-owner@vger.kernel.org, Linux LED Subsystem <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Dan,
-
-On 05/17/2018 04:34 PM, Dan Murphy wrote:
-> Jacek
-> 
-> On 05/16/2018 04:17 PM, Dan Murphy wrote:
-> <snip>
-> 
->>>>>
->>>>>
->>>>>>>> +               if (!ret)
->>>>>>>
->>>>>>> if (ret) sounds more natural. And better just to split
->>>>>>>
->>>>>>>> +                       snprintf(led->led_name, sizeof(led->led_name),
->>>>>>>> +                               "%s:%s", led->led_node->name, name);
->>>>>>>> +               else
->>>>>>>> +                       snprintf(led->led_name, sizeof(led->led_name),
->>>>>>>> +                               "%s:torch", led->led_node->name);
->>>>>>>
->>>>>>> const char *tmp;
->>>>>>>
->>>>>>> ret = device_property_read_...(&tmp);
->>>>>>> if (ret)
->>>>>>>    tmp = ...
->>>>>>> sprintf(...);
->>>>
->>>> We're no longer taking devicename section of a LED class device name
->>>> from DT, so it will look differently anyway.
->>>>
-> 
-> So in adding the device_property code I think we again are reaching the LED label issue.
-> In ARM with DT we would take the parent device node name and append it to the label
-
-AFAIR this approach (parent DT node name used for devicename ) was 
-incidentally applied in leds-as3645a.c. Soon after that we started
-to use led-controller for parent DT name, according to Rob's request.
-
-In the most of LED class drivers this is a child DT node which is used
-for devicename, in case label is absent.
-
-> if the optional label property was not available.  In migrating to the device_property
-> APIs we don't or can't depend on that parent node anymore.
-> 
-> So for the case where the label property does not exist should we use a hard coded name
-> or should we try to use the name from a device_id table.
-> 
-> This is how we did this for the leds-lp8860 driver.  If the label did not exist we used the
-> i2c_device_id table and pulled the string from there.
-
-i2c_device_id can't be applied as a generic pattern, but only for I2C
-hooked devices. Nonetheless since it allows to save few lines of code
-in case of drivers supporting a family of chips we can use it.
-
-We are going to get rid of a devicename section from LED class device
-name soon anyway, since it is redundant.
-
--- 
-Best regards,
-Jacek Anaszewski
+T24gVGh1LCBNYXkgMTcsIDIwMTggYXQgMTA6MTAgQU0sICA8a2d1bmRhQGNvZGVhdXJvcmEub3Jn
+PiB3cm90ZToKPiBPbiAyMDE4LTA1LTE3IDE4OjAxLCBSb2IgSGVycmluZyB3cm90ZToKPj4KPj4g
+T24gVGh1LCBNYXkgMTcsIDIwMTggYXQgNDo0NyBBTSwgIDxrZ3VuZGFAY29kZWF1cm9yYS5vcmc+
+IHdyb3RlOgo+Pj4KPj4+IE9uIDIwMTgtMDUtMDggMTU6NTUsIGtndW5kYUBjb2RlYXVyb3JhLm9y
+ZyB3cm90ZToKPj4+Pgo+Pj4+Cj4+Pj4gT24gMjAxOC0wNS0wNyAyMTo1MCwgQmpvcm4gQW5kZXJz
+c29uIHdyb3RlOgo+Pj4+Pgo+Pj4+Pgo+Pj4+PiBPbiBUaHUgMDMgTWF5IDAyOjU3IFBEVCAyMDE4
+LCBLaXJhbiBHdW5kYSB3cm90ZToKPj4+Pj4KPj4+Pj4+IFdMRUQ0IHBlcmlwaGVyYWwgaXMgcHJl
+c2VudCBvbiBzb21lIFBNSUNzIGxpa2UgcG1pODk5OAo+Pj4+Pj4gYW5kIHBtNjYwbC4gSXQgaGFz
+IGEgZGlmZmVyZW50IHJlZ2lzdGVyIG1hcCBhbmQgYWxzbwo+Pj4+Pj4gY29uZmlndXJhdGlvbnMg
+YXJlIGRpZmZlcmVudC4gQWRkIHN1cHBvcnQgZm9yIGl0LgoKWy4uLl0KCj4+Pj4+PiArICAgICAg
+ICAgICAgICAgICAgICAgdmFsdWU6Cj4+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgRm9yIHBt
+ODk0MTogZnJvbSAwIHRvIDI1MDAwIHdpdGggNTAwMCB1YSBzdGVwCj4+Pj4+PiArICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgRGVmYXVsdCAyMDAwMCB1QQo+Pj4+Pj4gKyAgICAgICAg
+ICAgICAgICAgICAgIEZvciBwbWk4OTk4OiBmcm9tIDAgdG8gMzAwMDAgd2l0aCA1MDAwIHVhIHN0
+ZXAKPj4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgRGVmYXVsdCAyNTAw
+MCB1QS4KPj4+Pj4KPj4+Pj4KPj4+Pj4KPj4+Pj4gVGhlc2UgdmFsdWVzIGNvdWxkIGJlIGRlc2Ny
+aWJlZCBqdXN0IGFzIHdlbGwgaW4gbUEsIHNvIGtlZXAgdGhlCj4+Pj4+IG9yaWdpbmFsCj4+Pj4+
+IHVuaXQgLSBpbiBwYXJ0aWN1bGFyIHNpbmNlIHRoZSBib290LWxpbWl0IGlzIGluIG1BLi4uCj4+
+Pj4+Cj4+Pj4gT2suIFdpbGwga2VlcCB0aGUgb3JpZ2luYWwgYXMgaXMgaW4gdGhlIG5leHQgc2Vy
+aWVzLgo+Pj4KPj4+Cj4+PiBIZXJlLCBJIG1heSBoYXZlIHRvIGdvIHdpdGggdGhlIGFwcHJvYWNo
+IGFzIGluICJxY29tLG92cCIuIEJlY2F1c2UgZm9yCj4+PiBwbTg5NDEKPj4+IHRoZSBjdXJyZW50
+IHN0ZXAgaXMgMSBtQSAoSSBoYXZlIHdyb25nbHkgbWVudGlvbmVkIGFzIDUwMDB1QSBoZXJlKSBh
+bmQKPj4+IGZvcgo+Pj4gUE1JODk5OAo+Pj4gdGhlIGN1cnJlbnQgc3RlcCBpcyAyLjUgbUEuIEhl
+bmNlLCBJIHdpbGwgYWRkIGFub3RoZXIgdmFyaWFibGUKPj4+ICJxY29tLGN1cnJlbnQtbGltaXQt
+dWEiCj4+PiBqdXN0IGxpa2UgInFjb20sb3ZwLW12Ii4KPj4KPj4KPj4gVXNlIHVuaXQgc3VmZml4
+ZXMgZGVmaW5lZCBpbiBiaW5kaW5ncy9wcm9wZXJ0eS11bml0cy50eHQuCj4KPiBUaGFua3MgZm9y
+IHBvaW50aW5nIGl0ICEgaG9wZSBJIGNhbiB1c2UgInFjb20sY3VycmVudC1saW1pdC1taWNyb2Ft
+cCIgYW5kCj4gInFjb20sb3ZwLW1pbGxpdm9sdCIuIEkgYW0gYXNraW5nIHRoaXMgYmVjYXVzZSBp
+IGZvdW5kIG9ubHkgIi1taWNyb3ZvbHQiLgo+ICItbWlsbGl2b2x0IiBpcyBub3QgcHJlc2VudCBp
+biB0aGUgYmluZGluZ3MgeW91IHBvaW50ZWQuCgpUaGF0J3MgYnkgZGVzaWduIHNvIGV2ZXJ5b25l
+IGRvZXNuJ3QganVzdCBwaWNrIHdoYXRldmVyIHJhbmRvbSB1bml0cwp0aGV5IGxpa2UuIERvZXMg
+bWljcm92b2x0cyBub3QgZ2l2ZSB5b3UgZW5vdWdoIHJhbmdlPwoKUm9iCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
