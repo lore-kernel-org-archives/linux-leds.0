@@ -1,90 +1,71 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL] LED updates for 4.18-rc1
-Date: Mon,  4 Jun 2018 22:50:09 +0200
-Message-ID: <1528145409-4978-1-git-send-email-jacek.anaszewski@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, andriy.shevchenko@linux.intel.com, baolin.wang@linaro.org, dmurphy@ti.com, lhenriques@suse.com, oleg@kaa.org.ua, weiyongjun1@huawei.com
+Subject: Re: [PATCH 0/2] leds: drop led_trigger_rename_static()
+Date: Fri, 15 Jun 2018 22:49:48 +0200
+Message-ID: <ca250930-59ac-6b41-dda5-b9ce3285de0d@gmail.com>
+References: <20180518085333.26187-1-u.kleine-koenig@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20180518085333.26187-1-u.kleine-koenig@pengutronix.de>
+Content-Language: en-US
+Sender: netdev-owner@vger.kernel.org
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Pavel Machek <pavel@ucw.cz>, Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-leds@vger.kernel.org, linux-can@vger.kernel.org, kernel@pengutronix.de
 List-Id: linux-leds@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-Please pull LED updates for 4.18-rc1. It was quite fruitful cycle, taking
-into account usual traffic on linux-leds list, as we managed to merge
-three new LED class drivers.
-
-New LED class drivers with related DT bindings:
-	- add LED driver for CR0014114 board
-	- add Spreadtrum SC27xx breathing light controller driver
-	- introduce the lm3601x LED driver
-
-LED class fix:
-	- ensure workqueue is initialized before setting brightness
-
-Improvements and fixes to existing LED class drivers:
-	- fix return value check in sc27xx_led_probe()
-	- use sysfs_match_string() helper in wm831x_status_src_store()
+I need can or net maintainer's ack for merging this
+set via LED tree. It's been awaiting feedback for a few weeks
+now and it is blocking another set depending on it.
 
 
-This is my first pull request signed with use of a subkey exported to
-Nitrokey, so please let me know if something is not as expected.
+On 05/18/2018 10:53 AM, Uwe Kleine-König wrote:
+> Hello,
+> 
+> initially I prepared a patch to fix the broken things in
+> led_trigger_rename_static(), but given that there is only the
+> can-trigger driver that makes use of this function and the netdev
+> trigger implements a super set of the can-trigger, removing both the
+> can-trigger and the broken function seems sensible.
+> 
+> Best regards
+> Uwe
+> 
+> Uwe Kleine-König (2):
+>    can: drop led trigger support
+>    leds: remove unused function led_trigger_rename_static()
+> 
+>   drivers/leds/led-triggers.c           |  13 ---
+>   drivers/net/can/Kconfig               |  11 --
+>   drivers/net/can/Makefile              |   2 -
+>   drivers/net/can/at91_can.c            |  10 --
+>   drivers/net/can/c_can/c_can.c         |  11 --
+>   drivers/net/can/dev.c                 |   5 -
+>   drivers/net/can/flexcan.c             |   8 --
+>   drivers/net/can/ifi_canfd/ifi_canfd.c |   9 --
+>   drivers/net/can/led.c                 | 143 --------------------------
+>   drivers/net/can/m_can/m_can.c         |   9 --
+>   drivers/net/can/rcar/rcar_can.c       |   8 --
+>   drivers/net/can/rcar/rcar_canfd.c     |   7 --
+>   drivers/net/can/rx-offload.c          |   2 -
+>   drivers/net/can/sja1000/sja1000.c     |  15 +--
+>   drivers/net/can/spi/hi311x.c          |   8 --
+>   drivers/net/can/spi/mcp251x.c         |  10 --
+>   drivers/net/can/sun4i_can.c           |   7 --
+>   drivers/net/can/ti_hecc.c             |   9 --
+>   drivers/net/can/usb/mcba_usb.c        |   7 --
+>   drivers/net/can/usb/usb_8dev.c        |  11 --
+>   drivers/net/can/xilinx_can.c          |   9 --
+>   include/linux/can/dev.h               |  10 --
+>   include/linux/can/led.h               |  54 ----------
+>   include/linux/leds.h                  |  18 ----
+>   24 files changed, 1 insertion(+), 395 deletions(-)
+>   delete mode 100644 drivers/net/can/led.c
+>   delete mode 100644 include/linux/can/led.h
+> 
 
-
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds_for_4.18-rc1
-
-for you to fetch changes up to 6d71021ab3b0bd6ff98270343353b03dfae5d550:
-
-  leds: class: ensure workqueue is initialized before setting brightness (2018-05-24 22:08:26 +0200)
-
+-- 
 Best regards,
 Jacek Anaszewski
-
-----------------------------------------------------------------
-LED updates for 4.18-rc1
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      leds: wm831x-status: Use sysfs_match_string() helper
-
-Baolin Wang (2):
-      dt-bindings: leds: Add SC27xx breathing light controller documentation
-      leds: Add Spreadtrum SC27xx breathing light controller driver
-
-Dan Murphy (2):
-      dt: bindings: lm3601x: Introduce the lm3601x driver
-      leds: lm3601x: Introduce the lm3601x LED driver
-
-Luis Henriques (1):
-      leds: class: ensure workqueue is initialized before setting brightness
-
-Oleh Kravchenko (2):
-      dt-bindings: Add vendor prefix and docs for CR0014114
-      leds: add LED driver for CR0014114 board
-
-Wei Yongjun (1):
-      leds: sc27xx: Fix return value check in sc27xx_led_probe()
-
- .../devicetree/bindings/leds/leds-cr0014114.txt    |  54 +++
- .../devicetree/bindings/leds/leds-lm3601x.txt      |  45 ++
- .../devicetree/bindings/leds/leds-sc27xx-bltc.txt  |  41 ++
- .../devicetree/bindings/vendor-prefixes.txt        |   1 +
- drivers/leds/Kconfig                               |  33 ++
- drivers/leds/Makefile                              |   3 +
- drivers/leds/led-class.c                           |  10 +-
- drivers/leds/leds-cr0014114.c                      | 315 +++++++++++++
- drivers/leds/leds-lm3601x.c                        | 487 +++++++++++++++++++++
- drivers/leds/leds-sc27xx-bltc.c                    | 244 +++++++++++
- drivers/leds/leds-wm831x-status.c                  |  22 +-
- 11 files changed, 1237 insertions(+), 18 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-cr0014114.txt
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
- create mode 100644 Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
- create mode 100644 drivers/leds/leds-cr0014114.c
- create mode 100644 drivers/leds/leds-lm3601x.c
- create mode 100644 drivers/leds/leds-sc27xx-bltc.c
