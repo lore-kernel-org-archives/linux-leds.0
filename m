@@ -1,71 +1,64 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 0/2] leds: drop led_trigger_rename_static()
-Date: Fri, 15 Jun 2018 22:49:48 +0200
-Message-ID: <ca250930-59ac-6b41-dda5-b9ce3285de0d@gmail.com>
-References: <20180518085333.26187-1-u.kleine-koenig@pengutronix.de>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RESEND PATCH v3 0/4] backlight: pwm_bl: support linear
+ interpolation and brightness to human eye
+Date: Mon, 18 Jun 2018 07:20:05 +0100
+Message-ID: <20180618062005.GE31141@dell>
+References: <20180409083333.1249-1-enric.balletbo@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180518085333.26187-1-u.kleine-koenig@pengutronix.de>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Pavel Machek <pavel@ucw.cz>, Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-leds@vger.kernel.org, linux-can@vger.kernel.org, kernel@pengutronix.de
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180409083333.1249-1-enric.balletbo@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>, Doug Anderson <dianders@google.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
+On Mon, 09 Apr 2018, Enric Balletbo i Serra wrote:
 
-I need can or net maintainer's ack for merging this
-set via LED tree. It's been awaiting feedback for a few weeks
-now and it is blocking another set depending on it.
-
-
-On 05/18/2018 10:53 AM, Uwe Kleine-König wrote:
-> Hello,
+> Dear all,
 > 
-> initially I prepared a patch to fix the broken things in
-> led_trigger_rename_static(), but given that there is only the
-> can-trigger driver that makes use of this function and the netdev
-> trigger implements a super set of the can-trigger, removing both the
-> can-trigger and the broken function seems sensible.
+> This series is a third patchset (resend )integrating the requested
+> changes.
+> 
+> The first and second patch what tries to solve is the problem of
+> granularity for high resolution PWMs. The idea is simple interpolate
+> between 2 brightness values so we can have a high PWM duty cycle (a
+> 16 bits PWM is up to 65535 possible steps) without having to list
+> out every possible value in the dts. I think that this patch is
+> required to not break backward compatibility, to be more flexible and
+> also extend the functionality to be able to use high resolution PWM
+> with enough steps to have a good UI experience in userspace.
+> 
+> The thirth and fourth patch is a bit more ambicious, the idea is let
+> decide the driver the brightness-levels required in function of the PWM
+> resolution. To do this create a brightness-levels table filled with the
+> CIE 1931 algorithm values to convert brightness to PWM duty cycle.
+> 
+> More detailed info is available in the commit message of every patch.
+> 
+> Both functionalities were tested on a Samsung Chromebook Plus (that has
+> a 16 bits PWM) and a SL50 device (with a 8 bits PWM)
+> 
+> Waiting for your feedback.
 > 
 > Best regards
-> Uwe
 > 
-> Uwe Kleine-König (2):
->    can: drop led trigger support
->    leds: remove unused function led_trigger_rename_static()
+> Enric Balletbo i Serra (4):
+>   backlight: pwm_bl: linear interpolation between brightness-levels
+>   dt-bindings: pwm-backlight: add a num-interpolation-steps property.
+>   backlight: pwm_bl: compute brightness of LED linearly to human eye.
+>   dt-bindings: pwm-backlight: move brightness-levels to optional.
 > 
->   drivers/leds/led-triggers.c           |  13 ---
->   drivers/net/can/Kconfig               |  11 --
->   drivers/net/can/Makefile              |   2 -
->   drivers/net/can/at91_can.c            |  10 --
->   drivers/net/can/c_can/c_can.c         |  11 --
->   drivers/net/can/dev.c                 |   5 -
->   drivers/net/can/flexcan.c             |   8 --
->   drivers/net/can/ifi_canfd/ifi_canfd.c |   9 --
->   drivers/net/can/led.c                 | 143 --------------------------
->   drivers/net/can/m_can/m_can.c         |   9 --
->   drivers/net/can/rcar/rcar_can.c       |   8 --
->   drivers/net/can/rcar/rcar_canfd.c     |   7 --
->   drivers/net/can/rx-offload.c          |   2 -
->   drivers/net/can/sja1000/sja1000.c     |  15 +--
->   drivers/net/can/spi/hi311x.c          |   8 --
->   drivers/net/can/spi/mcp251x.c         |  10 --
->   drivers/net/can/sun4i_can.c           |   7 --
->   drivers/net/can/ti_hecc.c             |   9 --
->   drivers/net/can/usb/mcba_usb.c        |   7 --
->   drivers/net/can/usb/usb_8dev.c        |  11 --
->   drivers/net/can/xilinx_can.c          |   9 --
->   include/linux/can/dev.h               |  10 --
->   include/linux/can/led.h               |  54 ----------
->   include/linux/leds.h                  |  18 ----
->   24 files changed, 1 insertion(+), 395 deletions(-)
->   delete mode 100644 drivers/net/can/led.c
->   delete mode 100644 include/linux/can/led.h
-> 
+>  .../bindings/leds/backlight/pwm-backlight.txt      |  34 ++-
+>  drivers/video/backlight/pwm_bl.c                   | 232 +++++++++++++++++++--
+>  2 files changed, 246 insertions(+), 20 deletions(-)
+
+All applied for v4.18, thanks.
 
 -- 
-Best regards,
-Jacek Anaszewski
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
