@@ -1,59 +1,102 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] [v2] leds: ledtrig-activity: use
-	ktime_get_boot_ns()
-Date: Tue, 19 Jun 2018 22:42:41 +0200
-Message-ID: <32253e65-4f59-f332-d631-2d5f496a0ac7@gmail.com>
-References: <20180619082215.2990745-1-arnd@arndb.de>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH V3 1/7] backlight: qcom-wled: Rename pm8941-wled.c to
+ qcom-wled.c
+Date: Tue, 19 Jun 2018 15:54:21 -0700
+Message-ID: <20180619225421.GE15126@tuxbook-pro>
+References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
+ <1529406822-15379-2-git-send-email-kgunda@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <y2038-bounces@lists.linaro.org>
-In-Reply-To: <20180619082215.2990745-1-arnd@arndb.de>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/y2038/>
-List-Post: <mailto:y2038@lists.linaro.org>
-List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
-List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=subscribe>
-Errors-To: y2038-bounces@lists.linaro.org
-Sender: "Y2038" <y2038-bounces@lists.linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>, Pavel Machek <pavel@ucw.cz>
-Cc: y2038@lists.linaro.org, Willy Tarreau <w@1wt.eu>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1529406822-15379-2-git-send-email-kgunda@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kiran Gunda <kgunda@codeaurora.org>
+Cc: jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, Daniel Thompson <daniel.thompson@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-SGkgQXJuZCwKClRoYW5rIHlvdSBmb3IgdGhlIHVwZGF0ZS4KCk9uIDA2LzE5LzIwMTggMTA6MTgg
-QU0sIEFybmQgQmVyZ21hbm4gd3JvdGU6Cj4gZ2V0X21vbm90b25pY19ib290dGltZSgpIGlzIGRl
-cHJlY2F0ZWQsIHNvIGxldCdzIGNvbnZlcnQgdGhpcyB0bwo+IHRoZSBzaW1wbGVyIGt0aW1lX2dl
-dF9ib290X25zKCkuCj4gCj4gU2lnbmVkLW9mZi1ieTogQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5k
-Yi5kZT4KPiAtLS0KPiB2MjogZG9uJ3QgZHJvcCAnY3B1cycgbXVsdGlwbGljYXRpb24sIGFzIFBh
-dmVsIGFuZCBXaWxseSBwb2ludCBvdXQKPiAgICAgIHRoYXQgbmVlZHMgdG8gYmUga2VwdAo+IC0t
-LQo+ICAgZHJpdmVycy9sZWRzL3RyaWdnZXIvbGVkdHJpZy1hY3Rpdml0eS5jIHwgNSArLS0tLQo+
-ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCA0IGRlbGV0aW9ucygtKQo+IAo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2xlZHMvdHJpZ2dlci9sZWR0cmlnLWFjdGl2aXR5LmMgYi9kcml2
-ZXJzL2xlZHMvdHJpZ2dlci9sZWR0cmlnLWFjdGl2aXR5LmMKPiBpbmRleCA1MDgxODk0MDgyYmQu
-LjZjNmY4YTliOGQ5YSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2xlZHMvdHJpZ2dlci9sZWR0cmln
-LWFjdGl2aXR5LmMKPiArKysgYi9kcml2ZXJzL2xlZHMvdHJpZ2dlci9sZWR0cmlnLWFjdGl2aXR5
-LmMKPiBAQCAtMzcsNyArMzcsNiBAQCBzdGF0aWMgdm9pZCBsZWRfYWN0aXZpdHlfZnVuY3Rpb24o
-c3RydWN0IHRpbWVyX2xpc3QgKnQpCj4gICAJc3RydWN0IGFjdGl2aXR5X2RhdGEgKmFjdGl2aXR5
-X2RhdGEgPSBmcm9tX3RpbWVyKGFjdGl2aXR5X2RhdGEsIHQsCj4gICAJCQkJCQkJIHRpbWVyKTsK
-PiAgIAlzdHJ1Y3QgbGVkX2NsYXNzZGV2ICpsZWRfY2RldiA9IGFjdGl2aXR5X2RhdGEtPmxlZF9j
-ZGV2Owo+IC0Jc3RydWN0IHRpbWVzcGVjIGJvb3RfdGltZTsKPiAgIAl1bnNpZ25lZCBpbnQgdGFy
-Z2V0Owo+ICAgCXVuc2lnbmVkIGludCB1c2FnZTsKPiAgIAlpbnQgZGVsYXk7Cj4gQEAgLTU3LDgg
-KzU2LDYgQEAgc3RhdGljIHZvaWQgbGVkX2FjdGl2aXR5X2Z1bmN0aW9uKHN0cnVjdCB0aW1lcl9s
-aXN0ICp0KQo+ICAgCQlyZXR1cm47Cj4gICAJfQo+ICAgCj4gLQlnZXRfbW9ub3RvbmljX2Jvb3R0
-aW1lKCZib290X3RpbWUpOwo+IC0KPiAgIAljcHVzID0gMDsKPiAgIAljdXJyX3VzZWQgPSAwOwo+
-ICAgCj4gQEAgLTc2LDcgKzczLDcgQEAgc3RhdGljIHZvaWQgbGVkX2FjdGl2aXR5X2Z1bmN0aW9u
-KHN0cnVjdCB0aW1lcl9saXN0ICp0KQo+ICAgCSAqIGRvd24gdG8gMTZ1cywgZW5zdXJpbmcgd2Ug
-d29uJ3Qgb3ZlcmZsb3cgMzItYml0IGNvbXB1dGF0aW9ucyBiZWxvdwo+ICAgCSAqIGV2ZW4gdXAg
-dG8gM2sgQ1BVcywgd2hpbGUga2VlcGluZyBkaXZpZGVzIGNoZWFwIG9uIHNtYWxsZXIgc3lzdGVt
-cy4KPiAgIAkgKi8KPiAtCWN1cnJfYm9vdCA9IHRpbWVzcGVjX3RvX25zKCZib290X3RpbWUpICog
-Y3B1czsKPiArCWN1cnJfYm9vdCA9IGt0aW1lX2dldF9ib290X25zKCkgKiBjcHVzOwo+ICAgCWRp
-ZmZfYm9vdCA9IChjdXJyX2Jvb3QgLSBhY3Rpdml0eV9kYXRhLT5sYXN0X2Jvb3QpID4+IDE2Owo+
-ICAgCWRpZmZfdXNlZCA9IChjdXJyX3VzZWQgLSBhY3Rpdml0eV9kYXRhLT5sYXN0X3VzZWQpID4+
-IDE2Owo+ICAgCWFjdGl2aXR5X2RhdGEtPmxhc3RfYm9vdCA9IGN1cnJfYm9vdDsKPiAKCkFwcGxp
-ZWQuCgotLSAKQmVzdCByZWdhcmRzLApKYWNlayBBbmFzemV3c2tpCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fClkyMDM4IG1haWxpbmcgbGlzdApZMjAzOEBs
-aXN0cy5saW5hcm8ub3JnCmh0dHBzOi8vbGlzdHMubGluYXJvLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L3kyMDM4Cg==
+On Tue 19 Jun 04:13 PDT 2018, Kiran Gunda wrote:
+
+> pm8941-wled.c driver is supporting the WLED peripheral
+> on pm8941. Rename it to qcom-wled.c so that it can support
+> WLED on multiple PMICs.
+> 
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+
+Please carry any tags acquired when reposting patches without changes
+and please add a "Changes since v???:" list below the --- to expedite
+the review process.
+
+
+This is still 
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  .../bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt}    | 2 +-
+>  drivers/video/backlight/Kconfig                                   | 8 ++++----
+>  drivers/video/backlight/Makefile                                  | 2 +-
+>  drivers/video/backlight/{pm8941-wled.c => qcom-wled.c}            | 0
+>  4 files changed, 6 insertions(+), 6 deletions(-)
+>  rename Documentation/devicetree/bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt} (95%)
+>  rename drivers/video/backlight/{pm8941-wled.c => qcom-wled.c} (100%)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+> similarity index 95%
+> rename from Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
+> rename to Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+> index e5b294d..fb39e32 100644
+> --- a/Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
+> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+> @@ -1,4 +1,4 @@
+> -Binding for Qualcomm PM8941 WLED driver
+> +Binding for Qualcomm Technologies, Inc. WLED driver
+>  
+>  Required properties:
+>  - compatible: should be "qcom,pm8941-wled"
+> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+> index 4e1d2ad..8c095e3 100644
+> --- a/drivers/video/backlight/Kconfig
+> +++ b/drivers/video/backlight/Kconfig
+> @@ -299,12 +299,12 @@ config BACKLIGHT_TOSA
+>  	  If you have an Sharp SL-6000 Zaurus say Y to enable a driver
+>  	  for its backlight
+>  
+> -config BACKLIGHT_PM8941_WLED
+> -	tristate "Qualcomm PM8941 WLED Driver"
+> +config BACKLIGHT_QCOM_WLED
+> +	tristate "Qualcomm PMIC WLED Driver"
+>  	select REGMAP
+>  	help
+> -	  If you have the Qualcomm PM8941, say Y to enable a driver for the
+> -	  WLED block.
+> +	  If you have the Qualcomm PMIC, say Y to enable a driver for the
+> +	  WLED block. Currently it supports PM8941 and PMI8998.
+>  
+>  config BACKLIGHT_SAHARA
+>  	tristate "Tabletkiosk Sahara Touch-iT Backlight Driver"
+> diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
+> index 5e28f01..6fd76ef 100644
+> --- a/drivers/video/backlight/Makefile
+> +++ b/drivers/video/backlight/Makefile
+> @@ -49,8 +49,8 @@ obj-$(CONFIG_BACKLIGHT_OMAP1)		+= omap1_bl.o
+>  obj-$(CONFIG_BACKLIGHT_OT200)		+= ot200_bl.o
+>  obj-$(CONFIG_BACKLIGHT_PANDORA)		+= pandora_bl.o
+>  obj-$(CONFIG_BACKLIGHT_PCF50633)	+= pcf50633-backlight.o
+> -obj-$(CONFIG_BACKLIGHT_PM8941_WLED)	+= pm8941-wled.o
+>  obj-$(CONFIG_BACKLIGHT_PWM)		+= pwm_bl.o
+> +obj-$(CONFIG_BACKLIGHT_QCOM_WLED)	+= qcom-wled.o
+>  obj-$(CONFIG_BACKLIGHT_SAHARA)		+= kb3886_bl.o
+>  obj-$(CONFIG_BACKLIGHT_SKY81452)	+= sky81452-backlight.o
+>  obj-$(CONFIG_BACKLIGHT_TOSA)		+= tosa_bl.o
+> diff --git a/drivers/video/backlight/pm8941-wled.c b/drivers/video/backlight/qcom-wled.c
+> similarity index 100%
+> rename from drivers/video/backlight/pm8941-wled.c
+> rename to drivers/video/backlight/qcom-wled.c
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>  a Linux Foundation Collaborative Project
+> 
