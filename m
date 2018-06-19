@@ -1,60 +1,53 @@
-From: Willy Tarreau <w@1wt.eu>
-Subject: Re: [PATCH] leds: ledtrig-activity: use ktime_get_boot_ns()
-Date: Mon, 18 Jun 2018 20:29:13 +0200
-Message-ID: <20180618182913.GA30450@1wt.eu>
-References: <20180618144210.72367-1-arnd@arndb.de> <20180618150715.GA30470@amd>
- <CAK8P3a1K19WoEGaqrj6Fx0GYyj1jmA50dS+dMJuF7ugkwjCiug@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <y2038-bounces@lists.linaro.org>
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1K19WoEGaqrj6Fx0GYyj1jmA50dS+dMJuF7ugkwjCiug@mail.gmail.com>
-List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/y2038/>
-List-Post: <mailto:y2038@lists.linaro.org>
-List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
-List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=subscribe>
-Errors-To: y2038-bounces@lists.linaro.org
-Sender: "Y2038" <y2038-bounces@lists.linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kees Cook <keescook@chromium.org>, y2038 Mailman List <y2038@lists.linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] [v2] leds: ledtrig-activity: use ktime_get_boot_ns()
+Date: Tue, 19 Jun 2018 10:18:56 +0200
+Message-ID: <20180619082215.2990745-1-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Willy Tarreau <w@1wt.eu>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-SGkgQXJuZCwKCk9uIE1vbiwgSnVuIDE4LCAyMDE4IGF0IDA1OjQ3OjI4UE0gKzAyMDAsIEFybmQg
-QmVyZ21hbm4gd3JvdGU6Cj4gT24gTW9uLCBKdW4gMTgsIDIwMTggYXQgNTowNyBQTSwgUGF2ZWwg
-TWFjaGVrIDxwYXZlbEB1Y3cuY3o+IHdyb3RlOgo+ID4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2xl
-ZHMvdHJpZ2dlci9sZWR0cmlnLWFjdGl2aXR5LmMgYi9kcml2ZXJzL2xlZHMvdHJpZ2dlci9sZWR0
-cmlnLWFjdGl2aXR5LmMKPiA+PiBpbmRleCA1MDgxODk0MDgyYmQuLjU4OWMxYmM0ZDBiOSAxMDA2
-NDQKPiA+PiAtLS0gYS9kcml2ZXJzL2xlZHMvdHJpZ2dlci9sZWR0cmlnLWFjdGl2aXR5LmMKPiA+
-PiArKysgYi9kcml2ZXJzL2xlZHMvdHJpZ2dlci9sZWR0cmlnLWFjdGl2aXR5LmMKPiA+PiBAQCAt
-MzcsNyArMzcsNiBAQCBzdGF0aWMgdm9pZCBsZWRfYWN0aXZpdHlfZnVuY3Rpb24oc3RydWN0IHRp
-bWVyX2xpc3QgKnQpCj4gPj4gICAgICAgc3RydWN0IGFjdGl2aXR5X2RhdGEgKmFjdGl2aXR5X2Rh
-dGEgPSBmcm9tX3RpbWVyKGFjdGl2aXR5X2RhdGEsIHQsCj4gPj4gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHRpbWVyKTsKPiA+PiAgICAgICBz
-dHJ1Y3QgbGVkX2NsYXNzZGV2ICpsZWRfY2RldiA9IGFjdGl2aXR5X2RhdGEtPmxlZF9jZGV2Owo+
-ID4+IC0gICAgIHN0cnVjdCB0aW1lc3BlYyBib290X3RpbWU7Cj4gPj4gICAgICAgdW5zaWduZWQg
-aW50IHRhcmdldDsKPiA+PiAgICAgICB1bnNpZ25lZCBpbnQgdXNhZ2U7Cj4gPj4gICAgICAgaW50
-IGRlbGF5Owo+ID4+IEBAIC01Nyw3ICs1Niw3IEBAIHN0YXRpYyB2b2lkIGxlZF9hY3Rpdml0eV9m
-dW5jdGlvbihzdHJ1Y3QgdGltZXJfbGlzdCAqdCkKPiA+PiAgICAgICAgICAgICAgIHJldHVybjsK
-PiA+PiAgICAgICB9Cj4gPj4KPiA+PiAtICAgICBnZXRfbW9ub3RvbmljX2Jvb3R0aW1lKCZib290
-X3RpbWUpOwo+ID4+ICsgICAgIGN1cnJfYm9vdCA9IGt0aW1lX2dldF9ib290X25zKCk7Cj4gPj4K
-PiA+PiAgICAgICBjcHVzID0gMDsKPiA+PiAgICAgICBjdXJyX3VzZWQgPSAwOwo+ID4+IEBAIC03
-Niw3ICs3NSw2IEBAIHN0YXRpYyB2b2lkIGxlZF9hY3Rpdml0eV9mdW5jdGlvbihzdHJ1Y3QgdGlt
-ZXJfbGlzdCAqdCkKPiA+PiAgICAgICAgKiBkb3duIHRvIDE2dXMsIGVuc3VyaW5nIHdlIHdvbid0
-IG92ZXJmbG93IDMyLWJpdCBjb21wdXRhdGlvbnMgYmVsb3cKPiA+PiAgICAgICAgKiBldmVuIHVw
-IHRvIDNrIENQVXMsIHdoaWxlIGtlZXBpbmcgZGl2aWRlcyBjaGVhcCBvbiBzbWFsbGVyIHN5c3Rl
-bXMuCj4gPj4gICAgICAgICovCj4gPj4gLSAgICAgY3Vycl9ib290ID0gdGltZXNwZWNfdG9fbnMo
-JmJvb3RfdGltZSkgKiBjcHVzOwo+ID4KPiA+IE9yaWdpbmFsIGNvZGUgaXMgcHJldHR5IHdlaXJk
-IChub3RpY2UgdGhlICogY3B1cyksIHNvIEknbQo+ID4gZG91YmxlLWNoZWNraW5nLgo+IAo+IE9r
-LCBkcm9wcGluZyB0aGUgKmNwdXMgd2FzIG5vdCBpbnRlbnRpb25hbCwgSSdsbCByZXBvc3QgYSB2
-ZXJzaW9uIHRoYXQgcHV0cwo+IGl0IHRoYXQgYmFjay4gVGhhbmtzIGZvciBwb2ludGluZyB0aGlz
-IG91dCEKClBhdmVsIGlzIHJpZ2h0LCB0aGUgKmNwdXMgaXMgaW50ZW50aW9uYWwuIGN1cnJfYm9v
-dCBjb250YWlucyB0aGUgY3VtdWxhdGVkCnRpbWUgZm9yIGFsbCBDUFVzIGluIG9yZGVyIHRvIG1l
-YXN1cmUgYW4gYXZlcmFnZSB1c2FnZSBvdmVyIGFsbCBvZiB0aGVtLgpCeSBrZWVwaW5nIGl0IHNj
-YWxlZCBieSAjY3B1cyB3ZSBhdm9pZCB1c2VsZXNzIGRpdmlkZXMuCgpDaGVlcnMsCldpbGx5Cl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fClkyMDM4IG1haWxp
-bmcgbGlzdApZMjAzOEBsaXN0cy5saW5hcm8ub3JnCmh0dHBzOi8vbGlzdHMubGluYXJvLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL3kyMDM4Cg==
+get_monotonic_boottime() is deprecated, so let's convert this to
+the simpler ktime_get_boot_ns().
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2: don't drop 'cpus' multiplication, as Pavel and Willy point out
+    that needs to be kept
+---
+ drivers/leds/trigger/ledtrig-activity.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
+index 5081894082bd..6c6f8a9b8d9a 100644
+--- a/drivers/leds/trigger/ledtrig-activity.c
++++ b/drivers/leds/trigger/ledtrig-activity.c
+@@ -37,7 +37,6 @@ static void led_activity_function(struct timer_list *t)
+ 	struct activity_data *activity_data = from_timer(activity_data, t,
+ 							 timer);
+ 	struct led_classdev *led_cdev = activity_data->led_cdev;
+-	struct timespec boot_time;
+ 	unsigned int target;
+ 	unsigned int usage;
+ 	int delay;
+@@ -57,8 +56,6 @@ static void led_activity_function(struct timer_list *t)
+ 		return;
+ 	}
+ 
+-	get_monotonic_boottime(&boot_time);
+-
+ 	cpus = 0;
+ 	curr_used = 0;
+ 
+@@ -76,7 +73,7 @@ static void led_activity_function(struct timer_list *t)
+ 	 * down to 16us, ensuring we won't overflow 32-bit computations below
+ 	 * even up to 3k CPUs, while keeping divides cheap on smaller systems.
+ 	 */
+-	curr_boot = timespec_to_ns(&boot_time) * cpus;
++	curr_boot = ktime_get_boot_ns() * cpus;
+ 	diff_boot = (curr_boot - activity_data->last_boot) >> 16;
+ 	diff_used = (curr_used - activity_data->last_used) >> 16;
+ 	activity_data->last_boot = curr_boot;
+-- 
+2.9.0
