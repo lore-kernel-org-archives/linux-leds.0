@@ -1,121 +1,74 @@
 From: kgunda@codeaurora.org
-Subject: Re: [PATCH V3 1/7] backlight: qcom-wled: Rename pm8941-wled.c to
- qcom-wled.c
-Date: Wed, 20 Jun 2018 10:53:19 +0530
-Message-ID: <b3e66f817d919b3b8a8330e7c6827ce2@codeaurora.org>
+Subject: Re: [PATCH V3 3/7] backlight: qcom-wled: Add new properties for
+ PMI8998
+Date: Wed, 20 Jun 2018 10:55:26 +0530
+Message-ID: <588c8b50ea33d55a179b1d81a9973ff3@codeaurora.org>
 References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
- <1529406822-15379-2-git-send-email-kgunda@codeaurora.org>
- <20180619225421.GE15126@tuxbook-pro>
+ <1529406822-15379-4-git-send-email-kgunda@codeaurora.org>
+ <20180619230351.GG15126@tuxbook-pro>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180619225421.GE15126@tuxbook-pro>
+In-Reply-To: <20180619230351.GG15126@tuxbook-pro>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, Daniel Thompson <daniel.thompson@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, Daniel Thompson <daniel.thompson@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 2018-06-20 04:24, Bjorn Andersson wrote:
+On 2018-06-20 04:33, Bjorn Andersson wrote:
 > On Tue 19 Jun 04:13 PDT 2018, Kiran Gunda wrote:
+>> diff --git 
+>> a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt 
+>> b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+> [..]
+>>  - qcom,num-strings
+>>  	Usage:        optional
+>>  	Value type:   <u32>
+>>  	Definition:   #; number of led strings attached;
+>> -		      value from 1 to 3. default: 2
+>> -		      This property is supported only for PM8941.
+>> +		      value: For PM8941 from 1 to 3. default: 2
+>> +			     For PMI8998 from 1 to 4. default: 4
+> [..]
+>> +- qcom,enabled-strings
+>> +	Usage:        optional
+>> +	Value tyoe:   <u32 array>
+>> +	Definition:   Array of the WLED strings numbered from 0 to 3. Each
+>> +		      string of leds are operated individually. Specify the
+>> +		      list of strings used by the device. Any combination of
+>> +		      led strings can be used.
+>> +		      for pm8941: Default values are [00 01].
+>> +		      for pmi8998: Default values are [00 01 02 03].
 > 
->> pm8941-wled.c driver is supporting the WLED peripheral
->> on pm8941. Rename it to qcom-wled.c so that it can support
->> WLED on multiple PMICs.
->> 
->> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+> I would suggest omitting the defaults, as we can see in several places
+> in this document we end up having to update the document with new
+> defaults for each platform.
 > 
-> Please carry any tags acquired when reposting patches without changes
-> and please add a "Changes since v???:" list below the --- to expedite
-> the review process.
+> Also, per the defaults of the optional qcom,num-strings these are
+> already the defaults...
 > 
+Sure. I will remove the defaults in the next series.
+> [..]
+>> +pmi8998-wled@d800 {
+>> +	compatible = "qcom,pmi8998-wled";
+>> +	reg = <0xd800 0xd900>;
+>> +	label = "backlight";
+>> +
+>> +	interrupts = <3 0xd8 2 IRQ_TYPE_EDGE_RISING>,
+>> +		     <3 0xd8 1 IRQ_TYPE_EDGE_RISING>;
+>> +	interrupt-names = "short", "ovp";
+>> +	qcom,current-limit-microamp = <25000>;
+>> +	qcom,current-boost-limit = <805>;
+>> +	qcom,switching-freq = <1600>;
+>> +	qcom,ovp-millivolt = <29600>;
+>> +	qcom,num-strings = <4>;
+>> +	qcom,enabled-strings = <0x00 0x01 0x02 0x03>;
 > 
-> This is still
+> Please omit the pmi8998 example as well, there's no real benefit of
+> adding similar examples for each platform.
 > 
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
+Sure. I will remove it.
 > Regards,
 > Bjorn
-> 
-Thanks Bjorn for reviewing. Sure I will keep the tags when re-posting.
-I have mentioned the consolidated changes in the 0th patch. Anyways,
-I will keep it for individual patches from next time.
->> ---
->>  .../bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt}    | 2 
->> +-
->>  drivers/video/backlight/Kconfig                                   | 8 
->> ++++----
->>  drivers/video/backlight/Makefile                                  | 2 
->> +-
->>  drivers/video/backlight/{pm8941-wled.c => qcom-wled.c}            | 0
->>  4 files changed, 6 insertions(+), 6 deletions(-)
->>  rename 
->> Documentation/devicetree/bindings/leds/backlight/{pm8941-wled.txt => 
->> qcom-wled.txt} (95%)
->>  rename drivers/video/backlight/{pm8941-wled.c => qcom-wled.c} (100%)
->> 
->> diff --git 
->> a/Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt 
->> b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> similarity index 95%
->> rename from 
->> Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
->> rename to 
->> Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> index e5b294d..fb39e32 100644
->> --- a/Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
->> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> @@ -1,4 +1,4 @@
->> -Binding for Qualcomm PM8941 WLED driver
->> +Binding for Qualcomm Technologies, Inc. WLED driver
->> 
->>  Required properties:
->>  - compatible: should be "qcom,pm8941-wled"
->> diff --git a/drivers/video/backlight/Kconfig 
->> b/drivers/video/backlight/Kconfig
->> index 4e1d2ad..8c095e3 100644
->> --- a/drivers/video/backlight/Kconfig
->> +++ b/drivers/video/backlight/Kconfig
->> @@ -299,12 +299,12 @@ config BACKLIGHT_TOSA
->>  	  If you have an Sharp SL-6000 Zaurus say Y to enable a driver
->>  	  for its backlight
->> 
->> -config BACKLIGHT_PM8941_WLED
->> -	tristate "Qualcomm PM8941 WLED Driver"
->> +config BACKLIGHT_QCOM_WLED
->> +	tristate "Qualcomm PMIC WLED Driver"
->>  	select REGMAP
->>  	help
->> -	  If you have the Qualcomm PM8941, say Y to enable a driver for the
->> -	  WLED block.
->> +	  If you have the Qualcomm PMIC, say Y to enable a driver for the
->> +	  WLED block. Currently it supports PM8941 and PMI8998.
->> 
->>  config BACKLIGHT_SAHARA
->>  	tristate "Tabletkiosk Sahara Touch-iT Backlight Driver"
->> diff --git a/drivers/video/backlight/Makefile 
->> b/drivers/video/backlight/Makefile
->> index 5e28f01..6fd76ef 100644
->> --- a/drivers/video/backlight/Makefile
->> +++ b/drivers/video/backlight/Makefile
->> @@ -49,8 +49,8 @@ obj-$(CONFIG_BACKLIGHT_OMAP1)		+= omap1_bl.o
->>  obj-$(CONFIG_BACKLIGHT_OT200)		+= ot200_bl.o
->>  obj-$(CONFIG_BACKLIGHT_PANDORA)		+= pandora_bl.o
->>  obj-$(CONFIG_BACKLIGHT_PCF50633)	+= pcf50633-backlight.o
->> -obj-$(CONFIG_BACKLIGHT_PM8941_WLED)	+= pm8941-wled.o
->>  obj-$(CONFIG_BACKLIGHT_PWM)		+= pwm_bl.o
->> +obj-$(CONFIG_BACKLIGHT_QCOM_WLED)	+= qcom-wled.o
->>  obj-$(CONFIG_BACKLIGHT_SAHARA)		+= kb3886_bl.o
->>  obj-$(CONFIG_BACKLIGHT_SKY81452)	+= sky81452-backlight.o
->>  obj-$(CONFIG_BACKLIGHT_TOSA)		+= tosa_bl.o
->> diff --git a/drivers/video/backlight/pm8941-wled.c 
->> b/drivers/video/backlight/qcom-wled.c
->> similarity index 100%
->> rename from drivers/video/backlight/pm8941-wled.c
->> rename to drivers/video/backlight/qcom-wled.c
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
->> Forum,
->>  a Linux Foundation Collaborative Project
->> 
