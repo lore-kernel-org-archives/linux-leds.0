@@ -1,57 +1,42 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Vinod <vkoul@kernel.org>
 Subject: Re: [PATCH V3 6/7] backlight: qcom-wled: add support for short
  circuit handling
-Date: Tue, 19 Jun 2018 22:33:00 -0700
-Message-ID: <20180620053300.GJ15126@tuxbook-pro>
+Date: Wed, 20 Jun 2018 11:17:22 +0530
+Message-ID: <20180620054722.GH13316@vkoul-mobl>
 References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
  <1529406822-15379-7-git-send-email-kgunda@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
 In-Reply-To: <1529406822-15379-7-git-send-email-kgunda@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Kiran Gunda <kgunda@codeaurora.org>
-Cc: jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, Daniel Thompson <daniel.thompson@linaro.org>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org
+Cc: Daniel Thompson <daniel.thompson@linaro.org>, b.zolnierkie@samsung.com, jingoohan1@gmail.com, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, bjorn.andersson@linaro.org, linux-leds@vger.kernel.org, linux-arm-msm@vger.kernel.org, lee.jones@linaro.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Tue 19 Jun 04:13 PDT 2018, Kiran Gunda wrote:
-
-> Handle the short circuit interrupt and check if the short circuit
-> interrupt is valid. Re-enable the module to check if it goes
-> away. Disable the module altogether if the short circuit event
-> persists.
-> 
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-> ---
->  drivers/video/backlight/qcom-wled.c | 130 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 127 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-[..]
->  struct wled {
->  	const char *name;
->  	struct device *dev;
->  	struct regmap *regmap;
-> +	struct mutex lock;	/* Lock to avoid race from ISR */
-> +	ktime_t last_short_event;
->  	u16 ctrl_addr;
->  	u16 sink_addr;
->  	u32 brightness;
->  	u32 max_brightness;
-> +	u32 short_count;
->  	const int *version;
-> +	bool disabled_by_short;
-> +	bool has_short_detect;
-
-The use of feature flags, instead of checking the version, like this is
-good!
-
->  
->  	struct wled_config cfg;
->  	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
+T24gMTktMDYtMTgsIDE2OjQzLCBLaXJhbiBHdW5kYSB3cm90ZToKCj4gIHN0cnVjdCB3bGVkIHsK
+PiAgCWNvbnN0IGNoYXIgKm5hbWU7Cj4gIAlzdHJ1Y3QgZGV2aWNlICpkZXY7Cj4gIAlzdHJ1Y3Qg
+cmVnbWFwICpyZWdtYXA7Cj4gKwlzdHJ1Y3QgbXV0ZXggbG9jazsJLyogTG9jayB0byBhdm9pZCBy
+YWNlIGZyb20gSVNSICovCgp0aGUgY29tbWVudCBpcyB3cm9uZyBhcyB5b3UgYXZvaWQgcmFjZSB3
+aXRoIHRocmVhZCBoYW5kbGVyIGFuZCBub3QgdGhlCm1haW4gSVNSLiBUaGUgSVNSIHJ1bnMgaW4g
+YXRvbWljIGNvbnRleHQgc28geW91IGNhbnQgdXNlIGEgbXV0ZXggYnV0IHlvdQptYXkgZG8gc28g
+d2l0aCBhIHRocmVhZCBoYW5kbGVyCgo+ICsjZGVmaW5lIFdMRURfU0hPUlRfRExZX01TCQkJMjAK
+PiArI2RlZmluZSBXTEVEX1NIT1JUX0NOVF9NQVgJCQk1Cj4gKyNkZWZpbmUgV0xFRF9TSE9SVF9S
+RVNFVF9DTlRfRExZX1VTCQlVU0VDX1BFUl9TRUMKCmFuIGVtcHR5IGxpbmUgYWZ0ZXIgZGVmaW5l
+cyB3b3VsZCBiZSBiZXR0ZXIKCj4gK3N0YXRpYyBpbnQgd2xlZF9jb25maWd1cmVfc2hvcnRfaXJx
+KHN0cnVjdCB3bGVkICp3bGVkLAo+ICsJCQkJICAgIHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYpCj4gK3sKPiArCWludCByYyA9IDAsIHNob3J0X2lycTsKCnN1cGVyZmx1b3VzIGluaXRpYWxp
+emF0aW9uIG9mIHJjCgotLSAKflZpbm9kCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
