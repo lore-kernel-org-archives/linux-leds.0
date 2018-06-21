@@ -1,113 +1,41 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH V3 3/7] backlight: qcom-wled: Add new properties for
- PMI8998
-Date: Wed, 20 Jun 2018 13:05:02 -0600
-Message-ID: <20180620190502.GA20160@rob-hp-laptop>
-References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
- <1529406822-15379-4-git-send-email-kgunda@codeaurora.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
+ controller driver
+Date: Thu, 21 Jun 2018 15:25:07 +0800
+Message-ID: <CAMz4kuJh+H_5XkeO=FpmHXdusMqPu9=NUfr1YOgumMh2mPsoJA@mail.gmail.com>
+References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
+ <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
+ <20180509142539.GB25131@amd> <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
+ <20180510113749.GG6977@amd> <6289571e-7224-ca5e-1acf-5b099be57302@gmail.com>
+ <20180512083559.GB8944@amd> <7c9d5eec-4e6b-9b26-470c-f8002cca5f27@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1529406822-15379-4-git-send-email-kgunda@codeaurora.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kiran Gunda <kgunda@codeaurora.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, b.zolnierkie@samsung.com, jingoohan1@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, bjorn.andersson@linaro.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-arm-msm@vger.kernel.org, lee.jones@linaro.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <7c9d5eec-4e6b-9b26-470c-f8002cca5f27@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, linux-leds@vger.kernel.org, DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-T24gVHVlLCBKdW4gMTksIDIwMTggYXQgMDQ6NDM6MzhQTSArMDUzMCwgS2lyYW4gR3VuZGEgd3Jv
-dGU6Cj4gVXBkYXRlIHRoZSBiaW5kaW5ncyB3aXRoIHRoZSBuZXcgcHJvcGVydGllcyB1c2VkIGZv
-cgo+IFBNSTg5OTguCj4gCj4gU2lnbmVkLW9mZi1ieTogS2lyYW4gR3VuZGEgPGtndW5kYUBjb2Rl
-YXVyb3JhLm9yZz4KPiAtLS0KPiAgLi4uL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L3Fjb20td2xl
-ZC50eHQgICAgICAgICAgfCA4NCArKysrKysrKysrKysrKysrKysrKy0tCj4gIDEgZmlsZSBjaGFu
-Z2VkLCA3NyBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9E
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvcWNvbS13bGVk
-LnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9x
-Y29tLXdsZWQudHh0Cj4gaW5kZXggMTRmMjhmMi4uNTAzY2U4NyAxMDA2NDQKPiAtLS0gYS9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvcWNvbS13bGVkLnR4
-dAo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdo
-dC9xY29tLXdsZWQudHh0Cj4gQEAgLTQ4LDExICs0OCwxNSBAQCBwbGF0Zm9ybXMuIFRoZSBQTUlD
-IGlzIGNvbm5lY3RlZCB0byB0aGUgaG9zdCBwcm9jZXNzb3IgdmlhIFNQTUkgYnVzLgo+ICAtIHFj
-b20sY3VycmVudC1saW1pdAo+ICAJVXNhZ2U6ICAgICAgICBvcHRpb25hbAo+ICAJVmFsdWUgdHlw
-ZTogICA8dTMyPgo+IC0JRGVmaW5pdGlvbjogICBtQTsgcGVyLXN0cmluZyBjdXJyZW50IGxpbWl0
-Cj4gLQkJICAgICAgdmFsdWU6IEZvciBwbTg5NDE6IGZyb20gMCB0byAyNSB3aXRoIDUgbUEgc3Rl
-cAo+IC0JCQkgICAgIERlZmF1bHQgMjAgbUEuCj4gLQkJCSAgICAgRm9yIHBtaTg5OTg6IGZyb20g
-MCB0byAzMCB3aXRoIDUgbUEgc3RlcAo+IC0JCQkgICAgIERlZmF1bHQgMjUgbUEuCj4gKwlEZWZp
-bml0aW9uOiAgIG1BOyBwZXItc3RyaW5nIGN1cnJlbnQgbGltaXQ7IHZhbHVlIGZyb20gMCB0byAy
-NSB3aXRoCj4gKwkJICAgICAgMSBtQSBzdGVwLiBEZWZhdWx0IDIwIG1BLgo+ICsJCSAgICAgIFRo
-aXMgcHJvcGVydHkgaXMgc3VwcG9ydGVkIG9ubHkgZm9yIHBtODk0MS4KPiArCj4gKy0gcWNvbSxj
-dXJyZW50LWxpbWl0LW1pY3JvYW1wCj4gKwlVc2FnZTogICAgICAgIG9wdGlvbmFsCj4gKwlWYWx1
-ZSB0eXBlOiAgIDx1MzI+Cj4gKwlEZWZpbml0aW9uOiAgIHVBOyBwZXItc3RyaW5nIGN1cnJlbnQg
-bGltaXQ7IHZhbHVlIGZyb20gMCB0byAzMDAwMCB3aXRoCj4gKwkJICAgICAgMjUwMCB1QSBzdGVw
-LiBEZWZhdWx0IDI1MDAwIHVBLgoKVGhpcyBkb2Vzbid0IHJlYWxseSBzZWVtIHdvcnRoIGFkZGlu
-ZyBqdXN0IHRvIGFkZCAnLW1pY3JvYW1wJy4KCgo+ICAtIHFjb20sY3VycmVudC1ib29zdC1saW1p
-dAo+ICAJVXNhZ2U6ICAgICAgICBvcHRpb25hbAo+IEBAIC03OSwxMiArODMsNjEgQEAgcGxhdGZv
-cm1zLiBUaGUgUE1JQyBpcyBjb25uZWN0ZWQgdG8gdGhlIGhvc3QgcHJvY2Vzc29yIHZpYSBTUE1J
-IGJ1cy4KPiAgCQkgICAgICAyNywgMjksIDMyLCAzNS4gZGVmYXVsdDogMjlWCj4gIAkJICAgICAg
-VGhpcyBwcm9wZXJ0eSBpcyBzdXBwb3J0ZWQgb25seSBmb3IgUE04OTQxLgo+ICAKPiArLSBxY29t
-LG92cC1taWxsaXZvbHQKCklzIHRoaXMgdGhlIHNhbWUgYXMgcWNvbSxvdnA/IElmIHNvLCBzYW1l
-IGNvbW1lbnQuCgo+ICsJVXNhZ2U6ICAgICAgICBvcHRpb25hbAo+ICsJVmFsdWUgdHlwZTogICA8
-dTMyPgo+ICsJRGVmaW5pdGlvbjogICBtVjsgT3Zlci12b2x0YWdlIHByb3RlY3Rpb24gbGltaXQ7
-Cj4gKwkJICAgICAgRm9yIHBtaTg5OTg6IG9uZSBvZiAxODEwMCwgMTk2MDAsIDI5NjAwLCAzMTEw
-MAo+ICsJCSAgICAgIERlZmF1bHQ6IDI5NjAwIG1WCj4gKwkJICAgICAgSWYgdGhpcyBwcm9wZXJ0
-eSBpcyBub3Qgc3BlY2lmaWVkIGZvciBQTTg5NDEsIGl0Cj4gKwkJICAgICAgZmFsbHMgYmFjayB0
-byAicWNvbSxvdnAiIHByb3BlcnR5Lgo+ICsKPiAgLSBxY29tLG51bS1zdHJpbmdzCj4gIAlVc2Fn
-ZTogICAgICAgIG9wdGlvbmFsCj4gIAlWYWx1ZSB0eXBlOiAgIDx1MzI+Cj4gIAlEZWZpbml0aW9u
-OiAgICM7IG51bWJlciBvZiBsZWQgc3RyaW5ncyBhdHRhY2hlZDsKPiAtCQkgICAgICB2YWx1ZSBm
-cm9tIDEgdG8gMy4gZGVmYXVsdDogMgo+IC0JCSAgICAgIFRoaXMgcHJvcGVydHkgaXMgc3VwcG9y
-dGVkIG9ubHkgZm9yIFBNODk0MS4KPiArCQkgICAgICB2YWx1ZTogRm9yIFBNODk0MSBmcm9tIDEg
-dG8gMy4gZGVmYXVsdDogMgo+ICsJCQkgICAgIEZvciBQTUk4OTk4IGZyb20gMSB0byA0LiBkZWZh
-dWx0OiA0Cj4gKwo+ICstIGludGVycnVwdHMKPiArCVVzYWdlOiAgICAgICAgb3B0aW9uYWwKPiAr
-CVZhbHVlIHR5cGU6ICAgPHByb3AgZW5jb2RlZCBhcnJheT4KPiArCURlZmluaXRpb246ICAgSW50
-ZXJydXB0cyBhc3NvY2lhdGVkIHdpdGggV0xFRC4gVGhpcyBzaG91bGQgYmUKPiArCQkgICAgICAi
-c2hvcnQiIGFuZCAib3ZwIiBpbnRlcnJ1cHRzLiBJbnRlcnJ1cHRzIGNhbiBiZQo+ICsJCSAgICAg
-IHNwZWNpZmllZCBhcyBwZXIgdGhlIGVuY29kaW5nIGxpc3RlZCB1bmRlcgo+ICsJCSAgICAgIERv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9zcG1pLwo+ICsJCSAgICAgIHFjb20sc3Bt
-aS1wbWljLWFyYi50eHQuCj4gKwo+ICstIGludGVycnVwdC1uYW1lcwo+ICsJVXNhZ2U6ICAgICAg
-ICBvcHRpb25hbAo+ICsJVmFsdWUgdHlwZTogICA8c3RyaW5nPgo+ICsJRGVmaW5pdGlvbjogICBJ
-bnRlcnJ1cHQgbmFtZXMgYXNzb2NpYXRlZCB3aXRoIHRoZSBpbnRlcnJ1cHRzLgo+ICsJCSAgICAg
-IE11c3QgYmUgInNob3J0IiBhbmQgIm92cCIuIFRoZSBzaG9ydCBjaXJjdWl0IGRldGVjdGlvbgo+
-ICsJCSAgICAgIGlzIG5vdCBzdXBwb3J0ZWQgZm9yIFBNODk0MS4KPiArCj4gKy0gcWNvbSxlbmFi
-bGVkLXN0cmluZ3MKPiArCVVzYWdlOiAgICAgICAgb3B0aW9uYWwKPiArCVZhbHVlIHR5b2U6ICAg
-PHUzMiBhcnJheT4KPiArCURlZmluaXRpb246ICAgQXJyYXkgb2YgdGhlIFdMRUQgc3RyaW5ncyBu
-dW1iZXJlZCBmcm9tIDAgdG8gMy4gRWFjaAo+ICsJCSAgICAgIHN0cmluZyBvZiBsZWRzIGFyZSBv
-cGVyYXRlZCBpbmRpdmlkdWFsbHkuIFNwZWNpZnkgdGhlCj4gKwkJICAgICAgbGlzdCBvZiBzdHJp
-bmdzIHVzZWQgYnkgdGhlIGRldmljZS4gQW55IGNvbWJpbmF0aW9uIG9mCj4gKwkJICAgICAgbGVk
-IHN0cmluZ3MgY2FuIGJlIHVzZWQuCj4gKwkJICAgICAgZm9yIHBtODk0MTogRGVmYXVsdCB2YWx1
-ZXMgYXJlIFswMCAwMV0uCj4gKwkJICAgICAgZm9yIHBtaTg5OTg6IERlZmF1bHQgdmFsdWVzIGFy
-ZSBbMDAgMDEgMDIgMDNdLgoKdTMyIG9yIHU4IGJlY2F1c2UgZHRzIHN5bnRheCBmb3IgOC1iaXQg
-YXJyYXkgaXMgW10uCgo+ICsKPiArLSBxY29tLGV4dGVybmFsLXBmZXQKPiArCVVzYWdlOiAgICAg
-ICAgb3B0aW9uYWwKPiArCVZhbHVlIHR5cGU6ICAgPGJvb2w+Cj4gKwlEZWZpbml0aW9uOiAgIFNw
-ZWNpZnkgaWYgZXh0ZXJuYWwgUEZFVCBjb250cm9sIGZvciBzaG9ydCBjaXJjdWl0Cj4gKwkJICAg
-ICAgcHJvdGVjdGlvbiBpcyB1c2VkLiBUaGlzIHByb3BlcnR5IGlzIHN1cHBvcnRlZCBvbmx5Cj4g
-KwkJICAgICAgZm9yIFBNSTg5OTguCj4gKwo+ICstIHFjb20sYXV0by1zdHJpbmctZGV0ZWN0aW9u
-Cj4gKwlVc2FnZTogICAgICAgIG9wdGlvbmFsCj4gKwlWYWx1ZSB0eXBlOiAgIDxib29sPgo+ICsJ
-RGVmaW5pdGlvbjogICBFbmFibGVzIGF1dG8tZGV0ZWN0aW9uIG9mIHRoZSBXTEVEIHN0cmluZyBj
-b25maWd1cmF0aW9uLgo+ICsJCSAgICAgIFRoaXMgZmVhdHVyZSBpcyBub3Qgc3VwcG9ydGVkIGZv
-ciBQTTg5NDEuCj4gKwo+ICAKPiAgRXhhbXBsZToKPiAgCj4gQEAgLTk5LDQgKzE1MiwyMSBAQCBw
-bTg5NDEtd2xlZEBkODAwIHsKPiAgCXFjb20sc3dpdGNoaW5nLWZyZXEgPSA8MTYwMD47Cj4gIAlx
-Y29tLG92cCA9IDwyOT47Cj4gIAlxY29tLG51bS1zdHJpbmdzID0gPDI+Owo+ICsJcWNvbSxlbmFi
-bGVkLXN0cmluZ3MgPSA8MHgwMCAweDAxPjsKPiArfTsKPiArCj4gK3BtaTg5OTgtd2xlZEBkODAw
-IHsKCmxlZC1jb250cm9sbGVyIHsKCkFuZCBuZWVkcyBhIHVuaXQtYWRkcmVzcy4KCj4gKwljb21w
-YXRpYmxlID0gInFjb20scG1pODk5OC13bGVkIjsKPiArCXJlZyA9IDwweGQ4MDAgMHhkOTAwPjsK
-PiArCWxhYmVsID0gImJhY2tsaWdodCI7Cj4gKwo+ICsJaW50ZXJydXB0cyA9IDwzIDB4ZDggMiBJ
-UlFfVFlQRV9FREdFX1JJU0lORz4sCj4gKwkJICAgICA8MyAweGQ4IDEgSVJRX1RZUEVfRURHRV9S
-SVNJTkc+Owo+ICsJaW50ZXJydXB0LW5hbWVzID0gInNob3J0IiwgIm92cCI7Cj4gKwlxY29tLGN1
-cnJlbnQtbGltaXQtbWljcm9hbXAgPSA8MjUwMDA+Owo+ICsJcWNvbSxjdXJyZW50LWJvb3N0LWxp
-bWl0ID0gPDgwNT47Cj4gKwlxY29tLHN3aXRjaGluZy1mcmVxID0gPDE2MDA+Owo+ICsJcWNvbSxv
-dnAtbWlsbGl2b2x0ID0gPDI5NjAwPjsKPiArCXFjb20sbnVtLXN0cmluZ3MgPSA8ND47Cj4gKwlx
-Y29tLGVuYWJsZWQtc3RyaW5ncyA9IDwweDAwIDB4MDEgMHgwMiAweDAzPjsKPiAgfTsKPiAtLSAK
-PiBUaGUgUXVhbGNvbW0gSW5ub3ZhdGlvbiBDZW50ZXIsIEluYy4gaXMgYSBtZW1iZXIgb2YgdGhl
-IENvZGUgQXVyb3JhIEZvcnVtLAo+ICBhIExpbnV4IEZvdW5kYXRpb24gQ29sbGFib3JhdGl2ZSBQ
-cm9qZWN0Cj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Jacek and Bjorn,
+
+> OK, I've revised the discussion under Qualcomm LPG patch set and
+> it seems that we have almost ready solution in [0], except the
+> pattern_repeat file you mention in [1]. So probably Baolin could
+> address your remarks from [1] and add pattern_repeat file to the
+> patch that begins thread [0].
+>
+> [0] https://lkml.org/lkml/2017/11/15/27
+> [1] https://lkml.org/lkml/2017/12/8/470
+
+I did not see Bjorn's patch introducing the 'pattern' and
+'pattern_repeat' interfaces was resend, but we have some requirements
+depend on this patch for Spreadtrum LED controller.
+
+Bjorn, will you resend your patchset? and I will help to test it. Or
+can I help to resend the patch with keeping your authorization?
+Thanks.
+
+-- 
+Baolin.wang
+Best Regards
