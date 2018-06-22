@@ -1,111 +1,95 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Subject: Re: [PATCH V3 2/7] backlight: qcom-wled: restructure the qcom-wled
- bindings
-Date: Thu, 21 Jun 2018 14:12:57 +0100
-Message-ID: <20180621131257.bql555n5vgwamtlu@holly.lan>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH V3 5/7] backlight: qcom-wled: Add support for WLED4
+ peripheral
+Date: Fri, 22 Jun 2018 16:09:03 -0700
+Message-ID: <20180622230903.GM3402@tuxbook-pro>
 References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
- <1529406822-15379-3-git-send-email-kgunda@codeaurora.org>
+ <1529406822-15379-6-git-send-email-kgunda@codeaurora.org>
+ <20180620051417.GI15126@tuxbook-pro>
+ <27aa7ff8f7e0cd8fdca5d3ee17bb1ef4@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1529406822-15379-3-git-send-email-kgunda@codeaurora.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kiran Gunda <kgunda@codeaurora.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, jingoohan1@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, bjorn.andersson@linaro.org, Rob Herring <robh+dt@kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-arm-msm@vger.kernel.org, lee.jones@linaro.org, linux-leds@vger.kernel.org
+In-Reply-To: <27aa7ff8f7e0cd8fdca5d3ee17bb1ef4@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kgunda@codeaurora.org
+Cc: jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, Daniel Thompson <daniel.thompson@linaro.org>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-T24gVHVlLCBKdW4gMTksIDIwMTggYXQgMDQ6NDM6MzdQTSArMDUzMCwgS2lyYW4gR3VuZGEgd3Jv
-dGU6Cj4gUmVzdHJ1Y3R1cmUgdGhlIHFjb20td2xlZCBiaW5kaW5ncyBmb3IgdGhlIGJldHRlciBy
-ZWFkYWJpbGl0eS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBLaXJhbiBHdW5kYSA8a2d1bmRhQGNvZGVh
-dXJvcmEub3JnPgoKQWNrZWQtYnk6IERhbmllbCBUaG9tcHNvbiA8ZGFuaWVsLnRob21wc29uQGxp
-bmFyby5vcmc+Cgo+IC0tLQo+ICAuLi4vYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvcWNvbS13bGVk
-LnR4dCAgICAgICAgICB8IDExMCArKysrKysrKysrKysrKysrLS0tLS0KPiAgMSBmaWxlIGNoYW5n
-ZWQsIDg1IGluc2VydGlvbnMoKyksIDI1IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9E
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvcWNvbS13bGVk
-LnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9x
-Y29tLXdsZWQudHh0Cj4gaW5kZXggZmIzOWUzMi4uMTRmMjhmMiAxMDA2NDQKPiAtLS0gYS9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvcWNvbS13bGVkLnR4
-dAo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdo
-dC9xY29tLXdsZWQudHh0Cj4gQEAgLTEsMzAgKzEsOTAgQEAKPiAgQmluZGluZyBmb3IgUXVhbGNv
-bW0gVGVjaG5vbG9naWVzLCBJbmMuIFdMRUQgZHJpdmVyCj4gIAo+IC1SZXF1aXJlZCBwcm9wZXJ0
-aWVzOgo+IC0tIGNvbXBhdGlibGU6IHNob3VsZCBiZSAicWNvbSxwbTg5NDEtd2xlZCIKPiAtLSBy
-ZWc6IHNsYXZlIGFkZHJlc3MKPiAtCj4gLU9wdGlvbmFsIHByb3BlcnRpZXM6Cj4gLS0gZGVmYXVs
-dC1icmlnaHRuZXNzOiBicmlnaHRuZXNzIHZhbHVlIG9uIGJvb3QsIHZhbHVlIGZyb206IDAtNDA5
-NQo+IC0JZGVmYXVsdDogMjA0OAo+IC0tIGxhYmVsOiBUaGUgbmFtZSBvZiB0aGUgYmFja2xpZ2h0
-IGRldmljZQo+IC0tIHFjb20sY3Mtb3V0OiBib29sOyBlbmFibGUgY3VycmVudCBzaW5rIG91dHB1
-dAo+IC0tIHFjb20sY2FiYzogYm9vbDsgZW5hYmxlIGNvbnRlbnQgYWRhcHRpdmUgYmFja2xpZ2h0
-IGNvbnRyb2wKPiAtLSBxY29tLGV4dC1nZW46IGJvb2w7IHVzZSBleHRlcm5hbGx5IGdlbmVyYXRl
-ZCBtb2R1bGF0b3Igc2lnbmFsIHRvIGRpbQo+IC0tIHFjb20sY3VycmVudC1saW1pdDogbUE7IHBl
-ci1zdHJpbmcgY3VycmVudCBsaW1pdDsgdmFsdWUgZnJvbSAwIHRvIDI1Cj4gLQlkZWZhdWx0OiAy
-MG1BCj4gLS0gcWNvbSxjdXJyZW50LWJvb3N0LWxpbWl0OiBtQTsgYm9vc3QgY3VycmVudCBsaW1p
-dDsgb25lIG9mOgo+IC0JMTA1LCAzODUsIDUyNSwgODA1LCA5ODAsIDEyNjAsIDE0MDAsIDE2ODAK
-PiAtCWRlZmF1bHQ6IDgwNW1BCj4gLS0gcWNvbSxzd2l0Y2hpbmctZnJlcToga0h6OyBzd2l0Y2hp
-bmcgZnJlcXVlbmN5OyBvbmUgb2Y6Cj4gLQk2MDAsIDY0MCwgNjg1LCA3MzgsIDgwMCwgODcyLCA5
-NjAsIDEwNjYsIDEyMDAsIDEzNzEsCj4gLQkxNjAwLCAxOTIwLCAyNDAwLCAzMjAwLCA0ODAwLCA5
-NjAwLAo+IC0JZGVmYXVsdDogMTYwMGtIego+IC0tIHFjb20sb3ZwOiBWOyBPdmVyLXZvbHRhZ2Ug
-cHJvdGVjdGlvbiBsaW1pdDsgb25lIG9mOgo+IC0JMjcsIDI5LCAzMiwgMzUKPiAtCWRlZmF1bHQ6
-IDI5Vgo+IC0tIHFjb20sbnVtLXN0cmluZ3M6ICM7IG51bWJlciBvZiBsZWQgc3RyaW5ncyBhdHRh
-Y2hlZDsgdmFsdWUgZnJvbSAxIHRvIDMKPiAtCWRlZmF1bHQ6IDIKPiArV0xFRCAoV2hpdGUgTGln
-aHQgRW1pdHRpbmcgRGlvZGUpIGRyaXZlciBpcyB1c2VkIGZvciBjb250cm9sbGluZyBkaXNwbGF5
-Cj4gK2JhY2tsaWdodCB0aGF0IGlzIHBhcnQgb2YgUE1JQyBvbiBRdWFsY29tbSBUZWNobm9sb2dp
-ZXMsIEluYy4gcmVmZXJlbmNlCj4gK3BsYXRmb3Jtcy4gVGhlIFBNSUMgaXMgY29ubmVjdGVkIHRv
-IHRoZSBob3N0IHByb2Nlc3NvciB2aWEgU1BNSSBidXMuCj4gKwo+ICstIGNvbXBhdGlibGUKPiAr
-CVVzYWdlOiAgICAgICAgcmVxdWlyZWQKPiArCVZhbHVlIHR5cGU6ICAgPHN0cmluZz4KPiArCURl
-ZmluaXRpb246ICAgc2hvdWxkIGJlIG9uZSBvZjoKPiArCQkJInFjb20scG04OTQxLXdsZWQiCj4g
-KwkJCSJxY29tLHBtaTg5OTgtd2xlZCIKPiArCQkJInFjb20scG02NjBsLXdsZWQiCj4gKwo+ICst
-IHJlZwo+ICsJVXNhZ2U6ICAgICAgICByZXF1aXJlZAo+ICsJVmFsdWUgdHlwZTogICA8cHJvcCBl
-bmNvZGVkIGFycmF5Pgo+ICsJRGVmaW5pdGlvbjogICBCYXNlIGFkZHJlc3Mgb2YgdGhlIFdMRUQg
-bW9kdWxlcy4KPiArCj4gKy0gZGVmYXVsdC1icmlnaHRuZXNzCj4gKwlVc2FnZTogICAgICAgIG9w
-dGlvbmFsCj4gKwlWYWx1ZSB0eXBlOiAgIDx1MzI+Cj4gKwlEZWZpbml0aW9uOiAgIGJyaWdodG5l
-c3MgdmFsdWUgb24gYm9vdCwgdmFsdWUgZnJvbTogMC00MDk1Cj4gKwkJICAgICAgRGVmYXVsdDog
-MjA0OAo+ICsKPiArLSBsYWJlbAo+ICsJVXNhZ2U6ICAgICAgICByZXF1aXJlZAo+ICsJVmFsdWUg
-dHlwZTogICA8c3RyaW5nPgo+ICsJRGVmaW5pdGlvbjogICBUaGUgbmFtZSBvZiB0aGUgYmFja2xp
-Z2h0IGRldmljZQo+ICsKPiArLSBxY29tLGNzLW91dAo+ICsJVXNhZ2U6ICAgICAgICBvcHRpb25h
-bAo+ICsJVmFsdWUgdHlwZTogICA8Ym9vbD4KPiArCURlZmluaXRpb246ICAgZW5hYmxlIGN1cnJl
-bnQgc2luayBvdXRwdXQuCj4gKwkJICAgICAgVGhpcyBwcm9wZXJ0eSBpcyBzdXBwb3J0ZWQgb25s
-eSBmb3IgUE04OTQxLgo+ICsKPiArLSBxY29tLGNhYmMKPiArCVVzYWdlOiAgICAgICAgb3B0aW9u
-YWwKPiArCVZhbHVlIHR5cGU6ICAgPGJvb2w+Cj4gKwlEZWZpbml0aW9uOiAgIGVuYWJsZSBjb250
-ZW50IGFkYXB0aXZlIGJhY2tsaWdodCBjb250cm9sLgo+ICsKPiArLSBxY29tLGV4dC1nZW4KPiAr
-CVVzYWdlOiAgICAgICAgb3B0aW9uYWwKPiArCVZhbHVlIHR5cGU6ICAgPGJvb2w+Cj4gKwlEZWZp
-bml0aW9uOiAgIHVzZSBleHRlcm5hbGx5IGdlbmVyYXRlZCBtb2R1bGF0b3Igc2lnbmFsIHRvIGRp
-bS4KPiArCQkgICAgICBUaGlzIHByb3BlcnR5IGlzIHN1cHBvcnRlZCBvbmx5IGZvciBQTTg5NDEu
-Cj4gKwo+ICstIHFjb20sY3VycmVudC1saW1pdAo+ICsJVXNhZ2U6ICAgICAgICBvcHRpb25hbAo+
-ICsJVmFsdWUgdHlwZTogICA8dTMyPgo+ICsJRGVmaW5pdGlvbjogICBtQTsgcGVyLXN0cmluZyBj
-dXJyZW50IGxpbWl0Cj4gKwkJICAgICAgdmFsdWU6IEZvciBwbTg5NDE6IGZyb20gMCB0byAyNSB3
-aXRoIDUgbUEgc3RlcAo+ICsJCQkgICAgIERlZmF1bHQgMjAgbUEuCj4gKwkJCSAgICAgRm9yIHBt
-aTg5OTg6IGZyb20gMCB0byAzMCB3aXRoIDUgbUEgc3RlcAo+ICsJCQkgICAgIERlZmF1bHQgMjUg
-bUEuCj4gKwo+ICstIHFjb20sY3VycmVudC1ib29zdC1saW1pdAo+ICsJVXNhZ2U6ICAgICAgICBv
-cHRpb25hbAo+ICsJVmFsdWUgdHlwZTogICA8dTMyPgo+ICsJRGVmaW5pdGlvbjogICBtQTsgYm9v
-c3QgY3VycmVudCBsaW1pdC4KPiArCQkgICAgICBGb3IgcG04OTQxOiBvbmUgb2Y6IDEwNSwgMzg1
-LCA1MjUsIDgwNSwgOTgwLCAxMjYwLCAxNDAwLAo+ICsJCSAgICAgIDE2ODAuIERlZmF1bHQ6IDgw
-NSBtQQo+ICsJCSAgICAgIEZvciBwbWk4OTk4OiBvbmUgb2Y6IDEwNSwgMjgwLCA0NTAsIDYyMCwg
-OTcwLCAxMTUwLCAxMzAwLAo+ICsJCSAgICAgIDE1MDAuIERlZmF1bHQ6IDk3MCBtQQo+ICsKPiAr
-LSBxY29tLHN3aXRjaGluZy1mcmVxCj4gKwlVc2FnZTogICAgICAgIG9wdGlvbmFsCj4gKwlWYWx1
-ZSB0eXBlOiAgIDx1MzI+Cj4gKwkgRGVmaW5pdGlvbjogICBrSHo7IHN3aXRjaGluZyBmcmVxdWVu
-Y3k7IG9uZSBvZjogNjAwLCA2NDAsIDY4NSwgNzM4LAo+ICsJCSAgICAgICA4MDAsIDg3MiwgOTYw
-LCAxMDY2LCAxMjAwLCAxMzcxLCAxNjAwLCAxOTIwLCAyNDAwLCAzMjAwLAo+ICsJCSAgICAgICA0
-ODAwLCA5NjAwLgo+ICsJCSAgICAgICBEZWZhdWx0OiBmb3IgcG04OTQxOiAxNjAwIGtIego+ICsJ
-CQkJZm9yIHBtaTg5OTg6IDgwMCBrSHoKPiArCj4gKy0gcWNvbSxvdnAKPiArCVVzYWdlOiAgICAg
-ICAgb3B0aW9uYWwKPiArCVZhbHVlIHR5cGU6ICAgPHUzMj4KPiArCURlZmluaXRpb246ICAgVjsg
-T3Zlci12b2x0YWdlIHByb3RlY3Rpb24gbGltaXQ7IG9uZSBvZjoKPiArCQkgICAgICAyNywgMjks
-IDMyLCAzNS4gZGVmYXVsdDogMjlWCj4gKwkJICAgICAgVGhpcyBwcm9wZXJ0eSBpcyBzdXBwb3J0
-ZWQgb25seSBmb3IgUE04OTQxLgo+ICsKPiArLSBxY29tLG51bS1zdHJpbmdzCj4gKwlVc2FnZTog
-ICAgICAgIG9wdGlvbmFsCj4gKwlWYWx1ZSB0eXBlOiAgIDx1MzI+Cj4gKwlEZWZpbml0aW9uOiAg
-ICM7IG51bWJlciBvZiBsZWQgc3RyaW5ncyBhdHRhY2hlZDsKPiArCQkgICAgICB2YWx1ZSBmcm9t
-IDEgdG8gMy4gZGVmYXVsdDogMgo+ICsJCSAgICAgIFRoaXMgcHJvcGVydHkgaXMgc3VwcG9ydGVk
-IG9ubHkgZm9yIFBNODk0MS4KPiAgCj4gIEV4YW1wbGU6Cj4gIAo+IC0tIAo+IFRoZSBRdWFsY29t
-bSBJbm5vdmF0aW9uIENlbnRlciwgSW5jLiBpcyBhIG1lbWJlciBvZiB0aGUgQ29kZSBBdXJvcmEg
-Rm9ydW0sCj4gIGEgTGludXggRm91bmRhdGlvbiBDb2xsYWJvcmF0aXZlIFByb2plY3QKPiAKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Wed 20 Jun 04:00 PDT 2018, kgunda@codeaurora.org wrote:
+
+> On 2018-06-20 10:44, Bjorn Andersson wrote:
+> > On Tue 19 Jun 04:13 PDT 2018, Kiran Gunda wrote:
+> > 
+> > > WLED4 peripheral is present on some PMICs like pmi8998 and
+> > > pm660l. It has a different register map and configurations
+> > > are also different. Add support for it.
+> > > 
+> > > Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+> > > ---
+> > >  drivers/video/backlight/qcom-wled.c | 635
+> > > ++++++++++++++++++++++++++++--------
+> > >  1 file changed, 503 insertions(+), 132 deletions(-)
+> > 
+> > Split this further into a patch that does structural preparation of
+> > WLED3 support and then an addition of WLED4, the mixture makes parts of
+> > this patch almost impossible to review. Please find some comments below.
+> > 
+> Sure. I will split it in the next series.
+
+Thanks!
+
+> > > 
+> > > diff --git a/drivers/video/backlight/qcom-wled.c
+> > > b/drivers/video/backlight/qcom-wled.c
+> > [..]
+> > > 
+> > >  /* WLED3 sink registers */
+> > >  #define WLED3_SINK_REG_SYNC				0x47
+> > 
+> > Drop the 3 from this if it's common between the two.
+> > 
+> > > -#define  WLED3_SINK_REG_SYNC_MASK			0x07
+> > > +#define  WLED3_SINK_REG_SYNC_MASK			GENMASK(2, 0)
+> > > +#define  WLED4_SINK_REG_SYNC_MASK			GENMASK(3, 0)
+> > >  #define  WLED3_SINK_REG_SYNC_LED1			BIT(0)
+> > >  #define  WLED3_SINK_REG_SYNC_LED2			BIT(1)
+> > >  #define  WLED3_SINK_REG_SYNC_LED3			BIT(2)
+> > > +#define  WLED4_SINK_REG_SYNC_LED4			BIT(3)
+> > >  #define  WLED3_SINK_REG_SYNC_ALL			0x07
+> > > +#define  WLED4_SINK_REG_SYNC_ALL			0x0f
+> > >  #define  WLED3_SINK_REG_SYNC_CLEAR			0x00
+> > > 
+> > [..]
+> > > +static int wled4_set_brightness(struct wled *wled, u16 brightness)
+> > 
+> > Afaict this is identical to wled3_set_brightness() with the exception
+> > that there's a minimum brightness and the base address for the
+> > brightness registers are different.
+> > 
+> > I would suggest that you add a min_brightness to wled and that you
+> > figure out a way to carry the brightness base register address; and by
+> > that you squash these two functions.
+> > 
+> There are four different parameters. 1) minimum brightness 2) WLED base
+> addresses
+> 3) Brightness base addresses 4) the brightness sink registers address
+> offsets also
+> different for wled 3 and wled4. (in wled3 0x40, 0x42, 0x44, where as in
+> wled4 0x57, 0x67, 0x77, 0x87).
+> 
+
+Sorry, I must have gotten lost in the defines, I see the difference
+between the two register layouts now. If you retain the old mechanism of
+doing the math openly in the function this would have been obvious.
+
+> Irrelevant to this patch, but wled5 has some more extra registers to
+> set the brightness.  Keeping this in mind, it is better to have
+> separate functions? Otherwise we will have to use the version checks
+> in the wled_set_brightness function, if we have the common function.
+
+Okay, so it sounds reasonable to split this out to some degree.
+
+Regards,
+Bjorn
