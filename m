@@ -1,95 +1,123 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH V3 5/7] backlight: qcom-wled: Add support for WLED4
- peripheral
-Date: Fri, 22 Jun 2018 16:09:03 -0700
-Message-ID: <20180622230903.GM3402@tuxbook-pro>
-References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
- <1529406822-15379-6-git-send-email-kgunda@codeaurora.org>
- <20180620051417.GI15126@tuxbook-pro>
- <27aa7ff8f7e0cd8fdca5d3ee17bb1ef4@codeaurora.org>
+From: "Raffaello D. Di Napoli" <rafdev@dinapo.li>
+Subject: [PATCH] leds: Modify PC Engines apu/apu2 driver to also support apu3
+Date: Sat, 23 Jun 2018 23:17:37 -0400
+Message-ID: <6f54ce4c-56e8-b683-cb1c-c186d3d298c4@dinapo.li>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <27aa7ff8f7e0cd8fdca5d3ee17bb1ef4@codeaurora.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: kgunda@codeaurora.org
-Cc: jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, Daniel Thompson <daniel.thompson@linaro.org>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "Raffaello D. Di Napoli" <rafdev@dinapo.li>
 List-Id: linux-leds@vger.kernel.org
 
-On Wed 20 Jun 04:00 PDT 2018, kgunda@codeaurora.org wrote:
+PC Engines apu3 is an improved version of the apu2, using the same SoC
+and almost everything else.
 
-> On 2018-06-20 10:44, Bjorn Andersson wrote:
-> > On Tue 19 Jun 04:13 PDT 2018, Kiran Gunda wrote:
-> > 
-> > > WLED4 peripheral is present on some PMICs like pmi8998 and
-> > > pm660l. It has a different register map and configurations
-> > > are also different. Add support for it.
-> > > 
-> > > Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-> > > ---
-> > >  drivers/video/backlight/qcom-wled.c | 635
-> > > ++++++++++++++++++++++++++++--------
-> > >  1 file changed, 503 insertions(+), 132 deletions(-)
-> > 
-> > Split this further into a patch that does structural preparation of
-> > WLED3 support and then an addition of WLED4, the mixture makes parts of
-> > this patch almost impossible to review. Please find some comments below.
-> > 
-> Sure. I will split it in the next series.
+This patch reuses as much as possible from the apu2 definitions, to
+avoid redundancy.
 
-Thanks!
+Signed-off-by: Raffaello D. Di Napoli <rafdev@dinapo.li>
+---
+  drivers/leds/Kconfig    |  5 +++--
+  drivers/leds/leds-apu.c | 44 +++++++++++++++++++++++++++++++++++++++++++-
+  2 files changed, 46 insertions(+), 3 deletions(-)
 
-> > > 
-> > > diff --git a/drivers/video/backlight/qcom-wled.c
-> > > b/drivers/video/backlight/qcom-wled.c
-> > [..]
-> > > 
-> > >  /* WLED3 sink registers */
-> > >  #define WLED3_SINK_REG_SYNC				0x47
-> > 
-> > Drop the 3 from this if it's common between the two.
-> > 
-> > > -#define  WLED3_SINK_REG_SYNC_MASK			0x07
-> > > +#define  WLED3_SINK_REG_SYNC_MASK			GENMASK(2, 0)
-> > > +#define  WLED4_SINK_REG_SYNC_MASK			GENMASK(3, 0)
-> > >  #define  WLED3_SINK_REG_SYNC_LED1			BIT(0)
-> > >  #define  WLED3_SINK_REG_SYNC_LED2			BIT(1)
-> > >  #define  WLED3_SINK_REG_SYNC_LED3			BIT(2)
-> > > +#define  WLED4_SINK_REG_SYNC_LED4			BIT(3)
-> > >  #define  WLED3_SINK_REG_SYNC_ALL			0x07
-> > > +#define  WLED4_SINK_REG_SYNC_ALL			0x0f
-> > >  #define  WLED3_SINK_REG_SYNC_CLEAR			0x00
-> > > 
-> > [..]
-> > > +static int wled4_set_brightness(struct wled *wled, u16 brightness)
-> > 
-> > Afaict this is identical to wled3_set_brightness() with the exception
-> > that there's a minimum brightness and the base address for the
-> > brightness registers are different.
-> > 
-> > I would suggest that you add a min_brightness to wled and that you
-> > figure out a way to carry the brightness base register address; and by
-> > that you squash these two functions.
-> > 
-> There are four different parameters. 1) minimum brightness 2) WLED base
-> addresses
-> 3) Brightness base addresses 4) the brightness sink registers address
-> offsets also
-> different for wled 3 and wled4. (in wled3 0x40, 0x42, 0x44, where as in
-> wled4 0x57, 0x67, 0x77, 0x87).
-> 
-
-Sorry, I must have gotten lost in the defines, I see the difference
-between the two register layouts now. If you retain the old mechanism of
-doing the math openly in the function this would have been obvious.
-
-> Irrelevant to this patch, but wled5 has some more extra registers to
-> set the brightness.  Keeping this in mind, it is better to have
-> separate functions? Otherwise we will have to use the version checks
-> in the wled_set_brightness function, if we have the common function.
-
-Okay, so it sounds reasonable to split this out to some degree.
-
-Regards,
-Bjorn
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 6e3a998f..44097a3e 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -57,12 +57,13 @@ config LEDS_AAT1290
+  	depends on PINCTRL
+  	help
+  	 This option enables support for the LEDs on the AAT1290.
++
+  config LEDS_APU
+-	tristate "Front panel LED support for PC Engines APU/APU2 boards"
++	tristate "Front panel LED support for PC Engines APU/APU2/APU3 boards"
+  	depends on LEDS_CLASS
+  	depends on X86 && DMI
+  	help
+-	  This driver makes the PC Engines APU/APU2 front panel LEDs
++	  This driver makes the PC Engines APU/APU2/APU3 front panel LEDs
+  	  accessible from userspace programs through the LED subsystem.
+   	  To compile this driver as a module, choose M here: the
+diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
+index 8c93d689..8d42e46e 100644
+--- a/drivers/leds/leds-apu.c
++++ b/drivers/leds/leds-apu.c
+@@ -102,6 +102,13 @@ static const struct apu_led_profile 
+apu2_led_profile[] = {
+  	{ "apu2:green:3", LED_OFF, APU2_FCH_GPIO_BASE + 70 * APU2_IOSIZE },
+  };
+  +/* Same as apu2_led_profile, but with "3" in the LED names. */
++static const struct apu_led_profile apu3_led_profile[] = {
++	{ "apu3:green:1", LED_ON,  APU2_FCH_GPIO_BASE + 68 * APU2_IOSIZE },
++	{ "apu3:green:2", LED_OFF, APU2_FCH_GPIO_BASE + 69 * APU2_IOSIZE },
++	{ "apu3:green:3", LED_OFF, APU2_FCH_GPIO_BASE + 70 * APU2_IOSIZE },
++};
++
+  static const struct dmi_system_id apu_led_dmi_table[] __initconst = {
+  	{
+  		.ident = "apu",
+@@ -134,6 +141,30 @@ static const struct dmi_system_id 
+apu_led_dmi_table[] __initconst = {
+  			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
+  		}
+  	},
++	/* PC Engines APU3 with "Legacy" bios < 4.0.8 */
++	{
++		.ident = "apu3",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "APU3")
++		}
++	},
++	/* PC Engines APU3 with "Legacy" bios >= 4.0.8 */
++	{
++		.ident = "apu3",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "apu3")
++		}
++	},
++	/* PC Engines APU2 with "Mainline" bios */
++	{
++		.ident = "apu3",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu3")
++		}
++	},
+  	{}
+  };
+  MODULE_DEVICE_TABLE(dmi, apu_led_dmi_table);
+@@ -235,6 +266,14 @@ static int __init apu_led_probe(struct 
+platform_device *pdev)
+  		apu_led->platform = APU2_LED_PLATFORM;
+  		apu_led->num_led_instances = ARRAY_SIZE(apu2_led_profile);
+  		apu_led->iosize = APU2_IOSIZE;
++	} else if (dmi_match(DMI_BOARD_NAME, "APU3") ||
++		   dmi_match(DMI_BOARD_NAME, "apu3") ||
++		   dmi_match(DMI_BOARD_NAME, "PC Engines apu3")) {
++		apu_led->profile = apu3_led_profile;
++		/* Otherwise identical to APU2. */
++		apu_led->platform = APU2_LED_PLATFORM;
++		apu_led->num_led_instances = ARRAY_SIZE(apu3_led_profile);
++		apu_led->iosize = APU2_IOSIZE;
+  	}
+   	spin_lock_init(&apu_led->lock);
+@@ -259,7 +298,10 @@ static int __init apu_led_init(void)
+  	if (!(dmi_match(DMI_PRODUCT_NAME, "APU") ||
+  	      dmi_match(DMI_PRODUCT_NAME, "APU2") ||
+  	      dmi_match(DMI_PRODUCT_NAME, "apu2") ||
+-	      dmi_match(DMI_PRODUCT_NAME, "PC Engines apu2"))) {
++	      dmi_match(DMI_PRODUCT_NAME, "PC Engines apu2") ||
++	      dmi_match(DMI_PRODUCT_NAME, "APU3") ||
++	      dmi_match(DMI_PRODUCT_NAME, "apu3") ||
++	      dmi_match(DMI_PRODUCT_NAME, "PC Engines apu3"))) {
+  		pr_err("Unknown PC Engines board: %s\n",
+  				dmi_get_system_info(DMI_PRODUCT_NAME));
+  		return -ENODEV;
+-- 
+2.16.4
