@@ -1,136 +1,118 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: Modify PC Engines apu/apu2 driver to support apu3
-Date: Mon, 25 Jun 2018 21:43:45 +0200
-Message-ID: <ff2d3a46-d425-3963-8353-c1a7c78788de@gmail.com>
-References: <5b30f692.1c69fb81.dbc7.ac34SMTPIN_ADDED_MISSING@mx.google.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH 1/2] leds: core: Introduce generic pattern interface
+Date: Tue, 26 Jun 2018 13:08:03 +0800
+Message-ID: <CAMz4kuKiMrE-z9D3gsSqJU9zCdGz-gakLeSWSLWOL2efTgm-1Q@mail.gmail.com>
+References: <046c0cf717cbdfd55dcdc2bb7463642734e2ca4c.1529902636.git.baolin.wang@linaro.org>
+ <20180625121845.GA32505@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5b30f692.1c69fb81.dbc7.ac34SMTPIN_ADDED_MISSING@mx.google.com>
-Content-Language: en-US
+In-Reply-To: <20180625121845.GA32505@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Raffaello D. Di Napoli" <rafdev@dinapo.li>
-Cc: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>, linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Raffaello,
+Hi Pavel,
 
-Thank you for the patch.
+On 25 June 2018 at 20:18, Pavel Machek <pavel@ucw.cz> wrote:
+> On Mon 2018-06-25 13:03:19, Baolin Wang wrote:
+>> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>
+>> Some LED controllers have support for autonomously controlling
+>> brightness over time, according to some preprogrammed pattern or
+>> function.
+>>
+>> This adds a new optional operator that LED class drivers can implement
+>> if they support such functionality as well as a new device attribute to
+>> configure the pattern for a given LED.
+>
+> Thanks for doing this!
+>
+>> index 5f67f7a..fe90a12 100644
+>> --- a/Documentation/ABI/testing/sysfs-class-led
+>> +++ b/Documentation/ABI/testing/sysfs-class-led
+>> @@ -61,3 +61,19 @@ Description:
+>>               gpio and backlight triggers. In case of the backlight trigger,
+>>               it is useful when driving a LED which is intended to indicate
+>>               a device in a standby like state.
+>> +
+>> +What: /sys/class/leds/<led>/pattern
+>> +Date: June 2018
+>> +KernelVersion: 4.18
+>> +Description:
+>> +     Specify a pattern for the LED, for LED hardware that support
+>> +     altering the brightness as a function of time.
+>> +
+>> +     The pattern is given by a series of tuples, of brightness and
+>> +     duration (ms). The LED is expected to traverse the series and
+>> +     each brightness value for the specified duration.
+>> +
+>> +     As LED hardware might have different capabilities and precision
+>> +     the requested pattern might be slighly adjusted by the driver
+>> +     and the resulting pattern of such operation should be returned
+>> +     when this file is read.
+>
+> I'd add "Duration of 0 means brightness should immediately change to
+> new value."
 
-On 06/25/2018 02:50 PM, Raffaello D. Di Napoli wrote:
-> PC Engines apu3 is an improved version of the apu2, using the same SoC
-> and almost everything else.
-> 
-> This patch reuses as much as possible from the apu2 definitions, to
-> avoid redundancy.
-> 
-> Signed-off-by: Raffaello D. Di Napoli <rafdev@dinapo.li>
-> ---
->   drivers/leds/Kconfig    |  5 +++--
->   drivers/leds/leds-apu.c | 44 +++++++++++++++++++++++++++++++++++++++++++-
->   2 files changed, 46 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 6e3a998f..44097a3e 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -57,12 +57,13 @@ config LEDS_AAT1290
->   	depends on PINCTRL
->   	help
->   	 This option enables support for the LEDs on the AAT1290.
-> +
->   config LEDS_APU
-> -	tristate "Front panel LED support for PC Engines APU/APU2 boards"
-> +	tristate "Front panel LED support for PC Engines APU/APU2/APU3 boards"
->   	depends on LEDS_CLASS
->   	depends on X86 && DMI
->   	help
-> -	  This driver makes the PC Engines APU/APU2 front panel LEDs
-> +	  This driver makes the PC Engines APU/APU2/APU3 front panel LEDs
->   	  accessible from userspace programs through the LED subsystem.
->   
->   	  To compile this driver as a module, choose M here: the
-> diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
-> index 8c93d689..8d42e46e 100644
-> --- a/drivers/leds/leds-apu.c
-> +++ b/drivers/leds/leds-apu.c
-> @@ -102,6 +102,13 @@ static const struct apu_led_profile apu2_led_profile[] = {
->   	{ "apu2:green:3", LED_OFF, APU2_FCH_GPIO_BASE + 70 * APU2_IOSIZE },
->   };
->   
-> +/* Same as apu2_led_profile, but with "3" in the LED names. */
-> +static const struct apu_led_profile apu3_led_profile[] = {
-> +	{ "apu3:green:1", LED_ON,  APU2_FCH_GPIO_BASE + 68 * APU2_IOSIZE },
-> +	{ "apu3:green:2", LED_OFF, APU2_FCH_GPIO_BASE + 69 * APU2_IOSIZE },
-> +	{ "apu3:green:3", LED_OFF, APU2_FCH_GPIO_BASE + 70 * APU2_IOSIZE },
-> +};
-> +
->   static const struct dmi_system_id apu_led_dmi_table[] __initconst = {
->   	{
->   		.ident = "apu",
-> @@ -134,6 +141,30 @@ static const struct dmi_system_id apu_led_dmi_table[] __initconst = {
->   			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
->   		}
->   	},
-> +	/* PC Engines APU3 with "Legacy" bios < 4.0.8 */
-> +	{
-> +		.ident = "apu3",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +			DMI_MATCH(DMI_BOARD_NAME, "APU3")
-> +		}
-> +	},
-> +	/* PC Engines APU3 with "Legacy" bios >= 4.0.8 */
-> +	{
-> +		.ident = "apu3",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +			DMI_MATCH(DMI_BOARD_NAME, "apu3")
-> +		}
-> +	},
-> +	/* PC Engines APU2 with "Mainline" bios */
-> +	{
-> +		.ident = "apu3",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu3")
-> +		}
-> +	},
->   	{}
->   };
->   MODULE_DEVICE_TABLE(dmi, apu_led_dmi_table);
-> @@ -235,6 +266,14 @@ static int __init apu_led_probe(struct platform_device *pdev)
->   		apu_led->platform = APU2_LED_PLATFORM;
->   		apu_led->num_led_instances = ARRAY_SIZE(apu2_led_profile);
->   		apu_led->iosize = APU2_IOSIZE;
-> +	} else if (dmi_match(DMI_BOARD_NAME, "APU3") ||
-> +		   dmi_match(DMI_BOARD_NAME, "apu3") ||
-> +		   dmi_match(DMI_BOARD_NAME, "PC Engines apu3")) {
-> +		apu_led->profile = apu3_led_profile;
-> +		/* Otherwise identical to APU2. */
-> +		apu_led->platform = APU2_LED_PLATFORM;
-> +		apu_led->num_led_instances = ARRAY_SIZE(apu3_led_profile);
-> +		apu_led->iosize = APU2_IOSIZE;
->   	}
->   
->   	spin_lock_init(&apu_led->lock);
-> @@ -259,7 +298,10 @@ static int __init apu_led_init(void)
->   	if (!(dmi_match(DMI_PRODUCT_NAME, "APU") ||
->   	      dmi_match(DMI_PRODUCT_NAME, "APU2") ||
->   	      dmi_match(DMI_PRODUCT_NAME, "apu2") ||
-> -	      dmi_match(DMI_PRODUCT_NAME, "PC Engines apu2"))) {
-> +	      dmi_match(DMI_PRODUCT_NAME, "PC Engines apu2") ||
-> +	      dmi_match(DMI_PRODUCT_NAME, "APU3") ||
-> +	      dmi_match(DMI_PRODUCT_NAME, "apu3") ||
-> +	      dmi_match(DMI_PRODUCT_NAME, "PC Engines apu3"))) {
->   		pr_err("Unknown PC Engines board: %s\n",
->   				dmi_get_system_info(DMI_PRODUCT_NAME));
->   		return -ENODEV;
-> 
+Sure.
 
-Applied.
+>
+>> +     struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>> +     struct led_pattern *pattern = NULL;
+>> +     unsigned long val;
+>> +     char *sbegin;
+>> +     char *elem;
+>> +     char *s;
+>> +     int ret, len = 0;
+>> +     bool odd = true;
+>> +
+>> +     s = sbegin = kstrndup(buf, size, GFP_KERNEL);
+>> +     if (!s)
+>> +             return -ENOMEM;
+>> +
+>> +     /* Trim trailing newline */
+>> +     s[strcspn(s, "\n")] = '\0';
+>
+> Is substring function best to use here? Will it do the right thing
+> when \n is not present?
+
+We always have a '\n' to present the end of the string passed from
+userspace. Or anything I missed here?
+
+>
+>> +     /* If the remaining string is empty, clear the pattern */
+>> +     if (!s[0]) {
+>> +             ret = led_cdev->pattern_clear(led_cdev);
+>> +             goto out;
+>> +     }
+>> +
+>> +     pattern = kcalloc(size, sizeof(*pattern), GFP_KERNEL);
+>> +     if (!pattern) {
+>> +             ret = -ENOMEM;
+>> +             goto out;
+>> +     }
+>> +
+>> +     /* Parse out the brightness & delta_t touples and check for repeat */
+>> +     while ((elem = strsep(&s, " ")) != NULL) {
+>> +             ret = kstrtoul(elem, 10, &val);
+>> +             if (ret)
+>> +                     goto out;
+>> +
+>> +             if (odd) {
+>> +                     pattern[len].brightness = val;
+>> +             } else {
+>> +                     /* Ensure we don't have any delta_t == 0 */
+>> +                     if (!val) {
+>> +                             ret = -EINVAL;
+>> +                             goto out;
+>> +                     }
+>
+> I believe we should support delta_t of 0 for "change immediately".
+
+OK. Thanks for your comments.
 
 -- 
-Best regards,
-Jacek Anaszewski
+Baolin Wang
+Best Regards
