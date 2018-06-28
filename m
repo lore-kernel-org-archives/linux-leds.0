@@ -1,211 +1,367 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH v2 1/2] leds: core: Introduce generic pattern interface
-Date: Thu, 28 Jun 2018 19:20:41 +0800
-Message-ID: <CAMz4ku+PYqgz9HdPHkw_sR53=gY-_aetQVoZpfirt-0EAJBR_Q@mail.gmail.com>
-References: <03bc9a51ccae38cdc86934746aee9f75ec667cfd.1530162340.git.baolin.wang@linaro.org>
- <CAHp75Vfmr=VRtQaUWk4i8A2sws2sDS=QL3wTMfHTszrniAv-YA@mail.gmail.com>
- <CAMz4kuKOnXX5cf36UZu91f7M9y6NL2Q-CkAxf=VnqawmcQ3tGg@mail.gmail.com> <CAHp75VdAXR5=wmfEmF7pwOhZV+P-hOTPdCMFPvwCCqyACnQqpw@mail.gmail.com>
+From: Andreas Klinger <ak@it-klinger.de>
+Subject: [PATCH] leds: ledtrig-morse: send out morse code
+Date: Thu, 28 Jun 2018 15:42:27 +0200
+Message-ID: <20180628134227.GA1719@arbeit>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VdAXR5=wmfEmF7pwOhZV+P-hOTPdCMFPvwCCqyACnQqpw@mail.gmail.com>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz, ben.whitten@gmail.com, geert+renesas@glider.be, w@1wt.eu, ak@it-klinger.de, pombredanne@nexb.com, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 28 June 2018 at 18:24, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> On Thu, Jun 28, 2018 at 12:18 PM, Baolin Wang <baolin.wang@linaro.org> wrote:
->> On 28 June 2018 at 16:31, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->>> On Thu, Jun 28, 2018 at 8:16 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
->
->>>> +What: /sys/class/leds/<led>/pattern
->>>> +Date: June 2018
->>>> +KernelVersion: 4.18
->>>
->>> 4.19 ?
->>
->> I think this will be merged in 4.18.
->
-> Is it bug fix? I don't see how it would make v4.18.
+Send out a morse code by using LEDs.
 
-OK. 4.19 is fine.
+This is useful especially on embedded systems without displays to tell the
+user about error conditions and status information.
 
->>>> +static ssize_t pattern_show(struct device *dev,
->>>> +                           struct device_attribute *attr, char *buf)
->>>> +{
->>>> +       struct led_classdev *led_cdev = dev_get_drvdata(dev);
->>>> +       struct led_pattern *pattern;
->>>> +       size_t offset = 0;
->>>> +       int count, n, i;
->>>
->>>> +       if (!led_cdev->pattern_get)
->>>> +               return -EOPNOTSUPP;
->>>> +
->>>
->>> Perhaps just hide an attribute completely?
->>
->> Driver need implement the pattern_get() interface, otherwise we can
->> not get any available pattern values to show.
->
-> It doesn't contradict with what I said. I proposed to just hide an
-> attribute from sysfs completely if there is no such callbacks
-> available.
+The trigger will be called "morse"
 
-Ah, I got your points now. But the pattern is RW and we can not hide
-it if only pattern_get() is not supplied without considering
-pattern_set().
+The string to be send is written into the file morse_string and sent out
+with a workqueue. Supported are letters and digits.
 
->
->>>> +       pattern = led_cdev->pattern_get(led_cdev, &count);
->>>> +       if (IS_ERR_OR_NULL(pattern))
->>>> +               return PTR_ERR(pattern);
->>>
->>> Hmm.. Here you shadow NULL case by returning 0.
->>> Even if it's correct behaviour IS_ERR_OR_NULL is a beast to hide such
->>> subtle detail.
->>>
->>> It also would be good idea to check for count == 0 and bail out
->>> immediately. Otherwise you will print an extra blank line.
->>
->> We can not check count, since count can be not initialized if failed
->> to call pattern_get(). So maybe force user to return error pointer,
->> and we just check like:
->> if (IS_ERR(pattern))
->>         return PTR_ERR(pattern);
->
-> My question is can be counter 0 by some reason?
+With the file dot_unit the minimal time unit can be adjusted in
+milliseconds.
 
-I am not sure, but I still think checking the return error pointer is
-the common way to handle.
+Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+---
+ drivers/leds/trigger/Kconfig         |  10 ++
+ drivers/leds/trigger/Makefile        |   1 +
+ drivers/leds/trigger/ledtrig-morse.c | 298 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 309 insertions(+)
+ create mode 100644 drivers/leds/trigger/ledtrig-morse.c
 
->>>> +       for (i = 0; i < count; i++) {
->>>> +               n = snprintf(buf + offset, PAGE_SIZE - offset, "%d %d",
->>>> +                            pattern[i].brightness, pattern[i].delta_t);
->>>> +
->>>
->>>> +               if (offset + n >= PAGE_SIZE)
->>>> +                       goto err_nospc;
->>>
->>>> +
->>>> +               offset += n;
->>>> +
->>>
->>>> +               if (i < count - 1)
->>>> +                       buf[offset++] = ' ';
->>>
->>> You might add this to the end of above format string and remove this
->>> conditional completely...
->>
->> Hmmm, I do not think we need add one extra ' ' to the end of format string.
->
-> Why not? You do it anyway for all except last, but...
-
-Previous whitespace is used to break up the brightness value and
-delta_t value, but it is useless to add one extra ' ' to the end of
-format string.
-
->
->>>> +       buf[offset++] = '\n';
->>>
->>> ...and use here something like
->>>
->>> buf[offset - 1] = '\n';
->>
->> I don't think so. We need increase the offset value at the same time.
->
-> Nope, you don't need it. here we replace trailing space by '\n'.
-
-But why we need add one extra useless space?
-
->
->>> (we have such patterns in the kernel)
->
-> ...look at existing patterns in the kernel.
->
->>>> +       /* Trim trailing newline */
->>>> +       s[strcspn(s, "\n")] = '\0';
->>>
->>> It's usually done via strstrip().
->>>
->>> sbegin = kstrndup();
->>> ...
->>>
->>> s = strstrip(sbegin);
->>
->> Good idea, will change.
->
-> Replying to your another message. And who cares about leading spaces?
-> Is it wrong to have them? Why?
-
-OK, will use strstrip() to remove leading and trailing space firstly.
-
->
->>>> +       /* Parse out the brightness & delta_t touples */
->>>> +       while ((elem = strsep(&s, " ")) != NULL) {
->>>> +               ret = kstrtoul(elem, 10, &val);
->>>> +               if (ret)
->>>> +                       goto out;
->>>> +
->>>
->>>> +               if (odd) {
->>>
->>> This is effectivelly if (len % 2 == 0)
->>
->> It is incorrect, we can not use len to decide the value is brightness
->> or delta. Here logical is to make sure we must keep <brightness
->> delta>, <brightness, delta> ......
->
-> Right, the problem is the format itself I suppose.
-> It's too error prone for one attribute.
-
-The format was decided by previous discussion, so I still like to keep
-the original approach here.
-
->
-> What about to change it like
->
-> "brightness delta[, brightness delta[, ...]]"
->
-> and then you do
->
-> ...elem = strsep(&s, ",")...
->
-> sscanf("%d %d") == 2
->
-> ?
->
->>>> +                       pattern[len].brightness = val;
->>>> +               } else {
->>>> +                       pattern[len].delta_t = val;
->>>> +                       len++;
->>>> +               }
->>>> +
->>>> +               odd = !odd;
->>>> +       }
->>>> +
->>>> +       /*
->>>> +        * Fail if we didn't find any data points or last data point was partial
->>>> +        */
->>>> +       if (!len || !odd) {
->>>> +               ret = -EINVAL;
->>>> +               goto out;
->>>> +       }
->>>
->>> For partial data can we return different error code?
->>> Does it make sense?
->>
->> Sorry I did not get you here. If user set incorrect pattern values, I
->> think '-EINVAL' is suitable.
->
-> OK.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
-
-
-
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+index a2559b4fdfff..ea706ef2354c 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -142,4 +142,14 @@ config LEDS_TRIGGER_NETDEV
+ 	  This allows LEDs to be controlled by network device activity.
+ 	  If unsure, say Y.
+ 
++config LEDS_TRIGGER_MORSE
++	tristate "LED Morse Trigger"
++	depends on LEDS_TRIGGERS
++	help
++	  This allows to send a morse code through LEDs.
++	  It is useful especially in embedded systems when there is only
++	  little interface to tell the user error or status codes. Sending
++	  a morse code can be an alternative here.
++	  If unsure, say Y.
++
+ endif # LEDS_TRIGGERS
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+index f3cfe1950538..5735381cc3d3 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
+ obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
+ obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
+ obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
++obj-$(CONFIG_LEDS_TRIGGER_MORSE)	+= ledtrig-morse.o
+diff --git a/drivers/leds/trigger/ledtrig-morse.c b/drivers/leds/trigger/ledtrig-morse.c
+new file mode 100644
+index 000000000000..77f6ee502ebe
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-morse.c
+@@ -0,0 +1,298 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * ledtrig-morse: LED Morse Trigger
++ *
++ * send a string as morse code out through LEDs
++ *
++ * can be used to send error codes or messages
++ *
++ * string to be send is written into morse_string
++ * supported are letters and digits
++ *
++ * Author: Andreas Klinger <ak@it-klinger.de>
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/device.h>
++#include <linux/ctype.h>
++#include <linux/slab.h>
++#include <linux/delay.h>
++#include <linux/workqueue.h>
++#include <linux/leds.h>
++
++
++#define MORSE_DOT_UNIT_DEFAULT	500
++#define MORSE_TELEGRAM_SIZE	100
++
++struct morse_data {
++	unsigned int		dot_unit;
++	struct led_classdev	*led_cdev;
++	struct work_struct	work;
++	char			telegram[MORSE_TELEGRAM_SIZE];
++	unsigned int		telegram_size;
++	struct mutex		lock;
++};
++
++struct morse_char {
++	char	c;
++	char	*z;
++};
++
++static struct morse_char morse_table[] = {
++	{'a', ".-S"},
++	{'b', "-...S"},
++	{'c', "-.-.S"},
++	{'d', "-..S"},
++	{'e', ".S"},
++	{'f', "..-.S"},
++	{'g', "--.S"},
++	{'h', "....S"},
++	{'i', "..S"},
++	{'j', ".---S"},
++	{'k', "-.-S"},
++	{'l', ".-..S"},
++	{'m', "--S"},
++	{'n', "-.S"},
++	{'o', "---S"},
++	{'p', ".--.S"},
++	{'q', "--.-S"},
++	{'r', ".-.S"},
++	{'s', "...S"},
++	{'t', "-S"},
++	{'u', "..-S"},
++	{'v', "...-S"},
++	{'w', ".--S"},
++	{'x', "-..-S"},
++	{'y', "-.--S"},
++	{'z', "--..S"},
++	{'1', ".----S"},
++	{'2', "..---S"},
++	{'3', "...--S"},
++	{'4', "....-S"},
++	{'5', ".....S"},
++	{'6', "-....S"},
++	{'7', "--...S"},
++	{'8', "---..S"},
++	{'9', "----.S"},
++	{'0', "-----S"},
++	{0, NULL},
++};
++
++static void morse_long(struct led_classdev *led_cdev)
++{
++	struct morse_data *data = led_cdev->trigger_data;
++
++	led_set_brightness(led_cdev, LED_ON);
++	msleep(3 * data->dot_unit);
++	led_set_brightness(led_cdev, LED_OFF);
++	msleep(data->dot_unit);
++}
++
++static void morse_short(struct led_classdev *led_cdev)
++{
++	struct morse_data *data = led_cdev->trigger_data;
++
++	led_set_brightness(led_cdev, LED_ON);
++	msleep(data->dot_unit);
++	led_set_brightness(led_cdev, LED_OFF);
++	msleep(data->dot_unit);
++}
++
++static void morse_letter_space(struct led_classdev *led_cdev)
++{
++	struct morse_data *data = led_cdev->trigger_data;
++	/*
++	 * Pause: 3 dot spaces
++	 * 1 dot space already there from morse character
++	 */
++	msleep(2 * data->dot_unit);
++}
++
++static void morse_word_space(struct led_classdev *led_cdev)
++{
++	struct morse_data *data = led_cdev->trigger_data;
++	/*
++	 * Pause: 7 dot spaces
++	 * 1 dot space already there from morse character
++	 * 2 dot spaces already there from letter space
++	 */
++	msleep(4 * data->dot_unit);
++}
++
++static void morse_send_char(struct led_classdev *led_cdev, char ch)
++{
++	int i = 0;
++
++	while ((morse_table[i].c) && (morse_table[i].c != tolower(ch)))
++		i++;
++
++	if (morse_table[i].c) {
++		int j = 0;
++
++		while (morse_table[i].z[j] != 'S') {
++			switch (morse_table[i].z[j]) {
++			case '.':
++				morse_short(led_cdev);
++				break;
++			case '-':
++				morse_long(led_cdev);
++				break;
++			}
++			j++;
++		}
++		morse_letter_space(led_cdev);
++	} else {
++		/*
++		 * keep it simple:
++		 * whenever there is an unrecognized character make a word
++		 * space
++		 */
++		morse_word_space(led_cdev);
++	}
++}
++
++static void morse_work(struct work_struct *work)
++{
++	struct morse_data *data = container_of(work, struct morse_data, work);
++	int i;
++
++	mutex_lock(&data->lock);
++
++	for (i = 0; i < data->telegram_size; i++)
++		morse_send_char(data->led_cdev, data->telegram[i]);
++
++	mutex_unlock(&data->lock);
++}
++
++static ssize_t morse_string_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct morse_data *data = led_cdev->trigger_data;
++
++	if (size >= sizeof(data->telegram))
++		return -E2BIG;
++
++	mutex_lock(&data->lock);
++
++	memcpy(data->telegram, buf, size);
++	data->telegram_size = size;
++
++	mutex_unlock(&data->lock);
++
++	schedule_work(&data->work);
++
++	return size;
++}
++
++static DEVICE_ATTR_WO(morse_string);
++
++static ssize_t dot_unit_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct morse_data *data = led_cdev->trigger_data;
++
++	return sprintf(buf, "%u\n", data->dot_unit);
++}
++
++static ssize_t dot_unit_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct morse_data *data = led_cdev->trigger_data;
++	unsigned long dot_unit;
++	ssize_t ret = -EINVAL;
++
++	ret = kstrtoul(buf, 10, &dot_unit);
++	if (ret)
++		return ret;
++
++	data->dot_unit = dot_unit;
++
++	return size;
++}
++
++static DEVICE_ATTR_RW(dot_unit);
++
++static void morse_trig_activate(struct led_classdev *led_cdev)
++{
++	int rc;
++	struct morse_data *data;
++
++	data = kzalloc(sizeof(struct morse_data), GFP_KERNEL);
++	if (!data) {
++		dev_err(led_cdev->dev, "unable to allocate morse trigger\n");
++		return;
++	}
++
++	led_cdev->trigger_data = data;
++	data->led_cdev = led_cdev;
++	data->dot_unit = MORSE_DOT_UNIT_DEFAULT;
++
++	rc = device_create_file(led_cdev->dev, &dev_attr_morse_string);
++	if (rc)
++		goto err_out_data;
++
++	rc = device_create_file(led_cdev->dev, &dev_attr_dot_unit);
++	if (rc)
++		goto err_out_morse_string;
++
++	INIT_WORK(&data->work, morse_work);
++
++	mutex_init(&data->lock);
++
++	led_set_brightness(led_cdev, LED_OFF);
++	led_cdev->activated = true;
++
++	return;
++
++err_out_data:
++	kfree(data);
++err_out_morse_string:
++	device_remove_file(led_cdev->dev, &dev_attr_morse_string);
++}
++
++static void morse_trig_deactivate(struct led_classdev *led_cdev)
++{
++	struct morse_data *data = led_cdev->trigger_data;
++
++	if (led_cdev->activated) {
++
++		cancel_work_sync(&data->work);
++
++		device_remove_file(led_cdev->dev, &dev_attr_morse_string);
++		device_remove_file(led_cdev->dev, &dev_attr_dot_unit);
++
++		kfree(data);
++
++		led_cdev->trigger_data = NULL;
++		led_cdev->activated = false;
++	}
++}
++
++static struct led_trigger morse_led_trigger = {
++	.name     = "morse",
++	.activate = morse_trig_activate,
++	.deactivate = morse_trig_deactivate,
++};
++
++static int __init morse_trig_init(void)
++{
++	return led_trigger_register(&morse_led_trigger);
++}
++
++static void __exit morse_trig_exit(void)
++{
++	led_trigger_unregister(&morse_led_trigger);
++}
++
++module_init(morse_trig_init);
++module_exit(morse_trig_exit);
++
++MODULE_AUTHOR("Andreas Klinger <ak@it-klinger.de>");
++MODULE_DESCRIPTION("Morse code LED trigger");
++MODULE_LICENSE("GPL");
 -- 
-Baolin.wang
-Best Regards
+2.1.4
