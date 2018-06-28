@@ -1,7 +1,7 @@
 From: Andreas Klinger <ak@it-klinger.de>
 Subject: Re: [PATCH] leds: ledtrig-morse: send out morse code
-Date: Thu, 28 Jun 2018 22:29:57 +0200
-Message-ID: <20180628202955.GA1534@imap.1und1.de>
+Date: Thu, 28 Jun 2018 22:33:08 +0200
+Message-ID: <20180628203308.GA1859@imap.1und1.de>
 References: <20180628134227.GA1719@arbeit>
  <20180628185630.GA6095@amd>
 Mime-Version: 1.0
@@ -17,7 +17,6 @@ List-Id: linux-leds@vger.kernel.org
 
 Hi Pavel,
 
-Pavel Machek <pavel@ucw.cz> schrieb am Thu, 28. Jun 20:56:
 > Hi!
 > 
 > > Send out a morse code by using LEDs.
@@ -56,6 +55,7 @@ Another question:
 The pattern trigger is not in mainline. Do you know why?
 
 Andreas
+
 
 
 > 
@@ -719,3 +719,15 @@ Andreas
 > 
 > 
 > 
+
+
+
+
+-- 
+Andreas Klinger
+Grabenreith 27
+84508 Burgkirchen
++49 8623 919966
+ak@it-klinger.de
+www.it-klinger.de
+www.grabenreith.de
