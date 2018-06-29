@@ -1,181 +1,254 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] leds: ledtrig-morse: send out morse code
-Date: Thu, 28 Jun 2018 22:45:16 +0200
-Message-ID: <20180628204516.GA29146@amd>
-References: <20180628134227.GA1719@arbeit>
- <20180628185630.GA6095@amd>
- <20180628202955.GA1534@imap.1und1.de>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
+Date: Fri, 29 Jun 2018 13:03:00 +0800
+Message-ID: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180628202955.GA1534@imap.1und1.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andreas Klinger <ak@it-klinger.de>
-Cc: jacek.anaszewski@gmail.com, ben.whitten@gmail.com, geert+renesas@glider.be, w@1wt.eu, pombredanne@nexb.com, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: bjorn.andersson@linaro.org, baolin.wang@linaro.org, broonie@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
---IS0zKkzwUGydFO0o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Some LED controllers have support for autonomously controlling
+brightness over time, according to some preprogrammed pattern or
+function.
 
-On Thu 2018-06-28 22:29:57, Andreas Klinger wrote:
-> Hi Pavel,
->=20
-> Pavel Machek <pavel@ucw.cz> schrieb am Thu, 28. Jun 20:56:
-> > Hi!
-> >=20
-> > > Send out a morse code by using LEDs.
-> > >=20
-> > > This is useful especially on embedded systems without displays to tel=
-l the
-> > > user about error conditions and status information.
-> > >=20
-> > > The trigger will be called "morse"
-> > >=20
-> > > The string to be send is written into the file morse_string and sent =
-out
-> > > with a workqueue. Supported are letters and digits.
-> > >=20
-> > > With the file dot_unit the minimal time unit can be adjusted in
-> > > milliseconds.
-> > >=20
-> > > Signed-off-by: Andreas Klinger <ak@it-klinger.de>
-> >=20
-> > Can we get more general "pattern" trigger? Some LEDs can do that in
-> > hardware, and it is more general than plain morse.
-> >=20
-> > Ouch and it already was implemented :-). Patch is in attachment.
->=20
-> The idea of the morse trigger is so be able so send out a short error
-> code or if needed also a complete sentence. The morse code don't need
-> extra explanation to the user. Decoding can be found everywhere.
+This adds a new optional operator that LED class drivers can implement
+if they support such functionality as well as a new device attribute to
+configure the pattern for a given LED.
 
-Yeah, well... I don't think decoding sentences in morse code is going
-to be much fun.
+[Baolin Wang did some minor improvements.]
 
-And we don't really want encoder in kernel. Just do encoding in
-userspace, and use pattern trigger to display it.
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes from v2:
+ - Change kernel version to 4.19.
+ - Force user to return error pointer if failed to issue pattern_get().
+ - Use strstrip() to trim trailing newline.
+ - Other optimization.
 
-For many uses, morse code is "too geeky", and other patterns will be
-used.
+Changes from v1:
+ - Add some comments suggested by Pavel.
+ - Change 'delta_t' can be 0.
 
-Like " X    " for error 1, " X X     " for error 2, " .xX .xX " for
-charging, " .xXx. " for everything okay...
+Note: I removed the pattern repeat check and will get the repeat number by adding
+one extra file named 'pattern_repeat' according to previous discussion.
+---
+ Documentation/ABI/testing/sysfs-class-led |   17 +++++
+ drivers/leds/led-class.c                  |  119 +++++++++++++++++++++++++++++
+ include/linux/leds.h                      |   19 +++++
+ 3 files changed, 155 insertions(+)
 
-> With the pattern trigger one need a translation of the letters and
-> numbers into morse code. This is what the morse trigger is doing.
->=20
-> So from my perspective the pattern trigger is something different than
-> the morse one.
-
-Well, pattern trigger is more generic, and can do everything morse
-trigger can do. Lets do that instead.
-
-> Another question:
-> The pattern trigger is not in mainline. Do you know why?
-
-Needs to be resubmitted, I'd say.
-
-								Pavel
-
-> > +++ b/Documentation/leds/ledtrig-pattern.txt
-> > @@ -0,0 +1,86 @@
-> > +LED Pattern Trigger
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +This is a LED trigger allowing arbitrary pattern execution. It can do =
-gradual
-> > +dimming. This trigger can be configured to repeat the pattern a number=
- of
-> > +times or indefinitely. This is intended as a way of communication for =
-embedded
-> > +systems with no screen.
-> > +
-> > +The trigger can be activated from user space on LED class devices as s=
-hown
-> > +below:
-> > +
-> > +  echo pattern > trigger
-> > +
-> > +This adds the following sysfs attributes to the LED:
-> > +
-> > +  pattern - specifies the pattern. See syntax below.
-> > +
-> > +  repeat - number of times the pattern must be repeated.
-> > +	writing -1 to this file will make the pattern
-> > +	repeat indefinitely.
-> > +
-> > +The pattern will be restarted each time a new value is written to
-> > +the pattern or repeat attribute. When dimming, the LED brightness
-> > +is set every 50 ms.
-> > +
-> > +pattern syntax:
-> > +The pattern is specified in the pattern attribute with an array of com=
-ma-
-> > +separated "brightness/length in miliseconds" values. The two components
-> > +of each value are to be separated by a space.
-> > +
-> > +For example, assuming the driven LED supports
-> > +intensity value from 0 to 255:
-> > +
-> > +  echo 0 1000, 255 2000 > pattern
-> > +
-> > +Or:
-> > +
-> > +  echo 0 1000, 255 2000, > pattern
-> > +
-> > +Will make the LED go gradually from zero-intensity to max (255) intens=
-ity
-> > +in 1000 milliseconds, then back to zero intensity in 2000 milliseconds:
-> > +
-> > +LED brightness
-> > +    ^
-> > +255-|       / \            / \            /
-> > +    |      /    \         /    \         /
-> > +    |     /       \      /       \      /
-> > +    |    /          \   /          \   /
-> > +  0-|   /             \/             \/
-> > +    +---0----1----2----3----4----5----6------------> time (s)
-> > +
-> > +
-> > +
-> > +To make the LED go instantly from one brigntess value to another,
-> > +use zero-time lengths. For example:
-> > +
-> > +  echo 0 1000, 0 0, 255 2000, 255 0 > pattern
-> > +
-> > +Will make the LED stay off for one second, then stay at max brightness
-> > +for two seconds:
-> > +
-> > +LED brightness
-> > +    ^
-> > +255-|        +---------+    +---------+
-> > +    |        |         |    |         |
-> > +    |        |         |    |         |
-> > +    |        |         |    |         |
-> > +  0-|   -----+         +----+         +----
-> > +    +---0----1----2----3----4----5----6------------> time (s)
-> > +
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---IS0zKkzwUGydFO0o
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAls1SNwACgkQMOfwapXb+vKiDgCeJ1roVYvSkYtGRqe3UmDuHvZo
-VPUAoKOMofhs2mlyNB2iHu7yL6TufO3y
-=9tDE
------END PGP SIGNATURE-----
-
---IS0zKkzwUGydFO0o--
+diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+index 5f67f7a..e01ac55 100644
+--- a/Documentation/ABI/testing/sysfs-class-led
++++ b/Documentation/ABI/testing/sysfs-class-led
+@@ -61,3 +61,20 @@ Description:
+ 		gpio and backlight triggers. In case of the backlight trigger,
+ 		it is useful when driving a LED which is intended to indicate
+ 		a device in a standby like state.
++
++What: /sys/class/leds/<led>/pattern
++Date: June 2018
++KernelVersion: 4.19
++Description:
++	Specify a pattern for the LED, for LED hardware that support
++	altering the brightness as a function of time.
++
++	The pattern is given by a series of tuples, of brightness and
++	duration (ms). The LED is expected to traverse the series and
++	each brightness value for the specified duration. Duration of
++	0 means brightness should immediately change to new value.
++
++	As LED hardware might have different capabilities and precision
++	the requested pattern might be slighly adjusted by the driver
++	and the resulting pattern of such operation should be returned
++	when this file is read.
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 3c7e348..8a685a2 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -74,6 +74,123 @@ static ssize_t max_brightness_show(struct device *dev,
+ }
+ static DEVICE_ATTR_RO(max_brightness);
+ 
++static ssize_t pattern_show(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct led_pattern *pattern;
++	size_t offset = 0;
++	int count, n, i;
++
++	if (!led_cdev->pattern_get)
++		return -EOPNOTSUPP;
++
++	pattern = led_cdev->pattern_get(led_cdev, &count);
++	if (IS_ERR(pattern))
++		return PTR_ERR(pattern);
++
++	for (i = 0; i < count; i++) {
++		n = snprintf(buf + offset, PAGE_SIZE - offset, "%d %d ",
++			     pattern[i].brightness, pattern[i].delta_t);
++
++		if (offset + n >= PAGE_SIZE)
++			goto err_nospc;
++
++		offset += n;
++	}
++
++	buf[offset - 1] = '\n';
++
++	kfree(pattern);
++	return offset;
++
++err_nospc:
++	kfree(pattern);
++	return -ENOSPC;
++}
++
++static ssize_t pattern_store(struct device *dev,
++			     struct device_attribute *attr,
++			     const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct led_pattern *pattern = NULL;
++	unsigned long val;
++	char *sbegin;
++	char *elem;
++	char *s;
++	int ret, len = 0;
++	bool odd = true;
++
++	sbegin = kstrndup(buf, size, GFP_KERNEL);
++	if (!sbegin)
++		return -ENOMEM;
++
++	/*
++	 * Trim trailing newline, if the remaining string is empty,
++	 * clear the pattern.
++	 */
++	s = strstrip(sbegin);
++	if (!*s) {
++		ret = led_cdev->pattern_clear(led_cdev);
++		goto out;
++	}
++
++	pattern = kcalloc(size, sizeof(*pattern), GFP_KERNEL);
++	if (!pattern) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	/* Parse out the brightness & delta_t touples */
++	while ((elem = strsep(&s, " ")) != NULL) {
++		ret = kstrtoul(elem, 10, &val);
++		if (ret)
++			goto out;
++
++		if (odd) {
++			pattern[len].brightness = val;
++		} else {
++			pattern[len].delta_t = val;
++			len++;
++		}
++
++		odd = !odd;
++	}
++
++	/*
++	 * Fail if we didn't find any data points or last data point was partial
++	 */
++	if (!len || !odd) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	ret = led_cdev->pattern_set(led_cdev, pattern, len);
++
++out:
++	kfree(pattern);
++	kfree(sbegin);
++	return ret < 0 ? ret : size;
++}
++static DEVICE_ATTR_RW(pattern);
++
++static umode_t led_class_attrs_mode(struct kobject *kobj,
++				    struct attribute *attr, int index)
++{
++	struct device *dev = container_of(kobj, struct device, kobj);
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++
++	if (attr == &dev_attr_brightness.attr)
++		return attr->mode;
++	if (attr == &dev_attr_max_brightness.attr)
++		return attr->mode;
++	if (attr == &dev_attr_pattern.attr && led_cdev->pattern_set)
++		return attr->mode;
++
++	return 0;
++}
++
+ #ifdef CONFIG_LEDS_TRIGGERS
+ static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
+ static struct attribute *led_trigger_attrs[] = {
+@@ -88,11 +205,13 @@ static ssize_t max_brightness_show(struct device *dev,
+ static struct attribute *led_class_attrs[] = {
+ 	&dev_attr_brightness.attr,
+ 	&dev_attr_max_brightness.attr,
++	&dev_attr_pattern.attr,
+ 	NULL,
+ };
+ 
+ static const struct attribute_group led_group = {
+ 	.attrs = led_class_attrs,
++	.is_visible = led_class_attrs_mode,
+ };
+ 
+ static const struct attribute_group *led_groups[] = {
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index b7e8255..acdbb2f 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -22,6 +22,7 @@
+ #include <linux/workqueue.h>
+ 
+ struct device;
++struct led_pattern;
+ /*
+  * LED Core
+  */
+@@ -88,6 +89,14 @@ struct led_classdev {
+ 				     unsigned long *delay_on,
+ 				     unsigned long *delay_off);
+ 
++	int (*pattern_set)(struct led_classdev *led_cdev,
++			   struct led_pattern *pattern, int len);
++
++	int (*pattern_clear)(struct led_classdev *led_cdev);
++
++	struct led_pattern *(*pattern_get)(struct led_classdev *led_cdev,
++					   int *len);
++
+ 	struct device		*dev;
+ 	const struct attribute_group	**groups;
+ 
+@@ -446,4 +455,14 @@ static inline void led_classdev_notify_brightness_hw_changed(
+ 	struct led_classdev *led_cdev, enum led_brightness brightness) { }
+ #endif
+ 
++/**
++ * struct led_pattern - brigheness value in a pattern
++ * @delta_t: delay until next entry, in milliseconds
++ * @brightness: brightness at time = 0
++ */
++struct led_pattern {
++	int delta_t;
++	int brightness;
++};
++
+ #endif		/* __LINUX_LEDS_H_INCLUDED */
+-- 
+1.7.9.5
