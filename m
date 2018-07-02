@@ -1,38 +1,47 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 0/9] Fix references for some missing documentation files
-Date: Mon, 2 Jul 2018 11:27:23 -0600
-Message-ID: <20180702112723.654d348c@lwn.net>
-References: <cover.1530005114.git.mchehab+samsung@kernel.org>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH 1/4] leds: lm3692x: Update license header to SPDX
+Date: Mon, 2 Jul 2018 13:12:13 -0500
+Message-ID: <20180702181216.19660-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <virtualization-bounces@lists.linux-foundation.org>
-In-Reply-To: <cover.1530005114.git.mchehab+samsung@kernel.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
-List-Post: <mailto:virtualization@lists.linux-foundation.org>
-List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
-Sender: virtualization-bounces@lists.linux-foundation.org
-Errors-To: virtualization-bounces@lists.linux-foundation.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, James Morris <james.morris@microsoft.com>, kvm@vger.kernel.org, Linux Doc Mailing List <linux-doc@vger.kernel.org>, virtualization@lists.linux-foundation.org, linux-leds@vger.kernel.org, linux-scsi@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, intel-wired-lan@lists.osuosl.org, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-gpio@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Andy Whitcroft <apw@canonical.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Changbin Du <changbin.du@intel.com>, Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@zh-kernel.org, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, jacek.anaszewski@gmail.com, andy.shevchenko@gmail.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, 26 Jun 2018 06:49:02 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+Update the license header to the current
+SPDX licensing format.
 
-> Having nothing to do while waiting for my plane to arrive while
-> returning back from Japan, I ended by writing a small series of 
-> patches meant to reduce the number of bad Documentation/* 
-> links that are detected by:
-> 	./scripts/documentation-file-ref-check
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ drivers/leds/leds-lm3692x.c | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
 
-I've applied everything except the two networking patches, since I expect
-those to go through Dave's tree.
-
-Thanks,
-
-jon
+diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+index 437173d1712c..1a06d8c97789 100644
+--- a/drivers/leds/leds-lm3692x.c
++++ b/drivers/leds/leds-lm3692x.c
+@@ -1,17 +1,6 @@
+-/*
+- * TI lm3692x LED Driver
+- *
+- * Copyright (C) 2017 Texas Instruments
+- *
+- * Author: Dan Murphy <dmurphy@ti.com>
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * version 2 as published by the Free Software Foundation.
+- *
+- * Data sheet is located
+- * http://www.ti.com/lit/ds/snvsa29/snvsa29.pdf
+- */
++// SPDX-License-Identifier: GPL-2.0
++// TI LM3692x LED chip family driver 
++// Copyright (C) 2017-18 Texas Instruments Incorporated - http://www.ti.com/
+ 
+ #include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
+-- 
+2.17.0.582.gccdcbd54c
