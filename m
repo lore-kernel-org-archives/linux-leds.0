@@ -1,7 +1,7 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 2/4] leds: lm3692x: Change DT calls to fwnode calls
-Date: Mon, 2 Jul 2018 13:12:14 -0500
-Message-ID: <20180702181216.19660-2-dmurphy@ti.com>
+Subject: [PATCH 3/4] dt: bindings: lm3692x: Update binding for LED sync control
+Date: Mon, 2 Jul 2018 13:12:15 -0500
+Message-ID: <20180702181216.19660-3-dmurphy@ti.com>
 References: <20180702181216.19660-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,79 +12,35 @@ To: robh+dt@kernel.org, mark.rutland@arm.com, jacek.anaszewski@gmail.com, andy.s
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-Update the code to use the fwnode calls as opposed
-to ARM DT node api's.
+Update the binding to be able to configure the LED
+sync to turn on.
 
-This allows the device to be used with either DT
-configurations or ACPI definitions.
+The LM36922 has one output but can sync current to 2 LED
+strings.  The user may only use one sync so the other
+syncs need to be disabled.
+
+The LM36923 has 3 LED syncs.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-lm3692x.c | 38 ++++++++++++++++++++-----------------
- 1 file changed, 21 insertions(+), 17 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-lm3692x.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index 1a06d8c97789..ade4abfceb46 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -267,30 +267,15 @@ static int lm3692x_init(struct lm3692x_led *led)
- static int lm3692x_probe(struct i2c_client *client,
- 			const struct i2c_device_id *id)
- {
--	int ret;
-+	struct fwnode_handle *child = NULL;
- 	struct lm3692x_led *led;
--	struct device_node *np = client->dev.of_node;
--	struct device_node *child_node;
- 	const char *name;
-+	int ret;
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+index 6c9074f84a51..08b352840bd7 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+@@ -20,7 +20,10 @@ Optional properties:
+ 	- vled-supply : LED supply
  
- 	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
- 	if (!led)
- 		return -ENOMEM;
+ Required child properties:
+-	- reg : 0
++	- reg : 0 - Will enable all LED sync paths
++		1 - Will enable the LED1 sync
++		2 - Will enable the LED2 sync
++		3 - Will enable the LED3 sync (LM36923 only)
  
--	for_each_available_child_of_node(np, child_node) {
--		led->led_dev.default_trigger = of_get_property(child_node,
--						    "linux,default-trigger",
--						    NULL);
--
--		ret = of_property_read_string(child_node, "label", &name);
--		if (!ret)
--			snprintf(led->label, sizeof(led->label),
--				 "%s:%s", id->name, name);
--		else
--			snprintf(led->label, sizeof(led->label),
--				 "%s::backlight_cluster", id->name);
--	};
--
- 	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
- 						   "enable", GPIOD_OUT_LOW);
- 	if (IS_ERR(led->enable_gpio)) {
-@@ -323,6 +308,25 @@ static int lm3692x_probe(struct i2c_client *client,
- 	if (ret)
- 		return ret;
- 
-+	child = device_get_next_child_node(&led->client->dev, child);
-+	if (!child) {
-+		dev_err(&led->client->dev, "No LED Child node\n");
-+		return ret;
-+	}
-+
-+	fwnode_property_read_string(child, "linux,default-trigger",
-+				    &led->led_dev.default_trigger);
-+
-+	ret = fwnode_property_read_string(child, "label", &name);
-+	if (ret)
-+		snprintf(led->label, sizeof(led->label),
-+			"%s::", led->client->name);
-+	else
-+		snprintf(led->label, sizeof(led->label),
-+			 "%s:%s", led->client->name, name);
-+
-+	led->led_dev.dev->of_node = to_of_node(child);
-+
- 	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
- 	if (ret) {
- 		dev_err(&client->dev, "led register err: %d\n", ret);
+ Optional child properties:
+ 	- label : see Documentation/devicetree/bindings/leds/common.txt
 -- 
 2.17.0.582.gccdcbd54c
