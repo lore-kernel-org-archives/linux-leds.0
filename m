@@ -1,79 +1,38 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] leds: ledtrig-morse: send out morse code
-Date: Fri, 29 Jun 2018 11:23:27 +0200
-Message-ID: <20180629092327.GB31718@amd>
-References: <20180628185630.GA6095@amd>
- <20180628202955.GA1534@imap.1und1.de>
- <20180628204516.GA29146@amd>
- <20180629064147.GA3219@arbeit>
- <20180629071724.GA10079@amd>
- <CAMuHMdXaPz3ckT1cPZed4e=iwk3nb75UBGC66hm+b+xRDNNnNg@mail.gmail.com>
- <20180629072912.GB10079@amd>
- <CAMuHMdW1NX=BwJE0eauRLkRj1se4iRNGdxHXeajNQ-dKDhnPKw@mail.gmail.com>
- <20180629080717.GA12112@amd>
- <20180629082439.GA15660@kroah.com>
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 0/9] Fix references for some missing documentation files
+Date: Mon, 2 Jul 2018 11:27:23 -0600
+Message-ID: <20180702112723.654d348c@lwn.net>
+References: <cover.1530005114.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180629082439.GA15660@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Andreas Klinger <ak@it-klinger.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Ben Whitten <ben.whitten@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Willy Tarreau <w@1wt.eu>, Philippe Ombredanne <pombredanne@nexb.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+In-Reply-To: <cover.1530005114.git.mchehab+samsung@kernel.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, James Morris <james.morris@microsoft.com>, kvm@vger.kernel.org, Linux Doc Mailing List <linux-doc@vger.kernel.org>, virtualization@lists.linux-foundation.org, linux-leds@vger.kernel.org, linux-scsi@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, intel-wired-lan@lists.osuosl.org, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-gpio@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Andy Whitcroft <apw@canonical.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Changbin Du <changbin.du@intel.com>, Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@zh-kernel.org, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-leds@vger.kernel.org
 
+On Tue, 26 Jun 2018 06:49:02 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
---ZoaI/ZTpAVc4A5k6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Having nothing to do while waiting for my plane to arrive while
+> returning back from Japan, I ended by writing a small series of 
+> patches meant to reduce the number of bad Documentation/* 
+> links that are detected by:
+> 	./scripts/documentation-file-ref-check
 
-On Fri 2018-06-29 04:24:39, Greg KH wrote:
-> On Fri, Jun 29, 2018 at 10:07:17AM +0200, Pavel Machek wrote:
-> > Hi!
-> >=20
-> > > > There's no reason 2. should be in kernel ("mechanism, not policy").
-> > > >
-> > > > Given 1. is not really more complicated than the morse
-> > > > trigger... please just help with pattern trigger if you want this to
-> > > > happen.
-> > >=20
-> > > Ah, you want to do the conversion to morse code in userspace?
-> > > Yes, that makes sense.
-> >=20
-> > Yes, that's what I want.
->=20
-> We all want a pony :)
+I've applied everything except the two networking patches, since I expect
+those to go through Dave's tree.
 
-I already have a pony :-).
+Thanks,
 
-> Seriously, this is a very simple module, works well, and makes some
-> system's life much easier as there is no external dependancy on a
-> text-to-morse-code library needed.
-
-It still does not belong into kernel.
-
-It is interesting. You deleted bluetooth driver people used from
-staging because of "not enough cleanups" and you want me to maintain
-text-to-morse-code in the kernel?!
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ZoaI/ZTpAVc4A5k6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAls1+o8ACgkQMOfwapXb+vIi+wCeIbMHYOvUMzsomFPAiOJz5gPF
-oS0AoLhHUDhUopw8FKMLS/t9q+ti7dDF
-=7f5U
------END PGP SIGNATURE-----
-
---ZoaI/ZTpAVc4A5k6--
+jon
