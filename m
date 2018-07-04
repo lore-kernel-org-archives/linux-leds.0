@@ -1,66 +1,52 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] Fix platform data in leds-pca955x.c
-Date: Wed, 4 Jul 2018 23:17:35 +0300
-Message-ID: <CAHp75VdLpDSS9M_y=DhcCCJW1bZA7TXpSVaairbGCPxtiyiwMA@mail.gmail.com>
-References: <62fb47ea-9296-139b-1eeb-28ddc5826091@landley.net>
- <CAHp75Vc+2rjFcLfuV5ao0eGmz2aF4jRS_YTZQTaRx=45sOSFOw@mail.gmail.com>
- <CAHp75VdEUquwcd3_OxbHAK+gOCnpff_Fd91jkHx87XKkD2xwKQ@mail.gmail.com> <fda04867-b470-5266-65db-edb90023f8dc@landley.net>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v2] leds: ledtrig-morse: send out morse code
+Date: Wed, 4 Jul 2018 22:36:33 +0200
+Message-ID: <b10a8282-0297-8cd6-5d29-fb4adcf72366@gmail.com>
+References: <20180703155328.GA18299@arbeit> <20180704065305.GA23509@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <fda04867-b470-5266-65db-edb90023f8dc@landley.net>
+In-Reply-To: <20180704065305.GA23509@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Landley <rob@landley.net>
-Cc: clg@kaod.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Andrew Jeffery <andrew@aj.id.au>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Andreas Klinger <ak@it-klinger.de>
+Cc: ben.whitten@gmail.com, geert+renesas@glider.be, w@1wt.eu, pombredanne@nexb.com, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 9:09 PM, Rob Landley <rob@landley.net> wrote:
-> On 07/04/2018 12:04 PM, Andy Shevchenko wrote:
->> On Wed, Jul 4, 2018 at 8:00 PM, Andy Shevchenko
->> <andy.shevchenko@gmail.com> wrote:
->>> On Wed, Jul 4, 2018 at 3:46 AM, Rob Landley <rob@landley.net> wrote:
+Hi Pavel,
+
+On 07/04/2018 08:53 AM, Pavel Machek wrote:
+> On Tue 2018-07-03 17:53:28, Andreas Klinger wrote:
+>> Send out a morse code by using LEDs.
 >>
->>> For now, you can switch to unified device properties API (basically
->>> un-ifdef pca955x_pdata_of_init() and replacing of_* by device_* or
->>> fwnode_* compatible calls) and providing a static table of built-in
->>> device properties in the platform code in question.
->>> (see include/linux/property.h, for example users of
->>> PROPERTY_ENTRY_U*() macros, like arch/arm/mach-pxa/raumfeld.c)
+>> This is useful especially on embedded systems without displays to tell the
+>> user about error conditions and status information.
 >>
->> Taking into consideration that device is enumerated by i2c core, which
->> is being aware of device properties (1), better example might be
->> drivers/platform/x86/intel_cht_int33fe.c
->
-> This file doesn't include the word "LED".
+>> The trigger will be called "morse"
+>>
+>> The string to be send is written into the file morse_string and sent out
+>> with a workqueue. Supported are letters and digits.
+>>
+>> With the file dot_unit the minimal time unit can be adjusted in
+>> milliseconds.
+>>
+>> Also add documentation for the morse led trigger
+>>
+>> Thanks to Greg and Geert for suggesting improvements
+>>
+>> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+> 
+> As I stated before, I don't think morse encoder belongs in kernel.
+> 
+> LED pattern trigger should be merged, instead.
 
-Should it?
-You seems missed a point completely.
+We've already agreed in [0] upon pattern sysfs file, and related
+patch set [1] is just to be merged.
 
->
->   $ grep -i led drivers/platform/x86/intel_cht_int33fe.c
->   $
->
-> Examining it... this is an ACPI driver, Intel's Not-Invented-Here proprietary
-> device tree.
-
-Huh?!
-
-> So I should convert an sh7760 board to ACPI?
-
-NO! (Of cource if you have ACPI ID and meaning of that device on ACPI
-enabled platform, then it's your choice)
-
->  How would this fix the problem
-> where the driver's probe function expects a structure as input that is locally
-> defined, instead of the generic structure from linux/leds.h it used to accept?
-
-You missed a point.
-
-> If we feed the probe function NULL platform data _and_ don't have device tree
-> enabled, doesn't it error out?
-
-No.
+[0] https://lkml.org/lkml/2018/5/12/142
+[1] https://patchwork.kernel.org/patch/10495595/
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Best regards,
+Jacek Anaszewski
