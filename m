@@ -1,129 +1,65 @@
-From: Willy Tarreau <w@1wt.eu>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH v2] leds: ledtrig-morse: send out morse code
-Date: Wed, 4 Jul 2018 04:41:12 +0200
-Message-ID: <20180704024112.GB9015@1wt.eu>
+Date: Wed, 4 Jul 2018 08:53:05 +0200
+Message-ID: <20180704065305.GA23509@amd>
 References: <20180703155328.GA18299@arbeit>
- <CAHp75VcQmUPCqzteHs=EaA5h-ABAQ=GWuLVRGWL3meMKZBJ-iQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAHp75VcQmUPCqzteHs=EaA5h-ABAQ=GWuLVRGWL3meMKZBJ-iQ@mail.gmail.com>
+In-Reply-To: <20180703155328.GA18299@arbeit>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andreas Klinger <ak@it-klinger.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, ben.whitten@gmail.com, Geert Uytterhoeven <geert+renesas@glider.be>, Philippe Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+To: Andreas Klinger <ak@it-klinger.de>
+Cc: jacek.anaszewski@gmail.com, ben.whitten@gmail.com, geert+renesas@glider.be, w@1wt.eu, pombredanne@nexb.com, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 09:43:06PM +0300, Andy Shevchenko wrote:
-> > +struct morse_char {
-> > +       char    c;
-> > +       char    *z;
-> > +};
-> > +
-> 
-> > +static struct morse_char morse_table[] = {
-> 
-> const ?
-> 
-> > +       {'a', ".-"},
-> > +       {'b', "-..."},
-> > +       {'c', "-.-."},
-> > +       {'d', "-.."},
-> > +       {'e', "."},
-> > +       {'f', "..-."},
-> > +       {'g', "--."},
-> > +       {'h', "...."},
-> > +       {'i', ".."},
-> > +       {'j', ".---"},
-> > +       {'k', "-.-"},
-> > +       {'l', ".-.."},
-> > +       {'m', "--"},
-> > +       {'n', "-."},
-> > +       {'o', "---"},
-> > +       {'p', ".--."},
-> > +       {'q', "--.-"},
-> > +       {'r', ".-."},
-> > +       {'s', "..."},
-> > +       {'t', "-"},
-> > +       {'u', "..-"},
-> > +       {'v', "...-"},
-> > +       {'w', ".--"},
-> > +       {'x', "-..-"},
-> > +       {'y', "-.--"},
-> > +       {'z', "--.."},
-> > +       {'1', ".----"},
-> > +       {'2', "..---"},
-> > +       {'3', "...--"},
-> > +       {'4', "....-"},
-> > +       {'5', "....."},
-> > +       {'6', "-...."},
-> > +       {'7', "--..."},
-> > +       {'8', "---.."},
-> > +       {'9', "----."},
-> > +       {'0', "-----"},
-> 
-> Do you expect this to be changed somehow?
-> Otherwise we might just to keep two char arrays of alphas and digits
-> in an order of ascii appearance.
-> 
-> In the code something like
-> 
-> ch = tolower(x);
-> if (isalpha(ch))
->  code = alphas[ch - 'a'];
-> else if (isdigit(ch))
->  code = digits[ch - '0'];
-> else
->  code = unknown;
-> 
-> > +       {0, NULL},
-> 
-> And this will gone, you just provide it with known size,
 
-Well, in this case it's even possible to go further and avoid storing
-36 strings. Indeed, no representation is longer than 5 symbols, so you
-can use 5 bits for the encoding (0=".", 1="-") and 3 bits for the
-length, it gives you a single byte per character instead of a pointer
-to a string plus 6 chars. Then in order to make it readable, 5 macros
-can be provided to emit the code :
+--GvXjxJ+pjyke8COw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-#define MORSE1(a,b)       (1 | ((a)<<3))
-#define MORSE2(a,b)       (2 | ((a)<<3)|((b)<<4))
-#define MORSE3(a,b,c)     (3 | ((a)<<3)|((b)<<4)|((c)<<5))
-#define MORSE4(a,b,c,d)   (4 | ((a)<<3)|((b)<<4)|((c)<<5)|((d)<<6))
-#define MORSE5(a,b,c,d,e) (5 | ((a)<<3)|((b)<<4)|((c)<<5)|((d)<<6)|((e)<<7))
+On Tue 2018-07-03 17:53:28, Andreas Klinger wrote:
+> Send out a morse code by using LEDs.
+>=20
+> This is useful especially on embedded systems without displays to tell the
+> user about error conditions and status information.
+>=20
+> The trigger will be called "morse"
+>=20
+> The string to be send is written into the file morse_string and sent out
+> with a workqueue. Supported are letters and digits.
+>=20
+> With the file dot_unit the minimal time unit can be adjusted in
+> milliseconds.
+>=20
+> Also add documentation for the morse led trigger
+>=20
+> Thanks to Greg and Geert for suggesting improvements
+>=20
+> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
 
-Then all chars may be defined like this :
+As I stated before, I don't think morse encoder belongs in kernel.
 
-    ['a'] = MORSE2(0,1),
-    ['b'] = MORSE4(1,0,0,0),
-    ['c'] = MORSE4(1,0,1,0),
-    ['d'] = MORSE3(1,0,0),
-    ['e'] = MORSE1(0),
-    ...
+LED pattern trigger should be merged, instead.
+									Pavel
 
-and when processing these :
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-    code = morse_table[tolower(c)];
-    code_len = code & 7;
-    code >>= 3;
+--GvXjxJ+pjyke8COw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-    while (code_len) {
-       if (code & 1)
-           emit_long();
-       else
-           emit_short();
-       code >>= 1;
-       code_len--;
-    }
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-In this case it could even cover the whole ASCII table at once since it's
-not certain that the saved bytes compensate for the extra code and alignment
-used to save them :-)
+iEYEARECAAYFAls8btEACgkQMOfwapXb+vIl/wCeN+xEVRwOmIgwfh5wGeO83+ss
++G8An1B7SRgMEcZNiLOksSbMiilQkECn
+=jugO
+-----END PGP SIGNATURE-----
 
-Note that I'm not suggesting that it is required to proceed like this, but
-I think it makes the whole code more compact, which aligns with the purpose
-of focusing on embedded devices.
-
-Cheers,
-Willy
+--GvXjxJ+pjyke8COw--
