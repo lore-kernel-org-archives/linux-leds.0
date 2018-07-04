@@ -1,39 +1,171 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
+From: Rob Landley <rob@landley.net>
 Subject: Re: [PATCH] Fix platform data in leds-pca955x.c
-Date: Wed, 4 Jul 2018 20:04:30 +0300
-Message-ID: <CAHp75VdEUquwcd3_OxbHAK+gOCnpff_Fd91jkHx87XKkD2xwKQ@mail.gmail.com>
-References: <62fb47ea-9296-139b-1eeb-28ddc5826091@landley.net> <CAHp75Vc+2rjFcLfuV5ao0eGmz2aF4jRS_YTZQTaRx=45sOSFOw@mail.gmail.com>
+Date: Wed, 4 Jul 2018 12:59:26 -0500
+Message-ID: <6842e605-d299-7476-dc15-b27eb7b3bf41@landley.net>
+References: <62fb47ea-9296-139b-1eeb-28ddc5826091@landley.net>
+ <CAHp75Vc+2rjFcLfuV5ao0eGmz2aF4jRS_YTZQTaRx=45sOSFOw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <CAHp75Vc+2rjFcLfuV5ao0eGmz2aF4jRS_YTZQTaRx=45sOSFOw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Landley <rob@landley.net>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: clg@kaod.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Andrew Jeffery <andrew@aj.id.au>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 8:00 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+
+
+On 07/04/2018 12:00 PM, Andy Shevchenko wrote:
 > On Wed, Jul 4, 2018 at 3:46 AM, Rob Landley <rob@landley.net> wrote:
+>> I have some questions about recent changes to leds-pca955x.c since 4.13:
+>>
+>> How is non-of platform data supposed to work now? Commit ed1f4b9676a8 switched
+>> struct led_platform_data *pdata in the _probe() function to a locally defined
+>> structure that platform data can't provide because it's not in any header it
+>> can #include.
+>>
+>> This is disguised by dev_get_platdata() returning a void * so changing the type
+>> of pdata the returned pointer is assigned to didn't require a new typecast,
+>> instead existing board definitions still compile but quietly break at runtime.
+>> (Specifically the SH7760 board I use at work broke in the pdata->num_leds !=
+>> chip->bits sanity check, and then userpace sees an empty /sys/class/leds and I
+>> started start digging because "huh"?)
+>>
+>> Why did the type change, anyway? The generic led_platform_data it was
+>> using before has all the fields the device tree's actually initializing, at
+>> least if you use flags for the new gpio stuff.
+>>
+>> Commit 561099a1a2e9 added CONFIG_LEDS_PCA955X_GPIO, but the initialization
+>> code adds gpio logic outside this config symbol: probe only calls
+>> devm_led_classdev_register() within a case statement that depends on setting the
+>> right "this is not GPIO" value.
+>>
+>> The "GPIO" indicator could have been a flag in the existing LED structure's
+>> flags field, but instead of a bit it's #defining three symbols. The
+>> PCA955X_TYPE_* macros with the new type constants only exist in the device tree
+>> header. Strangely, the old default "this is an LED" value isn't zero, zero is
+>> PCA955X_TYPE_NONE which is unused (never set anywhere in the tree), and would
+>> cause the LED to be skipped: you have to set a field platform data can't
+>> access, using a macro platform data probably doesn't have, in order for
+>> devm_led_classdev_register() to get called on that LED at all. Why?
+>>
+>> This is especially odd since if you did want to skip an LED, there was already a
+>> way to indicate that: by giving it an empty string as a name. (It doesn't seem
+>> to have come up, but it's the obvious way to do it.) Except commit 390c97dc6e34
+>> deals with that by writing the index number as a string to the platform data
+>> struct. Leaving aside "why did you do that?", isn't the platform data supposed to
+>> be in a read only section when it's actual platform data? And since the probe
+>> function then immediately copies the data into the another structure, can't we
+>> just fill out the other one directly without overwriting our arguments?
+>>
+>> As for the lifetime rules, the local pca955x_led (writeable copy initialized from
+>> the read-only platform data) had the name[] array locally living in the
+>> struct, but the device tree commits added char *default_trigger pointing to
+>> external memory. Is there a reason this is now inconsistent?
+>>
+>> Here's the patch I whipped up at work today (applied to v4.14) that undid enough
+>> of this to make the driver work again with platform data on the board we ship:
+> 
+> No platform data, please.
+
+Why?
+
+Platform data is what this was using before the device tree migration broke it,
+without regression testing any existing boards using the driver. I just put it
+back to working with the existing structures defined in the existing board file,
+which is as straightforward "undoing the regression" as I can.
+
+I'm happy to migrate the whole thing to device tree, but that's bigger than
+fixing an LED driver regression, and too big a change for this product release.
+
+> So, we have two options here:
+> - use Unified Device Properties API
+> - introduce something like LED_LOOKUP_TABLE (see analogue with GPIO /
+> regulator / PWM)
+> 
+> Looking at the platform data LED framework provides I don't see for
+> now a necessity of creating lookup tables (though it might be better
+> choice in long term).
+
+I... don't see that necessity either?
+
+The data structure the driver needed in 4.13 contained all the information
+needed to run the device. The new data structure this driver created locally in
+the C file had no obvious reason to exist, and didn't have visiblity outside the
+driver file despite being the new input format the driver expected. How was that
+thought through?
+
+The new OF probe is allocating a temporary structure to copy data into from the
+fdt, then feeding the intermediate structure to a probe function that allocates
+_another_ set of structures to copy the data into from there, except the old
+code copied _everything_ into the new structures and the new one is leaving
+gratuitous pointers to the intermediate structures so they can't be freed. How
+does that make sense?
+
+I have no idea why they did any of this, but I don't see how my patch made it
+worse. What's there is crazy, my fix was to back up to "not crazy". I'm all for
+a better fix on top of that later, but "it works again" is the important bit.
+
+(I admit I gave the device tree codepath exactly as much testing as the device
+tree developers gave the platform data codepath, but it should work.)
 
 > For now, you can switch to unified device properties API (basically
 > un-ifdef pca955x_pdata_of_init() and replacing of_* by device_* or
 > fwnode_* compatible calls) and providing a static table of built-in
 > device properties in the platform code in question.
+
+Ah, a static table of built-in device properties. You mean like:
+
++static struct led_info sh7760_led_info[] = {
++    { .name = "peer_com" },
++    { .name = "run" },
++    { .name = "gen_fault" },
++    { .name = "bat_fault" },
++    { .name = "eth_10" },
++    { .name = "bat_chg" },      /* Used as binary (low active) output */
++    { .name = "bat_load" },     /* Used as binary (low active) output */
++    { .name = "bo_on_n" },      /* Used as binary (low active) output */
++};
++
++static struct led_platform_data sh7760_led_platform_data = {
++    .num_leds = 8,
++    .leds = sh7760_led_info,
++};
++
++static struct i2c_board_info __initdata sh7760_i2c0_devices[] = {
++    {
++        I2C_BOARD_INFO("pca9551", 0x60),    /* Use 7-bit addresses */
++        .platform_data = &sh7760_led_platform_data,
++    },
++};
+
+I.E. the existing format that worked fine back in 3.x?
+
+I've been trying to clean the board support patches up to get it all posted
+upstream for a couple months now. Porting the product to a reasonably current
+kernel was the first step. (Would have been 4.16 and then 4.17 but the flash
+driver grew a weird data corruption bug in the dev cycle for 4.15 I haven't had
+spare bandwidth to track down yet, it takes about fifteen minutes of jffs2
+stressing to manifest, then you have to reformat the partition.)
+
+I can post a 4.17 version of the patch if you like? (I have to port 3 _other_
+patches to test that version on the actual hardware, and then the filesystem
+will eat itself at some random point because of the flash issue unless that got
+fixed since 4.16, but I can do that thursday if you think it would help?)
+
 > (see include/linux/property.h, for example users of
-> PROPERTY_ENTRY_U*() macros, like arch/arm/mach-pxa/raumfeld.c)
+> PROPERTY_ENTRY_U*() macros, like arch/arm/mach-pxa/raumfeld.c
 
-Taking into consideration that device is enumerated by i2c core, which
-is being aware of device properties (1), better example might be
-drivers/platform/x86/intel_cht_int33fe.c
+Will that work with the driver as-is? Given that the structure the driver is
+taking as external input is local to the driver .c file, I don't see how?
 
-(1)
-commit d3e1b617ae20c459627f501b4bc55b1ea91f662b
-Author: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Thu Feb 2 17:41:28 2017 -0800
+If an identical structure _is_ present in include/linux/property.h, presumably
+not with the pca955x name in the generic header, then why is leds-pca955x.c
+defining its own local copy of it? And who regression tests keeping the two in sync?
 
-   i2c: allow specify device properties in i2c_board_info
+Or are you saying "let's create a third format and convert all the existing
+users to something _other_ than device tree"? If so... why?
 
--- 
-With Best Regards,
-Andy Shevchenko
+Rob
