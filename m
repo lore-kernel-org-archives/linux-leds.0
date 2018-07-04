@@ -1,82 +1,171 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2] leds: ledtrig-morse: send out morse code
-Date: Wed, 4 Jul 2018 20:19:16 +0200
-Message-ID: <20180704181916.GA10785@amd>
-References: <20180703155328.GA18299@arbeit>
- <20180704065305.GA23509@amd>
- <20180704073443.GA9388@1wt.eu>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] Fix platform data in leds-pca955x.c
+Date: Wed, 4 Jul 2018 23:15:24 +0300
+Message-ID: <CAHp75VcbwPJGdMxXutxHDrdstcfAa7H0Sc5ntWdOUVvvSHkQ8w@mail.gmail.com>
+References: <62fb47ea-9296-139b-1eeb-28ddc5826091@landley.net>
+ <CAHp75Vc+2rjFcLfuV5ao0eGmz2aF4jRS_YTZQTaRx=45sOSFOw@mail.gmail.com> <6842e605-d299-7476-dc15-b27eb7b3bf41@landley.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180704073443.GA9388@1wt.eu>
+In-Reply-To: <6842e605-d299-7476-dc15-b27eb7b3bf41@landley.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Willy Tarreau <w@1wt.eu>
-Cc: Andreas Klinger <ak@it-klinger.de>, jacek.anaszewski@gmail.com, ben.whitten@gmail.com, geert+renesas@glider.be, pombredanne@nexb.com, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Rob Landley <rob@landley.net>
+Cc: clg@kaod.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Andrew Jeffery <andrew@aj.id.au>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
+On Wed, Jul 4, 2018 at 8:59 PM, Rob Landley <rob@landley.net> wrote:
+> On 07/04/2018 12:00 PM, Andy Shevchenko wrote:
+>> On Wed, Jul 4, 2018 at 3:46 AM, Rob Landley <rob@landley.net> wrote:
 
---fUYQa+Pmc3FrFX/N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> No platform data, please.
+>
+> Why?
 
-Hi!
+Many reasons, starting with "no board files" approach.
+Main reason for this particular topic is _unification_ of the access
+to the device properties.
 
-> On Wed, Jul 04, 2018 at 08:53:05AM +0200, Pavel Machek wrote:
-> > As I stated before, I don't think morse encoder belongs in kernel.
->=20
-> On the opposite, I think that the kernel needs to be a bit more autonomous
-> when it comes to reporting its own issues. Being able to report a panic
-> when userland cannot be accessed for example is the reason why we've seen
-> various features such as blinking keyboard LEDs for this.
+> Platform data is what this was using before the device tree migration broke it,
+> without regression testing any existing boards using the driver. I just put it
+> back to working with the existing structures defined in the existing board file,
+> which is as straightforward "undoing the regression" as I can.
 
-Being able to report panics by blinking would be nice... but proposed
-patch does NOT do that.
+I agree that broken patch must be fixed, but I disagree on the approach how.
 
-> > LED pattern trigger should be merged, instead.
->=20
-> Well, just like we have LED and LED triggers in the kernel, I think having
-> a generic way to use patterns could be nice and in this case Morse could =
-be
-> one such pattern, but if that means it's limited to userland to configure
-> it then it sadly voids all of its benefits.
+> I'm happy to migrate the whole thing to device tree, but that's bigger than
+> fixing an LED driver regression, and too big a change for this product release.
 
-Proposed patch is already limited to configuration from userland... so
-it does not have any benefits.
+Did you read my message carefully? Did I mention device tree there?
+I'm proposing to move towards unified device properties API to forget
+about DT/non-DT/ACPI/non-ACPI/etc property provider.
+It's not a driver's business to categorize that crap.
 
-If special "panic blinking" mode is wanted -- I guess that would make
-sense.
+>> So, we have two options here:
+>> - use Unified Device Properties API
+>> - introduce something like LED_LOOKUP_TABLE (see analogue with GPIO /
+>> regulator / PWM)
+>>
+>> Looking at the platform data LED framework provides I don't see for
+>> now a necessity of creating lookup tables (though it might be better
+>> choice in long term).
+>
+> I... don't see that necessity either?
+>
+> The data structure the driver needed in 4.13 contained all the information
+> needed to run the device. The new data structure this driver created locally in
+> the C file had no obvious reason to exist, and didn't have visiblity outside the
+> driver file despite being the new input format the driver expected. How was that
+> thought through?
 
-But
+The author of the change didn't think about legacy platform data
+variants for sure, no-one complained that time for already a year(?),
+so, what do you expect.
+Moreover, I agree with the author on the idea to move out from legacy
+platform data.
 
-a) trigger may not be right infrastructure for that; triggers need
-quite a lot kernel to be working, as they run in separate threads --
-panic blinking probably should be mdelay / brightness set / mdelay,
-and probably limited to LEDs that can be accessed without sleeping.
+> The new OF probe is allocating a temporary structure to copy data into from the
+> fdt, then feeding the intermediate structure to a probe function that allocates
+> _another_ set of structures to copy the data into from there, except the old
+> code copied _everything_ into the new structures and the new one is leaving
+> gratuitous pointers to the intermediate structures so they can't be freed. How
+> does that make sense?
 
-b) we may want trigger to be used for something else (Caps lock? HDD
-activity?)  when not panicked. Thus, again, trigger is not exactly
-suitable. (It might make sense to blink many/all LEDs simultaneously
-to make it super obvious to the user).
+I didn't look at the details of the patch and I can admit that it
+might have besides obvious regression (for you) some other non-best
+design solutions.
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> I have no idea why they did any of this, but I don't see how my patch made it
+> worse. What's there is crazy, my fix was to back up to "not crazy". I'm all for
+> a better fix on top of that later, but "it works again" is the important bit.
 
---fUYQa+Pmc3FrFX/N
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Again, I agree on the "regression must be fixed" and disagree on the
+approach you chose.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> (I admit I gave the device tree codepath exactly as much testing as the device
+> tree developers gave the platform data codepath, but it should work.)
+>
+>> For now, you can switch to unified device properties API (basically
+>> un-ifdef pca955x_pdata_of_init() and replacing of_* by device_* or
+>> fwnode_* compatible calls) and providing a static table of built-in
+>> device properties in the platform code in question.
+>
+> Ah, a static table of built-in device properties. You mean like:
+>
+> +static struct led_info sh7760_led_info[] = {
+> +    { .name = "peer_com" },
+> +    { .name = "run" },
+> +    { .name = "gen_fault" },
+> +    { .name = "bat_fault" },
+> +    { .name = "eth_10" },
+> +    { .name = "bat_chg" },      /* Used as binary (low active) output */
+> +    { .name = "bat_load" },     /* Used as binary (low active) output */
+> +    { .name = "bo_on_n" },      /* Used as binary (low active) output */
+> +};
+> +
+> +static struct led_platform_data sh7760_led_platform_data = {
+> +    .num_leds = 8,
+> +    .leds = sh7760_led_info,
+> +};
+> +
+> +static struct i2c_board_info __initdata sh7760_i2c0_devices[] = {
+> +    {
+> +        I2C_BOARD_INFO("pca9551", 0x60),    /* Use 7-bit addresses */
+> +        .platform_data = &sh7760_led_platform_data,
+> +    },
+> +};
+>
+> I.E. the existing format that worked fine back in 3.x?
 
-iEYEARECAAYFAls9D6QACgkQMOfwapXb+vJBBQCgnDtU7XYmFul7TKOT2pU99SNY
-01gAoJn7YYvvoYh0eCxrS+AEOFQOjHR4
-=rhKO
------END PGP SIGNATURE-----
+Feels like similar, but no.
 
---fUYQa+Pmc3FrFX/N--
+I already pointed out to the examples of provider
+(intel_cht_int33fe.c) and if you look into it carefully you will find
+the consumers, like fusb302 and max17047.
+Moreover, I pointed out to the commit against I2C core to give you a
+clue how it's connected between board info and actual consumer.
+
+> I've been trying to clean the board support patches up to get it all posted
+> upstream for a couple months now. Porting the product to a reasonably current
+> kernel was the first step. (Would have been 4.16 and then 4.17 but the flash
+> driver grew a weird data corruption bug in the dev cycle for 4.15 I haven't had
+> spare bandwidth to track down yet, it takes about fifteen minutes of jffs2
+> stressing to manifest, then you have to reformat the partition.)
+>
+> I can post a 4.17 version of the patch if you like? (I have to port 3 _other_
+> patches to test that version on the actual hardware, and then the filesystem
+> will eat itself at some random point because of the flash issue unless that got
+> fixed since 4.16, but I can do that thursday if you think it would help?)
+
+I'm sorry I don't follow here.
+
+>> (see include/linux/property.h, for example users of
+>> PROPERTY_ENTRY_U*() macros, like arch/arm/mach-pxa/raumfeld.c
+>
+> Will that work with the driver as-is? Given that the structure the driver is
+> taking as external input is local to the driver .c file, I don't see how?
+
+Yes, that's why I pointed to files and commit.
+
+> If an identical structure _is_ present in include/linux/property.h, presumably
+> not with the pca955x name in the generic header, then why is leds-pca955x.c
+> defining its own local copy of it?
+
+No, unified device properties are driver agnostic. It's a mechanism
+how to provide and consume device properties independently on resource
+provider (DT/ACPI/legacy platform code).
+
+> And who regression tests keeping the two in sync?
+
+This is not needed as you considered it. It's orthogonal to the
+driver. What is needed is to follow device tree bindings correctly in
+the driver and in the provider, but this part is being handled by DT
+people like Rob Herring.
+
+> Or are you saying "let's create a third format and convert all the existing
+> users to something _other_ than device tree"? If so... why?
+
+No.
+
+-- 
+With Best Regards,
+Andy Shevchenko
