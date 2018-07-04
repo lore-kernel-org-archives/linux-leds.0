@@ -1,50 +1,82 @@
-From: Rob Landley <rob@landley.net>
-Subject: Re: [PATCH] Fix platform data in leds-pca955x.c
-Date: Wed, 4 Jul 2018 13:09:34 -0500
-Message-ID: <fda04867-b470-5266-65db-edb90023f8dc@landley.net>
-References: <62fb47ea-9296-139b-1eeb-28ddc5826091@landley.net>
- <CAHp75Vc+2rjFcLfuV5ao0eGmz2aF4jRS_YTZQTaRx=45sOSFOw@mail.gmail.com>
- <CAHp75VdEUquwcd3_OxbHAK+gOCnpff_Fd91jkHx87XKkD2xwKQ@mail.gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2] leds: ledtrig-morse: send out morse code
+Date: Wed, 4 Jul 2018 20:19:16 +0200
+Message-ID: <20180704181916.GA10785@amd>
+References: <20180703155328.GA18299@arbeit>
+ <20180704065305.GA23509@amd>
+ <20180704073443.GA9388@1wt.eu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VdEUquwcd3_OxbHAK+gOCnpff_Fd91jkHx87XKkD2xwKQ@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180704073443.GA9388@1wt.eu>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: clg@kaod.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Andrew Jeffery <andrew@aj.id.au>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Willy Tarreau <w@1wt.eu>
+Cc: Andreas Klinger <ak@it-klinger.de>, jacek.anaszewski@gmail.com, ben.whitten@gmail.com, geert+renesas@glider.be, pombredanne@nexb.com, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 07/04/2018 12:04 PM, Andy Shevchenko wrote:
-> On Wed, Jul 4, 2018 at 8:00 PM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->> On Wed, Jul 4, 2018 at 3:46 AM, Rob Landley <rob@landley.net> wrote:
-> 
->> For now, you can switch to unified device properties API (basically
->> un-ifdef pca955x_pdata_of_init() and replacing of_* by device_* or
->> fwnode_* compatible calls) and providing a static table of built-in
->> device properties in the platform code in question.
->> (see include/linux/property.h, for example users of
->> PROPERTY_ENTRY_U*() macros, like arch/arm/mach-pxa/raumfeld.c)
-> 
-> Taking into consideration that device is enumerated by i2c core, which
-> is being aware of device properties (1), better example might be
-> drivers/platform/x86/intel_cht_int33fe.c
 
-This file doesn't include the word "LED".
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  $ grep -i led drivers/platform/x86/intel_cht_int33fe.c
-  $
+Hi!
 
-Examining it... this is an ACPI driver, Intel's Not-Invented-Here proprietary
-device tree.
+> On Wed, Jul 04, 2018 at 08:53:05AM +0200, Pavel Machek wrote:
+> > As I stated before, I don't think morse encoder belongs in kernel.
+>=20
+> On the opposite, I think that the kernel needs to be a bit more autonomous
+> when it comes to reporting its own issues. Being able to report a panic
+> when userland cannot be accessed for example is the reason why we've seen
+> various features such as blinking keyboard LEDs for this.
 
-So I should convert an sh7760 board to ACPI? How would this fix the problem
-where the driver's probe function expects a structure as input that is locally
-defined, instead of the generic structure from linux/leds.h it used to accept?
+Being able to report panics by blinking would be nice... but proposed
+patch does NOT do that.
 
-If we feed the probe function NULL platform data _and_ don't have device tree
-enabled, doesn't it error out?
+> > LED pattern trigger should be merged, instead.
+>=20
+> Well, just like we have LED and LED triggers in the kernel, I think having
+> a generic way to use patterns could be nice and in this case Morse could =
+be
+> one such pattern, but if that means it's limited to userland to configure
+> it then it sadly voids all of its benefits.
 
-Rob
+Proposed patch is already limited to configuration from userland... so
+it does not have any benefits.
+
+If special "panic blinking" mode is wanted -- I guess that would make
+sense.
+
+But
+
+a) trigger may not be right infrastructure for that; triggers need
+quite a lot kernel to be working, as they run in separate threads --
+panic blinking probably should be mdelay / brightness set / mdelay,
+and probably limited to LEDs that can be accessed without sleeping.
+
+b) we may want trigger to be used for something else (Caps lock? HDD
+activity?)  when not panicked. Thus, again, trigger is not exactly
+suitable. (It might make sense to blink many/all LEDs simultaneously
+to make it super obvious to the user).
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--fUYQa+Pmc3FrFX/N
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAls9D6QACgkQMOfwapXb+vJBBQCgnDtU7XYmFul7TKOT2pU99SNY
+01gAoJn7YYvvoYh0eCxrS+AEOFQOjHR4
+=rhKO
+-----END PGP SIGNATURE-----
+
+--fUYQa+Pmc3FrFX/N--
