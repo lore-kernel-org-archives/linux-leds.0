@@ -1,60 +1,31 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2] leds: ledtrig-morse: send out morse code
-Date: Wed, 4 Jul 2018 23:21:19 +0200
-Message-ID: <20180704212119.GA18063@amd>
-References: <20180703155328.GA18299@arbeit>
- <20180704065305.GA23509@amd>
- <b10a8282-0297-8cd6-5d29-fb4adcf72366@gmail.com>
+From: David Laight <David.Laight@ACULAB.COM>
+Subject: RE: [PATCH v2] leds: ledtrig-morse: send out morse code
+Date: Thu, 5 Jul 2018 10:56:46 +0000
+Message-ID: <6db92ee3e66a45338c187ad575a759c2@AcuMS.aculab.com>
+References: <20180703155328.GA18299@arbeit> <20180704065305.GA23509@amd>
+ <20180704073443.GA9388@1wt.eu> <20180704181916.GA10785@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="HlL+5n6rz5pIUxbD"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b10a8282-0297-8cd6-5d29-fb4adcf72366@gmail.com>
+In-Reply-To: <20180704181916.GA10785@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Andreas Klinger <ak@it-klinger.de>, ben.whitten@gmail.com, geert+renesas@glider.be, w@1wt.eu, pombredanne@nexb.com, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: 'Pavel Machek' <pavel@ucw.cz>, Willy Tarreau <w@1wt.eu>
+Cc: Andreas Klinger <ak@it-klinger.de>, "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>, "ben.whitten@gmail.com" <ben.whitten@gmail.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "pombredanne@nexb.com" <pombredanne@nexb.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
+...
+> > Well, just like we have LED and LED triggers in the kernel, I think having
+> > a generic way to use patterns could be nice and in this case Morse could be
+> > one such pattern, but if that means it's limited to userland to configure
+> > it then it sadly voids all of its benefits.
 
---HlL+5n6rz5pIUxbD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I've been involved in a system that used morse for short error messages.
+Unless you actually know morse it is completely hopeless.
 
-Hi!
+With two leds next to each other you should be able to generate
+a lot of easily identifiable patterns by repeating separate 4-bit
+patterns (in sync) on both leds (at about 2Hz update).
 
-> >LED pattern trigger should be merged, instead.
->=20
-> We've already agreed in [0] upon pattern sysfs file, and related
-> patch set [1] is just to be merged.
->=20
-> [0] https://lkml.org/lkml/2018/5/12/142
-> [1] https://patchwork.kernel.org/patch/10495595/
-
-Well, [1] is for LEDs that can do patterns in hardware. I'm aware of
-that work.
-
-I still believe that we want to do "trigger" that can do the same on
-hardware that is not so lucky.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---HlL+5n6rz5pIUxbD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAls9Ok8ACgkQMOfwapXb+vIDMwCguvk+PcxIkoANV0G9UBM42mZQ
-vV4AnAivyw4C/MU/NEUKyDY4pFBe4dIr
-=g1PS
------END PGP SIGNATURE-----
-
---HlL+5n6rz5pIUxbD--
+	David
