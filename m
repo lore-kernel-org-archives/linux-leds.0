@@ -1,200 +1,51 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] Fix platform data in leds-pca955x.c
-Date: Thu, 5 Jul 2018 22:53:12 +0200
-Message-ID: <828a80f4-69cc-c99a-9b10-6772989935e1@gmail.com>
-References: <62fb47ea-9296-139b-1eeb-28ddc5826091@landley.net>
+Subject: Re: [PATCH v7 02/16] leds: triggers: let struct
+ led_trigger::activate() return an error code
+Date: Thu, 5 Jul 2018 23:31:28 +0200
+Message-ID: <1172a776-a951-28d5-fae4-824969f4a82b@gmail.com>
+References: <a9b3548b-09c4-fae4-1bce-abf3392b9ceb@gmail.com>
+ <20180702200535.1337-2-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <62fb47ea-9296-139b-1eeb-28ddc5826091@landley.net>
+In-Reply-To: <20180702200535.1337-2-u.kleine-koenig@pengutronix.de>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Landley <rob@landley.net>, clg@kaod.org, pavel@ucw.cz, andrew@aj.id.au, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Pavel Machek <pavel@ucw.cz>, kernel@pengutronix.de, linux-leds@vger.kernel.org, kernel-patch-test@lists.linaro.org, Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, Johannes Berg <johannes@sipsolutions.net>, linux-bluetooth@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Rob.
+Hi Uwe,
 
-On 07/04/2018 02:46 AM, Rob Landley wrote:
-> I have some questions about recent changes to leds-pca955x.c since 4.13:
+On 07/02/2018 10:05 PM, Uwe Kleine-König wrote:
+> Given that activating a trigger can fail, let the callback return an
+> indication. This prevents to have a trigger active according to the
+> "trigger" sysfs attribute but not functional.
 > 
-> How is non-of platform data supposed to work now? Commit ed1f4b9676a8 switched
-> struct led_platform_data *pdata in the _probe() function to a locally defined
-> structure that platform data can't provide because it's not in any header it
-> can #include.
+> All users are changed accordingly to return 0 for now. There is no intended
+> change in behaviour.
+> 
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+[...]
+> -static void ieee80211_tx_led_activate(struct led_classdev *led_cdev)
+> +static int ieee80211_tx_led_activate(struct led_classdev *led_cdev)
+>   {
+>   	struct ieee80211_local *local = container_of(led_cdev->trigger,
+>   						     struct ieee80211_local,
+>   						     tx_led);
+>   
+>   	atomic_inc(&local->tx_led_active);
+> +
+> +	return 0
+[...]
 
-That is clear omission. Nonetheless, I like the i2c_board_info related
-solution, proposed by Andy. Would you mind checking that approach?
+s/return 0/return 0;/
 
+Fixed it up and applied. I'm taking lack of net maintainer feedback
+as a tacit approval (or lack of interest).
+
+-- 
 Best regards,
 Jacek Anaszewski
-
-> This is disguised by dev_get_platdata() returning a void * so changing the type
-> of pdata the returned pointer is assigned to didn't require a new typecast,
-> instead existing board definitions still compile but quietly break at runtime.
-> (Specifically the SH7760 board I use at work broke in the pdata->num_leds !=
-> chip->bits sanity check, and then userpace sees an empty /sys/class/leds and I
-> started start digging because "huh"?)
-> 
-> Why did the type change, anyway? The generic led_platform_data it was
-> using before has all the fields the device tree's actually initializing, at
-> least if you use flags for the new gpio stuff.
-> 
-> Commit 561099a1a2e9 added CONFIG_LEDS_PCA955X_GPIO, but the initialization
-> code adds gpio logic outside this config symbol: probe only calls
-> devm_led_classdev_register() within a case statement that depends on setting the
-> right "this is not GPIO" value.
-> 
-> The "GPIO" indicator could have been a flag in the existing LED structure's
-> flags field, but instead of a bit it's #defining three symbols. The
-> PCA955X_TYPE_* macros with the new type constants only exist in the device tree
-> header. Strangely, the old default "this is an LED" value isn't zero, zero is
-> PCA955X_TYPE_NONE which is unused (never set anywhere in the tree), and would
-> cause the LED to be skipped: you have to set a field platform data can't
-> access, using a macro platform data probably doesn't have, in order for
-> devm_led_classdev_register() to get called on that LED at all. Why?
-> 
-> This is especially odd since if you did want to skip an LED, there was already a
-> way to indicate that: by giving it an empty string as a name. (It doesn't seem
-> to have come up, but it's the obvious way to do it.) Except commit 390c97dc6e34
-> deals with that by writing the index number as a string to the platform data
-> struct. Leaving aside "why did you do that?", isn't the platform data supposed to
-> be in a read only section when it's actual platform data? And since the probe
-> function then immediately copies the data into the another structure, can't we
-> just fill out the other one directly without overwriting our arguments?
-> 
-> As for the lifetime rules, the local pca955x_led (writeable copy initialized from
-> the read-only platform data) had the name[] array locally living in the
-> struct, but the device tree commits added char *default_trigger pointing to
-> external memory. Is there a reason this is now inconsistent?
-> 
-> Here's the patch I whipped up at work today (applied to v4.14) that undid enough
-> of this to make the driver work again with platform data on the board we ship:
-> 
-> 
-> From: Rob Landley <rob@landley.net>
-> 
-> The LED driver changes that went into 4.14 to add device tree support broke
-> non-device-tree support.
-> 
-> Signed-off-by: Rob Landley <rob@landley.net>
-> 
->   leds-pca955x.c |   46 +++++++++++++++++++---------------------------
->   1 file changed, 19 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-> index 9057291..c1df4f1 100644
-> --- a/drivers/leds/leds-pca955x.c
-> +++ b/drivers/leds/leds-pca955x.c
-> @@ -134,11 +134,6 @@ struct pca955x_led {
->   	const char		*default_trigger;
->   };
->   
-> -struct pca955x_platform_data {
-> -	struct pca955x_led	*leds;
-> -	int			num_leds;
-> -};
-> -
->   /* 8 bits per input register */
->   static inline int pca95xx_num_input_regs(int bits)
->   {
-> @@ -367,24 +362,25 @@ static int pca955x_gpio_direction_output(struct gpio_chip *gc,
->   #endif /* CONFIG_LEDS_PCA955X_GPIO */
->   
->   #if IS_ENABLED(CONFIG_OF)
-> -static struct pca955x_platform_data *
-> +static struct led_platform_data *
->   pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
->   {
->   	struct device_node *np = client->dev.of_node;
->   	struct device_node *child;
-> -	struct pca955x_platform_data *pdata;
-> +	struct led_platform_data *pdata;
->   	int count;
->   
->   	count = of_get_child_count(np);
->   	if (!count || count > chip->bits)
->   		return ERR_PTR(-ENODEV);
->   
-> +	/* Never freed, can be called multiple times with insmod/rmmod */
->   	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
->   	if (!pdata)
->   		return ERR_PTR(-ENOMEM);
->   
->   	pdata->leds = devm_kzalloc(&client->dev,
-> -				   sizeof(struct pca955x_led) * chip->bits,
-> +				   sizeof(struct led_platform_dat) * chip->bits,
->   				   GFP_KERNEL);
->   	if (!pdata->leds)
->   		return ERR_PTR(-ENOMEM);
-> @@ -401,11 +397,10 @@ pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
->   		if (of_property_read_string(child, "label", &name))
->   			name = child->name;
->   
-> -		snprintf(pdata->leds[reg].name, sizeof(pdata->leds[reg].name),
-> -			 "%s", name);
-> +		pdata->leds[reg].name = name;
->   
-> -		pdata->leds[reg].type = PCA955X_TYPE_LED;
-> -		of_property_read_u32(child, "type", &pdata->leds[reg].type);
-> +		pdata->leds[reg].flags = PCA955X_TYPE_LED;
-> +		of_property_read_u32(child, "type", &pdata->leds[reg].flags);
->   		of_property_read_string(child, "linux,default-trigger",
->   					&pdata->leds[reg].default_trigger);
->   	}
-> @@ -425,7 +420,7 @@ static const struct of_device_id of_pca955x_match[] = {
->   
->   MODULE_DEVICE_TABLE(of, of_pca955x_match);
->   #else
-> -static struct pca955x_platform_data *
-> +static struct led_platform_data *
->   pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
->   {
->   	return ERR_PTR(-ENODEV);
-> @@ -440,7 +435,7 @@ static int pca955x_probe(struct i2c_client *client,
->   	struct pca955x_chipdef *chip;
->   	struct i2c_adapter *adapter;
->   	int i, err;
-> -	struct pca955x_platform_data *pdata;
-> +	struct led_platform_data *pdata;
->   	int ngpios = 0;
->   
->   	if (id) {
-> @@ -502,26 +497,23 @@ static int pca955x_probe(struct i2c_client *client,
->   		pca955x_led = &pca955x->leds[i];
->   		pca955x_led->led_num = i;
->   		pca955x_led->pca955x = pca955x;
-> -		pca955x_led->type = pdata->leds[i].type;
-> +		pca955x_led->type = pdata->leds[i].flags;
->   
-> -		switch (pca955x_led->type) {
-> -		case PCA955X_TYPE_NONE:
-> -			break;
-> -		case PCA955X_TYPE_GPIO:
-> +		if (pca955x_led->type) {
->   			ngpios++;
-> -			break;
-> -		case PCA955X_TYPE_LED:
-> +		} else {
->   			/*
->   			 * Platform data can specify LED names and
->   			 * default triggers
->   			 */
->   			if (pdata->leds[i].name[0] == '\0')
-> -				snprintf(pdata->leds[i].name,
-> -					sizeof(pdata->leds[i].name), "%d", i);
-> -
-> -			snprintf(pca955x_led->name,
-> -				sizeof(pca955x_led->name), "pca955x:%s",
-> -				pdata->leds[i].name);
-> +				snprintf(pca955x_led->name,
-> +					sizeof(pca955x_led->name), "pca955x:%d",
-> +					i);
-> +			else
-> +				snprintf(pca955x_led->name,
-> +					sizeof(pca955x_led->name), "pca955x:%s",
-> +					pdata->leds[i].name);
->   
->   			if (pdata->leds[i].default_trigger)
->   				pca955x_led->led_cdev.default_trigger =
-> 
