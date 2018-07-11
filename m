@@ -1,559 +1,271 @@
-From: Kiran Gunda <kgunda@codeaurora.org>
-Subject: [PATCH V4 8/8] backlight: qcom-wled: Add auto string detection logic
-Date: Mon,  9 Jul 2018 15:52:21 +0530
-Message-ID: <1531131741-19971-9-git-send-email-kgunda@codeaurora.org>
-References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
+Date: Wed, 11 Jul 2018 19:02:38 +0800
+Message-ID: <CAMz4kuJfPKykB6G-8C25mmMCfQgefv-Y=k2OQYZR_e0Tvg3guQ@mail.gmail.com>
+References: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
+In-Reply-To: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org, jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org, Kiran Gunda <kgunda@codeaurora.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Baolin Wang <baolin.wang@linaro.org>, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-The auto string detection algorithm checks if the current WLED
-sink configuration is valid. It tries enabling every sink and
-checks if the OVP fault is observed. Based on this information
-it detects and enables the valid sink configuration.
-Auto calibration will be triggered when the OVP fault interrupts
-are seen frequently thereby it tries to fix the sink configuration.
+Hi Jacek and Pavel,
 
-The auto-detection also kicks in when the connected LED string
-of the display-backlight malfunctions (because of damage) and
-requires the damaged string to be turned off to prevent the
-complete panel and/or board from being damaged.
+On 29 June 2018 at 13:03, Baolin Wang <baolin.wang@linaro.org> wrote:
+> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+>
+> Some LED controllers have support for autonomously controlling
+> brightness over time, according to some preprogrammed pattern or
+> function.
+>
+> This adds a new optional operator that LED class drivers can implement
+> if they support such functionality as well as a new device attribute to
+> configure the pattern for a given LED.
+>
+> [Baolin Wang did some minor improvements.]
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+> Changes from v2:
+>  - Change kernel version to 4.19.
+>  - Force user to return error pointer if failed to issue pattern_get().
+>  - Use strstrip() to trim trailing newline.
+>  - Other optimization.
+>
+> Changes from v1:
+>  - Add some comments suggested by Pavel.
+>  - Change 'delta_t' can be 0.
+>
+> Note: I removed the pattern repeat check and will get the repeat number by adding
+> one extra file named 'pattern_repeat' according to previous discussion.
+> ---
 
-Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
----
-Changes from V3:
-	- Optimized the wled_ovp_work
-	- pr_err/pr_dbg to dev_err/dev_dbg
-	- removed un-necessary variable initializations
-	- Addressed few other comments from Bjorn 
+Do you have any comments for this version patch set? Thanks.
 
- drivers/video/backlight/qcom-wled.c | 402 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 397 insertions(+), 5 deletions(-)
+>  Documentation/ABI/testing/sysfs-class-led |   17 +++++
+>  drivers/leds/led-class.c                  |  119 +++++++++++++++++++++++++++++
+>  include/linux/leds.h                      |   19 +++++
+>  3 files changed, 155 insertions(+)
+>
+> diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+> index 5f67f7a..e01ac55 100644
+> --- a/Documentation/ABI/testing/sysfs-class-led
+> +++ b/Documentation/ABI/testing/sysfs-class-led
+> @@ -61,3 +61,20 @@ Description:
+>                 gpio and backlight triggers. In case of the backlight trigger,
+>                 it is useful when driving a LED which is intended to indicate
+>                 a device in a standby like state.
+> +
+> +What: /sys/class/leds/<led>/pattern
+> +Date: June 2018
+> +KernelVersion: 4.19
+> +Description:
+> +       Specify a pattern for the LED, for LED hardware that support
+> +       altering the brightness as a function of time.
+> +
+> +       The pattern is given by a series of tuples, of brightness and
+> +       duration (ms). The LED is expected to traverse the series and
+> +       each brightness value for the specified duration. Duration of
+> +       0 means brightness should immediately change to new value.
+> +
+> +       As LED hardware might have different capabilities and precision
+> +       the requested pattern might be slighly adjusted by the driver
+> +       and the resulting pattern of such operation should be returned
+> +       when this file is read.
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 3c7e348..8a685a2 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -74,6 +74,123 @@ static ssize_t max_brightness_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RO(max_brightness);
+>
+> +static ssize_t pattern_show(struct device *dev,
+> +                           struct device_attribute *attr, char *buf)
+> +{
+> +       struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +       struct led_pattern *pattern;
+> +       size_t offset = 0;
+> +       int count, n, i;
+> +
+> +       if (!led_cdev->pattern_get)
+> +               return -EOPNOTSUPP;
+> +
+> +       pattern = led_cdev->pattern_get(led_cdev, &count);
+> +       if (IS_ERR(pattern))
+> +               return PTR_ERR(pattern);
+> +
+> +       for (i = 0; i < count; i++) {
+> +               n = snprintf(buf + offset, PAGE_SIZE - offset, "%d %d ",
+> +                            pattern[i].brightness, pattern[i].delta_t);
+> +
+> +               if (offset + n >= PAGE_SIZE)
+> +                       goto err_nospc;
+> +
+> +               offset += n;
+> +       }
+> +
+> +       buf[offset - 1] = '\n';
+> +
+> +       kfree(pattern);
+> +       return offset;
+> +
+> +err_nospc:
+> +       kfree(pattern);
+> +       return -ENOSPC;
+> +}
+> +
+> +static ssize_t pattern_store(struct device *dev,
+> +                            struct device_attribute *attr,
+> +                            const char *buf, size_t size)
+> +{
+> +       struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +       struct led_pattern *pattern = NULL;
+> +       unsigned long val;
+> +       char *sbegin;
+> +       char *elem;
+> +       char *s;
+> +       int ret, len = 0;
+> +       bool odd = true;
+> +
+> +       sbegin = kstrndup(buf, size, GFP_KERNEL);
+> +       if (!sbegin)
+> +               return -ENOMEM;
+> +
+> +       /*
+> +        * Trim trailing newline, if the remaining string is empty,
+> +        * clear the pattern.
+> +        */
+> +       s = strstrip(sbegin);
+> +       if (!*s) {
+> +               ret = led_cdev->pattern_clear(led_cdev);
+> +               goto out;
+> +       }
+> +
+> +       pattern = kcalloc(size, sizeof(*pattern), GFP_KERNEL);
+> +       if (!pattern) {
+> +               ret = -ENOMEM;
+> +               goto out;
+> +       }
+> +
+> +       /* Parse out the brightness & delta_t touples */
+> +       while ((elem = strsep(&s, " ")) != NULL) {
+> +               ret = kstrtoul(elem, 10, &val);
+> +               if (ret)
+> +                       goto out;
+> +
+> +               if (odd) {
+> +                       pattern[len].brightness = val;
+> +               } else {
+> +                       pattern[len].delta_t = val;
+> +                       len++;
+> +               }
+> +
+> +               odd = !odd;
+> +       }
+> +
+> +       /*
+> +        * Fail if we didn't find any data points or last data point was partial
+> +        */
+> +       if (!len || !odd) {
+> +               ret = -EINVAL;
+> +               goto out;
+> +       }
+> +
+> +       ret = led_cdev->pattern_set(led_cdev, pattern, len);
+> +
+> +out:
+> +       kfree(pattern);
+> +       kfree(sbegin);
+> +       return ret < 0 ? ret : size;
+> +}
+> +static DEVICE_ATTR_RW(pattern);
+> +
+> +static umode_t led_class_attrs_mode(struct kobject *kobj,
+> +                                   struct attribute *attr, int index)
+> +{
+> +       struct device *dev = container_of(kobj, struct device, kobj);
+> +       struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +
+> +       if (attr == &dev_attr_brightness.attr)
+> +               return attr->mode;
+> +       if (attr == &dev_attr_max_brightness.attr)
+> +               return attr->mode;
+> +       if (attr == &dev_attr_pattern.attr && led_cdev->pattern_set)
+> +               return attr->mode;
+> +
+> +       return 0;
+> +}
+> +
+>  #ifdef CONFIG_LEDS_TRIGGERS
+>  static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
+>  static struct attribute *led_trigger_attrs[] = {
+> @@ -88,11 +205,13 @@ static ssize_t max_brightness_show(struct device *dev,
+>  static struct attribute *led_class_attrs[] = {
+>         &dev_attr_brightness.attr,
+>         &dev_attr_max_brightness.attr,
+> +       &dev_attr_pattern.attr,
+>         NULL,
+>  };
+>
+>  static const struct attribute_group led_group = {
+>         .attrs = led_class_attrs,
+> +       .is_visible = led_class_attrs_mode,
+>  };
+>
+>  static const struct attribute_group *led_groups[] = {
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index b7e8255..acdbb2f 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -22,6 +22,7 @@
+>  #include <linux/workqueue.h>
+>
+>  struct device;
+> +struct led_pattern;
+>  /*
+>   * LED Core
+>   */
+> @@ -88,6 +89,14 @@ struct led_classdev {
+>                                      unsigned long *delay_on,
+>                                      unsigned long *delay_off);
+>
+> +       int (*pattern_set)(struct led_classdev *led_cdev,
+> +                          struct led_pattern *pattern, int len);
+> +
+> +       int (*pattern_clear)(struct led_classdev *led_cdev);
+> +
+> +       struct led_pattern *(*pattern_get)(struct led_classdev *led_cdev,
+> +                                          int *len);
+> +
+>         struct device           *dev;
+>         const struct attribute_group    **groups;
+>
+> @@ -446,4 +455,14 @@ static inline void led_classdev_notify_brightness_hw_changed(
+>         struct led_classdev *led_cdev, enum led_brightness brightness) { }
+>  #endif
+>
+> +/**
+> + * struct led_pattern - brigheness value in a pattern
+> + * @delta_t: delay until next entry, in milliseconds
+> + * @brightness: brightness at time = 0
+> + */
+> +struct led_pattern {
+> +       int delta_t;
+> +       int brightness;
+> +};
+> +
+>  #endif         /* __LINUX_LEDS_H_INCLUDED */
+> --
+> 1.7.9.5
+>
 
-diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-index a14f1a6..b7d4fae 100644
---- a/drivers/video/backlight/qcom-wled.c
-+++ b/drivers/video/backlight/qcom-wled.c
-@@ -25,10 +25,18 @@
- #define WLED_MAX_STRINGS				4
- 
- #define WLED_DEFAULT_BRIGHTNESS				2048
--
-+#define WLED_SOFT_START_DLY_US				10000
- #define WLED_SINK_REG_BRIGHT_MAX			0xFFF
- 
- /* WLED control registers */
-+#define WLED_CTRL_REG_FAULT_STATUS			0x08
-+#define  WLED_CTRL_REG_ILIM_FAULT_BIT			BIT(0)
-+#define  WLED_CTRL_REG_OVP_FAULT_BIT			BIT(1)
-+#define  WLED4_CTRL_REG_SC_FAULT_BIT			BIT(2)
-+
-+#define WLED_CTRL_REG_INT_RT_STS			0x10
-+#define  WLED_CTRL_REG_OVP_FAULT_STATUS			BIT(1)
-+
- #define WLED_CTRL_REG_MOD_EN				0x46
- #define  WLED_CTRL_REG_MOD_EN_MASK			BIT(7)
- #define  WLED_CTRL_REG_MOD_EN_SHIFT			7
-@@ -36,6 +44,8 @@
- #define WLED_CTRL_REG_FREQ				0x4c
- #define  WLED_CTRL_REG_FREQ_MASK			GENMASK(3, 0)
- 
-+#define WLED_CTRL_REG_FEEDBACK_CONTROL			0x48
-+
- #define WLED_CTRL_REG_OVP				0x4d
- #define  WLED_CTRL_REG_OVP_MASK				GENMASK(1, 0)
- 
-@@ -127,6 +137,7 @@ struct wled_config {
- 	bool ext_gen;
- 	bool cabc;
- 	bool external_pfet;
-+	bool auto_detection_enabled;
- };
- 
- struct wled {
-@@ -135,16 +146,22 @@ struct wled {
- 	struct regmap *regmap;
- 	struct mutex lock;	/* Lock to avoid race from thread irq handler */
- 	ktime_t last_short_event;
-+	ktime_t start_ovp_fault_time;
- 	u16 ctrl_addr;
- 	u16 sink_addr;
- 	u16 max_string_count;
-+	u16 auto_detection_ovp_count;
- 	u32 brightness;
- 	u32 max_brightness;
- 	u32 short_count;
-+	u32 auto_detect_count;
- 	bool disabled_by_short;
- 	bool has_short_detect;
-+	int ovp_irq;
-+	bool ovp_irq_disabled;
- 
- 	struct wled_config cfg;
-+	struct delayed_work ovp_work;
- 	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
- };
- 
-@@ -189,6 +206,15 @@ static int wled4_set_brightness(struct wled *wled, u16 brightness)
- 	return 0;
- }
- 
-+static void wled_ovp_work(struct work_struct *work)
-+{
-+	struct wled *wled = container_of(work,
-+					 struct wled, ovp_work.work);
-+
-+	if (wled->ovp_irq > 0)
-+		enable_irq(wled->ovp_irq);
-+}
-+
- static int wled_module_enable(struct wled *wled, int val)
- {
- 	int rc;
-@@ -200,7 +226,18 @@ static int wled_module_enable(struct wled *wled, int val)
- 				WLED_CTRL_REG_MOD_EN,
- 				WLED_CTRL_REG_MOD_EN_MASK,
- 				val << WLED_CTRL_REG_MOD_EN_SHIFT);
--	return rc;
-+	if (rc < 0)
-+		return rc;
-+
-+	if (val) {
-+		schedule_delayed_work(&wled->ovp_work, WLED_SOFT_START_DLY_US);
-+	} else {
-+		cancel_delayed_work_sync(&wled->ovp_work);
-+		if (wled->ovp_irq > 0)
-+			disable_irq(wled->ovp_irq);
-+	}
-+
-+	return 0;
- }
- 
- static int wled_sync_toggle(struct wled *wled)
-@@ -307,6 +344,312 @@ static irqreturn_t wled_short_irq_handler(int irq, void *_wled)
- 	return IRQ_HANDLED;
- }
- 
-+#define AUTO_DETECT_BRIGHTNESS		200
-+
-+static void wled_auto_string_detection(struct wled *wled)
-+{
-+	int rc = 0, i;
-+	u32 sink_config = 0, int_sts;
-+	u8 sink_test = 0, sink_valid = 0, val;
-+
-+	/* read configured sink configuration */
-+	rc = regmap_read(wled->regmap, wled->sink_addr +
-+			 WLED4_SINK_REG_CURR_SINK, &sink_config);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to read SINK configuration rc=%d\n",
-+			rc);
-+		goto failed_detect;
-+	}
-+
-+	/* disable the module before starting detection */
-+	rc = regmap_update_bits(wled->regmap,
-+				wled->ctrl_addr + WLED_CTRL_REG_MOD_EN,
-+				WLED_CTRL_REG_MOD_EN_MASK, 0);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to disable WLED module rc=%d\n", rc);
-+		goto failed_detect;
-+	}
-+
-+	/* set low brightness across all sinks */
-+	rc = wled4_set_brightness(wled, AUTO_DETECT_BRIGHTNESS);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to set brightness for auto detection rc=%d\n",
-+			rc);
-+		goto failed_detect;
-+	}
-+
-+	if (wled->cfg.cabc) {
-+		for (i = 0; i < wled->cfg.num_strings; i++) {
-+			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
-+						WLED4_SINK_REG_STR_CABC(i),
-+						WLED4_SINK_REG_STR_CABC_MASK,
-+						0);
-+			if (rc < 0)
-+				goto failed_detect;
-+		}
-+	}
-+
-+	/* disable all sinks */
-+	rc = regmap_write(wled->regmap,
-+			  wled->sink_addr + WLED4_SINK_REG_CURR_SINK, 0);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to disable all sinks rc=%d\n", rc);
-+		goto failed_detect;
-+	}
-+
-+	/* iterate through the strings one by one */
-+	for (i = 0; i < wled->cfg.num_strings; i++) {
-+		sink_test = BIT((WLED4_SINK_REG_CURR_SINK_SHFT + i));
-+
-+		/* Enable feedback control */
-+		rc = regmap_write(wled->regmap, wled->ctrl_addr +
-+				  WLED_CTRL_REG_FEEDBACK_CONTROL, i + 1);
-+		if (rc < 0) {
-+			dev_err(wled->dev, "Failed to enable feedback for SINK %d rc = %d\n",
-+				i + 1, rc);
-+			goto failed_detect;
-+		}
-+
-+		/* enable the sink */
-+		rc = regmap_write(wled->regmap, wled->sink_addr +
-+				  WLED4_SINK_REG_CURR_SINK, sink_test);
-+		if (rc < 0) {
-+			dev_err(wled->dev, "Failed to configure SINK %d rc=%d\n",
-+				i + 1, rc);
-+			goto failed_detect;
-+		}
-+
-+		/* Enable the module */
-+		rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
-+					WLED_CTRL_REG_MOD_EN,
-+					WLED_CTRL_REG_MOD_EN_MASK,
-+					WLED_CTRL_REG_MOD_EN_MASK);
-+		if (rc < 0) {
-+			dev_err(wled->dev, "Failed to enable WLED module rc=%d\n",
-+				rc);
-+			goto failed_detect;
-+		}
-+
-+		usleep_range(WLED_SOFT_START_DLY_US,
-+			     WLED_SOFT_START_DLY_US + 1000);
-+
-+		rc = regmap_read(wled->regmap, wled->ctrl_addr +
-+				 WLED_CTRL_REG_INT_RT_STS, &int_sts);
-+		if (rc < 0) {
-+			dev_err(wled->dev, "Error in reading WLED3_CTRL_INT_RT_STS rc=%d\n",
-+				rc);
-+			goto failed_detect;
-+		}
-+
-+		if (int_sts & WLED_CTRL_REG_OVP_FAULT_STATUS)
-+			dev_dbg(wled->dev, "WLED OVP fault detected with SINK %d\n",
-+				i + 1);
-+		else
-+			sink_valid |= sink_test;
-+
-+		/* Disable the module */
-+		rc = regmap_update_bits(wled->regmap,
-+					wled->ctrl_addr + WLED_CTRL_REG_MOD_EN,
-+					WLED_CTRL_REG_MOD_EN_MASK, 0);
-+		if (rc < 0) {
-+			dev_err(wled->dev, "Failed to disable WLED module rc=%d\n",
-+				rc);
-+			goto failed_detect;
-+		}
-+	}
-+
-+	if (!sink_valid) {
-+		dev_err(wled->dev, "No valid WLED sinks found\n");
-+		wled->disabled_by_short = true;
-+		goto failed_detect;
-+	}
-+
-+	if (sink_valid == sink_config) {
-+		dev_dbg(wled->dev, "WLED auto-detection complete, sink-config=%x OK!\n",
-+			sink_config);
-+	} else {
-+		dev_warn(wled->dev, "New WLED string configuration found %x\n",
-+			 sink_valid);
-+		sink_config = sink_valid;
-+	}
-+
-+	/* write the new sink configuration */
-+	rc = regmap_write(wled->regmap,
-+			  wled->sink_addr + WLED4_SINK_REG_CURR_SINK,
-+			  sink_config);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to reconfigure the default sink rc=%d\n",
-+			rc);
-+		goto failed_detect;
-+	}
-+
-+	/* Enable valid sinks */
-+	for (i = 0; i < wled->cfg.num_strings; i++) {
-+		if (wled->cfg.cabc) {
-+			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
-+						WLED4_SINK_REG_STR_CABC(i),
-+						WLED4_SINK_REG_STR_CABC_MASK,
-+						WLED4_SINK_REG_STR_CABC_MASK);
-+			if (rc < 0)
-+				goto failed_detect;
-+		}
-+
-+		if (sink_config & BIT(WLED4_SINK_REG_CURR_SINK_SHFT + i))
-+			val = WLED4_SINK_REG_STR_MOD_MASK;
-+		else
-+			val = 0x0; /* disable modulator_en for unused sink */
-+
-+		rc = regmap_write(wled->regmap, wled->sink_addr +
-+				  WLED4_SINK_REG_STR_MOD_EN(i), val);
-+		if (rc < 0) {
-+			dev_err(wled->dev, "Failed to configure MODULATOR_EN rc=%d\n",
-+				rc);
-+			goto failed_detect;
-+		}
-+	}
-+
-+	/* restore the feedback setting */
-+	rc = regmap_write(wled->regmap,
-+			  wled->ctrl_addr + WLED_CTRL_REG_FEEDBACK_CONTROL, 0);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to restore feedback setting rc=%d\n",
-+			rc);
-+		goto failed_detect;
-+	}
-+
-+	/* restore brightness */
-+	rc = wled4_set_brightness(wled, wled->brightness);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to set brightness after auto detection rc=%d\n",
-+			rc);
-+		goto failed_detect;
-+	}
-+
-+	rc = regmap_update_bits(wled->regmap,
-+				wled->ctrl_addr + WLED_CTRL_REG_MOD_EN,
-+				WLED_CTRL_REG_MOD_EN_MASK,
-+				WLED_CTRL_REG_MOD_EN_MASK);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to enable WLED module rc=%d\n", rc);
-+		goto failed_detect;
-+	}
-+
-+failed_detect:
-+	return;
-+}
-+
-+#define WLED_AUTO_DETECT_OVP_COUNT		5
-+#define WLED_AUTO_DETECT_CNT_DLY_US		USEC_PER_SEC
-+static bool wled_auto_detection_required(struct wled *wled)
-+{
-+	s64 elapsed_time_us;
-+
-+	if (!wled->cfg.auto_detection_enabled)
-+		return false;
-+
-+	/*
-+	 * Check if the OVP fault was an occasional one
-+	 * or if it's firing continuously, the latter qualifies
-+	 * for an auto-detection check.
-+	 */
-+	if (!wled->auto_detection_ovp_count) {
-+		wled->start_ovp_fault_time = ktime_get();
-+		wled->auto_detection_ovp_count++;
-+	} else {
-+		elapsed_time_us = ktime_us_delta(ktime_get(),
-+						 wled->start_ovp_fault_time);
-+		if (elapsed_time_us > WLED_AUTO_DETECT_CNT_DLY_US)
-+			wled->auto_detection_ovp_count = 0;
-+		else
-+			wled->auto_detection_ovp_count++;
-+
-+		if (wled->auto_detection_ovp_count >=
-+				WLED_AUTO_DETECT_OVP_COUNT) {
-+			wled->auto_detection_ovp_count = 0;
-+			return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+static int wled_auto_detection_at_init(struct wled *wled)
-+{
-+	int rc;
-+	u32 fault_status, rt_status;
-+
-+	if (!wled->cfg.auto_detection_enabled)
-+		return 0;
-+
-+	rc = regmap_read(wled->regmap,
-+			 wled->ctrl_addr + WLED_CTRL_REG_INT_RT_STS,
-+			 &rt_status);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to read RT status rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	rc = regmap_read(wled->regmap,
-+			 wled->ctrl_addr + WLED_CTRL_REG_FAULT_STATUS,
-+			 &fault_status);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to read fault status rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	if ((rt_status & WLED_CTRL_REG_OVP_FAULT_STATUS) ||
-+	    (fault_status & WLED_CTRL_REG_OVP_FAULT_BIT)) {
-+		mutex_lock(&wled->lock);
-+		wled_auto_string_detection(wled);
-+		mutex_unlock(&wled->lock);
-+	}
-+
-+	return rc;
-+}
-+
-+static irqreturn_t wled_ovp_irq_handler(int irq, void *_wled)
-+{
-+	struct wled *wled = _wled;
-+	int rc;
-+	u32 int_sts, fault_sts;
-+
-+	rc = regmap_read(wled->regmap,
-+			 wled->ctrl_addr + WLED_CTRL_REG_INT_RT_STS, &int_sts);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Error in reading WLED3_INT_RT_STS rc=%d\n",
-+			rc);
-+		return IRQ_HANDLED;
-+	}
-+
-+	rc = regmap_read(wled->regmap, wled->ctrl_addr +
-+			 WLED_CTRL_REG_FAULT_STATUS, &fault_sts);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Error in reading WLED_FAULT_STATUS rc=%d\n",
-+			rc);
-+		return IRQ_HANDLED;
-+	}
-+
-+	if (fault_sts &
-+		(WLED_CTRL_REG_OVP_FAULT_BIT | WLED_CTRL_REG_ILIM_FAULT_BIT))
-+		dev_dbg(wled->dev, "WLED OVP fault detected, int_sts=%x fault_sts= %x\n",
-+			int_sts, fault_sts);
-+
-+	if (fault_sts & WLED_CTRL_REG_OVP_FAULT_BIT) {
-+		mutex_lock(&wled->lock);
-+		disable_irq_nosync(wled->ovp_irq);
-+
-+		if (wled_auto_detection_required(wled))
-+			wled_auto_string_detection(wled);
-+
-+		enable_irq(wled->ovp_irq);
-+		wled->ovp_irq_disabled = false;
-+
-+		mutex_unlock(&wled->lock);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
- static int wled3_setup(struct wled *wled)
- {
- 	u16 addr;
-@@ -442,8 +785,10 @@ static int wled4_setup(struct wled *wled)
- 		sink_en |= 1 << temp;
- 	}
- 
--	if (sink_cfg == sink_en)
--		return 0;
-+	if (sink_cfg == sink_en) {
-+		rc = wled_auto_detection_at_init(wled);
-+		return rc;
-+	}
- 
- 	rc = regmap_update_bits(wled->regmap,
- 				wled->sink_addr + WLED4_SINK_REG_CURR_SINK,
-@@ -506,7 +851,9 @@ static int wled4_setup(struct wled *wled)
- 		return rc;
- 	}
- 
--	return 0;
-+	rc = wled_auto_detection_at_init(wled);
-+
-+	return rc;
- }
- 
- static const struct wled_config wled4_config_defaults = {
-@@ -517,6 +864,7 @@ static int wled4_setup(struct wled *wled)
- 	.switch_freq = 11,
- 	.cabc = false,
- 	.external_pfet = false,
-+	.auto_detection_enabled = false,
- };
- 
- static const u32 wled3_boost_i_limit_values[] = {
-@@ -686,6 +1034,7 @@ static int wled_configure(struct wled *wled, int version)
- 		{ "qcom,ext-gen", &cfg->ext_gen, },
- 		{ "qcom,cabc", &cfg->cabc, },
- 		{ "qcom,external-pfet", &cfg->external_pfet, },
-+		{ "qcom,auto-string-detection", &cfg->auto_detection_enabled, },
- 	};
- 
- 	prop_addr = of_get_address(dev->of_node, 0, NULL, NULL);
-@@ -806,6 +1155,42 @@ static int wled_configure_short_irq(struct wled *wled,
- 	return rc;
- }
- 
-+static int wled_configure_ovp_irq(struct wled *wled,
-+				  struct platform_device *pdev)
-+{
-+	int rc;
-+	u32 val;
-+
-+	wled->ovp_irq = platform_get_irq_byname(pdev, "ovp");
-+	if (wled->ovp_irq < 0) {
-+		dev_dbg(&pdev->dev, "ovp irq is not used\n");
-+		return 0;
-+	}
-+
-+	rc = devm_request_threaded_irq(wled->dev, wled->ovp_irq, NULL,
-+				       wled_ovp_irq_handler, IRQF_ONESHOT,
-+				       "wled_ovp_irq", wled);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Unable to request ovp_irq (err:%d)\n",
-+			rc);
-+		wled->ovp_irq = 0;
-+		return 0;
-+	}
-+
-+	rc = regmap_read(wled->regmap, wled->ctrl_addr +
-+			 WLED_CTRL_REG_MOD_EN, &val);
-+	if (rc < 0)
-+		return rc;
-+
-+	/* Keep OVP irq disabled until module is enabled */
-+	if (!(val & WLED_CTRL_REG_MOD_EN_MASK)) {
-+		disable_irq(wled->ovp_irq);
-+		wled->ovp_irq_disabled = true;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct backlight_ops wled_ops = {
- 	.update_status = wled_update_status,
- };
-@@ -846,6 +1231,7 @@ static int wled_probe(struct platform_device *pdev)
- 
- 	switch (version) {
- 	case WLED3:
-+		wled->cfg.auto_detection_enabled = false;
- 		rc = wled3_setup(wled);
- 		if (rc) {
- 			dev_err(&pdev->dev, "wled3_setup failed\n");
-@@ -867,10 +1253,16 @@ static int wled_probe(struct platform_device *pdev)
- 		break;
- 	}
- 
-+	INIT_DELAYED_WORK(&wled->ovp_work, wled_ovp_work);
-+
- 	rc = wled_configure_short_irq(wled, pdev);
- 	if (rc < 0)
- 		return rc;
- 
-+	rc = wled_configure_ovp_irq(wled, pdev);
-+	if (rc < 0)
-+		return rc;
-+
- 	val = WLED_DEFAULT_BRIGHTNESS;
- 	of_property_read_u32(pdev->dev.of_node, "default-brightness", &val);
- 
+
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
- a Linux Foundation Collaborative Project
+Baolin Wang
+Best Regards
