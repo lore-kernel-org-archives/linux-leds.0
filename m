@@ -1,227 +1,295 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH v4 2/2] leds: sc27xx: Add pattern_set/get/clear interfaces for LED controller
-Date: Fri, 13 Jul 2018 14:21:14 +0800
-Message-ID: <590b0e33c7c1638f99f32b7ad82243fe2e29ba3b.1531460834.git.baolin.wang@linaro.org>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v4 1/2] leds: core: Introduce generic pattern interface
+Date: Fri, 13 Jul 2018 22:07:13 +0200
+Message-ID: <7263fcd3-4bd0-d3b1-5468-5bd6234fbd53@gmail.com>
 References: <a0b874372f9ccd0491b54c79ac63b41812efef56.1531460834.git.baolin.wang@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <a0b874372f9ccd0491b54c79ac63b41812efef56.1531460834.git.baolin.wang@linaro.org>
-In-Reply-To: <a0b874372f9ccd0491b54c79ac63b41812efef56.1531460834.git.baolin.wang@linaro.org>
-References: <a0b874372f9ccd0491b54c79ac63b41812efef56.1531460834.git.baolin.wang@linaro.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: baolin.wang@linaro.org, bjorn.andersson@linaro.org, broonie@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Baolin Wang <baolin.wang@linaro.org>, pavel@ucw.cz
+Cc: bjorn.andersson@linaro.org, broonie@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-This patch implements the 'pattern_set', 'pattern_get' and 'pattern_clear'
-interfaces to support SC27XX LED breathing mode.
+Hi Baolin,
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes from v3:
- - None.
+Thank you for the update.
 
-Changes from v2:
- - No updates.
+On 07/13/2018 08:21 AM, Baolin Wang wrote:
+> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> Some LED controllers have support for autonomously controlling
+> brightness over time, according to some preprogrammed pattern or
+> function.
+> 
+> This adds a new optional operator that LED class drivers can implement
+> if they support such functionality as well as a new device attribute to
+> configure the pattern for a given LED.
+> 
+> [Baolin Wang did some improvements.]
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+> Changes from v3:
+>   - Move the check in pattern_show() to of_led_classdev_register().
+>   - Add more documentation to explain how to set/clear one pattern.
+> 
+> Changes from v2:
+>   - Change kernel version to 4.19.
+>   - Force user to return error pointer if failed to issue pattern_get().
+>   - Use strstrip() to trim trailing newline.
+>   - Other optimization.
+> 
+> Changes from v1:
+>   - Add some comments suggested by Pavel.
+>   - Change 'delta_t' can be 0.
+> 
+> Note: I removed the pattern repeat check and will get the repeat number by adding
+> one extra file named 'pattern_repeat' according to previous discussion.
+> ---
+>   Documentation/ABI/testing/sysfs-class-led |   20 +++++
+>   drivers/leds/led-class.c                  |  118 +++++++++++++++++++++++++++++
+>   include/linux/leds.h                      |   19 +++++
+>   3 files changed, 157 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+> index 5f67f7a..f4b73ad 100644
+> --- a/Documentation/ABI/testing/sysfs-class-led
+> +++ b/Documentation/ABI/testing/sysfs-class-led
+> @@ -61,3 +61,23 @@ Description:
+>   		gpio and backlight triggers. In case of the backlight trigger,
+>   		it is useful when driving a LED which is intended to indicate
+>   		a device in a standby like state.
+> +
+> +What: /sys/class/leds/<led>/pattern
+> +Date:		July 2018
+> +KernelVersion:	4.19
+> +Description:
+> +		Specify a pattern for the LED, for LED hardware that support
+> +		altering the brightness as a function of time.
+> +
+> +		The pattern is given by a series of tuples, of brightness and
+> +		duration (ms). The LED is expected to traverse the series and
+> +		each brightness value for the specified duration. Duration of
+> +		0 means brightness should immediately change to new value.
+> +
+> +		As LED hardware might have different capabilities and precision
+> +		the requested pattern might be slighly adjusted by the driver
+> +		and the resulting pattern of such operation should be returned
+> +		when this file is read.
+> +
+> +		Writing non-empty string to this file will active the pattern,
 
-Changes from v1:
- - No updates.
----
- drivers/leds/leds-sc27xx-bltc.c |  160 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 160 insertions(+)
+s/active/activate/
 
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index 9d9b7aa..898f92d 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -6,6 +6,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/slab.h>
- #include <uapi/linux/uleds.h>
- 
- /* PMIC global control register definition */
-@@ -32,8 +33,13 @@
- #define SC27XX_DUTY_MASK	GENMASK(15, 0)
- #define SC27XX_MOD_MASK		GENMASK(7, 0)
- 
-+#define SC27XX_CURVE_SHIFT	8
-+#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
-+#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
-+
- #define SC27XX_LEDS_OFFSET	0x10
- #define SC27XX_LEDS_MAX		3
-+#define SC27XX_LEDS_PATTERN_CNT	4
- 
- struct sc27xx_led {
- 	char name[LED_MAX_NAME_SIZE];
-@@ -122,6 +128,157 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
- 	return err;
- }
- 
-+static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	struct regmap *regmap = leds->priv->regmap;
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	int err;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	/* Reset the rise, high, fall and low time to zero. */
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
-+
-+	err = regmap_update_bits(regmap, ctrl_base,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static int sc27xx_led_pattern_set(struct led_classdev *ldev,
-+				  struct led_pattern *pattern,
-+				  int len)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	/*
-+	 * Must contain 4 patterns to configure the rise time, high time, fall
-+	 * time and low time to enable the breathing mode.
-+	 */
-+	if (len != SC27XX_LEDS_PATTERN_CNT)
-+		return -EINVAL;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_L_MASK, pattern[0].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_L_MASK, pattern[1].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[2].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[3].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
-+				 SC27XX_DUTY_MASK,
-+				 (pattern[0].brightness << SC27XX_DUTY_SHIFT) |
-+				 SC27XX_MOD_MASK);
-+	if (err)
-+		goto out;
-+
-+	/* Enable the LED breathing mode */
-+	err = regmap_update_bits(regmap, ctrl_base,
-+				 SC27XX_LED_RUN << ctrl_shift,
-+				 SC27XX_LED_RUN << ctrl_shift);
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static struct led_pattern *sc27xx_led_pattern_get(struct led_classdev *ldev,
-+						  int *len)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	struct regmap *regmap = leds->priv->regmap;
-+	struct led_pattern *pattern;
-+	int i, err;
-+	u32 val;
-+
-+	/*
-+	 * Must allocate 4 patterns to show the rise time, high time, fall time
-+	 * and low time.
-+	 */
-+	pattern = kcalloc(SC27XX_LEDS_PATTERN_CNT, sizeof(*pattern),
-+			  GFP_KERNEL);
-+	if (!pattern)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE0, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[0].delta_t = val & SC27XX_CURVE_L_MASK;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE1, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[1].delta_t = val & SC27XX_CURVE_L_MASK;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE0, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[2].delta_t = (val & SC27XX_CURVE_H_MASK) >> SC27XX_CURVE_SHIFT;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE1, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[3].delta_t = (val & SC27XX_CURVE_H_MASK) >> SC27XX_CURVE_SHIFT;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_DUTY, &val);
-+	if (err)
-+		goto out;
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	val = (val & SC27XX_DUTY_MASK) >> SC27XX_DUTY_SHIFT;
-+	for (i = 0; i < SC27XX_LEDS_PATTERN_CNT; i++)
-+		pattern[i].brightness = val;
-+
-+	*len = SC27XX_LEDS_PATTERN_CNT;
-+
-+	return pattern;
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+	kfree(pattern);
-+
-+	return ERR_PTR(err);
-+}
-+
- static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- {
- 	int i, err;
-@@ -140,6 +297,9 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- 		led->priv = priv;
- 		led->ldev.name = led->name;
- 		led->ldev.brightness_set_blocking = sc27xx_led_set;
-+		led->ldev.pattern_set = sc27xx_led_pattern_set;
-+		led->ldev.pattern_get = sc27xx_led_pattern_get;
-+		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
- 
- 		err = devm_led_classdev_register(dev, &led->ldev);
- 		if (err)
+> +		and empty string will disable the pattern.
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 3c7e348..0992a0e 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -74,6 +74,119 @@ static ssize_t max_brightness_show(struct device *dev,
+>   }
+>   static DEVICE_ATTR_RO(max_brightness);
+>   
+> +static ssize_t pattern_show(struct device *dev,
+> +			    struct device_attribute *attr, char *buf)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct led_pattern *pattern;
+> +	size_t offset = 0;
+> +	int count, n, i;
+> +
+> +	pattern = led_cdev->pattern_get(led_cdev, &count);
+> +	if (IS_ERR(pattern))
+> +		return PTR_ERR(pattern);
+> +
+> +	for (i = 0; i < count; i++) {
+> +		n = snprintf(buf + offset, PAGE_SIZE - offset, "%d %d ",
+> +			     pattern[i].brightness, pattern[i].delta_t);
+> +
+> +		if (offset + n >= PAGE_SIZE)
+> +			goto err_nospc;
+> +
+> +		offset += n;
+> +	}
+> +
+> +	buf[offset - 1] = '\n';
+> +
+> +	kfree(pattern);
+> +	return offset;
+> +
+> +err_nospc:
+> +	kfree(pattern);
+> +	return -ENOSPC;
+> +}
+> +
+> +static ssize_t pattern_store(struct device *dev,
+> +			     struct device_attribute *attr,
+> +			     const char *buf, size_t size)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct led_pattern *pattern = NULL;
+> +	char *sbegin, *elem, *s;
+> +	unsigned long val;
+> +	int ret = 0, len = 0;
+> +	bool odd = true;
+> +
+> +	sbegin = kstrndup(buf, size, GFP_KERNEL);
+> +	if (!sbegin)
+> +		return -ENOMEM;
+> +
+> +	/*
+> +	 * Trim trailing newline, if the remaining string is empty,
+> +	 * clear the pattern.
+> +	 */
+> +	s = strstrip(sbegin);
+> +	if (!*s) {
+> +		if (led_cdev->pattern_clear)
+> +			ret = led_cdev->pattern_clear(led_cdev);
+
+Why you don't require pattern_clear op to be initialized?
+Without it there seems to be no other way to disable the pattern.
+
+Please fail in led_classdev_register() if it is NULL, similarly
+as when pattern_get is NULL.
+
+> +		goto out;
+> +	}
+> +
+> +	pattern = kcalloc(size, sizeof(*pattern), GFP_KERNEL);
+> +	if (!pattern) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	/* Parse out the brightness & delta_t touples */
+> +	while ((elem = strsep(&s, " ")) != NULL) {
+> +		ret = kstrtoul(elem, 10, &val);
+> +		if (ret)
+> +			goto out;
+> +
+> +		if (odd) {
+> +			pattern[len].brightness = val;
+> +		} else {
+> +			pattern[len].delta_t = val;
+> +			len++;
+> +		}
+> +
+> +		odd = !odd;
+> +	}
+> +
+> +	/*
+> +	 * Fail if we didn't find any data points or last data point was partial
+> +	 */
+> +	if (!len || !odd) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	ret = led_cdev->pattern_set(led_cdev, pattern, len);
+> +
+> +out:
+> +	kfree(pattern);
+> +	kfree(sbegin);
+> +	return ret < 0 ? ret : size;
+> +}
+> +static DEVICE_ATTR_RW(pattern);
+> +
+> +static umode_t led_class_attrs_mode(struct kobject *kobj,
+> +				    struct attribute *attr, int index)
+> +{
+> +	struct device *dev = container_of(kobj, struct device, kobj);
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +
+> +	if (attr == &dev_attr_brightness.attr)
+> +		return attr->mode;
+> +	if (attr == &dev_attr_max_brightness.attr)
+> +		return attr->mode;
+> +	if (attr == &dev_attr_pattern.attr && led_cdev->pattern_set)
+> +		return attr->mode;
+> +
+> +	return 0;
+> +}
+> +
+>   #ifdef CONFIG_LEDS_TRIGGERS
+>   static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
+>   static struct attribute *led_trigger_attrs[] = {
+> @@ -88,11 +201,13 @@ static ssize_t max_brightness_show(struct device *dev,
+>   static struct attribute *led_class_attrs[] = {
+>   	&dev_attr_brightness.attr,
+>   	&dev_attr_max_brightness.attr,
+> +	&dev_attr_pattern.attr,
+>   	NULL,
+>   };
+>   
+>   static const struct attribute_group led_group = {
+>   	.attrs = led_class_attrs,
+> +	.is_visible = led_class_attrs_mode,
+>   };
+>   
+>   static const struct attribute_group *led_groups[] = {
+> @@ -256,6 +371,9 @@ int of_led_classdev_register(struct device *parent, struct device_node *np,
+>   	char name[LED_MAX_NAME_SIZE];
+>   	int ret;
+>   
+> +	if (led_cdev->pattern_set && !led_cdev->pattern_get)
+
+if (led_cdev->pattern_set && (!led_cdev->pattern_get ||
+                               !led_cdev->pattern_clear)
+
+> +		return -EINVAL;
+> +
+>   	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
+>   	if (ret < 0)
+>   		return ret;
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index b7e8255..acdbb2f 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -22,6 +22,7 @@
+>   #include <linux/workqueue.h>
+>   
+>   struct device;
+> +struct led_pattern;
+>   /*
+>    * LED Core
+>    */
+> @@ -88,6 +89,14 @@ struct led_classdev {
+>   				     unsigned long *delay_on,
+>   				     unsigned long *delay_off);
+>   
+> +	int (*pattern_set)(struct led_classdev *led_cdev,
+> +			   struct led_pattern *pattern, int len);
+> +
+> +	int (*pattern_clear)(struct led_classdev *led_cdev);
+> +
+> +	struct led_pattern *(*pattern_get)(struct led_classdev *led_cdev,
+> +					   int *len);
+> +
+>   	struct device		*dev;
+>   	const struct attribute_group	**groups;
+>   
+> @@ -446,4 +455,14 @@ static inline void led_classdev_notify_brightness_hw_changed(
+>   	struct led_classdev *led_cdev, enum led_brightness brightness) { }
+>   #endif
+>   
+> +/**
+> + * struct led_pattern - brigheness value in a pattern
+> + * @delta_t: delay until next entry, in milliseconds
+> + * @brightness: brightness at time = 0
+> + */
+> +struct led_pattern {
+> +	int delta_t;
+> +	int brightness;
+> +};
+> +
+>   #endif		/* __LINUX_LEDS_H_INCLUDED */
+> 
+
 -- 
-1.7.9.5
+Best regards,
+Jacek Anaszewski
