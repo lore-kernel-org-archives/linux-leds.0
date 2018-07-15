@@ -1,71 +1,131 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-Date: Sun, 15 Jul 2018 14:22:03 +0200
-Message-ID: <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
-References: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
- <CAMz4kuJfPKykB6G-8C25mmMCfQgefv-Y=k2OQYZR_e0Tvg3guQ@mail.gmail.com>
- <8da1b769-8aa3-9698-467a-2e7b0707fecf@gmail.com>
- <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
- <20180714212033.GA31950@amd> <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
- <20180714222924.GA2776@amd> <20180714223907.GB2776@amd>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: REGRESSION: [RESEND PATCH v3 1/4] backlight: pwm_bl: linear
+ interpolation between brightness-levels
+Date: Sun, 15 Jul 2018 14:26:44 +0000
+Message-ID: <1531664796.7579.13.camel@toradex.com>
+References: <20180409083333.1249-1-enric.balletbo@collabora.com>
+         <20180409083333.1249-2-enric.balletbo@collabora.com>
+         <1531580895.7579.7.camel@toradex.com> <20180715075732.GA2989@wychelm.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180714223907.GB2776@amd>
+In-Reply-To: <20180715075732.GA2989@wychelm.lan>
 Content-Language: en-US
+Content-ID: <B383E2BA32D77F4F98AF5F52DECD6B68@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Baolin Wang <baolin.wang@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>
+Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dianders@google.com" <dianders@google.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>, "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kernel@collabora.com" <kernel@collabora.com>, "briannorris@google.com" <briannorris@google.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "amstan@google.com" <amstan@google.com>, "groeck@google.com" <groeck@google.com>
 List-Id: linux-leds@vger.kernel.org
 
-On 07/15/2018 12:39 AM, Pavel Machek wrote:
-> On Sun 2018-07-15 00:29:25, Pavel Machek wrote:
->> On Sun 2018-07-15 00:02:57, Jacek Anaszewski wrote:
->>> Hi Pavel,
->>>
->>> On 07/14/2018 11:20 PM, Pavel Machek wrote:
->>>> Hi!
->>>>
->>>>>> It also drew my attention to the issue of desired pattern sysfs
->>>>>> interface semantics on uninitialized pattern. In your implementation
->>>>>> user seems to be unable to determine if the pattern is activated
->>>>>> or not. We should define the semantics for this use case and
->>>>>> describe it in the documentation. Possibly pattern could
->>>>>> return alone new line character then.
->>>>
->>>> Let me take a step back: we have triggers.. like LED blinking.
->>>>
->>>> How is that going to interact with patterns? We probably want the
->>>> patterns to be ignored in that case...?
->>>>
->>>> Which suggest to me that we should treat patterns as a trigger. I
->>>> believe we do something similar with blinking already.
->>>>
->>>> Then it is easy to determine if pattern is active, and pattern
->>>> vs. trigger issue is solved automatically.
->>>
->>> I'm all for it. I proposed this approach during the previous
->>> discussions related to possible pattern interface implementations,
->>> but you seemed not to be so enthusiastic in [0].
->>>
->>> [0] https://lkml.org/lkml/2017/4/7/350
->>
->> Hmm. Reading my own email now, I can't decipher it.
->>
->> I believe I meant "changing patterns from kernel in response to events
->> is probably overkill"... or something like that.
-> 
-> Anyway -- to clean up the confusion -- I'd like to see
-> 
-> echo pattern > trigger
-> echo "1 2 3 4 5 6 7 8" > somewhere
-
-s/somewhere/pattern/
-
-pattern trigger should create "pattern" file similarly how ledtrig-timer
-creates delay_{on|off} files.
-
--- 
-Best regards,
-Jacek Anaszewski
+T24gU3VuLCAyMDE4LTA3LTE1IGF0IDA4OjU3ICswMTAwLCBEYW5pZWwgVGhvbXBzb24gd3JvdGU6
+DQo+IE9uIFNhdCwgSnVsIDE0LCAyMDE4IGF0IDAzOjA4OjE3UE0gKzAwMDAsIE1hcmNlbCBaaXN3
+aWxlciB3cm90ZToNCj4gPiBPbiBNb24sIDIwMTgtMDQtMDkgYXQgMTA6MzMgKzAyMDAsIEVucmlj
+IEJhbGxldGJvIGkgU2VycmEgd3JvdGU6DQo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy92aWRl
+by9iYWNrbGlnaHQvcHdtX2JsLmMNCj4gPiA+IGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcHdt
+X2JsLmMNCj4gPiA+IGluZGV4IDhlM2YxMjQ1ZjVjNS4uZjBhMTA4YWI1NzBhIDEwMDY0NA0KPiA+
+ID4gLS0tIGEvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcHdtX2JsLmMNCj4gPiA+ICsrKyBiL2Ry
+aXZlcnMvdmlkZW8vYmFja2xpZ2h0L3B3bV9ibC5jDQo+ID4gPiBAQCAtMTQ3LDcgKzE0NywxMSBA
+QCBzdGF0aWMgaW50IHB3bV9iYWNrbGlnaHRfcGFyc2VfZHQoc3RydWN0DQo+ID4gPiBkZXZpY2UN
+Cj4gPiA+ICpkZXYsDQo+ID4gPiAgCQkJCSAgc3RydWN0DQo+ID4gPiBwbGF0Zm9ybV9wd21fYmFj
+a2xpZ2h0X2RhdGENCj4gPiA+ICpkYXRhKQ0KPiA+ID4gIHsNCj4gPiA+ICAJc3RydWN0IGRldmlj
+ZV9ub2RlICpub2RlID0gZGV2LT5vZl9ub2RlOw0KPiA+ID4gKwl1bnNpZ25lZCBpbnQgbnVtX2xl
+dmVscyA9IDA7DQo+ID4gPiArCXVuc2lnbmVkIGludCBsZXZlbHNfY291bnQ7DQo+ID4gPiArCXVu
+c2lnbmVkIGludCBudW1fc3RlcHM7DQo+IA0KPiBudW1fc3RlcHMgaXMgbm90IGluaXRpYWxpemVk
+Li4uDQo+IA0KPiANCj4gPiA+ICAJc3RydWN0IHByb3BlcnR5ICpwcm9wOw0KPiA+ID4gKwl1bnNp
+Z25lZCBpbnQgKnRhYmxlOw0KPiA+ID4gIAlpbnQgbGVuZ3RoOw0KPiA+ID4gIAl1MzIgdmFsdWU7
+DQo+ID4gPiAgCWludCByZXQ7DQo+ID4gPiBAQCAtMTY3LDYgKzE3MSw3IEBAIHN0YXRpYyBpbnQg
+cHdtX2JhY2tsaWdodF9wYXJzZV9kdChzdHJ1Y3QNCj4gPiA+IGRldmljZQ0KPiA+ID4gKmRldiwN
+Cj4gPiA+ICAJLyogcmVhZCBicmlnaHRuZXNzIGxldmVscyBmcm9tIERUIHByb3BlcnR5ICovDQo+
+ID4gPiAgCWlmIChkYXRhLT5tYXhfYnJpZ2h0bmVzcyA+IDApIHsNCj4gPiA+ICAJCXNpemVfdCBz
+aXplID0gc2l6ZW9mKCpkYXRhLT5sZXZlbHMpICogZGF0YS0NCj4gPiA+ID4gbWF4X2JyaWdodG5l
+c3M7DQo+ID4gPiANCj4gPiA+ICsJCXVuc2lnbmVkIGludCBpLCBqLCBuID0gMDsNCj4gPiA+ICAN
+Cj4gPiA+ICAJCWRhdGEtPmxldmVscyA9IGRldm1fa3phbGxvYyhkZXYsIHNpemUsDQo+ID4gPiBH
+RlBfS0VSTkVMKTsNCj4gPiA+ICAJCWlmICghZGF0YS0+bGV2ZWxzKQ0KPiA+ID4gQEAgLTE4NCw2
+ICsxODksODQgQEAgc3RhdGljIGludCBwd21fYmFja2xpZ2h0X3BhcnNlX2R0KHN0cnVjdA0KPiA+
+ID4gZGV2aWNlDQo+ID4gPiAqZGV2LA0KPiA+ID4gIAkJCXJldHVybiByZXQ7DQo+ID4gPiAgDQo+
+ID4gPiAgCQlkYXRhLT5kZnRfYnJpZ2h0bmVzcyA9IHZhbHVlOw0KPiA+ID4gKw0KPiA+ID4gKwkJ
+LyoNCj4gPiA+ICsJCSAqIFRoaXMgcHJvcGVydHkgaXMgb3B0aW9uYWwsIGlmIGlzIHNldCBlbmFi
+bGVzDQo+ID4gPiBsaW5lYXINCj4gPiA+ICsJCSAqIGludGVycG9sYXRpb24gYmV0d2VlbiBlYWNo
+IG9mIHRoZSB2YWx1ZXMgb2YNCj4gPiA+IGJyaWdodG5lc3MgbGV2ZWxzDQo+ID4gPiArCQkgKiBh
+bmQgY3JlYXRlcyBhIG5ldyBwcmUtY29tcHV0ZWQgdGFibGUuDQo+ID4gPiArCQkgKi8NCj4gPiA+
+ICsJCW9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJudW0taW50ZXJwb2xhdGVkLQ0KPiA+ID4g
+c3RlcHMiLA0KPiA+ID4gKwkJCQkgICAgICZudW1fc3RlcHMpOw0KPiANCj4gLi4uIHRoaXMgaXMg
+bm90IGd1YXJhbnRlZWQgdG8gaW5pdGlhbGl6ZWQgbnVtX3N0ZXBzIC4uLg0KDQpZZXMsIGFzIGl0
+IG9ubHkgZG9lcyBzbyBpZiByZXR1cm5pbmcgemVyby4gSSBkbyBmdXJ0aGVyIHByb3Bvc2UgdG8N
+CmNoZWNrIGl0cyByZXR1cm4gdmFsdWUgYXMgd2VsbC4gSXNuJ3QgdGhhdCB3aGF0IHJldHVybiB2
+YWx1ZXMgYXJlIHVzZWQNCmZvcj8NCg0KUXVvdGluZyBmcm9tIGluY2x1ZGUvbGludXgvb2YuaDoN
+Cg0KU2VhcmNoIGZvciBhIHByb3BlcnR5IGluIGEgZGV2aWNlIG5vZGUgYW5kIHJlYWQgMzItYml0
+IHZhbHVlKHMpIGZyb20NCml0LiBSZXR1cm5zIDAgb24gc3VjY2VzcywgLUVJTlZBTCBpZiB0aGUg
+cHJvcGVydHkgZG9lcyBub3QgZXhpc3QsDQotRU5PREFUQSBpZiBwcm9wZXJ0eSBkb2VzIG5vdCBo
+YXZlIGEgdmFsdWUsIGFuZCAtRU9WRVJGTE9XIGlmIHRoZQ0KcHJvcGVydHkgZGF0YSBpc24ndCBs
+YXJnZSBlbm91Z2guDQoNCj4gPiA+ICsNCj4gPiA+ICsJCS8qDQo+ID4gPiArCQkgKiBNYWtlIHN1
+cmUgdGhhdCB0aGVyZSBpcyBhdCBsZWFzdCB0d28gZW50cmllcw0KPiA+ID4gaW4NCj4gPiA+IHRo
+ZQ0KPiA+ID4gKwkJICogYnJpZ2h0bmVzcy1sZXZlbHMgdGFibGUsIG90aGVyd2lzZSB3ZSBjYW4n
+dA0KPiA+ID4gaW50ZXJwb2xhdGUNCj4gPiA+ICsJCSAqIGJldHdlZW4gdHdvIHBvaW50cy4NCj4g
+PiA+ICsJCSAqLw0KPiA+ID4gKwkJaWYgKG51bV9zdGVwcykgew0KPiANCj4gLi4uIGFuZCB3ZSBt
+YWtlIGEgZGVjaXNpb24gb24gaXQgaGVyZS4NCj4gDQo+IE1hcmNlbDogQ2FuIHlvdSB0cnkgdGhl
+IGZvbGxvd2luZyBxdWljayBmaXg/IEl0J3MgdW50ZXN0ZWQgb24gbXkgc2lkZQ0KPiAgICAgICAg
+IGJ1dCB2ZXJ5IHNpbXBsZS4uLg0KPiANCj4gRnJvbSA2ZmEyZmJlYjAxNzA4NjE0N2FjNjE5ODEx
+MDdhOTVjYjhhZTdiNGU3IE1vbiBTZXAgMTcgMDA6MDA6MDANCj4gMjAwMQ0KPiBGcm9tOiBEYW5p
+ZWwgVGhvbXBzb24gPGRhbmllbC50aG9tcHNvbkBsaW5hcm8ub3JnPg0KPiBEYXRlOiBTdW4sIDE1
+IEp1bCAyMDE4IDA4OjQ5OjA1ICswMTAwDQo+IFN1YmplY3Q6IFtQQVRDSF0gYmFja2xpZ2h0OiBw
+d21fYmw6IEZpeCB1bmluaXRpYWxpemVkIHZhcmlhYmxlDQo+IA0KPiBDdXJyZW50bHksIGlmIHRo
+ZSBEVCBkb2VzIG5vdCBkZWZpbmUgbnVtLWludGVycG9sYXRlZC1zdGVwcyB0aGVuDQo+IG51bV9z
+dGVwcyBpcyB1bmRlZmluZWQgbWVhbmluZyB0aGUgaW50ZXJwb2xhdGlvbiBjb2RlIHdpbGwgZGVw
+bG95DQo+IHJhbmRvbWx5LiBGaXggdGhpcy4NCj4gDQo+IEZpeGVzOiA1NzNmZTZkMWMyNWMgKCJi
+YWNrbGlnaHQ6IHB3bV9ibDogTGluZWFyIGludGVycG9sYXRpb24gYmV0d2Vlbg0KPiBicmlnaHRu
+ZXNzLWxldmVscyIpDQo+IFJlcG9ydGVkLWJ5OiBNYXJjZWwgWmlzd2lsZXIgPG1hcmNlbC56aXN3
+aWxlckB0b3JhZGV4LmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogRGFuaWVsIFRob21wc29uIDxkYW5p
+ZWwudGhvbXBzb25AbGluYXJvLm9yZz4NCj4gLS0tDQo+ICBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdo
+dC9wd21fYmwuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBk
+ZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3B3
+bV9ibC5jDQo+IGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcHdtX2JsLmMNCj4gaW5kZXggOWVl
+NGMxYjczNWIyLi5iZGZjYzBhNzFkYjEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvdmlkZW8vYmFj
+a2xpZ2h0L3B3bV9ibC5jDQo+ICsrKyBiL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3B3bV9ibC5j
+DQo+IEBAIC0yNTAsNyArMjUwLDcgQEAgc3RhdGljIGludCBwd21fYmFja2xpZ2h0X3BhcnNlX2R0
+KHN0cnVjdCBkZXZpY2UNCj4gKmRldiwNCj4gIAlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUgPSBk
+ZXYtPm9mX25vZGU7DQo+ICAJdW5zaWduZWQgaW50IG51bV9sZXZlbHMgPSAwOw0KPiAgCXVuc2ln
+bmVkIGludCBsZXZlbHNfY291bnQ7DQo+IC0JdW5zaWduZWQgaW50IG51bV9zdGVwczsNCj4gKwl1
+bnNpZ25lZCBpbnQgbnVtX3N0ZXBzID0gMDsNCj4gIAlzdHJ1Y3QgcHJvcGVydHkgKnByb3A7DQo+
+ICAJdW5zaWduZWQgaW50ICp0YWJsZTsNCj4gIAlpbnQgbGVuZ3RoOw0KPiAtLQ0KPiAyLjE3LjEN
+Cg0KRnJvbSBkYmIzMWQwMGM5ZjI4NzNhZmZlZGJjZWFlOTE3YzlkN2ZjZTVmODMyIE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQ0KTWVzc2FnZS1JZDogPGRiYjMxZDAwYzlmMjg3M2FmZmVkYmNlYWU5
+MTdjOWQ3ZmNlNWY4MzIuMTUzMTY2NDY2My5naXQubWENCnJjZWwuemlzd2lsZXJAdG9yYWRleC5j
+b20+DQpGcm9tOiBEYW5pZWwgVGhvbXBzb24gPGRhbmllbC50aG9tcHNvbkBsaW5hcm8ub3JnPg0K
+RGF0ZTogU3VuLCAxNSBKdWwgMjAxOCAwODo0OTowNSArMDEwMA0KU3ViamVjdDogW1BBVENIXSBi
+YWNrbGlnaHQ6IHB3bV9ibDogRml4IHVuaW5pdGlhbGl6ZWQgdmFyaWFibGUNCg0KQ3VycmVudGx5
+LCBpZiB0aGUgRFQgZG9lcyBub3QgZGVmaW5lIG51bS1pbnRlcnBvbGF0ZWQtc3RlcHMgdGhlbg0K
+bnVtX3N0ZXBzIGlzIHVuZGVmaW5lZCBtZWFuaW5nIHRoZSBpbnRlcnBvbGF0aW9uIGNvZGUgd2ls
+bCBkZXBsb3kNCnJhbmRvbWx5LiBGaXggdGhpcy4NCg0KRml4ZXM6IDU3M2ZlNmQxYzI1YyAoImJh
+Y2tsaWdodDogcHdtX2JsOiBMaW5lYXIgaW50ZXJwb2xhdGlvbiBiZXR3ZWVuDQpicmlnaHRuZXNz
+LWxldmVscyIpDQpSZXBvcnRlZC1ieTogTWFyY2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJA
+dG9yYWRleC5jb20+DQpTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgVGhvbXBzb24gPGRhbmllbC50aG9t
+cHNvbkBsaW5hcm8ub3JnPg0KU2lnbmVkLW9mZi1ieTogTWFyY2VsIFppc3dpbGVyIDxtYXJjZWwu
+emlzd2lsZXJAdG9yYWRleC5jb20+DQotLS0NCiBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9wd21f
+YmwuYyB8IDE4ICsrKysrKysrLS0tLS0tLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlv
+bnMoKyksIDEwIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy92aWRlby9iYWNr
+bGlnaHQvcHdtX2JsLmMNCmIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcHdtX2JsLmMNCmluZGV4
+IDllZTRjMWI3MzViMi4uZTg4NGQ1ODkzNzhkIDEwMDY0NA0KLS0tIGEvZHJpdmVycy92aWRlby9i
+YWNrbGlnaHQvcHdtX2JsLmMNCisrKyBiL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3B3bV9ibC5j
+DQpAQCAtMjUwLDcgKzI1MCw3IEBAIHN0YXRpYyBpbnQgcHdtX2JhY2tsaWdodF9wYXJzZV9kdChz
+dHJ1Y3QgZGV2aWNlDQoqZGV2LA0KIAlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUgPSBkZXYtPm9m
+X25vZGU7DQogCXVuc2lnbmVkIGludCBudW1fbGV2ZWxzID0gMDsNCiAJdW5zaWduZWQgaW50IGxl
+dmVsc19jb3VudDsNCi0JdW5zaWduZWQgaW50IG51bV9zdGVwczsNCisJdW5zaWduZWQgaW50IG51
+bV9zdGVwcyA9IDA7DQogCXN0cnVjdCBwcm9wZXJ0eSAqcHJvcDsNCiAJdW5zaWduZWQgaW50ICp0
+YWJsZTsNCiAJaW50IGxlbmd0aDsNCkBAIC0yOTksMTUgKzI5OSwxMyBAQCBzdGF0aWMgaW50IHB3
+bV9iYWNrbGlnaHRfcGFyc2VfZHQoc3RydWN0IGRldmljZQ0KKmRldiwNCiAJCSAqIGludGVycG9s
+YXRpb24gYmV0d2VlbiBlYWNoIG9mIHRoZSB2YWx1ZXMgb2YNCmJyaWdodG5lc3MgbGV2ZWxzDQog
+CQkgKiBhbmQgY3JlYXRlcyBhIG5ldyBwcmUtY29tcHV0ZWQgdGFibGUuDQogCQkgKi8NCi0JCW9m
+X3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJudW0taW50ZXJwb2xhdGVkLXN0ZXBzIiwNCi0JCQkJ
+ICAgICAmbnVtX3N0ZXBzKTsNCi0NCi0JCS8qDQotCQkgKiBNYWtlIHN1cmUgdGhhdCB0aGVyZSBp
+cyBhdCBsZWFzdCB0d28gZW50cmllcyBpbiB0aGUNCi0JCSAqIGJyaWdodG5lc3MtbGV2ZWxzIHRh
+YmxlLCBvdGhlcndpc2Ugd2UgY2FuJ3QNCmludGVycG9sYXRlDQotCQkgKiBiZXR3ZWVuIHR3byBw
+b2ludHMuDQotCQkgKi8NCi0JCWlmIChudW1fc3RlcHMpIHsNCisJCWlmICgob2ZfcHJvcGVydHlf
+cmVhZF91MzIobm9kZSwgIm51bS1pbnRlcnBvbGF0ZWQtDQpzdGVwcyIsDQorCQkJCQkgICZudW1f
+c3RlcHMpID09IDApICYmDQoobnVtX3N0ZXBzKSkgew0KKwkJCS8qDQorCQkJICogTWFrZSBzdXJl
+IHRoYXQgdGhlcmUgaXMgYXQgbGVhc3QgdHdvDQplbnRyaWVzIGluIHRoZQ0KKwkJCSAqIGJyaWdo
+dG5lc3MtbGV2ZWxzIHRhYmxlLCBvdGhlcndpc2Ugd2UgY2FuJ3QNCmludGVycG9sYXRlDQorCQkJ
+ICogYmV0d2VlbiB0d28gcG9pbnRzLg0KKwkJCSAqLw0KIAkJCWlmIChkYXRhLT5tYXhfYnJpZ2h0
+bmVzcyA8IDIpIHsNCiAJCQkJZGV2X2VycihkZXYsICJjYW4ndCBpbnRlcnBvbGF0ZVxuIik7DQog
+CQkJCXJldHVybiAtRUlOVkFMOw0KLS0gDQoyLjE0LjQ=
