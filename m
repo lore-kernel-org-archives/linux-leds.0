@@ -1,230 +1,163 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH v5 2/2] leds: sc27xx: Add pattern_set/get/clear interfaces for LED controller
-Date: Mon, 16 Jul 2018 19:10:15 +0800
-Message-ID: <51cd675efcf546c712377878e353312e9d4980df.1531711385.git.baolin.wang@linaro.org>
-References: <05c235df7bbcc4b898e7b263bf38338d9c822005.1531711385.git.baolin.wang@linaro.org>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: REGRESSION: [RESEND PATCH v3 1/4] backlight: pwm_bl: linear
+ interpolation between brightness-levels
+Date: Mon, 16 Jul 2018 11:57:29 +0000
+Message-ID: <1531742247.6547.4.camel@toradex.com>
+References: <20180409083333.1249-1-enric.balletbo@collabora.com>
+         <20180409083333.1249-2-enric.balletbo@collabora.com>
+         <1531580895.7579.7.camel@toradex.com> <20180715075732.GA2989@wychelm.lan>
+         <1531664796.7579.13.camel@toradex.com>
+         <20180716094223.syzwviia4wdx74yh@holly.lan>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <05c235df7bbcc4b898e7b263bf38338d9c822005.1531711385.git.baolin.wang@linaro.org>
-In-Reply-To: <05c235df7bbcc4b898e7b263bf38338d9c822005.1531711385.git.baolin.wang@linaro.org>
-References: <05c235df7bbcc4b898e7b263bf38338d9c822005.1531711385.git.baolin.wang@linaro.org>
+In-Reply-To: <20180716094223.syzwviia4wdx74yh@holly.lan>
+Content-Language: en-US
+Content-ID: <D8909C86F8A00848B5A909019F3BB688@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: baolin.wang@linaro.org, bjorn.andersson@linaro.org, david@lechnology.com, broonie@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>
+Cc: "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dianders@google.com" <dianders@google.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>, "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kernel@collabora.com" <kernel@collabora.com>, "briannorris@google.com" <briannorris@google.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "amstan@google.com" <amstan@google.com>, "groeck@google.com" <groeck@google.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch implements the 'pattern_set', 'pattern_get' and 'pattern_clear'
-interfaces to support SC27XX LED breathing mode.
-
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes from v4:
- - None.
-
-Changes from v3:
- - None.
-
-Changes from v2:
- - No updates.
-
-Changes from v1:
- - No updates.
----
- drivers/leds/leds-sc27xx-bltc.c |  160 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 160 insertions(+)
-
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index 9d9b7aa..898f92d 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -6,6 +6,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/slab.h>
- #include <uapi/linux/uleds.h>
- 
- /* PMIC global control register definition */
-@@ -32,8 +33,13 @@
- #define SC27XX_DUTY_MASK	GENMASK(15, 0)
- #define SC27XX_MOD_MASK		GENMASK(7, 0)
- 
-+#define SC27XX_CURVE_SHIFT	8
-+#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
-+#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
-+
- #define SC27XX_LEDS_OFFSET	0x10
- #define SC27XX_LEDS_MAX		3
-+#define SC27XX_LEDS_PATTERN_CNT	4
- 
- struct sc27xx_led {
- 	char name[LED_MAX_NAME_SIZE];
-@@ -122,6 +128,157 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
- 	return err;
- }
- 
-+static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	struct regmap *regmap = leds->priv->regmap;
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	int err;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	/* Reset the rise, high, fall and low time to zero. */
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
-+
-+	err = regmap_update_bits(regmap, ctrl_base,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static int sc27xx_led_pattern_set(struct led_classdev *ldev,
-+				  struct led_pattern *pattern,
-+				  int len)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	/*
-+	 * Must contain 4 patterns to configure the rise time, high time, fall
-+	 * time and low time to enable the breathing mode.
-+	 */
-+	if (len != SC27XX_LEDS_PATTERN_CNT)
-+		return -EINVAL;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_L_MASK, pattern[0].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_L_MASK, pattern[1].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[2].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[3].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
-+				 SC27XX_DUTY_MASK,
-+				 (pattern[0].brightness << SC27XX_DUTY_SHIFT) |
-+				 SC27XX_MOD_MASK);
-+	if (err)
-+		goto out;
-+
-+	/* Enable the LED breathing mode */
-+	err = regmap_update_bits(regmap, ctrl_base,
-+				 SC27XX_LED_RUN << ctrl_shift,
-+				 SC27XX_LED_RUN << ctrl_shift);
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static struct led_pattern *sc27xx_led_pattern_get(struct led_classdev *ldev,
-+						  int *len)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	struct regmap *regmap = leds->priv->regmap;
-+	struct led_pattern *pattern;
-+	int i, err;
-+	u32 val;
-+
-+	/*
-+	 * Must allocate 4 patterns to show the rise time, high time, fall time
-+	 * and low time.
-+	 */
-+	pattern = kcalloc(SC27XX_LEDS_PATTERN_CNT, sizeof(*pattern),
-+			  GFP_KERNEL);
-+	if (!pattern)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE0, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[0].delta_t = val & SC27XX_CURVE_L_MASK;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE1, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[1].delta_t = val & SC27XX_CURVE_L_MASK;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE0, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[2].delta_t = (val & SC27XX_CURVE_H_MASK) >> SC27XX_CURVE_SHIFT;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE1, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[3].delta_t = (val & SC27XX_CURVE_H_MASK) >> SC27XX_CURVE_SHIFT;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_DUTY, &val);
-+	if (err)
-+		goto out;
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	val = (val & SC27XX_DUTY_MASK) >> SC27XX_DUTY_SHIFT;
-+	for (i = 0; i < SC27XX_LEDS_PATTERN_CNT; i++)
-+		pattern[i].brightness = val;
-+
-+	*len = SC27XX_LEDS_PATTERN_CNT;
-+
-+	return pattern;
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+	kfree(pattern);
-+
-+	return ERR_PTR(err);
-+}
-+
- static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- {
- 	int i, err;
-@@ -140,6 +297,9 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- 		led->priv = priv;
- 		led->ldev.name = led->name;
- 		led->ldev.brightness_set_blocking = sc27xx_led_set;
-+		led->ldev.pattern_set = sc27xx_led_pattern_set;
-+		led->ldev.pattern_get = sc27xx_led_pattern_get;
-+		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
- 
- 		err = devm_led_classdev_register(dev, &led->ldev);
- 		if (err)
--- 
-1.7.9.5
+T24gTW9uLCAyMDE4LTA3LTE2IGF0IDEwOjQyICswMTAwLCBEYW5pZWwgVGhvbXBzb24gd3JvdGU6
+DQo+IE9uIFN1biwgSnVsIDE1LCAyMDE4IGF0IDAyOjI2OjQ0UE0gKzAwMDAsIE1hcmNlbCBaaXN3
+aWxlciB3cm90ZToNCj4gPiBPbiBTdW4sIDIwMTgtMDctMTUgYXQgMDg6NTcgKzAxMDAsIERhbmll
+bCBUaG9tcHNvbiB3cm90ZToNCj4gPiA+IE9uIFNhdCwgSnVsIDE0LCAyMDE4IGF0IDAzOjA4OjE3
+UE0gKzAwMDAsIE1hcmNlbCBaaXN3aWxlciB3cm90ZToNCj4gPiA+ID4gT24gTW9uLCAyMDE4LTA0
+LTA5IGF0IDEwOjMzICswMjAwLCBFbnJpYyBCYWxsZXRibyBpIFNlcnJhDQo+ID4gPiA+IHdyb3Rl
+Og0KPiA+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9wd21fYmwu
+Yw0KPiA+ID4gPiA+IGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcHdtX2JsLmMNCj4gPiA+ID4g
+PiBpbmRleCA4ZTNmMTI0NWY1YzUuLmYwYTEwOGFiNTcwYSAxMDA2NDQNCj4gPiA+ID4gPiAtLS0g
+YS9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9wd21fYmwuYw0KPiA+ID4gPiA+ICsrKyBiL2RyaXZl
+cnMvdmlkZW8vYmFja2xpZ2h0L3B3bV9ibC5jDQo+ID4gPiA+ID4gQEAgLTE0Nyw3ICsxNDcsMTEg
+QEAgc3RhdGljIGludCBwd21fYmFja2xpZ2h0X3BhcnNlX2R0KHN0cnVjdA0KPiA+ID4gPiA+IGRl
+dmljZQ0KPiA+ID4gPiA+ICpkZXYsDQo+ID4gPiA+ID4gIAkJCQkgIHN0cnVjdA0KPiA+ID4gPiA+
+IHBsYXRmb3JtX3B3bV9iYWNrbGlnaHRfZGF0YQ0KPiA+ID4gPiA+ICpkYXRhKQ0KPiA+ID4gPiA+
+ICB7DQo+ID4gPiA+ID4gIAlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUgPSBkZXYtPm9mX25vZGU7
+DQo+ID4gPiA+ID4gKwl1bnNpZ25lZCBpbnQgbnVtX2xldmVscyA9IDA7DQo+ID4gPiA+ID4gKwl1
+bnNpZ25lZCBpbnQgbGV2ZWxzX2NvdW50Ow0KPiA+ID4gPiA+ICsJdW5zaWduZWQgaW50IG51bV9z
+dGVwczsNCj4gPiA+IA0KPiA+ID4gbnVtX3N0ZXBzIGlzIG5vdCBpbml0aWFsaXplZC4uLg0KPiA+
+ID4gDQo+ID4gPiANCj4gPiA+ID4gPiAgCXN0cnVjdCBwcm9wZXJ0eSAqcHJvcDsNCj4gPiA+ID4g
+PiArCXVuc2lnbmVkIGludCAqdGFibGU7DQo+ID4gPiA+ID4gIAlpbnQgbGVuZ3RoOw0KPiA+ID4g
+PiA+ICAJdTMyIHZhbHVlOw0KPiA+ID4gPiA+ICAJaW50IHJldDsNCj4gPiA+ID4gPiBAQCAtMTY3
+LDYgKzE3MSw3IEBAIHN0YXRpYyBpbnQgcHdtX2JhY2tsaWdodF9wYXJzZV9kdChzdHJ1Y3QNCj4g
+PiA+ID4gPiBkZXZpY2UNCj4gPiA+ID4gPiAqZGV2LA0KPiA+ID4gPiA+ICAJLyogcmVhZCBicmln
+aHRuZXNzIGxldmVscyBmcm9tIERUIHByb3BlcnR5ICovDQo+ID4gPiA+ID4gIAlpZiAoZGF0YS0+
+bWF4X2JyaWdodG5lc3MgPiAwKSB7DQo+ID4gPiA+ID4gIAkJc2l6ZV90IHNpemUgPSBzaXplb2Yo
+KmRhdGEtPmxldmVscykgKiBkYXRhLQ0KPiA+ID4gPiA+ID4gbWF4X2JyaWdodG5lc3M7DQo+ID4g
+PiA+ID4gDQo+ID4gPiA+ID4gKwkJdW5zaWduZWQgaW50IGksIGosIG4gPSAwOw0KPiA+ID4gPiA+
+ICANCj4gPiA+ID4gPiAgCQlkYXRhLT5sZXZlbHMgPSBkZXZtX2t6YWxsb2MoZGV2LCBzaXplLA0K
+PiA+ID4gPiA+IEdGUF9LRVJORUwpOw0KPiA+ID4gPiA+ICAJCWlmICghZGF0YS0+bGV2ZWxzKQ0K
+PiA+ID4gPiA+IEBAIC0xODQsNiArMTg5LDg0IEBAIHN0YXRpYyBpbnQgcHdtX2JhY2tsaWdodF9w
+YXJzZV9kdChzdHJ1Y3QNCj4gPiA+ID4gPiBkZXZpY2UNCj4gPiA+ID4gPiAqZGV2LA0KPiA+ID4g
+PiA+ICAJCQlyZXR1cm4gcmV0Ow0KPiA+ID4gPiA+ICANCj4gPiA+ID4gPiAgCQlkYXRhLT5kZnRf
+YnJpZ2h0bmVzcyA9IHZhbHVlOw0KPiA+ID4gPiA+ICsNCj4gPiA+ID4gPiArCQkvKg0KPiA+ID4g
+PiA+ICsJCSAqIFRoaXMgcHJvcGVydHkgaXMgb3B0aW9uYWwsIGlmIGlzIHNldA0KPiA+ID4gPiA+
+IGVuYWJsZXMNCj4gPiA+ID4gPiBsaW5lYXINCj4gPiA+ID4gPiArCQkgKiBpbnRlcnBvbGF0aW9u
+IGJldHdlZW4gZWFjaCBvZiB0aGUgdmFsdWVzDQo+ID4gPiA+ID4gb2YNCj4gPiA+ID4gPiBicmln
+aHRuZXNzIGxldmVscw0KPiA+ID4gPiA+ICsJCSAqIGFuZCBjcmVhdGVzIGEgbmV3IHByZS1jb21w
+dXRlZCB0YWJsZS4NCj4gPiA+ID4gPiArCQkgKi8NCj4gPiA+ID4gPiArCQlvZl9wcm9wZXJ0eV9y
+ZWFkX3UzMihub2RlLCAibnVtLQ0KPiA+ID4gPiA+IGludGVycG9sYXRlZC0NCj4gPiA+ID4gPiBz
+dGVwcyIsDQo+ID4gPiA+ID4gKwkJCQkgICAgICZudW1fc3RlcHMpOw0KPiA+ID4gDQo+ID4gPiAu
+Li4gdGhpcyBpcyBub3QgZ3VhcmFudGVlZCB0byBpbml0aWFsaXplZCBudW1fc3RlcHMgLi4uDQo+
+ID4gDQo+ID4gWWVzLCBhcyBpdCBvbmx5IGRvZXMgc28gaWYgcmV0dXJuaW5nIHplcm8uIEkgZG8g
+ZnVydGhlciBwcm9wb3NlIHRvDQo+ID4gY2hlY2sgaXRzIHJldHVybiB2YWx1ZSBhcyB3ZWxsLiBJ
+c24ndCB0aGF0IHdoYXQgcmV0dXJuIHZhbHVlcyBhcmUNCj4gPiB1c2VkDQo+ID4gZm9yPw0KPiAN
+Cj4gSSBkb24ndCBtdWNoIG1pbmQgZWl0aGVyIHdheS4NCj4gDQo+IEkgb3JpZ2luYWxseSB3cm90
+ZSB0aGUgcGF0Y2ggeW91IHNoYXJlZCBiZWxvdyBidXQgdGhlbiBkZWNpZGVkIHRvIGFzaw0KPiB5
+b3UNCj4gdG8gdGVzdCBhbmQsIHNpbmNlIEkgZGlkbid0IGNvbXBpbGUgdGVzdCBiZWZvcmUgZG9p
+bmcgc28sIEkgb3B0ZWQgZm9yDQo+IHNvbWV0aGluZyBtb3JlIGltbXVuZSB0byBzaWxseSBtaXN0
+YWtlcy4NCj4gDQo+IA0KPiA+IFF1b3RpbmcgZnJvbSBpbmNsdWRlL2xpbnV4L29mLmg6DQo+ID4g
+DQo+ID4gU2VhcmNoIGZvciBhIHByb3BlcnR5IGluIGEgZGV2aWNlIG5vZGUgYW5kIHJlYWQgMzIt
+Yml0IHZhbHVlKHMpDQo+ID4gZnJvbQ0KPiA+IGl0LiBSZXR1cm5zIDAgb24gc3VjY2VzcywgLUVJ
+TlZBTCBpZiB0aGUgcHJvcGVydHkgZG9lcyBub3QgZXhpc3QsDQo+ID4gLUVOT0RBVEEgaWYgcHJv
+cGVydHkgZG9lcyBub3QgaGF2ZSBhIHZhbHVlLCBhbmQgLUVPVkVSRkxPVyBpZiB0aGUNCj4gPiBw
+cm9wZXJ0eSBkYXRhIGlzbid0IGxhcmdlIGVub3VnaC4NCj4gPiANCj4gPiA+ID4gPiArDQo+ID4g
+PiA+ID4gKwkJLyoNCj4gPiA+ID4gPiArCQkgKiBNYWtlIHN1cmUgdGhhdCB0aGVyZSBpcyBhdCBs
+ZWFzdCB0d28NCj4gPiA+ID4gPiBlbnRyaWVzDQo+ID4gPiA+ID4gaW4NCj4gPiA+ID4gPiB0aGUN
+Cj4gPiA+ID4gPiArCQkgKiBicmlnaHRuZXNzLWxldmVscyB0YWJsZSwgb3RoZXJ3aXNlIHdlDQo+
+ID4gPiA+ID4gY2FuJ3QNCj4gPiA+ID4gPiBpbnRlcnBvbGF0ZQ0KPiA+ID4gPiA+ICsJCSAqIGJl
+dHdlZW4gdHdvIHBvaW50cy4NCj4gPiA+ID4gPiArCQkgKi8NCj4gPiA+ID4gPiArCQlpZiAobnVt
+X3N0ZXBzKSB7DQo+ID4gPiANCj4gPiA+IC4uLiBhbmQgd2UgbWFrZSBhIGRlY2lzaW9uIG9uIGl0
+IGhlcmUuDQo+ID4gPiANCj4gPiA+IE1hcmNlbDogQ2FuIHlvdSB0cnkgdGhlIGZvbGxvd2luZyBx
+dWljayBmaXg/IEl0J3MgdW50ZXN0ZWQgb24gbXkNCj4gPiA+IHNpZGUNCj4gPiA+ICAgICAgICAg
+YnV0IHZlcnkgc2ltcGxlLi4uDQo+ID4gPiANCj4gPiA+IEZyb20gNmZhMmZiZWIwMTcwODYxNDdh
+YzYxOTgxMTA3YTk1Y2I4YWU3YjRlNyBNb24gU2VwIDE3IDAwOjAwOjAwDQo+ID4gPiAyMDAxDQo+
+ID4gPiBGcm9tOiBEYW5pZWwgVGhvbXBzb24gPGRhbmllbC50aG9tcHNvbkBsaW5hcm8ub3JnPg0K
+PiA+ID4gRGF0ZTogU3VuLCAxNSBKdWwgMjAxOCAwODo0OTowNSArMDEwMA0KPiA+ID4gU3ViamVj
+dDogW1BBVENIXSBiYWNrbGlnaHQ6IHB3bV9ibDogRml4IHVuaW5pdGlhbGl6ZWQgdmFyaWFibGUN
+Cj4gPiA+IA0KPiA+ID4gQ3VycmVudGx5LCBpZiB0aGUgRFQgZG9lcyBub3QgZGVmaW5lIG51bS1p
+bnRlcnBvbGF0ZWQtc3RlcHMgdGhlbg0KPiA+ID4gbnVtX3N0ZXBzIGlzIHVuZGVmaW5lZCBtZWFu
+aW5nIHRoZSBpbnRlcnBvbGF0aW9uIGNvZGUgd2lsbCBkZXBsb3kNCj4gPiA+IHJhbmRvbWx5LiBG
+aXggdGhpcy4NCj4gPiA+IA0KPiA+ID4gRml4ZXM6IDU3M2ZlNmQxYzI1YyAoImJhY2tsaWdodDog
+cHdtX2JsOiBMaW5lYXIgaW50ZXJwb2xhdGlvbg0KPiA+ID4gYmV0d2Vlbg0KPiA+ID4gYnJpZ2h0
+bmVzcy1sZXZlbHMiKQ0KPiA+ID4gUmVwb3J0ZWQtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2Vs
+Lnppc3dpbGVyQHRvcmFkZXguY29tPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTogRGFuaWVsIFRob21w
+c29uIDxkYW5pZWwudGhvbXBzb25AbGluYXJvLm9yZz4NCj4gPiA+IC0tLQ0KPiA+ID4gIGRyaXZl
+cnMvdmlkZW8vYmFja2xpZ2h0L3B3bV9ibC5jIHwgMiArLQ0KPiA+ID4gIDEgZmlsZSBjaGFuZ2Vk
+LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+ID4gDQo+ID4gPiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcHdtX2JsLmMNCj4gPiA+IGIvZHJpdmVycy92aWRl
+by9iYWNrbGlnaHQvcHdtX2JsLmMNCj4gPiA+IGluZGV4IDllZTRjMWI3MzViMi4uYmRmY2MwYTcx
+ZGIxIDEwMDY0NA0KPiA+ID4gLS0tIGEvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcHdtX2JsLmMN
+Cj4gPiA+ICsrKyBiL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3B3bV9ibC5jDQo+ID4gPiBAQCAt
+MjUwLDcgKzI1MCw3IEBAIHN0YXRpYyBpbnQgcHdtX2JhY2tsaWdodF9wYXJzZV9kdChzdHJ1Y3QN
+Cj4gPiA+IGRldmljZQ0KPiA+ID4gKmRldiwNCj4gPiA+ICAJc3RydWN0IGRldmljZV9ub2RlICpu
+b2RlID0gZGV2LT5vZl9ub2RlOw0KPiA+ID4gIAl1bnNpZ25lZCBpbnQgbnVtX2xldmVscyA9IDA7
+DQo+ID4gPiAgCXVuc2lnbmVkIGludCBsZXZlbHNfY291bnQ7DQo+ID4gPiAtCXVuc2lnbmVkIGlu
+dCBudW1fc3RlcHM7DQo+ID4gPiArCXVuc2lnbmVkIGludCBudW1fc3RlcHMgPSAwOw0KPiA+ID4g
+IAlzdHJ1Y3QgcHJvcGVydHkgKnByb3A7DQo+ID4gPiAgCXVuc2lnbmVkIGludCAqdGFibGU7DQo+
+ID4gPiAgCWludCBsZW5ndGg7DQo+ID4gPiAtLQ0KPiA+ID4gMi4xNy4xDQo+ID4gDQo+ID4gRnJv
+bSBkYmIzMWQwMGM5ZjI4NzNhZmZlZGJjZWFlOTE3YzlkN2ZjZTVmODMyIE1vbiBTZXAgMTcgMDA6
+MDA6MDANCj4gPiAyMDAxDQo+ID4gTWVzc2FnZS1JZDoNCj4gPiA8ZGJiMzFkMDBjOWYyODczYWZm
+ZWRiY2VhZTkxN2M5ZDdmY2U1ZjgzMi4xNTMxNjY0NjYzLmdpdC5tYQ0KPiA+IHJjZWwuemlzd2ls
+ZXJAdG9yYWRleC5jb20+DQo+ID4gRnJvbTogRGFuaWVsIFRob21wc29uIDxkYW5pZWwudGhvbXBz
+b25AbGluYXJvLm9yZz4NCj4gPiBEYXRlOiBTdW4sIDE1IEp1bCAyMDE4IDA4OjQ5OjA1ICswMTAw
+DQo+ID4gU3ViamVjdDogW1BBVENIXSBiYWNrbGlnaHQ6IHB3bV9ibDogRml4IHVuaW5pdGlhbGl6
+ZWQgdmFyaWFibGUNCj4gPiANCj4gPiBDdXJyZW50bHksIGlmIHRoZSBEVCBkb2VzIG5vdCBkZWZp
+bmUgbnVtLWludGVycG9sYXRlZC1zdGVwcyB0aGVuDQo+ID4gbnVtX3N0ZXBzIGlzIHVuZGVmaW5l
+ZCBtZWFuaW5nIHRoZSBpbnRlcnBvbGF0aW9uIGNvZGUgd2lsbCBkZXBsb3kNCj4gPiByYW5kb21s
+eS4gRml4IHRoaXMuDQo+ID4gDQo+ID4gRml4ZXM6IDU3M2ZlNmQxYzI1YyAoImJhY2tsaWdodDog
+cHdtX2JsOiBMaW5lYXIgaW50ZXJwb2xhdGlvbg0KPiA+IGJldHdlZW4NCj4gPiBicmlnaHRuZXNz
+LWxldmVscyIpDQo+ID4gUmVwb3J0ZWQtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dp
+bGVyQHRvcmFkZXguY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IERhbmllbCBUaG9tcHNvbiA8ZGFu
+aWVsLnRob21wc29uQGxpbmFyby5vcmc+DQo+ID4gU2lnbmVkLW9mZi1ieTogTWFyY2VsIFppc3dp
+bGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQo+IA0KPiBJcyBpdCBUZXN0ZWQtYnk6
+IHRvbz8gSXQgd291bGQgYmUgZ29vZCB0byBjb25maXJtIEkgd2FzIHJpZ2h0IGFib3V0DQo+IHRo
+ZQ0KPiBjYXVzZSBvZiB0aGUgcHJvYmxlbS4NCg0KWWVzIGFuZCBJIGNvbmZpcm0geW91IHdlcmUg
+cmlnaHQuDQoNCj4gPiAtLS0NCj4gPiAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcHdtX2JsLmMg
+fCAxOCArKysrKysrKy0tLS0tLS0tLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9u
+cygrKSwgMTAgZGVsZXRpb25zKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlk
+ZW8vYmFja2xpZ2h0L3B3bV9ibC5jDQo+ID4gYi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9wd21f
+YmwuYw0KPiA+IGluZGV4IDllZTRjMWI3MzViMi4uZTg4NGQ1ODkzNzhkIDEwMDY0NA0KPiA+IC0t
+LSBhL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3B3bV9ibC5jDQo+ID4gKysrIGIvZHJpdmVycy92
+aWRlby9iYWNrbGlnaHQvcHdtX2JsLmMNCj4gPiBAQCAtMjUwLDcgKzI1MCw3IEBAIHN0YXRpYyBp
+bnQgcHdtX2JhY2tsaWdodF9wYXJzZV9kdChzdHJ1Y3QgZGV2aWNlDQo+ID4gKmRldiwNCj4gPiAg
+CXN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSA9IGRldi0+b2Zfbm9kZTsNCj4gPiAgCXVuc2lnbmVk
+IGludCBudW1fbGV2ZWxzID0gMDsNCj4gPiAgCXVuc2lnbmVkIGludCBsZXZlbHNfY291bnQ7DQo+
+ID4gLQl1bnNpZ25lZCBpbnQgbnVtX3N0ZXBzOw0KPiA+ICsJdW5zaWduZWQgaW50IG51bV9zdGVw
+cyA9IDA7DQo+IA0KPiBUaGlzIGNhbiBnby4gSWYgd2UgY2hlY2sgdGhlIHJldHVybiBjb2RlIHRo
+ZW0gdGhpcyB2YXJpYWJsZSBpcyBubw0KPiBsb25nZXINCj4gdXNlZCB1bmluaXRpYWxpemVkIFtJ
+J20gT0sgdG8gbWFrZSB0aGUgY2hhbmdlIHRob3VnaC4uLiBzaW5jZSB5b3UndmUNCj4ga2VwdCBt
+eSBuYW1lIGF0IHRoZSB0b3AgOy0pIF0uDQoNClllcywgSSBjb25maXJtIHRoYXQgdGhpcyB3b3Jr
+cyBmb3IgbWUuIEFyZSB5b3UgZ29uYSBzZW5kIGEgcHJvcGVyIHBhdGNoDQpvdXQgb3Igc2hvdWxk
+IEkgZG8gaXQ/DQoNCj4gRGFuaWVsLg0KPiANCj4gPiAgCXN0cnVjdCBwcm9wZXJ0eSAqcHJvcDsN
+Cj4gPiAgCXVuc2lnbmVkIGludCAqdGFibGU7DQo+ID4gIAlpbnQgbGVuZ3RoOw0KPiA+IEBAIC0y
+OTksMTUgKzI5OSwxMyBAQCBzdGF0aWMgaW50IHB3bV9iYWNrbGlnaHRfcGFyc2VfZHQoc3RydWN0
+DQo+ID4gZGV2aWNlDQo+ID4gKmRldiwNCj4gPiAgCQkgKiBpbnRlcnBvbGF0aW9uIGJldHdlZW4g
+ZWFjaCBvZiB0aGUgdmFsdWVzIG9mDQo+ID4gYnJpZ2h0bmVzcyBsZXZlbHMNCj4gPiAgCQkgKiBh
+bmQgY3JlYXRlcyBhIG5ldyBwcmUtY29tcHV0ZWQgdGFibGUuDQo+ID4gIAkJICovDQo+ID4gLQkJ
+b2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgIm51bS1pbnRlcnBvbGF0ZWQtDQo+ID4gc3RlcHMi
+LA0KPiA+IC0JCQkJICAgICAmbnVtX3N0ZXBzKTsNCj4gPiAtDQo+ID4gLQkJLyoNCj4gPiAtCQkg
+KiBNYWtlIHN1cmUgdGhhdCB0aGVyZSBpcyBhdCBsZWFzdCB0d28gZW50cmllcyBpbg0KPiA+IHRo
+ZQ0KPiA+IC0JCSAqIGJyaWdodG5lc3MtbGV2ZWxzIHRhYmxlLCBvdGhlcndpc2Ugd2UgY2FuJ3QN
+Cj4gPiBpbnRlcnBvbGF0ZQ0KPiA+IC0JCSAqIGJldHdlZW4gdHdvIHBvaW50cy4NCj4gPiAtCQkg
+Ki8NCj4gPiAtCQlpZiAobnVtX3N0ZXBzKSB7DQo+ID4gKwkJaWYgKChvZl9wcm9wZXJ0eV9yZWFk
+X3UzMihub2RlLCAibnVtLWludGVycG9sYXRlZC0NCj4gPiBzdGVwcyIsDQo+ID4gKwkJCQkJICAm
+bnVtX3N0ZXBzKSA9PSAwKSAmJg0KPiA+IChudW1fc3RlcHMpKSB7DQo+ID4gKwkJCS8qDQo+ID4g
+KwkJCSAqIE1ha2Ugc3VyZSB0aGF0IHRoZXJlIGlzIGF0IGxlYXN0IHR3bw0KPiA+IGVudHJpZXMg
+aW4gdGhlDQo+ID4gKwkJCSAqIGJyaWdodG5lc3MtbGV2ZWxzIHRhYmxlLCBvdGhlcndpc2Ugd2UN
+Cj4gPiBjYW4ndA0KPiA+IGludGVycG9sYXRlDQo+ID4gKwkJCSAqIGJldHdlZW4gdHdvIHBvaW50
+cy4NCj4gPiArCQkJICovDQo+ID4gIAkJCWlmIChkYXRhLT5tYXhfYnJpZ2h0bmVzcyA8IDIpIHsN
+Cj4gPiAgCQkJCWRldl9lcnIoZGV2LCAiY2FuJ3QNCj4gPiBpbnRlcnBvbGF0ZVxuIik7DQo+ID4g
+IAkJCQlyZXR1cm4gLUVJTlZBTDsNCj4gPiAtLSANCj4gPiAyLjE0LjQ=
