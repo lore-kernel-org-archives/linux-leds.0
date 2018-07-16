@@ -1,33 +1,127 @@
-From: David Lechner <david@lechnology.com>
-Subject: Re: [PATCH v5 1/2] leds: core: Introduce generic pattern interface
-Date: Mon, 16 Jul 2018 11:51:01 -0500
-Message-ID: <6ecb22d5-fac4-dbe9-87e7-196d87d6d06f@lechnology.com>
-References: <05c235df7bbcc4b898e7b263bf38338d9c822005.1531711385.git.baolin.wang@linaro.org>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
+Date: Mon, 16 Jul 2018 22:29:12 +0200
+Message-ID: <68996338-a902-2b57-0bb9-df274a496b06@gmail.com>
+References: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
+ <CAMz4kuJfPKykB6G-8C25mmMCfQgefv-Y=k2OQYZR_e0Tvg3guQ@mail.gmail.com>
+ <8da1b769-8aa3-9698-467a-2e7b0707fecf@gmail.com>
+ <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
+ <20180714212033.GA31950@amd> <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
+ <20180714222924.GA2776@amd> <20180714223907.GB2776@amd>
+ <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
+ <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <05c235df7bbcc4b898e7b263bf38338d9c822005.1531711385.git.baolin.wang@linaro.org>
+In-Reply-To: <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Baolin Wang <baolin.wang@linaro.org>, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: bjorn.andersson@linaro.org, broonie@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Lechner <david@lechnology.com>, Baolin Wang <baolin.wang@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 07/16/2018 06:10 AM, Baolin Wang wrote:
-> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Hi David,
+
+On 07/16/2018 03:00 AM, David Lechner wrote:
+> On 07/15/2018 07:22 AM, Jacek Anaszewski wrote:
+>> On 07/15/2018 12:39 AM, Pavel Machek wrote:
+>>> On Sun 2018-07-15 00:29:25, Pavel Machek wrote:
+>>>> On Sun 2018-07-15 00:02:57, Jacek Anaszewski wrote:
+>>>>> Hi Pavel,
+>>>>>
+>>>>> On 07/14/2018 11:20 PM, Pavel Machek wrote:
+>>>>>> Hi!
+>>>>>>
+>>>>>>>> It also drew my attention to the issue of desired pattern sysfs
+>>>>>>>> interface semantics on uninitialized pattern. In your 
+>>>>>>>> implementation
+>>>>>>>> user seems to be unable to determine if the pattern is activated
+>>>>>>>> or not. We should define the semantics for this use case and
+>>>>>>>> describe it in the documentation. Possibly pattern could
+>>>>>>>> return alone new line character then.
+>>>>>>
+>>>>>> Let me take a step back: we have triggers.. like LED blinking.
+>>>>>>
+>>>>>> How is that going to interact with patterns? We probably want the
+>>>>>> patterns to be ignored in that case...?
+>>>>>>
+>>>>>> Which suggest to me that we should treat patterns as a trigger. I
+>>>>>> believe we do something similar with blinking already.
+>>>>>>
+>>>>>> Then it is easy to determine if pattern is active, and pattern
+>>>>>> vs. trigger issue is solved automatically.
+>>>>>
+>>>>> I'm all for it. I proposed this approach during the previous
+>>>>> discussions related to possible pattern interface implementations,
+>>>>> but you seemed not to be so enthusiastic in [0].
+>>>>>
+>>>>> [0] https://lkml.org/lkml/2017/4/7/350
+>>>>
+>>>> Hmm. Reading my own email now, I can't decipher it.
+>>>>
+>>>> I believe I meant "changing patterns from kernel in response to events
+>>>> is probably overkill"... or something like that.
+>>>
+>>> Anyway -- to clean up the confusion -- I'd like to see
+>>>
+>>> echo pattern > trigger
+>>> echo "1 2 3 4 5 6 7 8" > somewhere
+>>
+>> s/somewhere/pattern/
+>>
+>> pattern trigger should create "pattern" file similarly how ledtrig-timer
+>> creates delay_{on|off} files.
+>>
 > 
-> Some LED controllers have support for autonomously controlling
-> brightness over time, according to some preprogrammed pattern or
-> function.
+> I don't think this is the best way. For example, if you want more than one
+> LED to have the same pattern, then the patterns will not be synchronized
+> between the LEDs. The same things happens now with many of the existing
+> triggers. For example, if I have two LEDs side-by-side using the heartbeat
+> trigger, they may blink at the same time or they may not, which is not
+> very nice. I think we can make something better.
+
+It is virtually impossible to enforce synchronous blinking for the
+LEDs driven by different hardware due to:
+
+- different hardware means via which brightness is set (MMIO, I2C, SPI,
+   PWM and other pulsed fashion based protocols),
+- the need for deferring brightness setting to a workqueue task to
+   allow for setting LED brightness from atomic context,
+- contention on locks
+
+For the LEDs driven by the same chip it would make more sense
+to allow for synchronization, but it can be achieved on driver
+level, with help of some subsystem level interface to indicate
+which LEDs should be synchronized.
+
+However, when we start to pretend that we can synchronize the
+devices, we must answer how accurate we can be. The accuracy
+will decrease as blink frequency rises. We'd need to define
+reliability limit.
+
+For different devices, this limit will be different, and it will also
+depend on the CPU speed.
+
+We've had few attempts of approaching the subject of synchronized
+blinking but none of them proved to be good enough to be merged.
+
+Frankly speaking I doubt it is good task for the system like Linux.
+
+> Perhaps a way to do this would be to use configfs to create a pattern
+> trigger that can be shared by multiple LEDs. Like this:
 > 
-> This adds a new optional operator that LED class drivers can implement
-> if they support such functionality as well as a new device attribute to
-> configure the pattern for a given LED.
+>      mkdir /sys/kernel/config/leds/triggers/my-nice-pattern
+>      echo "1 2 3 4" > 
+> /sys/kernel/config/leds/triggers/my-nice-pattern/pattern
+>      echo my-nice-pattern > /sys/class/leds/led0/trigger
+>      echo my-nice-pattern > /sys/class/leds/led1/trigger
+> 
+> 
+> Please CC me on any future revisions of this series. I would like to 
+> test it.
 > 
 
-Hmm... I was hoping that this would be a generic pattern trigger that
-could be used by any LED (e.g. gpio LEDs), not just LEDs with hardware
-support. I guess I cannot really test this after all.
-
-I think it looks good for your use case though.
+-- 
+Best regards,
+Jacek Anaszewski
