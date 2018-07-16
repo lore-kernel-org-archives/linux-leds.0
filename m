@@ -1,54 +1,66 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 3/4] dt: bindings: lm3692x: Update binding for LED sync
- control
-Date: Mon, 16 Jul 2018 15:08:45 -0600
-Message-ID: <20180716210845.GA26337@rob-hp-laptop>
-References: <20180702181216.19660-1-dmurphy@ti.com>
- <20180702181216.19660-3-dmurphy@ti.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v5 1/2] leds: core: Introduce generic pattern interface
+Date: Mon, 16 Jul 2018 23:43:54 +0200
+Message-ID: <20180716214354.GA10734@amd>
+References: <05c235df7bbcc4b898e7b263bf38338d9c822005.1531711385.git.baolin.wang@linaro.org>
+ <6ecb22d5-fac4-dbe9-87e7-196d87d6d06f@lechnology.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180702181216.19660-3-dmurphy@ti.com>
+In-Reply-To: <6ecb22d5-fac4-dbe9-87e7-196d87d6d06f@lechnology.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: mark.rutland@arm.com, jacek.anaszewski@gmail.com, andy.shevchenko@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: David Lechner <david@lechnology.com>
+Cc: Baolin Wang <baolin.wang@linaro.org>, jacek.anaszewski@gmail.com, bjorn.andersson@linaro.org, broonie@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 01:12:15PM -0500, Dan Murphy wrote:
-> Update the binding to be able to configure the LED
-> sync to turn on.
 
-s/sync/sink/ ? As in a current sink.
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> The LM36922 has one output but can sync current to 2 LED
-> strings.  The user may only use one sync so the other
-> syncs need to be disabled.
-> 
-> The LM36923 has 3 LED syncs.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  Documentation/devicetree/bindings/leds/leds-lm3692x.txt | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
-> index 6c9074f84a51..08b352840bd7 100644
-> --- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
-> @@ -20,7 +20,10 @@ Optional properties:
->  	- vled-supply : LED supply
->  
->  Required child properties:
-> -	- reg : 0
-> +	- reg : 0 - Will enable all LED sync paths
-> +		1 - Will enable the LED1 sync
-> +		2 - Will enable the LED2 sync
-> +		3 - Will enable the LED3 sync (LM36923 only)
->  
->  Optional child properties:
->  	- label : see Documentation/devicetree/bindings/leds/common.txt
-> -- 
-> 2.17.0.582.gccdcbd54c
-> 
+On Mon 2018-07-16 11:51:01, David Lechner wrote:
+> On 07/16/2018 06:10 AM, Baolin Wang wrote:
+> >From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> >
+> >Some LED controllers have support for autonomously controlling
+> >brightness over time, according to some preprogrammed pattern or
+> >function.
+> >
+> >This adds a new optional operator that LED class drivers can implement
+> >if they support such functionality as well as a new device attribute to
+> >configure the pattern for a given LED.
+> >
+>=20
+> Hmm... I was hoping that this would be a generic pattern trigger that
+> could be used by any LED (e.g. gpio LEDs), not just LEDs with hardware
+> support. I guess I cannot really test this after all.
+>=20
+> I think it looks good for your use case though.
+
+Generic trigger doing patterns on any hardware would be welcome, too.
+
+I even have a copy of code somewhere, if you want to dust it off,
+clean up and merge...
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--1yeeQ81UyVL57Vl7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltNEZoACgkQMOfwapXb+vLr8wCfSAhGyEvmu8sdlw1crcLm1/Qg
+whYAoJa4On8pQxgK8jAsPP5TpXuiyytL
+=T15q
+-----END PGP SIGNATURE-----
+
+--1yeeQ81UyVL57Vl7--
