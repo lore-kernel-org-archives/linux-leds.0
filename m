@@ -1,59 +1,74 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH V4 6/8] backlight: qcom-wled: Add support for WLED4
- peripheral
-Date: Fri, 20 Jul 2018 23:21:29 +0200
-Message-ID: <20180720212128.GA13883@amd>
-References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
- <1531131741-19971-7-git-send-email-kgunda@codeaurora.org>
- <e5bdf2fe-321a-f2e5-22f5-c886f019ac1a@linaro.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+From: Simon Shields <simon@lineageos.org>
+Subject: [PATCH v3 0/2] Panasonic AN30259A support
+Date: Sun, 22 Jul 2018 00:12:25 +1000
+Message-ID: <20180721141228.2283-1-simon@lineageos.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <e5bdf2fe-321a-f2e5-22f5-c886f019ac1a@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Kiran Gunda <kgunda@codeaurora.org>, bjorn.andersson@linaro.org, jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, jacek.anaszewski@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: Simon Shields <simon@lineageos.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
+Hi,
 
---EeQfGwPcQSOJBaQU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch series adds DT bindings (patch #1) and the corresponding driver
+(patch #2) for the Panasonic AN30259A 3-channel LED driver. AN30259A
+uses an internal clock for controlling brightness/on-off cycles, but
+also supports using an external PWM/clock input. This patch series only
+implements support for the former.
 
-Hi!
+The AN30259A is connected using I2C, and the datasheet is freely
+available[0].
 
-> >@@ -332,6 +529,7 @@ static u32 wled_values(const struct wled_var_cfg *cf=
-g, u32 idx)
-> >  }
-> >  #define	WLED3	3
-> >+#define	WLED4	4
->=20
-> Are these macros always going to define 3 to be 3 and 4 to be 4. If so we
-> probably don't need them (and they should be removed from patch 5/8 too).
->=20
-> There is a degree of nitpicking here however. The rest looks OK to me.
+Changes since v3:
+* Rebased on v4.18-rc3.
+* Drop unnecessary DUTYMAX/MID calculations when blinking:
+ previously I'd thought that the PWM duty values were expressed
+ as a percentage of the maximum current output, but in reality
+ they're a percentage of the current set in the LEDxCC registers. 
+This simplifies the code quite a bit.
+* Corrected MODULE_LICENSE declaration.
+* Return -EINVAL from set_blink if the blink rate is unsupported in
+ hardware.
+* Fix more checkpatch --strict issues.
 
-Really nitpicking, and I don't care much either way, but as natural
-numbering would be 0-based, I'd keep the defines.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Changes since v2:
+* Drop "an30259a:" prefix from bindings and add it in the device driver
+ instead.
+* Use led-controller instead of leds for sample DT binding.
+* Use ":indicator" instead of ":notification" in sample DT binding.
+* Merge an30259a_led_set and an30259a_brightness to
+ an30259a_brightness_set (and same for blink functions).
+* Explain the range limitations of the AN30259A's sloping mode
+ in the code - the AN30259A only has a 7-bit PWM range in slope mode,
+ and the bottom 3 bits are always set.
 
---EeQfGwPcQSOJBaQU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Changes since v1:
+* Documentation formatting/grammar fixes.
+* Use reg property instead of led-sources for leds.
+* Add default-state support.
+* Fix auto-probing when built as a module.
+* Simplified DT parsing code.
+* Use devm version of led_class_register().
+* Fix LED naming scheme.
+* Fixed checkpatch --strict issues.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Cheers,
+Simon
 
-iEYEARECAAYFAltSUlgACgkQMOfwapXb+vKc9wCgl+DW32Mu1D+P2T/k85doKKNP
-auoAn2rci/ZciPj1uUoVBrhTrw4JuCcw
-=H4GY
------END PGP SIGNATURE-----
+[0]: https://www.alliedelec.com/m/d/a9d2b3ee87c2d1a535a41dd747b1c247.pdf
 
---EeQfGwPcQSOJBaQU--
+Simon Shields (2):
+  dt-bindings: leds: document Panasonic AN30259A bindings
+  leds: add Panasonic AN30259A support
+
+ .../bindings/leds/leds-an30259a.txt           |  43 +++
+ drivers/leds/Kconfig                          |  11 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-an30259a.c                  | 365 ++++++++++++++++++
+ 4 files changed, 420 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-an30259a.txt
+ create mode 100644 drivers/leds/leds-an30259a.c
+
+-- 
+2.18.0
