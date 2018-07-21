@@ -1,74 +1,72 @@
 From: Simon Shields <simon@lineageos.org>
-Subject: [PATCH v3 0/2] Panasonic AN30259A support
-Date: Sun, 22 Jul 2018 00:12:25 +1000
-Message-ID: <20180721141228.2283-1-simon@lineageos.org>
+Subject: [PATCH v3 1/2] dt-bindings: leds: document Panasonic AN30259A bindings
+Date: Sun, 22 Jul 2018 00:12:26 +1000
+Message-ID: <20180721141228.2283-2-simon@lineageos.org>
+References: <20180721141228.2283-1-simon@lineageos.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180721141228.2283-1-simon@lineageos.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
 Cc: Simon Shields <simon@lineageos.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
-
-This patch series adds DT bindings (patch #1) and the corresponding driver
-(patch #2) for the Panasonic AN30259A 3-channel LED driver. AN30259A
-uses an internal clock for controlling brightness/on-off cycles, but
-also supports using an external PWM/clock input. This patch series only
-implements support for the former.
-
-The AN30259A is connected using I2C, and the datasheet is freely
-available[0].
-
-Changes since v3:
-* Rebased on v4.18-rc3.
-* Drop unnecessary DUTYMAX/MID calculations when blinking:
- previously I'd thought that the PWM duty values were expressed
- as a percentage of the maximum current output, but in reality
- they're a percentage of the current set in the LEDxCC registers. 
-This simplifies the code quite a bit.
-* Corrected MODULE_LICENSE declaration.
-* Return -EINVAL from set_blink if the blink rate is unsupported in
- hardware.
-* Fix more checkpatch --strict issues.
-
-Changes since v2:
-* Drop "an30259a:" prefix from bindings and add it in the device driver
- instead.
-* Use led-controller instead of leds for sample DT binding.
-* Use ":indicator" instead of ":notification" in sample DT binding.
-* Merge an30259a_led_set and an30259a_brightness to
- an30259a_brightness_set (and same for blink functions).
-* Explain the range limitations of the AN30259A's sloping mode
- in the code - the AN30259A only has a 7-bit PWM range in slope mode,
- and the bottom 3 bits are always set.
-
-Changes since v1:
-* Documentation formatting/grammar fixes.
-* Use reg property instead of led-sources for leds.
-* Add default-state support.
-* Fix auto-probing when built as a module.
-* Simplified DT parsing code.
-* Use devm version of led_class_register().
-* Fix LED naming scheme.
-* Fixed checkpatch --strict issues.
-
-Cheers,
-Simon
-
-[0]: https://www.alliedelec.com/m/d/a9d2b3ee87c2d1a535a41dd747b1c247.pdf
-
-Simon Shields (2):
-  dt-bindings: leds: document Panasonic AN30259A bindings
-  leds: add Panasonic AN30259A support
-
- .../bindings/leds/leds-an30259a.txt           |  43 +++
- drivers/leds/Kconfig                          |  11 +
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-an30259a.c                  | 365 ++++++++++++++++++
- 4 files changed, 420 insertions(+)
+Signed-off-by: Simon Shields <simon@lineageos.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/leds/leds-an30259a.txt           | 43 +++++++++++++++++++
+ 1 file changed, 43 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/leds/leds-an30259a.txt
- create mode 100644 drivers/leds/leds-an30259a.c
 
+diff --git a/Documentation/devicetree/bindings/leds/leds-an30259a.txt b/Documentation/devicetree/bindings/leds/leds-an30259a.txt
+new file mode 100644
+index 000000000000..6ffb861083c0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-an30259a.txt
+@@ -0,0 +1,43 @@
++* Panasonic AN30259A 3-channel LED driver
++
++The AN30259A is a LED controller capable of driving three LEDs independently. It supports
++constant current output and sloping current output modes. The chip is connected over I2C.
++
++Required properties:
++	- compatible: Must be "panasonic,an30259a".
++	- reg: I2C slave address.
++	- #address-cells: Must be 1.
++	- #size-cells: Must be 0.
++
++Each LED is represented as a sub-node of the panasonic,an30259a node.
++
++Required sub-node properties:
++	- reg: Pin that the LED is connected to. Must be 1, 2, or 3.
++
++Optional sub-node properties:
++	- label: see Documentation/devicetree/bindings/leds/common.txt
++	- linux,default-trigger: see Documentation/devicetree/bindings/leds/common.txt
++
++Example:
++led-controller@30 {
++	compatible = "panasonic,an30259a";
++	reg = <0x30>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	led@1 {
++		reg = <1>;
++		linux,default-trigger = "heartbeat";
++		label = "red:indicator";
++	};
++
++	led@2 {
++		reg = <2>;
++		label = "green:indicator";
++	};
++
++	led@3 {
++		reg = <3>;
++		label = "blue:indicator";
++	};
++};
 -- 
 2.18.0
