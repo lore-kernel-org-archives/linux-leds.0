@@ -1,436 +1,132 @@
-From: Simon Shields <simon@lineageos.org>
-Subject: [PATCH v3 2/2] leds: add Panasonic AN30259A support
-Date: Sun, 22 Jul 2018 00:12:27 +1000
-Message-ID: <20180721141228.2283-3-simon@lineageos.org>
-References: <20180721141228.2283-1-simon@lineageos.org>
+From: kgunda@codeaurora.org
+Subject: Re: [PATCH V4 4/8] backlight: qcom-wled: Rename PM8941* to WLED3
+Date: Mon, 23 Jul 2018 11:25:12 +0530
+Message-ID: <cc903e5fb06344731e75f078bdf42401@codeaurora.org>
+References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
+ <1531131741-19971-5-git-send-email-kgunda@codeaurora.org>
+ <9aff8c23-7c72-eaee-9d59-424cd34be4ac@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180721141228.2283-1-simon@lineageos.org>
+In-Reply-To: <9aff8c23-7c72-eaee-9d59-424cd34be4ac@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Simon Shields <simon@lineageos.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: bjorn.andersson@linaro.org, jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-AN30259A is a 3-channel LED driver which uses I2C. It supports timed
-operation via an internal PWM clock, and variable brightness. This
-driver offers support for basic hardware-based blinking and brightness
-control.
-
-The datasheet is freely available:
-https://www.alliedelec.com/m/d/a9d2b3ee87c2d1a535a41dd747b1c247.pdf
-
-Signed-off-by: Simon Shields <simon@lineageos.org>
----
- drivers/leds/Kconfig         |  11 ++
- drivers/leds/Makefile        |   1 +
- drivers/leds/leds-an30259a.c | 365 +++++++++++++++++++++++++++++++++++
- 3 files changed, 377 insertions(+)
- create mode 100644 drivers/leds/leds-an30259a.c
-
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 6e3a998f3370..1567882fd039 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -57,6 +57,17 @@ config LEDS_AAT1290
- 	depends on PINCTRL
- 	help
- 	 This option enables support for the LEDs on the AAT1290.
-+
-+config LEDS_AN30259A
-+	tristate "LED support for Panasonic AN30259A"
-+	depends on LEDS_CLASS && I2C && OF
-+	help
-+	  This option enables support for the AN30259A 3-channel
-+	  LED driver.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called leds-an30259a.
-+
- config LEDS_APU
- 	tristate "Front panel LED support for PC Engines APU/APU2 boards"
- 	depends on LEDS_CLASS
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 420b5d2cfa62..4c1b0054f379 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_LEDS_88PM860X)		+= leds-88pm860x.o
- obj-$(CONFIG_LEDS_AAT1290)		+= leds-aat1290.o
- obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
- obj-$(CONFIG_LEDS_AS3645A)		+= leds-as3645a.o
-+obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
- obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
- obj-$(CONFIG_LEDS_BCM6358)		+= leds-bcm6358.o
- obj-$(CONFIG_LEDS_BD2802)		+= leds-bd2802.o
-diff --git a/drivers/leds/leds-an30259a.c b/drivers/leds/leds-an30259a.c
-new file mode 100644
-index 000000000000..c7b900b388ac
---- /dev/null
-+++ b/drivers/leds/leds-an30259a.c
-@@ -0,0 +1,365 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Driver for Panasonic AN30259A 3-channel LED driver
-+//
-+// Copyright (c) 2018 Simon Shields <simon@lineageos.org>
-+//
-+// Datasheet:
-+// https://www.alliedelec.com/m/d/a9d2b3ee87c2d1a535a41dd747b1c247.pdf
-+
-+#include <linux/i2c.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <uapi/linux/uleds.h>
-+
-+#define MAX_LEDS 3
-+
-+#define REG_SRESET 0x00
-+#define LED_SRESET BIT(0)
-+
-+/* LED power registers */
-+#define REG_LED_ON 0x01
-+#define LED_EN(x) BIT((x) - 1)
-+#define LED_SLOPE(x) BIT(((x) - 1) + 4)
-+
-+#define REG_LEDCC(x) (0x03 + ((x) - 1))
-+
-+/* slope control registers */
-+#define REG_SLOPE(x) (0x06 + ((x) - 1))
-+#define LED_SLOPETIME1(x) (x)
-+#define LED_SLOPETIME2(x) ((x) << 4)
-+
-+#define REG_LEDCNT1(x) (0x09 + (4 * ((x) - 1)))
-+#define LED_DUTYMAX(x) ((x) << 4)
-+#define LED_DUTYMID(x) (x)
-+
-+#define REG_LEDCNT2(x) (0x0A + (4 * ((x) - 1)))
-+#define LED_DELAY(x) ((x) << 4)
-+#define LED_DUTYMIN(x) (x)
-+
-+/* detention time control (length of each slope step) */
-+#define REG_LEDCNT3(x) (0x0B + (4 * ((x) - 1)))
-+#define LED_DT1(x) (x)
-+#define LED_DT2(x) ((x) << 4)
-+
-+#define REG_LEDCNT4(x) (0x0C + (4 * ((x) - 1)))
-+#define LED_DT3(x) (x)
-+#define LED_DT4(x) ((x) << 4)
-+
-+#define REG_MAX 0x14
-+
-+#define BLINK_MAX_TIME 7500 /* ms */
-+#define SLOPE_RESOLUTION 500 /* ms */
-+
-+#define STATE_OFF 0
-+#define STATE_KEEP 1
-+#define STATE_ON 2
-+
-+struct an30259a;
-+
-+struct an30259a_led {
-+	struct an30259a *chip;
-+	struct led_classdev cdev;
-+	u32 num;
-+	u32 default_state;
-+	bool sloping;
-+	char label[LED_MAX_NAME_SIZE];
-+};
-+
-+struct an30259a {
-+	struct mutex mutex; /* held when writing to registers */
-+	struct i2c_client *client;
-+	struct an30259a_led leds[MAX_LEDS];
-+	struct regmap *regmap;
-+	int num_leds;
-+};
-+
-+static int an30259a_brightness_set(struct led_classdev *cdev,
-+				   enum led_brightness brightness)
-+{
-+	struct an30259a_led *led;
-+	int ret;
-+	unsigned int led_on;
-+
-+	led = container_of(cdev, struct an30259a_led, cdev);
-+	mutex_lock(&led->chip->mutex);
-+
-+	ret = regmap_read(led->chip->regmap, REG_LED_ON, &led_on);
-+	if (ret)
-+		goto error;
-+
-+	switch (brightness) {
-+	case LED_OFF:
-+		led_on &= ~LED_EN(led->num);
-+		led_on &= ~LED_SLOPE(led->num);
-+		led->sloping = false;
-+		break;
-+	default:
-+		led_on |= LED_EN(led->num);
-+		if (led->sloping)
-+			led_on |= LED_SLOPE(led->num);
-+		ret = regmap_write(led->chip->regmap, REG_LEDCNT1(led->num),
-+				   LED_DUTYMAX(0xf) | LED_DUTYMID(0xf));
-+		if (ret)
-+			goto error;
-+		break;
-+	}
-+
-+	ret = regmap_write(led->chip->regmap, REG_LED_ON, led_on);
-+	if (ret)
-+		goto error;
-+
-+	ret = regmap_write(led->chip->regmap, REG_LEDCC(led->num),
-+			   brightness);
-+
-+error:
-+	mutex_unlock(&led->chip->mutex);
-+
-+	return ret;
-+}
-+
-+static int an30259a_blink_set(struct led_classdev *cdev,
-+			      unsigned long *delay_off, unsigned long *delay_on)
-+{
-+	struct an30259a_led *led;
-+	int ret, num;
-+	unsigned int led_on, duty;
-+	unsigned long off = *delay_off, on = *delay_on;
-+
-+	led = container_of(cdev, struct an30259a_led, cdev);
-+
-+	mutex_lock(&led->chip->mutex);
-+	num = led->num;
-+
-+	/* slope time can only be a multiple of 500ms. */
-+	if (off % SLOPE_RESOLUTION || on % SLOPE_RESOLUTION) {
-+		ret = -EINVAL;
-+		goto error;
-+	}
-+
-+	/* up to a maximum of 7500ms. */
-+	if (off > BLINK_MAX_TIME || on > BLINK_MAX_TIME) {
-+		ret = -EINVAL;
-+		goto error;
-+	}
-+
-+	/* if no blink specified, default to 1 Hz. */
-+	if (!off && !on) {
-+		*delay_off = off = 500;
-+		*delay_on = on = 500;
-+	}
-+
-+	/* convert into values the HW will understand. */
-+	off /= SLOPE_RESOLUTION;
-+	on /= SLOPE_RESOLUTION;
-+
-+	/* duty min should be zero (=off), delay should be zero. */
-+	ret = regmap_write(led->chip->regmap, REG_LEDCNT2(num),
-+			   LED_DELAY(0) | LED_DUTYMIN(0));
-+	if (ret)
-+		goto error;
-+
-+	/* reset detention time (no "breathing" effect). */
-+	ret = regmap_write(led->chip->regmap, REG_LEDCNT3(num),
-+			   LED_DT1(0) | LED_DT2(0));
-+	if (ret)
-+		goto error;
-+	ret = regmap_write(led->chip->regmap, REG_LEDCNT4(num),
-+			   LED_DT3(0) | LED_DT4(0));
-+	if (ret)
-+		goto error;
-+
-+	/* slope time controls on/off cycle length. */
-+	ret = regmap_write(led->chip->regmap, REG_SLOPE(num),
-+			   LED_SLOPETIME1(off) | LED_SLOPETIME2(on));
-+	if (ret)
-+		goto error;
-+
-+	/* Finally, enable slope mode. */
-+	ret = regmap_read(led->chip->regmap, REG_LED_ON, &led_on);
-+	if (ret)
-+		goto error;
-+
-+	led_on |= LED_SLOPE(num) | LED_EN(led->num);
-+
-+	ret = regmap_write(led->chip->regmap, REG_LED_ON, led_on);
-+
-+	if (!ret)
-+		led->sloping = true;
-+error:
-+	mutex_unlock(&led->chip->mutex);
-+
-+	return ret;
-+}
-+
-+static int an30259a_dt_init(struct i2c_client *client,
-+			    struct an30259a *chip)
-+{
-+	struct device_node *np = client->dev.of_node, *child;
-+	int count, ret;
-+	int i = 0;
-+	const char *str;
-+	struct an30259a_led *led;
-+
-+	count = of_get_child_count(np);
-+	if (!count || count > MAX_LEDS)
-+		return -EINVAL;
-+
-+	for_each_available_child_of_node(np, child) {
-+		u32 source;
-+
-+		ret = of_property_read_u32(child, "reg", &source);
-+		if (ret != 0 || !source || source > MAX_LEDS) {
-+			dev_err(&client->dev, "Couldn't read LED address: %d\n",
-+				ret);
-+			count--;
-+			continue;
-+		}
-+
-+		led = &chip->leds[i];
-+
-+		led->num = source;
-+		led->chip = chip;
-+
-+		if (of_property_read_string(child, "label", &str))
-+			snprintf(led->label, sizeof(led->label), "an30259a::");
-+		else
-+			snprintf(led->label, sizeof(led->label), "an30259a:%s",
-+				 str);
-+
-+		led->cdev.name = led->label;
-+
-+		if (!of_property_read_string(child, "default-state", &str)) {
-+			if (!strcmp(str, "on"))
-+				led->default_state = STATE_ON;
-+			else if (!strcmp(str, "keep"))
-+				led->default_state = STATE_KEEP;
-+			else
-+				led->default_state = STATE_OFF;
-+		}
-+
-+		of_property_read_string(child, "linux,default-trigger",
-+					&led->cdev.default_trigger);
-+
-+		i++;
-+	}
-+
-+	if (!count)
-+		return -EINVAL;
-+
-+	chip->num_leds = i;
-+
-+	return 0;
-+}
-+
-+static const struct regmap_config an30259a_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = REG_MAX,
-+};
-+
-+static void an30259a_init_default_state(struct an30259a_led *led)
-+{
-+	struct an30259a *chip = led->chip;
-+	int led_on, err;
-+
-+	switch (led->default_state) {
-+	case STATE_ON:
-+		led->cdev.brightness = LED_FULL;
-+		break;
-+	case STATE_KEEP:
-+		err = regmap_read(chip->regmap, REG_LED_ON, &led_on);
-+		if (err)
-+			break;
-+
-+		if (!(led_on & LED_EN(led->num))) {
-+			led->cdev.brightness = LED_OFF;
-+			break;
-+		}
-+		regmap_read(chip->regmap, REG_LEDCC(led->num),
-+			    &led->cdev.brightness);
-+		break;
-+	default:
-+		led->cdev.brightness = LED_OFF;
-+	}
-+
-+	an30259a_brightness_set(&led->cdev, led->cdev.brightness);
-+}
-+
-+static int an30259a_probe(struct i2c_client *client)
-+{
-+	struct an30259a *chip;
-+	int i, err;
-+
-+	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	err = an30259a_dt_init(client, chip);
-+	if (err < 0)
-+		return err;
-+
-+	mutex_init(&chip->mutex);
-+	chip->client = client;
-+	i2c_set_clientdata(client, chip);
-+
-+	chip->regmap = devm_regmap_init_i2c(client, &an30259a_regmap_config);
-+
-+	for (i = 0; i < chip->num_leds; i++) {
-+		an30259a_init_default_state(&chip->leds[i]);
-+		chip->leds[i].cdev.brightness_set_blocking =
-+			an30259a_brightness_set;
-+		chip->leds[i].cdev.blink_set = an30259a_blink_set;
-+
-+		err = devm_led_classdev_register(&client->dev,
-+						 &chip->leds[i].cdev);
-+		if (err < 0)
-+			goto exit;
-+	}
-+	return 0;
-+
-+exit:
-+	mutex_destroy(&chip->mutex);
-+	return err;
-+}
-+
-+static int an30259a_remove(struct i2c_client *client)
-+{
-+	struct an30259a *chip = i2c_get_clientdata(client);
-+
-+	mutex_destroy(&chip->mutex);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id an30259a_match_table[] = {
-+	{ .compatible = "panasonic,an30259a", },
-+	{ /* sentinel */ },
-+};
-+
-+MODULE_DEVICE_TABLE(of, an30259a_match_table);
-+
-+static const struct i2c_device_id an30259a_id[] = {
-+	{ "an30259a", 0 },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(i2c, an30259a_id);
-+
-+static struct i2c_driver an30259a_driver = {
-+	.driver = {
-+		.name = "leds-an32059a",
-+		.of_match_table = of_match_ptr(an30259a_match_table),
-+	},
-+	.probe_new = an30259a_probe,
-+	.remove = an30259a_remove,
-+	.id_table = an30259a_id,
-+};
-+
-+module_i2c_driver(an30259a_driver);
-+
-+MODULE_AUTHOR("Simon Shields <simon@lineageos.org>");
-+MODULE_DESCRIPTION("AN32059A LED driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.18.0
+On 2018-07-20 18:53, Daniel Thompson wrote:
+> On 09/07/18 11:22, Kiran Gunda wrote:
+>> Rename the PM8941* references as WLED3 to make the
+>> driver generic and have WLED support for other PMICs.
+>> 
+>> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>> ---
+>> Changes from V3:
+>> 	- Changed the MODULE_DESCRIPTION
+>> 
+>>   drivers/video/backlight/qcom-wled.c | 248 
+>> ++++++++++++++++++------------------
+>>   1 file changed, 125 insertions(+), 123 deletions(-)
+>> 
+>> diff --git a/drivers/video/backlight/qcom-wled.c 
+>> b/drivers/video/backlight/qcom-wled.c
+>> index 0b6d219..3cd6e75 100644
+>> --- a/drivers/video/backlight/qcom-wled.c
+>> +++ b/drivers/video/backlight/qcom-wled.c
+>> @@ -18,77 +18,79 @@
+>>   #include <linux/regmap.h>
+>>     /* From DT binding */
+>> -#define PM8941_WLED_DEFAULT_BRIGHTNESS		2048
+>> +#define WLED_DEFAULT_BRIGHTNESS				2048
+>>   -#define PM8941_WLED_REG_VAL_BASE		0x40
+>> -#define  PM8941_WLED_REG_VAL_MAX		0xFFF
+>> +#define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
+>> +#define WLED3_CTRL_REG_VAL_BASE				0x40
+>>   -#define PM8941_WLED_REG_MOD_EN			0x46
+>> -#define  PM8941_WLED_REG_MOD_EN_BIT		BIT(7)
+>> -#define  PM8941_WLED_REG_MOD_EN_MASK		BIT(7)
+>> +/* WLED3 control registers */
+>> +#define WLED3_CTRL_REG_MOD_EN				0x46
+>> +#define  WLED3_CTRL_REG_MOD_EN_BIT			BIT(7)
+>> +#define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
+>>   -#define PM8941_WLED_REG_SYNC			0x47
+>> -#define  PM8941_WLED_REG_SYNC_MASK		0x07
+>> -#define  PM8941_WLED_REG_SYNC_LED1		BIT(0)
+>> -#define  PM8941_WLED_REG_SYNC_LED2		BIT(1)
+>> -#define  PM8941_WLED_REG_SYNC_LED3		BIT(2)
+>> -#define  PM8941_WLED_REG_SYNC_ALL		0x07
+>> -#define  PM8941_WLED_REG_SYNC_CLEAR		0x00
+>> +#define WLED3_CTRL_REG_FREQ				0x4c
+>> +#define  WLED3_CTRL_REG_FREQ_MASK			0x0f
+>>   -#define PM8941_WLED_REG_FREQ			0x4c
+>> -#define  PM8941_WLED_REG_FREQ_MASK		0x0f
+>> +#define WLED3_CTRL_REG_OVP				0x4d
+>> +#define  WLED3_CTRL_REG_OVP_MASK			0x03
+>>   -#define PM8941_WLED_REG_OVP			0x4d
+>> -#define  PM8941_WLED_REG_OVP_MASK		0x03
+>> +#define WLED3_CTRL_REG_ILIMIT				0x4e
+>> +#define  WLED3_CTRL_REG_ILIMIT_MASK			0x07
+>>   -#define PM8941_WLED_REG_BOOST			0x4e
+>> -#define  PM8941_WLED_REG_BOOST_MASK		0x07
+>> +/* WLED3 sink registers */
+>> +#define WLED3_SINK_REG_SYNC				0x47
+>> +#define  WLED3_SINK_REG_SYNC_MASK			0x07
+>> +#define  WLED3_SINK_REG_SYNC_LED1			BIT(0)
+>> +#define  WLED3_SINK_REG_SYNC_LED2			BIT(1)
+>> +#define  WLED3_SINK_REG_SYNC_LED3			BIT(2)
+>> +#define  WLED3_SINK_REG_SYNC_ALL			0x07
+>> +#define  WLED3_SINK_REG_SYNC_CLEAR			0x00
+>>   -#define PM8941_WLED_REG_SINK			0x4f
+>> -#define  PM8941_WLED_REG_SINK_MASK		0xe0
+>> -#define  PM8941_WLED_REG_SINK_SHFT		0x05
+>> +#define WLED3_SINK_REG_CURR_SINK			0x4f
+>> +#define  WLED3_SINK_REG_CURR_SINK_MASK			0xe0
+>> +#define  WLED3_SINK_REG_CURR_SINK_SHFT			0x05
+>>   -/* Per-'string' registers below */
+>> -#define PM8941_WLED_REG_STR_OFFSET		0x10
+>> +/* WLED3 per-'string' registers below */
+>> +#define WLED3_SINK_REG_STR_OFFSET			0x10
+>>   -#define PM8941_WLED_REG_STR_MOD_EN_BASE		0x60
+>> -#define  PM8941_WLED_REG_STR_MOD_MASK		BIT(7)
+>> -#define  PM8941_WLED_REG_STR_MOD_EN		BIT(7)
+>> +#define WLED3_SINK_REG_STR_MOD_EN_BASE			0x60
+>> +#define  WLED3_SINK_REG_STR_MOD_MASK			BIT(7)
+>> +#define  WLED3_SINK_REG_STR_MOD_EN			BIT(7)
+>>   -#define PM8941_WLED_REG_STR_SCALE_BASE		0x62
+>> -#define  PM8941_WLED_REG_STR_SCALE_MASK		0x1f
+>> +#define WLED3_SINK_REG_STR_FULL_SCALE_CURR		0x62
+>> +#define  WLED3_SINK_REG_STR_FULL_SCALE_CURR_MASK	0x1f
+>>   -#define PM8941_WLED_REG_STR_MOD_SRC_BASE	0x63
+>> -#define  PM8941_WLED_REG_STR_MOD_SRC_MASK	0x01
+>> -#define  PM8941_WLED_REG_STR_MOD_SRC_INT	0x00
+>> -#define  PM8941_WLED_REG_STR_MOD_SRC_EXT	0x01
+>> +#define WLED3_SINK_REG_STR_MOD_SRC_BASE			0x63
+>> +#define  WLED3_SINK_REG_STR_MOD_SRC_MASK		0x01
+>> +#define  WLED3_SINK_REG_STR_MOD_SRC_INT			0x00
+>> +#define  WLED3_SINK_REG_STR_MOD_SRC_EXT			0x01
+>>   -#define PM8941_WLED_REG_STR_CABC_BASE		0x66
+>> -#define  PM8941_WLED_REG_STR_CABC_MASK		BIT(7)
+>> -#define  PM8941_WLED_REG_STR_CABC_EN		BIT(7)
+>> +#define WLED3_SINK_REG_STR_CABC_BASE			0x66
+>> +#define  WLED3_SINK_REG_STR_CABC_MASK			BIT(7)
+>> +#define  WLED3_SINK_REG_STR_CABC_EN			BIT(7)
+>>   -struct pm8941_wled_config {
+>> -	u32 i_boost_limit;
+>> +struct wled_config {
+>> +	u32 boost_i_limit;
+>>   	u32 ovp;
+>>   	u32 switch_freq;
+>>   	u32 num_strings;
+>> -	u32 i_limit;
+>> +	u32 string_i_limit;
+> 
+> This patch implements a grand renaming and I have no objections to
+> including change for boost_i_limit and string_i_limit in it. I'd
+> prefer it to be mentioned in the patch header though.
+> 
+> Once that is done:
+> 
+> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Thanks Daneil. I will include it in the patch header in next series.
