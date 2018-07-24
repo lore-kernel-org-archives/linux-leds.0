@@ -1,132 +1,291 @@
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-Date: Mon, 23 Jul 2018 17:55:21 -0700
-Message-ID: <20180724005521.GG30024@minitux>
-References: <20180714222924.GA2776@amd>
- <20180714223907.GB2776@amd>
- <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
- <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
- <68996338-a902-2b57-0bb9-df274a496b06@gmail.com>
- <20180718075637.GA10279@amd>
- <CAMz4kuJa=s19q7wQFQT1giUe0AN4hpux4PG2koUcnE7q_x7LCQ@mail.gmail.com>
- <20180718120836.GB23157@amd>
- <47b1b143-48dd-a265-c2af-254dda53a2cc@lechnology.com>
- <8e51d2f1-0fc0-a968-4f97-3a4e09dd99e0@gmail.com>
+Subject: Re: [PATCH v5 1/2] leds: core: Introduce generic pattern interface
+Date: Mon, 23 Jul 2018 18:06:49 -0700
+Message-ID: <20180724010649.GH30024@minitux>
+References: <05c235df7bbcc4b898e7b263bf38338d9c822005.1531711385.git.baolin.wang@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <8e51d2f1-0fc0-a968-4f97-3a4e09dd99e0@gmail.com>
+In-Reply-To: <05c235df7bbcc4b898e7b263bf38338d9c822005.1531711385.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: David Lechner <david@lechnology.com>, Pavel Machek <pavel@ucw.cz>, Baolin Wang <baolin.wang@linaro.org>, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, david@lechnology.com, broonie@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Fri 20 Jul 12:11 PDT 2018, Jacek Anaszewski wrote:
+On Mon 16 Jul 04:10 PDT 2018, Baolin Wang wrote:
 
-> Hi David,
+> From: Bjorn Andersson <bjorn.andersson@linaro.org>
 > 
-> On 07/18/2018 07:00 PM, David Lechner wrote:
-> > 
-> > 
-> > On 7/18/18 7:08 AM, Pavel Machek wrote:
-> > > On Wed 2018-07-18 19:32:01, Baolin Wang wrote:
-> > > > On 18 July 2018 at 15:56, Pavel Machek <pavel@ucw.cz> wrote:
-> > > > > Hi!
-> > > > > 
-> > > > > > > > > > I believe I meant "changing patterns
-> > > > > > > > > > from kernel in response to events
-> > > > > > > > > > is probably overkill"... or something like that.
-> > > > > > > > > 
-> > > > > > > > > Anyway -- to clean up the confusion -- I'd like to see
-> > > > > > > > > 
-> > > > > > > > > echo pattern > trigger
-> > > > > > > > > echo "1 2 3 4 5 6 7 8" > somewhere
-> > > > > > > > 
-> > > > > > > > s/somewhere/pattern/
-> > > > > > > > 
-> > > > > > > > pattern trigger should create "pattern" file
-> > > > > > > > similarly how ledtrig-timer
-> > > > > > > > creates delay_{on|off} files.
-> > > > > 
-> > > > > Yes, that sounds reasonable. v5 still says
-> > > > > 
-> > > > > +               Writing non-empty string to this file will
-> > > > > activate the pattern,
-> > > > > +               and empty string will disable the pattern.
-> > > > > 
-> > > > > I'd deactivate the pattern by simply writing something else to the
-> > > > > trigger file.
-> > > > 
-> > > > For the case we met in patch 2, it is not related with trigger things.
-> > > > We just set some series of tuples including brightness and duration
-> > > > (ms) to the hardware to enable the breath mode of the LED, we did not
-> > > > trigger anything. So it is weird to write something to trigger file to
-> > > > deactive the pattern.
-> > > 
-> > > Confused. I thought that "breathing mode" would be handled similar way
-> > > to hardware blinking: userland selects pattern trigger, pattern file
-> > > appears (similar way to delay_on/delay_off files with blinking), he
-> > > configures it, hardware brightness follows the pattern ("breathing
-> > > mode"). If pattern is no longer required, echo none > trigger stops
-> > > it.
-> > >                                     Pavel
-> > > 
-> > 
-> > I was confused too when I first read this thread. But after reviewing
-> > v5, it is clear that this is _not_ a trigger (and it should not be a
-> > trigger). This is basically the equivalent the brightness attribute -
-> > except that now the brightness changes over time instead of being a
-> > constant value.
+> Some LED controllers have support for autonomously controlling
+> brightness over time, according to some preprogrammed pattern or
+> function.
 > 
-> Pattern trigger would be just more flexible version of existing
-> ledtrig-timer.c, which also changes brightness over time.
+> This adds a new optional operator that LED class drivers can implement
+> if they support such functionality as well as a new device attribute to
+> configure the pattern for a given LED.
 > 
-> Trigger, by definition, is a kernel based source of LED events,
-> so timer trigger falls under this definition, same way as pattern
-> trigger would.
+> [Baolin Wang did some improvements.]
 > 
-> What may cause confusion is the possibility of exploiting hardware
-> capabilities, in case the requested settings fit in.
-> ledtrig-timer fathom the hardware capabilities using blink_set op,
-> and pattern trigger would use pattern_set op for that purpose.
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+
+I'm happy to see that you found this patch useful and think the patch
+looks good.
+
+> ---
+> Changes from v4:
+>  - Fix some typos.
+>  - Check if pattern_clear() is initialized.
 > 
-
-For the use cases I had in mind it's perfectly fine to describe this as
-a trigger.
-
-But that said, I rather quickly started playing around with associating
-patterns to trigger events; e.g. having a continuous pulse associated
-with the bluetooth "power" trigger or defining a smooth rampdown for the
-mmc activity trigger.
-
-> > This way, the pattern can be used in conjunction with triggers.
-> > 
-> > For example, one might want to set the _pattern_ to something like a
-> > "breathe" pattern and set the _trigger_ to the power supply charging
-> > full trigger. This way, the LED will be off until the battery is full
-> > and then the LED will "breath" when the battery is full.
+> Changes from v3:
+>  - Move the check in pattern_show() to of_led_classdev_register().
+>  - Add more documentation to explain how to set/clear one pattern.
 > 
-> AFAICS you comprehend "pattern trigger" notion as a LED trigger that
-> activates pattern functionality. I'd say that you'd need a specialized
-> "battery" trigger for that purpose, that instead of calling
-> led_set_brightness_nosleep() would schedule call to
-> led_trigger_set(led_cdev "pattern"), assuming that pattern trigger
-> would be implemented as I explained above.
+> Changes from v2:
+>  - Change kernel version to 4.19.
+>  - Force user to return error pointer if failed to issue pattern_get().
+>  - Use strstrip() to trim trailing newline.
+>  - Other optimization.
 > 
+> Changes from v1:
+>  - Add some comments suggested by Pavel.
+>  - Change 'delta_t' can be 0.
+> 
+> Note: I removed the pattern repeat check and will get the repeat number by adding
+> one extra file named 'pattern_repeat' according to previous discussion.
 
-Presumably the battery logic has a number of states; low batter
-discharging, low battery charging, full battery, levels in-between.
-
-Defining the levels for these and an appropriate UX seems like a job for
-something with a little bit of configurability and product specific
-logic. The transitions here would need to reconfigure the pattern, so it
-doesn't seem unreasonable for it to also set the pattern trigger.
-
-
-I'm not sure this logic does belong in the kernel, but I think that
-question is of less importance for the design of this.
+In the Qualcomm LPG it's possible to specify if the pattern should be
+run through once of repeated continuously, so if you provide the means
+to control this by a separately I don't see a problem with this.
 
 Regards,
 Bjorn
+
+> ---
+>  Documentation/ABI/testing/sysfs-class-led |   20 +++++
+>  drivers/leds/led-class.c                  |  118 +++++++++++++++++++++++++++++
+>  include/linux/leds.h                      |   19 +++++
+>  3 files changed, 157 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+> index 5f67f7a..a040fd0 100644
+> --- a/Documentation/ABI/testing/sysfs-class-led
+> +++ b/Documentation/ABI/testing/sysfs-class-led
+> @@ -61,3 +61,23 @@ Description:
+>  		gpio and backlight triggers. In case of the backlight trigger,
+>  		it is useful when driving a LED which is intended to indicate
+>  		a device in a standby like state.
+> +
+> +What: /sys/class/leds/<led>/pattern
+> +Date:		July 2018
+> +KernelVersion:	4.19
+> +Description:
+> +		Specify a pattern for the LED, for LED hardware that support
+> +		altering the brightness as a function of time.
+> +
+> +		The pattern is given by a series of tuples, of brightness and
+> +		duration (ms). The LED is expected to traverse the series and
+> +		each brightness value for the specified duration. Duration of
+> +		0 means brightness should immediately change to new value.
+> +
+> +		As LED hardware might have different capabilities and precision
+> +		the requested pattern might be slighly adjusted by the driver
+> +		and the resulting pattern of such operation should be returned
+> +		when this file is read.
+> +
+> +		Writing non-empty string to this file will activate the pattern,
+> +		and empty string will disable the pattern.
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 3c7e348..5c6d2e9 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -74,6 +74,118 @@ static ssize_t max_brightness_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RO(max_brightness);
+>  
+> +static ssize_t pattern_show(struct device *dev,
+> +			    struct device_attribute *attr, char *buf)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct led_pattern *pattern;
+> +	size_t offset = 0;
+> +	int count, n, i;
+> +
+> +	pattern = led_cdev->pattern_get(led_cdev, &count);
+> +	if (IS_ERR(pattern))
+> +		return PTR_ERR(pattern);
+> +
+> +	for (i = 0; i < count; i++) {
+> +		n = snprintf(buf + offset, PAGE_SIZE - offset, "%d %d ",
+> +			     pattern[i].brightness, pattern[i].delta_t);
+> +
+> +		if (offset + n >= PAGE_SIZE)
+> +			goto err_nospc;
+> +
+> +		offset += n;
+> +	}
+> +
+> +	buf[offset - 1] = '\n';
+> +
+> +	kfree(pattern);
+> +	return offset;
+> +
+> +err_nospc:
+> +	kfree(pattern);
+> +	return -ENOSPC;
+> +}
+> +
+> +static ssize_t pattern_store(struct device *dev,
+> +			     struct device_attribute *attr,
+> +			     const char *buf, size_t size)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct led_pattern *pattern = NULL;
+> +	char *sbegin, *elem, *s;
+> +	unsigned long val;
+> +	int ret = 0, len = 0;
+> +	bool odd = true;
+> +
+> +	sbegin = kstrndup(buf, size, GFP_KERNEL);
+> +	if (!sbegin)
+> +		return -ENOMEM;
+> +
+> +	/*
+> +	 * Trim trailing newline, if the remaining string is empty,
+> +	 * clear the pattern.
+> +	 */
+> +	s = strstrip(sbegin);
+> +	if (!*s) {
+> +		ret = led_cdev->pattern_clear(led_cdev);
+> +		goto out;
+> +	}
+> +
+> +	pattern = kcalloc(size, sizeof(*pattern), GFP_KERNEL);
+> +	if (!pattern) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	/* Parse out the brightness & delta_t touples */
+> +	while ((elem = strsep(&s, " ")) != NULL) {
+> +		ret = kstrtoul(elem, 10, &val);
+> +		if (ret)
+> +			goto out;
+> +
+> +		if (odd) {
+> +			pattern[len].brightness = val;
+> +		} else {
+> +			pattern[len].delta_t = val;
+> +			len++;
+> +		}
+> +
+> +		odd = !odd;
+> +	}
+> +
+> +	/*
+> +	 * Fail if we didn't find any data points or last data point was partial
+> +	 */
+> +	if (!len || !odd) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	ret = led_cdev->pattern_set(led_cdev, pattern, len);
+> +
+> +out:
+> +	kfree(pattern);
+> +	kfree(sbegin);
+> +	return ret < 0 ? ret : size;
+> +}
+> +static DEVICE_ATTR_RW(pattern);
+> +
+> +static umode_t led_class_attrs_mode(struct kobject *kobj,
+> +				    struct attribute *attr, int index)
+> +{
+> +	struct device *dev = container_of(kobj, struct device, kobj);
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +
+> +	if (attr == &dev_attr_brightness.attr)
+> +		return attr->mode;
+> +	if (attr == &dev_attr_max_brightness.attr)
+> +		return attr->mode;
+> +	if (attr == &dev_attr_pattern.attr && led_cdev->pattern_set)
+> +		return attr->mode;
+> +
+> +	return 0;
+> +}
+> +
+>  #ifdef CONFIG_LEDS_TRIGGERS
+>  static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
+>  static struct attribute *led_trigger_attrs[] = {
+> @@ -88,11 +200,13 @@ static ssize_t max_brightness_show(struct device *dev,
+>  static struct attribute *led_class_attrs[] = {
+>  	&dev_attr_brightness.attr,
+>  	&dev_attr_max_brightness.attr,
+> +	&dev_attr_pattern.attr,
+>  	NULL,
+>  };
+>  
+>  static const struct attribute_group led_group = {
+>  	.attrs = led_class_attrs,
+> +	.is_visible = led_class_attrs_mode,
+>  };
+>  
+>  static const struct attribute_group *led_groups[] = {
+> @@ -256,6 +370,10 @@ int of_led_classdev_register(struct device *parent, struct device_node *np,
+>  	char name[LED_MAX_NAME_SIZE];
+>  	int ret;
+>  
+> +	if (led_cdev->pattern_set &&
+> +	    (!led_cdev->pattern_get || !led_cdev->pattern_clear))
+> +		return -EINVAL;
+> +
+>  	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
+>  	if (ret < 0)
+>  		return ret;
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index b7e8255..5f1c751 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -22,6 +22,7 @@
+>  #include <linux/workqueue.h>
+>  
+>  struct device;
+> +struct led_pattern;
+>  /*
+>   * LED Core
+>   */
+> @@ -88,6 +89,14 @@ struct led_classdev {
+>  				     unsigned long *delay_on,
+>  				     unsigned long *delay_off);
+>  
+> +	int (*pattern_set)(struct led_classdev *led_cdev,
+> +			   struct led_pattern *pattern, int len);
+> +
+> +	int (*pattern_clear)(struct led_classdev *led_cdev);
+> +
+> +	struct led_pattern *(*pattern_get)(struct led_classdev *led_cdev,
+> +					   int *len);
+> +
+>  	struct device		*dev;
+>  	const struct attribute_group	**groups;
+>  
+> @@ -446,4 +455,14 @@ static inline void led_classdev_notify_brightness_hw_changed(
+>  	struct led_classdev *led_cdev, enum led_brightness brightness) { }
+>  #endif
+>  
+> +/**
+> + * struct led_pattern - brightness value in a pattern
+> + * @delta_t: delay until next entry, in milliseconds
+> + * @brightness: brightness at time = 0
+> + */
+> +struct led_pattern {
+> +	int delta_t;
+> +	int brightness;
+> +};
+> +
+>  #endif		/* __LINUX_LEDS_H_INCLUDED */
+> -- 
+> 1.7.9.5
+> 
