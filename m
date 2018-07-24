@@ -1,117 +1,132 @@
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-Date: Mon, 23 Jul 2018 17:35:51 -0700
-Message-ID: <20180724003551.GF30024@minitux>
-References: <8da1b769-8aa3-9698-467a-2e7b0707fecf@gmail.com>
- <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
- <20180714212033.GA31950@amd>
- <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
- <20180714222924.GA2776@amd>
+Date: Mon, 23 Jul 2018 17:55:21 -0700
+Message-ID: <20180724005521.GG30024@minitux>
+References: <20180714222924.GA2776@amd>
  <20180714223907.GB2776@amd>
  <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
  <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
  <68996338-a902-2b57-0bb9-df274a496b06@gmail.com>
- <20180716215616.GB10734@amd>
+ <20180718075637.GA10279@amd>
+ <CAMz4kuJa=s19q7wQFQT1giUe0AN4hpux4PG2koUcnE7q_x7LCQ@mail.gmail.com>
+ <20180718120836.GB23157@amd>
+ <47b1b143-48dd-a265-c2af-254dda53a2cc@lechnology.com>
+ <8e51d2f1-0fc0-a968-4f97-3a4e09dd99e0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180716215616.GB10734@amd>
+In-Reply-To: <8e51d2f1-0fc0-a968-4f97-3a4e09dd99e0@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, David Lechner <david@lechnology.com>, Baolin Wang <baolin.wang@linaro.org>, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: David Lechner <david@lechnology.com>, Pavel Machek <pavel@ucw.cz>, Baolin Wang <baolin.wang@linaro.org>, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Mon 16 Jul 14:56 PDT 2018, Pavel Machek wrote:
+On Fri 20 Jul 12:11 PDT 2018, Jacek Anaszewski wrote:
 
-> Hi!
+> Hi David,
 > 
-> > >>>echo pattern > trigger
-> > >>>echo "1 2 3 4 5 6 7 8" > somewhere
-> > >>
-> > >>s/somewhere/pattern/
-> > >>
-> > >>pattern trigger should create "pattern" file similarly how ledtrig-timer
-> > >>creates delay_{on|off} files.
-> > >>
-> > >
-> > >I don't think this is the best way. For example, if you want more than one
-> > >LED to have the same pattern, then the patterns will not be synchronized
-> > >between the LEDs. The same things happens now with many of the existing
-> > >triggers. For example, if I have two LEDs side-by-side using the heartbeat
-> > >trigger, they may blink at the same time or they may not, which is not
-> > >very nice. I think we can make something better.
-> 
-> Yes, synchronization would be nice -- it is really a must for RGB LEDs
-> -- but I believe it is too much to ask from Baolin at the moment.
-> 
-
-In my work on the Qualcomm LPG (which I should finish up and resend) I
-described the RGB as a single LED, with the color configured by Pavel's
-suggested HSV interface. This single LED would be given one pattern.
-
-This works fine for the typical use cases we've seen so far, but would
-not be enough to describe transitions between colors.
-
-I believe that a reasonable solution to this would be to extend the
-pattern to allow each value in the list to contain data for more than
-one channel - something that should be reasonable to add on top of this
-suggestion.
-
-> > It is virtually impossible to enforce synchronous blinking for the
-> > LEDs driven by different hardware due to:
+> On 07/18/2018 07:00 PM, David Lechner wrote:
 > > 
-> > - different hardware means via which brightness is set (MMIO, I2C, SPI,
-> >   PWM and other pulsed fashion based protocols),
-> > - the need for deferring brightness setting to a workqueue task to
-> >   allow for setting LED brightness from atomic context,
-> > - contention on locks
-> 
-> I disagree here. Yes, it would be hard to synchronize blinking down to
-> microseconds, but it would be easy to get synchronization right down
-> to miliseconds and humans will not be able to tell the difference.
-> 
-
-I like the HSV approach for exposing multi color LEDs and we should be
-able to provide a "virtual" LED that groups some number of LEDs into
-one, to represent this use case when the hardware doesn't do directly.
-
-In such cases it would work quite weel to use the proposed pattern
-interface for setting the pattern of this virtual LED and having it
-cascade the pattern into the individual LEDs and then start them at
-about the same time...
-
-> > For the LEDs driven by the same chip it would make more sense
-> > to allow for synchronization, but it can be achieved on driver
-> > level, with help of some subsystem level interface to indicate
-> > which LEDs should be synchronized.
 > > 
-> > However, when we start to pretend that we can synchronize the
-> > devices, we must answer how accurate we can be. The accuracy
-> > will decrease as blink frequency rises. We'd need to define
-> > reliability limit.
+> > On 7/18/18 7:08 AM, Pavel Machek wrote:
+> > > On Wed 2018-07-18 19:32:01, Baolin Wang wrote:
+> > > > On 18 July 2018 at 15:56, Pavel Machek <pavel@ucw.cz> wrote:
+> > > > > Hi!
+> > > > > 
+> > > > > > > > > > I believe I meant "changing patterns
+> > > > > > > > > > from kernel in response to events
+> > > > > > > > > > is probably overkill"... or something like that.
+> > > > > > > > > 
+> > > > > > > > > Anyway -- to clean up the confusion -- I'd like to see
+> > > > > > > > > 
+> > > > > > > > > echo pattern > trigger
+> > > > > > > > > echo "1 2 3 4 5 6 7 8" > somewhere
+> > > > > > > > 
+> > > > > > > > s/somewhere/pattern/
+> > > > > > > > 
+> > > > > > > > pattern trigger should create "pattern" file
+> > > > > > > > similarly how ledtrig-timer
+> > > > > > > > creates delay_{on|off} files.
+> > > > > 
+> > > > > Yes, that sounds reasonable. v5 still says
+> > > > > 
+> > > > > +               Writing non-empty string to this file will
+> > > > > activate the pattern,
+> > > > > +               and empty string will disable the pattern.
+> > > > > 
+> > > > > I'd deactivate the pattern by simply writing something else to the
+> > > > > trigger file.
+> > > > 
+> > > > For the case we met in patch 2, it is not related with trigger things.
+> > > > We just set some series of tuples including brightness and duration
+> > > > (ms) to the hardware to enable the breath mode of the LED, we did not
+> > > > trigger anything. So it is weird to write something to trigger file to
+> > > > deactive the pattern.
+> > > 
+> > > Confused. I thought that "breathing mode" would be handled similar way
+> > > to hardware blinking: userland selects pattern trigger, pattern file
+> > > appears (similar way to delay_on/delay_off files with blinking), he
+> > > configures it, hardware brightness follows the pattern ("breathing
+> > > mode"). If pattern is no longer required, echo none > trigger stops
+> > > it.
+> > >                                     Pavel
+> > > 
+> > 
+> > I was confused too when I first read this thread. But after reviewing
+> > v5, it is clear that this is _not_ a trigger (and it should not be a
+> > trigger). This is basically the equivalent the brightness attribute -
+> > except that now the brightness changes over time instead of being a
+> > constant value.
 > 
-> We don't need _that_ ammount of overengineering. We just need to
-> synchronize them well enough :-).
+> Pattern trigger would be just more flexible version of existing
+> ledtrig-timer.c, which also changes brightness over time.
 > 
-> > We've had few attempts of approaching the subject of synchronized
-> > blinking but none of them proved to be good enough to be merged.
+> Trigger, by definition, is a kernel based source of LED events,
+> so timer trigger falls under this definition, same way as pattern
+> trigger would.
 > 
-> I'm sure interested person could do something like that in less than
-> two weeks fulltime... It is not rocket science, just a lot of work in
-> kernel... 
+> What may cause confusion is the possibility of exploiting hardware
+> capabilities, in case the requested settings fit in.
+> ledtrig-timer fathom the hardware capabilities using blink_set op,
+> and pattern trigger would use pattern_set op for that purpose.
 > 
 
-With the Qualcomm LPG driver I expect the hardware description to group
-the channels of a RGB and as such the driver will synchronize the
-pattern execution when the output is enabled.
+For the use cases I had in mind it's perfectly fine to describe this as
+a trigger.
 
-> But patterns are few years overdue and I believe we should not delay
-> them any further.
+But that said, I rather quickly started playing around with associating
+patterns to trigger events; e.g. having a continuous pulse associated
+with the bluetooth "power" trigger or defining a smooth rampdown for the
+mmc activity trigger.
+
+> > This way, the pattern can be used in conjunction with triggers.
+> > 
+> > For example, one might want to set the _pattern_ to something like a
+> > "breathe" pattern and set the _trigger_ to the power supply charging
+> > full trigger. This way, the LED will be off until the battery is full
+> > and then the LED will "breath" when the battery is full.
+> 
+> AFAICS you comprehend "pattern trigger" notion as a LED trigger that
+> activates pattern functionality. I'd say that you'd need a specialized
+> "battery" trigger for that purpose, that instead of calling
+> led_set_brightness_nosleep() would schedule call to
+> led_trigger_set(led_cdev "pattern"), assuming that pattern trigger
+> would be implemented as I explained above.
 > 
 
-Sorry for not prioritizing reworking this patch based on your suggestion
-of describing it as a trigger, I still think this sounds reasonable.
+Presumably the battery logic has a number of states; low batter
+discharging, low battery charging, full battery, levels in-between.
+
+Defining the levels for these and an appropriate UX seems like a job for
+something with a little bit of configurability and product specific
+logic. The transitions here would need to reconfigure the pattern, so it
+doesn't seem unreasonable for it to also set the pattern trigger.
+
+
+I'm not sure this logic does belong in the kernel, but I think that
+question is of less importance for the design of this.
 
 Regards,
 Bjorn
