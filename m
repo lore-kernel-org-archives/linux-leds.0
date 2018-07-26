@@ -1,67 +1,54 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-Date: Tue, 24 Jul 2018 13:50:29 +0200
-Message-ID: <20180724115029.GB26036@amd>
-References: <20180714223907.GB2776@amd>
- <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
- <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
- <68996338-a902-2b57-0bb9-df274a496b06@gmail.com>
- <20180718075637.GA10279@amd>
- <913151e4-c19f-9a22-697c-52a9fb48cb32@gmail.com>
- <0e0cd8f7-dc73-6733-65f2-9a14506b0f0e@gmail.com>
- <20180718221717.GA5451@amd>
- <20180719202005.GA7763@amd>
- <CAMz4kuKGcnDqyF29vGDqjRDMWmmk=c=QVQExYrx_Ymomm3qh+g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] leds: add Panasonic AN30259A support
+Date: Thu, 26 Jul 2018 09:44:49 +0200
+Message-ID: <20180726074449.GB4872@amd>
+References: <20180721141228.2283-1-simon@lineageos.org>
+ <20180721141228.2283-3-simon@lineageos.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IiVenqGWf+H9Y6IX"
+        protocol="application/pgp-signature"; boundary="uQr8t48UFsdbeI+V"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMz4kuKGcnDqyF29vGDqjRDMWmmk=c=QVQExYrx_Ymomm3qh+g@mail.gmail.com>
+In-Reply-To: <20180721141228.2283-3-simon@lineageos.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, David Lechner <david@lechnology.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Simon Shields <simon@lineageos.org>
+Cc: linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
 
---IiVenqGWf+H9Y6IX
+--uQr8t48UFsdbeI+V
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Sun 2018-07-22 00:12:27, Simon Shields wrote:
+> AN30259A is a 3-channel LED driver which uses I2C. It supports timed
+> operation via an internal PWM clock, and variable brightness. This
+> driver offers support for basic hardware-based blinking and brightness
+> control.
+>=20
+> The datasheet is freely available:
+> https://www.alliedelec.com/m/d/a9d2b3ee87c2d1a535a41dd747b1c247.pdf
+>=20
+> Signed-off-by: Simon Shields <simon@lineageos.org>
 
-> Thanks for showing your thoughts. But I failed to compile your code,
-> would you like to send out formal patches (Or only including software
-> pattern, I will help to add hardware pattern part and do some testing
-> with our driver)? Thanks.
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-Random thoughts:
-
-I am not sure "struct led_pattern" makes sense. Maybe array of
-integers would be enough? Should we have structure with whole array
-and length of the pattern?
-
-struct led_pattern {
-       int len;
-       struct led_pattern steps[];
-}
-									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---IiVenqGWf+H9Y6IX
+--uQr8t48UFsdbeI+V
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAltXEoUACgkQMOfwapXb+vJevwCcDDL5WHbHc6p8n8hwo+Ez8mSM
-p48An3ZN6n7oYAPg/OVMhhySBVsYlUgR
-=Q6GI
+iEYEARECAAYFAltZe/EACgkQMOfwapXb+vJvlwCbBXb2+g0cgKex/IjaREEUND6w
+RKUAn3H8s5I6vHOaVpE+zHBQ6XP3ScOA
+=/a69
 -----END PGP SIGNATURE-----
 
---IiVenqGWf+H9Y6IX--
+--uQr8t48UFsdbeI+V--
