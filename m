@@ -1,202 +1,49 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH 2/2] leds: sc27xx: Add pattern_set/get/clear interfaces for LED controller
-Date: Mon, 30 Jul 2018 20:29:30 +0800
-Message-ID: <3ed70a68eaa6318c9afb2536956f4886c10a2764.1532953083.git.baolin.wang@linaro.org>
-References: <e74c21120d89dd645377761e6c9995eab6eb00ca.1532953083.git.baolin.wang@linaro.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH] leds: add APU3 dmi information to leds-apu
+Date: Mon, 30 Jul 2018 16:14:31 +0200
+Message-ID: <20180730141431.GA24051@amd>
+References: <20180730091108.30098-1-fe@dev.tdt.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e74c21120d89dd645377761e6c9995eab6eb00ca.1532953083.git.baolin.wang@linaro.org>
-In-Reply-To: <e74c21120d89dd645377761e6c9995eab6eb00ca.1532953083.git.baolin.wang@linaro.org>
-References: <e74c21120d89dd645377761e6c9995eab6eb00ca.1532953083.git.baolin.wang@linaro.org>
+Content-Disposition: inline
+In-Reply-To: <20180730091108.30098-1-fe@dev.tdt.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: bjorn.andersson@linaro.org, david@lechnology.com, baolin.wang@linaro.org, broonie@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Florian Eckert <fe@dev.tdt.de>
+Cc: jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Eckert.Florian@googlemail.com
 List-Id: linux-leds@vger.kernel.org
 
-This patch implements the 'pattern_set', 'pattern_get' and 'pattern_clear'
-interfaces to support SC27XX LED breathing mode.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/leds/leds-sc27xx-bltc.c |  151 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 151 insertions(+)
+--AhhlLboLdkugWU4S
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index 9d9b7aa..ebe23e1 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -32,8 +32,13 @@
- #define SC27XX_DUTY_MASK	GENMASK(15, 0)
- #define SC27XX_MOD_MASK		GENMASK(7, 0)
- 
-+#define SC27XX_CURVE_SHIFT	8
-+#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
-+#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
-+
- #define SC27XX_LEDS_OFFSET	0x10
- #define SC27XX_LEDS_MAX		3
-+#define SC27XX_LEDS_PATTERN_CNT	4
- 
- struct sc27xx_led {
- 	char name[LED_MAX_NAME_SIZE];
-@@ -122,6 +127,148 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
- 	return err;
- }
- 
-+static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	struct regmap *regmap = leds->priv->regmap;
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	int err;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	/* Reset the rise, high, fall and low time to zero. */
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
-+
-+	err = regmap_update_bits(regmap, ctrl_base,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static int sc27xx_led_pattern_set(struct led_classdev *ldev,
-+				  struct led_pattern *pattern,
-+				  int len, u32 repeat)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	/*
-+	 * Must contain 4 patterns to configure the rise time, high time, fall
-+	 * time and low time to enable the breathing mode.
-+	 */
-+	if (len != SC27XX_LEDS_PATTERN_CNT)
-+		return -EINVAL;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_L_MASK, pattern[0].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_L_MASK, pattern[1].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[2].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[3].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
-+				 SC27XX_DUTY_MASK,
-+				 (pattern[0].brightness << SC27XX_DUTY_SHIFT) |
-+				 SC27XX_MOD_MASK);
-+	if (err)
-+		goto out;
-+
-+	/* Enable the LED breathing mode */
-+	err = regmap_update_bits(regmap, ctrl_base,
-+				 SC27XX_LED_RUN << ctrl_shift,
-+				 SC27XX_LED_RUN << ctrl_shift);
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static int sc27xx_led_pattern_get(struct led_classdev *ldev,
-+				  struct led_pattern *pattern, int *len,
-+				  u32 *repeat)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	struct regmap *regmap = leds->priv->regmap;
-+	int i, err;
-+	u32 val;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE0, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[0].delta_t = val & SC27XX_CURVE_L_MASK;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE1, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[1].delta_t = val & SC27XX_CURVE_L_MASK;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE0, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[2].delta_t = (val & SC27XX_CURVE_H_MASK) >> SC27XX_CURVE_SHIFT;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE1, &val);
-+	if (err)
-+		goto out;
-+
-+	pattern[3].delta_t = (val & SC27XX_CURVE_H_MASK) >> SC27XX_CURVE_SHIFT;
-+
-+	err = regmap_read(regmap, base + SC27XX_LEDS_DUTY, &val);
-+	if (err)
-+		goto out;
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	val = (val & SC27XX_DUTY_MASK) >> SC27XX_DUTY_SHIFT;
-+	for (i = 0; i < SC27XX_LEDS_PATTERN_CNT; i++)
-+		pattern[i].brightness = val;
-+
-+	*len = SC27XX_LEDS_PATTERN_CNT;
-+	*repeat = 0;
-+
-+	return 0;
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
- static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- {
- 	int i, err;
-@@ -140,6 +287,10 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- 		led->priv = priv;
- 		led->ldev.name = led->name;
- 		led->ldev.brightness_set_blocking = sc27xx_led_set;
-+		led->ldev.pattern_set = sc27xx_led_pattern_set;
-+		led->ldev.pattern_get = sc27xx_led_pattern_get;
-+		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
-+		led->ldev.default_trigger = "pattern";
- 
- 		err = devm_led_classdev_register(dev, &led->ldev);
- 		if (err)
--- 
-1.7.9.5
+On Mon 2018-07-30 11:11:08, Florian Eckert wrote:
+> This driver should also get loaded if this is a APU3 from PC Engines.
+> It has the same pin layout for leds.
+>=20
+> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--AhhlLboLdkugWU4S
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltfHUcACgkQMOfwapXb+vK3ywCgjIl/fCx5BA6iYqdoGBZN7rzf
+OI0An3PQwpwaqBy7K4QWbKBzT2KZCttG
+=u87m
+-----END PGP SIGNATURE-----
+
+--AhhlLboLdkugWU4S--
