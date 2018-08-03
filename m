@@ -1,78 +1,79 @@
-From: kgunda@codeaurora.org
+From: Daniel Thompson <daniel.thompson@linaro.org>
 Subject: Re: [PATCH V4 0/8] backlight: qcom-wled: Support for QCOM wled driver
-Date: Fri, 03 Aug 2018 12:49:34 +0530
-Message-ID: <519913ec490934931b1c0b3a4539c283@codeaurora.org>
+Date: Fri, 3 Aug 2018 08:45:03 +0100
+Message-ID: <20180803074503.xvjvllsejw7xq3ox@holly.lan>
 References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
+ <519913ec490934931b1c0b3a4539c283@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org, jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <519913ec490934931b1c0b3a4539c283@codeaurora.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: kgunda@codeaurora.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, jingoohan1@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, bjorn.andersson@linaro.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-arm-msm@vger.kernel.org, lee.jones@linaro.org, linux-arm-msm-owner@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Bjorn,
-Can you please help review this patch series ?
-
-Pavel, Rob, Daniel reviewed the series except the "auto string 
-detection" patch.
-
-Thanks,
-Kiran
-
-On 2018-07-09 15:52, Kiran Gunda wrote:
-> This patch series renames the pm8941-wled.c driver to qcom-wled.c to 
-> add
-> the support for multiple PMICs supported by qualcomm. This patch series
-> supports both PM8941 and PMI8998 WLED. The PMI8998 WLED has the support
-> to handle the OVP (over voltage protection) and the SC (short circuit
-> protection)
-> interrupts. It also has the auto string detection algorithm support to
-> configure the right strings if the user specified string configuration
-> is in-correct. These three features are added in this series for 
-> PMI8998.
-> 
-> changes from v1:
->    - Fixed the commit message for
->    - backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
-> 
-> Changes from v2:
->    - Fixed bjorn and other reviewer's comments
->    - Seperated the device tree bindings
->    - Splitted out the WLED4 changes in seperate patch
->    - Merged OVP and auto string detection patch
-> 
-> Changes from v3:
->   - Added Reviewed-by/Acked-by tags
->   - Fixed comments from Bjorn/Vinod/Rob
->   - Splitting the "backlight: qcom-wled: Add support for WLED4 
-> peripheral" patch
->     to seperate the WLED3 specific restructure.
-> 
-> Kiran Gunda (8):
->   backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
->   backlight: qcom-wled: restructure the qcom-wled bindings
->   backlight: qcom-wled: Add new properties for PMI8998
->   backlight: qcom-wled: Rename PM8941* to WLED3
->   backlight: qcom-wled: Restructure the driver for WLED3
->   backlight: qcom-wled: Add support for WLED4 peripheral
->   backlight: qcom-wled: add support for short circuit handling
->   backlight: qcom-wled: Add auto string detection logic
-> 
->  .../bindings/leds/backlight/pm8941-wled.txt        |   42 -
->  .../bindings/leds/backlight/qcom-wled.txt          |  150 +++
->  drivers/video/backlight/Kconfig                    |    8 +-
->  drivers/video/backlight/Makefile                   |    2 +-
->  drivers/video/backlight/pm8941-wled.c              |  432 -------
->  drivers/video/backlight/qcom-wled.c                | 1298 
-> ++++++++++++++++++++
->  6 files changed, 1453 insertions(+), 479 deletions(-)
->  delete mode 100644
-> Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
->  create mode 100644
-> Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->  delete mode 100644 drivers/video/backlight/pm8941-wled.c
->  create mode 100644 drivers/video/backlight/qcom-wled.c
+T24gRnJpLCBBdWcgMDMsIDIwMTggYXQgMTI6NDk6MzRQTSArMDUzMCwga2d1bmRhQGNvZGVhdXJv
+cmEub3JnIHdyb3RlOgo+IEhpIEJqb3JuLAo+IENhbiB5b3UgcGxlYXNlIGhlbHAgcmV2aWV3IHRo
+aXMgcGF0Y2ggc2VyaWVzID8KPiAKPiBQYXZlbCwgUm9iLCBEYW5pZWwgcmV2aWV3ZWQgdGhlIHNl
+cmllcyBleGNlcHQgdGhlICJhdXRvIHN0cmluZyBkZXRlY3Rpb24iCj4gcGF0Y2guCgpJIGRpZCB0
+YWtlIGEgZ2xhbmNlIGF0IHRoZSBsYXN0IHBhdGNoLi4uIGJ1dCBpbiB0aGUgZW5kIGRlY2lkZWQg
+dG8gd2FpdApmb3IgdjUgdG8gbG9vayBpbiBkZXB0aC4KCgpEYW5pZWwuCgoKPiAKPiBUaGFua3Ms
+Cj4gS2lyYW4KPiAKPiBPbiAyMDE4LTA3LTA5IDE1OjUyLCBLaXJhbiBHdW5kYSB3cm90ZToKPiA+
+IFRoaXMgcGF0Y2ggc2VyaWVzIHJlbmFtZXMgdGhlIHBtODk0MS13bGVkLmMgZHJpdmVyIHRvIHFj
+b20td2xlZC5jIHRvIGFkZAo+ID4gdGhlIHN1cHBvcnQgZm9yIG11bHRpcGxlIFBNSUNzIHN1cHBv
+cnRlZCBieSBxdWFsY29tbS4gVGhpcyBwYXRjaCBzZXJpZXMKPiA+IHN1cHBvcnRzIGJvdGggUE04
+OTQxIGFuZCBQTUk4OTk4IFdMRUQuIFRoZSBQTUk4OTk4IFdMRUQgaGFzIHRoZSBzdXBwb3J0Cj4g
+PiB0byBoYW5kbGUgdGhlIE9WUCAob3ZlciB2b2x0YWdlIHByb3RlY3Rpb24pIGFuZCB0aGUgU0Mg
+KHNob3J0IGNpcmN1aXQKPiA+IHByb3RlY3Rpb24pCj4gPiBpbnRlcnJ1cHRzLiBJdCBhbHNvIGhh
+cyB0aGUgYXV0byBzdHJpbmcgZGV0ZWN0aW9uIGFsZ29yaXRobSBzdXBwb3J0IHRvCj4gPiBjb25m
+aWd1cmUgdGhlIHJpZ2h0IHN0cmluZ3MgaWYgdGhlIHVzZXIgc3BlY2lmaWVkIHN0cmluZyBjb25m
+aWd1cmF0aW9uCj4gPiBpcyBpbi1jb3JyZWN0LiBUaGVzZSB0aHJlZSBmZWF0dXJlcyBhcmUgYWRk
+ZWQgaW4gdGhpcyBzZXJpZXMgZm9yCj4gPiBQTUk4OTk4Lgo+ID4gCj4gPiBjaGFuZ2VzIGZyb20g
+djE6Cj4gPiAgICAtIEZpeGVkIHRoZSBjb21taXQgbWVzc2FnZSBmb3IKPiA+ICAgIC0gYmFja2xp
+Z2h0OiBxY29tLXdsZWQ6IFJlbmFtZSBwbTg5NDEtd2xlZC5jIHRvIHFjb20td2xlZC5jCj4gPiAK
+PiA+IENoYW5nZXMgZnJvbSB2MjoKPiA+ICAgIC0gRml4ZWQgYmpvcm4gYW5kIG90aGVyIHJldmll
+d2VyJ3MgY29tbWVudHMKPiA+ICAgIC0gU2VwZXJhdGVkIHRoZSBkZXZpY2UgdHJlZSBiaW5kaW5n
+cwo+ID4gICAgLSBTcGxpdHRlZCBvdXQgdGhlIFdMRUQ0IGNoYW5nZXMgaW4gc2VwZXJhdGUgcGF0
+Y2gKPiA+ICAgIC0gTWVyZ2VkIE9WUCBhbmQgYXV0byBzdHJpbmcgZGV0ZWN0aW9uIHBhdGNoCj4g
+PiAKPiA+IENoYW5nZXMgZnJvbSB2MzoKPiA+ICAgLSBBZGRlZCBSZXZpZXdlZC1ieS9BY2tlZC1i
+eSB0YWdzCj4gPiAgIC0gRml4ZWQgY29tbWVudHMgZnJvbSBCam9ybi9WaW5vZC9Sb2IKPiA+ICAg
+LSBTcGxpdHRpbmcgdGhlICJiYWNrbGlnaHQ6IHFjb20td2xlZDogQWRkIHN1cHBvcnQgZm9yIFdM
+RUQ0Cj4gPiBwZXJpcGhlcmFsIiBwYXRjaAo+ID4gICAgIHRvIHNlcGVyYXRlIHRoZSBXTEVEMyBz
+cGVjaWZpYyByZXN0cnVjdHVyZS4KPiA+IAo+ID4gS2lyYW4gR3VuZGEgKDgpOgo+ID4gICBiYWNr
+bGlnaHQ6IHFjb20td2xlZDogUmVuYW1lIHBtODk0MS13bGVkLmMgdG8gcWNvbS13bGVkLmMKPiA+
+ICAgYmFja2xpZ2h0OiBxY29tLXdsZWQ6IHJlc3RydWN0dXJlIHRoZSBxY29tLXdsZWQgYmluZGlu
+Z3MKPiA+ICAgYmFja2xpZ2h0OiBxY29tLXdsZWQ6IEFkZCBuZXcgcHJvcGVydGllcyBmb3IgUE1J
+ODk5OAo+ID4gICBiYWNrbGlnaHQ6IHFjb20td2xlZDogUmVuYW1lIFBNODk0MSogdG8gV0xFRDMK
+PiA+ICAgYmFja2xpZ2h0OiBxY29tLXdsZWQ6IFJlc3RydWN0dXJlIHRoZSBkcml2ZXIgZm9yIFdM
+RUQzCj4gPiAgIGJhY2tsaWdodDogcWNvbS13bGVkOiBBZGQgc3VwcG9ydCBmb3IgV0xFRDQgcGVy
+aXBoZXJhbAo+ID4gICBiYWNrbGlnaHQ6IHFjb20td2xlZDogYWRkIHN1cHBvcnQgZm9yIHNob3J0
+IGNpcmN1aXQgaGFuZGxpbmcKPiA+ICAgYmFja2xpZ2h0OiBxY29tLXdsZWQ6IEFkZCBhdXRvIHN0
+cmluZyBkZXRlY3Rpb24gbG9naWMKPiA+IAo+ID4gIC4uLi9iaW5kaW5ncy9sZWRzL2JhY2tsaWdo
+dC9wbTg5NDEtd2xlZC50eHQgICAgICAgIHwgICA0MiAtCj4gPiAgLi4uL2JpbmRpbmdzL2xlZHMv
+YmFja2xpZ2h0L3Fjb20td2xlZC50eHQgICAgICAgICAgfCAgMTUwICsrKwo+ID4gIGRyaXZlcnMv
+dmlkZW8vYmFja2xpZ2h0L0tjb25maWcgICAgICAgICAgICAgICAgICAgIHwgICAgOCArLQo+ID4g
+IGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L01ha2VmaWxlICAgICAgICAgICAgICAgICAgIHwgICAg
+MiArLQo+ID4gIGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3BtODk0MS13bGVkLmMgICAgICAgICAg
+ICAgIHwgIDQzMiAtLS0tLS0tCj4gPiAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcWNvbS13bGVk
+LmMgICAgICAgICAgICAgICAgfCAxMjk4Cj4gPiArKysrKysrKysrKysrKysrKysrKwo+ID4gIDYg
+ZmlsZXMgY2hhbmdlZCwgMTQ1MyBpbnNlcnRpb25zKCspLCA0NzkgZGVsZXRpb25zKC0pCj4gPiAg
+ZGVsZXRlIG1vZGUgMTAwNjQ0Cj4gPiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+bGVkcy9iYWNrbGlnaHQvcG04OTQxLXdsZWQudHh0Cj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0Cj4g
+PiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvcWNvbS13
+bGVkLnR4dAo+ID4gIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9w
+bTg5NDEtd2xlZC5jCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvdmlkZW8vYmFja2xp
+Z2h0L3Fjb20td2xlZC5jCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
