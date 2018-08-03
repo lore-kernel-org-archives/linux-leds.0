@@ -1,62 +1,78 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 1/2] leds: core: Introduce LED pattern trigger
-Date: Thu, 2 Aug 2018 14:53:40 -0700
-Message-ID: <20180802215340.GP30024@minitux>
-References: <1bf9aed83d1756dd4f81590297ce7e0b9972bf85.1533112637.git.baolin.wang@linaro.org>
- <34c87589-ccaf-e541-7acb-efcf3bd306f6@gmail.com>
+From: kgunda@codeaurora.org
+Subject: Re: [PATCH V4 0/8] backlight: qcom-wled: Support for QCOM wled driver
+Date: Fri, 03 Aug 2018 12:49:34 +0530
+Message-ID: <519913ec490934931b1c0b3a4539c283@codeaurora.org>
+References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <34c87589-ccaf-e541-7acb-efcf3bd306f6@gmail.com>
+In-Reply-To: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Baolin Wang <baolin.wang@linaro.org>, pavel@ucw.cz, rteysseyre@gmail.com, david@lechnology.com, broonie@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: bjorn.andersson@linaro.org, jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Thu 02 Aug 14:21 PDT 2018, Jacek Anaszewski wrote:
-> On 08/01/2018 11:01 AM, Baolin Wang wrote:
-[..]
-> > diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
-[..]
-> > +static ssize_t pattern_trig_store_pattern(struct device *dev,
-> > +					  struct device_attribute *attr,
-> > +					  const char *buf, size_t count)
-> > +{
-> > +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> > +	struct pattern_trig_data *data = led_cdev->trigger_data;
-> > +	int cr, ccount, offset = 0, err = 0;
-> > +
-> > +	if (!data->hardware_pattern)
-> > +		del_timer_sync(&data->timer);
-> > +
-> > +	mutex_lock(&data->lock);
-> > +
-> > +	data->npatterns = 0;
-> > +	while (offset < count - 1 && data->npatterns < MAX_PATTERNS) {
-> > +		cr = 0;
-> > +		ccount = sscanf(buf + offset, "%d %d " PATTERN_SEPARATOR "%n",
-> > +				&data->patterns[data->npatterns].brightness,
-> > +				&data->patterns[data->npatterns].delta_t, &cr);
-> 
-> In case user makes a typo while constructing list of pattern tuples,
-> e.g. he forgets a comma, the pattern gets silently truncated.
-> 
-> User is able to detect the truncation by reading pattern file,
-> but it is not an immediate feedback anyway.
-> 
+Hi Bjorn,
+Can you please help review this patch series ?
 
-I agree, a failure to parse the entire pattern should result in an error
-returned, rather than just silently truncating the pattern.
+Pavel, Rob, Daniel reviewed the series except the "auto string 
+detection" patch.
 
-> I propose that pattern format should require number of tuples in the
-> first position which would allow to get rid of this ambiguity, since
-> we could verify if the number of parsed tuples is as intended.
+Thanks,
+Kiran
+
+On 2018-07-09 15:52, Kiran Gunda wrote:
+> This patch series renames the pm8941-wled.c driver to qcom-wled.c to 
+> add
+> the support for multiple PMICs supported by qualcomm. This patch series
+> supports both PM8941 and PMI8998 WLED. The PMI8998 WLED has the support
+> to handle the OVP (over voltage protection) and the SC (short circuit
+> protection)
+> interrupts. It also has the auto string detection algorithm support to
+> configure the right strings if the user specified string configuration
+> is in-correct. These three features are added in this series for 
+> PMI8998.
 > 
-
-I would prefer to see that we check that we have consumed the entire
-input (accepting optional \n end), rather than having to prepend a count
-to the string...
-
-Regards,
-Bjorn
+> changes from v1:
+>    - Fixed the commit message for
+>    - backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
+> 
+> Changes from v2:
+>    - Fixed bjorn and other reviewer's comments
+>    - Seperated the device tree bindings
+>    - Splitted out the WLED4 changes in seperate patch
+>    - Merged OVP and auto string detection patch
+> 
+> Changes from v3:
+>   - Added Reviewed-by/Acked-by tags
+>   - Fixed comments from Bjorn/Vinod/Rob
+>   - Splitting the "backlight: qcom-wled: Add support for WLED4 
+> peripheral" patch
+>     to seperate the WLED3 specific restructure.
+> 
+> Kiran Gunda (8):
+>   backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
+>   backlight: qcom-wled: restructure the qcom-wled bindings
+>   backlight: qcom-wled: Add new properties for PMI8998
+>   backlight: qcom-wled: Rename PM8941* to WLED3
+>   backlight: qcom-wled: Restructure the driver for WLED3
+>   backlight: qcom-wled: Add support for WLED4 peripheral
+>   backlight: qcom-wled: add support for short circuit handling
+>   backlight: qcom-wled: Add auto string detection logic
+> 
+>  .../bindings/leds/backlight/pm8941-wled.txt        |   42 -
+>  .../bindings/leds/backlight/qcom-wled.txt          |  150 +++
+>  drivers/video/backlight/Kconfig                    |    8 +-
+>  drivers/video/backlight/Makefile                   |    2 +-
+>  drivers/video/backlight/pm8941-wled.c              |  432 -------
+>  drivers/video/backlight/qcom-wled.c                | 1298 
+> ++++++++++++++++++++
+>  6 files changed, 1453 insertions(+), 479 deletions(-)
+>  delete mode 100644
+> Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
+>  create mode 100644
+> Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>  delete mode 100644 drivers/video/backlight/pm8941-wled.c
+>  create mode 100644 drivers/video/backlight/qcom-wled.c
