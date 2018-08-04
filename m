@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [PATCH 1/2] di: bindings: lm3697: Introduce the lm3697 driver
-Date: Sat, 4 Aug 2018 14:18:48 +0200
-Message-ID: <54ff1f05-7f0f-4a6f-a67c-d671056fa137@gmail.com>
+Date: Sat, 4 Aug 2018 14:22:08 +0200
+Message-ID: <b22bf013-f83c-12c1-90e5-8b0dc4145834@gmail.com>
 References: <20180803150231.7172-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
