@@ -1,52 +1,97 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH v4 1/2] leds: core: Introduce LED pattern trigger
-Date: Mon, 6 Aug 2018 16:31:54 +0800
-Message-ID: <CAMz4kuJMPc6bVZZbJif2cmx3Ea0xc1Bc4JYyEQjaskppGNddtA@mail.gmail.com>
-References: <c43374283744539702023053c896efe3c73b7833.1533441631.git.baolin.wang@linaro.org>
- <3d7e8701-d92b-9f51-befa-a585b5957488@gmail.com> <CAMz4kuLSBLReVSo4zXf8b64kwCmRt2PS=JkeD2wJO41X-WmBQQ@mail.gmail.com>
- <20180806070958.GA5231@amd> <CAMz4kuKdtFDfvc4Lrx6yG5yu=qYRPj8MS5phxcLBkdKAPwXZyQ@mail.gmail.com>
- <20180806080617.GA19523@amd>
+From: kgunda@codeaurora.org
+Subject: Re: [PATCH V4 0/8] backlight: qcom-wled: Support for QCOM wled driver
+Date: Mon, 06 Aug 2018 16:28:47 +0530
+Message-ID: <405f3406c933b93d84a554f4552941f4@codeaurora.org>
+References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
+ <519913ec490934931b1c0b3a4539c283@codeaurora.org>
+ <20180803074503.xvjvllsejw7xq3ox@holly.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180806080617.GA19523@amd>
+In-Reply-To: <20180803074503.xvjvllsejw7xq3ox@holly.lan>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, rteysseyre@gmail.com, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: bjorn.andersson@linaro.org, jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 6 August 2018 at 16:06, Pavel Machek <pavel@ucw.cz> wrote:
-> On Mon 2018-08-06 15:33:12, Baolin Wang wrote:
->> Hi Pavel,
->>
->> On 6 August 2018 at 15:09, Pavel Machek <pavel@ucw.cz> wrote:
->> > Hi!
->> >
->> >> > In current implementation this file on read returns the number
->> >> > of remaining repeat intervals. I'd add that to this description.
->> >>
->> >> I saw Pavel's comments that he did not suggest do this. So I will keep
->> >> the original description?
->> >
->> > If that is accepted, the code should return originally written number.
->>
->> But I think it is more reasonable if user can know how many
->> repetitions were left. So for your hardware case, can we add
->> pattern_get() interface back to get the repetition number?
->
-> Well, I'd say that we are mostly seeing "infinite" repetitions, or one
-> repetition.
->
-> Yes, interface could be added to the lowlever driver -- but I'm not
-> sure hardware really supports getting that information; could be
-> tricky on N900 for example.
->
-> I'd keep it simple for now.
+On 2018-08-03 13:15, Daniel Thompson wrote:
+> On Fri, Aug 03, 2018 at 12:49:34PM +0530, kgunda@codeaurora.org wrote:
+>> Hi Bjorn,
+>> Can you please help review this patch series ?
+>> 
+>> Pavel, Rob, Daniel reviewed the series except the "auto string 
+>> detection"
+>> patch.
+> 
+> I did take a glance at the last patch... but in the end decided to wait
+> for v5 to look in depth.
+> 
+> 
+> Daniel.
+> 
+> 
+>> 
+Thanks Daniel! I will push the V5 series then.
 
-OK, I also like to keep it simple. I am fine the repeat file returns
-originally written number. If Jacek also agrees with this, then I will
-update new version.
-
--- 
-Baolin Wang
-Best Regards
+>> Thanks,
+>> Kiran
+>> 
+>> On 2018-07-09 15:52, Kiran Gunda wrote:
+>> > This patch series renames the pm8941-wled.c driver to qcom-wled.c to add
+>> > the support for multiple PMICs supported by qualcomm. This patch series
+>> > supports both PM8941 and PMI8998 WLED. The PMI8998 WLED has the support
+>> > to handle the OVP (over voltage protection) and the SC (short circuit
+>> > protection)
+>> > interrupts. It also has the auto string detection algorithm support to
+>> > configure the right strings if the user specified string configuration
+>> > is in-correct. These three features are added in this series for
+>> > PMI8998.
+>> >
+>> > changes from v1:
+>> >    - Fixed the commit message for
+>> >    - backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
+>> >
+>> > Changes from v2:
+>> >    - Fixed bjorn and other reviewer's comments
+>> >    - Seperated the device tree bindings
+>> >    - Splitted out the WLED4 changes in seperate patch
+>> >    - Merged OVP and auto string detection patch
+>> >
+>> > Changes from v3:
+>> >   - Added Reviewed-by/Acked-by tags
+>> >   - Fixed comments from Bjorn/Vinod/Rob
+>> >   - Splitting the "backlight: qcom-wled: Add support for WLED4
+>> > peripheral" patch
+>> >     to seperate the WLED3 specific restructure.
+>> >
+>> > Kiran Gunda (8):
+>> >   backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
+>> >   backlight: qcom-wled: restructure the qcom-wled bindings
+>> >   backlight: qcom-wled: Add new properties for PMI8998
+>> >   backlight: qcom-wled: Rename PM8941* to WLED3
+>> >   backlight: qcom-wled: Restructure the driver for WLED3
+>> >   backlight: qcom-wled: Add support for WLED4 peripheral
+>> >   backlight: qcom-wled: add support for short circuit handling
+>> >   backlight: qcom-wled: Add auto string detection logic
+>> >
+>> >  .../bindings/leds/backlight/pm8941-wled.txt        |   42 -
+>> >  .../bindings/leds/backlight/qcom-wled.txt          |  150 +++
+>> >  drivers/video/backlight/Kconfig                    |    8 +-
+>> >  drivers/video/backlight/Makefile                   |    2 +-
+>> >  drivers/video/backlight/pm8941-wled.c              |  432 -------
+>> >  drivers/video/backlight/qcom-wled.c                | 1298
+>> > ++++++++++++++++++++
+>> >  6 files changed, 1453 insertions(+), 479 deletions(-)
+>> >  delete mode 100644
+>> > Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
+>> >  create mode 100644
+>> > Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>> >  delete mode 100644 drivers/video/backlight/pm8941-wled.c
+>> >  create mode 100644 drivers/video/backlight/qcom-wled.c
+> --
+> To unsubscribe from this list: send the line "unsubscribe 
+> linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
