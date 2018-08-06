@@ -1,97 +1,84 @@
-From: kgunda@codeaurora.org
-Subject: Re: [PATCH V4 0/8] backlight: qcom-wled: Support for QCOM wled driver
-Date: Mon, 06 Aug 2018 16:28:47 +0530
-Message-ID: <405f3406c933b93d84a554f4552941f4@codeaurora.org>
-References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
- <519913ec490934931b1c0b3a4539c283@codeaurora.org>
- <20180803074503.xvjvllsejw7xq3ox@holly.lan>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v4 1/2] leds: core: Introduce LED pattern trigger
+Date: Mon, 6 Aug 2018 13:41:29 +0200
+Message-ID: <b7407dc4-73b3-f819-2c44-03ed65999e32@gmail.com>
+References: <c43374283744539702023053c896efe3c73b7833.1533441631.git.baolin.wang@linaro.org>
+ <3d7e8701-d92b-9f51-befa-a585b5957488@gmail.com>
+ <CAMz4kuLSBLReVSo4zXf8b64kwCmRt2PS=JkeD2wJO41X-WmBQQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180803074503.xvjvllsejw7xq3ox@holly.lan>
+In-Reply-To: <CAMz4kuLSBLReVSo4zXf8b64kwCmRt2PS=JkeD2wJO41X-WmBQQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: bjorn.andersson@linaro.org, jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 2018-08-03 13:15, Daniel Thompson wrote:
-> On Fri, Aug 03, 2018 at 12:49:34PM +0530, kgunda@codeaurora.org wrote:
->> Hi Bjorn,
->> Can you please help review this patch series ?
->> 
->> Pavel, Rob, Daniel reviewed the series except the "auto string 
->> detection"
->> patch.
-> 
-> I did take a glance at the last patch... but in the end decided to wait
-> for v5 to look in depth.
-> 
-> 
-> Daniel.
-> 
-> 
->> 
-Thanks Daniel! I will push the V5 series then.
+Hi Baolin,
 
->> Thanks,
->> Kiran
->> 
->> On 2018-07-09 15:52, Kiran Gunda wrote:
->> > This patch series renames the pm8941-wled.c driver to qcom-wled.c to add
->> > the support for multiple PMICs supported by qualcomm. This patch series
->> > supports both PM8941 and PMI8998 WLED. The PMI8998 WLED has the support
->> > to handle the OVP (over voltage protection) and the SC (short circuit
->> > protection)
->> > interrupts. It also has the auto string detection algorithm support to
->> > configure the right strings if the user specified string configuration
->> > is in-correct. These three features are added in this series for
->> > PMI8998.
->> >
->> > changes from v1:
->> >    - Fixed the commit message for
->> >    - backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
->> >
->> > Changes from v2:
->> >    - Fixed bjorn and other reviewer's comments
->> >    - Seperated the device tree bindings
->> >    - Splitted out the WLED4 changes in seperate patch
->> >    - Merged OVP and auto string detection patch
->> >
->> > Changes from v3:
->> >   - Added Reviewed-by/Acked-by tags
->> >   - Fixed comments from Bjorn/Vinod/Rob
->> >   - Splitting the "backlight: qcom-wled: Add support for WLED4
->> > peripheral" patch
->> >     to seperate the WLED3 specific restructure.
->> >
->> > Kiran Gunda (8):
->> >   backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
->> >   backlight: qcom-wled: restructure the qcom-wled bindings
->> >   backlight: qcom-wled: Add new properties for PMI8998
->> >   backlight: qcom-wled: Rename PM8941* to WLED3
->> >   backlight: qcom-wled: Restructure the driver for WLED3
->> >   backlight: qcom-wled: Add support for WLED4 peripheral
->> >   backlight: qcom-wled: add support for short circuit handling
->> >   backlight: qcom-wled: Add auto string detection logic
->> >
->> >  .../bindings/leds/backlight/pm8941-wled.txt        |   42 -
->> >  .../bindings/leds/backlight/qcom-wled.txt          |  150 +++
->> >  drivers/video/backlight/Kconfig                    |    8 +-
->> >  drivers/video/backlight/Makefile                   |    2 +-
->> >  drivers/video/backlight/pm8941-wled.c              |  432 -------
->> >  drivers/video/backlight/qcom-wled.c                | 1298
->> > ++++++++++++++++++++
->> >  6 files changed, 1453 insertions(+), 479 deletions(-)
->> >  delete mode 100644
->> > Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
->> >  create mode 100644
->> > Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> >  delete mode 100644 drivers/video/backlight/pm8941-wled.c
->> >  create mode 100644 drivers/video/backlight/qcom-wled.c
-> --
-> To unsubscribe from this list: send the line "unsubscribe 
-> linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On 08/06/2018 03:53 AM, Baolin Wang wrote:
+> Hi Jacek,
+[...]
+>>> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>> @@ -0,0 +1,21 @@
+>>> +What:                /sys/class/leds/<led>/pattern
+>>> +Date:                August 2018
+>>> +KernelVersion:       4.19
+>>> +Description:
+>>> +             Specify a pattern for the LED, for LED hardware that support
+>>> +             altering the brightness as a function of time.
+>>> +
+>>> +             The pattern is given by a series of tuples, of brightness and
+>>> +             duration (ms). The LED is expected to traverse the series and
+>>> +             each brightness value for the specified duration. Duration of
+>>> +             0 means brightness should immediately change to new value.
+>>> +
+>>> +             The format of the pattern values should be:
+>>> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
+>>> +             duration_3 ...".
+>>> +
+>>> +What:                /sys/class/leds/<led>/repeat
+>>> +Date:                August 2018
+>>> +KernelVersion:       4.19
+>>> +Description:
+>>> +             Specify a pattern repeat number. 0 means repeat indefinitely.
+>>
+>> In current implementation this file on read returns the number
+>> of remaining repeat intervals. I'd add that to this description.
+> 
+> I saw Pavel's comments that he did not suggest do this. So I will keep
+> the original description?
+
+Yes, please report always the original value.
+
+[...]
+>>> +static ssize_t pattern_trig_store_repeat(struct device *dev,
+>>> +                                      struct device_attribute *attr,
+>>> +                                      const char *buf, size_t count)
+>>> +{
+>>> +     struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>>> +     struct pattern_trig_data *data = led_cdev->trigger_data;
+>>> +     unsigned long res;
+>>> +     int err;
+>>> +
+>>> +     err = kstrtoul(buf, 10, &res);
+>>> +     if (err)
+>>> +             return err;
+>>> +
+>>> +     if (!led_cdev->pattern_set)
+>>> +             del_timer_sync(&data->timer);
+>>
+>> Is there a reason for not having this check under mutex?
+> 
+> We will hold the mutex in pattern_trig_timer_function(), so if we do
+> del_timer_sync() under the mutex protection, we may meet dead-lock
+> issue. Moreover, the del_timer_sync() will make sure deactivating one
+> timer is safe.
+
+Ack.
+
+-- 
+Best regards,
+Jacek Anaszewski
