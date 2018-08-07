@@ -1,96 +1,226 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v2 1/2] dt: bindings: lm3697: Add bindings for lm3697 driver
-Date: Tue, 7 Aug 2018 11:04:41 -0500
-Message-ID: <20180807160442.8937-1-dmurphy@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
+Date: Tue, 7 Aug 2018 23:54:21 +0200
+Message-ID: <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
+References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, jacek.anaszewski@gmail.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+To: Baolin Wang <baolin.wang@linaro.org>, pavel@ucw.cz
+Cc: rteysseyre@gmail.com, bjorn.andersson@linaro.org, broonie@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.orgBjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-Add the device tree bindings for the lm3697
-led driver for backlighting and display.
+Hi Baolin,
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
+Thank you for addressing the review remarks.
+Since the patch set is targeted for 4.19, then we have three weeks
+before it will be merged to the for-next anyway. That said, I propose
+one more modification, please take a look below.
 
-v2 - Fixed subject and patch commit message - https://lore.kernel.org/patchwork/patch/971326/
+On 08/06/2018 02:05 PM, Baolin Wang wrote:
+> Some LED controllers have support for autonomously controlling
+> brightness over time, according to some preprogrammed pattern or
+> function.
+> 
+> This patch adds pattern trigger that LED device can configure the
+> pattern and trigger it.
+> 
+> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+> Changes from v4:
+>  - Change the repeat file to return the originally written number.
+>  - Improve comments.
+>  - Fix some build warnings.
+> 
+> Changes from v3:
+>  - Reset pattern number to 0 if user provides incorrect pattern string.
+>  - Support one pattern.
+> 
+> Changes from v2:
+>  - Remove hardware_pattern boolen.
+>  - Chnage the pattern string format.
+> 
+> Changes from v1:
+>  - Use ATTRIBUTE_GROUPS() to define attributes.
+>  - Introduce hardware_pattern flag to determine if software pattern
+>  or hardware pattern.
+>  - Re-implement pattern_trig_store_pattern() function.
+>  - Remove pattern_get() interface.
+>  - Improve comments.
+>  - Other small optimization.
+> ---
+>  .../ABI/testing/sysfs-class-led-trigger-pattern    |   24 ++
+>  drivers/leds/trigger/Kconfig                       |    7 +
+>  drivers/leds/trigger/Makefile                      |    1 +
+>  drivers/leds/trigger/ledtrig-pattern.c             |  266 ++++++++++++++++++++
+>  include/linux/leds.h                               |   16 ++
+>  5 files changed, 314 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> new file mode 100644
+> index 0000000..bc7475f
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> @@ -0,0 +1,24 @@
+> +What:		/sys/class/leds/<led>/pattern
+> +Date:		August 2018
+> +KernelVersion:	4.19
+> +Description:
+> +		Specify a pattern for the LED, for LED hardware that support
+> +		altering the brightness as a function of time.
+> +
+> +		The pattern is given by a series of tuples, of brightness and
+> +		duration (ms). The LED is expected to traverse the series and
+> +		each brightness value for the specified duration. Duration of
+> +		0 means brightness should immediately change to new value.
+> +
+> +		The format of the pattern values should be:
+> +		"brightness_1 duration_1 brightness_2 duration_2 brightness_3
+> +		duration_3 ...".
+> +
+> +What:		/sys/class/leds/<led>/repeat
+> +Date:		August 2018
+> +KernelVersion:	4.19
+> +Description:
+> +		Specify a pattern repeat number. 0 means repeat indefinitely.
+> +
+> +		This file will always return the originally written repeat
+> +		number.
+> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+> index 4018af7..b76fc3c 100644
+> --- a/drivers/leds/trigger/Kconfig
+> +++ b/drivers/leds/trigger/Kconfig
+> @@ -129,4 +129,11 @@ config LEDS_TRIGGER_NETDEV
+>  	  This allows LEDs to be controlled by network device activity.
+>  	  If unsure, say Y.
+>  
+> +config LEDS_TRIGGER_PATTERN
+> +	tristate "LED Pattern Trigger"
+> +	help
+> +	  This allows LEDs to be controlled by a software or hardware pattern
+> +	  which is a series of tuples, of brightness and duration (ms).
+> +	  If unsure, say N
+> +
+>  endif # LEDS_TRIGGERS
+> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+> index f3cfe19..9bcb64e 100644
+> --- a/drivers/leds/trigger/Makefile
+> +++ b/drivers/leds/trigger/Makefile
+> @@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
+>  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
+>  obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
+>  obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
+> +obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+= ledtrig-pattern.o
+> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+> new file mode 100644
+> index 0000000..63b94a2
+> --- /dev/null
+> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+> @@ -0,0 +1,266 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * LED pattern trigger
+> + *
+> + * Idea discussed with Pavel Machek. Raphael Teysseyre implemented
+> + * the first version, Baolin Wang simplified and improved the approach.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/slab.h>
+> +#include <linux/timer.h>
+> +
+> +#define MAX_PATTERNS		1024
+> +
+> +struct pattern_trig_data {
+> +	struct led_classdev *led_cdev;
+> +	struct led_pattern patterns[MAX_PATTERNS];
+> +	struct led_pattern *curr;
+> +	struct led_pattern *next;
+> +	struct mutex lock;
+> +	u32 npatterns;
+> +	u32 repeat;
+> +	u32 last_repeat;
+> +	bool is_indefinite;
+> +	struct timer_list timer;
+> +};
+> +
+> +static void pattern_trig_update_patterns(struct pattern_trig_data *data)
+> +{
+> +	data->curr = data->next;
+> +	if (!data->is_indefinite && data->curr == data->patterns)
+> +		data->repeat--;
+> +
+> +	if (data->next == data->patterns + data->npatterns - 1)
+> +		data->next = data->patterns;
+> +	else
+> +		data->next++;
+> +}
+> +
+> +static void pattern_trig_timer_function(struct timer_list *t)
+> +{
+> +	struct pattern_trig_data *data = from_timer(data, t, timer);
+> +
+> +	mutex_lock(&data->lock);
+> +
+> +	if (!data->is_indefinite && !data->repeat) {
+> +		mutex_unlock(&data->lock);
+> +		return;
+> +	}
+> +
+> +	led_set_brightness(data->led_cdev, data->curr->brightness);
+> +	mod_timer(&data->timer, jiffies + msecs_to_jiffies(data->curr->delta_t));
+> +	pattern_trig_update_patterns(data);
+> +
+> +	mutex_unlock(&data->lock);
+> +}
+> +
+> +static int pattern_trig_start_pattern(struct pattern_trig_data *data,
+> +				      struct led_classdev *led_cdev)
+> +{
+> +	if (!data->npatterns)
+> +		return 0;
+> +
+> +	if (led_cdev->pattern_set) {
+> +		return led_cdev->pattern_set(led_cdev, data->patterns,
+> +					     data->npatterns, data->repeat);
 
- .../devicetree/bindings/leds/leds-lm3697.txt  | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+I think that it would be more flexible if software pattern fallback
+was applied in case of pattern_set failure. Otherwise, it would
+lead to the situation where LED class devices that support hardware
+blinking couldn't be applied the same set of patterns as LED class
+devices that don't implement pattern_set. The latter will always have to
+resort to using software pattern engine which will accept far greater
+amount of pattern combinations.
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-new file mode 100644
-index 000000000000..7b8e490f1ea1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-@@ -0,0 +1,64 @@
-+* Texas Instruments - LM3697 Highly Efficient White LED Driver
-+
-+The LM3697 11-bit LED driver provides high-
-+performance backlight dimming for 1, 2, or 3 series
-+LED strings while delivering up to 90% efficiency.
-+
-+This device is suitable for Display and Keypad Lighting
-+
-+Required properties:
-+	- compatible:
-+		"ti,lm3967"
-+	- reg :  I2C slave address
-+	- #address-cells : 1
-+	- #size-cells : 0
-+	- control-bank-cfg - : Indicates which sink is connected to which control bank
-+		0 - All HVLED outputs are controlled by bank A
-+		1 - HVLED1 is controlled bank B, HVLED2/3 are controlled by bank A
-+		2 - HVLED2 is controlled bank B, HVLED1/3 are controlled by bank A
-+		3 - HVLED1/2 are controlled by bank B, HVLED3 is controlled by bank A
-+		4 - HVLED3 is controlled by bank B, HVLED1/2 are controlled by bank A
-+		5 - HVLED1/3 is controlled by bank B, HVLED2 is controlled by bank A
-+		6 - (default) HVLED1 is controlled by bank A, HVLED2/3 are controlled by bank B
-+		7 - All HVLED outputs are controlled by bank B
-+
-+Optional properties:
-+	- enable-gpios : gpio pin to enable/disable the device.
-+	- vled-supply : LED supply
-+
-+Required child properties:
-+	- reg : 0 - LED is Controlled by bank A
-+		1 - LED is Controlled by bank B
-+
-+Optional child properties:
-+	- label : see Documentation/devicetree/bindings/leds/common.txt
-+	- linux,default-trigger :
-+	   see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example:
-+
-+led-controller@36 {
-+	compatible = "ti,lm3967";
-+	reg = <0x36>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-+	vled-supply = <&vbatt>;
-+	control-bank-cfg = <0>;
-+
-+	led@0 {
-+		reg = <0>;
-+		label = "white:first_backlight_cluster";
-+		linux,default-trigger = "backlight";
-+	};
-+
-+	led@1 {
-+		reg = <1>;
-+		label = "white:second_backlight_cluster";
-+		linux,default-trigger = "frontlight";
-+	};
-+}
-+
-+For more product information please see the link below:
-+http://www.ti.com/lit/ds/symlink/lm3697.pdf
+In this case we need to discuss on what basis the decision will be
+made on whether hardware or software engine will be used.
+
+Possible options coming to mind:
+- an interface will be provided to determine max difference between
+  the settings supported by the hardware and the settings requested by
+  the user, that will result in aligning user's setting to the hardware
+  capabilities
+- the above alignment rate will be predefined instead
+- hardware engine will be used only if user requests supported settings
+  on the whole span of the requested pattern
+- in each of the above cases it would be worth to think of the
+  interface to show the scope of the settings supported by hardware
+
+The same issue applies to the already available timer trigger.
+So far the policy implemented by the drivers implementing blink_set
+op varies.
+
 -- 
-2.17.0.582.gccdcbd54c
+Best regards,
+Jacek Anaszewski
