@@ -1,25 +1,29 @@
 From: Dan Murphy <dmurphy@ti.com>
 Subject: Re: [PATCH v2 1/2] dt: bindings: lm3697: Add bindings for lm3697
  driver
-Date: Wed, 8 Aug 2018 16:41:16 -0500
-Message-ID: <cdf671fa-674d-6e34-177e-c0e9cb4f6137@ti.com>
+Date: Wed, 8 Aug 2018 16:45:06 -0500
+Message-ID: <01bbf05a-8e5e-d3ce-857a-ac5c6efb779c@ti.com>
 References: <20180807160442.8937-1-dmurphy@ti.com>
  <20180808195903.GB20912@amd> <f6b3534b-2ee9-782e-35e5-e103c34528bc@ti.com>
  <20180808210215.GA15831@amd> <f18a5616-bb25-da0d-aec8-585e042b4919@ti.com>
- <20180808210926.GC15831@amd>
+ <53691469-4554-42a8-c182-762c1a3939b7@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180808210926.GC15831@amd>
+In-Reply-To: <53691469-4554-42a8-c182-762c1a3939b7@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 08/08/2018 04:09 PM, Pavel Machek wrote:
-> On Wed 2018-08-08 16:04:43, Dan Murphy wrote:
+Jacek
+
+On 08/08/2018 04:09 PM, Jacek Anaszewski wrote:
+> Hi Dan,
+> 
+> On 08/08/2018 11:04 PM, Dan Murphy wrote:
 >> On 08/08/2018 04:02 PM, Pavel Machek wrote:
 >>> Hi!
 >>>
@@ -48,17 +52,13 @@ On 08/08/2018 04:09 PM, Pavel Machek wrote:
 >> 2 sinks 3 LED strings.  How do you know which LED string is which and what bank it belongs
 >> to when setting the brightness.  Each Bank has a separate register for brightness control.
 > 
-> Yes, and LED strings are statically assigned to banks, right?
+> Just a blind shot, without going into details - could you please check
+> if led-sources property documented in the common LED bindings couldn't
+> help here?
 > 
-> So why not simply forget about LED strings for sake of hw
-> abstractions, and work just with banks?
 
-How would you set the control bank register for the correct LED string configuration?
-
-Dan
-
-> 									Pavel
-> 
+I could change the name to led-sources.  But this part does not really follow the 1 output to a
+1 LED string topology.
 
 
 -- 
