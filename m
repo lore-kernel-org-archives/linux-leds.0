@@ -1,135 +1,163 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 1/2] dt: bindings: lm3697: Add bindings for lm3697
- driver
-Date: Wed, 8 Aug 2018 21:59:03 +0200
-Message-ID: <20180808195903.GB20912@amd>
+Subject: Re: [PATCH v2 2/2] leds: lm3697: Introduce the lm3697 driver
+Date: Wed, 8 Aug 2018 21:59:09 +0200
+Message-ID: <20180808195909.GC20912@amd>
 References: <20180807160442.8937-1-dmurphy@ti.com>
+ <20180807160442.8937-2-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="5I6of5zJg18YgZEa"
+        protocol="application/pgp-signature"; boundary="RIYY1s2vRbPFwWeW"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180807160442.8937-1-dmurphy@ti.com>
+In-Reply-To: <20180807160442.8937-2-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dan Murphy <dmurphy@ti.com>
 Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 
---5I6of5zJg18YgZEa
+--RIYY1s2vRbPFwWeW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue 2018-08-07 11:04:41, Dan Murphy wrote:
-> Add the device tree bindings for the lm3697
-> led driver for backlighting and display.
+Hi!
+
+> Introduce the lm3697 LED driver for
+> backlighting and display.
+>=20
+> Datasheet location:
+> http://www.ti.com/lit/ds/symlink/lm3697.pdf
 >=20
 > Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->=20
-> v2 - Fixed subject and patch commit message - https://lore.kernel.org/pat=
-chwork/patch/971326/
->=20
->  .../devicetree/bindings/leds/leds-lm3697.txt  | 64 +++++++++++++++++++
->  1 file changed, 64 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Doc=
-umentation/devicetree/bindings/leds/leds-lm3697.txt
-> new file mode 100644
-> index 000000000000..7b8e490f1ea1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> @@ -0,0 +1,64 @@
-> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
-> +
-> +The LM3697 11-bit LED driver provides high-
-> +performance backlight dimming for 1, 2, or 3 series
-> +LED strings while delivering up to 90% efficiency.
-> +
-> +This device is suitable for Display and Keypad Lighting
-> +
-> +Required properties:
-> +	- compatible:
-> +		"ti,lm3967"
-> +	- reg :  I2C slave address
-> +	- #address-cells : 1
-> +	- #size-cells : 0
-> +	- control-bank-cfg - : Indicates which sink is connected to which contr=
-ol bank
-> +		0 - All HVLED outputs are controlled by bank A
-> +		1 - HVLED1 is controlled bank B, HVLED2/3 are controlled by bank A
-> +		2 - HVLED2 is controlled bank B, HVLED1/3 are controlled by bank A
-> +		3 - HVLED1/2 are controlled by bank B, HVLED3 is controlled by bank A
-> +		4 - HVLED3 is controlled by bank B, HVLED1/2 are controlled by bank A
-> +		5 - HVLED1/3 is controlled by bank B, HVLED2 is controlled by bank A
-> +		6 - (default) HVLED1 is controlled by bank A, HVLED2/3 are controlled =
-by bank B
-> +		7 - All HVLED outputs are controlled by bank B
 
-This is quite long way to describe a bitmask, no? Could we make
-it so that control-bank-cfg is not needed?
+> +
+> +#define LM3697_HVLED1_2_3_A		0
+> +#define LM3697_HVLED1_B_HVLED2_3_A	1
+> +#define LM3697_HVLED2_B_HVLED1_3_A	2
+> +#define LM3697_HVLED1_2_B_HVLED3_A	3
+> +#define LM3697_HVLED3_B_HVLED1_2_A	4
+> +#define LM3697_HVLED1_3_B_HVLED2_A	5
+> +#define LM3697_HVLED1_A_HVLED2_3_B	6
+> +#define LM3697_HVLED1_2_3_B		7
 
-> +Optional properties:
-> +	- enable-gpios : gpio pin to enable/disable the device.
-> +	- vled-supply : LED supply
-> +
-> +Required child properties:
-> +	- reg : 0 - LED is Controlled by bank A
-> +		1 - LED is Controlled by bank B
+That's rather long and verbose way to describe a bitmap, right?
 
-Can we compute control-bank-cfg from this?
+> +static const struct regmap_config lm3697_regmap_config =3D {
+> +	.reg_bits =3D 8,
+> +	.val_bits =3D 8,
+> +
+> +	.max_register =3D LM3697_CTRL_ENABLE,
+> +	.reg_defaults =3D lm3697_reg_defs,
+> +	.num_reg_defaults =3D ARRAY_SIZE(lm3697_reg_defs),
+> +	.cache_type =3D REGCACHE_RBTREE,
+> +};
 
-> +Optional child properties:
-> +	- label : see Documentation/devicetree/bindings/leds/common.txt
-> +	- linux,default-trigger :
-> +	   see Documentation/devicetree/bindings/leds/common.txt
+Is rbtree good idea? You don't have that many registers.
+
+> +static int lm3697_init(struct lm3697 *priv)
+> +{
+> +	int ret;
 > +
-> +Example:
+=2E...
+> +		regmap_write(priv->regmap, LM3697_RESET, LM3697_SW_RESET);
+
+No error checking required here?
+
+> +	if (priv->control_bank_config < LM3697_HVLED1_2_3_A ||
+> +	    priv->control_bank_config > LM3697_HVLED1_2_3_B) {
+> +		dev_err(&priv->client->dev, "Control bank configuration is out of rang=
+e\n");
+> +		ret =3D -EINVAL;
+> +		goto out;
+> +	}
 > +
-> +led-controller@36 {
-> +	compatible =3D "ti,lm3967";
-> +	reg =3D <0x36>;
-> +	#address-cells =3D <1>;
-> +	#size-cells =3D <0>;
+> +	device_for_each_child_node(priv->dev, child) {
+> +		led =3D &priv->leds[i];
 > +
-> +	enable-gpios =3D <&gpio1 28 GPIO_ACTIVE_HIGH>;
-> +	vled-supply =3D <&vbatt>;
-> +	control-bank-cfg =3D <0>;
+> +		ret =3D fwnode_property_read_u32(child, "reg", &led->control_bank);
+> +		if (ret) {
+> +			dev_err(&priv->client->dev, "reg DT property missing\n");
+> +			goto child_out;
+> +		}
 > +
-> +	led@0 {
-> +		reg =3D <0>;
-> +		label =3D "white:first_backlight_cluster";
-> +		linux,default-trigger =3D "backlight";
-> +	};
+> +		fwnode_property_read_string(child, "linux,default-trigger",
+> +					    &led->led_dev.default_trigger);
 > +
-> +	led@1 {
-> +		reg =3D <1>;
-> +		label =3D "white:second_backlight_cluster";
-> +		linux,default-trigger =3D "frontlight";
-> +	};
+> +		ret =3D fwnode_property_read_string(child, "label", &name);
+> +		if (ret)
+> +			snprintf(led->label, sizeof(led->label),
+> +				"%s::", priv->client->name);
+> +		else
+> +			snprintf(led->label, sizeof(led->label),
+> +				 "%s:%s", priv->client->name, name);
+> +
+> +
+> +		led->priv =3D priv;
+> +		led->led_dev.name =3D led->label;
+> +		led->led_dev.brightness_set_blocking =3D lm3697_brightness_set;
+> +
+> +		ret =3D devm_led_classdev_register(priv->dev, &led->led_dev);
+> +		if (ret) {
+> +			dev_err(&priv->client->dev, "led register err: %d\n", ret);
+> +			goto child_out;
+> +		}
+> +
+> +		if (priv->control_bank_config =3D=3D LM3697_HVLED1_2_3_A ||
+> +		    priv->control_bank_config =3D=3D LM3697_HVLED1_2_3_B)
+> +			goto child_out;
+
+This checks if we have just one bank, I see it. Should it also check
+the led actually uses the correct bank?
+
+> +		i++;
+> +		fwnode_handle_put(child);
+> +	}
+> +
+> +child_out:
+> +	fwnode_handle_put(child);
+
+Is not the fwnode_handle_put() done twice for non-error case?
+
+> +	ret =3D lm3697_init(led);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return ret;
 > +}
 
-Does the example show correct config? AFAICT all controls go to bank
-A according to control-bank-cfg, yet led@1 describes bank B...
+The if is not needed here.
+
+> +static int lm3697_remove(struct i2c_client *client)
+> +{
+> +	struct lm3697 *led =3D i2c_get_clientdata(client);
+> +	int ret;
+> +
+> +	ret =3D regmap_update_bits(led->regmap, LM3697_CTRL_ENABLE,
+> +				 LM3697_CTRL_A_B_EN, 0);
+> +	if (ret) {
+> +		dev_err(&led->client->dev, "Failed to disable regulator\n");
+> +		return ret;
+
+Misleading, this does nothing with regulators.
 
 									Pavel
+
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---5I6of5zJg18YgZEa
+--RIYY1s2vRbPFwWeW
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAltrS4cACgkQMOfwapXb+vKAfQCfbzUzq5mBZdpRkhc2+SYn/F4W
-QwQAn0BVsaZHm62DgwAMWR6op3an7cC2
-=5n4G
+iEYEARECAAYFAltrS40ACgkQMOfwapXb+vL+tgCfWiL4OedfDaGO5nplfYMJD/P5
+Ph0AoLvOkyCnWOFDRqOxI/NCkQr1vKOl
+=UFS0
 -----END PGP SIGNATURE-----
 
---5I6of5zJg18YgZEa--
+--RIYY1s2vRbPFwWeW--
