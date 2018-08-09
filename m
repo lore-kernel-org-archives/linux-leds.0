@@ -1,102 +1,94 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 1/2] dt: bindings: lm3697: Add bindings for lm3697
- driver
-Date: Thu, 9 Aug 2018 14:09:56 +0200
-Message-ID: <683f9e60-9ad8-93d8-e4ed-dbfdae78c307@gmail.com>
-References: <20180807160442.8937-1-dmurphy@ti.com>
- <20180808195903.GB20912@amd> <f6b3534b-2ee9-782e-35e5-e103c34528bc@ti.com>
- <20180808210215.GA15831@amd> <f18a5616-bb25-da0d-aec8-585e042b4919@ti.com>
- <53691469-4554-42a8-c182-762c1a3939b7@gmail.com>
- <01bbf05a-8e5e-d3ce-857a-ac5c6efb779c@ti.com>
+Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
+Date: Thu, 9 Aug 2018 15:21:53 +0200
+Message-ID: <cc29be64-47a5-2bc1-f1be-64b4ad7e1a6d@gmail.com>
+References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
+ <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
+ <CAMz4kuL8ufCqbqgegozJt3P7JON0AzA9KrbvcvOB15McA5S=zA@mail.gmail.com>
+ <5d594e9b-9889-adc2-cc59-f4f45eea7ddb@gmail.com>
+ <CAMz4kuJBT2m8YpsAFufiGQFOYCgBbyf9Rrhce+396pRoW802aw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <01bbf05a-8e5e-d3ce-857a-ac5c6efb779c@ti.com>
+In-Reply-To: <CAMz4kuJBT2m8YpsAFufiGQFOYCgBbyf9Rrhce+396pRoW802aw@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
-Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-Dan,
+Hi Baolin,
 
-On 08/08/2018 11:45 PM, Dan Murphy wrote:
-> Jacek
-> 
-> On 08/08/2018 04:09 PM, Jacek Anaszewski wrote:
->> Hi Dan,
->>
->> On 08/08/2018 11:04 PM, Dan Murphy wrote:
->>> On 08/08/2018 04:02 PM, Pavel Machek wrote:
->>>> Hi!
+On 08/09/2018 07:48 AM, Baolin Wang wrote:
+[...]
+>>>>> +static int pattern_trig_start_pattern(struct pattern_trig_data *data,
+>>>>> +                                   struct led_classdev *led_cdev)
+>>>>> +{
+>>>>> +     if (!data->npatterns)
+>>>>> +             return 0;
+>>>>> +
+>>>>> +     if (led_cdev->pattern_set) {
+>>>>> +             return led_cdev->pattern_set(led_cdev, data->patterns,
+>>>>> +                                          data->npatterns, data->repeat);
 >>>>
->>>>>>> +	- #size-cells : 0
->>>>>>> +	- control-bank-cfg - : Indicates which sink is connected to which control bank
->>>>>>> +		0 - All HVLED outputs are controlled by bank A
->>>>>>> +		1 - HVLED1 is controlled bank B, HVLED2/3 are controlled by bank A
->>>>>>> +		2 - HVLED2 is controlled bank B, HVLED1/3 are controlled by bank A
->>>>>>> +		3 - HVLED1/2 are controlled by bank B, HVLED3 is controlled by bank A
->>>>>>> +		4 - HVLED3 is controlled by bank B, HVLED1/2 are controlled by bank A
->>>>>>> +		5 - HVLED1/3 is controlled by bank B, HVLED2 is controlled by bank A
->>>>>>> +		6 - (default) HVLED1 is controlled by bank A, HVLED2/3 are controlled by bank B
->>>>>>> +		7 - All HVLED outputs are controlled by bank B
->>>>>>
->>>>>> This is quite long way to describe a bitmask, no? Could we make
->>>>>> it so that control-bank-cfg is not needed?
->>>>>
->>>>> The problem we have here is there is a potential to control
->>>>> 3 different LED string but only 2 sinks.  So control bank A can control 2 LED strings and control
->>>>> bank b can control 1 LED string.  
->>>>>
->>>>
->>>> Can we forget about the LED strings, and just expose the sinks as
->>>> Linux LED devices?
+>>>> I think that it would be more flexible if software pattern fallback
+>>>> was applied in case of pattern_set failure. Otherwise, it would
+>>>> lead to the situation where LED class devices that support hardware
+>>>> blinking couldn't be applied the same set of patterns as LED class
+>>>> devices that don't implement pattern_set. The latter will always have to
+>>>> resort to using software pattern engine which will accept far greater
+>>>> amount of pattern combinations.
 >>>
->>> 2 sinks 3 LED strings.  How do you know which LED string is which and what bank it belongs
->>> to when setting the brightness.  Each Bank has a separate register for brightness control.
+>>> Hmmm, I am not sure this is useful for hardware pattern, since the LED
+>>> hardware can be diverse which is hard to be compatible with software
+>>> pattern.
+>>>
+>>> For example, for our SC27XX LED, it only supports 4 hardware patterns
+>>> setting (low time, rising time, high time and falling time) to make it
+>>> work at breathing mode. If user provides 3 or 5 patterns values, it
+>>> will failed to issue pattern_set(). But at this time, we don't want to
+>>> use software pattern instead since it will be not the breathing mode
+>>> expected by user. I don't know if there are other special LED
+>>> hardware.
 >>
->> Just a blind shot, without going into details - could you please check
->> if led-sources property documented in the common LED bindings couldn't
->> help here?
+>> Good point. So this is the issue we should dwell on, since the
+>> requested pattern effect should look similar on all devices.
+>> Of course in case of software pattern it will be often impossible
+>> to achieve the same fluency. Similarly as in case of rendering graphics
+>> with and without acceleration.
 >>
+>> In case of your device, I'd say that we'd need more complex description
+>> of breathing mode pattern. More complex than just four intervals.
+>> It should reflect all the intervals the hardware engine needs to perform
+>> to achieve the breathing effect. Can this information be inferred from
+>> the docs?
 > 
-> I could change the name to led-sources.  But this part does not really follow the 1 output to a
-> 1 LED string topology.
+>>From our docs, it only provides registers to set the low time, rising
+> time, high time and falling time (value unit is 0.125s and max value
+> is 63 = 7.875s) to enable breathing mode. So each interval value can
+> be 1 ~ 63. But that is still hard for software pattern to simulate the
+> breathing mode performed by hardware pattern.
 
-led-sources was designed for describing the topology where one LED can
-be connected to more then one output, see bindings of
-max77693-led (in Documentation/devicetree/bindings/mfd/max77693.txt).
+Software fallback is not expected to show similar performance to the
+hardware engine on the whole span of the supported time range.
 
-Here the topology is a bit different - more than one LED (string) can be
-connected to a single bank, but this is accomplished inside the chip.
-Logically LEDs configured that way can be treated as a single LED
-(string) connected to two outputs, and what follows they should be
-described by a single DT child node.
+Having min rise time value at 125ms, and given that max_brightness
+is 255, then we'd have 255 / 125 = 2.04 of brightness level rise per
+1ms. So, the pattern for rising edge could look like (assuming we
+stop at 254):
 
-led-sources will fit very well for this purpose. You could do
-the following mapping:
+0 1 2 1 4 1 6 1 8 1 10 1 ... 254 1
 
-0 - HVLED1
-1 - HVLED2
-2 - HVLED3
+Now, I'm starting to wonder if we shouldn't have specialized trigger
+for breathing patterns, that would accept brightness level change per
+time period. Pattern trigger needs more flexibility and inferring if the
+hardware can handle given series of pattern intervals would entail
+unnecessary code complexity.
 
-Then, in the child DT nodes you would use these identifiers to describe
-the topology:
-
-Following node would describe strings connected to the outputs
-HVLED1 and HVLED2 controlled by bank A.
-
-led@0 {
-	reg = <0>;
-	led-sources = <0>. <1>;
-	label = "white:first_backlight_cluster";
-	linux,default-trigger = "backlight";
-};
-
-
-IOW I agree with Pavel, but I propose to use already documented common
-DT LED property.
+Such breathing trigger would require triplets comprised of
+start brightness, end brightness and a duration of the brightness
+transition.
 
 -- 
 Best regards,
