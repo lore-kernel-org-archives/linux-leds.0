@@ -1,176 +1,133 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
-Date: Sat, 11 Aug 2018 10:17:11 +0800
-Message-ID: <CAMz4ku+wV1WAyq-ZO5y66b_H2p__hDzaXNquRctNSaHRj0xiOw@mail.gmail.com>
-References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
- <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com> <CAMz4kuL8ufCqbqgegozJt3P7JON0AzA9KrbvcvOB15McA5S=zA@mail.gmail.com>
- <5d594e9b-9889-adc2-cc59-f4f45eea7ddb@gmail.com> <CAMz4kuJBT2m8YpsAFufiGQFOYCgBbyf9Rrhce+396pRoW802aw@mail.gmail.com>
- <cc29be64-47a5-2bc1-f1be-64b4ad7e1a6d@gmail.com> <CAMz4kuKs09P4_9k=_U1jYOpYz_8UHkHGpD_Wketpd35uqdBRoA@mail.gmail.com>
- <90e7f2b4-b706-4784-a7c6-30dba1614e67@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [GIT PULL] LED updates for 4.19-rc1
+Date: Mon, 13 Aug 2018 21:47:23 +0200
+Message-ID: <1534189643-6449-1-git-send-email-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <90e7f2b4-b706-4784-a7c6-30dba1614e67@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, arnd@arndb.de, colin.king@canonical.com, daniel@zonque.org, dmurphy@ti.com, elviskitone@gmail.com, mchehab+samsung@kernel.org, rafdev@dinapo.li, u.kleine-koenig@pengutronix.de, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi Jacek,
+Hi Linus,
 
-On 11 August 2018 at 02:10, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
-> Hi Baolin,
->
-> On 08/10/2018 05:26 PM, Baolin Wang wrote:
->> Hi Jacek,
->>
->> On 9 August 2018 at 21:21, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
->>> Hi Baolin,
->>>
->>> On 08/09/2018 07:48 AM, Baolin Wang wrote:
->>> [...]
->>>>>>>> +static int pattern_trig_start_pattern(struct pattern_trig_data *data,
->>>>>>>> +                                   struct led_classdev *led_cdev)
->>>>>>>> +{
->>>>>>>> +     if (!data->npatterns)
->>>>>>>> +             return 0;
->>>>>>>> +
->>>>>>>> +     if (led_cdev->pattern_set) {
->>>>>>>> +             return led_cdev->pattern_set(led_cdev, data->patterns,
->>>>>>>> +                                          data->npatterns, data->repeat);
->>>>>>>
->>>>>>> I think that it would be more flexible if software pattern fallback
->>>>>>> was applied in case of pattern_set failure. Otherwise, it would
->>>>>>> lead to the situation where LED class devices that support hardware
->>>>>>> blinking couldn't be applied the same set of patterns as LED class
->>>>>>> devices that don't implement pattern_set. The latter will always have to
->>>>>>> resort to using software pattern engine which will accept far greater
->>>>>>> amount of pattern combinations.
->>>>>>
->>>>>> Hmmm, I am not sure this is useful for hardware pattern, since the LED
->>>>>> hardware can be diverse which is hard to be compatible with software
->>>>>> pattern.
->>>>>>
->>>>>> For example, for our SC27XX LED, it only supports 4 hardware patterns
->>>>>> setting (low time, rising time, high time and falling time) to make it
->>>>>> work at breathing mode. If user provides 3 or 5 patterns values, it
->>>>>> will failed to issue pattern_set(). But at this time, we don't want to
->>>>>> use software pattern instead since it will be not the breathing mode
->>>>>> expected by user. I don't know if there are other special LED
->>>>>> hardware.
->>>>>
->>>>> Good point. So this is the issue we should dwell on, since the
->>>>> requested pattern effect should look similar on all devices.
->>>>> Of course in case of software pattern it will be often impossible
->>>>> to achieve the same fluency. Similarly as in case of rendering graphics
->>>>> with and without acceleration.
->>>>>
->>>>> In case of your device, I'd say that we'd need more complex description
->>>>> of breathing mode pattern. More complex than just four intervals.
->>>>> It should reflect all the intervals the hardware engine needs to perform
->>>>> to achieve the breathing effect. Can this information be inferred from
->>>>> the docs?
->>>>
->>>> >From our docs, it only provides registers to set the low time, rising
->>>> time, high time and falling time (value unit is 0.125s and max value
->>>> is 63 = 7.875s) to enable breathing mode. So each interval value can
->>>> be 1 ~ 63. But that is still hard for software pattern to simulate the
->>>> breathing mode performed by hardware pattern.
->>>
->>> Software fallback is not expected to show similar performance to the
->>> hardware engine on the whole span of the supported time range.
->>>
->>> Having min rise time value at 125ms, and given that max_brightness
->>> is 255, then we'd have 255 / 125 = 2.04 of brightness level rise per
->>> 1ms. So, the pattern for rising edge could look like (assuming we
->>> stop at 254):
->>>
->>> 0 1 2 1 4 1 6 1 8 1 10 1 ... 254 1
->>
->> Right, maybe this can work, maybe not. Since we can met different
->> cases when failed to issue pattern_set(). Maybe the LED hardware
->> occurs some errors, in this case we should shutdown the LED, not
->> enable the software pattern instead, which still can not work.
->
-> This is arguable. Timer trigger always resorts to using software
-> fallback if blink_set() fails.
+Please pull LED updates for 4.19-rc1.
 
-Timer trigger is simple which only need delay_on and delay_off, that
-means software can be easy to show the same performance. But hardware
-pattern can be diverse, we need to convert hardware patterns to
-software patterns.
+LED triggers improvements make the biggest part of this pull request.
+The most striking ones, that allowed for nice cleanups in the triggers are:
+	- centralized handling of creation and removal of trigger sysfs
+	  attributes via attribute group
+        - addition of module_led_trigger() helper
 
->> Maybe
->> driver can set NULL for pattern_set/clear interfaces to disable
->> hardware pattern, then next time user will perform the patterns with
->> software pattern mode.
->
-> Resetting any ops after LED class driver is probed should be
-> deemed forbidden, since LED core can make some decisions basing on
-> whether given ops are initialized or not.
+The other things that need to be mentioned:
 
-OK.
+New features and improvements to existing LED class drivers:
+	- lt3593: add DT support, switch to gpiod interface
+	- lm3692x: support LED sync configuration, change OF calls to fwnode calls
+	- apu: modify PC Engines apu/apu2 driver to support apu3
 
->
->> For our SC27XX LED, like I said if user provides only 3 pattern values
->> which will failed to issue pattern_set(). But I still do not need use
->> software patterns to show similar performance, instead it will still
->> keep the last hardware pattern performance ( It did not overlap the
->> previous hardware pattern setting). Maybe different drivers have
->> different error handling, that's why I think we can leave driver to
->> choose the proper way to handle.
->
-> ABI semantics is generic, i.e. common for all drivers. Driver can
-> always log any problems occurred while setting pattern, but it shouldn't
-> necessarily need to prevent pattern trigger from using software
-> fallback.
+Change in the drivers/net/can/led.c:
+	- mark led trigger as broken since it's in the way for the further
+          cleanups. It implements a subset of the netdev trigger and an Ack
+	  is needed from someone who can actually test and confirm that the netdev
+	  trigger works for can devices.
 
-Fine.
+Thanks,
+Jacek Anaszewski
 
->> Honestly, can we keep this pattern trigger simple and easy at first?
->> If some drivers want to use software patterns to perform again once
->> their hardware patterns performed failed (IMHO our SC27XX LED do not
->> need), then we can add this feature, at that time we will have users
->> to test and optimize the feature. Maybe I am wrong:)
->
-> In other words you want to prevent users from exploiting the flexibility
-> of pattern trigger, and limit them to using always only breathing
-> scheme for SC27XX LED. What if someone would like to employ pattern
-> trigger for encoding morse message to report system errors?
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
-I think we can change to use timer trigger or other triggers.
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
 
->
-> And secondly, we cannot keep the interface simple at first and then
-> change it, because this is against Linux rule, which says that
-> interface cannot break existing users.
+are available in the git repository at:
 
-Make sense.
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds-for-4.19-rc1
 
->
->>> Now, I'm starting to wonder if we shouldn't have specialized trigger
->>> for breathing patterns, that would accept brightness level change per
->>> time period. Pattern trigger needs more flexibility and inferring if the
->>> hardware can handle given series of pattern intervals would entail
->>> unnecessary code complexity.
->>>
->>> Such breathing trigger would require triplets comprised of
->>> start brightness, end brightness and a duration of the brightness
->>> transition.
->>
->> But this is the only place we can set the hardware patterns according
->> to our previous discussion. Thanks.
->
-> Thinking more about it, introducing another trigger for something being
-> also a pattern is a bad idea.
+for you to fetch changes up to 2224f2ff9670b899983ff1b42d85530e889cfea1:
 
-Yes.
+  leds: ns2: Change unsigned to unsigned int (2018-08-06 23:03:12 +0200)
 
-> Perhaps, as an alternative, we could allow for providing mathematical
-> formula to define the edge of brightness change.
->
-> I wonder what Pavel thinks.
+----------------------------------------------------------------
+LED updates for 4.19-rc1
+----------------------------------------------------------------
 
--- 
-Baolin Wang
-Best Regards
+Arnd Bergmann (1):
+      leds: ledtrig-activity: use ktime_get_boot_ns()
+
+Colin Ian King (1):
+      leds: max8997: use mode when calling max8997_led_set_mode
+
+Dan Murphy (4):
+      leds: lm3692x: Update license header to SPDX
+      leds: lm3692x: Change DT calls to fwnode calls
+      dt: bindings: lm3692x: Update binding for LED sync control
+      leds: lm3692x: Support LED sync configuration
+
+Daniel Mack (5):
+      dt-bindings: leds: Add bindings for lltc,lt3593
+      leds: lt3593: merge functions and clean up code
+      leds: lt3593: switch to gpiod interface
+      leds: lt3593: Add device tree probing glue
+      leds: lt3593: update email address and switch to SPDX license header
+
+Kitone Elvis Peter (1):
+      leds: ns2: Change unsigned to unsigned int
+
+Mauro Carvalho Chehab (1):
+      devicectree: bindings: fix location of leds common file
+
+Raffaello D. Di Napoli (1):
+      leds: Modify PC Engines apu/apu2 driver to support apu3
+
+Uwe Kleine-König (18):
+      leds: triggers: don't depend on LEDS_TRIGGERS twice
+      can: mark led trigger as broken
+      leds: triggers: make the MODULE_LICENSE string match the actual license
+      leds: triggers: let struct led_trigger::activate() return an error code
+      leds: triggers: add device attribute support
+      leds: triggers: handle .trigger_data and .activated() in the core
+      leds: triggers: define module_led_trigger helper
+      leds: triggers: new function led_set_trigger_data()
+      leds: netdev trigger: simplifications from core changes
+      leds: timer trigger: simplifications from core changes
+      leds: transient trigger: simplifications from core changes
+      leds: oneshot trigger: simplifications from core changes
+      leds: heartbeat trigger: simplifications from core changes
+      leds: default-on trigger: make use of module_led_trigger()
+      leds: activity trigger: simplifications from core changes
+      leds: backlight trigger: simplifications from core changes
+      leds: gpio trigger: simplifications from core changes
+      usb: simplify usbport trigger
+
+ Documentation/devicetree/bindings/leds/common.txt  |   2 +-
+ .../devicetree/bindings/leds/leds-lm3692x.txt      |   5 +-
+ .../devicetree/bindings/leds/leds-lt3593.txt       |  32 ++++
+ drivers/leds/Kconfig                               |   5 +-
+ drivers/leds/led-triggers.c                        |  39 ++++-
+ drivers/leds/leds-apu.c                            |  44 ++++-
+ drivers/leds/leds-lm3692x.c                        | 181 ++++++++++++++------
+ drivers/leds/leds-lt3593.c                         | 190 ++++++++++++---------
+ drivers/leds/leds-max8997.c                        |   2 +-
+ drivers/leds/leds-ns2.c                            |   4 +-
+ drivers/leds/trigger/Kconfig                       |  15 +-
+ drivers/leds/trigger/ledtrig-activity.c            |  51 +++---
+ drivers/leds/trigger/ledtrig-backlight.c           |  64 +++----
+ drivers/leds/trigger/ledtrig-camera.c              |   3 +-
+ drivers/leds/trigger/ledtrig-default-on.c          |  20 +--
+ drivers/leds/trigger/ledtrig-gpio.c                |  92 +++-------
+ drivers/leds/trigger/ledtrig-heartbeat.c           |  49 +++---
+ drivers/leds/trigger/ledtrig-netdev.c              | 101 ++++-------
+ drivers/leds/trigger/ledtrig-oneshot.c             |  91 +++-------
+ drivers/leds/trigger/ledtrig-timer.c               |  58 ++-----
+ drivers/leds/trigger/ledtrig-transient.c           | 102 ++++-------
+ drivers/net/can/Kconfig                            |   6 +
+ drivers/tty/vt/keyboard.c                          |   4 +-
+ drivers/usb/core/ledtrig-usbport.c                 |  34 ++--
+ include/linux/leds.h                               |  36 +++-
+ net/bluetooth/leds.c                               |   6 +-
+ net/mac80211/led.c                                 |  20 ++-
+ net/rfkill/core.c                                  |   4 +-
+ 28 files changed, 641 insertions(+), 619 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lt3593.txt
