@@ -1,133 +1,169 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL] LED updates for 4.19-rc1
-Date: Mon, 13 Aug 2018 21:47:23 +0200
-Message-ID: <1534189643-6449-1-git-send-email-jacek.anaszewski@gmail.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v2 2/2] leds: lm3697: Introduce the lm3697 driver
+Date: Tue, 14 Aug 2018 08:54:24 -0500
+Message-ID: <d76cb536-7ac0-6616-4979-8706ef22e9f3@ti.com>
+References: <20180807160442.8937-1-dmurphy@ti.com>
+ <20180807160442.8937-2-dmurphy@ti.com> <20180808195909.GC20912@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180808195909.GC20912@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, arnd@arndb.de, colin.king@canonical.com, daniel@zonque.org, dmurphy@ti.com, elviskitone@gmail.com, mchehab+samsung@kernel.org, rafdev@dinapo.li, u.kleine-koenig@pengutronix.de, jacek.anaszewski@gmail.com
+To: Pavel Machek <pavel@ucw.cz>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Linus,
+Pavel
 
-Please pull LED updates for 4.19-rc1.
+Thanks for the review
 
-LED triggers improvements make the biggest part of this pull request.
-The most striking ones, that allowed for nice cleanups in the triggers are:
-	- centralized handling of creation and removal of trigger sysfs
-	  attributes via attribute group
-        - addition of module_led_trigger() helper
+On 08/08/2018 02:59 PM, Pavel Machek wrote:
+> Hi!
+> 
+>> Introduce the lm3697 LED driver for
+>> backlighting and display.
+>>
+>> Datasheet location:
+>> http://www.ti.com/lit/ds/symlink/lm3697.pdf
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> 
+>> +
+>> +#define LM3697_HVLED1_2_3_A		0
+>> +#define LM3697_HVLED1_B_HVLED2_3_A	1
+>> +#define LM3697_HVLED2_B_HVLED1_3_A	2
+>> +#define LM3697_HVLED1_2_B_HVLED3_A	3
+>> +#define LM3697_HVLED3_B_HVLED1_2_A	4
+>> +#define LM3697_HVLED1_3_B_HVLED2_A	5
+>> +#define LM3697_HVLED1_A_HVLED2_3_B	6
+>> +#define LM3697_HVLED1_2_3_B		7
+> 
+> That's rather long and verbose way to describe a bitmap, right?
 
-The other things that need to be mentioned:
+It will be removed with v3
 
-New features and improvements to existing LED class drivers:
-	- lt3593: add DT support, switch to gpiod interface
-	- lm3692x: support LED sync configuration, change OF calls to fwnode calls
-	- apu: modify PC Engines apu/apu2 driver to support apu3
+> 
+>> +static const struct regmap_config lm3697_regmap_config = {
+>> +	.reg_bits = 8,
+>> +	.val_bits = 8,
+>> +
+>> +	.max_register = LM3697_CTRL_ENABLE,
+>> +	.reg_defaults = lm3697_reg_defs,
+>> +	.num_reg_defaults = ARRAY_SIZE(lm3697_reg_defs),
+>> +	.cache_type = REGCACHE_RBTREE,
+>> +};
+> 
+> Is rbtree good idea? You don't have that many registers.
 
-Change in the drivers/net/can/led.c:
-	- mark led trigger as broken since it's in the way for the further
-          cleanups. It implements a subset of the netdev trigger and an Ack
-	  is needed from someone who can actually test and confirm that the netdev
-	  trigger works for can devices.
+ack
 
-Thanks,
-Jacek Anaszewski
+> 
+>> +static int lm3697_init(struct lm3697 *priv)
+>> +{
+>> +	int ret;
+>> +
+> ....
+>> +		regmap_write(priv->regmap, LM3697_RESET, LM3697_SW_RESET);
+> 
+> No error checking required here?
 
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+Ack
 
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+> 
+>> +	if (priv->control_bank_config < LM3697_HVLED1_2_3_A ||
+>> +	    priv->control_bank_config > LM3697_HVLED1_2_3_B) {
+>> +		dev_err(&priv->client->dev, "Control bank configuration is out of range\n");
+>> +		ret = -EINVAL;
+>> +		goto out;
+>> +	}
+>> +
+>> +	device_for_each_child_node(priv->dev, child) {
+>> +		led = &priv->leds[i];
+>> +
+>> +		ret = fwnode_property_read_u32(child, "reg", &led->control_bank);
+>> +		if (ret) {
+>> +			dev_err(&priv->client->dev, "reg DT property missing\n");
+>> +			goto child_out;
+>> +		}
+>> +
+>> +		fwnode_property_read_string(child, "linux,default-trigger",
+>> +					    &led->led_dev.default_trigger);
+>> +
+>> +		ret = fwnode_property_read_string(child, "label", &name);
+>> +		if (ret)
+>> +			snprintf(led->label, sizeof(led->label),
+>> +				"%s::", priv->client->name);
+>> +		else
+>> +			snprintf(led->label, sizeof(led->label),
+>> +				 "%s:%s", priv->client->name, name);
+>> +
+>> +
+>> +		led->priv = priv;
+>> +		led->led_dev.name = led->label;
+>> +		led->led_dev.brightness_set_blocking = lm3697_brightness_set;
+>> +
+>> +		ret = devm_led_classdev_register(priv->dev, &led->led_dev);
+>> +		if (ret) {
+>> +			dev_err(&priv->client->dev, "led register err: %d\n", ret);
+>> +			goto child_out;
+>> +		}
+>> +
+>> +		if (priv->control_bank_config == LM3697_HVLED1_2_3_A ||
+>> +		    priv->control_bank_config == LM3697_HVLED1_2_3_B)
+>> +			goto child_out;
+> 
+> This checks if we have just one bank, I see it. Should it also check
+> the led actually uses the correct bank?
 
-are available in the git repository at:
+It will be removed with v3
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds-for-4.19-rc1
+> 
+>> +		i++;
+>> +		fwnode_handle_put(child);
+>> +	}
+>> +
+>> +child_out:
+>> +	fwnode_handle_put(child);
+> 
+> Is not the fwnode_handle_put() done twice for non-error case?
 
-for you to fetch changes up to 2224f2ff9670b899983ff1b42d85530e889cfea1:
+Ack
 
-  leds: ns2: Change unsigned to unsigned int (2018-08-06 23:03:12 +0200)
+> 
+>> +	ret = lm3697_init(led);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return ret;
+>> +}
+> 
+> The if is not needed here.
+> 
 
-----------------------------------------------------------------
-LED updates for 4.19-rc1
-----------------------------------------------------------------
+Ack
 
-Arnd Bergmann (1):
-      leds: ledtrig-activity: use ktime_get_boot_ns()
+>> +static int lm3697_remove(struct i2c_client *client)
+>> +{
+>> +	struct lm3697 *led = i2c_get_clientdata(client);
+>> +	int ret;
+>> +
+>> +	ret = regmap_update_bits(led->regmap, LM3697_CTRL_ENABLE,
+>> +				 LM3697_CTRL_A_B_EN, 0);
+>> +	if (ret) {
+>> +		dev_err(&led->client->dev, "Failed to disable regulator\n");
+>> +		return ret;
+> 
+> Misleading, this does nothing with regulators.
 
-Colin Ian King (1):
-      leds: max8997: use mode when calling max8997_led_set_mode
+Ack
 
-Dan Murphy (4):
-      leds: lm3692x: Update license header to SPDX
-      leds: lm3692x: Change DT calls to fwnode calls
-      dt: bindings: lm3692x: Update binding for LED sync control
-      leds: lm3692x: Support LED sync configuration
+> 
+> 									Pavel
+> 
 
-Daniel Mack (5):
-      dt-bindings: leds: Add bindings for lltc,lt3593
-      leds: lt3593: merge functions and clean up code
-      leds: lt3593: switch to gpiod interface
-      leds: lt3593: Add device tree probing glue
-      leds: lt3593: update email address and switch to SPDX license header
 
-Kitone Elvis Peter (1):
-      leds: ns2: Change unsigned to unsigned int
-
-Mauro Carvalho Chehab (1):
-      devicectree: bindings: fix location of leds common file
-
-Raffaello D. Di Napoli (1):
-      leds: Modify PC Engines apu/apu2 driver to support apu3
-
-Uwe Kleine-König (18):
-      leds: triggers: don't depend on LEDS_TRIGGERS twice
-      can: mark led trigger as broken
-      leds: triggers: make the MODULE_LICENSE string match the actual license
-      leds: triggers: let struct led_trigger::activate() return an error code
-      leds: triggers: add device attribute support
-      leds: triggers: handle .trigger_data and .activated() in the core
-      leds: triggers: define module_led_trigger helper
-      leds: triggers: new function led_set_trigger_data()
-      leds: netdev trigger: simplifications from core changes
-      leds: timer trigger: simplifications from core changes
-      leds: transient trigger: simplifications from core changes
-      leds: oneshot trigger: simplifications from core changes
-      leds: heartbeat trigger: simplifications from core changes
-      leds: default-on trigger: make use of module_led_trigger()
-      leds: activity trigger: simplifications from core changes
-      leds: backlight trigger: simplifications from core changes
-      leds: gpio trigger: simplifications from core changes
-      usb: simplify usbport trigger
-
- Documentation/devicetree/bindings/leds/common.txt  |   2 +-
- .../devicetree/bindings/leds/leds-lm3692x.txt      |   5 +-
- .../devicetree/bindings/leds/leds-lt3593.txt       |  32 ++++
- drivers/leds/Kconfig                               |   5 +-
- drivers/leds/led-triggers.c                        |  39 ++++-
- drivers/leds/leds-apu.c                            |  44 ++++-
- drivers/leds/leds-lm3692x.c                        | 181 ++++++++++++++------
- drivers/leds/leds-lt3593.c                         | 190 ++++++++++++---------
- drivers/leds/leds-max8997.c                        |   2 +-
- drivers/leds/leds-ns2.c                            |   4 +-
- drivers/leds/trigger/Kconfig                       |  15 +-
- drivers/leds/trigger/ledtrig-activity.c            |  51 +++---
- drivers/leds/trigger/ledtrig-backlight.c           |  64 +++----
- drivers/leds/trigger/ledtrig-camera.c              |   3 +-
- drivers/leds/trigger/ledtrig-default-on.c          |  20 +--
- drivers/leds/trigger/ledtrig-gpio.c                |  92 +++-------
- drivers/leds/trigger/ledtrig-heartbeat.c           |  49 +++---
- drivers/leds/trigger/ledtrig-netdev.c              | 101 ++++-------
- drivers/leds/trigger/ledtrig-oneshot.c             |  91 +++-------
- drivers/leds/trigger/ledtrig-timer.c               |  58 ++-----
- drivers/leds/trigger/ledtrig-transient.c           | 102 ++++-------
- drivers/net/can/Kconfig                            |   6 +
- drivers/tty/vt/keyboard.c                          |   4 +-
- drivers/usb/core/ledtrig-usbport.c                 |  34 ++--
- include/linux/leds.h                               |  36 +++-
- net/bluetooth/leds.c                               |   6 +-
- net/mac80211/led.c                                 |  20 ++-
- net/rfkill/core.c                                  |   4 +-
- 28 files changed, 641 insertions(+), 619 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lt3593.txt
+-- 
+------------------
+Dan Murphy
