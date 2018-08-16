@@ -1,83 +1,120 @@
-From: kgunda@codeaurora.org
-Subject: Re: [PATCH V4 8/8] backlight: qcom-wled: Add auto string detection
- logic
-Date: Thu, 16 Aug 2018 11:03:18 +0530
-Message-ID: <bfc20fc54fcb3bc91ce13b353f73039e@codeaurora.org>
-References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
- <1531131741-19971-9-git-send-email-kgunda@codeaurora.org>
- <20180807063229.GE23866@tuxbook-pro>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v4 1/2] dt-bindings: leds: Add bindings for lm3697 driver
+Date: Thu, 16 Aug 2018 12:20:57 -0500
+Message-ID: <20180816172058.31700-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180807063229.GE23866@tuxbook-pro>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-On 2018-08-07 12:02, Bjorn Andersson wrote:
-> On Mon 09 Jul 03:22 PDT 2018, Kiran Gunda wrote:
->> diff --git a/drivers/video/backlight/qcom-wled.c 
->> b/drivers/video/backlight/qcom-wled.c
-> [..]
->> @@ -189,6 +206,15 @@ static int wled4_set_brightness(struct wled 
->> *wled, u16 brightness)
->>  	return 0;
->>  }
->> 
->> +static void wled_ovp_work(struct work_struct *work)
->> +{
->> +	struct wled *wled = container_of(work,
->> +					 struct wled, ovp_work.work);
->> +
->> +	if (wled->ovp_irq > 0)
->> +		enable_irq(wled->ovp_irq);
->> +}
->> +
->>  static int wled_module_enable(struct wled *wled, int val)
->>  {
->>  	int rc;
->> @@ -200,7 +226,18 @@ static int wled_module_enable(struct wled *wled, 
->> int val)
->>  				WLED_CTRL_REG_MOD_EN,
->>  				WLED_CTRL_REG_MOD_EN_MASK,
->>  				val << WLED_CTRL_REG_MOD_EN_SHIFT);
->> -	return rc;
->> +	if (rc < 0)
->> +		return rc;
->> +
->> +	if (val) {
->> +		schedule_delayed_work(&wled->ovp_work, WLED_SOFT_START_DLY_US);
-> 
-> schedule_delayed_work() takes a delay in jiffies, not micro seconds.
-> 
-I will address it in the next series.
->> +	} else {
->> +		cancel_delayed_work_sync(&wled->ovp_work);
-> 
-> If we get here within WLED_SOFT_START_DLY_US of a module enable we have
-> yet to execute the enable_irq() in the delayed worker, which should 
-> mean
-> that the irq is unbalanced from then on.
-> 
-> I believe you can check the return value of cancel_delayed_work_sync()
-> being true to know if wled_ovp_work() was yet to execute.
-> 
-Ok. I will address it in next series.
->> +		if (wled->ovp_irq > 0)
->> +			disable_irq(wled->ovp_irq);
->> +	}
->> +
->> +	return 0;
->>  }
->> 
-> 
-> Regards,
-> Bjorn
-> --
-> To unsubscribe from this list: send the line "unsubscribe 
-> linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Add the device tree bindings for the lm3697
+LED driver for backlighting and display.
+
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+
+v4 - Removed HVLED definition in favor of HVLED place definition - https://lore.kernel.org/patchwork/patch/974812/
+v3 - Updated subject with prefered title - https://lore.kernel.org/patchwork/patch/972337/
+v2 - Fixed subject and patch commit message - https://lore.kernel.org/patchwork/patch/971326/
+
+ .../devicetree/bindings/leds/leds-lm3697.txt  | 86 +++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+new file mode 100644
+index 000000000000..bcd67d53c889
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+@@ -0,0 +1,86 @@
++* Texas Instruments - LM3697 Highly Efficient White LED Driver
++
++The LM3697 11-bit LED driver provides high-
++performance backlight dimming for 1, 2, or 3 series
++LED strings while delivering up to 90% efficiency.
++
++This device is suitable for Display and Keypad Lighting
++
++Required properties:
++	- compatible:
++		"ti,lm3967"
++	- reg :  I2C slave address
++	- #address-cells : 1
++	- #size-cells : 0
++
++Optional properties:
++	- enable-gpios : gpio pin to enable/disable the device.
++	- vled-supply : LED supply
++
++Required child properties:
++	- reg : 0 - LED is Controlled by bank A
++		1 - LED is Controlled by bank B
++	- led-sources : Indicates which HVLED string is associated to which
++			control bank.  Each element in the array is associated
++			with a specific HVLED string.  Element 0 is HVLED1,
++			element 1 is HVLED2 and element 2 HVLED3.
++			Additional information is contained
++			in Documentation/devicetree/bindings/leds/common.txt
++			0 - HVLED is not active in this control bank
++			1 - HVLED string is controlled by this control bank
++
++Optional child properties:
++	- label : see Documentation/devicetree/bindings/leds/common.txt
++	- linux,default-trigger :
++	   see Documentation/devicetree/bindings/leds/common.txt
++
++Example:
++
++HVLED string 1 and 2 controlled by control bank A and HVLED string controlled by
++control bank B.
++
++led-controller@36 {
++	compatible = "ti,lm3967";
++	reg = <0x36>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
++	vled-supply = <&vbatt>;
++
++	led@0 {
++		reg = <0>;
++		led-sources = <1 0 1>;
++		label = "white:first_backlight_cluster";
++		linux,default-trigger = "backlight";
++	};
++
++	led@1 {
++		reg = <1>;
++		led-sources = <0 1 0>;
++		label = "white:second_backlight_cluster";
++		linux,default-trigger = "backlight";
++	};
++}
++
++All HVLED strings controlled by control bank A
++
++led-controller@36 {
++	compatible = "ti,lm3967";
++	reg = <0x36>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
++	vled-supply = <&vbatt>;
++
++	led@0 {
++		reg = <0>;
++		led-sources = <1 1 1>;
++		label = "white:backlight_cluster";
++		linux,default-trigger = "backlight";
++	};
++}
++
++For more product information please see the link below:
++http://www.ti.com/lit/ds/symlink/lm3697.pdf
+-- 
+2.17.0.582.gccdcbd54c
