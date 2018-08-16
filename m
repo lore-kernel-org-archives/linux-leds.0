@@ -1,72 +1,58 @@
 From: kgunda@codeaurora.org
-Subject: Re: [PATCH V4 3/8] backlight: qcom-wled: Add new properties for
- PMI8998
-Date: Thu, 16 Aug 2018 10:53:11 +0530
-Message-ID: <897ab82c450bff71658c1fa32e7e6021@codeaurora.org>
+Subject: Re: [PATCH V4 5/8] backlight: qcom-wled: Restructure the driver for
+ WLED3
+Date: Thu, 16 Aug 2018 10:58:51 +0530
+Message-ID: <53030a892f6cd69a8e58188ff1a60f36@codeaurora.org>
 References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
- <1531131741-19971-4-git-send-email-kgunda@codeaurora.org>
- <20180807052355.GA23866@tuxbook-pro>
+ <1531131741-19971-6-git-send-email-kgunda@codeaurora.org>
+ <20180807053705.GB23866@tuxbook-pro>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180807052355.GA23866@tuxbook-pro>
+In-Reply-To: <20180807053705.GB23866@tuxbook-pro>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+Cc: jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 2018-08-07 10:53, Bjorn Andersson wrote:
+On 2018-08-07 11:07, Bjorn Andersson wrote:
 > On Mon 09 Jul 03:22 PDT 2018, Kiran Gunda wrote:
->> diff --git 
->> a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt 
->> b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>> diff --git a/drivers/video/backlight/qcom-wled.c 
+>> b/drivers/video/backlight/qcom-wled.c
 > [..]
->>  - qcom,num-strings
->>  	Usage:        optional
->>  	Value type:   <u32>
->>  	Definition:   #; number of led strings attached;
->> -		      value from 1 to 3. default: 2
->> -		      This property is supported only for PM8941.
->> +		      value: For PM8941 from 1 to 3.
->> +			     For PMI8998 from 1 to 4.
-> [..]
->> +- qcom,enabled-strings
->> +	Usage:        optional
->> +	Value tyoe:   <u32 array>
->> +	Definition:   Array of the WLED strings numbered from 0 to 3. Each
->> +		      string of leds are operated individually. Specify the
->> +		      list of strings used by the device. Any combination of
->> +		      led strings can be used.
-> [..]
+>> @@ -365,6 +434,15 @@ static int wled_configure(struct wled *wled, 
+>> struct device *dev)
 >> 
->>  Example:
+>>  	cfg->num_strings = cfg->num_strings + 1;
 >> 
->> @@ -99,4 +146,5 @@ pm8941-wled@d800 {
->>  	qcom,switching-freq = <1600>;
->>  	qcom,ovp = <29>;
->>  	qcom,num-strings = <2>;
->> +	qcom,enabled-strings = <0x00 0x01>;
+>> +	string_len = of_property_count_elems_of_size(dev->of_node,
+>> +						     "qcom,enabled-strings",
+>> +						     sizeof(u32));
+>> +	if (string_len > 0)
+>> +		rc = of_property_read_u32_array(dev->of_node,
+>> +						"qcom,enabled-strings",
+>> +						wled->cfg.enabled_strings,
 > 
-> Nit. I would assume that specifying qcom,num-strings = <2> implies that
-> the first 2 strings are used, so one would not also specify
-> qcom,enabled-strings.
+> qcom,enabled-strings is listed as optional, but without it we will end
+> up with qcom,num-strings zeros in an array.  Initialize
+> wled->cfg.enabled_strings to 0,1,2,3 and the driver will be backwards
+> compatible.
 > 
-Thanks Bjorn for reviewing the series !
-
-"qcom,enabled-strings" need be specified along with the 
-"qcom,num-strings".
-Because the enabled-strings can be <0, 2> or <0, 3 > also. The driver 
-picks the string
-configuration from the enabled-strings array and enable only those 
-current-sinks.
-
-> (And you should use decimal for natural numbers)
+Correct. I will initialize the array in the next series.
+> I also think that if you do qcom,enabled-strings = <0, 1, 2>; there's 
+> no
+> need to also specify qcom,num-strings = <3>; and we can just use
+> string_len for num_strings.
+Correct. But I have kept this property to have the backward 
+compatibility with the
+old driver (WLED3).
 > 
-I will modify it in next series.
-> 
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> +						sizeof(u32));
+>> +
+>>  	return 0;
+>>  }
 > 
 > Regards,
 > Bjorn
