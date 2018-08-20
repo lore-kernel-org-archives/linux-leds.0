@@ -1,61 +1,33 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v4 2/2] leds: lm3697: Introduce the lm3697 driver
-Date: Fri, 17 Aug 2018 14:55:25 -0500
-Message-ID: <9b82ae9f-330b-0150-f768-0c1955ab4582@ti.com>
-References: <20180816172058.31700-1-dmurphy@ti.com>
- <20180816172058.31700-2-dmurphy@ti.com>
- <9ef9cd25-5c73-964c-ac09-55c0c78e5dc9@gmail.com>
- <c751759a-d0c2-4ee7-2299-99d83538bdc4@ti.com>
- <24e05753-8ec7-e1b0-8671-8443bc20130a@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 1/2] dt-bindings: leds: Add bindings for lm3697 driver
+Date: Mon, 20 Aug 2018 12:57:49 -0500
+Message-ID: <20180820175749.GA13428@bogus>
+References: <20180817151528.21623-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <24e05753-8ec7-e1b0-8671-8443bc20130a@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180817151528.21623-1-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, pavel@ucw.cz
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
-
-On 08/17/2018 02:37 PM, Jacek Anaszewski wrote:
-> Dan,
+On Fri, 17 Aug 2018 10:15:27 -0500, Dan Murphy wrote:
+> Add the device tree bindings for the lm3697
+> LED driver for backlighting and display.
 > 
-> On 08/16/2018 10:44 PM, Dan Murphy wrote:
->> Jacek
->>
->> On 08/16/2018 02:58 PM, Jacek Anaszewski wrote:
->>> Dan,
->>>
->>> Thank you for the patch.
->>>
->>> I didn't review DT parsing details in v3, but now I've produced
->>> diff between v3 and v4 to check what has changed.
->>>
->>> I'm quite surprised realizing that you're not validating
->>> HVLED and control banks assignment, having in mind earlier
->>> discussions and your concerns about numerous DT configurations
->>> to check.
->>>
->>> Is it on purpose?
->>>
->>
->> Yes.  It was on purpose.  After sleeping on it and going through the overall
->> control to HVLED assignments I realized the user will know quite quickly
->> that their configuration is messed up.
->>
->> The suggestions actually simplified the code quite nicely which I am happier to have
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
 > 
-> Ack. Thanks for the v5 - I'll let it sit on the lists for a week anyway,
-> until the merge window gets closed.
+> v5 - Fix the comment for the example - https://lore.kernel.org/patchwork/patch/975060/
+> 
+> v4 - Removed HVLED definition in favor of HVLED place definition - https://lore.kernel.org/patchwork/patch/974812/
+> v3 - Updated subject with prefered title - https://lore.kernel.org/patchwork/patch/972337/
+> v2 - Fixed subject and patch commit message - https://lore.kernel.org/patchwork/patch/971326/
+> 
+>  .../devicetree/bindings/leds/leds-lm3697.txt  | 86 +++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
 > 
 
-Sounds good to me.
-
-Dan
-
--- 
-------------------
-Dan Murphy
+Reviewed-by: Rob Herring <robh@kernel.org>
