@@ -1,83 +1,62 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v5 2/2] leds: lm3697: Introduce the lm3697 driver
-Date: Fri, 24 Aug 2018 21:33:44 +0200
-Message-ID: <586dc4fb-ebdf-ba8a-8a1e-ad49c80a1157@gmail.com>
-References: <20180817151528.21623-1-dmurphy@ti.com>
- <20180817151528.21623-2-dmurphy@ti.com> <20180824100549.GC4045@amd>
- <e5abd336-9861-66f3-3991-40cf1302ce8d@ti.com>
+Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
+Date: Fri, 24 Aug 2018 21:49:50 +0200
+Message-ID: <9bb7ac19-36a6-d11a-6d46-fc65c2026201@gmail.com>
+References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
+ <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com> <20180824101145.GA1510@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e5abd336-9861-66f3-3991-40cf1302ce8d@ti.com>
+In-Reply-To: <20180824101145.GA1510@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
-Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com, bjorn.andersson@linaro.org, broonie@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Dan,
+Hi Pavel,
 
-On 08/24/2018 01:58 PM, Dan Murphy wrote:
-> Jacek
+On 08/24/2018 12:11 PM, Pavel Machek wrote:
+> Hi!
 > 
-> On 08/24/2018 05:05 AM, Pavel Machek wrote:
->> Hi!
+>> I think that it would be more flexible if software pattern fallback
+>> was applied in case of pattern_set failure. Otherwise, it would
+>> lead to the situation where LED class devices that support hardware
+>> blinking couldn't be applied the same set of patterns as LED class
+>> devices that don't implement pattern_set. The latter will always have to
+>> resort to using software pattern engine which will accept far greater
+>> amount of pattern combinations.
 >>
->>> +/**
->>> + * struct lm3697 -
->>> + * @enable_gpio - Hardware enable gpio
->>> + * @regulator - LED supply regulator pointer
->>> + * @client - Pointer to the I2C client
->>> + * @regmap - Devices register map
->>> + * @dev - Pointer to the devices device struct
->>> + * @lock - Lock for reading/writing the device
->>> + * @leds - Array of LED strings.
->>> + */
+>> In this case we need to discuss on what basis the decision will be
+>> made on whether hardware or software engine will be used.
 >>
->> extra .
->>
->>> +	ret = regmap_write(led->priv->regmap, brt_msb_reg, brt_val);
->>> +	if (ret) {
->>> +		dev_err(&led->priv->client->dev, "Cannot write MSB\n");
->>> +		goto out;
->>> +	}
->>> +out:
->>
->> I'd avoid this goto.
->>
->>> +static int lm3697_set_control_bank(struct lm3697 *priv)
->>> +{
->>> +	u8 control_bank_config = 0;
->>> +	struct lm3697_led *led;
->>> +	int ret, i;
->>> +
->>> +	led = &priv->leds[0];
->>> +	if (led->control_bank == LM3697_CONTROL_A)
->>> +		led = &priv->leds[1];
->>
->> I'd expect CONTROL_A to correspond to leds[0]...?
->>
->>> +	for (i = 0; i < LM3697_MAX_LED_STRINGS; i++) {
->>> +		if (led->hvled_strings[i] == LM3697_HVLED_ASSIGNMENT)
->>> +			control_bank_config |= 1 << i;
->>> +	}
->>
->> Extra {}s.
->>
->>> +	priv->regulator = devm_regulator_get(&priv->client->dev, "vled");
->>> +	if (IS_ERR(priv->regulator))
->>> +		priv->regulator = NULL;
->>
->> If vled regulator is specified in dt and _get fails, is it worth a
->> warning?
->>
->> 									Pavel
->>
+>> Possible options coming to mind:
+>> - an interface will be provided to determine max difference between
+>>   the settings supported by the hardware and the settings requested by
+>>   the user, that will result in aligning user's setting to the hardware
+>>   capabilities
+>> - the above alignment rate will be predefined instead
+>> - hardware engine will be used only if user requests supported settings
+>>   on the whole span of the requested pattern
+>> - in each of the above cases it would be worth to think of the
+>>   interface to show the scope of the settings supported by hardware
 > 
-> Do you want v6 or a new patch on top?
+> I'd recommend keeping it simple. We use hardware engine if driver
+> author thinks pattern is "close enough".
 
-Please submit v6.
+The thing is that in the ledtrig-pattern v5 implementation there
+is no option of using software fallback if pattern_set op
+is initialized:
+
++	if (led_cdev->pattern_set) {
++		return led_cdev->pattern_set(led_cdev, data->patterns,
++					     data->npatterns, data->repeat);
++	}
+
+> If human can not tell the difference, it probably is.
+> 
+> We may want to do something more formal later.
 
 -- 
 Best regards,
