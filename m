@@ -1,72 +1,64 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
-Date: Fri, 24 Aug 2018 12:11:45 +0200
-Message-ID: <20180824101145.GA1510@amd>
-References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
- <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="/9DWx/yDrRhgMJTb"
+From: Kiran Gunda <kgunda@codeaurora.org>
+Subject: [PATCH V5 0/8] backlight: qcom-wled: Support for QCOM wled driver
+Date: Fri, 24 Aug 2018 15:57:39 +0530
+Message-ID: <1535106467-17843-1-git-send-email-kgunda@codeaurora.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com, bjorn.andersson@linaro.org, broonie@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: bjorn.andersson@linaro.org, jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org, Kiran Gunda <kgunda@codeaurora.org>
 List-Id: linux-leds@vger.kernel.org
 
+This patch series renames the pm8941-wled.c driver to qcom-wled.c to add
+the support for multiple PMICs supported by qualcomm. This patch series
+supports both PM8941 and PMI8998 WLED. The PMI8998 WLED has the support
+to handle the OVP (over voltage protection) and the SC (short circuit
+protection)
+interrupts. It also has the auto string detection algorithm support to
+configure the right strings if the user specified string configuration
+is in-correct. These three features are added in this series for PMI8998.
 
---/9DWx/yDrRhgMJTb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+changes from v1:
+   - Fixed the commit message for
+   - backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
 
-Hi!
+Changes from v2:
+   - Fixed bjorn and other reviewer's comments
+   - Seperated the device tree bindings
+   - Splitted out the WLED4 changes in seperate patch
+   - Merged OVP and auto string detection patch
 
-> I think that it would be more flexible if software pattern fallback
-> was applied in case of pattern_set failure. Otherwise, it would
-> lead to the situation where LED class devices that support hardware
-> blinking couldn't be applied the same set of patterns as LED class
-> devices that don't implement pattern_set. The latter will always have to
-> resort to using software pattern engine which will accept far greater
-> amount of pattern combinations.
->=20
-> In this case we need to discuss on what basis the decision will be
-> made on whether hardware or software engine will be used.
->=20
-> Possible options coming to mind:
-> - an interface will be provided to determine max difference between
->   the settings supported by the hardware and the settings requested by
->   the user, that will result in aligning user's setting to the hardware
->   capabilities
-> - the above alignment rate will be predefined instead
-> - hardware engine will be used only if user requests supported settings
->   on the whole span of the requested pattern
-> - in each of the above cases it would be worth to think of the
->   interface to show the scope of the settings supported by hardware
+Changes from v3:
+  - Added Reviewed-by/Acked-by tags
+  - Fixed comments from Bjorn/Vinod/Rob
+  - Splitting the "backlight: qcom-wled: Add support for WLED4 peripheral" patch
+    to seperate the WLED3 specific restructure.
 
-I'd recommend keeping it simple. We use hardware engine if driver
-author thinks pattern is "close enough".
+Changes from v4:
+  - Added reviewed-by/Acked-by tags
+  - Fixed comments from Bjorn/Daniel/Pavel
 
-If human can not tell the difference, it probably is.
+Kiran Gunda (8):
+  backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
+  backlight: qcom-wled: restructure the qcom-wled bindings
+  backlight: qcom-wled: Add new properties for PMI8998
+  backlight: qcom-wled: Rename PM8941* to WLED3
+  backlight: qcom-wled: Restructure the driver for WLED3
+  backlight: qcom-wled: Add support for WLED4 peripheral
+  backlight: qcom-wled: add support for short circuit handling
+  backlight: qcom-wled: Add auto string detection logic
 
-We may want to do something more formal later.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+ .../bindings/leds/backlight/pm8941-wled.txt        |   42 -
+ .../bindings/leds/backlight/qcom-wled.txt          |  150 +++
+ drivers/video/backlight/Kconfig                    |    8 +-
+ drivers/video/backlight/Makefile                   |    2 +-
+ drivers/video/backlight/pm8941-wled.c              |  432 -------
+ drivers/video/backlight/qcom-wled.c                | 1296 ++++++++++++++++++++
+ 6 files changed, 1451 insertions(+), 479 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+ delete mode 100644 drivers/video/backlight/pm8941-wled.c
+ create mode 100644 drivers/video/backlight/qcom-wled.c
 
---/9DWx/yDrRhgMJTb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlt/2eEACgkQMOfwapXb+vKtBgCgp15fsv7FX679nW0h33YTmU70
-KqwAoLsWGFNPvDCFIabrzTu9n1dvfmgM
-=KBsf
------END PGP SIGNATURE-----
-
---/9DWx/yDrRhgMJTb--
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+ a Linux Foundation Collaborative Project
