@@ -1,39 +1,48 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH V5 4/8] backlight: qcom-wled: Rename PM8941* to WLED3
-Date: Mon, 27 Aug 2018 08:04:29 -0700
-Message-ID: <20180827150429.GM3048@tuxbook-pro>
-References: <1535106467-17843-1-git-send-email-kgunda@codeaurora.org>
- <1535106467-17843-5-git-send-email-kgunda@codeaurora.org>
- <20180827100448.GF31905@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Rob Herring <robh@kernel.org>
+Subject: [PATCH] leds: Convert to using %pOFn instead of device_node.name
+Date: Mon, 27 Aug 2018 20:52:26 -0500
+Message-ID: <20180828015252.28511-25-robh@kernel.org>
+References: <20180828015252.28511-1-robh@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180827100448.GF31905@amd>
+In-Reply-To: <20180828015252.28511-1-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Kiran Gunda <kgunda@codeaurora.org>, jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org, jacek.anaszewski@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Sakari Ailus <sakari.ailus@iki.fi>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Mon 27 Aug 03:04 PDT 2018, Pavel Machek wrote:
+In preparation to remove the node name pointer from struct device_node,
+convert printf users to use the %pOFn format specifier.
 
-> On Fri 2018-08-24 15:57:43, Kiran Gunda wrote:
-> > Rename the PM8941* references as WLED3 to make the driver
-> > generic and have WLED support for other PMICs. Also rename
-> > "i_boost_limit" and "i_limit" variables to "boost_i_limit"
-> > and "string_i_limit" respectively to resemble the corresponding
-> > register names.
-> 
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> 
-> > -MODULE_DESCRIPTION("pm8941 wled driver");
-> > +MODULE_DESCRIPTION("Qualcomm WLED driver");
-> 
-> "... supporting pm8941, xxx devices" ?
-> 
+Cc: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/leds/leds-as3645a.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I would suggest not doing this. There's quite a long list of different
-PMICs containing some version of this hardware block.
-
-Regards,
-Bjorn
+diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+index f883616d9e60..98a69b1a43f9 100644
+--- a/drivers/leds/leds-as3645a.c
++++ b/drivers/leds/leds-as3645a.c
+@@ -529,7 +529,7 @@ static int as3645a_parse_node(struct as3645a *flash,
+ 		strlcpy(names->flash, name, sizeof(names->flash));
+ 	else
+ 		snprintf(names->flash, sizeof(names->flash),
+-			 "%s:flash", node->name);
++			 "%pOFn:flash", node);
+ 
+ 	rval = of_property_read_u32(flash->flash_node, "flash-timeout-us",
+ 				    &cfg->flash_timeout_us);
+@@ -573,7 +573,7 @@ static int as3645a_parse_node(struct as3645a *flash,
+ 		strlcpy(names->indicator, name, sizeof(names->indicator));
+ 	else
+ 		snprintf(names->indicator, sizeof(names->indicator),
+-			 "%s:indicator", node->name);
++			 "%pOFn:indicator", node);
+ 
+ 	rval = of_property_read_u32(flash->indicator_node, "led-max-microamp",
+ 				    &cfg->indicator_max_ua);
+-- 
+2.17.1
