@@ -1,63 +1,62 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: Convert to using %pOFn instead of device_node.name
-Date: Tue, 28 Aug 2018 22:37:03 +0200
-Message-ID: <5e5ea614-5242-eabc-2e4a-aa20432a4a12@gmail.com>
-References: <20180828015252.28511-1-robh@kernel.org>
- <20180828015252.28511-25-robh@kernel.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
+Date: Tue, 28 Aug 2018 13:47:49 -0700
+Message-ID: <20180828204749.GH2523@minitux>
+References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
+ <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
+ <20180824101145.GA1510@amd>
+ <9bb7ac19-36a6-d11a-6d46-fc65c2026201@gmail.com>
+ <20180824201227.GB17146@amd>
+ <f5046e2d-9f15-4b7e-083e-e97f7ca0693c@gmail.com>
+ <CAMz4kuLubD6v1+zmjuKtBL4geBk4ofBdkMy+v8x0K5g_L0otqQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180828015252.28511-25-robh@kernel.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <CAMz4kuLubD6v1+zmjuKtBL4geBk4ofBdkMy+v8x0K5g_L0otqQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Sakari Ailus <sakari.ailus@iki.fi>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Rob,
+On Sat 25 Aug 00:51 PDT 2018, Baolin Wang wrote:
 
-Thank you for the patch.
-
-On 08/28/2018 03:52 AM, Rob Herring wrote:
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
+> On 25 August 2018 at 04:44, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+> > On 08/24/2018 10:12 PM, Pavel Machek wrote:
+> >> On Fri 2018-08-24 21:49:50, Jacek Anaszewski wrote:
+> >>> Hi Pavel,
+> >>>
+> >>> On 08/24/2018 12:11 PM, Pavel Machek wrote:
+[..]
+> >>> +    if (led_cdev->pattern_set) {
+> >>> +            return led_cdev->pattern_set(led_cdev, data->patterns,
+> >>> +                                         data->npatterns, data->repeat);
+> >>> +    }
+> >>
+> >> Yeah, that sounds wrong. (Sorry I did not pay enough attention).
+> >>
+> >> It pattern_set() returns special error code, it should just continue
+> >> and use software pattern fallback.
+> >
+> > And now we can get back to the issue I was concerned about in the
+> > email you replied to, i.e. what series of [brightness delta_t] tuples
+> > should be written to the pattern file to enable hardware breathing
+> > engine.
 > 
-> Cc: Sakari Ailus <sakari.ailus@iki.fi>
-> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: linux-leds@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/leds/leds-as3645a.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-> index f883616d9e60..98a69b1a43f9 100644
-> --- a/drivers/leds/leds-as3645a.c
-> +++ b/drivers/leds/leds-as3645a.c
-> @@ -529,7 +529,7 @@ static int as3645a_parse_node(struct as3645a *flash,
->  		strlcpy(names->flash, name, sizeof(names->flash));
->  	else
->  		snprintf(names->flash, sizeof(names->flash),
-> -			 "%s:flash", node->name);
-> +			 "%pOFn:flash", node);
->  
->  	rval = of_property_read_u32(flash->flash_node, "flash-timeout-us",
->  				    &cfg->flash_timeout_us);
-> @@ -573,7 +573,7 @@ static int as3645a_parse_node(struct as3645a *flash,
->  		strlcpy(names->indicator, name, sizeof(names->indicator));
->  	else
->  		snprintf(names->indicator, sizeof(names->indicator),
-> -			 "%s:indicator", node->name);
-> +			 "%pOFn:indicator", node);
->  
->  	rval = of_property_read_u32(flash->indicator_node, "led-max-microamp",
->  				    &cfg->indicator_max_ua);
+> OK. So now we've made a consensus to use the software pattern fallback
+> if failed to set hardware pattern. How about introduce one interface
+> to convert hardware patterns to software patterns if necessary?
 > 
 
-Applied.
+I do not agree that a silent fallback mechanism is the way to go here.
+There is a enormous difference in power consumption between letting a
+dedicated piece of hardware drive a pulse on a LED or using a general
+purpose ARM core running at hundreds of MHz.
 
--- 
-Best regards,
-Jacek Anaszewski
+
+Note that the most common use case for the driver I'm trying to upstream
+is to pulse the LED when you have a notification pending on your Android
+device, in which case you want all the CPUs are completely powered down.
+
+Regards,
+Bjorn
