@@ -1,97 +1,87 @@
 From: kgunda@codeaurora.org
-Subject: Re: [PATCH V5 5/8] backlight: qcom-wled: Restructure the driver for
- WLED3
-Date: Wed, 29 Aug 2018 12:40:24 +0530
-Message-ID: <bcd99b19d4a7586ba47c05b8b5bd2bcf@codeaurora.org>
+Subject: Re: [PATCH V5 8/8] backlight: qcom-wled: Add auto string detection
+ logic
+Date: Wed, 29 Aug 2018 12:43:28 +0530
+Message-ID: <f6e6baa748d73b68c1cbcc5d955df471@codeaurora.org>
 References: <1535106467-17843-1-git-send-email-kgunda@codeaurora.org>
- <1535106467-17843-6-git-send-email-kgunda@codeaurora.org>
- <20180827100939.GG31905@amd>
+ <1535106467-17843-9-git-send-email-kgunda@codeaurora.org>
+ <20180827145420.GL3048@tuxbook-pro>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180827100939.GG31905@amd>
+In-Reply-To: <20180827145420.GL3048@tuxbook-pro>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: bjorn.andersson@linaro.org, jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org, jacek.anaszewski@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: jingoohan1@gmail.com, lee.jones@linaro.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 2018-08-27 15:39, Pavel Machek wrote:
-> On Fri 2018-08-24 15:57:44, Kiran Gunda wrote:
->> Restructure the driver to add the support for new WLED
->> peripherals.
->> 
->> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
->> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
->> ---
->> Changes from V3:
->>     - This is the new patch after splitting the
->>       "backlight: qcom-wled: Add support for WLED4 peripheral" patch
->>       to seperate the WLED3 specific restructure.
->> 
->> Changes from V4:
->>     - Initialize wled->cfg.enabled_strings to 0,1,2,3.
->>     - Replaced the WLED3 macro with 3.
->> 
->>  drivers/video/backlight/qcom-wled.c | 395 
->> ++++++++++++++++++++++--------------
->>  1 file changed, 245 insertions(+), 150 deletions(-)
->> 
+On 2018-08-27 20:24, Bjorn Andersson wrote:
+> On Fri 24 Aug 03:27 PDT 2018, Kiran Gunda wrote:
 >> diff --git a/drivers/video/backlight/qcom-wled.c 
 >> b/drivers/video/backlight/qcom-wled.c
->> index 3cd6e75..a746bec 100644
->> --- a/drivers/video/backlight/qcom-wled.c
->> +++ b/drivers/video/backlight/qcom-wled.c
->> @@ -15,59 +15,71 @@
->>  #include <linux/module.h>
->>  #include <linux/of.h>
->>  #include <linux/of_device.h>
->> +#include <linux/of_address.h>
->>  #include <linux/regmap.h>
->> 
->>  /* From DT binding */
->> +#define WLED_MAX_STRINGS				4
+> [..]
+>>  struct wled {
+>> @@ -135,16 +146,22 @@ struct wled {
+>>  	struct regmap *regmap;
+>>  	struct mutex lock;	/* Lock to avoid race from thread irq handler */
+>>  	ktime_t last_short_event;
+>> +	ktime_t start_ovp_fault_time;
+>>  	u16 ctrl_addr;
+>>  	u16 sink_addr;
+>>  	u16 max_string_count;
+>> +	u16 auto_detection_ovp_count;
+>>  	u32 brightness;
+>>  	u32 max_brightness;
+>>  	u32 short_count;
+>> +	u32 auto_detect_count;
+>>  	bool disabled_by_short;
+>>  	bool has_short_detect;
+>> +	int ovp_irq;
+>> +	bool ovp_irq_disabled;
+> 
+> ovp_irq_disabled is now only assigned, never read. So you should be 
+> able
+> to drop it.
+> 
+Ok. will address in next series.
+> [..]
+>> @@ -200,7 +226,18 @@ static int wled_module_enable(struct wled *wled, 
+>> int val)
+>>  				WLED_CTRL_REG_MOD_EN,
+>>  				WLED_CTRL_REG_MOD_EN_MASK,
+>>  				val << WLED_CTRL_REG_MOD_EN_SHIFT);
+>> -	return rc;
+>> +	if (rc < 0)
+>> +		return rc;
 >> +
->>  #define WLED_DEFAULT_BRIGHTNESS				2048
->> 
->> -#define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
->> -#define WLED3_CTRL_REG_VAL_BASE				0x40
->> +#define WLED_SINK_REG_BRIGHT_MAX			0xFFF
+>> +	if (val) {
+>> +		schedule_delayed_work(&wled->ovp_work, HZ / 100);
 > 
-> Stop this, no. In previous patch you renamed from ABC123_ to WLED3_,
-> now you are renaming back to WLED?
+> wled_ovp_work() is a nop when ovp_irq == 0, so wrap the entire if/else
+> in a check for ovp_irq > 0 (rather than include it in the else) and 
+> drop
+> it from the worker.
 > 
-> Stop messing with the names. I'd actually prefer you to stick with
-> original driver name, and just add note that this now supports more
-> hardware.
-> 
-> But yes, _one_ rename is okay. I guess. But renaming it twice in one
-> series is not acceptable.
-> 
-ok. I will stop renaming from WLED3 to WLED in this patch. I did it 
-because these registers
-are common for both WLED3 and WLED4 and Bjorn also suggested the same. 
-Anyways I will stop
-this renaming in this patch from WLED3 to WLED.
-
->> @@ -365,6 +433,15 @@ static int wled_configure(struct wled *wled, 
->> struct device *dev)
->> 
->>  	cfg->num_strings = cfg->num_strings + 1;
->> 
->> +	string_len = of_property_count_elems_of_size(dev->of_node,
->> +						     "qcom,enabled-strings",
->> +						     sizeof(u32));
->> +	if (string_len > 0)
->> +		rc = of_property_read_u32_array(dev->of_node,
->> +						"qcom,enabled-strings",
->> +						wled->cfg.enabled_strings,
->> +						sizeof(u32));
+Will address in next series.
+>> +	} else {
+>> +		if (!cancel_delayed_work_sync(&wled->ovp_work) &&
+>> +		    wled->ovp_irq > 0)
+>> +			disable_irq(wled->ovp_irq);
+>> +	}
 >> +
->>  	return 0;
->>  }
+>> +	return 0;
 > 
-> rc is assigned but never used.
-Will address it next series.
-> 									Pavel
+> Also, if a user calls rmmod within 10ms of enabling module we will
+> schedule work of code that's no longer available in the kernel. So you
+> need to also cancel_delayed_work_sync() in the remove function of the
+> driver.
+> 
+> 
+Will address in next series.
+> Apart from this I think this patch looks good now!
+> 
+Thank you
+> Regards,
+> Bjorn
