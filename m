@@ -1,92 +1,97 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [rfc] leds: add TI LMU backlight driver
-Date: Tue, 4 Sep 2018 09:34:49 -0500
-Message-ID: <d96eab23-dbd9-71a6-551e-2bc99ce4a57c@ti.com>
-References: <20180829212032.GB15786@amd>
- <a0906253-44e3-5a01-73ca-67c7cb124eb0@ti.com> <20180830201825.GA1936@amd>
- <ec7c9624-c1c3-df35-3593-704ac1dc9a4d@ti.com> <20180831213030.GA23447@amd>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v7 1/2] leds: core: Introduce LED pattern trigger
+Date: Tue, 4 Sep 2018 21:38:13 +0200
+Message-ID: <e6cf7c2d-917a-b05f-178c-012c6b4161cf@gmail.com>
+References: <e6d4e7be537a4e4d6fce26c6d446703b1910eab9.1535700092.git.baolin.wang@linaro.org>
+ <ef266d4a-ba0e-cba6-ae30-ebbf730e28a2@gmail.com> <20180903215323.GA21489@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180831213030.GA23447@amd>
+In-Reply-To: <20180903215323.GA21489@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, kernel list <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org, nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Cc: bjorn.andersson@linaro.org, Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com, broonie@kernel.org, linus.walleij@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Pavel
-
-On 08/31/2018 04:30 PM, Pavel Machek wrote:
+On 09/03/2018 11:53 PM, Pavel Machek wrote:
 > Hi!
 > 
->>> Aha. I did not realize that was for same hardware... I should have
->>> cc-ed you, I guess.
+>>> +static int pattern_trig_start_pattern(struct led_classdev *led_cdev)
+>>> +{
+>>> +	struct pattern_trig_data *data = led_cdev->trigger_data;
+>>> +
+>>> +	if (!data->npatterns)
+>>> +		return 0;
+>>> +
+>>> +	if (data->is_hw_pattern) {
+>>> +		return led_cdev->pattern_set(led_cdev, data->patterns,
+>>> +					     data->npatterns, data->repeat);
+>>> +	}
 >>
->> No worries Jacek cc'd me.
-> 
-> Good.
-> 
->>>> I do not like this driver.
->>>> I don't like that it smashes numerous devices into some structure with varying register maps.
->>>>
->>>
->>> Can you elaborate? The chips are similar enough that single driver
->>> makes sense, and we certainly want to maintain one driver, not 6
->>> drivers differing only in .. what exactly?
+>> I have doubts here if it is a good idea to enforce array of tuples
+>> as a generic interface for all hw_patterns. It may not fit well for
+>> every hw pattern engine. It seems that the only feasible solution will
+>> be allowing drivers to come up with their own interfaces, i.e. the
+>> approach you proposed at first for your driver. It seems that the
+>> ledtrig-pattern with software pattern mechanism will be just
+>> a nice side effect of this series :-)
 >>
->> Well I think it is justified to have independent drivers as each device has different features from
->> this basic LED driver.  If we are just looking for basic support then yes this driver is fine.
+>> Unless someone will propose a better solution.
 > 
->> But here is where a single driver will start getting messy and support difficult
->>
->> LM3533 has ALS and an ADC for an ALS analog sensor
->> LM3631 has no ALS functionality
->> LM3632 has strobe functionality and no ramp support
->> LM3633 has indicator support coupled with the hvled support
->> LM3695 does not even appear to be available publicly
->> LM3697 is the only device that that this driver could be used for as is.
+> I believe array of tuples will work for everyone. It is just a LED, it
+> can change intensity over time.
+
+We have an example of different semantics in case of hw pattern
+for leds-sc27xx-bltc.c, from this patch set.
+
+Proposed hw_pattern ABI documentation:
+
++What:		/sys/class/leds/<led>/hw_pattern
++Date:		September 2018
++KernelVersion:	4.20
++Description:
++		Specify a hardware pattern for the SC27XX LED. For the SC27XX
++		LED controller, it only supports 4 hardware patterns to configure
++		the low time, rise time, high time and fall time for the breathing
++		mode, and each stage duration unit is 125ms. So the format of
++		the hardware pattern values should be:
++		"brightness_1 duration_1 brightness_2 duration_2 brightness_3
++		duration_3 brightness_4 duration_4".
+
+In this case low time and high time can be easily described with
+use of the proposed [brightness delta_t] tuples. It is not equally
+obvious in case of rise time and fall time.
+
+I can imagine hw pattern that would require defining blink rate
+over period of time, or blink rate during rise/fall time - in the
+latter case we would have odd number of pattern components. Probably
+it wouldn't be a big deal, we'd need one "padding" value, but still
+there's room for improvement IMHO.
+
+>> We need a broader consensus here. I'd like to hear Pavel's opinion,
+>> since he's been always in favor of common pattern interface, and
+>> inspired this work.
 > 
-> Ok, so ... yes, I'm really interested in basic support. But drivers
-> seem to have a lot in common, voltage limits, for example. 
+> I believe Baolin did good work here. I believe it will cover most, if
+> not all, hardware engines out there. I think we should merge it, and
+> see what happens -- it should be good enough.
 > 
->> In addition if I wanted to only support a single device I have to pull in the full data
->> file that defines all the other devices.  That is pretty bad to increase the size of the kernel
->> image to have support for devices that are not even on the target product.  The ti-lmu data file
->> alone is ~15k, the ti-lmu code does not even build with this patch (So this is a nack on the patch as it is.)
->> but commenting out the offending code gives me at least ~23k more data on top
->> of the ti-lmu MFD framework which is ~33k.  That is ~71k of code just to support 1 LED device
->> that is 3x what we have now.  That is not good for IoT devices.
+> (Yes, there's still more work to do, but that will be stuff like RGB
+> LED synchronization.)
 > 
->> The LM3697 is 22k without ramp support.
+> (And yes, one of the LED chip has pattern engine that can compute
+> prime numbers on its own. I don't expect to support
+> _that_. Fortunately, nobody but me is likely to want that pattern, so
+> we are still okay :-) 
 > 
-> Well, I don't think object file size is huge problem. First,
-> "distribution" kernel with support for 6 different chips will be ~71k,
-> while your proposal will result in ~136k. Second, yes, we could put
-> ifdefs into ti-lmu data file to make it smaller.
+> https://gitlab.com/tui/tui/blob/master/ofone/tests.notcc/primes.nc
 > 
-> Anyway, clean source code and easy maintainance is more important.
+> )
+> 									Pavel
+> 
 
-I am going to reply here and snip the rest of the chain.
-
-My proposal is to create a ti-lmu-led-common file that contains all the common
-code.  We can have LED drivers use that common code to perform the common tasks.
-This can then be extended to other devices past, present or future that have the
-same feature set.
-
-Then the register maps and LED registration can be contained in each LED driver and any additional features
-can be supported in the LED driver.  The common code will retrieve any device settings from
-the firmware that it is interested in.
-
-I can throw some code together and RFC the code.  This way we get the common core for the
-chips and not the bloat or messy source with a single driver.
-
-And yes I can put this together and support it if it is needed.  I just need to go get the EVMs
-so I can test it.
-
-Thoughts?
-
-<snip>-- 
-------------------
-Dan Murphy
+-- 
+Best regards,
+Jacek Anaszewski
