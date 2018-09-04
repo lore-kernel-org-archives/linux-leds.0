@@ -1,190 +1,92 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH v8 2/2] leds: sc27xx: Add pattern_set/clear interfaces for LED controller
-Date: Tue,  4 Sep 2018 19:01:31 +0800
-Message-ID: <e7642c73ac1c20b97990a887f76f2f51c41f930b.1536027873.git.baolin.wang@linaro.org>
-References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [rfc] leds: add TI LMU backlight driver
+Date: Tue, 4 Sep 2018 09:34:49 -0500
+Message-ID: <d96eab23-dbd9-71a6-551e-2bc99ce4a57c@ti.com>
+References: <20180829212032.GB15786@amd>
+ <a0906253-44e3-5a01-73ca-67c7cb124eb0@ti.com> <20180830201825.GA1936@amd>
+ <ec7c9624-c1c3-df35-3593-704ac1dc9a4d@ti.com> <20180831213030.GA23447@amd>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
-In-Reply-To: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
-References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
+In-Reply-To: <20180831213030.GA23447@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: rteysseyre@gmail.com, bjorn.andersson@linaro.org, baolin.wang@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, kernel list <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org, nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
 List-Id: linux-leds@vger.kernel.org
 
-This patch implements the 'pattern_set'and 'pattern_clear'
-interfaces to support SC27XX LED breathing mode.
+Pavel
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes from v7:
- - Add its own ABI documentation file.
+On 08/31/2018 04:30 PM, Pavel Machek wrote:
+> Hi!
+> 
+>>> Aha. I did not realize that was for same hardware... I should have
+>>> cc-ed you, I guess.
+>>
+>> No worries Jacek cc'd me.
+> 
+> Good.
+> 
+>>>> I do not like this driver.
+>>>> I don't like that it smashes numerous devices into some structure with varying register maps.
+>>>>
+>>>
+>>> Can you elaborate? The chips are similar enough that single driver
+>>> makes sense, and we certainly want to maintain one driver, not 6
+>>> drivers differing only in .. what exactly?
+>>
+>> Well I think it is justified to have independent drivers as each device has different features from
+>> this basic LED driver.  If we are just looking for basic support then yes this driver is fine.
+> 
+>> But here is where a single driver will start getting messy and support difficult
+>>
+>> LM3533 has ALS and an ADC for an ALS analog sensor
+>> LM3631 has no ALS functionality
+>> LM3632 has strobe functionality and no ramp support
+>> LM3633 has indicator support coupled with the hvled support
+>> LM3695 does not even appear to be available publicly
+>> LM3697 is the only device that that this driver could be used for as is.
+> 
+> Ok, so ... yes, I'm really interested in basic support. But drivers
+> seem to have a lot in common, voltage limits, for example. 
+> 
+>> In addition if I wanted to only support a single device I have to pull in the full data
+>> file that defines all the other devices.  That is pretty bad to increase the size of the kernel
+>> image to have support for devices that are not even on the target product.  The ti-lmu data file
+>> alone is ~15k, the ti-lmu code does not even build with this patch (So this is a nack on the patch as it is.)
+>> but commenting out the offending code gives me at least ~23k more data on top
+>> of the ti-lmu MFD framework which is ~33k.  That is ~71k of code just to support 1 LED device
+>> that is 3x what we have now.  That is not good for IoT devices.
+> 
+>> The LM3697 is 22k without ramp support.
+> 
+> Well, I don't think object file size is huge problem. First,
+> "distribution" kernel with support for 6 different chips will be ~71k,
+> while your proposal will result in ~136k. Second, yes, we could put
+> ifdefs into ti-lmu data file to make it smaller.
+> 
+> Anyway, clean source code and easy maintainance is more important.
 
-Changes from v6:
- - None.
+I am going to reply here and snip the rest of the chain.
 
-Changes from v5:
- - None.
+My proposal is to create a ti-lmu-led-common file that contains all the common
+code.  We can have LED drivers use that common code to perform the common tasks.
+This can then be extended to other devices past, present or future that have the
+same feature set.
 
-Changes from v4:
- - None.
+Then the register maps and LED registration can be contained in each LED driver and any additional features
+can be supported in the LED driver.  The common code will retrieve any device settings from
+the firmware that it is interested in.
 
-Changes from v3:
- - None.
+I can throw some code together and RFC the code.  This way we get the common core for the
+chips and not the bloat or messy source with a single driver.
 
-Changes from v2:
- - None.
+And yes I can put this together and support it if it is needed.  I just need to go get the EVMs
+so I can test it.
 
-Changes from v1:
- - Remove pattern_get interface.
----
- .../ABI/testing/sysfs-class-led-driver-sc27xx      |   11 +++
- drivers/leds/leds-sc27xx-bltc.c                    |   94 ++++++++++++++++++++
- 2 files changed, 105 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+Thoughts?
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-new file mode 100644
-index 0000000..ecef3ba
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-@@ -0,0 +1,11 @@
-+What:		/sys/class/leds/<led>/hw_pattern
-+Date:		September 2018
-+KernelVersion:	4.20
-+Description:
-+		Specify a hardware pattern for the SC27XX LED. For the SC27XX
-+		LED controller, it only supports 4 hardware patterns to configure
-+		the low time, rise time, high time and fall time for the breathing
-+		mode, and each stage duration unit is 125ms. So the format of
-+		the hardware pattern values should be:
-+		"brightness_1 duration_1 brightness_2 duration_2 brightness_3
-+		duration_3 brightness_4 duration_4".
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index 9d9b7aa..297dd43 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -32,8 +32,13 @@
- #define SC27XX_DUTY_MASK	GENMASK(15, 0)
- #define SC27XX_MOD_MASK		GENMASK(7, 0)
- 
-+#define SC27XX_CURVE_SHIFT	8
-+#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
-+#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
-+
- #define SC27XX_LEDS_OFFSET	0x10
- #define SC27XX_LEDS_MAX		3
-+#define SC27XX_LEDS_PATTERN_CNT	4
- 
- struct sc27xx_led {
- 	char name[LED_MAX_NAME_SIZE];
-@@ -122,6 +127,91 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
- 	return err;
- }
- 
-+static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	struct regmap *regmap = leds->priv->regmap;
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	int err;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	/* Reset the rise, high, fall and low time to zero. */
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
-+
-+	err = regmap_update_bits(regmap, ctrl_base,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static int sc27xx_led_pattern_set(struct led_classdev *ldev,
-+				  struct led_pattern *pattern,
-+				  int len, u32 repeat)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	/*
-+	 * Must contain 4 patterns to configure the rise time, high time, fall
-+	 * time and low time to enable the breathing mode.
-+	 */
-+	if (len != SC27XX_LEDS_PATTERN_CNT)
-+		return -EINVAL;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_L_MASK, pattern[0].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_L_MASK, pattern[1].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[2].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[3].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
-+				 SC27XX_DUTY_MASK,
-+				 (pattern[0].brightness << SC27XX_DUTY_SHIFT) |
-+				 SC27XX_MOD_MASK);
-+	if (err)
-+		goto out;
-+
-+	/* Enable the LED breathing mode */
-+	err = regmap_update_bits(regmap, ctrl_base,
-+				 SC27XX_LED_RUN << ctrl_shift,
-+				 SC27XX_LED_RUN << ctrl_shift);
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
- static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- {
- 	int i, err;
-@@ -140,6 +230,9 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- 		led->priv = priv;
- 		led->ldev.name = led->name;
- 		led->ldev.brightness_set_blocking = sc27xx_led_set;
-+		led->ldev.pattern_set = sc27xx_led_pattern_set;
-+		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
-+		led->ldev.default_trigger = "pattern";
- 
- 		err = devm_led_classdev_register(dev, &led->ldev);
- 		if (err)
-@@ -241,4 +334,5 @@ static int sc27xx_led_remove(struct platform_device *pdev)
- 
- MODULE_DESCRIPTION("Spreadtrum SC27xx breathing light controller driver");
- MODULE_AUTHOR("Xiaotong Lu <xiaotong.lu@spreadtrum.com>");
-+MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org>");
- MODULE_LICENSE("GPL v2");
--- 
-1.7.9.5
+<snip>-- 
+------------------
+Dan Murphy
