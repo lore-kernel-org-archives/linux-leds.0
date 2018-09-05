@@ -1,109 +1,135 @@
-From: Song Qiang <songqiang1304521@gmail.com>
-Subject: [PATCH] leds: leds-gpio: Add a condition check for active low leds.
-Date: Wed,  5 Sep 2018 10:34:36 +0800
-Message-ID: <20180905023436.11826-1-songqiang.1304521@gmail.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH v8 2/2] leds: sc27xx: Add pattern_set/clear interfaces for
+ LED controller
+Date: Wed, 5 Sep 2018 10:43:59 +0800
+Message-ID: <CAMz4kuJJUXe-z5s5cRQG19Yj4RE3uVqOCdWNpOX3f+wvW+WbrQ@mail.gmail.com>
+References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
+ <e7642c73ac1c20b97990a887f76f2f51c41f930b.1536027873.git.baolin.wang@linaro.org>
+ <ff34b0fd-dd56-f239-94a9-d84673f6869a@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <ff34b0fd-dd56-f239-94a9-d84673f6869a@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com
-Cc: pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Song Qiang <songqiang.1304521@gmail.com>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Some leds on our board are active low leds, which means these leds
-are lighted when the corresponding gpio line is low, while the
-original leds-gpio driver default all leds are active high leds.
-This patch adds a devicetree node "light-state", whose value should
-be "high" for active high leds and "low" for active low leds.
-The default value is "high" for compatible for the original driver.
+Hi Jacek,
 
-Signed-off-by: Song Qiang <songqiang.1304521@gmail.com>
----
- .../devicetree/bindings/leds/leds-gpio.txt    | 15 +++++++++++
- drivers/leds/leds-gpio.c                      | 25 +++++++++++++++++--
- 2 files changed, 38 insertions(+), 2 deletions(-)
+On 5 September 2018 at 04:19, Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+> Hi Baolin,
+>
+> On 09/04/2018 01:01 PM, Baolin Wang wrote:
+>> This patch implements the 'pattern_set'and 'pattern_clear'
+>> interfaces to support SC27XX LED breathing mode.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>> ---
+>> Changes from v7:
+>>  - Add its own ABI documentation file.
+>>
+>> Changes from v6:
+>>  - None.
+>>
+>> Changes from v5:
+>>  - None.
+>>
+>> Changes from v4:
+>>  - None.
+>>
+>> Changes from v3:
+>>  - None.
+>>
+>> Changes from v2:
+>>  - None.
+>>
+>> Changes from v1:
+>>  - Remove pattern_get interface.
+>> ---
+>>  .../ABI/testing/sysfs-class-led-driver-sc27xx      |   11 +++
+>>  drivers/leds/leds-sc27xx-bltc.c                    |   94 ++++++++++++++++++++
+>>  2 files changed, 105 insertions(+)
+>>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> new file mode 100644
+>> index 0000000..ecef3ba
+>> --- /dev/null
+>> +++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> @@ -0,0 +1,11 @@
+>> +What:                /sys/class/leds/<led>/hw_pattern
+>> +Date:                September 2018
+>> +KernelVersion:       4.20
+>> +Description:
+>> +             Specify a hardware pattern for the SC27XX LED. For the SC27XX
+>> +             LED controller, it only supports 4 hardware patterns to configure
+>
+> If I understand it correctly then the four components: low, rise, high,
+> and fall time make a single pattern. So calling it "4 hardware patterns"
+> can be misleading. Below you're using "stage" notion - it would be good
+> to use it consequently on the whole span of this document.
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-gpio.txt b/Documentation/devicetree/bindings/leds/leds-gpio.txt
-index a48dda268f81..0a8fad75c704 100644
---- a/Documentation/devicetree/bindings/leds/leds-gpio.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-gpio.txt
-@@ -23,6 +23,9 @@ LED sub-node properties:
-   remains up.
- - panic-indicator : (optional)
-   see Documentation/devicetree/bindings/leds/common.txt
-+- light-state: (optional) Values should be "high" or "low", which indicates
-+	the state of the GPIO pin when the led is on.
-+  see Documentation/devicetree/bindings/leds/common.txt
- 
- Examples:
- 
-@@ -64,3 +67,15 @@ leds {
- 		retain-state-suspended;
- 	};
- };
-+
-+leds {
-+	compatible = "gpio-leds";
-+
-+	led0 {
-+		label = "led0";
-+		gpios = <&gpio1 19 GPIO_ACTIVE_HIGH>;
-+		linux,default-trigger = "heartbeat";
-+		default-state = "off";
-+		light-state = "low";
-+	};
-+}
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index 764c31301f90..463ded0c71ac 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -26,9 +26,13 @@ struct gpio_led_data {
- 	struct gpio_desc *gpiod;
- 	u8 can_sleep;
- 	u8 blinking;
-+	u8 light_state;
- 	gpio_blink_set_t platform_gpio_blink_set;
- };
- 
-+#define LEDS_GPIO_LIGHTSTATE_HIGH	0
-+#define LEDS_GPIO_LIGHTSTATE_LOW	1
-+
- static inline struct gpio_led_data *
- 			cdev_to_gpio_led_data(struct led_classdev *led_cdev)
- {
-@@ -42,9 +46,15 @@ static void gpio_led_set(struct led_classdev *led_cdev,
- 	int level;
- 
- 	if (value == LED_OFF)
--		level = 0;
-+		if (led_dat->light_state == LEDS_GPIO_LIGHTSTATE_HIGH)
-+			level = 0;
-+		else
-+			level = 1;
- 	else
--		level = 1;
-+		if (led_dat->light_state == LEDS_GPIO_LIGHTSTATE_HIGH)
-+			level = 1;
-+		else
-+			level = 0;
- 
- 	if (led_dat->blinking) {
- 		led_dat->platform_gpio_blink_set(led_dat->gpiod, level,
-@@ -205,6 +215,17 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 				led.default_state = LEDS_GPIO_DEFSTATE_OFF;
- 		}
- 
-+		if (!fwnode_property_read_string(child, "light-state",
-+						 &state)) {
-+			if (!strcmp(state, "low"))
-+				led_dat->light_state =
-+					LEDS_GPIO_LIGHTSTATE_LOW;
-+			else{
-+				led_dat->light_state =
-+					LEDS_GPIO_LIGHTSTATE_HIGH;
-+			}
-+		}
-+
- 		if (fwnode_property_present(child, "retain-state-suspended"))
- 			led.retain_state_suspended = 1;
- 		if (fwnode_property_present(child, "retain-state-shutdown"))
+Sure. I will modify the documentation to avoid misleading words.
+
+>
+>> +             the low time, rise time, high time and fall time for the breathing
+>> +             mode, and each stage duration unit is 125ms. So the format of
+>> +             the hardware pattern values should be:
+>
+> I'd be more precise here:
+>
+> Min stage duration: ???
+> Max stage duration: ???
+> Stage duration step: 125 ms
+
+OK.
+
+>
+>> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
+>> +             duration_3 brightness_4 duration_4".
+>
+> Looking at sc27xx_led_pattern_set() it doesn't seem like you would
+> use brightnesses other then brightness_1. I assume that the low
+> brightness is fixed to 0 and the high brightness is the brightness_1.
+> If yes, than we don't need brightnesses in this pattern definition,
+> since the current brightness will suffice.
+>
+> You'd need to alter the hw_pattern description to say that the
+> brightness currently set is to be used as a high brightness, and the
+> hw_pattern for this driver consists only of the four delta_t components.
+
+Sorry for confusing here. For SC27XX LED, the 4 stages use one same
+brightness. To be compatible with the hardware pattern format, so we
+force to set one brightness for each stage. I will add some comments
+to explain the LED expects the same brightness for each stage instead
+of using the current brightness file which is not used for our
+breathing mode.
+
+>
+> This is clear example of what I had on mind when having doubts
+> about using tuples for pattern_set.
+>
+> Alternatively, if we want to enforce tuples format for hw_pattern,
+> and if we want to be consistent - we'd need to require defining target
+> brightness for each stage properly, i.e.
+>
+> echo "100 500 100 500 0 500 0 500" > pattern
+>
+> Which would mean:
+>
+> 1. Rise from brightness 0 to 100 for 500 ms.
+> 2. Keep brightness 100 for 500 ms.
+> 3. Fall from brightness 100 to 0 for 500 ms.
+> 4. Keep brightness 0 for 500 ms.
+>
+> --
+> Best regards,
+> Jacek Anaszewski
+
+
+
 -- 
-2.17.1
+Baolin Wang
+Best Regards
