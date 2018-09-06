@@ -1,215 +1,89 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH v10 2/2] leds: sc27xx: Add pattern_set/clear interfaces for LED controller
-Date: Thu,  6 Sep 2018 10:37:52 +0800
-Message-ID: <975a9570c75fb4469c0cef55cc9ed42266f933af.1536200860.git.baolin.wang@linaro.org>
-References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536200860.git.baolin.wang@linaro.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [rfc] leds: add TI LMU backlight driver
+Date: Thu, 6 Sep 2018 12:16:15 +0200
+Message-ID: <20180906101615.GA1467@amd>
+References: <20180829212032.GB15786@amd>
+ <a0906253-44e3-5a01-73ca-67c7cb124eb0@ti.com>
+ <20180830201825.GA1936@amd>
+ <ec7c9624-c1c3-df35-3593-704ac1dc9a4d@ti.com>
+ <20180831213030.GA23447@amd>
+ <d96eab23-dbd9-71a6-551e-2bc99ce4a57c@ti.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536200860.git.baolin.wang@linaro.org>
+Content-Disposition: inline
+In-Reply-To: <d96eab23-dbd9-71a6-551e-2bc99ce4a57c@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: rteysseyre@gmail.com, bjorn.andersson@linaro.org, baolin.wang@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>
+Cc: linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, kernel list <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org, nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
 List-Id: linux-leds@vger.kernel.org
 
-This patch implements the 'pattern_set'and 'pattern_clear'
-interfaces to support SC27XX LED breathing mode.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes from v9:
- - Optimize the ABI documentation file.
- - Update the brightness value in hardware pattern mode.
+--mYCpIKhGyMATD0i+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes from v8:
- - Optimize the ABI documentation file.
+Hi!
 
-Changes from v7:
- - Add its own ABI documentation file.
+> > Well, I don't think object file size is huge problem. First,
+> > "distribution" kernel with support for 6 different chips will be ~71k,
+> > while your proposal will result in ~136k. Second, yes, we could put
+> > ifdefs into ti-lmu data file to make it smaller.
+> >=20
+> > Anyway, clean source code and easy maintainance is more important.
+>=20
+> I am going to reply here and snip the rest of the chain.
+>=20
+> My proposal is to create a ti-lmu-led-common file that contains all the c=
+ommon
+> code.  We can have LED drivers use that common code to perform the common=
+ tasks.
+> This can then be extended to other devices past, present or future that h=
+ave the
+> same feature set.
 
-Changes from v6:
- - None.
+Sounds good. But we'll still need to have the structure with register
+info, right?
 
-Changes from v5:
- - None.
+> Then the register maps and LED registration can be contained in each LED =
+driver and any additional features
+> can be supported in the LED driver.  The common code will retrieve any de=
+vice settings from
+> the firmware that it is interested in.
 
-Changes from v4:
- - None.
+=46rom the device tree?
 
-Changes from v3:
- - None.
+> I can throw some code together and RFC the code.  This way we get the com=
+mon core for the
+> chips and not the bloat or messy source with a single driver.
+>=20
+> And yes I can put this together and support it if it is needed.  I just n=
+eed to go get the EVMs
+> so I can test it.
 
-Changes from v2:
- - None.
+Well, if possible, I'd like to see how the code would look. Example
+for single LED type would be enough... If it is reasonable, I can port
+it to Droid 4 or at least provide testing.
 
-Changes from v1:
- - Remove pattern_get interface.
----
- .../ABI/testing/sysfs-class-led-driver-sc27xx      |   22 +++++
- drivers/leds/leds-sc27xx-bltc.c                    |  103 ++++++++++++++++++++
- 2 files changed, 125 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-new file mode 100644
-index 0000000..d8056d5
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-@@ -0,0 +1,22 @@
-+What:		/sys/class/leds/<led>/hw_pattern
-+Date:		September 2018
-+KernelVersion:	4.20
-+Description:
-+		Specify a hardware pattern for the SC27XX LED. For the SC27XX
-+		LED controller, it only supports 4 stages to make a single
-+		hardware pattern, which is used to configure the rise time,
-+		high time, fall time and low time for the breathing mode.
-+
-+		For the breathing mode, the SC27XX LED only expects one brightness
-+		for the high stage. To be compatible with the hardware pattern
-+		format, we should set brightness as 0 for rise stage, fall
-+		stage and low stage.
-+
-+		Min stage duration: 125 ms
-+		Max stage duration: 31875 ms
-+
-+		Since the stage duration step is 125 ms, the duration must be
-+		a multiplier of 125, like 125ms, 250ms, 375ms, 500ms ... 31875ms.
-+
-+		Thus the format of the hardware pattern values should be:
-+		"0 rise_duration brightness high_duration 0 fall_duration 0 low_duration".
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index 9d9b7aa..558a325 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -32,8 +32,15 @@
- #define SC27XX_DUTY_MASK	GENMASK(15, 0)
- #define SC27XX_MOD_MASK		GENMASK(7, 0)
- 
-+#define SC27XX_CURVE_SHIFT	8
-+#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
-+#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
-+
- #define SC27XX_LEDS_OFFSET	0x10
- #define SC27XX_LEDS_MAX		3
-+#define SC27XX_LEDS_PATTERN_CNT	4
-+/* Stage duration step, in milliseconds */
-+#define SC27XX_LEDS_STEP	125
- 
- struct sc27xx_led {
- 	char name[LED_MAX_NAME_SIZE];
-@@ -122,6 +129,98 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
- 	return err;
- }
- 
-+static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	struct regmap *regmap = leds->priv->regmap;
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	int err;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	/* Reset the rise, high, fall and low time to zero. */
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
-+
-+	err = regmap_update_bits(regmap, ctrl_base,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
-+
-+	ldev->brightness = LED_OFF;
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static int sc27xx_led_pattern_set(struct led_classdev *ldev,
-+				  struct led_pattern *pattern,
-+				  int len, u32 repeat)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	/*
-+	 * Must contain 4 tuples to configure the rise time, high time, fall
-+	 * time and low time to enable the breathing mode.
-+	 */
-+	if (len != SC27XX_LEDS_PATTERN_CNT)
-+		return -EINVAL;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_L_MASK,
-+				 pattern[0].delta_t / SC27XX_LEDS_STEP);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_L_MASK,
-+				 pattern[1].delta_t / SC27XX_LEDS_STEP);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_H_MASK,
-+				 (pattern[2].delta_t / SC27XX_LEDS_STEP) <<
-+				 SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_H_MASK,
-+				 (pattern[3].delta_t / SC27XX_LEDS_STEP) <<
-+				 SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
-+				 SC27XX_DUTY_MASK,
-+				 (pattern[1].brightness << SC27XX_DUTY_SHIFT) |
-+				 SC27XX_MOD_MASK);
-+	if (err)
-+		goto out;
-+
-+	/* Enable the LED breathing mode */
-+	err = regmap_update_bits(regmap, ctrl_base,
-+				 SC27XX_LED_RUN << ctrl_shift,
-+				 SC27XX_LED_RUN << ctrl_shift);
-+	if (!err)
-+		ldev->brightness = pattern[1].brightness;
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
- static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- {
- 	int i, err;
-@@ -140,6 +239,9 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- 		led->priv = priv;
- 		led->ldev.name = led->name;
- 		led->ldev.brightness_set_blocking = sc27xx_led_set;
-+		led->ldev.pattern_set = sc27xx_led_pattern_set;
-+		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
-+		led->ldev.default_trigger = "pattern";
- 
- 		err = devm_led_classdev_register(dev, &led->ldev);
- 		if (err)
-@@ -241,4 +343,5 @@ static int sc27xx_led_remove(struct platform_device *pdev)
- 
- MODULE_DESCRIPTION("Spreadtrum SC27xx breathing light controller driver");
- MODULE_AUTHOR("Xiaotong Lu <xiaotong.lu@spreadtrum.com>");
-+MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org>");
- MODULE_LICENSE("GPL v2");
--- 
-1.7.9.5
+--mYCpIKhGyMATD0i+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluQ/m8ACgkQMOfwapXb+vJ0WwCfQAscvnJED+8nh2tOsOP9GyLr
+5FkAn1toz5PQqjtC1SaukJx9lfgK1cYD
+=UtOM
+-----END PGP SIGNATURE-----
+
+--mYCpIKhGyMATD0i+--
