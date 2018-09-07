@@ -1,295 +1,207 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v6 1/2] dt-bindings: leds: Add bindings for lm3697 driver
-Date: Thu, 6 Sep 2018 23:16:17 +0200
-Message-ID: <20180906211617.GB16899@amd>
-References: <20180906135005.6718-1-dmurphy@ti.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH v10 2/2] leds: sc27xx: Add pattern_set/clear interfaces
+ for LED controller
+Date: Fri, 7 Sep 2018 10:49:14 +0800
+Message-ID: <CAMz4ku+7TcsQLiTPHB=8EpW7mbk5skd=TEio3HKX0WHEpWYc+g@mail.gmail.com>
+References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536200860.git.baolin.wang@linaro.org>
+ <975a9570c75fb4469c0cef55cc9ed42266f933af.1536200860.git.baolin.wang@linaro.org>
+ <ae29d9b4-e5f8-a00d-df74-fb20328e4634@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="oLBj+sq0vYjzfsbl"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180906135005.6718-1-dmurphy@ti.com>
+In-Reply-To: <ae29d9b4-e5f8-a00d-df74-fb20328e4634@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
+Hi Jacek,
 
---oLBj+sq0vYjzfsbl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7 September 2018 at 04:16, Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+> Hi Baolin,
+>
+> Thank you for the patch. I really appreciate your effort.
+>
+> I see one more thing I forgot to mention in the previous
+> review. Please take a look at my comment to pattern_set().
+>
+> On 09/06/2018 04:37 AM, Baolin Wang wrote:
+>> This patch implements the 'pattern_set'and 'pattern_clear'
+>> interfaces to support SC27XX LED breathing mode.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>> ---
+>> Changes from v9:
+>>  - Optimize the ABI documentation file.
+>>  - Update the brightness value in hardware pattern mode.
+>>
+>> Changes from v8:
+>>  - Optimize the ABI documentation file.
+>>
+>> Changes from v7:
+>>  - Add its own ABI documentation file.
+>>
+>> Changes from v6:
+>>  - None.
+>>
+>> Changes from v5:
+>>  - None.
+>>
+>> Changes from v4:
+>>  - None.
+>>
+>> Changes from v3:
+>>  - None.
+>>
+>> Changes from v2:
+>>  - None.
+>>
+>> Changes from v1:
+>>  - Remove pattern_get interface.
+>> ---
+>>  .../ABI/testing/sysfs-class-led-driver-sc27xx      |   22 +++++
+>>  drivers/leds/leds-sc27xx-bltc.c                    |  103 ++++++++++++++++++++
+>>  2 files changed, 125 insertions(+)
+>>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> new file mode 100644
+>> index 0000000..d8056d5
+>> --- /dev/null
+>> +++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> @@ -0,0 +1,22 @@
+>> +What:                /sys/class/leds/<led>/hw_pattern
+>> +Date:                September 2018
+>> +KernelVersion:       4.20
+>> +Description:
+>> +             Specify a hardware pattern for the SC27XX LED. For the SC27XX
+>> +             LED controller, it only supports 4 stages to make a single
+>> +             hardware pattern, which is used to configure the rise time,
+>> +             high time, fall time and low time for the breathing mode.
+>> +
+>> +             For the breathing mode, the SC27XX LED only expects one brightness
+>> +             for the high stage. To be compatible with the hardware pattern
+>> +             format, we should set brightness as 0 for rise stage, fall
+>> +             stage and low stage.
+>> +
+>> +             Min stage duration: 125 ms
+>> +             Max stage duration: 31875 ms
+>> +
+>> +             Since the stage duration step is 125 ms, the duration must be
+>> +             a multiplier of 125, like 125ms, 250ms, 375ms, 500ms ... 31875ms.
+>> +
+>> +             Thus the format of the hardware pattern values should be:
+>> +             "0 rise_duration brightness high_duration 0 fall_duration 0 low_duration".
+>> diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
+>> index 9d9b7aa..558a325 100644
+>> --- a/drivers/leds/leds-sc27xx-bltc.c
+>> +++ b/drivers/leds/leds-sc27xx-bltc.c
+>> @@ -32,8 +32,15 @@
+>>  #define SC27XX_DUTY_MASK     GENMASK(15, 0)
+>>  #define SC27XX_MOD_MASK              GENMASK(7, 0)
+>>
+>> +#define SC27XX_CURVE_SHIFT   8
+>> +#define SC27XX_CURVE_L_MASK  GENMASK(7, 0)
+>> +#define SC27XX_CURVE_H_MASK  GENMASK(15, 8)
+>> +
+>>  #define SC27XX_LEDS_OFFSET   0x10
+>>  #define SC27XX_LEDS_MAX              3
+>> +#define SC27XX_LEDS_PATTERN_CNT      4
+>> +/* Stage duration step, in milliseconds */
+>> +#define SC27XX_LEDS_STEP     125
+>>
+>>  struct sc27xx_led {
+>>       char name[LED_MAX_NAME_SIZE];
+>> @@ -122,6 +129,98 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
+>>       return err;
+>>  }
+>>
+>> +static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
+>> +{
+>> +     struct sc27xx_led *leds = to_sc27xx_led(ldev);
+>> +     struct regmap *regmap = leds->priv->regmap;
+>> +     u32 base = sc27xx_led_get_offset(leds);
+>> +     u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
+>> +     u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
+>> +     int err;
+>> +
+>> +     mutex_lock(&leds->priv->lock);
+>> +
+>> +     /* Reset the rise, high, fall and low time to zero. */
+>> +     regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
+>> +     regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
+>> +
+>> +     err = regmap_update_bits(regmap, ctrl_base,
+>> +                     (SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
+>> +
+>> +     ldev->brightness = LED_OFF;
+>> +
+>> +     mutex_unlock(&leds->priv->lock);
+>> +
+>> +     return err;
+>> +}
+>> +
+>> +static int sc27xx_led_pattern_set(struct led_classdev *ldev,
+>> +                               struct led_pattern *pattern,
+>> +                               int len, u32 repeat)
+>> +{
+>> +     struct sc27xx_led *leds = to_sc27xx_led(ldev);
+>> +     u32 base = sc27xx_led_get_offset(leds);
+>> +     u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
+>> +     u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
+>> +     struct regmap *regmap = leds->priv->regmap;
+>> +     int err;
+>> +
+>> +     /*
+>> +      * Must contain 4 tuples to configure the rise time, high time, fall
+>> +      * time and low time to enable the breathing mode.
+>> +      */
+>> +     if (len != SC27XX_LEDS_PATTERN_CNT)
+>> +             return -EINVAL;
+>> +
+>> +     mutex_lock(&leds->priv->lock);
+>
+> Please add below macros at the top of the file and the function
+> shown. It will allow to nicely align the value provided by
+> the user to the nearest delta_t step. We have similar thing
+> in led_class_flash.c (led_clamp_align()), that was adopted from
+> v4l2-ctrls.c.
+>
+> #define SC27XX_DELTA_T_MIN SC27XX_LEDS_STEP
+> #define SC27XX_DELTA_T_MAX (SC27XX_LEDS_STEP * 255)
+>
+> static void sc27xx_led_clamp_align_delta_t(u32 *delta_t)
+> {
+>         u32 v, offset, t = *delta_t;
+>
+>         v = t + SC27XX_LEDS_STEP / 2;
+>         v = clamp(v, SC27XX_DELTA_T_MIN, SC27XX_DELTA_T_MAX);
+>         offset = v - SC27XX_DELTA_T_MIN;
+>         offset = SC27XX_LEDS_STEP * (offset / SC27XX_LEDS_STEP);
+>         *delta_t = SC27XX_DELTA_T_MIN + offset;
+> }
+>
+> Then call the function for each delta_t before writing it to the device:
+>
+> sc27xx_led_clamp_align_delta_t(&pattern[0].delta_t);
+> sc27xx_led_clamp_align_delta_t(&pattern[1].delta_t);
+> sc27xx_led_clamp_align_delta_t(&pattern[2].delta_t);
+> sc27xx_led_clamp_align_delta_t(&pattern[3].delta_t);
 
-Hi!
+That's a good point. Will add in next version.
 
-> Add the device tree bindings for the lm3697
-> LED driver for backlighting and display.
->=20
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->=20
-> v6 - Fix minor issues - https://lore.kernel.org/patchwork/patch/975387/
->=20
-> v5 - Fix the comment for the example - https://lore.kernel.org/patchwork/=
-patch/975060/
-> v4 - Removed HVLED definition in favor of HVLED place definition - https:=
-//lore.kernel.org/patchwork/patch/974812/
-> v3 - Updated subject with prefered title - https://lore.kernel.org/patchw=
-ork/patch/972337/
-> v2 - Fixed subject and patch commit message - https://lore.kernel.org/pat=
-chwork/patch/971326/
->=20
->  .../devicetree/bindings/leds/leds-lm3697.txt  | 86 +++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Doc=
-umentation/devicetree/bindings/leds/leds-lm3697.txt
-> new file mode 100644
-> index 000000000000..3256dec21075
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> @@ -0,0 +1,86 @@
-> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
-> +
-> +The LM3697 11-bit LED driver provides high-
-> +performance backlight dimming for 1, 2, or 3 series
-> +LED strings while delivering up to 90% efficiency.
+>
+> Also, regarding PATCH v8 1/2, please change the types of properties
+> in struct led_pattern as follows:
+>
+> +struct led_pattern {
+> +       u32 delta_t;
+> +       enum led_brightness brightness;
+> +};
 
-Hmm. We already have second set of bindings for 3697:
+Sure. Thanks for your comments.
 
-=2E/devicetree/bindings/mfd/ti-lmu.txt
-
-(Sorry for not noticing that earlier). Advantage is that those have
-had discussion with device tree people and have acks:
-
-What to do there?
-
-								Pavel
-commit 287cce719d85311f61d1b6b7f7b0d93f7907cd46
-Author: Milo Kim <milo.kim@ti.com>
-Date:   Tue Feb 28 15:45:14 2017 +0900
-
-    dt-bindings: mfd: Add TI LMU device binding information
-
-    This patch describes overall binding for TI LMU MFD devices.
-
-    Signed-off-by: Milo Kim <milo.kim@ti.com>
-        Acked-by: Rob Herring <robh+dt@kernel.org>
-	    Acked-by: Tony Lindgren <tony@atomide.com>
-	        Signed-off-by: Lee Jones <lee.jones@linaro.org>
-	=09
-
-commit d774c7e447ac911e73a1b3c775e6d89f0422218c
-Author: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Date:   Mon Aug 27 09:15:08 2018 -0700
-
-    dt-bindings: mfd: ti-lmu: update for backlight
-   =20
-    Update binding to integrate the backlight feature directly into
-    the main node, as suggested by Rob Herring.
-   =20
-    Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-
-diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Documentati=
-on/devicetree/bindings/mfd/ti-lmu.txt
-index c885cf8..b3433e9 100644
---- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-+++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-@@ -28,10 +28,9 @@ Required properties:
-=20
- Optional property:
-   - enable-gpios: A GPIO specifier for hardware enable pin.
--
--Required node:
--  - backlight: All LMU devices have backlight child nodes.
--               For the properties, please refer to [1].
-+  - pwm-names: Should be either "lmu-backlight" or unset
-+  - pwm: This should be a PWM specifier following ../pwm/pwm.txt and must
-+         only be specified, if the backlight should be used in PWM mode.
-=20
- Optional nodes:
-   - fault-monitor: Hardware fault monitoring driver for LM3633 and LM3697.
-@@ -42,8 +41,31 @@ Optional nodes:
-   - leds: LED properties for LM3633. Please refer to [2].
-   - regulators: Regulator properties for LM3631 and LM3632.
-                 Please refer to [3].
-+  - bank0, bank1, bank2: This contains the backlight configuration
-+                         for each backlight control bank.
-+
-+Required properties in the bank subnodes:
-+  - label: A string describing the backlight. Should contain "keyboard"
-+           for a keyboard backlight and "lcd" for LCD panel backlights.
-+  - ti,led-sources: A list of channels, that should be driven. Each channel
-+                    should only be driven by one bank.
-+
-+Optional properties in the bank subnodes:
-+  - default-brightness-level: Backlight initial brightness value.
-+                              Type is <u32>. It is set as soon as backlight
-+			      device is created.
-+			      0 ~ 2047 =3D LM3631, LM3632, LM3633, LM3695 and
-+					 LM3697
-+			      0 ~ 255  =3D LM3532
-+  - ti,ramp-up-ms, ti,ramp-down-ms: Light dimming effect properties.
-+				    Type is <u32>. Unit is millisecond.
-+					0 ~ 65 ms    =3D LM3532
-+					0 ~ 4000 ms  =3D LM3631
-+					0 ~ 16000 ms =3D LM3633 and LM3697
-+  - pwm-period: PWM period. Only valid in PWM brightness mode.
-+                Type is <u32>. If this property is missing, then control
-+		mode is set to I2C by default.
-=20
--[1] ../leds/backlight/ti-lmu-backlight.txt
- [2] ../leds/leds-lm3633.txt
- [3] ../regulator/lm363x-regulator.txt
-=20
-@@ -53,14 +75,11 @@ lm3532@38 {
-=20
- 	enable-gpios =3D <&pioC 2 GPIO_ACTIVE_HIGH>;
-=20
--	backlight {
--		compatible =3D "ti,lm3532-backlight";
--
--		lcd {
--			led-sources =3D <0 1 2>;
--			ramp-up-msec =3D <30>;
--			ramp-down-msec =3D <0>;
--		};
-+	bank0 {
-+		label =3D "lcd";
-+		led-sources =3D <0 1 2>;
-+		ramp-up-msec =3D <30>;
-+		ramp-down-msec =3D <0>;
- 	};
- };
-=20
-@@ -105,13 +124,10 @@ lm3631@29 {
- 		};
- 	};
-=20
--	backlight {
--		compatible =3D "ti,lm3631-backlight";
--
--		lcd_bl {
--			led-sources =3D <0 1>;
--			ramp-up-msec =3D <300>;
--		};
-+	bank0 {
-+		label =3D "lcd_bl";
-+		led-sources =3D <0 1>;
-+		ramp-up-msec =3D <300>;
- 	};
- };
-=20
-@@ -147,16 +163,13 @@ lm3632@11 {
- 		};
- 	};
-=20
--	backlight {
--		compatible =3D "ti,lm3632-backlight";
--
--		pwms =3D <&pwm0 0 10000 0>; /* pwm number, period, polarity */
--		pwm-names =3D "lmu-backlight";
-+	pwms =3D <&pwm0 0 10000 0>; /* pwm number, period, polarity */
-+	pwm-names =3D "lmu-backlight";
-=20
--		lcd {
--			led-sources =3D <0 1>;
--			pwm-period =3D <10000>;
--		};
-+	bank0 {
-+		label =3D "lcd";
-+		led-sources =3D <0 1>;
-+		pwm-period =3D <10000>;
- 	};
- };
-=20
-@@ -166,22 +179,18 @@ lm3633@36 {
-=20
- 	enable-gpios =3D <&pioC 2 GPIO_ACTIVE_HIGH>;
-=20
--	backlight {
--		compatible =3D "ti,lm3633-backlight";
--
--		main {
--			label =3D "main_lcd";
--			led-sources =3D <1 2>;
--			ramp-up-msec =3D <500>;
--			ramp-down-msec =3D <500>;
--		};
-+	bank0 {
-+		label =3D "main_lcd";
-+		led-sources =3D <1 2>;
-+		ramp-up-msec =3D <500>;
-+		ramp-down-msec =3D <500>;
-+	};
-=20
--		front {
--			label =3D "front_lcd";
--			led-sources =3D <0>;
--			ramp-up-msec =3D <1000>;
--			ramp-down-msec =3D <0>;
--		};
-+	bank1 {
-+		label =3D "front_lcd";
-+		led-sources =3D <0>;
-+		ramp-up-msec =3D <1000>;
-+		ramp-down-msec =3D <0>;
- 	};
-=20
- 	leds {
-@@ -211,13 +220,9 @@ lm3695@63 {
-=20
- 	enable-gpios =3D <&pioC 2 GPIO_ACTIVE_HIGH>;
-=20
--	backlight {
--		compatible =3D "ti,lm3695-backlight";
--
--		lcd {
--			label =3D "bl";
--			led-sources =3D <0 1>;
--		};
-+	bank0 {
-+		label =3D "lcd_bl";
-+		led-sources =3D <0 1>;
- 	};
- };
-=20
-@@ -227,14 +232,10 @@ lm3697@36 {
-=20
- 	enable-gpios =3D <&pioC 2 GPIO_ACTIVE_HIGH>;
-=20
--	backlight {
--		compatible =3D "ti,lm3697-backlight";
--
--		lcd {
--			led-sources =3D <0 1 2>;
--			ramp-up-msec =3D <200>;
--			ramp-down-msec =3D <200>;
--		};
-+	bank0 {
-+		led-sources =3D <0 1 2>;
-+		ramp-up-msec =3D <200>;
-+		ramp-down-msec =3D <200>;
- 	};
-=20
- 	fault-monitor {
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---oLBj+sq0vYjzfsbl
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluRmSEACgkQMOfwapXb+vJvYQCcDGC+DkNW4KrswdxW+W8NkNyM
-n18An3gqyPdKTPwSc/oMcDs/26fx2ZKv
-=/9XA
------END PGP SIGNATURE-----
-
---oLBj+sq0vYjzfsbl--
+-- 
+Baolin Wang
+Best Regards
