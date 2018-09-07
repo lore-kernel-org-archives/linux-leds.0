@@ -1,54 +1,55 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 1/2] dt-bindings: leds: Add bindings for lm3697 driver
-Date: Fri, 7 Sep 2018 09:45:35 +0200
-Message-ID: <20180907074535.GA22061@amd>
-References: <20180817151528.21623-1-dmurphy@ti.com>
- <20180824095515.GB4045@amd>
- <01a8f463-67c9-740c-5001-ac63e4a3dc4e@ti.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH] leds: pwm: silently error out on EPROBE_DEFER
+Date: Fri, 07 Sep 2018 09:56:12 +0200
+Message-ID: <1053e423d4ba8c1dd65468d278c79d2b7159401f.camel@baylibre.com>
+References: <20180906135904.13803-1-jbrunet@baylibre.com>
+         <20180906153548.GA10088@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <01a8f463-67c9-740c-5001-ac63e4a3dc4e@ti.com>
+In-Reply-To: <20180906153548.GA10088@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>, sre@kernel.org
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+On Thu, 2018-09-06 at 17:35 +0200, Pavel Machek wrote:
+> On Thu 2018-09-06 15:59:04, Jerome Brunet wrote:
+> > When probing, if we fail to get the pwm due to probe deferal, we shouldn't
+> > print an error message. Just be silent in this case.
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> >  drivers/leds/leds-pwm.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> > index df80c89ebe7f..5d3faae51d59 100644
+> > --- a/drivers/leds/leds-pwm.c
+> > +++ b/drivers/leds/leds-pwm.c
+> > @@ -100,8 +100,9 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+> >  		led_data->pwm = devm_pwm_get(dev, led->name);
+> >  	if (IS_ERR(led_data->pwm)) {
+> >  		ret = PTR_ERR(led_data->pwm);
+> > -		dev_err(dev, "unable to request PWM for %s: %d\n",
+> > -			led->name, ret);
+> > +		if (ret != -EPROBE_DEFER)
+> > +			dev_err(dev, "unable to request PWM for %s: %d\n",
+> > +				led->name, ret);
+> >  		return ret;
+> >  	}
+> 
+> Hmm, sometimes probing is deffered forever, and in such case debug
+> message is useful.
+> 
+> Do you see excessive number of these?
 
---SLDf9lqlvOQaIe6s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+About 10 but displaying an error which is not error is already excessive IMO.
 
-Hi!
+There is nothing out of the ordinary here. Feel free to grep git log for
+EPROBE_DEFER. Many drivers take this into account from the beginning now and
+we've been fixing others in most subsystem.
 
-> >> +All HVLED strings controlled by control bank A
-> >=20
-> > ":"?
->=20
-> Not sure what you are asking for here.
-
-Text looked like missing ":" at end of line.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---SLDf9lqlvOQaIe6s
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluSLJ8ACgkQMOfwapXb+vK4dwCgqCMaZ0Os+EMMq/dLMrmAprVF
-t7UAnAvNukSTOdWR2KPLjxm4g/KKHPo1
-=ptLq
------END PGP SIGNATURE-----
-
---SLDf9lqlvOQaIe6s--
+> 									
+> 									Pavel
