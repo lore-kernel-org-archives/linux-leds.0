@@ -1,439 +1,84 @@
-From: Simon Shields <simon@lineageos.org>
-Subject: [PATCH v5 2/2] leds: add Panasonic AN30259A support
-Date: Sun,  9 Sep 2018 20:38:25 +1000
-Message-ID: <20180909103826.17793-3-simon@lineageos.org>
-References: <20180909103826.17793-1-simon@lineageos.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH v8 1/2] leds: core: Introduce LED pattern trigger
+Date: Sun, 9 Sep 2018 21:38:42 +0800
+Message-ID: <CAMz4kuK=t9t0nZaVHguv_BVH5WKTDvxPrxCjPrpws9=VV_57ag@mail.gmail.com>
+References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
+ <20180908050208.GY2523@minitux> <0190dc10-99a3-abb7-b196-a537c49a2b6e@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180909103826.17793-1-simon@lineageos.org>
+In-Reply-To: <0190dc10-99a3-abb7-b196-a537c49a2b6e@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Simon Shields <simon@lineageos.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-AN30259A is a 3-channel LED driver which uses I2C. It supports timed
-operation via an internal PWM clock, and variable brightness. This
-driver offers support for basic hardware-based blinking and brightness
-control.
+On 9 September 2018 at 04:19, Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+> Hi Bjorn,
+>
+> On 09/08/2018 07:02 AM, Bjorn Andersson wrote:
+>> On Tue 04 Sep 04:01 PDT 2018, Baolin Wang wrote:
+>>
+>>> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>> [..]
+>>> +What:               /sys/class/leds/<led>/hw_pattern
+>>> +Date:               September 2018
+>>> +KernelVersion:      4.20
+>>> +Description:
+>>> +            Specify a hardware pattern for the LED, for LED hardware that
+>>> +            supports autonomously controlling brightness over time, according
+>>> +            to some preprogrammed hardware patterns.
+>>> +
+>>> +            Since different LED hardware can have different semantics of
+>>> +            hardware patterns, each driver is expected to provide its own
+>>> +            description for the hardware patterns in their ABI documentation
+>>> +            file.
+>>> +
+>>
+>> So, after a full circle we're back at drivers with support for hardware
+>> patterns should have their own ABI for setting that pattern.
+>>
+>> The controls for my hardware is:
+>> * a list of brightness values
+>> * the rate of the pattern
+>> * a flag to indicate that the pattern should be played from start
+>>   to end, end to start or start to end to start
+>> * a boolean indicating if the pattern should be played once or repeated
+>>   indefinitely.
+>>
+>> Given that the interface now is hw specific, what benefit is there to
+>> attempt to cram these 4 knobs into "hw_pattern"? Or am I allowed to
+>> create additional files for the latter three?
+>
+> So this is an argument corroborating my concerns raised in [0].
+> I really think that we should allow for custom pattern interfaces
+> defined by LED class drivers.
+>
+>>> +What:               /sys/class/leds/<led>/repeat
+>>> +Date:               September 2018
+>>> +KernelVersion:      4.20
+>>> +Description:
+>>> +            Specify a pattern repeat number. 0 means repeat indefinitely.
+>>> +
+>>> +            This file will always return the originally written repeat
+>>> +            number.
+>>
+>> I'm still convinced that this will confuse our users and to me it would
+>> be more logical if this denotes the number of times the pattern should
+>> be repeated, with e.g. negative numbers denoting infinite.
+>
+> Sounds reasonable. Let's change this semantics as you propose.
+>
+>> In particular I expect to have to explain why my driver expects that you
+>> write 0 in the file named "repeat" to make it repeat and 1 to make it
+>> not repeat.
 
-The datasheet is freely available:
-https://www.alliedelec.com/m/d/a9d2b3ee87c2d1a535a41dd747b1c247.pdf
+Hm, so there are some cases we need to make clear.
+1) If negative numbers present infinite, so what's the meaning of number 0?
+2) What we should show for users if repeat number is negative, just
+show negative numbers or one string "infinite"?
 
-Signed-off-by: Simon Shields <simon@lineageos.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
----
- drivers/leds/Kconfig         |  10 +
- drivers/leds/Makefile        |   1 +
- drivers/leds/leds-an30259a.c | 368 +++++++++++++++++++++++++++++++++++
- 3 files changed, 379 insertions(+)
- create mode 100644 drivers/leds/leds-an30259a.c
-
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 44097a3e0fcc..a72f97fca57b 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -58,6 +58,16 @@ config LEDS_AAT1290
- 	help
- 	 This option enables support for the LEDs on the AAT1290.
- 
-+config LEDS_AN30259A
-+	tristate "LED support for Panasonic AN30259A"
-+	depends on LEDS_CLASS && I2C && OF
-+	help
-+	  This option enables support for the AN30259A 3-channel
-+	  LED driver.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called leds-an30259a.
-+
- config LEDS_APU
- 	tristate "Front panel LED support for PC Engines APU/APU2/APU3 boards"
- 	depends on LEDS_CLASS
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 420b5d2cfa62..4c1b0054f379 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_LEDS_88PM860X)		+= leds-88pm860x.o
- obj-$(CONFIG_LEDS_AAT1290)		+= leds-aat1290.o
- obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
- obj-$(CONFIG_LEDS_AS3645A)		+= leds-as3645a.o
-+obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
- obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
- obj-$(CONFIG_LEDS_BCM6358)		+= leds-bcm6358.o
- obj-$(CONFIG_LEDS_BD2802)		+= leds-bd2802.o
-diff --git a/drivers/leds/leds-an30259a.c b/drivers/leds/leds-an30259a.c
-new file mode 100644
-index 000000000000..1c1f0c8c56f4
---- /dev/null
-+++ b/drivers/leds/leds-an30259a.c
-@@ -0,0 +1,368 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Driver for Panasonic AN30259A 3-channel LED driver
-+//
-+// Copyright (c) 2018 Simon Shields <simon@lineageos.org>
-+//
-+// Datasheet:
-+// https://www.alliedelec.com/m/d/a9d2b3ee87c2d1a535a41dd747b1c247.pdf
-+
-+#include <linux/i2c.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <uapi/linux/uleds.h>
-+
-+#define AN30259A_MAX_LEDS 3
-+
-+#define AN30259A_REG_SRESET 0x00
-+#define AN30259A_LED_SRESET BIT(0)
-+
-+/* LED power registers */
-+#define AN30259A_REG_LED_ON 0x01
-+#define AN30259A_LED_EN(x) BIT((x) - 1)
-+#define AN30259A_LED_SLOPE(x) BIT(((x) - 1) + 4)
-+
-+#define AN30259A_REG_LEDCC(x) (0x03 + ((x) - 1))
-+
-+/* slope control registers */
-+#define AN30259A_REG_SLOPE(x) (0x06 + ((x) - 1))
-+#define AN30259A_LED_SLOPETIME1(x) (x)
-+#define AN30259A_LED_SLOPETIME2(x) ((x) << 4)
-+
-+#define AN30259A_REG_LEDCNT1(x) (0x09 + (4 * ((x) - 1)))
-+#define AN30259A_LED_DUTYMAX(x) ((x) << 4)
-+#define AN30259A_LED_DUTYMID(x) (x)
-+
-+#define AN30259A_REG_LEDCNT2(x) (0x0A + (4 * ((x) - 1)))
-+#define AN30259A_LED_DELAY(x) ((x) << 4)
-+#define AN30259A_LED_DUTYMIN(x) (x)
-+
-+/* detention time control (length of each slope step) */
-+#define AN30259A_REG_LEDCNT3(x) (0x0B + (4 * ((x) - 1)))
-+#define AN30259A_LED_DT1(x) (x)
-+#define AN30259A_LED_DT2(x) ((x) << 4)
-+
-+#define AN30259A_REG_LEDCNT4(x) (0x0C + (4 * ((x) - 1)))
-+#define AN30259A_LED_DT3(x) (x)
-+#define AN30259A_LED_DT4(x) ((x) << 4)
-+
-+#define AN30259A_REG_MAX 0x14
-+
-+#define AN30259A_BLINK_MAX_TIME 7500 /* ms */
-+#define AN30259A_SLOPE_RESOLUTION 500 /* ms */
-+
-+#define STATE_OFF 0
-+#define STATE_KEEP 1
-+#define STATE_ON 2
-+
-+struct an30259a;
-+
-+struct an30259a_led {
-+	struct an30259a *chip;
-+	struct led_classdev cdev;
-+	u32 num;
-+	u32 default_state;
-+	bool sloping;
-+	char label[LED_MAX_NAME_SIZE];
-+};
-+
-+struct an30259a {
-+	struct mutex mutex; /* held when writing to registers */
-+	struct i2c_client *client;
-+	struct an30259a_led leds[AN30259A_MAX_LEDS];
-+	struct regmap *regmap;
-+	int num_leds;
-+};
-+
-+static int an30259a_brightness_set(struct led_classdev *cdev,
-+				   enum led_brightness brightness)
-+{
-+	struct an30259a_led *led;
-+	int ret;
-+	unsigned int led_on;
-+
-+	led = container_of(cdev, struct an30259a_led, cdev);
-+	mutex_lock(&led->chip->mutex);
-+
-+	ret = regmap_read(led->chip->regmap, AN30259A_REG_LED_ON, &led_on);
-+	if (ret)
-+		goto error;
-+
-+	switch (brightness) {
-+	case LED_OFF:
-+		led_on &= ~AN30259A_LED_EN(led->num);
-+		led_on &= ~AN30259A_LED_SLOPE(led->num);
-+		led->sloping = false;
-+		break;
-+	default:
-+		led_on |= AN30259A_LED_EN(led->num);
-+		if (led->sloping)
-+			led_on |= AN30259A_LED_SLOPE(led->num);
-+		ret = regmap_write(led->chip->regmap,
-+				   AN30259A_REG_LEDCNT1(led->num),
-+				   AN30259A_LED_DUTYMAX(0xf) |
-+				   AN30259A_LED_DUTYMID(0xf));
-+		if (ret)
-+			goto error;
-+		break;
-+	}
-+
-+	ret = regmap_write(led->chip->regmap, AN30259A_REG_LED_ON, led_on);
-+	if (ret)
-+		goto error;
-+
-+	ret = regmap_write(led->chip->regmap, AN30259A_REG_LEDCC(led->num),
-+			   brightness);
-+
-+error:
-+	mutex_unlock(&led->chip->mutex);
-+
-+	return ret;
-+}
-+
-+static int an30259a_blink_set(struct led_classdev *cdev,
-+			      unsigned long *delay_off, unsigned long *delay_on)
-+{
-+	struct an30259a_led *led;
-+	int ret, num;
-+	unsigned int led_on;
-+	unsigned long off = *delay_off, on = *delay_on;
-+
-+	led = container_of(cdev, struct an30259a_led, cdev);
-+
-+	mutex_lock(&led->chip->mutex);
-+	num = led->num;
-+
-+	/* slope time can only be a multiple of 500ms. */
-+	if (off % AN30259A_SLOPE_RESOLUTION || on % AN30259A_SLOPE_RESOLUTION) {
-+		ret = -EINVAL;
-+		goto error;
-+	}
-+
-+	/* up to a maximum of 7500ms. */
-+	if (off > AN30259A_BLINK_MAX_TIME || on > AN30259A_BLINK_MAX_TIME) {
-+		ret = -EINVAL;
-+		goto error;
-+	}
-+
-+	/* if no blink specified, default to 1 Hz. */
-+	if (!off && !on) {
-+		*delay_off = off = 500;
-+		*delay_on = on = 500;
-+	}
-+
-+	/* convert into values the HW will understand. */
-+	off /= AN30259A_SLOPE_RESOLUTION;
-+	on /= AN30259A_SLOPE_RESOLUTION;
-+
-+	/* duty min should be zero (=off), delay should be zero. */
-+	ret = regmap_write(led->chip->regmap, AN30259A_REG_LEDCNT2(num),
-+			   AN30259A_LED_DELAY(0) | AN30259A_LED_DUTYMIN(0));
-+	if (ret)
-+		goto error;
-+
-+	/* reset detention time (no "breathing" effect). */
-+	ret = regmap_write(led->chip->regmap, AN30259A_REG_LEDCNT3(num),
-+			   AN30259A_LED_DT1(0) | AN30259A_LED_DT2(0));
-+	if (ret)
-+		goto error;
-+	ret = regmap_write(led->chip->regmap, AN30259A_REG_LEDCNT4(num),
-+			   AN30259A_LED_DT3(0) | AN30259A_LED_DT4(0));
-+	if (ret)
-+		goto error;
-+
-+	/* slope time controls on/off cycle length. */
-+	ret = regmap_write(led->chip->regmap, AN30259A_REG_SLOPE(num),
-+			   AN30259A_LED_SLOPETIME1(off) |
-+			   AN30259A_LED_SLOPETIME2(on));
-+	if (ret)
-+		goto error;
-+
-+	/* Finally, enable slope mode. */
-+	ret = regmap_read(led->chip->regmap, AN30259A_REG_LED_ON, &led_on);
-+	if (ret)
-+		goto error;
-+
-+	led_on |= AN30259A_LED_SLOPE(num) | AN30259A_LED_EN(led->num);
-+
-+	ret = regmap_write(led->chip->regmap, AN30259A_REG_LED_ON, led_on);
-+
-+	if (!ret)
-+		led->sloping = true;
-+error:
-+	mutex_unlock(&led->chip->mutex);
-+
-+	return ret;
-+}
-+
-+static int an30259a_dt_init(struct i2c_client *client,
-+			    struct an30259a *chip)
-+{
-+	struct device_node *np = client->dev.of_node, *child;
-+	int count, ret;
-+	int i = 0;
-+	const char *str;
-+	struct an30259a_led *led;
-+
-+	count = of_get_child_count(np);
-+	if (!count || count > AN30259A_MAX_LEDS)
-+		return -EINVAL;
-+
-+	for_each_available_child_of_node(np, child) {
-+		u32 source;
-+
-+		ret = of_property_read_u32(child, "reg", &source);
-+		if (ret != 0 || !source || source > AN30259A_MAX_LEDS) {
-+			dev_err(&client->dev, "Couldn't read LED address: %d\n",
-+				ret);
-+			count--;
-+			continue;
-+		}
-+
-+		led = &chip->leds[i];
-+
-+		led->num = source;
-+		led->chip = chip;
-+
-+		if (of_property_read_string(child, "label", &str))
-+			snprintf(led->label, sizeof(led->label), "an30259a::");
-+		else
-+			snprintf(led->label, sizeof(led->label), "an30259a:%s",
-+				 str);
-+
-+		led->cdev.name = led->label;
-+
-+		if (!of_property_read_string(child, "default-state", &str)) {
-+			if (!strcmp(str, "on"))
-+				led->default_state = STATE_ON;
-+			else if (!strcmp(str, "keep"))
-+				led->default_state = STATE_KEEP;
-+			else
-+				led->default_state = STATE_OFF;
-+		}
-+
-+		of_property_read_string(child, "linux,default-trigger",
-+					&led->cdev.default_trigger);
-+
-+		i++;
-+	}
-+
-+	if (!count)
-+		return -EINVAL;
-+
-+	chip->num_leds = i;
-+
-+	return 0;
-+}
-+
-+static const struct regmap_config an30259a_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = AN30259A_REG_MAX,
-+};
-+
-+static void an30259a_init_default_state(struct an30259a_led *led)
-+{
-+	struct an30259a *chip = led->chip;
-+	int led_on, err;
-+
-+	switch (led->default_state) {
-+	case STATE_ON:
-+		led->cdev.brightness = LED_FULL;
-+		break;
-+	case STATE_KEEP:
-+		err = regmap_read(chip->regmap, AN30259A_REG_LED_ON, &led_on);
-+		if (err)
-+			break;
-+
-+		if (!(led_on & AN30259A_LED_EN(led->num))) {
-+			led->cdev.brightness = LED_OFF;
-+			break;
-+		}
-+		regmap_read(chip->regmap, AN30259A_REG_LEDCC(led->num),
-+			    &led->cdev.brightness);
-+		break;
-+	default:
-+		led->cdev.brightness = LED_OFF;
-+	}
-+
-+	an30259a_brightness_set(&led->cdev, led->cdev.brightness);
-+}
-+
-+static int an30259a_probe(struct i2c_client *client)
-+{
-+	struct an30259a *chip;
-+	int i, err;
-+
-+	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	err = an30259a_dt_init(client, chip);
-+	if (err < 0)
-+		return err;
-+
-+	mutex_init(&chip->mutex);
-+	chip->client = client;
-+	i2c_set_clientdata(client, chip);
-+
-+	chip->regmap = devm_regmap_init_i2c(client, &an30259a_regmap_config);
-+
-+	for (i = 0; i < chip->num_leds; i++) {
-+		an30259a_init_default_state(&chip->leds[i]);
-+		chip->leds[i].cdev.brightness_set_blocking =
-+			an30259a_brightness_set;
-+		chip->leds[i].cdev.blink_set = an30259a_blink_set;
-+
-+		err = devm_led_classdev_register(&client->dev,
-+						 &chip->leds[i].cdev);
-+		if (err < 0)
-+			goto exit;
-+	}
-+	return 0;
-+
-+exit:
-+	mutex_destroy(&chip->mutex);
-+	return err;
-+}
-+
-+static int an30259a_remove(struct i2c_client *client)
-+{
-+	struct an30259a *chip = i2c_get_clientdata(client);
-+
-+	mutex_destroy(&chip->mutex);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id an30259a_match_table[] = {
-+	{ .compatible = "panasonic,an30259a", },
-+	{ /* sentinel */ },
-+};
-+
-+MODULE_DEVICE_TABLE(of, an30259a_match_table);
-+
-+static const struct i2c_device_id an30259a_id[] = {
-+	{ "an30259a", 0 },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(i2c, an30259a_id);
-+
-+static struct i2c_driver an30259a_driver = {
-+	.driver = {
-+		.name = "leds-an32059a",
-+		.of_match_table = of_match_ptr(an30259a_match_table),
-+	},
-+	.probe_new = an30259a_probe,
-+	.remove = an30259a_remove,
-+	.id_table = an30259a_id,
-+};
-+
-+module_i2c_driver(an30259a_driver);
-+
-+MODULE_AUTHOR("Simon Shields <simon@lineageos.org>");
-+MODULE_DESCRIPTION("AN32059A LED driver");
-+MODULE_LICENSE("GPL v2");
 -- 
-2.18.0
+Baolin Wang
+Best Regards
