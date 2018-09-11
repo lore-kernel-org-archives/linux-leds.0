@@ -1,95 +1,179 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v6 1/2] dt-bindings: leds: Add bindings for lm3697 driver
-Date: Tue, 11 Sep 2018 16:05:40 -0500
-Message-ID: <ff9f932f-a9ae-b4fd-54d0-60be549534cb@ti.com>
-References: <20180906135005.6718-1-dmurphy@ti.com>
- <20180906211617.GB16899@amd> <b8ac9d52-f16d-5fc4-0e9a-9246b9f984c5@ti.com>
- <20180907133228.GA16297@amd> <70f7506c-6a3d-3830-59a4-a246dc6163f7@ti.com>
- <226b8770-7041-39a4-5a06-6002a7c1225f@gmail.com>
- <20a814ce-a4c5-0649-6677-6b85a5fd2321@ti.com>
- <59561e0f-e3b9-7898-a300-90b198ad14e6@gmail.com>
- <20d9ea9e-bbb8-2240-97cc-615e3fbcef8c@ti.com> <20180911205504.GA31219@amd>
+Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
+Date: Tue, 11 Sep 2018 16:48:16 -0500
+Message-ID: <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com>
+References: <20180911170825.17789-1-dmurphy@ti.com>
+ <20180911170825.17789-2-dmurphy@ti.com> <20180911200530.GA28290@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180911205504.GA31219@amd>
+In-Reply-To: <20180911200530.GA28290@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, linux-omap@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 09/11/2018 03:55 PM, Pavel Machek wrote:
-> Hi!
-> 
->>>>>>>> And I think Jacek pointed out that the bindings references in this bindings
->>>>>>>> don't even exist.
->>>>>>>>
->>>>>>>> I am thinking we need to deprecate this MFD driver and consolidate these drivers
->>>>>>>> in the LED directory as we indicated before.  I did not find any ti-lmu support
->>>>>>>> code.
->>>>>>>>
->>>>>>>> ti-lmu common core code and then the LED children appending the feature differentiation.
->>>>>>>
->>>>>>>> Need some maintainer weigh in here.
->>>>>>>
->>>>>>> Hehe. I'm maintnainer. Fun.
->>>>>>
->>>>>> I know.  I want to see if there was any other opinion.  Especially for the LED driver.
->>>>>>
->>>>> [...]
->>>>>
->>>>> I have a question - is this lm3697 LED controller a cell of some MFD
->>>>> device? Or is it a self-contained chip?
->>>>>
->>>>
->>>> This is a self contained chip.  And the LM3697 only function is a LED driver.
->>>> It does not have any other special functions like the LM363X drivers for GPIO and Regulator support.
->>>
->>> This is an argument for merging it as a standalone LED class driver
->>> then. It is even more justifiable, taking into account uncertainties
->>> related to the proper way of adding the support for it to the existing
->>> MFD driver, whereas the code reuse would be the only advantage of having
->>> thus support in MFD subsystem.
+Pavel
+
+On 09/11/2018 03:05 PM, Pavel Machek wrote:
+> On Tue 2018-09-11 12:08:20, Dan Murphy wrote:
+>> Remove support for the LM3697 LED device
+>> from the ti-lmu.  The LM3697 will be supported
+>> via a stand alone LED driver.
 >>
->> Does the argument carry over to the other devices?
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
 > 
-> We really need something reasonable, that works for stand-alone LEDs,
-> and also works for LEDs that are part of MFD when the hardware is similar.
+> I'd really like to see better explanation here.
+> 
 
-I agree that LED drivers that have other functional blocks beyond driving a LED
-chain belongs in the MFD space.  The amount of code that is similar is very small.
+I will update the commit message but....
 
-And like I pointed out Droid 4 may be only one use case where it makes sense to combine
-all the LED code into a central place.  But most customers will just want a LED specific
-driver to maintain.
+How do I politely explain that the original implementation was wrong for certain devices?
+How do I politely explain that this binding has information that does not exist?
+Isn't code and documentation supposed to be pushed in stages together?
+Like document the current supported source features and then submit patches to amend new
+features or changes to the source.  I did that in this series
+where I introduced the driver and when I added a feature I added the binding information.
+
+Unfortunately Milo left TI before he had a chance to finish upstreaming.
+
+Some issues with the current binding:
+1) The documentation referenced in the ti-lmu.txt does not exist but the binding was accepted.
+[1] ../leds/backlight/ti-lmu-backlight.txt
+[2] ../leds/leds-lm3633.txt
+[3] ../regulator/lm363x-regulator.txt
+
+2) ramp-up-msec and ramp-down-msec are not explained or defined in this current binding.
+Looks to be defined in the staged code though.
+
+3) The ramp-up-msec and ramp-down-msec are not the right node parameters
+the code shows ti,ramp-down-ms and ti,ramp-up-ms.  Looking at the clean up of the binding
+in the staged commits the binding still does not match the code.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/commit/?h=droid4-pending-v4.19&id=d774c7e447ac911e73a1b3c775e6d89f0422218c
+
+4) The ramp rates ranges are incorrect for the LM3697 it should be from 0 -> 117400 ms
+
+5) The children compatibles are not defined in this binding but appear to be removed in the staged code.
+
+6) address-cells and size-cells are missing from the binding
+
+I am attempting to clean this up for all the dedicated LED drivers.
+There is a lot of bloat with this driver to support a single LED driver that is a single function device.
+
+This ti-lmu driver may be a great thing for the Droid 4 but from a customers
+stand point that just wants to use just 1 of the dedicated LED drivers this driver is
+overly complex and possibly hard to add code for differentiation.
+
+> We have existing binding, for lm3697 and similar devices. With this
+> series, different binding is introduced, without documented reason.
+> 
+
+I can update the commit message to indicate that this device is not a MFD
+device and only is a SFD that needs to be supported by a dedicated driver.
+
+> That's bad.
+
+This ti-lmu binding is more misleading in the current state.
 
 > 
->> Like the LM3632 (part of the ti-lmu) has flash and torch and no other special functions
->> so it would look like the lm3601x family with different register mappings.
->>
->> The LM3631 seems to also be just a LED driver with no extra functionality
->>
->> I could go buy an EVM and put together a driver for that device as well using the lm3601x as
->> reference.
+> Now, maybe you are right and the hardware should be handled by
+> drivers/leds, not drivers/mfd. But we should have solution for all the
+> similar chips, and that still does not mean we have to modify the
+> binding. (But maybe we want to move it to different
+> directory). Bindings are supposed to describe hardware, not mirror
+> structure of our drivers.
+
+But this is not clean to have this device in the MFD bindings directory
+when the support is in the LEDs directory.
+
+I am working on creating driver for the other single function devices.
+It will take some time.  I am waiting on the hardware to come in.
+
 > 
-> I do have hardware with lm3532. I can test patches, and I guess I can
-> port driver easily if it is obvious how to do that.
+> Unless there's something fatally wrong with the binding... but in such
+> case we'd like to know what is wrong.
+> 
+> [And yes, I recognize current situation is ... not ideal and I'm
+> willing to help. But I'm not sure this is step in right direction.]
 
-
-I can get the LM3532 EVM.  I wrote a similar driver for the original Droid 10 years ago.
-Upstreaming was not a priority for that company.
-
-Here is a reference to the LM3530 code from back in the day on Google OMAP kernel.
-https://android.googlesource.com/kernel/omap/+/android-omap-3.0/drivers/leds/leds-lm3530.c
-
-Otherwise I can create the LM3532 driver as well and look at the LM3530
+It will take some time to get this all cleaned up.  But I am willing to
+get this done.
 
 Dan
 
 > 
-> 									Pavel
+> Thanks,
+> 								Pavel
+> 
+> 
+>> ---
+>>
+>> v7 - New change for the series based on the comments in https://lore.kernel.org/patchwork/patch/982550/
+>>
+>>  .../devicetree/bindings/mfd/ti-lmu.txt        | 26 +------------------
+>>  1 file changed, 1 insertion(+), 25 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+>> index c885cf89b8ce..920f910be4e9 100644
+>> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+>> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+>> @@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
+>>    LM3632       Backlight and regulator
+>>    LM3633       Backlight, LED and fault monitor
+>>    LM3695       Backlight
+>> -  LM3697       Backlight and fault monitor
+>>  
+>>  Required properties:
+>>    - compatible: Should be one of:
+>> @@ -18,11 +17,10 @@ Required properties:
+>>                  "ti,lm3632"
+>>                  "ti,lm3633"
+>>                  "ti,lm3695"
+>> -                "ti,lm3697"
+>>    - reg: I2C slave address.
+>>           0x11 for LM3632
+>>           0x29 for LM3631
+>> -         0x36 for LM3633, LM3697
+>> +         0x36 for LM3633
+>>           0x38 for LM3532
+>>           0x63 for LM3695
+>>  
+>> @@ -38,7 +36,6 @@ Optional nodes:
+>>      Required properties:
+>>        - compatible: Should be one of:
+>>                      "ti,lm3633-fault-monitor"
+>> -                    "ti,lm3697-fault-monitor"
+>>    - leds: LED properties for LM3633. Please refer to [2].
+>>    - regulators: Regulator properties for LM3631 and LM3632.
+>>                  Please refer to [3].
+>> @@ -220,24 +217,3 @@ lm3695@63 {
+>>  		};
+>>  	};
+>>  };
+>> -
+>> -lm3697@36 {
+>> -	compatible = "ti,lm3697";
+>> -	reg = <0x36>;
+>> -
+>> -	enable-gpios = <&pioC 2 GPIO_ACTIVE_HIGH>;
+>> -
+>> -	backlight {
+>> -		compatible = "ti,lm3697-backlight";
+>> -
+>> -		lcd {
+>> -			led-sources = <0 1 2>;
+>> -			ramp-up-msec = <200>;
+>> -			ramp-down-msec = <200>;
+>> -		};
+>> -	};
+>> -
+>> -	fault-monitor {
+>> -		compatible = "ti,lm3697-fault-monitor";
+>> -	};
+>> -};
 > 
 
 
