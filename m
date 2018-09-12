@@ -1,53 +1,107 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
-Date: Wed, 12 Sep 2018 20:35:44 +0200
-Message-ID: <7bb0462c-e641-0c58-1f68-bd02d38edab2@gmail.com>
-References: <20180911170825.17789-1-dmurphy@ti.com>
- <20180911170825.17789-2-dmurphy@ti.com> <20180911200530.GA28290@amd>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v8 1/2] leds: core: Introduce LED pattern trigger
+Date: Wed, 12 Sep 2018 21:18:20 +0200
+Message-ID: <20180912191820.GA27704@amd>
+References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
+ <20180908050208.GY2523@minitux>
+ <20180910211935.GA4697@amd>
+ <dd1f8dd2-d577-ab12-e67a-7ed71459055a@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180911200530.GA28290@amd>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <dd1f8dd2-d577-ab12-e67a-7ed71459055a@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, linux-omap@vger.kernel.org, linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com, broonie@kernel.org, linus.walleij@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 09/11/2018 10:05 PM, Pavel Machek wrote:
-> On Tue 2018-09-11 12:08:20, Dan Murphy wrote:
->> Remove support for the LM3697 LED device
->> from the ti-lmu.  The LM3697 will be supported
->> via a stand alone LED driver.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> 
-> I'd really like to see better explanation here.
-> 
-> We have existing binding, for lm3697 and similar devices. With this
-> series, different binding is introduced, without documented reason.
-> 
-> That's bad.
-> 
-> Now, maybe you are right and the hardware should be handled by
-> drivers/leds, not drivers/mfd. But we should have solution for all the
-> similar chips, and that still does not mean we have to modify the
-> binding. (But maybe we want to move it to different
-> directory). Bindings are supposed to describe hardware, not mirror
-> structure of our drivers.
-> 
-> Unless there's something fatally wrong with the binding... but in such
-> case we'd like to know what is wrong.
 
-Dangling references ?
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> [And yes, I recognize current situation is ... not ideal and I'm
-> willing to help. But I'm not sure this is step in right direction.]
-> 
-> Thanks,
+Hi!
 
+> >>> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-patter=
+n b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> >> [..]
+> >>> +What:		/sys/class/leds/<led>/hw_pattern
+> >>> +Date:		September 2018
+> >>> +KernelVersion:	4.20
+> >>> +Description:
+> >>> +		Specify a hardware pattern for the LED, for LED hardware that
+> >>> +		supports autonomously controlling brightness over time, according
+> >>> +		to some preprogrammed hardware patterns.
+> >>> +
+> >>> +		Since different LED hardware can have different semantics of
+> >>> +		hardware patterns, each driver is expected to provide its own
+> >>> +		description for the hardware patterns in their ABI documentation
+> >>> +		file.
+> >>> +
+> >>
+> >> So, after a full circle we're back at drivers with support for hardware
+> >> patterns should have their own ABI for setting that pattern.
+> >>
+> >> The controls for my hardware is:
+> >> * a list of brightness values
+> >> * the rate of the pattern
+> >> * a flag to indicate that the pattern should be played from start
+> >>   to end, end to start or start to end to start
+> >> * a boolean indicating if the pattern should be played once or repeated
+> >>   indefinitely.
+> >=20
+> > No, we are not back to full circle.
+> >=20
+> > Or at least we should not be.
+> >=20
+> > Yes, hw_pattern can have some limitation pattern does not, but if you
+> > take values from hw_pattern file and put them into pattern file, you
+> > should get the same pattern (with more power being consumed). And that
+> > property is kind of important for me, because it should keep the ABI
+> > reasonable.
+>=20
+> If you looked at what we agreed on with Baolin, you'd realize
+> that this property is in no way preserved.
+> This is what the whole story is about - we're introducing hw_pattern
+> because of difficulties in describing breathing pattern by a series
+> of [brightness delta_t] tuples.
+>=20
+> And Bjorn presented another example. I'm inclined to leave the
+> definition of hw_pattern semantics to the LED class drivers,
+> and allow them to create related sysfs files.
 
--- 
-Best regards,
-Jacek Anaszewski
+Please lets not do that.
+
+We already have drivers that do that and it is complete
+nightmare. Some take binary code for the tiny CPU driving the LED.
+
+What exactly is the problem? [brightness delta_t] can describe
+anything single LED can do in finite time. You are right, that
+[brightness delta_t] sequence may get rather long, and it may be hard
+to turn that sequence into parameters. Are there any _interesting_
+sequences hardware can do but [brightness delta_t] can not store
+reasonably?
+
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluZZnwACgkQMOfwapXb+vKk4ACfeuiIz9zul593vxA5PPJRklQ7
+04wAn3mbOGBFjJoVrINshnq/FECRY26v
+=EOK8
+-----END PGP SIGNATURE-----
+
+--2fHTh5uZTiUOsy+g--
