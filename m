@@ -1,241 +1,128 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
-Date: Thu, 13 Sep 2018 10:15:45 -0500
-Message-ID: <7950fa32-c8f9-52bb-06b0-0c1cc93b6bc9@ti.com>
-References: <20180911170825.17789-1-dmurphy@ti.com>
- <20180911170825.17789-2-dmurphy@ti.com> <20180911200530.GA28290@amd>
- <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com> <20180912214938.GA30654@amd>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v8 1/2] leds: core: Introduce LED pattern trigger
+Date: Thu, 13 Sep 2018 21:37:20 +0200
+Message-ID: <48df13cd-af36-7753-8469-54d67937b54d@gmail.com>
+References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
+ <20180908050208.GY2523@minitux> <20180910211935.GA4697@amd>
+ <dd1f8dd2-d577-ab12-e67a-7ed71459055a@gmail.com> <20180912191820.GA27704@amd>
+ <a82e3d9c-1df8-9e73-7371-613ad550693d@gmail.com> <20180912204156.GA15541@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180912214938.GA30654@amd>
+In-Reply-To: <20180912204156.GA15541@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, linux-omap@vger.kernel.org, linux-leds@vger.kernel.org
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com, broonie@kernel.org, linus.walleij@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Pavel
-
-On 09/12/2018 04:49 PM, Pavel Machek wrote:
+On 09/12/2018 10:41 PM, Pavel Machek wrote:
 > Hi!
 > 
->> On 09/11/2018 03:05 PM, Pavel Machek wrote:
->>> On Tue 2018-09-11 12:08:20, Dan Murphy wrote:
->>>> Remove support for the LM3697 LED device
->>>> from the ti-lmu.  The LM3697 will be supported
->>>> via a stand alone LED driver.
+>>>>> No, we are not back to full circle.
+>>>>>
+>>>>> Or at least we should not be.
+>>>>>
+>>>>> Yes, hw_pattern can have some limitation pattern does not, but if you
+>>>>> take values from hw_pattern file and put them into pattern file, you
+>>>>> should get the same pattern (with more power being consumed). And that
+>>>>> property is kind of important for me, because it should keep the ABI
+>>>>> reasonable.
 >>>>
->>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>>> If you looked at what we agreed on with Baolin, you'd realize
+>>>> that this property is in no way preserved.
+>>>> This is what the whole story is about - we're introducing hw_pattern
+>>>> because of difficulties in describing breathing pattern by a series
+>>>> of [brightness delta_t] tuples.
+>>>>
+>>>> And Bjorn presented another example. I'm inclined to leave the
+>>>> definition of hw_pattern semantics to the LED class drivers,
+>>>> and allow them to create related sysfs files.
 >>>
->>> I'd really like to see better explanation here.
+>>> Please lets not do that.
 >>>
->>
->> I will update the commit message but....
->>
->> How do I politely explain that the original implementation was wrong for certain devices?
-> 
-> Implementation? Device tree is hardware description.
-
-Yes this hardware description is incorrect.  The hardware description is
-describing a MFD but this LED driver (and a couple others) only perform
-1 function and that is to drive a LED string.
-
-> 
->> How do I politely explain that this binding has information that
->>  does not exist?
-> 
-> I don't understand this sentence.
-
-That was explained later on the issues with the binding.
-
-> 
->> Isn't code and documentation supposed to be pushed in stages
->> together?
-> 
-> Device tree is _not_ documentation. And yes, it is normally pushed
-> together. But that did not happen here, and bindings are already in.
-> 
-
-Hmm..  Its not documentation but it is in the Documentation folder.
-And just because the bindings are in does not mean they cannot be changed.
-
-So someone hurried up and pushed the bindings that were not accurate and
-they were taken and now we are stuck with this implementation?
-
-That does not seem like progress.
-
-> Bindings are an ABI between bootloader and kernel. They should not be
-> changed lightly. 
-> 
-> Here I believe they should be fixed; not deleted.
-> 
-
-I am fixing them.  Removing devices that should not have been there to begin with.
-
-Also if they are not to be changed lightly then why is there so much churn in the
-staged patches.  Looks like the compatible is changing with this patch and appears that it
-was not documented appropriately.
-According to the above statement this patch should be rejected because it is changing the ABI.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/commit/?h=droid4-pending-v4.19&id=d774c7e447ac911e73a1b3c775e6d89f0422218c
-
->> Unfortunately Milo left TI before he had a chance to finish upstreaming.
-> 
-> Well -- I wanted to finish upstreaming. I still have those patches,
-> and they still look reasonably well. Better than 
-> 
-
-than?
-
->> Some issues with the current binding:
->> 1) The documentation referenced in the ti-lmu.txt does not exist but the binding was accepted.
->> [1] ../leds/backlight/ti-lmu-backlight.txt
->> [2] ../leds/leds-lm3633.txt
->> [3] ../regulator/lm363x-regulator.txt
->>
->> 2) ramp-up-msec and ramp-down-msec are not explained or defined in this current binding.
->> Looks to be defined in the staged code though.
->>
->> 3) The ramp-up-msec and ramp-down-msec are not the right node parameters
->> the code shows ti,ramp-down-ms and ti,ramp-up-ms.  Looking at the clean up of the binding
->> in the staged commits the binding still does not match the code.
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/commit/?h=droid4-pending-v4.19&id=d774c7e447ac911e73a1b3c775e6d89f0422218c
->>
-> 
-> Bindings are authoritative. Of course, they can be fixed if really
-> neccessary, but normally code should be adapted to the bindings, not
-> the other way around.
-
-They should only be authoritative when they are correct.
-
-> 
-> If slow ramping up/down is something that would be expected in other
-> chips, too, ti, prefix is not good idea.
-> 
-
-Well if this is something expected for other chips shouldn't the LED framework be
-updated as opposed to creating a stub layer to do this?
-
->> 4) The ramp rates ranges are incorrect for the LM3697 it should be from 0 -> 117400 ms
->>
->> 5) The children compatibles are not defined in this binding but appear to be removed in the staged code.
->>
->> 6) address-cells and size-cells are missing from the binding
-> 
-> Yep, ok, so these should be fixed. Still the bindings should be fixed,
-> not removed and started over.
-> 
-
-So once something is in the binding it can never be removed?
-
->> I am attempting to clean this up for all the dedicated LED drivers.
->> There is a lot of bloat with this driver to support a single LED driver that is a single function device.
->>
-> 
-> What about the multi function devices? They should have same binding.
-
-The MFD devices defined are not in contention here only the SFD.
-The only comment there is data section bloat that occurs in attempting to support
-only one device out of the supported devices.  But that can be done via #ifconfig
-
-> 
->> This ti-lmu driver may be a great thing for the Droid 4 but from a customers
->> stand point that just wants to use just 1 of the dedicated LED drivers this driver is
->> overly complex and possibly hard to add code for differentiation.
-> 
-> The ti-lmu driver sounds like a way to go. We really want single
-> driver, even if more complex, than 6 separate ones.
-
-Not really in agreement here.  The ti-lmu driver only makes sense for MFD devices where
-the device itself supports more then just one function.  Otherwise we could just lump every
-single LED device into this driver.
-
-Again not sure why we gloss over the fact that this driver with all of the device data is
-the correct way to go for every single device.  If a target product only has the LM3697 why does the MFD need
-to be used?  Why do we need to bring in all the support for all the additional devices?
-
-This may be great for Droid 4 but not for any other device.  Including IoT devices that need smaller kernel
-foot prints.
-
-All be it the analog side of these devices may be the same but the digital side for each chip is different.
-The register maps are not the same, the number of supported LED strings are not
-the same, there are features not supported by this driver and will be a pain to add.
-Adding features will be a complete night mare especially for the LM3632 which also support Torch and Flash.
-
-
-Here are where a single driver will start getting messy and support difficult
-LM3533 has ALS and an ADC for an ALS analog sensor
-LM3631 has no ALS functionality
-LM3632 has strobe/torch functionality and no ramp support
-LM3633 has lvled support coupled with the hvled support
-LM3695 does not even appear to be available publicly
-LM3697 is the only device that that this driver could be used for as is.
-
-Jacek has already agreed that having a dedicated LED driver for SFD devices is preferred method.
-
-> 
->>> We have existing binding, for lm3697 and similar devices. With this
->>> series, different binding is introduced, without documented reason.
+>>> We already have drivers that do that and it is complete
+>>> nightmare. Some take binary code for the tiny CPU driving the LED.
 >>>
+>>> What exactly is the problem? [brightness delta_t] can describe
 >>
->> I can update the commit message to indicate that this device is not a MFD
->> device and only is a SFD that needs to be supported by a dedicated
->> driver.
-> 
-> Device bindings are operating systems independend. This is not an argument.
-> 
-
-I have no idea what this statement means.
-
->>> Now, maybe you are right and the hardware should be handled by
->>> drivers/leds, not drivers/mfd. But we should have solution for all the
->>> similar chips, and that still does not mean we have to modify the
->>> binding. (But maybe we want to move it to different
->>> directory). Bindings are supposed to describe hardware, not mirror
->>> structure of our drivers.
+>> You wrote:
 >>
->> But this is not clean to have this device in the MFD bindings directory
->> when the support is in the LEDs directory.
+>> <quote>
+>> Yes, hw_pattern can have some limitation pattern does not, but if you
+>> take values from hw_pattern file and put them into pattern file, you
+>> should get the same pattern (with more power being consumed).
+>> </quote>
+>>
+>> The problem is that we decided to introduce hw_pattern to
+>> to take away from drivers a responsibility for translating
+>> a series of tuples, approximating the brightness curve,
+>> to the values that can be written to the hardware registers.
+>>
+>> Because this is what would need to be done to check if hw can support
+>> given series of tuples and activate it. Actually with this approach
+>> we wouldn't need hw_pattern at all, since pattern alone would do.
+>> But implementation thereof is what we could call a nightmare.
+>>
+>> What follows, your claim from the quotation is inaccurate:
+>> values from hw_pattern written to the pattern file will not
+>> produce the same pattern, at least in case of what was proposed
+>> in [0] for drivers/leds/leds-sc27xx-bltc.c.
 > 
-> Perhaps location of the binding is wrong. Still not reason to drop it
-> and introduce new one.
+> That sounds easy, see below.
 > 
-
-Location and implementation is wrong for certain devices.
-
->>>> index c885cf89b8ce..920f910be4e9 100644
->>>> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
->>>> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
->>>> @@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
->>>>    LM3632       Backlight and regulator
->>>>    LM3633       Backlight, LED and fault monitor
->>>>    LM3695       Backlight
->>>> -  LM3697       Backlight and fault monitor
->>>>  
->>>>  Required properties:
->>>>    - compatible: Should be one of:
+>>> anything single LED can do in finite time. You are right, that
+>>> [brightness delta_t] sequence may get rather long, and it may be hard
+>>> to turn that sequence into parameters. Are there any _interesting_
+>>> sequences hardware can do but [brightness delta_t] can not store
+>>> reasonably?
+>>
+>> Please propose the implementation of pattern_set for
+>> drivers/leds/leds-sc27xx-bltc.c breathing pattern, that will
+>> setup breathing mode basing on the values from tuples.
+>>
+>> Use Baolin's patch [0] for a reference of what hardware expects.
+>>
+>> [0] https://lore.kernel.org/patchwork/patch/984246/
 > 
-> You see? Even if your "new" binding has no flaws, "flawed" binding
-> still remains in tree, and we still have problems for lm3632, 3633,
-> 3695. That's why it needs to be fixed, not replaced.
-
-I am working on those as well.  LM3632 is a MFD device and can be supported via
-the MFD framework.
-
-This work for the other LED drivers needs to be done before we bring in any other
-code.
-
-Dan
-
+> Yep, so we change documentation to require
 > 
-> Best regards,
-> 									Pavel
+> 0 rise_duration brightness high_duration brightness fall_duration 0 low_duration"
 > 
+> ...and we are done; at least as long as user writes expected pattern
+> to the file.
+> 
+> I'd actually like to see this at begining of function:
+>     if (pattern[0].brightness != 0)
+>         return -EINVAL;
+>     if (pattern[2].brightness != 0)
+>         return -EINVAL;
+>     if (pattern[3].brightness != 0)
+>         return -EINVAL;
+>     if (pattern[1].brightness != pattern[2].brightness)
+>         return -EINVAL;
+> 
+> ..so if user writes something unexpected, he gets the error back.
+> 
+> What am I missing?
 
+I suppose that breathing pattern means smooth rise and fall of
+brightness. I'd even say that it should be a non-linear function.
+
+I'm not sure if you noticed my quotation of your statement from the
+previous message, because the modification you proposed doesn't
+introduce any novelty to the related matter.
+
+The difference between pattern and discussed hw_pattern
+semantics is that:
+
+- hw_pattern semantics for leds-sc27xx-bltc.c requires only four
+  tuples to setup the breathing pattern.
+
+- the same four tuples written to the pattern file would result
+  in four brightness changes
 
 -- 
-------------------
-Dan Murphy
+Best regards,
+Jacek Anaszewski
