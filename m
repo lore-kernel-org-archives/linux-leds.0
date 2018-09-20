@@ -1,49 +1,66 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
-Date: Fri, 21 Sep 2018 00:04:43 +0200
-Message-ID: <20180920220443.GB27468@xo-6d-61-c0.localdomain>
-References: <20180911170825.17789-2-dmurphy@ti.com>
- <20180911200530.GA28290@amd>
- <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com>
- <20180912214938.GA30654@amd>
- <7950fa32-c8f9-52bb-06b0-0c1cc93b6bc9@ti.com>
- <20180914081822.GA21830@amd>
- <9c14ee7c-f172-bb0c-d9a8-8aeee408f716@gmail.com>
- <20180914214220.GA2081@amd>
- <be2ee681-7ae0-6545-0208-6ae5c1b7affd@gmail.com>
- <5a249ae3-e3f7-8eff-4022-ed982e364326@ti.com>
+Subject: Re: [PATCH 1/2] libata: add ledtrig support
+Date: Fri, 21 Sep 2018 00:04:49 +0200
+Message-ID: <20180920220449.GC27468@xo-6d-61-c0.localdomain>
+References: <1537328730-9156-1-git-send-email-aditya@kobol.io>
+ <1537328730-9156-2-git-send-email-aditya@kobol.io>
+ <20180920072354.GA20392@amd>
+ <20180920082425.GB20006@makrotopia.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <5a249ae3-e3f7-8eff-4022-ed982e364326@ti.com>
+In-Reply-To: <20180920082425.GB20006@makrotopia.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, linux-omap@vger.kernel.org, linux-leds@vger.kernel.org
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Aditya Prayoga <aditya@kobol.io>, linux-ide@vger.kernel.org, linux-leds@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, Jens Axboe <axboe@kernel.dk>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
 Hi!
 
-> >>> Easy to maintain will be a dedicated LED class driver.
-> >>
-> >> You mean, 3 dedicated LED class drivers and 3 MFD drivers with LED
-> >> parts? We'll need complex driver anyway, and I'd really like to have
-> >> just one.
+> > > +#ifdef CONFIG_ATA_LEDS
+> > > +	/* register LED triggers for all ports */
+> > > +	for (i = 0; i < host->n_ports; i++) {
+> > > +		if (unlikely(!host->ports[i]->ledtrig))
+> > > +			continue;
+> > > +
+> > > +		snprintf(host->ports[i]->ledtrig_name,
+> > > +			sizeof(host->ports[i]->ledtrig_name), "ata%u",
+> > > +			host->ports[i]->print_id);
 > > 
-> > In the LED subsystem we can wrap common functionalities
-> > into a library object. MFD driver will be able to reuse it then.
+> > > +		host->ports[i]->ledtrig->name = host->ports[i]->ledtrig_name;
+> > > +
+> > > +		if (led_trigger_register(host->ports[i]->ledtrig)) {
+> > > +			kfree(host->ports[i]->ledtrig);
+> > > +			host->ports[i]->ledtrig = NULL;
+> > > +		}
+> > > +	}
+> > > +#endif
+> > 
+> > No, we don't want you to register multiple triggers. We want one
+> > trigger, than has parameter "which port to watch". (Number of triggers
+> > is limited as by sysfs limitations).
 > 
-> I am currently working on that code now.  I expect a RFC on this this week.
+> Back then I implemented it that way to be able to define the
+> default trigger for each LED in device tree and "trigger-sources"
+> didn't exist yet (it was introduced for USB ports and isn't yet used
+> for anything other than that)
 
-Looking forward to that.
+I see why you did it... BUt I believe we still want single trigger solution...
 
-But you really need acks for the bindings, and since Rob is usually quite slow
-acking them, it is easiest to use the existing binding... if it is wrong it
-needs to be fixed, anyway.
+> However, the problem till today is also that ATA ports are often not
+> individual device-tree objects we can refer to, see for example
+> marvell,armada-370-sata which appears as one opaque controller. Ie.
+> all SATA drivers have to be converted to expose individual ports on
+> device-tree before the trigger-sources approach can be applied...
 
-THanks,
+Yep, well... something to do in SATA then.
+
+Perhaps this should also have an option for single LED for _any_ SATA activity,
+and 90% devices will be happy with that?
 
 									Pavel
+
 -- 
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
