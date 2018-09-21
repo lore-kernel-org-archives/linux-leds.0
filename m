@@ -1,13 +1,13 @@
 From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH v12 1/2] leds: core: Introduce LED pattern trigger
-Date: Fri, 21 Sep 2018 23:12:21 +0200
-Message-ID: <20180921211221.GB18062@amd>
+Date: Fri, 21 Sep 2018 23:17:58 +0200
+Message-ID: <20180921211758.GC18062@amd>
 References: <67ebebf02edd6d8ee42a13b139733e9cc680ea86.1536631975.git.baolin.wang@linaro.org>
  <CAMz4kuJx9twJ=wM5qsucV3JH_VS-AC1aWMqpQOwAMkCuKBHLRg@mail.gmail.com>
  <324778a9-a32c-ae6e-337a-39845f214bfc@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="1UWUbFP1cBYEclgG"
+        protocol="application/pgp-signature"; boundary="NU0Ex4SbNnrxsi6C"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <324778a9-a32c-ae6e-337a-39845f214bfc@gmail.com>
@@ -17,7 +17,7 @@ Cc: Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com, Bjorn Andersson 
 List-Id: linux-leds@vger.kernel.org
 
 
---1UWUbFP1cBYEclgG
+--NU0Ex4SbNnrxsi6C
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -54,58 +54,43 @@ te:
 >=20
 > [0] https://lkml.org/lkml/2018/9/13/1216
 
-Patch 1/2 is not controversial; I believe we can apply it now.
+To paint a picture:
 
-2/2: Non-linear or not, can we just ignore that for now? We don't have
-well-defined meaning of what brightness 128 means, so... I believe we
-can do that reasonably safely.
+brightness
 
-I don't exactly understand what you are saying with the four tuples.
+   rise hold          lower       hold down
+  ^    XXXXXXXXXXXXXXX
+  |   X               XX
+  |  X                  XX
+  | X                     XXXXXXXXXXXXXXXXXXXXXXXXXX
+  +-------------------------------------------------------> time
 
-Yes, sc27xx currently has a limit where it can do single rise, hold,
-lower, hold at zero.
+This is what Baolin's hardware can do, right?
 
-That is described by pattern:
+This is also what pattern trigger can do, right?
 
-"0 rise_duration brightness high_duration brightness fall_duration 0   low_=
-duration"
+So all we need to do is match the two interfaces, so that hw_pattern
+returns -EINVAL on patterns hardware can not actually do.
 
-We should add this to sc27xx handler:
-
-> I'd actually like to see this at begining of function:
->     if (pattern[0].brightness !=3D 0)
->         return -EINVAL;
->     if (pattern[2].brightness !=3D 0)
->         return -EINVAL;
->     if (pattern[3].brightness !=3D 0)
->         return -EINVAL;
->     if (pattern[1].brightness !=3D pattern[2].brightness)
->         return -EINVAL;
->=20
-> ..so if user writes something unexpected, he gets the error back.
-
-Then it is compatible -- or should be. Pattern trigger should do the
-same -- rise, hold, lower, hold at zero.
-
-I don't really see the problem.
+I believe I described code to do that in [0] above.
 
 Best regards,
-								Pavel
+									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---1UWUbFP1cBYEclgG
+--NU0Ex4SbNnrxsi6C
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlulXrUACgkQMOfwapXb+vJjxwCfShrrN7WuiyD03m4OCK62wOJr
-tawAoMTx6qvVG0GNl5/Ei3a78aTJTMuE
-=3PAe
+iEYEARECAAYFAlulYAYACgkQMOfwapXb+vIJRgCffOmvia1hPAQGZz0N+KNpi2lm
+yuIAoKxzd78UcCCS+x133y+Fr+jNrBjt
+=O2R8
 -----END PGP SIGNATURE-----
 
---1UWUbFP1cBYEclgG--
+--NU0Ex4SbNnrxsi6C--
