@@ -1,62 +1,38 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH v12 1/2] leds: core: Introduce LED pattern trigger
-Date: Tue, 25 Sep 2018 19:24:03 +0800
-Message-ID: <CAMz4kuL-MeTuYjADGU+ajczwtnidQ54wEgctBQN_PC28-7gszQ@mail.gmail.com>
-References: <67ebebf02edd6d8ee42a13b139733e9cc680ea86.1536631975.git.baolin.wang@linaro.org>
- <20180924235452.GI2523@minitux>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v7 3/6] dt-bindings: leds: Add bindings for lm3697 driver
+Date: Tue, 25 Sep 2018 14:39:28 -0500
+Message-ID: <CAL_JsqLsKtzvnkfwy4H7QQyRqwEEmSp_qi_28=QoLJqs0w2NNw@mail.gmail.com>
+References: <20180911170825.17789-1-dmurphy@ti.com> <20180911170825.17789-4-dmurphy@ti.com>
+ <20180924161844.GA29028@bogus> <20180924180219.GA24418@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180924235452.GI2523@minitux>
+In-Reply-To: <20180924180219.GA24418@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Dan Murphy <dmurphy@ti.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, linux-omap <linux-omap@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 25 September 2018 at 07:54, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Mon 10 Sep 19:47 PDT 2018, Baolin Wang wrote:
-> [..]
->> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
-> [..]
->> +What:                /sys/class/leds/<led>/hw_pattern
->> +Date:                September 2018
->> +KernelVersion:       4.20
->> +Description:
->> +             Specify a hardware pattern for the LED, for LED hardware that
->> +             supports autonomously controlling brightness over time, according
->> +             to some preprogrammed hardware patterns.
->> +
->> +             Since different LED hardware can have different semantics of
->> +             hardware patterns, each driver is expected to provide its own
->> +             description for the hardware patterns in their ABI documentation
->> +             file.
->> +
->> +What:                /sys/class/leds/<led>/repeat
->> +Date:                September 2018
->> +KernelVersion:       4.20
->> +Description:
->> +             Specify a pattern repeat number. -1 means repeat indefinitely,
->> +             other negative numbers and number 0 are invalid.
->> +
->> +             This file will always return the originally written repeat
->> +             number.
+On Mon, Sep 24, 2018 at 1:02 PM Pavel Machek <pavel@ucw.cz> wrote:
 >
-> This captures the infinite case much better, thanks!
+> Hi!
 >
-> Given that 0 is described as invalid, does this imply that setting a new
-> pattern the repeat will be disabled? And hence if my hardware supports
-> only infinite or no-repeat setting a new pattern is the way to disable
-> further repeats (rather than just setting repeat = 0)?
+> > > Add the device tree bindings for the lm3697
+> > > LED driver for backlighting and display.
+> > >
+> > > Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>
+> > >  .../devicetree/bindings/leds/leds-lm3697.txt  | 86 +++++++++++++++++++
+> > >  1 file changed, 86 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+> >
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+>
+> We already have binding for lm3697 in
+> Documentation/devicetree/bindings/mfd/ti-lmu.txt . Is it good idea to
+> have second one?
 
-It won't. A new pattern setting will not affect your infinite or
-no-repeat setting.
+Of course not. Now that you mention it, I do remember seeing some
+discussion on this.
 
-> Regardless, I believe the semantics of these two files will work fine
-> for my Qualcomm LPG driver.
-
-Thanks.
-
--- 
-Baolin Wang
-Best Regards
+Rob
