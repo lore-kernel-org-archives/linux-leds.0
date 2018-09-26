@@ -1,42 +1,66 @@
-From: Aditya Prayoga <aditya@kobol.io>
-Subject: Re: [PATCH 2/2] ARM: mvebu: Enable ARCH_WANT_LIBATA_LEDS in Armada 38x
-Date: Wed, 26 Sep 2018 13:05:49 +0700
-Message-ID: <CAFTRUBdqz8fQN--KQ36LQm_EJpOvZ2723oDRyEn+_HMM5YK5CA@mail.gmail.com>
-References: <1537328730-9156-1-git-send-email-aditya@kobol.io>
- <1537328730-9156-3-git-send-email-aditya@kobol.io> <20180920072635.GB20392@amd>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [RFC PATCH 0/9] TI LMU and Dedicated LED drivers
+Date: Wed, 26 Sep 2018 08:09:12 -0500
+Message-ID: <20180926130921.12329-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180920072635.GB20392@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: pavel@ucw.cz
-Cc: linux-ide@vger.kernel.org, linux-leds@vger.kernel.org, jason@lakedaemon.net, Andrew Lunn <andrew@lunn.ch>, gregory.clement@bootlin.com, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux@armlinux.org.uk, axboe@kernel.dk, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, jacek.anaszewski@gmail.com, Daniel Golle <daniel@makrotopia.org>
+To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, linux-omap@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 2:26 PM Pavel Machek <pavel@ucw.cz> wrote:
->
-> On Wed 2018-09-19 11:45:30, Aditya Prayoga wrote:
-> > Enable hidden symbol ARCH_WANT_LIBATA_LEDS so CONFIG_ATA_LEDS can be
-> > used in kernel configuration.
->
-> Should that be hidden symbol and should that be architecture specific?
->
+All
 
-The intention was to minimize the risk of the ledtrig code being
-included by accident. The
-code itself does not have architecture specific instruction
+This is an attempt to create a common TI LMU code base that can be leveraged
+by dedicate LED drivers.
 
-> For a notebook, I may want scrolllock LED to indicate ATA activity
-> (because I'm using USB keyboard and can't see the disk led).
->
-> Hmm. And while at it... it would be nice to have option to watch all
-> ATA ports combined, as well.
+This code is by no means complete as I am looking for comments on the
+implementation and demonstrating the advantage of adding unique features within
+a dedicated LED driver while using common code to perform common features.
 
-but there is disk-activity trigger for that purpose.
+Assuming that the implementation can be used the code will be debugged and the
+DT bindings and TI-lmu code will be scrubbed.
 
-Aditya
+Dan
 
->                                                                         Pavel
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Dan Murphy (8):
+  dt-bindings: ti-lmu: Remove LM3697
+  mfd: ti-lmu: Remove support for LM3697
+  dt-bindings: leds: Add bindings for lm3697 driver
+  leds: lm3697: Introduce the lm3697 driver
+  dt-bindings: leds: Add support for the LM3633
+  leds: lm3633: Introduce the lm3633 driver
+  dt-bindings: leds: Add the LM3632 LED dt binding
+  leds: lm3632: Introduce the TI LM3632 driver
+
+Pavel Machek (1):
+  leds: add TI LMU backlight driver
+
+ .../devicetree/bindings/leds/leds-lm3632.txt  |  53 ++
+ .../devicetree/bindings/leds/leds-lm3633.txt  |  69 +++
+ .../devicetree/bindings/leds/leds-lm3697.txt  |  98 ++++
+ .../devicetree/bindings/mfd/ti-lmu.txt        |  26 +-
+ drivers/leds/Kconfig                          |  29 +
+ drivers/leds/Makefile                         |   4 +
+ drivers/leds/leds-lm3632.c                    | 547 ++++++++++++++++++
+ drivers/leds/leds-lm3633.c                    | 430 ++++++++++++++
+ drivers/leds/leds-lm3697.c                    | 389 +++++++++++++
+ drivers/leds/ti-lmu-led-common.c              | 175 ++++++
+ drivers/leds/ti-lmu-led-common.h              |  43 ++
+ drivers/mfd/Kconfig                           |   2 +-
+ drivers/mfd/ti-lmu.c                          |  17 -
+ include/linux/mfd/ti-lmu-register.h           |  44 --
+ include/linux/mfd/ti-lmu.h                    |   1 -
+ 15 files changed, 1839 insertions(+), 88 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3632.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3633.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+ create mode 100644 drivers/leds/leds-lm3632.c
+ create mode 100644 drivers/leds/leds-lm3633.c
+ create mode 100644 drivers/leds/leds-lm3697.c
+ create mode 100644 drivers/leds/ti-lmu-led-common.c
+ create mode 100644 drivers/leds/ti-lmu-led-common.h
+
+-- 
+2.19.0
