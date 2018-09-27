@@ -1,47 +1,48 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v12 1/2] leds: core: Introduce LED pattern trigger
-Date: Thu, 27 Sep 2018 23:47:05 +0200
-Message-ID: <20180927214705.GB17346@amd>
-References: <CAMz4kuJx9twJ=wM5qsucV3JH_VS-AC1aWMqpQOwAMkCuKBHLRg@mail.gmail.com>
- <324778a9-a32c-ae6e-337a-39845f214bfc@gmail.com>
- <20180921211758.GC18062@amd>
- <ccac8e5f-e122-9f7d-aa43-fa89c79cb1fe@gmail.com>
- <20180921221813.GA20355@amd>
- <20180922194451.GA27826@amd>
- <470f4037-b682-73f8-8063-b4d7a70e04bc@gmail.com>
- <CAMz4kuL431PPMnOAXev-4ZzYwiGwMtz90RQT0JTP2bSdZ7fHUg@mail.gmail.com>
- <9188b107-92da-11aa-9903-848e3f347f8c@gmail.com>
- <CAMz4kuLE4WkMHVW3bUwOdcx8wSfZOXJhN47-B4_cBe1JiXef=A@mail.gmail.com>
+Subject: Re: [RFC PATCH 7/9] leds: lm3633: Introduce the lm3633 driver
+Date: Thu, 27 Sep 2018 23:47:52 +0200
+Message-ID: <20180927214752.GG17346@amd>
+References: <20180926130921.12329-1-dmurphy@ti.com>
+ <20180926130921.12329-8-dmurphy@ti.com>
+ <20180926223612.GA32286@amd>
+ <7da01c06-f0f1-9022-54ec-f851d01f86ee@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
+        protocol="application/pgp-signature"; boundary="0z5c7mBtSy1wdr4F"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMz4kuLE4WkMHVW3bUwOdcx8wSfZOXJhN47-B4_cBe1JiXef=A@mail.gmail.com>
+In-Reply-To: <7da01c06-f0f1-9022-54ec-f851d01f86ee@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, linux-omap@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 
---KFztAG8eRSV9hGtP
+--0z5c7mBtSy1wdr4F
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > Actually you have it also:
-> > "Duration of 0 means brightness should immediately change to new value"
-> >
-> > According to this, to get instant changes your pattern should look
-> > like this:
-> >
-> > echo "0 100 0 0 20 100 20 0 40 100 40 0 80 100 80 0 100 100" > pattern
+> > Duplicate.
+> >=20
+> > Can we get some more sharing? One way would be to have struct with
+> > all the constants (instead of #defines) use that...?
 >=20
-> Make sense. Thanks for your explanation.
+> I will look at the adding common constants to but they should be common a=
+cross
+> more then just 2 devices.  As you can see the LM3632 code is quite differ=
+ent
+> when you add in the flash/torch support.
 
-Thanks for all the work and sorry for all the confusion!
+LM3632 is indeed different, I see.
+
+On the other hand, I'd really like to see the code shared, even if it
+is just for 2 devices. (I believe that family is big enough that we'll
+likely see more sharing in future).
+
+Thanks,
 
 									Pavel
 --=20
@@ -49,16 +50,16 @@ Thanks for all the work and sorry for all the confusion!
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---KFztAG8eRSV9hGtP
+--0z5c7mBtSy1wdr4F
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlutT9kACgkQMOfwapXb+vLbTQCeILW0TTKQKVhafEafhYvgJwyx
-+1oAn1nZD8b2b/0KWcvEmSKo2Lm3vV/o
-=sFvr
+iEYEARECAAYFAlutUAgACgkQMOfwapXb+vJLFQCeL4YKXfqkDl+7md+fsLrHBgwp
+YOUAn1r4iDOnflyNQ8BWi2AF31Apg1XE
+=0NJ2
 -----END PGP SIGNATURE-----
 
---KFztAG8eRSV9hGtP--
+--0z5c7mBtSy1wdr4F--
