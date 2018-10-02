@@ -1,81 +1,89 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Dan Murphy <dmurphy@ti.com>
 Subject: Re: [RFC PATCH v2 1/9] leds: add TI LMU backlight driver
-Date: Tue, 2 Oct 2018 09:56:29 +0200
-Message-ID: <20181002075629.GB19677@amd>
+Date: Tue, 2 Oct 2018 07:32:36 -0500
+Message-ID: <23dd6b46-cd16-ee67-3006-76a8dc67a7cb@ti.com>
 References: <20180928182954.25446-1-dmurphy@ti.com>
- <20180928182954.25446-2-dmurphy@ti.com>
+ <20180928182954.25446-2-dmurphy@ti.com> <20181002075629.GB19677@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="H+4ONPRPur6+Ovig"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180928182954.25446-2-dmurphy@ti.com>
+In-Reply-To: <20181002075629.GB19677@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, linux-omap@vger.kernel.org, linux-leds@vger.kernel.org, Milo Kim <milo.kim@ti.com>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, linux-omap@vger.kernel.org, linux-leds@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 List-Id: linux-leds@vger.kernel.org
 
+Pavel
 
---H+4ONPRPur6+Ovig
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/02/2018 02:56 AM, Pavel Machek wrote:
+> On Fri 2018-09-28 13:29:46, Dan Murphy wrote:
+>> From: Pavel Machek <pavel@ucw.cz>
+>>
+>> This adds backlight support for the following TI LMU
+>> chips: LM3532, LM3631, LM3632, LM3633, LM3695 and LM3697.
+>>
+>> It controls LEDs on Droid 4
+>> smartphone, including keyboard and screen backlights.
+>>
+>> Signed-off-by: Milo Kim <milo.kim@ti.com>
+>> [add LED subsystem support for keyboard backlight and rework DT
+>> binding according to Rob Herrings feedback]
+>> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+>> [remove backlight subsystem support for now]
+>> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> 
+> So... this driver adds support for LM3532, LM3631, LM3632, LM3633,
+> LM3695 and LM3697 (or it did when I signed it off).
 
-On Fri 2018-09-28 13:29:46, Dan Murphy wrote:
-> From: Pavel Machek <pavel@ucw.cz>
->=20
-> This adds backlight support for the following TI LMU
-> chips: LM3532, LM3631, LM3632, LM3633, LM3695 and LM3697.
->=20
-> It controls LEDs on Droid 4
-> smartphone, including keyboard and screen backlights.
->=20
-> Signed-off-by: Milo Kim <milo.kim@ti.com>
-> [add LED subsystem support for keyboard backlight and rework DT
-> binding according to Rob Herrings feedback]
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> [remove backlight subsystem support for now]
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Yes I have to pull these out of the patch.
 
-So... this driver adds support for LM3532, LM3631, LM3632, LM3633,
-LM3695 and LM3697 (or it did when I signed it off).
+> 
+> The rest of the series does not really bring any advantages (you claim
+> it may add advantages in future). It takes code out of common driver
+> and duplicates it.
 
-The rest of the series does not really bring any advantages (you claim
-it may add advantages in future). It takes code out of common driver
-and duplicates it.
 
-Could we take this patch, get the basic support for LM3532, LM3631,
-LM3632, LM3633, LM3695 and LM3697, and then split out the drivers when
-we actually gain some advantage doing so (and also when the costs are
-clear)?
+I disagree.  Honestly using that ideallogy all LED drivers should use the common code
+as it is a wrapper around regmap and a few if statements.
 
-Thanks,
+The 3632 adds the proper LED flash class support coupled with proper backlight support.
+The 3633 adds the proper support for LV and HV LED support.
 
-								Pavel
+Duplicate code that I could find is put in the common file.
+This patch set adds the LED devices as all other LED devices are added in the LED directory.
 
->  drivers/leds/Kconfig             |   8 ++
->  drivers/leds/Makefile            |   1 +
->  drivers/leds/ti-lmu-led-common.c | 138 +++++++++++++++++++++++++++++++
->  drivers/leds/ti-lmu-led-common.h |  54 ++++++++++++
->  4 files changed, 201 insertions(+)
->  create mode 100644 drivers/leds/ti-lmu-led-common.c
->  create mode 100644 drivers/leds/ti-lmu-led-common.h
+> 
+> Could we take this patch, get the basic support for LM3532, LM3631,
+> LM3632, LM3633, LM3695 and LM3697, and then split out the drivers when
+> we actually gain some advantage doing so (and also when the costs are
+> clear)?
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+We have debated this over and over and now we have 3 different implementations
+available we need to collude on which one we want to support.
 
---H+4ONPRPur6+Ovig
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Jacek I defer to you and Pavel since you are both LED maintainers.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+I can support the dedicated LED drivers but I cannot support the TI LMU only implementation.
 
-iEYEARECAAYFAluzJK0ACgkQMOfwapXb+vJPfQCeN5zfZPU7rrI6+9qKKKezKCj+
-vLoAn1SVCqWQaZhDgEySYyhd3nxaxrA5
-=0Ipj
------END PGP SIGNATURE-----
+Dan
 
---H+4ONPRPur6+Ovig--
+> 
+> Thanks,
+> 
+> 								Pavel
+> 
+>>  drivers/leds/Kconfig             |   8 ++
+>>  drivers/leds/Makefile            |   1 +
+>>  drivers/leds/ti-lmu-led-common.c | 138 +++++++++++++++++++++++++++++++
+>>  drivers/leds/ti-lmu-led-common.h |  54 ++++++++++++
+>>  4 files changed, 201 insertions(+)
+>>  create mode 100644 drivers/leds/ti-lmu-led-common.c
+>>  create mode 100644 drivers/leds/ti-lmu-led-common.h
+> 
+
+
+-- 
+------------------
+Dan Murphy
