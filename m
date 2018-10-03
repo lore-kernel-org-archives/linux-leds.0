@@ -1,83 +1,368 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [RFC PATCH v2 1/9] leds: add TI LMU backlight driver
-Date: Wed, 3 Oct 2018 00:07:54 +0200
-Message-ID: <20181002220754.GA20413@amd>
-References: <20180928182954.25446-1-dmurphy@ti.com>
- <20180928182954.25446-2-dmurphy@ti.com>
- <20181002075629.GB19677@amd>
- <23dd6b46-cd16-ee67-3006-76a8dc67a7cb@ti.com>
- <0be423a9-174c-60ce-0c67-7193c6af3063@gmail.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH v14 1/2] leds: core: Introduce LED pattern trigger
+Date: Wed, 3 Oct 2018 09:21:19 +0800
+Message-ID: <CAMz4kuJ4iB7pn+i29aypnbxxPK_UDjus=EiNZ2WefBB0onZPTg@mail.gmail.com>
+References: <c3a6f08ac978c309bb0b002a0384c4f0ad0f59cd.1538494476.git.baolin.wang@linaro.org>
+ <9bf6236e-83af-7156-b26b-7d88ece2d81e@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <0be423a9-174c-60ce-0c67-7193c6af3063@gmail.com>
+In-Reply-To: <9bf6236e-83af-7156-b26b-7d88ece2d81e@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, linux-omap@vger.kernel.org, linux-leds@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
+Hi Jacek,
 
---mYCpIKhGyMATD0i+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 3 October 2018 at 04:25, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+> Hi Baolin,
+>
+> Thank you for the v14. We'll probably need v15, though :-)
+>
+> I added the comments in the code below.
+>
+> On 10/02/2018 05:43 PM, Baolin Wang wrote:
+>> This patch adds one new led trigger that LED device can configure
+>> the software or hardware pattern and trigger it.
+>>
+>> Consumers can write 'pattern' file to enable the software pattern
+>> which alters the brightness for the specified duration with one
+>> software timer.
+>>
+>> Moreover consumers can write 'hw_pattern' file to enable the hardware
+>> pattern for some LED controllers which can autonomously control
+>> brightness over time, according to some preprogrammed hardware
+>> patterns.
+>>
+>> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>> ---
+>> Changes from v13:
+>>  - Add duration validation for gradual dimming.
+>>  - Coding style optimization.
+>>
+>> Changes from v12:
+>>  - Add gradual dimming support for software pattern.
+>>
+>> Changes from v11:
+>>  - Change -1 means repeat indefinitely.
+>>
+>> Changes from v10:
+>>  - Change 'int' to 'u32' for delta_t field.
+>>
+>> Changes from v9:
+>>  - None.
+>>
+>> Changes from v8:
+>>  - None.
+>>
+>> Changes from v7:
+>>  - Move the SC27XX hardware patterns description into its own ABI file.
+>>
+>> Changes from v6:
+>>  - Improve commit message.
+>>  - Optimize the description of the hw_pattern file.
+>>  - Simplify some logics.
+>>
+>> Changes from v5:
+>>  - Add one 'hw_pattern' file for hardware patterns.
+>>
+>> Changes from v4:
+>>  - Change the repeat file to return the originally written number.
+>>  - Improve comments.
+>>  - Fix some build warnings.
+>>
+>> Changes from v3:
+>>  - Reset pattern number to 0 if user provides incorrect pattern string.
+>>  - Support one pattern.
+>>
+>> Changes from v2:
+>>  - Remove hardware_pattern boolen.
+>>  - Chnage the pattern string format.
+>>
+>> Changes from v1:
+>>  - Use ATTRIBUTE_GROUPS() to define attributes.
+>>  - Introduce hardware_pattern flag to determine if software pattern
+>>  or hardware pattern.
+>>  - Re-implement pattern_trig_store_pattern() function.
+>>  - Remove pattern_get() interface.
+>>  - Improve comments.
+>>  - Other small optimization.
+>> ---
+>>  .../ABI/testing/sysfs-class-led-trigger-pattern    |  76 ++++
+>>  drivers/leds/trigger/Kconfig                       |   7 +
+>>  drivers/leds/trigger/Makefile                      |   1 +
+>>  drivers/leds/trigger/ledtrig-pattern.c             | 431 +++++++++++++++++++++
+>>  include/linux/leds.h                               |  15 +
+>>  5 files changed, 530 insertions(+)
+>>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>> new file mode 100644
+>> index 0000000..22d7af7
+>> --- /dev/null
+>> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>> @@ -0,0 +1,76 @@
+>> +What:                /sys/class/leds/<led>/pattern
+>> +Date:                September 2018
+>> +KernelVersion:       4.20
+>> +Description:
+>> +             Specify a software pattern for the LED, that supports altering
+>> +             the brightness for the specified duration with one software
+>> +             timer. It can do gradual dimming and constant brightness.
+>> +
+>> +             The pattern is given by a series of tuples, of brightness and
+>> +             duration (ms). The LED is expected to traverse the series and
+>> +             each brightness value for the specified duration. Duration of
+>> +             0 means brightness should immediately change to new value.
+>> +
+>> +             1. When doing gradual dimming, the led brightness will be updated
+>> +             every 50 milliseconds, so the duration of each step should not
+>> +             less than 50 milliseconds.
+>
+> I'd like to avoid this constraint. Lowest supported delta_t should be 1.
+>
+> We should only prevent entering dimming mode if current delta_t
+> is lower than UPDATE_INTERVAL.
 
-Hi!
+I do not think so. If the pattern format is used for dimming and the
+delta_t is lower than UPDATE_INTERVAL, we should return errors. Since
+in this case, we can not change to constant mode.
 
-> > We have debated this over and over and now we have 3 different implemen=
-tations
-> > available we need to collude on which one we want to support.
-> >=20
-> > Jacek I defer to you and Pavel since you are both LED maintainers.
-> >=20
-> > I can support the dedicated LED drivers but I cannot support the TI LMU=
- only implementation.
->=20
-> I uphold my previous opinion - please go ahead with moving the support
-> for non-MFD devices from MFD subsystem to the LED subsystem. And yes -
-> along with the bindings. This is semantically correct, and yet we don't
-> have mainline users.
->=20
-> Pavel - you will have to engage more people for your crusade to prevail.
-> For now, to speed up the things, I am forced to ignore your NAK.
-> So NAK to your NAK. Sorry.
+Like you mentioned:
 
-No need to be sorry :-).
+echo "10 49 20 49" > pattern
 
-Lets ignore the code for now, as code can be changed easily.
+We can not enter dimming, meanwhile the pattern format is not used for
+constant brightness, so should return errors for the invalid pattern
+values.
 
-Bindings are not something you or I maintain, so we don't have final
-word there, and I have feeling this is not going to go past device
-tree maintainers. [AFAICT: you can move binding in Documentation/ to
-different place, that's not a problem; but creating a new binding when
-old one exists is.]
+> I also propose to make the dimming interval configurable via sysfs
+> dimming_interval file.
 
-If you and Dan feel that is okay, you are welcome to try to get the
-patches past Rob, just please retain the NAK so that he remembers the
-discussion, and so that it is clear that I don't like the changes.
+So the dimming_interva range is [1, 50] milliseconds?
 
-I believe smart thing to do is to try to do that before working
-further on the code, but of course, its all up to you :-).
+I am fine with this. Pavel, do you also agree with adding one new file
+to set the dimming interval or keep it as simple now?
 
-Friends,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+>
+>> The gradual dimming format of the
+>> +             software pattern values should be:
+>> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
+>> +             duration_3 ...". For example:
+>> +
+>> +             echo 0 1000 255 2000 > pattern
+>> +
+>> +             It will make the LED go gradually from zero-intensity to max (255)
+>> +             intensity in 1000 milliseconds, then back to zero intensity in 2000
+>> +             milliseconds:
+>> +
+>> +             LED brightness
+>> +                 ^
+>> +             255-|       / \            / \            /
+>> +                 |      /    \         /    \         /
+>> +                 |     /       \      /       \      /
+>> +                 |    /          \   /          \   /
+>> +               0-|   /             \/             \/
+>> +                 +---0----1----2----3----4----5----6------------> time (s)
+>> +
+>> +             2. To make the LED go instantly from one brigntess value to another,
+>> +             we should use use zero-time lengths. So the format should be:
+>> +             "brightness_1 duration_1 brightness_1 0 brightness_2 duration_2
+>> +             brightness_2 0 ...". For example:
+>> +
+>> +             echo 0 1000 0 0 255 2000 255 0 > pattern
+>> +
+>> +             It will make the LED stay off for one second, then stay at max brightness
+>> +             for two seconds:
+>> +
+>> +             LED brightness
+>> +                 ^
+>> +             255-|        +---------+    +---------+
+>> +                 |        |         |    |         |
+>> +                 |        |         |    |         |
+>> +                 |        |         |    |         |
+>> +               0-|   -----+         +----+         +----
+>> +                 +---0----1----2----3----4----5----6------------> time (s)
+>> +
+>> +What:                /sys/class/leds/<led>/hw_pattern
+>> +Date:                September 2018
+>> +KernelVersion:       4.20
+>> +Description:
+>> +             Specify a hardware pattern for the LED, for LED hardware that
+>> +             supports autonomously controlling brightness over time, according
+>> +             to some preprogrammed hardware patterns.
+>> +
+>> +             Since different LED hardware can have different semantics of
+>> +             hardware patterns, each driver is expected to provide its own
+>> +             description for the hardware patterns in their ABI documentation
+>> +             file.
+>> +
+>> +What:                /sys/class/leds/<led>/repeat
+>> +Date:                September 2018
+>> +KernelVersion:       4.20
+>> +Description:
+>> +             Specify a pattern repeat number. -1 means repeat indefinitely,
+>> +             other negative numbers and number 0 are invalid.
+>> +
+>> +             This file will always return the originally written repeat
+>> +             number.
+>> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+>> index 4018af7..b76fc3c 100644
+>> --- a/drivers/leds/trigger/Kconfig
+>> +++ b/drivers/leds/trigger/Kconfig
+>> @@ -129,4 +129,11 @@ config LEDS_TRIGGER_NETDEV
+>>         This allows LEDs to be controlled by network device activity.
+>>         If unsure, say Y.
+>>
+>> +config LEDS_TRIGGER_PATTERN
+>> +     tristate "LED Pattern Trigger"
+>> +     help
+>> +       This allows LEDs to be controlled by a software or hardware pattern
+>> +       which is a series of tuples, of brightness and duration (ms).
+>> +       If unsure, say N
+>> +
+>>  endif # LEDS_TRIGGERS
+>> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+>> index f3cfe19..9bcb64e 100644
+>> --- a/drivers/leds/trigger/Makefile
+>> +++ b/drivers/leds/trigger/Makefile
+>> @@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)        += ledtrig-transient.o
+>>  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)    += ledtrig-camera.o
+>>  obj-$(CONFIG_LEDS_TRIGGER_PANIC)     += ledtrig-panic.o
+>>  obj-$(CONFIG_LEDS_TRIGGER_NETDEV)    += ledtrig-netdev.o
+>> +obj-$(CONFIG_LEDS_TRIGGER_PATTERN)   += ledtrig-pattern.o
+>> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+>> new file mode 100644
+>> index 0000000..92a0fd0
+>> --- /dev/null
+>> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+>> @@ -0,0 +1,431 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +/*
+>> + * LED pattern trigger
+>> + *
+>> + * Idea discussed with Pavel Machek. Raphael Teysseyre implemented
+>> + * the first version, Baolin Wang simplified and improved the approach.
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/leds.h>
+>> +#include <linux/module.h>
+>> +#include <linux/mutex.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/timer.h>
+>> +
+>> +#define MAX_PATTERNS         1024
+>> +/*
+>> + * When doing gradual dimming, the led brightness will be updated
+>> + * every 50 milliseconds.
+>> + */
+>> +#define UPDATE_INTERVAL              50
+>> +
+>> +struct pattern_trig_data {
+>> +     struct led_classdev *led_cdev;
+>> +     struct led_pattern patterns[MAX_PATTERNS];
+>> +     struct led_pattern *curr;
+>> +     struct led_pattern *next;
+>> +     struct mutex lock;
+>> +     u32 npatterns;
+>> +     int repeat;
+>> +     int last_repeat;
+>> +     int delta_t;
+>> +     bool is_indefinite;
+>> +     bool is_hw_pattern;
+>> +     struct timer_list timer;
+>> +};
+>> +
+>> +static void pattern_trig_update_patterns(struct pattern_trig_data *data)
+>> +{
+>> +     data->curr = data->next;
+>> +     if (!data->is_indefinite && data->curr == data->patterns)
+>> +             data->repeat--;
+>> +
+>> +     if (data->next == data->patterns + data->npatterns - 1)
+>> +             data->next = data->patterns;
+>> +     else
+>> +             data->next++;
+>> +
+>> +     data->delta_t = 0;
+>> +}
+>> +
+>> +static int pattern_trig_compute_brightness(struct pattern_trig_data *data)
+>> +{
+>> +     int step_brightness;
+>> +
+>> +     if (data->delta_t == 0)
+>> +             return data->curr->brightness;
+>> +
+>> +     step_brightness = abs(data->next->brightness - data->curr->brightness);
+>> +     step_brightness = data->delta_t * step_brightness / data->curr->delta_t;
+>> +
+>> +     if (data->next->brightness > data->curr->brightness)
+>> +             return data->curr->brightness + step_brightness;
+>> +     else
+>> +             return data->curr->brightness - step_brightness;
+>> +}
+>> +
+>> +static void pattern_trig_timer_function(struct timer_list *t)
+>> +{
+>> +     struct pattern_trig_data *data = from_timer(data, t, timer);
+>> +
+>> +     mutex_lock(&data->lock);
+>> +
+>> +     for (; ;) {
+>
+> This whitespace between semicolons looks odd. Please remove it.
 
---mYCpIKhGyMATD0i+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Sure.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+>
+>> +             if (!data->is_indefinite && !data->repeat)
+>> +                     break;
+>> +
+>> +             if (data->curr->brightness == data->next->brightness) {
+>> +                     /* Constant brightness */
+>> +                     led_set_brightness(data->led_cdev,
+>> +                                        data->curr->brightness);
+>> +                     mod_timer(&data->timer,
+>> +                               jiffies + msecs_to_jiffies(data->curr->delta_t));
+>> +
+>> +                     /* Skip the step with zero duration */
+>> +                     pattern_trig_update_patterns(data);
+>> +                     /* Select next step */
+>> +                     pattern_trig_update_patterns(data);
+>> +                     break;
+>> +             } else {
+>> +                     /* Gradual dimming */
+>> +
+>> +                     /*
+>> +                      * If the accumulation time is larger than current
+>> +                      * step duration, we should go next one and re-check
+>> +                      * if we repeated done.
+>> +                      */
+>> +                     if (data->delta_t > data->curr->delta_t) {
+>> +                             pattern_trig_update_patterns(data);
+>> +                             continue;
+>> +                     }
+>> +
+>> +                     led_set_brightness(data->led_cdev,
+>> +                                        pattern_trig_compute_brightness(data));
+>> +                     mod_timer(&data->timer,
+>> +                               jiffies + msecs_to_jiffies(UPDATE_INTERVAL));
+>> +                     /* Accumulate the gradual dimming time */
+>> +                     data->delta_t += UPDATE_INTERVAL;
+>> +                     break;
+>> +             }
+>
+> Why two "break" statements instead of one here?
 
-iEYEARECAAYFAluz7DoACgkQMOfwapXb+vJnxQCdHpH3662vekGqNWYJsBMpPjLj
-ZSIAoLpKy+Libu1zIKlStBseOo/ZzfZF
-=CMwe
------END PGP SIGNATURE-----
+Yes, can remove one. Sorry for the quick version patch set without
+much self-checking in the night. Thanks for your comments.
 
---mYCpIKhGyMATD0i+--
+-- 
+Baolin Wang
+Best Regards
