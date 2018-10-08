@@ -1,53 +1,52 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Dan Murphy <dmurphy@ti.com>
 Subject: Re: [RFC PATCH 9/9] leds: lm3632: Introduce the TI LM3632 driver
-Date: Sun, 7 Oct 2018 15:46:30 +0200
-Message-ID: <20181007134630.GA19323@amd>
+Date: Mon, 8 Oct 2018 07:23:13 -0500
+Message-ID: <b323e344-f8e5-1a29-9ea3-56499d41ba89@ti.com>
 References: <20180926130921.12329-1-dmurphy@ti.com>
- <20180926130921.12329-10-dmurphy@ti.com>
+ <20180926130921.12329-10-dmurphy@ti.com> <20181007134630.GA19323@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180926130921.12329-10-dmurphy@ti.com>
+In-Reply-To: <20181007134630.GA19323@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
+To: Pavel Machek <pavel@ucw.cz>
 Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, linux-omap@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+Pavel
 
---3MwIy2ne0vdjdPXF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/07/2018 08:46 AM, Pavel Machek wrote:
+> On Wed 2018-09-26 08:09:21, Dan Murphy wrote:
+>> Add the dedicated TI LM3632 LED driver.  This
+>> LED device is capable of driving a backlight display.
+>>
+>> In addition to the backlight the device has control
+>> of a strobe and torch output.
+> 
+> Is this in some way similar to 3639? That also seems to include flash
+> and torch.
+> 
+> drivers/video/backlight/lm3639_bl.c
+> 	
 
-On Wed 2018-09-26 08:09:21, Dan Murphy wrote:
-> Add the dedicated TI LM3632 LED driver.  This
-> LED device is capable of driving a backlight display.
->=20
-> In addition to the backlight the device has control
-> of a strobe and torch output.
+NICE!  
 
-Is this in some way similar to 3639? That also seems to include flash
-and torch.
+Yes this driver looks to be good enough to use for the 3632 as well.
 
-drivers/video/backlight/lm3639_bl.c
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+We would have to extend that driver to support the 3632, add firmware support,
+convert the led class registration to the flash LED registration and add the regulator support.
 
---3MwIy2ne0vdjdPXF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I can abandon the dedicated LED driver and update this one for the 3632.
+No reason to have duplicate code.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Dan
 
-iEYEARECAAYFAlu6DjYACgkQMOfwapXb+vKIfgCfaCzUEz9ZpoY/EfPeEOMPf4a9
-KQAAnRlaLwr0s5K4pIDwlOTMD6W6XxRB
-=upBE
------END PGP SIGNATURE-----
+							Pavel
+> 
 
---3MwIy2ne0vdjdPXF--
+
+-- 
+------------------
+Dan Murphy
