@@ -1,7 +1,7 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v3 4/9] dt-bindings: leds: Add bindings for lm3697 driver
-Date: Thu, 11 Oct 2018 11:51:18 -0500
-Message-ID: <20181011165123.32198-5-dmurphy@ti.com>
+Subject: [PATCH v3 7/9] mfd: ti-lmu: Remove support for LM3633
+Date: Thu, 11 Oct 2018 11:51:21 -0500
+Message-ID: <20181011165123.32198-8-dmurphy@ti.com>
 References: <20181011165123.32198-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,118 +12,79 @@ To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
 Cc: lee.jones@linaro.org, tony@atomide.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-Add the device tree bindings for the lm3697
-LED driver for backlighting and display.
+Remove support for the LM3633 from the ti-lmu
+driver in favor of a dedicated LED driver.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- .../devicetree/bindings/leds/leds-lm3697.txt  | 98 +++++++++++++++++++
- 1 file changed, 98 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+ drivers/mfd/Kconfig  |  2 +-
+ drivers/mfd/ti-lmu.c | 21 ---------------------
+ 2 files changed, 1 insertion(+), 22 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-new file mode 100644
-index 000000000000..4bb2ed51025b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-@@ -0,0 +1,98 @@
-+* Texas Instruments - LM3697 Highly Efficient White LED Driver
-+
-+The LM3697 11-bit LED driver provides high-
-+performance backlight dimming for 1, 2, or 3 series
-+LED strings while delivering up to 90% efficiency.
-+
-+This device is suitable for display and keypad Lighting
-+
-+Required properties:
-+	- compatible:
-+		"ti,lm3697"
-+	- reg :  I2C slave address
-+	- #address-cells : 1
-+	- #size-cells : 0
-+
-+Optional properties:
-+	- enable-gpios : GPIO pin to enable/disable the device
-+	- vled-supply : LED supply
-+
-+Required child properties:
-+	- reg : 0 - LED is Controlled by bank A
-+		1 - LED is Controlled by bank B
-+	- led-sources : Indicates which HVLED string is associated to which
-+			control bank.  Each element in the array is associated
-+			with a specific HVLED string.  Element 0 is HVLED1,
-+			element 1 is HVLED2 and element 2 HVLED3.
-+			Additional information is contained
-+			in Documentation/devicetree/bindings/leds/common.txt
-+			0 - HVLED is not active in this control bank
-+			1 - HVLED string is controlled by this control bank
-+
-+Optional child properties:
-+	- runtime-ramp-up-msec: Current ramping from one brightness level to
-+				the a higher brightness level.
-+				Range from 2048 us - 117.44 s
-+	- runtime-ramp-down-msec: Current ramping from one brightness level to
-+				  the a lower brightness level.
-+				  Range from 2048 us - 117.44 s
-+	- label : see Documentation/devicetree/bindings/leds/common.txt
-+	- linux,default-trigger :
-+	   see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example:
-+
-+HVLED string 1 and 3 are controlled by control bank A and HVLED 2 string is
-+controlled by control bank B.
-+
-+led-controller@36 {
-+	compatible = "ti,lm3697";
-+	reg = <0x36>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-+	vled-supply = <&vbatt>;
-+
-+	led@0 {
-+		reg = <0>;
-+		led-sources = <1 0 1>;
-+		runtime-ramp-up-msec = <5000>;
-+		runtime-ramp-down-msec = <1000>;
-+		label = "white:first_backlight_cluster";
-+		linux,default-trigger = "backlight";
-+	};
-+
-+	led@1 {
-+		reg = <1>;
-+		led-sources = <0 1 0>;
-+		runtime-ramp-up-msec = <500>;
-+		runtime-ramp-down-msec = <1000>;
-+		label = "white:second_backlight_cluster";
-+		linux,default-trigger = "backlight";
-+	};
-+}
-+
-+All HVLED strings controlled by control bank A
-+
-+led-controller@36 {
-+	compatible = "ti,lm3697";
-+	reg = <0x36>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-+	vled-supply = <&vbatt>;
-+
-+	led@0 {
-+		reg = <0>;
-+		led-sources = <1 1 1>;
-+		runtime-ramp-up-msec = <500>;
-+		runtime-ramp-down-msec = <1000>;
-+		label = "white:backlight_cluster";
-+		linux,default-trigger = "backlight";
-+	};
-+}
-+
-+For more product information please see the link below:
-+http://www.ti.com/lit/ds/symlink/lm3697.pdf
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 9b04dd527c68..225cb3be350c 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1293,7 +1293,7 @@ config MFD_TI_LMU
+ 	help
+ 	  Say yes here to enable support for TI LMU chips.
+ 
+-	  TI LMU MFD supports LM3532, LM3631, LM3632, LM3633, and LM3695.
++	  TI LMU MFD supports LM3532, LM3631, LM3632, and LM3695.
+ 	  It consists of backlight, LED and regulator driver.
+ 	  It provides consistent device controls for lighting functions.
+ 
+diff --git a/drivers/mfd/ti-lmu.c b/drivers/mfd/ti-lmu.c
+index b6bfa99a29dd..2cf8a23cba52 100644
+--- a/drivers/mfd/ti-lmu.c
++++ b/drivers/mfd/ti-lmu.c
+@@ -102,24 +102,6 @@ static struct mfd_cell lm3632_devices[] = {
+ 	},
+ };
+ 
+-static struct mfd_cell lm3633_devices[] = {
+-	{
+-		.name          = "ti-lmu-backlight",
+-		.id            = LM3633,
+-		.of_compatible = "ti,lm3633-backlight",
+-	},
+-	{
+-		.name          = "lm3633-leds",
+-		.of_compatible = "ti,lm3633-leds",
+-	},
+-	/* Monitoring driver for open/short circuit detection */
+-	{
+-		.name          = "ti-lmu-fault-monitor",
+-		.id            = LM3633,
+-		.of_compatible = "ti,lm3633-fault-monitor",
+-	},
+-};
+-
+ static struct mfd_cell lm3695_devices[] = {
+ 	{
+ 		.name          = "ti-lmu-backlight",
+@@ -139,14 +121,12 @@ static const struct ti_lmu_data chip##_data =	\
+ TI_LMU_DATA(lm3532, LM3532_MAX_REG);
+ TI_LMU_DATA(lm3631, LM3631_MAX_REG);
+ TI_LMU_DATA(lm3632, LM3632_MAX_REG);
+-TI_LMU_DATA(lm3633, LM3633_MAX_REG);
+ TI_LMU_DATA(lm3695, LM3695_MAX_REG);
+ 
+ static const struct of_device_id ti_lmu_of_match[] = {
+ 	{ .compatible = "ti,lm3532", .data = &lm3532_data },
+ 	{ .compatible = "ti,lm3631", .data = &lm3631_data },
+ 	{ .compatible = "ti,lm3632", .data = &lm3632_data },
+-	{ .compatible = "ti,lm3633", .data = &lm3633_data },
+ 	{ .compatible = "ti,lm3695", .data = &lm3695_data },
+ 	{ }
+ };
+@@ -219,7 +199,6 @@ static const struct i2c_device_id ti_lmu_ids[] = {
+ 	{ "lm3532", LM3532 },
+ 	{ "lm3631", LM3631 },
+ 	{ "lm3632", LM3632 },
+-	{ "lm3633", LM3633 },
+ 	{ "lm3695", LM3695 },
+ 	{ }
+ };
 -- 
 2.19.0
