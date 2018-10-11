@@ -1,252 +1,129 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH v15 2/2] leds: sc27xx: Add pattern_set/clear interfaces for LED controller
-Date: Thu, 11 Oct 2018 12:07:15 +0800
-Message-ID: <062eedb00fd7fc14291e4b72a07616f6abbf98a7.1539230481.git.baolin.wang@linaro.org>
-References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v3 4/9] dt-bindings: leds: Add bindings for lm3697 driver
+Date: Thu, 11 Oct 2018 11:51:18 -0500
+Message-ID: <20181011165123.32198-5-dmurphy@ti.com>
+References: <20181011165123.32198-1-dmurphy@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
-In-Reply-To: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
-References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
+In-Reply-To: <20181011165123.32198-1-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: rteysseyre@gmail.com, bjorn.andersson@linaro.org, baolin.wang@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: lee.jones@linaro.org, tony@atomide.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-This patch implements the 'pattern_set'and 'pattern_clear'
-interfaces to support SC27XX LED breathing mode.
+Add the device tree bindings for the lm3697
+LED driver for backlighting and display.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Acked-by: Pavel Machek <pavel@ucw.c>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
-Chnages from v14:
- - None.
+ .../devicetree/bindings/leds/leds-lm3697.txt  | 98 +++++++++++++++++++
+ 1 file changed, 98 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
 
-Changes from v13:
- - None.
-
-Changes from v12:
- - None.
-
-Changes from v11:
- - None.
-
-Changes from v10:
- - Add duration alignment function suggested by Jacek.
- - Add acked tag from Pavel.
-
-Changes from v9:
- - Optimize the ABI documentation file.
- - Update the brightness value in hardware pattern mode.
-
-Changes from v8:
- - Optimize the ABI documentation file.
-
-Changes from v7:
- - Add its own ABI documentation file.
-
-Changes from v6:
- - None.
-
-Changes from v5:
- - None.
-
-Changes from v4:
- - None.
-
-Changes from v3:
- - None.
-
-Changes from v2:
- - None.
-
-Changes from v1:
- - Remove pattern_get interface.
----
- .../ABI/testing/sysfs-class-led-driver-sc27xx      |   22 ++++
- drivers/leds/leds-sc27xx-bltc.c                    |  121 ++++++++++++++++++++
- 2 files changed, 143 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-
-diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
 new file mode 100644
-index 0000000..45b1e60
+index 000000000000..4bb2ed51025b
 --- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-@@ -0,0 +1,22 @@
-+What:		/sys/class/leds/<led>/hw_pattern
-+Date:		September 2018
-+KernelVersion:	4.20
-+Description:
-+		Specify a hardware pattern for the SC27XX LED. For the SC27XX
-+		LED controller, it only supports 4 stages to make a single
-+		hardware pattern, which is used to configure the rise time,
-+		high time, fall time and low time for the breathing mode.
++++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+@@ -0,0 +1,98 @@
++* Texas Instruments - LM3697 Highly Efficient White LED Driver
 +
-+		For the breathing mode, the SC27XX LED only expects one brightness
-+		for the high stage. To be compatible with the hardware pattern
-+		format, we should set brightness as 0 for rise stage, fall
-+		stage and low stage.
++The LM3697 11-bit LED driver provides high-
++performance backlight dimming for 1, 2, or 3 series
++LED strings while delivering up to 90% efficiency.
 +
-+		Min stage duration: 125 ms
-+		Max stage duration: 31875 ms
++This device is suitable for display and keypad Lighting
 +
-+		Since the stage duration step is 125 ms, the duration should be
-+		a multiplier of 125, like 125ms, 250ms, 375ms, 500ms ... 31875ms.
++Required properties:
++	- compatible:
++		"ti,lm3697"
++	- reg :  I2C slave address
++	- #address-cells : 1
++	- #size-cells : 0
 +
-+		Thus the format of the hardware pattern values should be:
-+		"0 rise_duration brightness high_duration 0 fall_duration 0 low_duration".
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index 9d9b7aa..fecf27f 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -32,8 +32,18 @@
- #define SC27XX_DUTY_MASK	GENMASK(15, 0)
- #define SC27XX_MOD_MASK		GENMASK(7, 0)
- 
-+#define SC27XX_CURVE_SHIFT	8
-+#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
-+#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
++Optional properties:
++	- enable-gpios : GPIO pin to enable/disable the device
++	- vled-supply : LED supply
 +
- #define SC27XX_LEDS_OFFSET	0x10
- #define SC27XX_LEDS_MAX		3
-+#define SC27XX_LEDS_PATTERN_CNT	4
-+/* Stage duration step, in milliseconds */
-+#define SC27XX_LEDS_STEP	125
-+/* Minimum and maximum duration, in milliseconds */
-+#define SC27XX_DELTA_T_MIN	SC27XX_LEDS_STEP
-+#define SC27XX_DELTA_T_MAX	(SC27XX_LEDS_STEP * 255)
- 
- struct sc27xx_led {
- 	char name[LED_MAX_NAME_SIZE];
-@@ -122,6 +132,113 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
- 	return err;
- }
- 
-+static void sc27xx_led_clamp_align_delta_t(u32 *delta_t)
-+{
-+	u32 v, offset, t = *delta_t;
++Required child properties:
++	- reg : 0 - LED is Controlled by bank A
++		1 - LED is Controlled by bank B
++	- led-sources : Indicates which HVLED string is associated to which
++			control bank.  Each element in the array is associated
++			with a specific HVLED string.  Element 0 is HVLED1,
++			element 1 is HVLED2 and element 2 HVLED3.
++			Additional information is contained
++			in Documentation/devicetree/bindings/leds/common.txt
++			0 - HVLED is not active in this control bank
++			1 - HVLED string is controlled by this control bank
 +
-+	v = t + SC27XX_LEDS_STEP / 2;
-+	v = clamp_t(u32, v, SC27XX_DELTA_T_MIN, SC27XX_DELTA_T_MAX);
-+	offset = v - SC27XX_DELTA_T_MIN;
-+	offset = SC27XX_LEDS_STEP * (offset / SC27XX_LEDS_STEP);
++Optional child properties:
++	- runtime-ramp-up-msec: Current ramping from one brightness level to
++				the a higher brightness level.
++				Range from 2048 us - 117.44 s
++	- runtime-ramp-down-msec: Current ramping from one brightness level to
++				  the a lower brightness level.
++				  Range from 2048 us - 117.44 s
++	- label : see Documentation/devicetree/bindings/leds/common.txt
++	- linux,default-trigger :
++	   see Documentation/devicetree/bindings/leds/common.txt
 +
-+	*delta_t = SC27XX_DELTA_T_MIN + offset;
++Example:
++
++HVLED string 1 and 3 are controlled by control bank A and HVLED 2 string is
++controlled by control bank B.
++
++led-controller@36 {
++	compatible = "ti,lm3697";
++	reg = <0x36>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
++	vled-supply = <&vbatt>;
++
++	led@0 {
++		reg = <0>;
++		led-sources = <1 0 1>;
++		runtime-ramp-up-msec = <5000>;
++		runtime-ramp-down-msec = <1000>;
++		label = "white:first_backlight_cluster";
++		linux,default-trigger = "backlight";
++	};
++
++	led@1 {
++		reg = <1>;
++		led-sources = <0 1 0>;
++		runtime-ramp-up-msec = <500>;
++		runtime-ramp-down-msec = <1000>;
++		label = "white:second_backlight_cluster";
++		linux,default-trigger = "backlight";
++	};
 +}
 +
-+static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	struct regmap *regmap = leds->priv->regmap;
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	int err;
++All HVLED strings controlled by control bank A
 +
-+	mutex_lock(&leds->priv->lock);
++led-controller@36 {
++	compatible = "ti,lm3697";
++	reg = <0x36>;
++	#address-cells = <1>;
++	#size-cells = <0>;
 +
-+	/* Reset the rise, high, fall and low time to zero. */
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
++	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
++	vled-supply = <&vbatt>;
 +
-+	err = regmap_update_bits(regmap, ctrl_base,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
-+
-+	ldev->brightness = LED_OFF;
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
++	led@0 {
++		reg = <0>;
++		led-sources = <1 1 1>;
++		runtime-ramp-up-msec = <500>;
++		runtime-ramp-down-msec = <1000>;
++		label = "white:backlight_cluster";
++		linux,default-trigger = "backlight";
++	};
 +}
 +
-+static int sc27xx_led_pattern_set(struct led_classdev *ldev,
-+				  struct led_pattern *pattern,
-+				  u32 len, int repeat)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	/*
-+	 * Must contain 4 tuples to configure the rise time, high time, fall
-+	 * time and low time to enable the breathing mode.
-+	 */
-+	if (len != SC27XX_LEDS_PATTERN_CNT)
-+		return -EINVAL;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	sc27xx_led_clamp_align_delta_t(&pattern[0].delta_t);
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_L_MASK,
-+				 pattern[0].delta_t / SC27XX_LEDS_STEP);
-+	if (err)
-+		goto out;
-+
-+	sc27xx_led_clamp_align_delta_t(&pattern[1].delta_t);
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_L_MASK,
-+				 pattern[1].delta_t / SC27XX_LEDS_STEP);
-+	if (err)
-+		goto out;
-+
-+	sc27xx_led_clamp_align_delta_t(&pattern[2].delta_t);
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_H_MASK,
-+				 (pattern[2].delta_t / SC27XX_LEDS_STEP) <<
-+				 SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+	sc27xx_led_clamp_align_delta_t(&pattern[3].delta_t);
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_H_MASK,
-+				 (pattern[3].delta_t / SC27XX_LEDS_STEP) <<
-+				 SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
-+				 SC27XX_DUTY_MASK,
-+				 (pattern[1].brightness << SC27XX_DUTY_SHIFT) |
-+				 SC27XX_MOD_MASK);
-+	if (err)
-+		goto out;
-+
-+	/* Enable the LED breathing mode */
-+	err = regmap_update_bits(regmap, ctrl_base,
-+				 SC27XX_LED_RUN << ctrl_shift,
-+				 SC27XX_LED_RUN << ctrl_shift);
-+	if (!err)
-+		ldev->brightness = pattern[1].brightness;
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
- static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- {
- 	int i, err;
-@@ -140,6 +257,9 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- 		led->priv = priv;
- 		led->ldev.name = led->name;
- 		led->ldev.brightness_set_blocking = sc27xx_led_set;
-+		led->ldev.pattern_set = sc27xx_led_pattern_set;
-+		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
-+		led->ldev.default_trigger = "pattern";
- 
- 		err = devm_led_classdev_register(dev, &led->ldev);
- 		if (err)
-@@ -241,4 +361,5 @@ static int sc27xx_led_remove(struct platform_device *pdev)
- 
- MODULE_DESCRIPTION("Spreadtrum SC27xx breathing light controller driver");
- MODULE_AUTHOR("Xiaotong Lu <xiaotong.lu@spreadtrum.com>");
-+MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org>");
- MODULE_LICENSE("GPL v2");
++For more product information please see the link below:
++http://www.ti.com/lit/ds/symlink/lm3697.pdf
 -- 
-1.7.9.5
+2.19.0
