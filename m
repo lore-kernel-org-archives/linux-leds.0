@@ -1,53 +1,136 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 2/9] dt-bindings: ti-lmu: Remove LM3697
-Date: Fri, 12 Oct 2018 11:26:19 -0500
-Message-ID: <20181012162619.GA28573@bogus>
+Subject: Re: [PATCH v3 4/9] dt-bindings: leds: Add bindings for lm3697 driver
+Date: Fri, 12 Oct 2018 11:27:02 -0500
+Message-ID: <20181012162702.GA5672@bogus>
 References: <20181011165123.32198-1-dmurphy@ti.com>
- <20181011165123.32198-3-dmurphy@ti.com>
- <20181011182734.GA7973@amd>
- <4fcb91c7-b2b2-798d-8a41-fa1b475086e0@ti.com>
- <8c1559e1-b703-4c98-8bd9-7c9993bd59f5@gmail.com>
+ <20181011165123.32198-5-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <8c1559e1-b703-4c98-8bd9-7c9993bd59f5@gmail.com>
+In-Reply-To: <20181011165123.32198-5-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>, lee.jones@linaro.org, tony@atomide.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, tony@atomide.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 09:38:53PM +0200, Jacek Anaszewski wrote:
-> On 10/11/2018 08:34 PM, Dan Murphy wrote:
-> > Pavel
-> > 
-> > On 10/11/2018 01:27 PM, Pavel Machek wrote:
-> >> On Thu 2018-10-11 11:51:16, Dan Murphy wrote:
-> >>> Remove support for the LM3697 LED device
-> >>> from the ti-lmu.  The LM3697 will be supported
-> >>> via a stand alone LED driver.
-> >>>
-> >>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> >>
-> >> NAK.
-> > 
-> > Thanks for the NAK.
-> > 
-> > This NAK was NAK'd by other maintainer in the V2 RFC patchset
-> > 
-> > https://lore.kernel.org/patchwork/patch/993171/
+On Thu, Oct 11, 2018 at 11:51:18AM -0500, Dan Murphy wrote:
+> Add the device tree bindings for the lm3697
+> LED driver for backlighting and display.
+
+Bindings are for h/w, not drivers...
+
 > 
-> I confirm. LM3697 is a standalone device and not a cell of any
-> MFD device.
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  .../devicetree/bindings/leds/leds-lm3697.txt  | 98 +++++++++++++++++++
+>  1 file changed, 98 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
 > 
-> Waiting for DT maintainer's ack.
-
-You all sort out what you want... I can't follow it all, and I'm not 
-going to spend the time trying to figure out what is going on here.
-
-As this is worded, changing the driver is a Linux problem and irrelevant 
-to the binding. Now if you want to move documentation to a location that 
-makes more sense, then fine. But structure patches that way and make it 
-clear that from an binding ABI perspective, nothing is changing.
-
-Rob
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+> new file mode 100644
+> index 000000000000..4bb2ed51025b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+> @@ -0,0 +1,98 @@
+> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
+> +
+> +The LM3697 11-bit LED driver provides high-
+> +performance backlight dimming for 1, 2, or 3 series
+> +LED strings while delivering up to 90% efficiency.
+> +
+> +This device is suitable for display and keypad Lighting
+> +
+> +Required properties:
+> +	- compatible:
+> +		"ti,lm3697"
+> +	- reg :  I2C slave address
+> +	- #address-cells : 1
+> +	- #size-cells : 0
+> +
+> +Optional properties:
+> +	- enable-gpios : GPIO pin to enable/disable the device
+> +	- vled-supply : LED supply
+> +
+> +Required child properties:
+> +	- reg : 0 - LED is Controlled by bank A
+> +		1 - LED is Controlled by bank B
+> +	- led-sources : Indicates which HVLED string is associated to which
+> +			control bank.  Each element in the array is associated
+> +			with a specific HVLED string.  Element 0 is HVLED1,
+> +			element 1 is HVLED2 and element 2 HVLED3.
+> +			Additional information is contained
+> +			in Documentation/devicetree/bindings/leds/common.txt
+> +			0 - HVLED is not active in this control bank
+> +			1 - HVLED string is controlled by this control bank
+> +
+> +Optional child properties:
+> +	- runtime-ramp-up-msec: Current ramping from one brightness level to
+> +				the a higher brightness level.
+> +				Range from 2048 us - 117.44 s
+> +	- runtime-ramp-down-msec: Current ramping from one brightness level to
+> +				  the a lower brightness level.
+> +				  Range from 2048 us - 117.44 s
+> +	- label : see Documentation/devicetree/bindings/leds/common.txt
+> +	- linux,default-trigger :
+> +	   see Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Example:
+> +
+> +HVLED string 1 and 3 are controlled by control bank A and HVLED 2 string is
+> +controlled by control bank B.
+> +
+> +led-controller@36 {
+> +	compatible = "ti,lm3697";
+> +	reg = <0x36>;
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +
+> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+> +	vled-supply = <&vbatt>;
+> +
+> +	led@0 {
+> +		reg = <0>;
+> +		led-sources = <1 0 1>;
+> +		runtime-ramp-up-msec = <5000>;
+> +		runtime-ramp-down-msec = <1000>;
+> +		label = "white:first_backlight_cluster";
+> +		linux,default-trigger = "backlight";
+> +	};
+> +
+> +	led@1 {
+> +		reg = <1>;
+> +		led-sources = <0 1 0>;
+> +		runtime-ramp-up-msec = <500>;
+> +		runtime-ramp-down-msec = <1000>;
+> +		label = "white:second_backlight_cluster";
+> +		linux,default-trigger = "backlight";
+> +	};
+> +}
+> +
+> +All HVLED strings controlled by control bank A
+> +
+> +led-controller@36 {
+> +	compatible = "ti,lm3697";
+> +	reg = <0x36>;
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +
+> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+> +	vled-supply = <&vbatt>;
+> +
+> +	led@0 {
+> +		reg = <0>;
+> +		led-sources = <1 1 1>;
+> +		runtime-ramp-up-msec = <500>;
+> +		runtime-ramp-down-msec = <1000>;
+> +		label = "white:backlight_cluster";
+> +		linux,default-trigger = "backlight";
+> +	};
+> +}
+> +
+> +For more product information please see the link below:
+> +http://www.ti.com/lit/ds/symlink/lm3697.pdf
+> -- 
+> 2.19.0
+> 
