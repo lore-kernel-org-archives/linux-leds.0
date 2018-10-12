@@ -1,136 +1,83 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 4/9] dt-bindings: leds: Add bindings for lm3697 driver
-Date: Fri, 12 Oct 2018 11:27:02 -0500
-Message-ID: <20181012162702.GA5672@bogus>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v3 2/9] dt-bindings: ti-lmu: Remove LM3697
+Date: Fri, 12 Oct 2018 20:03:12 +0200
+Message-ID: <20181012180312.GB5565@amd>
 References: <20181011165123.32198-1-dmurphy@ti.com>
- <20181011165123.32198-5-dmurphy@ti.com>
+ <20181011165123.32198-3-dmurphy@ti.com>
+ <20181011182734.GA7973@amd>
+ <4fcb91c7-b2b2-798d-8a41-fa1b475086e0@ti.com>
+ <8c1559e1-b703-4c98-8bd9-7c9993bd59f5@gmail.com>
+ <20181012162619.GA28573@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="jq0ap7NbKX2Kqbes"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181011165123.32198-5-dmurphy@ti.com>
+In-Reply-To: <20181012162619.GA28573@bogus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, tony@atomide.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan Murphy <dmurphy@ti.com>, lee.jones@linaro.org, tony@atomide.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 11:51:18AM -0500, Dan Murphy wrote:
-> Add the device tree bindings for the lm3697
-> LED driver for backlighting and display.
 
-Bindings are for h/w, not drivers...
+--jq0ap7NbKX2Kqbes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  .../devicetree/bindings/leds/leds-lm3697.txt  | 98 +++++++++++++++++++
->  1 file changed, 98 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> new file mode 100644
-> index 000000000000..4bb2ed51025b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> @@ -0,0 +1,98 @@
-> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
-> +
-> +The LM3697 11-bit LED driver provides high-
-> +performance backlight dimming for 1, 2, or 3 series
-> +LED strings while delivering up to 90% efficiency.
-> +
-> +This device is suitable for display and keypad Lighting
-> +
-> +Required properties:
-> +	- compatible:
-> +		"ti,lm3697"
-> +	- reg :  I2C slave address
-> +	- #address-cells : 1
-> +	- #size-cells : 0
-> +
-> +Optional properties:
-> +	- enable-gpios : GPIO pin to enable/disable the device
-> +	- vled-supply : LED supply
-> +
-> +Required child properties:
-> +	- reg : 0 - LED is Controlled by bank A
-> +		1 - LED is Controlled by bank B
-> +	- led-sources : Indicates which HVLED string is associated to which
-> +			control bank.  Each element in the array is associated
-> +			with a specific HVLED string.  Element 0 is HVLED1,
-> +			element 1 is HVLED2 and element 2 HVLED3.
-> +			Additional information is contained
-> +			in Documentation/devicetree/bindings/leds/common.txt
-> +			0 - HVLED is not active in this control bank
-> +			1 - HVLED string is controlled by this control bank
-> +
-> +Optional child properties:
-> +	- runtime-ramp-up-msec: Current ramping from one brightness level to
-> +				the a higher brightness level.
-> +				Range from 2048 us - 117.44 s
-> +	- runtime-ramp-down-msec: Current ramping from one brightness level to
-> +				  the a lower brightness level.
-> +				  Range from 2048 us - 117.44 s
-> +	- label : see Documentation/devicetree/bindings/leds/common.txt
-> +	- linux,default-trigger :
-> +	   see Documentation/devicetree/bindings/leds/common.txt
-> +
-> +Example:
-> +
-> +HVLED string 1 and 3 are controlled by control bank A and HVLED 2 string is
-> +controlled by control bank B.
-> +
-> +led-controller@36 {
-> +	compatible = "ti,lm3697";
-> +	reg = <0x36>;
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-> +	vled-supply = <&vbatt>;
-> +
-> +	led@0 {
-> +		reg = <0>;
-> +		led-sources = <1 0 1>;
-> +		runtime-ramp-up-msec = <5000>;
-> +		runtime-ramp-down-msec = <1000>;
-> +		label = "white:first_backlight_cluster";
-> +		linux,default-trigger = "backlight";
-> +	};
-> +
-> +	led@1 {
-> +		reg = <1>;
-> +		led-sources = <0 1 0>;
-> +		runtime-ramp-up-msec = <500>;
-> +		runtime-ramp-down-msec = <1000>;
-> +		label = "white:second_backlight_cluster";
-> +		linux,default-trigger = "backlight";
-> +	};
-> +}
-> +
-> +All HVLED strings controlled by control bank A
-> +
-> +led-controller@36 {
-> +	compatible = "ti,lm3697";
-> +	reg = <0x36>;
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-> +	vled-supply = <&vbatt>;
-> +
-> +	led@0 {
-> +		reg = <0>;
-> +		led-sources = <1 1 1>;
-> +		runtime-ramp-up-msec = <500>;
-> +		runtime-ramp-down-msec = <1000>;
-> +		label = "white:backlight_cluster";
-> +		linux,default-trigger = "backlight";
-> +	};
-> +}
-> +
-> +For more product information please see the link below:
-> +http://www.ti.com/lit/ds/symlink/lm3697.pdf
-> -- 
-> 2.19.0
-> 
+Hi!
+
+> > >>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> > >>
+> > >> NAK.
+> > >=20
+> > > Thanks for the NAK.
+> > >=20
+> > > This NAK was NAK'd by other maintainer in the V2 RFC patchset
+> > >=20
+> > > https://lore.kernel.org/patchwork/patch/993171/
+> >=20
+> > I confirm. LM3697 is a standalone device and not a cell of any
+> > MFD device.
+> >=20
+> > Waiting for DT maintainer's ack.
+>=20
+> You all sort out what you want... I can't follow it all, and I'm not=20
+> going to spend the time trying to figure out what is going on here.
+
+This is what I want:
+
+> As this is worded, changing the driver is a Linux problem and irrelevant=
+=20
+> to the binding. Now if you want to move documentation to a location that=
+=20
+> makes more sense, then fine. But structure patches that way and make it=
+=20
+> clear that from an binding ABI perspective, nothing is changing.
+
+=2E..but apparently I did not have enough authority to get it.
+
+(I'm ok with move, and it is possible that binding does need some
+fixups besides the move; still it should be done as fixup not as a new
+binding).
+
+Thanks,
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--jq0ap7NbKX2Kqbes
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvA4eAACgkQMOfwapXb+vKgBQCfUIZ/eXRCOTCJUVJpsOGMC5nR
+58oAn37DSu7PFR32erjNbDh23QXc4GIz
+=qPga
+-----END PGP SIGNATURE-----
+
+--jq0ap7NbKX2Kqbes--
