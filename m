@@ -1,67 +1,54 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v3 2/9] dt-bindings: ti-lmu: Remove LM3697
-Date: Tue, 16 Oct 2018 08:25:36 -0500
-Message-ID: <aa401333-9650-c925-2085-6e6d17b576bd@ti.com>
-References: <20181011165123.32198-3-dmurphy@ti.com>
- <20181011182734.GA7973@amd> <4fcb91c7-b2b2-798d-8a41-fa1b475086e0@ti.com>
- <8c1559e1-b703-4c98-8bd9-7c9993bd59f5@gmail.com>
- <20181012162619.GA28573@bogus> <20181012180312.GB5565@amd>
- <60cc9238-aba2-aa6a-64a4-2b5e20835549@gmail.com>
- <CAL_Jsq+Yspr_iNP1eYanvtmiuMf-xNEZ0suDH3tQayV=V5r5=g@mail.gmail.com>
- <73647af4-0258-49a9-d9b6-eeef7e7813dc@gmail.com>
- <5c7f03cc-4d45-6010-523d-46721c218731@ti.com> <20181015214512.GA2001@amd>
+From: Liviu Dudau <liviu@dudau.co.uk>
+Subject: [PATCH] leds: gpio: set led_dat->gpiod pointer for OF defined GPIO leds
+Date: Thu, 18 Oct 2018 01:14:32 +0100
+Message-ID: <20181018001432.710-1-liviu@dudau.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181015214512.GA2001@amd>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh@kernel.org>, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Liviu Dudau <liviu@dudau.co.uk>
 List-Id: linux-leds@vger.kernel.org
 
-Thanks
+Commit 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
+removed the common code path that set the led_dat->gpiod pointer in
+create_gpio_led(), but only added it back for the devices that have
+a valid gpio_led_platform_data structure. Calling gpio_leds_create()
+in gpio_led_probe() is not enough to get a valid gpiod pointer.
 
-On 10/15/2018 04:45 PM, Pavel Machek wrote:
-> Hi!
-> 
->>>> Given this one seems to have not really been finished, it's probably
->>>> okay to make changes in this case. Still, it would be good to see
->>>> patches structured so that it's obvious we're breaking things. But how
->>>> the patches are structured doesn't matter until there's some agreement
->>>> on the end result.
->>>
->>> OK, so if I'm getting it right, the correct patch structure in this case
->>> means that changes removing bindings from MFD and moving them along
->>> with the modifications to the LED subsystem should be placed in a single
->>> patch.
->>>
->>> Dan, could you please arrange the next patch set version accordingly?
->>
->> Yes I can squash the DT bindings patches and call it a "move and modify"
-> 
-> You can do move without problems. But if you plan to modify them,
-> please try to change as little as possible, make it separate patch and
-> explain why new version is better than old one.
-> 
+Fortunately enough, gpio_leds_create() already gets the needed pointer,
+we just need to assign it to the relevant gpio_led_data structure.
 
-I have been thinking of how to do this.  Since the 2 devices are part of the current
-binding there really is not a way to move them.  Since there are still MFD capable
-devices available.
+Fixes: 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Liviu Dudau <liviu@dudau.co.uk>
+---
 
-I would still need to remove the current active binding and create a new binding in the LED
-bindings directory.
+Hi,
 
-I would have to remove and create in the same patch.
+I found this issue while testing linux-next-20181017, I don't know how
+stable the leds for-next tree is in terms of commit IDs, if that gets
+rebased then the Fixes commit ID needs updating.
 
-Dan
+Best regards,
+Liviu
 
-> Thanks,
-> 									Pavel
-> 
+ drivers/leds/leds-gpio.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 32fa752565bc..45e012093865 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -163,6 +163,8 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 			return ERR_CAST(led.gpiod);
+ 		}
+ 
++		led_dat->gpiod = led.gpiod;
++
+ 		fwnode_property_read_string(child, "linux,default-trigger",
+ 					    &led.default_trigger);
+ 
 -- 
-------------------
-Dan Murphy
+2.19.0
