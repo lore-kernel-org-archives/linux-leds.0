@@ -1,189 +1,93 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-Date: Mon, 22 Oct 2018 11:07:13 +0200
-Message-ID: <CACRpkdaLTFFDbW9VY3DmaJ4R5ceXFJK0W_dSi7jbqi3Bz4FXkg@mail.gmail.com>
-References: <20180421085009.28773-1-javier@emutex.com> <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-4-git-send-email-dan@emutex.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [GIT PULL] LED updates for 4.20-rc1
+Date: Mon, 22 Oct 2018 21:28:29 +0200
+Message-ID: <1540236509-5341-1-git-send-email-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1539969334-24577-4-git-send-email-dan@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan O'Donovan <dan@emutex.com>, Eric Anholt <eric@anholt.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-leds@vger.kernel.org, carlos.iglesias@emutex.com, Javier Arteaga <javier@emutex.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, baolin.wang@linaro.org, jbrunet@baylibre.com, linus.walleij@linaro.org, robh@kernel.org, simon@lineageos.org
 List-Id: linux-leds@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 7:16 PM Dan O'Donovan <dan@emutex.com> wrote:
+Hi Linus,
 
-> From: Javier Arteaga <javier@emutex.com>
->
-> The UP2 board features a Raspberry Pi compatible pin header (HAT) and a
-> board-specific expansion connector (EXHAT).
+Please pull LED updates for 4.20-rc1.
 
-Which makes me want to have Eric Anholt's review on this patch
-so as to secure basic interoperability with that header.
+We introduce LED pattern trigger - the idea that was proposed three years
+ago now received enough attention and determination to drive it to the
+successful end.
 
-> Both expose assorted
-> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or other
-> on-board devices (ADC, FPGA IP blocks...).
+There is also one new LED class driver and couple of improvements
+to the existing ones.
 
-OK
-Look at how RPi define names for their GPIO lines in the
-DTS file:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/bcm2835-rpi-b.dts
 
-Please follow this pattern with your patch.
+New LED class driver
+	- add support for Panasonic AN30259A with related DT bindings
 
-As you probably do not have device tree or anything similar
-for ACPI to name the lines (correct me if I'm wrong)
-you can use the .names array in struct gpio_chip for
-hardcoding the proper line names.
+New LED trigger
+	- introduce LED pattern trigger
 
-lsgpio should give the same line names as it does on
-the corresponding RPi header IMO.
+leds-sc27xx-bltc
+	- implement pattern_set/clear ops to enable support for
+	  pattern trigger's hw_pattern sysfs file
 
-> +config PINCTRL_UPBOARD
-> +       tristate "UP Squared pinctrl and GPIO driver"
-> +       depends on ACPI
-> +       depends on MFD_UPBOARD
-> +       select PINMUX
+Improvements to existing LED class drivers:
+	- leds-pwm: don't print error message on -EPROBE_DEFER
+	- leds-gpio: try to lookup gpiod from device
+	- leds-as3645a: convert to using %pOFn instead of device_node.name
 
-select GPIOLIB
 
-as you're using it.
+Thanks,
+Jacek Anaszewski
 
-> +static int upboard_get_functions_count(struct pinctrl_dev *pctldev)
-> +{
-> +       return 0;
-> +}
-> +
-> +static int upboard_get_function_groups(struct pinctrl_dev *pctldev,
-> +                                      unsigned int selector,
-> +                                      const char * const **groups,
-> +                                      unsigned int *num_groups)
-> +{
-> +       *groups = NULL;
-> +       *num_groups = 0;
-> +       return 0;
-> +}
-> +
-> +static const char *upboard_get_function_name(struct pinctrl_dev *pctldev,
-> +                                            unsigned int selector)
-> +{
-> +       return NULL;
-> +}
-> +
-> +static int upboard_set_mux(struct pinctrl_dev *pctldev, unsigned int function,
-> +                          unsigned int group)
-> +{
-> +       return 0;
-> +}
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-This just looks weird.
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
 
-There seems to be code to disable pins and turn them into
-GPIOs in upboard_gpio_request_enable() but no way to
-switch them back to the original function, is that how it works?
+are available in the git repository at:
 
-I guess it is fine if that is how it's supposed to be used. But
-won't some grumpy users come around and complain about
-this one day?
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds-for-4.20-rc1
 
-We can fix it when it happens though.
+for you to fetch changes up to 8dbac65f5c181e4723586ab738b703bb23bc3f2a:
 
-> +static int upboard_gpio_request(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +       struct upboard_pinctrl *pctrl =
-> +               container_of(gc, struct upboard_pinctrl, chip);
-> +       struct gpio_desc *desc;
-> +       int ret;
-> +
-> +       ret = pinctrl_gpio_request(gc->base + offset);
-> +       if (ret)
-> +               return ret;
-> +
-> +       desc = devm_gpiod_get_index(gc->parent, "external", offset, GPIOD_ASIS);
-> +       if (IS_ERR(desc))
-> +               return PTR_ERR(desc);
+  leds: sc27xx: Add pattern_set/clear interfaces for LED controller (2018-10-11 21:59:11 +0200)
 
-No please don't do this. The consumers should request
-the gpio, not the driver.
+----------------------------------------------------------------
+LED updates for 4.20-rc1.
+----------------------------------------------------------------
+Baolin Wang (2):
+      leds: core: Introduce LED pattern trigger
+      leds: sc27xx: Add pattern_set/clear interfaces for LED controller
 
-> +static void upboard_gpio_free(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +       struct upboard_pinctrl *pctrl =
-> +               container_of(gc, struct upboard_pinctrl, chip);
-> +
-> +       if (offset + 1 > pctrl->nsoc_gpios || !pctrl->soc_gpios[offset])
-> +               return;
-> +
-> +       devm_gpiod_put(gc->parent, pctrl->soc_gpios[offset]);
+Jerome Brunet (1):
+      leds: pwm: silently error out on EPROBE_DEFER
 
-Dito.
+Linus Walleij (1):
+      leds: gpio: Try to lookup gpiod from device
 
-> +static int upboard_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +       struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
-> +
-> +       if (IS_ERR(desc))
-> +               return PTR_ERR(desc);
-> +
-> +       return gpiod_get_direction(desc);
-> +}
+Rob Herring (1):
+      leds: Convert to using %pOFn instead of device_node.name
 
-This is just confusing me even more...
+Simon Shields (2):
+      dt-bindings: leds: document Panasonic AN30259A bindings
+      leds: add Panasonic AN30259A support
 
-If you need pinctrl_gpio_get_direction() then it should be
-added to the API in <linux/pinctrl/consumer.h>.
-
-> +static int upboard_gpio_direction_output(struct gpio_chip *gc,
-> +                                        unsigned int offset, int value)
-> +{
-> +       struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
-> +       int ret;
-> +
-> +       if (IS_ERR(desc))
-> +               return PTR_ERR(desc);
-> +
-> +       ret = pinctrl_gpio_direction_output(gc->base + offset);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return gpiod_direction_output(desc, value);
-
-No this looks confusing too.
-
-> +static int upboard_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +       struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc, offset);
-> +
-> +       if (IS_ERR(desc))
-> +               return PTR_ERR(desc);
-> +
-> +       return gpiod_get_value(desc);
-
-I don't get this masking one GPIO chip behind another GPIO chip.
-It looks really weird.
-
-What we usually have is a GPIO chip in front of a pin controller
-utilizing
-extern int pinctrl_gpio_request(unsigned gpio);
-extern void pinctrl_gpio_free(unsigned gpio);
-extern int pinctrl_gpio_direction_input(unsigned gpio);
-extern int pinctrl_gpio_direction_output(unsigned gpio);
-extern int pinctrl_gpio_set_config(unsigned gpio, unsigned long config);
-
-these things for the GPIO chip to talk to the pin control
-back-end.
-
-This driver seems to use a GPIO chip in front of a
-GPIO chip and a pin controller too (or something like
-that) and that makes me very uneasy.
-
-I need a clear picture of the internal architectur of
-the GPIO parts of this driver, why the GPIO accessors
-are calling back into the GPIO layer etc. It looks very
-unorthodox to me, and I get very confused.
-
-Yours.
-Linus Walleij
+ .../ABI/testing/sysfs-class-led-driver-sc27xx      |  22 ++
+ .../ABI/testing/sysfs-class-led-trigger-pattern    |  82 ++++
+ .../devicetree/bindings/leds/leds-an30259a.txt     |  43 +++
+ drivers/leds/Kconfig                               |  10 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-an30259a.c                       | 368 ++++++++++++++++++
+ drivers/leds/leds-as3645a.c                        |   4 +-
+ drivers/leds/leds-gpio.c                           |  92 +++--
+ drivers/leds/leds-pwm.c                            |   5 +-
+ drivers/leds/leds-sc27xx-bltc.c                    | 121 ++++++
+ drivers/leds/trigger/Kconfig                       |   7 +
+ drivers/leds/trigger/Makefile                      |   1 +
+ drivers/leds/trigger/ledtrig-pattern.c             | 411 +++++++++++++++++++++
+ include/linux/leds.h                               |  15 +
+ 14 files changed, 1148 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-an30259a.txt
+ create mode 100644 drivers/leds/leds-an30259a.c
+ create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
