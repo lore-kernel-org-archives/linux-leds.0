@@ -1,198 +1,198 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the LM3697
-Date: Tue, 23 Oct 2018 12:06:18 -0500
-Message-ID: <20181023170623.31820-2-dmurphy@ti.com>
-References: <20181023170623.31820-1-dmurphy@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
+Date: Tue, 23 Oct 2018 20:50:48 +0200
+Message-ID: <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1539969334-24577-3-git-send-email-dan@emutex.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181023170623.31820-1-dmurphy@ti.com>
+In-Reply-To: <1539969334-24577-3-git-send-email-dan@emutex.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com, Dan Murphy <dmurphy@ti.com>
+To: Dan O'Donovan <dan@emutex.com>, linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>, Javier Arteaga <javier@emutex.com>
 List-Id: linux-leds@vger.kernel.org
 
-The LM3697 is a single function LED driver. The single function LED
-driver needs to reside in the LED directory as a dedicated LED driver
-and not as a MFD device.  The device does have common brightness and ramp
-features and those can be accomodated by a TI LMU framework.
+Hi Javier,
 
-The LM3697 dt binding needs to be moved from the ti-lmu.txt and a dedicated
-LED dt binding needs to be added.  The new LM3697 LED dt binding will then
-reside in the Documentation/devicetree/bindings/leds directory and follow the
-current LED and general bindings guidelines.
+Thank you for the patch.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
+I have few trivial issues below, please take a look.
 
-v4 - Squashed removal and addition of the dt bindings into a single patch - https://lore.kernel.org/patchwork/patch/998703/
+On 10/19/2018 07:15 PM, Dan O'Donovan wrote:
+> From: Javier Arteaga <javier@emutex.com>
+> 
+> Allow userspace to use the on-board LEDs as "upboard:<color>:".
+> 
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> Signed-off-by: Javier Arteaga <javier@emutex.com>
+> Signed-off-by: Dan O'Donovan <dan@emutex.com>
+> ---
+>  drivers/leds/Kconfig        |  10 +++++
+>  drivers/leds/Makefile       |   1 +
+>  drivers/leds/leds-upboard.c | 104 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 115 insertions(+)
+>  create mode 100644 drivers/leds/leds-upboard.c
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 44097a3..0ed8857 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -756,6 +756,16 @@ config LEDS_NIC78BX
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called leds-nic78bx.
+>  
+> +config LEDS_UPBOARD
+> +	tristate "LED support for the UP Squared"
+> +	depends on LEDS_CLASS
+> +	depends on MFD_UPBOARD
+> +	help
+> +	  This option enables support for the LEDs on the UP Squared board.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called leds-upboard.
+> +
+>  comment "LED Triggers"
+>  source "drivers/leds/trigger/Kconfig"
+>  
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 420b5d2..c85f18f 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -78,6 +78,7 @@ obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
+>  obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
+>  obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
+>  obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
+> +obj-$(CONFIG_LEDS_UPBOARD)		+= leds-upboard.o
+>  
+>  # LED SPI Drivers
+>  obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
+> diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
+> new file mode 100644
+> index 0000000..34a6973
+> --- /dev/null
+> +++ b/drivers/leds/leds-upboard.c
+> @@ -0,0 +1,104 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// UP Board LED driver
+> +//
+> +// Copyright (c) 2018, Emutex Ltd.
+> +//
+> +// Author: Javier Arteaga <javier@emutex.com>
+> +//
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/leds.h>
+> +#include <linux/mfd/upboard.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/acpi.h>
 
- .../devicetree/bindings/leds/leds-lm3697.txt  | 98 +++++++++++++++++++
- .../devicetree/bindings/mfd/ti-lmu.txt        | 26 +----
- 2 files changed, 99 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+The last include should go first to keep alphabetical order.
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-new file mode 100644
-index 000000000000..4bb2ed51025b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
-@@ -0,0 +1,98 @@
-+* Texas Instruments - LM3697 Highly Efficient White LED Driver
-+
-+The LM3697 11-bit LED driver provides high-
-+performance backlight dimming for 1, 2, or 3 series
-+LED strings while delivering up to 90% efficiency.
-+
-+This device is suitable for display and keypad Lighting
-+
-+Required properties:
-+	- compatible:
-+		"ti,lm3697"
-+	- reg :  I2C slave address
-+	- #address-cells : 1
-+	- #size-cells : 0
-+
-+Optional properties:
-+	- enable-gpios : GPIO pin to enable/disable the device
-+	- vled-supply : LED supply
-+
-+Required child properties:
-+	- reg : 0 - LED is Controlled by bank A
-+		1 - LED is Controlled by bank B
-+	- led-sources : Indicates which HVLED string is associated to which
-+			control bank.  Each element in the array is associated
-+			with a specific HVLED string.  Element 0 is HVLED1,
-+			element 1 is HVLED2 and element 2 HVLED3.
-+			Additional information is contained
-+			in Documentation/devicetree/bindings/leds/common.txt
-+			0 - HVLED is not active in this control bank
-+			1 - HVLED string is controlled by this control bank
-+
-+Optional child properties:
-+	- runtime-ramp-up-msec: Current ramping from one brightness level to
-+				the a higher brightness level.
-+				Range from 2048 us - 117.44 s
-+	- runtime-ramp-down-msec: Current ramping from one brightness level to
-+				  the a lower brightness level.
-+				  Range from 2048 us - 117.44 s
-+	- label : see Documentation/devicetree/bindings/leds/common.txt
-+	- linux,default-trigger :
-+	   see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example:
-+
-+HVLED string 1 and 3 are controlled by control bank A and HVLED 2 string is
-+controlled by control bank B.
-+
-+led-controller@36 {
-+	compatible = "ti,lm3697";
-+	reg = <0x36>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-+	vled-supply = <&vbatt>;
-+
-+	led@0 {
-+		reg = <0>;
-+		led-sources = <1 0 1>;
-+		runtime-ramp-up-msec = <5000>;
-+		runtime-ramp-down-msec = <1000>;
-+		label = "white:first_backlight_cluster";
-+		linux,default-trigger = "backlight";
-+	};
-+
-+	led@1 {
-+		reg = <1>;
-+		led-sources = <0 1 0>;
-+		runtime-ramp-up-msec = <500>;
-+		runtime-ramp-down-msec = <1000>;
-+		label = "white:second_backlight_cluster";
-+		linux,default-trigger = "backlight";
-+	};
-+}
-+
-+All HVLED strings controlled by control bank A
-+
-+led-controller@36 {
-+	compatible = "ti,lm3697";
-+	reg = <0x36>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-+	vled-supply = <&vbatt>;
-+
-+	led@0 {
-+		reg = <0>;
-+		led-sources = <1 1 1>;
-+		runtime-ramp-up-msec = <500>;
-+		runtime-ramp-down-msec = <1000>;
-+		label = "white:backlight_cluster";
-+		linux,default-trigger = "backlight";
-+	};
-+}
-+
-+For more product information please see the link below:
-+http://www.ti.com/lit/ds/symlink/lm3697.pdf
-diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-index c885cf89b8ce..920f910be4e9 100644
---- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-+++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-@@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
-   LM3632       Backlight and regulator
-   LM3633       Backlight, LED and fault monitor
-   LM3695       Backlight
--  LM3697       Backlight and fault monitor
- 
- Required properties:
-   - compatible: Should be one of:
-@@ -18,11 +17,10 @@ Required properties:
-                 "ti,lm3632"
-                 "ti,lm3633"
-                 "ti,lm3695"
--                "ti,lm3697"
-   - reg: I2C slave address.
-          0x11 for LM3632
-          0x29 for LM3631
--         0x36 for LM3633, LM3697
-+         0x36 for LM3633
-          0x38 for LM3532
-          0x63 for LM3695
- 
-@@ -38,7 +36,6 @@ Optional nodes:
-     Required properties:
-       - compatible: Should be one of:
-                     "ti,lm3633-fault-monitor"
--                    "ti,lm3697-fault-monitor"
-   - leds: LED properties for LM3633. Please refer to [2].
-   - regulators: Regulator properties for LM3631 and LM3632.
-                 Please refer to [3].
-@@ -220,24 +217,3 @@ lm3695@63 {
- 		};
- 	};
- };
--
--lm3697@36 {
--	compatible = "ti,lm3697";
--	reg = <0x36>;
--
--	enable-gpios = <&pioC 2 GPIO_ACTIVE_HIGH>;
--
--	backlight {
--		compatible = "ti,lm3697-backlight";
--
--		lcd {
--			led-sources = <0 1 2>;
--			ramp-up-msec = <200>;
--			ramp-down-msec = <200>;
--		};
--	};
--
--	fault-monitor {
--		compatible = "ti,lm3697-fault-monitor";
--	};
--};
+> +
+> +#define to_upboard_led(cdev) container_of(cdev, struct upboard_led, cdev)
+> +
+> +static const char * const upboard_led_names[] = {
+> +	"upboard:blue:",
+> +	"upboard:yellow:",
+> +	"upboard:green:",
+> +	"upboard:red:",
+> +};
+> +
+> +struct upboard_led {
+> +	struct regmap_field *field;
+> +	struct led_classdev cdev;
+> +};
+> +
+> +static enum led_brightness upboard_led_brightness_get(struct led_classdev *cdev)
+> +{
+> +	struct upboard_led *led = to_upboard_led(cdev);
+> +	int brightness = 0;
+> +
+> +	regmap_field_read(led->field, &brightness);
+
+Please check the return value.
+
+> +	return brightness;
+> +}
+> +
+> +static void upboard_led_brightness_set(struct led_classdev *cdev,
+> +				       enum led_brightness brightness)
+> +{
+> +	struct upboard_led *led = to_upboard_led(cdev);
+> +
+> +	regmap_field_write(led->field, brightness);
+
+Ditto.
+
+> +}
+> +
+> +static int upboard_led_probe(struct platform_device *pdev)
+> +{
+> +	unsigned int led_index = pdev->id;
+> +	struct device *dev = &pdev->dev;
+> +	struct acpi_device *adev;
+> +	struct upboard_led *led;
+> +	struct regmap *regmap;
+> +	struct reg_field conf = {
+> +		.reg = UPBOARD_REG_FUNC_EN0,
+> +		.lsb = led_index,
+> +		.msb = led_index,
+> +	};
+> +
+> +	adev = ACPI_COMPANION(dev);
+> +	if (!adev || strcmp(acpi_device_hid(adev), "AANT0F01"))
+> +		return -ENODEV;
+> +
+> +	if (led_index >= ARRAY_SIZE(upboard_led_names))
+> +		return -EINVAL;
+> +
+> +	if (!dev->parent)
+> +		return -EINVAL;
+> +
+> +	regmap = dev_get_regmap(dev->parent, NULL);
+> +	if (!regmap)
+> +		return -EINVAL;
+> +
+> +	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+> +	if (!led)
+> +		return -ENOMEM;
+> +
+> +	led->field = devm_regmap_field_alloc(dev, regmap, conf);
+> +	if (IS_ERR(led->field))
+> +		return PTR_ERR(led->field);
+> +
+> +	led->cdev.max_brightness = 1;
+
+s/1/LED_ON/
+
+> +	led->cdev.brightness_get = upboard_led_brightness_get;
+> +	led->cdev.brightness_set = upboard_led_brightness_set;
+> +	led->cdev.name = upboard_led_names[led_index];
+> +
+> +	return devm_led_classdev_register(dev, &led->cdev);
+> +}
+> +
+> +static struct platform_driver upboard_led_driver = {
+> +	.driver = {
+> +		.name = "upboard-led",
+> +	},
+> +};
+> +
+> +module_platform_driver_probe(upboard_led_driver, upboard_led_probe);
+> +
+> +MODULE_ALIAS("platform:upboard-led");
+> +MODULE_AUTHOR("Javier Arteaga <javier@emutex.com>");
+> +MODULE_DESCRIPTION("UP Board LED driver");
+> +MODULE_LICENSE("GPL v2");
+> 
+
 -- 
-2.19.0
+Best regards,
+Jacek Anaszewski
