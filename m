@@ -1,77 +1,71 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v4 1/7] leds: add TI LMU backlight driver
-Date: Wed, 24 Oct 2018 15:17:16 +0200
-Message-ID: <20181024131716.GA11619@amd>
+Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
+ LM3697
+Date: Wed, 24 Oct 2018 15:43:24 +0200
+Message-ID: <20181024134324.GA12125@amd>
 References: <20181023170623.31820-1-dmurphy@ti.com>
- <20181024091407.GC24997@amd>
- <4afc7944-d6f1-fef1-1ae4-f761e050fec9@ti.com>
+ <20181023170623.31820-2-dmurphy@ti.com>
+ <20181024090421.GB24997@amd>
+ <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4afc7944-d6f1-fef1-1ae4-f761e050fec9@ti.com>
+In-Reply-To: <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
 List-Id: linux-leds@vger.kernel.org
 
 
---CE+1k2dSO48ffgeK
+--vkogqOf2sHV7VnPd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2018-10-24 07:27:57, Dan Murphy wrote:
-> Pavel
->=20
-> On 10/24/2018 04:14 AM, Pavel Machek wrote:
-> > On Tue 2018-10-23 12:06:17, Dan Murphy wrote:
-> >> From: Pavel Machek <pavel@ucw.cz>
-> >>
-> >> This adds backlight support for the following TI LMU
-> >> chips: LM3532, LM3631, LM3632, LM3633, LM3695 and LM3697.
-> >>
-> >> It controls LEDs on Droid 4
-> >> smartphone, including keyboard and screen backlights.
-> >>
-> >> Signed-off-by: Milo Kim <milo.kim@ti.com>
-> >> [add LED subsystem support for keyboard backlight and rework DT
-> >> binding according to Rob Herrings feedback]
-> >> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> >> [remove backlight subsystem support for now]
-> >> Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> >=20
-> > This is not correct way to sign off a patch.
-> >=20
-> > What is worse, this is very different from patch I submitted; this
-> > misses imporant parts while my patch was complete.
-> >=20
-> > I already submitted better patch for both the driver and device tree
-> > bindings. Can we go back and apply that?
-> >=20
-> > Then you can add your changes on top of that, if they actually make
-> > the situation better.
->=20
-> Thanks for this.  I wanted to make sure not to loose any authorship or cr=
-edit
-> in the commit.  Actually removing Milo might help stop getting the bounce=
- back
-> from the mail daemon.
->=20
-> I was using the RFC patch as my base https://lore.kernel.org/patchwork/pa=
-tch/978995/
->=20
-> Which contains this sign off.
+Hi!
 
-Yeah, but you need to append your sign-off to the end, preferably
-prepending note saying what you modified. [I'm ok with the original
-patch, but I'm not ok with your version].
+> >> The LM3697 is a single function LED driver. The single function LED
+> >> driver needs to reside in the LED directory as a dedicated LED driver
+> >> and not as a MFD device.  The device does have common brightness and r=
+amp
+> >=20
+> > So it is single function LED driver. That does not mean it can not
+> > share bindings with the rest. Where the bindings live is not imporant.
+>=20
+> It can share bindings that are correctly done, not ones that are incomple=
+te and incorrect.
 
-=46rom: Pavel Machek <pavel@ucw.cz>
+If you see wrong binding you are welcome to fix it. If it is in wrong
+place, you can move it around.
 
-Is not correct. Original patch is from Milo, if you want to add
-explicit From:, I guess it should be his.
+You are not welcome to create 2 "fixed" versions, while leaving
+original "buggy" version in tree!
+
+=2E..but that's what your series does. Better changelogs will _not_ help.
+
+> Where bindings live is important to new Linux kernel developers and produ=
+ct=20
+> developers looking for the proper documentation on the H/W bindings.
+
+We have talked about this before.
+
+> >> @@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
+> >>    LM3632       Backlight and regulator
+> >>    LM3633       Backlight, LED and fault monitor
+> >>    LM3695       Backlight
+> >> -  LM3697       Backlight and fault monitor
+> >> =20
+> >>  Required properties:
+> >>    - compatible: Should be one of:
+> >=20
+> > NAK. You can use existing binding.
+>=20
+> Thank you for the consistency
+
+You are wasting your time. What is worse, you are wasting my time,
+too, and time of people on the list.
 
 									Pavel
 --=20
@@ -79,16 +73,16 @@ explicit From:, I guess it should be his.
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---CE+1k2dSO48ffgeK
+--vkogqOf2sHV7VnPd
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlvQcNwACgkQMOfwapXb+vL9mgCfZ/m3O860tSqL0HBhl1qUP6EV
-nUsAn3Sk6DE7p7E0zkedARl61HPpdVuZ
-=SUnO
+iEYEARECAAYFAlvQdvwACgkQMOfwapXb+vKIVQCdHKRZaUqDYczyawaKzJ6Jh/hc
+RhAAni+U1fIHCxm+J71dz9ORidtXH868
+=cFuT
 -----END PGP SIGNATURE-----
 
---CE+1k2dSO48ffgeK--
+--vkogqOf2sHV7VnPd--
