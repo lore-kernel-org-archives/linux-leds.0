@@ -1,91 +1,63 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3697
-Date: Wed, 24 Oct 2018 07:07:57 -0500
-Message-ID: <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
+Subject: Re: [PATCH v4 1/7] leds: add TI LMU backlight driver
+Date: Wed, 24 Oct 2018 07:27:57 -0500
+Message-ID: <4afc7944-d6f1-fef1-1ae4-f761e050fec9@ti.com>
 References: <20181023170623.31820-1-dmurphy@ti.com>
- <20181023170623.31820-2-dmurphy@ti.com> <20181024090421.GB24997@amd>
+ <20181024091407.GC24997@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181024090421.GB24997@amd>
+In-Reply-To: <20181024091407.GC24997@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 List-Id: linux-leds@vger.kernel.org
 
 Pavel
 
-On 10/24/2018 04:04 AM, Pavel Machek wrote:
-> Hi!
+On 10/24/2018 04:14 AM, Pavel Machek wrote:
+> On Tue 2018-10-23 12:06:17, Dan Murphy wrote:
+>> From: Pavel Machek <pavel@ucw.cz>
+>>
+>> This adds backlight support for the following TI LMU
+>> chips: LM3532, LM3631, LM3632, LM3633, LM3695 and LM3697.
+>>
+>> It controls LEDs on Droid 4
+>> smartphone, including keyboard and screen backlights.
+>>
+>> Signed-off-by: Milo Kim <milo.kim@ti.com>
+>> [add LED subsystem support for keyboard backlight and rework DT
+>> binding according to Rob Herrings feedback]
+>> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+>> [remove backlight subsystem support for now]
+>> Signed-off-by: Pavel Machek <pavel@ucw.cz>
 > 
->> The LM3697 is a single function LED driver. The single function LED
->> driver needs to reside in the LED directory as a dedicated LED driver
->> and not as a MFD device.  The device does have common brightness and ramp
+> This is not correct way to sign off a patch.
 > 
-> So it is single function LED driver. That does not mean it can not
-> share bindings with the rest. Where the bindings live is not imporant.
+> What is worse, this is very different from patch I submitted; this
+> misses imporant parts while my patch was complete.
 > 
-
-It can share bindings that are correctly done, not ones that are incomplete and incorrect.
-
-Where bindings live is important to new Linux kernel developers and product 
-developers looking for the proper documentation on the H/W bindings.
-
->> reside in the Documentation/devicetree/bindings/leds directory and follow the
->> current LED and general bindings guidelines.
+> I already submitted better patch for both the driver and device tree
+> bindings. Can we go back and apply that?
 > 
-> What you forgot to tell us in the changelog:
+> Then you can add your changes on top of that, if they actually make
+> the situation better.
 
-I can add this to the changelog.
+Thanks for this.  I wanted to make sure not to loose any authorship or credit
+in the commit.  Actually removing Milo might help stop getting the bounce back
+from the mail daemon.
 
-> 
->> +Optional child properties:
->> +	- runtime-ramp-up-msec: Current ramping from one brightness level to
->> +				the a higher brightness level.
->> +				Range from 2048 us - 117.44 s
-> 
-> The other binding uses "ramp-up-msec". Tell us why you are changing this, or
-> better don't change things needlessly.
-> 
-> We don't want to be using "runtime-ramp-up-msec" for one device and
-> "ramp-up-msec" for the other.
+I was using the RFC patch as my base https://lore.kernel.org/patchwork/patch/978995/
 
-This is another example of how the original bindings were incorrect and misleading.
-
-The LM3697 have 2 ramp implementations that can be used.
-
-Startup/Shutdown ramp and Runtime Ramp.  Same Ramp rates different registers and
-different end user experience.
-
-So having a single node call ramp-up-msec is misleading and it does not
-indicate what the H/W will do.
-
-> 
-> I'm not sure what other changes you did, and changelog does not tell
-> me.
-> 
->> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
->> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
->> @@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
->>    LM3632       Backlight and regulator
->>    LM3633       Backlight, LED and fault monitor
->>    LM3695       Backlight
->> -  LM3697       Backlight and fault monitor
->>  
->>  Required properties:
->>    - compatible: Should be one of:
-> 
-> NAK. You can use existing binding.
-
-Thank you for the consistency
+Which contains this sign off.
 
 Dan
 
 > 
-> 									Pavel
+> Thanks,
+> 								Pavel
 > 
 
 
