@@ -1,48 +1,73 @@
 From: Rob Herring <robh@kernel.org>
 Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
  LM3697
-Date: Wed, 24 Oct 2018 09:49:51 -0500
-Message-ID: <20181024144951.GB9327@bogus>
+Date: Wed, 24 Oct 2018 09:54:34 -0500
+Message-ID: <20181024145434.GC9327@bogus>
 References: <20181023170623.31820-1-dmurphy@ti.com>
  <20181023170623.31820-2-dmurphy@ti.com>
+ <20181024090421.GB24997@amd>
+ <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181023170623.31820-2-dmurphy@ti.com>
+In-Reply-To: <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dan Murphy <dmurphy@ti.com>
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
+Cc: Pavel Machek <pavel@ucw.cz>, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 12:06:18PM -0500, Dan Murphy wrote:
-> The LM3697 is a single function LED driver. The single function LED
-> driver needs to reside in the LED directory as a dedicated LED driver
-> and not as a MFD device.  The device does have common brightness and ramp
-> features and those can be accomodated by a TI LMU framework.
+On Wed, Oct 24, 2018 at 07:07:57AM -0500, Dan Murphy wrote:
+> Pavel
 > 
-> The LM3697 dt binding needs to be moved from the ti-lmu.txt and a dedicated
-> LED dt binding needs to be added.  The new LM3697 LED dt binding will then
-> reside in the Documentation/devicetree/bindings/leds directory and follow the
-> current LED and general bindings guidelines.
+> On 10/24/2018 04:04 AM, Pavel Machek wrote:
+> > Hi!
+> > 
+> >> The LM3697 is a single function LED driver. The single function LED
+> >> driver needs to reside in the LED directory as a dedicated LED driver
+> >> and not as a MFD device.  The device does have common brightness and ramp
+> > 
+> > So it is single function LED driver. That does not mean it can not
+> > share bindings with the rest. Where the bindings live is not imporant.
+> > 
 > 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
+> It can share bindings that are correctly done, not ones that are incomplete and incorrect.
 > 
-> v4 - Squashed removal and addition of the dt bindings into a single patch - https://lore.kernel.org/patchwork/patch/998703/
-
-Still not really the sequence I'd like to see and what I think would 
-help the discussion move along.
-
-Patch 1: move all the devices out of ti-lmu.txt into the grouping which 
-makes sense. IOW, no functional changes. Probably only strict 
-sub/supersets of each other should be shared.
-
-Patch 2-N: Make binding changes. Then we discuss things like ramp time 
-properties separately from binding structure.
-
+> Where bindings live is important to new Linux kernel developers and product 
+> developers looking for the proper documentation on the H/W bindings.
 > 
->  .../devicetree/bindings/leds/leds-lm3697.txt  | 98 +++++++++++++++++++
->  .../devicetree/bindings/mfd/ti-lmu.txt        | 26 +----
->  2 files changed, 99 insertions(+), 25 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+> >> reside in the Documentation/devicetree/bindings/leds directory and follow the
+> >> current LED and general bindings guidelines.
+> > 
+> > What you forgot to tell us in the changelog:
+> 
+> I can add this to the changelog.
+> 
+> > 
+> >> +Optional child properties:
+> >> +	- runtime-ramp-up-msec: Current ramping from one brightness level to
+> >> +				the a higher brightness level.
+> >> +				Range from 2048 us - 117.44 s
+> > 
+> > The other binding uses "ramp-up-msec". Tell us why you are changing this, or
+> > better don't change things needlessly.
+> > 
+> > We don't want to be using "runtime-ramp-up-msec" for one device and
+> > "ramp-up-msec" for the other.
+> 
+> This is another example of how the original bindings were incorrect and misleading.
+> 
+> The LM3697 have 2 ramp implementations that can be used.
+> 
+> Startup/Shutdown ramp and Runtime Ramp.  Same Ramp rates different registers and
+> different end user experience.
+> 
+> So having a single node call ramp-up-msec is misleading and it does not
+> indicate what the H/W will do.
+
+The existing ones aren't documented (present in the example is not 
+documented). This seems like something that should be common rather than 
+TI specific. Though it also seems more like something the user would 
+want to control (i.e. sysfs) rather than fixed in DT.
+
+Rob
