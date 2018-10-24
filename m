@@ -1,66 +1,89 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v4 1/7] leds: add TI LMU backlight driver
-Date: Wed, 24 Oct 2018 07:27:57 -0500
-Message-ID: <4afc7944-d6f1-fef1-1ae4-f761e050fec9@ti.com>
-References: <20181023170623.31820-1-dmurphy@ti.com>
- <20181024091407.GC24997@amd>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 0/3] UP Squared board drivers
+Date: Wed, 24 Oct 2018 16:05:04 +0300
+Message-ID: <20181024130504.GU10650@smile.fi.intel.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <1539969334-24577-1-git-send-email-dan@emutex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181024091407.GC24997@amd>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1539969334-24577-1-git-send-email-dan@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Dan O'Donovan <dan@emutex.com>
+Cc: linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>
 List-Id: linux-leds@vger.kernel.org
 
-Pavel
-
-On 10/24/2018 04:14 AM, Pavel Machek wrote:
-> On Tue 2018-10-23 12:06:17, Dan Murphy wrote:
->> From: Pavel Machek <pavel@ucw.cz>
->>
->> This adds backlight support for the following TI LMU
->> chips: LM3532, LM3631, LM3632, LM3633, LM3695 and LM3697.
->>
->> It controls LEDs on Droid 4
->> smartphone, including keyboard and screen backlights.
->>
->> Signed-off-by: Milo Kim <milo.kim@ti.com>
->> [add LED subsystem support for keyboard backlight and rework DT
->> binding according to Rob Herrings feedback]
->> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
->> [remove backlight subsystem support for now]
->> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+On Fri, Oct 19, 2018 at 06:15:31PM +0100, Dan O'Donovan wrote:
+> Hi all,
 > 
-> This is not correct way to sign off a patch.
+> This series adds platform support for AAEON's UP Squared, a x86 SBC
+> based on Apollo Lake [1]. Specifically, it enables control for the board
+> pin headers and for the LEDs, as both of these features are only
+> available behind a FPGA-based platform controller.
 > 
-> What is worse, this is very different from patch I submitted; this
-> misses imporant parts while my patch was complete.
+> This is structured around a MFD driver that provides a regmap interface
+> to that platform controller to each MFD cell.
 > 
-> I already submitted better patch for both the driver and device tree
-> bindings. Can we go back and apply that?
+> The series is carved out from an out-of-tree support patchset, initially
+> written for the original UP Board [2] and then extended through the past
+> year to support new entries in the lineup (UP Board, UP Squared and
+> UP Core) [3].
 > 
-> Then you can add your changes on top of that, if they actually make
-> the situation better.
+> Here we only submit support for UP Squared to simplify review. Still,
+> the driver is designed so that it can easily gain support for the other
+> boards.
+> 
+> V1 was originally submitted by Javier Arteaga in April 2018 as an RFC [4].
+> This V2 aims to address the feedback gratefully received from that.
 
-Thanks for this.  I wanted to make sure not to loose any authorship or credit
-in the commit.  Actually removing Milo might help stop getting the bounce back
-from the mail daemon.
-
-I was using the RFC patch as my base https://lore.kernel.org/patchwork/patch/978995/
-
-Which contains this sign off.
-
-Dan
+Are you attending ELCE in Edinburgh?
 
 > 
-> Thanks,
-> 								Pavel
+> [1]: http://www.up-board.org/upsquared/specifications-up2/
+> [2]: https://lkml.kernel.org/r/1467648434-29080-1-git-send-email-dan@emutex.com
+> [3]: https://github.com/emutex/ubilinux-kernel/commits/upboard-4.9
+> [4]: https://lore.kernel.org/lkml/20180421085009.28773-1-javier@emutex.com/
 > 
-
+> V2:
+> * Rewrote regmap r/w handlers to avoid duplication and improve readability
+> * Simplified data passing between MFD parent and child device drivers
+> * Removed incorrect __init attribute from probe functions
+> * Moved MFD cell definitions into same patch as MFD driver and simplified them
+> * Promoted some dev_dbg instances to dev_err for probe error cases
+> * Decoupled MFD cell reference from ACPI driver data
+> * Miscellanous coding style improvements
+> * Fixed license mismatches
+> 
+> Javier Arteaga (3):
+>   mfd: upboard: Add UP2 platform controller driver
+>   leds: upboard: Add LED support
+>   pinctrl: upboard: Add UP2 pinctrl and gpio driver
+> 
+>  drivers/leds/Kconfig              |  10 +
+>  drivers/leds/Makefile             |   1 +
+>  drivers/leds/leds-upboard.c       | 104 ++++++++
+>  drivers/mfd/Kconfig               |  17 ++
+>  drivers/mfd/Makefile              |   1 +
+>  drivers/mfd/upboard.c             | 344 +++++++++++++++++++++++++
+>  drivers/pinctrl/Kconfig           |  13 +
+>  drivers/pinctrl/Makefile          |   1 +
+>  drivers/pinctrl/pinctrl-upboard.c | 519 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/upboard.h       |  44 ++++
+>  10 files changed, 1054 insertions(+)
+>  create mode 100644 drivers/leds/leds-upboard.c
+>  create mode 100644 drivers/mfd/upboard.c
+>  create mode 100644 drivers/pinctrl/pinctrl-upboard.c
+>  create mode 100644 include/linux/mfd/upboard.h
+> 
+> -- 
+> 2.7.4
+> 
+> 
+> ------
+> This email has been scanned for spam and malware by The Email Laundry.
+> 
 
 -- 
-------------------
-Dan Murphy
+With Best Regards,
+Andy Shevchenko
