@@ -1,83 +1,75 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
-Date: Wed, 24 Oct 2018 22:07:30 +0200
-Message-ID: <00720f10-a525-32d1-0aa5-00fc88251f5e@gmail.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-3-git-send-email-dan@emutex.com>
- <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com> <20181023185453.GA27397@amd>
- <226e0df2-83f9-bee5-f359-a3e040d12311@gmail.com> <20181023193014.GA32003@amd>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH] Fix pattern handling optimalization
+Date: Wed, 24 Oct 2018 22:44:39 +0200
+Message-ID: <20181024204439.GA32300@amd>
+References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
+ <d90397dd-429f-4f3f-307c-b69dccc360e0@gmail.com>
+ <20181024083143.GA24165@amd>
+ <bdadda71-f919-b6a6-4e1c-f87ed298b6b5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181023193014.GA32003@amd>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <bdadda71-f919-b6a6-4e1c-f87ed298b6b5@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Dan O'Donovan <dan@emutex.com>, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>, Javier Arteaga <javier@emutex.com>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com, bjorn.andersson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 10/23/2018 09:30 PM, Pavel Machek wrote:
-> On Tue 2018-10-23 21:09:54, Jacek Anaszewski wrote:
->> On 10/23/2018 08:54 PM, Pavel Machek wrote:
->>> Hi!
->>>
->>>>> +	led->field = devm_regmap_field_alloc(dev, regmap, conf);
->>>>> +	if (IS_ERR(led->field))
->>>>> +		return PTR_ERR(led->field);
->>>>> +
->>>>> +	led->cdev.max_brightness = 1;
->>>>
->>>> s/1/LED_ON/
->>>
->>> Actually, I prefer constant 1 here, as it makes it immediately obvious
->>> this supports just 0/1.
->>>
->>> Yes, LED_ON is also 1, but I had to grep the header files for
->>> that... (I thought it was 255).
->>
->> If we have the enum for that, let's use it.
->> Here's the commit message of the patch adding LED_ON - it should
->> be somehow familiar to you - see the ack.
-> 
-> Well .. brightness = LED_ON; is good usage. max_brightness = LED_ON is
-> IMO less readable than max_brightness = 1.
-> 
-> Looking at situation again... Having LED_ON and LED_FULL, with some
-> leds having max brightness of 1023, so LED_FULL is not really full
-> brightness any more... Maybe it is time to get rid of the enum, and
-> make it plain int. It does not really enumarate anything, and it does
-> not help readability, either.
 
-I agree that it introduces confusion.
+--zYM0uCDKw75PZbzx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yet, there are many out of LED subsystem files to update:
 
-find -name "*.c" -o -name "*.h" | xargs grep  "enum led_brightness" |
-awk -F: '{print $1}' | sort -u | grep -v "leds" | wc -l
+Check for zero duration before skipping step. This fixes pattern
+   =20
+    echo "0 1000 10 2550 0 1000" > pattern
+   =20
+which should do [  .-xXx-.] but does [   Xx-.]
+   =20
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Suggested-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-returns 87.
 
->> commit 4e552c8cb5bc9137e67e035bab8df6dddbca7384
->> Author: Andi Shyti <andi.shyti@samsung.com>
->> Date:   Thu Jan 5 11:34:12 2017 +0900
->>
->>     leds: add LED_ON brightness as boolean value
->>
->>     Some devices do not handle the led brightness or simply don't
->>     care about it. Conceptually said devices want to just switch on
->>     or off the led. It is useless in this case to have a 255 range
->>     of brightness, while just having an LED_ON and LED_OFF improves
->>     the boolean meaning of the led status.
->>
->>     Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
->>     Acked-by: Pavel Machek <pavel@ucw.cz>
->>     Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->>
->>
-> 
+diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/=
+ledtrig-pattern.c
+index ce7acd1..bc5f495 100644
+--- a/drivers/leds/trigger/ledtrig-pattern.c
++++ b/drivers/leds/trigger/ledtrig-pattern.c
+@@ -87,9 +87,10 @@ static void pattern_trig_timer_function(struct timer_lis=
+t *t)
+ 					   data->curr->brightness);
+ 			mod_timer(&data->timer,
+ 				  jiffies + msecs_to_jiffies(data->curr->delta_t));
+-
+-			/* Skip the tuple with zero duration */
+-			pattern_trig_update_patterns(data);
++			if (!data->next->delta_t) {
++				/* Skip the tuple with zero duration */
++				pattern_trig_update_patterns(data);
++			}
+ 			/* Select next tuple */
+ 			pattern_trig_update_patterns(data);
+ 		} else {
 
--- 
-Best regards,
-Jacek Anaszewski
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--zYM0uCDKw75PZbzx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvQ2bcACgkQMOfwapXb+vKyowCgmQw1KOCxLLu4I87qhZA1qRqC
+5SgAn1uGctB8Vfbn0/8DL1CPCrFjOLb+
+=WJ0K
+-----END PGP SIGNATURE-----
+
+--zYM0uCDKw75PZbzx--
