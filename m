@@ -1,86 +1,69 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3697
-Date: Wed, 24 Oct 2018 11:04:21 +0200
-Message-ID: <20181024090421.GB24997@amd>
+Subject: Re: [PATCH v4 1/7] leds: add TI LMU backlight driver
+Date: Wed, 24 Oct 2018 11:14:07 +0200
+Message-ID: <20181024091407.GC24997@amd>
 References: <20181023170623.31820-1-dmurphy@ti.com>
- <20181023170623.31820-2-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
+        protocol="application/pgp-signature"; boundary="3siQDZowHQqNOShm"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181023170623.31820-2-dmurphy@ti.com>
+In-Reply-To: <20181023170623.31820-1-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com, Milo Kim <milo.kim@ti.com>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 List-Id: linux-leds@vger.kernel.org
 
 
---/NkBOFFp2J2Af1nK
+--3siQDZowHQqNOShm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Tue 2018-10-23 12:06:17, Dan Murphy wrote:
+> From: Pavel Machek <pavel@ucw.cz>
+>=20
+> This adds backlight support for the following TI LMU
+> chips: LM3532, LM3631, LM3632, LM3633, LM3695 and LM3697.
+>=20
+> It controls LEDs on Droid 4
+> smartphone, including keyboard and screen backlights.
+>=20
+> Signed-off-by: Milo Kim <milo.kim@ti.com>
+> [add LED subsystem support for keyboard backlight and rework DT
+> binding according to Rob Herrings feedback]
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> [remove backlight subsystem support for now]
+> Signed-off-by: Pavel Machek <pavel@ucw.cz>
 
-> The LM3697 is a single function LED driver. The single function LED
-> driver needs to reside in the LED directory as a dedicated LED driver
-> and not as a MFD device.  The device does have common brightness and ramp
+This is not correct way to sign off a patch.
 
-So it is single function LED driver. That does not mean it can not
-share bindings with the rest. Where the bindings live is not imporant.
+What is worse, this is very different from patch I submitted; this
+misses imporant parts while my patch was complete.
 
-> reside in the Documentation/devicetree/bindings/leds directory and follow=
- the
-> current LED and general bindings guidelines.
+I already submitted better patch for both the driver and device tree
+bindings. Can we go back and apply that?
 
-What you forgot to tell us in the changelog:
+Then you can add your changes on top of that, if they actually make
+the situation better.
 
-> +Optional child properties:
-> +	- runtime-ramp-up-msec: Current ramping from one brightness level to
-> +				the a higher brightness level.
-> +				Range from 2048 us - 117.44 s
-
-The other binding uses "ramp-up-msec". Tell us why you are changing this, or
-better don't change things needlessly.
-
-We don't want to be using "runtime-ramp-up-msec" for one device and
-"ramp-up-msec" for the other.
-
-I'm not sure what other changes you did, and changelog does not tell
-me.
-
-> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> @@ -9,7 +9,6 @@ TI LMU driver supports lighting devices below.
->    LM3632       Backlight and regulator
->    LM3633       Backlight, LED and fault monitor
->    LM3695       Backlight
-> -  LM3697       Backlight and fault monitor
-> =20
->  Required properties:
->    - compatible: Should be one of:
-
-NAK. You can use existing binding.
-
-									Pavel
-
+Thanks,
+								Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---/NkBOFFp2J2Af1nK
+--3siQDZowHQqNOShm
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlvQNZUACgkQMOfwapXb+vLFrQCePprM1e0VfDEX433UAglIWdwL
-N9wAn1JtNbW8lF43Y5o8u6F4uxfI7yfy
-=JVUJ
+iEYEARECAAYFAlvQN98ACgkQMOfwapXb+vIOCACfQN8uM9Mm9rBT85ynEiWjE19w
+zKEAn2XQzpMu+BYx1591Y+bK54grktTX
+=4gGL
 -----END PGP SIGNATURE-----
 
---/NkBOFFp2J2Af1nK--
+--3siQDZowHQqNOShm--
