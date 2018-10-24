@@ -1,84 +1,90 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
-Date: Tue, 23 Oct 2018 22:31:19 +0200
-Message-ID: <1570e79b-3ea4-b389-72c8-1d595a46f380@gmail.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-3-git-send-email-dan@emutex.com>
- <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com>
- <16591e6735e32baad10f083c688119ce79d12911.camel@perches.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v15 1/2] leds: core: Introduce LED pattern trigger
+Date: Wed, 24 Oct 2018 10:31:43 +0200
+Message-ID: <20181024083143.GA24165@amd>
+References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
+ <d90397dd-429f-4f3f-307c-b69dccc360e0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <16591e6735e32baad10f083c688119ce79d12911.camel@perches.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <d90397dd-429f-4f3f-307c-b69dccc360e0@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>, Dan O'Donovan <dan@emutex.com>, linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>, Javier Arteaga <javier@emutex.com>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com, bjorn.andersson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 10/23/2018 09:23 PM, Joe Perches wrote:
-> On Tue, 2018-10-23 at 20:50 +0200, Jacek Anaszewski wrote:
->>> diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
->>> new file mode 100644
->>> index 0000000..34a6973
->>> --- /dev/null
->>> +++ b/drivers/leds/leds-upboard.c
->>> @@ -0,0 +1,104 @@
-> []
->>> +#include <linux/kernel.h>
->>> +#include <linux/leds.h>
->>> +#include <linux/mfd/upboard.h>
->>> +#include <linux/module.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/regmap.h>
->>> +#include <linux/acpi.h>
->>
->> The last include should go first to keep alphabetical order.
-> 
-> There is no accepted single kernel style for #include
-> file ordering.
 
-Well, I myself have been asked several times for sorting
-includes, that's why I keep requiring it for the LED subsystem too.
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-When it's by the occasion of a new driver submission, it costs
-virtually nothing. And it allows for avoiding any prospective
-noise on the list due to the submissions like "Order includes".
+Hi!
 
-As a first shot the following returns 77:
+> > +
+> > +		The gradual dimming format of the software pattern values should be:
+> > +		"brightness_1 duration_1 brightness_2 duration_2 brightness_3
+> > +		duration_3 ...". For example:
+> > +
+> > +		echo 0 1000 255 2000 > pattern
+> > +
+> > +		It will make the LED go gradually from zero-intensity to max (255)
+> > +		intensity in 1000 milliseconds, then back to zero intensity in 2000
+> > +		milliseconds:
+> > +
+> > +		LED brightness
+> > +		    ^
+> > +		255-|       / \            / \            /
+> > +		    |      /    \         /    \         /
+> > +		    |     /       \      /       \      /
+> > +		    |    /          \   /          \   /
+> > +		  0-|   /             \/             \/
+> > +		    +---0----1----2----3----4----5----6------------> time (s)
+> > +
 
-git log | grep -i "include.*alphabetical" | wc -l
+Ok, so I got around to testing this.
 
-Aside of that, in case of this particular patch the intention seemingly
-was to have includes ordered lexicographically, since only the last
-item didn't fit for this pattern.
+echo "0 1000 10 2550 0 1000 0 100" > pattern
 
-> drivers/leds does not use a single style nor is this
-> particular variant documented anywhere to my knowledge.
+makes expected pattern [  .-xXx-.  ].
 
-Unspecified kind of includes sorting is mentioned in the
-Documentation/process/coding-style.rst, line 637.
+But when I do
 
-> Until such a time when either a local preferred style
-> document or a treewide preferred style exists, please
-> stop asking people to modify #include ordering for
-> various styles like reverse christmas tree by length,
-> alphabetic ordering, or other individual style
-> My preferred style would always have kernel.h first
-> as that may help with precompiled headers and overall
-> kernel compilation time one day.
+echo "0 1000 10 2550 0 1000" > pattern
 
-If that will happen we'll see massive rearrangement of includes
-anyway.
+I only get expected pattern on the first iteration, then I get
+[    Xx-.   ].
 
-But OK, I've skimmed through other subsystems and core kernel
-files and realized that this is indeed often not preserved.
+I'm using led-controller:flash on nokia n900 (so everything in
+software).
 
-So, provided there are no other strong arguments in favor
-of sorting, I will give up this nitpicking from now on.
+> OK, let's abide by constant update interval for now.
+>=20
+> Thank you for your work on this patch set throughout
+> all these months. We will have -rc8, so one week of testing
+> before sending upstream should be enough.
+>=20
+> Patch set applied to the for-next branch of linux-leds.git.
 
--- 
-Best regards,
-Jacek Anaszewski
+Thanks!
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvQLe8ACgkQMOfwapXb+vJv3wCcCzjCiv8b5zBW5DE6MWaAQVjS
+oxUAn3rZi5MI0deWIzolnVib0O+1VRRC
+=4v+J
+-----END PGP SIGNATURE-----
+
+--lrZ03NoBR/3+SXJZ--
