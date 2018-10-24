@@ -1,89 +1,94 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 0/3] UP Squared board drivers
-Date: Wed, 24 Oct 2018 16:05:04 +0300
-Message-ID: <20181024130504.GU10650@smile.fi.intel.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v4 1/7] leds: add TI LMU backlight driver
+Date: Wed, 24 Oct 2018 15:17:16 +0200
+Message-ID: <20181024131716.GA11619@amd>
+References: <20181023170623.31820-1-dmurphy@ti.com>
+ <20181024091407.GC24997@amd>
+ <4afc7944-d6f1-fef1-1ae4-f761e050fec9@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1539969334-24577-1-git-send-email-dan@emutex.com>
+In-Reply-To: <4afc7944-d6f1-fef1-1ae4-f761e050fec9@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan O'Donovan <dan@emutex.com>
-Cc: linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 List-Id: linux-leds@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 06:15:31PM +0100, Dan O'Donovan wrote:
-> Hi all,
-> 
-> This series adds platform support for AAEON's UP Squared, a x86 SBC
-> based on Apollo Lake [1]. Specifically, it enables control for the board
-> pin headers and for the LEDs, as both of these features are only
-> available behind a FPGA-based platform controller.
-> 
-> This is structured around a MFD driver that provides a regmap interface
-> to that platform controller to each MFD cell.
-> 
-> The series is carved out from an out-of-tree support patchset, initially
-> written for the original UP Board [2] and then extended through the past
-> year to support new entries in the lineup (UP Board, UP Squared and
-> UP Core) [3].
-> 
-> Here we only submit support for UP Squared to simplify review. Still,
-> the driver is designed so that it can easily gain support for the other
-> boards.
-> 
-> V1 was originally submitted by Javier Arteaga in April 2018 as an RFC [4].
-> This V2 aims to address the feedback gratefully received from that.
 
-Are you attending ELCE in Edinburgh?
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> [1]: http://www.up-board.org/upsquared/specifications-up2/
-> [2]: https://lkml.kernel.org/r/1467648434-29080-1-git-send-email-dan@emutex.com
-> [3]: https://github.com/emutex/ubilinux-kernel/commits/upboard-4.9
-> [4]: https://lore.kernel.org/lkml/20180421085009.28773-1-javier@emutex.com/
-> 
-> V2:
-> * Rewrote regmap r/w handlers to avoid duplication and improve readability
-> * Simplified data passing between MFD parent and child device drivers
-> * Removed incorrect __init attribute from probe functions
-> * Moved MFD cell definitions into same patch as MFD driver and simplified them
-> * Promoted some dev_dbg instances to dev_err for probe error cases
-> * Decoupled MFD cell reference from ACPI driver data
-> * Miscellanous coding style improvements
-> * Fixed license mismatches
-> 
-> Javier Arteaga (3):
->   mfd: upboard: Add UP2 platform controller driver
->   leds: upboard: Add LED support
->   pinctrl: upboard: Add UP2 pinctrl and gpio driver
-> 
->  drivers/leds/Kconfig              |  10 +
->  drivers/leds/Makefile             |   1 +
->  drivers/leds/leds-upboard.c       | 104 ++++++++
->  drivers/mfd/Kconfig               |  17 ++
->  drivers/mfd/Makefile              |   1 +
->  drivers/mfd/upboard.c             | 344 +++++++++++++++++++++++++
->  drivers/pinctrl/Kconfig           |  13 +
->  drivers/pinctrl/Makefile          |   1 +
->  drivers/pinctrl/pinctrl-upboard.c | 519 ++++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/upboard.h       |  44 ++++
->  10 files changed, 1054 insertions(+)
->  create mode 100644 drivers/leds/leds-upboard.c
->  create mode 100644 drivers/mfd/upboard.c
->  create mode 100644 drivers/pinctrl/pinctrl-upboard.c
->  create mode 100644 include/linux/mfd/upboard.h
-> 
-> -- 
-> 2.7.4
-> 
-> 
-> ------
-> This email has been scanned for spam and malware by The Email Laundry.
-> 
+On Wed 2018-10-24 07:27:57, Dan Murphy wrote:
+> Pavel
+>=20
+> On 10/24/2018 04:14 AM, Pavel Machek wrote:
+> > On Tue 2018-10-23 12:06:17, Dan Murphy wrote:
+> >> From: Pavel Machek <pavel@ucw.cz>
+> >>
+> >> This adds backlight support for the following TI LMU
+> >> chips: LM3532, LM3631, LM3632, LM3633, LM3695 and LM3697.
+> >>
+> >> It controls LEDs on Droid 4
+> >> smartphone, including keyboard and screen backlights.
+> >>
+> >> Signed-off-by: Milo Kim <milo.kim@ti.com>
+> >> [add LED subsystem support for keyboard backlight and rework DT
+> >> binding according to Rob Herrings feedback]
+> >> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> >> [remove backlight subsystem support for now]
+> >> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> >=20
+> > This is not correct way to sign off a patch.
+> >=20
+> > What is worse, this is very different from patch I submitted; this
+> > misses imporant parts while my patch was complete.
+> >=20
+> > I already submitted better patch for both the driver and device tree
+> > bindings. Can we go back and apply that?
+> >=20
+> > Then you can add your changes on top of that, if they actually make
+> > the situation better.
+>=20
+> Thanks for this.  I wanted to make sure not to loose any authorship or cr=
+edit
+> in the commit.  Actually removing Milo might help stop getting the bounce=
+ back
+> from the mail daemon.
+>=20
+> I was using the RFC patch as my base https://lore.kernel.org/patchwork/pa=
+tch/978995/
+>=20
+> Which contains this sign off.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Yeah, but you need to append your sign-off to the end, preferably
+prepending note saying what you modified. [I'm ok with the original
+patch, but I'm not ok with your version].
+
+=46rom: Pavel Machek <pavel@ucw.cz>
+
+Is not correct. Original patch is from Milo, if you want to add
+explicit From:, I guess it should be his.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvQcNwACgkQMOfwapXb+vL9mgCfZ/m3O860tSqL0HBhl1qUP6EV
+nUsAn3Sk6DE7p7E0zkedARl61HPpdVuZ
+=SUnO
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
