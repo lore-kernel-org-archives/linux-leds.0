@@ -1,56 +1,103 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: gpio: Fix gpiod for DT based devices
-Date: Thu, 25 Oct 2018 21:22:34 +0200
-Message-ID: <05996b8d-f35c-d2d6-3043-75456fbfe0fa@gmail.com>
-References: <CACceFXdF9XQS6WeSWvO=EKUEGnKwG_VkqUOECA3kJY-Hy72fjQ@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
+ LM3697
+Date: Thu, 25 Oct 2018 14:54:44 -0500
+Message-ID: <20181025195444.GA12737@bogus>
+References: <20181023170623.31820-1-dmurphy@ti.com>
+ <20181023170623.31820-2-dmurphy@ti.com>
+ <20181024090421.GB24997@amd>
+ <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
+ <20181024145434.GC9327@bogus>
+ <beb1a6e1-8120-be94-b1a4-60ea6721765d@ti.com>
+ <ade3121a-58ab-c0c3-6605-cf7d6a638da0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACceFXdF9XQS6WeSWvO=EKUEGnKwG_VkqUOECA3kJY-Hy72fjQ@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <ade3121a-58ab-c0c3-6605-cf7d6a638da0@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Sneddon <dan.sneddon@gmail.com>, pavel@ucw.cz, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linus.walleij@linaro.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi Dan,
-
-Thank you for the patch. Nonetheless, I've just applied similar Liviu's
-patch [0], since it arrived one week ago already.
-
-I'll send it upstream with LED fixes for 4-20-rc2.
-
-[0] https://lkml.org/lkml/2018/10/18/154
-
-Best regards,
-Jacek Anaszewski
-
-On 10/25/2018 05:06 PM, Dan Sneddon wrote:
-> commit 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
-> failes to set the gpio descriptor for DT based machines.  Since the
-> value being passed in is always 0 the descriptor fails the validation
-> check but does so silently.  This means the driver probes successfully
-> even though it can't actually control the gpio line.  This patch sets
-> the gpio descriptor in the path taken by DT based devices.
+On Thu, Oct 25, 2018 at 08:27:18PM +0200, Jacek Anaszewski wrote:
+> On 10/25/2018 08:07 PM, Dan Murphy wrote:
+> > Rob
+> > 
+> > On 10/24/2018 09:54 AM, Rob Herring wrote:
+> >> On Wed, Oct 24, 2018 at 07:07:57AM -0500, Dan Murphy wrote:
+> >>> Pavel
+> >>>
+> >>> On 10/24/2018 04:04 AM, Pavel Machek wrote:
+> >>>> Hi!
+> >>>>
+> >>>>> The LM3697 is a single function LED driver. The single function LED
+> >>>>> driver needs to reside in the LED directory as a dedicated LED driver
+> >>>>> and not as a MFD device.  The device does have common brightness and ramp
+> >>>>
+> >>>> So it is single function LED driver. That does not mean it can not
+> >>>> share bindings with the rest. Where the bindings live is not imporant.
+> >>>>
+> >>>
+> >>> It can share bindings that are correctly done, not ones that are incomplete and incorrect.
+> >>>
+> >>> Where bindings live is important to new Linux kernel developers and product 
+> >>> developers looking for the proper documentation on the H/W bindings.
+> >>>
+> >>>>> reside in the Documentation/devicetree/bindings/leds directory and follow the
+> >>>>> current LED and general bindings guidelines.
+> >>>>
+> >>>> What you forgot to tell us in the changelog:
+> >>>
+> >>> I can add this to the changelog.
+> >>>
+> >>>>
+> >>>>> +Optional child properties:
+> >>>>> +	- runtime-ramp-up-msec: Current ramping from one brightness level to
+> >>>>> +				the a higher brightness level.
+> >>>>> +				Range from 2048 us - 117.44 s
+> >>>>
+> >>>> The other binding uses "ramp-up-msec". Tell us why you are changing this, or
+> >>>> better don't change things needlessly.
+> >>>>
+> >>>> We don't want to be using "runtime-ramp-up-msec" for one device and
+> >>>> "ramp-up-msec" for the other.
+> >>>
+> >>> This is another example of how the original bindings were incorrect and misleading.
+> >>>
+> >>> The LM3697 have 2 ramp implementations that can be used.
+> >>>
+> >>> Startup/Shutdown ramp and Runtime Ramp.  Same Ramp rates different registers and
+> >>> different end user experience.
+> >>>
+> >>> So having a single node call ramp-up-msec is misleading and it does not
+> >>> indicate what the H/W will do.
+> >>
+> >> The existing ones aren't documented (present in the example is not 
+> >> documented). This seems like something that should be common rather than 
+> >> TI specific. Though it also seems more like something the user would 
+> >> want to control (i.e. sysfs) rather than fixed in DT.
+> >>
+> > 
+> > Changing the runtime ramping or startup/shutdown ramping could also be done via sysfs.
+> > I am not dedicated to having it in the DT file I was following prior art.
+> > 
+> > Jacek
+> > 
+> > Do you have an opinion on this?
 > 
-> Fixes: 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
-> Signed-off-by: Dan Sneddon <dan.sneddon@gmail.com>
-> ---
->  drivers/leds/leds-gpio.c | 1 +
->  1 file changed, 1 insertion(+)
+> This is this problem with the Device Tree's scope of responsibility.
+> It is defined as a means for "describing the hardware", but often
+> this rule is abused by the properties that fall into "configuration"
+> category. E.g. default-state, retain-state-suspended from leds-gpio.txt
+> or linux-default-trigger from common LED bindings.
 > 
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index 32fa752..e0e57c2 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -162,6 +162,7 @@ static struct gpio_leds_priv
-> *gpio_leds_create(struct platform_device *pdev)
->             fwnode_handle_put(child);
->             return ERR_CAST(led.gpiod);
->         }
-> +       led_dat->gpiod = led.gpiod;
-> 
->         fwnode_property_read_string(child, "linux,default-trigger",
->                         &led.default_trigger);
-> 
+> In some cases this is justified. The question is whether it is something
+> that necessarily needs to be configured on driver probing? If not, then
+> I'd go for sysfs interface.
+
+Yes. I'd also add it should be along the lines of for a given 
+board it's always configured in that way or is it something you'd want 
+in the BIOS of your PC.
+
+Rob
