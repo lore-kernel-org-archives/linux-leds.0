@@ -1,60 +1,42 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] leds: gpio: set led_dat->gpiod pointer for OF defined
- GPIO leds
-Date: Thu, 25 Oct 2018 15:08:20 +0200
-Message-ID: <20181025130820.GA10294@amd>
-References: <20181018001432.710-1-liviu@dudau.co.uk>
- <20181023111842.GA29083@bart.dudau.co.uk>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2 1/3] mfd: upboard: Add UP2 platform controller driver
+Date: Thu, 25 Oct 2018 16:15:23 +0300
+Message-ID: <20181025131523.GY10650@smile.fi.intel.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1539969334-24577-2-git-send-email-dan@emutex.com>
+ <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
+ <20181025110505.GA4870@dell>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181023111842.GA29083@bart.dudau.co.uk>
+In-Reply-To: <20181025110505.GA4870@dell>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Liviu Dudau <liviu@dudau.co.uk>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Dan O'Donovan <dan@emutex.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, carlos.iglesias@emutex.com, Javier Arteaga <javier@emutex.com>
 List-Id: linux-leds@vger.kernel.org
 
+On Thu, Oct 25, 2018 at 12:05:05PM +0100, Lee Jones wrote:
+> On Sat, 20 Oct 2018, Andy Shevchenko wrote:
+> > On Fri, Oct 19, 2018 at 8:26 PM Dan O'Donovan <dan@emutex.com> wrote:
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > > +       ret = upboard_init_gpio(dev);
+> > > +       if (ret) {
+> > > +               if (ret != -EPROBE_DEFER)
+> > > +                       dev_err(dev, "failed to init GPIOs: %d", ret);
+> > > +               return ret;
+> > > +       }
+> > 
+> > I don't know if probe_err() helper is going to be a part of v4.21
+> > (which this series targets), it would be good to use it.
+> 
+> Interesting.  What does it do?
 
-On Tue 2018-10-23 12:18:44, Liviu Dudau wrote:
-> On Thu, Oct 18, 2018 at 01:14:32AM +0100, Liviu Dudau wrote:
-> > Commit 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
-> > removed the common code path that set the led_dat->gpiod pointer in
-> > create_gpio_led(), but only added it back for the devices that have
-> > a valid gpio_led_platform_data structure. Calling gpio_leds_create()
-> > in gpio_led_probe() is not enough to get a valid gpiod pointer.
-> >=20
-> > Fortunately enough, gpio_leds_create() already gets the needed pointer,
-> > we just need to assign it to the relevant gpio_led_data structure.
-> >=20
-> > Fixes: 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> > Signed-off-by: Liviu Dudau <liviu@dudau.co.uk>
+The code will tell better than I
+https://lore.kernel.org/lkml/20181017132205.5204-1-a.hajda@samsung.com/
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvRwEQACgkQMOfwapXb+vLnlQCfVuN9x6W44LTDBA8LOvC3ydfe
-PGEAn114L8PUMDo1fD6c3sbODcP4JeA/
-=8K2O
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
+-- 
+With Best Regards,
+Andy Shevchenko
