@@ -1,40 +1,110 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
-Date: Thu, 25 Oct 2018 12:22:21 +0300
-Message-ID: <20181025092221.GW10650@smile.fi.intel.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 1/3] mfd: upboard: Add UP2 platform controller driver
+Date: Thu, 25 Oct 2018 12:05:05 +0100
+Message-ID: <20181025110505.GA4870@dell>
 References: <20180421085009.28773-1-javier@emutex.com>
  <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-3-git-send-email-dan@emutex.com>
- <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com>
- <20181023185453.GA27397@amd>
- <226e0df2-83f9-bee5-f359-a3e040d12311@gmail.com>
- <20181023193014.GA32003@amd>
- <00720f10-a525-32d1-0aa5-00fc88251f5e@gmail.com>
+ <1539969334-24577-2-git-send-email-dan@emutex.com>
+ <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <00720f10-a525-32d1-0aa5-00fc88251f5e@gmail.com>
+In-Reply-To: <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Dan O'Donovan <dan@emutex.com>, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>, Javier Arteaga <javier@emutex.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Dan O'Donovan <dan@emutex.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, carlos.iglesias@emutex.com, Javier Arteaga <javier@emutex.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 10:07:30PM +0200, Jacek Anaszewski wrote:
+On Sat, 20 Oct 2018, Andy Shevchenko wrote:
 
-> Yet, there are many out of LED subsystem files to update:
+> On Fri, Oct 19, 2018 at 8:26 PM Dan O'Donovan <dan@emutex.com> wrote:
+> >
+> > From: Javier Arteaga <javier@emutex.com>
+> >
+> > UP Squared (UP2) is a x86 SBC from AAEON based on Intel Apollo Lake. It
+> > features a MAX 10 FPGA that routes lines from both SoC and on-board
+> > devices to two I/O headers:
+> >
+> >                                 +------------------------+
+> >                                 | 40-pin RPi-like header |
+> >                          +------|         (HAT)          |
+> >                          |      +------------------------+
+> >     +-------+    +--------+
+> >     |       |    |        |     +------------------------+
+> >     |  SoC  |----|  FPGA  |-----|  Custom UP2 pin header |
+> >     |       |    |        |     |        (EXHAT)         |
+> >     +-------+    +--------+     +------------------------+
+> >                          |
+> >                          +------* On-board devices: LED, VLS...
+> >
+> > This is intended to enable vendor-specific applications to customize I/O
+> > header pinout, as well as include low-latency functionality. It also
+> > performs voltage level translation between the SoC (1.8V) and HAT header
+> > (3.3V).
+> >
+> > Out of the box, this block implements a platform controller with a
+> > GPIO-bitbanged control interface. It's enumerated by ACPI and provides
+> > registers to control:
+> >
+> > - Configuration of all FPGA-routed header lines. These can be driven
+> >   SoC-to-header, header-to-SoC or set in high impedance.
+> >
+> > - On-board LEDs and enable lines for other platform devices.
+> >
+> > Add core support for this platform controller as a MFD device, exposing
+> > these registers as a regmap.
 > 
-> find -name "*.c" -o -name "*.h" | xargs grep  "enum led_brightness" |
-> awk -F: '{print $1}' | sort -u | grep -v "leds" | wc -l
+> Can we see a link to or an excerpt of ACPI table for this device?
 > 
-> returns 87.
+> > +#define set_clear(u, x) gpiod_set_value((u)->clear_gpio, (x))
+> > +#define set_strobe(u, x) gpiod_set_value((u)->strobe_gpio, (x))
+> > +#define set_datain(u, x) gpiod_set_value((u)->datain_gpio, (x))
+> > +#define get_dataout(u) gpiod_get_value((u)->dataout_gpio)
+> 
+> I think these macros don't bring much value. (Up to you and Lee to decide)
 
-Side note: 
+I agree.
 
-git grep -n 'enum led_brightness' | ...
+In fact I think they only serve to obfuscate instead of clarify.
 
-a bit more effitient.
+[...]
+
+> > +               set_strobe(ddata, 0);
+> > +               set_strobe(ddata, 1);
+> > +               *val |= get_dataout(ddata) << i;
+> > +       }
+> > +}
+> 
+> > +static int upboard_check_supported(struct device *dev, struct regmap *regmap)
+> > +{
+> > +       uint8_t manufacturer_id, build, major, minor, patch;
+> > +       unsigned int platform_id, firmware_id;
+> > +       int ret;
+> 
+> > +       manufacturer_id = platform_id & 0xff;
+> 
+> Redundant & 0xff part.
+
+Maybe not required, but lets the reader know it's intended.
+
+[...]
+
+> > +       ret = upboard_init_gpio(dev);
+> > +       if (ret) {
+> > +               if (ret != -EPROBE_DEFER)
+> > +                       dev_err(dev, "failed to init GPIOs: %d", ret);
+> > +               return ret;
+> > +       }
+> 
+> I don't know if probe_err() helper is going to be a part of v4.21
+> (which this series targets), it would be good to use it.
+
+Interesting.  What does it do?
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
