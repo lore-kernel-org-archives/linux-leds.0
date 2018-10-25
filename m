@@ -1,57 +1,86 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] leds: gpio: Fix gpiod for DT based devices
-Date: Thu, 25 Oct 2018 22:41:56 +0200
-Message-ID: <20181025204156.GA18016@amd>
-References: <CACceFXdF9XQS6WeSWvO=EKUEGnKwG_VkqUOECA3kJY-Hy72fjQ@mail.gmail.com>
- <05996b8d-f35c-d2d6-3043-75456fbfe0fa@gmail.com>
+Subject: More checks for patterns? was: Fix pattern handling optimalization
+Date: Thu, 25 Oct 2018 23:24:29 +0200
+Message-ID: <20181025212429.GB18016@amd>
+References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
+ <d90397dd-429f-4f3f-307c-b69dccc360e0@gmail.com>
+ <20181024083143.GA24165@amd>
+ <bdadda71-f919-b6a6-4e1c-f87ed298b6b5@gmail.com>
+ <20181024204439.GA32300@amd>
+ <79c29d20-ae6a-4a12-28fa-93d7305a0623@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+        protocol="application/pgp-signature"; boundary="4SFOXa2GPu3tIq4H"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <05996b8d-f35c-d2d6-3043-75456fbfe0fa@gmail.com>
+In-Reply-To: <79c29d20-ae6a-4a12-28fa-93d7305a0623@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Dan Sneddon <dan.sneddon@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org
+Cc: Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com, bjorn.andersson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 
---jRHKVT23PllUwdXP
+--4SFOXa2GPu3tIq4H
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu 2018-10-25 21:22:34, Jacek Anaszewski wrote:
-> Hi Dan,
->=20
-> Thank you for the patch. Nonetheless, I've just applied similar Liviu's
-> patch [0], since it arrived one week ago already.
->=20
-> I'll send it upstream with LED fixes for 4-20-rc2.
->=20
-> [0] https://lkml.org/lkml/2018/10/18/154
 
-If people are hitting it this often, maybe it is time to push it
-early? Linus should not have problem taking two pull requests in a
-merge window.
+We don't want brightness < 0, but this may not be best way to do
+this. We also don't want brightness > max_brightness, but I'm not sure
+this check is effective.
 
-Best regards,
-								Pavel
+We probably also don't want pattern where all the delta_t s are zero.
+
+I came up with this so far....
+   	    	       	    	    	      	  	    Pavel
+
+
+
+diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/=
+ledtrig-pattern.c
+index ce7acd1..bc5f495 100644
+--- a/drivers/leds/trigger/ledtrig-pattern.c
++++ b/drivers/leds/trigger/ledtrig-pattern.c
+@@ -250,9 +251,16 @@ static ssize_t pattern_trig_store_patterns(struct led_=
+classdev *led_cdev,
+=20
+ 	while (offset < count - 1 && data->npatterns < MAX_PATTERNS) {
+ 		cr =3D 0;
+-		ccount =3D sscanf(buf + offset, "%d %u %n",
++		ccount =3D sscanf(buf + offset, "%u %u %n",
+ 				&data->patterns[data->npatterns].brightness,
+ 				&data->patterns[data->npatterns].delta_t, &cr);
++
++		if (data->patterns[data->npatterns].brightness > data->led_cdev->max_bri=
+ghtness) {
++			data->npatterns =3D 0;
++			err =3D -EINVAL;
++			goto out;
++		}
++			=20
+ 		if (ccount !=3D 2) {
+ 			data->npatterns =3D 0;
+ 			err =3D -EINVAL;
+
+
+
+
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---jRHKVT23PllUwdXP
+--4SFOXa2GPu3tIq4H
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlvSKpQACgkQMOfwapXb+vL69QCgrB8Ww6KMnhD0+f24/fAFK/hh
-IkUAn0Ejc7WDoBfh/qwxgTWl6bjyOl2M
-=/+2L
+iEYEARECAAYFAlvSNI0ACgkQMOfwapXb+vJyjgCfTl2L83kZog2c6ughpc0RXY6D
++REAn0adMKwNRz617q44ig0s9Mv0EML4
+=+wPI
 -----END PGP SIGNATURE-----
 
---jRHKVT23PllUwdXP--
+--4SFOXa2GPu3tIq4H--
