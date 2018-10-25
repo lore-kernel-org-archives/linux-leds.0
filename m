@@ -1,111 +1,61 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3697
-Date: Thu, 25 Oct 2018 13:32:00 -0500
-Message-ID: <dfee9293-490f-2d47-c75b-971735683d41@ti.com>
-References: <20181023170623.31820-1-dmurphy@ti.com>
- <20181023170623.31820-2-dmurphy@ti.com> <20181024090421.GB24997@amd>
- <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com> <20181024145434.GC9327@bogus>
- <beb1a6e1-8120-be94-b1a4-60ea6721765d@ti.com>
- <ade3121a-58ab-c0c3-6605-cf7d6a638da0@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] Fix pattern handling optimalization
+Date: Thu, 25 Oct 2018 21:17:45 +0200
+Message-ID: <79c29d20-ae6a-4a12-28fa-93d7305a0623@gmail.com>
+References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
+ <d90397dd-429f-4f3f-307c-b69dccc360e0@gmail.com> <20181024083143.GA24165@amd>
+ <bdadda71-f919-b6a6-4e1c-f87ed298b6b5@gmail.com> <20181024204439.GA32300@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ade3121a-58ab-c0c3-6605-cf7d6a638da0@gmail.com>
+In-Reply-To: <20181024204439.GA32300@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com, bjorn.andersson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
+Hi Pavel.
 
-On 10/25/2018 01:27 PM, Jacek Anaszewski wrote:
-> On 10/25/2018 08:07 PM, Dan Murphy wrote:
->> Rob
->>
->> On 10/24/2018 09:54 AM, Rob Herring wrote:
->>> On Wed, Oct 24, 2018 at 07:07:57AM -0500, Dan Murphy wrote:
->>>> Pavel
->>>>
->>>> On 10/24/2018 04:04 AM, Pavel Machek wrote:
->>>>> Hi!
->>>>>
->>>>>> The LM3697 is a single function LED driver. The single function LED
->>>>>> driver needs to reside in the LED directory as a dedicated LED driver
->>>>>> and not as a MFD device.  The device does have common brightness and ramp
->>>>>
->>>>> So it is single function LED driver. That does not mean it can not
->>>>> share bindings with the rest. Where the bindings live is not imporant.
->>>>>
->>>>
->>>> It can share bindings that are correctly done, not ones that are incomplete and incorrect.
->>>>
->>>> Where bindings live is important to new Linux kernel developers and product 
->>>> developers looking for the proper documentation on the H/W bindings.
->>>>
->>>>>> reside in the Documentation/devicetree/bindings/leds directory and follow the
->>>>>> current LED and general bindings guidelines.
->>>>>
->>>>> What you forgot to tell us in the changelog:
->>>>
->>>> I can add this to the changelog.
->>>>
->>>>>
->>>>>> +Optional child properties:
->>>>>> +	- runtime-ramp-up-msec: Current ramping from one brightness level to
->>>>>> +				the a higher brightness level.
->>>>>> +				Range from 2048 us - 117.44 s
->>>>>
->>>>> The other binding uses "ramp-up-msec". Tell us why you are changing this, or
->>>>> better don't change things needlessly.
->>>>>
->>>>> We don't want to be using "runtime-ramp-up-msec" for one device and
->>>>> "ramp-up-msec" for the other.
->>>>
->>>> This is another example of how the original bindings were incorrect and misleading.
->>>>
->>>> The LM3697 have 2 ramp implementations that can be used.
->>>>
->>>> Startup/Shutdown ramp and Runtime Ramp.  Same Ramp rates different registers and
->>>> different end user experience.
->>>>
->>>> So having a single node call ramp-up-msec is misleading and it does not
->>>> indicate what the H/W will do.
->>>
->>> The existing ones aren't documented (present in the example is not 
->>> documented). This seems like something that should be common rather than 
->>> TI specific. Though it also seems more like something the user would 
->>> want to control (i.e. sysfs) rather than fixed in DT.
->>>
->>
->> Changing the runtime ramping or startup/shutdown ramping could also be done via sysfs.
->> I am not dedicated to having it in the DT file I was following prior art.
->>
->> Jacek
->>
->> Do you have an opinion on this?
+Thank you for the patch.
+
+On 10/24/2018 10:44 PM, Pavel Machek wrote:
 > 
-> This is this problem with the Device Tree's scope of responsibility.
-> It is defined as a means for "describing the hardware", but often
-> this rule is abused by the properties that fall into "configuration"
-> category. E.g. default-state, retain-state-suspended from leds-gpio.txt
-> or linux-default-trigger from common LED bindings.
+> Check for zero duration before skipping step. This fixes pattern
+>     
+>     echo "0 1000 10 2550 0 1000" > pattern
+>     
+> which should do [  .-xXx-.] but does [   Xx-.]
+>     
+> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> Suggested-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 > 
-> In some cases this is justified. The question is whether it is something
-> that necessarily needs to be configured on driver probing? If not, then
-> I'd go for sysfs interface.
+> 
+> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+> index ce7acd1..bc5f495 100644
+> --- a/drivers/leds/trigger/ledtrig-pattern.c
+> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+> @@ -87,9 +87,10 @@ static void pattern_trig_timer_function(struct timer_list *t)
+>  					   data->curr->brightness);
+>  			mod_timer(&data->timer,
+>  				  jiffies + msecs_to_jiffies(data->curr->delta_t));
+> -
+> -			/* Skip the tuple with zero duration */
+> -			pattern_trig_update_patterns(data);
+> +			if (!data->next->delta_t) {
+> +				/* Skip the tuple with zero duration */
+> +				pattern_trig_update_patterns(data);
+> +			}
+>  			/* Select next tuple */
+>  			pattern_trig_update_patterns(data);
+>  		} else {
 > 
 
-Appreciate the feedback.  I think you and Rob are right. This should be a sysfs
-entry.  I can think of instances where the ramp times might want to be modified 
-or even turned off.
+Yep, it fixes the issue.
 
-I will change that implementation.
-
-Dan
+Applied to the fixes-for-4.20-rc2 branch of linux-leds.git
 
 -- 
-------------------
-Dan Murphy
+Best regards,
+Jacek Anaszewski
