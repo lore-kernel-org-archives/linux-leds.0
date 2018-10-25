@@ -1,42 +1,40 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2 1/3] mfd: upboard: Add UP2 platform controller driver
-Date: Thu, 25 Oct 2018 16:15:23 +0300
-Message-ID: <20181025131523.GY10650@smile.fi.intel.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-2-git-send-email-dan@emutex.com>
- <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
- <20181025110505.GA4870@dell>
+From: Dan Sneddon <dan.sneddon@gmail.com>
+Subject: [PATCH] leds: gpio: Fix gpiod for DT based devices
+Date: Thu, 25 Oct 2018 08:06:01 -0700
+Message-ID: <CACceFXdF9XQS6WeSWvO=EKUEGnKwG_VkqUOECA3kJY-Hy72fjQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181025110505.GA4870@dell>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Dan O'Donovan <dan@emutex.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, carlos.iglesias@emutex.com, Javier Arteaga <javier@emutex.com>
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linus.walleij@linaro.org
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 12:05:05PM +0100, Lee Jones wrote:
-> On Sat, 20 Oct 2018, Andy Shevchenko wrote:
-> > On Fri, Oct 19, 2018 at 8:26 PM Dan O'Donovan <dan@emutex.com> wrote:
+commit 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
+failes to set the gpio descriptor for DT based machines.  Since the
+value being passed in is always 0 the descriptor fails the validation
+check but does so silently.  This means the driver probes successfully
+even though it can't actually control the gpio line.  This patch sets
+the gpio descriptor in the path taken by DT based devices.
 
-> > > +       ret = upboard_init_gpio(dev);
-> > > +       if (ret) {
-> > > +               if (ret != -EPROBE_DEFER)
-> > > +                       dev_err(dev, "failed to init GPIOs: %d", ret);
-> > > +               return ret;
-> > > +       }
-> > 
-> > I don't know if probe_err() helper is going to be a part of v4.21
-> > (which this series targets), it would be good to use it.
-> 
-> Interesting.  What does it do?
+Fixes: 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
+Signed-off-by: Dan Sneddon <dan.sneddon@gmail.com>
+---
+ drivers/leds/leds-gpio.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-The code will tell better than I
-https://lore.kernel.org/lkml/20181017132205.5204-1-a.hajda@samsung.com/
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 32fa752..e0e57c2 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -162,6 +162,7 @@ static struct gpio_leds_priv
+*gpio_leds_create(struct platform_device *pdev)
+            fwnode_handle_put(child);
+            return ERR_CAST(led.gpiod);
+        }
++       led_dat->gpiod = led.gpiod;
 
-
+        fwnode_property_read_string(child, "linux,default-trigger",
+                        &led.default_trigger);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.7.4
