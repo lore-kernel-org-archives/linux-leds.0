@@ -1,7 +1,7 @@
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 1/7] arm64: dts: rockchip: ficus: Add on-board LED support
-Date: Mon, 29 Oct 2018 14:30:00 +0530
-Message-ID: <20181029090006.4353-2-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 2/7] arm64: dts: rockchip: rock960: Add on-board LED support
+Date: Mon, 29 Oct 2018 14:30:01 +0530
+Message-ID: <20181029090006.4353-3-manivannan.sadhasivam@linaro.org>
 References: <20181029090006.4353-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20181029090006.4353-1-manivannan.sadhasivam@linaro.org>
@@ -10,28 +10,28 @@ To: robh@kernel.org, heiko@sntech.de, ezequiel@collabora.com, xuwei5@hisilicon.c
 Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linus.walleij@linaro.org, koen.kooi@linaro.org, nicolas.dechesne@linaro.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-Add on-board LED support for Ficus board based on the following
-standard used by other 96Boards:
+Add on-board LED support for Rock960 board based on the following
+standard used by rest of the 96Boards:
 
-red:user1  default-trigger: heartbeat
-red:user2  default-trigger: mmc0/disk-activity (onboard-storage)
-red:user3  default-trigger: mmc1 (SD-card)
-red:user4  default-trigger: none, panic-indicator
-red:wlan   default-trigger: phy0tx
-red:bt     default-trigger: hci0-power
+green:user1  default-trigger: heartbeat
+green:user2  default-trigger: mmc0/disk-activity(onboard-storage)
+green:user3  default-trigger: mmc1 (SD-card)
+green:user4  default-trigger: none, panic-indicator
+yellow:wlan  default-trigger: phy0tx
+blue:bt      default-trigger: hci0-power
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm64/boot/dts/rockchip/rk3399-ficus.dts | 78 +++++++++++++++++++
- 1 file changed, 78 insertions(+)
+ .../boot/dts/rockchip/rk3399-rock960.dts      | 79 +++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts b/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
-index cce266da28cd..027d428917b8 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
-@@ -23,6 +23,52 @@
- 		clock-output-names = "clkin_gmac";
- 		#clock-cells = <0>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts
+index 3c3308daec98..12285c51cceb 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts
+@@ -13,6 +13,53 @@
+ 	chosen {
+ 		stdout-path = "serial2:1500000n8";
  	};
 +
 +	leds {
@@ -41,85 +41,86 @@ index cce266da28cd..027d428917b8 100644
 +			    <&user_led4>, <&wlan_led>, <&bt_led>;
 +
 +		user_led1 {
-+			label = "red:user1";
-+			gpios = <&gpio4 25 0>;
++			label = "green:user1";
++			gpios = <&gpio4 RK_PC2 0>;
 +			linux,default-trigger = "heartbeat";
 +		};
 +
 +		user_led2 {
-+			label = "red:user2";
-+			gpios = <&gpio4 26 0>;
++			label = "green:user2";
++			gpios = <&gpio4 RK_PC6 0>;
 +			linux,default-trigger = "mmc0";
 +		};
 +
 +		user_led3 {
-+			label = "red:user3";
-+			gpios = <&gpio4 30 0>;
++			label = "green:user3";
++			gpios = <&gpio4 RK_PD0 0>;
 +			linux,default-trigger = "mmc1";
 +		};
 +
 +		user_led4 {
-+			label = "red:user4";
-+			gpios = <&gpio1 0 0>;
++			label = "green:user4";
++			gpios = <&gpio4 RK_PD4 0>;
 +			panic-indicator;
 +			linux,default-trigger = "none";
 +		};
 +
 +		wlan_active_led {
-+			label = "red:wlan";
-+			gpios = <&gpio1 1 0>;
++			label = "yellow:wlan";
++			gpios = <&gpio4 RK_PD5 0>;
 +			linux,default-trigger = "phy0tx";
 +			default-state = "off";
 +		};
 +
 +		bt_active_led {
-+			label = "red:bt";
-+			gpios = <&gpio1 4 0>;
++			label = "blue:bt";
++			gpios = <&gpio4 RK_PD6 0>;
 +			linux,default-trigger = "hci0-power";
 +			default-state = "off";
 +		};
 +	};
++
  };
  
- &gmac {
-@@ -66,6 +112,38 @@
- 				<4 27 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
-+
+ &pcie0 {
+@@ -20,6 +67,38 @@
+ };
+ 
+ &pinctrl {
 +	leds {
 +		user_led1: user_led1 {
 +			rockchip,pins =
-+				<4 25 RK_FUNC_GPIO &pcfg_pull_none>;
++				<4 RK_PC2 RK_FUNC_GPIO &pcfg_pull_none>;
 +		};
 +
 +		user_led2: user_led2 {
 +			rockchip,pins =
-+				<4 26 RK_FUNC_GPIO &pcfg_pull_none>;
++				<4 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
 +		};
 +
 +		user_led3: user_led3 {
 +			rockchip,pins =
-+				<4 30 RK_FUNC_GPIO &pcfg_pull_none>;
++				<4 RK_PD0 RK_FUNC_GPIO &pcfg_pull_none>;
 +		};
 +
 +		user_led4: user_led4 {
 +			rockchip,pins =
-+				<1 0 RK_FUNC_GPIO &pcfg_pull_none>;
++				<4 RK_PD4 RK_FUNC_GPIO &pcfg_pull_none>;
 +		};
 +
 +		wlan_led: wlan_led {
 +			rockchip,pins =
-+				<1 1 RK_FUNC_GPIO &pcfg_pull_none>;
++				<4 RK_PD5 RK_FUNC_GPIO &pcfg_pull_none>;
 +		};
 +
 +		bt_led: bt_led {
 +			rockchip,pins =
-+				<1 4 RK_FUNC_GPIO &pcfg_pull_none>;
++				<4 RK_PD6 RK_FUNC_GPIO &pcfg_pull_none>;
 +		};
 +	};
- };
- 
- &usbdrd_dwc3_0 {
++
+ 	pcie {
+ 		pcie_drv: pcie-drv {
+ 			rockchip,pins =
 -- 
 2.17.1
