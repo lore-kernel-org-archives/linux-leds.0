@@ -1,7 +1,7 @@
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 5/7] arm64: dts: hisilicon: poplar: Standardize LED labels and triggers
-Date: Mon, 29 Oct 2018 14:30:04 +0530
-Message-ID: <20181029090006.4353-6-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 6/7] arm64: dts: xilinx: ultra96: Standardize LED labels and triggers
+Date: Mon, 29 Oct 2018 14:30:05 +0530
+Message-ID: <20181029090006.4353-7-manivannan.sadhasivam@linaro.org>
 References: <20181029090006.4353-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20181029090006.4353-1-manivannan.sadhasivam@linaro.org>
@@ -19,58 +19,56 @@ green:user4  default-trigger: none, panic-indicator
 yellow:wlan  default-trigger: phy0tx
 blue:bt      default-trigger: hci0-power
 
-So lets adopt the same for Poplar, which is one of the 96Boards
-Enterprise edition platform.
-
-Due to absence of WLAN and BT support, corresponding LED nodes are not
-considered.
+So lets adopt the same for Ultra96, which is one of the 96Boards
+CE and AI platform. Since the WLAN and BT LEDs are hardwired onboard,
+consolidate only User LEDs.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- .../arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts b/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts
-index d30f6eb8a5ee..32716c96b457 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts
-@@ -35,30 +35,31 @@
+diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
+index eb5e8bddb610..c08a8753215b 100644
+--- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
++++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
+@@ -57,29 +57,30 @@
+ 	leds {
  		compatible = "gpio-leds";
- 
- 		user-led0 {
--			label = "USER-LED0";
+ 		ds2 {
+-			label = "ds2";
 +			label = "green:user1";
- 			gpios = <&gpio6 3 GPIO_ACTIVE_LOW>;
+ 			gpios = <&gpio 20 GPIO_ACTIVE_HIGH>;
  			linux,default-trigger = "heartbeat";
- 			default-state = "off";
  		};
  
- 		user-led1 {
--			label = "USER-LED1";
+ 		ds3 {
+-			label = "ds3";
 +			label = "green:user2";
- 			gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
- 			linux,default-trigger = "mmc0";
+ 			gpios = <&gpio 19 GPIO_ACTIVE_HIGH>;
+-			linux,default-trigger = "phy0tx"; /* WLAN tx */
++			linux,default-trigger = "mmc0";
  			default-state = "off";
  		};
  
- 		user-led2 {
--			label = "USER-LED2";
+ 		ds4 {
+-			label = "ds4";
 +			label = "green:user3";
- 			gpios = <&gpio5 2 GPIO_ACTIVE_LOW>;
--			linux,default-trigger = "none";
+ 			gpios = <&gpio 18 GPIO_ACTIVE_HIGH>;
+-			linux,default-trigger = "phy0rx"; /* WLAN rx */
 +			linux,default-trigger = "mmc1";
  			default-state = "off";
  		};
  
- 		user-led3 {
--			label = "USER-LED3";
+ 		ds5 {
+-			label = "ds5";
 +			label = "green:user4";
- 			gpios = <&gpio10 6 GPIO_ACTIVE_LOW>;
--			linux,default-trigger = "cpu0";
+ 			gpios = <&gpio 17 GPIO_ACTIVE_HIGH>;
+-			linux,default-trigger = "bluetooth-power";
 +			linux,default-trigger = "none";
 +			panic-indicator;
- 			default-state = "off";
  		};
- 	};
+ 
+ 		vbus_det { /* U5 USB5744 VBUS detection via MIO25 */
 -- 
 2.17.1
