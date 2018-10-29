@@ -1,105 +1,67 @@
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v2 7/7] arm64: dts: qcom: apq8016-sbc: Standardize LED
- labels
-Date: Mon, 29 Oct 2018 15:02:10 +0530
-Message-ID: <20181029093210.GA6110@Mani-XPS-13-9360>
-References: <20181029090006.4353-1-manivannan.sadhasivam@linaro.org>
- <20181029090006.4353-8-manivannan.sadhasivam@linaro.org>
- <CAHLCerM91ukzAJZHaxXxwoHU-6mVUV+X9_y_Rs0zmybNnRJCfA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Subject: [PATCH v3 0/7] Standardize onboard LED support for 96Boards
+Date: Mon, 29 Oct 2018 15:12:38 +0530
+Message-ID: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHLCerM91ukzAJZHaxXxwoHU-6mVUV+X9_y_Rs0zmybNnRJCfA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Amit Kucheria <amit.kucheria@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>, ezequiel@collabora.com, Wei Xu <xuwei5@hisilicon.com>, Michal Simek <michal.simek@xilinx.com>, pavel@ucw.cz, Andy Gross <andy.gross@linaro.org>, linux-leds@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, lakml <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, koen.kooi@linaro.org, nicolas.dechesne@linaro.org
+To: robh@kernel.org, heiko@sntech.de, ezequiel@collabora.com, xuwei5@hisilicon.com, michal.simek@xilinx.com, pavel@ucw.cz, andy.gross@linaro.org
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linus.walleij@linaro.org, koen.kooi@linaro.org, nicolas.dechesne@linaro.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 02:47:11PM +0530, Amit Kucheria wrote:
-> On Mon, Oct 29, 2018 at 2:31 PM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > For all 96Boards, the following standard is used for onboard LEDs.
-> >
-> > green:user1  default-trigger: heartbeat
-> > green:user2  default-trigger: mmc0/disk-activity(onboard-storage)
-> > green:user3  default-trigger: mmc1 (SD-card)
-> > green:user4  default-trigger: none, panic-indicator
-> > yellow:wlan  default-trigger: phy0tx
-> > blue:bt      default-trigger: hci0-power
-> >
-> > So lets adopt the same for APQ8016 SBC (Dragonboard410c), which is
-> > one of the 96Boards CE platform.
-> 
-> You are missing a signed-off here :-)
->
+This patchset standardizes the onboard LEDs on 96Boards by maintaining
+common labels and triggers as below:
 
-ahh, my bad. Will fix it in next revision.
+green:user1  default-trigger: heartbeat
+green:user2  default-trigger: mmc0/disk-activity (onboard-storage)
+green:user3  default-trigger: mmc1 (SD card)
+green:user4  default-trigger: none, panic-indicator
+yellow:wlan  default-trigger: phy0tx
+blue:bt      default-trigger: hci0-power
+
+This standardization is required to provide a common behaviour of LEDs
+across all mainline supported 96Boards and also making it easier to
+control it using an userspace library like MRAA.
+
+For Rock960 and Ficus boards, the LED support is added in this patchset.
+Rest of the boards are converted to adopt the standard.
+
+Note: Since there is no UFS trigger available for now, user2 LED trigger
+is set to none on HiKey960.
 
 Thanks,
 Mani
 
-> Acked-by: Amit Kucheria <amit.kucheria@linaro.org>
-> 
-> > ---
-> >  arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-> > index 46feedf7c989..35f95154316b 100644
-> > --- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-> > @@ -300,28 +300,28 @@
-> >                         compatible = "gpio-leds";
-> >
-> >                         led@1 {
-> > -                               label = "apq8016-sbc:green:user1";
-> > +                               label = "green:user1";
-> >                                 gpios = <&msmgpio 21 GPIO_ACTIVE_HIGH>;
-> >                                 linux,default-trigger = "heartbeat";
-> >                                 default-state = "off";
-> >                         };
-> >
-> >                         led@2 {
-> > -                               label = "apq8016-sbc:green:user2";
-> > +                               label = "green:user2";
-> >                                 gpios = <&msmgpio 120 GPIO_ACTIVE_HIGH>;
-> >                                 linux,default-trigger = "mmc0";
-> >                                 default-state = "off";
-> >                         };
-> >
-> >                         led@3 {
-> > -                               label = "apq8016-sbc:green:user3";
-> > +                               label = "green:user3";
-> >                                 gpios = <&pm8916_gpios 1 GPIO_ACTIVE_HIGH>;
-> >                                 linux,default-trigger = "mmc1";
-> >                                 default-state = "off";
-> >                         };
-> >
-> >                         led@4 {
-> > -                               label = "apq8016-sbc:green:user4";
-> > +                               label = "green:user4";
-> >                                 gpios = <&pm8916_gpios 2 GPIO_ACTIVE_HIGH>;
-> >                                 linux,default-trigger = "none";
-> >                                 panic-indicator;
-> > @@ -329,14 +329,14 @@
-> >                         };
-> >
-> >                         led@5 {
-> > -                               label = "apq8016-sbc:yellow:wlan";
-> > +                               label = "yellow:wlan";
-> >                                 gpios = <&pm8916_mpps 2 GPIO_ACTIVE_HIGH>;
-> >                                 linux,default-trigger = "phy0tx";
-> >                                 default-state = "off";
-> >                         };
-> >
-> >                         led@6 {
-> > -                               label = "apq8016-sbc:blue:bt";
-> > +                               label = "blue:bt";
-> >                                 gpios = <&pm8916_mpps 3 GPIO_ACTIVE_HIGH>;
-> >                                 linux,default-trigger = "bluetooth-power";
-> >                                 default-state = "off";
-> > --
-> > 2.17.1
-> >
+Changes in v3:
+
+* Added missing Signed-off-by tag for APQ8016 patch
+* Added Acked-by from Amit
+* Fixed user LED node names for HiKey board
+
+Changes in v2:
+
+* Removed device-name from LED labels as per the suggestion from Simon
+  and Pavel
+* Adopted APQ8016 SBC (Dragonboard410c)
+* Tested the Ficus patch on Ficus V1.1 board
+* CCed LED mailing list
+
+Manivannan Sadhasivam (7):
+  arm64: dts: rockchip: ficus: Add on-board LED support
+  arm64: dts: rockchip: rock960: Add on-board LED support
+  arm64: dts: hisilicon: hikey: Standardize LED labels and triggers
+  arm64: dts: hisilicon: hikey960: Standardize LED labels and triggers
+  arm64: dts: hisilicon: poplar: Standardize LED labels and triggers
+  arm64: dts: xilinx: ultra96: Standardize LED labels and triggers
+  arm64: dts: qcom: apq8016-sbc: Standardize LED labels
+
+ .../boot/dts/hisilicon/hi3660-hikey960.dts    | 18 ++---
+ .../boot/dts/hisilicon/hi3798cv200-poplar.dts | 13 +--
+ .../arm64/boot/dts/hisilicon/hi6220-hikey.dts | 25 +++---
+ arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi     | 12 +--
+ arch/arm64/boot/dts/rockchip/rk3399-ficus.dts | 78 ++++++++++++++++++
+ .../boot/dts/rockchip/rk3399-rock960.dts      | 79 +++++++++++++++++++
+ .../boot/dts/xilinx/zynqmp-zcu100-revC.dts    | 15 ++--
+ 7 files changed, 200 insertions(+), 40 deletions(-)
+
+-- 
+2.17.1
