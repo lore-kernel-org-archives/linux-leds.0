@@ -1,67 +1,61 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: More checks for patterns? was: Fix pattern handling
- optimalization
-Date: Fri, 26 Oct 2018 21:56:51 +0200
-Message-ID: <216b2cb8-dd3e-6849-8643-ab5aef92c7a8@gmail.com>
-References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
- <d90397dd-429f-4f3f-307c-b69dccc360e0@gmail.com> <20181024083143.GA24165@amd>
- <bdadda71-f919-b6a6-4e1c-f87ed298b6b5@gmail.com> <20181024204439.GA32300@amd>
- <79c29d20-ae6a-4a12-28fa-93d7305a0623@gmail.com> <20181025212429.GB18016@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 0/7] Standardize onboard LED support for 96Boards
+Date: Mon, 29 Oct 2018 14:29:59 +0530
+Message-ID: <20181029090006.4353-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181025212429.GB18016@amd>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com, bjorn.andersson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: robh@kernel.org, heiko@sntech.de, ezequiel@collabora.com, xuwei5@hisilicon.com, michal.simek@xilinx.com, pavel@ucw.cz, andy.gross@linaro.org
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linus.walleij@linaro.org, koen.kooi@linaro.org, nicolas.dechesne@linaro.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 10/25/2018 11:24 PM, Pavel Machek wrote:
-> 
-> We don't want brightness < 0, but this may not be best way to do
-> this. We also don't want brightness > max_brightness, but I'm not sure
-> this check is effective.
-> 
-> We probably also don't want pattern where all the delta_t s are zero.
-> 
-> I came up with this so far....
->    	    	       	    	    	      	  	    Pavel
-> 
-> 
-> 
-> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
-> index ce7acd1..bc5f495 100644
-> --- a/drivers/leds/trigger/ledtrig-pattern.c
-> +++ b/drivers/leds/trigger/ledtrig-pattern.c
-> @@ -250,9 +251,16 @@ static ssize_t pattern_trig_store_patterns(struct led_classdev *led_cdev,
->  
->  	while (offset < count - 1 && data->npatterns < MAX_PATTERNS) {
->  		cr = 0;
-> -		ccount = sscanf(buf + offset, "%d %u %n",
-> +		ccount = sscanf(buf + offset, "%u %u %n",
->  				&data->patterns[data->npatterns].brightness,
->  				&data->patterns[data->npatterns].delta_t, &cr);
-> +
-> +		if (data->patterns[data->npatterns].brightness > data->led_cdev->max_brightness) {
-> +			data->npatterns = 0;
-> +			err = -EINVAL;
+This patchset standardizes the onboard LEDs on 96Boards by maintaining
+common labels and triggers as below:
 
-We don't fail on attempt of setting brightness > max_brightness, but
-only truncate it. In this case we could do the same for consistency.
+green:user1  default-trigger: heartbeat
+green:user2  default-trigger: mmc0/disk-activity (onboard-storage)
+green:user3  default-trigger: mmc1 (SD card)
+green:user4  default-trigger: none, panic-indicator
+yellow:wlan  default-trigger: phy0tx
+blue:bt      default-trigger: hci0-power
 
-> +			goto out;
-> +		}
-> +			 
->  		if (ccount != 2) {
->  			data->npatterns = 0;
->  			err = -EINVAL;
-> 
-> 
-> 
-> 
+This standardization is required to provide a common behaviour of LEDs
+across all mainline supported 96Boards and also making it easier to
+control it using an userspace library like MRAA.
+
+For Rock960 and Ficus boards, the LED support is added in this patchset.
+Rest of the boards are converted to adopt the standard.
+
+Note: Since there is no UFS trigger available for now, user2 LED trigger
+is set to none on HiKey960.
+
+Thanks,
+Mani
+
+Changes in v2:
+
+* Removed device-name from LED labels as per the suggestion from Simon
+  and Pavel
+* Adopted APQ8016 SBC (Dragonboard410c)
+* Tested the Ficus patch on Ficus V1.1 board
+* CCed LED mailing list
+
+Manivannan Sadhasivam (7):
+  arm64: dts: rockchip: ficus: Add on-board LED support
+  arm64: dts: rockchip: rock960: Add on-board LED support
+  arm64: dts: hisilicon: hikey: Standardize LED labels and triggers
+  arm64: dts: hisilicon: hikey960: Standardize LED labels and triggers
+  arm64: dts: hisilicon: poplar: Standardize LED labels and triggers
+  arm64: dts: xilinx: ultra96: Standardize LED labels and triggers
+  arm64: dts: qcom: apq8016-sbc: Standardize LED labels
+
+ .../boot/dts/hisilicon/hi3660-hikey960.dts    | 18 ++---
+ .../boot/dts/hisilicon/hi3798cv200-poplar.dts | 13 +--
+ .../arm64/boot/dts/hisilicon/hi6220-hikey.dts | 17 ++--
+ arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi     | 12 +--
+ arch/arm64/boot/dts/rockchip/rk3399-ficus.dts | 78 ++++++++++++++++++
+ .../boot/dts/rockchip/rk3399-rock960.dts      | 79 +++++++++++++++++++
+ .../boot/dts/xilinx/zynqmp-zcu100-revC.dts    | 15 ++--
+ 7 files changed, 196 insertions(+), 36 deletions(-)
 
 -- 
-Best regards,
-Jacek Anaszewski
+2.17.1
