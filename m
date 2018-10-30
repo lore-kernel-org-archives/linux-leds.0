@@ -1,86 +1,72 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 7/7] arm64: dts: qcom: apq8016-sbc: Standardize LED labels
-Date: Mon, 29 Oct 2018 15:12:45 +0530
-Message-ID: <20181029094245.7886-8-manivannan.sadhasivam@linaro.org>
-References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
+ LM3697
+Date: Tue, 30 Oct 2018 08:40:04 -0500
+Message-ID: <bdb73aa2-60d9-3356-f934-091f738e20a0@ti.com>
+References: <20181023170623.31820-1-dmurphy@ti.com>
+ <20181023170623.31820-2-dmurphy@ti.com> <20181024090421.GB24997@amd>
+ <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com> <20181024145434.GC9327@bogus>
+ <beb1a6e1-8120-be94-b1a4-60ea6721765d@ti.com>
+ <ade3121a-58ab-c0c3-6605-cf7d6a638da0@gmail.com> <20181026083703.GB19434@amd>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20181026083703.GB19434@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh@kernel.org, heiko@sntech.de, ezequiel@collabora.com, xuwei5@hisilicon.com, michal.simek@xilinx.com, pavel@ucw.cz, andy.gross@linaro.org
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linus.walleij@linaro.org, koen.kooi@linaro.org, nicolas.dechesne@linaro.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
 List-Id: linux-leds@vger.kernel.org
 
-For all 96Boards, the following standard is used for onboard LEDs.
+All
 
-green:user1  default-trigger: heartbeat
-green:user2  default-trigger: mmc0/disk-activity(onboard-storage)
-green:user3  default-trigger: mmc1 (SD-card)
-green:user4  default-trigger: none, panic-indicator
-yellow:wlan  default-trigger: phy0tx
-blue:bt      default-trigger: hci0-power
+On 10/26/2018 03:37 AM, Pavel Machek wrote:
+> Hi!
+> 
+>>> Do you have an opinion on this?
+>>
+>> This is this problem with the Device Tree's scope of responsibility.
+>> It is defined as a means for "describing the hardware", but often
+>> this rule is abused by the properties that fall into "configuration"
+>> category. E.g. default-state, retain-state-suspended from leds-gpio.txt
+>> or linux-default-trigger from common LED bindings.
+> 
+> "retain-state-suspended" is actually hardware property. On PCs,
+> (most?) LEDs will go off in suspend. On android phones, LEDs stay on
+> while suspended.
+> 
+> "linux-default-trigger" is actually kind-of hardware property, too. If
+> LED has an icon near it (or on it), you want to use that LED in that
+> meaning.
+> 
+> (Thinkpad X60 has "wifi", "bluetooth", "numlock", "capslock", "hdd",
+> "power", "battery", "ac" and "sleep" leds. Surely we should use them
+> in that meaning?)
+> 
+> Now, if someone has leds labeled "user 1..user 4" and uses
+> "linux-default-trigger" there, that is kind of "more interesting".
+> 
+> "default-state" is similar (subset of "linux-default-trigger"); you
+> don't want power LED to go off during kernel boot...
 
-So lets adopt the same for APQ8016 SBC (Dragonboard410c), which is
-one of the 96Boards CE platform.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Acked-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+I just want to follow up here and let you know that I have not abandoned this.
+I am trying to rework and fix up the ti lmu binding as asked by Pavel.  Its proving
+to be a bit of a challenge based on looking forward to what will be the implementation.
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-index 46feedf7c989..35f95154316b 100644
---- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-@@ -300,28 +300,28 @@
- 			compatible = "gpio-leds";
- 
- 			led@1 {
--				label = "apq8016-sbc:green:user1";
-+				label = "green:user1";
- 				gpios = <&msmgpio 21 GPIO_ACTIVE_HIGH>;
- 				linux,default-trigger = "heartbeat";
- 				default-state = "off";
- 			};
- 
- 			led@2 {
--				label = "apq8016-sbc:green:user2";
-+				label = "green:user2";
- 				gpios = <&msmgpio 120 GPIO_ACTIVE_HIGH>;
- 				linux,default-trigger = "mmc0";
- 				default-state = "off";
- 			};
- 
- 			led@3 {
--				label = "apq8016-sbc:green:user3";
-+				label = "green:user3";
- 				gpios = <&pm8916_gpios 1 GPIO_ACTIVE_HIGH>;
- 				linux,default-trigger = "mmc1";
- 				default-state = "off";
- 			};
- 
- 			led@4 {
--				label = "apq8016-sbc:green:user4";
-+				label = "green:user4";
- 				gpios = <&pm8916_gpios 2 GPIO_ACTIVE_HIGH>;
- 				linux,default-trigger = "none";
- 				panic-indicator;
-@@ -329,14 +329,14 @@
- 			};
- 
- 			led@5 {
--				label = "apq8016-sbc:yellow:wlan";
-+				label = "yellow:wlan";
- 				gpios = <&pm8916_mpps 2 GPIO_ACTIVE_HIGH>;
- 				linux,default-trigger = "phy0tx";
- 				default-state = "off";
- 			};
- 
- 			led@6 {
--				label = "apq8016-sbc:blue:bt";
-+				label = "blue:bt";
- 				gpios = <&pm8916_mpps 3 GPIO_ACTIVE_HIGH>;
- 				linux,default-trigger = "bluetooth-power";
- 				default-state = "off";
+I also did go offline and speak with Tony.  I have a Droid 4 so I can test all of this on
+production hardware as well.
+
+Updated patchset will take some time to get out.
+
+Dan
+
+> 
+> 								Pavel
+> 
+
+
 -- 
-2.17.1
+------------------
+Dan Murphy
