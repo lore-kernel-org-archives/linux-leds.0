@@ -1,46 +1,91 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 0/7] Standardize onboard LED support for 96Boards
-Date: Wed, 31 Oct 2018 14:38:56 +0100
-Message-ID: <CACRpkdYThcGjdV9Ezs4qMr8K6_jH40SDUgt0Tps8d+_4sSESyg@mail.gmail.com>
-References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
+From: Dan O'Donovan <dan.odonovan@emutex.com>
+Subject: Re: [PATCH v2 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
+Date: Wed, 31 Oct 2018 19:55:39 +0000
+Message-ID: <4ba11985-c71e-e526-8478-8bfe0e208429@emutex.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1539969334-24577-4-git-send-email-dan@emutex.com>
+ <CAHp75Vc8jxK6mcjOxmuOD0CTqYvfSSL=HMPpRVtOyCb6LxVB2w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <CAHp75Vc8jxK6mcjOxmuOD0CTqYvfSSL=HMPpRVtOyCb6LxVB2w@mail.gmail.com>
+Content-Language: en-US
+Content-ID: <87C31841509831468D8F76348AFB44BF@EURP190.PROD.OUTLOOK.COM>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, ezequiel@collabora.com, Xu Wei <xuwei5@hisilicon.com>, Michal Simek <michal.simek@xilinx.com>, Pavel Machek <pavel@ucw.cz>, Andy Gross <andy.gross@linaro.org>, linux-leds@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-arm-msm@vger.kernel.org, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Koen Kooi <koen.kooi@linaro.org>, Nicolas
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, Dan O'Donovan <dan.odonovan@emutex.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Carlos Iglesias <carlos.iglesias@emutex.com>, Javier Arteaga <javier@emutex.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 10:43 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-
-> This patchset standardizes the onboard LEDs on 96Boards by maintaining
-> common labels and triggers as below:
->
-> green:user1  default-trigger: heartbeat
-> green:user2  default-trigger: mmc0/disk-activity (onboard-storage)
-> green:user3  default-trigger: mmc1 (SD card)
-> green:user4  default-trigger: none, panic-indicator
-> yellow:wlan  default-trigger: phy0tx
-> blue:bt      default-trigger: hci0-power
->
-> This standardization is required to provide a common behaviour of LEDs
-> across all mainline supported 96Boards and also making it easier to
-> control it using an userspace library like MRAA.
->
-> For Rock960 and Ficus boards, the LED support is added in this patchset.
-> Rest of the boards are converted to adopt the standard.
->
-> Note: Since there is no UFS trigger available for now, user2 LED trigger
-> is set to none on HiKey960.
-
-This series:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-It makes a lot of sense to try to unify the userspace ABI so we get
-some kind of order here instead of trying to counteract it with
-per-device kludges in userspace. It definately makes things better!
-
-Yours,
-Linus Walleij
+VGhhbmtzIGZvciB5b3VyIHJldmlldyBmZWVkYmFjaywgQW5keSHCoCBJJ2xsIHNlbmQgYSB2MyBz
+aG9ydGx5IHdpdGggdGhvc2UgY2hhbmdlcyB5b3Ugc3VnZ2VzdGVkLsKgIEkndmUgYWRkZWQgc29t
+ZSBjb21tZW50cyBpbmxpbmUgYmVsb3cuDQoNCk9uIDEwLzIwLzIwMTggMTI6NDAgUE0sIEFuZHkg
+U2hldmNoZW5rbyB3cm90ZToNCj4gT24gRnJpLCBPY3QgMTksIDIwMTggYXQgODoyNCBQTSBEYW4g
+TydEb25vdmFuIDxkYW5AZW11dGV4LmNvbT4gd3JvdGU6DQo+DQo+PiArc3RhdGljIGludCB1cGJv
+YXJkX2dldF9mdW5jdGlvbnNfY291bnQoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2KQ0KPj4g
+K3sNCj4+ICsgICAgICAgcmV0dXJuIDA7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBpbnQgdXBi
+b2FyZF9nZXRfZnVuY3Rpb25fZ3JvdXBzKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCj4+
+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBzZWxl
+Y3RvciwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IGNo
+YXIgKiBjb25zdCAqKmdyb3VwcywNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHVuc2lnbmVkIGludCAqbnVtX2dyb3VwcykNCj4+ICt7DQo+PiArICAgICAgICpncm91
+cHMgPSBOVUxMOw0KPj4gKyAgICAgICAqbnVtX2dyb3VwcyA9IDA7DQo+PiArICAgICAgIHJldHVy
+biAwOw0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgY29uc3QgY2hhciAqdXBib2FyZF9nZXRfZnVu
+Y3Rpb25fbmFtZShzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQo+PiArICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgc2VsZWN0b3IpDQo+
+PiArew0KPj4gKyAgICAgICByZXR1cm4gTlVMTDsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIGlu
+dCB1cGJvYXJkX3NldF9tdXgoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCB1bnNpZ25lZCBp
+bnQgZnVuY3Rpb24sDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQg
+Z3JvdXApDQo+PiArew0KPj4gKyAgICAgICByZXR1cm4gMDsNCj4+ICt9DQo+IEhtbS4uLiBEbyB5
+b3UgbmVlZCB0aG9zZSBzdHVicz8gU2FtZSBRIGZvciBvdGhlciBzdHVicyBpbiB0aGUgZmlsZS4N
+Ckl0IGxvb2tzIGxpa2UgdGhleSdyZSByZXF1aXJlZCBieSBwaW5jdHJsIGNvcmUsIHdoaWNoIHJl
+dHVybnMgYW4gZXJyb3IgaWYgdGhleSdyZSBub3QgcHJvdmlkZWQuDQoNCj4+ICtzdGF0aWMgaW50
+IHVwYm9hcmRfZ3Bpb19yZXF1ZXN0X2VuYWJsZShzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYs
+DQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgcGluY3Ry
+bF9ncGlvX3JhbmdlICpyYW5nZSwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHVuc2lnbmVkIGludCBwaW4pDQo+PiArew0KPj4gKyAgICAgICBjb25zdCBzdHJ1Y3Qg
+cGluX2Rlc2MgKiBjb25zdCBwZCA9IHBpbl9kZXNjX2dldChwY3RsZGV2LCBwaW4pOw0KPj4gKyAg
+ICAgICBjb25zdCBzdHJ1Y3QgdXBib2FyZF9waW4gKnA7DQo+PiArICAgICAgIGludCByZXQ7DQo+
+PiArDQo+PiArICAgICAgIGlmICghcGQpDQo+PiArICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5W
+QUw7DQo+IFdoZW4gaXQgcG9zc2libGUgdG8gaGFwcGVuPw0KPiBTYW1lIFEgZm9yIHRoZSByZXN0
+IHNhbWUgZXhjZXJwdHMuDQpBZ3JlZWQsIGl0IHNob3VsZG4ndCBiZSBwb3NzaWJsZS7CoCBJIHdp
+bGwgcmVtb3ZlIHRoZXNlIGNoZWNrcy4NCg0KPj4gKw0KPj4gKyAgICAgICBpZiAob2Zmc2V0ICsg
+MSA+IHBjdHJsLT5uc29jX2dwaW9zIHx8ICFwY3RybC0+c29jX2dwaW9zW29mZnNldF0pDQo+PiAr
+ICAgICAgICAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVOT0RFVik7DQo+IG9mZnNldCA+PSA/DQo+
+IElzIGl0IGV2ZW4gcG9zc2libGU/DQpBZ3JlZWQsIGl0IHNob3VsZG4ndCBiZSBwb3NzaWJsZS7C
+oCBJIHdpbGwgcmVtb3ZlIHRoZXNlIGNoZWNrcy4NCg0KPj4gK3N0YXRpYyBpbnQgdXBib2FyZF9w
+aW5jdHJsX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+PiArew0KPj4gKyAg
+ICAgICBzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2Ow0KPj4gKyAgICAgICBzdHJ1Y3Qg
+cGluY3RybF9kZXNjICpwY3RsZGVzYzsNCj4+ICsgICAgICAgc3RydWN0IHVwYm9hcmRfcGluY3Ry
+bCAqcGN0cmw7DQo+PiArICAgICAgIHN0cnVjdCB1cGJvYXJkX3BpbiAqcGluczsNCj4+ICsgICAg
+ICAgc3RydWN0IGFjcGlfZGV2aWNlICphZGV2Ow0KPj4gKyAgICAgICBzdHJ1Y3QgcmVnbWFwICpy
+ZWdtYXA7DQo+PiArICAgICAgIHVuc2lnbmVkIGludCBpOw0KPj4gKyAgICAgICBpbnQgcmV0Ow0K
+Pj4gKyAgICAgICBhZGV2ID0gQUNQSV9DT01QQU5JT04oZGV2KTsNCj4+ICsgICAgICAgaWYgKCFh
+ZGV2IHx8IHN0cmNtcChhY3BpX2RldmljZV9oaWQoYWRldiksICJBQU5UMEYwMSIpKQ0KPj4gKyAg
+ICAgICAgICAgICAgIHJldHVybiAtRU5PREVWOw0KPiBTYW1lIFEgYXMgcGVyIExFRCBkcml2ZXIu
+DQpJIGFncmVlLsKgIEkgd2lsbCByZW1vdmUgdGhpcyBjaGVjaywgYm90aCBoZXJlIGFuZCBpbiB0
+aGUgTEVEIGRyaXZlci4NCg0KPj4gKyAgICAgICAgICAgICAgIGlmIChwZC0+ZHJ2X2RhdGEpIHsN
+Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCByZWdfZmllbGQgKmZpZWxkID0gcGQt
+PmRydl9kYXRhOw0KPj4gKw0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgcGluLT5mdW5jX2Vu
+ID0gZGV2bV9yZWdtYXBfZmllbGRfYWxsb2MoZGV2LCByZWdtYXAsDQo+PiArICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAqZmllbGQp
+Ow0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKElTX0VSUihwaW4tPmZ1bmNfZW4pKQ0K
+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gUFRSX0VSUihwaW4tPmZ1
+bmNfZW4pOw0KPj4gKyAgICAgICAgICAgICAgIH0NCj4+ICsNCj4+ICsgICAgICAgICAgICAgICBw
+aW4tPmdwaW9fZW4gPSB1cGJvYXJkX2ZpZWxkX2FsbG9jKGRldiwgcmVnbWFwLA0KPj4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgVVBCT0FSRF9SRUdf
+R1BJT19FTjAsIGkpOw0KPj4gKyAgICAgICAgICAgICAgIGlmIChJU19FUlIocGluLT5ncGlvX2Vu
+KSkNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBQVFJfRVJSKHBpbi0+Z3Bpb19l
+bik7DQo+PiArDQo+PiArICAgICAgICAgICAgICAgcGluLT5ncGlvX2RpciA9IHVwYm9hcmRfZmll
+bGRfYWxsb2MoZGV2LCByZWdtYXAsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgVVBCT0FSRF9SRUdfR1BJT19ESVIwLCBpKTsNCj4+ICsgICAg
+ICAgICAgICAgICBpZiAoSVNfRVJSKHBpbi0+Z3Bpb19kaXIpKQ0KPj4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgcmV0dXJuIFBUUl9FUlIocGluLT5ncGlvX2Rpcik7DQo+PiArDQo+PiArICAgICAg
+ICAgICAgICAgKChzdHJ1Y3QgcGluY3RybF9waW5fZGVzYyAqKXBkKS0+ZHJ2X2RhdGEgPSBwaW47
+DQo+IEknbSBub3Qgc3VyZSBJIHVuZGVyc3RhbmQgdGhlIHB1cnBvc2Ugb2YgdGhpcyBjYXN0aW5n
+Lg0KV2hlbiB0aGUgcGQgcG9pbnRlciBpcyByZXRyaWV2ZWQgZnJvbSBzdHJ1Y3QgcGluY3RybF9k
+ZXNjLCBpdCBoYXMgYSBjb25zdCBjb25zdHJhaW50LsKgIFRoZSBwdXJwb3NlIG9mIHRoZSBjYXN0
+IGlzIHRvIGJ5cGFzcyB0aGF0IGNvbnN0cmFpbnQgZm9yIHRoaXMgdXNlIGNhc2UsIGJlY2F1c2Ug
+dGhpcyBjb2RlIGlzIGFsbG9jYXRpbmcgYW5kIHNldHRpbmcgZHJ2X2RhdGEgZHluYW1pY2FsbHkg
+aGVyZSBhdCBydW4tdGltZSByYXRoZXIgdGhhbiBhdCBjb21waWxlLXRpbWUuDQo=
