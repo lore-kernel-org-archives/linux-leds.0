@@ -1,47 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Dan O'Donovan <dan.odonovan@emutex.com>
 Subject: Re: [PATCH v3 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-Date: Wed, 31 Oct 2018 22:30:20 +0100
-Message-ID: <CACRpkdajUt7Brrf9jCOhEvrzvx24A8tp1NpGKuDPi_0uh5++eg@mail.gmail.com>
+Date: Wed, 31 Oct 2018 21:39:32 +0000
+Message-ID: <ee46cc57-28c0-dc3e-ead1-f979c0eb516e@emutex.com>
 References: <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1541018689-20625-1-git-send-email-dan@emutex.com> <1541018689-20625-4-git-send-email-dan@emutex.com>
+ <1541018689-20625-1-git-send-email-dan@emutex.com>
+ <1541018689-20625-4-git-send-email-dan@emutex.com>
+ <CACRpkdajUt7Brrf9jCOhEvrzvx24A8tp1NpGKuDPi_0uh5++eg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1541018689-20625-4-git-send-email-dan@emutex.com>
+In-Reply-To: <CACRpkdajUt7Brrf9jCOhEvrzvx24A8tp1NpGKuDPi_0uh5++eg@mail.gmail.com>
+Content-Language: en-US
+Content-ID: <CAB8E5971349104080D19B6121C90987@EURP190.PROD.OUTLOOK.COM>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan O'Donovan <dan@emutex.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-leds@vger.kernel.org, carlos.iglesias@emutex.com
+To: Linus Walleij <linus.walleij@linaro.org>, Dan O'Donovan <dan.odonovan@emutex.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Carlos Iglesias <carlos.iglesias@emutex.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Dan,
-
-On Wed, Oct 31, 2018 at 9:45 PM Dan O'Donovan <dan@emutex.com> wrote:
-
-> The UP2 board features a Raspberry Pi compatible pin header (HAT) and a
-> board-specific expansion connector (EXHAT). Both expose assorted
-> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or other
-> on-board devices (ADC, FPGA IP blocks...).
->
-> These lines are routed through an on-board FPGA. The platform controller
-> in its stock firmware provides register fields to change:
->
-> - Line enable (FPGA pins enabled / high impedance)
-> - Line direction (SoC driven / FPGA driven)
->
-> To enable using SoC GPIOs on the pin header, this arrangement requires
-> both configuring the platform controller, and updating the SoC pad
-> registers in sync.
->
-> Add a frontend pinctrl/GPIO driver that registers a new set of GPIO
-> lines for the header pins. When these are requested, the driver
-> propagates this request to the backend SoC pinctrl/GPIO driver by
-> grabbing a GPIO descriptor for the matching SoC GPIO line. The needed
-> mapping for this is retrieved via ACPI properties.
->
-> Signed-off-by: Dan O'Donovan <dan@emutex.com>
-
-It appears you missed my review comments so please read them
-and reply or respin the patch accordingly.
-
-Yours,
-Linus Walleij
+DQpPbiAxMC8zMS8yMDE4IDA5OjMwIFBNLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0KPiBIaSBEYW4s
+DQo+DQo+IE9uIFdlZCwgT2N0IDMxLCAyMDE4IGF0IDk6NDUgUE0gRGFuIE8nRG9ub3ZhbiA8ZGFu
+QGVtdXRleC5jb20+IHdyb3RlOg0KPg0KPj4gVGhlIFVQMiBib2FyZCBmZWF0dXJlcyBhIFJhc3Bi
+ZXJyeSBQaSBjb21wYXRpYmxlIHBpbiBoZWFkZXIgKEhBVCkgYW5kIGENCj4+IGJvYXJkLXNwZWNp
+ZmljIGV4cGFuc2lvbiBjb25uZWN0b3IgKEVYSEFUKS4gQm90aCBleHBvc2UgYXNzb3J0ZWQNCj4+
+IGZ1bmN0aW9ucyBmcm9tIGVpdGhlciB0aGUgU29DIChzdWNoIGFzIEdQSU8sIEkyQywgU1BJLCBV
+QVJULi4uKSBvciBvdGhlcg0KPj4gb24tYm9hcmQgZGV2aWNlcyAoQURDLCBGUEdBIElQIGJsb2Nr
+cy4uLikuDQo+Pg0KPj4gVGhlc2UgbGluZXMgYXJlIHJvdXRlZCB0aHJvdWdoIGFuIG9uLWJvYXJk
+IEZQR0EuIFRoZSBwbGF0Zm9ybSBjb250cm9sbGVyDQo+PiBpbiBpdHMgc3RvY2sgZmlybXdhcmUg
+cHJvdmlkZXMgcmVnaXN0ZXIgZmllbGRzIHRvIGNoYW5nZToNCj4+DQo+PiAtIExpbmUgZW5hYmxl
+IChGUEdBIHBpbnMgZW5hYmxlZCAvIGhpZ2ggaW1wZWRhbmNlKQ0KPj4gLSBMaW5lIGRpcmVjdGlv
+biAoU29DIGRyaXZlbiAvIEZQR0EgZHJpdmVuKQ0KPj4NCj4+IFRvIGVuYWJsZSB1c2luZyBTb0Mg
+R1BJT3Mgb24gdGhlIHBpbiBoZWFkZXIsIHRoaXMgYXJyYW5nZW1lbnQgcmVxdWlyZXMNCj4+IGJv
+dGggY29uZmlndXJpbmcgdGhlIHBsYXRmb3JtIGNvbnRyb2xsZXIsIGFuZCB1cGRhdGluZyB0aGUg
+U29DIHBhZA0KPj4gcmVnaXN0ZXJzIGluIHN5bmMuDQo+Pg0KPj4gQWRkIGEgZnJvbnRlbmQgcGlu
+Y3RybC9HUElPIGRyaXZlciB0aGF0IHJlZ2lzdGVycyBhIG5ldyBzZXQgb2YgR1BJTw0KPj4gbGlu
+ZXMgZm9yIHRoZSBoZWFkZXIgcGlucy4gV2hlbiB0aGVzZSBhcmUgcmVxdWVzdGVkLCB0aGUgZHJp
+dmVyDQo+PiBwcm9wYWdhdGVzIHRoaXMgcmVxdWVzdCB0byB0aGUgYmFja2VuZCBTb0MgcGluY3Ry
+bC9HUElPIGRyaXZlciBieQ0KPj4gZ3JhYmJpbmcgYSBHUElPIGRlc2NyaXB0b3IgZm9yIHRoZSBt
+YXRjaGluZyBTb0MgR1BJTyBsaW5lLiBUaGUgbmVlZGVkDQo+PiBtYXBwaW5nIGZvciB0aGlzIGlz
+IHJldHJpZXZlZCB2aWEgQUNQSSBwcm9wZXJ0aWVzLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IERh
+biBPJ0Rvbm92YW4gPGRhbkBlbXV0ZXguY29tPg0KPiBJdCBhcHBlYXJzIHlvdSBtaXNzZWQgbXkg
+cmV2aWV3IGNvbW1lbnRzIHNvIHBsZWFzZSByZWFkIHRoZW0NCj4gYW5kIHJlcGx5IG9yIHJlc3Bp
+biB0aGUgcGF0Y2ggYWNjb3JkaW5nbHkuDQpIaSBMaW51cy7CoCBVbmZvcnR1bmF0ZWx5IEkgZGlk
+IG1pc3MgeW91ciBjb21tZW50cyBjb21wbGV0ZWx5LsKgIFNvbWVob3csIHRoZXkgd2VyZW4ndCBp
+biBteSBJbmJveCwgYnV0IEkgZm91bmQgdGhlbSBpbiB0aGUgb25saW5lIGFyY2hpdmVzIG5vdy7C
+oCBUaGFua3MgZm9yIGxldHRpbmcgbWUga25vdy4NCkknbGwgcmVwbHkgdG8gdGhvc2Ugc29vbi4N
+Cj4NCj4gWW91cnMsDQo+IExpbnVzIFdhbGxlaWoNCg0K
