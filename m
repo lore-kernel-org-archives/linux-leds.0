@@ -1,81 +1,172 @@
-From: Dan O'Donovan <dan.odonovan@emutex.com>
-Subject: Re: [PATCH v2 1/3] mfd: upboard: Add UP2 platform controller driver
-Date: Wed, 31 Oct 2018 20:40:45 +0000
-Message-ID: <cdf91d51-dfb5-b2dc-99af-60954cf32255@emutex.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-2-git-send-email-dan@emutex.com>
- <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Dan O'Donovan <dan@emutex.com>
+Subject: [PATCH v3 2/3] leds: upboard: Add LED support
+Date: Wed, 31 Oct 2018 20:44:48 +0000
+Message-ID: <1541018689-20625-3-git-send-email-dan@emutex.com>
+References: <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1541018689-20625-1-git-send-email-dan@emutex.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <FA21931C4422744687ECC1B11E2A1830@EURP190.PROD.OUTLOOK.COM>
+In-Reply-To: <1541018689-20625-1-git-send-email-dan@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Dan O'Donovan <dan.odonovan@emutex.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Carlos Iglesias <carlos.iglesias@emutex.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>, Dan O'Donovan <dan@emutex.com>
 List-Id: linux-leds@vger.kernel.org
 
-DQpPbiAxMC8yMC8yMDE4IDEyOjQ5IFBNLCBBbmR5IFNoZXZjaGVua28gd3JvdGU6DQo+IE9uIEZy
-aSwgT2N0IDE5LCAyMDE4IGF0IDg6MjYgUE0gRGFuIE8nRG9ub3ZhbiA8ZGFuQGVtdXRleC5jb20+
-IHdyb3RlOg0KPj4gRnJvbTogSmF2aWVyIEFydGVhZ2EgPGphdmllckBlbXV0ZXguY29tPg0KPj4N
-Cj4+IFVQIFNxdWFyZWQgKFVQMikgaXMgYSB4ODYgU0JDIGZyb20gQUFFT04gYmFzZWQgb24gSW50
-ZWwgQXBvbGxvIExha2UuIEl0DQo+PiBmZWF0dXJlcyBhIE1BWCAxMCBGUEdBIHRoYXQgcm91dGVz
-IGxpbmVzIGZyb20gYm90aCBTb0MgYW5kIG9uLWJvYXJkDQo+PiBkZXZpY2VzIHRvIHR3byBJL08g
-aGVhZGVyczoNCj4+DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICstLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0rDQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwg
-NDAtcGluIFJQaS1saWtlIGhlYWRlciB8DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgKy0t
-LS0tLXwgICAgICAgICAoSEFUKSAgICAgICAgICB8DQo+PiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgfCAgICAgICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rDQo+PiAgICAgKy0tLS0tLS0rICAg
-ICstLS0tLS0tLSsNCj4+ICAgICB8ICAgICAgIHwgICAgfCAgICAgICAgfCAgICAgKy0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLSsNCj4+ICAgICB8ICBTb0MgIHwtLS0tfCAgRlBHQSAgfC0tLS0tfCAg
-Q3VzdG9tIFVQMiBwaW4gaGVhZGVyIHwNCj4+ICAgICB8ICAgICAgIHwgICAgfCAgICAgICAgfCAg
-ICAgfCAgICAgICAgKEVYSEFUKSAgICAgICAgIHwNCj4+ICAgICArLS0tLS0tLSsgICAgKy0tLS0t
-LS0tKyAgICAgKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4+ICAgICAgICAgICAgICAgICAg
-ICAgICAgICB8DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgKy0tLS0tLSogT24tYm9hcmQg
-ZGV2aWNlczogTEVELCBWTFMuLi4NCj4+DQo+PiBUaGlzIGlzIGludGVuZGVkIHRvIGVuYWJsZSB2
-ZW5kb3Itc3BlY2lmaWMgYXBwbGljYXRpb25zIHRvIGN1c3RvbWl6ZSBJL08NCj4+IGhlYWRlciBw
-aW5vdXQsIGFzIHdlbGwgYXMgaW5jbHVkZSBsb3ctbGF0ZW5jeSBmdW5jdGlvbmFsaXR5LiBJdCBh
-bHNvDQo+PiBwZXJmb3JtcyB2b2x0YWdlIGxldmVsIHRyYW5zbGF0aW9uIGJldHdlZW4gdGhlIFNv
-QyAoMS44VikgYW5kIEhBVCBoZWFkZXINCj4+ICgzLjNWKS4NCj4+DQo+PiBPdXQgb2YgdGhlIGJv
-eCwgdGhpcyBibG9jayBpbXBsZW1lbnRzIGEgcGxhdGZvcm0gY29udHJvbGxlciB3aXRoIGENCj4+
-IEdQSU8tYml0YmFuZ2VkIGNvbnRyb2wgaW50ZXJmYWNlLiBJdCdzIGVudW1lcmF0ZWQgYnkgQUNQ
-SSBhbmQgcHJvdmlkZXMNCj4+IHJlZ2lzdGVycyB0byBjb250cm9sOg0KPj4NCj4+IC0gQ29uZmln
-dXJhdGlvbiBvZiBhbGwgRlBHQS1yb3V0ZWQgaGVhZGVyIGxpbmVzLiBUaGVzZSBjYW4gYmUgZHJp
-dmVuDQo+PiAgIFNvQy10by1oZWFkZXIsIGhlYWRlci10by1Tb0Mgb3Igc2V0IGluIGhpZ2ggaW1w
-ZWRhbmNlLg0KPj4NCj4+IC0gT24tYm9hcmQgTEVEcyBhbmQgZW5hYmxlIGxpbmVzIGZvciBvdGhl
-ciBwbGF0Zm9ybSBkZXZpY2VzLg0KPj4NCj4+IEFkZCBjb3JlIHN1cHBvcnQgZm9yIHRoaXMgcGxh
-dGZvcm0gY29udHJvbGxlciBhcyBhIE1GRCBkZXZpY2UsIGV4cG9zaW5nDQo+PiB0aGVzZSByZWdp
-c3RlcnMgYXMgYSByZWdtYXAuDQo+IENhbiB3ZSBzZWUgYSBsaW5rIHRvIG9yIGFuIGV4Y2VycHQg
-b2YgQUNQSSB0YWJsZSBmb3IgdGhpcyBkZXZpY2U/DQpTdXJlOiBodHRwczovL2dpc3QuZ2l0aHVi
-LmNvbS9EYW4tRW11dGV4LzYzODJjMjVmNGI4YjhjZGQ4MGU2MDU2ODg5Y2RmNDhiDQpJJ2xsIGFk
-ZCB0aGlzIHRvIHRoZSBjb3ZlciBsZXR0ZXIgZm9yIHYzIGFzIHdlbGwuDQoNCj4NCj4+ICsjZGVm
-aW5lIHNldF9jbGVhcih1LCB4KSBncGlvZF9zZXRfdmFsdWUoKHUpLT5jbGVhcl9ncGlvLCAoeCkp
-DQo+PiArI2RlZmluZSBzZXRfc3Ryb2JlKHUsIHgpIGdwaW9kX3NldF92YWx1ZSgodSktPnN0cm9i
-ZV9ncGlvLCAoeCkpDQo+PiArI2RlZmluZSBzZXRfZGF0YWluKHUsIHgpIGdwaW9kX3NldF92YWx1
-ZSgodSktPmRhdGFpbl9ncGlvLCAoeCkpDQo+PiArI2RlZmluZSBnZXRfZGF0YW91dCh1KSBncGlv
-ZF9nZXRfdmFsdWUoKHUpLT5kYXRhb3V0X2dwaW8pDQo+IEkgdGhpbmsgdGhlc2UgbWFjcm9zIGRv
-bid0IGJyaW5nIG11Y2ggdmFsdWUuIChVcCB0byB5b3UgYW5kIExlZSB0byBkZWNpZGUpDQpUaGVz
-ZSB3ZXJlIGFkZGVkIGluIHJlc3BvbnNlIHRvIG9uZSBvZiB5b3VyIHJldmlldyBjb21tZW50cyBv
-biB0aGUgb3JpZ2luYWwgcGF0Y2gtc2V0IDspDQpJIHRoaW5rIHRoZXkgZG8gc2xpZ2h0bHkgaW1w
-cm92ZSB0aGUgY29kZSByZWFkYWJpbGl0eSBzbyBJJ2xsIGxlYXZlIHRoZW0gdGhlcmUgaWYgdGhl
-cmUgYXJlIG5vIG9iamVjdGlvbnMuDQoNCj4NCj4NCj4+ICtzdGF0aWMgdm9pZCBfX3JlZ19pb193
-cml0ZShjb25zdCBzdHJ1Y3QgdXBib2FyZF9kZGF0YSAqIGNvbnN0IGRkYXRhLA0KPj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgaW50IHNpemUsIHVuc2lnbmVkIGludCB2YWwp
-DQo+PiArew0KPj4gKyAgICAgICBpbnQgaTsNCj4+ICsNCj4+ICsgICAgICAgLyoNCj4+ICsgICAg
-ICAgICogREFUQUlOIGlzIGxhdGNoZWQgb24gZWFjaCByaXNpbmcgZWRnZSBvZiB0aGUgU1RST0JF
-IHNpZ25hbC4NCj4+ICsgICAgICAgICogRGF0YSAocmVnaXN0ZXIgYWRkcmVzcyBvciB2YWx1ZSkg
-aXMgc2VudCBNU2IgZmlyc3QuDQo+PiArICAgICAgICAqLw0KPj4gKyAgICAgICBmb3IgKGkgPSBz
-aXplIC0gMTsgaSA+PSAwOyBpLS0pIHsNCj4gd2hpbGUgKHNpemUtLSkNClllcCwgbXVjaCBuZWF0
-ZXIuwqAgSSdsbCBjaGFuZ2UgdGhhdCwgdGhhbmtzIcKgIERpdHRvIGZvciB0aGUgb3RoZXIgY29t
-bWVudHMgb24gdGhpcyBmaWxlLisgcmV0ID0gdXBib2FyZF9pbml0X2dwaW8oZGV2KTsNCg0KPj4g
-KyAgICAgICBpZiAocmV0KSB7DQo+PiArICAgICAgICAgICAgICAgaWYgKHJldCAhPSAtRVBST0JF
-X0RFRkVSKQ0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgZGV2X2VycihkZXYsICJmYWlsZWQg
-dG8gaW5pdCBHUElPczogJWQiLCByZXQpOw0KPj4gKyAgICAgICAgICAgICAgIHJldHVybiByZXQ7
-DQo+PiArICAgICAgIH0NCj4gSSBkb24ndCBrbm93IGlmIHByb2JlX2VycigpIGhlbHBlciBpcyBn
-b2luZyB0byBiZSBhIHBhcnQgb2YgdjQuMjENCj4gKHdoaWNoIHRoaXMgc2VyaWVzIHRhcmdldHMp
-LCBpdCB3b3VsZCBiZSBnb29kIHRvIHVzZSBpdC4NCkkgbGVmdCB0aGlzIG91dCBmb3Igbm93IGlu
-IGNhc2UgaXQgY2F1c2VzIGFueSBhd2t3YXJkbmVzcyB3aXRoIG1lcmdpbmcuwqAgSG9wZSB0aGF0
-J3Mgb2suDQoNCg==
+Allow userspace to use the on-board LEDs as "upboard:<color>:".
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Dan O'Donovan <dan@emutex.com>
+---
+ drivers/leds/Kconfig        |  10 +++++
+ drivers/leds/Makefile       |   1 +
+ drivers/leds/leds-upboard.c | 103 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 114 insertions(+)
+ create mode 100644 drivers/leds/leds-upboard.c
+
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index a72f97f..4ae1ec3 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -766,6 +766,16 @@ config LEDS_NIC78BX
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called leds-nic78bx.
+ 
++config LEDS_UPBOARD
++	tristate "LED support for the UP Squared"
++	depends on LEDS_CLASS
++	depends on MFD_UPBOARD
++	help
++	  This option enables support for the LEDs on the UP Squared board.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called leds-upboard.
++
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
+ 
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 4c1b005..a35629d 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -79,6 +79,7 @@ obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
+ obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
+ obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
+ obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
++obj-$(CONFIG_LEDS_UPBOARD)		+= leds-upboard.o
+ 
+ # LED SPI Drivers
+ obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
+diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
+new file mode 100644
+index 0000000..90ebd9b
+--- /dev/null
++++ b/drivers/leds/leds-upboard.c
+@@ -0,0 +1,103 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// UP Board LED driver
++//
++// Copyright (c) 2018, Emutex Ltd.
++//
++// Author: Javier Arteaga <javier@emutex.com>
++//
++
++#include <linux/kernel.h>
++#include <linux/leds.h>
++#include <linux/mfd/upboard.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#define to_upboard_led(cdev) container_of(cdev, struct upboard_led, cdev)
++
++static const char * const upboard_led_names[] = {
++	"upboard:blue:",
++	"upboard:yellow:",
++	"upboard:green:",
++	"upboard:red:",
++};
++
++struct upboard_led {
++	struct regmap_field *field;
++	struct led_classdev cdev;
++};
++
++static enum led_brightness upboard_led_brightness_get(struct led_classdev *cdev)
++{
++	struct upboard_led *led = to_upboard_led(cdev);
++	int ret, brightness = 0;
++
++	ret = regmap_field_read(led->field, &brightness);
++	if (ret < 0)
++		dev_err(cdev->dev, "Failed to get led brightness, %d", ret);
++
++	return brightness;
++}
++
++static void upboard_led_brightness_set(struct led_classdev *cdev,
++				       enum led_brightness brightness)
++{
++	struct upboard_led *led = to_upboard_led(cdev);
++	int ret;
++
++	ret = regmap_field_write(led->field, brightness);
++	if (ret < 0)
++		dev_err(cdev->dev, "Failed to set led brightness, %d", ret);
++}
++
++static int upboard_led_probe(struct platform_device *pdev)
++{
++	unsigned int led_index = pdev->id;
++	struct device *dev = &pdev->dev;
++	struct upboard_led *led;
++	struct regmap *regmap;
++	struct reg_field conf = {
++		.reg = UPBOARD_REG_FUNC_EN0,
++		.lsb = led_index,
++		.msb = led_index,
++	};
++
++	if (led_index >= ARRAY_SIZE(upboard_led_names))
++		return -EINVAL;
++
++	if (!dev->parent)
++		return -EINVAL;
++
++	regmap = dev_get_regmap(dev->parent, NULL);
++	if (!regmap)
++		return -EINVAL;
++
++	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
++	if (!led)
++		return -ENOMEM;
++
++	led->field = devm_regmap_field_alloc(dev, regmap, conf);
++	if (IS_ERR(led->field))
++		return PTR_ERR(led->field);
++
++	led->cdev.max_brightness = 1;
++	led->cdev.brightness_get = upboard_led_brightness_get;
++	led->cdev.brightness_set = upboard_led_brightness_set;
++	led->cdev.name = upboard_led_names[led_index];
++
++	return devm_led_classdev_register(dev, &led->cdev);
++}
++
++static struct platform_driver upboard_led_driver = {
++	.driver = {
++		.name = "upboard-led",
++	},
++};
++
++module_platform_driver_probe(upboard_led_driver, upboard_led_probe);
++
++MODULE_ALIAS("platform:upboard-led");
++MODULE_AUTHOR("Javier Arteaga <javier@emutex.com>");
++MODULE_DESCRIPTION("UP Board LED driver");
++MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
+
+
+------
+This email has been scanned for spam and malware by The Email Laundry.
