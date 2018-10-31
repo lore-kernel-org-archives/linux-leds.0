@@ -1,32 +1,47 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 0/7] Standardize onboard LED support for 96Boards
-Date: Wed, 31 Oct 2018 22:17:29 +0100
-Message-ID: <CACRpkdarkLuErC_F4ALqOB5Wuf7TnDXmWZVKvfR7iGvOy=j++g@mail.gmail.com>
-References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
- <CACRpkdYThcGjdV9Ezs4qMr8K6_jH40SDUgt0Tps8d+_4sSESyg@mail.gmail.com> <CAHTX3dJTXtuA0i-ffPjoiWuxEcF_5JY55VJtWd9zxW4HxK1K3w@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
+Date: Wed, 31 Oct 2018 22:30:20 +0100
+Message-ID: <CACRpkdajUt7Brrf9jCOhEvrzvx24A8tp1NpGKuDPi_0uh5++eg@mail.gmail.com>
+References: <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1541018689-20625-1-git-send-email-dan@emutex.com> <1541018689-20625-4-git-send-email-dan@emutex.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHTX3dJTXtuA0i-ffPjoiWuxEcF_5JY55VJtWd9zxW4HxK1K3w@mail.gmail.com>
+In-Reply-To: <1541018689-20625-4-git-send-email-dan@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Simek <monstr@monstr.eu>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-arm-msm@vger.kernel.org, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, Xu Wei <xuwei5@hisilicon.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Nicolas Dechesne <nicolas.dechesne@linaro.org>, Koen Kooi <koen.kooi@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Pavel Machek <pavel@ucw.cz>, Andy Gross <andy.gross@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>
+To: Dan O'Donovan <dan@emutex.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-leds@vger.kernel.org, carlos.iglesias@emutex.com
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 4:47 PM Michal Simek <monstr@monstr.eu> wrote:
+Hi Dan,
 
-> No doubt about it that this is good. If this is there from day 1 all will be good.
-> I am just saying that we are all the time
-> saying that we shouldn't break userspace. Right now if there is single application
-> which uses existing names we are breaking it.
+On Wed, Oct 31, 2018 at 9:45 PM Dan O'Donovan <dan@emutex.com> wrote:
 
-Yeah that's the problem, the approach is usually that if a tree falls
-in the forest and noone is there to hear it, then it doesn't make a
-sound.
+> The UP2 board features a Raspberry Pi compatible pin header (HAT) and a
+> board-specific expansion connector (EXHAT). Both expose assorted
+> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or other
+> on-board devices (ADC, FPGA IP blocks...).
+>
+> These lines are routed through an on-board FPGA. The platform controller
+> in its stock firmware provides register fields to change:
+>
+> - Line enable (FPGA pins enabled / high impedance)
+> - Line direction (SoC driven / FPGA driven)
+>
+> To enable using SoC GPIOs on the pin header, this arrangement requires
+> both configuring the platform controller, and updating the SoC pad
+> registers in sync.
+>
+> Add a frontend pinctrl/GPIO driver that registers a new set of GPIO
+> lines for the header pins. When these are requested, the driver
+> propagates this request to the backend SoC pinctrl/GPIO driver by
+> grabbing a GPIO descriptor for the matching SoC GPIO line. The needed
+> mapping for this is retrieved via ACPI properties.
+>
+> Signed-off-by: Dan O'Donovan <dan@emutex.com>
 
-But we can't assume someone is there as the safe default either.
-
-I'd say apply it and see what happens, people are supposed to test.
+It appears you missed my review comments so please read them
+and reply or respin the patch accordingly.
 
 Yours,
 Linus Walleij
