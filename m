@@ -1,72 +1,46 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3697
-Date: Tue, 30 Oct 2018 08:40:04 -0500
-Message-ID: <bdb73aa2-60d9-3356-f934-091f738e20a0@ti.com>
-References: <20181023170623.31820-1-dmurphy@ti.com>
- <20181023170623.31820-2-dmurphy@ti.com> <20181024090421.GB24997@amd>
- <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com> <20181024145434.GC9327@bogus>
- <beb1a6e1-8120-be94-b1a4-60ea6721765d@ti.com>
- <ade3121a-58ab-c0c3-6605-cf7d6a638da0@gmail.com> <20181026083703.GB19434@amd>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 0/7] Standardize onboard LED support for 96Boards
+Date: Wed, 31 Oct 2018 14:38:56 +0100
+Message-ID: <CACRpkdYThcGjdV9Ezs4qMr8K6_jH40SDUgt0Tps8d+_4sSESyg@mail.gmail.com>
+References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181026083703.GB19434@amd>
-Content-Language: en-US
+In-Reply-To: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, ezequiel@collabora.com, Xu Wei <xuwei5@hisilicon.com>, Michal Simek <michal.simek@xilinx.com>, Pavel Machek <pavel@ucw.cz>, Andy Gross <andy.gross@linaro.org>, linux-leds@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-arm-msm@vger.kernel.org, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Koen Kooi <koen.kooi@linaro.org>, Nicolas
 List-Id: linux-leds@vger.kernel.org
 
-All
+On Mon, Oct 29, 2018 at 10:43 AM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 
-On 10/26/2018 03:37 AM, Pavel Machek wrote:
-> Hi!
-> 
->>> Do you have an opinion on this?
->>
->> This is this problem with the Device Tree's scope of responsibility.
->> It is defined as a means for "describing the hardware", but often
->> this rule is abused by the properties that fall into "configuration"
->> category. E.g. default-state, retain-state-suspended from leds-gpio.txt
->> or linux-default-trigger from common LED bindings.
-> 
-> "retain-state-suspended" is actually hardware property. On PCs,
-> (most?) LEDs will go off in suspend. On android phones, LEDs stay on
-> while suspended.
-> 
-> "linux-default-trigger" is actually kind-of hardware property, too. If
-> LED has an icon near it (or on it), you want to use that LED in that
-> meaning.
-> 
-> (Thinkpad X60 has "wifi", "bluetooth", "numlock", "capslock", "hdd",
-> "power", "battery", "ac" and "sleep" leds. Surely we should use them
-> in that meaning?)
-> 
-> Now, if someone has leds labeled "user 1..user 4" and uses
-> "linux-default-trigger" there, that is kind of "more interesting".
-> 
-> "default-state" is similar (subset of "linux-default-trigger"); you
-> don't want power LED to go off during kernel boot...
+> This patchset standardizes the onboard LEDs on 96Boards by maintaining
+> common labels and triggers as below:
+>
+> green:user1  default-trigger: heartbeat
+> green:user2  default-trigger: mmc0/disk-activity (onboard-storage)
+> green:user3  default-trigger: mmc1 (SD card)
+> green:user4  default-trigger: none, panic-indicator
+> yellow:wlan  default-trigger: phy0tx
+> blue:bt      default-trigger: hci0-power
+>
+> This standardization is required to provide a common behaviour of LEDs
+> across all mainline supported 96Boards and also making it easier to
+> control it using an userspace library like MRAA.
+>
+> For Rock960 and Ficus boards, the LED support is added in this patchset.
+> Rest of the boards are converted to adopt the standard.
+>
+> Note: Since there is no UFS trigger available for now, user2 LED trigger
+> is set to none on HiKey960.
 
+This series:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-I just want to follow up here and let you know that I have not abandoned this.
-I am trying to rework and fix up the ti lmu binding as asked by Pavel.  Its proving
-to be a bit of a challenge based on looking forward to what will be the implementation.
+It makes a lot of sense to try to unify the userspace ABI so we get
+some kind of order here instead of trying to counteract it with
+per-device kludges in userspace. It definately makes things better!
 
-I also did go offline and speak with Tony.  I have a Droid 4 so I can test all of this on
-production hardware as well.
-
-Updated patchset will take some time to get out.
-
-Dan
-
-> 
-> 								Pavel
-> 
-
-
--- 
-------------------
-Dan Murphy
+Yours,
+Linus Walleij
