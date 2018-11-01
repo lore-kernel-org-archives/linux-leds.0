@@ -1,64 +1,38 @@
-From: Dan O'Donovan <dan.odonovan@emutex.com>
-Subject: Re: [PATCH v3 1/3] mfd: upboard: Add UP2 platform controller driver
-Date: Thu, 1 Nov 2018 09:58:19 +0000
-Message-ID: <32536c5d-9e88-7b2b-d7ab-acb2247870fa@emutex.com>
-References: <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1541018689-20625-1-git-send-email-dan@emutex.com>
- <1541018689-20625-2-git-send-email-dan@emutex.com>
- <20181101080712.GB15973@dell>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v3 0/7] Standardize onboard LED support for 96Boards
+Date: Thu, 01 Nov 2018 11:49:08 +0100
+Message-ID: <1590147.nMxYQPWRVN@diego>
+References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org> <CAHTX3dJTXtuA0i-ffPjoiWuxEcF_5JY55VJtWd9zxW4HxK1K3w@mail.gmail.com> <CACRpkdarkLuErC_F4ALqOB5Wuf7TnDXmWZVKvfR7iGvOy=j++g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181101080712.GB15973@dell>
-Content-Language: en-US
-Content-ID: <04A91641CFDDA54D988CCE97E02623D9@EURP190.PROD.OUTLOOK.COM>
+In-Reply-To: <CACRpkdarkLuErC_F4ALqOB5Wuf7TnDXmWZVKvfR7iGvOy=j++g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Dan O'Donovan <dan.odonovan@emutex.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Carlos Iglesias <carlos.iglesias@emutex.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michal Simek <monstr@monstr.eu>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-arm-msm@vger.kernel.org, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, Xu Wei <xuwei5@hisilicon.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Nicolas Dechesne <nicolas.dechesne@linaro.org>, Koen Kooi <koen.kooi@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Pavel Machek <pavel@ucw.cz>, Andy Gross <andy.gross@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, ezequiel@col
 List-Id: linux-leds@vger.kernel.org
 
-T24gMTEvMDEvMjAxOCAwODowNyBBTSwgTGVlIEpvbmVzIHdyb3RlOg0KPiBPbiBXZWQsIDMxIE9j
-dCAyMDE4LCBEYW4gTydEb25vdmFuIHdyb3RlOg0KPg0KPj4gVVAgU3F1YXJlZCAoVVAyKSBpcyBh
-IHg4NiBTQkMgZnJvbSBBQUVPTiBiYXNlZCBvbiBJbnRlbCBBcG9sbG8gTGFrZS4gSXQNCj4+IGZl
-YXR1cmVzIGEgTUFYIDEwIEZQR0EgdGhhdCByb3V0ZXMgbGluZXMgZnJvbSBib3RoIFNvQyBhbmQg
-b24tYm9hcmQNCj4+IGRldmljZXMgdG8gdHdvIEkvTyBoZWFkZXJzOg0KPj4NCj4+ICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4+ICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCA0MC1waW4gUlBpLWxpa2UgaGVhZGVyIHwN
-Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICArLS0tLS0tfCAgICAgICAgIChIQVQpICAgICAg
-ICAgIHwNCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgICAgKy0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLSsNCj4+ICAgICArLS0tLS0tLSsgICAgKy0tLS0tLS0tKw0KPj4gICAgIHwgICAg
-ICAgfCAgICB8ICAgICAgICB8ICAgICArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKw0KPj4gICAg
-IHwgIFNvQyAgfC0tLS18ICBGUEdBICB8LS0tLS18ICBDdXN0b20gVVAyIHBpbiBoZWFkZXIgfA0K
-Pj4gICAgIHwgICAgICAgfCAgICB8ICAgICAgICB8ICAgICB8ICAgICAgICAoRVhIQVQpICAgICAg
-ICAgfA0KPj4gICAgICstLS0tLS0tKyAgICArLS0tLS0tLS0rICAgICArLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tKw0KPj4gICAgICAgICAgICAgICAgICAgICAgICAgIHwNCj4+ICAgICAgICAgICAg
-ICAgICAgICAgICAgICArLS0tLS0tKiBPbi1ib2FyZCBkZXZpY2VzOiBMRUQsIFZMUy4uLg0KPj4N
-Cj4+IFRoaXMgaXMgaW50ZW5kZWQgdG8gZW5hYmxlIHZlbmRvci1zcGVjaWZpYyBhcHBsaWNhdGlv
-bnMgdG8gY3VzdG9taXplIEkvTw0KPj4gaGVhZGVyIHBpbm91dCwgYXMgd2VsbCBhcyBpbmNsdWRl
-IGxvdy1sYXRlbmN5IGZ1bmN0aW9uYWxpdHkuIEl0IGFsc28NCj4+IHBlcmZvcm1zIHZvbHRhZ2Ug
-bGV2ZWwgdHJhbnNsYXRpb24gYmV0d2VlbiB0aGUgU29DICgxLjhWKSBhbmQgSEFUIGhlYWRlcg0K
-Pj4gKDMuM1YpLg0KPj4NCj4+IE91dCBvZiB0aGUgYm94LCB0aGlzIGJsb2NrIGltcGxlbWVudHMg
-YSBwbGF0Zm9ybSBjb250cm9sbGVyIHdpdGggYQ0KPj4gR1BJTy1iaXRiYW5nZWQgY29udHJvbCBp
-bnRlcmZhY2UuIEl0J3MgZW51bWVyYXRlZCBieSBBQ1BJIGFuZCBwcm92aWRlcw0KPj4gcmVnaXN0
-ZXJzIHRvIGNvbnRyb2w6DQo+Pg0KPj4gLSBDb25maWd1cmF0aW9uIG9mIGFsbCBGUEdBLXJvdXRl
-ZCBoZWFkZXIgbGluZXMuIFRoZXNlIGNhbiBiZSBkcml2ZW4NCj4+ICAgU29DLXRvLWhlYWRlciwg
-aGVhZGVyLXRvLVNvQyBvciBzZXQgaW4gaGlnaCBpbXBlZGFuY2UuDQo+Pg0KPj4gLSBPbi1ib2Fy
-ZCBMRURzIGFuZCBlbmFibGUgbGluZXMgZm9yIG90aGVyIHBsYXRmb3JtIGRldmljZXMuDQo+Pg0K
-Pj4gQWRkIGNvcmUgc3VwcG9ydCBmb3IgdGhpcyBwbGF0Zm9ybSBjb250cm9sbGVyIGFzIGEgTUZE
-IGRldmljZSwgZXhwb3NpbmcNCj4+IHRoZXNlIHJlZ2lzdGVycyBhcyBhIHJlZ21hcC4NCj4+DQo+
-PiBBY2tlZC1ieTogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPg0KPj4g
-U2lnbmVkLW9mZi1ieTogRGFuIE8nRG9ub3ZhbiA8ZGFuQGVtdXRleC5jb20+DQo+PiAtLS0NCj4+
-ICBkcml2ZXJzL21mZC9LY29uZmlnICAgICAgICAgfCAgMTcgKysrDQo+PiAgZHJpdmVycy9tZmQv
-TWFrZWZpbGUgICAgICAgIHwgICAxICsNCj4+ICBkcml2ZXJzL21mZC91cGJvYXJkLmMgICAgICAg
-fCAzMzYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4+ICBp
-bmNsdWRlL2xpbnV4L21mZC91cGJvYXJkLmggfCAgNDQgKysrKysrDQo+PiAgNCBmaWxlcyBjaGFu
-Z2VkLCAzOTggaW5zZXJ0aW9ucygrKQ0KPj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL21m
-ZC91cGJvYXJkLmMNCj4+ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9tZmQvdXBi
-b2FyZC5oDQo+IExvb2tzIGxpa2UgeW91J3ZlIGlnbm9yZWQgdGhlIHJldmlldyBjb21tZW50cyBo
-ZXJlIHRvby4NCkhpIExlZS7CoCBMb29rcyBsaWtlIEkgZGlkbid0IHJlY2VpdmUgeW91ciBvcmln
-aW5hbCBlbWFpbCwgbW9zdCBsaWtlbHkgYmVjYXVzZSBvZiBhIGNyYXBweSBzcGFtIGZpbHRlcmlu
-ZyBzZXJ2aWNlIHdlIHdlcmUgdXNpbmcgaGVyZSB1cCB1bnRpbCByZWNlbnRseS7CoCBJJ3ZlIGZv
-dW5kIHlvdXIgY29tbWVudHMgaW4gb25saW5lIGFyY2hpdmVzIG5vdyBhbmQgd2lsbCBhZGRyZXNz
-IHRoZW0gaW4gdGhlIG5leHQgcmV2aXNpb24gb2YgdGhlIHBhdGNoZXMuwqAgU29ycnkgZm9yIHRo
-ZSBpbmNvbnZlbmllbmNlLiA6KA0KDQo=
+Am Mittwoch, 31. Oktober 2018, 22:17:29 CET schrieb Linus Walleij:
+> On Wed, Oct 31, 2018 at 4:47 PM Michal Simek <monstr@monstr.eu> wrote:
+> > No doubt about it that this is good. If this is there from day 1 all will
+> > be good. I am just saying that we are all the time
+> > saying that we shouldn't break userspace. Right now if there is single
+> > application which uses existing names we are breaking it.
+> 
+> Yeah that's the problem, the approach is usually that if a tree falls
+> in the forest and noone is there to hear it, then it doesn't make a
+> sound.
+> 
+> But we can't assume someone is there as the safe default either.
+> 
+> I'd say apply it and see what happens, people are supposed to test.
+
+At least for the Rockchip boards I'm somewhat confident, that they should
+be new enough to not have anybody building cludges - especially as I think
+LEDs might not be the most interesting device on such boards :-) .
+
+So while I can apply the Rockchip patches, I'm still hoping for some
+kind of consensus beforehand, least we roll it back after the fact  ;-) .
+
+Heiko
