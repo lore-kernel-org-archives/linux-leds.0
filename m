@@ -1,38 +1,65 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v3 0/7] Standardize onboard LED support for 96Boards
-Date: Thu, 01 Nov 2018 11:49:08 +0100
-Message-ID: <1590147.nMxYQPWRVN@diego>
-References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org> <CAHTX3dJTXtuA0i-ffPjoiWuxEcF_5JY55VJtWd9zxW4HxK1K3w@mail.gmail.com> <CACRpkdarkLuErC_F4ALqOB5Wuf7TnDXmWZVKvfR7iGvOy=j++g@mail.gmail.com>
+From: Brian Dodge <bdodge09@gmail.com>
+Subject: [PATCH] backlight/arcxcnn user proper vendor prefix in device tree
+ bindings
+Date: Thu,  1 Nov 2018 18:35:29 -0400
+Message-ID: <1541111729-26492-1-git-send-email-bdodge09@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdarkLuErC_F4ALqOB5Wuf7TnDXmWZVKvfR7iGvOy=j++g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michal Simek <monstr@monstr.eu>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-arm-msm@vger.kernel.org, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, Xu Wei <xuwei5@hisilicon.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Nicolas Dechesne <nicolas.dechesne@linaro.org>, Koen Kooi <koen.kooi@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Pavel Machek <pavel@ucw.cz>, Andy Gross <andy.gross@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, ezequiel@col
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kern
+Cc: Brian Dodge <bdodge09@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
-Am Mittwoch, 31. Oktober 2018, 22:17:29 CET schrieb Linus Walleij:
-> On Wed, Oct 31, 2018 at 4:47 PM Michal Simek <monstr@monstr.eu> wrote:
-> > No doubt about it that this is good. If this is there from day 1 all will
-> > be good. I am just saying that we are all the time
-> > saying that we shouldn't break userspace. Right now if there is single
-> > application which uses existing names we are breaking it.
-> 
-> Yeah that's the problem, the approach is usually that if a tree falls
-> in the forest and noone is there to hear it, then it doesn't make a
-> sound.
-> 
-> But we can't assume someone is there as the safe default either.
-> 
-> I'd say apply it and see what happens, people are supposed to test.
-
-At least for the Rockchip boards I'm somewhat confident, that they should
-be new enough to not have anybody building cludges - especially as I think
-LEDs might not be the most interesting device on such boards :-) .
-
-So while I can apply the Rockchip patches, I'm still hoping for some
-kind of consensus beforehand, least we roll it back after the fact  ;-) .
-
-Heiko
+VGhlIHZlbmRvci1wcmVmaXhlcy50eHQgZmlsZSBwcm9wZXJseSByZWZlcnMgdG8gQXJjdGljU2Fu
+ZAphcyAiYXJjdGljIiB3aGlsZSB0aGUgYWN0dWFsIGJhY2tsaWdodCBkcml2ZXIgYW5kIHRoZQpk
+ZXZpY2UgdHJlZSBiaW5kaW5ncyBmb3IgaXQgaW1wcm9wZXJseSB1c2UgImFyYyIuIFRoZQpiaW5k
+aW5ncyBhcmUgYWxzbyBtb2RpZmllZCB0byBzdXBwb3J0IG5ld2VyIGJhY2tsaWdodCBjaGlwcwpp
+biB0aGUgYXJjeGNubiBmYW1pbHkKClNpZ25lZC1vZmYtYnk6IEJyaWFuIERvZGdlIDxiZG9kZ2Uw
+OUBnbWFpbC5jb20+Ci0tLQogLi4uL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L2FyY3hjbm5fYmwu
+dHh0ICAgICAgICAgICB8IDIwICsrKysrKysrKystLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwg
+MTAgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L2FyY3hjbm5fYmwudHh0IGIv
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L2FyY3hjbm5f
+YmwudHh0CmluZGV4IDIzMGFiZGUuLmRjYWEyMzkgMTAwNjQ0Ci0tLSBhL0RvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9hcmN4Y25uX2JsLnR4dAorKysgYi9E
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvYXJjeGNubl9i
+bC50eHQKQEAgLTEsOCArMSw4IEBACi1CaW5kaW5nIGZvciBBcmN0aWNTYW5kIGFyYzJjMDYwOCBM
+RUQgZHJpdmVyCitCaW5kaW5nIGZvciBBcmN0aWNTYW5kIGFyYyBmYW1pbHkgTEVEIGRyaXZlcnMK
+IAogUmVxdWlyZWQgcHJvcGVydGllczoKLS0gY29tcGF0aWJsZToJCXNob3VsZCBiZSAiYXJjLGFy
+YzJjMDYwOCIKLS0gcmVnOgkJCXNsYXZlIGFkZHJlc3MKKy0gY29tcGF0aWJsZToJImFyY3RpYyxh
+cmMxYzA2MDgiLCAiYXJjdGljLGFyYzJjMDYwOCIsICJhcmN0aWMsYXJjM2MwODQ1IgorLSByZWc6
+CQlzbGF2ZSBhZGRyZXNzCiAKIE9wdGlvbmFsIHByb3BlcnRpZXM6CiAtIGRlZmF1bHQtYnJpZ2h0
+bmVzczoJYnJpZ2h0bmVzcyB2YWx1ZSBvbiBib290LCB2YWx1ZSBmcm9tOiAwLTQwOTUKQEAgLTEx
+LDE5ICsxMSwxOSBAQCBPcHRpb25hbCBwcm9wZXJ0aWVzOgogLSBsZWQtc291cmNlczoJCUxpc3Qg
+b2YgZW5hYmxlZCBjaGFubmVscyBmcm9tIDAgdG8gNS4KIAkJCVNlZSBEb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvbGVkcy9jb21tb24udHh0CiAKLS0gYXJjLGxlZC1jb25maWctMDoJ
+c2V0dGluZyBmb3IgcmVnaXN0ZXIgSUxFRF9DT05GSUdfMAotLSBhcmMsbGVkLWNvbmZpZy0xOglz
+ZXR0aW5nIGZvciByZWdpc3RlciBJTEVEX0NPTkZJR18xCi0tIGFyYyxkaW0tZnJlcToJCVBXTSBt
+b2RlIGZyZXF1ZW5jZSBzZXR0aW5nIChiaXRzIFszOjBdIHVzZWQpCi0tIGFyYyxjb21wLWNvbmZp
+ZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgQ09ORklHX0NPTVAKLS0gYXJjLGZpbHRlci1jb25maWc6
+CXNldHRpbmcgZm9yIHJlZ2lzdGVyIEZJTFRFUl9DT05GSUcKLS0gYXJjLHRyaW0tY29uZmlnOglz
+ZXR0aW5nIGZvciByZWdpc3RlciBJTUFYVFVORQorLSBhcmN0aWMsbGVkLWNvbmZpZy0wOglzZXR0
+aW5nIGZvciByZWdpc3RlciBJTEVEX0NPTkZJR18wCistIGFyY3RpYyxsZWQtY29uZmlnLTE6CXNl
+dHRpbmcgZm9yIHJlZ2lzdGVyIElMRURfQ09ORklHXzEKKy0gYXJjdGljLGRpbS1mcmVxOgkJUFdN
+IG1vZGUgZnJlcXVlbmNlIHNldHRpbmcgKGJpdHMgWzM6MF0gdXNlZCkKKy0gYXJjdGljLGNvbXAt
+Y29uZmlnOglzZXR0aW5nIGZvciByZWdpc3RlciBDT05GSUdfQ09NUAorLSBhcmN0aWMsZmlsdGVy
+LWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgRklMVEVSX0NPTkZJRworLSBhcmN0aWMsdHJp
+bS1jb25maWc6CXNldHRpbmcgZm9yIHJlZ2lzdGVyIElNQVhUVU5FCiAKIE5vdGU6IE9wdGlvbmFs
+IHByb3BlcnRpZXMgbm90IHNwZWNpZmllZCB3aWxsIGRlZmF1bHQgdG8gdmFsdWVzIGluIElDIEVQ
+Uk9NCiAKIEV4YW1wbGU6CiAKIGFyYzJjMDYwOEAzMCB7Ci0JY29tcGF0aWJsZSA9ICJhcmMsYXJj
+MmMwNjA4IjsKKwljb21wYXRpYmxlID0gImFyY3RpYyxhcmMyYzA2MDgiOwogCXJlZyA9IDwweDMw
+PjsKIAlkZWZhdWx0LWJyaWdodG5lc3MgPSA8NTAwPjsKIAlsYWJlbCA9ICJsY2QtYmFja2xpZ2h0
+IjsKLS0gCjIuNy40CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
