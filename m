@@ -1,48 +1,71 @@
-From: Dan O'Donovan <dan.odonovan@emutex.com>
-Subject: Re: [PATCH v3 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-Date: Wed, 31 Oct 2018 21:39:32 +0000
-Message-ID: <ee46cc57-28c0-dc3e-ead1-f979c0eb516e@emutex.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 1/3] mfd: upboard: Add UP2 platform controller driver
+Date: Thu, 1 Nov 2018 08:07:12 +0000
+Message-ID: <20181101080712.GB15973@dell>
 References: <1539969334-24577-1-git-send-email-dan@emutex.com>
  <1541018689-20625-1-git-send-email-dan@emutex.com>
- <1541018689-20625-4-git-send-email-dan@emutex.com>
- <CACRpkdajUt7Brrf9jCOhEvrzvx24A8tp1NpGKuDPi_0uh5++eg@mail.gmail.com>
+ <1541018689-20625-2-git-send-email-dan@emutex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdajUt7Brrf9jCOhEvrzvx24A8tp1NpGKuDPi_0uh5++eg@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <CAB8E5971349104080D19B6121C90987@EURP190.PROD.OUTLOOK.COM>
+Content-Disposition: inline
+In-Reply-To: <1541018689-20625-2-git-send-email-dan@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Dan O'Donovan <dan.odonovan@emutex.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Carlos Iglesias <carlos.iglesias@emutex.com>
+To: Dan O'Donovan <dan@emutex.com>
+Cc: linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>
 List-Id: linux-leds@vger.kernel.org
 
-DQpPbiAxMC8zMS8yMDE4IDA5OjMwIFBNLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0KPiBIaSBEYW4s
-DQo+DQo+IE9uIFdlZCwgT2N0IDMxLCAyMDE4IGF0IDk6NDUgUE0gRGFuIE8nRG9ub3ZhbiA8ZGFu
-QGVtdXRleC5jb20+IHdyb3RlOg0KPg0KPj4gVGhlIFVQMiBib2FyZCBmZWF0dXJlcyBhIFJhc3Bi
-ZXJyeSBQaSBjb21wYXRpYmxlIHBpbiBoZWFkZXIgKEhBVCkgYW5kIGENCj4+IGJvYXJkLXNwZWNp
-ZmljIGV4cGFuc2lvbiBjb25uZWN0b3IgKEVYSEFUKS4gQm90aCBleHBvc2UgYXNzb3J0ZWQNCj4+
-IGZ1bmN0aW9ucyBmcm9tIGVpdGhlciB0aGUgU29DIChzdWNoIGFzIEdQSU8sIEkyQywgU1BJLCBV
-QVJULi4uKSBvciBvdGhlcg0KPj4gb24tYm9hcmQgZGV2aWNlcyAoQURDLCBGUEdBIElQIGJsb2Nr
-cy4uLikuDQo+Pg0KPj4gVGhlc2UgbGluZXMgYXJlIHJvdXRlZCB0aHJvdWdoIGFuIG9uLWJvYXJk
-IEZQR0EuIFRoZSBwbGF0Zm9ybSBjb250cm9sbGVyDQo+PiBpbiBpdHMgc3RvY2sgZmlybXdhcmUg
-cHJvdmlkZXMgcmVnaXN0ZXIgZmllbGRzIHRvIGNoYW5nZToNCj4+DQo+PiAtIExpbmUgZW5hYmxl
-IChGUEdBIHBpbnMgZW5hYmxlZCAvIGhpZ2ggaW1wZWRhbmNlKQ0KPj4gLSBMaW5lIGRpcmVjdGlv
-biAoU29DIGRyaXZlbiAvIEZQR0EgZHJpdmVuKQ0KPj4NCj4+IFRvIGVuYWJsZSB1c2luZyBTb0Mg
-R1BJT3Mgb24gdGhlIHBpbiBoZWFkZXIsIHRoaXMgYXJyYW5nZW1lbnQgcmVxdWlyZXMNCj4+IGJv
-dGggY29uZmlndXJpbmcgdGhlIHBsYXRmb3JtIGNvbnRyb2xsZXIsIGFuZCB1cGRhdGluZyB0aGUg
-U29DIHBhZA0KPj4gcmVnaXN0ZXJzIGluIHN5bmMuDQo+Pg0KPj4gQWRkIGEgZnJvbnRlbmQgcGlu
-Y3RybC9HUElPIGRyaXZlciB0aGF0IHJlZ2lzdGVycyBhIG5ldyBzZXQgb2YgR1BJTw0KPj4gbGlu
-ZXMgZm9yIHRoZSBoZWFkZXIgcGlucy4gV2hlbiB0aGVzZSBhcmUgcmVxdWVzdGVkLCB0aGUgZHJp
-dmVyDQo+PiBwcm9wYWdhdGVzIHRoaXMgcmVxdWVzdCB0byB0aGUgYmFja2VuZCBTb0MgcGluY3Ry
-bC9HUElPIGRyaXZlciBieQ0KPj4gZ3JhYmJpbmcgYSBHUElPIGRlc2NyaXB0b3IgZm9yIHRoZSBt
-YXRjaGluZyBTb0MgR1BJTyBsaW5lLiBUaGUgbmVlZGVkDQo+PiBtYXBwaW5nIGZvciB0aGlzIGlz
-IHJldHJpZXZlZCB2aWEgQUNQSSBwcm9wZXJ0aWVzLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IERh
-biBPJ0Rvbm92YW4gPGRhbkBlbXV0ZXguY29tPg0KPiBJdCBhcHBlYXJzIHlvdSBtaXNzZWQgbXkg
-cmV2aWV3IGNvbW1lbnRzIHNvIHBsZWFzZSByZWFkIHRoZW0NCj4gYW5kIHJlcGx5IG9yIHJlc3Bp
-biB0aGUgcGF0Y2ggYWNjb3JkaW5nbHkuDQpIaSBMaW51cy7CoCBVbmZvcnR1bmF0ZWx5IEkgZGlk
-IG1pc3MgeW91ciBjb21tZW50cyBjb21wbGV0ZWx5LsKgIFNvbWVob3csIHRoZXkgd2VyZW4ndCBp
-biBteSBJbmJveCwgYnV0IEkgZm91bmQgdGhlbSBpbiB0aGUgb25saW5lIGFyY2hpdmVzIG5vdy7C
-oCBUaGFua3MgZm9yIGxldHRpbmcgbWUga25vdy4NCkknbGwgcmVwbHkgdG8gdGhvc2Ugc29vbi4N
-Cj4NCj4gWW91cnMsDQo+IExpbnVzIFdhbGxlaWoNCg0K
+On Wed, 31 Oct 2018, Dan O'Donovan wrote:
+
+> UP Squared (UP2) is a x86 SBC from AAEON based on Intel Apollo Lake. It
+> features a MAX 10 FPGA that routes lines from both SoC and on-board
+> devices to two I/O headers:
+> 
+>                                 +------------------------+
+>                                 | 40-pin RPi-like header |
+>                          +------|         (HAT)          |
+>                          |      +------------------------+
+>     +-------+    +--------+
+>     |       |    |        |     +------------------------+
+>     |  SoC  |----|  FPGA  |-----|  Custom UP2 pin header |
+>     |       |    |        |     |        (EXHAT)         |
+>     +-------+    +--------+     +------------------------+
+>                          |
+>                          +------* On-board devices: LED, VLS...
+> 
+> This is intended to enable vendor-specific applications to customize I/O
+> header pinout, as well as include low-latency functionality. It also
+> performs voltage level translation between the SoC (1.8V) and HAT header
+> (3.3V).
+> 
+> Out of the box, this block implements a platform controller with a
+> GPIO-bitbanged control interface. It's enumerated by ACPI and provides
+> registers to control:
+> 
+> - Configuration of all FPGA-routed header lines. These can be driven
+>   SoC-to-header, header-to-SoC or set in high impedance.
+> 
+> - On-board LEDs and enable lines for other platform devices.
+> 
+> Add core support for this platform controller as a MFD device, exposing
+> these registers as a regmap.
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Dan O'Donovan <dan@emutex.com>
+> ---
+>  drivers/mfd/Kconfig         |  17 +++
+>  drivers/mfd/Makefile        |   1 +
+>  drivers/mfd/upboard.c       | 336 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/upboard.h |  44 ++++++
+>  4 files changed, 398 insertions(+)
+>  create mode 100644 drivers/mfd/upboard.c
+>  create mode 100644 include/linux/mfd/upboard.h
+
+Looks like you've ignored the review comments here too.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
