@@ -1,77 +1,180 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Subject: Re: [PATCH] backlight/arcxcnn support newer chips in arcxcnn family
- and fix vendor prefix
-Date: Sat, 3 Nov 2018 16:58:27 +0000
-Message-ID: <20181103165827.j7yjujcakwg42owp@holly.lan>
-References: <1541112541-27046-1-git-send-email-bdodge09@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1541112541-27046-1-git-send-email-bdodge09@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Brian Dodge <bdodge09@gmail.com>
-Cc: mark.rutland@arm.com, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, linux-leds@vger.kernel.org
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH] ARM: OMAP1: ams-delta: Provide GPIO lookup table for LED device
+Date: Tue,  6 Nov 2018 00:23:49 +0100
+Message-ID: <20181105232349.17351-1-jmkrzyszt@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
-T24gVGh1LCBOb3YgMDEsIDIwMTggYXQgMDY6NDk6MDFQTSAtMDQwMCwgQnJpYW4gRG9kZ2Ugd3Jv
-dGU6Cj4gU3VwcG9ydCBmb3IgQXJjdGljU2FuZCBhcmMxIGFuZCBhcmMzIHNoaXBzIGlzIGFkZGVk
-LiBTb21lIHJhbmdlcwo+IGFuZCBjb250cm9sIHBhdGhzIGFyZSBtb2RpZmllZCBiYXNlZCBvbiB0
-aGUgY2hpcCBpZCBwcm9iZWQgdmlhCj4gaTJjLgoKVGhpcy4uLgoKCj4gQWxzbyB1cGRhdGVzIHZl
-bmRvciBwcmVmaXggdG8gYXJjdGljIGZyb20gYXJjIHdoaWNoIHdhcyBhCj4gbWlzdGFrZSBpbiB0
-aGUgb3JpZ2luYWwgZHJpdmVyIHN1Ym1pc3Npb24KCi4uLiBhbmQgdGhpcyBsb29rcyBsaWtlIHRo
-ZXkgd291bGQgYmUgYmV0dGVyIHBsYWNlZCBpbnRvIHNlcGFyYXRlCnBhdGNoZXMuCgoKPiBTaWdu
-ZWQtb2ZmLWJ5OiBCcmlhbiBEb2RnZSA8YmRvZGdlMDlAZ21haWwuY29tPgoKVGhpcyBsb29rcyB2
-ZXJ5IHNpbWlsYXIgdG8geW91ciBwYXRjaCBvZiAxMCBtaW51dGVzIGFnby4gSXMgaXQgYW4KdXBk
-YXRlZCB2ZXJzaW9uPyBTb3JyeSB0byBnZXQgYWxsIHByb2NlZHVyYWwgb24geW91IGJ1dCBpZiBp
-dCBpcwphbiB1cGRhdGUgdGhlbiBidW1waW5nIHRoZSB2ZXJzaW9uIG51bWJlciBhbmQgc3VtbWFy
-eSBvZiBjaGFuZ2VzCndvdWxkIGJlIGhlbHBmdWwgKGV2ZW4gaWYgdGhlIGNoYW5nZSBzdW1tYXJ5
-IGlzIGp1c3QgImRlY2lkZWQgdG8KcmV3cml0ZSB0aGUgcGF0Y2ggaGVhZGVyIHRvIGltcHJvdmUg
-Y2xhcml0eSIpLgoKCkRhbmllbC4KCgo+IC0tLQo+ICAuLi4vYmluZGluZ3MvbGVkcy9iYWNrbGln
-aHQvYXJjeGNubl9ibC50eHQgICAgICAgICAgIHwgMjAgKysrKysrKysrKy0tLS0tLS0tLS0KPiAg
-MSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQo+IAo+IGRp
-ZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGln
-aHQvYXJjeGNubl9ibC50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVk
-cy9iYWNrbGlnaHQvYXJjeGNubl9ibC50eHQKPiBpbmRleCBkY2FhMjM5Li4yMzBhYmRlIDEwMDY0
-NAo+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdo
-dC9hcmN4Y25uX2JsLnR4dAo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
-cy9sZWRzL2JhY2tsaWdodC9hcmN4Y25uX2JsLnR4dAo+IEBAIC0xLDggKzEsOCBAQAo+IC1CaW5k
-aW5nIGZvciBBcmN0aWNTYW5kIGFyYyBmYW1pbHkgTEVEIGRyaXZlcnMKPiArQmluZGluZyBmb3Ig
-QXJjdGljU2FuZCBhcmMyYzA2MDggTEVEIGRyaXZlcgo+ICAKPiAgUmVxdWlyZWQgcHJvcGVydGll
-czoKPiAtLSBjb21wYXRpYmxlOgkiYXJjdGljLGFyYzFjMDYwOCIsICJhcmN0aWMsYXJjMmMwNjA4
-IiwgImFyY3RpYyxhcmMzYzA4NDUiCj4gLS0gcmVnOgkJc2xhdmUgYWRkcmVzcwo+ICstIGNvbXBh
-dGlibGU6CQlzaG91bGQgYmUgImFyYyxhcmMyYzA2MDgiCj4gKy0gcmVnOgkJCXNsYXZlIGFkZHJl
-c3MKPiAgCj4gIE9wdGlvbmFsIHByb3BlcnRpZXM6Cj4gIC0gZGVmYXVsdC1icmlnaHRuZXNzOgli
-cmlnaHRuZXNzIHZhbHVlIG9uIGJvb3QsIHZhbHVlIGZyb206IDAtNDA5NQo+IEBAIC0xMSwxOSAr
-MTEsMTkgQEAgT3B0aW9uYWwgcHJvcGVydGllczoKPiAgLSBsZWQtc291cmNlczoJCUxpc3Qgb2Yg
-ZW5hYmxlZCBjaGFubmVscyBmcm9tIDAgdG8gNS4KPiAgCQkJU2VlIERvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9sZWRzL2NvbW1vbi50eHQKPiAgCj4gLS0gYXJjdGljLGxlZC1jb25m
-aWctMDoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgSUxFRF9DT05GSUdfMAo+IC0tIGFyY3RpYyxsZWQt
-Y29uZmlnLTE6CXNldHRpbmcgZm9yIHJlZ2lzdGVyIElMRURfQ09ORklHXzEKPiAtLSBhcmN0aWMs
-ZGltLWZyZXE6CQlQV00gbW9kZSBmcmVxdWVuY2Ugc2V0dGluZyAoYml0cyBbMzowXSB1c2VkKQo+
-IC0tIGFyY3RpYyxjb21wLWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgQ09ORklHX0NPTVAK
-PiAtLSBhcmN0aWMsZmlsdGVyLWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgRklMVEVSX0NP
-TkZJRwo+IC0tIGFyY3RpYyx0cmltLWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgSU1BWFRV
-TkUKPiArLSBhcmMsbGVkLWNvbmZpZy0wOglzZXR0aW5nIGZvciByZWdpc3RlciBJTEVEX0NPTkZJ
-R18wCj4gKy0gYXJjLGxlZC1jb25maWctMToJc2V0dGluZyBmb3IgcmVnaXN0ZXIgSUxFRF9DT05G
-SUdfMQo+ICstIGFyYyxkaW0tZnJlcToJCVBXTSBtb2RlIGZyZXF1ZW5jZSBzZXR0aW5nIChiaXRz
-IFszOjBdIHVzZWQpCj4gKy0gYXJjLGNvbXAtY29uZmlnOglzZXR0aW5nIGZvciByZWdpc3RlciBD
-T05GSUdfQ09NUAo+ICstIGFyYyxmaWx0ZXItY29uZmlnOglzZXR0aW5nIGZvciByZWdpc3RlciBG
-SUxURVJfQ09ORklHCj4gKy0gYXJjLHRyaW0tY29uZmlnOglzZXR0aW5nIGZvciByZWdpc3RlciBJ
-TUFYVFVORQo+ICAKPiAgTm90ZTogT3B0aW9uYWwgcHJvcGVydGllcyBub3Qgc3BlY2lmaWVkIHdp
-bGwgZGVmYXVsdCB0byB2YWx1ZXMgaW4gSUMgRVBST00KPiAgCj4gIEV4YW1wbGU6Cj4gIAo+ICBh
-cmMyYzA2MDhAMzAgewo+IC0JY29tcGF0aWJsZSA9ICJhcmN0aWMsYXJjMmMwNjA4IjsKPiArCWNv
-bXBhdGlibGUgPSAiYXJjLGFyYzJjMDYwOCI7Cj4gIAlyZWcgPSA8MHgzMD47Cj4gIAlkZWZhdWx0
-LWJyaWdodG5lc3MgPSA8NTAwPjsKPiAgCWxhYmVsID0gImxjZC1iYWNrbGlnaHQiOwo+IC0tIAo+
-IDIuNy40Cj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Global GPIO numbers no longer have to be passed to leds-gpio driver,
+replace their assignment with a lookup table.
+
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+ arch/arm/mach-omap1/board-ams-delta.c | 95 ++++++++++-------------------------
+ 1 file changed, 26 insertions(+), 69 deletions(-)
+
+diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+index b8acc9912a58..19e0c071d675 100644
+--- a/arch/arm/mach-omap1/board-ams-delta.c
++++ b/arch/arm/mach-omap1/board-ams-delta.c
+@@ -371,15 +371,9 @@ static struct gpiod_lookup_table ams_delta_lcd_gpio_table = {
+ 	},
+ };
+ 
+-/*
+- * Dynamically allocated GPIO numbers must be obtained fromm GPIO device
+- * before they can be put in the gpio_led table.  Before that happens,
+- * initialize the table with invalid GPIO numbers, not 0.
+- */
+ static struct gpio_led gpio_leds[] __initdata = {
+ 	[LATCH1_PIN_LED_CAMERA] = {
+ 		.name		 = "camera",
+-		.gpio		 = -EINVAL,
+ 		.default_state	 = LEDS_GPIO_DEFSTATE_OFF,
+ #ifdef CONFIG_LEDS_TRIGGERS
+ 		.default_trigger = "ams_delta_camera",
+@@ -387,27 +381,22 @@ static struct gpio_led gpio_leds[] __initdata = {
+ 	},
+ 	[LATCH1_PIN_LED_ADVERT] = {
+ 		.name		 = "advert",
+-		.gpio		 = -EINVAL,
+ 		.default_state	 = LEDS_GPIO_DEFSTATE_OFF,
+ 	},
+ 	[LATCH1_PIN_LED_MAIL] = {
+ 		.name		 = "email",
+-		.gpio		 = -EINVAL,
+ 		.default_state	 = LEDS_GPIO_DEFSTATE_OFF,
+ 	},
+ 	[LATCH1_PIN_LED_HANDSFREE] = {
+ 		.name		 = "handsfree",
+-		.gpio		 = -EINVAL,
+ 		.default_state	 = LEDS_GPIO_DEFSTATE_OFF,
+ 	},
+ 	[LATCH1_PIN_LED_VOICEMAIL] = {
+ 		.name		 = "voicemail",
+-		.gpio		 = -EINVAL,
+ 		.default_state	 = LEDS_GPIO_DEFSTATE_OFF,
+ 	},
+ 	[LATCH1_PIN_LED_VOICE] = {
+ 		.name		 = "voice",
+-		.gpio		 = -EINVAL,
+ 		.default_state	 = LEDS_GPIO_DEFSTATE_OFF,
+ 	},
+ };
+@@ -417,6 +406,24 @@ static const struct gpio_led_platform_data leds_pdata __initconst = {
+ 	.num_leds	= ARRAY_SIZE(gpio_leds),
+ };
+ 
++static struct gpiod_lookup_table leds_gpio_table = {
++	.table = {
++		GPIO_LOOKUP_IDX(LATCH1_LABEL, LATCH1_PIN_LED_CAMERA, NULL,
++				LATCH1_PIN_LED_CAMERA, 0),
++		GPIO_LOOKUP_IDX(LATCH1_LABEL, LATCH1_PIN_LED_ADVERT, NULL,
++				LATCH1_PIN_LED_ADVERT, 0),
++		GPIO_LOOKUP_IDX(LATCH1_LABEL, LATCH1_PIN_LED_MAIL, NULL,
++				LATCH1_PIN_LED_MAIL, 0),
++		GPIO_LOOKUP_IDX(LATCH1_LABEL, LATCH1_PIN_LED_HANDSFREE, NULL,
++				LATCH1_PIN_LED_HANDSFREE, 0),
++		GPIO_LOOKUP_IDX(LATCH1_LABEL, LATCH1_PIN_LED_VOICEMAIL, NULL,
++				LATCH1_PIN_LED_VOICEMAIL, 0),
++		GPIO_LOOKUP_IDX(LATCH1_LABEL, LATCH1_PIN_LED_VOICE, NULL,
++				LATCH1_PIN_LED_VOICE, 0),
++		{ },
++	},
++};
++
+ static struct i2c_board_info ams_delta_camera_board_info[] = {
+ 	{
+ 		I2C_BOARD_INFO("ov6650", 0x60),
+@@ -677,6 +684,8 @@ static void __init ams_delta_latch2_init(void)
+ 
+ static void __init ams_delta_init(void)
+ {
++	struct platform_device *leds_pdev;
++
+ 	/* mux pins for uarts */
+ 	omap_cfg_reg(UART1_TX);
+ 	omap_cfg_reg(UART1_RTS);
+@@ -740,6 +749,12 @@ static void __init ams_delta_init(void)
+ 	gpiod_add_lookup_tables(ams_delta_gpio_tables,
+ 				ARRAY_SIZE(ams_delta_gpio_tables));
+ 
++	leds_pdev = gpio_led_register_device(PLATFORM_DEVID_NONE, &leds_pdata);
++	if (!IS_ERR(leds_pdev)) {
++		leds_gpio_table.dev_id = dev_name(&leds_pdev->dev);
++		gpiod_add_lookup_table(&leds_gpio_table);
++	}
++
+ 	omap_writew(omap_readw(ARM_RSTCT1) | 0x0004, ARM_RSTCT1);
+ 
+ 	omapfb_set_lcd_config(&ams_delta_lcd_config);
+@@ -793,64 +808,6 @@ static struct platform_device ams_delta_modem_device = {
+ 	},
+ };
+ 
+-/*
+- * leds-gpio driver doesn't make use of GPIO lookup tables,
+- * it has to be provided with GPIO numbers over platform data
+- * if GPIO descriptor info can't be obtained from device tree.
+- * We could either define GPIO lookup tables and use them on behalf
+- * of the leds-gpio device, or we can use GPIO driver level methods
+- * for identification of GPIO numbers as long as we don't support
+- * device tree.  Let's do the latter.
+- */
+-static void __init ams_delta_led_init(struct gpio_chip *chip)
+-{
+-	struct gpio_desc *gpiod;
+-	int i;
+-
+-	for (i = LATCH1_PIN_LED_CAMERA; i < LATCH1_PIN_DOCKIT1; i++) {
+-		gpiod = gpiochip_request_own_desc(chip, i, NULL);
+-		if (IS_ERR(gpiod)) {
+-			pr_warn("%s: %s GPIO %d request failed (%ld)\n",
+-				__func__, LATCH1_LABEL, i, PTR_ERR(gpiod));
+-			continue;
+-		}
+-
+-		/* Assign GPIO numbers to LED device. */
+-		gpio_leds[i].gpio = desc_to_gpio(gpiod);
+-
+-		gpiochip_free_own_desc(gpiod);
+-	}
+-
+-	gpio_led_register_device(PLATFORM_DEVID_NONE, &leds_pdata);
+-}
+-
+-/*
+- * The purpose of this function is to take care of assignment of GPIO numbers
+- * to platform devices which depend on GPIO lines provided by Amstrad Delta
+- * latch1 and/or latch2 GPIO devices but don't use GPIO lookup tables.
+- * The function may be called as soon as latch1/latch2 GPIO devices are
+- * initilized.  Since basic-mmio-gpio driver is not registered before
+- * device_initcall, this may happen at erliest during device_initcall_sync.
+- * Dependent devices shouldn't be registered before that, their
+- * registration may be performed from within this function or later.
+- */
+-static int __init ams_delta_gpio_init(void)
+-{
+-	struct gpio_chip *chip;
+-
+-	if (!machine_is_ams_delta())
+-		return -ENODEV;
+-
+-	chip = gpiochip_find(LATCH1_LABEL, gpiochip_match_by_label);
+-	if (!chip)
+-		pr_err("%s: latch1 GPIO chip not found\n", __func__);
+-	else
+-		ams_delta_led_init(chip);
+-
+-	return 0;
+-}
+-device_initcall_sync(ams_delta_gpio_init);
+-
+ static int __init modem_nreset_init(void)
+ {
+ 	int err;
+-- 
+2.16.4
