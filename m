@@ -1,130 +1,95 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 12/24] leds: lm3692x: Use led_compose_name()
-Date: Tue,  6 Nov 2018 23:07:20 +0100
-Message-ID: <1541542052-10081-13-git-send-email-jacek.anaszewski@gmail.com>
+Subject: [PATCH 06/24] leds: sc27xx-blt: Use led_compose_name()
+Date: Tue,  6 Nov 2018 23:07:14 +0100
+Message-ID: <1541542052-10081-7-git-send-email-jacek.anaszewski@gmail.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Dan Murphy <dmurphy@ti.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Xiaotong Lu <xiaotong.lu@spreadtrum.com>, Baolin Wang <baolin.wang@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
 Switch to using generic LED support for composing LED class
 device name.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Dan Murphy <dmurphy@ti.com>
+Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+Cc: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/leds/leds-lm3692x.c | 39 ++++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+ drivers/leds/leds-sc27xx-bltc.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index 4f413a7..9dfc0f2 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -13,7 +13,6 @@
+diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
+index 9d9b7aa..9fe7cb1 100644
+--- a/drivers/leds/leds-sc27xx-bltc.c
++++ b/drivers/leds/leds-sc27xx-bltc.c
+@@ -6,7 +6,6 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
  #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
 -#include <uapi/linux/uleds.h>
  
- #define LM36922_MODEL	0
- #define LM36923_MODEL	1
-@@ -95,6 +94,9 @@
- #define LM3692X_FAULT_FLAG_SHRT BIT(3)
- #define LM3692X_FAULT_FLAG_OPEN BIT(4)
+ /* PMIC global control register definition */
+ #define SC27XX_MODULE_EN0	0xc08
+@@ -36,7 +35,7 @@
+ #define SC27XX_LEDS_MAX		3
  
-+#define LM36922_NAME "lm36922"
-+#define LM36923_NAME "lm36923"
+ struct sc27xx_led {
+-	char name[LED_MAX_NAME_SIZE];
++	struct fwnode_handle *fwnode;
+ 	struct led_classdev ldev;
+ 	struct sc27xx_led_priv *priv;
+ 	u8 line;
+@@ -132,16 +131,22 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
+ 
+ 	for (i = 0; i < SC27XX_LEDS_MAX; i++) {
+ 		struct sc27xx_led *led = &priv->leds[i];
++		struct led_init_data init_data = { led->fwnode };
+ 
+ 		if (!led->active)
+ 			continue;
+ 
++		err = led_compose_name(led->fwnode, "sc27xx", ":",
++				       init_data.name);
++		if (err)
++			return err;
 +
- /**
-  * struct lm3692x_led -
-  * @lock - Lock for reading/writing the device
-@@ -103,7 +105,6 @@
-  * @regmap - Devices register map
-  * @enable_gpio - VDDIO/EN gpio to enable communication interface
-  * @regulator - LED supply regulator pointer
-- * @label - LED label
-  * @led_enable - LED sync to be enabled
-  * @model_id - Current device model ID enumerated
-  */
-@@ -114,7 +115,6 @@ struct lm3692x_led {
- 	struct regmap *regmap;
- 	struct gpio_desc *enable_gpio;
- 	struct regulator *regulator;
--	char label[LED_MAX_NAME_SIZE];
- 	int led_enable;
- 	int model_id;
- };
-@@ -325,7 +325,8 @@ static int lm3692x_init(struct lm3692x_led *led)
- static int lm3692x_probe_dt(struct lm3692x_led *led)
- {
- 	struct fwnode_handle *child = NULL;
--	const char *name;
-+	struct led_init_data init_data;
-+	char *model_name;
- 	int ret;
+ 		led->line = i;
+ 		led->priv = priv;
+-		led->ldev.name = led->name;
+ 		led->ldev.brightness_set_blocking = sc27xx_led_set;
  
- 	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
-@@ -346,17 +347,20 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- 		dev_err(&led->client->dev, "No LED Child node\n");
- 		return -ENODEV;
+-		err = devm_led_classdev_register(dev, &led->ldev);
++		err = devm_led_classdev_register_ext(dev, &led->ldev,
++						     &init_data);
+ 		if (err)
+ 			return err;
  	}
-+	init_data.fwnode = child;
+@@ -154,7 +159,6 @@ static int sc27xx_led_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node, *child;
+ 	struct sc27xx_led_priv *priv;
+-	const char *str;
+ 	u32 base, count, reg;
+ 	int err;
  
--	fwnode_property_read_string(child, "linux,default-trigger",
--				    &led->led_dev.default_trigger);
-+	if (led->model_id == LM36922_MODEL)
-+		model_name =  LM36922_NAME;
-+	else
-+		model_name =  LM36923_NAME;
+@@ -196,15 +200,8 @@ static int sc27xx_led_probe(struct platform_device *pdev)
+ 			return -EINVAL;
+ 		}
  
--	ret = fwnode_property_read_string(child, "label", &name);
-+	ret = led_compose_name(child, model_name, ":backlight_cluster",
-+			       init_data.name);
- 	if (ret)
--		snprintf(led->label, sizeof(led->label),
--			"%s::", led->client->name);
--	else
--		snprintf(led->label, sizeof(led->label),
--			 "%s:%s", led->client->name, name);
-+		return ret;
-+
-+	fwnode_property_read_string(child, "linux,default-trigger",
-+				    &led->led_dev.default_trigger);
- 
- 	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
- 	if (ret) {
-@@ -364,16 +368,13 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- 		return ret;
- 	}
- 
--	led->led_dev.name = led->label;
++		priv->leds[reg].fwnode = of_fwnode_handle(child);
+ 		priv->leds[reg].active = true;
 -
--	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
-+	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
-+					     &init_data);
- 	if (ret) {
- 		dev_err(&led->client->dev, "led register err: %d\n", ret);
- 		return ret;
+-		err = of_property_read_string(child, "label", &str);
+-		if (err)
+-			snprintf(priv->leds[reg].name, LED_MAX_NAME_SIZE,
+-				 "sc27xx::");
+-		else
+-			snprintf(priv->leds[reg].name, LED_MAX_NAME_SIZE,
+-				 "sc27xx:%s", str);
  	}
  
--	led->led_dev.dev->of_node = to_of_node(child);
--
- 	return 0;
- }
- 
-@@ -439,8 +440,8 @@ static int lm3692x_remove(struct i2c_client *client)
- }
- 
- static const struct i2c_device_id lm3692x_id[] = {
--	{ "lm36922", LM36922_MODEL },
--	{ "lm36923", LM36923_MODEL },
-+	{ LM36922_NAME, LM36922_MODEL },
-+	{ LM36923_NAME, LM36923_MODEL },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, lm3692x_id);
+ 	err = sc27xx_led_register(dev, priv);
 -- 
 2.1.4
