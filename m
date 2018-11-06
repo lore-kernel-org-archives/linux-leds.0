@@ -1,86 +1,97 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v14 1/2] leds: core: Introduce LED pattern trigger
-Date: Tue, 6 Nov 2018 16:57:01 +0100
-Message-ID: <CAMuHMdWTnwVeO0ihTSzaoQWPGw3HO8tiy+HARpwW9cCCXMAJPQ@mail.gmail.com>
-References: <c3a6f08ac978c309bb0b002a0384c4f0ad0f59cd.1538494476.git.baolin.wang@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [PATCH 00/24] Add generic support for composing LED class device name
+Date: Tue,  6 Nov 2018 23:07:08 +0100
+Message-ID: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c3a6f08ac978c309bb0b002a0384c4f0ad0f59cd.1538494476.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi Baolin,
+LED class device naming pattern included devicename section, which had
+unpleasant effect of varying userspace interface dependent on underlaying
+hardware. Moreover, this information was redundant in the LED name, since
+the LED controller name could have been obtained from sysfs device group
 
-On Tue, Oct 2, 2018 at 6:39 PM Baolin Wang <baolin.wang@linaro.org> wrote:
-> This patch adds one new led trigger that LED device can configure
-> the software or hardware pattern and trigger it.
->
-> Consumers can write 'pattern' file to enable the software pattern
-> which alters the brightness for the specified duration with one
-> software timer.
->
-> Moreover consumers can write 'hw_pattern' file to enable the hardware
-> pattern for some LED controllers which can autonomously control
-> brightness over time, according to some preprogrammed hardware
-> patterns.
->
-> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+This patch set introduces a led_compose_name() function in the LED core,
+which unifies and simplifies LED class device name composition. This
+change is accompanied by the improvements in the common LED DT bindings
+where two new properties are introduced: "function" and "color" . The two
+deprecate the old "label" property which was leaving too much room for
+interpretation, leading to inconsistent LED naming.
 
-> --- /dev/null
-> +++ b/drivers/leds/trigger/ledtrig-pattern.c
-> @@ -0,0 +1,431 @@
+There are also changes in LED DT node naming, which are in line with
+DT maintainer's request from [0].
 
-> +static void pattern_trig_timer_function(struct timer_list *t)
-> +{
-> +       struct pattern_trig_data *data = from_timer(data, t, timer);
-> +
-> +       mutex_lock(&data->lock);
+Since some DT LED naming unification, related to not including devicename
+section in "label" DT property, is being requested during reviews of new
+LED class drivers for almost a year now, then those drivers are the first
+candidates for optimalization and the first users of the new
+led_compose_name() API. The modifications were tested with Qemu,
+by stubbing the driver internals where hardware interaction was needed
+for proper probing.
 
-Timer functions run in interrupt context, hence if CONFIG_DEBUG_ATOMIC_SLEEP=y:
+Thanks,
+Jacek Anaszewski
 
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
-in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/1
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted
-4.20.0-rc1-koelsch-00841-ga338c8181013c1a9 #171
-Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-[<c020f19c>] (unwind_backtrace) from [<c020aecc>] (show_stack+0x10/0x14)
-[<c020aecc>] (show_stack) from [<c07affb8>] (dump_stack+0x7c/0x9c)
-[<c07affb8>] (dump_stack) from [<c02417d4>] (___might_sleep+0xf4/0x158)
-[<c02417d4>] (___might_sleep) from [<c07c92c4>] (mutex_lock+0x18/0x60)
-[<c07c92c4>] (mutex_lock) from [<c067b28c>]
-(pattern_trig_timer_function+0x1c/0x11c)
-[<c067b28c>] (pattern_trig_timer_function) from [<c027f6fc>]
-(call_timer_fn+0x1c/0x90)
-[<c027f6fc>] (call_timer_fn) from [<c027f944>] (expire_timers+0x94/0xa4)
-[<c027f944>] (expire_timers) from [<c027fc98>] (run_timer_softirq+0x108/0x15c)
-[<c027fc98>] (run_timer_softirq) from [<c02021cc>] (__do_softirq+0x1d4/0x258)
-[<c02021cc>] (__do_softirq) from [<c0224d24>] (irq_exit+0x64/0xc4)
-[<c0224d24>] (irq_exit) from [<c0268dd0>] (__handle_domain_irq+0x80/0xb4)
-[<c0268dd0>] (__handle_domain_irq) from [<c045e1b0>] (gic_handle_irq+0x58/0x90)
-[<c045e1b0>] (gic_handle_irq) from [<c02019f8>] (__irq_svc+0x58/0x74)
-Exception stack(0xeb483f60 to 0xeb483fa8)
-3f60: 00000000 00000000 eb9afaa0 c0217e80 00000000 ffffe000 00000000 c0e06408
-3f80: 00000002 c0e0647c c0c6a5f0 00000000 c0e04900 eb483fb0 c0207ea8 c0207e98
-3fa0: 60020013 ffffffff
-[<c02019f8>] (__irq_svc) from [<c0207e98>] (arch_cpu_idle+0x1c/0x38)
-[<c0207e98>] (arch_cpu_idle) from [<c0247ca8>] (do_idle+0x138/0x268)
-[<c0247ca8>] (do_idle) from [<c0248050>] (cpu_startup_entry+0x18/0x1c)
-[<c0248050>] (cpu_startup_entry) from [<402022ec>] (0x402022ec)
+[0] https://lore.kernel.org/patchwork/patch/858993/
 
-Either this should use a spinlock instead of a mutex, or the timer
-function should kick a workqueue to do the real work.
+Jacek Anaszewski (24):
+  leds: class: Improve LED and LED flash class registration API
+  leds: core: Add support for composing LED class device names
+  leds: dt-bindings: Add LED_FUNCTION definitions
+  dt-bindings: leds: Add function and color properties
+  dt-bindings: sc27xx-blt: Add function and color properties
+  leds: sc27xx-blt: Use led_compose_name()
+  dt-bindings: lt3593: Add function and color properties
+  leds: lt3593: Use led_compose_name()
+  dt-bindings: lp8860: Add function and color properties
+  leds: lp8860: Use led_compose_name()
+  dt-bindings: lm3692x: Add function and color properties
+  leds: lm3692x: Use led_compose_name()
+  dt-bindings: lm36010: Add function and color properties
+  leds: lm3601x: Use led_compose_name()
+  dt-bindings: cr0014114: Add function and color properties
+  leds: cr0014114: Use led_compose_name()
+  dt-bindings: aat1290: Add function and color properties
+  leds: aat1290: Use led_compose_name()
+  dt-bindings: as3645a: Add function and color properties
+  leds: as3645a: Use led_compose_name()
+  dt-bindings: leds-gpio: Add function and color properties
+  leds: gpio: Use led_compose_name()
+  dt-bindings: an30259a: Add function and color properties
+  leds: an30259a: Use led_compose_name()
 
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../devicetree/bindings/leds/ams,as3645a.txt       |  22 +++--
+ Documentation/devicetree/bindings/leds/common.txt  |  52 +++++++++--
+ .../devicetree/bindings/leds/leds-aat1290.txt      |  12 ++-
+ .../devicetree/bindings/leds/leds-an30259a.txt     |  22 ++++-
+ .../devicetree/bindings/leds/leds-cr0014114.txt    |  26 ++++--
+ .../devicetree/bindings/leds/leds-gpio.txt         |  22 +++--
+ .../devicetree/bindings/leds/leds-lm3601x.txt      |  10 +-
+ .../devicetree/bindings/leds/leds-lm3692x.txt      |   9 +-
+ .../devicetree/bindings/leds/leds-lp8860.txt       |   9 +-
+ .../devicetree/bindings/leds/leds-lt3593.txt       |  11 ++-
+ .../devicetree/bindings/leds/leds-sc27xx-bltc.txt  |  10 +-
+ Documentation/leds/leds-class.txt                  |   2 +-
+ drivers/leds/led-class-flash.c                     |   9 +-
+ drivers/leds/led-class.c                           |  34 ++++---
+ drivers/leds/led-core.c                            |  71 +++++++++++++++
+ drivers/leds/leds-aat1290.c                        |  17 ++--
+ drivers/leds/leds-an30259a.c                       |  26 +++---
+ drivers/leds/leds-as3645a.c                        |  65 ++++++-------
+ drivers/leds/leds-cr0014114.c                      |  30 ++----
+ drivers/leds/leds-gpio.c                           |  27 +++---
+ drivers/leds/leds-lm3601x.c                        |  45 ++++-----
+ drivers/leds/leds-lm3692x.c                        |  39 ++++----
+ drivers/leds/leds-lp8860.c                         |  38 ++++----
+ drivers/leds/leds-lt3593.c                         |  19 ++--
+ drivers/leds/leds-sc27xx-bltc.c                    |  23 ++---
+ include/dt-bindings/leds/functions.h               | 101 +++++++++++++++++++++
+ include/linux/led-class-flash.h                    |  13 ++-
+ include/linux/leds.h                               |  61 +++++++++++--
+ 28 files changed, 571 insertions(+), 254 deletions(-)
+ create mode 100644 include/dt-bindings/leds/functions.h
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.1.4
