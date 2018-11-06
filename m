@@ -1,89 +1,72 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 22/24] leds: gpio: Use led_compose_name()
-Date: Tue,  6 Nov 2018 23:07:30 +0100
-Message-ID: <1541542052-10081-23-git-send-email-jacek.anaszewski@gmail.com>
+Subject: [PATCH 23/24] dt-bindings: an30259a: Add function and color properties
+Date: Tue,  6 Nov 2018 23:07:31 +0100
+Message-ID: <1541542052-10081-24-git-send-email-jacek.anaszewski@gmail.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-Switch to using generic LED support for composing LED class
-device name.
+Refer to new "function" and "color" properties and mark "label"
+as deprecated.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Simon Shields <simon@lineageos.org>
 ---
- drivers/leds/leds-gpio.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ .../devicetree/bindings/leds/leds-an30259a.txt     | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index c87fbd3..69a3cde 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -77,11 +77,19 @@ static int gpio_blink_set(struct led_classdev *led_cdev,
+diff --git a/Documentation/devicetree/bindings/leds/leds-an30259a.txt b/Documentation/devicetree/bindings/leds/leds-an30259a.txt
+index 6ffb861..43da93b 100644
+--- a/Documentation/devicetree/bindings/leds/leds-an30259a.txt
++++ b/Documentation/devicetree/bindings/leds/leds-an30259a.txt
+@@ -15,10 +15,19 @@ Required sub-node properties:
+ 	- reg: Pin that the LED is connected to. Must be 1, 2, or 3.
  
- static int create_gpio_led(const struct gpio_led *template,
- 	struct gpio_led_data *led_dat, struct device *parent,
--	struct device_node *np, gpio_blink_set_t blink_set)
-+	struct fwnode_handle *fwnode, gpio_blink_set_t blink_set)
- {
-+	struct led_init_data init_data = { fwnode };
- 	int ret, state;
+ Optional sub-node properties:
+-	- label: see Documentation/devicetree/bindings/leds/common.txt
+-	- linux,default-trigger: see Documentation/devicetree/bindings/leds/common.txt
++	- function :
++		see Documentation/devicetree/bindings/leds/common.txt
++	- color :
++		see Documentation/devicetree/bindings/leds/common.txt
++	- label :
++		see Documentation/devicetree/bindings/leds/common.txt (deprecated)
++	- linux,default-trigger :
++		see Documentation/devicetree/bindings/leds/common.txt
  
--	led_dat->cdev.name = template->name;
-+	if (template->name) {
-+		led_dat->cdev.name = template->name;
-+	} else {
-+		ret = led_compose_name(fwnode, NULL, NULL, init_data.name);
-+		if (ret)
-+			return ret;
-+	}
+ Example:
 +
- 	led_dat->cdev.default_trigger = template->default_trigger;
- 	led_dat->can_sleep = gpiod_cansleep(led_dat->gpiod);
- 	if (!led_dat->can_sleep)
-@@ -112,7 +120,8 @@ static int create_gpio_led(const struct gpio_led *template,
- 	if (ret < 0)
- 		return ret;
++#include <dt-bindings/leds/functions.h>
++
+ led-controller@30 {
+ 	compatible = "panasonic,an30259a";
+ 	reg = <0x30>;
+@@ -28,16 +37,19 @@ led-controller@30 {
+ 	led@1 {
+ 		reg = <1>;
+ 		linux,default-trigger = "heartbeat";
+-		label = "red:indicator";
++		function = LED_FUNCTION_INDICATOR;
++		color = "red";
+ 	};
  
--	return devm_led_classdev_register(parent, &led_dat->cdev);
-+	return devm_led_classdev_register_ext(parent, &led_dat->cdev,
-+					      &init_data);
- }
+ 	led@2 {
+ 		reg = <2>;
+-		label = "green:indicator";
++		function = LED_FUNCTION_INDICATOR;
++		color = "green";
+ 	};
  
- struct gpio_leds_priv {
-@@ -145,15 +154,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 		struct gpio_led_data *led_dat = &priv->leds[priv->num_leds];
- 		struct gpio_led led = {};
- 		const char *state = NULL;
--		struct device_node *np = to_of_node(child);
--
--		ret = fwnode_property_read_string(child, "label", &led.name);
--		if (ret && IS_ENABLED(CONFIG_OF) && np)
--			led.name = np->name;
--		if (!led.name) {
--			fwnode_handle_put(child);
--			return ERR_PTR(-EINVAL);
--		}
- 
- 		led.gpiod = devm_fwnode_get_gpiod_from_child(dev, NULL, child,
- 							     GPIOD_ASIS,
-@@ -183,12 +183,11 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 		if (fwnode_property_present(child, "panic-indicator"))
- 			led.panic_indicator = 1;
- 
--		ret = create_gpio_led(&led, led_dat, dev, np, NULL);
-+		ret = create_gpio_led(&led, led_dat, dev, child, NULL);
- 		if (ret < 0) {
- 			fwnode_handle_put(child);
- 			return ERR_PTR(ret);
- 		}
--		led_dat->cdev.dev->of_node = np;
- 		priv->num_leds++;
- 	}
- 
+ 	led@3 {
+ 		reg = <3>;
+-		label = "blue:indicator";
++		function = LED_FUNCTION_INDICATOR;
++		color = "blue";
+ 	};
+ };
 -- 
 2.1.4
