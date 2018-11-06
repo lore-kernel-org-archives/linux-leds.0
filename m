@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 21/24] dt-bindings: leds-gpio: Add function and color properties
-Date: Tue,  6 Nov 2018 23:07:29 +0100
-Message-ID: <1541542052-10081-22-git-send-email-jacek.anaszewski@gmail.com>
+Subject: [PATCH 22/24] leds: gpio: Use led_compose_name()
+Date: Tue,  6 Nov 2018 23:07:30 +0100
+Message-ID: <1541542052-10081-23-git-send-email-jacek.anaszewski@gmail.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
@@ -10,80 +10,80 @@ To: linux-leds@vger.kernel.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-Refer to new "function" and "color" properties and mark "label"
-as deprecated.
+Switch to using generic LED support for composing LED class
+device name.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- .../devicetree/bindings/leds/leds-gpio.txt         | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ drivers/leds/leds-gpio.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-gpio.txt b/Documentation/devicetree/bindings/leds/leds-gpio.txt
-index a48dda2..c34cb64 100644
---- a/Documentation/devicetree/bindings/leds/leds-gpio.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-gpio.txt
-@@ -10,8 +10,12 @@ LED sub-node properties:
- - gpios :  Should specify the LED's GPIO, see "gpios property" in
-   Documentation/devicetree/bindings/gpio/gpio.txt.  Active low LEDs should be
-   indicated using flags in the GPIO specifier.
--- label :  (optional)
-+- function :  (optional)
-+  see Documentation/devicetree/bindings/leds/common.txt
-+- color :  (optional)
-   see Documentation/devicetree/bindings/leds/common.txt
-+- label :  (optional)
-+  see Documentation/devicetree/bindings/leds/common.txt (deprecated)
- - linux,default-trigger :  (optional)
-   see Documentation/devicetree/bindings/leds/common.txt
- - default-state:  (optional) The initial state of the LED.
-@@ -30,27 +34,30 @@ Examples:
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index c87fbd3..69a3cde 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -77,11 +77,19 @@ static int gpio_blink_set(struct led_classdev *led_cdev,
  
- leds {
- 	compatible = "gpio-leds";
--	hdd {
--		label = "Disk Activity";
-+	led@0 {
- 		gpios = <&mcu_pio 0 GPIO_ACTIVE_LOW>;
- 		linux,default-trigger = "disk-activity";
-+		function = LED_FUNCTION_HDD;
- 	};
+ static int create_gpio_led(const struct gpio_led *template,
+ 	struct gpio_led_data *led_dat, struct device *parent,
+-	struct device_node *np, gpio_blink_set_t blink_set)
++	struct fwnode_handle *fwnode, gpio_blink_set_t blink_set)
+ {
++	struct led_init_data init_data = { fwnode };
+ 	int ret, state;
  
--	fault {
-+	led@1 {
- 		gpios = <&mcu_pio 1 GPIO_ACTIVE_HIGH>;
- 		/* Keep LED on if BIOS detected hardware fault */
- 		default-state = "keep";
-+		function = LED_FUNCTION_FAULT;
- 	};
- };
+-	led_dat->cdev.name = template->name;
++	if (template->name) {
++		led_dat->cdev.name = template->name;
++	} else {
++		ret = led_compose_name(fwnode, NULL, NULL, init_data.name);
++		if (ret)
++			return ret;
++	}
++
+ 	led_dat->cdev.default_trigger = template->default_trigger;
+ 	led_dat->can_sleep = gpiod_cansleep(led_dat->gpiod);
+ 	if (!led_dat->can_sleep)
+@@ -112,7 +120,8 @@ static int create_gpio_led(const struct gpio_led *template,
+ 	if (ret < 0)
+ 		return ret;
  
- run-control {
- 	compatible = "gpio-leds";
--	red {
-+	led@0 {
- 		gpios = <&mpc8572 6 GPIO_ACTIVE_HIGH>;
-+		color = "red";
- 		default-state = "off";
- 	};
--	green {
-+	led@1 {
- 		gpios = <&mpc8572 7 GPIO_ACTIVE_HIGH>;
-+		color = "green";
- 		default-state = "on";
- 	};
- };
-@@ -58,9 +65,10 @@ run-control {
- leds {
- 	compatible = "gpio-leds";
+-	return devm_led_classdev_register(parent, &led_dat->cdev);
++	return devm_led_classdev_register_ext(parent, &led_dat->cdev,
++					      &init_data);
+ }
  
--	charger-led {
-+	led@0 {
- 		gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
- 		linux,default-trigger = "max8903-charger-charging";
- 		retain-state-suspended;
-+		function = LED_FUNCTION_CHRG;
- 	};
- };
+ struct gpio_leds_priv {
+@@ -145,15 +154,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 		struct gpio_led_data *led_dat = &priv->leds[priv->num_leds];
+ 		struct gpio_led led = {};
+ 		const char *state = NULL;
+-		struct device_node *np = to_of_node(child);
+-
+-		ret = fwnode_property_read_string(child, "label", &led.name);
+-		if (ret && IS_ENABLED(CONFIG_OF) && np)
+-			led.name = np->name;
+-		if (!led.name) {
+-			fwnode_handle_put(child);
+-			return ERR_PTR(-EINVAL);
+-		}
+ 
+ 		led.gpiod = devm_fwnode_get_gpiod_from_child(dev, NULL, child,
+ 							     GPIOD_ASIS,
+@@ -183,12 +183,11 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 		if (fwnode_property_present(child, "panic-indicator"))
+ 			led.panic_indicator = 1;
+ 
+-		ret = create_gpio_led(&led, led_dat, dev, np, NULL);
++		ret = create_gpio_led(&led, led_dat, dev, child, NULL);
+ 		if (ret < 0) {
+ 			fwnode_handle_put(child);
+ 			return ERR_PTR(ret);
+ 		}
+-		led_dat->cdev.dev->of_node = np;
+ 		priv->num_leds++;
+ 	}
+ 
 -- 
 2.1.4
