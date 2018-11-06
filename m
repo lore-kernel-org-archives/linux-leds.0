@@ -1,180 +1,84 @@
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH] ARM: OMAP1: ams-delta: Provide GPIO lookup table for LED device
-Date: Tue,  6 Nov 2018 00:23:49 +0100
-Message-ID: <20181105232349.17351-1-jmkrzyszt@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>
+From: Brian Dodge <bdodge09@gmail.com>
+Subject: Re: [PATCH] backlight/arcxcnn support newer chips in arcxcnn family
+ and fix vendor prefix
+Date: Mon, 5 Nov 2018 20:34:12 -0500
+Message-ID: <f2a94633-e45f-72da-7884-cc4b559eec1f@gmail.com>
+References: <1541112541-27046-1-git-send-email-bdodge09@gmail.com>
+ <20181103165827.j7yjujcakwg42owp@holly.lan>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20181103165827.j7yjujcakwg42owp@holly.lan>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: mark.rutland@arm.com, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Global GPIO numbers no longer have to be passed to leds-gpio driver,
-replace their assignment with a lookup table.
-
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
- arch/arm/mach-omap1/board-ams-delta.c | 95 ++++++++++-------------------------
- 1 file changed, 26 insertions(+), 69 deletions(-)
-
-diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index b8acc9912a58..19e0c071d675 100644
---- a/arch/arm/mach-omap1/board-ams-delta.c
-+++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -371,15 +371,9 @@ static struct gpiod_lookup_table ams_delta_lcd_gpio_table = {
- 	},
- };
- 
--/*
-- * Dynamically allocated GPIO numbers must be obtained fromm GPIO device
-- * before they can be put in the gpio_led table.  Before that happens,
-- * initialize the table with invalid GPIO numbers, not 0.
-- */
- static struct gpio_led gpio_leds[] __initdata = {
- 	[LATCH1_PIN_LED_CAMERA] = {
- 		.name		 = "camera",
--		.gpio		 = -EINVAL,
- 		.default_state	 = LEDS_GPIO_DEFSTATE_OFF,
- #ifdef CONFIG_LEDS_TRIGGERS
- 		.default_trigger = "ams_delta_camera",
-@@ -387,27 +381,22 @@ static struct gpio_led gpio_leds[] __initdata = {
- 	},
- 	[LATCH1_PIN_LED_ADVERT] = {
- 		.name		 = "advert",
--		.gpio		 = -EINVAL,
- 		.default_state	 = LEDS_GPIO_DEFSTATE_OFF,
- 	},
- 	[LATCH1_PIN_LED_MAIL] = {
- 		.name		 = "email",
--		.gpio		 = -EINVAL,
- 		.default_state	 = LEDS_GPIO_DEFSTATE_OFF,
- 	},
- 	[LATCH1_PIN_LED_HANDSFREE] = {
- 		.name		 = "handsfree",
--		.gpio		 = -EINVAL,
- 		.default_state	 = LEDS_GPIO_DEFSTATE_OFF,
- 	},
- 	[LATCH1_PIN_LED_VOICEMAIL] = {
- 		.name		 = "voicemail",
--		.gpio		 = -EINVAL,
- 		.default_state	 = LEDS_GPIO_DEFSTATE_OFF,
- 	},
- 	[LATCH1_PIN_LED_VOICE] = {
- 		.name		 = "voice",
--		.gpio		 = -EINVAL,
- 		.default_state	 = LEDS_GPIO_DEFSTATE_OFF,
- 	},
- };
-@@ -417,6 +406,24 @@ static const struct gpio_led_platform_data leds_pdata __initconst = {
- 	.num_leds	= ARRAY_SIZE(gpio_leds),
- };
- 
-+static struct gpiod_lookup_table leds_gpio_table = {
-+	.table = {
-+		GPIO_LOOKUP_IDX(LATCH1_LABEL, LATCH1_PIN_LED_CAMERA, NULL,
-+				LATCH1_PIN_LED_CAMERA, 0),
-+		GPIO_LOOKUP_IDX(LATCH1_LABEL, LATCH1_PIN_LED_ADVERT, NULL,
-+				LATCH1_PIN_LED_ADVERT, 0),
-+		GPIO_LOOKUP_IDX(LATCH1_LABEL, LATCH1_PIN_LED_MAIL, NULL,
-+				LATCH1_PIN_LED_MAIL, 0),
-+		GPIO_LOOKUP_IDX(LATCH1_LABEL, LATCH1_PIN_LED_HANDSFREE, NULL,
-+				LATCH1_PIN_LED_HANDSFREE, 0),
-+		GPIO_LOOKUP_IDX(LATCH1_LABEL, LATCH1_PIN_LED_VOICEMAIL, NULL,
-+				LATCH1_PIN_LED_VOICEMAIL, 0),
-+		GPIO_LOOKUP_IDX(LATCH1_LABEL, LATCH1_PIN_LED_VOICE, NULL,
-+				LATCH1_PIN_LED_VOICE, 0),
-+		{ },
-+	},
-+};
-+
- static struct i2c_board_info ams_delta_camera_board_info[] = {
- 	{
- 		I2C_BOARD_INFO("ov6650", 0x60),
-@@ -677,6 +684,8 @@ static void __init ams_delta_latch2_init(void)
- 
- static void __init ams_delta_init(void)
- {
-+	struct platform_device *leds_pdev;
-+
- 	/* mux pins for uarts */
- 	omap_cfg_reg(UART1_TX);
- 	omap_cfg_reg(UART1_RTS);
-@@ -740,6 +749,12 @@ static void __init ams_delta_init(void)
- 	gpiod_add_lookup_tables(ams_delta_gpio_tables,
- 				ARRAY_SIZE(ams_delta_gpio_tables));
- 
-+	leds_pdev = gpio_led_register_device(PLATFORM_DEVID_NONE, &leds_pdata);
-+	if (!IS_ERR(leds_pdev)) {
-+		leds_gpio_table.dev_id = dev_name(&leds_pdev->dev);
-+		gpiod_add_lookup_table(&leds_gpio_table);
-+	}
-+
- 	omap_writew(omap_readw(ARM_RSTCT1) | 0x0004, ARM_RSTCT1);
- 
- 	omapfb_set_lcd_config(&ams_delta_lcd_config);
-@@ -793,64 +808,6 @@ static struct platform_device ams_delta_modem_device = {
- 	},
- };
- 
--/*
-- * leds-gpio driver doesn't make use of GPIO lookup tables,
-- * it has to be provided with GPIO numbers over platform data
-- * if GPIO descriptor info can't be obtained from device tree.
-- * We could either define GPIO lookup tables and use them on behalf
-- * of the leds-gpio device, or we can use GPIO driver level methods
-- * for identification of GPIO numbers as long as we don't support
-- * device tree.  Let's do the latter.
-- */
--static void __init ams_delta_led_init(struct gpio_chip *chip)
--{
--	struct gpio_desc *gpiod;
--	int i;
--
--	for (i = LATCH1_PIN_LED_CAMERA; i < LATCH1_PIN_DOCKIT1; i++) {
--		gpiod = gpiochip_request_own_desc(chip, i, NULL);
--		if (IS_ERR(gpiod)) {
--			pr_warn("%s: %s GPIO %d request failed (%ld)\n",
--				__func__, LATCH1_LABEL, i, PTR_ERR(gpiod));
--			continue;
--		}
--
--		/* Assign GPIO numbers to LED device. */
--		gpio_leds[i].gpio = desc_to_gpio(gpiod);
--
--		gpiochip_free_own_desc(gpiod);
--	}
--
--	gpio_led_register_device(PLATFORM_DEVID_NONE, &leds_pdata);
--}
--
--/*
-- * The purpose of this function is to take care of assignment of GPIO numbers
-- * to platform devices which depend on GPIO lines provided by Amstrad Delta
-- * latch1 and/or latch2 GPIO devices but don't use GPIO lookup tables.
-- * The function may be called as soon as latch1/latch2 GPIO devices are
-- * initilized.  Since basic-mmio-gpio driver is not registered before
-- * device_initcall, this may happen at erliest during device_initcall_sync.
-- * Dependent devices shouldn't be registered before that, their
-- * registration may be performed from within this function or later.
-- */
--static int __init ams_delta_gpio_init(void)
--{
--	struct gpio_chip *chip;
--
--	if (!machine_is_ams_delta())
--		return -ENODEV;
--
--	chip = gpiochip_find(LATCH1_LABEL, gpiochip_match_by_label);
--	if (!chip)
--		pr_err("%s: latch1 GPIO chip not found\n", __func__);
--	else
--		ams_delta_led_init(chip);
--
--	return 0;
--}
--device_initcall_sync(ams_delta_gpio_init);
--
- static int __init modem_nreset_init(void)
- {
- 	int err;
--- 
-2.16.4
+QXBvbG9naWVzLCB0aGlzIHBhdGNoIHN1Ym1pc3Npb24gd2FzIG5vdCBkb25lIHByb3Blcmx5IGFu
+ZCBub3Qgc3VibWl0dGVkIApwcm9wZXJseS4KCkkgaGF2ZSBwcmVwYXJlZCBhIG5ldyBwYXRjaCBz
+ZXQgd2hpY2ggYnJlYWtzIHRoaXMgd29yayBpbnRvIHRocmVlIApkaXN0aW5jdCBwYXRjaGVzLgoK
+QnJpYW4KCk9uIDExLzMvMTggMTI6NTggUE0sIERhbmllbCBUaG9tcHNvbiB3cm90ZToKPiBPbiBU
+aHUsIE5vdiAwMSwgMjAxOCBhdCAwNjo0OTowMVBNIC0wNDAwLCBCcmlhbiBEb2RnZSB3cm90ZToK
+Pj4gU3VwcG9ydCBmb3IgQXJjdGljU2FuZCBhcmMxIGFuZCBhcmMzIHNoaXBzIGlzIGFkZGVkLiBT
+b21lIHJhbmdlcwo+PiBhbmQgY29udHJvbCBwYXRocyBhcmUgbW9kaWZpZWQgYmFzZWQgb24gdGhl
+IGNoaXAgaWQgcHJvYmVkIHZpYQo+PiBpMmMuCj4gVGhpcy4uLgo+Cj4KPj4gQWxzbyB1cGRhdGVz
+IHZlbmRvciBwcmVmaXggdG8gYXJjdGljIGZyb20gYXJjIHdoaWNoIHdhcyBhCj4+IG1pc3Rha2Ug
+aW4gdGhlIG9yaWdpbmFsIGRyaXZlciBzdWJtaXNzaW9uCj4gLi4uIGFuZCB0aGlzIGxvb2tzIGxp
+a2UgdGhleSB3b3VsZCBiZSBiZXR0ZXIgcGxhY2VkIGludG8gc2VwYXJhdGUKPiBwYXRjaGVzLgo+
+Cj4KPj4gU2lnbmVkLW9mZi1ieTogQnJpYW4gRG9kZ2UgPGJkb2RnZTA5QGdtYWlsLmNvbT4KPiBU
+aGlzIGxvb2tzIHZlcnkgc2ltaWxhciB0byB5b3VyIHBhdGNoIG9mIDEwIG1pbnV0ZXMgYWdvLiBJ
+cyBpdCBhbgo+IHVwZGF0ZWQgdmVyc2lvbj8gU29ycnkgdG8gZ2V0IGFsbCBwcm9jZWR1cmFsIG9u
+IHlvdSBidXQgaWYgaXQgaXMKPiBhbiB1cGRhdGUgdGhlbiBidW1waW5nIHRoZSB2ZXJzaW9uIG51
+bWJlciBhbmQgc3VtbWFyeSBvZiBjaGFuZ2VzCj4gd291bGQgYmUgaGVscGZ1bCAoZXZlbiBpZiB0
+aGUgY2hhbmdlIHN1bW1hcnkgaXMganVzdCAiZGVjaWRlZCB0bwo+IHJld3JpdGUgdGhlIHBhdGNo
+IGhlYWRlciB0byBpbXByb3ZlIGNsYXJpdHkiKS4KPgo+Cj4gRGFuaWVsLgo+Cj4KPj4gLS0tCj4+
+ICAgLi4uL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L2FyY3hjbm5fYmwudHh0ICAgICAgICAgICB8
+IDIwICsrKysrKysrKystLS0tLS0tLS0tCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlv
+bnMoKyksIDEwIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L2FyY3hjbm5fYmwudHh0IGIvRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L2FyY3hjbm5fYmwudHh0
+Cj4+IGluZGV4IGRjYWEyMzkuLjIzMGFiZGUgMTAwNjQ0Cj4+IC0tLSBhL0RvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9hcmN4Y25uX2JsLnR4dAo+PiArKysg
+Yi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvYXJjeGNu
+bl9ibC50eHQKPj4gQEAgLTEsOCArMSw4IEBACj4+IC1CaW5kaW5nIGZvciBBcmN0aWNTYW5kIGFy
+YyBmYW1pbHkgTEVEIGRyaXZlcnMKPj4gK0JpbmRpbmcgZm9yIEFyY3RpY1NhbmQgYXJjMmMwNjA4
+IExFRCBkcml2ZXIKPj4gICAKPj4gICBSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+PiAtLSBjb21wYXRp
+YmxlOgkiYXJjdGljLGFyYzFjMDYwOCIsICJhcmN0aWMsYXJjMmMwNjA4IiwgImFyY3RpYyxhcmMz
+YzA4NDUiCj4+IC0tIHJlZzoJCXNsYXZlIGFkZHJlc3MKPj4gKy0gY29tcGF0aWJsZToJCXNob3Vs
+ZCBiZSAiYXJjLGFyYzJjMDYwOCIKPj4gKy0gcmVnOgkJCXNsYXZlIGFkZHJlc3MKPj4gICAKPj4g
+ICBPcHRpb25hbCBwcm9wZXJ0aWVzOgo+PiAgIC0gZGVmYXVsdC1icmlnaHRuZXNzOglicmlnaHRu
+ZXNzIHZhbHVlIG9uIGJvb3QsIHZhbHVlIGZyb206IDAtNDA5NQo+PiBAQCAtMTEsMTkgKzExLDE5
+IEBAIE9wdGlvbmFsIHByb3BlcnRpZXM6Cj4+ICAgLSBsZWQtc291cmNlczoJCUxpc3Qgb2YgZW5h
+YmxlZCBjaGFubmVscyBmcm9tIDAgdG8gNS4KPj4gICAJCQlTZWUgRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL2xlZHMvY29tbW9uLnR4dAo+PiAgIAo+PiAtLSBhcmN0aWMsbGVkLWNv
+bmZpZy0wOglzZXR0aW5nIGZvciByZWdpc3RlciBJTEVEX0NPTkZJR18wCj4+IC0tIGFyY3RpYyxs
+ZWQtY29uZmlnLTE6CXNldHRpbmcgZm9yIHJlZ2lzdGVyIElMRURfQ09ORklHXzEKPj4gLS0gYXJj
+dGljLGRpbS1mcmVxOgkJUFdNIG1vZGUgZnJlcXVlbmNlIHNldHRpbmcgKGJpdHMgWzM6MF0gdXNl
+ZCkKPj4gLS0gYXJjdGljLGNvbXAtY29uZmlnOglzZXR0aW5nIGZvciByZWdpc3RlciBDT05GSUdf
+Q09NUAo+PiAtLSBhcmN0aWMsZmlsdGVyLWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgRklM
+VEVSX0NPTkZJRwo+PiAtLSBhcmN0aWMsdHJpbS1jb25maWc6CXNldHRpbmcgZm9yIHJlZ2lzdGVy
+IElNQVhUVU5FCj4+ICstIGFyYyxsZWQtY29uZmlnLTA6CXNldHRpbmcgZm9yIHJlZ2lzdGVyIElM
+RURfQ09ORklHXzAKPj4gKy0gYXJjLGxlZC1jb25maWctMToJc2V0dGluZyBmb3IgcmVnaXN0ZXIg
+SUxFRF9DT05GSUdfMQo+PiArLSBhcmMsZGltLWZyZXE6CQlQV00gbW9kZSBmcmVxdWVuY2Ugc2V0
+dGluZyAoYml0cyBbMzowXSB1c2VkKQo+PiArLSBhcmMsY29tcC1jb25maWc6CXNldHRpbmcgZm9y
+IHJlZ2lzdGVyIENPTkZJR19DT01QCj4+ICstIGFyYyxmaWx0ZXItY29uZmlnOglzZXR0aW5nIGZv
+ciByZWdpc3RlciBGSUxURVJfQ09ORklHCj4+ICstIGFyYyx0cmltLWNvbmZpZzoJc2V0dGluZyBm
+b3IgcmVnaXN0ZXIgSU1BWFRVTkUKPj4gICAKPj4gICBOb3RlOiBPcHRpb25hbCBwcm9wZXJ0aWVz
+IG5vdCBzcGVjaWZpZWQgd2lsbCBkZWZhdWx0IHRvIHZhbHVlcyBpbiBJQyBFUFJPTQo+PiAgIAo+
+PiAgIEV4YW1wbGU6Cj4+ICAgCj4+ICAgYXJjMmMwNjA4QDMwIHsKPj4gLQljb21wYXRpYmxlID0g
+ImFyY3RpYyxhcmMyYzA2MDgiOwo+PiArCWNvbXBhdGlibGUgPSAiYXJjLGFyYzJjMDYwOCI7Cj4+
+ICAgCXJlZyA9IDwweDMwPjsKPj4gICAJZGVmYXVsdC1icmlnaHRuZXNzID0gPDUwMD47Cj4+ICAg
+CWxhYmVsID0gImxjZC1iYWNrbGlnaHQiOwo+PiAtLSAKPj4gMi43LjQKPj4KX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
