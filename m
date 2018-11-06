@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 15/24] dt-bindings: cr0014114: Add function and color properties
-Date: Tue,  6 Nov 2018 23:07:23 +0100
-Message-ID: <1541542052-10081-16-git-send-email-jacek.anaszewski@gmail.com>
+Subject: [PATCH 16/24] leds: cr0014114: Use led_compose_name()
+Date: Tue,  6 Nov 2018 23:07:24 +0100
+Message-ID: <1541542052-10081-17-git-send-email-jacek.anaszewski@gmail.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
@@ -10,80 +10,96 @@ To: linux-leds@vger.kernel.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Oleh Kravchenko <oleg@kaa.org.ua>
 List-Id: linux-leds@vger.kernel.org
 
-Refer to new "function" and "color" properties and mark "label"
-as deprecated.
+Switch to using generic LED support for composing LED class
+device name.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc: Oleh Kravchenko <oleg@kaa.org.ua>
 ---
- .../devicetree/bindings/leds/leds-cr0014114.txt    | 26 ++++++++++++++++------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ drivers/leds/leds-cr0014114.c | 29 ++++++++++-------------------
+ 1 file changed, 10 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-cr0014114.txt b/Documentation/devicetree/bindings/leds/leds-cr0014114.txt
-index 4255b19..4c65c56 100644
---- a/Documentation/devicetree/bindings/leds/leds-cr0014114.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-cr0014114.txt
-@@ -11,14 +11,20 @@ Property rules described in Documentation/devicetree/bindings/spi/spi-bus.txt
- apply. In particular, "reg" and "spi-max-frequency" properties must be given.
+diff --git a/drivers/leds/leds-cr0014114.c b/drivers/leds/leds-cr0014114.c
+index 1c82152..0aee979 100644
+--- a/drivers/leds/leds-cr0014114.c
++++ b/drivers/leds/leds-cr0014114.c
+@@ -8,7 +8,6 @@
+ #include <linux/of_device.h>
+ #include <linux/spi/spi.h>
+ #include <linux/workqueue.h>
+-#include <uapi/linux/uleds.h>
  
- LED sub-node properties:
--- label :
-+- function :
-+	see Documentation/devicetree/bindings/leds/common.txt
-+- color :
- 	see Documentation/devicetree/bindings/leds/common.txt
-+- label :
-+	see Documentation/devicetree/bindings/leds/common.txt (deprecated)
- - linux,default-trigger : (optional)
- 	see Documentation/devicetree/bindings/leds/common.txt
+ /*
+  *  CR0014114 SPI protocol descrtiption:
+@@ -40,8 +39,9 @@
+ #define CR_FW_DELAY_MSEC	10
+ #define CR_RECOUNT_DELAY	(HZ * 3600)
  
- Example
- -------
- 
-+#include <dt-bindings/leds/functions.h>
++#define CR_DEV_NAME		"cr0014114"
 +
- led-controller@0 {
- 	compatible = "crane,cr0014114";
- 	reg = <0>;
-@@ -28,27 +34,33 @@ led-controller@0 {
+ struct cr0014114_led {
+-	char			name[LED_MAX_NAME_SIZE];
+ 	struct cr0014114	*priv;
+ 	struct led_classdev	ldev;
+ 	u8			brightness;
+@@ -167,8 +167,7 @@ static int cr0014114_set_sync(struct led_classdev *ldev,
+ 						    struct cr0014114_led,
+ 						    ldev);
  
- 	led@0 {
- 		reg = <0>;
--		label = "red:coin";
-+		function = "coin";
-+		color = "red";
- 	};
- 	led@1 {
- 		reg = <1>;
--		label = "green:coin";
-+		function = "coin";
-+		color = "green";
- 	};
- 	led@2 {
- 		reg = <2>;
--		label = "blue:coin";
-+		function = "coin";
-+		color = "blue";
- 	};
- 	led@3 {
- 		reg = <3>;
--		label = "red:bill";
-+		function = "bill";
-+		color = "red";
- 	};
- 	led@4 {
- 		reg = <4>;
--		label = "green:bill";
-+		function = "bill";
-+		color = "green";
- 	};
- 	led@5 {
- 		reg = <5>;
--		label = "blue:bill";
-+		function = "bill";
-+		color = "blue";
- 	};
- 	...
- };
+-	dev_dbg(led->priv->dev, "Set brightness of %s to %d\n",
+-		led->name, brightness);
++	dev_dbg(led->priv->dev, "Set brightness to %d\n", brightness);
+ 
+ 	mutex_lock(&led->priv->lock);
+ 	led->brightness = (u8)brightness;
+@@ -183,41 +182,33 @@ static int cr0014114_probe_dt(struct cr0014114 *priv)
+ 	size_t			i = 0;
+ 	struct cr0014114_led	*led;
+ 	struct fwnode_handle	*child;
+-	struct device_node	*np;
++	struct led_init_data	init_data;
+ 	int			ret;
+-	const char		*str;
+ 
+ 	device_for_each_child_node(priv->dev, child) {
+-		np = to_of_node(child);
+ 		led = &priv->leds[i];
++		init_data.fwnode = child;
+ 
+-		ret = fwnode_property_read_string(child, "label", &str);
++		ret = led_compose_name(child, CR_DEV_NAME, ":", init_data.name);
+ 		if (ret)
+-			snprintf(led->name, sizeof(led->name),
+-				 "cr0014114::");
+-		else
+-			snprintf(led->name, sizeof(led->name),
+-				 "cr0014114:%s", str);
++			return ret;
+ 
+ 		fwnode_property_read_string(child, "linux,default-trigger",
+ 					    &led->ldev.default_trigger);
+ 
+ 		led->priv			  = priv;
+-		led->ldev.name			  = led->name;
+ 		led->ldev.max_brightness	  = CR_MAX_BRIGHTNESS;
+ 		led->ldev.brightness_set_blocking = cr0014114_set_sync;
+ 
+-		ret = devm_led_classdev_register(priv->dev, &led->ldev);
++		ret = devm_led_classdev_register_ext(priv->dev, &led->ldev,
++						     &init_data);
+ 		if (ret) {
+ 			dev_err(priv->dev,
+-				"failed to register LED device %s, err %d",
+-				led->name, ret);
++				"failed to register LED device , err %d", ret);
+ 			fwnode_handle_put(child);
+ 			return ret;
+ 		}
+ 
+-		led->ldev.dev->of_node = np;
+-
+ 		i++;
+ 	}
+ 
 -- 
 2.1.4
