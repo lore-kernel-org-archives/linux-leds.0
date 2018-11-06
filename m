@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 23/24] dt-bindings: an30259a: Add function and color properties
-Date: Tue,  6 Nov 2018 23:07:31 +0100
-Message-ID: <1541542052-10081-24-git-send-email-jacek.anaszewski@gmail.com>
+Subject: [PATCH 24/24] leds: an30259a: Use led_compose_name()
+Date: Tue,  6 Nov 2018 23:07:32 +0100
+Message-ID: <1541542052-10081-25-git-send-email-jacek.anaszewski@gmail.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
@@ -10,63 +10,88 @@ To: linux-leds@vger.kernel.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-Refer to new "function" and "color" properties and mark "label"
-as deprecated.
+Switch to using generic LED support for composing LED class
+device name.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc: Simon Shields <simon@lineageos.org>
 ---
- .../devicetree/bindings/leds/leds-an30259a.txt     | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ drivers/leds/leds-an30259a.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-an30259a.txt b/Documentation/devicetree/bindings/leds/leds-an30259a.txt
-index 6ffb861..43da93b 100644
---- a/Documentation/devicetree/bindings/leds/leds-an30259a.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-an30259a.txt
-@@ -15,10 +15,19 @@ Required sub-node properties:
- 	- reg: Pin that the LED is connected to. Must be 1, 2, or 3.
+diff --git a/drivers/leds/leds-an30259a.c b/drivers/leds/leds-an30259a.c
+index 1c1f0c8..d714ee8 100644
+--- a/drivers/leds/leds-an30259a.c
++++ b/drivers/leds/leds-an30259a.c
+@@ -13,7 +13,6 @@
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/regmap.h>
+-#include <uapi/linux/uleds.h>
  
- Optional sub-node properties:
--	- label: see Documentation/devicetree/bindings/leds/common.txt
--	- linux,default-trigger: see Documentation/devicetree/bindings/leds/common.txt
-+	- function :
-+		see Documentation/devicetree/bindings/leds/common.txt
-+	- color :
-+		see Documentation/devicetree/bindings/leds/common.txt
-+	- label :
-+		see Documentation/devicetree/bindings/leds/common.txt (deprecated)
-+	- linux,default-trigger :
-+		see Documentation/devicetree/bindings/leds/common.txt
+ #define AN30259A_MAX_LEDS 3
  
- Example:
+@@ -54,6 +53,8 @@
+ #define AN30259A_BLINK_MAX_TIME 7500 /* ms */
+ #define AN30259A_SLOPE_RESOLUTION 500 /* ms */
+ 
++#define AN30259A_NAME "an30259a"
 +
-+#include <dt-bindings/leds/functions.h>
-+
- led-controller@30 {
- 	compatible = "panasonic,an30259a";
- 	reg = <0x30>;
-@@ -28,16 +37,19 @@ led-controller@30 {
- 	led@1 {
- 		reg = <1>;
- 		linux,default-trigger = "heartbeat";
--		label = "red:indicator";
-+		function = LED_FUNCTION_INDICATOR;
-+		color = "red";
- 	};
+ #define STATE_OFF 0
+ #define STATE_KEEP 1
+ #define STATE_ON 2
+@@ -62,11 +63,11 @@ struct an30259a;
  
- 	led@2 {
- 		reg = <2>;
--		label = "green:indicator";
-+		function = LED_FUNCTION_INDICATOR;
-+		color = "green";
- 	};
- 
- 	led@3 {
- 		reg = <3>;
--		label = "blue:indicator";
-+		function = LED_FUNCTION_INDICATOR;
-+		color = "blue";
- 	};
+ struct an30259a_led {
+ 	struct an30259a *chip;
++	struct fwnode_handle *fwnode;
+ 	struct led_classdev cdev;
+ 	u32 num;
+ 	u32 default_state;
+ 	bool sloping;
+-	char label[LED_MAX_NAME_SIZE];
  };
+ 
+ struct an30259a {
+@@ -226,14 +227,7 @@ static int an30259a_dt_init(struct i2c_client *client,
+ 
+ 		led->num = source;
+ 		led->chip = chip;
+-
+-		if (of_property_read_string(child, "label", &str))
+-			snprintf(led->label, sizeof(led->label), "an30259a::");
+-		else
+-			snprintf(led->label, sizeof(led->label), "an30259a:%s",
+-				 str);
+-
+-		led->cdev.name = led->label;
++		led->fwnode = of_fwnode_handle(child);
+ 
+ 		if (!of_property_read_string(child, "default-state", &str)) {
+ 			if (!strcmp(str, "on"))
+@@ -312,13 +306,21 @@ static int an30259a_probe(struct i2c_client *client)
+ 	chip->regmap = devm_regmap_init_i2c(client, &an30259a_regmap_config);
+ 
+ 	for (i = 0; i < chip->num_leds; i++) {
++		struct led_init_data init_data = { chip->leds[i].fwnode };
++
++		int ret = led_compose_name(init_data.fwnode, AN30259A_NAME, ":",
++					   init_data.name);
++		if (ret)
++			return ret;
++
+ 		an30259a_init_default_state(&chip->leds[i]);
+ 		chip->leds[i].cdev.brightness_set_blocking =
+ 			an30259a_brightness_set;
+ 		chip->leds[i].cdev.blink_set = an30259a_blink_set;
+ 
+-		err = devm_led_classdev_register(&client->dev,
+-						 &chip->leds[i].cdev);
++		err = devm_led_classdev_register_ext(&client->dev,
++						 &chip->leds[i].cdev,
++						 &init_data);
+ 		if (err < 0)
+ 			goto exit;
+ 	}
 -- 
 2.1.4
