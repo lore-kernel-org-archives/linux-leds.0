@@ -1,13 +1,13 @@
 From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH 01/24] leds: class: Improve LED and LED flash class
- registration API
-Date: Wed, 7 Nov 2018 14:55:27 +0800
-Message-ID: <CAMz4kuJrfCfe7xJptVU_EGa-GM0-pfMaH2xb8+BksEia9W=bEw@mail.gmail.com>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com> <1541542052-10081-2-git-send-email-jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
+ device names
+Date: Wed, 7 Nov 2018 15:20:51 +0800
+Message-ID: <CAMz4ku+K=Jw56C2YczFMcVGRPUHMpSw4_iWEsNmKDBQgWjmEqQ@mail.gmail.com>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com> <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1541542052-10081-2-git-send-email-jacek.anaszewski@gmail.com>
+In-Reply-To: <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>, Xiaotong Lu <xiaotong.lu@spreadtrum.com>
@@ -17,33 +17,18 @@ Hi Jacek,
 
 On 7 November 2018 at 06:07, Jacek Anaszewski
 <jacek.anaszewski@gmail.com> wrote:
-> Replace of_led_classdev_register() with led_classdev_register_ext(), which
-> accepts easily extendable struct led_init_data, instead of the fixed
-> struct device_node argument. The latter can be now passed in a fwnode
-> property of the struct led_init_data.
+> Add public led_compose_name() API for composing LED class device
+> name basing on fwnode_handle data. The function composes device name
+> according to either a new <color:function> pattern or the legacy
+> <devicename:color:function> pattern. The decision on using the
+> particular pattern is made basing on whether fwnode contains new
+> "function" and "color" properties, or the legacy "label" proeprty.
 >
-> The modification is driven by the need for passing another argument
-> to the LED class initialization function - a LED class device name.
-> Currently it is conveyed in the "name" char pointer property of
-> struct led_classdev, which is semantically and functionally incorrect
-> since it is needed only on LED class device registration, but persists
-> in system memory throughout the whole LED class device lifetime.
+> Backwards compatibility with in-driver hard-coded LED class device
+> names is assured thanks to the default_desc argument.
 >
-> Whereas in case of the name strings coming from DT "label" property or
-> statically initialized ones the cost is only the pointer size, it grows
-> to LED_MAX_NAME_SIZE (64) with the advent of a new LED class device naming
-> scheme, where color and function properties come from separate board
-> firmware properties and the name needs to be constructed in a new buffer.
->
-> The change will not break any existing clients since the patch alters
-> also existing led_classdev{_flash}_register() macro wrappers, that pass
-> NULL in place of init_data, which leads to using legacy name
-> initialization path basing on the struct led_classdev's "name" property.
->
-> Two existing users of devm_of_led_classdev_registers() are modified
-> to use devm_led_classdev_register(), which will not impact their
-> operation since they in fact didn't need to pass struct device_node on
-> registration from the beginning.
+> In case none of the aformentioned properties was found, then, for OF
+> nodes, the node name is adopted for LED class device name.
 >
 > Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 > Cc: Baolin Wang <baolin.wang@linaro.org>
@@ -55,277 +40,176 @@ On 7 November 2018 at 06:07, Jacek Anaszewski
 > Cc: Simon Shields <simon@lineageos.org>
 > Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 > ---
->  drivers/leds/led-class-flash.c  |  9 +++++----
->  drivers/leds/led-class.c        | 34 ++++++++++++++++++++++------------
->  drivers/leds/leds-cr0014114.c   |  3 +--
->  drivers/leds/leds-gpio.c        |  2 +-
->  include/linux/led-class-flash.h | 13 +++++++++----
->  include/linux/leds.h            | 29 +++++++++++++++++++----------
->  6 files changed, 57 insertions(+), 33 deletions(-)
+>  Documentation/leds/leds-class.txt |  2 +-
+>  drivers/leds/led-core.c           | 71 +++++++++++++++++++++++++++++++++++++++
+>  include/linux/leds.h              | 32 ++++++++++++++++++
+>  3 files changed, 104 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
-> index cf39827..8d1c117 100644
-> --- a/drivers/leds/led-class-flash.c
-> +++ b/drivers/leds/led-class-flash.c
-> @@ -285,8 +285,9 @@ static void led_flash_init_sysfs_groups(struct led_classdev_flash *fled_cdev)
->         led_cdev->groups = flash_groups;
->  }
+> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
+> index 836cb16..e9009c4 100644
+> --- a/Documentation/leds/leds-class.txt
+> +++ b/Documentation/leds/leds-class.txt
+> @@ -43,7 +43,7 @@ LED Device Naming
 >
-> -int led_classdev_flash_register(struct device *parent,
-> -                               struct led_classdev_flash *fled_cdev)
-> +int led_classdev_flash_register_ext(struct device *parent,
-> +                                   struct led_classdev_flash *fled_cdev,
-> +                                   struct led_init_data *init_data)
->  {
->         struct led_classdev *led_cdev;
->         const struct led_flash_ops *ops;
-> @@ -312,13 +313,13 @@ int led_classdev_flash_register(struct device *parent,
->         }
+>  Is currently of the form:
 >
->         /* Register led class device */
-> -       ret = led_classdev_register(parent, led_cdev);
-> +       ret = led_classdev_register_ext(parent, led_cdev, init_data);
->         if (ret < 0)
->                 return ret;
+> -"devicename:colour:function"
+> +"colour:function"
 >
->         return 0;
->  }
-> -EXPORT_SYMBOL_GPL(led_classdev_flash_register);
-> +EXPORT_SYMBOL_GPL(led_classdev_flash_register_ext);
->
->  void led_classdev_flash_unregister(struct led_classdev_flash *fled_cdev)
->  {
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 3c7e348..8c80763 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -17,6 +17,7 @@
->  #include <linux/leds.h>
+>  There have been calls for LED properties such as colour to be exported as
+>  individual led class attributes. As a solution which doesn't incur as much
+> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+> index ede4fa0..f7371fc 100644
+> --- a/drivers/leds/led-core.c
+> +++ b/drivers/leds/led-core.c
+> @@ -16,6 +16,8 @@
 >  #include <linux/list.h>
 >  #include <linux/module.h>
+>  #include <linux/mutex.h>
 > +#include <linux/of.h>
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
->  #include <linux/timer.h>
-> @@ -244,18 +245,25 @@ static int led_classdev_next_name(const char *init_name, char *name,
+> +#include <linux/property.h>
+>  #include <linux/rwsem.h>
+>  #include "leds.h"
+>
+> @@ -327,3 +329,72 @@ void led_sysfs_enable(struct led_classdev *led_cdev)
+>         led_cdev->flags &= ~LED_SYSFS_DISABLE;
 >  }
->
->  /**
-> - * of_led_classdev_register - register a new object of led_classdev class.
-> + * led_classdev_register_ext - register a new object of led_classdev class.
->   *
->   * @parent: parent of LED device
->   * @led_cdev: the led_classdev structure for this device.
-> - * @np: DT node describing this LED
-> + * @init_data: LED class device initialization data
->   */
-> -int of_led_classdev_register(struct device *parent, struct device_node *np,
-> -                           struct led_classdev *led_cdev)
-> +int led_classdev_register_ext(struct device *parent,
-> +                             struct led_classdev *led_cdev,
-> +                             struct led_init_data *init_data)
->  {
->         char name[LED_MAX_NAME_SIZE];
->         int ret;
->
-> +       if (init_data && init_data->name) {
-> +               led_cdev->name = init_data->name;
-> +       } else {
-> +               dev_info(parent, "init_data not available");
-> +       }
+>  EXPORT_SYMBOL_GPL(led_sysfs_enable);
 > +
->         ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
->         if (ret < 0)
->                 return ret;
-> @@ -268,7 +276,8 @@ int of_led_classdev_register(struct device *parent, struct device_node *np,
->                 mutex_unlock(&led_cdev->led_access);
->                 return PTR_ERR(led_cdev->dev);
->         }
-> -       led_cdev->dev->of_node = np;
-> +       if (init_data && init_data->fwnode)
-> +               led_cdev->dev->of_node = to_of_node(init_data->fwnode);
->
->         if (ret)
->                 dev_warn(parent, "Led %s renamed to %s due to name collision",
-> @@ -313,7 +322,7 @@ int of_led_classdev_register(struct device *parent, struct device_node *np,
->
->         return 0;
->  }
-> -EXPORT_SYMBOL_GPL(of_led_classdev_register);
-> +EXPORT_SYMBOL_GPL(led_classdev_register_ext);
->
->  /**
->   * led_classdev_unregister - unregisters a object of led_properties class.
-> @@ -358,14 +367,15 @@ static void devm_led_classdev_release(struct device *dev, void *res)
->  }
->
->  /**
-> - * devm_of_led_classdev_register - resource managed led_classdev_register()
-> + * devm_led_classdev_register_ext - resource managed led_classdev_register_ext()
->   *
->   * @parent: parent of LED device
->   * @led_cdev: the led_classdev structure for this device.
-> + * @init_data: LED class device initialization data
->   */
-> -int devm_of_led_classdev_register(struct device *parent,
-> -                                 struct device_node *np,
-> -                                 struct led_classdev *led_cdev)
-> +int devm_led_classdev_register_ext(struct device *parent,
-> +                                  struct led_classdev *led_cdev,
-> +                                  struct led_init_data *init_data)
->  {
->         struct led_classdev **dr;
->         int rc;
-> @@ -374,7 +384,7 @@ int devm_of_led_classdev_register(struct device *parent,
->         if (!dr)
->                 return -ENOMEM;
->
-> -       rc = of_led_classdev_register(parent, np, led_cdev);
-> +       rc = led_classdev_register_ext(parent, led_cdev, init_data);
->         if (rc) {
->                 devres_free(dr);
->                 return rc;
-> @@ -385,7 +395,7 @@ int devm_of_led_classdev_register(struct device *parent,
->
->         return 0;
->  }
-> -EXPORT_SYMBOL_GPL(devm_of_led_classdev_register);
-> +EXPORT_SYMBOL_GPL(devm_led_classdev_register_ext);
->
->  static int devm_led_classdev_match(struct device *dev, void *res, void *data)
->  {
-> diff --git a/drivers/leds/leds-cr0014114.c b/drivers/leds/leds-cr0014114.c
-> index 0e42624..1c82152 100644
-> --- a/drivers/leds/leds-cr0014114.c
-> +++ b/drivers/leds/leds-cr0014114.c
-> @@ -207,8 +207,7 @@ static int cr0014114_probe_dt(struct cr0014114 *priv)
->                 led->ldev.max_brightness          = CR_MAX_BRIGHTNESS;
->                 led->ldev.brightness_set_blocking = cr0014114_set_sync;
->
-> -               ret = devm_of_led_classdev_register(priv->dev, np,
-> -                                                   &led->ldev);
-> +               ret = devm_led_classdev_register(priv->dev, &led->ldev);
->                 if (ret) {
->                         dev_err(priv->dev,
->                                 "failed to register LED device %s, err %d",
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index 32fa752..c87fbd3 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -112,7 +112,7 @@ static int create_gpio_led(const struct gpio_led *template,
->         if (ret < 0)
->                 return ret;
->
-> -       return devm_of_led_classdev_register(parent, np, &led_dat->cdev);
-> +       return devm_led_classdev_register(parent, &led_dat->cdev);
->  }
->
->  struct gpio_leds_priv {
-> diff --git a/include/linux/led-class-flash.h b/include/linux/led-class-flash.h
-> index 700efaa..28a73d0 100644
-> --- a/include/linux/led-class-flash.h
-> +++ b/include/linux/led-class-flash.h
-> @@ -90,15 +90,20 @@ static inline struct led_classdev_flash *lcdev_to_flcdev(
->  }
->
->  /**
-> - * led_classdev_flash_register - register a new object of led_classdev class
-> - *                              with support for flash LEDs
-> + * fwnode_led_classdev_flash_register - register a new object of led_classdev
-
-s/fwnode_led_classdev_flash_register/led_classdev_flash_register_ext
-
-> + *                                     class with support for flash LEDs
->   * @parent: the flash LED to register
-> + * @fwnode: the flash LED fwnode handle
-
-s/fwnode/init_data
-
->   * @fled_cdev: the led_classdev_flash structure for this device
->   *
->   * Returns: 0 on success or negative error value on failure
->   */
-> -extern int led_classdev_flash_register(struct device *parent,
-> -                               struct led_classdev_flash *fled_cdev);
-> +extern int led_classdev_flash_register_ext(struct device *parent,
-> +                                       struct led_classdev_flash *fled_cdev,
-> +                                       struct led_init_data *init_data);
+> +static void led_parse_properties(struct fwnode_handle *fwnode,
+> +                                struct led_properties *props)
+> +{
+> +       int ret;
 > +
-> +#define led_classdev_flash_register(parent, fled_cdev)         \
-> +       led_classdev_flash_register_ext(parent, fled_cdev, NULL)
->
->  /**
->   * led_classdev_flash_unregister - unregisters an object of led_classdev class
+> +       if (!fwnode)
+> +               return;
+> +
+> +       ret = fwnode_property_read_string(fwnode, "label", &props->label);
+> +       if (!ret)
+> +               return;
+> +
+> +       ret = fwnode_property_read_string(fwnode, "function", &props->function);
+> +       if (ret)
+> +               pr_info("Failed to parse function property\n");
+> +
+> +       ret = fwnode_property_read_string(fwnode, "color", &props->color);
+> +       if (ret)
+> +               pr_info("Failed to parse color property\n");
+
+Now the color and function properties can be optional, so we should
+deal with different return errors.
+-EINVAL means we have not set color or function property, which means
+we should not give failure message for users (maybe "not supply color
+property\n") and return 0 as success.
+For other errors, we should not ignore them, instead we should give
+failure messages and return errors.
+
+Tested-by: Baolin Wang <baolin.wang@linaro.org>
+
+> +}
+> +
+> +int led_compose_name(struct fwnode_handle *fwnode, const char *led_hw_name,
+> +                    const char *default_desc, char *led_classdev_name)
+> +{
+> +       struct led_properties props = {};
+> +
+> +       if (!led_classdev_name)
+> +               return -EINVAL;
+> +
+> +       led_parse_properties(fwnode, &props);
+> +
+> +       if (props.label) {
+> +               /*
+> +                * Presence of 'label' DT property implies legacy LED name,
+> +                * formatted as <devicename:color:function>, with possible
+> +                * section omission if doesn't apply to given device.
+> +                *
+> +                * If no led_hw_name has been passed, then it indicates that
+> +                * DT label should be used as-is for LED class device name.
+> +                * Otherwise the label is prepended with led_hw_name to compose
+> +                * the final LED class device name.
+> +                */
+> +               if (!led_hw_name) {
+> +                       strncpy(led_classdev_name, props.label,
+> +                               LED_MAX_NAME_SIZE);
+> +               } else {
+> +                       snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
+> +                                led_hw_name, props.label);
+> +               }
+> +       } else if (props.function || props.color) {
+> +               snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
+> +                        props.color ?: "", props.function ?: "");
+> +       } else if (default_desc) {
+> +               if (!led_hw_name) {
+> +                       pr_err("Legacy LED naming requires devicename segment");
+> +                       return -EINVAL;
+> +               }
+> +               snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
+> +                        led_hw_name, default_desc);
+> +       } else if (is_of_node(fwnode)) {
+> +               strncpy(led_classdev_name, to_of_node(fwnode)->name,
+> +                       LED_MAX_NAME_SIZE);
+> +       } else
+> +               return -EINVAL;
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(led_compose_name);
 > diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 834683d..646c49a 100644
+> index 646c49a..ddb4001 100644
 > --- a/include/linux/leds.h
 > +++ b/include/linux/leds.h
-> @@ -20,6 +20,7 @@
->  #include <linux/spinlock.h>
->  #include <linux/timer.h>
->  #include <linux/workqueue.h>
-> +#include <uapi/linux/uleds.h>
+> @@ -238,6 +238,32 @@ extern void led_sysfs_disable(struct led_classdev *led_cdev);
+>  extern void led_sysfs_enable(struct led_classdev *led_cdev);
 >
->  struct device;
->  /*
-> @@ -33,6 +34,13 @@ enum led_brightness {
->         LED_FULL        = 255,
+>  /**
+> + * led_compose_name - compose LED class device name
+> + * @child: child fwnode_handle describing a LED,
+> + *        or a group of synchronized LEDs.
+> + * @led_hw_name: name of the LED controller, used when falling back to legacy
+> + *              LED naming; it should be set to NULL in new LED class drivers
+> + * @default_desc: default <color:function> tuple, for backwards compatibility
+> + *               with in-driver hard-coded LED names used as a fallback when
+> + *               "label" DT property was absent; it should be set to NULL
+> + *               in new LED class drivers
+> + * @led_classdev_name: composed LED class device name
+> + *
+> + * Create LED class device name basing on the configuration provided by the
+> + * board firmware. The name can have a legacy form <devicename:color:function>,
+> + * or a new form <color:function>. The latter is chosen if at least one of
+> + * "color" or "function" properties is present in the fwnode, leaving the
+> + * section blank if the related property is absent. The former is applied
+> + * when legacy "label" property is present in the fwnode. In case none of the
+> + * aformentioned properties was found, then, for OF nodes, the node name
+> + * is adopted for LED class device name.
+> + *
+> + * Returns: 0 on success or negative error value on failure
+> + */
+> +extern int led_compose_name(struct fwnode_handle *child, const char *led_hw_name,
+> +                           const char *default_desc, char *led_classdev_name);
+> +
+> +/**
+>   * led_sysfs_is_disabled - check if LED sysfs interface is disabled
+>   * @led_cdev: the LED to query
+>   *
+> @@ -414,6 +440,12 @@ struct led_platform_data {
+>         struct led_info *leds;
 >  };
 >
-> +struct led_init_data {
-> +       /* Device fwnode handle */
-> +       struct fwnode_handle *fwnode;
-> +       /* Requested LED class device name */
-> +       char name[LED_MAX_NAME_SIZE];
+> +struct led_properties {
+> +       const char *color;
+> +       const char *function;
+> +       const char *label;
 > +};
 > +
->  struct led_classdev {
->         const char              *name;
->         enum led_brightness      brightness;
-> @@ -73,6 +81,7 @@ struct led_classdev {
->          */
->         int (*brightness_set_blocking)(struct led_classdev *led_cdev,
->                                        enum led_brightness brightness);
-> +
-
-Unrelated change.
-
->         /* Get LED brightness level */
->         enum led_brightness (*brightness_get)(struct led_classdev *led_cdev);
->
-> @@ -123,16 +132,16 @@ struct led_classdev {
->         struct mutex            led_access;
->  };
->
-> -extern int of_led_classdev_register(struct device *parent,
-> -                                   struct device_node *np,
-> -                                   struct led_classdev *led_cdev);
-> -#define led_classdev_register(parent, led_cdev)                                \
-> -       of_led_classdev_register(parent, NULL, led_cdev)
-> -extern int devm_of_led_classdev_register(struct device *parent,
-> -                                        struct device_node *np,
-> -                                        struct led_classdev *led_cdev);
-> -#define devm_led_classdev_register(parent, led_cdev)                   \
-> -       devm_of_led_classdev_register(parent, NULL, led_cdev)
-> +extern int led_classdev_register_ext(struct device *parent,
-> +                                    struct led_classdev *led_cdev,
-> +                                    struct led_init_data *init_data);
-> +#define led_classdev_register(parent, led_cdev)                        \
-> +       led_classdev_register_ext(parent, led_cdev, NULL)
-> +extern int devm_led_classdev_register_ext(struct device *parent,
-> +                                         struct led_classdev *led_cdev,
-> +                                         struct led_init_data *init_data);
-> +#define devm_led_classdev_register(parent, led_cdev)           \
-> +       devm_led_classdev_register_ext(parent, led_cdev, NULL)
->  extern void led_classdev_unregister(struct led_classdev *led_cdev);
->  extern void devm_led_classdev_unregister(struct device *parent,
->                                          struct led_classdev *led_cdev);
+>  struct gpio_desc;
+>  typedef int (*gpio_blink_set_t)(struct gpio_desc *desc, int state,
+>                                 unsigned long *delay_on,
 > --
 > 2.1.4
 >
 
-It can work well for SC27XX LED, FWIW you can add my tested tag.
-Tested-by: Baolin Wang <baolin.wang@linaro.org>
+
 
 -- 
 Baolin Wang
