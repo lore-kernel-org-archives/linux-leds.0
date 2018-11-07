@@ -1,81 +1,82 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 08/24] leds: lt3593: Use led_compose_name()
-Date: Wed, 7 Nov 2018 20:49:39 +0100
-Message-ID: <6666ef06-c19d-b0d8-a32b-44cecb8bc4b3@gmail.com>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-9-git-send-email-jacek.anaszewski@gmail.com>
- <42d68eae-6905-e787-3797-f0f16b0dfb84@zonque.org>
+Subject: Re: [PATCH] leds: trigger: Fix sleeping function called from invalid
+ context
+Date: Wed, 7 Nov 2018 21:45:26 +0100
+Message-ID: <3233e3af-bd33-e719-7252-59d92a8da2b1@gmail.com>
+References: <5f1cfb9c87f591b12efa2e7a0063f15532649634.1541563908.git.baolin.wang@linaro.org>
+ <CAMuHMdVUnH7ubtLOHAt1uLFOqqeAy60LvoWaWLiJx0gf8PWhSg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <42d68eae-6905-e787-3797-f0f16b0dfb84@zonque.org>
+In-Reply-To: <CAMuHMdVUnH7ubtLOHAt1uLFOqqeAy60LvoWaWLiJx0gf8PWhSg@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Mack <daniel@zonque.org>, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Baolin Wang <baolin.wang@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 11/07/2018 08:37 PM, Daniel Mack wrote:
-> On 6/11/2018 11:07 PM, Jacek Anaszewski wrote:
->> Switch to using generic LED support for composing LED class
->> device name.
-> 
-> Thanks for the rework!
-> 
->> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->> ---
->>   drivers/leds/leds-lt3593.c | 19 ++++++++-----------
->>   1 file changed, 8 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
->> index de3623e..d005abc 100644
->> --- a/drivers/leds/leds-lt3593.c
->> +++ b/drivers/leds/leds-lt3593.c
->> @@ -10,10 +10,10 @@
->>   #include <linux/slab.h>
->>   #include <linux/module.h>
->>   #include <linux/of.h>
->> -#include <uapi/linux/uleds.h>
->> +
->> +#define LED_LT3593_NAME "lt3593"
->>     struct lt3593_led_data {
->> -    char name[LED_MAX_NAME_SIZE];
->>       struct led_classdev cdev;
->>       struct gpio_desc *gpiod;
->>   };
->> @@ -111,6 +111,7 @@ static int lt3593_led_probe(struct platform_device
->> *pdev)
->>       struct fwnode_handle *child;
->>       int ret, state = LEDS_GPIO_DEFSTATE_OFF;
->>       enum gpiod_flags flags = GPIOD_OUT_LOW;
->> +    struct led_init_data init_data;
->>       const char *tmp;
->>         if (dev_get_platdata(dev)) {
->> @@ -138,14 +139,11 @@ static int lt3593_led_probe(struct
->> platform_device *pdev)
->>           return PTR_ERR(led_data->gpiod);
->>         child = device_get_next_child_node(dev, NULL);
->> +    init_data.fwnode = child;
-> 
-> Not quite following. `fwnode' is the only member of that struct that is
-> initialized?
-> 
->>   -    ret = fwnode_property_read_string(child, "label", &tmp);
->> -    if (ret < 0)
->> -        snprintf(led_data->name, sizeof(led_data->name),
->> -             "lt3593::");
->> -    else
->> -        snprintf(led_data->name, sizeof(led_data->name),
->> -             "lt3593:%s", tmp);
->> +    ret = led_compose_name(child, LED_LT3593_NAME, ":", init_data.name);
-> 
-> ... and here, a member that wasn't written before is used? What am I
-> missing?
+Hi Baolin and Geert,
 
-init_data.name pointer is passed to led_compose_name(), which fills
-this array with the composed name.
+Geert - thanks for the heads-up.
 
--- 
+Baolin - thanks for the quick fix.
+
+Applied to the fixes-for-4.20-rc2 branch of linux-leds.git
+
 Best regards,
 Jacek Anaszewski
+
+On 11/07/2018 08:59 AM, Geert Uytterhoeven wrote:
+> Hi Baolin,
+> 
+> On Wed, Nov 7, 2018 at 6:43 AM Baolin Wang <baolin.wang@linaro.org> wrote:
+>> We will meet below issue due to mutex_lock() is called in interrupt context.
+>> The mutex lock is used to protect the pattern trigger data, but before changing
+>> new pattern trigger data (pattern values or repeat value) by users, we always
+>> cancel the timer firstly to clear previous patterns' performance. That means
+>> there is no race in pattern_trig_timer_function(), so we can drop the mutex
+>> lock in pattern_trig_timer_function() to avoid this issue.
+>>
+>> Moreover we can move the timer cancelling into mutex protection, since there
+>> is no deadlock risk if we remove the mutex lock in pattern_trig_timer_function().
+>>
+>> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
+>> in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/1
+>> CPU: 1 PID: 0 Comm: swapper/1 Not tainted
+>> 4.20.0-rc1-koelsch-00841-ga338c8181013c1a9 #171
+>> Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+>> [<c020f19c>] (unwind_backtrace) from [<c020aecc>] (show_stack+0x10/0x14)
+>> [<c020aecc>] (show_stack) from [<c07affb8>] (dump_stack+0x7c/0x9c)
+>> [<c07affb8>] (dump_stack) from [<c02417d4>] (___might_sleep+0xf4/0x158)
+>> [<c02417d4>] (___might_sleep) from [<c07c92c4>] (mutex_lock+0x18/0x60)
+>> [<c07c92c4>] (mutex_lock) from [<c067b28c>] (pattern_trig_timer_function+0x1c/0x11c)
+>> [<c067b28c>] (pattern_trig_timer_function) from [<c027f6fc>] (call_timer_fn+0x1c/0x90)
+>> [<c027f6fc>] (call_timer_fn) from [<c027f944>] (expire_timers+0x94/0xa4)
+>> [<c027f944>] (expire_timers) from [<c027fc98>] (run_timer_softirq+0x108/0x15c)
+>> [<c027fc98>] (run_timer_softirq) from [<c02021cc>] (__do_softirq+0x1d4/0x258)
+>> [<c02021cc>] (__do_softirq) from [<c0224d24>] (irq_exit+0x64/0xc4)
+>> [<c0224d24>] (irq_exit) from [<c0268dd0>] (__handle_domain_irq+0x80/0xb4)
+>> [<c0268dd0>] (__handle_domain_irq) from [<c045e1b0>] (gic_handle_irq+0x58/0x90)
+>> [<c045e1b0>] (gic_handle_irq) from [<c02019f8>] (__irq_svc+0x58/0x74)
+>> Exception stack(0xeb483f60 to 0xeb483fa8)
+>> 3f60: 00000000 00000000 eb9afaa0 c0217e80 00000000 ffffe000 00000000 c0e06408
+>> 3f80: 00000002 c0e0647c c0c6a5f0 00000000 c0e04900 eb483fb0 c0207ea8 c0207e98
+>> 3fa0: 60020013 ffffffff
+>> [<c02019f8>] (__irq_svc) from [<c0207e98>] (arch_cpu_idle+0x1c/0x38)
+>> [<c0207e98>] (arch_cpu_idle) from [<c0247ca8>] (do_idle+0x138/0x268)
+>> [<c0247ca8>] (do_idle) from [<c0248050>] (cpu_startup_entry+0x18/0x1c)
+>> [<c0248050>] (cpu_startup_entry) from [<402022ec>] (0x402022ec)
+>>
+>> Fixes: 5fd752b6b3a2 ("leds: core: Introduce LED pattern trigger")
+>> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> 
+> Thanks!
+> 
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
