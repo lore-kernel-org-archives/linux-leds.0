@@ -1,82 +1,52 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: trigger: Fix sleeping function called from invalid
- context
-Date: Wed, 7 Nov 2018 21:45:26 +0100
-Message-ID: <3233e3af-bd33-e719-7252-59d92a8da2b1@gmail.com>
-References: <5f1cfb9c87f591b12efa2e7a0063f15532649634.1541563908.git.baolin.wang@linaro.org>
- <CAMuHMdVUnH7ubtLOHAt1uLFOqqeAy60LvoWaWLiJx0gf8PWhSg@mail.gmail.com>
+Subject: Re: [PATCH trivial] Documentation: ABI: led-trigger-pattern: Fix
+ typos
+Date: Wed, 7 Nov 2018 21:45:35 +0100
+Message-ID: <58507e6b-a1a9-c1ff-e469-11611ba7e8ab@gmail.com>
+References: <20181107134524.13989-1-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdVUnH7ubtLOHAt1uLFOqqeAy60LvoWaWLiJx0gf8PWhSg@mail.gmail.com>
+In-Reply-To: <20181107134524.13989-1-geert+renesas@glider.be>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Baolin Wang <baolin.wang@linaro.org>
-Cc: Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Baolin Wang <baolin.wang@linaro.org>, Jiri Kosina <trivial@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Baolin and Geert,
+Hi Geert,
 
-Geert - thanks for the heads-up.
+On 11/07/2018 02:45 PM, Geert Uytterhoeven wrote:
+>   - Spelling s/brigntess/brightness/,
+>   - Double "use".
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/ABI/testing/sysfs-class-led-trigger-pattern | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> index fb3d1e03b8819bb9..1e5d172e064624d9 100644
+> --- a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> @@ -37,8 +37,8 @@ Description:
+>  		  0-|   /             \/             \/
+>  		    +---0----1----2----3----4----5----6------------> time (s)
+>  
+> -		2. To make the LED go instantly from one brigntess value to another,
+> -		we should use use zero-time lengths (the brightness must be same as
+> +		2. To make the LED go instantly from one brightness value to another,
+> +		we should use zero-time lengths (the brightness must be same as
+>  		the previous tuple's). So the format should be:
+>  		"brightness_1 duration_1 brightness_1 0 brightness_2 duration_2
+>  		brightness_2 0 ...". For example:
+> 
 
-Baolin - thanks for the quick fix.
+Thanks for the patch.
 
-Applied to the fixes-for-4.20-rc2 branch of linux-leds.git
+Applied to the fixes-for-4.20-rc2 branch of linux-leds.git.
 
+-- 
 Best regards,
 Jacek Anaszewski
-
-On 11/07/2018 08:59 AM, Geert Uytterhoeven wrote:
-> Hi Baolin,
-> 
-> On Wed, Nov 7, 2018 at 6:43 AM Baolin Wang <baolin.wang@linaro.org> wrote:
->> We will meet below issue due to mutex_lock() is called in interrupt context.
->> The mutex lock is used to protect the pattern trigger data, but before changing
->> new pattern trigger data (pattern values or repeat value) by users, we always
->> cancel the timer firstly to clear previous patterns' performance. That means
->> there is no race in pattern_trig_timer_function(), so we can drop the mutex
->> lock in pattern_trig_timer_function() to avoid this issue.
->>
->> Moreover we can move the timer cancelling into mutex protection, since there
->> is no deadlock risk if we remove the mutex lock in pattern_trig_timer_function().
->>
->> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
->> in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/1
->> CPU: 1 PID: 0 Comm: swapper/1 Not tainted
->> 4.20.0-rc1-koelsch-00841-ga338c8181013c1a9 #171
->> Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
->> [<c020f19c>] (unwind_backtrace) from [<c020aecc>] (show_stack+0x10/0x14)
->> [<c020aecc>] (show_stack) from [<c07affb8>] (dump_stack+0x7c/0x9c)
->> [<c07affb8>] (dump_stack) from [<c02417d4>] (___might_sleep+0xf4/0x158)
->> [<c02417d4>] (___might_sleep) from [<c07c92c4>] (mutex_lock+0x18/0x60)
->> [<c07c92c4>] (mutex_lock) from [<c067b28c>] (pattern_trig_timer_function+0x1c/0x11c)
->> [<c067b28c>] (pattern_trig_timer_function) from [<c027f6fc>] (call_timer_fn+0x1c/0x90)
->> [<c027f6fc>] (call_timer_fn) from [<c027f944>] (expire_timers+0x94/0xa4)
->> [<c027f944>] (expire_timers) from [<c027fc98>] (run_timer_softirq+0x108/0x15c)
->> [<c027fc98>] (run_timer_softirq) from [<c02021cc>] (__do_softirq+0x1d4/0x258)
->> [<c02021cc>] (__do_softirq) from [<c0224d24>] (irq_exit+0x64/0xc4)
->> [<c0224d24>] (irq_exit) from [<c0268dd0>] (__handle_domain_irq+0x80/0xb4)
->> [<c0268dd0>] (__handle_domain_irq) from [<c045e1b0>] (gic_handle_irq+0x58/0x90)
->> [<c045e1b0>] (gic_handle_irq) from [<c02019f8>] (__irq_svc+0x58/0x74)
->> Exception stack(0xeb483f60 to 0xeb483fa8)
->> 3f60: 00000000 00000000 eb9afaa0 c0217e80 00000000 ffffe000 00000000 c0e06408
->> 3f80: 00000002 c0e0647c c0c6a5f0 00000000 c0e04900 eb483fb0 c0207ea8 c0207e98
->> 3fa0: 60020013 ffffffff
->> [<c02019f8>] (__irq_svc) from [<c0207e98>] (arch_cpu_idle+0x1c/0x38)
->> [<c0207e98>] (arch_cpu_idle) from [<c0247ca8>] (do_idle+0x138/0x268)
->> [<c0247ca8>] (do_idle) from [<c0248050>] (cpu_startup_entry+0x18/0x1c)
->> [<c0248050>] (cpu_startup_entry) from [<402022ec>] (0x402022ec)
->>
->> Fixes: 5fd752b6b3a2 ("leds: core: Introduce LED pattern trigger")
->> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> 
-> Thanks!
-> 
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
