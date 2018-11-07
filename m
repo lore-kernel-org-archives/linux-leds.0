@@ -1,49 +1,50 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH trivial] Documentation: ABI: led-trigger-pattern: Fix
- typos
-Date: Wed, 7 Nov 2018 15:11:49 +0100
-Message-ID: <20181107141149.GA17276@amd>
-References: <20181107134524.13989-1-geert+renesas@glider.be>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 03/24] leds: dt-bindings: Add LED_FUNCTION definitions
+Date: Wed, 7 Nov 2018 20:28:38 +0100
+Message-ID: <e1c7a64d-30ae-c649-fd72-1359d3339d2d@gmail.com>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-4-git-send-email-jacek.anaszewski@gmail.com>
+ <ee6b35ab-6e26-a5fa-538e-d33b88903330@ysoft.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181107134524.13989-1-geert+renesas@glider.be>
+In-Reply-To: <ee6b35ab-6e26-a5fa-538e-d33b88903330@ysoft.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Jiri Kosina <trivial@kernel.org>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "pavel@ucw.cz" <pavel@ucw.cz>, "robh@kernel.org" <robh@kernel.org>, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>, Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 List-Id: linux-leds@vger.kernel.org
 
+Hi Michal
 
---3MwIy2ne0vdjdPXF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/07/2018 09:36 AM, Vokáč Michal wrote:
+> On 6.11.2018 23:07, Jacek Anaszewski wrote:
+>> Add common LED function definitions for use in Device Tree.
+>> The function names were extracted from existing dts files
+>> after eliminating oddities.
+>>
+>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>> Cc: Baolin Wang <baolin.wang@linaro.org>
+>> Cc: Daniel Mack <daniel@zonque.org>
+>> Cc: Dan Murphy <dmurphy@ti.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+>> Cc: Simon Shields <simon@lineageos.org>
+>> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+>> ---
+>>   include/dt-bindings/leds/functions.h | 101 +++++++++++++++++++++++++++++++++++
+>>   1 file changed, 101 insertions(+)
+>>   create mode 100644 include/dt-bindings/leds/functions.h
+> 
+> Hi Jacek,
+> Just nit picking. I think the subject should be:
+> 
+> "dt-bindings: leds: ..." to be consistent.
 
-On Wed 2018-11-07 14:45:24, Geert Uytterhoeven wrote:
->   - Spelling s/brigntess/brightness/,
->   - Double "use".
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks for the heads-up. I'll change it in the v2.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---3MwIy2ne0vdjdPXF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvi8qUACgkQMOfwapXb+vK2iwCfXYwrKkf+gjzK53oEitCqzggF
-f80AoKsnSdqOM7EGK6Rm2GNuSczCUthI
-=W5YQ
------END PGP SIGNATURE-----
-
---3MwIy2ne0vdjdPXF--
+-- 
+Best regards,
+Jacek Anaszewski
