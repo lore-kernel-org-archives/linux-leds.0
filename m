@@ -1,72 +1,35 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] leds: trigger: Fix sleeping function called from invalid context
-Date: Wed, 7 Nov 2018 08:59:26 +0100
-Message-ID: <CAMuHMdVUnH7ubtLOHAt1uLFOqqeAy60LvoWaWLiJx0gf8PWhSg@mail.gmail.com>
-References: <5f1cfb9c87f591b12efa2e7a0063f15532649634.1541563908.git.baolin.wang@linaro.org>
+From: =?utf-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
+Subject: Re: [PATCH 03/24] leds: dt-bindings: Add LED_FUNCTION definitions
+Date: Wed, 7 Nov 2018 08:36:47 +0000
+Message-ID: <ee6b35ab-6e26-a5fa-538e-d33b88903330@ysoft.com>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-4-git-send-email-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5f1cfb9c87f591b12efa2e7a0063f15532649634.1541563908.git.baolin.wang@linaro.org>
+In-Reply-To: <1541542052-10081-4-git-send-email-jacek.anaszewski@gmail.com>
+Content-Language: en-US
+Content-ID: <7204B21C1CC9C648B27D7350CDA8D6DE@eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "pavel@ucw.cz" <pavel@ucw.cz>, "robh@kernel.org" <robh@kernel.org>, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>, Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Baolin,
-
-On Wed, Nov 7, 2018 at 6:43 AM Baolin Wang <baolin.wang@linaro.org> wrote:
-> We will meet below issue due to mutex_lock() is called in interrupt context.
-> The mutex lock is used to protect the pattern trigger data, but before changing
-> new pattern trigger data (pattern values or repeat value) by users, we always
-> cancel the timer firstly to clear previous patterns' performance. That means
-> there is no race in pattern_trig_timer_function(), so we can drop the mutex
-> lock in pattern_trig_timer_function() to avoid this issue.
->
-> Moreover we can move the timer cancelling into mutex protection, since there
-> is no deadlock risk if we remove the mutex lock in pattern_trig_timer_function().
->
-> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
-> in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/1
-> CPU: 1 PID: 0 Comm: swapper/1 Not tainted
-> 4.20.0-rc1-koelsch-00841-ga338c8181013c1a9 #171
-> Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-> [<c020f19c>] (unwind_backtrace) from [<c020aecc>] (show_stack+0x10/0x14)
-> [<c020aecc>] (show_stack) from [<c07affb8>] (dump_stack+0x7c/0x9c)
-> [<c07affb8>] (dump_stack) from [<c02417d4>] (___might_sleep+0xf4/0x158)
-> [<c02417d4>] (___might_sleep) from [<c07c92c4>] (mutex_lock+0x18/0x60)
-> [<c07c92c4>] (mutex_lock) from [<c067b28c>] (pattern_trig_timer_function+0x1c/0x11c)
-> [<c067b28c>] (pattern_trig_timer_function) from [<c027f6fc>] (call_timer_fn+0x1c/0x90)
-> [<c027f6fc>] (call_timer_fn) from [<c027f944>] (expire_timers+0x94/0xa4)
-> [<c027f944>] (expire_timers) from [<c027fc98>] (run_timer_softirq+0x108/0x15c)
-> [<c027fc98>] (run_timer_softirq) from [<c02021cc>] (__do_softirq+0x1d4/0x258)
-> [<c02021cc>] (__do_softirq) from [<c0224d24>] (irq_exit+0x64/0xc4)
-> [<c0224d24>] (irq_exit) from [<c0268dd0>] (__handle_domain_irq+0x80/0xb4)
-> [<c0268dd0>] (__handle_domain_irq) from [<c045e1b0>] (gic_handle_irq+0x58/0x90)
-> [<c045e1b0>] (gic_handle_irq) from [<c02019f8>] (__irq_svc+0x58/0x74)
-> Exception stack(0xeb483f60 to 0xeb483fa8)
-> 3f60: 00000000 00000000 eb9afaa0 c0217e80 00000000 ffffe000 00000000 c0e06408
-> 3f80: 00000002 c0e0647c c0c6a5f0 00000000 c0e04900 eb483fb0 c0207ea8 c0207e98
-> 3fa0: 60020013 ffffffff
-> [<c02019f8>] (__irq_svc) from [<c0207e98>] (arch_cpu_idle+0x1c/0x38)
-> [<c0207e98>] (arch_cpu_idle) from [<c0247ca8>] (do_idle+0x138/0x268)
-> [<c0247ca8>] (do_idle) from [<c0248050>] (cpu_startup_entry+0x18/0x1c)
-> [<c0248050>] (cpu_startup_entry) from [<402022ec>] (0x402022ec)
->
-> Fixes: 5fd752b6b3a2 ("leds: core: Introduce LED pattern trigger")
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-
-Thanks!
-
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+T24gNi4xMS4yMDE4IDIzOjA3LCBKYWNlayBBbmFzemV3c2tpIHdyb3RlOg0KPiBBZGQgY29tbW9u
+IExFRCBmdW5jdGlvbiBkZWZpbml0aW9ucyBmb3IgdXNlIGluIERldmljZSBUcmVlLg0KPiBUaGUg
+ZnVuY3Rpb24gbmFtZXMgd2VyZSBleHRyYWN0ZWQgZnJvbSBleGlzdGluZyBkdHMgZmlsZXMNCj4g
+YWZ0ZXIgZWxpbWluYXRpbmcgb2RkaXRpZXMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBKYWNlayBB
+bmFzemV3c2tpIDxqYWNlay5hbmFzemV3c2tpQGdtYWlsLmNvbT4NCj4gQ2M6IEJhb2xpbiBXYW5n
+IDxiYW9saW4ud2FuZ0BsaW5hcm8ub3JnPg0KPiBDYzogRGFuaWVsIE1hY2sgPGRhbmllbEB6b25x
+dWUub3JnPg0KPiBDYzogRGFuIE11cnBoeSA8ZG11cnBoeUB0aS5jb20+DQo+IENjOiBMaW51cyBX
+YWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+DQo+IENjOiBPbGVoIEtyYXZjaGVua28g
+PG9sZWdAa2FhLm9yZy51YT4NCj4gQ2M6IFNha2FyaSBBaWx1cyA8c2FrYXJpLmFpbHVzQGxpbnV4
+LmludGVsLmNvbT4NCj4gQ2M6IFNpbW9uIFNoaWVsZHMgPHNpbW9uQGxpbmVhZ2Vvcy5vcmc+DQo+
+IENjOiBYaWFvdG9uZyBMdSA8eGlhb3RvbmcubHVAc3ByZWFkdHJ1bS5jb20+DQo+IC0tLQ0KPiAg
+IGluY2x1ZGUvZHQtYmluZGluZ3MvbGVkcy9mdW5jdGlvbnMuaCB8IDEwMSArKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKw0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxMDEgaW5zZXJ0aW9u
+cygrKQ0KPiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL2xlZHMvZnVu
+Y3Rpb25zLmgNCg0KSGkgSmFjZWssDQpKdXN0IG5pdCBwaWNraW5nLiBJIHRoaW5rIHRoZSBzdWJq
+ZWN0IHNob3VsZCBiZToNCg0KImR0LWJpbmRpbmdzOiBsZWRzOiAuLi4iIHRvIGJlIGNvbnNpc3Rl
+bnQuDQoNCkJlc3QgcmVnYXJkcywNCk1pY2hhbA0KDQo=
