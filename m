@@ -1,112 +1,72 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH 06/24] leds: sc27xx-blt: Use led_compose_name()
-Date: Wed, 7 Nov 2018 15:22:45 +0800
-Message-ID: <CAMz4kuL9r7pOiqVm9vD4G0AOXe6_UN2nTGmCchp=TVy98XLWJw@mail.gmail.com>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com> <1541542052-10081-7-git-send-email-jacek.anaszewski@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] leds: trigger: Fix sleeping function called from invalid context
+Date: Wed, 7 Nov 2018 08:59:26 +0100
+Message-ID: <CAMuHMdVUnH7ubtLOHAt1uLFOqqeAy60LvoWaWLiJx0gf8PWhSg@mail.gmail.com>
+References: <5f1cfb9c87f591b12efa2e7a0063f15532649634.1541563908.git.baolin.wang@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1541542052-10081-7-git-send-email-jacek.anaszewski@gmail.com>
+In-Reply-To: <5f1cfb9c87f591b12efa2e7a0063f15532649634.1541563908.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Jacek,
+Hi Baolin,
 
-On 7 November 2018 at 06:07, Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
-> Switch to using generic LED support for composing LED class
-> device name.
+On Wed, Nov 7, 2018 at 6:43 AM Baolin Wang <baolin.wang@linaro.org> wrote:
+> We will meet below issue due to mutex_lock() is called in interrupt context.
+> The mutex lock is used to protect the pattern trigger data, but before changing
+> new pattern trigger data (pattern values or repeat value) by users, we always
+> cancel the timer firstly to clear previous patterns' performance. That means
+> there is no race in pattern_trig_timer_function(), so we can drop the mutex
+> lock in pattern_trig_timer_function() to avoid this issue.
 >
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-> Cc: Baolin Wang <baolin.wang@linaro.org>
+> Moreover we can move the timer cancelling into mutex protection, since there
+> is no deadlock risk if we remove the mutex lock in pattern_trig_timer_function().
+>
+> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
+> in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/1
+> CPU: 1 PID: 0 Comm: swapper/1 Not tainted
+> 4.20.0-rc1-koelsch-00841-ga338c8181013c1a9 #171
+> Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+> [<c020f19c>] (unwind_backtrace) from [<c020aecc>] (show_stack+0x10/0x14)
+> [<c020aecc>] (show_stack) from [<c07affb8>] (dump_stack+0x7c/0x9c)
+> [<c07affb8>] (dump_stack) from [<c02417d4>] (___might_sleep+0xf4/0x158)
+> [<c02417d4>] (___might_sleep) from [<c07c92c4>] (mutex_lock+0x18/0x60)
+> [<c07c92c4>] (mutex_lock) from [<c067b28c>] (pattern_trig_timer_function+0x1c/0x11c)
+> [<c067b28c>] (pattern_trig_timer_function) from [<c027f6fc>] (call_timer_fn+0x1c/0x90)
+> [<c027f6fc>] (call_timer_fn) from [<c027f944>] (expire_timers+0x94/0xa4)
+> [<c027f944>] (expire_timers) from [<c027fc98>] (run_timer_softirq+0x108/0x15c)
+> [<c027fc98>] (run_timer_softirq) from [<c02021cc>] (__do_softirq+0x1d4/0x258)
+> [<c02021cc>] (__do_softirq) from [<c0224d24>] (irq_exit+0x64/0xc4)
+> [<c0224d24>] (irq_exit) from [<c0268dd0>] (__handle_domain_irq+0x80/0xb4)
+> [<c0268dd0>] (__handle_domain_irq) from [<c045e1b0>] (gic_handle_irq+0x58/0x90)
+> [<c045e1b0>] (gic_handle_irq) from [<c02019f8>] (__irq_svc+0x58/0x74)
+> Exception stack(0xeb483f60 to 0xeb483fa8)
+> 3f60: 00000000 00000000 eb9afaa0 c0217e80 00000000 ffffe000 00000000 c0e06408
+> 3f80: 00000002 c0e0647c c0c6a5f0 00000000 c0e04900 eb483fb0 c0207ea8 c0207e98
+> 3fa0: 60020013 ffffffff
+> [<c02019f8>] (__irq_svc) from [<c0207e98>] (arch_cpu_idle+0x1c/0x38)
+> [<c0207e98>] (arch_cpu_idle) from [<c0247ca8>] (do_idle+0x138/0x268)
+> [<c0247ca8>] (do_idle) from [<c0248050>] (cpu_startup_entry+0x18/0x1c)
+> [<c0248050>] (cpu_startup_entry) from [<402022ec>] (0x402022ec)
+>
+> Fixes: 5fd752b6b3a2 ("leds: core: Introduce LED pattern trigger")
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-Thanks for simplifying the code, it can work well for SC27XX LED.
-Tested-by: Baolin Wang <baolin.wang@linaro.org>
+Thanks!
 
-> ---
->  drivers/leds/leds-sc27xx-bltc.c | 23 ++++++++++-------------
->  1 file changed, 10 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-> index 9d9b7aa..9fe7cb1 100644
-> --- a/drivers/leds/leds-sc27xx-bltc.c
-> +++ b/drivers/leds/leds-sc27xx-bltc.c
-> @@ -6,7 +6,6 @@
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> -#include <uapi/linux/uleds.h>
->
->  /* PMIC global control register definition */
->  #define SC27XX_MODULE_EN0      0xc08
-> @@ -36,7 +35,7 @@
->  #define SC27XX_LEDS_MAX                3
->
->  struct sc27xx_led {
-> -       char name[LED_MAX_NAME_SIZE];
-> +       struct fwnode_handle *fwnode;
->         struct led_classdev ldev;
->         struct sc27xx_led_priv *priv;
->         u8 line;
-> @@ -132,16 +131,22 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
->
->         for (i = 0; i < SC27XX_LEDS_MAX; i++) {
->                 struct sc27xx_led *led = &priv->leds[i];
-> +               struct led_init_data init_data = { led->fwnode };
->
->                 if (!led->active)
->                         continue;
->
-> +               err = led_compose_name(led->fwnode, "sc27xx", ":",
-> +                                      init_data.name);
-> +               if (err)
-> +                       return err;
-> +
->                 led->line = i;
->                 led->priv = priv;
-> -               led->ldev.name = led->name;
->                 led->ldev.brightness_set_blocking = sc27xx_led_set;
->
-> -               err = devm_led_classdev_register(dev, &led->ldev);
-> +               err = devm_led_classdev_register_ext(dev, &led->ldev,
-> +                                                    &init_data);
->                 if (err)
->                         return err;
->         }
-> @@ -154,7 +159,6 @@ static int sc27xx_led_probe(struct platform_device *pdev)
->         struct device *dev = &pdev->dev;
->         struct device_node *np = dev->of_node, *child;
->         struct sc27xx_led_priv *priv;
-> -       const char *str;
->         u32 base, count, reg;
->         int err;
->
-> @@ -196,15 +200,8 @@ static int sc27xx_led_probe(struct platform_device *pdev)
->                         return -EINVAL;
->                 }
->
-> +               priv->leds[reg].fwnode = of_fwnode_handle(child);
->                 priv->leds[reg].active = true;
-> -
-> -               err = of_property_read_string(child, "label", &str);
-> -               if (err)
-> -                       snprintf(priv->leds[reg].name, LED_MAX_NAME_SIZE,
-> -                                "sc27xx::");
-> -               else
-> -                       snprintf(priv->leds[reg].name, LED_MAX_NAME_SIZE,
-> -                                "sc27xx:%s", str);
->         }
->
->         err = sc27xx_led_register(dev, priv);
-> --
-> 2.1.4
->
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
+                        Geert
 
 -- 
-Baolin Wang
-Best Regards
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
