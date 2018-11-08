@@ -1,138 +1,52 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 10/24] leds: lp8860: Use led_compose_name()
-Date: Thu, 8 Nov 2018 12:16:26 -0600
-Message-ID: <d0d4eff7-5840-95d7-a1a1-104188d1b619@ti.com>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-11-git-send-email-jacek.anaszewski@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [GIT PULL] LED fixes for 4.20-rc2
+Date: Thu,  8 Nov 2018 20:29:08 +0100
+Message-ID: <1541705348-4615-1-git-send-email-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1541542052-10081-11-git-send-email-jacek.anaszewski@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, baolin.wang@linaro.org, geert+renesas@glider.be, pavel@ucw.cz
 List-Id: linux-leds@vger.kernel.org
 
-On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
-> Switch to using generic LED support for composing LED class
-> device name.
-> 
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  drivers/leds/leds-lp8860.c | 38 +++++++++++++++++++-------------------
->  1 file changed, 19 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-> index 39c72a9..7c12ccd 100644
-> --- a/drivers/leds/leds-lp8860.c
-> +++ b/drivers/leds/leds-lp8860.c
-> @@ -22,7 +22,6 @@
->  #include <linux/of_gpio.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/slab.h>
-> -#include <uapi/linux/uleds.h>
->  
->  #define LP8860_DISP_CL1_BRT_MSB		0x00
->  #define LP8860_DISP_CL1_BRT_LSB		0x01
-> @@ -87,6 +86,8 @@
->  
->  #define LP8860_CLEAR_FAULTS		0x01
->  
-> +#define LP8860_NAME			"lp8860"
-> +
->  /**
->   * struct lp8860_led -
->   * @lock - Lock for reading/writing the device
-> @@ -96,7 +97,6 @@
->   * @eeprom_regmap - EEPROM register map
->   * @enable_gpio - VDDIO/EN gpio to enable communication interface
->   * @regulator - LED supply regulator pointer
-> - * @label - LED label
->   */
->  struct lp8860_led {
->  	struct mutex lock;
-> @@ -106,7 +106,6 @@ struct lp8860_led {
->  	struct regmap *eeprom_regmap;
->  	struct gpio_desc *enable_gpio;
->  	struct regulator *regulator;
-> -	char label[LED_MAX_NAME_SIZE];
->  };
->  
->  struct lp8860_eeprom_reg {
-> @@ -387,25 +386,26 @@ static int lp8860_probe(struct i2c_client *client,
->  	struct lp8860_led *led;
->  	struct device_node *np = client->dev.of_node;
->  	struct device_node *child_node;
-> -	const char *name;
-> +	struct led_init_data init_data;
->  
->  	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
->  	if (!led)
->  		return -ENOMEM;
->  
-> -	for_each_available_child_of_node(np, child_node) {
-> -		led->led_dev.default_trigger = of_get_property(child_node,
-> -						    "linux,default-trigger",
-> -						    NULL);
-> -
-> -		ret = of_property_read_string(child_node, "label", &name);
-> -		if (!ret)
-> -			snprintf(led->label, sizeof(led->label), "%s:%s",
-> -				 id->name, name);
-> -		else
-> -			snprintf(led->label, sizeof(led->label),
-> -				"%s::display_cluster", id->name);
-> -	}
+Hi Linus,
 
-We need to keep a loop here looking for additional nodes as this device has string support and just
-not cluster support.
+Please pull LED fixes for 4.20-rc2.
 
-Just need to get the other LED patches done.
+All three fixes are related to the newly added pattern trigger:
 
-> +	child_node = of_get_next_available_child(np, NULL);
-> +	if (!child_node)
-> +		return -EINVAL;
-> +
-> +	init_data.fwnode = of_fwnode_handle(child_node),
-> +
-> +	led->led_dev.default_trigger = of_get_property(child_node,
-> +					    "linux,default-trigger",
-> +					    NULL);
-> +
-> +	ret = led_compose_name(init_data.fwnode, LP8860_NAME,
-> +			       ":display_cluster", init_data.name);
+- remove mutex_lock() from timer callback, which would trigger problems
+  related to sleeping in atomic context, the removal is harmless since
+  mutex protection turned out to be redundant in this case
+- fix pattern parsing to properly handle intervals with brightness == 0
+- fix typos in the ABI documentation
 
-Should we use the #defines here for display_cluster?
+The following changes since commit 8dbac65f5c181e4723586ab738b703bb23bc3f2a:
 
-> +	if (ret)
-> +		return ret;
->  
->  	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
->  						   "enable", GPIOD_OUT_LOW);
-> @@ -420,7 +420,6 @@ static int lp8860_probe(struct i2c_client *client,
->  		led->regulator = NULL;
->  
->  	led->client = client;
-> -	led->led_dev.name = led->label;
->  	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
->  
->  	mutex_init(&led->lock);
-> @@ -447,7 +446,8 @@ static int lp8860_probe(struct i2c_client *client,
->  	if (ret)
->  		return ret;
->  
-> -	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
-> +	ret = devm_led_classdev_register_ext(&client->dev, &led->led_dev,
-> +					     &init_data);
->  	if (ret) {
->  		dev_err(&client->dev, "led register err: %d\n", ret);
->  		return ret;
-> 
+  leds: sc27xx: Add pattern_set/clear interfaces for LED controller (2018-10-11 21:59:11 +0200)
 
+are available in the git repository at:
 
--- 
-------------------
-Dan Murphy
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led-fixes-for-4.20-rc2
+
+for you to fetch changes up to 406e7f986b2e4499295351bcfff5c93b0d34022a:
+
+  Documentation: ABI: led-trigger-pattern: Fix typos (2018-11-07 21:43:46 +0100)
+
+Thanks,
+Jacek Anaszewski
+
+----------------------------------------------------------------
+LED fixes for 4.20-rc2
+----------------------------------------------------------------
+Baolin Wang (1):
+      leds: trigger: Fix sleeping function called from invalid context
+
+Geert Uytterhoeven (1):
+      Documentation: ABI: led-trigger-pattern: Fix typos
+
+Pavel Machek (1):
+      Fix pattern handling optimalization
+
+ .../ABI/testing/sysfs-class-led-trigger-pattern    |  4 ++--
+ drivers/leds/trigger/ledtrig-pattern.c             | 27 +++++++---------------
+ 2 files changed, 10 insertions(+), 21 deletions(-)
