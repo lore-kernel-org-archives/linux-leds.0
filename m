@@ -1,80 +1,172 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
- properties
-Date: Thu, 8 Nov 2018 15:08:02 -0600
-Message-ID: <81884969-956c-9d21-4114-4cb10d1e90e3@ti.com>
+Subject: Re: [PATCH 12/24] leds: lm3692x: Use led_compose_name()
+Date: Thu, 8 Nov 2018 15:11:05 -0600
+Message-ID: <8584e8a2-44df-33b1-4d9e-9fb3fb2cb98d@ti.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
- <26714494-06f8-163d-1ef8-75f75c25a467@ti.com>
- <c650a9eb-afae-2a27-e39c-d448a5b3eadd@gmail.com>
+ <1541542052-10081-13-git-send-email-jacek.anaszewski@gmail.com>
+ <d1267477-e000-f392-290f-2546f8ee379c@ti.com>
+ <a58cdce3-3d15-0ab4-de98-01e526a142a1@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c650a9eb-afae-2a27-e39c-d448a5b3eadd@gmail.com>
+In-Reply-To: <a58cdce3-3d15-0ab4-de98-01e526a142a1@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>, Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 Jacek
 
-On 11/08/2018 02:47 PM, Jacek Anaszewski wrote:
+On 11/08/2018 02:48 PM, Jacek Anaszewski wrote:
 > Dan,
 > 
-> On 11/08/2018 07:00 PM, Dan Murphy wrote:
->> Jacek
->>
+> On 11/08/2018 07:14 PM, Dan Murphy wrote:
 >> On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
->>> Introduce dedicated properties for conveying information about
->>> LED function and color. Mark old "label" property as deprecated.
+>>> Switch to using generic LED support for composing LED class
+>>> device name.
 >>>
 >>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->>> Cc: Baolin Wang <baolin.wang@linaro.org>
->>> Cc: Daniel Mack <daniel@zonque.org>
 >>> Cc: Dan Murphy <dmurphy@ti.com>
->>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
->>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
->>> Cc: Simon Shields <simon@lineageos.org>
->>> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 >>> ---
->>>  Documentation/devicetree/bindings/leds/common.txt | 52 +++++++++++++++++++----
->>>  1 file changed, 44 insertions(+), 8 deletions(-)
+>>>  drivers/leds/leds-lm3692x.c | 39 ++++++++++++++++++++-------------------
+>>>  1 file changed, 20 insertions(+), 19 deletions(-)
 >>>
->>> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
->>> index aa13998..3efc826 100644
->>> --- a/Documentation/devicetree/bindings/leds/common.txt
->>> +++ b/Documentation/devicetree/bindings/leds/common.txt
->>> @@ -10,14 +10,20 @@ can influence the way of the LED device initialization, the LED components
->>>  have to be tightly coupled with the LED device binding. They are represented
->>>  by child nodes of the parent LED device binding.
+>>> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+>>> index 4f413a7..9dfc0f2 100644
+>>> --- a/drivers/leds/leds-lm3692x.c
+>>> +++ b/drivers/leds/leds-lm3692x.c
+>>> @@ -13,7 +13,6 @@
+>>>  #include <linux/regmap.h>
+>>>  #include <linux/regulator/consumer.h>
+>>>  #include <linux/slab.h>
+>>> -#include <uapi/linux/uleds.h>
 >>>  
+>>>  #define LM36922_MODEL	0
+>>>  #define LM36923_MODEL	1
+>>> @@ -95,6 +94,9 @@
+>>>  #define LM3692X_FAULT_FLAG_SHRT BIT(3)
+>>>  #define LM3692X_FAULT_FLAG_OPEN BIT(4)
+>>>  
+>>> +#define LM36922_NAME "lm36922"
+>>> +#define LM36923_NAME "lm36923"
 >>> +
->>>  Optional properties for child nodes:
->>>  - led-sources : List of device current outputs the LED is connected to. The
->>>  		outputs are identified by the numbers that must be defined
->>>  		in the LED device binding documentation.
->>> +- function: LED functon. Use one of the LED_FUNCTION_* prefixed definitions
->>> +	    from the header include/dt-bindings/leds/functions.h.
->>> +	    If there is no matching LED_FUNCTION available, add a new one.
->>> +- color : Color of the LED.
+>>>  /**
+>>>   * struct lm3692x_led -
+>>>   * @lock - Lock for reading/writing the device
+>>> @@ -103,7 +105,6 @@
+>>>   * @regmap - Devices register map
+>>>   * @enable_gpio - VDDIO/EN gpio to enable communication interface
+>>>   * @regulator - LED supply regulator pointer
+>>> - * @label - LED label
+>>>   * @led_enable - LED sync to be enabled
+>>>   * @model_id - Current device model ID enumerated
+>>>   */
+>>> @@ -114,7 +115,6 @@ struct lm3692x_led {
+>>>  	struct regmap *regmap;
+>>>  	struct gpio_desc *enable_gpio;
+>>>  	struct regulator *regulator;
+>>> -	char label[LED_MAX_NAME_SIZE];
+>>>  	int led_enable;
+>>>  	int model_id;
+>>>  };
+>>> @@ -325,7 +325,8 @@ static int lm3692x_init(struct lm3692x_led *led)
+>>>  static int lm3692x_probe_dt(struct lm3692x_led *led)
+>>>  {
+>>>  	struct fwnode_handle *child = NULL;
+>>> -	const char *name;
+>>> +	struct led_init_data init_data;
+>>> +	char *model_name;
+>>>  	int ret;
+>>>  
+>>>  	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
+>>> @@ -346,17 +347,20 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+>>>  		dev_err(&led->client->dev, "No LED Child node\n");
+>>>  		return -ENODEV;
+>>>  	}
+>>> +	init_data.fwnode = child;
+>>>  
+>>> -	fwnode_property_read_string(child, "linux,default-trigger",
+>>> -				    &led->led_dev.default_trigger);
+>>> +	if (led->model_id == LM36922_MODEL)
+>>> +		model_name =  LM36922_NAME;
+>>> +	else
+>>> +		model_name =  LM36923_NAME;
+>>>  
+>>> -	ret = fwnode_property_read_string(child, "label", &name);
+>>> +	ret = led_compose_name(child, model_name, ":backlight_cluster",
+>>> +			       init_data.name);
+>>>  	if (ret)
+>>> -		snprintf(led->label, sizeof(led->label),
+>>> -			"%s::", led->client->name);
+>>> -	else
+>>> -		snprintf(led->label, sizeof(led->label),
+>>> -			 "%s:%s", led->client->name, name);
+>>> +		return ret;
+>>> +
+>>> +	fwnode_property_read_string(child, "linux,default-trigger",
+>>> +				    &led->led_dev.default_trigger);
+>>>  
+>>>  	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
+>>>  	if (ret) {
+>>> @@ -364,16 +368,13 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+>>>  		return ret;
+>>>  	}
+>>>  
+>>> -	led->led_dev.name = led->label;
+>>> -
+>>> -	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
+>>> +	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
+>>> +					     &init_data);
+>>>  	if (ret) {
+>>>  		dev_err(&led->client->dev, "led register err: %d\n", ret);
+>>>  		return ret;
+>>>  	}
+>>>  
+>>> -	led->led_dev.dev->of_node = to_of_node(child);
+>>> -
+>>>  	return 0;
+>>>  }
+>>>  
+>>> @@ -439,8 +440,8 @@ static int lm3692x_remove(struct i2c_client *client)
+>>>  }
+>>>  
+>>>  static const struct i2c_device_id lm3692x_id[] = {
+>>> -	{ "lm36922", LM36922_MODEL },
+>>> -	{ "lm36923", LM36923_MODEL },
+>>> +	{ LM36922_NAME, LM36922_MODEL },
+>>> +	{ LM36923_NAME, LM36923_MODEL },
 >>
->> Should we define the colors too?  There are only really 4.  Red, green, blue and white.
->>
->> Generally varying colors are created base on the primary colors.  Even the amber color
+>> How is this change relevant?
+>> No mention in the comments about this change.
 > 
-> No problem, I can add LED colors. However, I don't quite follow how
-> the mix of base color strings would give "amber" ? :-)
+> Unrelated. It is a remnant from the stage of development, where I had
+> an impression that i2c_client name is taken from this array
+> somehow. Only later I learned that it is taken from OF compatible
+> property after removing vendor prefix with comma.
 > 
+> Afterwards I decide to abide by this change since it seems to be
+> just an improvement - if I'm adding the string definition anyway,
+> then why not replace other matching literals?
+> 
+> I will add the explanation if the commit message if there are no
+> other objections.
 
-Amber or yellow.  Red and green with a hint of blue or no blue depending on how dark you want it.
-
-You don't always have to turn the LED on full to mix.  Sometimes lowering the level of the stronger colors like red 
-and upping weaker colors like green you can different color
+That works for me.  Just did not want the change to be "hidden" even without
+the intent of hiding it.
 
 Dan
+
+> 
+>>>  	{ }
+>>>  };
+>>>  MODULE_DEVICE_TABLE(i2c, lm3692x_id);
+>>>
+>>
+>>
+> 
+
 
 -- 
 ------------------
