@@ -1,148 +1,171 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 10/24] leds: lp8860: Use led_compose_name()
-Date: Thu, 8 Nov 2018 21:48:20 +0100
-Message-ID: <bfa4cf6d-1d78-3d48-4846-eb4bcc9e8a98@gmail.com>
+Subject: Re: [PATCH 03/24] leds: dt-bindings: Add LED_FUNCTION definitions
+Date: Thu, 8 Nov 2018 22:03:20 +0100
+Message-ID: <9a0027bf-0bb9-f11a-54ac-3c4d4b078fe2@gmail.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-11-git-send-email-jacek.anaszewski@gmail.com>
- <d0d4eff7-5840-95d7-a1a1-104188d1b619@ti.com>
+ <1541542052-10081-4-git-send-email-jacek.anaszewski@gmail.com>
+ <CAL_Jsq+NNx-oCY-RtG0F=WKknF3OD52sgtgVgFPz1mrYQbaeKw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d0d4eff7-5840-95d7-a1a1-104188d1b619@ti.com>
+In-Reply-To: <CAL_Jsq+NNx-oCY-RtG0F=WKknF3OD52sgtgVgFPz1mrYQbaeKw@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>, xiaotong.lu@spreadtrum.com
 List-Id: linux-leds@vger.kernel.org
 
-Dan,
+Hi Rob,
 
-On 11/08/2018 07:16 PM, Dan Murphy wrote:
-> On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
->> Switch to using generic LED support for composing LED class
->> device name.
+Thanks for the review.
+
+On 11/08/2018 04:13 PM, Rob Herring wrote:
+> On Tue, Nov 6, 2018 at 4:07 PM Jacek Anaszewski
+> <jacek.anaszewski@gmail.com> wrote:
+>>
+>> Add common LED function definitions for use in Device Tree.
+>> The function names were extracted from existing dts files
+>> after eliminating oddities.
 >>
 >> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> Cc: Baolin Wang <baolin.wang@linaro.org>
+>> Cc: Daniel Mack <daniel@zonque.org>
+>> Cc: Dan Murphy <dmurphy@ti.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+>> Cc: Simon Shields <simon@lineageos.org>
+>> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 >> ---
->>  drivers/leds/leds-lp8860.c | 38 +++++++++++++++++++-------------------
->>  1 file changed, 19 insertions(+), 19 deletions(-)
+>>  include/dt-bindings/leds/functions.h | 101 +++++++++++++++++++++++++++++++++++
+>>  1 file changed, 101 insertions(+)
+>>  create mode 100644 include/dt-bindings/leds/functions.h
 >>
->> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
->> index 39c72a9..7c12ccd 100644
->> --- a/drivers/leds/leds-lp8860.c
->> +++ b/drivers/leds/leds-lp8860.c
->> @@ -22,7 +22,6 @@
->>  #include <linux/of_gpio.h>
->>  #include <linux/gpio/consumer.h>
->>  #include <linux/slab.h>
->> -#include <uapi/linux/uleds.h>
->>  
->>  #define LP8860_DISP_CL1_BRT_MSB		0x00
->>  #define LP8860_DISP_CL1_BRT_LSB		0x01
->> @@ -87,6 +86,8 @@
->>  
->>  #define LP8860_CLEAR_FAULTS		0x01
->>  
->> +#define LP8860_NAME			"lp8860"
+>> diff --git a/include/dt-bindings/leds/functions.h b/include/dt-bindings/leds/functions.h
+>> new file mode 100644
+>> index 0000000..3f94e09
+>> --- /dev/null
+>> +++ b/include/dt-bindings/leds/functions.h
+>> @@ -0,0 +1,101 @@
+>> +// SPDX-License-Identifier: GPL-2.0
 >> +
->>  /**
->>   * struct lp8860_led -
->>   * @lock - Lock for reading/writing the device
->> @@ -96,7 +97,6 @@
->>   * @eeprom_regmap - EEPROM register map
->>   * @enable_gpio - VDDIO/EN gpio to enable communication interface
->>   * @regulator - LED supply regulator pointer
->> - * @label - LED label
->>   */
->>  struct lp8860_led {
->>  	struct mutex lock;
->> @@ -106,7 +106,6 @@ struct lp8860_led {
->>  	struct regmap *eeprom_regmap;
->>  	struct gpio_desc *enable_gpio;
->>  	struct regulator *regulator;
->> -	char label[LED_MAX_NAME_SIZE];
->>  };
->>  
->>  struct lp8860_eeprom_reg {
->> @@ -387,25 +386,26 @@ static int lp8860_probe(struct i2c_client *client,
->>  	struct lp8860_led *led;
->>  	struct device_node *np = client->dev.of_node;
->>  	struct device_node *child_node;
->> -	const char *name;
->> +	struct led_init_data init_data;
->>  
->>  	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
->>  	if (!led)
->>  		return -ENOMEM;
->>  
->> -	for_each_available_child_of_node(np, child_node) {
->> -		led->led_dev.default_trigger = of_get_property(child_node,
->> -						    "linux,default-trigger",
->> -						    NULL);
->> -
->> -		ret = of_property_read_string(child_node, "label", &name);
->> -		if (!ret)
->> -			snprintf(led->label, sizeof(led->label), "%s:%s",
->> -				 id->name, name);
->> -		else
->> -			snprintf(led->label, sizeof(led->label),
->> -				"%s::display_cluster", id->name);
->> -	}
+>> +#define LED_FUNCTION_2G "2g"
+>> +#define LED_FUNCTION_ACTIVITY "activity"
+>> +#define LED_FUNCTION_ADSL "adsl"
+>> +#define LED_FUNCTION_ALARM "alarm"
+>> +#define LED_FUNCTION_ALIVE "alive"
+>> +#define LED_FUNCTION_ALL "all"
+>> +#define LED_FUNCTION_APP "app"
+>> +#define LED_FUNCTION_AUX "aux"
+>> +#define LED_FUNCTION_BACKUP "backup"
+>> +#define LED_FUNCTION_BACKLIGHT "backlight"
+>> +#define LED_FUNCTION_BACKLIGHT_CLUSTER "backlight_cluster"
 > 
-> We need to keep a loop here looking for additional nodes as this device has string support and just
-> not cluster support.
+> I'd prefer we go further and only define 1 endorsed function name.
+> Backlight, disk, network, fault/error all seem to have a few
+
+OK, I'll try to remove semantically akin duplicates.
+
+> duplicates. I'm also thinking the functions make linux,default-trigger
+> redundant in some cases.
+
+Yes, this is tempting. Needs more thorough analysis, though.
+
+> I'm not a huge fan of making these defines, but it does make it
+> perfectly clear if folks use standard names or not.
 > 
-> Just need to get the other LED patches done.
-
-In the current shape only the properties from the last parsed child node
-will be used for initializing the LED class device. So, this should be
-meant also a fix removing this obscurity. Worth mentioning in the commit
-message. Or I'm not getting it right?
-
->> +	child_node = of_get_next_available_child(np, NULL);
->> +	if (!child_node)
->> +		return -EINVAL;
->> +
->> +	init_data.fwnode = of_fwnode_handle(child_node),
->> +
->> +	led->led_dev.default_trigger = of_get_property(child_node,
->> +					    "linux,default-trigger",
->> +					    NULL);
->> +
->> +	ret = led_compose_name(init_data.fwnode, LP8860_NAME,
->> +			       ":display_cluster", init_data.name);
-> 
-> Should we use the #defines here for display_cluster?
-
-Right, will fix in the next version.
-
->> +	if (ret)
->> +		return ret;
->>  
->>  	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
->>  						   "enable", GPIOD_OUT_LOW);
->> @@ -420,7 +420,6 @@ static int lp8860_probe(struct i2c_client *client,
->>  		led->regulator = NULL;
->>  
->>  	led->client = client;
->> -	led->led_dev.name = led->label;
->>  	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
->>  
->>  	mutex_init(&led->lock);
->> @@ -447,7 +446,8 @@ static int lp8860_probe(struct i2c_client *client,
->>  	if (ret)
->>  		return ret;
->>  
->> -	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
->> +	ret = devm_led_classdev_register_ext(&client->dev, &led->led_dev,
->> +					     &init_data);
->>  	if (ret) {
->>  		dev_err(&client->dev, "led register err: %d\n", ret);
->>  		return ret;
+>> +#define LED_FUNCTION_BEEP "beep"
+>> +#define LED_FUNCTION_BLUETOOTH "bluetooth"
+>> +#define LED_FUNCTION_BOOT "boot"
+>> +#define LED_FUNCTION_BOTTOM "bottom"
+>> +#define LED_FUNCTION_BRICK_STATUS "brick-status"
+>> +#define LED_FUNCTION_CEL "cel"
+>> +#define LED_FUNCTION_CEL_PWR "cel-pwr"
+>> +#define LED_FUNCTION_CEL_RESET "cel-reset"
+>> +#define LED_FUNCTION_CHRG "chrg"
+>> +#define LED_FUNCTION_COM "com"
+>> +#define LED_FUNCTION_COPY "copy"
+>> +#define LED_FUNCTION_CPU "cpu"
+>> +#define LED_FUNCTION_DEBUG "debug"
+>> +#define LED_FUNCTION_DIA "dia"
+>> +#define LED_FUNCTION_DISK "disk"
+>> +#define LED_FUNCTION_DISPLAY_CLUSTER "display_cluster"
+>> +#define LED_FUNCTION_DOWN "down"
+>> +#define LED_FUNCTION_DSL "dsl"
+>> +#define LED_FUNCTION_ENOCEAN "enocean"
+>> +#define LED_FUNCTION_ENTER "enter"
+>> +#define LED_FUNCTION_ERROR "error"
+>> +#define LED_FUNCTION_ESATA "esata"
+>> +#define LED_FUNCTION_ETHERNET_STATUS "ethernet-status"
+>> +#define LED_FUNCTION_FAIL "fail"
+>> +#define LED_FUNCTION_FAULT "fault"
+>> +#define LED_FUNCTION_FLASH "flash"
+>> +#define LED_FUNCTION_FRONT "front"
+>> +#define LED_FUNCTION_FUNC "func"
+>> +#define LED_FUNCTION_GPIO "gpio"
+>> +#define LED_FUNCTION_GSM "gsm"
+>> +#define LED_FUNCTION_HD "hd"
+>> +#define LED_FUNCTION_HDD "hdd"
+>> +#define LED_FUNCTION_HDDERR "hdderr"
+>> +#define LED_FUNCTION_HEALTH "health"
+>> +#define LED_FUNCTION_HEARTBEAT "heartbeat"
+>> +#define LED_FUNCTION_HOME "home"
+>> +#define LED_FUNCTION_INDICATOR "indicator"
+>> +#define LED_FUNCTION_INET "inet"
+>> +#define LED_FUNCTION_INFO "info"
+>> +#define LED_FUNCTION_INTERNET "internet"
+>> +#define LED_FUNCTION_KEYPAD "keypad"
+>> +#define LED_FUNCTION_LAN "lan"
+>> +#define LED_FUNCTION_LEFT "left"
+>> +#define LED_FUNCTION_LIVE "live"
+>> +#define LED_FUNCTION_MICROSD "microsd"
+>> +#define LED_FUNCTION_MISC "misc"
+>> +#define LED_FUNCTION_MMC "mmc"
+>> +#define LED_FUNCTION_NAND "nand"
+>> +#define LED_FUNCTION_NETWORK "network"
+>> +#define LED_FUNCTION_ON "on"
+>> +#define LED_FUNCTION_OS "os"
+>> +#define LED_FUNCTION_PANEL "panel"
+>> +#define LED_FUNCTION_PMU_STAT "pmu_stat"
+>> +#define LED_FUNCTION_PROG "prog"
+>> +#define LED_FUNCTION_PROGRAMMING "programming"
+>> +#define LED_FUNCTION_PULSE "pulse"
+>> +#define LED_FUNCTION_PWR "pwr"
+>> +#define LED_FUNCTION_QSS "qss"
+>> +#define LED_FUNCTION_REAR "rear"
+>> +#define LED_FUNCTION_REBUILD "rebuild"
+>> +#define LED_FUNCTION_RIGHT "right"
+>> +#define LED_FUNCTION_ROUTER "router"
+>> +#define LED_FUNCTION_RS "rs"
+>> +#define LED_FUNCTION_RX "rx"
+>> +#define LED_FUNCTION_SATA "sata"
+>> +#define LED_FUNCTION_SD "sd"
+>> +#define LED_FUNCTION_SLEEP "sleep"
+>> +#define LED_FUNCTION_STANDBY "standby"
+>> +#define LED_FUNCTION_STATUS "status"
+>> +#define LED_FUNCTION_SW "sw"
+>> +#define LED_FUNCTION_SWRDY "swrdy"
+>> +#define LED_FUNCTION_SYSTEM "system"
+>> +#define LED_FUNCTION_TEL "tel"
+>> +#define LED_FUNCTION_TOP "top"
+>> +#define LED_FUNCTION_TORCH "torch"
+>> +#define LED_FUNCTION_TV "tv"
+>> +#define LED_FUNCTION_TX "tx"
+>> +#define LED_FUNCTION_UP "up"
+>> +#define LED_FUNCTION_USB "usb"
+>> +#define LED_FUNCTION_USB_COPY "usb_copy"
+>> +#define LED_FUNCTION_USER "user"
+>> +#define LED_FUNCTION_USR "usr"
+>> +#define LED_FUNCTION_WAN "wan"
+>> +#define LED_FUNCTION_WIFI "wifi"
+>> +#define LED_FUNCTION_WIRELESS "wireless"
+>> +#define LED_FUNCTION_WLAN "wlan"
+>> +#define LED_FUNCTION_WMODE "wmode"
+>> +#define LED_FUNCTION_WPS "wps"
+>> --
+>> 2.1.4
 >>
-> 
 > 
 
 -- 
