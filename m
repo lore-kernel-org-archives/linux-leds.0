@@ -1,173 +1,29 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 12/24] leds: lm3692x: Use led_compose_name()
-Date: Thu, 8 Nov 2018 15:11:05 -0600
-Message-ID: <8584e8a2-44df-33b1-4d9e-9fb3fb2cb98d@ti.com>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-13-git-send-email-jacek.anaszewski@gmail.com>
- <d1267477-e000-f392-290f-2546f8ee379c@ti.com>
- <a58cdce3-3d15-0ab4-de98-01e526a142a1@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [GIT PULL] LED fixes for 4.20-rc2
+Date: Thu, 8 Nov 2018 17:51:39 -0600
+Message-ID: <CAHk-=wg9cYHtZZ6_n0O0MdpOhTKUhQo5iqeM_xnRLrDkb8F3xA@mail.gmail.com>
+References: <1541705348-4615-1-git-send-email-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a58cdce3-3d15-0ab4-de98-01e526a142a1@gmail.com>
-Content-Language: en-US
+In-Reply-To: <1541705348-4615-1-git-send-email-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, baolin.wang@linaro.org, geert+renesas@glider.be, pavel@ucw.cz
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
+On Thu, Nov 8, 2018 at 1:29 PM Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+>
+>
+> All three fixes are related to the newly added pattern trigger:
+>
+> - remove mutex_lock() from timer callback, which would trigger problems
+>   related to sleeping in atomic context, the removal is harmless since
+>   mutex protection turned out to be redundant in this case
+> - fix pattern parsing to properly handle intervals with brightness == 0
+> - fix typos in the ABI documentation
 
-On 11/08/2018 02:48 PM, Jacek Anaszewski wrote:
-> Dan,
-> 
-> On 11/08/2018 07:14 PM, Dan Murphy wrote:
->> On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
->>> Switch to using generic LED support for composing LED class
->>> device name.
->>>
->>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->>> Cc: Dan Murphy <dmurphy@ti.com>
->>> ---
->>>  drivers/leds/leds-lm3692x.c | 39 ++++++++++++++++++++-------------------
->>>  1 file changed, 20 insertions(+), 19 deletions(-)
->>>
->>> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
->>> index 4f413a7..9dfc0f2 100644
->>> --- a/drivers/leds/leds-lm3692x.c
->>> +++ b/drivers/leds/leds-lm3692x.c
->>> @@ -13,7 +13,6 @@
->>>  #include <linux/regmap.h>
->>>  #include <linux/regulator/consumer.h>
->>>  #include <linux/slab.h>
->>> -#include <uapi/linux/uleds.h>
->>>  
->>>  #define LM36922_MODEL	0
->>>  #define LM36923_MODEL	1
->>> @@ -95,6 +94,9 @@
->>>  #define LM3692X_FAULT_FLAG_SHRT BIT(3)
->>>  #define LM3692X_FAULT_FLAG_OPEN BIT(4)
->>>  
->>> +#define LM36922_NAME "lm36922"
->>> +#define LM36923_NAME "lm36923"
->>> +
->>>  /**
->>>   * struct lm3692x_led -
->>>   * @lock - Lock for reading/writing the device
->>> @@ -103,7 +105,6 @@
->>>   * @regmap - Devices register map
->>>   * @enable_gpio - VDDIO/EN gpio to enable communication interface
->>>   * @regulator - LED supply regulator pointer
->>> - * @label - LED label
->>>   * @led_enable - LED sync to be enabled
->>>   * @model_id - Current device model ID enumerated
->>>   */
->>> @@ -114,7 +115,6 @@ struct lm3692x_led {
->>>  	struct regmap *regmap;
->>>  	struct gpio_desc *enable_gpio;
->>>  	struct regulator *regulator;
->>> -	char label[LED_MAX_NAME_SIZE];
->>>  	int led_enable;
->>>  	int model_id;
->>>  };
->>> @@ -325,7 +325,8 @@ static int lm3692x_init(struct lm3692x_led *led)
->>>  static int lm3692x_probe_dt(struct lm3692x_led *led)
->>>  {
->>>  	struct fwnode_handle *child = NULL;
->>> -	const char *name;
->>> +	struct led_init_data init_data;
->>> +	char *model_name;
->>>  	int ret;
->>>  
->>>  	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
->>> @@ -346,17 +347,20 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
->>>  		dev_err(&led->client->dev, "No LED Child node\n");
->>>  		return -ENODEV;
->>>  	}
->>> +	init_data.fwnode = child;
->>>  
->>> -	fwnode_property_read_string(child, "linux,default-trigger",
->>> -				    &led->led_dev.default_trigger);
->>> +	if (led->model_id == LM36922_MODEL)
->>> +		model_name =  LM36922_NAME;
->>> +	else
->>> +		model_name =  LM36923_NAME;
->>>  
->>> -	ret = fwnode_property_read_string(child, "label", &name);
->>> +	ret = led_compose_name(child, model_name, ":backlight_cluster",
->>> +			       init_data.name);
->>>  	if (ret)
->>> -		snprintf(led->label, sizeof(led->label),
->>> -			"%s::", led->client->name);
->>> -	else
->>> -		snprintf(led->label, sizeof(led->label),
->>> -			 "%s:%s", led->client->name, name);
->>> +		return ret;
->>> +
->>> +	fwnode_property_read_string(child, "linux,default-trigger",
->>> +				    &led->led_dev.default_trigger);
->>>  
->>>  	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
->>>  	if (ret) {
->>> @@ -364,16 +368,13 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
->>>  		return ret;
->>>  	}
->>>  
->>> -	led->led_dev.name = led->label;
->>> -
->>> -	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
->>> +	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
->>> +					     &init_data);
->>>  	if (ret) {
->>>  		dev_err(&led->client->dev, "led register err: %d\n", ret);
->>>  		return ret;
->>>  	}
->>>  
->>> -	led->led_dev.dev->of_node = to_of_node(child);
->>> -
->>>  	return 0;
->>>  }
->>>  
->>> @@ -439,8 +440,8 @@ static int lm3692x_remove(struct i2c_client *client)
->>>  }
->>>  
->>>  static const struct i2c_device_id lm3692x_id[] = {
->>> -	{ "lm36922", LM36922_MODEL },
->>> -	{ "lm36923", LM36923_MODEL },
->>> +	{ LM36922_NAME, LM36922_MODEL },
->>> +	{ LM36923_NAME, LM36923_MODEL },
->>
->> How is this change relevant?
->> No mention in the comments about this change.
-> 
-> Unrelated. It is a remnant from the stage of development, where I had
-> an impression that i2c_client name is taken from this array
-> somehow. Only later I learned that it is taken from OF compatible
-> property after removing vendor prefix with comma.
-> 
-> Afterwards I decide to abide by this change since it seems to be
-> just an improvement - if I'm adding the string definition anyway,
-> then why not replace other matching literals?
-> 
-> I will add the explanation if the commit message if there are no
-> other objections.
+Pulled,
 
-That works for me.  Just did not want the change to be "hidden" even without
-the intent of hiding it.
-
-Dan
-
-> 
->>>  	{ }
->>>  };
->>>  MODULE_DEVICE_TABLE(i2c, lm3692x_id);
->>>
->>
->>
-> 
-
-
--- 
-------------------
-Dan Murphy
+                Linus
