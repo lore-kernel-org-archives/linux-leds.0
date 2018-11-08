@@ -1,52 +1,238 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL] LED fixes for 4.20-rc2
-Date: Thu,  8 Nov 2018 20:29:08 +0100
-Message-ID: <1541705348-4615-1-git-send-email-jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
+ device names
+Date: Thu, 8 Nov 2018 21:47:30 +0100
+Message-ID: <3a5ca343-5c48-b257-4ba4-5a7e223efbf8@gmail.com>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
+ <CAMz4ku+K=Jw56C2YczFMcVGRPUHMpSw4_iWEsNmKDBQgWjmEqQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMz4ku+K=Jw56C2YczFMcVGRPUHMpSw4_iWEsNmKDBQgWjmEqQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, baolin.wang@linaro.org, geert+renesas@glider.be, pavel@ucw.cz
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>, Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Linus,
+Hi Baolin,
 
-Please pull LED fixes for 4.20-rc2.
+Thanks for the review.
 
-All three fixes are related to the newly added pattern trigger:
+On 11/07/2018 08:20 AM, Baolin Wang wrote:
+> Hi Jacek,
+> 
+> On 7 November 2018 at 06:07, Jacek Anaszewski
+> <jacek.anaszewski@gmail.com> wrote:
+>> Add public led_compose_name() API for composing LED class device
+>> name basing on fwnode_handle data. The function composes device name
+>> according to either a new <color:function> pattern or the legacy
+>> <devicename:color:function> pattern. The decision on using the
+>> particular pattern is made basing on whether fwnode contains new
+>> "function" and "color" properties, or the legacy "label" proeprty.
+>>
+>> Backwards compatibility with in-driver hard-coded LED class device
+>> names is assured thanks to the default_desc argument.
+>>
+>> In case none of the aformentioned properties was found, then, for OF
+>> nodes, the node name is adopted for LED class device name.
+>>
+>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>> Cc: Baolin Wang <baolin.wang@linaro.org>
+>> Cc: Daniel Mack <daniel@zonque.org>
+>> Cc: Dan Murphy <dmurphy@ti.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+>> Cc: Simon Shields <simon@lineageos.org>
+>> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+>> ---
+>>  Documentation/leds/leds-class.txt |  2 +-
+>>  drivers/leds/led-core.c           | 71 +++++++++++++++++++++++++++++++++++++++
+>>  include/linux/leds.h              | 32 ++++++++++++++++++
+>>  3 files changed, 104 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
+>> index 836cb16..e9009c4 100644
+>> --- a/Documentation/leds/leds-class.txt
+>> +++ b/Documentation/leds/leds-class.txt
+>> @@ -43,7 +43,7 @@ LED Device Naming
+>>
+>>  Is currently of the form:
+>>
+>> -"devicename:colour:function"
+>> +"colour:function"
+>>
+>>  There have been calls for LED properties such as colour to be exported as
+>>  individual led class attributes. As a solution which doesn't incur as much
+>> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+>> index ede4fa0..f7371fc 100644
+>> --- a/drivers/leds/led-core.c
+>> +++ b/drivers/leds/led-core.c
+>> @@ -16,6 +16,8 @@
+>>  #include <linux/list.h>
+>>  #include <linux/module.h>
+>>  #include <linux/mutex.h>
+>> +#include <linux/of.h>
+>> +#include <linux/property.h>
+>>  #include <linux/rwsem.h>
+>>  #include "leds.h"
+>>
+>> @@ -327,3 +329,72 @@ void led_sysfs_enable(struct led_classdev *led_cdev)
+>>         led_cdev->flags &= ~LED_SYSFS_DISABLE;
+>>  }
+>>  EXPORT_SYMBOL_GPL(led_sysfs_enable);
+>> +
+>> +static void led_parse_properties(struct fwnode_handle *fwnode,
+>> +                                struct led_properties *props)
+>> +{
+>> +       int ret;
+>> +
+>> +       if (!fwnode)
+>> +               return;
+>> +
+>> +       ret = fwnode_property_read_string(fwnode, "label", &props->label);
+>> +       if (!ret)
+>> +               return;
+>> +
+>> +       ret = fwnode_property_read_string(fwnode, "function", &props->function);
+>> +       if (ret)
+>> +               pr_info("Failed to parse function property\n");
+>> +
+>> +       ret = fwnode_property_read_string(fwnode, "color", &props->color);
+>> +       if (ret)
+>> +               pr_info("Failed to parse color property\n");
+> 
+> Now the color and function properties can be optional, so we should
+> deal with different return errors.
+> -EINVAL means we have not set color or function property, which means
+> we should not give failure message for users (maybe "not supply color
+> property\n") and return 0 as success.
 
-- remove mutex_lock() from timer callback, which would trigger problems
-  related to sleeping in atomic context, the removal is harmless since
-  mutex protection turned out to be redundant in this case
-- fix pattern parsing to properly handle intervals with brightness == 0
-- fix typos in the ABI documentation
+The lack of any of these properties is not critical, therefore this
+function does not return the error code, but only prints the status.
+Please note that I'm not using pr_error(), but pr_info().
+Related to the message text - I agree, I will change it to e.g.
+"color property not found"
 
-The following changes since commit 8dbac65f5c181e4723586ab738b703bb23bc3f2a:
+> For other errors, we should not ignore them, instead we should give
+> failure messages and return errors.
 
-  leds: sc27xx: Add pattern_set/clear interfaces for LED controller (2018-10-11 21:59:11 +0200)
+I've skimmed through other kernel drivers and vast majority of
+them don't check exact failure code in case of non-zero return,
+but assume that property is missing, and eventually report
+error code. I'd do the same here.
 
-are available in the git repository at:
+> Tested-by: Baolin Wang <baolin.wang@linaro.org>
+> 
+>> +}
+>> +
+>> +int led_compose_name(struct fwnode_handle *fwnode, const char *led_hw_name,
+>> +                    const char *default_desc, char *led_classdev_name)
+>> +{
+>> +       struct led_properties props = {};
+>> +
+>> +       if (!led_classdev_name)
+>> +               return -EINVAL;
+>> +
+>> +       led_parse_properties(fwnode, &props);
+>> +
+>> +       if (props.label) {
+>> +               /*
+>> +                * Presence of 'label' DT property implies legacy LED name,
+>> +                * formatted as <devicename:color:function>, with possible
+>> +                * section omission if doesn't apply to given device.
+>> +                *
+>> +                * If no led_hw_name has been passed, then it indicates that
+>> +                * DT label should be used as-is for LED class device name.
+>> +                * Otherwise the label is prepended with led_hw_name to compose
+>> +                * the final LED class device name.
+>> +                */
+>> +               if (!led_hw_name) {
+>> +                       strncpy(led_classdev_name, props.label,
+>> +                               LED_MAX_NAME_SIZE);
+>> +               } else {
+>> +                       snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
+>> +                                led_hw_name, props.label);
+>> +               }
+>> +       } else if (props.function || props.color) {
+>> +               snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
+>> +                        props.color ?: "", props.function ?: "");
+>> +       } else if (default_desc) {
+>> +               if (!led_hw_name) {
+>> +                       pr_err("Legacy LED naming requires devicename segment");
+>> +                       return -EINVAL;
+>> +               }
+>> +               snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
+>> +                        led_hw_name, default_desc);
+>> +       } else if (is_of_node(fwnode)) {
+>> +               strncpy(led_classdev_name, to_of_node(fwnode)->name,
+>> +                       LED_MAX_NAME_SIZE);
+>> +       } else
+>> +               return -EINVAL;
+>> +
+>> +       return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(led_compose_name);
+>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>> index 646c49a..ddb4001 100644
+>> --- a/include/linux/leds.h
+>> +++ b/include/linux/leds.h
+>> @@ -238,6 +238,32 @@ extern void led_sysfs_disable(struct led_classdev *led_cdev);
+>>  extern void led_sysfs_enable(struct led_classdev *led_cdev);
+>>
+>>  /**
+>> + * led_compose_name - compose LED class device name
+>> + * @child: child fwnode_handle describing a LED,
+>> + *        or a group of synchronized LEDs.
+>> + * @led_hw_name: name of the LED controller, used when falling back to legacy
+>> + *              LED naming; it should be set to NULL in new LED class drivers
+>> + * @default_desc: default <color:function> tuple, for backwards compatibility
+>> + *               with in-driver hard-coded LED names used as a fallback when
+>> + *               "label" DT property was absent; it should be set to NULL
+>> + *               in new LED class drivers
+>> + * @led_classdev_name: composed LED class device name
+>> + *
+>> + * Create LED class device name basing on the configuration provided by the
+>> + * board firmware. The name can have a legacy form <devicename:color:function>,
+>> + * or a new form <color:function>. The latter is chosen if at least one of
+>> + * "color" or "function" properties is present in the fwnode, leaving the
+>> + * section blank if the related property is absent. The former is applied
+>> + * when legacy "label" property is present in the fwnode. In case none of the
+>> + * aformentioned properties was found, then, for OF nodes, the node name
+>> + * is adopted for LED class device name.
+>> + *
+>> + * Returns: 0 on success or negative error value on failure
+>> + */
+>> +extern int led_compose_name(struct fwnode_handle *child, const char *led_hw_name,
+>> +                           const char *default_desc, char *led_classdev_name);
+>> +
+>> +/**
+>>   * led_sysfs_is_disabled - check if LED sysfs interface is disabled
+>>   * @led_cdev: the LED to query
+>>   *
+>> @@ -414,6 +440,12 @@ struct led_platform_data {
+>>         struct led_info *leds;
+>>  };
+>>
+>> +struct led_properties {
+>> +       const char *color;
+>> +       const char *function;
+>> +       const char *label;
+>> +};
+>> +
+>>  struct gpio_desc;
+>>  typedef int (*gpio_blink_set_t)(struct gpio_desc *desc, int state,
+>>                                 unsigned long *delay_on,
+>> --
+>> 2.1.4
+>>
+> 
+> 
+> 
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led-fixes-for-4.20-rc2
-
-for you to fetch changes up to 406e7f986b2e4499295351bcfff5c93b0d34022a:
-
-  Documentation: ABI: led-trigger-pattern: Fix typos (2018-11-07 21:43:46 +0100)
-
-Thanks,
+-- 
+Best regards,
 Jacek Anaszewski
-
-----------------------------------------------------------------
-LED fixes for 4.20-rc2
-----------------------------------------------------------------
-Baolin Wang (1):
-      leds: trigger: Fix sleeping function called from invalid context
-
-Geert Uytterhoeven (1):
-      Documentation: ABI: led-trigger-pattern: Fix typos
-
-Pavel Machek (1):
-      Fix pattern handling optimalization
-
- .../ABI/testing/sysfs-class-led-trigger-pattern    |  4 ++--
- drivers/leds/trigger/ledtrig-pattern.c             | 27 +++++++---------------
- 2 files changed, 10 insertions(+), 21 deletions(-)
