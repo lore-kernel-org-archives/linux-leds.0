@@ -1,136 +1,94 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v14 1/2] leds: core: Introduce LED pattern trigger
-Date: Fri, 9 Nov 2018 09:13:58 +0100
-Message-ID: <20181109081358.GD12450@amd>
-References: <c3a6f08ac978c309bb0b002a0384c4f0ad0f59cd.1538494476.git.baolin.wang@linaro.org>
- <CAMuHMdWTnwVeO0ihTSzaoQWPGw3HO8tiy+HARpwW9cCCXMAJPQ@mail.gmail.com>
- <CAMz4kuKZ5z-v_j5Fhu=QzwY-=U6SBy4uSWoT8G8U83Z2qBRLxA@mail.gmail.com>
+From: =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
+Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
+ properties
+Date: Fri, 9 Nov 2018 10:32:01 +0200
+Message-ID: <bdd18dc6-0dee-5957-81d4-39254c7ad74d@gmail.com>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="k4f25fnPtRuIRUb3"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMz4kuKZ5z-v_j5Fhu=QzwY-=U6SBy4uSWoT8G8U83Z2qBRLxA@mail.gmail.com>
+In-Reply-To: <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, rteysseyre@gmail.com, =?iso-8859-1?Q?Bj=F6rn?= Andersson <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>, Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 List-Id: linux-leds@vger.kernel.org
 
+On 07/11/2018 0.07, Jacek Anaszewski wrote:
+> Introduce dedicated properties for conveying information about
+> LED function and color. Mark old "label" property as deprecated.
+> 
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Baolin Wang <baolin.wang@linaro.org>
+> Cc: Daniel Mack <daniel@zonque.org>
+> Cc: Dan Murphy <dmurphy@ti.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Cc: Simon Shields <simon@lineageos.org>
+> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+> ---
+>   Documentation/devicetree/bindings/leds/common.txt | 52 +++++++++++++++++++----
+>   1 file changed, 44 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index aa13998..3efc826 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -10,14 +10,20 @@ can influence the way of the LED device initialization, the LED components
+>   have to be tightly coupled with the LED device binding. They are represented
+>   by child nodes of the parent LED device binding.
+>   
+> +
+>   Optional properties for child nodes:
+>   - led-sources : List of device current outputs the LED is connected to. The
+>   		outputs are identified by the numbers that must be defined
+>   		in the LED device binding documentation.
+> +- function: LED functon. Use one of the LED_FUNCTION_* prefixed definitions
+> +	    from the header include/dt-bindings/leds/functions.h.
+> +	    If there is no matching LED_FUNCTION available, add a new one.
+> +- color : Color of the LED.
 
---k4f25fnPtRuIRUb3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We have had for years out-of-tree patch for multi color gpio led driver 
+which extends this concept with multiple colors. Then in sysfs there has 
+been possibility to control the color and otherwise use blinking or 
+other features.
 
-On Wed 2018-11-07 11:23:52, Baolin Wang wrote:
-> Hi Geert,
->=20
-> On 6 November 2018 at 23:57, Geert Uytterhoeven <geert@linux-m68k.org> wr=
-ote:
-> > Hi Baolin,
-> >
-> > On Tue, Oct 2, 2018 at 6:39 PM Baolin Wang <baolin.wang@linaro.org> wro=
-te:
-> >> This patch adds one new led trigger that LED device can configure
-> >> the software or hardware pattern and trigger it.
-> >>
-> >> Consumers can write 'pattern' file to enable the software pattern
-> >> which alters the brightness for the specified duration with one
-> >> software timer.
-> >>
-> >> Moreover consumers can write 'hw_pattern' file to enable the hardware
-> >> pattern for some LED controllers which can autonomously control
-> >> brightness over time, according to some preprogrammed hardware
-> >> patterns.
-> >>
-> >> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
-> >> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> >
-> >> --- /dev/null
-> >> +++ b/drivers/leds/trigger/ledtrig-pattern.c
-> >> @@ -0,0 +1,431 @@
-> >
-> >> +static void pattern_trig_timer_function(struct timer_list *t)
-> >> +{
-> >> +       struct pattern_trig_data *data =3D from_timer(data, t, timer);
-> >> +
-> >> +       mutex_lock(&data->lock);
-> >
-> > Timer functions run in interrupt context, hence if CONFIG_DEBUG_ATOMIC_=
-SLEEP=3Dy:
-> >
-> > BUG: sleeping function called from invalid context at kernel/locking/mu=
-tex.c:254
-> > in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/1
-> > CPU: 1 PID: 0 Comm: swapper/1 Not tainted
-> > 4.20.0-rc1-koelsch-00841-ga338c8181013c1a9 #171
-> > Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-> > [<c020f19c>] (unwind_backtrace) from [<c020aecc>] (show_stack+0x10/0x14)
-> > [<c020aecc>] (show_stack) from [<c07affb8>] (dump_stack+0x7c/0x9c)
-> > [<c07affb8>] (dump_stack) from [<c02417d4>] (___might_sleep+0xf4/0x158)
-> > [<c02417d4>] (___might_sleep) from [<c07c92c4>] (mutex_lock+0x18/0x60)
-> > [<c07c92c4>] (mutex_lock) from [<c067b28c>]
-> > (pattern_trig_timer_function+0x1c/0x11c)
-> > [<c067b28c>] (pattern_trig_timer_function) from [<c027f6fc>]
-> > (call_timer_fn+0x1c/0x90)
-> > [<c027f6fc>] (call_timer_fn) from [<c027f944>] (expire_timers+0x94/0xa4)
-> > [<c027f944>] (expire_timers) from [<c027fc98>] (run_timer_softirq+0x108=
-/0x15c)
-> > [<c027fc98>] (run_timer_softirq) from [<c02021cc>] (__do_softirq+0x1d4/=
-0x258)
-> > [<c02021cc>] (__do_softirq) from [<c0224d24>] (irq_exit+0x64/0xc4)
-> > [<c0224d24>] (irq_exit) from [<c0268dd0>] (__handle_domain_irq+0x80/0xb=
-4)
-> > [<c0268dd0>] (__handle_domain_irq) from [<c045e1b0>] (gic_handle_irq+0x=
-58/0x90)
-> > [<c045e1b0>] (gic_handle_irq) from [<c02019f8>] (__irq_svc+0x58/0x74)
-> > Exception stack(0xeb483f60 to 0xeb483fa8)
-> > 3f60: 00000000 00000000 eb9afaa0 c0217e80 00000000 ffffe000 00000000 c0=
-e06408
-> > 3f80: 00000002 c0e0647c c0c6a5f0 00000000 c0e04900 eb483fb0 c0207ea8 c0=
-207e98
-> > 3fa0: 60020013 ffffffff
-> > [<c02019f8>] (__irq_svc) from [<c0207e98>] (arch_cpu_idle+0x1c/0x38)
-> > [<c0207e98>] (arch_cpu_idle) from [<c0247ca8>] (do_idle+0x138/0x268)
-> > [<c0247ca8>] (do_idle) from [<c0248050>] (cpu_startup_entry+0x18/0x1c)
-> > [<c0248050>] (cpu_startup_entry) from [<402022ec>] (0x402022ec)
-> >
-> > Either this should use a spinlock instead of a mutex, or the timer
-> > function should kick a workqueue to do the real work.
-> >
->=20
-> Ah, sorry I missed this. Good catch.
->=20
-> After more thinking, the easy fix is that I think we can remove the
-> mutex lock in pattern_trig_timer_function(). Since the mutex lock is
-> used to protect the pattern trigger data, but before changing new
-> pattern trigger data (pattern values or repeat value) by users, we
-> always cancel the timer firstly to clear previous patterns'
-> performance. That means there is no race in
-> pattern_trig_timer_function(), so we can drop the mutex lock in
-> pattern_trig_timer_function() to avoid this issue.
->=20
-> I will send one patch to fix this issue. Thanks.
+Our need is multi color status led of the device which includes 
+different kind of blinkings and colors on different situations.
 
-That's kind of interesting, but yes, it should work.
+Current in-tree gpio led driver just wasn't atomic enough and a bit 
+clumsy interface for handling this.
 
-									Pavel
+Now that this is being looked at could we come up with solution that we 
+could define multiple colors for one led in device tree and then we 
+could work on getting the driver upstreamed?
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+What we did was generally:
 
---k4f25fnPtRuIRUb3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+leds-multi {
+	compatible = "gpio-multi-leds";
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+	status {
+		gpios = <...>;
+		linux,default-trigger = "none";
+		deafult-state = "keep";
 
-iEYEARECAAYFAlvlQcYACgkQMOfwapXb+vIgTQCfdl40iS1czNt8D9OJf/A32jfF
-8noAniM9zrGGCOlj8d3NvB4D0UnBXzqb
-=mQQf
------END PGP SIGNATURE-----
+		color-red {
+			pin-mask = <0x01>;
+		};
 
---k4f25fnPtRuIRUb3--
+		color-green {
+			pin-mask = <0x02>;
+		};
+
+		color-orange {
+			pin-mask = <0x03>;
+		};
+	};
+};
+
+Thanks,
+Vesa Jääskeläinen
