@@ -1,15 +1,16 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 03/24] leds: dt-bindings: Add LED_FUNCTION definitions
-Date: Sun, 11 Nov 2018 21:02:41 +0100
-Message-ID: <96296b4d-d49e-2b08-4306-196605a9f5dc@gmail.com>
+Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
+ device names
+Date: Sun, 11 Nov 2018 21:02:58 +0100
+Message-ID: <a640167b-3a3e-daea-b377-6e82b653c5e8@gmail.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-4-git-send-email-jacek.anaszewski@gmail.com>
- <20181111113157.GK27666@amd>
+ <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
+ <20181111120234.GA28794@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181111113157.GK27666@amd>
+In-Reply-To: <20181111120234.GA28794@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
@@ -18,122 +19,61 @@ List-Id: linux-leds@vger.kernel.org
 
 Hi Pavel,
 
-Thanks for the review.
-
-On 11/11/2018 12:31 PM, Pavel Machek wrote:
+On 11/11/2018 01:02 PM, Pavel Machek wrote:
 > Hi!
 > 
->> Add common LED function definitions for use in Device Tree.
->> The function names were extracted from existing dts files
->> after eliminating oddities.
+>> Add public led_compose_name() API for composing LED class device
+>> name basing on fwnode_handle data. The function composes device name
+>> according to either a new <color:function> pattern or the legacy
+>> <devicename:color:function> pattern. The decision on using the
+>> particular pattern is made basing on whether fwnode contains new
+>> "function" and "color" properties, or the legacy "label" proeprty.
+>>
+>> Backwards compatibility with in-driver hard-coded LED class device
+>> names is assured thanks to the default_desc argument.
+>>
+>> In case none of the aformentioned properties was found, then, for OF
+>> nodes, the node name is adopted for LED class device name.
+>>
 > 
-> Thanks for doing this.
+>> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
+>> index 836cb16..e9009c4 100644
+>> --- a/Documentation/leds/leds-class.txt
+>> +++ b/Documentation/leds/leds-class.txt
+>> @@ -43,7 +43,7 @@ LED Device Naming
+>>  
+>>  Is currently of the form:
+>>  
+>> -"devicename:colour:function"
+>> +"colour:function"
+>>  
 > 
->> diff --git a/include/dt-bindings/leds/functions.h b/include/dt-bindings/leds/functions.h
->> new file mode 100644
->> index 0000000..3f94e09
->> --- /dev/null
->> +++ b/include/dt-bindings/leds/functions.h
->> @@ -0,0 +1,101 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
+> I don't think we want to do it in all cases.
 > 
->> +#define LED_FUNCTION_2G "2g"
->> +#define LED_FUNCTION_ACTIVITY "activity"
->> +#define LED_FUNCTION_ADSL "adsl"
->> +#define LED_FUNCTION_ALARM "alarm"
->> +#define LED_FUNCTION_ALIVE "alive"
->> +#define LED_FUNCTION_ALL "all"
->> +#define LED_FUNCTION_APP "app"
->> +#define LED_FUNCTION_AUX "aux"
->> +#define LED_FUNCTION_BACKUP "backup"
->> +#define LED_FUNCTION_BACKLIGHT "backlight"
->> +#define LED_FUNCTION_BACKLIGHT_CLUSTER "backlight_cluster"
+> So, on my cellphone seeing lp5523:green:led is indeed not useful.
 > 
-> Sounds like one of backlight and backlight_cluster should be deprecated?
-
-I think so.
-
->> +#define LED_FUNCTION_BEEP "beep"
->> +#define LED_FUNCTION_BLUETOOTH "bluetooth"
->> +#define LED_FUNCTION_BOOT "boot"
->> +#define LED_FUNCTION_BOTTOM "bottom"
+> But on notebook with usb keyboard attached, you need to keep the
+> devicename to be able to distinguish capslock on internal keyboard and
+> capslock on first USB keyboard and capslock on second USB keyboard.
 > 
-> I believe some of these should get comments. For example what does
-> "all" and "bottom" LEDs do?
-
-It would be best to ask the author, but for now,
-I'd just remove all of "bottom", "up", "left", "right"
-etc.
-
->> +#define LED_FUNCTION_BRICK_STATUS "brick-status"
->> +#define LED_FUNCTION_CEL "cel"
->> +#define LED_FUNCTION_CEL_PWR "cel-pwr"
->> +#define LED_FUNCTION_CEL_RESET "cel-reset"
->> +#define LED_FUNCTION_CHRG "chrg"
->> +#define LED_FUNCTION_COM "com"
->> +#define LED_FUNCTION_COPY "copy"
->> +#define LED_FUNCTION_CPU "cpu"
->> +#define LED_FUNCTION_DEBUG "debug"
->> +#define LED_FUNCTION_DIA "dia"
+> Taking look at the list of functions, here's stuff like "hdd" and
+> "hdderr". I assume the first means hdd activity... If we can do it, it
+> would be nicest to have "sda:green:activity" and maybe
+> "sda:red:error". For a raid array with 8 drives...
 > 
-> What does this one do?
-
-I'd opt for something like "diagnostics", but this is a blind shot.
-Let's remove it then and, and let people add more meaningful
-definition in case it is needed.
-
->> +#define LED_FUNCTION_DISK "disk"
+> For example I have a router running linux. It has 4 lan ports, with
+> correspondings LED, and an wan led.
 > 
-> We have disk, hd, hdd and sata. Deprecate some?
-
-Disk should be the best choice, especially given that we have
-identically named trigger.
-
->> +#define LED_FUNCTION_DISPLAY_CLUSTER "display_cluster"
->> +#define LED_FUNCTION_DOWN "down"
->> +#define LED_FUNCTION_DSL "dsl"
->> +#define LED_FUNCTION_ENOCEAN "enocean"
->> +#define LED_FUNCTION_ENTER "enter"
->> +#define LED_FUNCTION_ERROR "error"
->> +#define LED_FUNCTION_ESATA "esata"
->> +#define LED_FUNCTION_ETHERNET_STATUS "ethernet-status"
->> +#define LED_FUNCTION_FAIL "fail"
->> +#define LED_FUNCTION_FAULT "fault"
->> +#define LED_FUNCTION_FLASH "flash"
->> +#define LED_FUNCTION_FRONT "front"
->> +#define LED_FUNCTION_FUNC "func"
->> +#define LED_FUNCTION_GPIO "gpio"
->> +#define LED_FUNCTION_GSM "gsm"
+> Having "green:lan1" to "green:lan4" and "green:wan" plus
+> "red:wanerror" would work, but I'd really preffer
+> "eth0:green:link"... "adsl0:green:link", "adsl0:red:error".
 > 
->> +#define LED_FUNCTION_HD "hd"
->> +#define LED_FUNCTION_HDD "hdd"
->> +#define LED_FUNCTION_HDDERR "hdderr"
-> 
-> Ok, I'll 
+> There are now phones with flashes on both main and selfie
+> cameras. Again, knowing which device is which is important. As is
+> knowing which display is controlled by particular backlight.
 
-Hmm?
-
-> 
->> +#define LED_FUNCTION_HEALTH "health"
->> +#define LED_FUNCTION_HEARTBEAT "heartbeat"
-> 
-> Sounds same as alive, deprecate alive?
-
-Heartbeat may be designated specifically for registration
-for events from the trigger with the same name.
-
->> +#define LED_FUNCTION_WIFI "wifi"
->> +#define LED_FUNCTION_WIRELESS "wireless"
->> +#define LED_FUNCTION_WLAN "wlan"
-> 
-> Same as wifi and wireless, I guess, deprecate some?
-
-I'd remove "wireless" and "wlan".
-
-> I'll touch same subject in another email.
-> 									Pavel
-> 
+It's overcomplicating the naming again. In every case you can tweak
+the function name to eth0_link, eth1_link etc.
 
 -- 
 Best regards,
