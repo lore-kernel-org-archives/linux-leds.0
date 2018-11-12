@@ -1,97 +1,167 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
- device names
-Date: Mon, 12 Nov 2018 11:35:13 +0100
-Message-ID: <20181112103513.GB5695@amd>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH 10/24] leds: lp8860: Use led_compose_name()
+Date: Mon, 12 Nov 2018 08:05:51 -0600
+Message-ID: <fba5c68c-d010-94d6-de2f-32fad11868f3@ti.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
- <20181111120234.GA28794@amd>
- <a640167b-3a3e-daea-b377-6e82b653c5e8@gmail.com>
- <20181111201605.GA20160@amd>
- <57b77d4e-39a0-aaf2-5952-c2c25dc58593@gmail.com>
+ <1541542052-10081-11-git-send-email-jacek.anaszewski@gmail.com>
+ <d0d4eff7-5840-95d7-a1a1-104188d1b619@ti.com>
+ <bfa4cf6d-1d78-3d48-4846-eb4bcc9e8a98@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="EuxKj2iCbKjpUGkD"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <57b77d4e-39a0-aaf2-5952-c2c25dc58593@gmail.com>
+In-Reply-To: <bfa4cf6d-1d78-3d48-4846-eb4bcc9e8a98@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>, Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+Jacek
 
---EuxKj2iCbKjpUGkD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/08/2018 02:48 PM, Jacek Anaszewski wrote:
+> Dan,
+> 
+> On 11/08/2018 07:16 PM, Dan Murphy wrote:
+>> On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
+>>> Switch to using generic LED support for composing LED class
+>>> device name.
+>>>
+>>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>> ---
+>>>  drivers/leds/leds-lp8860.c | 38 +++++++++++++++++++-------------------
+>>>  1 file changed, 19 insertions(+), 19 deletions(-)
+>>>
+>>> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+>>> index 39c72a9..7c12ccd 100644
+>>> --- a/drivers/leds/leds-lp8860.c
+>>> +++ b/drivers/leds/leds-lp8860.c
+>>> @@ -22,7 +22,6 @@
+>>>  #include <linux/of_gpio.h>
+>>>  #include <linux/gpio/consumer.h>
+>>>  #include <linux/slab.h>
+>>> -#include <uapi/linux/uleds.h>
+>>>  
+>>>  #define LP8860_DISP_CL1_BRT_MSB		0x00
+>>>  #define LP8860_DISP_CL1_BRT_LSB		0x01
+>>> @@ -87,6 +86,8 @@
+>>>  
+>>>  #define LP8860_CLEAR_FAULTS		0x01
+>>>  
+>>> +#define LP8860_NAME			"lp8860"
+>>> +
+>>>  /**
+>>>   * struct lp8860_led -
+>>>   * @lock - Lock for reading/writing the device
+>>> @@ -96,7 +97,6 @@
+>>>   * @eeprom_regmap - EEPROM register map
+>>>   * @enable_gpio - VDDIO/EN gpio to enable communication interface
+>>>   * @regulator - LED supply regulator pointer
+>>> - * @label - LED label
+>>>   */
+>>>  struct lp8860_led {
+>>>  	struct mutex lock;
+>>> @@ -106,7 +106,6 @@ struct lp8860_led {
+>>>  	struct regmap *eeprom_regmap;
+>>>  	struct gpio_desc *enable_gpio;
+>>>  	struct regulator *regulator;
+>>> -	char label[LED_MAX_NAME_SIZE];
+>>>  };
+>>>  
+>>>  struct lp8860_eeprom_reg {
+>>> @@ -387,25 +386,26 @@ static int lp8860_probe(struct i2c_client *client,
+>>>  	struct lp8860_led *led;
+>>>  	struct device_node *np = client->dev.of_node;
+>>>  	struct device_node *child_node;
+>>> -	const char *name;
+>>> +	struct led_init_data init_data;
+>>>  
+>>>  	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
+>>>  	if (!led)
+>>>  		return -ENOMEM;
+>>>  
+>>> -	for_each_available_child_of_node(np, child_node) {
+>>> -		led->led_dev.default_trigger = of_get_property(child_node,
+>>> -						    "linux,default-trigger",
+>>> -						    NULL);
+>>> -
+>>> -		ret = of_property_read_string(child_node, "label", &name);
+>>> -		if (!ret)
+>>> -			snprintf(led->label, sizeof(led->label), "%s:%s",
+>>> -				 id->name, name);
+>>> -		else
+>>> -			snprintf(led->label, sizeof(led->label),
+>>> -				"%s::display_cluster", id->name);
+>>> -	}
+>>
+>> We need to keep a loop here looking for additional nodes as this device has string support and just
+>> not cluster support.
+>>
+>> Just need to get the other LED patches done.
+> 
+> In the current shape only the properties from the last parsed child node
+> will be used for initializing the LED class device. So, this should be
+> meant also a fix removing this obscurity. Worth mentioning in the commit
+> message. Or I'm not getting it right?
 
-Hi!
 
-> >> It's overcomplicating the naming again. In every case you can tweak
-> >> the function name to eth0_link, eth1_link etc.
-> >=20
-> > Well, but in such case it would be good to keep existing scheme.
-> >=20
-> > My system looks like this:
-> >=20
-> > input16::capslock    tpacpi::bay_active    tpacpi::standby
-> > input16::numlock     tpacpi::dock_active   tpacpi::thinklight
-> > input16::scrolllock  tpacpi::dock_batt	      tpacpi::thinkvantage
-> > input5::capslock     tpacpi::dock_status1  tpacpi::unknown_led
-> > input5::numlock      tpacpi::dock_status2  tpacpi::unknown_led2
-> > input5::scrolllock   tpacpi:green:batt	      tpacpi::unknown_led3
-> >=20
-> > I agree that we should get rid of "tpacpi:" part in some cases. But
-> > it does not make sense to get rid of "input16:" part -- it tells you
-> > if the LED is on USB or on built-in keyboard.
-> >=20
-> > Ideally, tpacpi::thinklight would be input5::frontlight (as it is
-> > frontlight for the keyboard).
-> >=20
-> > Yes we should simplify, but it still needs to work in all cases.
->=20
-> Well, label is not being removed. You still can use it an the old
-> fashion, even when using new led_compose_name().
->=20
-> Maybe removing the description of the old LED naming from
-> Documentation/leds/leds-class.txt was too drastic move.
-> I'll keep it next to the new one, and only add a note that
-> it is kept only for backwards compatibility.
+Yes I agree as this driver in the current shape only supports cluster mode only not string support.
+I have some stashed patches locally that register each string individually for this device.
 
-I agree that removing it is "just too drastic".
+I have not worked out a good algorithm to set the register appropriately.
 
-But it is not just for backwards compatibility. See my examples above,
-it is needed to tell which device the LED is asociated with, and it is
-absolutely required for USB devices (for example).
+If you want to remove the loop then I can add it back once I add string support.
 
-And even for "embedded" stuff like routers, we want eth0:green:link,
-eth0:yellow:activity and not some kind of hack.
+Dan
 
-Ideally, colors would come from fixed list, functions would come from
-fixed list, and device part would come from name used elsewhere in the
-kernel.
+> 
+>>> +	child_node = of_get_next_available_child(np, NULL);
+>>> +	if (!child_node)
+>>> +		return -EINVAL;
+>>> +
+>>> +	init_data.fwnode = of_fwnode_handle(child_node),
+>>> +
+>>> +	led->led_dev.default_trigger = of_get_property(child_node,
+>>> +					    "linux,default-trigger",
+>>> +					    NULL);
+>>> +
+>>> +	ret = led_compose_name(init_data.fwnode, LP8860_NAME,
+>>> +			       ":display_cluster", init_data.name);
+>>
+>> Should we use the #defines here for display_cluster?
+> 
+> Right, will fix in the next version.
+> 
+>>> +	if (ret)
+>>> +		return ret;
+>>>  
+>>>  	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
+>>>  						   "enable", GPIOD_OUT_LOW);
+>>> @@ -420,7 +420,6 @@ static int lp8860_probe(struct i2c_client *client,
+>>>  		led->regulator = NULL;
+>>>  
+>>>  	led->client = client;
+>>> -	led->led_dev.name = led->label;
+>>>  	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
+>>>  
+>>>  	mutex_init(&led->lock);
+>>> @@ -447,7 +446,8 @@ static int lp8860_probe(struct i2c_client *client,
+>>>  	if (ret)
+>>>  		return ret;
+>>>  
+>>> -	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
+>>> +	ret = devm_led_classdev_register_ext(&client->dev, &led->led_dev,
+>>> +					     &init_data);
+>>>  	if (ret) {
+>>>  		dev_err(&client->dev, "led register err: %d\n", ret);
+>>>  		return ret;
+>>>
+>>
+>>
+> 
 
-(And yes, it probably means we should have something in device tree to
-link LED to its device. device =3D "name" would be good start...)
 
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---EuxKj2iCbKjpUGkD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvpV2EACgkQMOfwapXb+vJHygCfZngO0ozX1gBL+B+xCkXI/KeM
-YvwAoJQTbDB5UxyDTDl2rTh8xZe+Unvn
-=WFvx
------END PGP SIGNATURE-----
-
---EuxKj2iCbKjpUGkD--
+-- 
+------------------
+Dan Murphy
