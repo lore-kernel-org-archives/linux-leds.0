@@ -1,78 +1,72 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: LEDs on USB keyboards was Re: [PATCH 02/24] leds: core: Add support
- for composing LED class device names
-Date: Mon, 12 Nov 2018 23:11:04 +0100
-Message-ID: <20181112221104.GC11942@amd>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
- <20181111120234.GA28794@amd>
- <a640167b-3a3e-daea-b377-6e82b653c5e8@gmail.com>
- <20181111201605.GA20160@amd>
- <57b77d4e-39a0-aaf2-5952-c2c25dc58593@gmail.com>
- <e72ac342-5253-851a-e54f-b1bd752be628@gmail.com>
- <CACRpkdZwgZ=PmX3PEpR-F76BZ5g9hzvQYc_3QfFYhHvBHqp4Tw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: backlight: fix vendor prefix for
+ ArcticSand arcxcnn driver bindings
+Date: Mon, 12 Nov 2018 12:42:54 -0600
+Message-ID: <5bea0ec6.1c69fb81.82c48.304f@mx.google.com>
+References: <1541592640-18478-1-git-send-email-bdodge09@gmail.com>
+ <1541592640-18478-2-git-send-email-bdodge09@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="lMM8JwqTlfDpEaS6"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZwgZ=PmX3PEpR-F76BZ5g9hzvQYc_3QfFYhHvBHqp4Tw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: dachaac@gmail.com, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, dmurphy@ti.com, oleg@kaa.org.ua, Sakari Ailus <sakari.ailus@linux.intel.com>, simon@lineageos.org, xiaotong.lu@spreadtrum.com
+In-Reply-To: <1541592640-18478-2-git-send-email-bdodge09@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Brian Dodge <bdodge09@gmail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-
---lMM8JwqTlfDpEaS6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> > Couldn't we have here multiple variants that would then be chosen based
-> > on device tree definition?
->=20
-> It needs to be subsystem specific or something.
-> What you say make sense for things based on device
-> tree.
->=20
-> The problem hit me on an Intel laptop with several
-> USB keyboards.
->=20
-> OK maybe I am stupid for plugging in two USB keyboards,
-> but we should definately support it. Input/HID supports it
-> well.
-
-Plugging two USB keyboards should be supported.
-
-Can we get some details... kernel version, architecture, maybe
-=2Econfig, where/how it fails?
-
-On my systems, keyboard leds are prefixed with device name, so I see
-no chance for duplicities...
-
-input5::capslock/   =20
-input5::numlock/    =20
-input5::scrolllock/
-
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---lMM8JwqTlfDpEaS6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvp+ngACgkQMOfwapXb+vLqywCdFaqE3SM9L6Df8+cbZl/qYHAi
-7BEAoI8ogyxXrej9w7IRZ6vlaCjzxYNi
-=SadW
------END PGP SIGNATURE-----
-
---lMM8JwqTlfDpEaS6--
+T24gV2VkLCBOb3YgMDcsIDIwMTggYXQgMDc6MTA6MzhBTSAtMDUwMCwgQnJpYW4gRG9kZ2Ugd3Jv
+dGU6Cj4gVGhlIHZlbmRvci1wcmVmaXhlcy50eHQgZmlsZSBwcm9wZXJseSByZWZlcnMgdG8gQXJj
+dGljU2FuZAo+IGFzIGFyY3RpYyBidXQgdGhlIGRyaXZlciBiaW5kaW5ncyBpbXByb3Blcmx5IGFi
+YnJldmlhdGVkIHRoZQo+IHByZWZpeCB0byBhcmMuIFRoaXMgd2FzIGEgbWlzdGFrZSBpbiB0aGUg
+b3JpZ2luYWwgcGF0Y2gKPiAKCkFyZSB0aGVyZSBhbnkgdXNlcnMgYW5kIGFyZSB0aGV5IG9rYXkg
+d2l0aCB0aGlzIGNoYW5naW5nPwoKPiBTaWduZWQtb2ZmLWJ5OiBCcmlhbiBEb2RnZSA8YmRvZGdl
+MDlAZ21haWwuY29tPgo+IC0tLQo+ICAuLi4vYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvYXJjeGNu
+bl9ibC50eHQgICAgICAgICAgIHwgMjAgKysrKysrKysrKy0tLS0tLS0tLS0KPiAgMSBmaWxlIGNo
+YW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQg
+YS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvYXJjeGNu
+bl9ibC50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGln
+aHQvYXJjeGNubl9ibC50eHQKPiBpbmRleCAyMzBhYmRlLi5kY2FhMjM5IDEwMDY0NAo+IC0tLSBh
+L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9hcmN4Y25u
+X2JsLnR4dAo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2Jh
+Y2tsaWdodC9hcmN4Y25uX2JsLnR4dAo+IEBAIC0xLDggKzEsOCBAQAo+IC1CaW5kaW5nIGZvciBB
+cmN0aWNTYW5kIGFyYzJjMDYwOCBMRUQgZHJpdmVyCj4gK0JpbmRpbmcgZm9yIEFyY3RpY1NhbmQg
+YXJjIGZhbWlseSBMRUQgZHJpdmVycwo+IAo+ICBSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+IC0tIGNv
+bXBhdGlibGU6CQlzaG91bGQgYmUgImFyYyxhcmMyYzA2MDgiCj4gLS0gcmVnOgkJCXNsYXZlIGFk
+ZHJlc3MKPiArLSBjb21wYXRpYmxlOgkiYXJjdGljLGFyYzFjMDYwOCIsICJhcmN0aWMsYXJjMmMw
+NjA4IiwgImFyY3RpYyxhcmMzYzA4NDUiCgpGb3JtYXQgb25lIHBlciBsaW5lIHBsZWFzZS4KCj4g
+Ky0gcmVnOgkJc2xhdmUgYWRkcmVzcwo+IAo+ICBPcHRpb25hbCBwcm9wZXJ0aWVzOgo+ICAtIGRl
+ZmF1bHQtYnJpZ2h0bmVzczoJYnJpZ2h0bmVzcyB2YWx1ZSBvbiBib290LCB2YWx1ZSBmcm9tOiAw
+LTQwOTUKPiBAQCAtMTEsMTkgKzExLDE5IEBAIE9wdGlvbmFsIHByb3BlcnRpZXM6Cj4gIC0gbGVk
+LXNvdXJjZXM6CQlMaXN0IG9mIGVuYWJsZWQgY2hhbm5lbHMgZnJvbSAwIHRvIDUuCj4gIAkJCVNl
+ZSBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9jb21tb24udHh0Cj4gCj4g
+LS0gYXJjLGxlZC1jb25maWctMDoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgSUxFRF9DT05GSUdfMAo+
+IC0tIGFyYyxsZWQtY29uZmlnLTE6CXNldHRpbmcgZm9yIHJlZ2lzdGVyIElMRURfQ09ORklHXzEK
+PiAtLSBhcmMsZGltLWZyZXE6CQlQV00gbW9kZSBmcmVxdWVuY2Ugc2V0dGluZyAoYml0cyBbMzow
+XSB1c2VkKQo+IC0tIGFyYyxjb21wLWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgQ09ORklH
+X0NPTVAKPiAtLSBhcmMsZmlsdGVyLWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgRklMVEVS
+X0NPTkZJRwo+IC0tIGFyYyx0cmltLWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgSU1BWFRV
+TkUKPiArLSBhcmN0aWMsbGVkLWNvbmZpZy0wOglzZXR0aW5nIGZvciByZWdpc3RlciBJTEVEX0NP
+TkZJR18wCj4gKy0gYXJjdGljLGxlZC1jb25maWctMToJc2V0dGluZyBmb3IgcmVnaXN0ZXIgSUxF
+RF9DT05GSUdfMQo+ICstIGFyY3RpYyxkaW0tZnJlcToJCVBXTSBtb2RlIGZyZXF1ZW5jZSBzZXR0
+aW5nIChiaXRzIFszOjBdIHVzZWQpCj4gKy0gYXJjdGljLGNvbXAtY29uZmlnOglzZXR0aW5nIGZv
+ciByZWdpc3RlciBDT05GSUdfQ09NUAo+ICstIGFyY3RpYyxmaWx0ZXItY29uZmlnOglzZXR0aW5n
+IGZvciByZWdpc3RlciBGSUxURVJfQ09ORklHCj4gKy0gYXJjdGljLHRyaW0tY29uZmlnOglzZXR0
+aW5nIGZvciByZWdpc3RlciBJTUFYVFVORQo+IAo+ICBOb3RlOiBPcHRpb25hbCBwcm9wZXJ0aWVz
+IG5vdCBzcGVjaWZpZWQgd2lsbCBkZWZhdWx0IHRvIHZhbHVlcyBpbiBJQyBFUFJPTQo+IAo+ICBF
+eGFtcGxlOgo+IAo+ICBhcmMyYzA2MDhAMzAgewo+IC0JY29tcGF0aWJsZSA9ICJhcmMsYXJjMmMw
+NjA4IjsKPiArCWNvbXBhdGlibGUgPSAiYXJjdGljLGFyYzJjMDYwOCI7Cj4gIAlyZWcgPSA8MHgz
+MD47Cj4gIAlkZWZhdWx0LWJyaWdodG5lc3MgPSA8NTAwPjsKPiAgCWxhYmVsID0gImxjZC1iYWNr
+bGlnaHQiOwo+IC0tCj4gMi43LjQKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
