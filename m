@@ -1,74 +1,26 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
- device names
-Date: Tue, 13 Nov 2018 22:50:40 +0100
-Message-ID: <20181113215040.GA2235@amd>
-References: <20181111120234.GA28794@amd>
- <a640167b-3a3e-daea-b377-6e82b653c5e8@gmail.com>
- <20181111201605.GA20160@amd>
- <57b77d4e-39a0-aaf2-5952-c2c25dc58593@gmail.com>
- <20181112103513.GB5695@amd>
- <662c02ba-455b-e2bf-a5e2-ae3933161894@gmail.com>
- <20181112190554.GA13959@amd>
- <b167cfc1-e392-eec6-6455-5983dc1c7212@gmail.com>
- <20181112220616.GB11942@amd>
- <CAMuHMdVAYpXPZie8DTrmMz+KXiVP=WNyFNtfTZPYHYkFOa9wqg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] ARM: OMAP1: ams-delta: Provide GPIO lookup table for LED device
+Date: Wed, 14 Nov 2018 13:51:23 +0100
+Message-ID: <CACRpkdYxgh9Nvh3WsOmE25KRHhn-E9NJ-4wVSzt6SjOTRCuYLg@mail.gmail.com>
+References: <20181105232349.17351-1-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="k1lZvvs/B4yU6o8G"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVAYpXPZie8DTrmMz+KXiVP=WNyFNtfTZPYHYkFOa9wqg@mail.gmail.com>
+In-Reply-To: <20181105232349.17351-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, dmurphy@ti.com, Linus Walleij <linus.walleij@linaro.org>, oleg@kaa.org.ua, Sakari Ailus <sakari.ailus@linux.intel.com>, simon@lineageos.org, xiaotong.lu@spreadtrum.com
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: ext Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-leds@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
+On Tue, Nov 6, 2018 at 12:22 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
---k1lZvvs/B4yU6o8G
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Global GPIO numbers no longer have to be passed to leds-gpio driver,
+> replace their assignment with a lookup table.
+>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-On Tue 2018-11-13 22:38:49, Geert Uytterhoeven wrote:
-> Hi Pavel,
->=20
-> On Mon, Nov 12, 2018 at 11:07 PM Pavel Machek <pavel@ucw.cz> wrote:
-> > Not really, I'm afraid. Hard drives have no red LEDs on them (and the
-> > LED would not be visible, anyway) so the "device" symlink in such case
-> > would point to some kind of i2c LED controller.
->=20
-> I've seen hard drives with LEDs on the PCB.
+Excellent Janusz! :)
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Me too.
-
-> External USB enclosures with hard drives typically have LEDs, too.
-
-Yes, but typically neither are OS controlled.
-
-I'm thinking home NAS system; it may have per-disk LEDs and they'll
-probably be on some kind of dedicated LED controller.
-
-Anyway, my point is that "device that controls this LED" is often
-different from "device this LED is about".
-
-Regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---k1lZvvs/B4yU6o8G
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvrRzAACgkQMOfwapXb+vK3gwCfQZiQIfJVltzytk33zq1aIbwR
-ZiAAoKDyWVBNyG9TS9jhfQevyqvfWUHX
-=UwZm
------END PGP SIGNATURE-----
-
---k1lZvvs/B4yU6o8G--
+Yours,
+Linus Walleij
