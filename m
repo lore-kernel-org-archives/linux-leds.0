@@ -1,31 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 03/24] leds: dt-bindings: Add LED_FUNCTION definitions
-Date: Thu, 15 Nov 2018 10:16:22 +0100
-Message-ID: <CACRpkdb6VP5hsg8ScrfAEt7TV5k_8zf7cruNxzhwfHrkdgwyuA@mail.gmail.com>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com> <1541542052-10081-4-git-send-email-jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v3 1/3] mfd: upboard: Add UP2 platform controller driver
+Date: Thu, 15 Nov 2018 15:56:27 +0100
+Message-ID: <CACRpkda=xz=6sVuM1r81krR+09gOTaxBkab3_Xj0qMEB5AdVtQ@mail.gmail.com>
+References: <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1541018689-20625-1-git-send-email-dan@emutex.com> <1541018689-20625-2-git-send-email-dan@emutex.com>
+ <20181111112944.GA27666@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1541542052-10081-4-git-send-email-jacek.anaszewski@gmail.com>
+In-Reply-To: <20181111112944.GA27666@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, dmurphy@ti.com, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, simon@lineageos.org, xiaotong.lu@spreadtrum.com
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Dan O'Donovan <dan@emutex.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-leds@vger.kernel.org, carlos.iglesias@emutex.com
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 11:07 PM Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
+On Sun, Nov 11, 2018 at 12:29 PM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> > +static void __reg_io_start(const struct upboard_ddata * const ddata)
+> > +{
+> > +     /*
+> > +      * CLEAR signal must be pulsed low before any register access.
+> > +      * This resets internal counters in the controller and marks
+> > +      * the start of a new register access.
+> > +      */
+> > +     set_clear(ddata, 0);
+> > +     set_clear(ddata, 1);
+> > +}
+>
+> We normally reserve __ prefix for different stuff. This is not using
+> it appropriately.
 
-> +#define LED_FUNCTION_DISK "disk"
++1
 
-I recently added triggers for "disk-read" and "disk-write".
-This was because the D-Link DNS-313 does have dedicated
-LEDs for each usecase, and so does DIR-685.
+I actively dislike __underscore_notation as it seems to be
+completely arbitrary and ambiguous. I think even
+do_the_stuff_reg_io_start() is better.
 
-So I think you may need
-LED_FUNCTION_DISK_READ "disk-read"
-and
-LED_FUNCTION_DISK_WRITE "disk-write"
-to cover these cases.
+But please come up with something to the point and
+descriptive! :)
 
 Yours,
 Linus Walleij
