@@ -1,43 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/3] mfd: upboard: Add UP2 platform controller driver
-Date: Thu, 15 Nov 2018 15:56:27 +0100
-Message-ID: <CACRpkda=xz=6sVuM1r81krR+09gOTaxBkab3_Xj0qMEB5AdVtQ@mail.gmail.com>
-References: <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1541018689-20625-1-git-send-email-dan@emutex.com> <1541018689-20625-2-git-send-email-dan@emutex.com>
- <20181111112944.GA27666@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] leds: powernv: add of_node_put()
+Date: Wed, 21 Nov 2018 07:31:38 -0500
+Message-ID: <20181121123138.21870-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181111112944.GA27666@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Dan O'Donovan <dan@emutex.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-leds@vger.kernel.org, carlos.iglesias@emutex.com
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
+Cc: linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 12:29 PM Pavel Machek <pavel@ucw.cz> wrote:
->
-> > +static void __reg_io_start(const struct upboard_ddata * const ddata)
-> > +{
-> > +     /*
-> > +      * CLEAR signal must be pulsed low before any register access.
-> > +      * This resets internal counters in the controller and marks
-> > +      * the start of a new register access.
-> > +      */
-> > +     set_clear(ddata, 0);
-> > +     set_clear(ddata, 1);
-> > +}
->
-> We normally reserve __ prefix for different stuff. This is not using
-> it appropriately.
+of_find_node_by_path() acquires a reference to the node returned by
+it and that reference needs to be dropped by its caller.bl_idle_init()
+doesn't do that, so fix it.
 
-+1
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/leds/leds-powernv.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-I actively dislike __underscore_notation as it seems to be
-completely arbitrary and ambiguous. I think even
-do_the_stuff_reg_io_start() is better.
-
-But please come up with something to the point and
-descriptive! :)
-
-Yours,
-Linus Walleij
+diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+index b1adbd70ce2e..0b1540029034 100644
+--- a/drivers/leds/leds-powernv.c
++++ b/drivers/leds/leds-powernv.c
+@@ -285,6 +285,7 @@ static int powernv_led_probe(struct platform_device *pdev)
+ 	struct device_node *led_node;
+ 	struct powernv_led_common *powernv_led_common;
+ 	struct device *dev = &pdev->dev;
++	int rc;
+ 
+ 	led_node = of_find_node_by_path("/ibm,opal/leds");
+ 	if (!led_node) {
+@@ -295,15 +296,20 @@ static int powernv_led_probe(struct platform_device *pdev)
+ 
+ 	powernv_led_common = devm_kzalloc(dev, sizeof(*powernv_led_common),
+ 					  GFP_KERNEL);
+-	if (!powernv_led_common)
+-		return -ENOMEM;
++	if (!powernv_led_common){
++		rc = -ENOMEM;
++		goto out;
++	}
+ 
+ 	mutex_init(&powernv_led_common->lock);
+ 	powernv_led_common->max_led_type = cpu_to_be64(OPAL_SLOT_LED_TYPE_MAX);
+ 
+ 	platform_set_drvdata(pdev, powernv_led_common);
+ 
+-	return powernv_led_classdev(pdev, led_node, powernv_led_common);
++	rc = powernv_led_classdev(pdev, led_node, powernv_led_common);
++out:
++	of_node_put(led_node);
++	return rc;
+ }
+ 
+ /* Platform driver remove */
+-- 
+2.17.0
