@@ -1,8 +1,8 @@
 From: Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5/6] platform/x86: dell-laptop: Drop
-	superfluous exported function
-Date: Mon, 26 Nov 2018 18:11:25 +0100
-Message-ID: <20181126171126.20280-6-tiwai@suse.de>
+Subject: [PATCH 3/6] platform/x86: thinkpad_acpi: Add audio
+	mute LED classdev support
+Date: Mon, 26 Nov 2018 18:11:23 +0100
+Message-ID: <20181126171126.20280-4-tiwai@suse.de>
 References: <20181126171126.20280-1-tiwai@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,83 +22,119 @@ To: alsa-devel@alsa-project.org
 Cc: Ayman Bagabas <ayman.bagabas@gmail.com>, platform-driver-x86@vger.kernel.org, Hui Wang <hui.wang@canonical.com>, ibm-acpi-devel@lists.sourceforge.net, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Since we've switched to the LED trigger for binding with HD-audio,
-we can drop the exported function as well as the whole
-linux/dell-led.h.
+In the upcoming change, the binding of audio mute / mic-mute LED
+controls will be switched with LED trigger.  This patch is the last
+piece of preparation: adding the audio mute / mic-mute LED class
+devices to thinkpad_acpi driver.
+
+Two devices, tpacpi::mute and tpacpi::micmute, will be added for
+controlling the mute LED and mic-mute LED, respectively.
+
+Also this selects CONFIG_LEDS_TRIGGERS and CONFIG_LEDS_TRIGGERS_AUDIO
+unconditionally.  Strictly speaking, these aren't 100% mandatory, but
+leaving these manual selections would lead to a functional regression
+easily once after converting from the dynamic symbol binding to the
+LEDs trigger in a later patch.
 
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- drivers/platform/x86/dell-laptop.c | 22 +++++-----------------
- include/linux/dell-led.h           |  7 -------
- 2 files changed, 5 insertions(+), 24 deletions(-)
- delete mode 100644 include/linux/dell-led.h
+ drivers/platform/x86/Kconfig         |  2 +
+ drivers/platform/x86/thinkpad_acpi.c | 56 +++++++++++++++++++++++++---
+ 2 files changed, 52 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-index 6a647e2d09ee..40236895b263 100644
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@ -29,7 +29,6 @@
- #include <linux/mm.h>
- #include <linux/i8042.h>
- #include <linux/debugfs.h>
--#include <linux/dell-led.h>
- #include <linux/seq_file.h>
- #include <acpi/video.h>
- #include "dell-rbtn.h"
-@@ -2109,17 +2108,17 @@ static struct notifier_block dell_laptop_notifier = {
- 	.notifier_call = dell_laptop_notifier_call,
- };
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 9b9cc3cc33e9..87f70e8f4dd0 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -495,6 +495,8 @@ config THINKPAD_ACPI
+ 	select NVRAM
+ 	select NEW_LEDS
+ 	select LEDS_CLASS
++	select LEDS_TRIGGERS
++	select LEDS_TRIGGER_AUDIO
+ 	---help---
+ 	  This is a driver for the IBM and Lenovo ThinkPad laptops. It adds
+ 	  support for Fn-Fx key combinations, Bluetooth control, video
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index fde08a997557..3c09afae1248 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -9203,17 +9203,57 @@ int tpacpi_led_set(int whichled, bool on)
+ }
+ EXPORT_SYMBOL_GPL(tpacpi_led_set);
  
--int dell_micmute_led_set(int state)
-+static int micmute_led_set(struct led_classdev *led_cdev,
-+			   enum led_brightness brightness)
++static int tpacpi_led_mute_set(struct led_classdev *led_cdev,
++			       enum led_brightness brightness)
++{
++	return tpacpi_led_set(TPACPI_LED_MUTE, brightness != LED_OFF);
++}
++
++static int tpacpi_led_micmute_set(struct led_classdev *led_cdev,
++				  enum led_brightness brightness)
++{
++	return tpacpi_led_set(TPACPI_LED_MICMUTE, brightness != LED_OFF);
++}
++
++static struct led_classdev mute_led_cdev[] = {
++	[TPACPI_LED_MUTE] = {
++		.name		= "tpacpi::mute",
++		.max_brightness = 1,
++		.brightness_set_blocking = tpacpi_led_mute_set,
++		.default_trigger = "audio-mute",
++	},
++	[TPACPI_LED_MICMUTE] = {
++		.name		= "tpacpi::micmute",
++		.max_brightness = 1,
++		.brightness_set_blocking = tpacpi_led_micmute_set,
++		.default_trigger = "audio-micmute",
++	},
++};
++
+ static int mute_led_init(struct ibm_init_struct *iibm)
  {
- 	struct calling_interface_buffer buffer;
- 	struct calling_interface_token *token;
-+	int state = brightness != LED_OFF;
++	static enum led_audio types[] = {
++		[TPACPI_LED_MUTE] = LED_AUDIO_MUTE,
++		[TPACPI_LED_MICMUTE] = LED_AUDIO_MICMUTE,
++	};
+ 	acpi_handle temp;
+-	int i;
++	int i, err;
  
- 	if (state == 0)
- 		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
--	else if (state == 1)
--		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
- 	else
--		return -EINVAL;
-+		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
+ 	for (i = 0; i < TPACPI_LED_MAX; i++) {
+ 		struct tp_led_table *t = &led_tables[i];
+-		if (ACPI_SUCCESS(acpi_get_handle(hkey_handle, t->name, &temp)))
+-			mute_led_on_off(t, false);
+-		else
++		if (!ACPI_SUCCESS(acpi_get_handle(hkey_handle, t->name, &temp))) {
+ 			t->state = -ENODEV;
++			continue;
++		}
++
++		mute_led_cdev[i].brightness = ledtrig_audio_get(types[i]);
++		err = led_classdev_register(&tpacpi_pdev->dev, &mute_led_cdev[i]);
++		if (err < 0) {
++			while (--i >= 0)
++				if (led_tables[i].state >= 0)
++					led_classdev_unregister(&mute_led_cdev[i]);
++			return err;
++		}
+ 	}
+ 	return 0;
+ }
+@@ -9222,8 +9262,12 @@ static void mute_led_exit(void)
+ {
+ 	int i;
  
- 	if (!token)
- 		return -ENODEV;
-@@ -2127,18 +2126,7 @@ int dell_micmute_led_set(int state)
- 	dell_fill_request(&buffer, token->location, token->value, 0, 0);
- 	dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
- 
--	return state;
--}
--EXPORT_SYMBOL_GPL(dell_micmute_led_set);
--
--static int micmute_led_set(struct led_classdev *led_cdev,
--			   enum led_brightness brightness)
--{
--	int state = brightness != LED_OFF;
--	int err;
--
--	err = dell_micmute_led_set(state);
--	return err < 0 ? err : 0;
-+	return 0;
+-	for (i = 0; i < TPACPI_LED_MAX; i++)
+-		tpacpi_led_set(i, false);
++	for (i = 0; i < TPACPI_LED_MAX; i++) {
++		if (led_tables[i].state >= 0) {
++			led_classdev_unregister(&mute_led_cdev[i]);
++			tpacpi_led_set(i, false);
++		}
++	}
  }
  
- static struct led_classdev micmute_led_cdev = {
-diff --git a/include/linux/dell-led.h b/include/linux/dell-led.h
-deleted file mode 100644
-index 92521471517f..000000000000
---- a/include/linux/dell-led.h
-+++ /dev/null
-@@ -1,7 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __DELL_LED_H__
--#define __DELL_LED_H__
--
--int dell_micmute_led_set(int on);
--
--#endif
+ static void mute_led_resume(void)
 -- 
 2.19.1
