@@ -1,8 +1,8 @@
 From: Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 2/6] platform/x86: dell-laptop: Add micmute LED
-	trigger support
-Date: Mon, 26 Nov 2018 18:11:22 +0100
-Message-ID: <20181126171126.20280-3-tiwai@suse.de>
+Subject: [PATCH 5/6] platform/x86: dell-laptop: Drop
+	superfluous exported function
+Date: Mon, 26 Nov 2018 18:11:25 +0100
+Message-ID: <20181126171126.20280-6-tiwai@suse.de>
 References: <20181126171126.20280-1-tiwai@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,94 +22,83 @@ To: alsa-devel@alsa-project.org
 Cc: Ayman Bagabas <ayman.bagabas@gmail.com>, platform-driver-x86@vger.kernel.org, Hui Wang <hui.wang@canonical.com>, ibm-acpi-devel@lists.sourceforge.net, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-This patch adds the LED trigger support for audio mic-mute control.
-As of this patch, the LED device isn't tied with the audio driver, and
-can be changed via user-space at "dell::micmute" sysfs entry.  The
-binding with HD-audio is still done via the existing exported
-dell_micmute_led_set().  It will be replaced with the LED trigger
-binding in later patches.
-
-Also this selects CONFIG_LEDS_TRIGGERS and CONFIG_LEDS_TRIGGERS_AUDIO
-unconditionally.  Strictly speaking, these aren't 100% mandatory, but
-leaving these manual selections would lead to a functional regression
-easily once after converting from the dynamic symbol binding to the
-LEDs trigger in a later patch.
+Since we've switched to the LED trigger for binding with HD-audio,
+we can drop the exported function as well as the whole
+linux/dell-led.h.
 
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- drivers/platform/x86/Kconfig       |  2 ++
- drivers/platform/x86/dell-laptop.c | 25 +++++++++++++++++++++++++
- 2 files changed, 27 insertions(+)
+ drivers/platform/x86/dell-laptop.c | 22 +++++-----------------
+ include/linux/dell-led.h           |  7 -------
+ 2 files changed, 5 insertions(+), 24 deletions(-)
+ delete mode 100644 include/linux/dell-led.h
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 54f6a40c75c6..9b9cc3cc33e9 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -177,6 +177,8 @@ config DELL_LAPTOP
- 	select POWER_SUPPLY
- 	select LEDS_CLASS
- 	select NEW_LEDS
-+	select LEDS_TRIGGERS
-+	select LEDS_TRIGGER_AUDIO
- 	---help---
- 	This driver adds support for rfkill and backlight control to Dell
- 	laptops (except for some models covered by the Compal driver).
 diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-index 06978c14c83b..6a647e2d09ee 100644
+index 6a647e2d09ee..40236895b263 100644
 --- a/drivers/platform/x86/dell-laptop.c
 +++ b/drivers/platform/x86/dell-laptop.c
-@@ -2131,6 +2131,23 @@ int dell_micmute_led_set(int state)
- }
- EXPORT_SYMBOL_GPL(dell_micmute_led_set);
+@@ -29,7 +29,6 @@
+ #include <linux/mm.h>
+ #include <linux/i8042.h>
+ #include <linux/debugfs.h>
+-#include <linux/dell-led.h>
+ #include <linux/seq_file.h>
+ #include <acpi/video.h>
+ #include "dell-rbtn.h"
+@@ -2109,17 +2108,17 @@ static struct notifier_block dell_laptop_notifier = {
+ 	.notifier_call = dell_laptop_notifier_call,
+ };
  
+-int dell_micmute_led_set(int state)
 +static int micmute_led_set(struct led_classdev *led_cdev,
 +			   enum led_brightness brightness)
-+{
-+	int state = brightness != LED_OFF;
-+	int err;
-+
-+	err = dell_micmute_led_set(state);
-+	return err < 0 ? err : 0;
-+}
-+
-+static struct led_classdev micmute_led_cdev = {
-+	.name = "dell::micmute",
-+	.max_brightness = 1,
-+	.brightness_set_blocking = micmute_led_set,
-+	.default_trigger = "audio-micmute",
-+};
-+
- static int __init dell_init(void)
  {
+ 	struct calling_interface_buffer buffer;
  	struct calling_interface_token *token;
-@@ -2175,6 +2192,11 @@ static int __init dell_init(void)
++	int state = brightness != LED_OFF;
  
- 	dell_laptop_register_notifier(&dell_laptop_notifier);
+ 	if (state == 0)
+ 		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
+-	else if (state == 1)
+-		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
+ 	else
+-		return -EINVAL;
++		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
  
-+	micmute_led_cdev.brightness = ledtrig_audio_get(LED_AUDIO_MICMUTE);
-+	ret = led_classdev_register(&platform_device->dev, &micmute_led_cdev);
-+	if (ret < 0)
-+		goto fail_led;
-+
- 	if (acpi_video_get_backlight_type() != acpi_backlight_vendor)
- 		return 0;
+ 	if (!token)
+ 		return -ENODEV;
+@@ -2127,18 +2126,7 @@ int dell_micmute_led_set(int state)
+ 	dell_fill_request(&buffer, token->location, token->value, 0, 0);
+ 	dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
  
-@@ -2220,6 +2242,8 @@ static int __init dell_init(void)
- fail_get_brightness:
- 	backlight_device_unregister(dell_backlight_device);
- fail_backlight:
-+	led_classdev_unregister(&micmute_led_cdev);
-+fail_led:
- 	dell_cleanup_rfkill();
- fail_rfkill:
- 	platform_device_del(platform_device);
-@@ -2239,6 +2263,7 @@ static void __exit dell_exit(void)
- 		touchpad_led_exit();
- 	kbd_led_exit();
- 	backlight_device_unregister(dell_backlight_device);
-+	led_classdev_unregister(&micmute_led_cdev);
- 	dell_cleanup_rfkill();
- 	if (platform_device) {
- 		platform_device_unregister(platform_device);
+-	return state;
+-}
+-EXPORT_SYMBOL_GPL(dell_micmute_led_set);
+-
+-static int micmute_led_set(struct led_classdev *led_cdev,
+-			   enum led_brightness brightness)
+-{
+-	int state = brightness != LED_OFF;
+-	int err;
+-
+-	err = dell_micmute_led_set(state);
+-	return err < 0 ? err : 0;
++	return 0;
+ }
+ 
+ static struct led_classdev micmute_led_cdev = {
+diff --git a/include/linux/dell-led.h b/include/linux/dell-led.h
+deleted file mode 100644
+index 92521471517f..000000000000
+--- a/include/linux/dell-led.h
++++ /dev/null
+@@ -1,7 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef __DELL_LED_H__
+-#define __DELL_LED_H__
+-
+-int dell_micmute_led_set(int on);
+-
+-#endif
 -- 
 2.19.1
