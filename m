@@ -1,19 +1,17 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH 0/6] Introduce audio-mute LED trigger (and
  conversions to it)
-Date: Wed, 28 Nov 2018 22:00:59 +0100
-Message-ID: <0ed37870-c7b6-fd6b-2f6e-7325fdde3629@gmail.com>
-References: <20181126171126.20280-1-tiwai@suse.de>
- <20181127084418.GA20504@amd> <20181128111806.cb3cncpjeq73sptg@pali>
+Date: Wed, 28 Nov 2018 22:01:45 +0100
+Message-ID: <20181128210145.GD20670@amd>
+References: <20181126171126.20280-1-tiwai@suse.de> <20181127084418.GA20504@amd>
+ <20181128111806.cb3cncpjeq73sptg@pali>
  <s5hy39dv3dg.wl-tiwai@suse.de> <20181128122505.GA1193@amd>
- <8bb45cc6-9f98-9fed-9676-7f1429328c4a@gmail.com> <20181128203410.GA20670@amd>
- <20181128204612.l3bayhop4qmep2hj@pali>
+ <8bb45cc6-9f98-9fed-9676-7f1429328c4a@gmail.com>
+ <20181128203410.GA20670@amd> <20181128204612.l3bayhop4qmep2hj@pali>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============1865404272012981392=="
 Return-path: <alsa-devel-bounces@alsa-project.org>
 In-Reply-To: <20181128204612.l3bayhop4qmep2hj@pali>
-Content-Language: en-US
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -23,64 +21,104 @@ List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: alsa-devel-bounces@alsa-project.org
-To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: alsa-devel@alsa-project.org, Ayman Bagabas <ayman.bagabas@gmail.com>, Takashi Iwai <tiwai@suse.de>, platform-driver-x86@vger.kernel.org, Hui Wang <hui.wang@canonical.com>, ibm-acpi-devel@lists.sourceforge.net, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-leds@vger.kernel.org
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc: alsa-devel@alsa-project.org, Ayman Bagabas <ayman.bagabas@gmail.com>, Takashi Iwai <tiwai@suse.de>, platform-driver-x86@vger.kernel.org, Hui Wang <hui.wang@canonical.com>, ibm-acpi-devel@lists.sourceforge.net, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-T24gMTEvMjgvMjAxOCAwOTo0NiBQTSwgUGFsaSBSb2jDoXIgd3JvdGU6Cj4gT24gV2VkbmVzZGF5
-IDI4IE5vdmVtYmVyIDIwMTggMjE6MzQ6MTAgUGF2ZWwgTWFjaGVrIHdyb3RlOgo+PiBIaSEKPj4K
-Pj4+Pj4+PiBMb29rcyBnb29kLi4uIGV4Y2VwdCBvbmUgZGV0YWlsOiB5b3UgaGF2ZSAidHBhY3Bp
-OjptaWNtdXRlIiBhbmQKPj4+Pj4+PiAiZGVsbDo6bWljbXV0ZSIuIEkga25vdyBpdCBmb2xsb3dz
-ICJ0cmFkaXRpb24iLCBidXQgd2UgYXJlIHRyeWluZyB0bwo+Pj4+Pj4+IGZpeCB0aGF0IGF0IHRo
-ZSBtb21lbnQuIExhcHRvcCBtaWNtdXRlIGJ1dHRvbiBpcyBhIGxhcHRvcCBtaWNtdXRlCj4+Pj4+
-Pj4gYnV0dG9uLCBhbmQgdXNlcnNwYWNlIHNob3VsZCBub3QgbmVlZCB0byBrbm93IHdoYXQgcHJl
-Zml4IHRvIHVzZQo+Pj4+Pj4+IGRlcGVuZGluZyBvbiB2ZW5kb3IuCj4+Pj4+Pj4KPj4+Pj4+PiBJ
-J2Qgc3VnZ2VzdCB1c2luZyAic3lzOjptaWNtdXRlIi4KPj4+Pj4+Cj4+Pj4+PiBJIGNhbiBpbWFn
-aW5lIHRoYXQgaW4gZnV0dXJlIHNvbWUgZGV2aWNlcyBsaWtlIGtleWJvYXJkcyB3b3VsZCBoYXZl
-IGFsc28KPj4+Pj4+IG11dGUgbGVkLiBXZSBhbHJlYWR5IGhhdmUga2V5Ym9hcmRzIHdpdGggbXV0
-ZSBrZXksIHNvIGl0IGlzIHNvbWV0aGluZwo+Pj4+Pj4gbm90IHVucmVhbGlzdGljLiBXaGF0IHNo
-b3VsZCBiZSBuYW1lIGNvbnZlbnRpb24gZm9yIHRoZXNlIG11dGUgbGVkcz8KPj4+Pj4+Cj4+Pj4+
-PiBJcyBub3QgInN5czo6IiBwcmVmaXggdG9vIGdlbmVyaWM/Cj4+Pj4+Cj4+Pj4+IEdvb2QgcG9p
-bnQuICBJIHRob3VnaHQgb2YgImxhcHRvcDo6IiBidXQgaXQncyBub3QgYWx3YXlzIGxhcHRvcC4K
-Pj4+Pj4gImJ1aWx0aW46OiI/ICBEb2Vzbid0IHNvdW5kIGdyZWF0LCBlaXRoZXIuCj4+Pj4+Cj4+
-Pj4+IEEgbmljZSBnb2RmYXRoZXIgaXMgcmVxdWlyZWQgaGVyZS4uLgo+Pj4+Cj4+Pj4gSnVzdCB1
-c2Ugc3lzOjogOi0pLgo+Pj4+Cj4+Pj4gbGFwdG9wOjogd291bGQgd29yayBmb3IgbWUsIHRvby4g
-KEl0IGlzIGFsd2F5cyBsYXB0b3AgaW4gdGhlIGNhc2VzIHdlCj4+Pj4gYXJlIGhhbmRsaW5nIG5v
-dywgcmlnaHQ/KQo+Pj4+Cj4+Pj4gV2hlbiB3ZSBnZXQgYSBrZXlib2FyZCB3aXRoIG11dGUgbGVk
-LCB3ZSdsbCBoYXZlIHRvIGRlY2lkZSBpZiBpdAo+Pj4+IHNob3VsZCBiZSBpbnB1dDY6Om11dGUg
-LS0gYmVjYXVzZSBpdCBpcyBvbiBrZXlib2FyZCwgb3IgaWYgaXQgaXMKPj4+PiBzeXM6Om11dGUg
-LS0gYmVjYXVzZSB0aGUga2V5IGlzIGV4cGVjdGVkIHRvIG11dGUgd2hvbGUgc3lzdGVtLgo+Pj4K
-Pj4+IGRyaXZlcnMvaW5wdXQvaW5wdXQtbGVkcy5jIHNlZW1zIHRvIGFscmVhZHkgc3VwcG9ydCBt
-dXRlIExFRC4KPj4+IEl0IHdpbGwgYmUgZXhwb3NlZCBhcyBpbnB1dE46Om11dGUuCj4+Pgo+Pj4g
-RG9jdW1lbnRhdGlvbi9sZWRzL2xlZHMtY2xhc3MudHh0IGRlZmluZXMgTEVEIG5hbWluZyBwYXR0
-ZXJuCj4+PiB0byA8ZGV2aWNlbmFtZTpjb2xvcjpmdW5jdGlvbj4gYW5kICJzeXMiIGRvZXMgbm90
-IGxvb2sgYXMKPj4+IHNvbWV0aGluZyByZXNlbWJsaW5nIGRldmljZSBuYW1lLgo+Pgo+PiBTbyB3
-aGF0IGlzIHlvdXIgc3VnZ2VzdGlvbj8KPiAKPiBJIGd1ZXNzIHdlIHNob3VsZCBmb2xsb3cgZG9j
-dW1lbnRhdGlvbi4gT3IgdXBkYXRlIGRvY3VtZW50YXRpb24gaWYgaXQKPiBkb2VzIG5vdCBtYWtl
-IHNlbnNlIHRvIGZvbGxvdyBpdC4KPiAKPj4gSSBkb24ndCBjYXJlIG11Y2ggYXMgbG9uZyBhcyBp
-dCBpcyBzYW1lIGluIHRwYWNwaSBhbmQgZGVsbAo+PiBjYXNlLiAoTmVpdGhlciBhcmUgZGV2aWNl
-IG5hbWVzLCBidHcgOi0pLgo+Pgo+PiBBY3R1YWxseSAiOjptdXRlIiB3b3VsZCBtYWtlIHNlbnNl
-LCB0b28uCj4gCj4gIjo6bXV0ZSIgaXMgbm90IGEgZ29vZCBpZGVhIGR1ZSB0byBuYW1lIHVuaXF1
-ZW5lc3MuCgpMRUQgY29yZSBhZGRzIGEgbnVtZXJpY2FsIHN1ZmZpeCB0byB0aGUgb3JpZ2luYWwg
-bmFtZQppZiBpdCBpcyBhbHJlYWR5IHRha2VuLiBPZiBjb3Vyc2UgaXQgaXMgYSBsYXN0IHJlc29y
-dCBqdXN0CnRvIGF2b2lkIG5hbWUgY2xhc2guCgo+IEluIGNhc2UgeW91IHdvdWxkIGhhdmUgdHdv
-IGRyaXZlcnMgd2hpY2ggYm90aCBwcm92aWRlcyAibXV0ZSIgbGVkLCB0aGVuCj4gdGhleSBuZWVk
-IHRvIGhhdmUgZGlmZmVyZW50IG5hbWUuIFJlYXNvbiBhbHNvIHdoeSBnZW5lcmljIG5hbWUgInN5
-cyIgaXMKPiBub3QgYSBnb29kIGlkZWEuCj4gCj4gaW5wdXQgc3Vic3lzdGVtIHNlZW1zIHRvIHNv
-bHZlZCB0aGlzIHByb2JsZW0gYnkgYXBwZW5kaW5nIG51bWJlciBhZnRlcgo+ICJpbnB1dCIgd29y
-ZC4KPiAKPiBJIHRoaW5rIHRoYXQgZHJpdmVyIG5hbWUgb3Igc3Vic3lzdGVtIG5hbWUgd291bGQg
-YmUgdXNhYmxlIHRvZ2V0aGVyIHdpdGgKPiBudW1iZXIuCj4gCj4gVXNlcnNwYWNlIGFwcGxpY2F0
-aW9uIHdvdWxkIGJlIHByb2JhYmx5IGludGVyZXN0ZWQgdG8gZGlzdGluZ3Vpc2gKPiBiZXR3ZWVu
-ICJtdXRlIGxlZCB3aGljaCBpcyBwYXJ0IG9mIGxhcHRvcCIgYW5kICJtdXRlIGxlZCB3aGljaCBp
-cwo+IGF2YWlsYWJsZSBvbiBleHRlcm5hbCBVU0Iga2V5Ym9hcmQiLgo+IAo+IElmIGV4dGVybmFs
-IFVTQiBrZXlib2FyZCBpcyBpZGVudGlmaWVkIGFzICJpbnB1dDciIGRldmljZSwgdGhlbgo+ICJp
-bnB1dDc6Om11dGUiIGlzIGEgZ29vZCBuYW1lIGZvciBtdXRlIGtleS4gQnV0ICJzeXM6Om11dGUi
-IGRvZXMgbm90IHNheQo+IGFueXRoaW5nIHRvIHdoaWNoIGRldmljZSBvciBoYXJkd2FyZSBpdCBi
-ZWxvbmdzIG5vciBkb2VzIG5vdCBzb2x2ZQo+IHByb2JsZW0gdGhhdCB3aGljaCBkZXZpY2UvZHJp
-dmVyL3N1YnN5c3RlbSBzaG91bGQgaGF2ZSBwcml2aWxlZ2UgdG8gdGFrZQo+IHRoaXMgInN5cyIg
-bmFtZS4KCkhvdyBhYm91dCBqdXN0ICJwbGF0Zm9ybSIgZm9yIHRoZSBMRURzIGJlaW5nIHBhcnQg
-b2YgdGhlIGRldmljZQpvbiB3aGljaCB0aGUgc3lzdGVtIGlzIHJ1bm5pbmc/CgotLSAKQmVzdCBy
-ZWdhcmRzLApKYWNlayBBbmFzemV3c2tpCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1w
-cm9qZWN0Lm9yZwpodHRwOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxtYW4vbGlzdGlu
-Zm8vYWxzYS1kZXZlbAo=
+
+--===============1865404272012981392==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="NklN7DEeGtkPCoo3"
+Content-Disposition: inline
+
+
+--NklN7DEeGtkPCoo3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> > > >> A nice godfather is required here...
+> > > >=20
+> > > > Just use sys:: :-).
+> > > >=20
+> > > > laptop:: would work for me, too. (It is always laptop in the cases =
+we
+> > > > are handling now, right?)
+> > > >=20
+> > > > When we get a keyboard with mute led, we'll have to decide if it
+> > > > should be input6::mute -- because it is on keyboard, or if it is
+> > > > sys::mute -- because the key is expected to mute whole system.
+> > >=20
+> > > drivers/input/input-leds.c seems to already support mute LED.
+> > > It will be exposed as inputN::mute.
+> > >=20
+> > > Documentation/leds/leds-class.txt defines LED naming pattern
+> > > to <devicename:color:function> and "sys" does not look as
+> > > something resembling device name.
+> >=20
+> > So what is your suggestion?
+>=20
+> I guess we should follow documentation. Or update documentation if it
+> does not make sense to follow it.
+
+That's actually in progress. Let me and Jacek deal with it. We don't
+need great "how to name a LED" discussion here (google: bike shed paiting).
+
+> > I don't care much as long as it is same in tpacpi and dell
+> > case. (Neither are device names, btw :-).
+> >=20
+> > Actually "::mute" would make sense, too.
+>=20
+> "::mute" is not a good idea due to name uniqueness.
+>=20
+> In case you would have two drivers which both provides "mute" led, then
+> they need to have different name. Reason also why generic name "sys" is
+> not a good idea.
+
+> I think that driver name or subsystem name would be usable together with
+> number.
+>=20
+> Userspace application would be probably interested to distinguish
+> between "mute led which is part of laptop" and "mute led which is
+> available on external USB keyboard".
+>=20
+> If external USB keyboard is identified as "input7" device, then
+> "input7::mute" is a good name for mute key. But "sys::mute" does not say
+> anything to which device or hardware it belongs nor does not solve
+> problem that which device/driver/subsystem should have privilege to take
+> this "sys" name.
+
+Well, "sys" says this is system-wide mute LED. There are not expected
+to be two of those, and there never will be, with the drivers
+currently proposed.
+
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--NklN7DEeGtkPCoo3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlv/AjkACgkQMOfwapXb+vJSFgCfSsbGVUgueTs3P7nYP5RkLvlb
+r/8AnjiS4cgofYPQ8nbKXrrzqDN1DTax
+=8OH5
+-----END PGP SIGNATURE-----
+
+--NklN7DEeGtkPCoo3--
+
+--===============1865404272012981392==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============1865404272012981392==--
