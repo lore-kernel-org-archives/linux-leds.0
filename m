@@ -1,72 +1,60 @@
-From: Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH v2 5/6] platform/x86: dell-laptop: Drop
-	superfluous exported function
-Date: Thu, 29 Nov 2018 08:31:30 +0100
-Message-ID: <20181129073131.4338-6-tiwai@suse.de>
-References: <20181129073131.4338-1-tiwai@suse.de>
+From: Wei Xu <xuwei5@hisilicon.com>
+Subject: Re: [PATCH v3 0/7] Standardize onboard LED support for 96Boards
+Date: Thu, 29 Nov 2018 15:42:29 +0000
+Message-ID: <5C0008E5.5080401@hisilicon.com>
+References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
+ <CACRpkdYThcGjdV9Ezs4qMr8K6_jH40SDUgt0Tps8d+_4sSESyg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20181129073131.4338-1-tiwai@suse.de>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: alsa-devel@alsa-project.org
-Cc: Ayman Bagabas <ayman.bagabas@gmail.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, platform-driver-x86@vger.kernel.org, Hui Wang <hui.wang@canonical.com>, ibm-acpi-devel@lists.sourceforge.net, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-leds@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYThcGjdV9Ezs4qMr8K6_jH40SDUgt0Tps8d+_4sSESyg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, ezequiel@collabora.com, Michal Simek <michal.simek@xilinx.com>, Pavel Machek <pavel@ucw.cz>, Andy Gross <andy.gross@linaro.org>, linux-leds@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-arm-msm@vger.kernel.org, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Koen Kooi <koen.kooi@linaro.org>, Nicolas Dechesne <nicolas.dechesne>
 List-Id: linux-leds@vger.kernel.org
 
-U2luY2Ugd2UndmUgc3dpdGNoZWQgdG8gdGhlIExFRCB0cmlnZ2VyIGZvciBiaW5kaW5nIHdpdGgg
-SEQtYXVkaW8sCndlIGNhbiBkcm9wIHRoZSBleHBvcnRlZCBmdW5jdGlvbiBhcyB3ZWxsIGFzIHRo
-ZSB3aG9sZQpsaW51eC9kZWxsLWxlZC5oLgoKQWNrZWQtYnk6IEphY2VrIEFuYXN6ZXdza2kgPGph
-Y2VrLmFuYXN6ZXdza2lAZ21haWwuY29tPgpBY2tlZC1ieTogUGF2ZWwgTWFjaGVrIDxwYXZlbEB1
-Y3cuY3o+CkFja2VkLWJ5OiBBbmR5IFNoZXZjaGVua28gPGFuZHkuc2hldmNoZW5rb0BnbWFpbC5j
-b20+CkFja2VkLWJ5OiBQYWxpIFJvaMOhciA8cGFsaS5yb2hhckBnbWFpbC5jb20+ClNpZ25lZC1v
-ZmYtYnk6IFRha2FzaGkgSXdhaSA8dGl3YWlAc3VzZS5kZT4KLS0tCiBkcml2ZXJzL3BsYXRmb3Jt
-L3g4Ni9kZWxsLWxhcHRvcC5jIHwgMjIgKysrKystLS0tLS0tLS0tLS0tLS0tLQogaW5jbHVkZS9s
-aW51eC9kZWxsLWxlZC5oICAgICAgICAgICB8ICA3IC0tLS0tLS0KIDIgZmlsZXMgY2hhbmdlZCwg
-NSBpbnNlcnRpb25zKCspLCAyNCBkZWxldGlvbnMoLSkKIGRlbGV0ZSBtb2RlIDEwMDY0NCBpbmNs
-dWRlL2xpbnV4L2RlbGwtbGVkLmgKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9k
-ZWxsLWxhcHRvcC5jIGIvZHJpdmVycy9wbGF0Zm9ybS94ODYvZGVsbC1sYXB0b3AuYwppbmRleCAw
-ZGIyZGJmN2IwZDEuLmZiMDcxZTZhNTA1OCAxMDA2NDQKLS0tIGEvZHJpdmVycy9wbGF0Zm9ybS94
-ODYvZGVsbC1sYXB0b3AuYworKysgYi9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9kZWxsLWxhcHRvcC5j
-CkBAIC0yOSw3ICsyOSw2IEBACiAjaW5jbHVkZSA8bGludXgvbW0uaD4KICNpbmNsdWRlIDxsaW51
-eC9pODA0Mi5oPgogI2luY2x1ZGUgPGxpbnV4L2RlYnVnZnMuaD4KLSNpbmNsdWRlIDxsaW51eC9k
-ZWxsLWxlZC5oPgogI2luY2x1ZGUgPGxpbnV4L3NlcV9maWxlLmg+CiAjaW5jbHVkZSA8YWNwaS92
-aWRlby5oPgogI2luY2x1ZGUgImRlbGwtcmJ0bi5oIgpAQCAtMjEwOSwxNyArMjEwOCwxNyBAQCBz
-dGF0aWMgc3RydWN0IG5vdGlmaWVyX2Jsb2NrIGRlbGxfbGFwdG9wX25vdGlmaWVyID0gewogCS5u
-b3RpZmllcl9jYWxsID0gZGVsbF9sYXB0b3Bfbm90aWZpZXJfY2FsbCwKIH07CiAKLWludCBkZWxs
-X21pY211dGVfbGVkX3NldChpbnQgc3RhdGUpCitzdGF0aWMgaW50IG1pY211dGVfbGVkX3NldChz
-dHJ1Y3QgbGVkX2NsYXNzZGV2ICpsZWRfY2RldiwKKwkJCSAgIGVudW0gbGVkX2JyaWdodG5lc3Mg
-YnJpZ2h0bmVzcykKIHsKIAlzdHJ1Y3QgY2FsbGluZ19pbnRlcmZhY2VfYnVmZmVyIGJ1ZmZlcjsK
-IAlzdHJ1Y3QgY2FsbGluZ19pbnRlcmZhY2VfdG9rZW4gKnRva2VuOworCWludCBzdGF0ZSA9IGJy
-aWdodG5lc3MgIT0gTEVEX09GRjsKIAogCWlmIChzdGF0ZSA9PSAwKQogCQl0b2tlbiA9IGRlbGxf
-c21iaW9zX2ZpbmRfdG9rZW4oR0xPQkFMX01JQ19NVVRFX0RJU0FCTEUpOwotCWVsc2UgaWYgKHN0
-YXRlID09IDEpCi0JCXRva2VuID0gZGVsbF9zbWJpb3NfZmluZF90b2tlbihHTE9CQUxfTUlDX01V
-VEVfRU5BQkxFKTsKIAllbHNlCi0JCXJldHVybiAtRUlOVkFMOworCQl0b2tlbiA9IGRlbGxfc21i
-aW9zX2ZpbmRfdG9rZW4oR0xPQkFMX01JQ19NVVRFX0VOQUJMRSk7CiAKIAlpZiAoIXRva2VuKQog
-CQlyZXR1cm4gLUVOT0RFVjsKQEAgLTIxMjcsMTggKzIxMjYsNyBAQCBpbnQgZGVsbF9taWNtdXRl
-X2xlZF9zZXQoaW50IHN0YXRlKQogCWRlbGxfZmlsbF9yZXF1ZXN0KCZidWZmZXIsIHRva2VuLT5s
-b2NhdGlvbiwgdG9rZW4tPnZhbHVlLCAwLCAwKTsKIAlkZWxsX3NlbmRfcmVxdWVzdCgmYnVmZmVy
-LCBDTEFTU19UT0tFTl9XUklURSwgU0VMRUNUX1RPS0VOX1NURCk7CiAKLQlyZXR1cm4gc3RhdGU7
-Ci19Ci1FWFBPUlRfU1lNQk9MX0dQTChkZWxsX21pY211dGVfbGVkX3NldCk7Ci0KLXN0YXRpYyBp
-bnQgbWljbXV0ZV9sZWRfc2V0KHN0cnVjdCBsZWRfY2xhc3NkZXYgKmxlZF9jZGV2LAotCQkJICAg
-ZW51bSBsZWRfYnJpZ2h0bmVzcyBicmlnaHRuZXNzKQotewotCWludCBzdGF0ZSA9IGJyaWdodG5l
-c3MgIT0gTEVEX09GRjsKLQlpbnQgZXJyOwotCi0JZXJyID0gZGVsbF9taWNtdXRlX2xlZF9zZXQo
-c3RhdGUpOwotCXJldHVybiBlcnIgPCAwID8gZXJyIDogMDsKKwlyZXR1cm4gMDsKIH0KIAogc3Rh
-dGljIHN0cnVjdCBsZWRfY2xhc3NkZXYgbWljbXV0ZV9sZWRfY2RldiA9IHsKZGlmZiAtLWdpdCBh
-L2luY2x1ZGUvbGludXgvZGVsbC1sZWQuaCBiL2luY2x1ZGUvbGludXgvZGVsbC1sZWQuaApkZWxl
-dGVkIGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggOTI1MjE0NzE1MTdmLi4wMDAwMDAwMDAwMDAKLS0t
-IGEvaW5jbHVkZS9saW51eC9kZWxsLWxlZC5oCisrKyAvZGV2L251bGwKQEAgLTEsNyArMCwwIEBA
-Ci0vKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCAqLwotI2lmbmRlZiBfX0RFTExf
-TEVEX0hfXwotI2RlZmluZSBfX0RFTExfTEVEX0hfXwotCi1pbnQgZGVsbF9taWNtdXRlX2xlZF9z
-ZXQoaW50IG9uKTsKLQotI2VuZGlmCi0tIAoyLjE5LjEKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2
-ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRwOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxt
-YW4vbGlzdGluZm8vYWxzYS1kZXZlbAo=
+Hi Manivannan,
+
+On 2018/10/31 13:38, Linus Walleij wrote:
+> On Mon, Oct 29, 2018 at 10:43 AM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> 
+>> This patchset standardizes the onboard LEDs on 96Boards by maintaining
+>> common labels and triggers as below:
+>>
+>> green:user1  default-trigger: heartbeat
+>> green:user2  default-trigger: mmc0/disk-activity (onboard-storage)
+>> green:user3  default-trigger: mmc1 (SD card)
+>> green:user4  default-trigger: none, panic-indicator
+>> yellow:wlan  default-trigger: phy0tx
+>> blue:bt      default-trigger: hci0-power
+>>
+>> This standardization is required to provide a common behaviour of LEDs
+>> across all mainline supported 96Boards and also making it easier to
+>> control it using an userspace library like MRAA.
+>>
+>> For Rock960 and Ficus boards, the LED support is added in this patchset.
+>> Rest of the boards are converted to adopt the standard.
+>>
+>> Note: Since there is no UFS trigger available for now, user2 LED trigger
+>> is set to none on HiKey960.
+> 
+> This series:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> It makes a lot of sense to try to unify the userspace ABI so we get
+> some kind of order here instead of trying to counteract it with
+> per-device kludges in userspace. It definately makes things better!
+> 
+> Yours,
+> Linus Walleij
+> 
+> .
+> 
+
+Applied hisilicon part(patch 3,4 and 5) to the hisilicon soc dt tree.
+Thanks!
+
+Best Regards,
+Wei
