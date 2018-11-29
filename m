@@ -1,12 +1,14 @@
 From: Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH v2 0/6] Introduce audio-mute LED trigger (and
-	conversions to it)
-Date: Thu, 29 Nov 2018 08:31:25 +0100
-Message-ID: <20181129073131.4338-1-tiwai@suse.de>
+Subject: [PATCH v2 6/6] platform/x86: thinkpad_acpi: Drop
+	superfluous exported function
+Date: Thu, 29 Nov 2018 08:31:31 +0100
+Message-ID: <20181129073131.4338-7-tiwai@suse.de>
+References: <20181129073131.4338-1-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20181129073131.4338-1-tiwai@suse.de>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -20,59 +22,85 @@ To: alsa-devel@alsa-project.org
 Cc: Ayman Bagabas <ayman.bagabas@gmail.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, platform-driver-x86@vger.kernel.org, Hui Wang <hui.wang@canonical.com>, ibm-acpi-devel@lists.sourceforge.net, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
-
-this is revised patch series for adding a new LED trigger audio-mute
-and audio-micmute, and converting the HD-audio driver and the platform 
-drivers to use the LED trigger instead of the ugly direct dynamic
-symbol binding.
-
-v2 series addressed a couple of issues Andy suggested, and changed the
-led class dev names to "platform::xxx" as discussed in the previous
-thread.
-
-The latest version of patches are found in topic/leds-trigger branch
-in my sound git tree.
-  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
-
-As these are cross-tree patches, the branch above is based cleanly on
-v4.20-rc3.  From now on, it'll stay as an immutable branch, so feel
-free to merge into other trees.
-
-
-thanks,
-
-Takashi
-
-===
-
-Takashi Iwai (6):
-  leds: trigger: Introduce audio mute LED trigger
-  platform/x86: dell-laptop: Add micmute LED trigger support
-  platform/x86: thinkpad_acpi: Add audio mute LED classdev support
-  ALSA: hda - Support led audio trigger
-  platform/x86: dell-laptop: Drop superfluous exported function
-  platform/x86: thinkpad_acpi: Drop superfluous exported function
-
- drivers/leds/trigger/Kconfig         |  7 +++
- drivers/leds/trigger/Makefile        |  1 +
- drivers/leds/trigger/ledtrig-audio.c | 44 ++++++++++++++++++
- drivers/platform/x86/Kconfig         |  4 ++
- drivers/platform/x86/dell-laptop.c   | 27 ++++++++---
- drivers/platform/x86/thinkpad_acpi.c | 67 +++++++++++++++++++++-------
- include/linux/dell-led.h             |  7 ---
- include/linux/leds.h                 | 20 +++++++++
- include/linux/thinkpad_acpi.h        | 16 -------
- sound/pci/hda/dell_wmi_helper.c      | 48 --------------------
- sound/pci/hda/hda_generic.c          | 31 +++++++++++++
- sound/pci/hda/hda_generic.h          |  2 +
- sound/pci/hda/patch_realtek.c        | 17 +++----
- sound/pci/hda/thinkpad_helper.c      | 43 +++---------------
- 14 files changed, 194 insertions(+), 140 deletions(-)
- create mode 100644 drivers/leds/trigger/ledtrig-audio.c
- delete mode 100644 include/linux/dell-led.h
- delete mode 100644 include/linux/thinkpad_acpi.h
- delete mode 100644 sound/pci/hda/dell_wmi_helper.c
-
--- 
-2.19.1
+U2luY2Ugd2UndmUgc3dpdGNoZWQgdG8gdGhlIExFRCB0cmlnZ2VyIGZvciBiaW5kaW5nIHdpdGgg
+SEQtYXVkaW8sCndlIGNhbiBkcm9wIHRoZSBleHBvcnRlZCBmdW5jdGlvbiBhcyB3ZWxsIGFzIHRo
+ZSB3aG9sZQpsaW51eC90aGlua3BhZF9hY3BpLmguCgpUaGUgb3duIFRQQUNQSV9MRURfTVVURSBh
+bmQgVFBBQ1BJX0xFRF9NSUNNVVRFIGRlZmluaXRpb25zIGFyZQpyZXBsYWNlZCB3aXRoIHRoZSBp
+ZGVudGljYWwgb25lcyBmb3IgTEVEUywgaS5lLiBMRURfQVVESU9fTVVURSBhbmQKTEVEX0FVRElP
+X01JQ01VVEUsIHJlc3BlY3RpdmVseS4gIFRoZXkgYXJlIG5vIGxvbmdlciBuZWVkZWQgYXMKcmVm
+ZXJyZWQgb25seSBsb2NhbGx5LgoKQWNrZWQtYnk6IEphY2VrIEFuYXN6ZXdza2kgPGphY2VrLmFu
+YXN6ZXdza2lAZ21haWwuY29tPgpBY2tlZC1ieTogUGF2ZWwgTWFjaGVrIDxwYXZlbEB1Y3cuY3o+
+CkFja2VkLWJ5OiBBbmR5IFNoZXZjaGVua28gPGFuZHkuc2hldmNoZW5rb0BnbWFpbC5jb20+CkFj
+a2VkLWJ5OiBIZW5yaXF1ZSBkZSBNb3JhZXMgSG9sc2NodWggPGhtaEBobWguZW5nLmJyPgpBY2tl
+ZC1ieTogUGFsaSBSb2jDoXIgPHBhbGkucm9oYXJAZ21haWwuY29tPgpTaWduZWQtb2ZmLWJ5OiBU
+YWthc2hpIEl3YWkgPHRpd2FpQHN1c2UuZGU+Ci0tLQogZHJpdmVycy9wbGF0Zm9ybS94ODYvdGhp
+bmtwYWRfYWNwaS5jIHwgMzAgKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLQogaW5jbHVkZS9s
+aW51eC90aGlua3BhZF9hY3BpLmggICAgICAgIHwgMTYgLS0tLS0tLS0tLS0tLS0tCiAyIGZpbGVz
+IGNoYW5nZWQsIDExIGluc2VydGlvbnMoKyksIDM1IGRlbGV0aW9ucygtKQogZGVsZXRlIG1vZGUg
+MTAwNjQ0IGluY2x1ZGUvbGludXgvdGhpbmtwYWRfYWNwaS5oCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9wbGF0Zm9ybS94ODYvdGhpbmtwYWRfYWNwaS5jIGIvZHJpdmVycy9wbGF0Zm9ybS94ODYvdGhp
+bmtwYWRfYWNwaS5jCmluZGV4IDNkMmMxZjVmMjJlMi4uMjFmZmI5NjE1ODVhIDEwMDY0NAotLS0g
+YS9kcml2ZXJzL3BsYXRmb3JtL3g4Ni90aGlua3BhZF9hY3BpLmMKKysrIGIvZHJpdmVycy9wbGF0
+Zm9ybS94ODYvdGhpbmtwYWRfYWNwaS5jCkBAIC04MSw3ICs4MSw2IEBACiAjaW5jbHVkZSA8bGlu
+dXgvYWNwaS5oPgogI2luY2x1ZGUgPGxpbnV4L3BjaV9pZHMuaD4KICNpbmNsdWRlIDxsaW51eC9w
+b3dlcl9zdXBwbHkuaD4KLSNpbmNsdWRlIDxsaW51eC90aGlua3BhZF9hY3BpLmg+CiAjaW5jbHVk
+ZSA8c291bmQvY29yZS5oPgogI2luY2x1ZGUgPHNvdW5kL2NvbnRyb2wuaD4KICNpbmNsdWRlIDxz
+b3VuZC9pbml0dmFsLmg+CkBAIC05MTUwLDYgKzkxNDksNyBAQCBzdGF0aWMgc3RydWN0IGlibV9z
+dHJ1Y3QgZmFuX2RyaXZlcl9kYXRhID0gewogICogTXV0ZSBMRUQgc3ViZHJpdmVyCiAgKi8KIAor
+I2RlZmluZSBUUEFDUElfTEVEX01BWAkJMgogCiBzdHJ1Y3QgdHBfbGVkX3RhYmxlIHsKIAlhY3Bp
+X3N0cmluZyBuYW1lOwpAQCAtOTE1OCwxMyArOTE1OCwxMyBAQCBzdHJ1Y3QgdHBfbGVkX3RhYmxl
+IHsKIAlpbnQgc3RhdGU7CiB9OwogCi1zdGF0aWMgc3RydWN0IHRwX2xlZF90YWJsZSBsZWRfdGFi
+bGVzW10gPSB7Ci0JW1RQQUNQSV9MRURfTVVURV0gPSB7CitzdGF0aWMgc3RydWN0IHRwX2xlZF90
+YWJsZSBsZWRfdGFibGVzW1RQQUNQSV9MRURfTUFYXSA9IHsKKwlbTEVEX0FVRElPX01VVEVdID0g
+ewogCQkubmFtZSA9ICJTU01TIiwKIAkJLm9uX3ZhbHVlID0gMSwKIAkJLm9mZl92YWx1ZSA9IDAs
+CiAJfSwKLQlbVFBBQ1BJX0xFRF9NSUNNVVRFXSA9IHsKKwlbTEVEX0FVRElPX01JQ01VVEVdID0g
+ewogCQkubmFtZSA9ICJNTVRTIiwKIAkJLm9uX3ZhbHVlID0gMiwKIAkJLm9mZl92YWx1ZSA9IDAs
+CkBAIC05MTg5LDQwICs5MTg5LDM2IEBAIHN0YXRpYyBpbnQgbXV0ZV9sZWRfb25fb2ZmKHN0cnVj
+dCB0cF9sZWRfdGFibGUgKnQsIGJvb2wgc3RhdGUpCiAJcmV0dXJuIHN0YXRlOwogfQogCi1pbnQg
+dHBhY3BpX2xlZF9zZXQoaW50IHdoaWNobGVkLCBib29sIG9uKQorc3RhdGljIGludCB0cGFjcGlf
+bGVkX3NldChpbnQgd2hpY2hsZWQsIGJvb2wgb24pCiB7CiAJc3RydWN0IHRwX2xlZF90YWJsZSAq
+dDsKIAotCWlmICh3aGljaGxlZCA8IDAgfHwgd2hpY2hsZWQgPj0gVFBBQ1BJX0xFRF9NQVgpCi0J
+CXJldHVybiAtRUlOVkFMOwotCiAJdCA9ICZsZWRfdGFibGVzW3doaWNobGVkXTsKIAlpZiAodC0+
+c3RhdGUgPCAwIHx8IHQtPnN0YXRlID09IG9uKQogCQlyZXR1cm4gdC0+c3RhdGU7CiAJcmV0dXJu
+IG11dGVfbGVkX29uX29mZih0LCBvbik7CiB9Ci1FWFBPUlRfU1lNQk9MX0dQTCh0cGFjcGlfbGVk
+X3NldCk7CiAKIHN0YXRpYyBpbnQgdHBhY3BpX2xlZF9tdXRlX3NldChzdHJ1Y3QgbGVkX2NsYXNz
+ZGV2ICpsZWRfY2RldiwKIAkJCSAgICAgICBlbnVtIGxlZF9icmlnaHRuZXNzIGJyaWdodG5lc3Mp
+CiB7Ci0JcmV0dXJuIHRwYWNwaV9sZWRfc2V0KFRQQUNQSV9MRURfTVVURSwgYnJpZ2h0bmVzcyAh
+PSBMRURfT0ZGKTsKKwlyZXR1cm4gdHBhY3BpX2xlZF9zZXQoTEVEX0FVRElPX01VVEUsIGJyaWdo
+dG5lc3MgIT0gTEVEX09GRik7CiB9CiAKIHN0YXRpYyBpbnQgdHBhY3BpX2xlZF9taWNtdXRlX3Nl
+dChzdHJ1Y3QgbGVkX2NsYXNzZGV2ICpsZWRfY2RldiwKIAkJCQkgIGVudW0gbGVkX2JyaWdodG5l
+c3MgYnJpZ2h0bmVzcykKIHsKLQlyZXR1cm4gdHBhY3BpX2xlZF9zZXQoVFBBQ1BJX0xFRF9NSUNN
+VVRFLCBicmlnaHRuZXNzICE9IExFRF9PRkYpOworCXJldHVybiB0cGFjcGlfbGVkX3NldChMRURf
+QVVESU9fTUlDTVVURSwgYnJpZ2h0bmVzcyAhPSBMRURfT0ZGKTsKIH0KIAotc3RhdGljIHN0cnVj
+dCBsZWRfY2xhc3NkZXYgbXV0ZV9sZWRfY2RldltdID0gewotCVtUUEFDUElfTEVEX01VVEVdID0g
+eworc3RhdGljIHN0cnVjdCBsZWRfY2xhc3NkZXYgbXV0ZV9sZWRfY2RldltUUEFDUElfTEVEX01B
+WF0gPSB7CisJW0xFRF9BVURJT19NVVRFXSA9IHsKIAkJLm5hbWUJCT0gInBsYXRmb3JtOjptdXRl
+IiwKIAkJLm1heF9icmlnaHRuZXNzID0gMSwKIAkJLmJyaWdodG5lc3Nfc2V0X2Jsb2NraW5nID0g
+dHBhY3BpX2xlZF9tdXRlX3NldCwKIAkJLmRlZmF1bHRfdHJpZ2dlciA9ICJhdWRpby1tdXRlIiwK
+IAl9LAotCVtUUEFDUElfTEVEX01JQ01VVEVdID0geworCVtMRURfQVVESU9fTUlDTVVURV0gPSB7
+CiAJCS5uYW1lCQk9ICJwbGF0Zm9ybTo6bWljbXV0ZSIsCiAJCS5tYXhfYnJpZ2h0bmVzcyA9IDEs
+CiAJCS5icmlnaHRuZXNzX3NldF9ibG9ja2luZyA9IHRwYWNwaV9sZWRfbWljbXV0ZV9zZXQsCkBA
+IC05MjMyLDEwICs5MjI4LDYgQEAgc3RhdGljIHN0cnVjdCBsZWRfY2xhc3NkZXYgbXV0ZV9sZWRf
+Y2RldltdID0gewogCiBzdGF0aWMgaW50IG11dGVfbGVkX2luaXQoc3RydWN0IGlibV9pbml0X3N0
+cnVjdCAqaWlibSkKIHsKLQlzdGF0aWMgZW51bSBsZWRfYXVkaW8gdHlwZXNbXSA9IHsKLQkJW1RQ
+QUNQSV9MRURfTVVURV0gPSBMRURfQVVESU9fTVVURSwKLQkJW1RQQUNQSV9MRURfTUlDTVVURV0g
+PSBMRURfQVVESU9fTUlDTVVURSwKLQl9OwogCWFjcGlfaGFuZGxlIHRlbXA7CiAJaW50IGksIGVy
+cjsKIApAQCAtOTI0Niw3ICs5MjM4LDcgQEAgc3RhdGljIGludCBtdXRlX2xlZF9pbml0KHN0cnVj
+dCBpYm1faW5pdF9zdHJ1Y3QgKmlpYm0pCiAJCQljb250aW51ZTsKIAkJfQogCi0JCW11dGVfbGVk
+X2NkZXZbaV0uYnJpZ2h0bmVzcyA9IGxlZHRyaWdfYXVkaW9fZ2V0KHR5cGVzW2ldKTsKKwkJbXV0
+ZV9sZWRfY2RldltpXS5icmlnaHRuZXNzID0gbGVkdHJpZ19hdWRpb19nZXQoaSk7CiAJCWVyciA9
+IGxlZF9jbGFzc2Rldl9yZWdpc3RlcigmdHBhY3BpX3BkZXYtPmRldiwgJm11dGVfbGVkX2NkZXZb
+aV0pOwogCQlpZiAoZXJyIDwgMCkgewogCQkJd2hpbGUgKGktLSkgewpkaWZmIC0tZ2l0IGEvaW5j
+bHVkZS9saW51eC90aGlua3BhZF9hY3BpLmggYi9pbmNsdWRlL2xpbnV4L3RoaW5rcGFkX2FjcGku
+aApkZWxldGVkIGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggOWZiMzE3OTcwYzAxLi4wMDAwMDAwMDAw
+MDAKLS0tIGEvaW5jbHVkZS9saW51eC90aGlua3BhZF9hY3BpLmgKKysrIC9kZXYvbnVsbApAQCAt
+MSwxNiArMCwwIEBACi0vKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCAqLwotI2lm
+bmRlZiBfX1RISU5LUEFEX0FDUElfSF9fCi0jZGVmaW5lIF9fVEhJTktQQURfQUNQSV9IX18KLQot
+LyogVGhlc2UgdHdvIGZ1bmN0aW9ucyByZXR1cm4gMCBpZiBzdWNjZXNzLCBvciBuZWdhdGl2ZSBl
+cnJvciBjb2RlCi0gICAoZSBnIC1FTk9ERVYgaWYgbm8gbGVkIHByZXNlbnQpICovCi0KLWVudW0g
+ewotCVRQQUNQSV9MRURfTVVURSwKLQlUUEFDUElfTEVEX01JQ01VVEUsCi0JVFBBQ1BJX0xFRF9N
+QVgsCi19OwotCi1pbnQgdHBhY3BpX2xlZF9zZXQoaW50IHdoaWNobGVkLCBib29sIG9uKTsKLQot
+I2VuZGlmCi0tIAoyLjE5LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0
+Lm9yZwpodHRwOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vYWxz
+YS1kZXZlbAo=
