@@ -1,14 +1,12 @@
 From: Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH v2 3/6] platform/x86: thinkpad_acpi: Add audio
-	mute LED classdev support
-Date: Thu, 29 Nov 2018 08:31:28 +0100
-Message-ID: <20181129073131.4338-4-tiwai@suse.de>
-References: <20181129073131.4338-1-tiwai@suse.de>
+Subject: [PATCH v2 0/6] Introduce audio-mute LED trigger (and
+	conversions to it)
+Date: Thu, 29 Nov 2018 08:31:25 +0100
+Message-ID: <20181129073131.4338-1-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20181129073131.4338-1-tiwai@suse.de>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -22,76 +20,59 @@ To: alsa-devel@alsa-project.org
 Cc: Ayman Bagabas <ayman.bagabas@gmail.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, platform-driver-x86@vger.kernel.org, Hui Wang <hui.wang@canonical.com>, ibm-acpi-devel@lists.sourceforge.net, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-SW4gdGhlIHVwY29taW5nIGNoYW5nZSwgdGhlIGJpbmRpbmcgb2YgYXVkaW8gbXV0ZSAvIG1pYy1t
-dXRlIExFRApjb250cm9scyB3aWxsIGJlIHN3aXRjaGVkIHdpdGggTEVEIHRyaWdnZXIuICBUaGlz
-IHBhdGNoIGlzIHRoZSBsYXN0CnBpZWNlIG9mIHByZXBhcmF0aW9uOiBhZGRpbmcgdGhlIGF1ZGlv
-IG11dGUgLyBtaWMtbXV0ZSBMRUQgY2xhc3MKZGV2aWNlcyB0byB0aGlua3BhZF9hY3BpIGRyaXZl
-ci4KClR3byBkZXZpY2VzLCBwbGF0Zm9ybTo6bXV0ZSBhbmQgcGxhdGZvcm06Om1pY211dGUsIHdp
-bGwgYmUgYWRkZWQgZm9yCmNvbnRyb2xsaW5nIHRoZSBtdXRlIExFRCBhbmQgbWljLW11dGUgTEVE
-LCByZXNwZWN0aXZlbHkuICBUaGUgbmV3CnByZWZpeCAicGxhdGZvcm0iIGlzIHRoZSBzdWdnZXN0
-aW9uIGJ5IHVwc3RyZWFtIGZvciBpbmRpY2F0aW5nIHRoZQpnZW5lcmljIGxhcHRvcCBhdHRyaWJ1
-dGUuCgpBbHNvIHRoaXMgc2VsZWN0cyBDT05GSUdfTEVEU19UUklHR0VSUyBhbmQgQ09ORklHX0xF
-RFNfVFJJR0dFUlNfQVVESU8KdW5jb25kaXRpb25hbGx5LiAgU3RyaWN0bHkgc3BlYWtpbmcsIHRo
-ZXNlIGFyZW4ndCAxMDAlIG1hbmRhdG9yeSwgYnV0CmxlYXZpbmcgdGhlc2UgbWFudWFsIHNlbGVj
-dGlvbnMgd291bGQgbGVhZCB0byBhIGZ1bmN0aW9uYWwgcmVncmVzc2lvbgplYXNpbHkgb25jZSBh
-ZnRlciBjb252ZXJ0aW5nIGZyb20gdGhlIGR5bmFtaWMgc3ltYm9sIGJpbmRpbmcgdG8gdGhlCkxF
-RHMgdHJpZ2dlciBpbiBhIGxhdGVyIHBhdGNoLgoKQWNrZWQtYnk6IEphY2VrIEFuYXN6ZXdza2kg
-PGphY2VrLmFuYXN6ZXdza2lAZ21haWwuY29tPgpBY2tlZC1ieTogUGF2ZWwgTWFjaGVrIDxwYXZl
-bEB1Y3cuY3o+CkFja2VkLWJ5OiBBbmR5IFNoZXZjaGVua28gPGFuZHkuc2hldmNoZW5rb0BnbWFp
-bC5jb20+CkFja2VkLWJ5OiBIZW5yaXF1ZSBkZSBNb3JhZXMgSG9sc2NodWggPGhtaEBobWguZW5n
-LmJyPgpBY2tlZC1ieTogUGFsaSBSb2jDoXIgPHBhbGkucm9oYXJAZ21haWwuY29tPgpTaWduZWQt
-b2ZmLWJ5OiBUYWthc2hpIEl3YWkgPHRpd2FpQHN1c2UuZGU+Ci0tLQogZHJpdmVycy9wbGF0Zm9y
-bS94ODYvS2NvbmZpZyAgICAgICAgIHwgIDIgKwogZHJpdmVycy9wbGF0Zm9ybS94ODYvdGhpbmtw
-YWRfYWNwaS5jIHwgNTcgKysrKysrKysrKysrKysrKysrKysrKysrKy0tLQogMiBmaWxlcyBjaGFu
-Z2VkLCA1MyBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvcGxhdGZvcm0veDg2L0tjb25maWcgYi9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9LY29uZmlnCmlu
-ZGV4IDliOWNjM2NjMzNlOS4uODdmNzBlOGY0ZGQwIDEwMDY0NAotLS0gYS9kcml2ZXJzL3BsYXRm
-b3JtL3g4Ni9LY29uZmlnCisrKyBiL2RyaXZlcnMvcGxhdGZvcm0veDg2L0tjb25maWcKQEAgLTQ5
-NSw2ICs0OTUsOCBAQCBjb25maWcgVEhJTktQQURfQUNQSQogCXNlbGVjdCBOVlJBTQogCXNlbGVj
-dCBORVdfTEVEUwogCXNlbGVjdCBMRURTX0NMQVNTCisJc2VsZWN0IExFRFNfVFJJR0dFUlMKKwlz
-ZWxlY3QgTEVEU19UUklHR0VSX0FVRElPCiAJLS0taGVscC0tLQogCSAgVGhpcyBpcyBhIGRyaXZl
-ciBmb3IgdGhlIElCTSBhbmQgTGVub3ZvIFRoaW5rUGFkIGxhcHRvcHMuIEl0IGFkZHMKIAkgIHN1
-cHBvcnQgZm9yIEZuLUZ4IGtleSBjb21iaW5hdGlvbnMsIEJsdWV0b290aCBjb250cm9sLCB2aWRl
-bwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9wbGF0Zm9ybS94ODYvdGhpbmtwYWRfYWNwaS5jIGIvZHJp
-dmVycy9wbGF0Zm9ybS94ODYvdGhpbmtwYWRfYWNwaS5jCmluZGV4IGZkZTA4YTk5NzU1Ny4uM2Qy
-YzFmNWYyMmUyIDEwMDY0NAotLS0gYS9kcml2ZXJzL3BsYXRmb3JtL3g4Ni90aGlua3BhZF9hY3Bp
-LmMKKysrIGIvZHJpdmVycy9wbGF0Zm9ybS94ODYvdGhpbmtwYWRfYWNwaS5jCkBAIC05MjAzLDE3
-ICs5MjAzLDU4IEBAIGludCB0cGFjcGlfbGVkX3NldChpbnQgd2hpY2hsZWQsIGJvb2wgb24pCiB9
-CiBFWFBPUlRfU1lNQk9MX0dQTCh0cGFjcGlfbGVkX3NldCk7CiAKK3N0YXRpYyBpbnQgdHBhY3Bp
-X2xlZF9tdXRlX3NldChzdHJ1Y3QgbGVkX2NsYXNzZGV2ICpsZWRfY2RldiwKKwkJCSAgICAgICBl
-bnVtIGxlZF9icmlnaHRuZXNzIGJyaWdodG5lc3MpCit7CisJcmV0dXJuIHRwYWNwaV9sZWRfc2V0
-KFRQQUNQSV9MRURfTVVURSwgYnJpZ2h0bmVzcyAhPSBMRURfT0ZGKTsKK30KKworc3RhdGljIGlu
-dCB0cGFjcGlfbGVkX21pY211dGVfc2V0KHN0cnVjdCBsZWRfY2xhc3NkZXYgKmxlZF9jZGV2LAor
-CQkJCSAgZW51bSBsZWRfYnJpZ2h0bmVzcyBicmlnaHRuZXNzKQoreworCXJldHVybiB0cGFjcGlf
-bGVkX3NldChUUEFDUElfTEVEX01JQ01VVEUsIGJyaWdodG5lc3MgIT0gTEVEX09GRik7Cit9CisK
-K3N0YXRpYyBzdHJ1Y3QgbGVkX2NsYXNzZGV2IG11dGVfbGVkX2NkZXZbXSA9IHsKKwlbVFBBQ1BJ
-X0xFRF9NVVRFXSA9IHsKKwkJLm5hbWUJCT0gInBsYXRmb3JtOjptdXRlIiwKKwkJLm1heF9icmln
-aHRuZXNzID0gMSwKKwkJLmJyaWdodG5lc3Nfc2V0X2Jsb2NraW5nID0gdHBhY3BpX2xlZF9tdXRl
-X3NldCwKKwkJLmRlZmF1bHRfdHJpZ2dlciA9ICJhdWRpby1tdXRlIiwKKwl9LAorCVtUUEFDUElf
-TEVEX01JQ01VVEVdID0geworCQkubmFtZQkJPSAicGxhdGZvcm06Om1pY211dGUiLAorCQkubWF4
-X2JyaWdodG5lc3MgPSAxLAorCQkuYnJpZ2h0bmVzc19zZXRfYmxvY2tpbmcgPSB0cGFjcGlfbGVk
-X21pY211dGVfc2V0LAorCQkuZGVmYXVsdF90cmlnZ2VyID0gImF1ZGlvLW1pY211dGUiLAorCX0s
-Cit9OworCiBzdGF0aWMgaW50IG11dGVfbGVkX2luaXQoc3RydWN0IGlibV9pbml0X3N0cnVjdCAq
-aWlibSkKIHsKKwlzdGF0aWMgZW51bSBsZWRfYXVkaW8gdHlwZXNbXSA9IHsKKwkJW1RQQUNQSV9M
-RURfTVVURV0gPSBMRURfQVVESU9fTVVURSwKKwkJW1RQQUNQSV9MRURfTUlDTVVURV0gPSBMRURf
-QVVESU9fTUlDTVVURSwKKwl9OwogCWFjcGlfaGFuZGxlIHRlbXA7Ci0JaW50IGk7CisJaW50IGks
-IGVycjsKIAogCWZvciAoaSA9IDA7IGkgPCBUUEFDUElfTEVEX01BWDsgaSsrKSB7CiAJCXN0cnVj
-dCB0cF9sZWRfdGFibGUgKnQgPSAmbGVkX3RhYmxlc1tpXTsKLQkJaWYgKEFDUElfU1VDQ0VTUyhh
-Y3BpX2dldF9oYW5kbGUoaGtleV9oYW5kbGUsIHQtPm5hbWUsICZ0ZW1wKSkpCi0JCQltdXRlX2xl
-ZF9vbl9vZmYodCwgZmFsc2UpOwotCQllbHNlCisJCWlmIChBQ1BJX0ZBSUxVUkUoYWNwaV9nZXRf
-aGFuZGxlKGhrZXlfaGFuZGxlLCB0LT5uYW1lLCAmdGVtcCkpKSB7CiAJCQl0LT5zdGF0ZSA9IC1F
-Tk9ERVY7CisJCQljb250aW51ZTsKKwkJfQorCisJCW11dGVfbGVkX2NkZXZbaV0uYnJpZ2h0bmVz
-cyA9IGxlZHRyaWdfYXVkaW9fZ2V0KHR5cGVzW2ldKTsKKwkJZXJyID0gbGVkX2NsYXNzZGV2X3Jl
-Z2lzdGVyKCZ0cGFjcGlfcGRldi0+ZGV2LCAmbXV0ZV9sZWRfY2RldltpXSk7CisJCWlmIChlcnIg
-PCAwKSB7CisJCQl3aGlsZSAoaS0tKSB7CisJCQkJaWYgKGxlZF90YWJsZXNbaV0uc3RhdGUgPj0g
-MCkKKwkJCQkJbGVkX2NsYXNzZGV2X3VucmVnaXN0ZXIoJm11dGVfbGVkX2NkZXZbaV0pOworCQkJ
-fQorCQkJcmV0dXJuIGVycjsKKwkJfQogCX0KIAlyZXR1cm4gMDsKIH0KQEAgLTkyMjIsOCArOTI2
-MywxMiBAQCBzdGF0aWMgdm9pZCBtdXRlX2xlZF9leGl0KHZvaWQpCiB7CiAJaW50IGk7CiAKLQlm
-b3IgKGkgPSAwOyBpIDwgVFBBQ1BJX0xFRF9NQVg7IGkrKykKLQkJdHBhY3BpX2xlZF9zZXQoaSwg
-ZmFsc2UpOworCWZvciAoaSA9IDA7IGkgPCBUUEFDUElfTEVEX01BWDsgaSsrKSB7CisJCWlmIChs
-ZWRfdGFibGVzW2ldLnN0YXRlID49IDApIHsKKwkJCWxlZF9jbGFzc2Rldl91bnJlZ2lzdGVyKCZt
-dXRlX2xlZF9jZGV2W2ldKTsKKwkJCXRwYWNwaV9sZWRfc2V0KGksIGZhbHNlKTsKKwkJfQorCX0K
-IH0KIAogc3RhdGljIHZvaWQgbXV0ZV9sZWRfcmVzdW1lKHZvaWQpCi0tIAoyLjE5LjEKCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFp
-bGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRwOi8vbWFpbG1hbi5hbHNh
-LXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vYWxzYS1kZXZlbAo=
+Hi,
+
+this is revised patch series for adding a new LED trigger audio-mute
+and audio-micmute, and converting the HD-audio driver and the platform 
+drivers to use the LED trigger instead of the ugly direct dynamic
+symbol binding.
+
+v2 series addressed a couple of issues Andy suggested, and changed the
+led class dev names to "platform::xxx" as discussed in the previous
+thread.
+
+The latest version of patches are found in topic/leds-trigger branch
+in my sound git tree.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+
+As these are cross-tree patches, the branch above is based cleanly on
+v4.20-rc3.  From now on, it'll stay as an immutable branch, so feel
+free to merge into other trees.
+
+
+thanks,
+
+Takashi
+
+===
+
+Takashi Iwai (6):
+  leds: trigger: Introduce audio mute LED trigger
+  platform/x86: dell-laptop: Add micmute LED trigger support
+  platform/x86: thinkpad_acpi: Add audio mute LED classdev support
+  ALSA: hda - Support led audio trigger
+  platform/x86: dell-laptop: Drop superfluous exported function
+  platform/x86: thinkpad_acpi: Drop superfluous exported function
+
+ drivers/leds/trigger/Kconfig         |  7 +++
+ drivers/leds/trigger/Makefile        |  1 +
+ drivers/leds/trigger/ledtrig-audio.c | 44 ++++++++++++++++++
+ drivers/platform/x86/Kconfig         |  4 ++
+ drivers/platform/x86/dell-laptop.c   | 27 ++++++++---
+ drivers/platform/x86/thinkpad_acpi.c | 67 +++++++++++++++++++++-------
+ include/linux/dell-led.h             |  7 ---
+ include/linux/leds.h                 | 20 +++++++++
+ include/linux/thinkpad_acpi.h        | 16 -------
+ sound/pci/hda/dell_wmi_helper.c      | 48 --------------------
+ sound/pci/hda/hda_generic.c          | 31 +++++++++++++
+ sound/pci/hda/hda_generic.h          |  2 +
+ sound/pci/hda/patch_realtek.c        | 17 +++----
+ sound/pci/hda/thinkpad_helper.c      | 43 +++---------------
+ 14 files changed, 194 insertions(+), 140 deletions(-)
+ create mode 100644 drivers/leds/trigger/ledtrig-audio.c
+ delete mode 100644 include/linux/dell-led.h
+ delete mode 100644 include/linux/thinkpad_acpi.h
+ delete mode 100644 sound/pci/hda/dell_wmi_helper.c
+
+-- 
+2.19.1
