@@ -1,42 +1,177 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 0/6] Introduce audio-mute LED trigger (and
- conversions to it)
-Date: Fri, 30 Nov 2018 12:42:34 +0200
-Message-ID: <20181130104234.GJ10650@smile.fi.intel.com>
-References: <20181127084418.GA20504@amd> <20181128111806.cb3cncpjeq73sptg@pali>
- <s5hy39dv3dg.wl-tiwai@suse.de> <20181128122505.GA1193@amd>
- <8bb45cc6-9f98-9fed-9676-7f1429328c4a@gmail.com>
- <20181128203410.GA20670@amd> <20181128204612.l3bayhop4qmep2hj@pali>
- <0ed37870-c7b6-fd6b-2f6e-7325fdde3629@gmail.com>
- <20181128212212.GE20670@amd>
- <5f8eece3-95af-7866-d7d0-02cc3cb695ca@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color properties
+Date: Fri, 30 Nov 2018 08:38:17 -0600
+Message-ID: <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
+ <5bea0eb8.1c69fb81.6b921.80e6@mx.google.com> <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
+ <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <5f8eece3-95af-7866-d7d0-02cc3cb695ca@gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: alsa-devel@alsa-project.org, Ayman Bagabas <ayman.bagabas@gmail.com>, Takashi Iwai <tiwai@suse.de>, platform-driver-x86@vger.kernel.org, Hui Wang <hui.wang@canonical.com>, ibm-acpi-devel@lists.sourceforge.net, Pavel Machek <pavel@ucw.cz>, Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, linux-leds@vger.kernel.org
+Cc: Pavel Machek <pavel@ucw.cz>, Linux LED Subsystem <linux-leds@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 10:23:31PM +0100, Jacek Anaszewski wrote:
+On Tue, Nov 27, 2018 at 2:38 PM Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+>
+> On 11/13/2018 09:57 PM, Jacek Anaszewski wrote:
+> > On 11/12/2018 07:27 PM, Rob Herring wrote:
+> >> On Tue, Nov 06, 2018 at 11:07:12PM +0100, Jacek Anaszewski wrote:
+> >>> Introduce dedicated properties for conveying information about
+> >>> LED function and color. Mark old "label" property as deprecated.
+> >>>
+> >>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> >>> Cc: Baolin Wang <baolin.wang@linaro.org>
+> >>> Cc: Daniel Mack <daniel@zonque.org>
+> >>> Cc: Dan Murphy <dmurphy@ti.com>
+> >>> Cc: Linus Walleij <linus.walleij@linaro.org>
+> >>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+> >>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> >>> Cc: Simon Shields <simon@lineageos.org>
+> >>> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+> >>> ---
+> >>>  Documentation/devicetree/bindings/leds/common.txt | 52 +++++++++++++++++++----
+> >>>  1 file changed, 44 insertions(+), 8 deletions(-)
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> >>> index aa13998..3efc826 100644
+> >>> --- a/Documentation/devicetree/bindings/leds/common.txt
+> >>> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> >>> @@ -10,14 +10,20 @@ can influence the way of the LED device initialization, the LED components
+> >>>  have to be tightly coupled with the LED device binding. They are represented
+> >>>  by child nodes of the parent LED device binding.
+> >>>
+> >>> +
+> >>>  Optional properties for child nodes:
+> >>>  - led-sources : List of device current outputs the LED is connected to. The
+> >>>             outputs are identified by the numbers that must be defined
+> >>>             in the LED device binding documentation.
+> >>> +- function: LED functon. Use one of the LED_FUNCTION_* prefixed definitions
+> >>> +       from the header include/dt-bindings/leds/functions.h.
+> >>> +       If there is no matching LED_FUNCTION available, add a new one.
+> >>> +- color : Color of the LED.
+> >>>  - label : The label for this LED. If omitted, the label is taken from the node
+> >>>       name (excluding the unit address). It has to uniquely identify
+> >>>       a device, i.e. no other LED class device can be assigned the same
+> >>> -     label.
+> >>> +     label. This property is deprecated - use 'function' and 'color'
+> >>> +     properties instead.
+> >>
+> >> I don't know if I'd go as far a deprecating.
+> >>
+> >> One thing to consider is how we handle multiple of the same function? Do
+> >> we allow an index on function names? What if an index isn't meaningful
+> >> and we need "front" vs. "rear" for example? Maybe label is still needed
+> >> there.
+> >
+> > I believe that 'label' property with its old semantics must be preserved
+> > for backwards compatibility - it so far has been used inconsistently for
+> > conveying variations of devicename:color:function sections. If provided,
+> > then it's been taken as-is for LED class device name, or concatenated
+> > with the devicename hard-coded in the driver.
+> >
+> > Regarding the differentiation between the LEDs with functions of
+> > same kind - OK, I agree, we will need another section.
+> >
+> > What seems to fits the best is the reference to the device it is
+> > logically associated with.
+> >
+> > The question is whether the devicename should be provided in DT
+> > literally, or by phandle, and then retrieved in runtime, basing on the
+> > sysfs entry, like in case of input-leds bridge which for USB keyboard
+> > creates LEDs named e.g.:
+> >
+> > input5::capslock
+> > input5::numlock
+> > input5::scrolllock
+> >
+> > Probably we will have to allow for some flexibility in this regard,
+> > to allow for providing devicename literally like "rear", "front",
+> > or like above input case.
+>
+> I must admit I have a dilemma  with this devicename part.
+> Thinking more of it - the semantics of that section of LED
+> class device name needs to be precise. Currently there seem
+> to be two types of device names considered:
+>
+> 1) descriptive name like in case of flash -
+>    front-camera::flash, rear-camera::flash, which would allow
+>    for providing arbitrary devicenames, i.e. it would not improve
+>    LED naming too much, which was the aim of this patch set
+> 2) name representing hardware relation or user-defined relation between
+>    some device and the LED class device, like in above keyboard
+>    LED case:
+>
+>    - input5::numlock
+>
+>    or for hard disk:
+>
+>    - sda1::hdderr,
+>
+>    In the hdderr case Pavel mentioned the arrangement where the LED
+>    is not a part of the hard disk, so the relation would have to be
+>    defined in DT.
+>    For the flash case the devicename part would be matching /dev/videoN
+>    device.
+>
+> I'm in favour of the option 2) since it seems to be more precise.
+> In this case we would need a mechanism for asynchronous LED class
+> device registration which would register a LED only after the
+> associated device has been probed and its name is known.
+> The mechanism would be a simpler form of
+> drivers/media/v4l2-core/v4l2-async.c.
+>
+> In the LED DT node we would need a property holding a phandle
+> to the associated device. Then, in the runtime the related device
+> would call led_register_associated_device(struct device_node*,
+> struct device*) which would in turn match the device_node with
+> the phandle assigned to the property in the LED DT node. Having
+> the struct device of the associated device we could retrieve
+> device node name from dev->kobj.
+>
+> We would also probably need different DT properties for different
+> types of devices, since e.g. for network case the network interface
+> name would fit better for the LED name, than the phy name,
+> and we would need to know what type of device name we're going
+> to look for.
+>
+> Pavel gave following examples:
+>
+> eth0:green:link
+> adsl0:green:link
+> adsl0:red:error
+>
+> So we would have e.g.:
+>
+> associated-vl42-device = <&camera1>;
+> associated-network-device = <&phy1>;
+> associated-block-device = <&phy1>;
 
-> Regarding sound devices - how would we name micmute LED for USB
-> microphone? I suppose that it is possible to discover some unique
-> identifier in runtime - this is a question to ALSA people.
+Variable property names are kind of a pain to parse.
 
-USB path (e.g. 2-1.1.2.4.3) + '::' + name ?
+Perhaps when LEDs are associated with a device, we shouldn't care
+within the context of the LED subsystem what the name is. The
+association is more important and if you have that exposed, then you
+don't really need to care what the name is. You still have to deal
+with a device with more than 1 LED, but that becomes a problem local
+to that device.
 
--- 
-With Best Regards,
-Andy Shevchenko
+What I'm getting at is following a more standard binding pattern of
+providers and consumers like we have for gpios, clocks, etc. So we'd
+have something like this:
+
+ethernet {
+  ...
+  leds = <&green_led>, <&red_led>;
+  led-names = "link", "err";
+};
+
+We can still support defining LED names as we've done, but we don't
+have to come up with some elaborate naming convention that covers
+every single case.
+
+Rob
