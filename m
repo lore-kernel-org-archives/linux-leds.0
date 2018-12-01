@@ -1,166 +1,112 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Well-known LED names was Re: [PATCH 0/6] Introduce
- audio-mute LED trigger (and conversions to it)
-Date: Sat, 1 Dec 2018 15:41:01 +0100
-Message-ID: <20181201144101.GD31631@amd>
-References: <20181127084418.GA20504@amd> <20181128111806.cb3cncpjeq73sptg@pali>
- <s5hy39dv3dg.wl-tiwai@suse.de> <20181128122505.GA1193@amd>
- <8bb45cc6-9f98-9fed-9676-7f1429328c4a@gmail.com>
- <20181128203410.GA20670@amd> <20181128204612.l3bayhop4qmep2hj@pali>
- <0ed37870-c7b6-fd6b-2f6e-7325fdde3629@gmail.com>
- <20181128212212.GE20670@amd>
- <5f8eece3-95af-7866-d7d0-02cc3cb695ca@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
+ properties
+Date: Sat, 1 Dec 2018 22:17:41 +0100
+Message-ID: <fa5add90-e1b7-d527-374f-175abdf88455@gmail.com>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
+ <5bea0eb8.1c69fb81.6b921.80e6@mx.google.com>
+ <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
+ <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com>
+ <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
+ <20181130210814.GA5756@amd>
+ <CAL_JsqK4oaUTBemXiTZzLeOKOndQ_GZp2F7mJ0VzGEKVGHY20Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4358365166168736433=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <5f8eece3-95af-7866-d7d0-02cc3cb695ca@gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: alsa-devel@alsa-project.org, Ayman Bagabas <ayman.bagabas@gmail.com>, Takashi Iwai <tiwai@suse.de>, platform-driver-x86@vger.kernel.org, Hui Wang <hui.wang@canonical.com>, ibm-acpi-devel@lists.sourceforge.net, Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL_JsqK4oaUTBemXiTZzLeOKOndQ_GZp2F7mJ0VzGEKVGHY20Q@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>, Pavel Machek <pavel@ucw.cz>
+Cc: Linux LED Subsystem <linux-leds@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
+On 11/30/2018 11:19 PM, Rob Herring wrote:
+> On Fri, Nov 30, 2018 at 3:08 PM Pavel Machek <pavel@ucw.cz> wrote:
+>>
+>> Hi!
+>>
+>>>> Pavel gave following examples:
+>>>>
+>>>> eth0:green:link
+>>>> adsl0:green:link
+>>>> adsl0:red:error
+>>>>
+>>>> So we would have e.g.:
+>>>>
+>>>> associated-vl42-device = <&camera1>;
+>>>> associated-network-device = <&phy1>;
+>>>> associated-block-device = <&phy1>;
+>>>
+>>> Variable property names are kind of a pain to parse.
+>>
+>> Ok, would it be enough to have associated-device = <&whatever>?
+> 
+> Yeah, but I though you needed the device type name in there.
+> 
+>>> Perhaps when LEDs are associated with a device, we shouldn't care
+>>> within the context of the LED subsystem what the name is. The
+>>> association is more important and if you have that exposed, then you
+>>> don't really need to care what the name is. You still have to deal
+>>> with a device with more than 1 LED, but that becomes a problem local
+>>> to that device.
+>>>
+>>> What I'm getting at is following a more standard binding pattern of
+>>> providers and consumers like we have for gpios, clocks, etc. So we'd
+>>> have something like this:
+>>>
+>>> ethernet {
+>>>   ...
+>>>   leds = <&green_led>, <&red_led>;
+>>>   led-names = "link", "err";
+>>> };
+>>
+>> Basically every single device could have a LED associated with it
+>> ("activity"). Would doing it like this mean we'd have to modify every
+>> single driver to parse leds / led-names properties?
+> 
+> Normally, that's how properties like this would work. A driver is also
+> what knows how the leds should function. 
 
---===============4358365166168736433==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lc9FT7cWel8HagAv"
-Content-Disposition: inline
+This is not true in case of associations where LED controller is
+an independent device, as in Pavel's example [0].
 
+> A driver can retrieve the led
+> and associate it with the 'foo-bar' function. The 'foo-bar' function
+> then doesn't have to be defined in DT nor exposed to userspace. It
+> wouldn't even have to be driver specific. The driver's subsystem could
+> handle it all if the led functions are standardized. Though then you'd
+> be back to needing standard names for 'led-names', but that's no worse
+> that trigger names. This model would also allow getting rid of
+> 'linux,default-trigger' properties in a lot of cases which wouldn't be
+> a bad thing.
+> 
+> However, having drivers handle this is not required. You can iterate
+> thru the tree for nodes with 'leds' and find the node which has a
+> phandle to the led node you care about. 
 
---lc9FT7cWel8HagAv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This way of discovering associations between devices and LEDs
+would be more reliable than by devicename part of LED class device
+as discussed previously.
 
-Hi!
+However, I've just tried to verify how it works, but
+I can't find the way to get the of_node phandle from sysfs.
 
-> >>> If external USB keyboard is identified as "input7" device, then
-> >>> "input7::mute" is a good name for mute key. But "sys::mute" does not =
-say
-> >>> anything to which device or hardware it belongs nor does not solve
-> >>> problem that which device/driver/subsystem should have privilege to t=
-ake
-> >>> this "sys" name.
-> >>
-> >> How about just "platform" for the LEDs being part of the device
-> >> on which the system is running?
-> >=20
-> > "platform" works for me.
-> >=20
-> > Are we in agreement that this name will be used for all similar LEDs,
-> > as long as they are on the "main box" of the device, no matter if they
-> > are connected using acpi, gpio, i2c, ...?
->=20
-> One doubt: say we have hdd activity LED on the "main box" - it
-> would be named "platform::disk".
->=20
-> Now, we add external USB disk. Previously we were considering
-> the naming for disk LEDs in the form e.g. "sdb::disk".
->=20
-> If so, there would be discrepancy between internal and external disk
-> LED names. Similarly in case of eth/adsl/wlan/camera LEDs.
+The "of_node" link in per-device dirs in /sys/devices point
+to the directories containing DT properties of the node, but
+I see no way to obtain the node phandle.
 
-Well, it really depends if the "plaform::disk" is for all the disks,
-or if it is for sda. In the second case, it might be better to name it
-sda::disk...
+> Sure, it's not that efficient,
+> but it does work and it's only done once. Basically, as long as the
+> linkage is there, we can make it work. I think using
+> 'associated-device' might work better for the current implementation
+> of Linux LED support, but leds/led-names would be more inline with
+> other DT bindings. The current Linux implementation shouldn't dictate
+> the binding design.
 
-Anyway... I believe we should start documenting good and bad LEDs, so
-that patch authors know what is there, and can try to be consistent,
-and so that userland knows what names to probe for.
+[0] https://lkml.org/lkml/2018/11/13/103
 
-What about following? Any other LEDs worth mentioning?
-
-commit c56708addf9c312cefd760bca218a0545258b217
-Author: Pavel <pavel@ucw.cz>
-Date:   Sat Dec 1 15:32:13 2018 +0100
-
-leds: Add list of well-known LED names
-   =20
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-
-diff --git a/Documentation/leds/well-known-leds.txt b/Documentation/leds/we=
-ll-known-leds.txt
-new file mode 100644
-index 0000000..9a262db
---- /dev/null
-+++ b/Documentation/leds/well-known-leds.txt
-@@ -0,0 +1,42 @@
-+-*- org -*-
-+
-+It is somehow important to provide consistent interface to the
-+userland. LED devices have one problem there, and that is naming of
-+directories in /sys/class/leds. It would be nice if userland would
-+just know right "name" for given LED function, but situation got more
-+complex.
-+
-+Anyway, if backwards compatibility is not an issue, new code should
-+use one of the "good" names from this list, and you should extend the
-+list where applicable.
-+
-+Bad names are listed, too, in case you are writing application that
-+wants to use particular feature, you should probe for good name first
-+but then try the bad ones, too".
-+
-+* Keyboards
-+
-+Good: "input*:*:capslock"
-+Good: "input*:*:scrolllock"
-+Good: "input*:*:numlock"
-+
-+Set of common keyboard LEDs, going back to PC AT or so.
-+
-+Bad: "tpacpi::thinklight" (IBM/Lenovo Thinkpads)
-+Bad: "lp5523:kb{1,2,3,4,5,6,7}" (Nokia N900)
-+
-+Keyboard frontlight/backlight.
-+
-+* Sound subsystem
-+
-+Good: "platform:*:mute"
-+Good: "platform:*:micmute"
-+
-+LEDs on notebook body, indicating that sound input / output is muted.
-+
-+* System notification
-+
-+Good: "status-led:{red,green,blue}" (Motorola Droid 4)
-+Bad: "lp5523:{r,g,b}" (Nokia N900)
-+
-+Phones usually have multi-color status LED.
-
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---lc9FT7cWel8HagAv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwCnX0ACgkQMOfwapXb+vLo0wCghl7pPkG4xPiXLjZ2qehtFOtL
-z60AoJXadfpQ0Yyu7oJ0vKOW1QPv4sHB
-=5o7d
------END PGP SIGNATURE-----
-
---lc9FT7cWel8HagAv--
-
---===============4358365166168736433==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============4358365166168736433==--
+-- 
+Best regards,
+Jacek Anaszewski
