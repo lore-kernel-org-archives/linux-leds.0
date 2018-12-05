@@ -1,42 +1,53 @@
-From: Rob Herring <robh@kernel.org>
-Subject: [PATCH] leds: 88pm860x: Use of_node_name_eq for node name comparisons
-Date: Wed,  5 Dec 2018 13:50:27 -0600
-Message-ID: <20181205195050.4759-11-robh@kernel.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH] leds: 88pm860x: Use of_node_name_eq for node name
+ comparisons
+Date: Wed, 5 Dec 2018 21:14:59 +0100
+Message-ID: <20181205201459.GA28635@amd>
+References: <20181205195050.4759-11-robh@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181205195050.4759-11-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Convert string compares of DT node names to use of_node_name_eq helper
-instead. This removes direct access to the node name pointer.
 
-For instances using of_node_cmp, this has the side effect of now using
-case sensitive comparisons. This should not matter for any FDT based
-system which this is.
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/leds/leds-88pm860x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed 2018-12-05 13:50:27, Rob Herring wrote:
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
+>=20
+> For instances using of_node_cmp, this has the side effect of now using
+> case sensitive comparisons. This should not matter for any FDT based
+> system which this is.
+>=20
+> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
-index 77a104d2b124..036d4a536697 100644
---- a/drivers/leds/leds-88pm860x.c
-+++ b/drivers/leds/leds-88pm860x.c
-@@ -130,7 +130,7 @@ static int pm860x_led_dt_init(struct platform_device *pdev,
- 		return -ENODEV;
- 	}
- 	for_each_child_of_node(nproot, np) {
--		if (!of_node_cmp(np->name, data->name)) {
-+		if (of_node_name_eq(np, data->name)) {
- 			of_property_read_u32(np, "marvell,88pm860x-iset",
- 					     &iset);
- 			data->iset = PM8606_LED_CURRENT(iset);
--- 
-2.19.1
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--+HP7ph2BbKc20aGI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwIMcMACgkQMOfwapXb+vKY6QCfXMMY8ANWPZNTc1+06lh14+I7
+uREAniani01HtkA0wuRxR8l35y6MFE7F
+=JWGk
+-----END PGP SIGNATURE-----
+
+--+HP7ph2BbKc20aGI--
