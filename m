@@ -1,37 +1,42 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: trigger named just "tx" in drivers/net/wireless/atmel/at76c50x-usb.c
-Date: Mon, 03 Dec 2018 10:45:01 +0200
-Message-ID: <87lg57f182.fsf@codeaurora.org>
-References: <20181201143144.GC31631@amd>
+From: Rob Herring <robh@kernel.org>
+Subject: [PATCH] leds: 88pm860x: Use of_node_name_eq for node name comparisons
+Date: Wed,  5 Dec 2018 13:50:27 -0600
+Message-ID: <20181205195050.4759-11-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181201143144.GC31631@amd> (Pavel Machek's message of "Sat, 1
-        Dec 2018 15:31:44 +0100")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>, davem@davemloft.net, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Pavel Machek <pavel@ucw.cz> writes:
+Convert string compares of DT node names to use of_node_name_eq helper
+instead. This removes direct access to the node name pointer.
 
-> While grepping something else, I came across LED trigger that is named
-> just "tx".
->
-> That's a bit too generic afaict?
->
-> +++ b/drivers/net/wireless/atmel/at76c50x-usb.c
-> @@ -520,7 +520,7 @@ static int at76_usbdfu_download(struct usb_device
-> *udev, u8 *buf, u32 size,
->  static int tx_activity;
->   static void at76_ledtrig_tx_timerfunc(struct timer_list *unused);
->    static DEFINE_TIMER(ledtrig_tx_timer, at76_ledtrig_tx_timerfunc);
->    -DEFINE_LED_TRIGGER(ledtrig_tx);
->    +DEFINE_LED_TRIGGER(ledtrig_tx); /* Hey! "tx" is a bit too generic
->    name for a trigger! */
+For instances using of_node_cmp, this has the side effect of now using
+case sensitive comparisons. This should not matter for any FDT based
+system which this is.
 
-This is an ancient driver, my guess is that nobody uses it anymore. I
-should orphan it and maybe even remove it at some point.
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/leds/leds-88pm860x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
+index 77a104d2b124..036d4a536697 100644
+--- a/drivers/leds/leds-88pm860x.c
++++ b/drivers/leds/leds-88pm860x.c
+@@ -130,7 +130,7 @@ static int pm860x_led_dt_init(struct platform_device *pdev,
+ 		return -ENODEV;
+ 	}
+ 	for_each_child_of_node(nproot, np) {
+-		if (!of_node_cmp(np->name, data->name)) {
++		if (of_node_name_eq(np, data->name)) {
+ 			of_property_read_u32(np, "marvell,88pm860x-iset",
+ 					     &iset);
+ 			data->iset = PM8606_LED_CURRENT(iset);
 -- 
-Kalle Valo
+2.19.1
