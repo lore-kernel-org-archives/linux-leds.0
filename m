@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/4] leds: pwm: Use OF variant of LED registering function
-Date: Fri,  7 Dec 2018 13:32:52 +0100
-Message-ID: <1544185974-5932-2-git-send-email-krzk@kernel.org>
+Subject: [PATCH 3/4] dt-bindings: leds: Add pattern initialization from Device Tree
+Date: Fri,  7 Dec 2018 13:32:53 +0100
+Message-ID: <1544185974-5932-3-git-send-email-krzk@kernel.org>
 References: <1544185974-5932-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1544185974-5932-1-git-send-email-krzk@kernel.org>
@@ -9,27 +9,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Baolin Wang <baolin.wang@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Raphael Teysseyre <rteysseyre@gmail.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-The PWM leds can be instantiated from Device Tree so pass the
-respective device node to LED core.  This provides the LED system with
-proper device node and exposes it through uevent.
+Document new linux,trigger-pattern property for initialization of LED
+pattern trigger.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/leds/leds-pwm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/leds/common.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index fcb3e87a9887..af08bcdc4fd8 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -114,7 +114,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 	if (!led_data->period && (led->pwm_period_ns > 0))
- 		led_data->period = led->pwm_period_ns;
+diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+index aa1399814a2a..4c65e854bb91 100644
+--- a/Documentation/devicetree/bindings/leds/common.txt
++++ b/Documentation/devicetree/bindings/leds/common.txt
+@@ -37,6 +37,13 @@ Optional properties for child nodes:
+      "ide-disk" - LED indicates IDE disk activity (deprecated),
+                   in new implementations use "disk-activity"
+      "timer" - LED flashes at a fixed, configurable rate
++     "pattern" - LED alters the brightness for the specified duration with one
++                 software timer (see
++                 Documentation/ABI/testing/sysfs-class-led-trigger-pattern)
++
++- linux,trigger-pattern : Default pattern for "pattern" trigger (see
++                          Documentation/ABI/testing/sysfs-class-led-trigger-pattern
++                          for description of format)
  
--	ret = devm_led_classdev_register(dev, &led_data->cdev);
-+	ret = devm_of_led_classdev_register(dev, child, &led_data->cdev);
- 	if (ret == 0) {
- 		priv->num_leds++;
- 		led_pwm_set(&led_data->cdev, led_data->cdev.brightness);
+ - led-max-microamp : Maximum LED supply current in microamperes. This property
+                      can be made mandatory for the board configurations
 -- 
 2.7.4
