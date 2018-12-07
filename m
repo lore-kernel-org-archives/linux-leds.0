@@ -1,37 +1,82 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] leds: gpio: Drop unneeded manual of_node assignment
-Date: Fri,  7 Dec 2018 11:10:06 +0100
-Message-ID: <1544177406-24752-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH 1/4] leds: pwm: Simplify with resource-managed devm_led_classdev_register()
+Date: Fri,  7 Dec 2018 13:32:51 +0100
+Message-ID: <1544185974-5932-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Baolin Wang <baolin.wang@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Raphael Teysseyre <rteysseyre@gmail.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-This reverts the main change of commit bff23714bc36 ("leds: leds-gpio:
-Set of_node for created LED devices") because of_node assignment is
-handled by core since commit 7ea79ae86c28 ("leds: gpio: use OF variant
-of LED registering function").  Basically the code was overwriting the
-of_node with same value.
-
-No functional change expected.
+Simplify the exit path with resource-managed version of registering LED
+class device.  The code should be functionally the same, except that on
+device removal the led_pwm_priv->num_leds is not decremented to zero
+(which should not have any effect as device is going away).
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/leds/leds-gpio.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/leds/leds-pwm.c | 22 ++--------------------
+ 1 file changed, 2 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index 45e012093865..998f2ff6914d 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -190,7 +190,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 			fwnode_handle_put(child);
- 			return ERR_PTR(ret);
- 		}
--		led_dat->cdev.dev->of_node = np;
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index 5d3faae51d59..fcb3e87a9887 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -74,12 +74,6 @@ static inline size_t sizeof_pwm_leds_priv(int num_leds)
+ 		      (sizeof(struct led_pwm_data) * num_leds);
+ }
+ 
+-static void led_pwm_cleanup(struct led_pwm_priv *priv)
+-{
+-	while (priv->num_leds--)
+-		led_classdev_unregister(&priv->leds[priv->num_leds].cdev);
+-}
+-
+ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 		       struct led_pwm *led, struct device_node *child)
+ {
+@@ -120,7 +114,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 	if (!led_data->period && (led->pwm_period_ns > 0))
+ 		led_data->period = led->pwm_period_ns;
+ 
+-	ret = led_classdev_register(dev, &led_data->cdev);
++	ret = devm_led_classdev_register(dev, &led_data->cdev);
+ 	if (ret == 0) {
  		priv->num_leds++;
+ 		led_pwm_set(&led_data->cdev, led_data->cdev.brightness);
+@@ -191,25 +185,14 @@ static int led_pwm_probe(struct platform_device *pdev)
+ 		ret = led_pwm_create_of(&pdev->dev, priv);
  	}
  
+-	if (ret) {
+-		led_pwm_cleanup(priv);
++	if (ret)
+ 		return ret;
+-	}
+ 
+ 	platform_set_drvdata(pdev, priv);
+ 
+ 	return 0;
+ }
+ 
+-static int led_pwm_remove(struct platform_device *pdev)
+-{
+-	struct led_pwm_priv *priv = platform_get_drvdata(pdev);
+-
+-	led_pwm_cleanup(priv);
+-
+-	return 0;
+-}
+-
+ static const struct of_device_id of_pwm_leds_match[] = {
+ 	{ .compatible = "pwm-leds", },
+ 	{},
+@@ -218,7 +201,6 @@ MODULE_DEVICE_TABLE(of, of_pwm_leds_match);
+ 
+ static struct platform_driver led_pwm_driver = {
+ 	.probe		= led_pwm_probe,
+-	.remove		= led_pwm_remove,
+ 	.driver		= {
+ 		.name	= "leds_pwm",
+ 		.of_match_table = of_pwm_leds_match,
 -- 
 2.7.4
