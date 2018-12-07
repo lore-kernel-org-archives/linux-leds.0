@@ -1,82 +1,35 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 1/4] leds: pwm: Simplify with resource-managed devm_led_classdev_register()
-Date: Fri,  7 Dec 2018 13:32:51 +0100
-Message-ID: <1544185974-5932-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH 2/4] leds: pwm: Use OF variant of LED registering function
+Date: Fri,  7 Dec 2018 13:32:52 +0100
+Message-ID: <1544185974-5932-2-git-send-email-krzk@kernel.org>
+References: <1544185974-5932-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1544185974-5932-1-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Baolin Wang <baolin.wang@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Raphael Teysseyre <rteysseyre@gmail.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Simplify the exit path with resource-managed version of registering LED
-class device.  The code should be functionally the same, except that on
-device removal the led_pwm_priv->num_leds is not decremented to zero
-(which should not have any effect as device is going away).
+The PWM leds can be instantiated from Device Tree so pass the
+respective device node to LED core.  This provides the LED system with
+proper device node and exposes it through uevent.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/leds/leds-pwm.c | 22 ++--------------------
- 1 file changed, 2 insertions(+), 20 deletions(-)
+ drivers/leds/leds-pwm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 5d3faae51d59..fcb3e87a9887 100644
+index fcb3e87a9887..af08bcdc4fd8 100644
 --- a/drivers/leds/leds-pwm.c
 +++ b/drivers/leds/leds-pwm.c
-@@ -74,12 +74,6 @@ static inline size_t sizeof_pwm_leds_priv(int num_leds)
- 		      (sizeof(struct led_pwm_data) * num_leds);
- }
- 
--static void led_pwm_cleanup(struct led_pwm_priv *priv)
--{
--	while (priv->num_leds--)
--		led_classdev_unregister(&priv->leds[priv->num_leds].cdev);
--}
--
- static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 		       struct led_pwm *led, struct device_node *child)
- {
-@@ -120,7 +114,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+@@ -114,7 +114,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
  	if (!led_data->period && (led->pwm_period_ns > 0))
  		led_data->period = led->pwm_period_ns;
  
--	ret = led_classdev_register(dev, &led_data->cdev);
-+	ret = devm_led_classdev_register(dev, &led_data->cdev);
+-	ret = devm_led_classdev_register(dev, &led_data->cdev);
++	ret = devm_of_led_classdev_register(dev, child, &led_data->cdev);
  	if (ret == 0) {
  		priv->num_leds++;
  		led_pwm_set(&led_data->cdev, led_data->cdev.brightness);
-@@ -191,25 +185,14 @@ static int led_pwm_probe(struct platform_device *pdev)
- 		ret = led_pwm_create_of(&pdev->dev, priv);
- 	}
- 
--	if (ret) {
--		led_pwm_cleanup(priv);
-+	if (ret)
- 		return ret;
--	}
- 
- 	platform_set_drvdata(pdev, priv);
- 
- 	return 0;
- }
- 
--static int led_pwm_remove(struct platform_device *pdev)
--{
--	struct led_pwm_priv *priv = platform_get_drvdata(pdev);
--
--	led_pwm_cleanup(priv);
--
--	return 0;
--}
--
- static const struct of_device_id of_pwm_leds_match[] = {
- 	{ .compatible = "pwm-leds", },
- 	{},
-@@ -218,7 +201,6 @@ MODULE_DEVICE_TABLE(of, of_pwm_leds_match);
- 
- static struct platform_driver led_pwm_driver = {
- 	.probe		= led_pwm_probe,
--	.remove		= led_pwm_remove,
- 	.driver		= {
- 		.name	= "leds_pwm",
- 		.of_match_table = of_pwm_leds_match,
 -- 
 2.7.4
