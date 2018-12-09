@@ -1,109 +1,68 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 4/4] leds: trigger: Add pattern initialization from Device
- Tree
-Date: Sun, 9 Dec 2018 19:55:26 +0100
-Message-ID: <fcb28be6-7d6a-1216-5a22-339f30366fd1@gmail.com>
-References: <1544185974-5932-1-git-send-email-krzk@kernel.org>
- <1544185974-5932-4-git-send-email-krzk@kernel.org>
- <8222f85b-4e61-69c4-6d31-ba559de02829@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 1/2] led: triggers: Break the for loop after default
+ trigger is found
+Date: Sun, 9 Dec 2018 19:58:47 +0100
+Message-ID: <20181209185847.GB6331@amd>
+References: <20181209184942.22391-1-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="SkvwRMAIpAhPCcCJ"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8222f85b-4e61-69c4-6d31-ba559de02829@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20181209184942.22391-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Baolin Wang <baolin.wang@linaro.org>, Raphael Teysseyre <rteysseyre@gmail.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 12/8/18 7:44 PM, Jacek Anaszewski wrote:
-> Hi Krzysztof,
-> 
-> Thank you for the patch set.
-> 
-> Applied 1/4 and 2/4.
-> 
-> I'll hold on merging 3/4 until we sort out the issues
-> I have with this one. Please refer to my comment below.
-> 
-> On 12/7/18 1:32 PM, Krzysztof Kozlowski wrote:
->> Allow initialization of pattern used in pattern trigger from Device Tree
->> property.
->>
->> This is especially useful for embedded systems where the pattern trigger
->> would be used to indicate the process of boot status in a nice,
->> user-friendly blinking way.  This initialization pattern will be used
->> till user-space is brought up and sets its own pattern, indicating the
->> boot status is for example finished.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> ---
->>   drivers/leds/trigger/ledtrig-pattern.c | 18 ++++++++++++++++++
->>   1 file changed, 18 insertions(+)
->>
->> diff --git a/drivers/leds/trigger/ledtrig-pattern.c 
->> b/drivers/leds/trigger/ledtrig-pattern.c
->> index 1870cf87afe1..96309d3bc43c 100644
->> --- a/drivers/leds/trigger/ledtrig-pattern.c
->> +++ b/drivers/leds/trigger/ledtrig-pattern.c
->> @@ -11,6 +11,7 @@
->>   #include <linux/leds.h>
->>   #include <linux/module.h>
->>   #include <linux/mutex.h>
->> +#include <linux/of.h>
->>   #include <linux/slab.h>
->>   #include <linux/timer.h>
->> @@ -331,6 +332,21 @@ static const struct attribute_group 
->> *pattern_trig_groups[] = {
->>       NULL,
->>   };
->> +static void pattern_init(struct led_classdev *led_cdev)
->> +{
->> +    struct device_node *np = dev_of_node(led_cdev->dev);
->> +    const char *pattern;
->> +
->> +    if (!np)
->> +        return;
->> +
->> +    if (!of_property_read_string(np, "linux,trigger-pattern", 
->> &pattern)) {
->> +        if (strlen(pattern))
->> +            pattern_trig_store_patterns(led_cdev, pattern,
->> +                            strlen(pattern), false);
->> +    }
->> +}
->> +
->>   static int pattern_trig_activate(struct led_classdev *led_cdev)
->>   {
->>       struct pattern_trig_data *data;
->> @@ -354,6 +370,8 @@ static int pattern_trig_activate(struct 
->> led_classdev *led_cdev)
->>       timer_setup(&data->timer, pattern_trig_timer_function, 0);
->>       led_cdev->activated = true;
->> +    pattern_init(led_cdev);
 
-With my recent patches it would suffice to replace above line with:
+--SkvwRMAIpAhPCcCJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-if (led_cdev->flags & LED_INIT_DEFAULT_TRIGGER) {
-	pattern_init(led_cdev);
-	led_cdev->flags &= ~LED_INIT_DEFAULT_TRIGGER;
-}
+On Sun 2018-12-09 19:49:41, Jacek Anaszewski wrote:
+> It is of no avail to continue iterating through registered
+> triggers in the led_trigger_set_default() after the trigger to set
+> has been found. Add "break" statement to fix this omission.
+>=20
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-> It means that the pattern defined in DT would be applied
-> whenever the pattern trigger is set for a LED class device,
-> whereas it should happen only on LED class device initialization,
-> if linux,default-trigger is set to "pattern".
-> 
-> What we would need for making that work is a generic support for
-> parsing trigger specific initialization data in the
-> of_led_classdev_register().
-> 
->> +
->>       return 0;
->>   }
->>
-> 
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
--- 
-Best regards,
-Jacek Anaszewski
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> index 17d73db1456e..52b12e601ebe 100644
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
+> @@ -200,8 +200,10 @@ void led_trigger_set_default(struct led_classdev *le=
+d_cdev)
+>  	down_read(&triggers_list_lock);
+>  	down_write(&led_cdev->trigger_lock);
+>  	list_for_each_entry(trig, &trigger_list, next_trig) {
+> -		if (!strcmp(led_cdev->default_trigger, trig->name))
+> +		if (!strcmp(led_cdev->default_trigger, trig->name)) {
+>  			led_trigger_set(led_cdev, trig);
+> +			break;
+> +		}
+>  	}
+>  	up_write(&led_cdev->trigger_lock);
+>  	up_read(&triggers_list_lock);
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--SkvwRMAIpAhPCcCJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwNZecACgkQMOfwapXb+vJqOACgmfbn4ZU0GE/Y4e63y5ciJhEG
+6v8An2sq4nj0m5dD04LbNtArKGkfqBZt
+=5dK7
+-----END PGP SIGNATURE-----
+
+--SkvwRMAIpAhPCcCJ--
