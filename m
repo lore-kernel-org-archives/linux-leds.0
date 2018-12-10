@@ -1,44 +1,42 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 0/5] leds: trigger: Add pattern initialization from Device Tree
-Date: Mon, 10 Dec 2018 10:29:56 +0100
-Message-ID: <1544434201-14190-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH v2 1/5] led: triggers: Break the for loop after default trigger is found
+Date: Mon, 10 Dec 2018 10:29:57 +0100
+Message-ID: <1544434201-14190-2-git-send-email-krzk@kernel.org>
+References: <1544434201-14190-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1544434201-14190-1-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Baolin Wang <baolin.wang@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-I rebased on top of Jacek's patches and, as I could not find them on git kernel
-tree, I included them here. Also with small fixup.
+It is of no avail to continue iterating through registered
+triggers in the led_trigger_set_default() after the trigger to set
+has been found. Add "break" statement to fix this omission.
 
-Changes since v1:
-1. Rebase on Jacek's patches.
-2. Add patch 3/5 for fixup of Jacek's solution.
-3. Drop first two patches from the series (applied).
-4. Patch 5/5: Use LED_INIT_DEFAULT_TRIGGER (suggested by Jacek Anaszewski).
-5. Patch 5/5: Return-on-error and log warning (suggested by Pavel Machek).
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/leds/led-triggers.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-
-Best regards,
-Krzysztof
-
-
-Jacek Anaszewski (2):
-  led: triggers: Break the for loop after default trigger is found
-  led: triggers: Add LED_INIT_DEFAULT_TRIGGER flag
-
-Krzysztof Kozlowski (3):
-  led: triggers: Initialize LED_INIT_DEFAULT_TRIGGER if trigger is
-    brought after class
-  dt-bindings: leds: Add pattern initialization from Device Tree
-  leds: trigger: Add pattern initialization from Device Tree
-
- Documentation/devicetree/bindings/leds/common.txt |  7 +++++
- drivers/leds/led-triggers.c                       | 10 +++++--
- drivers/leds/trigger/ledtrig-pattern.c            | 32 +++++++++++++++++++++++
- include/linux/leds.h                              |  1 +
- 4 files changed, 48 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 17d73db1456e..52b12e601ebe 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -200,8 +200,10 @@ void led_trigger_set_default(struct led_classdev *led_cdev)
+ 	down_read(&triggers_list_lock);
+ 	down_write(&led_cdev->trigger_lock);
+ 	list_for_each_entry(trig, &trigger_list, next_trig) {
+-		if (!strcmp(led_cdev->default_trigger, trig->name))
++		if (!strcmp(led_cdev->default_trigger, trig->name)) {
+ 			led_trigger_set(led_cdev, trig);
++			break;
++		}
+ 	}
+ 	up_write(&led_cdev->trigger_lock);
+ 	up_read(&triggers_list_lock);
 -- 
 2.7.4
