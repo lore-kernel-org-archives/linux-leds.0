@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 5/5] leds: trigger: Add pattern initialization from Device Tree
-Date: Mon, 10 Dec 2018 10:30:01 +0100
-Message-ID: <1544434201-14190-6-git-send-email-krzk@kernel.org>
+Subject: [PATCH v2 2/5] led: triggers: Add LED_INIT_DEFAULT_TRIGGER flag
+Date: Mon, 10 Dec 2018 10:29:58 +0100
+Message-ID: <1544434201-14190-3-git-send-email-krzk@kernel.org>
 References: <1544434201-14190-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1544434201-14190-1-git-send-email-krzk@kernel.org>
@@ -9,76 +9,55 @@ Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Baolin Wang <baolin.wang@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Allow initialization of pattern used in pattern trigger from Device Tree
-property.
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-This is especially useful for embedded systems where the pattern trigger
-would be used to indicate the process of boot status in a nice,
-user-friendly blinking way.  This initialization pattern will be used
-till user-space is brought up and sets its own pattern, indicating the
-boot status is for example finished.
+Add the flag LED_INIT_DEFAULT_TRIGGER for indicating that trigger
+being set is a default trigger for the LED class device, and
+thus it should be initialized with settings provided in the fwnode.
 
+Set the flag in the led_trigger_set_default(). It is expected to be
+cleared in the activate() op of a trigger after trigger fwnode
+initialization data is parsed and applied. This should happen only
+once after LED class device registration, to allow leaving triggers
+in the idle state on re-apply and let the users apply their own
+settings without being interfered with the default ones.
+
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/leds/trigger/ledtrig-pattern.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/leds/led-triggers.c | 2 ++
+ include/linux/leds.h        | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
-index 1870cf87afe1..1e7672eba2b8 100644
---- a/drivers/leds/trigger/ledtrig-pattern.c
-+++ b/drivers/leds/trigger/ledtrig-pattern.c
-@@ -11,6 +11,7 @@
- #include <linux/leds.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/of.h>
- #include <linux/slab.h>
- #include <linux/timer.h>
- 
-@@ -331,6 +332,28 @@ static const struct attribute_group *pattern_trig_groups[] = {
- 	NULL,
- };
- 
-+static void pattern_init(struct led_classdev *led_cdev)
-+{
-+	struct device_node *np = dev_of_node(led_cdev->dev);
-+	const char *pattern;
-+	int err;
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 52b12e601ebe..9421222ca7a0 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -201,10 +201,12 @@ void led_trigger_set_default(struct led_classdev *led_cdev)
+ 	down_write(&led_cdev->trigger_lock);
+ 	list_for_each_entry(trig, &trigger_list, next_trig) {
+ 		if (!strcmp(led_cdev->default_trigger, trig->name)) {
++			led_cdev->flags |= LED_INIT_DEFAULT_TRIGGER;
+ 			led_trigger_set(led_cdev, trig);
+ 			break;
+ 		}
+ 	}
 +
-+	if (!np)
-+		return;
-+
-+	if (of_property_read_string(np, "linux,trigger-pattern", &pattern))
-+		return;
-+
-+	if (!strlen(pattern))
-+		return;
-+
-+	err = pattern_trig_store_patterns(led_cdev, pattern, strlen(pattern),
-+					  false);
-+	if (err)
-+		dev_warn(led_cdev->dev,
-+			 "Pattern initialization failed with error %d\n", err);
-+}
-+
- static int pattern_trig_activate(struct led_classdev *led_cdev)
- {
- 	struct pattern_trig_data *data;
-@@ -354,6 +377,15 @@ static int pattern_trig_activate(struct led_classdev *led_cdev)
- 	timer_setup(&data->timer, pattern_trig_timer_function, 0);
- 	led_cdev->activated = true;
- 
-+	if (led_cdev->flags & LED_INIT_DEFAULT_TRIGGER) {
-+		pattern_init(led_cdev);
-+		/*
-+		 * Mark as initialized even on pattern_init() error because
-+		 * any consecutive call to it would produce the same error.
-+		 */
-+		led_cdev->flags &= ~LED_INIT_DEFAULT_TRIGGER;
-+	}
-+
- 	return 0;
+ 	up_write(&led_cdev->trigger_lock);
+ 	up_read(&triggers_list_lock);
  }
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 580cbaef789a..5263f87e1d2c 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -51,6 +51,7 @@ struct led_classdev {
+ #define LED_PANIC_INDICATOR	BIT(20)
+ #define LED_BRIGHT_HW_CHANGED	BIT(21)
+ #define LED_RETAIN_AT_SHUTDOWN	BIT(22)
++#define LED_INIT_DEFAULT_TRIGGER BIT(23)
  
+ 	/* set_brightness_work / blink_timer flags, atomic, private. */
+ 	unsigned long		work_flags;
 -- 
 2.7.4
