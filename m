@@ -1,67 +1,79 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: trigger named just "tx" in
- drivers/net/wireless/atmel/at76c50x-usb.c
-Date: Sun, 9 Dec 2018 21:08:44 +0100
-Message-ID: <20181209200844.GA12756@amd>
-References: <20181201143144.GC31631@amd>
- <87lg57f182.fsf@codeaurora.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 4/4] leds: trigger: Add pattern initialization from Device Tree
+Date: Mon, 10 Dec 2018 09:34:44 +0100
+Message-ID: <CAJKOXPfGFUBsaUixth4T3qzDu_mdvZ9XQNhEUExWogv_5mfySg@mail.gmail.com>
+References: <1544185974-5932-1-git-send-email-krzk@kernel.org>
+ <1544185974-5932-4-git-send-email-krzk@kernel.org> <20181209081722.GB7561@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <87lg57f182.fsf@codeaurora.org>
+In-Reply-To: <20181209081722.GB7561@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>, davem@davemloft.net, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: pavel@ucw.cz
+Cc: jacek.anaszewski@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, baolin.wang@linaro.org, rteysseyre@gmail.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-
---ZGiS0Q5IWpPtfppv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon 2018-12-03 10:45:01, Kalle Valo wrote:
-> Pavel Machek <pavel@ucw.cz> writes:
->=20
-> > While grepping something else, I came across LED trigger that is named
-> > just "tx".
+On Sun, 9 Dec 2018 at 09:17, Pavel Machek <pavel@ucw.cz> wrote:
+>
+> On Fri 2018-12-07 13:32:54, Krzysztof Kozlowski wrote:
+> > Allow initialization of pattern used in pattern trigger from Device Tree
+> > property.
 > >
-> > That's a bit too generic afaict?
+> > This is especially useful for embedded systems where the pattern trigger
+> > would be used to indicate the process of boot status in a nice,
+> > user-friendly blinking way.  This initialization pattern will be used
+> > till user-space is brought up and sets its own pattern, indicating the
+> > boot status is for example finished.
 > >
-> > +++ b/drivers/net/wireless/atmel/at76c50x-usb.c
-> > @@ -520,7 +520,7 @@ static int at76_usbdfu_download(struct usb_device
-> > *udev, u8 *buf, u32 size,
-> >  static int tx_activity;
-> >   static void at76_ledtrig_tx_timerfunc(struct timer_list *unused);
-> >    static DEFINE_TIMER(ledtrig_tx_timer, at76_ledtrig_tx_timerfunc);
-> >    -DEFINE_LED_TRIGGER(ledtrig_tx);
-> >    +DEFINE_LED_TRIGGER(ledtrig_tx); /* Hey! "tx" is a bit too generic
-> >    name for a trigger! */
->=20
-> This is an ancient driver, my guess is that nobody uses it anymore. I
-> should orphan it and maybe even remove it at some point.
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >  drivers/leds/trigger/ledtrig-pattern.c | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> >
+> > diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+> > index 1870cf87afe1..96309d3bc43c 100644
+> > --- a/drivers/leds/trigger/ledtrig-pattern.c
+> > +++ b/drivers/leds/trigger/ledtrig-pattern.c
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/leds.h>
+> >  #include <linux/module.h>
+> >  #include <linux/mutex.h>
+> > +#include <linux/of.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/timer.h>
+> >
+> > @@ -331,6 +332,21 @@ static const struct attribute_group *pattern_trig_groups[] = {
+> >       NULL,
+> >  };
+> >
+> > +static void pattern_init(struct led_classdev *led_cdev)
+> > +{
+> > +     struct device_node *np = dev_of_node(led_cdev->dev);
+> > +     const char *pattern;
+> > +
+> > +     if (!np)
+> > +             return;
+> > +
+> > +     if (!of_property_read_string(np, "linux,trigger-pattern", &pattern)) {
+> > +             if (strlen(pattern))
+> > +                     pattern_trig_store_patterns(led_cdev, pattern,
+> > +                                                 strlen(pattern), false);
+> > +     }
+> > +}
+>
+> "  if (of_...())
+>       return;
+>
+>    if (!strlen())
+>        return"
 
-Are you willing to add a fixme there? I really don't want people to
-copy that example.
-									Pavel
+Sure.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+>
+> Check return value of pattern_trig_store_patterns().
 
---ZGiS0Q5IWpPtfppv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+i can add printing of error in such case but I am not sure whether it
+is worth to fail entire pattern_trig_activate().
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwNdkwACgkQMOfwapXb+vIFugCgruCm9/ACguL9fMeJjswzFgCt
-3TcAnjJ60I+ja4xwG1FqHLvHc33BuucN
-=oWTy
------END PGP SIGNATURE-----
-
---ZGiS0Q5IWpPtfppv--
+Best regards,
+Krzysztof
