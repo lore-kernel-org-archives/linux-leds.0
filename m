@@ -1,88 +1,51 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.4 43/91] leds: turn off the LED and wait for completion on unregistering LED class device
-Date: Tue, 11 Dec 2018 16:41:02 +0100
-Message-ID: <20181211151609.493252715@linuxfoundation.org>
-References: <20181211151606.026852373@linuxfoundation.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 4/5] dt-bindings: leds: Add pattern initialization from
+ Device Tree
+Date: Tue, 11 Dec 2018 11:23:29 -0600
+Message-ID: <CABGGiszi3cgkQy0+h4q6nEY0V1Td2x3eR_kZ50cu3awrSGscMQ@mail.gmail.com>
+References: <1544434201-14190-1-git-send-email-krzk@kernel.org> <1544434201-14190-5-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, linux-leds@vger.kernel.org, Milo Kim <milo.kim@ti.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1544434201-14190-5-git-send-email-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: krzk@kernel.org
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Baolin Wang <baolin.wang@linaro.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Dec 10, 2018 at 3:30 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> Document new linux,trigger-pattern property for initialization of LED
+> pattern trigger.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/leds/common.txt | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index aa1399814a2a..4c65e854bb91 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -37,6 +37,13 @@ Optional properties for child nodes:
+>       "ide-disk" - LED indicates IDE disk activity (deprecated),
+>                    in new implementations use "disk-activity"
+>       "timer" - LED flashes at a fixed, configurable rate
+> +     "pattern" - LED alters the brightness for the specified duration with one
+> +                 software timer (see
+> +                 Documentation/ABI/testing/sysfs-class-led-trigger-pattern)
+> +
+> +- linux,trigger-pattern : Default pattern for "pattern" trigger (see
+> +                          Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> +                          for description of format)
 
-------------------
+Binding documents should generally not refer to kernel docs and need
+to stand on their own.
 
-From: Milo Kim <milo.kim@ti.com>
+I don't think this needs to be linux specific. I'd just call it
+'led-pattern'. I don't think this should be tied to the trigger types.
+Isn't possible you would want to tie a pattern to different triggers.
+IOW, when event X happens, run the pattern. And you could have
+one-shot versus continuous.
 
-commit d1aa577f5e191d77d3ad62da93729b5af9532bb4 upstream.
-
-Workqueue, 'set_brightness_work' is used for scheduling brightness control.
-This workqueue is canceled when the LED class device is unregistered.
-Currently, LED subsystem handles like below.
-
-  cancel_work_sync(&led_cdev->set_brightness_work)
-  led_set_brightness(led_cdev, LED_OFF)
-
-However, this could be a problem.
-Workqueue is going to be canceled but LED device needs to be off.
-The worst case is null pointer access due to scheduling a workqueue.
-
-LED module is loaded.
-  LED driver private data is allocated by using devm_zalloc().
-
-LED module is unloaded.
-  led_classdev_unregister() is called.
-    cancel_work_sync()
-      led_set_brightness(led_cdev, LED_OFF)
-        schedule_work() if LED driver uses brightness_set_blocking()
-        In the meantime, driver private data will be freed.
-
-        ..scheduling..
-
-        brightness_set_blocking() callback is invoked.
-          For the brightness control, LED driver tries to access private
-          data but resource is removed!
-
-To avoid this problem, LED subsystem should turn off the brightness first
-and wait for completion.
-
-  led_set_brightness(led_cdev, LED_OFF)
-  flush_work(&led_cdev->set_brightness_work)
-
-It guarantees that LED driver turns off the brightness prior to
-resource management.
-
-Cc: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Milo Kim <milo.kim@ti.com>
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/leds/led-class.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -247,12 +247,13 @@ void led_classdev_unregister(struct led_
- 	up_write(&led_cdev->trigger_lock);
- #endif
- 
--	cancel_work_sync(&led_cdev->set_brightness_work);
--
- 	/* Stop blinking */
- 	led_stop_software_blink(led_cdev);
-+
- 	led_set_brightness(led_cdev, LED_OFF);
- 
-+	flush_work(&led_cdev->set_brightness_work);
-+
- 	device_unregister(led_cdev->dev);
- 
- 	down_write(&leds_list_lock);
+Rob
