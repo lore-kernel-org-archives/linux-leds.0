@@ -1,73 +1,64 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
- properties
-Date: Tue, 11 Dec 2018 23:44:37 +0100
-Message-ID: <20181211224436.GA27976@amd>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
- <5bea0eb8.1c69fb81.6b921.80e6@mx.google.com>
- <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
- <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com>
- <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
- <20181130210814.GA5756@amd>
- <CAL_JsqK4oaUTBemXiTZzLeOKOndQ_GZp2F7mJ0VzGEKVGHY20Q@mail.gmail.com>
- <fa5add90-e1b7-d527-374f-175abdf88455@gmail.com>
- <CAL_Jsq+EsTXghh-bEtBmQ3oXEW45RJZJEJ2Zn1z-LfhvhNiXnQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 4/5] dt-bindings: leds: Add pattern initialization from
+ Device Tree
+Date: Wed, 12 Dec 2018 09:42:30 +0100
+Message-ID: <CAJKOXPfrRKvvK0fq9SS5xOgeT-vS30z0JwFh=55bow4-tktSZQ@mail.gmail.com>
+References: <1544434201-14190-1-git-send-email-krzk@kernel.org>
+ <1544434201-14190-5-git-send-email-krzk@kernel.org> <CABGGiszi3cgkQy0+h4q6nEY0V1Td2x3eR_kZ50cu3awrSGscMQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+EsTXghh-bEtBmQ3oXEW45RJZJEJ2Zn1z-LfhvhNiXnQ@mail.gmail.com>
+In-Reply-To: <CABGGiszi3cgkQy0+h4q6nEY0V1Td2x3eR_kZ50cu3awrSGscMQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
+To: robh@kernel.org
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, baolin.wang@linaro.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-
---ZGiS0Q5IWpPtfppv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> > >> Basically every single device could have a LED associated with it
-> > >> ("activity"). Would doing it like this mean we'd have to modify every
-> > >> single driver to parse leds / led-names properties?
-> > >
-> > > Normally, that's how properties like this would work. A driver is also
-> > > what knows how the leds should function.
+On Tue, 11 Dec 2018 at 18:23, Rob Herring <robh@kernel.org> wrote:
+>
+> On Mon, Dec 10, 2018 at 3:30 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 > >
-> > This is not true in case of associations where LED controller is
-> > an independent device, as in Pavel's example [0].
->=20
-> I'm not really following how the HDD example is different. The parent
-> of an LED would be the controller. The link to the led node would be
-> in the disk controller node. Though maybe if things get complicated
-> enough, we'd want to describe the drives or drive bays in DT.
+> > Document new linux,trigger-pattern property for initialization of LED
+> > pattern trigger.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >  Documentation/devicetree/bindings/leds/common.txt | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> > index aa1399814a2a..4c65e854bb91 100644
+> > --- a/Documentation/devicetree/bindings/leds/common.txt
+> > +++ b/Documentation/devicetree/bindings/leds/common.txt
+> > @@ -37,6 +37,13 @@ Optional properties for child nodes:
+> >       "ide-disk" - LED indicates IDE disk activity (deprecated),
+> >                    in new implementations use "disk-activity"
+> >       "timer" - LED flashes at a fixed, configurable rate
+> > +     "pattern" - LED alters the brightness for the specified duration with one
+> > +                 software timer (see
+> > +                 Documentation/ABI/testing/sysfs-class-led-trigger-pattern)
+> > +
+> > +- linux,trigger-pattern : Default pattern for "pattern" trigger (see
+> > +                          Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> > +                          for description of format)
+>
+> Binding documents should generally not refer to kernel docs and need
+> to stand on their own.
 
-We were talking case where the LED is on GPIO somewhere. And yes,
-drive bays would be similar.
+I'll copy then the description of pattern.
 
-And.. often you have a single LED for multiple harddrives, too. Fun
-:-).
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> I don't think this needs to be linux specific. I'd just call it
+> 'led-pattern'. I don't think this should be tied to the trigger types.
+> Isn't possible you would want to tie a pattern to different triggers.
+> IOW, when event X happens, run the pattern. And you could have
+> one-shot versus continuous.
 
---ZGiS0Q5IWpPtfppv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+In general pattern has trigger specific format. For pattern-trigger it
+would look like "0 1000 255 1000". For timer trigger it would be just
+a single number (period for blinks). Quite similar for the oneshot
+trigger. I can change it to "led-pattern" (or maybe
+"led-default-pattern" to match "linux,default-trigger" property?) and
+document that the pattern itself is trigger specific
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwQPdQACgkQMOfwapXb+vLnGwCgtFgGl73d1rwY7gfpcDZHaRP5
-akgAoIRxzgT8UZQvLrRu5ZLyNwN/Q2xH
-=VpU7
------END PGP SIGNATURE-----
-
---ZGiS0Q5IWpPtfppv--
+Best regards,
+Krzysztof
