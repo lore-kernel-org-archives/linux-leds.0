@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 3/5] leds: trigger: pattern: Add pattern initialization from Device Tree
-Date: Tue, 18 Dec 2018 16:27:30 +0100
-Message-ID: <1545146852-32207-4-git-send-email-krzk@kernel.org>
+Subject: [PATCH v4 4/5] leds: trigger: oneshot: Add initialization from Device Tree
+Date: Tue, 18 Dec 2018 16:27:31 +0100
+Message-ID: <1545146852-32207-5-git-send-email-krzk@kernel.org>
 References: <1545146852-32207-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1545146852-32207-1-git-send-email-krzk@kernel.org>
@@ -9,160 +9,62 @@ Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Raphael Teysseyre <rteysseyre@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Baolin Wang <baolin.wang@linaro.org>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Allow initialization of pattern used in pattern trigger from Device Tree
-property.
+Allow initialization of delays used in oneshot trigger from Device
+Tree property.
 
-This is especially useful for embedded systems where the pattern trigger
-would be used to indicate the process of boot status in a nice,
-user-friendly blinking way.  This initialization pattern will be used
-till user-space is brought up and sets its own pattern, indicating the
-boot status is for example finished.
+This is especially useful for embedded systems where the trigger might
+be used early, before bringing up user-space.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/leds/trigger/ledtrig-pattern.c | 99 +++++++++++++++++++++++++++-------
- 1 file changed, 80 insertions(+), 19 deletions(-)
+ drivers/leds/trigger/ledtrig-oneshot.c | 38 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 36 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
-index 1870cf87afe1..053e430d9dbb 100644
---- a/drivers/leds/trigger/ledtrig-pattern.c
-+++ b/drivers/leds/trigger/ledtrig-pattern.c
-@@ -220,22 +220,10 @@ static ssize_t pattern_trig_show_patterns(struct pattern_trig_data *data,
- 	return count;
- }
- 
--static ssize_t pattern_trig_store_patterns(struct led_classdev *led_cdev,
--					   const char *buf, size_t count,
--					   bool hw_pattern)
-+static int pattern_trig_store_patterns_string(struct pattern_trig_data *data,
-+					      const char *buf, size_t count)
- {
--	struct pattern_trig_data *data = led_cdev->trigger_data;
--	int ccount, cr, offset = 0, err = 0;
--
--	mutex_lock(&data->lock);
--
--	del_timer_sync(&data->timer);
--
--	if (data->is_hw_pattern)
--		led_cdev->pattern_clear(led_cdev);
--
--	data->is_hw_pattern = hw_pattern;
--	data->npatterns = 0;
-+	int ccount, cr, offset = 0;
- 
- 	while (offset < count - 1 && data->npatterns < MAX_PATTERNS) {
- 		cr = 0;
-@@ -244,14 +232,54 @@ static ssize_t pattern_trig_store_patterns(struct led_classdev *led_cdev,
- 				&data->patterns[data->npatterns].delta_t, &cr);
- 		if (ccount != 2) {
- 			data->npatterns = 0;
--			err = -EINVAL;
--			goto out;
-+			return -EINVAL;
- 		}
- 
- 		offset += cr;
- 		data->npatterns++;
- 	}
- 
-+	return 0;
-+}
-+
-+static int pattern_trig_store_patterns_int(struct pattern_trig_data *data,
-+					   const u32 *buf, size_t count)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i += 2) {
-+		data->patterns[data->npatterns].brightness = buf[i];
-+		data->patterns[data->npatterns].delta_t = buf[i + 1];
-+		data->npatterns++;
-+	}
-+
-+	return 0;
-+}
-+
-+static ssize_t pattern_trig_store_patterns(struct led_classdev *led_cdev,
-+					   const char *buf, const u32 *buf_int,
-+					   size_t count, bool hw_pattern)
-+{
-+	struct pattern_trig_data *data = led_cdev->trigger_data;
-+	int err = 0;
-+
-+	mutex_lock(&data->lock);
-+
-+	del_timer_sync(&data->timer);
-+
-+	if (data->is_hw_pattern)
-+		led_cdev->pattern_clear(led_cdev);
-+
-+	data->is_hw_pattern = hw_pattern;
-+	data->npatterns = 0;
-+
-+	if (buf)
-+		err = pattern_trig_store_patterns_string(data, buf, count);
-+	else
-+		err = pattern_trig_store_patterns_int(data, buf_int, count);
-+	if (err)
-+		goto out;
-+
- 	err = pattern_trig_start_pattern(led_cdev);
- 	if (err)
- 		data->npatterns = 0;
-@@ -275,7 +303,7 @@ static ssize_t pattern_store(struct device *dev, struct device_attribute *attr,
- {
- 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
- 
--	return pattern_trig_store_patterns(led_cdev, buf, count, false);
-+	return pattern_trig_store_patterns(led_cdev, buf, NULL, count, false);
- }
- 
- static DEVICE_ATTR_RW(pattern);
-@@ -295,7 +323,7 @@ static ssize_t hw_pattern_store(struct device *dev,
- {
- 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
- 
--	return pattern_trig_store_patterns(led_cdev, buf, count, true);
-+	return pattern_trig_store_patterns(led_cdev, buf, NULL, count, true);
- }
- 
- static DEVICE_ATTR_RW(hw_pattern);
-@@ -331,6 +359,30 @@ static const struct attribute_group *pattern_trig_groups[] = {
- 	NULL,
+diff --git a/drivers/leds/trigger/ledtrig-oneshot.c b/drivers/leds/trigger/ledtrig-oneshot.c
+index 95c9be4b6e7e..71baccc00f06 100644
+--- a/drivers/leds/trigger/ledtrig-oneshot.c
++++ b/drivers/leds/trigger/ledtrig-oneshot.c
+@@ -130,6 +130,34 @@ static struct attribute *oneshot_trig_attrs[] = {
  };
+ ATTRIBUTE_GROUPS(oneshot_trig);
  
 +static void pattern_init(struct led_classdev *led_cdev)
 +{
-+	unsigned int size = 0;
 +	u32 *pattern;
-+	int err;
++	unsigned int size = 0;
 +
 +	pattern = led_classdev_get_default_pattern(led_cdev, &size);
 +	if (!pattern)
-+		return;
++		goto out_default;
 +
-+	if (size % 2) {
-+		dev_warn(led_cdev->dev, "Expected pattern of tuples\n");
-+		goto out;
++	if (size != 2) {
++		dev_warn(led_cdev->dev,
++			 "Expected 2 but got %u values for delays pattern\n",
++			 size);
++		goto out_default;
 +	}
 +
-+	err = pattern_trig_store_patterns(led_cdev, NULL, pattern, size, false);
-+	if (err < 0)
-+		dev_warn(led_cdev->dev,
-+			 "Pattern initialization failed with error %d\n", err);
-+
-+out:
++	led_cdev->blink_delay_on = pattern[0];
++	led_cdev->blink_delay_off = pattern[1];
 +	kfree(pattern);
++
++	return;
++
++out_default:
++	kfree(pattern);
++	led_cdev->blink_delay_on = DEFAULT_DELAY;
++	led_cdev->blink_delay_off = DEFAULT_DELAY;
 +}
 +
- static int pattern_trig_activate(struct led_classdev *led_cdev)
+ static int oneshot_trig_activate(struct led_classdev *led_cdev)
  {
- 	struct pattern_trig_data *data;
-@@ -354,6 +406,15 @@ static int pattern_trig_activate(struct led_classdev *led_cdev)
- 	timer_setup(&data->timer, pattern_trig_timer_function, 0);
- 	led_cdev->activated = true;
+ 	struct oneshot_trig_data *oneshot_data;
+@@ -140,8 +168,14 @@ static int oneshot_trig_activate(struct led_classdev *led_cdev)
  
+ 	led_set_trigger_data(led_cdev, oneshot_data);
+ 
+-	led_cdev->blink_delay_on = DEFAULT_DELAY;
+-	led_cdev->blink_delay_off = DEFAULT_DELAY;
 +	if (led_cdev->flags & LED_INIT_DEFAULT_TRIGGER) {
 +		pattern_init(led_cdev);
 +		/*
@@ -171,9 +73,8 @@ index 1870cf87afe1..053e430d9dbb 100644
 +		 */
 +		led_cdev->flags &= ~LED_INIT_DEFAULT_TRIGGER;
 +	}
-+
+ 
  	return 0;
  }
- 
 -- 
 2.7.4
