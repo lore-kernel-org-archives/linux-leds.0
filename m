@@ -1,76 +1,80 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Dan Murphy <dmurphy@ti.com>
 Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
-Date: Wed, 19 Dec 2018 20:34:55 +0100
-Message-ID: <20181219193455.GA21159@amd>
+Date: Wed, 19 Dec 2018 13:41:18 -0600
+Message-ID: <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
 References: <20181219162626.12297-1-dmurphy@ti.com>
- <20181219162626.12297-3-dmurphy@ti.com>
+ <20181219162626.12297-3-dmurphy@ti.com> <20181219193455.GA21159@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181219162626.12297-3-dmurphy@ti.com>
+In-Reply-To: <20181219193455.GA21159@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
+To: Pavel Machek <pavel@ucw.cz>
 Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+Pavel
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the review.
 
-Hi!
+On 12/19/2018 01:34 PM, Pavel Machek wrote:
+> Hi!
+> 
+>> +static DEVICE_ATTR_WO(ctrl_bank_a_mix);
+>> +static DEVICE_ATTR_WO(ctrl_bank_b_mix);
+>> +static DEVICE_ATTR_WO(ctrl_bank_c_mix);
+>> +
+>> +static struct attribute *lp5024_ctrl_bank_attrs[] = {
+>> +	&dev_attr_ctrl_bank_a_mix.attr,
+>> +	&dev_attr_ctrl_bank_b_mix.attr,
+>> +	&dev_attr_ctrl_bank_c_mix.attr,
+>> +	NULL
+>> +};
+>> +ATTRIBUTE_GROUPS(lp5024_ctrl_bank);
+> 
+> ...
+>> +
+>> +static DEVICE_ATTR_WO(led1_mix);
+>> +static DEVICE_ATTR_WO(led2_mix);
+>> +static DEVICE_ATTR_WO(led3_mix);
+>> +
+>> +static struct attribute *lp5024_led_independent_attrs[] = {
+>> +	&dev_attr_led1_mix.attr,
+>> +	&dev_attr_led2_mix.attr,
+>> +	&dev_attr_led3_mix.attr,
+>> +	NULL
+>> +};
+>> +ATTRIBUTE_GROUPS(lp5024_led_independent);
+> 
+> Ok, so you are adding new sysfs files. Are they _really_ neccessary?
+> We'd like to have uniform interfaces for the leds.
 
-> +static DEVICE_ATTR_WO(ctrl_bank_a_mix);
-> +static DEVICE_ATTR_WO(ctrl_bank_b_mix);
-> +static DEVICE_ATTR_WO(ctrl_bank_c_mix);
-> +
-> +static struct attribute *lp5024_ctrl_bank_attrs[] =3D {
-> +	&dev_attr_ctrl_bank_a_mix.attr,
-> +	&dev_attr_ctrl_bank_b_mix.attr,
-> +	&dev_attr_ctrl_bank_c_mix.attr,
-> +	NULL
-> +};
-> +ATTRIBUTE_GROUPS(lp5024_ctrl_bank);
+Yes I am adding these for this driver.
+They adjust the individual brightness of each LED connected (what the HW guys called mixing).
 
-=2E..
-> +
-> +static DEVICE_ATTR_WO(led1_mix);
-> +static DEVICE_ATTR_WO(led2_mix);
-> +static DEVICE_ATTR_WO(led3_mix);
-> +
-> +static struct attribute *lp5024_led_independent_attrs[] =3D {
-> +	&dev_attr_led1_mix.attr,
-> +	&dev_attr_led2_mix.attr,
-> +	&dev_attr_led3_mix.attr,
-> +	NULL
-> +};
-> +ATTRIBUTE_GROUPS(lp5024_led_independent);
+The standard brightness sysfs adjusts all 3 LEDs simultaneously so that all 3 LEDs brightness are
+uniform.
 
-Ok, so you are adding new sysfs files. Are they _really_ neccessary?
-We'd like to have uniform interfaces for the leds.
+I did not think these belonged in the dt as they should be user space configurable
 
-If they are neccessary, we need documentation for them.
+> 
+> If they are neccessary, we need documentation for them.
 
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Sure I have no problem documenting them but where do I do that?
+I am assuming Documentation/leds/leds-lp5024.txt
 
---45Z9DzgjV8m4Oswq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+This looks to be where Milo did this before.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Dan
 
-iEYEARECAAYFAlwanV8ACgkQMOfwapXb+vJcsgCgoDf6Ygk2LIK09xDjs70WVjLa
-F40An31rlizGm0+OPasF2r2CeWK+pGOi
-=bOXm
------END PGP SIGNATURE-----
+> 
+> Thanks,
+> 									Pavel
+> 
 
---45Z9DzgjV8m4Oswq--
+
+-- 
+------------------
+Dan Murphy
