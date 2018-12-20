@@ -1,55 +1,129 @@
-From: Dan Murphy <dmurphy@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
-Date: Thu, 20 Dec 2018 08:03:29 -0600
-Message-ID: <8bc77441-eb22-8748-b00b-59d403794c24@ti.com>
-References: <20181219162626.12297-3-dmurphy@ti.com>
- <20181219193455.GA21159@amd> <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
- <20181219201047.GA23448@amd> <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
- <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com> <20181219220326.GA28244@amd>
- <a3214ab3-9281-19d6-7fcc-5abae9a60ebd@ti.com> <20181219222737.GB30496@amd>
- <d7edfd57-20df-bd83-b616-5b18e8bc2c64@ti.com> <20181220090612.GA21972@amd>
+Date: Thu, 20 Dec 2018 21:31:00 +0100
+Message-ID: <71d3ac12-5beb-0a26-71e1-5eae798e7b9f@gmail.com>
+References: <20181219162626.12297-1-dmurphy@ti.com>
+ <20181219162626.12297-3-dmurphy@ti.com> <20181219193455.GA21159@amd>
+ <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com> <20181219201047.GA23448@amd>
+ <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181220090612.GA21972@amd>
+In-Reply-To: <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>
+To: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
+Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 12/20/2018 03:06 AM, Pavel Machek wrote:
-> Hi!
-> 
->>> Anyway, if your 36 channels can be set independently, I believe you
->>> just want them to export as 36 LEDs.
+On 12/19/18 10:50 PM, Dan Murphy wrote:
+> On 12/19/2018 03:36 PM, Jacek Anaszewski wrote:
+>> Hi Dan and Pavel,
 >>
->> I am not sure that is what the "customers" would want to have to set 36 different nodes or even declare those 36 nodes.
->> That is 36 independent user space to kernel space calls that are very expensive just to set a LED color and brightness.
+>> On 12/19/18 9:41 PM, Dan Murphy wrote:
+>>> Pavel
+>>>
+>>> On 12/19/2018 02:10 PM, Pavel Machek wrote:
+>>>> On Wed 2018-12-19 13:41:18, Dan Murphy wrote:
+>>>>> Pavel
+>>>>>
+>>>>> Thanks for the review.
+>>>>>
+>>>>> On 12/19/2018 01:34 PM, Pavel Machek wrote:
+>>>>>> Hi!
+>>>>>>
+>>>>>>> +static DEVICE_ATTR_WO(ctrl_bank_a_mix);
+>>>>>>> +static DEVICE_ATTR_WO(ctrl_bank_b_mix);
+>>>>>>> +static DEVICE_ATTR_WO(ctrl_bank_c_mix);
+>>>>>>> +
+>>>>>>> +static struct attribute *lp5024_ctrl_bank_attrs[] = {
+>>>>>>> +    &dev_attr_ctrl_bank_a_mix.attr,
+>>>>>>> +    &dev_attr_ctrl_bank_b_mix.attr,
+>>>>>>> +    &dev_attr_ctrl_bank_c_mix.attr,
+>>>>>>> +    NULL
+>>>>>>> +};
+>>>>>>> +ATTRIBUTE_GROUPS(lp5024_ctrl_bank);
+>>>>>>
+>>>>>> ...
+>>>>>>> +
+>>>>>>> +static DEVICE_ATTR_WO(led1_mix);
+>>>>>>> +static DEVICE_ATTR_WO(led2_mix);
+>>>>>>> +static DEVICE_ATTR_WO(led3_mix);
+>>>>>>> +
+>>>>>>> +static struct attribute *lp5024_led_independent_attrs[] = {
+>>>>>>> +    &dev_attr_led1_mix.attr,
+>>>>>>> +    &dev_attr_led2_mix.attr,
+>>>>>>> +    &dev_attr_led3_mix.attr,
+>>>>>>> +    NULL
+>>>>>>> +};
+>>>>>>> +ATTRIBUTE_GROUPS(lp5024_led_independent);
+>>>>>>
+>>>>>> Ok, so you are adding new sysfs files. Are they _really_ neccessary?
+>>>>>> We'd like to have uniform interfaces for the leds.
+>>>>>
+>>>>> Yes I am adding these for this driver.
+>>>>> They adjust the individual brightness of each LED connected (what the HW guys called mixing).
+>>>>>
+>>>>> The standard brightness sysfs adjusts all 3 LEDs simultaneously so that all 3 LEDs brightness are
+>>>>> uniform.
+>>>>
+>>>> 1 LED, 1 brightness file... that's what we do. Why should this one be different?
+>>>>
+>>>
+>>> Yes I understand this and 1 DT child node per LED out but...
+>>>
+>>> This device has a single register to control 3 LEDs brightness as a group and individual brightness
+>>> registers to control the LEDs independently to mix the LEDs to a specific color.
+>>>
+>>> There needs to be a way to control both so that developers can mix and adjust the individual RGB and
+>>> then control the brightness of the group during run time without touching the "mixing" value.
+>>>
+>>> I don't think a user needs nor would want to have 24 different LED nodes with 24 different brightness files.
+>>> Or with the LP5036 that would have 36 LED nodes.
+>>>
+>>> Table 1 in the data sheet shows how the outputs map to the control banks to the LED registers.
+>>
+>> Some time ago we had discussion with Vesa Jääskeläinen about possible
+>> approaches to RGB LEDs [0]. What seemed to be the most suitable
+>> variation of the discussed out-of-tree approach was the "color" property
+>> and array of color triplets defined in Device Tree per each color.
 >>
 > 
-> No, 36 independend calls to kernel space are not that expensive.
-
-But they are time consuming.
-
-Also note that even if I set the OUTX color mix register the LEDX brightness register controls the output intensity.
-
-So if the brightness is 0x0 and the Mix register is 0xff then the LED is still off.
-
-I am sticking with the driver as is.  I think this is a better representation of the part and its capability then presenting x number of
-sysfs nodes that will have no affect on the LED if set until the corresponding brightness register is not set properly.
-
-This will also keep the device tree entries down to a minimum.  The LEDx brightness register actually
-controls the output and there are only 7 of these.
-
-Dan
-
+> Why does Device tree define the color?
 > 
-> 									Pavel
-> 
+> Rob indicated that Device tree is supposed to define the hardware.
+> This thread seems to be defining the operation.
 
+Perceived colors produced by LEDs from different manufacturers may
+differ and this alone should be deemed a sufficient argument for having
+board specific color definitions.
+
+> Shouldn't the color be done via user space and not dt?
+
+I think that we should keep the userspace interface as simple
+as possible and backwards compatible with monochrome LEDs.
+
+I also propose to avoid the introduction of a color sysfs
+property in favor of creating separate LED class devices
+for different "color ranges". The devices would drive the same
+LED but using different preset color levels.
+
+We don't have to expose all device knobs to the userspace,
+but instead provide some predefined configurations. It would
+improve user experience by keeping LED class devices simple
+in use. It would be Device Tree designer's responsibility to
+provide color definitions that make sense for given RGB LED
+controller and RGB LED element configuration.
+
+Registering color palette with devm_rgb_register() you proposed
+is also an option, but with one LED class device per color palette
+it would mean allowing for creation/destruction of LED class
+devices by any user having access to given LED's sysfs interface,
+which is really bad solution.
 
 -- 
-------------------
-Dan Murphy
+Best regards,
+Jacek Anaszewski
