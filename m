@@ -1,114 +1,64 @@
-From: Dan Murphy <dmurphy@ti.com>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
-Date: Wed, 19 Dec 2018 19:31:51 -0600
-Message-ID: <d7edfd57-20df-bd83-b616-5b18e8bc2c64@ti.com>
-References: <20181219162626.12297-1-dmurphy@ti.com>
- <20181219162626.12297-3-dmurphy@ti.com> <20181219193455.GA21159@amd>
- <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com> <20181219201047.GA23448@amd>
+Date: Thu, 20 Dec 2018 10:06:12 +0100
+Message-ID: <20181220090612.GA21972@amd>
+References: <20181219162626.12297-3-dmurphy@ti.com>
+ <20181219193455.GA21159@amd>
+ <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
+ <20181219201047.GA23448@amd>
  <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
- <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com> <20181219220326.GA28244@amd>
- <a3214ab3-9281-19d6-7fcc-5abae9a60ebd@ti.com> <20181219222737.GB30496@amd>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <20181219220326.GA28244@amd>
+ <a3214ab3-9281-19d6-7fcc-5abae9a60ebd@ti.com>
+ <20181219222737.GB30496@amd>
+ <d7edfd57-20df-bd83-b616-5b18e8bc2c64@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181219222737.GB30496@amd>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <d7edfd57-20df-bd83-b616-5b18e8bc2c64@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
+To: Dan Murphy <dmurphy@ti.com>
 Cc: jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Pavel
 
-Thanks for trimming.
+--W/nzBZO5zC0uMSeA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 12/19/2018 04:27 PM, Pavel Machek wrote:
-> Hi!
-> 
-> [cc list trimmed]
-> 
->>>>> I don't think a user needs nor would want to have 24 different LED nodes with 24 different brightness files.
->>>>> Or with the LP5036 that would have 36 LED nodes.
->>>>>
->>>>> Table 1 in the data sheet shows how the outputs map to the control banks to the LED registers.
->>>>
->>>> Some time ago we had discussion with Vesa Jääskeläinen about possible
->>>> approaches to RGB LEDs [0]. What seemed to be the most suitable
->>>> variation of the discussed out-of-tree approach was the "color" property
->>>> and array of color triplets defined in Device Tree per each color.
->>>>
->>>> Please refer to [0] for the details.
->>>>
->>>> [0] https://lkml.org/lkml/2018/11/9/938
->>>
->>> Yes, plus I also have the set of HSV patches somewhere... and they
->>> work, but I found out that HSV->RGB conversion results in loss of precision.
->>>
->>> We may want to do something like that.
->>>
->>> But we need to do it once, in a driver core. We obviously don't want
->>> each driver having different version of RGB support.
->>
->> True.  But the RGB driver really should not be defining the color palette.
->>
->> Maybe a "color capability" reported to user space so that the user space can make the decision.
->>
->> It can report
->>
->> For GPIO or constant current situations
->> static red
->> static blue
->> static green 
->>
->> For adjustable configurations it can report:
->> variable red
->> variable blue
->> variable green
->>
->> or even simpler "static" or "dynamic" as a return to report the RGB configuration.
->> The LED driver would just need to set the variable.
-> 
-> I'm not sure what static/variable is.
+Hi!
 
-My suggestion is really based in opinion.  It is my opinion that the user space sets the policy
-of the RGB.  The DT nor the driver should limit the capability of what the user would want to do.
+> > Anyway, if your 36 channels can be set independently, I believe you
+> > just want them to export as 36 LEDs.
+>=20
+> I am not sure that is what the "customers" would want to have to set 36 d=
+ifferent nodes or even declare those 36 nodes.
+> That is 36 independent user space to kernel space calls that are very exp=
+ensive just to set a LED color and brightness.
+>=20
 
-But instead should let the user know what the driver and HW can do.  It seems that the suggestion made in the
-email thread [0] https://lkml.org/lkml/2018/11/9/938 limits that capability via the DT by defining a specific color.
+No, 36 independend calls to kernel space are not that expensive.
 
-If I have a configurable current RGB combo then the palette is endless.  But in a GPIO fixed current situation the palette is
-limited.  So I don't think I agree with the DT side of it.
+									Pavel
 
-There needs to be a way that the kernel can indicate to the user space "heres what I can do you need to let me know".
-As each kernel driver just needs to interact with the HW and not set policy.
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-> 
-> I have RGB leds here that can set any channel to 0-255, at
-> runtime. They seem to be quite common at phones.
+--W/nzBZO5zC0uMSeA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Yes I agree.  Android specifically likes to set these values in the lighting HAL.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-But alternatively once the color is set the brightness can be controlled by PWM or an ALS.
+iEYEARECAAYFAlwbW4QACgkQMOfwapXb+vIX5gCfbSoZAB6VrN4h8DnjYJr1VN0/
+XJ0AoKGMJ00yzItHxFC4vtxppLvmclBq
+=G+17
+-----END PGP SIGNATURE-----
 
-> 
-> Anyway, if your 36 channels can be set independently, I believe you
-> just want them to export as 36 LEDs.
-
-I am not sure that is what the "customers" would want to have to set 36 different nodes or even declare those 36 nodes.
-That is 36 independent user space to kernel space calls that are very expensive just to set a LED color and brightness.
-
-Now that is very unrealistic that there would be 36 calls happening.  But for this part it
-would cut the calls to set the brightness to the kernel in runtime after init to 1/3.  Set the color and then only one call for the brightness.
-
-Dan
-
-> 
-> Thanks,
-> 									Pavel
-> 
-
-
--- 
-------------------
-Dan Murphy
+--W/nzBZO5zC0uMSeA--
