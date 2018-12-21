@@ -1,154 +1,64 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
-Date: Fri, 21 Dec 2018 07:05:18 -0600
-Message-ID: <45ce01f0-af6e-1cc6-5126-fb557c7d2a82@ti.com>
-References: <20181219162626.12297-1-dmurphy@ti.com>
- <20181219162626.12297-3-dmurphy@ti.com> <20181219193455.GA21159@amd>
- <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com> <20181219201047.GA23448@amd>
- <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
- <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
- <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
- <71d3ac12-5beb-0a26-71e1-5eae798e7b9f@gmail.com>
- <2bca210b-76ad-d5a9-906c-4151695050c3@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 8bit
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [GIT PULL] LED updates for 4.21-rc1
+Date: Fri, 21 Dec 2018 16:54:51 +0100
+Message-ID: <20181221155451.7024-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2bca210b-76ad-d5a9-906c-4151695050c3@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, krzk@kernel.org, robh@kernel.org, tiny.windzz@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-On 12/21/2018 01:32 AM, Jacek Anaszewski wrote:
-> On 12/20/18 9:31 PM, Jacek Anaszewski wrote:
->> On 12/19/18 10:50 PM, Dan Murphy wrote:
->>> On 12/19/2018 03:36 PM, Jacek Anaszewski wrote:
->>>> Hi Dan and Pavel,
->>>>
->>>> On 12/19/18 9:41 PM, Dan Murphy wrote:
->>>>> Pavel
->>>>>
->>>>> On 12/19/2018 02:10 PM, Pavel Machek wrote:
->>>>>> On Wed 2018-12-19 13:41:18, Dan Murphy wrote:
->>>>>>> Pavel
->>>>>>>
->>>>>>> Thanks for the review.
->>>>>>>
->>>>>>> On 12/19/2018 01:34 PM, Pavel Machek wrote:
->>>>>>>> Hi!
->>>>>>>>
->>>>>>>>> +static DEVICE_ATTR_WO(ctrl_bank_a_mix);
->>>>>>>>> +static DEVICE_ATTR_WO(ctrl_bank_b_mix);
->>>>>>>>> +static DEVICE_ATTR_WO(ctrl_bank_c_mix);
->>>>>>>>> +
->>>>>>>>> +static struct attribute *lp5024_ctrl_bank_attrs[] = {
->>>>>>>>> +    &dev_attr_ctrl_bank_a_mix.attr,
->>>>>>>>> +    &dev_attr_ctrl_bank_b_mix.attr,
->>>>>>>>> +    &dev_attr_ctrl_bank_c_mix.attr,
->>>>>>>>> +    NULL
->>>>>>>>> +};
->>>>>>>>> +ATTRIBUTE_GROUPS(lp5024_ctrl_bank);
->>>>>>>>
->>>>>>>> ...
->>>>>>>>> +
->>>>>>>>> +static DEVICE_ATTR_WO(led1_mix);
->>>>>>>>> +static DEVICE_ATTR_WO(led2_mix);
->>>>>>>>> +static DEVICE_ATTR_WO(led3_mix);
->>>>>>>>> +
->>>>>>>>> +static struct attribute *lp5024_led_independent_attrs[] = {
->>>>>>>>> +    &dev_attr_led1_mix.attr,
->>>>>>>>> +    &dev_attr_led2_mix.attr,
->>>>>>>>> +    &dev_attr_led3_mix.attr,
->>>>>>>>> +    NULL
->>>>>>>>> +};
->>>>>>>>> +ATTRIBUTE_GROUPS(lp5024_led_independent);
->>>>>>>>
->>>>>>>> Ok, so you are adding new sysfs files. Are they _really_ neccessary?
->>>>>>>> We'd like to have uniform interfaces for the leds.
->>>>>>>
->>>>>>> Yes I am adding these for this driver.
->>>>>>> They adjust the individual brightness of each LED connected (what the HW guys called mixing).
->>>>>>>
->>>>>>> The standard brightness sysfs adjusts all 3 LEDs simultaneously so that all 3 LEDs brightness are
->>>>>>> uniform.
->>>>>>
->>>>>> 1 LED, 1 brightness file... that's what we do. Why should this one be different?
->>>>>>
->>>>>
->>>>> Yes I understand this and 1 DT child node per LED out but...
->>>>>
->>>>> This device has a single register to control 3 LEDs brightness as a group and individual brightness
->>>>> registers to control the LEDs independently to mix the LEDs to a specific color.
->>>>>
->>>>> There needs to be a way to control both so that developers can mix and adjust the individual RGB and
->>>>> then control the brightness of the group during run time without touching the "mixing" value.
->>>>>
->>>>> I don't think a user needs nor would want to have 24 different LED nodes with 24 different brightness files.
->>>>> Or with the LP5036 that would have 36 LED nodes.
->>>>>
->>>>> Table 1 in the data sheet shows how the outputs map to the control banks to the LED registers.
->>>>
->>>> Some time ago we had discussion with Vesa Jääskeläinen about possible
->>>> approaches to RGB LEDs [0]. What seemed to be the most suitable
->>>> variation of the discussed out-of-tree approach was the "color" property
->>>> and array of color triplets defined in Device Tree per each color.
->>>>
->>>
->>> Why does Device tree define the color?
->>>
->>> Rob indicated that Device tree is supposed to define the hardware.
->>> This thread seems to be defining the operation.
->>
->> Perceived colors produced by LEDs from different manufacturers may
->> differ and this alone should be deemed a sufficient argument for having
->> board specific color definitions.
->>
->>> Shouldn't the color be done via user space and not dt?
->>
->> I think that we should keep the userspace interface as simple
->> as possible and backwards compatible with monochrome LEDs.
->>
->> I also propose to avoid the introduction of a color sysfs
->> property in favor of creating separate LED class devices
->> for different "color ranges". The devices would drive the same
->> LED but using different preset color levels.
-> 
-> On the other hand, scattering the control over the hardware
-> among multiple LED class devices would complicate extension
-> of pattern trigger with the support for RGB LEDs.
-> 
-> I looks like we will need the "color" sysfs file  anyway.
-> 
->> We don't have to expose all device knobs to the userspace,
->> but instead provide some predefined configurations. It would
->> improve user experience by keeping LED class devices simple
->> in use. It would be Device Tree designer's responsibility to
->> provide color definitions that make sense for given RGB LED
->> controller and RGB LED element configuration.
->>
->> Registering color palette with devm_rgb_register() you proposed
->> is also an option, but with one LED class device per color palette
->> it would mean allowing for creation/destruction of LED class
->> devices by any user having access to given LED's sysfs interface,
->> which is really bad solution.
-> 
-> With the "color" sysfs file it will make more sense to allow for user
-> defined color palettes.
-> 
+Hi Linus,
 
-I think defining these values in the device tree or acpi severely limits the devices
-capabilities.  Especially in development phases.  If the knobs were exposed then the user space
-can create new experiences.  The color definition should be an absolute color defined in the dt and
-either the framework or user space needs to mix these appropriately.  IMO user space should set the policy
-of the user experience and the dt/acpi needs to set the capabilities.
+Please pull LED updates for 4.21-rc1.
 
-I do like Pavels idea on defining the more standard binding pattern to "group" leds into a single group.
+There are several few-liners, where most of them are fixes
+and improvments. One thing standing out is ground preparation
+for inititializing trigger parameters via Device Tree.
 
-Maybe the framework could take these groups and combine/group them into a single node with the groups colors.
+We introduce LED_INIT_DEFAULT_TRIGGER flag for that purpose
+and set it when default trigger is matched. It indicates
+that trigger should parse DT properties to retrieve
+the initialization data when set as default one.
 
-Dan
--- 
-------------------
-Dan Murphy
+The following changes since commit 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6:
+
+  Linux 4.20-rc3 (2018-11-18 13:33:44 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds-for-4.21-rc1
+
+for you to fetch changes up to 8146aace60c7409cc60a1598bc9647a5bbb12eb4:
+
+  led: triggers: Initialize LED_INIT_DEFAULT_TRIGGER if trigger is brought after class (2018-12-10 21:31:55 +0100)
+
+Thanks,
+Jacek Anaszewski
+
+----------------------------------------------------------------
+LEDs for 4.21-rc1
+----------------------------------------------------------------
+Jacek Anaszewski (2):
+      led: triggers: Break the for loop after default trigger is found
+      led: triggers: Add LED_INIT_DEFAULT_TRIGGER flag
+
+Krzysztof Kozlowski (4):
+      leds: gpio: Drop unneeded manual of_node assignment
+      leds: pwm: Simplify with resource-managed devm_led_classdev_register()
+      leds: pwm: Use OF variant of LED registering function
+      led: triggers: Initialize LED_INIT_DEFAULT_TRIGGER if trigger is brought after class
+
+Rob Herring (1):
+      leds: 88pm860x: Use of_node_name_eq for node name comparisons
+
+Yangtao Li (1):
+      leds: powernv: add of_node_put()
+
+ drivers/leds/led-triggers.c  |  9 +++++++--
+ drivers/leds/leds-88pm860x.c |  2 +-
+ drivers/leds/leds-gpio.c     |  1 -
+ drivers/leds/leds-powernv.c  | 12 +++++++++---
+ drivers/leds/leds-pwm.c      | 22 ++--------------------
+ include/linux/leds.h         |  1 +
+ 6 files changed, 20 insertions(+), 27 deletions(-)
