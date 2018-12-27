@@ -1,38 +1,29 @@
-From: Kangjie Lu <kjlu@umn.edu>
-Subject: [PATCH] leds: fix a missing check of return value of lp55xx_read
-Date: Tue, 25 Dec 2018 22:18:23 -0600
-Message-ID: <20181226041823.73950-1-kjlu@umn.edu>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 2/5] leds: Add helper for getting default pattern from
+ Device Tree
+Date: Thu, 27 Dec 2018 09:47:23 +0100
+Message-ID: <CAJKOXPew1Ufq8vOE2=dqh-=zCQpB8H-X+CEK456MqgcEsNi+5A@mail.gmail.com>
+References: <1545146852-32207-1-git-send-email-krzk@kernel.org> <1545146852-32207-3-git-send-email-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1545146852-32207-3-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: kjlu@umn.edu
-Cc: pakki001@umn.edu, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Raphael Teysseyre <rteysseyre@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Baolin Wang <baolin.wang@linaro.org>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-When lp55xx_read() fails, "status" is an uninitialized variable and thus
-may contain random value; using it leads to undefined behaviors.
+On Tue, 18 Dec 2018 at 16:27, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> Multiple LED triggers might need to access default pattern so add a
+> helper for that.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/leds/led-class.c | 42 ++++++++++++++++++++++++++++++++++++++++++
 
-The fix inserts a check for the return value of lp55xx_read: if it
-fails, returns with its error code.
+As pointed out by 0day-ci this has to be in leds-core.c.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/leds/leds-lp5523.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I'll fix it.
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index a2e74feee2b2..fd64df5a57a5 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -318,7 +318,9 @@ static int lp5523_init_program_engine(struct lp55xx_chip *chip)
- 
- 	/* Let the programs run for couple of ms and check the engine status */
- 	usleep_range(3000, 6000);
--	lp55xx_read(chip, LP5523_REG_STATUS, &status);
-+	ret = lp55xx_read(chip, LP5523_REG_STATUS, &status);
-+	if (ret)
-+		return ret;
- 	status &= LP5523_ENG_STATUS_MASK;
- 
- 	if (status != LP5523_ENG_STATUS_MASK) {
--- 
-2.17.2 (Apple Git-113)
+Best regards,
+Krzysztof
