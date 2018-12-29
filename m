@@ -1,108 +1,162 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt: bindings: lp5024: Introduce the lp5024 and
- lp5018 RGB driver
-Date: Fri, 28 Dec 2018 17:53:33 -0600
-Message-ID: <20181228235333.GA13949@bogus>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+Date: Sat, 29 Dec 2018 19:28:04 +0100
+Message-ID: <b7c69135-1641-48cb-1770-c4c77a989efe@gmail.com>
 References: <20181219162626.12297-1-dmurphy@ti.com>
- <20181219162626.12297-2-dmurphy@ti.com>
+ <20181219162626.12297-3-dmurphy@ti.com> <20181219193455.GA21159@amd>
+ <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com> <20181219201047.GA23448@amd>
+ <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+ <71d3ac12-5beb-0a26-71e1-5eae798e7b9f@gmail.com>
+ <2bca210b-76ad-d5a9-906c-4151695050c3@gmail.com>
+ <45ce01f0-af6e-1cc6-5126-fb557c7d2a82@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181219162626.12297-2-dmurphy@ti.com>
+In-Reply-To: <45ce01f0-af6e-1cc6-5126-fb557c7d2a82@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
+Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 10:26:25AM -0600, Dan Murphy wrote:
-> Introduce the bindings for the Texas Instruments LP5024 and the LP5018
-> RGB LED device driver.  The LP5024/18 can control RGB LEDs individually
-> or as part of a control bank group.  These devices have the ability
-> to adjust the mixing control for the RGB LEDs to obtain different colors
-> independent of the overall brightness of the LED grouping.
+On 12/21/18 2:05 PM, Dan Murphy wrote:
+> On 12/21/2018 01:32 AM, Jacek Anaszewski wrote:
+>> On 12/20/18 9:31 PM, Jacek Anaszewski wrote:
+>>> On 12/19/18 10:50 PM, Dan Murphy wrote:
+>>>> On 12/19/2018 03:36 PM, Jacek Anaszewski wrote:
+>>>>> Hi Dan and Pavel,
+>>>>>
+>>>>> On 12/19/18 9:41 PM, Dan Murphy wrote:
+>>>>>> Pavel
+>>>>>>
+>>>>>> On 12/19/2018 02:10 PM, Pavel Machek wrote:
+>>>>>>> On Wed 2018-12-19 13:41:18, Dan Murphy wrote:
+>>>>>>>> Pavel
+>>>>>>>>
+>>>>>>>> Thanks for the review.
+>>>>>>>>
+>>>>>>>> On 12/19/2018 01:34 PM, Pavel Machek wrote:
+>>>>>>>>> Hi!
+>>>>>>>>>
+>>>>>>>>>> +static DEVICE_ATTR_WO(ctrl_bank_a_mix);
+>>>>>>>>>> +static DEVICE_ATTR_WO(ctrl_bank_b_mix);
+>>>>>>>>>> +static DEVICE_ATTR_WO(ctrl_bank_c_mix);
+>>>>>>>>>> +
+>>>>>>>>>> +static struct attribute *lp5024_ctrl_bank_attrs[] = {
+>>>>>>>>>> +    &dev_attr_ctrl_bank_a_mix.attr,
+>>>>>>>>>> +    &dev_attr_ctrl_bank_b_mix.attr,
+>>>>>>>>>> +    &dev_attr_ctrl_bank_c_mix.attr,
+>>>>>>>>>> +    NULL
+>>>>>>>>>> +};
+>>>>>>>>>> +ATTRIBUTE_GROUPS(lp5024_ctrl_bank);
+>>>>>>>>>
+>>>>>>>>> ...
+>>>>>>>>>> +
+>>>>>>>>>> +static DEVICE_ATTR_WO(led1_mix);
+>>>>>>>>>> +static DEVICE_ATTR_WO(led2_mix);
+>>>>>>>>>> +static DEVICE_ATTR_WO(led3_mix);
+>>>>>>>>>> +
+>>>>>>>>>> +static struct attribute *lp5024_led_independent_attrs[] = {
+>>>>>>>>>> +    &dev_attr_led1_mix.attr,
+>>>>>>>>>> +    &dev_attr_led2_mix.attr,
+>>>>>>>>>> +    &dev_attr_led3_mix.attr,
+>>>>>>>>>> +    NULL
+>>>>>>>>>> +};
+>>>>>>>>>> +ATTRIBUTE_GROUPS(lp5024_led_independent);
+>>>>>>>>>
+>>>>>>>>> Ok, so you are adding new sysfs files. Are they _really_ neccessary?
+>>>>>>>>> We'd like to have uniform interfaces for the leds.
+>>>>>>>>
+>>>>>>>> Yes I am adding these for this driver.
+>>>>>>>> They adjust the individual brightness of each LED connected (what the HW guys called mixing).
+>>>>>>>>
+>>>>>>>> The standard brightness sysfs adjusts all 3 LEDs simultaneously so that all 3 LEDs brightness are
+>>>>>>>> uniform.
+>>>>>>>
+>>>>>>> 1 LED, 1 brightness file... that's what we do. Why should this one be different?
+>>>>>>>
+>>>>>>
+>>>>>> Yes I understand this and 1 DT child node per LED out but...
+>>>>>>
+>>>>>> This device has a single register to control 3 LEDs brightness as a group and individual brightness
+>>>>>> registers to control the LEDs independently to mix the LEDs to a specific color.
+>>>>>>
+>>>>>> There needs to be a way to control both so that developers can mix and adjust the individual RGB and
+>>>>>> then control the brightness of the group during run time without touching the "mixing" value.
+>>>>>>
+>>>>>> I don't think a user needs nor would want to have 24 different LED nodes with 24 different brightness files.
+>>>>>> Or with the LP5036 that would have 36 LED nodes.
+>>>>>>
+>>>>>> Table 1 in the data sheet shows how the outputs map to the control banks to the LED registers.
+>>>>>
+>>>>> Some time ago we had discussion with Vesa Jääskeläinen about possible
+>>>>> approaches to RGB LEDs [0]. What seemed to be the most suitable
+>>>>> variation of the discussed out-of-tree approach was the "color" property
+>>>>> and array of color triplets defined in Device Tree per each color.
+>>>>>
+>>>>
+>>>> Why does Device tree define the color?
+>>>>
+>>>> Rob indicated that Device tree is supposed to define the hardware.
+>>>> This thread seems to be defining the operation.
+>>>
+>>> Perceived colors produced by LEDs from different manufacturers may
+>>> differ and this alone should be deemed a sufficient argument for having
+>>> board specific color definitions.
+>>>
+>>>> Shouldn't the color be done via user space and not dt?
+>>>
+>>> I think that we should keep the userspace interface as simple
+>>> as possible and backwards compatible with monochrome LEDs.
+>>>
+>>> I also propose to avoid the introduction of a color sysfs
+>>> property in favor of creating separate LED class devices
+>>> for different "color ranges". The devices would drive the same
+>>> LED but using different preset color levels.
+>>
+>> On the other hand, scattering the control over the hardware
+>> among multiple LED class devices would complicate extension
+>> of pattern trigger with the support for RGB LEDs.
+>>
+>> I looks like we will need the "color" sysfs file  anyway.
+>>
+>>> We don't have to expose all device knobs to the userspace,
+>>> but instead provide some predefined configurations. It would
+>>> improve user experience by keeping LED class devices simple
+>>> in use. It would be Device Tree designer's responsibility to
+>>> provide color definitions that make sense for given RGB LED
+>>> controller and RGB LED element configuration.
+>>>
+>>> Registering color palette with devm_rgb_register() you proposed
+>>> is also an option, but with one LED class device per color palette
+>>> it would mean allowing for creation/destruction of LED class
+>>> devices by any user having access to given LED's sysfs interface,
+>>> which is really bad solution.
+>>
+>> With the "color" sysfs file it will make more sense to allow for user
+>> defined color palettes.
+>>
 > 
-> Datasheet:
-> http://www.ti.com/lit/ds/symlink/lp5024.pdf
+> I think defining these values in the device tree or acpi severely limits the devices
+> capabilities.  Especially in development phases.  If the knobs were exposed then the user space
+> can create new experiences.  The color definition should be an absolute color defined in the dt and
+> either the framework or user space needs to mix these appropriately.  IMO user space should set the policy
+> of the user experience and the dt/acpi needs to set the capabilities.
 > 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  .../devicetree/bindings/leds/leds-lp5024.txt  | 63 +++++++++++++++++++
->  1 file changed, 63 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lp5024.txt
+> I do like Pavels idea on defining the more standard binding pattern to "group" leds into a single group.
 > 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lp5024.txt b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
-> new file mode 100644
-> index 000000000000..9567aa6f7813
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
-> @@ -0,0 +1,63 @@
-> +* Texas Instruments - LP5024/18 RGB LED driver
-> +
-> +The LM3692x is an ultra-compact, highly efficient,
-> +white-LED driver designed for LCD display backlighting.
+> Maybe the framework could take these groups and combine/group them into a single node with the groups colors.
 
-Leftover copy-n-paste?
+There is still HSV approach [0] in store. One problem with proposed
+implementation is fixed algorithm of RGB <-> HSV color space conversion.
+Maybe allowing for some board specific adjustments in DT would add
+more flexibility.
 
-> +
-> +The main difference between the LP5024 and L5018 is the number of
-> +RGB LEDs they support.  The LP5024 supports twenty four strings while the
-> +LP5018 supports eighteen strings.
-> +
-> +Required properties:
-> +	- compatible:
-> +		"ti,lp5018"
-> +		"ti,lp5024"
-> +	- reg :  I2C slave address
-> +	- #address-cells : 1
-> +	- #size-cells : 0
-> +
-> +Optional properties:
-> +	- enable-gpios : gpio pin to enable/disable the device.
-> +	- vled-supply : LED supply
-> +
-> +Required child properties:
-> +	- reg : Is the child node iteration.
-> +	- led-sources : LP5024 - 0 - 7
-> +			LP5018 - 0 - 5
-> +			Declares the LED string or strings that the child node
-> +			will control.  If ti,control-bank is set then this
-> +			property will contain multiple LED IDs.
-> +
-> +Optional child properties:
-> +	- label : see Documentation/devicetree/bindings/leds/common.txt
-> +	- linux,default-trigger :
-> +	   see Documentation/devicetree/bindings/leds/common.txt
-> +	- ti,control-bank : Indicates that the LED strings declared in the
-> +			    led-sources property are grouped within a control
-> +			    bank for brightness and mixing control.
-> +
-> +Example:
-> +
-> +led-controller@28 {
-> +	compatible = "ti,lp5024";
-> +	reg = <0x28>;
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-> +	vled-supply = <&vbatt>;
-> +
-> +	led@0 {
-> +		reg = <0>;
-> +		led-sources = <1>;
-> +	};
-> +
-> +	led@1 {
-> +		reg = <1>;
-> +		led-sources = <0 6>;
-> +		ti,control-bank;
-> +	};
-> +
-> +}
-> +
-> +For more product information please see the link below:
-> +http://www.ti.com/lit/ds/symlink/lp5024.pdf
-> -- 
-> 2.20.0.rc2.7.g965798d1f2
-> 
+[0] https://lkml.org/lkml/2017/8/31/255
+
+-- 
+Best regards,
+Jacek Anaszewski
