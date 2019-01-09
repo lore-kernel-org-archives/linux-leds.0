@@ -1,72 +1,169 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v7 0/5] leds: trigger: Add pattern initialization from Device Tree
-Date: Wed,  9 Jan 2019 15:44:44 +0100
-Message-ID: <1547045089-19128-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH v7 1/5] dt-bindings: leds: Add pattern initialization from Device Tree
+Date: Wed,  9 Jan 2019 15:44:45 +0100
+Message-ID: <1547045089-19128-2-git-send-email-krzk@kernel.org>
+References: <1547045089-19128-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1547045089-19128-1-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
+Document new led-pattern property for initialization of LED triggers.
+The property format is trigger-specific (except being array of
+integers).  For pattern trigger, the explanation of pattern format was
+moved to a common file shared with sysfs ABI.
 
-Changes since v6:
-1. Drop goto from led_get_default_pattern() and rename "DeviceTree"
-   into "device tree".
-2. Add Pavel's ack to patch 1/5.
-
-Changes since v5:
-1. Drop the "classdev" prefix from helper for getting default pattern
-   and move the kerneldoc to header file (this was not fixed in v5 by
-   mistake).
-
-Changes since v4:
-1. Move helper to get default pattern from led-class.c to led-core.c and
-   rename it (build issue pointed by kbuild robot).
-
-Changes since v3:
-1. Add missing EXPORT_SYMBOL_GPL.
-2. Put pattern trigger format into common file - shared between
-   dt-bindings and sysfs.
-3. Use array of integers as led-pattern property (since it is bigger change
-   I did not add Pavel's ack to patch 2/5).
-4. Mention ms units for led-pattern bindings.
-
-Changes since v2:
-1. Drop Jacek's patches and my "led: triggers: Initialize
-   LED_INIT_DEFAULT_TRIGGER if trigger is brought after class".
-2. Follow Rob's advices about bindings - use "led-pattern" property
-   and generalize usage of it into to three triggers.
-3. New patches (2/5, 4/5 and 5/5).
-
-Changes since v1:
-1. Rebase on Jacek's patches.
-2. Add patch 3/5 for fixup of Jacek's solution.
-3. Drop first two patches from the series (applied).
-4. Patch 5/5: Use LED_INIT_DEFAULT_TRIGGER (suggested by Jacek Anaszewski).
-5. Patch 5/5: Return-on-error and log warning (suggested by Pavel Machek).
-
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (5):
-  dt-bindings: leds: Add pattern initialization from Device Tree
-  leds: Add helper for getting default pattern from Device Tree
-  leds: trigger: pattern: Add pattern initialization from Device Tree
-  leds: trigger: oneshot: Add initialization from Device Tree
-  leds: trigger: timer: Add initialization from Device Tree
-
- .../ABI/testing/sysfs-class-led-trigger-pattern    | 51 +----------
- Documentation/devicetree/bindings/leds/common.txt  | 12 +++
- .../bindings/leds/leds-trigger-pattern.txt         | 49 +++++++++++
- drivers/leds/led-core.c                            | 30 +++++++
- drivers/leds/trigger/ledtrig-oneshot.c             | 38 ++++++++-
- drivers/leds/trigger/ledtrig-pattern.c             | 99 +++++++++++++++++-----
- drivers/leds/trigger/ledtrig-timer.c               | 34 ++++++++
- include/linux/leds.h                               | 13 +++
- 8 files changed, 257 insertions(+), 69 deletions(-)
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+---
+ .../ABI/testing/sysfs-class-led-trigger-pattern    | 51 ++--------------------
+ Documentation/devicetree/bindings/leds/common.txt  | 12 +++++
+ .../bindings/leds/leds-trigger-pattern.txt         | 49 +++++++++++++++++++++
+ 3 files changed, 64 insertions(+), 48 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
 
+diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+index 1e5d172e0646..bd92ef9d6faa 100644
+--- a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
++++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+@@ -7,55 +7,10 @@ Description:
+ 		timer. It can do gradual dimming and step change of brightness.
+ 
+ 		The pattern is given by a series of tuples, of brightness and
+-		duration (ms). The LED is expected to traverse the series and
+-		each brightness value for the specified duration. Duration of
+-		0 means brightness should immediately change to new value, and
+-		writing malformed pattern deactivates any active one.
++		duration (ms).
+ 
+-		1. For gradual dimming, the dimming interval now is set as 50
+-		milliseconds. So the tuple with duration less than dimming
+-		interval (50ms) is treated as a step change of brightness,
+-		i.e. the subsequent brightness will be applied without adding
+-		intervening dimming intervals.
+-
+-		The gradual dimming format of the software pattern values should be:
+-		"brightness_1 duration_1 brightness_2 duration_2 brightness_3
+-		duration_3 ...". For example:
+-
+-		echo 0 1000 255 2000 > pattern
+-
+-		It will make the LED go gradually from zero-intensity to max (255)
+-		intensity in 1000 milliseconds, then back to zero intensity in 2000
+-		milliseconds:
+-
+-		LED brightness
+-		    ^
+-		255-|       / \            / \            /
+-		    |      /    \         /    \         /
+-		    |     /       \      /       \      /
+-		    |    /          \   /          \   /
+-		  0-|   /             \/             \/
+-		    +---0----1----2----3----4----5----6------------> time (s)
+-
+-		2. To make the LED go instantly from one brightness value to another,
+-		we should use zero-time lengths (the brightness must be same as
+-		the previous tuple's). So the format should be:
+-		"brightness_1 duration_1 brightness_1 0 brightness_2 duration_2
+-		brightness_2 0 ...". For example:
+-
+-		echo 0 1000 0 0 255 2000 255 0 > pattern
+-
+-		It will make the LED stay off for one second, then stay at max brightness
+-		for two seconds:
+-
+-		LED brightness
+-		    ^
+-		255-|        +---------+    +---------+
+-		    |        |         |    |         |
+-		    |        |         |    |         |
+-		    |        |         |    |         |
+-		  0-|   -----+         +----+         +----
+-		    +---0----1----2----3----4----5----6------------> time (s)
++		The exact format is described in:
++		Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+ 
+ What:		/sys/class/leds/<led>/hw_pattern
+ Date:		September 2018
+diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+index aa1399814a2a..70876ac11367 100644
+--- a/Documentation/devicetree/bindings/leds/common.txt
++++ b/Documentation/devicetree/bindings/leds/common.txt
+@@ -37,6 +37,18 @@ Optional properties for child nodes:
+      "ide-disk" - LED indicates IDE disk activity (deprecated),
+                   in new implementations use "disk-activity"
+      "timer" - LED flashes at a fixed, configurable rate
++     "pattern" - LED alters the brightness for the specified duration with one
++                 software timer (requires "led-pattern" property)
++
++- led-pattern : Array of integers with default pattern for certain triggers.
++                Each trigger may parse this property differently:
++                - one-shot : two numbers specifying delay on and delay off (in ms),
++                - timer : two numbers specifying delay on and delay off (in ms),
++                - pattern : the pattern is given by a series of tuples, of
++                  brightness and duration (in ms).  The exact format is
++                  described in:
++                  Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
++
+ 
+ - led-max-microamp : Maximum LED supply current in microamperes. This property
+                      can be made mandatory for the board configurations
+diff --git a/Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt b/Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+new file mode 100644
+index 000000000000..d3696680bfc8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+@@ -0,0 +1,49 @@
++* Pattern format for LED pattern trigger
++
++The pattern is given by a series of tuples, of brightness and duration (ms).
++The LED is expected to traverse the series and each brightness value for the
++specified duration. Duration of 0 means brightness should immediately change to
++new value, and writing malformed pattern deactivates any active one.
++
++1. For gradual dimming, the dimming interval now is set as 50 milliseconds. So
++the tuple with duration less than dimming interval (50ms) is treated as a step
++change of brightness, i.e. the subsequent brightness will be applied without
++adding intervening dimming intervals.
++
++The gradual dimming format of the software pattern values should be:
++"brightness_1 duration_1 brightness_2 duration_2 brightness_3 duration_3 ...".
++For example (using sysfs interface):
++
++echo 0 1000 255 2000 > pattern
++
++It will make the LED go gradually from zero-intensity to max (255) intensity in
++1000 milliseconds, then back to zero intensity in 2000 milliseconds:
++
++LED brightness
++    ^
++255-|       / \            / \            /
++    |      /    \         /    \         /
++    |     /       \      /       \      /
++    |    /          \   /          \   /
++  0-|   /             \/             \/
++    +---0----1----2----3----4----5----6------------> time (s)
++
++2. To make the LED go instantly from one brightness value to another, we should
++use zero-time lengths (the brightness must be same as the previous tuple's). So
++the format should be: "brightness_1 duration_1 brightness_1 0 brightness_2
++duration_2 brightness_2 0 ...".
++For example (using sysfs interface):
++
++echo 0 1000 0 0 255 2000 255 0 > pattern
++
++It will make the LED stay off for one second, then stay at max brightness for
++two seconds:
++
++LED brightness
++    ^
++255-|        +---------+    +---------+
++    |        |         |    |         |
++    |        |         |    |         |
++    |        |         |    |         |
++  0-|   -----+         +----+         +----
++    +---0----1----2----3----4----5----6------------> time (s)
 -- 
 2.7.4
