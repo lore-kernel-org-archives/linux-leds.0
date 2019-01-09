@@ -1,69 +1,72 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v6 2/5] leds: Add helper for getting default pattern from
- Device Tree
-Date: Wed, 9 Jan 2019 15:03:51 +0100
-Message-ID: <CAJKOXPdhz3PVELFk_zSH+akmCLWgEfWvV+aGUoL9R9sBaQKjDg@mail.gmail.com>
-References: <1546596524-19863-1-git-send-email-krzk@kernel.org>
- <1546596524-19863-3-git-send-email-krzk@kernel.org> <20190107174924.GD933@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v7 0/5] leds: trigger: Add pattern initialization from Device Tree
+Date: Wed,  9 Jan 2019 15:44:44 +0100
+Message-ID: <1547045089-19128-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190107174924.GD933@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, 7 Jan 2019 at 18:49, Pavel Machek <pavel@ucw.cz> wrote:
->
-> Hi!
->
-> > Multiple LED triggers might need to access default pattern so add a
-> > helper for that.
-> >
-> >  }
-> >  EXPORT_SYMBOL_GPL(led_update_brightness);
-> >
-> > +u32 *led_get_default_pattern(struct led_classdev *led_cdev, unsigned int *size)
-> > +{
-> > +     struct device_node *np = dev_of_node(led_cdev->dev);
-> > +     u32 *pattern;
-> > +     int count;
-> > +
-> > +     if (!np)
-> > +             return NULL;
-> > +
-> > +     count = of_property_count_u32_elems(np, "led-pattern");
-> > +     if (count < 0)
-> > +             return NULL;
-> > +
-> > +     pattern = kcalloc(count, sizeof(*pattern), GFP_KERNEL);
-> > +     if (!pattern)
-> > +             return NULL;
-> > +
-> > +     if (of_property_read_u32_array(np, "led-pattern", pattern, count))
-> > +             goto err;
->
-> Just kfree and return here. No need for goto if that is just one case.
+Hi,
 
-OK
+Changes since v6:
+1. Drop goto from led_get_default_pattern() and rename "DeviceTree"
+   into "device tree".
+2. Add Pavel's ack to patch 1/5.
 
->
->
-> >  /**
-> > + * led_get_default_pattern - return default pattern
-> > + *
-> > + * @led_cdev: the LED to get default pattern for
-> > + * @size:     pointer for storing the number of elements in returned array,
-> > + *            modified only if return != NULL
-> > + *
-> > + * Return:    Allocated array of integers with default pattern from DeviceTree
-> > + *            or NULL.  Caller is responsible for kfree().
-> > + */
->
-> "DeviceTree" -> "device tree".
+Changes since v5:
+1. Drop the "classdev" prefix from helper for getting default pattern
+   and move the kerneldoc to header file (this was not fixed in v5 by
+   mistake).
 
-Sure, thanks for the feedback!
+Changes since v4:
+1. Move helper to get default pattern from led-class.c to led-core.c and
+   rename it (build issue pointed by kbuild robot).
+
+Changes since v3:
+1. Add missing EXPORT_SYMBOL_GPL.
+2. Put pattern trigger format into common file - shared between
+   dt-bindings and sysfs.
+3. Use array of integers as led-pattern property (since it is bigger change
+   I did not add Pavel's ack to patch 2/5).
+4. Mention ms units for led-pattern bindings.
+
+Changes since v2:
+1. Drop Jacek's patches and my "led: triggers: Initialize
+   LED_INIT_DEFAULT_TRIGGER if trigger is brought after class".
+2. Follow Rob's advices about bindings - use "led-pattern" property
+   and generalize usage of it into to three triggers.
+3. New patches (2/5, 4/5 and 5/5).
+
+Changes since v1:
+1. Rebase on Jacek's patches.
+2. Add patch 3/5 for fixup of Jacek's solution.
+3. Drop first two patches from the series (applied).
+4. Patch 5/5: Use LED_INIT_DEFAULT_TRIGGER (suggested by Jacek Anaszewski).
+5. Patch 5/5: Return-on-error and log warning (suggested by Pavel Machek).
+
 
 Best regards,
 Krzysztof
+
+Krzysztof Kozlowski (5):
+  dt-bindings: leds: Add pattern initialization from Device Tree
+  leds: Add helper for getting default pattern from Device Tree
+  leds: trigger: pattern: Add pattern initialization from Device Tree
+  leds: trigger: oneshot: Add initialization from Device Tree
+  leds: trigger: timer: Add initialization from Device Tree
+
+ .../ABI/testing/sysfs-class-led-trigger-pattern    | 51 +----------
+ Documentation/devicetree/bindings/leds/common.txt  | 12 +++
+ .../bindings/leds/leds-trigger-pattern.txt         | 49 +++++++++++
+ drivers/leds/led-core.c                            | 30 +++++++
+ drivers/leds/trigger/ledtrig-oneshot.c             | 38 ++++++++-
+ drivers/leds/trigger/ledtrig-pattern.c             | 99 +++++++++++++++++-----
+ drivers/leds/trigger/ledtrig-timer.c               | 34 ++++++++
+ include/linux/leds.h                               | 13 +++
+ 8 files changed, 257 insertions(+), 69 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+
+-- 
+2.7.4
