@@ -1,159 +1,185 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 1/2] dt: bindings: lp5024: Introduce the lp5024 and lp5018
- RGB driver
-Date: Wed, 9 Jan 2019 21:12:15 +0100
-Message-ID: <df59c10d-7038-cb4a-45f0-7420254c6398@gmail.com>
-References: <20181219162626.12297-1-dmurphy@ti.com>
- <20181219162626.12297-2-dmurphy@ti.com>
- <dc2283f9-db85-1eaf-f046-3fbbd4adcace@gmail.com>
- <2d2d5dcd-9c23-e901-daac-9b79aa5a5e82@ti.com>
- <6c62956e-7789-58ba-5437-f2e033f2825c@gmail.com>
- <366cbf6d-94fa-fea9-be58-07ddb09cff3a@ti.com>
+Subject: Re: [PATCH v7 1/5] dt-bindings: leds: Add pattern initialization from
+ Device Tree
+Date: Wed, 9 Jan 2019 21:44:45 +0100
+Message-ID: <d15cffc9-45c7-11ab-5be0-4fcdaa9b388c@gmail.com>
+References: <1547045089-19128-1-git-send-email-krzk@kernel.org>
+ <1547045089-19128-2-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <366cbf6d-94fa-fea9-be58-07ddb09cff3a@ti.com>
+In-Reply-To: <1547045089-19128-2-git-send-email-krzk@kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Dan,
+Hi Krzysztof,
 
-On 1/8/19 10:22 PM, Dan Murphy wrote:
-> On 1/8/19 3:16 PM, Jacek Anaszewski wrote:
->> On 1/8/19 9:53 PM, Dan Murphy wrote:
->>> Jacek
->>>
->>> On 1/8/19 2:33 PM, Jacek Anaszewski wrote:
->>>> Dan,
->>>>
->>>> On 12/19/18 5:26 PM, Dan Murphy wrote:
->>>>> Introduce the bindings for the Texas Instruments LP5024 and the LP5018
->>>>> RGB LED device driver.  The LP5024/18 can control RGB LEDs individually
->>>>> or as part of a control bank group.  These devices have the ability
->>>>> to adjust the mixing control for the RGB LEDs to obtain different colors
->>>>> independent of the overall brightness of the LED grouping.
->>>>>
->>>>> Datasheet:
->>>>> http://www.ti.com/lit/ds/symlink/lp5024.pdf
->>>>>
->>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>>>> ---
->>>>>     .../devicetree/bindings/leds/leds-lp5024.txt  | 63 +++++++++++++++++++
->>>>>     1 file changed, 63 insertions(+)
->>>>>     create mode 100644 Documentation/devicetree/bindings/leds/leds-lp5024.txt
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lp5024.txt b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
->>>>> new file mode 100644
->>>>> index 000000000000..9567aa6f7813
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
->>>>> @@ -0,0 +1,63 @@
->>>>> +* Texas Instruments - LP5024/18 RGB LED driver
->>>>> +
->>>>> +The LM3692x is an ultra-compact, highly efficient,
->>>>> +white-LED driver designed for LCD display backlighting.
->>>>> +
->>>>> +The main difference between the LP5024 and L5018 is the number of
->>>>> +RGB LEDs they support.  The LP5024 supports twenty four strings while the
->>>>> +LP5018 supports eighteen strings.
->>>>> +
->>>>> +Required properties:
->>>>> +    - compatible:
->>>>> +        "ti,lp5018"
->>>>> +        "ti,lp5024"
->>>>> +    - reg :  I2C slave address
->>>>> +    - #address-cells : 1
->>>>> +    - #size-cells : 0
->>>>> +
->>>>> +Optional properties:
->>>>> +    - enable-gpios : gpio pin to enable/disable the device.
->>>>> +    - vled-supply : LED supply
->>>>> +
->>>>> +Required child properties:
->>>>> +    - reg : Is the child node iteration.
->>>>> +    - led-sources : LP5024 - 0 - 7
->>>>> +            LP5018 - 0 - 5
->>>>> +            Declares the LED string or strings that the child node
->>>>> +            will control.  If ti,control-bank is set then this
->>>>> +            property will contain multiple LED IDs.
->>>>> +
->>>>> +Optional child properties:
->>>>> +    - label : see Documentation/devicetree/bindings/leds/common.txt
->>>>> +    - linux,default-trigger :
->>>>> +       see Documentation/devicetree/bindings/leds/common.txt
->>>>> +    - ti,control-bank : Indicates that the LED strings declared in the
->>>>> +                led-sources property are grouped within a control
->>>>> +                bank for brightness and mixing control.
->>>>> +
->>>>> +Example:
->>>>> +
->>>>> +led-controller@28 {
->>>>> +    compatible = "ti,lp5024";
->>>>> +    reg = <0x28>;
->>>>> +    #address-cells = <1>;
->>>>> +    #size-cells = <0>;
->>>>> +
->>>>> +    enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
->>>>> +    vled-supply = <&vbatt>;
->>>>> +
->>>>> +    led@0 {
->>>>> +        reg = <0>;
->>>>> +        led-sources = <1>;
->>>>> +    };
->>>>> +
->>>>> +    led@1 {
->>>>> +        reg = <1>;
->>>>> +        led-sources = <0 6>;
->>>>> +        ti,control-bank;
->>>>
->>>> Do you really need ti,control-bank? Doesn't led-sources array size
->>>> greater than 1 mean that the node describes control bank?
->>>>
->>>
->>> That will work too.
->>
->>>> Also, does it make sense to have only two LEDs in the bank?
->>>
->>> The array can populate all 7 LEDs in a single node.  I only show 2 here as the example.
->>> See the description above of the led-sources
->>
->> OK, I confused RGB LED modules with banks.
->>
->> Shouldn't we allow for defining either strings or RGB LED
->> triplets somehow then?
->>
-> 
-> Well that is what this should be doing.  If you define a single LED in LED sources then
-> the triplet is controlled via the associated LEDx_brightness register.
+Thank you for the update.
 
-led-sources should map to iouts directly.
-So, for RGB LED modules I would expect:
+Patch set looks good to me.
 
-LED0: led-sources = <0 1 2>;
-LED1: led-sources = <3 4 5>;
-LED2: led-sources = <6 7 8>;
-and so on.
+Now we're missing only ack from Rob for this patch.
 
-for banks:
-
-Bank A with iouts 0,3,6,9: led-sources<0 3 6 9>;
-Bank B with iouts 2,4,10:  led-sources<2 4 10>;
-Bank C with iouts 5,8,11,14,17: led-sources<5 8 11 14 17>;
-
-We could additionally mark banks with ti,control-bank,
-but I'm not sure if it would ease parsing, since
-you will have to validate iouts configuration anyway.
-
-> If you have multiple LED sources defined in the led-sources then those LEDs would be grouped in the bank.
-> I guess I need to provide some protection or a warning if a DT defines two banks because there is only one bank control.
-
-Does the hardware allow the IOUT to belong to an RGB LED module
-and to a bank in the same time?
-
--- 
 Best regards,
 Jacek Anaszewski
+
+On 1/9/19 3:44 PM, Krzysztof Kozlowski wrote:
+> Document new led-pattern property for initialization of LED triggers.
+> The property format is trigger-specific (except being array of
+> integers).  For pattern trigger, the explanation of pattern format was
+> moved to a common file shared with sysfs ABI.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> ---
+>   .../ABI/testing/sysfs-class-led-trigger-pattern    | 51 ++--------------------
+>   Documentation/devicetree/bindings/leds/common.txt  | 12 +++++
+>   .../bindings/leds/leds-trigger-pattern.txt         | 49 +++++++++++++++++++++
+>   3 files changed, 64 insertions(+), 48 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> index 1e5d172e0646..bd92ef9d6faa 100644
+> --- a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> @@ -7,55 +7,10 @@ Description:
+>   		timer. It can do gradual dimming and step change of brightness.
+>   
+>   		The pattern is given by a series of tuples, of brightness and
+> -		duration (ms). The LED is expected to traverse the series and
+> -		each brightness value for the specified duration. Duration of
+> -		0 means brightness should immediately change to new value, and
+> -		writing malformed pattern deactivates any active one.
+> +		duration (ms).
+>   
+> -		1. For gradual dimming, the dimming interval now is set as 50
+> -		milliseconds. So the tuple with duration less than dimming
+> -		interval (50ms) is treated as a step change of brightness,
+> -		i.e. the subsequent brightness will be applied without adding
+> -		intervening dimming intervals.
+> -
+> -		The gradual dimming format of the software pattern values should be:
+> -		"brightness_1 duration_1 brightness_2 duration_2 brightness_3
+> -		duration_3 ...". For example:
+> -
+> -		echo 0 1000 255 2000 > pattern
+> -
+> -		It will make the LED go gradually from zero-intensity to max (255)
+> -		intensity in 1000 milliseconds, then back to zero intensity in 2000
+> -		milliseconds:
+> -
+> -		LED brightness
+> -		    ^
+> -		255-|       / \            / \            /
+> -		    |      /    \         /    \         /
+> -		    |     /       \      /       \      /
+> -		    |    /          \   /          \   /
+> -		  0-|   /             \/             \/
+> -		    +---0----1----2----3----4----5----6------------> time (s)
+> -
+> -		2. To make the LED go instantly from one brightness value to another,
+> -		we should use zero-time lengths (the brightness must be same as
+> -		the previous tuple's). So the format should be:
+> -		"brightness_1 duration_1 brightness_1 0 brightness_2 duration_2
+> -		brightness_2 0 ...". For example:
+> -
+> -		echo 0 1000 0 0 255 2000 255 0 > pattern
+> -
+> -		It will make the LED stay off for one second, then stay at max brightness
+> -		for two seconds:
+> -
+> -		LED brightness
+> -		    ^
+> -		255-|        +---------+    +---------+
+> -		    |        |         |    |         |
+> -		    |        |         |    |         |
+> -		    |        |         |    |         |
+> -		  0-|   -----+         +----+         +----
+> -		    +---0----1----2----3----4----5----6------------> time (s)
+> +		The exact format is described in:
+> +		Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+>   
+>   What:		/sys/class/leds/<led>/hw_pattern
+>   Date:		September 2018
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index aa1399814a2a..70876ac11367 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -37,6 +37,18 @@ Optional properties for child nodes:
+>        "ide-disk" - LED indicates IDE disk activity (deprecated),
+>                     in new implementations use "disk-activity"
+>        "timer" - LED flashes at a fixed, configurable rate
+> +     "pattern" - LED alters the brightness for the specified duration with one
+> +                 software timer (requires "led-pattern" property)
+> +
+> +- led-pattern : Array of integers with default pattern for certain triggers.
+> +                Each trigger may parse this property differently:
+> +                - one-shot : two numbers specifying delay on and delay off (in ms),
+> +                - timer : two numbers specifying delay on and delay off (in ms),
+> +                - pattern : the pattern is given by a series of tuples, of
+> +                  brightness and duration (in ms).  The exact format is
+> +                  described in:
+> +                  Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+> +
+>   
+>   - led-max-microamp : Maximum LED supply current in microamperes. This property
+>                        can be made mandatory for the board configurations
+> diff --git a/Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt b/Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+> new file mode 100644
+> index 000000000000..d3696680bfc8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+> @@ -0,0 +1,49 @@
+> +* Pattern format for LED pattern trigger
+> +
+> +The pattern is given by a series of tuples, of brightness and duration (ms).
+> +The LED is expected to traverse the series and each brightness value for the
+> +specified duration. Duration of 0 means brightness should immediately change to
+> +new value, and writing malformed pattern deactivates any active one.
+> +
+> +1. For gradual dimming, the dimming interval now is set as 50 milliseconds. So
+> +the tuple with duration less than dimming interval (50ms) is treated as a step
+> +change of brightness, i.e. the subsequent brightness will be applied without
+> +adding intervening dimming intervals.
+> +
+> +The gradual dimming format of the software pattern values should be:
+> +"brightness_1 duration_1 brightness_2 duration_2 brightness_3 duration_3 ...".
+> +For example (using sysfs interface):
+> +
+> +echo 0 1000 255 2000 > pattern
+> +
+> +It will make the LED go gradually from zero-intensity to max (255) intensity in
+> +1000 milliseconds, then back to zero intensity in 2000 milliseconds:
+> +
+> +LED brightness
+> +    ^
+> +255-|       / \            / \            /
+> +    |      /    \         /    \         /
+> +    |     /       \      /       \      /
+> +    |    /          \   /          \   /
+> +  0-|   /             \/             \/
+> +    +---0----1----2----3----4----5----6------------> time (s)
+> +
+> +2. To make the LED go instantly from one brightness value to another, we should
+> +use zero-time lengths (the brightness must be same as the previous tuple's). So
+> +the format should be: "brightness_1 duration_1 brightness_1 0 brightness_2
+> +duration_2 brightness_2 0 ...".
+> +For example (using sysfs interface):
+> +
+> +echo 0 1000 0 0 255 2000 255 0 > pattern
+> +
+> +It will make the LED stay off for one second, then stay at max brightness for
+> +two seconds:
+> +
+> +LED brightness
+> +    ^
+> +255-|        +---------+    +---------+
+> +    |        |         |    |         |
+> +    |        |         |    |         |
+> +    |        |         |    |         |
+> +  0-|   -----+         +----+         +----
+> +    +---0----1----2----3----4----5----6------------> time (s)
+> 
