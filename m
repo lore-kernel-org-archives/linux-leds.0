@@ -1,135 +1,96 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: Generic RGB LED support was Re: [PATCH 2/2] leds: lp5024: Add
- the LP5024/18 RGB LED driver
-Date: Tue, 8 Jan 2019 23:59:52 +0100
-Message-ID: <20190108225952.GA13299@amd>
-References: <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
- <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com>
- <20190104201256.GA2931@amd>
+From: =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+Date: Wed, 9 Jan 2019 08:20:04 +0200
+Message-ID: <34e8b474-0a3e-f51b-aa8a-5b892102044d@gmail.com>
+References: <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
+ <20181219201047.GA23448@amd> <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+ <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
+ <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
+ <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
+ <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
+ <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
  <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com>
- <20190104220726.GA12395@amd>
- <4cf79414-578e-eea7-4f46-fc8789206988@gmail.com>
- <20190105123146.GA16354@amd>
- <8044cdd9-b9b3-fddd-6106-184b906859e2@gmail.com>
- <20190105221254.GA22322@amd>
- <dac50714-9caf-2496-3208-fb62f886e31f@gmail.com>
+ <90a2ed79-b437-af14-4538-430d8723cc6b@gmail.com>
+ <d73aa021-509d-ad34-5871-76560e868d03@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <dac50714-9caf-2496-3208-fb62f886e31f@gmail.com>
+In-Reply-To: <d73aa021-509d-ad34-5871-76560e868d03@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Vesa =?iso-8859-1?B?SuTkc2tlbORpbmVu?= <dachaac@gmail.com>, Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+Hi Dan,
 
---envbJBWh7q8WU6mo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 07/01/2019 21.34, Dan Murphy wrote:
+> Vesa
+> 
+> On 1/4/19 6:39 PM, Vesa Jääskeläinen wrote:
+>> Hi Jacek,
+>>
+>> On 04/01/2019 23.37, Jacek Anaszewski wrote:
+>>> But, aside from that hypothetic issue, we need a solution for
+>>> LEDn_BRIGHTNESS feature of lp5024, i.e. setting color intensity
+>>> via a single register write. How would you propose to address that?
+>>
+>> You could model it to something like this in device tree:
+>>
+>> led-module @ <i2c-address> {
+>>      compatible = "lp5024";
+>>
+>>      // There is in hardware setup to use either linear or
+>>      // logarithmic scaling:
+>>      //enable-logarithmic-brightness;
+>>
+>>      led0 {
+>>          // this will create led instance for LED0 in lp5024
+>>          label = "lp-led0";
+>>         
+>>          // This specifies LED number within lp5024
+>>          led-index = <0>;   // set output-base as 0*3 == 0
+>>         
+>>          element-red {
+>>              // refers to OUT0
+>>              output-offset = <0>;
+>>          };
+>>         
+>>          element-green {
+>>              // refers to OUT1
+>>              output-offset = <1>;
+>>          };
+>>         
+>>          element-blue {
+>>              // refers to OUT2
+>>              output-offset = <2>;
+>>          };
+>>         
+>>      };
+>>
+>>      led1 {
+>>          // this will create led instance for LED1 in lp5024
+>>          label = "lp-led1";
+>>         
+>>          // This specifies LED number within lp5024
+>>          led-index = <1>;   // set output-base as 1*3 == 3
+>>
+> 
+> Can we not use led-sources like I have done already?
 
-Hi!
+It was just for illustration of the idea. Names can be agreed. I have 
+nothing against led-sources name. I was just looking at datasheet to try 
+to undestand what it did and then tried to figure out if it could be 
+mapped the idea I have been playing with.
 
-> >>>Grab yourself an RGB LED and play with it; you'll see what the
-> >>>problems are. It is hard to explain colors over email...
-> >>
-> >>Video [0] gives some overview of lp5024 capabilities.
-> >>
-> >>I don't see any problems in exposing separate red,green,blue
-> >>files and brightness for the devices with hardware support for
-> >>that.
-> >
-> >Well, that's what we do today, as three separate LEDs, right?
->=20
-> No. It doesn't allow for setting color intensity by having
-> the color fixed beforehand. Below is relevant excerpt from
-> the lp5024 documentation. This is not something that can be
-> mapped to RGB color space, but rather to HSV/HSL, with the
-> reservation that the hardware implementation uses PWM
-> for setting color intensity.
+> I really like to keep the DT nodes simple and re-use nodes that exist if possible.
 
-So they have feature where they have independent controls for each
-channel, then one common control per three channels. Other chips have
-common control for all the LEDs, for example. We don't support that
-currently; lets focus on the RGB thing first.
+I'll reply to Jacek's email about more clarifications of the idea.
 
-> >I don't have problem with that, either; other drivers already do
-> >that. He's free to use existing same interface.
-> >
-> >But that is insufficient, as it does not allow simple stuff, such as
-> >turning led "white".
-> >
-> >So... perhaps we should agree on requirements, first, and then we can
-> >discuss solutions?
-> >
-> >Requirements for RGB LED interface:
-> >
-> >1) Userspace should be able to set the white color
-> >
-> >2) Userspace should be able to arbitrary color from well known list
-> >and it should approximately match what would CRT, LCD or OLED monitor di=
-splay
->=20
-> The difference is that monitor display driver is pre-calibrated
-> for given display by the manufacturer. With the LED controllers the
-> manufacturer has no control over what LEDs will be connected to the
-> iouts. Therefore it should be not surprising that colors produced
-> by custom LEDs are not as user would expect when comparing to
-> the RGB color displayed on the monitor display.
+Thanks,
+Vesa Jääskeläinen
 
-It is true that _chip_ manufacturer can not know what LEDs will be
-connected. But _system_ manufacturer can and should know that, and
-should tell be able to tell us in the dts.
-
-> This renders your requirement 2) infeasible with use of custom LEDs
-> any fixed algorithm, since the final effect will always heavily depend
-> on the LED circuit design.
-
-Depending on LED circuit design and actual LEDs connected is okay.. we
-just need to get information from _system_ designer (not chip
-designer), and pass it to a place where color is computed.
-
-> >a) RGB LEDs are usually not balanced. Setting 100% PWM on
-> >red/green/blue channels will result in nothing close to white
-> >light. In fact, to get white light on N900, blue and green channel's
-> >PWM needs to be set pretty low, as in 5%.
-> >
-> >b) LED class does not define any relation between "brightness" in
-> >sysfs and ammount of light in lumens. Some drivers use close to linear
-> >relation, some use exponential relation. Human eyes percieve logarithm
-> >of lumens. RGB color model uses even more complex function.
->=20
-> One general question: do you have any solutions in store?
-
-I played with LEDs on N900 over the weekend, yes.
-
-And getting reasonable colors seems to be possible, when a) and b) are
-solved... a) seems to be more important than b).
-
-Now... this does not tell us how we should design kernel<->user
-interface, but it should tell us that main goals - 1) and 2) are
-possible.
-
-Best regards,
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---envbJBWh7q8WU6mo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlw1K2cACgkQMOfwapXb+vJssgCdECJUPj0Ru8PJgm0ldaRU90TT
-GYUAmwTaWvDbd+1OXIli2bRoOI4qIjjb
-=SrHH
------END PGP SIGNATURE-----
-
---envbJBWh7q8WU6mo--
+> My code already maps and groups the outputs into the associated banks
