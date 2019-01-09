@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v7 2/5] leds: Add helper for getting default pattern from Device Tree
-Date: Wed,  9 Jan 2019 15:44:46 +0100
-Message-ID: <1547045089-19128-3-git-send-email-krzk@kernel.org>
+Subject: [PATCH v7 5/5] leds: trigger: timer: Add initialization from Device Tree
+Date: Wed,  9 Jan 2019 15:44:49 +0100
+Message-ID: <1547045089-19128-6-git-send-email-krzk@kernel.org>
 References: <1547045089-19128-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1547045089-19128-1-git-send-email-krzk@kernel.org>
@@ -10,87 +10,70 @@ To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
 Cc: Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Multiple LED triggers might need to access default pattern so add a
-helper for that.
+Allow initialization of delays used in timer trigger from Device
+Tree property.
+
+This is especially useful for embedded systems where the trigger might
+be used early, before bringing up user-space.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/leds/led-core.c | 30 ++++++++++++++++++++++++++++++
- include/linux/leds.h    | 13 +++++++++++++
- 2 files changed, 43 insertions(+)
+ drivers/leds/trigger/ledtrig-timer.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index ede4fa0ac2cc..e3da7c03da1b 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -16,7 +16,9 @@
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/of.h>
- #include <linux/rwsem.h>
+diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/ledtrig-timer.c
+index 7c14983781ee..ca898c1383be 100644
+--- a/drivers/leds/trigger/ledtrig-timer.c
++++ b/drivers/leds/trigger/ledtrig-timer.c
+@@ -15,6 +15,7 @@
+ #include <linux/init.h>
+ #include <linux/device.h>
+ #include <linux/ctype.h>
 +#include <linux/slab.h>
- #include "leds.h"
+ #include <linux/leds.h>
  
- DECLARE_RWSEM(leds_list_lock);
-@@ -310,6 +312,34 @@ int led_update_brightness(struct led_classdev *led_cdev)
- }
- EXPORT_SYMBOL_GPL(led_update_brightness);
+ static ssize_t led_delay_on_show(struct device *dev,
+@@ -77,8 +78,41 @@ static struct attribute *timer_trig_attrs[] = {
+ };
+ ATTRIBUTE_GROUPS(timer_trig);
  
-+u32 *led_get_default_pattern(struct led_classdev *led_cdev, unsigned int *size)
++static void pattern_init(struct led_classdev *led_cdev)
 +{
-+	struct device_node *np = dev_of_node(led_cdev->dev);
 +	u32 *pattern;
-+	int count;
++	unsigned int size = 0;
 +
-+	if (!np)
-+		return NULL;
-+
-+	count = of_property_count_u32_elems(np, "led-pattern");
-+	if (count < 0)
-+		return NULL;
-+
-+	pattern = kcalloc(count, sizeof(*pattern), GFP_KERNEL);
++	pattern = led_get_default_pattern(led_cdev, &size);
 +	if (!pattern)
-+		return NULL;
++		return;
 +
-+	if (of_property_read_u32_array(np, "led-pattern", pattern, count)) {
-+		kfree(pattern);
-+		return NULL;
++	if (size != 2) {
++		dev_warn(led_cdev->dev,
++			 "Expected 2 but got %u values for delays pattern\n",
++			 size);
++		goto out;
 +	}
 +
-+	*size = count;
++	led_cdev->blink_delay_on = pattern[0];
++	led_cdev->blink_delay_off = pattern[1];
++	/* led_blink_set() called by caller */
 +
-+	return pattern;
++out:
++	kfree(pattern);
 +}
-+EXPORT_SYMBOL_GPL(led_get_default_pattern);
 +
- /* Caller must ensure led_cdev->led_access held */
- void led_sysfs_disable(struct led_classdev *led_cdev)
+ static int timer_trig_activate(struct led_classdev *led_cdev)
  {
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 5263f87e1d2c..78204650fe2a 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -219,6 +219,19 @@ extern int led_set_brightness_sync(struct led_classdev *led_cdev,
- extern int led_update_brightness(struct led_classdev *led_cdev);
- 
- /**
-+ * led_get_default_pattern - return default pattern
-+ *
-+ * @led_cdev: the LED to get default pattern for
-+ * @size:     pointer for storing the number of elements in returned array,
-+ *            modified only if return != NULL
-+ *
-+ * Return:    Allocated array of integers with default pattern from device tree
-+ *            or NULL.  Caller is responsible for kfree().
-+ */
-+extern u32 *led_get_default_pattern(struct led_classdev *led_cdev,
-+				    unsigned int *size);
++	if (led_cdev->flags & LED_INIT_DEFAULT_TRIGGER) {
++		pattern_init(led_cdev);
++		/*
++		 * Mark as initialized even on pattern_init() error because
++		 * any consecutive call to it would produce the same error.
++		 */
++		led_cdev->flags &= ~LED_INIT_DEFAULT_TRIGGER;
++	}
 +
-+/**
-  * led_sysfs_disable - disable LED sysfs interface
-  * @led_cdev: the LED to set
-  *
+ 	led_blink_set(led_cdev, &led_cdev->blink_delay_on,
+ 		      &led_cdev->blink_delay_off);
+ 
 -- 
 2.7.4
