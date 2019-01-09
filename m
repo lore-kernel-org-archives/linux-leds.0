@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v7 5/5] leds: trigger: timer: Add initialization from Device Tree
-Date: Wed,  9 Jan 2019 15:44:49 +0100
-Message-ID: <1547045089-19128-6-git-send-email-krzk@kernel.org>
+Subject: [PATCH v7 4/5] leds: trigger: oneshot: Add initialization from Device Tree
+Date: Wed,  9 Jan 2019 15:44:48 +0100
+Message-ID: <1547045089-19128-5-git-send-email-krzk@kernel.org>
 References: <1547045089-19128-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1547045089-19128-1-git-send-email-krzk@kernel.org>
@@ -10,7 +10,7 @@ To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
 Cc: Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Allow initialization of delays used in timer trigger from Device
+Allow initialization of delays used in oneshot trigger from Device
 Tree property.
 
 This is especially useful for embedded systems where the trigger might
@@ -18,24 +18,16 @@ be used early, before bringing up user-space.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/leds/trigger/ledtrig-timer.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ drivers/leds/trigger/ledtrig-oneshot.c | 38 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 36 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/ledtrig-timer.c
-index 7c14983781ee..ca898c1383be 100644
---- a/drivers/leds/trigger/ledtrig-timer.c
-+++ b/drivers/leds/trigger/ledtrig-timer.c
-@@ -15,6 +15,7 @@
- #include <linux/init.h>
- #include <linux/device.h>
- #include <linux/ctype.h>
-+#include <linux/slab.h>
- #include <linux/leds.h>
- 
- static ssize_t led_delay_on_show(struct device *dev,
-@@ -77,8 +78,41 @@ static struct attribute *timer_trig_attrs[] = {
+diff --git a/drivers/leds/trigger/ledtrig-oneshot.c b/drivers/leds/trigger/ledtrig-oneshot.c
+index 95c9be4b6e7e..8808f0ad7339 100644
+--- a/drivers/leds/trigger/ledtrig-oneshot.c
++++ b/drivers/leds/trigger/ledtrig-oneshot.c
+@@ -130,6 +130,34 @@ static struct attribute *oneshot_trig_attrs[] = {
  };
- ATTRIBUTE_GROUPS(timer_trig);
+ ATTRIBUTE_GROUPS(oneshot_trig);
  
 +static void pattern_init(struct led_classdev *led_cdev)
 +{
@@ -44,25 +36,36 @@ index 7c14983781ee..ca898c1383be 100644
 +
 +	pattern = led_get_default_pattern(led_cdev, &size);
 +	if (!pattern)
-+		return;
++		goto out_default;
 +
 +	if (size != 2) {
 +		dev_warn(led_cdev->dev,
 +			 "Expected 2 but got %u values for delays pattern\n",
 +			 size);
-+		goto out;
++		goto out_default;
 +	}
 +
 +	led_cdev->blink_delay_on = pattern[0];
 +	led_cdev->blink_delay_off = pattern[1];
-+	/* led_blink_set() called by caller */
-+
-+out:
 +	kfree(pattern);
++
++	return;
++
++out_default:
++	kfree(pattern);
++	led_cdev->blink_delay_on = DEFAULT_DELAY;
++	led_cdev->blink_delay_off = DEFAULT_DELAY;
 +}
 +
- static int timer_trig_activate(struct led_classdev *led_cdev)
+ static int oneshot_trig_activate(struct led_classdev *led_cdev)
  {
+ 	struct oneshot_trig_data *oneshot_data;
+@@ -140,8 +168,14 @@ static int oneshot_trig_activate(struct led_classdev *led_cdev)
+ 
+ 	led_set_trigger_data(led_cdev, oneshot_data);
+ 
+-	led_cdev->blink_delay_on = DEFAULT_DELAY;
+-	led_cdev->blink_delay_off = DEFAULT_DELAY;
 +	if (led_cdev->flags & LED_INIT_DEFAULT_TRIGGER) {
 +		pattern_init(led_cdev);
 +		/*
@@ -71,9 +74,8 @@ index 7c14983781ee..ca898c1383be 100644
 +		 */
 +		led_cdev->flags &= ~LED_INIT_DEFAULT_TRIGGER;
 +	}
-+
- 	led_blink_set(led_cdev, &led_cdev->blink_delay_on,
- 		      &led_cdev->blink_delay_off);
  
+ 	return 0;
+ }
 -- 
 2.7.4
