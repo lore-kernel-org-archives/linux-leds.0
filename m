@@ -1,7 +1,7 @@
 From: =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
 Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
-Date: Wed, 9 Jan 2019 08:20:04 +0200
-Message-ID: <34e8b474-0a3e-f51b-aa8a-5b892102044d@gmail.com>
+Date: Wed, 9 Jan 2019 08:46:27 +0200
+Message-ID: <9ed1c2e6-62ff-6b4c-6b38-48d6176bcd88@gmail.com>
 References: <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
  <20181219201047.GA23448@amd> <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
  <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
@@ -13,24 +13,24 @@ References: <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
  <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
  <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com>
  <90a2ed79-b437-af14-4538-430d8723cc6b@gmail.com>
- <d73aa021-509d-ad34-5871-76560e868d03@ti.com>
+ <38daf022-e4e4-799d-4c75-ee851315290d@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d73aa021-509d-ad34-5871-76560e868d03@ti.com>
+In-Reply-To: <38daf022-e4e4-799d-4c75-ee851315290d@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Dan,
+Hi Jacek,
 
-On 07/01/2019 21.34, Dan Murphy wrote:
-> Vesa
+On 07/01/2019 23.13, Jacek Anaszewski wrote:
+> Hi Vesa,
 > 
-> On 1/4/19 6:39 PM, Vesa Jääskeläinen wrote:
+> On 1/5/19 1:39 AM, Vesa Jääskeläinen wrote:
 >> Hi Jacek,
 >>
 >> On 04/01/2019 23.37, Jacek Anaszewski wrote:
@@ -41,56 +41,176 @@ On 07/01/2019 21.34, Dan Murphy wrote:
 >> You could model it to something like this in device tree:
 >>
 >> led-module @ <i2c-address> {
->>      compatible = "lp5024";
+>>      compatible = "lp5024";
 >>
->>      // There is in hardware setup to use either linear or
->>      // logarithmic scaling:
->>      //enable-logarithmic-brightness;
+>>      // There is in hardware setup to use either linear or
+>>      // logarithmic scaling:
+>>      //enable-logarithmic-brightness;
 >>
->>      led0 {
->>          // this will create led instance for LED0 in lp5024
->>          label = "lp-led0";
->>         
->>          // This specifies LED number within lp5024
->>          led-index = <0>;   // set output-base as 0*3 == 0
->>         
->>          element-red {
->>              // refers to OUT0
->>              output-offset = <0>;
->>          };
->>         
->>          element-green {
->>              // refers to OUT1
->>              output-offset = <1>;
->>          };
->>         
->>          element-blue {
->>              // refers to OUT2
->>              output-offset = <2>;
->>          };
->>         
->>      };
+>>      led0 {
+>>          // this will create led instance for LED0 in lp5024
+>>          label = "lp-led0";
 >>
->>      led1 {
->>          // this will create led instance for LED1 in lp5024
->>          label = "lp-led1";
->>         
->>          // This specifies LED number within lp5024
->>          led-index = <1>;   // set output-base as 1*3 == 3
+>>          // This specifies LED number within lp5024
+>>          led-index = <0>;   // set output-base as 0*3 == 0
 >>
+>>          element-red {
+>>              // refers to OUT0
+>>              output-offset = <0>;
+>>          };
+>>
+>>          element-green {
+>>              // refers to OUT1
+>>              output-offset = <1>;
+>>          };
+>>
+>>          element-blue {
+>>              // refers to OUT2
+>>              output-offset = <2>;
+>>          };
+>>
+>>      };
+>>
+>>      led1 {
+>>          // this will create led instance for LED1 in lp5024
+>>          label = "lp-led1";
+>>
+>>          // This specifies LED number within lp5024
+>>          led-index = <1>;   // set output-base as 1*3 == 3
+>>
+>>          element-red {
+>>              // refers to OUT3
+>>              output-offset = <0>;
+>>          };
+>>
+>>          element-green {
+>>              // refers to OUT4
+>>              output-offset = <1>;
+>>          };
+>>
+>>          element-blue {
+>>              // refers to OUT5
+>>              output-offset = <2>;
+>>          };
+>>
+>>      };
+>>
+>>      bank-led {
+>>          // this will create led instance for bank leds in lp5024
+>>          label = "lp-bank-led";
+>>
+>>          // configured bank led configuration
+>>          led-index = <2 3 4 5 6 7>;
+>>          // As here is list of led-indices this entry is
+>>          // assumed to be bank configuration. Bank mode is enable
+>>          // for the indices.
+>>
+>>          // set output-base as BANK A
+>>
+>>          element-red {
+>>              // refers to BANK A
+>>              output-offset = <0>;
+>>          };
+>>
+>>          element-green {
+>>              // refers to BANK B
+>>              output-offset = <1>;
+>>          };
+>>
+>>          element-blue {
+>>              // refers to BANK C
+>>              output-offset = <2>;
+>>          };
+>>      };
+>> };
+>>
+>> This would then create three led instances and each led instance has 
+>> brightness setting and that goes straight to hardware.
+>>
+>> If one would want to override hardware control for brightness then I 
+>> suppose you would define in led node something like:
+>>
+>>      brightness-model = "hsl"
+>>
+>> This would then pick red, green and blue elements for hsl calculations 
+>> and others color elements for linear. LED specific hardware brightness 
+>> would then be either 0 or 0xFF depending if all of LED color elements 
+>> are zero or not.
+>>
+>> Would that kind of model work?
 > 
-> Can we not use led-sources like I have done already?
+> I'd prefer to have single RGB LED device. And your DT design
+> is unnecessarily complex and a bit confusing.
 
-It was just for illustration of the idea. Names can be agreed. I have 
-nothing against led-sources name. I was just looking at datasheet to try 
-to undestand what it did and then tried to figure out if it could be 
-mapped the idea I have been playing with.
+As this chip series is kinda designed for N x RGB LED's my idea was that 
+if from user space point of view we model it as N times of individual 
+RGB LED instances that may not even have anything to do with together. 
+Eg. could be used for different purposes and such.
 
-> I really like to keep the DT nodes simple and re-use nodes that exist if possible.
+And in device tree one would define logical connections for the leds so 
+they would be mapped logically correct to user space.
 
-I'll reply to Jacek's email about more clarifications of the idea.
+If one would define it like:
+
+led1 {
+	// this will create led instance for LED1 in lp5024
+	label = "lp-led1";
+	
+	// This specifies LED number within lp5024
+	led-sources = <1>;
+};
+(note changed led-index to led-sources as that is what Pavel had and 
+preferred)
+
+We could assume that it is RGB led in this driver's case and create it 
+automatically with elements "red", "green", and "blue". And this could 
+then be mapped automatically to HSL color elements or what ever the 
+model would be.
+
+If you would model it differently in your hardware design then you would 
+need to define more device tree nodes. Eg. if your order of LEDs would 
+not be red, green, blue. Or if you would have non-RGB led(s) in there.
+
+> Also, you provided scarce information about sysfs interface.
+> It would be nice to see the sequence of commands.
+
+In this case it could be:
+
+# Note: Updated color to value array model.
+
+$ ls /sys/class/leds
+lp-led0	lp-led1	lp-bank-led
+
+$ ls /sys/class/leds/lp-led0
+brightness	color
+
+$ ls /sys/class/leds/lp-led1
+brightness	color
+
+$ ls /sys/class/leds/lp-bank-led
+brightness	color
+
+# Idea of above is that as brightness is for triplet:
+#   OUT(LED*3 + 0), OUT(LED*3 + 1), OUT(LED*3 + 2),
+# Then if we model it like RGB LED then brightness would automatically
+# map to correct OUTputs and be grouped from user space point of view
+# logically in correct place.
+
+# set first led to red
+echo "255 0 0" > /sys/class/leds/lp-led0/color
+
+# set second led to green
+echo "0 255 0" > /sys/class/leds/lp-led1/color
+
+# set bank led to blue
+echo "0 0 255" > /sys/class/leds/lp-bank-led/color
+
+# Set hardware brightness control to middle
+echo "128" > /sys/class/leds/lp-bank-led/brightness
+
+# If we would have software controlled virtual brightness enabled for
+# particular led classdev then there would be some math in either user
+# or in kernel space.
 
 Thanks,
 Vesa Jääskeläinen
-
-> My code already maps and groups the outputs into the associated banks
