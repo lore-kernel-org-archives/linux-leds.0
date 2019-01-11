@@ -1,8 +1,8 @@
 From: Dan Murphy <dmurphy@ti.com>
 Subject: Re: [PATCH 1/2] dt: bindings: lp5024: Introduce the lp5024 and lp5018
  RGB driver
-Date: Thu, 10 Jan 2019 17:51:13 -0600
-Message-ID: <519bc859-1485-9bb3-8054-440b9cd6491f@ti.com>
+Date: Fri, 11 Jan 2019 06:38:46 -0600
+Message-ID: <76577ad1-8c29-c5f6-e253-a8541a150dc0@ti.com>
 References: <20181219162626.12297-1-dmurphy@ti.com>
  <20181219162626.12297-2-dmurphy@ti.com>
  <dc2283f9-db85-1eaf-f046-3fbbd4adcace@gmail.com>
@@ -30,6 +30,8 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.ke
 List-Id: linux-leds@vger.kernel.org
 
 Jacek
+
+Sorry I missed some replies
 
 On 1/10/19 4:03 PM, Jacek Anaszewski wrote:
 > On 1/10/19 9:43 PM, Dan Murphy wrote:
@@ -230,25 +232,11 @@ On 1/10/19 4:03 PM, Jacek Anaszewski wrote:
 > There is naming conflict I noticed just now - LEDn_BANK_EN bits
 > in LED_CONFIG0 register enable RGB LED modules, and not BANKs (A,B,C).
 > 
-
-I read this a couple times but not sure I understand your comments.  The bits in the LED_CONFIG0 enable the bank control for the
-LED modules.
-
-Are you saying the conflict is in the data sheet?  the code? or an understanding?
-
 >> These OUTPUTs will appear as a single RGB LED grouping.
 > 
 > Single? W would rather expect that we get two RGB LED modules, whose
 > brightness will be controlled via LED0_BRIGHTNESS and LED1_BRIGHTNESS
 > registers respectively.
-
-When you set bank control on a certain LED module all the outputs under that module are controlled by the bank registers.
-So if you say LED0 and LED6 are bank controlled then the RGB LED clusters connected to output 0, 1, 2, 15, 16 and 17 will all
-be controlled by the bank register and react simultaneously to mixing or brightness controls,  LED0_BRIGHTNESS and LED6_BRIGHTNESS
-register and mixer controls will have no affect on the individaul LED clusters connect to the outputs.
-
-Dan
-
 > 
 >>>> ti,control-bank; // But this can be omitted as led-sources is greater then 3
 >>>>
@@ -271,6 +259,10 @@ Dan
 > Moreover - not 3 color adjustment registers, but six - one per iout:
 > OUT0_COLOR to OUT5_COLOR.
 > 
+
+When the LEDs are banked the banked LEDs are controlled by the bank registers not the LEDx registers
+so you should only see 3 color adjustments on the banked LEDs.
+
 >>>> They cannot be separated so the device theoretically treats the RGB group as a single LED.  And
 >>>> when banked it treats the groups of RGBs that are defined as a single LED.
 >>>>
@@ -286,6 +278,9 @@ Dan
 > 
 > We have RGB LED modules (enabled with LEDn_Bank_EN bits) and three
 > banks (A,B,C), which are enabled by default, am I right?
+
+No.  Independent LED modules are enabled by default.  You have to explicitly enable the banks.
+
 > 
 > Bank A iouts: 0, 3 ,6, 9, 12, 15
 > Bank B iouts: 1, 4, 7, 10, 13, 16
@@ -295,6 +290,12 @@ Dan
 > the BANK_{A.B,C}_COLOR and BANK_BRIGHTNESS registers
 > lose control over related IOUTs in favour of LEDn_BRIGHTNESS and
 > related OUTn_COLOR registers. Is it correct?
+
+No it is the opposite.  When the bit is enabled LED banking is enabled and the BANK brightness and color registers over
+ride the LEDx color and brightness registers.
+
+Default is independent control of the RGB via the LEDx color and brightness registers.
+
 > 
 >> As you know the brightness is controlled by the single BANK_BRIGHTNESS register.  So identifying each output in the led-sources is
 >> misleading as the hardware does this all on the chip.  This is why I just mapped each output to the Virtual LEDx module.
@@ -306,9 +307,20 @@ Dan
 > but only ti,control-bank. The semantics would be:
 > controls all iouts not taken by RGB LED modules.
 > 
+
+Hmm.  I guess I will put that on hold until you read the responses.  I am not sure that would work or
+that would be really clean.  I still believe that mapping led-sources to the LEDx module number is the cleanest
+simplest solution since the driver cannot inter mix different outputs for enablement.
+
 > I would also add Table 1 contents (Bank Number and LED Number
 > Assignment) to the DT bindings.
 > 
+
+Should I add that to the DT binding or reference the data sheet table since this driver will support 4 different devices
+with varying number of outputs from 18-36.
+
+Dan
+
 >> If you define LED0 and LED1 as banked then OUT0->5 are banked and it would be considered a single virtual output.
 >>
 >> LED_CONFIG0 even uses the modular approach to define what is banked and what is not.  With the modular approach to led-sources
