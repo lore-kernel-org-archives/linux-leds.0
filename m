@@ -1,191 +1,443 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: Generic RGB LED support was Re: [PATCH 2/2] leds: lp5024: Add the
- LP5024/18 RGB LED driver
-Date: Sun, 13 Jan 2019 17:37:29 +0100
-Message-ID: <1e37a036-bf46-5717-69e3-7cf9a1917fee@gmail.com>
-References: <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
- <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
- <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com> <20190104220726.GA12395@amd>
- <4cf79414-578e-eea7-4f46-fc8789206988@gmail.com> <20190105123146.GA16354@amd>
- <8044cdd9-b9b3-fddd-6106-184b906859e2@gmail.com> <20190105221254.GA22322@amd>
- <dac50714-9caf-2496-3208-fb62f886e31f@gmail.com> <20190108225952.GA13299@amd>
- <1c53d379-64e5-4e72-5236-de8db77a5048@gmail.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH 1/2] dt: bindings: lp5024: Introduce the lp5024 and lp5018
+ RGB driver
+Date: Mon, 14 Jan 2019 06:27:03 -0600
+Message-ID: <1c452daa-d77e-5d31-3694-b9dfda9cc8f3@ti.com>
+References: <20181219162626.12297-1-dmurphy@ti.com>
+ <20181219162626.12297-2-dmurphy@ti.com>
+ <dc2283f9-db85-1eaf-f046-3fbbd4adcace@gmail.com>
+ <2d2d5dcd-9c23-e901-daac-9b79aa5a5e82@ti.com>
+ <6c62956e-7789-58ba-5437-f2e033f2825c@gmail.com>
+ <366cbf6d-94fa-fea9-be58-07ddb09cff3a@ti.com>
+ <df59c10d-7038-cb4a-45f0-7420254c6398@gmail.com>
+ <ec0393b7-118e-1f3b-d5af-86ecdf66412a@ti.com>
+ <ae700129-7b59-c92b-0c0a-b57a6f230ff7@gmail.com>
+ <adcd7987-f7fc-ae1f-9aa4-cebcbf01ad58@ti.com>
+ <1702dfd6-b08f-c1ff-e46d-1366618bedb0@gmail.com>
+ <72112839-11d4-54be-df94-b2322f77cb0f@ti.com>
+ <8b126077-c200-ed34-03b7-6d43a22fb0c9@gmail.com>
+ <92cc81dc-7280-8bf0-9536-9c4d990eaf3b@ti.com>
+ <459a4d7a-980b-5a46-9bd8-7a7afb37e1c3@gmail.com>
+ <76577ad1-8c29-c5f6-e253-a8541a150dc0@ti.com>
+ <3674d644-ccf6-d545-fc41-6bdf8960df44@gmail.com>
+ <0140ad64-432e-7723-2415-0b3a8ac4d8dc@ti.com>
+ <ed78b2fd-7ab8-d7c3-cf28-4d5b06783fb3@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1c53d379-64e5-4e72-5236-de8db77a5048@gmail.com>
+In-Reply-To: <ed78b2fd-7ab8-d7c3-cf28-4d5b06783fb3@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Vesa,
+Jacek
 
-On 1/9/19 8:11 AM, Vesa Jääskeläinen wrote:
-> Hi Pavel,
+On 1/12/19 1:48 PM, Jacek Anaszewski wrote:
+> Hi Dan,
 > 
-> On 09/01/2019 0.59, Pavel Machek wrote:
->> Hi!
+> On 1/12/19 6:09 PM, Dan Murphy wrote:
+>> Jacek
 >>
->>>>>> Grab yourself an RGB LED and play with it; you'll see what the
->>>>>> problems are. It is hard to explain colors over email...
+>> On 1/11/19 3:52 PM, Jacek Anaszewski wrote:
+>>> Dan,
+>>>
+>>> On 1/11/19 1:38 PM, Dan Murphy wrote:
+>>>> Jacek
+>>>>
+>>>> Sorry I missed some replies
+>>>>
+>>>> On 1/10/19 4:03 PM, Jacek Anaszewski wrote:
+>>>>> On 1/10/19 9:43 PM, Dan Murphy wrote:
+>>>>>> Jacek
+>>>>>>
+>>>>>> On 1/10/19 1:57 PM, Jacek Anaszewski wrote:
+>>>>>>> Dan,
+>>>>>>>
+>>>>>>> On 1/10/19 8:22 PM, Dan Murphy wrote:
+>>>>>>>> Jacek
+>>>>>>>>
+>>>>>>>> On 1/10/19 12:44 PM, Jacek Anaszewski wrote:
+>>>>>>>>> Hi Dan,
+>>>>>>>>>
+>>>>>>>>> On 1/9/19 10:31 PM, Dan Murphy wrote:
+>>>>>>>>>> Jacek
+>>>>>>>>>>
+>>>>>>>>>> On 1/9/19 3:28 PM, Jacek Anaszewski wrote:
+>>>>>>>>>>> On 1/9/19 10:12 PM, Dan Murphy wrote:
+>>>>>>>>>>>> On 1/9/19 2:12 PM, Jacek Anaszewski wrote:
+>>>>>>>>>>>>> Hi Dan,
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> On 1/8/19 10:22 PM, Dan Murphy wrote:
+>>>>>>>>>>>>>> On 1/8/19 3:16 PM, Jacek Anaszewski wrote:
+>>>>>>>>>>>>>>> On 1/8/19 9:53 PM, Dan Murphy wrote:
+>>>>>>>>>>>>>>>> Jacek
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> On 1/8/19 2:33 PM, Jacek Anaszewski wrote:
+>>>>>>>>>>>>>>>>> Dan,
+>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>> On 12/19/18 5:26 PM, Dan Murphy wrote:
+>>>>>>>>>>>>>>>>>> Introduce the bindings for the Texas Instruments LP5024 and the LP5018
+>>>>>>>>>>>>>>>>>> RGB LED device driver.  The LP5024/18 can control RGB LEDs individually
+>>>>>>>>>>>>>>>>>> or as part of a control bank group.  These devices have the ability
+>>>>>>>>>>>>>>>>>> to adjust the mixing control for the RGB LEDs to obtain different colors
+>>>>>>>>>>>>>>>>>> independent of the overall brightness of the LED grouping.
+>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>> Datasheet:
+>>>>>>>>>>>>>>>>>> http://www.ti.com/lit/ds/symlink/lp5024.pdf
+>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>>>>>>>>>>>>>>>>> ---
+>>>>>>>>>>>>>>>>>>           .../devicetree/bindings/leds/leds-lp5024.txt  | 63 +++++++++++++++++++
+>>>>>>>>>>>>>>>>>>           1 file changed, 63 insertions(+)
+>>>>>>>>>>>>>>>>>>           create mode 100644 Documentation/devicetree/bindings/leds/leds-lp5024.txt
+>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lp5024.txt b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
+>>>>>>>>>>>>>>>>>> new file mode 100644
+>>>>>>>>>>>>>>>>>> index 000000000000..9567aa6f7813
+>>>>>>>>>>>>>>>>>> --- /dev/null
+>>>>>>>>>>>>>>>>>> +++ b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
+>>>>>>>>>>>>>>>>>> @@ -0,0 +1,63 @@
+>>>>>>>>>>>>>>>>>> +* Texas Instruments - LP5024/18 RGB LED driver
+>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>> +The LM3692x is an ultra-compact, highly efficient,
+>>>>>>>>>>>>>>>>>> +white-LED driver designed for LCD display backlighting.
+>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>> +The main difference between the LP5024 and L5018 is the number of
+>>>>>>>>>>>>>>>>>> +RGB LEDs they support.  The LP5024 supports twenty four strings while the
+>>>>>>>>>>>>>>>>>> +LP5018 supports eighteen strings.
+>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>> +Required properties:
+>>>>>>>>>>>>>>>>>> +    - compatible:
+>>>>>>>>>>>>>>>>>> +        "ti,lp5018"
+>>>>>>>>>>>>>>>>>> +        "ti,lp5024"
+>>>>>>>>>>>>>>>>>> +    - reg :  I2C slave address
+>>>>>>>>>>>>>>>>>> +    - #address-cells : 1
+>>>>>>>>>>>>>>>>>> +    - #size-cells : 0
+>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>> +Optional properties:
+>>>>>>>>>>>>>>>>>> +    - enable-gpios : gpio pin to enable/disable the device.
+>>>>>>>>>>>>>>>>>> +    - vled-supply : LED supply
+>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>> +Required child properties:
+>>>>>>>>>>>>>>>>>> +    - reg : Is the child node iteration.
+>>>>>>>>>>>>>>>>>> +    - led-sources : LP5024 - 0 - 7
+>>>>>>>>>>>>>>>>>> +            LP5018 - 0 - 5
+>>>>>>>>>>>>>>>>>> +            Declares the LED string or strings that the child node
+>>>>>>>>>>>>>>>>>> +            will control.  If ti,control-bank is set then this
+>>>>>>>>>>>>>>>>>> +            property will contain multiple LED IDs.
+>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>> +Optional child properties:
+>>>>>>>>>>>>>>>>>> +    - label : see Documentation/devicetree/bindings/leds/common.txt
+>>>>>>>>>>>>>>>>>> +    - linux,default-trigger :
+>>>>>>>>>>>>>>>>>> +       see Documentation/devicetree/bindings/leds/common.txt
+>>>>>>>>>>>>>>>>>> +    - ti,control-bank : Indicates that the LED strings declared in the
+>>>>>>>>>>>>>>>>>> +                led-sources property are grouped within a control
+>>>>>>>>>>>>>>>>>> +                bank for brightness and mixing control.
+>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>> +Example:
+>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>> +led-controller@28 {
+>>>>>>>>>>>>>>>>>> +    compatible = "ti,lp5024";
+>>>>>>>>>>>>>>>>>> +    reg = <0x28>;
+>>>>>>>>>>>>>>>>>> +    #address-cells = <1>;
+>>>>>>>>>>>>>>>>>> +    #size-cells = <0>;
+>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>> +    enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>>>>>>>>>>>>>>>>>> +    vled-supply = <&vbatt>;
+>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>> +    led@0 {
+>>>>>>>>>>>>>>>>>> +        reg = <0>;
+>>>>>>>>>>>>>>>>>> +        led-sources = <1>;
+>>>>>>>>>>>>>>>>>> +    };
+>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>> +    led@1 {
+>>>>>>>>>>>>>>>>>> +        reg = <1>;
+>>>>>>>>>>>>>>>>>> +        led-sources = <0 6>;
+>>>>>>>>>>>>>>>>>> +        ti,control-bank;
+>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>> Do you really need ti,control-bank? Doesn't led-sources array size
+>>>>>>>>>>>>>>>>> greater than 1 mean that the node describes control bank?
+>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> That will work too.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>> Also, does it make sense to have only two LEDs in the bank?
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> The array can populate all 7 LEDs in a single node.  I only show 2 here as the example.
+>>>>>>>>>>>>>>>> See the description above of the led-sources
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> OK, I confused RGB LED modules with banks.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Shouldn't we allow for defining either strings or RGB LED
+>>>>>>>>>>>>>>> triplets somehow then?
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Well that is what this should be doing.  If you define a single LED in LED sources then
+>>>>>>>>>>>>>> the triplet is controlled via the associated LEDx_brightness register.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> led-sources should map to iouts directly.
+>>>>>>>>>>>>> So, for RGB LED modules I would expect:
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> LED0: led-sources = <0 1 2>;
+>>>>>>>>>>>>> LED1: led-sources = <3 4 5>;
+>>>>>>>>>>>>> LED2: led-sources = <6 7 8>;
+>>>>>>>>>>>>> and so on.
+>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> for banks:
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Bank A with iouts 0,3,6,9: led-sources<0 3 6 9>;
+>>>>>>>>>>>>> Bank B with iouts 2,4,10:  led-sources<2 4 10>;
+>>>>>>>>>>>>> Bank C with iouts 5,8,11,14,17: led-sources<5 8 11 14 17>;
+>>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> Ok the led-sources would need to be different then this as I don't define the sources for banks.
+>>>>>>>>>>>>
+>>>>>>>>>>>> The led-sources for the banks and the individual groups will have different meanings within the same
+>>>>>>>>>>>> document.  I was attempting to keep the led-sources mapped to the LEDx_brightness registers as opposed to
+>>>>>>>>>>>> the hardware outputs since the RGB LEDs are controlled and grouped by a single brightness register and if banked then
+>>>>>>>>>>>> it would be controlled by the bank brightness register.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Describing these in the DT seems wrought with potential issues as the data sheet defines what outputs map to what bank and LED
+>>>>>>>>>>>> registers.
+>>>>>>>>>>>
+>>>>>>>>>>> Yes, that's why I mentioned the need for validation of led-sources.
+>>>>>>>>>>> But they have to be iouts. This property was introduced specifically
+>>>>>>>>>>> for such purposes.
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> Yes Pavel also mentioned that as well.
+>>>>>>>>>>
+>>>>>>>>>> I will look into validating the sources.  But there will be no mapping of the sources to the output that is done
+>>>>>>>>>> in the hardware.  This would just be a data sheet mapping since the outputs are not configurable.
+>>>>>>>>>
+>>>>>>>>> Hmm, isn't the mapping defined in the hardware via LED_CONFIG0 register?
+>>>>>>>>> I have an impression that it defines whether LED belongs to an RGB LED
+>>>>>>>>> module or to a bank. Basing on that I created my DT example above.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Yes so if you turn on the bank control for LED0 and LED1 then
+>>>>>>>> out 0, 3 are mapped to BANK A
+>>>>>>>> out 1, 4 are mapped to BANK B
+>>>>>>>
+>>>>>>> Just noticed that I made a mistake in my example, it should have been:
+>>>>>>>
+>>>>>>> Bank B with iouts 1,4,10:  led-sources<1 4 10>;
+>>>>>>>
+>>>>>>>> out 2, 5 are mapped to BANK C
+>>>>>>>
+>>>>>>> Correct.
+>>>>>>>
+>>>>>>>> All done automatically in the hardware and the LED0_BRIGHTNESS and LED1_BRIGHTNESS registers have no affect on the brightness
+>>>>>>>
+>>>>>>> That's right.
+>>>>>>>
+>>>>>>>> If we grouped the LEDs into a bank the led-sources would look more like this
+>>>>>>>> led-sources = < 0 1 2 3 4 5 >;
+>>>>>>>
+>>>>>>> Why? This would be a mix of three banks. Like you listed above.
+>>>>>>> I'm still interpreting led-sources elements as iout identifiers.
+>>>>>>>
+>>>>>>
+>>>>>> I am as well but as I tried to explain that if you define OUT0 as bank controlled then OUT1 and OUT2 are also bank controlled
+>>>>>> within the hardware.  We have no control of that.  If BIT(0) and BIT(1) are set in the LED_CONFIG0 register then OUT0, 1, 2, 3, 4 and 5 are all bank controlled.
 >>>>>
->>>>> Video [0] gives some overview of lp5024 capabilities.
+>>>>> There is naming conflict I noticed just now - LEDn_BANK_EN bits
+>>>>> in LED_CONFIG0 register enable RGB LED modules, and not BANKs (A,B,C).
 >>>>>
->>>>> I don't see any problems in exposing separate red,green,blue
->>>>> files and brightness for the devices with hardware support for
->>>>> that.
+>>>>>> These OUTPUTs will appear as a single RGB LED grouping.
+>>>>>
+>>>>> Single? W would rather expect that we get two RGB LED modules, whose
+>>>>> brightness will be controlled via LED0_BRIGHTNESS and LED1_BRIGHTNESS
+>>>>> registers respectively.
+>>>>>
+>>>>>>>> ti,control-bank; // But this can be omitted as led-sources is greater then 3
+>>>>>>>>
+>>>>>>>> non-banked case would be
+>>>>>>>> led-sources = < 0 1 2 >;
+>>>>>>>
+>>>>>>> Agreed here. It would be LED0 RGB LED module.
+>>>>>>>> But the actual OUT numbers don't matter in the bank case unless we do the validation.  There would need to be an algorithim
+>>>>>>>> that translates these output to the correct LEDx register and CONFIG0 bits.  Basically if OUT0 is mapped to the bank then OUT1 and OUT2
+>>>>>>>> are inherently mapped to the bank.
+>>>>>>>
+>>>>>>> To three separate banks, right?
+>>>>>>> OUT0 - bank A, OUT1 - bank B, OUT2 - bank C.
+>>>>>>
+>>>>>> Yes but there is no BANK output pin just like there is no dedicated LEDn output pin.  The banks are grouped internally to the device
+>>>>>> so again if OUT0 and OUT3 are defined as banked then 1, 2, 4, and 5 are all mapped to the bank.  1 BANK brightness register and 3 bank
+>>>>>> color adjustment registers.
+>>>>>
+>>>>> Here as above, I would expect two separate banks - LED0 and LED1.
+>>>>> Moreover - not 3 color adjustment registers, but six - one per iout:
+>>>>> OUT0_COLOR to OUT5_COLOR.
+>>>>>
 >>>>
->>>> Well, that's what we do today, as three separate LEDs, right?
+>>>> When the LEDs are banked the banked LEDs are controlled by the bank registers not the LEDx registers
+>>>> so you should only see 3 color adjustments on the banked LEDs.
+>>>>
+>>>>>>>> They cannot be separated so the device theoretically treats the RGB group as a single LED.  And
+>>>>>>>> when banked it treats the groups of RGBs that are defined as a single LED.
+>>>>>>>>
+>>>>>>>> This is why it was easier use the LEDx out as the virtual out as we only need to define the group number(s) that are controled by the
+>>>>>>>> LED file presented to the user space.
+>>>>>>>
+>>>>>>> I suspect there is logical clash here due to interpreting
+>>>>>>> led-sources elements as iouts in one case and LEDn modules
+>>>>>>> in the other case.
+>>>>>>>
+>>>>>>
+>>>>>> Yes.  When the RGBs are banked you have to think of them as a single RGB LED cluster and not as separate RGB LED clusters.
+>>>>>
+>>>>> We have RGB LED modules (enabled with LEDn_Bank_EN bits) and three
+>>>>> banks (A,B,C), which are enabled by default, am I right?
+>>>>
+>>>> No.  Independent LED modules are enabled by default.  You have to explicitly enable the banks.
+>>>>
+>>>>>
+>>>>> Bank A iouts: 0, 3 ,6, 9, 12, 15
+>>>>> Bank B iouts: 1, 4, 7, 10, 13, 16
+>>>>> Bank C iouts: 2, 5, 8, 11, 14, 17
+>>>>>
+>>>>> When RGB LED module is enabled (via LEDn_Bank_EN bit),
+>>>>> the BANK_{A.B,C}_COLOR and BANK_BRIGHTNESS registers
+>>>>> lose control over related IOUTs in favour of LEDn_BRIGHTNESS and
+>>>>> related OUTn_COLOR registers. Is it correct?
+>>>>
+>>>> No it is the opposite.  When the bit is enabled LED banking is enabled and the BANK brightness and color registers over
+>>>> ride the LEDx color and brightness registers.
+>>>>
+>>>> Default is independent control of the RGB via the LEDx color and brightness registers.
+>>>>
+>>>>>
+>>>>>> As you know the brightness is controlled by the single BANK_BRIGHTNESS register.  So identifying each output in the led-sources is
+>>>>>> misleading as the hardware does this all on the chip.  This is why I just mapped each output to the Virtual LEDx module.
+>>>>>
+>>>>> Ekhm, I messed something here.
+>>>>>
+>>>>> So for this I would define a single LED class device.
+>>>>> Related DT node would not need led-sources at all,
+>>>>> but only ti,control-bank. The semantics would be:
+>>>>> controls all iouts not taken by RGB LED modules.
+>>>>>
+>>>>
+>>>> Hmm.  I guess I will put that on hold until you read the responses.  I am not sure that would work or
+>>>> that would be really clean.  I still believe that mapping led-sources to the LEDx module number is the cleanest
+>>>> simplest solution since the driver cannot inter mix different outputs for enablement.
 >>>
->>> No. It doesn't allow for setting color intensity by having
->>> the color fixed beforehand. Below is relevant excerpt from
->>> the lp5024 documentation. This is not something that can be
->>> mapped to RGB color space, but rather to HSV/HSL, with the
->>> reservation that the hardware implementation uses PWM
->>> for setting color intensity.
->>
->> So they have feature where they have independent controls for each
->> channel, then one common control per three channels. Other chips have
->> common control for all the LEDs, for example. We don't support that
->> currently; lets focus on the RGB thing first.
->>
->>>> I don't have problem with that, either; other drivers already do
->>>> that. He's free to use existing same interface.
->>>>
->>>> But that is insufficient, as it does not allow simple stuff, such as
->>>> turning led "white".
->>>>
->>>> So... perhaps we should agree on requirements, first, and then we can
->>>> discuss solutions?
->>>>
->>>> Requirements for RGB LED interface:
->>>>
->>>> 1) Userspace should be able to set the white color
->>>>
->>>> 2) Userspace should be able to arbitrary color from well known list
->>>> and it should approximately match what would CRT, LCD or OLED 
->>>> monitor display
+>>> I've read the doc again more carefully and hopefully I finally have
+>>> proper understanding. Let's check it.
 >>>
->>> The difference is that monitor display driver is pre-calibrated
->>> for given display by the manufacturer. With the LED controllers the
->>> manufacturer has no control over what LEDs will be connected to the
->>> iouts. Therefore it should be not surprising that colors produced
->>> by custom LEDs are not as user would expect when comparing to
->>> the RGB color displayed on the monitor display.
->>
->> It is true that _chip_ manufacturer can not know what LEDs will be
->> connected. But _system_ manufacturer can and should know that, and
->> should tell be able to tell us in the dts.
->>
->>> This renders your requirement 2) infeasible with use of custom LEDs
->>> any fixed algorithm, since the final effect will always heavily depend
->>> on the LED circuit design.
->>
->> Depending on LED circuit design and actual LEDs connected is okay.. we
->> just need to get information from _system_ designer (not chip
->> designer), and pass it to a place where color is computed.
->>
->>>> a) RGB LEDs are usually not balanced. Setting 100% PWM on
->>>> red/green/blue channels will result in nothing close to white
->>>> light. In fact, to get white light on N900, blue and green channel's
->>>> PWM needs to be set pretty low, as in 5%.
->>>>
->>>> b) LED class does not define any relation between "brightness" in
->>>> sysfs and ammount of light in lumens. Some drivers use close to linear
->>>> relation, some use exponential relation. Human eyes percieve logarithm
->>>> of lumens. RGB color model uses even more complex function.
+>>> 1. On reset LED_CONFIG0 bits are zeroed, which means
+>>>     LEDn module independent control mode.
+>>> 2. LEDn modules (i.e. IOUT triplets) are controlled independently,
+>>>     with use of LEDn_BRIGHTNESS registers, and each IOUT color can
+>>>     be adjusted using OUTn_CONTROL registers.
+>>> 3. LEDn_Bank_EN bits, when set to 1, assign given RGB LED module
+>>>     to one global bank, controlled via BANK_BRIGHTNESS and BANK_n_COLOR
+>>>     registers.
 >>>
->>> One general question: do you have any solutions in store?
+>>> Having that, I'd see led-sources definitions as follows
+>>> (led-sources element is IOUT identifier)
+>>>
+>>> 1.
+>>>
+>>> - LED0, LED1, LED2, LED3 modules controlled by separate
+>>>    LED class devices
+>>>
+>>> led-sources = <0 1 2>   // LED0
+>>> led-sources = <3 4 5>   // LED1
+>>> led-sources = <6 7 8>   // LED2
+>>> led-sources = <9 10 11> // LED3
+>>>
+>>> 2.
+>>>
+>>> - LED0 and LED3 modules assigned to the bank, and controlled
+>>>    by one LED class device,
+>>> - LED1 and LED2 modules controlled by separate LED class devices
+>>>
+>>> led-sources = <0 1 2 9 10 11> // Bank with LED0 and LED3
+>>> led-sources = <3 4 5>         // LED1
+>>> led-sources = <6 7 8>         // LED2
+>>>
+>>>
+>>> So now I see your point. It would be indeed easier
+>>> to switch to LEDn module identifiers for led-sources
+>>> elements. With that the definitions would look like
+>>> this:
+>>>
+>>>
+>>> 1.
+>>>
+>>> - LED0, LED1, LED2, LED3 modules controlled by separate
+>>>    LED class devices
+>>>
+>>> led-sources = <0>   // LED0
+>>> led-sources = <1>   // LED1
+>>> led-sources = <2>   // LED2
+>>> led-sources = <3>   // LED3
+>>>
+>>> 2.
+>>>
+>>> - LED0 and LED3 modules assigned to the bank, and controlled
+>>>    by one LED class device,
+>>> - LED1 and LED2 modules controlled by separate LED class devices
+>>>
+>>> led-sources = <0 3> // Bank with LED0 and LED3
+>>> led-sources = <1>   // LED1
+>>> led-sources = <2>   // LED2
+>>>
 >>
->> I played with LEDs on N900 over the weekend, yes.
+>> This is exactly how I submitted the code.
 >>
->> And getting reasonable colors seems to be possible, when a) and b) are
->> solved... a) seems to be more important than b).
+>>>
+>>> But, I don't think use of led-sources is justified in
+>>> this case. I propose to introduce device specific properties:
+>>>
+>>> ti,led-module and ti,led-bank
+>>>
+>>> With that we would have:
+>>>
+>>> ti,led-bank = <0 3>   // Bank with LED0 and LED3 modules
+>>> ti,led-module = <1>   // LED1
+>>> ti.led-module = <2>   // LED2
+>>>
 >>
->> Now... this does not tell us how we should design kernel<->user
->> interface, but it should tell us that main goals - 1) and 2) are
->> possible.
+>> We are now aligned.  I can change the led-sources to the TI specific if there are no further objections.
+>> In doing this I can eliminate the ti,control-bank property.
+>>
+>>>
+>>>>> I would also add Table 1 contents (Bank Number and LED Number
+>>>>> Assignment) to the DT bindings.
+>>>>>
+>>>>
+>>>> Should I add that to the DT binding or reference the data sheet table since this driver will support 4 different devices
+>>>> with varying number of outputs from 18-36.
+>>>
+>>> My first thought was to show full table, but four different
+>>> mappings would add too much noise. So the reference to the data
+>>> sheet should suffice.
+>>>
+>>
+>> OK
+>>
+>> One last question I am going to add the LP5036 and 30 which have the same technology but slightly different register maps.
+>> Should I rename the driver to LP5036.c as the 30, 24 and 18 would technically be subsets?
 > 
-> I was thinking about this calibration and color correctness thing and I 
-> am thinking a bit that it should be partly in kernel and partly in user 
-> space.
+> How about leds-lp50xx.c ? You can also create a library like
+> drivers/leds/leds-lp55xx-common.c if that would simplify the code.
 > 
-> For displays and printers there are defined icc-profiles that define how 
-> colors are mapped to particular device in cases when you want to have 
-> accurate color representation. In theory to get accurate LED output one 
-> could model LEDs with icc profile and then pick your color and convert 
-> it with icc profile to actual raw hardware values. Then this raw 
-> hardware value could be written from user space to kernel.
 
-icc-profiles idea sounds interesting. We would have to adjust hsv->rgb
-algorithm to take the profiles into account. I wonder how that would
-work in practice.
+A library would be overkill.
+Is it just the DT that we don't want to use wild cards in naming?
 
-> In kernel we could provide raw hardware value support and in case of PWM 
-> IC controlled LEDs we could provide curve mapping to linearize the 
-> behavior of values entered to enable use in cases where close enough is 
-> good enough.
-> 
-> Eg. if you want to have "white" then you have your color space picker 
-> like sRGB(255,255,255). Then you would define icc profile it might 
-> translate to hardware raw values 253%, 230%, 225%.
+leds-lp50xx.c is a fine name to me.
 
-> Then you would write this to kernel with:
-> 
-> # set red, green and blue color elements
-> echo "253 230 225" > color
-> 
-> In this case however behavior of brightness node is challening in 
-> accuracy domain. Britghtness value 255 would of course provide 1:1 
-> mapping in this case.
-> 
-> To go right to correct color and brightness at one go we could have 
-> optional brightness at the end of color value array:
-> 
-> # set red, green and blue color element and brightness setting:
-> echo "253 230 225 255" > color
-> 
-> If you want to have fancier behavior for brightness in your system then 
-> we probably need to have configurable brightness model.
-> 
-> - hardware, like in lp5024 case would map to hardware register (would be 
-> omitted if there is no such register)
-> - onoff, would act like light switch ON/OFF eg. either configured value 
-> or all zeroes.
-> - scaled, would multiply the color elements
-> - hsl, would use hsl formula
-> - and this can be extended later with some other models and allows us to 
-> start with with some models now.
-> 
-> We could define this in devicetree and from sysfs a bit like with trigger:
-> 
-> $ cat brightness_model
-> [hardware] onoff scaled hsl
-> 
-> $ echo "hsl" > brightness_model
-> 
-> $ cat brightness_model
-> hardware onoff scaled [hsl]
-> 
-> Then we could have "color_names" or such sysfs entry to determine allow 
-> user space auto detection of led elements):
-> 
-> $ cat color_names
-> red green blue
-> 
-> I suppose this model would provide flexibilty for multiple cases. Make 
-> it simple for most uses, allow accuracy with icc profiles for advanced 
-> users, would allow atomic color setting.
-> 
-> I have updated (not yet in github) my tests to use color array model and 
-> color_names already and can play with brightness_model thing if this is 
-> something that is good path?
-> 
-> What do you think?
+Dan
 
 -- 
-Best regards,
-Jacek Anaszewski
+------------------
+Dan Murphy
