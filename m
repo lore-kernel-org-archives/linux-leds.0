@@ -1,151 +1,231 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB
- LED driver
-Date: Wed, 16 Jan 2019 11:55:37 +0100
-Message-ID: <20190116105537.GA1803@amd>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB LED
+ driver
+Date: Wed, 16 Jan 2019 12:41:52 -0600
+Message-ID: <86299268-3202-814a-134b-04bd2170faab@ti.com>
 References: <20190114211723.11186-1-dmurphy@ti.com>
  <20190114211723.11186-2-dmurphy@ti.com>
- <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com>
- <20190115222223.GA17363@amd>
- <79394d17-3124-75b2-ccac-dc1046499d14@ti.com>
+ <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com> <20190115222223.GA17363@amd>
+ <79394d17-3124-75b2-ccac-dc1046499d14@ti.com> <20190116105537.GA1803@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <79394d17-3124-75b2-ccac-dc1046499d14@ti.com>
+In-Reply-To: <20190116105537.GA1803@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
+To: Pavel Machek <pavel@ucw.cz>
 Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, dachaac@gmail.com, robh+dt@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+Hello
 
---fUYQa+Pmc3FrFX/N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 1/16/19 4:55 AM, Pavel Machek wrote:
+> Hi!
+> 
+>> On 1/15/19 4:22 PM, Pavel Machek wrote:
+>>> Hi!
+>>>
+>>>>> +The 24-bit RGB value passed in follows the pattern 0xXXRRGGBB
+>>>>> +XX - Do not care ignored by the driver
+>>>>> +RR - is the 8 bit Red LED value
+>>>>> +GG - is the 8 bit Green LED value
+>>>>> +BB - is the 8 bit Blue LED value
+>>>>> +
+>>>>> +Example:
+>>>>> +LED module output 4 of the LP5024 will be a yellow color:
+>>>>> +echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color
+>>>>> +
+>>>>> +LED module output 4 of the LP5024 will be dimmed 50%:
+>>>>> +echo 0x80 > /sys/class/leds/lp5024\:led4_mod/brightness
+>>>>> +
+>>>>> +LED banked RGBs of the LP5036 will be a white color:
+>>>>> +echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color
+>>>>
+>>>> This part with example cans remain in Documentation/leds if you
+>>>>> like.
+>>>
+>>> Does it actually work like that on hardware?
+>>
+>> What?
+> 
+> If you do echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color,
+> does it actually produce white? With all the different RGB modules
+> manufacturers can use with lp5024P?
+> 
+> If you do echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color, does
+> it actually produce yellow, with all the different RGB modules
+> manufacturers can use with lp5024P?
+> 
 
-Hi!
+I believe the answer to the general questions is no for any RGB cluster and driver out there.
+Because if you set the same values on each and every RGB device out there you will get varying shades of the color.
+But for this device yes the color does appear to be yellow to me versus what was displayed on my monitor by the HSL picker.
+But everyone interprets colors differently.
 
-> On 1/15/19 4:22 PM, Pavel Machek wrote:
-> > Hi!
-> >=20
-> >>> +The 24-bit RGB value passed in follows the pattern 0xXXRRGGBB
-> >>> +XX - Do not care ignored by the driver
-> >>> +RR - is the 8 bit Red LED value
-> >>> +GG - is the 8 bit Green LED value
-> >>> +BB - is the 8 bit Blue LED value
-> >>> +
-> >>> +Example:
-> >>> +LED module output 4 of the LP5024 will be a yellow color:
-> >>> +echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color
-> >>> +
-> >>> +LED module output 4 of the LP5024 will be dimmed 50%:
-> >>> +echo 0x80 > /sys/class/leds/lp5024\:led4_mod/brightness
-> >>> +
-> >>> +LED banked RGBs of the LP5036 will be a white color:
-> >>> +echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color
-> >>
-> >> This part with example cans remain in Documentation/leds if you
-> >>> like.
-> >=20
-> > Does it actually work like that on hardware?
->=20
-> What?
+If you write the same value for yellow or white on a droid 4 and the N900 do they produce the same color side by side?
+Most probably not.
 
-If you do echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color,
-does it actually produce white? With all the different RGB modules
-manufacturers can use with lp5024P?
+As you pointed out the PWM needs to be modified to obtain the correct white color to account for LED and other device constraints.
 
-If you do echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color, does
-it actually produce yellow, with all the different RGB modules
-manufacturers can use with lp5024P?
+But we need to take into account the light pipe.  Pools nowadays have RGB LED spot lights in them.  It can
+be set to white.  On my pool right off the lens the color has a purplish hue to it.  As the light is diffracted into
+the pool the color becomes white.  The pool is clear.  When I add chemicals to the pool and make it cloudy
+and turn on the lights the color off the lens is now white.  This is an example on a large scale but the issue
+scales down to the hand helds and smart home applications.
 
-> > Is it supposed to support "normal" RGB colors as seen on monitors?
->=20
-> Monitors are not an application for this part.
+If the cluster is piped through a flexible optic 0xffffff may produce the "white" you want on its output.
 
-You did not answer the question. When you talk about yellow, is it
-same yellow the rest of world talks about?
+So an expectation of certain color without proper piping based on a single RGB value may be a little unreasonable.
+There may need to be a way to attenuate the values based on the hardware aspect of the equation ie light pipe (or lack thereof) and LED vendor.
+So if we write 0xffffff to the RGB driver the driver could adjust the intensity of the individual LEDs based on the diffraction
+coefficients.
 
-> > Because 100% PWM on all channels does not result in white on hardware
-> > I have.
->=20
-> I don't know I am usually blinded by the light and have no diffuser over
-> the LEDs to disperse the light so when I look I see all 3 colors.
+I also think that is an unreasonable expectation here that writing a single value to any LED RGB driver would produce
+a "rest of the world" absolute color.  Maybe it can produce something similar but not identical.
+As you indicated in the requirements there is more involved here then just the LED and the values written.
+The colors should be close but may not be identical.
 
-How can we have useful discussion about colors when you don't see the
-colors?
+A 10 year old N900 should not be considered the gold standard for color production due to advancements in LED,
+light pipe and LED driver technology.
+The single package RGB clusters on the board I am testing is about the size of a single RGB LED from 10 years ago.
 
-Place a piece of paper over the LEDs....
+I agree that the interface developed should work on the device but the algorithm derived to obtain the color needs to have
+a hardware aspect to the calculation.
 
-> > But...
-> >=20
-> > I believe we should have a reasonable design before we do something
-> > like this. There's no guarantee someone will not use lp50xx with just
-> > the white LEDs for example. How will this work? Plus existing hardware
-> > already uses three separate LEDs for RGB LED. Why not provide same
-> > interface?
->=20
-> Which existing hardware?  Are they using this part?
+>>> Is it supposed to support "normal" RGB colors as seen on monitors?
+>>
+>> Monitors are not an application for this part.
+> 
+> You did not answer the question. When you talk about yellow, is it
+> same yellow the rest of world talks about?
+> 
 
-Nokia N900. They are not using this part, but any interface we invent
-should work there, too.
+See above.  It is close to what was on my monitor displayed.
 
-> <rant>
-> Why are we delaying getting the RGB framework or HSV in?
-> I would rather design against something you want instead of having
-> everyone complain about every implementation I post.
-> </rant>
+>>> Because 100% PWM on all channels does not result in white on hardware
+>>> I have.
+>>
+>> I don't know I am usually blinded by the light and have no diffuser over
+>> the LEDs to disperse the light so when I look I see all 3 colors.
+> 
+> How can we have useful discussion about colors when you don't see the
+> colors?
+> 
+> Place a piece of paper over the LEDs....
+> 
 
-Because you insist on creating new kernel interfaces, when existing
-interfaces work, and are doing that badly.
+Good suggestion for a rough test.
 
-Because your patches are of lower quality than is acceptable for linux
-kernel.
+>>> But...
+>>>
+>>> I believe we should have a reasonable design before we do something
+>>> like this. There's no guarantee someone will not use lp50xx with just
+>>> the white LEDs for example. How will this work? Plus existing hardware
+>>> already uses three separate LEDs for RGB LED. Why not provide same
+>>> interface?
+>>
+>> Which existing hardware?  Are they using this part?
+> 
+> Nokia N900. They are not using this part, but any interface we invent
+> should work there, too.
+> 
 
-Because you don't seem to be reading the emails.
+Yes a common interface would be nice with some sort of hardware tuning coefficient.
 
-I sent list of requirements for RGB led support. This does not meet
-them.
+>> <rant>
+>> Why are we delaying getting the RGB framework or HSV in?
+>> I would rather design against something you want instead of having
+>> everyone complain about every implementation I post.
+>> </rant>
+> 
+> Because you insist on creating new kernel interfaces, when existing
+> interfaces work, and are doing that badly.
+> 
+> Because your patches are of lower quality than is acceptable for linux
+> kernel.
+> 
+> Because you don't seem to be reading the emails.
+> 
+> I sent list of requirements for RGB led support. This does not meet
+> them.
+> 
 
-> It is not a normal RGB driver.  The device collates the individual RGB
-> clusters into a single brightness register and you can modify the intensi=
-ty of the individual
-> LEDs via other registers.  If brightness is 0 then the cluster is OFF reg=
-ardless of the color
-> set in the individual registers.
+Sigh.  You did not answer my question.
 
-I understand that. So just set cluster brightness to 255 and you have
-normal RGB driver you can control with existing interfaces. You don't
-have to use every feature your hardware has.
+Your requirements seem to be centered around monitors but that is only one application of the current
+RGB LED landscape.
 
-You did not answer the "what if someone uses this with all white LEDs"
-question.
+I am willing to work with you on the HSV and adapting the LP50xx part to this framework.
+Or any RGB framework for that matter.  I still don't agree with the kernel needing to declare colors
+ maybe color capabilities but not specific colors.
 
-You know what? First, submit driver with similar functionality to
-existing RGB drivers, using same interface existing drivers are
-using. When that is accepted, we can talk about extending
-kernel<->user interfaces.
+It was agreed to continue forward with this particular implementation.
+At least thats what the email (I apparently did not read) stated.
 
-Thanks,
-									Pavel
+I need to fix the code to use the space separated value as pointed out and shown by Vesa.
+This will map nicely into this device with the color file as what I implemented is in theory
+they same code except for the space separated values.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+>> It is not a normal RGB driver.  The device collates the individual RGB
+>> clusters into a single brightness register and you can modify the intensity of the individual
+>> LEDs via other registers.  If brightness is 0 then the cluster is OFF regardless of the color
+>> set in the individual registers.
+> 
+> I understand that. So just set cluster brightness to 255 and you have
+> normal RGB driver you can control with existing interfaces. You don't
+> have to use every feature your hardware has.
+> 
 
---fUYQa+Pmc3FrFX/N
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+The brightness file is available and adjusts the brightness of the RGB cluster.
+I am not attempting to implement every feature the device has.  But I am attempting to use
+the basic features that are available and useful.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> You did not answer the "what if someone uses this with all white LEDs"
+> question.
+> 
 
-iEYEARECAAYFAlw/DagACgkQMOfwapXb+vIoVgCfedc0OSdbNGb0hlloqu6krDpU
-X6oAn3s2wHVdp1ECg7vpxXdJOQUskULQ
-=APCk
------END PGP SIGNATURE-----
+Are you asking what if someone places a white LED instead of a RGB on the hardware?
+Well then they need to go back and have a review of the data sheet and what they are trying to
+achieve.  That would be a misapplication of the LED driver itself and something software cannot fix.
 
---fUYQa+Pmc3FrFX/N--
+But if they do determine they want to control these white LEDs with this device
+then they can ignore the "color" file and control the cluster via the brightness file like we
+do today.  The color file will only change the intensity of the single output (assuming LED module mode)
+or the banked output.
+
+If a user wants to place a RGB cluster down on the hardware and have white as the consistent color
+well then that is fine as the RGB outputs are all set to 0xff and the intensity of the cluster is
+controlled by the brightness file.  If they cannot achieve the "white" with the default settings then
+on init they can set the color file once to obtain the "white" color and continue to use the brightness
+file to control the overall brightness of the cluster.
+
+It was determined in the email chain not to expose a brightness file per output as this device
+does not lend itself to that convention.
+
+> You know what? First, submit driver with similar functionality to
+> existing RGB drivers, using same interface existing drivers are
+> using. When that is accepted, we can talk about extending
+> kernel<->user interfaces.
+> 
+
+I could do that but then there is no way for users to have any other color but "white" with this driver.
+That defeats the purpose of the device itself.
+
+This is why I would rather align the interfaces with what is being proposed so the interfaces won't change only
+the engine underneath will.
+
+I am not sure if you are aware of this or care but I found this recent blog on this effort:
+https://www.phoronix.com/scan.php?page=news_item&px=Linux-RGB-LED-Interface
+See some of the comments.
+
+Dan
+
+> Thanks,
+> 									Pavel
+> 
+
+
+-- 
+------------------
+Dan Murphy
