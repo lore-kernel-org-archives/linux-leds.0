@@ -1,23 +1,82 @@
-From: pr-tracker-bot@kernel.org
-Subject: Re: [GIT PULL] LED fix for 5.0-rc3.
-Date: Fri, 18 Jan 2019 05:05:02 +0000
-Message-ID: <154778790228.10702.5331263532394901114.pr-tracker-bot@kernel.org>
-References: <20190117214352.23045-1-jacek.anaszewski@gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 00/13] mfd: add support for max77650 PMIC
+Date: Fri, 18 Jan 2019 14:42:31 +0100
+Message-ID: <20190118134244.22253-1-brgl@bgdev.pl>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190117214352.23045-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, kjlu@umn.edu
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-The pull request you sent on Thu, 17 Jan 2019 22:43:52 +0100:
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led-fix-for-5.0-rc3
+This series adds support for max77650 ultra low-power PMIC. It provides
+the core mfd driver and a set of five sub-drivers for the regulator,
+power supply, gpio, leds and input subsystems.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2451f3717c538795fc9fade46916683ebf7ea959
+Patches 1-6 add the DT binding documents. Patches 7-12 add all drivers.
+Last patch adds a MAINTAINERS entry for this device.
 
-Thank you!
+Note that patch 8/13 depends on commit 03c87b95ac04 ("regulator: provide
+rdev_get_regmap()") which was picked up by Mark Brown for v5.1.
+
+Bartosz Golaszewski (13):
+  dt-bindings: mfd: add DT bindings for max77650
+  dt-bindings: regulator: add DT bindings for max77650
+  dt-bindings: power: supply: add DT bindings for max77650
+  dt-bindings: gpio: add DT bindings for max77650
+  dt-bindings: leds: add DT bindings for max77650
+  dt-bindings: input: add DT bindings for max77650
+  mfd: max77650: new core mfd driver
+  regulator: max77650: add regulator support
+  power: supply: max77650: add support for battery charger
+  gpio: max77650: add GPIO support
+  leds: max77650: add LEDs support
+  input: max77650: add onkey support
+  MAINTAINERS: add an entry for max77650 mfd driver
+
+ .../bindings/gpio/gpio-max77650.txt           |  34 ++
+ .../bindings/input/max77650-onkey.txt         |  26 +
+ .../bindings/leds/leds-max77650.txt           |  57 ++
+ .../devicetree/bindings/mfd/max77650.txt      |  28 +
+ .../power/supply/max77650-charger.txt         |  27 +
+ .../bindings/regulator/max77650-regulator.txt |  41 ++
+ MAINTAINERS                                   |  14 +
+ drivers/gpio/Kconfig                          |   7 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-max77650.c                  | 189 ++++++
+ drivers/input/misc/Kconfig                    |   9 +
+ drivers/input/misc/Makefile                   |   1 +
+ drivers/input/misc/max77650-onkey.c           | 135 +++++
+ drivers/leds/Kconfig                          |   6 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-max77650.c                  | 162 ++++++
+ drivers/mfd/Kconfig                           |  11 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/max77650.c                        | 212 +++++++
+ drivers/power/supply/Kconfig                  |   7 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/max77650-charger.c       | 347 +++++++++++
+ drivers/regulator/Kconfig                     |   8 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/max77650-regulator.c        | 537 ++++++++++++++++++
+ include/linux/mfd/max77650.h                  |  73 +++
+ 26 files changed, 1936 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/max77650-regulator.txt
+ create mode 100644 drivers/gpio/gpio-max77650.c
+ create mode 100644 drivers/input/misc/max77650-onkey.c
+ create mode 100644 drivers/leds/leds-max77650.c
+ create mode 100644 drivers/mfd/max77650.c
+ create mode 100644 drivers/power/supply/max77650-charger.c
+ create mode 100644 drivers/regulator/max77650-regulator.c
+ create mode 100644 include/linux/mfd/max77650.h
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.19.1
