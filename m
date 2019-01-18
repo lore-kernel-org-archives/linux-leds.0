@@ -1,37 +1,138 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL] LED fix for 5.0-rc3.
-Date: Thu, 17 Jan 2019 22:43:52 +0100
-Message-ID: <20190117214352.23045-1-jacek.anaszewski@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: RGB LED class Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family
+ of the RGB LED driver
+Date: Fri, 18 Jan 2019 01:02:35 +0100
+Message-ID: <20190118000235.GB27661@amd>
+References: <20190114211723.11186-1-dmurphy@ti.com>
+ <20190114211723.11186-2-dmurphy@ti.com>
+ <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com>
+ <20190115222223.GA17363@amd>
+ <79394d17-3124-75b2-ccac-dc1046499d14@ti.com>
+ <20190116105537.GA1803@amd>
+ <86299268-3202-814a-134b-04bd2170faab@ti.com>
+ <8dfa2854-2814-6874-ab8e-1858e9a18acf@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="tjCHc7DPkfUGtrlw"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <8dfa2854-2814-6874-ab8e-1858e9a18acf@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, kjlu@umn.edu
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, dachaac@gmail.com, robh+dt@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Linus,
 
-Please pull single LED fix.
+--tjCHc7DPkfUGtrlw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+Hi!
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
-are available in the git repository at:
+> >I am willing to work with you on the HSV and adapting the LP50xx part to=
+ this framework.
+> >Or any RGB framework for that matter.  I still don't agree with the kern=
+el needing to declare colors
+> >  maybe color capabilities but not specific colors.
+>=20
+> Dan, if you have a bandwidth for LED RGB class implementation
+> then please go ahead. It would be good to compare colors produced
+> by software HSV->RGB algorithm to what can be achieved with
+> LEDn_BRIGHTNESS feature.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led-fix-for-5.0-rc3
+Don't get me wrong, I'd like to see LED RGB class implementation. But
+it will delay merge of this driver.
 
-for you to fetch changes up to 248b57015f35c94d4eae2fdd8c6febf5cd703900:
+If we want to do that, we should first discuss the requirements, and
+then come up with interface.. and only then we can talk about the
+driver code.
 
-  leds: lp5523: fix a missing check of return value of lp55xx_read (2019-01-17 22:27:39 +0100)
+That's why I believe preferable way would be to merge the driver using
+the existing interface.
 
-Thanks,
-Jacek Anaszewski
+Of course, first designing RGB LED class and then merging the
+driver.. is okay with me. But lets not rush the class because there's
+driver waiting for it.
 
-----------------------------------------------------------------
-LED fix for 5.0-rc3
-----------------------------------------------------------------
-Kangjie Lu (1):
-      leds: lp5523: fix a missing check of return value of lp55xx_read
+> The requirements for LED RGB class as I would see it:
+>=20
+> sysfs interface:
+>=20
+> brightness-model: space separated list of available options:
+> - rgb (default):
+>   - creates color file with "red green blue" decimal values
+>   - creates brightness file
+> 	a) for devices with hardware support for adjusting color
+>            intensity it maps to corresponding register
+>         b) for the rest writing any value greater than 0 will result
+>            in setting all color registers to max
+> - hsv:
+>   - creates color file with "h s v" values - it shall
+>     use software HSV->RGB algorithm for setting color registers
+>=20
+> - any other custom color ranges defined in DT, but it can be covered
+>   later
+> - other options?
 
- drivers/leds/leds-lp5523.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+First, I think we want to decide if RGB LED should be presented as
+3 LEDs or as 1 LED... and what to do with existing RGB leds being
+presented as 3 LEDs.
+
+I don't think we want to support both RGB and HSV in the kernel. It is
+math, and not a nice one.
+
+Yes, both have advantages and disadvantages, but having _both_ in
+kernel has disadvantages of both.
+
+One way I could imagine the interface:
+
+    RGB LED presented as one LED.
+
+    brightness -- controls brightness of whole RGB module.
+
+    pwm_channels -- "1000 240 300" -- "red part should be full on, green
+    should be pwm controlled to 240/1000, blue should be 300/1000"
+
+    pwm_white -- "1000 500 400" -- tells userspace what to write to PWM
+    channels to get approximately white color.
+
+    This would assume that RGB LEDs are always pwm controlled. That
+    seems to be true for hardware I seen.
+
+    + no complex math in kernel
+
+    + userspace knows enough to display arbitrary colors
+
+    + userspace can use full range of available PWM intensities
+
+    + existing triggers will work nicely
+
+    - userland needs to do non-trivial math to get colors it wants
+
+    - not sure how to migrate existing devices
+
+Thoughts? Other possible interfaces?
+
+Best regards,
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--tjCHc7DPkfUGtrlw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxBF5sACgkQMOfwapXb+vLk7ACggrnpo4GT4crCmLiKiC8Lan/F
+m2YAn2pa5S/YMpk7b2XpOyHfzqRZiJws
+=Rwmp
+-----END PGP SIGNATURE-----
+
+--tjCHc7DPkfUGtrlw--
