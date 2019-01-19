@@ -1,100 +1,112 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: RGB LED class Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX
- family of the RGB LED driver
-Date: Sat, 19 Jan 2019 22:36:29 +0100
-Message-ID: <20190119213629.GA3654@amd>
+Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB
+ LED driver
+Date: Sat, 19 Jan 2019 22:46:06 +0100
+Message-ID: <20190119214606.GA4712@amd>
 References: <20190114211723.11186-1-dmurphy@ti.com>
  <20190114211723.11186-2-dmurphy@ti.com>
  <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com>
  <20190115222223.GA17363@amd>
  <79394d17-3124-75b2-ccac-dc1046499d14@ti.com>
  <20190116105537.GA1803@amd>
- <86299268-3202-814a-134b-04bd2170faab@ti.com>
- <8dfa2854-2814-6874-ab8e-1858e9a18acf@gmail.com>
- <20190118000235.GB27661@amd>
- <61fa89eb-c12e-8f9c-9457-9d6d17ba7717@gmail.com>
+ <efb4e1c1-0d13-bed7-d262-284fc1a0c9ab@gmail.com>
+ <4115ad75-22f7-d9ae-c38f-e0ab61fb6655@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <61fa89eb-c12e-8f9c-9457-9d6d17ba7717@gmail.com>
+In-Reply-To: <4115ad75-22f7-d9ae-c38f-e0ab61fb6655@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, dachaac@gmail.com, robh+dt@kernel.org
+To: Vesa =?iso-8859-1?B?SuTkc2tlbORpbmVu?= <dachaac@gmail.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 
---SUOF0GtieIMvvwua
+--ew6BAiZeqk4r7MaW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> >First, I think we want to decide if RGB LED should be presented as
-> >3 LEDs or as 1 LED... and what to do with existing RGB leds being
-> >presented as 3 LEDs.
+> >Moreover, I think that RGB LED class with configurable
+> >brightness-model, and with possible color range adjustments via
+> >icc-profiles or something similar, is the best solution that has been
+> >proposed so far. It is just flexible.
 > >
-> >I don't think we want to support both RGB and HSV in the kernel. It is
-> >math, and not a nice one.
+> >I'd like to capitalize on the ideas shared in this thread and have
+> >finally LED RGB class materialized.
 > >
-> >Yes, both have advantages and disadvantages, but having _both_ in
-> >kernel has disadvantages of both.
-> >
-> >One way I could imagine the interface:
-> >
-> >     RGB LED presented as one LED.
-> >
-> >     brightness -- controls brightness of whole RGB module.
 >=20
-> What algorithm would be used for mapping brightness levels to RGB values
-> in case of devices without hardware support for that?
-
-Output power =3D brightness / max_brightness * pwm_channel[x].
-
-> >     pwm_channels -- "1000 240 300" -- "red part should be full on, green
-> >     should be pwm controlled to 240/1000, blue should be 300/1000"
-> >
-> >     pwm_white -- "1000 500 400" -- tells userspace what to write to PWM
-> >     channels to get approximately white color.
-> >
-> >     This would assume that RGB LEDs are always pwm controlled. That
-> >     seems to be true for hardware I seen.
+> I have now updated my github code with my understanding of the discussion:
+> https://github.com/vesajaaskelainen/linux/tree/wip-multi-color-led
 >=20
-> Why pwm in the file names? I don't see any gain and only possible
-> problems. Many LED controllers use current level and not PWM
-> for driving LEDs.
+> Commits:
+> - dt-bindings: leds: Introduce linux,default-brightness-model for all leds
+> https://github.com/vesajaaskelainen/linux/commit/4ffb21d644056686096226bb=
+ede7c8c78b0254c2
+> - drivers: leds: Add core support for multi color element LEDs
+> https://github.com/vesajaaskelainen/linux/commit/627f38bb78cebc694b8e6d73=
+5fb088c87925435d
+> - dt-bindings: leds: leds-pwm: Introduce multi color element leds support
+> https://github.com/vesajaaskelainen/linux/commit/ef6c5730d621e79ea0b02470=
+caa83bc39439536a
+> - WIP: drivers: leds: leds-pwm: Add multi color element LED support.
+> https://github.com/vesajaaskelainen/linux/commit/0430a27823d9162926424b32=
+c23be1c53eb9cbe2
+>=20
+> First two commits are common and could be taken before I am happy with the
+> pwm led driver changes. This new conditional feature flag makes it a bit
+> harder. Of course one option would be to require it to be enabled.
+>=20
+> Current set of concepts:
+> - brightness-model: hardware, onoff, linear
+>   - could be extended in future with other modes like hsv if wanted
 
-I want to make sure userspace understands this has linear relation to
-output power. I'd like to avoid mentioning color because there power
-output is not linear with "RGB"=20
+Would it be enough to tell userspace what is relation between values
+it writes and output power?
 
-> s/pwm/color/
+Onoff is subset of linear, I guess. We already have max_brightness in
+the API.
 
-s/pwm/power/ would work for me.
+> # Setting up color to not so bright purple with brightness set to 255
+> $ echo "32 0 32 255" > color
 
-> Besides white also other color presets could be defined in DT.
+> # Setting up color to a bit brighter purple with brightness
+> $ echo "128 0 128 255" > color
 
-They should not be neccessary. When userspace knows what is white and
-that power is linear with values in power_channels, it should be able
-to do colorspace conversion itself.
-								Pavel
+This would require colorspace conversion in kernel. I have:
+
+    	    scales =3D (1., 0.39, 0.11) # for n900
+            val =3D map(lambda x: int((x**2.2)*255), val)
+	    (r, g, b) =3D val
+
+	    (r_, g_, b_) =3D m.scales
+	    red =3D r*r_
+	    ...
+
+x**2.2 is simplified, real expression is more complex. But it is
+floating point math...
+
+Do we want to do that?
+
+									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---SUOF0GtieIMvvwua
+--ew6BAiZeqk4r7MaW
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlxDmF0ACgkQMOfwapXb+vL/LQCfaLBavlaI26/fDnA+2+PM639T
-NTAAnAwZBcafnVt7AmOEomXaMxihgxCQ
-=1A/N
+iEYEARECAAYFAlxDmp4ACgkQMOfwapXb+vLiHACcCLj0rtLbmOrnP63lMapTQ3Hm
+xqkAn1NM814Qq9FoyTvD6QjbL0d/AvZm
+=mY3B
 -----END PGP SIGNATURE-----
 
---SUOF0GtieIMvvwua--
+--ew6BAiZeqk4r7MaW--
