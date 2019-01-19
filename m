@@ -1,262 +1,100 @@
-From: =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
-Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB LED
- driver
-Date: Sat, 19 Jan 2019 21:11:01 +0200
-Message-ID: <4115ad75-22f7-d9ae-c38f-e0ab61fb6655@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: RGB LED class Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX
+ family of the RGB LED driver
+Date: Sat, 19 Jan 2019 22:36:29 +0100
+Message-ID: <20190119213629.GA3654@amd>
 References: <20190114211723.11186-1-dmurphy@ti.com>
  <20190114211723.11186-2-dmurphy@ti.com>
- <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com> <20190115222223.GA17363@amd>
- <79394d17-3124-75b2-ccac-dc1046499d14@ti.com> <20190116105537.GA1803@amd>
- <efb4e1c1-0d13-bed7-d262-284fc1a0c9ab@gmail.com>
+ <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com>
+ <20190115222223.GA17363@amd>
+ <79394d17-3124-75b2-ccac-dc1046499d14@ti.com>
+ <20190116105537.GA1803@amd>
+ <86299268-3202-814a-134b-04bd2170faab@ti.com>
+ <8dfa2854-2814-6874-ab8e-1858e9a18acf@gmail.com>
+ <20190118000235.GB27661@amd>
+ <61fa89eb-c12e-8f9c-9457-9d6d17ba7717@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <efb4e1c1-0d13-bed7-d262-284fc1a0c9ab@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <61fa89eb-c12e-8f9c-9457-9d6d17ba7717@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, dachaac@gmail.com, robh+dt@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Jacek et al,
 
-On 17/01/2019 23.08, Jacek Anaszewski wrote:
-> On 1/16/19 11:55 AM, Pavel Machek wrote:
->> Hi!
->>
->>> On 1/15/19 4:22 PM, Pavel Machek wrote:
->>>> Hi!
->>>>
->>>>>> +The 24-bit RGB value passed in follows the pattern 0xXXRRGGBB
->>>>>> +XX - Do not care ignored by the driver
->>>>>> +RR - is the 8 bit Red LED value
->>>>>> +GG - is the 8 bit Green LED value
->>>>>> +BB - is the 8 bit Blue LED value
->>>>>> +
->>>>>> +Example:
->>>>>> +LED module output 4 of the LP5024 will be a yellow color:
->>>>>> +echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color
->>>>>> +
->>>>>> +LED module output 4 of the LP5024 will be dimmed 50%:
->>>>>> +echo 0x80 > /sys/class/leds/lp5024\:led4_mod/brightness
->>>>>> +
->>>>>> +LED banked RGBs of the LP5036 will be a white color:
->>>>>> +echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color
->>>>>
->>>>> This part with example cans remain in Documentation/leds if you
->>>>>> like.
->>>>
->>>> Does it actually work like that on hardware?
->>>
->>> What?
->>
->> If you do echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color,
->> does it actually produce white? With all the different RGB modules
->> manufacturers can use with lp5024P?
->>
->> If you do echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color, does
->> it actually produce yellow, with all the different RGB modules
->> manufacturers can use with lp5024P?
-> 
-> Vesa proposed using icc-profiles to make the colors looking similar
-> on various LEDs. It was in reply to your message with requirements
-> for RGB LED class.
-> 
-> For this device we can however do without it. Videos showing the
-> performance of this particular device with a reference design using
-> RGB LEDs prove it works nice.
-> 
->>>> Is it supposed to support "normal" RGB colors as seen on monitors?
->>>
->>> Monitors are not an application for this part.
->>
->> You did not answer the question. When you talk about yellow, is it
->> same yellow the rest of world talks about?
->>
->>>> Because 100% PWM on all channels does not result in white on hardware
->>>> I have.
->>>
->>> I don't know I am usually blinded by the light and have no diffuser over
->>> the LEDs to disperse the light so when I look I see all 3 colors.
->>
->> How can we have useful discussion about colors when you don't see the
->> colors?
->>
->> Place a piece of paper over the LEDs....
->>
->>>> But...
->>>>
->>>> I believe we should have a reasonable design before we do something
->>>> like this. There's no guarantee someone will not use lp50xx with just
->>>> the white LEDs for example. How will this work? Plus existing hardware
->>>> already uses three separate LEDs for RGB LED. Why not provide same
->>>> interface?
->>>
->>> Which existing hardware?  Are they using this part?
->>
->> Nokia N900. They are not using this part, but any interface we invent
->> should work there, too.
->>
->>> <rant>
->>> Why are we delaying getting the RGB framework or HSV in?
->>> I would rather design against something you want instead of having
->>> everyone complain about every implementation I post.
->>> </rant>
->>
->> Because you insist on creating new kernel interfaces, when existing
->> interfaces work, and are doing that badly.
->>
->> Because your patches are of lower quality than is acceptable for linux
->> kernel.
-> 
-> Lets keep things civil please.
-> 
-> This sentence should look familiar to you - it's not the first time
-> you resort to this type of narration.
-> 
->> Because you don't seem to be reading the emails.
->>
->> I sent list of requirements for RGB led support. This does not meet
->> them.
-> 
-> And you didn't respond to the comments from Vesa. The requirements
-> has not been acclaimed.
-> 
->>> It is not a normal RGB driver.  The device collates the individual RGB
->>> clusters into a single brightness register and you can modify the 
->>> intensity of the individual
->>> LEDs via other registers.  If brightness is 0 then the cluster is OFF 
->>> regardless of the color
->>> set in the individual registers.
->>
->> I understand that. So just set cluster brightness to 255 and you have
->> normal RGB driver you can control with existing interfaces. You don't
->> have to use every feature your hardware has.
-> 
-> This feature is one of the core advantages of this device.
-> 
->> You did not answer the "what if someone uses this with all white LEDs"
->> question.
->>
->> You know what? First, submit driver with similar functionality to
->> existing RGB drivers, using same interface existing drivers are
->> using. When that is accepted, we can talk about extending
->> kernel<->user interfaces.
-> 
-> This stands in contradiction with my request.
-> 
-> Provided there will be no other NAKs, I am eager to accept the
-> interface with color and brightness files.
-> 
-> Moreover, I think that RGB LED class with configurable
-> brightness-model, and with possible color range adjustments via
-> icc-profiles or something similar, is the best solution that has been 
-> proposed so far. It is just flexible.
-> 
-> I'd like to capitalize on the ideas shared in this thread and have
-> finally LED RGB class materialized.
-> 
+--SUOF0GtieIMvvwua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have now updated my github code with my understanding of the discussion:
-https://github.com/vesajaaskelainen/linux/tree/wip-multi-color-led
+Hi!
 
-Commits:
-- dt-bindings: leds: Introduce linux,default-brightness-model for all leds
-https://github.com/vesajaaskelainen/linux/commit/4ffb21d644056686096226bbede7c8c78b0254c2
-- drivers: leds: Add core support for multi color element LEDs
-https://github.com/vesajaaskelainen/linux/commit/627f38bb78cebc694b8e6d735fb088c87925435d
-- dt-bindings: leds: leds-pwm: Introduce multi color element leds support
-https://github.com/vesajaaskelainen/linux/commit/ef6c5730d621e79ea0b02470caa83bc39439536a
-- WIP: drivers: leds: leds-pwm: Add multi color element LED support.
-https://github.com/vesajaaskelainen/linux/commit/0430a27823d9162926424b32c23be1c53eb9cbe2
+> >First, I think we want to decide if RGB LED should be presented as
+> >3 LEDs or as 1 LED... and what to do with existing RGB leds being
+> >presented as 3 LEDs.
+> >
+> >I don't think we want to support both RGB and HSV in the kernel. It is
+> >math, and not a nice one.
+> >
+> >Yes, both have advantages and disadvantages, but having _both_ in
+> >kernel has disadvantages of both.
+> >
+> >One way I could imagine the interface:
+> >
+> >     RGB LED presented as one LED.
+> >
+> >     brightness -- controls brightness of whole RGB module.
+>=20
+> What algorithm would be used for mapping brightness levels to RGB values
+> in case of devices without hardware support for that?
 
-First two commits are common and could be taken before I am happy with 
-the pwm led driver changes. This new conditional feature flag makes it a 
-bit harder. Of course one option would be to require it to be enabled.
+Output power =3D brightness / max_brightness * pwm_channel[x].
 
-Current set of concepts:
-- brightness-model: hardware, onoff, linear
-   - could be extended in future with other modes like hsv if wanted
-- led_common_setup_of: helper for setting up common parts of led class 
-device from devicetree.
-- led_color_element_setup_of: helper for setting up color element parts 
-of led class device from devicetree.
-- led_scale_color_elements: single point helper for handling 
-brightness-model.
-- From user space point-of-view atomic changes for color elements and 
-brightness.
+> >     pwm_channels -- "1000 240 300" -- "red part should be full on, green
+> >     should be pwm controlled to 240/1000, blue should be 300/1000"
+> >
+> >     pwm_white -- "1000 500 400" -- tells userspace what to write to PWM
+> >     channels to get approximately white color.
+> >
+> >     This would assume that RGB LEDs are always pwm controlled. That
+> >     seems to be true for hardware I seen.
+>=20
+> Why pwm in the file names? I don't see any gain and only possible
+> problems. Many LED controllers use current level and not PWM
+> for driving LEDs.
 
-Sysfs interfaces:
-- brightness_model: Change of brightness model on the fly. Similar if as 
-trigger selection.
-- color: configuring all color element values as array of values with 
-support for optional brightness entry as last value.
-- color_names: information for user space about color element values in 
-'color' array.
-- max_color: information for user space about maximum values for entries 
-in 'color' array.
+I want to make sure userspace understands this has linear relation to
+output power. I'd like to avoid mentioning color because there power
+output is not linear with "RGB"=20
 
-Example usage:
+> s/pwm/color/
 
-$ cd /sys/class/leds/status
+s/pwm/power/ would work for me.
 
-$ ls
-brightness        brightness_model  color             color_names 
-device            max_brightness    max_color         power 
-subsystem         trigger           uevent
+> Besides white also other color presets could be defined in DT.
 
-$ cat brightness_model
-hardware [onoff] linear
-$ cat color_names
-red green blue
-$ cat max_color
-255 255 255
-$ cat brightness
-0
+They should not be neccessary. When userspace knows what is white and
+that power is linear with values in power_channels, it should be able
+to do colorspace conversion itself.
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-# Setting up color to not so bright purple with brightness set to 255
-$ echo "32 0 32 255" > color
+--SUOF0GtieIMvvwua
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-# Setting up color to a bit brighter purple with brightness
-$ echo "128 0 128 255" > color
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-# Activate heartbeat blinking
-$ echo "heartbeat" > trigger
+iEYEARECAAYFAlxDmF0ACgkQMOfwapXb+vL/LQCfaLBavlaI26/fDnA+2+PM639T
+NTAAnAwZBcafnVt7AmOEomXaMxihgxCQ
+=1A/N
+-----END PGP SIGNATURE-----
 
-# Now led is blinking with purple color
-
-# Change color to green
-$ echo "0 255 0" > color
-
-# Now led is blinking with green color
-
-And in devicetree I had now:
-
-multi-color-leds {
-	compatible = "pwm-leds";
-
-	status-led {
-		label = "status";
-		linux,default-brightness-model = "onoff";
-
-		element-red {
-			pwms = <&ehrpwm0 0 100000 0>;
-		};
-		element-green {
-			pwms = <&ehrpwm1 0 100000 0>;
-		};
-		element-blue {
-			pwms = <&ehrpwm1 1 100000 0>;
-		};
-	};
-};
-
-What do you think is this something we agree and could go forward?
-
-If it is it would be a good idea to get feedback from Dan on how easy it 
-is to use and other possible issues if he takes common commits and tries 
-it out with his lp50xx driver.
-
-Thanks,
-Vesa Jääskeläinen
+--SUOF0GtieIMvvwua--
