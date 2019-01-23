@@ -1,449 +1,462 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB LED
- driver
-Date: Wed, 23 Jan 2019 22:52:10 +0100
-Message-ID: <1c7680d3-6926-d837-dcd9-254aca23df39@gmail.com>
-References: <20190114211723.11186-1-dmurphy@ti.com>
- <20190114211723.11186-2-dmurphy@ti.com>
- <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com> <20190115222223.GA17363@amd>
- <79394d17-3124-75b2-ccac-dc1046499d14@ti.com> <20190116105537.GA1803@amd>
- <86299268-3202-814a-134b-04bd2170faab@ti.com>
- <8dfa2854-2814-6874-ab8e-1858e9a18acf@gmail.com>
- <9f87e1ac-be66-2998-578c-de2c1794a00a@ti.com>
- <4a20b14c-9514-25b8-affe-20f9ede4d4d8@ti.com>
- <8fac6aeb-28a8-d136-c654-9d1b5d4f7ddb@gmail.com>
- <27318c48-f84a-5129-ac88-545edd549101@gmail.com>
- <21d3e21a-e50e-ee46-6f81-5a22db878c15@ti.com>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH 09/13] power: supply: max77650: add support for battery
+ charger
+Date: Wed, 23 Jan 2019 19:27:38 +0100
+Message-ID: <20190123182738.wtskerasrzmrufrn@earth.universe>
+References: <20190118134244.22253-1-brgl@bgdev.pl>
+ <20190118134244.22253-10-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="l65ke3pvpc2acxdd"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <21d3e21a-e50e-ee46-6f81-5a22db878c15@ti.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190118134244.22253-10-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-Dan,
 
-On 1/22/19 11:44 PM, Dan Murphy wrote:
-> Jacek
-> 
-> On 1/22/19 3:39 PM, Jacek Anaszewski wrote:
->> Hi all,
->>
->> On 1/20/19 7:42 AM, Vesa Jääskeläinen wrote:
->>> Hi Dan,
->>>
->>> On 18/01/2019 15.58, Dan Murphy wrote:
->>>> Jacek
->>>>
->>>> On 1/18/19 7:45 AM, Dan Murphy wrote:
->>>>> Jacek
->>>>>
->>>>> On 1/17/19 3:10 PM, Jacek Anaszewski wrote:
->>>>>> Hi Dan,
->>>>>>
->>>>>> On 1/16/19 7:41 PM, Dan Murphy wrote:
->>>>>>> Hello
->>>>>>>
->>>>>>> On 1/16/19 4:55 AM, Pavel Machek wrote:
->>>>>>>> Hi!
->>>>>>>>
->>>>>>>>> On 1/15/19 4:22 PM, Pavel Machek wrote:
->>>>>>>>>> Hi!
->>>>>>>>>>
->>>>>>>>>>>> +The 24-bit RGB value passed in follows the pattern 0xXXRRGGBB
->>>>>>>>>>>> +XX - Do not care ignored by the driver
->>>>>>>>>>>> +RR - is the 8 bit Red LED value
->>>>>>>>>>>> +GG - is the 8 bit Green LED value
->>>>>>>>>>>> +BB - is the 8 bit Blue LED value
->>>>>>>>>>>> +
->>>>>>>>>>>> +Example:
->>>>>>>>>>>> +LED module output 4 of the LP5024 will be a yellow color:
->>>>>>>>>>>> +echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color
->>>>>>>>>>>> +
->>>>>>>>>>>> +LED module output 4 of the LP5024 will be dimmed 50%:
->>>>>>>>>>>> +echo 0x80 > /sys/class/leds/lp5024\:led4_mod/brightness
->>>>>>>>>>>> +
->>>>>>>>>>>> +LED banked RGBs of the LP5036 will be a white color:
->>>>>>>>>>>> +echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color
->>>>>>>>>>>
->>>>>>>>>>> This part with example cans remain in Documentation/leds if you
->>>>>>>>>>>> like.
->>>>>>>>>>
->>>>>>>>>> Does it actually work like that on hardware?
->>>>>>>>>
->>>>>>>>> What?
->>>>>>>>
->>>>>>>> If you do echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color,
->>>>>>>> does it actually produce white? With all the different RGB modules
->>>>>>>> manufacturers can use with lp5024P?
->>>>>>>>
->>>>>>>> If you do echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color, does
->>>>>>>> it actually produce yellow, with all the different RGB modules
->>>>>>>> manufacturers can use with lp5024P?
->>>>>>>>
->>>>>>>
->>>>>>> I believe the answer to the general questions is no for any RGB cluster and driver out there.
->>>>>>> Because if you set the same values on each and every RGB device out there you will get varying shades of the color.
->>>>>>> But for this device yes the color does appear to be yellow to me versus what was displayed on my monitor by the HSL picker.
->>>>>>> But everyone interprets colors differently.
->>>>>>>
->>>>>>> If you write the same value for yellow or white on a droid 4 and the N900 do they produce the same color side by side?
->>>>>>> Most probably not.
->>>>>>>
->>>>>>> As you pointed out the PWM needs to be modified to obtain the correct white color to account for LED and other device constraints.
->>>>>>>
->>>>>>> But we need to take into account the light pipe.  Pools nowadays have RGB LED spot lights in them.  It can
->>>>>>> be set to white.  On my pool right off the lens the color has a purplish hue to it.  As the light is diffracted into
->>>>>>> the pool the color becomes white.  The pool is clear.  When I add chemicals to the pool and make it cloudy
->>>>>>> and turn on the lights the color off the lens is now white.  This is an example on a large scale but the issue
->>>>>>> scales down to the hand helds and smart home applications.
->>>>>>>
->>>>>>> If the cluster is piped through a flexible optic 0xffffff may produce the "white" you want on its output.
->>>>>>>
->>>>>>> So an expectation of certain color without proper piping based on a single RGB value may be a little unreasonable.
->>>>>>> There may need to be a way to attenuate the values based on the hardware aspect of the equation ie light pipe (or lack thereof) and LED vendor.
->>>>>>> So if we write 0xffffff to the RGB driver the driver could adjust the intensity of the individual LEDs based on the diffraction
->>>>>>> coefficients.
->>>>>>>
->>>>>>> I also think that is an unreasonable expectation here that writing a single value to any LED RGB driver would produce
->>>>>>> a "rest of the world" absolute color.  Maybe it can produce something similar but not identical.
->>>>>>> As you indicated in the requirements there is more involved here then just the LED and the values written.
->>>>>>> The colors should be close but may not be identical.
->>>>>>>
->>>>>>> A 10 year old N900 should not be considered the gold standard for color production due to advancements in LED,
->>>>>>> light pipe and LED driver technology.
->>>>>>> The single package RGB clusters on the board I am testing is about the size of a single RGB LED from 10 years ago.
->>>>>>>
->>>>>>> I agree that the interface developed should work on the device but the algorithm derived to obtain the color needs to have
->>>>>>> a hardware aspect to the calculation.
->>>>>>>
->>>>>>>>>> Is it supposed to support "normal" RGB colors as seen on monitors?
->>>>>>>>>
->>>>>>>>> Monitors are not an application for this part.
->>>>>>>>
->>>>>>>> You did not answer the question. When you talk about yellow, is it
->>>>>>>> same yellow the rest of world talks about?
->>>>>>>>
->>>>>>>
->>>>>>> See above.  It is close to what was on my monitor displayed.
->>>>>>>
->>>>>>>>>> Because 100% PWM on all channels does not result in white on hardware
->>>>>>>>>> I have.
->>>>>>>>>
->>>>>>>>> I don't know I am usually blinded by the light and have no diffuser over
->>>>>>>>> the LEDs to disperse the light so when I look I see all 3 colors.
->>>>>>>>
->>>>>>>> How can we have useful discussion about colors when you don't see the
->>>>>>>> colors?
->>>>>>>>
->>>>>>>> Place a piece of paper over the LEDs....
->>>>>>>>
->>>>>>>
->>>>>>> Good suggestion for a rough test.
->>>>>>>
->>>>>>>>>> But...
->>>>>>>>>>
->>>>>>>>>> I believe we should have a reasonable design before we do something
->>>>>>>>>> like this. There's no guarantee someone will not use lp50xx with just
->>>>>>>>>> the white LEDs for example. How will this work? Plus existing hardware
->>>>>>>>>> already uses three separate LEDs for RGB LED. Why not provide same
->>>>>>>>>> interface?
->>>>>>>>>
->>>>>>>>> Which existing hardware?  Are they using this part?
->>>>>>>>
->>>>>>>> Nokia N900. They are not using this part, but any interface we invent
->>>>>>>> should work there, too.
->>>>>>>>
->>>>>>>
->>>>>>> Yes a common interface would be nice with some sort of hardware tuning coefficient.
->>>>>>>
->>>>>>>>> <rant>
->>>>>>>>> Why are we delaying getting the RGB framework or HSV in?
->>>>>>>>> I would rather design against something you want instead of having
->>>>>>>>> everyone complain about every implementation I post.
->>>>>>>>> </rant>
->>>>>>>>
->>>>>>>> Because you insist on creating new kernel interfaces, when existing
->>>>>>>> interfaces work, and are doing that badly.
->>>>>>>>
->>>>>>>> Because your patches are of lower quality than is acceptable for linux
->>>>>>>> kernel.
->>>>>>>>
->>>>>>>> Because you don't seem to be reading the emails.
->>>>>>>>
->>>>>>>> I sent list of requirements for RGB led support. This does not meet
->>>>>>>> them.
->>>>>>>>
->>>>>>>
->>>>>>> Sigh.  You did not answer my question.
->>>>>>>
->>>>>>> Your requirements seem to be centered around monitors but that is only one application of the current
->>>>>>> RGB LED landscape.
->>>>>>>
->>>>>>> I am willing to work with you on the HSV and adapting the LP50xx part to this framework.
->>>>>>> Or any RGB framework for that matter.  I still don't agree with the kernel needing to declare colors
->>>>>>>     maybe color capabilities but not specific colors.
->>>>>>
->>>>>> Dan, if you have a bandwidth for LED RGB class implementation
->>>>>> then please go ahead. It would be good to compare colors produced
->>>>>> by software HSV->RGB algorithm to what can be achieved with
->>>>>> LEDn_BRIGHTNESS feature.
->>>>>>
->>>>>> The requirements for LED RGB class as I would see it:
->>>>>>
->>>>>> sysfs interface:
->>>>>>
->>>>>> brightness-model: space separated list of available options:
->>>>>> - rgb (default):
->>>>>>     - creates color file with "red green blue" decimal values
->>>>>
->>>>> What about other colored LEDs?  Presenting RGB for an Amber LED does not seem right.
->>>>> Should the LED color come from the DT?
->>>>>
->>>>
->>>> I thought about this, other non-RGB LEDs would not use the RGB framework.
->>>> But should they have the same interfaces as RGB?
->>>>
->>>> Should PWM control be a global interface?
->>>
->>> In order to being able to set multi color element led at one go I would recommend using then model:
->>>
->>> color_names: "red green blue white"
->>>
->>> echo "32 43 0 128" > color
->>>
->>> This way all elements would be set at same time from user space point of view.
->>>
->>> This of course requires that it is part of the physical/logical led that is being controlled. If it is a separate thing then it would logically be differently controlled mono color led.
->>>
->>> If you look what kinds of leds are available lets say from digikey you get all kinds of combos:
->>>
->>> - red, green, blue
->>> - red, green, blue, amber
->>> - red, green, blue, white
->>> - red, green, blue, white - cool
->>> - red, green, blue, white - neutral
->>> - red, green, blue, white - warm
->>> - red, orange
->>> - purple, ultraviolet
->>> - amber, blue
->>> - amber, blue, cyan, green, red, violet, white - cool
->>> - amber, blue, green
->>> - amber, green, blue
->>> - and then lots of single special colors
->>
->> It suggested me another solution. Instead of LED RGB class
->> we would have LED multi-color class.
->>
-> 
-> I was thinking the same thing this morning.  But I was thinking that the RGB
-> class should be an additional class to stand on its own or can register to the
-> multi color class.
-> 
->> Sysfs interface design:
->> -----------------------
->>
->> colors: directory containing files that map to
->>          the brightness of particular LEDs; there
->>          would be predefined color names that LED class
->>          driver should map iouts to, e.g.:
-> 
-> Filling in the missing ideas with questions.
-> 
-> Is it a directory or a file?  If it is a directory does that not break the current
-> directory label model?
-> 
-> so the path would be /sys/class/leds/colors ?  (It is probably not this but needs clarification)
-> How would this look if I had 2 of the same color LEDs?  The Beagle bone black has 2 Blue LEDs.
-> They are assigned to different triggers and have different directories.  Both are GPIO controlled.
-> 
-> Or are you saying it would be something like (More then likely this is what you intended)
-> /sys/class/leds/input4::numlock/colors?
+--l65ke3pvpc2acxdd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, this is what I meant.
+Hi Bartosz,
 
-> Maybe it is mandated that "multi" be added to the label when the class is registered so the caller
-> knows that this is a multi color class and not a single LED color class.
+Looks mostly ok, I have a few comments inline towards the end.
 
-Like I am going to come up with standardized color names
-in my LED naming related patch, the multi-color names
-can be defined as well, e.g.: rgb, rgbw, rgbwa, rgbwauv etc.
+On Fri, Jan 18, 2019 at 02:42:40PM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>=20
+> Add basic support for the battery charger for max77650 PMIC.
+>=20
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/power/supply/Kconfig            |   7 +
+>  drivers/power/supply/Makefile           |   1 +
+>  drivers/power/supply/max77650-charger.c | 347 ++++++++++++++++++++++++
+>  3 files changed, 355 insertions(+)
+>  create mode 100644 drivers/power/supply/max77650-charger.c
+>=20
+> diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+> index e901b9879e7e..0230c96fa94d 100644
+> --- a/drivers/power/supply/Kconfig
+> +++ b/drivers/power/supply/Kconfig
+> @@ -499,6 +499,13 @@ config CHARGER_DETECTOR_MAX14656
+>  	  Revision 1.2 and can be found e.g. in Kindle 4/5th generation
+>  	  readers and certain LG devices.
+> =20
+> +config CHARGER_MAX77650
+> +	tristate "Maxim MAX77650 battery charger driver"
+> +	depends on MFD_MAX77650
+> +	help
+> +	  Say Y to enable support for the battery charger control of MAX77650
+> +	  PMICs.
+> +
+>  config CHARGER_MAX77693
+>  	tristate "Maxim MAX77693 battery charger driver"
+>  	depends on MFD_MAX77693
+> diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
+> index b731c2a9b695..b73eb8c5c1a9 100644
+> --- a/drivers/power/supply/Makefile
+> +++ b/drivers/power/supply/Makefile
+> @@ -70,6 +70,7 @@ obj-$(CONFIG_CHARGER_MANAGER)	+=3D charger-manager.o
+>  obj-$(CONFIG_CHARGER_LTC3651)	+=3D ltc3651-charger.o
+>  obj-$(CONFIG_CHARGER_MAX14577)	+=3D max14577_charger.o
+>  obj-$(CONFIG_CHARGER_DETECTOR_MAX14656)	+=3D max14656_charger_detector.o
+> +obj-$(CONFIG_CHARGER_MAX77650)	+=3D max77650-charger.o
+>  obj-$(CONFIG_CHARGER_MAX77693)	+=3D max77693_charger.o
+>  obj-$(CONFIG_CHARGER_MAX8997)	+=3D max8997_charger.o
+>  obj-$(CONFIG_CHARGER_MAX8998)	+=3D max8998_charger.o
+> diff --git a/drivers/power/supply/max77650-charger.c b/drivers/power/supp=
+ly/max77650-charger.c
+> new file mode 100644
+> index 000000000000..fb9d8f933174
+> --- /dev/null
+> +++ b/drivers/power/supply/max77650-charger.c
+> @@ -0,0 +1,347 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2018 BayLibre SAS
+> + * Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> + *
+> + * Battery charger driver for MAXIM 77650/77651 charger/power-supply.
+> + */
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/max77650.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/power_supply.h>
+> +#include <linux/regmap.h>
+> +
+> +#define MAX77650_CHARGER_ENABLED		BIT(0)
+> +#define MAX77650_CHARGER_DISABLED		0x00
+> +#define MAX77650_CHARGER_CHG_EN_MASK		BIT(0)
+> +
+> +#define MAX77650_CHARGER_CHG_DTLS_MASK		GENMASK(7, 4)
+> +#define MAX77650_CHARGER_CHG_DTLS_BITS(_reg) \
+> +		(((_reg) & MAX77650_CHARGER_CHG_DTLS_MASK) >> 4)
+> +
+> +#define MAX77650_CHARGER_CHG_OFF		0x00
+> +#define MAX77650_CHARGER_CHG_PREQ		0x01
+> +#define MAX77650_CHARGER_CHG_ON_CURR		0x02
+> +#define MAX77650_CHARGER_CHG_ON_JCURR		0x03
+> +#define MAX77650_CHARGER_CHG_ON_VOLT		0x04
+> +#define MAX77650_CHARGER_CHG_ON_JVOLT		0x05
+> +#define MAX77650_CHARGER_CHG_ON_TOPOFF		0x06
+> +#define MAX77650_CHARGER_CHG_ON_JTOPOFF		0x07
+> +#define MAX77650_CHARGER_CHG_DONE		0x08
+> +#define MAX77650_CHARGER_CHG_JDONE		0x09
+> +#define MAX77650_CHARGER_CHG_SUSP_PF		0x0a
+> +#define MAX77650_CHARGER_CHG_SUSP_FCF		0x0b
+> +#define MAX77650_CHARGER_CHG_SUSP_BTF		0x0c
+> +
+> +#define MAX77650_CHARGER_CHGIN_DTLS_MASK	GENMASK(3, 2)
+> +#define MAX77650_CHARGER_CHGIN_DTLS_BITS(_reg) \
+> +		(((_reg) & MAX77650_CHARGER_CHGIN_DTLS_MASK) >> 2)
+> +
+> +#define MAX77650_CHARGER_CHGIN_UVL		0x00
+> +#define MAX77650_CHARGER_CHGIN_OVL		0x01
+> +#define MAX77650_CHARGER_CHGIN_OKAY		0x11
+> +
+> +#define MAX77650_CHARGER_CHG_MASK	BIT(1)
+> +#define MAX77650_CHARGER_CHG_CHARGING(_reg) \
+> +		(((_reg) & MAX77650_CHARGER_CHG_MASK) > 1)
+> +
+> +#define MAX77650_CHARGER_VCHGIN_MIN_MASK	0xc0
+> +#define MAX77650_CHARGER_VCHGIN_MIN_SHIFT(_val)	((_val) << 5)
+> +
+> +#define MAX77650_CHARGER_ICHGIN_LIM_MASK	0x1c
+> +#define MAX77650_CHARGER_ICHGIN_LIM_SHIFT(_val)	((_val) << 2)
+> +
+> +struct max77650_charger_data {
+> +	struct regmap *map;
+> +	struct device *dev;
+> +};
+> +
+> +static enum power_supply_property max77650_charger_properties[] =3D {
+> +	POWER_SUPPLY_PROP_STATUS,
+> +	POWER_SUPPLY_PROP_ONLINE,
+> +	POWER_SUPPLY_PROP_CHARGE_TYPE
+> +};
+> +
+> +static const unsigned int max77650_charger_vchgin_min_table[] =3D {
+> +	4000000, 4100000, 4200000, 4300000, 4400000, 4500000, 4600000, 4700000
+> +};
+> +
+> +static const unsigned int max77650_charger_ichgin_lim_table[] =3D {
+> +	95000, 190000, 285000, 380000, 475000
+> +};
+> +
+> +static int max77650_charger_set_vchgin_min(struct max77650_charger_data =
+*chg,
+> +					   unsigned int val)
+> +{
+> +	int i, rv;
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(max77650_charger_vchgin_min_table); i++) {
+> +		if (val =3D=3D max77650_charger_vchgin_min_table[i]) {
+> +			rv =3D regmap_update_bits(chg->map,
+> +					MAX77650_REG_CNFG_CHG_B,
+> +					MAX77650_CHARGER_VCHGIN_MIN_MASK,
+> +					MAX77650_CHARGER_VCHGIN_MIN_SHIFT(i));
+> +			if (rv)
+> +				return rv;
+> +
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int max77650_charger_set_ichgin_lim(struct max77650_charger_data =
+*chg,
+> +					   unsigned int val)
+> +{
+> +	int i, rv;
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(max77650_charger_ichgin_lim_table); i++) {
+> +		if (val =3D=3D max77650_charger_ichgin_lim_table[i]) {
+> +			rv =3D regmap_update_bits(chg->map,
+> +					MAX77650_REG_CNFG_CHG_B,
+> +					MAX77650_CHARGER_ICHGIN_LIM_MASK,
+> +					MAX77650_CHARGER_ICHGIN_LIM_SHIFT(i));
+> +			if (rv)
+> +				return rv;
+> +
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static void max77650_charger_enable(struct max77650_charger_data *chg)
+> +{
+> +	int rv;
+> +
+> +	rv =3D regmap_update_bits(chg->map,
+> +				MAX77650_REG_CNFG_CHG_B,
+> +				MAX77650_CHARGER_CHG_EN_MASK,
+> +				MAX77650_CHARGER_ENABLED);
+> +	if (rv)
+> +		dev_err(chg->dev, "unable to enable the charger: %d\n", rv);
+> +}
+> +
+> +static void max77650_charger_disable(struct max77650_charger_data *chg)
+> +{
+> +	int rv;
+> +
+> +	rv =3D regmap_update_bits(chg->map,
+> +				MAX77650_REG_CNFG_CHG_B,
+> +				MAX77650_CHARGER_CHG_EN_MASK,
+> +				MAX77650_CHARGER_DISABLED);
+> +	if (rv)
+> +		dev_err(chg->dev, "unable to disable the charger: %d\n", rv);
+> +}
+> +
+> +static irqreturn_t max77650_charger_check_status(int irq, void *data)
+> +{
+> +	struct max77650_charger_data *chg =3D data;
+> +	int rv, reg;
+> +
+> +	rv =3D regmap_read(chg->map, MAX77650_REG_STAT_CHG_B, &reg);
+> +	if (rv) {
+> +		dev_err(chg->dev,
+> +			"unable to read the charger status: %d\n", rv);
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	switch (MAX77650_CHARGER_CHGIN_DTLS_BITS(reg)) {
+> +	case MAX77650_CHARGER_CHGIN_UVL:
+> +		dev_err(chg->dev, "undervoltage lockout detected, disabling charger\n"=
+);
+> +		max77650_charger_disable(chg);
+> +		break;
+> +	case MAX77650_CHARGER_CHGIN_OVL:
+> +		dev_err(chg->dev, "overvoltage lockout detected, disabling charger\n");
+> +		max77650_charger_disable(chg);
+> +		break;
+> +	case MAX77650_CHARGER_CHGIN_OKAY:
+> +		max77650_charger_enable(chg);
+> +		break;
+> +	default:
+> +		/* May be 0x10 - debouncing */
+> +		break;
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int max77650_charger_get_property(struct power_supply *psy,
+> +					 enum power_supply_property psp,
+> +					 union power_supply_propval *val)
+> +{
+> +	struct max77650_charger_data *chg =3D power_supply_get_drvdata(psy);
+> +	int rv, reg;
+> +
+> +	switch (psp) {
+> +	case POWER_SUPPLY_PROP_STATUS:
+> +		rv =3D regmap_read(chg->map, MAX77650_REG_STAT_CHG_B, &reg);
+> +		if (rv)
+> +			return rv;
+> +
+> +		if (MAX77650_CHARGER_CHG_CHARGING(reg)) {
+> +			val->intval =3D POWER_SUPPLY_STATUS_CHARGING;
+> +			break;
+> +		}
+> +
+> +		switch (MAX77650_CHARGER_CHG_DTLS_BITS(reg)) {
+> +		case MAX77650_CHARGER_CHG_OFF:
+> +		case MAX77650_CHARGER_CHG_SUSP_PF:
+> +		case MAX77650_CHARGER_CHG_SUSP_FCF:
+> +		case MAX77650_CHARGER_CHG_SUSP_BTF:
+> +			val->intval =3D POWER_SUPPLY_STATUS_NOT_CHARGING;
+> +			break;
+> +		case MAX77650_CHARGER_CHG_PREQ:
+> +		case MAX77650_CHARGER_CHG_ON_CURR:
+> +		case MAX77650_CHARGER_CHG_ON_JCURR:
+> +		case MAX77650_CHARGER_CHG_ON_VOLT:
+> +		case MAX77650_CHARGER_CHG_ON_JVOLT:
+> +		case MAX77650_CHARGER_CHG_ON_TOPOFF:
+> +		case MAX77650_CHARGER_CHG_ON_JTOPOFF:
+> +			val->intval =3D POWER_SUPPLY_STATUS_CHARGING;
+> +			break;
+> +		case MAX77650_CHARGER_CHG_DONE:
+> +			val->intval =3D POWER_SUPPLY_STATUS_FULL;
+> +			break;
+> +		default:
+> +			val->intval =3D POWER_SUPPLY_STATUS_UNKNOWN;
+> +		}
+> +		break;
+> +	case POWER_SUPPLY_PROP_ONLINE:
+> +		rv =3D regmap_read(chg->map, MAX77650_REG_STAT_CHG_B, &reg);
+> +		if (rv)
+> +			return rv;
+> +
+> +		val->intval =3D MAX77650_CHARGER_CHG_CHARGING(reg);
+> +		break;
+> +	case POWER_SUPPLY_PROP_CHARGE_TYPE:
+> +		rv =3D regmap_read(chg->map, MAX77650_REG_STAT_CHG_B, &reg);
+> +		if (rv)
+> +			return rv;
+> +
+> +		if (!MAX77650_CHARGER_CHG_CHARGING(reg)) {
+> +			val->intval =3D POWER_SUPPLY_CHARGE_TYPE_NONE;
+> +			break;
+> +		}
+> +
+> +		switch (MAX77650_CHARGER_CHG_DTLS_BITS(reg)) {
+> +		case MAX77650_CHARGER_CHG_PREQ:
+> +		case MAX77650_CHARGER_CHG_ON_CURR:
+> +		case MAX77650_CHARGER_CHG_ON_JCURR:
+> +		case MAX77650_CHARGER_CHG_ON_VOLT:
+> +		case MAX77650_CHARGER_CHG_ON_JVOLT:
+> +			val->intval =3D POWER_SUPPLY_CHARGE_TYPE_FAST;
+> +			break;
+> +		case MAX77650_CHARGER_CHG_ON_TOPOFF:
+> +		case MAX77650_CHARGER_CHG_ON_JTOPOFF:
+> +			val->intval =3D POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
+> +			break;
+> +		default:
+> +			val->intval =3D POWER_SUPPLY_CHARGE_TYPE_UNKNOWN;
+> +		}
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct power_supply_desc max77650_battery_desc =3D {
+> +	.name		=3D "max77650",
+> +	.type		=3D POWER_SUPPLY_TYPE_BATTERY,
 
-> What about providing a file called colors_raw which takes in the raw decimal values to obtain other color
-> variants when RGB is only available?  And this can also present a single write to the kernel with the new
-> color values.
+This is a charger, not a battery. BATTERY type is for the fuel
+gauges. You should be using POWER_SUPPLY_TYPE_USB for USB based
+battery chargers and POWER_SUPPLY_TYPE_MAINS otherwise.
 
-My design already covers that in the form of files in the colors
-directory. Like I stated: "files that map to the brightness of
-particular LEDs". Single write is secured by "echo "write" > sync.
+> +	.get_property	=3D max77650_charger_get_property,
+> +	.properties	=3D max77650_charger_properties,
+> +	.num_properties	=3D ARRAY_SIZE(max77650_charger_properties),
+> +};
+> +
+> +static int max77650_charger_probe(struct platform_device *pdev)
+> +{
+> +	struct regmap_irq_chip_data *irq_data;
+> +	struct power_supply_config pscfg =3D {};
+> +	struct max77650_charger_data *chg;
+> +	struct power_supply *battery;
+> +	struct device *dev, *parent;
+> +	int rv, chg_irq, chgin_irq;
+> +	struct i2c_client *i2c;
+> +	unsigned int prop;
+> +
+> +	dev =3D &pdev->dev;
+> +	parent =3D dev->parent;
+> +	i2c =3D to_i2c_client(parent);
+> +	irq_data =3D i2c_get_clientdata(i2c);
+> +
+> +	chg =3D devm_kzalloc(dev, sizeof(*chg), GFP_KERNEL);
+> +	if (!chg)
+> +		return -ENOMEM;
+> +
+> +	chg->map =3D dev_get_regmap(parent, NULL);
+> +	if (!chg->map)
+> +		return -ENODEV;
+> +
+> +	chg->dev =3D dev;
+> +
+> +	pscfg.of_node =3D dev->of_node;
+> +	pscfg.drv_data =3D chg;
+> +
+> +	chg_irq =3D regmap_irq_get_virq(irq_data, MAX77650_INT_CHG);
+> +	if (chg_irq <=3D 0)
+> +		return -EINVAL;
+> +
+> +	chgin_irq =3D regmap_irq_get_virq(irq_data, MAX77650_INT_CHGIN);
+> +	if (chgin_irq <=3D 0)
+> +		return -EINVAL;
+> +
+> +	rv =3D devm_request_threaded_irq(dev, chg_irq, NULL,
+> +				       max77650_charger_check_status,
+> +				       IRQF_ONESHOT, "chg", chg);
+> +	if (rv)
+> +		return rv;
+> +
+> +	rv =3D devm_request_threaded_irq(dev, chgin_irq, NULL,
+> +				       max77650_charger_check_status,
+> +				       IRQF_ONESHOT, "chgin", chg);
+> +	if (rv)
+> +		return rv;
+> +
+> +	battery =3D devm_power_supply_register(dev,
+> +					     &max77650_battery_desc, &pscfg);
+> +	if (IS_ERR(battery))
+> +		return PTR_ERR(battery);
+> +
+> +	rv =3D of_property_read_u32(dev->of_node, "maxim,vchgin-min", &prop);
+> +	if (rv =3D=3D 0) {
+> +		rv =3D max77650_charger_set_vchgin_min(chg, prop);
+> +		if (rv)
+> +			return rv;
+> +	}
+> +
+> +	rv =3D of_property_read_u32(dev->of_node, "maxim,ichgin-lim", &prop);
+> +	if (rv =3D=3D 0) {
+> +		rv =3D max77650_charger_set_ichgin_lim(chg, prop);
+> +		if (rv)
+> +			return rv;
+> +	}
+> +
+> +	return regmap_update_bits(chg->map,
+> +				  MAX77650_REG_CNFG_CHG_B,
+> +				  MAX77650_CHARGER_CHG_EN_MASK,
+> +				  MAX77650_CHARGER_ENABLED);
 
-> I am not a fan of hard coding preset colors as you can see there are to many of them and variations of the color.
-> In addition this severely limits the ability of the user.  Unless we stick to primary colors only and not secondary
-> colors.
-> Defining and hard coding hte colors can get out of control and not maintainable moving forward.  Especially
-> if we start adding defines like white_warm, white_neutral and other variations to the color.
+should this be disabled on module remove?
 
-We would not limit anything. Every color combination can be achieved
-by following this exemplary sequence:
+> +}
+> +
+> +static struct platform_driver max77650_charger_driver =3D {
+> +	.driver =3D {
+> +		.name =3D "max77650-charger",
+> +	},
+> +	.probe =3D max77650_charger_probe,
+> +};
+> +module_platform_driver(max77650_charger_driver);
+> +
+> +MODULE_DESCRIPTION("MAXIM 77650/77651 charger driver");
+> +MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
+> +MODULE_LICENSE("GPL");
 
-$ echo 154 > colors/red
-$ echo 232 > colors/green
-$ echo 43  > colors/blue
-# echo "write" > sync     //only this changes hardware state
+This is GPL2 or later, but "SPDX-License-Identifier: GPL-2.0" is not.
 
-brightness-model is provided only to define mapping of legacy brightness
-levels (governed by brightness file and led_set_brightness() API) to
-the specific combination of colors.
+-- Sebastian
 
-For instance we can define three brightness levels for green hue:
+--l65ke3pvpc2acxdd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-DT definition for it would look like below:
+-----BEGIN PGP SIGNATURE-----
 
-rgb-green = <0x277c33 0x37b048 0x47e45d>;
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxIshcACgkQ2O7X88g7
++ppaFQ/+MilWAKunLL5jC5uZ+hE8DXIj3QLHKLYR7N1VbKuZ9gkIVP8SN3PLrZIg
+PTpYB699fRP8I8ouyg2eaKRJP8OnNhTqvBGMSek4NIRzBFrKCKFC3RG6AbHT2F3y
+ZdBI1GE0c0SP/YVHnWodeKVAoBRz0eSs2jq66p764qAjOJvGUKvCedHVhraFx74O
++Q+PZh1mNsGk6ZyR89v9Ow5Q21QAMqo5H0Kk9q7LHbDmlTTZOaWJnWmp4VdAUcCu
+TGblwu4JSpciTRI3aK1CgHpQhncKKARTAPE9IvizL52ykmBf25bxCefYjRME/Quq
+0VQUn42n6DoLjJVg8LZOHPJ+/0FHdcoxyvzDQOH7kz99S3fsvSJ4nJi6673dZK0X
+xkKCWB2eV9yGfpm4NSRDtA1qhLfBKaAc1Dxfv/6WgdUHvXzzLxyKa4iG2dHnkVYJ
+nEuypH2tk78qSEj6jOpBek53Sfxxd9osqZpnRTV5rEPEg9gUTDQ76je6Dry0mYDQ
+F17hL1fT0gBfD19w12EzveuNoEpAbq9WzQlyZQIwTOaqZykt6rkjaCB/WNsyhDjj
+9M9Jqr4feJTqiobNhjeY0yk+RDUIcyjTDn2nyClzB30CACFsCU2oiM8sbq5SLWb+
+7x42oE7F7MorMYBMSzSjCt2sAoZPfmpyZQvTO1y47gX9Hw7YNV0=
+=ha6j
+-----END PGP SIGNATURE-----
 
-LED multi color class would then do the following mapping for
-each of the three brightness levels for rgb-green brightness model:
-
-$ echo rgb-green > brightness_model
-$ echo 1 > brightness // red=0x27, green=0x7c, blue=0x33
-$ echo 2 > brightness // red=0x37, green=0xb0, blue=0x48
-$ echo 3 > brightness // red=0x47, green=0xe4, blue=0x5d
-
-> What about IR LEDs used for night vision products?  Do these fall into the multi color class?
-> We do have a driver I submitted that had an IR LED and a White LED combined.  It was created against the
-> flash class but it could be a multi color LED as well.
-> 
-> How would traversing through the full color palette work if you were to want to produce a multi
-> color ring like the LP50xx where the pattern can traverse from one end of the color spectrum and back?
-> Or in a product like the gaming keyboards that will change color or change backlight brightness?
-
-This is not meant as a solution for pattern generator but for
-consolidated source of multi color light. In the simplest case
-RGB LED elements like those used for lp5024 reference board,
-but it could be RGBWAUV LED [0] as well.
-
-For patterns traversing many LEDs I see a trigger as the best solution.
-Hmm, now I see that trigger mechanism actually can serve as very
-flexible pattern generator.
-
-We would need a device that could be configured to register
-a number of multi-led-patternN triggers, one per LED, and generate
-events for each trigger in a loop.
-
-The device would have to allow for configuring pattern intervals
-via sysfs, like in case of current pattern trigger.
-
-LED class devices would have to register for its events:
-
-$/sys/class/leds/led1 echo multi-led-pattern1 > trigger
-$/sys/class/leds/led2 echo multi-led-pattern2 > trigger
-$/sys/class/leds/led3 echo multi-led-pattern3 > trigger
-
-The ability to define brightness models in DT would
-add even more flexibility.
-
-> Not sure what color LEDs the keyboard manufacturers place on their keyboards but does the interface design
-> capable of doing this?
-> 
-> https://www.youtube.com/watch?v=pfKv3g2FeBE
-> or something like this
-> 
-> https://www.youtube.com/watch?v=PO3auX3f5C4
-> 
-> The LP5036 has this capability.
-> 
->>    - red
->>    - green
->>    - blue
->>    - white
->>    - sync: accepts "write" and "read", which executes
->>            write/readout to/from a device respectively.
->>
-> 
-> What are these above, the values or the files under the colors directory?
-
-They are just color specific counterparts of monochrome brightness.
-In terms of lp50xx they would map to OUTn_COLOR registers.
-
-> I am assuming they are files.
-
-Right.
-
-> Are they mandatory or optional?
-
-Mandatory, one per each iout to control.
-
->> brightness-model: defines brightness level to color configuration
->>                    mapping
->>    - "hardware": for devices with feature like LEDn_BRIGHTNESS of lp50xx
->>    - "rgb-<hue>": available only when all three red,green,blue colors
->>                   are present in the colors directory.
->>                   <hue> is a placeholder for given DT hue presets.
->>    - "rgbw-<hue>": Same as above, but available only when white color
->>                   (any of amber or white-{cool|neutral|warm} can be
->>                   mapped to white) is also available. In this mode
->>                   max_brightness equals num-of-hue-presets + 1, and
->>                   max_brightness, when set, turns the "white" LED on
-> 
-> Why do we need white combined here?  Should this not be its own entity?
-
-To be able to set white color. We're still talking about one LED
-element (although they can be be physically few LEDs in one case).
-This is brightness file, so we've got to stick to the semantics.
-Max brightness level should be the brightest. With RGBW LEDs we
-fortunately have a means to achieve pure white, that's why
-rgbw-<hue> would be beneficial. If you increase L component of
-HSL color space, the max value gives white for all hues.
-So maybe this brightness-model would be rather called hsl-<hue>.
-
-For RGBW LEDs, we would have to allow for more shades of white too,
-like in [1].
-
-> Again I don't like limiting the color palette from the DT.  I think that the
-> user space can see what colors are available for that device and makes its own
-> decision on what color to present.
-> 
-> For the RGBw what about RGB amber and RGB purple.  Are the white LEDs always part of the
-> same function trying to be achieved by the system designer?  The RGB can be used to denote
-> notification status and the white can be used to denote that a charger is connected.  Motorola
-> Droid did this.
-
-I hope I've just clarified my idea.
-
-> 
->>    - "rgb-linear": I'm not sure if it should be available - it will
->>                    have unpredictable results
->>
->> brightness: sets/reads brightness in the way specific to the
->>              current brightness-model. When more colors are available
->>              (e.g. amber, blue, cyan, green, red, violet, white), they
->>              are not touched by write to brightness).
->>
->> HSV->RGB conversion is left entirely to the userspace, which can set any
->> color with use of the proposed interface.
->>
->> Let's agree on sysfs interface first, and only after that move
->> to the DT details.
->>
-> 
-> DT's are meant to describe hardware and not describe the product.  Unless Rob does not see
-> an issue with defining product capabilities in the DT then we should keep that out of the DT.
-
-LED element is a device. I see nothing irrelevant for DT in describing 
-the lighting specificity of a device mounted on the board. Please keep
-in mind that it will not limit the number of colors available to set.
-It will only allow to define mapping of brightness level to color.
-We need that for current trigger mechanism to work with LED multi-color
-class.
-
-[0] 
-http://www.cobledarray.com/sale-4942931-10w-rgbwauv-led-diode-6-in-1-high-power-multicolor-led-chip.html
-[1] https://www.youtube.com/watch?v=NzlFmTqOh9M
-
--- 
-Best regards,
-Jacek Anaszewski
+--l65ke3pvpc2acxdd--
