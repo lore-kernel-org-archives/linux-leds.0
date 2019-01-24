@@ -1,1009 +1,545 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB LED
  driver
-Date: Thu, 24 Jan 2019 22:14:17 +0100
-Message-ID: <4a9515aa-218e-bc8b-d7a4-5c7d4f4b0504@gmail.com>
+Date: Thu, 24 Jan 2019 22:55:58 +0100
+Message-ID: <f7ad8d5a-2998-f6f0-be4b-b47237b3397f@gmail.com>
 References: <20190114211723.11186-1-dmurphy@ti.com>
  <20190114211723.11186-2-dmurphy@ti.com>
- <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com>
- <2b16d0c3-82fb-f14b-b666-d2b58d23b5f9@ti.com>
+ <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com> <20190115222223.GA17363@amd>
+ <79394d17-3124-75b2-ccac-dc1046499d14@ti.com> <20190116105537.GA1803@amd>
+ <86299268-3202-814a-134b-04bd2170faab@ti.com>
+ <8dfa2854-2814-6874-ab8e-1858e9a18acf@gmail.com>
+ <9f87e1ac-be66-2998-578c-de2c1794a00a@ti.com>
+ <4a20b14c-9514-25b8-affe-20f9ede4d4d8@ti.com>
+ <8fac6aeb-28a8-d136-c654-9d1b5d4f7ddb@gmail.com>
+ <27318c48-f84a-5129-ac88-545edd549101@gmail.com>
+ <21d3e21a-e50e-ee46-6f81-5a22db878c15@ti.com>
+ <1c7680d3-6926-d837-dcd9-254aca23df39@gmail.com>
+ <3e804986-89ef-2465-51ad-86e793b39b7e@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2b16d0c3-82fb-f14b-b666-d2b58d23b5f9@ti.com>
+In-Reply-To: <3e804986-89ef-2465-51ad-86e793b39b7e@ti.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, pavel@ucw.cz, devicetree@vger.kernel.org, dachaac@gmail.com, robh+dt@kernel.org
+To: Dan Murphy <dmurphy@ti.com>, =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Dan,
+Dan
 
-On 1/24/19 9:32 PM, Dan Murphy wrote:
+On 1/24/19 10:00 PM, Dan Murphy wrote:
 > Jacek
 > 
-> Replying to code comments.
-> 
-> On 1/15/19 3:47 PM, Jacek Anaszewski wrote:
->> Hi Da,
+> On 1/23/19 3:52 PM, Jacek Anaszewski wrote:
+>> Dan,
 >>
->> Thank you for the v2.
->>
-> 
-> I will probably submit v3 outside the realm of the multi color framework.
-> We can always convert as Pavel pointed out.
-> 
->> I have some remarks below.
->>
->> On 1/14/19 10:17 PM, Dan Murphy wrote:
->>> Introduce the LP5036/30/24/18 RGB LED driver.
->>> The difference in these parts are the number of
->>> LED outputs where the:
+>> On 1/22/19 11:44 PM, Dan Murphy wrote:
+>>> Jacek
 >>>
->>> LP5036 can control 36 LEDs
->>> LP5030 can control 30 LEDs
->>> LP5024 can control 24 LEDs
->>> LP5018 can control 18 LEDs
+>>> On 1/22/19 3:39 PM, Jacek Anaszewski wrote:
+>>>> Hi all,
+>>>>
+>>>> On 1/20/19 7:42 AM, Vesa Jääskeläinen wrote:
+>>>>> Hi Dan,
+>>>>>
+>>>>> On 18/01/2019 15.58, Dan Murphy wrote:
+>>>>>> Jacek
+>>>>>>
+>>>>>> On 1/18/19 7:45 AM, Dan Murphy wrote:
+>>>>>>> Jacek
+>>>>>>>
+>>>>>>> On 1/17/19 3:10 PM, Jacek Anaszewski wrote:
+>>>>>>>> Hi Dan,
+>>>>>>>>
+>>>>>>>> On 1/16/19 7:41 PM, Dan Murphy wrote:
+>>>>>>>>> Hello
+>>>>>>>>>
+>>>>>>>>> On 1/16/19 4:55 AM, Pavel Machek wrote:
+>>>>>>>>>> Hi!
+>>>>>>>>>>
+>>>>>>>>>>> On 1/15/19 4:22 PM, Pavel Machek wrote:
+>>>>>>>>>>>> Hi!
+>>>>>>>>>>>>
+>>>>>>>>>>>>>> +The 24-bit RGB value passed in follows the pattern 0xXXRRGGBB
+>>>>>>>>>>>>>> +XX - Do not care ignored by the driver
+>>>>>>>>>>>>>> +RR - is the 8 bit Red LED value
+>>>>>>>>>>>>>> +GG - is the 8 bit Green LED value
+>>>>>>>>>>>>>> +BB - is the 8 bit Blue LED value
+>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>> +Example:
+>>>>>>>>>>>>>> +LED module output 4 of the LP5024 will be a yellow color:
+>>>>>>>>>>>>>> +echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color
+>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>> +LED module output 4 of the LP5024 will be dimmed 50%:
+>>>>>>>>>>>>>> +echo 0x80 > /sys/class/leds/lp5024\:led4_mod/brightness
+>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>> +LED banked RGBs of the LP5036 will be a white color:
+>>>>>>>>>>>>>> +echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> This part with example cans remain in Documentation/leds if you
+>>>>>>>>>>>>>> like.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Does it actually work like that on hardware?
+>>>>>>>>>>>
+>>>>>>>>>>> What?
+>>>>>>>>>>
+>>>>>>>>>> If you do echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color,
+>>>>>>>>>> does it actually produce white? With all the different RGB modules
+>>>>>>>>>> manufacturers can use with lp5024P?
+>>>>>>>>>>
+>>>>>>>>>> If you do echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color, does
+>>>>>>>>>> it actually produce yellow, with all the different RGB modules
+>>>>>>>>>> manufacturers can use with lp5024P?
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> I believe the answer to the general questions is no for any RGB cluster and driver out there.
+>>>>>>>>> Because if you set the same values on each and every RGB device out there you will get varying shades of the color.
+>>>>>>>>> But for this device yes the color does appear to be yellow to me versus what was displayed on my monitor by the HSL picker.
+>>>>>>>>> But everyone interprets colors differently.
+>>>>>>>>>
+>>>>>>>>> If you write the same value for yellow or white on a droid 4 and the N900 do they produce the same color side by side?
+>>>>>>>>> Most probably not.
+>>>>>>>>>
+>>>>>>>>> As you pointed out the PWM needs to be modified to obtain the correct white color to account for LED and other device constraints.
+>>>>>>>>>
+>>>>>>>>> But we need to take into account the light pipe.  Pools nowadays have RGB LED spot lights in them.  It can
+>>>>>>>>> be set to white.  On my pool right off the lens the color has a purplish hue to it.  As the light is diffracted into
+>>>>>>>>> the pool the color becomes white.  The pool is clear.  When I add chemicals to the pool and make it cloudy
+>>>>>>>>> and turn on the lights the color off the lens is now white.  This is an example on a large scale but the issue
+>>>>>>>>> scales down to the hand helds and smart home applications.
+>>>>>>>>>
+>>>>>>>>> If the cluster is piped through a flexible optic 0xffffff may produce the "white" you want on its output.
+>>>>>>>>>
+>>>>>>>>> So an expectation of certain color without proper piping based on a single RGB value may be a little unreasonable.
+>>>>>>>>> There may need to be a way to attenuate the values based on the hardware aspect of the equation ie light pipe (or lack thereof) and LED vendor.
+>>>>>>>>> So if we write 0xffffff to the RGB driver the driver could adjust the intensity of the individual LEDs based on the diffraction
+>>>>>>>>> coefficients.
+>>>>>>>>>
+>>>>>>>>> I also think that is an unreasonable expectation here that writing a single value to any LED RGB driver would produce
+>>>>>>>>> a "rest of the world" absolute color.  Maybe it can produce something similar but not identical.
+>>>>>>>>> As you indicated in the requirements there is more involved here then just the LED and the values written.
+>>>>>>>>> The colors should be close but may not be identical.
+>>>>>>>>>
+>>>>>>>>> A 10 year old N900 should not be considered the gold standard for color production due to advancements in LED,
+>>>>>>>>> light pipe and LED driver technology.
+>>>>>>>>> The single package RGB clusters on the board I am testing is about the size of a single RGB LED from 10 years ago.
+>>>>>>>>>
+>>>>>>>>> I agree that the interface developed should work on the device but the algorithm derived to obtain the color needs to have
+>>>>>>>>> a hardware aspect to the calculation.
+>>>>>>>>>
+>>>>>>>>>>>> Is it supposed to support "normal" RGB colors as seen on monitors?
+>>>>>>>>>>>
+>>>>>>>>>>> Monitors are not an application for this part.
+>>>>>>>>>>
+>>>>>>>>>> You did not answer the question. When you talk about yellow, is it
+>>>>>>>>>> same yellow the rest of world talks about?
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> See above.  It is close to what was on my monitor displayed.
+>>>>>>>>>
+>>>>>>>>>>>> Because 100% PWM on all channels does not result in white on hardware
+>>>>>>>>>>>> I have.
+>>>>>>>>>>>
+>>>>>>>>>>> I don't know I am usually blinded by the light and have no diffuser over
+>>>>>>>>>>> the LEDs to disperse the light so when I look I see all 3 colors.
+>>>>>>>>>>
+>>>>>>>>>> How can we have useful discussion about colors when you don't see the
+>>>>>>>>>> colors?
+>>>>>>>>>>
+>>>>>>>>>> Place a piece of paper over the LEDs....
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Good suggestion for a rough test.
+>>>>>>>>>
+>>>>>>>>>>>> But...
+>>>>>>>>>>>>
+>>>>>>>>>>>> I believe we should have a reasonable design before we do something
+>>>>>>>>>>>> like this. There's no guarantee someone will not use lp50xx with just
+>>>>>>>>>>>> the white LEDs for example. How will this work? Plus existing hardware
+>>>>>>>>>>>> already uses three separate LEDs for RGB LED. Why not provide same
+>>>>>>>>>>>> interface?
+>>>>>>>>>>>
+>>>>>>>>>>> Which existing hardware?  Are they using this part?
+>>>>>>>>>>
+>>>>>>>>>> Nokia N900. They are not using this part, but any interface we invent
+>>>>>>>>>> should work there, too.
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Yes a common interface would be nice with some sort of hardware tuning coefficient.
+>>>>>>>>>
+>>>>>>>>>>> <rant>
+>>>>>>>>>>> Why are we delaying getting the RGB framework or HSV in?
+>>>>>>>>>>> I would rather design against something you want instead of having
+>>>>>>>>>>> everyone complain about every implementation I post.
+>>>>>>>>>>> </rant>
+>>>>>>>>>>
+>>>>>>>>>> Because you insist on creating new kernel interfaces, when existing
+>>>>>>>>>> interfaces work, and are doing that badly.
+>>>>>>>>>>
+>>>>>>>>>> Because your patches are of lower quality than is acceptable for linux
+>>>>>>>>>> kernel.
+>>>>>>>>>>
+>>>>>>>>>> Because you don't seem to be reading the emails.
+>>>>>>>>>>
+>>>>>>>>>> I sent list of requirements for RGB led support. This does not meet
+>>>>>>>>>> them.
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Sigh.  You did not answer my question.
+>>>>>>>>>
+>>>>>>>>> Your requirements seem to be centered around monitors but that is only one application of the current
+>>>>>>>>> RGB LED landscape.
+>>>>>>>>>
+>>>>>>>>> I am willing to work with you on the HSV and adapting the LP50xx part to this framework.
+>>>>>>>>> Or any RGB framework for that matter.  I still don't agree with the kernel needing to declare colors
+>>>>>>>>>      maybe color capabilities but not specific colors.
+>>>>>>>>
+>>>>>>>> Dan, if you have a bandwidth for LED RGB class implementation
+>>>>>>>> then please go ahead. It would be good to compare colors produced
+>>>>>>>> by software HSV->RGB algorithm to what can be achieved with
+>>>>>>>> LEDn_BRIGHTNESS feature.
+>>>>>>>>
+>>>>>>>> The requirements for LED RGB class as I would see it:
+>>>>>>>>
+>>>>>>>> sysfs interface:
+>>>>>>>>
+>>>>>>>> brightness-model: space separated list of available options:
+>>>>>>>> - rgb (default):
+>>>>>>>>      - creates color file with "red green blue" decimal values
+>>>>>>>
+>>>>>>> What about other colored LEDs?  Presenting RGB for an Amber LED does not seem right.
+>>>>>>> Should the LED color come from the DT?
+>>>>>>>
+>>>>>>
+>>>>>> I thought about this, other non-RGB LEDs would not use the RGB framework.
+>>>>>> But should they have the same interfaces as RGB?
+>>>>>>
+>>>>>> Should PWM control be a global interface?
+>>>>>
+>>>>> In order to being able to set multi color element led at one go I would recommend using then model:
+>>>>>
+>>>>> color_names: "red green blue white"
+>>>>>
+>>>>> echo "32 43 0 128" > color
+>>>>>
+>>>>> This way all elements would be set at same time from user space point of view.
+>>>>>
+>>>>> This of course requires that it is part of the physical/logical led that is being controlled. If it is a separate thing then it would logically be differently controlled mono color led.
+>>>>>
+>>>>> If you look what kinds of leds are available lets say from digikey you get all kinds of combos:
+>>>>>
+>>>>> - red, green, blue
+>>>>> - red, green, blue, amber
+>>>>> - red, green, blue, white
+>>>>> - red, green, blue, white - cool
+>>>>> - red, green, blue, white - neutral
+>>>>> - red, green, blue, white - warm
+>>>>> - red, orange
+>>>>> - purple, ultraviolet
+>>>>> - amber, blue
+>>>>> - amber, blue, cyan, green, red, violet, white - cool
+>>>>> - amber, blue, green
+>>>>> - amber, green, blue
+>>>>> - and then lots of single special colors
+>>>>
+>>>> It suggested me another solution. Instead of LED RGB class
+>>>> we would have LED multi-color class.
+>>>>
 >>>
->>> The device has the ability to group LED output into control banks
->>> so that multiple LED banks can be controlled with the same mixing and
->>> brightness.  Inversely the LEDs can also be controlled independently.
+>>> I was thinking the same thing this morning.  But I was thinking that the RGB
+>>> class should be an additional class to stand on its own or can register to the
+>>> multi color class.
 >>>
->>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>> ---
+>>>> Sysfs interface design:
+>>>> -----------------------
+>>>>
+>>>> colors: directory containing files that map to
+>>>>           the brightness of particular LEDs; there
+>>>>           would be predefined color names that LED class
+>>>>           driver should map iouts to, e.g.:
 >>>
->>> v2 - Changed the mix and module files to a single "color" file, added the LP5030
->>> and LP5036 register mapping, added ABI documentation, updated the parsing of
->>> DT and led sources to match DT, renamed driver to leds-lp50xx.c - https://lore.kernel.org/patchwork/patch/1026515/
+>>> Filling in the missing ideas with questions.
 >>>
->>>    Documentation/leds/leds-lp50xx.txt |  36 ++
->>>    drivers/leds/Kconfig               |   7 +
->>>    drivers/leds/Makefile              |   1 +
->>>    drivers/leds/leds-lp50xx.c         | 754 +++++++++++++++++++++++++++++
->>>    4 files changed, 798 insertions(+)
->>>    create mode 100644 Documentation/leds/leds-lp50xx.txt
->>>    create mode 100644 drivers/leds/leds-lp50xx.c
+>>> Is it a directory or a file?  If it is a directory does that not break the current
+>>> directory label model?
 >>>
->>> diff --git a/Documentation/leds/leds-lp50xx.txt b/Documentation/leds/leds-lp50xx.txt
->>
->> Please move it to
->>
->> Documentation/ABI/testing/sysfs-class-led-driver-lp50xx
->>
->> and use standard ABI documentation format.
->>
-> 
-> Ack.  I will add this file as well per the doc format.
-> 
->>
->>> new file mode 100644
->>> index 000000000000..8b1b01dfdd22
->>> --- /dev/null
->>> +++ b/Documentation/leds/leds-lp50xx.txt
->>> @@ -0,0 +1,36 @@
->>> +LP5018/LP5024/LP5030/LP5036 Common Driver
->>> +=================================================
->>> +
->>> +Authors: Dan Murphy <dmurphy@ti.com>
->>> +
->>> +Description
->>> +-----------
->>> +The LP50XX RGB LED drivers have the ability to group multiple RGB cluster
->>> +LEDs into a single group for simultaneous control or expose single RGB cluster
->>> +for control.  This device exposes different register interfaces to control
->>> +the cluster brightness as well as the individual RGB LEDs color intensity.
->>> +
->>> +RGB Cluster Color Control
->>> +-------------------------
->>> +The LP50xx driver will expose a file called "color" for each LED class instance
->>> +defined.  This file will accept a 24-bit RGB value in which the the color of the
->>> +RGB LEDs will be set.
->>> +
->>> +The 24-bit RGB value passed in follows the pattern 0xXXRRGGBB
->>> +XX - Do not care ignored by the driver
->>> +RR - is the 8 bit Red LED value
->>> +GG - is the 8 bit Green LED value
->>> +BB - is the 8 bit Blue LED value
->>> +
->>> +Example:
->>> +LED module output 4 of the LP5024 will be a yellow color:
->>> +echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color
->>> +
->>> +LED module output 4 of the LP5024 will be dimmed 50%:
->>> +echo 0x80 > /sys/class/leds/lp5024\:led4_mod/brightness
->>> +
->>> +LED banked RGBs of the LP5036 will be a white color:
->>> +echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color
->>
->> This part with example cans remain in Documentation/leds if you like.
->>
->>> +
->>> +LED banked RGBs of the LP50364 will be dimmed 50%:
->>> +echo 0x80 > /sys/class/leds/lp5036\:led_banked/brightness
->>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->>> index a72f97fca57b..5f413445a667 100644
->>> --- a/drivers/leds/Kconfig
->>> +++ b/drivers/leds/Kconfig
->>> @@ -326,6 +326,13 @@ config LEDS_LP3952
->>>          To compile this driver as a module, choose M here: the
->>>          module will be called leds-lp3952.
->>>    +config LEDS_LP50XX
->>> +    tristate "LED Support for TI LP5036/30/24/18 LED driver chip"
->>> +    depends on LEDS_CLASS && REGMAP_I2C
->>> +    help
->>> +      If you say yes here you get support for the Texas Instruments
->>> +      LP5036, LP5030, LP5024 and LP5018 LED driver.
->>> +
->>>    config LEDS_LP55XX_COMMON
->>>        tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
->>>        depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
->>> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
->>> index 4c1b0054f379..852eff0b773f 100644
->>> --- a/drivers/leds/Makefile
->>> +++ b/drivers/leds/Makefile
->>> @@ -32,6 +32,7 @@ obj-$(CONFIG_LEDS_GPIO_REGISTER)    += leds-gpio-register.o
->>>    obj-$(CONFIG_LEDS_GPIO)            += leds-gpio.o
->>>    obj-$(CONFIG_LEDS_LP3944)        += leds-lp3944.o
->>>    obj-$(CONFIG_LEDS_LP3952)        += leds-lp3952.o
->>> +obj-$(CONFIG_LEDS_LP50XX)        += leds-lp50xx.o
->>>    obj-$(CONFIG_LEDS_LP55XX_COMMON)    += leds-lp55xx-common.o
->>>    obj-$(CONFIG_LEDS_LP5521)        += leds-lp5521.o
->>>    obj-$(CONFIG_LEDS_LP5523)        += leds-lp5523.o
->>> diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
->>> new file mode 100644
->>> index 000000000000..41bb2e0129c8
->>> --- /dev/null
->>> +++ b/drivers/leds/leds-lp50xx.c
->>> @@ -0,0 +1,754 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/* TI LP50XX LED chip family driver
->>> + * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
->>> + */
->>
->> Let's use uniform "//" comment style here.
-> 
-> Ack
-> 
->>
->>> +#include <linux/gpio/consumer.h>
->>> +#include <linux/i2c.h>
->>> +#include <linux/init.h>
->>> +#include <linux/leds.h>
->>> +#include <linux/module.h>
->>> +#include <linux/mutex.h>
->>> +#include <linux/of.h>
->>> +#include <linux/of_gpio.h>
->>> +#include <linux/regmap.h>
->>> +#include <linux/regulator/consumer.h>
->>> +#include <linux/slab.h>
->>> +#include <uapi/linux/uleds.h>
->>> +
->>> +#define LP50XX_DEV_CFG0        0x00
->>> +#define LP50XX_DEV_CFG1        0x01
->>> +#define LP50XX_LED_CFG0        0x02
->>> +
->>> +/* LP5018 and LP5024 registers */
->>> +#define LP5024_BNK_BRT        0x03
->>> +#define LP5024_BNKA_CLR        0x04
->>> +#define LP5024_BNKB_CLR        0x05
->>> +#define LP5024_BNKC_CLR        0x06
->>> +#define LP5024_LED0_BRT        0x07
->>> +#define LP5024_LED1_BRT        0x08
->>> +#define LP5024_LED2_BRT        0x09
->>> +#define LP5024_LED3_BRT        0x0a
->>> +#define LP5024_LED4_BRT        0x0b
->>> +#define LP5024_LED5_BRT        0x0c
->>> +#define LP5024_LED6_BRT        0x0d
->>> +#define LP5024_LED7_BRT        0x0e
->>> +
->>> +#define LP5024_OUT0_CLR        0x0f
->>> +#define LP5024_OUT1_CLR        0x10
->>> +#define LP5024_OUT2_CLR        0x11
->>> +#define LP5024_OUT3_CLR        0x12
->>> +#define LP5024_OUT4_CLR        0x13
->>> +#define LP5024_OUT5_CLR        0x14
->>> +#define LP5024_OUT6_CLR        0x15
->>> +#define LP5024_OUT7_CLR        0x16
->>> +#define LP5024_OUT8_CLR        0x17
->>> +#define LP5024_OUT9_CLR        0x18
->>> +#define LP5024_OUT10_CLR    0x19
->>> +#define LP5024_OUT11_CLR    0x1a
->>> +#define LP5024_OUT12_CLR    0x1b
->>> +#define LP5024_OUT13_CLR    0x1c
->>> +#define LP5024_OUT14_CLR    0x1d
->>> +#define LP5024_OUT15_CLR    0x1e
->>> +#define LP5024_OUT16_CLR    0x1f
->>> +#define LP5024_OUT17_CLR    0x20
->>> +#define LP5024_OUT18_CLR    0x21
->>> +#define LP5024_OUT19_CLR    0x22
->>> +#define LP5024_OUT20_CLR    0x23
->>> +#define LP5024_OUT21_CLR    0x24
->>> +#define LP5024_OUT22_CLR    0x25
->>> +#define LP5024_OUT23_CLR    0x26
->>> +#define LP5024_RESET        0x27
->>> +
->>> +/* LP5030 and LP5036 registers */
->>> +#define LP5036_LED_CFG1        0x03
->>> +#define LP5036_BNK_BRT        0x04
->>> +#define LP5036_BNKA_CLR        0x05
->>> +#define LP5036_BNKB_CLR        0x06
->>> +#define LP5036_BNKC_CLR        0x07
->>> +#define LP5036_LED0_BRT        0x08
->>> +#define LP5036_LED1_BRT        0x09
->>> +#define LP5036_LED2_BRT        0x0a
->>> +#define LP5036_LED3_BRT        0x0b
->>> +#define LP5036_LED4_BRT        0x0c
->>> +#define LP5036_LED5_BRT        0x0d
->>> +#define LP5036_LED6_BRT        0x0e
->>> +#define LP5036_LED7_BRT        0x0f
->>> +#define LP5036_LED8_BRT        0x10
->>> +#define LP5036_LED9_BRT        0x11
->>> +#define LP5036_LED10_BRT    0x12
->>> +#define LP5036_LED11_BRT    0x13
->>> +
->>> +#define LP5036_OUT0_CLR        0x14
->>> +#define LP5036_OUT1_CLR        0x15
->>> +#define LP5036_OUT2_CLR        0x16
->>> +#define LP5036_OUT3_CLR        0x17
->>> +#define LP5036_OUT4_CLR        0x18
->>> +#define LP5036_OUT5_CLR        0x19
->>> +#define LP5036_OUT6_CLR        0x1a
->>> +#define LP5036_OUT7_CLR        0x1b
->>> +#define LP5036_OUT8_CLR        0x1c
->>> +#define LP5036_OUT9_CLR        0x1d
->>> +#define LP5036_OUT10_CLR    0x1e
->>> +#define LP5036_OUT11_CLR    0x1f
->>> +#define LP5036_OUT12_CLR    0x20
->>> +#define LP5036_OUT13_CLR    0x21
->>> +#define LP5036_OUT14_CLR    0x22
->>> +#define LP5036_OUT15_CLR    0x23
->>> +#define LP5036_OUT16_CLR    0x24
->>> +#define LP5036_OUT17_CLR    0x25
->>> +#define LP5036_OUT18_CLR    0x26
->>> +#define LP5036_OUT19_CLR    0x27
->>> +#define LP5036_OUT20_CLR    0x28
->>> +#define LP5036_OUT21_CLR    0x29
->>> +#define LP5036_OUT22_CLR    0x2a
->>> +#define LP5036_OUT23_CLR    0x2b
->>> +#define LP5036_OUT24_CLR    0x2c
->>> +#define LP5036_OUT25_CLR    0x2d
->>> +#define LP5036_OUT26_CLR    0x2e
->>> +#define LP5036_OUT27_CLR    0x2f
->>> +#define LP5036_OUT28_CLR    0x30
->>> +#define LP5036_OUT29_CLR    0x31
->>> +#define LP5036_OUT30_CLR    0x32
->>> +#define LP5036_OUT31_CLR    0x33
->>> +#define LP5036_OUT32_CLR    0x34
->>> +#define LP5036_OUT33_CLR    0x35
->>> +#define LP5036_OUT34_CLR    0x36
->>> +#define LP5036_OUT35_CLR    0x37
->>> +#define LP5036_RESET        0x38
->>> +
->>> +#define LP50XX_SW_RESET        0xff
->>> +
->>> +#define LP50XX_CHIP_EN        BIT(6)
->>> +
->>> +#define LP5018_MAX_LED_STRINGS    6
->>> +#define LP5024_MAX_LED_STRINGS    8
->>> +#define LP5030_MAX_LED_STRINGS    10
->>> +#define LP5036_MAX_LED_STRINGS    12
->>> +
->>> +enum lp50xx_model {
->>> +    LP5018,
->>> +    LP5024,
->>> +    LP5030,
->>> +    LP5036,
->>> +};
->>> +
->>> +struct lp50xx_led {
->>> +    u32 led_strings[LP5036_MAX_LED_STRINGS];
->>
->> It is possible to have only one bank, so this can be a property
->> of struct lp50xx. Moreover, it doesn't need to be an array,
->> but should be:
->>
->> unsigned long bank_modules;
->>
->> Then you will be able to use bitops on it, where bit position will
->> refer to the id of RGB LED module assigned to the bank.
->>
-> 
-> ACK.  Had to think a bit on this to make sure there was enough room
-> but aligning on LEDn_MODULES/BANKS should be fine
-> 
->>> +    char label[LED_MAX_NAME_SIZE];
->>> +    struct led_classdev led_dev;
->>> +    struct lp50xx *priv;
->>> +    int led_number;
->>> +    u8 ctrl_bank_enabled;
->>> +};
->>> +
->>> +/**
->>> + * struct lp50xx -
->>> + * @enable_gpio: Hardware enable gpio
->>> + * @regulator: LED supply regulator pointer
->>> + * @client: Pointer to the I2C client
->>> + * @regmap: Devices register map
->>> + * @dev: Pointer to the devices device struct
->>> + * @lock: Lock for reading/writing the device
->>> + * @model_id: ID of the device
->>> + * @leds: Array of LED strings
->>
->> Please don't use capital letters for property description.
->> Still, some of the properties below remain undocumented.
->>
-> 
-> You are referring to ID and I2C or do you mean no capitals to start the
-> description?
-
-The latter.
-
-> Yes I added the properties and missed documenting them.
-> 
->>> + */
->>> +struct lp50xx {
->>> +    struct gpio_desc *enable_gpio;
->>> +    struct regulator *regulator;
->>> +    struct i2c_client *client;
->>> +    struct regmap *regmap;
->>> +    struct device *dev;
->>> +    struct mutex lock;
->>> +    enum lp50xx_model model_id;
->>> +    int max_leds;
->>> +    int num_of_leds;
->>> +
->>> +    u8 led_brightness0_reg;
->>> +    u8 mix_out0_reg;
->>> +    u8 bank_brt_reg;
->>> +    u8 bank_mix_reg;
->>> +    u8 reset_reg;
->>> +
->>> +    /* This needs to be at the end of the struct */
->>> +    struct lp50xx_led leds[];
->>> +};
->>> +
->>> +static const struct reg_default lp5024_reg_defs[] = {
->>> +    {LP50XX_DEV_CFG0, 0x0},
->>> +    {LP50XX_DEV_CFG1, 0x3c},
->>> +    {LP50XX_LED_CFG0, 0x0},
->>> +    {LP5024_BNK_BRT, 0xff},
->>> +    {LP5024_BNKA_CLR, 0x0f},
->>> +    {LP5024_BNKB_CLR, 0x0f},
->>> +    {LP5024_BNKC_CLR, 0x0f},
->>> +    {LP5024_LED0_BRT, 0x0f},
->>> +    {LP5024_LED1_BRT, 0xff},
->>> +    {LP5024_LED2_BRT, 0xff},
->>> +    {LP5024_LED3_BRT, 0xff},
->>> +    {LP5024_LED4_BRT, 0xff},
->>> +    {LP5024_LED5_BRT, 0xff},
->>> +    {LP5024_LED6_BRT, 0xff},
->>> +    {LP5024_LED7_BRT, 0xff},
->>> +    {LP5024_OUT0_CLR, 0x0f},
->>> +    {LP5024_OUT1_CLR, 0x00},
->>> +    {LP5024_OUT2_CLR, 0x00},
->>> +    {LP5024_OUT3_CLR, 0x00},
->>> +    {LP5024_OUT4_CLR, 0x00},
->>> +    {LP5024_OUT5_CLR, 0x00},
->>> +    {LP5024_OUT6_CLR, 0x00},
->>> +    {LP5024_OUT7_CLR, 0x00},
->>> +    {LP5024_OUT8_CLR, 0x00},
->>> +    {LP5024_OUT9_CLR, 0x00},
->>> +    {LP5024_OUT10_CLR, 0x00},
->>> +    {LP5024_OUT11_CLR, 0x00},
->>> +    {LP5024_OUT12_CLR, 0x00},
->>> +    {LP5024_OUT13_CLR, 0x00},
->>> +    {LP5024_OUT14_CLR, 0x00},
->>> +    {LP5024_OUT15_CLR, 0x00},
->>> +    {LP5024_OUT16_CLR, 0x00},
->>> +    {LP5024_OUT17_CLR, 0x00},
->>> +    {LP5024_OUT18_CLR, 0x00},
->>> +    {LP5024_OUT19_CLR, 0x00},
->>> +    {LP5024_OUT20_CLR, 0x00},
->>> +    {LP5024_OUT21_CLR, 0x00},
->>> +    {LP5024_OUT22_CLR, 0x00},
->>> +    {LP5024_OUT23_CLR, 0x00},
->>> +    {LP5024_RESET, 0x00}
->>> +};
->>> +
->>> +static const struct reg_default lp5036_reg_defs[] = {
->>> +    {LP50XX_DEV_CFG0, 0x0},
->>> +    {LP50XX_DEV_CFG1, 0x3c},
->>> +    {LP50XX_LED_CFG0, 0x0},
->>> +    {LP5036_LED_CFG1, 0x0},
->>> +    {LP5036_BNK_BRT, 0xff},
->>> +    {LP5036_BNKA_CLR, 0x0f},
->>> +    {LP5036_BNKB_CLR, 0x0f},
->>> +    {LP5036_BNKC_CLR, 0x0f},
->>> +    {LP5036_LED0_BRT, 0x0f},
->>> +    {LP5036_LED1_BRT, 0xff},
->>> +    {LP5036_LED2_BRT, 0xff},
->>> +    {LP5036_LED3_BRT, 0xff},
->>> +    {LP5036_LED4_BRT, 0xff},
->>> +    {LP5036_LED5_BRT, 0xff},
->>> +    {LP5036_LED6_BRT, 0xff},
->>> +    {LP5036_LED7_BRT, 0xff},
->>> +    {LP5036_OUT0_CLR, 0x0f},
->>> +    {LP5036_OUT1_CLR, 0x00},
->>> +    {LP5036_OUT2_CLR, 0x00},
->>> +    {LP5036_OUT3_CLR, 0x00},
->>> +    {LP5036_OUT4_CLR, 0x00},
->>> +    {LP5036_OUT5_CLR, 0x00},
->>> +    {LP5036_OUT6_CLR, 0x00},
->>> +    {LP5036_OUT7_CLR, 0x00},
->>> +    {LP5036_OUT8_CLR, 0x00},
->>> +    {LP5036_OUT9_CLR, 0x00},
->>> +    {LP5036_OUT10_CLR, 0x00},
->>> +    {LP5036_OUT11_CLR, 0x00},
->>> +    {LP5036_OUT12_CLR, 0x00},
->>> +    {LP5036_OUT13_CLR, 0x00},
->>> +    {LP5036_OUT14_CLR, 0x00},
->>> +    {LP5036_OUT15_CLR, 0x00},
->>> +    {LP5036_OUT16_CLR, 0x00},
->>> +    {LP5036_OUT17_CLR, 0x00},
->>> +    {LP5036_OUT18_CLR, 0x00},
->>> +    {LP5036_OUT19_CLR, 0x00},
->>> +    {LP5036_OUT20_CLR, 0x00},
->>> +    {LP5036_OUT21_CLR, 0x00},
->>> +    {LP5036_OUT22_CLR, 0x00},
->>> +    {LP5036_OUT23_CLR, 0x00},
->>> +    {LP5036_OUT24_CLR, 0x00},
->>> +    {LP5036_OUT25_CLR, 0x00},
->>> +    {LP5036_OUT26_CLR, 0x00},
->>> +    {LP5036_OUT27_CLR, 0x00},
->>> +    {LP5036_OUT28_CLR, 0x00},
->>> +    {LP5036_OUT29_CLR, 0x00},
->>> +    {LP5036_OUT30_CLR, 0x00},
->>> +    {LP5036_OUT31_CLR, 0x00},
->>> +    {LP5036_OUT32_CLR, 0x00},
->>> +    {LP5036_OUT33_CLR, 0x00},
->>> +    {LP5036_OUT34_CLR, 0x00},
->>> +    {LP5036_OUT35_CLR, 0x00},
->>> +    {LP5036_RESET, 0x00}
->>> +};
->>> +
->>> +static const struct regmap_config lp5024_regmap_config = {
->>> +    .reg_bits = 8,
->>> +    .val_bits = 8,
->>> +
->>> +    .max_register = LP5024_RESET,
->>> +    .reg_defaults = lp5024_reg_defs,
->>> +    .num_reg_defaults = ARRAY_SIZE(lp5024_reg_defs),
->>> +    .cache_type = REGCACHE_RBTREE,
->>> +};
->>> +
->>> +static const struct regmap_config lp5036_regmap_config = {
->>> +    .reg_bits = 8,
->>> +    .val_bits = 8,
->>> +
->>> +    .max_register = LP5036_RESET,
->>> +    .reg_defaults = lp5036_reg_defs,
->>> +    .num_reg_defaults = ARRAY_SIZE(lp5036_reg_defs),
->>> +    .cache_type = REGCACHE_RBTREE,
->>> +};
->>> +
->>> +static ssize_t color_show(struct device *dev,
->>> +            struct device_attribute *attr,
->>> +            char *buf)
->>> +{
->>> +    struct led_classdev *led_cdev = dev_get_drvdata(dev);
->>> +    struct lp50xx_led *led = container_of(led_cdev, struct lp50xx_led,
->>> +                          led_dev);
->>> +    struct lp50xx *priv = led->priv;
->>> +    unsigned int red_val, green_val, blue_val;
->>> +    u8 red_reg, green_reg, blue_reg;
->>> +    u32 mix_value = 0;
->>> +    u8 led_offset;
->>> +    int ret;
->>> +
->>> +    if (led->ctrl_bank_enabled) {
->>> +        red_reg = priv->bank_mix_reg;
->>> +        green_reg = priv->bank_mix_reg + 1;
->>> +        blue_reg = priv->bank_mix_reg + 2;
->>> +    } else {
->>> +        led_offset = (led->led_number * 3);
->>> +        red_reg = priv->mix_out0_reg + led_offset;
->>> +        green_reg = priv->mix_out0_reg + led_offset + 1;
->>> +        blue_reg = priv->mix_out0_reg + led_offset + 2;
->>> +    }
->>> +
->>> +    ret = regmap_read(priv->regmap, red_reg, &red_val);
->>> +    if (ret) {
->>> +        dev_err(&priv->client->dev, "Cannot read LED value\n");
->>> +        goto out;
->>> +    }
->>> +
->>> +    ret = regmap_read(priv->regmap, green_reg, &green_val);
->>> +    if (ret) {
->>> +        dev_err(&priv->client->dev, "Cannot read LED value\n");
->>> +        goto out;
->>> +    }
->>> +
->>> +    ret = regmap_read(priv->regmap, blue_reg, &blue_val);
->>> +    if (ret) {
->>> +        dev_err(&priv->client->dev, "Cannot read LED value\n");
->>> +        goto out;
->>> +    }
->>> +
->>> +    mix_value = (red_val << 16 | green_val << 8 | blue_val);
->>> +
->>> +out:
->>> +    return scnprintf(buf, PAGE_SIZE, "0x%X\n", mix_value);
->>> +}
->>> +
->>> +static ssize_t color_store(struct device *dev,
->>> +                struct device_attribute *attr,
->>> +                const char *buf, size_t size)
->>> +{
->>> +    struct led_classdev *led_cdev = dev_get_drvdata(dev);
->>> +    struct lp50xx_led *led = container_of(led_cdev, struct lp50xx_led,
->>> +                          led_dev);
->>> +    struct lp50xx *priv = led->priv;
->>> +    u8 led_offset;
->>> +    unsigned long mix_value;
->>> +    u8 red_reg, green_reg, blue_reg;
->>> +    u8 red_val, green_val, blue_val;
->>> +    int ret;
->>> +
->>> +    ret = kstrtoul(buf, 0, &mix_value);
->>> +    if (ret)
->>> +        return ret;
->>> +
->>> +    if (led->ctrl_bank_enabled) {
->>> +        red_reg = priv->bank_mix_reg;
->>> +        green_reg = priv->bank_mix_reg + 1;
->>> +        blue_reg = priv->bank_mix_reg + 2;
->>> +    } else {
->>> +        led_offset = (led->led_number * 3);
->>> +        red_reg = priv->mix_out0_reg + led_offset;
->>> +        green_reg = priv->mix_out0_reg + led_offset + 1;
->>> +        blue_reg = priv->mix_out0_reg + led_offset + 2;
->>> +    }
->>> +
->>> +    red_val = (mix_value & 0xff0000) >> 16;
->>> +    green_val = (mix_value & 0xff00) >> 8;
->>> +    blue_val = (mix_value & 0xff);
->>
->> I've been rather thinking about space separated list of decimal
->> "red green blue" values, but maybe this way it will be less
->> controversial. Let's if there will be other opinions.
->>
-> 
-> Has anything changed based on this?
-> Should I change the file name from "color" to something else?
-
-Yes, I'd stick to my most recent proposal:
-"colors" directory with red,green,blue files mapped to IOUTn_COLOR
-register, and the file "sync" in this directory accepting "write"
-and "read" strings.
-
-We could think of some alternatives for the "colors" directory
-and "sync" file names.
-
-s/colors/color_intensities/ ?
-s/sync/rw ?
-
-For rw case we could have values "1" for write and "0" for read.
-
->>> +
->>> +    ret = regmap_write(priv->regmap, red_reg, red_val);
->>> +    if (ret) {
->>> +        dev_err(&priv->client->dev, "Cannot write LED value\n");
->>> +        goto out;
->>> +    }
->>> +
->>> +    ret = regmap_write(priv->regmap, green_reg, green_val);
->>> +    if (ret) {
->>> +        dev_err(&priv->client->dev, "Cannot write LED value\n");
->>> +        goto out;
->>> +    }
->>> +
->>> +    ret = regmap_write(priv->regmap, blue_reg, blue_val);
->>> +    if (ret) {
->>> +        dev_err(&priv->client->dev, "Cannot write LED value\n");
->>> +        goto out;
->>> +    }
->>> +out:
->>> +    return size;
->>> +}
->>> +
->>> +static DEVICE_ATTR_RW(color);
->>> +
->>> +static struct attribute *lp50xx_led_color_attrs[] = {
->>> +    &dev_attr_color.attr,
->>> +    NULL
->>> +};
->>> +ATTRIBUTE_GROUPS(lp50xx_led_color);
->>> +
->>> +static int lp50xx_brightness_set(struct led_classdev *led_cdev,
->>> +                enum led_brightness brt_val)
->>> +{
->>> +    struct lp50xx_led *led = container_of(led_cdev, struct lp50xx_led,
->>> +                          led_dev);
->>> +    int ret = 0;
->>> +    u8 reg_val;
->>> +
->>> +    mutex_lock(&led->priv->lock);
->>> +
->>> +    if (led->ctrl_bank_enabled)
->>> +        reg_val = led->priv->bank_brt_reg;
->>> +    else
->>> +        reg_val = led->priv->led_brightness0_reg + led->led_number;
->>> +
->>> +    ret = regmap_write(led->priv->regmap, reg_val, brt_val);
->>> +
->>> +    mutex_unlock(&led->priv->lock);
->>> +
->>> +    return ret;
->>> +}
->>> +
->>> +static enum led_brightness lp50xx_brightness_get(struct led_classdev *led_cdev)
->>> +{
->>> +    struct lp50xx_led *led = container_of(led_cdev, struct lp50xx_led,
->>> +                          led_dev);
->>> +    unsigned int brt_val;
->>> +    u8 reg_val;
->>> +    int ret;
->>> +
->>> +    mutex_lock(&led->priv->lock);
->>> +
->>> +    if (led->ctrl_bank_enabled)
->>> +        reg_val = led->priv->bank_brt_reg;
->>> +    else
->>> +        reg_val = led->priv->led_brightness0_reg + led->led_number;
->>> +
->>> +    ret = regmap_read(led->priv->regmap, reg_val, &brt_val);
->>> +
->>> +    mutex_unlock(&led->priv->lock);
->>> +
->>> +    return brt_val;
->>> +}
->>> +
->>> +static void lp50xx_set_led_values(struct lp50xx *priv)
->>> +{
->>> +    if (priv->model_id == LP5018 || priv->model_id == LP5024) {
->>> +        priv->led_brightness0_reg = LP5024_LED0_BRT;
->>> +        priv->mix_out0_reg = LP5024_OUT0_CLR;
->>> +        priv->bank_brt_reg = LP5024_BNK_BRT;
->>> +        priv->bank_mix_reg = LP5024_BNKA_CLR;
->>> +        priv->reset_reg = LP5024_RESET;
->>> +    } else {
->>> +        priv->led_brightness0_reg = LP5036_LED0_BRT;
->>> +        priv->mix_out0_reg = LP5036_OUT0_CLR;
->>> +        priv->bank_brt_reg = LP5036_BNK_BRT;
->>> +        priv->bank_mix_reg = LP5036_BNKA_CLR;
->>> +        priv->reset_reg = LP5036_RESET;
->>> +    }
->>> +}
->>> +
->>> +static int lp50xx_set_banks(struct lp50xx *priv)
->>> +{
->>> +    struct lp50xx_led *led;
->>> +    u8 led_ctrl_enable = 0;
->>> +    u8 led1_ctrl_enable = 0;
->>> +    u8 ctrl_ext = 0;
->>> +    int i, j;
->>> +    int ret;
->>> +
->>> +    for (i = 0; i <= priv->num_of_leds; i++) {
->>> +        led = &priv->leds[i];
->>> +        if (!led->ctrl_bank_enabled)
->>> +            continue;
->>> +
->>> +        for (j = 0; j <= priv->max_leds - 1; j++) {
->>> +            if (led->led_strings[j]    > (LP5024_MAX_LED_STRINGS - 1)) {
->>> +                ctrl_ext = led->led_strings[j] - LP5024_MAX_LED_STRINGS;
->>> +                led1_ctrl_enable |= (1 << ctrl_ext);
->>> +            } else {
->>> +                led_ctrl_enable |= (1 << led->led_strings[j]);
->>> +            }
->>> +        }
->>> +    }
->>
->> With centralized bank_modules flags it should look simpler.
->>
-> 
-> I don't think so.  The LP5030 and LP5036 have 2 registers to denote Module vs banked.
-> 
-> But once I convert it we will know.
-> 
->>> +
->>> +    ret = regmap_write(priv->regmap, LP50XX_LED_CFG0, led_ctrl_enable);
->>> +
->>> +    if (led1_ctrl_enable)
->>> +        ret = regmap_write(priv->regmap, LP5036_LED_CFG1,
->>> +                   led1_ctrl_enable);
->>> +
->>> +    return ret;
->>> +}
->>> +
->>> +static int lp50xx_init(struct lp50xx *priv)
->>> +{
->>> +    int ret;
->>> +
->>> +    lp50xx_set_led_values(priv);
->>> +
->>> +    if (priv->enable_gpio) {
->>> +        gpiod_direction_output(priv->enable_gpio, 1);
->>> +    } else {
->>> +        ret = regmap_write(priv->regmap, priv->reset_reg,
->>> +                   LP50XX_SW_RESET);
->>> +        if (ret) {
->>> +            dev_err(&priv->client->dev,
->>> +                "Cannot reset the device\n");
->>> +            goto out;
->>> +        }
->>> +    }
->>> +
->>> +    ret = lp50xx_set_banks(priv);
->>> +    if (ret) {
->>> +        dev_err(&priv->client->dev, "Cannot set the banks\n");
->>> +        goto out;
->>> +    }
->>> +
->>> +    ret = regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
->>> +    if (ret)
->>> +        dev_err(&priv->client->dev, "Cannot write ctrl enable\n");
->>> +
->>> +out:
->>> +    return ret;
->>> +}
->>> +
->>> +static int lp50xx_probe_dt(struct lp50xx *priv)
->>> +{
->>> +    struct fwnode_handle *child = NULL;
->>> +    struct lp50xx_led *led;
->>> +    int control_bank_defined = 0;
->>> +    const char *name;
->>> +    int led_number;
->>> +    size_t i = 0;
->>> +    int ret;
->>> +
->>> +    priv->enable_gpio = devm_gpiod_get_optional(&priv->client->dev,
->>> +                           "enable", GPIOD_OUT_LOW);
->>> +    if (IS_ERR(priv->enable_gpio)) {
->>> +        ret = PTR_ERR(priv->enable_gpio);
->>> +        dev_err(&priv->client->dev, "Failed to get enable gpio: %d\n",
->>> +            ret);
->>> +        return ret;
->>> +    }
->>> +
->>> +    priv->regulator = devm_regulator_get(&priv->client->dev, "vled");
->>> +    if (IS_ERR(priv->regulator))
->>> +        priv->regulator = NULL;
->>> +
->>> +    if (priv->model_id == LP5018)
->>> +        priv->max_leds = LP5018_MAX_LED_STRINGS;
->>> +    else if (priv->model_id == LP5024)
->>> +        priv->max_leds = LP5024_MAX_LED_STRINGS;
->>> +    else if (priv->model_id == LP5030)
->>> +        priv->max_leds = LP5030_MAX_LED_STRINGS;
->>> +    else
->>> +        priv->max_leds = LP5036_MAX_LED_STRINGS;
->>
->> Let's change STRINGS to MODULEs.
->>
-> 
-> ACK.
-> 
->>> +
->>> +    device_for_each_child_node(&priv->client->dev, child) {
->>> +        led = &priv->leds[i];
->>> +
->>> +        if (fwnode_property_present(child, "ti,led-bank")) {
->>> +            led->ctrl_bank_enabled = 1;
->>> +            if (!control_bank_defined)
->>> +                control_bank_defined = 1;
->>> +            else {
->>> +                dev_err(&priv->client->dev,
->>> +                    "ti,led-bank defined twice\n");
->>> +                fwnode_handle_put(child);
->>> +                goto child_out;
->>> +            }
->>> +        } else {
->>> +            led->ctrl_bank_enabled = 0;
->>> +        }
->>
->> Any bit set in bank_modules will signify that bank is defined
->> and enabled.
->>
-> 
-> This is stored so that when the brightness or color is called the correct
-> register either bank or LEDn_MODULES is used.
-> 
-> This way I don't have to go out and read the devices bank enable register
-> and try to determine what was banked and what was not.
-
-You don't need to read the register but its cached state
-(even via regmap - if you don't mark register volatile
-then it will return cached register state).
-I suppose it doesn't change in time in hardware?
-
-I meant that instead of:
-
-if (!control_bank_defined)
-
-you will be able to do the following check:
-
-if (!bank_modules)
-
-Also you will not need led->ctrl_bank_enabled, because
-bank_modules == 0 will mean bank disabled.
-
->>> +        if (led->ctrl_bank_enabled) {
->>> +            ret = fwnode_property_read_u32_array(child,
->>> +                                 "ti,led-bank",
->>> +                                 NULL, 0);
->>> +            ret = fwnode_property_read_u32_array(child,
->>> +                                 "ti,led-bank",
->>> +                                 led->led_strings,
->>> +                                 ret);
->>> +
->>> +            led->led_number = led->led_strings[0];
->>> +
->>> +        } else {
->>> +            ret = fwnode_property_read_u32(child, "ti,led-module",
->>> +                           &led_number);
->>> +
->>> +            led->led_number = led_number;
->>> +        }
->>> +        if (ret) {
->>> +            dev_err(&priv->client->dev,
->>> +                "led sourcing property missing\n");
->>> +            fwnode_handle_put(child);
->>> +            goto child_out;
->>> +        }
->>> +
->>> +        if (led_number > priv->max_leds) {
->>> +            dev_err(&priv->client->dev,
->>> +                "led-sources property is invalid\n");
->>> +            ret = -EINVAL;
->>> +            fwnode_handle_put(child);
->>> +            goto child_out;
->>> +        }
->>> +
->>> +        ret = fwnode_property_read_string(child, "label", &name);
->>> +        if (ret)
->>> +            snprintf(led->label, sizeof(led->label),
->>> +                "%s::", priv->client->name);
->>> +        else
->>> +            snprintf(led->label, sizeof(led->label),
->>> +                 "%s:%s", priv->client->name, name);
->>> +
->>> +        fwnode_property_read_string(child, "linux,default-trigger",
->>> +                    &led->led_dev.default_trigger);
->>> +
->>> +        led->priv = priv;
->>> +        led->led_dev.name = led->label;
->>> +        led->led_dev.brightness_set_blocking = lp50xx_brightness_set;
->>> +        led->led_dev.brightness_get = lp50xx_brightness_get;
->>> +        led->led_dev.groups = lp50xx_led_color_groups;
->>> +
->>> +        ret = devm_led_classdev_register(&priv->client->dev,
->>> +                         &led->led_dev);
->>> +        if (ret) {
->>> +            dev_err(&priv->client->dev, "led register err: %d\n",
->>> +                ret);
->>> +            fwnode_handle_put(child);
->>> +            goto child_out;
->>> +        }
->>> +        i++;
->>> +    }
->>> +    priv->num_of_leds = i;
->>> +
->>> +child_out:
->>> +    return ret;
->>> +}
->>> +
->>> +static int lp50xx_probe(struct i2c_client *client,
->>> +            const struct i2c_device_id *id)
->>> +{
->>> +    struct lp50xx *led;
->>> +    int count;
->>> +    int ret;
->>> +
->>> +    count = device_get_child_node_count(&client->dev);
->>> +    if (!count) {
->>> +        dev_err(&client->dev, "LEDs are not defined in device tree!");
->>> +        return -ENODEV;
->>> +    }
->>> +
->>> +    led = devm_kzalloc(&client->dev, struct_size(led, leds, count),
->>> +               GFP_KERNEL);
->>> +    if (!led)
->>> +        return -ENOMEM;
->>> +
->>> +    mutex_init(&led->lock);
->>> +    led->client = client;
->>> +    led->dev = &client->dev;
->>> +    led->model_id = id->driver_data;
->>> +    i2c_set_clientdata(client, led);
->>> +
->>> +    if (led->model_id == LP5018 || led->model_id == LP5024)
->>> +        led->regmap = devm_regmap_init_i2c(client,
->>> +                           &lp5024_regmap_config);
->>> +    else
->>> +        led->regmap = devm_regmap_init_i2c(client,
->>> +                           &lp5036_regmap_config);
->>> +
->>> +    if (IS_ERR(led->regmap)) {
->>> +        ret = PTR_ERR(led->regmap);
->>> +        dev_err(&client->dev, "Failed to allocate register map: %d\n",
->>> +            ret);
->>> +        return ret;
->>> +    }
->>> +
->>> +    ret = lp50xx_probe_dt(led);
->>> +    if (ret)
->>> +     ��  return ret;
->>> +
->>> +    ret = lp50xx_init(led);
->>> +    if (ret)
->>> +        return ret;
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static int lp50xx_remove(struct i2c_client *client)
->>> +{
->>> +    struct lp50xx *led = i2c_get_clientdata(client);
->>> +    int ret;
->>> +
->>> +    ret = regmap_update_bits(led->regmap, LP50XX_DEV_CFG0,
->>> +                 LP50XX_CHIP_EN, 0);
->>> +    if (ret) {
->>> +        dev_err(&led->client->dev, "Failed to disable regulator\n");
->>> +        return ret;
->>> +    }
->>> +
->>> +    if (led->enable_gpio)
->>> +        gpiod_direction_output(led->enable_gpio, 0);
->>> +
->>> +    if (led->regulator) {
->>> +        ret = regulator_disable(led->regulator);
->>> +        if (ret)
->>> +            dev_err(&led->client->dev,
->>> +                "Failed to disable regulator\n");
->>> +    }
->>> +
->>> +    mutex_destroy(&led->lock);
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static const struct i2c_device_id lp50xx_id[] = {
->>> +    { "lp5018", LP5018 },
->>> +    { "lp5024", LP5024 },
->>> +    { "lp5030", LP5030 },
->>> +    { "lp5036", LP5036 },
->>> +    { }
->>> +};
->>> +MODULE_DEVICE_TABLE(i2c, lp50xx_id);
->>> +
->>> +static const struct of_device_id of_lp50xx_leds_match[] = {
->>> +    { .compatible = "ti,lp5018", },
->>> +    { .compatible = "ti,lp5024", },
->>> +    { .compatible = "ti,lp5030", },
->>> +    { .compatible = "ti,lp5036", },
->>> +    {},
->>> +};
->>> +MODULE_DEVICE_TABLE(of, of_lp50xx_leds_match);
->>> +
->>> +static struct i2c_driver lp50xx_driver = {
->>> +    .driver = {
->>> +        .name    = "lp50xx",
->>> +        .of_match_table = of_lp50xx_leds_match,
->>> +    },
->>> +    .probe        = lp50xx_probe,
->>> +    .remove        = lp50xx_remove,
->>> +    .id_table    = lp50xx_id,
->>> +};
->>> +module_i2c_driver(lp50xx_driver);
->>> +
->>> +MODULE_DESCRIPTION("Texas Instruments LP5024 LED driver");
->>> +MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
->>> +MODULE_LICENSE("GPL v2");
+>>> so the path would be /sys/class/leds/colors ?  (It is probably not this but needs clarification)
+>>> How would this look if I had 2 of the same color LEDs?  The Beagle bone black has 2 Blue LEDs.
+>>> They are assigned to different triggers and have different directories.  Both are GPIO controlled.
 >>>
+>>> Or are you saying it would be something like (More then likely this is what you intended)
+>>> /sys/class/leds/input4::numlock/colors?
+>>
+>> Yes, this is what I meant.
+>>
+> 
+> OK.  Thanks for the clarification
+> 
+>>> Maybe it is mandated that "multi" be added to the label when the class is registered so the caller
+>>> knows that this is a multi color class and not a single LED color class.
+>>
+>> Like I am going to come up with standardized color names
+>> in my LED naming related patch, the multi-color names
+>> can be defined as well, e.g.: rgb, rgbw, rgbwa, rgbwauv etc.
+>>
+> 
+> That may be better it is descriptive off the command line.
+> 
+>>> What about providing a file called colors_raw which takes in the raw decimal values to obtain other color
+>>> variants when RGB is only available?  And this can also present a single write to the kernel with the new
+>>> color values.
+>>
+>> My design already covers that in the form of files in the colors
+>> directory. Like I stated: "files that map to the brightness of
+>> particular LEDs". Single write is secured by "echo "write" > sync.
+>>
+> 
+> OK.  So set the new values and then tell the set the sync which will make the device driver write the
+> device.
+> 
+> Sounds good.  how about echo 1 > sync and we can stay away from a long string conversion
+
+We need also to be able to do a readout.
+
+If we changed "sync" to "rw" then we could come up with intuitive
+semantics:
+
+echo 1 > rw  // write
+echo 0 > rw  // read
+
+rw file would have WO permission.
+
+>>> I am not a fan of hard coding preset colors as you can see there are to many of them and variations of the color.
+>>> In addition this severely limits the ability of the user.  Unless we stick to primary colors only and not secondary
+>>> colors.
+>>> Defining and hard coding hte colors can get out of control and not maintainable moving forward.  Especially
+>>> if we start adding defines like white_warm, white_neutral and other variations to the color.
+>>
+>> We would not limit anything. Every color combination can be achieved
+>> by following this exemplary sequence:
+>>
+>> $ echo 154 > colors/red
+>> $ echo 232 > colors/green
+>> $ echo 43  > colors/blue
+>> # echo "write" > sync     //only this changes hardware state
+>>
+>> brightness-model is provided only to define mapping of legacy brightness
+>> levels (governed by brightness file and led_set_brightness() API) to
+>> the specific combination of colors.
+>>
+>> For instance we can define three brightness levels for green hue:
+>>
+>> DT definition for it would look like below:
+>>
+>> rgb-green = <0x277c33 0x37b048 0x47e45d>;
+>>
+>> LED multi color class would then do the following mapping for
+>> each of the three brightness levels for rgb-green brightness model:
+>>
+>> $ echo rgb-green > brightness_model
+>> $ echo 1 > brightness // red=0x27, green=0x7c, blue=0x33
+>> $ echo 2 > brightness // red=0x37, green=0xb0, blue=0x48
+>> $ echo 3 > brightness // red=0x47, green=0xe4, blue=0x5d
+>>
+> 
+> OK I would have to play with this on the LP devices.
+> 
+>>> What about IR LEDs used for night vision products?  Do these fall into the multi color class?
+>>> We do have a driver I submitted that had an IR LED and a White LED combined.  It was created against the
+>>> flash class but it could be a multi color LED as well.
+>>>
+>>> How would traversing through the full color palette work if you were to want to produce a multi
+>>> color ring like the LP50xx where the pattern can traverse from one end of the color spectrum and back?
+>>> Or in a product like the gaming keyboards that will change color or change backlight brightness?
+>>
+>> This is not meant as a solution for pattern generator but for
+>> consolidated source of multi color light. In the simplest case
+>> RGB LED elements like those used for lp5024 reference board,
+>> but it could be RGBWAUV LED [0] as well.
+>>
+>> For patterns traversing many LEDs I see a trigger as the best solution.
+>> Hmm, now I see that trigger mechanism actually can serve as very
+>> flexible pattern generator.
+>>
+>> We would need a device that could be configured to register
+>> a number of multi-led-patternN triggers, one per LED, and generate
+>> events for each trigger in a loop.
+>>
+>> The device would have to allow for configuring pattern intervals
+>> via sysfs, like in case of current pattern trigger.
+>>
+>> LED class devices would have to register for its events:
+>>
+>> $/sys/class/leds/led1 echo multi-led-pattern1 > trigger
+>> $/sys/class/leds/led2 echo multi-led-pattern2 > trigger
+>> $/sys/class/leds/led3 echo multi-led-pattern3 > trigger
+>>
+> 
+> A bit off topic but I like the idea.  We should save this for another day
+
+Yes, that's another story.
+
+>> The ability to define brightness models in DT would
+>> add even more flexibility.
+>>
+> 
+> brightness models would be mandatory to support in the driver but an optional
+> DT entry.
+> 
+> Is that a correct assumption?
+
+Correct.
+
+>>> Not sure what color LEDs the keyboard manufacturers place on their keyboards but does the interface design
+>>> capable of doing this?
+>>>
+>>> https://www.youtube.com/watch?v=pfKv3g2FeBE
+>>> or something like this
+>>>
+>>> https://www.youtube.com/watch?v=PO3auX3f5C4
+>>>
+>>> The LP5036 has this capability.
+>>>
+>>>>     - red
+>>>>     - green
+>>>>     - blue
+>>>>     - white
+>>>>     - sync: accepts "write" and "read", which executes
+>>>>             write/readout to/from a device respectively.
+>>>>
+>>>
+>>> What are these above, the values or the files under the colors directory?
+>>
+>> They are just color specific counterparts of monochrome brightness.
+>> In terms of lp50xx they would map to OUTn_COLOR registers.
+>>
+>>> I am assuming they are files.
+>>
+>> Right.
+>>
+>>> Are they mandatory or optional?
+>>
+>> Mandatory, one per each iout to control.
+>>
+> 
+> OK And all the LEDs within this directory would be considered a LED cluster?
+> 
+> And if there are 2 like colors of the LED defined in the same cluster would we just see a single
+> file and write a common value to that file and the driver would have to update each
+> red LED within that cluster.  No independent control of like colored LEDs within the
+> registered LED cluster.
+> 
+> If the developer wants this level of control they would have to register two separate classes
+> 
+> Correct?
+
+I would abide by one color to one iout mapping. Registering more LEDs
+under the same color feels more of a task for trigger.
+
+>>>> brightness-model: defines brightness level to color configuration
+>>>>                     mapping
+>>>>     - "hardware": for devices with feature like LEDn_BRIGHTNESS of lp50xx
+>>>>     - "rgb-<hue>": available only when all three red,green,blue colors
+>>>>                    are present in the colors directory.
+>>>>                    <hue> is a placeholder for given DT hue presets.
+>>>>     - "rgbw-<hue>": Same as above, but available only when white color
+>>>>                    (any of amber or white-{cool|neutral|warm} can be
+>>>>                    mapped to white) is also available. In this mode
+>>>>                    max_brightness equals num-of-hue-presets + 1, and
+>>>>                    max_brightness, when set, turns the "white" LED on
+>>>
+>>> Why do we need white combined here?  Should this not be its own entity?
+>>
+>> To be able to set white color. We're still talking about one LED
+>> element (although they can be be physically few LEDs in one case).
+>> This is brightness file, so we've got to stick to the semantics.
+>> Max brightness level should be the brightest. With RGBW LEDs we
+>> fortunately have a means to achieve pure white, that's why
+>> rgbw-<hue> would be beneficial. If you increase L component of
+>> HSL color space, the max value gives white for all hues.
+>> So maybe this brightness-model would be rather called hsl-<hue>.
+>>
+>> For RGBW LEDs, we would have to allow for more shades of white too,
+>> like in [1].
+>>
+> 
+> Yep.
+
+But this all would be left to the DT designer decision.
+
+>>> Again I don't like limiting the color palette from the DT.  I think that the
+>>> user space can see what colors are available for that device and makes its own
+>>> decision on what color to present.
+>>>
+>>> For the RGBw what about RGB amber and RGB purple.  Are the white LEDs always part of the
+>>> same function trying to be achieved by the system designer?  The RGB can be used to denote
+>>> notification status and the white can be used to denote that a charger is connected.  Motorola
+>>> Droid did this.
+>>
+>> I hope I've just clarified my idea.
+>>
+> 
+> Its getting clearer.  I would like to see it in code and play with it not as a user
+> but as a developer.  Make sure the paper model works as well as the real implementation.
+> 
+> Is this model clear to the developer?
+> How would a developer define what values are appropriate for the brightness-model?
+
+We could create guidelines e.g. that for hsl-<hue> pattern, the
+colors corresponding to brightness levels should be arranged so
+that increasing brightness felt like increasing value of
+L component of HSL.
+
+But we wouldn't be able to enforce adherence to a particular scheme.
+
+> Does the driver have to become overly complex to support simple color generation?
+
+Not at all. Caching the colors written to the files in colors directory
+would be responsibility of LED multi-color class. On echo 1 > sync
+the core would call a new op e.g.
+
+color_set(struct led_classdev_multicolor *mcled_cdev)
+
+Driver would read in it colors cached in struct led_classdev_multicolor
+and write them to the hardware.
+
+> Thoughts on putting code to idea?
+> 
+> 
+>>>
+>>>>     - "rgb-linear": I'm not sure if it should be available - it will
+>>>>                     have unpredictable results
+>>>>
+>>>> brightness: sets/reads brightness in the way specific to the
+>>>>               current brightness-model. When more colors are available
+>>>>               (e.g. amber, blue, cyan, green, red, violet, white), they
+>>>>               are not touched by write to brightness).
+>>>>
+>>>> HSV->RGB conversion is left entirely to the userspace, which can set any
+>>>> color with use of the proposed interface.
+>>>>
+>>>> Let's agree on sysfs interface first, and only after that move
+>>>> to the DT details.
+>>>>
+>>>
+>>> DT's are meant to describe hardware and not describe the product.  Unless Rob does not see
+>>> an issue with defining product capabilities in the DT then we should keep that out of the DT.
+>>
+>> LED element is a device. I see nothing irrelevant for DT in describing the lighting specificity of a device mounted on the board. Please keep
+>> in mind that it will not limit the number of colors available to set.
+>> It will only allow to define mapping of brightness level to color.
+>> We need that for current trigger mechanism to work with LED multi-color
+>> class.
+>>
+> 
+> I see this now.
+> 
+> Dan
+> 
+>> [0] http://www.cobledarray.com/sale-4942931-10w-rgbwauv-led-diode-6-in-1-high-power-multicolor-led-chip.html
+>> [1] https://www.youtube.com/watch?v=NzlFmTqOh9M
 >>
 > 
 > 
