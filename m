@@ -1,55 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 10/13] gpio: max77650: add GPIO support
-Date: Thu, 24 Jan 2019 11:30:18 +0100
-Message-ID: <CACRpkdacfOLSs1GPew4gMtL_BX0OTXqBQNWzWZMwAkk+Ah2ETQ@mail.gmail.com>
-References: <20190118134244.22253-1-brgl@bgdev.pl> <20190118134244.22253-11-brgl@bgdev.pl>
- <CACRpkdZhy7yBZrGLxhRGaac7v5jZhgUSz9gZAhFXbevJbKjpZw@mail.gmail.com> <CAMRc=Me6OSKDk7bN4++M68DjoeArd+gZx16o0oQBXfRoCWBt2A@mail.gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3 6/7] arm64: dts: xilinx: ultra96: Standardize LED
+ labels and triggers
+Date: Thu, 24 Jan 2019 10:49:30 -0600
+Message-ID: <CAL_Jsq+zfV66EZHX7psh2=r-=wDrmLLcr5PWtSzuKRNOdMR-Dw@mail.gmail.com>
+References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
+ <20181029094245.7886-7-manivannan.sadhasivam@linaro.org> <20181221023708.GC3233@Mani-XPS-13-9360>
+ <9f4f05cb-f326-a4e3-e306-cfbf64b629b4@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=Me6OSKDk7bN4++M68DjoeArd+gZx16o0oQBXfRoCWBt2A@mail.gmail.com>
+In-Reply-To: <9f4f05cb-f326-a4e3-e306-cfbf64b629b4@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Brian Masney <masneyb@onstation.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, devicetree@vger.kernel.org, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, koen.kooi@linaro.org, Nicolas Dechesne <nicolas.dechesne@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 6:07 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-
-> Thank you for your review. While I think you're right about the issue
-> being present in this driver, I'm not sure it's really a problem. Do
-> we actually require every gpio-controller to also be a stand-alone
-> interrupt-controller?
-
-Absolutely not :D
-
-Just GPIO is fine.
-
-> The binding document for the GPIO module doesn't
-> mention this - it only requires the gpio-controller property. Without
-> the "interrupt-controller" property dtc will bail-out if anyone uses
-> this node as the interrupt parent.
+On Fri, Dec 21, 2018 at 12:51 AM Michal Simek <michal.simek@xilinx.com> wrote:
 >
-> If I'm wrong and we do require it, then I think we need to update
-> Documentation/devicetree/bindings/gpio/gpio.txt.
+> On 21. 12. 18 3:37, Manivannan Sadhasivam wrote:
+> > On Mon, Oct 29, 2018 at 03:12:44PM +0530, Manivannan Sadhasivam wrote:
+> >> For all 96Boards, the following standard is used for onboard LEDs.
+> >>
+> >> green:user1  default-trigger: heartbeat
+> >> green:user2  default-trigger: mmc0/disk-activity(onboard-storage)
+> >> green:user3  default-trigger: mmc1 (SD-card)
+> >> green:user4  default-trigger: none, panic-indicator
+> >> yellow:wlan  default-trigger: phy0tx
+> >> blue:bt      default-trigger: hci0-power
+> >>
+> >> So lets adopt the same for Ultra96, which is one of the 96Boards
+> >> CE and AI platform. Since the WLAN and BT LEDs are hardwired onboard,
+> >> consolidate only User LEDs.
+> >>
+> >
+> > Hello,
+> >
+> > Any update on this patch?
+>
+> I am still waiting for reaction from Rob.
+> We are keep trying to keep backward compatibility and this patch is
+> breaking it that's why I want to know DT guys reaction on this change.
 
-What is weird is if a driver with DT bindings not mentioning IRQ
-and only probing from DT start implementing IRQ support, that
-becomes quite inconsistent. So then max77650_gpio_to_irq()
-should just return -ENOTSUPP
-or something for now, then it's fine.
+dts changes and backwards compatibility are ultimately up to the
+platform maintainers. Your users can yell at you if they care. I only
+ask that changes that break compatibility are documented as doing so.
 
-We can add the (complicated) IRQ handling later.
+Personally, I'm in favor of this change. I'd rather seem uniformity
+across boards and this is just a dev board and LED functions won't
+affect booting.
 
-I am trying to eat my own dogfood here, I was sweating all
-last night trying to implement a hierarchical IRQ controller.
-There is no running away from that now. :/
-
-Apparently doing hierarchical IRQs demand that all irq
-controllers up to the top-level SoC IRQ controller support
-hierarchical interrupts using the v2 version of the irqdomain
-API, and currently it seems like the ARM
-GIC seems like the only top level IRQ controller that can
-do that.
-
-Yours,
-Linus Walleij
+Rob
