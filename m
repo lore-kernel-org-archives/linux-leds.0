@@ -1,57 +1,127 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 12/13] input: max77650: add onkey support
-Date: Mon, 28 Jan 2019 11:22:53 -0800
-Message-ID: <20190128192253.GD34692@dtor-ws>
-References: <20190118134244.22253-1-brgl@bgdev.pl>
- <20190118134244.22253-13-brgl@bgdev.pl>
- <20190119090318.GB187380@dtor-ws>
- <CAMRc=MfOWWK+nfYLt03EFe-ekTnbDr6oCoqd=n3dpMjz1sELMQ@mail.gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: RGB LED class Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX
+ family of the RGB LED driver
+Date: Tue, 29 Jan 2019 00:03:51 +0100
+Message-ID: <20190128230351.GA5728@amd>
+References: <20190114211723.11186-1-dmurphy@ti.com>
+ <20190114211723.11186-2-dmurphy@ti.com>
+ <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com>
+ <20190115222223.GA17363@amd>
+ <79394d17-3124-75b2-ccac-dc1046499d14@ti.com>
+ <20190116105537.GA1803@amd>
+ <86299268-3202-814a-134b-04bd2170faab@ti.com>
+ <8dfa2854-2814-6874-ab8e-1858e9a18acf@gmail.com>
+ <20190118000235.GB27661@amd>
+ <b7ee7c2b-0878-962c-71ee-3ef281f6de0f@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMRc=MfOWWK+nfYLt03EFe-ekTnbDr6oCoqd=n3dpMjz1sELMQ@mail.gmail.com>
+In-Reply-To: <b7ee7c2b-0878-962c-71ee-3ef281f6de0f@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, dachaac@gmail.com, robh+dt@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 11:52:50AM +0100, Bartosz Golaszewski wrote:
-> sob., 19 sty 2019 o 10:03 Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> napisał(a):
-> >
-> > Hi Bartosz,
-> >
-> > On Fri, Jan 18, 2019 at 02:42:43PM +0100, Bartosz Golaszewski wrote:
-> > > +     input_set_capability(onkey->input, EV_KEY, onkey->code);
-> > > +
-> > > +     rv = devm_request_threaded_irq(dev, irq_f, NULL,
-> >
-> > Why threaded interrupt with only hard interrupt handler? If parent
-> > interrupt is threaded use "any_context_irq" here.
-> >
-> 
-> Hi Dmitry,
-> 
-> actually it's the other way around. Take a look at the function
-> prototype for  devm_request_threaded_irq()[1].
-> 
-> The third parameter is the hard-irq handler (NULL in my patch), the
-> fourth is the thread function. Actually even if I did what you're
-> saying - it would never work as this is a nested irq for which the
-> hard-irq handler is never called.
 
-Sorry, my eyes must have crossed. Still, from the driver POV the
-interrupt does not have to be threaded, this is dictated by the
-constraints beyond the driver control. For these cases we have
-devm_request_any_context_irq() that takes essentially only "hard" IRQ
-handler, but internally either does request_irq() or
-request_threaded_irq(), depending on the context (whether the interrupt
-is nested or not). Using devm_request_any_context_irq() should not have
-any behavioral changes, but documents the logic better.
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
+Hi!
 
--- 
-Dmitry
+> > First, I think we want to decide if RGB LED should be presented as
+> > 3 LEDs or as 1 LED... and what to do with existing RGB leds being
+> > presented as 3 LEDs.
+>=20
+> What do we do with RGBW drivers?  Like the LP5562.  RGB can be grouped as=
+ a single
+> LED but does the white LED get grouped too or should it register as a new=
+ LED?
+>=20
+> I am assuming the answer is that it would register as a new LED.
+
+We could extend this to more than three channels, and specify "color"
+for each channel. We could probably specify wavelength for
+monochromatic LEDs and color temperature for white LEDs....
+
+> >     pwm_channels -- "1000 240 300" -- "red part should be full on, green
+> >     should be pwm controlled to 240/1000, blue should be 300/1000"
+> >=20
+>=20
+> Why 1000?  Why not based on a duty cycle percentage and let the LED drive=
+r figure out
+> what that means to the device?
+>=20
+> pwm_channels -- "100 24 30" -- red part is full on 100%, green is 24% dut=
+y cycle and
+> blue is 30% duty cycle.
+
+Percentage would work, too. Having base of 1000 (not 100) gives a bit
+more precision.
+
+> >     pwm_white -- "1000 500 400" -- tells userspace what to write to PWM
+> >     channels to get approximately white color.
+> >=20
+>=20
+> Same as above on the duty cycle.
+>=20
+> But I still am in disagreement with the kernel detailing what is white or=
+ how to
+> achieve white.
+>=20
+> Based on my earlier email about light pipes and the LED vendors and aging=
+ I think product
+> developers will need to fine tune what is "white" on their product from u=
+ser space or even a DT node.
+>
+
+Yes, this needs to be in the DT and kernel needs to expose it to
+userspace in sysfs.
+
+> >     This would assume that RGB LEDs are always pwm controlled. That
+> >     seems to be true for hardware I seen.
+> >=20
+>=20
+> GPIO LEDs can be binary or use PWM depending on what is needed.
+>=20
+> >     + no complex math in kernel
+>=20
+> We can eliminate the math if we use the "color" file that was proposed an=
+d pass in absolute
+> hex/decimal numbers for color.
+
+No you can't.
+
+> >     + userspace knows enough to display arbitrary colors
+> >=20
+> >     + userspace can use full range of available PWM intensities
+> >=20
+>=20
+> Do we need a pwm_max file to indicate to the user space what the max valu=
+es of the pwm
+> is for each color?
+
+Maybe. I'd assume brightness_max would be equal to max pwm.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxPilcACgkQMOfwapXb+vJrzACglsQtnLzislwoPMC/iz16rLlf
+xZ8AnjMk2zkKk3dfNb9eCcvZR1xQQHWg
+=9b19
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
