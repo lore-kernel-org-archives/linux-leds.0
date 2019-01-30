@@ -1,181 +1,161 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [RFC PATCH] leds: multicolor: Add sysfs interface definition
-Date: Wed, 30 Jan 2019 23:14:31 +0100
-Message-ID: <8b701a97-f945-488d-8bf3-d2efe400e30c@gmail.com>
+Date: Wed, 30 Jan 2019 23:35:43 +0100
+Message-ID: <20190130223542.GA22040@amd>
 References: <20190130183005.833-1-dmurphy@ti.com>
- <f3792d44-1a43-318b-1b12-d6d69275c3a8@gmail.com>
- <333a146a-a469-5b72-5e81-ff7f522dc598@ti.com>
- <c65ca84d-8054-2244-1899-e4a9cb0842da@gmail.com>
- <138450e2-9082-6986-a89b-0028dca0d365@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <138450e2-9082-6986-a89b-0028dca0d365@ti.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190130183005.833-1-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Dan,
 
-On 1/30/19 10:07 PM, Dan Murphy wrote:
-> Jacek
-> 
-> On 1/30/19 2:20 PM, Jacek Anaszewski wrote:
->> Dan,
->>
->> On 1/30/19 8:59 PM, Dan Murphy wrote:
->>> Jacek
->>>
->>> On 1/30/19 1:37 PM, Jacek Anaszewski wrote:
->>>> Hi Dan,
->>>>
->>>> Thank you for the RFC.
->>>>
->>>> One vital thing is missing - documentation of brightness file must
->>>> be updated to define its semantics for LED multi color class.
->>>>
->>>> Either we need brightness-model file returning only "onoff" option
->>>> available, or, for time being, fix the max_brightness for LED multi
->>>> color class to 1 (which will map to max intensity level for each color).
->>>>
->>>
->>> I can make max_brightness default to 1 if not set by the LED driver.
->>>
->>> But the LP50xx has brightness controls so setting max_brightness from the driver should over ride
->>> the max of 1 in the upper level.
->>
->> Yes, so the max_brightness should be updated basing on current
->> brightness-model. For LEDn_BRIGHTNESS of LP50xx we could have
->> "hw" or maybe even better just "lp50xx-linear" and "lp50xx-logarithmic"
->> - I just forgot about that capability of the device.
->>
-> 
-> OK maybe "hw" would make sense as there may be other devices that have dedicated brightness controls
-> over color controls.
+--3V7upXqbjpZ4EhLz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Single "hw" doesn't address both linear and logarithmic.
-This is device specific, so I don't see anything wrong in
-"lp50xx-*", provided that it will be documented.
+On Wed 2019-01-30 12:30:05, Dan Murphy wrote:
+> Add a documentation of LED Multicolor LED class specific
+> sysfs attributes.
 
-> Probably need to create a model for non-modeled cases like "rgb-independent".  Dumb name but I could not
-> think of anything better.
+No, sorry. This does not most of the requirements.
 
-There is no point in having any rgb* brightness model since increasing
-rgb in an arbitrary way will not give the impression of increasing color
-intensity (lightness of the same hue). With DT defined hsl-<color>
-ranges there is no way to verify that levels arrangement makes sense
-with regard to preserving hue, this is a matter of trust. But we should
-state that it is highly recommended to obey this constraint so as to
-not mislead users.
+								Pavel
 
->>> For devices that do not support brightness as a separate control we can create a file called
->>> max_brightness_<color> that defines the max that a specific color can be set to.  If max_brightness
->>> is set to 1 then create max_brightness_<color>.  If max_brightness > 1 then do not create the files.
->>
->> Right. We will need dedicated max_brightness for each color.
->> They should be placed also in the colors directory, next to the color
->> files.
->>
-> 
-> OK will document this.
-> 
->>> I don't think we have fully vetted the brightness-model yet so I prefer to omit
->>> it and possibly introduce that later.
->>
->> We need to start from something. It will give better overview of the
->> whole idea.
->>
-> 
-> OK.  Don't get me wrong I don't oppose this idea I am just trying to figure out how the user space would
-> know what models and brightness levels are available.
+Requirements for RGB LED interface:
 
-$ cat brightness-model
-lp50xx-linear lp50xx-logarithmic onoff hsl-green hsl=blue
+1) Userspace should be able to set the white color
 
-max_brightness will return available number of brightness levels
-for each brightness model.
+2) Userspace should be able to arbitrary color from well known list
+and it should approximately match what would CRT, LCD or OLED monitor
+display. Color list is for example here:
 
-I'd not bother with presenting whole range of available color
-presets. Userspace can verify the brightness->color mapping
-by reading colors/<color> files after setting given brightness
-level.
+	 https://www.rapidtables.com/web/color/RGB_Color.html
 
-However, I'm not sure how useful it will be. This is a gist
-of this whole discussion - we cannot be certain about exact
-color effect produced with given settings.
+    2a) LEDs probably slightly change color as they age. That's out of
+    scope, unless the variation is much greater than on monitors.
 
-> I mean we can read the brightness-models and present the available models but then how does the user know
-> what and how many levels are in each model?  And how do we govern putting them in the right order?
+    3a) Manufacturing differences cause small color variation. Again,
+    that's out of scope, unless the variation is much greater than on
+    monitors.
 
-`cat max_brightness` will return number of levels for the model
-currently set. Regarding the order - we must rely on the DT array
-arrangement. In case of hardware originated brightness model we
-must trust hardware implementation.
+Nice to have features:
 
-> The DT file can get messed up, per the previous example
-> rgb-green = <0x277c33 0x37b048 0x47e45d>;
-> 
-> This is assumed to be from dimmest to brightest.  But that is just an assumption
-> 
-> What if the entry looked like this?
-> rgb-green = <0x37b048 0x277c33 0x47e45d>;
+3) Full range of available colors/intensities should be available to
+userspace
 
-We can do nothing. It is just the cost of leaving some decisions to DT.
+4) Interface should work well with existing triggers
 
-> Then echo 1 > brightness is not really a lower intensity then echo 2 > brightness.
-> I know this is a product level issue but this can be misused and there is no way for maintainers
-> or reviewers to really catch this error in code reviews.
-> 
-> The driver can map the brightness to the appropriate level requested by the class but again not
-> sure how the user space can know what is available.  And there is nothing from stopping a
-> definition of up to 2^32 brightness combinations.  This I know is unrealistic but the capability is there
-> 
-> I am wondering if there should be some sort of coefficient that can be defined that is
-> applied to each color (no complex math).  I can see this working in a linear device but logrithimic
-> maybe an issue.
-> 
-> Like
-> 
-> rgb-green = <0x277c33>;  //Coefficient used to set the dimmest allowed brightness for the color model.
-> 
-> echo 1 > brightness
-> 
-> red = 0x27
-> green = 0x7c
-> blue = 0x33
-> 
-> echo 2 > brightness
-> 
-> red = 0x28
-> green = 0x7d
-> blue = 0x34
-> 
-> echo 3 > brightness
-> 
-> red = 0x29
-> green = 0x7e
-> blue = 0x35
-> 
-> This example would give you 132 different brightness levels. green is the brightest defined color so the step calculation is
-> 
-> 255-124+1 = 132 (zero based) as 0 is off.
-> 
-> There can be a file called rgb_green_max which can be read to indicate how many brightness levels can be achieved.
-> If the user goes beyond the steps then throw -EINVAL at them.
-> 
-> These brightness models probably should be put into a separate directory to isolate and not clutter the colors directory.
-> And writing brightness to these models would be immediate no sync involved.
+5) It would be nice if userland knew how many lumens are produced at
+each wavelength for each setting (again, minus aging and manufacturing
+variations).
 
-I intended that brightness-model location would be the main LED class
-device directory.
+6) Complexity of math in kernel should be low, and preferably it
+should be integer or fixed point
 
-And the whole concept is simple. We allow to set what we get from DT
-or from the hardware. Without verification exceeding beyond
-max_brightness values defined per iout.
+Problems:
 
--- 
-Best regards,
-Jacek Anaszewski
+a) RGB LEDs are usually not balanced. Setting 100% PWM on
+red/green/blue channels will result in nothing close to white
+light. In fact, to get white light on N900, blue and green channel's
+PWM needs to be set pretty low, as in 5%.
+
+b) LED class does not define any relation between "brightness" in
+sysfs and ammount of light in lumens. Some drivers use close to linear
+relation, some use exponential relation. Human eyes percieve logarithm
+of lumens. RGB color model uses even more complex function.
+
+	   https://en.wikipedia.org/wiki/Gamma_correction
+	   #Windows, Mac, sRGB and TV/video standard gammas
+	   https://en.wikipedia.org/wiki/SRGB#Specification_of_the_transformation
+
+c) Except for white LEDs, LEDs are basically sources of single
+wavelength of light, while CRTs and LCDs produce broader
+spectrums.
+
+d) RG, RGBW and probably other LED combinations exist.
+
+e) Not all "red" LEDs will produce same wavelength. Similar
+differences will exist for other colors.
+
+f) We have existing RGB LEDs represented as three separate
+monochromatic LEDs in sysfs.
+
+
+
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  .../ABI/testing/sysfs-class-led-multicolor    | 38 +++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-class-led-multicolor b/Docum=
+entation/ABI/testing/sysfs-class-led-multicolor
+> new file mode 100644
+> index 000000000000..19f8da9b150e
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-class-led-multicolor
+> @@ -0,0 +1,38 @@
+> +What:		/sys/class/leds/<led>/color/sync_enable
+> +Date:		January 2019
+> +KernelVersion:	5.0
+> +Contact:	Dan Murphy <dmurphy@ti.com>
+> +Description:	read/write
+> +		Writing a 1 to this file will enable the sychronization of all
+> +		the defined color LEDs within the LED node.  Writing a 0 to
+> +		this file will disable syncing.
+> +
+> +What:		/sys/class/leds/<led>/color/sync
+> +Date:		January 2019
+> +KernelVersion:	5.0
+> +Contact:	Dan Murphy <dmurphy@ti.com>
+> +Description:	write only
+> +		Writing a 1 to this file while sync_enable is set to 1 will
+> +		synchronize all defined LEDs within the LED node.  All LEDs
+> +		defined will be configured based on the brightness that has
+> +		been requested.
+> +
+> +		If sync_enable is set to 0 then writing a 1 to sync has no
+> +		affect on the LEDs.
+> +
+> +What:		/sys/class/leds/<led>/color/<led color>
+> +Date:		January 2019
+> +KernelVersion:	5.0
+> +Contact:	Dan Murphy <dmurphy@ti.com>
+> +Description:	read/write
+> +		These files are dynamically created based on the colors defined
+> +		by the registrar of the class.
+> +		The led color(s) can be but not limited to red, green, blue,
+> +		white, amber and violet.  If sync is enabled then writing the
+> +		brightness value of the LED is deferred until a 1 is
+> +		written to /sys/class/leds/<led>/color/sync.  If syncing is
+> +		disabled then the LED brightness value will be written
+> +		immediately to the LED driver.
+> +
+> +		The value of the color is from 0 to
+> +		/sys/class/leds/<led>/max_brightness.
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--3V7upXqbjpZ4EhLz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxSJr4ACgkQMOfwapXb+vKwnQCfeJ/O6IsFSsFE1Y0rSrmPQ4PZ
+VGIAnime4cDvW6qR8HXvnNHFWetJ7c6j
+=cIQe
+-----END PGP SIGNATURE-----
+
+--3V7upXqbjpZ4EhLz--
