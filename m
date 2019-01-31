@@ -1,105 +1,54 @@
-From: Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH 3/5] dt-bindings: leds: Add binding for axp20x-led device driver
-Date: Thu, 31 Jan 2019 10:23:05 +0200
-Message-ID: <20190131082308.22522-3-stefan@olimex.com>
-References: <20190131082308.22522-1-stefan@olimex.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 12/13] input: max77650: add onkey support
+Date: Thu, 31 Jan 2019 12:28:13 +0000
+Message-ID: <20190131122813.GB20797@sirena.org.uk>
+References: <20190129133545.1931-1-brgl@bgdev.pl>
+ <20190129133545.1931-14-brgl@bgdev.pl>
+ <20190130185328.GA149208@dtor-ws>
+ <CAMRc=McaqqmU6S_Yz35ZMvhWtWO4hTASA0fmL5CT4JizbYgu4Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="9zSXsLTf0vkW971A"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190131082308.22522-1-stefan@olimex.com>
+Content-Disposition: inline
+In-Reply-To: <CAMRc=McaqqmU6S_Yz35ZMvhWtWO4hTASA0fmL5CT4JizbYgu4Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:X-POWERS MULTIFUNCTION PMIC
-        DEVICE DRIVERS" <linux-kernel@vger.kernel.org>
-Cc: Stefan Mavrodiev <stefan@olimex.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-This adds the devicetree bindings for charge led indicator found
-on most of X-Powers AXP20X PMICs.
 
-Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
----
- .../devicetree/bindings/leds/leds-axp20x.txt  | 74 +++++++++++++++++++
- 1 file changed, 74 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-axp20x.txt
+--9zSXsLTf0vkW971A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-axp20x.txt b/Documentation/devicetree/bindings/leds/leds-axp20x.txt
-new file mode 100644
-index 000000000000..73fae22ffe29
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-axp20x.txt
-@@ -0,0 +1,74 @@
-+Device Tree Bindings for LED support on X-Powers PMIC
-+
-+Most of the X-Powers PMICs have integrated battery charger with LED indicator.
-+The output is open-drain, so the state is either high-Z or output-low. The
-+driver is subnode of AXP20X MFD driver, since it uses shared bus with all
-+other cells.
-+The LED can be controlled either manually or automatic. Then in automatic
-+(controlled by the charger) there are two indication modes:
-+
-+Mode-A
-+======
-+- output-low:		Charging
-+- high-Z		Not charging
-+- 1Hz flashing:		Abnormal alarm
-+- 4Hz flashing		Overvoltage alarm
-+
-+Mode-B
-+======
-+- output-low:		Battery full
-+- high-Z		Not charging
-+- 1Hz flashing:		Charging
-+- 4Hz flashing		Overvoltage or abnormal alarm
-+
-+The control and the mode can be changed from sysfs.
-+
-+For AXP20X MFD bindings see:
-+Documentation/devicetree/bindings/mfd/axp20x.txt
-+
-+Required properties:
-+- compatible : Must be "x-powers,axp20x-led"
-+
-+Supported common leds properties, see ./common.txt for more information:
-+- label : sets LED label. If omitted, dt device node is used
-+- linux,default-trigger : See
-+- default-state:
-+
-+Optional properties:
-+- x-powers,charger-mode: 0 for Mode-A, 1 for Mode-B
-+			 If omitted, then the control is set to manual mode.
-+			 On invalid value, Mode-A is used.
-+
-+
-+Example:
-+
-+	axp803: pmic@3a3 {
-+		compatible = "x-powers,axp803";
-+
-+		...
-+
-+		axp20x-led {
-+			compatible = "x-powers,axp20x-led";
-+			status = "okay";
-+
-+			label = "axp20x:yellow:chgled";
-+			linux,default-trigger = "timer";
-+			default-state = "on";
-+		};
-+	};
-+
-+or
-+
-+	axp803: pmic@3a3 {
-+		compatible = "x-powers,axp803";
-+
-+		...
-+
-+		axp20x-led {
-+			compatible = "x-powers,axp20x-led";
-+			status = "okay";
-+
-+			label = "axp20x:yellow:chgled";
-+			x-powers,charger-mode = "mode-b";
-+		};
-+	};
--- 
-2.17.1
+On Thu, Jan 31, 2019 at 09:15:01AM +0100, Bartosz Golaszewski wrote:
+
+> I'm not sure what the policy is on merging MFD drivers, but I'm seeing
+> that Mark Brown has already picked up the regulator part into his tree
+> (including the binding document). I think you can just pick up the
+> input patches and it will simply not show up in Kconfig until the core
+> mfd module is upstream.
+
+> @Mark: could you please confirm it?
+
+Right, as it's a new MFD the Kconfig will stop it causing build breakage
+until the MFD is merged.  I'm doing it partly just to cut down on the
+amount of mail from resends while the rest of the series gets reviewed.
+
+--9zSXsLTf0vkW971A
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxS6dwACgkQJNaLcl1U
+h9BBNAf/Yq7Uoem9cGciS63O6v97feMamBfser9PLXATQwLIfr7vuvbz8Ig1I/jt
+1UQPV4xcX4J6Oj13T5hUuc6BgQ7eGEwwHE4fDLbSs5Ze2Hj1Brd9sM7ER/Ro3L3m
+Xuz7lFta+tF8gWGtdX8bKyJEcIfWOtawyLhIsCZ7qSWE44x5yUmUmV9kxSpXyAnI
+IfDJnfSW1E3XHt5WjfpIcDIxvup1fPxIstkHts7+OdsQcIcSUmrnFIvuzmbq94/z
+zvyu2vj0Qm0DkkGQDYfVMdINpac608CdtXlAUQ1F4+ImRgSDNn32QZ9Jde+1190c
+3HjaOajFH7egd9TFMTJxLaHaiEHaeA==
+=y+sH
+-----END PGP SIGNATURE-----
+
+--9zSXsLTf0vkW971A--
