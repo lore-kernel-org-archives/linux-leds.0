@@ -1,248 +1,143 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [RFC PATCH] leds: multicolor: Add sysfs interface definition
-Date: Thu, 31 Jan 2019 21:54:21 +0100
-Message-ID: <9c813441-378b-b404-c364-ee8271aca4d9@gmail.com>
-References: <20190130183005.833-1-dmurphy@ti.com>
- <f3792d44-1a43-318b-1b12-d6d69275c3a8@gmail.com>
- <333a146a-a469-5b72-5e81-ff7f522dc598@ti.com>
- <c65ca84d-8054-2244-1899-e4a9cb0842da@gmail.com>
- <138450e2-9082-6986-a89b-0028dca0d365@ti.com>
- <8b701a97-f945-488d-8bf3-d2efe400e30c@gmail.com>
- <385e4fc9-91cc-176c-730b-c27628027e2e@ti.com>
+Subject: Re: [PATCH 3/5] dt-bindings: leds: Add binding for axp20x-led device
+ driver
+Date: Thu, 31 Jan 2019 22:37:25 +0100
+Message-ID: <990611bd-9c6f-aa03-6cb9-431d9415891d@gmail.com>
+References: <20190131082308.22522-1-stefan@olimex.com>
+ <20190131082308.22522-3-stefan@olimex.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <385e4fc9-91cc-176c-730b-c27628027e2e@ti.com>
+In-Reply-To: <20190131082308.22522-3-stefan@olimex.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Stefan Mavrodiev <stefan@olimex.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:X-POWERS MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Dan,
+Hi Stefan,
 
-On 1/31/19 2:48 PM, Dan Murphy wrote:
-> Jacek
+Thank you for the patch.
+
+I have few nits below.
+
+On 1/31/19 9:23 AM, Stefan Mavrodiev wrote:
+> This adds the devicetree bindings for charge led indicator found
+> on most of X-Powers AXP20X PMICs.
 > 
-> On 1/30/19 4:14 PM, Jacek Anaszewski wrote:
->> Dan,
->>
->> On 1/30/19 10:07 PM, Dan Murphy wrote:
->>> Jacek
->>>
->>> On 1/30/19 2:20 PM, Jacek Anaszewski wrote:
->>>> Dan,
->>>>
->>>> On 1/30/19 8:59 PM, Dan Murphy wrote:
->>>>> Jacek
->>>>>
->>>>> On 1/30/19 1:37 PM, Jacek Anaszewski wrote:
->>>>>> Hi Dan,
->>>>>>
->>>>>> Thank you for the RFC.
->>>>>>
->>>>>> One vital thing is missing - documentation of brightness file must
->>>>>> be updated to define its semantics for LED multi color class.
->>>>>>
->>>>>> Either we need brightness-model file returning only "onoff" option
->>>>>> available, or, for time being, fix the max_brightness for LED multi
->>>>>> color class to 1 (which will map to max intensity level for each color).
->>>>>>
->>>>>
->>>>> I can make max_brightness default to 1 if not set by the LED driver.
->>>>>
->>>>> But the LP50xx has brightness controls so setting max_brightness from the driver should over ride
->>>>> the max of 1 in the upper level.
->>>>
->>>> Yes, so the max_brightness should be updated basing on current
->>>> brightness-model. For LEDn_BRIGHTNESS of LP50xx we could have
->>>> "hw" or maybe even better just "lp50xx-linear" and "lp50xx-logarithmic"
->>>> - I just forgot about that capability of the device.
->>>>
->>>
->>> OK maybe "hw" would make sense as there may be other devices that have dedicated brightness controls
->>> over color controls.
->>
->> Single "hw" doesn't address both linear and logarithmic.
->> This is device specific, so I don't see anything wrong in
->> "lp50xx-*", provided that it will be documented.
->>
+> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+> ---
+>   .../devicetree/bindings/leds/leds-axp20x.txt  | 74 +++++++++++++++++++
+>   1 file changed, 74 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-axp20x.txt
 > 
-> OK.  This would need to be lp50xx specific.
+> diff --git a/Documentation/devicetree/bindings/leds/leds-axp20x.txt b/Documentation/devicetree/bindings/leds/leds-axp20x.txt
+> new file mode 100644
+> index 000000000000..73fae22ffe29
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-axp20x.txt
+> @@ -0,0 +1,74 @@
+> +Device Tree Bindings for LED support on X-Powers PMIC
+> +
+> +Most of the X-Powers PMICs have integrated battery charger with LED indicator.
+> +The output is open-drain, so the state is either high-Z or output-low. The
+> +driver is subnode of AXP20X MFD driver, since it uses shared bus with all
 
-Thinking more of it - "hw_logarithmic" and "hw_linear" should also do.
-It would be even better option as it is generic.
+s/is subnode/is a subnode/
 
-My only concern here is how to document them. I we chose lp50xx-*
-prefixed names, then we could just refer to the data sheet.
+> +other cells.
+> +The LED can be controlled either manually or automatic. Then in automatic
 
-For generic hw_{logarithmic|linear} brightness models we will need
-precise description. Actually it will be needed also for DT provided
-color levels. People must have good reference to know how to arrange DT
-color arrays.
+s/or automatic/or automatically/
 
-It would be best to refer to standards, e.g. CIECAM02 [0], description
-of hue [1] and the overall relationship between "six technically defined
-dimensions of color appearance: brightness (luminance), lightness,
-colorfulness, chroma, saturation, and hue." I've found also interesting
-presentation [2].
+> +(controlled by the charger) there are two indication modes:
+> +
+> +Mode-A
+> +======
+> +- output-low:		Charging
+> +- high-Z		Not charging
+> +- 1Hz flashing:		Abnormal alarm
+> +- 4Hz flashing		Overvoltage alarm
+> +
+> +Mode-B
+> +======
+> +- output-low:		Battery full
+> +- high-Z		Not charging
+> +- 1Hz flashing:		Charging
+> +- 4Hz flashing		Overvoltage or abnormal alarm
+> +
+> +The control and the mode can be changed from sysfs.
+> +
+> +For AXP20X MFD bindings see:
+> +Documentation/devicetree/bindings/mfd/axp20x.txt
+> +
+> +Required properties:
+> +- compatible : Must be "x-powers,axp20x-led"
+> +
+> +Supported common leds properties, see ./common.txt for more information:
 
-After we agree on the interface I can try to put these together.
+s/leds/LED/
 
->>> Probably need to create a model for non-modeled cases like "rgb-independent".  Dumb name but I could not
->>> think of anything better.
->>
->> There is no point in having any rgb* brightness model since increasing
->> rgb in an arbitrary way will not give the impression of increasing color
->> intensity (lightness of the same hue). With DT defined hsl-<color>
->> ranges there is no way to verify that levels arrangement makes sense
->> with regard to preserving hue, this is a matter of trust. But we should
->> state that it is highly recommended to obey this constraint so as to
->> not mislead users.
->>
+Please remove ", see ./common.txt for more information" in favor
+of references indicated below.
+
+> +- label : sets LED label. If omitted, dt device node is used
+
+Please change it to:
+- label : See Documentation/devicetree/bindings/leds/common.txt
+
+> +- linux,default-trigger : See
+> +- default-state:
+
+- linux,default-trigger : See 
+Documentation/devicetree/bindings/leds/common.txt
+
+> +
+> +Optional properties:
+> +- x-powers,charger-mode: 0 for Mode-A, 1 for Mode-B
+> +			 If omitted, then the control is set to manual mode.
+> +			 On invalid value, Mode-A is used.
+> +
+> +
+> +Example:
+> +
+> +	axp803: pmic@3a3 {
+> +		compatible = "x-powers,axp803";
+> +
+> +		...
+> +
+> +		axp20x-led {
+
+s/axp20x-led/led@0/
+
+> +			compatible = "x-powers,axp20x-led";
+> +			status = "okay";
+> +
+> +			label = "axp20x:yellow:chgled";
+> +			linux,default-trigger = "timer";
+> +			default-state = "on";
+> +		};
+> +	};
+> +
+> +or
+> +
+> +	axp803: pmic@3a3 {
+> +		compatible = "x-powers,axp803";
+> +
+> +		...
+> +
+> +		axp20x-led {
+
+s/axp20x-led/led@0/
+
+> +			compatible = "x-powers,axp20x-led";
+> +			status = "okay";
+> +
+> +			label = "axp20x:yellow:chgled";
+> +			x-powers,charger-mode = "mode-b";
+> +		};
+> +	};
 > 
-> OK.  I will document this in v2 for discussion
-> 
->>>>> For devices that do not support brightness as a separate control we can create a file called
->>>>> max_brightness_<color> that defines the max that a specific color can be set to.  If max_brightness
->>>>> is set to 1 then create max_brightness_<color>.  If max_brightness > 1 then do not create the files.
->>>>
->>>> Right. We will need dedicated max_brightness for each color.
->>>> They should be placed also in the colors directory, next to the color
->>>> files.
->>>>
->>>
->>> OK will document this.
->>>
->>>>> I don't think we have fully vetted the brightness-model yet so I prefer to omit
->>>>> it and possibly introduce that later.
->>>>
->>>> We need to start from something. It will give better overview of the
->>>> whole idea.
->>>>
->>>
->>> OK.  Don't get me wrong I don't oppose this idea I am just trying to figure out how the user space would
->>> know what models and brightness levels are available.
->>
->> $ cat brightness-model
->> lp50xx-linear lp50xx-logarithmic onoff hsl-green hsl=blue
->>
->> max_brightness will return available number of brightness levels
->> for each brightness model.
->>
-> 
-> So max_brightness here would be dynamic?
-
-Yes.
-
-> Or could we read hsl-<color> and get the number of levels and not mess with the max_brightness definition?
-
-For hw_{linear|logarithmic| it will return the brightness resolution
-supported by the hardware.
-For hsl-<color> (or whatever we will call it) it will return the number
-of elements in the array the currently chosen brightness-model refers
-to.
-
-> Or should that be the current level?
-
-Hmm? Current level will be available after executing "cat brightness".
-
->> I'd not bother with presenting whole range of available color
->> presets. Userspace can verify the brightness->color mapping
->> by reading colors/<color> files after setting given brightness
->> level.
->>
-> 
-> Userspace would have to have knowledge of the values set in order to verify the
-> color values.
-
-For the single element array:
-
-some-color-model = <0xaabbcc>;
-
-user will get this:
-
-$ echo some-color-model > brightness-model
-$ echo 1 > brightness
-$ cat colors/red   // prints 0xaa
-$ cat colors/green // prints 0xbb
-$ cat colors/blue  // prints 0xcc
-
->> However, I'm not sure how useful it will be. This is a gist
->> of this whole discussion - we cannot be certain about exact
->> color effect produced with given settings.
->>
->>> I mean we can read the brightness-models and present the available models but then how does the user know
->>> what and how many levels are in each model?  And how do we govern putting them in the right order?
->>
->> `cat max_brightness` will return number of levels for the model
->> currently set. Regarding the order - we must rely on the DT array
->> arrangement. In case of hardware originated brightness model we
->> must trust hardware implementation.
->>
-> 
-> Another question on this is what is the proposed definition of the DT value?
-> 
-> is it supposed to be 0xrrggbb?  What about other colors like Amber?
-> This was demonstrated in one of the videos you sent.
-> 
-> Maybe it should be rgb-<color> and not hsl-<color> because these values are not hsl values
-> but instead RGB values.
-
-Right, it should be possible to have even more than 4 LEDs
-in the LED multi-color class device. We shouldn't also limit
-the number of brightness levels for a single LED to one byte,
-as current framework also doesn't do that.
-
-For 5 LEDs in the cluster, the array containing three
-brightness level would look like below (dummy values):
-
-purple-linear-0 = <198 323 442 238 43 90>;
-purple-linear-1 = <200 323 442 238 43 90>;
-purple-linear-2 = <398 323 442 238 43 90>;
-
-One more thing related to the brightness-model interface -
-instead of a file it must be a directory with files named
-after colors ranges defined in DT. There is PAGE_SIZE limit
-imposed on the sysfs file size, and we already had a report
-about crash caused by triggers file size that exceeded this
-limit due to large number of cpus available on the platform,
-that created equally large number of cpu triggers.
-
-Also, if we will have those files, we will be able to report the number
-of available brightness levels per each color range.
-
->>> The DT file can get messed up, per the previous example
->>> rgb-green = <0x277c33 0x37b048 0x47e45d>;
->>>
->>> This is assumed to be from dimmest to brightest.  But that is just an assumption
->>>
->>> What if the entry looked like this?
->>> rgb-green = <0x37b048 0x277c33 0x47e45d>;
->>
->> We can do nothing. It is just the cost of leaving some decisions to DT.
->>
-> 
-> <snip>
-> 
->>
->> I intended that brightness-model location would be the main LED class
->> device directory.
->>
->> And the whole concept is simple. We allow to set what we get from DT
->> or from the hardware. Without verification exceeding beyond
->> max_brightness values defined per iout.
->>
-> 
-> Yes this is simple will put some documentation around it for discussion
-> 
-> Dan
-> 
-
-[0] https://en.wikipedia.org/wiki/CIECAM02
-[1] https://en.wikipedia.org/wiki/Hue
-[2] http://rit-mcsl.org/fairchild/PDFs/AppearanceLec.pdf
 
 -- 
 Best regards,
