@@ -1,51 +1,129 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 12/13] input: max77650: add onkey support
-Date: Fri, 1 Feb 2019 09:11:14 +0000
-Message-ID: <20190201091114.GD783@dell>
-References: <20190129133545.1931-1-brgl@bgdev.pl>
- <20190129133545.1931-14-brgl@bgdev.pl>
- <20190130185328.GA149208@dtor-ws>
- <CAMRc=McaqqmU6S_Yz35ZMvhWtWO4hTASA0fmL5CT4JizbYgu4Q@mail.gmail.com>
- <20190131122813.GB20797@sirena.org.uk>
- <CAKdAkRQUAMsT7SA7oAaEmLrkZ6hOdAqCC9RC6HGRsjJ+TvASrQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v3 00/11] mfd: add support for max77650 PMIC
+Date: Fri,  1 Feb 2019 10:47:25 +0100
+Message-ID: <20190201094736.32057-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAKdAkRQUAMsT7SA7oAaEmLrkZ6hOdAqCC9RC6HGRsjJ+TvASrQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, 31 Jan 2019, Dmitry Torokhov wrote:
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> On Thu, Jan 31, 2019 at 4:28 AM Mark Brown <broonie@kernel.org> wrote:
-> >
-> > On Thu, Jan 31, 2019 at 09:15:01AM +0100, Bartosz Golaszewski wrote:
-> >
-> > > I'm not sure what the policy is on merging MFD drivers, but I'm seeing
-> > > that Mark Brown has already picked up the regulator part into his tree
-> > > (including the binding document). I think you can just pick up the
-> > > input patches and it will simply not show up in Kconfig until the core
-> > > mfd module is upstream.
-> >
-> > > @Mark: could you please confirm it?
-> >
-> > Right, as it's a new MFD the Kconfig will stop it causing build breakage
-> > until the MFD is merged.  I'm doing it partly just to cut down on the
-> > amount of mail from resends while the rest of the series gets reviewed.
-> 
-> Ugh, I might have pulled it in if it did not reference the new header
-> file. As a rule I try to enable all symbols that result in input
-> devices being created so as much of input code is covered... I'd
-> prefer input piece be merged with MFD.
+This series adds support for max77650 ultra low-power PMIC. It provides
+the core mfd driver and a set of five sub-drivers for the regulator,
+power supply, gpio, leds and input subsystems.
 
-That's no problem.
+Patches 1-6 add the DT binding documents. Patches 7-12 add all drivers.
+Last patch adds a MAINTAINERS entry for this device.
+
+Note that patch 8/13 depends on commit 03c87b95ac04 ("regulator: provide
+rdev_get_regmap()") which was picked up by Mark Brown for v5.1.
+
+v1 -> v2:
+
+General:
+- use C++ style comments for the SPDX license identifier and the
+  copyright header
+- s/MODULE_LICENSE("GPL")/MODULE_LICENSE("GPL v2")/
+- lookup the virtual interrupt numbers in the MFD driver, setup
+  resources for child devices and use platform_get_irq_byname()
+  in sub-drivers
+- picked up review tags
+- use devm_request_any_context_irq() for interrupt requests
+
+LEDs:
+- changed the max77650_leds_ prefix to max77650_led_
+- drop the max77650_leds structure as the only field it held was the
+  regmap pointer, move said pointer to struct max77650_led
+- change the driver name to "max77650-led"
+- drop the last return value check and return the result of
+  regmap_write() directly
+- change the labeling scheme to one consistent with other LED drivers
+
+ONKEY:
+- drop the key reporting helper and call the input functions directly
+  from interrupt handlers
+- rename the rv local variable to error
+- drop parent device asignment
+
+Regulator:
+- drop the unnecessary init_data lookup from the driver code
+- drop unnecessary include
+
+Charger:
+- disable the charger on driver remove
+- change the power supply type to POWER_SUPPLY_TYPE_USB
+
+GPIO:
+- drop interrupt support until we have correct implementation of hierarchical
+  irqs in gpiolib
+
+v2 -> v3:
+
+General:
+- dropped regulator patches as they're already in Mark Brown's branch
+
+LED:
+- fix the compatible string in the DT binding example
+- use the max_brightness property
+- use a common prefix ("MAX77650_LED") for all defines in the driver
+
+MFD:
+- add the MODULE_DEVICE_TABLE()
+- add a sentinel to the of_device_id array
+- constify the pointers to irq names
+- use an enum instead of defines for interrupt indexes
+
+Bartosz Golaszewski (11):
+  dt-bindings: mfd: add DT bindings for max77650
+  dt-bindings: power: supply: add DT bindings for max77650
+  dt-bindings: gpio: add DT bindings for max77650
+  dt-bindings: leds: add DT bindings for max77650
+  dt-bindings: input: add DT bindings for max77650
+  mfd: max77650: new core mfd driver
+  power: supply: max77650: add support for battery charger
+  gpio: max77650: add GPIO support
+  leds: max77650: add LEDs support
+  input: max77650: add onkey support
+  MAINTAINERS: add an entry for max77650 mfd driver
+
+ .../bindings/gpio/gpio-max77650.txt           |  34 ++
+ .../bindings/input/max77650-onkey.txt         |  26 ++
+ .../bindings/leds/leds-max77650.txt           |  57 +++
+ .../devicetree/bindings/mfd/max77650.txt      |  28 ++
+ .../power/supply/max77650-charger.txt         |  27 ++
+ MAINTAINERS                                   |  14 +
+ drivers/gpio/Kconfig                          |   7 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-max77650.c                  | 189 ++++++++++
+ drivers/input/misc/Kconfig                    |   9 +
+ drivers/input/misc/Makefile                   |   1 +
+ drivers/input/misc/max77650-onkey.c           | 127 +++++++
+ drivers/leds/Kconfig                          |   6 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-max77650.c                  | 147 ++++++++
+ drivers/mfd/Kconfig                           |  11 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/max77650.c                        | 342 +++++++++++++++++
+ drivers/power/supply/Kconfig                  |   7 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/max77650-charger.c       | 355 ++++++++++++++++++
+ include/linux/mfd/max77650.h                  |  59 +++
+ 22 files changed, 1450 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+ create mode 100644 drivers/gpio/gpio-max77650.c
+ create mode 100644 drivers/input/misc/max77650-onkey.c
+ create mode 100644 drivers/leds/leds-max77650.c
+ create mode 100644 drivers/mfd/max77650.c
+ create mode 100644 drivers/power/supply/max77650-charger.c
+ create mode 100644 include/linux/mfd/max77650.h
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.20.1
