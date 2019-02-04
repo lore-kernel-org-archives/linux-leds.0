@@ -1,266 +1,268 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v3 09/11] leds: max77650: add LEDs support
-Date: Sat, 2 Feb 2019 15:39:55 +0100
-Message-ID: <CAMRc=McK0oc2-Cve5x6k+3TOJDF9qSxaCr9ix3=i=7Z2eDw2XQ@mail.gmail.com>
-References: <20190201094736.32057-1-brgl@bgdev.pl> <20190201094736.32057-10-brgl@bgdev.pl>
- <78b99abb-f367-1533-0690-8da26957a664@gmail.com> <d86adc21-627f-0350-72e0-f6f10b023413@ti.com>
+Subject: Re: [PATCH v3 08/11] gpio: max77650: add GPIO support
+Date: Mon, 4 Feb 2019 11:49:35 +0100
+Message-ID: <CAMRc=Md5duy1nw2neBRoEUGcqV-KCdLasUL0f6DF41t3gFMsYQ@mail.gmail.com>
+References: <20190201094736.32057-1-brgl@bgdev.pl> <20190201094736.32057-9-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d86adc21-627f-0350-72e0-f6f10b023413@ti.com>
+In-Reply-To: <20190201094736.32057-9-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-pt., 1 lut 2019 o 21:15 Dan Murphy <dmurphy@ti.com> napisa=C5=82(a):
+pt., 1 lut 2019 o 10:48 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(a)=
+:
 >
-> Hi
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >
-> On 2/1/19 1:45 PM, Jacek Anaszewski wrote:
-> > Hi Bartosz,
-> >
-> > Thanks for the update.
-> >
-> > On 2/1/19 10:47 AM, Bartosz Golaszewski wrote:
-> >> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >>
-> >> This adds basic support for LEDs for the max77650 PMIC. The device has
-> >> three current sinks for driving LEDs.
-> >>
-> >> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >> ---
-> >>   drivers/leds/Kconfig         |   6 ++
-> >>   drivers/leds/Makefile        |   1 +
-> >>   drivers/leds/leds-max77650.c | 147 +++++++++++++++++++++++++++++++++=
-++
-> >>   3 files changed, 154 insertions(+)
-> >>   create mode 100644 drivers/leds/leds-max77650.c
-> >>
-> >> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> >> index a72f97fca57b..6e7a8f51eccc 100644
-> >> --- a/drivers/leds/Kconfig
-> >> +++ b/drivers/leds/Kconfig
-> >> @@ -608,6 +608,12 @@ config LEDS_TLC591XX
-> >>         This option enables support for Texas Instruments TLC59108
-> >>         and TLC59116 LED controllers.
-> >>   +config LEDS_MAX77650
-> >> +    tristate "LED support for Maxim MAX77650 PMIC"
-> >> +    depends on MFD_MAX77650
-> >> +    help
-> >> +      LEDs driver for MAX77650 family of PMICs from Maxim Integrated.=
-"
-> >> +
-> >>   config LEDS_MAX77693
-> >>       tristate "LED support for MAX77693 Flash"
-> >>       depends on LEDS_CLASS_FLASH
-> >> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> >> index 4c1b0054f379..f48b2404dbb7 100644
-> >> --- a/drivers/leds/Makefile
-> >> +++ b/drivers/leds/Makefile
-> >> @@ -61,6 +61,7 @@ obj-$(CONFIG_LEDS_MC13783)        +=3D leds-mc13783.=
-o
-> >>   obj-$(CONFIG_LEDS_NS2)            +=3D leds-ns2.o
-> >>   obj-$(CONFIG_LEDS_NETXBIG)        +=3D leds-netxbig.o
-> >>   obj-$(CONFIG_LEDS_ASIC3)        +=3D leds-asic3.o
-> >> +obj-$(CONFIG_LEDS_MAX77650)        +=3D leds-max77650.o
-> >>   obj-$(CONFIG_LEDS_MAX77693)        +=3D leds-max77693.o
-> >>   obj-$(CONFIG_LEDS_MAX8997)        +=3D leds-max8997.o
-> >>   obj-$(CONFIG_LEDS_LM355x)        +=3D leds-lm355x.o
-> >> diff --git a/drivers/leds/leds-max77650.c b/drivers/leds/leds-max77650=
-.c
-> >> new file mode 100644
-> >> index 000000000000..6b74ce9cac12
-> >> --- /dev/null
-> >> +++ b/drivers/leds/leds-max77650.c
-> >> @@ -0,0 +1,147 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +//
-> >> +// Copyright (C) 2018 BayLibre SAS
-> >> +// Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >> +//
-> >> +// LED driver for MAXIM 77650/77651 charger/power-supply.
-> >> +
-> >> +#include <linux/i2c.h>
-> >> +#include <linux/leds.h>
-> >> +#include <linux/mfd/max77650.h>
-> >> +#include <linux/module.h>
-> >> +#include <linux/platform_device.h>
-> >> +#include <linux/regmap.h>
-> >> +
-> >> +#define MAX77650_LED_NUM_LEDS        3
-> >> +
-> >> +#define MAX77650_LED_A_BASE        0x40
-> >> +#define MAX77650_LED_B_BASE        0x43
-> >> +
-> >> +#define MAX77650_LED_BR_MASK        GENMASK(4, 0)
-> >> +#define MAX77650_LED_EN_MASK        GENMASK(7, 6)
-> >> +
-> >> +#define MAX77650_LED_MAX_BRIGHTNESS    MAX77650_LED_BR_MASK
-> >> +
-> >> +/* Enable EN_LED_MSTR. */
-> >> +#define MAX77650_LED_TOP_DEFAULT    BIT(0)
-> >> +
-> >> +#define MAX77650_LED_ENABLE        GENMASK(7, 6)
-> >> +#define MAX77650_LED_DISABLE        0x00
-> >> +
-> >> +#define MAX77650_LED_A_DEFAULT        MAX77650_LED_DISABLE
-> >> +/* 100% on duty */
-> >> +#define MAX77650_LED_B_DEFAULT        GENMASK(3, 0)
-> >> +
-> >> +struct max77650_led {
-> >> +    struct led_classdev cdev;
-> >> +    struct regmap *map;
-> >> +    unsigned int regA;
-> >> +    unsigned int regB;
+> Add GPIO support for max77650 mfd device. This PMIC exposes a single
+> GPIO line.
 >
-> Please don't use camel case.
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/gpio/Kconfig         |   7 ++
+>  drivers/gpio/Makefile        |   1 +
+>  drivers/gpio/gpio-max77650.c | 189 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 197 insertions(+)
+>  create mode 100644 drivers/gpio/gpio-max77650.c
 >
-
-Sorry, but this is pointless nitpicking. The registers are referred to
-in the manual as LED[012]_A and LED[012]_B so these variable names
-reflect that. The difference between ThisKindOfCamelCase and regA/regB
-is obvious. It's much more readable than for example rega or reg_a. I
-also used the same approach in the regulator module and there were no
-complaints.
-
-> >> +};
-> >> +
-> >> +static struct max77650_led *max77650_to_led(struct led_classdev *cdev=
-)
-> >> +{
-> >> +    return container_of(cdev, struct max77650_led, cdev);
-> >> +}
-> >> +
-> >> +static int max77650_led_brightness_set(struct led_classdev *cdev,
-> >> +                       enum led_brightness brightness)
-> >> +{
-> >> +    struct max77650_led *led =3D max77650_to_led(cdev);
-> >> +    int val, mask;
-> >> +
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index b5a2845347ec..fb297fe5bfec 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -1095,6 +1095,13 @@ config GPIO_MAX77620
+>           driver also provides interrupt support for each of the gpios.
+>           Say yes here to enable the max77620 to be used as gpio controll=
+er.
 >
-> The register value and bits are only 8 bit why an int?
->
-
-Because regmap_update_bits() deals with 32-bit integers. There's no
-hurt and it's less confusing.
-
-> >> +    mask =3D MAX77650_LED_BR_MASK | MAX77650_LED_EN_MASK;
-> >> +
-> >> +    if (brightness =3D=3D LED_OFF)
-> >> +        val =3D MAX77650_LED_DISABLE;
-> >> +    else
-> >> +        val =3D MAX77650_LED_ENABLE | brightness;
-> >> +
-> >> +    return regmap_update_bits(led->map, led->regA, mask, val);
-> >> +}
-> >> +
-> >> +static int max77650_led_probe(struct platform_device *pdev)
-> >> +{
-> >> +    struct device_node *of_node, *child;
-> >> +    struct max77650_led *leds, *led;
-> >> +    struct device *parent;
-> >> +    struct device *dev;
-> >> +    struct regmap *map;
-> >> +    const char *label;
-> >> +    int rv, num_leds;
-> >> +    u32 reg;
-> >> +
-> >> +    dev =3D &pdev->dev;
-> >> +    parent =3D dev->parent;
-> >> +    of_node =3D dev->of_node;
-> >> +
-> >> +    if (!of_node)
-> >> +        return -ENODEV;
-> >> +
-> >> +    leds =3D devm_kcalloc(dev, sizeof(*leds),
-> >> +                MAX77650_LED_NUM_LEDS, GFP_KERNEL);
-> >> +    if (!leds)
-> >> +        return -ENOMEM;
-> >> +
-> >> +    map =3D dev_get_regmap(dev->parent, NULL);
-> >> +    if (!map)
-> >> +        return -ENODEV;
-> >> +
-> >> +    num_leds =3D of_get_child_count(of_node);
-> >> +    if (!num_leds || num_leds > MAX77650_LED_NUM_LEDS)
-> >> +        return -ENODEV;
-> >> +
-> >> +    for_each_child_of_node(of_node, child) {
-> >> +        rv =3D of_property_read_u32(child, "reg", &reg);
->
-> Can we use the fwnode_property_read_u32 call here?
-> And the same for all below as well?
->
->
-
-Of course we can. But why? This is a low-power PMIC. Is there really a
-chance that a non-DT system will want to use it? If so - we will be
-able to convert it if needed. For now: I'd stick with of_* functions.
-
-> >> +        if (rv || reg >=3D MAX77650_LED_NUM_LEDS)
-> >> +            return -EINVAL;
-> >> +
-> >> +        led =3D &leds[reg];
-> >> +        led->map =3D map;
-> >> +        led->regA =3D MAX77650_LED_A_BASE + reg;
-> >> +        led->regB =3D MAX77650_LED_B_BASE + reg;
-> >> +        led->cdev.brightness_set_blocking =3D max77650_led_brightness=
-_set;
-> >> +        led->cdev.max_brightness =3D MAX77650_LED_MAX_BRIGHTNESS;
-> >> +
-> >> +        label =3D of_get_property(child, "label", NULL);
-> >> +        if (!label) {
-> >> +            led->cdev.name =3D "max77650::";
-> >> +        } else {
-> >> +            led->cdev.name =3D devm_kasprintf(dev, GFP_KERNEL,
-> >> +                            "max77650:%s", label);
-> >> +            if (!led->cdev.name)
-> >> +                return -ENOMEM;
-> >> +        }
-> >> +
-> >> +        of_property_read_string(child, "linux,default-trigger",
-> >> +                    &led->cdev.default_trigger);
-> >> +
-> >> +        rv =3D devm_of_led_classdev_register(dev, child, &led->cdev);
-> >> +        if (rv)
-> >> +            return rv;
-> >> +
-> >> +        rv =3D regmap_write(map, led->regA, MAX77650_LED_A_DEFAULT);
-> >> +        if (rv)
-> >> +            return rv;
-> >> +
-> >> +        rv =3D regmap_write(map, led->regB, MAX77650_LED_B_DEFAULT);
-> >> +        if (rv)
-> >> +            return rv;
-> >> +    }
-> >> +
-> >> +    return regmap_write(map,
-> >> +                MAX77650_REG_CNFG_LED_TOP,
-> >> +                MAX77650_LED_TOP_DEFAULT);
-> >> +}
-> >> +
-> >> +static struct platform_driver max77650_led_driver =3D {
-> >> +    .driver =3D {
-> >> +        .name =3D "max77650-led",
-> >> +    },
-> >> +    .probe =3D max77650_led_probe,
-> >> +};
-> >> +module_platform_driver(max77650_led_driver);
-> >> +
-> >> +MODULE_DESCRIPTION("MAXIM 77650/77651 LED driver");
-> >> +MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
-> >> +MODULE_LICENSE("GPL v2");
-> >>
-> >
-> > Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> >
->
->
+> +config GPIO_MAX77650
+> +       tristate "Maxim MAX77650/77651 GPIO support"
+> +       depends on MFD_MAX77650
+> +       help
+> +         GPIO driver for MAX77650/77651 PMIC from Maxim Semiconductor.
+> +         These chips have a single pin that can be configured as GPIO.
+> +
+>  config GPIO_MSIC
+>         bool "Intel MSIC mixed signal gpio support"
+>         depends on (X86 || COMPILE_TEST) && MFD_INTEL_MSIC
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index 37628f8dbf70..8bdad50db822 100644
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -78,6 +78,7 @@ obj-$(CONFIG_GPIO_MAX7300)    +=3D gpio-max7300.o
+>  obj-$(CONFIG_GPIO_MAX7301)     +=3D gpio-max7301.o
+>  obj-$(CONFIG_GPIO_MAX732X)     +=3D gpio-max732x.o
+>  obj-$(CONFIG_GPIO_MAX77620)    +=3D gpio-max77620.o
+> +obj-$(CONFIG_GPIO_MAX77650)    +=3D gpio-max77650.o
+>  obj-$(CONFIG_GPIO_MB86S7X)     +=3D gpio-mb86s7x.o
+>  obj-$(CONFIG_GPIO_MENZ127)     +=3D gpio-menz127.o
+>  obj-$(CONFIG_GPIO_MERRIFIELD)  +=3D gpio-merrifield.o
+> diff --git a/drivers/gpio/gpio-max77650.c b/drivers/gpio/gpio-max77650.c
+> new file mode 100644
+> index 000000000000..8382dd85c548
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-max77650.c
+> @@ -0,0 +1,189 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (C) 2018 BayLibre SAS
+> +// Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> +//
+> +// GPIO driver for MAXIM 77650/77651 charger/power-supply.
+> +
+> +#include <linux/gpio/driver.h>
+> +#include <linux/i2c.h>
+> +#include <linux/mfd/max77650.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#define MAX77650_GPIO_DIR_MASK         BIT(0)
+> +#define MAX77650_GPIO_INVAL_MASK       BIT(1)
+> +#define MAX77650_GPIO_DRV_MASK         BIT(2)
+> +#define MAX77650_GPIO_OUTVAL_MASK      BIT(3)
+> +#define MAX77650_GPIO_DEBOUNCE_MASK    BIT(4)
+> +
+> +#define MAX77650_GPIO_DIR_OUT          0x00
+> +#define MAX77650_GPIO_DIR_IN           BIT(0)
+> +#define MAX77650_GPIO_OUT_LOW          0x00
+> +#define MAX77650_GPIO_OUT_HIGH         BIT(3)
+> +#define MAX77650_GPIO_DRV_OPEN_DRAIN   0x00
+> +#define MAX77650_GPIO_DRV_PUSH_PULL    BIT(2)
+> +#define MAX77650_GPIO_DEBOUNCE         BIT(4)
+> +
+> +#define MAX77650_GPIO_DIR_BITS(_reg) \
+> +               ((_reg) & MAX77650_GPIO_DIR_MASK)
+> +#define MAX77650_GPIO_INVAL_BITS(_reg) \
+> +               (((_reg) & MAX77650_GPIO_INVAL_MASK) >> 1)
+> +
+> +struct max77650_gpio_chip {
+> +       struct regmap *map;
+> +       struct gpio_chip gc;
+> +};
+> +
+> +static int max77650_gpio_direction_input(struct gpio_chip *gc,
+> +                                        unsigned int offset)
+> +{
+> +       struct max77650_gpio_chip *chip =3D gpiochip_get_data(gc);
+> +
+> +       return regmap_update_bits(chip->map,
+> +                                 MAX77650_REG_CNFG_GPIO,
+> +                                 MAX77650_GPIO_DIR_MASK,
+> +                                 MAX77650_GPIO_DIR_IN);
+> +}
+> +
+> +static int max77650_gpio_direction_output(struct gpio_chip *gc,
+> +                                         unsigned int offset, int value)
+> +{
+> +       struct max77650_gpio_chip *chip =3D gpiochip_get_data(gc);
+> +       int mask, regval;
+> +
+> +       mask =3D MAX77650_GPIO_DIR_MASK | MAX77650_GPIO_OUTVAL_MASK;
+> +       regval =3D value ? MAX77650_GPIO_OUT_HIGH : MAX77650_GPIO_OUT_LOW=
+;
+> +       regval |=3D MAX77650_GPIO_DIR_OUT;
+> +
+> +       return regmap_update_bits(chip->map,
+> +                                 MAX77650_REG_CNFG_GPIO, mask, regval);
+> +}
+> +
+> +static void max77650_gpio_set_value(struct gpio_chip *gc,
+> +                                   unsigned int offset, int value)
+> +{
+> +       struct max77650_gpio_chip *chip =3D gpiochip_get_data(gc);
+> +       int rv, regval;
+> +
+> +       regval =3D value ? MAX77650_GPIO_OUT_HIGH : MAX77650_GPIO_OUT_LOW=
+;
+> +
+> +       rv =3D regmap_update_bits(chip->map, MAX77650_REG_CNFG_GPIO,
+> +                               MAX77650_GPIO_OUTVAL_MASK, regval);
+> +       if (rv)
+> +               dev_err(gc->parent, "cannot set GPIO value: %d\n", rv);
+> +}
+> +
+> +static int max77650_gpio_get_value(struct gpio_chip *gc,
+> +                                  unsigned int offset)
+> +{
+> +       struct max77650_gpio_chip *chip =3D gpiochip_get_data(gc);
+> +       unsigned int val;
+> +       int rv;
+> +
+> +       rv =3D regmap_read(chip->map, MAX77650_REG_CNFG_GPIO, &val);
+> +       if (rv)
+> +               return rv;
+> +
+> +       return MAX77650_GPIO_INVAL_BITS(val);
+> +}
+> +
+> +static int max77650_gpio_get_direction(struct gpio_chip *gc,
+> +                                      unsigned int offset)
+> +{
+> +       struct max77650_gpio_chip *chip =3D gpiochip_get_data(gc);
+> +       unsigned int val;
+> +       int rv;
+> +
+> +       rv =3D regmap_read(chip->map, MAX77650_REG_CNFG_GPIO, &val);
+> +       if (rv)
+> +               return rv;
+> +
+> +       return MAX77650_GPIO_DIR_BITS(val);
+> +}
+> +
+> +static int max77650_gpio_set_config(struct gpio_chip *gc,
+> +                                   unsigned int offset, unsigned long cf=
+g)
+> +{
+> +       struct max77650_gpio_chip *chip =3D gpiochip_get_data(gc);
+> +
+> +       switch (pinconf_to_config_param(cfg)) {
+> +       case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+> +               return regmap_update_bits(chip->map,
+> +                                         MAX77650_REG_CNFG_GPIO,
+> +                                         MAX77650_GPIO_DRV_MASK,
+> +                                         MAX77650_GPIO_DRV_OPEN_DRAIN);
+> +       case PIN_CONFIG_DRIVE_PUSH_PULL:
+> +               return regmap_update_bits(chip->map,
+> +                                         MAX77650_REG_CNFG_GPIO,
+> +                                         MAX77650_GPIO_DRV_MASK,
+> +                                         MAX77650_GPIO_DRV_PUSH_PULL);
+> +       case PIN_CONFIG_INPUT_DEBOUNCE:
+> +               return regmap_update_bits(chip->map,
+> +                                         MAX77650_REG_CNFG_GPIO,
+> +                                         MAX77650_GPIO_DEBOUNCE_MASK,
+> +                                         MAX77650_GPIO_DEBOUNCE);
+> +       default:
+> +               return -ENOTSUPP;
+> +       }
+> +}
+> +
+> +static int max77650_gpio_to_irq(struct gpio_chip *gc, unsigned int offse=
+t)
+> +{
+> +       /*
+> +        * TODO Add interrupt support.
+> +        *
+> +        * We first need to properly support hierarchical irqs in gpiolib
+> +        * and regmap irq_chip.
+> +        */
+> +       return -EOPNOTSUPP;
+> +}
+> +
+> +static int max77650_gpio_probe(struct platform_device *pdev)
+> +{
+> +       struct max77650_gpio_chip *chip;
+> +       struct device *dev, *parent;
+> +       struct i2c_client *i2c;
+> +
+> +       dev =3D &pdev->dev;
+> +       parent =3D dev->parent;
+> +       i2c =3D to_i2c_client(parent);
+> +
+> +       chip =3D devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+> +       if (!chip)
+> +               return -ENOMEM;
+> +
+> +       chip->map =3D dev_get_regmap(parent, NULL);
+> +       if (!chip->map)
+> +               return -ENODEV;
+> +
+> +       chip->gc.base =3D -1;
+> +       chip->gc.ngpio =3D 1;
+> +       chip->gc.label =3D i2c->name;
+> +       chip->gc.parent =3D dev;
+> +       chip->gc.owner =3D THIS_MODULE;
+> +       chip->gc.can_sleep =3D true;
+> +
+> +       chip->gc.direction_input =3D max77650_gpio_direction_input;
+> +       chip->gc.direction_output =3D max77650_gpio_direction_output;
+> +       chip->gc.set =3D max77650_gpio_set_value;
+> +       chip->gc.get =3D max77650_gpio_get_value;
+> +       chip->gc.get_direction =3D max77650_gpio_get_direction;
+> +       chip->gc.set_config =3D max77650_gpio_set_config;
+> +       chip->gc.to_irq =3D max77650_gpio_to_irq;
+> +
+> +       return devm_gpiochip_add_data(dev, &chip->gc, chip);
+> +}
+> +
+> +static struct platform_driver max77650_gpio_driver =3D {
+> +       .driver =3D {
+> +               .name =3D "max77650-gpio",
+> +       },
+> +       .probe =3D max77650_gpio_probe,
+> +};
+> +module_platform_driver(max77650_gpio_driver);
+> +
+> +MODULE_DESCRIPTION("MAXIM 77650/77651 GPIO driver");
+> +MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
+> +MODULE_LICENSE("GPL v2");
 > --
-> ------------------
-> Dan Murphy
+> 2.20.1
+>
 
-Best regards,
-Bartosz Golaszewski
+I forgot to collect the tag, but Linus left his Reviewed-by:.
+
+Bart
