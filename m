@@ -1,59 +1,29 @@
-From: =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
-Subject: Re: [RFC PATCH] leds: multicolor: Add sysfs interface definition
-Date: Fri, 8 Feb 2019 07:09:14 +0200
-Message-ID: <6d50b09c-87be-d48f-cfe5-f5143c18d38c@gmail.com>
-References: <20190130183005.833-1-dmurphy@ti.com> <20190130223542.GA22040@amd>
- <6afa674b-9c4e-2568-c758-030e93aebd06@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 07/10] gpio: max77650: add GPIO support
+Date: Fri, 8 Feb 2019 12:22:10 +0100
+Message-ID: <CACRpkdYKLeKA7CPFvoBPHB-K+X_n80YvFyYS_SHxuTTyGLNZ4g@mail.gmail.com>
+References: <20190205091237.6448-1-brgl@bgdev.pl> <20190205091237.6448-8-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6afa674b-9c4e-2568-c758-030e93aebd06@gmail.com>
-Content-Language: en-US
+In-Reply-To: <20190205091237.6448-8-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi All,
+On Tue, Feb 5, 2019 at 10:12 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-On 08/02/2019 6.55, Vesa Jääskeläinen wrote:
-> Hi All,
-> 
-> On 31/01/2019 0.35, Pavel Machek wrote:
->> On Wed 2019-01-30 12:30:05, Dan Murphy wrote:
->>> Add a documentation of LED Multicolor LED class specific
->>> sysfs attributes.
->>
->> No, sorry. This does not most of the requirements.
->>
->>                                 Pavel
->>
->> Requirements for RGB LED interface:
-> 
-> ...
-> 
-> I have tried to capture relevant parts of ideas and requirements and 
-> usage in a wiki page in github:
-> 
-> https://github.com/vesajaaskelainen/linux-multicolor-leds/wiki
-> 
-> I believe the discussion is good to perform in mailing list -- I am 
-> happy to update or give you access to update the wiki so we could have 
-> easy to use summary/details source during discussions.
-> 
-> Ideas on the interface seem to be a bit drifting so I apologize if some 
-> of Your ideas were not captured.
-> 
-> There has been at least two direct proposals for userspace interface and 
-> I tried to provide usage example also for Dan's proposal. Feel free to 
-> correct me if I made a mistake.
-> 
-> I believe it is a good to create summary page as there seems to many 
-> aspects to be though out. What do you feel on this approach?
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Add GPIO support for max77650 mfd device. This PMIC exposes a single
+> GPIO line.
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-And should we perhaps move this discussion only to linux-leds mailing 
-list for successive replies :) ? So we don't generate too broad traffic.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Please merge this with the rest of the stuff through MFD!
 
 Thanks,
-Vesa Jääskeläinen
+Linus Walleij
