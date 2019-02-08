@@ -1,122 +1,52 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 7/7] arm64: dts: qcom: apq8016-sbc: Standardize LED
- labels
-Date: Tue, 5 Feb 2019 11:24:12 -0800
-Message-ID: <20190205192412.GG31919@minitux>
-References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
- <20181029094245.7886-8-manivannan.sadhasivam@linaro.org>
- <20181221023554.GB3233@Mani-XPS-13-9360>
- <CAP71WjzWiCg-NXDnh58N-5O7kvNj+DDndSK04DeoPxFE2L8W0g@mail.gmail.com>
+From: =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
+Subject: Re: [RFC PATCH] leds: multicolor: Add sysfs interface definition
+Date: Fri, 8 Feb 2019 06:55:34 +0200
+Message-ID: <6afa674b-9c4e-2568-c758-030e93aebd06@gmail.com>
+References: <20190130183005.833-1-dmurphy@ti.com> <20190130223542.GA22040@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAP71WjzWiCg-NXDnh58N-5O7kvNj+DDndSK04DeoPxFE2L8W0g@mail.gmail.com>
+In-Reply-To: <20190130223542.GA22040@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nicolas Dechesne <nicolas.dechesne@linaro.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Andy Gross <andy.gross@linaro.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lkml <linux-kernel@vger.kernel.org>, linux-rockchip@lists.infradead.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-soc@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Koen Kooi <koen.kooi@linaro.org>
+To: Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Tue 05 Feb 11:00 PST 2019, Nicolas Dechesne wrote:
+Hi All,
 
-> Hey Mani,
+On 31/01/2019 0.35, Pavel Machek wrote:
+> On Wed 2019-01-30 12:30:05, Dan Murphy wrote:
+>> Add a documentation of LED Multicolor LED class specific
+>> sysfs attributes.
 > 
-> thanks for sending this out, it should have been just like that in the
-> first place ;)
+> No, sorry. This does not most of the requirements.
 > 
+> 								Pavel
+> 
+> Requirements for RGB LED interface:
 
-Thanks Nico for the confirmation, I will queue this for v5.2
+...
 
-Regards,
-Bjorn
+I have tried to capture relevant parts of ideas and requirements and 
+usage in a wiki page in github:
 
-> On Fri, Dec 21, 2018 at 3:36 AM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Mon, Oct 29, 2018 at 03:12:45PM +0530, Manivannan Sadhasivam wrote:
-> > > For all 96Boards, the following standard is used for onboard LEDs.
-> > >
-> > > green:user1  default-trigger: heartbeat
-> > > green:user2  default-trigger: mmc0/disk-activity(onboard-storage)
-> > > green:user3  default-trigger: mmc1 (SD-card)
-> > > green:user4  default-trigger: none, panic-indicator
-> > > yellow:wlan  default-trigger: phy0tx
-> > > blue:bt      default-trigger: hci0-power
-> > >
-> > > So lets adopt the same for APQ8016 SBC (Dragonboard410c), which is
-> > > one of the 96Boards CE platform.
-> > >
-> >
-> > Hello,
-> >
-> > Any update on this patch?
-> 
-> Reviewed-by: Nicolas Dechesne <nicolas.dechesne@linaro.org>
-> 
-> >
-> > Regards,
-> > Mani
-> >
-> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > Acked-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi | 12 ++++++------
-> > >  1 file changed, 6 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-> > > index 46feedf7c989..35f95154316b 100644
-> > > --- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-> > > @@ -300,28 +300,28 @@
-> > >                       compatible = "gpio-leds";
-> > >
-> > >                       led@1 {
-> > > -                             label = "apq8016-sbc:green:user1";
-> > > +                             label = "green:user1";
-> > >                               gpios = <&msmgpio 21 GPIO_ACTIVE_HIGH>;
-> > >                               linux,default-trigger = "heartbeat";
-> > >                               default-state = "off";
-> > >                       };
-> > >
-> > >                       led@2 {
-> > > -                             label = "apq8016-sbc:green:user2";
-> > > +                             label = "green:user2";
-> > >                               gpios = <&msmgpio 120 GPIO_ACTIVE_HIGH>;
-> > >                               linux,default-trigger = "mmc0";
-> > >                               default-state = "off";
-> > >                       };
-> > >
-> > >                       led@3 {
-> > > -                             label = "apq8016-sbc:green:user3";
-> > > +                             label = "green:user3";
-> > >                               gpios = <&pm8916_gpios 1 GPIO_ACTIVE_HIGH>;
-> > >                               linux,default-trigger = "mmc1";
-> > >                               default-state = "off";
-> > >                       };
-> > >
-> > >                       led@4 {
-> > > -                             label = "apq8016-sbc:green:user4";
-> > > +                             label = "green:user4";
-> > >                               gpios = <&pm8916_gpios 2 GPIO_ACTIVE_HIGH>;
-> > >                               linux,default-trigger = "none";
-> > >                               panic-indicator;
-> > > @@ -329,14 +329,14 @@
-> > >                       };
-> > >
-> > >                       led@5 {
-> > > -                             label = "apq8016-sbc:yellow:wlan";
-> > > +                             label = "yellow:wlan";
-> > >                               gpios = <&pm8916_mpps 2 GPIO_ACTIVE_HIGH>;
-> > >                               linux,default-trigger = "phy0tx";
-> > >                               default-state = "off";
-> > >                       };
-> > >
-> > >                       led@6 {
-> > > -                             label = "apq8016-sbc:blue:bt";
-> > > +                             label = "blue:bt";
-> > >                               gpios = <&pm8916_mpps 3 GPIO_ACTIVE_HIGH>;
-> > >                               linux,default-trigger = "bluetooth-power";
-> > >                               default-state = "off";
-> > > --
-> > > 2.17.1
-> > >
+https://github.com/vesajaaskelainen/linux-multicolor-leds/wiki
+
+I believe the discussion is good to perform in mailing list -- I am 
+happy to update or give you access to update the wiki so we could have 
+easy to use summary/details source during discussions.
+
+Ideas on the interface seem to be a bit drifting so I apologize if some 
+of Your ideas were not captured.
+
+There has been at least two direct proposals for userspace interface and 
+I tried to provide usage example also for Dan's proposal. Feel free to 
+correct me if I made a mistake.
+
+I believe it is a good to create summary page as there seems to many 
+aspects to be though out. What do you feel on this approach?
+
+Thanks,
+Vesa Jääskeläinen
