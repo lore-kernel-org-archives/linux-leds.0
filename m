@@ -1,29 +1,77 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 01/10] dt-bindings: mfd: add DT bindings for max77650
-Date: Fri, 8 Feb 2019 13:15:26 +0100
-Message-ID: <CACRpkdaERR=jBf-mchuEEyRu_vb8vr8CoZ5uL6apPGD9gOgw=w@mail.gmail.com>
-References: <20190205091237.6448-1-brgl@bgdev.pl> <20190205091237.6448-2-brgl@bgdev.pl>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [RFC PATCH] leds: multicolor: Add sysfs interface definition
+Date: Fri, 8 Feb 2019 10:55:14 -0600
+Message-ID: <cf99d7f3-5e79-bd18-094f-54efca5f576c@ti.com>
+References: <20190130183005.833-1-dmurphy@ti.com> <20190130223542.GA22040@amd>
+ <6afa674b-9c4e-2568-c758-030e93aebd06@gmail.com>
+ <6d50b09c-87be-d48f-cfe5-f5143c18d38c@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190205091237.6448-2-brgl@bgdev.pl>
+In-Reply-To: <6d50b09c-87be-d48f-cfe5-f5143c18d38c@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 10:12 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+Veas
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Add a DT binding document for max77650 ultra-low power PMIC. This
-> describes the core mfd device and the GPIO module.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 2/7/19 11:09 PM, Vesa Jääskeläinen wrote:
+> Hi All,
+> 
+> On 08/02/2019 6.55, Vesa Jääskeläinen wrote:
+>> Hi All,
+>>
+>> On 31/01/2019 0.35, Pavel Machek wrote:
+>>> On Wed 2019-01-30 12:30:05, Dan Murphy wrote:
+>>>> Add a documentation of LED Multicolor LED class specific
+>>>> sysfs attributes.
+>>>
+>>> No, sorry. This does not most of the requirements.
+>>>
+>>>                                 Pavel
+>>>
+>>> Requirements for RGB LED interface:
+>>
+>> ...
+>>
+>> I have tried to capture relevant parts of ideas and requirements and usage in a wiki page in github:
+>>
+>> https://github.com/vesajaaskelainen/linux-multicolor-leds/wiki
+>>
+>> I believe the discussion is good to perform in mailing list -- I am happy to update or give you access to update the wiki so we could have easy to use summary/details source during discussions.
+>>
+>> Ideas on the interface seem to be a bit drifting so I apologize if some of Your ideas were not captured.
+>>
+>> There has been at least two direct proposals for userspace interface and I tried to provide usage example also for Dan's proposal. Feel free to correct me if I made a mistake.
+>>
+>> I believe it is a good to create summary page as there seems to many aspects to be though out. What do you feel on this approach?
+> 
+> And should we perhaps move this discussion only to linux-leds mailing list for successive replies :) ? So we don't generate too broad traffic.
+> 
 
-This is a good solution!
+Thank you for this.  I have posted updated documentation and posted updated code that includes a test file that does
+nothing but register a dummy node.  This was tested on raspberry pi 5.0-rc kernel.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Also the code is updated for the LP50xx and a HACK for Droid4.
 
-Yours,
-Linus Walleij
+brightness-model is still an open topic on the best way to implement this so we have not introduced the code yet.
+
+Here is the ABI doc
+http://git.ti.com/gitweb/?p=ti-analog-linux-kernel/dmurphy-analog.git;a=blob;f=Documentation/ABI/testing/sysfs-class-led-multicolor;h=45629199791285200e3775fc0b4dde1dfebb130f;hb=ce08183aa24edc0d883550339eef93fd72b4ac45
+
+Here is the class description
+http://git.ti.com/gitweb/?p=ti-analog-linux-kernel/dmurphy-analog.git;a=blob;f=Documentation/leds/leds-class-multicolor.txt;h=357f045a826aac71d65704891c18e7fb31e5cb9b;hb=refs/heads/multicolor_class
+
+
+Dan
+
+> Thanks,
+> Vesa Jääskeläinen
+
+
+-- 
+------------------
+Dan Murphy
