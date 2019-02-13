@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 75/83] leds: lp5523: fix a missing check of return value of lp55xx_read
-Date: Tue, 12 Feb 2019 21:36:53 -0500
-Message-ID: <20190213023701.20286-75-sashal@kernel.org>
-References: <20190213023701.20286-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 13/14] leds: lp5523: fix a missing check of return value of lp55xx_read
+Date: Tue, 12 Feb 2019 21:41:37 -0500
+Message-ID: <20190213024139.22268-13-sashal@kernel.org>
+References: <20190213024139.22268-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190213024139.22268-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Kangjie Lu <kjlu@umn.edu>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
@@ -30,10 +30,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index a2e74feee2b2..fd64df5a57a5 100644
+index 9e1716f8098c..20e43f8b9325 100644
 --- a/drivers/leds/leds-lp5523.c
 +++ b/drivers/leds/leds-lp5523.c
-@@ -318,7 +318,9 @@ static int lp5523_init_program_engine(struct lp55xx_chip *chip)
+@@ -313,7 +313,9 @@ static int lp5523_init_program_engine(struct lp55xx_chip *chip)
  
  	/* Let the programs run for couple of ms and check the engine status */
  	usleep_range(3000, 6000);
