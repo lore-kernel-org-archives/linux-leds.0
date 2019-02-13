@@ -1,39 +1,48 @@
-From: Yauhen Kharuzhy <jekhor@gmail.com>
-Subject: [PATCH v2 0/2] Intel Cherry Trail Whiskey Cove LEDs support
-Date: Tue, 12 Feb 2019 23:58:59 +0300
-Message-ID: <20190212205901.13037-1-jekhor@gmail.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 094/105] leds: lp5523: fix a missing check of return value of lp55xx_read
+Date: Tue, 12 Feb 2019 21:33:25 -0500
+Message-ID: <20190213023336.19019-94-sashal@kernel.org>
+References: <20190213023336.19019-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Cc: Hans de Goede <hdegoede@redhat.com>, Yauhen Kharuzhy <jekhor@gmail.com>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Kangjie Lu <kjlu@umn.edu>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-This patch series introduces new driver for controlling LEDs connected
-to Intel Cherry Trail Whiskey Cove PMIC (general-purpose LED and charger
-status led). Only simple 'always on' and blinking modes are supported
-for now, no breathing.
+From: Kangjie Lu <kjlu@umn.edu>
 
-Driver was tested only with Lenovo Yoga Book notebook, and I don't have
-any documentation for the PMIC, so proposals and testing are welcome.
+[ Upstream commit 248b57015f35c94d4eae2fdd8c6febf5cd703900 ]
 
-v2:
-  - Fix comments and code style
-  - Add mutex to protect led state
-  - Add defaults triggers
-  - Fix module license declaration
+When lp55xx_read() fails, "status" is an uninitialized variable and thus
+may contain random value; using it leads to undefined behaviors.
 
-Yauhen Kharuzhy (2):
-  leds: Add Intel Cherry Trail Whiskey Cove PMIC LEDs
-  mfd: Add leds MFD cell for intel_soc_pmic_chtwc
+The fix inserts a check for the return value of lp55xx_read: if it
+fails, returns with its error code.
 
- drivers/leds/Kconfig               |  11 ++
- drivers/leds/Makefile              |   1 +
- drivers/leds/leds-cht-wcove.c      | 293 +++++++++++++++++++++++++++++
- drivers/mfd/intel_soc_pmic_chtwc.c |   1 +
- 4 files changed, 306 insertions(+)
- create mode 100644 drivers/leds/leds-cht-wcove.c
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/leds/leds-lp5523.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index a2e74feee2b2..fd64df5a57a5 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -318,7 +318,9 @@ static int lp5523_init_program_engine(struct lp55xx_chip *chip)
+ 
+ 	/* Let the programs run for couple of ms and check the engine status */
+ 	usleep_range(3000, 6000);
+-	lp55xx_read(chip, LP5523_REG_STATUS, &status);
++	ret = lp55xx_read(chip, LP5523_REG_STATUS, &status);
++	if (ret)
++		return ret;
+ 	status &= LP5523_ENG_STATUS_MASK;
+ 
+ 	if (status != LP5523_ENG_STATUS_MASK) {
 -- 
-2.20.1
+2.19.1
