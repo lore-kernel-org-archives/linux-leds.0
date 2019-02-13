@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 094/105] leds: lp5523: fix a missing check of return value of lp55xx_read
-Date: Tue, 12 Feb 2019 21:33:25 -0500
-Message-ID: <20190213023336.19019-94-sashal@kernel.org>
-References: <20190213023336.19019-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 75/83] leds: lp5523: fix a missing check of return value of lp55xx_read
+Date: Tue, 12 Feb 2019 21:36:53 -0500
+Message-ID: <20190213023701.20286-75-sashal@kernel.org>
+References: <20190213023701.20286-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Kangjie Lu <kjlu@umn.edu>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
