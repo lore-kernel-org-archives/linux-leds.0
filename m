@@ -1,146 +1,191 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
- LEDs
-Date: Thu, 14 Feb 2019 13:28:40 +0100
-Message-ID: <20190214122840.GA21860@amd>
-References: <20190212205901.13037-1-jekhor@gmail.com>
- <20190212205901.13037-2-jekhor@gmail.com>
- <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
- <20190213230731.GA8557@amd>
- <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
- <20190213233806.GA11867@amd>
- <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
- <20190214111423.GE6132@amd>
- <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v6 00/11] mfd: add support for max77650 PMIC
+Date: Thu, 14 Feb 2019 15:00:11 +0100
+Message-ID: <20190214140022.19201-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
---zhXaljGHf11kAtnf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series adds support for max77650 ultra low-power PMIC. It provides
+the core mfd driver and a set of five sub-drivers for the regulator,
+power supply, gpio, leds and input subsystems.
 
-Hi!
+Patches 1-4 add the DT binding documents. Patch 5 documents mfd_add_devices().
+Patches 6-10 add all drivers. Last patch adds a MAINTAINERS entry for this
+device.
 
-Jacek, could we get you to comment here? I'd prefer "hardware" trigger...
+The regulator part has already been picked up into the regulator tree.
 
-> >>That assumes that breathing is the default setting on all hardware
-> >>and again I don't see why not to export this functionality to
-> >
-> >Save the status on boot, then restore it on rmmod/reboot/poweroff? :-).
->=20
-> Which works until the system freezes one time. I believe that
-> if we are going to do a LED driver for the charging LED on these
-> devices, we MUST offer a way to put it back in its original
-> state, even if the state is foo-barred at bootup.
->=20
-> >>userspace. Just because something does not fit in the existing
-> >>API is IMHO not a good reason to not expose it to userspace.
-> >>
-> >>I suggest that we deal with this special case by adding 3 custom
-> >>sysfs attributes:
-> >>
-> >>1) "mode" which when read, prints, e.g. :
-> >>manual [on-when-charging]
-> >
-> >While this allows _user on console_ to control everything using echo,
-> >it is not suitable for applications trying to control LEDs.
-> >
-> >As there's nothing special about the case here, I believe we should
-> >have generic solution here.
-> >
-> >My preffered solution would be "hardware" trigger that leaves the LED
-> >in hardware control.
->=20
-> As you explained in the parts which I snipped, there are many
-> devices which have a similar choice for a LED being under hw or
-> user control. I can see how this looks like a trigger and how we
-> could use the trigger API for this.
->=20
-> I believe though, that if we implement a "virtual" (for lack of
-> a better word) trigger for this, that this should be done in the
-> LED core. I can envision this working like this:
+v1 -> v2:
+=========
 
-Agreed about the LED core.
+General:
+- use C++ style comments for the SPDX license identifier and the
+  copyright header
+- s/MODULE_LICENSE("GPL")/MODULE_LICENSE("GPL v2")/
+- lookup the virtual interrupt numbers in the MFD driver, setup
+  resources for child devices and use platform_get_irq_byname()
+  in sub-drivers
+- picked up review tags
+- use devm_request_any_context_irq() for interrupt requests
 
-> 1) Add a:
->=20
-> hw_control_set(struct led_classdev *led_cdev, bool enable_hw_control);
->=20
-> Callback to struct led_classdev which when implemented by a driver
-> like the current PMIC LED controller would do what it says.
->=20
-> 2) Have the core create and register a virtual hardware trigger the
-> first time a LED cdev which has this callback gets registered.
->=20
-> When configured as the trigger for this LED device this trigger calls
-> hw_control_set(cdev, true) and when unregistered calls
-> hw_control_set(cdev, false)
->=20
-> Taking a quick look at the trigger code, a problem with this is
-> that normally any trigger can work with any led device, so this
-> "hardware" trigger will show up in the list of possible
-> triggers for each device.
->=20
-> This problem can be solved by making the activate method for the
-> hardware trigger check the classdev has a hw_control_set callback
-> and if not return -EINVAL, or maybe -ENXIO but still this is somewhat
-> inconsistent with other triggers, which AFAIK work with any LED.
+LEDs:
+- changed the max77650_leds_ prefix to max77650_led_
+- drop the max77650_leds structure as the only field it held was the
+  regmap pointer, move said pointer to struct max77650_led
+- change the driver name to "max77650-led"
+- drop the last return value check and return the result of
+  regmap_write() directly
+- change the labeling scheme to one consistent with other LED drivers
 
-I guess other option is to modify core so that it does not list
-"hardware" trigger for leds that don't support it.
+ONKEY:
+- drop the key reporting helper and call the input functions directly
+  from interrupt handlers
+- rename the rv local variable to error
+- drop parent device asignment
 
-> >Alternatively I could imagine "hardware" sysfs attribute, containing
-> >0/1, with 0=3D=3Dsoftware controlled, 1=3D=3Dhardware controlled.
->=20
-> Hmm, maybe call it "hardware_controlled" instead ? Otherwise this
-> would work for me and I would personally prefer this solution. This
-> could even be done in the LED core using the hw_control_set callback
-> I proposed, to make sure it is handled consistently between devices.
+Regulator:
+- drop the unnecessary init_data lookup from the driver code
+- drop unnecessary include
 
-This should be in LED core, yes.
+Charger:
+- disable the charger on driver remove
+- change the power supply type to POWER_SUPPLY_TYPE_USB
 
-> >The rest of attributes would have to be Cove-specific, yes (but still
-> >should fit with the rest of LED subsystem).
->=20
-> Right, I see that the triggers attribute already uses the fmt where
-> on "cat" all options are listed and the current active one has [] around =
-it,
-> so I think the pattern and frequency attributes I proposed should work
-> well, although thinking more about this I believe the freq. attribute sho=
-uld
-> be called pattern_freq to make clear it applies to blinking / breathing
-> set through the pattern attribute.
+GPIO:
+- drop interrupt support until we have correct implementation of hierarchical
+  irqs in gpiolib
 
-Take a look at blinking trigger. It can already do hardware
-acceleration, but uses different format than what you proposed.
+v2 -> v3:
+=========
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+General:
+- dropped regulator patches as they're already in Mark Brown's branch
 
---zhXaljGHf11kAtnf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+LED:
+- fix the compatible string in the DT binding example
+- use the max_brightness property
+- use a common prefix ("MAX77650_LED") for all defines in the driver
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+MFD:
+- add the MODULE_DEVICE_TABLE()
+- add a sentinel to the of_device_id array
+- constify the pointers to irq names
+- use an enum instead of defines for interrupt indexes
 
-iEYEARECAAYFAlxlXvgACgkQMOfwapXb+vK75wCfRohINirLNSVrYOl223Wl8k+y
-x1wAoKy6w9XdMNw15J+x4331bdMEUdSs
-=ei2J
------END PGP SIGNATURE-----
+v3 -> v4:
+=========
 
---zhXaljGHf11kAtnf--
+GPIO:
+- as discussed with Linus Walleij: the gpio-controller is now part of
+  the core mfd module (we don't spawn a sub-node anymore), the binding
+  document for GPIO has been dropped, the GPIO properties have been
+  defined in the binding document for the mfd core, the interrupt
+  functionality has been reintroduced with the irq directly passed from
+  the mfd part
+- due to the above changes the Reviewed-by tag from Linus was dropped
+
+v4 -> v5:
+=========
+
+General:
+- add a patch documenting mfd_add_devices()
+
+MFD:
+- pass the regmap irq_chip irq domain to mfd over mfd_add_devices so that
+  the hw interrupts from resources can be correctly mapped to virtual irqs
+- remove the enum listing cell indexes
+- extend Kconfig help
+- add a link to the programming manual
+- use REGMAP_IRQ_REG() for regmap interrupts (except for GPI which has
+  is composed of two hw interrupts for rising and falling edge)
+- add error messages in probe
+- use PLATFORM_DEVID_NONE constant in devm_mfd_add_devices()
+- set irq_base to 0 in regmap_add_irq_chip() as other users to, it's only
+  relevant if it's > 0
+
+Charger:
+- use non-maxim specific property names for minimum input voltage and current
+  limit
+- code shrink by using the enable/disable charger helpers everywhere
+- use more descriptive names for constants
+
+Onkey:
+- use EV_SW event type for slide mode
+
+LED:
+- remove stray " from Kconfig help
+
+v5 -> v6:
+=========
+
+MFD:
+- remove stray spaces in the binding document
+- rename the example dt node
+- remove unnecessary interrupt-parent property from the bindings
+
+LED:
+- add a missing dependency on LEDS_CLASS to Kconfig
+
+Onkey:
+- use boolean for the slide button property
+
+Charger:
+- fix the property names in DT example
+- make constants even more readable
+
+Bartosz Golaszewski (11):
+  dt-bindings: mfd: add DT bindings for max77650
+  dt-bindings: power: supply: add DT bindings for max77650
+  dt-bindings: leds: add DT bindings for max77650
+  dt-bindings: input: add DT bindings for max77650
+  mfd: core: document mfd_add_devices()
+  mfd: max77650: new core mfd driver
+  power: supply: max77650: add support for battery charger
+  gpio: max77650: add GPIO support
+  leds: max77650: add LEDs support
+  input: max77650: add onkey support
+  MAINTAINERS: add an entry for max77650 mfd driver
+
+ .../bindings/input/max77650-onkey.txt         |  26 ++
+ .../bindings/leds/leds-max77650.txt           |  57 +++
+ .../devicetree/bindings/mfd/max77650.txt      |  46 +++
+ .../power/supply/max77650-charger.txt         |  27 ++
+ MAINTAINERS                                   |  14 +
+ drivers/gpio/Kconfig                          |   7 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-max77650.c                  | 190 +++++++++
+ drivers/input/misc/Kconfig                    |   9 +
+ drivers/input/misc/Makefile                   |   1 +
+ drivers/input/misc/max77650-onkey.c           | 121 ++++++
+ drivers/leds/Kconfig                          |   6 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-max77650.c                  | 147 +++++++
+ drivers/mfd/Kconfig                           |  14 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/max77650.c                        | 234 +++++++++++
+ drivers/mfd/mfd-core.c                        |  14 +
+ drivers/power/supply/Kconfig                  |   7 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/max77650-charger.c       | 366 ++++++++++++++++++
+ include/linux/mfd/max77650.h                  |  59 +++
+ 22 files changed, 1349 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+ create mode 100644 drivers/gpio/gpio-max77650.c
+ create mode 100644 drivers/input/misc/max77650-onkey.c
+ create mode 100644 drivers/leds/leds-max77650.c
+ create mode 100644 drivers/mfd/max77650.c
+ create mode 100644 drivers/power/supply/max77650-charger.c
+ create mode 100644 include/linux/mfd/max77650.h
+
+-- 
+2.20.1
