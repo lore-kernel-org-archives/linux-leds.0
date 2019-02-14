@@ -1,8 +1,8 @@
 From: Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
  LEDs
-Date: Thu, 14 Feb 2019 12:14:23 +0100
-Message-ID: <20190214111423.GE6132@amd>
+Date: Thu, 14 Feb 2019 12:28:58 +0100
+Message-ID: <20190214112858.GG6132@amd>
 References: <20190212205901.13037-1-jekhor@gmail.com>
  <20190212205901.13037-2-jekhor@gmail.com>
  <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
@@ -12,7 +12,7 @@ References: <20190212205901.13037-1-jekhor@gmail.com>
  <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cPi+lWm09sJ+d57q"
+        protocol="application/pgp-signature"; boundary="gvF4niNJ+uBMJnEh"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
@@ -22,7 +22,7 @@ Cc: Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org, linux-leds
 List-Id: linux-leds@vger.kernel.org
 
 
---cPi+lWm09sJ+d57q
+--gvF4niNJ+uBMJnEh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -51,86 +51,34 @@ Hi!
 > Except that when in yoga-charging mode, the user should
 > still be able to select if the LED is simply on when charging,
 > blinking when charging, or breathing when charging.
->=20
-> Given that there are 2 independent settings model-ing this
-> as a trigger does not work well. Also the trigger names should
-> not contain yoga as the PMIC in question is used in other
-> devices too.
->=20
-> I really think we should not try to shoe-horn special cases
-> like this into the generic API and just use custom sysfs
-> attributes for this. Like for example how the kbd-backlight
 
-This is not really that much of a special case. I have LEDs on
-thinkpads that can be either hardware controlled or sw controlled with
-various functions. Both Droid 4 and N900 have hardware support for
-showing charging state on the notification LED. N900 additionaly has
-debug functionality for keyboard backlight...
+BTW... all this should really go in the comment to the top of the
+file. It is non-trivial.
 
-> led classdev from the dell-laptop has custom attributes to
-> select if the timeout for going off on keyboard/mouse activity
-> and another custom attribute to select if only the keyboard or
-> both the keyboard and mouse count as relevant activity.
+> >>The problem is that any changes made are permanent, they
+> >>survice reboots and the default is Breathing, so we need
+> >>a way to restore that which does not involve removing
+> >>the internal battery of these devices.
 
-Yeah well more stuff to fix :-(.
+As should this.... as it is quite unusual.
 
-> Triggers are great for when we actually want to add a link
-> between an event coming from some part of code in the kernel,
-> to a LED classdevice, so that that event can control the LED.
-
-Well, triggers are also useful because userspace should already know
-about them.... and because your hardware already behaves as if it had
-"trigger" implemented in hardware...
-
-> >Anyway, in such case I'd propose having rmmod/reboot/poweroff hook
-> >that just sets it to breathing. No need to expose it to userspace.
->=20
-> That assumes that breathing is the default setting on all hardware
-> and again I don't see why not to export this functionality to
-
-Save the status on boot, then restore it on rmmod/reboot/poweroff? :-).
-
-> userspace. Just because something does not fit in the existing
-> API is IMHO not a good reason to not expose it to userspace.
->=20
-> I suggest that we deal with this special case by adding 3 custom
-> sysfs attributes:
->=20
-> 1) "mode" which when read, prints, e.g. :
-> manual [on-when-charging]
-
-While this allows _user on console_ to control everything using echo,
-it is not suitable for applications trying to control LEDs.
-
-As there's nothing special about the case here, I believe we should
-have generic solution here.
-
-My preffered solution would be "hardware" trigger that leaves the LED
-in hardware control.
-
-Alternatively I could imagine "hardware" sysfs attribute, containing
-0/1, with 0=3D=3Dsoftware controlled, 1=3D=3Dhardware controlled.
-
-The rest of attributes would have to be Cove-specific, yes (but still
-should fit with the rest of LED subsystem).
-
+Best regards,
 									Pavel
-
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---cPi+lWm09sJ+d57q
+--gvF4niNJ+uBMJnEh
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlxlTY8ACgkQMOfwapXb+vJzowCcDBSgjX9a8r05/K8QsFoR0E2Q
-+ikAnR9jy6i2r0Xx2WH2KjLctFqQmCYc
-=knIQ
+iEYEARECAAYFAlxlUPoACgkQMOfwapXb+vKDeQCgj8YoCeC9y3msoIYfCsFyGPYh
+sdMAnAtIhoY/uZb8icAAoaBhWoEem8rQ
+=Aczs
 -----END PGP SIGNATURE-----
 
---cPi+lWm09sJ+d57q--
+--gvF4niNJ+uBMJnEh--
