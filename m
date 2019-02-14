@@ -1,109 +1,169 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 12/13] input: max77650: add onkey support
-Date: Thu, 14 Feb 2019 09:42:48 +0000
-Message-ID: <20190214094248.GI13737@dell>
-References: <20190118134244.22253-1-brgl@bgdev.pl>
- <20190118134244.22253-13-brgl@bgdev.pl>
- <20190119090318.GB187380@dtor-ws>
- <20190212203408.GA1863@dell>
- <CAKdAkRQZ+ug7tpkE4x_8iTbUm9JnyF5wWrUnPRASi98t25LTbA@mail.gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+Date: Thu, 14 Feb 2019 10:57:13 +0100
+Message-ID: <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
+References: <20190212205901.13037-1-jekhor@gmail.com>
+ <20190212205901.13037-2-jekhor@gmail.com>
+ <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com> <20190213230731.GA8557@amd>
+ <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
+ <20190213233806.GA11867@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAKdAkRQZ+ug7tpkE4x_8iTbUm9JnyF5wWrUnPRASi98t25LTbA@mail.gmail.com>
+In-Reply-To: <20190213233806.GA11867@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lkml <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, DTML <devicetree@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, 12 Feb 2019, Dmitry Torokhov wrote:
+Hi,
 
-> Hi Lee,
+On 14-02-19 00:38, Pavel Machek wrote:
+> Hi!
 > 
-> On Tue, Feb 12, 2019 at 12:34 PM Lee Jones <lee.jones@linaro.org> wrote:
-> >
-> > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > >
-> > > > Add support for the push- and slide-button events for max77650.
-> > > >
-> > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > > ---
-> > > >  drivers/input/misc/Kconfig          |   9 ++
-> > > >  drivers/input/misc/Makefile         |   1 +
-> > > >  drivers/input/misc/max77650-onkey.c | 135 ++++++++++++++++++++++++++++
-> > > >  3 files changed, 145 insertions(+)
-> > > >  create mode 100644 drivers/input/misc/max77650-onkey.c
-> >
-> > [...]
-> >
-> > Moving things around a bit:
-> >
-> > > > +static int max77650_onkey_probe(struct platform_device *pdev)
-> > > > +{
-> >
-> > > > +   irq_f = regmap_irq_get_virq(irq_data, MAX77650_INT_nEN_F);
-> > > > +   if (irq_f <= 0)
-> > > > +           return -EINVAL;
-> > > > +
-> > > > +   irq_r = regmap_irq_get_virq(irq_data, MAX77650_INT_nEN_R);
-> > > > +   if (irq_r <= 0)
-> > > > +           return -EINVAL;
-> > >
-> > > Ugh, it would be better if you handled IRQ mapping in the MFD piece and
-> > > passed it as resources of platform device. Then you'd simply call
-> > > platform_get_irq() here and did not have to reach into parent device for
-> > > "irq_dara".
-> >
-> > These device IRQs were defined and registered with the Regmap *set*
-> > (actually init()) APIs and thus should be pulled out using the
-> > appropriate reverse Regmap *get* APIs here in the device.
-> >
-> > Registering them with Regmap *and* pulling them back out again in the
-> > same (MFD in this case) driver, only to register them as platform data
-> > is certainly not how I see the API being designed/used.
-> >
-> > > > +   struct regmap_irq_chip_data *irq_data;
-> > > > +   struct device *dev, *parent;
-> >
-> > > > +   dev = &pdev->dev;
-> > > > +   parent = dev->parent;
-> > > > +   i2c = to_i2c_client(parent);
-> > > > +   irq_data = i2c_get_clientdata(i2c);
-> > > > +
-> > > > +   map = dev_get_regmap(parent, NULL);
-> > > > +   if (!map)
-> > > > +           return -ENODEV;
-> >
-> > However, this hoop jumping is a bit crazy and for the most part
-> > superfluous.  Instead, create a struct of attributes you wish to share
-> > with the child devices (containing both regmap (which you should call
-> > regmap and not map by the way) and irq_data) and pass it as either
-> > platform data (preferred) or as device data.
-> >
-> > If you choose the latter, you do not need to convert from 'device' to
-> > 'i2c' to do the look-up.  Since this function (probe()) is provided
-> > with a platform_device, you can just use platform_get_drvdata() to
-> > achieve the same as above.
-> >
-> > If you go the preferred (platform data) route, then you should use
-> > dev_get_platdata() instead.
 > 
-> By doing what you are suggesting (introducing platform data) you
-> introducing strong dependency between MFD and input piece for no
-> different reason. With the current implementation the parent can be
-> reworked completely without involving onkey driver.
+>>> Agreed.
+>>>
+>>>> I believe it would be best to add a custom "mode" attribute
+>>>> to the led classdev, with "manual" and "on-when-charging"
+>>>> modes, this would then control bits 0-1 of reg 0x5e1f and
+>>>> by default these bits should be left as is when the driver
+>>>> loads.
+>>>
+>>> No. This is not first hardware when we have something like this, and
+>>> we need something generic here.
+>>>
+>>> One possibility would be magic "hardware drives this led"
+>>> trigger. Hmm? (Jacek disliked this idea before, but maybe we can
+>>> convince him).
+>>>
+>>> Generic "is this driven by hardware or not" attribute might be
+>>> possible, too... but its interaction with triggers/brightness/etc
+>>> would be confusing.
+>>
+>> In this case the interaction is not that tricky, but it will
+>> likely be different per led controller, so I do not think that
+>> we can ever come up with a truely generic solution.
+>>
+>> Basically the charge led has 3 states:
+>>
+>> 1) Off
+>> 2) On
+>> 3) On when charging
+>>
+>> And then when on it has 4 patterns:
+>>
+>> 1) Permanently off (so still not really on)
+>> 2) Permanently on
+>> 3) Blinking
+>> 4) Breathing
 > 
-> I find such clean separation desirable. We are trying to move away
-> form platform data where it makes sense.
+> Ok, so you don't really need to support _both_ off methods.
+> 
+> Still sounds like a normal LED, with special "yoga-charging" and
+> "yoga-breathing" triggers. (All the normal triggers should still work,
+> too.)
 
-Never mind.  We found a way forward where everyone wins!
+Except that when in yoga-charging mode, the user should
+still be able to select if the LED is simply on when charging,
+blinking when charging, or breathing when charging.
 
-Thanks for your time.
+Given that there are 2 independent settings model-ing this
+as a trigger does not work well. Also the trigger names should
+not contain yoga as the PMIC in question is used in other
+devices too.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I really think we should not try to shoe-horn special cases
+like this into the generic API and just use custom sysfs
+attributes for this. Like for example how the kbd-backlight
+led classdev from the dell-laptop has custom attributes to
+select if the timeout for going off on keyboard/mouse activity
+and another custom attribute to select if only the keyboard or
+both the keyboard and mouse count as relevant activity.
+
+Triggers are great for when we actually want to add a link
+between an event coming from some part of code in the kernel,
+to a LED classdevice, so that that event can control the LED.
+
+Trying to shoe-horn all sort of other stuff into this API
+just does not work well IMHO and is abuse of the original
+LED trigger API.
+
+>> These 4 patterns can be selected when on, independent
+>> of being perma-on or ondemand-on
+> 
+> Yeah, but we don't really want to expose that to userspace.
+
+I disagree I see no reason if we are adding a driver for
+this why the user should not be able to select if the
+LED is on, blinking or glowing when charging.
+
+>>>> As for the 0x5e20 settings, I believe another custom
+>>>> sysfs attribute, called "breathing" would be a good idea to
+>>>> export the breathing functionality.
+>>>
+>>> We have "pattern" trigger that can do this kind of stuff in
+>>> software. But I'm not sure if this is worth supporting.
+>>
+>> The problem is that any changes made are permanent, they
+>> survice reboots and the default is Breathing, so we need
+>> a way to restore that which does not involve removing
+>> the internal battery of these devices.
+> 
+> Wow. Now that's a broken hardware.
+
+The PMIC is attached to the battery and retaining the state
+of the logic controlling the charging LED when off seems sane
+to me.
+
+Arguably the firmware should set some sane defaults on boot,
+but at least on the 2 devices with this PMIC I have it does
+not do this.
+
+> Anyway, in such case I'd propose having rmmod/reboot/poweroff hook
+> that just sets it to breathing. No need to expose it to userspace.
+
+That assumes that breathing is the default setting on all hardware
+and again I don't see why not to export this functionality to
+userspace. Just because something does not fit in the existing
+API is IMHO not a good reason to not expose it to userspace.
+
+I suggest that we deal with this special case by adding 3 custom
+sysfs attributes:
+
+1) "mode" which when read, prints, e.g. :
+manual [on-when-charging]
+
+With the [] indicating the current mode, and writes accepting
+all 3 values and updating the hw accordingly.
+
+This format is used in more places in the kernel and allows
+for the user to easily discover the possible values.
+
+2) "pattern" which when read, prints, e.g. :
+on blinking [breathing]
+
+3) "frequency", when read prints, e.g. :
+0.25hz [0.5hz] 1hz 2hz
+Note this controls both the blinking and breathing freq.
+
+Note I've not listed off anywhere, this can be achieved by
+setting the brightness to 0 as we do with normal leds.
+
+For interactions with other APIs we can do the standard
+thing where writing 0 to brightness resets things, in this
+case this would reset mode to manual and pattern to on.
+
+And if the blinking API gets used, then too the mode should
+be switched to manual, and the pattern obviously becomes
+blinking.
+
+I believe this will work well with this hardware and
+nicely allow the user to control all settings.
+
+Regards,
+
+Hans
