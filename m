@@ -1,45 +1,65 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
- LEDs
-Date: Thu, 14 Feb 2019 11:04:44 +0100
-Message-ID: <079efdd4-2259-1e6f-48dd-5876f2bd7a93@redhat.com>
-References: <20190212205901.13037-1-jekhor@gmail.com>
- <20190212205901.13037-2-jekhor@gmail.com>
- <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v5 02/11] dt-bindings: power: supply: add DT bindings for
+ max77650
+Date: Thu, 14 Feb 2019 11:37:24 +0100
+Message-ID: <20190214103723.GB6132@amd>
+References: <20190213134335.10838-1-brgl@bgdev.pl>
+ <20190213134335.10838-3-brgl@bgdev.pl>
+ <20190213204834.GA31342@bogus>
+ <CAMRc=MeyMnRMzmexgNBF5PkP-Hs2G2sS4hCP4mTZR5jxC=ej1w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2B/JsCI69OhZNC5r"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MeyMnRMzmexgNBF5PkP-Hs2G2sS4hCP4mTZR5jxC=ej1w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
 
-On 13-02-19 23:43, Hans de Goede wrote:
-> Hi,
-> 
-> On 12-02-19 21:59, Yauhen Kharuzhy wrote:
->> Add support for LEDs connected to the Intel Cherry Trail Whiskey Cove
->> PMIC. Charger and general-purpose leds are supported. Hardware blinking
->> is implemented, breathing is not.
->>
->> This driver was tested with Lenovo Yoga Book notebook.
+--2B/JsCI69OhZNC5r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-<snip>
+> > > +Optional properties:
+> > > +--------------------
+> > > +- min-input-voltage: Minimum CHGIN regulation voltage (in microvolts=
+). Must be
+> > > +                     one of: 4000000, 4100000, 4200000, 4300000, 440=
+0000,
+> > > +                     4500000, 4600000, 4700000.
+> > > +- current-limit:     CHGIN input current limit (in microamps). Must =
+be one of:
+> > > +                     95000, 190000, 285000, 380000, 475000.
+> >
+> > Unit suffix? Really, these should be common properties. We have
+> > some I think. Charger bindings are a mess though...
+> >
+>=20
+> Do you mean a suffix like: ua for microamps and uv for microvolts? I'm
+> not seeing any other such properties.
 
-> Note that in my experience the "charging" mode only works
-> when bits 0-1 have the value 10.
+Documentation/devicetree$ grep -ri microvolt .
 
-Ok, scrap that I don't know where this info in my notes
-came from (probably user error), the power-on-reset
-value for bits 0-1 is 00 and then the hw controls the
-charging LED just fine. So your code is right, bit 0
-switches between hw-control (0) and user-control (1) and
-bit 1 is on/off when user-control is enabled.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Regards,
+--2B/JsCI69OhZNC5r
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Hans
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxlROMACgkQMOfwapXb+vLNdQCaAo+4r83xaUgQipX/MRUY+nFR
+MjYAoJkeKxbdk5V1BQmqhzzCvblyyxwc
+=S9/A
+-----END PGP SIGNATURE-----
+
+--2B/JsCI69OhZNC5r--
