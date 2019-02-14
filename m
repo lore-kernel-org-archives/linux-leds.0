@@ -1,88 +1,136 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 07/11] power: supply: max77650: add support for
- battery charger
-Date: Thu, 14 Feb 2019 11:51:15 +0100
-Message-ID: <20190214105115.GD6132@amd>
-References: <20190213134335.10838-1-brgl@bgdev.pl>
- <20190213134335.10838-8-brgl@bgdev.pl>
- <20190214103944.GC6132@amd>
- <CAMRc=MdR9j3pEw4SFU+SQyWF-jD3n-kp6Z7_6L-bH6J2zyeSZA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+Date: Thu, 14 Feb 2019 12:14:23 +0100
+Message-ID: <20190214111423.GE6132@amd>
+References: <20190212205901.13037-1-jekhor@gmail.com>
+ <20190212205901.13037-2-jekhor@gmail.com>
+ <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
+ <20190213230731.GA8557@amd>
+ <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
+ <20190213233806.GA11867@amd>
+ <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="NklN7DEeGtkPCoo3"
+        protocol="application/pgp-signature"; boundary="cPi+lWm09sJ+d57q"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMRc=MdR9j3pEw4SFU+SQyWF-jD3n-kp6Z7_6L-bH6J2zyeSZA@mail.gmail.com>
+In-Reply-To: <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 
---NklN7DEeGtkPCoo3
-Content-Type: text/plain; charset=utf-8
+--cPi+lWm09sJ+d57q
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu 2019-02-14 11:42:03, Bartosz Golaszewski wrote:
-> czw., 14 lut 2019 o 11:39 Pavel Machek <pavel@ucw.cz> napisa=C5=82(a):
+Hi!
+
+> >>Basically the charge led has 3 states:
+> >>
+> >>1) Off
+> >>2) On
+> >>3) On when charging
+> >>
+> >>And then when on it has 4 patterns:
+> >>
+> >>1) Permanently off (so still not really on)
+> >>2) Permanently on
+> >>3) Blinking
+> >>4) Breathing
 > >
-> > Hi!
+> >Ok, so you don't really need to support _both_ off methods.
 > >
-> > > +#define MAX77650_CHG_OFF                     0x00
-> > > +#define MAX77650_CHG_PREQ                    0x01
-> > > +
-> > > +#define MAX77650_CHGIN_UNDERVOLTAGE_LOCKOUT  0x00
-> > > +#define MAX77650_CHGIN_OVERVOLTAGE_LOCKOUT   0x01
-> > > +#define MAX77650_CHGIN_OKAY                  0x11
-> >
-> > Thanks for doing this.
-> >
-> > > +#define MAX77650_CHG_ON_CURR                 0x02
-> > > +#define MAX77650_CHG_ON_CURR_JEITA           0x03
-> > > +#define MAX77650_CHG_ON_VOLT                 0x04
-> > > +#define MAX77650_CHG_ON_VOLT_JEITA           0x05
-> > > +#define MAX77650_CHG_ON_TOPOFF                       0x06
-> > > +#define MAX77650_CHG_ON_TOPOFF_JEITA         0x07
-> > > +#define MAX77650_CHG_DONE                    0x08
-> > > +#define MAX77650_CHG_DONE_JEITA                      0x09
-> > > +#define MAX77650_CHG_SUSP_PREQ_TIM_FAULT     0x0a
-> > > +#define MAX77650_CHG_SUSP_FAST_CHG_TIM_FAULT 0x0b
-> > > +#define MAX77650_CHG_SUSP_BATT_TEMP_FAULT    0x0c
-> > > +
-> > > +#define MAX77650_CHARGER_CHGIN_DTLS_MASK     GENMASK(3, 2)
-> > > +#define MAX77650_CHARGER_CHGIN_DTLS_BITS(_reg) \
-> > > +             (((_reg) & MAX77650_CHARGER_CHGIN_DTLS_MASK) >> 2)
-> >
-> > But I guess these could use similar treatment?
-> >                                                         Pavel
-> >
+> >Still sounds like a normal LED, with special "yoga-charging" and
+> >"yoga-breathing" triggers. (All the normal triggers should still work,
+> >too.)
 >=20
-> These are already called the same as in the manual, so we can keep them r=
-ight?
+> Except that when in yoga-charging mode, the user should
+> still be able to select if the LED is simply on when charging,
+> blinking when charging, or breathing when charging.
+>=20
+> Given that there are 2 independent settings model-ing this
+> as a trigger does not work well. Also the trigger names should
+> not contain yoga as the PMIC in question is used in other
+> devices too.
+>=20
+> I really think we should not try to shoe-horn special cases
+> like this into the generic API and just use custom sysfs
+> attributes for this. Like for example how the kbd-backlight
 
-Will the person fixing the driver in 5 years have the manual?
+This is not really that much of a special case. I have LEDs on
+thinkpads that can be either hardware controlled or sw controlled with
+various functions. Both Droid 4 and N900 have hardware support for
+showing charging state on the notification LED. N900 additionaly has
+debug functionality for keyboard backlight...
 
-Someone in the manual was leaving out letters, unfortunately the
-result is not readable without the manual. PREQ TIM? Adding the
-letters back would help, as would comments.
+> led classdev from the dell-laptop has custom attributes to
+> select if the timeout for going off on keyboard/mouse activity
+> and another custom attribute to select if only the keyboard or
+> both the keyboard and mouse count as relevant activity.
+
+Yeah well more stuff to fix :-(.
+
+> Triggers are great for when we actually want to add a link
+> between an event coming from some part of code in the kernel,
+> to a LED classdevice, so that that event can control the LED.
+
+Well, triggers are also useful because userspace should already know
+about them.... and because your hardware already behaves as if it had
+"trigger" implemented in hardware...
+
+> >Anyway, in such case I'd propose having rmmod/reboot/poweroff hook
+> >that just sets it to breathing. No need to expose it to userspace.
+>=20
+> That assumes that breathing is the default setting on all hardware
+> and again I don't see why not to export this functionality to
+
+Save the status on boot, then restore it on rmmod/reboot/poweroff? :-).
+
+> userspace. Just because something does not fit in the existing
+> API is IMHO not a good reason to not expose it to userspace.
+>=20
+> I suggest that we deal with this special case by adding 3 custom
+> sysfs attributes:
+>=20
+> 1) "mode" which when read, prints, e.g. :
+> manual [on-when-charging]
+
+While this allows _user on console_ to control everything using echo,
+it is not suitable for applications trying to control LEDs.
+
+As there's nothing special about the case here, I believe we should
+have generic solution here.
+
+My preffered solution would be "hardware" trigger that leaves the LED
+in hardware control.
+
+Alternatively I could imagine "hardware" sysfs attribute, containing
+0/1, with 0=3D=3Dsoftware controlled, 1=3D=3Dhardware controlled.
+
+The rest of attributes would have to be Cove-specific, yes (but still
+should fit with the rest of LED subsystem).
 
 									Pavel
+
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---NklN7DEeGtkPCoo3
+--cPi+lWm09sJ+d57q
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEUEARECAAYFAlxlSCMACgkQMOfwapXb+vJ61QCYvQW22YY08iRs4fNS+4u78dHu
-uQCghDrKjjWbUqxyNHWG7qSN4Q3gzes=
-=vokJ
+iEYEARECAAYFAlxlTY8ACgkQMOfwapXb+vJzowCcDBSgjX9a8r05/K8QsFoR0E2Q
++ikAnR9jy6i2r0Xx2WH2KjLctFqQmCYc
+=knIQ
 -----END PGP SIGNATURE-----
 
---NklN7DEeGtkPCoo3--
+--cPi+lWm09sJ+d57q--
