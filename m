@@ -1,8 +1,8 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
 Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
  LEDs
-Date: Fri, 15 Feb 2019 23:31:25 +0100
-Message-ID: <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
+Date: Sat, 16 Feb 2019 00:14:09 +0100
+Message-ID: <b15fd048-8206-4057-a354-07dc14ca15e3@redhat.com>
 References: <20190212205901.13037-1-jekhor@gmail.com>
  <20190212205901.13037-2-jekhor@gmail.com>
  <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com> <20190213230731.GA8557@amd>
@@ -14,129 +14,80 @@ References: <20190212205901.13037-1-jekhor@gmail.com>
  <2a5e2002-e5f1-6da3-8a43-317801b69657@redhat.com>
  <3d5407a7-9458-f071-a1d5-511b09678e20@gmail.com>
  <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
+ <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
+In-Reply-To: <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
 Cc: Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 2/15/19 11:26 PM, Hans de Goede wrote:
-> Hi,
-> 
-> On 2/15/19 10:42 PM, Jacek Anaszewski wrote:
->> Hi all,
+Hi,
+
+On 2/15/19 11:31 PM, Jacek Anaszewski wrote:
+> On 2/15/19 11:26 PM, Hans de Goede wrote:
+
+<snip>
+
+>> I think that should work fine, which means that we can use the timer and
+>> pattern trigger support for the blinking and breathing modes.
 >>
->> On 2/15/19 12:27 PM, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 15-02-19 00:03, Pavel Machek wrote:
->>>> Hi!
->>>>
->>>>>>>> I suggest that we deal with this special case by adding 3 custom
->>>>>>>> sysfs attributes:
->>>>>>>>
->>>>>>>> 1) "mode" which when read, prints, e.g. :
->>>>>>>> manual [on-when-charging]
->>>>>>>
->>>>>>> While this allows _user on console_ to control everything using 
->>>>>>> echo,
->>>>>>> it is not suitable for applications trying to control LEDs.
->>>>>>>
->>>>>>> As there's nothing special about the case here, I believe we should
->>>>>>> have generic solution here.
->>>>>>>
->>>>>>> My preffered solution would be "hardware" trigger that leaves the 
->>>>>>> LED
->>>>>>> in hardware control.
->>>>>>
->>>>>> As you explained in the parts which I snipped, there are many
->>>>>> devices which have a similar choice for a LED being under hw or
->>>>>> user control. I can see how this looks like a trigger and how we
->>>>>> could use the trigger API for this.
->>>>>>
->>>>>> I believe though, that if we implement a "virtual" (for lack of
->>>>>> a better word) trigger for this, that this should be done in the
->>>>>> LED core. I can envision this working like this:
->>>>>>
->>>>>> 1) Add a:
->>>>>>
->>>>>> hw_control_set(struct led_classdev *led_cdev, bool 
->>>>>> enable_hw_control);
->>>>>
->>>>> Please note that we have support for hw patterns in the pattern 
->>>>> trigger.
->>>>> (see how drivers/leds/leds-sc27xx-bltc.c makes use of it for its
->>>>> breathing pattern).
->>>>> We have also support for hw blinking in timer trigger via blink_set 
->>>>> op.
->>>>>
->>>>> In addition to that there is brightness_hw_changed sysfs attribute
->>>>> with led_classdev_notify_brightness_hw_changed() LED API.
->>>>>
->>>>> Couldn't they be used in concert to support the specific features
->>>>> of the device in question?
->>>>
->>>> I believe main issue here is this:
->>>>
->>>> Hardware can automatically control the LED according to the charging
->>>> status, or it can be used as normal software-controlled LED.
->>>>
->>>> I believe we should use trigger to select if hardware controls it or
->>>> not (and then add driver-specific files to describe the
->>>> details). Other proposal is in the mail thread, too.
->>>
->>> Right, so there are really 2 orthogonal issues here:
->>>
->>> 1) With this hardware the LED is either turned on/off automatically
->>> by the PMIC based on charging state; or it is under user control.
->>>
->>> This is different from the led_classdev_notify_brightness_hw_changed
->>> case, where the hardware may update the state underneath the driver,
->>> but the driver can still always update the state itself. In this case
->>> if the LED is in hw-control mode then the driver cannot turn it on/off.
->>>
->>> Pavel suggested modeling this with a new "hardware' trigger, where
->>> setting the trigger to this trigger will enable the hw-controlled
->>> mode and setting any other trigger will switch thing to the 
->>> user-controlled
->>> mode.
+>> That still leaves the switching between user and hw-control modes,
+>> as discussed the hw-controlled mode could be modelled as a new "hardware"
+>> trigger, but then we cannot choose between on/blink/breathing when
+>> in hw-controlled mode. As Pavel mentioned, that would require some
+>> sort of composed trigger, where we have both the hardware and
+>> timer triggers active for example.
 >>
->> We already do have hw_pattern file exposed by pattern trigger.
->> It can be used to set hw breathing mode using some device specific
->> syntax semantics, documented in dedicated ABI documentation.
->> It was introduced for similar case, see
->> Documentation/ABI/testing/sysfs-class-led-driver-sc27xx.
+>> I think it might be easier to just allow turning on/off the hardware
+>> control mode through a special "hardware_control" sysfs attribute and
+>> then use the existing timer and pattern triggers for blinking / breathing.
 > 
-> Ah I see, yes that could be used, the pattern would just be a single
-> integer specifying the cycle time in milliseconds, as nothing
-> else is configurable.
+> Pattern trigger exposes pattern file by default and hw_pattern if
+> pattern_set/get ops are provided. Writing them enables software and
+> hardware pattern respectively.
 
-I depends on how the pattern looks like. If it is breathing then
-we'd need more than one value.
+This is not about software vs hardware pattern.
 
-> I think that should work fine, which means that we can use the timer and
-> pattern trigger support for the blinking and breathing modes.
-> 
-> That still leaves the switching between user and hw-control modes,
-> as discussed the hw-controlled mode could be modelled as a new "hardware"
-> trigger, but then we cannot choose between on/blink/breathing when
-> in hw-controlled mode. As Pavel mentioned, that would require some
-> sort of composed trigger, where we have both the hardware and
-> timer triggers active for example.
-> 
-> I think it might be easier to just allow turning on/off the hardware
-> control mode through a special "hardware_control" sysfs attribute and
-> then use the existing timer and pattern triggers for blinking / breathing.
+There are 2 *orthogonal*, separate problems/challenges with this LED controller:
 
-Pattern trigger exposes pattern file by default and hw_pattern if
-pattern_set/get ops are provided. Writing them enables software and
-hardware pattern respectively.
+1) It has hardware blinking and breathing, as discussed this can be
+controlled through the timer and pattern triggers, so this problem
+is solved.
 
--- 
-Best regards,
-Jacek Anaszewski
+2) It has 2 operating modes:
+
+a) Automatic/hardware controlled, in this mode the LED is turned
+off or on (where on can be continues on, blinking or breathing)
+by the hardware itself, when in this mode we / userspace is not
+in control of the LED
+
+b) Manual/user controlled mode, in this mode we / userspace can
+control of the LED.
+
+Currently there is no API in the ledclass to switch a LED from
+automatic controlled to user controlled and back, This is what
+the proposed hardware trigger was for, to switch to automatic
+mode. A problem with this is that we still want to be able
+to chose between continues on, blinking or breathing (when on),
+configure the max brightness, etc.
+
+Since there cannot be more then 1 trigger active, with the
+hardware trigger solution we cannot say we want automatic
+control (hardware trigger) and blinking when the automatic
+mode says the LED should be on (timer trigger) as that
+would mean having 2 triggers active with the hardware
+trigger solution.
+
+As such I think the switch between automatic and manual
+control would be best exported through a special "hardware_control"
+sysfs attribute and then use the existing timer and pattern
+triggers for blinking / breathing.
+
+Regards,
+
+Hans
