@@ -1,97 +1,72 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 1/8] leds: Add support for AXP20X CHGLED
-Date: Fri, 15 Feb 2019 19:32:40 +0100
-Message-ID: <20190215183239.GB3280@amd>
+Subject: Re: [PATCH v2 5/8] arm64: dts: allwinner: Enable AXP803 CHGLED for
+ Olimex boards
+Date: Fri, 15 Feb 2019 19:49:16 +0100
+Message-ID: <20190215184916.GA17897@amd>
 References: <20190215115013.11098-1-stefan@olimex.com>
- <20190215115013.11098-2-stefan@olimex.com>
- <20190215155732.nmtshldcjk2qyhx4@flea>
+ <20190215115013.11098-6-stefan@olimex.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ADZbWkCsHQ7r3kzd"
+        protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190215155732.nmtshldcjk2qyhx4@flea>
+In-Reply-To: <20190215115013.11098-6-stefan@olimex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Stefan Mavrodiev <stefan@olimex.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:X-POWERS MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>
+To: Stefan Mavrodiev <stefan@olimex.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Lee Jones <lee.jones@linaro.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:X-POWERS MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-leds@vger.kernel.org
 
 
---ADZbWkCsHQ7r3kzd
+--LQksG6bCIzRHxTLp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> On Fri, Feb 15, 2019 at 01:50:06PM +0200, Stefan Mavrodiev wrote:
-
-> > +static ssize_t control_store(struct device *dev, struct device_attribu=
-te *attr,
-> > +			     const char *buf, size_t size)
-> > +{
-> > +	struct led_classdev *cdev =3D dev_get_drvdata(dev);
-> > +	struct axp20x_led *priv =3D to_axp20x_led(cdev);
-> > +	unsigned long val;
-> > +	int ret;
-> > +
-> > +	ret =3D kstrtoul(buf, 0, &val);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	/**
-> > +	 * Supported values are:
-> > +	 *   - 0 : Manual control
-> > +	 *   - 1 : Charger control
-> > +	 */
-=2E..
-> > +static struct attribute *axp20x_led_attrs[] =3D {
-> > +	&dev_attr_control.attr,
-> > +	&dev_attr_mode.attr,
-> > +	NULL,
-> > +};
-> > +ATTRIBUTE_GROUPS(axp20x_led);
+On Fri 2019-02-15 13:50:10, Stefan Mavrodiev wrote:
+> Teres-I and A64-OLinuXino commes with populated LED connected
+> to AXP803. So to be used as battery indication, pass the LED control
+> to the charger itself in mode 0 ( FULL while charging, OFF no battery
+> or completed).
 >=20
-> I can't really say whether adding sysfs handles for this is the right
-> thing to do, but if it is you should document the interface.
-
-It is not. See "Add Intel Cherry Trail Whiskey Cove PMIC LEDs" thread
-in the last few days.
-
-> > +	if (!of_property_read_u8(np, "x-powers,charger-mode", &value)) {
-> > +		priv->ctrl =3D AXP20X_CHGLED_CTRL_CHARGER;
-> > +		priv->mode =3D (value < 2) ? value : 0;
-> > +	} else {
-> > +		priv->ctrl =3D AXP20X_CHGLED_CTRL_MANUAL;
-> > +	}
+> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts | 6 ++++++
+>  arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts   | 6 ++++++
+>  2 files changed, 12 insertions(+)
 >=20
-> I'm not sure we want to make this a property of the device
-> tree. Changing the device tree isn't an option for some users, so we
-> need to make sure we can change it even if we can't change the device
-> tree.
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arc=
+h/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+> index f7a4bccaa5d4..7d6930319fba 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+> @@ -177,6 +177,12 @@
+> =20
+>  #include "axp803.dtsi"
+> =20
+> +&axp_led {
+> +	label =3D "a64-olinuxino:yellow:chgled";
 
-We want this to be configurable at run time. It can get default from
-the device tree.
+There's little chance userspace will recognize this led.
 
-If we go for the "hardware" trigger, you'll get it for free.
+Can you make it "platform:yellow:charging" and fix it for other
+boards, too?
 
-Best regards,
-								Pavel
+									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---ADZbWkCsHQ7r3kzd
+--LQksG6bCIzRHxTLp
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlxnBccACgkQMOfwapXb+vKlTgCgwIfqaui3iA1stvAe0/CTXIh8
-KCIAn1R8vkC9KvroWOwgGcFWmxzzS7wT
-=5x+c
+iEYEARECAAYFAlxnCawACgkQMOfwapXb+vLEAwCfUcSllFtWon2qQkW9JcK3hfq4
+aMsAoKwCglaZGvwLk+NVMgYjCe18FLZf
+=ftHA
 -----END PGP SIGNATURE-----
 
---ADZbWkCsHQ7r3kzd--
+--LQksG6bCIzRHxTLp--
