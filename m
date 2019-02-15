@@ -1,72 +1,135 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 5/8] arm64: dts: allwinner: Enable AXP803 CHGLED for
- Olimex boards
-Date: Fri, 15 Feb 2019 19:49:16 +0100
-Message-ID: <20190215184916.GA17897@amd>
-References: <20190215115013.11098-1-stefan@olimex.com>
- <20190215115013.11098-6-stefan@olimex.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+Date: Fri, 15 Feb 2019 22:41:31 +0100
+Message-ID: <6beed61c-1fc6-6525-e873-a8978f5fbffb@gmail.com>
+References: <20190212205901.13037-1-jekhor@gmail.com>
+ <20190212205901.13037-2-jekhor@gmail.com>
+ <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com> <20190213230731.GA8557@amd>
+ <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
+ <20190213233806.GA11867@amd>
+ <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com> <20190214111423.GE6132@amd>
+ <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
+ <20190214122840.GA21860@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190215115013.11098-6-stefan@olimex.com>
+In-Reply-To: <20190214122840.GA21860@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Mavrodiev <stefan@olimex.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Lee Jones <lee.jones@linaro.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:X-POWERS MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>
+To: Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+Hi Pavel,
 
---LQksG6bCIzRHxTLp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2/14/19 1:28 PM, Pavel Machek wrote:
+> Hi!
+> 
+> Jacek, could we get you to comment here? I'd prefer "hardware" trigger...
 
-On Fri 2019-02-15 13:50:10, Stefan Mavrodiev wrote:
-> Teres-I and A64-OLinuXino commes with populated LED connected
-> to AXP803. So to be used as battery indication, pass the LED control
-> to the charger itself in mode 0 ( FULL while charging, OFF no battery
-> or completed).
->=20
-> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
-> ---
->  arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts | 6 ++++++
->  arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts   | 6 ++++++
->  2 files changed, 12 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arc=
-h/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-> index f7a4bccaa5d4..7d6930319fba 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-> @@ -177,6 +177,12 @@
-> =20
->  #include "axp803.dtsi"
-> =20
-> +&axp_led {
-> +	label =3D "a64-olinuxino:yellow:chgled";
+What prevents use from using pattern trigger with its hw_pattern file?
 
-There's little chance userspace will recognize this led.
+Do you remember drivers/leds/leds-sc27xx-bltc.c and its breathing mode,
+for which pattern trigger was introduced?
 
-Can you make it "platform:yellow:charging" and fix it for other
-boards, too?
+>>>> That assumes that breathing is the default setting on all hardware
+>>>> and again I don't see why not to export this functionality to
+>>>
+>>> Save the status on boot, then restore it on rmmod/reboot/poweroff? :-).
+>>
+>> Which works until the system freezes one time. I believe that
+>> if we are going to do a LED driver for the charging LED on these
+>> devices, we MUST offer a way to put it back in its original
+>> state, even if the state is foo-barred at bootup.
+>>
+>>>> userspace. Just because something does not fit in the existing
+>>>> API is IMHO not a good reason to not expose it to userspace.
+>>>>
+>>>> I suggest that we deal with this special case by adding 3 custom
+>>>> sysfs attributes:
+>>>>
+>>>> 1) "mode" which when read, prints, e.g. :
+>>>> manual [on-when-charging]
+>>>
+>>> While this allows _user on console_ to control everything using echo,
+>>> it is not suitable for applications trying to control LEDs.
+>>>
+>>> As there's nothing special about the case here, I believe we should
+>>> have generic solution here.
+>>>
+>>> My preffered solution would be "hardware" trigger that leaves the LED
+>>> in hardware control.
+>>
+>> As you explained in the parts which I snipped, there are many
+>> devices which have a similar choice for a LED being under hw or
+>> user control. I can see how this looks like a trigger and how we
+>> could use the trigger API for this.
+>>
+>> I believe though, that if we implement a "virtual" (for lack of
+>> a better word) trigger for this, that this should be done in the
+>> LED core. I can envision this working like this:
+> 
+> Agreed about the LED core.
+> 
+>> 1) Add a:
+>>
+>> hw_control_set(struct led_classdev *led_cdev, bool enable_hw_control);
+>>
+>> Callback to struct led_classdev which when implemented by a driver
+>> like the current PMIC LED controller would do what it says.
+>>
+>> 2) Have the core create and register a virtual hardware trigger the
+>> first time a LED cdev which has this callback gets registered.
+>>
+>> When configured as the trigger for this LED device this trigger calls
+>> hw_control_set(cdev, true) and when unregistered calls
+>> hw_control_set(cdev, false)
+>>
+>> Taking a quick look at the trigger code, a problem with this is
+>> that normally any trigger can work with any led device, so this
+>> "hardware" trigger will show up in the list of possible
+>> triggers for each device.
+>>
+>> This problem can be solved by making the activate method for the
+>> hardware trigger check the classdev has a hw_control_set callback
+>> and if not return -EINVAL, or maybe -ENXIO but still this is somewhat
+>> inconsistent with other triggers, which AFAIK work with any LED.
+> 
+> I guess other option is to modify core so that it does not list
+> "hardware" trigger for leds that don't support it.
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Pattern trigger will not show hw_pattern file if pattern_set/get ops
+are not provided.
 
---LQksG6bCIzRHxTLp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+>>> Alternatively I could imagine "hardware" sysfs attribute, containing
+>>> 0/1, with 0==software controlled, 1==hardware controlled.
+>>
+>> Hmm, maybe call it "hardware_controlled" instead ? Otherwise this
+>> would work for me and I would personally prefer this solution. This
+>> could even be done in the LED core using the hw_control_set callback
+>> I proposed, to make sure it is handled consistently between devices.
+> 
+> This should be in LED core, yes.
+> 
+>>> The rest of attributes would have to be Cove-specific, yes (but still
+>>> should fit with the rest of LED subsystem).
+>>
+>> Right, I see that the triggers attribute already uses the fmt where
+>> on "cat" all options are listed and the current active one has [] around it,
+>> so I think the pattern and frequency attributes I proposed should work
+>> well, although thinking more about this I believe the freq. attribute should
+>> be called pattern_freq to make clear it applies to blinking / breathing
+>> set through the pattern attribute.
+> 
+> Take a look at blinking trigger. It can already do hardware
+> acceleration, but uses different format than what you proposed.
+> 
+> Best regards,
+> 									Pavel
+> 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlxnCawACgkQMOfwapXb+vLEAwCfUcSllFtWon2qQkW9JcK3hfq4
-aMsAoKwCglaZGvwLk+NVMgYjCe18FLZf
-=ftHA
------END PGP SIGNATURE-----
-
---LQksG6bCIzRHxTLp--
+-- 
+Best regards,
+Jacek Anaszewski
