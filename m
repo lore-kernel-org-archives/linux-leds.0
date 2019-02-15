@@ -1,7 +1,7 @@
 From: Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH v2 6/8] arm: dts: axpxx: add charge led node
-Date: Fri, 15 Feb 2019 13:50:11 +0200
-Message-ID: <20190215115013.11098-7-stefan@olimex.com>
+Subject: [PATCH v2 5/8] arm64: dts: allwinner: Enable AXP803 CHGLED for Olimex boards
+Date: Fri, 15 Feb 2019 13:50:10 +0200
+Message-ID: <20190215115013.11098-6-stefan@olimex.com>
 References: <20190215115013.11098-1-stefan@olimex.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190215115013.11098-1-stefan@olimex.com>
@@ -13,63 +13,50 @@ To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
 Cc: Stefan Mavrodiev <stefan@olimex.com>
 List-Id: linux-leds@vger.kernel.org
 
-Add dt node for axp20x-led driver controlling CHGLED.
-Default status is disabled, since it may be not used.
+Teres-I and A64-OLinuXino commes with populated LED connected
+to AXP803. So to be used as battery indication, pass the LED control
+to the charger itself in mode 0 ( FULL while charging, OFF no battery
+or completed).
 
 Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
 ---
- arch/arm/boot/dts/axp209.dtsi | 5 +++++
- arch/arm/boot/dts/axp22x.dtsi | 5 +++++
- arch/arm/boot/dts/axp81x.dtsi | 5 +++++
- 3 files changed, 15 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts | 6 ++++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts   | 6 ++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/axp209.dtsi b/arch/arm/boot/dts/axp209.dtsi
-index 0d9ff12bdf28..f972b6f3ecd0 100644
---- a/arch/arm/boot/dts/axp209.dtsi
-+++ b/arch/arm/boot/dts/axp209.dtsi
-@@ -69,6 +69,11 @@
- 		#gpio-cells = <2>;
- 	};
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+index f7a4bccaa5d4..7d6930319fba 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+@@ -177,6 +177,12 @@
  
-+	axp_led: led {
-+		compatible = "x-powers,axp20x-led";
-+		status = "disabled";
-+	};
-+
- 	battery_power_supply: battery-power-supply {
- 		compatible = "x-powers,axp209-battery-power-supply";
- 		status = "disabled";
-diff --git a/arch/arm/boot/dts/axp22x.dtsi b/arch/arm/boot/dts/axp22x.dtsi
-index 65a07a67aca9..92a0b64252b1 100644
---- a/arch/arm/boot/dts/axp22x.dtsi
-+++ b/arch/arm/boot/dts/axp22x.dtsi
-@@ -62,6 +62,11 @@
- 		#io-channel-cells = <1>;
- 	};
+ #include "axp803.dtsi"
  
-+	axp_led: led {
-+		compatible = "x-powers,axp20x-led";
-+		status = "disabled";
-+	};
++&axp_led {
++	label = "a64-olinuxino:yellow:chgled";
++	status = "okay";
++	x-powers,charger-mode = <0>;
++};
 +
- 	battery_power_supply: battery-power-supply {
- 		compatible = "x-powers,axp221-battery-power-supply";
- 		status = "disabled";
-diff --git a/arch/arm/boot/dts/axp81x.dtsi b/arch/arm/boot/dts/axp81x.dtsi
-index bd83962d3627..22e243cc40d5 100644
---- a/arch/arm/boot/dts/axp81x.dtsi
-+++ b/arch/arm/boot/dts/axp81x.dtsi
-@@ -74,6 +74,11 @@
- 		};
- 	};
+ &reg_aldo1 {
+ 	regulator-always-on;
+ 	regulator-min-microvolt = <2800000>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+index c455b24dd079..cdffdd4e4561 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+@@ -145,6 +145,12 @@
  
-+	axp_led: led {
-+		compatible = "x-powers,axp20x-led";
-+		status = "disabled";
-+	};
+ #include "axp803.dtsi"
+ 
++&axp_led {
++	label = "teres-i:yellow:chgled";
++	status = "okay";
++	x-powers,charger-mode = <0>;
++};
 +
- 	battery_power_supply: battery-power-supply {
- 		compatible = "x-powers,axp813-battery-power-supply";
- 		status = "disabled";
+ &reg_aldo1 {
+ 	regulator-always-on;
+ 	regulator-min-microvolt = <2800000>;
 -- 
 2.17.1
