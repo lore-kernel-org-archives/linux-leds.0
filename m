@@ -1,7 +1,7 @@
 From: Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH v2 4/8] arm64: dts: allwinner: axp803: add charge led node
-Date: Fri, 15 Feb 2019 13:50:09 +0200
-Message-ID: <20190215115013.11098-5-stefan@olimex.com>
+Subject: [PATCH v2 3/8] dt-bindings: leds: Add binding for axp20x-led device driver
+Date: Fri, 15 Feb 2019 13:50:08 +0200
+Message-ID: <20190215115013.11098-4-stefan@olimex.com>
 References: <20190215115013.11098-1-stefan@olimex.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190215115013.11098-1-stefan@olimex.com>
@@ -13,29 +13,94 @@ To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
 Cc: Stefan Mavrodiev <stefan@olimex.com>
 List-Id: linux-leds@vger.kernel.org
 
-Add dt node for axp20x-led driver controlling CHGLED.
-Default status is disabled, since it may be not used.
+This adds the devicetree bindings for charge led indicator found
+on most of X-Powers AXP20X PMICs.
 
 Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
 ---
- arch/arm64/boot/dts/allwinner/axp803.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../devicetree/bindings/leds/leds-axp20x.txt  | 74 +++++++++++++++++++
+ 1 file changed, 74 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-axp20x.txt
 
-diff --git a/arch/arm64/boot/dts/allwinner/axp803.dtsi b/arch/arm64/boot/dts/allwinner/axp803.dtsi
-index c3a618e1279a..af4898602b34 100644
---- a/arch/arm64/boot/dts/allwinner/axp803.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/axp803.dtsi
-@@ -76,6 +76,11 @@
- 		};
- 	};
- 
-+	axp_led: led {
-+		compatible = "x-powers,axp20x-led";
-+		status = "disabled";
+diff --git a/Documentation/devicetree/bindings/leds/leds-axp20x.txt b/Documentation/devicetree/bindings/leds/leds-axp20x.txt
+new file mode 100644
+index 000000000000..5a83ad06796d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-axp20x.txt
+@@ -0,0 +1,74 @@
++Device Tree Bindings for LED support on X-Powers PMIC
++
++Most of the X-Powers PMICs have integrated battery charger with LED indicator.
++The output is open-drain, so the state is either high-Z or output-low. The
++driver is a subnode of AXP20X MFD driver, since it uses shared bus with all
++other cells.
++The LED can be controlled either manually or automatically. Then in automatic
++(controlled by the charger) there are two indication modes:
++
++Mode-A
++======
++- output-low:		Charging
++- high-Z		Not charging
++- 1Hz flashing:		Abnormal alarm
++- 4Hz flashing		Overvoltage alarm
++
++Mode-B
++======
++- output-low:		Battery full
++- high-Z		Not charging
++- 1Hz flashing:		Charging
++- 4Hz flashing		Overvoltage or abnormal alarm
++
++The control and the mode can be changed from sysfs.
++
++For AXP20X MFD bindings see:
++Documentation/devicetree/bindings/mfd/axp20x.txt
++
++Required properties:
++- compatible : Must be "x-powers,axp20x-led"
++
++Supported common LED properties, see ./common.txt for more informationn
++- label : See Documentation/devicetree/bindings/leds/common.txt
++- linux,default-trigger : See Documentation/devicetree/bindings/leds/common.txt
++- default-state: See Documentation/devicetree/bindings/leds/common.txt
++
++Optional properties:
++- x-powers,charger-mode: 0 for Mode-A, 1 for Mode-B
++			 If omitted, then the control is set to manual mode.
++			 On invalid value, Mode-A is used.
++
++
++Example:
++
++	axp803: pmic@3a3 {
++		compatible = "x-powers,axp803";
++
++		...
++
++		led@0 {
++			compatible = "x-powers,axp20x-led";
++			status = "okay";
++
++			label = "axp20x:yellow:chgled";
++			linux,default-trigger = "timer";
++			default-state = "on";
++		};
 +	};
 +
- 	battery_power_supply: battery-power-supply {
- 		compatible = "x-powers,axp803-battery-power-supply",
- 			     "x-powers,axp813-battery-power-supply";
++or
++
++	axp803: pmic@3a3 {
++		compatible = "x-powers,axp803";
++
++		...
++
++		led@0 {
++			compatible = "x-powers,axp20x-led";
++			status = "okay";
++
++			label = "axp20x:yellow:chgled";
++			x-powers,charger-mode = <1>;
++		};
++	};
 -- 
 2.17.1
