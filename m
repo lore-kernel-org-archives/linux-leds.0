@@ -1,8 +1,8 @@
-From: Hans de Goede <hdegoede@redhat.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
  LEDs
-Date: Sat, 16 Feb 2019 21:55:42 +0100
-Message-ID: <7be63b6b-8d8d-90b8-fb17-d219b87a101f@redhat.com>
+Date: Sat, 16 Feb 2019 22:54:57 +0100
+Message-ID: <2d5c6f50-c41f-655c-ab03-0c66aa911a27@gmail.com>
 References: <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
  <2b6faaa5-b21e-a512-de7d-ca21be5045fc@gmail.com> <20190214230307.GA17358@amd>
  <2a5e2002-e5f1-6da3-8a43-317801b69657@redhat.com>
@@ -20,11 +20,9 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190216193727.GA14305@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>
+Cc: Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
-
-Hi,
 
 On 2/16/19 8:37 PM, Pavel Machek wrote:
 > Hi!
@@ -112,19 +110,11 @@ On 2/16/19 8:37 PM, Pavel Machek wrote:
 > describe the pattern LED should do, not whether it reacts to charging
 > or not.
 
-Then we are back to step 1 of the discussion, that we need another
-mechanism outside of the trigger to select if the LED shows the configured
-pattern always, or only when the charger is on.
+This is hardware specific and is supposed to have dedicated ABI
+documentation. There's no reason to introduce new mechanisms when
+existing ones fit. It will still describe a pattern but activated
+on some condition.
 
-These really are 2 orthogonal settings, there is a pattern which can
-be set and the LED can either show that pattern always; or only when
-charging the battery. Note that the same pattern is used in both cases.
-
-This is why I previously suggested having a custom sysfs hardware_control
-attribute which selects between the "only show pattern when charging"
-modes ("hardware_control=1" or "always show the pattern mode"
-("hardware_control=0").
-
-Regards,
-
-Hans
+-- 
+Best regards,
+Jacek Anaszewski
