@@ -1,73 +1,129 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Yauhen Kharuzhy <jekhor@gmail.com>
 Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
  LEDs
-Date: Sat, 16 Feb 2019 00:26:00 +0100
-Message-ID: <20190215232600.GA21591@amd>
-References: <20190212205901.13037-2-jekhor@gmail.com>
- <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
- <20190213230731.GA8557@amd>
+Date: Sat, 16 Feb 2019 14:26:11 +0300
+Message-ID: <20190216112611.GA11750@jeknote.loshitsa1.net>
+References: <20190213230731.GA8557@amd>
  <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
  <20190213233806.GA11867@amd>
  <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
  <20190214111423.GE6132@amd>
  <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
- <20190214122840.GA21860@amd>
- <6beed61c-1fc6-6525-e873-a8978f5fbffb@gmail.com>
+ <2b6faaa5-b21e-a512-de7d-ca21be5045fc@gmail.com>
+ <20190214230307.GA17358@amd>
+ <20190215072709.GD30250@jeknote.loshitsa1.net>
+ <a79807bb-7826-6f2c-0738-7bddcc66cc5e@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <6beed61c-1fc6-6525-e873-a8978f5fbffb@gmail.com>
+In-Reply-To: <a79807bb-7826-6f2c-0738-7bddcc66cc5e@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Cc: Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+On Fri, Feb 15, 2019 at 10:43:17PM +0100, Jacek Anaszewski wrote:
+> Hi Yauhen,
+> 
+> On 2/15/19 8:27 AM, Yauhen Kharuzhy wrote:
+> > On Fri, Feb 15, 2019 at 12:03:07AM +0100, Pavel Machek wrote:
+> > > Hi!
+> > > 
+> > > > > > > I suggest that we deal with this special case by adding 3 custom
+> > > > > > > sysfs attributes:
+> > > > > > > 
+> > > > > > > 1) "mode" which when read, prints, e.g. :
+> > > > > > > manual [on-when-charging]
+> > > > > > 
+> > > > > > While this allows _user on console_ to control everything using echo,
+> > > > > > it is not suitable for applications trying to control LEDs.
+> > > > > > 
+> > > > > > As there's nothing special about the case here, I believe we should
+> > > > > > have generic solution here.
+> > > > > > 
+> > > > > > My preffered solution would be "hardware" trigger that leaves the LED
+> > > > > > in hardware control.
+> > > > > 
+> > > > > As you explained in the parts which I snipped, there are many
+> > > > > devices which have a similar choice for a LED being under hw or
+> > > > > user control. I can see how this looks like a trigger and how we
+> > > > > could use the trigger API for this.
+> > > > > 
+> > > > > I believe though, that if we implement a "virtual" (for lack of
+> > > > > a better word) trigger for this, that this should be done in the
+> > > > > LED core. I can envision this working like this:
+> > > > > 
+> > > > > 1) Add a:
+> > > > > 
+> > > > > hw_control_set(struct led_classdev *led_cdev, bool enable_hw_control);
+> > > > 
+> > > > Please note that we have support for hw patterns in the pattern trigger.
+> > > > (see how drivers/leds/leds-sc27xx-bltc.c makes use of it for its
+> > > > breathing pattern).
+> > > > We have also support for hw blinking in timer trigger via blink_set op.
+> > > > 
+> > > > In addition to that there is brightness_hw_changed sysfs attribute
+> > > > with led_classdev_notify_brightness_hw_changed() LED API.
+> > > > 
+> > > > Couldn't they be used in concert to support the specific features
+> > > > of the device in question?
+> > > 
+> > > I believe main issue here is this:
+> > > 
+> > > Hardware can automatically control the LED according to the charging
+> > > status, or it can be used as normal software-controlled LED.
+> > > 
+> > > I believe we should use trigger to select if hardware controls it or
+> > > not (and then add driver-specific files to describe the
+> > > details). Other proposal is in the mail thread, too.
+> > 
+> > But there are two kinds of 'hardware control' here in discussion:
+> > 1:
+> > 	a) PMIC switching LED off/on/breathing/blinking reflected the charging
+> > 	state (charger is controlled by PMIC entirely without of
+> > 	software intervention) – 'hw controlled' mode
+> 
+> Can we detect when charging is activated?
 
---LZvS9be/3tNcYl/X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Depends on PMIC and charger configuration. Seems there are no common
+way working for all configurations exists.
 
-On Fri 2019-02-15 22:41:31, Jacek Anaszewski wrote:
-> Hi Pavel,
->=20
-> On 2/14/19 1:28 PM, Pavel Machek wrote:
-> >Hi!
-> >
-> >Jacek, could we get you to comment here? I'd prefer "hardware" trigger...
->=20
-> What prevents use from using pattern trigger with its hw_pattern file?
->=20
-> Do you remember drivers/leds/leds-sc27xx-bltc.c and its breathing mode,
-> for which pattern trigger was introduced?
+> 
+> > 	b) Software controls when LED is on/off/breathing/blinking but
+> > 	patterns are generated by PMIC – 'sw controlled' mode.
+> > 
+> > 2:
+> > 	a) parameters of lighting (continuous/blinking/breathing) are
+> > 	set in the PMIC and the PMIC generates patterns
+> > 	b) blinking/breathing patterns are generated by the software
+> > 	entirely.
+> > 
+> > It seems that we sometimes confuse this two kinds of hw control definitions
+> > in the discussion.
+> > 
+> > 
+> > The simple use case question: with this hardware and existing LED class
+> > API, what user/app should to do to make LED breathing with hw-generated
+> > pattern?
+> > 
+> > As I see, user should activate 'pattern' trigger and write to its hw_pattern attribute...
+> > hm... big pattern which describes every step of breathing? Some
+> > simplified pattern which should be interpreted as 'enable the breathing
+> > an set its frequency' by driver? Which level of simplification will be
+> > suitable? Which criteria of pattern rejection should be?
+> 
+> Please see my reply to Hans. We need some simplified device specific
+> syntax of hw_pattern for this device, similarly like in:
+> Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
 
-Yes, we can do that.
+Thanks, this approach seems easy to implement.
 
-But forget heartbeat and blinking now.
+> 
+> -- 
+> Best regards,
+> Jacek Anaszewski
 
-Problem I'm getting at is that this LED can either be software
-controlled (showing for example disk activity) or it can show whether
-the battery is charging (autonomously, in hardware, will work even
-after kernel crash).
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---LZvS9be/3tNcYl/X
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlxnSogACgkQMOfwapXb+vIFEwCghiDqFaTxqIxtznmzoZHQnXrB
-J2AAoLuDQcYHggxlTOlNt/WTMKUR/1MI
-=Sc/n
------END PGP SIGNATURE-----
-
---LZvS9be/3tNcYl/X--
+-- 
+Yauhen Kharuzhy
