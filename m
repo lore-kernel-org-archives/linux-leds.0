@@ -1,148 +1,30 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
- LEDs
-Date: Mon, 18 Feb 2019 12:12:03 +0100
-Message-ID: <98896f2f-1752-d52a-f755-3daa3b29a83f@redhat.com>
-References: <3d5407a7-9458-f071-a1d5-511b09678e20@gmail.com>
- <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
- <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
- <b15fd048-8206-4057-a354-07dc14ca15e3@redhat.com>
- <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
- <af5bec7b-0da1-ee19-cdf4-0240f56221ad@redhat.com>
- <20190216193727.GA14305@amd>
- <7be63b6b-8d8d-90b8-fb17-d219b87a101f@redhat.com>
- <20190217000851.GA29803@amd>
- <81cc42f5-1f3d-c7f2-eb13-c2f8c4f9bfb4@redhat.com>
- <20190217174549.GA13301@amd>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v6 01/11] dt-bindings: mfd: add DT bindings for max77650
+Date: Mon, 18 Feb 2019 10:35:07 -0600
+Message-ID: <20190218163507.GA16551@bogus>
+References: <20190214140022.19201-1-brgl@bgdev.pl>
+ <20190214140022.19201-2-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190217174549.GA13301@amd>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190214140022.19201-2-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
-
-On 17-02-19 18:45, Pavel Machek wrote:
-> Hi!
+On Thu, 14 Feb 2019 15:00:12 +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
->>> I see... and yes, that would be the easiest solution.
->>>
->>> But somehow I see "this LED is controlled by charging state" as
->>> primary and "it shows pulses instead of staying on" as secondary
->>> eye-candy.
->>>
->>> This week there was another driver for charger LED.. but that one does
->>> not do pulses. Ideally, we'd like consistent interface to the
->>> userland.
->>>
->>> (To make it complex, the other driver supports things like:
->>>    LED solid on -- fully charged
->>>    LED blinking slowly -- charging
->>>    LED blinking fast -- charge error
->>>    LED off -- not charging).
->>
->> Something like that could be supported with my original hw_pattern
->> proposal where we simply encode all of this in the hw-pattern file:
->>
->> tupple0: charging blinking_on_time
->> tupple1: charging blinking_off_time
->> tupple2: charging breathing_time
->> tupple3: manual blinking_on_time
->> tupple4: manual blinking_off_time
->> tupple5: manual breathing_time
+> Add a DT binding document for max77650 ultra-low power PMIC. This
+> describes the core mfd device and the GPIO module.
 > 
-> So the userland would need to know "I'm on yoga, so 3rd tupple sets up
-> breathing when charging"?
-
-Yes this is for the hw_pattern file not the regular pattern file and if I've
-understood things correctly then the hw_pattern file is often (always?)
-specific to the LED controller model. See e.g. :
-Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-
-Also userland is not really expected to touch this, the user himself
-could touch it if he/she wants to customize things.
-
->> So for this chip you mention, we do not need the breathing time (no breathing support),
->> so we would get the following tupples:
->>
->> tupple0: not charging blinking_on_time
->> tupple1: not charging blinking_off_time
->> tupple2: slow charging blinking_on_time
->> tupple3: slow charging blinking_off_time
->> tupple4: fast charging blinking_on_time
->> tupple5: fast charging blinking_off_time
->> tupple6: charging error blinking_on_time
->> tupple7: charging error blinking_off_time
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  .../devicetree/bindings/mfd/max77650.txt      | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
 > 
-> Patterns and their meanings are fixed (or almost) on that driver, so
-> fortunately that will not be neccessary.
 
-Ok, so back the Whiskey Cove PMIC LED controller, I think
-there was some agreement to add a hw_control sysfs
-attribute and simplify the hw_pattern ABI to:
-
-tupple0: blinking_on_time
-tupple1: blinking_off_time
-tupple2: breathing_time
-
-You suggested adding support for a hw_control
-sysfs attribute to the core, activated by a flag.
-
-I assume that there will then be a callback into the
-driver when that file gets written. The semantics for
-the Whiskey Cove PMIC LED controller are clear, but
-how should the patch adding support for this to the LED core
-describe the new hw_control sysfs attribute in:
-Documentation/ABI/testing/sysfs-class-led ?
-
-Or do you just want to have the basic handling in the
-core and then describe the semantics in a per LED controller
-way like how we do for hw_pattern, so for the
-Whiskey Cove PMIC LED controller we would add a:
-Documentation/ABI/testing/sysfs-class-led-cht-wc
-file, which we need to do anyways for the hw_pattern file?
-
-<snip stuff about N900>
-
-Regards,
-
-Hans
-
-
-
-
-> 
->> Where by solid on/off can be done by setting one
->> of the blinking times to 0.
->>
->> Having hw_pattern ABIs like this where some of
->> the tupples only activate on certain conditions
->> might be better then a hardware_control sysfs
->> file as it offers more flexibility.
-> 
-> Agreed about flexibility, but I don't think it does enough to provide
-> hardware abstraction. It might be too much flexibility.
-> 
-> Also it only works with hw controlled LEDs.
-> 
-> With RGB LED multiple patterns per LED make a lot of sense (as there's
-> typically just one led.
-> 
-> For example on N900, we have
-> 
-> green: fully charged.
-> yellow pulsing: charging.
-> solid yellow: hardware feature, emergency charging.
-> white pulsing: happy phone, no events
-> blue fast pulses: message waiting
-> 
-> On N900, I'm handling that in userspace, but...
-> 
-> Best regards,
-> 									Pavel
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
