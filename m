@@ -1,149 +1,80 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
- LEDs
-Date: Mon, 18 Feb 2019 22:59:07 +0100
-Message-ID: <d16af997-f872-98c1-7b3a-caf77dac4059@gmail.com>
-References: <3d5407a7-9458-f071-a1d5-511b09678e20@gmail.com>
- <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
- <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
- <b15fd048-8206-4057-a354-07dc14ca15e3@redhat.com>
- <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
- <af5bec7b-0da1-ee19-cdf4-0240f56221ad@redhat.com>
- <20190216193727.GA14305@amd>
- <7be63b6b-8d8d-90b8-fb17-d219b87a101f@redhat.com>
- <20190217000851.GA29803@amd>
- <81cc42f5-1f3d-c7f2-eb13-c2f8c4f9bfb4@redhat.com>
- <20190217174549.GA13301@amd>
- <98896f2f-1752-d52a-f755-3daa3b29a83f@redhat.com>
+From: Stefan Mavrodiev <stefan@olimex.com>
+Subject: Re: [PATCH v2 1/8] leds: Add support for AXP20X CHGLED
+Date: Tue, 19 Feb 2019 09:42:30 +0200
+Message-ID: <5fdac512-947d-fd46-d953-22d6fc837423@olimex.com>
+References: <20190215115013.11098-1-stefan@olimex.com>
+ <20190215115013.11098-2-stefan@olimex.com>
+ <20190215155732.nmtshldcjk2qyhx4@flea> <20190215183239.GB3280@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <98896f2f-1752-d52a-f755-3daa3b29a83f@redhat.com>
+In-Reply-To: <20190215183239.GB3280@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>
-Cc: Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>, Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Stefan Mavrodiev <stefan@olimex.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:X-POWERS MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Hans,
 
-On 2/18/19 12:12 PM, Hans de Goede wrote:
-> Hi,
-> 
-> On 17-02-19 18:45, Pavel Machek wrote:
->> Hi!
->>
->>>> I see... and yes, that would be the easiest solution.
->>>>
->>>> But somehow I see "this LED is controlled by charging state" as
->>>> primary and "it shows pulses instead of staying on" as secondary
->>>> eye-candy.
->>>>
->>>> This week there was another driver for charger LED.. but that one does
->>>> not do pulses. Ideally, we'd like consistent interface to the
->>>> userland.
->>>>
->>>> (To make it complex, the other driver supports things like:
->>>>    LED solid on -- fully charged
->>>>    LED blinking slowly -- charging
->>>>    LED blinking fast -- charge error
->>>>    LED off -- not charging).
->>>
->>> Something like that could be supported with my original hw_pattern
->>> proposal where we simply encode all of this in the hw-pattern file:
->>>
->>> tupple0: charging blinking_on_time
->>> tupple1: charging blinking_off_time
->>> tupple2: charging breathing_time
->>> tupple3: manual blinking_on_time
->>> tupple4: manual blinking_off_time
->>> tupple5: manual breathing_time
->>
->> So the userland would need to know "I'm on yoga, so 3rd tupple sets up
->> breathing when charging"?
-> 
-> Yes this is for the hw_pattern file not the regular pattern file and if 
-> I've
-> understood things correctly then the hw_pattern file is often (always?)
-> specific to the LED controller model. See e.g. :
-> Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+On 2/15/19 8:32 PM, Pavel Machek wrote:
+> Hi!
+>
+>> On Fri, Feb 15, 2019 at 01:50:06PM +0200, Stefan Mavrodiev wrote:
+>>> +static ssize_t control_store(struct device *dev, struct device_attribute *attr,
+>>> +			     const char *buf, size_t size)
+>>> +{
+>>> +	struct led_classdev *cdev = dev_get_drvdata(dev);
+>>> +	struct axp20x_led *priv = to_axp20x_led(cdev);
+>>> +	unsigned long val;
+>>> +	int ret;
+>>> +
+>>> +	ret = kstrtoul(buf, 0, &val);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	/**
+>>> +	 * Supported values are:
+>>> +	 *   - 0 : Manual control
+>>> +	 *   - 1 : Charger control
+>>> +	 */
+> ...
+>>> +static struct attribute *axp20x_led_attrs[] = {
+>>> +	&dev_attr_control.attr,
+>>> +	&dev_attr_mode.attr,
+>>> +	NULL,
+>>> +};
+>>> +ATTRIBUTE_GROUPS(axp20x_led);
+>> I can't really say whether adding sysfs handles for this is the right
+>> thing to do, but if it is you should document the interface.
+> It is not. See "Add Intel Cherry Trail Whiskey Cove PMIC LEDs" thread
+> in the last few days.
 
-This is so far the only user of hw_pattern. Whereas as in case of the
-mentioned driver, it allows to simplify the pattern description which
-would have to be otherwise quite complex in case of breathing, still the
-sequence of tuples needs to adhere to the common pattern syntax.
+What I understood is that there will be changes in the LED core, exporting
+a new sysfs entry "hw_control". Then I should set HW_CONTROL flag for the
+device and add hw_control_get/set callback functions. And this can happen
+when the LED core is updated. Right?
 
-> Also userland is not really expected to touch this, the user himself
-> could touch it if he/she wants to customize things.
-> 
->>> So for this chip you mention, we do not need the breathing time (no 
->>> breathing support),
->>> so we would get the following tupples:
->>>
->>> tupple0: not charging blinking_on_time
->>> tupple1: not charging blinking_off_time
->>> tupple2: slow charging blinking_on_time
->>> tupple3: slow charging blinking_off_time
->>> tupple4: fast charging blinking_on_time
->>> tupple5: fast charging blinking_off_time
->>> tupple6: charging error blinking_on_time
->>> tupple7: charging error blinking_off_time
->>
->> Patterns and their meanings are fixed (or almost) on that driver, so
->> fortunately that will not be neccessary.
-> 
-> Ok, so back the Whiskey Cove PMIC LED controller, I think
-> there was some agreement to add a hw_control sysfs
-> attribute and simplify the hw_pattern ABI to:
-> 
-> tupple0: blinking_on_time
-> tupple1: blinking_off_time
-> tupple2: breathing_time
+However I didn't understand how (in my case) hardware controlled pattern
+will be selected?
 
-Pattern format is defined to:
-
-brightness_1 duration_1 brightness_2 duration_2 brightness_3 duration_3
-and so on...
-
- From what I understood blinking and breathing are different
-patterns in case of discussed device, so they would have to be
-initialized differently.
-
-Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
-shows how to approach both cases, i.e. for instant change
-of brightness we need intervening tuple with duration time = 0.
-
-Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-shows how hw breathing was approached in that case.
-
-> You suggested adding support for a hw_control
-> sysfs attribute to the core, activated by a flag.
-> 
-> I assume that there will then be a callback into the
-
-Yes, e.g. hw_control_set{_get}.
-
-> driver when that file gets written. The semantics for
-> the Whiskey Cove PMIC LED controller are clear, but
-> how should the patch adding support for this to the LED core
-> describe the new hw_control sysfs attribute in:
-> Documentation/ABI/testing/sysfs-class-led ?
-
-Yes, since it will belong to LED core.
-
-> Or do you just want to have the basic handling in the
-> core and then describe the semantics in a per LED controller
-> way like how we do for hw_pattern, so for the
-> Whiskey Cove PMIC LED controller we would add a:
-> Documentation/ABI/testing/sysfs-class-led-cht-wc
-> file, which we need to do anyways for the hw_pattern file?
-
-In Documentation/ABI/testing/sysfs-class-led-cht-wc we should
-have a description of hw_pattern semantics for Whiskey Cove PMIC LED,
-with regard to how hw_control state impacts the mode of trigger
-(manual/triggered when charging).
-
--- 
 Best regards,
-Jacek Anaszewski
+Stefan Mavrodiev
+
+>>> +	if (!of_property_read_u8(np, "x-powers,charger-mode", &value)) {
+>>> +		priv->ctrl = AXP20X_CHGLED_CTRL_CHARGER;
+>>> +		priv->mode = (value < 2) ? value : 0;
+>>> +	} else {
+>>> +		priv->ctrl = AXP20X_CHGLED_CTRL_MANUAL;
+>>> +	}
+>> I'm not sure we want to make this a property of the device
+>> tree. Changing the device tree isn't an option for some users, so we
+>> need to make sure we can change it even if we can't change the device
+>> tree.
+> We want this to be configurable at run time. It can get default from
+> the device tree.
+>
+> If we go for the "hardware" trigger, you'll get it for free.
+>
+> Best regards,
+> 								Pavel
