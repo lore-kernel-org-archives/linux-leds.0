@@ -1,80 +1,54 @@
 From: Stefan Mavrodiev <stefan@olimex.com>
-Subject: Re: [PATCH v2 1/8] leds: Add support for AXP20X CHGLED
-Date: Tue, 19 Feb 2019 09:42:30 +0200
-Message-ID: <5fdac512-947d-fd46-d953-22d6fc837423@olimex.com>
+Subject: Re: [PATCH v2 5/8] arm64: dts: allwinner: Enable AXP803 CHGLED for
+ Olimex boards
+Date: Tue, 19 Feb 2019 09:43:56 +0200
+Message-ID: <d01f4cd2-67ef-66dc-4cb9-cad117bae90b@olimex.com>
 References: <20190215115013.11098-1-stefan@olimex.com>
- <20190215115013.11098-2-stefan@olimex.com>
- <20190215155732.nmtshldcjk2qyhx4@flea> <20190215183239.GB3280@amd>
+ <20190215115013.11098-6-stefan@olimex.com> <20190215184916.GA17897@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190215183239.GB3280@amd>
+In-Reply-To: <20190215184916.GA17897@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Stefan Mavrodiev <stefan@olimex.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:X-POWERS MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>
+To: Pavel Machek <pavel@ucw.cz>, Stefan Mavrodiev <stefan@olimex.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Lee Jones <lee.jones@linaro.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:X-POWERS MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-leds@vger.kernel.org
 
 
-On 2/15/19 8:32 PM, Pavel Machek wrote:
-> Hi!
+On 2/15/19 8:49 PM, Pavel Machek wrote:
+> On Fri 2019-02-15 13:50:10, Stefan Mavrodiev wrote:
+>> Teres-I and A64-OLinuXino commes with populated LED connected
+>> to AXP803. So to be used as battery indication, pass the LED control
+>> to the charger itself in mode 0 ( FULL while charging, OFF no battery
+>> or completed).
+>>
+>> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+>> ---
+>>   arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts | 6 ++++++
+>>   arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts   | 6 ++++++
+>>   2 files changed, 12 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+>> index f7a4bccaa5d4..7d6930319fba 100644
+>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+>> @@ -177,6 +177,12 @@
+>>   
+>>   #include "axp803.dtsi"
+>>   
+>> +&axp_led {
+>> +	label = "a64-olinuxino:yellow:chgled";
+> There's little chance userspace will recognize this led.
 >
->> On Fri, Feb 15, 2019 at 01:50:06PM +0200, Stefan Mavrodiev wrote:
->>> +static ssize_t control_store(struct device *dev, struct device_attribute *attr,
->>> +			     const char *buf, size_t size)
->>> +{
->>> +	struct led_classdev *cdev = dev_get_drvdata(dev);
->>> +	struct axp20x_led *priv = to_axp20x_led(cdev);
->>> +	unsigned long val;
->>> +	int ret;
->>> +
->>> +	ret = kstrtoul(buf, 0, &val);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	/**
->>> +	 * Supported values are:
->>> +	 *   - 0 : Manual control
->>> +	 *   - 1 : Charger control
->>> +	 */
-> ...
->>> +static struct attribute *axp20x_led_attrs[] = {
->>> +	&dev_attr_control.attr,
->>> +	&dev_attr_mode.attr,
->>> +	NULL,
->>> +};
->>> +ATTRIBUTE_GROUPS(axp20x_led);
->> I can't really say whether adding sysfs handles for this is the right
->> thing to do, but if it is you should document the interface.
-> It is not. See "Add Intel Cherry Trail Whiskey Cove PMIC LEDs" thread
-> in the last few days.
+> Can you make it "platform:yellow:charging" and fix it for other
+> boards, too?
 
-What I understood is that there will be changes in the LED core, exporting
-a new sysfs entry "hw_control". Then I should set HW_CONTROL flag for the
-device and add hw_control_get/set callback functions. And this can happen
-when the LED core is updated. Right?
-
-However I didn't understand how (in my case) hardware controlled pattern
-will be selected?
+Sure.
 
 Best regards,
 Stefan Mavrodiev
 
->>> +	if (!of_property_read_u8(np, "x-powers,charger-mode", &value)) {
->>> +		priv->ctrl = AXP20X_CHGLED_CTRL_CHARGER;
->>> +		priv->mode = (value < 2) ? value : 0;
->>> +	} else {
->>> +		priv->ctrl = AXP20X_CHGLED_CTRL_MANUAL;
->>> +	}
->> I'm not sure we want to make this a property of the device
->> tree. Changing the device tree isn't an option for some users, so we
->> need to make sure we can change it even if we can't change the device
->> tree.
-> We want this to be configurable at run time. It can get default from
-> the device tree.
 >
-> If we go for the "hardware" trigger, you'll get it for free.
->
-> Best regards,
-> 								Pavel
+> 									Pavel
