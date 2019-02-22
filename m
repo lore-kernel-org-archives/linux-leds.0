@@ -1,54 +1,113 @@
-From: Stefan Mavrodiev <stefan@olimex.com>
-Subject: Re: [PATCH v2 5/8] arm64: dts: allwinner: Enable AXP803 CHGLED for
- Olimex boards
-Date: Tue, 19 Feb 2019 09:43:56 +0200
-Message-ID: <d01f4cd2-67ef-66dc-4cb9-cad117bae90b@olimex.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 3/8] dt-bindings: leds: Add binding for axp20x-led
+ device driver
+Date: Fri, 22 Feb 2019 13:51:09 -0600
+Message-ID: <20190222195109.GA17753@bogus>
 References: <20190215115013.11098-1-stefan@olimex.com>
- <20190215115013.11098-6-stefan@olimex.com> <20190215184916.GA17897@amd>
+ <20190215115013.11098-4-stefan@olimex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190215184916.GA17897@amd>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190215115013.11098-4-stefan@olimex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, Stefan Mavrodiev <stefan@olimex.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Lee Jones <lee.jones@linaro.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:X-POWERS MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>
+To: Stefan Mavrodiev <stefan@olimex.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Lee Jones <lee.jones@linaro.org>, "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:X-POWERS MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-leds@vger.kernel.org
 
+On Fri, Feb 15, 2019 at 01:50:08PM +0200, Stefan Mavrodiev wrote:
+> This adds the devicetree bindings for charge led indicator found
+> on most of X-Powers AXP20X PMICs.
+> 
+> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+> ---
+>  .../devicetree/bindings/leds/leds-axp20x.txt  | 74 +++++++++++++++++++
+>  1 file changed, 74 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-axp20x.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-axp20x.txt b/Documentation/devicetree/bindings/leds/leds-axp20x.txt
+> new file mode 100644
+> index 000000000000..5a83ad06796d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-axp20x.txt
+> @@ -0,0 +1,74 @@
+> +Device Tree Bindings for LED support on X-Powers PMIC
+> +
+> +Most of the X-Powers PMICs have integrated battery charger with LED indicator.
+> +The output is open-drain, so the state is either high-Z or output-low. The
+> +driver is a subnode of AXP20X MFD driver, since it uses shared bus with all
+> +other cells.
+> +The LED can be controlled either manually or automatically. Then in automatic
+> +(controlled by the charger) there are two indication modes:
+> +
+> +Mode-A
+> +======
+> +- output-low:		Charging
+> +- high-Z		Not charging
+> +- 1Hz flashing:		Abnormal alarm
+> +- 4Hz flashing		Overvoltage alarm
+> +
+> +Mode-B
+> +======
+> +- output-low:		Battery full
+> +- high-Z		Not charging
+> +- 1Hz flashing:		Charging
+> +- 4Hz flashing		Overvoltage or abnormal alarm
+> +
+> +The control and the mode can be changed from sysfs.
+> +
+> +For AXP20X MFD bindings see:
+> +Documentation/devicetree/bindings/mfd/axp20x.txt
+> +
+> +Required properties:
+> +- compatible : Must be "x-powers,axp20x-led"
+> +
+> +Supported common LED properties, see ./common.txt for more informationn
+> +- label : See Documentation/devicetree/bindings/leds/common.txt
+> +- linux,default-trigger : See Documentation/devicetree/bindings/leds/common.txt
+> +- default-state: See Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Optional properties:
+> +- x-powers,charger-mode: 0 for Mode-A, 1 for Mode-B
+> +			 If omitted, then the control is set to manual mode.
+> +			 On invalid value, Mode-A is used.
+> +
+> +
+> +Example:
+> +
+> +	axp803: pmic@3a3 {
+> +		compatible = "x-powers,axp803";
+> +
+> +		...
+> +
+> +		led@0 {
 
-On 2/15/19 8:49 PM, Pavel Machek wrote:
-> On Fri 2019-02-15 13:50:10, Stefan Mavrodiev wrote:
->> Teres-I and A64-OLinuXino commes with populated LED connected
->> to AXP803. So to be used as battery indication, pass the LED control
->> to the charger itself in mode 0 ( FULL while charging, OFF no battery
->> or completed).
->>
->> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
->> ---
->>   arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts | 6 ++++++
->>   arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts   | 6 ++++++
->>   2 files changed, 12 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
->> index f7a4bccaa5d4..7d6930319fba 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
->> @@ -177,6 +177,12 @@
->>   
->>   #include "axp803.dtsi"
->>   
->> +&axp_led {
->> +	label = "a64-olinuxino:yellow:chgled";
-> There's little chance userspace will recognize this led.
->
-> Can you make it "platform:yellow:charging" and fix it for other
-> boards, too?
+What's the 0 for? A unit address without a reg property is not valid.
 
-Sure.
-
-Best regards,
-Stefan Mavrodiev
-
->
-> 									Pavel
+> +			compatible = "x-powers,axp20x-led";
+> +			status = "okay";
+> +
+> +			label = "axp20x:yellow:chgled";
+> +			linux,default-trigger = "timer";
+> +			default-state = "on";
+> +		};
+> +	};
+> +
+> +or
+> +
+> +	axp803: pmic@3a3 {
+> +		compatible = "x-powers,axp803";
+> +
+> +		...
+> +
+> +		led@0 {
+> +			compatible = "x-powers,axp20x-led";
+> +			status = "okay";
+> +
+> +			label = "axp20x:yellow:chgled";
+> +			x-powers,charger-mode = <1>;
+> +		};
+> +	};
+> -- 
+> 2.17.1
+> 
