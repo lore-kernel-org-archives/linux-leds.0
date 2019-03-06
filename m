@@ -1,23 +1,60 @@
-From: pr-tracker-bot@kernel.org
-Subject: Re: [GIT PULL] LED updates for 5.1-rc1
-Date: Tue, 05 Mar 2019 03:40:06 +0000
-Message-ID: <155175720681.14960.7491361896849133808.pr-tracker-bot@kernel.org>
-References: <20190304201110.3969-1-jacek.anaszewski@gmail.com>
+From: "Enrico Weigelt, metux IT consult" <info@metux.net>
+Subject: [PATCH] drivers: leds: Kconfig: pedantic cleanups
+Date: Wed,  6 Mar 2019 19:15:46 +0100
+Message-ID: <1551896146-17719-1-git-send-email-info@metux.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190304201110.3969-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, krzk@kernel.org, michal@plume.com
+To: linux-kernel@vger.kernel.org
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-The pull request you sent on Mon,  4 Mar 2019 21:11:10 +0100:
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/leds/Kconfig | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds-for-5.1-rc1
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cd2a3bf02625ffad02a6b9f7df758ee36cf12769
-
-Thank you!
-
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index a72f97f..2b5ae50 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -56,7 +56,7 @@ config LEDS_AAT1290
+ 	depends on OF
+ 	depends on PINCTRL
+ 	help
+-	 This option enables support for the LEDs on the AAT1290.
++	  This option enables support for the LEDs on the AAT1290.
+ 
+ config LEDS_AN30259A
+ 	tristate "LED support for Panasonic AN30259A"
+@@ -413,13 +413,13 @@ config LEDS_CLEVO_MAIL
+ 
+ 	  This module can drive the mail LED for the following notebooks:
+ 
+-	  	Clevo D400P
+-	  	Clevo D410J
+-	  	Clevo D410V
+-	  	Clevo D400V/D470V (not tested, but might work)
+-	  	Clevo M540N
+-	  	Clevo M5x0N (not tested, but might work)
+-	  	Positivo Mobile (Clevo M5x0V)
++	        Clevo D400P
++	        Clevo D410J
++	        Clevo D410V
++	        Clevo D400V/D470V (not tested, but might work)
++	        Clevo M540N
++	        Clevo M5x0N (not tested, but might work)
++	        Positivo Mobile (Clevo M5x0V)
+ 
+ 	  If your model is not listed here you can try the "nodetect"
+ 	  module parameter.
+@@ -462,7 +462,7 @@ config LEDS_WM831X_STATUS
+ 	depends on MFD_WM831X
+ 	help
+ 	  This option enables support for the status LEDs of the WM831x
+-          series of PMICs.
++	  series of PMICs.
+ 
+ config LEDS_WM8350
+ 	tristate "LED Support for WM8350 AudioPlus PMIC"
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+1.9.1
