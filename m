@@ -1,49 +1,39 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
 Subject: Re: [PATCH] drivers: leds: Kconfig: pedantic cleanups
-Date: Wed, 6 Mar 2019 22:19:14 +0100
-Message-ID: <20190306211914.GA355@amd>
+Date: Thu, 7 Mar 2019 22:04:01 +0100
+Message-ID: <eae77715-ec42-ae26-3b77-300c32c329f2@metux.net>
 References: <1551896146-17719-1-git-send-email-info@metux.net>
+ <20190306211914.GA355@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1551896146-17719-1-git-send-email-info@metux.net>
+In-Reply-To: <20190306211914.GA355@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
+To: Pavel Machek <pavel@ucw.cz>, "Enrico Weigelt, metux IT consult" <info@metux.net>
 Cc: linux-kernel@vger.kernel.org, jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+On 06.03.19 22:19, Pavel Machek wrote:
+> On Wed 2019-03-06 19:15:46, Enrico Weigelt, metux IT consult wrote:
+> 
+> Would be nice if changelog here said what you did. AFAICT it cleans up
+> spaces before tabs...
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I assumed that would be obvious (my editor explicitly shows tabs) :o
 
-On Wed 2019-03-06 19:15:46, Enrico Weigelt, metux IT consult wrote:
 
-Would be nice if changelog here said what you did. AFAICT it cleans up
-spaces before tabs...
+>> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+> 
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+thx.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+--mtx
 
---UlVJffcvxoiEqYs2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEUEARECAAYFAlyAOVEACgkQMOfwapXb+vLb3QCfdIIQvvqpI9kDPTY5CnZJo95X
-bBAAljwkKvGXeryTRCqwZcctYkwJFlA=
-=NVn6
------END PGP SIGNATURE-----
-
---UlVJffcvxoiEqYs2--
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
