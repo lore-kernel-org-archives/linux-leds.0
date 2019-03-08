@@ -1,51 +1,112 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
-Date: Fri, 8 Mar 2019 07:28:19 -0600
-Message-ID: <f618b1dc-abf2-88ba-9b73-1a70471adc6b@ti.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 2/4] ARM: dts: omap4-droid4: Update backlight dt
+ properties
+Date: Fri, 8 Mar 2019 16:14:22 +0100
+Message-ID: <20190308151422.GA10378@amd>
 References: <20190307220947.20057-1-dmurphy@ti.com>
- <20190307220947.20057-4-dmurphy@ti.com>
+ <20190307220947.20057-2-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190307220947.20057-4-dmurphy@ti.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190307220947.20057-2-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, tony@atomide.com, lee.jones@linaro.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, tony@atomide.com, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hello
 
-On 3/7/19 4:09 PM, Dan Murphy wrote:
-> Introduce the Texas Instruments LM3532 White LED driver.
-> The driver supports ALS configurability or manual brightness
-> control.
-> 
-> The driver also supports associating LED strings with specific
-> control banks in a group or as individually controlled strings.
-> 
+--rwEMma7ioTxnRzrJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> Update the properties for the lm3532 device node for droid4.
+> With this change the backlight LED string and the keypad
+> LED strings will be controlled separately.
+>=20
 > Signed-off-by: Dan Murphy <dmurphy@ti.com>
 > ---
->  drivers/leds/Kconfig                   |  10 +
->  drivers/leds/Makefile                  |   1 +
->  drivers/leds/leds-lm3532.c             | 595 +++++++++++++++++++++++++
->  include/dt-bindings/leds/leds-lm3532.h |  72 +++
->  4 files changed, 678 insertions(+)
->  create mode 100644 drivers/leds/leds-lm3532.c
->  create mode 100644 include/dt-bindings/leds/leds-lm3532.h
-> 
+>  arch/arm/boot/dts/omap4-droid4-xt894.dts | 27 +++++++++++++++++-------
+>  1 file changed, 19 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts=
+/omap4-droid4-xt894.dts
+> index e21ec929f096..94e3d53dbcf3 100644
+> --- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
+> +++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
+> @@ -6,6 +6,7 @@
+>  /dts-v1/;
+> =20
+>  #include <dt-bindings/input/input.h>
+> +#include <dt-bindings/leds/leds-lm3532.h>
+>  #include "omap443x.dtsi"
+>  #include "motorola-cpcap-mapphone.dtsi"
+> =20
+> @@ -383,20 +384,30 @@
+>  };
+> =20
+>  &i2c1 {
+> -	lm3532@38 {
+> +	led-controller@38 {
+>  		compatible =3D "ti,lm3532";
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+>  		reg =3D <0x38>;
+> =20
+>  		enable-gpios =3D <&gpio6 12 GPIO_ACTIVE_HIGH>;
+> =20
+> -		lcd_backlight: backlight {
+> -			compatible =3D "ti,lm3532-backlight";
+> +		ramp-up-ms =3D <LM3532_RAMP_1024us>;
+> +		ramp-down-ms =3D <LM3532_RAMP_65536us>;
 
-After thinking about this dt header I am not happy about having it.
-I am thinking of removing this file completely and doing some calculations in the driver
-file for the impedance, averaging time and ramp times.
+I guess dt people will have some comments here. I'd expect
 
-I would still like to get comments on the rest of the code but in v2 the dt bindings header will
-go away.
+ramp-up-us =3D <1024> would be more natural.
 
-Dan
+> +		lcd_backlight: led@0 {
+> +			reg =3D <0>;
+> +			led-sources =3D <2>;
+> +			ti,led-mode =3D <LM3532_BL_MODE_MANUAL>;
+> +			label =3D "backlight";
 
-<snip>
--- 
-------------------
-Dan Murphy
+Ok, so we'll have lm3532::backlight. That is not too useful, as it
+does not tell userland what kaclight it is.
+
+main_display::backlight ?
+
+OTOH this one is not too important as backlight subsystem should
+handle this.
+
+> +		led@1 {
+> +			reg =3D <1>;
+> +			led-sources =3D <1>;
+> +			ti,led-mode =3D <LM3532_BL_MODE_MANUAL>;
+> +			label =3D "keypad";
+
+I guess best variant would be inputX::backlight here, but that might
+be tricky to implement.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--rwEMma7ioTxnRzrJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlyChs4ACgkQMOfwapXb+vIv/ACgr+bHsUANQodAGVuN1nwjp+Hk
+EsQAn3mJlgxw10AjQts0YNXx0d/CPN7q
+=E/DJ
+-----END PGP SIGNATURE-----
+
+--rwEMma7ioTxnRzrJ--
