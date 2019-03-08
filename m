@@ -1,80 +1,51 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 3/4] mfd: ti-lmu: Remove LM3532 backlight driver references
-Date: Thu, 7 Mar 2019 16:09:46 -0600
-Message-ID: <20190307220947.20057-3-dmurphy@ti.com>
+Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
+Date: Fri, 8 Mar 2019 07:28:19 -0600
+Message-ID: <f618b1dc-abf2-88ba-9b73-1a70471adc6b@ti.com>
 References: <20190307220947.20057-1-dmurphy@ti.com>
+ <20190307220947.20057-4-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190307220947.20057-1-dmurphy@ti.com>
+In-Reply-To: <20190307220947.20057-4-dmurphy@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, tony@atomide.com, lee.jones@linaro.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Remove the LM3532 backlight driver references from the ti-lmu
-code as dedicated driver support is available.
+Hello
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/mfd/ti-lmu.c       | 11 -----------
- include/linux/mfd/ti-lmu.h |  1 -
- 2 files changed, 12 deletions(-)
+On 3/7/19 4:09 PM, Dan Murphy wrote:
+> Introduce the Texas Instruments LM3532 White LED driver.
+> The driver supports ALS configurability or manual brightness
+> control.
+> 
+> The driver also supports associating LED strings with specific
+> control banks in a group or as individually controlled strings.
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  drivers/leds/Kconfig                   |  10 +
+>  drivers/leds/Makefile                  |   1 +
+>  drivers/leds/leds-lm3532.c             | 595 +++++++++++++++++++++++++
+>  include/dt-bindings/leds/leds-lm3532.h |  72 +++
+>  4 files changed, 678 insertions(+)
+>  create mode 100644 drivers/leds/leds-lm3532.c
+>  create mode 100644 include/dt-bindings/leds/leds-lm3532.h
+> 
 
-diff --git a/drivers/mfd/ti-lmu.c b/drivers/mfd/ti-lmu.c
-index 37d0bdb291c3..b06cb908d1aa 100644
---- a/drivers/mfd/ti-lmu.c
-+++ b/drivers/mfd/ti-lmu.c
-@@ -54,14 +54,6 @@ static void ti_lmu_disable_hw(void *data)
- 		gpiod_set_value(lmu->en_gpio, 0);
- }
- 
--static const struct mfd_cell lm3532_devices[] = {
--	{
--		.name          = "ti-lmu-backlight",
--		.id            = LM3532,
--		.of_compatible = "ti,lm3532-backlight",
--	},
--};
--
- #define LM363X_REGULATOR(_id)			\
- {						\
- 	.name          = "lm363x-regulator",	\
-@@ -141,7 +133,6 @@ static const struct ti_lmu_data chip##_data =	\
- 	.max_register = max_reg,		\
- }						\
- 
--TI_LMU_DATA(lm3532, LM3532_MAX_REG);
- TI_LMU_DATA(lm3631, LM3631_MAX_REG);
- TI_LMU_DATA(lm3632, LM3632_MAX_REG);
- TI_LMU_DATA(lm3633, LM3633_MAX_REG);
-@@ -211,7 +202,6 @@ static int ti_lmu_probe(struct i2c_client *cl, const struct i2c_device_id *id)
- }
- 
- static const struct of_device_id ti_lmu_of_match[] = {
--	{ .compatible = "ti,lm3532", .data = &lm3532_data },
- 	{ .compatible = "ti,lm3631", .data = &lm3631_data },
- 	{ .compatible = "ti,lm3632", .data = &lm3632_data },
- 	{ .compatible = "ti,lm3633", .data = &lm3633_data },
-@@ -222,7 +212,6 @@ static const struct of_device_id ti_lmu_of_match[] = {
- MODULE_DEVICE_TABLE(of, ti_lmu_of_match);
- 
- static const struct i2c_device_id ti_lmu_ids[] = {
--	{ "lm3532", LM3532 },
- 	{ "lm3631", LM3631 },
- 	{ "lm3632", LM3632 },
- 	{ "lm3633", LM3633 },
-diff --git a/include/linux/mfd/ti-lmu.h b/include/linux/mfd/ti-lmu.h
-index 1ef51ed36be5..7762c1bce55d 100644
---- a/include/linux/mfd/ti-lmu.h
-+++ b/include/linux/mfd/ti-lmu.h
-@@ -22,7 +22,6 @@
- #define LMU_EVENT_MONITOR_DONE		0x01
- 
- enum ti_lmu_id {
--	LM3532,
- 	LM3631,
- 	LM3632,
- 	LM3633,
+After thinking about this dt header I am not happy about having it.
+I am thinking of removing this file completely and doing some calculations in the driver
+file for the impedance, averaging time and ramp times.
+
+I would still like to get comments on the rest of the code but in v2 the dt bindings header will
+go away.
+
+Dan
+
+<snip>
 -- 
-2.20.1.390.gb5101f9297
+------------------
+Dan Murphy
