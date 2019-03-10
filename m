@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 10/25] dt-bindings: lp8860: Add function and color properties
-Date: Sun, 10 Mar 2019 19:28:21 +0100
-Message-ID: <20190310182836.20841-11-jacek.anaszewski@gmail.com>
+Subject: [PATCH 09/25] leds: lt3593: Use led_compose_name()
+Date: Sun, 10 Mar 2019 19:28:20 +0100
+Message-ID: <20190310182836.20841-10-jacek.anaszewski@gmail.com>
 References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
@@ -10,46 +10,71 @@ To: linux-leds@vger.kernel.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-Refer to new "function" and "color" properties and mark "label"
-as deprecated.
+Switch to using generic LED support for composing LED class
+device name.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Acked-by: Dan Murphy <dmurphy@ti.com>
+Acked-by: Daniel Mack <daniel@zonque.org>
 ---
- Documentation/devicetree/bindings/leds/leds-lp8860.txt | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/leds/leds-lt3593.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lp8860.txt b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-index 5f0e892ad759..623065a55ed8 100644
---- a/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-@@ -20,12 +20,16 @@ Required child properties:
- 	- reg : 0
- 
- Optional child properties:
--	- label : see Documentation/devicetree/bindings/leds/common.txt
-+	- function : see Documentation/devicetree/bindings/leds/common.txt
-+	- color : see Documentation/devicetree/bindings/leds/common.txt
-+	- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
- 	- linux,default-trigger :
- 	   see Documentation/devicetree/bindings/leds/common.txt
- 
- Example:
- 
-+#include <dt-bindings/leds/common.h>
+diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
+index de3623e0d094..d005abcf4743 100644
+--- a/drivers/leds/leds-lt3593.c
++++ b/drivers/leds/leds-lt3593.c
+@@ -10,10 +10,10 @@
+ #include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <uapi/linux/uleds.h>
 +
- led-controller@2d {
- 	compatible = "ti,lp8860";
- 	#address-cells = <1>;
-@@ -36,7 +40,8 @@ led-controller@2d {
++#define LED_LT3593_NAME "lt3593"
  
- 	led@0 {
- 		reg = <0>;
--		label = "white:backlight";
-+		function = LED_FUNCTION_BACKLIGHT;
-+		color = LED_COLOR_NAME_WHITE;
- 		linux,default-trigger = "backlight";
- 	};
- }
+ struct lt3593_led_data {
+-	char name[LED_MAX_NAME_SIZE];
+ 	struct led_classdev cdev;
+ 	struct gpio_desc *gpiod;
+ };
+@@ -111,6 +111,7 @@ static int lt3593_led_probe(struct platform_device *pdev)
+ 	struct fwnode_handle *child;
+ 	int ret, state = LEDS_GPIO_DEFSTATE_OFF;
+ 	enum gpiod_flags flags = GPIOD_OUT_LOW;
++	struct led_init_data init_data;
+ 	const char *tmp;
+ 
+ 	if (dev_get_platdata(dev)) {
+@@ -138,14 +139,11 @@ static int lt3593_led_probe(struct platform_device *pdev)
+ 		return PTR_ERR(led_data->gpiod);
+ 
+ 	child = device_get_next_child_node(dev, NULL);
++	init_data.fwnode = child;
+ 
+-	ret = fwnode_property_read_string(child, "label", &tmp);
+-	if (ret < 0)
+-		snprintf(led_data->name, sizeof(led_data->name),
+-			 "lt3593::");
+-	else
+-		snprintf(led_data->name, sizeof(led_data->name),
+-			 "lt3593:%s", tmp);
++	ret = led_compose_name(child, LED_LT3593_NAME, ":", init_data.name);
++	if (ret)
++		return ret;
+ 
+ 	fwnode_property_read_string(child, "linux,default-trigger",
+ 				    &led_data->cdev.default_trigger);
+@@ -160,11 +158,10 @@ static int lt3593_led_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	led_data->cdev.name = led_data->name;
+ 	led_data->cdev.brightness_set_blocking = lt3593_led_set;
+ 	led_data->cdev.brightness = state ? LED_FULL : LED_OFF;
+ 
+-	ret = devm_led_classdev_register(dev, &led_data->cdev);
++	ret = devm_led_classdev_register_ext(dev, &led_data->cdev, &init_data);
+ 	if (ret < 0) {
+ 		fwnode_handle_put(child);
+ 		return ret;
 -- 
 2.11.0
