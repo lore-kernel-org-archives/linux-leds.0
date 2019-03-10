@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 04/25] dt-bindings: leds: Add LED_COLOR_NAME definitions
-Date: Sun, 10 Mar 2019 19:28:15 +0100
-Message-ID: <20190310182836.20841-5-jacek.anaszewski@gmail.com>
+Subject: [PATCH 05/25] dt-bindings: leds: Add function and color properties
+Date: Sun, 10 Mar 2019 19:28:16 +0100
+Message-ID: <20190310182836.20841-6-jacek.anaszewski@gmail.com>
 References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
@@ -10,7 +10,8 @@ To: linux-leds@vger.kernel.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-Add common LED color name definitions for use in Device Tree.
+Introduce dedicated properties for conveying information about
+LED function and color. Mark old "label" property as deprecated.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc: Baolin Wang <baolin.wang@linaro.org>
@@ -21,26 +22,104 @@ Cc: Oleh Kravchenko <oleg@kaa.org.ua>
 Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: Simon Shields <simon@lineageos.org>
 ---
- include/dt-bindings/leds/common.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ Documentation/devicetree/bindings/leds/common.txt | 55 +++++++++++++++++++----
+ 1 file changed, 47 insertions(+), 8 deletions(-)
 
-diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
-index ffcd46317307..0e986bb59391 100644
---- a/include/dt-bindings/leds/common.h
-+++ b/include/dt-bindings/leds/common.h
-@@ -57,4 +57,13 @@
- #define LED_FUNCTION_WLAN "wlan"
- #define LED_FUNCTION_WPS "wps"
+diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+index aa1399814a2a..3402b0e1cec9 100644
+--- a/Documentation/devicetree/bindings/leds/common.txt
++++ b/Documentation/devicetree/bindings/leds/common.txt
+@@ -10,14 +10,23 @@ can influence the way of the LED device initialization, the LED components
+ have to be tightly coupled with the LED device binding. They are represented
+ by child nodes of the parent LED device binding.
  
-+/* Standard LED colors */
-+#define LED_COLOR_NAME_WHITE    "white"
-+#define LED_COLOR_NAME_RED      "red"
-+#define LED_COLOR_NAME_GREEN    "green"
-+#define LED_COLOR_NAME_BLUE     "blue"
-+#define LED_COLOR_NAME_AMBER    "amber"
-+#define LED_COLOR_NAME_VIOLET   "violet"
-+#define LED_COLOR_NAME_YELLOW   "yellow"
 +
- #endif /* __DT_BINDINGS_LEDS_H */
+ Optional properties for child nodes:
+ - led-sources : List of device current outputs the LED is connected to. The
+ 		outputs are identified by the numbers that must be defined
+ 		in the LED device binding documentation.
++- function: LED functon. Use one of the LED_FUNCTION_* prefixed definitions
++	    from the header include/dt-bindings/leds/common.h.
++	    If there is no matching LED_FUNCTION available, add a new one.
++- color : Color of the LED. Use one of the LED_COLOR_NAME_* prefixed definitions
++	    from the header include/dt-bindings/leds/common.h.
++	    If there is no matching LED_COLOR_NAME available, add a new one.
++
+ - label : The label for this LED. If omitted, the label is taken from the node
+ 	  name (excluding the unit address). It has to uniquely identify
+ 	  a device, i.e. no other LED class device can be assigned the same
+-	  label.
++	  label. This property is deprecated - use 'function' and 'color'
++	  properties instead.
+ 
+ - default-state : The initial state of the LED. Valid values are "on", "off",
+   and "keep". If the LED is already on or off and the default-state property is
+@@ -87,29 +96,59 @@ Required properties for trigger source:
+ 
+ * Examples
+ 
+-gpio-leds {
++#include <dt-bindings/leds/common.h>
++
++led-controller@0 {
+ 	compatible = "gpio-leds";
+ 
+-	system-status {
+-		label = "Status";
++	led0 {
++		function = LED_FUNCTION_STATUS;
+ 		linux,default-trigger = "heartbeat";
+ 		gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	usb {
++	led1 {
++		function = LED_FUNCTION_USB;
+ 		gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+ 		trigger-sources = <&ohci_port1>, <&ehci_port1>;
+ 	};
+ };
+ 
+-max77693-led {
++led-controller@0 {
+ 	compatible = "maxim,max77693-led";
+ 
+-	camera-flash {
+-		label = "Flash";
++	led {
++		function = LED_FUNCTION_FLASH;
++		color = LED_COLOR_NAME_WHITE;
+ 		led-sources = <0>, <1>;
+ 		led-max-microamp = <50000>;
+ 		flash-max-microamp = <320000>;
+ 		flash-max-timeout-us = <500000>;
+ 	};
+ };
++
++led-controller@30 {
++        compatible = "panasonic,an30259a";
++        reg = <0x30>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led@1 {
++                reg = <1>;
++                linux,default-trigger = "heartbeat";
++                function = LED_FUNCTION_INDICATOR;
++                color = LED_COLOR_NAME_RED;
++        };
++
++        led@2 {
++                reg = <2>;
++                function = LED_FUNCTION_INDICATOR;
++                color = LED_COLOR_NAME_GREEN;
++        };
++
++        led@3 {
++                reg = <3>;
++                function = LED_FUNCTION_INDICATOR;
++                color = LED_COLOR_NAME_BLUE;
++        };
++};
 -- 
 2.11.0
