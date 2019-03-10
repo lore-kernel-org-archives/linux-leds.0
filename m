@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 11/25] leds: lp8860: Use led_compose_name()
-Date: Sun, 10 Mar 2019 19:28:22 +0100
-Message-ID: <20190310182836.20841-12-jacek.anaszewski@gmail.com>
+Subject: [PATCH 13/25] leds: lm3692x: Use led_compose_name()
+Date: Sun, 10 Mar 2019 19:28:24 +0100
+Message-ID: <20190310182836.20841-14-jacek.anaszewski@gmail.com>
 References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
@@ -13,111 +13,123 @@ List-Id: linux-leds@vger.kernel.org
 Switch to using generic LED support for composing LED class
 device name.
 
-While at it, avoid iterating through available child of nodes
-in favor of obtaining single expected child node using single
-call to of_get_next_available_child().
+Since the same device strings would be used in two places,
+then add macros LM36922_NAME and LM36922_NAME for use in
+lm3692x_probe_dt(() and lm3692x_id array.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 Cc: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-lp8860.c | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ drivers/leds/leds-lm3692x.c | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-index 39c72a908f3b..7c12ccdc1f2f 100644
---- a/drivers/leds/leds-lp8860.c
-+++ b/drivers/leds/leds-lp8860.c
-@@ -22,7 +22,6 @@
- #include <linux/of_gpio.h>
- #include <linux/gpio/consumer.h>
+diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+index 4f413a7c5f05..9dfc0f28a9c8 100644
+--- a/drivers/leds/leds-lm3692x.c
++++ b/drivers/leds/leds-lm3692x.c
+@@ -13,7 +13,6 @@
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
  #include <linux/slab.h>
 -#include <uapi/linux/uleds.h>
  
- #define LP8860_DISP_CL1_BRT_MSB		0x00
- #define LP8860_DISP_CL1_BRT_LSB		0x01
-@@ -87,6 +86,8 @@
+ #define LM36922_MODEL	0
+ #define LM36923_MODEL	1
+@@ -95,6 +94,9 @@
+ #define LM3692X_FAULT_FLAG_SHRT BIT(3)
+ #define LM3692X_FAULT_FLAG_OPEN BIT(4)
  
- #define LP8860_CLEAR_FAULTS		0x01
- 
-+#define LP8860_NAME			"lp8860"
++#define LM36922_NAME "lm36922"
++#define LM36923_NAME "lm36923"
 +
  /**
-  * struct lp8860_led -
+  * struct lm3692x_led -
   * @lock - Lock for reading/writing the device
-@@ -96,7 +97,6 @@
-  * @eeprom_regmap - EEPROM register map
+@@ -103,7 +105,6 @@
+  * @regmap - Devices register map
   * @enable_gpio - VDDIO/EN gpio to enable communication interface
   * @regulator - LED supply regulator pointer
 - * @label - LED label
+  * @led_enable - LED sync to be enabled
+  * @model_id - Current device model ID enumerated
   */
- struct lp8860_led {
- 	struct mutex lock;
-@@ -106,7 +106,6 @@ struct lp8860_led {
- 	struct regmap *eeprom_regmap;
+@@ -114,7 +115,6 @@ struct lm3692x_led {
+ 	struct regmap *regmap;
  	struct gpio_desc *enable_gpio;
  	struct regulator *regulator;
 -	char label[LED_MAX_NAME_SIZE];
+ 	int led_enable;
+ 	int model_id;
  };
- 
- struct lp8860_eeprom_reg {
-@@ -387,25 +386,26 @@ static int lp8860_probe(struct i2c_client *client,
- 	struct lp8860_led *led;
- 	struct device_node *np = client->dev.of_node;
- 	struct device_node *child_node;
+@@ -325,7 +325,8 @@ static int lm3692x_init(struct lm3692x_led *led)
+ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ {
+ 	struct fwnode_handle *child = NULL;
 -	const char *name;
 +	struct led_init_data init_data;
++	char *model_name;
+ 	int ret;
  
- 	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
- 	if (!led)
- 		return -ENOMEM;
+ 	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
+@@ -346,17 +347,20 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ 		dev_err(&led->client->dev, "No LED Child node\n");
+ 		return -ENODEV;
+ 	}
++	init_data.fwnode = child;
  
--	for_each_available_child_of_node(np, child_node) {
--		led->led_dev.default_trigger = of_get_property(child_node,
--						    "linux,default-trigger",
--						    NULL);
--
--		ret = of_property_read_string(child_node, "label", &name);
--		if (!ret)
--			snprintf(led->label, sizeof(led->label), "%s:%s",
--				 id->name, name);
--		else
--			snprintf(led->label, sizeof(led->label),
--				"%s::display_cluster", id->name);
--	}
-+	child_node = of_get_next_available_child(np, NULL);
-+	if (!child_node)
-+		return -EINVAL;
-+
-+	init_data.fwnode = of_fwnode_handle(child_node),
-+
-+	led->led_dev.default_trigger = of_get_property(child_node,
-+					    "linux,default-trigger",
-+					    NULL);
-+
-+	ret = led_compose_name(init_data.fwnode, LP8860_NAME,
-+			       ":display_cluster", init_data.name);
-+	if (ret)
-+		return ret;
+-	fwnode_property_read_string(child, "linux,default-trigger",
+-				    &led->led_dev.default_trigger);
++	if (led->model_id == LM36922_MODEL)
++		model_name =  LM36922_NAME;
++	else
++		model_name =  LM36923_NAME;
  
- 	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
- 						   "enable", GPIOD_OUT_LOW);
-@@ -420,7 +420,6 @@ static int lp8860_probe(struct i2c_client *client,
- 		led->regulator = NULL;
- 
- 	led->client = client;
--	led->led_dev.name = led->label;
- 	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
- 
- 	mutex_init(&led->lock);
-@@ -447,7 +446,8 @@ static int lp8860_probe(struct i2c_client *client,
+-	ret = fwnode_property_read_string(child, "label", &name);
++	ret = led_compose_name(child, model_name, ":backlight_cluster",
++			       init_data.name);
  	if (ret)
- 		return ret;
+-		snprintf(led->label, sizeof(led->label),
+-			"%s::", led->client->name);
+-	else
+-		snprintf(led->label, sizeof(led->label),
+-			 "%s:%s", led->client->name, name);
++		return ret;
++
++	fwnode_property_read_string(child, "linux,default-trigger",
++				    &led->led_dev.default_trigger);
  
--	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
-+	ret = devm_led_classdev_register_ext(&client->dev, &led->led_dev,
+ 	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
+ 	if (ret) {
+@@ -364,16 +368,13 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ 		return ret;
+ 	}
+ 
+-	led->led_dev.name = led->label;
+-
+-	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
++	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
 +					     &init_data);
  	if (ret) {
- 		dev_err(&client->dev, "led register err: %d\n", ret);
+ 		dev_err(&led->client->dev, "led register err: %d\n", ret);
  		return ret;
+ 	}
+ 
+-	led->led_dev.dev->of_node = to_of_node(child);
+-
+ 	return 0;
+ }
+ 
+@@ -439,8 +440,8 @@ static int lm3692x_remove(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id lm3692x_id[] = {
+-	{ "lm36922", LM36922_MODEL },
+-	{ "lm36923", LM36923_MODEL },
++	{ LM36922_NAME, LM36922_MODEL },
++	{ LM36923_NAME, LM36923_MODEL },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, lm3692x_id);
 -- 
 2.11.0
