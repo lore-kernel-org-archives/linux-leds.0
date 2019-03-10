@@ -1,89 +1,92 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 16/25] dt-bindings: cr0014114: Add function and color properties
-Date: Sun, 10 Mar 2019 19:28:27 +0100
-Message-ID: <20190310182836.20841-17-jacek.anaszewski@gmail.com>
+Subject: [PATCH 19/25] leds: aat1290: Use led_compose_name()
+Date: Sun, 10 Mar 2019 19:28:30 +0100
+Message-ID: <20190310182836.20841-20-jacek.anaszewski@gmail.com>
 References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Oleh Kravchenko <oleg@kaa.org.ua>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-Refer to new "function" and "color" properties and mark "label"
-as deprecated.
+Switch to using generic LED support for composing LED class
+device name.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Oleh Kravchenko <oleg@kaa.org.ua>
 ---
- .../devicetree/bindings/leds/leds-cr0014114.txt    | 26 ++++++++++++++++------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ drivers/leds/leds-aat1290.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-cr0014114.txt b/Documentation/devicetree/bindings/leds/leds-cr0014114.txt
-index 4255b19ad25c..311b5dbbacac 100644
---- a/Documentation/devicetree/bindings/leds/leds-cr0014114.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-cr0014114.txt
-@@ -11,14 +11,20 @@ Property rules described in Documentation/devicetree/bindings/spi/spi-bus.txt
- apply. In particular, "reg" and "spi-max-frequency" properties must be given.
+diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+index 43bd8a43f36c..9132a6ee551e 100644
+--- a/drivers/leds/leds-aat1290.c
++++ b/drivers/leds/leds-aat1290.c
+@@ -45,6 +45,8 @@
+ #define AAT1290_FLASH_TM_NUM_LEVELS	16
+ #define AAT1290_MM_CURRENT_SCALE_SIZE	15
  
- LED sub-node properties:
--- label :
-+- function :
-+	see Documentation/devicetree/bindings/leds/common.txt
-+- color :
- 	see Documentation/devicetree/bindings/leds/common.txt
-+- label :
-+	see Documentation/devicetree/bindings/leds/common.txt (deprecated)
- - linux,default-trigger : (optional)
- 	see Documentation/devicetree/bindings/leds/common.txt
- 
- Example
- -------
- 
-+#include <dt-bindings/leds/common.h>
++#define AAT1290_NAME			"aat1290"
 +
- led-controller@0 {
- 	compatible = "crane,cr0014114";
- 	reg = <0>;
-@@ -28,27 +34,33 @@ led-controller@0 {
  
- 	led@0 {
- 		reg = <0>;
--		label = "red:coin";
-+		function = "coin";
-+		color = LED_COLOR_NAME_RED;
- 	};
- 	led@1 {
- 		reg = <1>;
--		label = "green:coin";
-+		function = "coin";
-+		color = LED_COLOR_NAME_GREEN;
- 	};
- 	led@2 {
- 		reg = <2>;
--		label = "blue:coin";
-+		function = "coin";
-+		color = LED_COLOR_NAME_BLUE;
- 	};
- 	led@3 {
- 		reg = <3>;
--		label = "red:bill";
-+		function = "bill";
-+		color = LED_COLOR_NAME_RED;
- 	};
- 	led@4 {
- 		reg = <4>;
--		label = "green:bill";
-+		function = "bill";
-+		color = LED_COLOR_NAME_GREEN;
- 	};
- 	led@5 {
- 		reg = <5>;
--		label = "blue:bill";
-+		function = "bill";
-+		color = LED_COLOR_NAME_BLUE;
- 	};
- 	...
+ struct aat1290_led_config_data {
+ 	/* maximum LED current in movie mode */
+@@ -78,7 +80,6 @@ struct aat1290_led {
+ 	int *mm_current_scale;
+ 	/* device mode */
+ 	bool movie_mode;
+-
+ 	/* brightness cache */
+ 	unsigned int torch_brightness;
  };
+@@ -218,7 +219,6 @@ static int aat1290_led_parse_dt(struct aat1290_led *led,
+ 			struct aat1290_led_config_data *cfg,
+ 			struct device_node **sub_node)
+ {
+-	struct led_classdev *led_cdev = &led->fled_cdev.led_cdev;
+ 	struct device *dev = &led->pdev->dev;
+ 	struct device_node *child_node;
+ #if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
+@@ -257,9 +257,6 @@ static int aat1290_led_parse_dt(struct aat1290_led *led,
+ 		return -EINVAL;
+ 	}
+ 
+-	led_cdev->name = of_get_property(child_node, "label", NULL) ? :
+-						child_node->name;
+-
+ 	ret = of_property_read_u32(child_node, "led-max-microamp",
+ 				&cfg->max_mm_current);
+ 	/*
+@@ -469,6 +466,7 @@ static int aat1290_led_probe(struct platform_device *pdev)
+ 	struct aat1290_led *led;
+ 	struct led_classdev *led_cdev;
+ 	struct led_classdev_flash *fled_cdev;
++	struct led_init_data init_data;
+ 	struct aat1290_led_config_data led_cfg = {};
+ 	struct v4l2_flash_config v4l2_sd_cfg = {};
+ 	int ret;
+@@ -488,6 +486,12 @@ static int aat1290_led_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	init_data.fwnode = of_fwnode_handle(sub_node);
++	ret = led_compose_name(init_data.fwnode, AAT1290_NAME, NULL,
++			       init_data.name);
++	if (ret < 0)
++		return ret;
++
+ 	mutex_init(&led->lock);
+ 
+ 	/* Initialize LED Flash class device */
+@@ -498,7 +502,8 @@ static int aat1290_led_probe(struct platform_device *pdev)
+ 	aat1290_init_flash_timeout(led, &led_cfg);
+ 
+ 	/* Register LED Flash class device */
+-	ret = led_classdev_flash_register(&pdev->dev, fled_cdev);
++	ret = led_classdev_flash_register_ext(&pdev->dev, fled_cdev,
++					      &init_data);
+ 	if (ret < 0)
+ 		goto err_flash_register;
+ 
 -- 
 2.11.0
