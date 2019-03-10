@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 14/25] dt-bindings: lm36010: Add function and color properties
-Date: Sun, 10 Mar 2019 19:28:25 +0100
-Message-ID: <20190310182836.20841-15-jacek.anaszewski@gmail.com>
+Subject: [PATCH 12/25] dt-bindings: lm3692x: Add function and color properties
+Date: Sun, 10 Mar 2019 19:28:23 +0100
+Message-ID: <20190310182836.20841-13-jacek.anaszewski@gmail.com>
 References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
@@ -16,38 +16,40 @@ as deprecated.
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc: Dan Murphy <dmurphy@ti.com>
 ---
- Documentation/devicetree/bindings/leds/leds-lm3601x.txt | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-lm3692x.txt | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-index a88b2c41e75b..157b68d3db89 100644
---- a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-@@ -22,9 +22,14 @@ Required properties for flash LED child nodes:
- 	- led-max-microamp : Range from 2.4mA - 376mA
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+index 08b352840bd7..c15806235e85 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+@@ -26,12 +26,16 @@ Required child properties:
+ 		3 - Will enable the LED3 sync (LM36923 only)
  
  Optional child properties:
 -	- label : see Documentation/devicetree/bindings/leds/common.txt
 +	- function : see Documentation/devicetree/bindings/leds/common.txt
 +	- color : see Documentation/devicetree/bindings/leds/common.txt
 +	- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
+ 	- linux,default-trigger :
+ 	   see Documentation/devicetree/bindings/leds/common.txt
  
  Example:
-+
+ 
 +#include <dt-bindings/leds/common.h>
 +
- led-controller@64 {
- 	compatible = "ti,lm36010";
- 	#address-cells = <1>;
-@@ -33,7 +38,8 @@ led-controller@64 {
+ led-controller@36 {
+ 	compatible = "ti,lm3692x";
+ 	reg = <0x36>;
+@@ -43,7 +47,8 @@ led-controller@36 {
  
  	led@0 {
- 		reg = <1>;
--		label = "white:torch";
-+		function = LED_FUNCTION_TORCH;
+ 		reg = <0>;
+-		label = "white:backlight_cluster";
++		function = LED_BACKLIGHT_CLUSTER;
 +		color = LED_COLOR_NAME_WHITE;
- 		led-max-microamp = <376000>;
- 		flash-max-microamp = <1500000>;
- 		flash-max-timeout-us = <1600000>;
+ 		linux,default-trigger = "backlight";
+ 	};
+ }
 -- 
 2.11.0
