@@ -1,59 +1,105 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 18/25] dt-bindings: aat1290: Add function and color properties
-Date: Sun, 10 Mar 2019 19:28:29 +0100
-Message-ID: <20190310182836.20841-19-jacek.anaszewski@gmail.com>
+Subject: [PATCH 17/25] leds: cr0014114: Use led_compose_name()
+Date: Sun, 10 Mar 2019 19:28:28 +0100
+Message-ID: <20190310182836.20841-18-jacek.anaszewski@gmail.com>
 References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Oleh Kravchenko <oleg@kaa.org.ua>
 List-Id: linux-leds@vger.kernel.org
 
-Refer to new "function" and "color" properties and mark "label"
-as deprecated.
+Switch to using generic LED support for composing LED class
+device name.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Oleh Kravchenko <oleg@kaa.org.ua>
 ---
- Documentation/devicetree/bindings/leds/leds-aat1290.txt | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/leds/leds-cr0014114.c | 29 ++++++++++-------------------
+ 1 file changed, 10 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-index 85c0c58617f6..9192ff42c886 100644
---- a/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
-@@ -32,15 +32,18 @@ Required properties of the LED child node:
-                          formula: T = 8.82 * 10^9 * Ct.
+diff --git a/drivers/leds/leds-cr0014114.c b/drivers/leds/leds-cr0014114.c
+index 1c82152764d2..0aee979b048f 100644
+--- a/drivers/leds/leds-cr0014114.c
++++ b/drivers/leds/leds-cr0014114.c
+@@ -8,7 +8,6 @@
+ #include <linux/of_device.h>
+ #include <linux/spi/spi.h>
+ #include <linux/workqueue.h>
+-#include <uapi/linux/uleds.h>
  
- Optional properties of the LED child node:
--- label : see Documentation/devicetree/bindings/leds/common.txt
-+- function : see Documentation/devicetree/bindings/leds/common.txt
-+- color : see Documentation/devicetree/bindings/leds/common.txt
-+- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
+ /*
+  *  CR0014114 SPI protocol descrtiption:
+@@ -40,8 +39,9 @@
+ #define CR_FW_DELAY_MSEC	10
+ #define CR_RECOUNT_DELAY	(HZ * 3600)
  
- Example (by Ct = 220nF, Rset = 160kohm and exynos4412-trats2 board with
- a switch that allows for routing strobe signal either from the host or from
- the camera sensor):
++#define CR_DEV_NAME		"cr0014114"
++
+ struct cr0014114_led {
+-	char			name[LED_MAX_NAME_SIZE];
+ 	struct cr0014114	*priv;
+ 	struct led_classdev	ldev;
+ 	u8			brightness;
+@@ -167,8 +167,7 @@ static int cr0014114_set_sync(struct led_classdev *ldev,
+ 						    struct cr0014114_led,
+ 						    ldev);
  
- #include "exynos4412.dtsi"
-+#include <dt-bindings/leds/common.h>
+-	dev_dbg(led->priv->dev, "Set brightness of %s to %d\n",
+-		led->name, brightness);
++	dev_dbg(led->priv->dev, "Set brightness to %d\n", brightness);
  
--aat1290 {
-+led-controller {
- 	compatible = "skyworks,aat1290";
- 	flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
- 	enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
-@@ -50,8 +53,9 @@ aat1290 {
- 	pinctrl-1 = <&camera_flash_host>;
- 	pinctrl-2 = <&camera_flash_isp>;
+ 	mutex_lock(&led->priv->lock);
+ 	led->brightness = (u8)brightness;
+@@ -183,41 +182,33 @@ static int cr0014114_probe_dt(struct cr0014114 *priv)
+ 	size_t			i = 0;
+ 	struct cr0014114_led	*led;
+ 	struct fwnode_handle	*child;
+-	struct device_node	*np;
++	struct led_init_data	init_data;
+ 	int			ret;
+-	const char		*str;
  
--	camera_flash: flash-led {
--		label = "aat1290-flash";
-+	camera_flash: led {
-+		function = LED_FUNCTION_FLASH;
-+		color = LED_COLOR_NAME_WHITE;
- 		led-max-microamp = <520833>;
- 		flash-max-microamp = <1012500>;
- 		flash-max-timeout-us = <1940000>;
+ 	device_for_each_child_node(priv->dev, child) {
+-		np = to_of_node(child);
+ 		led = &priv->leds[i];
++		init_data.fwnode = child;
+ 
+-		ret = fwnode_property_read_string(child, "label", &str);
++		ret = led_compose_name(child, CR_DEV_NAME, ":", init_data.name);
+ 		if (ret)
+-			snprintf(led->name, sizeof(led->name),
+-				 "cr0014114::");
+-		else
+-			snprintf(led->name, sizeof(led->name),
+-				 "cr0014114:%s", str);
++			return ret;
+ 
+ 		fwnode_property_read_string(child, "linux,default-trigger",
+ 					    &led->ldev.default_trigger);
+ 
+ 		led->priv			  = priv;
+-		led->ldev.name			  = led->name;
+ 		led->ldev.max_brightness	  = CR_MAX_BRIGHTNESS;
+ 		led->ldev.brightness_set_blocking = cr0014114_set_sync;
+ 
+-		ret = devm_led_classdev_register(priv->dev, &led->ldev);
++		ret = devm_led_classdev_register_ext(priv->dev, &led->ldev,
++						     &init_data);
+ 		if (ret) {
+ 			dev_err(priv->dev,
+-				"failed to register LED device %s, err %d",
+-				led->name, ret);
++				"failed to register LED device , err %d", ret);
+ 			fwnode_handle_put(child);
+ 			return ret;
+ 		}
+ 
+-		led->ldev.dev->of_node = np;
+-
+ 		i++;
+ 	}
+ 
 -- 
 2.11.0
