@@ -1,14 +1,14 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 03/25] dt-bindings: leds: Add LED_FUNCTION definitions
-Date: Mon, 11 Mar 2019 07:22:17 -0500
-Message-ID: <ac860282-af12-8a1f-5d85-2f587856d669@ti.com>
+Subject: Re: [PATCH 04/25] dt-bindings: leds: Add LED_COLOR_NAME definitions
+Date: Mon, 11 Mar 2019 07:23:08 -0500
+Message-ID: <4b4b5109-2da3-a74f-7e77-c4ab4d34ecbc@ti.com>
 References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
- <20190310182836.20841-4-jacek.anaszewski@gmail.com>
+ <20190310182836.20841-5-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190310182836.20841-4-jacek.anaszewski@gmail.com>
+In-Reply-To: <20190310182836.20841-5-jacek.anaszewski@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
@@ -18,9 +18,7 @@ List-Id: linux-leds@vger.kernel.org
 Jacek
 
 On 3/10/19 1:28 PM, Jacek Anaszewski wrote:
-> Add common LED function definitions for use in Device Tree.
-> The function names were extracted from existing dts files
-> after eliminating oddities.
+> Add common LED color name definitions for use in Device Tree.
 > 
 > Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 > Cc: Baolin Wang <baolin.wang@linaro.org>
@@ -31,71 +29,28 @@ On 3/10/19 1:28 PM, Jacek Anaszewski wrote:
 > Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 > Cc: Simon Shields <simon@lineageos.org>
 > ---
->  include/dt-bindings/leds/common.h | 38 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
+>  include/dt-bindings/leds/common.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
 > diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
-> index e171d0a6beb2..ffcd46317307 100644
+> index ffcd46317307..0e986bb59391 100644
 > --- a/include/dt-bindings/leds/common.h
 > +++ b/include/dt-bindings/leds/common.h
-> @@ -19,4 +19,42 @@
->  #define LEDS_BOOST_ADAPTIVE	1
->  #define LEDS_BOOST_FIXED	2
+> @@ -57,4 +57,13 @@
+>  #define LED_FUNCTION_WLAN "wlan"
+>  #define LED_FUNCTION_WPS "wps"
 >  
-> +/* Standard LED functions */
-> +#define LED_FUNCTION_ACTIVITY "activity"
-> +#define LED_FUNCTION_ADSL "adsl"
-> +#define LED_FUNCTION_ALARM "alarm"
-> +#define LED_FUNCTION_BACKLIGHT "backlight"
-> +#define LED_FUNCTION_BLUETOOTH "bluetooth"
-> +#define LED_FUNCTION_BOOT "boot"
-> +#define LED_FUNCTION_CHRG "chrg"
-
-Why not spell out charge?
-
-
-> +#define LED_FUNCTION_DEBUG "debug"
-> +#define LED_FUNCTION_DISK "disk"
-> +#define LED_FUNCTION_DISK_READ "disk-read"
-> +#define LED_FUNCTION_DISK_WRITE "disk-write"
-> +#define LED_FUNCTION_FAULT "fault"
-> +#define LED_FUNCTION_FLASH "flash"
-> +#define LED_FUNCTION_HDDERR "hdderr"
-> +#define LED_FUNCTION_HEARTBEAT "heartbeat"
-> +#define LED_FUNCTION_INDICATOR "indicator"
-> +#define LED_FUNCTION_INFO "info"
-> +#define LED_FUNCTION_INTERNET "internet"
-
-LEDs function can be for keyboards and keypads.
-
-Keypad for hand held devices
-
-#define LED_FUNCTION_KEYBOARD "keyboard"
-#define LED_FUNCTION_KEYPAD "keypad"
-
-
-> +#define LED_FUNCTION_LAN "lan"
-> +#define LED_FUNCTION_MMC "mmc"
-> +#define LED_FUNCTION_NAND "nand"
-> +#define LED_FUNCTION_ON "on"
-> +#define LED_FUNCTION_PROGRAMMING "programming"
-> +#define LED_FUNCTION_PWR "pwr"
-
-Same comment as above on chrg
-
-> +#define LED_FUNCTION_RX "rx"
-> +#define LED_FUNCTION_SD "sd"
-> +#define LED_FUNCTION_SLEEP "sleep"
-> +#define LED_FUNCTION_STANDBY "standby"
-> +#define LED_FUNCTION_STATUS "status"
-> +#define LED_FUNCTION_TORCH "torch"
-> +#define LED_FUNCTION_TV "tv"
-> +#define LED_FUNCTION_TX "tx"
-> +#define LED_FUNCTION_USB "usb"
-> +#define LED_FUNCTION_WAN "wan"
-> +#define LED_FUNCTION_WLAN "wlan"
-> +#define LED_FUNCTION_WPS "wps"
+> +/* Standard LED colors */
+> +#define LED_COLOR_NAME_WHITE    "white"
+> +#define LED_COLOR_NAME_RED      "red"
+> +#define LED_COLOR_NAME_GREEN    "green"
+> +#define LED_COLOR_NAME_BLUE     "blue"
+> +#define LED_COLOR_NAME_AMBER    "amber"
+> +#define LED_COLOR_NAME_VIOLET   "violet"
+> +#define LED_COLOR_NAME_YELLOW   "yellow"
 > +
+
+#define LED_COLOR_NAME_INFRARED	"ir"
 
 Dan
 
