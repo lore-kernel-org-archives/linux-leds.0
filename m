@@ -1,106 +1,66 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
-Date: Mon, 11 Mar 2019 18:22:54 +0100
-Message-ID: <cf26b351-f2b5-8345-29b7-401153b5f0d7@gmail.com>
-References: <20190307220947.20057-1-dmurphy@ti.com>
- <20190307220947.20057-4-dmurphy@ti.com>
- <8ac4d84f-c792-893d-fbae-fac88fac8631@gmail.com>
- <bb621d08-c192-0018-f67e-3f3262a71b6f@ti.com>
+Subject: Re: [PATCH 04/25] dt-bindings: leds: Add LED_COLOR_NAME definitions
+Date: Mon, 11 Mar 2019 18:23:04 +0100
+Message-ID: <7151f59e-4413-8e27-4120-c5acfcf9b919@gmail.com>
+References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
+ <20190310182836.20841-5-jacek.anaszewski@gmail.com>
+ <4b4b5109-2da3-a74f-7e77-c4ab4d34ecbc@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <bb621d08-c192-0018-f67e-3f3262a71b6f@ti.com>
+In-Reply-To: <4b4b5109-2da3-a74f-7e77-c4ab4d34ecbc@ti.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz, tony@atomide.com, lee.jones@linaro.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
 Dan,
 
-One more thing I forgot to mention before.
-
-On 3/11/19 12:36 PM, Dan Murphy wrote:
+On 3/11/19 1:23 PM, Dan Murphy wrote:
 > Jacek
-[...]
 > 
->>> @@ -0,0 +1,72 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 */
->>> +/* TI LM3532 LED driver
->>> + * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
->>> + */
+> On 3/10/19 1:28 PM, Jacek Anaszewski wrote:
+>> Add common LED color name definitions for use in Device Tree.
+>>
+>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>> Cc: Baolin Wang <baolin.wang@linaro.org>
+>> Cc: Daniel Mack <daniel@zonque.org>
+>> Cc: Dan Murphy <dmurphy@ti.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+>> Cc: Simon Shields <simon@lineageos.org>
+>> ---
+>>   include/dt-bindings/leds/common.h | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
+>> index ffcd46317307..0e986bb59391 100644
+>> --- a/include/dt-bindings/leds/common.h
+>> +++ b/include/dt-bindings/leds/common.h
+>> @@ -57,4 +57,13 @@
+>>   #define LED_FUNCTION_WLAN "wlan"
+>>   #define LED_FUNCTION_WPS "wps"
+>>   
+>> +/* Standard LED colors */
+>> +#define LED_COLOR_NAME_WHITE    "white"
+>> +#define LED_COLOR_NAME_RED      "red"
+>> +#define LED_COLOR_NAME_GREEN    "green"
+>> +#define LED_COLOR_NAME_BLUE     "blue"
+>> +#define LED_COLOR_NAME_AMBER    "amber"
+>> +#define LED_COLOR_NAME_VIOLET   "violet"
+>> +#define LED_COLOR_NAME_YELLOW   "yellow"
+>> +
+> 
+> #define LED_COLOR_NAME_INFRARED	"ir"
 
-Let's have "//" comments here.
+Ack.
 
->>> +#ifndef __DT_BINDINGS_LEDS_LM3532_H
->>> +#define __DT_BINDINGS_LEDS_LM3532_H
->>> +
->>> +#define LM3532_BL_MODE_MANUAL    0x00 /* "man" */
->>> +#define LM3532_BL_MODE_ALS    0x01 /* "als" */
->>> +
->>> +/* ALS Resistor Select */
->>> +#define LM3532_IMP_HIGH        0x00
->>> +#define LM3532_IMP_37K        0x01
->>> +#define LM3532_IMP_18_5K    0x02
->>> +#define LM3532_IMP_12_33K    0x03
->>> +#define LM3532_IMP_9_25K    0x04
->>> +#define LM3532_IMP_7_4K        0x05
->>> +#define LM3532_IMP_6_17K    0x06
->>> +#define LM3532_IMP_5_29K    0x07
->>> +#define LM3532_IMP_4_63K    0x08
->>> +#define LM3532_IMP_4_11K    0x09
->>> +#define LM3532_IMP_3_7K        0x0a
->>> +#define LM3532_IMP_3_36K    0x0b
->>> +#define LM3532_IMP_3_08K    0x0c
->>> +#define LM3532_IMP_2_85K    0x0d
->>> +#define LM3532_IMP_2_64K    0x0e
->>> +#define LM3532_IMP_2_44K    0x0f
->>> +#define LM3532_IMP_2_31K    0x10
->>> +#define LM3532_IMP_2_18K    0x11
->>> +#define LM3532_IMP_2_06K    0x12
->>> +#define LM3532_IMP_1_95K    0x13
->>> +#define LM3532_IMP_1_85K    0x14
->>> +#define LM3532_IMP_1_76K    0x15
->>> +#define LM3532_IMP_1_68K    0x16
->>> +#define LM3532_IMP_1_61K    0x17
->>> +#define LM3532_IMP_1_54K    0x18
->>> +#define LM3532_IMP_1_48K    0x19
->>> +#define LM3532_IMP_1_42K    0x1a
->>> +#define LM3532_IMP_1_37K    0x1b
->>> +#define LM3532_IMP_1_32K    0x1c
->>> +#define LM3532_IMP_1_28K    0x1d
->>> +#define LM3532_IMP_1_23K    0x1e
->>> +#define LM3532_IMP_1_19K    0x1f
->>> +
->>> +/* ALS Averaging Time */
->>> +#define LM3532_ALS_AVRG_TIME_17_92ms    0x00
->>> +#define LM3532_ALS_AVRG_TIME_35_84ms    0x01
->>> +#define LM3532_ALS_AVRG_TIME_71_68ms    0x02
->>> +#define LM3532_ALS_AVRG_TIME_143_36ms    0x03
->>> +#define LM3532_ALS_AVRG_TIME_286_72ms    0x04
->>> +#define LM3532_ALS_AVRG_TIME_573_44ms    0x05
->>> +#define LM3532_ALS_AVRG_TIME_1146_88ms    0x06
->>> +#define LM3532_ALS_AVRG_TIME_2293_76ms    0x07
->>> +
->>> +/* ALS input select */
->>> +#define LM3532_ALS_INPUT_AVRG    0x00 /* ALS1 and ALS2 input average */
->>> +#define LM3532_ALS_INPUT_ALS1    0x01 /* ALS1 Input */
->>> +#define LM3532_ALS_INPUT_ALS2    0x02 /* ALS2 Input */
->>> +#define LM3532_ALS_INPUT_CEIL    0x03 /* Max of ALS1 and ALS2 */
->>> +
->>> +/* Ramp Times */
->>> +#define LM3532_RAMP_8us        0x00
->>> +#define LM3532_RAMP_1024us    0x01
->>> +#define LM3532_RAMP_2048us    0x02
->>> +#define LM3532_RAMP_4096us    0x03
->>> +#define LM3532_RAMP_8192us    0x04
->>> +#define LM3532_RAMP_16384us    0x05
->>> +#define LM3532_RAMP_32768us    0x06
->>> +#define LM3532_RAMP_65536us    0x07
->>> +
->>> +#endif /* __DT_BINDINGS_LEDS_LM3532_H */
->>>
+> Dan
+> 
+>>   #endif /* __DT_BINDINGS_LEDS_H */
 >>
 > 
 > 
