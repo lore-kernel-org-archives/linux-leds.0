@@ -1,100 +1,122 @@
-From: Nick Crews <ncrews@chromium.org>
-Subject: Re: [PATCH] platform/chrome: Add Wilco EC keyboard backlight LEDs support
-Date: Mon, 11 Mar 2019 09:29:06 -0600
-Message-ID: <CAHX4x85=_76=Kyepf3Nw++4yVKOZujhLsonzaicZOnY5fi-Pfw@mail.gmail.com>
-References: <20190308203801.57920-1-ncrews@chromium.org> <20190308210843.GA16125@amd>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 03/25] dt-bindings: leds: Add LED_FUNCTION definitions
+Date: Mon, 11 Mar 2019 18:22:43 +0100
+Message-ID: <9b02a7fd-3cec-f935-23e0-7c3b1263dbc4@gmail.com>
+References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
+ <20190310182836.20841-4-jacek.anaszewski@gmail.com>
+ <ac860282-af12-8a1f-5d85-2f587856d669@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190308210843.GA16125@amd>
+In-Reply-To: <ac860282-af12-8a1f-5d85-2f587856d669@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Daniel Erat <derat@google.com>, Guenter Roeck <groeck@google.com>, Dmitry Torokhov <dtor@google.com>
+To: Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-Thanks for looking this over. I will fix most of your concerns, but
-have one question.
+Hi Dan,
 
-On Fri, Mar 8, 2019 at 2:08 PM Pavel Machek <pavel@ucw.cz> wrote:
->
-> On Fri 2019-03-08 13:38:02, Nick Crews wrote:
-> > This patch is meant to be applied on top of the for-next
-> > branch of the platform/chrome repository, as it uses some of
-> > the code staged there.
-> >
-> > The EC is in charge of controlling the keyboard backlight on
-> > the Wilco platform. We expose a standard LED class device at
-> > /sys/class/leds/wilco::kbd_backlight. This driver is modeled
-> > after the standard Chrome OS keyboard backlight driver at
-> > drivers/platform/chrome/cros_kbd_led_backlight.c
->
-> Can you make it "platform::kbd_backlight"? We want some consistency
-> there.
+Thanks for the review.
 
-The analogous name in the standard driver
-drivers/platform/chrome/cros_kbd_led_backlight.c is
-"chromeos::kbd_backlight", and I thought "wilco" was a better
-substitute for "chromeos" than "platform" would be. What other thing
-are you saying "platform" would be consistent with?
+On 3/11/19 1:22 PM, Dan Murphy wrote:
+> Jacek
+> 
+> On 3/10/19 1:28 PM, Jacek Anaszewski wrote:
+>> Add common LED function definitions for use in Device Tree.
+>> The function names were extracted from existing dts files
+>> after eliminating oddities.
+>>
+>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>> Cc: Baolin Wang <baolin.wang@linaro.org>
+>> Cc: Daniel Mack <daniel@zonque.org>
+>> Cc: Dan Murphy <dmurphy@ti.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+>> Cc: Simon Shields <simon@lineageos.org>
+>> ---
+>>   include/dt-bindings/leds/common.h | 38 ++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 38 insertions(+)
+>>
+>> diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
+>> index e171d0a6beb2..ffcd46317307 100644
+>> --- a/include/dt-bindings/leds/common.h
+>> +++ b/include/dt-bindings/leds/common.h
+>> @@ -19,4 +19,42 @@
+>>   #define LEDS_BOOST_ADAPTIVE	1
+>>   #define LEDS_BOOST_FIXED	2
+>>   
+>> +/* Standard LED functions */
+>> +#define LED_FUNCTION_ACTIVITY "activity"
+>> +#define LED_FUNCTION_ADSL "adsl"
+>> +#define LED_FUNCTION_ALARM "alarm"
+>> +#define LED_FUNCTION_BACKLIGHT "backlight"
+>> +#define LED_FUNCTION_BLUETOOTH "bluetooth"
+>> +#define LED_FUNCTION_BOOT "boot"
+>> +#define LED_FUNCTION_CHRG "chrg"
+> 
+> Why not spell out charge?
 
->
-> > Some Wilco devices do not support a keyboard backlight. This
-> > is checked in probe(), and in this case the sysfs entry will
-> > not appear, and everything will behave normally.
->
-> Good.
->
-> > When the EC is reset (loses all AC and battery power), it will
-> > restart in some unpredictable state. The brightness on the
-> > keyboard could be anything, and reading the brightness
-> > from the EC is undefined behavior. Therefore, at startup the
-> > brightness should be set, and then everything will work.
->
-> Really? Undefined behavior?
+It was in one of existing dts files.
+I have no issue with that, will change it to "charge".
 
-By undefined I guess I meant "not conforming with the schema
-that Chrome OS normally uses." The EC begins in non-PWM mode,
-so while it may behave consistently, it doesn't behave as the rest of
-Chrome OS expects. I think the solution is going to be to hard-code in
-setting the brightness to 0 at probe(), and then everything should be
-in a consistent state.
+> 
+>> +#define LED_FUNCTION_DEBUG "debug"
+>> +#define LED_FUNCTION_DISK "disk"
+>> +#define LED_FUNCTION_DISK_READ "disk-read"
+>> +#define LED_FUNCTION_DISK_WRITE "disk-write"
+>> +#define LED_FUNCTION_FAULT "fault"
+>> +#define LED_FUNCTION_FLASH "flash"
+>> +#define LED_FUNCTION_HDDERR "hdderr"
+>> +#define LED_FUNCTION_HEARTBEAT "heartbeat"
+>> +#define LED_FUNCTION_INDICATOR "indicator"
+>> +#define LED_FUNCTION_INFO "info"
+>> +#define LED_FUNCTION_INTERNET "internet"
+> 
+> LEDs function can be for keyboards and keypads.
+> 
+> Keypad for hand held devices
+> 
+> #define LED_FUNCTION_KEYBOARD "keyboard"
+> #define LED_FUNCTION_KEYPAD "keypad"
 
->
-> > index e09e4cebe9b4..15b56f5ce090 100644
-> > --- a/drivers/platform/chrome/wilco_ec/Kconfig
-> > +++ b/drivers/platform/chrome/wilco_ec/Kconfig
-> > @@ -18,3 +18,12 @@ config WILCO_EC_DEBUGFS
-> >         manipulation and allow for testing arbitrary commands.  This
-> >         interface is intended for debug only and will not be present
-> >         on production devices.
-> > +
-> > +config WILCO_EC_KBD_BACKLIGHT
-> > +     tristate "Enable keyboard led backlight control"
->
-> Delete "led" or make it "LED".
->
-> > +     depends on WILCO_EC
-> > +     help
-> > +       If you say Y here, you get support to set the keyboard backlight led
->
-> Same here.
->
-> > +#define DRV_NAME             "wilco-kbd-backlight"
-> > +
-> > +#define EC_COMMAND_KB_BKLIGHT        0x75
-> > +#define KBBL_MSG_SIZE                16
-> > +/* The EC can set the backlight brightness in several different modes.
-> > +The mode we care about is PWM mode, where we separately supply a
-> > +literal percentage to set the brightness to. We need to set the proper
-> > +KBBL_PWM_MODE flag in the KBBL_MODE_INDEX-th byte in the message, and
-> > +then supply the percentage within the KBBL_BRIGHTNESS_INDEX-th byte
-> > +within the message. When we read the brightness, the percentage is
-> > +returned in this same byte location. */
->
-> Please use comment style specified in CodingStyle.
->
-> Best regards,
->                                                                         Pavel
+Ack.
 
-Cheers,
-Nick
+> 
+>> +#define LED_FUNCTION_LAN "lan"
+>> +#define LED_FUNCTION_MMC "mmc"
+>> +#define LED_FUNCTION_NAND "nand"
+>> +#define LED_FUNCTION_ON "on"
+>> +#define LED_FUNCTION_PROGRAMMING "programming"
+>> +#define LED_FUNCTION_PWR "pwr"
+> 
+> Same comment as above on chrg
+
+Ack.
+
+>> +#define LED_FUNCTION_RX "rx"
+>> +#define LED_FUNCTION_SD "sd"
+>> +#define LED_FUNCTION_SLEEP "sleep"
+>> +#define LED_FUNCTION_STANDBY "standby"
+>> +#define LED_FUNCTION_STATUS "status"
+>> +#define LED_FUNCTION_TORCH "torch"
+>> +#define LED_FUNCTION_TV "tv"
+>> +#define LED_FUNCTION_TX "tx"
+>> +#define LED_FUNCTION_USB "usb"
+>> +#define LED_FUNCTION_WAN "wan"
+>> +#define LED_FUNCTION_WLAN "wlan"
+>> +#define LED_FUNCTION_WPS "wps"
+>> +
+> 
+> Dan
+> 
+>>   #endif /* __DT_BINDINGS_LEDS_H */
+>>
+> 
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
