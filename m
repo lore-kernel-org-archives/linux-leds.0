@@ -1,118 +1,106 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 03/25] dt-bindings: leds: Add LED_FUNCTION definitions
-Date: Mon, 11 Mar 2019 18:22:43 +0100
-Message-ID: <9b02a7fd-3cec-f935-23e0-7c3b1263dbc4@gmail.com>
-References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
- <20190310182836.20841-4-jacek.anaszewski@gmail.com>
- <ac860282-af12-8a1f-5d85-2f587856d669@ti.com>
+Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
+Date: Mon, 11 Mar 2019 18:22:54 +0100
+Message-ID: <cf26b351-f2b5-8345-29b7-401153b5f0d7@gmail.com>
+References: <20190307220947.20057-1-dmurphy@ti.com>
+ <20190307220947.20057-4-dmurphy@ti.com>
+ <8ac4d84f-c792-893d-fbae-fac88fac8631@gmail.com>
+ <bb621d08-c192-0018-f67e-3f3262a71b6f@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ac860282-af12-8a1f-5d85-2f587856d669@ti.com>
+In-Reply-To: <bb621d08-c192-0018-f67e-3f3262a71b6f@ti.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
+To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz, tony@atomide.com, lee.jones@linaro.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Dan,
+Dan,
 
-Thanks for the review.
+One more thing I forgot to mention before.
 
-On 3/11/19 1:22 PM, Dan Murphy wrote:
+On 3/11/19 12:36 PM, Dan Murphy wrote:
 > Jacek
+[...]
 > 
-> On 3/10/19 1:28 PM, Jacek Anaszewski wrote:
->> Add common LED function definitions for use in Device Tree.
->> The function names were extracted from existing dts files
->> after eliminating oddities.
->>
->> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->> Cc: Baolin Wang <baolin.wang@linaro.org>
->> Cc: Daniel Mack <daniel@zonque.org>
->> Cc: Dan Murphy <dmurphy@ti.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
->> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
->> Cc: Simon Shields <simon@lineageos.org>
->> ---
->>   include/dt-bindings/leds/common.h | 38 ++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 38 insertions(+)
->>
->> diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
->> index e171d0a6beb2..ffcd46317307 100644
->> --- a/include/dt-bindings/leds/common.h
->> +++ b/include/dt-bindings/leds/common.h
->> @@ -19,4 +19,42 @@
->>   #define LEDS_BOOST_ADAPTIVE	1
->>   #define LEDS_BOOST_FIXED	2
->>   
->> +/* Standard LED functions */
->> +#define LED_FUNCTION_ACTIVITY "activity"
->> +#define LED_FUNCTION_ADSL "adsl"
->> +#define LED_FUNCTION_ALARM "alarm"
->> +#define LED_FUNCTION_BACKLIGHT "backlight"
->> +#define LED_FUNCTION_BLUETOOTH "bluetooth"
->> +#define LED_FUNCTION_BOOT "boot"
->> +#define LED_FUNCTION_CHRG "chrg"
-> 
-> Why not spell out charge?
+>>> @@ -0,0 +1,72 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +/* TI LM3532 LED driver
+>>> + * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
+>>> + */
 
-It was in one of existing dts files.
-I have no issue with that, will change it to "charge".
+Let's have "//" comments here.
 
-> 
->> +#define LED_FUNCTION_DEBUG "debug"
->> +#define LED_FUNCTION_DISK "disk"
->> +#define LED_FUNCTION_DISK_READ "disk-read"
->> +#define LED_FUNCTION_DISK_WRITE "disk-write"
->> +#define LED_FUNCTION_FAULT "fault"
->> +#define LED_FUNCTION_FLASH "flash"
->> +#define LED_FUNCTION_HDDERR "hdderr"
->> +#define LED_FUNCTION_HEARTBEAT "heartbeat"
->> +#define LED_FUNCTION_INDICATOR "indicator"
->> +#define LED_FUNCTION_INFO "info"
->> +#define LED_FUNCTION_INTERNET "internet"
-> 
-> LEDs function can be for keyboards and keypads.
-> 
-> Keypad for hand held devices
-> 
-> #define LED_FUNCTION_KEYBOARD "keyboard"
-> #define LED_FUNCTION_KEYPAD "keypad"
-
-Ack.
-
-> 
->> +#define LED_FUNCTION_LAN "lan"
->> +#define LED_FUNCTION_MMC "mmc"
->> +#define LED_FUNCTION_NAND "nand"
->> +#define LED_FUNCTION_ON "on"
->> +#define LED_FUNCTION_PROGRAMMING "programming"
->> +#define LED_FUNCTION_PWR "pwr"
-> 
-> Same comment as above on chrg
-
-Ack.
-
->> +#define LED_FUNCTION_RX "rx"
->> +#define LED_FUNCTION_SD "sd"
->> +#define LED_FUNCTION_SLEEP "sleep"
->> +#define LED_FUNCTION_STANDBY "standby"
->> +#define LED_FUNCTION_STATUS "status"
->> +#define LED_FUNCTION_TORCH "torch"
->> +#define LED_FUNCTION_TV "tv"
->> +#define LED_FUNCTION_TX "tx"
->> +#define LED_FUNCTION_USB "usb"
->> +#define LED_FUNCTION_WAN "wan"
->> +#define LED_FUNCTION_WLAN "wlan"
->> +#define LED_FUNCTION_WPS "wps"
->> +
-> 
-> Dan
-> 
->>   #endif /* __DT_BINDINGS_LEDS_H */
+>>> +#ifndef __DT_BINDINGS_LEDS_LM3532_H
+>>> +#define __DT_BINDINGS_LEDS_LM3532_H
+>>> +
+>>> +#define LM3532_BL_MODE_MANUAL    0x00 /* "man" */
+>>> +#define LM3532_BL_MODE_ALS    0x01 /* "als" */
+>>> +
+>>> +/* ALS Resistor Select */
+>>> +#define LM3532_IMP_HIGH        0x00
+>>> +#define LM3532_IMP_37K        0x01
+>>> +#define LM3532_IMP_18_5K    0x02
+>>> +#define LM3532_IMP_12_33K    0x03
+>>> +#define LM3532_IMP_9_25K    0x04
+>>> +#define LM3532_IMP_7_4K        0x05
+>>> +#define LM3532_IMP_6_17K    0x06
+>>> +#define LM3532_IMP_5_29K    0x07
+>>> +#define LM3532_IMP_4_63K    0x08
+>>> +#define LM3532_IMP_4_11K    0x09
+>>> +#define LM3532_IMP_3_7K        0x0a
+>>> +#define LM3532_IMP_3_36K    0x0b
+>>> +#define LM3532_IMP_3_08K    0x0c
+>>> +#define LM3532_IMP_2_85K    0x0d
+>>> +#define LM3532_IMP_2_64K    0x0e
+>>> +#define LM3532_IMP_2_44K    0x0f
+>>> +#define LM3532_IMP_2_31K    0x10
+>>> +#define LM3532_IMP_2_18K    0x11
+>>> +#define LM3532_IMP_2_06K    0x12
+>>> +#define LM3532_IMP_1_95K    0x13
+>>> +#define LM3532_IMP_1_85K    0x14
+>>> +#define LM3532_IMP_1_76K    0x15
+>>> +#define LM3532_IMP_1_68K    0x16
+>>> +#define LM3532_IMP_1_61K    0x17
+>>> +#define LM3532_IMP_1_54K    0x18
+>>> +#define LM3532_IMP_1_48K    0x19
+>>> +#define LM3532_IMP_1_42K    0x1a
+>>> +#define LM3532_IMP_1_37K    0x1b
+>>> +#define LM3532_IMP_1_32K    0x1c
+>>> +#define LM3532_IMP_1_28K    0x1d
+>>> +#define LM3532_IMP_1_23K    0x1e
+>>> +#define LM3532_IMP_1_19K    0x1f
+>>> +
+>>> +/* ALS Averaging Time */
+>>> +#define LM3532_ALS_AVRG_TIME_17_92ms    0x00
+>>> +#define LM3532_ALS_AVRG_TIME_35_84ms    0x01
+>>> +#define LM3532_ALS_AVRG_TIME_71_68ms    0x02
+>>> +#define LM3532_ALS_AVRG_TIME_143_36ms    0x03
+>>> +#define LM3532_ALS_AVRG_TIME_286_72ms    0x04
+>>> +#define LM3532_ALS_AVRG_TIME_573_44ms    0x05
+>>> +#define LM3532_ALS_AVRG_TIME_1146_88ms    0x06
+>>> +#define LM3532_ALS_AVRG_TIME_2293_76ms    0x07
+>>> +
+>>> +/* ALS input select */
+>>> +#define LM3532_ALS_INPUT_AVRG    0x00 /* ALS1 and ALS2 input average */
+>>> +#define LM3532_ALS_INPUT_ALS1    0x01 /* ALS1 Input */
+>>> +#define LM3532_ALS_INPUT_ALS2    0x02 /* ALS2 Input */
+>>> +#define LM3532_ALS_INPUT_CEIL    0x03 /* Max of ALS1 and ALS2 */
+>>> +
+>>> +/* Ramp Times */
+>>> +#define LM3532_RAMP_8us        0x00
+>>> +#define LM3532_RAMP_1024us    0x01
+>>> +#define LM3532_RAMP_2048us    0x02
+>>> +#define LM3532_RAMP_4096us    0x03
+>>> +#define LM3532_RAMP_8192us    0x04
+>>> +#define LM3532_RAMP_16384us    0x05
+>>> +#define LM3532_RAMP_32768us    0x06
+>>> +#define LM3532_RAMP_65536us    0x07
+>>> +
+>>> +#endif /* __DT_BINDINGS_LEDS_LM3532_H */
+>>>
 >>
 > 
 > 
