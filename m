@@ -1,144 +1,137 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 05/25] dt-bindings: leds: Add function and color
- properties
-Date: Mon, 11 Mar 2019 07:26:43 -0500
-Message-ID: <98c1a41e-77bb-5ffd-b5b3-772a28c0f0a6@ti.com>
+Subject: Re: [PATCH 11/25] leds: lp8860: Use led_compose_name()
+Date: Mon, 11 Mar 2019 07:28:50 -0500
+Message-ID: <cf42384b-cdbc-3ad7-468f-c4036579652f@ti.com>
 References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
- <20190310182836.20841-6-jacek.anaszewski@gmail.com>
+ <20190310182836.20841-12-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190310182836.20841-6-jacek.anaszewski@gmail.com>
+In-Reply-To: <20190310182836.20841-12-jacek.anaszewski@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 On 3/10/19 1:28 PM, Jacek Anaszewski wrote:
-> Introduce dedicated properties for conveying information about
-> LED function and color. Mark old "label" property as deprecated.
+> Switch to using generic LED support for composing LED class
+> device name.
+> 
+> While at it, avoid iterating through available child of nodes
+> in favor of obtaining single expected child node using single
+> call to of_get_next_available_child().
 > 
 > Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Baolin Wang <baolin.wang@linaro.org>
-> Cc: Daniel Mack <daniel@zonque.org>
 > Cc: Dan Murphy <dmurphy@ti.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Cc: Simon Shields <simon@lineageos.org>
 > ---
->  Documentation/devicetree/bindings/leds/common.txt | 55 +++++++++++++++++++----
->  1 file changed, 47 insertions(+), 8 deletions(-)
+>  drivers/leds/leds-lp8860.c | 38 +++++++++++++++++++-------------------
+>  1 file changed, 19 insertions(+), 19 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-> index aa1399814a2a..3402b0e1cec9 100644
-> --- a/Documentation/devicetree/bindings/leds/common.txt
-> +++ b/Documentation/devicetree/bindings/leds/common.txt
-> @@ -10,14 +10,23 @@ can influence the way of the LED device initialization, the LED components
->  have to be tightly coupled with the LED device binding. They are represented
->  by child nodes of the parent LED device binding.
+> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+> index 39c72a908f3b..7c12ccdc1f2f 100644
+> --- a/drivers/leds/leds-lp8860.c
+> +++ b/drivers/leds/leds-lp8860.c
+> @@ -22,7 +22,6 @@
+>  #include <linux/of_gpio.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/slab.h>
+> -#include <uapi/linux/uleds.h>
 >  
+>  #define LP8860_DISP_CL1_BRT_MSB		0x00
+>  #define LP8860_DISP_CL1_BRT_LSB		0x01
+> @@ -87,6 +86,8 @@
+>  
+>  #define LP8860_CLEAR_FAULTS		0x01
+>  
+> +#define LP8860_NAME			"lp8860"
 > +
->  Optional properties for child nodes:
->  - led-sources : List of device current outputs the LED is connected to. The
->  		outputs are identified by the numbers that must be defined
->  		in the LED device binding documentation.
-> +- function: LED functon. Use one of the LED_FUNCTION_* prefixed definitions
-> +	    from the header include/dt-bindings/leds/common.h.
-> +	    If there is no matching LED_FUNCTION available, add a new one.
-> +- color : Color of the LED. Use one of the LED_COLOR_NAME_* prefixed definitions
-> +	    from the header include/dt-bindings/leds/common.h.
-> +	    If there is no matching LED_COLOR_NAME available, add a new one.
-> +
-
-I am assuming multi color can re-use this property as well?
-
->  - label : The label for this LED. If omitted, the label is taken from the node
->  	  name (excluding the unit address). It has to uniquely identify
->  	  a device, i.e. no other LED class device can be assigned the same
-> -	  label.
-> +	  label. This property is deprecated - use 'function' and 'color'
-> +	  properties instead.
->  
->  - default-state : The initial state of the LED. Valid values are "on", "off",
->    and "keep". If the LED is already on or off and the default-state property is
-> @@ -87,29 +96,59 @@ Required properties for trigger source:
->  
->  * Examples
->  
-> -gpio-leds {
-> +#include <dt-bindings/leds/common.h>
-> +
-> +led-controller@0 {
->  	compatible = "gpio-leds";
->  
-> -	system-status {
-> -		label = "Status";
-> +	led0 {
-> +		function = LED_FUNCTION_STATUS;
-
-Missing color for example unless there is a reason to omit it for GPIO LEDs
-
-Also missing reg here
-
->  		linux,default-trigger = "heartbeat";
->  		gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
->  	};
->  
-> -	usb {
-> +	led1 {
-> +		function = LED_FUNCTION_USB;
-
-Same as above
-Also missing reg here
->  		gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
->  		trigger-sources = <&ohci_port1>, <&ehci_port1>;
->  	};
+>  /**
+>   * struct lp8860_led -
+>   * @lock - Lock for reading/writing the device
+> @@ -96,7 +97,6 @@
+>   * @eeprom_regmap - EEPROM register map
+>   * @enable_gpio - VDDIO/EN gpio to enable communication interface
+>   * @regulator - LED supply regulator pointer
+> - * @label - LED label
+>   */
+>  struct lp8860_led {
+>  	struct mutex lock;
+> @@ -106,7 +106,6 @@ struct lp8860_led {
+>  	struct regmap *eeprom_regmap;
+>  	struct gpio_desc *enable_gpio;
+>  	struct regulator *regulator;
+> -	char label[LED_MAX_NAME_SIZE];
 >  };
 >  
-> -max77693-led {
-> +led-controller@0 {
->  	compatible = "maxim,max77693-led";
+>  struct lp8860_eeprom_reg {
+> @@ -387,25 +386,26 @@ static int lp8860_probe(struct i2c_client *client,
+>  	struct lp8860_led *led;
+>  	struct device_node *np = client->dev.of_node;
+>  	struct device_node *child_node;
+> -	const char *name;
+> +	struct led_init_data init_data;
 >  
-> -	camera-flash {
-> -		label = "Flash";
-> +	led {
-> +		function = LED_FUNCTION_FLASH;
-> +		color = LED_COLOR_NAME_WHITE;
->  		led-sources = <0>, <1>;
->  		led-max-microamp = <50000>;
->  		flash-max-microamp = <320000>;
->  		flash-max-timeout-us = <500000>;
->  	};
->  };
+>  	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
+>  	if (!led)
+>  		return -ENOMEM;
+>  
+> -	for_each_available_child_of_node(np, child_node) {
+> -		led->led_dev.default_trigger = of_get_property(child_node,
+> -						    "linux,default-trigger",
+> -						    NULL);
+> -
+> -		ret = of_property_read_string(child_node, "label", &name);
+> -		if (!ret)
+> -			snprintf(led->label, sizeof(led->label), "%s:%s",
+> -				 id->name, name);
+> -		else
+> -			snprintf(led->label, sizeof(led->label),
+> -				"%s::display_cluster", id->name);
+> -	}
+> +	child_node = of_get_next_available_child(np, NULL);
+
+Again this device has multiple outputs that can be banked or separated.
+
+I would prefer to leave the iteration and just change the name generation.
+
+Dan
+
+> +	if (!child_node)
+> +		return -EINVAL;
 > +
-> +led-controller@30 {
-> +        compatible = "panasonic,an30259a";
-> +        reg = <0x30>;
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
+> +	init_data.fwnode = of_fwnode_handle(child_node),
 > +
-> +        led@1 {
-> +                reg = <1>;
-> +                linux,default-trigger = "heartbeat";
-> +                function = LED_FUNCTION_INDICATOR;
-> +                color = LED_COLOR_NAME_RED;
-> +        };
+> +	led->led_dev.default_trigger = of_get_property(child_node,
+> +					    "linux,default-trigger",
+> +					    NULL);
 > +
-> +        led@2 {
-> +                reg = <2>;
-> +                function = LED_FUNCTION_INDICATOR;
-> +                color = LED_COLOR_NAME_GREEN;
-> +        };
-> +
-> +        led@3 {
-> +                reg = <3>;
-> +                function = LED_FUNCTION_INDICATOR;
-> +                color = LED_COLOR_NAME_BLUE;
-> +        };
-> +};
+> +	ret = led_compose_name(init_data.fwnode, LP8860_NAME,
+> +			       ":display_cluster", init_data.name);
+> +	if (ret)
+> +		return ret;
+>  
+>  	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
+>  						   "enable", GPIOD_OUT_LOW);
+> @@ -420,7 +420,6 @@ static int lp8860_probe(struct i2c_client *client,
+>  		led->regulator = NULL;
+>  
+>  	led->client = client;
+> -	led->led_dev.name = led->label;
+>  	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
+>  
+>  	mutex_init(&led->lock);
+> @@ -447,7 +446,8 @@ static int lp8860_probe(struct i2c_client *client,
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
+> +	ret = devm_led_classdev_register_ext(&client->dev, &led->led_dev,
+> +					     &init_data);
+>  	if (ret) {
+>  		dev_err(&client->dev, "led register err: %d\n", ret);
+>  		return ret;
 > 
 
 
