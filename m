@@ -1,160 +1,100 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 13/25] leds: lm3692x: Use led_compose_name()
-Date: Mon, 11 Mar 2019 07:38:27 -0500
-Message-ID: <6e439475-8d34-5d5c-4a12-5d1d864e9c22@ti.com>
-References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
- <20190310182836.20841-14-jacek.anaszewski@gmail.com>
+From: Nick Crews <ncrews@chromium.org>
+Subject: Re: [PATCH] platform/chrome: Add Wilco EC keyboard backlight LEDs support
+Date: Mon, 11 Mar 2019 09:29:06 -0600
+Message-ID: <CAHX4x85=_76=Kyepf3Nw++4yVKOZujhLsonzaicZOnY5fi-Pfw@mail.gmail.com>
+References: <20190308203801.57920-1-ncrews@chromium.org> <20190308210843.GA16125@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190310182836.20841-14-jacek.anaszewski@gmail.com>
-Content-Language: en-US
+In-Reply-To: <20190308210843.GA16125@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Daniel Erat <derat@google.com>, Guenter Roeck <groeck@google.com>, Dmitry Torokhov <dtor@google.com>
 List-Id: linux-leds@vger.kernel.org
 
-On 3/10/19 1:28 PM, Jacek Anaszewski wrote:
-> Switch to using generic LED support for composing LED class
-> device name.
-> 
-> Since the same device strings would be used in two places,
-> then add macros LM36922_NAME and LM36922_NAME for use in
-> lm3692x_probe_dt(() and lm3692x_id array.
-> 
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> Cc: Dan Murphy <dmurphy@ti.com>
-> ---
->  drivers/leds/leds-lm3692x.c | 39 ++++++++++++++++++++-------------------
->  1 file changed, 20 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-> index 4f413a7c5f05..9dfc0f28a9c8 100644
-> --- a/drivers/leds/leds-lm3692x.c
-> +++ b/drivers/leds/leds-lm3692x.c
-> @@ -13,7 +13,6 @@
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
-> -#include <uapi/linux/uleds.h>
->  
->  #define LM36922_MODEL	0
->  #define LM36923_MODEL	1
-> @@ -95,6 +94,9 @@
->  #define LM3692X_FAULT_FLAG_SHRT BIT(3)
->  #define LM3692X_FAULT_FLAG_OPEN BIT(4)
->  
-> +#define LM36922_NAME "lm36922"
-> +#define LM36923_NAME "lm36923"
-> +
->  /**
->   * struct lm3692x_led -
->   * @lock - Lock for reading/writing the device
-> @@ -103,7 +105,6 @@
->   * @regmap - Devices register map
->   * @enable_gpio - VDDIO/EN gpio to enable communication interface
->   * @regulator - LED supply regulator pointer
-> - * @label - LED label
->   * @led_enable - LED sync to be enabled
->   * @model_id - Current device model ID enumerated
->   */
-> @@ -114,7 +115,6 @@ struct lm3692x_led {
->  	struct regmap *regmap;
->  	struct gpio_desc *enable_gpio;
->  	struct regulator *regulator;
-> -	char label[LED_MAX_NAME_SIZE];
->  	int led_enable;
->  	int model_id;
->  };
-> @@ -325,7 +325,8 @@ static int lm3692x_init(struct lm3692x_led *led)
->  static int lm3692x_probe_dt(struct lm3692x_led *led)
->  {
->  	struct fwnode_handle *child = NULL;
-> -	const char *name;
-> +	struct led_init_data init_data;
-> +	char *model_name;
->  	int ret;
->  
->  	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
-> @@ -346,17 +347,20 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
->  		dev_err(&led->client->dev, "No LED Child node\n");
->  		return -ENODEV;
->  	}
-> +	init_data.fwnode = child;
->  
-> -	fwnode_property_read_string(child, "linux,default-trigger",
-> -				    &led->led_dev.default_trigger);
-> +	if (led->model_id == LM36922_MODEL)
-> +		model_name =  LM36922_NAME;
-> +	else
-> +		model_name =  LM36923_NAME;
->  
+Thanks for looking this over. I will fix most of your concerns, but
+have one question.
 
+On Fri, Mar 8, 2019 at 2:08 PM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> On Fri 2019-03-08 13:38:02, Nick Crews wrote:
+> > This patch is meant to be applied on top of the for-next
+> > branch of the platform/chrome repository, as it uses some of
+> > the code staged there.
+> >
+> > The EC is in charge of controlling the keyboard backlight on
+> > the Wilco platform. We expose a standard LED class device at
+> > /sys/class/leds/wilco::kbd_backlight. This driver is modeled
+> > after the standard Chrome OS keyboard backlight driver at
+> > drivers/platform/chrome/cros_kbd_led_backlight.c
+>
+> Can you make it "platform::kbd_backlight"? We want some consistency
+> there.
 
-Why do we need this change?
+The analogous name in the standard driver
+drivers/platform/chrome/cros_kbd_led_backlight.c is
+"chromeos::kbd_backlight", and I thought "wilco" was a better
+substitute for "chromeos" than "platform" would be. What other thing
+are you saying "platform" would be consistent with?
 
-led->client->name should suffice here and then we do not have to #define the name at all.
+>
+> > Some Wilco devices do not support a keyboard backlight. This
+> > is checked in probe(), and in this case the sysfs entry will
+> > not appear, and everything will behave normally.
+>
+> Good.
+>
+> > When the EC is reset (loses all AC and battery power), it will
+> > restart in some unpredictable state. The brightness on the
+> > keyboard could be anything, and reading the brightness
+> > from the EC is undefined behavior. Therefore, at startup the
+> > brightness should be set, and then everything will work.
+>
+> Really? Undefined behavior?
 
+By undefined I guess I meant "not conforming with the schema
+that Chrome OS normally uses." The EC begins in non-PWM mode,
+so while it may behave consistently, it doesn't behave as the rest of
+Chrome OS expects. I think the solution is going to be to hard-code in
+setting the brightness to 0 at probe(), and then everything should be
+in a consistent state.
 
-> -	ret = fwnode_property_read_string(child, "label", &name);
-> +	ret = led_compose_name(child, model_name, ":backlight_cluster",
-> +			       init_data.name);
->  	if (ret)
-> -		snprintf(led->label, sizeof(led->label),
-> -			"%s::", led->client->name);
-> -	else
-> -		snprintf(led->label, sizeof(led->label),
-> -			 "%s:%s", led->client->name, name);
-> +		return ret;
-> +
-> +	fwnode_property_read_string(child, "linux,default-trigger",
-> +				    &led->led_dev.default_trigger);
->  
->  	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
->  	if (ret) {
-> @@ -364,16 +368,13 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
->  		return ret;
->  	}
->  
-> -	led->led_dev.name = led->label;
-> -
-> -	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
-> +	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
-> +					     &init_data);
->  	if (ret) {
->  		dev_err(&led->client->dev, "led register err: %d\n", ret);
->  		return ret;
->  	}
->  
-> -	led->led_dev.dev->of_node = to_of_node(child);
-> -
+>
+> > index e09e4cebe9b4..15b56f5ce090 100644
+> > --- a/drivers/platform/chrome/wilco_ec/Kconfig
+> > +++ b/drivers/platform/chrome/wilco_ec/Kconfig
+> > @@ -18,3 +18,12 @@ config WILCO_EC_DEBUGFS
+> >         manipulation and allow for testing arbitrary commands.  This
+> >         interface is intended for debug only and will not be present
+> >         on production devices.
+> > +
+> > +config WILCO_EC_KBD_BACKLIGHT
+> > +     tristate "Enable keyboard led backlight control"
+>
+> Delete "led" or make it "LED".
+>
+> > +     depends on WILCO_EC
+> > +     help
+> > +       If you say Y here, you get support to set the keyboard backlight led
+>
+> Same here.
+>
+> > +#define DRV_NAME             "wilco-kbd-backlight"
+> > +
+> > +#define EC_COMMAND_KB_BKLIGHT        0x75
+> > +#define KBBL_MSG_SIZE                16
+> > +/* The EC can set the backlight brightness in several different modes.
+> > +The mode we care about is PWM mode, where we separately supply a
+> > +literal percentage to set the brightness to. We need to set the proper
+> > +KBBL_PWM_MODE flag in the KBBL_MODE_INDEX-th byte in the message, and
+> > +then supply the percentage within the KBBL_BRIGHTNESS_INDEX-th byte
+> > +within the message. When we read the brightness, the percentage is
+> > +returned in this same byte location. */
+>
+> Please use comment style specified in CodingStyle.
+>
+> Best regards,
+>                                                                         Pavel
 
-Seems like an additional change here not documented.
-If it is a bug fix or an enhancement probably need a separate patch.
-
-I do know why this is removed just need tracability on the log.
-
-Dan
-
->  	return 0;
->  }
->  
-> @@ -439,8 +440,8 @@ static int lm3692x_remove(struct i2c_client *client)
->  }
->  
->  static const struct i2c_device_id lm3692x_id[] = {
-> -	{ "lm36922", LM36922_MODEL },
-> -	{ "lm36923", LM36923_MODEL },
-> +	{ LM36922_NAME, LM36922_MODEL },
-> +	{ LM36923_NAME, LM36923_MODEL },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(i2c, lm3692x_id);
-> 
-
-
--- 
-------------------
-Dan Murphy
+Cheers,
+Nick
