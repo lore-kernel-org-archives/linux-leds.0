@@ -1,125 +1,168 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
-Date: Mon, 11 Mar 2019 12:24:09 -0500
-Message-ID: <ee13f836-bd77-22b0-e230-2fc9050afe88@ti.com>
-References: <20190307220947.20057-1-dmurphy@ti.com>
- <20190307220947.20057-4-dmurphy@ti.com>
- <8ac4d84f-c792-893d-fbae-fac88fac8631@gmail.com>
- <bb621d08-c192-0018-f67e-3f3262a71b6f@ti.com>
- <cf26b351-f2b5-8345-29b7-401153b5f0d7@gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 13/25] leds: lm3692x: Use led_compose_name()
+Date: Mon, 11 Mar 2019 18:24:46 +0100
+Message-ID: <5ae3df58-7379-c584-9d00-ef1c35d8689d@gmail.com>
+References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
+ <20190310182836.20841-14-jacek.anaszewski@gmail.com>
+ <6e439475-8d34-5d5c-4a12-5d1d864e9c22@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cf26b351-f2b5-8345-29b7-401153b5f0d7@gmail.com>
+In-Reply-To: <6e439475-8d34-5d5c-4a12-5d1d864e9c22@ti.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, pavel@ucw.cz, tony@atomide.com, lee.jones@linaro.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
+Dan,
 
-On 3/11/19 12:22 PM, Jacek Anaszewski wrote:
-> Dan,
-> 
-> One more thing I forgot to mention before.
-> 
-> On 3/11/19 12:36 PM, Dan Murphy wrote:
->> Jacek
-> [...]
+On 3/11/19 1:38 PM, Dan Murphy wrote:
+> On 3/10/19 1:28 PM, Jacek Anaszewski wrote:
+>> Switch to using generic LED support for composing LED class
+>> device name.
 >>
->>>> @@ -0,0 +1,72 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0 */
->>>> +/* TI LM3532 LED driver
->>>> + * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
->>>> + */
-> 
-> Let's have "//" comments here.
-> 
-
-Like I said earlier in v2 this header went away.
-
-And checkpatch takes issue with // in headers.
-
-Unless they have removed that requirement.
-
-Dan
-
->>>> +#ifndef __DT_BINDINGS_LEDS_LM3532_H
->>>> +#define __DT_BINDINGS_LEDS_LM3532_H
->>>> +
->>>> +#define LM3532_BL_MODE_MANUAL    0x00 /* "man" */
->>>> +#define LM3532_BL_MODE_ALS    0x01 /* "als" */
->>>> +
->>>> +/* ALS Resistor Select */
->>>> +#define LM3532_IMP_HIGH        0x00
->>>> +#define LM3532_IMP_37K        0x01
->>>> +#define LM3532_IMP_18_5K    0x02
->>>> +#define LM3532_IMP_12_33K    0x03
->>>> +#define LM3532_IMP_9_25K    0x04
->>>> +#define LM3532_IMP_7_4K        0x05
->>>> +#define LM3532_IMP_6_17K    0x06
->>>> +#define LM3532_IMP_5_29K    0x07
->>>> +#define LM3532_IMP_4_63K    0x08
->>>> +#define LM3532_IMP_4_11K    0x09
->>>> +#define LM3532_IMP_3_7K        0x0a
->>>> +#define LM3532_IMP_3_36K    0x0b
->>>> +#define LM3532_IMP_3_08K    0x0c
->>>> +#define LM3532_IMP_2_85K    0x0d
->>>> +#define LM3532_IMP_2_64K    0x0e
->>>> +#define LM3532_IMP_2_44K    0x0f
->>>> +#define LM3532_IMP_2_31K    0x10
->>>> +#define LM3532_IMP_2_18K    0x11
->>>> +#define LM3532_IMP_2_06K    0x12
->>>> +#define LM3532_IMP_1_95K    0x13
->>>> +#define LM3532_IMP_1_85K    0x14
->>>> +#define LM3532_IMP_1_76K    0x15
->>>> +#define LM3532_IMP_1_68K    0x16
->>>> +#define LM3532_IMP_1_61K    0x17
->>>> +#define LM3532_IMP_1_54K    0x18
->>>> +#define LM3532_IMP_1_48K    0x19
->>>> +#define LM3532_IMP_1_42K    0x1a
->>>> +#define LM3532_IMP_1_37K    0x1b
->>>> +#define LM3532_IMP_1_32K    0x1c
->>>> +#define LM3532_IMP_1_28K    0x1d
->>>> +#define LM3532_IMP_1_23K    0x1e
->>>> +#define LM3532_IMP_1_19K    0x1f
->>>> +
->>>> +/* ALS Averaging Time */
->>>> +#define LM3532_ALS_AVRG_TIME_17_92ms    0x00
->>>> +#define LM3532_ALS_AVRG_TIME_35_84ms    0x01
->>>> +#define LM3532_ALS_AVRG_TIME_71_68ms    0x02
->>>> +#define LM3532_ALS_AVRG_TIME_143_36ms    0x03
->>>> +#define LM3532_ALS_AVRG_TIME_286_72ms    0x04
->>>> +#define LM3532_ALS_AVRG_TIME_573_44ms    0x05
->>>> +#define LM3532_ALS_AVRG_TIME_1146_88ms    0x06
->>>> +#define LM3532_ALS_AVRG_TIME_2293_76ms    0x07
->>>> +
->>>> +/* ALS input select */
->>>> +#define LM3532_ALS_INPUT_AVRG    0x00 /* ALS1 and ALS2 input average */
->>>> +#define LM3532_ALS_INPUT_ALS1    0x01 /* ALS1 Input */
->>>> +#define LM3532_ALS_INPUT_ALS2    0x02 /* ALS2 Input */
->>>> +#define LM3532_ALS_INPUT_CEIL    0x03 /* Max of ALS1 and ALS2 */
->>>> +
->>>> +/* Ramp Times */
->>>> +#define LM3532_RAMP_8us        0x00
->>>> +#define LM3532_RAMP_1024us    0x01
->>>> +#define LM3532_RAMP_2048us    0x02
->>>> +#define LM3532_RAMP_4096us    0x03
->>>> +#define LM3532_RAMP_8192us    0x04
->>>> +#define LM3532_RAMP_16384us    0x05
->>>> +#define LM3532_RAMP_32768us    0x06
->>>> +#define LM3532_RAMP_65536us    0x07
->>>> +
->>>> +#endif /* __DT_BINDINGS_LEDS_LM3532_H */
->>>>
->>>
+>> Since the same device strings would be used in two places,
+>> then add macros LM36922_NAME and LM36922_NAME for use in
+>> lm3692x_probe_dt(() and lm3692x_id array.
 >>
+>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>> Acked-by: Pavel Machek <pavel@ucw.cz>
+>> Cc: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>   drivers/leds/leds-lm3692x.c | 39 ++++++++++++++++++++-------------------
+>>   1 file changed, 20 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+>> index 4f413a7c5f05..9dfc0f28a9c8 100644
+>> --- a/drivers/leds/leds-lm3692x.c
+>> +++ b/drivers/leds/leds-lm3692x.c
+>> @@ -13,7 +13,6 @@
+>>   #include <linux/regmap.h>
+>>   #include <linux/regulator/consumer.h>
+>>   #include <linux/slab.h>
+>> -#include <uapi/linux/uleds.h>
+>>   
+>>   #define LM36922_MODEL	0
+>>   #define LM36923_MODEL	1
+>> @@ -95,6 +94,9 @@
+>>   #define LM3692X_FAULT_FLAG_SHRT BIT(3)
+>>   #define LM3692X_FAULT_FLAG_OPEN BIT(4)
+>>   
+>> +#define LM36922_NAME "lm36922"
+>> +#define LM36923_NAME "lm36923"
+>> +
+>>   /**
+>>    * struct lm3692x_led -
+>>    * @lock - Lock for reading/writing the device
+>> @@ -103,7 +105,6 @@
+>>    * @regmap - Devices register map
+>>    * @enable_gpio - VDDIO/EN gpio to enable communication interface
+>>    * @regulator - LED supply regulator pointer
+>> - * @label - LED label
+>>    * @led_enable - LED sync to be enabled
+>>    * @model_id - Current device model ID enumerated
+>>    */
+>> @@ -114,7 +115,6 @@ struct lm3692x_led {
+>>   	struct regmap *regmap;
+>>   	struct gpio_desc *enable_gpio;
+>>   	struct regulator *regulator;
+>> -	char label[LED_MAX_NAME_SIZE];
+>>   	int led_enable;
+>>   	int model_id;
+>>   };
+>> @@ -325,7 +325,8 @@ static int lm3692x_init(struct lm3692x_led *led)
+>>   static int lm3692x_probe_dt(struct lm3692x_led *led)
+>>   {
+>>   	struct fwnode_handle *child = NULL;
+>> -	const char *name;
+>> +	struct led_init_data init_data;
+>> +	char *model_name;
+>>   	int ret;
+>>   
+>>   	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
+>> @@ -346,17 +347,20 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+>>   		dev_err(&led->client->dev, "No LED Child node\n");
+>>   		return -ENODEV;
+>>   	}
+>> +	init_data.fwnode = child;
+>>   
+>> -	fwnode_property_read_string(child, "linux,default-trigger",
+>> -				    &led->led_dev.default_trigger);
+>> +	if (led->model_id == LM36922_MODEL)
+>> +		model_name =  LM36922_NAME;
+>> +	else
+>> +		model_name =  LM36923_NAME;
+>>   
+> 
+> 
+> Why do we need this change?
+> 
+> led->client->name should suffice here and then we do not have to #define the name at all.
+
+Indeed, at that time I was not aware that I2C subsystem creates client
+name using product name from DT compatible property.
+
+> 
+>> -	ret = fwnode_property_read_string(child, "label", &name);
+>> +	ret = led_compose_name(child, model_name, ":backlight_cluster",
+>> +			       init_data.name);
+>>   	if (ret)
+>> -		snprintf(led->label, sizeof(led->label),
+>> -			"%s::", led->client->name);
+>> -	else
+>> -		snprintf(led->label, sizeof(led->label),
+>> -			 "%s:%s", led->client->name, name);
+>> +		return ret;
+>> +
+>> +	fwnode_property_read_string(child, "linux,default-trigger",
+>> +				    &led->led_dev.default_trigger);
+>>   
+>>   	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
+>>   	if (ret) {
+>> @@ -364,16 +368,13 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+>>   		return ret;
+>>   	}
+>>   
+>> -	led->led_dev.name = led->label;
+>> -
+>> -	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
+>> +	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
+>> +					     &init_data);
+>>   	if (ret) {
+>>   		dev_err(&led->client->dev, "led register err: %d\n", ret);
+>>   		return ret;
+>>   	}
+>>   
+>> -	led->led_dev.dev->of_node = to_of_node(child);
+>> -
+> 
+> Seems like an additional change here not documented.
+> If it is a bug fix or an enhancement probably need a separate patch.
+> 
+> I do know why this is removed just need tracability on the log.
+
+OK, I will add the comment.
+
+>>   	return 0;
+>>   }
+>>   
+>> @@ -439,8 +440,8 @@ static int lm3692x_remove(struct i2c_client *client)
+>>   }
+>>   
+>>   static const struct i2c_device_id lm3692x_id[] = {
+>> -	{ "lm36922", LM36922_MODEL },
+>> -	{ "lm36923", LM36923_MODEL },
+>> +	{ LM36922_NAME, LM36922_MODEL },
+>> +	{ LM36923_NAME, LM36923_MODEL },
+>>   	{ }
+>>   };
+>>   MODULE_DEVICE_TABLE(i2c, lm3692x_id);
 >>
 > 
-
+> 
 
 -- 
-------------------
-Dan Murphy
+Best regards,
+Jacek Anaszewski
