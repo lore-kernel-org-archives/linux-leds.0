@@ -1,48 +1,57 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
-Date: Wed, 13 Mar 2019 08:49:09 -0700
-Message-ID: <dae1f4224eeaaf4eb6f3daeaf31d51af17a5b083.camel@perches.com>
-References: <20190307220947.20057-1-dmurphy@ti.com>
-         <20190307220947.20057-4-dmurphy@ti.com>
-         <8ac4d84f-c792-893d-fbae-fac88fac8631@gmail.com>
-         <bb621d08-c192-0018-f67e-3f3262a71b6f@ti.com>
-         <cf26b351-f2b5-8345-29b7-401153b5f0d7@gmail.com>
-         <ee13f836-bd77-22b0-e230-2fc9050afe88@ti.com>
-         <09ee942fb7be08c600c989217ad3abfe4b6702fd.camel@perches.com>
-         <c3743a0e-9efd-e179-098c-31b1242870b4@ti.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH 1/4] leds: netdev trigger: use memcpy in device_name_store
+Date: Wed, 13 Mar 2019 21:26:12 +0100
+Message-ID: <20190313202615.22883-2-linux@rasmusvillemoes.dk>
+References: <20190311144227.GA4404@amd>
+ <20190313202615.22883-1-linux@rasmusvillemoes.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c3743a0e-9efd-e179-098c-31b1242870b4@ti.com>
+In-Reply-To: <20190313202615.22883-1-linux@rasmusvillemoes.dk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, pavel@ucw.cz, tony@atomide.com, lee.jones@linaro.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, 2019-03-11 at 12:47 -0500, Dan Murphy wrote:
-> On 3/11/19 12:30 PM, Joe Perches wrote:
-> > On Mon, 2019-03-11 at 12:24 -0500, Dan Murphy wrote:
-> > > checkpatch takes issue with // in headers.
-> > > Unless they have removed that requirement.
-[]
-> I guess I was referring to this SPDX warning
->  
-> WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
-> #1: FILE: drivers/net/can/m_can/m_can.h:1:
-> +//SPDX-License-Identifier: GPL-2.0
+If userspace doesn't end the input with a newline (which can easily
+happen if the write happens from a C program that does write(fd,
+iface, strlen(iface))), we may end up including garbage from a
+previous, longer value in the device_name. For example
 
-The general form uses a space after the //
+# cat device_name
 
-And much more recently:
+# printf 'eth12' > device_name
+# cat device_name
+eth12
+# printf 'eth3' > device_name
+# cat device_name
+eth32
 
-commit fdf13693d370653013eec3bc7f80a3f535001bf0
-Author: Joe Perches <joe@perches.com>
-Date:   Thu Mar 7 16:28:32 2019 -0800
+I highly doubt anybody is relying on this behaviour, so switch to
+simply copying the bytes (we've already checked that size is <
+IFNAMSIZ) and unconditionally zero-terminate it; of course, we also
+still have to strip a trailing newline.
 
-    checkpatch: verify SPDX comment style
-    
-    Using SPDX commenting style // or /* is specified for various file types
-    in Documentation/process/license-rules.rst so add an appropriate test for
-    .[chsS] files because many proposed file additions and patches do not use
-    the correct style.
+This is also preparation for future patches.
+
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ drivers/leds/trigger/ledtrig-netdev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
+index 3dd3ed46d473..ddc2b90ad7ec 100644
+--- a/drivers/leds/trigger/ledtrig-netdev.c
++++ b/drivers/leds/trigger/ledtrig-netdev.c
+@@ -122,7 +122,8 @@ static ssize_t device_name_store(struct device *dev,
+ 		trigger_data->net_dev = NULL;
+ 	}
+ 
+-	strncpy(trigger_data->device_name, buf, size);
++	memcpy(trigger_data->device_name, buf, size);
++	trigger_data->device_name[size] = '\0';
+ 	if (size > 0 && trigger_data->device_name[size - 1] == '\n')
+ 		trigger_data->device_name[size - 1] = 0;
+ 
+-- 
+2.20.1
