@@ -1,42 +1,77 @@
 From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH 4/4] leds: netdev trigger: allow setting initial values in
- device tree
-Date: Thu, 14 Mar 2019 14:19:42 +0100
-Message-ID: <2cd9c42c-1056-979f-568e-c7e387bf90c6@rasmusvillemoes.dk>
-References: <20190311144227.GA4404@amd>
- <20190313202615.22883-1-linux@rasmusvillemoes.dk>
- <20190313202615.22883-5-linux@rasmusvillemoes.dk>
- <20190314102911.GA15173@amd>
- <6fb71b90-1ae3-9d93-6e0c-c95e441ced7a@rasmusvillemoes.dk>
- <20190314120047.GA19072@amd>
+Subject: [PATCH v2 2/6] leds: netdev trigger: factor out middle part of device_name_store
+Date: Thu, 14 Mar 2019 15:06:15 +0100
+Message-ID: <20190314140619.3309-3-linux@rasmusvillemoes.dk>
+References: <20190313202615.22883-1-linux@rasmusvillemoes.dk>
+ <20190314140619.3309-1-linux@rasmusvillemoes.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20190314120047.GA19072@amd>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190314140619.3309-1-linux@rasmusvillemoes.dk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 14/03/2019 13.00, Pavel Machek wrote:
-linux,default-trigger from
-> 
-> Yeah and now insert the modules for the can devices in different
-> order... May not happen in your case but will be fairly common for
-> ethernets.
+Take the part of device_name_store that puts the old device (if any),
+copies the new device name, looks the name up etc. into a separate
+helper function. This is preparation for using that helper from a
+function that will initialize the led_netdev_data from a device tree
+node. No functional change.
 
-Unpredictable device names is not a problem I'm trying to solve, nor one
-that actually occurs on embedded systems. And even if one has such a
-system, one is likely running udev or similar to rename devices to
-something sane and predictable, in which case a fixed string _still_
-works fine. Or one uses udev rules to munge the netdev trigger sysfs
-files, and has applications dealing with devices appearing as banana457.
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ drivers/leds/trigger/ledtrig-netdev.c | 30 ++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-OK, so there's of_find_net_device_by_node, so a phandle solution might
-also be possible, and might work just as well for my case. But I still
-think initializing with a fixed string is the simplest and sanest thing
-to do.
-
-Rasmus
+diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
+index 8d476b92f58c..21605033e322 100644
+--- a/drivers/leds/trigger/ledtrig-netdev.c
++++ b/drivers/leds/trigger/ledtrig-netdev.c
+@@ -104,19 +104,9 @@ static ssize_t device_name_show(struct device *dev,
+ 	return len;
+ }
+ 
+-static ssize_t device_name_store(struct device *dev,
+-				 struct device_attribute *attr, const char *buf,
+-				 size_t size)
++static void netdev_trig_set_device(struct led_netdev_data *trigger_data,
++				   const char *buf, size_t size)
+ {
+-	struct led_netdev_data *trigger_data = led_trigger_get_drvdata(dev);
+-
+-	if (size >= IFNAMSIZ)
+-		return -EINVAL;
+-
+-	cancel_delayed_work_sync(&trigger_data->work);
+-
+-	spin_lock_bh(&trigger_data->lock);
+-
+ 	if (trigger_data->net_dev) {
+ 		dev_put(trigger_data->net_dev);
+ 		trigger_data->net_dev = NULL;
+@@ -137,6 +127,22 @@ static ssize_t device_name_store(struct device *dev,
+ 			set_bit(NETDEV_LED_MODE_LINKUP, &trigger_data->mode);
+ 
+ 	trigger_data->last_activity = 0;
++}
++
++static ssize_t device_name_store(struct device *dev,
++				 struct device_attribute *attr, const char *buf,
++				 size_t size)
++{
++	struct led_netdev_data *trigger_data = led_trigger_get_drvdata(dev);
++
++	if (size >= IFNAMSIZ)
++		return -EINVAL;
++
++	cancel_delayed_work_sync(&trigger_data->work);
++
++	spin_lock_bh(&trigger_data->lock);
++
++	netdev_trig_set_device(trigger_data, buf, size);
+ 
+ 	set_baseline_state(trigger_data);
+ 	spin_unlock_bh(&trigger_data->lock);
+-- 
+2.20.1
