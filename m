@@ -1,31 +1,54 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH 2/4] leds: netdev trigger: factor out middle part of
- device_name_store
-Date: Thu, 14 Mar 2019 10:57:55 +0100
-Message-ID: <c6eb8d99-67ff-defd-31fc-fa55deb16b5b@rasmusvillemoes.dk>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 1/4] leds: netdev trigger: use memcpy in device_name_store
+Date: Thu, 14 Mar 2019 11:04:16 +0100
+Message-ID: <20190314100416.5ywtxhsbhqz6rvdq@pengutronix.de>
 References: <20190311144227.GA4404@amd>
  <20190313202615.22883-1-linux@rasmusvillemoes.dk>
- <20190313202615.22883-3-linux@rasmusvillemoes.dk>
- <20190314093111.7ivkdg7ozk4vylio@pengutronix.de>
+ <20190313202615.22883-2-linux@rasmusvillemoes.dk>
+ <20190314092929.65amwzsaswcvsexl@pengutronix.de>
+ <8b2903c9-e56b-ea22-41b2-d6f96bec1d96@rasmusvillemoes.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190314093111.7ivkdg7ozk4vylio@pengutronix.de>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <8b2903c9-e56b-ea22-41b2-d6f96bec1d96@rasmusvillemoes.dk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Cc: Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 14/03/2019 10.31, Uwe Kleine-KÃ¶nig wrote:
-> Hello,
+On Thu, Mar 14, 2019 at 10:57:14AM +0100, Rasmus Villemoes wrote:
+> On 14/03/2019 10.29, Uwe Kleine-König wrote:
+> > Hello,
+> > 
+> > On Wed, Mar 13, 2019 at 09:26:12PM +0100, Rasmus Villemoes wrote:
+> >> --- a/drivers/leds/trigger/ledtrig-netdev.c
+> >> +++ b/drivers/leds/trigger/ledtrig-netdev.c
+> >> @@ -122,7 +122,8 @@ static ssize_t device_name_store(struct device *dev,
+> >>  		trigger_data->net_dev = NULL;
+> >>  	}
+> >>  
+> >> -	strncpy(trigger_data->device_name, buf, size);
+> >> +	memcpy(trigger_data->device_name, buf, size);
+> >> +	trigger_data->device_name[size] = '\0';
+> > 
+> > This is open-coding
+> > 
+> > 	strlcpy(trigger_data->device_name, buf, size);
 > 
-> On Wed, Mar 13, 2019 at 09:26:13PM +0100, Rasmus Villemoes wrote:
->> +static void set_device(struct led_netdev_data *trigger_data,
->> +		       const char *buf, size_t size)
-> 
-> "set_device" is a very generic name. Can you please prefix it with
-> "ledtrig_netdev_"?
+> No. size here is the number of bytes userspace wrote, which never (well,
+> almost never, they could do something odd) contain a nul byte. Passing
+> that as size to strlcpy would guarantee that we chopped off the last
+> character from the user input.
 
-Sure. Will do next round.
+You're right here, strlcpy isn't a replacement here. I withdraw my
+suggestion.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
