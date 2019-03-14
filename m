@@ -1,108 +1,86 @@
 From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH 1/4] leds: netdev trigger: use memcpy in device_name_store
-Date: Thu, 14 Mar 2019 11:54:06 +0100
-Message-ID: <9324dc3c-a9dd-e179-6fc5-17b2fdaab74b@rasmusvillemoes.dk>
+Subject: Re: [PATCH 4/4] leds: netdev trigger: allow setting initial values in
+ device tree
+Date: Thu, 14 Mar 2019 12:26:38 +0100
+Message-ID: <6fb71b90-1ae3-9d93-6e0c-c95e441ced7a@rasmusvillemoes.dk>
 References: <20190311144227.GA4404@amd>
  <20190313202615.22883-1-linux@rasmusvillemoes.dk>
- <20190313202615.22883-2-linux@rasmusvillemoes.dk>
- <20190314101419.GA14455@amd>
+ <20190313202615.22883-5-linux@rasmusvillemoes.dk>
+ <20190314102911.GA15173@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190314101419.GA14455@amd>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20190314102911.GA15173@amd>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: netdev-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org
+Cc: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 14/03/2019 11.14, Pavel Machek wrote:
-> Hi!
-> 
->> If userspace doesn't end the input with a newline (which can easily
->> happen if the write happens from a C program that does write(fd,
->> iface, strlen(iface))), we may end up including garbage from a
->> previous, longer value in the device_name. For example
+On 14/03/2019 11.29, Pavel Machek wrote:
+> On Wed 2019-03-13 21:26:15, Rasmus Villemoes wrote:
+>> It can be quite convenient to initialize a netdev-triggered LED with a
+>> device name and setting the rx,tx,link properties from device tree,
+>> instead of having to do that in an init script in userspace.
 >>
->> # cat device_name
->>
->> # printf 'eth12' > device_name
->> # cat device_name
->> eth12
->> # printf 'eth3' > device_name
->> # cat device_name
->> eth32
->>
->> I highly doubt anybody is relying on this behaviour, so switch to
->> simply copying the bytes (we've already checked that size is <
->> IFNAMSIZ) and unconditionally zero-terminate it; of course, we also
->> still have to strip a trailing newline.
+>> +                The optional child node netdev can be used to
+>> +                configure initial values for the link, rx, tx and
+>> +                device_name properties. For example, setting
+>> +                linux,default-trigger = "netdev" and adding the child
+>> +                node
+>> +
+>> +                netdev {
+>> +                    rx;
+>> +                    tx;
+>> +                    link;
+>> +                    device-name = "can0";
+>> +                };
+>> +
+>> +                can be used to replace 'linux,default-trigger =
+>> +                "can0-rxtx"' that relies on the deprecated
+>> +                CONFIG_CAN_LEDS.
 > 
->   char device_name[IFNAMSIZ];
+> I'm sorry, but no, not like this. I see it works for you, only having
+> single can device, but it would quickly break with two of them and two
+> ethernets are rather common.
 > 
-> Ok, good catch reporting the bug, but are you sure the fix is right?
-> 
-> AFAICT the design is that device_name does _not_ have to be zero
-> terminated, and your fix incorrectly limits the size of device_name.
+> So this will need to be device = <&phandle_of_ethernet_device> or
+> something like that. There may be example with usb port triggers.
 
-Yes, I'm sure.
+Huh? I have two CAN devices, and there are two LEDs on the front panel
+labeled CAN-A and CAN-B; my device tree nodes for that are
 
-/**
- *      dev_valid_name - check if name is okay for network device
- *      @name: name string
- *
- *      Network device names need to be valid file names to
- *      to allow sysfs to work.  We also disallow any kind of
- *      whitespace.
- */
-bool dev_valid_name(const char *name)
-{
-        if (*name == '\0')
-                return false;
-        if (strnlen(name, IFNAMSIZ) == IFNAMSIZ)
-                return false;
+		cana {
+			label = "cana:green:activity";
+			gpios = <&gpio0 10 0>;
+			default-state = "off";
+			linux,default-trigger = "netdev";
 
-so no netdevice name has a string length > 15 (IOW, there must be a nul
-byte within the first 16 bytes of name). Also note all the places a
-net_device->name is printed with a simple %s, so they are definitely
-always 0-terminated.
+			netdev {
+				rx;
+				tx;
+				link;
+				device-name = "can0";
+			};
+		};
 
-Moreover, I'm actually not limiting anything more than was already done;
-we already reject any input from userspace >= 16 bytes. I'm simply
-ensuring that we're never confused by leftover garbage.
+		canb {
+			label = "canb:green:activity";
+			gpios = <&gpio0 5 0>;
+			default-state = "off";
+			linux,default-trigger = "netdev";
 
->> --- a/drivers/leds/trigger/ledtrig-netdev.c
->> +++ b/drivers/leds/trigger/ledtrig-netdev.c
->> @@ -122,7 +122,8 @@ static ssize_t device_name_store(struct device *dev,
->>  		trigger_data->net_dev = NULL;
->>  	}
->>  
->> -	strncpy(trigger_data->device_name, buf, size);
->> +	memcpy(trigger_data->device_name, buf, size);
->> +	trigger_data->device_name[size] = '\0';
-> 
-> I'd do = 0 for consistency with code below.
+			netdev {
+				rx;
+				tx;
+				link;
+				device-name = "can1";
+			};
+		};
 
-I'd rather the other way around :) but yeah, let's just be consistent.
-I'll fix in next version.
-
-> I believe the strncpy() is right to use here, but code should be
-> modified so that zero-termination is not required.
-
-So, I believe the above should convince you that strncpy is wrong. Or
-rather, strncpy is really just a convoluted memcpy: the userspace input
-doesn't contain a nul among the size bytes [1], so the "copy all the
-bytes, but don't nul-terminate" semantics of strncpy kick in - which is
-often a security bug, but the code is such that the zero at
-device_name[15] (because it was originally kzalloc'ed) is never
-overwritten. So in theory, we could keep strncpy and just add the
-nul-termination, but the str* prefix is very misleading (which is
-probably why the bug happened in the first place).
-
-[1] And if it did, the "zero the rest of the output buffer" semantics
-kick in. That's functionally equivalent to my memcpy() + write one nul
-byte, since nothing after that first nul byte in device_name would ever
-be inspected.
+and this works just fine. The only change from the old DT is the
+addition of the netdev nodes and changing linux,default-trigger from
+"can0-rxtx", "can1-rxtx" to both "netdev".
 
 Rasmus
