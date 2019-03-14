@@ -1,61 +1,42 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v4 1/4] dt: lm3532: Add lm3532 dt doc and update ti_lmu
- doc
-Date: Thu, 14 Mar 2019 07:52:04 -0500
-Message-ID: <75def574-5fe4-46c0-664f-8c6583b69668@ti.com>
-References: <20190313123249.17258-1-dmurphy@ti.com>
- <20190314093912.GA10637@amd>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH 4/4] leds: netdev trigger: allow setting initial values in
+ device tree
+Date: Thu, 14 Mar 2019 14:19:42 +0100
+Message-ID: <2cd9c42c-1056-979f-568e-c7e387bf90c6@rasmusvillemoes.dk>
+References: <20190311144227.GA4404@amd>
+ <20190313202615.22883-1-linux@rasmusvillemoes.dk>
+ <20190313202615.22883-5-linux@rasmusvillemoes.dk>
+ <20190314102911.GA15173@amd>
+ <6fb71b90-1ae3-9d93-6e0c-c95e441ced7a@rasmusvillemoes.dk>
+ <20190314120047.GA19072@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190314093912.GA10637@amd>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20190314120047.GA19072@amd>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: netdev-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, tony@atomide.com, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Cc: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hello
-
-On 3/14/19 4:39 AM, Pavel Machek wrote:
-> Hi!
+On 14/03/2019 13.00, Pavel Machek wrote:
+linux,default-trigger from
 > 
-> Could you maybe slow down a bit.
-> 
-> "Hey, I should review this". "Hmm, there are two new versions in the
-> mailbox in the meantime, good thing I waited."
-> 
+> Yeah and now insert the modules for the can devices in different
+> order... May not happen in your case but will be fairly common for
+> ethernets.
 
-Yes.  I am going to hold off on v5 until the code gets reviewed.
+Unpredictable device names is not a problem I'm trying to solve, nor one
+that actually occurs on embedded systems. And even if one has such a
+system, one is likely running udev or similar to rename devices to
+something sane and predictable, in which case a fixed string _still_
+works fine. Or one uses udev rules to munge the netdev trigger sysfs
+files, and has applications dealing with devices appearing as banana457.
 
->> +	ramp-up-ms = <1024>;
->> +	ramp-down-ms = <65536>;
-> 
-> This is wrong.
-> 
+OK, so there's of_find_net_device_by_node, so a phandle solution might
+also be possible, and might work just as well for my case. But I still
+think initializing with a fixed string is the simplest and sanest thing
+to do.
 
-Ack.  Changed in it in the example I deleted.
-
->> +	led@1 {
->> +		reg = <1>;
->> +		led-sources = <1>;
->> +		ti,led-mode = <0>;
->> +		label = "keypad";
-> 
-> "platform::kbd_backlight"
-
-Being an example does it have to match DT contents?
-
-I can change it since I have to touch the file anyway.
-
-Dan
-
-
-> 									Pavel
-> 
-
-
--- 
-------------------
-Dan Murphy
+Rasmus
