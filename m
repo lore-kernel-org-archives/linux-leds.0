@@ -1,149 +1,108 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 4/4] leds: netdev trigger: allow setting initial values in
- device tree
-Date: Thu, 14 Mar 2019 11:32:17 +0100
-Message-ID: <98fda0ee-555d-86a5-a4f1-1774271e4b6d@gmail.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH 1/4] leds: netdev trigger: use memcpy in device_name_store
+Date: Thu, 14 Mar 2019 11:54:06 +0100
+Message-ID: <9324dc3c-a9dd-e179-6fc5-17b2fdaab74b@rasmusvillemoes.dk>
 References: <20190311144227.GA4404@amd>
  <20190313202615.22883-1-linux@rasmusvillemoes.dk>
- <20190313202615.22883-5-linux@rasmusvillemoes.dk>
+ <20190313202615.22883-2-linux@rasmusvillemoes.dk>
+ <20190314101419.GA14455@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190313202615.22883-5-linux@rasmusvillemoes.dk>
+In-Reply-To: <20190314101419.GA14455@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Rasmus,
-
-Thank you for the patch set.
-
-I have one comment below.
-
-On 3/13/19 9:26 PM, Rasmus Villemoes wrote:
-> It can be quite convenient to initialize a netdev-triggered LED with a
-> device name and setting the rx,tx,link properties from device tree,
-> instead of having to do that in an init script in userspace.
+On 14/03/2019 11.14, Pavel Machek wrote:
+> Hi!
 > 
-> My main motivation for this is to be able to switch away from the
-> deprecated CONFIG_CAN_LEDS, so add an example based on that and add a
-> pointer in the net/can/Kconfig file.
+>> If userspace doesn't end the input with a newline (which can easily
+>> happen if the write happens from a C program that does write(fd,
+>> iface, strlen(iface))), we may end up including garbage from a
+>> previous, longer value in the device_name. For example
+>>
+>> # cat device_name
+>>
+>> # printf 'eth12' > device_name
+>> # cat device_name
+>> eth12
+>> # printf 'eth3' > device_name
+>> # cat device_name
+>> eth32
+>>
+>> I highly doubt anybody is relying on this behaviour, so switch to
+>> simply copying the bytes (we've already checked that size is <
+>> IFNAMSIZ) and unconditionally zero-terminate it; of course, we also
+>> still have to strip a trailing newline.
 > 
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> ---
->   .../devicetree/bindings/leds/common.txt       | 17 ++++++++++
->   drivers/leds/trigger/ledtrig-netdev.c         | 31 +++++++++++++++++++
->   drivers/net/can/Kconfig                       |  3 +-
->   3 files changed, 50 insertions(+), 1 deletion(-)
+>   char device_name[IFNAMSIZ];
 > 
-> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-> index 7cb88460a47c..4f3a97e73417 100644
-> --- a/Documentation/devicetree/bindings/leds/common.txt
-> +++ b/Documentation/devicetree/bindings/leds/common.txt
-> @@ -43,6 +43,23 @@ Optional properties for child nodes:
->                   Documentation/ABI/testing/sysfs-class-led-trigger-netdev)
->                   to reflect the state and activity of a net device.
->   
-> +                The optional child node netdev can be used to
-> +                configure initial values for the link, rx, tx and
-> +                device_name properties. For example, setting
-> +                linux,default-trigger = "netdev" and adding the child
-> +                node
-> +
-> +                netdev {
-> +                    rx;
-> +                    tx;
-> +                    link;
-> +                    device-name = "can0";
-> +                };
-> +
-> +                can be used to replace 'linux,default-trigger =
-> +                "can0-rxtx"' that relies on the deprecated
-> +                CONFIG_CAN_LEDS.
-> +
->   - led-pattern : Array of integers with default pattern for certain triggers.
->                   Each trigger may parse this property differently:
->                   - one-shot : two numbers specifying delay on and delay off (in ms),
-> diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-> index 55153a7e8433..1f7c86df1e91 100644
-> --- a/drivers/leds/trigger/ledtrig-netdev.c
-> +++ b/drivers/leds/trigger/ledtrig-netdev.c
-> @@ -20,6 +20,7 @@
->   #include <linux/list.h>
->   #include <linux/module.h>
->   #include <linux/netdevice.h>
-> +#include <linux/of.h>
->   #include <linux/spinlock.h>
->   #include <linux/timer.h>
->   #include "../leds.h"
-> @@ -395,6 +396,35 @@ static void netdev_trig_work(struct work_struct *work)
->   			(atomic_read(&trigger_data->interval)*2));
->   }
->   
-> +static void netdev_trig_of_init(struct led_classdev *led_cdev,
-> +				struct led_netdev_data *trigger_data)
-> +{
-> +	struct device_node *np = led_cdev->dev->of_node;
-> +	const char *device_name;
-> +
-> +	if (!np)
-> +		return;
-> +	np = of_get_child_by_name(np, "netdev");
-> +	if (!np)
-> +		return;
-> +
-> +	if (of_property_read_bool(np, "link"))
-> +		__set_bit(NETDEV_LED_LINK, &trigger_data->mode);
-> +	if (of_property_read_bool(np, "tx"))
-> +		__set_bit(NETDEV_LED_TX, &trigger_data->mode);
-> +	if (of_property_read_bool(np, "rx"))
-> +		__set_bit(NETDEV_LED_RX, &trigger_data->mode);
-> +	if (!of_property_read_string(np, "device-name", &device_name)) {
-> +		unsigned len = strlen(device_name);
-> +
-> +		if (len < IFNAMSIZ)
-> +			set_device(trigger_data, device_name, len);
-> +	}
-> +	set_baseline_state(trigger_data);
-> +
-> +	of_node_put(np);
-> +}
-> +
->   static int netdev_trig_activate(struct led_classdev *led_cdev)
->   {
->   	struct led_netdev_data *trigger_data;
-> @@ -418,6 +448,7 @@ static int netdev_trig_activate(struct led_classdev *led_cdev)
->   	trigger_data->mode = 0;
->   	atomic_set(&trigger_data->interval, msecs_to_jiffies(50));
->   	trigger_data->last_activity = 0;
-> +	netdev_trig_of_init(led_cdev, trigger_data);
-
-You want to execute this only if recently introduced flag
-LED_INIT_DEFAULT_TRIGGER is set. Please compare how
-drivers/leds/trigger/ledtrig-pattern.c uses it.
-
->   
->   	led_set_trigger_data(led_cdev, trigger_data);
->   
-> diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
-> index e0f0ad7a550a..91703a96b636 100644
-> --- a/drivers/net/can/Kconfig
-> +++ b/drivers/net/can/Kconfig
-> @@ -77,7 +77,8 @@ config CAN_LEDS
->   	# everything that this driver is doing. This is marked as broken
->   	# because it uses stuff that is intended to be changed or removed.
->   	# Please consider switching to the netdev trigger and confirm it
-> -	# fulfills your needs instead of fixing this driver.
-> +	# fulfills your needs instead of fixing this driver. See e.g.
-> +	# Documentation/devicetree/bindings/leds/common.txt
->   	depends on BROKEN
->   	select LEDS_TRIGGERS
->   	---help---
+> Ok, good catch reporting the bug, but are you sure the fix is right?
 > 
+> AFAICT the design is that device_name does _not_ have to be zero
+> terminated, and your fix incorrectly limits the size of device_name.
 
--- 
-Best regards,
-Jacek Anaszewski
+Yes, I'm sure.
+
+/**
+ *      dev_valid_name - check if name is okay for network device
+ *      @name: name string
+ *
+ *      Network device names need to be valid file names to
+ *      to allow sysfs to work.  We also disallow any kind of
+ *      whitespace.
+ */
+bool dev_valid_name(const char *name)
+{
+        if (*name == '\0')
+                return false;
+        if (strnlen(name, IFNAMSIZ) == IFNAMSIZ)
+                return false;
+
+so no netdevice name has a string length > 15 (IOW, there must be a nul
+byte within the first 16 bytes of name). Also note all the places a
+net_device->name is printed with a simple %s, so they are definitely
+always 0-terminated.
+
+Moreover, I'm actually not limiting anything more than was already done;
+we already reject any input from userspace >= 16 bytes. I'm simply
+ensuring that we're never confused by leftover garbage.
+
+>> --- a/drivers/leds/trigger/ledtrig-netdev.c
+>> +++ b/drivers/leds/trigger/ledtrig-netdev.c
+>> @@ -122,7 +122,8 @@ static ssize_t device_name_store(struct device *dev,
+>>  		trigger_data->net_dev = NULL;
+>>  	}
+>>  
+>> -	strncpy(trigger_data->device_name, buf, size);
+>> +	memcpy(trigger_data->device_name, buf, size);
+>> +	trigger_data->device_name[size] = '\0';
+> 
+> I'd do = 0 for consistency with code below.
+
+I'd rather the other way around :) but yeah, let's just be consistent.
+I'll fix in next version.
+
+> I believe the strncpy() is right to use here, but code should be
+> modified so that zero-termination is not required.
+
+So, I believe the above should convince you that strncpy is wrong. Or
+rather, strncpy is really just a convoluted memcpy: the userspace input
+doesn't contain a nul among the size bytes [1], so the "copy all the
+bytes, but don't nul-terminate" semantics of strncpy kick in - which is
+often a security bug, but the code is such that the zero at
+device_name[15] (because it was originally kzalloc'ed) is never
+overwritten. So in theory, we could keep strncpy and just add the
+nul-termination, but the str* prefix is very misleading (which is
+probably why the bug happened in the first place).
+
+[1] And if it did, the "zero the rest of the output buffer" semantics
+kick in. That's functionally equivalent to my memcpy() + write one nul
+byte, since nothing after that first nul byte in device_name would ever
+be inspected.
+
+Rasmus
