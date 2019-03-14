@@ -1,7 +1,7 @@
 From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v2 1/6] leds: netdev trigger: use memcpy in device_name_store
-Date: Thu, 14 Mar 2019 15:06:14 +0100
-Message-ID: <20190314140619.3309-2-linux@rasmusvillemoes.dk>
+Subject: [PATCH v2 4/6] leds: netdev trigger: move name length checking to netdev_trig_set_device
+Date: Thu, 14 Mar 2019 15:06:17 +0100
+Message-ID: <20190314140619.3309-5-linux@rasmusvillemoes.dk>
 References: <20190313202615.22883-1-linux@rasmusvillemoes.dk>
  <20190314140619.3309-1-linux@rasmusvillemoes.dk>
 Mime-Version: 1.0
@@ -13,45 +13,70 @@ To: Pavel Machek <pavel@ucw.cz>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-k
 Cc: LKML <linux-kernel@vger.kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-If userspace doesn't end the input with a newline (which can easily
-happen if the write happens from a C program that does write(fd,
-iface, strlen(iface))), we may end up including garbage from a
-previous, longer value in the device_name. For example
-
-# cat device_name
-
-# printf 'eth12' > device_name
-# cat device_name
-eth12
-# printf 'eth3' > device_name
-# cat device_name
-eth32
-
-I highly doubt anybody is relying on this behaviour, so switch to
-simply copying the bytes (we've already checked that size is <
-IFNAMSIZ) and unconditionally zero-terminate it; of course, we also
-still have to strip a trailing newline.
-
-This is also preparation for future patches.
+It's better to check that size is sane in the function that does the
+memcpy'ing and 0-termination to the IFNAMSIZ-sized buffer instead of
+relying on callers getting it right. Not rejecting size upfront does
+mean we would do the cancel_delayed_work_sync(), but that gets fixed
+up by the set_baseline_state() call.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/leds/trigger/ledtrig-netdev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/leds/trigger/ledtrig-netdev.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index 3dd3ed46d473..8d476b92f58c 100644
+index c35439291424..e4a76ce4e4c7 100644
 --- a/drivers/leds/trigger/ledtrig-netdev.c
 +++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -122,7 +122,8 @@ static ssize_t device_name_store(struct device *dev,
+@@ -104,9 +104,12 @@ static ssize_t device_name_show(struct device *dev,
+ 	return len;
+ }
+ 
+-static void netdev_trig_set_device(struct led_netdev_data *trigger_data,
+-				   const char *buf, size_t size)
++static ssize_t netdev_trig_set_device(struct led_netdev_data *trigger_data,
++				      const char *buf, size_t size)
+ {
++	if (size >= IFNAMSIZ)
++		return -EINVAL;
++
+ 	if (trigger_data->net_dev) {
+ 		dev_put(trigger_data->net_dev);
  		trigger_data->net_dev = NULL;
- 	}
+@@ -125,6 +128,7 @@ static void netdev_trig_set_device(struct led_netdev_data *trigger_data,
+ 			set_bit(NETDEV_LED_MODE_LINKUP, &trigger_data->mode);
  
--	strncpy(trigger_data->device_name, buf, size);
-+	memcpy(trigger_data->device_name, buf, size);
-+	trigger_data->device_name[size] = 0;
- 	if (size > 0 && trigger_data->device_name[size - 1] == '\n')
- 		trigger_data->device_name[size - 1] = 0;
+ 	trigger_data->last_activity = 0;
++	return 0;
+ }
  
+ static ssize_t device_name_store(struct device *dev,
+@@ -133,23 +137,22 @@ static ssize_t device_name_store(struct device *dev,
+ {
+ 	struct led_netdev_data *trigger_data = led_trigger_get_drvdata(dev);
+ 	size_t orig_size = size;
++	ssize_t ret;
+ 
+ 	/* Ignore trailing newline */
+ 	if (size > 0 && buf[size - 1] == '\n')
+ 		size--;
+-	if (size >= IFNAMSIZ)
+-		return -EINVAL;
+ 
+ 	cancel_delayed_work_sync(&trigger_data->work);
+ 
+ 	spin_lock_bh(&trigger_data->lock);
+ 
+-	netdev_trig_set_device(trigger_data, buf, size);
++	ret = netdev_trig_set_device(trigger_data, buf, size);
+ 
+ 	set_baseline_state(trigger_data);
+ 	spin_unlock_bh(&trigger_data->lock);
+ 
+-	return orig_size;
++	return ret ? ret : orig_size;
+ }
+ 
+ static DEVICE_ATTR_RW(device_name);
 -- 
 2.20.1
