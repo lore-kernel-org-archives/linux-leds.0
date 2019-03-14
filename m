@@ -1,89 +1,153 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 4/4] leds: netdev trigger: allow setting initial values
- in device tree
-Date: Thu, 14 Mar 2019 13:00:47 +0100
-Message-ID: <20190314120047.GA19072@amd>
+Subject: Re: [PATCH 1/4] leds: netdev trigger: use memcpy in device_name_store
+Date: Thu, 14 Mar 2019 13:16:39 +0100
+Message-ID: <20190314121639.GB19072@amd>
 References: <20190311144227.GA4404@amd>
  <20190313202615.22883-1-linux@rasmusvillemoes.dk>
- <20190313202615.22883-5-linux@rasmusvillemoes.dk>
- <20190314102911.GA15173@amd>
- <6fb71b90-1ae3-9d93-6e0c-c95e441ced7a@rasmusvillemoes.dk>
+ <20190313202615.22883-2-linux@rasmusvillemoes.dk>
+ <20190314101419.GA14455@amd>
+ <9324dc3c-a9dd-e179-6fc5-17b2fdaab74b@rasmusvillemoes.dk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
+        protocol="application/pgp-signature"; boundary="pvezYHf7grwyp3Bc"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <6fb71b90-1ae3-9d93-6e0c-c95e441ced7a@rasmusvillemoes.dk>
+In-Reply-To: <9324dc3c-a9dd-e179-6fc5-17b2fdaab74b@rasmusvillemoes.dk>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 
---UugvWAfsgieZRqgk
+--pvezYHf7grwyp3Bc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu 2019-03-14 12:26:38, Rasmus Villemoes wrote:
-> On 14/03/2019 11.29, Pavel Machek wrote:
-> > On Wed 2019-03-13 21:26:15, Rasmus Villemoes wrote:
-> >> It can be quite convenient to initialize a netdev-triggered LED with a
-> >> device name and setting the rx,tx,link properties from device tree,
-> >> instead of having to do that in an init script in userspace.
-> >>
-> >> +                The optional child node netdev can be used to
-> >> +                configure initial values for the link, rx, tx and
-> >> +                device_name properties. For example, setting
-> >> +                linux,default-trigger =3D "netdev" and adding the chi=
-ld
-> >> +                node
-> >> +
-> >> +                netdev {
-> >> +                    rx;
-> >> +                    tx;
-> >> +                    link;
-> >> +                    device-name =3D "can0";
-> >> +                };
-> >> +
-> >> +                can be used to replace 'linux,default-trigger =3D
-> >> +                "can0-rxtx"' that relies on the deprecated
-> >> +                CONFIG_CAN_LEDS.
-> >=20
-> > I'm sorry, but no, not like this. I see it works for you, only having
-> > single can device, but it would quickly break with two of them and two
-> > ethernets are rather common.
-> >=20
-> > So this will need to be device =3D <&phandle_of_ethernet_device> or
-> > something like that. There may be example with usb port triggers.
->=20
-> Huh? I have two CAN devices, and there are two LEDs on the front panel
-> labeled CAN-A and CAN-B; my device tree nodes for that are
-=2E..
-> and this works just fine. The only change from the old DT is the
-> addition of the netdev nodes and changing linux,default-trigger from
-> "can0-rxtx", "can1-rxtx" to both "netdev".
+Hi!
 
-Yeah and now insert the modules for the can devices in different
-order... May not happen in your case but will be fairly common for
-ethernets.
+> >> If userspace doesn't end the input with a newline (which can easily
+> >> happen if the write happens from a C program that does write(fd,
+> >> iface, strlen(iface))), we may end up including garbage from a
+> >> previous, longer value in the device_name. For example
+> >>
+> >> # cat device_name
+> >>
+> >> # printf 'eth12' > device_name
+> >> # cat device_name
+> >> eth12
+> >> # printf 'eth3' > device_name
+> >> # cat device_name
+> >> eth32
+> >>
+> >> I highly doubt anybody is relying on this behaviour, so switch to
+> >> simply copying the bytes (we've already checked that size is <
+> >> IFNAMSIZ) and unconditionally zero-terminate it; of course, we also
+> >> still have to strip a trailing newline.
+> >=20
+> >   char device_name[IFNAMSIZ];
+> >=20
+> > Ok, good catch reporting the bug, but are you sure the fix is right?
+> >=20
+> > AFAICT the design is that device_name does _not_ have to be zero
+> > terminated, and your fix incorrectly limits the size of device_name.
+>=20
+> Yes, I'm sure.
+>=20
+> /**
+>  *      dev_valid_name - check if name is okay for network device
+>  *      @name: name string
+>  *
+>  *      Network device names need to be valid file names to
+>  *      to allow sysfs to work.  We also disallow any kind of
+>  *      whitespace.
+>  */
+> bool dev_valid_name(const char *name)
+> {
+>         if (*name =3D=3D '\0')
+>                 return false;
+>         if (strnlen(name, IFNAMSIZ) =3D=3D IFNAMSIZ)
+>                 return false;
+>=20
+> so no netdevice name has a string length > 15 (IOW, there must be a nul
+> byte within the first 16 bytes of name). Also note all the places a
+> net_device->name is printed with a simple %s, so they are definitely
+> always 0-terminated.
+>=20
+> Moreover, I'm actually not limiting anything more than was already done;
+> we already reject any input from userspace >=3D 16 bytes. I'm simply
+> ensuring that we're never confused by leftover garbage.
+
+Ok. Sorry for the noise.
+
+> >> --- a/drivers/leds/trigger/ledtrig-netdev.c
+> >> +++ b/drivers/leds/trigger/ledtrig-netdev.c
+> >> @@ -122,7 +122,8 @@ static ssize_t device_name_store(struct device *de=
+v,
+> >>  		trigger_data->net_dev =3D NULL;
+> >>  	}
+> >> =20
+> >> -	strncpy(trigger_data->device_name, buf, size);
+> >> +	memcpy(trigger_data->device_name, buf, size);
+> >> +	trigger_data->device_name[size] =3D '\0';
+> >=20
+> > I'd do =3D 0 for consistency with code below.
+>=20
+> I'd rather the other way around :) but yeah, let's just be consistent.
+> I'll fix in next version.
+
+Or just use your version and fix both places :-). Your option, as long
+as it is consistent.=20
+
+> > I believe the strncpy() is right to use here, but code should be
+> > modified so that zero-termination is not required.
+>=20
+> So, I believe the above should convince you that strncpy is wrong. Or
+> rather, strncpy is really just a convoluted memcpy: the userspace input
+> doesn't contain a nul among the size bytes [1], so the "copy all the
+> bytes, but don't nul-terminate" semantics of strncpy kick in - which is
+> often a security bug, but the code is such that the zero at
+> device_name[15] (because it was originally kzalloc'ed) is never
+> overwritten. So in theory, we could keep strncpy and just add the
+> nul-termination, but the str* prefix is very misleading (which is
+> probably why the bug happened in the first place).
+>=20
+> [1] And if it did, the "zero the rest of the output buffer" semantics
+> kick in. That's functionally equivalent to my memcpy() + write one nul
+> byte, since nothing after that first nul byte in device_name would ever
+> be inspected.
+
+Actually "zero the rest" semantics kind of makes sense here.
+
+No, I'm sorry, I don't understand. How are you getting stale data
+there?
+
+> >> # printf 'eth12' > device_name
+> >> # cat device_name
+> >> eth12
+> >> # printf 'eth3' > device_name
+> >> # cat device_name
+> >> eth32
+
+strncpy() should zero the rest, and you should get "eth3"...?!
 
 									Pavel
+
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---UugvWAfsgieZRqgk
+--pvezYHf7grwyp3Bc
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlyKQm8ACgkQMOfwapXb+vI2kgCeI4eLitwds68MutQltj+a4klK
-xT0An1vLH+H/RtsLkTkIb2mBueNE1jsi
-=BBl1
+iEYEARECAAYFAlyKRicACgkQMOfwapXb+vIjwgCfduXA/6kZKv1i59goSO1ZCrtc
+y88AmwUj98ZvcR5MLZtu5DngzJqzluUB
+=BlIj
 -----END PGP SIGNATURE-----
 
---UugvWAfsgieZRqgk--
+--pvezYHf7grwyp3Bc--
