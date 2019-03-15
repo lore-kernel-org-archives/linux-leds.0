@@ -1,65 +1,96 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 6/6] leds: netdev trigger: allow setting initial values
- in device tree
-Date: Thu, 14 Mar 2019 16:36:45 +0100
-Message-ID: <ddc53d4c-3da8-3f00-12dc-51df4a149bcf@gmail.com>
-References: <20190313202615.22883-1-linux@rasmusvillemoes.dk>
- <20190314140619.3309-1-linux@rasmusvillemoes.dk>
- <20190314140619.3309-7-linux@rasmusvillemoes.dk>
- <742bd6b2-0a11-858e-d727-204b0313265e@gmail.com>
- <10d65087-2ae5-8ddf-e9be-02c9341b452b@rasmusvillemoes.dk>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 1/4] dt: lm3532: Add lm3532 dt doc and update ti_lmu
+ doc
+Date: Fri, 15 Mar 2019 18:35:01 -0500
+Message-ID: <20190315233501.GA26767@bogus>
+References: <20190313123249.17258-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <10d65087-2ae5-8ddf-e9be-02c9341b452b@rasmusvillemoes.dk>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190313123249.17258-1-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, tony@atomide.com, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 3/14/19 4:05 PM, Rasmus Villemoes wrote:
-> On 14/03/2019 15.24, Jacek Anaszewski wrote:
->> Rasmus,
->>
->> Thank you for the update.
->> Still, there is one thing to improve.
->>
+On Wed, Mar 13, 2019 at 07:32:46AM -0500, Dan Murphy wrote:
+> Add the lm3532 device tree documentation.
+> Remove lm3532 device tree reference from the ti_lmu devicetree
+> documentation.
 > 
->>>    static int netdev_trig_activate(struct led_classdev *led_cdev)
->>>    {
->>>        struct led_netdev_data *trigger_data;
->>> @@ -423,6 +451,8 @@ static int netdev_trig_activate(struct
->>> led_classdev *led_cdev)
->>>        trigger_data->mode = 0;
->>>        atomic_set(&trigger_data->interval, msecs_to_jiffies(50));
->>>        trigger_data->last_activity = 0;
->>> +    if (led_cdev->flags & LED_INIT_DEFAULT_TRIGGER)
->>> +        netdev_trig_of_init(led_cdev, trigger_data);
->>
->> We don't necessarily want OF settings to be used for initialization on
->> each LED trigger activation for the LED class device, but only on the
->> first one. That's why the triggers using this flags clean it here:
->>
->> led_cdev->flags &= ~LED_INIT_DEFAULT_TRIGGER;
+> With the addition of the dedicated lm3532 documentation the device
+> can be removed from the ti_lmu.txt.
 > 
-> Right, I noticed that pattern, but wondered about it. If this is
-> supposed to be a general thing, why isn't it just done by the trigger
-> core after the call of led_trigger_set() in the two places the bit gets
-> set? I.e.
+> The reason for this is that the lm3532 dt documentation now defines
+> the ability to control LED output strings against different control
+> banks or groups multiple strings to be controlled by a single control
+> bank.
 > 
-> 		led_cdev->flags |= LED_INIT_DEFAULT_TRIGGER;
-> 		led_trigger_set(led_cdev, trig);
-> +		led_cdev->flags &= ~LED_INIT_DEFAULT_TRIGGER;
+> Another addition was for ALS lighting control and configuration.  The
+> LM3532 has a feature that can take in the ALS reading from 2 separate
+> ALS devices and adjust the brightness on the strings that are configured
+> to support this feature.
 > 
-> I can certainly add clearing the flag to my code, just wondering.
+> Finally the device specific properties were moved to the parent node as these
+> properties are not control bank configurable.  These include the runtime ramp
+> and the ALS configuration.
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+> 
+> v4 - Appended "ti," to TI specific properties, add enable gpio documentation,
+> removed an example, moved ramp to optional parent properties - https://lore.kernel.org/patchwork/patch/1050122/
+> 
+> v3 - No changes - https://lore.kernel.org/patchwork/patch/1049026/
+> v2 - Fixed ramp-up and ramp-down properties, removed hard coded property values,
+> added ranges for variable properties, I did not change the label - https://lore.kernel.org/patchwork/patch/1048805/
+> 
+> 
+>  .../devicetree/bindings/leds/leds-lm3532.txt  | 101 ++++++++++++++++++
+>  .../devicetree/bindings/mfd/ti-lmu.txt        |  20 ----
+>  2 files changed, 101 insertions(+), 20 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3532.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3532.txt b/Documentation/devicetree/bindings/leds/leds-lm3532.txt
+> new file mode 100644
+> index 000000000000..ba793ef9b3b6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-lm3532.txt
+> @@ -0,0 +1,101 @@
+> +* Texas Instruments - lm3532 White LED driver with ambient light sensing
+> +capability.
+> +
+> +The LM3532 provides the 3 high-voltage, low-side current sinks. The device is
+> +programmable over an I2C-compatible interface and has independent
+> +current control for all three channels. The adaptive current regulation
+> +method allows for different LED currents in each current sink thus allowing
+> +for a wide variety of backlight and keypad applications.
+> +
+> +The main features of the LM3532 include dual ambient light sensor inputs
+> +each with 32 internal voltage setting resistors, 8-bit logarithmic and linear
+> +brightness control, dual external PWM brightness control inputs, and up to
+> +1000:1 dimming ratio with programmable fade in and fade out settings.
+> +
+> +Required properties:
+> +	- compatible : "ti,lm3532"
+> +	- reg : I2C slave address
+> +	- #address-cells : 1
+> +	- #size-cells : 0
+> +
+> +Optional properties:
+> +	- enable-gpios : gpio pin to enable (active high)/disable the device.
+> +	Range for ramp settings: 8us - 65536us
 
-Good point. It would have to be applied in both
-led_trigger_set_default() and led_trigger_register(). So you either
-need to add generic support for clearing the flag (and update the three
-users) or update your patch alone.
+This should be after the 2 ramp properties.
 
--- 
-Best regards,
-Jacek Anaszewski
+With that,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+ 
+> +	- ramp-up-us - The Run time ramp rates/step are from one current
+> +		       set-point to another after the device has reached its
+> +		       initial target set point from turn-on
+> +	- ramp-down-us - The Run time ramp rates/step are from one current
+> +			 set-point to another after the device has reached its
+> +			 initial target set point from turn-on
