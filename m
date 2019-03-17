@@ -1,96 +1,77 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 1/4] dt: lm3532: Add lm3532 dt doc and update ti_lmu
- doc
-Date: Fri, 15 Mar 2019 18:35:01 -0500
-Message-ID: <20190315233501.GA26767@bogus>
-References: <20190313123249.17258-1-dmurphy@ti.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 4/4] leds: netdev trigger: allow setting initial values
+ in device tree
+Date: Sun, 17 Mar 2019 20:11:50 +0100
+Message-ID: <20190317191150.GA31285@amd>
+References: <20190311144227.GA4404@amd>
+ <20190313202615.22883-1-linux@rasmusvillemoes.dk>
+ <20190313202615.22883-5-linux@rasmusvillemoes.dk>
+ <20190314102911.GA15173@amd>
+ <6fb71b90-1ae3-9d93-6e0c-c95e441ced7a@rasmusvillemoes.dk>
+ <20190314120047.GA19072@amd>
+ <2cd9c42c-1056-979f-568e-c7e387bf90c6@rasmusvillemoes.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190313123249.17258-1-dmurphy@ti.com>
+In-Reply-To: <2cd9c42c-1056-979f-568e-c7e387bf90c6@rasmusvillemoes.dk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, tony@atomide.com, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Mar 13, 2019 at 07:32:46AM -0500, Dan Murphy wrote:
-> Add the lm3532 device tree documentation.
-> Remove lm3532 device tree reference from the ti_lmu devicetree
-> documentation.
-> 
-> With the addition of the dedicated lm3532 documentation the device
-> can be removed from the ti_lmu.txt.
-> 
-> The reason for this is that the lm3532 dt documentation now defines
-> the ability to control LED output strings against different control
-> banks or groups multiple strings to be controlled by a single control
-> bank.
-> 
-> Another addition was for ALS lighting control and configuration.  The
-> LM3532 has a feature that can take in the ALS reading from 2 separate
-> ALS devices and adjust the brightness on the strings that are configured
-> to support this feature.
-> 
-> Finally the device specific properties were moved to the parent node as these
-> properties are not control bank configurable.  These include the runtime ramp
-> and the ALS configuration.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
-> 
-> v4 - Appended "ti," to TI specific properties, add enable gpio documentation,
-> removed an example, moved ramp to optional parent properties - https://lore.kernel.org/patchwork/patch/1050122/
-> 
-> v3 - No changes - https://lore.kernel.org/patchwork/patch/1049026/
-> v2 - Fixed ramp-up and ramp-down properties, removed hard coded property values,
-> added ranges for variable properties, I did not change the label - https://lore.kernel.org/patchwork/patch/1048805/
-> 
-> 
->  .../devicetree/bindings/leds/leds-lm3532.txt  | 101 ++++++++++++++++++
->  .../devicetree/bindings/mfd/ti-lmu.txt        |  20 ----
->  2 files changed, 101 insertions(+), 20 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3532.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3532.txt b/Documentation/devicetree/bindings/leds/leds-lm3532.txt
-> new file mode 100644
-> index 000000000000..ba793ef9b3b6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm3532.txt
-> @@ -0,0 +1,101 @@
-> +* Texas Instruments - lm3532 White LED driver with ambient light sensing
-> +capability.
-> +
-> +The LM3532 provides the 3 high-voltage, low-side current sinks. The device is
-> +programmable over an I2C-compatible interface and has independent
-> +current control for all three channels. The adaptive current regulation
-> +method allows for different LED currents in each current sink thus allowing
-> +for a wide variety of backlight and keypad applications.
-> +
-> +The main features of the LM3532 include dual ambient light sensor inputs
-> +each with 32 internal voltage setting resistors, 8-bit logarithmic and linear
-> +brightness control, dual external PWM brightness control inputs, and up to
-> +1000:1 dimming ratio with programmable fade in and fade out settings.
-> +
-> +Required properties:
-> +	- compatible : "ti,lm3532"
-> +	- reg : I2C slave address
-> +	- #address-cells : 1
-> +	- #size-cells : 0
-> +
-> +Optional properties:
-> +	- enable-gpios : gpio pin to enable (active high)/disable the device.
-> +	Range for ramp settings: 8us - 65536us
 
-This should be after the 2 ramp properties.
+--qMm9M+Fa2AknHoGS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-With that,
+On Thu 2019-03-14 14:19:42, Rasmus Villemoes wrote:
+> On 14/03/2019 13.00, Pavel Machek wrote:
+> linux,default-trigger from
+> >=20
+> > Yeah and now insert the modules for the can devices in different
+> > order... May not happen in your case but will be fairly common for
+> > ethernets.
+>=20
+> Unpredictable device names is not a problem I'm trying to solve, nor one
+> that actually occurs on embedded systems. And even if one has such a
+> system, one is likely running udev or similar to rename devices to
+> something sane and predictable, in which case a fixed string _still_
+> works fine. Or one uses udev rules to munge the netdev trigger sysfs
+> files, and has applications dealing with devices appearing as banana457.
+>=20
+> OK, so there's of_find_net_device_by_node, so a phandle solution might
+> also be possible, and might work just as well for my case. But I still
+> think initializing with a fixed string is the simplest and sanest thing
+> to do.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
- 
-> +	- ramp-up-us - The Run time ramp rates/step are from one current
-> +		       set-point to another after the device has reached its
-> +		       initial target set point from turn-on
-> +	- ramp-down-us - The Run time ramp rates/step are from one current
-> +			 set-point to another after the device has reached its
-> +			 initial target set point from turn-on
+Simplest, yes. Mergeable, no. Sorry.
+
+Udev will not help with renaming -- it runs after kernel boot, while
+udev parsing is usually done before userland starts.
+
+Plus, device tree should really describe hardware, and be usable with
+other operating systems. Of course, there are exceptions, but "can0"
+is unneccessarily linux-specific.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--qMm9M+Fa2AknHoGS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlyOm/YACgkQMOfwapXb+vK53QCeIdu8vu9Fai0AxUL3FZQMEO2k
+r5QAoKxdUdhvcbLSBdfF+dFwQEtFyYK5
+=JKhN
+-----END PGP SIGNATURE-----
+
+--qMm9M+Fa2AknHoGS--
