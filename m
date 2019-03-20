@@ -1,23 +1,25 @@
-From: Dan Murphy <dmurphy@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [PATCH v4 4/4] leds: lm3532: Introduce the lm3532 LED driver
-Date: Wed, 20 Mar 2019 07:39:55 -0500
-Message-ID: <8623d5bd-e369-9f90-a749-224119e5861b@ti.com>
+Date: Wed, 20 Mar 2019 19:59:14 +0100
+Message-ID: <a7ee025e-361e-90b8-e38d-53546a542102@gmail.com>
 References: <20190313123249.17258-1-dmurphy@ti.com>
  <20190313123249.17258-4-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190313123249.17258-4-dmurphy@ti.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, tony@atomide.com, lee.jones@linaro.org
+To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz, tony@atomide.com, lee.jones@linaro.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hello
+Hi Dan,
 
-On 3/13/19 7:32 AM, Dan Murphy wrote:
+I have one minor issue below.
+
+On 3/13/19 1:32 PM, Dan Murphy wrote:
 > Introduce the Texas Instruments LM3532 White LED driver.
 > The driver supports ALS configurability or manual brightness
 > control.
@@ -25,13 +27,6 @@ On 3/13/19 7:32 AM, Dan Murphy wrote:
 > The driver also supports associating LED strings with specific
 > control banks in a group or as individually controlled strings.
 > 
-
-I have a v5 series ready for posting and only the DT was reviewed.
-
-Do we have any comments on the code?
-
-Dan
-
 > Signed-off-by: Dan Murphy <dmurphy@ti.com>
 > ---
 > 
@@ -44,20 +39,20 @@ Dan
 > control when ALS is in control, added property value checks to ensure the values
 > are not out of bounds - https://lore.kernel.org/patchwork/patch/1048807/
 > 
->  drivers/leds/Kconfig       |  10 +
->  drivers/leds/Makefile      |   1 +
->  drivers/leds/leds-lm3532.c | 681 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 692 insertions(+)
->  create mode 100644 drivers/leds/leds-lm3532.c
+>   drivers/leds/Kconfig       |  10 +
+>   drivers/leds/Makefile      |   1 +
+>   drivers/leds/leds-lm3532.c | 681 +++++++++++++++++++++++++++++++++++++
+>   3 files changed, 692 insertions(+)
+>   create mode 100644 drivers/leds/leds-lm3532.c
 > 
 > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
 > index a72f97fca57b..da00b9ed5a5c 100644
 > --- a/drivers/leds/Kconfig
 > +++ b/drivers/leds/Kconfig
 > @@ -138,6 +138,16 @@ config LEDS_LM3530
->  	  controlled manually or using PWM input or using ambient
->  	  light automatically.
->  
+>   	  controlled manually or using PWM input or using ambient
+>   	  light automatically.
+>   
 > +config LEDS_LM3532
 > +	tristate "LCD Backlight driver for LM3532"
 > +	depends on LEDS_CLASS
@@ -68,21 +63,21 @@ Dan
 > +	  controlled manually or using PWM input or using ambient
 > +	  light automatically.
 > +
->  config LEDS_LM3533
->  	tristate "LED support for LM3533"
->  	depends on LEDS_CLASS
+>   config LEDS_LM3533
+>   	tristate "LED support for LM3533"
+>   	depends on LEDS_CLASS
 > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
 > index 4c1b0054f379..7a8b1f55d459 100644
 > --- a/drivers/leds/Makefile
 > +++ b/drivers/leds/Makefile
 > @@ -18,6 +18,7 @@ obj-$(CONFIG_LEDS_BD2802)		+= leds-bd2802.o
->  obj-$(CONFIG_LEDS_CPCAP)		+= leds-cpcap.o
->  obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
->  obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
+>   obj-$(CONFIG_LEDS_CPCAP)		+= leds-cpcap.o
+>   obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
+>   obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
 > +obj-$(CONFIG_LEDS_LM3532)		+= leds-lm3532.o
->  obj-$(CONFIG_LEDS_LM3533)		+= leds-lm3533.o
->  obj-$(CONFIG_LEDS_LM3642)		+= leds-lm3642.o
->  obj-$(CONFIG_LEDS_MIKROTIK_RB532)	+= leds-rb532.o
+>   obj-$(CONFIG_LEDS_LM3533)		+= leds-lm3533.o
+>   obj-$(CONFIG_LEDS_LM3642)		+= leds-lm3642.o
+>   obj-$(CONFIG_LEDS_MIKROTIK_RB532)	+= leds-rb532.o
 > diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
 > new file mode 100644
 > index 000000000000..e8a614d71469
@@ -737,7 +732,8 @@ Dan
 > +static int lm3532_remove(struct i2c_client *client)
 > +{
 > +	struct lm3532_data *drvdata = i2c_get_clientdata(client);
-> +
+mutex_destroy(&drvdata->lock);
+
 > +	if (drvdata->enable_gpio)
 > +		gpiod_direction_output(drvdata->enable_gpio, 0);
 > +
@@ -772,7 +768,6 @@ Dan
 > +MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
 > 
 
-
 -- 
-------------------
-Dan Murphy
+Best regards,
+Jacek Anaszewski
