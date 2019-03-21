@@ -1,51 +1,73 @@
-From: Dan Murphy <dmurphy@ti.com>
+From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: [PATCH v4 4/4] leds: lm3532: Introduce the lm3532 LED driver
-Date: Wed, 20 Mar 2019 14:05:49 -0500
-Message-ID: <c89ebac6-3053-4bb0-c85b-3daa4e7fc52d@ti.com>
+Date: Thu, 21 Mar 2019 08:20:34 +0000
+Message-ID: <20190321082034.GR4731@dell>
 References: <20190313123249.17258-1-dmurphy@ti.com>
  <20190313123249.17258-4-dmurphy@ti.com>
- <8623d5bd-e369-9f90-a749-224119e5861b@ti.com>
- <08406168-b20e-527f-23c7-e6543f5b5c10@gmail.com>
+ <a7ee025e-361e-90b8-e38d-53546a542102@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <08406168-b20e-527f-23c7-e6543f5b5c10@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <a7ee025e-361e-90b8-e38d-53546a542102@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, pavel@ucw.cz, tony@atomide.com, lee.jones@linaro.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz, tony@atomide.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
+On Wed, 20 Mar 2019, Jacek Anaszewski wrote:
 
-On 3/20/19 2:00 PM, Jacek Anaszewski wrote:
 > Hi Dan,
 > 
-> On 3/20/19 1:39 PM, Dan Murphy wrote:
->> Hello
->>
->> On 3/13/19 7:32 AM, Dan Murphy wrote:
->>> Introduce the Texas Instruments LM3532 White LED driver.
->>> The driver supports ALS configurability or manual brightness
->>> control.
->>>
->>> The driver also supports associating LED strings with specific
->>> control banks in a group or as individually controlled strings.
->>>
->>
->> I have a v5 series ready for posting and only the DT was reviewed.
->>
->> Do we have any comments on the code?
+> I have one minor issue below.
 > 
-> I've just added one comment. After it is addressed please submit v5.
-> 
+> On 3/13/19 1:32 PM, Dan Murphy wrote:
+> > Introduce the Texas Instruments LM3532 White LED driver.
+> > The driver supports ALS configurability or manual brightness
+> > control.
+> > 
+> > The driver also supports associating LED strings with specific
+> > control banks in a group or as individually controlled strings.
+> > 
+> > Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> > ---
+> > 
+> > v4 - Updated code to DT doc changes appending "ti," to TI specific properties -
+> > https://lore.kernel.org/patchwork/patch/1050124/
+> > 
+> > v3 - Removed switch case for register setting in favor of an algorithim (v1 comment),
+> > https://lore.kernel.org/patchwork/patch/1049024/
+> > v2 - Added look up tables for als_avg, als_imp and ramp times, fixed brightness
+> > control when ALS is in control, added property value checks to ensure the values
+> > are not out of bounds - https://lore.kernel.org/patchwork/patch/1048807/
+> > 
+> >   drivers/leds/Kconfig       |  10 +
+> >   drivers/leds/Makefile      |   1 +
+> >   drivers/leds/leds-lm3532.c | 681 +++++++++++++++++++++++++++++++++++++
+> >   3 files changed, 692 insertions(+)
+> >   create mode 100644 drivers/leds/leds-lm3532.c
 
-Thank you.  I will give it through the night for others to comment and I will post
-v5 tomorrow.
+[snip]
 
-Dan
+> > diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
+> > new file mode 100644
+> > index 000000000000..e8a614d71469
+> > --- /dev/null
+> > +++ b/drivers/leds/leds-lm3532.c
+
+[snip 700 lines of churn]
+
+Jacek could you please trim your replies please?  It took way to long
+to locate your one line comment in this 700 line patch.
+
+> > +static int lm3532_remove(struct i2c_client *client)
+> > +{
+> > +	struct lm3532_data *drvdata = i2c_get_clientdata(client);
+> mutex_destroy(&drvdata->lock);
 
 -- 
-------------------
-Dan Murphy
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
