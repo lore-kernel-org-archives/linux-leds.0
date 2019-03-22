@@ -1,54 +1,39 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [RESEND PATCH v6 09/11] leds: max77650: add LEDs support
-Date: Fri, 22 Mar 2019 20:40:44 +0100
-Message-ID: <f2963c2e-b4d0-1fae-3c7f-28fcdb545ee2@gmail.com>
-References: <20190318174228.18194-1-brgl@bgdev.pl>
- <20190318174228.18194-10-brgl@bgdev.pl> <20190322092124.GK27015@amd>
- <CAMRc=Mf1DxF1e63y+HsXtCFxZW8R0XWDLUXGy+4cp3zBS0_qhw@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
+Date: Fri, 22 Mar 2019 15:16:54 -0700
+Message-ID: <20190322221654.GG19425@atomide.com>
+References: <20190321142838.22985-1-dmurphy@ti.com>
+ <20190321142838.22985-4-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=Mf1DxF1e63y+HsXtCFxZW8R0XWDLUXGy+4cp3zBS0_qhw@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190321142838.22985-4-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Pavel Machek <pavel@ucw.cz>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 3/22/19 10:53 AM, Bartosz Golaszewski wrote:
-> pt., 22 mar 2019 o 10:21 Pavel Machek <pavel@ucw.cz> napisał(a):
->>
->> On Mon 2019-03-18 18:42:26, Bartosz Golaszewski wrote:
->>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>
->>> This adds basic support for LEDs for the max77650 PMIC. The device has
->>> three current sinks for driving LEDs.
->>>
->>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>> Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->>
->> Acked-by: Pavel Machek <pavel@ucw.cz>
->>
->>> +             label = of_get_property(child, "label", NULL);
->>> +             if (!label) {
->>> +                     led->cdev.name = "max77650::";
->>> +             } else {
->>> +                     led->cdev.name = devm_kasprintf(dev, GFP_KERNEL,
->>> +                                                     "max77650:%s", label);
->>> +                     if (!led->cdev.name)
->>> +                             return -ENOMEM;
->>> +             }
->>
->> I'd rather not have the "max77650:" prefix in the LED name (as it is
->> useless).
->>
+Hi,
+
+* Dan Murphy <dmurphy@ti.com> [190321 14:29]:
+> Introduce the Texas Instruments LM3532 White LED driver.
+> The driver supports ALS configurability or manual brightness
+> control.
 > 
-> I was instructed to do so by the LED subsystem maintainer.
+> The driver also supports associating LED strings with specific
+> control banks in a group or as individually controlled strings.
 
-Yes, let's keep things consistent, we will convert it to use generic
-support for LED naming once that support is merged.
+Thanks for getting this driver done. I need help a bit using
+this though.. What's the glue to the drm driver?
 
--- 
-Best regards,
-Jacek Anaszewski
+I can control the backlight brightness just fine via /sys, and
+backlight shows up as the trigger in /sys/class/leds/lm3532:backlight,
+but /sys/class/backlight is empty and looks like drm can't find it.
+
+Do I need to enable some additional driver(s) to get this to work
+with the drm driver?
+
+Regards,
+
+Tony
