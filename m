@@ -1,53 +1,54 @@
-From: Nick Crews <ncrews@chromium.org>
-Subject: Re: [PATCH 3/3] platform/chrome: Add Wilco EC keyboard backlight LEDs support
-Date: Fri, 22 Mar 2019 09:49:57 -0600
-Message-ID: <CAHX4x85L_WONddW3gCUBm4d99xD8AEUfrh8JFd=gn3m7wyF6Lg@mail.gmail.com>
-References: <20190321221334.240059-3-ncrews@chromium.org> <20190322113509.GE8681@amd>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [RESEND PATCH v6 09/11] leds: max77650: add LEDs support
+Date: Fri, 22 Mar 2019 20:40:44 +0100
+Message-ID: <f2963c2e-b4d0-1fae-3c7f-28fcdb545ee2@gmail.com>
+References: <20190318174228.18194-1-brgl@bgdev.pl>
+ <20190318174228.18194-10-brgl@bgdev.pl> <20190322092124.GK27015@amd>
+ <CAMRc=Mf1DxF1e63y+HsXtCFxZW8R0XWDLUXGy+4cp3zBS0_qhw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190322113509.GE8681@amd>
+In-Reply-To: <CAMRc=Mf1DxF1e63y+HsXtCFxZW8R0XWDLUXGy+4cp3zBS0_qhw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>, Guenter Roeck <groeck@google.com>, Dmitry Torokhov <dtor@google.com>, Simon Que <sque@google.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Pavel Machek <pavel@ucw.cz>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Fri, Mar 22, 2019 at 5:35 AM Pavel Machek <pavel@ucw.cz> wrote:
->
-> Hi!
->
-> > The EC is in charge of controlling the keyboard backlight on
-> > the Wilco platform. We expose a standard LED class device at
-> > /sys/class/leds/wilco::kbd_backlight. This driver is modeled
-> > after the standard Chrome OS keyboard backlight driver at
-> > drivers/platform/chrome/cros_kbd_led_backlight.c
->
-> Please make it platform::kbd_backlight . Userland should not need to
-> know what wilco is...
+On 3/22/19 10:53 AM, Bartosz Golaszewski wrote:
+> pt., 22 mar 2019 o 10:21 Pavel Machek <pavel@ucw.cz> napisał(a):
+>>
+>> On Mon 2019-03-18 18:42:26, Bartosz Golaszewski wrote:
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> This adds basic support for LEDs for the max77650 PMIC. The device has
+>>> three current sinks for driving LEDs.
+>>>
+>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>> Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>>
+>> Acked-by: Pavel Machek <pavel@ucw.cz>
+>>
+>>> +             label = of_get_property(child, "label", NULL);
+>>> +             if (!label) {
+>>> +                     led->cdev.name = "max77650::";
+>>> +             } else {
+>>> +                     led->cdev.name = devm_kasprintf(dev, GFP_KERNEL,
+>>> +                                                     "max77650:%s", label);
+>>> +                     if (!led->cdev.name)
+>>> +                             return -ENOMEM;
+>>> +             }
+>>
+>> I'd rather not have the "max77650:" prefix in the LED name (as it is
+>> useless).
+>>
+> 
+> I was instructed to do so by the LED subsystem maintainer.
 
-The corresponding device for normal chromeos devices is
-"chromeos::kbd_backlight". I wanted to differentiate this device from
-that one, so I thought that "wilco" a similar level of specific-ness as
-"chromeos". Using "platform" seems too general. The power manager
-daemon that controls the backlight just searches for LEDs ending with
-"*:kbd_backlight" so it should work for that, and I figured any user just
-browsing through sysfs would be able to guess what the LED does.
+Yes, let's keep things consistent, we will convert it to use generic
+support for LED naming once that support is merged.
 
-This is maybe a question for those who will need to maintain the
-Chrome OS system after adding this? Could some more
-Chrome OS-specific people chime in on this? I also CC'ed Simon
-Que, the author of the original driver (Simon, we are talking about
-https://lkml.org/lkml/2019/3/21/999)
-
->
-> What is wilco, anyway?
-
-Wilco is a new Chrome OS device which does not use the same embedded
-controller as the rest of the Chrome OS ecosystem. Thus, we need this new
-driver because the old one will not be compatible.
-
->
->                                                                         Pavel
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-- 
+Best regards,
+Jacek Anaszewski
