@@ -1,39 +1,43 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
-Date: Fri, 22 Mar 2019 15:16:54 -0700
-Message-ID: <20190322221654.GG19425@atomide.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 3/4] mfd: ti-lmu: Remove LM3532 backlight driver
+ references
+Date: Sat, 23 Mar 2019 17:47:21 +0100
+Message-ID: <8769a95d-179f-6219-0a63-9dd623cdd297@gmail.com>
 References: <20190321142838.22985-1-dmurphy@ti.com>
- <20190321142838.22985-4-dmurphy@ti.com>
+ <20190321142838.22985-3-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190321142838.22985-4-dmurphy@ti.com>
+In-Reply-To: <20190321142838.22985-3-dmurphy@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+To: lee.jones@linaro.org
+Cc: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz, tony@atomide.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
+Hi Lee,
 
-* Dan Murphy <dmurphy@ti.com> [190321 14:29]:
-> Introduce the Texas Instruments LM3532 White LED driver.
-> The driver supports ALS configurability or manual brightness
-> control.
+Can we have your ack for this going via LED tree, please?
+
+Best regards,
+Jacek Anaszewski
+
+On 3/21/19 3:28 PM, Dan Murphy wrote:
+> Remove the LM3532 backlight driver references from the ti-lmu
+> code as dedicated driver support is available.
 > 
-> The driver also supports associating LED strings with specific
-> control banks in a group or as individually controlled strings.
-
-Thanks for getting this driver done. I need help a bit using
-this though.. What's the glue to the drm driver?
-
-I can control the backlight brightness just fine via /sys, and
-backlight shows up as the trigger in /sys/class/leds/lm3532:backlight,
-but /sys/class/backlight is empty and looks like drm can't find it.
-
-Do I need to enable some additional driver(s) to get this to work
-with the drm driver?
-
-Regards,
-
-Tony
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+> 
+> v5 - No changes - https://lore.kernel.org/patchwork/patch/1050411/
+> 
+> v4 - No changes - https://lore.kernel.org/patchwork/patch/1050123/
+> v3 - No changes - https://lore.kernel.org/patchwork/patch/1049025/
+> v2 - Removed LM3532 register definitions from ti-lmu-register - https://lore.kernel.org/patchwork/patch/1048808/
+> 
+>   drivers/mfd/ti-lmu.c                | 11 --------
+>   include/linux/mfd/ti-lmu-register.h | 44 -----------------------------
+>   include/linux/mfd/ti-lmu.h          |  1 -
+>   3 files changed, 56 deletions(-)
+[...]
