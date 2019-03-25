@@ -1,56 +1,49 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 0/5] TI LMU rework
-Date: Mon, 25 Mar 2019 09:23:58 -0500
-Message-ID: <20190325142403.30447-1-dmurphy@ti.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
+Date: Mon, 25 Mar 2019 07:54:44 -0700
+Message-ID: <20190325145444.GK19425@atomide.com>
+References: <20190321142838.22985-1-dmurphy@ti.com>
+ <20190321142838.22985-4-dmurphy@ti.com>
+ <20190322221654.GG19425@atomide.com>
+ <dc24b66c-658e-41aa-c869-42c4a7e812a8@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <dc24b66c-658e-41aa-c869-42c4a7e812a8@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-All
+* Dan Murphy <dmurphy@ti.com> [190325 12:36]:
+> On 3/22/19 5:16 PM, Tony Lindgren wrote:
+> > I can control the backlight brightness just fine via /sys, and
+> > backlight shows up as the trigger in /sys/class/leds/lm3532:backlight,
+> > but /sys/class/backlight is empty and looks like drm can't find it.
+> > 
+> > Do I need to enable some additional driver(s) to get this to work
+> > with the drm driver?
+> > 
+> 
+> Can you dump or point to the defconfig?
 
-I know that it has been a long time but I put some additional effort into this
-code.  The TI LMU common code right now handles brightness and ramp up/down
-setting for the LM3697.  This so far are the common features I could find.
+This is just with the omap2plus_defconfig as in the droid4-pending-v5.0
+test branch below [0]. That branch has Sebastian's drm patches. The
+branch also has the older ti-lmu patches that I reverted for testing
+before applying your new series and enabling it in .config.
 
-The LM3697 driver has the ability to assign HVLED strings to specific control
-banks as well as assigning different max brightnesses to these strings.
+The drm driver (drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c) just
+does:
 
-Fault monitoring was removed as the data sheet indicates that this is for
-production tests only.
+backlight = of_parse_phandle(node, "backlight", 0);
+...
 
-I have plans to add additional LED drivers to use the TI LMU but I figured trying
-to add all of them at once would be a daunting review and probably wrought with 
-problems.
+That should still work the same, right?
 
-Dan
+Regards,
 
-Dan Murphy (5):
-  dt-bindings: mfd: Update the ramp up/down property
-  leds: TI LMU: Add common code for TI LMU devices
-  dt-bindings: ti-lmu: Modify dt bindings for the LM3697
-  mfd: ti-lmu: Remove support for LM3697
-  leds: lm3697: Introduce the lm3697 driver
+Tony
 
- .../devicetree/bindings/leds/leds-lm3697.txt  |  77 ++++
- .../devicetree/bindings/mfd/ti-lmu.txt        |  42 +-
- drivers/leds/Kconfig                          |  14 +
- drivers/leds/Makefile                         |   2 +
- drivers/leds/leds-lm3697.c                    | 401 ++++++++++++++++++
- drivers/leds/ti-lmu-led-common.c              | 131 ++++++
- drivers/mfd/Kconfig                           |   2 +-
- drivers/mfd/ti-lmu.c                          |  17 -
- include/linux/mfd/ti-lmu-register.h           |  44 --
- include/linux/mfd/ti-lmu.h                    |   1 -
- include/linux/ti-lmu-led-common.h             |  44 ++
- 11 files changed, 682 insertions(+), 93 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
- create mode 100644 drivers/leds/leds-lm3697.c
- create mode 100644 drivers/leds/ti-lmu-led-common.c
- create mode 100644 include/linux/ti-lmu-led-common.h
 
--- 
-2.19.0
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/log/?h=droid4-pending-v5.0
