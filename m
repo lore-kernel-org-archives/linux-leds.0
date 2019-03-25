@@ -1,57 +1,53 @@
-From: Dmitry Torokhov <dtor@google.com>
-Subject: Re: [PATCH 3/3] platform/chrome: Add Wilco EC keyboard backlight LEDs support
-Date: Mon, 25 Mar 2019 13:48:54 -0700
-Message-ID: <CAE_wzQ8oRKjmA0x01+gmPuQQQ=yCxS+v+c9=VyQSg1EKP8bDkQ@mail.gmail.com>
-References: <20190321221334.240059-3-ncrews@chromium.org> <20190322113509.GE8681@amd>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 3/4] mfd: ti-lmu: Remove LM3532 backlight driver
+ references
+Date: Mon, 25 Mar 2019 22:11:00 +0100
+Message-ID: <c950b7d3-eeb1-2dc2-b732-3a40d5b3a8b7@gmail.com>
+References: <20190321142838.22985-1-dmurphy@ti.com>
+ <20190321142838.22985-3-dmurphy@ti.com>
+ <8769a95d-179f-6219-0a63-9dd623cdd297@gmail.com> <20190325075317.GW4731@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190322113509.GE8681@amd>
+In-Reply-To: <20190325075317.GW4731@dell>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Nick Crews <ncrews@chromium.org>, enric.balletbo@collabora.com, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, lkml <linux-kernel@vger.kernel.org>, dlaurie@chromium.org, sjg@google.com, Guenter Roeck <groeck@google.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz, tony@atomide.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Fri, Mar 22, 2019 at 4:35 AM Pavel Machek <pavel@ucw.cz> wrote:
->
-> Hi!
->
-> > The EC is in charge of controlling the keyboard backlight on
-> > the Wilco platform. We expose a standard LED class device at
-> > /sys/class/leds/wilco::kbd_backlight. This driver is modeled
-> > after the standard Chrome OS keyboard backlight driver at
-> > drivers/platform/chrome/cros_kbd_led_backlight.c
->
-> Please make it platform::kbd_backlight . Userland should not need to
-> know what wilco is...
+On 3/25/19 8:53 AM, Lee Jones wrote:
+> On Sat, 23 Mar 2019, Jacek Anaszewski wrote:
+> 
+>> Hi Lee,
+>>
+>> Can we have your ack for this going via LED tree, please?
+> 
+> Patch looks okay.
+> 
+> You can take it through the LED, but if you do I will need you to send
+> me a pull-request to a minimised immutable branch please.
+> 
+> If you cannot do this, I can apply the set and provide the same to
+> you.
+> 
+> If you choose the former:
+> 
+>    Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> 
+> Please let me know what you decide
+> 
 
-It should not. But the current convention is "<device>::kbd-backlight":
+I've been exposing integration branches in the past, but after Linus'
+message [0] I have my doubts now. I wonder if it wouldn't make more
+sense if I just took the patches, and you'd cherry-pick them only in
+case such a need occurs. This way we would avoid this whole merge
+noise, which in an optimistic and very plausible case will not be needed
+at all.
 
-dtor@dtor-ws:~/kernel/work $ git grep "::kbd_backlight" -- drivers/
-drivers/hid/hid-asus.c: drvdata->kbd_backlight->cdev.name =
-"asus::kbd_backlight";
-drivers/hid/hid-google-hammer.c:        kbd_backlight->cdev.name =
-"hammer::kbd_backlight";
-drivers/hwmon/applesmc.c:       .name                   = "smc::kbd_backlight",
-drivers/input/misc/ims-pcu.c:            "pcu%d::kbd_backlight",
-pcu->device_no);
-drivers/platform/chrome/cros_kbd_led_backlight.c:       cdev->name =
-"chromeos::kbd_backlight";
-drivers/platform/x86/asus-laptop.c:             cdev->name =
-"asus::kbd_backlight";
-drivers/platform/x86/asus-wmi.c:                asus->kbd_led.name =
-"asus::kbd_backlight";
-drivers/platform/x86/dell-laptop.c:     .name           = "dell::kbd_backlight",
-drivers/platform/x86/samsung-laptop.c:          samsung->kbd_led.name
-= "samsung::kbd_backlight";
-drivers/platform/x86/thinkpad_acpi.c:           .name           =
-"tpacpi::kbd_backlight",
-drivers/platform/x86/toshiba_acpi.c:            dev->kbd_led.name =
-"toshiba::kbd_backlight";
-
-and userspace already knows how to handle these.
-
-Thanks.
+[0] https://lkml.org/lkml/2017/4/19/1104
 
 -- 
-Dmitry
+Best regards,
+Jacek Anaszewski
