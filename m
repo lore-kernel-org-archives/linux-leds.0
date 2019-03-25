@@ -1,61 +1,56 @@
-From: Nick Crews <ncrews@chromium.org>
-Subject: Re: [PATCH 3/3] platform/chrome: Add Wilco EC keyboard backlight LEDs support
-Date: Mon, 25 Mar 2019 14:24:09 -0600
-Message-ID: <CAHX4x84qSZxZ51FiYZ4ELEmUKJnUvMy7OGQVSQv2xh7x-nC57A@mail.gmail.com>
-References: <20190321221334.240059-3-ncrews@chromium.org> <20190322113509.GE8681@amd>
- <CAHX4x85L_WONddW3gCUBm4d99xD8AEUfrh8JFd=gn3m7wyF6Lg@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RESEND PATCH v6 02/11] dt-bindings: power: supply: add DT
+ bindings for max77650
+Date: Mon, 25 Mar 2019 15:46:09 -0500
+Message-ID: <20190325204609.GA29935@bogus>
+References: <20190318174228.18194-1-brgl@bgdev.pl>
+ <20190318174228.18194-3-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHX4x85L_WONddW3gCUBm4d99xD8AEUfrh8JFd=gn3m7wyF6Lg@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20190318174228.18194-3-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>, Guenter Roeck <groeck@google.com>, Dmitry Torokhov <dtor@google.com>, Simon Que <sque@google.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Fri, Mar 22, 2019 at 9:49 AM Nick Crews <ncrews@chromium.org> wrote:
->
-> On Fri, Mar 22, 2019 at 5:35 AM Pavel Machek <pavel@ucw.cz> wrote:
-> >
-> > Hi!
-> >
-> > > The EC is in charge of controlling the keyboard backlight on
-> > > the Wilco platform. We expose a standard LED class device at
-> > > /sys/class/leds/wilco::kbd_backlight. This driver is modeled
-> > > after the standard Chrome OS keyboard backlight driver at
-> > > drivers/platform/chrome/cros_kbd_led_backlight.c
-> >
-> > Please make it platform::kbd_backlight . Userland should not need to
-> > know what wilco is...
->
-> The corresponding device for normal chromeos devices is
-> "chromeos::kbd_backlight". I wanted to differentiate this device from
-> that one, so I thought that "wilco" a similar level of specific-ness as
-> "chromeos". Using "platform" seems too general. The power manager
-> daemon that controls the backlight just searches for LEDs ending with
-> "*:kbd_backlight" so it should work for that, and I figured any user just
-> browsing through sysfs would be able to guess what the LED does.
->
-> This is maybe a question for those who will need to maintain the
-> Chrome OS system after adding this? Could some more
-> Chrome OS-specific people chime in on this? I also CC'ed Simon
-> Que, the author of the original driver (Simon, we are talking about
-> https://lkml.org/lkml/2019/3/21/999)
+On Mon, Mar 18, 2019 at 06:42:19PM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Add the DT binding document for the battery charger module of max77650.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  .../power/supply/max77650-charger.txt         | 27 +++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/max77650-charger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+> new file mode 100644
+> index 000000000000..d25c95369616
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+> @@ -0,0 +1,27 @@
+> +Battery charger driver for MAX77650 PMIC from Maxim Integrated.
+> +
+> +This module is part of the MAX77650 MFD device. For more details
+> +see Documentation/devicetree/bindings/mfd/max77650.txt.
+> +
+> +The charger is represented as a sub-node of the PMIC node on the device tree.
+> +
+> +Required properties:
+> +--------------------
+> +- compatible:		Must be "maxim,max77650-charger"
+> +
+> +Optional properties:
+> +--------------------
+> +- min-microvolt:	Minimum CHGIN regulation voltage (in microvolts). Must be
+> +			one of: 4000000, 4100000, 4200000, 4300000, 4400000,
+> +			4500000, 4600000, 4700000.
+> +- curr-lim-microamp:	CHGIN input current limit (in microamps). Must be one of:
+> +			95000, 190000, 285000, 380000, 475000.
 
->From talking to Simon, since the interface is the same, I'll just keep the name
-as "chromeos::kbd_backlight". This makes sense to me too. I'll send out a
-patch fixing this.
+These should be common charger properties IMO.
 
->
-> >
-> > What is wilco, anyway?
->
-> Wilco is a new Chrome OS device which does not use the same embedded
-> controller as the rest of the Chrome OS ecosystem. Thus, we need this new
-> driver because the old one will not be compatible.
->
-> >
-> >                                                                         Pavel
-> > --
-> > (english) http://www.livejournal.com/~pavelmachek
-> > (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Rob
