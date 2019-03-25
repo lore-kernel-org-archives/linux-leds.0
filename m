@@ -1,64 +1,102 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
-Date: Mon, 25 Mar 2019 11:01:18 -0500
-Message-ID: <044f67e7-e196-a5b9-728b-a7c5f283f56f@ti.com>
-References: <20190321142838.22985-1-dmurphy@ti.com>
- <20190321142838.22985-4-dmurphy@ti.com> <20190322221654.GG19425@atomide.com>
- <dc24b66c-658e-41aa-c869-42c4a7e812a8@ti.com>
- <20190325145444.GK19425@atomide.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH 1/3] platform/chrome: wilco_ec: Split core and mailbox
+ into separate modules
+Date: Mon, 25 Mar 2019 18:18:23 +0100
+Message-ID: <33e0da93-18aa-5ddc-5bdb-a73336392e2a@collabora.com>
+References: <20190321221334.240059-1-ncrews@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190325145444.GK19425@atomide.com>
-Content-Language: en-US
+In-Reply-To: <20190321221334.240059-1-ncrews@chromium.org>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+To: Nick Crews <ncrews@chromium.org>, bleung@chromium.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: linux-kernel@vger.kernel.org, dlaurie@chromium.org, sjg@google.com, groeck@google.com, dtor@google.com
 List-Id: linux-leds@vger.kernel.org
 
-On 3/25/19 9:54 AM, Tony Lindgren wrote:
-> * Dan Murphy <dmurphy@ti.com> [190325 12:36]:
->> On 3/22/19 5:16 PM, Tony Lindgren wrote:
->>> I can control the backlight brightness just fine via /sys, and
->>> backlight shows up as the trigger in /sys/class/leds/lm3532:backlight,
->>> but /sys/class/backlight is empty and looks like drm can't find it.
->>>
->>> Do I need to enable some additional driver(s) to get this to work
->>> with the drm driver?
->>>
->>
->> Can you dump or point to the defconfig?
-> 
-> This is just with the omap2plus_defconfig as in the droid4-pending-v5.0
-> test branch below [0]. That branch has Sebastian's drm patches. The
-> branch also has the older ti-lmu patches that I reverted for testing
-> before applying your new series and enabling it in .config.
-> 
-> The drm driver (drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c) just
-> does:
-> 
-> backlight = of_parse_phandle(node, "backlight", 0);
-> ...
-> 
-> That should still work the same, right?
+Hi Nick,
 
-Yes it should still work the same.
-I did not change the node name.
-So the DRM driver should find the node.
+Thanks for the patch, some comments below.
 
-Dan
+On 21/3/19 23:13, Nick Crews wrote:
+> It was bad design to lump the mailbox interface to the Wilco EC into the
+> same module as the code module, which loads all the subdrivers:
 
+Typo: s/code/core/?
+
+> - This required the sub-drivers to depend on the core, which doesn't
+> really make sense, they should just depend on the mailbox interface.
+> - It caused problems with circular dependencies: An upcoming keyboard
+> backlight driver depends on the mailbox interface, which in the old
+> architecture makes it also depend on the core driver. However, the core
+> driver should be able to detect whether or not the keyboard
+> backlight is available, so the core module depends on the backlight
+> driver. This created a circular dependency.
 > 
-> Regards,
+> By splitting up the mailbox interface and core driver into separate
+> modules, it fixes both of these problems.
 > 
-> Tony
+> Signed-off-by: Nick Crews <ncrews@chromium.org>
+> ---
+>  drivers/platform/chrome/wilco_ec/Makefile  | 6 ++++--
+>  drivers/platform/chrome/wilco_ec/core.c    | 2 +-
+>  drivers/platform/chrome/wilco_ec/mailbox.c | 6 ++++++
+>  3 files changed, 11 insertions(+), 3 deletions(-)
 > 
-> 
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/log/?h=droid4-pending-v5.0
+> diff --git a/drivers/platform/chrome/wilco_ec/Makefile b/drivers/platform/chrome/wilco_ec/Makefile
+> index 063e7fb4ea17..9706aeb20ccb 100644
+> --- a/drivers/platform/chrome/wilco_ec/Makefile
+> +++ b/drivers/platform/chrome/wilco_ec/Makefile
+> @@ -1,6 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  
+> -wilco_ec-objs				:= core.o mailbox.o
+> -obj-$(CONFIG_WILCO_EC)			+= wilco_ec.o
+> +wilco_ec_mailbox-objs			:= mailbox.o
+> +obj-$(CONFIG_WILCO_EC)			+= wilco_ec_mailbox.o
+> +wilco_ec_core-objs			:= core.o
+> +obj-$(CONFIG_WILCO_EC)			+= wilco_ec_core.o
+
+Odd, same config definition (CONFIG_WILCO_EC) for two different kernel modules?
+
+>  wilco_ec_debugfs-objs			:= debugfs.o
+>  obj-$(CONFIG_WILCO_EC_DEBUGFS)		+= wilco_ec_debugfs.o
+> diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
+> index 05e1e2be1c91..ece30874f35f 100644
+> --- a/drivers/platform/chrome/wilco_ec/core.c
+> +++ b/drivers/platform/chrome/wilco_ec/core.c
+> @@ -20,7 +20,7 @@
+>  
+>  #include "../cros_ec_lpc_mec.h"
+>  
+> -#define DRV_NAME "wilco-ec"
+> +#define DRV_NAME "wilco-ec-core"
+>  
+>  static struct resource *wilco_get_resource(struct platform_device *pdev,
+>  					   int index)
+> diff --git a/drivers/platform/chrome/wilco_ec/mailbox.c b/drivers/platform/chrome/wilco_ec/mailbox.c
+> index 14355668ddfa..ca6b92ce7e6d 100644
+> --- a/drivers/platform/chrome/wilco_ec/mailbox.c
+> +++ b/drivers/platform/chrome/wilco_ec/mailbox.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/device.h>
+>  #include <linux/io.h>
+> +#include <linux/module.h>
+>  #include <linux/platform_data/wilco-ec.h>
+>  #include <linux/platform_device.h>
+>  
+> @@ -235,3 +236,8 @@ int wilco_ec_mailbox(struct wilco_ec_device *ec, struct wilco_ec_message *msg)
+>  
+>  }
+>  EXPORT_SYMBOL_GPL(wilco_ec_mailbox);
+> +
+> +MODULE_AUTHOR("Nick Crews <ncrews@chromium.org>");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("ChromeOS Wilco Embedded Controller mailbox interface");
+> +MODULE_ALIAS("platform:wilco-ec-mailbox");
 > 
 
-
--- 
-------------------
-Dan Murphy
+Thanks,
+- Enric
