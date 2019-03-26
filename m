@@ -1,53 +1,61 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 3/4] mfd: ti-lmu: Remove LM3532 backlight driver
- references
-Date: Mon, 25 Mar 2019 22:11:00 +0100
-Message-ID: <c950b7d3-eeb1-2dc2-b732-3a40d5b3a8b7@gmail.com>
-References: <20190321142838.22985-1-dmurphy@ti.com>
- <20190321142838.22985-3-dmurphy@ti.com>
- <8769a95d-179f-6219-0a63-9dd623cdd297@gmail.com> <20190325075317.GW4731@dell>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [RESEND PATCH v6 06/11] mfd: max77650: new core mfd driver
+Date: Tue, 26 Mar 2019 14:49:24 +0100
+Message-ID: <CAMRc=Me1BbZKPQyAt4RR1eRk9pX3oHFudpm1CnHx3-AuD-G5ug@mail.gmail.com>
+References: <20190318174228.18194-1-brgl@bgdev.pl> <20190318174228.18194-7-brgl@bgdev.pl>
+ <20190322091223.GI27015@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190325075317.GW4731@dell>
-Content-Language: en-US
+In-Reply-To: <20190322091223.GI27015@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz, tony@atomide.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-On 3/25/19 8:53 AM, Lee Jones wrote:
-> On Sat, 23 Mar 2019, Jacek Anaszewski wrote:
-> 
->> Hi Lee,
->>
->> Can we have your ack for this going via LED tree, please?
-> 
-> Patch looks okay.
-> 
-> You can take it through the LED, but if you do I will need you to send
-> me a pull-request to a minimised immutable branch please.
-> 
-> If you cannot do this, I can apply the set and provide the same to
-> you.
-> 
-> If you choose the former:
-> 
->    Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> 
-> Please let me know what you decide
-> 
+pt., 22 mar 2019 o 10:12 Pavel Machek <pavel@ucw.cz> napisa=C5=82(a):
+>
+> On Mon 2019-03-18 18:42:23, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Add the core mfd driver for max77650 PMIC. We define five sub-devices
+> > for which the drivers will be added in subsequent patches.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> >  drivers/mfd/Kconfig          |  14 +++
+> >  drivers/mfd/Makefile         |   1 +
+> >  drivers/mfd/max77650.c       | 234 +++++++++++++++++++++++++++++++++++
+> >  include/linux/mfd/max77650.h |  59 +++++++++
+> >  4 files changed, 308 insertions(+)
+> >  create mode 100644 drivers/mfd/max77650.c
+> >  create mode 100644 include/linux/mfd/max77650.h
+> >
+> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > index 0ce2d8dfc5f1..ade04e124aa0 100644
+> > --- a/drivers/mfd/Kconfig
+> > +++ b/drivers/mfd/Kconfig
+> > @@ -733,6 +733,20 @@ config MFD_MAX77620
+> >         provides common support for accessing the device; additional dr=
+ivers
+> >         must be enabled in order to use the functionality of the device=
+.
+> >
+> > +config MFD_MAX77650
+> > +     tristate "Maxim MAX77650/77651 PMIC Support"
+> > +     depends on I2C
+> > +     depends on OF || COMPILE_TEST
+>
+> This says it will compile ok in !OF case. Will it?
+>
 
-I've been exposing integration branches in the past, but after Linus'
-message [0] I have my doubts now. I wonder if it wouldn't make more
-sense if I just took the patches, and you'd cherry-pick them only in
-case such a need occurs. This way we would avoid this whole merge
-noise, which in an optimistic and very plausible case will not be needed
-at all.
+It will compile because the stubs for OF functions will be provided -
+it just won't work, because they won't be implemented.
 
-[0] https://lkml.org/lkml/2017/4/19/1104
+Bart
 
--- 
-Best regards,
-Jacek Anaszewski
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/b=
+log.html
