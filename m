@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 35/63] leds: lp55xx: fix null deref on firmware load failure
-Date: Wed, 27 Mar 2019 14:22:55 -0400
-Message-ID: <20190327182323.18577-35-sashal@kernel.org>
-References: <20190327182323.18577-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 45/87] leds: lp55xx: fix null deref on firmware load failure
+Date: Wed, 27 Mar 2019 14:19:58 -0400
+Message-ID: <20190327182040.17444-45-sashal@kernel.org>
+References: <20190327182040.17444-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190327182323.18577-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190327182040.17444-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Michal Kazior <michal@plume.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
@@ -41,10 +41,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index 59b76833f0d3..fd077c176a62 100644
+index 5377f22ff994..e2655953667c 100644
 --- a/drivers/leds/leds-lp55xx-common.c
 +++ b/drivers/leds/leds-lp55xx-common.c
-@@ -200,7 +200,7 @@ static void lp55xx_firmware_loaded(const struct firmware *fw, void *context)
+@@ -201,7 +201,7 @@ static void lp55xx_firmware_loaded(const struct firmware *fw, void *context)
  
  	if (!fw) {
  		dev_err(dev, "firmware request failed\n");
@@ -53,7 +53,7 @@ index 59b76833f0d3..fd077c176a62 100644
  	}
  
  	/* handling firmware data is chip dependent */
-@@ -213,9 +213,9 @@ static void lp55xx_firmware_loaded(const struct firmware *fw, void *context)
+@@ -214,9 +214,9 @@ static void lp55xx_firmware_loaded(const struct firmware *fw, void *context)
  
  	mutex_unlock(&chip->lock);
  
