@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 20/41] leds: lp55xx: fix null deref on firmware load failure
-Date: Wed, 27 Mar 2019 14:24:57 -0400
-Message-ID: <20190327182518.19394-20-sashal@kernel.org>
-References: <20190327182518.19394-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 35/63] leds: lp55xx: fix null deref on firmware load failure
+Date: Wed, 27 Mar 2019 14:22:55 -0400
+Message-ID: <20190327182323.18577-35-sashal@kernel.org>
+References: <20190327182323.18577-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190327182518.19394-1-sashal@kernel.org>
+In-Reply-To: <20190327182323.18577-1-sashal@kernel.org>
 Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Michal Kazior <michal@plume.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
@@ -41,7 +41,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index 77c26bc32eed..a038f1128446 100644
+index 59b76833f0d3..fd077c176a62 100644
 --- a/drivers/leds/leds-lp55xx-common.c
 +++ b/drivers/leds/leds-lp55xx-common.c
 @@ -200,7 +200,7 @@ static void lp55xx_firmware_loaded(const struct firmware *fw, void *context)
