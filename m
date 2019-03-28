@@ -1,63 +1,112 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 1/6] leds: netdev trigger: use memcpy in
- device_name_store
-Date: Wed, 27 Mar 2019 22:45:33 +0100
-Message-ID: <0cfbe06c-8d5b-5e94-21d9-15cf7b3ed022@gmail.com>
-References: <20190313202615.22883-1-linux@rasmusvillemoes.dk>
- <20190314140619.3309-1-linux@rasmusvillemoes.dk>
- <20190314140619.3309-2-linux@rasmusvillemoes.dk>
- <987c3e60-edb3-44f0-be28-434c70bb8659@gmail.com>
- <d1fccd75-c48b-d585-1170-1c1b76e1e098@rasmusvillemoes.dk>
- <21193aab-7880-d116-64e8-dd08afe5a47f@gmail.com>
- <5871d2bd-1a9d-9cf0-e8bd-6d691ea94415@rasmusvillemoes.dk>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 03/25] dt-bindings: leds: Add LED_FUNCTION definitions
+Date: Wed, 27 Mar 2019 19:03:57 -0500
+Message-ID: <20190328000357.GA3399@bogus>
+References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
+ <20190310182836.20841-4-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5871d2bd-1a9d-9cf0-e8bd-6d691ea94415@rasmusvillemoes.dk>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190310182836.20841-4-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Pavel Machek <pavel@ucw.cz>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 3/27/19 10:31 PM, Rasmus Villemoes wrote:
-> On 27/03/2019 22.20, Jacek Anaszewski wrote:
-> 
->> Thanks for the heads-up. I must admit I'm hitting into that for the
->> first time. After "git am" it was all OK, but it got screwed up after
->> "git rebase -i". And having "commit.cleanup = scissors" set globally all
->> the time is annoying if one extensively uses interactive rebase for
->> rewording commit messages. It entails the need for manual removal of
->> the whole stuff that appears then after actual commit message prepended
->> with "#" comment characters.
-> 
-> Eh, no? At least, whenever I do commit or rebase -i, git automatically
-> inserts a trailer starting with the magic scissor line
-> 
-> # ------------------------ >8 ------------------------
-> # Do not modify or remove the line above.
-> # Everything below it will be ignored.
-> 
-> Maybe there's some other config option to get that, or it depends on git
-> version. But I certainly don't do anything at all other than write or
-> modify the commit message.
+On Sun, Mar 10, 2019 at 07:28:14PM +0100, Jacek Anaszewski wrote:
+> Add common LED function definitions for use in Device Tree.
+> The function names were extracted from existing dts files
+> after eliminating oddities.
 
-I don't have this "#-- >8 --" line. Will have to find out the reason.
-I'm using git version 2.11.0 btw.
+I'd like this to be suggestions of what to use rather than what's 
+already out there. So my comments are in that context.
 
-> Never had a problem myself since I set commit.cleanup = scissors, but I
-> have had lots of my commit messages mangled, which is why I'm reacting.
 > 
->> This is probably the reason why people use often other characters
->> for command prompt (see the other fix for ledtrig-netdev).
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Baolin Wang <baolin.wang@linaro.org>
+> Cc: Daniel Mack <daniel@zonque.org>
+> Cc: Dan Murphy <dmurphy@ti.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Cc: Simon Shields <simon@lineageos.org>
+> ---
+>  include/dt-bindings/leds/common.h | 38 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
 > 
-> Command prompt char is not the only problem; C snippets with #include or
-> other preprocessor directives also regularly gets mangled, as does shell
-> snippets with a bit of commentary.
+> diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
+> index e171d0a6beb2..ffcd46317307 100644
+> --- a/include/dt-bindings/leds/common.h
+> +++ b/include/dt-bindings/leds/common.h
+> @@ -19,4 +19,42 @@
+>  #define LEDS_BOOST_ADAPTIVE	1
+>  #define LEDS_BOOST_FIXED	2
+>  
+> +/* Standard LED functions */
+> +#define LED_FUNCTION_ACTIVITY "activity"
 
-True. I certainly will have to get my git config fixed.
+of what?
 
--- 
-Best regards,
-Jacek Anaszewski
+> +#define LED_FUNCTION_ADSL "adsl"
+
+wan?
+
+> +#define LED_FUNCTION_ALARM "alarm"
+> +#define LED_FUNCTION_BACKLIGHT "backlight"
+> +#define LED_FUNCTION_BLUETOOTH "bluetooth"
+> +#define LED_FUNCTION_BOOT "boot"
+
+What about boot?
+
+> +#define LED_FUNCTION_CHRG "chrg"
+> +#define LED_FUNCTION_DEBUG "debug"
+> +#define LED_FUNCTION_DISK "disk"
+> +#define LED_FUNCTION_DISK_READ "disk-read"
+> +#define LED_FUNCTION_DISK_WRITE "disk-write"
+> +#define LED_FUNCTION_FAULT "fault"
+> +#define LED_FUNCTION_FLASH "flash"
+> +#define LED_FUNCTION_HDDERR "hdderr"
+
+disk-err for consistency?
+
+> +#define LED_FUNCTION_HEARTBEAT "heartbeat"
+> +#define LED_FUNCTION_INDICATOR "indicator"
+> +#define LED_FUNCTION_INFO "info"
+
+of what?
+
+> +#define LED_FUNCTION_INTERNET "internet"
+
+Same as wan? 
+
+> +#define LED_FUNCTION_LAN "lan"
+> +#define LED_FUNCTION_MMC "mmc"
+
+Same as disk?
+
+> +#define LED_FUNCTION_NAND "nand"
+> +#define LED_FUNCTION_ON "on"
+> +#define LED_FUNCTION_PROGRAMMING "programming"
+> +#define LED_FUNCTION_PWR "pwr"
+> +#define LED_FUNCTION_RX "rx"
+> +#define LED_FUNCTION_SD "sd"
+
+> +#define LED_FUNCTION_SLEEP "sleep"
+> +#define LED_FUNCTION_STANDBY "standby"
+
+Same things?
+
+> +#define LED_FUNCTION_STATUS "status"
+> +#define LED_FUNCTION_TORCH "torch"
+> +#define LED_FUNCTION_TV "tv"
+> +#define LED_FUNCTION_TX "tx"
+> +#define LED_FUNCTION_USB "usb"
+> +#define LED_FUNCTION_WAN "wan"
+> +#define LED_FUNCTION_WLAN "wlan"
+> +#define LED_FUNCTION_WPS "wps"
+> +
+>  #endif /* __DT_BINDINGS_LEDS_H */
+> -- 
+> 2.11.0
+> 
