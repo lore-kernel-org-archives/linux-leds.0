@@ -1,57 +1,56 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 04/25] dt-bindings: leds: Add LED_COLOR_NAME definitions
-Date: Wed, 27 Mar 2019 19:08:05 -0500
-Message-ID: <20190328000804.GA17215@bogus>
+Subject: Re: [PATCH v2 00/25] Add generic support for composing LED class
+ device name
+Date: Wed, 27 Mar 2019 19:19:30 -0500
+Message-ID: <20190328001930.GA22901@bogus>
 References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
- <20190310182836.20841-5-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190310182836.20841-5-jacek.anaszewski@gmail.com>
+In-Reply-To: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz
 List-Id: linux-leds@vger.kernel.org
 
-On Sun, Mar 10, 2019 at 07:28:15PM +0100, Jacek Anaszewski wrote:
-> Add common LED color name definitions for use in Device Tree.
+On Sun, Mar 10, 2019 at 07:28:11PM +0100, Jacek Anaszewski wrote:
+> Changes from v1:
+> 
+> - improved led_parse_properties() to parse label property at first
+>   and return immediately after parsing succeeds
+> - added tool get_led_device_info.sh for retrieving LED class device's
+>   parent device related information
+> - extended LED naming section of Documentation/leds/leds-class.txt
+> - adjusted the list of LED_FUNCTION definitions according to the v1 review
+>   remarks
+> - added standard LED_COLOR_NAME definitions
+> - removed functions.h and moved both LED_FUNCTION and LED_COLOR_NAME
+>   definitions to include/dt-bindings/common.h
+> - rebased leds-as3645a changes on top of the patch switching to fwnode
+>   property API
+> - updated DT bindings to use new LED_COLOR_NAME definitions
+> - improved common LED bindings to not use address unit for sub-nodes
+>   without reg property
+> 
+> Generally I still insist on deprecating label property and devicename
+> section of LED name. The tool I added for obtaining LED device name
+> proves availability of the related information in other places in
+> the sysfs. Other discussed use cases are covered in the updated
+> Documentation/leds/leds-class.txt.
+> 
+> Beside that, I tried also to create macros for automatic composition
+> of "-N" suffixed LED functions, so that it would not be necessary
+> to pollute common.h with plenty repetitions of the same function,
+> differing only with the postfix. Unfortunately, the preprocessor
+> of the dtc compiler seems not to accept string concatenetation.
+> I.e. it is not possible to to the following assighment:
+> 
+> function = "hdd""-1"
+> 
+> If anyone knows how to obviate this shortocoming please let me know.
 
-Do we actually have variations in color strings? Maybe someone uses 
-"RED" or something. If not, I think this adds less value compared to 
-function names. Just my 2 cents, either way is fine.
+Raise the question on devicetree-compiler list. I've done my share of 
+dtc patches, but the parsing side is generally not an area I touch.
 
-> 
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Baolin Wang <baolin.wang@linaro.org>
-> Cc: Daniel Mack <daniel@zonque.org>
-> Cc: Dan Murphy <dmurphy@ti.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Cc: Simon Shields <simon@lineageos.org>
-> ---
->  include/dt-bindings/leds/common.h | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
-> index ffcd46317307..0e986bb59391 100644
-> --- a/include/dt-bindings/leds/common.h
-> +++ b/include/dt-bindings/leds/common.h
-> @@ -57,4 +57,13 @@
->  #define LED_FUNCTION_WLAN "wlan"
->  #define LED_FUNCTION_WPS "wps"
->  
-> +/* Standard LED colors */
-> +#define LED_COLOR_NAME_WHITE    "white"
-> +#define LED_COLOR_NAME_RED      "red"
-> +#define LED_COLOR_NAME_GREEN    "green"
-> +#define LED_COLOR_NAME_BLUE     "blue"
-> +#define LED_COLOR_NAME_AMBER    "amber"
-> +#define LED_COLOR_NAME_VIOLET   "violet"
-> +#define LED_COLOR_NAME_YELLOW   "yellow"
-> +
->  #endif /* __DT_BINDINGS_LEDS_H */
-> -- 
-> 2.11.0
-> 
+Rob
