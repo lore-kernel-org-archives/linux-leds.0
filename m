@@ -1,56 +1,85 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 00/25] Add generic support for composing LED class
- device name
-Date: Wed, 27 Mar 2019 19:19:30 -0500
-Message-ID: <20190328001930.GA22901@bogus>
+Subject: Re: [PATCH 05/25] dt-bindings: leds: Add function and color
+ properties
+Date: Wed, 27 Mar 2019 19:23:41 -0500
+Message-ID: <20190328002341.GB22901@bogus>
 References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
+ <20190310182836.20841-6-jacek.anaszewski@gmail.com>
+ <98c1a41e-77bb-5ffd-b5b3-772a28c0f0a6@ti.com>
+ <796a13a7-fb8c-9b5b-6bd5-dfb7458731fe@gmail.com>
+ <232b6154-cccd-c1f9-80c3-438098f3ab08@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
+In-Reply-To: <232b6154-cccd-c1f9-80c3-438098f3ab08@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz
+Cc: Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Sun, Mar 10, 2019 at 07:28:11PM +0100, Jacek Anaszewski wrote:
-> Changes from v1:
+On Tue, Mar 12, 2019 at 05:43:11PM +0100, Jacek Anaszewski wrote:
+> On 3/11/19 6:24 PM, Jacek Anaszewski wrote:
+> > Dan,
+> > 
+> > On 3/11/19 1:26 PM, Dan Murphy wrote:
+> > > On 3/10/19 1:28 PM, Jacek Anaszewski wrote:
+> > > > Introduce dedicated properties for conveying information about
+> > > > LED function and color. Mark old "label" property as deprecated.
+> > > > 
+> > > > Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> > > > Cc: Baolin Wang <baolin.wang@linaro.org>
+> > > > Cc: Daniel Mack <daniel@zonque.org>
+> > > > Cc: Dan Murphy <dmurphy@ti.com>
+> > > > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > > > Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+> > > > Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > > Cc: Simon Shields <simon@lineageos.org>
+> > > > ---
+> > > >   Documentation/devicetree/bindings/leds/common.txt | 55
+> > > > +++++++++++++++++++----
+> > > >   1 file changed, 47 insertions(+), 8 deletions(-)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/leds/common.txt
+> > > > b/Documentation/devicetree/bindings/leds/common.txt
+> > > > index aa1399814a2a..3402b0e1cec9 100644
+> > > > --- a/Documentation/devicetree/bindings/leds/common.txt
+> > > > +++ b/Documentation/devicetree/bindings/leds/common.txt
+> > > > @@ -10,14 +10,23 @@ can influence the way of the LED device
+> > > > initialization, the LED components
+> > > >   have to be tightly coupled with the LED device binding. They
+> > > > are represented
+> > > >   by child nodes of the parent LED device binding.
+> > > > +
+> > > >   Optional properties for child nodes:
+> > > >   - led-sources : List of device current outputs the LED is
+> > > > connected to. The
+> > > >           outputs are identified by the numbers that must be defined
+> > > >           in the LED device binding documentation.
+> > > > +- function: LED functon. Use one of the LED_FUNCTION_* prefixed
+> > > > definitions
+> > > > +        from the header include/dt-bindings/leds/common.h.
+> > > > +        If there is no matching LED_FUNCTION available, add a new one.
+> > > > +- color : Color of the LED. Use one of the LED_COLOR_NAME_*
+> > > > prefixed definitions
+> > > > +        from the header include/dt-bindings/leds/common.h.
+> > > > +        If there is no matching LED_COLOR_NAME available, add a
+> > > > new one.
+> > > > +
+> > > 
+> > > I am assuming multi color can re-use this property as well?
+> > 
+> > I intended it to be a string, but indeed it would be better if we will
+> > make it an integer to be consistent with the discussed LED multi color
+> > design.
 > 
-> - improved led_parse_properties() to parse label property at first
->   and return immediately after parsing succeeds
-> - added tool get_led_device_info.sh for retrieving LED class device's
->   parent device related information
-> - extended LED naming section of Documentation/leds/leds-class.txt
-> - adjusted the list of LED_FUNCTION definitions according to the v1 review
->   remarks
-> - added standard LED_COLOR_NAME definitions
-> - removed functions.h and moved both LED_FUNCTION and LED_COLOR_NAME
->   definitions to include/dt-bindings/common.h
-> - rebased leds-as3645a changes on top of the patch switching to fwnode
->   property API
-> - updated DT bindings to use new LED_COLOR_NAME definitions
-> - improved common LED bindings to not use address unit for sub-nodes
->   without reg property
-> 
-> Generally I still insist on deprecating label property and devicename
-> section of LED name. The tool I added for obtaining LED device name
-> proves availability of the related information in other places in
-> the sysfs. Other discussed use cases are covered in the updated
-> Documentation/leds/leds-class.txt.
-> 
-> Beside that, I tried also to create macros for automatic composition
-> of "-N" suffixed LED functions, so that it would not be necessary
-> to pollute common.h with plenty repetitions of the same function,
-> differing only with the postfix. Unfortunately, the preprocessor
-> of the dtc compiler seems not to accept string concatenetation.
-> I.e. it is not possible to to the following assighment:
-> 
-> function = "hdd""-1"
-> 
-> If anyone knows how to obviate this shortocoming please let me know.
+> Going further, I wonder if it would make sense to make function also
+> an integer. This way we could enforce use of LED functions known
+> to kernel.
 
-Raise the question on devicetree-compiler list. I've done my share of 
-dtc patches, but the parsing side is generally not an area I touch.
+I think if we did that, then we'd just need to keep label. I think we 
+need to allow for populating a string in DT matching a sticker next to 
+an LED on a device.
 
 Rob
