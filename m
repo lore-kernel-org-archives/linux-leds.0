@@ -1,85 +1,71 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 05/25] dt-bindings: leds: Add function and color
- properties
-Date: Wed, 27 Mar 2019 19:23:41 -0500
-Message-ID: <20190328002341.GB22901@bogus>
-References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
- <20190310182836.20841-6-jacek.anaszewski@gmail.com>
- <98c1a41e-77bb-5ffd-b5b3-772a28c0f0a6@ti.com>
- <796a13a7-fb8c-9b5b-6bd5-dfb7458731fe@gmail.com>
- <232b6154-cccd-c1f9-80c3-438098f3ab08@gmail.com>
+Subject: Re: [PATCH v2 6/6] leds: netdev trigger: allow setting initial
+ values in device tree
+Date: Thu, 28 Mar 2019 11:28:42 -0500
+Message-ID: <20190328162842.GA11865@bogus>
+References: <20190313202615.22883-1-linux@rasmusvillemoes.dk>
+ <20190314140619.3309-1-linux@rasmusvillemoes.dk>
+ <20190314140619.3309-7-linux@rasmusvillemoes.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <232b6154-cccd-c1f9-80c3-438098f3ab08@gmail.com>
+In-Reply-To: <20190314140619.3309-7-linux@rasmusvillemoes.dk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Pavel Machek <pavel@ucw.cz>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 05:43:11PM +0100, Jacek Anaszewski wrote:
-> On 3/11/19 6:24 PM, Jacek Anaszewski wrote:
-> > Dan,
-> > 
-> > On 3/11/19 1:26 PM, Dan Murphy wrote:
-> > > On 3/10/19 1:28 PM, Jacek Anaszewski wrote:
-> > > > Introduce dedicated properties for conveying information about
-> > > > LED function and color. Mark old "label" property as deprecated.
-> > > > 
-> > > > Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> > > > Cc: Baolin Wang <baolin.wang@linaro.org>
-> > > > Cc: Daniel Mack <daniel@zonque.org>
-> > > > Cc: Dan Murphy <dmurphy@ti.com>
-> > > > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > > > Cc: Oleh Kravchenko <oleg@kaa.org.ua>
-> > > > Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > > Cc: Simon Shields <simon@lineageos.org>
-> > > > ---
-> > > >   Documentation/devicetree/bindings/leds/common.txt | 55
-> > > > +++++++++++++++++++----
-> > > >   1 file changed, 47 insertions(+), 8 deletions(-)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/leds/common.txt
-> > > > b/Documentation/devicetree/bindings/leds/common.txt
-> > > > index aa1399814a2a..3402b0e1cec9 100644
-> > > > --- a/Documentation/devicetree/bindings/leds/common.txt
-> > > > +++ b/Documentation/devicetree/bindings/leds/common.txt
-> > > > @@ -10,14 +10,23 @@ can influence the way of the LED device
-> > > > initialization, the LED components
-> > > >   have to be tightly coupled with the LED device binding. They
-> > > > are represented
-> > > >   by child nodes of the parent LED device binding.
-> > > > +
-> > > >   Optional properties for child nodes:
-> > > >   - led-sources : List of device current outputs the LED is
-> > > > connected to. The
-> > > >           outputs are identified by the numbers that must be defined
-> > > >           in the LED device binding documentation.
-> > > > +- function: LED functon. Use one of the LED_FUNCTION_* prefixed
-> > > > definitions
-> > > > +        from the header include/dt-bindings/leds/common.h.
-> > > > +        If there is no matching LED_FUNCTION available, add a new one.
-> > > > +- color : Color of the LED. Use one of the LED_COLOR_NAME_*
-> > > > prefixed definitions
-> > > > +        from the header include/dt-bindings/leds/common.h.
-> > > > +        If there is no matching LED_COLOR_NAME available, add a
-> > > > new one.
-> > > > +
-> > > 
-> > > I am assuming multi color can re-use this property as well?
-> > 
-> > I intended it to be a string, but indeed it would be better if we will
-> > make it an integer to be consistent with the discussed LED multi color
-> > design.
+On Thu, Mar 14, 2019 at 03:06:19PM +0100, Rasmus Villemoes wrote:
+> It can be quite convenient to initialize a netdev-triggered LED with a
+> device name and setting the rx,tx,link properties from device tree,
+> instead of having to do that in an init script (or udev rule) in
+> userspace.
 > 
-> Going further, I wonder if it would make sense to make function also
-> an integer. This way we could enforce use of LED functions known
-> to kernel.
+> My main motivation for this is to be able to switch away from the
+> deprecated CONFIG_CAN_LEDS. The example added to common.txt
+> corresponds to switching linux,default-trigger = "can0-rxtx" to
+> "netdev" and adding the indicated netdev subnode.
+> 
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> ---
+>  .../devicetree/bindings/leds/common.txt       | 11 +++++++
+>  drivers/leds/trigger/ledtrig-netdev.c         | 30 +++++++++++++++++++
+>  2 files changed, 41 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index 7cb88460a47c..f8078c4cf6f8 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -43,6 +43,17 @@ Optional properties for child nodes:
+>                  Documentation/ABI/testing/sysfs-class-led-trigger-netdev)
+>                  to reflect the state and activity of a net device.
+>  
+> +                The optional child node netdev can be used to
+> +                configure initial values for the link, rx, tx and
+> +                device_name properties. For example,
+> +
+> +                netdev {
 
-I think if we did that, then we'd just need to keep label. I think we 
-need to allow for populating a string in DT matching a sticker next to 
-an LED on a device.
+I was going to let the use of netdev slide, but now you have it 
+twice and that's a Linuxism.
 
-Rob
+> +                    rx;
+> +                    tx;
+> +                    link;
+
+What do these mean?
+
+> +                    device-name = "can0";
+
+can0 is a linux thing and doesn't belong in DT.
+
+> +                };
+
+I really don't like this. What's this going to look like if every 
+trigger wants to add something like this? What's special about netdev 
+leds?
+
+We really need to decouple the Linux LED trigger design from the DT 
+bindings. I have no problem associating LEDs with devices in DT, but it 
+shouldn't just bring the LED trigger design into the bindings.
