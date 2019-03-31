@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v3 15/25] leds: lm3601x: Use generic support for composing LED names
-Date: Sun, 31 Mar 2019 19:54:51 +0200
-Message-ID: <20190331175501.23471-16-jacek.anaszewski@gmail.com>
+Subject: [PATCH v3 13/25] leds: lm3692x: Use generic support for composing LED names
+Date: Sun, 31 Mar 2019 19:54:49 +0200
+Message-ID: <20190331175501.23471-14-jacek.anaszewski@gmail.com>
 References: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
@@ -13,129 +13,89 @@ List-Id: linux-leds@vger.kernel.org
 Switch to using generic LED support for composing LED class
 device name.
 
+At this occassion remove initialization of struct led_classdev's
+dev->of_node property in the driver, since now it will be taken from
+fwnode assigned to struct led_init_data and passed to the new
+devm_led_classdev_register_ext() API.
+
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-lm3601x.c | 38 +++++++++++++++++---------------------
- 1 file changed, 17 insertions(+), 21 deletions(-)
+ drivers/leds/leds-lm3692x.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3601x.c b/drivers/leds/leds-lm3601x.c
-index 081aa71e43a3..d81884c406c3 100644
---- a/drivers/leds/leds-lm3601x.c
-+++ b/drivers/leds/leds-lm3601x.c
-@@ -10,7 +10,6 @@
- #include <linux/module.h>
+diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+index 4f413a7c5f05..d2b30074d87a 100644
+--- a/drivers/leds/leds-lm3692x.c
++++ b/drivers/leds/leds-lm3692x.c
+@@ -13,7 +13,6 @@
  #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
  #include <linux/slab.h>
 -#include <uapi/linux/uleds.h>
  
- #define LM3601X_LED_IR		0x0
- #define LM3601X_LED_TORCH	0x1
-@@ -90,8 +89,6 @@ struct lm3601x_led {
+ #define LM36922_MODEL	0
+ #define LM36923_MODEL	1
+@@ -103,7 +102,6 @@
+  * @regmap - Devices register map
+  * @enable_gpio - VDDIO/EN gpio to enable communication interface
+  * @regulator - LED supply regulator pointer
+- * @label - LED label
+  * @led_enable - LED sync to be enabled
+  * @model_id - Current device model ID enumerated
+  */
+@@ -114,7 +112,6 @@ struct lm3692x_led {
  	struct regmap *regmap;
- 	struct mutex lock;
- 
--	char led_name[LED_MAX_NAME_SIZE];
--
- 	unsigned int flash_timeout;
- 	unsigned int last_flag;
- 
-@@ -322,10 +319,12 @@ static const struct led_flash_ops flash_ops = {
- 	.fault_get		= lm3601x_flash_fault_get,
+ 	struct gpio_desc *enable_gpio;
+ 	struct regulator *regulator;
+-	char label[LED_MAX_NAME_SIZE];
+ 	int led_enable;
+ 	int model_id;
  };
- 
--static int lm3601x_register_leds(struct lm3601x_led *led)
-+static int lm3601x_register_leds(struct lm3601x_led *led,
-+				 struct fwnode_handle *fwnode)
- {
- 	struct led_classdev *led_cdev;
- 	struct led_flash_setting *setting;
-+	struct led_init_data init_data;
- 
- 	led->fled_cdev.ops = &flash_ops;
- 
-@@ -342,20 +341,25 @@ static int lm3601x_register_leds(struct lm3601x_led *led)
- 	setting->val = led->flash_current_max;
- 
- 	led_cdev = &led->fled_cdev.led_cdev;
--	led_cdev->name = led->led_name;
- 	led_cdev->brightness_set_blocking = lm3601x_brightness_set;
- 	led_cdev->max_brightness = DIV_ROUND_UP(led->torch_current_max,
- 						LM3601X_TORCH_REG_DIV);
- 	led_cdev->flags |= LED_DEV_CAP_FLASH;
- 
--	return led_classdev_flash_register(&led->client->dev, &led->fled_cdev);
-+	init_data.fwnode = fwnode;
-+	init_data.led_hw_name = led->client->name;
-+	init_data.default_label = (led->led_mode == LM3601X_LED_TORCH) ?
-+					"torch" : "infrared";
-+
-+	return led_classdev_flash_register_ext(&led->client->dev,
-+						&led->fled_cdev, &init_data);
- }
- 
--static int lm3601x_parse_node(struct lm3601x_led *led)
-+static int lm3601x_parse_node(struct lm3601x_led *led,
-+			      struct fwnode_handle **fwnode)
+@@ -325,7 +322,7 @@ static int lm3692x_init(struct lm3692x_led *led)
+ static int lm3692x_probe_dt(struct lm3692x_led *led)
  {
  	struct fwnode_handle *child = NULL;
- 	int ret = -ENODEV;
 -	const char *name;
- 
- 	child = device_get_next_child_node(&led->client->dev, child);
- 	if (!child) {
-@@ -376,17 +380,6 @@ static int lm3601x_parse_node(struct lm3601x_led *led)
- 		goto out_err;
- 	}
- 
--	ret = fwnode_property_read_string(child, "label", &name);
--	if (ret) {
--		if (led->led_mode == LM3601X_LED_TORCH)
--			name = "torch";
--		else
--			name = "infrared";
--	}
--
--	snprintf(led->led_name, sizeof(led->led_name),
--		"%s:%s", led->client->name, name);
--
- 	ret = fwnode_property_read_u32(child, "led-max-microamp",
- 					&led->torch_current_max);
- 	if (ret) {
-@@ -411,6 +404,8 @@ static int lm3601x_parse_node(struct lm3601x_led *led)
- 		goto out_err;
- 	}
- 
-+	*fwnode = child;
-+
- out_err:
- 	fwnode_handle_put(child);
- 	return ret;
-@@ -419,6 +414,7 @@ static int lm3601x_parse_node(struct lm3601x_led *led)
- static int lm3601x_probe(struct i2c_client *client)
- {
- 	struct lm3601x_led *led;
-+	struct fwnode_handle *fwnode;
++	struct led_init_data init_data;
  	int ret;
  
- 	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
-@@ -428,7 +424,7 @@ static int lm3601x_probe(struct i2c_client *client)
- 	led->client = client;
- 	i2c_set_clientdata(client, led);
+ 	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
+@@ -350,30 +347,23 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ 	fwnode_property_read_string(child, "linux,default-trigger",
+ 				    &led->led_dev.default_trigger);
  
--	ret = lm3601x_parse_node(led);
-+	ret = lm3601x_parse_node(led, &fwnode);
- 	if (ret)
- 		return -ENODEV;
+-	ret = fwnode_property_read_string(child, "label", &name);
+-	if (ret)
+-		snprintf(led->label, sizeof(led->label),
+-			"%s::", led->client->name);
+-	else
+-		snprintf(led->label, sizeof(led->label),
+-			 "%s:%s", led->client->name, name);
+-
+ 	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
+ 	if (ret) {
+ 		dev_err(&led->client->dev, "reg DT property missing\n");
+ 		return ret;
+ 	}
  
-@@ -442,7 +438,7 @@ static int lm3601x_probe(struct i2c_client *client)
+-	led->led_dev.name = led->label;
++	init_data.fwnode = child;
++	init_data.led_hw_name = led->client->name;
++	init_data.default_label = ":";
  
- 	mutex_init(&led->lock);
+-	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
++	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
++					     &init_data);
+ 	if (ret) {
+ 		dev_err(&led->client->dev, "led register err: %d\n", ret);
+ 		return ret;
+ 	}
  
--	return lm3601x_register_leds(led);
-+	return lm3601x_register_leds(led, fwnode);
+-	led->led_dev.dev->of_node = to_of_node(child);
+-
+ 	return 0;
  }
  
- static int lm3601x_remove(struct i2c_client *client)
 -- 
 2.11.0
