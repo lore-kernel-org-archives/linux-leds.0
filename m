@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v3 12/25] dt-bindings: lm3692x: Add function and color properties
-Date: Sun, 31 Mar 2019 19:54:48 +0200
-Message-ID: <20190331175501.23471-13-jacek.anaszewski@gmail.com>
+Subject: [PATCH v3 10/25] dt-bindings: lp8860: Add function and color properties
+Date: Sun, 31 Mar 2019 19:54:46 +0200
+Message-ID: <20190331175501.23471-11-jacek.anaszewski@gmail.com>
 References: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
@@ -16,15 +16,15 @@ as deprecated.
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc: Dan Murphy <dmurphy@ti.com>
 ---
- Documentation/devicetree/bindings/leds/leds-lm3692x.txt | 9 +++++++--
+ Documentation/devicetree/bindings/leds/leds-lp8860.txt | 9 +++++++--
  1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
-index 08b352840bd7..4c2d923f8758 100644
---- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
-@@ -26,12 +26,16 @@ Required child properties:
- 		3 - Will enable the LED3 sync (LM36923 only)
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp8860.txt b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+index 5f0e892ad759..9863220db4ba 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp8860.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
+@@ -20,12 +20,16 @@ Required child properties:
+ 	- reg : 0
  
  Optional child properties:
 -	- label : see Documentation/devicetree/bindings/leds/common.txt
@@ -38,14 +38,14 @@ index 08b352840bd7..4c2d923f8758 100644
  
 +#include <dt-bindings/leds/common.h>
 +
- led-controller@36 {
- 	compatible = "ti,lm3692x";
- 	reg = <0x36>;
-@@ -43,7 +47,8 @@ led-controller@36 {
+ led-controller@2d {
+ 	compatible = "ti,lp8860";
+ 	#address-cells = <1>;
+@@ -36,7 +40,8 @@ led-controller@2d {
  
  	led@0 {
  		reg = <0>;
--		label = "white:backlight_cluster";
+-		label = "white:backlight";
 +		function = LED_FUNCTION_BACKLIGHT;
 +		color = <LED_COLOR_ID_WHITE>;
  		linux,default-trigger = "backlight";
