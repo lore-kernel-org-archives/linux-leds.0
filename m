@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [PATCH] leds: fix a potential NULL pointer dereference
-Date: Sun, 31 Mar 2019 12:52:05 +0200
-Message-ID: <1c8358dd-528a-9801-db0d-45e06cbe797f@gmail.com>
+Date: Sun, 31 Mar 2019 13:01:49 +0200
+Message-ID: <46573cc8-1666-d0a4-dadd-2b2f81e026fe@gmail.com>
 References: <20190309060411.29074-1-kjlu@umn.edu>
  <8c616b91-8f0d-f53b-af10-4d768063c5a0@gmail.com>
  <CAMuHMdXELu2tcSB5C1yKUGft6sDGPAy997ApPzy17n0MssfyWA@mail.gmail.com>
@@ -12,22 +12,13 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <CAMuHMdXELu2tcSB5C1yKUGft6sDGPAy997ApPzy17n0MssfyWA@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Kangjie Lu <kjlu@umn.edu>, pakki001@umn.edu, Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Kangjie Lu <kjlu@umn.edu>, pakki001@umn.edu, Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Linus,
+Hi Geert,
 
-Yesterday I submitted pull request [0] containing this patch, but
-the patch turns out to be pointless. Since I see my pull request merged
-on top of mainline trunk I suspect it will not be a problem to
-drop the patch or even whole pull request. In the latter case I'll
-re-submit it for -rc4.
-
-Sorry for the confusion.
-
-Best regards,
-Jacek Anaszewski
+Thank you for the notification.
 
 On 3/31/19 11:06 AM, Geert Uytterhoeven wrote:
 > Hi Jacek,
@@ -66,9 +57,15 @@ On 3/31/19 11:06 AM, Geert Uytterhoeven wrote:
 >>> +             if (unlikely(!of_id))
 > 
 > Use of unlikey() is frowned upon.
+
+What do you mean? Can you give some reference?
+
 > Moreover, this cannot happen, as pca9532_of_populate_pdata() already
 > contains a similar check.
-> 
+
+Right, I assumed this fixes a real problem and didn't spent too much
+time investigating the whole context.. Lesson for the future.
+
 > Kangjie: please stop submitting patches for missing checks, without
 > investigating if the failures can actually happen. Thanks!
 > 
@@ -82,10 +79,9 @@ On 3/31/19 11:06 AM, Geert Uytterhoeven wrote:
 >> Applied to the for-5.2 branch of linux-leds.git.
 > 
 > And also as a fix for v5.1...
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
 
-[0] https://lkml.org/lkml/2019/3/30/222
+Yes, but it had been in linux-next for almost two weeks before that.
+
+-- 
+Best regards,
+Jacek Anaszewski
