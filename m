@@ -1,80 +1,59 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v3 09/25] leds: lt3593: Use generic support for composing LED names
-Date: Sun, 31 Mar 2019 19:54:45 +0200
-Message-ID: <20190331175501.23471-10-jacek.anaszewski@gmail.com>
+Subject: [PATCH v3 06/25] dt-bindings: sc27xx-blt: Add function and color properties
+Date: Sun, 31 Mar 2019 19:54:42 +0200
+Message-ID: <20190331175501.23471-7-jacek.anaszewski@gmail.com>
 References: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Daniel Mack <daniel@zonque.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Baolin Wang <baolin.wang@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-Switch to using generic LED support for composing LED class
-device name.
+Refer to new "function" and "color" properties and mark "label"
+as deprecated.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Daniel Mack <daniel@zonque.org>
+Cc: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/leds/leds-lt3593.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
-index 83e8e58d81cb..b72752f26b22 100644
---- a/drivers/leds/leds-lt3593.c
-+++ b/drivers/leds/leds-lt3593.c
-@@ -10,10 +10,10 @@
- #include <linux/slab.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <uapi/linux/uleds.h>
-+
-+#define LED_LT3593_NAME "lt3593"
+diff --git a/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+index dddf84f9c7ea..df2b4e1c492b 100644
+--- a/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
++++ b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+@@ -14,7 +14,9 @@ Required child properties:
+ - reg: Port this LED is connected to.
  
- struct lt3593_led_data {
--	char name[LED_MAX_NAME_SIZE];
- 	struct led_classdev cdev;
- 	struct gpio_desc *gpiod;
+ Optional child properties:
+-- label: See Documentation/devicetree/bindings/leds/common.txt.
++- function: See Documentation/devicetree/bindings/leds/common.txt.
++- color: See Documentation/devicetree/bindings/leds/common.txt.
++- label: See Documentation/devicetree/bindings/leds/common.txt (deprecated).
+ 
+ Examples:
+ 
+@@ -25,17 +27,17 @@ led-controller@200 {
+ 	reg = <0x200>;
+ 
+ 	led@0 {
+-		label = "red";
++		color = <LED_COLOR_ID_RED>;
+ 		reg = <0x0>;
+ 	};
+ 
+ 	led@1 {
+-		label = "green";
++		color = <LED_COLOR_ID_GREEN>;
+ 		reg = <0x1>;
+ 	};
+ 
+ 	led@2 {
+-		label = "blue";
++		color = <LED_COLOR_ID_BLUE>;
+ 		reg = <0x2>;
+ 	};
  };
-@@ -66,6 +66,7 @@ static int lt3593_led_probe(struct platform_device *pdev)
- 	struct lt3593_led_data *led_data;
- 	struct fwnode_handle *child;
- 	int ret, state = LEDS_GPIO_DEFSTATE_OFF;
-+	struct led_init_data init_data;
- 	const char *tmp;
- 
- 	if (!dev->of_node)
-@@ -86,14 +87,6 @@ static int lt3593_led_probe(struct platform_device *pdev)
- 
- 	child = device_get_next_child_node(dev, NULL);
- 
--	ret = fwnode_property_read_string(child, "label", &tmp);
--	if (ret < 0)
--		snprintf(led_data->name, sizeof(led_data->name),
--			 "lt3593::");
--	else
--		snprintf(led_data->name, sizeof(led_data->name),
--			 "lt3593:%s", tmp);
--
- 	fwnode_property_read_string(child, "linux,default-trigger",
- 				    &led_data->cdev.default_trigger);
- 
-@@ -102,11 +95,14 @@ static int lt3593_led_probe(struct platform_device *pdev)
- 			state = LEDS_GPIO_DEFSTATE_ON;
- 	}
- 
--	led_data->cdev.name = led_data->name;
- 	led_data->cdev.brightness_set_blocking = lt3593_led_set;
- 	led_data->cdev.brightness = state ? LED_FULL : LED_OFF;
- 
--	ret = devm_led_classdev_register(dev, &led_data->cdev);
-+	init_data.fwnode = child;
-+	init_data.led_hw_name = LED_LT3593_NAME;
-+	init_data.default_label = ":";
-+
-+	ret = devm_led_classdev_register_ext(dev, &led_data->cdev, &init_data);
- 	if (ret < 0) {
- 		fwnode_handle_put(child);
- 		return ret;
 -- 
 2.11.0
