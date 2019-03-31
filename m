@@ -1,87 +1,149 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: fix a potential NULL pointer dereference
-Date: Sun, 31 Mar 2019 13:01:49 +0200
-Message-ID: <46573cc8-1666-d0a4-dadd-2b2f81e026fe@gmail.com>
-References: <20190309060411.29074-1-kjlu@umn.edu>
- <8c616b91-8f0d-f53b-af10-4d768063c5a0@gmail.com>
- <CAMuHMdXELu2tcSB5C1yKUGft6sDGPAy997ApPzy17n0MssfyWA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v3 00/25] Add generic support for composing LED class device name
+Date: Sun, 31 Mar 2019 19:54:36 +0200
+Message-ID: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXELu2tcSB5C1yKUGft6sDGPAy997ApPzy17n0MssfyWA@mail.gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Kangjie Lu <kjlu@umn.edu>, pakki001@umn.edu, Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi Geert,
+Changes from v2:
 
-Thank you for the notification.
+- removed from drivers the responsibility of calling led_compose_name()
+- added struct device* argument to led_compose_name() to allow using
+  dev_<level> logging functions for more informative logs
+- adjusted the list of LED_FUNCTION definitions according to the v2 review
+  remarks
+- renamed default_desc to default_label in the struct led_init_data
+- added led-enumerator DT property to the common LED bindings
+- removed LED_COLOR_NAME definitions from include/dt-bindings/leds/common.h
+- change DT color property type from string to integer
+- change struct initialization list to explicit property assignment in leds-sc27xx-bltc.c
+- use led->client->name for led_hw_name in leds-lm3692x.c
+- few other minor improvements to docs etc.
 
-On 3/31/19 11:06 AM, Geert Uytterhoeven wrote:
-> Hi Jacek,
-> 
-> On Sun, Mar 10, 2019 at 9:40 PM Jacek Anaszewski
-> <jacek.anaszewski@gmail.com> wrote:
->> On 3/9/19 7:04 AM, Kangjie Lu wrote:
->>> In case of_match_device cannot find a match, the fixes returns
->>> -EINVAL to avoid NULL pointer dereference.
->>>
->>> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
->>> ---
->>>    drivers/leds/leds-pca9532.c | 8 ++++++--
->>>    1 file changed, 6 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
->>> index 7fea18b0c15d..4b0335591728 100644
->>> --- a/drivers/leds/leds-pca9532.c
->>> +++ b/drivers/leds/leds-pca9532.c
->>> @@ -513,6 +513,7 @@ static int pca9532_probe(struct i2c_client *client,
->>>        const struct i2c_device_id *id)
->>>    {
->>>        int devid;
->>> +     const struct of_device_id *of_id;
->>>        struct pca9532_data *data = i2c_get_clientdata(client);
->>>        struct pca9532_platform_data *pca9532_pdata =
->>>                        dev_get_platdata(&client->dev);
->>> @@ -528,8 +529,11 @@ static int pca9532_probe(struct i2c_client *client,
->>>                        dev_err(&client->dev, "no platform data\n");
->>>                        return -EINVAL;
->>>                }
->>> -             devid = (int)(uintptr_t)of_match_device(
->>> -                     of_pca9532_leds_match, &client->dev)->data;
->>> +             of_id = of_match_device(of_pca9532_leds_match,
->>> +                             &client->dev);
->>> +             if (unlikely(!of_id))
-> 
-> Use of unlikey() is frowned upon.
+Changes from v1:
 
-What do you mean? Can you give some reference?
+- improved led_parse_properties() to parse label property at first
+  and return immediately after parsing succeeds
+- added tool get_led_device_info.sh for retrieving LED class device's
+  parent device related information
+- extended LED naming section of Documentation/leds/leds-class.txt
+- adjusted the list of LED_FUNCTION definitions according to the v1 review
+  remarks
+- added standard LED_COLOR_NAME definitions
+- removed functions.h and moved both LED_FUNCTION and LED_COLOR_NAME
+  definitions to include/dt-bindings/common.h
+- rebased leds-as3645a changes on top of the patch switching to fwnode
+  property API
+- updated DT bindings to use new LED_COLOR_NAME definitions
+- improved common LED bindings to not use address unit for sub-nodes
+  without reg property
 
-> Moreover, this cannot happen, as pca9532_of_populate_pdata() already
-> contains a similar check.
+Generally I still insist on deprecating label property and devicename
+section of LED name. The tool I added for obtaining LED device name
+proves availability of the related information in other places in
+the sysfs. Other discussed use cases are covered in the updated
+Documentation/leds/leds-class.txt.
 
-Right, I assumed this fixes a real problem and didn't spent too much
-time investigating the whole context.. Lesson for the future.
+Beside that, I tried also to create macros for automatic composition
+of "-N" suffixed LED functions, so that it would not be necessary
+to pollute common.h with plenty repetitions of the same function,
+differing only with the postfix. Unfortunately, the preprocessor
+of the dtc compiler seems not to accept string concatenetation.
+I.e. it is not possible to to the following assighment:
 
-> Kangjie: please stop submitting patches for missing checks, without
-> investigating if the failures can actually happen. Thanks!
-> 
->>> +                     return -EINVAL;
->>> +             devid = (int)of_id->data;
->>>        } else {
->>>                devid = id->driver_data;
->>>        }
->>
->>
->> Applied to the for-5.2 branch of linux-leds.git.
-> 
-> And also as a fix for v5.1...
+function = "hdd""-1"
 
-Yes, but it had been in linux-next for almost two weeks before that.
+If anyone knows how to obviate this shortocoming please let me know.
+
+Original cover letter:
+
+LED class device naming pattern included devicename section, which had
+unpleasant effect of varying userspace interface dependent on underlaying
+hardware. Moreover, this information was redundant in the LED name, since
+the LED controller name could have been obtained from sysfs device group
+
+This patch set introduces a led_compose_name() function in the LED core,
+which unifies and simplifies LED class device name composition. This
+change is accompanied by the improvements in the common LED DT bindings
+where two new properties are introduced: "function" and "color" . The two
+deprecate the old "label" property which was leaving too much room for
+interpretation, leading to inconsistent LED naming.
+
+There are also changes in LED DT node naming, which are in line with
+DT maintainer's request from [0].
+
+Since some DT LED naming unification, related to not including devicename
+section in "label" DT property, is being requested during reviews of new
+LED class drivers for almost a year now, then those drivers are the first
+candidates for optimalization and the first users of the new
+led_compose_name() API. The modifications were tested with Qemu,
+by stubbing the driver internals where hardware interaction was needed
+for proper probing.
+
+Thanks,
+Jacek Anaszewski
+
+Jacek Anaszewski (25):
+  leds: class: Improve LED and LED flash class registration API
+  dt-bindings: leds: Add LED_FUNCTION definitions
+  dt-bindings: leds: Add LED_COLOR_ID definitions
+  dt-bindings: leds: Add function, color and led-enumerator properties
+  leds: core: Add support for composing LED class device names
+  dt-bindings: sc27xx-blt: Add function and color properties
+  leds: sc27xx-blt: Use generic support for composing LED names
+  dt-bindings: lt3593: Add function and color properties
+  leds: lt3593: Use generic support for composing LED names
+  dt-bindings: lp8860: Add function and color properties
+  leds: lp8860: Use generic support for composing LED names
+  dt-bindings: lm3692x: Add function and color properties
+  leds: lm3692x: Use generic support for composing LED names
+  dt-bindings: lm36010: Add function and color properties
+  leds: lm3601x: Use generic support for composing LED names
+  dt-bindings: cr0014114: Add function and color properties
+  leds: cr0014114: Use generic support for composing LED names
+  dt-bindings: aat1290: Add function and color properties
+  leds: aat1290: Use generic support for composing LED names
+  dt-bindings: as3645a: Add function and color properties
+  leds: as3645a: Use generic support for composing LED names
+  dt-bindings: leds-gpio: Add function and color properties
+  leds: gpio: Use generic support for composing LED names
+  dt-bindings: an30259a: Add function and color properties
+  leds: an30259a: Use generic support for composing LED names
+
+ .../devicetree/bindings/leds/ams,as3645a.txt       | 22 +++--
+ Documentation/devicetree/bindings/leds/common.txt  | 61 ++++++++++++--
+ .../devicetree/bindings/leds/leds-aat1290.txt      | 12 ++-
+ .../devicetree/bindings/leds/leds-an30259a.txt     | 22 +++--
+ .../devicetree/bindings/leds/leds-cr0014114.txt    | 26 ++++--
+ .../devicetree/bindings/leds/leds-gpio.txt         | 23 ++++--
+ .../devicetree/bindings/leds/leds-lm3601x.txt      | 10 ++-
+ .../devicetree/bindings/leds/leds-lm3692x.txt      |  9 +-
+ .../devicetree/bindings/leds/leds-lp8860.txt       |  9 +-
+ .../devicetree/bindings/leds/leds-lt3593.txt       | 11 ++-
+ .../devicetree/bindings/leds/leds-sc27xx-bltc.txt  | 10 ++-
+ Documentation/leds/leds-class.txt                  | 27 +++++-
+ drivers/leds/led-class-flash.c                     |  9 +-
+ drivers/leds/led-class.c                           | 58 +++++++++----
+ drivers/leds/led-core.c                            | 96 ++++++++++++++++++++++
+ drivers/leds/leds-aat1290.c                        | 14 ++--
+ drivers/leds/leds-an30259a.c                       | 25 +++---
+ drivers/leds/leds-as3645a.c                        | 69 ++++++----------
+ drivers/leds/leds-cr0014114.c                      | 33 +++-----
+ drivers/leds/leds-gpio.c                           | 23 +++---
+ drivers/leds/leds-lm3601x.c                        | 38 ++++-----
+ drivers/leds/leds-lm3692x.c                        | 22 ++---
+ drivers/leds/leds-lp8860.c                         | 35 ++++----
+ drivers/leds/leds-lt3593.c                         | 20 ++---
+ drivers/leds/leds-sc27xx-bltc.c                    | 22 ++---
+ include/dt-bindings/leds/common.h                  | 47 +++++++++++
+ include/linux/led-class-flash.h                    | 15 ++--
+ include/linux/leds.h                               | 78 +++++++++++++++---
+ tools/leds/get_led_device_info.sh                  | 81 ++++++++++++++++++
+ 29 files changed, 660 insertions(+), 267 deletions(-)
+ create mode 100755 tools/leds/get_led_device_info.sh
 
 -- 
-Best regards,
-Jacek Anaszewski
+2.11.0
