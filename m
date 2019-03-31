@@ -1,57 +1,55 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v3 08/25] dt-bindings: lt3593: Add function and color properties
-Date: Sun, 31 Mar 2019 19:54:44 +0200
-Message-ID: <20190331175501.23471-9-jacek.anaszewski@gmail.com>
+Subject: [PATCH v3 12/25] dt-bindings: lm3692x: Add function and color properties
+Date: Sun, 31 Mar 2019 19:54:48 +0200
+Message-ID: <20190331175501.23471-13-jacek.anaszewski@gmail.com>
 References: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Daniel Mack <daniel@zonque.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
 Refer to new "function" and "color" properties and mark "label"
 as deprecated.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Daniel Mack <daniel@zonque.org>
+Cc: Dan Murphy <dmurphy@ti.com>
 ---
- Documentation/devicetree/bindings/leds/leds-lt3593.txt | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-lm3692x.txt | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lt3593.txt b/Documentation/devicetree/bindings/leds/leds-lt3593.txt
-index 6b2cabc36c0c..24eccdaa6322 100644
---- a/Documentation/devicetree/bindings/leds/leds-lt3593.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-lt3593.txt
-@@ -9,8 +9,10 @@ The hardware supports only one LED. The properties of this LED are
- configured in a sub-node in the device node.
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+index 08b352840bd7..4c2d923f8758 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+@@ -26,12 +26,16 @@ Required child properties:
+ 		3 - Will enable the LED3 sync (LM36923 only)
  
- Optional sub-node properties:
--- label:	A label for the LED. If none is given, the LED will be
--		named "lt3595::".
-+- function:		See Documentation/devicetree/bindings/leds/common.txt
-+- color:		See Documentation/devicetree/bindings/leds/common.txt
-+- label:		A label for the LED. If none is given, the LED will be
-+			named "lt3595::" (deprecated)
- - linux,default-trigger: The default trigger for the LED.
- 			See Documentation/devicetree/bindings/leds/common.txt
- - default-state:	The initial state of the LED.
-@@ -21,12 +23,15 @@ be handled by its own device node.
+ Optional child properties:
+-	- label : see Documentation/devicetree/bindings/leds/common.txt
++	- function : see Documentation/devicetree/bindings/leds/common.txt
++	- color : see Documentation/devicetree/bindings/leds/common.txt
++	- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
+ 	- linux,default-trigger :
+ 	   see Documentation/devicetree/bindings/leds/common.txt
  
  Example:
  
 +#include <dt-bindings/leds/common.h>
 +
- led-controller {
- 	compatible = "lltc,lt3593";
- 	lltc,ctrl-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
+ led-controller@36 {
+ 	compatible = "ti,lm3692x";
+ 	reg = <0x36>;
+@@ -43,7 +47,8 @@ led-controller@36 {
  
- 	led {
--		label = "white:backlight";
+ 	led@0 {
+ 		reg = <0>;
+-		label = "white:backlight_cluster";
 +		function = LED_FUNCTION_BACKLIGHT;
 +		color = <LED_COLOR_ID_WHITE>;
- 		default-state = "on";
+ 		linux,default-trigger = "backlight";
  	};
- };
+ }
 -- 
 2.11.0
