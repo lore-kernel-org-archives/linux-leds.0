@@ -1,56 +1,76 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [RFC PATCH 4/5] dt-bindings: leds: Add LED_COLOR_ID and COLOR_NAME definitions
-Date: Mon, 1 Apr 2019 12:33:59 -0500
-Message-ID: <20190401173400.14238-5-dmurphy@ti.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [RFC PATCH 5/5] leds: multicolor: Introduce a multicolor class
+ definition
+Date: Mon, 1 Apr 2019 14:10:35 -0700
+Message-ID: <5f75eeed-41d5-e0d9-38f8-bf00c5045ba1@infradead.org>
 References: <20190401173400.14238-1-dmurphy@ti.com>
+ <20190401173400.14238-6-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190401173400.14238-1-dmurphy@ti.com>
+In-Reply-To: <20190401173400.14238-6-dmurphy@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: marek.behun@nic.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: marek.behun@nic.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-This patch is being added to demonstrate reuse of Jacek's patch
-https://lore.kernel.org/patchwork/patch/1056726/
+Hi,
 
-I have added color name definitions to the above patch.
-I do not claim authorship and the intent of this patch to strictly
-for demonstration.
+On 4/1/19 10:34 AM, Dan Murphy wrote:
+> Introduce a multicolor class that groups colored LEDs
+> within a LED node.
+> 
+> The framework allows for dynamically setting individual LEDs
+> or setting brightness levels of LEDs and updating them virtually
+> simultaneously.
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  drivers/leds/Kconfig                 |  10 +
+>  drivers/leds/Makefile                |   1 +
+>  drivers/leds/led-class-multicolor.c  | 411 +++++++++++++++++++++++++++
+>  include/linux/led-class-multicolor.h |  69 +++++
+>  4 files changed, 491 insertions(+)
+>  create mode 100644 drivers/leds/led-class-multicolor.c
+>  create mode 100644 include/linux/led-class-multicolor.h
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index a72f97fca57b..477e108fd2a7 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -29,6 +29,16 @@ config LEDS_CLASS_FLASH
+>  	  for the flash related features of a LED device. It can be built
+>  	  as a module.
+>  
+> +config LEDS_CLASS_MULTI_COLOR
+> +	tristate "LED Mulit Color LED Class Support"
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- include/dt-bindings/leds/common.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+	              Multi
 
-diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
-index e171d0a6beb2..7e1279d761e4 100644
---- a/include/dt-bindings/leds/common.h
-+++ b/include/dt-bindings/leds/common.h
-@@ -19,4 +19,23 @@
- #define LEDS_BOOST_ADAPTIVE	1
- #define LEDS_BOOST_FIXED	2
- 
-+#define LED_COLOR_ID_WHITE	 0
-+#define LED_COLOR_ID_RED	 1
-+#define LED_COLOR_ID_GREEN	 2
-+#define LED_COLOR_ID_BLUE	 3
-+#define LED_COLOR_ID_AMBER	 4
-+#define LED_COLOR_ID_VIOLET	 5
-+#define LED_COLOR_ID_YELLOW	 6
-+#define LED_COLOR_ID_MAX	 LED_COLOR_ID_YELLOW
-+
-+#define LED_COLOR_NAME_WHITE	"white"
-+#define LED_COLOR_NAME_RED	"red"
-+#define LED_COLOR_NAME_GREEN	"green"
-+#define LED_COLOR_NAME_BLUE	"blue"
-+#define LED_COLOR_NAME_AMBER	"amber"
-+#define LED_COLOR_NAME_VIOLET	"violet"
-+#define LED_COLOR_NAME_YELLOW	"yellow"
-+
-+#define LED_COLOR_NAME_MAX_SZ	6
-+
- #endif /* __DT_BINDINGS_LEDS_H */
+> +	depends on LEDS_CLASS
+> +	help
+> +	  This option enables the flash led sysfs class in /sys/class/leds.
+
+	                                LED (?)
+
+> +	  It wrapps LED Class and adds flash LEDs specific sysfs attributes
+
+	     wraps
+
+> +	  and kernel internal API to it. You'll need this to provide support
+> +	  for the flash related features of a LED device. It can be built
+
+	                                 of an LED device.
+
+> +	  as a module.
+> +
+>  config LEDS_BRIGHTNESS_HW_CHANGED
+>  	bool "LED Class brightness_hw_changed attribute support"
+>  	depends on LEDS_CLASS
+
+
+ciao.
 -- 
-2.19.0
+~Randy
