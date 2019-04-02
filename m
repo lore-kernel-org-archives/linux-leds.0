@@ -1,52 +1,76 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: blinkm: clean up double assignment to
- data->i2c_addr
-Date: Tue, 2 Apr 2019 21:05:36 +0200
-Message-ID: <7360f559-7260-48b5-029d-e12a19bd967f@gmail.com>
-References: <20190330203757.8877-1-colin.king@canonical.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [RFC PATCH 5/5] leds: multicolor: Introduce a multicolor class
+ definition
+Date: Tue, 2 Apr 2019 14:07:42 -0500
+Message-ID: <7e156cac-b654-0d63-be44-efc90ab2decf@ti.com>
+References: <20190401173400.14238-1-dmurphy@ti.com>
+ <20190401173400.14238-6-dmurphy@ti.com>
+ <5f75eeed-41d5-e0d9-38f8-bf00c5045ba1@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190330203757.8877-1-colin.king@canonical.com>
+In-Reply-To: <5f75eeed-41d5-e0d9-38f8-bf00c5045ba1@infradead.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Jan-Simon Moeller <jansimon.moeller@gmx.de>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: marek.behun@nic.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Colin,
+Randy
 
-Thank you for the patch.
+Thank you.
 
-On 3/30/19 9:37 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 4/1/19 4:10 PM, Randy Dunlap wrote:
+> Hi,
 > 
-> Currently data->i2c_addr is being assigned twice, first with the
-> value 0x09 and then immediately afterwards with the value 0x08.
-> The first assignment is redundant and can be removed.
+> On 4/1/19 10:34 AM, Dan Murphy wrote:
+>> Introduce a multicolor class that groups colored LEDs
+>> within a LED node.
+>>
+>> The framework allows for dynamically setting individual LEDs
+>> or setting brightness levels of LEDs and updating them virtually
+>> simultaneously.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>  drivers/leds/Kconfig                 |  10 +
+>>  drivers/leds/Makefile                |   1 +
+>>  drivers/leds/led-class-multicolor.c  | 411 +++++++++++++++++++++++++++
+>>  include/linux/led-class-multicolor.h |  69 +++++
+>>  4 files changed, 491 insertions(+)
+>>  create mode 100644 drivers/leds/led-class-multicolor.c
+>>  create mode 100644 include/linux/led-class-multicolor.h
+>>
+>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>> index a72f97fca57b..477e108fd2a7 100644
+>> --- a/drivers/leds/Kconfig
+>> +++ b/drivers/leds/Kconfig
+>> @@ -29,6 +29,16 @@ config LEDS_CLASS_FLASH
+>>  	  for the flash related features of a LED device. It can be built
+>>  	  as a module.
+>>  
+>> +config LEDS_CLASS_MULTI_COLOR
+>> +	tristate "LED Mulit Color LED Class Support"
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/leds/leds-blinkm.c | 1 -
->   1 file changed, 1 deletion(-)
+> 	              Multi
+
+Ack
+
 > 
-> diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
-> index 851c1920b63c..11b771fb933b 100644
-> --- a/drivers/leds/leds-blinkm.c
-> +++ b/drivers/leds/leds-blinkm.c
-> @@ -594,7 +594,6 @@ static int blinkm_probe(struct i2c_client *client,
->   		goto exit;
->   	}
->   
-> -	data->i2c_addr = 0x09;
->   	data->i2c_addr = 0x08;
->   	/* i2c addr  - use fake addr of 0x08 initially (real is 0x09) */
->   	data->fw_ver = 0xfe;
+>> +	depends on LEDS_CLASS
+>> +	help
+>> +	  This option enables the flash led sysfs class in /sys/class/leds.
+> 
+> 	                                LED (?)
 > 
 
-Applied.
+HA!  This was a copy paste from the Flash class kconfig.  I need to re-write the description anyway.
 
+So your comments actually will turn into a bug fix for the Kconfig on that flag.
+
+Dan
+<snip>
 -- 
-Best regards,
-Jacek Anaszewski
+------------------
+Dan Murphy
