@@ -1,59 +1,211 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [RFC PATCH 5/5] leds: multicolor: Introduce a multicolor class
- definition
-Date: Tue, 2 Apr 2019 06:55:37 -0500
-Message-ID: <262bf73c-3fef-a5cb-3dd7-3312dae059d9@ti.com>
-References: <20190401173400.14238-1-dmurphy@ti.com>
- <20190401173400.14238-6-dmurphy@ti.com> <20190402074406.0860994a@nic.cz>
+Subject: Re: [PATCH v2 2/3] dt-bindings: backlight: add lm3630a bindings
+Date: Tue, 2 Apr 2019 07:56:55 -0500
+Message-ID: <68229e7f-4749-cde5-f541-793ab614084d@ti.com>
+References: <20190401103034.21062-1-masneyb@onstation.org>
+ <20190401103034.21062-3-masneyb@onstation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190402074406.0860994a@nic.cz>
+In-Reply-To: <20190401103034.21062-3-masneyb@onstation.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Behun <marek.behun@nic.cz>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Brian Masney <masneyb@onstation.org>, lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, jonathan@marek.ca
 List-Id: linux-leds@vger.kernel.org
 
-Marek
+Hello
 
-On 4/2/19 12:44 AM, Marek Behun wrote:
-> Hi Dan,
+On 4/1/19 5:30 AM, Brian Masney wrote:
+> Add new backlight bindings for the TI LM3630A dual-string white LED.
 > 
-> On Mon, 1 Apr 2019 12:34:00 -0500
-> Dan Murphy <dmurphy@ti.com> wrote:
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+>  .../leds/backlight/lm3630a-backlight.yaml     | 112 ++++++++++++++++++
+>  1 file changed, 112 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
 > 
->> +static ssize_t sync_store(struct device *dev,
->> +			  struct device_attribute *sync_attr,
->> +			  const char *buf, size_t size)
->> +{
->> +	struct led_classdev_mc_data *data = container_of(sync_attr,
->> +						      struct led_classdev_mc_data,
->> +						      sync_attr);
->> +	struct led_classdev_mc *mcled_cdev = data->mcled_cdev;
->> +	struct led_classdev *led_cdev = &mcled_cdev->led_cdev;
->> +	const struct led_multicolor_ops *ops = mcled_cdev->ops;
->> +	struct led_classdev_mc_priv *priv;
->> +	unsigned long sync_value;
->> +	ssize_t ret = -EINVAL;
->> +
->> +	mutex_lock(&led_cdev->led_access);
->> +
->> +	if (!mcled_cdev->sync_enabled)
->> +		goto unlock;
-> 
-> This lock is redundant, you could just put
->   if (mcled_cdev->sync_enabled)
->     return ret;
-> before the lock.
-> 
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+> new file mode 100644
+> index 000000000000..42a8c59d237a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+> @@ -0,0 +1,112 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/backlight/lm3630a-backlight.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI LM3630A High-Efficiency Dual-String White LED
+> +
+> +maintainers:
+> +  - Lee Jones <lee.jones@linaro.org>
+> +  - Daniel Thompson <daniel.thompson@linaro.org>
+> +  - Jingoo Han <jingoohan1@gmail.com>
+> +
+> +description: |
+> +  The LM3630A is a current-mode boost converter which supplies the power and
+> +  controls the current in up to two strings of 10 LEDs per string.
+> +  https://www.ti.com/product/LM3630A
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,lm3630a
+> +
+> +  reg:
+> +    maxItems: 1
+> +
 
-Ack
+No description on the reg here.  Assumed to be the i2c address?
 
-Thanks the code is just proof of concept code.  But I will make this change as well.
+> +  ti,linear-mapping-mode:
+> +    description: |
+> +      Enable linear mapping mode. If disabled, then it will use exponential
+> +      mapping mode in which the ramp up/down appears to have a more uniform
+> +      tranisiton to the human eye.
+
+s/tranisiton/transition
+
+> +    type: boolean
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +patternProperties:
+> +  "^led*$":
+> +    type: object
+> +    description: |
+> +      Properties for a string of connected LEDs.
+> +
+
+I have written a few of these drivers that have control bank support to control.  We have
+been defining the reg property as the control bank id
+
+reg 0 - Control bank A
+reg 1 - Control bank B
+
+Then use the led-sources to define what outputs are associated with which control bank.
+
+This way the hardware can just have CB B enabled without CB A.
+
+something like below would allow just control bank B to be enabled.
+
+led@1 {
+	reg = <1>;
+	label = "main-lcd";
+	default-brightness = <200>;
+	max-brightness = <255>;
+};
+
+This would connect control bank B to control bank A.  Or just use a flag to denote to connect them
+and not use led-sources.  But led-sources is the property of choice.
+
+led@0 {
+	reg = <0>;
+	led-sources = < 0 1 >;
+	label = "main-lcd";
+	default-brightness = <200>;
+	max-brightness = <255>;
+};
+
+And just the presence of 2 child nodes would indicate individual bank control
+led@0 {
+	reg = <0>;
+	label = "main-lcd";
+	default-brightness = <200>;
+	max-brightness = <255>;
+};
+
+led@1 {
+	reg = <1>;
+	label = "main-keypad";
+	default-brightness = <200>;
+	max-brightness = <255>;
+};
+
+> +    properties:
+> +      label:
+> +        description: |
+> +          The label for this LED. If omitted, the label is taken from the node
+> +          name (excluding the unit address). It has to uniquely identify a
+> +          device, i.e. no other LED class device can be assigned the same label.
+> +
+> +      led-sources:
+> +        description: |
+> +          List of device current outputs the LED is connected to.
+> +        allOf:
+> +          - $ref: /schemas/types.yaml#/definitions/uint32-array
+> +          - minItems: 1
+> +            maxItems: 2
+> +            items:
+> +              minimum: 0
+> +              maximum: 1
+> +
+
+label and led-sources are already defined in the common.txt no need to redefine them here.
+
+> +      default-brightness:
+> +        description: Default brightness level on boot.
+> +        minimum: 0
+> +        maximum: 255
+> +
+> +      max-brightness:
+> +        description: Maximum brightness level on boot.
+
+This is not the max brightness on boot.  This is the max brightness that is allowed during runtime.
 
 Dan
+
+> +        minimum: 0
+> +        maximum: 255
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        lm3630a_bl@38 {
+> +                compatible = "ti,lm3630a";
+> +                status = "ok";
+> +                reg = <0x38>;
+> +
+> +                led {
+> +                        label = "main-lcd";
+> +                        led-sources = <0 1>;
+> +                        default-brightness = <200>;
+> +                        max-brightness = <255>;
+> +                };
+> +        };
+> +    };
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        lm3630a_bl@38 {
+> +                compatible = "ti,lm3630a";
+> +                status = "ok";
+> +                reg = <0x38>;
+> +
+> +                led-bank-a {
+> +                        led-sources = <0>;
+> +                        default-brightness = <150>;
+> +                        ti,linear-mapping-mode;
+> +                };
+> +
+> +                led-bank-b {
+> +                        led-sources = <1>;
+> +                        default-brightness = <225>;
+> +                        ti,linear-mapping-mode;
+> +                };
+> +        };
+> +    };
+> 
+
 
 -- 
 ------------------
