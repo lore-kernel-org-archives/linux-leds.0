@@ -1,92 +1,104 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [RESEND PATCH v6 05/11] mfd: core: document mfd_add_devices()
-Date: Tue, 2 Apr 2019 10:08:59 +0200
-Message-ID: <CAMRc=Mekomya5A_tj3RKSeno1EaBoGNAFJajPfyB1cHP7c+L6w@mail.gmail.com>
-References: <20190318174228.18194-1-brgl@bgdev.pl> <20190318174228.18194-6-brgl@bgdev.pl>
- <20190402074103.GG4187@dell>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [RFC PATCH 2/5] dt: bindings: Add multicolor class dt bindings
+ documention
+Date: Tue, 2 Apr 2019 06:40:53 -0500
+Message-ID: <f8655180-0c3a-7292-3a49-57d997473992@ti.com>
+References: <20190401173400.14238-1-dmurphy@ti.com>
+ <20190401173400.14238-3-dmurphy@ti.com> <20190401212921.GB14681@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190402074103.GG4187@dell>
+In-Reply-To: <20190401212921.GB14681@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, marek.behun@nic.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-wt., 2 kwi 2019 o 09:41 Lee Jones <lee.jones@linaro.org> napisa=C5=82(a):
->
-> On Mon, 18 Mar 2019, Bartosz Golaszewski wrote:
->
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > Add a kernel doc for mfd_add_devices().
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >  drivers/mfd/mfd-core.c | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >
-> > diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-> > index 94e3f32ce935..0898a8db1747 100644
-> > --- a/drivers/mfd/mfd-core.c
-> > +++ b/drivers/mfd/mfd-core.c
-> > @@ -269,6 +269,20 @@ static int mfd_add_device(struct device *parent, i=
-nt id,
-> >       return ret;
-> >  }
-> >
-> > +/**
-> > + * mfd_add_devices - register a set of child devices
->
-> "register child devices"
->
-> > + *
-> > + * @parent: Parent device for all sub-nodes.
-> > + * @id: Platform device id. If >=3D 0, each sub-device will have its c=
-ell_id
-> > + *      added to this number and use it as the platform device id.
-> > + * @cells: Array of mfd cells describing sub-devices.
-> > + * @n_devs: Number of sub-devices to register.
-> > + * @mem_base: Parent register range resource for sub-devices.
-> > + * @irq_base: Base of the range of virtual interrupt numbers allocated=
- for
-> > + *            this MFD device. Unused if @domain is specified.
-> > + * @domain: Interrupt domain used to create mappings for HW interrupt =
-numbers
-> > + *          specificed in sub-devices' IRQ resources.
->
-> Spelling.
->
-> > + */
-> >  int mfd_add_devices(struct device *parent, int id,
-> >                   const struct mfd_cell *cells, int n_devs,
-> >                   struct resource *mem_base,
->
-> How about this:
->
-> /**
->  * mfd_add_devices - register child devices
->  *
->  * @parent:     Pointer to parent device.
->  * @id:         Can be PLATFORM_DEVID_AUTO to let the Platform API take c=
-are
->  *              of device numbering, or will be added to a device's cell_=
-id.
->  * @cells:      Array of (struct mfd_cell)s describing child devices.
->  * @n_devs:     Number of child devices to register.
->  * @mem_base:   Parent register range resource for child devices.
->  * @irq_base:   Base of the range of virtual interrupt numbers allocated =
-for
->  *              this MFD device. Unused if @domain is specified.
->  * @domain:     Interrupt domain to create mappings for hardware interrup=
-ts.
->  */
->
+Pavel
 
-Sure, looks good to me.
+On 4/1/19 4:29 PM, Pavel Machek wrote:
+> Hi!
+> 
+> 
+>>  .../bindings/leds/leds-class-multicolor.txt   | 140 ++++++++++++++++++
+>>  1 file changed, 140 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+>> new file mode 100644
+>> index 000000000000..4b1a26104c79
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+>> @@ -0,0 +1,140 @@
+>> +* Multicolor LED properties
+>> +
+>> +Multicolor LEDs can consist of a RGB, RGBW or a RGBA LED clusters.  These devices
+>> +can be grouped together and also provide a modeling mechanism so that the
+>> +cluster LEDs can vary in hue and intensity to produce a wide range of colors.
+>> +
+>> +The nodes and properties defined in this document are unique to the multicolor 
+>> +LED class.  Common LED nodes and properties are inherited from the common.txt
+>> +within this documentation directory.
+>> +
+>> +Required LED Child properties:
+>> +	- color : This is the color ID of the LED.  Definitions can be found
+>> +		  in include/linux/leds/common.txt
+>> +
+>> +Optional LED Child properties:
+>> +	- available-brightness-models : This is the phandle to the brightness-model
+>> +					node(s) that this LED cluster can support.
+>> +
+>> +Required Brightness model properties
+>> +	- led-brightness-model : This flag alerts the device driver and class
+>> +				 code that this node is a brightness model node
+>> +				 and to process the properties differently.
+>> +
+>> +Required Brightness model child properties
+>> +	- model_name : This is the name of the model presented to the user.  This
+>> +		       should be a color that the LED cluster can produce for
+>> +		       the device it is attached to.
+>> +	- layout : This is the LED layout for the levels.  This layout will
+>> +		   determine the color order of the levels.  The layout and
+>> +		   level-x properties array should be the same size.
+>> +	- level-x : These are the values for the LEDs to produce the color that
+>> +		    is defined.  These values are placed in the array according
+>> +		    to the layout property.
+> 
+>> +led-controller@30 {
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	compatible = "ti,lp5024";
+>> +	reg = <0x29>;
+>> +
+>> +	lp5024_model_yellow: brightness-models {
+>> +		led-brightness-model;
+>> +		model@0 {
+>> +			model_name = "yellow";
+>> +			layout = <LED_COLOR_ID_RED
+>> +				  LED_COLOR_ID_GREEN
+>> +				  LED_COLOR_ID_BLUE>;
+>> +			level-1 = <255 227 40>;
+>> +			level-2 = <255 240 136>;
+>> +			level-3 = <255 247 196>;
+>> +		};
+>> +	};
+> 
+> I don't think this works. RGB LED can show millions of colors. Do you
+> propose to have millions of entries in dts?
+> 									Pavel
+> 
 
-FYI the latest version of this series is v7, but the mfd driver didn't
-change since v6.
+I have had off line conversations with Jacek about this brightness model node.
 
-Bart
+Your concern was actually one of my concerns as well.  Not only millions of entries but also having a huge
+DT binary.
+
+We wanted to RFC this to get feedback.  And this is why I have not added any support for this in the framework code.
+
+Dan
+
+-- 
+------------------
+Dan Murphy
