@@ -1,89 +1,174 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v2 2/3] dt-bindings: backlight: add lm3630a bindings
-Date: Tue, 2 Apr 2019 08:44:22 -0500
-Message-ID: <c88d954a-ce37-35dc-414b-df28d6095d89@ti.com>
+Subject: Re: [PATCH v2 3/3] backlight: lm3630a: add device tree supprt
+Date: Tue, 2 Apr 2019 08:45:40 -0500
+Message-ID: <7bcd94ee-a4f8-c91b-697d-cc4c6337ec88@ti.com>
 References: <20190401103034.21062-1-masneyb@onstation.org>
- <20190401103034.21062-3-masneyb@onstation.org>
- <68229e7f-4749-cde5-f541-793ab614084d@ti.com>
- <20190402132440.GA10359@basecamp>
+ <20190401103034.21062-4-masneyb@onstation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190402132440.GA10359@basecamp>
+In-Reply-To: <20190401103034.21062-4-masneyb@onstation.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>
-Cc: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, jonathan@marek.ca
+To: Brian Masney <masneyb@onstation.org>, lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, jonathan@marek.ca
 List-Id: linux-leds@vger.kernel.org
 
-Brian
+Hello
 
-On 4/2/19 8:24 AM, Brian Masney wrote:
-> On Tue, Apr 02, 2019 at 07:56:55AM -0500, Dan Murphy wrote:
->> This would connect control bank B to control bank A.  Or just use a flag to denote to connect them
->> and not use led-sources.  But led-sources is the property of choice.
->>
->> led@0 {
->> 	reg = <0>;
->> 	led-sources = < 0 1 >;
->> 	label = "main-lcd";
->> 	default-brightness = <200>;
->> 	max-brightness = <255>;
->> };
+On 4/1/19 5:30 AM, Brian Masney wrote:
+> Add device tree support to the lm3630a driver and allow configuring
+> independently on both banks the mapping mode (linear or exponential),
+> initial and maximum LED brightness.
 > 
-> OK, I see. I wondered how we could do that in device tree.
-> 
->>> +    properties:
->>> +      label:
->>> +        description: |
->>> +          The label for this LED. If omitted, the label is taken from the node
->>> +          name (excluding the unit address). It has to uniquely identify a
->>> +          device, i.e. no other LED class device can be assigned the same label.
->>> +
->>> +      led-sources:
->>> +        description: |
->>> +          List of device current outputs the LED is connected to.
->>> +        allOf:
->>> +          - $ref: /schemas/types.yaml#/definitions/uint32-array
->>> +          - minItems: 1
->>> +            maxItems: 2
->>> +            items:
->>> +              minimum: 0
->>> +              maximum: 1
->>> +
->>
->> label and led-sources are already defined in the common.txt no need to redefine them here.
-> 
-> If I'm going to use the new-style bindings, then I'll need to convert
-> common.txt over to use the new format as well so that the automated
-> schema validations will work. I'm willing to do that work if there is
-> interest from the LED / backlight maintainers. The main issue is that
-> there are 62 references to the file common.txt in the directory
-> Documentation/devicetree/bindings/leds/. Would the maintainers prefer:
-> 
-> - Once common.txt is converted to common.yaml, make common.txt only
->   have a line stating that the common bindings were moved into
->   common.yaml. We can remove this file once all of the other bindings
->   are converted to the new-style format.
-> 
-> - Update all references to common.txt to common.yaml. (1 patch or 62
->   patches?)
-> 
-> - Or, just go with the older-style binding format for now.
-> 
-> Thanks Dan for your other comments. They make sense and I'll incorporate
-> those changes into my next version.
+> Driver was tested on a LG Nexus 5 (hammerhead) phone.
 > 
 
-That is up to the maintainers.
+Don't need this in the commit message.
 
-Also one other comment I noticed when reviewing the code that there is no definition to
-which child led properties are optional and which are required?
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+>  drivers/video/backlight/lm3630a_bl.c | 69 ++++++++++++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+> 
+> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+> index ef2553f452ca..96fbc1273dda 100644
+> --- a/drivers/video/backlight/lm3630a_bl.c
+> +++ b/drivers/video/backlight/lm3630a_bl.c
+> @@ -35,6 +35,9 @@
+>  #define REG_MAX		0x50
+>  
+>  #define INT_DEBOUNCE_MSEC	10
+> +
+> +#define LM3630A_MAX_SOURCES	2
+> +
+>  struct lm3630a_chip {
+>  	struct device *dev;
+>  	struct delayed_work work;
+> @@ -364,6 +367,64 @@ static const struct regmap_config lm3630a_regmap = {
+>  	.max_register = REG_MAX,
+>  };
+>  
+> +static void lm3630a_parse_dt(struct lm3630a_chip *pchip)
+> +{
+> +	u32 sources[LM3630A_MAX_SOURCES], val;
+> +	struct device_node *child_node;
+> +	int num_sources, ret, i;
+> +	bool linear;
+> +
+> +	for_each_available_child_of_node(pchip->dev->of_node, child_node) {
+
+I would prefer we use fwnode api's.
+
+See lm3532 patch submission for example
+https://lore.kernel.org/patchwork/patch/1053132/
+
+> +		num_sources = of_property_count_u32_elems(child_node,
+> +							  "led-sources");
+> +		if (num_sources < 0)
+> +			continue;
+> +
+
+Not sure what this is checking here.  Wondering if you should return an error here instead.
+
+> +		if (num_sources > LM3630A_MAX_SOURCES)
+> +			num_sources = LM3630A_MAX_SOURCES;
+> +
+
+If num_sources is greater than max should we not log and return an error?
+Why does the driver fix a malformed property?
+
+> +		ret = of_property_read_u32_array(child_node, "led-sources",
+> +						 sources, num_sources);
+> +		if (ret) {
+> +			dev_err(pchip->dev,
+> +				"Error parsing led-sources node: %d\n", ret);
+> +			return;
+
+We should return an error here see comment below on the order of operation pdata->dt->default parameters.
+
+> +		}
+> +
+> +		linear = of_property_read_bool(child_node,
+> +					       "ti,linear-mapping-mode");
+> +
+> +		for (i = 0; i < num_sources; i++) {
+
+If the reg property is used to determine control bank then this for..loop may be eliminated
+
+
+> +			if (sources[i] == 0)
+> +				pchip->pdata->leda_ctrl = linear ?
+> +					LM3630A_LEDA_ENABLE_LINEAR :
+> +					LM3630A_LEDA_ENABLE;
+> +			else if (sources[i] == 1)
+> +				pchip->pdata->ledb_ctrl = linear ?
+> +					LM3630A_LEDB_ENABLE_LINEAR :
+> +					LM3630A_LEDB_ENABLE;
+> +
+> +			ret = of_property_read_u32(child_node,
+> +						   "default-brightness", &val);
+> +			if (!ret) {
+> +				if (sources[i] == 0)
+> +					pchip->pdata->leda_init_brt = val;
+> +				else if (sources[i] == 1)
+> +					pchip->pdata->ledb_init_brt = val;
+> +			}
+> +
+> +			ret = of_property_read_u32(child_node, "max-brightness",
+> +						   &val);
+> +			if (!ret) {
+> +				if (sources[i] == 0)
+> +					pchip->pdata->leda_max_brt = val;
+> +				else if (sources[i] == 1)
+> +					pchip->pdata->ledb_max_brt = val;
+> +			}
+> +		}
+> +	};
+> +}
+> +
+>  static int lm3630a_probe(struct i2c_client *client,
+>  			 const struct i2c_device_id *id)
+>  {
+> @@ -405,6 +466,7 @@ static int lm3630a_probe(struct i2c_client *client,
+>  		pdata->ledb_init_brt = LM3630A_MAX_BRIGHTNESS;
+>  	}
+>  	pchip->pdata = pdata;
+> +	lm3630a_parse_dt(pchip);
+>  
+
+Hmm.  Wondering if this should be in the if (pdata == NULL) case and if parsing the
+node fails then set defaults.
+
+Because the way it is written if pdata is null then all the defaults are set then the dt parsing
+overwrites the data.
+
+Not sure if thats what you intended.
 
 Dan
 
-> Brian
+>  	/* chip initialize */
+>  	rval = lm3630a_chip_init(pchip);
+> @@ -470,11 +532,18 @@ static const struct i2c_device_id lm3630a_id[] = {
+>  	{}
+>  };
+>  
+> +static const struct of_device_id lm3630a_match_table[] = {
+> +	{ .compatible = "ti,lm3630a", },
+> +	{ },
+> +};
+> +
+> +
+>  MODULE_DEVICE_TABLE(i2c, lm3630a_id);
+>  
+>  static struct i2c_driver lm3630a_i2c_driver = {
+>  	.driver = {
+>  		   .name = LM3630A_NAME,
+> +		   .of_match_table = lm3630a_match_table,
+>  		   },
+>  	.probe = lm3630a_probe,
+>  	.remove = lm3630a_remove,
 > 
 
 
