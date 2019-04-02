@@ -1,76 +1,45 @@
 From: Marek Behun <marek.behun@nic.cz>
-Subject: Re: [RFC PATCH 3/5] documention: leds: Add multicolor class
- documentation
-Date: Tue, 2 Apr 2019 17:56:23 +0200
-Message-ID: <20190402175623.0d85ad7d@nic.cz>
+Subject: Re: [RFC PATCH 2/5] dt: bindings: Add multicolor class dt bindings
+ documention
+Date: Tue, 2 Apr 2019 18:17:12 +0200
+Message-ID: <20190402181712.3eccdb4b@nic.cz>
 References: <20190401173400.14238-1-dmurphy@ti.com>
-        <20190401173400.14238-4-dmurphy@ti.com>
-        <20190401212709.GA14681@amd>
-        <e2621a54-4c5c-4235-9aba-39a856cfbe88@ti.com>
+        <20190401173400.14238-3-dmurphy@ti.com>
+        <20190401212921.GB14681@amd>
+        <f8655180-0c3a-7292-3a49-57d997473992@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e2621a54-4c5c-4235-9aba-39a856cfbe88@ti.com>
+In-Reply-To: <f8655180-0c3a-7292-3a49-57d997473992@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dan Murphy <dmurphy@ti.com>
 Cc: Pavel Machek <pavel@ucw.cz>, robh+dt@kernel.org, jacek.anaszewski@gmail.com, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi
-
-On Tue, 2 Apr 2019 06:53:30 -0500
+On Tue, 2 Apr 2019 06:40:53 -0500
 Dan Murphy <dmurphy@ti.com> wrote:
 
-> I agree there are other solutions.  Better not so sure.
-> We keep kicking a solution down the road we have been talking about adding something to the kernel
-> for almost 5 months now, but no one can decide what to do.
+> I have had off line conversations with Jacek about this brightness model node.
 > 
-> How do we move a solution forward?
-> Should we just forget the whole idea and keep developing against the current framework?
+> Your concern was actually one of my concerns as well.  Not only millions of entries but also having a huge
+> DT binary.
 > 
-> > One was discussed before -- have single file which contains
-> > coefficients for r/g/b channels.
-> >   
+> We wanted to RFC this to get feedback.  And this is why I have not added any support for this in the framework code.
 > 
-> That has been presented as well and the concept was not well received either.
-> 
-> > Or at least... you should not really need separate sync and
-> > sync_enable files. One should do.
-> >   
-> 
-> The idea here was to be able to set the LED brightness immediately on a single LED
-> with a single brightness write or setup the color brightness on all the LEDs and then
-> sync the LED brightnesses.
-> 
-> If you wanted to control a single LED for notifications the user space may have to do
-> 
-> echo 0 > blue/brightness
-> echo 0 > green/brightness
-> echo 255 > red/brightness
-> echo 1 > sync
-> 
-> As opposed to just
-> echo 255 > red/brightness
+> Dan
 > 
 
-Maybe other kernel developers, or sysfs maintainers like Greg, schould
-also have a word about this.
+What if we just stuck to color spaces and defined channel curves in the
+device tree?
 
-Another solution, although not usable from shell, could be this:
-  if a process opens all brightness files of a singled multicolor LED
-  and then does a special SYNC_ON_THIS ioctl on one of them, then the
-  sync is done when this color is written.
-But that would also require ioctl for sysfs files, and I don't think
-Greg would like that.
+The curve could then be defined via an array of integer pairs, which
+would be interpreted as points via which the curve passes and the curve
+would be approximated by linear segemts...
 
-Dan's sync_enable API looks right to me from the one file/one value
-sysfs rule as well - you can enable this setting (sync_enable) via one
-file.
-
-What is the main reason you guys are concerned about this?
-That users will complain that they are writing to red/brightness and
-the LED does not change color (because they did not disable
-sync_enable)?
-
-Marek
+  led@0 {
+    colorspace = <COLOR_SPACE_ID_RGB>;
+    red-curve = <0 0>, <255 255>;
+    green-curve = <0 0>, <255 128>;
+    blue-curve = <0 0>, <255 128>;
+  };
