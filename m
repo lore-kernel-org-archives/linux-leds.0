@@ -1,15 +1,15 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [RFC PATCH 2/5] dt: bindings: Add multicolor class dt bindings
- documention
-Date: Tue, 2 Apr 2019 06:40:53 -0500
-Message-ID: <f8655180-0c3a-7292-3a49-57d997473992@ti.com>
+Subject: Re: [RFC PATCH 3/5] documention: leds: Add multicolor class
+ documentation
+Date: Tue, 2 Apr 2019 06:53:30 -0500
+Message-ID: <e2621a54-4c5c-4235-9aba-39a856cfbe88@ti.com>
 References: <20190401173400.14238-1-dmurphy@ti.com>
- <20190401173400.14238-3-dmurphy@ti.com> <20190401212921.GB14681@amd>
+ <20190401173400.14238-4-dmurphy@ti.com> <20190401212709.GA14681@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190401212921.GB14681@amd>
+In-Reply-To: <20190401212709.GA14681@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
@@ -18,86 +18,65 @@ List-Id: linux-leds@vger.kernel.org
 
 Pavel
 
-On 4/1/19 4:29 PM, Pavel Machek wrote:
+Thanks for the comments
+
+On 4/1/19 4:27 PM, Pavel Machek wrote:
 > Hi!
 > 
+>> +Under the "colors" directory there are two files created "sync" and
+>> +"sync_enable". The sync_enable file controls whether the LED brightness
+>> +value is set real time or if the LED brightness value setting is deferred until
+>> +the "sync" file is written.  If sync_enable is set then writing to each LED
+>> +"brightness" file will store the brightness value.  Once the "sync" file is
+>> +written then each LED color defined in the node will write the brightness of
+>> +the LED in the device driver.
+>> +
+>> +If "sync_enable" is not set then writing the brightness value of the LED to the
+>> +device driver is done immediately.  Writing the "sync" file has no
+>> affect.
 > 
->>  .../bindings/leds/leds-class-multicolor.txt   | 140 ++++++++++++++++++
->>  1 file changed, 140 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->> new file mode 100644
->> index 000000000000..4b1a26104c79
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->> @@ -0,0 +1,140 @@
->> +* Multicolor LED properties
->> +
->> +Multicolor LEDs can consist of a RGB, RGBW or a RGBA LED clusters.  These devices
->> +can be grouped together and also provide a modeling mechanism so that the
->> +cluster LEDs can vary in hue and intensity to produce a wide range of colors.
->> +
->> +The nodes and properties defined in this document are unique to the multicolor 
->> +LED class.  Common LED nodes and properties are inherited from the common.txt
->> +within this documentation directory.
->> +
->> +Required LED Child properties:
->> +	- color : This is the color ID of the LED.  Definitions can be found
->> +		  in include/linux/leds/common.txt
->> +
->> +Optional LED Child properties:
->> +	- available-brightness-models : This is the phandle to the brightness-model
->> +					node(s) that this LED cluster can support.
->> +
->> +Required Brightness model properties
->> +	- led-brightness-model : This flag alerts the device driver and class
->> +				 code that this node is a brightness model node
->> +				 and to process the properties differently.
->> +
->> +Required Brightness model child properties
->> +	- model_name : This is the name of the model presented to the user.  This
->> +		       should be a color that the LED cluster can produce for
->> +		       the device it is attached to.
->> +	- layout : This is the LED layout for the levels.  This layout will
->> +		   determine the color order of the levels.  The layout and
->> +		   level-x properties array should be the same size.
->> +	- level-x : These are the values for the LEDs to produce the color that
->> +		    is defined.  These values are placed in the array according
->> +		    to the layout property.
+> I believe better solutions exists for this problem.
 > 
->> +led-controller@30 {
->> +	#address-cells = <1>;
->> +	#size-cells = <0>;
->> +	compatible = "ti,lp5024";
->> +	reg = <0x29>;
->> +
->> +	lp5024_model_yellow: brightness-models {
->> +		led-brightness-model;
->> +		model@0 {
->> +			model_name = "yellow";
->> +			layout = <LED_COLOR_ID_RED
->> +				  LED_COLOR_ID_GREEN
->> +				  LED_COLOR_ID_BLUE>;
->> +			level-1 = <255 227 40>;
->> +			level-2 = <255 240 136>;
->> +			level-3 = <255 247 196>;
->> +		};
->> +	};
+
+I agree there are other solutions.  Better not so sure.
+We keep kicking a solution down the road we have been talking about adding something to the kernel
+for almost 5 months now, but no one can decide what to do.
+
+How do we move a solution forward?
+Should we just forget the whole idea and keep developing against the current framework?
+
+> One was discussed before -- have single file which contains
+> coefficients for r/g/b channels.
 > 
-> I don't think this works. RGB LED can show millions of colors. Do you
-> propose to have millions of entries in dts?
+
+That has been presented as well and the concept was not well received either.
+
+> Or at least... you should not really need separate sync and
+> sync_enable files. One should do.
+> 
+
+The idea here was to be able to set the LED brightness immediately on a single LED
+with a single brightness write or setup the color brightness on all the LEDs and then
+sync the LED brightnesses.
+
+If you wanted to control a single LED for notifications the user space may have to do
+
+echo 0 > blue/brightness
+echo 0 > green/brightness
+echo 255 > red/brightness
+echo 1 > sync
+
+As opposed to just
+echo 255 > red/brightness
+
+But if that is not a concern then removing the sync_enable is fine with me from a code standpoint
+but not from a user space side.
+
+Dan
+
 > 									Pavel
 > 
 
-I have had off line conversations with Jacek about this brightness model node.
-
-Your concern was actually one of my concerns as well.  Not only millions of entries but also having a huge
-DT binary.
-
-We wanted to RFC this to get feedback.  And this is why I have not added any support for this in the framework code.
-
-Dan
 
 -- 
 ------------------
