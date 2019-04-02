@@ -1,35 +1,46 @@
 From: Brian Masney <masneyb@onstation.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: backlight: add lm3630a bindings
-Date: Mon, 1 Apr 2019 19:04:05 -0400
-Message-ID: <20190401230405.GA7877@basecamp>
+Subject: Re: [PATCH v2 3/3] backlight: lm3630a: add device tree supprt
+Date: Mon, 1 Apr 2019 20:02:17 -0400
+Message-ID: <20190402000217.GA8315@basecamp>
 References: <20190401103034.21062-1-masneyb@onstation.org>
- <20190401103034.21062-3-masneyb@onstation.org>
- <20190401213926.GD14681@amd>
+ <20190401103034.21062-4-masneyb@onstation.org>
+ <20190401214847.GE14681@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190401213926.GD14681@amd>
+In-Reply-To: <20190401214847.GE14681@amd>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
 Cc: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org, jacek.anaszewski@gmail.com, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Apr 01, 2019 at 11:39:26PM +0200, Pavel Machek wrote:
-> On Mon 2019-04-01 06:30:33, Brian Masney wrote:
-> > Add new backlight bindings for the TI LM3630A dual-string white LED.
-> > 
-> > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > ---
-> >  .../leds/backlight/lm3630a-backlight.yaml     | 112
-> ++++++++++++++++++
+On Mon, Apr 01, 2019 at 11:48:47PM +0200, Pavel Machek wrote:
+> So ... we can have multiple LEDs, each can have up to two
+> sources.. and the settings are really per source, not per LED.
 > 
-> What is that? Is it future of all the bindings?
+> But you do not test for overlaps. What prevents me from having
 > 
-> Up to device tree people, I guess, but...
+>    foo {
+>        led_sources = <0>;
+>        ti,linear-mapping-mode;
+>    }
+>    bar {
+>        led_sources = <0>;
+>    }
+> 
+> (I.e. conflicting settings for a source?)
 
-Yes, this is the future format of the bindings so that automated
-validation can be performed. See
-Documentation/devicetree/writing-schema.md.
+In this case, it will go with the settings for 'bar'. I didn't check for
+the conflicting settings since I was going for consistency with the
+other two backlight drivers that already have the led-sources property:
+arcxcnn_bl.c and sky81452-backlight.c. I can add the additional check
+to fail if a source has already been encountered.
+
+> Plus I do not see parsing of led labels etc...
+
+OK... I can fix that up plus your other two comments.
+
+Thanks,
 
 Brian
