@@ -1,46 +1,88 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v2 3/3] backlight: lm3630a: add device tree supprt
-Date: Tue, 2 Apr 2019 12:07:22 -0500
-Message-ID: <6717928c-0531-cc36-d22b-a53cc359fb97@ti.com>
-References: <20190401103034.21062-1-masneyb@onstation.org>
- <20190401103034.21062-4-masneyb@onstation.org>
- <7bcd94ee-a4f8-c91b-697d-cc4c6337ec88@ti.com> <20190402164533.GA21197@amd>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] leds: fix a potential NULL pointer dereference
+Date: Tue, 2 Apr 2019 20:48:05 +0200
+Message-ID: <2c17fc80-1781-ce71-641f-b2503d1b055c@gmail.com>
+References: <20190309060411.29074-1-kjlu@umn.edu>
+ <8c616b91-8f0d-f53b-af10-4d768063c5a0@gmail.com>
+ <CAMuHMdXELu2tcSB5C1yKUGft6sDGPAy997ApPzy17n0MssfyWA@mail.gmail.com>
+ <46573cc8-1666-d0a4-dadd-2b2f81e026fe@gmail.com>
+ <CAMuHMdU9X2ah6q-RhqbAZnyaw9PHOsD5Q=Y9wmTU_uzJ0MLyuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190402164533.GA21197@amd>
+In-Reply-To: <CAMuHMdU9X2ah6q-RhqbAZnyaw9PHOsD5Q=Y9wmTU_uzJ0MLyuA@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Brian Masney <masneyb@onstation.org>, lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org, jacek.anaszewski@gmail.com, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, jonathan@marek.ca
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Kangjie Lu <kjlu@umn.edu>, pakki001@umn.edu, Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On 4/2/19 11:45 AM, Pavel Machek wrote:
-> On Tue 2019-04-02 08:45:40, Dan Murphy wrote:
->> Hello
->>
->> On 4/1/19 5:30 AM, Brian Masney wrote:
->>> Add device tree support to the lm3630a driver and allow configuring
->>> independently on both banks the mapping mode (linear or exponential),
->>> initial and maximum LED brightness.
+Hi Geert,
+
+On 4/1/19 9:08 AM, Geert Uytterhoeven wrote:
+> Hi Jacek,
+> 
+> On Sun, Mar 31, 2019 at 1:01 PM Jacek Anaszewski
+> <jacek.anaszewski@gmail.com> wrote:
+>> On 3/31/19 11:06 AM, Geert Uytterhoeven wrote:
+>> On Sun, Mar 10, 2019 at 9:40 PM Jacek Anaszewski
+>>> <jacek.anaszewski@gmail.com> wrote:
+>>>> On 3/9/19 7:04 AM, Kangjie Lu wrote:
+>>>>> In case of_match_device cannot find a match, the fixes returns
+>>>>> -EINVAL to avoid NULL pointer dereference.
+>>>>>
+>>>>> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+>>>>> ---
+>>>>>     drivers/leds/leds-pca9532.c | 8 ++++++--
+>>>>>     1 file changed, 6 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+>>>>> index 7fea18b0c15d..4b0335591728 100644
+>>>>> --- a/drivers/leds/leds-pca9532.c
+>>>>> +++ b/drivers/leds/leds-pca9532.c
+>>>>> @@ -513,6 +513,7 @@ static int pca9532_probe(struct i2c_client *client,
+>>>>>         const struct i2c_device_id *id)
+>>>>>     {
+>>>>>         int devid;
+>>>>> +     const struct of_device_id *of_id;
+>>>>>         struct pca9532_data *data = i2c_get_clientdata(client);
+>>>>>         struct pca9532_platform_data *pca9532_pdata =
+>>>>>                         dev_get_platdata(&client->dev);
+>>>>> @@ -528,8 +529,11 @@ static int pca9532_probe(struct i2c_client *client,
+>>>>>                         dev_err(&client->dev, "no platform data\n");
+>>>>>                         return -EINVAL;
+>>>>>                 }
+>>>>> -             devid = (int)(uintptr_t)of_match_device(
+>>>>> -                     of_pca9532_leds_match, &client->dev)->data;
+>>>>> +             of_id = of_match_device(of_pca9532_leds_match,
+>>>>> +                             &client->dev);
+>>>>> +             if (unlikely(!of_id))
 >>>
->>> Driver was tested on a LG Nexus 5 (hammerhead) phone.
->>>
+>>> Use of unlikey() is frowned upon.
 >>
->> Don't need this in the commit message.
+>> What do you mean? Can you give some reference?
 > 
-> Actually yes, we want that in commit message.
+> I have more memories of this being discussed, but I could find only
+> https://lwn.net/Articles/420019/
+
+Thanks!
+
+> It may be useful for some heavily used core code, but not in most drivers
+> or uncritical code like probe paths, due to:
+>    - many people getting it wrong,
+>    - usually it doesn't make any difference at all.
 > 
-
-Noted for future patches.
-
-Dan
-
-> 									Pavel
+>>>> Applied to the for-5.2 branch of linux-leds.git.
+>>>
+>>> And also as a fix for v5.1...
+>>
+>> Yes, but it had been in linux-next for almost two weeks before that.
 > 
+> Sorry, I only noticed when it got upstream.
 
+No problem.
 
 -- 
-------------------
-Dan Murphy
+Best regards,
+Jacek Anaszewski
