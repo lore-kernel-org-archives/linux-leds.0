@@ -1,87 +1,51 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH] leds: fix a potential NULL pointer dereference
-Date: Tue, 2 Apr 2019 20:48:05 +0200
-Message-ID: <2c17fc80-1781-ce71-641f-b2503d1b055c@gmail.com>
-References: <20190309060411.29074-1-kjlu@umn.edu>
- <8c616b91-8f0d-f53b-af10-4d768063c5a0@gmail.com>
- <CAMuHMdXELu2tcSB5C1yKUGft6sDGPAy997ApPzy17n0MssfyWA@mail.gmail.com>
- <46573cc8-1666-d0a4-dadd-2b2f81e026fe@gmail.com>
- <CAMuHMdU9X2ah6q-RhqbAZnyaw9PHOsD5Q=Y9wmTU_uzJ0MLyuA@mail.gmail.com>
+Subject: Re: [PATCH] leds: blinkm: clean up double assignment to
+ data->i2c_addr
+Date: Tue, 2 Apr 2019 21:05:36 +0200
+Message-ID: <7360f559-7260-48b5-029d-e12a19bd967f@gmail.com>
+References: <20190330203757.8877-1-colin.king@canonical.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdU9X2ah6q-RhqbAZnyaw9PHOsD5Q=Y9wmTU_uzJ0MLyuA@mail.gmail.com>
+In-Reply-To: <20190330203757.8877-1-colin.king@canonical.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Kangjie Lu <kjlu@umn.edu>, pakki001@umn.edu, Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Jan-Simon Moeller <jansimon.moeller@gmx.de>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Geert,
+Hi Colin,
 
-On 4/1/19 9:08 AM, Geert Uytterhoeven wrote:
-> Hi Jacek,
-> 
-> On Sun, Mar 31, 2019 at 1:01 PM Jacek Anaszewski
-> <jacek.anaszewski@gmail.com> wrote:
->> On 3/31/19 11:06 AM, Geert Uytterhoeven wrote:
->> On Sun, Mar 10, 2019 at 9:40 PM Jacek Anaszewski
->>> <jacek.anaszewski@gmail.com> wrote:
->>>> On 3/9/19 7:04 AM, Kangjie Lu wrote:
->>>>> In case of_match_device cannot find a match, the fixes returns
->>>>> -EINVAL to avoid NULL pointer dereference.
->>>>>
->>>>> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
->>>>> ---
->>>>>     drivers/leds/leds-pca9532.c | 8 ++++++--
->>>>>     1 file changed, 6 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
->>>>> index 7fea18b0c15d..4b0335591728 100644
->>>>> --- a/drivers/leds/leds-pca9532.c
->>>>> +++ b/drivers/leds/leds-pca9532.c
->>>>> @@ -513,6 +513,7 @@ static int pca9532_probe(struct i2c_client *client,
->>>>>         const struct i2c_device_id *id)
->>>>>     {
->>>>>         int devid;
->>>>> +     const struct of_device_id *of_id;
->>>>>         struct pca9532_data *data = i2c_get_clientdata(client);
->>>>>         struct pca9532_platform_data *pca9532_pdata =
->>>>>                         dev_get_platdata(&client->dev);
->>>>> @@ -528,8 +529,11 @@ static int pca9532_probe(struct i2c_client *client,
->>>>>                         dev_err(&client->dev, "no platform data\n");
->>>>>                         return -EINVAL;
->>>>>                 }
->>>>> -             devid = (int)(uintptr_t)of_match_device(
->>>>> -                     of_pca9532_leds_match, &client->dev)->data;
->>>>> +             of_id = of_match_device(of_pca9532_leds_match,
->>>>> +                             &client->dev);
->>>>> +             if (unlikely(!of_id))
->>>
->>> Use of unlikey() is frowned upon.
->>
->> What do you mean? Can you give some reference?
-> 
-> I have more memories of this being discussed, but I could find only
-> https://lwn.net/Articles/420019/
+Thank you for the patch.
 
-Thanks!
-
-> It may be useful for some heavily used core code, but not in most drivers
-> or uncritical code like probe paths, due to:
->    - many people getting it wrong,
->    - usually it doesn't make any difference at all.
+On 3/30/19 9:37 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
->>>> Applied to the for-5.2 branch of linux-leds.git.
->>>
->>> And also as a fix for v5.1...
->>
->> Yes, but it had been in linux-next for almost two weeks before that.
+> Currently data->i2c_addr is being assigned twice, first with the
+> value 0x09 and then immediately afterwards with the value 0x08.
+> The first assignment is redundant and can be removed.
 > 
-> Sorry, I only noticed when it got upstream.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/leds/leds-blinkm.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
+> index 851c1920b63c..11b771fb933b 100644
+> --- a/drivers/leds/leds-blinkm.c
+> +++ b/drivers/leds/leds-blinkm.c
+> @@ -594,7 +594,6 @@ static int blinkm_probe(struct i2c_client *client,
+>   		goto exit;
+>   	}
+>   
+> -	data->i2c_addr = 0x09;
+>   	data->i2c_addr = 0x08;
+>   	/* i2c addr  - use fake addr of 0x08 initially (real is 0x09) */
+>   	data->fw_ver = 0xfe;
+> 
 
-No problem.
+Applied.
 
 -- 
 Best regards,
