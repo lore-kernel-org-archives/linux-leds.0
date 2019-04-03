@@ -1,74 +1,37 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 3/4] mfd: ti-lmu: Remove LM3532 backlight driver
- references
-Date: Wed, 3 Apr 2019 19:45:08 +0200
-Message-ID: <8b771488-a914-0d75-6e9b-9a67b4c5017e@gmail.com>
-References: <20190321142838.22985-1-dmurphy@ti.com>
- <20190321142838.22985-3-dmurphy@ti.com>
- <8769a95d-179f-6219-0a63-9dd623cdd297@gmail.com> <20190325075317.GW4731@dell>
- <c950b7d3-eeb1-2dc2-b732-3a40d5b3a8b7@gmail.com>
- <20190403075709.GD11301@dell>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH] leds: Small fixes for Flash class description
+Date: Wed, 3 Apr 2019 13:19:22 -0500
+Message-ID: <20190403181922.21273-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190403075709.GD11301@dell>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz, tony@atomide.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz, rdunlap@infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-On 4/3/19 9:57 AM, Lee Jones wrote:
-> On Mon, 25 Mar 2019, Jacek Anaszewski wrote:
-> 
->> On 3/25/19 8:53 AM, Lee Jones wrote:
->>> On Sat, 23 Mar 2019, Jacek Anaszewski wrote:
->>>
->>>> Hi Lee,
->>>>
->>>> Can we have your ack for this going via LED tree, please?
->>>
->>> Patch looks okay.
->>>
->>> You can take it through the LED, but if you do I will need you to send
->>> me a pull-request to a minimised immutable branch please.
->>>
->>> If you cannot do this, I can apply the set and provide the same to
->>> you.
->>>
->>> If you choose the former:
->>>
->>>     Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
->>>
->>> Please let me know what you decide
->>>
->>
->> I've been exposing integration branches in the past, but after Linus'
->> message [0] I have my doubts now. I wonder if it wouldn't make more
->> sense if I just took the patches, and you'd cherry-pick them only in
->> case such a need occurs. This way we would avoid this whole merge
->> noise, which in an optimistic and very plausible case will not be needed
->> at all.
->>
->> [0] https://lkml.org/lkml/2017/4/19/1104
-> 
-> That email is 2 years old, and does not seem relevant to what we're
-> trying to achieve.  I've only ever had issues when *not* creating
-> immutable branches for these, cross subsystem scenarios.  The
-> shared branches I create are always minimalist and never change.
-> 
-> I'm happy to take the patches and create a suitable pull-request for
-> you if you are uncomfortable with the process.  I just need your Ack
-> to do so.  Up to you.
+Fix misspelling and capitalization of LED in the Kconfig.
 
-I don't have any problem with the process. The clear gain of cherry
-picking is more linear history. And the branch can be always created
-when such a need occurs in linux-next.
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ drivers/leds/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-That being said, I will send you a pull request once we sort out
-the problem with obtaining a reference to the backlight node.
-
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index a72f97fca57b..f24d31138471 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -23,8 +23,8 @@ config LEDS_CLASS_FLASH
+ 	tristate "LED Flash Class Support"
+ 	depends on LEDS_CLASS
+ 	help
+-	  This option enables the flash led sysfs class in /sys/class/leds.
+-	  It wrapps LED Class and adds flash LEDs specific sysfs attributes
++	  This option enables the flash LED sysfs class in /sys/class/leds.
++	  It wraps LED Class and adds flash LEDs specific sysfs attributes
+ 	  and kernel internal API to it. You'll need this to provide support
+ 	  for the flash related features of a LED device. It can be built
+ 	  as a module.
 -- 
-Best regards,
-Jacek Anaszewski
+2.19.0
