@@ -1,81 +1,90 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
-Date: Wed, 3 Apr 2019 13:06:00 -0700
-Message-ID: <20190403200600.GT49658@atomide.com>
-References: <20190321142838.22985-1-dmurphy@ti.com>
- <20190321142838.22985-4-dmurphy@ti.com>
- <20190322221654.GG19425@atomide.com>
- <dc24b66c-658e-41aa-c869-42c4a7e812a8@ti.com>
- <20190325145444.GK19425@atomide.com>
- <044f67e7-e196-a5b9-728b-a7c5f283f56f@ti.com>
- <20190328210437.tcojjqynggk72zo2@earth.universe>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 3/5] dt-bindings: ti-lmu: Modify dt bindings for the
+ LM3697
+Date: Wed, 3 Apr 2019 22:10:46 +0200
+Message-ID: <4e38128a-fa8f-aa94-284f-2c5a4906e17d@gmail.com>
+References: <20190325142403.30447-1-dmurphy@ti.com>
+ <20190325142403.30447-4-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190328210437.tcojjqynggk72zo2@earth.universe>
+In-Reply-To: <20190325142403.30447-4-dmurphy@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-* Sebastian Reichel <sre@kernel.org> [190329 05:36]:
-> Hi,
+Hi Dan,
+
+Thank you for the patch.
+
+You need Lee Jones on CC for this series.
+
+One more comment below.
+
+On 3/25/19 3:24 PM, Dan Murphy wrote:
+> The LM3697 is a single function LED driver. The single function LED
+> driver needs to reside in the LED directory as a dedicated LED driver
+> and not as a MFD device.  The device does have common brightness and ramp
+> features and those can be accomodated by a TI LMU framework.
 > 
-> On Mon, Mar 25, 2019 at 11:01:18AM -0500, Dan Murphy wrote:
-> > On 3/25/19 9:54 AM, Tony Lindgren wrote:
-> > > * Dan Murphy <dmurphy@ti.com> [190325 12:36]:
-> > >> On 3/22/19 5:16 PM, Tony Lindgren wrote:
-> > >>> I can control the backlight brightness just fine via /sys, and
-> > >>> backlight shows up as the trigger in /sys/class/leds/lm3532:backlight,
-> > >>> but /sys/class/backlight is empty and looks like drm can't find it.
-> > >>>
-> > >>> Do I need to enable some additional driver(s) to get this to work
-> > >>> with the drm driver?
-> > >>>
-> > >>
-> > >> Can you dump or point to the defconfig?
-> > > 
-> > > This is just with the omap2plus_defconfig as in the droid4-pending-v5.0
-> > > test branch below [0]. That branch has Sebastian's drm patches. The
-> > > branch also has the older ti-lmu patches that I reverted for testing
-> > > before applying your new series and enabling it in .config.
-> > > 
-> > > The drm driver (drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c) just
-> > > does:
-> > > 
-> > > backlight = of_parse_phandle(node, "backlight", 0);
-> > > ...
-> > > 
-> > > That should still work the same, right?
-> > 
-> > Yes it should still work the same.
-> > I did not change the node name.
-> > So the DRM driver should find the node.
+> The LM3697 dt binding needs to be moved from the ti-lmu.txt and a dedicated
+> LED dt binding needs to be added.  The new LM3697 LED dt binding will then
+> reside in the Documentation/devicetree/bindings/leds directory and follow the
+> current LED and general bindings guidelines.
 > 
-> This will not work, since the next line tries to get it as a
-> backlight device, but it's an LED device instead:
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>   .../devicetree/bindings/leds/leds-lm3697.txt  | 77 +++++++++++++++++++
+>   .../devicetree/bindings/mfd/ti-lmu.txt        | 26 +------
+>   2 files changed, 78 insertions(+), 25 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
 > 
-> of_find_backlight_by_node(backlight);
-> 
-> I suppose the backlight device could be instantiated on top
-> of the LED device somehow.
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+> new file mode 100644
+> index 000000000000..a780f11acd38
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+> @@ -0,0 +1,77 @@
+> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
+> +
+> +The LM3697 11-bit LED driver provides high-
+> +performance backlight dimming for 1, 2, or 3 series
+> +LED strings while delivering up to 90% efficiency.
+> +
+> +This device is suitable for display and keypad Lighting
+> +
+> +Required properties:
+> +	- compatible:
+> +		"ti,lm3697"
+> +	- reg :  I2C slave address
+> +	- #address-cells : 1
+> +	- #size-cells : 0
+> +
+> +Optional properties:
+> +	- enable-gpios : GPIO pin to enable/disable the device
+> +	- vled-supply : LED supply
+> +
+> +Required child properties:
+> +	- reg : 0 - LED is Controlled by bank A
+> +		1 - LED is Controlled by bank B
+> +	- led-sources : Indicates which HVLED string is associated to which
+> +			control bank.  This is a zero based property so
+> +			HVLED1 = 0, HVLED2 = 1, HVLED3 = 2.
+> +			Additional information is contained
+> +			in Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Optional child properties:
+> +	- max_brightness - This determines whether to use 8 bit brightness mode
+> +			   or 11 bit brightness mode.  If this value is not
+> +			   set the device is defaulted to the preferred 8bit
+> +			   brightness mode per 7.3.4.1 of the data sheet.
+> +			   The values are 255 (8bit) or 2047 (11bit).
 
-Hmm yeah I thought setting the ledtrig-backlight for it
-would do the trick. But after thinking about it there might
-be some backlight lifecycle issues with that where everything
-would need to be torn down for the panel to change the
-backlight trigger. I think the panel driver(s) assume the
-backlight to always be there at probe time. Well this is
-just based on just guessing.. I might be wrong.
+We should use led-max-microamp for that, if possible.
 
-I have no issues using of_find_backlight_by_node() like
-other panels.
-
-> (sorry for slow responses; I'm quite busy right now)
-
-No problem.
-
-Regards,
-
-Tony
+-- 
+Best regards,
+Jacek Anaszewski
