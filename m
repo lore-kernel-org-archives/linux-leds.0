@@ -1,105 +1,424 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 3/5] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3697
-Date: Wed, 3 Apr 2019 15:23:53 -0500
-Message-ID: <83e31761-714d-db83-8c35-cf45243cb50b@ti.com>
-References: <20190325142403.30447-1-dmurphy@ti.com>
- <20190325142403.30447-4-dmurphy@ti.com>
- <4e38128a-fa8f-aa94-284f-2c5a4906e17d@gmail.com>
+From: Nick Crews <ncrews@chromium.org>
+Subject: [PATCH v4 2/2] platform/chrome: Add Wilco EC keyboard backlight LEDs support
+Date: Wed,  3 Apr 2019 15:27:58 -0600
+Message-ID: <20190403212757.132684-2-ncrews@chromium.org>
+References: <20190403212757.132684-1-ncrews@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4e38128a-fa8f-aa94-284f-2c5a4906e17d@gmail.com>
-Content-Language: en-US
+In-Reply-To: <20190403212757.132684-1-ncrews@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, pavel@ucw.cz
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: enric.balletbo@collabora.com, bleung@chromium.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, alexandre.belloni@bootlin.com, a.zummo@towertech.it, linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, dlaurie@chromium.org, sjg@google.com, groeck@google.com, dtor@google.com, Nick Crews <ncrews@chromium.org>
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
+The EC is in charge of controlling the keyboard backlight on
+the Wilco platform. We expose a standard LED class device at
+/sys/class/leds/chromeos::kbd_backlight. This driver is modeled
+after the standard Chrome OS keyboard backlight driver at
+drivers/platform/chrome/cros_kbd_led_backlight.c
 
-On 4/3/19 3:10 PM, Jacek Anaszewski wrote:
-> Hi Dan,
-> 
-> Thank you for the patch.
-> 
-> You need Lee Jones on CC for this series.
-> 
+Some Wilco devices do not support a keyboard backlight. This
+is checked via wilco_ec_keyboard_leds_exist() in the core driver,
+and a platform_device will only be registered by the core if
+a backlight is supported.
 
-Yes I saw I missed Lee.
+After an EC reset the backlight could be in a non-PWM mode.
+Earlier in the boot sequence the BIOS should send a command to
+the EC to set the brightness, so things **should** be set up,
+but we double check in probe() as we query the initial brightness.
+If not set up, then set the brightness to 0.
 
-> One more comment below.
-> 
-> On 3/25/19 3:24 PM, Dan Murphy wrote:
->> The LM3697 is a single function LED driver. The single function LED
->> driver needs to reside in the LED directory as a dedicated LED driver
->> and not as a MFD device.  The device does have common brightness and ramp
->> features and those can be accomodated by a TI LMU framework.
->>
->> The LM3697 dt binding needs to be moved from the ti-lmu.txt and a dedicated
->> LED dt binding needs to be added.  The new LM3697 LED dt binding will then
->> reside in the Documentation/devicetree/bindings/leds directory and follow the
->> current LED and general bindings guidelines.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>   .../devicetree/bindings/leds/leds-lm3697.txt  | 77 +++++++++++++++++++
->>   .../devicetree/bindings/mfd/ti-lmu.txt        | 26 +------
->>   2 files changed, 78 insertions(+), 25 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
->> new file mode 100644
->> index 000000000000..a780f11acd38
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
->> @@ -0,0 +1,77 @@
->> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
->> +
->> +The LM3697 11-bit LED driver provides high-
->> +performance backlight dimming for 1, 2, or 3 series
->> +LED strings while delivering up to 90% efficiency.
->> +
->> +This device is suitable for display and keypad Lighting
->> +
->> +Required properties:
->> +    - compatible:
->> +        "ti,lm3697"
->> +    - reg :  I2C slave address
->> +    - #address-cells : 1
->> +    - #size-cells : 0
->> +
->> +Optional properties:
->> +    - enable-gpios : GPIO pin to enable/disable the device
->> +    - vled-supply : LED supply
->> +
->> +Required child properties:
->> +    - reg : 0 - LED is Controlled by bank A
->> +        1 - LED is Controlled by bank B
->> +    - led-sources : Indicates which HVLED string is associated to which
->> +            control bank.  This is a zero based property so
->> +            HVLED1 = 0, HVLED2 = 1, HVLED3 = 2.
->> +            Additional information is contained
->> +            in Documentation/devicetree/bindings/leds/common.txt
->> +
->> +Optional child properties:
->> +    - max_brightness - This determines whether to use 8 bit brightness mode
->> +               or 11 bit brightness mode.  If this value is not
->> +               set the device is defaulted to the preferred 8bit
->> +               brightness mode per 7.3.4.1 of the data sheet.
->> +               The values are 255 (8bit) or 2047 (11bit).
-> 
-> We should use led-max-microamp for that, if possible.
-> 
+Since the EC will never change the backlight level of its own accord,
+we don't need to implement a brightness_get() method.
 
-Actually I was thinking this property could move to common.txt
-LM3697 would use it and it is also defined in leds-pwm.txt leds-netxbig.txt 
+v4 changes:
+-Call keyboard_led_set_brightness() directly within
+ initialize_brightness(), instead of calling the library function.
 
-But I could rename it to led-max-microamp and figure out an algo to convert to max brightness
+v3 changes:
+-Since this behaves the same as the standard Chrome OS keyboard
+ backlight, rename the led device to "chromeos::kbd_backlight"
+-Move wilco_ec_keyboard_backlight_exists() into core module, so
+ that the core does not depend upon the keyboard backlight driver.
+-This required moving some code into wilco-ec.h
+-Refactor out some common code in set_brightness() and
+ initialize_brightness()
 
-Dan
+v2 changes:
+-Remove and fix uses of led vs LED in kconfig
+-Assume BIOS initializes brightness, but double check in probe()
+-Remove get_brightness() callback, as EC never changes brightness
+ by itself.
+-Use a __packed struct as message instead of opaque array
+-Add exported wilco_ec_keyboard_leds_exist() so the core driver
+ now only creates a platform _device if relevant
+-Fix use of keyboard_led_set_brightness() since it can sleep
 
+Signed-off-by: Nick Crews <ncrews@chromium.org>
+Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+---
+ drivers/platform/chrome/wilco_ec/Kconfig      |   9 +
+ drivers/platform/chrome/wilco_ec/Makefile     |   2 +
+ drivers/platform/chrome/wilco_ec/core.c       |  58 ++++++
+ .../chrome/wilco_ec/kbd_led_backlight.c       | 168 ++++++++++++++++++
+ include/linux/platform_data/wilco-ec.h        |  38 ++++
+ 5 files changed, 275 insertions(+)
+ create mode 100644 drivers/platform/chrome/wilco_ec/kbd_led_backlight.c
+
+diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/chrome/wilco_ec/Kconfig
+index e09e4cebe9b4..d8cf4a60d1b5 100644
+--- a/drivers/platform/chrome/wilco_ec/Kconfig
++++ b/drivers/platform/chrome/wilco_ec/Kconfig
+@@ -18,3 +18,12 @@ config WILCO_EC_DEBUGFS
+ 	  manipulation and allow for testing arbitrary commands.  This
+ 	  interface is intended for debug only and will not be present
+ 	  on production devices.
++
++config WILCO_EC_KBD_BACKLIGHT
++	tristate "Enable keyboard backlight control"
++	depends on WILCO_EC
++	help
++	  If you say Y here, you get support to set the keyboard backlight
++	  brightness. This happens via a standard LED driver that uses the
++	  Wilco EC mailbox interface. A standard LED class device will
++	  appear under /sys/class/leds/chromeos::kbd_backlight
+diff --git a/drivers/platform/chrome/wilco_ec/Makefile b/drivers/platform/chrome/wilco_ec/Makefile
+index 063e7fb4ea17..8436539813cd 100644
+--- a/drivers/platform/chrome/wilco_ec/Makefile
++++ b/drivers/platform/chrome/wilco_ec/Makefile
+@@ -4,3 +4,5 @@ wilco_ec-objs				:= core.o mailbox.o
+ obj-$(CONFIG_WILCO_EC)			+= wilco_ec.o
+ wilco_ec_debugfs-objs			:= debugfs.o
+ obj-$(CONFIG_WILCO_EC_DEBUGFS)		+= wilco_ec_debugfs.o
++wilco_kbd_backlight-objs		:= kbd_led_backlight.o
++obj-$(CONFIG_WILCO_EC_KBD_BACKLIGHT)	+= wilco_kbd_backlight.o
+diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
+index 05e1e2be1c91..3c45c157b7da 100644
+--- a/drivers/platform/chrome/wilco_ec/core.c
++++ b/drivers/platform/chrome/wilco_ec/core.c
+@@ -38,11 +38,47 @@ static struct resource *wilco_get_resource(struct platform_device *pdev,
+ 				   dev_name(dev));
+ }
+ 
++/**
++ * wilco_ec_keyboard_backlight_exists() - Is the keyboad backlight supported?
++ * @ec: EC device to query.
++ * @exists: Return value to fill in.
++ *
++ * Return: 0 on success, negative error code on failure.
++ */
++static int wilco_ec_keyboard_backlight_exists(struct wilco_ec_device *ec,
++					      bool *exists)
++{
++	struct wilco_ec_kbbl_msg request;
++	struct wilco_ec_kbbl_msg response;
++	struct wilco_ec_message msg;
++	int ret;
++
++	memset(&request, 0, sizeof(request));
++	request.command = WILCO_EC_COMMAND_KBBL;
++	request.subcmd = WILCO_KBBL_SUBCMD_GET_FEATURES;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.type = WILCO_EC_MSG_LEGACY;
++	msg.request_data = &request;
++	msg.request_size = sizeof(request);
++	msg.response_data = &response;
++	msg.response_size = sizeof(response);
++
++	ret = wilco_ec_mailbox(ec, &msg);
++	if (ret < 0)
++		return ret;
++
++	*exists = response.status != 0xFF;
++
++	return 0;
++}
++
+ static int wilco_ec_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct wilco_ec_device *ec;
+ 	int ret;
++	bool kbbl_exists;
+ 
+ 	ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
+ 	if (!ec)
+@@ -89,8 +125,29 @@ static int wilco_ec_probe(struct platform_device *pdev)
+ 		goto unregister_debugfs;
+ 	}
+ 
++	/* Register child dev to be found by the keyboard backlight driver. */
++	ret = wilco_ec_keyboard_backlight_exists(ec, &kbbl_exists);
++	if (ret) {
++		dev_err(ec->dev,
++			"Failed checking keyboard backlight support: %d", ret);
++		goto unregister_rtc;
++	}
++	if (kbbl_exists) {
++		ec->kbbl_pdev = platform_device_register_data(dev,
++						"wilco-kbd-backlight",
++						PLATFORM_DEVID_AUTO, NULL, 0);
++		if (IS_ERR(ec->kbbl_pdev)) {
++			dev_err(dev,
++				"Failed to create keyboard backlight pdev\n");
++			ret = PTR_ERR(ec->kbbl_pdev);
++			goto unregister_rtc;
++		}
++	}
++
+ 	return 0;
+ 
++unregister_rtc:
++	platform_device_unregister(ec->rtc_pdev);
+ unregister_debugfs:
+ 	if (ec->debugfs_pdev)
+ 		platform_device_unregister(ec->debugfs_pdev);
+@@ -102,6 +159,7 @@ static int wilco_ec_remove(struct platform_device *pdev)
+ {
+ 	struct wilco_ec_device *ec = platform_get_drvdata(pdev);
+ 
++	platform_device_unregister(ec->kbbl_pdev);
+ 	platform_device_unregister(ec->rtc_pdev);
+ 	if (ec->debugfs_pdev)
+ 		platform_device_unregister(ec->debugfs_pdev);
+diff --git a/drivers/platform/chrome/wilco_ec/kbd_led_backlight.c b/drivers/platform/chrome/wilco_ec/kbd_led_backlight.c
+new file mode 100644
+index 000000000000..6468ec51fb51
+--- /dev/null
++++ b/drivers/platform/chrome/wilco_ec/kbd_led_backlight.c
+@@ -0,0 +1,168 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Keyboard backlight LED driver for the Wilco Embedded Controller
++ *
++ * Copyright 2019 Google LLC
++ *
++ * The EC is in charge of controlling the keyboard backlight on
++ * the Wilco platform. We expose a standard LED class device at
++ * /sys/class/leds/chromeos::kbd_backlight. Power Manager normally
++ * controls the backlight by writing a percentage in range [0, 100]
++ * to the brightness property. This driver is modeled after the
++ * standard Chrome OS keyboard backlight driver at
++ * drivers/platform/chrome/cros_kbd_led_backlight.c
++ *
++ * Some Wilco devices do not support a keyboard backlight. This
++ * is checked via wilco_ec_keyboard_backlight_exists() in the core driver,
++ * and a platform_device will only be registered by the core if
++ * a backlight is supported.
++ *
++ * After an EC reset the backlight could be in a non-PWM mode.
++ * Earlier in the boot sequence the BIOS should send a command to
++ * the EC to set the brightness, so things **should** be set up,
++ * but we double check in probe() as we query the initial brightness.
++ * If not set up, then we set the brightness to KBBL_DEFAULT_BRIGHTNESS.
++ *
++ * Since the EC will never change the backlight level of its own accord,
++ * we don't need to implement a brightness_get() method.
++ */
++
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/platform_data/wilco-ec.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++#define DRV_NAME		"wilco-kbd-backlight"
++
++#define KBBL_DEFAULT_BRIGHTNESS	0
++
++struct wilco_keyboard_led_data {
++	struct wilco_ec_device *ec;
++	struct led_classdev keyboard;
++};
++
++/* Send a request, get a response, and check that the response is good. */
++static int send_kbbl_msg(struct wilco_ec_device *ec,
++			 const struct wilco_ec_kbbl_msg *request,
++			 struct wilco_ec_kbbl_msg *response)
++{
++	struct wilco_ec_message msg;
++	int ret;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.type = WILCO_EC_MSG_LEGACY;
++	msg.request_data = &request;
++	msg.request_size = sizeof(request);
++	msg.response_data = &response;
++	msg.response_size = sizeof(response);
++
++	ret = wilco_ec_mailbox(ec, &msg);
++	if (ret < 0)
++		dev_err(ec->dev, "Failed sending brightness command: %d", ret);
++
++	if (response->status) {
++		dev_err(ec->dev,
++			"EC reported failure sending brightness command: %d",
++			response->status);
++		return -EIO;
++	}
++
++	return 0;
++}
++
++/* This may sleep because it uses wilco_ec_mailbox() */
++static int keyboard_led_set_brightness(struct led_classdev *cdev,
++				       enum led_brightness brightness)
++{
++	struct wilco_ec_kbbl_msg request;
++	struct wilco_ec_kbbl_msg response;
++	struct wilco_keyboard_led_data *data;
++
++	memset(&request, 0, sizeof(request));
++	request.command = WILCO_EC_COMMAND_KBBL;
++	request.subcmd = WILCO_KBBL_SUBCMD_GET_STATE;
++	request.mode = WILCO_KBBL_MODE_FLAG_PWM;
++	request.percent = brightness;
++
++	data = container_of(cdev, struct wilco_keyboard_led_data, keyboard);
++	return send_kbbl_msg(data->ec, &request, &response);
++}
++
++/*
++ * Get the current brightness, ensuring that we are in PWM mode. If not
++ * in PWM mode, then the current brightness is meaningless, so set the
++ * brightness to KBBL_DEFAULT_BRIGHTNESS.
++ *
++ * Return: Final brightness of the keyboard, or negative error code on failure.
++ */
++static int initialize_brightness(struct wilco_keyboard_led_data *data)
++{
++	struct wilco_ec_kbbl_msg request;
++	struct wilco_ec_kbbl_msg response;
++	int ret;
++
++	memset(&request, 0, sizeof(request));
++	request.command = WILCO_EC_COMMAND_KBBL;
++	request.subcmd = WILCO_KBBL_SUBCMD_GET_STATE;
++
++	ret = send_kbbl_msg(data->ec, &request, &response);
++	if (ret < 0)
++		return ret;
++
++	if (response.mode & WILCO_KBBL_MODE_FLAG_PWM)
++		return response.percent;
++
++	dev_warn(data->ec->dev, "Keyboard brightness not initialized by BIOS");
++	ret = keyboard_led_set_brightness(&data->keyboard,
++					  KBBL_DEFAULT_BRIGHTNESS);
++	if (ret < 0)
++		return ret;
++
++	return KBBL_DEFAULT_BRIGHTNESS;
++}
++
++static int keyboard_led_probe(struct platform_device *pdev)
++{
++	struct wilco_ec_device *ec = dev_get_drvdata(pdev->dev.parent);
++	struct wilco_keyboard_led_data *data;
++	int ret;
++
++	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->ec = ec;
++	/* This acts the same as the CrOS backlight, so use the same name */
++	data->keyboard.name = "chromeos::kbd_backlight";
++	data->keyboard.max_brightness = 100;
++	data->keyboard.flags = LED_CORE_SUSPENDRESUME;
++	data->keyboard.brightness_set_blocking = keyboard_led_set_brightness;
++	ret = initialize_brightness(data);
++	if (ret < 0)
++		return ret;
++	data->keyboard.brightness = ret;
++
++	ret = devm_led_classdev_register(&pdev->dev, &data->keyboard);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static struct platform_driver keyboard_led_driver = {
++	.driver = {
++		.name = DRV_NAME,
++	},
++	.probe = keyboard_led_probe,
++};
++module_platform_driver(keyboard_led_driver);
++
++MODULE_AUTHOR("Nick Crews <ncrews@chromium.org>");
++MODULE_DESCRIPTION("Wilco keyboard backlight LED driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:" DRV_NAME);
+diff --git a/include/linux/platform_data/wilco-ec.h b/include/linux/platform_data/wilco-ec.h
+index 1ff224793c99..c3965b7f397d 100644
+--- a/include/linux/platform_data/wilco-ec.h
++++ b/include/linux/platform_data/wilco-ec.h
+@@ -32,6 +32,7 @@
+  * @data_size: Size of the data buffer used for EC communication.
+  * @debugfs_pdev: The child platform_device used by the debugfs sub-driver.
+  * @rtc_pdev: The child platform_device used by the RTC sub-driver.
++ * @kbbl_pdev: The child pdev used by the keyboard backlight sub-driver.
+  */
+ struct wilco_ec_device {
+ 	struct device *dev;
+@@ -43,6 +44,7 @@ struct wilco_ec_device {
+ 	size_t data_size;
+ 	struct platform_device *debugfs_pdev;
+ 	struct platform_device *rtc_pdev;
++	struct platform_device *kbbl_pdev;
+ };
+ 
+ /**
+@@ -114,6 +116,42 @@ struct wilco_ec_message {
+ 	void *response_data;
+ };
+ 
++/* Constants and structs useful for keyboard backlight (KBBL) control */
++
++#define WILCO_EC_COMMAND_KBBL		0x75
++#define WILCO_KBBL_MODE_FLAG_PWM	BIT(1)	/* Set brightness by percent. */
++
++/**
++ * enum kbbl_subcommand - What action does the EC perform?
++ * @WILCO_KBBL_SUBCMD_GET_FEATURES: Request available functionality from EC.
++ * @WILCO_KBBL_SUBCMD_GET_STATE: Request current mode and brightness from EC.
++ * @WILCO_KBBL_SUBCMD_SET_STATE: Write mode and brightness to EC.
++ */
++enum kbbl_subcommand {
++	WILCO_KBBL_SUBCMD_GET_FEATURES = 0x00,
++	WILCO_KBBL_SUBCMD_GET_STATE = 0x01,
++	WILCO_KBBL_SUBCMD_SET_STATE = 0x02,
++};
++
++/**
++ * struct wilco_ec_kbbl_msg - Message to/from EC for keyboard backlight control.
++ * @command: Always WILCO_EC_COMMAND_KBBL.
++ * @status: Set by EC to 0 on success, 0xFF on failure.
++ * @subcmd: One of enum kbbl_subcommand.
++ * @mode: Bit flags for used mode, we want to use WILCO_KBBL_MODE_FLAG_PWM.
++ * @percent: Brightness in 0-100. Only meaningful in PWM mode.
++ */
++struct wilco_ec_kbbl_msg {
++	u8 command;
++	u8 status;
++	u8 subcmd;
++	u8 reserved3;
++	u8 mode;
++	u8 reserved5to8[4];
++	u8 percent;
++	u8 reserved10to15[6];
++} __packed;
++
+ /**
+  * wilco_ec_mailbox() - Send request to the EC and receive the response.
+  * @ec: Wilco EC device.
 -- 
-------------------
-Dan Murphy
+2.20.1
