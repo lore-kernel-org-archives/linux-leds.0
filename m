@@ -1,148 +1,79 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [RFC PATCH 2/5] dt: bindings: Add multicolor class dt bindings
- documention
-Date: Tue, 2 Apr 2019 22:40:12 +0200
-Message-ID: <660390a5-0c3a-cfcf-119d-817f86d1659d@gmail.com>
-References: <20190401173400.14238-1-dmurphy@ti.com>
- <20190401173400.14238-3-dmurphy@ti.com> <20190401212921.GB14681@amd>
- <f8655180-0c3a-7292-3a49-57d997473992@ti.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v2 2/3] dt-bindings: backlight: add lm3630a bindings
+Date: Tue, 2 Apr 2019 20:50:09 -0500
+Message-ID: <CAL_JsqKCJ0hwBX1P2abLjfMPZow3SJGO65PQ1Fa+Qz9DFHCXSg@mail.gmail.com>
+References: <20190401103034.21062-1-masneyb@onstation.org>
+ <20190401103034.21062-3-masneyb@onstation.org>
+ <68229e7f-4749-cde5-f541-793ab614084d@ti.com>
+ <20190402132440.GA10359@basecamp>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f8655180-0c3a-7292-3a49-57d997473992@ti.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: robh+dt@kernel.org, marek.behun@nic.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190402132440.GA10359@basecamp>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Brian Masney <masneyb@onstation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Jonathan Marek <jonathan@marek.ca>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
-On 4/2/19 1:40 PM, Dan Murphy wrote:
-> Pavel
-> 
-> On 4/1/19 4:29 PM, Pavel Machek wrote:
->> Hi!
->>
->>
->>>   .../bindings/leds/leds-class-multicolor.txt   | 140 ++++++++++++++++++
->>>   1 file changed, 140 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->>> new file mode 100644
->>> index 000000000000..4b1a26104c79
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->>> @@ -0,0 +1,140 @@
->>> +* Multicolor LED properties
->>> +
->>> +Multicolor LEDs can consist of a RGB, RGBW or a RGBA LED clusters.  These devices
->>> +can be grouped together and also provide a modeling mechanism so that the
->>> +cluster LEDs can vary in hue and intensity to produce a wide range of colors.
->>> +
->>> +The nodes and properties defined in this document are unique to the multicolor
->>> +LED class.  Common LED nodes and properties are inherited from the common.txt
->>> +within this documentation directory.
->>> +
->>> +Required LED Child properties:
->>> +	- color : This is the color ID of the LED.  Definitions can be found
->>> +		  in include/linux/leds/common.txt
->>> +
->>> +Optional LED Child properties:
->>> +	- available-brightness-models : This is the phandle to the brightness-model
->>> +					node(s) that this LED cluster can support.
->>> +
->>> +Required Brightness model properties
->>> +	- led-brightness-model : This flag alerts the device driver and class
->>> +				 code that this node is a brightness model node
->>> +				 and to process the properties differently.
->>> +
->>> +Required Brightness model child properties
->>> +	- model_name : This is the name of the model presented to the user.  This
->>> +		       should be a color that the LED cluster can produce for
->>> +		       the device it is attached to.
->>> +	- layout : This is the LED layout for the levels.  This layout will
->>> +		   determine the color order of the levels.  The layout and
->>> +		   level-x properties array should be the same size.
->>> +	- level-x : These are the values for the LEDs to produce the color that
->>> +		    is defined.  These values are placed in the array according
->>> +		    to the layout property.
->>
->>> +led-controller@30 {
->>> +	#address-cells = <1>;
->>> +	#size-cells = <0>;
->>> +	compatible = "ti,lp5024";
->>> +	reg = <0x29>;
->>> +
->>> +	lp5024_model_yellow: brightness-models {
->>> +		led-brightness-model;
->>> +		model@0 {
->>> +			model_name = "yellow";
->>> +			layout = <LED_COLOR_ID_RED
->>> +				  LED_COLOR_ID_GREEN
->>> +				  LED_COLOR_ID_BLUE>;
->>> +			level-1 = <255 227 40>;
->>> +			level-2 = <255 240 136>;
->>> +			level-3 = <255 247 196>;
->>> +		};
->>> +	};
->>
->> I don't think this works. RGB LED can show millions of colors. Do you
->> propose to have millions of entries in dts?
->> 									Pavel
->>
-> 
-> I have had off line conversations with Jacek about this brightness model node.
-> 
-> Your concern was actually one of my concerns as well.  Not only millions of entries but also having a huge
-> DT binary.
-> 
-> We wanted to RFC this to get feedback.  And this is why I have not added any support for this in the framework code.
-
-We all know that nobody sane is going to add millions of color entries.
-It is just a holistic solution to the problem, without the need to worry
-about different colors being produced by different LED elements, either
-due to their inherent properties, due to different parameters of LED
-controllers and board designs, or due to aging. Of course the last
-case will be possible to fix only by update of DTB blob.
-
-Regarding the possible size of DTB blob, I made some calculations and
-even compiled sample dts. Here is my reasoning from one of the replies
-to Dan during our private discussion:
-
--------------------------------------------------------------------------
-
-Brightness models will be reusable between modules. There could be
-arbitrary number of brightness models, limited only by maximum dtb blob
-size.
-
-In uboot it can be configured with "setenv fdt_high". For the dtbs
-appended to zImage for ARM the limit is 2MB AFAIK. Brightness models
-will be what consumes the most of memory with this proposed DT design.
-
-Let's calculate.
-
-4 bytes for single brightness value (we allow for values > 255).
-
-I think quite exaggerated exemplary quantities:
-
-number of colors in the mcled_dev: 10
-number of levels per model: 256
-number of models: 100
-
-bytes required = 4 * 10 * 256 * 100 = 1024000, i.e. less than 1MB
-
-And average mainline dtbs usually don't exceed 100kB, so I think
-we are safe. I've even just tried it out by adding such 10 models
-of 255 levels * 10 values * 4-byte to versatile-pb.dts and I got dtb
-size ~150kB.
-
-But to be sure it would be good to get early ack from DT guys.
-
--------------------------------------------------------------------------
-
-And now is this moment - we'd like to hear the feedback from DT guys.
-
--- 
-Best regards,
-Jacek Anaszewski
+T24gVHVlLCBBcHIgMiwgMjAxOSBhdCA4OjI0IEFNIEJyaWFuIE1hc25leSA8bWFzbmV5YkBvbnN0
+YXRpb24ub3JnPiB3cm90ZToKPgo+IE9uIFR1ZSwgQXByIDAyLCAyMDE5IGF0IDA3OjU2OjU1QU0g
+LTA1MDAsIERhbiBNdXJwaHkgd3JvdGU6Cj4gPiBUaGlzIHdvdWxkIGNvbm5lY3QgY29udHJvbCBi
+YW5rIEIgdG8gY29udHJvbCBiYW5rIEEuICBPciBqdXN0IHVzZSBhIGZsYWcgdG8gZGVub3RlIHRv
+IGNvbm5lY3QgdGhlbQo+ID4gYW5kIG5vdCB1c2UgbGVkLXNvdXJjZXMuICBCdXQgbGVkLXNvdXJj
+ZXMgaXMgdGhlIHByb3BlcnR5IG9mIGNob2ljZS4KPiA+Cj4gPiBsZWRAMCB7Cj4gPiAgICAgICBy
+ZWcgPSA8MD47Cj4gPiAgICAgICBsZWQtc291cmNlcyA9IDwgMCAxID47Cj4gPiAgICAgICBsYWJl
+bCA9ICJtYWluLWxjZCI7Cj4gPiAgICAgICBkZWZhdWx0LWJyaWdodG5lc3MgPSA8MjAwPjsKPiA+
+ICAgICAgIG1heC1icmlnaHRuZXNzID0gPDI1NT47Cj4gPiB9Owo+Cj4gT0ssIEkgc2VlLiBJIHdv
+bmRlcmVkIGhvdyB3ZSBjb3VsZCBkbyB0aGF0IGluIGRldmljZSB0cmVlLgo+Cj4gPiA+ICsgICAg
+cHJvcGVydGllczoKPiA+ID4gKyAgICAgIGxhYmVsOgo+ID4gPiArICAgICAgICBkZXNjcmlwdGlv
+bjogfAo+ID4gPiArICAgICAgICAgIFRoZSBsYWJlbCBmb3IgdGhpcyBMRUQuIElmIG9taXR0ZWQs
+IHRoZSBsYWJlbCBpcyB0YWtlbiBmcm9tIHRoZSBub2RlCj4gPiA+ICsgICAgICAgICAgbmFtZSAo
+ZXhjbHVkaW5nIHRoZSB1bml0IGFkZHJlc3MpLiBJdCBoYXMgdG8gdW5pcXVlbHkgaWRlbnRpZnkg
+YQo+ID4gPiArICAgICAgICAgIGRldmljZSwgaS5lLiBubyBvdGhlciBMRUQgY2xhc3MgZGV2aWNl
+IGNhbiBiZSBhc3NpZ25lZCB0aGUgc2FtZSBsYWJlbC4KPiA+ID4gKwo+ID4gPiArICAgICAgbGVk
+LXNvdXJjZXM6Cj4gPiA+ICsgICAgICAgIGRlc2NyaXB0aW9uOiB8Cj4gPiA+ICsgICAgICAgICAg
+TGlzdCBvZiBkZXZpY2UgY3VycmVudCBvdXRwdXRzIHRoZSBMRUQgaXMgY29ubmVjdGVkIHRvLgo+
+ID4gPiArICAgICAgICBhbGxPZjoKPiA+ID4gKyAgICAgICAgICAtICRyZWY6IC9zY2hlbWFzL3R5
+cGVzLnlhbWwjL2RlZmluaXRpb25zL3VpbnQzMi1hcnJheQo+ID4gPiArICAgICAgICAgIC0gbWlu
+SXRlbXM6IDEKPiA+ID4gKyAgICAgICAgICAgIG1heEl0ZW1zOiAyCj4gPiA+ICsgICAgICAgICAg
+ICBpdGVtczoKPiA+ID4gKyAgICAgICAgICAgICAgbWluaW11bTogMAo+ID4gPiArICAgICAgICAg
+ICAgICBtYXhpbXVtOiAxCj4gPiA+ICsKPiA+Cj4gPiBsYWJlbCBhbmQgbGVkLXNvdXJjZXMgYXJl
+IGFscmVhZHkgZGVmaW5lZCBpbiB0aGUgY29tbW9uLnR4dCBubyBuZWVkIHRvIHJlZGVmaW5lIHRo
+ZW0gaGVyZS4KPgo+IElmIEknbSBnb2luZyB0byB1c2UgdGhlIG5ldy1zdHlsZSBiaW5kaW5ncywg
+dGhlbiBJJ2xsIG5lZWQgdG8gY29udmVydAo+IGNvbW1vbi50eHQgb3ZlciB0byB1c2UgdGhlIG5l
+dyBmb3JtYXQgYXMgd2VsbCBzbyB0aGF0IHRoZSBhdXRvbWF0ZWQKPiBzY2hlbWEgdmFsaWRhdGlv
+bnMgd2lsbCB3b3JrLiBJJ20gd2lsbGluZyB0byBkbyB0aGF0IHdvcmsgaWYgdGhlcmUgaXMKPiBp
+bnRlcmVzdCBmcm9tIHRoZSBMRUQgLyBiYWNrbGlnaHQgbWFpbnRhaW5lcnMuIFRoZSBtYWluIGlz
+c3VlIGlzIHRoYXQKPiB0aGVyZSBhcmUgNjIgcmVmZXJlbmNlcyB0byB0aGUgZmlsZSBjb21tb24u
+dHh0IGluIHRoZSBkaXJlY3RvcnkKPiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+bGVkcy8uIFdvdWxkIHRoZSBtYWludGFpbmVycyBwcmVmZXI6CgpUaGF0IHdvdWxkIGJlIGF3ZXNv
+bWUuCgo+IC0gT25jZSBjb21tb24udHh0IGlzIGNvbnZlcnRlZCB0byBjb21tb24ueWFtbCwgbWFr
+ZSBjb21tb24udHh0IG9ubHkKPiAgIGhhdmUgYSBsaW5lIHN0YXRpbmcgdGhhdCB0aGUgY29tbW9u
+IGJpbmRpbmdzIHdlcmUgbW92ZWQgaW50bwo+ICAgY29tbW9uLnlhbWwuIFdlIGNhbiByZW1vdmUg
+dGhpcyBmaWxlIG9uY2UgYWxsIG9mIHRoZSBvdGhlciBiaW5kaW5ncwo+ICAgYXJlIGNvbnZlcnRl
+ZCB0byB0aGUgbmV3LXN0eWxlIGZvcm1hdC4KPgo+IC0gVXBkYXRlIGFsbCByZWZlcmVuY2VzIHRv
+IGNvbW1vbi50eHQgdG8gY29tbW9uLnlhbWwuICgxIHBhdGNoIG9yIDYyCj4gICBwYXRjaGVzPykK
+CkknZCBwcm9iYWJseSBnbyB3aXRoIHRoZSBmb3JtZXIgaWYgSSBoYWQgdG8gcGljay4gVGhlIHJl
+YWwKY29tcGxpY2F0aW9uIGhlcmUgaXMgdGhlcmUncyBzb21lIG90aGVyIGNoYW5nZXMgaW4gZmxp
+Z2h0LgoKPgo+IC0gT3IsIGp1c3QgZ28gd2l0aCB0aGUgb2xkZXItc3R5bGUgYmluZGluZyBmb3Jt
+YXQgZm9yIG5vdy4KCkknbSBva2F5IGlmIHlvdSB3cml0ZSBpdCB3aXRoIHRoZSBhc3N1bXB0aW9u
+IHRoYXQgdGhlIGNvbW1vbgpwcm9wZXJ0aWVzIGhhdmUgYSBzY2hlbWEgZXZlbiBpZiB0aGV5IGRv
+bid0IHlldC4gQWxsIHRoYXQgbWVhbnMgaXMgeW91CmRvbid0IG5lZWQgdG8gZGVmaW5lIHRoZSB0
+eXBlLCBidXQgb25seSB0aGUgYWRkaXRpb25hbCBjb25zdHJhaW50cy4KVGhlcmUgZG9lc24ndCBo
+YXZlIHRvIGJlIGEgcmVmZXJlbmNlIGJhY2sgdG8gdGhlIGNvbW1vbiBwcm9wZXJ0eQoodGhvc2Ug
+cmVmZXJlbmNlcyB0ZW5kIHRvIGdldCBicm9rZW4gYXMgd2UgY2FuIHNlZSBoZXJlKS4gV2l0aApl
+dmVyeXRoaW5nIGFzIHN0cnVjdHVyZWQgZGF0YSwgd2UgY291bGQgZXZlbiBnZW5lcmF0ZSByZWZl
+cmVuY2VzIG9yCmhhdmUgc29tZSB0b29sIHRoYXQgY2FuIGxvb2t1cCB0aGUgY29tbW9uIGRlZmlu
+aXRpb25zLgoKUm9iCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bA==
