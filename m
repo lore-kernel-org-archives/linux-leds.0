@@ -1,59 +1,78 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v8 02/11] dt-bindings: power: supply: add DT bindings for max77650
-Date: Wed,  3 Apr 2019 11:00:59 +0200
-Message-ID: <20190403090108.24788-3-brgl@bgdev.pl>
-References: <20190403090108.24788-1-brgl@bgdev.pl>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH 0/5] TI LMU rework
+Date: Wed, 3 Apr 2019 07:02:07 -0500
+Message-ID: <1037091e-1f4a-3922-16ee-282253dad7e0@ti.com>
+References: <20190325142403.30447-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190403090108.24788-1-brgl@bgdev.pl>
+In-Reply-To: <20190325142403.30447-1-dmurphy@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hello
 
-Add the DT binding document for the battery charger module of max77650.
+On 3/25/19 9:23 AM, Dan Murphy wrote:
+> All
+> 
+> I know that it has been a long time but I put some additional effort into this
+> code.  The TI LMU common code right now handles brightness and ramp up/down
+> setting for the LM3697.  This so far are the common features I could find.
+> 
+> The LM3697 driver has the ability to assign HVLED strings to specific control
+> banks as well as assigning different max brightnesses to these strings.
+> 
+> Fault monitoring was removed as the data sheet indicates that this is for
+> production tests only.
+> 
+> I have plans to add additional LED drivers to use the TI LMU but I figured trying
+> to add all of them at once would be a daunting review and probably wrought with 
+> problems.
+> 
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- .../power/supply/max77650-charger.txt         | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+I have a new device I need to add to the TI LMU code LM36274.
+This will use the MFD ti-lmu code and I will need to create the backlight and regulator drivers.
 
-diff --git a/Documentation/devicetree/bindings/power/supply/max77650-charger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-new file mode 100644
-index 000000000000..fef188144386
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-@@ -0,0 +1,27 @@
-+Battery charger driver for MAX77650 PMIC from Maxim Integrated.
-+
-+This module is part of the MAX77650 MFD device. For more details
-+see Documentation/devicetree/bindings/mfd/max77650.txt.
-+
-+The charger is represented as a sub-node of the PMIC node on the device tree.
-+
-+Required properties:
-+--------------------
-+- compatible:		Must be "maxim,max77650-charger"
-+
-+Optional properties:
-+--------------------
-+- min-microvolt:	Minimum CHGIN regulation voltage (in microvolts). Must be
-+			one of: 4000000, 4100000, 4200000, 4300000, 4400000,
-+			4500000, 4600000, 4700000.
-+- current-limit-microamp:	CHGIN input current limit (in microamps). Must
-+				be one of: 95000, 190000, 285000, 380000, 475000.
-+
-+Example:
-+--------
-+
-+	charger {
-+		compatible = "maxim,max77650-charger";
-+		min-microvolt = <4200000>;
-+		curr-lim-microamp = <285000>;
-+	};
+I need to know how to proceed.  I can base the work off of the LM3532 patchset or use what is in mainline
+or base it off this patchset.  The LM36274 would use the ti-lmu-led-common code for brightness setting but the
+ramping times are different.
+
+Please let me know how to proceed.
+
+Dan
+
+> Dan
+> 
+> Dan Murphy (5):
+>   dt-bindings: mfd: Update the ramp up/down property
+>   leds: TI LMU: Add common code for TI LMU devices
+>   dt-bindings: ti-lmu: Modify dt bindings for the LM3697
+>   mfd: ti-lmu: Remove support for LM3697
+>   leds: lm3697: Introduce the lm3697 driver
+> 
+>  .../devicetree/bindings/leds/leds-lm3697.txt  |  77 ++++
+>  .../devicetree/bindings/mfd/ti-lmu.txt        |  42 +-
+>  drivers/leds/Kconfig                          |  14 +
+>  drivers/leds/Makefile                         |   2 +
+>  drivers/leds/leds-lm3697.c                    | 401 ++++++++++++++++++
+>  drivers/leds/ti-lmu-led-common.c              | 131 ++++++
+>  drivers/mfd/Kconfig                           |   2 +-
+>  drivers/mfd/ti-lmu.c                          |  17 -
+>  include/linux/mfd/ti-lmu-register.h           |  44 --
+>  include/linux/mfd/ti-lmu.h                    |   1 -
+>  include/linux/ti-lmu-led-common.h             |  44 ++
+>  11 files changed, 682 insertions(+), 93 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>  create mode 100644 drivers/leds/leds-lm3697.c
+>  create mode 100644 drivers/leds/ti-lmu-led-common.c
+>  create mode 100644 include/linux/ti-lmu-led-common.h
+> 
+
+
 -- 
-2.21.0
+------------------
+Dan Murphy
