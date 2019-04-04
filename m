@@ -1,56 +1,56 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 4/5] mfd: ti-lmu: Remove support for LM3697
-Date: Thu, 4 Apr 2019 07:09:15 -0500
-Message-ID: <6ebe491c-f124-2849-2e3a-0209dd5a2620@ti.com>
-References: <20190325142403.30447-1-dmurphy@ti.com>
- <20190325142403.30447-5-dmurphy@ti.com> <20190404081736.GM6830@dell>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 05/25] dt-bindings: leds: Add function and color
+ properties
+Date: Thu, 4 Apr 2019 15:21:52 +0200
+Message-ID: <20190404132152.GA6124@xo-6d-61-c0.localdomain>
+References: <20190310182836.20841-1-jacek.anaszewski@gmail.com>
+ <20190310182836.20841-6-jacek.anaszewski@gmail.com>
+ <98c1a41e-77bb-5ffd-b5b3-772a28c0f0a6@ti.com>
+ <796a13a7-fb8c-9b5b-6bd5-dfb7458731fe@gmail.com>
+ <232b6154-cccd-c1f9-80c3-438098f3ab08@gmail.com>
+ <20190328002341.GB22901@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190404081736.GM6830@dell>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190328002341.GB22901@bogus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-Lee
 
-Thanks for the review
+> > > > > +- function: LED functon. Use one of the LED_FUNCTION_* prefixed
+> > > > > definitions
+> > > > > +        from the header include/dt-bindings/leds/common.h.
+> > > > > +        If there is no matching LED_FUNCTION available, add a new one.
+> > > > > +- color : Color of the LED. Use one of the LED_COLOR_NAME_*
+> > > > > prefixed definitions
+> > > > > +        from the header include/dt-bindings/leds/common.h.
+> > > > > +        If there is no matching LED_COLOR_NAME available, add a
+> > > > > new one.
+> > > > > +
+> > > > 
+> > > > I am assuming multi color can re-use this property as well?
+> > > 
+> > > I intended it to be a string, but indeed it would be better if we will
+> > > make it an integer to be consistent with the discussed LED multi color
+> > > design.
+> > 
+> > Going further, I wonder if it would make sense to make function also
+> > an integer. This way we could enforce use of LED functions known
+> > to kernel.
+> 
+> I think if we did that, then we'd just need to keep label. I think we 
+> need to allow for populating a string in DT matching a sticker next to 
+> an LED on a device.
 
-On 4/4/19 3:17 AM, Lee Jones wrote:
-> On Mon, 25 Mar 2019, Dan Murphy wrote:
-> 
->> Remove support for the LM3697 from the ti-lmu
-> 
-> Bit of an odd place to insert a line feed.
-> 
+Well, there's often icon next to the LED... and we already use "label" for
+something else. New property might make sense, but again, icons will make it tricky.
 
-I will fix in v2.
-
->> driver in favor of a dedicated LED driver.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>  drivers/leds/Kconfig                |  2 +-
->>  drivers/mfd/Kconfig                 |  2 +-
->>  drivers/mfd/ti-lmu.c                | 17 -----------
->>  include/linux/mfd/ti-lmu-register.h | 44 -----------------------------
->>  include/linux/mfd/ti-lmu.h          |  1 -
->>  5 files changed, 2 insertions(+), 64 deletions(-)
-> 
-> I'm fine with the patch.
-> 
-> Can you edit drivers/leds/Kconfig as part of a separate patch please?
-> Keeping this in sync with this change is not critical and would add a
-> whole bunch of process which we can really do without.
-> 
-
-Ack.  I will add this when I add the LM3697 config in the Kconfig
-
-Dan
+									Pavel
 
 -- 
-------------------
-Dan Murphy
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
