@@ -1,108 +1,87 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 3/3] platform/chrome: Standardize Chrome OS keyboard
- backlight name
-Date: Thu, 4 Apr 2019 22:20:42 +0200
-Message-ID: <20190404202042.GF29984@amd>
-References: <CABXOdTeFnohENJrZ+=_W-EgsrKWttSFYKoR=LaCwzbhEbaOxzw@mail.gmail.com>
- <CAE_wzQ8xS+zvSKNVs1v4B_y3NDu2qB65p_hD+j=qGHFxQWOmSg@mail.gmail.com>
- <CAHX4x87cQLhZOEDxwBJs=UkDxwGxZOELGjHtp6aFLBWmjyQAFQ@mail.gmail.com>
- <CAE_wzQ8k4vO4yLsr2WNxYQ=-6JDmTsj6OxD0f3P=k8kJYFOD9Q@mail.gmail.com>
- <20190404185919.GB27340@amd>
- <CAE_wzQ-XuK7WOyPm6yXsmjp7z0=T92mMrfn1TVaavaLejcYVGA@mail.gmail.com>
- <20190404191931.GA29984@amd>
- <CAE_wzQ8y8i7C+_tv0CdnbUw0r21g1ggv2YUuzCog1xABivEvWA@mail.gmail.com>
- <20190404200658.GD29984@amd>
- <CAE_wzQ8WcMCzYqvxA_JBZKNza7ca3QE-VShmMxv5++_4F8RR=g@mail.gmail.com>
+From: Dmitry Torokhov <dtor@google.com>
+Subject: Re: [PATCH] platform/chrome: Add Wilco EC keyboard backlight LEDs support
+Date: Thu, 4 Apr 2019 13:22:32 -0700
+Message-ID: <CAE_wzQ-iOkM08u42Q3v0wcJhS_bo1UY-vt1qMwyvm4W7kSXQ9A@mail.gmail.com>
+References: <20190308203801.57920-1-ncrews@chromium.org> <20190308210843.GA16125@amd>
+ <CAHX4x85=_76=Kyepf3Nw++4yVKOZujhLsonzaicZOnY5fi-Pfw@mail.gmail.com>
+ <20190404112415.GB18653@amd> <CAE_wzQ96MkKb7uSoVBNkOZexevUKPf4jHyQZneg7YNCEs7SHfQ@mail.gmail.com>
+ <20190404190326.GC27340@amd> <CAE_wzQ8mr1OMKB+ASfsCdGcs70YrzEMN4Htfg1+O51=ByhXchw@mail.gmail.com>
+ <20190404192331.GB29984@amd> <CAE_wzQ_4Jb+4dDTFGQ7+sbQ-M8Qm8U_k7ug2DoZKKjTbf6pPTQ@mail.gmail.com>
+ <20190404201103.GE29984@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="R6sEYoIZpp9JErk7"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAE_wzQ8WcMCzYqvxA_JBZKNza7ca3QE-VShmMxv5++_4F8RR=g@mail.gmail.com>
+In-Reply-To: <20190404201103.GE29984@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dtor@google.com>
-Cc: Nick Crews <ncrews@chromium.org>, Guenter Roeck <groeck@google.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Nick Crews <ncrews@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Daniel Erat <derat@google.com>, Guenter Roeck <groeck@google.com>
 List-Id: linux-leds@vger.kernel.org
 
-
---R6sEYoIZpp9JErk7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu 2019-04-04 13:13:34, Dmitry Torokhov wrote:
-> On Thu, Apr 4, 2019 at 1:06 PM Pavel Machek <pavel@ucw.cz> wrote:
-> >
-> > Hi!
-> >
-> > > > > It is *function* and maybe color that userspace is interested in,=
- and
-> > > > > here we have proper standardization in form of "kbd_backlight". D=
-evice
-> > > > > name is, well, device name. It should uniquely identify the devic=
-e led
-> > > > > is attached to, but otherwise is rarely interesting. If userspace=
- is
-> > > > > really concerned what kind of keyboard backlight it is it should
-> > > > > investigate parent device(s) and see what they end up with.
-> > > >
-> > > > That does not work. Userspace wants to know if it is internal keybo=
-ard
-> > > > or USB keyboard, not what kind of i2c controller the LED is connect=
-ed
-> > > > to.
+On Thu, Apr 4, 2019 at 1:11 PM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> On Thu 2019-04-04 13:07:39, Dmitry Torokhov wrote:
+> > On Thu, Apr 4, 2019 at 12:23 PM Pavel Machek <pavel@ucw.cz> wrote:
 > > >
-> > > Why does userspace want to know it?
-> >
-> > For example to turn off backlight on internal keyboard when the lid is =
-closed.
->=20
-> Would you not want to turn off external as well?
-
-Not really. If I'm using machine with lid closed, external monitor and
-USB keyboard attached, I want to control backlight of USB keyboard,
-but backlight of internal keyboard can stay off.
-
-> And what to do if internal keyboard is not platform but USB? Like
-> Google "Whiskers"? (I am not sure why you decided to drop my mention
-> of internal USB keyboards completely off your reply).
-
-I don't have answers for everything. Even if you have USB keyboard, you'll
-likely still have backlight connected to embedded controller. If not,
-then maybe you have exception userland needs to know about.
-
-Still better than making everything an exception.
-
-> > > > grep for platform::mic_mute .
-> > > >
-> > > > (And platform is even pretty good match for how the LED is connected
-> > > > in your case).
+> > > Hi!
 > > >
-> > > Until we get a secondary interface that is also "platform"...
+> > > > > > > Yeah, well, we not let the cros_kbd_led_backlight.c use chromeos:: in
+> > > > > > > the first place. But it happened. We want all backlights for the
+> > > > > > > system keyboard to use common name, and "chromeos" is not really
+> > > > > > > suitable for that. "platform" is.
+> > > > > >
+> > > > > > Pavel, who exactly wants this and why? Looking at today's -next I see:
+> > > > > >
+> > > > > > dtor@dtor-ws:~/kernel/linux-next ((next-20190404))$ git grep
+> > > > > > "::kbd_backlight" | wc -l
+> > > > > > 18
+> > > > > > dtor@dtor-ws:~/kernel/linux-next ((next-20190404))$ git grep
+> > > > > > "platform::kbd_backlight" | wc -l
+> > > > > > 0
+> > > > > >
+> > > > > > so there isn't a single instance of "platform::kbd_backlight" and we
+> > > > > > definitely not changing existing names.
+> > > > >
+> > > > > Yeah, we made mistakes in the past. We _don't_ want userspace to have
+> > > > > ever growing list of names for userspace to follow.
+> > > > >
+> > > > > Backlight of internal keyboard is pretty common concept and there
+> > > > > should be one name for it.
+> > > >
+> > > > It is the *function* that is interesting to userspace, not full name,
+> > > > and we have proper standardization there.
+> > >
+> > > Well, if full name is not interesting, as you argue, why do we have
+> > > this discussion?
 > >
-> > How would that happen?
->=20
-> It won't happen on Wilco, but you can't imagine that several blocks
-> get reused in the same device and they end up clashing?
+> > Because I need to understand why you believe that device name for
+> > kbd_backlight matters, and having wilco::kbd_backlight is a bad idea,
+> > but, for example, having max77650::kbd_backlight is perfectly fine if
+> > somebody decided to wire it in this way.
+>
+> max77650::kbd_backlight is not fine and we'll try to prevent that in
+> future.
 
-In the end, there will be just one internal keyboard backlight, right?
+You do not control DTS for systems though.
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+>
+> We want one name for internal keyboard backlight. What exactly that
+> name is is not _that_ important, but platform::kbd_backlight seems
+> like reasonable choice.
 
---R6sEYoIZpp9JErk7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+And I am trying to show that depending on device and product (as in
+entire computing device) the same driver could be used in multitude of
+ways and expecting that all devices that can be internal will always
+have "platform::" prefix is not realistic. It will also fail if you
+have multiples of devices, as you need unique names, and that is what
+<device> component in name provides you with.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+You need smarter userspace to implement policy that is best suited for
+your product. Maybe you can help it by adding additional properties to
+LED devices, like we have connection_type in USB ports, to tell
+whether device is internal or not, but I'd leave the naming alone.
 
-iEYEARECAAYFAlymZxoACgkQMOfwapXb+vLn5QCfSbNvjo91bsUzD0yC/OdKMe60
-gKoAnjqsLnPZ538cfiN5/TCl3hIXhsG7
-=Dr/v
------END PGP SIGNATURE-----
 
---R6sEYoIZpp9JErk7--
+Thanks.
+
+-- 
+Dmitry
