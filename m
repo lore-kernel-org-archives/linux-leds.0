@@ -1,99 +1,99 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 3/3] platform/chrome: Standardize Chrome OS keyboard
- backlight name
-Date: Thu, 4 Apr 2019 20:59:19 +0200
-Message-ID: <20190404185919.GB27340@amd>
-References: <20190404171007.160878-1-ncrews@chromium.org>
- <20190404171007.160878-3-ncrews@chromium.org>
- <CABXOdTeFnohENJrZ+=_W-EgsrKWttSFYKoR=LaCwzbhEbaOxzw@mail.gmail.com>
- <CAE_wzQ8xS+zvSKNVs1v4B_y3NDu2qB65p_hD+j=qGHFxQWOmSg@mail.gmail.com>
- <CAHX4x87cQLhZOEDxwBJs=UkDxwGxZOELGjHtp6aFLBWmjyQAFQ@mail.gmail.com>
- <CAE_wzQ8k4vO4yLsr2WNxYQ=-6JDmTsj6OxD0f3P=k8kJYFOD9Q@mail.gmail.com>
+Subject: Re: [PATCH] platform/chrome: Add Wilco EC keyboard backlight LEDs
+ support
+Date: Thu, 4 Apr 2019 21:03:26 +0200
+Message-ID: <20190404190326.GC27340@amd>
+References: <20190308203801.57920-1-ncrews@chromium.org>
+ <20190308210843.GA16125@amd>
+ <CAHX4x85=_76=Kyepf3Nw++4yVKOZujhLsonzaicZOnY5fi-Pfw@mail.gmail.com>
+ <20190404112415.GB18653@amd>
+ <CAE_wzQ96MkKb7uSoVBNkOZexevUKPf4jHyQZneg7YNCEs7SHfQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="DKU6Jbt7q3WqK7+M"
+        protocol="application/pgp-signature"; boundary="bKyqfOwhbdpXa4YI"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAE_wzQ8k4vO4yLsr2WNxYQ=-6JDmTsj6OxD0f3P=k8kJYFOD9Q@mail.gmail.com>
+In-Reply-To: <CAE_wzQ96MkKb7uSoVBNkOZexevUKPf4jHyQZneg7YNCEs7SHfQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Torokhov <dtor@google.com>
-Cc: Nick Crews <ncrews@chromium.org>, Guenter Roeck <groeck@google.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>
+Cc: Nick Crews <ncrews@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Daniel Erat <derat@google.com>, Guenter Roeck <groeck@google.com>
 List-Id: linux-leds@vger.kernel.org
 
 
---DKU6Jbt7q3WqK7+M
+--bKyqfOwhbdpXa4YI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu 2019-04-04 11:55:27, Dmitry Torokhov wrote:
-> On Thu, Apr 4, 2019 at 11:41 AM Nick Crews <ncrews@chromium.org> wrote:
+On Thu 2019-04-04 09:13:27, Dmitry Torokhov wrote:
+> On Thu, Apr 4, 2019 at 4:24 AM Pavel Machek <pavel@ucw.cz> wrote:
 > >
-> > On Thu, Apr 4, 2019 at 11:43 AM Dmitry Torokhov <dtor@google.com> wrote:
+> > On Mon 2019-03-11 09:29:06, Nick Crews wrote:
+> > > Thanks for looking this over. I will fix most of your concerns, but
+> > > have one question.
 > > >
-> > > On Thu, Apr 4, 2019 at 10:36 AM Guenter Roeck <groeck@google.com> wro=
-te:
+> > > On Fri, Mar 8, 2019 at 2:08 PM Pavel Machek <pavel@ucw.cz> wrote:
 > > > >
-> > > > On Thu, Apr 4, 2019 at 10:11 AM Nick Crews <ncrews@chromium.org> wr=
-ote:
+> > > > On Fri 2019-03-08 13:38:02, Nick Crews wrote:
+> > > > > This patch is meant to be applied on top of the for-next
+> > > > > branch of the platform/chrome repository, as it uses some of
+> > > > > the code staged there.
 > > > > >
-> > > > > We want all backlights for the system keyboard to
-> > > > > use a common name, so the name "platform::kbd_backlight"
-> > > > > would be better than the current "chromeos::kbd_backlight"
-> > > > > name. Normally this wouldn't be worth changing, but the new
-> > > > > Wilco keyboard backlight driver uses the "platform" name.
-> > > > > We want to make it so all Chrome OS devices are consistent,
-> > > > > so we'll change the name here too.
-> > > > >
+> > > > > The EC is in charge of controlling the keyboard backlight on
+> > > > > the Wilco platform. We expose a standard LED class device at
+> > > > > /sys/class/leds/wilco::kbd_backlight. This driver is modeled
+> > > > > after the standard Chrome OS keyboard backlight driver at
+> > > > > drivers/platform/chrome/cros_kbd_led_backlight.c
 > > > >
-> > > > Wondering - who is the "we" you are talking about ?
-> >
-> > You're right, I should have been more precise.
-> > I was referring to Pavel, Enric, and myself. Pavel had this opinion her=
-e:
-> > https://lkml.org/lkml/2019/4/4/1040. I don't know what Pavel meant by "=
-we"
-> > in that comment, but I would guess that could mean the other LED mainta=
-iners
-> > as well? I talked with Enric 1:1 and he didn't see the problem with cha=
-nging it,
-> > though perhaps he was only considering our use of the LED via powerd,
-> > and not users in general. I'm guessing Pavel's and Enric's meanings tho=
-ugh,
-> > excuse me if I am misinterpreting.
-> >
+> > > > Can you make it "platform::kbd_backlight"? We want some consistency
+> > > > there.
 > > >
-> > > This also has a potential of breaking existing setups if somebody did
-> > > happen to match on entire name instead of suffix. Such changes have to
-> > > be considered very carefully; at this point I am against of doing
-> > > this.
+> > > The analogous name in the standard driver
+> > > drivers/platform/chrome/cros_kbd_led_backlight.c is
+> > > "chromeos::kbd_backlight", and I thought "wilco" was a better
+> > > substitute for "chromeos" than "platform" would be. What other thing
+> > > are you saying "platform" would be consistent with?
 > >
-> > Would it make sense to keep the old name as is, and only make the new
-> > Wilco name begin with "platform:"? What would you think is best?
+> > Yeah, well, we not let the cros_kbd_led_backlight.c use chromeos:: in
+> > the first place. But it happened. We want all backlights for the
+> > system keyboard to use common name, and "chromeos" is not really
+> > suitable for that. "platform" is.
 >=20
-> Given that we do not have a single instance of platform::kbd_backlight
-> in kernel at this time I have no idea why Pavel is trying to push this
-> for Wilco driver.
+> Pavel, who exactly wants this and why? Looking at today's -next I see:
+>=20
+> dtor@dtor-ws:~/kernel/linux-next ((next-20190404))$ git grep
+> "::kbd_backlight" | wc -l
+> 18
+> dtor@dtor-ws:~/kernel/linux-next ((next-20190404))$ git grep
+> "platform::kbd_backlight" | wc -l
+> 0
+>=20
+> so there isn't a single instance of "platform::kbd_backlight" and we
+> definitely not changing existing names.
 
-See the documentation in the email I sent few seconds ago. I hope it
-explains my reasoning, if not, I'll explain it.
+Yeah, we made mistakes in the past. We _don't_ want userspace to have
+ever growing list of names for userspace to follow.
+
+Backlight of internal keyboard is pretty common concept and there
+should be one name for it.
 
 								Pavel
+
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---DKU6Jbt7q3WqK7+M
+--bKyqfOwhbdpXa4YI
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlymVAcACgkQMOfwapXb+vKuIgCfQ4vAKLf3CJRwuVbZyvRR1gjE
-/FEAoIV1bUD24tCqtjsj6OhV3dG0cvrF
-=SDUB
+iEYEARECAAYFAlymVP4ACgkQMOfwapXb+vJ8iQCeNEvn/1nF28e8kOOtj+8fFCoI
+nHgAniQXBdkEeprilLGs6A11hHMOYOHn
+=gWZD
 -----END PGP SIGNATURE-----
 
---DKU6Jbt7q3WqK7+M--
+--bKyqfOwhbdpXa4YI--
