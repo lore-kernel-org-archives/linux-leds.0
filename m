@@ -1,92 +1,50 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 1/5] dt-bindings: mfd: Update the ramp up/down property
-Date: Thu, 4 Apr 2019 09:19:07 +0100
-Message-ID: <20190404081907.GO6830@dell>
-References: <20190325142403.30447-1-dmurphy@ti.com>
- <20190325142403.30447-2-dmurphy@ti.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v4 2/2] platform/chrome: Add Wilco EC keyboard backlight
+ LEDs support
+Date: Thu, 4 Apr 2019 13:17:31 +0200
+Message-ID: <20190404111731.GA18653@amd>
+References: <20190403212757.132684-1-ncrews@chromium.org>
+ <20190403212757.132684-2-ncrews@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190325142403.30447-2-dmurphy@ti.com>
+In-Reply-To: <20190403212757.132684-2-ncrews@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Nick Crews <ncrews@chromium.org>
+Cc: enric.balletbo@collabora.com, bleung@chromium.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, alexandre.belloni@bootlin.com, a.zummo@towertech.it, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, dlaurie@chromium.org, sjg@google.com, groeck@google.com, dtor@google.com
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, 25 Mar 2019, Dan Murphy wrote:
 
-> Modify the ramp-up/down property and add the property description
-> to the binding.
+--2oS5YaxWCcQjTEyO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is the 'what', but where is the 'why'?
+On Wed 2019-04-03 15:27:58, Nick Crews wrote:
+> The EC is in charge of controlling the keyboard backlight on
+> the Wilco platform. We expose a standard LED class device at
+> /sys/class/leds/chromeos::kbd_backlight. This driver is modeled
 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  .../devicetree/bindings/mfd/ti-lmu.txt        | 20 ++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> index 980394d701a7..d9d529de6dc1 100644
-> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> @@ -25,6 +25,12 @@ Required properties:
->  
->  Optional property:
->    - enable-gpios: A GPIO specifier for hardware enable pin.
-> +  - ramp-up-ms: Current ramping from one brightness level to
-> +		the a higher brightness level.
-> +		Range from 2048 us - 117.44 s
-> +  - ramp-down-ms: Current ramping from one brightness level to
-> +		  the a lower brightness level.
-> +		  Range from 2048 us - 117.44 s
->  
->  Required node:
->    - backlight: All LMU devices have backlight child nodes.
-> @@ -90,7 +96,7 @@ lm3631@29 {
->  
->  		lcd_bl {
->  			led-sources = <0 1>;
-> -			ramp-up-msec = <300>;
-> +			ramp-up-ms = <300>;
->  		};
->  	};
->  };
-> @@ -152,15 +158,15 @@ lm3633@36 {
->  		main {
->  			label = "main_lcd";
->  			led-sources = <1 2>;
-> -			ramp-up-msec = <500>;
-> -			ramp-down-msec = <500>;
-> +			ramp-up-ms = <500>;
-> +			ramp-down-ms = <500>;
->  		};
->  
->  		front {
->  			label = "front_lcd";
->  			led-sources = <0>;
-> -			ramp-up-msec = <1000>;
-> -			ramp-down-msec = <0>;
-> +			ramp-up-ms = <1000>;
-> +			ramp-down-ms = <0>;
->  		};
->  	};
->  
-> @@ -212,8 +218,8 @@ lm3697@36 {
->  
->  		lcd {
->  			led-sources = <0 1 2>;
-> -			ramp-up-msec = <200>;
-> -			ramp-down-msec = <200>;
-> +			ramp-up-ms = <200>;
-> +			ramp-down-ms = <200>;
->  		};
->  	};
->  
+Please use platform::kbd_backlight.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--2oS5YaxWCcQjTEyO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlyl58sACgkQMOfwapXb+vJt3QCghaHErLDMJqTNyiuOdDItOitT
+GksAn3e8UW+bDBwdh66UJ0k4HR+I51RZ
+=yv61
+-----END PGP SIGNATURE-----
+
+--2oS5YaxWCcQjTEyO--
