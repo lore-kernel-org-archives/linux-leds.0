@@ -1,28 +1,59 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 2/5] leds: TI LMU: Add common code for TI LMU devices
-Date: Thu, 4 Apr 2019 15:22:30 +0200
-Message-ID: <20190404132230.GB6190@xo-6d-61-c0.localdomain>
-References: <20190325142403.30447-1-dmurphy@ti.com>
- <20190325142403.30447-3-dmurphy@ti.com>
+From: Nick Crews <ncrews@chromium.org>
+Subject: Re: [PATCH] platform/chrome: Add Wilco EC keyboard backlight LEDs support
+Date: Thu, 4 Apr 2019 08:11:15 -0600
+Message-ID: <CAHX4x87zDrFMc1z0vbSE5+frPy+Ri9YD=9LtKXtsaGwhtXOrJQ@mail.gmail.com>
+References: <20190308203801.57920-1-ncrews@chromium.org> <20190308210843.GA16125@amd>
+ <CAHX4x85=_76=Kyepf3Nw++4yVKOZujhLsonzaicZOnY5fi-Pfw@mail.gmail.com> <20190404112415.GB18653@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190325142403.30447-3-dmurphy@ti.com>
+In-Reply-To: <20190404112415.GB18653@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Daniel Erat <derat@google.com>, Guenter Roeck <groeck@google.com>, Dmitry Torokhov <dtor@google.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Mon 2019-03-25 09:24:00, Dan Murphy wrote:
-> Create a TI LMU common framework for TI LMU devices that share
-> common features.
-> 
-> Currently the runtime ramp and brightness setting have
-> been identified as common features with common register settings.
-> 
-> This work is derived from Milo Kims TI LMU MFD code.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+On Thu, Apr 4, 2019 at 5:24 AM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> On Mon 2019-03-11 09:29:06, Nick Crews wrote:
+> > Thanks for looking this over. I will fix most of your concerns, but
+> > have one question.
+> >
+> > On Fri, Mar 8, 2019 at 2:08 PM Pavel Machek <pavel@ucw.cz> wrote:
+> > >
+> > > On Fri 2019-03-08 13:38:02, Nick Crews wrote:
+> > > > This patch is meant to be applied on top of the for-next
+> > > > branch of the platform/chrome repository, as it uses some of
+> > > > the code staged there.
+> > > >
+> > > > The EC is in charge of controlling the keyboard backlight on
+> > > > the Wilco platform. We expose a standard LED class device at
+> > > > /sys/class/leds/wilco::kbd_backlight. This driver is modeled
+> > > > after the standard Chrome OS keyboard backlight driver at
+> > > > drivers/platform/chrome/cros_kbd_led_backlight.c
+> > >
+> > > Can you make it "platform::kbd_backlight"? We want some consistency
+> > > there.
+> >
+> > The analogous name in the standard driver
+> > drivers/platform/chrome/cros_kbd_led_backlight.c is
+> > "chromeos::kbd_backlight", and I thought "wilco" was a better
+> > substitute for "chromeos" than "platform" would be. What other thing
+> > are you saying "platform" would be consistent with?
+>
+> Yeah, well, we not let the cros_kbd_led_backlight.c use chromeos:: in
+> the first place. But it happened. We want all backlights for the
+> system keyboard to use common name, and "chromeos" is not really
+> suitable for that. "platform" is.
+>
+>                                                                         Pavel
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+That reasoning makes sense Pavel. I don't think we care that much
+about what the prefix actually is. The userspace daemon only looks
+for something that matches "*:kbd_backlight". Therefore, I think we
+should change both of these to use "platform::kbd_backlight".
+Enric agrees with me here, any other concerns? If I don't hear anything
+I'll add that change to this patch as well and re-send it.
+
+Thanks,
+Nick
