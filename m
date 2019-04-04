@@ -1,31 +1,28 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v8 09/11] leds: max77650: add LEDs support
-Date: Thu, 4 Apr 2019 15:22:26 +0200
-Message-ID: <20190404132226.GA6190@xo-6d-61-c0.localdomain>
-References: <20190403090108.24788-1-brgl@bgdev.pl>
- <20190403090108.24788-10-brgl@bgdev.pl>
+Subject: Re: [PATCH 2/5] leds: TI LMU: Add common code for TI LMU devices
+Date: Thu, 4 Apr 2019 15:22:30 +0200
+Message-ID: <20190404132230.GB6190@xo-6d-61-c0.localdomain>
+References: <20190325142403.30447-1-dmurphy@ti.com>
+ <20190325142403.30447-3-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190403090108.24788-10-brgl@bgdev.pl>
+In-Reply-To: <20190325142403.30447-3-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed 2019-04-03 11:01:06, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon 2019-03-25 09:24:00, Dan Murphy wrote:
+> Create a TI LMU common framework for TI LMU devices that share
+> common features.
 > 
-> This adds basic support for LEDs for the max77650 PMIC. The device has
-> three current sinks for driving LEDs.
+> Currently the runtime ramp and brightness setting have
+> been identified as common features with common register settings.
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> This work is derived from Milo Kims TI LMU MFD code.
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
 
 Acked-by: Pavel Machek <pavel@ucw.cz>
-
-
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
