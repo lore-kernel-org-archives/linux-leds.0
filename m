@@ -1,69 +1,68 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 3/5] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3697
-Date: Thu, 4 Apr 2019 14:34:49 -0500
-Message-ID: <cdd8693f-8293-6336-6f0a-38a5d4fa7151@ti.com>
-References: <20190325142403.30447-1-dmurphy@ti.com>
- <20190325142403.30447-4-dmurphy@ti.com>
- <4e38128a-fa8f-aa94-284f-2c5a4906e17d@gmail.com>
- <83e31761-714d-db83-8c35-cf45243cb50b@ti.com>
- <4983e0b6-ae2b-9d15-0408-fdb23869711a@gmail.com>
- <28007702-cee0-079b-ccda-864f98a7b520@ti.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v5 2/3] platform/chrome: Add Wilco EC keyboard backlight
+ LEDs support
+Date: Thu, 4 Apr 2019 21:52:10 +0200
+Message-ID: <20190404195210.GC29984@amd>
+References: <20190404171007.160878-1-ncrews@chromium.org>
+ <20190404171007.160878-2-ncrews@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="/Uq4LBwYP4y1W6pO"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <28007702-cee0-079b-ccda-864f98a7b520@ti.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190404171007.160878-2-ncrews@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, pavel@ucw.cz
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Nick Crews <ncrews@chromium.org>
+Cc: enric.balletbo@collabora.com, bleung@chromium.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, alexandre.belloni@bootlin.com, a.zummo@towertech.it, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, dlaurie@chromium.org, sjg@google.com, groeck@google.com, dtor@google.com
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
 
-On 4/4/19 2:27 PM, Dan Murphy wrote:
-<snip>
+--/Uq4LBwYP4y1W6pO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>>>
->>>
->>> Actually I was thinking this property could move to common.txt
->>> LM3697 would use it and it is also defined in leds-pwm.txt leds-netxbig.txt
->>
->> It was considered back in 2014 when I was working on LED flash
->> class framework. It was then assessed inappropriate for describing
->> physical property of a device. It needs to be kept in mind that
->> it was in the context of flash LEDs, where currents are much
->> higher than for common LEDs. Since then we have been always using
->> led-max-microamp.
->>
->> With max-brightness in Device Tree there is also another problem -
->> we don't know what it really means - greater allowed current or
->> greater resolution.
->>
->> Why not allow for maximum available brightness resolution for ti-lmu
->> always when the amperage is not an issue?
->>
+On Thu 2019-04-04 11:10:08, Nick Crews wrote:
+> The EC is in charge of controlling the keyboard backlight on
+> the Wilco platform. We expose a standard LED class device at
+> /sys/class/leds/platform::kbd_backlight. This driver is modeled
+> after the standard Chrome OS keyboard backlight driver at
+> drivers/platform/chrome/cros_kbd_led_backlight.c
+>=20
+> Some Wilco devices do not support a keyboard backlight. This
+> is checked via wilco_ec_keyboard_leds_exist() in the core driver,
+> and a platform_device will only be registered by the core if
+> a backlight is supported.
+>=20
+> After an EC reset the backlight could be in a non-PWM mode.
+> Earlier in the boot sequence the BIOS should send a command to
+> the EC to set the brightness, so things **should** be set up,
+> but we double check in probe() as we query the initial brightness.
+> If not set up, then set the brightness to 0.
+>=20
+> Since the EC will never change the backlight level of its own accord,
+> we don't need to implement a brightness_get() method.
+=2E..
+> Signed-off-by: Nick Crews <ncrews@chromium.org>
+> Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-Missed answering this question.  Full scale ramping only works in 8-bit mode as the
-LSB is used for the ramp.  This is why, if the customer does not want ramping and wants full 11 bit control
-they can set this parameter for 11 bit brightness control.  Otherwise I default this to the 8 bit control as the preferred
-method.
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-7.3.4.1 8-Bit Control (Preferred)
-The preferred operating mode is to control the high-voltage LED brightness by setting the Control Bank LSB
-register (3 LSB's) to zero and using only the Control Bank MSB register (8 MSB's). In this mode the LM3697
-controls the 3 LSB's to ramp the high-voltage LED current using all 11-bits.
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Ramping does work in 11 bit mode but the ramp time may be shorter based on the brightness value set.
+--/Uq4LBwYP4y1W6pO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Of course the code can be made smarter that if the optional ramp properties are available then set 8 bit automatically
-but it cannot assume 11 bit if they are not.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Dan
+iEYEARECAAYFAlymYGoACgkQMOfwapXb+vLYUgCgsPgTBohHm4ztKgBYMtWoJma0
+VRkAoI4/89nZFkwhMdJlDvcCK+hHhMyL
+=c7Go
+-----END PGP SIGNATURE-----
 
-<snip>
-
--- 
-------------------
-Dan Murphy
+--/Uq4LBwYP4y1W6pO--
