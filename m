@@ -1,56 +1,55 @@
-From: Nick Crews <ncrews@chromium.org>
-Subject: Re: [PATCH v5 3/3] platform/chrome: Standardize Chrome OS keyboard
- backlight name
-Date: Thu, 4 Apr 2019 12:41:30 -0600
-Message-ID: <CAHX4x87cQLhZOEDxwBJs=UkDxwGxZOELGjHtp6aFLBWmjyQAFQ@mail.gmail.com>
-References: <20190404171007.160878-1-ncrews@chromium.org> <20190404171007.160878-3-ncrews@chromium.org>
- <CABXOdTeFnohENJrZ+=_W-EgsrKWttSFYKoR=LaCwzbhEbaOxzw@mail.gmail.com> <CAE_wzQ8xS+zvSKNVs1v4B_y3NDu2qB65p_hD+j=qGHFxQWOmSg@mail.gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
+Date: Thu, 4 Apr 2019 20:48:38 +0200
+Message-ID: <f4c0a946-fd0f-0071-0039-cfaea2f27ccc@gmail.com>
+References: <20190321142838.22985-1-dmurphy@ti.com>
+ <20190321142838.22985-4-dmurphy@ti.com> <20190404000909.GY49658@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAE_wzQ8xS+zvSKNVs1v4B_y3NDu2qB65p_hD+j=qGHFxQWOmSg@mail.gmail.com>
+In-Reply-To: <20190404000909.GY49658@atomide.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dtor@google.com>
-Cc: Guenter Roeck <groeck@google.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>
+To: Tony Lindgren <tony@atomide.com>, Dan Murphy <dmurphy@ti.com>
+Cc: robh+dt@kernel.org, pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Apr 4, 2019 at 11:43 AM Dmitry Torokhov <dtor@google.com> wrote:
->
-> On Thu, Apr 4, 2019 at 10:36 AM Guenter Roeck <groeck@google.com> wrote:
-> >
-> > On Thu, Apr 4, 2019 at 10:11 AM Nick Crews <ncrews@chromium.org> wrote:
-> > >
-> > > We want all backlights for the system keyboard to
-> > > use a common name, so the name "platform::kbd_backlight"
-> > > would be better than the current "chromeos::kbd_backlight"
-> > > name. Normally this wouldn't be worth changing, but the new
-> > > Wilco keyboard backlight driver uses the "platform" name.
-> > > We want to make it so all Chrome OS devices are consistent,
-> > > so we'll change the name here too.
-> > >
-> >
-> > Wondering - who is the "we" you are talking about ?
+Hi Tony,
 
-You're right, I should have been more precise.
-I was referring to Pavel, Enric, and myself. Pavel had this opinion here:
-https://lkml.org/lkml/2019/4/4/1040. I don't know what Pavel meant by "we"
-in that comment, but I would guess that could mean the other LED maintainers
-as well? I talked with Enric 1:1 and he didn't see the problem with changing it,
-though perhaps he was only considering our use of the LED via powerd,
-and not users in general. I'm guessing Pavel's and Enric's meanings though,
-excuse me if I am misinterpreting.
+Thanks for the feedback.
 
->
-> This also has a potential of breaking existing setups if somebody did
-> happen to match on entire name instead of suffix. Such changes have to
-> be considered very carefully; at this point I am against of doing
-> this.
+On 4/4/19 2:09 AM, Tony Lindgren wrote:
+> * Dan Murphy <dmurphy@ti.com> [190321 14:29]:
+>> Introduce the Texas Instruments LM3532 White LED driver.
+>> The driver supports ALS configurability or manual brightness
+>> control.
+>>
+>> The driver also supports associating LED strings with specific
+>> control banks in a group or as individually controlled strings.
+> 
+> I'm seeing slightly different naming under /sys/class/leds:
+> 
+> lm3532:backlight
+> lm3532:platform::kbd_backlight
 
-Would it make sense to keep the old name as is, and only make the new
-Wilco name begin with "platform:"? What would you think is best?
+The problem is in the "platform:" being a part of DT
+label property. It should not be included there if devicename
+section is added in the driver.
 
->
-> Thanks.
->
-> --
-> Dmitry
+> 
+> Not sure if this is correct with the the "platform" and
+> "::" there for the kbd_backlight?
+> 
+> With the dts change I posted, I've tested this with
+> linux-next and Sebastian's DSI command mode patches
+> "[PATCHv6 0/4] omapdrm: DSI command mode panel support".
+> 
+> So feel free to add:
+> 
+> Tested-by: Tony Lindgren <tony@atomide.com>
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
