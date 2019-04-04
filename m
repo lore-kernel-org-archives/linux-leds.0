@@ -1,54 +1,137 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 4/4] leds: lm3532: Introduce the lm3532 LED driver
-Date: Thu, 4 Apr 2019 14:23:34 -0500
-Message-ID: <f278edc7-1614-0410-9aa7-2e3a6fc7818b@ti.com>
-References: <20190321142838.22985-1-dmurphy@ti.com>
- <20190321142838.22985-4-dmurphy@ti.com> <20190404000909.GY49658@atomide.com>
- <f4c0a946-fd0f-0071-0039-cfaea2f27ccc@gmail.com>
+Subject: Re: [PATCH 3/5] dt-bindings: ti-lmu: Modify dt bindings for the
+ LM3697
+Date: Thu, 4 Apr 2019 14:27:08 -0500
+Message-ID: <28007702-cee0-079b-ccda-864f98a7b520@ti.com>
+References: <20190325142403.30447-1-dmurphy@ti.com>
+ <20190325142403.30447-4-dmurphy@ti.com>
+ <4e38128a-fa8f-aa94-284f-2c5a4906e17d@gmail.com>
+ <83e31761-714d-db83-8c35-cf45243cb50b@ti.com>
+ <4983e0b6-ae2b-9d15-0408-fdb23869711a@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f4c0a946-fd0f-0071-0039-cfaea2f27ccc@gmail.com>
+In-Reply-To: <4983e0b6-ae2b-9d15-0408-fdb23869711a@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Tony Lindgren <tony@atomide.com>
-Cc: robh+dt@kernel.org, pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org, pavel@ucw.cz
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Tony
-
-On 4/4/19 1:48 PM, Jacek Anaszewski wrote:
-> Hi Tony,
+On 4/4/19 1:39 PM, Jacek Anaszewski wrote:
+> Dan,
 > 
-> Thanks for the feedback.
-> 
-> On 4/4/19 2:09 AM, Tony Lindgren wrote:
->> * Dan Murphy <dmurphy@ti.com> [190321 14:29]:
->>> Introduce the Texas Instruments LM3532 White LED driver.
->>> The driver supports ALS configurability or manual brightness
->>> control.
+> On 4/3/19 10:23 PM, Dan Murphy wrote:
+>> Jacek
+>>
+>> On 4/3/19 3:10 PM, Jacek Anaszewski wrote:
+>>> Hi Dan,
 >>>
->>> The driver also supports associating LED strings with specific
->>> control banks in a group or as individually controlled strings.
+>>> Thank you for the patch.
+>>>
+>>> You need Lee Jones on CC for this series.
+>>>
 >>
->> I'm seeing slightly different naming under /sys/class/leds:
+>> Yes I saw I missed Lee.
 >>
->> lm3532:backlight
->> lm3532:platform::kbd_backlight
+>>> One more comment below.
+>>>
+>>> On 3/25/19 3:24 PM, Dan Murphy wrote:
+>>>> The LM3697 is a single function LED driver. The single function LED
+>>>> driver needs to reside in the LED directory as a dedicated LED driver
+>>>> and not as a MFD device.  The device does have common brightness and ramp
+>>>> features and those can be accomodated by a TI LMU framework.
+>>>>
+>>>> The LM3697 dt binding needs to be moved from the ti-lmu.txt and a dedicated
+>>>> LED dt binding needs to be added.  The new LM3697 LED dt binding will then
+>>>> reside in the Documentation/devicetree/bindings/leds directory and follow the
+>>>> current LED and general bindings guidelines.
+>>>>
+>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>>> ---
+>>>>    .../devicetree/bindings/leds/leds-lm3697.txt  | 77 +++++++++++++++++++
+>>>>    .../devicetree/bindings/mfd/ti-lmu.txt        | 26 +------
+>>>>    2 files changed, 78 insertions(+), 25 deletions(-)
+>>>>    create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3697.txt b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>>> new file mode 100644
+>>>> index 000000000000..a780f11acd38
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>>> @@ -0,0 +1,77 @@
+>>>> +* Texas Instruments - LM3697 Highly Efficient White LED Driver
+>>>> +
+>>>> +The LM3697 11-bit LED driver provides high-
+>>>> +performance backlight dimming for 1, 2, or 3 series
+>>>> +LED strings while delivering up to 90% efficiency.
+>>>> +
+>>>> +This device is suitable for display and keypad Lighting
+>>>> +
+>>>> +Required properties:
+>>>> +    - compatible:
+>>>> +        "ti,lm3697"
+>>>> +    - reg :  I2C slave address
+>>>> +    - #address-cells : 1
+>>>> +    - #size-cells : 0
+>>>> +
+>>>> +Optional properties:
+>>>> +    - enable-gpios : GPIO pin to enable/disable the device
+>>>> +    - vled-supply : LED supply
+>>>> +
+>>>> +Required child properties:
+>>>> +    - reg : 0 - LED is Controlled by bank A
+>>>> +        1 - LED is Controlled by bank B
+>>>> +    - led-sources : Indicates which HVLED string is associated to which
+>>>> +            control bank.  This is a zero based property so
+>>>> +            HVLED1 = 0, HVLED2 = 1, HVLED3 = 2.
+>>>> +            Additional information is contained
+>>>> +            in Documentation/devicetree/bindings/leds/common.txt
+>>>> +
+>>>> +Optional child properties:
+>>>> +    - max_brightness - This determines whether to use 8 bit brightness mode
+>>>> +               or 11 bit brightness mode.  If this value is not
+>>>> +               set the device is defaulted to the preferred 8bit
+>>>> +               brightness mode per 7.3.4.1 of the data sheet.
+>>>> +               The values are 255 (8bit) or 2047 (11bit).
+>>>
+>>> We should use led-max-microamp for that, if possible.
+>>>
+>>
+>> Actually I was thinking this property could move to common.txt
+>> LM3697 would use it and it is also defined in leds-pwm.txt leds-netxbig.txt
 > 
-> The problem is in the "platform:" being a part of DT
-> label property. It should not be included there if devicename
-> section is added in the driver.
+> It was considered back in 2014 when I was working on LED flash
+> class framework. It was then assessed inappropriate for describing
+> physical property of a device. It needs to be kept in mind that
+> it was in the context of flash LEDs, where currents are much
+> higher than for common LEDs. Since then we have been always using
+> led-max-microamp.
+> 
+> With max-brightness in Device Tree there is also another problem -
+> we don't know what it really means - greater allowed current or
+> greater resolution.
+> 
+> Why not allow for maximum available brightness resolution for ti-lmu
+> always when the amperage is not an issue?
 > 
 
-Feel free to make it whatever you want I am not married to the naming convention for Droid 4.
-It was a suggestion in the code review
+Maybe I should rename this to ti,brightness-resolution with the same values.
+or ti,brightness-res for short hand.
 
-https://lore.kernel.org/patchwork/patch/1048806/
+Or I could try to figure out the max-microamp but it really does not describe the hardware or
+the configuration.
 
-<snip>
+Dan
 
+
+> 
+>> But I could rename it to led-max-microamp and figure out an algo to convert to max brightness
+>>
+>> Dan
+>>
+> 
 
 
 -- 
