@@ -1,7 +1,7 @@
-From: Nick Crews <ncrews@chromium.org>
+From: Dmitry Torokhov <dtor@google.com>
 Subject: Re: [PATCH] platform/chrome: Add Wilco EC keyboard backlight LEDs support
-Date: Thu, 4 Apr 2019 08:11:15 -0600
-Message-ID: <CAHX4x87zDrFMc1z0vbSE5+frPy+Ri9YD=9LtKXtsaGwhtXOrJQ@mail.gmail.com>
+Date: Thu, 4 Apr 2019 09:13:27 -0700
+Message-ID: <CAE_wzQ96MkKb7uSoVBNkOZexevUKPf4jHyQZneg7YNCEs7SHfQ@mail.gmail.com>
 References: <20190308203801.57920-1-ncrews@chromium.org> <20190308210843.GA16125@amd>
  <CAHX4x85=_76=Kyepf3Nw++4yVKOZujhLsonzaicZOnY5fi-Pfw@mail.gmail.com> <20190404112415.GB18653@amd>
 Mime-Version: 1.0
@@ -10,10 +10,10 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190404112415.GB18653@amd>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Daniel Erat <derat@google.com>, Guenter Roeck <groeck@google.com>, Dmitry Torokhov <dtor@google.com>
+Cc: Nick Crews <ncrews@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Daniel Erat <derat@google.com>, Guenter Roeck <groeck@google.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Apr 4, 2019 at 5:24 AM Pavel Machek <pavel@ucw.cz> wrote:
+On Thu, Apr 4, 2019 at 4:24 AM Pavel Machek <pavel@ucw.cz> wrote:
 >
 > On Mon 2019-03-11 09:29:06, Nick Crews wrote:
 > > Thanks for looking this over. I will fix most of your concerns, but
@@ -45,15 +45,20 @@ On Thu, Apr 4, 2019 at 5:24 AM Pavel Machek <pavel@ucw.cz> wrote:
 > the first place. But it happened. We want all backlights for the
 > system keyboard to use common name, and "chromeos" is not really
 > suitable for that. "platform" is.
->
->                                                                         Pavel
 
-That reasoning makes sense Pavel. I don't think we care that much
-about what the prefix actually is. The userspace daemon only looks
-for something that matches "*:kbd_backlight". Therefore, I think we
-should change both of these to use "platform::kbd_backlight".
-Enric agrees with me here, any other concerns? If I don't hear anything
-I'll add that change to this patch as well and re-send it.
+Pavel, who exactly wants this and why? Looking at today's -next I see:
 
-Thanks,
-Nick
+dtor@dtor-ws:~/kernel/linux-next ((next-20190404))$ git grep
+"::kbd_backlight" | wc -l
+18
+dtor@dtor-ws:~/kernel/linux-next ((next-20190404))$ git grep
+"platform::kbd_backlight" | wc -l
+0
+
+so there isn't a single instance of "platform::kbd_backlight" and we
+definitely not changing existing names.
+
+Thanks.
+
+-- 
+Dmitry
