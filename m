@@ -1,50 +1,89 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 4/5] mfd: ti-lmu: Remove support for LM3697
-Date: Thu, 4 Apr 2019 09:18:09 +0100
-Message-ID: <20190404081809.GN6830@dell>
+Subject: Re: [PATCH 1/5] dt-bindings: mfd: Update the ramp up/down property
+Date: Thu, 4 Apr 2019 09:19:07 +0100
+Message-ID: <20190404081907.GO6830@dell>
 References: <20190325142403.30447-1-dmurphy@ti.com>
- <20190325142403.30447-5-dmurphy@ti.com>
- <20190404081736.GM6830@dell>
+ <20190325142403.30447-2-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190404081736.GM6830@dell>
+In-Reply-To: <20190325142403.30447-2-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dan Murphy <dmurphy@ti.com>
 Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, 04 Apr 2019, Lee Jones wrote:
+On Mon, 25 Mar 2019, Dan Murphy wrote:
 
-> On Mon, 25 Mar 2019, Dan Murphy wrote:
-> 
-> > Remove support for the LM3697 from the ti-lmu
-> 
-> Bit of an odd place to insert a line feed.
-> 
-> > driver in favor of a dedicated LED driver.
-> > 
-> > Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> > ---
-> >  drivers/leds/Kconfig                |  2 +-
-> >  drivers/mfd/Kconfig                 |  2 +-
-> >  drivers/mfd/ti-lmu.c                | 17 -----------
-> >  include/linux/mfd/ti-lmu-register.h | 44 -----------------------------
-> >  include/linux/mfd/ti-lmu.h          |  1 -
-> >  5 files changed, 2 insertions(+), 64 deletions(-)
-> 
-> I'm fine with the patch.
-> 
-> Can you edit drivers/leds/Kconfig as part of a separate patch please?
-> Keeping this in sync with this change is not critical and would add a
-> whole bunch of process which we can really do without.
+> Modify the ramp-up/down property and add the property description
+> to the binding.
 
-BTW, please add my:
+This is the 'what', but where is the 'why'?
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  .../devicetree/bindings/mfd/ti-lmu.txt        | 20 ++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+> index 980394d701a7..d9d529de6dc1 100644
+> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+> @@ -25,6 +25,12 @@ Required properties:
+>  
+>  Optional property:
+>    - enable-gpios: A GPIO specifier for hardware enable pin.
+> +  - ramp-up-ms: Current ramping from one brightness level to
+> +		the a higher brightness level.
+> +		Range from 2048 us - 117.44 s
+> +  - ramp-down-ms: Current ramping from one brightness level to
+> +		  the a lower brightness level.
+> +		  Range from 2048 us - 117.44 s
+>  
+>  Required node:
+>    - backlight: All LMU devices have backlight child nodes.
+> @@ -90,7 +96,7 @@ lm3631@29 {
+>  
+>  		lcd_bl {
+>  			led-sources = <0 1>;
+> -			ramp-up-msec = <300>;
+> +			ramp-up-ms = <300>;
+>  		};
+>  	};
+>  };
+> @@ -152,15 +158,15 @@ lm3633@36 {
+>  		main {
+>  			label = "main_lcd";
+>  			led-sources = <1 2>;
+> -			ramp-up-msec = <500>;
+> -			ramp-down-msec = <500>;
+> +			ramp-up-ms = <500>;
+> +			ramp-down-ms = <500>;
+>  		};
+>  
+>  		front {
+>  			label = "front_lcd";
+>  			led-sources = <0>;
+> -			ramp-up-msec = <1000>;
+> -			ramp-down-msec = <0>;
+> +			ramp-up-ms = <1000>;
+> +			ramp-down-ms = <0>;
+>  		};
+>  	};
+>  
+> @@ -212,8 +218,8 @@ lm3697@36 {
+>  
+>  		lcd {
+>  			led-sources = <0 1 2>;
+> -			ramp-up-msec = <200>;
+> -			ramp-down-msec = <200>;
+> +			ramp-up-ms = <200>;
+> +			ramp-down-ms = <200>;
+>  		};
+>  	};
+>  
 
 -- 
 Lee Jones [李琼斯]
