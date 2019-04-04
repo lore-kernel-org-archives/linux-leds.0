@@ -1,64 +1,112 @@
-From: Dmitry Torokhov <dtor@google.com>
-Subject: Re: [PATCH v5 3/3] platform/chrome: Standardize Chrome OS keyboard
- backlight name
-Date: Thu, 4 Apr 2019 14:48:35 -0700
-Message-ID: <CAE_wzQ8xe=x0uYcZkDRVKpUAQ_1vVdEPHU3XnEV1=_WN1-AMfw@mail.gmail.com>
-References: <CAHX4x87cQLhZOEDxwBJs=UkDxwGxZOELGjHtp6aFLBWmjyQAFQ@mail.gmail.com>
- <CAE_wzQ8k4vO4yLsr2WNxYQ=-6JDmTsj6OxD0f3P=k8kJYFOD9Q@mail.gmail.com>
- <20190404185919.GB27340@amd> <CAE_wzQ-XuK7WOyPm6yXsmjp7z0=T92mMrfn1TVaavaLejcYVGA@mail.gmail.com>
- <20190404191931.GA29984@amd> <CAE_wzQ8y8i7C+_tv0CdnbUw0r21g1ggv2YUuzCog1xABivEvWA@mail.gmail.com>
- <20190404200658.GD29984@amd> <CAE_wzQ8WcMCzYqvxA_JBZKNza7ca3QE-VShmMxv5++_4F8RR=g@mail.gmail.com>
- <20190404202042.GF29984@amd> <CAE_wzQ-8XwzptH7EqNrELxjBzY2+0oHJGB3Va=vZwwK3csu_aA@mail.gmail.com>
- <20190404204207.GH29984@amd>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 2/4] ARM: dts: omap4-droid4: Update backlight dt
+ properties
+Date: Thu, 4 Apr 2019 15:00:13 -0700
+Message-ID: <20190404220013.GG49658@atomide.com>
+References: <20190321142838.22985-1-dmurphy@ti.com>
+ <20190321142838.22985-2-dmurphy@ti.com>
+ <f9d80ad1-d80c-bf77-5e0b-1e02a1b74200@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190404204207.GH29984@amd>
+Content-Disposition: inline
+In-Reply-To: <f9d80ad1-d80c-bf77-5e0b-1e02a1b74200@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Nick Crews <ncrews@chromium.org>, Guenter Roeck <groeck@google.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Apr 4, 2019 at 1:42 PM Pavel Machek <pavel@ucw.cz> wrote:
->
-> Hi!
->
-> > > > And what to do if internal keyboard is not platform but USB? Like
-> > > > Google "Whiskers"? (I am not sure why you decided to drop my mention
-> > > > of internal USB keyboards completely off your reply).
-> > >
-> > > I don't have answers for everything. Even if you have USB keyboard, you'll
-> > > likely still have backlight connected to embedded controller. If not,
-> > > then maybe you have exception userland needs to know about.
-> > >
-> > > Still better than making everything an exception.
-> >
-> > You do not need to make everything exception. You just need to look
-> > beyond the name, and see how the device is connected. And then apply
-> > your exceptions for "weird" devices.
->
-> "Where it is connected" is not interesting to the userland. "Is it
-> backlight for internal keyboard" is the right question. It may be
-> connected to embedded controller or some kind of controller over
-> i2c... my shell scripts should not need to know about architecture of
-> every notebook out there.
+* Jacek Anaszewski <jacek.anaszewski@gmail.com> [190404 20:12]:
+> Tony,
+> 
+> On 3/21/19 3:28 PM, Dan Murphy wrote:
+> > Update the properties for the lm3532 device node for droid4.
+> > With this change the backlight LED string and the keypad
+> > LED strings will be controlled separately.
+> > 
+> > Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> > ---
+> > 
+> > v5 - No change - https://lore.kernel.org/patchwork/patch/1050409/
+> > 
+> > v4 - No change - https://lore.kernel.org/patchwork/patch/1050125/
+> > v3 - updated keypad label on v1 comment - https://lore.kernel.org/patchwork/patch/1049023/
+> > v2 - Fixed ramp-up and ramp-down properties, removed hard coded property values,
+> > I did not change the label as it is undecided what it could be - https://lore.kernel.org/patchwork/patch/1048806/
+> > 
+> >   arch/arm/boot/dts/omap4-droid4-xt894.dts | 26 ++++++++++++++++--------
+> >   1 file changed, 18 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts/omap4-droid4-xt894.dts
+> > index e21ec929f096..aea206f04f76 100644
+> > --- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
+> > +++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
+> > @@ -383,20 +383,30 @@
+> >   };
+> >   &i2c1 {
+> > -	lm3532@38 {
+> > +	led-controller@38 {
+> >   		compatible = "ti,lm3532";
+> > +		#address-cells = <1>;
+> > +		#size-cells = <0>;
+> >   		reg = <0x38>;
+> >   		enable-gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
+> > -		lcd_backlight: backlight {
+> > -			compatible = "ti,lm3532-backlight";
+> > +		ramp-up-us = <1024>;
+> > +		ramp-down-us = <8193>;
+> > -			lcd {
+> > -				led-sources = <0 1 2>;
+> > -				ramp-up-msec = <1>;
+> > -				ramp-down-msec = <0>;
+> > -			};
+> 
+> Since I'll be creating integration branch for this series,
+> and it would be good to have this patch in it too, then
+> I can do the amendments by myself:
+> 
+> > +		lcd_backlight: led@0 {
+> > +			reg = <0>;
+> > +			led-sources = <2>;
+> > +			ti,led-mode = <0>;
+> > +			label = "backlight";
+> 
+> s/backlight/:backlight/
+> 
+> > +			linux,default-trigger = "backlight";
+> > +		};
+> > +
+> > +		led@1 {
+> > +			reg = <1>;
+> > +			led-sources = <1>;
+> > +			ti,led-mode = <0>;
+> > +			label = "platform::kbd_backlight";
+> 
+> s/platform::kbd_backlight/:kbd_backlight/
 
-Then your scripts will be failing for some setups.
+Yes makes sense to me.
 
->
-> But I don't see why I should do additional work when its trivial for
-> kernel to just name the LED in an useful way.
->
-> "platform::kbd_backlight" has no disadvantages compared to
-> "wilco::kbd_backlight" ... so lets just use it.
+> and then send you a pull request.
+> 
+> Would you be OK with that?
 
-It has disadvantages because it promises more than it can deliver IMO.
-If device name != "platform::kbd_backlight" it does not mean that it
-is not internal keyboard. And you still have not resolved how you will
-handle cases when there is more than one deice that can be considered
-internal and may have a backlight.
+Sure go for it. Here's my ack for the changes:
 
-Thanks.
+Acked-by: Tony Lindgren <tony@atomide.com>
 
--- 
-Dmitry
+And then for the one liner to fold in below:
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+
+8< -------------
+diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts/omap4-droid4-xt894.dts
+--- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
++++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
+@@ -214,7 +214,6 @@
+ 
+ 		width-mm = <50>;
+ 		height-mm = <89>;
+-		backlight = <&lcd_backlight>;
+ 
+ 		panel-timing {
+ 			clock-frequency = <0>;		/* Calculated by dsi */
