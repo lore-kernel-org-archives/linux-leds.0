@@ -1,73 +1,63 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] platform/chrome: Add Wilco EC keyboard backlight LEDs
- support
-Date: Thu, 4 Apr 2019 22:34:08 +0200
-Message-ID: <20190404203408.GG29984@amd>
-References: <20190308210843.GA16125@amd>
- <CAHX4x85=_76=Kyepf3Nw++4yVKOZujhLsonzaicZOnY5fi-Pfw@mail.gmail.com>
- <20190404112415.GB18653@amd>
- <CAE_wzQ96MkKb7uSoVBNkOZexevUKPf4jHyQZneg7YNCEs7SHfQ@mail.gmail.com>
- <20190404190326.GC27340@amd>
- <CAE_wzQ8mr1OMKB+ASfsCdGcs70YrzEMN4Htfg1+O51=ByhXchw@mail.gmail.com>
- <20190404192331.GB29984@amd>
- <CAE_wzQ_4Jb+4dDTFGQ7+sbQ-M8Qm8U_k7ug2DoZKKjTbf6pPTQ@mail.gmail.com>
- <20190404201103.GE29984@amd>
- <CAE_wzQ-iOkM08u42Q3v0wcJhS_bo1UY-vt1qMwyvm4W7kSXQ9A@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] platform/chrome: Standardize Chrome OS keyboard
+ backlight name
+Date: Thu, 4 Apr 2019 22:42:07 +0200
+Message-ID: <20190404204207.GH29984@amd>
+References: <CAHX4x87cQLhZOEDxwBJs=UkDxwGxZOELGjHtp6aFLBWmjyQAFQ@mail.gmail.com>
+ <CAE_wzQ8k4vO4yLsr2WNxYQ=-6JDmTsj6OxD0f3P=k8kJYFOD9Q@mail.gmail.com>
+ <20190404185919.GB27340@amd>
+ <CAE_wzQ-XuK7WOyPm6yXsmjp7z0=T92mMrfn1TVaavaLejcYVGA@mail.gmail.com>
+ <20190404191931.GA29984@amd>
+ <CAE_wzQ8y8i7C+_tv0CdnbUw0r21g1ggv2YUuzCog1xABivEvWA@mail.gmail.com>
+ <20190404200658.GD29984@amd>
+ <CAE_wzQ8WcMCzYqvxA_JBZKNza7ca3QE-VShmMxv5++_4F8RR=g@mail.gmail.com>
+ <20190404202042.GF29984@amd>
+ <CAE_wzQ-8XwzptH7EqNrELxjBzY2+0oHJGB3Va=vZwwK3csu_aA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="RDS4xtyBfx+7DiaI"
+        protocol="application/pgp-signature"; boundary="TBNym+cBXeFsS4Vs"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAE_wzQ-iOkM08u42Q3v0wcJhS_bo1UY-vt1qMwyvm4W7kSXQ9A@mail.gmail.com>
+In-Reply-To: <CAE_wzQ-8XwzptH7EqNrELxjBzY2+0oHJGB3Va=vZwwK3csu_aA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Torokhov <dtor@google.com>
-Cc: Nick Crews <ncrews@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Daniel Erat <derat@google.com>, Guenter Roeck <groeck@google.com>
+Cc: Nick Crews <ncrews@chromium.org>, Guenter Roeck <groeck@google.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>
 List-Id: linux-leds@vger.kernel.org
 
 
---RDS4xtyBfx+7DiaI
+--TBNym+cBXeFsS4Vs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > > Because I need to understand why you believe that device name for
-> > > kbd_backlight matters, and having wilco::kbd_backlight is a bad idea,
-> > > but, for example, having max77650::kbd_backlight is perfectly fine if
-> > > somebody decided to wire it in this way.
+> > > And what to do if internal keyboard is not platform but USB? Like
+> > > Google "Whiskers"? (I am not sure why you decided to drop my mention
+> > > of internal USB keyboards completely off your reply).
 > >
-> > max77650::kbd_backlight is not fine and we'll try to prevent that in
-> > future.
+> > I don't have answers for everything. Even if you have USB keyboard, you=
+'ll
+> > likely still have backlight connected to embedded controller. If not,
+> > then maybe you have exception userland needs to know about.
+> >
+> > Still better than making everything an exception.
 >=20
-> You do not control DTS for systems though.
+> You do not need to make everything exception. You just need to look
+> beyond the name, and see how the device is connected. And then apply
+> your exceptions for "weird" devices.
 
-Actually we usually do. [And the name can still be fixed up in the driver.]
+"Where it is connected" is not interesting to the userland. "Is it
+backlight for internal keyboard" is the right question. It may be
+connected to embedded controller or some kind of controller over
+i2c... my shell scripts should not need to know about architecture of
+every notebook out there.
 
-> > We want one name for internal keyboard backlight. What exactly that
-> > name is is not _that_ important, but platform::kbd_backlight seems
-> > like reasonable choice.
->=20
-> And I am trying to show that depending on device and product (as in
-> entire computing device) the same driver could be used in multitude of
-> ways and expecting that all devices that can be internal will always
-> have "platform::" prefix is not realistic. It will also fail if you
-> have multiples of devices, as you need unique names, and that is what
-> <device> component in name provides you with.
+But I don't see why I should do additional work when its trivial for
+kernel to just name the LED in an useful way.
 
-I don't see what you are saying.
-
-We know that wilco::kbd_backlight is always internal keyboard
-backlight, so we name it platform::kbd_backlight. We do the same for
-similar drivers in future. I don't see any downsides.
-
-> You need smarter userspace to implement policy that is best suited for
-> your product. Maybe you can help it by adding additional properties to
-> LED devices, like we have connection_type in USB ports, to tell
-> whether device is internal or not, but I'd leave the naming alone.
-
-We may need smarter userspace, but it does not mean naming needs to
-make it harder than it already is.
+"platform::kbd_backlight" has no disadvantages compared to
+"wilco::kbd_backlight" ... so lets just use it.
 
 									Pavel
 --=20
@@ -75,16 +65,16 @@ make it harder than it already is.
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---RDS4xtyBfx+7DiaI
+--TBNym+cBXeFsS4Vs
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlymakAACgkQMOfwapXb+vKhtQCePUyb8436Nu7yGSsfiLH6gQpK
-1rkAniD3KdsbtLE8fdfyKmG2Q32Opn4B
-=SWjM
+iEYEARECAAYFAlymbB8ACgkQMOfwapXb+vJJYwCfX5l28e2wBm03LKaV/yWkOhJj
+6jIAoI8ECdVuduZ5jO34B8p1MsEbK8ja
+=6gux
 -----END PGP SIGNATURE-----
 
---RDS4xtyBfx+7DiaI--
+--TBNym+cBXeFsS4Vs--
