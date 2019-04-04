@@ -1,33 +1,58 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v4 2/2] platform/chrome: Add Wilco EC keyboard backlight
- LEDs support
-Date: Thu, 4 Apr 2019 13:17:31 +0200
-Message-ID: <20190404111731.GA18653@amd>
-References: <20190403212757.132684-1-ncrews@chromium.org>
- <20190403212757.132684-2-ncrews@chromium.org>
+Subject: Re: [PATCH] platform/chrome: Add Wilco EC keyboard backlight LEDs
+ support
+Date: Thu, 4 Apr 2019 13:24:15 +0200
+Message-ID: <20190404112415.GB18653@amd>
+References: <20190308203801.57920-1-ncrews@chromium.org>
+ <20190308210843.GA16125@amd>
+ <CAHX4x85=_76=Kyepf3Nw++4yVKOZujhLsonzaicZOnY5fi-Pfw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
+        protocol="application/pgp-signature"; boundary="LpQ9ahxlCli8rRTG"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190403212757.132684-2-ncrews@chromium.org>
+In-Reply-To: <CAHX4x85=_76=Kyepf3Nw++4yVKOZujhLsonzaicZOnY5fi-Pfw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Nick Crews <ncrews@chromium.org>
-Cc: enric.balletbo@collabora.com, bleung@chromium.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, alexandre.belloni@bootlin.com, a.zummo@towertech.it, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, dlaurie@chromium.org, sjg@google.com, groeck@google.com, dtor@google.com
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Daniel Erat <derat@google.com>, Guenter Roeck <groeck@google.com>, Dmitry Torokhov <dtor@google.com>
 List-Id: linux-leds@vger.kernel.org
 
 
---2oS5YaxWCcQjTEyO
+--LpQ9ahxlCli8rRTG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2019-04-03 15:27:58, Nick Crews wrote:
-> The EC is in charge of controlling the keyboard backlight on
-> the Wilco platform. We expose a standard LED class device at
-> /sys/class/leds/chromeos::kbd_backlight. This driver is modeled
+On Mon 2019-03-11 09:29:06, Nick Crews wrote:
+> Thanks for looking this over. I will fix most of your concerns, but
+> have one question.
+>=20
+> On Fri, Mar 8, 2019 at 2:08 PM Pavel Machek <pavel@ucw.cz> wrote:
+> >
+> > On Fri 2019-03-08 13:38:02, Nick Crews wrote:
+> > > This patch is meant to be applied on top of the for-next
+> > > branch of the platform/chrome repository, as it uses some of
+> > > the code staged there.
+> > >
+> > > The EC is in charge of controlling the keyboard backlight on
+> > > the Wilco platform. We expose a standard LED class device at
+> > > /sys/class/leds/wilco::kbd_backlight. This driver is modeled
+> > > after the standard Chrome OS keyboard backlight driver at
+> > > drivers/platform/chrome/cros_kbd_led_backlight.c
+> >
+> > Can you make it "platform::kbd_backlight"? We want some consistency
+> > there.
+>=20
+> The analogous name in the standard driver
+> drivers/platform/chrome/cros_kbd_led_backlight.c is
+> "chromeos::kbd_backlight", and I thought "wilco" was a better
+> substitute for "chromeos" than "platform" would be. What other thing
+> are you saying "platform" would be consistent with?
 
-Please use platform::kbd_backlight.
+Yeah, well, we not let the cros_kbd_led_backlight.c use chromeos:: in
+the first place. But it happened. We want all backlights for the
+system keyboard to use common name, and "chromeos" is not really
+suitable for that. "platform" is.
 
 									Pavel
 --=20
@@ -35,16 +60,16 @@ Please use platform::kbd_backlight.
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---2oS5YaxWCcQjTEyO
+--LpQ9ahxlCli8rRTG
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlyl58sACgkQMOfwapXb+vJt3QCghaHErLDMJqTNyiuOdDItOitT
-GksAn3e8UW+bDBwdh66UJ0k4HR+I51RZ
-=yv61
+iEYEARECAAYFAlyl6V8ACgkQMOfwapXb+vLF+gCglhx7EadWK3nlJphDZ1ubCXLD
+FnkAoKcA8GDxGY39W8axiHo5p9J505A7
+=TBrn
 -----END PGP SIGNATURE-----
 
---2oS5YaxWCcQjTEyO--
+--LpQ9ahxlCli8rRTG--
