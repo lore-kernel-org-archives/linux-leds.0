@@ -1,84 +1,159 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v2 1/6] dt-bindings: mfd: LMU: Add the ramp up/down property
-Date: Fri, 5 Apr 2019 09:28:50 -0500
-Message-ID: <20190405142855.3969-1-dmurphy@ti.com>
+Subject: [PATCH v2 5/6] mfd: ti-lmu: Remove support for LM3697
+Date: Fri, 5 Apr 2019 09:28:54 -0500
+Message-ID: <20190405142855.3969-5-dmurphy@ti.com>
+References: <20190405142855.3969-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190405142855.3969-1-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-Document the ramp-up and ramp-down property in the binding.
-Removing the "sec" from the property definition as seconds is
-implied.
+Remove support for the LM3697 from the ti-lmu driver in favor of a
+dedicated LED driver.
 
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
 
-v2 - Fixed commit message as this was not just a modification but adding documentation
-https://lore.kernel.org/patchwork/patch/1054504/
+v2 - Fixed commit message LF, removed leds/Kconfig from patch. -
+https://lore.kernel.org/patchwork/patch/1054502/
 
- .../devicetree/bindings/mfd/ti-lmu.txt        | 20 ++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ drivers/mfd/Kconfig                 |  2 +-
+ drivers/mfd/ti-lmu.c                | 17 -----------
+ include/linux/mfd/ti-lmu-register.h | 44 -----------------------------
+ include/linux/mfd/ti-lmu.h          |  1 -
+ 4 files changed, 1 insertion(+), 63 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-index 86ca786d54fc..adae96c79d39 100644
---- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-+++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-@@ -25,6 +25,12 @@ Required properties:
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 26ad6468d13a..fcae244229b3 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1312,7 +1312,7 @@ config MFD_TI_LMU
+ 	help
+ 	  Say yes here to enable support for TI LMU chips.
  
- Optional property:
-   - enable-gpios: A GPIO specifier for hardware enable pin.
-+  - ramp-up-ms: Current ramping from one brightness level to
-+		the a higher brightness level.
-+		Range from 2048 us - 117.44 s
-+  - ramp-down-ms: Current ramping from one brightness level to
-+		  the a lower brightness level.
-+		  Range from 2048 us - 117.44 s
+-	  TI LMU MFD supports LM3532, LM3631, LM3632, LM3633, LM3695 and LM3697.
++	  TI LMU MFD supports LM3532, LM3631, LM3632, LM3633, and LM3695.
+ 	  It consists of backlight, LED and regulator driver.
+ 	  It provides consistent device controls for lighting functions.
  
- Required node:
-   - backlight: All LMU devices have backlight child nodes.
-@@ -90,7 +96,7 @@ lm3631@29 {
- 
- 		lcd_bl {
- 			led-sources = <0 1>;
--			ramp-up-msec = <300>;
-+			ramp-up-ms = <300>;
- 		};
- 	};
+diff --git a/drivers/mfd/ti-lmu.c b/drivers/mfd/ti-lmu.c
+index b06cb908d1aa..89b1c5b584af 100644
+--- a/drivers/mfd/ti-lmu.c
++++ b/drivers/mfd/ti-lmu.c
+@@ -111,20 +111,6 @@ static const struct mfd_cell lm3695_devices[] = {
+ 	},
  };
-@@ -152,15 +158,15 @@ lm3633@36 {
- 		main {
- 			label = "main_lcd";
- 			led-sources = <1 2>;
--			ramp-up-msec = <500>;
--			ramp-down-msec = <500>;
-+			ramp-up-ms = <500>;
-+			ramp-down-ms = <500>;
- 		};
  
- 		front {
- 			label = "front_lcd";
- 			led-sources = <0>;
--			ramp-up-msec = <1000>;
--			ramp-down-msec = <0>;
-+			ramp-up-ms = <1000>;
-+			ramp-down-ms = <0>;
- 		};
- 	};
+-static const struct mfd_cell lm3697_devices[] = {
+-	{
+-		.name          = "ti-lmu-backlight",
+-		.id            = LM3697,
+-		.of_compatible = "ti,lm3697-backlight",
+-	},
+-	/* Monitoring driver for open/short circuit detection */
+-	{
+-		.name          = "ti-lmu-fault-monitor",
+-		.id            = LM3697,
+-		.of_compatible = "ti,lm3697-fault-monitor",
+-	},
+-};
+-
+ #define TI_LMU_DATA(chip, max_reg)		\
+ static const struct ti_lmu_data chip##_data =	\
+ {						\
+@@ -137,7 +123,6 @@ TI_LMU_DATA(lm3631, LM3631_MAX_REG);
+ TI_LMU_DATA(lm3632, LM3632_MAX_REG);
+ TI_LMU_DATA(lm3633, LM3633_MAX_REG);
+ TI_LMU_DATA(lm3695, LM3695_MAX_REG);
+-TI_LMU_DATA(lm3697, LM3697_MAX_REG);
  
-@@ -212,8 +218,8 @@ lm3697@36 {
+ static int ti_lmu_probe(struct i2c_client *cl, const struct i2c_device_id *id)
+ {
+@@ -206,7 +191,6 @@ static const struct of_device_id ti_lmu_of_match[] = {
+ 	{ .compatible = "ti,lm3632", .data = &lm3632_data },
+ 	{ .compatible = "ti,lm3633", .data = &lm3633_data },
+ 	{ .compatible = "ti,lm3695", .data = &lm3695_data },
+-	{ .compatible = "ti,lm3697", .data = &lm3697_data },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ti_lmu_of_match);
+@@ -216,7 +200,6 @@ static const struct i2c_device_id ti_lmu_ids[] = {
+ 	{ "lm3632", LM3632 },
+ 	{ "lm3633", LM3633 },
+ 	{ "lm3695", LM3695 },
+-	{ "lm3697", LM3697 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, ti_lmu_ids);
+diff --git a/include/linux/mfd/ti-lmu-register.h b/include/linux/mfd/ti-lmu-register.h
+index f09510561a55..76998b01764b 100644
+--- a/include/linux/mfd/ti-lmu-register.h
++++ b/include/linux/mfd/ti-lmu-register.h
+@@ -189,48 +189,4 @@
+ #define LM3695_REG_BRT_MSB			0x14
  
- 		lcd {
- 			led-sources = <0 1 2>;
--			ramp-up-msec = <200>;
--			ramp-down-msec = <200>;
-+			ramp-up-ms = <200>;
-+			ramp-down-ms = <200>;
- 		};
- 	};
+ #define LM3695_MAX_REG				0x14
+-
+-/* LM3697 */
+-#define LM3697_REG_HVLED_OUTPUT_CFG		0x10
+-#define LM3697_HVLED1_CFG_MASK			BIT(0)
+-#define LM3697_HVLED2_CFG_MASK			BIT(1)
+-#define LM3697_HVLED3_CFG_MASK			BIT(2)
+-#define LM3697_HVLED1_CFG_SHIFT			0
+-#define LM3697_HVLED2_CFG_SHIFT			1
+-#define LM3697_HVLED3_CFG_SHIFT			2
+-
+-#define LM3697_REG_BL0_RAMP			0x11
+-#define LM3697_REG_BL1_RAMP			0x12
+-#define LM3697_RAMPUP_MASK			0xF0
+-#define LM3697_RAMPUP_SHIFT			4
+-#define LM3697_RAMPDN_MASK			0x0F
+-#define LM3697_RAMPDN_SHIFT			0
+-
+-#define LM3697_REG_RAMP_CONF			0x14
+-#define LM3697_RAMP_MASK			0x0F
+-#define LM3697_RAMP_EACH			0x05
+-
+-#define LM3697_REG_PWM_CFG			0x1C
+-#define LM3697_PWM_A_MASK			BIT(0)
+-#define LM3697_PWM_B_MASK			BIT(1)
+-
+-#define LM3697_REG_IMAX_A			0x17
+-#define LM3697_REG_IMAX_B			0x18
+-
+-#define LM3697_REG_FEEDBACK_ENABLE		0x19
+-
+-#define LM3697_REG_BRT_A_LSB			0x20
+-#define LM3697_REG_BRT_A_MSB			0x21
+-#define LM3697_REG_BRT_B_LSB			0x22
+-#define LM3697_REG_BRT_B_MSB			0x23
+-
+-#define LM3697_REG_ENABLE			0x24
+-
+-#define LM3697_REG_OPEN_FAULT_STATUS		0xB0
+-
+-#define LM3697_REG_SHORT_FAULT_STATUS		0xB2
+-
+-#define LM3697_REG_MONITOR_ENABLE		0xB4
+-
+-#define LM3697_MAX_REG				0xB4
+ #endif
+diff --git a/include/linux/mfd/ti-lmu.h b/include/linux/mfd/ti-lmu.h
+index 7762c1bce55d..54e9d272e81c 100644
+--- a/include/linux/mfd/ti-lmu.h
++++ b/include/linux/mfd/ti-lmu.h
+@@ -26,7 +26,6 @@ enum ti_lmu_id {
+ 	LM3632,
+ 	LM3633,
+ 	LM3695,
+-	LM3697,
+ 	LMU_MAX_ID,
+ };
  
 -- 
 2.19.0
