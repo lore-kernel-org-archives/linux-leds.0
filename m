@@ -1,62 +1,115 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v3 03/25] dt-bindings: leds: Add LED_COLOR_ID definitions
-Date: Thu, 4 Apr 2019 20:12:03 -0500
-Message-ID: <440de7d8-6acd-fb5a-3607-ba3c0a99f894@ti.com>
-References: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
- <20190331175501.23471-4-jacek.anaszewski@gmail.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH v5 3/3] platform/chrome: Standardize Chrome OS keyboard
+ backlight name
+Date: Fri, 5 Apr 2019 10:42:15 +0200
+Message-ID: <df9577fd-c526-77e9-c11c-5416387121db@collabora.com>
+References: <20190404185919.GB27340@amd>
+ <CAE_wzQ-XuK7WOyPm6yXsmjp7z0=T92mMrfn1TVaavaLejcYVGA@mail.gmail.com>
+ <20190404191931.GA29984@amd>
+ <CAE_wzQ8y8i7C+_tv0CdnbUw0r21g1ggv2YUuzCog1xABivEvWA@mail.gmail.com>
+ <20190404200658.GD29984@amd>
+ <CAE_wzQ8WcMCzYqvxA_JBZKNza7ca3QE-VShmMxv5++_4F8RR=g@mail.gmail.com>
+ <20190404202042.GF29984@amd>
+ <CAE_wzQ-8XwzptH7EqNrELxjBzY2+0oHJGB3Va=vZwwK3csu_aA@mail.gmail.com>
+ <20190404204207.GH29984@amd>
+ <CAE_wzQ8xe=x0uYcZkDRVKpUAQ_1vVdEPHU3XnEV1=_WN1-AMfw@mail.gmail.com>
+ <20190404220509.GA14690@amd>
+ <CABXOdTeQgjd2-T+eZCMdTDWBGLHEk6kvnYR0DjJYR7zuvVTMsQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190331175501.23471-4-jacek.anaszewski@gmail.com>
-Content-Language: en-US
+In-Reply-To: <CABXOdTeQgjd2-T+eZCMdTDWBGLHEk6kvnYR0DjJYR7zuvVTMsQ@mail.gmail.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
+To: Guenter Roeck <groeck@google.com>, Pavel Machek <pavel@ucw.cz>
+Cc: Dmitry Torokhov <dtor@google.com>, Nick Crews <ncrews@chromium.org>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
+Hi,
 
-On 3/31/19 12:54 PM, Jacek Anaszewski wrote:
-> Add common LED color identifiers for use in Device Tree.
+On 5/4/19 0:42, Guenter Roeck wrote:
+> On Thu, Apr 4, 2019 at 3:05 PM Pavel Machek <pavel@ucw.cz> wrote:
+>>
+>> On Thu 2019-04-04 14:48:35, Dmitry Torokhov wrote:
+>>> On Thu, Apr 4, 2019 at 1:42 PM Pavel Machek <pavel@ucw.cz> wrote:
+>>>>
+>>>> Hi!
+>>>>
+>>>>>>> And what to do if internal keyboard is not platform but USB? Like
+>>>>>>> Google "Whiskers"? (I am not sure why you decided to drop my mention
+>>>>>>> of internal USB keyboards completely off your reply).
+>>>>>>
+>>>>>> I don't have answers for everything. Even if you have USB keyboard, you'll
+>>>>>> likely still have backlight connected to embedded controller. If not,
+>>>>>> then maybe you have exception userland needs to know about.
+>>>>>>
+>>>>>> Still better than making everything an exception.
+>>>>>
+>>>>> You do not need to make everything exception. You just need to look
+>>>>> beyond the name, and see how the device is connected. And then apply
+>>>>> your exceptions for "weird" devices.
+>>>>
+>>>> "Where it is connected" is not interesting to the userland. "Is it
+>>>> backlight for internal keyboard" is the right question. It may be
+>>>> connected to embedded controller or some kind of controller over
+>>>> i2c... my shell scripts should not need to know about architecture of
+>>>> every notebook out there.
+>>>
+>>> Then your scripts will be failing for some setups.
+>>
+>> Well, yes. Do you want to guess what "lp5523:kb3" is?
+>>
 > 
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Baolin Wang <baolin.wang@linaro.org>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Dan Murphy <dmurphy@ti.com>
-> Cc: Daniel Mack <daniel@zonque.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Cc: Simon Shields <simon@lineageos.org>
-> ---
->  include/dt-bindings/leds/common.h | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> Oh, please. The discussion is about the driver name part, which you
+> want to overload with some string to mean "internal", which in turn
+> is, if anything, part of the functionality.
 > 
-> diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
-> index 0325db5b4208..c95f39b3a254 100644
-> --- a/include/dt-bindings/leds/common.h
-> +++ b/include/dt-bindings/leds/common.h
-> @@ -55,4 +55,15 @@
->  #define LED_FUNCTION_WLAN "wlan"
->  #define LED_FUNCTION_WPS "wps"
->  
-> +/* Standard LED colors */
-> +#define LED_COLOR_ID_WHITE	0
-> +#define LED_COLOR_ID_RED	1
-> +#define LED_COLOR_ID_GREEN	2
-> +#define LED_COLOR_ID_BLUE	3
-> +#define LED_COLOR_ID_AMBER	4
-> +#define LED_COLOR_ID_VIOLET	5
-> +#define LED_COLOR_ID_YELLOW	6
-> +#define LED_COLOR_ID_IR		7
-> +#define LED_COLOR_ID_COUNT	8
-> +
->  #endif /* __DT_BINDINGS_LEDS_H */
+> With "platform", you'll at some point have two
+> "platform::kbd_backlight" entries. Remind me to send you a "told you
+> so" when that happens.
 > 
+> Guenter
+> 
+>>>> But I don't see why I should do additional work when its trivial for
+>>>> kernel to just name the LED in an useful way.
+>>>>
+>>>> "platform::kbd_backlight" has no disadvantages compared to
+>>>> "wilco::kbd_backlight" ... so lets just use it.
+>>>
+>>> It has disadvantages because it promises more than it can deliver IMO.
+>>> If device name != "platform::kbd_backlight" it does not mean that it
+>>> is not internal keyboard.
+>>
+>> My promise is if "platform::kbd_backlight" exists, it is backlight for
+>> internal keyboard. (And second half is "if it is easy for kernel, we
+>> name backlight for internal keyboard platform::kbd_backlight").
+>>
+>>> And you still have not resolved how you will
+>>> handle cases when there is more than one deice that can be considered
+>>> internal and may have a backlight.
+>>
+>> Is that realistic? How would that device look like?
+>>
 
-Reviewed-by: Dan Murphy <dmurphy@ti.com>
+Maybe is something "weird" in the PC/laptop world but in the Embedded world is
+not as weird as you think. I worked on devices that has two internal backlights,
+one to lit the qwerty keyboard and the other one to lit the numeric pad. We used
+the device field to differentiate both.
 
--- 
-------------------
-Dan Murphy
+  tclkeyboard::kbd_backlight
+  tclnumpad::kbd_backlight
+
+Taking this to the extreme you can also think in a device where every key has
+its own LED backlight, this happens for example in this device [1]. The device
+can lit only specific keys giving to the user a word prediction experience (i.e
+After press a key, only the keys that match with a possible word are lit on)
+
+- Enric
+
+[1] https://www.abilia.com/en/product/lightwriter-sl50
+
+>>                                                                         Pavel
+>> --
+>> (english) http://www.livejournal.com/~pavelmachek
+>> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
