@@ -1,86 +1,85 @@
-From: Guenter Roeck <groeck@google.com>
-Subject: Re: [PATCH v5 3/3] platform/chrome: Standardize Chrome OS keyboard
- backlight name
-Date: Thu, 4 Apr 2019 15:42:15 -0700
-Message-ID: <CABXOdTeQgjd2-T+eZCMdTDWBGLHEk6kvnYR0DjJYR7zuvVTMsQ@mail.gmail.com>
-References: <20190404185919.GB27340@amd> <CAE_wzQ-XuK7WOyPm6yXsmjp7z0=T92mMrfn1TVaavaLejcYVGA@mail.gmail.com>
- <20190404191931.GA29984@amd> <CAE_wzQ8y8i7C+_tv0CdnbUw0r21g1ggv2YUuzCog1xABivEvWA@mail.gmail.com>
- <20190404200658.GD29984@amd> <CAE_wzQ8WcMCzYqvxA_JBZKNza7ca3QE-VShmMxv5++_4F8RR=g@mail.gmail.com>
- <20190404202042.GF29984@amd> <CAE_wzQ-8XwzptH7EqNrELxjBzY2+0oHJGB3Va=vZwwK3csu_aA@mail.gmail.com>
- <20190404204207.GH29984@amd> <CAE_wzQ8xe=x0uYcZkDRVKpUAQ_1vVdEPHU3XnEV1=_WN1-AMfw@mail.gmail.com>
- <20190404220509.GA14690@amd>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v3 02/25] dt-bindings: leds: Add LED_FUNCTION definitions
+Date: Thu, 4 Apr 2019 20:11:21 -0500
+Message-ID: <c7c92db0-55e5-afba-c8ab-66e221b48b82@ti.com>
+References: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
+ <20190331175501.23471-3-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190404220509.GA14690@amd>
+In-Reply-To: <20190331175501.23471-3-jacek.anaszewski@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Dmitry Torokhov <dtor@google.com>, Nick Crews <ncrews@chromium.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Apr 4, 2019 at 3:05 PM Pavel Machek <pavel@ucw.cz> wrote:
->
-> On Thu 2019-04-04 14:48:35, Dmitry Torokhov wrote:
-> > On Thu, Apr 4, 2019 at 1:42 PM Pavel Machek <pavel@ucw.cz> wrote:
-> > >
-> > > Hi!
-> > >
-> > > > > > And what to do if internal keyboard is not platform but USB? Like
-> > > > > > Google "Whiskers"? (I am not sure why you decided to drop my mention
-> > > > > > of internal USB keyboards completely off your reply).
-> > > > >
-> > > > > I don't have answers for everything. Even if you have USB keyboard, you'll
-> > > > > likely still have backlight connected to embedded controller. If not,
-> > > > > then maybe you have exception userland needs to know about.
-> > > > >
-> > > > > Still better than making everything an exception.
-> > > >
-> > > > You do not need to make everything exception. You just need to look
-> > > > beyond the name, and see how the device is connected. And then apply
-> > > > your exceptions for "weird" devices.
-> > >
-> > > "Where it is connected" is not interesting to the userland. "Is it
-> > > backlight for internal keyboard" is the right question. It may be
-> > > connected to embedded controller or some kind of controller over
-> > > i2c... my shell scripts should not need to know about architecture of
-> > > every notebook out there.
-> >
-> > Then your scripts will be failing for some setups.
->
-> Well, yes. Do you want to guess what "lp5523:kb3" is?
->
+On 3/31/19 12:54 PM, Jacek Anaszewski wrote:
+> Add initial set of common LED function definitions for use in Device Tree.
+> 
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Baolin Wang <baolin.wang@linaro.org>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Dan Murphy <dmurphy@ti.com>
+> Cc: Daniel Mack <daniel@zonque.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Cc: Simon Shields <simon@lineageos.org>
+> ---
+>  include/dt-bindings/leds/common.h | 36 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
+> diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
+> index e171d0a6beb2..0325db5b4208 100644
+> --- a/include/dt-bindings/leds/common.h
+> +++ b/include/dt-bindings/leds/common.h
+> @@ -19,4 +19,40 @@
+>  #define LEDS_BOOST_ADAPTIVE	1
+>  #define LEDS_BOOST_FIXED	2
+>  
+> +/* Standard LED functions */
+> +#define LED_FUNCTION_ACTIVITY "activity"
+> +#define LED_FUNCTION_ALARM "alarm"
+> +#define LED_FUNCTION_BACKLIGHT "backlight"
+> +#define LED_FUNCTION_BLUETOOTH "bluetooth"
+> +#define LED_FUNCTION_BOOT "boot"
+> +#define LED_FUNCTION_CHARGE "charge"
+> +#define LED_FUNCTION_DEBUG "debug"
+> +#define LED_FUNCTION_DISK "disk"
+> +#define LED_FUNCTION_DISK_ERR "disk-err"
+> +#define LED_FUNCTION_DISK_READ "disk-read"
+> +#define LED_FUNCTION_DISK_WRITE "disk-write"
+> +#define LED_FUNCTION_FAULT "fault"
+> +#define LED_FUNCTION_FLASH "flash"
+> +#define LED_FUNCTION_HEARTBEAT "heartbeat"
+> +#define LED_FUNCTION_INDICATOR "indicator"
+> +#define LED_FUNCTION_KEYBOARD "keyboard"
+> +#define LED_FUNCTION_KEYPAD "keypad"
+> +#define LED_FUNCTION_LAN "lan"
+> +#define LED_FUNCTION_MMC "mmc"
+> +#define LED_FUNCTION_NAND "nand"
+> +#define LED_FUNCTION_ON "on"
+> +#define LED_FUNCTION_PROGRAMMING "programming"
+> +#define LED_FUNCTION_POWER "power"
+> +#define LED_FUNCTION_RX "rx"
+> +#define LED_FUNCTION_SD "sd"
+> +#define LED_FUNCTION_STANDBY "standby"
+> +#define LED_FUNCTION_STATUS "status"
+> +#define LED_FUNCTION_TORCH "torch"
+> +#define LED_FUNCTION_TV "tv"
+> +#define LED_FUNCTION_TX "tx"
+> +#define LED_FUNCTION_USB "usb"
+> +#define LED_FUNCTION_WAN "wan"
+> +#define LED_FUNCTION_WLAN "wlan"
+> +#define LED_FUNCTION_WPS "wps"
+> +
+>  #endif /* __DT_BINDINGS_LEDS_H */
+> 
 
-Oh, please. The discussion is about the driver name part, which you
-want to overload with some string to mean "internal", which in turn
-is, if anything, part of the functionality.
+Reviewed-by: Dan Murphy <dmurphy@ti.com>
 
-With "platform", you'll at some point have two
-"platform::kbd_backlight" entries. Remind me to send you a "told you
-so" when that happens.
-
-Guenter
-
-> > > But I don't see why I should do additional work when its trivial for
-> > > kernel to just name the LED in an useful way.
-> > >
-> > > "platform::kbd_backlight" has no disadvantages compared to
-> > > "wilco::kbd_backlight" ... so lets just use it.
-> >
-> > It has disadvantages because it promises more than it can deliver IMO.
-> > If device name != "platform::kbd_backlight" it does not mean that it
-> > is not internal keyboard.
->
-> My promise is if "platform::kbd_backlight" exists, it is backlight for
-> internal keyboard. (And second half is "if it is easy for kernel, we
-> name backlight for internal keyboard platform::kbd_backlight").
->
-> > And you still have not resolved how you will
-> > handle cases when there is more than one deice that can be considered
-> > internal and may have a backlight.
->
-> Is that realistic? How would that device look like?
->
->                                                                         Pavel
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-- 
+------------------
+Dan Murphy
