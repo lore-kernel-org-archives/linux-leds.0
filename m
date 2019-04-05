@@ -1,120 +1,169 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 4/6] regulator: lm363x: Add support for LM36274
-Date: Fri, 5 Apr 2019 09:55:38 -0500
-Message-ID: <20190405145540.27703-5-dmurphy@ti.com>
-References: <20190405145540.27703-1-dmurphy@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v5 3/3] platform/chrome: Standardize Chrome OS keyboard
+ backlight name
+Date: Fri, 5 Apr 2019 22:00:04 +0200
+Message-ID: <469dfb68-a7ab-668d-15cb-9e021c0d3f0c@gmail.com>
+References: <20190404185919.GB27340@amd>
+ <CAE_wzQ-XuK7WOyPm6yXsmjp7z0=T92mMrfn1TVaavaLejcYVGA@mail.gmail.com>
+ <20190404191931.GA29984@amd>
+ <CAE_wzQ8y8i7C+_tv0CdnbUw0r21g1ggv2YUuzCog1xABivEvWA@mail.gmail.com>
+ <20190404200658.GD29984@amd>
+ <CAE_wzQ8WcMCzYqvxA_JBZKNza7ca3QE-VShmMxv5++_4F8RR=g@mail.gmail.com>
+ <20190404202042.GF29984@amd>
+ <CAE_wzQ-8XwzptH7EqNrELxjBzY2+0oHJGB3Va=vZwwK3csu_aA@mail.gmail.com>
+ <20190404204207.GH29984@amd>
+ <CAE_wzQ8xe=x0uYcZkDRVKpUAQ_1vVdEPHU3XnEV1=_WN1-AMfw@mail.gmail.com>
+ <20190404220509.GA14690@amd>
+ <CABXOdTeQgjd2-T+eZCMdTDWBGLHEk6kvnYR0DjJYR7zuvVTMsQ@mail.gmail.com>
+ <df9577fd-c526-77e9-c11c-5416387121db@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190405145540.27703-1-dmurphy@ti.com>
+In-Reply-To: <df9577fd-c526-77e9-c11c-5416387121db@collabora.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Guenter Roeck <groeck@google.com>, Pavel Machek <pavel@ucw.cz>
+Cc: Dmitry Torokhov <dtor@google.com>, Nick Crews <ncrews@chromium.org>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>
 List-Id: linux-leds@vger.kernel.org
 
-Adding regulator support for the LM36274 backlight driver.
-This device can leverage this existing code as the functionality
-and registers are common enough between the LM36274 and the LM363x
-series of devices.
+Hi all,
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/regulator/Kconfig            |  2 +-
- drivers/regulator/lm363x-regulator.c | 52 ++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+), 1 deletion(-)
+On 4/5/19 10:42 AM, Enric Balletbo i Serra wrote:
+> Hi,
+> 
+> On 5/4/19 0:42, Guenter Roeck wrote:
+>> On Thu, Apr 4, 2019 at 3:05 PM Pavel Machek <pavel@ucw.cz> wrote:
+>>>
+>>> On Thu 2019-04-04 14:48:35, Dmitry Torokhov wrote:
+>>>> On Thu, Apr 4, 2019 at 1:42 PM Pavel Machek <pavel@ucw.cz> wrote:
+>>>>>
+>>>>> Hi!
+>>>>>
+>>>>>>>> And what to do if internal keyboard is not platform but USB? Like
+>>>>>>>> Google "Whiskers"? (I am not sure why you decided to drop my mention
+>>>>>>>> of internal USB keyboards completely off your reply).
+>>>>>>>
+>>>>>>> I don't have answers for everything. Even if you have USB keyboard, you'll
+>>>>>>> likely still have backlight connected to embedded controller. If not,
+>>>>>>> then maybe you have exception userland needs to know about.
+>>>>>>>
+>>>>>>> Still better than making everything an exception.
+>>>>>>
+>>>>>> You do not need to make everything exception. You just need to look
+>>>>>> beyond the name, and see how the device is connected. And then apply
+>>>>>> your exceptions for "weird" devices.
+>>>>>
+>>>>> "Where it is connected" is not interesting to the userland. "Is it
+>>>>> backlight for internal keyboard" is the right question. It may be
+>>>>> connected to embedded controller or some kind of controller over
+>>>>> i2c... my shell scripts should not need to know about architecture of
+>>>>> every notebook out there.
+>>>>
+>>>> Then your scripts will be failing for some setups.
+>>>
+>>> Well, yes. Do you want to guess what "lp5523:kb3" is?
+>>>
+>>
+>> Oh, please. The discussion is about the driver name part, which you
+>> want to overload with some string to mean "internal", which in turn
+>> is, if anything, part of the functionality.
+>>
+>> With "platform", you'll at some point have two
+>> "platform::kbd_backlight" entries. Remind me to send you a "told you
+>> so" when that happens.
+>>
+>> Guenter
+>>
+>>>>> But I don't see why I should do additional work when its trivial for
+>>>>> kernel to just name the LED in an useful way.
+>>>>>
+>>>>> "platform::kbd_backlight" has no disadvantages compared to
+>>>>> "wilco::kbd_backlight" ... so lets just use it.
+>>>>
+>>>> It has disadvantages because it promises more than it can deliver IMO.
+>>>> If device name != "platform::kbd_backlight" it does not mean that it
+>>>> is not internal keyboard.
+>>>
+>>> My promise is if "platform::kbd_backlight" exists, it is backlight for
+>>> internal keyboard. (And second half is "if it is easy for kernel, we
+>>> name backlight for internal keyboard platform::kbd_backlight").
+>>>
+>>>> And you still have not resolved how you will
+>>>> handle cases when there is more than one deice that can be considered
+>>>> internal and may have a backlight.
+>>>
+>>> Is that realistic? How would that device look like?
+>>>
+> 
+> Maybe is something "weird" in the PC/laptop world but in the Embedded world is
+> not as weird as you think. I worked on devices that has two internal backlights,
+> one to lit the qwerty keyboard and the other one to lit the numeric pad. We used
+> the device field to differentiate both.
+> 
+>    keyboardist::kbd_backlight
+>    tclnumpad::kbd_backlight
+> 
+> Taking this to the extreme you can also think in a device where every key has
+> its own LED backlight, this happens for example in this device [1]. The device
+> can lit only specific keys giving to the user a word prediction experience (i.e
+> After press a key, only the keys that match with a possible word are lit on)
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index b7f249ee5e68..23252ae81fdf 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -362,7 +362,7 @@ config REGULATOR_LM363X
- 	tristate "TI LM363X voltage regulators"
- 	depends on MFD_TI_LMU
- 	help
--	  This driver supports LM3631 and LM3632 voltage regulators for
-+	  This driver supports LM3631, LM3632 and LM36274 voltage regulators for
- 	  the LCD bias.
- 	  One boost output voltage is configurable and always on.
- 	  Other LDOs are used for the display module.
-diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
-index 382b1cecdd93..1944677b1448 100644
---- a/drivers/regulator/lm363x-regulator.c
-+++ b/drivers/regulator/lm363x-regulator.c
-@@ -37,6 +37,11 @@
- #define LM3632_VBOOST_MIN		4500000
- #define LM3632_VLDO_MIN			4000000
- 
-+/* LM36274 */
-+#define LM36274_BOOST_VSEL_MAX		0x3f
-+#define LM36274_LDO_VSEL_MAX		0x34
-+#define LM36274_VOLTAGE_MIN		4000000
-+
- /* Common */
- #define LM363X_STEP_50mV		50000
- #define LM363X_STEP_500mV		500000
-@@ -217,6 +222,51 @@ static const struct regulator_desc lm363x_regulator_desc[] = {
- 		.enable_reg     = LM3632_REG_BIAS_CONFIG,
- 		.enable_mask    = LM3632_EN_VNEG_MASK,
- 	},
-+
-+	/* LM36274 */
-+	{
-+		.name           = "vboost",
-+		.of_match	= "vboost",
-+		.id             = LM36274_BOOST,
-+		.ops            = &lm363x_boost_voltage_table_ops,
-+		.n_voltages     = LM36274_BOOST_VSEL_MAX,
-+		.min_uV         = LM36274_VOLTAGE_MIN,
-+		.uV_step        = LM363X_STEP_50mV,
-+		.type           = REGULATOR_VOLTAGE,
-+		.owner          = THIS_MODULE,
-+		.vsel_reg       = LM36274_REG_VOUT_BOOST,
-+		.vsel_mask      = LM36274_VOUT_MASK,
-+	},
-+	{
-+		.name           = "ldo_vpos",
-+		.of_match	= "vpos",
-+		.id             = LM36274_LDO_POS,
-+		.ops            = &lm363x_regulator_voltage_table_ops,
-+		.n_voltages     = LM36274_LDO_VSEL_MAX,
-+		.min_uV         = LM36274_VOLTAGE_MIN,
-+		.uV_step        = LM363X_STEP_50mV,
-+		.type           = REGULATOR_VOLTAGE,
-+		.owner          = THIS_MODULE,
-+		.vsel_reg       = LM36274_REG_VOUT_POS,
-+		.vsel_mask      = LM36274_VOUT_MASK,
-+		.enable_reg     = LM36274_REG_BIAS_CONFIG_1,
-+		.enable_mask    = LM36274_EN_VPOS_MASK,
-+	},
-+	{
-+		.name           = "ldo_vneg",
-+		.of_match	= "vneg",
-+		.id             = LM36274_LDO_NEG,
-+		.ops            = &lm363x_regulator_voltage_table_ops,
-+		.n_voltages     = LM36274_LDO_VSEL_MAX,
-+		.min_uV         = LM36274_VOLTAGE_MIN,
-+		.uV_step        = LM363X_STEP_50mV,
-+		.type           = REGULATOR_VOLTAGE,
-+		.owner          = THIS_MODULE,
-+		.vsel_reg       = LM36274_REG_VOUT_NEG,
-+		.vsel_mask      = LM36274_VOUT_MASK,
-+		.enable_reg     = LM36274_REG_BIAS_CONFIG_1,
-+		.enable_mask    = LM36274_EN_VNEG_MASK,
-+	},
- };
- 
- static struct gpio_desc *lm363x_regulator_of_get_enable_gpio(struct device *dev, int id)
-@@ -229,9 +279,11 @@ static struct gpio_desc *lm363x_regulator_of_get_enable_gpio(struct device *dev,
- 	 */
- 	switch (id) {
- 	case LM3632_LDO_POS:
-+	case LM36274_LDO_POS:
- 		return gpiod_get_index_optional(dev, "enable", 0,
- 				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
- 	case LM3632_LDO_NEG:
-+	case LM36274_LDO_NEG:
- 		return gpiod_get_index_optional(dev, "enable", 1,
- 				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
- 	default:
+While we have your attention at the subject of LED naming I would like
+to invite you all to reviewing my recent patch set [0], available
+also on the led_naming_v3 branch of linux-leds.git [1].
+
+The patch set introduces generic, backward compatible mechanism for
+composing LED class devices names. It also aims to deprecate current
+LED naming convention and encourage dropping "devicename" section.
+
+Patch 5/25 from the discussed patch set includes
+get_led_device_name_info.sh script proving that parent device name
+of the LED class device is available in the sysfs and its presence
+in the LED name is unjustified and redundant. The argument being raised
+here related to name clash risk when there is no unique devicename
+section included into the LED name is unjustified since LED core has
+a protection against that and adds "_n" numerical suffix to the
+requested LED name when it is already taken.
+
+The patch set introduces also a set of predefined LED_FUNCTION
+names to be used in DT bindings. This along with the removal
+of devicename section from LED naming pattern will help to keep
+LED sysfs interface more uniform and not varying depending on
+underlaying hardware driving the LEDs.
+
+Regarding the problem discussed in this thread - I would not necessarily
+go for "platform" in place of devicename LED name section in the
+cros_kbd_led_backlight driver. If we change it (should we at all - it is
+already in 5.0 AFAICS?), then I would opt for dropping the "chromeos:"
+part. It believe it will be possible to retrieve this name with
+get_led_device_info.sh script. It would be good exercise to check
+it out.
+
+In cases like above:
+
+     keyboardist::kbd_backlight
+     tclnumpad::kbd_backlight
+
+we could do with the following:
+
+     :kbd-backlight
+     :numpad-backlight
+
+I used hyphens instead of underscores since we will have this convention
+in the LED_FUNCTION names, which is more common for Device Tree, and
+some of existing LED triggers.
+
+W could also think of placing common LED_FUNCTION definitions in
+include/leds/led-functions.h and include it in both include/leds/leds.h
+and include/dt-bindings/leds/common.h, so that they would be more
+naturally accessible for non DT based drivers.
+
+
+[0] https://lkml.org/lkml/2019/3/31/222
+[1] 
+https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git/log/?h=led_naming_v3
+
 -- 
-2.19.0
+Best regards,
+Jacek Anaszewski
