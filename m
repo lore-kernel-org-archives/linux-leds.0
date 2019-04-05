@@ -1,115 +1,136 @@
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: Re: [PATCH v5 3/3] platform/chrome: Standardize Chrome OS keyboard
- backlight name
-Date: Fri, 5 Apr 2019 10:42:15 +0200
-Message-ID: <df9577fd-c526-77e9-c11c-5416387121db@collabora.com>
-References: <20190404185919.GB27340@amd>
- <CAE_wzQ-XuK7WOyPm6yXsmjp7z0=T92mMrfn1TVaavaLejcYVGA@mail.gmail.com>
- <20190404191931.GA29984@amd>
- <CAE_wzQ8y8i7C+_tv0CdnbUw0r21g1ggv2YUuzCog1xABivEvWA@mail.gmail.com>
- <20190404200658.GD29984@amd>
- <CAE_wzQ8WcMCzYqvxA_JBZKNza7ca3QE-VShmMxv5++_4F8RR=g@mail.gmail.com>
- <20190404202042.GF29984@amd>
- <CAE_wzQ-8XwzptH7EqNrELxjBzY2+0oHJGB3Va=vZwwK3csu_aA@mail.gmail.com>
- <20190404204207.GH29984@amd>
- <CAE_wzQ8xe=x0uYcZkDRVKpUAQ_1vVdEPHU3XnEV1=_WN1-AMfw@mail.gmail.com>
- <20190404220509.GA14690@amd>
- <CABXOdTeQgjd2-T+eZCMdTDWBGLHEk6kvnYR0DjJYR7zuvVTMsQ@mail.gmail.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v3 05/25] leds: core: Add support for composing LED class
+ device names
+Date: Fri, 5 Apr 2019 06:45:37 -0500
+Message-ID: <eda766d7-3974-0e1f-3025-59c0aa840b14@ti.com>
+References: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
+ <20190331175501.23471-6-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CABXOdTeQgjd2-T+eZCMdTDWBGLHEk6kvnYR0DjJYR7zuvVTMsQ@mail.gmail.com>
-Content-Language: en-GB
+In-Reply-To: <20190331175501.23471-6-jacek.anaszewski@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <groeck@google.com>, Pavel Machek <pavel@ucw.cz>
-Cc: Dmitry Torokhov <dtor@google.com>, Nick Crews <ncrews@chromium.org>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hi,
+Jacek
 
-On 5/4/19 0:42, Guenter Roeck wrote:
-> On Thu, Apr 4, 2019 at 3:05 PM Pavel Machek <pavel@ucw.cz> wrote:
->>
->> On Thu 2019-04-04 14:48:35, Dmitry Torokhov wrote:
->>> On Thu, Apr 4, 2019 at 1:42 PM Pavel Machek <pavel@ucw.cz> wrote:
->>>>
->>>> Hi!
->>>>
->>>>>>> And what to do if internal keyboard is not platform but USB? Like
->>>>>>> Google "Whiskers"? (I am not sure why you decided to drop my mention
->>>>>>> of internal USB keyboards completely off your reply).
->>>>>>
->>>>>> I don't have answers for everything. Even if you have USB keyboard, you'll
->>>>>> likely still have backlight connected to embedded controller. If not,
->>>>>> then maybe you have exception userland needs to know about.
->>>>>>
->>>>>> Still better than making everything an exception.
->>>>>
->>>>> You do not need to make everything exception. You just need to look
->>>>> beyond the name, and see how the device is connected. And then apply
->>>>> your exceptions for "weird" devices.
->>>>
->>>> "Where it is connected" is not interesting to the userland. "Is it
->>>> backlight for internal keyboard" is the right question. It may be
->>>> connected to embedded controller or some kind of controller over
->>>> i2c... my shell scripts should not need to know about architecture of
->>>> every notebook out there.
->>>
->>> Then your scripts will be failing for some setups.
->>
->> Well, yes. Do you want to guess what "lp5523:kb3" is?
->>
+On 3/31/19 12:54 PM, Jacek Anaszewski wrote:
+> Add generic support for composing LED class device name basing on
+> fwnode_handle data. The function composes device name according to
+> either a new <color:function> pattern or the legacy
+> <devicename:color:function> pattern. The decision on using the
+> particular pattern is made basing on whether fwnode contains new
+> "function" and "color" properties, or the legacy "label" proeprty.
 > 
-> Oh, please. The discussion is about the driver name part, which you
-> want to overload with some string to mean "internal", which in turn
-> is, if anything, part of the functionality.
+> Backward compatibility with in-driver hard-coded LED class device
+> names is assured thanks to the default_label and led_hw_name properties
+> of newly introduced struct led_init_data.
 > 
-> With "platform", you'll at some point have two
-> "platform::kbd_backlight" entries. Remind me to send you a "told you
-> so" when that happens.
+> In case none of the aforementioned properties was found, then, for OF
+> nodes, the node name is adopted for LED class device name.
 > 
-> Guenter
+> At the occassion of amending the Documentation/leds/leds-class.txt
+> unify spelling: colour -> color.
 > 
->>>> But I don't see why I should do additional work when its trivial for
->>>> kernel to just name the LED in an useful way.
->>>>
->>>> "platform::kbd_backlight" has no disadvantages compared to
->>>> "wilco::kbd_backlight" ... so lets just use it.
->>>
->>> It has disadvantages because it promises more than it can deliver IMO.
->>> If device name != "platform::kbd_backlight" it does not mean that it
->>> is not internal keyboard.
->>
->> My promise is if "platform::kbd_backlight" exists, it is backlight for
->> internal keyboard. (And second half is "if it is easy for kernel, we
->> name backlight for internal keyboard platform::kbd_backlight").
->>
->>> And you still have not resolved how you will
->>> handle cases when there is more than one deice that can be considered
->>> internal and may have a backlight.
->>
->> Is that realistic? How would that device look like?
->>
+> Alongside these changes added is a new tool - tools/leds/get_led_device_info.sh.
+> The tool allows retrieving details of a LED class device's parent device,
+> which proves that getting rid of a devicename section from LED name pattern
+> is justified since this information is already available in sysfs.
+> 
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Baolin Wang <baolin.wang@linaro.org>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Dan Murphy <dmurphy@ti.com>
+> Cc: Daniel Mack <daniel@zonque.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Cc: Simon Shields <simon@lineageos.org>
+> ---
+>  Documentation/leds/leds-class.txt | 27 +++++++++--
+>  drivers/leds/led-class.c          | 29 ++++++++++--
+>  drivers/leds/led-core.c           | 96 +++++++++++++++++++++++++++++++++++++++
+>  include/linux/leds.h              | 43 ++++++++++++++++++
+>  tools/leds/get_led_device_info.sh | 81 +++++++++++++++++++++++++++++++++
+>  5 files changed, 270 insertions(+), 6 deletions(-)
+>  create mode 100755 tools/leds/get_led_device_info.sh
+> 
+> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
+> index 8b39cc6b03ee..11e19c3c2e4d 100644
+> --- a/Documentation/leds/leds-class.txt
+> +++ b/Documentation/leds/leds-class.txt
+> @@ -43,14 +43,35 @@ LED Device Naming
+>  
+>  Is currently of the form:
+>  
+> -"devicename:colour:function"
+> -
+> -There have been calls for LED properties such as colour to be exported as
+> +"color:function"
+> +
+> +There might be still LED class drivers around using "devicename:color:function"
+> +naming pattern, but the "devicename" section is now deprecated since it used
+> +to convey information that was already available in the sysfs, like product
+> +name. There is a tool (tools/leds/get_led_device_info.sh) available for
+> +retrieving that information per a LED class device.
+> +
+> +Associations with other devices, like network ones, should be defined
+> +via LED trigger mechanism. This approach is applied by some of wireless
+> +network drivers that create triggers dynamically and incorporate phy
+> +name into the trigger name. On the other hand input subsystem offers LED - input
+> +bridge (drivers/input/input-leds.c) for exposing keyboard LEDs as LED class
+> +devices. The get_led_device_info.sh script has support for retrieving related
+> +input device node name. Should it support discovery of associations between
+> +LEDs and other subsystems, please don't hesitate to submit a relevant patch.
+> +
+> +There have been calls for LED properties such as color to be exported as
+>  individual led class attributes. As a solution which doesn't incur as much
+>  overhead, I suggest these become part of the device name. The naming scheme
+>  above leaves scope for further attributes should they be needed. If sections
+>  of the name don't apply, just leave that section blank.
+>  
+> +Please also keep in mind that LED subsystem has a protection against LED name
+> +conflict. It adds numerical suffix (e.g. "_1", "_2", "_3" etc.) to the requested
+> +LED class device name in case it is already in use. In order to prevent LED core
+> +from assigning these suffixes in an arbitrary order the led-enumerator fwnode
+> +property can be used for differentiation of LEDs that share common function
+> +and/or color. In this case enumerators will be prepended with "-" character.
+>  
+>  Brightness setting API
+>  ======================
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 2f09156b0c63..bfd46a9bba63 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -26,6 +26,18 @@
+>  
+>  static struct class *leds_class;
+>  
+> +const char *led_colors[LED_COLOR_ID_COUNT] = {
+> +	[LED_COLOR_ID_WHITE] = "white",
+> +	[LED_COLOR_ID_RED] = "red",
+> +	[LED_COLOR_ID_GREEN] = "green",
+> +	[LED_COLOR_ID_BLUE] = "blue",
+> +	[LED_COLOR_ID_AMBER] = "amber",
+> +	[LED_COLOR_ID_VIOLET] = "violet",
+> +	[LED_COLOR_ID_YELLOW] = "yellow",
+> +	[LED_COLOR_ID_IR] = "ir",
+> +};
+> +EXPORT_SYMBOL_GPL(led_colors);
+> +
 
-Maybe is something "weird" in the PC/laptop world but in the Embedded world is
-not as weird as you think. I worked on devices that has two internal backlights,
-one to lit the qwerty keyboard and the other one to lit the numeric pad. We used
-the device field to differentiate both.
+Why is this exported when it is only used here?
 
-  tclkeyboard::kbd_backlight
-  tclnumpad::kbd_backlight
+I can re-use this array for the multi color framework so I don't oppose it being exported.
 
-Taking this to the extreme you can also think in a device where every key has
-its own LED backlight, this happens for example in this device [1]. The device
-can lit only specific keys giving to the user a word prediction experience (i.e
-After press a key, only the keys that match with a possible word are lit on)
+Reviewed-by: Dan Murphy <dmurphy@ti.com>
 
-- Enric
+Dan
 
-[1] https://www.abilia.com/en/product/lightwriter-sl50
-
->>                                                                         Pavel
->> --
->> (english) http://www.livejournal.com/~pavelmachek
->> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+<snip>-- 
+------------------
+Dan Murphy
