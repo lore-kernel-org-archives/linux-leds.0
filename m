@@ -1,15 +1,15 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v3 10/25] dt-bindings: lp8860: Add function and color
+Subject: Re: [PATCH v3 12/25] dt-bindings: lm3692x: Add function and color
  properties
-Date: Fri, 5 Apr 2019 06:47:56 -0500
-Message-ID: <ed50b431-eaec-0470-649b-4fc50801a075@ti.com>
+Date: Fri, 5 Apr 2019 06:48:12 -0500
+Message-ID: <a2c1bee1-cce0-fd1a-bd4a-9b3390dc63e0@ti.com>
 References: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
- <20190331175501.23471-11-jacek.anaszewski@gmail.com>
+ <20190331175501.23471-13-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190331175501.23471-11-jacek.anaszewski@gmail.com>
+In-Reply-To: <20190331175501.23471-13-jacek.anaszewski@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
@@ -25,15 +25,15 @@ On 3/31/19 12:54 PM, Jacek Anaszewski wrote:
 > Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 > Cc: Dan Murphy <dmurphy@ti.com>
 > ---
->  Documentation/devicetree/bindings/leds/leds-lp8860.txt | 9 +++++++--
+>  Documentation/devicetree/bindings/leds/leds-lm3692x.txt | 9 +++++++--
 >  1 file changed, 7 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lp8860.txt b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-> index 5f0e892ad759..9863220db4ba 100644
-> --- a/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-> +++ b/Documentation/devicetree/bindings/leds/leds-lp8860.txt
-> @@ -20,12 +20,16 @@ Required child properties:
->  	- reg : 0
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+> index 08b352840bd7..4c2d923f8758 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+> +++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+> @@ -26,12 +26,16 @@ Required child properties:
+>  		3 - Will enable the LED3 sync (LM36923 only)
 >  
 >  Optional child properties:
 > -	- label : see Documentation/devicetree/bindings/leds/common.txt
@@ -47,14 +47,14 @@ On 3/31/19 12:54 PM, Jacek Anaszewski wrote:
 >  
 > +#include <dt-bindings/leds/common.h>
 > +
->  led-controller@2d {
->  	compatible = "ti,lp8860";
->  	#address-cells = <1>;
-> @@ -36,7 +40,8 @@ led-controller@2d {
+>  led-controller@36 {
+>  	compatible = "ti,lm3692x";
+>  	reg = <0x36>;
+> @@ -43,7 +47,8 @@ led-controller@36 {
 >  
 >  	led@0 {
 >  		reg = <0>;
-> -		label = "white:backlight";
+> -		label = "white:backlight_cluster";
 > +		function = LED_FUNCTION_BACKLIGHT;
 > +		color = <LED_COLOR_ID_WHITE>;
 >  		linux,default-trigger = "backlight";
@@ -63,6 +63,7 @@ On 3/31/19 12:54 PM, Jacek Anaszewski wrote:
 > 
 
 Reviewed-by: Dan Murphy <dmurphy@ti.com>
+
 -- 
 ------------------
 Dan Murphy
