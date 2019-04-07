@@ -1,51 +1,49 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL v2] LM3532 backlight support improvements and relocation
-Date: Sun,  7 Apr 2019 21:09:51 +0200
-Message-ID: <20190407190951.27288-1-jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 1/4] dt: lm3532: Add lm3532 dt doc and update ti_lmu doc
+Date: Sun, 7 Apr 2019 21:11:05 +0200
+Message-ID: <4d00cf1b-8863-1650-52e3-d1566f715a44@gmail.com>
+References: <20190321142838.22985-1-dmurphy@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190321142838.22985-1-dmurphy@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, tony@atomide.com
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, jacek.anaszewski@gmail.com
+To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz, tony@atomide.com, lee.jones@linaro.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Changes since v1:
+Hi Dan,
 
-- synchronized DT label properties in DT bindings with what has been agreed
-  for the patch "ARM: dts: omap4-droid4: Update backlight dt properties"
+On 3/21/19 3:28 PM, Dan Murphy wrote:
+> Add the lm3532 device tree documentation.
+> Remove lm3532 device tree reference from the ti_lmu devicetree
+> documentation.
+> 
+> With the addition of the dedicated lm3532 documentation the device
+> can be removed from the ti_lmu.txt.
+> 
+> The reason for this is that the lm3532 dt documentation now defines
+> the ability to control LED output strings against different control
+> banks or groups multiple strings to be controlled by a single control
+> bank.
+> 
+> Another addition was for ALS lighting control and configuration.  The
+> LM3532 has a feature that can take in the ALS reading from 2 separate
+> ALS devices and adjust the brightness on the strings that are configured
+> to support this feature.
+> 
+> Finally the device specific properties were moved to the parent node as these
+> properties are not control bank configurable.  These include the runtime ramp
+> and the ALS configuration.
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
 
-The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
+Thank you for your work on this set. Applied.
 
-  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/lm3532-driver-improvements
-
-for you to fetch changes up to bc1b8492c764fea940fc66206047e37a7f8d77e1:
-
-  leds: lm3532: Introduce the lm3532 LED driver (2019-04-07 20:45:49 +0200)
-
-Thanks,
+-- 
+Best regards,
 Jacek Anaszewski
-
-----------------------------------------------------------------
-LM3532 backlight driver improvements and relocation
-----------------------------------------------------------------
-Dan Murphy (4):
-      dt: lm3532: Add lm3532 dt doc and update ti_lmu doc
-      ARM: dts: omap4-droid4: Update backlight dt properties
-      mfd: ti-lmu: Remove LM3532 backlight driver references
-      leds: lm3532: Introduce the lm3532 LED driver
-
- .../devicetree/bindings/leds/leds-lm3532.txt       | 101 +++
- Documentation/devicetree/bindings/mfd/ti-lmu.txt   |  20 -
- arch/arm/boot/dts/omap4-droid4-xt894.dts           |  27 +-
- drivers/leds/Kconfig                               |  10 +
- drivers/leds/Makefile                              |   1 +
- drivers/leds/leds-lm3532.c                         | 683 +++++++++++++++++++++
- drivers/mfd/ti-lmu.c                               |  11 -
- include/linux/mfd/ti-lmu-register.h                |  44 --
- include/linux/mfd/ti-lmu.h                         |   1 -
- 9 files changed, 813 insertions(+), 85 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3532.txt
- create mode 100644 drivers/leds/leds-lm3532.c
