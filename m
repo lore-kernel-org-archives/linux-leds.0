@@ -1,124 +1,51 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 2/4] ARM: dts: omap4-droid4: Update backlight dt
- properties
-Date: Sun, 7 Apr 2019 20:31:02 +0200
-Message-ID: <eeb1ba10-302b-d81e-e5ae-129c79ef7b66@gmail.com>
-References: <20190321142838.22985-1-dmurphy@ti.com>
- <20190321142838.22985-2-dmurphy@ti.com>
- <f9d80ad1-d80c-bf77-5e0b-1e02a1b74200@gmail.com>
- <20190404220013.GG49658@atomide.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [GIT PULL v2] LM3532 backlight support improvements and relocation
+Date: Sun,  7 Apr 2019 21:09:51 +0200
+Message-ID: <20190407190951.27288-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190404220013.GG49658@atomide.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: lee.jones@linaro.org, tony@atomide.com
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-On 4/5/19 12:00 AM, Tony Lindgren wrote:
-> * Jacek Anaszewski <jacek.anaszewski@gmail.com> [190404 20:12]:
->> Tony,
->>
->> On 3/21/19 3:28 PM, Dan Murphy wrote:
->>> Update the properties for the lm3532 device node for droid4.
->>> With this change the backlight LED string and the keypad
->>> LED strings will be controlled separately.
->>>
->>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>> ---
->>>
->>> v5 - No change - https://lore.kernel.org/patchwork/patch/1050409/
->>>
->>> v4 - No change - https://lore.kernel.org/patchwork/patch/1050125/
->>> v3 - updated keypad label on v1 comment - https://lore.kernel.org/patchwork/patch/1049023/
->>> v2 - Fixed ramp-up and ramp-down properties, removed hard coded property values,
->>> I did not change the label as it is undecided what it could be - https://lore.kernel.org/patchwork/patch/1048806/
->>>
->>>    arch/arm/boot/dts/omap4-droid4-xt894.dts | 26 ++++++++++++++++--------
->>>    1 file changed, 18 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts/omap4-droid4-xt894.dts
->>> index e21ec929f096..aea206f04f76 100644
->>> --- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
->>> +++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
->>> @@ -383,20 +383,30 @@
->>>    };
->>>    &i2c1 {
->>> -	lm3532@38 {
->>> +	led-controller@38 {
->>>    		compatible = "ti,lm3532";
->>> +		#address-cells = <1>;
->>> +		#size-cells = <0>;
->>>    		reg = <0x38>;
->>>    		enable-gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
->>> -		lcd_backlight: backlight {
->>> -			compatible = "ti,lm3532-backlight";
->>> +		ramp-up-us = <1024>;
->>> +		ramp-down-us = <8193>;
->>> -			lcd {
->>> -				led-sources = <0 1 2>;
->>> -				ramp-up-msec = <1>;
->>> -				ramp-down-msec = <0>;
->>> -			};
->>
->> Since I'll be creating integration branch for this series,
->> and it would be good to have this patch in it too, then
->> I can do the amendments by myself:
->>
->>> +		lcd_backlight: led@0 {
->>> +			reg = <0>;
->>> +			led-sources = <2>;
->>> +			ti,led-mode = <0>;
->>> +			label = "backlight";
->>
->> s/backlight/:backlight/
->>
->>> +			linux,default-trigger = "backlight";
->>> +		};
->>> +
->>> +		led@1 {
->>> +			reg = <1>;
->>> +			led-sources = <1>;
->>> +			ti,led-mode = <0>;
->>> +			label = "platform::kbd_backlight";
->>
->> s/platform::kbd_backlight/:kbd_backlight/
-> 
-> Yes makes sense to me.
-> 
->> and then send you a pull request.
->>
->> Would you be OK with that?
-> 
-> Sure go for it. Here's my ack for the changes:
-> 
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> 
-> And then for the one liner to fold in below:
-> 
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> 
-> 8< -------------
-> diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts/omap4-droid4-xt894.dts
-> --- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
-> +++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
-> @@ -214,7 +214,6 @@
->   
->   		width-mm = <50>;
->   		height-mm = <89>;
-> -		backlight = <&lcd_backlight>;
->   
->   		panel-timing {
->   			clock-frequency = <0>;		/* Calculated by dsi */
-> 
+Changes since v1:
 
-Folded in, thanks. Beside that, I also removed lcd_backlight DT
-labels from both DT bindings and dts, since it is now unused
-and misleading.
+- synchronized DT label properties in DT bindings with what has been agreed
+  for the patch "ARM: dts: omap4-droid4: Update backlight dt properties"
 
--- 
-Best regards,
+The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
+
+  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/lm3532-driver-improvements
+
+for you to fetch changes up to bc1b8492c764fea940fc66206047e37a7f8d77e1:
+
+  leds: lm3532: Introduce the lm3532 LED driver (2019-04-07 20:45:49 +0200)
+
+Thanks,
 Jacek Anaszewski
+
+----------------------------------------------------------------
+LM3532 backlight driver improvements and relocation
+----------------------------------------------------------------
+Dan Murphy (4):
+      dt: lm3532: Add lm3532 dt doc and update ti_lmu doc
+      ARM: dts: omap4-droid4: Update backlight dt properties
+      mfd: ti-lmu: Remove LM3532 backlight driver references
+      leds: lm3532: Introduce the lm3532 LED driver
+
+ .../devicetree/bindings/leds/leds-lm3532.txt       | 101 +++
+ Documentation/devicetree/bindings/mfd/ti-lmu.txt   |  20 -
+ arch/arm/boot/dts/omap4-droid4-xt894.dts           |  27 +-
+ drivers/leds/Kconfig                               |  10 +
+ drivers/leds/Makefile                              |   1 +
+ drivers/leds/leds-lm3532.c                         | 683 +++++++++++++++++++++
+ drivers/mfd/ti-lmu.c                               |  11 -
+ include/linux/mfd/ti-lmu-register.h                |  44 --
+ include/linux/mfd/ti-lmu.h                         |   1 -
+ 9 files changed, 813 insertions(+), 85 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3532.txt
+ create mode 100644 drivers/leds/leds-lm3532.c
