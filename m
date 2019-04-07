@@ -1,196 +1,115 @@
-From: Dmitry Torokhov <dtor@google.com>
-Subject: Re: [PATCH v5 3/3] platform/chrome: Standardize Chrome OS keyboard
- backlight name
-Date: Sun, 7 Apr 2019 15:01:35 -0700
-Message-ID: <CAE_wzQ_bhRMH1yHOrFhOqAR_ch0w8Ajv31yynT7ssZ3eDM4FUQ@mail.gmail.com>
-References: <20190404185919.GB27340@amd> <CAE_wzQ-XuK7WOyPm6yXsmjp7z0=T92mMrfn1TVaavaLejcYVGA@mail.gmail.com>
- <20190404191931.GA29984@amd> <CAE_wzQ8y8i7C+_tv0CdnbUw0r21g1ggv2YUuzCog1xABivEvWA@mail.gmail.com>
- <20190404200658.GD29984@amd> <CAE_wzQ8WcMCzYqvxA_JBZKNza7ca3QE-VShmMxv5++_4F8RR=g@mail.gmail.com>
- <20190404202042.GF29984@amd> <CAE_wzQ-8XwzptH7EqNrELxjBzY2+0oHJGB3Va=vZwwK3csu_aA@mail.gmail.com>
- <20190404204207.GH29984@amd> <CAE_wzQ8xe=x0uYcZkDRVKpUAQ_1vVdEPHU3XnEV1=_WN1-AMfw@mail.gmail.com>
- <20190404220509.GA14690@amd> <CABXOdTeQgjd2-T+eZCMdTDWBGLHEk6kvnYR0DjJYR7zuvVTMsQ@mail.gmail.com>
- <df9577fd-c526-77e9-c11c-5416387121db@collabora.com> <469dfb68-a7ab-668d-15cb-9e021c0d3f0c@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [GIT PULL v2] LM3532 backlight support improvements and
+ relocation
+Date: Mon, 8 Apr 2019 00:17:40 +0200
+Message-ID: <20190407221740.GA6327@amd>
+References: <20190407190951.27288-1-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <469dfb68-a7ab-668d-15cb-9e021c0d3f0c@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20190407190951.27288-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Guenter Roeck <groeck@google.com>, Pavel Machek <pavel@ucw.cz>, Nick Crews <ncrews@chromium.org>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh@kernel.org, dmurphy@ti.com
+Cc: lee.jones@linaro.org, tony@atomide.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Jacek,
 
-On Fri, Apr 5, 2019 at 1:00 PM Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
->
-> Hi all,
->
-> On 4/5/19 10:42 AM, Enric Balletbo i Serra wrote:
-> > Hi,
-> >
-> > On 5/4/19 0:42, Guenter Roeck wrote:
-> >> On Thu, Apr 4, 2019 at 3:05 PM Pavel Machek <pavel@ucw.cz> wrote:
-> >>>
-> >>> On Thu 2019-04-04 14:48:35, Dmitry Torokhov wrote:
-> >>>> On Thu, Apr 4, 2019 at 1:42 PM Pavel Machek <pavel@ucw.cz> wrote:
-> >>>>>
-> >>>>> Hi!
-> >>>>>
-> >>>>>>>> And what to do if internal keyboard is not platform but USB? Like
-> >>>>>>>> Google "Whiskers"? (I am not sure why you decided to drop my mention
-> >>>>>>>> of internal USB keyboards completely off your reply).
-> >>>>>>>
-> >>>>>>> I don't have answers for everything. Even if you have USB keyboard, you'll
-> >>>>>>> likely still have backlight connected to embedded controller. If not,
-> >>>>>>> then maybe you have exception userland needs to know about.
-> >>>>>>>
-> >>>>>>> Still better than making everything an exception.
-> >>>>>>
-> >>>>>> You do not need to make everything exception. You just need to look
-> >>>>>> beyond the name, and see how the device is connected. And then apply
-> >>>>>> your exceptions for "weird" devices.
-> >>>>>
-> >>>>> "Where it is connected" is not interesting to the userland. "Is it
-> >>>>> backlight for internal keyboard" is the right question. It may be
-> >>>>> connected to embedded controller or some kind of controller over
-> >>>>> i2c... my shell scripts should not need to know about architecture of
-> >>>>> every notebook out there.
-> >>>>
-> >>>> Then your scripts will be failing for some setups.
-> >>>
-> >>> Well, yes. Do you want to guess what "lp5523:kb3" is?
-> >>>
-> >>
-> >> Oh, please. The discussion is about the driver name part, which you
-> >> want to overload with some string to mean "internal", which in turn
-> >> is, if anything, part of the functionality.
-> >>
-> >> With "platform", you'll at some point have two
-> >> "platform::kbd_backlight" entries. Remind me to send you a "told you
-> >> so" when that happens.
-> >>
-> >> Guenter
-> >>
-> >>>>> But I don't see why I should do additional work when its trivial for
-> >>>>> kernel to just name the LED in an useful way.
-> >>>>>
-> >>>>> "platform::kbd_backlight" has no disadvantages compared to
-> >>>>> "wilco::kbd_backlight" ... so lets just use it.
-> >>>>
-> >>>> It has disadvantages because it promises more than it can deliver IMO.
-> >>>> If device name != "platform::kbd_backlight" it does not mean that it
-> >>>> is not internal keyboard.
-> >>>
-> >>> My promise is if "platform::kbd_backlight" exists, it is backlight for
-> >>> internal keyboard. (And second half is "if it is easy for kernel, we
-> >>> name backlight for internal keyboard platform::kbd_backlight").
-> >>>
-> >>>> And you still have not resolved how you will
-> >>>> handle cases when there is more than one deice that can be considered
-> >>>> internal and may have a backlight.
-> >>>
-> >>> Is that realistic? How would that device look like?
-> >>>
-> >
-> > Maybe is something "weird" in the PC/laptop world but in the Embedded world is
-> > not as weird as you think. I worked on devices that has two internal backlights,
-> > one to lit the qwerty keyboard and the other one to lit the numeric pad. We used
-> > the device field to differentiate both.
-> >
-> >    keyboardist::kbd_backlight
-> >    tclnumpad::kbd_backlight
-> >
-> > Taking this to the extreme you can also think in a device where every key has
-> > its own LED backlight, this happens for example in this device [1]. The device
-> > can lit only specific keys giving to the user a word prediction experience (i.e
-> > After press a key, only the keys that match with a possible word are lit on)
->
-> While we have your attention at the subject of LED naming I would like
-> to invite you all to reviewing my recent patch set [0], available
-> also on the led_naming_v3 branch of linux-leds.git [1].
->
-> The patch set introduces generic, backward compatible mechanism for
-> composing LED class devices names. It also aims to deprecate current
-> LED naming convention and encourage dropping "devicename" section.
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->From looking at the docs section it looks like you propose to move
-from "device:color:fucntion" to simply "color:function" naming, and
-expect to have a suffix "_<n>" to avoid problem with duplicate LED
-names. I do not think this is quite backward compatible, since
-previously userspace was supposed to split the device name on the
-colon boundaries and extract the 3rd component if it wanted to
-determine function. With the new proposed scheme it has to be modified
-to try and also fetch the 2nd component if there isn't 3rd one and
-consider it as function as well. It also need to recognize potential
-suffixes and drop them before matching on function name.
+Hi!
 
-I think if you want flexibility you really need to switch from
-encoding the information in the name to add LED class attributes
-describing the LED in more detail. This might include information
-about LEd placement (internal/external) if such information is
-available, and other additional attributes, if needed. Updated
-userspace can make use of these new attributes, leaving existing
-userspace decoding legacy names.
+> Changes since v1:
+>=20
+> - synchronized DT label properties in DT bindings with what has been agre=
+ed
+>   for the patch "ARM: dts: omap4-droid4: Update backlight dt properties"
+>=20
+> The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa23=
+1b:
+>=20
+>   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+>=20
+> are available in the git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.g=
+it tags/lm3532-driver-improvements
+>=20
+> for you to fetch changes up to bc1b8492c764fea940fc66206047e37a7f8d77e1:
+>=20
+>   leds: lm3532: Introduce the lm3532 LED driver (2019-04-07 20:45:49 +020=
+0)
+>=20
+> Thanks,
+> Jacek Anaszewski
+>=20
+> ----------------------------------------------------------------
+> LM3532 backlight driver improvements and relocation
+> ----------------------------------------------------------------
+> Dan Murphy (4):
+>       dt: lm3532: Add lm3532 dt doc and update ti_lmu doc
 
->
-> Patch 5/25 from the discussed patch set includes
-> get_led_device_name_info.sh script proving that parent device name
-> of the LED class device is available in the sysfs and its presence
-> in the LED name is unjustified and redundant.  The argument being raised
-> here related to name clash risk when there is no unique devicename
-> section included into the LED name is unjustified since LED core has
-> a protection against that and adds "_n" numerical suffix to the
-> requested LED name when it is already taken.
+Sorry, this one will need more work.
 
-This scheme breaks userspace that does not expect additional suffixes
-attached to function name.
+When did Rob acknowledge this? I do not remember that mail & quick
+google does not find it.
 
->
-> The patch set introduces also a set of predefined LED_FUNCTION
-> names to be used in DT bindings. This along with the removal
-> of devicename section from LED naming pattern will help to keep
-> LED sysfs interface more uniform and not varying depending on
-> underlaying hardware driving the LEDs.
->
-> Regarding the problem discussed in this thread - I would not necessarily
-> go for "platform" in place of devicename LED name section in the
-> cros_kbd_led_backlight driver. If we change it (should we at all - it is
-> already in 5.0 AFAICS?), then I would opt for dropping the "chromeos:"
-> part. It believe it will be possible to retrieve this name with
-> get_led_device_info.sh script. It would be good exercise to check
-> it out.
->
-> In cases like above:
->
->      keyboardist::kbd_backlight
->      tclnumpad::kbd_backlight
->
-> we could do with the following:
->
->      :kbd-backlight
->      :numpad-backlight
->
-> I used hyphens instead of underscores since we will have this convention
-> in the LED_FUNCTION names, which is more common for Device Tree, and
-> some of existing LED triggers.
+I still don't like the fact that it is using different binding from
+other similar chips. It for example replaces "ramp-up-msec" with
+"ramp-up-us".
 
-I am not sure what device tree has to do with it. ACPI for example
-likes all caps and sort names with numbers, but we do not let it
-propagate into the kernel.
+This is certainly wrong:
 
-We also should not be changing existing function names as existing
-userspace relies on them.
++Optional properties if ALS mode is used:
++	  - ti,als-vmin - Minimum ALS voltage defined in Volts
++	  - ti,als-vmax - Maximum ALS voltage defined in Volts
++	  Per the data sheet the max ALS voltage is 2V and the min is
+0V
 
->
-> W could also think of placing common LED_FUNCTION definitions in
-> include/leds/led-functions.h and include it in both include/leds/leds.h
-> and include/dt-bindings/leds/common.h, so that they would be more
-> naturally accessible for non DT based drivers.
+=2E..but milivolts (or microvolts?) make sense there, and clearly
+milivolts are used because 2000V is way out of range.:
 
-This makes total sense.
++	  ti,als-vmin =3D <0>;
++	  ti,als-vmax =3D <2000>;
 
-Thanks.
+Plus:
 
--- 
-Dmitry
++Required child properties:
+=2E..
++	- ti,led-mode : Defines if the LED strings are manually controlled or
++			if the LED strings are controlled by the ALS.
++			       0x00 - LED strings are I2C controlled via full scale brightness =
+control register
++        		  	  0x01 - LED strings are ALS controlled
+
+Dunno. Normally we'd have "ti,automatic-led-mode", and if it was not
+present, we'd default to manual, no? (Also "led-mode" is a bit too
+generic. ti,als-enabled would be better description).
+
+Plus, I'd kind of expect ALS enabled/disabled to be runtime controled,
+not from the device tree.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlyqdwQACgkQMOfwapXb+vLaxACgsFFWomoCI5PIWeZLAY7mJVpr
+Oj0Anirsd9tos3fXoMjxEZCQbApj0MWy
+=Lrel
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
