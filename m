@@ -1,10 +1,8 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: [GIT PULL] LM3532 backlight support improvements and relocation
-Date: Sun,  7 Apr 2019 20:25:14 +0200
-Message-ID: <20190407182514.15427-2-jacek.anaszewski@gmail.com>
-References: <20190407182514.15427-1-jacek.anaszewski@gmail.com>
+Date: Sun,  7 Apr 2019 20:25:13 +0200
+Message-ID: <20190407182514.15427-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190407182514.15427-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: lee.jones@linaro.org, tony@atomide.com
 Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, jacek.anaszewski@gmail.com
