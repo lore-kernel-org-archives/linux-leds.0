@@ -1,119 +1,71 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 3/3] platform/chrome: Standardize Chrome OS keyboard
- backlight name
-Date: Sun, 7 Apr 2019 00:17:56 +0200
-Message-ID: <20190406221756.GA4472@amd>
-References: <20190404202042.GF29984@amd>
- <CAE_wzQ-8XwzptH7EqNrELxjBzY2+0oHJGB3Va=vZwwK3csu_aA@mail.gmail.com>
- <20190404204207.GH29984@amd>
- <CAE_wzQ8xe=x0uYcZkDRVKpUAQ_1vVdEPHU3XnEV1=_WN1-AMfw@mail.gmail.com>
- <20190404220509.GA14690@amd>
- <CABXOdTeQgjd2-T+eZCMdTDWBGLHEk6kvnYR0DjJYR7zuvVTMsQ@mail.gmail.com>
- <df9577fd-c526-77e9-c11c-5416387121db@collabora.com>
- <469dfb68-a7ab-668d-15cb-9e021c0d3f0c@gmail.com>
- <20190406095346.GB7546@amd>
- <1b45b4e8-18b6-62d5-7d42-0feed57c2c73@gmail.com>
+From: Brian Masney <masneyb@onstation.org>
+Subject: Re: [PATCH v2 2/3] dt-bindings: backlight: add lm3630a bindings
+Date: Sun, 7 Apr 2019 07:28:21 -0400
+Message-ID: <20190407112821.GA6922@basecamp>
+References: <20190401103034.21062-1-masneyb@onstation.org>
+ <20190401103034.21062-3-masneyb@onstation.org>
+ <68229e7f-4749-cde5-f541-793ab614084d@ti.com>
+ <20190402132440.GA10359@basecamp>
+ <c88d954a-ce37-35dc-414b-df28d6095d89@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1b45b4e8-18b6-62d5-7d42-0feed57c2c73@gmail.com>
+In-Reply-To: <c88d954a-ce37-35dc-414b-df28d6095d89@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Guenter Roeck <groeck@google.com>, Dmitry Torokhov <dtor@google.com>, Nick Crews <ncrews@chromium.org>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, jonathan@marek.ca
 List-Id: linux-leds@vger.kernel.org
 
+Hi Dan,
 
---G4iJoqBmSsgzjUCe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Apr 02, 2019 at 08:44:22AM -0500, Dan Murphy wrote:
+> Also one other comment I noticed when reviewing the code that there is no definition to
+> which child led properties are optional and which are required?
 
-Hi!
+With the new YAML bindings, there is a separate toplevel 'required' tag in
+the schema. Here is a snippet from my last submission that illustrates
+this:
 
-> >I am not sure about existing driver. Important thing for me is that
-> >new drivers use consistent naming.
-> >
-> >>In cases like above:
-> >>
-> >>     keyboardist::kbd_backlight
-> >>     tclnumpad::kbd_backlight
-> >>
-> >>we could do with the following:
-> >>
-> >>     :kbd-backlight
-> >>     :numpad-backlight
-> >>
-> >>I used hyphens instead of underscores since we will have this convention
-> >>in the LED_FUNCTION names, which is more common for Device Tree, and
-> >>some of existing LED triggers.
-> >
-> >Existing userspace already searches for *:kbd_backlight", AFAICT, so
-> >we probably want to keep the "_".
->=20
-> OK, but it should be an exception but not a rule.
-> This "kbd-*" naming is used in input and tty subsystems which register
-> keyboard triggers with this style:
->=20
-> ~/kernel$ git grep  ".*[\":]kbd-" -- "*.c"
-> drivers/input/input-leds.c:     [LED_NUML]      =3D { "numlock",
-> VT_TRIGGER("kbd-numlock") },
+    properties:
+      compatible:
+        const: ti,lm3630a
+    
+      reg:
+        maxItems: 1
+    
+      ti,linear-mapping-mode:
+        description: |
+          Enable linear mapping mode. If disabled, then it will use exponential
+          mapping mode in which the ramp up/down appears to have a more uniform
+          transition to the human eye.
+        type: boolean
+    
+    required:
+      - compatible
+      - reg
 
-> "kbd_" naming is used only in case of backlight LEDs:
->=20
-> ~/kernel$ git grep  ".*[\":]kbd_" -- "*.c"
-> drivers/hid/hid-asus.c: drvdata->kbd_backlight->cdev.name =3D
-> "asus::kbd_backlight";
+So 'ti,linear-mapping-mode' is optional in this example.
 
-Yes, but userland already knows about kbd_backlight, so we really can
-not change this.
+> > +      led-sources:
+> > +        description: |
+> > +          List of device current outputs the LED is connected to.
+> > +        allOf:
+> > +          - $ref: /schemas/types.yaml#/definitions/uint32-array
+> > +          - minItems: 1
+> > +            maxItems: 2
+> > +            items:
+> > +              minimum: 0
+> > +              maximum: 1
+> > +
+> 
+> label and led-sources are already defined in the common.txt no need to redefine them here.
 
-> With LEDs in platform drivers is that problem that we have the name
-> compiled into the kernel. Maybe to make it more flexible we could
-> use kernel config to choose between new "kbd-" and legacy "kbd_"
-> naming.
+We'll still need to define the led-sources and label in this binding
+with the new format even though it will also be in the LED common
+bindings. We won't have to put the common things like the description
+since that information will come from the common binding. We only need
+to specify the additional constraints like the min/max number of items
+and the min/max value for each item for this particular example.
 
-No, I don't think that is suitable use for config option.
-
-> >I don't care much if we use "platform:" or no prefix at all for
-> >backlight of internal keyboard, as long as it is consistent across all
-> >devices.
-> >
-> >We certainly want to use some prefix (probably inputX:) for backlight
-> >on USB keyboards.
->=20
-> For LEDs exposed through the input-LED bridge my get_led_device_info.sh
-> script nicely reports:
->=20
-> associated input node: input1
->=20
-> It just does:
->=20
-> readlink input1\:\:numlock/device
->=20
-> which prints: "../../input1 "
-
-Yes, that will probably work for USB keyboards. (But not for internal
-keyboards on phones, etc).
-
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---G4iJoqBmSsgzjUCe
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlypJZQACgkQMOfwapXb+vJtUACcDprz07bWGG7owVUANpYCh1Dn
-nncAn3OE1uj6KGpEPmzK7C18vf/0BB89
-=6fQc
------END PGP SIGNATURE-----
-
---G4iJoqBmSsgzjUCe--
+Brian
