@@ -1,43 +1,50 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [GIT PULL v2] LM3532 backlight support improvements and
- relocation
-Date: Mon, 8 Apr 2019 15:03:51 -0500
-Message-ID: <df6e1bf1-2588-46d0-c115-b6827174bb9b@ti.com>
-References: <20190407190951.27288-1-jacek.anaszewski@gmail.com>
- <20190407221740.GA6327@amd> <f96d09dc-3ddc-4ac7-3668-508df430f686@ti.com>
- <20190408193055.GN49658@atomide.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 bitops] bitops: Fix UBSAN undefined behavior warning
+ for rotation right
+Date: Mon, 8 Apr 2019 15:51:14 -0700
+Message-ID: <20190408155114.c0031348812a0590662e4bf9@linux-foundation.org>
+References: <20190407125325.24440-1-vadimp@mellanox.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190408193055.GN49658@atomide.com>
-Content-Language: en-US
+In-Reply-To: <20190407125325.24440-1-vadimp@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh@kernel.org, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vadim Pasternak <vadimp@mellanox.com>
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, idosch@mellanox.com
 List-Id: linux-leds@vger.kernel.org
 
-Tony
+On Sun,  7 Apr 2019 12:53:25 +0000 Vadim Pasternak <vadimp@mellanox.com> wrote:
 
-On 4/8/19 2:30 PM, Tony Lindgren wrote:
-> * Dan Murphy <dmurphy@ti.com> [190408 15:54]:
->> On 4/7/19 5:17 PM, Pavel Machek wrote:
->>> Plus, I'd kind of expect ALS enabled/disabled to be runtime controled,
->>> not from the device tree.
->> We can always add runtime override control to the driver.
-> Yeah that sounds good to me :) Sounds like this can be done
-> with follow up patches though.
+> The warning is caused by call to rorXX(), if the second parameters of
+> this function "shift" is zero. In such case UBSAN reports the warning
+> for the next expression: (word << (XX - shift), where XX is
+> 64, 32, 16, 8 for respectively ror64, ror32, ror16, ror8.
+> Fix adds validation of this parameter - in case it's equal zero, no
+> need to rotate, just original "word" is to be returned to caller.
+> 
+> The UBSAN undefined behavior warning has been reported for call to
+> ror32():
+> [   11.426543] UBSAN: Undefined behaviour in ./include/linux/bitops.h:93:33
+> [   11.434045] shift exponent 32 is too large for 32-bit type 'unsigned int'
+
+hm, do we care?
+
+> ...
 >
->> Just need to see if there is a common interface from input or IIO we can adopt.
-> Hmm can the lm3532 registers actually show the value
-> for the ALS sensors?
 
+> --- a/include/linux/bitops.h
+> +++ b/include/linux/bitops.h
+> @@ -70,6 +70,9 @@ static inline __u64 rol64(__u64 word, unsigned int shift)
+>   */
+>  static inline __u64 ror64(__u64 word, unsigned int shift)
+>  {
+> +	if (!shift)
+> +		return word;
+> +
+>  	return (word >> shift) | (word << (64 - shift));
+>  }
 
-No it can only report the current configured ALS zone not the LUX value.
-
-Dan
-
-
-> Regards,
->
-> Tony
+Is there any known architecture or compiler for which UL<<64 doesn't
+reliably produce zero?  Is there any prospect that this will become a
+problem in the future?
