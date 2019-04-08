@@ -1,8 +1,8 @@
 From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: [PATCH v1 bitops] bitops: Fix UBSAN undefined behavior warning
  for rotation right
-Date: Mon, 8 Apr 2019 15:51:14 -0700
-Message-ID: <20190408155114.c0031348812a0590662e4bf9@linux-foundation.org>
+Date: Mon, 8 Apr 2019 15:52:17 -0700
+Message-ID: <20190408155217.3f723554ae7fbcb34eeacb30@linux-foundation.org>
 References: <20190407125325.24440-1-vadimp@mellanox.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -11,8 +11,10 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190407125325.24440-1-vadimp@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, idosch@mellanox.com
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, idosch@mellanox.com, Andrey Ryabinin <aryabinin@virtuozzo.com>
 List-Id: linux-leds@vger.kernel.org
+
+(resend, cc Andrey)
 
 On Sun,  7 Apr 2019 12:53:25 +0000 Vadim Pasternak <vadimp@mellanox.com> wrote:
 
