@@ -1,70 +1,84 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 5/6] dt-bindings: leds: Add LED bindings for the LM36274
-Date: Mon, 8 Apr 2019 12:10:40 +0200
-Message-ID: <20190408101039.GC30958@amd>
-References: <20190405145540.27703-1-dmurphy@ti.com>
- <20190405145540.27703-6-dmurphy@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v8 02/11] dt-bindings: power: supply: add DT bindings for max77650
+Date: Mon, 8 Apr 2019 14:25:45 +0200
+Message-ID: <CAMRc=Mc+cTVrzywTydp-10Hj=-m=qCmtK1+4NRiOFHZ855fnDw@mail.gmail.com>
+References: <20190403090108.24788-1-brgl@bgdev.pl> <20190403090108.24788-3-brgl@bgdev.pl>
+ <20190406070746.GA29624@bogus>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Fig2xvG2VGoz8o/s"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190405145540.27703-6-dmurphy@ti.com>
+In-Reply-To: <20190406070746.GA29624@bogus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-
---Fig2xvG2VGoz8o/s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri 2019-04-05 09:55:39, Dan Murphy wrote:
-> Add the LM36274 LED specific bindings.
->=20
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  .../devicetree/bindings/leds/leds-lm36274.txt | 82 +++++++++++++++++++
->  1 file changed, 82 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.t=
+sob., 6 kwi 2019 o 09:07 Rob Herring <robh@kernel.org> napisa=C5=82(a):
+>
+> On Wed, Apr 03, 2019 at 11:00:59AM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Add the DT binding document for the battery charger module of max77650.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> >  .../power/supply/max77650-charger.txt         | 27 +++++++++++++++++++
+> >  1 file changed, 27 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/power/supply/max7=
+7650-charger.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/power/supply/max77650-ch=
+arger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charger=
+.txt
+> > new file mode 100644
+> > index 000000000000..fef188144386
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.t=
 xt
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm36274.txt b/Do=
-cumentation/devicetree/bindings/leds/leds-lm36274.txt
-> new file mode 100644
-> index 000000000000..359990d85b28
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm36274.txt
-> @@ -0,0 +1,82 @@
-> +* Texas Instruments LM36274 4-Channel LCD Backlight Driver w/Integrated =
-Bias
-> +
-> +The LM36274 is an integrated four-channel WLED driver and LCD bias suppl=
-y.
-> +The backlight boost provides the power to bias four parallel LED strings=
- with
-> +up to 29-V total output voltage. The 11-bit LED current is rogrammable v=
-ia
+> > @@ -0,0 +1,27 @@
+> > +Battery charger driver for MAX77650 PMIC from Maxim Integrated.
+> > +
+> > +This module is part of the MAX77650 MFD device. For more details
+> > +see Documentation/devicetree/bindings/mfd/max77650.txt.
+> > +
+> > +The charger is represented as a sub-node of the PMIC node on the devic=
+e tree.
+> > +
+> > +Required properties:
+> > +--------------------
+> > +- compatible:                Must be "maxim,max77650-charger"
+> > +
+> > +Optional properties:
+> > +--------------------
+> > +- min-microvolt:     Minimum CHGIN regulation voltage (in microvolts).=
+ Must be
+> > +                     one of: 4000000, 4100000, 4200000, 4300000, 44000=
+00,
+> > +                     4500000, 4600000, 4700000.
+> > +- current-limit-microamp:    CHGIN input current limit (in microamps).=
+ Must
+> > +                             be one of: 95000, 190000, 285000, 380000,=
+ 475000.
+>
+> To repeat what I said on v6, these should be common properties IMO (and
+> therefore documented as such).
+>
 
-29V
+Do you mean a separate "charger.txt" document in
+Documentation/devicetree/bindings/power/supply/?
 
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Bart
 
---Fig2xvG2VGoz8o/s
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlyrHh8ACgkQMOfwapXb+vItWQCbBx2RPdPw60W1yLJxHH47DSW5
-W1sAniGLQF1mjllOFEkUE/rvSou1fL5A
-=pXGZ
------END PGP SIGNATURE-----
-
---Fig2xvG2VGoz8o/s--
+> > +
+> > +Example:
+> > +--------
+> > +
+> > +     charger {
+> > +             compatible =3D "maxim,max77650-charger";
+> > +             min-microvolt =3D <4200000>;
+> > +             curr-lim-microamp =3D <285000>;
+> > +     };
+> > --
+> > 2.21.0
+> >
