@@ -1,110 +1,70 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Keyboard backlight LED naming was Re: [PATCH v5 2/3]
- platform/chrome: Add Wilco EC keyboard backlight LEDs support
-Date: Mon, 8 Apr 2019 11:41:13 +0200
-Message-ID: <20190408094113.GB30958@amd>
-References: <20190404171007.160878-1-ncrews@chromium.org>
- <20190404171007.160878-2-ncrews@chromium.org>
- <20190405201534.GA4426@roeck-us.net>
- <20190406084157.GA27043@amd>
- <CAE_wzQ9WG1+K1ZzVoii8ukDe_g+4Ha0bh6YvsRhceinwPjC+Kw@mail.gmail.com>
- <20190407221846.GB6327@amd>
- <CAE_wzQ_5Ha6hNt28_+j-pF3mAdXXifv9CuotDCeXff8KC1DNmA@mail.gmail.com>
+Subject: Re: [PATCH 5/6] dt-bindings: leds: Add LED bindings for the LM36274
+Date: Mon, 8 Apr 2019 12:10:40 +0200
+Message-ID: <20190408101039.GC30958@amd>
+References: <20190405145540.27703-1-dmurphy@ti.com>
+ <20190405145540.27703-6-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
+        protocol="application/pgp-signature"; boundary="Fig2xvG2VGoz8o/s"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAE_wzQ_5Ha6hNt28_+j-pF3mAdXXifv9CuotDCeXff8KC1DNmA@mail.gmail.com>
+In-Reply-To: <20190405145540.27703-6-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dtor@google.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Nick Crews <ncrews@chromium.org>, enric.balletbo@collabora.com, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, alexandre.belloni@bootlin.com, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, dlaurie@chromium.org, sjg@google.com, Guenter Roeck <groeck@google.com>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 
---NDin8bjvE/0mNLFQ
-Content-Type: text/plain; charset=utf-8
+--Fig2xvG2VGoz8o/s
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> > > > > This document also states "The naming scheme above leaves scope
-> > > > > for further attributes should they be needed". It does not permit,
-> > > > > however, to redefine one of the fields to mean "location", much l=
-ess
-> > > > > the declaration that a devicename of "platform" shall refer to an
-> > > > > "internal" backlight, or that there shall be no more than one
-> > > > > "internal" backlight in a given system.
-> > > >
-> > > > "platform" is as good devicename as "wilco" or "chromeos".
-> > >
-> > > No, because "platform" is not a device, it is something that you are
-> > > trying to assign a magic meaning to.
-> >
-> > "chromeos" is not a device, either.
+On Fri 2019-04-05 09:55:39, Dan Murphy wrote:
+> Add the LM36274 LED specific bindings.
 >=20
-> I agree, it is not a device name. We do not assign any specific
-> meaning to it though. We could change it to "cros_ec" if so desired
-> and nothing should break.
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  .../devicetree/bindings/leds/leds-lm36274.txt | 82 +++++++++++++++++++
+>  1 file changed, 82 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.t=
+xt
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lm36274.txt b/Do=
+cumentation/devicetree/bindings/leds/leds-lm36274.txt
+> new file mode 100644
+> index 000000000000..359990d85b28
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-lm36274.txt
+> @@ -0,0 +1,82 @@
+> +* Texas Instruments LM36274 4-Channel LCD Backlight Driver w/Integrated =
+Bias
+> +
+> +The LM36274 is an integrated four-channel WLED driver and LCD bias suppl=
+y.
+> +The backlight boost provides the power to bias four parallel LED strings=
+ with
+> +up to 29-V total output voltage. The 11-bit LED current is rogrammable v=
+ia
 
-Yes. And you can also change it to "platform" and nothing will break
-:-). Can we end the discussion here?
-
-If not, lets take a look at existing names:
-
-=2E/drivers/platform/x86/asus-laptop.c:		cdev->name =3D "asus::kbd_backligh=
-t";
-=2E/drivers/platform/x86/samsung-laptop.c:		samsung->kbd_led.name =3D "sams=
-ung::kbd_backlight";
-=2E/drivers/platform/x86/thinkpad_acpi.c:		.name		=3D "tpacpi::kbd_backligh=
-t",
-=2E/drivers/platform/x86/toshiba_acpi.c:		dev->kbd_led.name =3D "toshiba::k=
-bd_backlight";
-=2E/drivers/platform/x86/asus-wmi.c:		asus->kbd_led.name =3D "asus::kbd_bac=
-klight";
-=2E/drivers/platform/x86/dell-laptop.c:	.name           =3D "dell::kbd_back=
-light",
-=2E/drivers/platform/chrome/cros_kbd_led_backlight.c:	cdev->name =3D "chrom=
-eos::kbd_backlight";
-=2E/drivers/hwmon/applesmc.c:	.name			=3D "smc::kbd_backlight",
-=2E/drivers/hid/hid-asus.c:	drvdata->kbd_backlight->cdev.name =3D "asus::kb=
-d_backlight";
-=2E/drivers/hid/hid-google-hammer.c:	kbd_backlight->cdev.name =3D "hammer::=
-kbd_backlight";
-=2E/drivers/input/misc/ims-pcu.c:		 "pcu%d::kbd_backlight", pcu->device_no);
-
-asus, samsung, toshiba, asus, dell, chromeos... Those are really not
-device names, either. But in these cases, LED is probably controlled
-by EC, or by ACPI BIOS talking to the EC. People usually call such
-devices "platform devices".
-
-(Linux Platform Device Driver - CodeProject
-=EF=BF=BChttps://www.codeproject.com/tips/1080177/linux-platform-device-dri=
-ver
-A platform device is one which is hardwired on the board and hence not
-hot-pluggable. )
-
-You can take a look at discussion around micmute LED.
-
-Thus "platform" is quite suitable name in your case, and incidentaly,
-it will be more useful for userspace than "cros_ec".
+29V
 
 								Pavel
 --=20
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---NDin8bjvE/0mNLFQ
+--Fig2xvG2VGoz8o/s
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlyrFzkACgkQMOfwapXb+vJlgwCguCID6XvkjcM8i9lF5T/C4qOa
-CNQAn1xrrUlWgNG+JX2gh9qDIDpJ0ckJ
-=oyOJ
+iEYEARECAAYFAlyrHh8ACgkQMOfwapXb+vItWQCbBx2RPdPw60W1yLJxHH47DSW5
+W1sAniGLQF1mjllOFEkUE/rvSou1fL5A
+=pXGZ
 -----END PGP SIGNATURE-----
 
---NDin8bjvE/0mNLFQ--
+--Fig2xvG2VGoz8o/s--
