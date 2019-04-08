@@ -1,89 +1,110 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [GIT PULL v2] LM3532 backlight support improvements and
- relocation
-Date: Mon, 8 Apr 2019 00:50:11 +0200
-Message-ID: <20190407225011.GA9120@amd>
-References: <20190407190951.27288-1-jacek.anaszewski@gmail.com>
- <20190407221740.GA6327@amd>
+Subject: Keyboard backlight LED naming was Re: [PATCH v5 2/3]
+ platform/chrome: Add Wilco EC keyboard backlight LEDs support
+Date: Mon, 8 Apr 2019 11:41:13 +0200
+Message-ID: <20190408094113.GB30958@amd>
+References: <20190404171007.160878-1-ncrews@chromium.org>
+ <20190404171007.160878-2-ncrews@chromium.org>
+ <20190405201534.GA4426@roeck-us.net>
+ <20190406084157.GA27043@amd>
+ <CAE_wzQ9WG1+K1ZzVoii8ukDe_g+4Ha0bh6YvsRhceinwPjC+Kw@mail.gmail.com>
+ <20190407221846.GB6327@amd>
+ <CAE_wzQ_5Ha6hNt28_+j-pF3mAdXXifv9CuotDCeXff8KC1DNmA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
+        protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190407221740.GA6327@amd>
+In-Reply-To: <CAE_wzQ_5Ha6hNt28_+j-pF3mAdXXifv9CuotDCeXff8KC1DNmA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh@kernel.org, dmurphy@ti.com
-Cc: lee.jones@linaro.org, tony@atomide.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Torokhov <dtor@google.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Nick Crews <ncrews@chromium.org>, enric.balletbo@collabora.com, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, alexandre.belloni@bootlin.com, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, dlaurie@chromium.org, sjg@google.com, Guenter Roeck <groeck@google.com>
 List-Id: linux-leds@vger.kernel.org
 
 
---OXfL5xGRrasGEqWY
-Content-Type: text/plain; charset=us-ascii
+--NDin8bjvE/0mNLFQ
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > Changes since v1:
-> >=20
-> > - synchronized DT label properties in DT bindings with what has been ag=
-reed
-> >   for the patch "ARM: dts: omap4-droid4: Update backlight dt properties"
-> >=20
-> > The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa=
-231b:
-> >=20
-> >   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
-> >=20
-> > are available in the git repository at:
-> >=20
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds=
-=2Egit tags/lm3532-driver-improvements
-> >=20
-> > for you to fetch changes up to bc1b8492c764fea940fc66206047e37a7f8d77e1:
-> >=20
-> >   leds: lm3532: Introduce the lm3532 LED driver (2019-04-07 20:45:49 +0=
-200)
-> >=20
-> > Thanks,
-> > Jacek Anaszewski
-> >=20
-> > ----------------------------------------------------------------
-> > LM3532 backlight driver improvements and relocation
-> > ----------------------------------------------------------------
-> > Dan Murphy (4):
-> >       dt: lm3532: Add lm3532 dt doc and update ti_lmu doc
+> > > > > This document also states "The naming scheme above leaves scope
+> > > > > for further attributes should they be needed". It does not permit,
+> > > > > however, to redefine one of the fields to mean "location", much l=
+ess
+> > > > > the declaration that a devicename of "platform" shall refer to an
+> > > > > "internal" backlight, or that there shall be no more than one
+> > > > > "internal" backlight in a given system.
+> > > >
+> > > > "platform" is as good devicename as "wilco" or "chromeos".
+> > >
+> > > No, because "platform" is not a device, it is something that you are
+> > > trying to assign a magic meaning to.
+> >
+> > "chromeos" is not a device, either.
 >=20
-> Sorry, this one will need more work.
->=20
-> When did Rob acknowledge this? I do not remember that mail & quick
-> google does not find it.
+> I agree, it is not a device name. We do not assign any specific
+> meaning to it though. We could change it to "cros_ec" if so desired
+> and nothing should break.
 
-Aha, found it now:
+Yes. And you can also change it to "platform" and nothing will break
+:-). Can we end the discussion here?
 
-Date: Fri, 15 Mar 2019 18:35:01 -0500
-=46rom: Rob Herring <robh@kernel.org>
-To: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v4 1/4] dt: lm3532: Add lm3532 dt doc and update ti_lmu=
- doc
+If not, lets take a look at existing names:
 
- 									Pavel
+=2E/drivers/platform/x86/asus-laptop.c:		cdev->name =3D "asus::kbd_backligh=
+t";
+=2E/drivers/platform/x86/samsung-laptop.c:		samsung->kbd_led.name =3D "sams=
+ung::kbd_backlight";
+=2E/drivers/platform/x86/thinkpad_acpi.c:		.name		=3D "tpacpi::kbd_backligh=
+t",
+=2E/drivers/platform/x86/toshiba_acpi.c:		dev->kbd_led.name =3D "toshiba::k=
+bd_backlight";
+=2E/drivers/platform/x86/asus-wmi.c:		asus->kbd_led.name =3D "asus::kbd_bac=
+klight";
+=2E/drivers/platform/x86/dell-laptop.c:	.name           =3D "dell::kbd_back=
+light",
+=2E/drivers/platform/chrome/cros_kbd_led_backlight.c:	cdev->name =3D "chrom=
+eos::kbd_backlight";
+=2E/drivers/hwmon/applesmc.c:	.name			=3D "smc::kbd_backlight",
+=2E/drivers/hid/hid-asus.c:	drvdata->kbd_backlight->cdev.name =3D "asus::kb=
+d_backlight";
+=2E/drivers/hid/hid-google-hammer.c:	kbd_backlight->cdev.name =3D "hammer::=
+kbd_backlight";
+=2E/drivers/input/misc/ims-pcu.c:		 "pcu%d::kbd_backlight", pcu->device_no);
 
+asus, samsung, toshiba, asus, dell, chromeos... Those are really not
+device names, either. But in these cases, LED is probably controlled
+by EC, or by ACPI BIOS talking to the EC. People usually call such
+devices "platform devices".
+
+(Linux Platform Device Driver - CodeProject
+=EF=BF=BChttps://www.codeproject.com/tips/1080177/linux-platform-device-dri=
+ver
+A platform device is one which is hardwired on the board and hence not
+hot-pluggable. )
+
+You can take a look at discussion around micmute LED.
+
+Thus "platform" is quite suitable name in your case, and incidentaly,
+it will be more useful for userspace than "cros_ec".
+
+								Pavel
 --=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---OXfL5xGRrasGEqWY
+--NDin8bjvE/0mNLFQ
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlyqfqMACgkQMOfwapXb+vIucwCgvmkz7+2wSeCXVuEtUykmBQRb
-ro4Anj8KJeLX59qod6qbSgC5rY2SpPwH
-=IlHS
+iEYEARECAAYFAlyrFzkACgkQMOfwapXb+vJlgwCguCID6XvkjcM8i9lF5T/C4qOa
+CNQAn1xrrUlWgNG+JX2gh9qDIDpJ0ckJ
+=oyOJ
 -----END PGP SIGNATURE-----
 
---OXfL5xGRrasGEqWY--
+--NDin8bjvE/0mNLFQ--
