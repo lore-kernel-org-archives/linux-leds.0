@@ -1,52 +1,55 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 bitops] bitops: Fix UBSAN undefined behavior warning
- for rotation right
-Date: Mon, 8 Apr 2019 15:52:17 -0700
-Message-ID: <20190408155217.3f723554ae7fbcb34eeacb30@linux-foundation.org>
-References: <20190407125325.24440-1-vadimp@mellanox.com>
+From: Nick Crews <ncrews@chromium.org>
+Subject: Re: [PATCH v5 3/3] platform/chrome: Standardize Chrome OS keyboard
+ backlight name
+Date: Mon, 8 Apr 2019 17:58:16 -0600
+Message-ID: <CAHX4x87XiNMnjr+-2A2yHgKbZLaDBXO-U1Uij2sCq=gH9Vv4jw@mail.gmail.com>
+References: <20190404171007.160878-1-ncrews@chromium.org> <20190404171007.160878-3-ncrews@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190407125325.24440-1-vadimp@mellanox.com>
+In-Reply-To: <20190404171007.160878-3-ncrews@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, idosch@mellanox.com, Andrey Ryabinin <aryabinin@virtuozzo.com>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, Benson Leung <bleung@chromium.org>, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Duncan Laurie <dlaurie@chromium.org>, Simon Glass <sjg@google.com>, Guenter Roeck <groeck@google.com>, Dmitry Torokhov <dtor@google.com>
 List-Id: linux-leds@vger.kernel.org
 
-(resend, cc Andrey)
+I've just found a few [embarrassing :)] bugs in this version,
+so after we figure out the naming, please wait for me to send
+out another patch that fixes these.
 
-On Sun,  7 Apr 2019 12:53:25 +0000 Vadim Pasternak <vadimp@mellanox.com> wrote:
+Thanks, Nick
 
-> The warning is caused by call to rorXX(), if the second parameters of
-> this function "shift" is zero. In such case UBSAN reports the warning
-> for the next expression: (word << (XX - shift), where XX is
-> 64, 32, 16, 8 for respectively ror64, ror32, ror16, ror8.
-> Fix adds validation of this parameter - in case it's equal zero, no
-> need to rotate, just original "word" is to be returned to caller.
-> 
-> The UBSAN undefined behavior warning has been reported for call to
-> ror32():
-> [   11.426543] UBSAN: Undefined behaviour in ./include/linux/bitops.h:93:33
-> [   11.434045] shift exponent 32 is too large for 32-bit type 'unsigned int'
-
-hm, do we care?
-
-> ...
+On Thu, Apr 4, 2019 at 11:10 AM Nick Crews <ncrews@chromium.org> wrote:
 >
-
-> --- a/include/linux/bitops.h
-> +++ b/include/linux/bitops.h
-> @@ -70,6 +70,9 @@ static inline __u64 rol64(__u64 word, unsigned int shift)
->   */
->  static inline __u64 ror64(__u64 word, unsigned int shift)
->  {
-> +	if (!shift)
-> +		return word;
-> +
->  	return (word >> shift) | (word << (64 - shift));
->  }
-
-Is there any known architecture or compiler for which UL<<64 doesn't
-reliably produce zero?  Is there any prospect that this will become a
-problem in the future?
+> We want all backlights for the system keyboard to
+> use a common name, so the name "platform::kbd_backlight"
+> would be better than the current "chromeos::kbd_backlight"
+> name. Normally this wouldn't be worth changing, but the new
+> Wilco keyboard backlight driver uses the "platform" name.
+> We want to make it so all Chrome OS devices are consistent,
+> so we'll change the name here too.
+>
+> The Power Manager daemon only looks for LEDs that match the
+> pattern "*:kbd_backlight", so this change won't affect that.
+>
+> Signed-off-by: Nick Crews <ncrews@chromium.org>
+> ---
+>  drivers/platform/chrome/cros_kbd_led_backlight.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/platform/chrome/cros_kbd_led_backlight.c b/drivers/platform/chrome/cros_kbd_led_backlight.c
+> index aa409f0201fb..c56c8405f39c 100644
+> --- a/drivers/platform/chrome/cros_kbd_led_backlight.c
+> +++ b/drivers/platform/chrome/cros_kbd_led_backlight.c
+> @@ -77,7 +77,7 @@ static int keyboard_led_probe(struct platform_device *pdev)
+>         if (!cdev)
+>                 return -ENOMEM;
+>
+> -       cdev->name = "chromeos::kbd_backlight";
+> +       cdev->name = "platform::kbd_backlight";
+>         cdev->max_brightness = ACPI_KEYBOARD_BACKLIGHT_MAX;
+>         cdev->flags |= LED_CORE_SUSPENDRESUME;
+>         cdev->brightness_set = keyboard_led_set_brightness;
+> --
+> 2.20.1
+>
