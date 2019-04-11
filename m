@@ -1,116 +1,221 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v2 5/6] dt-bindings: leds: Add LED bindings for the LM36274
-Date: Wed, 10 Apr 2019 08:38:32 -0500
-Message-ID: <20190410133833.28859-5-dmurphy@ti.com>
-References: <20190410133833.28859-1-dmurphy@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v9 00/11] mfd: add support for max77650 PMIC
+Date: Thu, 11 Apr 2019 14:42:01 +0200
+Message-ID: <20190411124212.7612-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190410133833.28859-1-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-Add the LM36274 LED specific bindings.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
+This series adds support for max77650 ultra low-power PMIC. It provides
+the core mfd driver and a set of five sub-drivers for the regulator,
+power supply, gpio, leds and input subsystems.
 
-v2 - Changed 29-V to 29V - https://lore.kernel.org/patchwork/patch/1058779/
+Patches 1-4 add the DT binding documents. Patch 5 documents mfd_add_devices().
+Patches 6-10 add all drivers. Last patch adds a MAINTAINERS entry for this
+device.
 
- .../devicetree/bindings/leds/leds-lm36274.txt | 82 +++++++++++++++++++
- 1 file changed, 82 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
+The regulator part is already upstream.
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm36274.txt b/Documentation/devicetree/bindings/leds/leds-lm36274.txt
-new file mode 100644
-index 000000000000..329393700191
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-lm36274.txt
-@@ -0,0 +1,82 @@
-+* Texas Instruments LM36274 4-Channel LCD Backlight Driver w/Integrated Bias
-+
-+The LM36274 is an integrated four-channel WLED driver and LCD bias supply.
-+The backlight boost provides the power to bias four parallel LED strings with
-+up to 29V total output voltage. The 11-bit LED current is programmable via
-+the I2C bus and/or controlled via a logic level PWM input from 60 μA to 30 mA.
-+
-+Parent device properties are documented in ../mfd/ti_lmu.txt
-+Regulator properties are documented in ../regulator/lm363x-regulator.txt
-+
-+Required backlight properties:
-+	- compatible:
-+		"ti,lm36274-backlight"
-+	- reg : 0
-+	- #address-cells : 1
-+	- #size-cells : 0
-+	- led-sources : Indicates which LED strings will be enabled.
-+			Values from 0-3, sources is 0 based so strings will be
-+			source value + 1.
-+
-+Optional backlight properties:
-+	- label : see Documentation/devicetree/bindings/leds/common.txt
-+	- linux,default-trigger :
-+	   see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example:
-+
-+HVLED string 1 and 3 are controlled by control bank A and HVLED 2 string is
-+controlled by control bank B.
-+
-+lm36274@11 {
-+	compatible = "ti,lm36274";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	reg = <0x11>;
-+
-+	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-+
-+	regulators {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "ti,lm363x-regulator";
-+
-+		enable-gpios = <&pioC 0 GPIO_ACTIVE_HIGH>,
-+			       <&pioC 1 GPIO_ACTIVE_HIGH>;
-+
-+		vboost {
-+			regulator-name = "lcd_boost";
-+			regulator-min-microvolt = <4000000>;
-+			regulator-max-microvolt = <7150000>;
-+			regulator-always-on;
-+		};
-+
-+		vpos {
-+			regulator-name = "lcd_vpos";
-+			regulator-min-microvolt = <4000000>;
-+			regulator-max-microvolt = <6500000>;
-+		};
-+
-+		vneg {
-+			regulator-name = "lcd_vneg";
-+			regulator-min-microvolt = <4000000>;
-+			regulator-max-microvolt = <6500000>;
-+		};
-+	};
-+
-+	backlight {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "ti,lm36274-backlight";
-+
-+		led@0 {
-+			reg = <0>;
-+			led-sources = <0 2>;
-+			label = "white:backlight_cluster";
-+			linux,default-trigger = "backlight";
-+		};
-+	};
-+};
-+
-+For more product information please see the link below:
-+http://www.ti.com/lit/ds/symlink/lm36274.pdf
+v1 -> v2:
+=========
+
+General:
+- use C++ style comments for the SPDX license identifier and the
+  copyright header
+- s/MODULE_LICENSE("GPL")/MODULE_LICENSE("GPL v2")/
+- lookup the virtual interrupt numbers in the MFD driver, setup
+  resources for child devices and use platform_get_irq_byname()
+  in sub-drivers
+- picked up review tags
+- use devm_request_any_context_irq() for interrupt requests
+
+LEDs:
+- changed the max77650_leds_ prefix to max77650_led_
+- drop the max77650_leds structure as the only field it held was the
+  regmap pointer, move said pointer to struct max77650_led
+- change the driver name to "max77650-led"
+- drop the last return value check and return the result of
+  regmap_write() directly
+- change the labeling scheme to one consistent with other LED drivers
+
+ONKEY:
+- drop the key reporting helper and call the input functions directly
+  from interrupt handlers
+- rename the rv local variable to error
+- drop parent device asignment
+
+Regulator:
+- drop the unnecessary init_data lookup from the driver code
+- drop unnecessary include
+
+Charger:
+- disable the charger on driver remove
+- change the power supply type to POWER_SUPPLY_TYPE_USB
+
+GPIO:
+- drop interrupt support until we have correct implementation of hierarchical
+  irqs in gpiolib
+
+v2 -> v3:
+=========
+
+General:
+- dropped regulator patches as they're already in Mark Brown's branch
+
+LED:
+- fix the compatible string in the DT binding example
+- use the max_brightness property
+- use a common prefix ("MAX77650_LED") for all defines in the driver
+
+MFD:
+- add the MODULE_DEVICE_TABLE()
+- add a sentinel to the of_device_id array
+- constify the pointers to irq names
+- use an enum instead of defines for interrupt indexes
+
+v3 -> v4:
+=========
+
+GPIO:
+- as discussed with Linus Walleij: the gpio-controller is now part of
+  the core mfd module (we don't spawn a sub-node anymore), the binding
+  document for GPIO has been dropped, the GPIO properties have been
+  defined in the binding document for the mfd core, the interrupt
+  functionality has been reintroduced with the irq directly passed from
+  the mfd part
+- due to the above changes the Reviewed-by tag from Linus was dropped
+
+v4 -> v5:
+=========
+
+General:
+- add a patch documenting mfd_add_devices()
+
+MFD:
+- pass the regmap irq_chip irq domain to mfd over mfd_add_devices so that
+  the hw interrupts from resources can be correctly mapped to virtual irqs
+- remove the enum listing cell indexes
+- extend Kconfig help
+- add a link to the programming manual
+- use REGMAP_IRQ_REG() for regmap interrupts (except for GPI which has
+  is composed of two hw interrupts for rising and falling edge)
+- add error messages in probe
+- use PLATFORM_DEVID_NONE constant in devm_mfd_add_devices()
+- set irq_base to 0 in regmap_add_irq_chip() as other users to, it's only
+  relevant if it's > 0
+
+Charger:
+- use non-maxim specific property names for minimum input voltage and current
+  limit
+- code shrink by using the enable/disable charger helpers everywhere
+- use more descriptive names for constants
+
+Onkey:
+- use EV_SW event type for slide mode
+
+LED:
+- remove stray " from Kconfig help
+
+v5 -> v6:
+=========
+
+MFD:
+- remove stray spaces in the binding document
+- rename the example dt node
+- remove unnecessary interrupt-parent property from the bindings
+
+LED:
+- add a missing dependency on LEDS_CLASS to Kconfig
+
+Onkey:
+- use boolean for the slide button property
+
+Charger:
+- fix the property names in DT example
+- make constants even more readable
+
+v6 -> v7:
+=========
+
+Charger:
+- rename the current limit property to current-limit-microamp
+
+v7 -> v8:
+=========
+
+General:
+- collected acks from Lee
+- changed the documentation for mfd_add_devices() as suggested by Lee
+- rebased on top of v5.1-rc3
+
+v8 > v9:
+========
+
+General:
+- collected new tags
+- rebased on top of v5.1-rc4
+
+MFD:
+- various improvements in error messages
+- coding style tweaks
+
+Charger:
+- named the two optional properties in a more descriptive way, so that
+  we can make them generic for charger bindings if more potential users
+  appear
+
+Bartosz Golaszewski (11):
+  dt-bindings: mfd: add DT bindings for max77650
+  dt-bindings: power: supply: add DT bindings for max77650
+  dt-bindings: leds: add DT bindings for max77650
+  dt-bindings: input: add DT bindings for max77650
+  mfd: core: document mfd_add_devices()
+  mfd: max77650: new core mfd driver
+  power: supply: max77650: add support for battery charger
+  gpio: max77650: add GPIO support
+  leds: max77650: add LEDs support
+  input: max77650: add onkey support
+  MAINTAINERS: add an entry for max77650 mfd driver
+
+ .../bindings/input/max77650-onkey.txt         |  26 ++
+ .../bindings/leds/leds-max77650.txt           |  57 +++
+ .../devicetree/bindings/mfd/max77650.txt      |  46 +++
+ .../power/supply/max77650-charger.txt         |  28 ++
+ MAINTAINERS                                   |  14 +
+ drivers/gpio/Kconfig                          |   7 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-max77650.c                  | 190 +++++++++
+ drivers/input/misc/Kconfig                    |   9 +
+ drivers/input/misc/Makefile                   |   1 +
+ drivers/input/misc/max77650-onkey.c           | 121 ++++++
+ drivers/leds/Kconfig                          |   6 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-max77650.c                  | 147 +++++++
+ drivers/mfd/Kconfig                           |  14 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/max77650.c                        | 232 +++++++++++
+ drivers/mfd/mfd-core.c                        |  13 +
+ drivers/power/supply/Kconfig                  |   7 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/max77650-charger.c       | 368 ++++++++++++++++++
+ include/linux/mfd/max77650.h                  |  59 +++
+ 22 files changed, 1349 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+ create mode 100644 drivers/gpio/gpio-max77650.c
+ create mode 100644 drivers/input/misc/max77650-onkey.c
+ create mode 100644 drivers/leds/leds-max77650.c
+ create mode 100644 drivers/mfd/max77650.c
+ create mode 100644 drivers/power/supply/max77650-charger.c
+ create mode 100644 include/linux/mfd/max77650.h
+
 -- 
-2.21.0.5.gaeb582a983
+2.21.0
