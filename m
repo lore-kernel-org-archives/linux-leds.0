@@ -1,82 +1,128 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v9 01/11] dt-bindings: mfd: add DT bindings for max77650
-Date: Thu, 11 Apr 2019 14:42:02 +0200
-Message-ID: <20190411124212.7612-2-brgl@bgdev.pl>
-References: <20190411124212.7612-1-brgl@bgdev.pl>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v3 11/25] leds: lp8860: Use generic support for composing
+ LED names
+Date: Thu, 11 Apr 2019 10:28:54 -0500
+Message-ID: <4c454bbc-62b2-8607-893c-5e126cba31ad@ti.com>
+References: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
+ <20190331175501.23471-12-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190411124212.7612-1-brgl@bgdev.pl>
+In-Reply-To: <20190331175501.23471-12-jacek.anaszewski@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Rob Herring <robh@kernel.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Jacek
 
-Add a DT binding document for max77650 ultra-low power PMIC. This
-describes the core mfd device and the GPIO module.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- .../devicetree/bindings/mfd/max77650.txt      | 46 +++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
-
-diff --git a/Documentation/devicetree/bindings/mfd/max77650.txt b/Documentation/devicetree/bindings/mfd/max77650.txt
-new file mode 100644
-index 000000000000..b529d8d19335
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/max77650.txt
-@@ -0,0 +1,46 @@
-+MAX77650 ultra low-power PMIC from Maxim Integrated.
-+
-+Required properties:
-+-------------------
-+- compatible:		Must be "maxim,max77650"
-+- reg:			I2C device address.
-+- interrupts:		The interrupt on the parent the controller is
-+			connected to.
-+- interrupt-controller: Marks the device node as an interrupt controller.
-+- #interrupt-cells:	Must be <2>.
-+
-+- gpio-controller:	Marks the device node as a gpio controller.
-+- #gpio-cells:		Must be <2>. The first cell is the pin number and
-+			the second cell is used to specify the gpio active
-+			state.
-+
-+Optional properties:
-+--------------------
-+gpio-line-names:	Single string containing the name of the GPIO line.
-+
-+The GPIO-controller module is represented as part of the top-level PMIC
-+node. The device exposes a single GPIO line.
-+
-+For device-tree bindings of other sub-modules (regulator, power supply,
-+LEDs and onkey) refer to the binding documents under the respective
-+sub-system directories.
-+
-+For more details on GPIO bindings, please refer to the generic GPIO DT
-+binding document <devicetree/bindings/gpio/gpio.txt>.
-+
-+Example:
-+--------
-+
-+	pmic@48 {
-+		compatible = "maxim,max77650";
-+		reg = <0x48>;
-+
-+		interrupt-controller;
-+		interrupt-parent = <&gpio2>;
-+		#interrupt-cells = <2>;
-+		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-line-names = "max77650-charger";
-+	};
--- 
-2.21.0
+On 3/31/19 12:54 PM, Jacek Anaszewski wrote:
+> Switch to using generic LED support for composing LED class
+> device name.
+>
+> While at it, avoid iterating through available child of nodes
+> in favor of obtaining single expected child node using single
+> call to of_get_next_available_child().
+>
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Dan Murphy <dmurphy@ti.com>
+> ---
+>  drivers/leds/leds-lp8860.c | 35 ++++++++++++++++-------------------
+>  1 file changed, 16 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+> index 39c72a908f3b..10364068da53 100644
+> --- a/drivers/leds/leds-lp8860.c
+> +++ b/drivers/leds/leds-lp8860.c
+> @@ -22,7 +22,6 @@
+>  #include <linux/of_gpio.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/slab.h>
+> -#include <uapi/linux/uleds.h>
+>  
+>  #define LP8860_DISP_CL1_BRT_MSB		0x00
+>  #define LP8860_DISP_CL1_BRT_LSB		0x01
+> @@ -87,6 +86,8 @@
+>  
+>  #define LP8860_CLEAR_FAULTS		0x01
+>  
+> +#define LP8860_NAME			"lp8860"
+> +
+>  /**
+>   * struct lp8860_led -
+>   * @lock - Lock for reading/writing the device
+> @@ -96,7 +97,6 @@
+>   * @eeprom_regmap - EEPROM register map
+>   * @enable_gpio - VDDIO/EN gpio to enable communication interface
+>   * @regulator - LED supply regulator pointer
+> - * @label - LED label
+>   */
+>  struct lp8860_led {
+>  	struct mutex lock;
+> @@ -106,7 +106,6 @@ struct lp8860_led {
+>  	struct regmap *eeprom_regmap;
+>  	struct gpio_desc *enable_gpio;
+>  	struct regulator *regulator;
+> -	char label[LED_MAX_NAME_SIZE];
+>  };
+>  
+>  struct lp8860_eeprom_reg {
+> @@ -387,25 +386,19 @@ static int lp8860_probe(struct i2c_client *client,
+>  	struct lp8860_led *led;
+>  	struct device_node *np = client->dev.of_node;
+>  	struct device_node *child_node;
+> -	const char *name;
+> +	struct led_init_data init_data;
+>  
+>  	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
+>  	if (!led)
+>  		return -ENOMEM;
+>  
+> -	for_each_available_child_of_node(np, child_node) {
+> -		led->led_dev.default_trigger = of_get_property(child_node,
+> -						    "linux,default-trigger",
+> -						    NULL);
+> -
+> -		ret = of_property_read_string(child_node, "label", &name);
+> -		if (!ret)
+> -			snprintf(led->label, sizeof(led->label), "%s:%s",
+> -				 id->name, name);
+> -		else
+> -			snprintf(led->label, sizeof(led->label),
+> -				"%s::display_cluster", id->name);
+> -	}
+> +	child_node = of_get_next_available_child(np, NULL);
+> +	if (!child_node)
+> +		return -EINVAL;
+> +
+> +	led->led_dev.default_trigger = of_get_property(child_node,
+> +					    "linux,default-trigger",
+> +					    NULL);
+>  
+>  	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
+>  						   "enable", GPIOD_OUT_LOW);
+> @@ -420,7 +413,6 @@ static int lp8860_probe(struct i2c_client *client,
+>  		led->regulator = NULL;
+>  
+>  	led->client = client;
+> -	led->led_dev.name = led->label;
+>  	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
+>  
+>  	mutex_init(&led->lock);
+> @@ -447,7 +439,12 @@ static int lp8860_probe(struct i2c_client *client,
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
+> +	init_data.fwnode = of_fwnode_handle(child_node);
+> +	init_data.led_hw_name = LP8860_NAME;
+> +	init_data.default_label = ":display_cluster";
+> +
+> +	ret = devm_led_classdev_register_ext(&client->dev, &led->led_dev,
+> +					     &init_data);
+>  	if (ret) {
+>  		dev_err(&client->dev, "led register err: %d\n", ret);
+>  		return ret;
+Tested-by: Dan Murphy <dmurphy@ti.com>
