@@ -1,110 +1,107 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v3 13/25] leds: lm3692x: Use generic support for composing
- LED names
-Date: Thu, 11 Apr 2019 10:29:35 -0500
-Message-ID: <68d3f78d-7362-7707-450b-1d40deeeeaaa@ti.com>
-References: <20190331175501.23471-1-jacek.anaszewski@gmail.com>
- <20190331175501.23471-14-jacek.anaszewski@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v8 02/11] dt-bindings: power: supply: add DT bindings for max77650
+Date: Thu, 11 Apr 2019 11:50:19 -0500
+Message-ID: <CAL_JsqKHGczKAD3VjBsq6G=Ev0t8p_qWZ0YG6rRsqO8GuRAK7Q@mail.gmail.com>
+References: <20190403090108.24788-1-brgl@bgdev.pl> <20190403090108.24788-3-brgl@bgdev.pl>
+ <20190406070746.GA29624@bogus> <CAMRc=Mc+cTVrzywTydp-10Hj=-m=qCmtK1+4NRiOFHZ855fnDw@mail.gmail.com>
+ <CAL_JsqKHjppN2kXqVpv5LjTedykA-Q8vteQDipw=FAaoUZLGeg@mail.gmail.com>
+ <CAMRc=Mc4HOn+Pjwf+sD4fU7gNoksRKXz9Yq6zE233CCoNskPiQ@mail.gmail.com> <CAMRc=MfkdBMmhrCM7Ut8ZGkgT=gFTRrbgFmu3MbghGwCRkEEKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190331175501.23471-14-jacek.anaszewski@gmail.com>
-Content-Language: en-US
+In-Reply-To: <CAMRc=MfkdBMmhrCM7Ut8ZGkgT=gFTRrbgFmu3MbghGwCRkEEKg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
+On Tue, Apr 9, 2019 at 10:38 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> wt., 9 kwi 2019 o 13:04 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(=
+a):
+> >
+> > wt., 9 kwi 2019 o 03:10 Rob Herring <robh@kernel.org> napisa=C5=82(a):
+> > >
+> > > On Mon, Apr 8, 2019 at 7:25 AM Bartosz Golaszewski <brgl@bgdev.pl> wr=
+ote:
+> > > >
+> > > > sob., 6 kwi 2019 o 09:07 Rob Herring <robh@kernel.org> napisa=C5=82=
+(a):
+> > > > >
+> > > > > On Wed, Apr 03, 2019 at 11:00:59AM +0200, Bartosz Golaszewski wro=
+te:
+> > > > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > > > >
+> > > > > > Add the DT binding document for the battery charger module of m=
+ax77650.
+> > > > > >
+> > > > > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > > > > ---
+> > > > > >  .../power/supply/max77650-charger.txt         | 27 +++++++++++=
+++++++++
+> > > > > >  1 file changed, 27 insertions(+)
+> > > > > >  create mode 100644 Documentation/devicetree/bindings/power/sup=
+ply/max77650-charger.txt
+> > > > > >
+> > > > > > diff --git a/Documentation/devicetree/bindings/power/supply/max=
+77650-charger.txt b/Documentation/devicetree/bindings/power/supply/max77650=
+-charger.txt
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..fef188144386
+> > > > > > --- /dev/null
+> > > > > > +++ b/Documentation/devicetree/bindings/power/supply/max77650-c=
+harger.txt
+> > > > > > @@ -0,0 +1,27 @@
+> > > > > > +Battery charger driver for MAX77650 PMIC from Maxim Integrated=
+.
+> > > > > > +
+> > > > > > +This module is part of the MAX77650 MFD device. For more detai=
+ls
+> > > > > > +see Documentation/devicetree/bindings/mfd/max77650.txt.
+> > > > > > +
+> > > > > > +The charger is represented as a sub-node of the PMIC node on t=
+he device tree.
+> > > > > > +
+> > > > > > +Required properties:
+> > > > > > +--------------------
+> > > > > > +- compatible:                Must be "maxim,max77650-charger"
+> > > > > > +
+> > > > > > +Optional properties:
+> > > > > > +--------------------
+> > > > > > +- min-microvolt:     Minimum CHGIN regulation voltage (in micr=
+ovolts). Must be
+> > > > > > +                     one of: 4000000, 4100000, 4200000, 430000=
+0, 4400000,
+> > > > > > +                     4500000, 4600000, 4700000.
+> > > > > > +- current-limit-microamp:    CHGIN input current limit (in mic=
+roamps). Must
+> > > > > > +                             be one of: 95000, 190000, 285000,=
+ 380000, 475000.
+> > > > >
+> > > > > To repeat what I said on v6, these should be common properties IM=
+O (and
+> > > > > therefore documented as such).
+> > > > >
+> > > >
+> > > > Do you mean a separate "charger.txt" document in
+> > > > Documentation/devicetree/bindings/power/supply/?
+> > >
+> > > Yes, though I thought we had something already.
+> > >
+> > > Rob
+> >
+> > We don't AFAICT. There's only a binding document for "simple-battery"
+> > in power supply.
+> >
+> > Bart
+>
+> Can we have it locally for now but without the maxim prefix and then
+> reuse it if any other charger needs such functionality? To make it
+> even more generic we can name it: "input-voltage-min-microvolt" &
+> "input-current-limit-microamp".
 
-On 3/31/19 12:54 PM, Jacek Anaszewski wrote:
-> Switch to using generic LED support for composing LED class
-> device name.
->
-> At this occassion remove initialization of struct led_classdev's
-> dev->of_node property in the driver, since now it will be taken from
-> fwnode assigned to struct led_init_data and passed to the new
-> devm_led_classdev_register_ext() API.
->
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Dan Murphy <dmurphy@ti.com>
-> ---
->  drivers/leds/leds-lm3692x.c | 22 ++++++----------------
->  1 file changed, 6 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-> index 4f413a7c5f05..d2b30074d87a 100644
-> --- a/drivers/leds/leds-lm3692x.c
-> +++ b/drivers/leds/leds-lm3692x.c
-> @@ -13,7 +13,6 @@
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
-> -#include <uapi/linux/uleds.h>
->  
->  #define LM36922_MODEL	0
->  #define LM36923_MODEL	1
-> @@ -103,7 +102,6 @@
->   * @regmap - Devices register map
->   * @enable_gpio - VDDIO/EN gpio to enable communication interface
->   * @regulator - LED supply regulator pointer
-> - * @label - LED label
->   * @led_enable - LED sync to be enabled
->   * @model_id - Current device model ID enumerated
->   */
-> @@ -114,7 +112,6 @@ struct lm3692x_led {
->  	struct regmap *regmap;
->  	struct gpio_desc *enable_gpio;
->  	struct regulator *regulator;
-> -	char label[LED_MAX_NAME_SIZE];
->  	int led_enable;
->  	int model_id;
->  };
-> @@ -325,7 +322,7 @@ static int lm3692x_init(struct lm3692x_led *led)
->  static int lm3692x_probe_dt(struct lm3692x_led *led)
->  {
->  	struct fwnode_handle *child = NULL;
-> -	const char *name;
-> +	struct led_init_data init_data;
->  	int ret;
->  
->  	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
-> @@ -350,30 +347,23 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
->  	fwnode_property_read_string(child, "linux,default-trigger",
->  				    &led->led_dev.default_trigger);
->  
-> -	ret = fwnode_property_read_string(child, "label", &name);
-> -	if (ret)
-> -		snprintf(led->label, sizeof(led->label),
-> -			"%s::", led->client->name);
-> -	else
-> -		snprintf(led->label, sizeof(led->label),
-> -			 "%s:%s", led->client->name, name);
-> -
->  	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
->  	if (ret) {
->  		dev_err(&led->client->dev, "reg DT property missing\n");
->  		return ret;
->  	}
->  
-> -	led->led_dev.name = led->label;
-> +	init_data.fwnode = child;
-> +	init_data.led_hw_name = led->client->name;
-> +	init_data.default_label = ":";
->  
-> -	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
-> +	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
-> +					     &init_data);
->  	if (ret) {
->  		dev_err(&led->client->dev, "led register err: %d\n", ret);
->  		return ret;
->  	}
->  
-> -	led->led_dev.dev->of_node = to_of_node(child);
-> -
->  	return 0;
->  }
->  
+I guess. And defining these as 'input' is good because we do have
+similar property names already for battery current limit and voltages.
 
-Tested-by: Dan Murphy <dmurphy@ti.com>
+Rob
