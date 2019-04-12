@@ -1,28 +1,28 @@
-From: Dan Murphy <dmurphy@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Subject: Re: [PATCH v2 2/7] dt: bindings: Add multicolor class dt bindings
  documention
-Date: Fri, 12 Apr 2019 13:46:00 -0500
-Message-ID: <579add89-e274-07d2-04a4-4998917a62ff@ti.com>
+Date: Fri, 12 Apr 2019 21:10:49 +0200
+Message-ID: <7a987453-0e4d-be27-790e-efa4a0f40b2b@gmail.com>
 References: <20190411193848.23140-1-dmurphy@ti.com>
  <20190411193848.23140-3-dmurphy@ti.com> <20190412000707.70f8319f@nic.cz>
- <4e22f95f-8658-99cd-145e-b96f9e8314f7@gmail.com>
+ <5675ac20-6db2-34ea-938a-01f0076b87e7@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4e22f95f-8658-99cd-145e-b96f9e8314f7@gmail.com>
+In-Reply-To: <5675ac20-6db2-34ea-938a-01f0076b87e7@ti.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Marek Behun <marek.behun@nic.cz>
+To: Dan Murphy <dmurphy@ti.com>, Marek Behun <marek.behun@nic.cz>
 Cc: robh+dt@kernel.org, pavel@ucw.cz, rdunlap@infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
+Dan,
 
-On 4/12/19 1:14 PM, Jacek Anaszewski wrote:
-> Hi Marek,
+On 4/12/19 1:50 PM, Dan Murphy wrote:
+> Marek
 > 
-> On 4/12/19 12:07 AM, Marek Behun wrote:
+> On 4/11/19 5:07 PM, Marek Behun wrote:
 >> Hi Dan,
 >> this probaly was discussed, but I did not follow brightness model
 >> discussions:
@@ -30,29 +30,45 @@ On 4/12/19 1:14 PM, Jacek Anaszewski wrote:
 >> brightness, and then orange by writing orange model brightness?
 >> Will the resulting color be a mix of yellow and orange, or will the
 >> orange overwrite the yellow setting?
+>>
 > 
-> Orange will overwrite yellow settings. When color name is given
-> it should be treated as a hue. Then changing brightness level
-> should affect the lightness of a hue, similarly like changing
-> L component of HSL color model. This will be however entirely
-> up to DT brightness-model designer how they will design their models.
-> We are not going to verify that in the LED multi color class.
+> This was not discussed and is a good question.  If you write the yellow mode for a group of
+> LEDs then yellow would be produced for the brightness requested.
 > 
-> It implies that it will be possible to define arbitrary range
-> of color levels, not necessarily adhering to any established color
-> model. I think it could be useful to define brightness model
-> that allows to go from blue color (for cold) up to red (hot)
-> for representing a temperature for instance.
+> If orange is then requested then orange should be displayed at the brightness level requested.
+> So yes the orange will over write the yellow.
+
+Yes, and individual color brightness levels should correspond
+to the color components of the brightness-model level currently set.
+
+> The next question is if the absolute colors are written does it produce the same behavior?
 > 
-> These ideas will need however more documentation. Generally
-> we aim to propose only a convention.
+> So if you have yellow and write to the red should the red LED brightness be modified or should the
+> color switch to red?
+> And if the red LED is on and the blue LED is written should the color switch to blue or should the blue and red LEDs be mixed together?
+
+Now, if any of the color brightness files is altered it should update
+the hardware with this new setting, but brightness-model and main
+brightness level should not be changed. The thing that is missing in our
+proposal is lack of the way to check if brightness-model is up to date
+(i.e. if it reflects what is written to the hardware).
+
+How about utilizing the sync file from the new colors directory?
+It could return 1 on read when brightness levels of all colors
+match exactly the ones assigned to the brightness model level currently
+set.
+
+> This is tricky as the user space can write the individual absolute colors and mix the LEDs to produce varying
+> colors.  But the behavior writing the brightness models are different.
+> 
+> I would almost prefer that the user space reads the available absolute LED colors and creates the devices supported color palette and write the absolute LED colors only.  But this violates the requirements asked for.
+> 
+> Dan
+> 
+>> Marek
+>>
 > 
 
-Ah but what about the issue of writing the monochrome LED color.  With your description
-it implies that when we write the red LED, the red LED will come on and if we write the blue
-LED then the red LED in theory should turn off and the blue come on.
-
-But these could be used to mix the colors to create some abstract violet that is not defined in the brightness
-model.  Why should the brightness models and monochrome LEDs have two different operations.
-
-Dan
+-- 
+Best regards,
+Jacek Anaszewski
