@@ -1,80 +1,63 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 2/7] dt: bindings: Add multicolor class dt bindings
- documention
-Date: Fri, 12 Apr 2019 21:24:13 +0200
-Message-ID: <19932d2d-28c4-9212-b38b-8b7008fb1d34@gmail.com>
-References: <20190411193848.23140-1-dmurphy@ti.com>
- <20190411193848.23140-3-dmurphy@ti.com> <20190412000707.70f8319f@nic.cz>
- <4e22f95f-8658-99cd-145e-b96f9e8314f7@gmail.com>
- <579add89-e274-07d2-04a4-4998917a62ff@ti.com>
+Subject: Re: [PATCH v2 4/6] dt-bindings: ti-lmu: Modify dt bindings for the
+ LM3697
+Date: Fri, 12 Apr 2019 21:34:33 +0200
+Message-ID: <1a1482f7-a683-49d5-69a3-aa73a641288e@gmail.com>
+References: <20190405142855.3969-1-dmurphy@ti.com>
+ <20190405142855.3969-4-dmurphy@ti.com>
+ <04e160da-a73e-d330-3df4-8f420b3612b4@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <579add89-e274-07d2-04a4-4998917a62ff@ti.com>
+In-Reply-To: <04e160da-a73e-d330-3df4-8f420b3612b4@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, Marek Behun <marek.behun@nic.cz>
-Cc: robh+dt@kernel.org, pavel@ucw.cz, rdunlap@infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: robh+dt@kernel.org
+Cc: Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Dan,
+And one more:
 
-On 4/12/19 8:46 PM, Dan Murphy wrote:
-> Jacek
+[5] - LED naming patch set v3
+
+On 4/11/19 9:48 PM, Jacek Anaszewski wrote:
+> Hi Rob,
 > 
-> On 4/12/19 1:14 PM, Jacek Anaszewski wrote:
->> Hi Marek,
->>
->> On 4/12/19 12:07 AM, Marek Behun wrote:
->>> Hi Dan,
->>> this probaly was discussed, but I did not follow brightness model
->>> discussions:
->>> what will happen if I set yellow by writing into yellow mode
->>> brightness, and then orange by writing orange model brightness?
->>> Will the resulting color be a mix of yellow and orange, or will the
->>> orange overwrite the yellow setting?
->>
->> Orange will overwrite yellow settings. When color name is given
->> it should be treated as a hue. Then changing brightness level
->> should affect the lightness of a hue, similarly like changing
->> L component of HSL color model. This will be however entirely
->> up to DT brightness-model designer how they will design their models.
->> We are not going to verify that in the LED multi color class.
->>
->> It implies that it will be possible to define arbitrary range
->> of color levels, not necessarily adhering to any established color
->> model. I think it could be useful to define brightness model
->> that allows to go from blue color (for cold) up to red (hot)
->> for representing a temperature for instance.
->>
->> These ideas will need however more documentation. Generally
->> we aim to propose only a convention.
->>
+> I've collected references to the DT patches we're waiting
+> to be reviewed. This is just to make sure that none of them
+> will be missed - recent traffic on the linux-leds list
+> is a bit heavier.
 > 
-> Ah but what about the issue of writing the monochrome LED color.  With your description
-> it implies that when we write the red LED, the red LED will come on and if we write the blue
-> LED then the red LED in theory should turn off and the blue come on.
-
-Where did I write that? Probably the way I used word "color"
-was not adequate in at least two cases, which may have confused
-the reader.
-
-Modifying monochrome color brightness levels (under colors dir)
-will just modify corresponding IOUT brightness. Not affecting the
-other. I'll try to rephrase what seems to may sound equivocal:
-
-s/When color name is given/When brightness-model is given a color name/
-
-s/arbitrary range of color levels/arbitrary range of brightness-model 
-levels/
-
-
-> But these could be used to mix the colors to create some abstract violet that is not defined in the brightness
-> model.  Why should the brightness models and monochrome LEDs have two different operations.
+> [0] - draft of LED multi color class - we would especially like
+>        to get a feedback on the proposed brightness-model DT design
+> [1][2] - LM3697 backlight driver rework
+> [3][4] - LM36274 backlight driver with regulator support
 > 
-> Dan
+> On 4/5/19 4:28 PM, Dan Murphy wrote:
+>> The LM3697 is a single function LED driver. The single function LED
+>> driver needs to reside in the LED directory as a dedicated LED driver
+>> and not as a MFD device.  The device does have common brightness and ramp
+>> features and those can be accomodated by a TI LMU framework.
+>>
+>> The LM3697 dt binding needs to be moved from the ti-lmu.txt and a 
+>> dedicated
+>> LED dt binding needs to be added.  The new LM3697 LED dt binding will 
+>> then
+>> reside in the Documentation/devicetree/bindings/leds directory and 
+>> follow the
+>> current LED and general bindings guidelines.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+[...]
+> [0] https://marc.info/?l=linux-kernel&m=155414072611538&w=2
+> [1] https://marc.info/?l=devicetree&m=155447454524411&w=2
+> [2] https://lore.kernel.org/patchwork/patch/1058762/
+> [3] https://marc.info/?l=devicetree&m=155447624324995&w=2
+> [4] https://lore.kernel.org/patchwork/patch/1058779/
 > 
+
+[5] - https://marc.info/?l=linux-kernel&m=155405492231039&w=2
 
 -- 
 Best regards,
