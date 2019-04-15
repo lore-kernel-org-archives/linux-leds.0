@@ -1,27 +1,118 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: Re: [PATCH v3 2/3] dt-bindings: backlight: add lm3630a bindings
-Date: Mon, 15 Apr 2019 08:42:36 -0400
-Message-ID: <20190415124236.GA1910@basecamp>
-References: <20190415072905.2861-1-masneyb@onstation.org>
- <20190415072905.2861-3-masneyb@onstation.org>
- <051b5306-9dab-6249-9e41-b815dce1f2e2@ti.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH 5/5] leds: lm3697: Introduce the lm3697 driver
+Date: Mon, 15 Apr 2019 07:49:46 -0500
+Message-ID: <f47fff9b-bca1-6412-c423-acf01baabc9f@ti.com>
+References: <20190325142403.30447-1-dmurphy@ti.com>
+ <20190325142403.30447-6-dmurphy@ti.com> <20190413200605.GA3013@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <051b5306-9dab-6249-9e41-b815dce1f2e2@ti.com>
+In-Reply-To: <20190413200605.GA3013@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, jonathan@marek.ca
+To: Pavel Machek <pavel@ucw.cz>
+Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Apr 15, 2019 at 07:10:04AM -0500, Dan Murphy wrote:
-> I noticed we are missing "label".  It is defined as optional and it is hard coded in the driver
-> but wondering if there is a need to add it.
+Pavel
 
-OK, I'll make it optional and have it fall back to the hardcoded values
-if it is missing.
+On 4/13/19 3:06 PM, Pavel Machek wrote:
+> On Mon 2019-03-25 09:24:03, Dan Murphy wrote:
+>> Introduce the lm3697 LED driver for
+>> backlighting and display.
+>>
+>> Datasheet location:
+>> http://www.ti.com/lit/ds/symlink/lm3697.pdf
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>  drivers/leds/Kconfig       |   8 +-
+>>  drivers/leds/Makefile      |   1 +
+>>  drivers/leds/leds-lm3697.c | 401 +++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 409 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/leds/leds-lm3697.c
+>>
+>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>> index 735009e73414..688bb9a6f275 100644
+>> --- a/drivers/leds/Kconfig
+>> +++ b/drivers/leds/Kconfig
+>> @@ -776,9 +776,15 @@ config LEDS_NIC78BX
+>>  	  To compile this driver as a module, choose M here: the module
+>>  	  will be called leds-nic78bx.
+>>  
+>> +config LEDS_LM3697
+>> +	tristate "LED driver for LM3697"
+>> +	depends on LEDS_TI_LMU_COMMON
+>> +	help
+>> +	  Say Y to enable the LM3697 LED driver for TI LMU devices.
+>> +	  This supports the LED device LM3697.
+>> +
+>>  config LEDS_TI_LMU_COMMON
+>>  	tristate "LED driver for TI LMU"
+>> -	depends on REGMAP
+>>  	help
+>>            Say Y to enable the LED driver for TI LMU devices.
+>>            This supports common features between the TI LM3532, LM3631, LM3632,
+> 
+> Is deleting "depends on REGMAP" intentional? AFAICT you are using it.
+> 
 
-Thanks for the quick feedback on this patch and the other one.
+Thanks for pointing that out.  I don't know how that was in there.
 
-Brian
+> Plus we'd normally expect "COMMON" first and then specific driver. Not
+> sure if Kconfig can handle it out-of-order...
+> 
+> 
+
+OK.  Should I rename the ti_lmu file to leds-common-ti-lmu?
+
+This keeps the naming convention the same in the leds directory as well.
+
+FYI I will not add your acked-by on the LMU patch that introduced the code unless you approve.
+Since you found issues with the kconfig
+
+Refererence
+https://lore.kernel.org/patchwork/patch/1054500/
+
+>> +static int lm3697_init(struct lm3697 *priv)
+>> +{
+>> +	struct lm3697_led *led;
+>> +	int i, ret;
+>> +
+>> +	if (priv->enable_gpio) {
+>> +		gpiod_direction_output(priv->enable_gpio, 1);
+>> +	} else {
+>> +		ret = regmap_write(priv->regmap, LM3697_RESET, LM3697_SW_RESET);
+>> +		if (ret) {
+>> +			dev_err(&priv->client->dev, "Cannot reset the device\n");
+>> +			goto out;
+>> +		}
+>> +	}
+>> +
+>> +	ret = regmap_write(priv->regmap, LM3697_CTRL_ENABLE, 0x0);
+>> +	if (ret) {
+>> +		dev_err(&priv->client->dev, "Cannot write ctrl enable\n");
+>> +		goto out;
+>> +	}
+>> +
+>> +	ret = regmap_write(priv->regmap, LM3697_OUTPUT_CONFIG, priv->bank_cfg);
+>> +	if (ret)
+>> +		dev_err(&priv->client->dev, "Cannot write OUTPUT config\n");
+> 
+> Missing goto out?
+
+Ack
+
+> 
+>> +	for (i = 0; i < LM3697_MAX_CONTROL_BANKS; i++) {
+>> +		led = &priv->leds[i];
+>> +		ret = ti_lmu_common_set_ramp(&led->lmu_data);
+>> +		if (ret)
+>> +			dev_err(&priv->client->dev, "Setting the ramp rate failed\n");
+>> +	}
+>> +out:
+>> +	return ret;
+>> +}
+> 									Pavel
+> 
