@@ -1,7 +1,7 @@
 From: Brian Masney <masneyb@onstation.org>
-Subject: [PATCH v4 3/3] backlight: lm3630a: add firmware node support
-Date: Tue, 16 Apr 2019 19:53:50 -0400
-Message-ID: <20190416235350.13742-4-masneyb@onstation.org>
+Subject: [PATCH v4 2/3] dt-bindings: backlight: add lm3630a bindings
+Date: Tue, 16 Apr 2019 19:53:49 -0400
+Message-ID: <20190416235350.13742-3-masneyb@onstation.org>
 References: <20190416235350.13742-1-masneyb@onstation.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,273 +12,165 @@ To: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh
 Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca
 List-Id: linux-leds@vger.kernel.org
 
-Add fwnode support to the lm3630a driver and optionally allow
-configuring the label, default brightness level, and maximum brightness
-level. The two outputs can be controlled by bank A and B independently
-or bank A can control both outputs.
-
-If the platform data was not configured, then the driver defaults to
-enabling both banks. This patch changes the default value to disable
-both banks before parsing the firmware node so that just a single bank
-can be enabled if desired. There are no in-tree users of this driver.
-
-Driver was tested on a LG Nexus 5 (hammerhead) phone.
+Add new backlight bindings for the TI LM3630A dual-string white LED.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
 ---
-Changes since v3
-- Add support for label
-- Changed lm3630a_parse_node() to return -ENODEV if no nodes were found
-- Remove LM3630A_LED{A,B}_DISABLE
-- Add two additional newlines for code readability
-- Remove extra newline
+Rob: Since the common bindings aren't converted to the new JSON schema
+yet, I'm not sure how to do led-sources here. I would expect that we'd
+have the uint32-array on the common binding once it exists. I had to
+add it here to keep 'make dt_binding_check' happy. I left the
+description off though for that property since that'll come from common
+once its converted.
 
-Changes since v2
-- Separated out control banks and outputs via the reg and led-sources
-  properties.
-- Use fwnode instead of of API
-- Disable both banks by default before calling lm3630a_parse_node()
-- Add lots of error handling
-- Check for duplicate source / bank definitions
-- Remove extra ;
-- Make probe() method fail if fwnode parsing fails.
+Changes since v3:
+- Add label. I didn't add a description for it since that'll come from
+  the common properties once its converted.
 
- drivers/video/backlight/lm3630a_bl.c     | 147 ++++++++++++++++++++++-
- include/linux/platform_data/lm3630a_bl.h |   4 +
- 2 files changed, 146 insertions(+), 5 deletions(-)
+Changes since v2:
+- Update description of max-brightness
+- Add description for reg
+- Correct typo: s/tranisiton/transition
+- add reg to control banks
+- add additionalProperties
 
-diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
-index ef2553f452ca..6d3c54bfbb10 100644
---- a/drivers/video/backlight/lm3630a_bl.c
-+++ b/drivers/video/backlight/lm3630a_bl.c
-@@ -329,15 +329,17 @@ static const struct backlight_ops lm3630a_bank_b_ops = {
- 
- static int lm3630a_backlight_register(struct lm3630a_chip *pchip)
- {
--	struct backlight_properties props;
- 	struct lm3630a_platform_data *pdata = pchip->pdata;
-+	struct backlight_properties props;
-+	const char *label;
- 
- 	props.type = BACKLIGHT_RAW;
- 	if (pdata->leda_ctrl != LM3630A_LEDA_DISABLE) {
- 		props.brightness = pdata->leda_init_brt;
- 		props.max_brightness = pdata->leda_max_brt;
-+		label = pdata->leda_label ? pdata->leda_label : "lm3630a_leda";
- 		pchip->bleda =
--		    devm_backlight_device_register(pchip->dev, "lm3630a_leda",
-+		    devm_backlight_device_register(pchip->dev, label,
- 						   pchip->dev, pchip,
- 						   &lm3630a_bank_a_ops, &props);
- 		if (IS_ERR(pchip->bleda))
-@@ -348,8 +350,9 @@ static int lm3630a_backlight_register(struct lm3630a_chip *pchip)
- 	    (pdata->ledb_ctrl != LM3630A_LEDB_ON_A)) {
- 		props.brightness = pdata->ledb_init_brt;
- 		props.max_brightness = pdata->ledb_max_brt;
-+		label = pdata->ledb_label ? pdata->ledb_label : "lm3630a_ledb";
- 		pchip->bledb =
--		    devm_backlight_device_register(pchip->dev, "lm3630a_ledb",
-+		    devm_backlight_device_register(pchip->dev, label,
- 						   pchip->dev, pchip,
- 						   &lm3630a_bank_b_ops, &props);
- 		if (IS_ERR(pchip->bledb))
-@@ -364,6 +367,129 @@ static const struct regmap_config lm3630a_regmap = {
- 	.max_register = REG_MAX,
- };
- 
-+/**
-+ * lm3630a_parse_led_sources - Parse the optional led-sources fwnode property.
-+ * @node: firmware node
-+ * @default_bitmask: bitmask to return if the led-sources property was not
-+ *                   specified
-+ *
-+ * Parses the optional led-sources firmware node and returns a bitmask that
-+ * contains the outputs that are associated with the control bank. If the
-+ * property is missing, then the value of of @default_bitmask will be returned.
-+ */
-+static int lm3630a_parse_led_sources(struct fwnode_handle *node,
-+				     int default_bitmask)
-+{
-+	int ret, num_sources, i;
-+	u32 sources[2];
+ .../leds/backlight/lm3630a-backlight.yaml     | 128 ++++++++++++++++++
+ 1 file changed, 128 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+
+diff --git a/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+new file mode 100644
+index 000000000000..5067038ca637
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+@@ -0,0 +1,128 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/backlight/lm3630a-backlight.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	num_sources = fwnode_property_read_u32_array(node, "led-sources", NULL,
-+						     0);
-+	if (num_sources < 0)
-+		return default_bitmask;
-+	else if (num_sources > ARRAY_SIZE(sources))
-+		return -EINVAL;
++title: TI LM3630A High-Efficiency Dual-String White LED
 +
-+	ret = fwnode_property_read_u32_array(node, "led-sources", sources,
-+					     num_sources);
-+	if (ret)
-+		return ret;
++maintainers:
++  - Lee Jones <lee.jones@linaro.org>
++  - Daniel Thompson <daniel.thompson@linaro.org>
++  - Jingoo Han <jingoohan1@gmail.com>
 +
-+	ret = 0;
-+	for (i = 0; i < num_sources; i++) {
-+		if (sources[i] < 0 || sources[i] > 1)
-+			return -EINVAL;
++description: |
++  The LM3630A is a current-mode boost converter which supplies the power and
++  controls the current in up to two strings of 10 LEDs per string.
++  https://www.ti.com/product/LM3630A
 +
-+		ret |= BIT(sources[i]);
-+	}
++properties:
++  compatible:
++    const: ti,lm3630a
 +
-+	return ret;
-+}
++  reg:
++    description: The I2C address of the device
++    maxItems: 1
 +
-+static int lm3630a_parse_node(struct lm3630a_chip *pchip,
-+			      struct lm3630a_platform_data *pdata)
-+{
-+	int led_sources, ret = -ENODEV, seen = 0;
-+	struct fwnode_handle *node;
-+	const char *label;
-+	u32 bank, val;
-+	bool linear;
++  ti,linear-mapping-mode:
++    description: |
++      Enable linear mapping mode. If disabled, then it will use exponential
++      mapping mode in which the ramp up/down appears to have a more uniform
++      transition to the human eye.
++    type: boolean
 +
-+	device_for_each_child_node(pchip->dev, node) {
-+		ret = fwnode_property_read_u32(node, "reg", &bank);
-+		if (ret < 0)
-+			return ret;
++required:
++  - compatible
++  - reg
 +
-+		if (bank < 0 || bank > 1)
-+			return -EINVAL;
++patternProperties:
++  "^led@[01]$":
++    type: object
++    description: |
++      Properties for a string of connected LEDs.
 +
-+		if (seen & BIT(bank))
-+			return -EINVAL;
++    properties:
++      reg:
++        description: Control Bank
++        maxItems: 1
++        minimum: 0
++        maximum: 1
 +
-+		seen |= BIT(bank);
++      label:
++        maxItems: 1
 +
-+		led_sources = lm3630a_parse_led_sources(node, BIT(bank));
-+		if (led_sources < 0)
-+			return led_sources;
++      led-sources:
++        allOf:
++          - $ref: /schemas/types.yaml#/definitions/uint32-array
++          - minItems: 1
++            maxItems: 2
++            items:
++              minimum: 0
++              maximum: 1
 +
-+		linear = fwnode_property_read_bool(node,
-+						   "ti,linear-mapping-mode");
-+		if (bank == 0) {
-+			if (!(led_sources & BIT(0)))
-+				return -EINVAL;
++      default-brightness:
++        description: Default brightness level on boot.
++        minimum: 0
++        maximum: 255
 +
-+			pdata->leda_ctrl = linear ?
-+				LM3630A_LEDA_ENABLE_LINEAR :
-+				LM3630A_LEDA_ENABLE;
++      max-brightness:
++        description: Maximum brightness that is allowed during runtime.
++        minimum: 0
++        maximum: 255
 +
-+			if (led_sources & BIT(1)) {
-+				if (seen & BIT(1))
-+					return -EINVAL;
++    required:
++      - reg
 +
-+				seen |= BIT(1);
++    additionalProperties: false
 +
-+				pdata->ledb_ctrl = LM3630A_LEDB_ON_A;
-+			}
-+		} else {
-+			if (led_sources & BIT(0) || !(led_sources & BIT(1)))
-+				return -EINVAL;
++additionalProperties: false
 +
-+			pdata->ledb_ctrl = linear ?
-+				LM3630A_LEDB_ENABLE_LINEAR :
-+				LM3630A_LEDB_ENABLE;
-+		}
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
 +
-+		ret = fwnode_property_read_string(node, "label", &label);
-+		if (!ret) {
-+			if (bank == 0)
-+				pdata->leda_label = label;
-+			else
-+				pdata->ledb_label = label;
-+		}
++        lm3630a_bl@38 {
++                compatible = "ti,lm3630a";
++                status = "ok";
++                reg = <0x38>;
 +
-+		ret = fwnode_property_read_u32(node, "default-brightness",
-+					       &val);
-+		if (!ret) {
-+			if (bank == 0)
-+				pdata->leda_init_brt = val;
-+			else
-+				pdata->ledb_init_brt = val;
-+		}
++                #address-cells = <1>;
++                #size-cells = <0>;
 +
-+		ret = fwnode_property_read_u32(node, "max-brightness", &val);
-+		if (!ret) {
-+			if (bank == 0)
-+				pdata->leda_max_brt = val;
-+			else
-+				pdata->ledb_max_brt = val;
-+		}
++                led@0 {
++                        reg = <0>;
++                        led-sources = <0 1>;
++                        label = "lcd-backlight";
++                        default-brightness = <200>;
++                        max-brightness = <255>;
++                };
++        };
++    };
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
 +
-+		ret = 0;
-+	}
++        lm3630a_bl@38 {
++                compatible = "ti,lm3630a";
++                status = "ok";
++                reg = <0x38>;
 +
-+	return ret;
-+}
++                #address-cells = <1>;
++                #size-cells = <0>;
 +
- static int lm3630a_probe(struct i2c_client *client,
- 			 const struct i2c_device_id *id)
- {
-@@ -396,13 +522,18 @@ static int lm3630a_probe(struct i2c_client *client,
- 				     GFP_KERNEL);
- 		if (pdata == NULL)
- 			return -ENOMEM;
++                led@0 {
++                        reg = <0>;
++                        default-brightness = <150>;
++                        ti,linear-mapping-mode;
++                };
 +
- 		/* default values */
--		pdata->leda_ctrl = LM3630A_LEDA_ENABLE;
--		pdata->ledb_ctrl = LM3630A_LEDB_ENABLE;
- 		pdata->leda_max_brt = LM3630A_MAX_BRIGHTNESS;
- 		pdata->ledb_max_brt = LM3630A_MAX_BRIGHTNESS;
- 		pdata->leda_init_brt = LM3630A_MAX_BRIGHTNESS;
- 		pdata->ledb_init_brt = LM3630A_MAX_BRIGHTNESS;
-+
-+		rval = lm3630a_parse_node(pchip, pdata);
-+		if (rval) {
-+			dev_err(&client->dev, "fail : parse node\n");
-+			return rval;
-+		}
- 	}
- 	pchip->pdata = pdata;
- 
-@@ -470,11 +601,17 @@ static const struct i2c_device_id lm3630a_id[] = {
- 	{}
- };
- 
-+static const struct of_device_id lm3630a_match_table[] = {
-+	{ .compatible = "ti,lm3630a", },
-+	{ },
-+};
-+
- MODULE_DEVICE_TABLE(i2c, lm3630a_id);
- 
- static struct i2c_driver lm3630a_i2c_driver = {
- 	.driver = {
- 		   .name = LM3630A_NAME,
-+		   .of_match_table = lm3630a_match_table,
- 		   },
- 	.probe = lm3630a_probe,
- 	.remove = lm3630a_remove,
-diff --git a/include/linux/platform_data/lm3630a_bl.h b/include/linux/platform_data/lm3630a_bl.h
-index 7538e38e270b..762e68956f31 100644
---- a/include/linux/platform_data/lm3630a_bl.h
-+++ b/include/linux/platform_data/lm3630a_bl.h
-@@ -38,9 +38,11 @@ enum lm3630a_ledb_ctrl {
- 
- #define LM3630A_MAX_BRIGHTNESS 255
- /*
-+ *@leda_label    : optional led a label.
-  *@leda_init_brt : led a init brightness. 4~255
-  *@leda_max_brt  : led a max brightness.  4~255
-  *@leda_ctrl     : led a disable, enable linear, enable exponential
-+ *@ledb_label    : optional led b label.
-  *@ledb_init_brt : led b init brightness. 4~255
-  *@ledb_max_brt  : led b max brightness.  4~255
-  *@ledb_ctrl     : led b disable, enable linear, enable exponential
-@@ -50,10 +52,12 @@ enum lm3630a_ledb_ctrl {
- struct lm3630a_platform_data {
- 
- 	/* led a config.  */
-+	const char *leda_label;
- 	int leda_init_brt;
- 	int leda_max_brt;
- 	enum lm3630a_leda_ctrl leda_ctrl;
- 	/* led b config. */
-+	const char *ledb_label;
- 	int ledb_init_brt;
- 	int ledb_max_brt;
- 	enum lm3630a_ledb_ctrl ledb_ctrl;
++                led@1 {
++                        reg = <1>;
++                        default-brightness = <225>;
++                        ti,linear-mapping-mode;
++                };
++        };
++    };
 -- 
 2.20.1
