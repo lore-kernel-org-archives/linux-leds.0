@@ -1,7 +1,7 @@
 From: Brian Masney <masneyb@onstation.org>
-Subject: [PATCH v4 2/3] dt-bindings: backlight: add lm3630a bindings
-Date: Tue, 16 Apr 2019 19:53:49 -0400
-Message-ID: <20190416235350.13742-3-masneyb@onstation.org>
+Subject: [PATCH v4 1/3] backlight: lm3630a: return 0 on success in update_status functions
+Date: Tue, 16 Apr 2019 19:53:48 -0400
+Message-ID: <20190416235350.13742-2-masneyb@onstation.org>
 References: <20190416235350.13742-1-masneyb@onstation.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,165 +12,46 @@ To: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh
 Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca
 List-Id: linux-leds@vger.kernel.org
 
-Add new backlight bindings for the TI LM3630A dual-string white LED.
+lm3630a_bank_a_update_status() and lm3630a_bank_b_update_status()
+both return the brightness value if the brightness was successfully
+updated. Writing to these attributes via sysfs would cause a 'Bad
+address' error to be returned. These functions should return 0 on
+success, so let's change it to correct that error.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
+Fixes: 28e64a68a2ef ("backlight: lm3630: apply chip revision")
+Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
-Rob: Since the common bindings aren't converted to the new JSON schema
-yet, I'm not sure how to do led-sources here. I would expect that we'd
-have the uint32-array on the common binding once it exists. I had to
-add it here to keep 'make dt_binding_check' happy. I left the
-description off though for that property since that'll come from common
-once its converted.
-
 Changes since v3:
-- Add label. I didn't add a description for it since that'll come from
-  the common properties once its converted.
+- None
 
 Changes since v2:
-- Update description of max-brightness
-- Add description for reg
-- Correct typo: s/tranisiton/transition
-- add reg to control banks
-- add additionalProperties
+- None
 
- .../leds/backlight/lm3630a-backlight.yaml     | 128 ++++++++++++++++++
- 1 file changed, 128 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+ drivers/video/backlight/lm3630a_bl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
-new file mode 100644
-index 000000000000..5067038ca637
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
-@@ -0,0 +1,128 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/backlight/lm3630a-backlight.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI LM3630A High-Efficiency Dual-String White LED
-+
-+maintainers:
-+  - Lee Jones <lee.jones@linaro.org>
-+  - Daniel Thompson <daniel.thompson@linaro.org>
-+  - Jingoo Han <jingoohan1@gmail.com>
-+
-+description: |
-+  The LM3630A is a current-mode boost converter which supplies the power and
-+  controls the current in up to two strings of 10 LEDs per string.
-+  https://www.ti.com/product/LM3630A
-+
-+properties:
-+  compatible:
-+    const: ti,lm3630a
-+
-+  reg:
-+    description: The I2C address of the device
-+    maxItems: 1
-+
-+  ti,linear-mapping-mode:
-+    description: |
-+      Enable linear mapping mode. If disabled, then it will use exponential
-+      mapping mode in which the ramp up/down appears to have a more uniform
-+      transition to the human eye.
-+    type: boolean
-+
-+required:
-+  - compatible
-+  - reg
-+
-+patternProperties:
-+  "^led@[01]$":
-+    type: object
-+    description: |
-+      Properties for a string of connected LEDs.
-+
-+    properties:
-+      reg:
-+        description: Control Bank
-+        maxItems: 1
-+        minimum: 0
-+        maximum: 1
-+
-+      label:
-+        maxItems: 1
-+
-+      led-sources:
-+        allOf:
-+          - $ref: /schemas/types.yaml#/definitions/uint32-array
-+          - minItems: 1
-+            maxItems: 2
-+            items:
-+              minimum: 0
-+              maximum: 1
-+
-+      default-brightness:
-+        description: Default brightness level on boot.
-+        minimum: 0
-+        maximum: 255
-+
-+      max-brightness:
-+        description: Maximum brightness that is allowed during runtime.
-+        minimum: 0
-+        maximum: 255
-+
-+    required:
-+      - reg
-+
-+    additionalProperties: false
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        lm3630a_bl@38 {
-+                compatible = "ti,lm3630a";
-+                status = "ok";
-+                reg = <0x38>;
-+
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+
-+                led@0 {
-+                        reg = <0>;
-+                        led-sources = <0 1>;
-+                        label = "lcd-backlight";
-+                        default-brightness = <200>;
-+                        max-brightness = <255>;
-+                };
-+        };
-+    };
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        lm3630a_bl@38 {
-+                compatible = "ti,lm3630a";
-+                status = "ok";
-+                reg = <0x38>;
-+
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+
-+                led@0 {
-+                        reg = <0>;
-+                        default-brightness = <150>;
-+                        ti,linear-mapping-mode;
-+                };
-+
-+                led@1 {
-+                        reg = <1>;
-+                        default-brightness = <225>;
-+                        ti,linear-mapping-mode;
-+                };
-+        };
-+    };
+diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+index 2030a6b77a09..ef2553f452ca 100644
+--- a/drivers/video/backlight/lm3630a_bl.c
++++ b/drivers/video/backlight/lm3630a_bl.c
+@@ -201,7 +201,7 @@ static int lm3630a_bank_a_update_status(struct backlight_device *bl)
+ 				      LM3630A_LEDA_ENABLE, LM3630A_LEDA_ENABLE);
+ 	if (ret < 0)
+ 		goto out_i2c_err;
+-	return bl->props.brightness;
++	return 0;
+ 
+ out_i2c_err:
+ 	dev_err(pchip->dev, "i2c failed to access\n");
+@@ -278,7 +278,7 @@ static int lm3630a_bank_b_update_status(struct backlight_device *bl)
+ 				      LM3630A_LEDB_ENABLE, LM3630A_LEDB_ENABLE);
+ 	if (ret < 0)
+ 		goto out_i2c_err;
+-	return bl->props.brightness;
++	return 0;
+ 
+ out_i2c_err:
+ 	dev_err(pchip->dev, "i2c failed to access REG_CTRL\n");
 -- 
 2.20.1
