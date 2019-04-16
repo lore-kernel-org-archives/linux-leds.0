@@ -1,80 +1,32 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 5/5] leds: lm3697: Introduce the lm3697 driver
-Date: Mon, 15 Apr 2019 14:53:35 -0500
-Message-ID: <ea9ac786-7303-5de3-9686-55589eed35ec@ti.com>
-References: <20190325142403.30447-1-dmurphy@ti.com>
- <20190325142403.30447-6-dmurphy@ti.com> <20190413200605.GA3013@amd>
- <f47fff9b-bca1-6412-c423-acf01baabc9f@ti.com> <20190415140306.GA13084@amd>
+From: Brian Masney <masneyb@onstation.org>
+Subject: [PATCH v4 0/3] backlight: lm3630a: bug fix and fwnode support
+Date: Tue, 16 Apr 2019 19:53:47 -0400
+Message-ID: <20190416235350.13742-1-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415140306.GA13084@amd>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca
 List-Id: linux-leds@vger.kernel.org
 
+Here is a patch series that fixes a single bug and adds fwnode support
+to the lm3630a driver. This work was tested on a LG Nexus 5 (hammerhead)
+phone. My status page at https://masneyb.github.io/nexus-5-upstream/
+describes what is working so far with the upstream kernel.
 
+See the individual patches for the changelog.
 
-On 4/15/19 9:03 AM, Pavel Machek wrote:
-> 
->>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->>>> index 735009e73414..688bb9a6f275 100644
->>>> --- a/drivers/leds/Kconfig
->>>> +++ b/drivers/leds/Kconfig
->>>> @@ -776,9 +776,15 @@ config LEDS_NIC78BX
->>>>  	  To compile this driver as a module, choose M here: the module
->>>>  	  will be called leds-nic78bx.
->>>>  
->>>> +config LEDS_LM3697
->>>> +	tristate "LED driver for LM3697"
->>>> +	depends on LEDS_TI_LMU_COMMON
->>>> +	help
->>>> +	  Say Y to enable the LM3697 LED driver for TI LMU devices.
->>>> +	  This supports the LED device LM3697.
->>>> +
->>>>  config LEDS_TI_LMU_COMMON
->>>>  	tristate "LED driver for TI LMU"
->>>> -	depends on REGMAP
->>>>  	help
->>>>            Say Y to enable the LED driver for TI LMU devices.
->>>>            This supports common features between the TI LM3532, LM3631, LM3632,
-> ...
->>> Plus we'd normally expect "COMMON" first and then specific driver. Not
->>> sure if Kconfig can handle it out-of-order...
->>
->> OK.  Should I rename the ti_lmu file to leds-common-ti-lmu?
-> 
-> Oh, no, that is not what I meant.
-> 
-> You have
-> 
-> config B
->        depends on A
-> 
-> config A
-> 
-> above. We really want
-> 
-> config A
-> 
-> config B
->        depends on A
-> 
+Brian Masney (3):
+  backlight: lm3630a: return 0 on success in update_status functions
+  dt-bindings: backlight: add lm3630a bindings
+  backlight: lm3630a: add firmware node support
 
-Got it I will rearrange that in v2.
+ .../leds/backlight/lm3630a-backlight.yaml     | 128 +++++++++++++++
+ drivers/video/backlight/lm3630a_bl.c          | 151 +++++++++++++++++-
+ include/linux/platform_data/lm3630a_bl.h      |   4 +
+ 3 files changed, 276 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
 
->> This keeps the naming convention the same in the leds directory as well.
->>
->> FYI I will not add your acked-by on the LMU patch that introduced the code unless you approve.
->> Since you found issues with the kconfig
-> 
-> I did not review it in great detail, so no acked-by's, yet :-).
-
-Thanks
-Dan
-
-> 									Pavel
-> 
+-- 
+2.20.1
