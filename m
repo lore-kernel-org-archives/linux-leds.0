@@ -1,96 +1,59 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v4 26/26] leds: an30259a: Use generic support for composing LED names
-Date: Wed, 17 Apr 2019 22:54:39 +0200
-Message-ID: <20190417205439.17685-27-jacek.anaszewski@gmail.com>
+Subject: [PATCH v4 19/26] dt-bindings: aat1290: Add function and color properties
+Date: Wed, 17 Apr 2019 22:54:32 +0200
+Message-ID: <20190417205439.17685-20-jacek.anaszewski@gmail.com>
 References: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, jacek.anaszewski@gmail.com, Simon Shields <simon@lineageos.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-Switch to using generic LED support for composing LED class
-device name.
+Refer to new "function" and "color" properties and mark "label"
+as deprecated.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Simon Shields <simon@lineageos.org>
 ---
- drivers/leds/leds-an30259a.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-aat1290.txt | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/leds/leds-an30259a.c b/drivers/leds/leds-an30259a.c
-index 1c1f0c8c56f4..c626efa5403c 100644
---- a/drivers/leds/leds-an30259a.c
-+++ b/drivers/leds/leds-an30259a.c
-@@ -13,7 +13,6 @@
- #include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/regmap.h>
--#include <uapi/linux/uleds.h>
+diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
+index 85c0c58617f6..62ed17ec075b 100644
+--- a/Documentation/devicetree/bindings/leds/leds-aat1290.txt
++++ b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
+@@ -32,15 +32,18 @@ Required properties of the LED child node:
+                          formula: T = 8.82 * 10^9 * Ct.
  
- #define AN30259A_MAX_LEDS 3
+ Optional properties of the LED child node:
+-- label : see Documentation/devicetree/bindings/leds/common.txt
++- function : see Documentation/devicetree/bindings/leds/common.txt
++- color : see Documentation/devicetree/bindings/leds/common.txt
++- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
  
-@@ -54,6 +53,8 @@
- #define AN30259A_BLINK_MAX_TIME 7500 /* ms */
- #define AN30259A_SLOPE_RESOLUTION 500 /* ms */
+ Example (by Ct = 220nF, Rset = 160kohm and exynos4412-trats2 board with
+ a switch that allows for routing strobe signal either from the host or from
+ the camera sensor):
  
-+#define AN30259A_NAME "an30259a"
-+
- #define STATE_OFF 0
- #define STATE_KEEP 1
- #define STATE_ON 2
-@@ -62,11 +63,11 @@ struct an30259a;
+ #include "exynos4412.dtsi"
++#include <dt-bindings/leds/common.h>
  
- struct an30259a_led {
- 	struct an30259a *chip;
-+	struct fwnode_handle *fwnode;
- 	struct led_classdev cdev;
- 	u32 num;
- 	u32 default_state;
- 	bool sloping;
--	char label[LED_MAX_NAME_SIZE];
- };
+-aat1290 {
++led-controller {
+ 	compatible = "skyworks,aat1290";
+ 	flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
+ 	enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
+@@ -50,8 +53,9 @@ aat1290 {
+ 	pinctrl-1 = <&camera_flash_host>;
+ 	pinctrl-2 = <&camera_flash_isp>;
  
- struct an30259a {
-@@ -226,14 +227,7 @@ static int an30259a_dt_init(struct i2c_client *client,
- 
- 		led->num = source;
- 		led->chip = chip;
--
--		if (of_property_read_string(child, "label", &str))
--			snprintf(led->label, sizeof(led->label), "an30259a::");
--		else
--			snprintf(led->label, sizeof(led->label), "an30259a:%s",
--				 str);
--
--		led->cdev.name = led->label;
-+		led->fwnode = of_fwnode_handle(child);
- 
- 		if (!of_property_read_string(child, "default-state", &str)) {
- 			if (!strcmp(str, "on"))
-@@ -312,13 +306,20 @@ static int an30259a_probe(struct i2c_client *client)
- 	chip->regmap = devm_regmap_init_i2c(client, &an30259a_regmap_config);
- 
- 	for (i = 0; i < chip->num_leds; i++) {
-+		struct led_init_data init_data;
-+
- 		an30259a_init_default_state(&chip->leds[i]);
- 		chip->leds[i].cdev.brightness_set_blocking =
- 			an30259a_brightness_set;
- 		chip->leds[i].cdev.blink_set = an30259a_blink_set;
- 
--		err = devm_led_classdev_register(&client->dev,
--						 &chip->leds[i].cdev);
-+		init_data.fwnode = chip->leds[i].fwnode;
-+		init_data.devicename = AN30259A_NAME;
-+		init_data.default_label = ":";
-+
-+		err = devm_led_classdev_register_ext(&client->dev,
-+						 &chip->leds[i].cdev,
-+						 &init_data);
- 		if (err < 0)
- 			goto exit;
- 	}
+-	camera_flash: flash-led {
+-		label = "aat1290-flash";
++	camera_flash: led {
++		function = LED_FUNCTION_FLASH;
++		color = <LED_COLOR_ID_WHITE>;
+ 		led-max-microamp = <520833>;
+ 		flash-max-microamp = <1012500>;
+ 		flash-max-timeout-us = <1940000>;
 -- 
 2.11.0
