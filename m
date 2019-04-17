@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v4 12/26] leds: lp8860: Use generic support for composing LED names
-Date: Wed, 17 Apr 2019 22:54:25 +0200
-Message-ID: <20190417205439.17685-13-jacek.anaszewski@gmail.com>
+Subject: [PATCH v4 14/26] leds: lm3692x: Use generic support for composing LED names
+Date: Wed, 17 Apr 2019 22:54:27 +0200
+Message-ID: <20190417205439.17685-15-jacek.anaszewski@gmail.com>
 References: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
@@ -13,108 +13,89 @@ List-Id: linux-leds@vger.kernel.org
 Switch to using generic LED support for composing LED class
 device name.
 
-While at it, avoid iterating through available child of nodes
-in favor of obtaining single expected child node using single
-call to of_get_next_available_child().
+At this occassion remove initialization of struct led_classdev's
+dev->of_node property in the driver, since now it will be taken from
+fwnode assigned to struct led_init_data and passed to the new
+devm_led_classdev_register_ext() API.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-lp8860.c | 35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
+ drivers/leds/leds-lm3692x.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-index 39c72a908f3b..0d3f6b237aac 100644
---- a/drivers/leds/leds-lp8860.c
-+++ b/drivers/leds/leds-lp8860.c
-@@ -22,7 +22,6 @@
- #include <linux/of_gpio.h>
- #include <linux/gpio/consumer.h>
+diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+index 4f413a7c5f05..f25ac6a98125 100644
+--- a/drivers/leds/leds-lm3692x.c
++++ b/drivers/leds/leds-lm3692x.c
+@@ -13,7 +13,6 @@
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
  #include <linux/slab.h>
 -#include <uapi/linux/uleds.h>
  
- #define LP8860_DISP_CL1_BRT_MSB		0x00
- #define LP8860_DISP_CL1_BRT_LSB		0x01
-@@ -87,6 +86,8 @@
- 
- #define LP8860_CLEAR_FAULTS		0x01
- 
-+#define LP8860_NAME			"lp8860"
-+
- /**
-  * struct lp8860_led -
-  * @lock - Lock for reading/writing the device
-@@ -96,7 +97,6 @@
-  * @eeprom_regmap - EEPROM register map
+ #define LM36922_MODEL	0
+ #define LM36923_MODEL	1
+@@ -103,7 +102,6 @@
+  * @regmap - Devices register map
   * @enable_gpio - VDDIO/EN gpio to enable communication interface
   * @regulator - LED supply regulator pointer
 - * @label - LED label
+  * @led_enable - LED sync to be enabled
+  * @model_id - Current device model ID enumerated
   */
- struct lp8860_led {
- 	struct mutex lock;
-@@ -106,7 +106,6 @@ struct lp8860_led {
- 	struct regmap *eeprom_regmap;
+@@ -114,7 +112,6 @@ struct lm3692x_led {
+ 	struct regmap *regmap;
  	struct gpio_desc *enable_gpio;
  	struct regulator *regulator;
 -	char label[LED_MAX_NAME_SIZE];
+ 	int led_enable;
+ 	int model_id;
  };
- 
- struct lp8860_eeprom_reg {
-@@ -387,25 +386,19 @@ static int lp8860_probe(struct i2c_client *client,
- 	struct lp8860_led *led;
- 	struct device_node *np = client->dev.of_node;
- 	struct device_node *child_node;
+@@ -325,7 +322,7 @@ static int lm3692x_init(struct lm3692x_led *led)
+ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ {
+ 	struct fwnode_handle *child = NULL;
 -	const char *name;
 +	struct led_init_data init_data;
+ 	int ret;
  
- 	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
- 	if (!led)
- 		return -ENOMEM;
+ 	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
+@@ -350,30 +347,23 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ 	fwnode_property_read_string(child, "linux,default-trigger",
+ 				    &led->led_dev.default_trigger);
  
--	for_each_available_child_of_node(np, child_node) {
--		led->led_dev.default_trigger = of_get_property(child_node,
--						    "linux,default-trigger",
--						    NULL);
+-	ret = fwnode_property_read_string(child, "label", &name);
+-	if (ret)
+-		snprintf(led->label, sizeof(led->label),
+-			"%s::", led->client->name);
+-	else
+-		snprintf(led->label, sizeof(led->label),
+-			 "%s:%s", led->client->name, name);
 -
--		ret = of_property_read_string(child_node, "label", &name);
--		if (!ret)
--			snprintf(led->label, sizeof(led->label), "%s:%s",
--				 id->name, name);
--		else
--			snprintf(led->label, sizeof(led->label),
--				"%s::display_cluster", id->name);
--	}
-+	child_node = of_get_next_available_child(np, NULL);
-+	if (!child_node)
-+		return -EINVAL;
-+
-+	led->led_dev.default_trigger = of_get_property(child_node,
-+					    "linux,default-trigger",
-+					    NULL);
- 
- 	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
- 						   "enable", GPIOD_OUT_LOW);
-@@ -420,7 +413,6 @@ static int lp8860_probe(struct i2c_client *client,
- 		led->regulator = NULL;
- 
- 	led->client = client;
--	led->led_dev.name = led->label;
- 	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
- 
- 	mutex_init(&led->lock);
-@@ -447,7 +439,12 @@ static int lp8860_probe(struct i2c_client *client,
- 	if (ret)
+ 	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
+ 	if (ret) {
+ 		dev_err(&led->client->dev, "reg DT property missing\n");
  		return ret;
+ 	}
  
--	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
-+	init_data.fwnode = of_fwnode_handle(child_node);
-+	init_data.devicename = LP8860_NAME;
-+	init_data.default_label = ":display_cluster";
-+
-+	ret = devm_led_classdev_register_ext(&client->dev, &led->led_dev,
+-	led->led_dev.name = led->label;
++	init_data.fwnode = child;
++	init_data.devicename = led->client->name;
++	init_data.default_label = ":";
+ 
+-	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
++	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
 +					     &init_data);
  	if (ret) {
- 		dev_err(&client->dev, "led register err: %d\n", ret);
+ 		dev_err(&led->client->dev, "led register err: %d\n", ret);
  		return ret;
+ 	}
+ 
+-	led->led_dev.dev->of_node = to_of_node(child);
+-
+ 	return 0;
+ }
+ 
 -- 
 2.11.0
