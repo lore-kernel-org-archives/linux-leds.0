@@ -1,253 +1,164 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v4 3/3] backlight: lm3630a: add firmware node support
-Date: Wed, 17 Apr 2019 11:41:11 -0500
-Message-ID: <4dcd4b39-e7f8-f1c7-92df-6f09e98cf1be@ti.com>
-References: <20190416235350.13742-1-masneyb@onstation.org>
- <20190416235350.13742-4-masneyb@onstation.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [PATCH v4 00/26] Add generic support for composing LED class device name
+Date: Wed, 17 Apr 2019 22:54:13 +0200
+Message-ID: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190416235350.13742-4-masneyb@onstation.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>, lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, jonathan@marek.ca
+To: linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-Brian
+Changes from v3:
 
-On 4/16/19 6:53 PM, Brian Masney wrote:
-> Add fwnode support to the lm3630a driver and optionally allow
-> configuring the label, default brightness level, and maximum brightness
-> level. The two outputs can be controlled by bank A and B independently
-> or bank A can control both outputs.
-> 
-> If the platform data was not configured, then the driver defaults to
-> enabling both banks. This patch changes the default value to disable
-> both banks before parsing the firmware node so that just a single bank
-> can be enabled if desired. There are no in-tree users of this driver.
-> 
-> Driver was tested on a LG Nexus 5 (hammerhead) phone.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> ---
-> Changes since v3
-> - Add support for label
-> - Changed lm3630a_parse_node() to return -ENODEV if no nodes were found
-> - Remove LM3630A_LED{A,B}_DISABLE
-> - Add two additional newlines for code readability
-> - Remove extra newline
-> 
-> Changes since v2
-> - Separated out control banks and outputs via the reg and led-sources
->   properties.
-> - Use fwnode instead of of API
-> - Disable both banks by default before calling lm3630a_parse_node()
-> - Add lots of error handling
-> - Check for duplicate source / bank definitions
-> - Remove extra ;
-> - Make probe() method fail if fwnode parsing fails.
-> 
->  drivers/video/backlight/lm3630a_bl.c     | 147 ++++++++++++++++++++++-
->  include/linux/platform_data/lm3630a_bl.h |   4 +
->  2 files changed, 146 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
-> index ef2553f452ca..6d3c54bfbb10 100644
-> --- a/drivers/video/backlight/lm3630a_bl.c
-> +++ b/drivers/video/backlight/lm3630a_bl.c
-> @@ -329,15 +329,17 @@ static const struct backlight_ops lm3630a_bank_b_ops = {
->  
->  static int lm3630a_backlight_register(struct lm3630a_chip *pchip)
->  {
-> -	struct backlight_properties props;
->  	struct lm3630a_platform_data *pdata = pchip->pdata;
-> +	struct backlight_properties props;
-> +	const char *label;
->  
->  	props.type = BACKLIGHT_RAW;
->  	if (pdata->leda_ctrl != LM3630A_LEDA_DISABLE) {
->  		props.brightness = pdata->leda_init_brt;
->  		props.max_brightness = pdata->leda_max_brt;
-> +		label = pdata->leda_label ? pdata->leda_label : "lm3630a_leda";
->  		pchip->bleda =
-> -		    devm_backlight_device_register(pchip->dev, "lm3630a_leda",
-> +		    devm_backlight_device_register(pchip->dev, label,
->  						   pchip->dev, pchip,
->  						   &lm3630a_bank_a_ops, &props);
->  		if (IS_ERR(pchip->bleda))
-> @@ -348,8 +350,9 @@ static int lm3630a_backlight_register(struct lm3630a_chip *pchip)
->  	    (pdata->ledb_ctrl != LM3630A_LEDB_ON_A)) {
->  		props.brightness = pdata->ledb_init_brt;
->  		props.max_brightness = pdata->ledb_max_brt;
-> +		label = pdata->ledb_label ? pdata->ledb_label : "lm3630a_ledb";
->  		pchip->bledb =
-> -		    devm_backlight_device_register(pchip->dev, "lm3630a_ledb",
-> +		    devm_backlight_device_register(pchip->dev, label,
->  						   pchip->dev, pchip,
->  						   &lm3630a_bank_b_ops, &props);
->  		if (IS_ERR(pchip->bledb))
-> @@ -364,6 +367,129 @@ static const struct regmap_config lm3630a_regmap = {
->  	.max_register = REG_MAX,
->  };
->  
-> +/**
-> + * lm3630a_parse_led_sources - Parse the optional led-sources fwnode property.
-> + * @node: firmware node
-> + * @default_bitmask: bitmask to return if the led-sources property was not
-> + *                   specified
-> + *
-> + * Parses the optional led-sources firmware node and returns a bitmask that
-> + * contains the outputs that are associated with the control bank. If the
-> + * property is missing, then the value of of @default_bitmask will be returned.
-> + */
+- allow for devicename section for hot-pluggable devices
+- move led_colors array to led-core.c to avoid build break
+  due to Kconfig dependency issue
+- add a patch fixing led_colors array name clash with ALSA driver
+- change led-enumerator DT property name to more meaningful function-enumerator
+- add LED_FUNCTION_KBD_BACKLIGHT
+- change naming and add new proprties to struct led_init_data
+  and struct led_properties
 
-Not sure if this was intentional but you documented this interface you added but the others
-you did not.  If you need to explain what this is doing then the code may not be clear or the DT
-doc is not explicit enough.
+Changes from v2:
 
-> +static int lm3630a_parse_led_sources(struct fwnode_handle *node,
-> +				     int default_bitmask)
-> +{
-> +	int ret, num_sources, i;
-> +	u32 sources[2];
-> +
-> +	num_sources = fwnode_property_read_u32_array(node, "led-sources", NULL,
-> +						     0);
-> +	if (num_sources < 0)
-> +		return default_bitmask;
-> +	else if (num_sources > ARRAY_SIZE(sources))
-> +		return -EINVAL;
-> +
-> +	ret = fwnode_property_read_u32_array(node, "led-sources", sources,
-> +					     num_sources);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = 0;
+- removed from drivers the responsibility of calling led_compose_name()
+- added struct device* argument to led_compose_name() to allow using
+  dev_<level> logging functions for more informative logs
+- adjusted the list of LED_FUNCTION definitions according to the v2 review
+  remarks
+- renamed default_desc to default_label in the struct led_init_data
+- added led-enumerator DT property to the common LED bindings
+- removed LED_COLOR_NAME definitions from include/dt-bindings/leds/common.h
+- change DT color property type from string to integer
+- change struct initialization list to explicit property assignment in leds-sc27xx-bltc.c
+- use led->client->name for led_hw_name in leds-lm3692x.c
+- few other minor improvements to docs etc.
 
-This is unneeded since fwnode should return 0 on success if it gets here
+Changes from v1:
 
-> +	for (i = 0; i < num_sources; i++) {
-> +		if (sources[i] < 0 || sources[i] > 1)
-> +			return -EINVAL;
-> +
-> +		ret |= BIT(sources[i]);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int lm3630a_parse_node(struct lm3630a_chip *pchip,
-> +			      struct lm3630a_platform_data *pdata)
-> +{
-> +	int led_sources, ret = -ENODEV, seen = 0;
-> +	struct fwnode_handle *node;
-> +	const char *label;
-> +	u32 bank, val;
-> +	bool linear;
-> +
-> +	device_for_each_child_node(pchip->dev, node) {
-> +		ret = fwnode_property_read_u32(node, "reg", &bank);
-> +		if (ret < 0)
+- improved led_parse_properties() to parse label property at first
+  and return immediately after parsing succeeds
+- added tool get_led_device_info.sh for retrieving LED class device's
+  parent device related information
+- extended LED naming section of Documentation/leds/leds-class.txt
+- adjusted the list of LED_FUNCTION definitions according to the v1 review
+  remarks
+- added standard LED_COLOR_NAME definitions
+- removed functions.h and moved both LED_FUNCTION and LED_COLOR_NAME
+  definitions to include/dt-bindings/common.h
+- rebased leds-as3645a changes on top of the patch switching to fwnode
+  property API
+- updated DT bindings to use new LED_COLOR_NAME definitions
+- improved common LED bindings to not use address unit for sub-nodes
+  without reg property
 
-if (ret) should be fine here.
+Generally I still insist on deprecating label property and devicename
+section of LED name. The tool I added for obtaining LED device name
+proves availability of the related information in other places in
+the sysfs. Other discussed use cases are covered in the updated
+Documentation/leds/leds-class.txt.
 
-> +			return ret;
-> +
-> +		if (bank < 0 || bank > 1)
+Beside that, I tried also to create macros for automatic composition
+of "-N" suffixed LED functions, so that it would not be necessary
+to pollute common.h with plenty repetitions of the same function,
+differing only with the postfix. Unfortunately, the preprocessor
+of the dtc compiler seems not to accept string concatenetation.
+I.e. it is not possible to to the following assighment:
 
-maybe define the banks 
+function = "hdd""-1"
 
-#define LM3630A_BANK_0	0
-#define LM3630A_BANK_1	1
+If anyone knows how to obviate this shortocoming please let me know.
 
-So it is clear in the code what are the limits to the condition.
+Original cover letter:
 
-if (bank < LM3630A_BANK_0 || bank > LM3630A_BANK_1)
+LED class device naming pattern included devicename section, which had
+unpleasant effect of varying userspace interface dependent on underlaying
+hardware. Moreover, this information was redundant in the LED name, since
+the LED controller name could have been obtained from sysfs device group
 
-> +			return -EINVAL;
-> +
-> +		if (seen & BIT(bank))
-> +			return -EINVAL;
-> +
-> +		seen |= BIT(bank);
-> +
-> +		led_sources = lm3630a_parse_led_sources(node, BIT(bank));
-> +		if (led_sources < 0)
-> +			return led_sources;
-> +
-> +		linear = fwnode_property_read_bool(node,
-> +						   "ti,linear-mapping-mode");
-> +		if (bank == 0) {
+This patch set introduces a led_compose_name() function in the LED core,
+which unifies and simplifies LED class device name composition. This
+change is accompanied by the improvements in the common LED DT bindings
+where two new properties are introduced: "function" and "color" . The two
+deprecate the old "label" property which was leaving too much room for
+interpretation, leading to inconsistent LED naming.
 
-This may be nitpicky but what if you flip the if..else and do
-You have already validated bank to be within range.
+There are also changes in LED DT node naming, which are in line with
+DT maintainer's request from [0].
 
-if(bank)
-	ledb work
-else
-	leda work
+Since some DT LED naming unification, related to not including devicename
+section in "label" DT property, is being requested during reviews of new
+LED class drivers for almost a year now, then those drivers are the first
+candidates for optimalization and the first users of the new
+led_compose_name() API. The modifications were tested with Qemu,
+by stubbing the driver internals where hardware interaction was needed
+for proper probing.
 
-> +			if (!(led_sources & BIT(0)))
-> +				return -EINVAL;
-> +
-> +			pdata->leda_ctrl = linear ?
-> +				LM3630A_LEDA_ENABLE_LINEAR :
-> +				LM3630A_LEDA_ENABLE;
-> +
-> +			if (led_sources & BIT(1)) {
-> +				if (seen & BIT(1))
-> +					return -EINVAL;
-> +
-> +				seen |= BIT(1);
-> +
-> +				pdata->ledb_ctrl = LM3630A_LEDB_ON_A;
-> +			}
-> +		} else {
-> +			if (led_sources & BIT(0) || !(led_sources & BIT(1)))
-> +				return -EINVAL;
-> +
-> +			pdata->ledb_ctrl = linear ?
-> +				LM3630A_LEDB_ENABLE_LINEAR :
-> +				LM3630A_LEDB_ENABLE;
-> +		}
-> +
-> +		ret = fwnode_property_read_string(node, "label", &label);
-> +		if (!ret) {
-> +			if (bank == 0)
-> +				pdata->leda_label = label;
-> +			else
-> +				pdata->ledb_label = label;
-> +		}
-> +
-> +		ret = fwnode_property_read_u32(node, "default-brightness",
-> +					       &val);
-> +		if (!ret) {
-> +			if (bank == 0)
-> +				pdata->leda_init_brt = val;
-> +			else
-> +				pdata->ledb_init_brt = val;
-> +		}
-> +
-> +		ret = fwnode_property_read_u32(node, "max-brightness", &val);
-> +		if (!ret) {
-> +			if (bank == 0)
-> +				pdata->leda_max_brt = val;
-> +			else
-> +				pdata->ledb_max_brt = val;
-> +		}
-> +
-> +		ret = 0;
+Thanks,
+Jacek Anaszewski
 
-Maybe this could be
+Jacek Anaszewski (26):
+  ALSA: line6: Avoid polluting led_* namespace
+  leds: class: Improve LED and LED flash class registration API
+  dt-bindings: leds: Add LED_FUNCTION definitions
+  dt-bindings: leds: Add LED_COLOR_ID definitions
+  dt-bindings: leds: Add properties for LED name construction
+  leds: core: Add support for composing LED class device names
+  dt-bindings: sc27xx-blt: Add function and color properties
+  leds: sc27xx-blt: Use generic support for composing LED names
+  dt-bindings: lt3593: Add function and color properties
+  leds: lt3593: Use generic support for composing LED names
+  dt-bindings: lp8860: Add function and color properties
+  leds: lp8860: Use generic support for composing LED names
+  dt-bindings: lm3692x: Add function and color properties
+  leds: lm3692x: Use generic support for composing LED names
+  dt-bindings: lm36010: Add function and color properties
+  leds: lm3601x: Use generic support for composing LED names
+  dt-bindings: cr0014114: Add function and color properties
+  leds: cr0014114: Use generic support for composing LED names
+  dt-bindings: aat1290: Add function and color properties
+  leds: aat1290: Use generic support for composing LED names
+  dt-bindings: as3645a: Add function and color properties
+  leds: as3645a: Use generic support for composing LED names
+  dt-bindings: leds-gpio: Add function and color properties
+  leds: gpio: Use generic support for composing LED names
+  dt-bindings: an30259a: Add function and color properties
+  leds: an30259a: Use generic support for composing LED names
 
-if (ret)
-	ret = 0;
-else
-	do bank work.
+ .../devicetree/bindings/leds/ams,as3645a.txt       |  22 ++--
+ Documentation/devicetree/bindings/leds/common.txt  |  62 ++++++++--
+ .../devicetree/bindings/leds/leds-aat1290.txt      |  12 +-
+ .../devicetree/bindings/leds/leds-an30259a.txt     |  22 +++-
+ .../devicetree/bindings/leds/leds-cr0014114.txt    |  26 +++--
+ .../devicetree/bindings/leds/leds-gpio.txt         |  23 ++--
+ .../devicetree/bindings/leds/leds-lm3601x.txt      |  10 +-
+ .../devicetree/bindings/leds/leds-lm3692x.txt      |   9 +-
+ .../devicetree/bindings/leds/leds-lp8860.txt       |   9 +-
+ .../devicetree/bindings/leds/leds-lt3593.txt       |  11 +-
+ .../devicetree/bindings/leds/leds-sc27xx-bltc.txt  |  10 +-
+ Documentation/leds/leds-class.txt                  |  56 ++++++++-
+ drivers/leds/led-class-flash.c                     |   9 +-
+ drivers/leds/led-class.c                           |  45 +++++---
+ drivers/leds/led-core.c                            | 127 +++++++++++++++++++++
+ drivers/leds/leds-aat1290.c                        |  14 ++-
+ drivers/leds/leds-an30259a.c                       |  25 ++--
+ drivers/leds/leds-as3645a.c                        |  69 ++++-------
+ drivers/leds/leds-cr0014114.c                      |  33 ++----
+ drivers/leds/leds-gpio.c                           |  23 ++--
+ drivers/leds/leds-lm3601x.c                        |  38 +++---
+ drivers/leds/leds-lm3692x.c                        |  22 +---
+ drivers/leds/leds-lp8860.c                         |  35 +++---
+ drivers/leds/leds-lt3593.c                         |  20 ++--
+ drivers/leds/leds-pwm.c                            |   2 +-
+ drivers/leds/leds-sc27xx-bltc.c                    |  22 ++--
+ drivers/leds/leds.h                                |   1 +
+ include/dt-bindings/leds/common.h                  |  48 ++++++++
+ include/linux/led-class-flash.h                    |  15 ++-
+ include/linux/leds.h                               |  81 +++++++++++--
+ sound/usb/line6/toneport.c                         |   8 +-
+ tools/leds/get_led_device_info.sh                  |  81 +++++++++++++
+ 32 files changed, 718 insertions(+), 272 deletions(-)
+ create mode 100755 tools/leds/get_led_device_info.sh
 
-Dan
-
-<snip>
+-- 
+2.11.0
