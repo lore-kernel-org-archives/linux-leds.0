@@ -1,80 +1,96 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v4 10/26] leds: lt3593: Use generic support for composing LED names
-Date: Wed, 17 Apr 2019 22:54:23 +0200
-Message-ID: <20190417205439.17685-11-jacek.anaszewski@gmail.com>
+Subject: [PATCH v4 08/26] leds: sc27xx-blt: Use generic support for composing LED names
+Date: Wed, 17 Apr 2019 22:54:21 +0200
+Message-ID: <20190417205439.17685-9-jacek.anaszewski@gmail.com>
 References: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, jacek.anaszewski@gmail.com, Daniel Mack <daniel@zonque.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, jacek.anaszewski@gmail.com, Baolin Wang <baolin.wang@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
 Switch to using generic LED support for composing LED class
 device name.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Daniel Mack <daniel@zonque.org>
+Cc: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/leds/leds-lt3593.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ drivers/leds/leds-sc27xx-bltc.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
-index 83e8e58d81cb..9fe12e9ce38d 100644
---- a/drivers/leds/leds-lt3593.c
-+++ b/drivers/leds/leds-lt3593.c
-@@ -10,10 +10,10 @@
- #include <linux/slab.h>
- #include <linux/module.h>
+diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
+index fecf27fb1cdc..1c542380d080 100644
+--- a/drivers/leds/leds-sc27xx-bltc.c
++++ b/drivers/leds/leds-sc27xx-bltc.c
+@@ -6,7 +6,6 @@
  #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
 -#include <uapi/linux/uleds.h>
-+
-+#define LED_LT3593_NAME "lt3593"
  
- struct lt3593_led_data {
+ /* PMIC global control register definition */
+ #define SC27XX_MODULE_EN0	0xc08
+@@ -46,7 +45,7 @@
+ #define SC27XX_DELTA_T_MAX	(SC27XX_LEDS_STEP * 255)
+ 
+ struct sc27xx_led {
 -	char name[LED_MAX_NAME_SIZE];
- 	struct led_classdev cdev;
- 	struct gpio_desc *gpiod;
- };
-@@ -66,6 +66,7 @@ static int lt3593_led_probe(struct platform_device *pdev)
- 	struct lt3593_led_data *led_data;
- 	struct fwnode_handle *child;
- 	int ret, state = LEDS_GPIO_DEFSTATE_OFF;
-+	struct led_init_data init_data;
- 	const char *tmp;
++	struct fwnode_handle *fwnode;
+ 	struct led_classdev ldev;
+ 	struct sc27xx_led_priv *priv;
+ 	u8 line;
+@@ -249,19 +248,24 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
  
- 	if (!dev->of_node)
-@@ -86,14 +87,6 @@ static int lt3593_led_probe(struct platform_device *pdev)
+ 	for (i = 0; i < SC27XX_LEDS_MAX; i++) {
+ 		struct sc27xx_led *led = &priv->leds[i];
++		struct led_init_data init_data;
  
- 	child = device_get_next_child_node(dev, NULL);
+ 		if (!led->active)
+ 			continue;
  
--	ret = fwnode_property_read_string(child, "label", &tmp);
--	if (ret < 0)
--		snprintf(led_data->name, sizeof(led_data->name),
--			 "lt3593::");
--	else
--		snprintf(led_data->name, sizeof(led_data->name),
--			 "lt3593:%s", tmp);
+ 		led->line = i;
+ 		led->priv = priv;
+-		led->ldev.name = led->name;
+ 		led->ldev.brightness_set_blocking = sc27xx_led_set;
+ 		led->ldev.pattern_set = sc27xx_led_pattern_set;
+ 		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
+ 		led->ldev.default_trigger = "pattern";
+ 
+-		err = devm_led_classdev_register(dev, &led->ldev);
++		init_data.fwnode = led->fwnode;
++		init_data.devicename = "sc27xx";
++		init_data.default_label = ":";
++
++		err = devm_led_classdev_register_ext(dev, &led->ldev,
++						     &init_data);
+ 		if (err)
+ 			return err;
+ 	}
+@@ -274,7 +278,6 @@ static int sc27xx_led_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node, *child;
+ 	struct sc27xx_led_priv *priv;
+-	const char *str;
+ 	u32 base, count, reg;
+ 	int err;
+ 
+@@ -316,15 +319,8 @@ static int sc27xx_led_probe(struct platform_device *pdev)
+ 			return -EINVAL;
+ 		}
+ 
++		priv->leds[reg].fwnode = of_fwnode_handle(child);
+ 		priv->leds[reg].active = true;
 -
- 	fwnode_property_read_string(child, "linux,default-trigger",
- 				    &led_data->cdev.default_trigger);
- 
-@@ -102,11 +95,14 @@ static int lt3593_led_probe(struct platform_device *pdev)
- 			state = LEDS_GPIO_DEFSTATE_ON;
+-		err = of_property_read_string(child, "label", &str);
+-		if (err)
+-			snprintf(priv->leds[reg].name, LED_MAX_NAME_SIZE,
+-				 "sc27xx::");
+-		else
+-			snprintf(priv->leds[reg].name, LED_MAX_NAME_SIZE,
+-				 "sc27xx:%s", str);
  	}
  
--	led_data->cdev.name = led_data->name;
- 	led_data->cdev.brightness_set_blocking = lt3593_led_set;
- 	led_data->cdev.brightness = state ? LED_FULL : LED_OFF;
- 
--	ret = devm_led_classdev_register(dev, &led_data->cdev);
-+	init_data.fwnode = child;
-+	init_data.devicename = LED_LT3593_NAME;
-+	init_data.default_label = ":";
-+
-+	ret = devm_led_classdev_register_ext(dev, &led_data->cdev, &init_data);
- 	if (ret < 0) {
- 		fwnode_handle_put(child);
- 		return ret;
+ 	err = sc27xx_led_register(dev, priv);
 -- 
 2.11.0
