@@ -1,32 +1,32 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v4 11/26] dt-bindings: lp8860: Add function and color
- properties
-Date: Thu, 18 Apr 2019 07:28:26 -0500
-Message-ID: <f942fe13-c38e-0cde-2991-ed67f2249e9f@ti.com>
-References: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
- <20190417205439.17685-12-jacek.anaszewski@gmail.com>
+From: Brian Masney <masneyb@onstation.org>
+Subject: [PATCH v5 0/3] backlight: lm3630a: bug fix and fwnode support
+Date: Thu, 18 Apr 2019 11:11:40 -0400
+Message-ID: <20190418151143.26068-1-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190417205439.17685-12-jacek.anaszewski@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net
+To: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
+Here is a patch series that fixes a single bug and adds fwnode support
+to the lm3630a driver. This work was tested on a LG Nexus 5 (hammerhead)
+phone. My status page at https://masneyb.github.io/nexus-5-upstream/
+describes what is working so far with the upstream kernel.
 
-On 4/17/19 3:54 PM, Jacek Anaszewski wrote:
-> Refer to new "function" and "color" properties and mark "label"
-> as deprecated.
-> 
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Dan Murphy <dmurphy@ti.com>
+See the individual patches for the changelog.
 
-I gave reviewed-by for DT docs and tested-by for code for the TI parts affected.
+Brian Masney (3):
+  backlight: lm3630a: return 0 on success in update_status functions
+  dt-bindings: backlight: add lm3630a bindings
+  backlight: lm3630a: add firmware node support
 
-Dan
+ .../leds/backlight/lm3630a-backlight.yaml     | 129 +++++++++++++++
+ drivers/video/backlight/lm3630a_bl.c          | 153 +++++++++++++++++-
+ include/linux/platform_data/lm3630a_bl.h      |   4 +
+ 3 files changed, 279 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
 
-<snip>
+-- 
+2.20.1
