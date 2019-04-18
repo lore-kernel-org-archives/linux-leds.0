@@ -1,51 +1,59 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: [PATCH v5 1/3] backlight: lm3630a: return 0 on success in update_status functions
-Date: Thu, 18 Apr 2019 11:11:41 -0400
-Message-ID: <20190418151143.26068-2-masneyb@onstation.org>
-References: <20190418151143.26068-1-masneyb@onstation.org>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v4 01/26] ALSA: line6: Avoid polluting led_* namespace
+Date: Thu, 18 Apr 2019 19:12:13 +0200
+Message-ID: <b0d841c4-f027-d99d-ab76-721fba4a2a1e@gmail.com>
+References: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
+ <20190417205439.17685-2-jacek.anaszewski@gmail.com>
+ <s5h8sw7riwt.wl-tiwai@suse.de> <20190418122135.GA6925@amd>
+ <s5htvevh56y.wl-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190418151143.26068-1-masneyb@onstation.org>
+In-Reply-To: <s5htvevh56y.wl-tiwai@suse.de>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca
+To: Takashi Iwai <tiwai@suse.de>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, dtor@google.com, robh@kernel.org, Jaroslav Kysela <perex@perex.cz>, linux@roeck-us.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-lm3630a_bank_a_update_status() and lm3630a_bank_b_update_status()
-both return the brightness value if the brightness was successfully
-updated. Writing to these attributes via sysfs would cause a 'Bad
-address' error to be returned. These functions should return 0 on
-success, so let's change it to correct that error.
+On 4/18/19 2:24 PM, Takashi Iwai wrote:
+> On Thu, 18 Apr 2019 14:21:35 +0200,
+> Pavel Machek wrote:
+>>
+>> On Thu 2019-04-18 07:17:54, Takashi Iwai wrote:
+>>> On Wed, 17 Apr 2019 22:54:14 +0200,
+>>> Jacek Anaszewski wrote:
+>>>>
+>>>> led_colors clashes with the array of the same name being added
+>>>> to the LED class. Do the following amendments to fix this issue
+>>>> and the other prospective one.
+>>>>
+>>>> led_colors -> toneport_led_colors
+>>>> led_init_vals -> toneport_led_init_vals
+>>>>
+>>>> Fixes: f44edd7b2bbed ("ALSA: line6/toneport: Implement LED controls via LED class")
+>>>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>>>> Cc: Jaroslav Kysela <perex@perex.cz>
+>>>> Cc: Takashi Iwai <tiwai@suse.com>
+>>>> Cc: Arnd Bergmann <arnd@arndb.de>
+>>>
+>>> Looks good.
+>>>
+>>> Feel free to take my ack:
+>>>    Reviewed-by: Takashi Iwai <tiwai@suse.de>
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
-Fixes: 28e64a68a2ef ("backlight: lm3630: apply chip revision")
-Acked-by: Pavel Machek <pavel@ucw.cz>
----
- drivers/video/backlight/lm3630a_bl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks.
 
-diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
-index 2030a6b77a09..ef2553f452ca 100644
---- a/drivers/video/backlight/lm3630a_bl.c
-+++ b/drivers/video/backlight/lm3630a_bl.c
-@@ -201,7 +201,7 @@ static int lm3630a_bank_a_update_status(struct backlight_device *bl)
- 				      LM3630A_LEDA_ENABLE, LM3630A_LEDA_ENABLE);
- 	if (ret < 0)
- 		goto out_i2c_err;
--	return bl->props.brightness;
-+	return 0;
- 
- out_i2c_err:
- 	dev_err(pchip->dev, "i2c failed to access\n");
-@@ -278,7 +278,7 @@ static int lm3630a_bank_b_update_status(struct backlight_device *bl)
- 				      LM3630A_LEDB_ENABLE, LM3630A_LEDB_ENABLE);
- 	if (ret < 0)
- 		goto out_i2c_err;
--	return bl->props.brightness;
-+	return 0;
- 
- out_i2c_err:
- 	dev_err(pchip->dev, "i2c failed to access REG_CTRL\n");
+>> I guess this is independend of pretty much everything, and should be
+>> taken through the sound tree?
+> 
+> I don't mind either way.  If it's easier for you to take through sound
+> tree, just let me know.
+
+I prefer to take it via LED tree as this patch is needed
+by the LED naming set.
+
 -- 
-2.20.1
+Best regards,
+Jacek Anaszewski
