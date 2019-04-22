@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 97/98] leds: pca9532: fix a potential NULL pointer dereference
-Date: Mon, 22 Apr 2019 15:42:04 -0400
-Message-ID: <20190422194205.10404-97-sashal@kernel.org>
-References: <20190422194205.10404-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 67/68] leds: pca9532: fix a potential NULL pointer dereference
+Date: Mon, 22 Apr 2019 15:45:15 -0400
+Message-ID: <20190422194516.11634-67-sashal@kernel.org>
+References: <20190422194516.11634-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190422194205.10404-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190422194516.11634-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Kangjie Lu <kjlu@umn.edu>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
