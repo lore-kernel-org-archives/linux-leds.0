@@ -1,85 +1,64 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 53/68] leds: trigger: netdev: fix refcnt leak on interface rename
-Date: Mon, 22 Apr 2019 15:45:01 -0400
-Message-ID: <20190422194516.11634-53-sashal@kernel.org>
-References: <20190422194516.11634-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 98/98] leds: trigger: netdev: use memcpy in device_name_store
+Date: Mon, 22 Apr 2019 15:42:05 -0400
+Message-ID: <20190422194205.10404-98-sashal@kernel.org>
+References: <20190422194205.10404-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190422194516.11634-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190422194205.10404-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-From: Rafał Miłecki <rafal@milecki.pl>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-[ Upstream commit 4cb6560514fa19d556954b88128f3846fee66a03 ]
+[ Upstream commit 909346433064b8d840dc82af26161926b8d37558 ]
 
-Renaming a netdev-trigger-tracked interface was resulting in an
-unbalanced dev_hold().
+If userspace doesn't end the input with a newline (which can easily
+happen if the write happens from a C program that does write(fd,
+iface, strlen(iface))), we may end up including garbage from a
+previous, longer value in the device_name. For example
 
-Example:
-> iw phy phy0 interface add foo type __ap
-> echo netdev > trigger
-> echo foo > device_name
-> ip link set foo name bar
-> iw dev bar del
-[  237.355366] unregister_netdevice: waiting for bar to become free. Usage count = 1
-[  247.435362] unregister_netdevice: waiting for bar to become free. Usage count = 1
-[  257.545366] unregister_netdevice: waiting for bar to become free. Usage count = 1
+# cat device_name
 
-Above problem was caused by trigger checking a dev->name which obviously
-changes after renaming an interface. It meant missing all further events
-including the NETDEV_UNREGISTER which is required for calling dev_put().
+# printf 'eth12' > device_name
+# cat device_name
+eth12
+# printf 'eth3' > device_name
+# cat device_name
+eth32
 
-This change fixes that by:
-1) Comparing device struct *address* for notification-filtering purposes
-2) Dropping unneeded NETDEV_CHANGENAME code (no behavior change)
+I highly doubt anybody is relying on this behaviour, so switch to
+simply copying the bytes (we've already checked that size is <
+IFNAMSIZ) and unconditionally zero-terminate it; of course, we also
+still have to strip a trailing newline.
+
+This is also preparation for future patches.
 
 Fixes: 06f502f57d0d ("leds: trigger: Introduce a NETDEV trigger")
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
 ---
- drivers/leds/trigger/ledtrig-netdev.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/leds/trigger/ledtrig-netdev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index 3dd3ed46d473..167a94c02d05 100644
+index 167a94c02d05..136f86a1627d 100644
 --- a/drivers/leds/trigger/ledtrig-netdev.c
 +++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -301,11 +301,11 @@ static int netdev_trig_notify(struct notifier_block *nb,
- 		container_of(nb, struct led_netdev_data, notifier);
+@@ -122,7 +122,8 @@ static ssize_t device_name_store(struct device *dev,
+ 		trigger_data->net_dev = NULL;
+ 	}
  
- 	if (evt != NETDEV_UP && evt != NETDEV_DOWN && evt != NETDEV_CHANGE
--	    && evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER
--	    && evt != NETDEV_CHANGENAME)
-+	    && evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER)
- 		return NOTIFY_DONE;
+-	strncpy(trigger_data->device_name, buf, size);
++	memcpy(trigger_data->device_name, buf, size);
++	trigger_data->device_name[size] = 0;
+ 	if (size > 0 && trigger_data->device_name[size - 1] == '\n')
+ 		trigger_data->device_name[size - 1] = 0;
  
--	if (strcmp(dev->name, trigger_data->device_name))
-+	if (!(dev == trigger_data->net_dev ||
-+	      (evt == NETDEV_REGISTER && !strcmp(dev->name, trigger_data->device_name))))
- 		return NOTIFY_DONE;
- 
- 	cancel_delayed_work_sync(&trigger_data->work);
-@@ -320,12 +320,9 @@ static int netdev_trig_notify(struct notifier_block *nb,
- 		dev_hold(dev);
- 		trigger_data->net_dev = dev;
- 		break;
--	case NETDEV_CHANGENAME:
- 	case NETDEV_UNREGISTER:
--		if (trigger_data->net_dev) {
--			dev_put(trigger_data->net_dev);
--			trigger_data->net_dev = NULL;
--		}
-+		dev_put(trigger_data->net_dev);
-+		trigger_data->net_dev = NULL;
- 		break;
- 	case NETDEV_UP:
- 	case NETDEV_CHANGE:
 -- 
 2.19.1
