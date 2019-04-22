@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 43/43] leds: pca9532: fix a potential NULL pointer dereference
-Date: Mon, 22 Apr 2019 15:47:27 -0400
-Message-ID: <20190422194727.12495-43-sashal@kernel.org>
-References: <20190422194727.12495-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 29/29] leds: pca9532: fix a potential NULL pointer dereference
+Date: Mon, 22 Apr 2019 15:48:48 -0400
+Message-ID: <20190422194848.13049-29-sashal@kernel.org>
+References: <20190422194848.13049-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190422194727.12495-1-sashal@kernel.org>
+In-Reply-To: <20190422194848.13049-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Kangjie Lu <kjlu@umn.edu>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
@@ -28,10 +28,10 @@ Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
  1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index 7fea18b0c15d..7cb4d685a1f1 100644
+index 09a7cffbc46f..896b38f6f9c0 100644
 --- a/drivers/leds/leds-pca9532.c
 +++ b/drivers/leds/leds-pca9532.c
-@@ -513,6 +513,7 @@ static int pca9532_probe(struct i2c_client *client,
+@@ -488,6 +488,7 @@ static int pca9532_probe(struct i2c_client *client,
  	const struct i2c_device_id *id)
  {
  	int devid;
@@ -39,7 +39,7 @@ index 7fea18b0c15d..7cb4d685a1f1 100644
  	struct pca9532_data *data = i2c_get_clientdata(client);
  	struct pca9532_platform_data *pca9532_pdata =
  			dev_get_platdata(&client->dev);
-@@ -528,8 +529,11 @@ static int pca9532_probe(struct i2c_client *client,
+@@ -503,8 +504,11 @@ static int pca9532_probe(struct i2c_client *client,
  			dev_err(&client->dev, "no platform data\n");
  			return -EINVAL;
  		}
