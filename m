@@ -1,50 +1,41 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v6 2/3] dt-bindings: backlight: add lm3630a bindings
-Date: Wed, 24 Apr 2019 16:20:38 +0200
-Message-ID: <20190424142037.GA20237@amd>
+Subject: Re: [PATCH v6 3/3] backlight: lm3630a: add firmware node support
+Date: Wed, 24 Apr 2019 16:24:15 +0200
+Message-ID: <20190424142415.GB20237@amd>
 References: <20190424092505.6578-1-masneyb@onstation.org>
- <20190424092505.6578-3-masneyb@onstation.org>
+ <20190424092505.6578-4-masneyb@onstation.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+        protocol="application/pgp-signature"; boundary="oLBj+sq0vYjzfsbl"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190424092505.6578-3-masneyb@onstation.org>
+In-Reply-To: <20190424092505.6578-4-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Brian Masney <masneyb@onstation.org>
-Cc: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org, jacek.anaszewski@gmail.com, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca, Rob Herring <robh@kernel.org>
+Cc: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org, jacek.anaszewski@gmail.com, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca
 List-Id: linux-leds@vger.kernel.org
 
 
---yrj/dFKFPuw6o+aM
+--oLBj+sq0vYjzfsbl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.=
-yaml
-> @@ -0,0 +1,129 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/backlight/lm3630a-backlight.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-
-I'm not a great fan on links to external websites. But this is comment
-for Rob.
-
-> +title: TI LM3630A High-Efficiency Dual-String White LED
-> +
-> +maintainers:
-> +  - Lee Jones <lee.jones@linaro.org>
-> +  - Daniel Thompson <daniel.thompson@linaro.org>
-> +  - Jingoo Han <jingoohan1@gmail.com>
-
-Not a great fan of duplicating MAINTAINERS information here. But this
-is a comment for Rob, again.
+On Wed 2019-04-24 05:25:05, Brian Masney wrote:
+> Add fwnode support to the lm3630a driver and optionally allow
+> configuring the label, default brightness level, and maximum brightness
+> level. The two outputs can be controlled by bank A and B independently
+> or bank A can control both outputs.
+>=20
+> If the platform data was not configured, then the driver defaults to
+> enabling both banks. This patch changes the default value to disable
+> both banks before parsing the firmware node so that just a single bank
+> can be enabled if desired. There are no in-tree users of this driver.
+>=20
+> Driver was tested on a LG Nexus 5 (hammerhead) phone.
+>=20
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> Reviewed-by: Dan Murphy <dmurphy@ti.com>
 
 Acked-by: Pavel Machek <pavel@ucw.cz>
 
@@ -53,16 +44,16 @@ Acked-by: Pavel Machek <pavel@ucw.cz>
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---yrj/dFKFPuw6o+aM
+--oLBj+sq0vYjzfsbl
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlzAcLUACgkQMOfwapXb+vLuOwCgncoOwxSVP55VHXnFcEgdj8fS
-K/4AnijZY3OLIR7PsuPCSefpsYc7zdNf
-=F424
+iEYEARECAAYFAlzAcY8ACgkQMOfwapXb+vKHZQCfZ7wxHT3lFTEQnSgosEPjRAN9
+PWkAniD///EKrdym1kbPKR1X8qxmD136
+=BW+m
 -----END PGP SIGNATURE-----
 
---yrj/dFKFPuw6o+aM--
+--oLBj+sq0vYjzfsbl--
