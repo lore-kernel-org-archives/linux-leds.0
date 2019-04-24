@@ -1,74 +1,62 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v4 24/26] leds: gpio: Use generic support for composing
- LED names
-Date: Wed, 24 Apr 2019 21:02:18 +0200
-Message-ID: <100da86d-44ff-a39c-0d7c-715a286083f6@gmail.com>
-References: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
- <20190417205439.17685-25-jacek.anaszewski@gmail.com>
- <20190424140417.GE14360@amd>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v2 4/6] dt-bindings: ti-lmu: Modify dt bindings for the
+ LM3697
+Date: Wed, 24 Apr 2019 14:24:13 -0500
+Message-ID: <fb03c31e-2050-0975-f737-dcf401c45380@ti.com>
+References: <20190405142855.3969-1-dmurphy@ti.com>
+ <20190405142855.3969-4-dmurphy@ti.com>
+ <04e160da-a73e-d330-3df4-8f420b3612b4@gmail.com>
+ <1a1482f7-a683-49d5-69a3-aa73a641288e@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190424140417.GE14360@amd>
+In-Reply-To: <1a1482f7-a683-49d5-69a3-aa73a641288e@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net, Linus Walleij <linus.walleij@linaro.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org
+Cc: pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Pavel,
+Bump for Rob
 
-Thanks for the review.
-
-On 4/24/19 4:04 PM, Pavel Machek wrote:
-> On Wed 2019-04-17 22:54:37, Jacek Anaszewski wrote:
->> Switch to using generic LED support for composing LED class
->> device name.
->>
->> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> ---
->>   drivers/leds/leds-gpio.c | 23 ++++++++++-------------
->>   1 file changed, 10 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
->> index b26cf78993d1..60fb3c85cf05 100644
->> --- a/drivers/leds/leds-gpio.c
->> +++ b/drivers/leds/leds-gpio.c
->> @@ -77,11 +77,11 @@ static int gpio_blink_set(struct led_classdev *led_cdev,
->>   
->>   static int create_gpio_led(const struct gpio_led *template,
->>   	struct gpio_led_data *led_dat, struct device *parent,
->> -	struct device_node *np, gpio_blink_set_t blink_set)
->> +	struct fwnode_handle *fwnode, gpio_blink_set_t blink_set)
->>   {
->> +	struct led_init_data init_data = {};
->>   	int ret, state;
->>   
->> -	led_dat->cdev.name = template->name;
->>   	led_dat->cdev.default_trigger = template->default_trigger;
->>   	led_dat->can_sleep = gpiod_cansleep(led_dat->gpiod);
->>   	if (!led_dat->can_sleep)
->> @@ -112,7 +112,13 @@ static int create_gpio_led(const struct gpio_led *template,
->>   	if (ret < 0)
->>   		return ret;
->>   
->> -	return devm_led_classdev_register(parent, &led_dat->cdev);
->> +	if (template->name)
->> +		led_dat->cdev.name = template->name;
->> +	else
->> +		init_data.fwnode = fwnode;
->> +
->> +	return devm_led_classdev_register_ext(parent, &led_dat->cdev,
->> +					      &init_data);
+On 4/12/19 2:34 PM, Jacek Anaszewski wrote:
+> And one more:
 > 
-> Won't register_ext() overwrite template->name?
-
-Ah, right. I will need to tweak led_classdev_register_ext() to properly
-handle the case when init_data is not NULL, but struct led_classdev's
-"name" property is initialized.
-
--- 
-Best regards,
-Jacek Anaszewski
+> [5] - LED naming patch set v3
+> 
+> On 4/11/19 9:48 PM, Jacek Anaszewski wrote:
+>> Hi Rob,
+>>
+>> I've collected references to the DT patches we're waiting
+>> to be reviewed. This is just to make sure that none of them
+>> will be missed - recent traffic on the linux-leds list
+>> is a bit heavier.
+>>
+>> [0] - draft of LED multi color class - we would especially like
+>>        to get a feedback on the proposed brightness-model DT design
+>> [1][2] - LM3697 backlight driver rework
+>> [3][4] - LM36274 backlight driver with regulator support
+>>
+>> On 4/5/19 4:28 PM, Dan Murphy wrote:
+>>> The LM3697 is a single function LED driver. The single function LED
+>>> driver needs to reside in the LED directory as a dedicated LED driver
+>>> and not as a MFD device.  The device does have common brightness and ramp
+>>> features and those can be accomodated by a TI LMU framework.
+>>>
+>>> The LM3697 dt binding needs to be moved from the ti-lmu.txt and a dedicated
+>>> LED dt binding needs to be added.  The new LM3697 LED dt binding will then
+>>> reside in the Documentation/devicetree/bindings/leds directory and follow the
+>>> current LED and general bindings guidelines.
+>>>
+>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> [...]
+>> [0] https://marc.info/?l=linux-kernel&m=155414072611538&w=2
+>> [1] https://marc.info/?l=devicetree&m=155447454524411&w=2
+>> [2] https://lore.kernel.org/patchwork/patch/1058762/
+>> [3] https://marc.info/?l=devicetree&m=155447624324995&w=2
+>> [4] https://lore.kernel.org/patchwork/patch/1058779/
+>>
+> 
+> [5] - https://marc.info/?l=linux-kernel&m=155405492231039&w=2
+> 
