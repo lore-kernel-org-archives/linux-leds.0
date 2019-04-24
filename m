@@ -1,23 +1,23 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v4 20/26] leds: aat1290: Use generic support for
+Subject: Re: [PATCH v4 22/26] leds: as3645a: Use generic support for
  composing LED names
-Date: Wed, 24 Apr 2019 15:57:20 +0200
-Message-ID: <20190424135719.GC14360@amd>
+Date: Wed, 24 Apr 2019 16:01:28 +0200
+Message-ID: <20190424140128.GD14360@amd>
 References: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
- <20190417205439.17685-21-jacek.anaszewski@gmail.com>
+ <20190417205439.17685-23-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="1SQmhf2mF2YjsYvc"
+        protocol="application/pgp-signature"; boundary="VV4b6MQE+OnNyhkM"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190417205439.17685-21-jacek.anaszewski@gmail.com>
+In-Reply-To: <20190417205439.17685-23-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net, Sakari Ailus <sakari.ailus@linux.intel.com>
 List-Id: linux-leds@vger.kernel.org
 
 
---1SQmhf2mF2YjsYvc
+--VV4b6MQE+OnNyhkM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -28,46 +28,61 @@ Hi!
 > device name.
 >=20
 > Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-> @@ -257,9 +257,6 @@ static int aat1290_led_parse_dt(struct aat1290_led *l=
-ed,
->  		return -EINVAL;
->  	}
+> +static int as3645a_led_class_setup(struct as3645a *flash)
+>  {
+>  	struct led_classdev *fled_cdev =3D &flash->fled.led_cdev;
+>  	struct led_classdev *iled_cdev =3D &flash->iled_cdev;
+> +	struct led_init_data init_data;
+
+Not initialized.
+
+>  	struct led_flash_setting *cfg;
+>  	int rval;
 > =20
-> -	led_cdev->name =3D of_get_property(child_node, "label", NULL) ? :
-> -						child_node->name;
-> -
->  	ret =3D of_property_read_u32(child_node, "led-max-microamp",
->  				&cfg->max_mm_current);
->  	/*
-> @@ -469,6 +466,7 @@ static int aat1290_led_probe(struct platform_device *=
-pdev)
->  	struct aat1290_led *led;
->  	struct led_classdev *led_cdev;
->  	struct led_classdev_flash *fled_cdev;
-> +	struct led_init_data init_data =3D {};
+> -	iled_cdev->name =3D names->indicator;
+>  	iled_cdev->brightness_set_blocking =3D as3645a_set_indicator_brightness;
+>  	iled_cdev->max_brightness =3D
+>  		flash->cfg.indicator_max_ua / AS_INDICATOR_INTENSITY_STEP;
+>  	iled_cdev->flags =3D LED_CORE_SUSPENDRESUME;
+> =20
+> -	rval =3D led_classdev_register(&flash->client->dev, iled_cdev);
+> +	init_data.fwnode =3D flash->indicator_node;
+> +	init_data.devicename =3D AS_NAME;
+> +	init_data.default_label =3D "indicator";
 
-You can do directly =3D { .devicename =3D ...; }, at least for the name.
+And struct has one more field:
 
-Anyway, that's a detail.
+	 +       /*
+	 +        * indicates if LED name should always comprise
+         devicename section;
+	 +        * only LEDs exposed by drivers of hot-pluggable
+         devices should
+	 +        * set it to true
+	 +        */
+	 +       bool devname_mandatory;
+	  };
 
-8, 10, 12, 14, 16, 18, 20: Acked-by: Pavel Machek <pavel@ucw.cz>
+I believe it would be cleaner to always initialize struct with zeros;
+that way you can also expand it in future.
 									Pavel
+
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---1SQmhf2mF2YjsYvc
+--VV4b6MQE+OnNyhkM
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlzAaz8ACgkQMOfwapXb+vKriQCcDwk6UeJr46HCVI+yRgKifC9c
-4SQAnjIJmctKjqadfYavYRdvrDx2Llk9
-=jlY7
+iEYEARECAAYFAlzAbDgACgkQMOfwapXb+vKq5ACglcaCN/9FwvYniQtE1vovSced
+OvYAoI/2Wc8TqlBTLFMD/nofn+dxGPQI
+=K0fz
 -----END PGP SIGNATURE-----
 
---1SQmhf2mF2YjsYvc--
+--VV4b6MQE+OnNyhkM--
