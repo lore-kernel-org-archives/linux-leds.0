@@ -1,57 +1,71 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v4 20/26] leds: aat1290: Use generic support for composing
+Subject: Re: [PATCH v4 22/26] leds: as3645a: Use generic support for composing
  LED names
-Date: Wed, 24 Apr 2019 20:16:55 +0200
-Message-ID: <713cd359-4c93-7841-c3b7-bbf3d3ceec45@gmail.com>
+Date: Wed, 24 Apr 2019 20:18:06 +0200
+Message-ID: <52b9725f-ac30-0b09-af6e-879396c37819@gmail.com>
 References: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
- <20190417205439.17685-21-jacek.anaszewski@gmail.com>
- <20190424135719.GC14360@amd>
+ <20190417205439.17685-23-jacek.anaszewski@gmail.com>
+ <20190424140128.GD14360@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190424135719.GC14360@amd>
+In-Reply-To: <20190424140128.GD14360@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net, Sakari Ailus <sakari.ailus@linux.intel.com>
 List-Id: linux-leds@vger.kernel.org
 
-On 4/24/19 3:57 PM, Pavel Machek wrote:
+Pavel,
+
+On 4/24/19 4:01 PM, Pavel Machek wrote:
 > Hi!
 > 
 >> Switch to using generic LED support for composing LED class
 >> device name.
 >>
 >> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 > 
->> @@ -257,9 +257,6 @@ static int aat1290_led_parse_dt(struct aat1290_led *led,
->>   		return -EINVAL;
->>   	}
+>> +static int as3645a_led_class_setup(struct as3645a *flash)
+>>   {
+>>   	struct led_classdev *fled_cdev = &flash->fled.led_cdev;
+>>   	struct led_classdev *iled_cdev = &flash->iled_cdev;
+>> +	struct led_init_data init_data;
+> 
+> Not initialized.
+> 
+>>   	struct led_flash_setting *cfg;
+>>   	int rval;
 >>   
->> -	led_cdev->name = of_get_property(child_node, "label", NULL) ? :
->> -						child_node->name;
->> -
->>   	ret = of_property_read_u32(child_node, "led-max-microamp",
->>   				&cfg->max_mm_current);
->>   	/*
->> @@ -469,6 +466,7 @@ static int aat1290_led_probe(struct platform_device *pdev)
->>   	struct aat1290_led *led;
->>   	struct led_classdev *led_cdev;
->>   	struct led_classdev_flash *fled_cdev;
->> +	struct led_init_data init_data = {};
+>> -	iled_cdev->name = names->indicator;
+>>   	iled_cdev->brightness_set_blocking = as3645a_set_indicator_brightness;
+>>   	iled_cdev->max_brightness =
+>>   		flash->cfg.indicator_max_ua / AS_INDICATOR_INTENSITY_STEP;
+>>   	iled_cdev->flags = LED_CORE_SUSPENDRESUME;
+>>   
+>> -	rval = led_classdev_register(&flash->client->dev, iled_cdev);
+>> +	init_data.fwnode = flash->indicator_node;
+>> +	init_data.devicename = AS_NAME;
+>> +	init_data.default_label = "indicator";
 > 
-> You can do directly = { .devicename = ...; }, at least for the name.
-
-In previous versions I applied similar approach in few places but
-later figured out it will be more consistent if all assignments are
-next to each other.
-
-> Anyway, that's a detail.
+> And struct has one more field:
 > 
-> 8, 10, 12, 14, 16, 18, 20: Acked-by: Pavel Machek <pavel@ucw.cz>
+> 	 +       /*
+> 	 +        * indicates if LED name should always comprise
+>           devicename section;
+> 	 +        * only LEDs exposed by drivers of hot-pluggable
+>           devices should
+> 	 +        * set it to true
+> 	 +        */
+> 	 +       bool devname_mandatory;
+> 	  };
+> 
+> I believe it would be cleaner to always initialize struct with zeros;
+> that way you can also expand it in future.
 
-Thanks!
+Good point. Will fix that in v5.
 
 -- 
 Best regards,
