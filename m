@@ -1,41 +1,23 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL] LED update for 5.1-rc7
-Date: Wed, 24 Apr 2019 21:34:13 +0200
-Message-ID: <20190424193413.8135-1-jacek.anaszewski@gmail.com>
+From: pr-tracker-bot@kernel.org
+Subject: Re: [GIT PULL] LED update for 5.1-rc7
+Date: Wed, 24 Apr 2019 23:40:04 +0000
+Message-ID: <155614920464.7038.16723125529070373196.pr-tracker-bot@kernel.org>
+References: <20190424193413.8135-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190424193413.8135-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, dmurphy@ti.com, jacek.anaszewski@gmail.com
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, dmurphy@ti.com, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Wed, 24 Apr 2019 21:34:13 +0200:
 
-Please pull LED update for 5.1-rc7.
+> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds-for-5.1-rc7
 
-There is a single change to MAINTAINERS.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/11bfe6473bf2c83e4cc44fe97d95a8b0dae1e419
 
-We announce a new LED reviewer - Dan Murphy.
+Thank you!
 
-The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
-
-  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds-for-5.1-rc7
-
-for you to fetch changes up to 52fb56f7b5a9cc23a07b2c237bad91180263a492:
-
-  MAINTAINERS: LEDs: Add designated reviewer for LED subsystem (2019-04-24 21:07:18 +0200)
-
-Thanks,
-Jacek Anaszewski
-
-----------------------------------------------------------------
-LED update for 5.1-rc7.
-----------------------------------------------------------------
-Dan Murphy (1):
-      MAINTAINERS: LEDs: Add designated reviewer for LED subsystem
-
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
