@@ -1,77 +1,77 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v4 02/26] leds: class: Improve LED and LED flash class
- registration API
-Date: Wed, 24 Apr 2019 20:25:22 +0200
-Message-ID: <20190424182522.GA31600@amd>
-References: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
- <20190417205439.17685-3-jacek.anaszewski@gmail.com>
- <20190424134633.GA14360@amd>
- <5a738825-a8f9-f4ca-0a38-773fe145048f@gmail.com>
+From: Yauhen Kharuzhy <jekhor@gmail.com>
+Subject: Re: [PATCH v2 0/2] Intel Cherry Trail Whiskey Cove LEDs support
+Date: Wed, 24 Apr 2019 21:32:51 +0300
+Message-ID: <20190424183251.GA21254@jeknote.loshitsa1.net>
+References: <20190212205901.13037-1-jekhor@gmail.com>
+ <21337ca0-bb91-9ca9-117b-89c47c6b2ade@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <5a738825-a8f9-f4ca-0a38-773fe145048f@gmail.com>
+In-Reply-To: <21337ca0-bb91-9ca9-117b-89c47c6b2ade@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net, Baolin Wang <baolin.wang@linaro.org>, Dan Murphy <dmurphy@ti.com>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
+On Sun, Apr 21, 2019 at 09:28:42PM +0200, Hans de Goede wrote:
+> Hi Yauhen,
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I had a discussion with Jacek Anaszewski about this in another thread and
+> I believe we have come up with a solution for this which should work
+> nicely and should allow us to move forward with your driver (after
+> it is reworked to match the solution. So the solution we've come up with is:
+> 
+> 1) After thinking a bit more about the primary use-case for this, I've come
+> to the conclusion that putting LED1 / the charging LED in software-controlled
+> mode is also the correct thing to do on the GPD win / pocket. The reason for
+> this is that ideally the LED would glow while charging and be simply solid
+> on when the battery is full, the hw control does not allow this, so the GPD
+> win/pocket can benefit from sw-control too.
+> 
+> 2) To allow the desired behavior we need to define a new
+> "<supply-name>-charging-glow-full-solid" trigger in
+> drivers/power/supply/power_supply_leds.c; and this must be the default
+> trigger for the Intel Cherry Trail Whiskey Cove LED driver so that
+> everything will just work. Also we must restore the original hw control
+> setting on reboot/shut-down so that this is used on the GPD win/pocket when
+> Linux is not running.
+> 
+> 3) To be able to actually implement this new trigger we first need 2 things
+> in the kernel internal LED APIs:
+> 
+> 3a) An API for triggers to put the LED in glowing mode, we've come up
+> with the following prototype for this:
+> 
+> void led_trigger_glow(struct led_trigger *trigger, unsigned long *cylce_time);
+> 
+> Where cycle_time is the number of milliseconds for a full glow cycle (from off
+> to full-on to off again).  So if cylce_time is set to 1000 then the LED glows
+> at 1 Hz, 500, 2 HZ, etc. Note as with led_trigger_blink() the time passed to
+> led_trigger_glow is passed by reference as the LED driver may round it to
+> match what the hardware can do and the rounded value is returned to the caller
+> through the reference.
+> 
+> 3b) 3a) in turn will require adding a new optional glow_set callback to
+> struct led_classdev which will then get called by led_trigger_glow if available.
+> 
+> We've not discussed yet what to do if led_trigger_glow gets called on
+> a led_classdev which does not implement the new glow_set callback, I guess
+> the most sensible thing to do then is to fallback to blinking with delay_on
+> and delay_off set to cylce_time / 2.
+> 
+> If you can make some time to work on this solution that would be great. Please
+> let me know if you've any questions about the solution outlined below.
+> 
+> Note that glowing is only exported as in kernel functionality, I see no
+> use-case for exporting this to userspace and keeping this in kernel allows
+> us to keep things nice and simple.
+> 
 
-Hi!
+Hi,
+Unfortunately I am too busy now at fulltime job, so I don't know when I
+will return to this. But I still plan to do  :)
+ 
 
-> >>+/**
-> >>+ * led_classdev_register_ext - register a new object of LED class with
-> >>+ *			       init data
-> >>+ * @parent: LED controller device this LED is driven by
-> >>+ * @led_cdev: the led_classdev structure for this device
-> >>+ * @init_data: the LED class device initialization data
-> >>+ *
-> >>+ * Returns: 0 on success or negative error value on failure
-> >>+ */
-> >>+extern int led_classdev_register_ext(struct device *parent,
-> >>+				     struct led_classdev *led_cdev,
-> >>+				     struct led_init_data *init_data);
-> >>+#define led_classdev_register(parent, led_cdev)			\
-> >>+	led_classdev_register_ext(parent, led_cdev, NULL)
-> >>+extern int devm_led_classdev_register_ext(struct device *parent,
-> >>+					  struct led_classdev *led_cdev,
-> >>+					  struct led_init_data *init_data);
-> >>+#define devm_led_classdev_register(parent, led_cdev)		\
-> >>+	devm_led_classdev_register_ext(parent, led_cdev, NULL)
-> >
-> >Static inline (instead of macro) might be preffered. More type safety
-> >and less confusing behaviour in case of errors...
->=20
-> This is kind of alias. You have type control in the function being
-> mapped. With inline we'd have to nest the function calls, i.e.
-> it will worsen performance by this one additional call level.
-
-It is not a big issue; but no, performance will be exactly the
-same. "static inline" says .. well, inline this into caller, so there
-will be one function call, not two.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzAqhIACgkQMOfwapXb+vKL7wCgm2ecjy+H5PQSNXn7t4ew5vnA
-HdAAnRNge/Qf3sdJHMog0GWCEeTezh6s
-=hyUx
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
+-- 
+Yauhen Kharuzhy
