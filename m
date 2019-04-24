@@ -1,77 +1,85 @@
-From: Yauhen Kharuzhy <jekhor@gmail.com>
-Subject: Re: [PATCH v2 0/2] Intel Cherry Trail Whiskey Cove LEDs support
-Date: Wed, 24 Apr 2019 21:32:51 +0300
-Message-ID: <20190424183251.GA21254@jeknote.loshitsa1.net>
-References: <20190212205901.13037-1-jekhor@gmail.com>
- <21337ca0-bb91-9ca9-117b-89c47c6b2ade@redhat.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v6 2/3] dt-bindings: backlight: add lm3630a bindings
+Date: Wed, 24 Apr 2019 20:55:08 +0200
+Message-ID: <20190424185507.GB31600@amd>
+References: <20190424092505.6578-1-masneyb@onstation.org>
+ <20190424092505.6578-3-masneyb@onstation.org>
+ <20190424142037.GA20237@amd>
+ <CAL_JsqJSpmG_TfNaxHKQMzVn0ig=HaBupQ22bbPAa9riuCU71Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="s/l3CgOIzMHHjg/5"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <21337ca0-bb91-9ca9-117b-89c47c6b2ade@redhat.com>
+In-Reply-To: <CAL_JsqJSpmG_TfNaxHKQMzVn0ig=HaBupQ22bbPAa9riuCU71Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Brian Masney <masneyb@onstation.org>, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>, Jonathan Marek <jonathan@marek.ca>
 List-Id: linux-leds@vger.kernel.org
 
-On Sun, Apr 21, 2019 at 09:28:42PM +0200, Hans de Goede wrote:
-> Hi Yauhen,
 
-> I had a discussion with Jacek Anaszewski about this in another thread and
-> I believe we have come up with a solution for this which should work
-> nicely and should allow us to move forward with your driver (after
-> it is reworked to match the solution. So the solution we've come up with is:
-> 
-> 1) After thinking a bit more about the primary use-case for this, I've come
-> to the conclusion that putting LED1 / the charging LED in software-controlled
-> mode is also the correct thing to do on the GPD win / pocket. The reason for
-> this is that ideally the LED would glow while charging and be simply solid
-> on when the battery is full, the hw control does not allow this, so the GPD
-> win/pocket can benefit from sw-control too.
-> 
-> 2) To allow the desired behavior we need to define a new
-> "<supply-name>-charging-glow-full-solid" trigger in
-> drivers/power/supply/power_supply_leds.c; and this must be the default
-> trigger for the Intel Cherry Trail Whiskey Cove LED driver so that
-> everything will just work. Also we must restore the original hw control
-> setting on reboot/shut-down so that this is used on the GPD win/pocket when
-> Linux is not running.
-> 
-> 3) To be able to actually implement this new trigger we first need 2 things
-> in the kernel internal LED APIs:
-> 
-> 3a) An API for triggers to put the LED in glowing mode, we've come up
-> with the following prototype for this:
-> 
-> void led_trigger_glow(struct led_trigger *trigger, unsigned long *cylce_time);
-> 
-> Where cycle_time is the number of milliseconds for a full glow cycle (from off
-> to full-on to off again).  So if cylce_time is set to 1000 then the LED glows
-> at 1 Hz, 500, 2 HZ, etc. Note as with led_trigger_blink() the time passed to
-> led_trigger_glow is passed by reference as the LED driver may round it to
-> match what the hardware can do and the rounded value is returned to the caller
-> through the reference.
-> 
-> 3b) 3a) in turn will require adding a new optional glow_set callback to
-> struct led_classdev which will then get called by led_trigger_glow if available.
-> 
-> We've not discussed yet what to do if led_trigger_glow gets called on
-> a led_classdev which does not implement the new glow_set callback, I guess
-> the most sensible thing to do then is to fallback to blinking with delay_on
-> and delay_off set to cylce_time / 2.
-> 
-> If you can make some time to work on this solution that would be great. Please
-> let me know if you've any questions about the solution outlined below.
-> 
-> Note that glowing is only exported as in kernel functionality, I see no
-> use-case for exporting this to userspace and keeping this in kernel allows
-> us to keep things nice and simple.
-> 
+--s/l3CgOIzMHHjg/5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-Unfortunately I am too busy now at fulltime job, so I don't know when I
-will return to this. But I still plan to do  :)
- 
+On Wed 2019-04-24 10:57:50, Rob Herring wrote:
+> On Wed, Apr 24, 2019 at 9:20 AM Pavel Machek <pavel@ucw.cz> wrote:
+> >
+> > Hi!
+> >
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backli=
+ght.yaml
+> > > @@ -0,0 +1,129 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/leds/backlight/lm3630a-backlight.=
+yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >
+> > I'm not a great fan on links to external websites. But this is comment
+> > for Rob.
+>=20
+> This is simply how json-schema works. $schema says what meta-schema
+> this file should validate against so it's versioned if we change the
+> schema format. $id is just a unique identifier and is used to resolve
+> $ref values. Note that these aren't live urls either (but could be at
+> some point in the future).
 
--- 
-Yauhen Kharuzhy
+Umm. Interesting design :-).
+
+> > > +title: TI LM3630A High-Efficiency Dual-String White LED
+> > > +
+> > > +maintainers:
+> > > +  - Lee Jones <lee.jones@linaro.org>
+> > > +  - Daniel Thompson <daniel.thompson@linaro.org>
+> > > +  - Jingoo Han <jingoohan1@gmail.com>
+> >
+> > Not a great fan of duplicating MAINTAINERS information here. But this
+> > is a comment for Rob, again.
+>=20
+> Hopefully this is temporary until we move to per directory MAINTAINERS
+> files. Not sure what happened with that.
+
+Aha, ok.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--s/l3CgOIzMHHjg/5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzAsQsACgkQMOfwapXb+vJp8ACdGjX/IOssab2MF8x50hnYcR2/
+UrUAmgLyGXFRXLfDZyMk4DjDnq+tnC5a
+=JBX0
+-----END PGP SIGNATURE-----
+
+--s/l3CgOIzMHHjg/5--
