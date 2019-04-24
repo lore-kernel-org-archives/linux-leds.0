@@ -1,168 +1,59 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v5 2/3] dt-bindings: backlight: add lm3630a bindings
-Date: Tue, 23 Apr 2019 20:52:51 -0500
-Message-ID: <CAL_JsqLZqA=cKLo3Jw7fizt06ytADL8YbhhRKS=mLo05hAaf2A@mail.gmail.com>
-References: <20190418151143.26068-1-masneyb@onstation.org> <20190418151143.26068-3-masneyb@onstation.org>
+From: Pavel Machek <pavel@denx.de>
+Subject: Re: [PATCH v10 00/11] mfd: add support for max77650 PMIC
+Date: Wed, 24 Apr 2019 10:31:27 +0200
+Message-ID: <20190424083127.GB6699@amd>
+References: <20190423090451.23711-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="i0/AhcQY5QxfSsSZ"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190418151143.26068-3-masneyb@onstation.org>
+Content-Disposition: inline
+In-Reply-To: <20190423090451.23711-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>, Jonathan Marek <jonathan@marek.ca>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Apr 18, 2019 at 10:12 AM Brian Masney <masneyb@onstation.org> wrote:
->
-> Add new backlight bindings for the TI LM3630A dual-string white LED.
->
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> ---
-> Changes since v4:
-> - Drop $ref from led-sources
-> - Drop description from reg of i2c address
-> - Expand description of reg for the control bank
-> - Drop status from examples
->
-> Changes since v3:
-> - Add label. I didn't add a description for it since that'll come from
->   the common properties once its converted.
->
-> Changes since v2:
-> - Update description of max-brightness
-> - Add description for reg
-> - Correct typo: s/tranisiton/transition
-> - add reg to control banks
-> - add additionalProperties
->
->  .../leds/backlight/lm3630a-backlight.yaml     | 129 ++++++++++++++++++
->  1 file changed, 129 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
->
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
-> new file mode 100644
-> index 000000000000..e754df569365
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
-> @@ -0,0 +1,129 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/backlight/lm3630a-backlight.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI LM3630A High-Efficiency Dual-String White LED
-> +
-> +maintainers:
-> +  - Lee Jones <lee.jones@linaro.org>
-> +  - Daniel Thompson <daniel.thompson@linaro.org>
-> +  - Jingoo Han <jingoohan1@gmail.com>
-> +
-> +description: |
-> +  The LM3630A is a current-mode boost converter which supplies the power and
-> +  controls the current in up to two strings of 10 LEDs per string.
-> +  https://www.ti.com/product/LM3630A
-> +
-> +properties:
-> +  compatible:
-> +    const: ti,lm3630a
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  ti,linear-mapping-mode:
-> +    description: |
-> +      Enable linear mapping mode. If disabled, then it will use exponential
-> +      mapping mode in which the ramp up/down appears to have a more uniform
-> +      transition to the human eye.
-> +    type: boolean
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +patternProperties:
-> +  "^led@[01]$":
-> +    type: object
-> +    description: |
-> +      Properties for a string of connected LEDs.
-> +
-> +    properties:
-> +      reg:
-> +        description: |
-> +          The control bank that is used to program the two current sinks. The
-> +          LM3630A has two control banks (A and B) and are represented as 0 or 1
-> +          in this property. The two current sinks can be controlled
-> +          independently with both banks, or bank A can be configured to control
-> +          both sinks with the led-sources property.
-> +        maxItems: 1
-> +        minimum: 0
-> +        maximum: 1
-> +
-> +      label:
-> +        maxItems: 1
-> +
-> +      led-sources:
-> +        allOf:
-> +          - minItems: 1
-> +            maxItems: 2
-> +            items:
-> +              minimum: 0
-> +              maximum: 1
-> +
-> +      default-brightness:
-> +        description: Default brightness level on boot.
-> +        minimum: 0
-> +        maximum: 255
-> +
-> +      max-brightness:
-> +        description: Maximum brightness that is allowed during runtime.
-> +        minimum: 0
-> +        maximum: 255
-> +
-> +    required:
-> +      - reg
-> +
-> +    additionalProperties: false
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        lm3630a_bl@38 {
 
-Still needs:
+--i0/AhcQY5QxfSsSZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-led-controller@38
+On Tue 2019-04-23 11:04:40, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>=20
+> This series adds support for max77650 ultra low-power PMIC. It provides
+> the core mfd driver and a set of five sub-drivers for the regulator,
+> power supply, gpio, leds and input subsystems.
+>=20
+> Patches 1-4 add the DT binding documents. Patch 5 documents mfd_add_devic=
+es().
+> Patches 6-10 add all drivers. Last patch adds a MAINTAINERS entry for this
+> device.
+>=20
+> The regulator part is already upstream.
 
-> +                compatible = "ti,lm3630a";
-> +                reg = <0x38>;
-> +
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                led@0 {
-> +                        reg = <0>;
-> +                        led-sources = <0 1>;
-> +                        label = "lcd-backlight";
-> +                        default-brightness = <200>;
-> +                        max-brightness = <255>;
-> +                };
-> +        };
-> +    };
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        lm3630a_bl@38 {
+I see v10 in my inbox... and acks from all over the place, but patches
+not going in. Who takes these? I don't think I need another 10
+versions in my inbox...
+								Pavel
+							=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-And here.
+--i0/AhcQY5QxfSsSZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-With those fixed:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+iEYEARECAAYFAlzAHt8ACgkQMOfwapXb+vL/mgCeOCQVfRMEFE1+NFcHmsDoDLMo
+MjsAoI/6BvVLuAazM6fSVjSB60dlhrmA
+=BJ96
+-----END PGP SIGNATURE-----
+
+--i0/AhcQY5QxfSsSZ--
