@@ -1,62 +1,41 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v2 4/6] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3697
-Date: Wed, 24 Apr 2019 14:24:13 -0500
-Message-ID: <fb03c31e-2050-0975-f737-dcf401c45380@ti.com>
-References: <20190405142855.3969-1-dmurphy@ti.com>
- <20190405142855.3969-4-dmurphy@ti.com>
- <04e160da-a73e-d330-3df4-8f420b3612b4@gmail.com>
- <1a1482f7-a683-49d5-69a3-aa73a641288e@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [GIT PULL] LED update for 5.1-rc7
+Date: Wed, 24 Apr 2019 21:34:13 +0200
+Message-ID: <20190424193413.8135-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1a1482f7-a683-49d5-69a3-aa73a641288e@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, robh+dt@kernel.org
-Cc: pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, dmurphy@ti.com, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-Bump for Rob
+Hi Linus,
 
-On 4/12/19 2:34 PM, Jacek Anaszewski wrote:
-> And one more:
-> 
-> [5] - LED naming patch set v3
-> 
-> On 4/11/19 9:48 PM, Jacek Anaszewski wrote:
->> Hi Rob,
->>
->> I've collected references to the DT patches we're waiting
->> to be reviewed. This is just to make sure that none of them
->> will be missed - recent traffic on the linux-leds list
->> is a bit heavier.
->>
->> [0] - draft of LED multi color class - we would especially like
->>        to get a feedback on the proposed brightness-model DT design
->> [1][2] - LM3697 backlight driver rework
->> [3][4] - LM36274 backlight driver with regulator support
->>
->> On 4/5/19 4:28 PM, Dan Murphy wrote:
->>> The LM3697 is a single function LED driver. The single function LED
->>> driver needs to reside in the LED directory as a dedicated LED driver
->>> and not as a MFD device.  The device does have common brightness and ramp
->>> features and those can be accomodated by a TI LMU framework.
->>>
->>> The LM3697 dt binding needs to be moved from the ti-lmu.txt and a dedicated
->>> LED dt binding needs to be added.  The new LM3697 LED dt binding will then
->>> reside in the Documentation/devicetree/bindings/leds directory and follow the
->>> current LED and general bindings guidelines.
->>>
->>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> [...]
->> [0] https://marc.info/?l=linux-kernel&m=155414072611538&w=2
->> [1] https://marc.info/?l=devicetree&m=155447454524411&w=2
->> [2] https://lore.kernel.org/patchwork/patch/1058762/
->> [3] https://marc.info/?l=devicetree&m=155447624324995&w=2
->> [4] https://lore.kernel.org/patchwork/patch/1058779/
->>
-> 
-> [5] - https://marc.info/?l=linux-kernel&m=155405492231039&w=2
-> 
+Please pull LED update for 5.1-rc7.
+
+There is a single change to MAINTAINERS.
+
+We announce a new LED reviewer - Dan Murphy.
+
+The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
+
+  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds-for-5.1-rc7
+
+for you to fetch changes up to 52fb56f7b5a9cc23a07b2c237bad91180263a492:
+
+  MAINTAINERS: LEDs: Add designated reviewer for LED subsystem (2019-04-24 21:07:18 +0200)
+
+Thanks,
+Jacek Anaszewski
+
+----------------------------------------------------------------
+LED update for 5.1-rc7.
+----------------------------------------------------------------
+Dan Murphy (1):
+      MAINTAINERS: LEDs: Add designated reviewer for LED subsystem
+
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
