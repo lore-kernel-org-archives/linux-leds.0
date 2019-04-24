@@ -1,53 +1,72 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: [PATCH v6 1/3] backlight: lm3630a: return 0 on success in update_status functions
-Date: Wed, 24 Apr 2019 05:25:03 -0400
-Message-ID: <20190424092505.6578-2-masneyb@onstation.org>
-References: <20190424092505.6578-1-masneyb@onstation.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v4 02/26] leds: class: Improve LED and LED flash class
+ registration API
+Date: Wed, 24 Apr 2019 15:46:33 +0200
+Message-ID: <20190424134633.GA14360@amd>
+References: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
+ <20190417205439.17685-3-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190424092505.6578-1-masneyb@onstation.org>
+Content-Disposition: inline
+In-Reply-To: <20190417205439.17685-3-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net, Baolin Wang <baolin.wang@linaro.org>, Dan Murphy <dmurphy@ti.com>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-lm3630a_bank_a_update_status() and lm3630a_bank_b_update_status()
-both return the brightness value if the brightness was successfully
-updated. Writing to these attributes via sysfs would cause a 'Bad
-address' error to be returned. These functions should return 0 on
-success, so let's change it to correct that error.
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
-Fixes: 28e64a68a2ef ("backlight: lm3630: apply chip revision")
+--oyUTqETQ0mS9luUI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Baolin Wang <baolin.wang@linaro.org>
+
 Acked-by: Pavel Machek <pavel@ucw.cz>
----
-No changes since v2 when this patch was originally introduced.
 
- drivers/video/backlight/lm3630a_bl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> +/**
+> + * led_classdev_register_ext - register a new object of LED class with
+> + *			       init data
+> + * @parent: LED controller device this LED is driven by
+> + * @led_cdev: the led_classdev structure for this device
+> + * @init_data: the LED class device initialization data
+> + *
+> + * Returns: 0 on success or negative error value on failure
+> + */
+> +extern int led_classdev_register_ext(struct device *parent,
+> +				     struct led_classdev *led_cdev,
+> +				     struct led_init_data *init_data);
+> +#define led_classdev_register(parent, led_cdev)			\
+> +	led_classdev_register_ext(parent, led_cdev, NULL)
+> +extern int devm_led_classdev_register_ext(struct device *parent,
+> +					  struct led_classdev *led_cdev,
+> +					  struct led_init_data *init_data);
+> +#define devm_led_classdev_register(parent, led_cdev)		\
+> +	devm_led_classdev_register_ext(parent, led_cdev, NULL)
 
-diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
-index 2030a6b77a09..ef2553f452ca 100644
---- a/drivers/video/backlight/lm3630a_bl.c
-+++ b/drivers/video/backlight/lm3630a_bl.c
-@@ -201,7 +201,7 @@ static int lm3630a_bank_a_update_status(struct backlight_device *bl)
- 				      LM3630A_LEDA_ENABLE, LM3630A_LEDA_ENABLE);
- 	if (ret < 0)
- 		goto out_i2c_err;
--	return bl->props.brightness;
-+	return 0;
- 
- out_i2c_err:
- 	dev_err(pchip->dev, "i2c failed to access\n");
-@@ -278,7 +278,7 @@ static int lm3630a_bank_b_update_status(struct backlight_device *bl)
- 				      LM3630A_LEDB_ENABLE, LM3630A_LEDB_ENABLE);
- 	if (ret < 0)
- 		goto out_i2c_err;
--	return bl->props.brightness;
-+	return 0;
- 
- out_i2c_err:
- 	dev_err(pchip->dev, "i2c failed to access REG_CTRL\n");
--- 
-2.20.1
+Static inline (instead of macro) might be preffered. More type safety
+and less confusing behaviour in case of errors...
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--oyUTqETQ0mS9luUI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzAaLgACgkQMOfwapXb+vKyTgCgsOUBcfIzhs8Dz6QDfiZk6Tyz
+xxUAn05DyUMlRjizCI1uRAyr3qr/T+Mw
+=H8U1
+-----END PGP SIGNATURE-----
+
+--oyUTqETQ0mS9luUI--
