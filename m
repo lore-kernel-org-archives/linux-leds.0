@@ -1,51 +1,168 @@
-From: Pavel Machek <pavel@denx.de>
-Subject: Re: [PATCH] MAINTAINERS: LEDs: Add designated reviewer for LED
- subsystem
-Date: Tue, 23 Apr 2019 23:34:01 +0200
-Message-ID: <20190423213401.GA23226@amd>
-References: <20190423200024.29538-1-dmurphy@ti.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v5 2/3] dt-bindings: backlight: add lm3630a bindings
+Date: Tue, 23 Apr 2019 20:52:51 -0500
+Message-ID: <CAL_JsqLZqA=cKLo3Jw7fizt06ytADL8YbhhRKS=mLo05hAaf2A@mail.gmail.com>
+References: <20190418151143.26068-1-masneyb@onstation.org> <20190418151143.26068-3-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190423200024.29538-1-dmurphy@ti.com>
+In-Reply-To: <20190418151143.26068-3-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+To: Brian Masney <masneyb@onstation.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>, Jonathan Marek <jonathan@marek.ca>
 List-Id: linux-leds@vger.kernel.org
 
+On Thu, Apr 18, 2019 at 10:12 AM Brian Masney <masneyb@onstation.org> wrote:
+>
+> Add new backlight bindings for the TI LM3630A dual-string white LED.
+>
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+> Changes since v4:
+> - Drop $ref from led-sources
+> - Drop description from reg of i2c address
+> - Expand description of reg for the control bank
+> - Drop status from examples
+>
+> Changes since v3:
+> - Add label. I didn't add a description for it since that'll come from
+>   the common properties once its converted.
+>
+> Changes since v2:
+> - Update description of max-brightness
+> - Add description for reg
+> - Correct typo: s/tranisiton/transition
+> - add reg to control banks
+> - add additionalProperties
+>
+>  .../leds/backlight/lm3630a-backlight.yaml     | 129 ++++++++++++++++++
+>  1 file changed, 129 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+> new file mode 100644
+> index 000000000000..e754df569365
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+> @@ -0,0 +1,129 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/backlight/lm3630a-backlight.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI LM3630A High-Efficiency Dual-String White LED
+> +
+> +maintainers:
+> +  - Lee Jones <lee.jones@linaro.org>
+> +  - Daniel Thompson <daniel.thompson@linaro.org>
+> +  - Jingoo Han <jingoohan1@gmail.com>
+> +
+> +description: |
+> +  The LM3630A is a current-mode boost converter which supplies the power and
+> +  controls the current in up to two strings of 10 LEDs per string.
+> +  https://www.ti.com/product/LM3630A
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,lm3630a
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  ti,linear-mapping-mode:
+> +    description: |
+> +      Enable linear mapping mode. If disabled, then it will use exponential
+> +      mapping mode in which the ramp up/down appears to have a more uniform
+> +      transition to the human eye.
+> +    type: boolean
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +patternProperties:
+> +  "^led@[01]$":
+> +    type: object
+> +    description: |
+> +      Properties for a string of connected LEDs.
+> +
+> +    properties:
+> +      reg:
+> +        description: |
+> +          The control bank that is used to program the two current sinks. The
+> +          LM3630A has two control banks (A and B) and are represented as 0 or 1
+> +          in this property. The two current sinks can be controlled
+> +          independently with both banks, or bank A can be configured to control
+> +          both sinks with the led-sources property.
+> +        maxItems: 1
+> +        minimum: 0
+> +        maximum: 1
+> +
+> +      label:
+> +        maxItems: 1
+> +
+> +      led-sources:
+> +        allOf:
+> +          - minItems: 1
+> +            maxItems: 2
+> +            items:
+> +              minimum: 0
+> +              maximum: 1
+> +
+> +      default-brightness:
+> +        description: Default brightness level on boot.
+> +        minimum: 0
+> +        maximum: 255
+> +
+> +      max-brightness:
+> +        description: Maximum brightness that is allowed during runtime.
+> +        minimum: 0
+> +        maximum: 255
+> +
+> +    required:
+> +      - reg
+> +
+> +    additionalProperties: false
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        lm3630a_bl@38 {
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Still needs:
 
-On Tue 2019-04-23 15:00:24, Dan Murphy wrote:
-> Add a designated reviewer for the LED subsystem as there
-> are already two maintainers assigned.
->=20
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+led-controller@38
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+> +                compatible = "ti,lm3630a";
+> +                reg = <0x38>;
+> +
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                led@0 {
+> +                        reg = <0>;
+> +                        led-sources = <0 1>;
+> +                        label = "lcd-backlight";
+> +                        default-brightness = <200>;
+> +                        max-brightness = <255>;
+> +                };
+> +        };
+> +    };
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        lm3630a_bl@38 {
 
-Thanks!
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+And here.
 
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+With those fixed:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAly/hMkACgkQMOfwapXb+vIkQgCfev/QWLyC7ON22y8MVRZlUgn8
-ybgAoL08MHExlfxdncOcksCWKueyRBe1
-=0kUc
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
+Reviewed-by: Rob Herring <robh@kernel.org>
