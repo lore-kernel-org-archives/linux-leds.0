@@ -1,72 +1,77 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v4 22/26] leds: as3645a: Use generic support for composing
- LED names
-Date: Wed, 24 Apr 2019 20:18:06 +0200
-Message-ID: <52b9725f-ac30-0b09-af6e-879396c37819@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v4 02/26] leds: class: Improve LED and LED flash class
+ registration API
+Date: Wed, 24 Apr 2019 20:25:22 +0200
+Message-ID: <20190424182522.GA31600@amd>
 References: <20190417205439.17685-1-jacek.anaszewski@gmail.com>
- <20190417205439.17685-23-jacek.anaszewski@gmail.com>
- <20190424140128.GD14360@amd>
+ <20190417205439.17685-3-jacek.anaszewski@gmail.com>
+ <20190424134633.GA14360@amd>
+ <5a738825-a8f9-f4ca-0a38-773fe145048f@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190424140128.GD14360@amd>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <5a738825-a8f9-f4ca-0a38-773fe145048f@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net, Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net, Baolin Wang <baolin.wang@linaro.org>, Dan Murphy <dmurphy@ti.com>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-Pavel,
 
-On 4/24/19 4:01 PM, Pavel Machek wrote:
-> Hi!
-> 
->> Switch to using generic LED support for composing LED class
->> device name.
->>
->> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
->> +static int as3645a_led_class_setup(struct as3645a *flash)
->>   {
->>   	struct led_classdev *fled_cdev = &flash->fled.led_cdev;
->>   	struct led_classdev *iled_cdev = &flash->iled_cdev;
->> +	struct led_init_data init_data;
-> 
-> Not initialized.
-> 
->>   	struct led_flash_setting *cfg;
->>   	int rval;
->>   
->> -	iled_cdev->name = names->indicator;
->>   	iled_cdev->brightness_set_blocking = as3645a_set_indicator_brightness;
->>   	iled_cdev->max_brightness =
->>   		flash->cfg.indicator_max_ua / AS_INDICATOR_INTENSITY_STEP;
->>   	iled_cdev->flags = LED_CORE_SUSPENDRESUME;
->>   
->> -	rval = led_classdev_register(&flash->client->dev, iled_cdev);
->> +	init_data.fwnode = flash->indicator_node;
->> +	init_data.devicename = AS_NAME;
->> +	init_data.default_label = "indicator";
-> 
-> And struct has one more field:
-> 
-> 	 +       /*
-> 	 +        * indicates if LED name should always comprise
->           devicename section;
-> 	 +        * only LEDs exposed by drivers of hot-pluggable
->           devices should
-> 	 +        * set it to true
-> 	 +        */
-> 	 +       bool devname_mandatory;
-> 	  };
-> 
-> I believe it would be cleaner to always initialize struct with zeros;
-> that way you can also expand it in future.
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Good point. Will fix that in v5.
+Hi!
 
--- 
-Best regards,
-Jacek Anaszewski
+> >>+/**
+> >>+ * led_classdev_register_ext - register a new object of LED class with
+> >>+ *			       init data
+> >>+ * @parent: LED controller device this LED is driven by
+> >>+ * @led_cdev: the led_classdev structure for this device
+> >>+ * @init_data: the LED class device initialization data
+> >>+ *
+> >>+ * Returns: 0 on success or negative error value on failure
+> >>+ */
+> >>+extern int led_classdev_register_ext(struct device *parent,
+> >>+				     struct led_classdev *led_cdev,
+> >>+				     struct led_init_data *init_data);
+> >>+#define led_classdev_register(parent, led_cdev)			\
+> >>+	led_classdev_register_ext(parent, led_cdev, NULL)
+> >>+extern int devm_led_classdev_register_ext(struct device *parent,
+> >>+					  struct led_classdev *led_cdev,
+> >>+					  struct led_init_data *init_data);
+> >>+#define devm_led_classdev_register(parent, led_cdev)		\
+> >>+	devm_led_classdev_register_ext(parent, led_cdev, NULL)
+> >
+> >Static inline (instead of macro) might be preffered. More type safety
+> >and less confusing behaviour in case of errors...
+>=20
+> This is kind of alias. You have type control in the function being
+> mapped. With inline we'd have to nest the function calls, i.e.
+> it will worsen performance by this one additional call level.
+
+It is not a big issue; but no, performance will be exactly the
+same. "static inline" says .. well, inline this into caller, so there
+will be one function call, not two.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzAqhIACgkQMOfwapXb+vKL7wCgm2ecjy+H5PQSNXn7t4ew5vnA
+HdAAnRNge/Qf3sdJHMog0GWCEeTezh6s
+=hyUx
+-----END PGP SIGNATURE-----
+
+--2fHTh5uZTiUOsy+g--
