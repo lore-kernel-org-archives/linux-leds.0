@@ -1,13 +1,13 @@
 From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 Subject: Re: Thinkpad ACPI led -- it keeps blinking
-Date: Sat, 27 Apr 2019 23:45:56 +0200
-Message-ID: <20190427214556.GA19758@amd>
+Date: Sun, 28 Apr 2019 00:16:55 +0200
+Message-ID: <20190427221655.GA3844@amd>
 References: <20190426123513.GA18172@amd> <20190426214246.GA24966@amd>
  <84fac57d-1121-a1da-fb45-16a2521bdef9@gmail.com>
  <20190427193411.GA9709@amd>
  <2578a614-beb9-1c9d-9f74-208a8a7ab64f@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3581202643413206402=="
+Content-Type: multipart/mixed; boundary="===============2316593121854628134=="
 Return-path: <ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 In-Reply-To: <2578a614-beb9-1c9d-9f74-208a8a7ab64f-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/ibm-acpi-devel>,
@@ -23,93 +23,209 @@ Cc: ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, ibm-acpi-N
 List-Id: linux-leds@vger.kernel.org
 
 
---===============3581202643413206402==
+--===============2316593121854628134==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
+	protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
 Content-Disposition: inline
 
 
---cNdxnHkX5QqsyA0e
+--fUYQa+Pmc3FrFX/N
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat 2019-04-27 22:35:35, Jacek Anaszewski wrote:
-> On 4/27/19 9:34 PM, Pavel Machek wrote:
-> >On Sat 2019-04-27 18:55:37, Jacek Anaszewski wrote:
-> >>On 4/26/19 11:42 PM, Pavel Machek wrote:
-> >>>Hi!
-> >>>
-> >>>>Kernel 5.1.0-rc1 + some unrelated bits.
-> >>>
-> >>>I tried adding
-> >>>https://marc.info/?l=3Dlinux-kernel&m=3D151622365715313&q=3Draw as Jac=
-ek
-> >>>suggested, and it is still broken.
-> >>>
-> >>>Test code is this: ledtest actually works as expected on first try,
-> >>>but keeps blinking on second run. Strange.
-> >>
-> >>Did it work for previous releases? If yes, then bisect should help here.
-> >
-> >Absolutely no idea :-(. I assume "no". Capslock LED on the same system
-> >works as expected.
-> >
-> >I still hope thinkpad people will speak up, notice it does not work
-> >for them, and debug it :-).
->=20
-> I see this driver implements blink_set:
->=20
-> tpacpi_leds[led].led_classdev.blink_set =3D &led_sysfs_blink_set;
->=20
-> and also applies some internal logic related to the type
-> of supported LEDs, and the way how the hardware is accessed.
->=20
-> To eliminate the problem on the LED core side you could
-> disable initialization of blink_set op in the driver.
+Hi!
 
-Yep, software blinking will very likely work ok.
+It seems quite clear:
 
-[  226.949924] LED set 0 to 2
-[  226.950766] LED set 0 to 2... 0
-[  232.613577] LED set 0 to 2
-[  232.613991] LED set 0 to 0
-[  232.614467] LED set 0 to 2... 0
-[  232.616442] LED set 0 to 0... 0
+static int timer_trig_activate(struct led_classdev *led_cdev)
+{
+        printk("timer_trig_activate\n");
+	if (led_cdev->flags & LED_INIT_DEFAULT_TRIGGER) {
+=09
+        led_blink_set(led_cdev, &led_cdev->blink_delay_on, &led_cdev->blink=
+_delay_off);
 
-Thinkpad ACPI driver is being asked to turn led to blink [232.613577]
-LED set 0 to 2 and turn it off [  232.613991] LED set 0 to 0
-simultaneously. It has no internal locking and ACPI is slow. That
-can't end well.
-									Pavel
+	printk("timer_trig_activate done\n");
+
+        return 0;
+}
+
+static void timer_trig_deactivate(struct led_classdev *led_cdev)
+{
+        printk("timer_trig_deactivate\n");
+
+	/* Stop blinking */
+	led_set_brightness(led_cdev, LED_OFF);
+
+        printk("timer_trig_deactivate done\n");
+}
+
+We get timer_trig_deactivate() immediately followed by
+timer_trig_activate().
+
+set_brightness goes to workqueue because it would block. That means
+that blink_set() happens before set_brightness...
+
+								Pavel
+
+[   16.194141] e1000e 0000:02:00.0 eth1: 10/100 speed: disabling TSO
+[  145.887931] timer_trig_activate
+[  145.888011] LED set 0 to 2
+[  145.888879] LED set 0 to 2... 0
+[  145.888893] timer_trig_activate done
+[  149.977138] timer_trig_deactivate
+[  149.977169] timer_trig_deactivate done
+[  149.977479] timer_trig_activate
+[  149.977497] LED set 0 to 2
+[  149.978281] LED set 0 to 2... 0
+[  149.978295] timer_trig_activate done
+[  149.978415] LED set 0 to 0
+[  149.979851] LED set 0 to 0... 0
+[  184.839252] timer_trig_deactivate
+[  184.839282] timer_trig_deactivate done
+[  184.839319] timer_trig_activate
+[  184.839337] LED set 0 to 2
+[  184.839907] LED set 0 to 0
+[  184.840369] LED set 0 to 2... 0
+[  184.840383] timer_trig_activate done
+[  184.843318] LED set 0 to 0... 0
+root@amd:/sys/class/leds/tpacpi::power#
+
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index e3da7c0..ca1f69b 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -166,6 +166,7 @@ static void led_blink_setup(struct led_classdev *led_cd=
+ev,
+ {
+ 	if (!test_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags) &&
+ 	    led_cdev->blink_set &&
++	    /* This can sleep */
+ 	    !led_cdev->blink_set(led_cdev, delay_on, delay_off))
+ 		return;
+=20
+diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/le=
+dtrig-timer.c
+index ca898c1..0b061bb5 100644
+--- a/drivers/leds/trigger/ledtrig-timer.c
++++ b/drivers/leds/trigger/ledtrig-timer.c
+@@ -104,6 +104,7 @@ static void pattern_init(struct led_classdev *led_cdev)
+=20
+ static int timer_trig_activate(struct led_classdev *led_cdev)
+ {
++	printk("timer_trig_activate\n");
+ 	if (led_cdev->flags & LED_INIT_DEFAULT_TRIGGER) {
+ 		pattern_init(led_cdev);
+ 		/*
+@@ -115,14 +116,18 @@ static int timer_trig_activate(struct led_classdev *l=
+ed_cdev)
+=20
+ 	led_blink_set(led_cdev, &led_cdev->blink_delay_on,
+ 		      &led_cdev->blink_delay_off);
++	printk("timer_trig_activate done\n");
+=20
+ 	return 0;
+ }
+=20
+ static void timer_trig_deactivate(struct led_classdev *led_cdev)
+ {
++	printk("timer_trig_deactivate\n");
+ 	/* Stop blinking */
+ 	led_set_brightness(led_cdev, LED_OFF);
++
++	printk("timer_trig_deactivate done\n");
+ }
+=20
+ static struct led_trigger timer_led_trigger =3D {
+diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+index 3a4402a..b3fa9c9 100644
+--- a/drivers/mmc/core/host.c
++++ b/drivers/mmc/core/host.c
+@@ -363,11 +363,11 @@ int mmc_of_parse_voltage(struct device_node *np, u32 =
+*mask)
+ 	int num_ranges, i;
+=20
+ 	voltage_ranges =3D of_get_property(np, "voltage-ranges", &num_ranges);
+-	num_ranges =3D num_ranges / sizeof(*voltage_ranges) / 2;
+ 	if (!voltage_ranges) {
+ 		pr_debug("%pOF: voltage-ranges unspecified\n", np);
+ 		return 0;
+ 	}
++	num_ranges =3D num_ranges / sizeof(*voltage_ranges) / 2;
+ 	if (!num_ranges) {
+ 		pr_err("%pOF: voltage-ranges empty\n", np);
+ 		return -EINVAL;
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/th=
+inkpad_acpi.c
+index 57d9ae9..3ec6636 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -5867,6 +5867,8 @@ static int led_set_status(const unsigned int led,
+=20
+ 	int rc =3D 0;
+=20
++	printk("LED set %d to %d\n", led, ledstatus);
++
+ 	switch (led_supported) {
+ 	case TPACPI_LED_570:
+ 		/* 570 */
+@@ -5876,7 +5878,7 @@ static int led_set_status(const unsigned int led,
+ 			return -EPERM;
+ 		if (!acpi_evalf(led_handle, NULL, NULL, "vdd",
+ 				(1 << led), led_sled_arg1[ledstatus]))
+-			rc =3D -EIO;
++			return -EIO;
+ 		break;
+ 	case TPACPI_LED_OLD:
+ 		/* 600e/x, 770e, 770x, A21e, A2xm/p, T20-22, X20 */
+@@ -5900,12 +5902,14 @@ static int led_set_status(const unsigned int led,
+ 			return -EPERM;
+ 		if (!acpi_evalf(led_handle, NULL, NULL, "vdd",
+ 				led, led_led_arg1[ledstatus]))
+-			rc =3D -EIO;
++			return -EIO;
+ 		break;
+ 	default:
+-		rc =3D -ENXIO;
++		return -ENXIO;
+ 	}
+=20
++	printk("LED set %d to %d... %d\n", led, ledstatus, rc);
++
+ 	if (!rc)
+ 		tpacpi_led_state_cache[led] =3D ledstatus;
+=20
+
+=09
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---cNdxnHkX5QqsyA0e
+--fUYQa+Pmc3FrFX/N
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlzEzZQACgkQMOfwapXb+vJS2ACdELxAVLLsxfoqrCYKatyXFDTM
-ueYAnRWaffAg2FE3OkRUTeZQ3InSww0b
-=zsJ+
+iEYEARECAAYFAlzE1NcACgkQMOfwapXb+vJgFACgplv96Oc196GwivJnpG3bzLS0
+gxwAoJll4FbFvNNdgzW89qNi//F99zup
+=Ysda
 -----END PGP SIGNATURE-----
 
---cNdxnHkX5QqsyA0e--
+--fUYQa+Pmc3FrFX/N--
 
 
---===============3581202643413206402==
+--===============2316593121854628134==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 
---===============3581202643413206402==
+--===============2316593121854628134==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -120,4 +236,4 @@ ibm-acpi-devel mailing list
 ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
 https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel
 
---===============3581202643413206402==--
+--===============2316593121854628134==--
