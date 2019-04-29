@@ -1,40 +1,39 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 4/6] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3697
-Date: Mon, 29 Apr 2019 12:34:20 -0500
-Message-ID: <20190429173420.GA1273@bogus>
-References: <20190405142855.3969-1-dmurphy@ti.com>
- <20190405142855.3969-4-dmurphy@ti.com>
+From: "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Subject: Re: linux-next: Tree for Apr 29 (drivers/leds/leds-turris-omnia)
+Date: Mon, 29 Apr 2019 19:51:40 +0200
+Message-ID: <c045db7f-2147-1a58-8d65-8b52fddd932c@metux.net>
+References: <20190429190354.0d5e2e93@canb.auug.org.au>
+ <d3822785-0683-28df-ffa6-ab679aa27c73@infradead.org>
+ <20190429153200.GA11761@amd> <20190429173842.06f02852@nic.cz>
+ <20190429163753.GA16782@amd> <20190429184439.68049050@nic.cz>
+ <20190429165319.GB16782@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190405142855.3969-4-dmurphy@ti.com>
+In-Reply-To: <20190429165319.GB16782@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+To: Pavel Machek <pavel@ucw.cz>, Marek Behun <marek.behun@nic.cz>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Fri, 5 Apr 2019 09:28:53 -0500, Dan Murphy wrote:
-> The LM3697 is a single function LED driver. The single function LED
-> driver needs to reside in the LED directory as a dedicated LED driver
-> and not as a MFD device.  The device does have common brightness and ramp
-> features and those can be accomodated by a TI LMU framework.
+On 29.04.19 18:53, Pavel Machek wrote:
+>>> Theoretically. But we both now that probability of that is very low,
+>>> and that likely driver would need other updates, too... right?
+>>
+>> What would be the benefit to add ARM dependency? So that distro
+>> compilations don't ship the turris_omnia driver unnecesarily?
 > 
-> The LM3697 dt binding needs to be moved from the ti-lmu.txt and a dedicated
-> LED dt binding needs to be added.  The new LM3697 LED dt binding will then
-> reside in the Documentation/devicetree/bindings/leds directory and follow the
-> current LED and general bindings guidelines.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
-> 
-> v2 - Made changes to reference ti,brightness-resolution to the ti-lmu.txt -
-> https://lore.kernel.org/patchwork/patch/1054501/
-> 
->  .../devicetree/bindings/leds/leds-lm3697.txt  | 73 +++++++++++++++++++
->  .../devicetree/bindings/mfd/ti-lmu.txt        | 27 +------
->  2 files changed, 74 insertions(+), 26 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> 
+> That, and so that people are not asked "do you want to enable omnia
+> LEDs?" when they update their kernel on i386.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Is that controller only built-in into some SoCs, or also available
+as a separate chip ?
+
+--mtx
+
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
