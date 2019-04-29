@@ -1,126 +1,82 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: [PATCH] leds: avoid races with workqueue
-Date: Mon, 29 Apr 2019 17:22:59 +0200
-Message-ID: <20190429152259.GB10501@amd>
-References: <20190426123513.GA18172@amd> <20190426214246.GA24966@amd>
- <84fac57d-1121-a1da-fb45-16a2521bdef9@gmail.com>
- <20190427193411.GA9709@amd>
- <2578a614-beb9-1c9d-9f74-208a8a7ab64f@gmail.com>
- <20190427223207.GA3585@amd>
- <d2373c8b-5c66-c875-16c7-0c5a93470793@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: linux-next: Tree for Apr 29 (drivers/leds/leds-turris-omnia)
+Date: Mon, 29 Apr 2019 17:32:00 +0200
+Message-ID: <20190429153200.GA11761@amd>
+References: <20190429190354.0d5e2e93@canb.auug.org.au>
+ <d3822785-0683-28df-ffa6-ab679aa27c73@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5327714801193748459=="
-Return-path: <ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <d2373c8b-5c66-c875-16c7-0c5a93470793-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/ibm-acpi-devel>,
- <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=ibm-acpi-devel>
-List-Post: <mailto:ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel>,
- <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, ibm-acpi-N3TV7GIv+o9fyO9Q7EP/yw@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <d3822785-0683-28df-ffa6-ab679aa27c73@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marek Behun <marek.behun@nic.cz>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 
---===============5327714801193748459==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZfOjI3PrQbgiZnxM"
-Content-Disposition: inline
-
-
---ZfOjI3PrQbgiZnxM
+--tKW2IUtsqtDRztdT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
+On Mon 2019-04-29 08:03:02, Randy Dunlap wrote:
+> On 4/29/19 2:03 AM, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > Changes since 20190426:
+> >=20
+>=20
+> on i386:
+>=20
+> when CONFIG_LEDS_TURRIS_OMNIA=3Dy and CONFIG_I2C=3Dm:
+>=20
+> Probably should also depend on I2C.
+>=20
+>=20
+> ld: drivers/leds/leds-turris-omnia.o: in function `omnia_leds_remove':
+> leds-turris-omnia.c:(.text+0xb): undefined reference to `i2c_smbus_write_=
+byte_data'
+> ld: drivers/leds/leds-turris-omnia.o: in function `omnia_led_brightness_s=
+et_blocking':
+> leds-turris-omnia.c:(.text+0x62): undefined reference to `i2c_smbus_write=
+_byte_data'
+> ld: drivers/leds/leds-turris-omnia.o: in function `omnia_leds_probe':
+> leds-turris-omnia.c:(.text+0x1d8): undefined reference to `i2c_smbus_writ=
+e_byte_data'
+> ld: leds-turris-omnia.c:(.text+0x1f6): undefined reference to `i2c_smbus_=
+write_byte_data'
+> ld: drivers/leds/leds-turris-omnia.o: in function `omnia_leds_driver_init=
+':
+> leds-turris-omnia.c:(.init.text+0x8): undefined reference to `i2c_registe=
+r_driver'
+> ld: drivers/leds/leds-turris-omnia.o: in function `omnia_leds_driver_exit=
+':
+> leds-turris-omnia.c:(.exit.text+0x6): undefined reference to `i2c_del_dri=
+ver'
 
-There are races between "main" thread and workqueue. They manifest
-themselves on Thinkpad X60:
-   =20
-This should result in LED blinking, but it turns it off instead:
-   =20
-    root@amd:/data/pavel# cd /sys/class/leds/tpacpi\:\:power
-    root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
-    root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
-    root@amd:/sys/class/leds/tpacpi::power#
-   =20
-It should be possible to transition from blinking to solid on by echo
-0 > brightness; echo 1 > brightness... but that does not work, either,
-if done too quickly.
-   =20
-Synchronization of the workqueue fixes both.
-   =20
-Signed-off-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Ack.
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 68aa923..dcb59c8 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -57,6 +57,7 @@ static ssize_t brightness_store(struct device *dev,
- 	if (state =3D=3D LED_OFF)
- 		led_trigger_remove(led_cdev);
- 	led_set_brightness(led_cdev, state);
-+	flush_work(&led_cdev->set_brightness_work);
-=20
- 	ret =3D size;
- unlock:
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 9f8da39..aefac4d 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -166,6 +166,11 @@ static void led_blink_setup(struct led_classdev *led_c=
-dev,
- 		     unsigned long *delay_on,
- 		     unsigned long *delay_off)
- {
-+	/*
-+	 * If "set brightness to 0" is pending in workqueue, we don't
-+	 * want that to be reordered after blink_set()
-+	 */
-+	flush_work(&led_cdev->set_brightness_work);
- 	if (!test_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags) &&
- 	    led_cdev->blink_set &&
- 	    !led_cdev->blink_set(led_cdev, delay_on, delay_off))
+It can also depend on ARM or even specific ARM soc... unless we are
+compile testing. This is for specific router...
 
+									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---ZfOjI3PrQbgiZnxM
+--tKW2IUtsqtDRztdT
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlzHFtMACgkQMOfwapXb+vKzHQCePjX+aIpGGpJuL8D2SFeqNxbz
-GVIAnjogZRTg5UyLCA5uJBJ0Yb/RcCta
-=cleH
+iEYEARECAAYFAlzHGPAACgkQMOfwapXb+vL9jACcC0cZMF86zp58Y6ZM6xxpAhvi
+uv4AoKHilquec+zSgoj4f3eT5nker2ID
+=92aw
 -----END PGP SIGNATURE-----
 
---ZfOjI3PrQbgiZnxM--
-
-
---===============5327714801193748459==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============5327714801193748459==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-ibm-acpi-devel mailing list
-ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel
-
---===============5327714801193748459==--
+--tKW2IUtsqtDRztdT--
