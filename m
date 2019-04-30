@@ -1,63 +1,82 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v3 4/7] leds: TI LMU: Add common code for TI LMU devices
-Date: Tue, 30 Apr 2019 14:34:06 -0500
-Message-ID: <39f7a9ad-5fe3-067b-14e0-d90d6fbb940d@ti.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v3 2/7] dt-bindings: mfd: LMU: Add the ramp up/down
+ property
+Date: Wed, 1 May 2019 00:01:41 +0200
+Message-ID: <20190430220140.GB20410@amd>
 References: <20190430191730.19450-1-dmurphy@ti.com>
- <20190430191730.19450-5-dmurphy@ti.com>
- <7d161cbc-d6bd-83aa-3790-6c45fdf9521f@infradead.org>
- <a953b7e9-ce80-641a-4d0e-f0b96828a732@ti.com>
- <98b7f0fd-6f94-b8a1-a367-77d8cae2a97e@gmail.com>
+ <20190430191730.19450-3-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="jq0ap7NbKX2Kqbes"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <98b7f0fd-6f94-b8a1-a367-77d8cae2a97e@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190430191730.19450-3-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, pavel@ucw.cz
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>
+Cc: jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
 
-On 4/30/19 2:32 PM, Jacek Anaszewski wrote:
-> On 4/30/19 9:30 PM, Dan Murphy wrote:
->> Randy
->>
->> On 4/30/19 2:23 PM, Randy Dunlap wrote:
->>> On 4/30/19 12:17 PM, Dan Murphy wrote:
->>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->>>> index da00b9ed5a5c..3ae24eaf4cde 100644
->>>> --- a/drivers/leds/Kconfig
->>>> +++ b/drivers/leds/Kconfig
->>>> @@ -776,6 +776,14 @@ config LEDS_NIC78BX
->>>>         To compile this driver as a module, choose M here: the module
->>>>         will be called leds-nic78bx.
->>>>   +config LEDS_TI_LMU_COMMON
->>>> +    tristate "LED driver for TI LMU"
->>>
->>> what does LMU mean?
->>
->> Lighting management unit it is defined in the DT documentation
->>
->>>
->>>> +    depends on REGMAP
->>>> +    help
->>>> +          Say Y to enable the LED driver for TI LMU devices.
->>>> +          This supports common features between the TI LM3532, LM3631, LM3632,
->>>> +      LM3633, LM3695 and LM3697.
->>>
->>> Fix help indentation above to use tab + 2 spaces consistently.
->>>
->>
->> UGH I wish I had this comment 2 weeks ago.
->> But I can fix it
-> 
-> I will amend this while merging, no need to resend.
-> 
+--jq0ap7NbKX2Kqbes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you.  I will wait to rebase/repost the LM36274 patchset until after the this series is merged.
+On Tue 2019-04-30 14:17:25, Dan Murphy wrote:
+> Document the ramp-up and ramp-down property in the binding.
+> Removing the "sec" from the property definition as seconds is
+> implied.
+>=20
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>=20
+> v3 - No changes added Reviewed-by Rob - https://lore.kernel.org/patchwork=
+/patch/1058759/
+>=20
+> v2 - Fixed commit message as this was not just a modification but adding =
+documentation
+> https://lore.kernel.org/patchwork/patch/1054504/
+>=20
+>  .../devicetree/bindings/mfd/ti-lmu.txt        | 20 ++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Documenta=
+tion/devicetree/bindings/mfd/ti-lmu.txt
+> index 86ca786d54fc..adae96c79d39 100644
+> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+> @@ -25,6 +25,12 @@ Required properties:
+> =20
+>  Optional property:
 
-Honestly the only change to the LM36274 patchset is adding Rob's RB to the dt patches and rebasing the Kconfig.
+"properties".
 
-Dan
+>    - enable-gpios: A GPIO specifier for hardware enable pin.
+> +  - ramp-up-ms: Current ramping from one brightness level to
+> +		the a higher brightness level.
+> +		Range from 2048 us - 117.44 s
+> +  - ramp-down-ms: Current ramping from one brightness level to
+> +		  the a lower brightness level.
+> +		  Range from 2048 us - 117.44 s
+
+Can you use ramp-up/down-us for consistency?
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--jq0ap7NbKX2Kqbes
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzIxcQACgkQMOfwapXb+vLjgACeO8SZMcC4CDbleReMYezQzviv
+oxMAn14WNibbphqzbhklGMSoP6xbRuJh
+=+zr9
+-----END PGP SIGNATURE-----
+
+--jq0ap7NbKX2Kqbes--
