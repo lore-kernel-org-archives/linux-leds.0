@@ -1,62 +1,81 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v3 3/3] backlight: lm3630a: add firmware node support
-Date: Wed, 1 May 2019 10:26:27 +0200
-Message-ID: <20190501082627.GA2971@amd>
-References: <20190415072905.2861-1-masneyb@onstation.org>
- <20190415072905.2861-4-masneyb@onstation.org>
- <0e5e26ba-cf98-913e-8e76-e988a86dc0d1@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v3 0/7] LMU Common code intro
+Date: Wed, 1 May 2019 11:45:41 +0200
+Message-ID: <8166c0c1-facf-14da-7c71-5bc5a3cc23f7@gmail.com>
+References: <20190430191730.19450-1-dmurphy@ti.com>
+ <34088323-9b40-7dea-5449-6a01bb721c00@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <0e5e26ba-cf98-913e-8e76-e988a86dc0d1@ti.com>
+In-Reply-To: <34088323-9b40-7dea-5449-6a01bb721c00@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Brian Masney <masneyb@onstation.org>, lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org, jacek.anaszewski@gmail.com, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, jonathan@marek.ca
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+Ekhm, I forgot to add the main recipient.
 
---6TrnltStXW4iwmi0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Adding Lee.
 
-Hi!
+On 5/1/19 12:05 AM, Jacek Anaszewski wrote:
+> Hi Lee,
+> 
+> This patch set has dependency on the previous one for lm3532, which
+> also touches ti-lmu.txt bindings, and for which I already created
+> immutable branch. Now if I created another immutable branch for
+> this patch set we would have to resolve conflicts between the two,
+> as they would both be based on 5.1-rc1. Adds much overhead and
+> is error prone. Therefore I propose to apply this patch set on
+> top of my merge of LED tree with the immutable branch for lm3532.
+> 
+> Please let me know if you see it differently. I'll wait for your
+> response until Friday, and then proceed with the above as I think
+> it should be harmless for MFD.
+> 
+> Best regards,
+> Jacek Anaszewski
+> 
+> On 4/30/19 9:17 PM, Dan Murphy wrote:
+>> Hello
+>>
+>> I have added the Reviewed-by for dt bindings as well as made the 
+>> Kconfig change
+>> pointed out for the common code flag
+>>
+>> Dan
+>>
+>> Dan Murphy (7):
+>>    dt-bindings: mfd: LMU: Fix lm3632 dt binding example
+>>    dt-bindings: mfd: LMU: Add the ramp up/down property
+>>    dt-bindings: mfd: LMU: Add ti,brightness-resolution
+>>    leds: TI LMU: Add common code for TI LMU devices
+>>    dt-bindings: ti-lmu: Modify dt bindings for the LM3697
+>>    mfd: ti-lmu: Remove support for LM3697
+>>    leds: lm3697: Introduce the lm3697 driver
+>>
+>>   .../devicetree/bindings/leds/leds-lm3697.txt  |  73 ++++
+>>   .../devicetree/bindings/mfd/ti-lmu.txt        |  56 ++-
+>>   drivers/leds/Kconfig                          |  15 +
+>>   drivers/leds/Makefile                         |   2 +
+>>   drivers/leds/leds-lm3697.c                    | 395 ++++++++++++++++++
+>>   drivers/leds/ti-lmu-led-common.c              | 155 +++++++
+>>   drivers/mfd/Kconfig                           |   2 +-
+>>   drivers/mfd/ti-lmu.c                          |  17 -
+>>   include/linux/mfd/ti-lmu-register.h           |  44 --
+>>   include/linux/mfd/ti-lmu.h                    |   1 -
+>>   include/linux/ti-lmu-led-common.h             |  47 +++
+>>   11 files changed, 712 insertions(+), 95 deletions(-)
+>>   create mode 100644 
+>> Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>   create mode 100644 drivers/leds/leds-lm3697.c
+>>   create mode 100644 drivers/leds/ti-lmu-led-common.c
+>>   create mode 100644 include/linux/ti-lmu-led-common.h
+>>
+> 
+> 
 
-> > @@ -396,13 +506,20 @@ static int lm3630a_probe(struct i2c_client *clien=
-t,
-> >  				     GFP_KERNEL);
-> >  		if (pdata =3D=3D NULL)
-> >  			return -ENOMEM;
-> > +
-> >  		/* default values */
-> > -		pdata->leda_ctrl =3D LM3630A_LEDA_ENABLE;
-> > -		pdata->ledb_ctrl =3D LM3630A_LEDB_ENABLE;
-> > +		pdata->leda_ctrl =3D LM3630A_LEDA_DISABLE;
-> > +		pdata->ledb_ctrl =3D LM3630A_LEDB_DISABLE;
->=20
-> This is not needed since default is disabled and kzalloc will set these t=
-o 0
-
-Let compiler do this kind of optimalizations. Code makes sense as-is.
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---6TrnltStXW4iwmi0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzJWDMACgkQMOfwapXb+vK/6QCguYAgoaGIpYPAGtybTC9vIfZi
-p4UAn2Haq8zwV7EpVgAkDZlkZ4x+gZWb
-=7kTY
------END PGP SIGNATURE-----
-
---6TrnltStXW4iwmi0--
+-- 
+Best regards,
+Jacek Anaszewski
