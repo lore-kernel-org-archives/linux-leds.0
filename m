@@ -1,47 +1,36 @@
 From: Brian Masney <masneyb@onstation.org>
-Subject: Re: [PATCH v6 1/3] backlight: lm3630a: return 0 on success in
- update_status functions
-Date: Thu, 2 May 2019 06:42:39 -0400
-Message-ID: <20190502104239.GA24563@basecamp>
+Subject: Re: [PATCH v6 3/3] backlight: lm3630a: add firmware node support
+Date: Thu, 2 May 2019 06:46:12 -0400
+Message-ID: <20190502104612.GB24563@basecamp>
 References: <20190424092505.6578-1-masneyb@onstation.org>
- <20190424092505.6578-2-masneyb@onstation.org>
- <864c1ddc-1008-0041-1559-e491ca0186ef@linaro.org>
+ <20190424092505.6578-4-masneyb@onstation.org>
+ <3d8a2f9e-bd41-7713-5ad4-05a0d71e8fb1@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <864c1ddc-1008-0041-1559-e491ca0186ef@linaro.org>
+In-Reply-To: <3d8a2f9e-bd41-7713-5ad4-05a0d71e8fb1@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Daniel Thompson <daniel.thompson@linaro.org>
 Cc: lee.jones@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca, Daniel Thompson <daniel@redfelineninja.org.uk>
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, May 02, 2019 at 11:07:51AM +0100, Daniel Thompson wrote:
+On Thu, May 02, 2019 at 11:19:50AM +0100, Daniel Thompson wrote:
 > On 24/04/2019 10:25, Brian Masney wrote:
-> > lm3630a_bank_a_update_status() and lm3630a_bank_b_update_status()
-> > both return the brightness value if the brightness was successfully
-> > updated. Writing to these attributes via sysfs would cause a 'Bad
-> > address' error to be returned. These functions should return 0 on
-> > success, so let's change it to correct that error.
+> > Add fwnode support to the lm3630a driver and optionally allow
+> > configuring the label, default brightness level, and maximum brightness
+> > level. The two outputs can be controlled by bank A and B independently
+> > or bank A can control both outputs.
 > > 
-> > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > Fixes: 28e64a68a2ef ("backlight: lm3630: apply chip revision")
-> > Acked-by: Pavel Machek <pavel@ucw.cz>
+> > If the platform data was not configured, then the driver defaults to
+> > enabling both banks. This patch changes the default value to disable
+> > both banks before parsing the firmware node so that just a single bank
+> > can be enabled if desired. There are no in-tree users of this driver.
 > 
-> Hi Brian, sorry for the delay. For some reason your mails are being dumped
-> before they reach me so I only discovered these patches when I paid proper
-> attention to the replies and fetched them from patchwork.
-> 
-> Hi Lee, is the same thing happening for you? ;-)
+> In that case given I'd certainly entertain patches that move the config
+> structures out of include/linux/platform_data and say the driver requires a
+> proper entry in the hardware description! Not a requirement though.
 
-Huh, that's odd. I haven't ran into that issue when working with people
-from Linaro in other subsystems.
-
-As a sanity check, I used 'git send-email' to send this patch to
-check-auth@verifier.port25.com and it verified that I still have SPF,
-DKIM, reverse DNS, etc. all setup properly on this domain.
-
-hotmail.com addresses are the only ones I've had issues with in the
-past, but I doubt you're forwarding your email there. :)
+OK, I'll submit patches for that after this series is merged.
 
 Brian
