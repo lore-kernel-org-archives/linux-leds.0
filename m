@@ -1,67 +1,188 @@
 From: Daniel Thompson <daniel.thompson@linaro.org>
-Subject: Re: [PATCH v6 1/3] backlight: lm3630a: return 0 on success in
- update_status functions
-Date: Thu, 2 May 2019 11:07:51 +0100
-Message-ID: <864c1ddc-1008-0041-1559-e491ca0186ef@linaro.org>
+Subject: Re: [PATCH v6 2/3] dt-bindings: backlight: add lm3630a bindings
+Date: Thu, 2 May 2019 11:09:35 +0100
+Message-ID: <6af80a58-b3e2-bf67-cbfc-284df7ec52c1@linaro.org>
 References: <20190424092505.6578-1-masneyb@onstation.org>
- <20190424092505.6578-2-masneyb@onstation.org>
+ <20190424092505.6578-3-masneyb@onstation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190424092505.6578-2-masneyb@onstation.org>
+In-Reply-To: <20190424092505.6578-3-masneyb@onstation.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Brian Masney <masneyb@onstation.org>, lee.jones@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca, Daniel Thompson <daniel@redfelineninja.org.uk>
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca, Rob Herring <robh@kernel.org>, Daniel Thompson <daniel@redfelineninja.org.uk>
 List-Id: linux-leds@vger.kernel.org
 
 On 24/04/2019 10:25, Brian Masney wrote:
-> lm3630a_bank_a_update_status() and lm3630a_bank_b_update_status()
-> both return the brightness value if the brightness was successfully
-> updated. Writing to these attributes via sysfs would cause a 'Bad
-> address' error to be returned. These functions should return 0 on
-> success, so let's change it to correct that error.
+> Add new backlight bindings for the TI LM3630A dual-string white LED.
 > 
 > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> Fixes: 28e64a68a2ef ("backlight: lm3630: apply chip revision")
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > Acked-by: Pavel Machek <pavel@ucw.cz>
-
-Hi Brian, sorry for the delay. For some reason your mails are being 
-dumped before they reach me so I only discovered these patches when I 
-paid proper attention to the replies and fetched them from patchwork.
-
-Hi Lee, is the same thing happening for you? ;-)
 
 Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 
 
 > ---
-> No changes since v2 when this patch was originally introduced.
+> Changes since v5:
+> - Change 'lm3630a_bl@38' in examples to 'led-controller@38'
 > 
->   drivers/video/backlight/lm3630a_bl.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> Changes since v4:
+> - Drop $ref from led-sources
+> - Drop description from reg of i2c address
+> - Expand description of reg for the control bank
+> - Drop status from examples
 > 
-> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
-> index 2030a6b77a09..ef2553f452ca 100644
-> --- a/drivers/video/backlight/lm3630a_bl.c
-> +++ b/drivers/video/backlight/lm3630a_bl.c
-> @@ -201,7 +201,7 @@ static int lm3630a_bank_a_update_status(struct backlight_device *bl)
->   				      LM3630A_LEDA_ENABLE, LM3630A_LEDA_ENABLE);
->   	if (ret < 0)
->   		goto out_i2c_err;
-> -	return bl->props.brightness;
-> +	return 0;
->   
->   out_i2c_err:
->   	dev_err(pchip->dev, "i2c failed to access\n");
-> @@ -278,7 +278,7 @@ static int lm3630a_bank_b_update_status(struct backlight_device *bl)
->   				      LM3630A_LEDB_ENABLE, LM3630A_LEDB_ENABLE);
->   	if (ret < 0)
->   		goto out_i2c_err;
-> -	return bl->props.brightness;
-> +	return 0;
->   
->   out_i2c_err:
->   	dev_err(pchip->dev, "i2c failed to access REG_CTRL\n");
+> Changes since v3:
+> - Add label. I didn't add a description for it since that'll come from
+>    the common properties once its converted.
+> 
+> Changes since v2:
+> - Update description of max-brightness
+> - Add description for reg
+> - Correct typo: s/tranisiton/transition
+> - add reg to control banks
+> - add additionalProperties
+> 
+>   .../leds/backlight/lm3630a-backlight.yaml     | 129 ++++++++++++++++++
+>   1 file changed, 129 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+> new file mode 100644
+> index 000000000000..4d61fe0a98a4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+> @@ -0,0 +1,129 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/backlight/lm3630a-backlight.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI LM3630A High-Efficiency Dual-String White LED
+> +
+> +maintainers:
+> +  - Lee Jones <lee.jones@linaro.org>
+> +  - Daniel Thompson <daniel.thompson@linaro.org>
+> +  - Jingoo Han <jingoohan1@gmail.com>
+> +
+> +description: |
+> +  The LM3630A is a current-mode boost converter which supplies the power and
+> +  controls the current in up to two strings of 10 LEDs per string.
+> +  https://www.ti.com/product/LM3630A
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,lm3630a
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  ti,linear-mapping-mode:
+> +    description: |
+> +      Enable linear mapping mode. If disabled, then it will use exponential
+> +      mapping mode in which the ramp up/down appears to have a more uniform
+> +      transition to the human eye.
+> +    type: boolean
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +patternProperties:
+> +  "^led@[01]$":
+> +    type: object
+> +    description: |
+> +      Properties for a string of connected LEDs.
+> +
+> +    properties:
+> +      reg:
+> +        description: |
+> +          The control bank that is used to program the two current sinks. The
+> +          LM3630A has two control banks (A and B) and are represented as 0 or 1
+> +          in this property. The two current sinks can be controlled
+> +          independently with both banks, or bank A can be configured to control
+> +          both sinks with the led-sources property.
+> +        maxItems: 1
+> +        minimum: 0
+> +        maximum: 1
+> +
+> +      label:
+> +        maxItems: 1
+> +
+> +      led-sources:
+> +        allOf:
+> +          - minItems: 1
+> +            maxItems: 2
+> +            items:
+> +              minimum: 0
+> +              maximum: 1
+> +
+> +      default-brightness:
+> +        description: Default brightness level on boot.
+> +        minimum: 0
+> +        maximum: 255
+> +
+> +      max-brightness:
+> +        description: Maximum brightness that is allowed during runtime.
+> +        minimum: 0
+> +        maximum: 255
+> +
+> +    required:
+> +      - reg
+> +
+> +    additionalProperties: false
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        led-controller@38 {
+> +                compatible = "ti,lm3630a";
+> +                reg = <0x38>;
+> +
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                led@0 {
+> +                        reg = <0>;
+> +                        led-sources = <0 1>;
+> +                        label = "lcd-backlight";
+> +                        default-brightness = <200>;
+> +                        max-brightness = <255>;
+> +                };
+> +        };
+> +    };
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        led-controller@38 {
+> +                compatible = "ti,lm3630a";
+> +                reg = <0x38>;
+> +
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                led@0 {
+> +                        reg = <0>;
+> +                        default-brightness = <150>;
+> +                        ti,linear-mapping-mode;
+> +                };
+> +
+> +                led@1 {
+> +                        reg = <1>;
+> +                        default-brightness = <225>;
+> +                        ti,linear-mapping-mode;
+> +                };
+> +        };
+> +    };
 > 
