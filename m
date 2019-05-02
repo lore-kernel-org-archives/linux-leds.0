@@ -1,54 +1,73 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Subject: Re: [PATCH v6 1/3] backlight: lm3630a: return 0 on success in
- update_status functions
-Date: Thu, 2 May 2019 11:46:44 +0100
-Message-ID: <20190502104644.e3eth2cdebuz2mpk@holly.lan>
-References: <20190424092505.6578-1-masneyb@onstation.org>
- <20190424092505.6578-2-masneyb@onstation.org>
- <864c1ddc-1008-0041-1559-e491ca0186ef@linaro.org>
- <20190502104239.GA24563@basecamp>
+From: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] leds: avoid races with workqueue
+Date: Thu, 2 May 2019 20:29:18 +0200
+Message-ID: <9337b5fb-0ff8-9925-29e6-a781884af861@gmail.com>
+References: <20190426123513.GA18172@amd> <20190426214246.GA24966@amd>
+ <84fac57d-1121-a1da-fb45-16a2521bdef9@gmail.com> <20190427193411.GA9709@amd>
+ <2578a614-beb9-1c9d-9f74-208a8a7ab64f@gmail.com> <20190427223207.GA3585@amd>
+ <d2373c8b-5c66-c875-16c7-0c5a93470793@gmail.com> <20190429152259.GB10501@amd>
+ <36e1fdd7-a220-4b0d-d558-829f522b0841@gmail.com> <20190501183600.GA20452@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190502104239.GA24563@basecamp>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>
-Cc: lee.jones@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca, Daniel Thompson <daniel@redfelineninja.org.uk>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <20190501183600.GA20452@amd>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/ibm-acpi-devel>,
+ <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=ibm-acpi-devel>
+List-Post: <mailto:ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel>,
+ <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Cc: ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, ibm-acpi-N3TV7GIv+o9fyO9Q7EP/yw@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, May 02, 2019 at 06:42:39AM -0400, Brian Masney wrote:
-> On Thu, May 02, 2019 at 11:07:51AM +0100, Daniel Thompson wrote:
-> > On 24/04/2019 10:25, Brian Masney wrote:
-> > > lm3630a_bank_a_update_status() and lm3630a_bank_b_update_status()
-> > > both return the brightness value if the brightness was successfully
-> > > updated. Writing to these attributes via sysfs would cause a 'Bad
-> > > address' error to be returned. These functions should return 0 on
-> > > success, so let's change it to correct that error.
-> > > 
-> > > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > > Fixes: 28e64a68a2ef ("backlight: lm3630: apply chip revision")
-> > > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > 
-> > Hi Brian, sorry for the delay. For some reason your mails are being dumped
-> > before they reach me so I only discovered these patches when I paid proper
-> > attention to the replies and fetched them from patchwork.
-> > 
-> > Hi Lee, is the same thing happening for you? ;-)
-> 
-> Huh, that's odd. I haven't ran into that issue when working with people
-> from Linaro in other subsystems.
-> 
-> As a sanity check, I used 'git send-email' to send this patch to
-> check-auth@verifier.port25.com and it verified that I still have SPF,
-> DKIM, reverse DNS, etc. all setup properly on this domain.
-> 
-> hotmail.com addresses are the only ones I've had issues with in the
-> past, but I doubt you're forwarding your email there. :)
+Hi Pavel,
 
-No... and strangely enough your recent e-mail sailed through just fine.
-Let's wait and see what is happening for Lee (which I suspect may not be
-until well into next week).
+On 5/1/19 8:36 PM, Pavel Machek wrote:
+> Hi!
+> 
+>>> There are races between "main" thread and workqueue. They manifest
+>>> themselves on Thinkpad X60:
+>>> This should result in LED blinking, but it turns it off instead:
+>>>      root@amd:/data/pavel# cd /sys/class/leds/tpacpi\:\:power
+>>>      root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
+>>>      root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
+>>>      root@amd:/sys/class/leds/tpacpi::power#
 
+I believe this line is redundant, so I removed it.
 
-Daniel.
+>>> It should be possible to transition from blinking to solid on by echo
+>>> 0 > brightness; echo 1 > brightness... but that does not work, either,
+>>> if done too quickly.
+>>> Synchronization of the workqueue fixes both.
+>>> Signed-off-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+>>>
+>>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+>>> index 68aa923..dcb59c8 100644
+>>> --- a/drivers/leds/led-class.c
+>>> +++ b/drivers/leds/led-class.c
+>>> @@ -57,6 +57,7 @@ static ssize_t brightness_store(struct device *dev,
+>>>   	if (state == LED_OFF)
+>>>   		led_trigger_remove(led_cdev);
+>>>   	led_set_brightness(led_cdev, state);
+>>> +	flush_work(&led_cdev->set_brightness_work);
+>>
+>> Is this really required here? It creates non-uniform brightness
+>> setting behavior depending on whether it is set from sysfs or
+>> by in-kernel call to led_set_brightness().
+> 
+> This fixes the echo 0 > brightness; echo 1 > brightness. It has to be
+> at a place where we can sleep.
+> 
+> If you have better idea, it is welcome, but it would be good to fix
+> the bug.
+
+Currently not, so I applied the patch in this shape.
+
+-- 
+Best regards,
+Jacek Anaszewski
