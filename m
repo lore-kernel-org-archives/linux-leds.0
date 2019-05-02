@@ -1,117 +1,67 @@
-From: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Subject: Re: [PATCH] leds: avoid races with workqueue
-Date: Wed, 1 May 2019 20:36:00 +0200
-Message-ID: <20190501183600.GA20452@amd>
-References: <20190426123513.GA18172@amd> <20190426214246.GA24966@amd>
- <84fac57d-1121-a1da-fb45-16a2521bdef9@gmail.com>
- <20190427193411.GA9709@amd>
- <2578a614-beb9-1c9d-9f74-208a8a7ab64f@gmail.com>
- <20190427223207.GA3585@amd>
- <d2373c8b-5c66-c875-16c7-0c5a93470793@gmail.com>
- <20190429152259.GB10501@amd>
- <36e1fdd7-a220-4b0d-d558-829f522b0841@gmail.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH v6 1/3] backlight: lm3630a: return 0 on success in
+ update_status functions
+Date: Thu, 2 May 2019 11:07:51 +0100
+Message-ID: <864c1ddc-1008-0041-1559-e491ca0186ef@linaro.org>
+References: <20190424092505.6578-1-masneyb@onstation.org>
+ <20190424092505.6578-2-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1487509041811300481=="
-Return-path: <ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <36e1fdd7-a220-4b0d-d558-829f522b0841-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/ibm-acpi-devel>,
- <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=ibm-acpi-devel>
-List-Post: <mailto:ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel>,
- <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, ibm-acpi-N3TV7GIv+o9fyO9Q7EP/yw@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190424092505.6578-2-masneyb@onstation.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Brian Masney <masneyb@onstation.org>, lee.jones@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca, Daniel Thompson <daniel@redfelineninja.org.uk>
 List-Id: linux-leds@vger.kernel.org
 
+On 24/04/2019 10:25, Brian Masney wrote:
+> lm3630a_bank_a_update_status() and lm3630a_bank_b_update_status()
+> both return the brightness value if the brightness was successfully
+> updated. Writing to these attributes via sysfs would cause a 'Bad
+> address' error to be returned. These functions should return 0 on
+> success, so let's change it to correct that error.
+> 
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> Fixes: 28e64a68a2ef ("backlight: lm3630: apply chip revision")
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 
---===============1487509041811300481==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Content-Disposition: inline
+Hi Brian, sorry for the delay. For some reason your mails are being 
+dumped before they reach me so I only discovered these patches when I 
+paid proper attention to the replies and fetched them from patchwork.
 
+Hi Lee, is the same thing happening for you? ;-)
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> >There are races between "main" thread and workqueue. They manifest
-> >themselves on Thinkpad X60:
-> >This should result in LED blinking, but it turns it off instead:
-> >     root@amd:/data/pavel# cd /sys/class/leds/tpacpi\:\:power
-> >     root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
-> >     root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
-> >     root@amd:/sys/class/leds/tpacpi::power#
-> >It should be possible to transition from blinking to solid on by echo
-> >0 > brightness; echo 1 > brightness... but that does not work, either,
-> >if done too quickly.
-> >Synchronization of the workqueue fixes both.
-> >Signed-off-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-> >
-> >diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> >index 68aa923..dcb59c8 100644
-> >--- a/drivers/leds/led-class.c
-> >+++ b/drivers/leds/led-class.c
-> >@@ -57,6 +57,7 @@ static ssize_t brightness_store(struct device *dev,
-> >  	if (state =3D=3D LED_OFF)
-> >  		led_trigger_remove(led_cdev);
-> >  	led_set_brightness(led_cdev, state);
-> >+	flush_work(&led_cdev->set_brightness_work);
->=20
-> Is this really required here? It creates non-uniform brightness
-> setting behavior depending on whether it is set from sysfs or
-> by in-kernel call to led_set_brightness().
-
-This fixes the echo 0 > brightness; echo 1 > brightness. It has to be
-at a place where we can sleep.
-
-If you have better idea, it is welcome, but it would be good to fix
-the bug.
-
-Best regards,
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzJ5xAACgkQMOfwapXb+vI/BACeNY7i8g4zzNbNSD+qMBKyQ70o
-B34AoMDqGa9BH+n7wyRQltKiOYrajtpV
-=CJ0T
------END PGP SIGNATURE-----
-
---a8Wt8u1KmwUX3Y2C--
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 
 
---===============1487509041811300481==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============1487509041811300481==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-ibm-acpi-devel mailing list
-ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel
-
---===============1487509041811300481==--
+> ---
+> No changes since v2 when this patch was originally introduced.
+> 
+>   drivers/video/backlight/lm3630a_bl.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+> index 2030a6b77a09..ef2553f452ca 100644
+> --- a/drivers/video/backlight/lm3630a_bl.c
+> +++ b/drivers/video/backlight/lm3630a_bl.c
+> @@ -201,7 +201,7 @@ static int lm3630a_bank_a_update_status(struct backlight_device *bl)
+>   				      LM3630A_LEDA_ENABLE, LM3630A_LEDA_ENABLE);
+>   	if (ret < 0)
+>   		goto out_i2c_err;
+> -	return bl->props.brightness;
+> +	return 0;
+>   
+>   out_i2c_err:
+>   	dev_err(pchip->dev, "i2c failed to access\n");
+> @@ -278,7 +278,7 @@ static int lm3630a_bank_b_update_status(struct backlight_device *bl)
+>   				      LM3630A_LEDB_ENABLE, LM3630A_LEDB_ENABLE);
+>   	if (ret < 0)
+>   		goto out_i2c_err;
+> -	return bl->props.brightness;
+> +	return 0;
+>   
+>   out_i2c_err:
+>   	dev_err(pchip->dev, "i2c failed to access REG_CTRL\n");
+> 
