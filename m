@@ -1,74 +1,70 @@
-From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] leds: tpacpi: cleanup for Thinkpad
- ACPI led
-Date: Mon, 6 May 2019 18:20:22 +0300
-Message-ID: <CAHp75VcrW_9pyiG6N75CWkxc1S7mKknfDT_W87vSQNnzjf2uRw@mail.gmail.com>
-References: <20190426123513.GA18172@amd> <20190426214246.GA24966@amd>
- <84fac57d-1121-a1da-fb45-16a2521bdef9@gmail.com> <20190427193411.GA9709@amd>
- <2578a614-beb9-1c9d-9f74-208a8a7ab64f@gmail.com> <20190427223207.GA3585@amd>
- <d2373c8b-5c66-c875-16c7-0c5a93470793@gmail.com> <20190429152148.GA10501@amd>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v3 2/7] dt-bindings: mfd: LMU: Add the ramp up/down
+ property
+Date: Mon, 6 May 2019 12:53:25 -0500
+Message-ID: <7712d911-7ef3-e273-2cdc-89c5b56369cb@ti.com>
+References: <20190430191730.19450-1-dmurphy@ti.com>
+ <20190430191730.19450-3-dmurphy@ti.com> <20190430220140.GB20410@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <20190429152148.GA10501@amd>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/ibm-acpi-devel>,
- <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=ibm-acpi-devel>
-List-Post: <mailto:ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/ibm-acpi-devel>,
- <mailto:ibm-acpi-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: ibm-acpi-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: Thinkpad-acpi devel ML <ibm-acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Henrique de Moraes Holschuh <ibm-acpi-N3TV7GIv+o9fyO9Q7EP/yw@public.gmane.org>, Jacek Anaszewski <jacek.anaszewski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux LED Subsystem <linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Platform Driver <platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190430220140.GB20410@amd>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 6:22 PM Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org> wrote:
->
->
-> Make error returns more consistent... no behaviour change intended.
->
+Pavel
 
-Pushed to my review and testing queue, thanks!
+On 4/30/19 5:01 PM, Pavel Machek wrote:
+> On Tue 2019-04-30 14:17:25, Dan Murphy wrote:
+>> Document the ramp-up and ramp-down property in the binding.
+>> Removing the "sec" from the property definition as seconds is
+>> implied.
+>>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>
+>> v3 - No changes added Reviewed-by Rob - https://lore.kernel.org/patchwork/patch/1058759/
+>>
+>> v2 - Fixed commit message as this was not just a modification but adding documentation
+>> https://lore.kernel.org/patchwork/patch/1054504/
+>>
+>>  .../devicetree/bindings/mfd/ti-lmu.txt        | 20 ++++++++++++-------
+>>  1 file changed, 13 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+>> index 86ca786d54fc..adae96c79d39 100644
+>> --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+>> +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+>> @@ -25,6 +25,12 @@ Required properties:
+>>  
+>>  Optional property:
+> 
+> "properties".
+> 
 
-P.S. I fixed prefix accordingly.
+Ack
 
-> Signed-off-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
->
-> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-> index 726341f..7008a7f 100644
-> --- a/drivers/platform/x86/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/thinkpad_acpi.c
-> @@ -5808,7 +5808,7 @@ static int led_set_status(const unsigned int led,
->                         return -EPERM;
->                 if (!acpi_evalf(led_handle, NULL, NULL, "vdd",
->                                 (1 << led), led_sled_arg1[ledstatus]))
-> -                       rc = -EIO;
-> +                       return -EIO;
->                 break;
->         case TPACPI_LED_OLD:
->                 /* 600e/x, 770e, 770x, A21e, A2xm/p, T20-22, X20 */
-> @@ -5832,10 +5832,10 @@ static int led_set_status(const unsigned int led,
->                         return -EPERM;
->                 if (!acpi_evalf(led_handle, NULL, NULL, "vdd",
->                                 led, led_led_arg1[ledstatus]))
-> -                       rc = -EIO;
-> +                       return -EIO;
->                 break;
->         default:
-> -               rc = -ENXIO;
-> +               return -ENXIO;
->         }
->
->         if (!rc)
->
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+>>    - enable-gpios: A GPIO specifier for hardware enable pin.
+>> +  - ramp-up-ms: Current ramping from one brightness level to
+>> +		the a higher brightness level.
+>> +		Range from 2048 us - 117.44 s
+>> +  - ramp-down-ms: Current ramping from one brightness level to
+>> +		  the a lower brightness level.
+>> +		  Range from 2048 us - 117.44 s
+> 
+> Can you use ramp-up/down-us for consistency?
 
+Sure I can change it to ramp-up/down-us.
+I just converted it ramp-up/down-msec to ramp-ramp-up/down-ms.
 
+Probably makes more sense anyway with the range actually given is in us.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Dan
+
+> 								Pavel
+> 
