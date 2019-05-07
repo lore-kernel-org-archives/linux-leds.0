@@ -1,52 +1,46 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v4 0/7] LMU Rework
-Date: Mon, 6 May 2019 14:16:07 -0500
-Message-ID: <20190506191614.25051-1-dmurphy@ti.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 66/95] leds: pwm: silently error out on EPROBE_DEFER
+Date: Tue,  7 May 2019 01:37:55 -0400
+Message-ID: <20190507053826.31622-66-sashal@kernel.org>
+References: <20190507053826.31622-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: lee.jones@linaro.org, rdunlap@infradead.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190507053826.31622-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <alexander.levin@microsoft.com>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hello
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-With this series there was an offline discussion that the filename of the LED
-portion of the driver did not adhere to the directory file naming convention so
-the file name has been changed
+[ Upstream commit 9aec30371fb095a0c9415f3f0146ae269c3713d8 ]
 
-ti-lmu-led-common.c->leds-ti-lmu-common.c
-ti-lmu-led-common.h->leds-ti-lmu-common.h
+When probing, if we fail to get the pwm due to probe deferal, we shouldn't
+print an error message. Just be silent in this case.
 
-Dan
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/leds/leds-pwm.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Dan Murphy (7):
-  dt-bindings: mfd: LMU: Fix lm3632 dt binding example
-  dt-bindings: mfd: LMU: Add the ramp up/down property
-  dt-bindings: mfd: LMU: Add ti,brightness-resolution
-  leds: TI LMU: Add common code for TI LMU devices
-  dt-bindings: ti-lmu: Modify dt bindings for the LM3697
-  mfd: ti-lmu: Remove support for LM3697
-  leds: lm3697: Introduce the lm3697 driver
-
- .../devicetree/bindings/leds/leds-lm3697.txt  |  73 ++++
- .../devicetree/bindings/mfd/ti-lmu.txt        |  58 ++-
- drivers/leds/Kconfig                          |  15 +
- drivers/leds/Makefile                         |   2 +
- drivers/leds/leds-lm3697.c                    | 395 ++++++++++++++++++
- drivers/leds/leds-ti-lmu-common.c             | 156 +++++++
- drivers/mfd/Kconfig                           |   2 +-
- drivers/mfd/ti-lmu.c                          |  17 -
- include/linux/leds-ti-lmu-common.h            |  47 +++
- include/linux/mfd/ti-lmu-register.h           |  44 --
- include/linux/mfd/ti-lmu.h                    |   1 -
- 11 files changed, 714 insertions(+), 96 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
- create mode 100644 drivers/leds/leds-lm3697.c
- create mode 100644 drivers/leds/leds-ti-lmu-common.c
- create mode 100644 include/linux/leds-ti-lmu-common.h
-
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index 8d456dc6c5bf..83f9bbe57e02 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -101,8 +101,9 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 		led_data->pwm = devm_pwm_get(dev, led->name);
+ 	if (IS_ERR(led_data->pwm)) {
+ 		ret = PTR_ERR(led_data->pwm);
+-		dev_err(dev, "unable to request PWM for %s: %d\n",
+-			led->name, ret);
++		if (ret != -EPROBE_DEFER)
++			dev_err(dev, "unable to request PWM for %s: %d\n",
++				led->name, ret);
+ 		return ret;
+ 	}
+ 
 -- 
-2.21.0.5.gaeb582a983
+2.20.1
