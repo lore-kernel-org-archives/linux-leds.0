@@ -1,46 +1,65 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 66/95] leds: pwm: silently error out on EPROBE_DEFER
-Date: Tue,  7 May 2019 01:37:55 -0400
-Message-ID: <20190507053826.31622-66-sashal@kernel.org>
-References: <20190507053826.31622-1-sashal@kernel.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v6 1/3] backlight: lm3630a: return 0 on success in
+ update_status functions
+Date: Tue, 7 May 2019 10:53:07 +0100
+Message-ID: <20190507095307.GE4529@dell>
+References: <20190424092505.6578-1-masneyb@onstation.org>
+ <20190424092505.6578-2-masneyb@onstation.org>
+ <864c1ddc-1008-0041-1559-e491ca0186ef@linaro.org>
+ <20190502104239.GA24563@basecamp>
+ <20190502104644.e3eth2cdebuz2mpk@holly.lan>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190507053826.31622-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <alexander.levin@microsoft.com>, linux-leds@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190502104644.e3eth2cdebuz2mpk@holly.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Brian Masney <masneyb@onstation.org>, jingoohan1@gmail.com, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, dmurphy@ti.com, jonathan@marek.ca, Daniel Thompson <daniel@redfelineninja.org.uk>
 List-Id: linux-leds@vger.kernel.org
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+On Thu, 02 May 2019, Daniel Thompson wrote:
 
-[ Upstream commit 9aec30371fb095a0c9415f3f0146ae269c3713d8 ]
+> On Thu, May 02, 2019 at 06:42:39AM -0400, Brian Masney wrote:
+> > On Thu, May 02, 2019 at 11:07:51AM +0100, Daniel Thompson wrote:
+> > > On 24/04/2019 10:25, Brian Masney wrote:
+> > > > lm3630a_bank_a_update_status() and lm3630a_bank_b_update_status()
+> > > > both return the brightness value if the brightness was successfully
+> > > > updated. Writing to these attributes via sysfs would cause a 'Bad
+> > > > address' error to be returned. These functions should return 0 on
+> > > > success, so let's change it to correct that error.
+> > > > 
+> > > > Signed-off-by: Brian Masney <masneyb@onstation.org>
+> > > > Fixes: 28e64a68a2ef ("backlight: lm3630: apply chip revision")
+> > > > Acked-by: Pavel Machek <pavel@ucw.cz>
+> > > 
+> > > Hi Brian, sorry for the delay. For some reason your mails are being dumped
+> > > before they reach me so I only discovered these patches when I paid proper
+> > > attention to the replies and fetched them from patchwork.
+> > > 
+> > > Hi Lee, is the same thing happening for you? ;-)
+> > 
+> > Huh, that's odd. I haven't ran into that issue when working with people
+> > from Linaro in other subsystems.
+> > 
+> > As a sanity check, I used 'git send-email' to send this patch to
+> > check-auth@verifier.port25.com and it verified that I still have SPF,
+> > DKIM, reverse DNS, etc. all setup properly on this domain.
+> > 
+> > hotmail.com addresses are the only ones I've had issues with in the
+> > past, but I doubt you're forwarding your email there. :)
+> 
+> No... and strangely enough your recent e-mail sailed through just fine.
+> Let's wait and see what is happening for Lee (which I suspect may not be
+> until well into next week).
 
-When probing, if we fail to get the pwm due to probe deferal, we shouldn't
-print an error message. Just be silent in this case.
+Just catching up now.  On first pass - only ~800 mails to go!
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/leds/leds-pwm.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Looks like I do have Brian's mails though.
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 8d456dc6c5bf..83f9bbe57e02 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -101,8 +101,9 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 		led_data->pwm = devm_pwm_get(dev, led->name);
- 	if (IS_ERR(led_data->pwm)) {
- 		ret = PTR_ERR(led_data->pwm);
--		dev_err(dev, "unable to request PWM for %s: %d\n",
--			led->name, ret);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "unable to request PWM for %s: %d\n",
-+				led->name, ret);
- 		return ret;
- 	}
- 
 -- 
-2.20.1
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
