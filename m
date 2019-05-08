@@ -1,86 +1,59 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 0/7] LMU Common code intro
-Date: Wed, 8 May 2019 07:21:04 +0100
-Message-ID: <20190508062104.GC7627@dell>
-References: <20190430191730.19450-1-dmurphy@ti.com>
- <34088323-9b40-7dea-5449-6a01bb721c00@gmail.com>
- <8166c0c1-facf-14da-7c71-5bc5a3cc23f7@gmail.com>
+Subject: Re: [GIT PULL] LM3532 backlight support improvements and relocation
+Date: Wed, 8 May 2019 09:04:16 +0100
+Message-ID: <20190508080416.GB3995@dell>
+References: <20190407182514.15427-1-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <8166c0c1-facf-14da-7c71-5bc5a3cc23f7@gmail.com>
+In-Reply-To: <20190407182514.15427-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: tony@atomide.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, 01 May 2019, Jacek Anaszewski wrote:
+On Sun, 07 Apr 2019, Jacek Anaszewski wrote:
 
-> Ekhm, I forgot to add the main recipient.
+> The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
 > 
-> Adding Lee.
+>   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
 > 
-> On 5/1/19 12:05 AM, Jacek Anaszewski wrote:
-> > Hi Lee,
-> > 
-> > This patch set has dependency on the previous one for lm3532, which
-> > also touches ti-lmu.txt bindings, and for which I already created
-> > immutable branch. Now if I created another immutable branch for
-> > this patch set we would have to resolve conflicts between the two,
-> > as they would both be based on 5.1-rc1. Adds much overhead and
-> > is error prone. Therefore I propose to apply this patch set on
-> > top of my merge of LED tree with the immutable branch for lm3532.
-> > 
-> > Please let me know if you see it differently. I'll wait for your
-> > response until Friday, and then proceed with the above as I think
-> > it should be harmless for MFD.
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/lm3532-driver-improvements
 
-Looks like this set wasn't sent until -rc6 which is when I normally
-stop applying significant patches.  I think it's best that we wait
-until the next rotation.  That way all this dependency related
-hoop-jumping just goes away.
+Pulled, thanks.
 
-> > On 4/30/19 9:17 PM, Dan Murphy wrote:
-> > > Hello
-> > > 
-> > > I have added the Reviewed-by for dt bindings as well as made the
-> > > Kconfig change
-> > > pointed out for the common code flag
-> > > 
-> > > Dan
-> > > 
-> > > Dan Murphy (7):
-> > >    dt-bindings: mfd: LMU: Fix lm3632 dt binding example
-> > >    dt-bindings: mfd: LMU: Add the ramp up/down property
-> > >    dt-bindings: mfd: LMU: Add ti,brightness-resolution
-> > >    leds: TI LMU: Add common code for TI LMU devices
-> > >    dt-bindings: ti-lmu: Modify dt bindings for the LM3697
-> > >    mfd: ti-lmu: Remove support for LM3697
-> > >    leds: lm3697: Introduce the lm3697 driver
-> > > 
-> > >   .../devicetree/bindings/leds/leds-lm3697.txt  |  73 ++++
-> > >   .../devicetree/bindings/mfd/ti-lmu.txt        |  56 ++-
-> > >   drivers/leds/Kconfig                          |  15 +
-> > >   drivers/leds/Makefile                         |   2 +
-> > >   drivers/leds/leds-lm3697.c                    | 395 ++++++++++++++++++
-> > >   drivers/leds/ti-lmu-led-common.c              | 155 +++++++
-> > >   drivers/mfd/Kconfig                           |   2 +-
-> > >   drivers/mfd/ti-lmu.c                          |  17 -
-> > >   include/linux/mfd/ti-lmu-register.h           |  44 --
-> > >   include/linux/mfd/ti-lmu.h                    |   1 -
-> > >   include/linux/ti-lmu-led-common.h             |  47 +++
-> > >   11 files changed, 712 insertions(+), 95 deletions(-)
-> > >   create mode 100644
-> > > Documentation/devicetree/bindings/leds/leds-lm3697.txt
-> > >   create mode 100644 drivers/leds/leds-lm3697.c
-> > >   create mode 100644 drivers/leds/ti-lmu-led-common.c
-> > >   create mode 100644 include/linux/ti-lmu-led-common.h
-> > > 
-> > 
-> > 
+> for you to fetch changes up to b3e9d18dc4a5e4d329dea32b59bdde5e012ae64a:
 > 
+>   leds: lm3532: Introduce the lm3532 LED driver (2019-04-06 21:06:07 +0200)
+> 
+> Thanks,
+> Jacek Anaszewski
+> 
+> ----------------------------------------------------------------
+> LM3532 backlight driver improvements and relocation.
+> ----------------------------------------------------------------
+> Dan Murphy (4):
+>       dt: lm3532: Add lm3532 dt doc and update ti_lmu doc
+>       ARM: dts: omap4-droid4: Update backlight dt properties
+>       mfd: ti-lmu: Remove LM3532 backlight driver references
+>       leds: lm3532: Introduce the lm3532 LED driver
+> 
+>  .../devicetree/bindings/leds/leds-lm3532.txt       | 101 +++
+>  Documentation/devicetree/bindings/mfd/ti-lmu.txt   |  20 -
+>  arch/arm/boot/dts/omap4-droid4-xt894.dts           |  27 +-
+>  drivers/leds/Kconfig                               |  10 +
+>  drivers/leds/Makefile                              |   1 +
+>  drivers/leds/leds-lm3532.c                         | 683 +++++++++++++++++++++
+>  drivers/mfd/ti-lmu.c                               |  11 -
+>  include/linux/mfd/ti-lmu-register.h                |  44 --
+>  include/linux/mfd/ti-lmu.h                         |   1 -
+>  9 files changed, 813 insertions(+), 85 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3532.txt
+>  create mode 100644 drivers/leds/leds-lm3532.c
 
 -- 
 Lee Jones [李琼斯]
