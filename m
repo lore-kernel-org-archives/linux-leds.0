@@ -1,98 +1,81 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Yurii Pavlovskyi <yurii.pavlovskyi@gmail.com>
 Subject: Re: [PATCH v3 09/11] platform/x86: asus-wmi: Control RGB keyboard
  backlight
-Date: Wed, 8 May 2019 19:12:29 +0200
-Message-ID: <20190508171229.GA22024@amd>
+Date: Thu, 9 May 2019 21:04:53 +0200
+Message-ID: <52e73640-9fbf-437b-537a-7b3dc167052f@gmail.com>
 References: <7acd57fe-604a-a96a-4ca2-a25bc88d6405@gmail.com>
  <c953b43b-6186-77e9-54b1-b1cd1d7d1eb6@gmail.com>
  <CAHp75Vf9uPG7_K0P26nHYCH0WB6LFX3wk8aJBpLWQ-r46kDw9w@mail.gmail.com>
+ <20190508171229.GA22024@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vf9uPG7_K0P26nHYCH0WB6LFX3wk8aJBpLWQ-r46kDw9w@mail.gmail.com>
+In-Reply-To: <20190508171229.GA22024@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Yurii Pavlovskyi <yurii.pavlovskyi@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Corentin Chary <corentin.chary@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Daniel Drake <drake@endlessm.com>, acpi4asus-user <acpi4asus-user@lists.sourceforge.net>, Platform Driver <platform-driver-x86@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Corentin Chary <corentin.chary@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Daniel Drake <drake@endlessm.com>, acpi4asus-user <acpi4asus-user@lists.sourceforge.net>, Platform Driver <platform-driver-x86@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+First of all, thanks to Andy for all the review comments!
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I will implement all the ones that I didn't directly answer on as well and
+update this series shortly.
 
-Hi!
+Regarding this patch,
 
-> > The WMI exposes two methods for controlling RGB keyboard backlight, whi=
-ch
-> > allows controlling:
-> > * RGB components in range 00 - ff,
-> > * Switch between 4 effects,
-> > * Switch between 3 effect speed modes,
-> > * Separately enable the backlight on boot, in the awake state (after dr=
-iver
-> >   load), in sleep mode, and probably in something called shutdown mode =
-(no
-> >   observable effects of enabling it are known so far).
-> >
-> > The configuration should be written to several sysfs parameter buffers
-> > which are then written via WMI by writing either 1 or 2 to the "kbbl_se=
-t"
-> > parameter. When reading the buffers the last written value is returned.
-> >
-> > If the 2 is written to "kbbl_set", the parameters will be reset on rebo=
-ot
-> > (temporary mode), 1 is permanent mode, parameters are retained.
-> >
-> > The calls use new 3-dword input buffer method call.
-> >
-> > The functionality is only enabled if corresponding DSTS methods return
-> > exact valid values.
-> >
-> > The following script demonstrates usage:
-> >
-> > echo Red [00 - ff]
-> > echo 33 > /sys/devices/platform/asus-nb-wmi/kbbl/kbbl_red
-> > echo Green [00 - ff]
-> > echo ff > /sys/devices/platform/asus-nb-wmi/kbbl/kbbl_green
-> > echo Blue [00 - ff]
-> > echo 0 > /sys/devices/platform/asus-nb-wmi/kbbl/kbbl_blue
-> > echo Mode: 0 - static color, 1 - breathing, 2 - color cycle, 3 - strobi=
-ng
-> > echo 0 > /sys/devices/platform/asus-nb-wmi/kbbl/kbbl_mode
-> > echo Speed for modes 1 and 2: 0 - slow, 1 - medium, 2 - fast
-> > echo 0 > /sys/devices/platform/asus-nb-wmi/kbbl/kbbl_speed
-> > echo Enable: 02 - on boot, before module load, 08 - awake, 20 - sleep,
-> > echo 2a or ff to set all
-> > echo 2a > /sys/devices/platform/asus-nb-wmi/kbbl/kbbl_flags
-> > echo Save: 1 - permanently, 2 - temporarily, reset after reboot
-> > echo 1 > /sys/devices/platform/asus-nb-wmi/kbbl/kbbl_set
-> >
->=20
-> Shouldn't be the LED subsystem driver for this?
+On 08.05.19 19:12, Pavel Machek wrote:
+>> Shouldn't be the LED subsystem driver for this?
+> 
+> Yes, please. We have common interface for LED drivers; this needs to
+> use it.
 
-Yes, please. We have common interface for LED drivers; this needs to
-use it.
+That is indeed a better option and I did in fact considered this first and
+even did a test implementation. The discoveries were:
+1. The WMI methods are write-only and only written all at once in a
+transaction manner (also invoking solely first RGB-interface method has no
+effect until some other keyboard backlight method is called).
+2. In addition to RGB there are several control values, which switch
+effects, speed and enable or disable the backlight under specific
+conditions or switch whether it is set temporarily or permanently (not that
+these are critical functionalities, but for the sake of completeness).
+3. The EC is really slow
+# time bash -c "echo 1 > /sys/devices/platform/faustus/kbbl_set"
+
+real	0m0,691s
+user	0m0,000s
+sys	0m0,691s
+
+(please ignore the sysfs-path there, it's essentially the same code running
+as in this patch). It is consistently same for both temporary and permanent
+configuration. Writing after every change would take about (6+)x of that.
+Not that it's that unbearable though as it is not likely to be done often.
+
+I was not quite happy with that implementation so I opted for writing sort
+of sysfs wrapper instead that would allow same sort of transactions as
+provided by BIOS. I agree that it's non-standard solution.
+
+If I understood correctly, the typical current RGB led_class devices from
+the Linux tree currently provide channels as separate LEDs. There are also
+blink / pattern options present, I guess one could misuse them for setting
+effects and speed. So one could make 3 devices for RGB + 3 for awake,
+sleep, boot modes + 1 for setting effect / speed.
+
+I'd guess the end solution might be also either something like combination
+of both approaches (RGB leds + separate sysfs interface) or some extension
+of the led_class device interface. Dropping support of the non-essential
+features for the sake of uniformity of ABI would also be an option to
+consider (exposing just three RGB LEDs with brightness only), not happy one
+though.
+
+In any case this looks like it might need some additional research,
+discussion, development, and a pair of iterations so I tend to separate
+this patch from the series and post it extra after the others are through
+to avoid dragging 10+ patches around.
+
+Any suggestions on how to do this properly would be appreciated. That's the
+best I could come up with at the moment.
 
 Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---45Z9DzgjV8m4Oswq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzTDf0ACgkQMOfwapXb+vJFGACfSBV9DLzKArrDcy1WFTMiUIRD
-adwAoKGN8uwzERJIj5yAWDJcBhtOauT3
-=Pemh
------END PGP SIGNATURE-----
-
---45Z9DzgjV8m4Oswq--
+Yurii
