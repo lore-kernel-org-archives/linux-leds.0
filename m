@@ -1,129 +1,60 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v3 09/11] platform/x86: asus-wmi: Control RGB keyboard
- backlight
-Date: Fri, 10 May 2019 00:34:37 +0200
-Message-ID: <20190509223436.GB527@amd>
-References: <7acd57fe-604a-a96a-4ca2-a25bc88d6405@gmail.com>
- <c953b43b-6186-77e9-54b1-b1cd1d7d1eb6@gmail.com>
- <CAHp75Vf9uPG7_K0P26nHYCH0WB6LFX3wk8aJBpLWQ-r46kDw9w@mail.gmail.com>
- <20190508171229.GA22024@amd>
- <52e73640-9fbf-437b-537a-7b3dc167052f@gmail.com>
- <2f26dd9e-ada7-8e20-c810-a647854c338c@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v4 0/6] LM36274 Introduction
+Date: Tue, 14 May 2019 21:11:29 +0200
+Message-ID: <aface058-d34c-9ae0-838d-7e8b0cfe6e10@gmail.com>
+References: <20190507201159.13940-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="CUfgB8w4ZwR/yMy5"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2f26dd9e-ada7-8e20-c810-a647854c338c@ti.com>
+In-Reply-To: <20190507201159.13940-1-dmurphy@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Yurii Pavlovskyi <yurii.pavlovskyi@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Corentin Chary <corentin.chary@gmail.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Daniel Drake <drake@endlessm.com>, acpi4asus-user <acpi4asus-user@lists.sourceforge.net>, Platform Driver <platform-driver-x86@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz
+Cc: lee.jones@linaro.org, rdunlap@infradead.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
+I need acks from regulator framework maintainer for patches
+1/6 and 4/6.
 
---CUfgB8w4ZwR/yMy5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Adding Liam and Mark.
 
-Hi!
+On 5/7/19 10:11 PM, Dan Murphy wrote:
+> Hello
+> 
+> This is patch set v4 for the LM36274.  There were no changes made
+> to this patch set except to rebase this on top of the latest TI LMU common code
+> patchset.
+> 
+> This patch set was rebased on the series at:
+> https://lore.kernel.org/patchwork/project/lkml/list/?series=393071
+> 
+> Dan
+> 
+> Dan Murphy (6):
+>    regulator: lm363x: Make the gpio register enable flexible
+>    dt-bindings: mfd: Add lm36274 bindings to ti-lmu
+>    mfd: ti-lmu: Add LM36274 support to the ti-lmu
+>    regulator: lm363x: Add support for LM36274
+>    dt-bindings: leds: Add LED bindings for the LM36274
+>    leds: lm36274: Introduce the TI LM36274 LED driver
+> 
+>   .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
+>   .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
+>   drivers/leds/Kconfig                          |   7 +
+>   drivers/leds/Makefile                         |   1 +
+>   drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
+>   drivers/mfd/Kconfig                           |   5 +-
+>   drivers/mfd/ti-lmu.c                          |  14 ++
+>   drivers/regulator/Kconfig                     |   2 +-
+>   drivers/regulator/lm363x-regulator.c          |  56 +++++-
+>   include/linux/mfd/ti-lmu-register.h           |  23 +++
+>   include/linux/mfd/ti-lmu.h                    |   4 +
+>   11 files changed, 416 insertions(+), 6 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
+>   create mode 100644 drivers/leds/leds-lm36274.c
+> 
 
-> >> Yes, please. We have common interface for LED drivers; this needs to
-> >> use it.
-> >=20
-> > That is indeed a better option and I did in fact considered this first =
-and
-> > even did a test implementation. The discoveries were:
-> > 1. The WMI methods are write-only and only written all at once in a
-> > transaction manner (also invoking solely first RGB-interface method has=
- no
-> > effect until some other keyboard backlight method is called).
-
-Write-only is not a problem, right? Nor should be transaction. Just
-cache the values in kernel.
-
-> > 2. In addition to RGB there are several control values, which switch
-> > effects, speed and enable or disable the backlight under specific
-> > conditions or switch whether it is set temporarily or permanently (not =
-that
-> > these are critical functionalities, but for the sake of
-> > completeness).
-
-Yep, lets ignore that for now.
-
-> > 3. The EC is really slow
-> > # time bash -c "echo 1 > /sys/devices/platform/faustus/kbbl_set"
-> >=20
-> > real	0m0,691s
-> > user	0m0,000s
-> > sys	0m0,691s
-> >=20
-> > (please ignore the sysfs-path there, it's essentially the same code run=
-ning
-> > as in this patch). It is consistently same for both temporary and perma=
-nent
-> > configuration. Writing after every change would take about (6+)x of tha=
-t.
-> > Not that it's that unbearable though as it is not likely to be
-> > done often.
-
-Yup, this is quite ugly.
-
-What about simply ignoring changes as they happen, and then setting
-RGB channels when nothing changes for 10msec?
-
-> > I was not quite happy with that implementation so I opted for writing s=
-ort
-> > of sysfs wrapper instead that would allow same sort of transactions as
-> > provided by BIOS. I agree that it's non-standard solution.
-> >=20
-> > If I understood correctly, the typical current RGB led_class devices fr=
-om
-> > the Linux tree currently provide channels as separate LEDs. There are a=
-lso
-> > blink / pattern options present, I guess one could misuse them for sett=
-ing
-> > effects and speed. So one could make 3 devices for RGB + 3 for awake,
-> > sleep, boot modes + 1 for setting effect / speed.
-
-Take a look at "pattern" trigger. That should give you effect/speed
-options. .. for single channel.
-
-> > I'd guess the end solution might be also either something like combinat=
-ion
-> > of both approaches (RGB leds + separate sysfs interface) or some extens=
-ion
-> > of the led_class device interface. Dropping support of the non-essential
-> > features for the sake of uniformity of ABI would also be an option to
-> > consider (exposing just three RGB LEDs with brightness only), not happy=
- one
-> > though.
-> >=20
-> > In any case this looks like it might need some additional research,
-> > discussion, development, and a pair of iterations so I tend to separate
-> > this patch from the series and post it extra after the others are throu=
-gh
-> > to avoid dragging 10+ patches around.
-
-Separate patch certainly makes sense.
-
+-- 
 Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---CUfgB8w4ZwR/yMy5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzUqvwACgkQMOfwapXb+vK90gCfa5VCwbhBeQ0RlMOZuDkqJBma
-raAAnj+RO123XbofMN8InUVu/ER8DTMR
-=EKgO
------END PGP SIGNATURE-----
-
---CUfgB8w4ZwR/yMy5--
+Jacek Anaszewski
