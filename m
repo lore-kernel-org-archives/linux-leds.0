@@ -1,60 +1,33 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v4 0/6] LM36274 Introduction
-Date: Tue, 14 May 2019 21:11:29 +0200
-Message-ID: <aface058-d34c-9ae0-838d-7e8b0cfe6e10@gmail.com>
-References: <20190507201159.13940-1-dmurphy@ti.com>
+From: Kun Yi <kunyi@google.com>
+Subject: [PATCH 0/2] Fix LED GPIO trigger behavior
+Date: Thu, 16 May 2019 14:42:07 -0700
+Message-ID: <20190516214209.139726-1-kunyi@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190507201159.13940-1-dmurphy@ti.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz
-Cc: lee.jones@linaro.org, rdunlap@infradead.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+To: linux-leds@vger.kernel.org
+Cc: Kun Yi <kunyi@google.com>, jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com, u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-I need acks from regulator framework maintainer for patches
-1/6 and 4/6.
+*** BLURB HERE ***
+Hello there,
 
-Adding Liam and Mark.
+I recently tested ledtrig-gpio on an embedded controller and one of the
+issues I had involve not requesting the user input pin as GPIO.
 
-On 5/7/19 10:11 PM, Dan Murphy wrote:
-> Hello
-> 
-> This is patch set v4 for the LM36274.  There were no changes made
-> to this patch set except to rebase this on top of the latest TI LMU common code
-> patchset.
-> 
-> This patch set was rebased on the series at:
-> https://lore.kernel.org/patchwork/project/lkml/list/?series=393071
-> 
-> Dan
-> 
-> Dan Murphy (6):
->    regulator: lm363x: Make the gpio register enable flexible
->    dt-bindings: mfd: Add lm36274 bindings to ti-lmu
->    mfd: ti-lmu: Add LM36274 support to the ti-lmu
->    regulator: lm363x: Add support for LM36274
->    dt-bindings: leds: Add LED bindings for the LM36274
->    leds: lm36274: Introduce the TI LM36274 LED driver
-> 
->   .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
->   .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
->   drivers/leds/Kconfig                          |   7 +
->   drivers/leds/Makefile                         |   1 +
->   drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
->   drivers/mfd/Kconfig                           |   5 +-
->   drivers/mfd/ti-lmu.c                          |  14 ++
->   drivers/regulator/Kconfig                     |   2 +-
->   drivers/regulator/lm363x-regulator.c          |  56 +++++-
->   include/linux/mfd/ti-lmu-register.h           |  23 +++
->   include/linux/mfd/ti-lmu.h                    |   4 +
->   11 files changed, 416 insertions(+), 6 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
->   create mode 100644 drivers/leds/leds-lm36274.c
-> 
+In many embedded systems, a pin could be muxed as several functions, and
+requesting the pin as GPIO is necessary to let pinmux select the pin as
+a GPIO instead of, say an I2C pin. I'd like to learn whether it is appropriate
+to assume user of ledtrig-gpio really intends to use GPIOs and not some
+weird pins that are used as other functions.
+
+Kun Yi (2):
+  ledtrig-gpio: Request user input pin as GPIO
+  ledtrig-gpio: 0 is a valid GPIO number
+
+ drivers/leds/trigger/ledtrig-gpio.c | 35 ++++++++++++++++++++---------
+ 1 file changed, 24 insertions(+), 11 deletions(-)
 
 -- 
-Best regards,
-Jacek Anaszewski
+2.21.0.1020.gf2820cf01a-goog
