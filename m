@@ -1,95 +1,65 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v4 6/6] leds: lm36274: Introduce the TI LM36274 LED driver
-Date: Tue, 21 May 2019 14:41:24 -0500
-Message-ID: <65c656cd-1b16-0960-fbeb-8172087b88f2@ti.com>
-References: <20190507201159.13940-1-dmurphy@ti.com>
- <20190507201159.13940-7-dmurphy@ti.com>
- <77f1ed5b-bfd2-510c-edd5-1b702f2d1d45@gmail.com>
- <8d126925-9e71-dba4-eb88-50fd6e6c06d8@ti.com>
- <a7cb6628-e501-b580-f714-0e5de78ea39c@gmail.com>
- <d0c49197-984d-5cd8-032a-27d9c5ca6d29@ti.com>
- <97ff2f48-9ec0-06f1-b667-56fcdef8bf03@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [GIT PULL] Immutable branch between LEDs, MFD and REGULATOR
+Date: Tue, 21 May 2019 22:30:38 +0200
+Message-ID: <20190521203038.31946-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <97ff2f48-9ec0-06f1-b667-56fcdef8bf03@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, pavel@ucw.cz
-Cc: lee.jones@linaro.org, rdunlap@infradead.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-On 5/21/19 1:46 PM, Jacek Anaszewski wrote:
-> Dan,
-> 
-> On 5/21/19 8:25 PM, Dan Murphy wrote:
->> Jacek
->>
->> On 5/21/19 12:40 PM, Jacek Anaszewski wrote:
->>> On 5/20/19 11:19 PM, Dan Murphy wrote:
->>>> Jacek
->>>>
->>>> On 5/20/19 2:54 PM, Jacek Anaszewski wrote:
->>>>> Hi Dan,
->>>>>
->>>>> On 5/7/19 10:11 PM, Dan Murphy wrote:
->>>>>> Introduce the LM36274 LED driver.  This driver uses the ti-lmu
->>>>>> MFD driver to probe this LED driver.  The driver configures only the
->>>>>> LED registers and enables the outputs according to the config file.
->>>>>>
->>>>>> The driver utilizes the TI LMU (Lighting Management Unit) LED common
->>>>>> framework to set the brightness bits.
->>>>>>
->>>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>>>>> ---
->>>>>>     drivers/leds/Kconfig        |   7 ++
->>>>>>     drivers/leds/Makefile       |   1 +
->>>>>>     drivers/leds/leds-lm36274.c | 174 ++++++++++++++++++++++++++++++++++++
->>>>>>     3 files changed, 182 insertions(+)
->>>>>>     create mode 100644 drivers/leds/leds-lm36274.c
->>>>>>
->>>>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->>>>>> index 255fdd5e8491..db83a3feca01 100644
->>>>>> --- a/drivers/leds/Kconfig
->>>>>> +++ b/drivers/leds/Kconfig
->>>>>> @@ -791,6 +791,13 @@ config LEDS_LM3697
->>>>>>           Say Y to enable the LM3697 LED driver for TI LMU devices.
->>>>>>           This supports the LED device LM3697.
->>>>>>     +config LEDS_LM36274
->>>>>> +    tristate "LED driver for LM36274"
->>>>>> +    depends on LEDS_TI_LMU_COMMON
->>>>>
->>>>> Shouldn't we have "depends on MFD_TI_LMU" as well here?
->>>>>
->>>>
->>>> Actually the LEDS_TI_LMU_COMMON flag should depend on MFD_TI_LMU.
->>>> Then it would inherit that dependency.
->>>
->>> LEDS_TI_LMU_COMMON does not seem too have any dependency on MFD_TI_LMU,
->>> and it would be incorrect to require enabling MFD_TI_LMU for all drivers
->>> depending on TI_LMU_COMMON, that can be probed on their own, like
->>> leds-lm3697.c .
->>>
->>
->> Correct.
->>
->> I can update the Kconfigs unless you want to ammend the commits.
-> 
-> I added "depends on MFD_TI_LMU" to "config LEDS_LM36274".
-> Please verify your patch sets pushed to [0].
-> 
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
-Pulled
-Built
-tested
-verified
+are available in the git repository at:
 
-Good to go
+  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/ti-lmu-led-drivers
 
-Dan
+for you to fetch changes up to 13f5750a60b923d8f3f0e23902f2ece46dd733d7:
 
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git/log/?h=ib-leds-mfd-regulator
-> 
+  leds: lm36274: Introduce the TI LM36274 LED driver (2019-05-21 20:34:19 +0200)
+
+----------------------------------------------------------------
+TI LMU LED support rework and introduction of two new drivers
+with DT bindings:
+
+- leds-lm3697 (entails additions to lm363x-regulator.c)
+- leds-lm36274
+----------------------------------------------------------------
+Dan Murphy (12):
+      dt-bindings: mfd: LMU: Add the ramp up/down property
+      dt-bindings: mfd: LMU: Add ti,brightness-resolution
+      leds: TI LMU: Add common code for TI LMU devices
+      dt-bindings: ti-lmu: Modify dt bindings for the LM3697
+      mfd: ti-lmu: Remove support for LM3697
+      leds: lm3697: Introduce the lm3697 driver
+      regulator: lm363x: Make the gpio register enable flexible
+      dt-bindings: mfd: Add lm36274 bindings to ti-lmu
+      mfd: ti-lmu: Add LM36274 support to the ti-lmu
+      regulator: lm363x: Add support for LM36274
+      dt-bindings: leds: Add LED bindings for the LM36274
+      leds: lm36274: Introduce the TI LM36274 LED driver
+
+ .../devicetree/bindings/leds/leds-lm36274.txt      |  82 +++++
+ .../devicetree/bindings/leds/leds-lm3697.txt       |  73 ++++
+ Documentation/devicetree/bindings/mfd/ti-lmu.txt   |  88 +++--
+ drivers/leds/Kconfig                               |  23 ++
+ drivers/leds/Makefile                              |   3 +
+ drivers/leds/leds-lm36274.c                        | 174 +++++++++
+ drivers/leds/leds-lm3697.c                         | 395 +++++++++++++++++++++
+ drivers/leds/leds-ti-lmu-common.c                  | 156 ++++++++
+ drivers/mfd/Kconfig                                |   5 +-
+ drivers/mfd/ti-lmu.c                               |  23 +-
+ drivers/regulator/Kconfig                          |   2 +-
+ drivers/regulator/lm363x-regulator.c               |  56 ++-
+ include/linux/leds-ti-lmu-common.h                 |  47 +++
+ include/linux/mfd/ti-lmu-register.h                |  63 ++--
+ include/linux/mfd/ti-lmu.h                         |   5 +-
+ 15 files changed, 1112 insertions(+), 83 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+ create mode 100644 drivers/leds/leds-lm36274.c
+ create mode 100644 drivers/leds/leds-lm3697.c
+ create mode 100644 drivers/leds/leds-ti-lmu-common.c
+ create mode 100644 include/linux/leds-ti-lmu-common.h
