@@ -1,74 +1,66 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 08/10] dt: fix refs that were renamed to json with the
- same file name
-Date: Mon, 20 May 2019 18:00:06 -0500
-Message-ID: <CAL_JsqJj42BR42NNFj2xkY_EF_6nQnU_D-onV4GZvortv8ptvQ@mail.gmail.com>
-References: <cover.1558362030.git.mchehab+samsung@kernel.org>
- <66231286de0f11b45075292216a939858de8c3e5.1558362030.git.mchehab+samsung@kernel.org>
- <CAL_JsqKGzNBjxhvY2Vq9v8SXiND+7sjmsOwKkeu+gEM=2Y-n_A@mail.gmail.com> <20190520131344.39635733@coco.lan>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v4 6/6] leds: lm36274: Introduce the TI LM36274 LED driver
+Date: Tue, 21 May 2019 19:40:55 +0200
+Message-ID: <a7cb6628-e501-b580-f714-0e5de78ea39c@gmail.com>
+References: <20190507201159.13940-1-dmurphy@ti.com>
+ <20190507201159.13940-7-dmurphy@ti.com>
+ <77f1ed5b-bfd2-510c-edd5-1b702f2d1d45@gmail.com>
+ <8d126925-9e71-dba4-eb88-50fd6e6c06d8@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190520131344.39635733@coco.lan>
+In-Reply-To: <8d126925-9e71-dba4-eb88-50fd6e6c06d8@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, "Paul E. McKenney" <paulmck@linux.ibm.com>, devicetree@
+To: Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz
+Cc: lee.jones@linaro.org, rdunlap@infradead.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, May 20, 2019 at 11:14 AM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
->
-> Em Mon, 20 May 2019 10:57:47 -0500
-> Rob Herring <robh+dt@kernel.org> escreveu:
->
-> > On Mon, May 20, 2019 at 9:48 AM Mauro Carvalho Chehab
-> > <mchehab+samsung@kernel.org> wrote:
-> > >
-> > > This file was converted to json, but the references weren't
-> >
-> > Technically, converted to json-schema (the language) or yaml (the format).
->
-> Ok. Do you want me to change it at the patch and resend?
+On 5/20/19 11:19 PM, Dan Murphy wrote:
+> Jacek
+> 
+> On 5/20/19 2:54 PM, Jacek Anaszewski wrote:
+>> Hi Dan,
+>>
+>> On 5/7/19 10:11 PM, Dan Murphy wrote:
+>>> Introduce the LM36274 LED driver.  This driver uses the ti-lmu
+>>> MFD driver to probe this LED driver.  The driver configures only the
+>>> LED registers and enables the outputs according to the config file.
+>>>
+>>> The driver utilizes the TI LMU (Lighting Management Unit) LED common
+>>> framework to set the brightness bits.
+>>>
+>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>> ---
+>>>    drivers/leds/Kconfig        |   7 ++
+>>>    drivers/leds/Makefile       |   1 +
+>>>    drivers/leds/leds-lm36274.c | 174 ++++++++++++++++++++++++++++++++++++
+>>>    3 files changed, 182 insertions(+)
+>>>    create mode 100644 drivers/leds/leds-lm36274.c
+>>>
+>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>>> index 255fdd5e8491..db83a3feca01 100644
+>>> --- a/drivers/leds/Kconfig
+>>> +++ b/drivers/leds/Kconfig
+>>> @@ -791,6 +791,13 @@ config LEDS_LM3697
+>>>          Say Y to enable the LM3697 LED driver for TI LMU devices.
+>>>          This supports the LED device LM3697.
+>>>    +config LEDS_LM36274
+>>> +    tristate "LED driver for LM36274"
+>>> +    depends on LEDS_TI_LMU_COMMON
+>>
+>> Shouldn't we have "depends on MFD_TI_LMU" as well here?
+>>
+> 
+> Actually the LEDS_TI_LMU_COMMON flag should depend on MFD_TI_LMU.
+> Then it would inherit that dependency.
 
-No, I can fixup.
+LEDS_TI_LMU_COMMON does not seem too have any dependency on MFD_TI_LMU,
+and it would be incorrect to require enabling MFD_TI_LMU for all drivers
+depending on TI_LMU_COMMON, that can be probed on their own, like
+leds-lm3697.c .
 
->
-> >
-> > > renamed.
-> > >
-> > > Fixes: 66ed144f147a ("dt-bindings: interrupt-controller: Convert ARM GIC to json-schema")
-> > > (and other similar commits)
-> > >
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> > > ---
-> > >  Documentation/devicetree/bindings/arm/omap/crossbar.txt       | 2 +-
-> > >  .../devicetree/bindings/clock/samsung,s5pv210-clock.txt       | 2 +-
-> > >  .../bindings/interrupt-controller/marvell,odmi-controller.txt | 2 +-
-> > >  Documentation/devicetree/bindings/leds/irled/spi-ir-led.txt   | 2 +-
-> > >  MAINTAINERS                                                   | 4 ++--
-> > >  5 files changed, 6 insertions(+), 6 deletions(-)
-> >
-> > FYI, I'm actively looking for this in conversions now as we've had a
-> > few of these. For cases where we have a lot of references, I'm fixing
-> > this by keeping the .txt file with a reference to the .yaml file.
->
-> If the file name remains with the same name, except for the .txt -> .yaml,
-> you can just run the "scripts/documentation-file-ref-check --fix"
-> after this patch:
->
->         Subject: [PATCH 04/10] scripts/documentation-file-ref-check: teach about .txt -> .yaml renames
->
-> and it should detect and automatically fix all the references. As any
-> auto-hint script, you need to double-check the results.
-
-Nice!
-
->
-> > I'll pick up the DT patches in the series.
->
-> OK. There are a few such fixes inside patch 10/10. Do you want me
-> to split it or can it go through Jonathan's doc tree?
-
-Jon's tree is fine.
-
-Rob
+-- 
+Best regards,
+Jacek Anaszewski
