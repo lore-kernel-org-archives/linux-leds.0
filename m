@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 028/317] leds: avoid races with workqueue
-Date: Wed, 22 May 2019 15:18:49 -0400
-Message-ID: <20190522192338.23715-28-sashal@kernel.org>
-References: <20190522192338.23715-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 033/375] leds: avoid races with workqueue
+Date: Wed, 22 May 2019 15:15:33 -0400
+Message-ID: <20190522192115.22666-33-sashal@kernel.org>
+References: <20190522192115.22666-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190522192115.22666-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
@@ -53,10 +53,10 @@ index 3c7e3487b373b..85848c5da705f 100644
  	ret = size;
  unlock:
 diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index ede4fa0ac2cce..55dec67023599 100644
+index e3da7c03da1b5..e9ae7f87ab900 100644
 --- a/drivers/leds/led-core.c
 +++ b/drivers/leds/led-core.c
-@@ -162,6 +162,11 @@ static void led_blink_setup(struct led_classdev *led_cdev,
+@@ -164,6 +164,11 @@ static void led_blink_setup(struct led_classdev *led_cdev,
  		     unsigned long *delay_on,
  		     unsigned long *delay_off)
  {
