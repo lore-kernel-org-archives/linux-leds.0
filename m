@@ -1,49 +1,72 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v4 0/6] LM36274 Introduction
-Date: Wed, 22 May 2019 14:27:27 -0500
-Message-ID: <20190522192733.13422-1-dmurphy@ti.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 028/317] leds: avoid races with workqueue
+Date: Wed, 22 May 2019 15:18:49 -0400
+Message-ID: <20190522192338.23715-28-sashal@kernel.org>
+References: <20190522192338.23715-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz, broonie@kernel.org, lgirdwood@gmail.com
-Cc: lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hello
+From: Pavel Machek <pavel@ucw.cz>
 
-This is patch set v4 for the LM36274.  There were no changes made
-to this patch set except to rebase this on top of the latest TI LMU common code
-patchset.
+[ Upstream commit 0db37915d912e8dc6588f25da76d3ed36718d92f ]
 
-This patch set was rebased on the series at:
-https://lore.kernel.org/patchwork/project/lkml/list/?series=393071
+There are races between "main" thread and workqueue. They manifest
+themselves on Thinkpad X60:
 
-Dan
+This should result in LED blinking, but it turns it off instead:
 
-Dan Murphy (6):
-  regulator: lm363x: Make the gpio register enable flexible
-  dt-bindings: mfd: Add lm36274 bindings to ti-lmu
-  mfd: ti-lmu: Add LM36274 support to the ti-lmu
-  regulator: lm363x: Add support for LM36274
-  dt-bindings: leds: Add LED bindings for the LM36274
-  leds: lm36274: Introduce the TI LM36274 LED driver
+    root@amd:/data/pavel# cd /sys/class/leds/tpacpi\:\:power
+    root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
+    root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
 
- .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
- .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
- drivers/leds/Kconfig                          |   7 +
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
- drivers/mfd/Kconfig                           |   5 +-
- drivers/mfd/ti-lmu.c                          |  14 ++
- drivers/regulator/Kconfig                     |   2 +-
- drivers/regulator/lm363x-regulator.c          |  56 +++++-
- include/linux/mfd/ti-lmu-register.h           |  23 +++
- include/linux/mfd/ti-lmu.h                    |   4 +
- 11 files changed, 416 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
- create mode 100644 drivers/leds/leds-lm36274.c
+It should be possible to transition from blinking to solid on by echo
+0 > brightness; echo 1 > brightness... but that does not work, either,
+if done too quickly.
 
+Synchronization of the workqueue fixes both.
+
+Fixes: 1afcadfcd184 ("leds: core: Use set_brightness_work for the blocking op")
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/leds/led-class.c | 1 +
+ drivers/leds/led-core.c  | 5 +++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 3c7e3487b373b..85848c5da705f 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -57,6 +57,7 @@ static ssize_t brightness_store(struct device *dev,
+ 	if (state == LED_OFF)
+ 		led_trigger_remove(led_cdev);
+ 	led_set_brightness(led_cdev, state);
++	flush_work(&led_cdev->set_brightness_work);
+ 
+ 	ret = size;
+ unlock:
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index ede4fa0ac2cce..55dec67023599 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -162,6 +162,11 @@ static void led_blink_setup(struct led_classdev *led_cdev,
+ 		     unsigned long *delay_on,
+ 		     unsigned long *delay_off)
+ {
++	/*
++	 * If "set brightness to 0" is pending in workqueue, we don't
++	 * want that to be reordered after blink_set()
++	 */
++	flush_work(&led_cdev->set_brightness_work);
+ 	if (!test_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags) &&
+ 	    led_cdev->blink_set &&
+ 	    !led_cdev->blink_set(led_cdev, delay_on, delay_off))
 -- 
-2.21.0.5.gaeb582a983
+2.20.1
