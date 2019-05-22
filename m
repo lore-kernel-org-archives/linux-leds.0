@@ -1,72 +1,121 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 013/167] leds: avoid races with workqueue
-Date: Wed, 22 May 2019 15:26:08 -0400
-Message-ID: <20190522192842.25858-13-sashal@kernel.org>
-References: <20190522192842.25858-1-sashal@kernel.org>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [RESEND PATCH v4 4/6] regulator: lm363x: Add support for LM36274
+Date: Wed, 22 May 2019 14:27:31 -0500
+Message-ID: <20190522192733.13422-5-dmurphy@ti.com>
+References: <20190522192733.13422-1-dmurphy@ti.com>
 Mime-Version: 1.0
+Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190522192842.25858-1-sashal@kernel.org>
+In-Reply-To: <20190522192733.13422-1-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz, broonie@kernel.org, lgirdwood@gmail.com
+Cc: lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-From: Pavel Machek <pavel@ucw.cz>
+Adding regulator support for the LM36274 backlight driver.
+This device can leverage this existing code as the functionality
+and registers are common enough between the LM36274 and the LM363x
+series of devices.
 
-[ Upstream commit 0db37915d912e8dc6588f25da76d3ed36718d92f ]
-
-There are races between "main" thread and workqueue. They manifest
-themselves on Thinkpad X60:
-
-This should result in LED blinking, but it turns it off instead:
-
-    root@amd:/data/pavel# cd /sys/class/leds/tpacpi\:\:power
-    root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
-    root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
-
-It should be possible to transition from blinking to solid on by echo
-0 > brightness; echo 1 > brightness... but that does not work, either,
-if done too quickly.
-
-Synchronization of the workqueue fixes both.
-
-Fixes: 1afcadfcd184 ("leds: core: Use set_brightness_work for the blocking op")
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/led-class.c | 1 +
- drivers/leds/led-core.c  | 5 +++++
- 2 files changed, 6 insertions(+)
+ drivers/regulator/Kconfig            |  2 +-
+ drivers/regulator/lm363x-regulator.c | 52 ++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index b0e2d55acbd6f..80374c6c943ad 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -57,6 +57,7 @@ static ssize_t brightness_store(struct device *dev,
- 	if (state == LED_OFF)
- 		led_trigger_remove(led_cdev);
- 	led_set_brightness(led_cdev, state);
-+	flush_work(&led_cdev->set_brightness_work);
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index b7f249ee5e68..23252ae81fdf 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -362,7 +362,7 @@ config REGULATOR_LM363X
+ 	tristate "TI LM363X voltage regulators"
+ 	depends on MFD_TI_LMU
+ 	help
+-	  This driver supports LM3631 and LM3632 voltage regulators for
++	  This driver supports LM3631, LM3632 and LM36274 voltage regulators for
+ 	  the LCD bias.
+ 	  One boost output voltage is configurable and always on.
+ 	  Other LDOs are used for the display module.
+diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
+index 382b1cecdd93..1944677b1448 100644
+--- a/drivers/regulator/lm363x-regulator.c
++++ b/drivers/regulator/lm363x-regulator.c
+@@ -37,6 +37,11 @@
+ #define LM3632_VBOOST_MIN		4500000
+ #define LM3632_VLDO_MIN			4000000
  
- 	ret = size;
- unlock:
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 9ce6b32f52a19..cb84c35d64f97 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -162,6 +162,11 @@ static void led_blink_setup(struct led_classdev *led_cdev,
- 		     unsigned long *delay_on,
- 		     unsigned long *delay_off)
- {
-+	/*
-+	 * If "set brightness to 0" is pending in workqueue, we don't
-+	 * want that to be reordered after blink_set()
-+	 */
-+	flush_work(&led_cdev->set_brightness_work);
- 	if (!test_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags) &&
- 	    led_cdev->blink_set &&
- 	    !led_cdev->blink_set(led_cdev, delay_on, delay_off))
++/* LM36274 */
++#define LM36274_BOOST_VSEL_MAX		0x3f
++#define LM36274_LDO_VSEL_MAX		0x34
++#define LM36274_VOLTAGE_MIN		4000000
++
+ /* Common */
+ #define LM363X_STEP_50mV		50000
+ #define LM363X_STEP_500mV		500000
+@@ -217,6 +222,51 @@ static const struct regulator_desc lm363x_regulator_desc[] = {
+ 		.enable_reg     = LM3632_REG_BIAS_CONFIG,
+ 		.enable_mask    = LM3632_EN_VNEG_MASK,
+ 	},
++
++	/* LM36274 */
++	{
++		.name           = "vboost",
++		.of_match	= "vboost",
++		.id             = LM36274_BOOST,
++		.ops            = &lm363x_boost_voltage_table_ops,
++		.n_voltages     = LM36274_BOOST_VSEL_MAX,
++		.min_uV         = LM36274_VOLTAGE_MIN,
++		.uV_step        = LM363X_STEP_50mV,
++		.type           = REGULATOR_VOLTAGE,
++		.owner          = THIS_MODULE,
++		.vsel_reg       = LM36274_REG_VOUT_BOOST,
++		.vsel_mask      = LM36274_VOUT_MASK,
++	},
++	{
++		.name           = "ldo_vpos",
++		.of_match	= "vpos",
++		.id             = LM36274_LDO_POS,
++		.ops            = &lm363x_regulator_voltage_table_ops,
++		.n_voltages     = LM36274_LDO_VSEL_MAX,
++		.min_uV         = LM36274_VOLTAGE_MIN,
++		.uV_step        = LM363X_STEP_50mV,
++		.type           = REGULATOR_VOLTAGE,
++		.owner          = THIS_MODULE,
++		.vsel_reg       = LM36274_REG_VOUT_POS,
++		.vsel_mask      = LM36274_VOUT_MASK,
++		.enable_reg     = LM36274_REG_BIAS_CONFIG_1,
++		.enable_mask    = LM36274_EN_VPOS_MASK,
++	},
++	{
++		.name           = "ldo_vneg",
++		.of_match	= "vneg",
++		.id             = LM36274_LDO_NEG,
++		.ops            = &lm363x_regulator_voltage_table_ops,
++		.n_voltages     = LM36274_LDO_VSEL_MAX,
++		.min_uV         = LM36274_VOLTAGE_MIN,
++		.uV_step        = LM363X_STEP_50mV,
++		.type           = REGULATOR_VOLTAGE,
++		.owner          = THIS_MODULE,
++		.vsel_reg       = LM36274_REG_VOUT_NEG,
++		.vsel_mask      = LM36274_VOUT_MASK,
++		.enable_reg     = LM36274_REG_BIAS_CONFIG_1,
++		.enable_mask    = LM36274_EN_VNEG_MASK,
++	},
+ };
+ 
+ static struct gpio_desc *lm363x_regulator_of_get_enable_gpio(struct device *dev, int id)
+@@ -229,9 +279,11 @@ static struct gpio_desc *lm363x_regulator_of_get_enable_gpio(struct device *dev,
+ 	 */
+ 	switch (id) {
+ 	case LM3632_LDO_POS:
++	case LM36274_LDO_POS:
+ 		return gpiod_get_index_optional(dev, "enable", 0,
+ 				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+ 	case LM3632_LDO_NEG:
++	case LM36274_LDO_NEG:
+ 		return gpiod_get_index_optional(dev, "enable", 1,
+ 				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+ 	default:
 -- 
-2.20.1
+2.21.0.5.gaeb582a983
