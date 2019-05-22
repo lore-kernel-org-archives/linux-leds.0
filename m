@@ -1,80 +1,72 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [GIT PULL] Immutable branch between LEDs, MFD and REGULATOR
-Date: Wed, 22 May 2019 20:02:25 +0100
-Message-ID: <20190522190225.GH8582@sirena.org.uk>
-References: <20190521203038.31946-1-jacek.anaszewski@gmail.com>
- <20190521211504.GD1580@sirena.org.uk>
- <0340dce2-87fb-938d-615e-376e29f37b54@gmail.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 021/244] leds: avoid races with workqueue
+Date: Wed, 22 May 2019 15:22:47 -0400
+Message-ID: <20190522192630.24917-21-sashal@kernel.org>
+References: <20190522192630.24917-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="r5lq+205vWdkqwtk"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <0340dce2-87fb-938d-615e-376e29f37b54@gmail.com>
+In-Reply-To: <20190522192630.24917-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, lgirdwood@gmail.com
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+From: Pavel Machek <pavel@ucw.cz>
 
---r5lq+205vWdkqwtk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[ Upstream commit 0db37915d912e8dc6588f25da76d3ed36718d92f ]
 
-On Wed, May 22, 2019 at 08:27:32PM +0200, Jacek Anaszewski wrote:
-> On 5/21/19 11:15 PM, Mark Brown wrote:
-> > On Tue, May 21, 2019 at 10:30:38PM +0200, Jacek Anaszewski wrote:
+There are races between "main" thread and workqueue. They manifest
+themselves on Thinkpad X60:
 
-> > >        regulator: lm363x: Make the gpio register enable flexible
-> > >        regulator: lm363x: Add support for LM36274
+This should result in LED blinking, but it turns it off instead:
 
-> > Why have these been applied, I haven't reviewed them?  As far as I can
-> > tell they were sent before the merge window so I'd expect a resend at
-> > this point...
+    root@amd:/data/pavel# cd /sys/class/leds/tpacpi\:\:power
+    root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
+    root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
 
-> The patch set have been floating around for some time and besides
+It should be possible to transition from blinking to solid on by echo
+0 > brightness; echo 1 > brightness... but that does not work, either,
+if done too quickly.
 
-Most of that time as far as I can tell they weren't being posted to
-subsystem maintainers, you can't expect people to be aware of patches
-that they are not being sent and single postings get missed or dropped
-for all sorts of reasons.
+Synchronization of the workqueue fixes both.
 
-> the v2 you were cc'ed by Dan, I also poked you a week ago for v4 [1].
+Fixes: 1afcadfcd184 ("leds: core: Use set_brightness_work for the blocking op")
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/leds/led-class.c | 1 +
+ drivers/leds/led-core.c  | 5 +++++
+ 2 files changed, 6 insertions(+)
 
-That post from a week ago was you copying me into a thread I wasn't CCed
-on saying I should have been sent the patches.  My expectation would
-therefore be that someone would send me the patches, I'm obviously going
-to prioritize patches that actually get sent to me over ones where I
-have to go searching to try to turn up copies.
-
-> Don't be surprised that I assumed you simply don't care.
-
-You have unreasonable expectations here.  At the very least I would have
-expected something along the lines of "hey, you don't seem to have
-looked at these" before you just applied things, and ideally ensuring
-that the patches had actually been sent to everyone with a reasonable
-lead time so there was a good chance that review could happen.
-
-> Still, we're awaiting your comments
-
-If someone sends me the patches...
-
-> [0] https://lkml.org/lkml/2019/4/10/547
-> [1] https://lkml.org/lkml/2019/5/14/717
-
---r5lq+205vWdkqwtk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzlnMAACgkQJNaLcl1U
-h9A7/Af7BW6/ntmrX58R5eFypYlE09SLmBNBg+a4IISELqaWA0OV3d5EmEWxL013
-UtOTyvz1JbEfYkXUIOl+jlSScl639zYNnFZKw4UzqUTMevABc21Qq6uAA6kzhX2q
-X30wiQmtjq2ytsooyk1I+1gIhPJ9kUnlQ4UsdGqAx3oE9f51jV0BCAvCApiSijLw
-WDUNmuRBmdoIw3qOHcX9U0dAqrpWgLyJT1TOOBrOpO3YGFgeWbBZY99ERGw+lUNA
-jHHEdKYnXaZm4pjFs263gUHlqx7+UYhH+2TTqNOmfdtltWmkECHXCXlAiB8Q/2u2
-8hnzlwtfFXQIJRfLIQSUIdEWRXYmGg==
-=5wSb
------END PGP SIGNATURE-----
-
---r5lq+205vWdkqwtk--
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 3c7e3487b373b..85848c5da705f 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -57,6 +57,7 @@ static ssize_t brightness_store(struct device *dev,
+ 	if (state == LED_OFF)
+ 		led_trigger_remove(led_cdev);
+ 	led_set_brightness(led_cdev, state);
++	flush_work(&led_cdev->set_brightness_work);
+ 
+ 	ret = size;
+ unlock:
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index ede4fa0ac2cce..55dec67023599 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -162,6 +162,11 @@ static void led_blink_setup(struct led_classdev *led_cdev,
+ 		     unsigned long *delay_on,
+ 		     unsigned long *delay_off)
+ {
++	/*
++	 * If "set brightness to 0" is pending in workqueue, we don't
++	 * want that to be reordered after blink_set()
++	 */
++	flush_work(&led_cdev->set_brightness_work);
+ 	if (!test_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags) &&
+ 	    led_cdev->blink_set &&
+ 	    !led_cdev->blink_set(led_cdev, delay_on, delay_off))
+-- 
+2.20.1
