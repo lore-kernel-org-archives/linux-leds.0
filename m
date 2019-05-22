@@ -1,46 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
+From: Dan Murphy <dmurphy@ti.com>
 Subject: Re: [GIT PULL] Immutable branch between LEDs, MFD and REGULATOR
-Date: Tue, 21 May 2019 22:15:04 +0100
-Message-ID: <20190521211504.GD1580@sirena.org.uk>
+Date: Tue, 21 May 2019 19:48:18 -0500
+Message-ID: <151079e6-4ae3-3b95-2dc1-c57927b0425f@ti.com>
 References: <20190521203038.31946-1-jacek.anaszewski@gmail.com>
+ <20190521211504.GD1580@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3Gf/FFewwPeBMqCJ"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190521203038.31946-1-jacek.anaszewski@gmail.com>
+In-Reply-To: <20190521211504.GD1580@sirena.org.uk>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+To: Mark Brown <broonie@kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, lgirdwood@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
+Mark
 
---3Gf/FFewwPeBMqCJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 5/21/19 4:15 PM, Mark Brown wrote:
+> On Tue, May 21, 2019 at 10:30:38PM +0200, Jacek Anaszewski wrote:
+> 
+>>       regulator: lm363x: Make the gpio register enable flexible
+>>       regulator: lm363x: Add support for LM36274
+> 
+> Why have these been applied, I haven't reviewed them?  As far as I can
+> tell they were sent before the merge window so I'd expect a resend at
+> this point...
+> 
 
-On Tue, May 21, 2019 at 10:30:38PM +0200, Jacek Anaszewski wrote:
+You and Liam were cc'd on April 10,2019 for v2 of this patch set.  So I am not sure why the review was missed.
 
->       regulator: lm363x: Make the gpio register enable flexible
->       regulator: lm363x: Add support for LM36274
+My apologies for not cc'ing you on v4 but there were no change since that time.
+I cannot find v3 of this patchset.
 
-Why have these been applied, I haven't reviewed them?  As far as I can
-tell they were sent before the merge window so I'd expect a resend at
-this point...
+The initial patches were sent on April 5, 2019
 
---3Gf/FFewwPeBMqCJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzkalcACgkQJNaLcl1U
-h9BlRwf+OowE+CdFlxbWt3HLQBvc54GQXEQ2ajoYZncSe2xdPPagNorAvTKL+rjZ
-tMczSL65OCpn+RB5BKg6DkdP7YiQXrUxNZMhnLrjfTf+B5dBthidtv6b0fd47BQH
-tYfEK4nWsjsIqxLJiIW8V5GfvUB3IbQz/sXRzGzPKwNyPWI9J+oJVNwY+P225QUu
-bURSz0LjcQmsyz+a9foTTlAPvWHzY67AMXztiFhIt9wSJiqyfrDLaKnadMFhfJgB
-5X/uJA6ilusZ9xmp8Ldxp6j9D3nlm5pKprGtyvME0S5j66xai/sJTSyj7ENZF7R6
-Omjia+6STpP+tguogsvvHevdNgpALw==
-=jmUm
------END PGP SIGNATURE-----
-
---3Gf/FFewwPeBMqCJ--
+Dan
