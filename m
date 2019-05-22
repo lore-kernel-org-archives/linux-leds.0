@@ -1,27 +1,47 @@
-From: Colin Ian King <colin.king@canonical.com>
-Subject: Re: [PATCH][next] leds: TI LMU: remove redundant u8 comparisons with
- less than zero
-Date: Wed, 22 May 2019 11:00:04 +0100
-Message-ID: <dcb1f2d8-5894-ee7a-6413-ad6f596da888@canonical.com>
-References: <20190522082627.18354-1-colin.king@canonical.com>
- <20190522095317.GT31203@kadam>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH][V2] leds: TI LMU: fix u8 variable comparisons with less than zero
+Date: Wed, 22 May 2019 11:17:45 +0100
+Message-ID: <20190522101745.21828-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190522095317.GT31203@kadam>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dan Murphy <dmurphy@ti.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 22/05/2019 10:53, Dan Carpenter wrote:
-> No.  This isn't the right fix.  We should declare them as int instead.
+From: Colin Ian King <colin.king@canonical.com>
 
-Doh, brown paper bag time. I'll do a V2.
+The u8 variables ramp_ups and ramp_downs are being compared to less
+than zero, this will always be false.  Fix this by making the ramp
+variables ints.
 
-> 
-> regards,
-> dan carpenter
-> 
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: 9a8e66ebeaa2 ("leds: TI LMU: Add common code for TI LMU devices")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: make u8 vars ints rather than removing the comparison. Thanks once
+more to Dan Carpenter for spotting my clearly stupid V1 version and
+correcting my mistake.
+
+---
+ drivers/leds/leds-ti-lmu-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/leds/leds-ti-lmu-common.c b/drivers/leds/leds-ti-lmu-common.c
+index adc7293004f1..c9ab40d5a6ba 100644
+--- a/drivers/leds/leds-ti-lmu-common.c
++++ b/drivers/leds/leds-ti-lmu-common.c
+@@ -84,7 +84,7 @@ static int ti_lmu_common_convert_ramp_to_index(unsigned int usec)
+ int ti_lmu_common_set_ramp(struct ti_lmu_bank *lmu_bank)
+ {
+ 	struct regmap *regmap = lmu_bank->regmap;
+-	u8 ramp, ramp_up, ramp_down;
++	int ramp, ramp_up, ramp_down;
+ 
+ 	if (lmu_bank->ramp_up_usec == 0 && lmu_bank->ramp_down_usec == 0) {
+ 		ramp_up = 0;
+-- 
+2.20.1
