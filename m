@@ -1,60 +1,40 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+From: Dan Murphy <dmurphy@ti.com>
 Subject: Re: [PATCH v4 0/6] LM36274 Introduction
-Date: Wed, 22 May 2019 21:37:00 +0200
-Message-ID: <6501a8b5-8068-4c9d-6b51-ef00fa72c6d5@gmail.com>
+Date: Wed, 22 May 2019 14:39:05 -0500
+Message-ID: <2a8a9fa5-9338-bb17-e273-b1e0278a566d@ti.com>
 References: <20190522192733.13422-1-dmurphy@ti.com>
+ <6501a8b5-8068-4c9d-6b51-ef00fa72c6d5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190522192733.13422-1-dmurphy@ti.com>
+In-Reply-To: <6501a8b5-8068-4c9d-6b51-ef00fa72c6d5@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz, broonie@kernel.org, lgirdwood@gmail.com
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, pavel@ucw.cz, broonie@kernel.org, lgirdwood@gmail.com
 Cc: lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Dan,
+Jacek
 
-On 5/22/19 9:27 PM, Dan Murphy wrote:
-> Hello
+On 5/22/19 2:37 PM, Jacek Anaszewski wrote:
+> Hi Dan,
 > 
-> This is patch set v4 for the LM36274.  There were no changes made
-> to this patch set except to rebase this on top of the latest TI LMU common code
-> patchset.
-
-Why the rebase was needed? leds-lm36274.c was already including
-leds-ti-lmu-common.h.
-
-> This patch set was rebased on the series at:
-> https://lore.kernel.org/patchwork/project/lkml/list/?series=393071
+> On 5/22/19 9:27 PM, Dan Murphy wrote:
+>> Hello
+>>
+>> This is patch set v4 for the LM36274.  There were no changes made
+>> to this patch set except to rebase this on top of the latest TI LMU common code
+>> patchset.
 > 
-> Dan
-> 
-> Dan Murphy (6):
->    regulator: lm363x: Make the gpio register enable flexible
->    dt-bindings: mfd: Add lm36274 bindings to ti-lmu
->    mfd: ti-lmu: Add LM36274 support to the ti-lmu
->    regulator: lm363x: Add support for LM36274
->    dt-bindings: leds: Add LED bindings for the LM36274
->    leds: lm36274: Introduce the TI LM36274 LED driver
-> 
->   .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
->   .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
->   drivers/leds/Kconfig                          |   7 +
->   drivers/leds/Makefile                         |   1 +
->   drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
->   drivers/mfd/Kconfig                           |   5 +-
->   drivers/mfd/ti-lmu.c                          |  14 ++
->   drivers/regulator/Kconfig                     |   2 +-
->   drivers/regulator/lm363x-regulator.c          |  56 +++++-
->   include/linux/mfd/ti-lmu-register.h           |  23 +++
->   include/linux/mfd/ti-lmu.h                    |   4 +
->   11 files changed, 416 insertions(+), 6 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
->   create mode 100644 drivers/leds/leds-lm36274.c
+> Why the rebase was needed? leds-lm36274.c was already including
+> leds-ti-lmu-common.h.
 > 
 
--- 
-Best regards,
-Jacek Anaszewski
+I just resent the patchset.
+
+This was the cover letter in the series I sent originally.
+
+Dan
+
+<snip>
