@@ -1,72 +1,61 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 033/375] leds: avoid races with workqueue
-Date: Wed, 22 May 2019 15:15:33 -0400
-Message-ID: <20190522192115.22666-33-sashal@kernel.org>
-References: <20190522192115.22666-1-sashal@kernel.org>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH][V2] leds: TI LMU: fix u8 variable comparisons with less
+ than zero
+Date: Wed, 22 May 2019 22:48:44 +0200
+Message-ID: <1dab790f-0b82-5fac-2081-7943379ccc54@gmail.com>
+References: <20190522101745.21828-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190522192115.22666-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190522101745.21828-1-colin.king@canonical.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-From: Pavel Machek <pavel@ucw.cz>
+Hi Colin,
 
-[ Upstream commit 0db37915d912e8dc6588f25da76d3ed36718d92f ]
+Thank you for the patch.
 
-There are races between "main" thread and workqueue. They manifest
-themselves on Thinkpad X60:
+On 5/22/19 12:17 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The u8 variables ramp_ups and ramp_downs are being compared to less
+> than zero, this will always be false.  Fix this by making the ramp
+> variables ints.
+> 
+> Addresses-Coverity: ("Unsigned compared against 0")
+> Fixes: 9a8e66ebeaa2 ("leds: TI LMU: Add common code for TI LMU devices")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+> 
+> V2: make u8 vars ints rather than removing the comparison. Thanks once
+> more to Dan Carpenter for spotting my clearly stupid V1 version and
+> correcting my mistake.
+> 
+> ---
+>   drivers/leds/leds-ti-lmu-common.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-ti-lmu-common.c b/drivers/leds/leds-ti-lmu-common.c
+> index adc7293004f1..c9ab40d5a6ba 100644
+> --- a/drivers/leds/leds-ti-lmu-common.c
+> +++ b/drivers/leds/leds-ti-lmu-common.c
+> @@ -84,7 +84,7 @@ static int ti_lmu_common_convert_ramp_to_index(unsigned int usec)
+>   int ti_lmu_common_set_ramp(struct ti_lmu_bank *lmu_bank)
+>   {
+>   	struct regmap *regmap = lmu_bank->regmap;
+> -	u8 ramp, ramp_up, ramp_down;
+> +	int ramp, ramp_up, ramp_down;
+>   
+>   	if (lmu_bank->ramp_up_usec == 0 && lmu_bank->ramp_down_usec == 0) {
+>   		ramp_up = 0;
+> 
 
-This should result in LED blinking, but it turns it off instead:
+Applied.
 
-    root@amd:/data/pavel# cd /sys/class/leds/tpacpi\:\:power
-    root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
-    root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
-
-It should be possible to transition from blinking to solid on by echo
-0 > brightness; echo 1 > brightness... but that does not work, either,
-if done too quickly.
-
-Synchronization of the workqueue fixes both.
-
-Fixes: 1afcadfcd184 ("leds: core: Use set_brightness_work for the blocking op")
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/leds/led-class.c | 1 +
- drivers/leds/led-core.c  | 5 +++++
- 2 files changed, 6 insertions(+)
-
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 3c7e3487b373b..85848c5da705f 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -57,6 +57,7 @@ static ssize_t brightness_store(struct device *dev,
- 	if (state == LED_OFF)
- 		led_trigger_remove(led_cdev);
- 	led_set_brightness(led_cdev, state);
-+	flush_work(&led_cdev->set_brightness_work);
- 
- 	ret = size;
- unlock:
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index e3da7c03da1b5..e9ae7f87ab900 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -164,6 +164,11 @@ static void led_blink_setup(struct led_classdev *led_cdev,
- 		     unsigned long *delay_on,
- 		     unsigned long *delay_off)
- {
-+	/*
-+	 * If "set brightness to 0" is pending in workqueue, we don't
-+	 * want that to be reordered after blink_set()
-+	 */
-+	flush_work(&led_cdev->set_brightness_work);
- 	if (!test_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags) &&
- 	    led_cdev->blink_set &&
- 	    !led_cdev->blink_set(led_cdev, delay_on, delay_off))
 -- 
-2.20.1
+Best regards,
+Jacek Anaszewski
