@@ -1,88 +1,66 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [GIT PULL] Immutable branch between LEDs, MFD and REGULATOR
-Date: Wed, 22 May 2019 06:42:56 +0100
-Message-ID: <20190522054256.GA4574@dell>
-References: <20190521203038.31946-1-jacek.anaszewski@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [j.anaszewski-leds:for-next 3/14]
+ drivers/leds/leds-ti-lmu-common.c:97 ti_lmu_common_set_ramp() warn:
+ impossible condition '(ramp_up < 0) => (0-255 < 0)'
+Date: Wed, 22 May 2019 09:47:35 +0300
+Message-ID: <20190522064735.GK19380@kadam>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <kbuild-bounces@lists.01.org>
 Content-Disposition: inline
-In-Reply-To: <20190521203038.31946-1-jacek.anaszewski@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org
+List-Unsubscribe: <https://lists.01.org/mailman/options/kbuild>,
+ <mailto:kbuild-request@lists.01.org?subject=unsubscribe>
+List-Archive: <http://lists.01.org/pipermail/kbuild/>
+List-Post: <mailto:kbuild@lists.01.org>
+List-Help: <mailto:kbuild-request@lists.01.org?subject=help>
+List-Subscribe: <https://lists.01.org/mailman/listinfo/kbuild>,
+ <mailto:kbuild-request@lists.01.org?subject=subscribe>
+Errors-To: kbuild-bounces@lists.01.org
+Sender: "kbuild" <kbuild-bounces@lists.01.org>
+To: kbuild@01.org, Dan Murphy <dmurphy@ti.com>
+Cc: kbuild-all@01.org, linux-leds@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, 21 May 2019, Jacek Anaszewski wrote:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git for-next
+head:   413874ce52afa3310433e6dd73d775fd05bf92e7
+commit: 9a8e66ebeaa20a4f3eba12f0eba6835e8db16ded [3/14] leds: TI LMU: Add common code for TI LMU devices
 
-> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-> 
->   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/ti-lmu-led-drivers
-> 
-> for you to fetch changes up to 13f5750a60b923d8f3f0e23902f2ece46dd733d7:
-> 
->   leds: lm36274: Introduce the TI LM36274 LED driver (2019-05-21 20:34:19 +0200)
-> 
-> ----------------------------------------------------------------
-> TI LMU LED support rework and introduction of two new drivers
-> with DT bindings:
-> 
-> - leds-lm3697 (entails additions to lm363x-regulator.c)
-> - leds-lm36274
-> ----------------------------------------------------------------
-> Dan Murphy (12):
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->       dt-bindings: mfd: LMU: Add the ramp up/down property
->       dt-bindings: mfd: LMU: Add ti,brightness-resolution
->       mfd: ti-lmu: Remove support for LM3697
->       mfd: ti-lmu: Add LM36274 support to the ti-lmu
+smatch warnings:
+drivers/leds/leds-ti-lmu-common.c:97 ti_lmu_common_set_ramp() warn: impossible condition '(ramp_up < 0) => (0-255 < 0)'
+drivers/leds/leds-ti-lmu-common.c:97 ti_lmu_common_set_ramp() warn: impossible condition '(ramp_down < 0) => (0-255 < 0)'
 
-These patches were Acked "for my own reference", which means I'd
-at least expect a discussion on how/where they would be applied.
+# https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git/commit/?id=9a8e66ebeaa20a4f3eba12f0eba6835e8db16ded
+git remote add j.anaszewski-leds https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
+git remote update j.anaszewski-leds
+git checkout 9a8e66ebeaa20a4f3eba12f0eba6835e8db16ded
+vim +97 drivers/leds/leds-ti-lmu-common.c
 
-It's fine for them to go in via the LED tree in this instance and I do
-thank you for sending a PR.  Next time can we at least agree on the
-route-in though please?
+9a8e66eb Dan Murphy 2019-05-06   83  
+9a8e66eb Dan Murphy 2019-05-06   84  int ti_lmu_common_set_ramp(struct ti_lmu_bank *lmu_bank)
+9a8e66eb Dan Murphy 2019-05-06   85  {
+9a8e66eb Dan Murphy 2019-05-06   86  	struct regmap *regmap = lmu_bank->regmap;
+9a8e66eb Dan Murphy 2019-05-06   87  	u8 ramp, ramp_up, ramp_down;
+9a8e66eb Dan Murphy 2019-05-06   88  
+9a8e66eb Dan Murphy 2019-05-06   89  	if (lmu_bank->ramp_up_usec == 0 && lmu_bank->ramp_down_usec == 0) {
+9a8e66eb Dan Murphy 2019-05-06   90  		ramp_up = 0;
+9a8e66eb Dan Murphy 2019-05-06   91  		ramp_down = 0;
+9a8e66eb Dan Murphy 2019-05-06   92  	} else {
+9a8e66eb Dan Murphy 2019-05-06   93  		ramp_up = ti_lmu_common_convert_ramp_to_index(lmu_bank->ramp_up_usec);
+9a8e66eb Dan Murphy 2019-05-06   94  		ramp_down = ti_lmu_common_convert_ramp_to_index(lmu_bank->ramp_down_usec);
+9a8e66eb Dan Murphy 2019-05-06   95  	}
+9a8e66eb Dan Murphy 2019-05-06   96  
+9a8e66eb Dan Murphy 2019-05-06  @97  	if (ramp_up < 0 || ramp_down < 0)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Utterly unpossible!
 
->       leds: TI LMU: Add common code for TI LMU devices
->       dt-bindings: ti-lmu: Modify dt bindings for the LM3697
->       leds: lm3697: Introduce the lm3697 driver
->       regulator: lm363x: Make the gpio register enable flexible
->       dt-bindings: mfd: Add lm36274 bindings to ti-lmu
->       regulator: lm363x: Add support for LM36274
->       dt-bindings: leds: Add LED bindings for the LM36274
->       leds: lm36274: Introduce the TI LM36274 LED driver
-> 
->  .../devicetree/bindings/leds/leds-lm36274.txt      |  82 +++++
->  .../devicetree/bindings/leds/leds-lm3697.txt       |  73 ++++
->  Documentation/devicetree/bindings/mfd/ti-lmu.txt   |  88 +++--
->  drivers/leds/Kconfig                               |  23 ++
->  drivers/leds/Makefile                              |   3 +
->  drivers/leds/leds-lm36274.c                        | 174 +++++++++
->  drivers/leds/leds-lm3697.c                         | 395 +++++++++++++++++++++
->  drivers/leds/leds-ti-lmu-common.c                  | 156 ++++++++
->  drivers/mfd/Kconfig                                |   5 +-
->  drivers/mfd/ti-lmu.c                               |  23 +-
->  drivers/regulator/Kconfig                          |   2 +-
->  drivers/regulator/lm363x-regulator.c               |  56 ++-
->  include/linux/leds-ti-lmu-common.h                 |  47 +++
->  include/linux/mfd/ti-lmu-register.h                |  63 ++--
->  include/linux/mfd/ti-lmu.h                         |   5 +-
->  15 files changed, 1112 insertions(+), 83 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
->  create mode 100644 drivers/leds/leds-lm36274.c
->  create mode 100644 drivers/leds/leds-lm3697.c
->  create mode 100644 drivers/leds/leds-ti-lmu-common.c
->  create mode 100644 include/linux/leds-ti-lmu-common.h
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+9a8e66eb Dan Murphy 2019-05-06   98  		return -EINVAL;
+9a8e66eb Dan Murphy 2019-05-06   99  
+9a8e66eb Dan Murphy 2019-05-06  100  	ramp = (ramp_up << 4) | ramp_down;
+9a8e66eb Dan Murphy 2019-05-06  101  
+9a8e66eb Dan Murphy 2019-05-06  102  	return regmap_write(regmap, lmu_bank->runtime_ramp_reg, ramp);
+9a8e66eb Dan Murphy 2019-05-06  103  
