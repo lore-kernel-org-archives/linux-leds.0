@@ -1,55 +1,88 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH] dt-bindings: backlight: lm3630a: correct schema
- validation
-Date: Tue, 21 May 2019 19:53:45 -0500
-Message-ID: <6bc54c69-0c7b-69e5-6dce-aef631e20247@ti.com>
-References: <20190520085846.22320-1-masneyb@onstation.org>
- <CAL_JsqLcycH5e=YT-4AQFo-8O0bosjU7oagCRS5CMTfQNBLrcg@mail.gmail.com>
- <20190520133007.gymbonmq635gp73b@holly.lan>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [GIT PULL] Immutable branch between LEDs, MFD and REGULATOR
+Date: Wed, 22 May 2019 06:42:56 +0100
+Message-ID: <20190522054256.GA4574@dell>
+References: <20190521203038.31946-1-jacek.anaszewski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190520133007.gymbonmq635gp73b@holly.lan>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190521203038.31946-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: Brian Masney <masneyb@onstation.org>, Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, Jonathan Marek <jonathan@marek.ca>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+On Tue, 21 May 2019, Jacek Anaszewski wrote:
 
-
-On 5/20/19 8:30 AM, Daniel Thompson wrote:
-> On Mon, May 20, 2019 at 08:14:03AM -0500, Rob Herring wrote:
->> On Mon, May 20, 2019 at 3:59 AM Brian Masney <masneyb@onstation.org> wrote:
->>>
->>> The '#address-cells' and '#size-cells' properties were not defined in
->>> the lm3630a bindings and would cause the following error when
->>> attempting to validate the examples against the schema:
->>>
->>> Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.example.dt.yaml:
->>> '#address-cells', '#size-cells' do not match any of the regexes:
->>> '^led@[01]$', 'pinctrl-[0-9]+'
->>>
->>> Correct this by adding those two properties.
->>>
->>> While we're here, move the ti,linear-mapping-mode property to the
->>> led@[01] child nodes to correct the following validation error:
->>>
->>> Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.example.dt.yaml:
->>> led@0: 'ti,linear-mapping-mode' does not match any of the regexes:
->>> 'pinctrl-[0-9]+'
->>>
->>> Fixes: 32fcb75c66a0 ("dt-bindings: backlight: Add lm3630a bindings")
->>> Signed-off-by: Brian Masney <masneyb@onstation.org>
->>> Reported-by: Rob Herring <robh+dt@kernel.org>
->>> ---
->>>  .../leds/backlight/lm3630a-backlight.yaml     | 20 +++++++++++++------
->>>  1 file changed, 14 insertions(+), 6 deletions(-)
->>
->> Reviewed-by: Rob Herring <robh@kernel.org>
+> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 > 
-> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 > 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/ti-lmu-led-drivers
+> 
+> for you to fetch changes up to 13f5750a60b923d8f3f0e23902f2ece46dd733d7:
+> 
+>   leds: lm36274: Introduce the TI LM36274 LED driver (2019-05-21 20:34:19 +0200)
+> 
+> ----------------------------------------------------------------
+> TI LMU LED support rework and introduction of two new drivers
+> with DT bindings:
+> 
+> - leds-lm3697 (entails additions to lm363x-regulator.c)
+> - leds-lm36274
+> ----------------------------------------------------------------
+> Dan Murphy (12):
 
-Acked-by: Dan Murphy <dmurphy@ti.com>
+>       dt-bindings: mfd: LMU: Add the ramp up/down property
+>       dt-bindings: mfd: LMU: Add ti,brightness-resolution
+>       mfd: ti-lmu: Remove support for LM3697
+>       mfd: ti-lmu: Add LM36274 support to the ti-lmu
+
+These patches were Acked "for my own reference", which means I'd
+at least expect a discussion on how/where they would be applied.
+
+It's fine for them to go in via the LED tree in this instance and I do
+thank you for sending a PR.  Next time can we at least agree on the
+route-in though please?
+
+>       leds: TI LMU: Add common code for TI LMU devices
+>       dt-bindings: ti-lmu: Modify dt bindings for the LM3697
+>       leds: lm3697: Introduce the lm3697 driver
+>       regulator: lm363x: Make the gpio register enable flexible
+>       dt-bindings: mfd: Add lm36274 bindings to ti-lmu
+>       regulator: lm363x: Add support for LM36274
+>       dt-bindings: leds: Add LED bindings for the LM36274
+>       leds: lm36274: Introduce the TI LM36274 LED driver
+> 
+>  .../devicetree/bindings/leds/leds-lm36274.txt      |  82 +++++
+>  .../devicetree/bindings/leds/leds-lm3697.txt       |  73 ++++
+>  Documentation/devicetree/bindings/mfd/ti-lmu.txt   |  88 +++--
+>  drivers/leds/Kconfig                               |  23 ++
+>  drivers/leds/Makefile                              |   3 +
+>  drivers/leds/leds-lm36274.c                        | 174 +++++++++
+>  drivers/leds/leds-lm3697.c                         | 395 +++++++++++++++++++++
+>  drivers/leds/leds-ti-lmu-common.c                  | 156 ++++++++
+>  drivers/mfd/Kconfig                                |   5 +-
+>  drivers/mfd/ti-lmu.c                               |  23 +-
+>  drivers/regulator/Kconfig                          |   2 +-
+>  drivers/regulator/lm363x-regulator.c               |  56 ++-
+>  include/linux/leds-ti-lmu-common.h                 |  47 +++
+>  include/linux/mfd/ti-lmu-register.h                |  63 ++--
+>  include/linux/mfd/ti-lmu.h                         |   5 +-
+>  15 files changed, 1112 insertions(+), 83 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>  create mode 100644 drivers/leds/leds-lm36274.c
+>  create mode 100644 drivers/leds/leds-lm3697.c
+>  create mode 100644 drivers/leds/leds-ti-lmu-common.c
+>  create mode 100644 include/linux/leds-ti-lmu-common.h
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
