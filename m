@@ -1,38 +1,55 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [GIT PULL] Immutable branch between LEDs, MFD and REGULATOR
-Date: Tue, 21 May 2019 19:48:18 -0500
-Message-ID: <151079e6-4ae3-3b95-2dc1-c57927b0425f@ti.com>
-References: <20190521203038.31946-1-jacek.anaszewski@gmail.com>
- <20190521211504.GD1580@sirena.org.uk>
+Subject: Re: [PATCH] dt-bindings: backlight: lm3630a: correct schema
+ validation
+Date: Tue, 21 May 2019 19:53:45 -0500
+Message-ID: <6bc54c69-0c7b-69e5-6dce-aef631e20247@ti.com>
+References: <20190520085846.22320-1-masneyb@onstation.org>
+ <CAL_JsqLcycH5e=YT-4AQFo-8O0bosjU7oagCRS5CMTfQNBLrcg@mail.gmail.com>
+ <20190520133007.gymbonmq635gp73b@holly.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190521211504.GD1580@sirena.org.uk>
+In-Reply-To: <20190520133007.gymbonmq635gp73b@holly.lan>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, lgirdwood@gmail.com
+To: Daniel Thompson <daniel.thompson@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Brian Masney <masneyb@onstation.org>, Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, Jonathan Marek <jonathan@marek.ca>
 List-Id: linux-leds@vger.kernel.org
 
-Mark
 
-On 5/21/19 4:15 PM, Mark Brown wrote:
-> On Tue, May 21, 2019 at 10:30:38PM +0200, Jacek Anaszewski wrote:
+
+On 5/20/19 8:30 AM, Daniel Thompson wrote:
+> On Mon, May 20, 2019 at 08:14:03AM -0500, Rob Herring wrote:
+>> On Mon, May 20, 2019 at 3:59 AM Brian Masney <masneyb@onstation.org> wrote:
+>>>
+>>> The '#address-cells' and '#size-cells' properties were not defined in
+>>> the lm3630a bindings and would cause the following error when
+>>> attempting to validate the examples against the schema:
+>>>
+>>> Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.example.dt.yaml:
+>>> '#address-cells', '#size-cells' do not match any of the regexes:
+>>> '^led@[01]$', 'pinctrl-[0-9]+'
+>>>
+>>> Correct this by adding those two properties.
+>>>
+>>> While we're here, move the ti,linear-mapping-mode property to the
+>>> led@[01] child nodes to correct the following validation error:
+>>>
+>>> Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.example.dt.yaml:
+>>> led@0: 'ti,linear-mapping-mode' does not match any of the regexes:
+>>> 'pinctrl-[0-9]+'
+>>>
+>>> Fixes: 32fcb75c66a0 ("dt-bindings: backlight: Add lm3630a bindings")
+>>> Signed-off-by: Brian Masney <masneyb@onstation.org>
+>>> Reported-by: Rob Herring <robh+dt@kernel.org>
+>>> ---
+>>>  .../leds/backlight/lm3630a-backlight.yaml     | 20 +++++++++++++------
+>>>  1 file changed, 14 insertions(+), 6 deletions(-)
+>>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
 > 
->>       regulator: lm363x: Make the gpio register enable flexible
->>       regulator: lm363x: Add support for LM36274
-> 
-> Why have these been applied, I haven't reviewed them?  As far as I can
-> tell they were sent before the merge window so I'd expect a resend at
-> this point...
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 > 
 
-You and Liam were cc'd on April 10,2019 for v2 of this patch set.  So I am not sure why the review was missed.
-
-My apologies for not cc'ing you on v4 but there were no change since that time.
-I cannot find v3 of this patchset.
-
-The initial patches were sent on April 5, 2019
-
-Dan
+Acked-by: Dan Murphy <dmurphy@ti.com>
