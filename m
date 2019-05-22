@@ -1,72 +1,127 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 021/244] leds: avoid races with workqueue
-Date: Wed, 22 May 2019 15:22:47 -0400
-Message-ID: <20190522192630.24917-21-sashal@kernel.org>
-References: <20190522192630.24917-1-sashal@kernel.org>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: [RESEND PATCH v4 2/6] dt-bindings: mfd: Add lm36274 bindings to ti-lmu
+Date: Wed, 22 May 2019 14:27:29 -0500
+Message-ID: <20190522192733.13422-3-dmurphy@ti.com>
+References: <20190522192733.13422-1-dmurphy@ti.com>
 Mime-Version: 1.0
+Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190522192630.24917-1-sashal@kernel.org>
+In-Reply-To: <20190522192733.13422-1-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Pavel Machek <pavel@ucw.cz>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz, broonie@kernel.org, lgirdwood@gmail.com
+Cc: lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-From: Pavel Machek <pavel@ucw.cz>
+Add the LM36274 backlight driver with regulator support.
+This is a multi-function device for backlight applications.
 
-[ Upstream commit 0db37915d912e8dc6588f25da76d3ed36718d92f ]
+Backlight properties will be documented in it's a supplemental
+bindings document.
 
-There are races between "main" thread and workqueue. They manifest
-themselves on Thinkpad X60:
+Regulator support is documented in the regulator/lm363x-regulator.txt
 
-This should result in LED blinking, but it turns it off instead:
+http://www.ti.com/lit/ds/symlink/lm36274.pdf
 
-    root@amd:/data/pavel# cd /sys/class/leds/tpacpi\:\:power
-    root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
-    root@amd:/sys/class/leds/tpacpi::power# echo timer > trigger
-
-It should be possible to transition from blinking to solid on by echo
-0 > brightness; echo 1 > brightness... but that does not work, either,
-if done too quickly.
-
-Synchronization of the workqueue fixes both.
-
-Fixes: 1afcadfcd184 ("leds: core: Use set_brightness_work for the blocking op")
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/led-class.c | 1 +
- drivers/leds/led-core.c  | 5 +++++
- 2 files changed, 6 insertions(+)
+ .../devicetree/bindings/mfd/ti-lmu.txt        | 54 +++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 3c7e3487b373b..85848c5da705f 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -57,6 +57,7 @@ static ssize_t brightness_store(struct device *dev,
- 	if (state == LED_OFF)
- 		led_trigger_remove(led_cdev);
- 	led_set_brightness(led_cdev, state);
-+	flush_work(&led_cdev->set_brightness_work);
+diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+index 782d3c9812ed..2296b8f24de4 100644
+--- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
++++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
+@@ -8,6 +8,7 @@ TI LMU driver supports lighting devices below.
+   LM3632       Backlight and regulator
+   LM3633       Backlight, LED and fault monitor
+   LM3695       Backlight
++  LM36274      Backlight and regulator
  
- 	ret = size;
- unlock:
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index ede4fa0ac2cce..55dec67023599 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -162,6 +162,11 @@ static void led_blink_setup(struct led_classdev *led_cdev,
- 		     unsigned long *delay_on,
- 		     unsigned long *delay_off)
- {
-+	/*
-+	 * If "set brightness to 0" is pending in workqueue, we don't
-+	 * want that to be reordered after blink_set()
-+	 */
-+	flush_work(&led_cdev->set_brightness_work);
- 	if (!test_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags) &&
- 	    led_cdev->blink_set &&
- 	    !led_cdev->blink_set(led_cdev, delay_on, delay_off))
+ Required properties:
+   - compatible: Should be one of:
+@@ -15,11 +16,13 @@ Required properties:
+                 "ti,lm3632"
+                 "ti,lm3633"
+                 "ti,lm3695"
++		"ti,lm36274"
+   - reg: I2C slave address.
+          0x11 for LM3632
+          0x29 for LM3631
+          0x36 for LM3633
+          0x63 for LM3695
++         0x11 for LM36274
+ 
+ Optional properties:
+   - enable-gpios: A GPIO specifier for hardware enable pin.
+@@ -50,12 +53,14 @@ Optional nodes:
+       - compatible: Should be one of:
+                     "ti,lm3633-fault-monitor"
+   - leds: LED properties for LM3633. Please refer to [2].
++	  LED properties for LM36274. Please refer to [4].
+   - regulators: Regulator properties for LM3631 and LM3632.
+                 Please refer to [3].
+ 
+ [1] ../leds/backlight/ti-lmu-backlight.txt
+ [2] ../leds/leds-lm3633.txt
+ [3] ../regulator/lm363x-regulator.txt
++[4] ../leds/leds-lm36274.txt
+ 
+ lm3631@29 {
+ 	compatible = "ti,lm3631";
+@@ -213,3 +218,52 @@ lm3695@63 {
+ 		};
+ 	};
+ };
++
++lm36274@11 {
++	compatible = "ti,lm36274";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x11>;
++
++	enable-gpios = <&pioC 2 GPIO_ACTIVE_HIGH>;
++	regulators {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "ti,lm363x-regulator";
++
++		enable-gpios = <&pioC 0 GPIO_ACTIVE_HIGH>,
++			       <&pioC 1 GPIO_ACTIVE_HIGH>;
++
++		vboost {
++			regulator-name = "lcd_boost";
++			regulator-min-microvolt = <4000000>;
++			regulator-max-microvolt = <7150000>;
++			regulator-always-on;
++		};
++
++		vpos {
++			regulator-name = "lcd_vpos";
++			regulator-min-microvolt = <4000000>;
++			regulator-max-microvolt = <6500000>;
++		};
++
++		vneg {
++			regulator-name = "lcd_vneg";
++			regulator-min-microvolt = <4000000>;
++			regulator-max-microvolt = <6500000>;
++		};
++	};
++
++	backlight {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "ti,lm36274-backlight";
++
++		led@0 {
++			reg = <0>;
++			led-sources = <0 2>;
++			label = "white:backlight_cluster";
++			linux,default-trigger = "backlight";
++		};
++	};
++};
 -- 
-2.20.1
+2.21.0.5.gaeb582a983
