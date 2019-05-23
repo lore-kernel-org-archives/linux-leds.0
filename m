@@ -1,128 +1,67 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v3 2/9] dt: bindings: Add multicolor class dt bindings documention
-Date: Thu, 23 May 2019 14:08:13 -0500
-Message-ID: <20190523190820.29375-3-dmurphy@ti.com>
-References: <20190523190820.29375-1-dmurphy@ti.com>
+Subject: Re: [RESEND PATCH v4 6/6] leds: lm36274: Introduce the TI LM36274 LED
+ driver
+Date: Thu, 23 May 2019 14:09:49 -0500
+Message-ID: <0c2bd6af-92c5-2458-dc41-1ea413545347@ti.com>
+References: <20190522192733.13422-1-dmurphy@ti.com>
+ <20190522192733.13422-7-dmurphy@ti.com> <20190523125012.GB20354@amd>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190523190820.29375-1-dmurphy@ti.com>
+In-Reply-To: <20190523125012.GB20354@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: jacek.anaszewski@gmail.com, broonie@kernel.org, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Add DT bindings for the LEDs multicolor class framework.
+Pavel
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- .../bindings/leds/leds-class-multicolor.txt   | 97 +++++++++++++++++++
- 1 file changed, 97 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+Thanks for the review
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
-new file mode 100644
-index 000000000000..e2a2ce3279cb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
-@@ -0,0 +1,97 @@
-+* Multicolor LED properties
-+
-+Multicolor LEDs can consist of a RGB, RGBW or a RGBA LED clusters.  These devices
-+can be grouped together and also provide a modeling mechanism so that the
-+cluster LEDs can vary in hue and intensity to produce a wide range of colors.
-+
-+The nodes and properties defined in this document are unique to the multicolor
-+LED class.  Common LED nodes and properties are inherited from the common.txt
-+within this documentation directory.
-+
-+Required LED Child properties:
-+	- color : For multicolor LED support this property should be defined as
-+		  LED_COLOR_ID_MULTI and further definition can be found in
-+		  include/linux/leds/common.h.
-+
-+led-controller@30 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	compatible = "ti,lp5024";
-+	reg = <0x29>;
-+
-+	multi-led@4 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <4>;
-+		color = <LED_COLOR_ID_MULTI>;
-+		function = LED_FUNCTION_ACTIVITY;
-+
-+		led@12 {
-+			reg = <12>;
-+			color = <LED_COLOR_ID_RED>;
-+		};
-+
-+		led@13 {
-+			reg = <13>;
-+			color = <LED_COLOR_ID_GREEN>;
-+		};
-+
-+		led@14 {
-+			reg = <14>;
-+			color = <LED_COLOR_ID_BLUE>;
-+		};
-+	};
-+
-+	/* Only support RGB no model defined */
-+	multi-led@1 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <1>;
-+		color = <LED_COLOR_ID_MULTI>;
-+		function = LED_FUNCTION_;
-+
-+
-+		led@3 {
-+			reg = <3>;
-+			color = <LED_COLOR_ID_RED>;
-+		};
-+
-+		led@4 {
-+			reg = <4>;
-+			color = <LED_COLOR_ID_GREEN>;
-+		};
-+
-+		led@5 {
-+			reg = <5>;
-+			color = <LED_COLOR_ID_BLUE>;
-+		};
-+	};
-+
-+	multi-led@2 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		color = <LED_COLOR_ID_MULTI>;
-+		function = LED_FUNCTION_ACTIVITY;
-+		reg = <2>;
-+		ti,led-bank = <2 3 5>;
-+
-+		led@6 {
-+			reg = <0x6>;
-+			color = <LED_COLOR_ID_RED>;
-+			led-sources = <6 9 15>;
-+		};
-+
-+		led@7 {
-+			reg = <0x7>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			led-sources = <7 10 16>;
-+		};
-+
-+		led@8 {
-+			reg = <0x8>;
-+			color = <LED_COLOR_ID_BLUE>;
-+			led-sources = <8 11 17>;
-+		};
-+	};
-+
-+};
--- 
-2.21.0.5.gaeb582a983
+On 5/23/19 7:50 AM, Pavel Machek wrote:
+> Hi!
+> 
+>> +++ b/drivers/leds/leds-lm36274.c
+> 
+>> +static int lm36274_parse_dt(struct lm36274 *lm36274_data)
+>> +{
+>> +	struct fwnode_handle *child = NULL;
+>> +	char label[LED_MAX_NAME_SIZE];
+>> +	struct device *dev = &lm36274_data->pdev->dev;
+>> +	const char *name;
+>> +	int child_cnt;
+>> +	int ret = -EINVAL;
+>> +
+>> +	/* There should only be 1 node */
+>> +	child_cnt = device_get_child_node_count(dev);
+>> +	if (child_cnt != 1)
+>> +		return ret;
+> 
+> I'd do explicit "return -EINVAL" here.
+> 
+
+ACK
+
+>> +static int lm36274_probe(struct platform_device *pdev)
+>> +{
+>> +	struct ti_lmu *lmu = dev_get_drvdata(pdev->dev.parent);
+>> +	struct lm36274 *lm36274_data;
+>> +	int ret;
+>> +
+>> +	lm36274_data = devm_kzalloc(&pdev->dev, sizeof(*lm36274_data),
+>> +				    GFP_KERNEL);
+>> +	if (!lm36274_data) {
+>> +		ret = -ENOMEM;
+>> +		return ret;
+>> +	}
+> 
+> And certainly do "return -ENOMEM" explicitly here.
+> 
+
+ACK
+
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> 									Pavel
+> 
