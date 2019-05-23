@@ -1,7 +1,7 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v3 7/9] dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
-Date: Thu, 23 May 2019 14:08:18 -0500
-Message-ID: <20190523190820.29375-8-dmurphy@ti.com>
+Subject: [PATCH v3 4/9] dt-bindings: leds: Add multicolor ID to the color ID  list
+Date: Thu, 23 May 2019 14:08:15 -0500
+Message-ID: <20190523190820.29375-5-dmurphy@ti.com>
 References: <20190523190820.29375-1-dmurphy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -13,169 +13,27 @@ To: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org
 Cc: devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-Introduce the bindings for the Texas Instruments LP5036, LP5030, LP5024 and
-LP5018 RGB LED device driver.  The LP5036/30/24/18 can control RGB LEDs
-individually or as part of a control bank group.  These devices have the ability
-to adjust the mixing control for the RGB LEDs to obtain different colors
-independent of the overall brightness of the LED grouping.
-
-Datasheet:
-http://www.ti.com/lit/ds/symlink/lp5024.pdf
-http://www.ti.com/lit/ds/symlink/lp5036.pdf
+Add a new color ID that is declared as MULTICOLOR as with the
+multicolor framework declaring a definitive color is not accurate
+as the node can contain multiple colors.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- .../devicetree/bindings/leds/leds-lp50xx.txt  | 142 ++++++++++++++++++
- 1 file changed, 142 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+ include/dt-bindings/leds/common.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lp50xx.txt b/Documentation/devicetree/bindings/leds/leds-lp50xx.txt
-new file mode 100644
-index 000000000000..531e6a55fac3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-lp50xx.txt
-@@ -0,0 +1,142 @@
-+* Texas Instruments - LP5018/24/30/36 RGB LED driver
-+
-+The LP50XX is multi-channel, I2C RGB LED Drivers that can group RGB LEDs into
-+a LED group or control them individually.
-+
-+The difference in these RGB LED drivers is the number of supported RGB modules.
-+
-+Required parent properties:
-+	- compatible:
-+		"ti,lp5018"
-+		"ti,lp5024"
-+		"ti,lp5030"
-+		"ti,lp5036"
-+	- reg :  I2C slave address
-+		lp5018/24 - 0x28
-+		lp5030/36 - 0x30
-+	- #address-cells : 1
-+	- #size-cells : 0
-+
-+Optional parent properties:
-+	- enable-gpios : gpio pin to enable/disable the device.
-+	- vled-supply : LED supply
-+
-+Required child properties:
-+	- #address-cells : 1
-+	- #size-cells : 0
-+	- reg : This is the LED module number.
-+	- color : see Documentation/devicetree/bindings/leds/common.txt
-+	- function : see Documentation/devicetree/bindings/leds/common.txt
-+
-+Required child properties only is LED modules will be banked:
-+	- ti,led-bank : This property denotes the LED module numbers that will
-+			be controlled as a single RGB cluster.  Each LED module
-+			number will be controlled by a single LED class instance.
-+			There can only be one instance of the ti,led-bank
-+			property for each device node.
-+
-+Required grandchildren properties:
-+	- reg : A single entry denoting the LED module that controls
-+		the RGB cluster.
-+	- color : see Documentation/devicetree/bindings/leds/leds-multicolor.txt
-+	- led-sources : see Documentation/devicetree/bindings/leds/common.txt
-+
-+The LED outputs associated with the LED modules are defined in Table 1 of the
-+corresponding data sheets.
-+
-+LP5018 - 6 Total RGB cluster LED outputs 0-5
-+LP5024 - 8 Total RGB cluster LED outputs 0-7
-+LP5030 - 10 Total RGB cluster LED outputs 0-9
-+LP5036 - 12 Total RGB cluster LED outputs 0-11
-+
-+Optional child properties:
-+	- label : see Documentation/devicetree/bindings/leds/common.txt
-+	- linux,default-trigger :
-+	   see Documentation/devicetree/bindings/leds/common.txt
-+
-+Examples:
-+led-controller@29 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	compatible = "ti,lp5024";
-+	reg = <0x29>;
-+	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
-+	vled-supply = <&vmmcsd_fixed>;
-+
-+	multi-led@2 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <2>;
-+		color = <LED_COLOR_ID_MULTI>;
-+		function = LED_FUNCTION_STANDBY;
-+		ti,led-bank = <2 3 5>;
-+
-+		led@6 {
-+			reg = <0x6>;
-+			color = <LED_COLOR_ID_RED>;
-+			led-sources = <6 9 15>;
-+		};
-+
-+		led@7 {
-+			reg = <0x7>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			led-sources = <7 10 16>;
-+		};
-+
-+		led@8 {
-+			reg = <0x8>;
-+			color = <LED_COLOR_ID_BLUE>;
-+			led-sources = <8 11 17>;
-+		};
-+	};
-+
-+	multi-led@1 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <1>;
-+		color = <LED_COLOR_ID_MULTI>;
-+		function = LED_FUNCTION_STATUS;
-+
-+		led@3 {
-+			reg = <3>;
-+			color = <LED_COLOR_ID_RED>;
-+		};
-+
-+		led@4 {
-+			reg = <4>;
-+			color = <LED_COLOR_ID_GREEN>;
-+		};
-+
-+		led@5 {
-+			reg = <5>;
-+			color = <LED_COLOR_ID_BLUE>;
-+		};
-+	};
-+
-+	multi-led@4 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <4>;
-+		color = <LED_COLOR_ID_MULTI>;
-+		function = LED_FUNCTION_ACTIVITY;
-+
-+		led@12 {
-+			reg = <12>;
-+			color = <LED_COLOR_ID_RED>;
-+		};
-+
-+		led@13 {
-+			reg = <13>;
-+			color = <LED_COLOR_ID_GREEN>;
-+		};
-+
-+		led@14 {
-+			reg = <14>;
-+			color = <LED_COLOR_ID_BLUE>;
-+		};
-+	};
-+};
-+
-+For more product information please see the link below:
-+http://www.ti.com/lit/ds/symlink/lp5024.pdf
-+http://www.ti.com/lit/ds/symlink/lp5036.pdf
+diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
+index d8c8c38700bd..259cea653844 100644
+--- a/include/dt-bindings/leds/common.h
++++ b/include/dt-bindings/leds/common.h
+@@ -65,6 +65,7 @@
+ #define LED_COLOR_ID_VIOLET	5
+ #define LED_COLOR_ID_YELLOW	6
+ #define LED_COLOR_ID_IR		7
+-#define LED_COLOR_ID_COUNT	8
++#define LED_COLOR_ID_MULTI	8
++#define LED_COLOR_ID_COUNT	9
+ 
+ #endif /* __DT_BINDINGS_LEDS_H */
 -- 
 2.21.0.5.gaeb582a983
