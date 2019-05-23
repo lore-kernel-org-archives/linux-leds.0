@@ -1,123 +1,78 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [GIT PULL] Immutable branch between LEDs, MFD and REGULATOR
-Date: Thu, 23 May 2019 09:31:29 +0100
-Message-ID: <20190523083129.GH4574@dell>
-References: <20190521203038.31946-1-jacek.anaszewski@gmail.com>
- <20190522054256.GA4574@dell>
- <3492171a-bcdc-bee2-684c-e1029653a811@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [RESEND PATCH v4 5/6] dt-bindings: leds: Add LED bindings for
+ the LM36274
+Date: Thu, 23 May 2019 14:43:54 +0200
+Message-ID: <20190523124354.GA20354@amd>
+References: <20190522192733.13422-1-dmurphy@ti.com>
+ <20190522192733.13422-6-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <3492171a-bcdc-bee2-684c-e1029653a811@gmail.com>
+In-Reply-To: <20190522192733.13422-6-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, broonie@kernel.org
+To: Dan Murphy <dmurphy@ti.com>
+Cc: jacek.anaszewski@gmail.com, broonie@kernel.org, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, 22 May 2019, Jacek Anaszewski wrote:
 
-> On 5/22/19 7:42 AM, Lee Jones wrote:
-> > On Tue, 21 May 2019, Jacek Anaszewski wrote:
-> > 
-> > > The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-> > > 
-> > >    Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-> > > 
-> > > are available in the git repository at:
-> > > 
-> > >    git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/ti-lmu-led-drivers
-> > > 
-> > > for you to fetch changes up to 13f5750a60b923d8f3f0e23902f2ece46dd733d7:
-> > > 
-> > >    leds: lm36274: Introduce the TI LM36274 LED driver (2019-05-21 20:34:19 +0200)
-> > > 
-> > > ----------------------------------------------------------------
-> > > TI LMU LED support rework and introduction of two new drivers
-> > > with DT bindings:
-> > > 
-> > > - leds-lm3697 (entails additions to lm363x-regulator.c)
-> > > - leds-lm36274
-> > > ----------------------------------------------------------------
-> > > Dan Murphy (12):
-> > 
-> > >        dt-bindings: mfd: LMU: Add the ramp up/down property
-> > >        dt-bindings: mfd: LMU: Add ti,brightness-resolution
-> > >        mfd: ti-lmu: Remove support for LM3697
-> > >        mfd: ti-lmu: Add LM36274 support to the ti-lmu
-> > 
-> > These patches were Acked "for my own reference", which means I'd
-> > at least expect a discussion on how/where they would be applied.
-> > 
-> > It's fine for them to go in via the LED tree in this instance and I do
-> > thank you for sending a PR.  Next time can we at least agree on the
-> > route-in though please?
-> 
-> Usually ack from the colliding subsystem maintainer means he
-> acknowledges the patch and gives silent approval for merging
-> it via the other tree.
+--envbJBWh7q8WU6mo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Usually the type of Ack you mention takes this form:
+On Wed 2019-05-22 14:27:32, Dan Murphy wrote:
+> Add the LM36274 LED specific bindings.
+>=20
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  .../devicetree/bindings/leds/leds-lm36274.txt | 82 +++++++++++++++++++
+>  1 file changed, 82 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.t=
+xt
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lm36274.txt b/Do=
+cumentation/devicetree/bindings/leds/leds-lm36274.txt
+> new file mode 100644
+> index 000000000000..329393700191
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-lm36274.txt
+> @@ -0,0 +1,82 @@
+> +* Texas Instruments LM36274 4-Channel LCD Backlight Driver w/Integrated =
+Bias
+> +
+> +The LM36274 is an integrated four-channel WLED driver and LCD bias suppl=
+y.
+> +The backlight boost provides the power to bias four parallel LED strings=
+ with
+> +up to 29V total output voltage. The 11-bit LED current is programmable v=
+ia
+> +the I2C bus and/or controlled via a logic level PWM input from 60 ??A to=
+ 30 mA.
 
-  Acked-by: Lee Jones <lee.jones@linaro.org>
+??A -> uA.
 
-However, the one I provided looks like this:
+Otherwise:
 
-  For my own reference:
-    Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Which clearly says "for my own reference" and not to be taken as an
-indication that it's okay for the patch(es) to go in via another
-tree.
+--envbJBWh7q8WU6mo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> This is the usual workflow e.g. in case of massive reworks
-> of commonly shared kernel APIs.
-> 
-> Your Acked-for-MFD-by tag is not documented anywhere and I've just
-> found out about its exact meaning :-) Note also that it percolated
-> to the mainline git history probably because people mistakenly assumed
-> it was some new convention (despite that checkpatch.pl complains about
-> it). So far there are 12 occurrences thereof in git. I must admit that
-> I once unduly made my contribution to that mess.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Being MFD maintainer presents an uncommon and awkward scenario.  MFD
-is special in that it means we have to work more cross-subsystem than
-most (any?).  The default for MFD related patch-sets which traverse
-multiple subsystem is for them to go in via MFD with Acks from all the
-other maintainers.  I'm always happy to discuss different merge
-strategies, but using the MFD repo is the norm.
+iEYEARECAAYFAlzmlYoACgkQMOfwapXb+vKqwQCguE1tYsJKSdrCZlp4APCde3/D
+J+AAnRSO8dODevspq37ZGOhKif55TPKL
+=vVX+
+-----END PGP SIGNATURE-----
 
-The Acked-*-by you see above came as a result of a conversation
-between myself and Maintainers I work with the most.  It was seen as
-the most succinct way of saying that the patch has been reviewed,
-whilst providing the least amount of confusion w.r.t. whether it's
-okay to be applied to another tree or not.  The "for my own reference"
-should be clear enough that I provide that tag for my own purposes,
-rather than an okay for others to merge it.
-
-> Of course, now being taught about the exact meaning of the tag,
-> I will proceed accordingly.
-
-I'd appreciate that, thank you.
-
-> Regarding this one - please hold on for a while with pulling
-> the stuff, since we may have some updates from REGULATOR maintainers
-> (hopefully Acked-by).
-
-I haven't pulled this yet, but please bear in mind ...
-
-Once an immutable branch is created, it should never, ever change.  I
-think this is the second pull-request I've had from you [0] and the
-second one you've wanted to retract.  That should not happen!
-
-This is precisely why I usually find it better for patches to go in
-via the MFD tree.
-
-[0] [GIT PULL] LM3532 backlight support improvements and relocation
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+--envbJBWh7q8WU6mo--
