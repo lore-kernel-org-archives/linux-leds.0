@@ -1,80 +1,287 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [RESEND PATCH v4 6/6] leds: lm36274: Introduce the TI LM36274 LED
- driver
-Date: Fri, 24 May 2019 22:51:09 +0200
-Message-ID: <89a80aa8-66ee-d0ec-fa54-c55ca8de06af@gmail.com>
-References: <20190522192733.13422-1-dmurphy@ti.com>
- <20190522192733.13422-7-dmurphy@ti.com> <20190523125012.GB20354@amd>
- <0c2bd6af-92c5-2458-dc41-1ea413545347@ti.com>
+Subject: Re: Droid 4 backlight support
+Date: Fri, 24 May 2019 23:49:10 +0200
+Message-ID: <9285721b-8060-df59-7cdb-9cdd00b843ca@gmail.com>
+References: <20190523220047.GA15523@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+ boundary="------------CA1046244CA7FB683BBA048E"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0c2bd6af-92c5-2458-dc41-1ea413545347@ti.com>
+In-Reply-To: <20190523220047.GA15523@amd>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, dmurphy@ti.com, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org, nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
 List-Id: linux-leds@vger.kernel.org
+
+This is a multi-part message in MIME format.
+--------------CA1046244CA7FB683BBA048E
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 
 Hi,
 
-On 5/23/19 9:09 PM, Dan Murphy wrote:
-> Pavel
+On 5/24/19 12:00 AM, Pavel Machek wrote:
+> Hi!
 > 
-> Thanks for the review
+> Good news .. we have driver for backlight in mainline, AFAICT.
 > 
-> On 5/23/19 7:50 AM, Pavel Machek wrote:
->> Hi!
->>
->>> +++ b/drivers/leds/leds-lm36274.c
->>
->>> +static int lm36274_parse_dt(struct lm36274 *lm36274_data)
->>> +{
->>> +	struct fwnode_handle *child = NULL;
->>> +	char label[LED_MAX_NAME_SIZE];
->>> +	struct device *dev = &lm36274_data->pdev->dev;
->>> +	const char *name;
->>> +	int child_cnt;
->>> +	int ret = -EINVAL;
->>> +
->>> +	/* There should only be 1 node */
->>> +	child_cnt = device_get_child_node_count(dev);
->>> +	if (child_cnt != 1)
->>> +		return ret;
->>
->> I'd do explicit "return -EINVAL" here.
->>
+> Bad news .. it is called "lm3532::backlight" or something like that. I
+> guess we should switch to ":backlight" or something? It is quite
+> important to do that before someone starts to use the ABI...
 > 
-> ACK
-> 
->>> +static int lm36274_probe(struct platform_device *pdev)
->>> +{
->>> +	struct ti_lmu *lmu = dev_get_drvdata(pdev->dev.parent);
->>> +	struct lm36274 *lm36274_data;
->>> +	int ret;
->>> +
->>> +	lm36274_data = devm_kzalloc(&pdev->dev, sizeof(*lm36274_data),
->>> +				    GFP_KERNEL);
->>> +	if (!lm36274_data) {
->>> +		ret = -ENOMEM;
->>> +		return ret;
->>> +	}
->>
->> And certainly do "return -ENOMEM" explicitly here.
->>
-> 
-> ACK
-> 
->> Acked-by: Pavel Machek <pavel@ucw.cz>
+> And now... we have the driver, but it is not connected to the
+> backlight subsystem. I guess we could make the LED "default on" for
+> now... but if there's better plan, let me know.
 
-I've done all amendments requested by Pavel and updated branch
-ib-leds-mfd-regulator on linux-leds.git, but in the same time
-dropped the merge from the for-next.
+backlight trigger is added to fb_notifier_list
+defined in drivers/video/fbdev/core/fb_notify.c.
+Backlight subsystem is registered on the same notifications
+in drivers/video/backlight.backlight.c.
 
-We will proceed further once we clarify the issue of cross-merging
-recently raised again by Linus.
+So they are somehow related.
+
+Regarding the LED class device name - when I tried to come up
+with a description for each standardized LED function I realized
+that in case of many functions it would be indeed very useful
+to have devicename. For backlight LED it would be "associated
+frame buffer device node name, e.g. fb0".
+
+Attached is what I came up with, and I was going to send to the
+list officially with the v5 of LED naming patch set.
 
 -- 
 Best regards,
 Jacek Anaszewski
+
+--------------CA1046244CA7FB683BBA048E
+Content-Type: text/plain; charset=UTF-8;
+ name="led-functions.txt"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="led-functions.txt"
+
+This file presents standardized LED functions and their meaning.
+
+Each LED function is described using below template:
+
+- LED function name
+    NDEV : <function meaning when LED devicename section is absent>
+    DEV  : <function meaning when LED devicename section is present>
+    DEVICENAME : <expected LED devicename for DEV case>
+    TRIGGER: <matching LED trigger>
+
+/* LED functions with corresponding trigger support */
+
+- activity
+    NDEV : system activity
+    DEV  : n/a
+    TRIGGER : "activity"
+
+- backlight
+    NDEV : n/a
+    DEV  : backlight of a frame buffer device
+    DEVICENAME : associated frame buffer device, e.g. fb0
+    TRIGGER: "backlight"
+
+- capslock
+    NDEV : n/a
+    DEV  : keyboard capslock state related to the particular input device
+    DEVICENAME : associated input device, e.g. input1
+    TRIGGER : "kbd-capslock"
+
+- disk
+    NDEV : rw activity on any disk in the system
+    DEV  : rw activity on particular disk
+    DEVICENAME : associated disk, e.g.: hda, sdb
+    TRIGGER : "disk-activity", applies only to NDEV case
+
+- disk-read
+    NDEV : read activity on any disk in the system
+    DEV  : read activity on particular disk
+    DEVICENAME : associted disk, e.g.: hda, sdb
+    TRIGGER : "disk-read", applies only to NDEV case
+
+- disk-write
+    NDEV : write activity on any disk in the system
+    DEV  : write activity on particular disk
+    DEVICENAME : associated disk, .e.g" hda, sdb
+    TRIGGER : "disk-write", applies only to NDEV case
+
+- flash
+    NDEV : flash LED (if there is single available on the platform)
+    DEV  : flash LED related to the particular video device
+    DEVICENAME : associated video device, e.g. v4l2-subdev3
+    TRIGGER : "flash"; this LED can be also controlled by v4l2-flash framework
+
+- flash-front
+    NDEV : n/a
+    DEV  : front flash LED related to the particular video device
+    DEVICENAME : associated video device, e.g. v4l2-subdev3
+    TRIGGER : "flash"; this LED can be also controlled by v4l2-flash framework
+
+- flash-rear
+    NDEV : n/a
+    DEV  : rear flash LED related to the particular video device
+    DEVICENAME : associated video device, e.g. v4l2-subdev3
+    TRIGGER : "flash"; this LED can be also controlled by v4l2-flash framework
+
+- heartbeat
+    NDEV : cpu load average expressed as heartbeat-fashion blink frequency
+    DEV  : n/a
+    TRIGGER : "heartbeat"
+
+- lan
+    NDEV : n/a
+    DEV  : network traffic on selected network device
+    DEVICENAME : associated phy, e.g. phy1
+    TRIGGER : "netdev"
+
+- micmute
+    NDEV : platfrom microphone input mute state
+    DEV  : mute state of a microphone belonging to the particular device
+    DEVICENAME : associated audio device
+    TRIGGER : "audio-micmute"
+
+- mtd
+    NDEV : rw actvity on any mtd device in the system
+    DEV  : rw actvity on particular mtd device
+    DEVICENAME : associated mtd device, e.g mtdN
+    TRIGGER : "mtd"
+
+- mute
+    NDEV : platform audio output mute state
+    DEV  : mute state of particular audio device output
+    DEVICENAME : associated audio device
+    TRIGGER : "audio-mute"
+
+- numlock
+    NDEV : n/a
+    DEV  : keyboard numlock state related to the particular input device
+    DEVICENAME : associated input device, e.g. input1
+    TRIGGER : "kbd-numlock"
+
+- panic
+    NDEV : signals kernel panic
+    DEV  : n/a
+    TRIGGER : "panic"
+
+- scrolllock
+    NDEV : n/a
+    DEV  : keyboard scrollock state related to the particular input device
+    DEVICENAME : associated input device, e.g. input1
+    TRIGGER : "kbd-scrolllock"
+
+- torch
+    NDEV : torch LED (if there is single available on the platform)
+    DEV  : torch LED related to the particular video device
+    DEVICENAME : associated video device, e.g. video1, v4l2-subdev3
+    TRIGGER : "torch"; this LED can be also controlled by v4l2-flash framework
+
+- usb
+    NDEV : activity on any USB port
+    DEV  : activity on a particular USB port
+    DEVICENAME: associated USB device identifier
+    TRIGGER : "usbport"
+
+/* LED functions without corresponding trigger support */
+
+- alarm
+    NDEV : system wide alarm
+    DEV  : n/a
+
+- bluetooth
+    NDEV : activity on platform bluetooth adapter
+    DEV  : activity on bluetooth adapter related to the particular device
+    DEVICENAME : associated device
+
+- boot
+    NDEV : when lit indicates system boot
+    DEV  : n/a
+
+- charging
+    NDEV : battery charging status
+    DEV  : n/a
+
+- debug
+    NDEV : signals if device runs in debug mode
+    DEV  : n/a
+
+- disk-err
+    NDEV : failure on any disk in the system
+    DEV  : failure on particular disk
+    DEVICENAME : associted disk, e.g.: hda, sdb
+
+- fault
+    NDEV : general system fault
+    DEV  : fault on particular system device
+    DEVICENAME : related device name
+
+- indicator
+    NDEV : signals if platform camera sensor is active
+    DEV  : signals if camera sensor related to the particular video device is active
+    DEVICENAME : associated video device, e.g.: v4l2-subdev3
+
+- kbd_backlight	- keyboard backlight
+    NDEV : n/a
+    DEV  : backlight state related to the particular input device
+    DEVICENAME : associated input device, e.g. input1
+
+- mail
+    NDEV : signals a new massage in mailbox
+    DEV  : n/a
+
+- programming
+    NDEV : platform firmware update is in progress
+    DEV  : n/a
+
+- power
+    NDEV : power plug presence indicator
+    DEV  : n/a
+
+- rx
+    NDEV : n/a
+    DEV  : activity on rx line of serial port related to the particular tty device
+    DEVICENAME: associated tty device, e.g.: tty1, ttyUSB2
+
+- sd
+    NDEV : n/a
+    DEV  : activity on sd card related to the particular device
+    DEVICENAME: associated disk, e.g. sdb
+
+- sleep
+    NDEV : signals any variant of system hibernation or suspend state
+    DEV  : n/a
+
+- standby
+    NDEV : device standby status
+    DEV  : n/a
+
+- status
+    NDEV : system wide status LED
+    DEV  : n/a
+
+- system
+    NDEV : system is fully operating
+    DEV  : n/a
+
+- tx
+    NDEV : n/a
+    DEV  : activity on tx line of serial port related to the particular tty device
+    DEVICENAME: associated tty device, e.g.: tty1, ttyUSB2
+
+- wan
+    NDEV : activity on any WAN device
+    DEV  : activity on a particular WAN device
+    DEVICENAME: associated WAN device identifier
+
+- wlan
+    NDEV : activity on any wlan device
+    DEV  : activity on a particular wlan device
+    DEVICENAME: associated wlan device identifier
+
+- wps
+    NDEV : n/a
+    DEV  : wps functionality activation state related to the particular device
+    DEVICENAME : associated device name
+
+--------------CA1046244CA7FB683BBA048E--
