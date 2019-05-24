@@ -1,39 +1,80 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 7/9] dt: bindings: lp50xx: Introduce the lp50xx family
- of RGB drivers
-Date: Fri, 24 May 2019 15:50:22 -0500
-Message-ID: <20190524205022.GA9518@bogus>
-References: <20190523190820.29375-1-dmurphy@ti.com>
- <20190523190820.29375-8-dmurphy@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [RESEND PATCH v4 6/6] leds: lm36274: Introduce the TI LM36274 LED
+ driver
+Date: Fri, 24 May 2019 22:51:09 +0200
+Message-ID: <89a80aa8-66ee-d0ec-fa54-c55ca8de06af@gmail.com>
+References: <20190522192733.13422-1-dmurphy@ti.com>
+ <20190522192733.13422-7-dmurphy@ti.com> <20190523125012.GB20354@amd>
+ <0c2bd6af-92c5-2458-dc41-1ea413545347@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190523190820.29375-8-dmurphy@ti.com>
+In-Reply-To: <0c2bd6af-92c5-2458-dc41-1ea413545347@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+To: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, 23 May 2019 14:08:18 -0500, Dan Murphy wrote:
-> Introduce the bindings for the Texas Instruments LP5036, LP5030, LP5024 and
-> LP5018 RGB LED device driver.  The LP5036/30/24/18 can control RGB LEDs
-> individually or as part of a control bank group.  These devices have the ability
-> to adjust the mixing control for the RGB LEDs to obtain different colors
-> independent of the overall brightness of the LED grouping.
-> 
-> Datasheet:
-> http://www.ti.com/lit/ds/symlink/lp5024.pdf
-> http://www.ti.com/lit/ds/symlink/lp5036.pdf
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  .../devicetree/bindings/leds/leds-lp50xx.txt  | 142 ++++++++++++++++++
->  1 file changed, 142 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
-> 
+Hi,
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
+On 5/23/19 9:09 PM, Dan Murphy wrote:
+> Pavel
+> 
+> Thanks for the review
+> 
+> On 5/23/19 7:50 AM, Pavel Machek wrote:
+>> Hi!
+>>
+>>> +++ b/drivers/leds/leds-lm36274.c
+>>
+>>> +static int lm36274_parse_dt(struct lm36274 *lm36274_data)
+>>> +{
+>>> +	struct fwnode_handle *child = NULL;
+>>> +	char label[LED_MAX_NAME_SIZE];
+>>> +	struct device *dev = &lm36274_data->pdev->dev;
+>>> +	const char *name;
+>>> +	int child_cnt;
+>>> +	int ret = -EINVAL;
+>>> +
+>>> +	/* There should only be 1 node */
+>>> +	child_cnt = device_get_child_node_count(dev);
+>>> +	if (child_cnt != 1)
+>>> +		return ret;
+>>
+>> I'd do explicit "return -EINVAL" here.
+>>
+> 
+> ACK
+> 
+>>> +static int lm36274_probe(struct platform_device *pdev)
+>>> +{
+>>> +	struct ti_lmu *lmu = dev_get_drvdata(pdev->dev.parent);
+>>> +	struct lm36274 *lm36274_data;
+>>> +	int ret;
+>>> +
+>>> +	lm36274_data = devm_kzalloc(&pdev->dev, sizeof(*lm36274_data),
+>>> +				    GFP_KERNEL);
+>>> +	if (!lm36274_data) {
+>>> +		ret = -ENOMEM;
+>>> +		return ret;
+>>> +	}
+>>
+>> And certainly do "return -ENOMEM" explicitly here.
+>>
+> 
+> ACK
+> 
+>> Acked-by: Pavel Machek <pavel@ucw.cz>
 
-If a tag was not added on purpose, please state why and what changed.
+I've done all amendments requested by Pavel and updated branch
+ib-leds-mfd-regulator on linux-leds.git, but in the same time
+dropped the merge from the for-next.
+
+We will proceed further once we clarify the issue of cross-merging
+recently raised again by Linus.
+
+-- 
+Best regards,
+Jacek Anaszewski
