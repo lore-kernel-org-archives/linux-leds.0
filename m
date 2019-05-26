@@ -1,61 +1,51 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH -next] leds: max77650: Remove set but not used variable
- 'parent'
-Date: Sun, 26 May 2019 19:11:34 +0200
-Message-ID: <06cdba20-4bce-6739-7db9-dcf3a3c7b6bf@gmail.com>
-References: <20190525141941.16088-1-yuehaibing@huawei.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: Revert "leds: avoid races with workqueue"?
+Date: Sun, 26 May 2019 19:20:02 +0200
+Message-ID: <20190526172002.GB1282@xo-6d-61-c0.localdomain>
+References: <alpine.LSU.2.11.1905241540080.1674@eggly.anvils>
+ <20190525093759.GA17767@amd>
+ <alpine.LSU.2.11.1905251025300.1112@eggly.anvils>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190525141941.16088-1-yuehaibing@huawei.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.11.1905251025300.1112@eggly.anvils>
 Sender: linux-kernel-owner@vger.kernel.org
-To: YueHaibing <yuehaibing@huawei.com>, bgolaszewski@baylibre.com, pavel@ucw.cz, dmurphy@ti.com
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+To: Hugh Dickins <hughd@google.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi YueHaibing,
+On Sat 2019-05-25 10:32:31, Hugh Dickins wrote:
+> On Sat, 25 May 2019, Pavel Machek wrote:
+> 
+> > Hi!
+> > 
+> > > I'm having to revert 0db37915d912 ("leds: avoid races with workqueue")
+> > > from my 5.2-rc testing tree, because lockdep and other debug options
+> > > don't like it: net/mac80211/led.c arranges for led_blink_setup() to be
+> > > called at softirq time, and flush_work() is not good for calling
+> > > then.
+> > 
+> > This should keep X60 working (as well as it is now; X60 will still
+> > have problems with lost events in setup like yours).
+> > 
+> > Can you test this instead of the revert?
+> 
+> Thanks, Pavel: yes, that works fine for me on the T420s, no debug
+> complaints, good and silent; and the wifi LED is blinking as before.
 
-Thank you for the patch.
+I'd like to prevent recurrence of similar problem, and I wonder if you
+can give me a hint.
 
-On 5/25/19 4:19 PM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/leds/leds-max77650.c: In function max77650_led_probe:
-> drivers/leds/leds-max77650.c:67:17: warning: variable parent set but not used [-Wunused-but-set-variable]
-> 
-> It is never used and can be removed.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->   drivers/leds/leds-max77650.c | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-max77650.c b/drivers/leds/leds-max77650.c
-> index 6b74ce9cac12..8a8e5c65b157 100644
-> --- a/drivers/leds/leds-max77650.c
-> +++ b/drivers/leds/leds-max77650.c
-> @@ -64,7 +64,6 @@ static int max77650_led_probe(struct platform_device *pdev)
->   {
->   	struct device_node *of_node, *child;
->   	struct max77650_led *leds, *led;
-> -	struct device *parent;
->   	struct device *dev;
->   	struct regmap *map;
->   	const char *label;
-> @@ -72,7 +71,6 @@ static int max77650_led_probe(struct platform_device *pdev)
->   	u32 reg;
->   
->   	dev = &pdev->dev;
-> -	parent = dev->parent;
->   	of_node = dev->of_node;
->   
->   	if (!of_node)
-> 
+I can annotate code that can sleep with might_sleep().
 
-Applied.
+How can I annotate code that can not sleep? I might do 
 
--- 
-Best regards,
-Jacek Anaszewski
+spin_lock(&dummy);
+this_should_not_sleep();
+spin_unlock(&dummy);
+
+But I don't really need extra serialization. I just want annotations for
+lockdep. Any ideas?
+
+								Pavel
