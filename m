@@ -1,49 +1,41 @@
 From: Hugh Dickins <hughd@google.com>
-Subject: Re: leds: avoid flush_work in atomic context
-Date: Sun, 26 May 2019 12:34:54 -0700 (PDT)
-Message-ID: <alpine.LSU.2.11.1905261226040.2004@eggly.anvils>
-References: <20190526073854.GA13681@amd> <5a741b3c-cf45-3577-9b6c-653f083ca96b@gmail.com> <20190526173700.GD1282@xo-6d-61-c0.localdomain>
+Subject: Re: Revert "leds: avoid races with workqueue"?
+Date: Sun, 26 May 2019 13:36:11 -0700 (PDT)
+Message-ID: <alpine.LSU.2.11.1905261318290.2394@eggly.anvils>
+References: <alpine.LSU.2.11.1905241540080.1674@eggly.anvils> <20190525093759.GA17767@amd> <alpine.LSU.2.11.1905251025300.1112@eggly.anvils> <20190526172002.GB1282@xo-6d-61-c0.localdomain>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190526173700.GD1282@xo-6d-61-c0.localdomain>
+In-Reply-To: <20190526172002.GB1282@xo-6d-61-c0.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, hughd@google.com, linux-leds@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>
+Cc: Hugh Dickins <hughd@google.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 On Sun, 26 May 2019, Pavel Machek wrote:
-> Hi!
-> 
-> > Thank you for the patch.
+> On Sat 2019-05-25 10:32:31, Hugh Dickins wrote:
 > > 
-> > I've applied it however I'm not sure if it is an official
-> > submission, since it doesn't look like (no [PATCH] tag
-> > in the subject).
+> > Thanks, Pavel: yes, that works fine for me on the T420s, no debug
+> > complaints, good and silent; and the wifi LED is blinking as before.
 > 
-> It was official submission :-).
+> I'd like to prevent recurrence of similar problem, and I wonder if you
+> can give me a hint.
 > 
-> > Beside that 'Fixes' tag is somewhat incomplete - it should be
-> > generated using following git command:
-> > 
-> > git log -1 0db37915d912 --format='Fixes: %h ("%s")'
-> > 
-> > Fixed that and applied to the for-next branch and will push
-> > it upstream after a bit of testing for rc3 or rc4.
+> I can annotate code that can sleep with might_sleep().
 > 
-> Ok. Note that this did not crash Hugh's machine but it may crash
-> someone else's, and probably crashed mine already.
-
-Where "this" is commit 0db37915d912, I hope: right, it did not
-actually crash my machine, but the splurge of warning messages
-forced me to reboot quickly, and go look for the culprit.
-
-Your fix certainly did not crash my machine either,
-but I hope we don't expect your fix to crash someone else's!
-
+> How can I annotate code that can not sleep? I might do 
 > 
-> So... it makes sense to push it to Linus "soon".
+> spin_lock(&dummy);
+> this_should_not_sleep();
+> spin_unlock(&dummy);
+> 
+> But I don't really need extra serialization. I just want annotations for
+> lockdep. Any ideas?
 
-Agreed.
+I haven't tried to do that directly, so I'm likely to give bad advice:
+in particular, I forget the limitations of checking in_atomic().
+
+But very useful (and much cheaper than lockdep) debug options in
+this area are CONFIG_DEBUG_PREEMPT and CONFIG_DEBUG_ATOMIC_SLEEP.
 
 Hugh
