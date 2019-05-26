@@ -1,76 +1,63 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: Disk activity trigger: keeps blinking under full load
-Date: Sun, 26 May 2019 10:18:06 +0200
-Message-ID: <20190526081806.GA16279@amd>
-References: <20190523214301.GA14788@amd>
- <67fee5a8-cba1-79aa-104c-84bbe0e168e9@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RESEND PATCH v4 1/6] regulator: lm363x: Make the gpio register
+ enable flexible
+Date: Sun, 26 May 2019 13:48:38 +0100
+Message-ID: <20190526124838.GH2456@sirena.org.uk>
+References: <20190522192733.13422-1-dmurphy@ti.com>
+ <20190522192733.13422-2-dmurphy@ti.com>
+ <20190523130311.GA17245@sirena.org.uk>
+ <d4673abc-442c-83eb-1830-7f7ed9d8419e@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8/pVXlBMPtxfSuJG"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <67fee5a8-cba1-79aa-104c-84bbe0e168e9@gmail.com>
+In-Reply-To: <d4673abc-442c-83eb-1830-7f7ed9d8419e@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linz@li-pro.net, rpurdie@rpsys.net
+To: Dan Murphy <dmurphy@ti.com>
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 
---sm4nu43k4a2Rpi4c
+--8/pVXlBMPtxfSuJG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat 2019-05-25 19:02:47, Jacek Anaszewski wrote:
-> Hi,
->=20
-> On 5/23/19 11:43 PM, Pavel Machek wrote:
-> >Hi!
-> >
-> >I'm trying to use disk activity trigger on a scrollock LED... but it
-> >significantly differs from "usual" disk LED: even under "full" disk
-> >activity (linear read) where it should be solidly "on", it keeps
-> >blinking.
-> >
-> >I guess that's what led_trigger_blink_oneshot() does. I tried to
-> >change the parameters... off_delay =3D=3D 0 breaks it completely, and ev=
-en
-> >with delay of 1 it behaves very weirdly.
-> >
-> >Is there better helper I should use?
->=20
-> It seems this is the way how led_blink_set_oneshot() works.
-> It initially checks whether timer is pending and doesn't
-> reset the timer in this case:
->=20
->         if (test_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags) &&
->              timer_pending(&led_cdev->blink_timer))
->                 return;
->=20
-> In effect you get gaps between timer expiration and setting of a new
-> blink shot.
+On Thu, May 23, 2019 at 08:50:20AM -0500, Dan Murphy wrote:
+> On 5/23/19 8:03 AM, Mark Brown wrote:
+> > On Wed, May 22, 2019 at 02:27:28PM -0500, Dan Murphy wrote:
 
-Yep. I consider it a bug (it differs from hardware disk activity LEDs
-and looks horrible).
+> > Is it guaranteed that the bitmask for enabling the use of the GPIO is
+> > going to be the same for all regulators?  The bitmasks for the regulator
+> > enable look to be different, and it also looks like this setting might
+> > affect multiple regulators since it seems there are multiple enable bits
+> > in the same register.  If this affects multiple regulators then how's
+> > that working at the minute?
 
-Is there someone who considers it a feature?
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> Yes for the 3632 and 36274 bit0 is the EXT_EN for LCM on these chips.
+> LM3631 does not have LCM GPIO control so there is no setting and this should not be called.
+> If it is then the developer implemented the DT wrong.
 
---sm4nu43k4a2Rpi4c
+This feels fragile - it works for the current users but it's just
+assuming that the placement of this bit will always be in the same
+position in the same register as the enable and will silently fail if a
+new chip variant does things differently.  Either storing the data
+separately somewhere driver specific or just having explicit switch
+statements would be more robust.
+
+--8/pVXlBMPtxfSuJG
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEUEARECAAYFAlzqS74ACgkQMOfwapXb+vK5lwCY2aJx2EmQ02TQvwWY1vYObBB3
-eQCeLxM5YOpHbDuCdqBQMAtiKqCmIiQ=
-=qDzm
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzqiyUACgkQJNaLcl1U
+h9DtKwgAgwYVujK+ai00tAc8vMnYP77hZtQP9CqqTq6PKk5xDoaPXdedWl0j84c6
+4cf103WBzETd4ECf09dnm5ssZQBw/KQCjspYm20+oQdMqVytCdxRzq3nhC3YBbpy
+Wg2Bg550H8KDNNvHLwoFn7H1FdMtpD98mdJJ7vTXuLFx14vdKZ4Ya5oDEqHXAI4u
+ed5a4UPMTW7ptNb2jk2Mo5vDYP+9K7Z1+pLaCBo7EWUMlYkTKfHk1gnXea/6zCKa
+A6AZtafNbxcsToTsVoWBML7bw3FLH8oyWkm79NFIUZuGB+Zw0Ms98pR63gJXihLf
+rm1njloC7RIodeEOcKIzPVqSKwsjcg==
+=wc2b
 -----END PGP SIGNATURE-----
 
---sm4nu43k4a2Rpi4c--
+--8/pVXlBMPtxfSuJG--
