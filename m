@@ -1,41 +1,63 @@
-From: Hugh Dickins <hughd@google.com>
-Subject: Re: Revert "leds: avoid races with workqueue"?
-Date: Sun, 26 May 2019 13:36:11 -0700 (PDT)
-Message-ID: <alpine.LSU.2.11.1905261318290.2394@eggly.anvils>
-References: <alpine.LSU.2.11.1905241540080.1674@eggly.anvils> <20190525093759.GA17767@amd> <alpine.LSU.2.11.1905251025300.1112@eggly.anvils> <20190526172002.GB1282@xo-6d-61-c0.localdomain>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v3 1/9] leds: multicolor: Add sysfs interface definition
+Date: Mon, 27 May 2019 12:33:56 +0200
+Message-ID: <20190527103355.GA5287@amd>
+References: <20190523190820.29375-1-dmurphy@ti.com>
+ <20190523190820.29375-2-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190526172002.GB1282@xo-6d-61-c0.localdomain>
+Content-Disposition: inline
+In-Reply-To: <20190523190820.29375-2-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Hugh Dickins <hughd@google.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>
+Cc: jacek.anaszewski@gmail.com, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Sun, 26 May 2019, Pavel Machek wrote:
-> On Sat 2019-05-25 10:32:31, Hugh Dickins wrote:
-> > 
-> > Thanks, Pavel: yes, that works fine for me on the T420s, no debug
-> > complaints, good and silent; and the wifi LED is blinking as before.
-> 
-> I'd like to prevent recurrence of similar problem, and I wonder if you
-> can give me a hint.
-> 
-> I can annotate code that can sleep with might_sleep().
-> 
-> How can I annotate code that can not sleep? I might do 
-> 
-> spin_lock(&dummy);
-> this_should_not_sleep();
-> spin_unlock(&dummy);
-> 
-> But I don't really need extra serialization. I just want annotations for
-> lockdep. Any ideas?
 
-I haven't tried to do that directly, so I'm likely to give bad advice:
-in particular, I forget the limitations of checking in_atomic().
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But very useful (and much cheaper than lockdep) debug options in
-this area are CONFIG_DEBUG_PREEMPT and CONFIG_DEBUG_ATOMIC_SLEEP.
+On Thu 2019-05-23 14:08:12, Dan Murphy wrote:
+> Add a documentation of LED Multicolor LED class specific
+> sysfs attributes.
+>=20
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  .../ABI/testing/sysfs-class-led-multicolor    | 57 +++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-class-led-multicolor b/Docum=
+entation/ABI/testing/sysfs-class-led-multicolor
+> new file mode 100644
+> index 000000000000..2f102ede258b
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-class-led-multicolor
+> @@ -0,0 +1,57 @@
+> +What:		/sys/class/leds/<led>/colors/sync_enable
+> +Date:		April 2019
 
-Hugh
+I believe I suggested more reasonable interface. Why not use that?
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzrvRIACgkQMOfwapXb+vJdxQCfXnAO1nLU1TIocQz6gagl1XRu
+PSsAn17PTm9eh3T5EcXZOPxosG8n4/3+
+=xsN+
+-----END PGP SIGNATURE-----
+
+--lrZ03NoBR/3+SXJZ--
