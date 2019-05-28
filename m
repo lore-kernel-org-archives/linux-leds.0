@@ -1,52 +1,51 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v3 1/9] leds: multicolor: Add sysfs interface definition
-Date: Mon, 27 May 2019 19:45:34 -0500
-Message-ID: <522728b0-147b-3708-fea1-88a895491e05@ti.com>
+Subject: Re: [PATCH v3 7/9] dt: bindings: lp50xx: Introduce the lp50xx family
+ of RGB drivers
+Date: Mon, 27 May 2019 19:47:36 -0500
+Message-ID: <fd075387-8b54-ed48-f480-bd673df88ac3@ti.com>
 References: <20190523190820.29375-1-dmurphy@ti.com>
- <20190523190820.29375-2-dmurphy@ti.com> <20190527103355.GA5287@amd>
+ <20190523190820.29375-8-dmurphy@ti.com> <20190524205022.GA9518@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190527103355.GA5287@amd>
+In-Reply-To: <20190524205022.GA9518@bogus>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: jacek.anaszewski@gmail.com, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Pavel
+Rob
 
-On 5/27/19 5:33 AM, Pavel Machek wrote:
-> On Thu 2019-05-23 14:08:12, Dan Murphy wrote:
->> Add a documentation of LED Multicolor LED class specific
->> sysfs attributes.
+On 5/24/19 3:50 PM, Rob Herring wrote:
+> On Thu, 23 May 2019 14:08:18 -0500, Dan Murphy wrote:
+>> Introduce the bindings for the Texas Instruments LP5036, LP5030, LP5024 and
+>> LP5018 RGB LED device driver.  The LP5036/30/24/18 can control RGB LEDs
+>> individually or as part of a control bank group.  These devices have the ability
+>> to adjust the mixing control for the RGB LEDs to obtain different colors
+>> independent of the overall brightness of the LED grouping.
+>>
+>> Datasheet:
+>> http://www.ti.com/lit/ds/symlink/lp5024.pdf
+>> http://www.ti.com/lit/ds/symlink/lp5036.pdf
 >>
 >> Signed-off-by: Dan Murphy <dmurphy@ti.com>
 >> ---
->>   .../ABI/testing/sysfs-class-led-multicolor    | 57 +++++++++++++++++++
->>   1 file changed, 57 insertions(+)
->>   create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+>>   .../devicetree/bindings/leds/leds-lp50xx.txt  | 142 ++++++++++++++++++
+>>   1 file changed, 142 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
 >>
->> diff --git a/Documentation/ABI/testing/sysfs-class-led-multicolor b/Documentation/ABI/testing/sysfs-class-led-multicolor
->> new file mode 100644
->> index 000000000000..2f102ede258b
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-class-led-multicolor
->> @@ -0,0 +1,57 @@
->> +What:		/sys/class/leds/<led>/colors/sync_enable
->> +Date:		April 2019
-> I believe I suggested more reasonable interface. Why not use that?
+> Please add Acked-by/Reviewed-by tags when posting new versions. However,
+> there's no need to repost patches *only* to add the tags. The upstream
+> maintainer will do that for acks received on the version they apply.
 >
+> If a tag was not added on purpose, please state why and what changed.
 
-Can you please provide the reference to your interface?
+I usually provide the tags but in my cover letter I did indicate that 
+these patchsets have changed pretty dramatically so I did not feel right 
+about pulling in anyones tags.
 
-These patchsets have been around for a while (Decemeber 2018) and I 
-cannot seem to find the reference to your suggestion.
-
-The suggestion may have been mired in the brightness model discussions.
-
-So I don't want to over look what you suggested as it may be more 
-reasonable then what I have implemented.
+Adding your reviewed by on a binding that changed did not seem right to me.
 
 Dan
