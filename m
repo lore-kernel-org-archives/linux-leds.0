@@ -1,73 +1,68 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [GIT PULL] Immutable branch between LEDs, MFD and REGULATOR
-Date: Wed, 29 May 2019 22:44:39 +0200
-Message-ID: <5589b6b4-2bbc-a0ef-9c9f-a3ec161b773b@gmail.com>
-References: <20190521203038.31946-1-jacek.anaszewski@gmail.com>
- <20190521211504.GD1580@sirena.org.uk>
- <0340dce2-87fb-938d-615e-376e29f37b54@gmail.com>
- <20190522190225.GH8582@sirena.org.uk>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [RESEND PATCH v4 1/6] regulator: lm363x: Make the gpio register
+ enable flexible
+Date: Wed, 29 May 2019 15:47:08 -0500
+Message-ID: <afd2e445-09a9-a07f-f020-ede6870dce6e@ti.com>
+References: <20190522192733.13422-1-dmurphy@ti.com>
+ <20190522192733.13422-2-dmurphy@ti.com>
+ <20190523130311.GA17245@sirena.org.uk>
+ <d4673abc-442c-83eb-1830-7f7ed9d8419e@ti.com>
+ <20190526124838.GH2456@sirena.org.uk>
+ <2398099b-16e6-f155-5852-45ba3dbc21ef@ti.com>
+ <20190529151000.GP2456@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190522190225.GH8582@sirena.org.uk>
+In-Reply-To: <20190529151000.GP2456@sirena.org.uk>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Mark Brown <broonie@kernel.org>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, lgirdwood@gmail.com
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 5/22/19 9:02 PM, Mark Brown wrote:
-> On Wed, May 22, 2019 at 08:27:32PM +0200, Jacek Anaszewski wrote:
->> On 5/21/19 11:15 PM, Mark Brown wrote:
->>> On Tue, May 21, 2019 at 10:30:38PM +0200, Jacek Anaszewski wrote:
-> 
->>>>         regulator: lm363x: Make the gpio register enable flexible
->>>>         regulator: lm363x: Add support for LM36274
-> 
->>> Why have these been applied, I haven't reviewed them?  As far as I can
->>> tell they were sent before the merge window so I'd expect a resend at
->>> this point...
-> 
->> The patch set have been floating around for some time and besides
-> 
-> Most of that time as far as I can tell they weren't being posted to
-> subsystem maintainers, you can't expect people to be aware of patches
-> that they are not being sent and single postings get missed or dropped
-> for all sorts of reasons.
-> 
->> the v2 you were cc'ed by Dan, I also poked you a week ago for v4 [1].
-> 
-> That post from a week ago was you copying me into a thread I wasn't CCed
-> on saying I should have been sent the patches.  My expectation would
-> therefore be that someone would send me the patches, I'm obviously going
-> to prioritize patches that actually get sent to me over ones where I
-> have to go searching to try to turn up copies.
+Mark
 
-I admit I should have CC'ed you the exact patches and not only
-the cover letter.
+On 5/29/19 10:10 AM, Mark Brown wrote:
+> On Wed, May 29, 2019 at 06:51:32AM -0500, Dan Murphy wrote:
+>
+>> Although I don't disagree with you I don't see how the interface is fragile
+>> with only these 3 regulators defined.
+>> Would it not be prudent to amend this driver if/when a new regulator is
+>> needed that has a different enable bit/register combination?   And if that
+> The fragility I'm worried about is someone forgetting to make suitable
+> updates, especially if they don't use the feature in their own system.
 
->> Don't be surprised that I assumed you simply don't care.
-> 
-> You have unreasonable expectations here.  At the very least I would have
-> expected something along the lines of "hey, you don't seem to have
-> looked at these" before you just applied things, and ideally ensuring
-> that the patches had actually been sent to everyone with a reasonable
-> lead time so there was a good chance that review could happen.
+If they don't define the enable GPIO in the device tree then the gpio 
+descriptor pointer is NULL and the register write does not occur.
 
-In fact you were notified only of v2 of the patch set AFAICS.
-There is indeed a chance it might have gone unnoticed through
-your mailbox (or classified otherwise).
+The documentation indicates that this is only applicable for 3632 I need 
+to add the LM36274.
 
-I need to be more wary in such cases in the future.
+>> was the case I would almost expect a different driver completely if the
+>> regmap did not line up correctly.  I only reused this driver because the
+>> registers and bits lined up and did not think it was necessary to create a
+>> whole new driver.
+> This is a single register bit which is set once on startup isn't it?  It
+> seems like exactly the sort of thing that a hardware designer might
+> change incompatibly, perhaps even for good reasons like adding more
+> flexibility over which pins can be used to control the enable and far
+> from something that would require a totally new driver if it was handled
+> differently.
 
->> Still, we're awaiting your comments
-> 
-> If someone sends me the patches...
-> 
->> [0] https://lkml.org/lkml/2019/4/10/547
->> [1] https://lkml.org/lkml/2019/5/14/717
+Currently I don't have a device in this family that requires this level 
+of flexibility for this pin or configuration.
 
--- 
-Best regards,
-Jacek Anaszewski
+So if a need should arise should we not implement that flexibility at 
+that point?
+
+Not only this but the gpio descriptor is protected in 
+lm363x_regulator_of_get_enable_gpio due to checking of the regulator 
+ID.  As in patch #4 of this series if LM3632 or LM36274 check for enable 
+definition in the DT and create the descriptor if found.  If it is any 
+other regulator then don't do anything.
+
+If the HW designer changes these bits we end up with a new part and then 
+at that point we could add code to redefine the bit mask as well.
+
+Dan
