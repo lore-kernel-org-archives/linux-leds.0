@@ -1,68 +1,86 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [RESEND PATCH v4 1/6] regulator: lm363x: Make the gpio register
- enable flexible
-Date: Wed, 29 May 2019 15:47:08 -0500
-Message-ID: <afd2e445-09a9-a07f-f020-ede6870dce6e@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [RESEND PATCH v4 6/6] leds: lm36274: Introduce the TI LM36274 LED
+ driver
+Date: Wed, 29 May 2019 22:50:32 +0200
+Message-ID: <afff7c24-bb68-e9dc-295e-4449f9729cc9@gmail.com>
 References: <20190522192733.13422-1-dmurphy@ti.com>
- <20190522192733.13422-2-dmurphy@ti.com>
- <20190523130311.GA17245@sirena.org.uk>
- <d4673abc-442c-83eb-1830-7f7ed9d8419e@ti.com>
- <20190526124838.GH2456@sirena.org.uk>
- <2398099b-16e6-f155-5852-45ba3dbc21ef@ti.com>
- <20190529151000.GP2456@sirena.org.uk>
+ <20190522192733.13422-7-dmurphy@ti.com> <20190523125012.GB20354@amd>
+ <0c2bd6af-92c5-2458-dc41-1ea413545347@ti.com>
+ <89a80aa8-66ee-d0ec-fa54-c55ca8de06af@gmail.com> <20190529135821.GK4574@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190529151000.GP2456@sirena.org.uk>
+In-Reply-To: <20190529135821.GK4574@dell>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>, broonie@kernel.org, lgirdwood@gmail.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Mark
+On 5/29/19 3:58 PM, Lee Jones wrote:
+> On Fri, 24 May 2019, Jacek Anaszewski wrote:
+> 
+>> Hi,
+>>
+>> On 5/23/19 9:09 PM, Dan Murphy wrote:
+>>> Pavel
+>>>
+>>> Thanks for the review
+>>>
+>>> On 5/23/19 7:50 AM, Pavel Machek wrote:
+>>>> Hi!
+>>>>
+>>>>> +++ b/drivers/leds/leds-lm36274.c
+>>>>
+>>>>> +static int lm36274_parse_dt(struct lm36274 *lm36274_data)
+>>>>> +{
+>>>>> +	struct fwnode_handle *child = NULL;
+>>>>> +	char label[LED_MAX_NAME_SIZE];
+>>>>> +	struct device *dev = &lm36274_data->pdev->dev;
+>>>>> +	const char *name;
+>>>>> +	int child_cnt;
+>>>>> +	int ret = -EINVAL;
+>>>>> +
+>>>>> +	/* There should only be 1 node */
+>>>>> +	child_cnt = device_get_child_node_count(dev);
+>>>>> +	if (child_cnt != 1)
+>>>>> +		return ret;
+>>>>
+>>>> I'd do explicit "return -EINVAL" here.
+>>>>
+>>>
+>>> ACK
+>>>
+>>>>> +static int lm36274_probe(struct platform_device *pdev)
+>>>>> +{
+>>>>> +	struct ti_lmu *lmu = dev_get_drvdata(pdev->dev.parent);
+>>>>> +	struct lm36274 *lm36274_data;
+>>>>> +	int ret;
+>>>>> +
+>>>>> +	lm36274_data = devm_kzalloc(&pdev->dev, sizeof(*lm36274_data),
+>>>>> +				    GFP_KERNEL);
+>>>>> +	if (!lm36274_data) {
+>>>>> +		ret = -ENOMEM;
+>>>>> +		return ret;
+>>>>> +	}
+>>>>
+>>>> And certainly do "return -ENOMEM" explicitly here.
+>>>>
+>>>
+>>> ACK
+>>>
+>>>> Acked-by: Pavel Machek <pavel@ucw.cz>
+>>
+>> I've done all amendments requested by Pavel and updated branch
+>> ib-leds-mfd-regulator on linux-leds.git, but in the same time
+> 
+> What do you mean by updated?  You cannot update an 'ib' (immutable
+> branch).  Immutable means that it cannot change, by definition.
 
-On 5/29/19 10:10 AM, Mark Brown wrote:
-> On Wed, May 29, 2019 at 06:51:32AM -0500, Dan Murphy wrote:
->
->> Although I don't disagree with you I don't see how the interface is fragile
->> with only these 3 regulators defined.
->> Would it not be prudent to amend this driver if/when a new regulator is
->> needed that has a different enable bit/register combination?   And if that
-> The fragility I'm worried about is someone forgetting to make suitable
-> updates, especially if they don't use the feature in their own system.
+We have already talked about that. Nobody has pulled so the branch
+could have been safely updated.
 
-If they don't define the enable GPIO in the device tree then the gpio 
-descriptor pointer is NULL and the register write does not occur.
-
-The documentation indicates that this is only applicable for 3632 I need 
-to add the LM36274.
-
->> was the case I would almost expect a different driver completely if the
->> regmap did not line up correctly.  I only reused this driver because the
->> registers and bits lined up and did not think it was necessary to create a
->> whole new driver.
-> This is a single register bit which is set once on startup isn't it?  It
-> seems like exactly the sort of thing that a hardware designer might
-> change incompatibly, perhaps even for good reasons like adding more
-> flexibility over which pins can be used to control the enable and far
-> from something that would require a totally new driver if it was handled
-> differently.
-
-Currently I don't have a device in this family that requires this level 
-of flexibility for this pin or configuration.
-
-So if a need should arise should we not implement that flexibility at 
-that point?
-
-Not only this but the gpio descriptor is protected in 
-lm363x_regulator_of_get_enable_gpio due to checking of the regulator 
-ID.  As in patch #4 of this series if LM3632 or LM36274 check for enable 
-definition in the DT and create the descriptor if found.  If it is any 
-other regulator then don't do anything.
-
-If the HW designer changes these bits we end up with a new part and then 
-at that point we could add code to redefine the bit mask as well.
-
-Dan
+-- 
+Best regards,
+Jacek Anaszewski
