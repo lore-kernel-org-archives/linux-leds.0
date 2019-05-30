@@ -1,101 +1,69 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RESEND PATCH v4 6/6] leds: lm36274: Introduce the TI LM36274
- LED driver
-Date: Thu, 30 May 2019 08:38:27 +0100
-Message-ID: <20190530073827.GL4574@dell>
-References: <20190522192733.13422-1-dmurphy@ti.com>
- <20190522192733.13422-7-dmurphy@ti.com>
- <20190523125012.GB20354@amd>
- <0c2bd6af-92c5-2458-dc41-1ea413545347@ti.com>
- <89a80aa8-66ee-d0ec-fa54-c55ca8de06af@gmail.com>
- <20190529135821.GK4574@dell>
- <afff7c24-bb68-e9dc-295e-4449f9729cc9@gmail.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v3 1/9] leds: multicolor: Add sysfs interface definition
+Date: Thu, 30 May 2019 09:30:48 -0500
+Message-ID: <ee675df2-9097-8e1b-b9db-a42017ac06b6@ti.com>
+References: <20190523190820.29375-1-dmurphy@ti.com>
+ <20190523190820.29375-2-dmurphy@ti.com>
+ <f01ac400-efda-80a8-4d63-1e2add5e054a@gmail.com>
+ <185abdd6-100c-0a71-2da9-8f556d8ea701@ti.com>
+ <333167d0-4615-2fbe-e933-cbca623998ef@gmail.com>
+ <e54d9d29-5daa-fd3a-a5a9-ebd2450882ee@ti.com>
+ <c947d07c-2a8d-b9a8-b2ac-6c249ac54bca@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <afff7c24-bb68-e9dc-295e-4449f9729cc9@gmail.com>
+In-Reply-To: <c947d07c-2a8d-b9a8-b2ac-6c249ac54bca@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>, broonie@kernel.org, lgirdwood@gmail.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, pavel@ucw.cz, robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, 29 May 2019, Jacek Anaszewski wrote:
+Jacek
 
-> On 5/29/19 3:58 PM, Lee Jones wrote:
-> > On Fri, 24 May 2019, Jacek Anaszewski wrote:
-> > 
-> > > Hi,
-> > > 
-> > > On 5/23/19 9:09 PM, Dan Murphy wrote:
-> > > > Pavel
-> > > > 
-> > > > Thanks for the review
-> > > > 
-> > > > On 5/23/19 7:50 AM, Pavel Machek wrote:
-> > > > > Hi!
-> > > > > 
-> > > > > > +++ b/drivers/leds/leds-lm36274.c
-> > > > > 
-> > > > > > +static int lm36274_parse_dt(struct lm36274 *lm36274_data)
-> > > > > > +{
-> > > > > > +	struct fwnode_handle *child = NULL;
-> > > > > > +	char label[LED_MAX_NAME_SIZE];
-> > > > > > +	struct device *dev = &lm36274_data->pdev->dev;
-> > > > > > +	const char *name;
-> > > > > > +	int child_cnt;
-> > > > > > +	int ret = -EINVAL;
-> > > > > > +
-> > > > > > +	/* There should only be 1 node */
-> > > > > > +	child_cnt = device_get_child_node_count(dev);
-> > > > > > +	if (child_cnt != 1)
-> > > > > > +		return ret;
-> > > > > 
-> > > > > I'd do explicit "return -EINVAL" here.
-> > > > > 
-> > > > 
-> > > > ACK
-> > > > 
-> > > > > > +static int lm36274_probe(struct platform_device *pdev)
-> > > > > > +{
-> > > > > > +	struct ti_lmu *lmu = dev_get_drvdata(pdev->dev.parent);
-> > > > > > +	struct lm36274 *lm36274_data;
-> > > > > > +	int ret;
-> > > > > > +
-> > > > > > +	lm36274_data = devm_kzalloc(&pdev->dev, sizeof(*lm36274_data),
-> > > > > > +				    GFP_KERNEL);
-> > > > > > +	if (!lm36274_data) {
-> > > > > > +		ret = -ENOMEM;
-> > > > > > +		return ret;
-> > > > > > +	}
-> > > > > 
-> > > > > And certainly do "return -ENOMEM" explicitly here.
-> > > > > 
-> > > > 
-> > > > ACK
-> > > > 
-> > > > > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > > 
-> > > I've done all amendments requested by Pavel and updated branch
-> > > ib-leds-mfd-regulator on linux-leds.git, but in the same time
-> > 
-> > What do you mean by updated?  You cannot update an 'ib' (immutable
-> > branch).  Immutable means that it cannot change, by definition.
-> 
-> We have already talked about that. Nobody has pulled so the branch
-> could have been safely updated.
+On 5/28/19 1:29 PM, Jacek Anaszewski wrote:
+> On 5/28/19 8:19 PM, Dan Murphy wrote:
+>> Jacek
+>>
+>> On 5/28/19 12:44 PM, Jacek Anaszewski wrote:
+>>> Dan,
+>>>
+>>> On 5/28/19 7:32 PM, Dan Murphy wrote:
+>>>> Jacek
+>>>>
+>>>> On 5/27/19 3:00 PM, Jacek Anaszewski wrote:
+>>>>> Hi Dan,
+>>>>>
+>>>>> Thank you for the update.
+>>>>>
+>>>>> One thing is missing here - we need to document how legacy brightness
+>>>>> levels map to the sub-LED color levels, i.e. what you do in
+>>>>> multicolor_set_brightness().
+>>>>
+>>>>
+>>>> Ok so i will need to document the algorithm that is used to 
+>>>> determine the color LED brightness.
+>>>
+>>> Right, and please send just an update of that single patch.
+>>>
+>>
+>> So you are asking for v4 with only this patch updated.
+>
+> Not exactly - I am asking for v4 of this patch. We don't need
+> to spam the lists with the rest of unaltered patches from the series.
+>
+> The interface seems to be the most vital part of this patch set,
+> and it is possible that it will undergo at least slight modifications.
+>
+> We will move to discussing the code once we achieve a total consensus.
+>
 
-You have no sure way to know that.  And since I have no way to know,
-or faith that you won't update it again, pulling it now/at all would
-seem like a foolish thing to do.
+Sorry for the late reply.  OK I have updated the sysfs documentation but 
+in doing so I am also going to send in v4 of the sysfs documentation as 
+it explains the interfaces in more detail. Also I will be adding more 
+technical information into that sysfs doc on what is done and what to 
+expect and it's usage.
 
-Until you can provide me with an assurance that you will not keep
-updating/changing the supposedly immutable pull-requests you send out,
-I won't be pulling any more in.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Dan
