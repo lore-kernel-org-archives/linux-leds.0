@@ -1,40 +1,23 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL] LED fix for 5.2-rc3
-Date: Sat,  1 Jun 2019 19:59:44 +0200
-Message-ID: <20190601175944.21297-1-jacek.anaszewski@gmail.com>
+From: pr-tracker-bot@kernel.org
+Subject: Re: [GIT PULL] LED fix for 5.2-rc3
+Date: Sun, 02 Jun 2019 17:25:12 +0000
+Message-ID: <155949631296.24242.20021876127476850.pr-tracker-bot@kernel.org>
+References: <20190601175944.21297-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190601175944.21297-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz
 List-Id: linux-leds@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Sat,  1 Jun 2019 19:59:44 +0200:
 
-Please pull LED fix for recent change in LED core,
-that didn't take into account the possibility of calling
-led_blink_setup() from atomic context.
+> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led-fixes-for-5.2-rc3
 
-The following changes since commit cd6c84d8f0cdc911df435bb075ba22ce3c605b07:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f58c356ea74feef8c2bb774dd19ded91567a5cf2
 
-  Linux 5.2-rc2 (2019-05-26 16:49:19 -0700)
+Thank you!
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led-fixes-for-5.2-rc3
-
-for you to fetch changes up to 8c0f693c6effbc3f42f77a9e81209af9af20910c:
-
-  leds: avoid flush_work in atomic context (2019-05-31 22:29:14 +0200)
-
-Thanks,
-Jacek Anaszewski
-
-----------------------------------------------------------------
-LED fix for 5.2-rc3
-----------------------------------------------------------------
-Pavel Machek (1):
-      leds: avoid flush_work in atomic context
-
- drivers/leds/led-core.c              | 5 -----
- drivers/leds/trigger/ledtrig-timer.c | 5 +++++
- 2 files changed, 5 insertions(+), 5 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
