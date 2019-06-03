@@ -1,52 +1,37 @@
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [RFC PATCH 30/57] drivers: leds: Use class_find_device_by_name() helper
-Date: Mon,  3 Jun 2019 16:49:56 +0100
-Message-ID: <1559577023-558-31-git-send-email-suzuki.poulose@arm.com>
-References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH v6] platform/chrome: Add Wilco EC keyboard backlight LEDs
+ support
+Date: Mon, 3 Jun 2019 18:35:59 +0200
+Message-ID: <66bafd50-1599-db70-99da-e7f5877281c2@collabora.com>
+References: <20190409001642.249197-1-ncrews@chromium.org>
+ <20190409095503.GB32344@atrey.karlin.mff.cuni.cz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
+In-Reply-To: <20190409095503.GB32344@atrey.karlin.mff.cuni.cz>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, suzuki.poulose@arm.com, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>, Nick Crews <ncrews@chromium.org>
+Cc: bleung@chromium.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, linux-kernel@vger.kernel.org, dlaurie@chromium.org, sjg@google.com, groeck@google.com, dtor@google.com
 List-Id: linux-leds@vger.kernel.org
 
-Use the new class_find_device_by_name() helper.
+Hi Pavel,
 
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Dan Murphy <dmurphy@ti.com>
-Cc: linux-leds@vger.kernel.org
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/leds/led-class.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+On 9/4/19 11:55, Pavel Machek wrote:
+>> The EC is in charge of controlling the keyboard backlight on
+>> the Wilco platform. We expose a standard LED class device at
+>> /sys/class/leds/chromeos::kbd_backlight. This driver is modeled
+> 
+> As discussed, please use platform::.
+> 
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 85848c5..ee052aa 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -216,13 +216,6 @@ static int led_resume(struct device *dev)
- 
- static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
- 
--static int match_name(struct device *dev, const void *data)
--{
--	if (!dev_name(dev))
--		return 0;
--	return !strcmp(dev_name(dev), (char *)data);
--}
--
- static int led_classdev_next_name(const char *init_name, char *name,
- 				  size_t len)
- {
-@@ -233,7 +226,7 @@ static int led_classdev_next_name(const char *init_name, char *name,
- 	strlcpy(name, init_name, len);
- 
- 	while ((ret < len) &&
--	       (dev = class_find_device(leds_class, NULL, name, match_name))) {
-+	       (dev = class_find_device_by_name(leds_class, NULL, name))) {
- 		put_device(dev);
- 		ret = snprintf(name, len, "%s_%u", init_name, ++i);
- 	}
--- 
-2.7.4
+Last time I looked at this patch there were some work and discussion ongoing
+about led naming in led ML, did the discussion end? I'm not able to find if
+there is a final agreement.
+
+Thanks,
+ Enric
+
+> 								Pavel
+> 
