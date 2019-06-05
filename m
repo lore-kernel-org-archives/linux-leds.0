@@ -1,37 +1,52 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v5 1/6] regulator: lm363x: Make the gpio register enable
- flexible
-Date: Wed, 5 Jun 2019 11:32:02 -0500
-Message-ID: <c01c0177-6f28-dc2a-bae7-a5d18c30ce5d@ti.com>
-References: <20190604174345.14841-1-dmurphy@ti.com>
- <20190604174345.14841-2-dmurphy@ti.com> <20190605100132.GL2456@sirena.org.uk>
- <7ba7a633-1a39-adcc-e942-12c0eb7c3b16@ti.com>
- <054c3715-e85f-e052-faf1-057bf3a67d45@ti.com>
- <20190605163120.GR2456@sirena.org.uk>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: Re: [PATCH 10/13] drivers: Introduce variants of class_find_device()
+Date: Wed, 5 Jun 2019 19:13:19 +0100
+Message-ID: <24e8617f-2e15-bb6c-a6bb-bc9e6b32aa56@arm.com>
+References: <1559747630-28065-1-git-send-email-suzuki.poulose@arm.com>
+ <1559747630-28065-11-git-send-email-suzuki.poulose@arm.com>
+ <20190605161439.GB17272@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190605163120.GR2456@sirena.org.uk>
+In-Reply-To: <20190605161439.GB17272@kroah.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, rafael@kernel.org, a.zummo@towertech.it, alex.aring@gmail.com, alexander.shishkin@linux.intel.com, alexandre.belloni@bootlin.com, andrew@lunn.ch, arnd@arndb.de, dmurphy@ti.com, davem@davemloft.net, f.fainelli@gmail.com, freude@linux.ibm.com, heikki.krogerus@linux.intel.com, heiko.carstens@de.ibm.com, hkallweit1@gmail.com, jacek.anaszewski@gmail.com, jslaby@suse.com, lgirdwood@gmail.com, linux-leds@vger.kernel.org, linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org, linux-wpan@vger.kernel.org, broonie@kernel.org, mcoquelin.stm32@gmail.com, pavel@ucw.cz, peda@axentia.se, stefan@datenfreihafen.org, tomas.winkler@intel.com, rafael.j.wysocki@intel.com
 List-Id: linux-leds@vger.kernel.org
 
-Mark
+Hi Greg,
 
-On 6/5/19 11:31 AM, Mark Brown wrote:
-> On Wed, Jun 05, 2019 at 07:47:50AM -0500, Dan Murphy wrote:
->> On 6/5/19 7:02 AM, Dan Murphy wrote:
->>> I can squash patch 1 into 4.
->>> Also not sure what you mean by new validation.
->> Disregard I understand.  The patch is missing the validation code.
-> Ah, some git add issues I guess :)  Squashing would help but it's not
-> essential I think.
+On 06/05/2019 05:14 PM, Greg KH wrote:
+> On Wed, Jun 05, 2019 at 04:13:47PM +0100, Suzuki K Poulose wrote:
+>> +/**
+>> + * class_find_device_by_devt : device iterator for locating a particular device
+>> + * matching the device type.
+>> + * @class: class type
+>> + * @start: device to start search from
+>> + * @devt: device type of the device to match.
+>> + */
+>> +static inline struct device *class_find_device_by_devt(struct class *class,
+>> +						       struct device *start,
+>> +						       dev_t devt)
+>> +{
+>> +	return class_find_device(class, start, &devt, device_match_devt);
+>> +}
+> 
+> Still has the start parameter, despite the changelog saying it would not
+> :(
+> 
 
+Well, I kept the start parameter just for the _devt variants, as
+mentioned in the changelog:
 
-More like PEBKAC on this one
+" The new wrappers except the lookup by devt, drops the "start" device 
+pointer as none of the existing users need it and the attributes are 
+usually unique. The idea is to stop the proliferation of custom match.."
 
+Somehow I thought the dev_t may be duplicate for devices, which is why
+I didn't change that alone. But that was silly of me to ignore the minor
+number part. I will respin it fixing that.
 
-Dan
+Suzuki
