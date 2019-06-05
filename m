@@ -1,56 +1,43 @@
-From: Mark Brown <broonie@kernel.org>
+From: Dan Murphy <dmurphy@ti.com>
 Subject: Re: [PATCH v5 1/6] regulator: lm363x: Make the gpio register enable
  flexible
-Date: Wed, 5 Jun 2019 11:01:32 +0100
-Message-ID: <20190605100132.GL2456@sirena.org.uk>
+Date: Wed, 5 Jun 2019 07:02:45 -0500
+Message-ID: <7ba7a633-1a39-adcc-e942-12c0eb7c3b16@ti.com>
 References: <20190604174345.14841-1-dmurphy@ti.com>
- <20190604174345.14841-2-dmurphy@ti.com>
+ <20190604174345.14841-2-dmurphy@ti.com> <20190605100132.GL2456@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="LkBseQZEL/3d2JPd"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190604174345.14841-2-dmurphy@ti.com>
+In-Reply-To: <20190605100132.GL2456@sirena.org.uk>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
+To: Mark Brown <broonie@kernel.org>
 Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+Mark
 
---LkBseQZEL/3d2JPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 6/5/19 5:01 AM, Mark Brown wrote:
+> On Tue, Jun 04, 2019 at 12:43:40PM -0500, Dan Murphy wrote:
+>> The use of and enablement of the GPIO can be used across devices.
+>> Use the enable_reg in the regulator descriptor for the register to
+>> write.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>> ---
+>>
+>> v5 - No changes to the patch changes requested in this patch were done in
+>> patch 4 of this series - https://lore.kernel.org/patchwork/patch/1077408/
+> I was expecting this patch to just be completely dropped?  It looks like
+> the end result is very similar, we're still using enable_reg to get the
+> register and I don't see new validation added in patch 4.
 
-On Tue, Jun 04, 2019 at 12:43:40PM -0500, Dan Murphy wrote:
-> The use of and enablement of the GPIO can be used across devices.
-> Use the enable_reg in the regulator descriptor for the register to
-> write.
->=20
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> ---
->=20
-> v5 - No changes to the patch changes requested in this patch were done in
-> patch 4 of this series - https://lore.kernel.org/patchwork/patch/1077408/
+I can squash patch 1 into 4.
 
-I was expecting this patch to just be completely dropped?  It looks like
-the end result is very similar, we're still using enable_reg to get the
-register and I don't see new validation added in patch 4.
+Also not sure what you mean by new validation.
 
---LkBseQZEL/3d2JPd
-Content-Type: application/pgp-signature; name="signature.asc"
+Please comment on patch 4 to what you are looking for
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz3kvsACgkQJNaLcl1U
-h9CL4Af/eIXNOUQrDHol0TbFPD7MMFgStTriNhd5Fn+14zkke4yvtU6mzKz4ZNeh
-3kKeUTQRvj9/xVuKjKsFmLteeTCj1hPJ7/oa7M5uo+zFuQWMWnkNulYXSv01yue1
-61zxfIJgaHEbVlI31m0pqLAQTb5opriEJ7eWpH6Iw4aYbiWO3spi0lYrQFf0BXLR
-PT6L9eDXJXE+MrXc2HrzxOXAKtB91oveq2G8WdqXp9svmP2NimUvTMUHo1HPIpUB
-g7t2i9qT2k8+5WXZ/g03DN9IxVgNy29RuAYdyEpMD4vOYmbtJiaxQMknD0TQp7Kf
-Gx3UQmwBAtBfKwQOUMK+mTMQn0O8yQ==
-=A/Jg
------END PGP SIGNATURE-----
-
---LkBseQZEL/3d2JPd--
+Dan
