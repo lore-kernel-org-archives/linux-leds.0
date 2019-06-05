@@ -1,52 +1,46 @@
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH 10/13] drivers: Introduce variants of class_find_device()
-Date: Wed, 5 Jun 2019 19:13:19 +0100
-Message-ID: <24e8617f-2e15-bb6c-a6bb-bc9e6b32aa56@arm.com>
-References: <1559747630-28065-1-git-send-email-suzuki.poulose@arm.com>
- <1559747630-28065-11-git-send-email-suzuki.poulose@arm.com>
- <20190605161439.GB17272@kroah.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v6 3/5] regulator: lm363x: Add support for LM36274
+Date: Wed, 5 Jun 2019 19:17:16 +0100
+Message-ID: <20190605181716.GU2456@sirena.org.uk>
+References: <20190605125634.7042-1-dmurphy@ti.com>
+ <20190605125634.7042-4-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7ufiXnXZuEWu9ktD"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190605161439.GB17272@kroah.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190605125634.7042-4-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, rafael@kernel.org, a.zummo@towertech.it, alex.aring@gmail.com, alexander.shishkin@linux.intel.com, alexandre.belloni@bootlin.com, andrew@lunn.ch, arnd@arndb.de, dmurphy@ti.com, davem@davemloft.net, f.fainelli@gmail.com, freude@linux.ibm.com, heikki.krogerus@linux.intel.com, heiko.carstens@de.ibm.com, hkallweit1@gmail.com, jacek.anaszewski@gmail.com, jslaby@suse.com, lgirdwood@gmail.com, linux-leds@vger.kernel.org, linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org, linux-wpan@vger.kernel.org, broonie@kernel.org, mcoquelin.stm32@gmail.com, pavel@ucw.cz, peda@axentia.se, stefan@datenfreihafen.org, tomas.winkler@intel.com, rafael.j.wysocki@intel.com
+To: Dan Murphy <dmurphy@ti.com>
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Greg,
 
-On 06/05/2019 05:14 PM, Greg KH wrote:
-> On Wed, Jun 05, 2019 at 04:13:47PM +0100, Suzuki K Poulose wrote:
->> +/**
->> + * class_find_device_by_devt : device iterator for locating a particular device
->> + * matching the device type.
->> + * @class: class type
->> + * @start: device to start search from
->> + * @devt: device type of the device to match.
->> + */
->> +static inline struct device *class_find_device_by_devt(struct class *class,
->> +						       struct device *start,
->> +						       dev_t devt)
->> +{
->> +	return class_find_device(class, start, &devt, device_match_devt);
->> +}
-> 
-> Still has the start parameter, despite the changelog saying it would not
-> :(
-> 
+--7ufiXnXZuEWu9ktD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Well, I kept the start parameter just for the _devt variants, as
-mentioned in the changelog:
+On Wed, Jun 05, 2019 at 07:56:32AM -0500, Dan Murphy wrote:
+> Adding regulator support for the LM36274 backlight driver.
+> This device can leverage this existing code as the functionality
+> and registers are common enough between the LM36274 and the LM363x
+> series of devices.
 
-" The new wrappers except the lookup by devt, drops the "start" device 
-pointer as none of the existing users need it and the attributes are 
-usually unique. The idea is to stop the proliferation of custom match.."
+Acked-by: Mark Brown <broonie@kernel.org>
 
-Somehow I thought the dev_t may be duplicate for devices, which is why
-I didn't change that alone. But that was silly of me to ignore the minor
-number part. I will respin it fixing that.
+--7ufiXnXZuEWu9ktD
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Suzuki
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz4BysACgkQJNaLcl1U
+h9DoDgf/V2YC33j5Ud0esBDnPNRS3+xH3Zlc2kDXFTiDgjx06hmzU/n0qd1r9683
+6rsudqA2fn5Em4kP85w6xlwQFYJNYBq9D5C0wOm+OMTSy5Q2OuCjutVZNEPILUds
+dOGi9PL6v9MtvgpOrB0HaUaABqwHZ2AQMIXCHIpPDQceulf3dohTO03dFjwHHd88
+ZUUsnDr3zWlK7lbA86ud5tutOc5mxq/23W47hdu9C4nAXnQkU7iuHLCNTcbjOHhg
+mB6ba7BCxUCXKLpN5ZpROEBkcclPpZHN3efh0OKGc8rlkJ9/yORL5rnI5rnDQr+C
+Azr2Sw57XsTCbxqsbYSEIhzjQVcCNw==
+=TvzC
+-----END PGP SIGNATURE-----
+
+--7ufiXnXZuEWu9ktD--
