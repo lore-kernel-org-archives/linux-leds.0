@@ -1,46 +1,70 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v6 3/5] regulator: lm363x: Add support for LM36274
-Date: Wed, 5 Jun 2019 19:17:16 +0100
-Message-ID: <20190605181716.GU2456@sirena.org.uk>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v6 0/5] LM36274 Introduction
+Date: Wed, 5 Jun 2019 21:31:36 +0200
+Message-ID: <cb41fea8-4cc6-bf0d-8006-6441ba8f2213@gmail.com>
 References: <20190605125634.7042-1-dmurphy@ti.com>
- <20190605125634.7042-4-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7ufiXnXZuEWu9ktD"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190605125634.7042-4-dmurphy@ti.com>
+In-Reply-To: <20190605125634.7042-1-dmurphy@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz, broonie@kernel.org, lgirdwood@gmail.com
+Cc: lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+Hi Dan,
 
---7ufiXnXZuEWu9ktD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thank you for the v6.
 
-On Wed, Jun 05, 2019 at 07:56:32AM -0500, Dan Murphy wrote:
-> Adding regulator support for the LM36274 backlight driver.
-> This device can leverage this existing code as the functionality
-> and registers are common enough between the LM36274 and the LM363x
-> series of devices.
+Patches 4/5 and 5/5 don't contain amendments I made to
+the respective patches on the ib-leds-mfd-regulator branch
+(that address issues raised by Pavel), so I just kept those
+unchanged. Besides that I updated the remaining ones.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+Please check the ib-leds-mfd-regulator branch. I'll create a pull
+request once I get a confirmation from you saying that everything
+is as expected.
 
---7ufiXnXZuEWu9ktD
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+Jacek Anaszewski
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz4BysACgkQJNaLcl1U
-h9DoDgf/V2YC33j5Ud0esBDnPNRS3+xH3Zlc2kDXFTiDgjx06hmzU/n0qd1r9683
-6rsudqA2fn5Em4kP85w6xlwQFYJNYBq9D5C0wOm+OMTSy5Q2OuCjutVZNEPILUds
-dOGi9PL6v9MtvgpOrB0HaUaABqwHZ2AQMIXCHIpPDQceulf3dohTO03dFjwHHd88
-ZUUsnDr3zWlK7lbA86ud5tutOc5mxq/23W47hdu9C4nAXnQkU7iuHLCNTcbjOHhg
-mB6ba7BCxUCXKLpN5ZpROEBkcclPpZHN3efh0OKGc8rlkJ9/yORL5rnI5rnDQr+C
-Azr2Sw57XsTCbxqsbYSEIhzjQVcCNw==
-=TvzC
------END PGP SIGNATURE-----
-
---7ufiXnXZuEWu9ktD--
+On 6/5/19 2:56 PM, Dan Murphy wrote:
+> Hello
+> 
+> The v5 patchset missed adding in the new validation code.
+> Patch 1 of the v5 series was squashed into patch 4 of the v5 series.
+> So this will reduce the patchset by 1.
+> 
+> Sorry for the extra noise on the patchsets.  The change was lost when I converted
+> the patches from the mainline branch to the LED branch.
+> 
+> This change was made on top of the branch
+> 
+> repo: https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
+> branch: ti-lmu-led-drivers
+> 
+> 
+> Dan Murphy (5):
+>    dt-bindings: mfd: Add lm36274 bindings to ti-lmu
+>    mfd: ti-lmu: Add LM36274 support to the ti-lmu
+>    regulator: lm363x: Add support for LM36274
+>    dt-bindings: leds: Add LED bindings for the LM36274
+>    leds: lm36274: Introduce the TI LM36274 LED driver
+> 
+>   .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
+>   .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
+>   drivers/leds/Kconfig                          |   8 +
+>   drivers/leds/Makefile                         |   1 +
+>   drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
+>   drivers/mfd/Kconfig                           |   5 +-
+>   drivers/mfd/ti-lmu.c                          |  14 ++
+>   drivers/regulator/Kconfig                     |   2 +-
+>   drivers/regulator/lm363x-regulator.c          |  78 +++++++-
+>   include/linux/mfd/ti-lmu-register.h           |  23 +++
+>   include/linux/mfd/ti-lmu.h                    |   4 +
+>   11 files changed, 437 insertions(+), 8 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
+>   create mode 100644 drivers/leds/leds-lm36274.c
+> 
