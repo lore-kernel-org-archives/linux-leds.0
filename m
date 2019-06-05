@@ -1,52 +1,56 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v5 0/6] LM36274 Introduction
-Date: Tue, 4 Jun 2019 12:43:39 -0500
-Message-ID: <20190604174345.14841-1-dmurphy@ti.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v5 1/6] regulator: lm363x: Make the gpio register enable
+ flexible
+Date: Wed, 5 Jun 2019 11:01:32 +0100
+Message-ID: <20190605100132.GL2456@sirena.org.uk>
+References: <20190604174345.14841-1-dmurphy@ti.com>
+ <20190604174345.14841-2-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LkBseQZEL/3d2JPd"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190604174345.14841-2-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz, broonie@kernel.org, lgirdwood@gmail.com
-Cc: lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hello
 
-This is v5 of the patchset.  There is only one patch that has changed in the
-series and that is the regulator: lm363x: Add support for LM36274 patch.  This
-patch was updated to add flexibility in setting the bit to enable GPIO regulator
-control.
+--LkBseQZEL/3d2JPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This change was made on top of the branch
+On Tue, Jun 04, 2019 at 12:43:40PM -0500, Dan Murphy wrote:
+> The use of and enablement of the GPIO can be used across devices.
+> Use the enable_reg in the regulator descriptor for the register to
+> write.
+>=20
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> ---
+>=20
+> v5 - No changes to the patch changes requested in this patch were done in
+> patch 4 of this series - https://lore.kernel.org/patchwork/patch/1077408/
 
-repo: https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
-branch: ti-lmu-led-drivers
+I was expecting this patch to just be completely dropped?  It looks like
+the end result is very similar, we're still using enable_reg to get the
+register and I don't see new validation added in patch 4.
 
-Dan
+--LkBseQZEL/3d2JPd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Dan Murphy (6):
-  regulator: lm363x: Make the gpio register enable flexible
-  dt-bindings: mfd: Add lm36274 bindings to ti-lmu
-  mfd: ti-lmu: Add LM36274 support to the ti-lmu
-  regulator: lm363x: Add support for LM36274
-  dt-bindings: leds: Add LED bindings for the LM36274
-  leds: lm36274: Introduce the TI LM36274 LED driver
+-----BEGIN PGP SIGNATURE-----
 
- .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
- .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
- drivers/leds/Kconfig                          |   8 +
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
- drivers/mfd/Kconfig                           |   5 +-
- drivers/mfd/ti-lmu.c                          |  14 ++
- drivers/regulator/Kconfig                     |   2 +-
- drivers/regulator/lm363x-regulator.c          |  56 +++++-
- include/linux/mfd/ti-lmu-register.h           |  23 +++
- include/linux/mfd/ti-lmu.h                    |   4 +
- 11 files changed, 417 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
- create mode 100644 drivers/leds/leds-lm36274.c
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz3kvsACgkQJNaLcl1U
+h9CL4Af/eIXNOUQrDHol0TbFPD7MMFgStTriNhd5Fn+14zkke4yvtU6mzKz4ZNeh
+3kKeUTQRvj9/xVuKjKsFmLteeTCj1hPJ7/oa7M5uo+zFuQWMWnkNulYXSv01yue1
+61zxfIJgaHEbVlI31m0pqLAQTb5opriEJ7eWpH6Iw4aYbiWO3spi0lYrQFf0BXLR
+PT6L9eDXJXE+MrXc2HrzxOXAKtB91oveq2G8WdqXp9svmP2NimUvTMUHo1HPIpUB
+g7t2i9qT2k8+5WXZ/g03DN9IxVgNy29RuAYdyEpMD4vOYmbtJiaxQMknD0TQp7Kf
+Gx3UQmwBAtBfKwQOUMK+mTMQn0O8yQ==
+=A/Jg
+-----END PGP SIGNATURE-----
 
--- 
-2.21.0.5.gaeb582a983
+--LkBseQZEL/3d2JPd--
