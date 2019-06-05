@@ -1,33 +1,55 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 10/13] drivers: Introduce variants of class_find_device()
-Date: Wed, 5 Jun 2019 18:14:39 +0200
-Message-ID: <20190605161439.GB17272@kroah.com>
-References: <1559747630-28065-1-git-send-email-suzuki.poulose@arm.com>
- <1559747630-28065-11-git-send-email-suzuki.poulose@arm.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v5 1/6] regulator: lm363x: Make the gpio register enable
+ flexible
+Date: Wed, 5 Jun 2019 17:31:20 +0100
+Message-ID: <20190605163120.GR2456@sirena.org.uk>
+References: <20190604174345.14841-1-dmurphy@ti.com>
+ <20190604174345.14841-2-dmurphy@ti.com>
+ <20190605100132.GL2456@sirena.org.uk>
+ <7ba7a633-1a39-adcc-e942-12c0eb7c3b16@ti.com>
+ <054c3715-e85f-e052-faf1-057bf3a67d45@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8+74qwmUvVX309i6"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1559747630-28065-11-git-send-email-suzuki.poulose@arm.com>
+In-Reply-To: <054c3715-e85f-e052-faf1-057bf3a67d45@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-kernel@vger.kernel.org, rafael@kernel.org, Alessandro Zummo <a.zummo@towertech.it>, Alexander Aring <alex.aring@gmail.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, Dan Murphy <dmurphy@ti.com>, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Harald Freudenberger <freude@linux.ibm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Heiner Kallweit <hkallweit1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Jiri Slaby <jslaby@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-leds@vger.kernel.org, linux-rtc@vger.kernel.orgl
+To: Dan Murphy <dmurphy@ti.com>
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, lgirdwood@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 04:13:47PM +0100, Suzuki K Poulose wrote:
-> +/**
-> + * class_find_device_by_devt : device iterator for locating a particular device
-> + * matching the device type.
-> + * @class: class type
-> + * @start: device to start search from
-> + * @devt: device type of the device to match.
-> + */
-> +static inline struct device *class_find_device_by_devt(struct class *class,
-> +						       struct device *start,
-> +						       dev_t devt)
-> +{
-> +	return class_find_device(class, start, &devt, device_match_devt);
-> +}
 
-Still has the start parameter, despite the changelog saying it would not
-:(
+--8+74qwmUvVX309i6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jun 05, 2019 at 07:47:50AM -0500, Dan Murphy wrote:
+> On 6/5/19 7:02 AM, Dan Murphy wrote:
+
+> > I can squash patch 1 into 4.
+
+> > Also not sure what you mean by new validation.
+
+> Disregard I understand.=A0 The patch is missing the validation code.
+
+Ah, some git add issues I guess :)  Squashing would help but it's not
+essential I think.
+
+--8+74qwmUvVX309i6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz37lYACgkQJNaLcl1U
+h9D24Qf+LRTcByTN28sK2Y77cBUVbJQhwJeOJMTaOFPF2SDpJRBmU2oQZncg72xA
+iMwJgZcDDd1gjQuyDsxRL23e8guALeRL3rQ/MyHT22BhFEGUFJd7Ka0hyOgOpxwv
+R9Y7Gn8jo+Qt3AEcxn4HvHvq6zF/3FjUxUDbSquNchsjrv/flOp0uTbCuc1RQrcZ
+d7I/uj3KhYIWmzN8w/E3wLzLYqfVFoZZ/9/FuSXMXS6BdTsaOwzoQ/VJmQ0IxEhe
+FhFF2TWmvf84nAxKD6rYesFiuMXpM0Ok+v+5E2aI9/odBwHir8mcrMBWdOn3TDBT
+eEUXC5JLELCEeXJdm8Ep+dsNdaSOEw==
+=9Dl3
+-----END PGP SIGNATURE-----
+
+--8+74qwmUvVX309i6--
