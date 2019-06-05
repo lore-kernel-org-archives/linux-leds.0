@@ -1,52 +1,115 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v6 0/5] LM36274 Introduction
-Date: Wed, 5 Jun 2019 07:56:29 -0500
-Message-ID: <20190605125634.7042-1-dmurphy@ti.com>
+Subject: [PATCH v6 4/5] dt-bindings: leds: Add LED bindings for the LM36274
+Date: Wed, 5 Jun 2019 07:56:33 -0500
+Message-ID: <20190605125634.7042-5-dmurphy@ti.com>
+References: <20190605125634.7042-1-dmurphy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190605125634.7042-1-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jacek.anaszewski@gmail.com, pavel@ucw.cz, broonie@kernel.org, lgirdwood@gmail.com
-Cc: lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+Cc: lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-Hello
+Add the LM36274 LED specific bindings.
 
-The v5 patchset missed adding in the new validation code.
-Patch 1 of the v5 series was squashed into patch 4 of the v5 series.
-So this will reduce the patchset by 1.
-
-Sorry for the extra noise on the patchsets.  The change was lost when I converted
-the patches from the mainline branch to the LED branch.
-
-This change was made on top of the branch
-
-repo: https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
-branch: ti-lmu-led-drivers
-
-
-Dan Murphy (5):
-  dt-bindings: mfd: Add lm36274 bindings to ti-lmu
-  mfd: ti-lmu: Add LM36274 support to the ti-lmu
-  regulator: lm363x: Add support for LM36274
-  dt-bindings: leds: Add LED bindings for the LM36274
-  leds: lm36274: Introduce the TI LM36274 LED driver
-
- .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
- .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
- drivers/leds/Kconfig                          |   8 +
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
- drivers/mfd/Kconfig                           |   5 +-
- drivers/mfd/ti-lmu.c                          |  14 ++
- drivers/regulator/Kconfig                     |   2 +-
- drivers/regulator/lm363x-regulator.c          |  78 +++++++-
- include/linux/mfd/ti-lmu-register.h           |  23 +++
- include/linux/mfd/ti-lmu.h                    |   4 +
- 11 files changed, 437 insertions(+), 8 deletions(-)
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+---
+ .../devicetree/bindings/leds/leds-lm36274.txt | 82 +++++++++++++++++++
+ 1 file changed, 82 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
- create mode 100644 drivers/leds/leds-lm36274.c
 
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm36274.txt b/Documentation/devicetree/bindings/leds/leds-lm36274.txt
+new file mode 100644
+index 000000000000..329393700191
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-lm36274.txt
+@@ -0,0 +1,82 @@
++* Texas Instruments LM36274 4-Channel LCD Backlight Driver w/Integrated Bias
++
++The LM36274 is an integrated four-channel WLED driver and LCD bias supply.
++The backlight boost provides the power to bias four parallel LED strings with
++up to 29V total output voltage. The 11-bit LED current is programmable via
++the I2C bus and/or controlled via a logic level PWM input from 60 μA to 30 mA.
++
++Parent device properties are documented in ../mfd/ti_lmu.txt
++Regulator properties are documented in ../regulator/lm363x-regulator.txt
++
++Required backlight properties:
++	- compatible:
++		"ti,lm36274-backlight"
++	- reg : 0
++	- #address-cells : 1
++	- #size-cells : 0
++	- led-sources : Indicates which LED strings will be enabled.
++			Values from 0-3, sources is 0 based so strings will be
++			source value + 1.
++
++Optional backlight properties:
++	- label : see Documentation/devicetree/bindings/leds/common.txt
++	- linux,default-trigger :
++	   see Documentation/devicetree/bindings/leds/common.txt
++
++Example:
++
++HVLED string 1 and 3 are controlled by control bank A and HVLED 2 string is
++controlled by control bank B.
++
++lm36274@11 {
++	compatible = "ti,lm36274";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x11>;
++
++	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
++
++	regulators {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "ti,lm363x-regulator";
++
++		enable-gpios = <&pioC 0 GPIO_ACTIVE_HIGH>,
++			       <&pioC 1 GPIO_ACTIVE_HIGH>;
++
++		vboost {
++			regulator-name = "lcd_boost";
++			regulator-min-microvolt = <4000000>;
++			regulator-max-microvolt = <7150000>;
++			regulator-always-on;
++		};
++
++		vpos {
++			regulator-name = "lcd_vpos";
++			regulator-min-microvolt = <4000000>;
++			regulator-max-microvolt = <6500000>;
++		};
++
++		vneg {
++			regulator-name = "lcd_vneg";
++			regulator-min-microvolt = <4000000>;
++			regulator-max-microvolt = <6500000>;
++		};
++	};
++
++	backlight {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "ti,lm36274-backlight";
++
++		led@0 {
++			reg = <0>;
++			led-sources = <0 2>;
++			label = "white:backlight_cluster";
++			linux,default-trigger = "backlight";
++		};
++	};
++};
++
++For more product information please see the link below:
++http://www.ti.com/lit/ds/symlink/lm36274.pdf
 -- 
 2.21.0.5.gaeb582a983
