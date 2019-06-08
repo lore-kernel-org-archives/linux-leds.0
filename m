@@ -1,7 +1,7 @@
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 05/34] leds: leds-tca6507: simplify getting the adapter of a client
-Date: Sat,  8 Jun 2019 12:55:44 +0200
-Message-ID: <20190608105619.593-6-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 04/34] leds: leds-pca955x: simplify getting the adapter of a client
+Date: Sat,  8 Jun 2019 12:55:43 +0200
+Message-ID: <20190608105619.593-5-wsa+renesas@sang-engineering.com>
 References: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -20,21 +20,21 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Please apply to your subsystem tree.
 
- drivers/leds/leds-tca6507.c | 2 +-
+ drivers/leds/leds-pca955x.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-index c59035e157d1..58be20cae183 100644
---- a/drivers/leds/leds-tca6507.c
-+++ b/drivers/leds/leds-tca6507.c
-@@ -758,7 +758,7 @@ static int tca6507_probe(struct i2c_client *client,
- 	int err;
- 	int i = 0;
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index a9f5dad55956..460626d81c6a 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -432,7 +432,7 @@ static int pca955x_probe(struct i2c_client *client,
+ 	int ngpios = 0;
  
+ 	chip = &pca955x_chipdefs[id->driver_data];
 -	adapter = to_i2c_adapter(client->dev.parent);
 +	adapter = client->adapter;
  	pdata = dev_get_platdata(&client->dev);
- 
- 	if (!i2c_check_functionality(adapter, I2C_FUNC_I2C))
+ 	if (!pdata) {
+ 		pdata =	pca955x_get_pdata(client, chip);
 -- 
 2.19.1
