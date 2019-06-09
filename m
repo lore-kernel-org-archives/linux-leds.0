@@ -1,13 +1,13 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v5 17/26] leds: cr0014114: Use generic support for composing LED names
-Date: Sun,  9 Jun 2019 21:07:54 +0200
-Message-ID: <20190609190803.14815-18-jacek.anaszewski@gmail.com>
+Subject: [PATCH v5 13/26] leds: lm3692x: Use generic support for composing LED names
+Date: Sun,  9 Jun 2019 21:07:50 +0200
+Message-ID: <20190609190803.14815-14-jacek.anaszewski@gmail.com>
 References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, dmurphy@ti.com, jacek.anaszewski@gmail.com, Oleh Kravchenko <oleg@kaa.org.ua>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, dmurphy@ti.com, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
 Switch to using generic LED support for composing LED class
@@ -19,94 +19,84 @@ fwnode assigned to struct led_init_data and passed to the new
 devm_led_classdev_register_ext() API.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+Tested-by: Dan Murphy <dmurphy@ti.com>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
- drivers/leds/leds-cr0014114.c | 32 +++++++++++---------------------
- 1 file changed, 11 insertions(+), 21 deletions(-)
+ drivers/leds/leds-lm3692x.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/leds/leds-cr0014114.c b/drivers/leds/leds-cr0014114.c
-index 1c82152764d2..2da448ae718e 100644
---- a/drivers/leds/leds-cr0014114.c
-+++ b/drivers/leds/leds-cr0014114.c
-@@ -8,7 +8,6 @@
- #include <linux/of_device.h>
- #include <linux/spi/spi.h>
- #include <linux/workqueue.h>
+diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+index 4f413a7c5f05..3d381f2f73d0 100644
+--- a/drivers/leds/leds-lm3692x.c
++++ b/drivers/leds/leds-lm3692x.c
+@@ -13,7 +13,6 @@
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
 -#include <uapi/linux/uleds.h>
  
- /*
-  *  CR0014114 SPI protocol descrtiption:
-@@ -40,8 +39,9 @@
- #define CR_FW_DELAY_MSEC	10
- #define CR_RECOUNT_DELAY	(HZ * 3600)
+ #define LM36922_MODEL	0
+ #define LM36923_MODEL	1
+@@ -103,7 +102,6 @@
+  * @regmap - Devices register map
+  * @enable_gpio - VDDIO/EN gpio to enable communication interface
+  * @regulator - LED supply regulator pointer
+- * @label - LED label
+  * @led_enable - LED sync to be enabled
+  * @model_id - Current device model ID enumerated
+  */
+@@ -114,7 +112,6 @@ struct lm3692x_led {
+ 	struct regmap *regmap;
+ 	struct gpio_desc *enable_gpio;
+ 	struct regulator *regulator;
+-	char label[LED_MAX_NAME_SIZE];
+ 	int led_enable;
+ 	int model_id;
+ };
+@@ -325,7 +322,7 @@ static int lm3692x_init(struct lm3692x_led *led)
+ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ {
+ 	struct fwnode_handle *child = NULL;
+-	const char *name;
++	struct led_init_data init_data = {};
+ 	int ret;
  
-+#define CR_DEV_NAME		"cr0014114"
-+
- struct cr0014114_led {
--	char			name[LED_MAX_NAME_SIZE];
- 	struct cr0014114	*priv;
- 	struct led_classdev	ldev;
- 	u8			brightness;
-@@ -167,8 +167,7 @@ static int cr0014114_set_sync(struct led_classdev *ldev,
- 						    struct cr0014114_led,
- 						    ldev);
+ 	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
+@@ -350,30 +347,23 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ 	fwnode_property_read_string(child, "linux,default-trigger",
+ 				    &led->led_dev.default_trigger);
  
--	dev_dbg(led->priv->dev, "Set brightness of %s to %d\n",
--		led->name, brightness);
-+	dev_dbg(led->priv->dev, "Set brightness to %d\n", brightness);
- 
- 	mutex_lock(&led->priv->lock);
- 	led->brightness = (u8)brightness;
-@@ -183,41 +182,32 @@ static int cr0014114_probe_dt(struct cr0014114 *priv)
- 	size_t			i = 0;
- 	struct cr0014114_led	*led;
- 	struct fwnode_handle	*child;
--	struct device_node	*np;
-+	struct led_init_data	init_data = {};
- 	int			ret;
--	const char		*str;
- 
- 	device_for_each_child_node(priv->dev, child) {
--		np = to_of_node(child);
- 		led = &priv->leds[i];
- 
--		ret = fwnode_property_read_string(child, "label", &str);
--		if (ret)
--			snprintf(led->name, sizeof(led->name),
--				 "cr0014114::");
--		else
--			snprintf(led->name, sizeof(led->name),
--				 "cr0014114:%s", str);
+-	ret = fwnode_property_read_string(child, "label", &name);
+-	if (ret)
+-		snprintf(led->label, sizeof(led->label),
+-			"%s::", led->client->name);
+-	else
+-		snprintf(led->label, sizeof(led->label),
+-			 "%s:%s", led->client->name, name);
 -
- 		fwnode_property_read_string(child, "linux,default-trigger",
- 					    &led->ldev.default_trigger);
- 
- 		led->priv			  = priv;
--		led->ldev.name			  = led->name;
- 		led->ldev.max_brightness	  = CR_MAX_BRIGHTNESS;
- 		led->ldev.brightness_set_blocking = cr0014114_set_sync;
- 
--		ret = devm_led_classdev_register(priv->dev, &led->ldev);
-+		init_data.fwnode = child;
-+		init_data.devicename = CR_DEV_NAME;
-+		init_data.default_label = ":";
-+
-+		ret = devm_led_classdev_register_ext(priv->dev, &led->ldev,
-+						     &init_data);
- 		if (ret) {
- 			dev_err(priv->dev,
--				"failed to register LED device %s, err %d",
--				led->name, ret);
-+				"failed to register LED device, err %d", ret);
- 			fwnode_handle_put(child);
- 			return ret;
- 		}
- 
--		led->ldev.dev->of_node = np;
--
- 		i++;
+ 	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
+ 	if (ret) {
+ 		dev_err(&led->client->dev, "reg DT property missing\n");
+ 		return ret;
  	}
+ 
+-	led->led_dev.name = led->label;
++	init_data.fwnode = child;
++	init_data.devicename = led->client->name;
++	init_data.default_label = ":";
+ 
+-	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
++	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
++					     &init_data);
+ 	if (ret) {
+ 		dev_err(&led->client->dev, "led register err: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	led->led_dev.dev->of_node = to_of_node(child);
+-
+ 	return 0;
+ }
  
 -- 
 2.11.0
