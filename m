@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v5 14/26] dt-bindings: lm36010: Add function and color properties
-Date: Sun,  9 Jun 2019 21:07:51 +0200
-Message-ID: <20190609190803.14815-15-jacek.anaszewski@gmail.com>
+Subject: [PATCH v5 11/26] leds: lp8860: Use generic support for composing LED names
+Date: Sun,  9 Jun 2019 21:07:48 +0200
+Message-ID: <20190609190803.14815-12-jacek.anaszewski@gmail.com>
 References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
@@ -10,45 +10,112 @@ To: linux-leds@vger.kernel.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, dmurphy@ti.com, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-Refer to new "function" and "color" properties and mark "label"
-as deprecated.
+Switch to using generic LED support for composing LED class
+device name.
+
+While at it, avoid iterating through available child of nodes
+in favor of obtaining single expected child node using single
+call to of_get_next_available_child().
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Reviewed-by: Dan Murphy <dmurphy@ti.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Tested-by: Dan Murphy <dmurphy@ti.com>
 ---
- Documentation/devicetree/bindings/leds/leds-lm3601x.txt | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/leds/leds-lp8860.c | 35 ++++++++++++++++-------------------
+ 1 file changed, 16 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-index a88b2c41e75b..095dafb6ec7f 100644
---- a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-@@ -22,9 +22,14 @@ Required properties for flash LED child nodes:
- 	- led-max-microamp : Range from 2.4mA - 376mA
+diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+index 39c72a908f3b..e1587210c783 100644
+--- a/drivers/leds/leds-lp8860.c
++++ b/drivers/leds/leds-lp8860.c
+@@ -22,7 +22,6 @@
+ #include <linux/of_gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
+-#include <uapi/linux/uleds.h>
  
- Optional child properties:
--	- label : see Documentation/devicetree/bindings/leds/common.txt
-+	- function : see Documentation/devicetree/bindings/leds/common.txt
-+	- color : see Documentation/devicetree/bindings/leds/common.txt
-+	- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
+ #define LP8860_DISP_CL1_BRT_MSB		0x00
+ #define LP8860_DISP_CL1_BRT_LSB		0x01
+@@ -87,6 +86,8 @@
  
- Example:
+ #define LP8860_CLEAR_FAULTS		0x01
+ 
++#define LP8860_NAME			"lp8860"
 +
-+#include <dt-bindings/leds/common.h>
-+
- led-controller@64 {
- 	compatible = "ti,lm36010";
- 	#address-cells = <1>;
-@@ -33,7 +38,8 @@ led-controller@64 {
+ /**
+  * struct lp8860_led -
+  * @lock - Lock for reading/writing the device
+@@ -96,7 +97,6 @@
+  * @eeprom_regmap - EEPROM register map
+  * @enable_gpio - VDDIO/EN gpio to enable communication interface
+  * @regulator - LED supply regulator pointer
+- * @label - LED label
+  */
+ struct lp8860_led {
+ 	struct mutex lock;
+@@ -106,7 +106,6 @@ struct lp8860_led {
+ 	struct regmap *eeprom_regmap;
+ 	struct gpio_desc *enable_gpio;
+ 	struct regulator *regulator;
+-	char label[LED_MAX_NAME_SIZE];
+ };
  
- 	led@0 {
- 		reg = <1>;
--		label = "white:torch";
-+		function = LED_FUNCTION_TORCH;
-+		color = <LED_COLOR_ID_WHITE>;
- 		led-max-microamp = <376000>;
- 		flash-max-microamp = <1500000>;
- 		flash-max-timeout-us = <1600000>;
+ struct lp8860_eeprom_reg {
+@@ -387,25 +386,19 @@ static int lp8860_probe(struct i2c_client *client,
+ 	struct lp8860_led *led;
+ 	struct device_node *np = client->dev.of_node;
+ 	struct device_node *child_node;
+-	const char *name;
++	struct led_init_data init_data = {};
+ 
+ 	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
+ 	if (!led)
+ 		return -ENOMEM;
+ 
+-	for_each_available_child_of_node(np, child_node) {
+-		led->led_dev.default_trigger = of_get_property(child_node,
+-						    "linux,default-trigger",
+-						    NULL);
+-
+-		ret = of_property_read_string(child_node, "label", &name);
+-		if (!ret)
+-			snprintf(led->label, sizeof(led->label), "%s:%s",
+-				 id->name, name);
+-		else
+-			snprintf(led->label, sizeof(led->label),
+-				"%s::display_cluster", id->name);
+-	}
++	child_node = of_get_next_available_child(np, NULL);
++	if (!child_node)
++		return -EINVAL;
++
++	led->led_dev.default_trigger = of_get_property(child_node,
++					    "linux,default-trigger",
++					    NULL);
+ 
+ 	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
+ 						   "enable", GPIOD_OUT_LOW);
+@@ -420,7 +413,6 @@ static int lp8860_probe(struct i2c_client *client,
+ 		led->regulator = NULL;
+ 
+ 	led->client = client;
+-	led->led_dev.name = led->label;
+ 	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
+ 
+ 	mutex_init(&led->lock);
+@@ -447,7 +439,12 @@ static int lp8860_probe(struct i2c_client *client,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
++	init_data.fwnode = of_fwnode_handle(child_node);
++	init_data.devicename = LP8860_NAME;
++	init_data.default_label = ":display_cluster";
++
++	ret = devm_led_classdev_register_ext(&client->dev, &led->led_dev,
++					     &init_data);
+ 	if (ret) {
+ 		dev_err(&client->dev, "led register err: %d\n", ret);
+ 		return ret;
 -- 
 2.11.0
