@@ -1,7 +1,7 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v5 15/26] leds: lm3601x: Use generic support for composing LED names
-Date: Sun,  9 Jun 2019 21:07:52 +0200
-Message-ID: <20190609190803.14815-16-jacek.anaszewski@gmail.com>
+Subject: [PATCH v5 14/26] dt-bindings: lm36010: Add function and color properties
+Date: Sun,  9 Jun 2019 21:07:51 +0200
+Message-ID: <20190609190803.14815-15-jacek.anaszewski@gmail.com>
 References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
@@ -10,133 +10,45 @@ To: linux-leds@vger.kernel.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, dmurphy@ti.com, jacek.anaszewski@gmail.com
 List-Id: linux-leds@vger.kernel.org
 
-Switch to using generic LED support for composing LED class
-device name.
+Refer to new "function" and "color" properties and mark "label"
+as deprecated.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Tested-by: Dan Murphy <dmurphy@ti.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Dan Murphy <dmurphy@ti.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/leds/leds-lm3601x.c | 38 +++++++++++++++++---------------------
- 1 file changed, 17 insertions(+), 21 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-lm3601x.txt | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3601x.c b/drivers/leds/leds-lm3601x.c
-index 081aa71e43a3..b02972f1a341 100644
---- a/drivers/leds/leds-lm3601x.c
-+++ b/drivers/leds/leds-lm3601x.c
-@@ -10,7 +10,6 @@
- #include <linux/module.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
--#include <uapi/linux/uleds.h>
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+index a88b2c41e75b..095dafb6ec7f 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+@@ -22,9 +22,14 @@ Required properties for flash LED child nodes:
+ 	- led-max-microamp : Range from 2.4mA - 376mA
  
- #define LM3601X_LED_IR		0x0
- #define LM3601X_LED_TORCH	0x1
-@@ -90,8 +89,6 @@ struct lm3601x_led {
- 	struct regmap *regmap;
- 	struct mutex lock;
+ Optional child properties:
+-	- label : see Documentation/devicetree/bindings/leds/common.txt
++	- function : see Documentation/devicetree/bindings/leds/common.txt
++	- color : see Documentation/devicetree/bindings/leds/common.txt
++	- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
  
--	char led_name[LED_MAX_NAME_SIZE];
--
- 	unsigned int flash_timeout;
- 	unsigned int last_flag;
- 
-@@ -322,10 +319,12 @@ static const struct led_flash_ops flash_ops = {
- 	.fault_get		= lm3601x_flash_fault_get,
- };
- 
--static int lm3601x_register_leds(struct lm3601x_led *led)
-+static int lm3601x_register_leds(struct lm3601x_led *led,
-+				 struct fwnode_handle *fwnode)
- {
- 	struct led_classdev *led_cdev;
- 	struct led_flash_setting *setting;
-+	struct led_init_data init_data = {};
- 
- 	led->fled_cdev.ops = &flash_ops;
- 
-@@ -342,20 +341,25 @@ static int lm3601x_register_leds(struct lm3601x_led *led)
- 	setting->val = led->flash_current_max;
- 
- 	led_cdev = &led->fled_cdev.led_cdev;
--	led_cdev->name = led->led_name;
- 	led_cdev->brightness_set_blocking = lm3601x_brightness_set;
- 	led_cdev->max_brightness = DIV_ROUND_UP(led->torch_current_max,
- 						LM3601X_TORCH_REG_DIV);
- 	led_cdev->flags |= LED_DEV_CAP_FLASH;
- 
--	return led_classdev_flash_register(&led->client->dev, &led->fled_cdev);
-+	init_data.fwnode = fwnode;
-+	init_data.devicename = led->client->name;
-+	init_data.default_label = (led->led_mode == LM3601X_LED_TORCH) ?
-+					"torch" : "infrared";
+ Example:
 +
-+	return led_classdev_flash_register_ext(&led->client->dev,
-+						&led->fled_cdev, &init_data);
- }
- 
--static int lm3601x_parse_node(struct lm3601x_led *led)
-+static int lm3601x_parse_node(struct lm3601x_led *led,
-+			      struct fwnode_handle **fwnode)
- {
- 	struct fwnode_handle *child = NULL;
- 	int ret = -ENODEV;
--	const char *name;
- 
- 	child = device_get_next_child_node(&led->client->dev, child);
- 	if (!child) {
-@@ -376,17 +380,6 @@ static int lm3601x_parse_node(struct lm3601x_led *led)
- 		goto out_err;
- 	}
- 
--	ret = fwnode_property_read_string(child, "label", &name);
--	if (ret) {
--		if (led->led_mode == LM3601X_LED_TORCH)
--			name = "torch";
--		else
--			name = "infrared";
--	}
--
--	snprintf(led->led_name, sizeof(led->led_name),
--		"%s:%s", led->client->name, name);
--
- 	ret = fwnode_property_read_u32(child, "led-max-microamp",
- 					&led->torch_current_max);
- 	if (ret) {
-@@ -411,6 +404,8 @@ static int lm3601x_parse_node(struct lm3601x_led *led)
- 		goto out_err;
- 	}
- 
-+	*fwnode = child;
++#include <dt-bindings/leds/common.h>
 +
- out_err:
- 	fwnode_handle_put(child);
- 	return ret;
-@@ -419,6 +414,7 @@ static int lm3601x_parse_node(struct lm3601x_led *led)
- static int lm3601x_probe(struct i2c_client *client)
- {
- 	struct lm3601x_led *led;
-+	struct fwnode_handle *fwnode;
- 	int ret;
+ led-controller@64 {
+ 	compatible = "ti,lm36010";
+ 	#address-cells = <1>;
+@@ -33,7 +38,8 @@ led-controller@64 {
  
- 	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
-@@ -428,7 +424,7 @@ static int lm3601x_probe(struct i2c_client *client)
- 	led->client = client;
- 	i2c_set_clientdata(client, led);
- 
--	ret = lm3601x_parse_node(led);
-+	ret = lm3601x_parse_node(led, &fwnode);
- 	if (ret)
- 		return -ENODEV;
- 
-@@ -442,7 +438,7 @@ static int lm3601x_probe(struct i2c_client *client)
- 
- 	mutex_init(&led->lock);
- 
--	return lm3601x_register_leds(led);
-+	return lm3601x_register_leds(led, fwnode);
- }
- 
- static int lm3601x_remove(struct i2c_client *client)
+ 	led@0 {
+ 		reg = <1>;
+-		label = "white:torch";
++		function = LED_FUNCTION_TORCH;
++		color = <LED_COLOR_ID_WHITE>;
+ 		led-max-microamp = <376000>;
+ 		flash-max-microamp = <1500000>;
+ 		flash-max-timeout-us = <1600000>;
 -- 
 2.11.0
