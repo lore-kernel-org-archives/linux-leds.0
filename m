@@ -1,58 +1,138 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v5 08/26] dt-bindings: lt3593: Add function and color properties
-Date: Sun,  9 Jun 2019 21:07:45 +0200
-Message-ID: <20190609190803.14815-9-jacek.anaszewski@gmail.com>
+Subject: [PATCH v5 04/26] dt-bindings: leds: Add properties for LED name construction
+Date: Sun,  9 Jun 2019 21:07:41 +0200
+Message-ID: <20190609190803.14815-5-jacek.anaszewski@gmail.com>
 References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, dmurphy@ti.com, jacek.anaszewski@gmail.com, Daniel Mack <daniel@zonque.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, dmurphy@ti.com, jacek.anaszewski@gmail.com, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-Refer to new "function" and "color" properties and mark "label"
-as deprecated.
+Introduce dedicated properties for conveying information about
+LED function and color. Mark old "label" property as deprecated.
+
+Additionally function-enumerator property is being provided
+for the cases when neither function nor color can be used
+for LED differentiation.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Baolin Wang <baolin.wang@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Dan Murphy <dmurphy@ti.com>
 Cc: Daniel Mack <daniel@zonque.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Simon Shields <simon@lineageos.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/leds/leds-lt3593.txt | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/leds/common.txt | 62 ++++++++++++++++++++---
+ 1 file changed, 54 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lt3593.txt b/Documentation/devicetree/bindings/leds/leds-lt3593.txt
-index 6b2cabc36c0c..24eccdaa6322 100644
---- a/Documentation/devicetree/bindings/leds/leds-lt3593.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-lt3593.txt
-@@ -9,8 +9,10 @@ The hardware supports only one LED. The properties of this LED are
- configured in a sub-node in the device node.
+diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+index 70876ac11367..9fa6f9795d50 100644
+--- a/Documentation/devicetree/bindings/leds/common.txt
++++ b/Documentation/devicetree/bindings/leds/common.txt
+@@ -10,14 +10,30 @@ can influence the way of the LED device initialization, the LED components
+ have to be tightly coupled with the LED device binding. They are represented
+ by child nodes of the parent LED device binding.
  
- Optional sub-node properties:
--- label:	A label for the LED. If none is given, the LED will be
--		named "lt3595::".
-+- function:		See Documentation/devicetree/bindings/leds/common.txt
-+- color:		See Documentation/devicetree/bindings/leds/common.txt
-+- label:		A label for the LED. If none is given, the LED will be
-+			named "lt3595::" (deprecated)
- - linux,default-trigger: The default trigger for the LED.
- 			See Documentation/devicetree/bindings/leds/common.txt
- - default-state:	The initial state of the LED.
-@@ -21,12 +23,15 @@ be handled by its own device node.
++
+ Optional properties for child nodes:
+ - led-sources : List of device current outputs the LED is connected to. The
+ 		outputs are identified by the numbers that must be defined
+ 		in the LED device binding documentation.
++
++- function: LED functon. Use one of the LED_FUNCTION_* prefixed definitions
++	    from the header include/dt-bindings/leds/common.h.
++	    If there is no matching LED_FUNCTION available, add a new one.
++
++- color : Color of the LED. Use one of the LED_COLOR_ID_* prefixed definitions
++	  from the header include/dt-bindings/leds/common.h.
++	  If there is no matching LED_COLOR_ID available, add a new one.
++
++- function-enumerator: Integer to be used when more than one instance
++                       of the same function is needed, differing only with
++		       an ordinal number.
++
+ - label : The label for this LED. If omitted, the label is taken from the node
+ 	  name (excluding the unit address). It has to uniquely identify
+ 	  a device, i.e. no other LED class device can be assigned the same
+-	  label.
++	  label. This property is deprecated - use 'function' and 'color'
++	  properties instead. function-enumerator has no effect when this
++	  property is present.
  
- Example:
+ - default-state : The initial state of the LED. Valid values are "on", "off",
+   and "keep". If the LED is already on or off and the default-state property is
+@@ -99,29 +115,59 @@ Required properties for trigger source:
  
+ * Examples
+ 
+-gpio-leds {
 +#include <dt-bindings/leds/common.h>
 +
- led-controller {
- 	compatible = "lltc,lt3593";
- 	lltc,ctrl-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
++led-controller@0 {
+ 	compatible = "gpio-leds";
  
- 	led {
--		label = "white:backlight";
-+		function = LED_FUNCTION_BACKLIGHT;
-+		color = <LED_COLOR_ID_WHITE>;
- 		default-state = "on";
+-	system-status {
+-		label = "Status";
++	led0 {
++		function = LED_FUNCTION_STATUS;
+ 		linux,default-trigger = "heartbeat";
+ 		gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+-	usb {
++	led1 {
++		function = LED_FUNCTION_USB;
+ 		gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+ 		trigger-sources = <&ohci_port1>, <&ehci_port1>;
  	};
  };
+ 
+-max77693-led {
++led-controller@0 {
+ 	compatible = "maxim,max77693-led";
+ 
+-	camera-flash {
+-		label = "Flash";
++	led {
++		function = LED_FUNCTION_FLASH;
++		color = <LED_COLOR_ID_WHITE>;
+ 		led-sources = <0>, <1>;
+ 		led-max-microamp = <50000>;
+ 		flash-max-microamp = <320000>;
+ 		flash-max-timeout-us = <500000>;
+ 	};
+ };
++
++led-controller@30 {
++        compatible = "panasonic,an30259a";
++        reg = <0x30>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led@1 {
++		reg = <1>;
++		linux,default-trigger = "heartbeat";
++		function = LED_FUNCTION_INDICATOR;
++		function-enumerator = <1>;
++        };
++
++        led@2 {
++		reg = <2>;
++		function = LED_FUNCTION_INDICATOR;
++		function-enumerator = <2>;
++        };
++
++        led@3 {
++		reg = <3>;
++		function = LED_FUNCTION_INDICATOR;
++		function-enumerator = <3>;
++        };
++};
 -- 
 2.11.0
