@@ -1,138 +1,97 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v5 04/26] dt-bindings: leds: Add properties for LED name construction
-Date: Sun,  9 Jun 2019 21:07:41 +0200
-Message-ID: <20190609190803.14815-5-jacek.anaszewski@gmail.com>
+Subject: [PATCH v5 07/26] leds: sc27xx-blt: Use generic support for composing LED names
+Date: Sun,  9 Jun 2019 21:07:44 +0200
+Message-ID: <20190609190803.14815-8-jacek.anaszewski@gmail.com>
 References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, dmurphy@ti.com, jacek.anaszewski@gmail.com, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, dmurphy@ti.com, jacek.anaszewski@gmail.com, Baolin Wang <baolin.wang@linaro.org>
 List-Id: linux-leds@vger.kernel.org
 
-Introduce dedicated properties for conveying information about
-LED function and color. Mark old "label" property as deprecated.
-
-Additionally function-enumerator property is being provided
-for the cases when neither function nor color can be used
-for LED differentiation.
+Switch to using generic LED support for composing LED class
+device name.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc: Baolin Wang <baolin.wang@linaro.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Dan Murphy <dmurphy@ti.com>
-Cc: Daniel Mack <daniel@zonque.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Oleh Kravchenko <oleg@kaa.org.ua>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Simon Shields <simon@lineageos.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
- Documentation/devicetree/bindings/leds/common.txt | 62 ++++++++++++++++++++---
- 1 file changed, 54 insertions(+), 8 deletions(-)
+ drivers/leds/leds-sc27xx-bltc.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-index 70876ac11367..9fa6f9795d50 100644
---- a/Documentation/devicetree/bindings/leds/common.txt
-+++ b/Documentation/devicetree/bindings/leds/common.txt
-@@ -10,14 +10,30 @@ can influence the way of the LED device initialization, the LED components
- have to be tightly coupled with the LED device binding. They are represented
- by child nodes of the parent LED device binding.
+diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
+index fecf27fb1cdc..0ede87420bfc 100644
+--- a/drivers/leds/leds-sc27xx-bltc.c
++++ b/drivers/leds/leds-sc27xx-bltc.c
+@@ -6,7 +6,6 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+-#include <uapi/linux/uleds.h>
  
-+
- Optional properties for child nodes:
- - led-sources : List of device current outputs the LED is connected to. The
- 		outputs are identified by the numbers that must be defined
- 		in the LED device binding documentation.
-+
-+- function: LED functon. Use one of the LED_FUNCTION_* prefixed definitions
-+	    from the header include/dt-bindings/leds/common.h.
-+	    If there is no matching LED_FUNCTION available, add a new one.
-+
-+- color : Color of the LED. Use one of the LED_COLOR_ID_* prefixed definitions
-+	  from the header include/dt-bindings/leds/common.h.
-+	  If there is no matching LED_COLOR_ID available, add a new one.
-+
-+- function-enumerator: Integer to be used when more than one instance
-+                       of the same function is needed, differing only with
-+		       an ordinal number.
-+
- - label : The label for this LED. If omitted, the label is taken from the node
- 	  name (excluding the unit address). It has to uniquely identify
- 	  a device, i.e. no other LED class device can be assigned the same
--	  label.
-+	  label. This property is deprecated - use 'function' and 'color'
-+	  properties instead. function-enumerator has no effect when this
-+	  property is present.
+ /* PMIC global control register definition */
+ #define SC27XX_MODULE_EN0	0xc08
+@@ -46,7 +45,7 @@
+ #define SC27XX_DELTA_T_MAX	(SC27XX_LEDS_STEP * 255)
  
- - default-state : The initial state of the LED. Valid values are "on", "off",
-   and "keep". If the LED is already on or off and the default-state property is
-@@ -99,29 +115,59 @@ Required properties for trigger source:
+ struct sc27xx_led {
+-	char name[LED_MAX_NAME_SIZE];
++	struct fwnode_handle *fwnode;
+ 	struct led_classdev ldev;
+ 	struct sc27xx_led_priv *priv;
+ 	u8 line;
+@@ -249,19 +248,24 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
  
- * Examples
+ 	for (i = 0; i < SC27XX_LEDS_MAX; i++) {
+ 		struct sc27xx_led *led = &priv->leds[i];
++		struct led_init_data init_data = {};
  
--gpio-leds {
-+#include <dt-bindings/leds/common.h>
+ 		if (!led->active)
+ 			continue;
+ 
+ 		led->line = i;
+ 		led->priv = priv;
+-		led->ldev.name = led->name;
+ 		led->ldev.brightness_set_blocking = sc27xx_led_set;
+ 		led->ldev.pattern_set = sc27xx_led_pattern_set;
+ 		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
+ 		led->ldev.default_trigger = "pattern";
+ 
+-		err = devm_led_classdev_register(dev, &led->ldev);
++		init_data.fwnode = led->fwnode;
++		init_data.devicename = "sc27xx";
++		init_data.default_label = ":";
 +
-+led-controller@0 {
- 	compatible = "gpio-leds";
++		err = devm_led_classdev_register_ext(dev, &led->ldev,
++						     &init_data);
+ 		if (err)
+ 			return err;
+ 	}
+@@ -274,7 +278,6 @@ static int sc27xx_led_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node, *child;
+ 	struct sc27xx_led_priv *priv;
+-	const char *str;
+ 	u32 base, count, reg;
+ 	int err;
  
--	system-status {
--		label = "Status";
-+	led0 {
-+		function = LED_FUNCTION_STATUS;
- 		linux,default-trigger = "heartbeat";
- 		gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
- 	};
+@@ -316,15 +319,8 @@ static int sc27xx_led_probe(struct platform_device *pdev)
+ 			return -EINVAL;
+ 		}
  
--	usb {
-+	led1 {
-+		function = LED_FUNCTION_USB;
- 		gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
- 		trigger-sources = <&ohci_port1>, <&ehci_port1>;
- 	};
- };
++		priv->leds[reg].fwnode = of_fwnode_handle(child);
+ 		priv->leds[reg].active = true;
+-
+-		err = of_property_read_string(child, "label", &str);
+-		if (err)
+-			snprintf(priv->leds[reg].name, LED_MAX_NAME_SIZE,
+-				 "sc27xx::");
+-		else
+-			snprintf(priv->leds[reg].name, LED_MAX_NAME_SIZE,
+-				 "sc27xx:%s", str);
+ 	}
  
--max77693-led {
-+led-controller@0 {
- 	compatible = "maxim,max77693-led";
- 
--	camera-flash {
--		label = "Flash";
-+	led {
-+		function = LED_FUNCTION_FLASH;
-+		color = <LED_COLOR_ID_WHITE>;
- 		led-sources = <0>, <1>;
- 		led-max-microamp = <50000>;
- 		flash-max-microamp = <320000>;
- 		flash-max-timeout-us = <500000>;
- 	};
- };
-+
-+led-controller@30 {
-+        compatible = "panasonic,an30259a";
-+        reg = <0x30>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        led@1 {
-+		reg = <1>;
-+		linux,default-trigger = "heartbeat";
-+		function = LED_FUNCTION_INDICATOR;
-+		function-enumerator = <1>;
-+        };
-+
-+        led@2 {
-+		reg = <2>;
-+		function = LED_FUNCTION_INDICATOR;
-+		function-enumerator = <2>;
-+        };
-+
-+        led@3 {
-+		reg = <3>;
-+		function = LED_FUNCTION_INDICATOR;
-+		function-enumerator = <3>;
-+        };
-+};
+ 	err = sc27xx_led_register(dev, priv);
 -- 
 2.11.0
