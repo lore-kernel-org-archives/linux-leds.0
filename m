@@ -1,268 +1,96 @@
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH v5 26/26] leds: Document standard LED functions
-Date: Sun,  9 Jun 2019 21:08:03 +0200
-Message-ID: <20190609190803.14815-27-jacek.anaszewski@gmail.com>
+Subject: [PATCH v5 25/26] leds: an30259a: Use generic support for composing LED names
+Date: Sun,  9 Jun 2019 21:08:02 +0200
+Message-ID: <20190609190803.14815-26-jacek.anaszewski@gmail.com>
 References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, dmurphy@ti.com, jacek.anaszewski@gmail.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, pavel@ucw.cz, robh@kernel.org, dtor@google.com, linux@roeck-us.net, dmurphy@ti.com, jacek.anaszewski@gmail.com, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
-Add a documentation for standard LED functions with regard
-to differences in meaning between cases when devicename section
-of LED name is present or not.
+Switch to using generic LED support for composing LED class
+device name.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Simon Shields <simon@lineageos.org>
 ---
- Documentation/leds/led-functions.txt | 223 +++++++++++++++++++++++++++++++++++
- Documentation/leds/leds-class.txt    |   3 +
- 2 files changed, 226 insertions(+)
- create mode 100644 Documentation/leds/led-functions.txt
+ drivers/leds/leds-an30259a.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/leds/led-functions.txt b/Documentation/leds/led-functions.txt
-new file mode 100644
-index 000000000000..003b6b6271d1
---- /dev/null
-+++ b/Documentation/leds/led-functions.txt
-@@ -0,0 +1,223 @@
-+This file presents standardized LED functions and their meaning.
-+
-+Each LED function is described using below template:
-+
-+- LED function name
-+    NDEV : <function meaning when LED devicename section is absent>
-+    DEV  : <function meaning when LED devicename section is present>
-+    DEVICENAME : <expected LED devicename for DEV case>
-+    TRIGGER: <matching LED trigger>
-+
-+/* LED functions with corresponding trigger support */
-+
-+- activity
-+    NDEV : system activity
-+    DEV  : n/a
-+    TRIGGER : "activity"
-+
-+- backlight
-+    NDEV : n/a
-+    DEV  : backlight of a frame buffer device
-+    DEVICENAME : associated frame buffer device, e.g. fb0
-+    TRIGGER: "backlight"
-+
-+- capslock
-+    NDEV : n/a
-+    DEV  : keyboard capslock state related to the specified input device
-+    DEVICENAME : associated input device, e.g. input1
-+    TRIGGER : "kbd-capslock"
-+
-+- disk
-+    NDEV : rw activity on any disk in the system
-+    DEV  : rw activity on specified disk
-+    DEVICENAME : associated disk, e.g.: hda, sdb
-+    TRIGGER : "disk-activity", applies only to NDEV case
-+
-+- disk-read
-+    NDEV : read activity on any disk in the system
-+    DEV  : read activity on specified disk
-+    DEVICENAME : associted disk, e.g.: hda, sdb
-+    TRIGGER : "disk-read", applies only to NDEV case
-+
-+- disk-write
-+    NDEV : write activity on any disk in the system
-+    DEV  : write activity on specified disk
-+    DEVICENAME : associated disk, .e.g" hda, sdb
-+    TRIGGER : "disk-write", applies only to NDEV case
-+
-+- flash
-+    NDEV : flash LED (if there is single available on the platform)
-+    DEV  : flash LED related to the specified video device
-+    DEVICENAME : associated video device, e.g. v4l2-subdev3
-+    TRIGGER : "flash"; this LED can be also controlled by v4l2-flash framework
-+
-+- flash-front
-+    NDEV : n/a
-+    DEV  : front flash LED related to the specified video device
-+    DEVICENAME : associated video device, e.g. v4l2-subdev3
-+    TRIGGER : "flash"; this LED can be also controlled by v4l2-flash framework
-+
-+- flash-rear
-+    NDEV : n/a
-+    DEV  : rear flash LED related to the specified video device
-+    DEVICENAME : associated video device, e.g. v4l2-subdev3
-+    TRIGGER : "flash"; this LED can be also controlled by v4l2-flash framework
-+
-+- heartbeat
-+    NDEV : cpu load average expressed as heartbeat-fashion blink frequency
-+    DEV  : n/a
-+    TRIGGER : "heartbeat"
-+
-+- lan
-+    NDEV : n/a
-+    DEV  : network traffic on selected network device
-+    DEVICENAME : associated phy, e.g. phy1
-+    TRIGGER : "netdev"
-+
-+- micmute
-+    NDEV : plaform microphone input mute state
-+    DEV  : mute state of a microphone belonging to the specified device
-+    DEVICENAME : associated audio device
-+    TRIGGER : "audio-micmute"
-+
-+- mtd
-+    NDEV : rw actvity on any mtd device in the system
-+    DEV  : rw actvity on specified mtd device
-+    DEVICENAME : associated mtd device, e.g mtdN
-+    TRIGGER : "mtd"
-+
-+- mute
-+    NDEV : platform audio output mute state
-+    DEV  : mute state of specified audio device output
-+    DEVICENAME : associated audio device
-+    TRIGGER : "audio-mute"
-+
-+- numlock
-+    NDEV : n/a
-+    DEV  : keyboard numlock state related to the specified input device
-+    DEVICENAME : associated input device, e.g. input1
-+    TRIGGER : "kbd-numlock"
-+
-+- panic
-+    NDEV : signals kernel panic
-+    DEV  : n/a
-+    TRIGGER : "panic"
-+
-+- scrolllock
-+    NDEV : n/a
-+    DEV  : keyboard scrollock state related to the specified input device
-+    DEVICENAME : associated input device, e.g. input1
-+    TRIGGER : "kbd-scrolllock"
-+
-+- torch
-+    NDEV : torch LED (if there is single available on the platform)
-+    DEV  : torch LED related to the specified video device
-+    DEVICENAME : associated video device, e.g. video1, v4l2-subdev3
-+    TRIGGER : "torch"; this LED can be also controlled by v4l2-flash framework
-+
-+- usb
-+    NDEV : activity on any USB port
-+    DEV  : activity on a specified USB port
-+    DEVICENAME: associated USB device identifier
-+    TRIGGER : "usbport"
-+
-+/* LED functions without corresponding trigger support */
-+
-+- alarm
-+    NDEV : system wide alarm
-+    DEV  : n/a
-+
-+- bluetooth
-+    NDEV : activity on platform bluetooth adapter
-+    DEV  : activity on bluetooth adapter related to the specified device
-+    DEVICENAME : associated device
-+
-+- boot
-+    NDEV : when lit indicates system boot
-+    DEV  : n/a
-+
-+- charging
-+    NDEV : battery charging status
-+    DEV  : n/a
-+
-+- debug
-+    NDEV : signals if device runs in debug mode
-+    DEV  : n/a
-+
-+- disk-err
-+    NDEV : failure on any disk in the system
-+    DEV  : failure on specified disk
-+    DEVICENAME : associted disk, e.g.: hda, sdb
-+
-+- fault
-+    NDEV : general system fault
-+    DEV  : fault on specified system device
-+    DEVICENAME : related device name
-+
-+- indicator
-+    NDEV : signals if platform camera sensor is active
-+    DEV  : signals if camera sensor related to the specified video device is active
-+    DEVICENAME : associated video device, e.g.: v4l2-subdev3
-+
-+- kbd_backlight
-+    NDEV : platform keyboard backlight state
-+    DEV  : backlight state related to the specified device
-+    DEVICENAME : associated device, e.g. input1
-+
-+- mail
-+    NDEV : signals a new massage in mailbox
-+    DEV  : n/a
-+
-+- programming
-+    NDEV : platform firmware update is in progress
-+    DEV  : n/a
-+
-+- power
-+    NDEV : power plug presence indicator
-+    DEV  : n/a
-+
-+- rx
-+    NDEV : n/a
-+    DEV  : activity on rx line of serial port related to the specified tty device
-+    DEVICENAME: associated tty device, e.g.: tty1, ttyUSB2
-+
-+- sd
-+    NDEV : n/a
-+    DEV  : activity on sd card related to the specified device
-+    DEVICENAME: associated disk, e.g. sdb
-+
-+- sleep
-+    NDEV : signals any variant of system hibernation or suspend state
-+    DEV  : n/a
-+
-+- standby
-+    NDEV : device standby status
-+    DEV  : n/a
-+
-+- status
-+    NDEV : system wide status LED
-+    DEV  : n/a
-+
-+- system
-+    NDEV : system is fully operating
-+    DEV  : n/a
-+
-+- tx
-+    NDEV : n/a
-+    DEV  : activity on tx line of serial port related to the specified tty device
-+    DEVICENAME: associated tty device, e.g.: tty1, ttyUSB2
-+
-+- wan
-+    NDEV : activity on any WAN device
-+    DEV  : activity on a specified WAN device
-+    DEVICENAME: associated WAN device identifier
-+
-+- wlan
-+    NDEV : activity on any wlan device
-+    DEV  : activity on a specified wlan device
-+    DEVICENAME: associated wlan device identifier
-+
-+- wps
-+    NDEV : n/a
-+    DEV  : wps functionality activation state related to the specified device
-+    DEVICENAME : associated device name
-diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
-index e7316e37b57d..30684db9dfca 100644
---- a/Documentation/leds/leds-class.txt
-+++ b/Documentation/leds/leds-class.txt
-@@ -62,6 +62,9 @@ function: one of the LED_FUNCTION* definitions from the header
- If required color or function is missing, please submit a patch
- to linux-leds@vger.kernel.org, adding required entries.
+diff --git a/drivers/leds/leds-an30259a.c b/drivers/leds/leds-an30259a.c
+index 1c1f0c8c56f4..fa722d45269e 100644
+--- a/drivers/leds/leds-an30259a.c
++++ b/drivers/leds/leds-an30259a.c
+@@ -13,7 +13,6 @@
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/regmap.h>
+-#include <uapi/linux/uleds.h>
  
-+The exact meaning of LED function name depends on whether it has devicename
-+section filled or left blank. See Documentation/leds/led-functions.txt.
+ #define AN30259A_MAX_LEDS 3
+ 
+@@ -54,6 +53,8 @@
+ #define AN30259A_BLINK_MAX_TIME 7500 /* ms */
+ #define AN30259A_SLOPE_RESOLUTION 500 /* ms */
+ 
++#define AN30259A_NAME "an30259a"
 +
- It is possible that more than one LED with the same color and function will
- be required for given platform, differing only with an ordinal number.
- In this case it is preferable to just concatenate the predefined LED_FUNCTION*
+ #define STATE_OFF 0
+ #define STATE_KEEP 1
+ #define STATE_ON 2
+@@ -62,11 +63,11 @@ struct an30259a;
+ 
+ struct an30259a_led {
+ 	struct an30259a *chip;
++	struct fwnode_handle *fwnode;
+ 	struct led_classdev cdev;
+ 	u32 num;
+ 	u32 default_state;
+ 	bool sloping;
+-	char label[LED_MAX_NAME_SIZE];
+ };
+ 
+ struct an30259a {
+@@ -226,14 +227,7 @@ static int an30259a_dt_init(struct i2c_client *client,
+ 
+ 		led->num = source;
+ 		led->chip = chip;
+-
+-		if (of_property_read_string(child, "label", &str))
+-			snprintf(led->label, sizeof(led->label), "an30259a::");
+-		else
+-			snprintf(led->label, sizeof(led->label), "an30259a:%s",
+-				 str);
+-
+-		led->cdev.name = led->label;
++		led->fwnode = of_fwnode_handle(child);
+ 
+ 		if (!of_property_read_string(child, "default-state", &str)) {
+ 			if (!strcmp(str, "on"))
+@@ -312,13 +306,20 @@ static int an30259a_probe(struct i2c_client *client)
+ 	chip->regmap = devm_regmap_init_i2c(client, &an30259a_regmap_config);
+ 
+ 	for (i = 0; i < chip->num_leds; i++) {
++		struct led_init_data init_data = {};
++
+ 		an30259a_init_default_state(&chip->leds[i]);
+ 		chip->leds[i].cdev.brightness_set_blocking =
+ 			an30259a_brightness_set;
+ 		chip->leds[i].cdev.blink_set = an30259a_blink_set;
+ 
+-		err = devm_led_classdev_register(&client->dev,
+-						 &chip->leds[i].cdev);
++		init_data.fwnode = chip->leds[i].fwnode;
++		init_data.devicename = AN30259A_NAME;
++		init_data.default_label = ":";
++
++		err = devm_led_classdev_register_ext(&client->dev,
++						 &chip->leds[i].cdev,
++						 &init_data);
+ 		if (err < 0)
+ 			goto exit;
+ 	}
 -- 
 2.11.0
