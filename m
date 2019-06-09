@@ -1,145 +1,43 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v4 2/2] documention: leds: Add multicolor class
- documentation
-Date: Sun, 9 Jun 2019 17:15:57 +0200
-Message-ID: <d5bdf93b-2a6e-a773-ebb1-4850859ed147@gmail.com>
-References: <20190530181630.30373-1-dmurphy@ti.com>
- <20190530181630.30373-2-dmurphy@ti.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH 00/34] treewide: simplify getting the adapter of an I2C
+ client
+Date: Sun, 9 Jun 2019 16:37:52 +0000
+Message-ID: <661f1084-da4e-75f0-e632-335134932801@axentia.se>
+References: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------1E09EAE11F5DFB1537256FD3"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190530181630.30373-2-dmurphy@ti.com>
+In-Reply-To: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
 Content-Language: en-US
+Content-ID: <C55F5D15CFF4704BB7913C0E714412B0@eurprd02.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>, linux-usb@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------1E09EAE11F5DFB1537256FD3
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Hi Dan,
-
-On 5/30/19 8:16 PM, Dan Murphy wrote:
-[...]
-> +Multicolor Class Brightness Control
-> +-----------------------------------
-> +The multicolor class will redirect the device drivers call back
-> +function for brightness control to the multicolor class brightness
-> +control function.
-> +
-> +The brightness level for each LED is calculated based on the color LED
-> +brightness setting divided by the color LED max brightness setting multiplied by
-> +the requested value.
-> +
-> +led_brightness = requested_value*(led_color_brightness/led_color_max_brightness)
-> +
-> +Example:
-> +Three LEDs are present in the group as defined in "Directory Layout Example"
-> +within this document.
-> +
-> +A user first writes the color LED brightness file with the brightness level that
-> +is neccesary to achieve a blueish violet output from the RGB LED group.
-> +
-> +echo 138 > /sys/class/leds/rgb:grouped_leds/red/brightness
-> +echo 43 > /sys/class/leds/rgb:grouped_leds/green/brightness
-> +echo 226 > /sys/class/leds/rgb:grouped_leds/blue/brightness
-> +
-> +red -
-> +	brightness = 138
-> +	max_brightness = 255
-> +green -
-> +	brightness = 43
-> +	max_brightness = 255
-> +blue -
-> +	brightness = 226
-> +	max_brightness = 255
-> +
-> +The user can control the brightness of that RGB group by writing the parent
-> +'brightness' control.  Assuming a parent max_brightness of 255 the user may want
-> +to dim the LED color group to half.  The user would write a value of 128 to the
-> +parent brightness file then the values written to each LED will be adjusted
-> +base on this value
-> +
-> +cat /sys/class/leds/rgb:grouped_leds/max_brightness
-> +255
-> +echo 128 > /sys/class/leds/rgb:grouped_leds/brightness
-> +
-> +adjusted_red_value = 128 * (138/255) = 69
-> +adjusted_green_value = 128 * (43/255) = 21
-> +adjusted_blue_value = 128 * (226/255) = 113
-> +
-> +Reading the parent brightness file will return the current brightness value of
-> +the color LED group.
-
-I've tested this algorithm with python script and at least on my LED 
-monitor it works as expected. Attached is the script I've come up with.
-
-> +cat /sys/class/leds/rgb:grouped_leds/max_brightness
-> +255
-> +
-> +echo 128 > /sys/class/leds/rgb:grouped_leds/brightness
-> +
-> +cat /sys/class/leds/rgb:grouped_leds/max_brightness
-> +128
-> +
-> +
-> 
-
--- 
-Best regards,
-Jacek Anaszewski
-
---------------1E09EAE11F5DFB1537256FD3
-Content-Type: text/x-python;
- name="led_color.py"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="led_color.py"
-
-#!/usr/bin/python3.5
-
-from PIL import Image
-import sys
-import time
-
-WIDTH = 500
-HEIGHT = 500
-
-def print_usage():
-        print ('Usage: led_color.py RED GREEN BLUE TOP_BRIGHTNESS')
-        sys.exit(0)
-
-def main():
-    if len(sys.argv) != 5:
-            print_usage()
-
-    MAX_R = int(sys.argv[4])
-    MAX_G = int(sys.argv[4])
-    MAX_B = int(sys.argv[4])
-
-    R = int(sys.argv[1])
-    G = int(sys.argv[2])
-    B = int(sys.argv[3])
-    TB = int(sys.argv[4])
-
-    for BR in range(1,TB+1):
-        OUT_R = int(BR * R / MAX_R)
-        OUT_G = int(BR * G / MAX_G)
-        OUT_B = int(BR * B / MAX_B)
-
-        print("red: {}, green: {}, blue: {}".format(OUT_R, OUT_G, OUT_B))
-
-        img = Image.new("RGB", (WIDTH,HEIGHT), (OUT_R,OUT_G,OUT_B))
-        img.show()
-        time.sleep(0.1)
-
-
-if __name__ == "__main__":
-        main()
-
-
---------------1E09EAE11F5DFB1537256FD3--
+T24gMjAxOS0wNi0wOCAxMjo1NSwgV29sZnJhbSBTYW5nIHdyb3RlOg0KPiBXaGlsZSBwcmVwYXJp
+bmcgYSByZWZhY3RvcmluZyBzZXJpZXMsIEkgbm90aWNlZCB0aGF0IHNvbWUgZHJpdmVycyB1c2Ug
+YQ0KPiBjb21wbGljYXRlZCB3YXkgb2YgZGV0ZXJtaW5pbmcgdGhlIGFkYXB0ZXIgb2YgYSBjbGll
+bnQuIFRoZSBlYXN5IHdheSBpcw0KPiB0byB1c2UgdGhlIGludGVuZGVkIHBvaW50ZXI6IGNsaWVu
+dC0+YWRhcHRlcg0KPiANCj4gVGhlc2UgZHJpdmVycyBkbzoNCj4gCXRvX2kyY19hZGFwdGVyKGNs
+aWVudC0+ZGV2LnBhcmVudCk7DQo+IA0KPiBUaGUgSTJDIGNvcmUgcG9wdWxhdGVzIHRoZSBwYXJl
+bnQgcG9pbnRlciBhczoNCj4gCWNsaWVudC0+ZGV2LnBhcmVudCA9ICZjbGllbnQtPmFkYXB0ZXIt
+PmRldjsNCj4gDQo+IE5vdyB0YWtlIGludG8gY29uc2lkZXJhdGlvbiB0aGF0DQo+IAl0b19pMmNf
+YWRhcHRlcigmYWRhcHRlci0+ZGV2KTsNCj4gDQo+IGlzIGEgY29tcGxpY2F0ZWQgd2F5IG9mIHNh
+eWluZyAnYWRhcHRlcicsIHRoZW4gd2UgY2FuIGV2ZW4gZm9ybWFsbHkNCj4gcHJvdmUgdGhhdCB0
+aGUgY29tcGxpY2F0ZWQgZXhwcmVzc2lvbiBjYW4gYmUgc2ltcGxpZmllZCBieSB1c2luZw0KPiBj
+bGllbnQtPmFkYXB0ZXIuDQo+IA0KPiBUaGUgY29udmVyc2lvbiB3YXMgZG9uZSB1c2luZyBhIGNv
+Y2NpbmVsbGUgc2NyaXB0IHdpdGggc29tZSBtYW51YWwNCj4gaW5kZW50YXRpb24gZml4ZXMgYXBw
+bGllZCBvbiB0b3AuDQo+IA0KPiBUbyBhdm9pZCBhIGJyb3duIHBhcGVyIGJhZyBtaXN0YWtlLCBJ
+IGRvdWJsZSBjaGVja2VkIHRoaXMgb24gYSBSZW5lc2FzDQo+IFNhbHZhdG9yLVhTIGJvYXJkIChS
+LUNhciBNM04pIGFuZCB2ZXJpZmllZCBib3RoIGV4cHJlc3Npb24gcmVzdWx0IGluIHRoZQ0KPiBz
+YW1lIHBvaW50ZXIuIE90aGVyIHRoYW4gdGhhdCwgdGhlIHNlcmllcyBpcyBvbmx5IGJ1aWxkIHRl
+c3RlZC4NCg0KU2ltaWxhciB0aGluZ3MgZ28gb24gaW46DQoNCmRyaXZlcnMvaHdtb24vbG05MC5j
+DQpkcml2ZXJzL2xlZHMvbGVkcy1pczMxZmwzMTl4LmMNCmRyaXZlcnMvb2YvdW5pdHRlc3QuYw0K
+DQpUaG9zZSBoYXZlIHRoaXMgcGF0dGVybjoNCg0KCXN0cnVjdCBkZXZpY2UgKmRldiA9ICZjbGll
+bnQtPmRldjsNCglzdHJ1Y3QgaTJjX2FkYXB0ZXIgKmFkYXB0ZXIgPSB0b19pMmNfYWRhcHRlcihk
+ZXYtPnBhcmVudCk7DQoNCkFuZCBkcml2ZXJzL3J0Yy9ydGMtZm0zMTMwLmMgaGFzIGEgY291cGxl
+IG9mIHRoZXNlOg0KDQoJdG1wID0gaTJjX3RyYW5zZmVyKHRvX2kyY19hZGFwdGVyKGZtMzEzMC0+
+Y2xpZW50LT5kZXYucGFyZW50KSwNCgkJCS4uLik7DQoNCndoZXJlIGZtMzEzMC0+Y2xpZW50IGlz
+IG9mIHR5cGUgInN0cnVjdCBpMmNfY2xpZW50ICoiDQoNCkNoZWVycywNClBldGVyDQo=
