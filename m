@@ -1,41 +1,55 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/3] leds: is31fl319x: simplify getting the adapter of a client
-Date: Mon, 10 Jun 2019 11:51:55 +0200
-Message-ID: <20190610095157.11814-3-wsa+renesas@sang-engineering.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 2/3] leds: is31fl319x: simplify getting the adapter of a
+ client
+Date: Mon, 10 Jun 2019 11:53:48 +0200
+Message-ID: <20190610095348.GA29684@amd>
 References: <20190610095157.11814-1-wsa+renesas@sang-engineering.com>
+ <20190610095157.11814-3-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190610095157.11814-1-wsa+renesas@sang-engineering.com>
+Content-Disposition: inline
+In-Reply-To: <20190610095157.11814-3-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, Peter Rosin <peda@axentia.se>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-We have a dedicated pointer for that, so use it. Much easier to read and
-less computation involved.
 
-Reported-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--r5Pyd7+fXNt84Ff3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please apply to your subsystem tree.
+On Mon 2019-06-10 11:51:55, Wolfram Sang wrote:
+> We have a dedicated pointer for that, so use it. Much easier to read and
+> less computation involved.
+>=20
+> Reported-by: Peter Rosin <peda@axentia.se>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>=20
+> Please apply to your subsystem tree.
 
- drivers/leds/leds-is31fl319x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
-index f123309597e4..3615ec19085d 100644
---- a/drivers/leds/leds-is31fl319x.c
-+++ b/drivers/leds/leds-is31fl319x.c
-@@ -337,7 +337,7 @@ static int is31fl319x_probe(struct i2c_client *client,
- {
- 	struct is31fl319x_chip *is31;
- 	struct device *dev = &client->dev;
--	struct i2c_adapter *adapter = to_i2c_adapter(dev->parent);
-+	struct i2c_adapter *adapter = client->adapter;
- 	int err;
- 	int i = 0;
- 	u32 aggregated_led_microamp = IS31FL319X_CURRENT_MAX;
--- 
-2.19.1
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--r5Pyd7+fXNt84Ff3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlz+KKwACgkQMOfwapXb+vLTDACeLh3LBPe0OtMmh6/d9lcEm/L1
+IK8AnArpxLmha0PgB5wvKjGRD1A7eL7P
+=b2/m
+-----END PGP SIGNATURE-----
+
+--r5Pyd7+fXNt84Ff3--
