@@ -1,82 +1,124 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v6 0/5] LM36274 Introduction
-Date: Tue, 11 Jun 2019 07:17:10 -0500
-Message-ID: <d6f3a1d9-5198-917c-8313-ef2036472ce9@ti.com>
-References: <20190605125634.7042-1-dmurphy@ti.com>
- <cb41fea8-4cc6-bf0d-8006-6441ba8f2213@gmail.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH 2/2] backlight: pwm_bl: Get number of brightness levels
+ for CIE 1931 from the device tree
+Date: Tue, 11 Jun 2019 16:33:14 +0100
+Message-ID: <20190611153314.cj6j6l4kcl4kk4t2@holly.lan>
+References: <20190610233739.29477-1-mka@chromium.org>
+ <20190610233739.29477-2-mka@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cb41fea8-4cc6-bf0d-8006-6441ba8f2213@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, pavel@ucw.cz, broonie@kernel.org, lgirdwood@gmail.com
-Cc: lee.jones@linaro.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20190610233739.29477-2-mka@chromium.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, Brian Norris <briannorris@chromium.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-pwm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Jacek
-
-Reviewed and tested the updated branch.  Looks good to me.
-
-Dan
-
-On 6/5/19 2:31 PM, Jacek Anaszewski wrote:
-> Hi Dan,
->
-> Thank you for the v6.
->
-> Patches 4/5 and 5/5 don't contain amendments I made to
-> the respective patches on the ib-leds-mfd-regulator branch
-> (that address issues raised by Pavel), so I just kept those
-> unchanged. Besides that I updated the remaining ones.
->
-> Please check the ib-leds-mfd-regulator branch. I'll create a pull
-> request once I get a confirmation from you saying that everything
-> is as expected.
->
-> Best regards,
-> Jacek Anaszewski
->
-> On 6/5/19 2:56 PM, Dan Murphy wrote:
->> Hello
->>
->> The v5 patchset missed adding in the new validation code.
->> Patch 1 of the v5 series was squashed into patch 4 of the v5 series.
->> So this will reduce the patchset by 1.
->>
->> Sorry for the extra noise on the patchsets.  The change was lost when 
->> I converted
->> the patches from the mainline branch to the LED branch.
->>
->> This change was made on top of the branch
->>
->> repo: 
->> https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
->> branch: ti-lmu-led-drivers
->>
->>
->> Dan Murphy (5):
->>    dt-bindings: mfd: Add lm36274 bindings to ti-lmu
->>    mfd: ti-lmu: Add LM36274 support to the ti-lmu
->>    regulator: lm363x: Add support for LM36274
->>    dt-bindings: leds: Add LED bindings for the LM36274
->>    leds: lm36274: Introduce the TI LM36274 LED driver
->>
->>   .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
->>   .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
->>   drivers/leds/Kconfig                          |   8 +
->>   drivers/leds/Makefile                         |   1 +
->>   drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
->>   drivers/mfd/Kconfig                           |   5 +-
->>   drivers/mfd/ti-lmu.c                          |  14 ++
->>   drivers/regulator/Kconfig                     |   2 +-
->>   drivers/regulator/lm363x-regulator.c          |  78 +++++++-
->>   include/linux/mfd/ti-lmu-register.h           |  23 +++
->>   include/linux/mfd/ti-lmu.h                    |   4 +
->>   11 files changed, 437 insertions(+), 8 deletions(-)
->>   create mode 100644 
->> Documentation/devicetree/bindings/leds/leds-lm36274.txt
->>   create mode 100644 drivers/leds/leds-lm36274.c
->>
->
+T24gTW9uLCBKdW4gMTAsIDIwMTkgYXQgMDQ6Mzc6MzlQTSAtMDcwMCwgTWF0dGhpYXMgS2FlaGxj
+a2Ugd3JvdGU6Cj4gQ29tbWl0IDg4YmE5NWJlZGI3OSAoImJhY2tsaWdodDogcHdtX2JsOiBDb21w
+dXRlIGJyaWdodG5lc3Mgb2YgTEVECj4gbGluZWFybHkgdG8gaHVtYW4gZXllIikgdXNlcyBwd21f
+cGVyaW9kIC8gaHdlaWdodDMyKHB3bV9wZXJpb2QpIGFzCj4gYXMgaGV1cmlzdGljIHRvIGRldGVy
+bWluZSB0aGUgbnVtYmVyIG9mIGJyaWdodG5lc3MgbGV2ZWxzIHdoZW4gdGhlIERUCj4gZG9lc24n
+dCBwcm92aWRlIGEgYnJpZ2h0bmVzcyBsZXZlbCB0YWJsZS4gVGhpcyBoZXVyaXN0aWMgaXMgYnJv
+a2VuCj4gYW5kIGNhbiByZXN1bHQgaW4gZXhjZXNzaXZlbHkgbGFyZ2UgYnJpZ2h0bmVzcyB0YWJs
+ZXMuCj4gCj4gSW5zdGVhZCBvZiB1c2luZyB0aGUgaGV1cmlzdGljIHRyeSB0byByZXRyaWV2ZSB0
+aGUgbnVtYmVyIG9mCj4gYnJpZ2h0bmVzcyBsZXZlbHMgZnJvbSB0aGUgZGV2aWNlIHRyZWUgKHBy
+b3BlcnR5ICdtYXgtYnJpZ2h0bmVzcycKPiArIDEpLiBJZiB0aGUgdmFsdWUgaXMgbm90IHNwZWNp
+ZmllZCB1c2UgYSBkZWZhdWx0IG9mIDI1NiBsZXZlbHMuCgpJJ2xsIGxvb2sgYXQgdGhlIGNvZGUg
+dG9tb3Jyb3cgYnV0IHdoeSAyNTY/CgpUbyBtZSBpdCBmZWVscyBzaW11bHRhbmVvdXNseSB0b28g
+YmlnIGZvciBhIHNpbXBsZSA4LWJpdCBQV00gYW5kIHRvbwpzbWFsbCBmb3IgYW5pbWF0ZWQgYmFj
+a2xpZ2h0IGVmZmVjdHMuCgpJIGNlcnRhaW5seSBhZ3JlZSB0aGF0IGFuIG92ZXJyaWRlIGNvdWxk
+IGJlIHVzZWZ1bCBidXQgSSdtIG5vdCBjbGVhciB3aHkKZGVyaXZpbmcgYSBkZWZhdWx0IGJhc2Vk
+IG9uIHRoZSBwZXJpb2QgaXMgYm9ndXMgKGFuZCB0aGUgZGVzY3JpcHRpb24gaXMKbWVyZWx5IGNv
+bmNlcm5lZCBhYm91dCB1c2VsZXNzbHkgYmlnIHRhYmxlcykuCgovKgogKiBPbmNlIHdlIGhhdmUg
+NDA5NiBsZXZlbHMgdGhlcmUncyBsaXR0bGUgcG9pbnQgZ29pbmcgbXVjaCBoaWdoZXIuLi4KICog
+bmVpdGhlciBpbnRlcmFjdGl2ZSBzbGlkZXJzIG5vciBhbmltYXRpb24gYmVuZWZpdHMgZnJvbSBo
+YXZpbmcKICogbW9yZSB2YWx1ZXMgaW4gdGhlIHRhYmxlLgogKi8KbWF4X2JyaWdodG5lc3MgPSBt
+aW4oRElWX1JPVU5EX1VQKHBlcmlvZCwgZmZzKHBlcmlvZCksIDQwOTYpOwoKCkRhbmllbC4KCj4g
+Cj4gRml4ZXM6IDg4YmE5NWJlZGI3OSAoImJhY2tsaWdodDogcHdtX2JsOiBDb21wdXRlIGJyaWdo
+dG5lc3Mgb2YgTEVEIGxpbmVhcmx5IHRvIGh1bWFuIGV5ZSIpCj4gU2lnbmVkLW9mZi1ieTogTWF0
+dGhpYXMgS2FlaGxja2UgPG1rYUBjaHJvbWl1bS5vcmc+Cj4gLS0tCj4gIGRyaXZlcnMvdmlkZW8v
+YmFja2xpZ2h0L3B3bV9ibC5jIHwgNTkgKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+PiAgMSBmaWxlIGNoYW5nZWQsIDIxIGluc2VydGlvbnMoKyksIDM4IGRlbGV0aW9ucygtKQo+IAo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9wd21fYmwuYyBiL2RyaXZlcnMv
+dmlkZW8vYmFja2xpZ2h0L3B3bV9ibC5jCj4gaW5kZXggZmI0NWY4NjZiOTIzLi4yOTEzY2JlOWNm
+Y2IgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcHdtX2JsLmMKPiArKysg
+Yi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9wd21fYmwuYwo+IEBAIC0xOTQsMzggKzE5NCwxOSBA
+QCBpbnQgcHdtX2JhY2tsaWdodF9icmlnaHRuZXNzX2RlZmF1bHQoc3RydWN0IGRldmljZSAqZGV2
+LAo+ICAJCQkJICAgICBzdHJ1Y3QgcGxhdGZvcm1fcHdtX2JhY2tsaWdodF9kYXRhICpkYXRhLAo+
+ICAJCQkJICAgICB1bnNpZ25lZCBpbnQgcGVyaW9kKQo+ICB7Cj4gLQl1bnNpZ25lZCBpbnQgY291
+bnRlciA9IDA7Cj4gLQl1bnNpZ25lZCBpbnQgaSwgbjsKPiArCXVuc2lnbmVkIGludCBpOwo+ICsJ
+dW5zaWduZWQgaW50IG5sZXZlbHMgPSBkYXRhLT5tYXhfYnJpZ2h0bmVzcyArIDE7Cj4gIAl1NjQg
+cmV0dmFsOwo+ICAKPiAtCS8qCj4gLQkgKiBDb3VudCB0aGUgbnVtYmVyIG9mIGJpdHMgbmVlZGVk
+IHRvIHJlcHJlc2VudCB0aGUgcGVyaW9kIG51bWJlci4gVGhlCj4gLQkgKiBudW1iZXIgb2YgYml0
+cyBpcyB1c2VkIHRvIGNhbGN1bGF0ZSB0aGUgbnVtYmVyIG9mIGxldmVscyB1c2VkIGZvciB0aGUK
+PiAtCSAqIGJyaWdodG5lc3MtbGV2ZWxzIHRhYmxlLCB0aGUgcHVycG9zZSBvZiB0aGlzIGNhbGN1
+bGF0aW9uIGlzIGhhdmUgYQo+IC0JICogcHJlLWNvbXB1dGVkIHRhYmxlIHdpdGggZW5vdWdoIGxl
+dmVscyB0byBnZXQgbGluZWFyIGJyaWdodG5lc3MKPiAtCSAqIHBlcmNlcHRpb24uIFRoZSBwZXJp
+b2QgaXMgZGl2aWRlZCBieSB0aGUgbnVtYmVyIG9mIGJpdHMgc28gZm9yIGEKPiAtCSAqIDgtYml0
+IFBXTSB3ZSBoYXZlIDI1NSAvIDggPSAzMiBicmlnaHRuZXNzIGxldmVscyBvciBmb3IgYSAxNi1i
+aXQgUFdNCj4gLQkgKiB3ZSBoYXZlIDY1NTM1IC8gMTYgPSA0MDk2IGJyaWdodG5lc3MgbGV2ZWxz
+Lgo+IC0JICoKPiAtCSAqIE5vdGUgdGhhdCB0aGlzIG1ldGhvZCBpcyBiYXNlZCBvbiBlbXBpcmlj
+YWwgdGVzdGluZyBvbiBkaWZmZXJlbnQKPiAtCSAqIGRldmljZXMgd2l0aCBQV00gb2YgOCBhbmQg
+MTYgYml0cyBvZiByZXNvbHV0aW9uLgo+IC0JICovCj4gLQluID0gcGVyaW9kOwo+IC0Jd2hpbGUg
+KG4pIHsKPiAtCQljb3VudGVyICs9IG4gJSAyOwo+IC0JCW4gPj49IDE7Cj4gLQl9Cj4gLQo+IC0J
+ZGF0YS0+bWF4X2JyaWdodG5lc3MgPSBESVZfUk9VTkRfVVAocGVyaW9kLCBjb3VudGVyKTsKPiAt
+CWRhdGEtPmxldmVscyA9IGRldm1fa2NhbGxvYyhkZXYsIGRhdGEtPm1heF9icmlnaHRuZXNzLAo+
+ICsJZGF0YS0+bGV2ZWxzID0gZGV2bV9rY2FsbG9jKGRldiwgbmxldmVscywKPiAgCQkJCSAgICBz
+aXplb2YoKmRhdGEtPmxldmVscyksIEdGUF9LRVJORUwpOwo+ICAJaWYgKCFkYXRhLT5sZXZlbHMp
+Cj4gIAkJcmV0dXJuIC1FTk9NRU07Cj4gIAo+ICAJLyogRmlsbCB0aGUgdGFibGUgdXNpbmcgdGhl
+IGNpZTE5MzEgYWxnb3JpdGhtICovCj4gLQlmb3IgKGkgPSAwOyBpIDwgZGF0YS0+bWF4X2JyaWdo
+dG5lc3M7IGkrKykgewo+ICsJZm9yIChpID0gMDsgaSA8IG5sZXZlbHM7IGkrKykgewo+ICAJCXJl
+dHZhbCA9IGNpZTE5MzEoKGkgKiBQV01fTFVNSU5BTkNFX1NDQUxFKSAvCj4gLQkJCQkgZGF0YS0+
+bWF4X2JyaWdodG5lc3MsIFBXTV9MVU1JTkFOQ0VfU0NBTEUpICoKPiArCQkJCSBubGV2ZWxzLCBQ
+V01fTFVNSU5BTkNFX1NDQUxFKSAqCj4gIAkJCQkgcGVyaW9kOwo+ICAJCXJldHZhbCA9IERJVl9S
+T1VORF9DTE9TRVNUX1VMTChyZXR2YWwsIFBXTV9MVU1JTkFOQ0VfU0NBTEUpOwo+ICAJCWlmIChy
+ZXR2YWwgPiBVSU5UX01BWCkKPiBAQCAtMjMzLDggKzIxNCw3IEBAIGludCBwd21fYmFja2xpZ2h0
+X2JyaWdodG5lc3NfZGVmYXVsdChzdHJ1Y3QgZGV2aWNlICpkZXYsCj4gIAkJZGF0YS0+bGV2ZWxz
+W2ldID0gKHVuc2lnbmVkIGludClyZXR2YWw7Cj4gIAl9Cj4gIAo+IC0JZGF0YS0+ZGZ0X2JyaWdo
+dG5lc3MgPSBkYXRhLT5tYXhfYnJpZ2h0bmVzcyAvIDI7Cj4gLQlkYXRhLT5tYXhfYnJpZ2h0bmVz
+cy0tOwo+ICsJZGF0YS0+ZGZ0X2JyaWdodG5lc3MgPSBubGV2ZWxzIC8gMjsKPiAgCj4gIAlyZXR1
+cm4gMDsKPiAgfQo+IEBAIC0yNzIsOCArMjUyLDEzIEBAIHN0YXRpYyBpbnQgcHdtX2JhY2tsaWdo
+dF9wYXJzZV9kdChzdHJ1Y3QgZGV2aWNlICpkZXYsCj4gIAkgKiBzZXQgYSBkZWZhdWx0IHRhYmxl
+IG9mIGJyaWdodG5lc3MgbGV2ZWxzIHdpbGwgYmUgdXNlZC4KPiAgCSAqLwo+ICAJcHJvcCA9IG9m
+X2ZpbmRfcHJvcGVydHkobm9kZSwgImJyaWdodG5lc3MtbGV2ZWxzIiwgJmxlbmd0aCk7Cj4gLQlp
+ZiAoIXByb3ApCj4gKwlpZiAoIXByb3ApIHsKPiArCQlpZiAob2ZfcHJvcGVydHlfcmVhZF91MzIo
+bm9kZSwgIm1heC1icmlnaHRuZXNzIiwKPiArCQkJCQkgJmRhdGEtPm1heF9icmlnaHRuZXNzKSkK
+PiArCQkJZGF0YS0+bWF4X2JyaWdodG5lc3MgPSAyNTU7Cj4gKwo+ICAJCXJldHVybiAwOwo+ICsJ
+fQo+ICAKPiAgCWRhdGEtPm1heF9icmlnaHRuZXNzID0gbGVuZ3RoIC8gc2l6ZW9mKHUzMik7Cj4g
+IAo+IEBAIC01NjUsMTMgKzU1MCwxMCBAQCBzdGF0aWMgaW50IHB3bV9iYWNrbGlnaHRfcHJvYmUo
+c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgCj4gIAkJCXBiLT5sZXZlbHMgPSBkYXRh
+LT5sZXZlbHM7Cj4gIAkJfQo+IC0JfSBlbHNlIGlmICghZGF0YS0+bWF4X2JyaWdodG5lc3MpIHsK
+PiArCX0gZWxzZSBpZiAobm9kZSkgewo+ICAJCS8qCj4gLQkJICogSWYgbm8gYnJpZ2h0bmVzcyBs
+ZXZlbHMgYXJlIHByb3ZpZGVkIGFuZCBtYXhfYnJpZ2h0bmVzcyBpcwo+IC0JCSAqIG5vdCBzZXQs
+IHVzZSB0aGUgZGVmYXVsdCBicmlnaHRuZXNzIHRhYmxlLiBGb3IgdGhlIERUIGNhc2UsCj4gLQkJ
+ICogbWF4X2JyaWdodG5lc3MgaXMgc2V0IHRvIDAgd2hlbiBicmlnaHRuZXNzIGxldmVscyBpcyBu
+b3QKPiAtCQkgKiBzcGVjaWZpZWQuIEZvciB0aGUgbm9uLURUIGNhc2UsIG1heF9icmlnaHRuZXNz
+IGlzIHVzdWFsbHkKPiAtCQkgKiBzZXQgdG8gc29tZSB2YWx1ZS4KPiArCQkgKiBJZiBubyBicmln
+aHRuZXNzIGxldmVscyBhcmUgcHJvdmlkZWQgdXNlIHRoZSBkZWZhdWx0Cj4gKwkJICogYnJpZ2h0
+bmVzcyB0YWJsZS4KPiAgCQkgKi8KPiAgCj4gIAkJLyogR2V0IHRoZSBQV00gcGVyaW9kIChpbiBu
+YW5vc2Vjb25kcykgKi8KPiBAQCAtNTkxLDEyICs1NzMsMTMgQEAgc3RhdGljIGludCBwd21fYmFj
+a2xpZ2h0X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIAo+ICAJCQlwYi0+
+bGV2ZWxzID0gZGF0YS0+bGV2ZWxzOwo+ICAJCX0KPiAtCX0gZWxzZSB7Cj4gLQkJLyoKPiAtCQkg
+KiBUaGF0IG9ubHkgaGFwcGVucyBmb3IgdGhlIG5vbi1EVCBjYXNlLCB3aGVyZSBwbGF0Zm9ybSBk
+YXRhCj4gLQkJICogc2V0cyB0aGUgbWF4X2JyaWdodG5lc3MgdmFsdWUuCj4gLQkJICovCj4gKwl9
+IGVsc2UgaWYgKGRhdGEtPm1heF9icmlnaHRuZXNzKSB7Cj4gKwkJLyogbm9uLURUIGNhc2UsIG1h
+eF9icmlnaHRuZXNzIHZhbHVlIHNldCBpbiBwbGF0Zm9ybSBkYXRhLiAqLwo+ICAJCXBiLT5zY2Fs
+ZSA9IGRhdGEtPm1heF9icmlnaHRuZXNzOwo+ICsJfSBlbHNlIHsKPiArCQlkZXZfZXJyKCZwZGV2
+LT5kZXYsICJtYXggYnJpZ2h0bmVzcyBpcyBub3Qgc3BlY2lmaWVkXG4iKTsKPiArCQlyZXQgPSAt
+RUlOVkFMOwo+ICsJCWdvdG8gZXJyX2FsbG9jOwo+ICAJfQo+ICAKPiAgCXBiLT5sdGhfYnJpZ2h0
+bmVzcyA9IGRhdGEtPmx0aF9icmlnaHRuZXNzICogKHN0YXRlLnBlcmlvZCAvIHBiLT5zY2FsZSk7
+Cj4gLS0gCj4gMi4yMi4wLnJjMi4zODMuZ2Y0ZmJiZjMwYzItZ29vZwo+IApfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
