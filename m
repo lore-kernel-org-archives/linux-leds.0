@@ -1,68 +1,41 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [GIT PULL v2] Immutable branch between LEDs, MFD and REGULATOR
-Date: Wed, 12 Jun 2019 00:12:17 +0200
-Message-ID: <20190611221217.12335-1-jacek.anaszewski@gmail.com>
+From: Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
+ linearly to human eye.
+Date: Tue, 11 Jun 2019 15:30:19 -0700
+Message-ID: <20190611223019.GH137143@google.com>
+References: <20180208113032.27810-1-enric.balletbo@collabora.com>
+ <20180208113032.27810-4-enric.balletbo@collabora.com>
+ <20190607220947.GR40515@google.com>
+ <20190608210226.GB2359@xo-6d-61-c0.localdomain>
+ <20190610205233.GB137143@google.com>
+ <20190611104913.egsbwcedshjdy3m5@holly.lan>
+ <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org, lee.jones@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com
+To: Brian Norris <briannorris@google.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>, Pavel Machek <pavel@ucw.cz>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Doug Anderson <dianders@google.com>, Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
 List-Id: linux-leds@vger.kernel.org
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+On Tue, Jun 11, 2019 at 09:55:30AM -0700, Brian Norris wrote:
+> On Tue, Jun 11, 2019 at 3:49 AM Daniel Thompson
+> <daniel.thompson@linaro.org> wrote:
+> > This is a long standing flaw in the backlight interfaces. AFAIK generic
+> > userspaces end up with a (flawed) heuristic.
+> 
+> Bingo! Would be nice if we could start to fix this long-standing flaw.
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+Agreed!
 
-are available in the git repository at:
+How could a fix look like, a sysfs attribute? Would a boolean value
+like 'logarithmic_scale' or 'linear_scale' be enough or could more
+granularity be needed?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/ti-lmu-led-drivers
-
-for you to fetch changes up to 11e1bbc116a75d4a93122ea0a3b2be814922d864:
-
-  leds: lm36274: Introduce the TI LM36274 LED driver (2019-06-07 20:40:07 +0200)
-
-Thanks,
-Jacek Anaszewski
-
-----------------------------------------------------------------
-TI LMU LED support rework and introduction of two new drivers
-with DT bindings:
-
-- leds-lm3697
-- leds-lm36274
-
-----------------------------------------------------------------
-Dan Murphy (11):
-      dt-bindings: mfd: LMU: Add the ramp up/down property
-      dt-bindings: mfd: LMU: Add ti,brightness-resolution
-      leds: TI LMU: Add common code for TI LMU devices
-      dt-bindings: ti-lmu: Modify dt bindings for the LM3697
-      mfd: ti-lmu: Remove support for LM3697
-      leds: lm3697: Introduce the lm3697 driver
-      dt-bindings: mfd: Add lm36274 bindings to ti-lmu
-      mfd: ti-lmu: Add LM36274 support to the ti-lmu
-      regulator: lm363x: Add support for LM36274
-      dt-bindings: leds: Add LED bindings for the LM36274
-      leds: lm36274: Introduce the TI LM36274 LED driver
-
- .../devicetree/bindings/leds/leds-lm36274.txt      |  85 +++++
- .../devicetree/bindings/leds/leds-lm3697.txt       |  73 ++++
- Documentation/devicetree/bindings/mfd/ti-lmu.txt   |  88 +++--
- drivers/leds/Kconfig                               |  25 ++
- drivers/leds/Makefile                              |   3 +
- drivers/leds/leds-lm36274.c                        | 172 +++++++++
- drivers/leds/leds-lm3697.c                         | 395 +++++++++++++++++++++
- drivers/leds/leds-ti-lmu-common.c                  | 156 ++++++++
- drivers/mfd/Kconfig                                |   5 +-
- drivers/mfd/ti-lmu.c                               |  23 +-
- drivers/regulator/Kconfig                          |   2 +-
- drivers/regulator/lm363x-regulator.c               |  78 +++-
- include/linux/leds-ti-lmu-common.h                 |  47 +++
- include/linux/mfd/ti-lmu-register.h                |  63 ++--
- include/linux/mfd/ti-lmu.h                         |   5 +-
- 15 files changed, 1135 insertions(+), 85 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
- create mode 100644 drivers/leds/leds-lm36274.c
- create mode 100644 drivers/leds/leds-lm3697.c
- create mode 100644 drivers/leds/leds-ti-lmu-common.c
- create mode 100644 include/linux/leds-ti-lmu-common.h
+The new attribute could be optional (it only exists if explicitly
+specified by the driver) or be set to a default based on a heuristic
+if not specified and be 'fixed' on a case by case basis. The latter
+might violate "don't break userspace" though, so I'm not sure it's a
+good idea.
