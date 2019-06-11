@@ -1,141 +1,50 @@
-From: Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 2/2] backlight: pwm_bl: Get number of brightness levels for CIE 1931 from the device tree
-Date: Mon, 10 Jun 2019 16:37:39 -0700
-Message-ID: <20190610233739.29477-2-mka@chromium.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 1/2] dt-bindings: pwm-backlight: Add 'max-brightness'
+ property
+Date: Tue, 11 Jun 2019 12:14:03 +0200
+Message-ID: <20190611101403.GC7526@amd>
 References: <20190610233739.29477-1-mka@chromium.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="DIOMP1UsTsWJauNi"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <20190610233739.29477-1-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, Brian Norris <briannorris@chromium.org>, Matthias Kaehlcke <mka@chromium.org>
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, Brian Norris <briannorris@chromium.org>
 List-Id: linux-leds@vger.kernel.org
 
-Commit 88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED
-linearly to human eye") uses pwm_period / hweight32(pwm_period) as
-as heuristic to determine the number of brightness levels when the DT
-doesn't provide a brightness level table. This heuristic is broken
-and can result in excessively large brightness tables.
 
-Instead of using the heuristic try to retrieve the number of
-brightness levels from the device tree (property 'max-brightness'
-+ 1). If the value is not specified use a default of 256 levels.
+--DIOMP1UsTsWJauNi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED linearly to human eye")
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/video/backlight/pwm_bl.c | 59 ++++++++++++--------------------
- 1 file changed, 21 insertions(+), 38 deletions(-)
+On Mon 2019-06-10 16:37:38, Matthias Kaehlcke wrote:
+> Add an optional 'max-brightness' property, which is used to specify
+> the number of brightness levels (max-brightness + 1) when the node
+> has no 'brightness-levels' table.
+>=20
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index fb45f866b923..2913cbe9cfcb 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -194,38 +194,19 @@ int pwm_backlight_brightness_default(struct device *dev,
- 				     struct platform_pwm_backlight_data *data,
- 				     unsigned int period)
- {
--	unsigned int counter = 0;
--	unsigned int i, n;
-+	unsigned int i;
-+	unsigned int nlevels = data->max_brightness + 1;
- 	u64 retval;
- 
--	/*
--	 * Count the number of bits needed to represent the period number. The
--	 * number of bits is used to calculate the number of levels used for the
--	 * brightness-levels table, the purpose of this calculation is have a
--	 * pre-computed table with enough levels to get linear brightness
--	 * perception. The period is divided by the number of bits so for a
--	 * 8-bit PWM we have 255 / 8 = 32 brightness levels or for a 16-bit PWM
--	 * we have 65535 / 16 = 4096 brightness levels.
--	 *
--	 * Note that this method is based on empirical testing on different
--	 * devices with PWM of 8 and 16 bits of resolution.
--	 */
--	n = period;
--	while (n) {
--		counter += n % 2;
--		n >>= 1;
--	}
--
--	data->max_brightness = DIV_ROUND_UP(period, counter);
--	data->levels = devm_kcalloc(dev, data->max_brightness,
-+	data->levels = devm_kcalloc(dev, nlevels,
- 				    sizeof(*data->levels), GFP_KERNEL);
- 	if (!data->levels)
- 		return -ENOMEM;
- 
- 	/* Fill the table using the cie1931 algorithm */
--	for (i = 0; i < data->max_brightness; i++) {
-+	for (i = 0; i < nlevels; i++) {
- 		retval = cie1931((i * PWM_LUMINANCE_SCALE) /
--				 data->max_brightness, PWM_LUMINANCE_SCALE) *
-+				 nlevels, PWM_LUMINANCE_SCALE) *
- 				 period;
- 		retval = DIV_ROUND_CLOSEST_ULL(retval, PWM_LUMINANCE_SCALE);
- 		if (retval > UINT_MAX)
-@@ -233,8 +214,7 @@ int pwm_backlight_brightness_default(struct device *dev,
- 		data->levels[i] = (unsigned int)retval;
- 	}
- 
--	data->dft_brightness = data->max_brightness / 2;
--	data->max_brightness--;
-+	data->dft_brightness = nlevels / 2;
- 
- 	return 0;
- }
-@@ -272,8 +252,13 @@ static int pwm_backlight_parse_dt(struct device *dev,
- 	 * set a default table of brightness levels will be used.
- 	 */
- 	prop = of_find_property(node, "brightness-levels", &length);
--	if (!prop)
-+	if (!prop) {
-+		if (of_property_read_u32(node, "max-brightness",
-+					 &data->max_brightness))
-+			data->max_brightness = 255;
-+
- 		return 0;
-+	}
- 
- 	data->max_brightness = length / sizeof(u32);
- 
-@@ -565,13 +550,10 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 
- 			pb->levels = data->levels;
- 		}
--	} else if (!data->max_brightness) {
-+	} else if (node) {
- 		/*
--		 * If no brightness levels are provided and max_brightness is
--		 * not set, use the default brightness table. For the DT case,
--		 * max_brightness is set to 0 when brightness levels is not
--		 * specified. For the non-DT case, max_brightness is usually
--		 * set to some value.
-+		 * If no brightness levels are provided use the default
-+		 * brightness table.
- 		 */
- 
- 		/* Get the PWM period (in nanoseconds) */
-@@ -591,12 +573,13 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 
- 			pb->levels = data->levels;
- 		}
--	} else {
--		/*
--		 * That only happens for the non-DT case, where platform data
--		 * sets the max_brightness value.
--		 */
-+	} else if (data->max_brightness) {
-+		/* non-DT case, max_brightness value set in platform data. */
- 		pb->scale = data->max_brightness;
-+	} else {
-+		dev_err(&pdev->dev, "max brightness is not specified\n");
-+		ret = -EINVAL;
-+		goto err_alloc;
- 	}
- 
- 	pb->lth_brightness = data->lth_brightness * (state.period / pb->scale);
--- 
-2.22.0.rc2.383.gf4fbbf30c2-goog
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--DIOMP1UsTsWJauNi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlz/fusACgkQMOfwapXb+vI7hQCfbY5yXHCyNjPHDa1shmtPIsct
++c0An2/Nb9wnch/XTXBvdKNfcWj0x0Hw
+=J/wX
+-----END PGP SIGNATURE-----
+
+--DIOMP1UsTsWJauNi--
