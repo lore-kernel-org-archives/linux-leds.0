@@ -1,86 +1,88 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: pwm-backlight: Add 'max-brightness'
- property
-Date: Tue, 11 Jun 2019 12:28:51 +0200
-Message-ID: <20190611102851.GA16611@ulmo>
-References: <20190610233739.29477-1-mka@chromium.org>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
+ linearly to human eye.
+Date: Tue, 11 Jun 2019 11:49:13 +0100
+Message-ID: <20190611104913.egsbwcedshjdy3m5@holly.lan>
+References: <20180208113032.27810-1-enric.balletbo@collabora.com>
+ <20180208113032.27810-4-enric.balletbo@collabora.com>
+ <20190607220947.GR40515@google.com>
+ <20190608210226.GB2359@xo-6d-61-c0.localdomain>
+ <20190610205233.GB137143@google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190610233739.29477-1-mka@chromium.org>
+In-Reply-To: <20190610205233.GB137143@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Matthias Kaehlcke <mka@chromium.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, Brian Norris <briannorris@chromium.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Doug Anderson <dianders@google.com>, Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Brian Norris <briannorris@google.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com
 List-Id: linux-leds@vger.kernel.org
 
+On Mon, Jun 10, 2019 at 01:52:33PM -0700, Matthias Kaehlcke wrote:
+> Hi Pavel,
+> 
+> On Sat, Jun 08, 2019 at 11:02:26PM +0200, Pavel Machek wrote:
+> > Hi!
+> > 
+> > > > +	 * Note that this method is based on empirical testing on different
+> > > > +	 * devices with PWM of 8 and 16 bits of resolution.
+> > > > +	 */
+> > > > +	n = period;
+> > > > +	while (n) {
+> > > > +		counter += n % 2;
+> > > > +		n >>= 1;
+> > > > +	}
+> > > 
+> > > I don't quite follow the heuristics above. Are you sure the number of
+> > > PWM bits can be infered from the period? What if the period value (in
+> > > ns) doesn't directly correspond to a register value? And even if it
+> > > did, counting the number of set bits (the above loops is a
+> > > re-implementation of ffs()) doesn't really result in the dividers
+> > > mentioned in the comment. E.g. a period of 32768 ns (0x8000) results
+> > > in a divider of 1, i.e. 32768 brighness levels.
+> > > 
+> > > On veyron minnie the period is 1000000 ns, which results in 142858
+> > > levels (1000000 / 7)!
+> > > 
+> > > Not sure if there is a clean solution using heuristics, a DT property
+> > > specifying the number of levels could be an alternative. This could
+> > > also be useful to limit the number of (mostly) redundant levels, even
+> > > the intended max of 4096 seems pretty high.
+> > > 
+> > > Another (not directly related) observation is that on minnie the
+> > > actual brightness at a nominal 50% is close to 0 (duty cycle ~3%). I
+> > > haven't tested with other devices, but I wonder if it would make
+> > > sense to have an option to drop the bottom N% of levels, since the
+> > > near 0 brightness in the lower 50% probably isn't very useful in most
+> > > use cases, but maybe it looks different on other devices.
+> > 
+> > Eye percieves logarithm(duty cycle), mostly, and I find very low brightness
+> > levels quite useful when trying to use machine in dark room.
+> 
+> I realized that the brightness level display on Chrome OS (= my test
+> device) is non-linear, and it isn't actually the lower 50% of levels
+> that is near 0 brightness, but 'only' about 20%.
+> 
+> > But yes, specifying if brightness is linear or exponential would be quite
+> > useful.
+> 
+> Agreed, this could help userspace with displaying a reasonable
+> brightness level.
 
---5mCyUwZo2JvN/JJP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is a long standing flaw in the backlight interfaces. AFAIK generic
+userspaces end up with a (flawed) heuristic.
 
-On Mon, Jun 10, 2019 at 04:37:38PM -0700, Matthias Kaehlcke wrote:
-> Add an optional 'max-brightness' property, which is used to specify
-> the number of brightness levels (max-brightness + 1) when the node
-> has no 'brightness-levels' table.
->=20
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
->  .../devicetree/bindings/leds/backlight/pwm-backlight.txt       | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlig=
-ht.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> index 64fa2fbd98c9..98f4ba626054 100644
-> --- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> +++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> @@ -27,6 +27,9 @@ Optional properties:
->                              resolution pwm duty cycle can be used without
->                              having to list out every possible value in t=
-he
->                              brightness-level array.
-> +  - max-brightness: Maximum brightness value. Used to specify the number=
- of
-> +                    brightness levels (max-brightness + 1) when the node
-> +                    has no 'brightness-levels' table.
+Basically devices with a narrow range of choices can be assumed to be
+logarithmic (since anything linear with a narrow range of choices is
+junk anyway and the slider will never feel right).
 
-Back at the time when these bindings were defined we specifically didn't
-add this because it was deemed impractical. That is, no real hardware is
-actually capable of achieving useful results with a simplified
-description like this.
+On the other side though we can only really make a guess.
 
-Besides, we already have the num-interpolated-steps property which
-should allow you to achieve the same thing:
+Systems are coming along that allow us to animate the change of
+brightness (part of the reason for interpolated tables is to
+permit smooth animation rather than because the user explicitly wants
+to set the brightness to exactly 1117). These systems are often
+logarithmic but with a wide range of values.
 
-	brightness-levels =3D <0 255>;
-	default-brightness-level =3D <1>;
-	num-interpolated-steps =3D <255>;
 
-Though given the original discussion that we had around how backlight
-hardware behaves, that doesn't seem like a good choice.
-
-Thierry
-
---5mCyUwZo2JvN/JJP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz/gl4ACgkQ3SOs138+
-s6GSfxAAwY+qUwKq+54LHTg+9GjvcE4Uq0lDCHIfRvxHcE9LkoP6hO+howgYknDN
-8jhc8KUrHT4VgdE3gGokIwPssNaRzeEnGJ82WaIQ0s0PIhD1Vsa0gx81P+fDj4TT
-ByA5QlRiF1aaVDQLBlXDhTTjzl0xL/8/Q+gANrZVezWsDUBBCEwofvEQMoj0MJ+g
-NH+AdOPsjMZnY4QToqzPnEQ2WU3HrLB45MLKm+fxUdgEkN2h80tvjmXr5jgyBnQ1
-/dk8aOxFteV0kyvDJt+ZprHTGFvp43hZ5uvQqTLVZyEiW3pyt4snu1jnv8p9GTEV
-C3lP1/U3Xh+y+1CuZ4RCykHYBh1dr1YFrkbtebcAFFFuAI+qtbdPEym7IDOjKHhb
-o9XwM7j4EOpLyoaWdOE4IbdPMCsoCyZzNQklw1CfS6F+8Ei6qbFUq2302/RTPcZv
-NlgAHTQ0Ngh0rLBW5GaUE/Tb0zb3GksiVAnILi/lk2u+BhFxB8KCK0GgCVHY7I81
-iP+DiCXDciGi6r8+WkdFsz0577IntMoOVPqQ2OliC4snRnp6SJ6fJEAT5zAMB3id
-uc2LsElo8NT7VtTQzq6WRjtS2Yb+AexuVtpZDnwIWqO5U17Sdc9Li1YdV9s/p4eG
-Zbj2CZoWVjHVlv/7Fk4dY/ofFOPPcpgK/Aengy3NmXjIL4DxmcI=
-=qSIX
------END PGP SIGNATURE-----
-
---5mCyUwZo2JvN/JJP--
+Daniel.
