@@ -1,56 +1,61 @@
-From: Brian Norris <briannorris@google.com>
-Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
- linearly to human eye.
-Date: Tue, 11 Jun 2019 09:55:30 -0700
-Message-ID: <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
-References: <20180208113032.27810-1-enric.balletbo@collabora.com>
- <20180208113032.27810-4-enric.balletbo@collabora.com> <20190607220947.GR40515@google.com>
- <20190608210226.GB2359@xo-6d-61-c0.localdomain> <20190610205233.GB137143@google.com>
- <20190611104913.egsbwcedshjdy3m5@holly.lan>
+From: Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH 2/2] backlight: pwm_bl: Get number of brightness levels
+ for CIE 1931 from the device tree
+Date: Tue, 11 Jun 2019 10:01:23 -0700
+Message-ID: <20190611170123.GD137143@google.com>
+References: <20190610233739.29477-1-mka@chromium.org>
+ <20190610233739.29477-2-mka@chromium.org>
+ <20190611153314.cj6j6l4kcl4kk4t2@holly.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190611104913.egsbwcedshjdy3m5@holly.lan>
+Content-Disposition: inline
+In-Reply-To: <20190611153314.cj6j6l4kcl4kk4t2@holly.lan>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Matthias Kaehlcke <mka@chromium.org>, Pavel Machek <pavel@ucw.cz>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Doug Anderson <dianders@google.com>, Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
+Cc: Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, Brian Norris <briannorris@chromium.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 3:49 AM Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
-> This is a long standing flaw in the backlight interfaces. AFAIK generic
-> userspaces end up with a (flawed) heuristic.
+Hi Daniel,
 
-Bingo! Would be nice if we could start to fix this long-standing flaw.
+On Tue, Jun 11, 2019 at 04:33:14PM +0100, Daniel Thompson wrote:
+> On Mon, Jun 10, 2019 at 04:37:39PM -0700, Matthias Kaehlcke wrote:
+> > Commit 88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED
+> > linearly to human eye") uses pwm_period / hweight32(pwm_period) as
+> > as heuristic to determine the number of brightness levels when the DT
+> > doesn't provide a brightness level table. This heuristic is broken
+> > and can result in excessively large brightness tables.
+> > 
+> > Instead of using the heuristic try to retrieve the number of
+> > brightness levels from the device tree (property 'max-brightness'
+> > + 1). If the value is not specified use a default of 256 levels.
+> 
+> I'll look at the code tomorrow but why 256?
+> 
+> To me it feels simultaneously too big for a simple 8-bit PWM and too
+> small for animated backlight effects.
 
-> Basically devices with a narrow range of choices can be assumed to be
-> logarithmic
+I agree there is no one-size-fits-it-all default, 256 seemed like a
+possible compromise.
 
-That's (almost, see below) exactly what we have.
+> I certainly agree that an override could be useful but I'm not clear why
+> deriving a default based on the period is bogus (and the description is
+> merely concerned about uselessly big tables).
 
-(And this is what Matthias is fighting against, now that we're
-implementing both "large number of data points" and "pre-curved" at
-the same time. We will have to either adapt the heuristic, or else
-adapt our device trees to fit the heuristic.)
+Maybe it's not necessarily bogus, but the current heuristic that
+counts the number of set bits (hweight()) in the period certainly is.
 
-> Systems are coming along that allow us to animate the change of
-> brightness (part of the reason for interpolated tables is to
-> permit smooth animation rather than because the user explicitly wants
-> to set the brightness to exactly 1117).
+IIUC the period provides a clue about the PWM resolution, because it
+would be hard/impossible to accomodate the high resolution in shorter
+periods.
 
-Chrome OS has done this for a long time. So "coming along" is a bit late ;)
+> /*
+>  * Once we have 4096 levels there's little point going much higher...
+>  * neither interactive sliders nor animation benefits from having
+>  * more values in the table.
+>  */
+> max_brightness = min(DIV_ROUND_UP(period, ffs(period), 4096);
 
-Also, I believe Chrome OS will do animation/smoothing for all tables
-(small or large) where it can: even for the small tables.
-
-> These systems are often
-> logarithmic but with a wide range of values.
-
-NB: Chrome OS happens to use a polynomial formula (exponent = 2 or
-0.5, depending on how you look at it), not logarithmic. You can see it
-in all its (non)glory here:
-
-https://chromium.googlesource.com/chromiumos/platform2/+/ee015853b227cf265491bd80ccf096b188490529/power_manager/powerd/policy/internal_backlight_controller.cc#451
-
-Regards,
-Brian
+I was also considering something along these lines, but wasn't sure
+if there is indeed a relation between the period and the PWM
+resolution. I take your suggestion as a confirmation :)
