@@ -1,41 +1,146 @@
-From: Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
- linearly to human eye.
-Date: Tue, 11 Jun 2019 15:30:19 -0700
-Message-ID: <20190611223019.GH137143@google.com>
-References: <20180208113032.27810-1-enric.balletbo@collabora.com>
- <20180208113032.27810-4-enric.balletbo@collabora.com>
- <20190607220947.GR40515@google.com>
- <20190608210226.GB2359@xo-6d-61-c0.localdomain>
- <20190610205233.GB137143@google.com>
- <20190611104913.egsbwcedshjdy3m5@holly.lan>
- <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Subject: [PATCH v2 3/3] leds-pwm.c: support ACPI via firmware-node framework
+Date: Wed, 12 Jun 2019 10:36:08 +0200
+Message-ID: <5df196d63671205d6722d21bec0ae5857a6b91eb.1560327219.git.nikolaus.voss@loewensteinmedical.de>
+References: <cover.1560327219.git.nikolaus.voss@loewensteinmedical.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
+In-Reply-To: <cover.1560327219.git.nikolaus.voss@loewensteinmedical.de>
+In-Reply-To: <cover.1560327219.git.nikolaus.voss@loewensteinmedical.de>
+References: <cover.1560327219.git.nikolaus.voss@loewensteinmedical.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Norris <briannorris@google.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>, Pavel Machek <pavel@ucw.cz>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Doug Anderson <dianders@google.com>, Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>, Erik Schmauss <erik.schmauss@intel.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>, linux-acpi@vger.kernel.org, devel@acpica.org, linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, nv@vosn.de
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 09:55:30AM -0700, Brian Norris wrote:
-> On Tue, Jun 11, 2019 at 3:49 AM Daniel Thompson
-> <daniel.thompson@linaro.org> wrote:
-> > This is a long standing flaw in the backlight interfaces. AFAIK generic
-> > userspaces end up with a (flawed) heuristic.
-> 
-> Bingo! Would be nice if we could start to fix this long-standing flaw.
+DT specific handling is replaced by firmware-node abstration to support
+ACPI specification of PWM LEDS.
 
-Agreed!
+Example ASL:
+Device (PWML)
+{
+    Name (_HID, "PRP0001")
+    Name (_DSD, Package () {
+          ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+          Package () { Package () {"compatible",
+                                    Package () {"pwm-leds"}}}})
 
-How could a fix look like, a sysfs attribute? Would a boolean value
-like 'logarithmic_scale' or 'linear_scale' be enough or could more
-granularity be needed?
+    Device (PWL0)
+    {
+        Name (_HID, "PRP0001")
+        Name (_DSD, Package () {
+              ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+              Package () {
+                           Package () {"label", "alarm-led"},
+                           Package () {"pwms", Package ()
+                                       {\_SB_.PCI0.PWM, 0, 600000, 0}},
+                           Package () {"linux,default-state", "off"}}})
+    }
+}
 
-The new attribute could be optional (it only exists if explicitly
-specified by the driver) or be set to a default based on a heuristic
-if not specified and be 'fixed' on a case by case basis. The latter
-might violate "don't break userspace" though, so I'm not sure it's a
-good idea.
+Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+---
+ drivers/leds/leds-pwm.c | 45 ++++++++++++++++++++++++-----------------
+ 1 file changed, 27 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index af08bcdc4fd8..3ce4d53c0cc9 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -75,7 +75,7 @@ static inline size_t sizeof_pwm_leds_priv(int num_leds)
+ }
+ 
+ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+-		       struct led_pwm *led, struct device_node *child)
++		       struct led_pwm *led, struct fwnode_handle *fwnode)
+ {
+ 	struct led_pwm_data *led_data = &priv->leds[priv->num_leds];
+ 	struct pwm_args pargs;
+@@ -88,8 +88,8 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 	led_data->cdev.max_brightness = led->max_brightness;
+ 	led_data->cdev.flags = LED_CORE_SUSPENDRESUME;
+ 
+-	if (child)
+-		led_data->pwm = devm_of_pwm_get(dev, child, NULL);
++	if (fwnode)
++		led_data->pwm = devm_fwnode_pwm_get(dev, fwnode, NULL);
+ 	else
+ 		led_data->pwm = devm_pwm_get(dev, led->name);
+ 	if (IS_ERR(led_data->pwm)) {
+@@ -114,7 +114,8 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 	if (!led_data->period && (led->pwm_period_ns > 0))
+ 		led_data->period = led->pwm_period_ns;
+ 
+-	ret = devm_of_led_classdev_register(dev, child, &led_data->cdev);
++	ret = devm_of_led_classdev_register(dev, to_of_node(fwnode),
++					    &led_data->cdev);
+ 	if (ret == 0) {
+ 		priv->num_leds++;
+ 		led_pwm_set(&led_data->cdev, led_data->cdev.brightness);
+@@ -126,27 +127,35 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 	return ret;
+ }
+ 
+-static int led_pwm_create_of(struct device *dev, struct led_pwm_priv *priv)
++static int led_pwm_create_fwnode(struct device *dev, struct led_pwm_priv *priv)
+ {
+-	struct device_node *child;
++	struct fwnode_handle *fwnode;
+ 	struct led_pwm led;
+ 	int ret = 0;
+ 
+ 	memset(&led, 0, sizeof(led));
+ 
+-	for_each_child_of_node(dev->of_node, child) {
+-		led.name = of_get_property(child, "label", NULL) ? :
+-			   child->name;
++	device_for_each_child_node(dev, fwnode) {
++		ret = fwnode_property_read_string(fwnode, "label", &led.name);
++		if (ret && is_of_node(fwnode))
++			led.name = to_of_node(fwnode)->name;
+ 
+-		led.default_trigger = of_get_property(child,
+-						"linux,default-trigger", NULL);
+-		led.active_low = of_property_read_bool(child, "active-low");
+-		of_property_read_u32(child, "max-brightness",
+-				     &led.max_brightness);
++		if (!led.name) {
++			fwnode_handle_put(fwnode);
++			return -EINVAL;
++		}
+ 
+-		ret = led_pwm_add(dev, priv, &led, child);
++		fwnode_property_read_string(fwnode, "linux,default-trigger",
++					    &led.default_trigger);
++
++		led.active_low = fwnode_property_read_bool(fwnode,
++							   "active-low");
++		fwnode_property_read_u32(fwnode, "max-brightness",
++					 &led.max_brightness);
++
++		ret = led_pwm_add(dev, priv, &led, fwnode);
+ 		if (ret) {
+-			of_node_put(child);
++			fwnode_handle_put(fwnode);
+ 			break;
+ 		}
+ 	}
+@@ -164,7 +173,7 @@ static int led_pwm_probe(struct platform_device *pdev)
+ 	if (pdata)
+ 		count = pdata->num_leds;
+ 	else
+-		count = of_get_child_count(pdev->dev.of_node);
++		count = device_get_child_node_count(&pdev->dev);
+ 
+ 	if (!count)
+ 		return -EINVAL;
+@@ -182,7 +191,7 @@ static int led_pwm_probe(struct platform_device *pdev)
+ 				break;
+ 		}
+ 	} else {
+-		ret = led_pwm_create_of(&pdev->dev, priv);
++		ret = led_pwm_create_fwnode(&pdev->dev, priv);
+ 	}
+ 
+ 	if (ret)
+-- 
+2.17.1
