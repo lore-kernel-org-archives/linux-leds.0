@@ -1,8 +1,8 @@
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Daniel Thompson <daniel.thompson@linaro.org>
 Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
  linearly to human eye.
-Date: Wed, 12 Jun 2019 12:26:42 -0700
-Message-ID: <20190612192642.GK137143@google.com>
+Date: Wed, 12 Jun 2019 20:47:57 +0100
+Message-ID: <20190612194757.fxetkhah6detiukm@holly.lan>
 References: <20180208113032.27810-1-enric.balletbo@collabora.com>
  <20180208113032.27810-4-enric.balletbo@collabora.com>
  <20190607220947.GR40515@google.com>
@@ -12,93 +12,122 @@ References: <20180208113032.27810-1-enric.balletbo@collabora.com>
  <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
  <20190611223019.GH137143@google.com>
  <20190612110325.xdn3q2aod52oalge@holly.lan>
+ <20190612192642.GK137143@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190612110325.xdn3q2aod52oalge@holly.lan>
+In-Reply-To: <20190612192642.GK137143@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
+To: Matthias Kaehlcke <mka@chromium.org>
 Cc: Brian Norris <briannorris@google.com>, Pavel Machek <pavel@ucw.cz>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Doug Anderson <dianders@google.com>, Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi Daniel,
-
-On Wed, Jun 12, 2019 at 12:03:25PM +0100, Daniel Thompson wrote:
-> On Tue, Jun 11, 2019 at 03:30:19PM -0700, Matthias Kaehlcke wrote:
-> > On Tue, Jun 11, 2019 at 09:55:30AM -0700, Brian Norris wrote:
-> > > On Tue, Jun 11, 2019 at 3:49 AM Daniel Thompson
-> > > <daniel.thompson@linaro.org> wrote:
-> > > > This is a long standing flaw in the backlight interfaces. AFAIK generic
-> > > > userspaces end up with a (flawed) heuristic.
+On Wed, Jun 12, 2019 at 12:26:42PM -0700, Matthias Kaehlcke wrote:
+> Hi Daniel,
+> 
+> On Wed, Jun 12, 2019 at 12:03:25PM +0100, Daniel Thompson wrote:
+> > On Tue, Jun 11, 2019 at 03:30:19PM -0700, Matthias Kaehlcke wrote:
+> > > On Tue, Jun 11, 2019 at 09:55:30AM -0700, Brian Norris wrote:
+> > > > On Tue, Jun 11, 2019 at 3:49 AM Daniel Thompson
+> > > > <daniel.thompson@linaro.org> wrote:
+> > > > > This is a long standing flaw in the backlight interfaces. AFAIK generic
+> > > > > userspaces end up with a (flawed) heuristic.
+> > > > 
+> > > > Bingo! Would be nice if we could start to fix this long-standing flaw.
 > > > 
-> > > Bingo! Would be nice if we could start to fix this long-standing flaw.
+> > > Agreed!
+> > > 
+> > > How could a fix look like, a sysfs attribute? Would a boolean value
+> > > like 'logarithmic_scale' or 'linear_scale' be enough or could more
+> > > granularity be needed?
 > > 
-> > Agreed!
+> > Certainly "linear" (this device will work more or less correctly if the
+> > userspace applies perceptual curves). Not sure about logarithmic since
+> > what is actually useful is something that is "perceptually linear"
+> > (logarithmic is merely a way to approximate that).
 > > 
-> > How could a fix look like, a sysfs attribute? Would a boolean value
-> > like 'logarithmic_scale' or 'linear_scale' be enough or could more
-> > granularity be needed?
+> > I do wonder about a compatible string like most-detailed to
+> > least-detailed description. This for a PWM with the auto-generated
+> > tables we'd see something like:
+> > 
+> > cie-1991,perceptual,non-linear
+> > 
+> > For something that is non-linear but we are not sure what its tables are
+> > we can offer just "non-linear".
 > 
-> Certainly "linear" (this device will work more or less correctly if the
-> userspace applies perceptual curves). Not sure about logarithmic since
-> what is actually useful is something that is "perceptually linear"
-> (logarithmic is merely a way to approximate that).
+> Thanks for the feedback!
 > 
-> I do wonder about a compatible string like most-detailed to
-> least-detailed description. This for a PWM with the auto-generated
-> tables we'd see something like:
+> It seems clear that we want a string for the added flexibility. I can
+> work on a patch with the compatible string like description you
+> suggested and we can discuss in the review if we want to go with that
+> or prefer something else.
+
+Great, other important thing if we did decide to go this route is there
+must be some devices with multiple strings on day 1 (such as the cie-1991
+example above).
+
+Whatever we say the ABI is, if we end up with established userspace
+components that strcmp("linear", ...) and there are no early counter
+examples then we could get stuck without the option to add more
+precise tokens as we learn more.
+
+
+> > > The new attribute could be optional (it only exists if explicitly
+> > > specified by the driver) or be set to a default based on a heuristic
+> > > if not specified and be 'fixed' on a case by case basis. The latter
+> > > might violate "don't break userspace" though, so I'm not sure it's a
+> > > good idea.
+> > 
+> > I think we should avoid any heuristic! There are several drivers and we
+> > may not be able to work through all of them and make the correct
+> > decision.
 > 
-> cie-1991,perceptual,non-linear
+> Agreed
 > 
-> For something that is non-linear but we are not sure what its tables are
-> we can offer just "non-linear".
-
-Thanks for the feedback!
-
-It seems clear that we want a string for the added flexibility. I can
-work on a patch with the compatible string like description you
-suggested and we can discuss in the review if we want to go with that
-or prefer something else.
-
-> > The new attribute could be optional (it only exists if explicitly
-> > specified by the driver) or be set to a default based on a heuristic
-> > if not specified and be 'fixed' on a case by case basis. The latter
-> > might violate "don't break userspace" though, so I'm not sure it's a
-> > good idea.
+> > Instead one valid value for the sysfs should be "unknown" and this be
+> > the default for drivers we have not analysed (this also makes it easy to
+> > introduce change here).
 > 
-> I think we should avoid any heuristic! There are several drivers and we
-> may not be able to work through all of them and make the correct
-> decision.
-
-Agreed
-
-> Instead one valid value for the sysfs should be "unknown" and this be
-> the default for drivers we have not analysed (this also makes it easy to
-> introduce change here).
-
-An "unknown" value sounds good, it allows userspace to just do what it
-did/would hace done before this attribute existed.
-
-> We should only set the property to something else for drivers that have
-> been reviewed.
+> An "unknown" value sounds good, it allows userspace to just do what it
+> did/would hace done before this attribute existed.
 > 
-> There could be a special case for pwm_bl.c in that I'm prepared to
-> assume that the hardware components downstream of the PWM have a
-> roughly linear response and that if the user provided tables that their
-> function is to provide a perceptually comfortable response.
+> > We should only set the property to something else for drivers that have
+> > been reviewed.
+> > 
+> > There could be a special case for pwm_bl.c in that I'm prepared to
+> > assume that the hardware components downstream of the PWM have a
+> > roughly linear response and that if the user provided tables that their
+> > function is to provide a perceptually comfortable response.
+> 
+> Unfortunately this isn't universally true :(
+> 
+> At least several Chrome OS devices use a linear brightness scale and
+> userspace does the transformation in the animated slider. A quick
+> 'git grep -A10 brightness-levels arch' suggests that there are
+> multiple other devices/platforms using a linear scale.
 
-Unfortunately this isn't universally true :(
+Good point.
 
-At least several Chrome OS devices use a linear brightness scale and
-userspace does the transformation in the animated slider. A quick
-'git grep -A10 brightness-levels arch' suggests that there are
-multiple other devices/platforms using a linear scale.
+Any clue whether the tables are "stupid" (e.g. offer a poor user experience
+with notchy feeling backlight response) or whether they work because
+some of the downstream componentry has a non-linear response?
 
-We could treat devices with a predefined brightness table as
-"unknown", unless there is a (new optional) DT property that indicates
-the type of the scale.
 
-Cheers
+> We could treat devices with a predefined brightness table as
+> "unknown", unless there is a (new optional) DT property that indicates
+> the type of the scale.
 
-Matthias
+If we have an "unknown" and we don't know then I guess I just claimed
+that's what we have to do for cases we don't understand.
+
+For pwm_bl it would be easy to study the table and calculate how far from the
+line the centre point is... although that bringing back heuristics into
+the picture, albeit more useful ones.
+
+As I said... I'd be OK for the pwm_bl to take a few liberties because it
+is so different from the fully fledged LED driver drivers but we don't
+need to go crazy ;-)
+
+
+Daniel.
