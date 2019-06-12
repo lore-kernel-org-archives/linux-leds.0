@@ -1,48 +1,141 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 05/34] leds: leds-tca6507: simplify getting the adapter
- of a client
-Date: Thu, 13 Jun 2019 11:47:01 +0200
-Message-ID: <20190613094701.5jfat4wu4ug57bpl@verge.net.au>
-References: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
- <20190608105619.593-6-wsa+renesas@sang-engineering.com>
+From: Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
+ linearly to human eye.
+Date: Wed, 12 Jun 2019 14:59:00 -0700
+Message-ID: <20190612215900.GL137143@google.com>
+References: <20180208113032.27810-4-enric.balletbo@collabora.com>
+ <20190607220947.GR40515@google.com>
+ <20190608210226.GB2359@xo-6d-61-c0.localdomain>
+ <20190610205233.GB137143@google.com>
+ <20190611104913.egsbwcedshjdy3m5@holly.lan>
+ <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
+ <20190611223019.GH137143@google.com>
+ <20190612110325.xdn3q2aod52oalge@holly.lan>
+ <20190612192642.GK137143@google.com>
+ <20190612194757.fxetkhah6detiukm@holly.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190608105619.593-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190612194757.fxetkhah6detiukm@holly.lan>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Brian Norris <briannorris@google.com>, Pavel Machek <pavel@ucw.cz>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Doug Anderson <dianders@google.com>, Rob Herring <robh+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Guenter Roeck <groeck@google.com>, Lee Jones <lee.jones@linaro.org>, Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
 List-Id: linux-leds@vger.kernel.org
 
-On Sat, Jun 08, 2019 at 12:55:44PM +0200, Wolfram Sang wrote:
-> We have a dedicated pointer for that, so use it. Much easier to read and
-> less computation involved.
+On Wed, Jun 12, 2019 at 08:47:57PM +0100, Daniel Thompson wrote:
+> On Wed, Jun 12, 2019 at 12:26:42PM -0700, Matthias Kaehlcke wrote:
+> > Hi Daniel,
+> > 
+> > On Wed, Jun 12, 2019 at 12:03:25PM +0100, Daniel Thompson wrote:
+> > > On Tue, Jun 11, 2019 at 03:30:19PM -0700, Matthias Kaehlcke wrote:
+> > > > On Tue, Jun 11, 2019 at 09:55:30AM -0700, Brian Norris wrote:
+> > > > > On Tue, Jun 11, 2019 at 3:49 AM Daniel Thompson
+> > > > > <daniel.thompson@linaro.org> wrote:
+> > > > > > This is a long standing flaw in the backlight interfaces. AFAIK generic
+> > > > > > userspaces end up with a (flawed) heuristic.
+> > > > > 
+> > > > > Bingo! Would be nice if we could start to fix this long-standing flaw.
+> > > > 
+> > > > Agreed!
+> > > > 
+> > > > How could a fix look like, a sysfs attribute? Would a boolean value
+> > > > like 'logarithmic_scale' or 'linear_scale' be enough or could more
+> > > > granularity be needed?
+> > > 
+> > > Certainly "linear" (this device will work more or less correctly if the
+> > > userspace applies perceptual curves). Not sure about logarithmic since
+> > > what is actually useful is something that is "perceptually linear"
+> > > (logarithmic is merely a way to approximate that).
+> > > 
+> > > I do wonder about a compatible string like most-detailed to
+> > > least-detailed description. This for a PWM with the auto-generated
+> > > tables we'd see something like:
+> > > 
+> > > cie-1991,perceptual,non-linear
+> > > 
+> > > For something that is non-linear but we are not sure what its tables are
+> > > we can offer just "non-linear".
+> > 
+> > Thanks for the feedback!
+> > 
+> > It seems clear that we want a string for the added flexibility. I can
+> > work on a patch with the compatible string like description you
+> > suggested and we can discuss in the review if we want to go with that
+> > or prefer something else.
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Great, other important thing if we did decide to go this route is there
+> must be some devices with multiple strings on day 1 (such as the cie-1991
+> example above).
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Ok, I can add this to the PWM backlight driver (obviously with the
+actual handling of the new attribute in the core).
 
-> ---
+> Whatever we say the ABI is, if we end up with established userspace
+> components that strcmp("linear", ...) and there are no early counter
+> examples then we could get stuck without the option to add more
+> precise tokens as we learn more.
+
+Indeed, we need userspace to understand this isn't necessarily a
+'simple' string.
+
+> > > > The new attribute could be optional (it only exists if explicitly
+> > > > specified by the driver) or be set to a default based on a heuristic
+> > > > if not specified and be 'fixed' on a case by case basis. The latter
+> > > > might violate "don't break userspace" though, so I'm not sure it's a
+> > > > good idea.
+> > > 
+> > > I think we should avoid any heuristic! There are several drivers and we
+> > > may not be able to work through all of them and make the correct
+> > > decision.
+> > 
+> > Agreed
+> > 
+> > > Instead one valid value for the sysfs should be "unknown" and this be
+> > > the default for drivers we have not analysed (this also makes it easy to
+> > > introduce change here).
+> > 
+> > An "unknown" value sounds good, it allows userspace to just do what it
+> > did/would hace done before this attribute existed.
+> > 
+> > > We should only set the property to something else for drivers that have
+> > > been reviewed.
+> > > 
+> > > There could be a special case for pwm_bl.c in that I'm prepared to
+> > > assume that the hardware components downstream of the PWM have a
+> > > roughly linear response and that if the user provided tables that their
+> > > function is to provide a perceptually comfortable response.
+> > 
+> > Unfortunately this isn't universally true :(
+> > 
+> > At least several Chrome OS devices use a linear brightness scale and
+> > userspace does the transformation in the animated slider. A quick
+> > 'git grep -A10 brightness-levels arch' suggests that there are
+> > multiple other devices/platforms using a linear scale.
 > 
-> Please apply to your subsystem tree.
+> Good point.
 > 
->  drivers/leds/leds-tca6507.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Any clue whether the tables are "stupid" (e.g. offer a poor user experience
+> with notchy feeling backlight response) or whether they work because
+> some of the downstream componentry has a non-linear response?
+
+Sorry, I don't know details about any of these devices, except some of
+the Chrome OS ones.
+
+> > We could treat devices with a predefined brightness table as
+> > "unknown", unless there is a (new optional) DT property that indicates
+> > the type of the scale.
 > 
-> diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-> index c59035e157d1..58be20cae183 100644
-> --- a/drivers/leds/leds-tca6507.c
-> +++ b/drivers/leds/leds-tca6507.c
-> @@ -758,7 +758,7 @@ static int tca6507_probe(struct i2c_client *client,
->  	int err;
->  	int i = 0;
->  
-> -	adapter = to_i2c_adapter(client->dev.parent);
-> +	adapter = client->adapter;
->  	pdata = dev_get_platdata(&client->dev);
->  
->  	if (!i2c_check_functionality(adapter, I2C_FUNC_I2C))
-> -- 
-> 2.19.1
+> If we have an "unknown" and we don't know then I guess I just claimed
+> that's what we have to do for cases we don't understand.
 > 
+> For pwm_bl it would be easy to study the table and calculate how far from the
+> line the centre point is... although that bringing back heuristics into
+> the picture, albeit more useful ones.
+
+True, distinguishing between 'linear' and 'non-linear' shouldn't be a
+big deal.
+
+> As I said... I'd be OK for the pwm_bl to take a few liberties because it
+> is so different from the fully fledged LED driver drivers but we don't
+> need to go crazy ;-)
