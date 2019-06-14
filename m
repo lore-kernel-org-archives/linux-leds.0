@@ -1,159 +1,133 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v3 2/9] dt: bindings: Add multicolor class dt bindings
- documention
-Date: Fri, 14 Jun 2019 12:18:21 -0500
-Message-ID: <c234361e-f5f7-f8d7-18c6-9cc8ef74ac99@ti.com>
-References: <20190523190820.29375-1-dmurphy@ti.com>
- <20190523190820.29375-3-dmurphy@ti.com> <20190614170011.GA3277@bogus>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v2 10/28] drivers: Add generic helper to match by name
+Date: Fri, 14 Jun 2019 18:54:05 +0100
+Message-ID: <1560534863-15115-11-git-send-email-suzuki.poulose@arm.com>
+References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190614170011.GA3277@bogus>
-Content-Language: en-US
+In-Reply-To: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, suzuki.poulose@arm.com, Alessandro Zummo <a.zummo@towertech.it>, Alexander Aring <alex.aring@gmail.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Arnd Bergmann <arnd@arndb.de>, Dan Murphy <dmurphy@ti.com>, Harald Freudenberger <freude@linux.ibm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org, linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org, linux-wpan@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Pavel Machek <pavel@ucw.cz>
 List-Id: linux-leds@vger.kernel.org
 
-Rob
+Add a helper to match the device name. Also reuse this generic
+exported helper for bus_find_device_by_name(). This will also be
+used to add similar interface for (driver/class)_find_device()
 
-Thanks for the review
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Alexander Aring <alex.aring@gmail.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dan Murphy <dmurphy@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Harald Freudenberger <freude@linux.ibm.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: linux-leds@vger.kernel.org
+Cc: linux-rtc@vger.kernel.org
+Cc: linux-usb@vger.kernel.org
+Cc: linux-wpan@vger.kernel.org
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Peter Oberparleiter <oberpar@linux.ibm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Stefan Schmidt <stefan@datenfreihafen.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+---
+ drivers/base/bus.c     | 24 ------------------------
+ drivers/base/core.c    |  6 ++++++
+ include/linux/device.h | 18 +++++++++++++++---
+ 3 files changed, 21 insertions(+), 27 deletions(-)
 
-On 6/14/19 12:00 PM, Rob Herring wrote:
-> On Thu, May 23, 2019 at 02:08:13PM -0500, Dan Murphy wrote:
->> Add DT bindings for the LEDs multicolor class framework.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>   .../bindings/leds/leds-class-multicolor.txt   | 97 +++++++++++++++++++
->>   1 file changed, 97 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->> new file mode 100644
->> index 000000000000..e2a2ce3279cb
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->> @@ -0,0 +1,97 @@
->> +* Multicolor LED properties
->> +
->> +Multicolor LEDs can consist of a RGB, RGBW or a RGBA LED clusters.  These devices
->> +can be grouped together and also provide a modeling mechanism so that the
->> +cluster LEDs can vary in hue and intensity to produce a wide range of colors.
->> +
->> +The nodes and properties defined in this document are unique to the multicolor
->> +LED class.  Common LED nodes and properties are inherited from the common.txt
->> +within this documentation directory.
->> +
->> +Required LED Child properties:
->> +	- color : For multicolor LED support this property should be defined as
->> +		  LED_COLOR_ID_MULTI and further definition can be found in
->> +		  include/linux/leds/common.h.
->> +
->> +led-controller@30 {
->> +	#address-cells = <1>;
->> +	#size-cells = <0>;
->> +	compatible = "ti,lp5024";
->> +	reg = <0x29>;
->> +
->> +	multi-led@4 {
-> Typically we sort by address order.
-
-These are not addresses these end up being the "module" number that the 
-LEDs below are associated to.
-
-
->
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		reg = <4>;
->> +		color = <LED_COLOR_ID_MULTI>;
->> +		function = LED_FUNCTION_ACTIVITY;
->> +
->> +		led@12 {
->> +			reg = <12>;
->> +			color = <LED_COLOR_ID_RED>;
->> +		};
->> +
->> +		led@13 {
->> +			reg = <13>;
->> +			color = <LED_COLOR_ID_GREEN>;
->> +		};
->> +
->> +		led@14 {
->> +			reg = <14>;
->> +			color = <LED_COLOR_ID_BLUE>;
->> +		};
->> +	};
->> +
->> +	/* Only support RGB no model defined */
-> I don't understand this comment.
-
-Artifact can be removed
-
-
->
->> +	multi-led@1 {
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		reg = <1>;
->> +		color = <LED_COLOR_ID_MULTI>;
->> +		function = LED_FUNCTION_;
-> ??
-
-I meant to change that but missed it in the example.
-
-Dan
-
-
->
->> +
->> +
->> +		led@3 {
->> +			reg = <3>;
->> +			color = <LED_COLOR_ID_RED>;
->> +		};
->> +
->> +		led@4 {
->> +			reg = <4>;
->> +			color = <LED_COLOR_ID_GREEN>;
->> +		};
->> +
->> +		led@5 {
->> +			reg = <5>;
->> +			color = <LED_COLOR_ID_BLUE>;
->> +		};
->> +	};
->> +
->> +	multi-led@2 {
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		color = <LED_COLOR_ID_MULTI>;
->> +		function = LED_FUNCTION_ACTIVITY;
->> +		reg = <2>;
->> +		ti,led-bank = <2 3 5>;
->> +
->> +		led@6 {
->> +			reg = <0x6>;
->> +			color = <LED_COLOR_ID_RED>;
->> +			led-sources = <6 9 15>;
->> +		};
->> +
->> +		led@7 {
->> +			reg = <0x7>;
->> +			color = <LED_COLOR_ID_GREEN>;
->> +			led-sources = <7 10 16>;
->> +		};
->> +
->> +		led@8 {
->> +			reg = <0x8>;
->> +			color = <LED_COLOR_ID_BLUE>;
->> +			led-sources = <8 11 17>;
->> +		};
->> +	};
->> +
->> +};
->> -- 
->> 2.21.0.5.gaeb582a983
->>
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index df3cac7..a1d1e82 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -342,30 +342,6 @@ struct device *bus_find_device(struct bus_type *bus,
+ }
+ EXPORT_SYMBOL_GPL(bus_find_device);
+ 
+-static int match_name(struct device *dev, const void *data)
+-{
+-	const char *name = data;
+-
+-	return sysfs_streq(name, dev_name(dev));
+-}
+-
+-/**
+- * bus_find_device_by_name - device iterator for locating a particular device of a specific name
+- * @bus: bus type
+- * @start: Device to begin with
+- * @name: name of the device to match
+- *
+- * This is similar to the bus_find_device() function above, but it handles
+- * searching by a name automatically, no need to write another strcmp matching
+- * function.
+- */
+-struct device *bus_find_device_by_name(struct bus_type *bus,
+-				       struct device *start, const char *name)
+-{
+-	return bus_find_device(bus, start, (void *)name, match_name);
+-}
+-EXPORT_SYMBOL_GPL(bus_find_device_by_name);
+-
+ /**
+  * subsys_find_device_by_id - find a device with a specific enumeration number
+  * @subsys: subsystem
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 597095b..5724f93 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -3352,3 +3352,9 @@ int device_match_acpi_dev(struct device *dev, const void *adev)
+ 	return ACPI_COMPANION(dev) == adev;
+ }
+ EXPORT_SYMBOL(device_match_acpi_dev);
++
++int device_match_name(struct device *dev, const void *name)
++{
++	return sysfs_streq(dev_name(dev), name);
++}
++EXPORT_SYMBOL_GPL(device_match_name);
+diff --git a/include/linux/device.h b/include/linux/device.h
+index a03b50d..b9b82b7 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -167,15 +167,27 @@ int device_match_of_node(struct device *dev, const void *np);
+ int device_match_fwnode(struct device *dev, const void *fwnode);
+ int device_match_devt(struct device *dev, const void *pdevt);
+ int device_match_acpi_dev(struct device *dev, const void *adev);
++int device_match_name(struct device *dev, const void *name);
+ 
+ int bus_for_each_dev(struct bus_type *bus, struct device *start, void *data,
+ 		     int (*fn)(struct device *dev, void *data));
+ struct device *bus_find_device(struct bus_type *bus, struct device *start,
+ 			       const void *data,
+ 			       int (*match)(struct device *dev, const void *data));
+-struct device *bus_find_device_by_name(struct bus_type *bus,
+-				       struct device *start,
+-				       const char *name);
++/**
++ * bus_find_device_by_name - device iterator for locating a particular device
++ * of a specific name.
++ * @bus: bus type
++ * @start: Device to begin with
++ * @name: name of the device to match
++ */
++static inline struct device *bus_find_device_by_name(struct bus_type *bus,
++						     struct device *start,
++						     const char *name)
++{
++	return bus_find_device(bus, start, name, device_match_name);
++}
++
+ struct device *subsys_find_device_by_id(struct bus_type *bus, unsigned int id,
+ 					struct device *hint);
+ int bus_for_each_drv(struct bus_type *bus, struct device_driver *start,
+-- 
+2.7.4
