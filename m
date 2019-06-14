@@ -1,257 +1,241 @@
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 12/28] drivers: Introduce class_find_device_by_name() helper
-Date: Fri, 14 Jun 2019 18:54:07 +0100
-Message-ID: <1560534863-15115-13-git-send-email-suzuki.poulose@arm.com>
-References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v2 00/28] drivers: Consolidate device lookup helpers
+Date: Fri, 14 Jun 2019 18:53:55 +0100
+Message-ID: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, suzuki.poulose@arm.com, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexander Aring <alex.aring@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Dan Murphy <dmurphy@ti.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org, linux-wpan@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Stefan Schmidt <stefan@datenfreihafen.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Shyam Sundar S K <shyam-sundar.s-k@amd.com>, rafael@kernel.org, Will Deacon <will.deacon@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, dri-devel@lists.freedesktop.org, Pavel Machek <pavel@ucw.cz>, Stefan Schmidt <stefan@datenfreihafen.org>, Wolfram Sang <wsa@the-dreams.de>, linux-acpi@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Jiri Slaby <jslaby@suse.com>, Tomas Winkler <tomas.winkler@intel.com>, Dan Murphy <dmurphy@ti.com>, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-spi@vger.kernel.org, Joe Perches <joe@perches.com>, linux-wpan@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, David Airlie <airlied@linux.ie>, "Rafael J . Wysocki " <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>linux-
 List-Id: linux-leds@vger.kernel.org
 
-Add a new wrapper for class_find_device() to search for devices
-by name and convert the existing users to use the new helper.
-
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>
-Cc: Alexander Aring <alex.aring@gmail.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Dan Murphy <dmurphy@ti.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org
-Cc: linux-rtc@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
-Cc: linux-wpan@vger.kernel.org
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Stefan Schmidt <stefan@datenfreihafen.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/hwtracing/stm/core.c     |  9 +--------
- drivers/leds/led-class.c         |  9 +--------
- drivers/rtc/interface.c          | 11 +----------
- drivers/s390/crypto/zcrypt_api.c | 11 +----------
- drivers/usb/roles/class.c        |  8 +-------
- drivers/usb/typec/class.c        |  8 +-------
- include/linux/device.h           | 12 ++++++++++++
- net/ieee802154/core.c            |  7 +------
- 8 files changed, 19 insertions(+), 56 deletions(-)
-
-diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
-index e55b902..2b6bd42 100644
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -89,13 +89,6 @@ static struct class stm_class = {
- 	.dev_groups	= stm_groups,
- };
- 
--static int stm_dev_match(struct device *dev, const void *data)
--{
--	const char *name = data;
--
--	return sysfs_streq(name, dev_name(dev));
--}
--
- /**
-  * stm_find_device() - find stm device by name
-  * @buf:	character buffer containing the name
-@@ -116,7 +109,7 @@ struct stm_device *stm_find_device(const char *buf)
- 	if (!stm_core_up)
- 		return NULL;
- 
--	dev = class_find_device(&stm_class, NULL, buf, stm_dev_match);
-+	dev = class_find_device_by_name(&stm_class, buf);
- 	if (!dev)
- 		return NULL;
- 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 85848c5..317a619 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -216,13 +216,6 @@ static int led_resume(struct device *dev)
- 
- static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
- 
--static int match_name(struct device *dev, const void *data)
--{
--	if (!dev_name(dev))
--		return 0;
--	return !strcmp(dev_name(dev), (char *)data);
--}
--
- static int led_classdev_next_name(const char *init_name, char *name,
- 				  size_t len)
- {
-@@ -233,7 +226,7 @@ static int led_classdev_next_name(const char *init_name, char *name,
- 	strlcpy(name, init_name, len);
- 
- 	while ((ret < len) &&
--	       (dev = class_find_device(leds_class, NULL, name, match_name))) {
-+	       (dev = class_find_device_by_name(leds_class, name))) {
- 		put_device(dev);
- 		ret = snprintf(name, len, "%s_%u", init_name, ++i);
- 	}
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index 4124f4d..1bee39c 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -663,21 +663,12 @@ void rtc_update_irq(struct rtc_device *rtc,
- }
- EXPORT_SYMBOL_GPL(rtc_update_irq);
- 
--static int __rtc_match(struct device *dev, const void *data)
--{
--	const char *name = data;
--
--	if (strcmp(dev_name(dev), name) == 0)
--		return 1;
--	return 0;
--}
--
- struct rtc_device *rtc_class_open(const char *name)
- {
- 	struct device *dev;
- 	struct rtc_device *rtc = NULL;
- 
--	dev = class_find_device(rtc_class, NULL, name, __rtc_match);
-+	dev = class_find_device_by_name(rtc_class, name);
- 	if (dev)
- 		rtc = to_rtc_device(dev);
- 
-diff --git a/drivers/s390/crypto/zcrypt_api.c b/drivers/s390/crypto/zcrypt_api.c
-index 1058b4b..38a5a47 100644
---- a/drivers/s390/crypto/zcrypt_api.c
-+++ b/drivers/s390/crypto/zcrypt_api.c
-@@ -133,12 +133,6 @@ struct zcdn_device {
- static int zcdn_create(const char *name);
- static int zcdn_destroy(const char *name);
- 
--/* helper function, matches the name for find_zcdndev_by_name() */
--static int __match_zcdn_name(struct device *dev, const void *data)
--{
--	return strcmp(dev_name(dev), (const char *)data) == 0;
--}
--
- /* helper function, matches the devt value for find_zcdndev_by_devt() */
- static int __match_zcdn_devt(struct device *dev, const void *data)
- {
-@@ -152,10 +146,7 @@ static int __match_zcdn_devt(struct device *dev, const void *data)
-  */
- static inline struct zcdn_device *find_zcdndev_by_name(const char *name)
- {
--	struct device *dev =
--		class_find_device(zcrypt_class, NULL,
--				  (void *) name,
--				  __match_zcdn_name);
-+	struct device *dev = class_find_device_by_name(zcrypt_class, name);
- 
- 	return dev ? to_zcdn_dev(dev) : NULL;
- }
-diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
-index f45d8df..07aaa96 100644
---- a/drivers/usb/roles/class.c
-+++ b/drivers/usb/roles/class.c
-@@ -90,11 +90,6 @@ static int switch_fwnode_match(struct device *dev, const void *fwnode)
- 	return dev_fwnode(dev) == fwnode;
- }
- 
--static int switch_name_match(struct device *dev, const void *name)
--{
--	return !strcmp((const char *)name, dev_name(dev));
--}
--
- static void *usb_role_switch_match(struct device_connection *con, int ep,
- 				   void *data)
- {
-@@ -107,8 +102,7 @@ static void *usb_role_switch_match(struct device_connection *con, int ep,
- 		dev = class_find_device(role_class, NULL, con->fwnode,
- 					switch_fwnode_match);
- 	} else {
--		dev = class_find_device(role_class, NULL, con->endpoint[ep],
--					switch_name_match);
-+		dev = class_find_device_by_name(role_class, con->endpoint[ep]);
- 	}
- 
- 	return dev ? to_role_switch(dev) : ERR_PTR(-EPROBE_DEFER);
-diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-index 2eb6238..18a0687 100644
---- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -210,11 +210,6 @@ static int typec_port_fwnode_match(struct device *dev, const void *fwnode)
- 	return dev_fwnode(dev) == fwnode;
- }
- 
--static int typec_port_name_match(struct device *dev, const void *name)
--{
--	return !strcmp((const char *)name, dev_name(dev));
--}
--
- static void *typec_port_match(struct device_connection *con, int ep, void *data)
- {
- 	struct device *dev;
-@@ -227,8 +222,7 @@ static void *typec_port_match(struct device_connection *con, int ep, void *data)
- 		return class_find_device(typec_class, NULL, con->fwnode,
- 					 typec_port_fwnode_match);
- 
--	dev = class_find_device(typec_class, NULL, con->endpoint[ep],
--				typec_port_name_match);
-+	dev = class_find_device_by_name(typec_class, con->endpoint[ep]);
- 
- 	return dev ? dev : ERR_PTR(-EPROBE_DEFER);
- }
-diff --git a/include/linux/device.h b/include/linux/device.h
-index a449d09..bb14c7f 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -485,6 +485,18 @@ extern struct device *class_find_device(struct class *class,
- 					struct device *start, const void *data,
- 					int (*match)(struct device *, const void *));
- 
-+/**
-+ * class_find_device_by_name - device iterator for locating a particular device
-+ * of a specific name.
-+ * @class: class type
-+ * @name: name of the device to match
-+ */
-+static inline struct device *class_find_device_by_name(struct class *class,
-+						       const char *name)
-+{
-+	return class_find_device(class, NULL, name, device_match_name);
-+}
-+
- struct class_attribute {
- 	struct attribute attr;
- 	ssize_t (*show)(struct class *class, struct class_attribute *attr,
-diff --git a/net/ieee802154/core.c b/net/ieee802154/core.c
-index 60b7ac5..de259b5 100644
---- a/net/ieee802154/core.c
-+++ b/net/ieee802154/core.c
-@@ -23,11 +23,6 @@
- LIST_HEAD(cfg802154_rdev_list);
- int cfg802154_rdev_list_generation;
- 
--static int wpan_phy_match(struct device *dev, const void *data)
--{
--	return !strcmp(dev_name(dev), (const char *)data);
--}
--
- struct wpan_phy *wpan_phy_find(const char *str)
- {
- 	struct device *dev;
-@@ -35,7 +30,7 @@ struct wpan_phy *wpan_phy_find(const char *str)
- 	if (WARN_ON(!str))
- 		return NULL;
- 
--	dev = class_find_device(&wpan_phy_class, NULL, str, wpan_phy_match);
-+	dev = class_find_device_by_name(&wpan_phy_class, str);
- 	if (!dev)
- 		return NULL;
- 
--- 
-2.7.4
+V2UgaGF2ZSBkZXZpY2UgaXRlcmF0b3JzIHRvIGZpbmQgYSBwYXJ0aWN1bGFyIGRldmljZSBtYXRj
+aGluZyBhIGNyaXRlcmlhCmZvciBhIGdpdmVuIGJ1cy9jbGFzcy9kcml2ZXIuIGkuZSwge2J1cyxj
+bGFzcyxkcml2ZXJ9X2ZpbmRfZGV2aWNlKCkgQVBJcy4KVGhlIG1hdGNoaW5nIGNyaXRlcmlhIGlz
+IGEgZnVuY3Rpb24gcG9pbnRlciBmb3IgdGhlIEFQSXMuIE9mdGVuIHRoZSBsb29rdXAKaXMgYmFz
+ZWQgb24gYSBnZW5lcmljIHByb3BlcnR5IG9mIGEgZGV2aWNlIChlLmcsIG5hbWUsIGZ3bm9kZSwg
+b2Ygbm9kZSBwb2ludGVyCm9yIGRldmljZSB0eXBlKSByYXRoZXIgdGhhbiBhIGRyaXZlciBzcGVj
+aWZpYyBpbmZvcm1hdGlvbi4gSG93ZXZlciwgZWFjaCBkcml2ZXIKd3JpdGVzIHVwIGl0cyBvd24g
+Im1hdGNoIiBmdW5jdGlvbiwgc3BpbGxpbmcgdGhlIHNpbWlsYXIgbWF0Y2ggZnVuY3Rpb25zIGFs
+bApvdmVyIHRoZSBkcml2ZXIgc3Vic3lzdGVtcy4KCkFkZGl0aW9uYWxseSB0aGUgcHJvdG90eXBl
+IGZvciB0aGUgIm1hdGNoIiBmdW5jdGlvbnMgYWNjZXB0ZWQgYnkgdGhlIGFib3ZlIEFQSXMKaGF2
+ZSBhIG1pbnV0ZSBkaWZmZXJlbmNlIHdoaWNoIHByZXZlbnRzIHVzIG90aGVyd2lzZSBzaGFyaW5n
+IHRoZSBtYXRjaCBmdW5jdGlvbnMuCmkuZSwKCWludCAoKm1hdGNoKShzdHJ1Y3QgZGV2aWNlICpk
+ZXYsIHZvaWQgKmRhdGEpIGZvciB7YnVzL2RyaXZlcn1fZmluZF9kZXZpY2UoKQoJICB2cwoJaW50
+ICgqbWF0Y2gpKHN0cnVjdCBkZXZpY2UgKmRldiwgY29uc3Qgdm9pZCAqKSBmb3IgY2xhc3NfZmlu
+ZF9kZXZpY2UoKQoKSWYgd2UgcHJvbW90ZSB0aGUgZm9ybWVyIHRvIGFjY2VwdCBhICJjb25zdCB2
+b2lkKiIgcGFyYW1ldGVyLCB3ZSBjb3VsZCBzaGFyZSBvbmUKc2luZ2xlIG1hdGNoIGZ1bmN0aW9u
+IGZvciBhbGwgdGhlIGhlbHBlcnMuIFRoaXMgc2VyaWVzIGFjaGlldmVzIHRoZSBmb2xsb3dpbmc6
+CgogYSkgW1BhdGNoZXMgMDMtMDVdIFVuaWZ5IHRoZSBwcm90b3R5cGUgZm9yICJtYXRjaCIgZnVu
+Y3Rpb25zIGFjY2VwdGVkIGJ5IHRoZQogICAgIGRldmljZSBsb29rdXAgQVBJcy4KIGIpIFtQYXRj
+aGVzIDA2LTExXSBJbnRyb2R1Y2UgZ2VuZXJpYyBtYXRjaCBmdW5jdGlvbnMgdG8gbWF0Y2ggZGV2
+aWNlcyBieSB0aGUKICAgICBnZW5lcmljIGF0dHJpYnV0ZXMgb2YgYSBkZXZpY2UgKGUuZywgbmFt
+ZSwgZndub2RlLCBvZl9ub2RlIGFuZCBkZXZ0KS4KCiBjKSBbUGF0Y2hlcyAxMi0yN10gQWxzbywg
+aW4gb3JkZXIgdG8gcHJldmVudCBjcmVhdGlvbiBvZiBzdWNoIG1hdGNoIGZ1bmN0aW9ucwogICAg
+aW4gdGhlIGZ1dHVyZSwgd2UgaW50cm9kdWNlIHdyYXBwZXIgZnVuY3Rpb25zIGZvciB0aGUgbG9v
+ayB1cCBBUElzLCB3aGljaAogICAgYXV0b21hdGljYWxseSB1c2VzIHRoZSBhcHByb3ByaWF0ZSBt
+YXRjaCBmdW5jdGlvbnMuCgogICAgaS5lLAoJe2J1cy9jbGFzcy9kcml2ZXJ9X2ZpbmRfZGV2aWNl
+X2J5X25hbWUKCXtidXMvY2xhc3MvZHJpdmVyfV9maW5kX2RldmljZV9ieV9vZl9ub2RlCgl7YnVz
+L2NsYXNzL2RyaXZlcn1fZmluZF9kZXZpY2VfYnlfZndub2RlCgl7YnVzL2NsYXNzL2RyaXZlcn1f
+ZmluZF9kZXZpY2VfYnlfZGV2dAoJe2J1cy9jbGFzcy9kcml2ZXJ9X2ZpbmRfZGV2aWNlX2J5X2Fj
+cGlfZGV2Cgl7YnVzL2NsYXNzL2RyaXZlcn1fZmluZF9uZXh0X2RldmljZQoKICAgICBhbmQgY29u
+dmVydHMgdGhlIGV4aXN0aW5nIHVzZXJzIHRvIHN3aXRjaCB0byB0aGUgbmV3IGhlbHBlcnMuCgog
+ZCkgW1BhdGNoIDI4XSBBZGRpdGlvbmFsbHksIHRoaXMgc2VyaWVzIGFsc28gYWRkcyB3cmFwcGVy
+IGZvciBmaW5kaW5nIGEKICAgIGRldmljZSBieSBtYXRjaGluZyBhIGRldmljZSBkcml2ZXIgZm9y
+IHBsYXRmb3JtIGJ1cyBkZXZpY2VzIC0KCgkJIHBsYXRmb3JtX2ZpbmRfZGV2aWNlX2J5X2RyaXZl
+cigpCgogICAgdG8gYXZvaWQgYSBmZXcgZHJpdmVycyBoYXJkIGNvZGluZyB0aGUgcGxhdGZvcm0g
+YnVzIHNwZWNpZmljIGRldGFpbHMuCgpBcHBsaWVzIG9uIHY1LjItcmM0LCBhdmFpbGFibGUgYXQg
+WzBdCgogICAgWzBdIGdpdDovL2xpbnV4LWFybS5vcmcvbGludXgtc2twLmdpdCBkcml2ZXItY2xl
+YW51cC92MgpSRkMgWzFdIGh0dHBzOi8vbWFyYy5pbmZvLz9pPTE1NTk1NzcwMjMtNTU4LTEtZ2l0
+LXNlbmQtZW1haWwtc3V6dWtpLnBvdWxvc2VAYXJtLmNvbQpWMSAgWzJdIGh0dHBzOi8vbWFyYy5p
+bmZvLz9pPTE1NTk3NDc2MzAtMjgwNjUtMS1naXQtc2VuZC1lbWFpbC1zdXp1a2kucG91bG9zZUBh
+cm0uY29tCgpDaGFuZ2VzIHNpbmNlIHYxOgogLSBEcm9wIHN0YXJ0IHBhcmFtZXRlciBmb3IgKl9m
+aW5kX2RldmljZV9ieV9kZXZ0KCkuCiAtIEZpeCBidWlsZCB3YXJuaW5ncyBmb3IgczM5MAogLSBB
+ZGQgKl9maW5kX2RldmljZV9ieV9hY3BpX2RldigpIHdyYXBwZXJzLgogLSBHcm91cCB3cmFwcGVy
+cyBhbmQgdGhlIGNvbnN1bWVycyBpbnRvIHNpbmdsZSBwYXRjaCwgcmVkdWNpbmcKICAgdGhlIHRv
+dGFsIHBhdGNoZXMgdG8gMjggZnJvbSA1Ny4gKFJhZmFlbCkuCiAtIEJldHRlciBkZXNjcmlwdGlv
+biBmb3IgYWNwaSBjbGVhbnVwIHBhdGNoLgogLSBBZGRlZCB0YWdzIGZyb20gdjEuCgpDYzogQWxh
+biBUdWxsIDxhdHVsbEBrZXJuZWwub3JnPgpDYzogQWxlc3NhbmRybyBadW1tbyA8YS56dW1tb0B0
+b3dlcnRlY2guaXQ+CkNjOiBBbGV4YW5kZXIgQXJpbmcgPGFsZXguYXJpbmdAZ21haWwuY29tPgpD
+YzogQWxleGFuZGVyIFNoaXNoa2luIDxhbGV4YW5kZXIuc2hpc2hraW5AbGludXguaW50ZWwuY29t
+PgpDYzogQWxleGFuZHJlIEJlbGxvbmkgPGFsZXhhbmRyZS5iZWxsb25pQGJvb3RsaW4uY29tPgpD
+YzogQW5kcmVhcyBOb2V2ZXIgPGFuZHJlYXMubm9ldmVyQGdtYWlsLmNvbT4KQ2M6IEFuZHJldyBM
+dW5uIDxhbmRyZXdAbHVubi5jaD4KQ2M6IEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+CkNj
+OiBCam9ybiBIZWxnYWFzIDxiaGVsZ2Fhc0Bnb29nbGUuY29tPgpDYzogQ29yZXkgTWlueWFyZCA8
+bWlueWFyZEBhY20ub3JnPgpDYzogRGFuaWVsIFZldHRlciA8ZGFuaWVsQGZmd2xsLmNoPgpDYzog
+RGFuIE11cnBoeSA8ZG11cnBoeUB0aS5jb20+CkNjOiBEYXZpZCBBaXJsaWUgPGFpcmxpZWRAbGlu
+dXguaWU+CkNjOiBEYXZpZCBLZXJzaG5lciA8ZGF2aWQua2Vyc2huZXJAdW5pc3lzLmNvbT4KQ2M6
+ICJEYXZpZCBTLiBNaWxsZXIiIDxkYXZlbUBkYXZlbWxvZnQubmV0PgpDYzogRG91ZyBMZWRmb3Jk
+IDxkbGVkZm9yZEByZWRoYXQuY29tPgpDYzogZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpDYzogRWxpZSBNb3Jpc3NlIDxzeW5pdXJnZUBnbWFpbC5jb20+CkNjOiBFcmljIEFuaG9sdCA8
+ZXJpY0BhbmhvbHQubmV0PgpDYzogRmVsaXBlIEJhbGJpIDxiYWxiaUBrZXJuZWwub3JnPgpDYzog
+RmxvcmlhbiBGYWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+CkNjOiBGcmFuayBSb3dhbmQg
+PGZyb3dhbmQubGlzdEBnbWFpbC5jb20+CkNjOiBHcmFudCBMaWtlbHkgPGdyYW50Lmxpa2VseUBh
+cm0uY29tPgpDYzogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9y
+Zz4KQ2M6IEdyeWdvcmlpIFN0cmFzaGtvIDxncnlnb3JpaS5zdHJhc2hrb0B0aS5jb20+CkNjOiBI
+YXJhbGQgRnJldWRlbmJlcmdlciA8ZnJldWRlQGxpbnV4LmlibS5jb20+CkNjOiBIYXJ0bXV0IEtu
+YWFjayA8a25hYWNrLmhAZ214LmRlPgpDYzogSGVpa2tpIEtyb2dlcnVzIDxoZWlra2kua3JvZ2Vy
+dXNAbGludXguaW50ZWwuY29tPgpDYzogSGVpa28gQ2Fyc3RlbnMgPGhlaWtvLmNhcnN0ZW5zQGRl
+LmlibS5jb20+CkNjOiAiSGVpa28gU3TDvGJuZXIiIDxoZWlrb0BzbnRlY2guZGU+CkNjOiBIZWlr
+byBTdHVlYm5lciA8aGVpa29Ac250ZWNoLmRlPgpDYzogSGVpbmVyIEthbGx3ZWl0IDxoa2FsbHdl
+aXQxQGdtYWlsLmNvbT4KQ2M6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KQ2M6IEph
+Y2VrIEFuYXN6ZXdza2kgPGphY2VrLmFuYXN6ZXdza2lAZ21haWwuY29tPgpDYzogIkphbWVzIEUu
+Si4gQm90dG9tbGV5IiA8amVqYkBsaW51eC5pYm0uY29tPgpDYzogSmFzb24gR3VudGhvcnBlIDxq
+Z2dAemllcGUuY2E+CkNjOiBKaXJpIFNsYWJ5IDxqc2xhYnlAc3VzZS5jb20+CkNjOiBKb2UgUGVy
+Y2hlcyA8am9lQHBlcmNoZXMuY29tPgpDYzogSm9lcmcgUm9lZGVsIDxqb3JvQDhieXRlcy5vcmc+
+CkNjOiBKb25hdGhhbiBDYW1lcm9uIDxqaWMyM0BrZXJuZWwub3JnPgpDYzogSm9uYXRoYW4gSHVu
+dGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4KQ2M6IExlZSBKb25lcyA8bGVlLmpvbmVzQGxpbmFy
+by5vcmc+CkNjOiBMZW4gQnJvd24gPGxlbmJAa2VybmVsLm9yZwpDYzogTGlhbSBHaXJkd29vZCA8
+bGdpcmR3b29kQGdtYWlsLmNvbT4KQ2M6IE1hYXJ0ZW4gTGFua2hvcnN0IDxtYWFydGVuLmxhbmto
+b3JzdEBsaW51eC5pbnRlbC5jb20+CkNjOiBNYXJrIEJyb3duIDxicm9vbmllQGtlcm5lbC5vcmc+
+CkNjOiAiTWFydGluIEsuIFBldGVyc2VuIiA8bWFydGluLnBldGVyc2VuQG9yYWNsZS5jb20+CkNj
+OiBNYXRoaWV1IFBvaXJpZXIgPG1hdGhpZXUucG9pcmllckBsaW5hcm8ub3JnPgpDYzogTWF4aW1l
+IENvcXVlbGluIDxtY29xdWVsaW4uc3RtMzJAZ21haWwuY29tPgpDYzogTWF4aW1lIFJpcGFyZCA8
+bWF4aW1lLnJpcGFyZEBib290bGluLmNvbT4KQ2M6IE1pY2hhZWwgSmFtZXQgPG1pY2hhZWwuamFt
+ZXRAaW50ZWwuY29tPgpDYzogTWlrYSBXZXN0ZXJiZXJnIDxtaWthLndlc3RlcmJlcmdAbGludXgu
+aW50ZWwuY29tPgpDYzogTW9yaXR6IEZpc2NoZXIgPG1kZkBrZXJuZWwub3JnPgpDYzogTmVoYWwg
+U2hhaCA8bmVoYWwtYmFrdWxjaGFuZHJhLnNoYWhAYW1kLmNvbT4KQ2M6IE9saXZlciBOZXVrdW0g
+PG9uZXVrdW1Ac3VzZS5jb20+CkNjOiBQYXZlbCBNYWNoZWsgPHBhdmVsQHVjdy5jej4KQ2M6IFBl
+dGVyIE9iZXJwYXJsZWl0ZXIgPG9iZXJwYXJAbGludXguaWJtLmNvbT4KQ2M6IFBldGVyIFJvc2lu
+IDxwZWRhQGF4ZW50aWEuc2U+CkNjOiAiUmFmYWVsIEouIFd5c29ja2kiIDxyYWZhZWwuai53eXNv
+Y2tpQGludGVsLmNvbT4KQ2M6ICJSYWZhZWwgSi4gV3lzb2NraSIgPHJhZmFlbEBrZXJuZWwub3Jn
+PgpDYzogUmFmYWVsIEouIFd5c29ja2kiIDxyandAcmp3eXNvY2tpLm5ldD4KQ2M6IFJvYiBIZXJy
+aW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+CkNjOiBSb2JpbiBNdXJwaHkgPHJvYmluLm11cnBoeUBh
+cm0uY29tPgpDYzogUnVzc2VsbCBLaW5nIDxsaW51eEBhcm1saW51eC5vcmcudWs+CkNjOiBTYW5k
+eSBIdWFuZyA8aGpjQHJvY2stY2hpcHMuY29tPgpDYzogU2ViYXN0aWFuIEFuZHJ6ZWogU2lld2lv
+ciA8YmlnZWFzeUBsaW51dHJvbml4LmRlPgpDYzogU2ViYXN0aWFuIE90dCA8c2Vib3R0QGxpbnV4
+LmlibS5jb20+CkNjOiBTZXVuZy1Xb28gS2ltIDxzdzAzMTIua2ltQHNhbXN1bmcuY29tPgpDYzog
+U2h5YW0gU3VuZGFyIFMgSyA8c2h5YW0tc3VuZGFyLnMta0BhbWQuY29tPgpDYzogU3Jpbml2YXMg
+S2FuZGFnYXRsYSA8c3Jpbml2YXMua2FuZGFnYXRsYUBsaW5hcm8ub3JnPgpDYzogU3RlZmFuIFNj
+aG1pZHQgPHN0ZWZhbkBkYXRlbmZyZWloYWZlbi5vcmc+CkNjOiBUYWthc2hpIEl3YWkgPHRpd2Fp
+QHN1c2UuY29tPgpDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4K
+Q2M6IFRob3IgVGhheWVyIDx0aG9yLnRoYXllckBsaW51eC5pbnRlbC5jb20+CkNjOiBUb21hcyBX
+aW5rbGVyIDx0b21hcy53aW5rbGVyQGludGVsLmNvbT4KQ2M6IFVsZiBIYW5zc29uIDx1bGYuaGFu
+c3NvbkBsaW5hcm8ub3JnPgpDYzogV2lsbCBEZWFjb24gPHdpbGwuZGVhY29uQGFybS5jb20+CkNj
+OiBXb2xmcmFtIFNhbmcgPHdzYUB0aGUtZHJlYW1zLmRlPgpDYzogZGV2aWNldHJlZUB2Z2VyLmtl
+cm5lbC5vcmcKQ2M6IGxpbnV4LWFjcGlAdmdlci5rZXJuZWwub3JnCkNjOiBsaW51eC1mcGdhQHZn
+ZXIua2VybmVsLm9yZwpDYzogbGludXgtaTJjQHZnZXIua2VybmVsLm9yZwpDYzogbGludXgtbGVk
+c0B2Z2VyLmtlcm5lbC5vcmcKQ2M6IGxpbnV4LXJvY2tjaGlwQGxpc3RzLmluZnJhZGVhZC5vcmcK
+Q2M6IGxpbnV4LXJ0Y0B2Z2VyLmtlcm5lbC5vcmcKQ2M6IGxpbnV4LXNwaUB2Z2VyLmtlcm5lbC5v
+cmcKQ2M6IGxpbnV4LXVzYkB2Z2VyLmtlcm5lbC5vcmcKQ2M6IGxpbnV4LXdwYW5Admdlci5rZXJu
+ZWwub3JnCgpTdXp1a2kgSyBQb3Vsb3NlICgyOCk6CiAgc3RhZ2luZzogbW9zdC1jb3JlOiBVc2Ug
+YnVzX2ZpbmRfZGV2aWNlX2J5X25hbWUKICBtZmQ6IFJlbW92ZSB1bnVzZWQgaGVscGVyIHN5c2Nv
+bl9yZWdtYXBfbG9va3VwX2J5X3BkZXZuYW1lCiAgYWNwaTogdXRpbHM6IENsZWFudXAgYWNwaV9k
+ZXZfbWF0Y2hfY2IKICBidXNfZmluZF9kZXZpY2U6IFVuaWZ5IHRoZSBtYXRjaCBjYWxsYmFjayB3
+aXRoIGNsYXNzX2ZpbmRfZGV2aWNlCiAgZHJpdmVyX2ZpbmRfZGV2aWNlOiBVbmlmeSB0aGUgbWF0
+Y2ggZnVuY3Rpb24gd2l0aCBjbGFzc19maW5kX2RldmljZSgpCiAgZHJpdmVyczogQWRkIGdlbmVy
+aWMgaGVscGVyIHRvIG1hdGNoIGJ5IG9mX25vZGUKICBkcml2ZXJzOiBBZGQgZ2VuZXJpYyBoZWxw
+ZXIgdG8gbWF0Y2ggYnkgZndub2RlCiAgZHJpdmVyczogQWRkIGdlbmVyaWMgaGVscGVyIHRvIG1h
+dGNoIGJ5IGRldmljZSB0eXBlCiAgZHJpdmVyczogQWRkIGdlbmVyaWMgbWF0Y2ggaGVscGVyIGJ5
+IEFDUElfQ09NUEFOSU9OIGRldmljZQogIGRyaXZlcnM6IEFkZCBnZW5lcmljIGhlbHBlciB0byBt
+YXRjaCBieSBuYW1lCiAgZHJpdmVyczogQWRkIGdlbmVyaWMgaGVscGVyIHRvIG1hdGNoIGFueSBk
+ZXZpY2UKICBkcml2ZXJzOiBJbnRyb2R1Y2UgY2xhc3NfZmluZF9kZXZpY2VfYnlfbmFtZSgpIGhl
+bHBlcgogIGRyaXZlcnM6IEludHJvZHVjZSBjbGFzc19maW5kX2RldmljZV9ieV9vZl9ub2RlKCkg
+aGVscGVyCiAgZHJpdmVyczogSW50cm9kdWNlIGNsYXNzX2ZpbmRfZGV2aWNlX2J5X2Z3bm9kZSgp
+IGhlbHBlcgogIGRyaXZlcnM6IEludHJvZHVjZSBjbGFzc19maW5kX2RldmljZV9ieV9kZXZ0KCkg
+aGVscGVyCiAgZHJpdmVyczogSW50cm9kdWNlIGNsYXNzX2ZpbmRfZGV2aWNlX2J5X2FjcGlfZGV2
+KCkgaGVscGVyCiAgZHJpdmVyczogSW50cm9kdWNlIGJ1c19maW5kX2RldmljZV9ieV9vZl9ub2Rl
+KCkgaGVscGVyCiAgZHJpdmVyczogSW50cm9kdWNlIGJ1c19maW5kX2RldmljZV9ieV9md25vZGUo
+KSBoZWxwZXIKICBkcml2ZXJzOiBJbnRyb2R1Y2UgYnVzX2ZpbmRfZGV2aWNlX2J5X2RldnQoKSBo
+ZWxwZXIKICBkcml2ZXJzOiBJbnRyb2R1Y2UgYnVzX2ZpbmRfbmV4dF9kZXZpY2UoKSBoZWxwZXIK
+ICBkcml2ZXJzOiBJbnRyb2R1Y2UgYnVzX2ZpbmRfZGV2aWNlX2J5X2FjcGlfZGV2KCkgaGVscGVy
+CiAgZHJpdmVyczogSW50cm9kdWNlIGRyaXZlcl9maW5kX2RldmljZV9ieV9uYW1lKCkgaGVscGVy
+CiAgZHJpdmVyczogSW50cm9kdWNlIGRyaXZlcl9maW5kX2RldmljZV9ieV9vZl9ub2RlKCkgaGVs
+cGVyCiAgZHJpdmVyczogSW50cm9kdWNlIGRyaXZlcl9maW5kX2RldmljZV9ieV9md25vZGUoKSBo
+ZWxwZXIKICBkcml2ZXJzOiBJbnRyb2R1Y2UgZHJpdmVyX2ZpbmRfZGV2aWNlX2J5X2RldnQoKSBo
+ZWxwZXIKICBkcml2ZXJzOiBJbnRyb2R1Y2UgZHJpdmVyX2ZpbmRfbmV4dF9kZXZpY2UoKSBoZWxw
+ZXIKICBkcml2ZXJzOiBJbnRyb2R1Y2UgZHJpdmVyX2ZpbmRfZGV2aWNlX2J5X2FjcGlfZGV2KCkg
+aGVscGVyCiAgcGxhdGZvcm06IEFkZCBwbGF0Zm9ybV9maW5kX2RldmljZV9ieV9kcml2ZXIoKSBo
+ZWxwZXIKCiBhcmNoL3Bvd2VycGMvcGxhdGZvcm1zL3BzZXJpZXMvaWJtZWJ1cy5jICAgICAgICAg
+ICB8ICAgNCArLQogZHJpdmVycy9hY3BpL2FjcGlfbHBzcy5jICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgfCAgIDQgKy0KIGRyaXZlcnMvYWNwaS9zbGVlcC5jICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIHwgICAyICstCiBkcml2ZXJzL2FjcGkvdXRpbHMuYyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICB8ICAxMSArLQogZHJpdmVycy9hbWJhL3RlZ3JhLWFoYi5jICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgfCAgMTEgKy0KIGRyaXZlcnMvYmFzZS9idXMuYyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHwgIDI4ICstLQogZHJpdmVycy9iYXNlL2NvcmUuYyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgNDUgKysrLQogZHJpdmVycy9iYXNlL2RldmNv
+bi5jICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDggKy0KIGRyaXZlcnMvYmFzZS9k
+cml2ZXIuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA0ICstCiBkcml2ZXJzL2Jh
+c2UvcGxhdGZvcm0uYyAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAxNCArKwogZHJpdmVy
+cy9jaGFyL2lwbWkvaXBtaV9tc2doYW5kbGVyLmMgICAgICAgICAgICAgICAgfCAgIDggKy0KIGRy
+aXZlcnMvY2hhci9pcG1pL2lwbWlfc2lfcGxhdGZvcm0uYyAgICAgICAgICAgICAgIHwgICAyICst
+CiBkcml2ZXJzL2Zpcm13YXJlL2VmaS9kZXYtcGF0aC1wYXJzZXIuYyAgICAgICAgICAgICB8ICAg
+NCArLQogZHJpdmVycy9mcGdhL2ZwZ2EtYnJpZGdlLmMgICAgICAgICAgICAgICAgICAgICAgICAg
+fCAgIDggKy0KIGRyaXZlcnMvZnBnYS9mcGdhLW1nci5jICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIHwgICA4ICstCiBkcml2ZXJzL2ZwZ2Evb2YtZnBnYS1yZWdpb24uYyAgICAgICAgICAgICAg
+ICAgICAgICB8ICAgNyArLQogZHJpdmVycy9ncHUvZHJtL2RybV9taXBpX2RzaS5jICAgICAgICAg
+ICAgICAgICAgICAgfCAgIDcgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
+cnYuYyAgICAgICAgICAgIHwgICA5ICstCiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2No
+aXBfZHJtX2Rydi5jICAgICAgICB8ICAgMyArLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMg
+ICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDQgKy0KIGRyaXZlcnMvZ3B1L2RybS92YzQvdmM0
+X2Rydi5jICAgICAgICAgICAgICAgICAgICAgIHwgICAzICstCiBkcml2ZXJzL2h3dHJhY2luZy9j
+b3Jlc2lnaHQvY29yZXNpZ2h0LmMgICAgICAgICAgICB8ICAgNiArLQogZHJpdmVycy9od3RyYWNp
+bmcvY29yZXNpZ2h0L29mX2NvcmVzaWdodC5jICAgICAgICAgfCAgMTEgKy0KIGRyaXZlcnMvaHd0
+cmFjaW5nL2ludGVsX3RoL2NvcmUuYyAgICAgICAgICAgICAgICAgIHwgIDExICstCiBkcml2ZXJz
+L2h3dHJhY2luZy9zdG0vY29yZS5jICAgICAgICAgICAgICAgICAgICAgICB8ICAgOSArLQogZHJp
+dmVycy9pMmMvYnVzc2VzL2kyYy1hbWQtbXAyLXBjaS5jICAgICAgICAgICAgICAgfCAgIDggKy0K
+IGRyaXZlcnMvaTJjL2kyYy1jb3JlLWFjcGkuYyAgICAgICAgICAgICAgICAgICAgICAgIHwgIDEw
+ICstCiBkcml2ZXJzL2kyYy9pMmMtY29yZS1vZi5jICAgICAgICAgICAgICAgICAgICAgICAgICB8
+ICAgOSArLQogZHJpdmVycy9paW8vaW5rZXJuLmMgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgfCAgIDIgKy0KIGRyaXZlcnMvaW5maW5pYmFuZC9ody9obnMvaG5zX3JvY2VfaHdfdjEuYyAg
+ICAgICAgIHwgICA4ICstCiBkcml2ZXJzL2lvbW11L2FybS1zbW11LXYzLmMgICAgICAgICAgICAg
+ICAgICAgICAgICB8ICAgOSArLQogZHJpdmVycy9pb21tdS9hcm0tc21tdS5jICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgfCAgIDkgKy0KIGRyaXZlcnMvbGVkcy9sZWQtY2xhc3MuYyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHwgICA5ICstCiBkcml2ZXJzL21mZC9hbHRlcmEtc3lzbWdyLmMg
+ICAgICAgICAgICAgICAgICAgICAgICB8ICAxNCArLQogZHJpdmVycy9tZmQvc3lzY29uLmMgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMjEgLS0KIGRyaXZlcnMvbWlzYy9tZWkvbWFp
+bi5jICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA5ICstCiBkcml2ZXJzL211eC9jb3Jl
+LmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNyArLQogZHJpdmVycy9uZXQv
+ZXRoZXJuZXQvaGlzaWxpY29uL2hucy9obnNfZHNhZl9taXNjLmMgfCAgIDggKy0KIGRyaXZlcnMv
+bmV0L2V0aGVybmV0L3RpL2Nwc3ctcGh5LXNlbC5jICAgICAgICAgICAgIHwgICA0ICstCiBkcml2
+ZXJzL25ldC9ldGhlcm5ldC90aS9kYXZpbmNpX2VtYWMuYyAgICAgICAgICAgICB8ICAgMiArLQog
+ZHJpdmVycy9uZXQvZXRoZXJuZXQvdG9zaGliYS90YzM1ODE1LmMgICAgICAgICAgICAgfCAgIDQg
+Ky0KIGRyaXZlcnMvbmV0L3BoeS9tZGlvX2J1cy5jICAgICAgICAgICAgICAgICAgICAgICAgIHwg
+ICA5ICstCiBkcml2ZXJzL252bWVtL2NvcmUuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICB8ICAgNyArLQogZHJpdmVycy9vZi9vZl9tZGlvLmMgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgfCAgIDggKy0KIGRyaXZlcnMvb2YvcGxhdGZvcm0uYyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIHwgICA3ICstCiBkcml2ZXJzL3BjaS9wcm9iZS5jICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICB8ICAgNyArLQogZHJpdmVycy9wY2kvc2VhcmNoLmMgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgfCAgIDQgKy0KIGRyaXZlcnMvcmVndWxhdG9yL29mX3JlZ3VsYXRv
+ci5jICAgICAgICAgICAgICAgICAgIHwgICA3ICstCiBkcml2ZXJzL3J0Yy9pbnRlcmZhY2UuYyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAxMSArLQogZHJpdmVycy9zMzkwL2Npby9jY3dn
+cm91cC5jICAgICAgICAgICAgICAgICAgICAgICAgfCAgMTggKy0KIGRyaXZlcnMvczM5MC9jaW8v
+Y2hzY19zY2guYyAgICAgICAgICAgICAgICAgICAgICAgIHwgICAyICstCiBkcml2ZXJzL3MzOTAv
+Y2lvL2Nzcy5jICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNCArLQogZHJpdmVycy9z
+MzkwL2Npby9kZXZpY2UuYyAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMjEgKy0KIGRyaXZl
+cnMvczM5MC9jaW8vc2NtLmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA0ICstCiBk
+cml2ZXJzL3MzOTAvY3J5cHRvL2FwX2J1cy5jICAgICAgICAgICAgICAgICAgICAgICB8ICAgOCAr
+LQogZHJpdmVycy9zMzkwL2NyeXB0by96Y3J5cHRfYXBpLmMgICAgICAgICAgICAgICAgICAgfCAg
+MjIgKy0KIGRyaXZlcnMvc2NzaS9zY3NpX3Byb2MuYyAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHwgICA5ICstCiBkcml2ZXJzL3NwaS9zcGkuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICB8ICAyOCArLS0KIGRyaXZlcnMvc3RhZ2luZy9tb3N0L2NvcmUuYyAgICAgICAgICAgICAg
+ICAgICAgICAgIHwgICA5ICstCiBkcml2ZXJzL3RodW5kZXJib2x0L3N3aXRjaC5jICAgICAgICAg
+ICAgICAgICAgICAgICB8ICAgNCArLQogZHJpdmVycy90dHkvdHR5X2lvLmMgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgfCAgIDggKy0KIGRyaXZlcnMvdXNiL2NvcmUvZGV2aW8uYyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHwgICA4ICstCiBkcml2ZXJzL3VzYi9jb3JlL3VzYi5jICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNCArLQogZHJpdmVycy91c2IvcGh5L3BoeS1h
+bTMzNXgtY29udHJvbC5jICAgICAgICAgICAgICAgfCAgIDQgKy0KIGRyaXZlcnMvdXNiL3BoeS9w
+aHktaXNwMTMwMS5jICAgICAgICAgICAgICAgICAgICAgIHwgICA0ICstCiBkcml2ZXJzL3VzYi9y
+b2xlcy9jbGFzcy5jICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAxNiArLQogZHJpdmVycy91
+c2IvdHlwZWMvY2xhc3MuYyAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMTYgKy0KIGRyaXZl
+cnMvdmlzb3JidXMvdmlzb3JidXNfbWFpbi5jICAgICAgICAgICAgICAgICAgIHwgICA0ICstCiBp
+bmNsdWRlL2xpbnV4L2RldmljZS5oICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDI0NyAr
+KysrKysrKysrKysrKysrKysrKy0KIGluY2x1ZGUvbGludXgvbWZkL3N5c2Nvbi5oICAgICAgICAg
+ICAgICAgICAgICAgICAgIHwgICA2IC0KIGluY2x1ZGUvbGludXgvcGxhdGZvcm1fZGV2aWNlLmgg
+ICAgICAgICAgICAgICAgICAgIHwgICAzICsKIG5ldC9pZWVlODAyMTU0L2NvcmUuYyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHwgICA3ICstCiBzb3VuZC9zb2Mvcm9ja2NoaXAvcmszMzk5
+X2dydV9zb3VuZC5jICAgICAgICAgICAgICB8ICAgOSArLQogNzMgZmlsZXMgY2hhbmdlZCwgNDA3
+IGluc2VydGlvbnMoKyksIDQ4MiBkZWxldGlvbnMoLSkKCi0tIAoyLjcuNAoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
