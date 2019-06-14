@@ -1,35 +1,85 @@
-From: Alexander Dahl <ada@thorsis.com>
-Subject: Re: [PATCH v3 0/9] Multicolor Framework update
-Date: Fri, 14 Jun 2019 09:02:23 +0200
-Message-ID: <55737098.K72IVJ5cDM@ada>
-References: <20190523190820.29375-1-dmurphy@ti.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table loads
+Date: Fri, 14 Jun 2019 11:12:53 +0200
+Message-ID: <CAJZ5v0jqxWs=PPik-TCDqQiyxCSyRP7HTue1WsdWP9e-nik2eA@mail.gmail.com>
+References: <cover.1560327219.git.nikolaus.voss@loewensteinmedical.de> <e2a4ddfd93a904b50b7ccc074e00e14dc4661963.1560327219.git.nikolaus.voss@loewensteinmedical.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190523190820.29375-1-dmurphy@ti.com>
+In-Reply-To: <e2a4ddfd93a904b50b7ccc074e00e14dc4661963.1560327219.git.nikolaus.voss@loewensteinmedical.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-leds@vger.kernel.org
-Cc: Dan Murphy <dmurphy@ti.com>, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>, Erik Schmauss <erik.schmauss@intel.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, Thierry Reding <thierry.reding@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>, linux-leds@vger.kernel.org, Linux PWM List <linux-pwm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, nv@vosn.de
 List-Id: linux-leds@vger.kernel.org
 
-Hello Dan,
+On Wed, Jun 12, 2019 at 10:36 AM Nikolaus Voss
+<nikolaus.voss@loewensteinmedical.de> wrote:
+>
+> If an ACPI SSDT overlay is loaded after built-in tables
+> have been loaded e.g. via configfs or efivar_ssdt_load()
+> it is necessary to rewalk the namespace to resolve
+> references. Without this, relative and absolute paths
+> like ^PCI0.SBUS or \_SB.PCI0.SBUS are not resolved
+> correctly.
+>
+> Make configfs load use the same method as efivar_ssdt_load().
+>
+> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
 
-Am Donnerstag, 23. Mai 2019, 14:08:11 CEST schrieb Dan Murphy:
->   leds: multicolor: Add sysfs interface definition
->   dt: bindings: Add multicolor class dt bindings documention
->   documention: leds: Add multicolor class documentation
->   dt-bindings: leds: Add multicolor ID to the color ID  list
->   leds: Add multicolor ID to the color ID list
->   leds: multicolor: Introduce a multicolor class definition
->   dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
->   leds: lp50xx: Add the LP50XX family of the RGB LED driver
->   leds: Update the lp55xx to use the multi color framework
+This is fine by me, so
 
-While not having much experience with the implementation of the LED subsystem, 
-I've had a short look at those. Curious question: would it be possible to take 
-three gpio-leds and group those together to one multicolor-led? I know at 
-least one board, where things are wired up like this, see e.g. 
-at91-sama5d27_som1_ek.dts
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Greets
-Alex
+Or if you want me to take this patch (without the other two in the
+series), please let me know.
+
+As for the other two patches, someone else needs to review them for
+you as I'm not particularly familiar with the PWM subsystem.
+
+> ---
+>  drivers/acpi/acpi_configfs.c   |  6 +-----
+>  drivers/acpi/acpica/tbxfload.c | 11 +++++++++++
+>  2 files changed, 12 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/acpi/acpi_configfs.c b/drivers/acpi/acpi_configfs.c
+> index f92033661239..663f0d88f912 100644
+> --- a/drivers/acpi/acpi_configfs.c
+> +++ b/drivers/acpi/acpi_configfs.c
+> @@ -56,11 +56,7 @@ static ssize_t acpi_table_aml_write(struct config_item *cfg,
+>         if (!table->header)
+>                 return -ENOMEM;
+>
+> -       ACPI_INFO(("Host-directed Dynamic ACPI Table Load:"));
+> -       ret = acpi_tb_install_and_load_table(
+> -                       ACPI_PTR_TO_PHYSADDR(table->header),
+> -                       ACPI_TABLE_ORIGIN_EXTERNAL_VIRTUAL, FALSE,
+> -                       &table->index);
+> +       ret = acpi_load_table(table->header);
+>         if (ret) {
+>                 kfree(table->header);
+>                 table->header = NULL;
+> diff --git a/drivers/acpi/acpica/tbxfload.c b/drivers/acpi/acpica/tbxfload.c
+> index 4f30f06a6f78..ef8f8a9f3c9c 100644
+> --- a/drivers/acpi/acpica/tbxfload.c
+> +++ b/drivers/acpi/acpica/tbxfload.c
+> @@ -297,6 +297,17 @@ acpi_status acpi_load_table(struct acpi_table_header *table)
+>         status = acpi_tb_install_and_load_table(ACPI_PTR_TO_PHYSADDR(table),
+>                                                 ACPI_TABLE_ORIGIN_EXTERNAL_VIRTUAL,
+>                                                 FALSE, &table_index);
+> +
+> +       if (ACPI_SUCCESS(status)) {
+> +               /* Complete the initialization/resolution of package objects */
+> +
+> +               status = acpi_ns_walk_namespace(ACPI_TYPE_PACKAGE,
+> +                                               ACPI_ROOT_OBJECT,
+> +                                               ACPI_UINT32_MAX, 0,
+> +                                               acpi_ns_init_one_package,
+> +                                               NULL, NULL, NULL);
+> +       }
+> +
+>         return_ACPI_STATUS(status);
+>  }
+>
+> --
+> 2.17.1
+>
