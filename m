@@ -1,37 +1,52 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH] dt: leds-lm36274.txt: fix a broken reference to
- ti-lmu.txt
-Date: Mon, 17 Jun 2019 08:45:04 -0500
-Message-ID: <a15bace8-90a8-4201-86af-9fb464024f0a@ti.com>
-References: <79b9bf3388eb231da77c6a804862d21339262d0a.1560421387.git.mchehab+samsung@kernel.org>
- <20190617131220.GD21113@amd>
+Subject: Re: [PATCH v3 0/9] Multicolor Framework update
+Date: Mon, 17 Jun 2019 08:47:46 -0500
+Message-ID: <2a540277-01e3-abb6-f19f-6d52671ae4ce@ti.com>
+References: <20190523190820.29375-1-dmurphy@ti.com> <55737098.K72IVJ5cDM@ada>
+ <20190616154934.GC24837@xo-6d-61-c0.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190617131220.GD21113@amd>
+In-Reply-To: <20190616154934.GC24837@xo-6d-61-c0.localdomain>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>, Alexander Dahl <ada@thorsis.com>
+Cc: linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
+Hello
 
-On 6/17/19 8:12 AM, Pavel Machek wrote:
-> On Thu 2019-06-13 07:23:15, Mauro Carvalho Chehab wrote:
->> There's a typo there:
->> 	ti_lmu.txt -> ti-lmu.txt
->>
->> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-Acked-by: Dan Murphy <dmurphy@ti.com>
+On 6/16/19 10:49 AM, Pavel Machek wrote:
+> Hi!
 >
->> @@ -6,7 +6,7 @@ up to 29V total output voltage. The 11-bit LED current is programmable via
->>   the I2C bus and/or controlled via a logic level PWM input from 60 uA to 30 mA.
->>   
->>   Parent device properties are documented in
->> -Documentation/devicetree/bindings/mfd/ti_lmu.txt
->> +Documentation/devicetree/bindings/mfd/ti-lmu.txt
->>   
->>   Regulator properties are documented in
->>   Documentation/devicetree/bindings/regulator/lm363x-regulator.txt
+>> Am Donnerstag, 23. Mai 2019, 14:08:11 CEST schrieb Dan Murphy:
+>>>    leds: multicolor: Add sysfs interface definition
+>>>    dt: bindings: Add multicolor class dt bindings documention
+>>>    documention: leds: Add multicolor class documentation
+>>>    dt-bindings: leds: Add multicolor ID to the color ID  list
+>>>    leds: Add multicolor ID to the color ID list
+>>>    leds: multicolor: Introduce a multicolor class definition
+>>>    dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
+>>>    leds: lp50xx: Add the LP50XX family of the RGB LED driver
+>>>    leds: Update the lp55xx to use the multi color framework
+>> While not having much experience with the implementation of the LED subsystem,
+>> I've had a short look at those. Curious question: would it be possible to take
+>> three gpio-leds and group those together to one multicolor-led? I know at
+>> least one board, where things are wired up like this, see e.g.
+>> at91-sama5d27_som1_ek.dts
+> Probably could be done, but is not really a good match. Multicolor was meant for
+> LEDs with many brightness levels.
+
+Well that is one aspect of the MC FW.  The other aspect was to collate 
+cluster RGB modules into a single
+
+LED node as that RGB cluster would inherently display a functional color 
+(ie RGB battery LED, multi-color
+
+notification LEDs, Multicolor LED keyboards...)
+
+Dan
+
+
+> 									Pavel
