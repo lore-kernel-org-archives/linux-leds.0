@@ -1,52 +1,55 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v3 0/9] Multicolor Framework update
-Date: Mon, 17 Jun 2019 08:47:46 -0500
-Message-ID: <2a540277-01e3-abb6-f19f-6d52671ae4ce@ti.com>
-References: <20190523190820.29375-1-dmurphy@ti.com> <55737098.K72IVJ5cDM@ada>
- <20190616154934.GC24837@xo-6d-61-c0.localdomain>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH AUTOSEL 5.1 033/375] leds: avoid races with workqueue
+Date: Mon, 17 Jun 2019 17:57:00 +0200
+Message-ID: <20190617155659.GB32544@amd>
+References: <20190522192115.22666-1-sashal@kernel.org>
+ <20190522192115.22666-33-sashal@kernel.org>
+ <20190524225505.GA16076@amd>
+ <20190529185143.GH12898@sasha-vm>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190616154934.GC24837@xo-6d-61-c0.localdomain>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>, Alexander Dahl <ada@thorsis.com>
-Cc: linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190529185143.GH12898@sasha-vm>
+Sender: stable-owner@vger.kernel.org
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hello
 
-On 6/16/19 10:49 AM, Pavel Machek wrote:
-> Hi!
->
->> Am Donnerstag, 23. Mai 2019, 14:08:11 CEST schrieb Dan Murphy:
->>>    leds: multicolor: Add sysfs interface definition
->>>    dt: bindings: Add multicolor class dt bindings documention
->>>    documention: leds: Add multicolor class documentation
->>>    dt-bindings: leds: Add multicolor ID to the color ID  list
->>>    leds: Add multicolor ID to the color ID list
->>>    leds: multicolor: Introduce a multicolor class definition
->>>    dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
->>>    leds: lp50xx: Add the LP50XX family of the RGB LED driver
->>>    leds: Update the lp55xx to use the multi color framework
->> While not having much experience with the implementation of the LED subsystem,
->> I've had a short look at those. Curious question: would it be possible to take
->> three gpio-leds and group those together to one multicolor-led? I know at
->> least one board, where things are wired up like this, see e.g.
->> at91-sama5d27_som1_ek.dts
-> Probably could be done, but is not really a good match. Multicolor was meant for
-> LEDs with many brightness levels.
+--ftEhullJWpWg/VHq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Well that is one aspect of the MC FW.  The other aspect was to collate 
-cluster RGB modules into a single
+Hi!
 
-LED node as that RGB cluster would inherently display a functional color 
-(ie RGB battery LED, multi-color
+> >Could we hold this patch for now?
+>=20
+> Sure, dropped. Thanks!
 
-notification LEDs, Multicolor LED keyboards...)
+So... fix for this now should be in mainline. But as original problem
+is not too severe, I don't think we need to apply this or the fixed
+version to stable.
 
-Dan
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
+--ftEhullJWpWg/VHq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> 									Pavel
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl0HuEsACgkQMOfwapXb+vIN9gCghh2mt0P0yiQz64VCwTSsLCGE
+8k0AoLxWHBoA6YRevOHIQHADmm7JTh3U
+=ve35
+-----END PGP SIGNATURE-----
+
+--ftEhullJWpWg/VHq--
