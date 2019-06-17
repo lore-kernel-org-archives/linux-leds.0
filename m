@@ -1,62 +1,37 @@
-From: Pavel Machek <pavel@ucw.cz>
+From: Dan Murphy <dmurphy@ti.com>
 Subject: Re: [PATCH] dt: leds-lm36274.txt: fix a broken reference to
  ti-lmu.txt
-Date: Mon, 17 Jun 2019 15:12:21 +0200
-Message-ID: <20190617131220.GD21113@amd>
+Date: Mon, 17 Jun 2019 08:45:04 -0500
+Message-ID: <a15bace8-90a8-4201-86af-9fb464024f0a@ti.com>
 References: <79b9bf3388eb231da77c6a804862d21339262d0a.1560421387.git.mchehab+samsung@kernel.org>
+ <20190617131220.GD21113@amd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="5gxpn/Q6ypwruk0T"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <79b9bf3388eb231da77c6a804862d21339262d0a.1560421387.git.mchehab+samsung@kernel.org>
+In-Reply-To: <20190617131220.GD21113@amd>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
 
---5gxpn/Q6ypwruk0T
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu 2019-06-13 07:23:15, Mauro Carvalho Chehab wrote:
-> There's a typo there:
-> 	ti_lmu.txt -> ti-lmu.txt
->=20
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-
-Acked-by: Pavel Machek <pavel@ucw.cz>
-
-
-> @@ -6,7 +6,7 @@ up to 29V total output voltage. The 11-bit LED current is=
- programmable via
->  the I2C bus and/or controlled via a logic level PWM input from 60 uA to =
-30 mA.
-> =20
->  Parent device properties are documented in
-> -Documentation/devicetree/bindings/mfd/ti_lmu.txt
-> +Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> =20
->  Regulator properties are documented in
->  Documentation/devicetree/bindings/regulator/lm363x-regulator.txt
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---5gxpn/Q6ypwruk0T
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl0HkbQACgkQMOfwapXb+vIH5QCeKqYE0VNO+USbEO+mn6G8rRvD
-4oYAoKoX8mQcIqKy3vs9fYFn8oXLd3Kh
-=pLB1
------END PGP SIGNATURE-----
-
---5gxpn/Q6ypwruk0T--
+On 6/17/19 8:12 AM, Pavel Machek wrote:
+> On Thu 2019-06-13 07:23:15, Mauro Carvalho Chehab wrote:
+>> There's a typo there:
+>> 	ti_lmu.txt -> ti-lmu.txt
+>>
+>> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+Acked-by: Dan Murphy <dmurphy@ti.com>
+>
+>> @@ -6,7 +6,7 @@ up to 29V total output voltage. The 11-bit LED current is programmable via
+>>   the I2C bus and/or controlled via a logic level PWM input from 60 uA to 30 mA.
+>>   
+>>   Parent device properties are documented in
+>> -Documentation/devicetree/bindings/mfd/ti_lmu.txt
+>> +Documentation/devicetree/bindings/mfd/ti-lmu.txt
+>>   
+>>   Regulator properties are documented in
+>>   Documentation/devicetree/bindings/regulator/lm363x-regulator.txt
