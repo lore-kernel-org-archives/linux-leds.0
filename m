@@ -1,42 +1,73 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v3 0/9] Multicolor Framework update
-Date: Sun, 16 Jun 2019 17:49:34 +0200
-Message-ID: <20190616154934.GC24837@xo-6d-61-c0.localdomain>
-References: <20190523190820.29375-1-dmurphy@ti.com>
- <55737098.K72IVJ5cDM@ada>
+From: Nikolaus Voss <nv@vosn.de>
+Subject: RE: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table
+ loads
+Date: Mon, 17 Jun 2019 08:24:18 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1906170746150.12344@fox.voss.local>
+References: <cover.1560327219.git.nikolaus.voss@loewensteinmedical.de> <e2a4ddfd93a904b50b7ccc074e00e14dc4661963.1560327219.git.nikolaus.voss@loewensteinmedical.de> <CAJZ5v0jqxWs=PPik-TCDqQiyxCSyRP7HTue1WsdWP9e-nik2eA@mail.gmail.com>
+ <alpine.DEB.2.20.1906141114490.6579@fox.voss.local> <94F2FBAB4432B54E8AACC7DFDE6C92E3B95EFB26@ORSMSX110.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <55737098.K72IVJ5cDM@ada>
+In-Reply-To: <94F2FBAB4432B54E8AACC7DFDE6C92E3B95EFB26@ORSMSX110.amr.corp.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexander Dahl <ada@thorsis.com>
-Cc: linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>, jacek.anaszewski@gmail.com, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Moore, Robert" <robert.moore@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "Schmauss, Erik" <erik.schmauss@intel.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, Thierry Reding <thierry.reding@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, nikolaus.voss@loewensteinmedical.de
 List-Id: linux-leds@vger.kernel.org
 
-Hi!
+Bob,
 
-> Am Donnerstag, 23. Mai 2019, 14:08:11 CEST schrieb Dan Murphy:
-> >   leds: multicolor: Add sysfs interface definition
-> >   dt: bindings: Add multicolor class dt bindings documention
-> >   documention: leds: Add multicolor class documentation
-> >   dt-bindings: leds: Add multicolor ID to the color ID  list
-> >   leds: Add multicolor ID to the color ID list
-> >   leds: multicolor: Introduce a multicolor class definition
-> >   dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
-> >   leds: lp50xx: Add the LP50XX family of the RGB LED driver
-> >   leds: Update the lp55xx to use the multi color framework
-> 
-> While not having much experience with the implementation of the LED subsystem, 
-> I've had a short look at those. Curious question: would it be possible to take 
-> three gpio-leds and group those together to one multicolor-led? I know at 
-> least one board, where things are wired up like this, see e.g. 
-> at91-sama5d27_som1_ek.dts
+On Fri, 14 Jun 2019, Moore, Robert wrote:
+>
+>
+> -----Original Message-----
+> From: Nikolaus Voss [mailto:nv@vosn.de]
+> Sent: Friday, June 14, 2019 2:26 AM
+> To: Rafael J. Wysocki <rafael@kernel.org>
+> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>; Moore, Robert <robert.moore@intel.com>; Schmauss, Erik <erik.schmauss@intel.com>; Jacek Anaszewski <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy <dmurphy@ti.com>; Thierry Reding <thierry.reding@gmail.com>; ACPI Devel Maling List <linux-acpi@vger.kernel.org>; open list:ACPI COMPONENT ARCHITECTURE (ACPICA) <devel@acpica.org>; linux-leds@vger.kernel.org; Linux PWM List <linux-pwm@vger.kernel.org>; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table loads
+>
+> Hi Rafael,
+>
+> On Fri, 14 Jun 2019, Rafael J. Wysocki wrote:
+>> On Wed, Jun 12, 2019 at 10:36 AM Nikolaus Voss
+>> <nikolaus.voss@loewensteinmedical.de> wrote:
+>>>
+>>> If an ACPI SSDT overlay is loaded after built-in tables have been
+>>> loaded e.g. via configfs or efivar_ssdt_load() it is necessary to
+>>> rewalk the namespace to resolve references. Without this, relative
+>>> and absolute paths like ^PCI0.SBUS or \_SB.PCI0.SBUS are not resolved
+>>> correctly.
+>>>
+>>> Make configfs load use the same method as efivar_ssdt_load().
+>>>
+>>> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+>>
+>> This is fine by me, so
+>>
+>> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>
+>> Or if you want me to take this patch (without the other two in the
+>> series), please let me know.
+>
+> thanks. I think it would be the best if you take up this patch as it is 
+> an independent topic. In retrospect it wasn't a good idea to put it into 
+> this series.
+>
+> Kind regards,
+> Niko
+>
+> I would have to ask, why is additional code needed for package 
+> initialization/resolution? It already happens elsewhere in acpica. Bob
 
-Probably could be done, but is not really a good match. Multicolor was meant for
-LEDs with many brightness levels.
+for built-in tables loaded via acpi_ex_load_table_op() everything is fine, 
+because after acpi_tb_load_table() acpi_ns_walk_namespace() is called to 
+resolve references.
 
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+My fix only affects tables loaded dynamically via either 
+acpi_configfs driver (for debugging purposes) or efivar_ssdt_load() (to 
+specify a table on the kernel's command line). They use acpi_load_table() 
+to load the table from a caller-owned buffer. To resolve the references, 
+it is again necessary to rewalk the namespace, which was simply missing in 
+acpi_load_table().
+
+Niko
