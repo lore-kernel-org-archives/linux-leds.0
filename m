@@ -1,98 +1,143 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 2/9] dt: bindings: Add multicolor class dt bindings documention
-Date: Tue, 18 Jun 2019 12:57:14 -0600
-Message-ID: <CAL_JsqKRLZmZ5uCKWh_tpaYu7eSdYatsymzy+L-D=sesd81w+Q@mail.gmail.com>
-References: <20190523190820.29375-1-dmurphy@ti.com> <20190523190820.29375-3-dmurphy@ti.com>
- <20190614170011.GA3277@bogus> <c234361e-f5f7-f8d7-18c6-9cc8ef74ac99@ti.com>
- <CAL_JsqK7u1xXNmwtHjUd7Z5ewHd9_d51quH4zMXxEd63egd28w@mail.gmail.com> <afc7f11f-7f8d-7680-aef3-58c26e8b34fa@gmail.com>
+From: "Moore, Robert" <robert.moore@intel.com>
+Subject: RE: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table
+ loads
+Date: Tue, 18 Jun 2019 19:35:16 +0000
+Message-ID: <94F2FBAB4432B54E8AACC7DFDE6C92E3B95FB032@ORSMSX110.amr.corp.intel.com>
+References: <cover.1560327219.git.nikolaus.voss@loewensteinmedical.de>
+ <e2a4ddfd93a904b50b7ccc074e00e14dc4661963.1560327219.git.nikolaus.voss@loewensteinmedical.de>
+ <CAJZ5v0jqxWs=PPik-TCDqQiyxCSyRP7HTue1WsdWP9e-nik2eA@mail.gmail.com>
+ <alpine.DEB.2.20.1906141114490.6579@fox.voss.local>
+ <94F2FBAB4432B54E8AACC7DFDE6C92E3B95EFB26@ORSMSX110.amr.corp.intel.com>
+ <alpine.DEB.2.20.1906170746150.12344@fox.voss.local>
+ <94F2FBAB4432B54E8AACC7DFDE6C92E3B95F9EC6@ORSMSX110.amr.corp.intel.com>
+ <alpine.DEB.2.20.1906181030240.24846@fox.voss.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <afc7f11f-7f8d-7680-aef3-58c26e8b34fa@gmail.com>
+In-Reply-To: <alpine.DEB.2.20.1906181030240.24846@fox.voss.local>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, Linux LED Subsystem <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Nikolaus Voss <nv@vosn.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "Schmauss, Erik" <erik.schmauss@intel.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, Thierry Reding <thierry.reding@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-leds@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 12:20 PM Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
->
-> On 6/18/19 5:36 PM, Rob Herring wrote:
-> > On Fri, Jun 14, 2019 at 11:18 AM Dan Murphy <dmurphy@ti.com> wrote:
+I'm looking at this. We've changed the initialization of objects in the namespace recently, so I'm checking this out.
+
+
+> -----Original Message-----
+> From: Nikolaus Voss [mailto:nv@vosn.de]
+> Sent: Tuesday, June 18, 2019 2:22 AM
+> To: Moore, Robert <robert.moore@intel.com>
+> Cc: Rafael J. Wysocki <rafael@kernel.org>; Rafael J. Wysocki
+> <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>; Schmauss, Erik
+> <erik.schmauss@intel.com>; Jacek Anaszewski
+> <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy
+> <dmurphy@ti.com>; Thierry Reding <thierry.reding@gmail.com>; ACPI Devel
+> Maling List <linux-acpi@vger.kernel.org>; open list:ACPI COMPONENT
+> ARCHITECTURE (ACPICA) <devel@acpica.org>; linux-leds@vger.kernel.org;
+> Linux PWM List <linux-pwm@vger.kernel.org>; Linux Kernel Mailing List
+> <linux-kernel@vger.kernel.org>
+> Subject: RE: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table
+> loads
+> 
+> On Mon, 17 Jun 2019, Moore, Robert wrote:
+> >> -----Original Message-----
+> >> From: Nikolaus Voss [mailto:nv@vosn.de]
+> >> Sent: Sunday, June 16, 2019 11:24 PM
+> >> To: Moore, Robert <robert.moore@intel.com>
+> >> Cc: Rafael J. Wysocki <rafael@kernel.org>; Rafael J. Wysocki
+> >> <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>; Schmauss, Erik
+> >> <erik.schmauss@intel.com>; Jacek Anaszewski
+> >> <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy
+> >> <dmurphy@ti.com>; Thierry Reding <thierry.reding@gmail.com>; ACPI
+> >> Devel Maling List <linux-acpi@vger.kernel.org>; open list:ACPI
+> >> COMPONENT ARCHITECTURE (ACPICA) <devel@acpica.org>;
+> >> linux-leds@vger.kernel.org; Linux PWM List
+> >> <linux-pwm@vger.kernel.org>; Linux Kernel Mailing List
+> >> <linux-kernel@vger.kernel.org>; nikolaus.voss@loewensteinmedical.de
+> >> Subject: RE: [PATCH v2 1/3] ACPI: Resolve objects on host-directed
+> >> table loads
 > >>
-> >> Rob
+> >> Bob,
 > >>
-> >> Thanks for the review
-> >>
-> >> On 6/14/19 12:00 PM, Rob Herring wrote:
-> >>> On Thu, May 23, 2019 at 02:08:13PM -0500, Dan Murphy wrote:
-> >>>> Add DT bindings for the LEDs multicolor class framework.
+> >> On Fri, 14 Jun 2019, Moore, Robert wrote:
+> >>>
+> >>>
+> >>> -----Original Message-----
+> >>> From: Nikolaus Voss [mailto:nv@vosn.de]
+> >>> Sent: Friday, June 14, 2019 2:26 AM
+> >>> To: Rafael J. Wysocki <rafael@kernel.org>
+> >>> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>; Len Brown
+> >>> <lenb@kernel.org>; Moore, Robert <robert.moore@intel.com>; Schmauss,
+> >>> Erik <erik.schmauss@intel.com>; Jacek Anaszewski
+> >>> <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan
+> >>> Murphy <dmurphy@ti.com>; Thierry Reding <thierry.reding@gmail.com>;
+> >>> ACPI Devel Maling List <linux-acpi@vger.kernel.org>; open list:ACPI
+> >>> COMPONENT ARCHITECTURE (ACPICA) <devel@acpica.org>;
+> >>> linux-leds@vger.kernel.org; Linux PWM List
+> >>> <linux-pwm@vger.kernel.org>; Linux Kernel Mailing List
+> >>> <linux-kernel@vger.kernel.org>
+> >>> Subject: Re: [PATCH v2 1/3] ACPI: Resolve objects on host-directed
+> >>> table loads
+> >>>
+> >>> Hi Rafael,
+> >>>
+> >>> On Fri, 14 Jun 2019, Rafael J. Wysocki wrote:
+> >>>> On Wed, Jun 12, 2019 at 10:36 AM Nikolaus Voss
+> >>>> <nikolaus.voss@loewensteinmedical.de> wrote:
+> >>>>>
+> >>>>> If an ACPI SSDT overlay is loaded after built-in tables have been
+> >>>>> loaded e.g. via configfs or efivar_ssdt_load() it is necessary to
+> >>>>> rewalk the namespace to resolve references. Without this, relative
+> >>>>> and absolute paths like ^PCI0.SBUS or \_SB.PCI0.SBUS are not
+> >>>>> resolved correctly.
+> >>>>>
+> >>>>> Make configfs load use the same method as efivar_ssdt_load().
+> >>>>>
+> >>>>> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
 > >>>>
-> >>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> >>>> ---
-> >>>>    .../bindings/leds/leds-class-multicolor.txt   | 97 +++++++++++++++++++
-> >>>>    1 file changed, 97 insertions(+)
-> >>>>    create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+> >>>> This is fine by me, so
 > >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
-> >>>> new file mode 100644
-> >>>> index 000000000000..e2a2ce3279cb
-> >>>> --- /dev/null
-> >>>> +++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
-> >>>> @@ -0,0 +1,97 @@
-> >>>> +* Multicolor LED properties
-> >>>> +
-> >>>> +Multicolor LEDs can consist of a RGB, RGBW or a RGBA LED clusters.  These devices
-> >>>> +can be grouped together and also provide a modeling mechanism so that the
-> >>>> +cluster LEDs can vary in hue and intensity to produce a wide range of colors.
-> >>>> +
-> >>>> +The nodes and properties defined in this document are unique to the multicolor
-> >>>> +LED class.  Common LED nodes and properties are inherited from the common.txt
-> >>>> +within this documentation directory.
-> >>>> +
-> >>>> +Required LED Child properties:
-> >>>> +    - color : For multicolor LED support this property should be defined as
-> >>>> +              LED_COLOR_ID_MULTI and further definition can be found in
-> >>>> +              include/linux/leds/common.h.
-> >>>> +
-> >>>> +led-controller@30 {
-> >>>> +    #address-cells = <1>;
-> >>>> +    #size-cells = <0>;
-> >>>> +    compatible = "ti,lp5024";
-> >>>> +    reg = <0x29>;
-> >>>> +
-> >>>> +    multi-led@4 {
-> >>> Typically we sort by address order.
+> >>>> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>>
+> >>>> Or if you want me to take this patch (without the other two in the
+> >>>> series), please let me know.
+> >>>
+> >>> thanks. I think it would be the best if you take up this patch as it
+> >>> is an independent topic. In retrospect it wasn't a good idea to put
+> >>> it into this series.
+> >>>
+> >>> Kind regards,
+> >>> Niko
+> >>>
+> >>> I would have to ask, why is additional code needed for package
+> >>> initialization/resolution? It already happens elsewhere in acpica.
+> >>> Bob
 > >>
-> >> These are not addresses these end up being the "module" number that the
-> >> LEDs below are associated to.
+> >> for built-in tables loaded via acpi_ex_load_table_op() everything is
+> >> fine, because after acpi_tb_load_table() acpi_ns_walk_namespace() is
+> >> called to resolve references.
+> >>
+> >> My fix only affects tables loaded dynamically via either
+> >> acpi_configfs driver (for debugging purposes) or efivar_ssdt_load()
+> >> (to specify a table on the kernel's command line). They use
+> >> acpi_load_table() to load the table from a caller-owned buffer. To
+> >> resolve the references, it is again necessary to rewalk the
+> >> namespace, which was simply missing in acpi_load_table().
+> >>
+> > [Moore, Robert]
 > >
-> > 'reg' (and the unit-address) is an address in the sense that is how
-> > you identify a device or sub-device. It doesn't matter what type of
-> > 'address' it is, DT practice is to sort node in unit-address numerical
-> > order.
-> >
-> > 'module' is a h/w thing, right? A bank or instance within the device?
-> > If not, using 'reg' here is not appropriate.
->
-> In this case reg represents LEDn_BRIGHTNESS register which controls
-> a group of three LEDs. The thing is that those registers' addresses
-> start from 0x07, i.e. the formula for calculating the RGB LED module
-> address is: LEDn_BRIGHTNESS = 0x07 + n.
->
->  From the above it seems that we should have multi-led@7 and reg = 0x07
-> for LED0_BRIGHTNESS register governing the brightness of RGB LED
-> module 0, right?
-
-Use whatever makes the most sense from a h/w perspective. If 'module
-N' is something that I'd read about in the datasheet, then I'd stick
-with 'N'.
-
->
-> And regarding sorting by address order I think that Rob was asking for
-> placing whole multi-led@4 sub-node after multi-led@2 (here sticking to
-> the numeration from the patch).
-
-Right.
-
-Rob
+> > Perhaps you should call AcpiInitializeObjects after the call to
+> > AcpiLoadTable, but I will check.
+> 
+> My usage of acpi_load_table() is to load a SSDT which is the intended
+> use of this method according to its description. And my expectation is
+> that the package objects of the loaded table are initialized when this
+> function successfully returns so it aligns with the behavior of
+> acpi_ex_load_table_op() for built-in SSDTs. Otherwise there would be no
+> point in having this function at all, because
+> acpi_tb_install_and_load_table() could be called directly without any
+> difference.
+> 
+> Niko
