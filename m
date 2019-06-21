@@ -1,15 +1,16 @@
 From: Daniel Thompson <daniel.thompson@linaro.org>
-Subject: Re: [PATCH 2/3] backlight/arcxcnn fix vendor prefix
-Date: Fri, 21 Jun 2019 14:39:01 +0100
-Message-ID: <CAMTL27EJuD3WOBDVd_wen=VCxMZ-RPMZ52JnGBKjzftr-twKsw@mail.gmail.com>
+Subject: Re: Re: [PATCH 2/3] backlight/arcxcnn fix vendor prefix
+Date: Fri, 21 Jun 2019 14:46:05 +0100
+Message-ID: <c4477220-7159-b5a8-16ea-4f4dbb645ced@linaro.org>
 References: <1541592640-18478-1-git-send-email-bdodge09@gmail.com>
  <1541592640-18478-3-git-send-email-bdodge09@gmail.com>
- <20181111113053.GF27666@amd>
- <e372391c-1fd5-41ec-b766-7669fffb928d@gmail.com>
+ <20181111113053.GF27666@amd> <e372391c-1fd5-41ec-b766-7669fffb928d@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0641881323=="
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <e372391c-1fd5-41ec-b766-7669fffb928d@gmail.com>
+Content-Language: en-US
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -19,160 +20,50 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Brian Dodge <bdodge09@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Jingoo Han <jingoohan1@gmail.com>, DRI Development <dri-devel@lists.freedesktop.org>, Rob Herring <robh+dt@kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Peter Bacon <pbacon@psemi.com>, Lee Jones <lee.jones@linaro.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>
+To: Brian Dodge <bdodge09@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, Peter Bacon <pbacon@psemi.com>, lee.jones@linaro.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
---===============0641881323==
-Content-Type: multipart/alternative; boundary="00000000000076ce46058bd596e2"
-
---00000000000076ce46058bd596e2
-Content-Type: text/plain; charset="UTF-8"
-
-Hi Brian
-
-On Tue, 27 Nov 2018 at 00:44, Brian Dodge <bdodge09@gmail.com> wrote:
-
-> Thank you Pavel, that is a good point.
->
-> The chip vendor has indicated that there is no reason to maintain the
-> old/improper prefix and wishes to go forward (only) with the "arctic"
-> prefix and any existing dts files are or will be updated.
->
-
-Looks like this patch series has fallen into the cracks a little.
-
-I think I assumed this info would end in the description of patch v2 1/3
-(in order to answer Rob's feedback) and I sat and waited for a respin. On
-the other hand... I didn't actually say that explicitly anywhere! So... I'd
-recommend a respin perhaps with a small bit of text explaining how the
-vendor can state that any existing dts files will be updated. This is a
-peripheral device so these strings are probably embedded into OEM
-devicetrees rather than exclusively under the control of the vendor.
-
-
-Daniel.
-
-
-
-
-> On 11/11/18 6:30 AM, Pavel Machek wrote:
-> > Hi!
-> >
-> >> The vendor-prefixes.txt file properly refers to ArcticSand
-> >> as arctic but the driver improperly abbreviated the prefix
-> >> to arc. This was a mistake in the original patch
-> >>
-> >> Signed-off-by: Brian Dodge <bdodge09@gmail.com>
-> >> ---
-> >>   drivers/video/backlight/arcxcnn_bl.c | 22 +++++++++++-----------
-> >>   1 file changed, 11 insertions(+), 11 deletions(-)
-> >>
-> >>    *
-> >> - * Copyright 2016 ArcticSand, Inc.
-> >> - * Author : Brian Dodge <bdodge@arcticsand.com>
-> >> + * Copyright 2018 pSemi, Inc.
-> >> + * Author : Brian Dodge <bdodge@psemi.com>
-> > Ummm. Copyright 2016-2018?
-> >
-> >> @@ -202,27 +202,27 @@ static void arcxcnn_parse_dt(struct arcxcnn *lp)
-> >>      if (ret == 0)
-> >>              lp->pdata->initial_brightness = prog_val;
-> >>
-> >> -    ret = of_property_read_u32(node, "arc,led-config-0", &prog_val);
-> >> +    ret = of_property_read_u32(node, "arctic,led-config-0", &prog_val);
-> >>      if (ret == 0)
-> >>              lp->pdata->led_config_0 = (u8)prog_val;
-> >>
-> > If there's a dts using this, you want to update it at the same
-> > time. You may want to support both names going forward.
-> >
->  Pavel
->
-
---00000000000076ce46058bd596e2
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div>Hi Brian</div><br><div class=3D"gmail_quote"><div dir=
-=3D"ltr" class=3D"gmail_attr">On Tue, 27 Nov 2018 at 00:44, Brian Dodge &lt=
-;<a href=3D"mailto:bdodge09@gmail.com">bdodge09@gmail.com</a>&gt; wrote:<br=
-></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;=
-border-left:1px solid rgb(204,204,204);padding-left:1ex">Thank you Pavel, t=
-hat is a good point.<br>
-<br>
-The chip vendor has indicated that there is no reason to maintain the <br>
-old/improper prefix and wishes to go forward (only) with the &quot;arctic&q=
-uot; <br>
-prefix and any existing dts files are or will be updated.<br></blockquote><=
-div><br></div><div>Looks like this patch series has fallen into the cracks =
-a little.</div><div><br></div><div>I think I assumed this info would end in=
- the description of patch v2 1/3 (in order to answer Rob&#39;s feedback) an=
-d I sat and waited for a respin. On the other hand... I didn&#39;t actually=
- say that explicitly anywhere! So... I&#39;d recommend a respin perhaps wit=
-h a small bit of text explaining how the vendor can state that any existing=
- dts files will be updated. This is a peripheral device so these strings ar=
-e probably embedded into OEM devicetrees rather than exclusively under the =
-control of the vendor.</div><div><br></div><div><br></div><div>Daniel.</div=
-><div><br></div><div><br></div><div><br></div><blockquote class=3D"gmail_qu=
-ote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,20=
-4);padding-left:1ex">
-<br>
-On 11/11/18 6:30 AM, Pavel Machek wrote:<br>
-&gt; Hi!<br>
-&gt;<br>
-&gt;&gt; The vendor-prefixes.txt file properly refers to ArcticSand<br>
-&gt;&gt; as arctic but the driver improperly abbreviated the prefix<br>
-&gt;&gt; to arc. This was a mistake in the original patch<br>
-&gt;&gt;<br>
-&gt;&gt; Signed-off-by: Brian Dodge &lt;<a href=3D"mailto:bdodge09@gmail.co=
-m" target=3D"_blank">bdodge09@gmail.com</a>&gt;<br>
-&gt;&gt; ---<br>
-&gt;&gt;=C2=A0 =C2=A0drivers/video/backlight/arcxcnn_bl.c | 22 +++++++++++-=
-----------<br>
-&gt;&gt;=C2=A0 =C2=A01 file changed, 11 insertions(+), 11 deletions(-)<br>
-&gt;&gt;<br>
-&gt;&gt;=C2=A0 =C2=A0 *<br>
-&gt;&gt; - * Copyright 2016 ArcticSand, Inc.<br>
-&gt;&gt; - * Author : Brian Dodge &lt;<a href=3D"mailto:bdodge@arcticsand.c=
-om" target=3D"_blank">bdodge@arcticsand.com</a>&gt;<br>
-&gt;&gt; + * Copyright 2018 pSemi, Inc.<br>
-&gt;&gt; + * Author : Brian Dodge &lt;<a href=3D"mailto:bdodge@psemi.com" t=
-arget=3D"_blank">bdodge@psemi.com</a>&gt;<br>
-&gt; Ummm. Copyright 2016-2018?<br>
-&gt;<br>
-&gt;&gt; @@ -202,27 +202,27 @@ static void arcxcnn_parse_dt(struct arcxcnn =
-*lp)<br>
-&gt;&gt;=C2=A0 =C2=A0 =C2=A0 if (ret =3D=3D 0)<br>
-&gt;&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 lp-&gt;pdata-&gt;i=
-nitial_brightness =3D prog_val;<br>
-&gt;&gt;<br>
-&gt;&gt; -=C2=A0 =C2=A0 ret =3D of_property_read_u32(node, &quot;arc,led-co=
-nfig-0&quot;, &amp;prog_val);<br>
-&gt;&gt; +=C2=A0 =C2=A0 ret =3D of_property_read_u32(node, &quot;arctic,led=
--config-0&quot;, &amp;prog_val);<br>
-&gt;&gt;=C2=A0 =C2=A0 =C2=A0 if (ret =3D=3D 0)<br>
-&gt;&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 lp-&gt;pdata-&gt;l=
-ed_config_0 =3D (u8)prog_val;<br>
-&gt;&gt;<br>
-&gt; If there&#39;s a dts using this, you want to update it at the same<br>
-&gt; time. You may want to support both names going forward.<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Pavel<br>
-</blockquote></div></div>
-
---00000000000076ce46058bd596e2--
-
---===============0641881323==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-
---===============0641881323==--
+W1NvcnJ5IHRvIHRob3NlIHJlY2VpdmluZyB0aGlzIHR3aWNlLi4uIGhhZCB0byBkaWcgdGhpcyBv
+dXQgZnJvbSB0aGUgCmFyY2hpdmVzIGFuZCBzZW50IGl0IHRvIHRoZSBsaXN0cyBmcm9tIHRoZSB3
+cm9uZyBtYWlsZXJdCgpPbiAyNy8xMS8yMDE4IDAwOjQ0LCBCcmlhbiBEb2RnZSB3cm90ZToKPiBU
+aGFuayB5b3UgUGF2ZWwsIHRoYXQgaXMgYSBnb29kIHBvaW50Lgo+IAo+IFRoZSBjaGlwIHZlbmRv
+ciBoYXMgaW5kaWNhdGVkIHRoYXQgdGhlcmUgaXMgbm8gcmVhc29uIHRvIG1haW50YWluIHRoZSAK
+PiBvbGQvaW1wcm9wZXIgcHJlZml4IGFuZCB3aXNoZXMgdG8gZ28gZm9yd2FyZCAob25seSkgd2l0
+aCB0aGUgImFyY3RpYyIgCj4gcHJlZml4IGFuZCBhbnkgZXhpc3RpbmcgZHRzIGZpbGVzIGFyZSBv
+ciB3aWxsIGJlIHVwZGF0ZWQuCgpMb29rcyBsaWtlIHRoaXMgcGF0Y2ggc2VyaWVzIGhhcyBmYWxs
+ZW4gaW50byB0aGUgY3JhY2tzIGEgbGl0dGxlLgoKSSB0aGluayBJIGFzc3VtZWQgdGhpcyBpbmZv
+IHdvdWxkIGVuZCBpbiB0aGUgZGVzY3JpcHRpb24gb2YgcGF0Y2ggdjIgMS8zIAooaW4gb3JkZXIg
+dG8gYW5zd2VyIFJvYidzIGZlZWRiYWNrKSBhbmQgSSBzYXQgYW5kIHdhaXRlZCBmb3IgYSByZXNw
+aW4uIApPbiB0aGUgb3RoZXIgaGFuZC4uLiBJIGRpZG4ndCBhY3R1YWxseSBzYXkgdGhhdCBleHBs
+aWNpdGx5IGFueXdoZXJlISAKU28uLi4gSSdkIHJlY29tbWVuZCBhIHJlc3BpbiBwZXJoYXBzIHdp
+dGggYSBzbWFsbCBiaXQgb2YgdGV4dCBleHBsYWluaW5nIApob3cgdGhlIHZlbmRvciBjYW4gc3Rh
+dGUgdGhhdCBhbnkgZXhpc3RpbmcgZHRzIGZpbGVzIHdpbGwgYmUgdXBkYXRlZC4gClRoaXMgaXMg
+YSBwZXJpcGhlcmFsIGRldmljZSBzbyB0aGVzZSBzdHJpbmdzIGFyZSBwcm9iYWJseSBlbWJlZGRl
+ZCBpbnRvIApPRU0gZGV2aWNldHJlZXMgcmF0aGVyIHRoYW4gZXhjbHVzaXZlbHkgdW5kZXIgdGhl
+IGNvbnRyb2wgb2YgdGhlIHZlbmRvci4KCgpEYW5pZWwuCgoKPiAKPiBPbiAxMS8xMS8xOCA2OjMw
+IEFNLCBQYXZlbCBNYWNoZWsgd3JvdGU6Cj4+IEhpIQo+Pgo+Pj4gVGhlIHZlbmRvci1wcmVmaXhl
+cy50eHQgZmlsZSBwcm9wZXJseSByZWZlcnMgdG8gQXJjdGljU2FuZAo+Pj4gYXMgYXJjdGljIGJ1
+dCB0aGUgZHJpdmVyIGltcHJvcGVybHkgYWJicmV2aWF0ZWQgdGhlIHByZWZpeAo+Pj4gdG8gYXJj
+LiBUaGlzIHdhcyBhIG1pc3Rha2UgaW4gdGhlIG9yaWdpbmFsIHBhdGNoCj4+Pgo+Pj4gU2lnbmVk
+LW9mZi1ieTogQnJpYW4gRG9kZ2UgPGJkb2RnZTA5QGdtYWlsLmNvbT4KPj4+IC0tLQo+Pj4gwqAg
+ZHJpdmVycy92aWRlby9iYWNrbGlnaHQvYXJjeGNubl9ibC5jIHwgMjIgKysrKysrKysrKystLS0t
+LS0tLS0tLQo+Pj4gwqAgMSBmaWxlIGNoYW5nZWQsIDExIGluc2VydGlvbnMoKyksIDExIGRlbGV0
+aW9ucygtKQo+Pj4KPj4+IMKgwqAgKgo+Pj4gLSAqIENvcHlyaWdodCAyMDE2IEFyY3RpY1NhbmQs
+IEluYy4KPj4+IC0gKiBBdXRob3IgOiBCcmlhbiBEb2RnZSA8YmRvZGdlQGFyY3RpY3NhbmQuY29t
+Pgo+Pj4gKyAqIENvcHlyaWdodCAyMDE4IHBTZW1pLCBJbmMuCj4+PiArICogQXV0aG9yIDogQnJp
+YW4gRG9kZ2UgPGJkb2RnZUBwc2VtaS5jb20+Cj4+IFVtbW0uIENvcHlyaWdodCAyMDE2LTIwMTg/
+Cj4+Cj4+PiBAQCAtMjAyLDI3ICsyMDIsMjcgQEAgc3RhdGljIHZvaWQgYXJjeGNubl9wYXJzZV9k
+dChzdHJ1Y3QgYXJjeGNubiAqbHApCj4+PiDCoMKgwqDCoMKgIGlmIChyZXQgPT0gMCkKPj4+IMKg
+wqDCoMKgwqDCoMKgwqDCoCBscC0+cGRhdGEtPmluaXRpYWxfYnJpZ2h0bmVzcyA9IHByb2dfdmFs
+Owo+Pj4KPj4+IC3CoMKgwqAgcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgImFyYyxs
+ZWQtY29uZmlnLTAiLCAmcHJvZ192YWwpOwo+Pj4gK8KgwqDCoCByZXQgPSBvZl9wcm9wZXJ0eV9y
+ZWFkX3UzMihub2RlLCAiYXJjdGljLGxlZC1jb25maWctMCIsICZwcm9nX3ZhbCk7Cj4+PiDCoMKg
+wqDCoMKgIGlmIChyZXQgPT0gMCkKPj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBscC0+cGRhdGEtPmxl
+ZF9jb25maWdfMCA9ICh1OClwcm9nX3ZhbDsKPj4+Cj4+IElmIHRoZXJlJ3MgYSBkdHMgdXNpbmcg
+dGhpcywgeW91IHdhbnQgdG8gdXBkYXRlIGl0IGF0IHRoZSBzYW1lCj4+IHRpbWUuIFlvdSBtYXkg
+d2FudCB0byBzdXBwb3J0IGJvdGggbmFtZXMgZ29pbmcgZm9yd2FyZC4KPj4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBQYXZlbAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
