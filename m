@@ -1,35 +1,54 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 20/29] docs: leds: convert to ReST
-Date: Fri, 21 Jun 2019 12:59:42 +0200
-Message-ID: <20190621105942.GA24145@amd>
-References: <cover.1560890800.git.mchehab+samsung@kernel.org>
- <b8185b2d816810281a2b712c70518159516785b6.1560890801.git.mchehab+samsung@kernel.org>
+Subject: Re: [PATCH v2 3/3] leds-pwm.c: support ACPI via firmware-node
+ framework
+Date: Fri, 21 Jun 2019 13:01:28 +0200
+Message-ID: <20190621110128.GD24145@amd>
+References: <cover.1560327219.git.nikolaus.voss@loewensteinmedical.de>
+ <5df196d63671205d6722d21bec0ae5857a6b91eb.1560327219.git.nikolaus.voss@loewensteinmedical.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
+        protocol="application/pgp-signature"; boundary="3Pql8miugIZX0722"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <b8185b2d816810281a2b712c70518159516785b6.1560890801.git.mchehab+samsung@kernel.org>
+In-Reply-To: <5df196d63671205d6722d21bec0ae5857a6b91eb.1560327219.git.nikolaus.voss@loewensteinmedical.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Vadim Pasternak <vadimp@mellanox.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan Murphy <dmurphy@ti.com>, Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, linux-leds@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
+To: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>, Erik Schmauss <erik.schmauss@intel.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan Murphy <dmurphy@ti.com>, Thierry Reding <thierry.reding@gmail.com>, linux-acpi@vger.kernel.org, devel@acpica.org, linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, nv@vosn.de
 List-Id: linux-leds@vger.kernel.org
 
 
---KsGdsel6WgEHnImy
+--3Pql8miugIZX0722
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue 2019-06-18 17:53:38, Mauro Carvalho Chehab wrote:
-> Rename the leds documentation files to ReST, add an
-> index for them and adjust in order to produce a nice html
-> output via the Sphinx build system.
+On Wed 2019-06-12 10:36:08, Nikolaus Voss wrote:
+> DT specific handling is replaced by firmware-node abstration to support
+> ACPI specification of PWM LEDS.
 >=20
-> At its new index.rst, let's add a :orphan: while this is not linked to
-> the main index.rst file, in order to avoid build warnings.
+> Example ASL:
+> Device (PWML)
+> {
+>     Name (_HID, "PRP0001")
+>     Name (_DSD, Package () {
+>           ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+>           Package () { Package () {"compatible",
+>                                     Package () {"pwm-leds"}}}})
 >=20
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+>     Device (PWL0)
+>     {
+>         Name (_HID, "PRP0001")
+>         Name (_DSD, Package () {
+>               ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+>               Package () {
+>                            Package () {"label", "alarm-led"},
+>                            Package () {"pwms", Package ()
+>                                        {\_SB_.PCI0.PWM, 0, 600000, 0}},
+>                            Package () {"linux,default-state", "off"}}})
+>     }
+> }
+>=20
+> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
 
 Acked-by: Pavel Machek <pavel@ucw.cz>
 
@@ -38,16 +57,16 @@ Acked-by: Pavel Machek <pavel@ucw.cz>
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---KsGdsel6WgEHnImy
+--3Pql8miugIZX0722
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl0MuJ4ACgkQMOfwapXb+vLr4wCgr/sTE2xCAfouKtIL4+mRDlDH
-r3gAniPvzpOgYRlsEHIkVK0sPOYobZVO
-=AOCV
+iEYEARECAAYFAl0MuQgACgkQMOfwapXb+vLdfQCdEXpSEGq2qMko5kRPf//HXH7j
+GnMAoKHopDvN/1Q+REF1JJVm1jCtatXO
+=4BB0
 -----END PGP SIGNATURE-----
 
---KsGdsel6WgEHnImy--
+--3Pql8miugIZX0722--
