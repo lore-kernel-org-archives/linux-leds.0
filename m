@@ -1,17 +1,16 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Subject: Re: Re: Re: [PATCH 2/3] backlight/arcxcnn fix vendor prefix
-Date: Fri, 21 Jun 2019 14:48:51 +0100
-Message-ID: <da193d14-5cb7-3a1a-148e-fb8554c5def7@linaro.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: Re: [PATCH 2/3] backlight/arcxcnn fix vendor prefix
+Date: Sat, 22 Jun 2019 00:13:25 +0200
+Message-ID: <20190621221325.GA2343@amd>
 References: <1541592640-18478-1-git-send-email-bdodge09@gmail.com>
  <1541592640-18478-3-git-send-email-bdodge09@gmail.com>
- <20181111113053.GF27666@amd> <e372391c-1fd5-41ec-b766-7669fffb928d@gmail.com>
+ <20181111113053.GF27666@amd>
+ <e372391c-1fd5-41ec-b766-7669fffb928d@gmail.com>
  <c4477220-7159-b5a8-16ea-4f4dbb645ced@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============2011993797=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <c4477220-7159-b5a8-16ea-4f4dbb645ced@linaro.org>
-Content-Language: en-US
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -21,58 +20,77 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Brian Dodge <bdodge09@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, Peter Bacon <pbacon@psemi.com>, lee.jones@linaro.org, linux-leds@vger.kernel.org
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, Brian Dodge <bdodge09@gmail.com>, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, Peter Bacon <pbacon@psemi.com>, lee.jones@linaro.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-T24gMjEvMDYvMjAxOSAxNDo0NiwgRGFuaWVsIFRob21wc29uIHdyb3RlOgo+IFtTb3JyeSB0byB0
-aG9zZSByZWNlaXZpbmcgdGhpcyB0d2ljZS4uLiBoYWQgdG8gZGlnIHRoaXMgb3V0IGZyb20gdGhl
-IAo+IGFyY2hpdmVzIGFuZCBzZW50IGl0IHRvIHRoZSBsaXN0cyBmcm9tIHRoZSB3cm9uZyBtYWls
-ZXJdCj4gCj4gT24gMjcvMTEvMjAxOCAwMDo0NCwgQnJpYW4gRG9kZ2Ugd3JvdGU6Cj4+IFRoYW5r
-IHlvdSBQYXZlbCwgdGhhdCBpcyBhIGdvb2QgcG9pbnQuCj4+Cj4+IFRoZSBjaGlwIHZlbmRvciBo
-YXMgaW5kaWNhdGVkIHRoYXQgdGhlcmUgaXMgbm8gcmVhc29uIHRvIG1haW50YWluIHRoZSAKPj4g
-b2xkL2ltcHJvcGVyIHByZWZpeCBhbmQgd2lzaGVzIHRvIGdvIGZvcndhcmQgKG9ubHkpIHdpdGgg
-dGhlICJhcmN0aWMiIAo+PiBwcmVmaXggYW5kIGFueSBleGlzdGluZyBkdHMgZmlsZXMgYXJlIG9y
-IHdpbGwgYmUgdXBkYXRlZC4KPiAKPiBMb29rcyBsaWtlIHRoaXMgcGF0Y2ggc2VyaWVzIGhhcyBm
-YWxsZW4gaW50byB0aGUgY3JhY2tzIGEgbGl0dGxlLgo+IAo+IEkgdGhpbmsgSSBhc3N1bWVkIHRo
-aXMgaW5mbyB3b3VsZCBlbmQgaW4gdGhlIGRlc2NyaXB0aW9uIG9mIHBhdGNoIHYyIDEvMyAKPiAo
-aW4gb3JkZXIgdG8gYW5zd2VyIFJvYidzIGZlZWRiYWNrKSBhbmQgSSBzYXQgYW5kIHdhaXRlZCBm
-b3IgYSByZXNwaW4uIAo+IE9uIHRoZSBvdGhlciBoYW5kLi4uIEkgZGlkbid0IGFjdHVhbGx5IHNh
-eSB0aGF0IGV4cGxpY2l0bHkgYW55d2hlcmUhIAo+IFNvLi4uIEknZCByZWNvbW1lbmQgYSByZXNw
-aW4gcGVyaGFwcyB3aXRoIGEgc21hbGwgYml0IG9mIHRleHQgZXhwbGFpbmluZyAKPiBob3cgdGhl
-IHZlbmRvciBjYW4gc3RhdGUgdGhhdCBhbnkgZXhpc3RpbmcgZHRzIGZpbGVzIHdpbGwgYmUgdXBk
-YXRlZC4gCj4gVGhpcyBpcyBhIHBlcmlwaGVyYWwgZGV2aWNlIHNvIHRoZXNlIHN0cmluZ3MgYXJl
-IHByb2JhYmx5IGVtYmVkZGVkIGludG8gCj4gT0VNIGRldmljZXRyZWVzIHJhdGhlciB0aGFuIGV4
-Y2x1c2l2ZWx5IHVuZGVyIHRoZSBjb250cm9sIG9mIHRoZSB2ZW5kb3IuCgpJbiBmYWN0IHRoZXJl
-J3MgYSBwdWJsaWNseSBhdmFpbGFibGUgZXhhbXBsZSB1c2luZyB0aGlzIGJpbmRpbmc6Cmh0dHBz
-Oi8vY2hyb21pdW0uZ29vZ2xlc291cmNlLmNvbS9jaHJvbWl1bW9zL3RoaXJkX3BhcnR5L2tlcm5l
-bC8rL2ZhY3RvcnktZ3J1LTg2NTIuQi1jaHJvbWVvcy00LjQvYXJjaC9hcm02NC9ib290L2R0cy9y
-b2NrY2hpcC9yazMzOTktZ3J1LWdydS5kdHNpCgpJJ20gbm90IHN1cmUgaXQgY291bGQgYmUgY2hh
-bmdlZCB3aXRob3V0IG1haW50YWluaW5nIHN1cHBvcnQgZm9yIG9sZCBuYW1lcy4KCgpEYW5pZWwu
-CgoKPiAKPiAKPiBEYW5pZWwuCj4gCj4gCj4+Cj4+IE9uIDExLzExLzE4IDY6MzAgQU0sIFBhdmVs
-IE1hY2hlayB3cm90ZToKPj4+IEhpIQo+Pj4KPj4+PiBUaGUgdmVuZG9yLXByZWZpeGVzLnR4dCBm
-aWxlIHByb3Blcmx5IHJlZmVycyB0byBBcmN0aWNTYW5kCj4+Pj4gYXMgYXJjdGljIGJ1dCB0aGUg
-ZHJpdmVyIGltcHJvcGVybHkgYWJicmV2aWF0ZWQgdGhlIHByZWZpeAo+Pj4+IHRvIGFyYy4gVGhp
-cyB3YXMgYSBtaXN0YWtlIGluIHRoZSBvcmlnaW5hbCBwYXRjaAo+Pj4+Cj4+Pj4gU2lnbmVkLW9m
-Zi1ieTogQnJpYW4gRG9kZ2UgPGJkb2RnZTA5QGdtYWlsLmNvbT4KPj4+PiAtLS0KPj4+PiDCoCBk
-cml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9hcmN4Y25uX2JsLmMgfCAyMiArKysrKysrKysrKy0tLS0t
-LS0tLS0tCj4+Pj4gwqAgMSBmaWxlIGNoYW5nZWQsIDExIGluc2VydGlvbnMoKyksIDExIGRlbGV0
-aW9ucygtKQo+Pj4+Cj4+Pj4gwqDCoCAqCj4+Pj4gLSAqIENvcHlyaWdodCAyMDE2IEFyY3RpY1Nh
-bmQsIEluYy4KPj4+PiAtICogQXV0aG9yIDogQnJpYW4gRG9kZ2UgPGJkb2RnZUBhcmN0aWNzYW5k
-LmNvbT4KPj4+PiArICogQ29weXJpZ2h0IDIwMTggcFNlbWksIEluYy4KPj4+PiArICogQXV0aG9y
-IDogQnJpYW4gRG9kZ2UgPGJkb2RnZUBwc2VtaS5jb20+Cj4+PiBVbW1tLiBDb3B5cmlnaHQgMjAx
-Ni0yMDE4Pwo+Pj4KPj4+PiBAQCAtMjAyLDI3ICsyMDIsMjcgQEAgc3RhdGljIHZvaWQgYXJjeGNu
-bl9wYXJzZV9kdChzdHJ1Y3QgYXJjeGNubiAqbHApCj4+Pj4gwqDCoMKgwqDCoCBpZiAocmV0ID09
-IDApCj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIGxwLT5wZGF0YS0+aW5pdGlhbF9icmlnaHRuZXNz
-ID0gcHJvZ192YWw7Cj4+Pj4KPj4+PiAtwqDCoMKgIHJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMy
-KG5vZGUsICJhcmMsbGVkLWNvbmZpZy0wIiwgJnByb2dfdmFsKTsKPj4+PiArwqDCoMKgIHJldCA9
-IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmN0aWMsbGVkLWNvbmZpZy0wIiwgCj4+Pj4g
-JnByb2dfdmFsKTsKPj4+PiDCoMKgwqDCoMKgIGlmIChyZXQgPT0gMCkKPj4+PiDCoMKgwqDCoMKg
-wqDCoMKgwqAgbHAtPnBkYXRhLT5sZWRfY29uZmlnXzAgPSAodTgpcHJvZ192YWw7Cj4+Pj4KPj4+
-IElmIHRoZXJlJ3MgYSBkdHMgdXNpbmcgdGhpcywgeW91IHdhbnQgdG8gdXBkYXRlIGl0IGF0IHRo
-ZSBzYW1lCj4+PiB0aW1lLiBZb3UgbWF5IHdhbnQgdG8gc3VwcG9ydCBib3RoIG5hbWVzIGdvaW5n
-IGZvcndhcmQuCj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFBhdmVsCj4gCgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+
+--===============2011993797==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Content-Disposition: inline
+
+
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> [Sorry to those receiving this twice... had to dig this out from the
+> archives and sent it to the lists from the wrong mailer]
+>=20
+> On 27/11/2018 00:44, Brian Dodge wrote:
+> >Thank you Pavel, that is a good point.
+> >
+> >The chip vendor has indicated that there is no reason to maintain the
+> >old/improper prefix and wishes to go forward (only) with the "arctic"
+> >prefix and any existing dts files are or will be updated.
+>=20
+> Looks like this patch series has fallen into the cracks a little.
+>=20
+> I think I assumed this info would end in the description of patch v2 1/3 =
+(in
+> order to answer Rob's feedback) and I sat and waited for a respin. On the
+> other hand... I didn't actually say that explicitly anywhere! So... I'd
+> recommend a respin perhaps with a small bit of text explaining how the
+> vendor can state that any existing dts files will be updated. This is a
+> peripheral device so these strings are probably embedded into OEM
+> devicetrees rather than exclusively under the control of the vendor.
+
+So in next email you give good reason not to apply this :-).
+
+Anyway, this is Doc*/devicetree/, so not my area.
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl0NVoUACgkQMOfwapXb+vKcPQCeMXZLMpPGhmvkuIH+olZhfCFk
+CVIAoLN12wP5S77RinlmdQ/jZIZqwCWD
+=7Nqr
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
+
+--===============2011993797==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============2011993797==--
