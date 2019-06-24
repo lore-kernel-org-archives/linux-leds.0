@@ -1,139 +1,51 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table loads
-Date: Sat, 22 Jun 2019 11:04:32 +0200
-Message-ID: <CAJZ5v0gtG5mcBwMB7mZ2aooBnJmL7fmx=QpoeMTDpbbHrue6OA@mail.gmail.com>
-References: <cover.1560327219.git.nikolaus.voss@loewensteinmedical.de>
- <e2a4ddfd93a904b50b7ccc074e00e14dc4661963.1560327219.git.nikolaus.voss@loewensteinmedical.de>
- <CAJZ5v0jqxWs=PPik-TCDqQiyxCSyRP7HTue1WsdWP9e-nik2eA@mail.gmail.com>
- <alpine.DEB.2.20.1906141114490.6579@fox.voss.local> <94F2FBAB4432B54E8AACC7DFDE6C92E3B95EFB26@ORSMSX110.amr.corp.intel.com>
- <alpine.DEB.2.20.1906170746150.12344@fox.voss.local> <94F2FBAB4432B54E8AACC7DFDE6C92E3B95F9EC6@ORSMSX110.amr.corp.intel.com>
- <alpine.DEB.2.20.1906181030240.24846@fox.voss.local> <94F2FBAB4432B54E8AACC7DFDE6C92E3B95FB0BA@ORSMSX110.amr.corp.intel.com>
- <alpine.DEB.2.20.1906191123400.34742@fox.voss.local> <94F2FBAB4432B54E8AACC7DFDE6C92E3B95FC28D@ORSMSX110.amr.corp.intel.com>
- <alpine.DEB.2.20.1906200843320.9673@fox.voss.local>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2 00/28] drivers: Consolidate device lookup helpers
+Date: Mon, 24 Jun 2019 05:23:48 +0200
+Message-ID: <20190624032348.GA28919@kroah.com>
+References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.20.1906200843320.9673@fox.voss.local>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nikolaus Voss <nv@vosn.de>, "Moore, Robert" <robert.moore@intel.com>
-Cc: Len Brown <lenb@kernel.org>, "Schmauss, Erik" <erik.schmauss@intel.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, Thierry Reding <thierry.reding@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Shyam Sundar S K <shyam-sundar.s-k@amd.com>, rafael@kernel.org, Will Deacon <will.deacon@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, dri-devel@lists.freedesktop.org, Pavel Machek <pavel@ucw.cz>, Stefan Schmidt <stefan@datenfreihafen.org>, Wolfram Sang <wsa@the-dreams.de>, linux-acpi@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Jiri Slaby <jslaby@suse.com>, Tomas Winkler <tomas.winkler@intel.com>, Dan Murphy <dmurphy@ti.com>, linux-usb@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Joe Perches <joe@perches.com>, linux-wpan@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, David Airlie <airlied@linux.ie>, "Rafael J . Wysocki " <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>linu
 List-Id: linux-leds@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 8:49 AM Nikolaus Voss <nv@vosn.de> wrote:
->
-> On Wed, 19 Jun 2019, Moore, Robert wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Nikolaus Voss [mailto:nv@vosn.de]
-> >> Sent: Wednesday, June 19, 2019 2:31 AM
-> >> To: Moore, Robert <robert.moore@intel.com>
-> >> Cc: Rafael J. Wysocki <rafael@kernel.org>; Rafael J. Wysocki
-> >> <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>; Schmauss, Erik
-> >> <erik.schmauss@intel.com>; Jacek Anaszewski
-> >> <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy
-> >> <dmurphy@ti.com>; Thierry Reding <thierry.reding@gmail.com>; ACPI Devel
-> >> Maling List <linux-acpi@vger.kernel.org>; open list:ACPI COMPONENT
-> >> ARCHITECTURE (ACPICA) <devel@acpica.org>; linux-leds@vger.kernel.org;
-> >> Linux PWM List <linux-pwm@vger.kernel.org>; Linux Kernel Mailing List
-> >> <linux-kernel@vger.kernel.org>; nikolaus.voss@loewensteinmedical.de
-> >> Subject: RE: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table
-> >> loads
-> >>
-> >> Hi Bob,
-> >>
-> >> On Tue, 18 Jun 2019, Moore, Robert wrote:
-> >>>
-> >>>
-> >>>> -----Original Message-----
-> >>>> From: Moore, Robert
-> >>>> Sent: Tuesday, June 18, 2019 1:25 PM
-> >>>> To: 'Nikolaus Voss' <nv@vosn.de>
-> >>>> Cc: 'Rafael J. Wysocki' <rafael@kernel.org>; 'Rafael J. Wysocki'
-> >>>> <rjw@rjwysocki.net>; 'Len Brown' <lenb@kernel.org>; Schmauss, Erik
-> >>>> <erik.schmauss@intel.com>; 'Jacek Anaszewski'
-> >>>> <jacek.anaszewski@gmail.com>; 'Pavel Machek' <pavel@ucw.cz>; 'Dan
-> >>>> Murphy' <dmurphy@ti.com>; 'Thierry Reding'
-> >>>> <thierry.reding@gmail.com>; 'ACPI Devel Maling List'
-> >>>> <linux-acpi@vger.kernel.org>; 'open list:ACPI COMPONENT ARCHITECTURE
-> >>>> (ACPICA)' <devel@acpica.org>; 'linux- leds@vger.kernel.org' <linux-
-> >> leds@vger.kernel.org>; 'Linux PWM List'
-> >>>> <linux-pwm@vger.kernel.org>; 'Linux Kernel Mailing List' <linux-
-> >>>> kernel@vger.kernel.org>
-> >>>> Subject: RE: [PATCH v2 1/3] ACPI: Resolve objects on host-directed
-> >>>> table loads
-> >>>>
-> >>>> If it is in fact the AcpiLoadTable interface that is incorrect, that
-> >>>> of course is different. I'll check that out next.
-> >>>>
-> >>> [Moore, Robert]
-> >>>
-> >>> Yes, this is the issue, not specifically the Load() operator, but the
-> >>> AcpiLoadTable interface only.
-> >>
-> >> thanks for checking this out. So what is the conclusion? Is my fix of
-> >> AcpiLoadTable() sufficient or do we need a different solution?
-> >>
-> >> Niko
-> >>
-> >
-> >
-> > Your change is in the correct area. We want to do something like this, however:
-> >
-> > diff --git a/source/components/executer/exconfig.c b/source/components/executer/exconfig.c
-> > index 84a058ada..eba1a6d28 100644
-> > --- a/source/components/executer/exconfig.c
-> > +++ b/source/components/executer/exconfig.c
-> > @@ -342,10 +342,9 @@ AcpiExLoadTableOp (
-> >         return_ACPI_STATUS (Status);
-> >     }
-> >
-> > -    /* Complete the initialization/resolution of package objects */
-> > +    /* Complete the initialization/resolution of new objects */
-> >
-> > -    Status = AcpiNsWalkNamespace (ACPI_TYPE_PACKAGE, ACPI_ROOT_OBJECT,
-> > -        ACPI_UINT32_MAX, 0, AcpiNsInitOnePackage, NULL, NULL, NULL);
-> > +    AcpiNsInitializeObjects ();
-> >
-> >     /* Parameter Data (optional) */
-> >
-> > @@ -620,10 +619,11 @@ AcpiExLoadOp (
-> >         return_ACPI_STATUS (Status);
-> >     }
-> >
-> > -    /* Complete the initialization/resolution of package objects */
-> > +    /* Complete the initialization/resolution of new objects */
-> >
-> > -    Status = AcpiNsWalkNamespace (ACPI_TYPE_PACKAGE, ACPI_ROOT_OBJECT,
-> > -        ACPI_UINT32_MAX, 0, AcpiNsInitOnePackage, NULL, NULL, NULL);
-> > +    AcpiExExitInterpreter ();
-> > +    AcpiNsInitializeObjects ();
-> > +    AcpiExEnterInterpreter ();
-> >
-> >     /* Store the DdbHandle into the Target operand */
-> >
-> > diff --git a/source/components/tables/tbxfload.c b/source/components/tables/tbxfload.c
-> > index 217d54bf0..1e17db6c8 100644
-> > --- a/source/components/tables/tbxfload.c
-> > +++ b/source/components/tables/tbxfload.c
-> > @@ -479,6 +479,13 @@ AcpiLoadTable (
-> >     ACPI_INFO (("Host-directed Dynamic ACPI Table Load:"));
-> >     Status = AcpiTbInstallAndLoadTable (ACPI_PTR_TO_PHYSADDR (Table),
-> >         ACPI_TABLE_ORIGIN_EXTERNAL_VIRTUAL, FALSE, &TableIndex);
-> > +    if (ACPI_SUCCESS (Status))
-> > +    {
-> > +        /* Complete the initialization/resolution of new objects */
-> > +
-> > +        AcpiNsInitializeObjects ();
-> > +    }
-> > +
-> >     return_ACPI_STATUS (Status);
-> > }
->
-> Ok, I see your are taking this up (I was a bit unsure after your previous
-> post). Thanks,
-
-The $subject patch has been queued for 5.3.  If I should drop it,
-please let me know.
-
-Thanks!
+T24gRnJpLCBKdW4gMTQsIDIwMTkgYXQgMDY6NTM6NTVQTSArMDEwMCwgU3V6dWtpIEsgUG91bG9z
+ZSB3cm90ZToKPiBXZSBoYXZlIGRldmljZSBpdGVyYXRvcnMgdG8gZmluZCBhIHBhcnRpY3VsYXIg
+ZGV2aWNlIG1hdGNoaW5nIGEgY3JpdGVyaWEKPiBmb3IgYSBnaXZlbiBidXMvY2xhc3MvZHJpdmVy
+LiBpLmUsIHtidXMsY2xhc3MsZHJpdmVyfV9maW5kX2RldmljZSgpIEFQSXMuCj4gVGhlIG1hdGNo
+aW5nIGNyaXRlcmlhIGlzIGEgZnVuY3Rpb24gcG9pbnRlciBmb3IgdGhlIEFQSXMuIE9mdGVuIHRo
+ZSBsb29rdXAKPiBpcyBiYXNlZCBvbiBhIGdlbmVyaWMgcHJvcGVydHkgb2YgYSBkZXZpY2UgKGUu
+ZywgbmFtZSwgZndub2RlLCBvZiBub2RlIHBvaW50ZXIKPiBvciBkZXZpY2UgdHlwZSkgcmF0aGVy
+IHRoYW4gYSBkcml2ZXIgc3BlY2lmaWMgaW5mb3JtYXRpb24uIEhvd2V2ZXIsIGVhY2ggZHJpdmVy
+Cj4gd3JpdGVzIHVwIGl0cyBvd24gIm1hdGNoIiBmdW5jdGlvbiwgc3BpbGxpbmcgdGhlIHNpbWls
+YXIgbWF0Y2ggZnVuY3Rpb25zIGFsbAo+IG92ZXIgdGhlIGRyaXZlciBzdWJzeXN0ZW1zLgo+IAo+
+IEFkZGl0aW9uYWxseSB0aGUgcHJvdG90eXBlIGZvciB0aGUgIm1hdGNoIiBmdW5jdGlvbnMgYWNj
+ZXB0ZWQgYnkgdGhlIGFib3ZlIEFQSXMKPiBoYXZlIGEgbWludXRlIGRpZmZlcmVuY2Ugd2hpY2gg
+cHJldmVudHMgdXMgb3RoZXJ3aXNlIHNoYXJpbmcgdGhlIG1hdGNoIGZ1bmN0aW9ucy4KPiBpLmUs
+Cj4gCWludCAoKm1hdGNoKShzdHJ1Y3QgZGV2aWNlICpkZXYsIHZvaWQgKmRhdGEpIGZvciB7YnVz
+L2RyaXZlcn1fZmluZF9kZXZpY2UoKQo+IAkgIHZzCj4gCWludCAoKm1hdGNoKShzdHJ1Y3QgZGV2
+aWNlICpkZXYsIGNvbnN0IHZvaWQgKikgZm9yIGNsYXNzX2ZpbmRfZGV2aWNlKCkKPiAKPiBJZiB3
+ZSBwcm9tb3RlIHRoZSBmb3JtZXIgdG8gYWNjZXB0IGEgImNvbnN0IHZvaWQqIiBwYXJhbWV0ZXIs
+IHdlIGNvdWxkIHNoYXJlIG9uZQo+IHNpbmdsZSBtYXRjaCBmdW5jdGlvbiBmb3IgYWxsIHRoZSBo
+ZWxwZXJzLiBUaGlzIHNlcmllcyBhY2hpZXZlcyB0aGUgZm9sbG93aW5nOgo+IAo+ICBhKSBbUGF0
+Y2hlcyAwMy0wNV0gVW5pZnkgdGhlIHByb3RvdHlwZSBmb3IgIm1hdGNoIiBmdW5jdGlvbnMgYWNj
+ZXB0ZWQgYnkgdGhlCj4gICAgICBkZXZpY2UgbG9va3VwIEFQSXMuCgpJJ3ZlIGFwcGxpZWQgdGhl
+IGZpcnN0IDYgcGF0Y2hlcyBvZiB0aGlzIHNlcmllcyB0byBteSB0cmVlIG5vdy4gIExldCdzCnNl
+ZSBob3cgdGhhdCBnb2VzLCBhbmQgdGhpcyBzaG91bGQgZ2l2ZSB5b3UgYSBtb3JlIHNvbGlkIGJh
+c2UgdG8gcmVkbwp0aGUgcmVzdCBvZiB0aGUgc2VyaWVzIG9mZiBvZi4KCnRoYW5rcywKCmdyZWcg
+ay1oCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
