@@ -1,271 +1,58 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH v2 12/28] drivers: Introduce class_find_device_by_name()
- helper
-Date: Mon, 24 Jun 2019 12:08:28 +0200
-Message-ID: <20190624100828.GD3133@piout.net>
-References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
- <1560534863-15115-13-git-send-email-suzuki.poulose@arm.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH 2/3] backlight/arcxcnn fix vendor prefix
+Date: Mon, 24 Jun 2019 11:24:05 +0100
+Message-ID: <20190624102405.gg2lnlw6wmfvjrxu@holly.lan>
+References: <1541592640-18478-1-git-send-email-bdodge09@gmail.com>
+ <1541592640-18478-3-git-send-email-bdodge09@gmail.com>
+ <20181111113053.GF27666@amd>
+ <e372391c-1fd5-41ec-b766-7669fffb928d@gmail.com>
+ <c4477220-7159-b5a8-16ea-4f4dbb645ced@linaro.org>
+ <20190621221325.GA2343@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <1560534863-15115-13-git-send-email-suzuki.poulose@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexander Aring <alex.aring@gmail.com>, Dan Murphy <dmurphy@ti.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org, linux-wpan@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Stefan Schmidt <stefan@datenfreihafen.org>
+In-Reply-To: <20190621221325.GA2343@amd>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, Brian Dodge <bdodge09@gmail.com>, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, Peter Bacon <pbacon@psemi.com>, lee.jones@linaro.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On 14/06/2019 18:54:07+0100, Suzuki K Poulose wrote:
-> Add a new wrapper for class_find_device() to search for devices
-> by name and convert the existing users to use the new helper.
-> 
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Alessandro Zummo <a.zummo@towertech.it>
-> Cc: Alexander Aring <alex.aring@gmail.com>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Dan Murphy <dmurphy@ti.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-rtc@vger.kernel.org
-> Cc: linux-usb@vger.kernel.org
-> Cc: linux-wpan@vger.kernel.org
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Cc: Stefan Schmidt <stefan@datenfreihafen.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
-> ---
->  drivers/hwtracing/stm/core.c     |  9 +--------
->  drivers/leds/led-class.c         |  9 +--------
->  drivers/rtc/interface.c          | 11 +----------
->  drivers/s390/crypto/zcrypt_api.c | 11 +----------
->  drivers/usb/roles/class.c        |  8 +-------
->  drivers/usb/typec/class.c        |  8 +-------
->  include/linux/device.h           | 12 ++++++++++++
->  net/ieee802154/core.c            |  7 +------
->  8 files changed, 19 insertions(+), 56 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
-> index e55b902..2b6bd42 100644
-> --- a/drivers/hwtracing/stm/core.c
-> +++ b/drivers/hwtracing/stm/core.c
-> @@ -89,13 +89,6 @@ static struct class stm_class = {
->  	.dev_groups	= stm_groups,
->  };
->  
-> -static int stm_dev_match(struct device *dev, const void *data)
-> -{
-> -	const char *name = data;
-> -
-> -	return sysfs_streq(name, dev_name(dev));
-> -}
-> -
->  /**
->   * stm_find_device() - find stm device by name
->   * @buf:	character buffer containing the name
-> @@ -116,7 +109,7 @@ struct stm_device *stm_find_device(const char *buf)
->  	if (!stm_core_up)
->  		return NULL;
->  
-> -	dev = class_find_device(&stm_class, NULL, buf, stm_dev_match);
-> +	dev = class_find_device_by_name(&stm_class, buf);
->  	if (!dev)
->  		return NULL;
->  
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 85848c5..317a619 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -216,13 +216,6 @@ static int led_resume(struct device *dev)
->  
->  static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
->  
-> -static int match_name(struct device *dev, const void *data)
-> -{
-> -	if (!dev_name(dev))
-> -		return 0;
-> -	return !strcmp(dev_name(dev), (char *)data);
-> -}
-> -
->  static int led_classdev_next_name(const char *init_name, char *name,
->  				  size_t len)
->  {
-> @@ -233,7 +226,7 @@ static int led_classdev_next_name(const char *init_name, char *name,
->  	strlcpy(name, init_name, len);
->  
->  	while ((ret < len) &&
-> -	       (dev = class_find_device(leds_class, NULL, name, match_name))) {
-> +	       (dev = class_find_device_by_name(leds_class, name))) {
->  		put_device(dev);
->  		ret = snprintf(name, len, "%s_%u", init_name, ++i);
->  	}
-> diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-> index 4124f4d..1bee39c 100644
-> --- a/drivers/rtc/interface.c
-> +++ b/drivers/rtc/interface.c
-> @@ -663,21 +663,12 @@ void rtc_update_irq(struct rtc_device *rtc,
->  }
->  EXPORT_SYMBOL_GPL(rtc_update_irq);
->  
-> -static int __rtc_match(struct device *dev, const void *data)
-> -{
-> -	const char *name = data;
-> -
-> -	if (strcmp(dev_name(dev), name) == 0)
-> -		return 1;
-> -	return 0;
-> -}
-> -
->  struct rtc_device *rtc_class_open(const char *name)
->  {
->  	struct device *dev;
->  	struct rtc_device *rtc = NULL;
->  
-> -	dev = class_find_device(rtc_class, NULL, name, __rtc_match);
-> +	dev = class_find_device_by_name(rtc_class, name);
->  	if (dev)
->  		rtc = to_rtc_device(dev);
->  
-> diff --git a/drivers/s390/crypto/zcrypt_api.c b/drivers/s390/crypto/zcrypt_api.c
-> index 1058b4b..38a5a47 100644
-> --- a/drivers/s390/crypto/zcrypt_api.c
-> +++ b/drivers/s390/crypto/zcrypt_api.c
-> @@ -133,12 +133,6 @@ struct zcdn_device {
->  static int zcdn_create(const char *name);
->  static int zcdn_destroy(const char *name);
->  
-> -/* helper function, matches the name for find_zcdndev_by_name() */
-> -static int __match_zcdn_name(struct device *dev, const void *data)
-> -{
-> -	return strcmp(dev_name(dev), (const char *)data) == 0;
-> -}
-> -
->  /* helper function, matches the devt value for find_zcdndev_by_devt() */
->  static int __match_zcdn_devt(struct device *dev, const void *data)
->  {
-> @@ -152,10 +146,7 @@ static int __match_zcdn_devt(struct device *dev, const void *data)
->   */
->  static inline struct zcdn_device *find_zcdndev_by_name(const char *name)
->  {
-> -	struct device *dev =
-> -		class_find_device(zcrypt_class, NULL,
-> -				  (void *) name,
-> -				  __match_zcdn_name);
-> +	struct device *dev = class_find_device_by_name(zcrypt_class, name);
->  
->  	return dev ? to_zcdn_dev(dev) : NULL;
->  }
-> diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
-> index f45d8df..07aaa96 100644
-> --- a/drivers/usb/roles/class.c
-> +++ b/drivers/usb/roles/class.c
-> @@ -90,11 +90,6 @@ static int switch_fwnode_match(struct device *dev, const void *fwnode)
->  	return dev_fwnode(dev) == fwnode;
->  }
->  
-> -static int switch_name_match(struct device *dev, const void *name)
-> -{
-> -	return !strcmp((const char *)name, dev_name(dev));
-> -}
-> -
->  static void *usb_role_switch_match(struct device_connection *con, int ep,
->  				   void *data)
->  {
-> @@ -107,8 +102,7 @@ static void *usb_role_switch_match(struct device_connection *con, int ep,
->  		dev = class_find_device(role_class, NULL, con->fwnode,
->  					switch_fwnode_match);
->  	} else {
-> -		dev = class_find_device(role_class, NULL, con->endpoint[ep],
-> -					switch_name_match);
-> +		dev = class_find_device_by_name(role_class, con->endpoint[ep]);
->  	}
->  
->  	return dev ? to_role_switch(dev) : ERR_PTR(-EPROBE_DEFER);
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index 2eb6238..18a0687 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -210,11 +210,6 @@ static int typec_port_fwnode_match(struct device *dev, const void *fwnode)
->  	return dev_fwnode(dev) == fwnode;
->  }
->  
-> -static int typec_port_name_match(struct device *dev, const void *name)
-> -{
-> -	return !strcmp((const char *)name, dev_name(dev));
-> -}
-> -
->  static void *typec_port_match(struct device_connection *con, int ep, void *data)
->  {
->  	struct device *dev;
-> @@ -227,8 +222,7 @@ static void *typec_port_match(struct device_connection *con, int ep, void *data)
->  		return class_find_device(typec_class, NULL, con->fwnode,
->  					 typec_port_fwnode_match);
->  
-> -	dev = class_find_device(typec_class, NULL, con->endpoint[ep],
-> -				typec_port_name_match);
-> +	dev = class_find_device_by_name(typec_class, con->endpoint[ep]);
->  
->  	return dev ? dev : ERR_PTR(-EPROBE_DEFER);
->  }
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index a449d09..bb14c7f 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -485,6 +485,18 @@ extern struct device *class_find_device(struct class *class,
->  					struct device *start, const void *data,
->  					int (*match)(struct device *, const void *));
->  
-> +/**
-> + * class_find_device_by_name - device iterator for locating a particular device
-> + * of a specific name.
-> + * @class: class type
-> + * @name: name of the device to match
-> + */
-> +static inline struct device *class_find_device_by_name(struct class *class,
-> +						       const char *name)
-> +{
-> +	return class_find_device(class, NULL, name, device_match_name);
-> +}
-> +
->  struct class_attribute {
->  	struct attribute attr;
->  	ssize_t (*show)(struct class *class, struct class_attribute *attr,
-> diff --git a/net/ieee802154/core.c b/net/ieee802154/core.c
-> index 60b7ac5..de259b5 100644
-> --- a/net/ieee802154/core.c
-> +++ b/net/ieee802154/core.c
-> @@ -23,11 +23,6 @@
->  LIST_HEAD(cfg802154_rdev_list);
->  int cfg802154_rdev_list_generation;
->  
-> -static int wpan_phy_match(struct device *dev, const void *data)
-> -{
-> -	return !strcmp(dev_name(dev), (const char *)data);
-> -}
-> -
->  struct wpan_phy *wpan_phy_find(const char *str)
->  {
->  	struct device *dev;
-> @@ -35,7 +30,7 @@ struct wpan_phy *wpan_phy_find(const char *str)
->  	if (WARN_ON(!str))
->  		return NULL;
->  
-> -	dev = class_find_device(&wpan_phy_class, NULL, str, wpan_phy_match);
-> +	dev = class_find_device_by_name(&wpan_phy_class, str);
->  	if (!dev)
->  		return NULL;
->  
-> -- 
-> 2.7.4
-> 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+T24gU2F0LCBKdW4gMjIsIDIwMTkgYXQgMTI6MTM6MjVBTSArMDIwMCwgUGF2ZWwgTWFjaGVrIHdy
+b3RlOgo+IEhpIQo+IAo+ID4gW1NvcnJ5IHRvIHRob3NlIHJlY2VpdmluZyB0aGlzIHR3aWNlLi4u
+IGhhZCB0byBkaWcgdGhpcyBvdXQgZnJvbSB0aGUKPiA+IGFyY2hpdmVzIGFuZCBzZW50IGl0IHRv
+IHRoZSBsaXN0cyBmcm9tIHRoZSB3cm9uZyBtYWlsZXJdCj4gPiAKPiA+IE9uIDI3LzExLzIwMTgg
+MDA6NDQsIEJyaWFuIERvZGdlIHdyb3RlOgo+ID4gPlRoYW5rIHlvdSBQYXZlbCwgdGhhdCBpcyBh
+IGdvb2QgcG9pbnQuCj4gPiA+Cj4gPiA+VGhlIGNoaXAgdmVuZG9yIGhhcyBpbmRpY2F0ZWQgdGhh
+dCB0aGVyZSBpcyBubyByZWFzb24gdG8gbWFpbnRhaW4gdGhlCj4gPiA+b2xkL2ltcHJvcGVyIHBy
+ZWZpeCBhbmQgd2lzaGVzIHRvIGdvIGZvcndhcmQgKG9ubHkpIHdpdGggdGhlICJhcmN0aWMiCj4g
+PiA+cHJlZml4IGFuZCBhbnkgZXhpc3RpbmcgZHRzIGZpbGVzIGFyZSBvciB3aWxsIGJlIHVwZGF0
+ZWQuCj4gPiAKPiA+IExvb2tzIGxpa2UgdGhpcyBwYXRjaCBzZXJpZXMgaGFzIGZhbGxlbiBpbnRv
+IHRoZSBjcmFja3MgYSBsaXR0bGUuCj4gPiAKPiA+IEkgdGhpbmsgSSBhc3N1bWVkIHRoaXMgaW5m
+byB3b3VsZCBlbmQgaW4gdGhlIGRlc2NyaXB0aW9uIG9mIHBhdGNoIHYyIDEvMyAoaW4KPiA+IG9y
+ZGVyIHRvIGFuc3dlciBSb2IncyBmZWVkYmFjaykgYW5kIEkgc2F0IGFuZCB3YWl0ZWQgZm9yIGEg
+cmVzcGluLiBPbiB0aGUKPiA+IG90aGVyIGhhbmQuLi4gSSBkaWRuJ3QgYWN0dWFsbHkgc2F5IHRo
+YXQgZXhwbGljaXRseSBhbnl3aGVyZSEgU28uLi4gSSdkCj4gPiByZWNvbW1lbmQgYSByZXNwaW4g
+cGVyaGFwcyB3aXRoIGEgc21hbGwgYml0IG9mIHRleHQgZXhwbGFpbmluZyBob3cgdGhlCj4gPiB2
+ZW5kb3IgY2FuIHN0YXRlIHRoYXQgYW55IGV4aXN0aW5nIGR0cyBmaWxlcyB3aWxsIGJlIHVwZGF0
+ZWQuIFRoaXMgaXMgYQo+ID4gcGVyaXBoZXJhbCBkZXZpY2Ugc28gdGhlc2Ugc3RyaW5ncyBhcmUg
+cHJvYmFibHkgZW1iZWRkZWQgaW50byBPRU0KPiA+IGRldmljZXRyZWVzIHJhdGhlciB0aGFuIGV4
+Y2x1c2l2ZWx5IHVuZGVyIHRoZSBjb250cm9sIG9mIHRoZSB2ZW5kb3IuCj4gCj4gU28gaW4gbmV4
+dCBlbWFpbCB5b3UgZ2l2ZSBnb29kIHJlYXNvbiBub3QgdG8gYXBwbHkgdGhpcyA6LSkuCgpBZnJh
+aWQgc28uLi4gaXQgd2FzIG9uIHBhZ2UgMiBvZiBteSBnb29nbGUgc2VhcmNoIHNvIEkgZGlkIGEg
+cXVpY2sKc2VhcmNoLCBzZW50IHRoZSBmaXJzdCBtYWlsIGFuZCB0aGVuIHdlbnQgYmFjayB0byBt
+eSB3ZWIgYnJvd3Nlci4KCkl0IHdhcyBhdCB0aGF0IG1vbWVudCB0aGF0IEkgZGVjaWRlZCBhIHF1
+aWNrIHNlYXJjaCB3YXNuJ3QgZW5vdWdoIGFuZApkZWNpZGVkIHRvIGdvdCBhIGxpdHRsZSBkZWVw
+ZXIhCgoKRGFuaWVsLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWw=
