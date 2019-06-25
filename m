@@ -1,79 +1,66 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v6 0/5] LM36274 Introduction
-Date: Tue, 25 Jun 2019 07:30:54 +0100
-Message-ID: <20190625063054.GD21119@dell>
-References: <20190605125634.7042-1-dmurphy@ti.com>
- <20190624144217.GJ4699@dell>
- <3d2aa88c-c21c-b3a9-c8d9-fdb3a8fc3858@ti.com>
+From: Brian Dodge <bdodge09@gmail.com>
+Subject: [PATCH 1/2] dt-bindings: backlight: fix vendor prefix for ArcticSand
+ arcxcnn driver bindings
+Date: Tue, 25 Jun 2019 00:05:28 -0400
+Message-ID: <1561435529-7835-2-git-send-email-bdodge09@gmail.com>
+References: <1561435529-7835-1-git-send-email-bdodge09@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3d2aa88c-c21c-b3a9-c8d9-fdb3a8fc3858@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, broonie@kernel.org, lgirdwood@gmail.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1561435529-7835-1-git-send-email-bdodge09@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, daniel.thompson@linaro.org, Brian Dodge <bdodge09@gmail.com>, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pbacon@psemi.com, lee.jones@linaro.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, 24 Jun 2019, Dan Murphy wrote:
-
-> Lee
-> 
-> On 6/24/19 9:42 AM, Lee Jones wrote:
-> > On Wed, 05 Jun 2019, Dan Murphy wrote:
-> > 
-> > > Hello
-> > > 
-> > > The v5 patchset missed adding in the new validation code.
-> > > Patch 1 of the v5 series was squashed into patch 4 of the v5 series.
-> > > So this will reduce the patchset by 1.
-> > > 
-> > > Sorry for the extra noise on the patchsets.  The change was lost when I converted
-> > > the patches from the mainline branch to the LED branch.
-> > > 
-> > > This change was made on top of the branch
-> > > 
-> > > repo: https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
-> > > branch: ti-lmu-led-drivers
-> > > 
-> > > 
-> > > Dan Murphy (5):
-> > >    dt-bindings: mfd: Add lm36274 bindings to ti-lmu
-> > >    mfd: ti-lmu: Add LM36274 support to the ti-lmu
-> > >    regulator: lm363x: Add support for LM36274
-> > >    dt-bindings: leds: Add LED bindings for the LM36274
-> > >    leds: lm36274: Introduce the TI LM36274 LED driver
-> > > 
-> > >   .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
-> > >   .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
-> > >   drivers/leds/Kconfig                          |   8 +
-> > >   drivers/leds/Makefile                         |   1 +
-> > >   drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
-> > >   drivers/mfd/Kconfig                           |   5 +-
-> > >   drivers/mfd/ti-lmu.c                          |  14 ++
-> > >   drivers/regulator/Kconfig                     |   2 +-
-> > >   drivers/regulator/lm363x-regulator.c          |  78 +++++++-
-> > >   include/linux/mfd/ti-lmu-register.h           |  23 +++
-> > >   include/linux/mfd/ti-lmu.h                    |   4 +
-> > >   11 files changed, 437 insertions(+), 8 deletions(-)
-> > >   create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
-> > >   create mode 100644 drivers/leds/leds-lm36274.c
-> > Can you finish of satisfying everyone's comments and re-send with all
-> > the Acks you've collected so far?  If you turn this around quickly,
-> > you might still get into v5.3.
-> > 
-> 
-> The changes were made by Jacek and I reviewed and tested them
-> 
-> https://lkml.org/lkml/2019/6/11/455
-
-Ah, this was related to the recent GIT PULL craziness.
-
-Thanks for letting me know.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+ICAgIFRoZSB2ZW5kb3ItcHJlZml4ZXMudHh0IGZpbGUgcHJvcGVybHkgcmVmZXJzIHRvIEFyY3Rp
+Y1NhbmQKICAgIGFzIGFyY3RpYyBidXQgdGhlIGRyaXZlciBiaW5kaW5ncyBpbXByb3Blcmx5IGFi
+YnJldmlhdGVkIHRoZQogICAgcHJlZml4IHRvIGFyYy4gVGhpcyB3YXMgYSBtaXN0YWtlIGluIHRo
+ZSBvcmlnaW5hbCBwYXRjaAoKU2lnbmVkLW9mZi1ieTogQnJpYW4gRG9kZ2UgPGJkb2RnZTA5QGdt
+YWlsLmNvbT4KLS0tCiAuLi4vYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvYXJjeGNubl9ibC50eHQg
+ICAgICAgICB8IDI0ICsrKysrKysrKysrKystLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAxNCBp
+bnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9u
+L2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvYXJjeGNubl9ibC50eHQgYi9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvYXJjeGNubl9ibC50
+eHQKaW5kZXggMjMwYWJkZS4uOWNmNGM0NCAxMDA2NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L2FyY3hjbm5fYmwudHh0CisrKyBiL0RvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9hcmN4Y25uX2JsLnR4
+dApAQCAtMSw4ICsxLDEyIEBACi1CaW5kaW5nIGZvciBBcmN0aWNTYW5kIGFyYzJjMDYwOCBMRUQg
+ZHJpdmVyCitCaW5kaW5nIGZvciBBcmN0aWNTYW5kIGFyYyBmYW1pbHkgTEVEIGRyaXZlcnMKIAog
+UmVxdWlyZWQgcHJvcGVydGllczoKLS0gY29tcGF0aWJsZToJCXNob3VsZCBiZSAiYXJjLGFyYzJj
+MDYwOCIKLS0gcmVnOgkJCXNsYXZlIGFkZHJlc3MKKy0gY29tcGF0aWJsZTogb25lIG9mCisJImFy
+Y3RpYyxhcmMxYzA2MDgiCisJImFyY3RpYyxhcmMyYzA2MDgiCisJImFyY3RpYyxhcmMzYzA4NDUi
+CisKKy0gcmVnOgkJc2xhdmUgYWRkcmVzcwogCiBPcHRpb25hbCBwcm9wZXJ0aWVzOgogLSBkZWZh
+dWx0LWJyaWdodG5lc3M6CWJyaWdodG5lc3MgdmFsdWUgb24gYm9vdCwgdmFsdWUgZnJvbTogMC00
+MDk1CkBAIC0xMSwxOSArMTUsMTkgQEAgT3B0aW9uYWwgcHJvcGVydGllczoKIC0gbGVkLXNvdXJj
+ZXM6CQlMaXN0IG9mIGVuYWJsZWQgY2hhbm5lbHMgZnJvbSAwIHRvIDUuCiAJCQlTZWUgRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvY29tbW9uLnR4dAogCi0tIGFyYyxsZWQt
+Y29uZmlnLTA6CXNldHRpbmcgZm9yIHJlZ2lzdGVyIElMRURfQ09ORklHXzAKLS0gYXJjLGxlZC1j
+b25maWctMToJc2V0dGluZyBmb3IgcmVnaXN0ZXIgSUxFRF9DT05GSUdfMQotLSBhcmMsZGltLWZy
+ZXE6CQlQV00gbW9kZSBmcmVxdWVuY2Ugc2V0dGluZyAoYml0cyBbMzowXSB1c2VkKQotLSBhcmMs
+Y29tcC1jb25maWc6CXNldHRpbmcgZm9yIHJlZ2lzdGVyIENPTkZJR19DT01QCi0tIGFyYyxmaWx0
+ZXItY29uZmlnOglzZXR0aW5nIGZvciByZWdpc3RlciBGSUxURVJfQ09ORklHCi0tIGFyYyx0cmlt
+LWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgSU1BWFRVTkUKKy0gYXJjdGljLGxlZC1jb25m
+aWctMDoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgSUxFRF9DT05GSUdfMAorLSBhcmN0aWMsbGVkLWNv
+bmZpZy0xOglzZXR0aW5nIGZvciByZWdpc3RlciBJTEVEX0NPTkZJR18xCistIGFyY3RpYyxkaW0t
+ZnJlcToJCVBXTSBtb2RlIGZyZXF1ZW5jZSBzZXR0aW5nIChiaXRzIFszOjBdIHVzZWQpCistIGFy
+Y3RpYyxjb21wLWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgQ09ORklHX0NPTVAKKy0gYXJj
+dGljLGZpbHRlci1jb25maWc6CXNldHRpbmcgZm9yIHJlZ2lzdGVyIEZJTFRFUl9DT05GSUcKKy0g
+YXJjdGljLHRyaW0tY29uZmlnOglzZXR0aW5nIGZvciByZWdpc3RlciBJTUFYVFVORQogCiBOb3Rl
+OiBPcHRpb25hbCBwcm9wZXJ0aWVzIG5vdCBzcGVjaWZpZWQgd2lsbCBkZWZhdWx0IHRvIHZhbHVl
+cyBpbiBJQyBFUFJPTQogCiBFeGFtcGxlOgogCiBhcmMyYzA2MDhAMzAgewotCWNvbXBhdGlibGUg
+PSAiYXJjLGFyYzJjMDYwOCI7CisJY29tcGF0aWJsZSA9ICJhcmN0aWMsYXJjMmMwNjA4IjsKIAly
+ZWcgPSA8MHgzMD47CiAJZGVmYXVsdC1icmlnaHRuZXNzID0gPDUwMD47CiAJbGFiZWwgPSAibGNk
+LWJhY2tsaWdodCI7Ci0tIAoyLjcuNAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVs
