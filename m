@@ -1,16 +1,18 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 2/2] backlight: arcxcnn: add "arctic" vendor prefix
-Date: Wed, 26 Jun 2019 06:45:18 -0500
-Message-ID: <215b39a5-8f4b-c96f-b5e7-292132d84813@ti.com>
+From: Brian Dodge <bdodge09@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: backlight: fix vendor prefix for
+ ArcticSand arcxcnn driver bindings
+Date: Wed, 26 Jun 2019 10:59:55 -0400
+Message-ID: <CAFaGBPmF2gDNEy_Ok_Ky9GR7XEyVUdhG=BYGXEMCN1Tq2eHo6g@mail.gmail.com>
 References: <1561435529-7835-1-git-send-email-bdodge09@gmail.com>
- <1561435529-7835-3-git-send-email-bdodge09@gmail.com>
- <e3a6f4f5-8da9-f533-5cef-3ae2a87f52bc@ti.com>
+ <1561435529-7835-2-git-send-email-bdodge09@gmail.com>
+ <20190625085534.xf2ullyju3ewbgik@holly.lan>
+ <CAFaGBPnH=75=wJRM4EX9MYR8MSehEa2_hBEOsqo-DZvD6c6f_A@mail.gmail.com>
+ <20190626105614.ujmryi7qou2ra7aq@holly.lan>
+ <20190626145624.GC22348@xo-6d-61-c0.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============2112663020=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <e3a6f4f5-8da9-f533-5cef-3ae2a87f52bc@ti.com>
-Content-Language: en-US
+In-Reply-To: <20190626145624.GC22348@xo-6d-61-c0.localdomain>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -20,89 +22,80 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Brian Dodge <bdodge09@gmail.com>, pavel@ucw.cz
-Cc: devicetree@vger.kernel.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pbacon@psemi.com, lee.jones@linaro.org, linux-leds@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pbacon@psemi.com, lee.jones@linaro.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-SGVsbG8KCk9uZSBvdGhlciB0aGluZwoKT24gNi8yNi8xOSA2OjQyIEFNLCBEYW4gTXVycGh5IHdy
-b3RlOgo+IEhlbGxvCj4KPiBPbiA2LzI0LzE5IDExOjA1IFBNLCBCcmlhbiBEb2RnZSB3cm90ZToK
-Pj4gVGhlIG9yaWdpbmFsIHBhdGNoIGFkZGluZyB0aGlzIGRyaXZlciBhbmQgRFQgYmluZGluZ3Mg
-aW1wcm9wZXJseQo+PiB1c2VkICJhcmMiIGFzIHRoZSB2ZW5kb3ItcHJlZml4LiBUaGlzIGFkZHMg
-ImFyY3RpYyIgd2hpY2ggaXMgdGhlCj4+IHByb3BlciBwcmVmaXggYW5kIHJldGFpbnMgImFyYyIg
-dG8gYWxsb3cgZXhpc3RpbmcgdXNlcnMgb2YgdGhlCj4+ICJhcmMiIHByZWZpeCB0byB1cGRhdGUg
-dG8gbmV3IGtlcm5lbHMuIFRoZXJlIGlzIGF0IGxlYXN0IG9uZQo+PiAoU2Ftc3VuZyBDaHJvbWVi
-b29rIFBsdXMpCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEJyaWFuIERvZGdlIDxiZG9kZ2UwOUBnbWFp
-bC5jb20+Cj4+IC0tLQo+PiDCoCBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9hcmN4Y25uX2JsLmMg
-fCAzNSAKPj4gKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0KPj4gwqAgMSBmaWxl
-IGNoYW5nZWQsIDI1IGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvYXJjeGNubl9ibC5jIAo+PiBiL2RyaXZlcnMv
-dmlkZW8vYmFja2xpZ2h0L2FyY3hjbm5fYmwuYwo+PiBpbmRleCA3YjFjMGEwLi4xNGM2N2YyIDEw
-MDY0NAo+PiAtLS0gYS9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9hcmN4Y25uX2JsLmMKPj4gKysr
-IGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvYXJjeGNubl9ibC5jCj4+IEBAIC0xLDkgKzEsOSBA
-QAo+PiDCoCAvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMC1vbmx5Cj4+IMKgIC8q
-Cj4+IC0gKiBCYWNrbGlnaHQgZHJpdmVyIGZvciBBcmN0aWNTYW5kIEFSQ19YX0NfME5fME4gRGV2
-aWNlcwo+PiArICogQmFja2xpZ2h0IGRyaXZlciBmb3IgcFNlbWkgKGZvcm1lcmx5IEFyY3RpY1Nh
-bmQpIEFSQ19YX0NfME5fME4gCj4+IERldmljZXMKPj4gwqDCoCAqCj4+IC0gKiBDb3B5cmlnaHQg
-MjAxNiBBcmN0aWNTYW5kLCBJbmMuCj4+IC0gKiBBdXRob3IgOiBCcmlhbiBEb2RnZSA8YmRvZGdl
-QGFyY3RpY3NhbmQuY29tPgo+PiArICogQ29weXJpZ2h0IDIwMTYtMjAxOcKgIHBTZW1pLCBJbmMu
-Cj4+ICsgKiBBdXRob3IgOiBCcmlhbiBEb2RnZSA8YmRvZGdlQHBzZW1pLmNvbT4KPj4gwqDCoCAq
-Lwo+PiDCoCDCoCAjaW5jbHVkZSA8bGludXgvYmFja2xpZ2h0Lmg+Cj4+IEBAIC0xOTEsMjcgKzE5
-MSw0MCBAQCBzdGF0aWMgdm9pZCBhcmN4Y25uX3BhcnNlX2R0KHN0cnVjdCBhcmN4Y25uICpscCkK
-Pj4gwqDCoMKgwqDCoCBpZiAocmV0ID09IDApCj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBscC0+cGRh
-dGEtPmluaXRpYWxfYnJpZ2h0bmVzcyA9IHByb2dfdmFsOwo+PiDCoCAtwqDCoMKgIHJldCA9IG9m
-X3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmMsbGVkLWNvbmZpZy0wIiwgJnByb2dfdmFsKTsK
-Pj4gK8KgwqDCoCByZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihub2RlLCAiYXJjdGljLGxlZC1j
-b25maWctMCIsICZwcm9nX3ZhbCk7Cj4+ICvCoMKgwqAgaWYgKHJldCkKPj4gK8KgwqDCoMKgwqDC
-oMKgIHJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmMsbGVkLWNvbmZpZy0wIiwg
-Cj4+ICZwcm9nX3ZhbCk7Cj4gQ2FuIHlvdSBhZGQgbmV3IGxpbmVzIGJldHdlZW4gdGhlc2UgYW5k
-IGFsbCBiZWxvdwoKTWF5YmUgYWRkIGEgZGV2X2luZm8gaGVyZSB0byBpbmRpY2F0ZSB0aGF0IHRo
-aXMgaXMgYmVpbmcgZGVwcmVjYXRlZC4KCkl0IHdpbGwgbWFrZSB0aGUgQ2hyb21lIGJvb2sgY29u
-c29sZSBub2lzeSBidXQgYXQgbGVhc3QgaXQgd29uJ3QgZ28gc2lsZW50LgoKRGFuCgoKPj4gwqDC
-oMKgwqDCoCBpZiAocmV0ID09IDApCj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBscC0+cGRhdGEtPmxl
-ZF9jb25maWdfMCA9ICh1OClwcm9nX3ZhbDsKPj4gwqAgLcKgwqDCoCByZXQgPSBvZl9wcm9wZXJ0
-eV9yZWFkX3UzMihub2RlLCAiYXJjLGxlZC1jb25maWctMSIsICZwcm9nX3ZhbCk7Cj4+ICvCoMKg
-wqAgcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgImFyY3RpYyxsZWQtY29uZmlnLTEi
-LCAmcHJvZ192YWwpOwo+PiArwqDCoMKgIGlmIChyZXQpCj4+ICvCoMKgwqDCoMKgwqDCoCByZXQg
-PSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihub2RlLCAiYXJjLGxlZC1jb25maWctMSIsIAo+PiAmcHJv
-Z192YWwpOwo+PiDCoMKgwqDCoMKgIGlmIChyZXQgPT0gMCkKPj4gwqDCoMKgwqDCoMKgwqDCoMKg
-IGxwLT5wZGF0YS0+bGVkX2NvbmZpZ18xID0gKHU4KXByb2dfdmFsOwo+PiDCoCAtwqDCoMKgIHJl
-dCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmMsZGltLWZyZXEiLCAmcHJvZ192YWwp
-Owo+PiArwqDCoMKgIHJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmN0aWMsZGlt
-LWZyZXEiLCAmcHJvZ192YWwpOwo+PiArwqDCoMKgIGlmIChyZXQpCj4+ICvCoMKgwqDCoMKgwqDC
-oCByZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihub2RlLCAiYXJjLGRpbS1mcmVxIiwgJnByb2df
-dmFsKTsKPj4gwqDCoMKgwqDCoCBpZiAocmV0ID09IDApCj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBs
-cC0+cGRhdGEtPmRpbV9mcmVxID0gKHU4KXByb2dfdmFsOwo+PiDCoCAtwqDCoMKgIHJldCA9IG9m
-X3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmMsY29tcC1jb25maWciLCAmcHJvZ192YWwpOwo+
-PiArwqDCoMKgIHJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmN0aWMsY29tcC1j
-b25maWciLCAmcHJvZ192YWwpOwo+PiArwqDCoMKgIGlmIChyZXQpCj4+ICvCoMKgwqDCoMKgwqDC
-oCByZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihub2RlLCAiYXJjLGNvbXAtY29uZmlnIiwgJnBy
-b2dfdmFsKTsKPj4gwqDCoMKgwqDCoCBpZiAocmV0ID09IDApCj4+IMKgwqDCoMKgwqDCoMKgwqDC
-oCBscC0+cGRhdGEtPmNvbXBfY29uZmlnID0gKHU4KXByb2dfdmFsOwo+PiDCoCAtwqDCoMKgIHJl
-dCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmMsZmlsdGVyLWNvbmZpZyIsICZwcm9n
-X3ZhbCk7Cj4+ICvCoMKgwqAgcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgImFyY3Rp
-YyxmaWx0ZXItY29uZmlnIiwgCj4+ICZwcm9nX3ZhbCk7Cj4+ICvCoMKgwqAgaWYgKHJldCkKPj4g
-K8KgwqDCoMKgwqDCoMKgIHJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsCj4+ICvCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgImFyYyxmaWx0ZXItY29uZmlnIiwgJnByb2dfdmFs
-KTsKPj4gwqDCoMKgwqDCoCBpZiAocmV0ID09IDApCj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBscC0+
-cGRhdGEtPmZpbHRlcl9jb25maWcgPSAodTgpcHJvZ192YWw7Cj4+IMKgIC3CoMKgwqAgcmV0ID0g
-b2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgImFyYyx0cmltLWNvbmZpZyIsICZwcm9nX3ZhbCk7
-Cj4+ICvCoMKgwqAgcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgImFyY3RpYyx0cmlt
-LWNvbmZpZyIsICZwcm9nX3ZhbCk7Cj4+ICvCoMKgwqAgaWYgKHJldCkKPj4gK8KgwqDCoMKgwqDC
-oMKgIHJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmMsdHJpbS1jb25maWciLCAm
-cHJvZ192YWwpOwo+PiDCoMKgwqDCoMKgIGlmIChyZXQgPT0gMCkKPj4gwqDCoMKgwqDCoMKgwqDC
-oMKgIGxwLT5wZGF0YS0+dHJpbV9jb25maWcgPSAodTgpcHJvZ192YWw7Cj4+IMKgIEBAIC0zODEs
-NiArMzk0LDggQEAgc3RhdGljIGludCBhcmN4Y25uX3JlbW92ZShzdHJ1Y3QgaTJjX2NsaWVudCAq
-Y2wpCj4+IMKgIH0KPj4gwqAgwqAgc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgYXJj
-eGNubl9kdF9pZHNbXSA9IHsKPj4gK8KgwqDCoCB7IC5jb21wYXRpYmxlID0gImFyY3RpYyxhcmMy
-YzA2MDgiIH0sCj4+ICvCoMKgwqAgLyogaGVyZSB0byByZW1haW0gY29tcGF0aWJsZSB3aXRoIGFu
-IG9sZGVyIGJpbmRpbmcsIGRvIG5vdCB1c2UgKi8KPgo+IHMvcmVtYWltL3JlbWFpbgo+Cj4KPj4g
-wqDCoMKgwqDCoCB7IC5jb21wYXRpYmxlID0gImFyYyxhcmMyYzA2MDgiIH0sCj4+IMKgwqDCoMKg
-wqAgeyB9Cj4+IMKgIH07Cj4+IEBAIC00MDQsNSArNDE5LDUgQEAgc3RhdGljIHN0cnVjdCBpMmNf
-ZHJpdmVyIGFyY3hjbm5fZHJpdmVyID0gewo+PiDCoCBtb2R1bGVfaTJjX2RyaXZlcihhcmN4Y25u
-X2RyaXZlcik7Cj4+IMKgIMKgIE1PRFVMRV9MSUNFTlNFKCJHUEwgdjIiKTsKPj4gLU1PRFVMRV9B
-VVRIT1IoIkJyaWFuIERvZGdlIDxiZG9kZ2VAYXJjdGljc2FuZC5jb20+Iik7Cj4+ICtNT0RVTEVf
-QVVUSE9SKCJCcmlhbiBEb2RnZSA8YmRvZGdlQHBzZW1pLmNvbT4iKTsKPj4gwqAgTU9EVUxFX0RF
-U0NSSVBUSU9OKCJBUkNYQ05OIEJhY2tsaWdodCBkcml2ZXIiKTsKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+--===============2112663020==
+Content-Type: multipart/alternative; boundary="00000000000016bf57058c3b4dba"
+
+--00000000000016bf57058c3b4dba
+Content-Type: text/plain; charset="UTF-8"
+
+Is there a standard way to format to-be-deprecated items in the bindings?
+
+
+On Wed, Jun 26, 2019, 10:56 AM Pavel Machek <pavel@ucw.cz> wrote:
+
+> On Wed 2019-06-26 11:56:14, Daniel Thompson wrote:
+> > On Tue, Jun 25, 2019 at 07:44:06AM -0400, Brian Dodge wrote:
+> > > I would like to deprecate the old prefix in the future after
+> communicating
+> > > with all chip customers, which is why the old prefix is not documented
+> in
+> > > the new bindings.
+> >
+> > Deprecation is fine (by me at least) it's just that I'm not sure that
+> > removing the documentation for the deprecated bindings is the right way
+> > to do it. What is the prior art here?
+>
+> I believe we should keep the docs.
+>
+>                                                                 Pavel
+>
+
+--00000000000016bf57058c3b4dba
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto">Is there a standard way to format to-be-deprecated items =
+in the bindings?<div dir=3D"auto"><br></div></div><br><div class=3D"gmail_q=
+uote"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Jun 26, 2019, 10:56 AM =
+Pavel Machek &lt;<a href=3D"mailto:pavel@ucw.cz">pavel@ucw.cz</a>&gt; wrote=
+:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;bor=
+der-left:1px #ccc solid;padding-left:1ex">On Wed 2019-06-26 11:56:14, Danie=
+l Thompson wrote:<br>
+&gt; On Tue, Jun 25, 2019 at 07:44:06AM -0400, Brian Dodge wrote:<br>
+&gt; &gt; I would like to deprecate the old prefix in the future after comm=
+unicating<br>
+&gt; &gt; with all chip customers, which is why the old prefix is not docum=
+ented in<br>
+&gt; &gt; the new bindings.<br>
+&gt; <br>
+&gt; Deprecation is fine (by me at least) it&#39;s just that I&#39;m not su=
+re that<br>
+&gt; removing the documentation for the deprecated bindings is the right wa=
+y<br>
+&gt; to do it. What is the prior art here?<br>
+<br>
+I believe we should keep the docs.<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 Pavel<br>
+</blockquote></div>
+
+--00000000000016bf57058c3b4dba--
+
+--===============2112663020==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--===============2112663020==--
