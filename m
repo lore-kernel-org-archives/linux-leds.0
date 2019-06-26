@@ -1,96 +1,94 @@
-From: Oleh Kravchenko <oleg@kaa.org.ua>
-Subject: Re: [PATCH v5 05/26] leds: core: Add support for composing LED class
- device names
-Date: Wed, 26 Jun 2019 23:07:15 +0300
-Message-ID: <b65ba5ea-4b79-8245-bddb-3ecf1424892f@kaa.org.ua>
-References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
- <20190609190803.14815-6-jacek.anaszewski@gmail.com>
- <66811b33-c643-679e-344c-e293f03cc2fb@gmail.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH 2/2] backlight: arcxcnn: add "arctic" vendor prefix
+Date: Wed, 26 Jun 2019 06:42:43 -0500
+Message-ID: <e3a6f4f5-8da9-f533-5cef-3ae2a87f52bc@ti.com>
+References: <1561435529-7835-1-git-send-email-bdodge09@gmail.com>
+ <1561435529-7835-3-git-send-email-bdodge09@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="d0yCGDtABOsUsagkAYEPZkKFIhs6JAL1J"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <66811b33-c643-679e-344c-e293f03cc2fb@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, pavel@ucw.cz, dmurphy@ti.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1561435529-7835-3-git-send-email-bdodge09@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Brian Dodge <bdodge09@gmail.com>, pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pbacon@psemi.com, lee.jones@linaro.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---d0yCGDtABOsUsagkAYEPZkKFIhs6JAL1J
-Content-Type: multipart/mixed; boundary="LBr20YCteCuborVTrf1GiddCODPSBF69k";
- protected-headers="v1"
-From: Oleh Kravchenko <oleg@kaa.org.ua>
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- linux-leds@vger.kernel.org, pavel@ucw.cz, dmurphy@ti.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- robh@kernel.org, dtor@google.com, linux@roeck-us.net,
- Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Simon Shields <simon@lineageos.org>
-Message-ID: <b65ba5ea-4b79-8245-bddb-3ecf1424892f@kaa.org.ua>
-Subject: Re: [PATCH v5 05/26] leds: core: Add support for composing LED class
- device names
-References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
- <20190609190803.14815-6-jacek.anaszewski@gmail.com>
- <66811b33-c643-679e-344c-e293f03cc2fb@gmail.com>
-In-Reply-To: <66811b33-c643-679e-344c-e293f03cc2fb@gmail.com>
-
---LBr20YCteCuborVTrf1GiddCODPSBF69k
-Content-Type: text/plain; charset=utf-8
-Content-Language: uk-UA
-Content-Transfer-Encoding: quoted-printable
-
-Hello Jacek,
-so after this patch will be merged.
-
-There will be a way to define custom function name by DeviceTree?
-
-26.06.19 22:05, Jacek Anaszewski =D0=BF=D0=B8=D1=88=D0=B5:
-> Gentle reminder.
->=20
-> Pavel, Dan - any conclusions?
->=20
-> This patch is the main part of the proposed changes,
-> so it would be good to spot any remaining issues.
->=20
-> What needs a consensus is also a new
-> Documentation/leds/led-functions.txt file I introduce
-> in the patch 26/26.
->=20
-> Best regards,
-> Jacek Anaszewski
-
---=20
-Best regards,
-Oleh Kravchenko
-
-
-
---LBr20YCteCuborVTrf1GiddCODPSBF69k--
-
---d0yCGDtABOsUsagkAYEPZkKFIhs6JAL1J
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEC/TM5t+2NenFhW0Q0xNJm20pl4wFAl0T0HcACgkQ0xNJm20p
-l4zlVw/+OPDiiXs0MqGGwsZoTDMJFF/PG0Dh8o2htgeleIMR8nIzt4sgTUlIfNQR
-f7o0Rcl1WmVOS3tC4MVlB/iwqlWliILs/+PT/cEgdHjaVUJnlqLQW5tLBbKdOyv9
-Hjb5AaSJpkbMLfPHU8FzsVe8W8LA5n3fWPw/I/PZNMNeRyWfey5rf1NnENde5R1/
-1oYoX0AFA6mCvwLkcOqGVWXnPJRFi5botDkUqJ/TgWovoCejdNa6RpfoFAarvmso
-IafiZbKkLZkdDo97yCk0YO6DAyJzpRfuXm66o4QKUsDJ97nK7cqn1dV32NgugxMA
-n71QDPklGROEqt0vsCICsuICPiA+gsuSVugY76isADLS4e4/5ozdSdgZGB8xeJUq
-EFFoa3OLrb/uKjLdvYfITz4TiCVt+ID6z6n6mGljqthS7Q/N8dj/hObp7gBZsnXm
-A6tymz6Px1l6sziiRjZh6GB4whX15idudReP4pCDOy9rZEYX+ymXGgA+lyAUoNVU
-dOWtR9uK6sdn5wboWlw8pXxgENuropBE5Va7ZplNbzdY1RuCFP1kG6xMLjhhjv3J
-gakQcJRlcHnOPx2bS8JLuHq4nJniAZpaH3DB2e3AIlIzNDrK/mtFFL5p6uVTyxzC
-HZSer1I6XoIbCckSJp+IiGeJNSSh4zppozAvC2tv3re+O65ttsc=
-=AHkY
------END PGP SIGNATURE-----
-
---d0yCGDtABOsUsagkAYEPZkKFIhs6JAL1J--
+SGVsbG8KCk9uIDYvMjQvMTkgMTE6MDUgUE0sIEJyaWFuIERvZGdlIHdyb3RlOgo+IFRoZSBvcmln
+aW5hbCBwYXRjaCBhZGRpbmcgdGhpcyBkcml2ZXIgYW5kIERUIGJpbmRpbmdzIGltcHJvcGVybHkK
+PiB1c2VkICJhcmMiIGFzIHRoZSB2ZW5kb3ItcHJlZml4LiBUaGlzIGFkZHMgImFyY3RpYyIgd2hp
+Y2ggaXMgdGhlCj4gcHJvcGVyIHByZWZpeCBhbmQgcmV0YWlucyAiYXJjIiB0byBhbGxvdyBleGlz
+dGluZyB1c2VycyBvZiB0aGUKPiAiYXJjIiBwcmVmaXggdG8gdXBkYXRlIHRvIG5ldyBrZXJuZWxz
+LiBUaGVyZSBpcyBhdCBsZWFzdCBvbmUKPiAoU2Ftc3VuZyBDaHJvbWVib29rIFBsdXMpCj4KPiBT
+aWduZWQtb2ZmLWJ5OiBCcmlhbiBEb2RnZSA8YmRvZGdlMDlAZ21haWwuY29tPgo+IC0tLQo+ICAg
+ZHJpdmVycy92aWRlby9iYWNrbGlnaHQvYXJjeGNubl9ibC5jIHwgMzUgKysrKysrKysrKysrKysr
+KysrKysrKysrKy0tLS0tLS0tLS0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAyNSBpbnNlcnRpb25zKCsp
+LCAxMCBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdo
+dC9hcmN4Y25uX2JsLmMgYi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9hcmN4Y25uX2JsLmMKPiBp
+bmRleCA3YjFjMGEwLi4xNGM2N2YyIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvdmlkZW8vYmFja2xp
+Z2h0L2FyY3hjbm5fYmwuYwo+ICsrKyBiL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L2FyY3hjbm5f
+YmwuYwo+IEBAIC0xLDkgKzEsOSBAQAo+ICAgLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQ
+TC0yLjAtb25seQo+ICAgLyoKPiAtICogQmFja2xpZ2h0IGRyaXZlciBmb3IgQXJjdGljU2FuZCBB
+UkNfWF9DXzBOXzBOIERldmljZXMKPiArICogQmFja2xpZ2h0IGRyaXZlciBmb3IgcFNlbWkgKGZv
+cm1lcmx5IEFyY3RpY1NhbmQpIEFSQ19YX0NfME5fME4gRGV2aWNlcwo+ICAgICoKPiAtICogQ29w
+eXJpZ2h0IDIwMTYgQXJjdGljU2FuZCwgSW5jLgo+IC0gKiBBdXRob3IgOiBCcmlhbiBEb2RnZSA8
+YmRvZGdlQGFyY3RpY3NhbmQuY29tPgo+ICsgKiBDb3B5cmlnaHQgMjAxNi0yMDE5ICBwU2VtaSwg
+SW5jLgo+ICsgKiBBdXRob3IgOiBCcmlhbiBEb2RnZSA8YmRvZGdlQHBzZW1pLmNvbT4KPiAgICAq
+Lwo+ICAgCj4gICAjaW5jbHVkZSA8bGludXgvYmFja2xpZ2h0Lmg+Cj4gQEAgLTE5MSwyNyArMTkx
+LDQwIEBAIHN0YXRpYyB2b2lkIGFyY3hjbm5fcGFyc2VfZHQoc3RydWN0IGFyY3hjbm4gKmxwKQo+
+ICAgCWlmIChyZXQgPT0gMCkKPiAgIAkJbHAtPnBkYXRhLT5pbml0aWFsX2JyaWdodG5lc3MgPSBw
+cm9nX3ZhbDsKPiAgIAo+IC0JcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgImFyYyxs
+ZWQtY29uZmlnLTAiLCAmcHJvZ192YWwpOwo+ICsJcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIo
+bm9kZSwgImFyY3RpYyxsZWQtY29uZmlnLTAiLCAmcHJvZ192YWwpOwo+ICsJaWYgKHJldCkKPiAr
+CQlyZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihub2RlLCAiYXJjLGxlZC1jb25maWctMCIsICZw
+cm9nX3ZhbCk7CkNhbiB5b3UgYWRkIG5ldyBsaW5lcyBiZXR3ZWVuIHRoZXNlIGFuZCBhbGwgYmVs
+b3cKPiAgIAlpZiAocmV0ID09IDApCj4gICAJCWxwLT5wZGF0YS0+bGVkX2NvbmZpZ18wID0gKHU4
+KXByb2dfdmFsOwo+ICAgCj4gLQlyZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihub2RlLCAiYXJj
+LGxlZC1jb25maWctMSIsICZwcm9nX3ZhbCk7Cj4gKwlyZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3Uz
+Mihub2RlLCAiYXJjdGljLGxlZC1jb25maWctMSIsICZwcm9nX3ZhbCk7Cj4gKwlpZiAocmV0KQo+
+ICsJCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmMsbGVkLWNvbmZpZy0xIiwg
+JnByb2dfdmFsKTsKPiAgIAlpZiAocmV0ID09IDApCj4gICAJCWxwLT5wZGF0YS0+bGVkX2NvbmZp
+Z18xID0gKHU4KXByb2dfdmFsOwo+ICAgCj4gLQlyZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihu
+b2RlLCAiYXJjLGRpbS1mcmVxIiwgJnByb2dfdmFsKTsKPiArCXJldCA9IG9mX3Byb3BlcnR5X3Jl
+YWRfdTMyKG5vZGUsICJhcmN0aWMsZGltLWZyZXEiLCAmcHJvZ192YWwpOwo+ICsJaWYgKHJldCkK
+PiArCQlyZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihub2RlLCAiYXJjLGRpbS1mcmVxIiwgJnBy
+b2dfdmFsKTsKPiAgIAlpZiAocmV0ID09IDApCj4gICAJCWxwLT5wZGF0YS0+ZGltX2ZyZXEgPSAo
+dTgpcHJvZ192YWw7Cj4gICAKPiAtCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJh
+cmMsY29tcC1jb25maWciLCAmcHJvZ192YWwpOwo+ICsJcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91
+MzIobm9kZSwgImFyY3RpYyxjb21wLWNvbmZpZyIsICZwcm9nX3ZhbCk7Cj4gKwlpZiAocmV0KQo+
+ICsJCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmMsY29tcC1jb25maWciLCAm
+cHJvZ192YWwpOwo+ICAgCWlmIChyZXQgPT0gMCkKPiAgIAkJbHAtPnBkYXRhLT5jb21wX2NvbmZp
+ZyA9ICh1OClwcm9nX3ZhbDsKPiAgIAo+IC0JcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9k
+ZSwgImFyYyxmaWx0ZXItY29uZmlnIiwgJnByb2dfdmFsKTsKPiArCXJldCA9IG9mX3Byb3BlcnR5
+X3JlYWRfdTMyKG5vZGUsICJhcmN0aWMsZmlsdGVyLWNvbmZpZyIsICZwcm9nX3ZhbCk7Cj4gKwlp
+ZiAocmV0KQo+ICsJCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsCj4gKwkJCQkiYXJj
+LGZpbHRlci1jb25maWciLCAmcHJvZ192YWwpOwo+ICAgCWlmIChyZXQgPT0gMCkKPiAgIAkJbHAt
+PnBkYXRhLT5maWx0ZXJfY29uZmlnID0gKHU4KXByb2dfdmFsOwo+ICAgCj4gLQlyZXQgPSBvZl9w
+cm9wZXJ0eV9yZWFkX3UzMihub2RlLCAiYXJjLHRyaW0tY29uZmlnIiwgJnByb2dfdmFsKTsKPiAr
+CXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmN0aWMsdHJpbS1jb25maWciLCAm
+cHJvZ192YWwpOwo+ICsJaWYgKHJldCkKPiArCQlyZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihu
+b2RlLCAiYXJjLHRyaW0tY29uZmlnIiwgJnByb2dfdmFsKTsKPiAgIAlpZiAocmV0ID09IDApCj4g
+ICAJCWxwLT5wZGF0YS0+dHJpbV9jb25maWcgPSAodTgpcHJvZ192YWw7Cj4gICAKPiBAQCAtMzgx
+LDYgKzM5NCw4IEBAIHN0YXRpYyBpbnQgYXJjeGNubl9yZW1vdmUoc3RydWN0IGkyY19jbGllbnQg
+KmNsKQo+ICAgfQo+ICAgCj4gICBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBhcmN4
+Y25uX2R0X2lkc1tdID0gewo+ICsJeyAuY29tcGF0aWJsZSA9ICJhcmN0aWMsYXJjMmMwNjA4IiB9
+LAo+ICsJLyogaGVyZSB0byByZW1haW0gY29tcGF0aWJsZSB3aXRoIGFuIG9sZGVyIGJpbmRpbmcs
+IGRvIG5vdCB1c2UgKi8KCnMvcmVtYWltL3JlbWFpbgoKCj4gICAJeyAuY29tcGF0aWJsZSA9ICJh
+cmMsYXJjMmMwNjA4IiB9LAo+ICAgCXsgfQo+ICAgfTsKPiBAQCAtNDA0LDUgKzQxOSw1IEBAIHN0
+YXRpYyBzdHJ1Y3QgaTJjX2RyaXZlciBhcmN4Y25uX2RyaXZlciA9IHsKPiAgIG1vZHVsZV9pMmNf
+ZHJpdmVyKGFyY3hjbm5fZHJpdmVyKTsKPiAgIAo+ICAgTU9EVUxFX0xJQ0VOU0UoIkdQTCB2MiIp
+Owo+IC1NT0RVTEVfQVVUSE9SKCJCcmlhbiBEb2RnZSA8YmRvZGdlQGFyY3RpY3NhbmQuY29tPiIp
+Owo+ICtNT0RVTEVfQVVUSE9SKCJCcmlhbiBEb2RnZSA8YmRvZGdlQHBzZW1pLmNvbT4iKTsKPiAg
+IE1PRFVMRV9ERVNDUklQVElPTigiQVJDWENOTiBCYWNrbGlnaHQgZHJpdmVyIik7Cl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
