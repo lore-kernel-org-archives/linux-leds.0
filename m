@@ -1,15 +1,15 @@
-From: Brian Dodge <bdodge09@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: backlight: fix vendor prefix for
- ArcticSand arcxcnn driver bindings
-Date: Tue, 25 Jun 2019 07:44:06 -0400
-Message-ID: <CAFaGBPnH=75=wJRM4EX9MYR8MSehEa2_hBEOsqo-DZvD6c6f_A@mail.gmail.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH 2/2] backlight: arcxcnn: add "arctic" vendor prefix
+Date: Wed, 26 Jun 2019 11:53:28 +0100
+Message-ID: <20190626105328.f7mb2n7xo5afhuq2@holly.lan>
 References: <1561435529-7835-1-git-send-email-bdodge09@gmail.com>
- <1561435529-7835-2-git-send-email-bdodge09@gmail.com>
- <20190625085534.xf2ullyju3ewbgik@holly.lan>
+ <1561435529-7835-3-git-send-email-bdodge09@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1829269519=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190625085534.xf2ullyju3ewbgik@holly.lan>
+Content-Disposition: inline
+In-Reply-To: <1561435529-7835-3-git-send-email-bdodge09@gmail.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -19,244 +19,78 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: devicetree@vger.kernel.org, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, Pavel Machek <pavel@ucw.cz>, pbacon@psemi.com, lee.jones@linaro.org, linux-leds@vger.kernel.org
+To: Brian Dodge <bdodge09@gmail.com>
+Cc: devicetree@vger.kernel.org, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, pbacon@psemi.com, lee.jones@linaro.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
---===============1829269519==
-Content-Type: multipart/alternative; boundary="000000000000edd2ce058c2472a9"
-
---000000000000edd2ce058c2472a9
-Content-Type: text/plain; charset="UTF-8"
-
-I would like to deprecate the old prefix in the future after communicating
-with all chip customers, which is why the old prefix is not documented in
-the new bindings.
-
-
-On Tue, Jun 25, 2019, 4:55 AM Daniel Thompson <daniel.thompson@linaro.org>
-wrote:
-
-> On Tue, Jun 25, 2019 at 12:05:28AM -0400, Brian Dodge wrote:
-> >     The vendor-prefixes.txt file properly refers to ArcticSand
-> >     as arctic but the driver bindings improperly abbreviated the
-> >     prefix to arc. This was a mistake in the original patch
-> >
-> > Signed-off-by: Brian Dodge <bdodge09@gmail.com>
-> > ---
-> >  .../bindings/leds/backlight/arcxcnn_bl.txt         | 24
-> +++++++++++++---------
-> >  1 file changed, 14 insertions(+), 10 deletions(-)
-> >
-> > diff --git
-> a/Documentation/devicetree/bindings/leds/backlight/arcxcnn_bl.txt
-> b/Documentation/devicetree/bindings/leds/backlight/arcxcnn_bl.txt
-> > index 230abde..9cf4c44 100644
-> > --- a/Documentation/devicetree/bindings/leds/backlight/arcxcnn_bl.txt
-> > +++ b/Documentation/devicetree/bindings/leds/backlight/arcxcnn_bl.txt
-> > @@ -1,8 +1,12 @@
-> > -Binding for ArcticSand arc2c0608 LED driver
-> > +Binding for ArcticSand arc family LED drivers
-> >
-> >  Required properties:
-> > -- compatible:                should be "arc,arc2c0608"
-> > -- reg:                       slave address
-> > +- compatible: one of
-> > +     "arctic,arc1c0608"
-> > +     "arctic,arc2c0608"
-> > +     "arctic,arc3c0845"
->
-> This is more a question for the DT folks than for Brian but...
->
-> AFAICT this patch is fixing the binding for the ArcticSand devices to
-> use the correct value from vendor-prefixes.yaml and has been previously
-> discussed here:
-> https://lkml.org/lkml/2018/9/25/726
->
-> Currently this patch series just updates the DT bindings but the
-> implementation also honours the old values (since there is a Chromebook
-> in the wild that uses the current bindings).
->
-> Hence I'm not clear whether the bindings should document the deprecated
-> options too (e.g. make it easier to find the bindings doc with git grep
-> and friends).
->
->
-> Daniel.
->
->
-> > +
-> > +- reg:               slave address
-> >
-> >  Optional properties:
-> >  - default-brightness:        brightness value on boot, value from:
-> 0-4095
-> > @@ -11,19 +15,19 @@ Optional properties:
-> >  - led-sources:               List of enabled channels from 0 to 5.
-> >                       See
-> Documentation/devicetree/bindings/leds/common.txt
-> >
-> > -- arc,led-config-0:  setting for register ILED_CONFIG_0
-> > -- arc,led-config-1:  setting for register ILED_CONFIG_1
-> > -- arc,dim-freq:              PWM mode frequence setting (bits [3:0]
-> used)
-> > -- arc,comp-config:   setting for register CONFIG_COMP
-> > -- arc,filter-config: setting for register FILTER_CONFIG
-> > -- arc,trim-config:   setting for register IMAXTUNE
-> > +- arctic,led-config-0:       setting for register ILED_CONFIG_0
-> > +- arctic,led-config-1:       setting for register ILED_CONFIG_1
-> > +- arctic,dim-freq:           PWM mode frequence setting (bits [3:0]
-> used)
-> > +- arctic,comp-config:        setting for register CONFIG_COMP
-> > +- arctic,filter-config:      setting for register FILTER_CONFIG
-> > +- arctic,trim-config:        setting for register IMAXTUNE
-> >
-> >  Note: Optional properties not specified will default to values in IC
-> EPROM
-> >
-> >  Example:
-> >
-> >  arc2c0608@30 {
-> > -     compatible = "arc,arc2c0608";
-> > +     compatible = "arctic,arc2c0608";
-> >       reg = <0x30>;
-> >       default-brightness = <500>;
-> >       label = "lcd-backlight";
-> > --
-> > 2.7.4
-> >
->
-
---000000000000edd2ce058c2472a9
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"auto">I would like to deprecate the old prefix in the future af=
-ter communicating with all chip customers, which is why the old prefix is n=
-ot documented in the new bindings.<div dir=3D"auto"><br></div></div><br><di=
-v class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Jun 2=
-5, 2019, 4:55 AM Daniel Thompson &lt;<a href=3D"mailto:daniel.thompson@lina=
-ro.org" target=3D"_blank" rel=3D"noreferrer">daniel.thompson@linaro.org</a>=
-&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 =
-0 .8ex;border-left:1px #ccc solid;padding-left:1ex">On Tue, Jun 25, 2019 at=
- 12:05:28AM -0400, Brian Dodge wrote:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0The vendor-prefixes.txt file properly refers to Arc=
-ticSand<br>
-&gt;=C2=A0 =C2=A0 =C2=A0as arctic but the driver bindings improperly abbrev=
-iated the<br>
-&gt;=C2=A0 =C2=A0 =C2=A0prefix to arc. This was a mistake in the original p=
-atch<br>
-&gt; <br>
-&gt; Signed-off-by: Brian Dodge &lt;<a href=3D"mailto:bdodge09@gmail.com" r=
-el=3D"noreferrer noreferrer" target=3D"_blank">bdodge09@gmail.com</a>&gt;<b=
-r>
-&gt; ---<br>
-&gt;=C2=A0 .../bindings/leds/backlight/arcxcnn_bl.txt=C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0| 24 +++++++++++++---------<br>
-&gt;=C2=A0 1 file changed, 14 insertions(+), 10 deletions(-)<br>
-&gt; <br>
-&gt; diff --git a/Documentation/devicetree/bindings/leds/backlight/arcxcnn_=
-bl.txt b/Documentation/devicetree/bindings/leds/backlight/arcxcnn_bl.txt<br=
->
-&gt; index 230abde..9cf4c44 100644<br>
-&gt; --- a/Documentation/devicetree/bindings/leds/backlight/arcxcnn_bl.txt<=
-br>
-&gt; +++ b/Documentation/devicetree/bindings/leds/backlight/arcxcnn_bl.txt<=
-br>
-&gt; @@ -1,8 +1,12 @@<br>
-&gt; -Binding for ArcticSand arc2c0608 LED driver<br>
-&gt; +Binding for ArcticSand arc family LED drivers<br>
-&gt;=C2=A0 <br>
-&gt;=C2=A0 Required properties:<br>
-&gt; -- compatible:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-should be &quot;arc,arc2c0608&quot;<br>
-&gt; -- reg:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0slave address<br>
-&gt; +- compatible: one of<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0&quot;arctic,arc1c0608&quot;<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0&quot;arctic,arc2c0608&quot;<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0&quot;arctic,arc3c0845&quot;<br>
-<br>
-This is more a question for the DT folks than for Brian but...<br>
-<br>
-AFAICT this patch is fixing the binding for the ArcticSand devices to<br>
-use the correct value from vendor-prefixes.yaml and has been previously<br>
-discussed here:<br>
-<a href=3D"https://lkml.org/lkml/2018/9/25/726" rel=3D"noreferrer noreferre=
-r noreferrer" target=3D"_blank">https://lkml.org/lkml/2018/9/25/726</a><br>
-<br>
-Currently this patch series just updates the DT bindings but the<br>
-implementation also honours the old values (since there is a Chromebook<br>
-in the wild that uses the current bindings).<br>
-<br>
-Hence I&#39;m not clear whether the bindings should document the deprecated=
-<br>
-options too (e.g. make it easier to find the bindings doc with git grep<br>
-and friends).<br>
-<br>
-<br>
-Daniel.<br>
-<br>
-<br>
-&gt; +<br>
-&gt; +- reg:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0slave ad=
-dress<br>
-&gt;=C2=A0 <br>
-&gt;=C2=A0 Optional properties:<br>
-&gt;=C2=A0 - default-brightness:=C2=A0 =C2=A0 =C2=A0 =C2=A0 brightness valu=
-e on boot, value from: 0-4095<br>
-&gt; @@ -11,19 +15,19 @@ Optional properties:<br>
-&gt;=C2=A0 - led-sources:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0List of enabled channels from 0 to 5.<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0See Documentation/devicetree/bindings/leds/common.txt<br>
-&gt;=C2=A0 <br>
-&gt; -- arc,led-config-0:=C2=A0 setting for register ILED_CONFIG_0<br>
-&gt; -- arc,led-config-1:=C2=A0 setting for register ILED_CONFIG_1<br>
-&gt; -- arc,dim-freq:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 PWM m=
-ode frequence setting (bits [3:0] used)<br>
-&gt; -- arc,comp-config:=C2=A0 =C2=A0setting for register CONFIG_COMP<br>
-&gt; -- arc,filter-config: setting for register FILTER_CONFIG<br>
-&gt; -- arc,trim-config:=C2=A0 =C2=A0setting for register IMAXTUNE<br>
-&gt; +- arctic,led-config-0:=C2=A0 =C2=A0 =C2=A0 =C2=A0setting for register=
- ILED_CONFIG_0<br>
-&gt; +- arctic,led-config-1:=C2=A0 =C2=A0 =C2=A0 =C2=A0setting for register=
- ILED_CONFIG_1<br>
-&gt; +- arctic,dim-freq:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0PWM mode f=
-requence setting (bits [3:0] used)<br>
-&gt; +- arctic,comp-config:=C2=A0 =C2=A0 =C2=A0 =C2=A0 setting for register=
- CONFIG_COMP<br>
-&gt; +- arctic,filter-config:=C2=A0 =C2=A0 =C2=A0 setting for register FILT=
-ER_CONFIG<br>
-&gt; +- arctic,trim-config:=C2=A0 =C2=A0 =C2=A0 =C2=A0 setting for register=
- IMAXTUNE<br>
-&gt;=C2=A0 <br>
-&gt;=C2=A0 Note: Optional properties not specified will default to values i=
-n IC EPROM<br>
-&gt;=C2=A0 <br>
-&gt;=C2=A0 Example:<br>
-&gt;=C2=A0 <br>
-&gt;=C2=A0 arc2c0608@30 {<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0compatible =3D &quot;arc,arc2c0608&quot;;<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0compatible =3D &quot;arctic,arc2c0608&quot;;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0reg =3D &lt;0x30&gt;;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0default-brightness =3D &lt;500&gt;;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0label =3D &quot;lcd-backlight&quot;;<br>
-&gt; -- <br>
-&gt; 2.7.4<br>
-&gt; <br>
-</blockquote></div>
-
---000000000000edd2ce058c2472a9--
-
---===============1829269519==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-
---===============1829269519==--
+T24gVHVlLCBKdW4gMjUsIDIwMTkgYXQgMTI6MDU6MjlBTSAtMDQwMCwgQnJpYW4gRG9kZ2Ugd3Jv
+dGU6Cj4gVGhlIG9yaWdpbmFsIHBhdGNoIGFkZGluZyB0aGlzIGRyaXZlciBhbmQgRFQgYmluZGlu
+Z3MgaW1wcm9wZXJseQo+IHVzZWQgImFyYyIgYXMgdGhlIHZlbmRvci1wcmVmaXguIFRoaXMgYWRk
+cyAiYXJjdGljIiB3aGljaCBpcyB0aGUKPiBwcm9wZXIgcHJlZml4IGFuZCByZXRhaW5zICJhcmMi
+IHRvIGFsbG93IGV4aXN0aW5nIHVzZXJzIG9mIHRoZQo+ICJhcmMiIHByZWZpeCB0byB1cGRhdGUg
+dG8gbmV3IGtlcm5lbHMuIFRoZXJlIGlzIGF0IGxlYXN0IG9uZQo+IChTYW1zdW5nIENocm9tZWJv
+b2sgUGx1cykKPiAKPiBTaWduZWQtb2ZmLWJ5OiBCcmlhbiBEb2RnZSA8YmRvZGdlMDlAZ21haWwu
+Y29tPgoKU3RpbGwgbmVlZHMgY29uc2Vuc3VzIG9uIHRoZSBEVCBiaW5kaW5ncyBidXQgZm9yIGFu
+eSBmdXR1cmUgcmVzZW5kcwpwbGVhc2UgYWRkIHRoaXMgKHRvIHRoaXMgcGF0Y2ggb25seSk6CgpB
+Y2tlZC1ieTogRGFuaWVsIFRob21wc29uIDxkYW5pZWwudGhvbXBzb25AbGluYXJvLm9yZz4KCgpE
+YW5pZWwuCj4gLS0tCj4gIGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L2FyY3hjbm5fYmwuYyB8IDM1
+ICsrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAy
+NSBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy92aWRlby9iYWNrbGlnaHQvYXJjeGNubl9ibC5jIGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQv
+YXJjeGNubl9ibC5jCj4gaW5kZXggN2IxYzBhMC4uMTRjNjdmMiAxMDA2NDQKPiAtLS0gYS9kcml2
+ZXJzL3ZpZGVvL2JhY2tsaWdodC9hcmN4Y25uX2JsLmMKPiArKysgYi9kcml2ZXJzL3ZpZGVvL2Jh
+Y2tsaWdodC9hcmN4Y25uX2JsLmMKPiBAQCAtMSw5ICsxLDkgQEAKPiAgLy8gU1BEWC1MaWNlbnNl
+LUlkZW50aWZpZXI6IEdQTC0yLjAtb25seQo+ICAvKgo+IC0gKiBCYWNrbGlnaHQgZHJpdmVyIGZv
+ciBBcmN0aWNTYW5kIEFSQ19YX0NfME5fME4gRGV2aWNlcwo+ICsgKiBCYWNrbGlnaHQgZHJpdmVy
+IGZvciBwU2VtaSAoZm9ybWVybHkgQXJjdGljU2FuZCkgQVJDX1hfQ18wTl8wTiBEZXZpY2VzCj4g
+ICAqCj4gLSAqIENvcHlyaWdodCAyMDE2IEFyY3RpY1NhbmQsIEluYy4KPiAtICogQXV0aG9yIDog
+QnJpYW4gRG9kZ2UgPGJkb2RnZUBhcmN0aWNzYW5kLmNvbT4KPiArICogQ29weXJpZ2h0IDIwMTYt
+MjAxOSAgcFNlbWksIEluYy4KPiArICogQXV0aG9yIDogQnJpYW4gRG9kZ2UgPGJkb2RnZUBwc2Vt
+aS5jb20+Cj4gICAqLwo+ICAKPiAgI2luY2x1ZGUgPGxpbnV4L2JhY2tsaWdodC5oPgo+IEBAIC0x
+OTEsMjcgKzE5MSw0MCBAQCBzdGF0aWMgdm9pZCBhcmN4Y25uX3BhcnNlX2R0KHN0cnVjdCBhcmN4
+Y25uICpscCkKPiAgCWlmIChyZXQgPT0gMCkKPiAgCQlscC0+cGRhdGEtPmluaXRpYWxfYnJpZ2h0
+bmVzcyA9IHByb2dfdmFsOwo+ICAKPiAtCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUs
+ICJhcmMsbGVkLWNvbmZpZy0wIiwgJnByb2dfdmFsKTsKPiArCXJldCA9IG9mX3Byb3BlcnR5X3Jl
+YWRfdTMyKG5vZGUsICJhcmN0aWMsbGVkLWNvbmZpZy0wIiwgJnByb2dfdmFsKTsKPiArCWlmIChy
+ZXQpCj4gKwkJcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgImFyYyxsZWQtY29uZmln
+LTAiLCAmcHJvZ192YWwpOwo+ICAJaWYgKHJldCA9PSAwKQo+ICAJCWxwLT5wZGF0YS0+bGVkX2Nv
+bmZpZ18wID0gKHU4KXByb2dfdmFsOwo+ICAKPiAtCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMy
+KG5vZGUsICJhcmMsbGVkLWNvbmZpZy0xIiwgJnByb2dfdmFsKTsKPiArCXJldCA9IG9mX3Byb3Bl
+cnR5X3JlYWRfdTMyKG5vZGUsICJhcmN0aWMsbGVkLWNvbmZpZy0xIiwgJnByb2dfdmFsKTsKPiAr
+CWlmIChyZXQpCj4gKwkJcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgImFyYyxsZWQt
+Y29uZmlnLTEiLCAmcHJvZ192YWwpOwo+ICAJaWYgKHJldCA9PSAwKQo+ICAJCWxwLT5wZGF0YS0+
+bGVkX2NvbmZpZ18xID0gKHU4KXByb2dfdmFsOwo+ICAKPiAtCXJldCA9IG9mX3Byb3BlcnR5X3Jl
+YWRfdTMyKG5vZGUsICJhcmMsZGltLWZyZXEiLCAmcHJvZ192YWwpOwo+ICsJcmV0ID0gb2ZfcHJv
+cGVydHlfcmVhZF91MzIobm9kZSwgImFyY3RpYyxkaW0tZnJlcSIsICZwcm9nX3ZhbCk7Cj4gKwlp
+ZiAocmV0KQo+ICsJCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmMsZGltLWZy
+ZXEiLCAmcHJvZ192YWwpOwo+ICAJaWYgKHJldCA9PSAwKQo+ICAJCWxwLT5wZGF0YS0+ZGltX2Zy
+ZXEgPSAodTgpcHJvZ192YWw7Cj4gIAo+IC0JcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9k
+ZSwgImFyYyxjb21wLWNvbmZpZyIsICZwcm9nX3ZhbCk7Cj4gKwlyZXQgPSBvZl9wcm9wZXJ0eV9y
+ZWFkX3UzMihub2RlLCAiYXJjdGljLGNvbXAtY29uZmlnIiwgJnByb2dfdmFsKTsKPiArCWlmIChy
+ZXQpCj4gKwkJcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgImFyYyxjb21wLWNvbmZp
+ZyIsICZwcm9nX3ZhbCk7Cj4gIAlpZiAocmV0ID09IDApCj4gIAkJbHAtPnBkYXRhLT5jb21wX2Nv
+bmZpZyA9ICh1OClwcm9nX3ZhbDsKPiAgCj4gLQlyZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihu
+b2RlLCAiYXJjLGZpbHRlci1jb25maWciLCAmcHJvZ192YWwpOwo+ICsJcmV0ID0gb2ZfcHJvcGVy
+dHlfcmVhZF91MzIobm9kZSwgImFyY3RpYyxmaWx0ZXItY29uZmlnIiwgJnByb2dfdmFsKTsKPiAr
+CWlmIChyZXQpCj4gKwkJcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwKPiArCQkJCSJh
+cmMsZmlsdGVyLWNvbmZpZyIsICZwcm9nX3ZhbCk7Cj4gIAlpZiAocmV0ID09IDApCj4gIAkJbHAt
+PnBkYXRhLT5maWx0ZXJfY29uZmlnID0gKHU4KXByb2dfdmFsOwo+ICAKPiAtCXJldCA9IG9mX3By
+b3BlcnR5X3JlYWRfdTMyKG5vZGUsICJhcmMsdHJpbS1jb25maWciLCAmcHJvZ192YWwpOwo+ICsJ
+cmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgImFyY3RpYyx0cmltLWNvbmZpZyIsICZw
+cm9nX3ZhbCk7Cj4gKwlpZiAocmV0KQo+ICsJCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5v
+ZGUsICJhcmMsdHJpbS1jb25maWciLCAmcHJvZ192YWwpOwo+ICAJaWYgKHJldCA9PSAwKQo+ICAJ
+CWxwLT5wZGF0YS0+dHJpbV9jb25maWcgPSAodTgpcHJvZ192YWw7Cj4gIAo+IEBAIC0zODEsNiAr
+Mzk0LDggQEAgc3RhdGljIGludCBhcmN4Y25uX3JlbW92ZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2wp
+Cj4gIH0KPiAgCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGFyY3hjbm5fZHRf
+aWRzW10gPSB7Cj4gKwl7IC5jb21wYXRpYmxlID0gImFyY3RpYyxhcmMyYzA2MDgiIH0sCj4gKwkv
+KiBoZXJlIHRvIHJlbWFpbSBjb21wYXRpYmxlIHdpdGggYW4gb2xkZXIgYmluZGluZywgZG8gbm90
+IHVzZSAqLwo+ICAJeyAuY29tcGF0aWJsZSA9ICJhcmMsYXJjMmMwNjA4IiB9LAo+ICAJeyB9Cj4g
+IH07Cj4gQEAgLTQwNCw1ICs0MTksNSBAQCBzdGF0aWMgc3RydWN0IGkyY19kcml2ZXIgYXJjeGNu
+bl9kcml2ZXIgPSB7Cj4gIG1vZHVsZV9pMmNfZHJpdmVyKGFyY3hjbm5fZHJpdmVyKTsKPiAgCj4g
+IE1PRFVMRV9MSUNFTlNFKCJHUEwgdjIiKTsKPiAtTU9EVUxFX0FVVEhPUigiQnJpYW4gRG9kZ2Ug
+PGJkb2RnZUBhcmN0aWNzYW5kLmNvbT4iKTsKPiArTU9EVUxFX0FVVEhPUigiQnJpYW4gRG9kZ2Ug
+PGJkb2RnZUBwc2VtaS5jb20+Iik7Cj4gIE1PRFVMRV9ERVNDUklQVElPTigiQVJDWENOTiBCYWNr
+bGlnaHQgZHJpdmVyIik7Cj4gLS0gCj4gMi43LjQKPiAKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVs
