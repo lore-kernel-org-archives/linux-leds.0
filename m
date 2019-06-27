@@ -1,101 +1,59 @@
-From: Brian Dodge <bdodge09@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: backlight: fix vendor prefix for
- ArcticSand arcxcnn driver bindings
-Date: Wed, 26 Jun 2019 10:59:55 -0400
-Message-ID: <CAFaGBPmF2gDNEy_Ok_Ky9GR7XEyVUdhG=BYGXEMCN1Tq2eHo6g@mail.gmail.com>
-References: <1561435529-7835-1-git-send-email-bdodge09@gmail.com>
- <1561435529-7835-2-git-send-email-bdodge09@gmail.com>
- <20190625085534.xf2ullyju3ewbgik@holly.lan>
- <CAFaGBPnH=75=wJRM4EX9MYR8MSehEa2_hBEOsqo-DZvD6c6f_A@mail.gmail.com>
- <20190626105614.ujmryi7qou2ra7aq@holly.lan>
- <20190626145624.GC22348@xo-6d-61-c0.localdomain>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v5 05/26] leds: core: Add support for composing LED class
+ device names
+Date: Thu, 27 Jun 2019 20:28:06 +0200
+Message-ID: <7b038be0-274d-54f7-46f4-3dbe346169b8@gmail.com>
+References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
+ <20190609190803.14815-6-jacek.anaszewski@gmail.com>
+ <66811b33-c643-679e-344c-e293f03cc2fb@gmail.com>
+ <b65ba5ea-4b79-8245-bddb-3ecf1424892f@kaa.org.ua>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2112663020=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190626145624.GC22348@xo-6d-61-c0.localdomain>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pbacon@psemi.com, lee.jones@linaro.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <b65ba5ea-4b79-8245-bddb-3ecf1424892f@kaa.org.ua>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Oleh Kravchenko <oleg@kaa.org.ua>, linux-leds@vger.kernel.org, pavel@ucw.cz, dmurphy@ti.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
---===============2112663020==
-Content-Type: multipart/alternative; boundary="00000000000016bf57058c3b4dba"
+Hi Oleh,
 
---00000000000016bf57058c3b4dba
-Content-Type: text/plain; charset="UTF-8"
+On 6/26/19 10:07 PM, Oleh Kravchenko wrote:
+> Hello Jacek,
+> so after this patch will be merged.
+> 
+> There will be a way to define custom function name by DeviceTree?
 
-Is there a standard way to format to-be-deprecated items in the bindings?
+Yes. We standardize LED functions just to avoid spreading many similarly
+looking function names with the same semantics.
 
+We don't enforce using new function definitions in any way.
+It is possible to assign whatever you want to the DT label property
+(however now deprecated) or to the new DT function property.
 
-On Wed, Jun 26, 2019, 10:56 AM Pavel Machek <pavel@ucw.cz> wrote:
+It will be however preferable to use standard LED_FUNCTION definitions
+for new mainline bindings and dts files. Of course, as documentation
+states, it will be possible to propose new ones if none of existing
+fit for given application. This is only an initial set.
 
-> On Wed 2019-06-26 11:56:14, Daniel Thompson wrote:
-> > On Tue, Jun 25, 2019 at 07:44:06AM -0400, Brian Dodge wrote:
-> > > I would like to deprecate the old prefix in the future after
-> communicating
-> > > with all chip customers, which is why the old prefix is not documented
-> in
-> > > the new bindings.
-> >
-> > Deprecation is fine (by me at least) it's just that I'm not sure that
-> > removing the documentation for the deprecated bindings is the right way
-> > to do it. What is the prior art here?
->
-> I believe we should keep the docs.
->
->                                                                 Pavel
->
+> 26.06.19 22:05, Jacek Anaszewski пише:
+>> Gentle reminder.
+>>
+>> Pavel, Dan - any conclusions?
+>>
+>> This patch is the main part of the proposed changes,
+>> so it would be good to spot any remaining issues.
+>>
+>> What needs a consensus is also a new
+>> Documentation/leds/led-functions.txt file I introduce
+>> in the patch 26/26.
+>>
+>> Best regards,
+>> Jacek Anaszewski
+> 
 
---00000000000016bf57058c3b4dba
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"auto">Is there a standard way to format to-be-deprecated items =
-in the bindings?<div dir=3D"auto"><br></div></div><br><div class=3D"gmail_q=
-uote"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Jun 26, 2019, 10:56 AM =
-Pavel Machek &lt;<a href=3D"mailto:pavel@ucw.cz">pavel@ucw.cz</a>&gt; wrote=
-:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;bor=
-der-left:1px #ccc solid;padding-left:1ex">On Wed 2019-06-26 11:56:14, Danie=
-l Thompson wrote:<br>
-&gt; On Tue, Jun 25, 2019 at 07:44:06AM -0400, Brian Dodge wrote:<br>
-&gt; &gt; I would like to deprecate the old prefix in the future after comm=
-unicating<br>
-&gt; &gt; with all chip customers, which is why the old prefix is not docum=
-ented in<br>
-&gt; &gt; the new bindings.<br>
-&gt; <br>
-&gt; Deprecation is fine (by me at least) it&#39;s just that I&#39;m not su=
-re that<br>
-&gt; removing the documentation for the deprecated bindings is the right wa=
-y<br>
-&gt; to do it. What is the prior art here?<br>
-<br>
-I believe we should keep the docs.<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 Pavel<br>
-</blockquote></div>
-
---00000000000016bf57058c3b4dba--
-
---===============2112663020==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-
---===============2112663020==--
+-- 
+Best regards,
+Jacek Anaszewski
