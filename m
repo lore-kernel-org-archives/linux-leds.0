@@ -1,59 +1,169 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v5 05/26] leds: core: Add support for composing LED class
- device names
-Date: Thu, 27 Jun 2019 20:28:06 +0200
-Message-ID: <7b038be0-274d-54f7-46f4-3dbe346169b8@gmail.com>
-References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
- <20190609190803.14815-6-jacek.anaszewski@gmail.com>
- <66811b33-c643-679e-344c-e293f03cc2fb@gmail.com>
- <b65ba5ea-4b79-8245-bddb-3ecf1424892f@kaa.org.ua>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH 00/34] treewide: simplify getting the adapter of an I2C
+ client
+Date: Thu, 27 Jun 2019 20:28:17 +0200
+Message-ID: <20190627182817.5vrfmuzn7kanvtwu@earth.universe>
+References: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dtrjmbi6re7vojrt"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b65ba5ea-4b79-8245-bddb-3ecf1424892f@kaa.org.ua>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190608105619.593-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Oleh Kravchenko <oleg@kaa.org.ua>, linux-leds@vger.kernel.org, pavel@ucw.cz, dmurphy@ti.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Hi Oleh,
 
-On 6/26/19 10:07 PM, Oleh Kravchenko wrote:
-> Hello Jacek,
-> so after this patch will be merged.
-> 
-> There will be a way to define custom function name by DeviceTree?
+--dtrjmbi6re7vojrt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes. We standardize LED functions just to avoid spreading many similarly
-looking function names with the same semantics.
+Hi,
 
-We don't enforce using new function definitions in any way.
-It is possible to assign whatever you want to the DT label property
-(however now deprecated) or to the new DT function property.
+On Sat, Jun 08, 2019 at 12:55:39PM +0200, Wolfram Sang wrote:
+> While preparing a refactoring series, I noticed that some drivers use a
+> complicated way of determining the adapter of a client. The easy way is
+> to use the intended pointer: client->adapter
+>=20
+> These drivers do:
+> 	to_i2c_adapter(client->dev.parent);
+>=20
+> The I2C core populates the parent pointer as:
+> 	client->dev.parent =3D &client->adapter->dev;
+>=20
+> Now take into consideration that
+> 	to_i2c_adapter(&adapter->dev);
+>=20
+> is a complicated way of saying 'adapter', then we can even formally
+> prove that the complicated expression can be simplified by using
+> client->adapter.
+>=20
+> The conversion was done using a coccinelle script with some manual
+> indentation fixes applied on top.
+>=20
+> To avoid a brown paper bag mistake, I double checked this on a Renesas
+> Salvator-XS board (R-Car M3N) and verified both expression result in the
+> same pointer. Other than that, the series is only build tested.
+>=20
+> A branch can be found here:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/no_to_ada=
+pter
+>=20
+> Please apply the patches to the individual subsystem trees. There are no
+> dependencies.
+>=20
+> Thanks and kind regards,
+>=20
+>    Wolfram
 
-It will be however preferable to use standard LED_FUNCTION definitions
-for new mainline bindings and dts files. Of course, as documentation
-states, it will be possible to propose new ones if none of existing
-fit for given application. This is only an initial set.
+Thanks, I queued the patches prefixed with "power: supply: [...]".
 
-> 26.06.19 22:05, Jacek Anaszewski пише:
->> Gentle reminder.
->>
->> Pavel, Dan - any conclusions?
->>
->> This patch is the main part of the proposed changes,
->> so it would be good to spot any remaining issues.
->>
->> What needs a consensus is also a new
->> Documentation/leds/led-functions.txt file I introduce
->> in the patch 26/26.
->>
->> Best regards,
->> Jacek Anaszewski
-> 
+-- Sebastian
 
--- 
-Best regards,
-Jacek Anaszewski
+> Wolfram Sang (34):
+>   clk: clk-cdce706: simplify getting the adapter of a client
+>   gpu: drm: bridge: sii9234: simplify getting the adapter of a client
+>   iio: light: bh1780: simplify getting the adapter of a client
+>   leds: leds-pca955x: simplify getting the adapter of a client
+>   leds: leds-tca6507: simplify getting the adapter of a client
+>   media: i2c: ak881x: simplify getting the adapter of a client
+>   media: i2c: mt9m001: simplify getting the adapter of a client
+>   media: i2c: mt9m111: simplify getting the adapter of a client
+>   media: i2c: mt9p031: simplify getting the adapter of a client
+>   media: i2c: ov2640: simplify getting the adapter of a client
+>   media: i2c: tw9910: simplify getting the adapter of a client
+>   misc: fsa9480: simplify getting the adapter of a client
+>   misc: isl29003: simplify getting the adapter of a client
+>   misc: tsl2550: simplify getting the adapter of a client
+>   mtd: maps: pismo: simplify getting the adapter of a client
+>   power: supply: bq24190_charger: simplify getting the adapter of a client
+>   power: supply: bq24257_charger: simplify getting the adapter of a client
+>   power: supply: bq25890_charger: simplify getting the adapter of a client
+>   power: supply: max14656_charger_detector: simplify getting the adapter
+>     of a client
+>   power: supply: max17040_battery: simplify getting the adapter of a clie=
+nt
+>   power: supply: max17042_battery: simplify getting the adapter of a clie=
+nt
+>   power: supply: rt5033_battery: simplify getting the adapter of a client
+>   power: supply: rt9455_charger: simplify getting the adapter of a client
+>   power: supply: sbs-manager: simplify getting the adapter of a client
+>   regulator: max8952: simplify getting the adapter of a client
+>   rtc: fm3130: simplify getting the adapter of a client
+>   rtc: m41t80: simplify getting the adapter of a client
+>   rtc: rv8803: simplify getting the adapter of a client
+>   rtc: rx8010: simplify getting the adapter of a client
+>   rtc: rx8025: simplify getting the adapter of a client
+>   staging: media: soc_camera: imx074: simplify getting the adapter of a c=
+lient
+>   staging: media: soc_camera: mt9t031: simplify getting the adapter of a =
+client
+>   staging: media: soc_camera: soc_mt9v022: simplify getting the adapter
+>     of a client
+>   usb: typec: tcpm: fusb302: simplify getting the adapter of a client
+>=20
+>  drivers/clk/clk-cdce706.c                        | 2 +-
+>  drivers/gpu/drm/bridge/sii9234.c                 | 4 ++--
+>  drivers/iio/light/bh1780.c                       | 2 +-
+>  drivers/leds/leds-pca955x.c                      | 2 +-
+>  drivers/leds/leds-tca6507.c                      | 2 +-
+>  drivers/media/i2c/ak881x.c                       | 2 +-
+>  drivers/media/i2c/mt9m001.c                      | 2 +-
+>  drivers/media/i2c/mt9m111.c                      | 2 +-
+>  drivers/media/i2c/mt9p031.c                      | 2 +-
+>  drivers/media/i2c/ov2640.c                       | 2 +-
+>  drivers/media/i2c/tw9910.c                       | 3 +--
+>  drivers/misc/fsa9480.c                           | 2 +-
+>  drivers/misc/isl29003.c                          | 2 +-
+>  drivers/misc/tsl2550.c                           | 2 +-
+>  drivers/mtd/maps/pismo.c                         | 2 +-
+>  drivers/power/supply/bq24190_charger.c           | 2 +-
+>  drivers/power/supply/bq24257_charger.c           | 2 +-
+>  drivers/power/supply/bq25890_charger.c           | 2 +-
+>  drivers/power/supply/max14656_charger_detector.c | 2 +-
+>  drivers/power/supply/max17040_battery.c          | 2 +-
+>  drivers/power/supply/max17042_battery.c          | 2 +-
+>  drivers/power/supply/rt5033_battery.c            | 2 +-
+>  drivers/power/supply/rt9455_charger.c            | 2 +-
+>  drivers/power/supply/sbs-manager.c               | 2 +-
+>  drivers/regulator/max8952.c                      | 2 +-
+>  drivers/rtc/rtc-fm3130.c                         | 8 +++-----
+>  drivers/rtc/rtc-m41t80.c                         | 2 +-
+>  drivers/rtc/rtc-rv8803.c                         | 2 +-
+>  drivers/rtc/rtc-rx8010.c                         | 2 +-
+>  drivers/rtc/rtc-rx8025.c                         | 2 +-
+>  drivers/staging/media/soc_camera/imx074.c        | 2 +-
+>  drivers/staging/media/soc_camera/mt9t031.c       | 2 +-
+>  drivers/staging/media/soc_camera/soc_mt9v022.c   | 2 +-
+>  drivers/usb/typec/tcpm/fusb302.c                 | 3 +--
+>  34 files changed, 37 insertions(+), 41 deletions(-)
+>=20
+> --=20
+> 2.19.1
+>=20
+
+--dtrjmbi6re7vojrt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl0VCsEACgkQ2O7X88g7
++poEpxAAm77/GZ4czva5lDqclyAk1YfbiV55qi+jow32xQwZ17FXo8Ch9G11Qrwl
+famQPiB/pD3r3m2TfihhFAcFjOGiwl9GxQJ+4at64Atab2w5BWh9zwDQWdtT80jF
+3ytFncogbL36MVBgIv5YQUZQiqIiZlUei6lTOnnyfv3PLtvNVbIodxSVYp5qJWMy
+M+qrdy6tAVsuK6yqAwPRhfjBzlmlLZVudUZqbAWKMbK1YBt0rkkSNw9xpF1pLrv6
+zLbGdmBngoivDyNJldn+5bhMiwsDyxf/8E7eblcAMkO/D1oPrb51zV92FFX7qyzT
+eI5KRHwY88XkUuIK25aDnO1bR3eDn3RDcxtW8MMMeRihWX3gNSL+hKZ24XGxOgz5
+L3tL9nm6X6sHg867+V5voAxNACnbgFT/Mrzhal4HGbN8adctDoaSEuiMPAQlAkEG
+PbW3c2B0n+Bav3XksRT4h19t7drSk4a3aR04I/GHc3l9jDQicnDr4DwiVaPpd1UF
+gpPhBXgO4NSZr5yUEzoVOSOsW6WS2k5SFV+sQjU1C5R+oXBH59J9oIMlOOaNKo0w
+rTXxOtxQ38vqyMiQZBLwoTh1remxiOBp+5lwmYWGWYpBDVcr9HB+kzNJPFxDVk5A
+YgiEzXje0LsgjUBgpmiq5YPAmsNIntDezydWTc20Otk1+Vgotgo=
+=CJhg
+-----END PGP SIGNATURE-----
+
+--dtrjmbi6re7vojrt--
