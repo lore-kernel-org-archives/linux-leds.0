@@ -1,84 +1,47 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 24/43] docs: leds: convert to ReST
-Date: Fri, 28 Jun 2019 21:01:40 +0200
-Message-ID: <0b2a2452-20ca-1651-e03b-a15a8502b028@gmail.com>
-References: <cover.1561723979.git.mchehab+samsung@kernel.org>
- <2fecbe9a9cefda64771b43c5fc67495d897dd722.1561723980.git.mchehab+samsung@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: backlight: lm3630a: correct schema validation
+Date: Fri, 28 Jun 2019 13:22:38 -0600
+Message-ID: <20190628192238.GA8617@bogus>
+References: <20190520085846.22320-1-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2fecbe9a9cefda64771b43c5fc67495d897dd722.1561723980.git.mchehab+samsung@kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Vadim Pasternak <vadimp@mellanox.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>, Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, linux-leds@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20190520085846.22320-1-masneyb@onstation.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Brian Masney <masneyb@onstation.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, daniel.thompson@linaro.org, jonathan@marek.ca, b.zolnierkie@samsung.com, jingoohan1@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, linux-leds@vger.kernel.org, dmurphy@ti.com
 List-Id: linux-leds@vger.kernel.org
 
-Hi Mauro,
-
-On 6/28/19 2:20 PM, Mauro Carvalho Chehab wrote:
-> Rename the leds documentation files to ReST, add an
-> index for them and adjust in order to produce a nice html
-> output via the Sphinx build system.
-> 
-> At its new index.rst, let's add a :orphan: while this is not linked to
-> the main index.rst file, in order to avoid build warnings.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> ---
->  Documentation/laptops/thinkpad-acpi.txt       |   4 +-
->  Documentation/leds/index.rst                  |  25 ++
->  .../leds/{leds-blinkm.txt => leds-blinkm.rst} |  64 ++---
->  ...s-class-flash.txt => leds-class-flash.rst} |  49 ++--
->  .../leds/{leds-class.txt => leds-class.rst}   |  15 +-
->  .../leds/{leds-lm3556.txt => leds-lm3556.rst} | 100 ++++++--
->  .../leds/{leds-lp3944.txt => leds-lp3944.rst} |  23 +-
->  Documentation/leds/leds-lp5521.rst            | 115 +++++++++
->  Documentation/leds/leds-lp5521.txt            | 101 --------
->  Documentation/leds/leds-lp5523.rst            | 147 ++++++++++++
->  Documentation/leds/leds-lp5523.txt            | 130 ----------
->  Documentation/leds/leds-lp5562.rst            | 137 +++++++++++
->  Documentation/leds/leds-lp5562.txt            | 120 ----------
->  Documentation/leds/leds-lp55xx.rst            | 224 ++++++++++++++++++
->  Documentation/leds/leds-lp55xx.txt            | 194 ---------------
->  Documentation/leds/leds-mlxcpld.rst           | 118 +++++++++
->  Documentation/leds/leds-mlxcpld.txt           | 110 ---------
->  ...edtrig-oneshot.txt => ledtrig-oneshot.rst} |  11 +-
->  ...ig-transient.txt => ledtrig-transient.rst} |  63 +++--
->  ...edtrig-usbport.txt => ledtrig-usbport.rst} |  11 +-
->  Documentation/leds/{uleds.txt => uleds.rst}   |   5 +-
->  MAINTAINERS                                   |   2 +-
->  drivers/leds/trigger/Kconfig                  |   2 +-
->  drivers/leds/trigger/ledtrig-transient.c      |   2 +-
->  net/netfilter/Kconfig                         |   2 +-
->  25 files changed, 996 insertions(+), 778 deletions(-)
->  create mode 100644 Documentation/leds/index.rst
->  rename Documentation/leds/{leds-blinkm.txt => leds-blinkm.rst} (57%)
->  rename Documentation/leds/{leds-class-flash.txt => leds-class-flash.rst} (74%)
->  rename Documentation/leds/{leds-class.txt => leds-class.rst} (92%)
->  rename Documentation/leds/{leds-lm3556.txt => leds-lm3556.rst} (70%)
->  rename Documentation/leds/{leds-lp3944.txt => leds-lp3944.rst} (78%)
->  create mode 100644 Documentation/leds/leds-lp5521.rst
->  delete mode 100644 Documentation/leds/leds-lp5521.txt
->  create mode 100644 Documentation/leds/leds-lp5523.rst
->  delete mode 100644 Documentation/leds/leds-lp5523.txt
->  create mode 100644 Documentation/leds/leds-lp5562.rst
->  delete mode 100644 Documentation/leds/leds-lp5562.txt
->  create mode 100644 Documentation/leds/leds-lp55xx.rst
->  delete mode 100644 Documentation/leds/leds-lp55xx.txt
->  create mode 100644 Documentation/leds/leds-mlxcpld.rst
->  delete mode 100644 Documentation/leds/leds-mlxcpld.txt
->  rename Documentation/leds/{ledtrig-oneshot.txt => ledtrig-oneshot.rst} (90%)
->  rename Documentation/leds/{ledtrig-transient.txt => ledtrig-transient.rst} (81%)
->  rename Documentation/leds/{ledtrig-usbport.txt => ledtrig-usbport.rst} (86%)
->  rename Documentation/leds/{uleds.txt => uleds.rst} (95%)
-
-Patches 4/9 and 24/43 applied to the for-next branch of linux-leds.git.
-
-Thanks!
-
--- 
-Best regards,
-Jacek Anaszewski
+T24gTW9uLCAyMCBNYXkgMjAxOSAwNDo1ODo0NiAtMDQwMCwgQnJpYW4gTWFzbmV5IHdyb3RlOgo+
+IFRoZSAnI2FkZHJlc3MtY2VsbHMnIGFuZCAnI3NpemUtY2VsbHMnIHByb3BlcnRpZXMgd2VyZSBu
+b3QgZGVmaW5lZCBpbgo+IHRoZSBsbTM2MzBhIGJpbmRpbmdzIGFuZCB3b3VsZCBjYXVzZSB0aGUg
+Zm9sbG93aW5nIGVycm9yIHdoZW4KPiBhdHRlbXB0aW5nIHRvIHZhbGlkYXRlIHRoZSBleGFtcGxl
+cyBhZ2FpbnN0IHRoZSBzY2hlbWE6Cj4gCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL2xlZHMvYmFja2xpZ2h0L2xtMzYzMGEtYmFja2xpZ2h0LmV4YW1wbGUuZHQueWFtbDoKPiAn
+I2FkZHJlc3MtY2VsbHMnLCAnI3NpemUtY2VsbHMnIGRvIG5vdCBtYXRjaCBhbnkgb2YgdGhlIHJl
+Z2V4ZXM6Cj4gJ15sZWRAWzAxXSQnLCAncGluY3RybC1bMC05XSsnCj4gCj4gQ29ycmVjdCB0aGlz
+IGJ5IGFkZGluZyB0aG9zZSB0d28gcHJvcGVydGllcy4KPiAKPiBXaGlsZSB3ZSdyZSBoZXJlLCBt
+b3ZlIHRoZSB0aSxsaW5lYXItbWFwcGluZy1tb2RlIHByb3BlcnR5IHRvIHRoZQo+IGxlZEBbMDFd
+IGNoaWxkIG5vZGVzIHRvIGNvcnJlY3QgdGhlIGZvbGxvd2luZyB2YWxpZGF0aW9uIGVycm9yOgo+
+IAo+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9sbTM2
+MzBhLWJhY2tsaWdodC5leGFtcGxlLmR0LnlhbWw6Cj4gbGVkQDA6ICd0aSxsaW5lYXItbWFwcGlu
+Zy1tb2RlJyBkb2VzIG5vdCBtYXRjaCBhbnkgb2YgdGhlIHJlZ2V4ZXM6Cj4gJ3BpbmN0cmwtWzAt
+OV0rJwo+IAo+IEZpeGVzOiAzMmZjYjc1YzY2YTAgKCJkdC1iaW5kaW5nczogYmFja2xpZ2h0OiBB
+ZGQgbG0zNjMwYSBiaW5kaW5ncyIpCj4gU2lnbmVkLW9mZi1ieTogQnJpYW4gTWFzbmV5IDxtYXNu
+ZXliQG9uc3RhdGlvbi5vcmc+Cj4gUmVwb3J0ZWQtYnk6IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtl
+cm5lbC5vcmc+Cj4gLS0tCj4gIC4uLi9sZWRzL2JhY2tsaWdodC9sbTM2MzBhLWJhY2tsaWdodC55
+YW1sICAgICB8IDIwICsrKysrKysrKysrKystLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDE0IGlu
+c2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCj4gCgpBcHBsaWVkLCB0aGFua3MuCgpSb2IKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
