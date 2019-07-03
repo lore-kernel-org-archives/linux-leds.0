@@ -1,117 +1,83 @@
 From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 05/26] leds: core: Add support for composing LED class
- device names
-Date: Thu, 4 Jul 2019 00:00:43 +0200
-Message-ID: <20190703220043.GA876@amd>
+Subject: Various LED complexities was Re: [PATCH v5 05/26] leds: core: Add
+ support for composing LED class device names
+Date: Thu, 4 Jul 2019 00:05:26 +0200
+Message-ID: <20190703220526.GB876@amd>
 References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
  <20190609190803.14815-6-jacek.anaszewski@gmail.com>
+ <CACRpkdYdqKZVKSaQB0THi=iZcRT04EKX2-85__Hw1f53o8vsuw@mail.gmail.com>
+ <643e3b10fe9d45b59ed063ffc6d578ff@AcuMS.aculab.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
+        protocol="application/pgp-signature"; boundary="vGgW1X5XWziG23Ko"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190609190803.14815-6-jacek.anaszewski@gmail.com>
+In-Reply-To: <643e3b10fe9d45b59ed063ffc6d578ff@AcuMS.aculab.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, dtor@google.com, linux@roeck-us.net, dmurphy@ti.com, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Linus Walleij <linus.walleij@linaro.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
+To: David Laight <David.Laight@ACULAB.COM>
+Cc: 'Linus Walleij' <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Linux LED Subsystem <linux-leds@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Dmitry Torokhov <dtor@google.com>, Guenter Roeck <linux@roeck-us.net>, Dan Murphy <dmurphy@ti.com>, Baolin Wang <baolin.wang@linaro.org>, Daniel Mack <daniel@zonque.org>, Oleh Kravchenko <oleg@kaa.org.ua>, Sakari Ailus <sakari.ailus@linux.intel.com>, Simon Shields <simon@lineageos.org>
 List-Id: linux-leds@vger.kernel.org
 
 
---5mCyUwZo2JvN/JJP
+--vGgW1X5XWziG23Ko
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Fri 2019-06-28 13:30:30, David Laight wrote:
+> From: Linus Walleij
+> > Sent: 28 June 2019 09:46
+> ...
+> > A problem with LEDs is that it invites bikeshedding because it is too
+> > relateable.
+>=20
+> Bikeshedding leds :-)
+>=20
+> It also isn't at all clear how to handle bi-colour and tri-colour leds.
+> ISTR the usual interface lets you set the brightness, but more often
+> leds are single brightness but multi-colour.
+> Eg the ethernet 'speed' led which is (usually) off/orange/green.
+>=20
+> Changing the brightness either means changing the current or using PWM.
+> Both really require more hardware support than changing colours.
+>=20
+> I've done some led driving (for a front panel) from a PLD (small FPGA).
+> As well as the obvious things I did:
+> - dim: 1/8th on at 80Hz.
+> - flash: 1/8th on at 4Hz.
+> - orange: 50-50 red-green at 80Hz on an RGB led.
+>=20
+> There was also the 'ethernet activity' led which could either be driven
+> by the hardware, or forced on/off/flash by the driver.
+> If driven by the hardware, the software could read the current state.
+>=20
+> None of this really fitted the Linux leds interface.
 
-Sorry for the delay.
+Well, we are working on some of those :-). But lets discuss that in
+separate threads.
 
-> @@ -27,6 +29,18 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
->  LIST_HEAD(leds_list);
->  EXPORT_SYMBOL_GPL(leds_list);
-> =20
-> +const char *led_colors[LED_COLOR_ID_MAX] =3D {
+In particular we are working on triggers and RGB LEDs.
 
-const char * const , if we want to play that game?
-
-
-> +	[LED_COLOR_ID_WHITE] =3D "white",
-> +	[LED_COLOR_ID_RED] =3D "red",
-> +	[LED_COLOR_ID_GREEN] =3D "green",
-> +	[LED_COLOR_ID_BLUE] =3D "blue",
-> +	[LED_COLOR_ID_AMBER] =3D "amber",
-> +	[LED_COLOR_ID_VIOLET] =3D "violet",
-> +	[LED_COLOR_ID_YELLOW] =3D "yellow",
-> +	[LED_COLOR_ID_IR] =3D "ir",
-> +};
-> +EXPORT_SYMBOL_GPL(led_colors);
-> +
-
-> +	if (fwnode_property_present(fwnode, "label")) {
-> +		ret =3D fwnode_property_read_string(fwnode, "label", &props->label);
-> +		if (ret)
-> +			dev_err(dev, "Error parsing \'label\' property (%d)\n", ret);
-> +		return;
-
-I don't think you need to escape ' with \.
-
-> +	if (fwnode_property_present(fwnode, "function")) {
-> +		ret =3D fwnode_property_read_string(fwnode, "function", &props->functi=
-on);
-> +		if (ret) {
-> +			dev_err(dev,
-> +				"Error parsing \'function\' property (%d)\n",
-> +				ret);
-> +		}
-> +	} else {
-> +		return;
-> +	}
-
-> +
-> +	if (fwnode_property_present(fwnode, "function-enumerator")) {
-
-I'd do if (!fwnode_property_present()) return; in both occasions, to
-save an indentation level; but that's nitpicking.
-
-> +	if (props.label) {
-> +		/*
-> +		 * If init_data.devicename is NULL, then it indicates that
-> +		 * DT label should be used as-is for LED class device name.
-> +		 * Otherwise the label is prepended with devicename to compose
-> +		 * the final LED class device name.
-> +		 */
-> +		if (!devicename) {
-> +			strncpy(led_classdev_name, props.label,
-> +				LED_MAX_NAME_SIZE);
-> +		} else {
-> +			snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
-> +				 devicename, props.label);
-> +		}
-
-Unlike snprintf(), strncpy() does not guarantee NULL termination.
-
-I did not check the shell script.
-
-With that fixed,
-
-Acked-by: Pavel Machek <pavel@ucw.cz>
-
+bi-color LEDs seem to handled as two separate LEDs. Not much expected
+to change there.
+								=09
 									Pavel
+
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---5mCyUwZo2JvN/JJP
+--vGgW1X5XWziG23Ko
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl0dJYsACgkQMOfwapXb+vIsIQCdHeXyY51Wi7XK3/jnfTSCSYyv
-OasAoKFj4QE6Bn6SkRH40Pkbh0DKIheX
-=vR+B
+iEYEARECAAYFAl0dJqYACgkQMOfwapXb+vK3+gCgip2UEFe6NwueZy1C3k5AeG/n
+otAAnjpPCwHWvYp6ku5OriKI1CkGFCYr
+=31SK
 -----END PGP SIGNATURE-----
 
---5mCyUwZo2JvN/JJP--
+--vGgW1X5XWziG23Ko--
