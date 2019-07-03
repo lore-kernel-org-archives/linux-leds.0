@@ -1,269 +1,400 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
+From: Jean-Jacques Hiblot <jjhiblot@ti.com>
 Subject: Re: [PATCH 3/4] backlight: add led-backlight driver
-Date: Wed, 3 Jul 2019 10:44:57 +0100
-Message-ID: <20190703094457.etmbbjhhssbdkveo@holly.lan>
+Date: Wed, 3 Jul 2019 12:02:23 +0200
+Message-ID: <a8886ae9-31ec-de4c-0a83-5f681582a0b9@ti.com>
 References: <20190701151423.30768-1-jjhiblot@ti.com>
  <20190701151423.30768-4-jjhiblot@ti.com>
  <20190702095434.d426lichmaffz7a5@holly.lan>
  <531e237c-b570-5270-6fc3-6629a8bf7acd@ti.com>
  <20190702130434.frbx7jkec27ejbpo@holly.lan>
  <72c45311-c710-dc2d-a6de-68e44ea8436a@ti.com>
+ <20190703094457.etmbbjhhssbdkveo@holly.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <72c45311-c710-dc2d-a6de-68e44ea8436a@ti.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Cc: mark.rutland@arm.com, jingoohan1@gmail.com, tomi.valkeinen@ti.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, linux-leds@vger.kernel.org, dmurphy@ti.com
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190703094457.etmbbjhhssbdkveo@holly.lan>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, lee.jones@linaro.org, jingoohan1@gmail.com, dmurphy@ti.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com
 List-Id: linux-leds@vger.kernel.org
 
-T24gVHVlLCBKdWwgMDIsIDIwMTkgYXQgMDU6MTc6MjFQTSArMDIwMCwgSmVhbi1KYWNxdWVzIEhp
-YmxvdCB3cm90ZToKPiBEYW5pZWwsCj4gCj4gT24gMDIvMDcvMjAxOSAxNTowNCwgRGFuaWVsIFRo
-b21wc29uIHdyb3RlOgo+ID4gT24gVHVlLCBKdWwgMDIsIDIwMTkgYXQgMTI6NTk6NTNQTSArMDIw
-MCwgSmVhbi1KYWNxdWVzIEhpYmxvdCB3cm90ZToKPiA+ID4gSGkgRGFuaWVsLAo+ID4gPiAKPiA+
-ID4gT24gMDIvMDcvMjAxOSAxMTo1NCwgRGFuaWVsIFRob21wc29uIHdyb3RlOgo+ID4gPiA+IE9u
-IE1vbiwgSnVsIDAxLCAyMDE5IGF0IDA1OjE0OjIyUE0gKzAyMDAsIEplYW4tSmFjcXVlcyBIaWJs
-b3Qgd3JvdGU6Cj4gPiA+ID4gPiBGcm9tOiBUb21pIFZhbGtlaW5lbiA8dG9taS52YWxrZWluZW5A
-dGkuY29tPgo+ID4gPiA+ID4gCj4gPiA+ID4gPiBUaGlzIHBhdGNoIGFkZHMgYSBsZWQtYmFja2xp
-Z2h0IGRyaXZlciAobGVkX2JsKSwgd2hpY2ggaXMgbW9zdGx5IHNpbWlsYXIgdG8KPiA+ID4gPiA+
-IHB3bV9ibCBleGNlcHQgdGhlIGRyaXZlciB1c2VzIGEgTEVEIGNsYXNzIGRyaXZlciB0byBhZGp1
-c3QgdGhlIGJyaWdodG5lc3MKPiA+ID4gPiA+IGluIHRoZSBIVy4KPiA+ID4gPiA+IAo+ID4gPiA+
-ID4gU2lnbmVkLW9mZi1ieTogVG9taSBWYWxrZWluZW4gPHRvbWkudmFsa2VpbmVuQHRpLmNvbT4K
-PiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IEplYW4tSmFjcXVlcyBIaWJsb3QgPGpqaGlibG90QHRp
-LmNvbT4KPiA+ID4gPiA+IC0tLQo+ID4gPiA+ID4gICAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQv
-S2NvbmZpZyAgfCAgIDcgKwo+ID4gPiA+ID4gICAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQvTWFr
-ZWZpbGUgfCAgIDEgKwo+ID4gPiA+ID4gICAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQvbGVkX2Js
-LmMgfCAyMTcgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ID4gPiA+ID4gICAgMyBm
-aWxlcyBjaGFuZ2VkLCAyMjUgaW5zZXJ0aW9ucygrKQo+ID4gPiA+ID4gICAgY3JlYXRlIG1vZGUg
-MTAwNjQ0IGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L2xlZF9ibC5jCj4gPiA+ID4gPiAKPiA+ID4g
-PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9LY29uZmlnIGIvZHJpdmVy
-cy92aWRlby9iYWNrbGlnaHQvS2NvbmZpZwo+ID4gPiA+ID4gaW5kZXggOGIwODFkNjE3NzNlLi41
-ODVhMTc4NzYxOGMgMTAwNjQ0Cj4gPiA+ID4gPiAtLS0gYS9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdo
-dC9LY29uZmlnCj4gPiA+ID4gPiArKysgYi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9LY29uZmln
-Cj4gPiA+ID4gPiBAQCAtNDU4LDYgKzQ1OCwxMyBAQCBjb25maWcgQkFDS0xJR0hUX1JBVkVfU1AK
-PiA+ID4gPiA+ICAgIAloZWxwCj4gPiA+ID4gPiAgICAJICBTdXBwb3J0IGZvciBiYWNrbGlnaHQg
-Y29udHJvbCBvbiBSQVZFIFNQIGRldmljZS4KPiA+ID4gPiA+ICtjb25maWcgQkFDS0xJR0hUX0xF
-RAo+ID4gPiA+ID4gKwl0cmlzdGF0ZSAiR2VuZXJpYyBMRUQgYmFzZWQgQmFja2xpZ2h0IERyaXZl
-ciIKPiA+ID4gPiA+ICsJZGVwZW5kcyBvbiBMRURTX0NMQVNTICYmIE9GCj4gPiA+ID4gPiArCWhl
-bHAKPiA+ID4gPiA+ICsJICBJZiB5b3UgaGF2ZSBhIExDRCBiYWNrbGlnaHQgYWRqdXN0YWJsZSBi
-eSBMRUQgY2xhc3MgZHJpdmVyLCBzYXkgWQo+ID4gPiA+ID4gKwkgIHRvIGVuYWJsZSB0aGlzIGRy
-aXZlci4KPiA+ID4gPiA+ICsKPiA+ID4gPiA+ICAgIGVuZGlmICMgQkFDS0xJR0hUX0NMQVNTX0RF
-VklDRQo+ID4gPiA+ID4gICAgZW5kbWVudQo+ID4gPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-dmlkZW8vYmFja2xpZ2h0L01ha2VmaWxlIGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvTWFrZWZp
-bGUKPiA+ID4gPiA+IGluZGV4IDYzYzUwN2MwNzQzNy4uMmE2NzY0Mjk2NmE1IDEwMDY0NAo+ID4g
-PiA+ID4gLS0tIGEvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvTWFrZWZpbGUKPiA+ID4gPiA+ICsr
-KyBiL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L01ha2VmaWxlCj4gPiA+ID4gPiBAQCAtNTcsMyAr
-NTcsNCBAQCBvYmotJChDT05GSUdfQkFDS0xJR0hUX1RQUzY1MjE3KQkrPSB0cHM2NTIxN19ibC5v
-Cj4gPiA+ID4gPiAgICBvYmotJChDT05GSUdfQkFDS0xJR0hUX1dNODMxWCkJCSs9IHdtODMxeF9i
-bC5vCj4gPiA+ID4gPiAgICBvYmotJChDT05GSUdfQkFDS0xJR0hUX0FSQ1hDTk4pIAkrPSBhcmN4
-Y25uX2JsLm8KPiA+ID4gPiA+ICAgIG9iai0kKENPTkZJR19CQUNLTElHSFRfUkFWRV9TUCkJCSs9
-IHJhdmUtc3AtYmFja2xpZ2h0Lm8KPiA+ID4gPiA+ICtvYmotJChDT05GSUdfQkFDS0xJR0hUX0xF
-RCkJCSs9IGxlZF9ibC5vCj4gPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy92aWRlby9iYWNr
-bGlnaHQvbGVkX2JsLmMgYi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9sZWRfYmwuYwo+ID4gPiA+
-ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPiA+ID4gPiA+IGluZGV4IDAwMDAwMDAwMDAwMC4uZTY5
-OTkyNGNjMmJjCj4gPiA+ID4gPiAtLS0gL2Rldi9udWxsCj4gPiA+ID4gPiArKysgYi9kcml2ZXJz
-L3ZpZGVvL2JhY2tsaWdodC9sZWRfYmwuYwo+ID4gPiA+ID4gQEAgLTAsMCArMSwyMTcgQEAKPiA+
-ID4gPiA+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMAo+ID4gPiA+ID4gKy8q
-Cj4gPiA+ID4gPiArICogQ29weXJpZ2h0IChDKSAyMDE1LTIwMTggVGV4YXMgSW5zdHJ1bWVudHMg
-SW5jb3Jwb3JhdGVkIC0gIGh0dHA6Ly93d3cudGkuY29tLwo+ID4gPiA+ID4gKyAqIEF1dGhvcjog
-VG9taSBWYWxrZWluZW4gPHRvbWkudmFsa2VpbmVuQHRpLmNvbT4KPiA+ID4gPiA+ICsgKgo+ID4g
-PiA+ID4gKyAqIEJhc2VkIG9uIHB3bV9ibC5jCj4gPiA+ID4gPiArICovCj4gPiA+ID4gPiArCj4g
-PiA+ID4gPiArI2luY2x1ZGUgPGxpbnV4L2JhY2tsaWdodC5oPgo+ID4gPiA+ID4gKyNpbmNsdWRl
-IDxsaW51eC9ncGlvL2NvbnN1bWVyLmg+Cj4gPiA+ID4gPiArI2luY2x1ZGUgPGxpbnV4L2xlZHMu
-aD4KPiA+ID4gPiA+ICsjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+Cj4gPiA+ID4gPiArI2luY2x1
-ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgo+ID4gPiA+ID4gKyNpbmNsdWRlIDxsaW51eC9y
-ZWd1bGF0b3IvY29uc3VtZXIuaD4KPiA+ID4gPiA+ICsjaW5jbHVkZSA8bGludXgvc2xhYi5oPgo+
-ID4gPiA+ID4gKwo+ID4gPiA+ID4gK3N0cnVjdCBsZWRfYmxfZGF0YSB7Cj4gPiA+ID4gPiArCXN0
-cnVjdCBkZXZpY2UJCSpkZXY7Cj4gPiA+ID4gPiArCXN0cnVjdCBiYWNrbGlnaHRfZGV2aWNlCSpi
-bF9kZXY7Cj4gPiA+ID4gPiArCj4gPiA+ID4gPiArCXVuc2lnbmVkIGludAkJKmxldmVsczsKPiA+
-ID4gPiA+ICsJYm9vbAkJCWVuYWJsZWQ7Cj4gPiA+ID4gPiArCXN0cnVjdCByZWd1bGF0b3IJKnBv
-d2VyX3N1cHBseTsKPiA+ID4gPiA+ICsJc3RydWN0IGdwaW9fZGVzYwkqZW5hYmxlX2dwaW87Cj4g
-PiA+ID4gRm9yIHRoZSBQV00gZHJpdmVyIHRoZSBwb3dlcl9zdXBwbHkgYW5kIGVuYWJsZV9ncGlv
-IGFyZSBwYXJ0IG9mIG1hbmFnaW5nCj4gPiA+ID4gYSBkdW1iIExFRCBkcml2ZXIgZGV2aWNlIHRo
-YXQgaXMgZG93bnN0cmVhbSBvZiB0aGUgUFdNLgo+ID4gPiA+IAo+ID4gPiA+IFdoYXQgaXMgdGhl
-aXIgcHVycG9zZSB3aGVuIHdlIHdyYXAgYW4gTEVEIGRldmljZT8gUHV0IGFub3RoZXIgd2h5IHdo
-eSBpc24ndAo+ID4gPiA+IHRoZSBMRUQgZGV2aWNlIGRyaXZlciByZXNwb25zaWJsZSBmb3IgdGhp
-cz8KPiA+ID4gVGhpcyBxdWVzdGlvbiBjYW1lIHVwIHdoZW4gdGhlIHBhdGNoIHdhcyBmaXJzdCBw
-cm9wb3NlZCBpbiAyMDE1LiBIZXJlIGlzIHRoZQo+ID4gPiBhbnN3ZXIgZnJvbSBUb21pIGF0IHRo
-ZSB0aW1lLiBJdCBpcyBzdGlsbCByZWxldmFudC4KPiA+ID4gCj4gPiA+ICJUaGVzZSBhcmUgZm9y
-IHRoZSBiYWNrbGlnaHQsIG5vdCBmb3IgdGhlIExFRCBjaGlwLiBTbyAiTEVEIiBoZXJlIGlzIGEK
-PiA+ID4gY2hpcCB0aGF0IHByb2R1Y2VzIChtb3N0IGxpa2VseSkgYSBQV00gc2lnbmFsLCBhbmQg
-ImJhY2tsaWdodCIgaXMgdGhlCj4gPiA+IGNvbGxlY3Rpb24gb2YgY29tcG9uZW50cyB0aGF0IHVz
-ZSB0aGUgUFdNIHRvIHByb2R1Y2UgdGhlIGJhY2tsaWdodAo+ID4gPiBpdHNlbGYsIGFuZCB1c2Ug
-dGhlIHBvd2VyLXN1cHBseSBhbmQgZ3Bpb3MuIgo+ID4gRXhwYW5kZWQgc2lnbmlmaWNhbnRseSBp
-biB0aGUgYXNzb2NpYXRlZCB0aHJlYWQsIHJpZ2h0Pwo+ID4gaHR0cHM6Ly9wYXRjaHdvcmsua2Vy
-bmVsLm9yZy9wYXRjaC83MjkzOTkxLwo+ID4gCj4gPiBBbHNvIHN0aWxsIHJlbGV2YW50IGlzIHdo
-ZXRoZXIgdGhlIExFRCBkZXZpY2UgaXMgYmVpbmcgY29ycmVjdGx5Cj4gPiBtb2RlbGxlZCBpZiB0
-aGUgYWN0IG9mIHR1cm5pbmcgb24gdGhlIExFRCBkb2Vzbid0LCBpbiBmYWN0LCB0dXJuIHRoZSBM
-RUQKPiA+IG9uLiBJcyBpdCAqcmVhbGx5KiBhIGNvcnJlY3QgaW1wbGVtZW50YXRpb24gb2YgYW4g
-TEVEIGRldmljZSB0aGF0Cj4gPiBzZXR0aW5nIGl0IHRvIExFRF9GVUxMIHVzaW5nIHN5c2ZzIGRv
-ZXNuJ3QgY2F1c2UgaXQgdG8gbGlnaHQgdXA/Cj4gCj4gV2hhdCBJIHVuZGVyc3Rvb2QgZnJvbSB0
-aGUgZGlzY3Vzc2lvbiBiZXR3ZWVuIFJvYiBhbmQgVG9taSBpcyB0aGF0IHRoZQo+IGNoaWxkLW5v
-ZGUgb2YgdGhlIExFRCBjb250cm9sbGVyIHNob3VsZCBiZSBjb25zaWRlcmVkIGEgYmFja2xpZ2h0
-IGRldmljZSwKPiBub3QgYSBzaW1wbGUgTEVELiBJJ20gbm90IHN1cmUgaWYgdGhlIHN5c2ZzIGlu
-dGVyZmFjZSBpcyBzdGlsbCByZWxldmFudCBpbgo+IHRoYXQgY2FzZS4gTWF5YmUgaXQgc2hvdWxk
-IGp1c3QgYmUgZGlzYWJsZWQgYnkgdGhlIGJhY2tsaWdodCBkcml2ZXIKPiAocG9zc2libGUgd2l0
-aCBsZWRfc3lzZnNfZGlzYWJsZSgpKQoKbGVkX3N5c2ZzX2Rpc2FibGUoKSBzb3VuZHMgbGlrZSBh
-IHNlbnNpYmxlIGNoYW5nZSBidXQgdGhhdCdzIG5vdCBxdWl0ZQp3aGF0IEkgbWVhbi4KCkl0IGlz
-IG1vcmUgYSB0aG91Z2h0IGV4cGVyaW1lbnQgdG8gc2VlIGlmIHRoZSBwb3dlciBjb250cm9sICpz
-aG91bGQqIGJlCmltcGxlbWVudGVkIGJ5IHRoZSBiYWNrbGlnaHQuIENvbnNpZGVyIHdoYXQgaGFw
-cGVucyBpZiB3ZSAqZG9uJ3QqCmVuYWJsZSBDT05GSUdfQkFDS0xJR0hUX0xFRCBpbiB0aGUga2Vy
-bmVsOiB3ZSB3b3VsZCBzdGlsbCBoYXZlIGFuIExFRApkZXZpY2UgYW5kIGl0IHdvdWxkIG5vdCB3
-b3JrIGNvcnJlY3RseS4KCkluIG90aGVyIHdvcmRzIEkgbmFpdmVseSBleHBlY3QgdHVybmluZyBv
-biBhbiBMRUQgdXNpbmcgdGhlIExFRCBBUEkgCihhbnkgb2YgdGhlbSwgc3lzZnMgb3Iga2VybmVs
-KSB0byByZXN1bHQgaW4gdGhlIExFRCB0dXJuaW5nIG9uLgpJbXBsZW1lbnRpbmcgYSB3b3JrYXJv
-dW5kIGluIHRoZSBjbGllbnQgZm9yIHdoYXQgYXBwZWFycyB0byBiZQpzb21ldGhpbmcgbWlzc2lu
-ZyBpbiB0aGUgTEVEIGRyaXZlciBzdHJpa2VzIG1lIGFzIG9kZC4gV2h5IHNob3VsZG4ndAp0aGUg
-cmVndWxhdG9yIGJlIG1hbmFnZWQgaW4gdGhlIExFRCBkcml2ZXI/CgoKPiA+IEFjdHVhbGx5IHRo
-ZXJlIGlzIGFub3RoZXIgYXJlYSB3aGVyZSBJIHRoaW5rIGFuIExFRCBiYWNrbGlnaHQgc2hvdWxk
-Cj4gPiBwZXJoYXBzIGJlIGhlbGQgdG8gYSBoaWdoZXIgc3RhbmRhcmQgdGhhbiBhIFBXTSBiYWNr
-bGlnaHQgYW5kIHRoYXQgaXMKPiA+IGhhbmRsaW5nIGJhY2tsaWdodHMgY29tcG9zZWQgb2YgbXVs
-dGlwbGUgTEVEcy4KPiA+IAo+ID4gVXNpbmcgdGhlIFRMQzU5MXh4IGV4YW1wbGVzIGZyb20gdGhl
-IHRocmVhZCBhYm92ZS4uLiB0aGVzZSBhcmUKPiA+IG11bHRpLWNoYW5uZWwgKDggb3IgMTYpIExF
-RCBjb250cm9sbGVycyBhbmQgSSBkb24ndCB0aGluayBpdHMKPiA+IHNwZWN1bGF0aXZlIHRvIGFz
-c3VtZSB0aGF0IGEgYmFja2xpZ2h0IGNvdWxkIGNvbnN0cnVjdGVkIHVzaW5nCj4gPiBvbmUgb2Yg
-dGhlc2UgY291bGQgcmVxdWlyZSBtdWx0aXBsZSBMRURzLgo+IAo+IEluIHRoYXQgY2FzZSwgdGhl
-IGRldmljZS10cmVlIG1vZGVsIG11c3QgYmUgcXVpdGUgZGlmZmVyZW50Lgo+IAo+IEFjdHVhbGx5
-IHRoZSBiZXN0IHdheSB0byBkbyB0aGF0IGlzIHRvIHVzZSB0aGUgbW9kZWwgZnJvbSBUb21pCj4g
-aHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC83MjkzOTkxLyBhbmQgbW9kaWZ5IGl0
-IHRvIGhhbmRsZSBtb3JlCj4gdGhhbiBvbmUgTEVECj4gPGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5l
-bC5vcmcvcGF0Y2gvNzI5Mzk5MS8+Cj4gCj4gSSdtIG5vdCBjb21wbGV0ZWx5IHN1cmUgdGhhdCBw
-ZW9wbGUgd291bGQgc3RhcnQgbWFraW5nIHJlYWwgYmFja2xpZ2h0IHRoaXMKPiB3YXkgdGhvdWdo
-LiBJdCBpcyBtdWNoIG1vcmUgcHJvYmFibGUgdGhhdCB0aGUgb3VwdXQgb2YgdGhlIGxlZCBjdHJs
-IGlzCj4gY29ubmVjdGVkIHRvIGEgc2luZ2xlIGNvbnRyb2wgaW5wdXQgb2YgYSByZWFsIGJhY2ts
-aWdodCB0aGFuIHRvIGFjdHVhbCBMRURzLgoKSSdtIGFmcmFpZCBJIGRvbid0IGZvbGxvdyB0aGlz
-LiBJZiB5b3UgaGF2ZSBhIGJhY2tsaWdodCBjb21wb3NlZCBvZiBtdXRsaXBsZQpzdHJpbmdzIHdo
-eSB3b3VsZG4ndCBlYWNoIHN0cmluZyBiZSBhdHRhY2hlZCBkaXJlY3RseSB0byB0aGUgb3V0cHV0
-IGFuIG9mIExFRApkcml2ZXIgY2hpcCBzdWNoIGFzIHRoZSBUTEM1OTF4eCBmYW1pbHkuCgoKRGFu
-aWVsLgoKCj4gCj4gCj4gSkoKPiAKPiA+IAo+ID4gCj4gPiBEYW5pZWwuCj4gPiAKPiA+IAo+ID4g
-PiA+ID4gKwo+ID4gPiA+ID4gKwlzdHJ1Y3QgbGVkX2NsYXNzZGV2ICpsZWRfY2RldjsKPiA+ID4g
-PiA+ICsKPiA+ID4gPiA+ICsJdW5zaWduZWQgaW50IG1heF9icmlnaHRuZXNzOwo+ID4gPiA+ID4g
-Kwl1bnNpZ25lZCBpbnQgZGVmYXVsdF9icmlnaHRuZXNzOwo+ID4gPiA+ID4gK307Cj4gPiA+ID4g
-PiArCj4gPiA+ID4gPiArc3RhdGljIHZvaWQgbGVkX2JsX3NldF9icmlnaHRuZXNzKHN0cnVjdCBs
-ZWRfYmxfZGF0YSAqcHJpdiwgaW50IGJyaWdodG5lc3MpCj4gPiA+ID4gPiArewo+ID4gPiA+ID4g
-KwlpbnQgZXJyOwo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gKwlpZiAoIXByaXYtPmVuYWJsZWQpIHsK
-PiA+ID4gPiA+ICsJCWVyciA9IHJlZ3VsYXRvcl9lbmFibGUocHJpdi0+cG93ZXJfc3VwcGx5KTsK
-PiA+ID4gPiA+ICsJCWlmIChlcnIgPCAwKQo+ID4gPiA+ID4gKwkJCWRldl9lcnIocHJpdi0+ZGV2
-LCAiZmFpbGVkIHRvIGVuYWJsZSBwb3dlciBzdXBwbHlcbiIpOwo+ID4gPiA+ID4gKwo+ID4gPiA+
-ID4gKwkJaWYgKHByaXYtPmVuYWJsZV9ncGlvKQo+ID4gPiA+ID4gKwkJCWdwaW9kX3NldF92YWx1
-ZV9jYW5zbGVlcChwcml2LT5lbmFibGVfZ3BpbywgMSk7Cj4gPiA+ID4gPiArCX0KPiA+ID4gPiA+
-ICsKPiA+ID4gPiA+ICsJbGVkX3NldF9icmlnaHRuZXNzKHByaXYtPmxlZF9jZGV2LCBwcml2LT5s
-ZXZlbHNbYnJpZ2h0bmVzc10pOwo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gKwlwcml2LT5lbmFibGVk
-ID0gdHJ1ZTsKPiA+ID4gPiA+ICt9Cj4gPiA+ID4gPiArCj4gPiA+ID4gPiArc3RhdGljIHZvaWQg
-bGVkX2JsX3Bvd2VyX29mZihzdHJ1Y3QgbGVkX2JsX2RhdGEgKnByaXYpCj4gPiA+ID4gPiArewo+
-ID4gPiA+ID4gKwlpZiAoIXByaXYtPmVuYWJsZWQpCj4gPiA+ID4gPiArCQlyZXR1cm47Cj4gPiA+
-ID4gPiArCj4gPiA+ID4gPiArCWxlZF9zZXRfYnJpZ2h0bmVzcyhwcml2LT5sZWRfY2RldiwgTEVE
-X09GRik7Cj4gPiA+ID4gPiArCj4gPiA+ID4gPiArCWlmIChwcml2LT5lbmFibGVfZ3BpbykKPiA+
-ID4gPiA+ICsJCWdwaW9kX3NldF92YWx1ZV9jYW5zbGVlcChwcml2LT5lbmFibGVfZ3BpbywgMCk7
-Cj4gPiA+ID4gPiArCj4gPiA+ID4gPiArCXJlZ3VsYXRvcl9kaXNhYmxlKHByaXYtPnBvd2VyX3N1
-cHBseSk7Cj4gPiA+ID4gPiArCj4gPiA+ID4gPiArCXByaXYtPmVuYWJsZWQgPSBmYWxzZTsKPiA+
-ID4gPiA+ICt9Cj4gPiA+ID4gPiArCj4gPiA+ID4gPiArc3RhdGljIGludCBsZWRfYmxfdXBkYXRl
-X3N0YXR1cyhzdHJ1Y3QgYmFja2xpZ2h0X2RldmljZSAqYmwpCj4gPiA+ID4gPiArewo+ID4gPiA+
-ID4gKwlzdHJ1Y3QgbGVkX2JsX2RhdGEgKnByaXYgPSBibF9nZXRfZGF0YShibCk7Cj4gPiA+ID4g
-PiArCWludCBicmlnaHRuZXNzID0gYmwtPnByb3BzLmJyaWdodG5lc3M7Cj4gPiA+ID4gPiArCj4g
-PiA+ID4gPiArCWlmIChibC0+cHJvcHMucG93ZXIgIT0gRkJfQkxBTktfVU5CTEFOSyB8fAo+ID4g
-PiA+ID4gKwkgICAgYmwtPnByb3BzLmZiX2JsYW5rICE9IEZCX0JMQU5LX1VOQkxBTksgfHwKPiA+
-ID4gPiA+ICsJICAgIGJsLT5wcm9wcy5zdGF0ZSAmIEJMX0NPUkVfRkJCTEFOSykKPiA+ID4gPiA+
-ICsJCWJyaWdodG5lc3MgPSAwOwo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gKwlpZiAoYnJpZ2h0bmVz
-cyA+IDApCj4gPiA+ID4gPiArCQlsZWRfYmxfc2V0X2JyaWdodG5lc3MocHJpdiwgYnJpZ2h0bmVz
-cyk7Cj4gPiA+ID4gPiArCWVsc2UKPiA+ID4gPiA+ICsJCWxlZF9ibF9wb3dlcl9vZmYocHJpdik7
-Cj4gPiA+ID4gPiArCj4gPiA+ID4gPiArCXJldHVybiAwOwo+ID4gPiA+ID4gK30KPiA+ID4gPiA+
-ICsKPiA+ID4gPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGJhY2tsaWdodF9vcHMgbGVkX2JsX29w
-cyA9IHsKPiA+ID4gPiA+ICsJLnVwZGF0ZV9zdGF0dXMJPSBsZWRfYmxfdXBkYXRlX3N0YXR1cywK
-PiA+ID4gPiA+ICt9Owo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gK3N0YXRpYyBpbnQgbGVkX2JsX3Bh
-cnNlX2R0KHN0cnVjdCBkZXZpY2UgKmRldiwKPiA+ID4gPiA+ICsJCQkgICBzdHJ1Y3QgbGVkX2Js
-X2RhdGEgKnByaXYpCj4gPiA+ID4gPiArewo+ID4gPiA+ID4gKwlzdHJ1Y3QgZGV2aWNlX25vZGUg
-Km5vZGUgPSBkZXYtPm9mX25vZGU7Cj4gPiA+ID4gPiArCWludCBudW1fbGV2ZWxzOwo+ID4gPiA+
-ID4gKwl1MzIgKmxldmVsczsKPiA+ID4gPiA+ICsJdTMyIHZhbHVlOwo+ID4gPiA+ID4gKwlpbnQg
-cmV0Owo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gKwlpZiAoIW5vZGUpCj4gPiA+ID4gPiArCQlyZXR1
-cm4gLUVOT0RFVjsKPiA+ID4gPiA+ICsKPiA+ID4gPiA+ICsJbnVtX2xldmVscyA9IG9mX3Byb3Bl
-cnR5X2NvdW50X3UzMl9lbGVtcyhub2RlLCAiYnJpZ2h0bmVzcy1sZXZlbHMiKTsKPiA+ID4gPiBJ
-cyB0aGVyZSBhbnkgcmVhc29uIHRoYXQgdGhpcyBmdW5jdGlvbiBjYW5ub3QgdXNlIHRoZSAobW9y
-ZSBnZW5lcmljKQo+ID4gPiA+IGRldmljZSBwcm9wZXJ0eSBBUEkgdGhyb3VnaG91dCB0aGlzIGZ1
-bmN0aW9uPwo+ID4gPiBObyByZWFzb24uIFRoZSBjb2RlIGlzIGEgYml0IG9sZCwgYW5kIGNhbiBk
-byB3aXRoIGFuIHVwZGF0ZS4KPiA+ID4gCj4gPiA+IEFyZSB5b3UgdGhpbmtpbmcgb2Ygb2ZfcHJv
-cGVydHlfcmVhZF91MzJfYXJyYXkoKSwgb3IgYW5vdGhlciBmdW5jdGlvbiA/Cj4gPiA+IAo+ID4g
-PiBKSgo+ID4gPiAKPiA+ID4gPiAKPiA+ID4gPiAKPiA+ID4gPiBEYW5pZWwuCj4gPiA+ID4gCj4g
-PiA+ID4gCj4gPiA+ID4gPiArCWlmIChudW1fbGV2ZWxzIDwgMCkKPiA+ID4gPiA+ICsJCXJldHVy
-biBudW1fbGV2ZWxzOwo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gKwlsZXZlbHMgPSBkZXZtX2t6YWxs
-b2MoZGV2LCBzaXplb2YodTMyKSAqIG51bV9sZXZlbHMsIEdGUF9LRVJORUwpOwo+ID4gPiA+ID4g
-KwlpZiAoIWxldmVscykKPiA+ID4gPiA+ICsJCXJldHVybiAtRU5PTUVNOwo+ID4gPiA+ID4gKwo+
-ID4gPiA+ID4gKwlyZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMl9hcnJheShub2RlLCAiYnJpZ2h0
-bmVzcy1sZXZlbHMiLAo+ID4gPiA+ID4gKwkJCQkJIGxldmVscywKPiA+ID4gPiA+ICsJCQkJCSBu
-dW1fbGV2ZWxzKTsKPiA+ID4gPiA+ICsJaWYgKHJldCA8IDApCj4gPiA+ID4gPiArCQlyZXR1cm4g
-cmV0Owo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gKwlyZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMihu
-b2RlLCAiZGVmYXVsdC1icmlnaHRuZXNzLWxldmVsIiwgJnZhbHVlKTsKPiA+ID4gPiA+ICsJaWYg
-KHJldCA8IDApCj4gPiA+ID4gPiArCQlyZXR1cm4gcmV0Owo+ID4gPiA+ID4gKwo+ID4gPiA+ID4g
-KwlpZiAodmFsdWUgPj0gbnVtX2xldmVscykgewo+ID4gPiA+ID4gKwkJZGV2X2VycihkZXYsICJp
-bnZhbGlkIGRlZmF1bHQtYnJpZ2h0bmVzcy1sZXZlbFxuIik7Cj4gPiA+ID4gPiArCQlyZXR1cm4g
-LUVJTlZBTDsKPiA+ID4gPiA+ICsJfQo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gKwlwcml2LT5sZXZl
-bHMgPSBsZXZlbHM7Cj4gPiA+ID4gPiArCXByaXYtPm1heF9icmlnaHRuZXNzID0gbnVtX2xldmVs
-cyAtIDE7Cj4gPiA+ID4gPiArCXByaXYtPmRlZmF1bHRfYnJpZ2h0bmVzcyA9IHZhbHVlOwo+ID4g
-PiA+ID4gKwo+ID4gPiA+ID4gKwlyZXR1cm4gMDsKPiA+ID4gPiA+ICt9Cj4gPiA+ID4gPiArCj4g
-PiA+ID4gPiArc3RhdGljIGludCBsZWRfYmxfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldikKPiA+ID4gPiA+ICt7Cj4gPiA+ID4gPiArCXN0cnVjdCBiYWNrbGlnaHRfcHJvcGVydGll
-cyBwcm9wczsKPiA+ID4gPiA+ICsJc3RydWN0IGxlZF9ibF9kYXRhICpwcml2Owo+ID4gPiA+ID4g
-KwlpbnQgcmV0Owo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gKwlwcml2ID0gZGV2bV9remFsbG9jKCZw
-ZGV2LT5kZXYsIHNpemVvZigqcHJpdiksIEdGUF9LRVJORUwpOwo+ID4gPiA+ID4gKwlpZiAoIXBy
-aXYpCj4gPiA+ID4gPiArCQlyZXR1cm4gLUVOT01FTTsKPiA+ID4gPiA+ICsKPiA+ID4gPiA+ICsJ
-cGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgcHJpdik7Cj4gPiA+ID4gPiArCj4gPiA+ID4gPiAr
-CXByaXYtPmRldiA9ICZwZGV2LT5kZXY7Cj4gPiA+ID4gPiArCXByaXYtPmxlZF9jZGV2ID0gdG9f
-bGVkX2NsYXNzZGV2KHBkZXYtPmRldi5wYXJlbnQpOwo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gKwly
-ZXQgPSBsZWRfYmxfcGFyc2VfZHQoJnBkZXYtPmRldiwgcHJpdik7Cj4gPiA+ID4gPiArCWlmIChy
-ZXQgPCAwKSB7Cj4gPiA+ID4gPiArCQlpZiAocmV0ICE9IC1FUFJPQkVfREVGRVIpCj4gPiA+ID4g
-PiArCQkJZGV2X2VycigmcGRldi0+ZGV2LCAiZmFpbGVkIHRvIHBhcnNlIERUIGRhdGFcbiIpOwo+
-ID4gPiA+ID4gKwkJcmV0dXJuIHJldDsKPiA+ID4gPiA+ICsJfQo+ID4gPiA+ID4gKwo+ID4gPiA+
-ID4gKwlwcml2LT5lbmFibGVfZ3BpbyA9IGRldm1fZ3Bpb2RfZ2V0X29wdGlvbmFsKCZwZGV2LT5k
-ZXYsICJlbmFibGUiLAo+ID4gPiA+ID4gKwkJCSAgICBHUElPRF9PVVRfTE9XKTsKPiA+ID4gPiA+
-ICsJaWYgKElTX0VSUihwcml2LT5lbmFibGVfZ3BpbykpIHsKPiA+ID4gPiA+ICsJCXJldCA9IFBU
-Ul9FUlIocHJpdi0+ZW5hYmxlX2dwaW8pOwo+ID4gPiA+ID4gKwkJZ290byBlcnI7Cj4gPiA+ID4g
-PiArCX0KPiA+ID4gPiA+ICsKPiA+ID4gPiA+ICsJcHJpdi0+cG93ZXJfc3VwcGx5ID0gZGV2bV9y
-ZWd1bGF0b3JfZ2V0KCZwZGV2LT5kZXYsICJwb3dlciIpOwo+ID4gPiA+ID4gKwlpZiAoSVNfRVJS
-KHByaXYtPnBvd2VyX3N1cHBseSkpIHsKPiA+ID4gPiA+ICsJCXJldCA9IFBUUl9FUlIocHJpdi0+
-cG93ZXJfc3VwcGx5KTsKPiA+ID4gPiA+ICsJCWdvdG8gZXJyOwo+ID4gPiA+ID4gKwl9Cj4gPiA+
-ID4gPiArCj4gPiA+ID4gPiArCW1lbXNldCgmcHJvcHMsIDAsIHNpemVvZihzdHJ1Y3QgYmFja2xp
-Z2h0X3Byb3BlcnRpZXMpKTsKPiA+ID4gPiA+ICsJcHJvcHMudHlwZSA9IEJBQ0tMSUdIVF9SQVc7
-Cj4gPiA+ID4gPiArCXByb3BzLm1heF9icmlnaHRuZXNzID0gcHJpdi0+bWF4X2JyaWdodG5lc3M7
-Cj4gPiA+ID4gPiArCXByaXYtPmJsX2RldiA9IGJhY2tsaWdodF9kZXZpY2VfcmVnaXN0ZXIoZGV2
-X25hbWUoJnBkZXYtPmRldiksCj4gPiA+ID4gPiArCQkJJnBkZXYtPmRldiwgcHJpdiwgJmxlZF9i
-bF9vcHMsICZwcm9wcyk7Cj4gPiA+ID4gPiArCWlmIChJU19FUlIocHJpdi0+YmxfZGV2KSkgewo+
-ID4gPiA+ID4gKwkJZGV2X2VycigmcGRldi0+ZGV2LCAiZmFpbGVkIHRvIHJlZ2lzdGVyIGJhY2ts
-aWdodFxuIik7Cj4gPiA+ID4gPiArCQlyZXQgPSBQVFJfRVJSKHByaXYtPmJsX2Rldik7Cj4gPiA+
-ID4gPiArCQlnb3RvIGVycjsKPiA+ID4gPiA+ICsJfQo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gKwlw
-cml2LT5ibF9kZXYtPnByb3BzLmJyaWdodG5lc3MgPSBwcml2LT5kZWZhdWx0X2JyaWdodG5lc3M7
-Cj4gPiA+ID4gPiArCWJhY2tsaWdodF91cGRhdGVfc3RhdHVzKHByaXYtPmJsX2Rldik7Cj4gPiA+
-ID4gPiArCj4gPiA+ID4gPiArCXJldHVybiAwOwo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gK2VycjoK
-PiA+ID4gPiA+ICsKPiA+ID4gPiA+ICsJcmV0dXJuIHJldDsKPiA+ID4gPiA+ICt9Cj4gPiA+ID4g
-PiArCj4gPiA+ID4gPiArc3RhdGljIGludCBsZWRfYmxfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9k
-ZXZpY2UgKnBkZXYpCj4gPiA+ID4gPiArewo+ID4gPiA+ID4gKwlzdHJ1Y3QgbGVkX2JsX2RhdGEg
-KnByaXYgPSBwbGF0Zm9ybV9nZXRfZHJ2ZGF0YShwZGV2KTsKPiA+ID4gPiA+ICsJc3RydWN0IGJh
-Y2tsaWdodF9kZXZpY2UgKmJsID0gcHJpdi0+YmxfZGV2Owo+ID4gPiA+ID4gKwo+ID4gPiA+ID4g
-KwliYWNrbGlnaHRfZGV2aWNlX3VucmVnaXN0ZXIoYmwpOwo+ID4gPiA+ID4gKwo+ID4gPiA+ID4g
-KwlsZWRfYmxfcG93ZXJfb2ZmKHByaXYpOwo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gKwlyZXR1cm4g
-MDsKPiA+ID4gPiA+ICt9Cj4gPiA+ID4gPiArCj4gPiA+ID4gPiArc3RhdGljIGNvbnN0IHN0cnVj
-dCBvZl9kZXZpY2VfaWQgbGVkX2JsX29mX21hdGNoW10gPSB7Cj4gPiA+ID4gPiArCXsgLmNvbXBh
-dGlibGUgPSAibGVkLWJhY2tsaWdodCIgfSwKPiA+ID4gPiA+ICsJeyB9Cj4gPiA+ID4gPiArfTsK
-PiA+ID4gPiA+ICsKPiA+ID4gPiA+ICtNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBsZWRfYmxfb2Zf
-bWF0Y2gpOwo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gK3N0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZHJp
-dmVyIGxlZF9ibF9kcml2ZXIgPSB7Cj4gPiA+ID4gPiArCS5kcml2ZXIJCT0gewo+ID4gPiA+ID4g
-KwkJLm5hbWUJCT0gImxlZC1iYWNrbGlnaHQiLAo+ID4gPiA+ID4gKwkJLm9mX21hdGNoX3RhYmxl
-CT0gb2ZfbWF0Y2hfcHRyKGxlZF9ibF9vZl9tYXRjaCksCj4gPiA+ID4gPiArCX0sCj4gPiA+ID4g
-PiArCS5wcm9iZQkJPSBsZWRfYmxfcHJvYmUsCj4gPiA+ID4gPiArCS5yZW1vdmUJCT0gbGVkX2Js
-X3JlbW92ZSwKPiA+ID4gPiA+ICt9Owo+ID4gPiA+ID4gKwo+ID4gPiA+ID4gK21vZHVsZV9wbGF0
-Zm9ybV9kcml2ZXIobGVkX2JsX2RyaXZlcik7Cj4gPiA+ID4gPiArCj4gPiA+ID4gPiArTU9EVUxF
-X0RFU0NSSVBUSU9OKCJMRUQgYmFzZWQgQmFja2xpZ2h0IERyaXZlciIpOwo+ID4gPiA+ID4gK01P
-RFVMRV9MSUNFTlNFKCJHUEwiKTsKPiA+ID4gPiA+ICtNT0RVTEVfQUxJQVMoInBsYXRmb3JtOmxl
-ZC1iYWNrbGlnaHQiKTsKPiA+ID4gPiA+IC0tIAo+ID4gPiA+ID4gMi4xNy4xCj4gPiA+ID4gPiAK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Daniel,
+
+On 03/07/2019 11:44, Daniel Thompson wrote:
+> On Tue, Jul 02, 2019 at 05:17:21PM +0200, Jean-Jacques Hiblot wrote:
+>> Daniel,
+>>
+>> On 02/07/2019 15:04, Daniel Thompson wrote:
+>>> On Tue, Jul 02, 2019 at 12:59:53PM +0200, Jean-Jacques Hiblot wrote:
+>>>> Hi Daniel,
+>>>>
+>>>> On 02/07/2019 11:54, Daniel Thompson wrote:
+>>>>> On Mon, Jul 01, 2019 at 05:14:22PM +0200, Jean-Jacques Hiblot wrote:
+>>>>>> From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+>>>>>>
+>>>>>> This patch adds a led-backlight driver (led_bl), which is mostly similar to
+>>>>>> pwm_bl except the driver uses a LED class driver to adjust the brightness
+>>>>>> in the HW.
+>>>>>>
+>>>>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+>>>>>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+>>>>>> ---
+>>>>>>     drivers/video/backlight/Kconfig  |   7 +
+>>>>>>     drivers/video/backlight/Makefile |   1 +
+>>>>>>     drivers/video/backlight/led_bl.c | 217 +++++++++++++++++++++++++++++++
+>>>>>>     3 files changed, 225 insertions(+)
+>>>>>>     create mode 100644 drivers/video/backlight/led_bl.c
+>>>>>>
+>>>>>> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+>>>>>> index 8b081d61773e..585a1787618c 100644
+>>>>>> --- a/drivers/video/backlight/Kconfig
+>>>>>> +++ b/drivers/video/backlight/Kconfig
+>>>>>> @@ -458,6 +458,13 @@ config BACKLIGHT_RAVE_SP
+>>>>>>     	help
+>>>>>>     	  Support for backlight control on RAVE SP device.
+>>>>>> +config BACKLIGHT_LED
+>>>>>> +	tristate "Generic LED based Backlight Driver"
+>>>>>> +	depends on LEDS_CLASS && OF
+>>>>>> +	help
+>>>>>> +	  If you have a LCD backlight adjustable by LED class driver, say Y
+>>>>>> +	  to enable this driver.
+>>>>>> +
+>>>>>>     endif # BACKLIGHT_CLASS_DEVICE
+>>>>>>     endmenu
+>>>>>> diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
+>>>>>> index 63c507c07437..2a67642966a5 100644
+>>>>>> --- a/drivers/video/backlight/Makefile
+>>>>>> +++ b/drivers/video/backlight/Makefile
+>>>>>> @@ -57,3 +57,4 @@ obj-$(CONFIG_BACKLIGHT_TPS65217)	+= tps65217_bl.o
+>>>>>>     obj-$(CONFIG_BACKLIGHT_WM831X)		+= wm831x_bl.o
+>>>>>>     obj-$(CONFIG_BACKLIGHT_ARCXCNN) 	+= arcxcnn_bl.o
+>>>>>>     obj-$(CONFIG_BACKLIGHT_RAVE_SP)		+= rave-sp-backlight.o
+>>>>>> +obj-$(CONFIG_BACKLIGHT_LED)		+= led_bl.o
+>>>>>> diff --git a/drivers/video/backlight/led_bl.c b/drivers/video/backlight/led_bl.c
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..e699924cc2bc
+>>>>>> --- /dev/null
+>>>>>> +++ b/drivers/video/backlight/led_bl.c
+>>>>>> @@ -0,0 +1,217 @@
+>>>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>>>> +/*
+>>>>>> + * Copyright (C) 2015-2018 Texas Instruments Incorporated -  http://www.ti.com/
+>>>>>> + * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+>>>>>> + *
+>>>>>> + * Based on pwm_bl.c
+>>>>>> + */
+>>>>>> +
+>>>>>> +#include <linux/backlight.h>
+>>>>>> +#include <linux/gpio/consumer.h>
+>>>>>> +#include <linux/leds.h>
+>>>>>> +#include <linux/module.h>
+>>>>>> +#include <linux/platform_device.h>
+>>>>>> +#include <linux/regulator/consumer.h>
+>>>>>> +#include <linux/slab.h>
+>>>>>> +
+>>>>>> +struct led_bl_data {
+>>>>>> +	struct device		*dev;
+>>>>>> +	struct backlight_device	*bl_dev;
+>>>>>> +
+>>>>>> +	unsigned int		*levels;
+>>>>>> +	bool			enabled;
+>>>>>> +	struct regulator	*power_supply;
+>>>>>> +	struct gpio_desc	*enable_gpio;
+>>>>> For the PWM driver the power_supply and enable_gpio are part of managing
+>>>>> a dumb LED driver device that is downstream of the PWM.
+>>>>>
+>>>>> What is their purpose when we wrap an LED device? Put another why why isn't
+>>>>> the LED device driver responsible for this?
+>>>> This question came up when the patch was first proposed in 2015. Here is the
+>>>> answer from Tomi at the time. It is still relevant.
+>>>>
+>>>> "These are for the backlight, not for the LED chip. So "LED" here is a
+>>>> chip that produces (most likely) a PWM signal, and "backlight" is the
+>>>> collection of components that use the PWM to produce the backlight
+>>>> itself, and use the power-supply and gpios."
+>>> Expanded significantly in the associated thread, right?
+>>> https://patchwork.kernel.org/patch/7293991/
+>>>
+>>> Also still relevant is whether the LED device is being correctly
+>>> modelled if the act of turning on the LED doesn't, in fact, turn the LED
+>>> on. Is it *really* a correct implementation of an LED device that
+>>> setting it to LED_FULL using sysfs doesn't cause it to light up?
+>> What I understood from the discussion between Rob and Tomi is that the
+>> child-node of the LED controller should be considered a backlight device,
+>> not a simple LED. I'm not sure if the sysfs interface is still relevant in
+>> that case. Maybe it should just be disabled by the backlight driver
+>> (possible with led_sysfs_disable())
+> led_sysfs_disable() sounds like a sensible change but that's not quite
+> what I mean.
+>
+> It is more a thought experiment to see if the power control *should* be
+> implemented by the backlight. Consider what happens if we *don't*
+> enable CONFIG_BACKLIGHT_LED in the kernel: we would still have an LED
+> device and it would not work correctly.
+>
+> In other words I naively expect turning on an LED using the LED API
+> (any of them, sysfs or kernel) to result in the LED turning on.
+> Implementing a workaround in the client for what appears to be
+> something missing in the LED driver strikes me as odd. Why shouldn't
+> the regulator be managed in the LED driver?
+
+I see your point. Indeed having the regulator handled in the LED-core 
+makes sense in a lot of situations
+
+I'll think about it.
+
+>
+>
+>>> Actually there is another area where I think an LED backlight should
+>>> perhaps be held to a higher standard than a PWM backlight and that is
+>>> handling backlights composed of multiple LEDs.
+>>>
+>>> Using the TLC591xx examples from the thread above... these are
+>>> multi-channel (8 or 16) LED controllers and I don't think its
+>>> speculative to assume that a backlight could constructed using
+>>> one of these could require multiple LEDs.
+>> In that case, the device-tree model must be quite different.
+>>
+>> Actually the best way to do that is to use the model from Tomi
+>> https://patchwork.kernel.org/patch/7293991/ and modify it to handle more
+>> than one LED
+>> <https://patchwork.kernel.org/patch/7293991/>
+>>
+>> I'm not completely sure that people would start making real backlight this
+>> way though. It is much more probable that the ouput of the led ctrl is
+>> connected to a single control input of a real backlight than to actual LEDs.
+> I'm afraid I don't follow this. If you have a backlight composed of mutliple
+> strings why wouldn't each string be attached directly to the output an of LED
+> driver chip such as the TLC591xx family.
+
+OK. It makes sense.
+
+I'll rework the series in this direction: multiple LED devices handled 
+by one backlight device
+
+Thanks,
+
+JJ
+
+>
+>
+> Daniel.
+>
+>
+>>
+>> JJ
+>>
+>>>
+>>> Daniel.
+>>>
+>>>
+>>>>>> +
+>>>>>> +	struct led_classdev *led_cdev;
+>>>>>> +
+>>>>>> +	unsigned int max_brightness;
+>>>>>> +	unsigned int default_brightness;
+>>>>>> +};
+>>>>>> +
+>>>>>> +static void led_bl_set_brightness(struct led_bl_data *priv, int brightness)
+>>>>>> +{
+>>>>>> +	int err;
+>>>>>> +
+>>>>>> +	if (!priv->enabled) {
+>>>>>> +		err = regulator_enable(priv->power_supply);
+>>>>>> +		if (err < 0)
+>>>>>> +			dev_err(priv->dev, "failed to enable power supply\n");
+>>>>>> +
+>>>>>> +		if (priv->enable_gpio)
+>>>>>> +			gpiod_set_value_cansleep(priv->enable_gpio, 1);
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	led_set_brightness(priv->led_cdev, priv->levels[brightness]);
+>>>>>> +
+>>>>>> +	priv->enabled = true;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static void led_bl_power_off(struct led_bl_data *priv)
+>>>>>> +{
+>>>>>> +	if (!priv->enabled)
+>>>>>> +		return;
+>>>>>> +
+>>>>>> +	led_set_brightness(priv->led_cdev, LED_OFF);
+>>>>>> +
+>>>>>> +	if (priv->enable_gpio)
+>>>>>> +		gpiod_set_value_cansleep(priv->enable_gpio, 0);
+>>>>>> +
+>>>>>> +	regulator_disable(priv->power_supply);
+>>>>>> +
+>>>>>> +	priv->enabled = false;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static int led_bl_update_status(struct backlight_device *bl)
+>>>>>> +{
+>>>>>> +	struct led_bl_data *priv = bl_get_data(bl);
+>>>>>> +	int brightness = bl->props.brightness;
+>>>>>> +
+>>>>>> +	if (bl->props.power != FB_BLANK_UNBLANK ||
+>>>>>> +	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
+>>>>>> +	    bl->props.state & BL_CORE_FBBLANK)
+>>>>>> +		brightness = 0;
+>>>>>> +
+>>>>>> +	if (brightness > 0)
+>>>>>> +		led_bl_set_brightness(priv, brightness);
+>>>>>> +	else
+>>>>>> +		led_bl_power_off(priv);
+>>>>>> +
+>>>>>> +	return 0;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static const struct backlight_ops led_bl_ops = {
+>>>>>> +	.update_status	= led_bl_update_status,
+>>>>>> +};
+>>>>>> +
+>>>>>> +static int led_bl_parse_dt(struct device *dev,
+>>>>>> +			   struct led_bl_data *priv)
+>>>>>> +{
+>>>>>> +	struct device_node *node = dev->of_node;
+>>>>>> +	int num_levels;
+>>>>>> +	u32 *levels;
+>>>>>> +	u32 value;
+>>>>>> +	int ret;
+>>>>>> +
+>>>>>> +	if (!node)
+>>>>>> +		return -ENODEV;
+>>>>>> +
+>>>>>> +	num_levels = of_property_count_u32_elems(node, "brightness-levels");
+>>>>> Is there any reason that this function cannot use the (more generic)
+>>>>> device property API throughout this function?
+>>>> No reason. The code is a bit old, and can do with an update.
+>>>>
+>>>> Are you thinking of of_property_read_u32_array(), or another function ?
+>>>>
+>>>> JJ
+>>>>
+>>>>>
+>>>>> Daniel.
+>>>>>
+>>>>>
+>>>>>> +	if (num_levels < 0)
+>>>>>> +		return num_levels;
+>>>>>> +
+>>>>>> +	levels = devm_kzalloc(dev, sizeof(u32) * num_levels, GFP_KERNEL);
+>>>>>> +	if (!levels)
+>>>>>> +		return -ENOMEM;
+>>>>>> +
+>>>>>> +	ret = of_property_read_u32_array(node, "brightness-levels",
+>>>>>> +					 levels,
+>>>>>> +					 num_levels);
+>>>>>> +	if (ret < 0)
+>>>>>> +		return ret;
+>>>>>> +
+>>>>>> +	ret = of_property_read_u32(node, "default-brightness-level", &value);
+>>>>>> +	if (ret < 0)
+>>>>>> +		return ret;
+>>>>>> +
+>>>>>> +	if (value >= num_levels) {
+>>>>>> +		dev_err(dev, "invalid default-brightness-level\n");
+>>>>>> +		return -EINVAL;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	priv->levels = levels;
+>>>>>> +	priv->max_brightness = num_levels - 1;
+>>>>>> +	priv->default_brightness = value;
+>>>>>> +
+>>>>>> +	return 0;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static int led_bl_probe(struct platform_device *pdev)
+>>>>>> +{
+>>>>>> +	struct backlight_properties props;
+>>>>>> +	struct led_bl_data *priv;
+>>>>>> +	int ret;
+>>>>>> +
+>>>>>> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+>>>>>> +	if (!priv)
+>>>>>> +		return -ENOMEM;
+>>>>>> +
+>>>>>> +	platform_set_drvdata(pdev, priv);
+>>>>>> +
+>>>>>> +	priv->dev = &pdev->dev;
+>>>>>> +	priv->led_cdev = to_led_classdev(pdev->dev.parent);
+>>>>>> +
+>>>>>> +	ret = led_bl_parse_dt(&pdev->dev, priv);
+>>>>>> +	if (ret < 0) {
+>>>>>> +		if (ret != -EPROBE_DEFER)
+>>>>>> +			dev_err(&pdev->dev, "failed to parse DT data\n");
+>>>>>> +		return ret;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	priv->enable_gpio = devm_gpiod_get_optional(&pdev->dev, "enable",
+>>>>>> +			    GPIOD_OUT_LOW);
+>>>>>> +	if (IS_ERR(priv->enable_gpio)) {
+>>>>>> +		ret = PTR_ERR(priv->enable_gpio);
+>>>>>> +		goto err;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	priv->power_supply = devm_regulator_get(&pdev->dev, "power");
+>>>>>> +	if (IS_ERR(priv->power_supply)) {
+>>>>>> +		ret = PTR_ERR(priv->power_supply);
+>>>>>> +		goto err;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	memset(&props, 0, sizeof(struct backlight_properties));
+>>>>>> +	props.type = BACKLIGHT_RAW;
+>>>>>> +	props.max_brightness = priv->max_brightness;
+>>>>>> +	priv->bl_dev = backlight_device_register(dev_name(&pdev->dev),
+>>>>>> +			&pdev->dev, priv, &led_bl_ops, &props);
+>>>>>> +	if (IS_ERR(priv->bl_dev)) {
+>>>>>> +		dev_err(&pdev->dev, "failed to register backlight\n");
+>>>>>> +		ret = PTR_ERR(priv->bl_dev);
+>>>>>> +		goto err;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	priv->bl_dev->props.brightness = priv->default_brightness;
+>>>>>> +	backlight_update_status(priv->bl_dev);
+>>>>>> +
+>>>>>> +	return 0;
+>>>>>> +
+>>>>>> +err:
+>>>>>> +
+>>>>>> +	return ret;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static int led_bl_remove(struct platform_device *pdev)
+>>>>>> +{
+>>>>>> +	struct led_bl_data *priv = platform_get_drvdata(pdev);
+>>>>>> +	struct backlight_device *bl = priv->bl_dev;
+>>>>>> +
+>>>>>> +	backlight_device_unregister(bl);
+>>>>>> +
+>>>>>> +	led_bl_power_off(priv);
+>>>>>> +
+>>>>>> +	return 0;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static const struct of_device_id led_bl_of_match[] = {
+>>>>>> +	{ .compatible = "led-backlight" },
+>>>>>> +	{ }
+>>>>>> +};
+>>>>>> +
+>>>>>> +MODULE_DEVICE_TABLE(of, led_bl_of_match);
+>>>>>> +
+>>>>>> +static struct platform_driver led_bl_driver = {
+>>>>>> +	.driver		= {
+>>>>>> +		.name		= "led-backlight",
+>>>>>> +		.of_match_table	= of_match_ptr(led_bl_of_match),
+>>>>>> +	},
+>>>>>> +	.probe		= led_bl_probe,
+>>>>>> +	.remove		= led_bl_remove,
+>>>>>> +};
+>>>>>> +
+>>>>>> +module_platform_driver(led_bl_driver);
+>>>>>> +
+>>>>>> +MODULE_DESCRIPTION("LED based Backlight Driver");
+>>>>>> +MODULE_LICENSE("GPL");
+>>>>>> +MODULE_ALIAS("platform:led-backlight");
+>>>>>> -- 
+>>>>>> 2.17.1
+>>>>>>
