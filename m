@@ -1,37 +1,34 @@
 From: Joe Perches <joe@perches.com>
-Subject: [PATCH 0/8] treewide: correct misuses of strscpy/strlcpy
-Date: Thu,  4 Jul 2019 16:57:40 -0700
-Message-ID: <cover.1562283944.git.joe@perches.com>
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-nfs@vger.kernel.org
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH 2/8] leds: as3645a: Fix misuse of strlcpy
+Date: Thu,  4 Jul 2019 16:57:42 -0700
+Message-ID: <79fe35321ff794dccf1d08b415cee40636fa5fce.1562283944.git.joe@perches.com>
+References: <cover.1562283944.git.joe@perches.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1562283944.git.joe@perches.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-These are all likely copy/paste defects where the field size of the
-'copied to' array is incorrect.
+Probable cut&paste typo - use the correct field size.
 
-Each patch in this series is independent.
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ drivers/leds/leds-as3645a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Joe Perches (8):
-  Input: synaptics: Fix misuse of strlcpy
-  leds: as3645a: Fix misuse of strlcpy
-  media: m2m-deinterlace: Fix misuse of strscpy
-  media: go7007: Fix misuse of strscpy
-  net: ethernet: sun4i-emac: Fix misuse of strlcpy
-  net: nixge: Fix misuse of strlcpy
-  tty: hvcs: Fix odd use of strlcpy
-  nfsd: Fix misuse of strlcpy
-
- drivers/input/mouse/synaptics.c             | 2 +-
- drivers/leds/leds-as3645a.c                 | 2 +-
- drivers/media/platform/m2m-deinterlace.c    | 2 +-
- drivers/media/usb/go7007/snd-go7007.c       | 2 +-
- drivers/net/ethernet/allwinner/sun4i-emac.c | 4 ++--
- drivers/net/ethernet/ni/nixge.c             | 2 +-
- drivers/tty/hvc/hvcs.c                      | 4 ++--
- fs/nfsd/nfs4idmap.c                         | 2 +-
- 8 files changed, 10 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+index 14ab6b0e4de9..050088dff8dd 100644
+--- a/drivers/leds/leds-as3645a.c
++++ b/drivers/leds/leds-as3645a.c
+@@ -668,7 +668,7 @@ static int as3645a_v4l2_setup(struct as3645a *flash)
+ 	};
+ 
+ 	strlcpy(cfg.dev_name, led->name, sizeof(cfg.dev_name));
+-	strlcpy(cfgind.dev_name, flash->iled_cdev.name, sizeof(cfg.dev_name));
++	strlcpy(cfgind.dev_name, flash->iled_cdev.name, sizeof(cfgind.dev_name));
+ 
+ 	flash->vf = v4l2_flash_init(
+ 		&flash->client->dev, flash->flash_node, &flash->fled, NULL,
 -- 
 2.15.0
