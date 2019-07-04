@@ -1,227 +1,58 @@
-From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 1/2] leds: Add control of the voltage/current regulator to
- the LED core
-Date: Fri, 12 Jul 2019 13:49:21 -0500
-Message-ID: <56d16260-ff82-3439-4c1f-2a3a1552bc7d@ti.com>
-References: <20190708103547.23528-1-jjhiblot@ti.com>
- <20190708103547.23528-2-jjhiblot@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190708103547.23528-2-jjhiblot@ti.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jean-Jacques Hiblot <jjhiblot@ti.com>, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, daniel.thompson@linaro.org
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-List-Id: linux-leds@vger.kernel.org
-
-JJ
-
-On 7/8/19 5:35 AM, Jean-Jacques Hiblot wrote:
-> A LED is usually powered by a voltage/current regulator. Let the LED core
-Let the LED core know
-> about it. This allows the LED core to turn on or off the power supply
-> as needed.
-
->
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-> ---
->   drivers/leds/led-class.c | 10 ++++++++
->   drivers/leds/led-core.c  | 53 +++++++++++++++++++++++++++++++++++++---
->   include/linux/leds.h     |  4 +++
->   3 files changed, 64 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 4793e77808e2..e01b2d982564 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -17,6 +17,7 @@
->   #include <linux/slab.h>
->   #include <linux/spinlock.h>
->   #include <linux/timer.h>
-> +#include <linux/regulator/consumer.h>
-
-What if you move this to leds.h so core and class can both include it.
-
-
->   #include <uapi/linux/uleds.h>
->   #include "leds.h"
->   
-> @@ -272,6 +273,15 @@ int of_led_classdev_register(struct device *parent, struct device_node *np,
->   		dev_warn(parent, "Led %s renamed to %s due to name collision",
->   				led_cdev->name, dev_name(led_cdev->dev));
->   
-> +	led_cdev->regulator = devm_regulator_get(led_cdev->dev, "power");
-
-Is the regulator always going to be called power?
-
-> +	if (IS_ERR(led_cdev->regulator)) {
-> +		dev_err(led_cdev->dev, "Cannot get the power supply for %s\n",
-> +			led_cdev->name);
-> +		device_unregister(led_cdev->dev);
-> +		mutex_unlock(&led_cdev->led_access);
-> +		return PTR_ERR(led_cdev->regulator);
-
-This is listed as optional in the DT doc.  This appears to be required.
-
-I prefer to keep it optional.  Many LED drivers are connected to fixed 
-non-managed supplies.
-
-> +	}
-> +
->   	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
->   		ret = led_add_brightness_hw_changed(led_cdev);
->   		if (ret) {
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index 7107cd7e87cf..139de6b08cad 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -16,6 +16,7 @@
->   #include <linux/rwsem.h>
->   #include <linux/slab.h>
->   #include "leds.h"
-> +#include <linux/regulator/consumer.h>
->   
->   DECLARE_RWSEM(leds_list_lock);
->   EXPORT_SYMBOL_GPL(leds_list_lock);
-> @@ -23,6 +24,31 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
->   LIST_HEAD(leds_list);
->   EXPORT_SYMBOL_GPL(leds_list);
->   
-> +static bool __led_need_regulator_update(struct led_classdev *led_cdev,
-> +					int brightness)
-> +{
-> +	bool new_regulator_state = (brightness != LED_OFF);
-> +
-> +	return led_cdev->regulator_state != new_regulator_state;
-> +}
-> +
-> +static int __led_handle_regulator(struct led_classdev *led_cdev,
-> +				int brightness)
-> +{
-> +	if (__led_need_regulator_update(led_cdev, brightness)) {
-> +		int ret;
-
-Prefer to this to be moved up.
-
-> +
-> +		if (brightness != LED_OFF)
-> +			ret = regulator_enable(led_cdev->regulator);
-> +		else
-> +			ret = regulator_disable(led_cdev->regulator);
-> +		if (ret)
-> +			return ret;
-new line
-> +		led_cdev->regulator_state = (brightness != LED_OFF);
-> +	}
-> +	return 0;
-> +}
-> +
->   static int __led_set_brightness(struct led_classdev *led_cdev,
->   				enum led_brightness value)
->   {
-> @@ -80,6 +106,7 @@ static void led_timer_function(struct timer_list *t)
->   	}
->   
->   	led_set_brightness_nosleep(led_cdev, brightness);
-> +	__led_handle_regulator(led_cdev, brightness);
-
-Again this seems to indicate that the regulator is a required property 
-for the LEDs
-
-This needs to be made optional.  And the same comment through out for 
-every call.
+Return-Path: <SRS0=JjCH=VB=vger.kernel.org=linux-leds-owner@kernel.org>
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+	aws-us-west-2-korg-lkml-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD5CC0651F
+	for <linux-leds@archiver.kernel.org>; Thu,  4 Jul 2019 12:58:49 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 6A4932189E
+	for <linux-leds@archiver.kernel.org>; Thu,  4 Jul 2019 12:58:49 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726994AbfGDM6t convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 4 Jul 2019 08:58:49 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37235 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbfGDM6t (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 4 Jul 2019 08:58:49 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id A70C28068B; Thu,  4 Jul 2019 14:58:36 +0200 (CEST)
+Date:   Thu, 4 Jul 2019 14:58:37 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH] leds: max77650: add MODULE_ALIAS()
+Message-ID: <20190704125837.cdseto3p6ddfsgh6@devuan>
+References: <20190703084738.9501-1-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190703084738.9501-1-brgl@bgdev.pl>
+User-Agent: NeoMutt/20170113 (1.7.2)
+Sender: linux-leds-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-leds.vger.kernel.org>
+X-Mailing-List: linux-leds@vger.kernel.org
+Message-ID: <20190704125837.NEgOsYINXyjk0rSJsQD2J1osRaX6mDHIyewj4iV18oU@z>
 
 
->   
->   	/* Return in next iteration if led is in one-shot mode and we are in
->   	 * the final blink state so that the led is toggled each delay_on +
-> @@ -115,6 +142,8 @@ static void set_brightness_delayed(struct work_struct *ws)
->   	if (ret == -ENOTSUPP)
->   		ret = __led_set_brightness_blocking(led_cdev,
->   					led_cdev->delayed_set_value);
-> +	__led_handle_regulator(led_cdev, led_cdev->delayed_set_value);
-> +
->   	if (ret < 0 &&
->   	    /* LED HW might have been unplugged, therefore don't warn */
->   	    !(ret == -ENODEV && (led_cdev->flags & LED_UNREGISTERING) &&
-> @@ -141,6 +170,7 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
->   	/* never on - just set to off */
->   	if (!delay_on) {
->   		led_set_brightness_nosleep(led_cdev, LED_OFF);
-> +		__led_handle_regulator(led_cdev, LED_OFF);
->   		return;
->   	}
->   
-> @@ -148,6 +178,7 @@ static void led_set_software_blink(struct led_classdev *led_cdev,
->   	if (!delay_off) {
->   		led_set_brightness_nosleep(led_cdev,
->   					   led_cdev->blink_brightness);
-> +		__led_handle_regulator(led_cdev, led_cdev->blink_brightness);
->   		return;
->   	}
->   
-> @@ -256,8 +287,14 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev,
->   			      enum led_brightness value)
->   {
->   	/* Use brightness_set op if available, it is guaranteed not to sleep */
-> -	if (!__led_set_brightness(led_cdev, value))
-> -		return;
-> +	if (!__led_set_brightness(led_cdev, value)) {
-> +		/*
-> +		 * if regulator state doesn't need to be changed, that is all/
-> +		 * Otherwise delegate the change to a work queue
-> +		 */
-> +		if (!__led_need_regulator_update(led_cdev, value))
-> +			return;
-> +	}
->   
->   	/* If brightness setting can sleep, delegate it to a work queue task */
->   	led_cdev->delayed_set_value = value;
-> @@ -280,6 +317,8 @@ EXPORT_SYMBOL_GPL(led_set_brightness_nosleep);
->   int led_set_brightness_sync(struct led_classdev *led_cdev,
->   			    enum led_brightness value)
->   {
-> +	int ret;
-> +
->   	if (led_cdev->blink_delay_on || led_cdev->blink_delay_off)
->   		return -EBUSY;
->   
-> @@ -288,7 +327,15 @@ int led_set_brightness_sync(struct led_classdev *led_cdev,
->   	if (led_cdev->flags & LED_SUSPENDED)
->   		return 0;
->   
-> -	return __led_set_brightness_blocking(led_cdev, led_cdev->brightness);
-> +	ret = __led_set_brightness_blocking(led_cdev, led_cdev->brightness);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = __led_handle_regulator(led_cdev, led_cdev->brightness);
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Define a MODULE_ALIAS() in the LED sub-driver for max77650 so that
+> the appropriate module gets loaded together with the core mfd driver.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Can't you just return here?
-
-Dan
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
->   }
->   EXPORT_SYMBOL_GPL(led_set_brightness_sync);
->   
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 9b2bf574a17a..bee8e3f8dddd 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -123,6 +123,10 @@ struct led_classdev {
->   
->   	/* Ensures consistent access to the LED Flash Class device */
->   	struct mutex		led_access;
-> +
-> +	/* regulator */
-> +	struct regulator	*regulator;
-> +	bool			regulator_state;
->   };
->   
->   extern int of_led_classdev_register(struct device *parent,
+ACK.
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
