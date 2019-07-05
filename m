@@ -2,92 +2,95 @@ Return-Path: <SRS0=dgi5=VC=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4467C4649B
-	for <linux-leds@archiver.kernel.org>; Fri,  5 Jul 2019 11:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 215A2C46499
+	for <linux-leds@archiver.kernel.org>; Fri,  5 Jul 2019 20:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F78321852
-	for <linux-leds@archiver.kernel.org>; Fri,  5 Jul 2019 11:35:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zR9tdtpe"
+	by mail.kernel.org (Postfix) with ESMTP id EB8AF21670
+	for <linux-leds@archiver.kernel.org>; Fri,  5 Jul 2019 20:23:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbfGELfB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 5 Jul 2019 07:35:01 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:35274 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbfGELfB (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 5 Jul 2019 07:35:01 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x65BYpDq096314;
-        Fri, 5 Jul 2019 06:34:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1562326491;
-        bh=blnoL/MWFQnzkGsn5dq36BMBYhm1XiyMPpTo0t1/e6I=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=zR9tdtpeup1SDfhhyN5dDMB3l6l9mjNL7EW1niy+QvfOSHjDcQZoBbenpuod3nXpQ
-         QMhM+CZPY/OzVCgZ/HV7E6kCPvBT3534sIbqKZy58BuGiFjnQvUV9oQsTbZKG4PMVj
-         8Q2m67GBRcn5ljvu3knFGoQd8iwBa+tn9MFOSXYU=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x65BYo8j013814
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 5 Jul 2019 06:34:51 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 5 Jul
- 2019 06:34:50 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 5 Jul 2019 06:34:50 -0500
-Received: from [10.250.97.31] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x65BYmXQ070978;
-        Fri, 5 Jul 2019 06:34:48 -0500
-Subject: Re: [PATCH 0/4] Add a generic driver for LED-based backlight
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     <jacek.anaszewski@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
-        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>,
-        <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <tomi.valkeinen@ti.com>
-References: <20190701151423.30768-1-jjhiblot@ti.com>
- <20190705101434.fw5rpctnqt6dwg6e@devuan>
-From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-Message-ID: <e8f24c10-1d88-139c-d0ee-500473ecbe53@ti.com>
-Date:   Fri, 5 Jul 2019 13:34:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1725813AbfGEUXU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 5 Jul 2019 16:23:20 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37477 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbfGEUXU (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 5 Jul 2019 16:23:20 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 67D6480594; Fri,  5 Jul 2019 22:23:07 +0200 (CEST)
+Date:   Fri, 5 Jul 2019 22:23:17 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Joe Perches <joe@perches.com>
+Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] leds: as3645a: Fix misuse of strlcpy
+Message-ID: <20190705202317.GA5445@amd>
+References: <cover.1562283944.git.joe@perches.com>
+ <79fe35321ff794dccf1d08b415cee40636fa5fce.1562283944.git.joe@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <20190705101434.fw5rpctnqt6dwg6e@devuan>
-Content-Type: text/plain; charset="UTF-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
+Content-Disposition: inline
+In-Reply-To: <79fe35321ff794dccf1d08b415cee40636fa5fce.1562283944.git.joe@perches.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
-Message-ID: <20190705113445.c6qKxLENhqchUkGVqsUFb5q0ySbJ76iKwGeqOuYpx7E@z>
+Message-ID: <20190705202317.CNsP3I-8yf5c1VlrWIt62hMv1vcu18uFiiNX2WO73Zg@z>
 
 
-On 05/07/2019 12:14, Pavel Machek wrote:
-> On Mon 2019-07-01 17:14:19, Jean-Jacques Hiblot wrote:
->>
->> This series takes it from there and implements the binding that was
->> discussed in https://patchwork.kernel.org/patch/7293991/. In this new
->> binding the backlight device is a child of the LED controller instead of
->> being another platform device that uses a phandle to reference a LED.
-> Other option would be to have backlight trigger. What are
-> advantages/disadvantages relative to that?
+--RnlQjJ0d97Da+TV1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I don't know how this would fit in the model where multiple panels are 
-used, each with its own backlight.
+On Thu 2019-07-04 16:57:42, Joe Perches wrote:
+> Probable cut&paste typo - use the correct field size.
+>=20
+> Signed-off-by: Joe Perches <joe@perches.com>
 
-Also the notification is only about blanking.
+Ack.
+									Pavel
+> ---
+>  drivers/leds/leds-as3645a.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+> index 14ab6b0e4de9..050088dff8dd 100644
+> --- a/drivers/leds/leds-as3645a.c
+> +++ b/drivers/leds/leds-as3645a.c
+> @@ -668,7 +668,7 @@ static int as3645a_v4l2_setup(struct as3645a *flash)
+>  	};
+> =20
+>  	strlcpy(cfg.dev_name, led->name, sizeof(cfg.dev_name));
+> -	strlcpy(cfgind.dev_name, flash->iled_cdev.name, sizeof(cfg.dev_name));
+> +	strlcpy(cfgind.dev_name, flash->iled_cdev.name, sizeof(cfgind.dev_name)=
+);
+> =20
+>  	flash->vf =3D v4l2_flash_init(
+>  		&flash->client->dev, flash->flash_node, &flash->fled, NULL,
 
-> 									Pavel
->
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--RnlQjJ0d97Da+TV1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl0fsbUACgkQMOfwapXb+vIanwCguZhbbEab7n2anLambt3YwIU5
+BnkAoLc4SKnIko69xeOf6HmHCL495jOx
+=S9vd
+-----END PGP SIGNATURE-----
+
+--RnlQjJ0d97Da+TV1--
