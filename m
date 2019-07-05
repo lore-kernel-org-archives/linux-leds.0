@@ -1,29 +1,65 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 1/2] leds: tlc591xx: simplify driver by using the managed
- led API
-Date: Fri, 5 Jul 2019 12:17:55 +0200
-Message-ID: <20190705101755.gd36zbjz2p4x3yp6@devuan>
-References: <20190701152602.31716-1-jjhiblot@ti.com>
- <20190701152602.31716-2-jjhiblot@ti.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH 0/4] Add a generic driver for LED-based backlight
+Date: Fri, 5 Jul 2019 11:29:59 +0100
+Message-ID: <20190705102959.cmqhzpzikqjsydlx@holly.lan>
+References: <20190701151423.30768-1-jjhiblot@ti.com>
+ <20190705101434.fw5rpctnqt6dwg6e@devuan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <20190701152602.31716-2-jjhiblot@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Cc: jacek.anaszewski@gmail.com, dmurphy@ti.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, tomi.valkeinen@ti.com
+In-Reply-To: <20190705101434.fw5rpctnqt6dwg6e@devuan>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: mark.rutland@arm.com, jingoohan1@gmail.com, tomi.valkeinen@ti.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, Jean-Jacques Hiblot <jjhiblot@ti.com>, lee.jones@linaro.org, linux-leds@vger.kernel.org, dmurphy@ti.com
 List-Id: linux-leds@vger.kernel.org
 
-On Mon 2019-07-01 17:26:01, Jean-Jacques Hiblot wrote:
-> Use the managed API of the LED class (devm_led_classdev_register()
-> instead of led_classdev_register()).
-> This allows us to remove the code used to track-and-destroy the LED devices
-> 
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-
-ack.
-
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+T24gRnJpLCBKdWwgMDUsIDIwMTkgYXQgMTI6MTQ6MzRQTSArMDIwMCwgUGF2ZWwgTWFjaGVrIHdy
+b3RlOgo+IE9uIE1vbiAyMDE5LTA3LTAxIDE3OjE0OjE5LCBKZWFuLUphY3F1ZXMgSGlibG90IHdy
+b3RlOgo+ID4gVGhpcyBzZXJpZXMgYWltcyB0byBhZGQgYSBsZWQtYmFja2xpZ2h0IGRyaXZlciwg
+c2ltaWxhciB0byBwd20tYmFja2xpZ2h0LAo+ID4gYnV0IHVzaW5nIGEgTEVEIGNsYXNzIGRldmlj
+ZSB1bmRlcm5lYXRoLgo+ID4gCj4gPiBBIGZldyB5ZWFycyBhZ28gKDIwMTUpLCBUb21pIFZhbGtl
+aW5lbiBwb3N0ZWQgYSBzZXJpZXMgaW1wbGVtZW50aW5nIGEKPiA+IGJhY2tsaWdodCBkcml2ZXIg
+b24gdG9wIG9mIGEgTEVEIGRldmljZToKPiA+IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcv
+cGF0Y2gvNzI5Mzk5MS8KPiA+IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvNzI5
+NDAwMS8KPiA+IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvNzI5Mzk4MS8KPiA+
+IAo+ID4gVGhlIGRpc2N1c3Npb24gc3RvcHBlZCBiZWNhdXNlIFRvbWkgbGFja2VkIHRoZSB0aW1l
+IHRvIHdvcmsgb24gaXQuCj4gPiAKPiA+IFRoaXMgc2VyaWVzIHRha2VzIGl0IGZyb20gdGhlcmUg
+YW5kIGltcGxlbWVudHMgdGhlIGJpbmRpbmcgdGhhdCB3YXMKPiA+IGRpc2N1c3NlZCBpbiBodHRw
+czovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzcyOTM5OTEvLiBJbiB0aGlzIG5ldwo+ID4g
+YmluZGluZyB0aGUgYmFja2xpZ2h0IGRldmljZSBpcyBhIGNoaWxkIG9mIHRoZSBMRUQgY29udHJv
+bGxlciBpbnN0ZWFkIG9mCj4gPiBiZWluZyBhbm90aGVyIHBsYXRmb3JtIGRldmljZSB0aGF0IHVz
+ZXMgYSBwaGFuZGxlIHRvIHJlZmVyZW5jZSBhIExFRC4KPiAKPiBPdGhlciBvcHRpb24gd291bGQg
+YmUgdG8gaGF2ZSBiYWNrbGlnaHQgdHJpZ2dlci4gV2hhdCBhcmUKPiBhZHZhbnRhZ2VzL2Rpc2Fk
+dmFudGFnZXMgcmVsYXRpdmUgdG8gdGhhdD8KCkkgc3BlbnQgYSBsaXR0bGUgdGltZSB0aGlua2lu
+ZyBhYm91dCB0aGF0IGR1cmluZyB0aGUgcmVjZW50IHJvdW5kIG9mCnJldmlld3MuCgpNeSByb3Vn
+aCB0aG91Z2h0cyB3ZXJlIHRoYXQgTEVEIHRyaWdnZXJzIHdvdWxkIGJlIGEgZ29vZCB3YXkgdG8K
+aGFuZGxlIGl0IGluIHRoZSBrZXJuZWwgY29kZSBhbmQgd291bGQgdHJpdmlhbGx5IHNvbHZlIGEg
+YmFja2xpZ2h0CmNvbXBvc2VkIG9mIG11bHRpcGxlIExFRCBkZXZpY2VzIChzaW5jZSBhbGwgY291
+bGQgYXR0YWNoIHRvIHRoZSBzYW1lCnRyaWdnZXIpLiBIb3dldmVyIEkgdGhpbmsgaXQgd291bGQg
+YmUgZGlmZmljdWx0IHRvIHVzZSB0aGUgZXhpc3RpbmcgRFQKYmluZGluZ3MgZm9yIHRyaWdnZXJz
+IHRvIGV4cHJlc3MgdGhpbmdzIGxpa2UgYnJpZ2h0bmVzcyBjdXJ2ZXMgYW5kIHRvCmhhbmRsZSBz
+eXN0ZW1zIHdpdGggbXVsdGlwbGUgaGVhZHMuCgpJJ20gbm90ICp0b28qIHdvcnJpZWQgYWJvdXQg
+Y29uZmxpY3Qgd2l0aCB0aGUgZXhpc3RpbmcgYmFja2xpZ2h0IHRyaWdnZXIKKHdoaWNoIGlzbid0
+IGFjdHVhbGx5IGEgYmFja2xpZ2h0Li4uIGp1c3QgYSBob29rIGludG8gdGhlIGZyYW1lYnVmZmVy
+CmNvZGUgdG8gb3BlcmF0ZSBhIGJpbmFyeSBMRUQpLiBQZW9wbGUgbGlrZSBEYW5pZWwgVmV0dGVy
+IGFyZQpsYWJvdXJpbmcgZGlsaWdlbnRseSB0byBnZXQgcmlkIG9mIHRoZSBub3RpZmllciBpdCBk
+ZXBlbmRzIG9uIHNvIHR1cm5pbmcKaXQgaW50byBhIHByb3BlciBiYWNrbGlnaHQgZGV2aWNlIHdv
+dWxkIHByb2JhYmx5IGhlbHAgd2l0aCB0aGF0IGVmZm9ydC4KCkFueWhvdy4uLiBoYXZpbmcgdGhv
+dWdodCB0aGUgYWJvdmUgSSB0aGVuIHNob29rIG15c2VsZiBhIGJpdCBhbmQKZmlndXJlZCBpdCB3
+YXMgbW9yZSBpbXBvcnRhbnQgdG8gZm9jdXMgb24gc2FuZSBiaW5kaW5ncyB0aGF0IG9uIHdoYXQK
+dGhlIGtlcm5lbCBkb2VzIHVuZGVyIHRoZSBjb3ZlcnMgdG8gcmVhbGl6ZSB0aGVtIDstKSBhbmQg
+ZGVjaWRlZCB0byBrZWVwCnF1aWV0IHVudGlsIHRoZSBuZXh0IHNldCBvZiBiaW5kaW5ncyBpcyBw
+cm9wb3NlZC4KCkhvd2V2ZXIuLi4gc2luY2UgeW91IGFza2VkLi4uCgoKCkRhbmllbC4KX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
