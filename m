@@ -2,75 +2,80 @@ Return-Path: <SRS0=dgi5=VC=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB18C0650E
-	for <linux-leds@archiver.kernel.org>; Fri,  5 Jul 2019 00:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2840CC5B57D
+	for <linux-leds@archiver.kernel.org>; Fri,  5 Jul 2019 07:34:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68D2E21738
-	for <linux-leds@archiver.kernel.org>; Fri,  5 Jul 2019 00:06:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE710218BA
+	for <linux-leds@archiver.kernel.org>; Fri,  5 Jul 2019 07:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbfGEAGs (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 4 Jul 2019 20:06:48 -0400
-Received: from smtprelay0187.hostedemail.com ([216.40.44.187]:37672 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727313AbfGEAGs (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 4 Jul 2019 20:06:48 -0400
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave02.hostedemail.com (Postfix) with ESMTP id 796F4180002F8
-        for <linux-leds@vger.kernel.org>; Thu,  4 Jul 2019 23:57:57 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 2C144181D33FB;
-        Thu,  4 Jul 2019 23:57:56 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: dress39_62395d273d11f
-X-Filterd-Recvd-Size: 1588
-Received: from joe-laptop.perches.com (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf14.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  4 Jul 2019 23:57:54 +0000 (UTC)
-From:   Joe Perches <joe@perches.com>
-To:     Sakari Ailus <sakari.ailus@iki.fi>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/8] leds: as3645a: Fix misuse of strlcpy
-Date:   Thu,  4 Jul 2019 16:57:42 -0700
-Message-Id:
- <79fe35321ff794dccf1d08b415cee40636fa5fce.1562283944.git.joe@perches.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <cover.1562283944.git.joe@perches.com>
+        id S1727722AbfGEHeJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 5 Jul 2019 03:34:09 -0400
+Received: from retiisi.org.uk ([95.216.213.190]:53892 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725862AbfGEHeJ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 5 Jul 2019 03:34:09 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id A7F8E634C7F;
+        Fri,  5 Jul 2019 10:33:23 +0300 (EEST)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1hjIig-0001if-VQ; Fri, 05 Jul 2019 10:33:22 +0300
+Date:   Fri, 5 Jul 2019 10:33:22 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Joe Perches <joe@perches.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] leds: as3645a: Fix misuse of strlcpy
+Message-ID: <20190705073322.wee52ttghxm2vczn@valkosipuli.retiisi.org.uk>
 References: <cover.1562283944.git.joe@perches.com>
+ <79fe35321ff794dccf1d08b415cee40636fa5fce.1562283944.git.joe@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+In-Reply-To: <79fe35321ff794dccf1d08b415cee40636fa5fce.1562283944.git.joe@perches.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Message-ID: <20190704235742.vqoou4njIVkQDkpob02nfh-E_gpfK_hwkLNKYx-tI1Q@z>
+Message-ID: <20190705073322.QqwgZqCOjuLm9jpWOojNAUQVpr4aUx9R5B4k9dMs_Fg@z>
 
-Probable cut&paste typo - use the correct field size.
+On Thu, Jul 04, 2019 at 04:57:42PM -0700, Joe Perches wrote:
+> Probable cut&paste typo - use the correct field size.
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- drivers/leds/leds-as3645a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks, Joe!
 
-diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-index 14ab6b0e4de9..050088dff8dd 100644
---- a/drivers/leds/leds-as3645a.c
-+++ b/drivers/leds/leds-as3645a.c
-@@ -668,7 +668,7 @@ static int as3645a_v4l2_setup(struct as3645a *flash)
- 	};
- 
- 	strlcpy(cfg.dev_name, led->name, sizeof(cfg.dev_name));
--	strlcpy(cfgind.dev_name, flash->iled_cdev.name, sizeof(cfg.dev_name));
-+	strlcpy(cfgind.dev_name, flash->iled_cdev.name, sizeof(cfgind.dev_name));
- 
- 	flash->vf = v4l2_flash_init(
- 		&flash->client->dev, flash->flash_node, &flash->fled, NULL,
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+> ---
+>  drivers/leds/leds-as3645a.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+> index 14ab6b0e4de9..050088dff8dd 100644
+> --- a/drivers/leds/leds-as3645a.c
+> +++ b/drivers/leds/leds-as3645a.c
+> @@ -668,7 +668,7 @@ static int as3645a_v4l2_setup(struct as3645a *flash)
+>  	};
+>  
+>  	strlcpy(cfg.dev_name, led->name, sizeof(cfg.dev_name));
+> -	strlcpy(cfgind.dev_name, flash->iled_cdev.name, sizeof(cfg.dev_name));
+> +	strlcpy(cfgind.dev_name, flash->iled_cdev.name, sizeof(cfgind.dev_name));
+>  
+>  	flash->vf = v4l2_flash_init(
+>  		&flash->client->dev, flash->flash_node, &flash->fled, NULL,
+
 -- 
-2.15.0
+Kind regards,
 
+Sakari Ailus
