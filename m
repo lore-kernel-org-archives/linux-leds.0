@@ -1,40 +1,67 @@
-From: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: Re: [PATCH 0/4] Add a generic driver for LED-based backlight
-Date: Fri, 5 Jul 2019 13:34:45 +0200
-Message-ID: <e8f24c10-1d88-139c-d0ee-500473ecbe53@ti.com>
-References: <20190701151423.30768-1-jjhiblot@ti.com>
- <20190705101434.fw5rpctnqt6dwg6e@devuan>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 2/8] leds: as3645a: Fix misuse of strlcpy
+Date: Fri, 5 Jul 2019 22:23:17 +0200
+Message-ID: <20190705202317.GA5445@amd>
+References: <cover.1562283944.git.joe@perches.com>
+ <79fe35321ff794dccf1d08b415cee40636fa5fce.1562283944.git.joe@perches.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190705101434.fw5rpctnqt6dwg6e@devuan>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: mark.rutland@arm.com, daniel.thompson@linaro.org, jingoohan1@gmail.com, tomi.valkeinen@ti.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, dmurphy@ti.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <79fe35321ff794dccf1d08b415cee40636fa5fce.1562283944.git.joe@perches.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: Sakari Ailus <sakari.ailus@iki.fi>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-Ck9uIDA1LzA3LzIwMTkgMTI6MTQsIFBhdmVsIE1hY2hlayB3cm90ZToKPiBPbiBNb24gMjAxOS0w
-Ny0wMSAxNzoxNDoxOSwgSmVhbi1KYWNxdWVzIEhpYmxvdCB3cm90ZToKPj4KPj4gVGhpcyBzZXJp
-ZXMgdGFrZXMgaXQgZnJvbSB0aGVyZSBhbmQgaW1wbGVtZW50cyB0aGUgYmluZGluZyB0aGF0IHdh
-cwo+PiBkaXNjdXNzZWQgaW4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC83Mjkz
-OTkxLy4gSW4gdGhpcyBuZXcKPj4gYmluZGluZyB0aGUgYmFja2xpZ2h0IGRldmljZSBpcyBhIGNo
-aWxkIG9mIHRoZSBMRUQgY29udHJvbGxlciBpbnN0ZWFkIG9mCj4+IGJlaW5nIGFub3RoZXIgcGxh
-dGZvcm0gZGV2aWNlIHRoYXQgdXNlcyBhIHBoYW5kbGUgdG8gcmVmZXJlbmNlIGEgTEVELgo+IE90
-aGVyIG9wdGlvbiB3b3VsZCBiZSB0byBoYXZlIGJhY2tsaWdodCB0cmlnZ2VyLiBXaGF0IGFyZQo+
-IGFkdmFudGFnZXMvZGlzYWR2YW50YWdlcyByZWxhdGl2ZSB0byB0aGF0PwoKSSBkb24ndCBrbm93
-IGhvdyB0aGlzIHdvdWxkIGZpdCBpbiB0aGUgbW9kZWwgd2hlcmUgbXVsdGlwbGUgcGFuZWxzIGFy
-ZSAKdXNlZCwgZWFjaCB3aXRoIGl0cyBvd24gYmFja2xpZ2h0LgoKQWxzbyB0aGUgbm90aWZpY2F0
-aW9uIGlzIG9ubHkgYWJvdXQgYmxhbmtpbmcuCgo+IAkJCQkJCQkJCVBhdmVsCj4KX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+
+--RnlQjJ0d97Da+TV1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu 2019-07-04 16:57:42, Joe Perches wrote:
+> Probable cut&paste typo - use the correct field size.
+>=20
+> Signed-off-by: Joe Perches <joe@perches.com>
+
+Ack.
+									Pavel
+> ---
+>  drivers/leds/leds-as3645a.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+> index 14ab6b0e4de9..050088dff8dd 100644
+> --- a/drivers/leds/leds-as3645a.c
+> +++ b/drivers/leds/leds-as3645a.c
+> @@ -668,7 +668,7 @@ static int as3645a_v4l2_setup(struct as3645a *flash)
+>  	};
+> =20
+>  	strlcpy(cfg.dev_name, led->name, sizeof(cfg.dev_name));
+> -	strlcpy(cfgind.dev_name, flash->iled_cdev.name, sizeof(cfg.dev_name));
+> +	strlcpy(cfgind.dev_name, flash->iled_cdev.name, sizeof(cfgind.dev_name)=
+);
+> =20
+>  	flash->vf =3D v4l2_flash_init(
+>  		&flash->client->dev, flash->flash_node, &flash->fled, NULL,
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--RnlQjJ0d97Da+TV1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl0fsbUACgkQMOfwapXb+vIanwCguZhbbEab7n2anLambt3YwIU5
+BnkAoLc4SKnIko69xeOf6HmHCL495jOx
+=S9vd
+-----END PGP SIGNATURE-----
+
+--RnlQjJ0d97Da+TV1--
