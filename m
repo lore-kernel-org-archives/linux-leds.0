@@ -2,64 +2,67 @@ Return-Path: <SRS0=dgi5=VC=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA45C46499
-	for <linux-leds@archiver.kernel.org>; Fri,  5 Jul 2019 10:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B96C46499
+	for <linux-leds@archiver.kernel.org>; Fri,  5 Jul 2019 10:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D3B8218D3
-	for <linux-leds@archiver.kernel.org>; Fri,  5 Jul 2019 10:12:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7448D2083B
+	for <linux-leds@archiver.kernel.org>; Fri,  5 Jul 2019 10:14:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728335AbfGEKMC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 5 Jul 2019 06:12:02 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47208 "EHLO
+        id S1726005AbfGEKOm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 5 Jul 2019 06:14:42 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47303 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfGEKMB (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 5 Jul 2019 06:12:01 -0400
+        with ESMTP id S1727225AbfGEKOm (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 5 Jul 2019 06:14:42 -0400
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9E1CA80601; Fri,  5 Jul 2019 12:11:48 +0200 (CEST)
-Date:   Fri, 5 Jul 2019 12:11:51 +0200
+        id BECCC8022F; Fri,  5 Jul 2019 12:14:29 +0200 (CEST)
+Date:   Fri, 5 Jul 2019 12:14:34 +0200
 From:   Pavel Machek <pavel@ucw.cz>
 To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
 Cc:     jacek.anaszewski@gmail.com, robh+dt@kernel.org,
         mark.rutland@arm.com, lee.jones@linaro.org,
         daniel.thompson@linaro.org, jingoohan1@gmail.com, dmurphy@ti.com,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 4/4] devicetree: Add led-backlight binding
-Message-ID: <20190705101151.kmyvccbjitfqe4fv@devuan>
+        dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com
+Subject: Re: [PATCH 0/4] Add a generic driver for LED-based backlight
+Message-ID: <20190705101434.fw5rpctnqt6dwg6e@devuan>
 References: <20190701151423.30768-1-jjhiblot@ti.com>
- <20190701151423.30768-5-jjhiblot@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20190701151423.30768-5-jjhiblot@ti.com>
+In-Reply-To: <20190701151423.30768-1-jjhiblot@ti.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
-Message-ID: <20190705101151.u9HhezV6cpdnwyP6Pb8NRhOMOlR1fuCa7HiMjQAFYxU@z>
+Message-ID: <20190705101434.zOa0E5GtgklFWcNsdCIhRxgc2d8BPEfztbmJVM1kcTw@z>
 
-Hi!
-
-> Add DT binding for led-backlight.
+On Mon 2019-07-01 17:14:19, Jean-Jacques Hiblot wrote:
+> This series aims to add a led-backlight driver, similar to pwm-backlight,
+> but using a LED class device underneath.
 > 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-> Cc: devicetree@vger.kernel.org
-> ---
+> A few years ago (2015), Tomi Valkeinen posted a series implementing a
+> backlight driver on top of a LED device:
+> https://patchwork.kernel.org/patch/7293991/
+> https://patchwork.kernel.org/patch/7294001/
+> https://patchwork.kernel.org/patch/7293981/
+> 
+> The discussion stopped because Tomi lacked the time to work on it.
+> 
+> This series takes it from there and implements the binding that was
+> discussed in https://patchwork.kernel.org/patch/7293991/. In this new
+> binding the backlight device is a child of the LED controller instead of
+> being another platform device that uses a phandle to reference a LED.
 
-> +Required properties:
-> +  - compatible: "led-backlight"
-> +  - brightness-levels: Array of distinct LED brightness levels. These
-> +      are in the range from 0 to 255, passed to the LED class driver.
-
-These days, we support more (or less) than 256 brightness levels for LED.
+Other option would be to have backlight trigger. What are
+advantages/disadvantages relative to that?
 									Pavel
+
 -- 
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
