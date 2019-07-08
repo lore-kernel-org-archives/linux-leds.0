@@ -1,69 +1,152 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Subject: Re: [PATCH v2 3/4] dt-bindings: backlight: Add led-backlight binding
-Date: Mon, 8 Jul 2019 11:50:26 +0100
-Message-ID: <20190708105026.jfl4krv2veb7gzow@holly.lan>
-References: <20190708102700.23138-1-jjhiblot@ti.com>
- <20190708102700.23138-4-jjhiblot@ti.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v2 1/2] leds: tlc591xx: simplify driver by using the
+ managed led API
+Date: Mon, 8 Jul 2019 13:08:09 -0500
+Message-ID: <127551c1-d642-0603-f2f2-6fd4cc43bb93@ti.com>
+References: <20190708100620.22388-1-jjhiblot@ti.com>
+ <20190708100620.22388-2-jjhiblot@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190708102700.23138-4-jjhiblot@ti.com>
+In-Reply-To: <20190708100620.22388-2-jjhiblot@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Cc: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, lee.jones@linaro.org, jingoohan1@gmail.com, dmurphy@ti.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com
+To: Jean-Jacques Hiblot <jjhiblot@ti.com>, jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, tomi.valkeinen@ti.com
 List-Id: linux-leds@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 12:26:59PM +0200, Jean-Jacques Hiblot wrote:
-> Add DT binding for led-backlight.
-> 
+JJ
+
+On 7/8/19 5:06 AM, Jean-Jacques Hiblot wrote:
+> Use the managed API of the LED class (devm_led_classdev_register()
+> instead of led_classdev_register()).
+> This allows us to remove the code used to track-and-destroy the LED devices
+
+What changed from v1?
+
+I don't see any changes especially the bounds on the reg property.
+
+Dan
+
+
 > Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
 > ---
->  .../bindings/leds/backlight/led-backlight.txt | 29 +++++++++++++++++++
->  1 file changed, 29 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/led-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
-> new file mode 100644
-> index 000000000000..4f545316b288
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
-> @@ -0,0 +1,29 @@
-> +led-backlight bindings
+>   drivers/leds/leds-tlc591xx.c | 79 +++++++++---------------------------
+>   1 file changed, 20 insertions(+), 59 deletions(-)
+>
+> diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+> index 59ff088c7d75..3d5a4b92f016 100644
+> --- a/drivers/leds/leds-tlc591xx.c
+> +++ b/drivers/leds/leds-tlc591xx.c
+> @@ -128,51 +128,6 @@ tlc591xx_brightness_set(struct led_classdev *led_cdev,
+>   	return err;
+>   }
+>   
+> -static void
+> -tlc591xx_destroy_devices(struct tlc591xx_priv *priv, unsigned int j)
+> -{
+> -	int i = j;
+> -
+> -	while (--i >= 0) {
+> -		if (priv->leds[i].active)
+> -			led_classdev_unregister(&priv->leds[i].ldev);
+> -	}
+> -}
+> -
+> -static int
+> -tlc591xx_configure(struct device *dev,
+> -		   struct tlc591xx_priv *priv,
+> -		   const struct tlc591xx *tlc591xx)
+> -{
+> -	unsigned int i;
+> -	int err = 0;
+> -
+> -	tlc591xx_set_mode(priv->regmap, MODE2_DIM);
+> -	for (i = 0; i < TLC591XX_MAX_LEDS; i++) {
+> -		struct tlc591xx_led *led = &priv->leds[i];
+> -
+> -		if (!led->active)
+> -			continue;
+> -
+> -		led->priv = priv;
+> -		led->led_no = i;
+> -		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
+> -		led->ldev.max_brightness = LED_FULL;
+> -		err = led_classdev_register(dev, &led->ldev);
+> -		if (err < 0) {
+> -			dev_err(dev, "couldn't register LED %s\n",
+> -				led->ldev.name);
+> -			goto exit;
+> -		}
+> -	}
+> -
+> -	return 0;
+> -
+> -exit:
+> -	tlc591xx_destroy_devices(priv, i);
+> -	return err;
+> -}
+> -
+>   static const struct regmap_config tlc591xx_regmap = {
+>   	.reg_bits = 8,
+>   	.val_bits = 8,
+> @@ -225,7 +180,11 @@ tlc591xx_probe(struct i2c_client *client,
+>   
+>   	i2c_set_clientdata(client, priv);
+>   
+> +	tlc591xx_set_mode(priv->regmap, MODE2_DIM);
 > +
-> +This binding is used to describe a basic backlight device made of LEDs.
-> +It can also be used to describe a backlight device controlled by the output of
-> +a LED driver.
+>   	for_each_child_of_node(np, child) {
+> +		struct tlc591xx_led *led;
 > +
-> +Required properties:
-> +  - compatible: "led-backlight"
-> +  - leds: a list of LEDs
+>   		err = of_property_read_u32(child, "reg", &reg);
+>   		if (err) {
+>   			of_node_put(child);
+> @@ -236,22 +195,25 @@ tlc591xx_probe(struct i2c_client *client,
+>   			of_node_put(child);
+>   			return -EINVAL;
+>   		}
+> -		priv->leds[reg].active = true;
+> -		priv->leds[reg].ldev.name =
+> +		led = &priv->leds[reg];
 > +
-> +Optional properties:
-> +  - brightness-levels: Array of distinct brightness levels. These
-> +                       are in the range from 0 to 255. The actual brightness
-> +                       level programmed in each LED will be adjusted based on
-> +                       its maximum brightness:
-> +                       led brightness = (level * maximum brightness) / 255
-
-8-bits is a narrow range and likely to make animated backlight effects
-impossible because the stepping artefacts would be too obvious.
-
-I'd rather see the brightness-levels table expressed in the native
-steps of the LEDs in the leds list.
-
-I know this means that the LEDs must have identical ranges but I think
-it is OK. A backlight design whose LEDs are connected to non-identical
-drivers is either badly broken or sufficiently exotic to need to special
-purpose driver. The driver can therefore fail to probe if the LEDs are
-mismatched.
-
-> +
-> +  - default-brightness-level: The default brightness level (index into the
-> +                              array defined by the "brightness-levels" property).
-
-The brightness-levels property is optional... this text needs to be
-updated.
-
-
-Daniel.
+> +		led->active = true;
+> +		led->ldev.name =
+>   			of_get_property(child, "label", NULL) ? : child->name;
+> -		priv->leds[reg].ldev.default_trigger =
+> +		led->ldev.default_trigger =
+>   			of_get_property(child, "linux,default-trigger", NULL);
+> -	}
+> -	return tlc591xx_configure(dev, priv, tlc591xx);
+> -}
+> -
+> -static int
+> -tlc591xx_remove(struct i2c_client *client)
+> -{
+> -	struct tlc591xx_priv *priv = i2c_get_clientdata(client);
+> -
+> -	tlc591xx_destroy_devices(priv, TLC591XX_MAX_LEDS);
+>   
+> +		led->priv = priv;
+> +		led->led_no = reg;
+> +		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
+> +		led->ldev.max_brightness = LED_FULL;
+> +		err = devm_led_classdev_register(dev, &led->ldev);
+> +		if (err < 0) {
+> +			dev_err(dev, "couldn't register LED %s\n",
+> +				led->ldev.name);
+> +			return err;
+> +		}
+> +	}
+>   	return 0;
+>   }
+>   
+> @@ -268,7 +230,6 @@ static struct i2c_driver tlc591xx_driver = {
+>   		.of_match_table = of_match_ptr(of_tlc591xx_leds_match),
+>   	},
+>   	.probe = tlc591xx_probe,
+> -	.remove = tlc591xx_remove,
+>   	.id_table = tlc591xx_id,
+>   };
+>   
