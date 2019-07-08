@@ -2,63 +2,60 @@ Return-Path: <SRS0=V8yO=VF=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89553C606A7
-	for <linux-leds@archiver.kernel.org>; Mon,  8 Jul 2019 10:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60525C606AA
+	for <linux-leds@archiver.kernel.org>; Mon,  8 Jul 2019 10:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62B4520656
-	for <linux-leds@archiver.kernel.org>; Mon,  8 Jul 2019 10:27:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33DAC20656
+	for <linux-leds@archiver.kernel.org>; Mon,  8 Jul 2019 10:36:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rzCV+8qb"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hIpfqc3r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730078AbfGHK1c (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 8 Jul 2019 06:27:32 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:57174 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729360AbfGHK1S (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 8 Jul 2019 06:27:18 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x68ARA5C041885;
-        Mon, 8 Jul 2019 05:27:10 -0500
+        id S1727899AbfGHKgD (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 8 Jul 2019 06:36:03 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:57824 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfGHKgD (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 8 Jul 2019 06:36:03 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x68AZuJX003329;
+        Mon, 8 Jul 2019 05:35:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1562581630;
-        bh=ItirwO8erJEYpB2ZQfeB1f9//VYKLfEYE9vUyXsRw94=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=rzCV+8qb6tT+XQFnBxYkqKRu5ioTGUuoZo+fLVFgaj3Ur0V2PNb2lsCjKlEpCQf43
-         a2SKqGFo0uMCkT41mL7ltLHS66jhCKu47cNWhgjfUexCpCYYsymf/kp+ZlME/UPoCe
-         KoZ4Pb+J02tmNRiaXbJGBHOCg7qmyM34Chigmu+c=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x68ARAkR112018
+        s=ti-com-17Q1; t=1562582156;
+        bh=S2OagN/TyZ2TEiU3bu+SsPIK5XLysRm1306Fh61l0tQ=;
+        h=From:To:CC:Subject:Date;
+        b=hIpfqc3rSqrumuVG4rOSVS7bDA16icSG233TMLoMFUhWladJnI8goiauwYhBpNgcA
+         8ka3sKn6diiv7CfxmZI3kCf34sa6d/yQsJkTn/jtr4/Qfrj5yPuVfH1KlvuFdOysxA
+         uQkPuTKXXHaLrgkjpiOXqGbG57BKTkJjz0KXHUvE=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x68AZu2p020896
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 8 Jul 2019 05:27:10 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 8 Jul 2019 05:35:56 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 8 Jul
- 2019 05:27:09 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 05:35:56 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 8 Jul 2019 05:27:09 -0500
+ Frontend Transport; Mon, 8 Jul 2019 05:35:56 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x68AR8MN074669;
-        Mon, 8 Jul 2019 05:27:09 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x68AZtrb040273;
+        Mon, 8 Jul 2019 05:35:55 -0500
 From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
-        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>
+        <mark.rutland@arm.com>, <daniel.thompson@linaro.org>
 CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <tomi.valkeinen@ti.com>, Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v2 2/4] leds: Add managed API to get a LED from a device driver
-Date:   Mon, 8 Jul 2019 12:26:58 +0200
-Message-ID: <20190708102700.23138-3-jjhiblot@ti.com>
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@ti.com>
+Subject: [PATCH 0/2] leds: Add control of the voltage/current regulator to the LED core
+Date:   Mon, 8 Jul 2019 12:35:45 +0200
+Message-ID: <20190708103547.23528-1-jjhiblot@ti.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190708102700.23138-1-jjhiblot@ti.com>
-References: <20190708102700.23138-1-jjhiblot@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -66,83 +63,24 @@ Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
-Message-ID: <20190708102658.yVfhTe2efPHyrxDAJkSmL-peeykk5QdlNCJ-HQGiKxE@z>
+Message-ID: <20190708103545.25ClVwyABquqhtybefmCZi3ATlw_4_tb6Fr1pvziM10@z>
 
-If the LED is acquired by a consumer device with devm_led_get(), it is
-automatically release when the device is detach.
+This series makes it possible for the LED core to manage the power supply
+of a LED. It uses the regulator API to disable/enable the power if when the
+LED is turned on/off.
+This is especially useful in situations where the LED driver/controller is
+not supplying the power.
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
----
- drivers/leds/led-class.c | 42 ++++++++++++++++++++++++++++++++++++++++
- include/linux/leds.h     |  2 ++
- 2 files changed, 44 insertions(+)
+Jean-Jacques Hiblot (2):
+  leds: Add control of the voltage/current regulator to the LED core
+  dt-bindings: leds: document new "power-supply" property
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 0f67b13b0f1f..521cb76fbaf7 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -264,6 +264,48 @@ void led_put(struct led_classdev *led_cdev)
- }
- EXPORT_SYMBOL_GPL(led_put);
- 
-+static void devm_led_release(struct device *dev, void *res)
-+{
-+	struct led_classdev **p = res;
-+
-+	led_put(*p);
-+}
-+
-+/**
-+ * devm_led_get - Resource-managed request of a LED device
-+ * @dev:	LED consumer
-+ * @idx:	index of the LED to obtain in the consumer
-+ *
-+ * The device node of the device is parse to find the request LED device.
-+ * The LED device returned from this function is automatically released
-+ * on driver detach.
-+ *
-+ * @return a pointer to a LED device or ERR_PTR(errno) on failure.
-+ */
-+struct led_classdev *__must_check devm_led_get(struct device *dev,
-+					       int index)
-+{
-+	struct led_classdev *led;
-+	struct led_classdev **dr;
-+
-+	led = of_led_get(dev->of_node, index);
-+	if (IS_ERR(led))
-+		return led;
-+
-+	dr = devres_alloc(devm_led_release, sizeof(struct led_classdev *),
-+			  GFP_KERNEL);
-+	if (!dr) {
-+		led_put(led);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	*dr = led;
-+	devres_add(dev, dr);
-+
-+	return led;
-+}
-+EXPORT_SYMBOL_GPL(devm_led_get);
-+
- static int match_name(struct device *dev, const void *data)
- {
- 	if (!dev_name(dev))
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 0a71c7cdd191..7fcec566d774 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -148,6 +148,8 @@ extern void led_classdev_resume(struct led_classdev *led_cdev);
- 
- extern struct led_classdev *of_led_get(struct device_node *np, int index);
- extern void led_put(struct led_classdev *led_cdev);
-+struct led_classdev *__must_check devm_led_get(struct device *dev,
-+					       int index);
- 
- /**
-  * led_blink_set - set blinking with software fallback
+ .../devicetree/bindings/leds/common.txt       |  5 ++
+ drivers/leds/led-class.c                      | 10 ++++
+ drivers/leds/led-core.c                       | 53 +++++++++++++++++--
+ include/linux/leds.h                          |  4 ++
+ 4 files changed, 69 insertions(+), 3 deletions(-)
+
 -- 
 2.17.1
 
