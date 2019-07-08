@@ -1,152 +1,80 @@
 From: Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v2 1/2] leds: tlc591xx: simplify driver by using the
- managed led API
-Date: Mon, 8 Jul 2019 13:08:09 -0500
-Message-ID: <127551c1-d642-0603-f2f2-6fd4cc43bb93@ti.com>
-References: <20190708100620.22388-1-jjhiblot@ti.com>
- <20190708100620.22388-2-jjhiblot@ti.com>
+Subject: Re: [PATCH 1/2] dt-bindings: backlight: fix vendor prefix for
+ ArcticSand arcxcnn driver bindings
+Date: Mon, 8 Jul 2019 13:02:09 -0500
+Message-ID: <f2cf7c51-4857-30bd-a096-b1ce5ff01bd5@ti.com>
+References: <1561940895-15837-1-git-send-email-bdodge09@gmail.com>
+ <1561940895-15837-2-git-send-email-bdodge09@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190708100620.22388-2-jjhiblot@ti.com>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1561940895-15837-2-git-send-email-bdodge09@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jean-Jacques Hiblot <jjhiblot@ti.com>, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, tomi.valkeinen@ti.com
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Brian Dodge <bdodge09@gmail.com>, pavel@ucw.cz
+Cc: devicetree@vger.kernel.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pbacon@psemi.com, lee.jones@linaro.org, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-JJ
-
-On 7/8/19 5:06 AM, Jean-Jacques Hiblot wrote:
-> Use the managed API of the LED class (devm_led_classdev_register()
-> instead of led_classdev_register()).
-> This allows us to remove the code used to track-and-destroy the LED devices
-
-What changed from v1?
-
-I don't see any changes especially the bounds on the reg property.
-
-Dan
-
-
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-> ---
->   drivers/leds/leds-tlc591xx.c | 79 +++++++++---------------------------
->   1 file changed, 20 insertions(+), 59 deletions(-)
->
-> diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
-> index 59ff088c7d75..3d5a4b92f016 100644
-> --- a/drivers/leds/leds-tlc591xx.c
-> +++ b/drivers/leds/leds-tlc591xx.c
-> @@ -128,51 +128,6 @@ tlc591xx_brightness_set(struct led_classdev *led_cdev,
->   	return err;
->   }
->   
-> -static void
-> -tlc591xx_destroy_devices(struct tlc591xx_priv *priv, unsigned int j)
-> -{
-> -	int i = j;
-> -
-> -	while (--i >= 0) {
-> -		if (priv->leds[i].active)
-> -			led_classdev_unregister(&priv->leds[i].ldev);
-> -	}
-> -}
-> -
-> -static int
-> -tlc591xx_configure(struct device *dev,
-> -		   struct tlc591xx_priv *priv,
-> -		   const struct tlc591xx *tlc591xx)
-> -{
-> -	unsigned int i;
-> -	int err = 0;
-> -
-> -	tlc591xx_set_mode(priv->regmap, MODE2_DIM);
-> -	for (i = 0; i < TLC591XX_MAX_LEDS; i++) {
-> -		struct tlc591xx_led *led = &priv->leds[i];
-> -
-> -		if (!led->active)
-> -			continue;
-> -
-> -		led->priv = priv;
-> -		led->led_no = i;
-> -		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
-> -		led->ldev.max_brightness = LED_FULL;
-> -		err = led_classdev_register(dev, &led->ldev);
-> -		if (err < 0) {
-> -			dev_err(dev, "couldn't register LED %s\n",
-> -				led->ldev.name);
-> -			goto exit;
-> -		}
-> -	}
-> -
-> -	return 0;
-> -
-> -exit:
-> -	tlc591xx_destroy_devices(priv, i);
-> -	return err;
-> -}
-> -
->   static const struct regmap_config tlc591xx_regmap = {
->   	.reg_bits = 8,
->   	.val_bits = 8,
-> @@ -225,7 +180,11 @@ tlc591xx_probe(struct i2c_client *client,
->   
->   	i2c_set_clientdata(client, priv);
->   
-> +	tlc591xx_set_mode(priv->regmap, MODE2_DIM);
-> +
->   	for_each_child_of_node(np, child) {
-> +		struct tlc591xx_led *led;
-> +
->   		err = of_property_read_u32(child, "reg", &reg);
->   		if (err) {
->   			of_node_put(child);
-> @@ -236,22 +195,25 @@ tlc591xx_probe(struct i2c_client *client,
->   			of_node_put(child);
->   			return -EINVAL;
->   		}
-> -		priv->leds[reg].active = true;
-> -		priv->leds[reg].ldev.name =
-> +		led = &priv->leds[reg];
-> +
-> +		led->active = true;
-> +		led->ldev.name =
->   			of_get_property(child, "label", NULL) ? : child->name;
-> -		priv->leds[reg].ldev.default_trigger =
-> +		led->ldev.default_trigger =
->   			of_get_property(child, "linux,default-trigger", NULL);
-> -	}
-> -	return tlc591xx_configure(dev, priv, tlc591xx);
-> -}
-> -
-> -static int
-> -tlc591xx_remove(struct i2c_client *client)
-> -{
-> -	struct tlc591xx_priv *priv = i2c_get_clientdata(client);
-> -
-> -	tlc591xx_destroy_devices(priv, TLC591XX_MAX_LEDS);
->   
-> +		led->priv = priv;
-> +		led->led_no = reg;
-> +		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
-> +		led->ldev.max_brightness = LED_FULL;
-> +		err = devm_led_classdev_register(dev, &led->ldev);
-> +		if (err < 0) {
-> +			dev_err(dev, "couldn't register LED %s\n",
-> +				led->ldev.name);
-> +			return err;
-> +		}
-> +	}
->   	return 0;
->   }
->   
-> @@ -268,7 +230,6 @@ static struct i2c_driver tlc591xx_driver = {
->   		.of_match_table = of_match_ptr(of_tlc591xx_leds_match),
->   	},
->   	.probe = tlc591xx_probe,
-> -	.remove = tlc591xx_remove,
->   	.id_table = tlc591xx_id,
->   };
->   
+QnJpYW4KCk9uIDYvMzAvMTkgNzoyOCBQTSwgQnJpYW4gRG9kZ2Ugd3JvdGU6Cj4gVGhlIHZlbmRv
+ci1wcmVmaXhlcy50eHQgZmlsZSBwcm9wZXJseSByZWZlcnMgdG8gQXJjdGljU2FuZAo+IGFzIGFy
+Y3RpYyBidXQgdGhlIGRyaXZlciBiaW5kaW5ncyBpbXByb3Blcmx5IGFiYnJldmlhdGVkIHRoZQo+
+IHByZWZpeCB0byBhcmMuIFRoaXMgd2FzIGEgbWlzdGFrZSBpbiB0aGUgb3JpZ2luYWwgcGF0Y2gu
+IFRoaXMKPiBwYXRjaCBhZGRzICJhcmN0aWMiIGFuZCByZXRhaW5zICJhcmMiIChkZXByZWNhdGVk
+KSBiaW5kaW5ncwo+Cj4gU2lnbmVkLW9mZi1ieTogQnJpYW4gRG9kZ2UgPGJkb2RnZTA5QGdtYWls
+LmNvbT4KPiAtLS0KPiAgIC4uLi9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9hcmN4Y25uX2JsLnR4
+dCAgICAgICAgIHwgMzEgKysrKysrKysrKysrKysrLS0tLS0tLQo+ICAgMSBmaWxlIGNoYW5nZWQs
+IDIxIGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdpdCBhL0RvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9hcmN4Y25uX2JsLnR4
+dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9hcmN4
+Y25uX2JsLnR4dAo+IGluZGV4IDIzMGFiZGUuLjRkOTgzOTQgMTAwNjQ0Cj4gLS0tIGEvRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L2FyY3hjbm5fYmwudHh0
+Cj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0
+L2FyY3hjbm5fYmwudHh0Cj4gQEAgLTEsOCArMSwxMyBAQAo+IC1CaW5kaW5nIGZvciBBcmN0aWNT
+YW5kIGFyYzJjMDYwOCBMRUQgZHJpdmVyCj4gK0JpbmRpbmcgZm9yIEFyY3RpY1NhbmQgYXJjIGZh
+bWlseSBMRUQgZHJpdmVycwo+ICAgCj4gICBSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+IC0tIGNvbXBh
+dGlibGU6CQlzaG91bGQgYmUgImFyYyxhcmMyYzA2MDgiCj4gLS0gcmVnOgkJCXNsYXZlIGFkZHJl
+c3MKPiArLSBjb21wYXRpYmxlOiBvbmUgb2YKPiArCSJhcmN0aWMsYXJjMWMwNjA4Igo+ICsJImFy
+Y3RpYyxhcmMyYzA2MDgiCj4gKwkiYXJjdGljLGFyYzNjMDg0NSIKPiArCSJhcmMsYXJjMmMwNjA4
+IiAoZGVwcmVjYXRlZCkKPiArCj4gKy0gcmVnOgkJc2xhdmUgYWRkcmVzcwo+ICAgCj4gICBPcHRp
+b25hbCBwcm9wZXJ0aWVzOgo+ICAgLSBkZWZhdWx0LWJyaWdodG5lc3M6CWJyaWdodG5lc3MgdmFs
+dWUgb24gYm9vdCwgdmFsdWUgZnJvbTogMC00MDk1Cj4gQEAgLTExLDE5ICsxNiwyNSBAQCBPcHRp
+b25hbCBwcm9wZXJ0aWVzOgo+ICAgLSBsZWQtc291cmNlczoJCUxpc3Qgb2YgZW5hYmxlZCBjaGFu
+bmVscyBmcm9tIDAgdG8gNS4KPiAgIAkJCVNlZSBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvbGVkcy9jb21tb24udHh0Cj4gICAKPiAtLSBhcmMsbGVkLWNvbmZpZy0wOglzZXR0aW5n
+IGZvciByZWdpc3RlciBJTEVEX0NPTkZJR18wCj4gLS0gYXJjLGxlZC1jb25maWctMToJc2V0dGlu
+ZyBmb3IgcmVnaXN0ZXIgSUxFRF9DT05GSUdfMQo+IC0tIGFyYyxkaW0tZnJlcToJCVBXTSBtb2Rl
+IGZyZXF1ZW5jZSBzZXR0aW5nIChiaXRzIFszOjBdIHVzZWQpCj4gLS0gYXJjLGNvbXAtY29uZmln
+OglzZXR0aW5nIGZvciByZWdpc3RlciBDT05GSUdfQ09NUAo+IC0tIGFyYyxmaWx0ZXItY29uZmln
+OglzZXR0aW5nIGZvciByZWdpc3RlciBGSUxURVJfQ09ORklHCj4gLS0gYXJjLHRyaW0tY29uZmln
+OglzZXR0aW5nIGZvciByZWdpc3RlciBJTUFYVFVORQo+ICstIGFyY3RpYyxsZWQtY29uZmlnLTA6
+CXNldHRpbmcgZm9yIHJlZ2lzdGVyIElMRURfQ09ORklHXzAKPiArLSBhcmN0aWMsbGVkLWNvbmZp
+Zy0xOglzZXR0aW5nIGZvciByZWdpc3RlciBJTEVEX0NPTkZJR18xCj4gKy0gYXJjdGljLGRpbS1m
+cmVxOglQV00gbW9kZSBmcmVxdWVuY2Ugc2V0dGluZyAoYml0cyBbMzowXSB1c2VkKQo+ICstIGFy
+Y3RpYyxjb21wLWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgQ09ORklHX0NPTVAKPiArLSBh
+cmN0aWMsZmlsdGVyLWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgRklMVEVSX0NPTkZJRwo+
+ICstIGFyY3RpYyx0cmltLWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgSU1BWFRVTkUKPiAr
+LSBhcmMsbGVkLWNvbmZpZy0wOglzZXR0aW5nIGZvciByZWdpc3RlciBJTEVEX0NPTkZJR18wIChk
+ZXByZWNhdGVkKQo+ICstIGFyYyxsZWQtY29uZmlnLTE6CXNldHRpbmcgZm9yIHJlZ2lzdGVyIElM
+RURfQ09ORklHXzEgKGRlcHJlY2F0ZWQpCj4gKy0gYXJjLGRpbS1mcmVxOgkJUFdNIG1vZGUgZnJl
+cXVlbmNlIHNldHRpbmcgKGJpdHMgWzM6MF0gdXNlZCkgKGRlcHJlY2F0ZWQpCj4gKy0gYXJjLGNv
+bXAtY29uZmlnOglzZXR0aW5nIGZvciByZWdpc3RlciBDT05GSUdfQ09NUCAoZGVwcmVjYXRlZCkK
+PiArLSBhcmMsZmlsdGVyLWNvbmZpZzoJc2V0dGluZyBmb3IgcmVnaXN0ZXIgRklMVEVSX0NPTkZJ
+RyAoZGVwcmVjYXRlZCkKPiArLSBhcmMsdHJpbS1jb25maWc6CXNldHRpbmcgZm9yIHJlZ2lzdGVy
+IElNQVhUVU5FIChkZXByZWNhdGVkKQo+ICAgCj4gICBOb3RlOiBPcHRpb25hbCBwcm9wZXJ0aWVz
+IG5vdCBzcGVjaWZpZWQgd2lsbCBkZWZhdWx0IHRvIHZhbHVlcyBpbiBJQyBFUFJPTQo+ICAgCj4g
+ICBFeGFtcGxlOgo+ICAgCj4gICBhcmMyYzA2MDhAMzAgewo+IC0JY29tcGF0aWJsZSA9ICJhcmMs
+YXJjMmMwNjA4IjsKPiArCWNvbXBhdGlibGUgPSAiYXJjdGljLGFyYzJjMDYwOCI7Cj4gICAJcmVn
+ID0gPDB4MzA+Owo+ICAgCWRlZmF1bHQtYnJpZ2h0bmVzcyA9IDw1MDA+Owo+ICAgCWxhYmVsID0g
+ImxjZC1iYWNrbGlnaHQiOwoKClJldmlld2VkLWJ5OiBEYW4gTXVycGh5IDxkbXVycGh5QHRpLmNv
+bT4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
