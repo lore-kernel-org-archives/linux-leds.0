@@ -1,39 +1,55 @@
 From: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v2 2/2] leds: tlc591xx: Use the OF version of the LED registration function
-Date: Mon, 8 Jul 2019 12:06:20 +0200
-Message-ID: <20190708100620.22388-3-jjhiblot@ti.com>
-References: <20190708100620.22388-1-jjhiblot@ti.com>
+Subject: [PATCH v2 0/4] Add a generic driver for LED-based backlight
+Date: Mon, 8 Jul 2019 12:26:56 +0200
+Message-ID: <20190708102700.23138-1-jjhiblot@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190708100620.22388-1-jjhiblot@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, tomi.valkeinen@ti.com, Jean-Jacques Hiblot <jjhiblot@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com, dmurphy@ti.com, Jean-Jacques Hiblot <jjhiblot@ti.com>, linux-leds@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-The driver parses the device-tree to identify which LED should be handled.
-Since the information about the device node is known at this time, we can
-provide the LED core with it. It may be useful later.
-
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
----
- drivers/leds/leds-tlc591xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
-index 3d5a4b92f016..10764a62cb71 100644
---- a/drivers/leds/leds-tlc591xx.c
-+++ b/drivers/leds/leds-tlc591xx.c
-@@ -207,7 +207,7 @@ tlc591xx_probe(struct i2c_client *client,
- 		led->led_no = reg;
- 		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
- 		led->ldev.max_brightness = LED_FULL;
--		err = devm_led_classdev_register(dev, &led->ldev);
-+		err = devm_of_led_classdev_register(dev, child, &led->ldev);
- 		if (err < 0) {
- 			dev_err(dev, "couldn't register LED %s\n",
- 				led->ldev.name);
--- 
-2.17.1
+VGhpcyBzZXJpZXMgYWltcyB0byBhZGQgYSBsZWQtYmFja2xpZ2h0IGRyaXZlciwgc2ltaWxhciB0
+byBwd20tYmFja2xpZ2h0LApidXQgdXNpbmcgYSBMRUQgY2xhc3MgZGV2aWNlIHVuZGVybmVhdGgu
+CgpBIGZldyB5ZWFycyBhZ28gKDIwMTUpLCBUb21pIFZhbGtlaW5lbiBwb3N0ZWQgYSBzZXJpZXMg
+aW1wbGVtZW50aW5nIGEKYmFja2xpZ2h0IGRyaXZlciBvbiB0b3Agb2YgYSBMRUQgZGV2aWNlOgpo
+dHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzcyOTM5OTEvCmh0dHBzOi8vcGF0Y2h3
+b3JrLmtlcm5lbC5vcmcvcGF0Y2gvNzI5NDAwMS8KaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9y
+Zy9wYXRjaC83MjkzOTgxLwoKVGhlIGRpc2N1c3Npb24gc3RvcHBlZCBiZWNhdXNlIFRvbWkgbGFj
+a2VkIHRoZSB0aW1lIHRvIHdvcmsgb24gaXQuCgpUaGUgc2VyaWVzIGFmZmVjdHMgdGhlIExFRCBj
+b3JlIGFuZCBhZGQgYSBuZXcgYmFja2xpZ2h0IGRyaXZlci4KCmNoYW5nZXMgaW4gdjI6Ci0gYmts
+OiB0aGUgYmFja2xpZ2h0IGNhbiB1c2UgbW9yZSB0aGFuIG9uZSBMRUQuIEFzIGEgY29uc2VxdWVu
+Y2UgZG9uJ3QgbWFrZQogIHRoZSBiYWNrbGlnaHQgZGV2aWNlIGEgY2hpbGQgb2YgYSBMRUQgY29u
+dHJvbGxlci4KLSBia2w6IG1ha2UgYnJpZ2h0bmVzcy1sZXZlbHMgYW5kIGRlZmF1bHQtYnJpZ2h0
+bmVzcy1sZXZlbCBvcHRpb25hbAotIGJrbDogcmVtb3ZlZCB0aGUgb3B0aW9uIHRvIHVzZSBhIEdQ
+SU8gZW5hYmxlLgotIGJrbDogcmVtb3ZlZCB0aGUgb3B0aW9uIHRvIHVzZSBhIHJlZ3VsYXRvci4g
+SXQgc2hvdWxkIGJlIGhhbmRsZWQgYnkgdGhlCiAgTEVEIGNvcmUKLSBsZWQ6IHJlbW92ZWQgdGhl
+IG1lY2hhbmlzbSB0byBiaW5kIGEgY2hpbGQgZGV2aWNlIGZvciBlYWNoIExFRAotIGxlZDogaW1w
+cm92ZSB0aGUgd2F5IG9mX2dldF9sZWQoKSB3b3JrcyBhbmQgYWRkIGEgbWFuYWdlZCB2ZXJzaW9u
+IG9mIGl0CgpKZWFuLUphY3F1ZXMgSGlibG90ICgyKToKICBsZWRzOiBBZGQgbWFuYWdlZCBBUEkg
+dG8gZ2V0IGEgTEVEIGZyb20gYSBkZXZpY2UgZHJpdmVyCiAgZHQtYmluZGluZ3M6IGJhY2tsaWdo
+dDogQWRkIGxlZC1iYWNrbGlnaHQgYmluZGluZwoKVG9taSBWYWxrZWluZW4gKDIpOgogIGxlZHM6
+IEFkZCBvZl9sZWRfZ2V0KCkgYW5kIGxlZF9wdXQoKQogIGJhY2tsaWdodDogYWRkIGxlZC1iYWNr
+bGlnaHQgZHJpdmVyCgogLi4uL2JpbmRpbmdzL2xlZHMvYmFja2xpZ2h0L2xlZC1iYWNrbGlnaHQu
+dHh0IHwgIDI5ICsrKwogZHJpdmVycy9sZWRzL2xlZC1jbGFzcy5jICAgICAgICAgICAgICAgICAg
+ICAgIHwgIDkyICsrKysrKysKIGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L0tjb25maWcgICAgICAg
+ICAgICAgICB8ICAgNyArCiBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9NYWtlZmlsZSAgICAgICAg
+ICAgICAgfCAgIDEgKwogZHJpdmVycy92aWRlby9iYWNrbGlnaHQvbGVkX2JsLmMgICAgICAgICAg
+ICAgIHwgMjM1ICsrKysrKysrKysrKysrKysrKwogaW5jbHVkZS9saW51eC9sZWRzLmggICAgICAg
+ICAgICAgICAgICAgICAgICAgIHwgICA2ICsKIDYgZmlsZXMgY2hhbmdlZCwgMzcwIGluc2VydGlv
+bnMoKykKIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvbGVkcy9iYWNrbGlnaHQvbGVkLWJhY2tsaWdodC50eHQKIGNyZWF0ZSBtb2RlIDEwMDY0NCBk
+cml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9sZWRfYmwuYwoKLS0gCjIuMTcuMQoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
