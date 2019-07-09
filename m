@@ -1,78 +1,23 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Subject: Re: [PATCH v2 4/4] backlight: add led-backlight driver
-Date: Tue, 9 Jul 2019 10:31:35 +0100
-Message-ID: <20190709093135.ceuj5tszmuri52w2@holly.lan>
-References: <20190708102700.23138-1-jjhiblot@ti.com>
- <20190708102700.23138-5-jjhiblot@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190708102700.23138-5-jjhiblot@ti.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Cc: mark.rutland@arm.com, jingoohan1@gmail.com, tomi.valkeinen@ti.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, pavel@ucw.cz, lee.jones@linaro.org, linux-leds@vger.kernel.org, dmurphy@ti.com
+From: pr-tracker-bot@kernel.org
+Subject: Re: [GIT PULL] LED updates for 5.3-rc1
+Date: Tue, 09 Jul 2019 18:05:07 +0000
+Message-ID: <156269550705.14383.13824969277671553441.pr-tracker-bot@kernel.org>
+References: <20190701164633.6133-1-jacek.anaszewski@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190701164633.6133-1-jacek.anaszewski@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, dmurphy@ti.com, jacek.anaszewski@gmail.com, mchehab+samsung@kernel.org, oss@c-mauderer.de, pavel@ucw.cz, wsa+renesas@sang-engineering.com, yuehaibing@huawei.com
 List-Id: linux-leds@vger.kernel.org
 
-T24gTW9uLCBKdWwgMDgsIDIwMTkgYXQgMTI6Mjc6MDBQTSArMDIwMCwgSmVhbi1KYWNxdWVzIEhp
-YmxvdCB3cm90ZToKPiBGcm9tOiBUb21pIFZhbGtlaW5lbiA8dG9taS52YWxrZWluZW5AdGkuY29t
-Pgo+IAo+IFRoaXMgcGF0Y2ggYWRkcyBhIGxlZC1iYWNrbGlnaHQgZHJpdmVyIChsZWRfYmwpLCB3
-aGljaCBpcyBzaW1pbGFyIHRvCj4gcHdtX2JsIGV4Y2VwdCB0aGUgZHJpdmVyIHVzZXMgYSBMRUQg
-Y2xhc3MgZHJpdmVyIHRvIGFkanVzdCB0aGUKPiBicmlnaHRuZXNzIGluIHRoZSBIVy4gTXVsdGlw
-bGUgTEVEcyBjYW4gYmUgdXNlZCBmb3IgYSBzaW5nbGUgYmFja2xpZ2h0Lgo+IAo+IFNpZ25lZC1v
-ZmYtYnk6IFRvbWkgVmFsa2VpbmVuIDx0b21pLnZhbGtlaW5lbkB0aS5jb20+Cj4gU2lnbmVkLW9m
-Zi1ieTogSmVhbi1KYWNxdWVzIEhpYmxvdCA8ampoaWJsb3RAdGkuY29tPgo+IC0tLQo+ICBkcml2
-ZXJzL3ZpZGVvL2JhY2tsaWdodC9LY29uZmlnICB8ICAgNyArCj4gIGRyaXZlcnMvdmlkZW8vYmFj
-a2xpZ2h0L01ha2VmaWxlIHwgICAxICsKPiAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQvbGVkX2Js
-LmMgfCAyMzUgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ICAzIGZpbGVzIGNoYW5n
-ZWQsIDI0MyBpbnNlcnRpb25zKCspCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3ZpZGVv
-L2JhY2tsaWdodC9sZWRfYmwuYwoKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy92aWRlby9iYWNrbGln
-aHQvbGVkX2JsLmMgYi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9sZWRfYmwuYwo+IG5ldyBmaWxl
-IG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAwMDAwMDAwLi43NjQ0Mjc3Y2ZkYmIKPiAtLS0gL2Rl
-di9udWxsCj4gKysrIGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvbGVkX2JsLmMKPiBAQCAtMCww
-ICsxLDIzNSBAQAo+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMAo+ICsvKgo+
-ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTUtMjAxOSBUZXhhcyBJbnN0cnVtZW50cyBJbmNvcnBvcmF0
-ZWQgLSAgaHR0cDovL3d3dy50aS5jb20vCj4gKyAqIEF1dGhvcjogVG9taSBWYWxrZWluZW4gPHRv
-bWkudmFsa2VpbmVuQHRpLmNvbT4KPiArICoKPiArICogQmFzZWQgb24gcHdtX2JsLmMKPiArICov
-Cj4gKwo+ICsjaW5jbHVkZSA8bGludXgvYmFja2xpZ2h0Lmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9n
-cGlvL2NvbnN1bWVyLmg+CgpIZWFkZXIgc2hvdWxkIG5vIGxvbmdlciBiZSBuZWVkZWQuCgo+ICtz
-dGF0aWMgaW50IGxlZF9ibF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICt7
-Cj4gKwlzdHJ1Y3QgYmFja2xpZ2h0X3Byb3BlcnRpZXMgcHJvcHM7Cj4gKwlzdHJ1Y3QgbGVkX2Js
-X2RhdGEgKnByaXY7Cj4gKwlpbnQgcmV0Owo+ICsJaW50IGk7Cj4gKwo+ICsJcHJpdiA9IGRldm1f
-a3phbGxvYygmcGRldi0+ZGV2LCBzaXplb2YoKnByaXYpLCBHRlBfS0VSTkVMKTsKPiArCWlmICgh
-cHJpdikKPiArCQlyZXR1cm4gLUVOT01FTTsKPiArCj4gKwlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShw
-ZGV2LCBwcml2KTsKPiArCj4gKwlwcml2LT5kZXYgPSAmcGRldi0+ZGV2Owo+ICsKPiArCXJldCA9
-IGxlZF9ibF9wYXJzZV9kdCgmcGRldi0+ZGV2LCBwcml2KTsKPiArCWlmIChyZXQgPCAwKSB7Cj4g
-KwkJZGV2X2VycigmcGRldi0+ZGV2LCAiZmFpbGVkIHRvIHBhcnNlIERUIGRhdGFcbiIpOwo+ICsJ
-CXJldHVybiByZXQ7Cj4gKwl9Cj4gKwlwcml2LT5sZWRzID0gZGV2bV9remFsbG9jKCZwZGV2LT5k
-ZXYsCj4gKwkJCQkgIHNpemVvZihzdHJ1Y3QgbGVkX2NsYXNzZGV2ICopICogcHJpdi0+bmJfbGVk
-cywKPiArCQkJCSAgR0ZQX0tFUk5FTCk7Cj4gKwlpZiAoIXByaXYtPmxlZHMpCj4gKwkJcmV0dXJu
-IC1FTk9NRU07Cj4gKwo+ICsJZm9yIChpID0gMDsgaSA8IHByaXYtPm5iX2xlZHM7IGkrKykgewo+
-ICsJCXByaXYtPmxlZHNbaV0gPSBkZXZtX2xlZF9nZXQoJnBkZXYtPmRldiwgaSk7Cj4gKwkJaWYg
-KElTX0VSUihwcml2LT5sZWRzW2ldKSkKPiArCQkJcmV0dXJuIFBUUl9FUlIocHJpdi0+bGVkc1tp
-XSk7Cj4gKwl9Cj4gKwo+ICsJbWVtc2V0KCZwcm9wcywgMCwgc2l6ZW9mKHN0cnVjdCBiYWNrbGln
-aHRfcHJvcGVydGllcykpOwo+ICsJcHJvcHMudHlwZSA9IEJBQ0tMSUdIVF9SQVc7Cj4gKwlwcm9w
-cy5tYXhfYnJpZ2h0bmVzcyA9IHByaXYtPm1heF9icmlnaHRuZXNzOwo+ICsJcHJpdi0+YmxfZGV2
-ID0gYmFja2xpZ2h0X2RldmljZV9yZWdpc3RlcihkZXZfbmFtZSgmcGRldi0+ZGV2KSwKPiArCQkJ
-JnBkZXYtPmRldiwgcHJpdiwgJmxlZF9ibF9vcHMsICZwcm9wcyk7Cj4gKwlpZiAoSVNfRVJSKHBy
-aXYtPmJsX2RldikpIHsKPiArCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8gcmVnaXN0
-ZXIgYmFja2xpZ2h0XG4iKTsKPiArCQlyZXQgPSBQVFJfRVJSKHByaXYtPmJsX2Rldik7Cj4gKwkJ
-Z290byBlcnI7Cgpnb3RvIGlzIHBvaW50bGVzcyBmb3IgYSBwdXJlLWRldm0gZnVuY3Rpb24uCgo+
-ICsJfQo+ICsKPiArCXByaXYtPmJsX2Rldi0+cHJvcHMuYnJpZ2h0bmVzcyA9IHByaXYtPmRlZmF1
-bHRfYnJpZ2h0bmVzczsKPiArCWJhY2tsaWdodF91cGRhdGVfc3RhdHVzKHByaXYtPmJsX2Rldik7
-CgpUaGlzIHdpbGwgbGlnaHQgdXAgdGhlIGJhY2tsaWdodCBkdXJpbmcgYmFja2xpZ2h0IHByb2Jl
-LgoKQ2FuIHlvdSB0YWtlIGEgbG9vayBhdCBwd21fYmFja2xpZ2h0X2luaXRpYWxfcG93ZXJfc3Rh
-dGUoKSBhbmQgZGVjaWRlCmhvdyBtdWNoIG9mIGl0IGFwcGxpZXMgdG8gYW4gTEVEIGJhc2VkIGJh
-Y2tsaWdodCAodGhlIHBoYW5kbGUgc3R1ZmYKY2VydGFpbmx5IGRvZXMpLgoKCkRhbmllbC4KX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+The pull request you sent on Mon,  1 Jul 2019 18:46:33 +0200:
+
+> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds-for-5.3-rc1
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8a3367cc8005842efcefc0cb5c29780370818572
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
