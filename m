@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3379BC74221
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F7F7C74222
 	for <linux-leds@archiver.kernel.org>; Wed, 10 Jul 2019 12:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C4AB20838
+	by mail.kernel.org (Postfix) with ESMTP id 3812220838
 	for <linux-leds@archiver.kernel.org>; Wed, 10 Jul 2019 12:40:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fiAQzfgm"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nt+FSnle"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfGJMj4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 10 Jul 2019 08:39:56 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:53306 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727325AbfGJMjt (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 Jul 2019 08:39:49 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6ACdeeO104812;
-        Wed, 10 Jul 2019 07:39:40 -0500
+        id S1727327AbfGJMjt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 10 Jul 2019 08:39:49 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:53118 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbfGJMjs (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 Jul 2019 08:39:48 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6ACdddj125377;
+        Wed, 10 Jul 2019 07:39:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1562762380;
-        bh=ItirwO8erJEYpB2ZQfeB1f9//VYKLfEYE9vUyXsRw94=;
+        s=ti-com-17Q1; t=1562762379;
+        bh=nU97vt4bCNmMA9ZfacNjLitUhnqsxdeLpbW/G535FUs=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=fiAQzfgmv6EyownznjqE2NAbeOdOnBlqbOktus8k3tf27F6fETNlihMgdsdHarK0a
-         gQLxG0AVtms0wfiulXwC26bUO26ilXTpISul4YJRd+dJxpaYOh/ovK1nH8X8HQx0Qx
-         JC7OAD+x2E6sGrkg1x89rSRrRBMPvdsIkvOg8id0=
+        b=nt+FSnlezL9wtBvqQeSS6MVK33FJ6jGj3Az6wVgbgJRkoyz5ioF6pyG5nuffASu5z
+         wgWR7z3N8T6BwVR/GXV1o8TxDj8cf1mrmlmhqRF1k5/8cY91j8PjlW9Qo960VPUSXJ
+         IP11bvSVIuev/jLmcDwFLmgRd3weF25O6ryMeJnQ=
 Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6ACdeme113528
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6ACddbl080923
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 10 Jul 2019 07:39:40 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE103.ent.ti.com
+        Wed, 10 Jul 2019 07:39:39 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
  (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 10
- Jul 2019 07:39:40 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ Jul 2019 07:39:38 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 10 Jul 2019 07:39:40 -0500
+ Frontend Transport; Wed, 10 Jul 2019 07:39:38 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6ACdd2g071883;
-        Wed, 10 Jul 2019 07:39:39 -0500
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6ACdc9P071864;
+        Wed, 10 Jul 2019 07:39:38 -0500
 From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
         <mark.rutland@arm.com>, <lee.jones@linaro.org>,
@@ -53,9 +53,9 @@ To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
 CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
         <tomi.valkeinen@ti.com>, Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v3 2/4] leds: Add managed API to get a LED from a device driver
-Date:   Wed, 10 Jul 2019 14:39:30 +0200
-Message-ID: <20190710123932.28244-3-jjhiblot@ti.com>
+Subject: [PATCH v3 1/4] leds: Add of_led_get() and led_put()
+Date:   Wed, 10 Jul 2019 14:39:29 +0200
+Message-ID: <20190710123932.28244-2-jjhiblot@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190710123932.28244-1-jjhiblot@ti.com>
 References: <20190710123932.28244-1-jjhiblot@ti.com>
@@ -66,83 +66,113 @@ Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
-Message-ID: <20190710123930.ZyPtBImu19EFFBJztsfkszGd2qRJQn8Kt4C0QvAD7os@z>
+Message-ID: <20190710123929.3lVzuPU27u0KKbHqZA5_Maipd0FNO3eEmwqXfajUafk@z>
 
-If the LED is acquired by a consumer device with devm_led_get(), it is
-automatically release when the device is detach.
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
+This patch adds basic support for a kernel driver to get a LED device.
+This will be used by the led-backlight driver.
+
+Only OF version is implemented for now, and the behavior is similar to
+PWM's of_pwm_get() and pwm_put().
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
 ---
- drivers/leds/led-class.c | 42 ++++++++++++++++++++++++++++++++++++++++
- include/linux/leds.h     |  2 ++
- 2 files changed, 44 insertions(+)
+ drivers/leds/led-class.c | 50 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/leds.h     |  4 ++++
+ 2 files changed, 54 insertions(+)
 
 diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 0f67b13b0f1f..521cb76fbaf7 100644
+index e01b2d982564..0f67b13b0f1f 100644
 --- a/drivers/leds/led-class.c
 +++ b/drivers/leds/led-class.c
-@@ -264,6 +264,48 @@ void led_put(struct led_classdev *led_cdev)
- }
- EXPORT_SYMBOL_GPL(led_put);
+@@ -19,6 +19,7 @@
+ #include <linux/timer.h>
+ #include <linux/regulator/consumer.h>
+ #include <uapi/linux/uleds.h>
++#include <linux/of.h>
+ #include "leds.h"
  
-+static void devm_led_release(struct device *dev, void *res)
+ static struct class *leds_class;
+@@ -214,6 +215,55 @@ static int led_resume(struct device *dev)
+ 
+ static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
+ 
++static int led_match_led_node(struct device *led_dev, const void *data)
 +{
-+	struct led_classdev **p = res;
-+
-+	led_put(*p);
++	return led_dev->of_node == data ? 1 : 0;
 +}
 +
 +/**
-+ * devm_led_get - Resource-managed request of a LED device
-+ * @dev:	LED consumer
-+ * @idx:	index of the LED to obtain in the consumer
++ * of_led_get() - request a LED device via the LED framework
++ * @np: device node to get the LED device from
++ * @index: the index of the LED
 + *
-+ * The device node of the device is parse to find the request LED device.
-+ * The LED device returned from this function is automatically released
-+ * on driver detach.
-+ *
-+ * @return a pointer to a LED device or ERR_PTR(errno) on failure.
++ * Returns the LED device parsed from the phandle specified in the "leds"
++ * property of a device tree node or a negative error-code on failure.
 + */
-+struct led_classdev *__must_check devm_led_get(struct device *dev,
-+					       int index)
++struct led_classdev *of_led_get(struct device_node *np, int index)
 +{
-+	struct led_classdev *led;
-+	struct led_classdev **dr;
++	struct device *led_dev;
++	struct led_classdev *led_cdev;
++	struct device_node *led_node;
 +
-+	led = of_led_get(dev->of_node, index);
-+	if (IS_ERR(led))
-+		return led;
++	led_node = of_parse_phandle(np, "leds", index);
++	if (!led_node)
++		return ERR_PTR(-ENOENT);
 +
-+	dr = devres_alloc(devm_led_release, sizeof(struct led_classdev *),
-+			  GFP_KERNEL);
-+	if (!dr) {
-+		led_put(led);
-+		return ERR_PTR(-ENOMEM);
-+	}
++	led_dev = class_find_device(leds_class, NULL, led_node,
++		led_match_led_node);
++	of_node_put(led_node);
 +
-+	*dr = led;
-+	devres_add(dev, dr);
++	if (!led_dev)
++		return ERR_PTR(-EPROBE_DEFER);
 +
-+	return led;
++	led_cdev = dev_get_drvdata(led_dev);
++
++	if (!try_module_get(led_cdev->dev->parent->driver->owner))
++		return ERR_PTR(-ENODEV);
++
++	return led_cdev;
 +}
-+EXPORT_SYMBOL_GPL(devm_led_get);
++EXPORT_SYMBOL_GPL(of_led_get);
++
++/**
++ * led_put() - release a LED device
++ * @led_cdev: LED device
++ */
++void led_put(struct led_classdev *led_cdev)
++{
++	module_put(led_cdev->dev->parent->driver->owner);
++}
++EXPORT_SYMBOL_GPL(led_put);
 +
  static int match_name(struct device *dev, const void *data)
  {
  	if (!dev_name(dev))
 diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 0a71c7cdd191..7fcec566d774 100644
+index bee8e3f8dddd..0a71c7cdd191 100644
 --- a/include/linux/leds.h
 +++ b/include/linux/leds.h
-@@ -148,6 +148,8 @@ extern void led_classdev_resume(struct led_classdev *led_cdev);
+@@ -19,6 +19,7 @@
  
- extern struct led_classdev *of_led_get(struct device_node *np, int index);
- extern void led_put(struct led_classdev *led_cdev);
-+struct led_classdev *__must_check devm_led_get(struct device *dev,
-+					       int index);
+ struct device;
+ struct led_pattern;
++struct device_node;
+ /*
+  * LED Core
+  */
+@@ -145,6 +146,9 @@ extern void devm_led_classdev_unregister(struct device *parent,
+ extern void led_classdev_suspend(struct led_classdev *led_cdev);
+ extern void led_classdev_resume(struct led_classdev *led_cdev);
  
++extern struct led_classdev *of_led_get(struct device_node *np, int index);
++extern void led_put(struct led_classdev *led_cdev);
++
  /**
   * led_blink_set - set blinking with software fallback
+  * @led_cdev: the LED to start blinking
 -- 
 2.17.1
 
