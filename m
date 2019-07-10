@@ -2,177 +2,90 @@ Return-Path: <SRS0=703M=VH=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F7F7C74222
-	for <linux-leds@archiver.kernel.org>; Wed, 10 Jul 2019 12:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B67BC74A21
+	for <linux-leds@archiver.kernel.org>; Wed, 10 Jul 2019 14:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3812220838
-	for <linux-leds@archiver.kernel.org>; Wed, 10 Jul 2019 12:40:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DFDE20651
+	for <linux-leds@archiver.kernel.org>; Wed, 10 Jul 2019 14:30:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nt+FSnle"
+	dkim=pass (2048-bit key) header.d=logitech-com.20150623.gappssmtp.com header.i=@logitech-com.20150623.gappssmtp.com header.b="BEBTmdFz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfGJMjt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 10 Jul 2019 08:39:49 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:53118 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727068AbfGJMjs (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 Jul 2019 08:39:48 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6ACdddj125377;
-        Wed, 10 Jul 2019 07:39:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1562762379;
-        bh=nU97vt4bCNmMA9ZfacNjLitUhnqsxdeLpbW/G535FUs=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=nt+FSnlezL9wtBvqQeSS6MVK33FJ6jGj3Az6wVgbgJRkoyz5ioF6pyG5nuffASu5z
-         wgWR7z3N8T6BwVR/GXV1o8TxDj8cf1mrmlmhqRF1k5/8cY91j8PjlW9Qo960VPUSXJ
-         IP11bvSVIuev/jLmcDwFLmgRd3weF25O6ryMeJnQ=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6ACddbl080923
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 10 Jul 2019 07:39:39 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 10
- Jul 2019 07:39:38 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 10 Jul 2019 07:39:38 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6ACdc9P071864;
-        Wed, 10 Jul 2019 07:39:38 -0500
-From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
-        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>
-CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <tomi.valkeinen@ti.com>, Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v3 1/4] leds: Add of_led_get() and led_put()
-Date:   Wed, 10 Jul 2019 14:39:29 +0200
-Message-ID: <20190710123932.28244-2-jjhiblot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190710123932.28244-1-jjhiblot@ti.com>
-References: <20190710123932.28244-1-jjhiblot@ti.com>
+        id S1726617AbfGJOap (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 10 Jul 2019 10:30:45 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:40557 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbfGJOap (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 Jul 2019 10:30:45 -0400
+Received: by mail-ua1-f68.google.com with SMTP id s4so943323uad.7
+        for <linux-leds@vger.kernel.org>; Wed, 10 Jul 2019 07:30:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=logitech-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=3ZzAXO5i2+gxuy4kt7UDXzQqhSydebA9q1kIRUUGl1M=;
+        b=BEBTmdFz7uAipCN9jvJkw1YuCIutogumH8z2B8hux+JXye1n8llp/mgR1PviH3/9MB
+         NJ1V5j6KowxzBgo7S1K9zEzmYTo25IeNQFKR+01nqVB/cRZZQ5D1NSsv7oevO3p4Wv4T
+         NuQF+M2EvWmhYX8PcAUfTBHlr6kSLbmMwbWMrzgDy/N/VFVxN3pn7K9pDWoXDCi+ix+x
+         Kn1ohYegiXIiUbvENyl65QFbOJk4d6vYjX1qnu65WUGV3vbef0BVURsJcPJT75G0UOUG
+         Cknaq90IMMLLZR1Hgx1n2oqrHaY108EHTbP273KZco3b8lrlA/T1HX1L7Pflon4vnIM9
+         4mqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=3ZzAXO5i2+gxuy4kt7UDXzQqhSydebA9q1kIRUUGl1M=;
+        b=HR81QIO9+5beQ6sPMkFZjwoEQVeLvvvm3DLYvXe8MvXW2lpwETUePXAMGbRhMHFX5J
+         U51nJgv747Dhz7ZvrUBKpteR8GNP/qFYKpDV8KzIJ4g4eycEEw91UF9p1eS3IJqFq6Xt
+         Om5wjML8fejBBotPNYAuMD5sl9GcovLRUhcWH/XPGyln7YCVBgzhEggNOj6PTmh3ssle
+         LCZM2zcsDxtO5kP75w4YQlbXnHYfcs74Ce0po83DpQmCe7AhMKMSvwM+cN5ntMGcLb7a
+         npP2CECRe5PVxiPXYnYVp2AedBCHnXD4dLD7ehWDCRWvuyZFvMlBMbQuPARxxvH4q1Il
+         uPFg==
+X-Gm-Message-State: APjAAAWCwmGGGeVUiqoshRvEE9ZERA1ipWCQd7cGWGsmLEd5143fseIR
+        CWO7ilEQDoFcZsD17dE+sOH4O3R2nMAxSWF7LF09MSl/y8c=
+X-Google-Smtp-Source: APXvYqyVXqQ6ARKSQjPYjC+VW6+awH7/lzO6aSWKo25wz1+slzK0h84lmGPvO5E+FAQraFp8WXhlFTn9Msh/J/CxF5o=
+X-Received: by 2002:a9f:25e9:: with SMTP id 96mr18292129uaf.95.1562769042143;
+ Wed, 10 Jul 2019 07:30:42 -0700 (PDT)
 MIME-Version: 1.0
+From:   Nick Stoughton <nstoughton@logitech.com>
+Date:   Wed, 10 Jul 2019 07:30:31 -0700
+Message-ID: <CACpbN90YPxnsm1Py4t2-npk0b8A06+OZTtc8kom_smMDUyFEVw@mail.gmail.com>
+Subject: [PATCH] leds: leds-lp5562 allow firmware files up to the maximum length
+To:     linux-leds@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
-Message-ID: <20190710123929.3lVzuPU27u0KKbHqZA5_Maipd0FNO3eEmwqXfajUafk@z>
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Firmware files are in ASCII, using 2 hex characters per byte. The
+maximum length of a firmware string is therefore
 
-This patch adds basic support for a kernel driver to get a LED device.
-This will be used by the led-backlight driver.
+16 (commands) * 2 (bytes per command) * 2 (characters per byte) = 64
 
-Only OF version is implemented for now, and the behavior is similar to
-PWM's of_pwm_get() and pwm_put().
-
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+Signed-off-by: Nick Stoughton <nstoughton@logitech.com>
 ---
- drivers/leds/led-class.c | 50 ++++++++++++++++++++++++++++++++++++++++
- include/linux/leds.h     |  4 ++++
- 2 files changed, 54 insertions(+)
+ drivers/leds/leds-lp5562.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index e01b2d982564..0f67b13b0f1f 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -19,6 +19,7 @@
- #include <linux/timer.h>
- #include <linux/regulator/consumer.h>
- #include <uapi/linux/uleds.h>
-+#include <linux/of.h>
- #include "leds.h"
- 
- static struct class *leds_class;
-@@ -214,6 +215,55 @@ static int led_resume(struct device *dev)
- 
- static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
- 
-+static int led_match_led_node(struct device *led_dev, const void *data)
-+{
-+	return led_dev->of_node == data ? 1 : 0;
-+}
-+
-+/**
-+ * of_led_get() - request a LED device via the LED framework
-+ * @np: device node to get the LED device from
-+ * @index: the index of the LED
-+ *
-+ * Returns the LED device parsed from the phandle specified in the "leds"
-+ * property of a device tree node or a negative error-code on failure.
-+ */
-+struct led_classdev *of_led_get(struct device_node *np, int index)
-+{
-+	struct device *led_dev;
-+	struct led_classdev *led_cdev;
-+	struct device_node *led_node;
-+
-+	led_node = of_parse_phandle(np, "leds", index);
-+	if (!led_node)
-+		return ERR_PTR(-ENOENT);
-+
-+	led_dev = class_find_device(leds_class, NULL, led_node,
-+		led_match_led_node);
-+	of_node_put(led_node);
-+
-+	if (!led_dev)
-+		return ERR_PTR(-EPROBE_DEFER);
-+
-+	led_cdev = dev_get_drvdata(led_dev);
-+
-+	if (!try_module_get(led_cdev->dev->parent->driver->owner))
-+		return ERR_PTR(-ENODEV);
-+
-+	return led_cdev;
-+}
-+EXPORT_SYMBOL_GPL(of_led_get);
-+
-+/**
-+ * led_put() - release a LED device
-+ * @led_cdev: LED device
-+ */
-+void led_put(struct led_classdev *led_cdev)
-+{
-+	module_put(led_cdev->dev->parent->driver->owner);
-+}
-+EXPORT_SYMBOL_GPL(led_put);
-+
- static int match_name(struct device *dev, const void *data)
+diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
+index 37632fc63741..e00117e3b50d 100644
+--- a/drivers/leds/leds-lp5562.c
++++ b/drivers/leds/leds-lp5562.c
+@@ -260,7 +260,11 @@ static void lp5562_firmware_loaded(struct
+lp55xx_chip *chip)
  {
- 	if (!dev_name(dev))
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index bee8e3f8dddd..0a71c7cdd191 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -19,6 +19,7 @@
- 
- struct device;
- struct led_pattern;
-+struct device_node;
- /*
-  * LED Core
-  */
-@@ -145,6 +146,9 @@ extern void devm_led_classdev_unregister(struct device *parent,
- extern void led_classdev_suspend(struct led_classdev *led_cdev);
- extern void led_classdev_resume(struct led_classdev *led_cdev);
- 
-+extern struct led_classdev *of_led_get(struct device_node *np, int index);
-+extern void led_put(struct led_classdev *led_cdev);
-+
- /**
-  * led_blink_set - set blinking with software fallback
-  * @led_cdev: the LED to start blinking
--- 
-2.17.1
+        const struct firmware *fw = chip->fw;
 
+-       if (fw->size > LP5562_PROGRAM_LENGTH) {
++        /*
++         * the firmware is encoded in ascii hex character, with 2 chars
++         * per byte
++         */
++       if (fw->size > (LP5562_PROGRAM_LENGTH * 2)) {
+                dev_err(&chip->cl->dev, "firmware data size overflow: %zu\n",
+                        fw->size);
+                return;
+-- 
+Nick Stoughton
