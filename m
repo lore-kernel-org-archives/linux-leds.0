@@ -2,111 +2,99 @@ Return-Path: <SRS0=703M=VH=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F70C74A36
-	for <linux-leds@archiver.kernel.org>; Wed, 10 Jul 2019 19:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D65C74A36
+	for <linux-leds@archiver.kernel.org>; Wed, 10 Jul 2019 19:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2887220651
-	for <linux-leds@archiver.kernel.org>; Wed, 10 Jul 2019 19:16:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E79A120838
+	for <linux-leds@archiver.kernel.org>; Wed, 10 Jul 2019 19:16:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbfGJTQk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 10 Jul 2019 15:16:40 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47385 "EHLO
+        id S1728215AbfGJTQ7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 10 Jul 2019 15:16:59 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47390 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727612AbfGJTQk (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 Jul 2019 15:16:40 -0400
+        with ESMTP id S1727612AbfGJTQ7 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 Jul 2019 15:16:59 -0400
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id EF28B805E5; Wed, 10 Jul 2019 21:16:26 +0200 (CEST)
-Date:   Wed, 10 Jul 2019 21:16:37 +0200
+        id 80691805E5; Wed, 10 Jul 2019 21:16:46 +0200 (CEST)
+Date:   Wed, 10 Jul 2019 21:16:57 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
-Cc:     jacek.anaszewski@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org,
-        daniel.thompson@linaro.org, jingoohan1@gmail.com, dmurphy@ti.com,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com
-Subject: Re: [PATCH v3 4/4] backlight: add led-backlight driver
-Message-ID: <20190710191637.GD22995@amd>
-References: <20190710123932.28244-1-jjhiblot@ti.com>
- <20190710123932.28244-5-jjhiblot@ti.com>
+To:     Nick Stoughton <nstoughton@logitech.com>
+Cc:     linux-leds@vger.kernel.org
+Subject: Re: [PATCH] leds: leds-lp5562 allow firmware files up to the maximum
+ length
+Message-ID: <20190710191657.GE22995@amd>
+References: <CACpbN90YPxnsm1Py4t2-npk0b8A06+OZTtc8kom_smMDUyFEVw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="gE7i1rD7pdK0Ng3j"
+        protocol="application/pgp-signature"; boundary="PPYy/fEw/8QCHSq3"
 Content-Disposition: inline
-In-Reply-To: <20190710123932.28244-5-jjhiblot@ti.com>
+In-Reply-To: <CACpbN90YPxnsm1Py4t2-npk0b8A06+OZTtc8kom_smMDUyFEVw@mail.gmail.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
-Message-ID: <20190710191637.LzvYK4Dw888MKZ8EvvHhK6MxizFgLeb3xXC0WC4CZUU@z>
 
 
---gE7i1rD7pdK0Ng3j
+--PPYy/fEw/8QCHSq3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2019-07-10 14:39:32, Jean-Jacques Hiblot wrote:
-> From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+
+On Wed 2019-07-10 07:30:31, Nick Stoughton wrote:
+> Firmware files are in ASCII, using 2 hex characters per byte. The
+> maximum length of a firmware string is therefore
 >=20
-> This patch adds a led-backlight driver (led_bl), which is similar to
-> pwm_bl except the driver uses a LED class driver to adjust the
-> brightness in the HW. Multiple LEDs can be used for a single backlight.
+> 16 (commands) * 2 (bytes per command) * 2 (characters per byte) =3D 64
 >=20
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-
-> +
-> +		/*
-> +		 *try to map actual LED brightness to backlight brightness
-> +		 * level
-> +		 */
-
-"* Try"
-
-> +		db =3D priv->default_brightness;
-> +		for (i =3D 0 ; i < num_levels; i++) {
-> +			if ((i && db > levels[i-1]) && db <=3D levels[i])
-> +				break;
-> +		}
-> +		priv->default_brightness =3D i;
-> +		priv->max_brightness =3D num_levels - 1;
-> +		priv->levels =3D levels;
-> +	} else if (num_levels >=3D 0)
-> +		dev_warn(dev, "not enought levels defined\n");
-
-"Not enough"
-
-> +	ret =3D of_property_read_u32(node, "default-brightness-level", &value);
-> +	if (!ret && value <=3D priv->max_brightness)
-> +		priv->default_brightness =3D value;
-> +	else if (!ret  && value > priv->max_brightness)
-> +		dev_warn(dev, "invalid default brightness. ignoring it\n");
-
-"Invalid... Ignoring it."
+> Signed-off-by: Nick Stoughton <nstoughton@logitech.com>
 
 Acked-by: Pavel Machek <pavel@ucw.cz>
-									Pavel
+								Pavel
+> ---
+>  drivers/leds/leds-lp5562.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
+> index 37632fc63741..e00117e3b50d 100644
+> --- a/drivers/leds/leds-lp5562.c
+> +++ b/drivers/leds/leds-lp5562.c
+> @@ -260,7 +260,11 @@ static void lp5562_firmware_loaded(struct
+> lp55xx_chip *chip)
+>  {
+>         const struct firmware *fw =3D chip->fw;
+>=20
+> -       if (fw->size > LP5562_PROGRAM_LENGTH) {
+> +        /*
+> +         * the firmware is encoded in ascii hex character, with 2 chars
+> +         * per byte
+> +         */
+> +       if (fw->size > (LP5562_PROGRAM_LENGTH * 2)) {
+>                 dev_err(&chip->cl->dev, "firmware data size overflow: %zu=
+\n",
+>                         fw->size);
+>                 return;
 
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---gE7i1rD7pdK0Ng3j
+--PPYy/fEw/8QCHSq3
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl0mOZUACgkQMOfwapXb+vKGjACbBk0etpxF6Viyuje0o1lj4McY
-wJgAoKbPa8b/CQqQPf5ELQ7VvqyxdarH
-=TOSr
+iEYEARECAAYFAl0mOakACgkQMOfwapXb+vJRxgCdEUCxePKmF0/uQZMXOX1MIjpP
+jFIAoIyZQ9AeK32RuLtlWpHkYCvQSRnS
+=U+mw
 -----END PGP SIGNATURE-----
 
---gE7i1rD7pdK0Ng3j--
+--PPYy/fEw/8QCHSq3--
