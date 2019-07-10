@@ -1,180 +1,58 @@
 From: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: Re: [PATCH v2 1/2] leds: tlc591xx: simplify driver by using the
- managed led API
-Date: Wed, 10 Jul 2019 09:44:32 +0200
-Message-ID: <6242726a-ddb9-ab87-a28e-a1fa0ecbf87e@ti.com>
-References: <20190708100620.22388-1-jjhiblot@ti.com>
- <20190708100620.22388-2-jjhiblot@ti.com>
- <127551c1-d642-0603-f2f2-6fd4cc43bb93@ti.com>
+Subject: [PATCH v3 0/4]  Add a generic driver for LED-based backlight
+Date: Wed, 10 Jul 2019 14:39:28 +0200
+Message-ID: <20190710123932.28244-1-jjhiblot@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <127551c1-d642-0603-f2f2-6fd4cc43bb93@ti.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Murphy <dmurphy@ti.com>, jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, tomi.valkeinen@ti.com
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, lee.jones@linaro.org, daniel.thompson@linaro.org, jingoohan1@gmail.com
+Cc: dmurphy@ti.com, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com, Jean-Jacques Hiblot <jjhiblot@ti.com>
 List-Id: linux-leds@vger.kernel.org
 
-Hi Dan,
+This series aims to add a led-backlight driver, similar to pwm-backlight,
+but using a LED class device underneath.
 
-On 08/07/2019 20:08, Dan Murphy wrote:
-> JJ
->
-> On 7/8/19 5:06 AM, Jean-Jacques Hiblot wrote:
->> Use the managed API of the LED class (devm_led_classdev_register()
->> instead of led_classdev_register()).
->> This allows us to remove the code used to track-and-destroy the LED 
->> devices
->
-> What changed from v1?
+A few years ago (2015), Tomi Valkeinen posted a series implementing a
+backlight driver on top of a LED device:
+https://patchwork.kernel.org/patch/7293991/
+https://patchwork.kernel.org/patch/7294001/
+https://patchwork.kernel.org/patch/7293981/
 
-What changed is a bug fix in the loop: replaced led = &priv->leds[idx] 
-with led = &priv->leds[reg];
+The discussion stopped because Tomi lacked the time to work on it.
 
+changes in v3:
+- dt binding: don't limit the brightness range to 0-255. Use the range of
+  the underlying LEDs. as a side-effect, all LEDs must now have the same
+  range
+- driver: Adapt to dt binding update.
+- driver: rework probe() for clarity and remove the remaining goto.
 
->
-> I don't see any changes especially the bounds on the reg property.
+changes in v2:
+- handle more than one LED.
+- don't make the backlight device a child of the LED controller.
+- make brightness-levels and default-brightness-level optionnal
+- removed the option to use a GPIO enable.
+- removed the option to use a regulator. It should be handled by the LED core
+- don't make any change to the LED core (not needed anymore)
 
-It is not quite apparent in the diff, but there is such a check. Here is 
-what we have in the probe():
+Jean-Jacques Hiblot (2):
+  leds: Add managed API to get a LED from a device driver
+  dt-bindings: backlight: Add led-backlight binding
 
-     for_each_child_of_node(np, child) {
-         struct tlc591xx_led *led;
+Tomi Valkeinen (2):
+  leds: Add of_led_get() and led_put()
+  backlight: add led-backlight driver
 
-         err = of_property_read_u32(child, "reg", &reg);
-         if (err) {
-             of_node_put(child);
-             return err;
-         }
-         if (reg < 0 || reg >= tlc591xx->max_leds ||
-             priv->leds[reg].active) {
-             of_node_put(child);
-             return -EINVAL;
-         }
-         led = &priv->leds[reg];
+ .../bindings/leds/backlight/led-backlight.txt |  28 ++
+ drivers/leds/led-class.c                      |  92 ++++++
+ drivers/video/backlight/Kconfig               |   7 +
+ drivers/video/backlight/Makefile              |   1 +
+ drivers/video/backlight/led_bl.c              | 268 ++++++++++++++++++
+ include/linux/leds.h                          |   6 +
+ 6 files changed, 402 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+ create mode 100644 drivers/video/backlight/led_bl.c
 
-[...]
-         }
-     }
-
->
-> Dan
->
->
->> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
->> ---
->>   drivers/leds/leds-tlc591xx.c | 79 +++++++++---------------------------
->>   1 file changed, 20 insertions(+), 59 deletions(-)
->>
->> diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
->> index 59ff088c7d75..3d5a4b92f016 100644
->> --- a/drivers/leds/leds-tlc591xx.c
->> +++ b/drivers/leds/leds-tlc591xx.c
->> @@ -128,51 +128,6 @@ tlc591xx_brightness_set(struct led_classdev 
->> *led_cdev,
->>       return err;
->>   }
->>   -static void
->> -tlc591xx_destroy_devices(struct tlc591xx_priv *priv, unsigned int j)
->> -{
->> -    int i = j;
->> -
->> -    while (--i >= 0) {
->> -        if (priv->leds[i].active)
->> - led_classdev_unregister(&priv->leds[i].ldev);
->> -    }
->> -}
->> -
->> -static int
->> -tlc591xx_configure(struct device *dev,
->> -           struct tlc591xx_priv *priv,
->> -           const struct tlc591xx *tlc591xx)
->> -{
->> -    unsigned int i;
->> -    int err = 0;
->> -
->> -    tlc591xx_set_mode(priv->regmap, MODE2_DIM);
->> -    for (i = 0; i < TLC591XX_MAX_LEDS; i++) {
->> -        struct tlc591xx_led *led = &priv->leds[i];
->> -
->> -        if (!led->active)
->> -            continue;
->> -
->> -        led->priv = priv;
->> -        led->led_no = i;
->> -        led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
->> -        led->ldev.max_brightness = LED_FULL;
->> -        err = led_classdev_register(dev, &led->ldev);
->> -        if (err < 0) {
->> -            dev_err(dev, "couldn't register LED %s\n",
->> -                led->ldev.name);
->> -            goto exit;
->> -        }
->> -    }
->> -
->> -    return 0;
->> -
->> -exit:
->> -    tlc591xx_destroy_devices(priv, i);
->> -    return err;
->> -}
->> -
->>   static const struct regmap_config tlc591xx_regmap = {
->>       .reg_bits = 8,
->>       .val_bits = 8,
->> @@ -225,7 +180,11 @@ tlc591xx_probe(struct i2c_client *client,
->>         i2c_set_clientdata(client, priv);
->>   +    tlc591xx_set_mode(priv->regmap, MODE2_DIM);
->> +
->>       for_each_child_of_node(np, child) {
->> +        struct tlc591xx_led *led;
->> +
->>           err = of_property_read_u32(child, "reg", &reg);
->>           if (err) {
->>               of_node_put(child);
->> @@ -236,22 +195,25 @@ tlc591xx_probe(struct i2c_client *client,
->>               of_node_put(child);
->>               return -EINVAL;
->>           }
->> -        priv->leds[reg].active = true;
->> -        priv->leds[reg].ldev.name =
->> +        led = &priv->leds[reg];
->> +
->> +        led->active = true;
->> +        led->ldev.name =
->>               of_get_property(child, "label", NULL) ? : child->name;
->> -        priv->leds[reg].ldev.default_trigger =
->> +        led->ldev.default_trigger =
->>               of_get_property(child, "linux,default-trigger", NULL);
->> -    }
->> -    return tlc591xx_configure(dev, priv, tlc591xx);
->> -}
->> -
->> -static int
->> -tlc591xx_remove(struct i2c_client *client)
->> -{
->> -    struct tlc591xx_priv *priv = i2c_get_clientdata(client);
->> -
->> -    tlc591xx_destroy_devices(priv, TLC591XX_MAX_LEDS);
->>   +        led->priv = priv;
->> +        led->led_no = reg;
->> +        led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
->> +        led->ldev.max_brightness = LED_FULL;
->> +        err = devm_led_classdev_register(dev, &led->ldev);
->> +        if (err < 0) {
->> +            dev_err(dev, "couldn't register LED %s\n",
->> +                led->ldev.name);
->> +            return err;
->> +        }
->> +    }
->>       return 0;
->>   }
->>   @@ -268,7 +230,6 @@ static struct i2c_driver tlc591xx_driver = {
->>           .of_match_table = of_match_ptr(of_tlc591xx_leds_match),
->>       },
->>       .probe = tlc591xx_probe,
->> -    .remove = tlc591xx_remove,
->>       .id_table = tlc591xx_id,
->>   };
+-- 
+2.17.1
