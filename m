@@ -1,60 +1,54 @@
-From: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: Re: [PATCH v3 3/4] dt-bindings: backlight: Add led-backlight binding
-Date: Fri, 12 Jul 2019 15:57:20 +0200
-Message-ID: <0d513ab5-eeb0-c22c-7ec8-f773e445e5f1@ti.com>
-References: <20190710123932.28244-1-jjhiblot@ti.com>
- <20190710123932.28244-4-jjhiblot@ti.com> <20190710191314.GC22995@amd>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH 2/2] dt-bindings: leds: document new "power-supply"
+ property
+Date: Fri, 12 Jul 2019 13:38:10 -0500
+Message-ID: <cd233d13-b4dd-1c4f-235e-d63cebab6f4f@ti.com>
+References: <20190708103547.23528-1-jjhiblot@ti.com>
+ <20190708103547.23528-3-jjhiblot@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190710191314.GC22995@amd>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190708103547.23528-3-jjhiblot@ti.com>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: mark.rutland@arm.com, daniel.thompson@linaro.org, jingoohan1@gmail.com, tomi.valkeinen@ti.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, jacek.anaszewski@gmail.com, lee.jones@linaro.org, linux-leds@vger.kernel.org, dmurphy@ti.com
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jean-Jacques Hiblot <jjhiblot@ti.com>, jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com, daniel.thompson@linaro.org
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-leds@vger.kernel.org
 
-UGF2ZWwsCgpPbiAxMC8wNy8yMDE5IDIxOjEzLCBQYXZlbCBNYWNoZWsgd3JvdGU6Cj4gT24gV2Vk
-IDIwMTktMDctMTAgMTQ6Mzk6MzEsIEplYW4tSmFjcXVlcyBIaWJsb3Qgd3JvdGU6Cj4+IEFkZCBE
-VCBiaW5kaW5nIGZvciBsZWQtYmFja2xpZ2h0Lgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBKZWFuLUph
-Y3F1ZXMgSGlibG90IDxqamhpYmxvdEB0aS5jb20+Cj4+IC0tLQo+PiAgIC4uLi9iaW5kaW5ncy9s
-ZWRzL2JhY2tsaWdodC9sZWQtYmFja2xpZ2h0LnR4dCB8IDI4ICsrKysrKysrKysrKysrKysrKysK
-Pj4gICAxIGZpbGUgY2hhbmdlZCwgMjggaW5zZXJ0aW9ucygrKQo+PiAgIGNyZWF0ZSBtb2RlIDEw
-MDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9iYWNrbGlnaHQvbGVk
-LWJhY2tsaWdodC50eHQKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9sZWQtYmFja2xpZ2h0LnR4dCBiL0RvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2JhY2tsaWdodC9sZWQtYmFja2xpZ2h0LnR4dAo+
-PiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+PiBpbmRleCAwMDAwMDAwMDAwMDAuLjA0NDRlZWM4ZWZl
-MQo+PiAtLS0gL2Rldi9udWxsCj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9sZWRzL2JhY2tsaWdodC9sZWQtYmFja2xpZ2h0LnR4dAo+PiBAQCAtMCwwICsxLDI4IEBA
-Cj4+ICtsZWQtYmFja2xpZ2h0IGJpbmRpbmdzCj4+ICsKPj4gK1RoaXMgYmluZGluZyBpcyB1c2Vk
-IHRvIGRlc2NyaWJlIGEgYmFzaWMgYmFja2xpZ2h0IGRldmljZSBtYWRlIG9mCj4+IExFRHMuCj4g
-T2suCj4KPj4gK0l0IGNhbiBhbHNvIGJlIHVzZWQgdG8gZGVzY3JpYmUgYSBiYWNrbGlnaHQgZGV2
-aWNlIGNvbnRyb2xsZWQgYnkgdGhlIG91dHB1dCBvZgo+PiArYSBMRUQgZHJpdmVyLgo+ID8gVGhl
-IExFRCBkcml2ZXIgc2hvdWxkIGJldHRlciBiZSBkcml2aW5nIHNvbWUgTEVEcy4uLgoKV2VsbC4g
-d2UgYXJlIGRlcGVuZGVudCBvZiB0aGUgYm9hcmQgZGVzaWduLiBJZiBhIGJvYXJkIGRlc2lnbmVy
-IGRlY2lkZWQgCnRvIGNvbnRyb2wgYSBiYWNrbGlnaHQgd2l0aCBhIExFRC1jb250cm9sbGVyLCB0
-aGVuIHdlIGhhdmUgdG8gZGVhbCB3aXRoIGl0LgoKSW4gcHJhY3RpY2UgdGhlcmUgYXJlIGEgbG90
-IG9mIExFRCBkcml2ZXJzIHRoYXQgYWN0dWFsbHkgZHJpdmUgdGhlIExFRHMgCnVzaW5nIFBXTXMg
-YW5kIGNhbiBiZSB1c2VkIGZvciB0aGlzIHB1cnBvc2UuCgpKSgoKPgo+PiArUmVxdWlyZWQgcHJv
-cGVydGllczoKPj4gKyAgLSBjb21wYXRpYmxlOiAibGVkLWJhY2tsaWdodCIKPj4gKyAgLSBsZWRz
-OiBhIGxpc3Qgb2YgTEVEcwo+PiArCj4+ICtPcHRpb25hbCBwcm9wZXJ0aWVzOgo+PiArICAtIGJy
-aWdodG5lc3MtbGV2ZWxzOiBBcnJheSBvZiBkaXN0aW5jdCBicmlnaHRuZXNzIGxldmVscy4gVGhl
-IGxldmVscyBtdXN0IGJlCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGluIHRoZSByYW5nZSBh
-Y2NlcHRlZCBieSB0aGUgdW5kZXJseWluZyBMRUQgZGV2aWNlcy4KPj4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgVGhpcyBpcyB1c2VkIHRvIHRyYW5zbGF0ZSBhIGJhY2tsaWdodCBicmlnaHRuZXNz
-IGxldmVsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGludG8gYSBMRUQgYnJpZ2h0bmVzcyBs
-ZXZlbC4gaWYgbm90IHByb3ZpZGVkLCB0aGUKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgaWRl
-bnRpdHkgbWFwcGluZyBpcyB1c2VkLgo+ICJJZiBpdCBpcyBub3QiCj4gCQkJCQkJCQkJUGF2ZWwK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+JJ
+
+On 7/8/19 5:35 AM, Jean-Jacques Hiblot wrote:
+> Most of the LEDs are powered by a voltage/current regulator. describing in
+> the device-tree makes it possible for the LED core to enable/disable it
+> when needed.
+
+This should be patch 1.
+
+
+> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+> ---
+>   Documentation/devicetree/bindings/leds/common.txt | 5 +++++
+>   1 file changed, 5 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index 70876ac11367..e093a2b7eb90 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -61,6 +61,11 @@ Optional properties for child nodes:
+>   - panic-indicator : This property specifies that the LED should be used,
+>   		    if at all possible, as a panic indicator.
+>   
+> +- power-supply : A voltage/current regulator used to to power the LED. When a
+> +		 LED is turned off, the LED core disable its regulator. The
+> +		 same regulator can power many LED (or other) devices. It is
+> +		 turned off only when all of its users disabled it.
+> +
+>   - trigger-sources : List of devices which should be used as a source triggering
+>   		    this LED activity. Some LEDs can be related to a specific
+>   		    device and should somehow indicate its state. E.g. USB 2.0
+
+
+Do you have an example update?
+
+Dan
