@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8019FC76191
-	for <linux-leds@archiver.kernel.org>; Mon, 15 Jul 2019 14:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E580C76191
+	for <linux-leds@archiver.kernel.org>; Mon, 15 Jul 2019 14:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62078204FD
-	for <linux-leds@archiver.kernel.org>; Mon, 15 Jul 2019 14:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DAA1204FD
+	for <linux-leds@archiver.kernel.org>; Mon, 15 Jul 2019 14:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390853AbfGOO6J (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 15 Jul 2019 10:58:09 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:41859 "EHLO
+        id S2391373AbfGOO5p (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 15 Jul 2019 10:57:45 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:41069 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391203AbfGOO5q (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 15 Jul 2019 10:57:46 -0400
+        with ESMTP id S2391187AbfGOO5o (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 15 Jul 2019 10:57:44 -0400
 Received: from orion.localdomain ([95.118.111.244]) by
  mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MQeI4-1i8XHm0850-00Ngop; Mon, 15 Jul 2019 16:57:40 +0200
+ id 1MnJdC-1iCEHn0LUC-00jKG5; Mon, 15 Jul 2019 16:57:39 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
         linux-leds@vger.kernel.org
-Subject: [PATCH 5/6] leds: apu: fix error on probing failure
-Date:   Mon, 15 Jul 2019 16:57:32 +0200
-Message-Id: <1563202653-20994-6-git-send-email-info@metux.net>
+Subject: [PATCH 2/6] leds: apu: drop enum_apu_led_platform_types
+Date:   Mon, 15 Jul 2019 16:57:29 +0200
+Message-Id: <1563202653-20994-3-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1563202653-20994-1-git-send-email-info@metux.net>
 References: <1563202653-20994-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:QI5rtPQ3bK0AHvmaHVmXuB3T42TP0bp/kIiIn7Ga+GahivZv3am
- a3/qSgR7iY2fuJB4TEqN4Ax5DbX4/RtzX3rNl3Jxw/XucJhTahFmDZFzlXdlngiBe96FXHU
- sjNsHJ6AKJ0FcYl0ibpF7zRG0z7AkSyVo4vZrJmd9pMmOpo8cbSTIyUViedm6aTPSLsacPi
- lXp3uHR1q2vave97xHtdg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:T55pZtApU3E=:1rqzZlArG6nNJjkJPOUZku
- 6NLy2wq7GLDG8lxXiRvb2RT1XXae7XXqPxqPuMtemWFUpmQLKJeCvQWhKOhSL8XnYMVdEjP46
- VxcYsk2vmXm4G8gj3SAS+9IedY9f7V5PmwAERaTkULM4fjUiU6Va0NU7A5o82bAcUGQvKFXwJ
- asdusn6e6e8DuZUtc/+sY+0YSgm2iPmMt6VW+1YWipZVAaS8j+Kg32iooT2e6puNIOHH/rkAz
- h9KFzpI9sD9ERjXCfeOSuvktCdtn3siVtHqlf1kMMVWnI8s41LeeSM4FR/ig0xwbtPXcjK+1i
- oXF2oyPIFyZUq+4jUYfDDSmpfHlLaJficwrnfvl4RsHjpQ8eI/SOiVHwB+ZMaIhQbxASN5cSS
- gNB/KbEB6u1tPRDhGkF2mLrnxoxPQ1U2C5ANEsmfR+k3Ot+NYj7c5nTa4N/UbQzZhCKNbQmy4
- dbtLNildMyiPZDmBYhQIKYSiz7VMe80cRGNen/rfy7x85FdEdM3xKPevSc6z/lhoJpHLGfkPe
- CJIzIGk+nQDqP2pSMuJ7hMgqgmra4qjLEIM5eTL9rcEQUEXjIGpAKqgWoHXLfeN3u0jn0vNGC
- 9crJWVQ0IOdwaAinPjjdkFMu4LD2d+XxQXh7h6sANGHJ11xWOXMRw2xRoYzWRg5/bWo3HQ9ia
- CDjSwc7xj1HBwQ3QVVN+Sz71JfDbR4hiTC/PgNcjpSs6BAKael4f9zQXEJ8hJrXQtmTbESxWT
- MGarGUGkytXVHU5P9bGpfaPLP4E0hqs1OdFhVg==
+X-Provags-ID: V03:K1:2XVHfQn9y9/unTfgQQX3BK6lbqoCKEWS50tFTMvKjoKLtPqkHCv
+ pQP7y9J/DN3ItT73E+qy1z0Uffix6QTPqM7V228r6L4qj8Ox8kpi2P/opvRE6hZ0k0lhLlK
+ wHygYY4raTR4t/47Hjx31cf5+ayYuUAeem8v0Cr2pp+dbiXlXPlsj4kotqAQFbHFST+QEMa
+ Imv2Nkpc2JBbJDqrIx5cQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:dqx88A5qMTA=:1S4046MfPD8y/IpFSx2c3H
+ /8ObSM67QTcUhEm+m9wLxrdAPfS+5BKoDu4cVnerdrigzMZe7ENSuFGCJ0+zIgQAni7YMyGsC
+ gJKPc+I8NlRlRImTXQ13qYccs7a7Ss1908nLXLwOEeTrYVsgnPNvbuWHGqiNeTnPYfncXIsf8
+ qFVUZGmY/R3MM2V1EFcyr3coAPPhCqsYjzq5q55KTmNncgYKssnAgrSqriBVgS7vUsKZX5vn/
+ K33yCnXrJ0ufLce+ldnnstSx+GVtZ/EKUBV87O4+ERuYI8samehVPKcRjvBY8wNVtyCLkjCrb
+ yo8ovK1CXt8njgK1PHM2ptL5D9cvTrwAvWHRDjiz+hqu2Zs1a/1LbFXflz3bYFqnzG/uzRa2i
+ /Jz/mkhnuXU3+YtbIUrclIt6v2DDKQlMKSVpsv0HsIiarNYF3UhMeJUh7wdJarFmv5tJJ7QT8
+ Hr9FpHURuTH9PizLThX/MAFa5vhjRfnOrwuGWy2j8ovrneLEL9skGMb7iflUckgUSG8gn6vQk
+ mPdX90mffX66XDG4UGE45L0QedcrjZl9qGkxeSTST4EgDWUCE4wmseOF2xXFGX4AtB+35K90/
+ FsKc5Cfuz9I2MDLsBvASLa1z54inBD/xk8zuQrccvuBK3I9HVEon/R5tFrdhHkIYlrrkLxrqp
+ BRtKEPE6UXyrXtebKNpskNsns0bbLE6ArG1qA5ZMvSgVv8TJDStGW0e4iiNE4+sHhpZwaSeQM
+ /xOrWoborgoj7Ox/SoDtfsAy5QmUIx8vyKPolQ==
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
@@ -54,34 +55,62 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Enrico Weigelt <info@metux.net>
 
-The current error message on failed probing tends to be a bit
-misleading. Fix it to tell exactly that an APU v1 was not found.
+As this driver now only supports the APU1 boards, we don't need
+to differenciate between board types anymore. Therefore optimize
+away the now obsolete code.
 
 Signed-off-by: Enrico Weigelt <info@metux.net>
 ---
- drivers/leds/leds-apu.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/leds/leds-apu.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
-index 451cb9f..892fea7 100644
+index 140093a..37b054f 100644
 --- a/drivers/leds/leds-apu.c
 +++ b/drivers/leds/leds-apu.c
-@@ -170,13 +170,9 @@ static int __init apu_led_init(void)
- 	struct platform_device *pdev;
- 	int err;
+@@ -66,16 +66,10 @@ struct apu_led_profile {
+ 	unsigned long offset; /* for devm_ioremap */
+ };
  
--	if (!dmi_match(DMI_SYS_VENDOR, "PC Engines")) {
--		pr_err("No PC Engines board detected\n");
--		return -ENODEV;
--	}
--	if (!(dmi_match(DMI_PRODUCT_NAME, "APU"))) {
--		pr_err("Unknown PC Engines board: %s\n",
--				dmi_get_system_info(DMI_PRODUCT_NAME));
-+	if (!(dmi_match(DMI_SYS_VENDOR, "PC Engines") &&
-+	      dmi_match(DMI_PRODUCT_NAME, "APU"))) {
-+		pr_err("No PC Engines APUv1 board detected\n");
- 		return -ENODEV;
+-/* Supported platform types */
+-enum apu_led_platform_types {
+-	APU1_LED_PLATFORM,
+-};
+-
+ struct apu_led_pdata {
+ 	struct platform_device *pdev;
+ 	struct apu_led_priv *pled;
+ 	const struct apu_led_profile *profile;
+-	enum apu_led_platform_types platform;
+ 	int num_led_instances;
+ 	int iosize; /* for devm_ioremap() */
+ 	spinlock_t lock;
+@@ -130,8 +124,7 @@ static int apu_led_config(struct device *dev, struct apu_led_pdata *apuld)
+ 		led_cdev->brightness = apu_led->profile[i].brightness;
+ 		led_cdev->max_brightness = 1;
+ 		led_cdev->flags = LED_CORE_SUSPENDRESUME;
+-		if (apu_led->platform == APU1_LED_PLATFORM)
+-			led_cdev->brightness_set = apu1_led_brightness_set;
++		led_cdev->brightness_set = apu1_led_brightness_set;
+ 
+ 		pled->param.addr = devm_ioremap(dev,
+ 				apu_led->profile[i].offset, apu_led->iosize);
+@@ -144,7 +137,7 @@ static int apu_led_config(struct device *dev, struct apu_led_pdata *apuld)
+ 		if (err)
+ 			goto error;
+ 
+-		led_cdev->brightness_set(led_cdev, apu_led->profile[i].brightness);
++		apu1_led_brightness_set(led_cdev, apu_led->profile[i].brightness);
  	}
+ 
+ 	return 0;
+@@ -166,7 +159,6 @@ static int __init apu_led_probe(struct platform_device *pdev)
+ 	apu_led->pdev = pdev;
+ 
+ 	apu_led->profile = apu1_led_profile;
+-	apu_led->platform = APU1_LED_PLATFORM;
+ 	apu_led->num_led_instances = ARRAY_SIZE(apu1_led_profile);
+ 	apu_led->iosize = APU1_IOSIZE;
  
 -- 
 1.9.1
