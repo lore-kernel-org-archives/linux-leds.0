@@ -2,68 +2,139 @@ Return-Path: <SRS0=1K4V=VM=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3498FC7618F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53ABBC7618F
 	for <linux-leds@archiver.kernel.org>; Mon, 15 Jul 2019 14:58:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BBEF204FD
+	by mail.kernel.org (Postfix) with ESMTP id 3737A204FD
 	for <linux-leds@archiver.kernel.org>; Mon, 15 Jul 2019 14:58:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391188AbfGOO5n (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 15 Jul 2019 10:57:43 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:39271 "EHLO
+        id S2388840AbfGOO6W (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 15 Jul 2019 10:58:22 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:42089 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391156AbfGOO5n (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 15 Jul 2019 10:57:43 -0400
+        with ESMTP id S2390903AbfGOO5o (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 15 Jul 2019 10:57:44 -0400
 Received: from orion.localdomain ([95.118.111.244]) by
  mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MD9Kp-1heY5r1xHV-0099xY; Mon, 15 Jul 2019 16:57:38 +0200
+ id 1MOzKk-1i5nCR2tVE-00PLVd; Mon, 15 Jul 2019 16:57:39 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
         linux-leds@vger.kernel.org
-Subject: leds: apu: drop obsolete support for apu>=2
-Date:   Mon, 15 Jul 2019 16:57:27 +0200
-Message-Id: <1563202653-20994-1-git-send-email-info@metux.net>
+Subject: [PATCH 4/6] leds: apu: drop profile field from priv data
+Date:   Mon, 15 Jul 2019 16:57:31 +0200
+Message-Id: <1563202653-20994-5-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
-X-Provags-ID: V03:K1:bjFr0P34zwiwycyYooXN3gJkPyUMnzKh8TAai8QjjD7P+jPKx2y
- WyKnPaduPkTjD8w6/TIxmlobgiDmXFHOT8h9wdFt/oZwF7WxTUNrspQjz+P2jrMyir7Suy8
- KI+IDFa1BKa+EfmK/h/AE/sEmU6/EM1Q6eCstSEtXOFO3wVRSdFfx9PP6R1gnMlfZkloJOr
- kHWimJpwyN9TrpKaKuhiA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:brXsJ+7J2ag=:2Hrh3GyFKmNSrBJg7E8a4q
- 31jgTlWMxMfuJDca2c/SDY4UME51Eb10rP7k5uv2H7Z3HgpTSCkTnD8DCJ/sDETOx6GeaFDDl
- YFCB59of1eEO2OB8lO/ucdtlC2CbndegoYCEJ6dpL2kqwRyqRmC7h+50UdF2CKGwX0svHLpg7
- kFk4TbnEnU4e2S+hCAVcqWfM/qbSAAgEJYDJphahDJFe+ttVwoc16To2UBpG8pvtI737NKEx/
- jGDFAD75aOd/Rm0fCZsfgtopDTO/O4p+4Wtu1CUbaurB2OsQihFskYpLRAfwBsQT251D4soPp
- 6zeLk62VBrCb6b9yHdpwgb9+d7Tw6HWITEl+DqRwr31i+9Ne6mQq9BBWXB6yrSZ3E8Hp5mOvp
- 1HV3RVm3tAfrHMkIPdcEsbkgqzKOnNiM040LWZu8fGTPrUGIktnbWdRWhwhvACkbtJMCxNWWL
- lF7C69uSsBlW4Xy2DySzrbBJIRliRDDaiG5fziYiS5YBqYaUv0GPoME6qtPxJ9bJp9emugzyZ
- rE/EJ4xEYSJhRXCDALU7R0kNBDNFjfvM7/rJeLnlipfadZJmaOjkyEsX/l9KNxkHCxf+d2Vhy
- 1Ibpq0VWp9NhDIO5JvyUYma8CZ+hdKadr3DarT19RXrZsQPYE39TvNZx5NkviduppU/tMubnC
- jB+k/49L824fPF5+hno9evc5XGLVoz/97TDdHDLfZhf0e1djMWNAaG7BbwKoe2drmOEk0Eaw0
- SAtKm9fSIvkwCEj1gKIcndoNFF4s7hweWOcpbQ==
+In-Reply-To: <1563202653-20994-1-git-send-email-info@metux.net>
+References: <1563202653-20994-1-git-send-email-info@metux.net>
+X-Provags-ID: V03:K1:/XuT5C5+ZAd8EZV57RjhC1vSM1n2EnuzZFECLA56V3Uz7rBFADh
+ rS7H91OCIwDT+ngUcqwzWyR6poASpCtFBY5cGLpF2ApYS7Aunsxcg0HOli3DY0ayinJFpX1
+ uFSxVzGegIT4xLsI1+HJrYSqJb/RNlMPyogNFlN7zg0kEG4YHOgtI8ycdPRK17xXXEBDl3v
+ LqFs+TpB4yuoy29lNA10w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:t/j9D14XzVI=:QxMs7OptdsJotNbcM77P2W
+ B4SZ2Yc5dqRJcyKXwEqUyvY5mDSOYwK/cCUUq/ClUPRu2lHXDczvahn2fF5P2/8LTGW41RkTR
+ 49CASclXakqezdHiPOO/glwmGnQ56O8qn2P9YYAWgiUTKyQE42reeW0soTm0cd6ntkhInLIXg
+ OJt39VXCEPtDE4P2aFs2jRLePbMYLPob5Hr5+pQsyTxDerwY2sP+Ek8VMh9zOt5GGP+OjBhj8
+ rNPw59as+n7g/k277cH54gnZUdTOyTHEruW8MJpw09I3zfiO12WVfIDJyp/I6YtOhW5qCe5Sa
+ 3CRoPkFdi59EyFxZaaH3DOvaDvSUehv0O7rsqha0wp9Xpe7xg7sHvBvviaEbCUovfZXVXvwYN
+ u3OYtui+C0rpUxxMU2SRr5w5R+tiKgWmS/wCByLH0nND8OcttaiaCxT7HVBH3AERXk8LR00hj
+ O6MyKHl4KMEonUXO9Kn29FNelFLHpzVNY1Xk1Li+KVSbIsSVRiz6EJwQy92d1bAtv4ER4Hkpz
+ EaYkmDsa0UxEWPw9SSbBOLWaDmumgZGBGGJGXK0bYH6Y/5Fekep3ONRbKk/2mmJ0PIuKx5r1q
+ CU5qrTTa/XBgzXkGSP1HL2+MfYdSDU88+xSQxUqMeZirFmxSqscYTfQweZ1M3tZXL6Friouxd
+ HQGHOo8dslOxa9a8pO5jkkbsjTt6ou5Qj7SVdAZZKIWUh8X9ZHVRFtKXjySFe/wImdAy5o3rB
+ xGCCtQhIs159zT20doOn1ttwZ9Hu+N4NFieJ5Q==
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi folks,
+From: Enrico Weigelt <info@metux.net>
 
+As this driver now only supports the APU1 boards, we don't need
+to handle profiles anymore and just can use the only one global
+array directly.
 
-the legacy apu LEDs driver has been superseded by the more complete
-pcengines-apu2 platform driver, for APU >= 2. It only supports
-the three front LEDs, but lacks all the other GPIOs (eg. button
-or simsw), and conflicts with the pcengines-apu2 driver.
+Signed-off-by: Enrico Weigelt <info@metux.net>
+---
+ drivers/leds/leds-apu.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
-Old APUv1 has a very different chipset.
-
-Therefore I propose dropping the apu>=2 support from the legacy
-driver, reducing it to only the old (obsolete) APUv1 boards.
-
-
---mtx
-
+diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
+index f79146c..451cb9f 100644
+--- a/drivers/leds/leds-apu.c
++++ b/drivers/leds/leds-apu.c
+@@ -69,8 +69,6 @@ struct apu_led_profile {
+ struct apu_led_pdata {
+ 	struct platform_device *pdev;
+ 	struct apu_led_priv *pled;
+-	const struct apu_led_profile *profile;
+-	int num_led_instances;
+ 	spinlock_t lock;
+ };
+ 
+@@ -109,24 +107,24 @@ static int apu_led_config(struct device *dev, struct apu_led_pdata *apuld)
+ 	int err;
+ 
+ 	apu_led->pled = devm_kcalloc(dev,
+-		apu_led->num_led_instances, sizeof(struct apu_led_priv),
++		ARRAY_SIZE(apu1_led_profile), sizeof(struct apu_led_priv),
+ 		GFP_KERNEL);
+ 
+ 	if (!apu_led->pled)
+ 		return -ENOMEM;
+ 
+-	for (i = 0; i < apu_led->num_led_instances; i++) {
++	for (i = 0; i < ARRAY_SIZE(apu1_led_profile); i++) {
+ 		struct apu_led_priv *pled = &apu_led->pled[i];
+ 		struct led_classdev *led_cdev = &pled->cdev;
+ 
+-		led_cdev->name = apu_led->profile[i].name;
+-		led_cdev->brightness = apu_led->profile[i].brightness;
++		led_cdev->name = apu1_led_profile[i].name;
++		led_cdev->brightness = apu1_led_profile[i].brightness;
+ 		led_cdev->max_brightness = 1;
+ 		led_cdev->flags = LED_CORE_SUSPENDRESUME;
+ 		led_cdev->brightness_set = apu1_led_brightness_set;
+ 
+ 		pled->param.addr = devm_ioremap(dev,
+-				apu_led->profile[i].offset, APU1_IOSIZE);
++				apu1_led_profile[i].offset, APU1_IOSIZE);
+ 		if (!pled->param.addr) {
+ 			err = -ENOMEM;
+ 			goto error;
+@@ -136,7 +134,7 @@ static int apu_led_config(struct device *dev, struct apu_led_pdata *apuld)
+ 		if (err)
+ 			goto error;
+ 
+-		apu1_led_brightness_set(led_cdev, apu_led->profile[i].brightness);
++		apu1_led_brightness_set(led_cdev, apu1_led_profile[i].brightness);
+ 	}
+ 
+ 	return 0;
+@@ -157,9 +155,6 @@ static int __init apu_led_probe(struct platform_device *pdev)
+ 
+ 	apu_led->pdev = pdev;
+ 
+-	apu_led->profile = apu1_led_profile;
+-	apu_led->num_led_instances = ARRAY_SIZE(apu1_led_profile);
+-
+ 	spin_lock_init(&apu_led->lock);
+ 	return apu_led_config(&pdev->dev, apu_led);
+ }
+@@ -204,7 +199,7 @@ static void __exit apu_led_exit(void)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < apu_led->num_led_instances; i++)
++	for (i = 0; i < ARRAY_SIZE(apu1_led_profile); i++)
+ 		led_classdev_unregister(&apu_led->pled[i].cdev);
+ 
+ 	platform_device_unregister(apu_led->pdev);
+-- 
+1.9.1
 
