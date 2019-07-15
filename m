@@ -2,139 +2,109 @@ Return-Path: <SRS0=1K4V=VM=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53ABBC7618F
-	for <linux-leds@archiver.kernel.org>; Mon, 15 Jul 2019 14:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC6CC7618F
+	for <linux-leds@archiver.kernel.org>; Mon, 15 Jul 2019 15:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3737A204FD
-	for <linux-leds@archiver.kernel.org>; Mon, 15 Jul 2019 14:58:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 819C32067C
+	for <linux-leds@archiver.kernel.org>; Mon, 15 Jul 2019 15:19:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mUMMPxaN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388840AbfGOO6W (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 15 Jul 2019 10:58:22 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:42089 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390903AbfGOO5o (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 15 Jul 2019 10:57:44 -0400
-Received: from orion.localdomain ([95.118.111.244]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MOzKk-1i5nCR2tVE-00PLVd; Mon, 15 Jul 2019 16:57:39 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
-        linux-leds@vger.kernel.org
-Subject: [PATCH 4/6] leds: apu: drop profile field from priv data
-Date:   Mon, 15 Jul 2019 16:57:31 +0200
-Message-Id: <1563202653-20994-5-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1563202653-20994-1-git-send-email-info@metux.net>
-References: <1563202653-20994-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:/XuT5C5+ZAd8EZV57RjhC1vSM1n2EnuzZFECLA56V3Uz7rBFADh
- rS7H91OCIwDT+ngUcqwzWyR6poASpCtFBY5cGLpF2ApYS7Aunsxcg0HOli3DY0ayinJFpX1
- uFSxVzGegIT4xLsI1+HJrYSqJb/RNlMPyogNFlN7zg0kEG4YHOgtI8ycdPRK17xXXEBDl3v
- LqFs+TpB4yuoy29lNA10w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:t/j9D14XzVI=:QxMs7OptdsJotNbcM77P2W
- B4SZ2Yc5dqRJcyKXwEqUyvY5mDSOYwK/cCUUq/ClUPRu2lHXDczvahn2fF5P2/8LTGW41RkTR
- 49CASclXakqezdHiPOO/glwmGnQ56O8qn2P9YYAWgiUTKyQE42reeW0soTm0cd6ntkhInLIXg
- OJt39VXCEPtDE4P2aFs2jRLePbMYLPob5Hr5+pQsyTxDerwY2sP+Ek8VMh9zOt5GGP+OjBhj8
- rNPw59as+n7g/k277cH54gnZUdTOyTHEruW8MJpw09I3zfiO12WVfIDJyp/I6YtOhW5qCe5Sa
- 3CRoPkFdi59EyFxZaaH3DOvaDvSUehv0O7rsqha0wp9Xpe7xg7sHvBvviaEbCUovfZXVXvwYN
- u3OYtui+C0rpUxxMU2SRr5w5R+tiKgWmS/wCByLH0nND8OcttaiaCxT7HVBH3AERXk8LR00hj
- O6MyKHl4KMEonUXO9Kn29FNelFLHpzVNY1Xk1Li+KVSbIsSVRiz6EJwQy92d1bAtv4ER4Hkpz
- EaYkmDsa0UxEWPw9SSbBOLWaDmumgZGBGGJGXK0bYH6Y/5Fekep3ONRbKk/2mmJ0PIuKx5r1q
- CU5qrTTa/XBgzXkGSP1HL2+MfYdSDU88+xSQxUqMeZirFmxSqscYTfQweZ1M3tZXL6Friouxd
- HQGHOo8dslOxa9a8pO5jkkbsjTt6ou5Qj7SVdAZZKIWUh8X9ZHVRFtKXjySFe/wImdAy5o3rB
- xGCCtQhIs159zT20doOn1ttwZ9Hu+N4NFieJ5Q==
+        id S1730673AbfGOPTs (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 15 Jul 2019 11:19:48 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54145 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730221AbfGOPTs (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 15 Jul 2019 11:19:48 -0400
+Received: by mail-wm1-f68.google.com with SMTP id x15so15605700wmj.3
+        for <linux-leds@vger.kernel.org>; Mon, 15 Jul 2019 08:19:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=HHztAI/ZQoVWsQtGtZCm40CW/6TH0AHaPswdjI5N1oQ=;
+        b=mUMMPxaN+YcHfpcJeojEBde29eKqocO/DZ1FrwPpV6dC9y5f09wS6nUZWtc1tMnLuv
+         w1kky1RxU5cFckBDOOsmjWc6qYct//DeNf8lxmicE6v2alZlhbSJz6c4C/KTNLJ/NA3Z
+         eeJTQAV39FIouQXo3wyEP2I89bFZZ03QLZagts2eWDi6VbA3euGhZJVipzVo2tj6gV54
+         Tmpzw9J9q5/e8rTXDKIulB1VPt46+sQK52s6i9iDNLp1KI6YMxCiadbheJTFkSEHc/JO
+         nImamz6P3N1doomh0IYSSJz9EvXtQ9g/pMZQXiO/PcBiGaTT9aLek769kEERYMBnVIyH
+         c7lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=HHztAI/ZQoVWsQtGtZCm40CW/6TH0AHaPswdjI5N1oQ=;
+        b=HwOzsja/Md4xMXHwEdGqlWbrPISYlmSZFLyKlOJmObOq6OT0zIfKtbd31OffHkG9Pz
+         VtlPD92uszgAf1nj9b3+OuXV5EcfNXp4pnXJf6KnSBG842GkbwNuWStAjqWVMjff/VSp
+         TFqv/o6LNlcezc80yo3ha1QUx9puG0cLhRrJ6FmVOxqKRBR4wZ4aCbrpwUfoY03PrSUF
+         8NFI8rV44/6Onv+BIRRP7ABPBosFRV+9U17PAWzZ0pFyz8ayTECGdwUaNE0oI34ZMzji
+         oFm2U+TIulZWAyilPN8OK+PL9ZipZG2iWx/TOFFrHL7qUIkwFofQBv/fni8UzOLBSjR7
+         mv6w==
+X-Gm-Message-State: APjAAAXIuyrVDeA0PxYR5d6gahvBq9yzWQ1GhQdLs+mVXaOLN3r1rEdu
+        aOgnZu2TVAUyWtPLhrc1G8PJog==
+X-Google-Smtp-Source: APXvYqw1KkKk6QFk1n8Mx4/eZF0c9gqDHwWbqFleJnMcfVrqqH/7TK3PX3BO5WoKr9F0daRiY9Jdfw==
+X-Received: by 2002:a05:600c:2146:: with SMTP id v6mr24391543wml.59.1563203985761;
+        Mon, 15 Jul 2019 08:19:45 -0700 (PDT)
+Received: from holly.lan (82-132-244-224.dab.02.net. [82.132.244.224])
+        by smtp.gmail.com with ESMTPSA id g17sm13049119wrm.7.2019.07.15.08.19.42
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 15 Jul 2019 08:19:44 -0700 (PDT)
+Date:   Mon, 15 Jul 2019 16:19:35 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
+Cc:     Dan Murphy <dmurphy@ti.com>, jacek.anaszewski@gmail.com,
+        pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] leds: Add control of the voltage/current regulator
+ to the LED core
+Message-ID: <20190715151935.4ci23aqw4liz56fg@holly.lan>
+References: <20190708103547.23528-1-jjhiblot@ti.com>
+ <20190708103547.23528-2-jjhiblot@ti.com>
+ <56d16260-ff82-3439-4c1f-2a3a1552bc7d@ti.com>
+ <ab4818c0-bc7a-13e1-c6ce-e977b0234de0@ti.com>
+ <20190715092400.sedjumqkecglheyu@holly.lan>
+ <9c53f54f-d0d4-50d4-09da-34389085269a@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9c53f54f-d0d4-50d4-09da-34389085269a@ti.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Enrico Weigelt <info@metux.net>
+On Mon, Jul 15, 2019 at 11:47:08AM +0200, Jean-Jacques Hiblot wrote:
+> > > > > +    if (IS_ERR(led_cdev->regulator)) {
+> > > > > +        dev_err(led_cdev->dev, "Cannot get the power supply for %s\n",
+> > > > > +            led_cdev->name);
+> > > > > +        device_unregister(led_cdev->dev);
+> > > > > +        mutex_unlock(&led_cdev->led_access);
+> > > > > +        return PTR_ERR(led_cdev->regulator);
+> > > > This is listed as optional in the DT doc.  This appears to be required.
+> > > The regulator core will provide a dummy regulator if none is given in the
+> > > device tree. I would rather have an error in that case, but that is not how
+> > > it works.
+> > If you actively wanted to get -ENODEV back when there is no regulator
+> > then you can use devm_regulator_get_optional() for that.
+> > 
+> > However perhaps be careful what you wish for. If you use get_optional()
+> > then you will have to sprinkle NULL or IS_ERR() checks everywhere. I'd
+> > favour using the current approach!
+> 
+> Thanks for the info. I think I'll use the get_optionnal(). That will add a
+> bit of complexity, but it will avoid deferring some work in
+> led_set_brightness_nopm() when it is not needed.
 
-As this driver now only supports the APU1 boards, we don't need
-to handle profiles anymore and just can use the only one global
-array directly.
+Makes sense, I didn't notice that it allows you to avoid deferred work.
 
-Signed-off-by: Enrico Weigelt <info@metux.net>
----
- drivers/leds/leds-apu.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
-index f79146c..451cb9f 100644
---- a/drivers/leds/leds-apu.c
-+++ b/drivers/leds/leds-apu.c
-@@ -69,8 +69,6 @@ struct apu_led_profile {
- struct apu_led_pdata {
- 	struct platform_device *pdev;
- 	struct apu_led_priv *pled;
--	const struct apu_led_profile *profile;
--	int num_led_instances;
- 	spinlock_t lock;
- };
- 
-@@ -109,24 +107,24 @@ static int apu_led_config(struct device *dev, struct apu_led_pdata *apuld)
- 	int err;
- 
- 	apu_led->pled = devm_kcalloc(dev,
--		apu_led->num_led_instances, sizeof(struct apu_led_priv),
-+		ARRAY_SIZE(apu1_led_profile), sizeof(struct apu_led_priv),
- 		GFP_KERNEL);
- 
- 	if (!apu_led->pled)
- 		return -ENOMEM;
- 
--	for (i = 0; i < apu_led->num_led_instances; i++) {
-+	for (i = 0; i < ARRAY_SIZE(apu1_led_profile); i++) {
- 		struct apu_led_priv *pled = &apu_led->pled[i];
- 		struct led_classdev *led_cdev = &pled->cdev;
- 
--		led_cdev->name = apu_led->profile[i].name;
--		led_cdev->brightness = apu_led->profile[i].brightness;
-+		led_cdev->name = apu1_led_profile[i].name;
-+		led_cdev->brightness = apu1_led_profile[i].brightness;
- 		led_cdev->max_brightness = 1;
- 		led_cdev->flags = LED_CORE_SUSPENDRESUME;
- 		led_cdev->brightness_set = apu1_led_brightness_set;
- 
- 		pled->param.addr = devm_ioremap(dev,
--				apu_led->profile[i].offset, APU1_IOSIZE);
-+				apu1_led_profile[i].offset, APU1_IOSIZE);
- 		if (!pled->param.addr) {
- 			err = -ENOMEM;
- 			goto error;
-@@ -136,7 +134,7 @@ static int apu_led_config(struct device *dev, struct apu_led_pdata *apuld)
- 		if (err)
- 			goto error;
- 
--		apu1_led_brightness_set(led_cdev, apu_led->profile[i].brightness);
-+		apu1_led_brightness_set(led_cdev, apu1_led_profile[i].brightness);
- 	}
- 
- 	return 0;
-@@ -157,9 +155,6 @@ static int __init apu_led_probe(struct platform_device *pdev)
- 
- 	apu_led->pdev = pdev;
- 
--	apu_led->profile = apu1_led_profile;
--	apu_led->num_led_instances = ARRAY_SIZE(apu1_led_profile);
--
- 	spin_lock_init(&apu_led->lock);
- 	return apu_led_config(&pdev->dev, apu_led);
- }
-@@ -204,7 +199,7 @@ static void __exit apu_led_exit(void)
- {
- 	int i;
- 
--	for (i = 0; i < apu_led->num_led_instances; i++)
-+	for (i = 0; i < ARRAY_SIZE(apu1_led_profile); i++)
- 		led_classdev_unregister(&apu_led->pled[i].cdev);
- 
- 	platform_device_unregister(apu_led->pdev);
--- 
-1.9.1
-
+Daniel.
