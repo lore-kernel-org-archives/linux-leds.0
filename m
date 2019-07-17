@@ -2,62 +2,60 @@ Return-Path: <SRS0=M6xg=VO=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5E7C76186
-	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 14:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A8AC76192
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 14:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 896F6208C0
-	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 14:00:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FEE6208C0
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 14:00:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pOqupyCB"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u/wqkh9r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbfGQOAC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 17 Jul 2019 10:00:02 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:60592 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbfGQOAC (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 17 Jul 2019 10:00:02 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6HDxuJ5109675;
-        Wed, 17 Jul 2019 08:59:56 -0500
+        id S1726085AbfGQOAA (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 17 Jul 2019 10:00:00 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:37350 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbfGQOAA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 17 Jul 2019 10:00:00 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6HDxqSk062883;
+        Wed, 17 Jul 2019 08:59:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1563371996;
-        bh=xIc3z2d+5D/rJ8xZOe9QZOEhKhuuTTaa43KvfS4jeRo=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=pOqupyCBGjnrz0nJQNTrCs64BdkxnLHnn3JpNanz6a5oPZ8AxmEwq9FR9RlN5UoDZ
-         xEgMq9JTNgsb60B9QtC/qwX0nYnziUB0val5vBdYeSw89/t/hUxqxVVoQkP2y5Vohb
-         uFxTafJq1ABnruwPhbY9fLj3pxsvNCaqa4hMGbZc=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6HDxuB6055077
+        s=ti-com-17Q1; t=1563371992;
+        bh=XbfWttQsD9HxjUDBssZl8Yh4lE+MdlmkC8ZSKN0ubjI=;
+        h=From:To:CC:Subject:Date;
+        b=u/wqkh9r280mzTDCWrrmUqWC9Xqq7FIa+nryqf62hRieZntb5ITucSR84049lMBQA
+         Os7pzsTXBvgq0khbrOeYDLFAzTFyovVWkuwRPkq1Yz+rdVOZMOwanrrstTlRxLcnXr
+         KPZAHtzfTa42+zAnf9EmBOv+9xYBtQHD0pV22Obg=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6HDxqO8108183
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 17 Jul 2019 08:59:56 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 17 Jul 2019 08:59:52 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 17
- Jul 2019 08:59:55 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ Jul 2019 08:59:52 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 17 Jul 2019 08:59:56 -0500
+ Frontend Transport; Wed, 17 Jul 2019 08:59:52 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6HDxtpw016885;
-        Wed, 17 Jul 2019 08:59:55 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6HDxpQb069975;
+        Wed, 17 Jul 2019 08:59:52 -0500
 From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
         <mark.rutland@arm.com>, <daniel.thompson@linaro.org>
 CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v3 3/3] leds: Make led_set_brightness_sync() also use __led_set_brightness()
-Date:   Wed, 17 Jul 2019 15:59:48 +0200
-Message-ID: <20190717135948.19340-4-jjhiblot@ti.com>
+Subject: [PATCH v3 0/3] leds: Add control of the voltage/current regulator to the LED core
+Date:   Wed, 17 Jul 2019 15:59:45 +0200
+Message-ID: <20190717135948.19340-1-jjhiblot@ti.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190717135948.19340-1-jjhiblot@ti.com>
-References: <20190717135948.19340-1-jjhiblot@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -66,42 +64,39 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-There are some LED drivers that do not implement brightness_set_blocking(),
-for those drivers led_set_brightness_sync() cannot work.
-Fixing it by calling first __led_set_brightness() and falling back to
-__led_set_brightness_blocking() if it failed.
+This series makes it possible for the LED core to manage the power supply
+of a LED. It uses the regulator API to disable/enable the power if when the
+LED is turned on/off.
+This is especially useful in situations where the LED driver/controller is
+not supplying the power.
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
----
- drivers/leds/led-core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+While at it, throw in a fix for led_set_brightness_sync() so that it can
+work with drivers that don't provide brightness_set_blocking()
 
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index dab32cf778f2..4a0506081c0e 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -320,15 +320,19 @@ int led_set_brightness_sync(struct led_classdev *led_cdev,
- 	if (led_cdev->blink_delay_on || led_cdev->blink_delay_off)
- 		return -EBUSY;
- 
--	led_cdev->brightness = min(value, led_cdev->max_brightness);
-+	value = min(value, led_cdev->max_brightness);
- 
- 	if (led_cdev->flags & LED_SUSPENDED)
- 		return 0;
- 
--	ret = __led_set_brightness_blocking(led_cdev, led_cdev->brightness);
-+	ret = __led_set_brightness(led_cdev, value);
-+	if (ret == -ENOTSUPP)
-+		ret = __led_set_brightness_blocking(led_cdev, value);
- 	if (ret)
- 		return ret;
- 
-+	led_cdev->brightness = value;
-+
- 	return __led_handle_regulator(led_cdev, led_cdev->brightness);
- }
- EXPORT_SYMBOL_GPL(led_set_brightness_sync);
+changes in v3:
+- reword device-tree description
+- reword commit log
+- remove regulator updates from functions used in atomic context. If the
+  regulator must be updated, it is defered to a workqueue.
+- Fix led_set_brightness_sync() to work with the non-blocking function
+  __led_set_brightness()
+
+changes in v2:
+- use devm_regulator_get_optional() to avoid using the dummy regulator and
+  do some unnecessary work
+
+Jean-Jacques Hiblot (3):
+  dt-bindings: leds: document the "power-supply" property
+  leds: Add control of the voltage/current regulator to the LED core
+  leds: Make led_set_brightness_sync() also use __led_set_brightness()
+
+ .../devicetree/bindings/leds/common.txt       |  4 ++
+ drivers/leds/led-class.c                      | 15 ++++++
+ drivers/leds/led-core.c                       | 53 +++++++++++++++++--
+ drivers/leds/leds.h                           |  1 +
+ include/linux/leds.h                          |  4 ++
+ 5 files changed, 73 insertions(+), 4 deletions(-)
+
 -- 
 2.17.1
 
