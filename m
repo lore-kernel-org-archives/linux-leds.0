@@ -7,61 +7,62 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E385C76192
-	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 13:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A22BC76186
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 13:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECA72205F4
-	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 13:23:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EBF8208C0
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 13:47:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rCTktTTy"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OvE+rl3D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbfGQNX0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 17 Jul 2019 09:23:26 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33626 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbfGQNX0 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 17 Jul 2019 09:23:26 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6HDNJfc053821;
-        Wed, 17 Jul 2019 08:23:19 -0500
+        id S1725993AbfGQNr2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 17 Jul 2019 09:47:28 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:59366 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfGQNr2 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 17 Jul 2019 09:47:28 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6HDlKab106607;
+        Wed, 17 Jul 2019 08:47:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1563369799;
-        bh=7w70GvKKtgyFoxwG+WzJCvNRew7k10rVv3rd6Z95nLk=;
+        s=ti-com-17Q1; t=1563371240;
+        bh=KE7ll8RGnYW0NspHb1Isx+it3u3F262JZfA7NFbvB3Y=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=rCTktTTyWodhfYtJr/j12+hmDxYg2bovIequtwO63+ayqS47UzhSEHpEh0nT4tZGr
-         e4GwNvJ8SSrBRQynqnsUV64I7LyMi2kdZJOnwoUmpey134e7Pt+eX+nQauZemFlBQ0
-         /qkj9b2I8S19A8pT9ASekkSQ3C0umAA7BQH8n/3g=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6HDNJDH060743
+        b=OvE+rl3DHZ7If/K/1iJwdCLx5InQVBbexmSEQpkQ1Kme5IQpTazoz/ueXM1ClMQ6I
+         GdzxtbsgpT7rXrDsVr9Zxk10m5WmII+hj1yjSZwOhOaNtOAnTJ3ik54N8hvVcRQ5TZ
+         IbT8SqyWweaUefOfxcp1QobQtlEtCzRc89qOfR5A=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6HDlK6C122361
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 17 Jul 2019 08:23:19 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 17 Jul 2019 08:47:20 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 17
- Jul 2019 08:23:19 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ Jul 2019 08:47:20 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 17 Jul 2019 08:23:19 -0500
+ Frontend Transport; Wed, 17 Jul 2019 08:47:20 -0500
 Received: from [10.250.98.129] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6HDNHfr093396;
-        Wed, 17 Jul 2019 08:23:18 -0500
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6HDlIet039267;
+        Wed, 17 Jul 2019 08:47:18 -0500
 Subject: Re: [PATCH v2 2/2] leds: Add control of the voltage/current regulator
  to the LED core
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-        <mark.rutland@arm.com>, <daniel.thompson@linaro.org>
-CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+CC:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <dmurphy@ti.com>,
+        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
 References: <20190715155657.22976-1-jjhiblot@ti.com>
  <20190715155657.22976-3-jjhiblot@ti.com>
- <4ae4d83b-8dee-72e4-3860-dd420a29115e@gmail.com>
+ <20190716105032.thpcttko5do3u56n@holly.lan>
 From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-Message-ID: <08873dfd-d7b2-9fd2-1aca-c63a7e983e2d@ti.com>
-Date:   Wed, 17 Jul 2019 15:23:16 +0200
+Message-ID: <9497174a-65b9-bd4f-8ce3-89176930a78c@ti.com>
+Date:   Wed, 17 Jul 2019 15:47:16 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <4ae4d83b-8dee-72e4-3860-dd420a29115e@gmail.com>
+In-Reply-To: <20190716105032.thpcttko5do3u56n@holly.lan>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -71,21 +72,27 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Jacek,
 
-On 15/07/2019 22:42, Jacek Anaszewski wrote:
-> @@ -80,6 +107,7 @@ static void led_timer_function(struct timer_list *t)
->   	}
->   
->   	led_set_brightness_nosleep(led_cdev, brightness);
-> +	__led_handle_regulator(led_cdev, brightness);
-> This cannot be called from atomic context since regulator_enable/disable
-> use mutex beneath, that can sleep on contention. Therefore this call
-> has to be made in two places instead:
->
-> __led_set_brightness()
-> __led_set_brightness_blocking()
+On 16/07/2019 12:50, Daniel Thompson wrote:
+> On Mon, Jul 15, 2019 at 05:56:57PM +0200, Jean-Jacques Hiblot wrote:
+>> A LED is usually powered by a voltage/current regulator. Let the LED core
+> This is almost certainly nitpicking but since there's enough other
+> review comments that you will have to respin anyway ;-)
+No problems. comments are welcome.
+> Is an LED really "usually powered by a voltage/current regulator"? Some
+> LEDs have a software controlled power supply but I'm not sure it is
+> the usual case.
+True. I'll reword this.
+> Likewise its a little confusing to be talking about LEDs with an
+> external current regulator since, although that is possible, it is also
+> one the main features provided by LED driver chips.
 
-Thanks. I'll fix this in v3.
+In my experience LED drivers are quite often current sinks. In that case 
+the power is provided externally, and sometimes by a managed regulator.
+
+Thanks,
 
 JJ
+
+>
+> Daniel.
