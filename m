@@ -7,54 +7,55 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A8AC76192
-	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 14:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41366C76186
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 14:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FEE6208C0
-	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 14:00:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1537D20818
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 14:15:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u/wqkh9r"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FL+rfY1t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726085AbfGQOAA (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 17 Jul 2019 10:00:00 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:37350 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbfGQOAA (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 17 Jul 2019 10:00:00 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6HDxqSk062883;
-        Wed, 17 Jul 2019 08:59:52 -0500
+        id S1727637AbfGQOP3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 17 Jul 2019 10:15:29 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:49622 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbfGQOP3 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 17 Jul 2019 10:15:29 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6HEFJVe036361;
+        Wed, 17 Jul 2019 09:15:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1563371992;
-        bh=XbfWttQsD9HxjUDBssZl8Yh4lE+MdlmkC8ZSKN0ubjI=;
+        s=ti-com-17Q1; t=1563372919;
+        bh=wmbVRRCj0IguumeyCLY5alwgve2QCszThM26fNaNT+Y=;
         h=From:To:CC:Subject:Date;
-        b=u/wqkh9r280mzTDCWrrmUqWC9Xqq7FIa+nryqf62hRieZntb5ITucSR84049lMBQA
-         Os7pzsTXBvgq0khbrOeYDLFAzTFyovVWkuwRPkq1Yz+rdVOZMOwanrrstTlRxLcnXr
-         KPZAHtzfTa42+zAnf9EmBOv+9xYBtQHD0pV22Obg=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6HDxqO8108183
+        b=FL+rfY1tSw0CRmepUeFIGKWqbgEIkpZ8eJccIH74o24uxCCleH9Zj51c4aCuwdP2Q
+         uFDEUT4yOz8UC6L7x43DFU1HhdEs4ABUw2ArnBm3Qj2hcgltu8QBmD3z7wfQekmEiE
+         GmAp5CHpQv0munbNjwly3GORfeXCHvNCtHsaBsIk=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6HEFJTe075585
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 17 Jul 2019 08:59:52 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 17 Jul 2019 09:15:19 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 17
- Jul 2019 08:59:52 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ Jul 2019 09:15:18 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 17 Jul 2019 08:59:52 -0500
+ Frontend Transport; Wed, 17 Jul 2019 09:15:18 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6HDxpQb069975;
-        Wed, 17 Jul 2019 08:59:52 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6HEFISC094769;
+        Wed, 17 Jul 2019 09:15:18 -0500
 From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <daniel.thompson@linaro.org>
+        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
+        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>
 CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v3 0/3] leds: Add control of the voltage/current regulator to the LED core
-Date:   Wed, 17 Jul 2019 15:59:45 +0200
-Message-ID: <20190717135948.19340-1-jjhiblot@ti.com>
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <tomi.valkeinen@ti.com>, Jean-Jacques Hiblot <jjhiblot@ti.com>
+Subject: [PATCH v4 0/4] Add a generic driver for LED-based backlight
+Date:   Wed, 17 Jul 2019 16:15:10 +0200
+Message-ID: <20190717141514.21171-1-jjhiblot@ti.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -64,38 +65,55 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This series makes it possible for the LED core to manage the power supply
-of a LED. It uses the regulator API to disable/enable the power if when the
-LED is turned on/off.
-This is especially useful in situations where the LED driver/controller is
-not supplying the power.
+This series aims to add a led-backlight driver, similar to pwm-backlight,
+but using a LED class device underneath.
 
-While at it, throw in a fix for led_set_brightness_sync() so that it can
-work with drivers that don't provide brightness_set_blocking()
+A few years ago (2015), Tomi Valkeinen posted a series implementing a
+backlight driver on top of a LED device:
+https://patchwork.kernel.org/patch/7293991/
+https://patchwork.kernel.org/patch/7294001/
+https://patchwork.kernel.org/patch/7293981/
+
+The discussion stopped because Tomi lacked the time to work on it.
+
+changes in v4:
+- fix dev_err() messages and commit logs following the advices of Pavel
+- cosmetic changes (indents, getting rid of  "? 1 : 0" in
+  led_match_led_node())
 
 changes in v3:
-- reword device-tree description
-- reword commit log
-- remove regulator updates from functions used in atomic context. If the
-  regulator must be updated, it is defered to a workqueue.
-- Fix led_set_brightness_sync() to work with the non-blocking function
-  __led_set_brightness()
+- dt binding: don't limit the brightness range to 0-255. Use the range of
+  the underlying LEDs. as a side-effect, all LEDs must now have the same
+  range
+- driver: Adapt to dt binding update.
+- driver: rework probe() for clarity and remove the remaining goto.
 
 changes in v2:
-- use devm_regulator_get_optional() to avoid using the dummy regulator and
-  do some unnecessary work
+- handle more than one LED.
+- don't make the backlight device a child of the LED controller.
+- make brightness-levels and default-brightness-level optional
+- removed the option to use a GPIO enable.
+- removed the option to use a regulator. It should be handled by the LED
+  core
+- don't make any change to the LED core (not needed anymore)
 
-Jean-Jacques Hiblot (3):
-  dt-bindings: leds: document the "power-supply" property
-  leds: Add control of the voltage/current regulator to the LED core
-  leds: Make led_set_brightness_sync() also use __led_set_brightness()
+Jean-Jacques Hiblot (2):
+  leds: Add managed API to get a LED from a device driver
+  dt-bindings: backlight: Add led-backlight binding
 
- .../devicetree/bindings/leds/common.txt       |  4 ++
- drivers/leds/led-class.c                      | 15 ++++++
- drivers/leds/led-core.c                       | 53 +++++++++++++++++--
- drivers/leds/leds.h                           |  1 +
- include/linux/leds.h                          |  4 ++
- 5 files changed, 73 insertions(+), 4 deletions(-)
+Tomi Valkeinen (2):
+  leds: Add of_led_get() and led_put()
+  backlight: add led-backlight driver
+
+ .../bindings/leds/backlight/led-backlight.txt |  28 ++
+ drivers/leds/led-class.c                      |  92 ++++++
+ drivers/video/backlight/Kconfig               |   7 +
+ drivers/video/backlight/Makefile              |   1 +
+ drivers/video/backlight/led_bl.c              | 268 ++++++++++++++++++
+ include/linux/leds.h                          |   6 +
+ 6 files changed, 402 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+ create mode 100644 drivers/video/backlight/led_bl.c
 
 -- 
 2.17.1
