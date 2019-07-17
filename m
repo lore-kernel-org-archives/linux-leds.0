@@ -2,97 +2,229 @@ Return-Path: <SRS0=M6xg=VO=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A22BC76186
-	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 13:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D67C76186
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 14:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EBF8208C0
-	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 13:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A076B208C0
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Jul 2019 14:00:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OvE+rl3D"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jsLw/pAR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725993AbfGQNr2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 17 Jul 2019 09:47:28 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:59366 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbfGQNr2 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 17 Jul 2019 09:47:28 -0400
+        id S1727497AbfGQOAD (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 17 Jul 2019 10:00:03 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:47336 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727343AbfGQOAD (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 17 Jul 2019 10:00:03 -0400
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6HDlKab106607;
-        Wed, 17 Jul 2019 08:47:20 -0500
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6HDxtB0032142;
+        Wed, 17 Jul 2019 08:59:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1563371240;
-        bh=KE7ll8RGnYW0NspHb1Isx+it3u3F262JZfA7NFbvB3Y=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=OvE+rl3DHZ7If/K/1iJwdCLx5InQVBbexmSEQpkQ1Kme5IQpTazoz/ueXM1ClMQ6I
-         GdzxtbsgpT7rXrDsVr9Zxk10m5WmII+hj1yjSZwOhOaNtOAnTJ3ik54N8hvVcRQ5TZ
-         IbT8SqyWweaUefOfxcp1QobQtlEtCzRc89qOfR5A=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6HDlK6C122361
+        s=ti-com-17Q1; t=1563371995;
+        bh=6+vilr+XdQSHC+LrYsP3LHhEU56tDuwpTN0339HCvk4=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=jsLw/pARH8MiGhMAL6f3SWhrDZ+RRfVfCQZfi7TARLOfs8QeJ7RsrQ3Ph0fUdJ92D
+         It7Ts+uvDVKhcFHNbB0H84TaPwEYIbfsEtgieMAHkEB/6fbrOvm70Iyb75xSYVvt/O
+         VEbxpgdUtTGyfdQ+hQ4ciwQCNpj10k7xP7Y7nRVQ=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6HDxth4007365
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 17 Jul 2019 08:47:20 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 17 Jul 2019 08:59:55 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 17
- Jul 2019 08:47:20 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ Jul 2019 08:59:54 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 17 Jul 2019 08:47:20 -0500
-Received: from [10.250.98.129] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6HDlIet039267;
-        Wed, 17 Jul 2019 08:47:18 -0500
-Subject: Re: [PATCH v2 2/2] leds: Add control of the voltage/current regulator
- to the LED core
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-CC:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <dmurphy@ti.com>,
-        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20190715155657.22976-1-jjhiblot@ti.com>
- <20190715155657.22976-3-jjhiblot@ti.com>
- <20190716105032.thpcttko5do3u56n@holly.lan>
+ Frontend Transport; Wed, 17 Jul 2019 08:59:54 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6HDxseV051940;
+        Wed, 17 Jul 2019 08:59:54 -0500
 From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-Message-ID: <9497174a-65b9-bd4f-8ce3-89176930a78c@ti.com>
-Date:   Wed, 17 Jul 2019 15:47:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <daniel.thompson@linaro.org>
+CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@ti.com>
+Subject: [PATCH v3 2/3] leds: Add control of the voltage/current regulator to the LED core
+Date:   Wed, 17 Jul 2019 15:59:47 +0200
+Message-ID: <20190717135948.19340-3-jjhiblot@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190717135948.19340-1-jjhiblot@ti.com>
+References: <20190717135948.19340-1-jjhiblot@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20190716105032.thpcttko5do3u56n@holly.lan>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Sometimes LEDs are powered by an external voltage/current regulator. Let
+the LED core know about it. This allows the LED core to turn on or off
+managed power supplies.
 
-On 16/07/2019 12:50, Daniel Thompson wrote:
-> On Mon, Jul 15, 2019 at 05:56:57PM +0200, Jean-Jacques Hiblot wrote:
->> A LED is usually powered by a voltage/current regulator. Let the LED core
-> This is almost certainly nitpicking but since there's enough other
-> review comments that you will have to respin anyway ;-)
-No problems. comments are welcome.
-> Is an LED really "usually powered by a voltage/current regulator"? Some
-> LEDs have a software controlled power supply but I'm not sure it is
-> the usual case.
-True. I'll reword this.
-> Likewise its a little confusing to be talking about LEDs with an
-> external current regulator since, although that is possible, it is also
-> one the main features provided by LED driver chips.
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+Reviewed-by: Dan Murphy <dmurphy@ti.com>
+---
+ drivers/leds/led-class.c | 15 +++++++++++++
+ drivers/leds/led-core.c  | 47 +++++++++++++++++++++++++++++++++++++---
+ drivers/leds/leds.h      |  1 +
+ include/linux/leds.h     |  4 ++++
+ 4 files changed, 64 insertions(+), 3 deletions(-)
 
-In my experience LED drivers are quite often current sinks. In that case 
-the power is provided externally, and sometimes by a managed regulator.
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 4793e77808e2..cadd43c30d50 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -253,6 +253,7 @@ int of_led_classdev_register(struct device *parent, struct device_node *np,
+ {
+ 	char name[LED_MAX_NAME_SIZE];
+ 	int ret;
++	struct regulator *regulator;
+ 
+ 	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
+ 	if (ret < 0)
+@@ -272,6 +273,20 @@ int of_led_classdev_register(struct device *parent, struct device_node *np,
+ 		dev_warn(parent, "Led %s renamed to %s due to name collision",
+ 				led_cdev->name, dev_name(led_cdev->dev));
+ 
++	regulator = devm_regulator_get_optional(led_cdev->dev, "power");
++	if (IS_ERR(regulator)) {
++		if (PTR_ERR(regulator) != -ENODEV) {
++			dev_err(led_cdev->dev, "Cannot get the power supply for %s\n",
++				led_cdev->name);
++			device_unregister(led_cdev->dev);
++			mutex_unlock(&led_cdev->led_access);
++			return PTR_ERR(regulator);
++		}
++		led_cdev->regulator = NULL;
++	} else {
++		led_cdev->regulator = regulator;
++	}
++
+ 	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
+ 		ret = led_add_brightness_hw_changed(led_cdev);
+ 		if (ret) {
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index 7107cd7e87cf..dab32cf778f2 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -23,6 +23,33 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
+ LIST_HEAD(leds_list);
+ EXPORT_SYMBOL_GPL(leds_list);
+ 
++static bool __led_need_regulator_update(struct led_classdev *led_cdev,
++					int brightness)
++{
++	bool new_state = (brightness != LED_OFF);
++
++	return led_cdev->regulator && led_cdev->regulator_state != new_state;
++}
++
++static int __led_handle_regulator(struct led_classdev *led_cdev,
++				int brightness)
++{
++	int rc;
++
++	if (__led_need_regulator_update(led_cdev, brightness)) {
++
++		if (brightness != LED_OFF)
++			rc = regulator_enable(led_cdev->regulator);
++		else
++			rc = regulator_disable(led_cdev->regulator);
++		if (rc)
++			return rc;
++
++		led_cdev->regulator_state = (brightness != LED_OFF);
++	}
++	return 0;
++}
++
+ static int __led_set_brightness(struct led_classdev *led_cdev,
+ 				enum led_brightness value)
+ {
+@@ -115,6 +142,8 @@ static void set_brightness_delayed(struct work_struct *ws)
+ 	if (ret == -ENOTSUPP)
+ 		ret = __led_set_brightness_blocking(led_cdev,
+ 					led_cdev->delayed_set_value);
++	__led_handle_regulator(led_cdev, led_cdev->delayed_set_value);
++
+ 	if (ret < 0 &&
+ 	    /* LED HW might have been unplugged, therefore don't warn */
+ 	    !(ret == -ENODEV && (led_cdev->flags & LED_UNREGISTERING) &&
+@@ -256,8 +285,14 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev,
+ 			      enum led_brightness value)
+ {
+ 	/* Use brightness_set op if available, it is guaranteed not to sleep */
+-	if (!__led_set_brightness(led_cdev, value))
+-		return;
++	if (!__led_set_brightness(led_cdev, value)) {
++		/*
++		 * if regulator state doesn't need to be changed, that is all/
++		 * Otherwise delegate the change to a work queue
++		 */
++		if (!__led_need_regulator_update(led_cdev, value))
++			return;
++	}
+ 
+ 	/* If brightness setting can sleep, delegate it to a work queue task */
+ 	led_cdev->delayed_set_value = value;
+@@ -280,6 +315,8 @@ EXPORT_SYMBOL_GPL(led_set_brightness_nosleep);
+ int led_set_brightness_sync(struct led_classdev *led_cdev,
+ 			    enum led_brightness value)
+ {
++	int ret;
++
+ 	if (led_cdev->blink_delay_on || led_cdev->blink_delay_off)
+ 		return -EBUSY;
+ 
+@@ -288,7 +325,11 @@ int led_set_brightness_sync(struct led_classdev *led_cdev,
+ 	if (led_cdev->flags & LED_SUSPENDED)
+ 		return 0;
+ 
+-	return __led_set_brightness_blocking(led_cdev, led_cdev->brightness);
++	ret = __led_set_brightness_blocking(led_cdev, led_cdev->brightness);
++	if (ret)
++		return ret;
++
++	return __led_handle_regulator(led_cdev, led_cdev->brightness);
+ }
+ EXPORT_SYMBOL_GPL(led_set_brightness_sync);
+ 
+diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+index 47b229469069..5aa5c038bd38 100644
+--- a/drivers/leds/leds.h
++++ b/drivers/leds/leds.h
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/rwsem.h>
+ #include <linux/leds.h>
++#include <linux/regulator/consumer.h>
+ 
+ static inline int led_get_brightness(struct led_classdev *led_cdev)
+ {
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 9b2bf574a17a..bee8e3f8dddd 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -123,6 +123,10 @@ struct led_classdev {
+ 
+ 	/* Ensures consistent access to the LED Flash Class device */
+ 	struct mutex		led_access;
++
++	/* regulator */
++	struct regulator	*regulator;
++	bool			regulator_state;
+ };
+ 
+ extern int of_led_classdev_register(struct device *parent,
+-- 
+2.17.1
 
-Thanks,
-
-JJ
-
->
-> Daniel.
