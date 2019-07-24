@@ -2,69 +2,67 @@ Return-Path: <SRS0=k/tp=VV=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D8AC76186
-	for <linux-leds@archiver.kernel.org>; Wed, 24 Jul 2019 21:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE047C76186
+	for <linux-leds@archiver.kernel.org>; Wed, 24 Jul 2019 21:03:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D30E721873
-	for <linux-leds@archiver.kernel.org>; Wed, 24 Jul 2019 21:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A145821873
+	for <linux-leds@archiver.kernel.org>; Wed, 24 Jul 2019 21:03:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NXRtSpQn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIxHLUua"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbfGXVC6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 24 Jul 2019 17:02:58 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53371 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbfGXVC6 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 24 Jul 2019 17:02:58 -0400
-Received: by mail-wm1-f67.google.com with SMTP id x15so43029223wmj.3;
-        Wed, 24 Jul 2019 14:02:55 -0700 (PDT)
+        id S1727000AbfGXVDJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 24 Jul 2019 17:03:09 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35126 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726238AbfGXVDI (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 24 Jul 2019 17:03:08 -0400
+Received: by mail-wm1-f65.google.com with SMTP id l2so42794225wmg.0
+        for <linux-leds@vger.kernel.org>; Wed, 24 Jul 2019 14:03:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+        h=subject:to:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=7YgJqjEfdgZXnXeTvJ4PZQHPEn5PQ4I8CGg8M9y1/NY=;
-        b=NXRtSpQnbhspUOKyvA4vYLPHtv7ovVVB269NAGzsXKdHQTxx/wSAPrWOz7VnSQaon+
-         BNA4ahkDPqHgmLWg5B2gPMpdDyBV3lIigkELBFm7UEHhUbkgsdUln2MlSebD5BmpvTTX
-         AvlKx5xgJ27bRBwKZp1sDw31zPqjnIfEdRGeYRpSULFAixsQ9fKPUG350Mg5azB2qWbc
-         zQ6aniZU9aXPYxjOgRqWVVajHpDrVuUD9ovJA7TFAvq1/duUtIUVbzYFZrnKPWNNJUfp
-         dHIBXuvhmdrQp4t1l7BOn+oSQYjrfT5021OUrXmHBOp4Sxkd4ImPywkhH0z+c0Nu5jgM
-         jj2w==
+        bh=hIDsH5aVfojpz6x8o3X6q1+g9RwTgIPDJIHQX6u7rNk=;
+        b=CIxHLUuavRqYSgEVKjhWof4KnLVkHgtTgT6gjVIw063OqLldD0Onp3pA5z3YPJNGwi
+         vbGMwiBlFnz3LUReRV1Xd34A/GGxOpiyGzzLwLcxpSAScueb9+zZ8uc+ICZx0XTQ0qLl
+         IQG1lYTLt8p4P4+YMhxBhHl2HjEiOWSKQImKazMx9KcHwo2dhSkAOvi1aQckb0f94hn+
+         qVMk8d16ZE9d1SVOe9dllNvicl5ZuPqpiVfvJJOjcn/pgbDqIUEjpvBpLK0ALxUeQ71D
+         Mgj3CSM/eZtqJD3/f1k06Jo9EanVd5Wk1oqREhw6/QYXZ4tlN877dtrslCRovEk+RyMb
+         g4Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+        h=x-gm-message-state:subject:to:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=7YgJqjEfdgZXnXeTvJ4PZQHPEn5PQ4I8CGg8M9y1/NY=;
-        b=Or4VtYgglrkQFkftFP+EPMxj9xAPDGNKDoJIASQ6Pi8aDzyBxLNWh06nQsIkHSZXZH
-         IM+KeWGgtDkEY85USuwrEsp/RFWcxiaI/h0aX4HIPRRB0bF5mT++OsUbswwq5xp0ht0d
-         uLDLHTUi+BBoOPsmqbzHlMy/+6MYZx7KGVUTdhGuM05StWihh5vCKcXbZOsEV8r2RFoi
-         e3N20gbU2+5oIjmvYmpm6lSNd6gdPgn/Vw3tgykVav/6RN6wSCDYyb9c3jbWACPlj1HK
-         mss3UWgTXFT0Ot07jTsfCk1f2x03Kvg1xyin9dGJ0fwQsfgGIEj3Vd2v/qT3NqaS9NP1
-         /fDg==
-X-Gm-Message-State: APjAAAWjR1ls5I5LCu77hYX6SPgL8r5OGV3jbdPquZUYZy/eMSevX/gj
-        kQWdqJ5C+DUqfht45fEyN50=
-X-Google-Smtp-Source: APXvYqyL88aMFz4WzOJeQkMPvXkNK8S4wy/OwQKWC9RR1vtpvxV36XzBzkBfVkfIIkrUy95eK68ZRg==
-X-Received: by 2002:a7b:c954:: with SMTP id i20mr77168269wml.169.1564002175217;
-        Wed, 24 Jul 2019 14:02:55 -0700 (PDT)
+        bh=hIDsH5aVfojpz6x8o3X6q1+g9RwTgIPDJIHQX6u7rNk=;
+        b=gnFtiHA3YxNFWV0TqbwxAMBiXh+aOU6lHtLXh+CIje+5nkftOyOCR/7W5rXWmQIeuP
+         eRPzR0wQaBnahuAPKGjLBwswfPyLirmumltExqLd/4M76jndMxU7xT2hsYXa0jhSqgYC
+         p7ZBzFiBMt0AtrPjXnqhHs/vw5d33/rYZWz9zf7Y7gt32Y2GJpKbsWAwX4svZVs6Fb3p
+         0HwCMCp1JRIrP5QDSOO9AcDdG3NJX3laJ8ZBStVVS5V3za0NqMdV7zu3m3ZPQI91xrrw
+         wuvGYih5hCpOFKIvf3GD8K87xIgDhIz48EafadQ1DXR/sLbUqzNmJbXCiYrObSz+oEXs
+         WBvA==
+X-Gm-Message-State: APjAAAUdC0qeZswhyDJjQUsx3qNyWE0+H6g7vte/oKBOiSHV6DjUdmhu
+        rr0xBVrqz1poEv6clC4wFpY=
+X-Google-Smtp-Source: APXvYqxhldOt/lwFV43AO2fuYLn8CC1coXVYCN2OiE4YTzdRZSpIqiJ8fBcJrc0NrRj6jgvvI+Q/MA==
+X-Received: by 2002:a05:600c:212:: with SMTP id 18mr26192697wmi.88.1564002186525;
+        Wed, 24 Jul 2019 14:03:06 -0700 (PDT)
 Received: from [192.168.1.19] (bko238.neoplus.adsl.tpnet.pl. [83.28.182.238])
-        by smtp.gmail.com with ESMTPSA id e3sm41762283wrt.93.2019.07.24.14.02.53
+        by smtp.gmail.com with ESMTPSA id s188sm38193415wmf.40.2019.07.24.14.03.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 14:02:54 -0700 (PDT)
-Subject: Re: [PATCH v5 00/26] Add generic support for composing LED class
- device name
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     linux-leds@vger.kernel.org, dmurphy@ti.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh@kernel.org, dtor@google.com, linux@roeck-us.net
-References: <20190609190803.14815-1-jacek.anaszewski@gmail.com>
- <405b2806-342a-952d-67ab-47516225c54e@gmail.com> <20190718105233.GA3859@amd>
+        Wed, 24 Jul 2019 14:03:05 -0700 (PDT)
+Subject: Re: [PATCH v1 1/3] leds: lm3532: Switch to use
+ fwnode_property_count_uXX()
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
+        Dan Murphy <dmurphy@ti.com>
+References: <20190723201459.70449-1-andriy.shevchenko@linux.intel.com>
 From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
@@ -123,13 +121,13 @@ Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
  VykdkWccEqvxqDV4f8q0V0MW3KWfkD9/07bbGxXSnImeLt7bPuVMGK2tAUbr2+dUYmUdsETZ
  1HgZ11moCVU5Ru0RwTv9oyThOsK3HQjI7NCIsDzVpolaGQPd9E7xwOVHhhDcXRqqNjLzHUSe
  eGGiEQ==
-Message-ID: <3d8890a2-47e8-2dd0-9764-93676703df2a@gmail.com>
-Date:   Wed, 24 Jul 2019 23:02:52 +0200
+Message-ID: <ed940bb6-f16f-0d0e-74c8-1af70d4f0fad@gmail.com>
+Date:   Wed, 24 Jul 2019 23:03:04 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190718105233.GA3859@amd>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20190723201459.70449-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-leds-owner@vger.kernel.org
@@ -137,44 +135,37 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 7/18/19 12:52 PM, Pavel Machek wrote:
-> 
->> Hi all,
->>
->> I need explicit acks for some patches from this series, that
->> were either requested improvements or I modified them by myself
->> after v4.
->>
->> The patches I am talking about are the following:
->>
->> 1/26
->> 21/26
->> 23/26
->> 25/26
-> 
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+Hi Andy,
 
-Applied the patch set without patch 26/26 for now.
-I had to make some formatting related changes in leds-class.rst, in
-part of the added text (we had leds-class.txt -> leds-class.rst
-transition in the meantime) to fix resulting html formatting.
-Basically they aimed to achieve nice bullets to compensate some
-sphinx issue related to lack of line breaks after quoted strings.
+Thank you for the patch set.
 
-Current shape of leds-class.rst on linux-leds.git for-next branch can
-be looked up via [0].
+Patches 1-3 applied.
 
->> 26/26 would be nice to have but I presume it needs more discussion
->> and analysis.
+On 7/23/19 10:14 PM, Andy Shevchenko wrote:
+> Use fwnode_property_count_uXX() directly, that makes code neater.
 > 
-> Idea is good, but I'd sort the file in different way.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/leds/leds-lm3532.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> Best regards,
-> 									Pavel
+> diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
+> index 180895b83b88..646100724971 100644
+> --- a/drivers/leds/leds-lm3532.c
+> +++ b/drivers/leds/leds-lm3532.c
+> @@ -549,10 +549,7 @@ static int lm3532_parse_node(struct lm3532_data *priv)
+>  				lm3532_als_configure(priv, led);
+>  		}
+>  
+> -		led->num_leds = fwnode_property_read_u32_array(child,
+> -							       "led-sources",
+> -							       NULL, 0);
+> -
+> +		led->num_leds = fwnode_property_count_u32(child, "led-sources");
+>  		if (led->num_leds > LM3532_MAX_LED_STRINGS) {
+>  			dev_err(&priv->client->dev, "To many LED string defined\n");
+>  			continue;
 > 
-
-[0]
-https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git/tree/Documentation/leds/leds-class.rst?h=for-next
 
 -- 
 Best regards,
