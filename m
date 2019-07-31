@@ -1,112 +1,119 @@
-Return-Path: <SRS0=x7IF=V3=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=OIGY=V4=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C30C32750
-	for <linux-leds@archiver.kernel.org>; Tue, 30 Jul 2019 21:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4537C32751
+	for <linux-leds@archiver.kernel.org>; Wed, 31 Jul 2019 12:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFC912067D
-	for <linux-leds@archiver.kernel.org>; Tue, 30 Jul 2019 21:52:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4916A20659
+	for <linux-leds@archiver.kernel.org>; Wed, 31 Jul 2019 12:11:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="d1JmcRvt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387836AbfG3Vwi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 30 Jul 2019 17:52:38 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45987 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728479AbfG3Vwh (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 30 Jul 2019 17:52:37 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 87BF280250; Tue, 30 Jul 2019 23:52:22 +0200 (CEST)
-Date:   Tue, 30 Jul 2019 23:52:33 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org,
-        jacek.anaszewski@gmail.com, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: Backlight in motorola Droid 4
-Message-ID: <20190730215233.GB9405@amd>
-References: <20181219162626.12297-1-dmurphy@ti.com>
- <20190722205921.GA24787@amd>
- <b8fbc94f-c087-2c9d-4532-ea423f1626e6@ti.com>
- <20190724124530.GA30211@amd>
- <ca69f627-96e2-f982-3a29-18b0127ac6e5@ti.com>
- <edde330e-516b-ecaa-4139-0bfa766a9c08@ti.com>
- <20190729220030.GA20100@amd>
- <ff91f577-98ad-d27b-02c2-6ed495cf4a38@ti.com>
+        id S1728284AbfGaMLi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 31 Jul 2019 08:11:38 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:50328 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfGaMLh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 31 Jul 2019 08:11:37 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6VCBXvT103048;
+        Wed, 31 Jul 2019 07:11:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1564575093;
+        bh=9kumtwSF+8X5y9StzLhD9AwVScn9PWy2LjR254AomAs=;
+        h=Subject:From:To:References:Date:In-Reply-To;
+        b=d1JmcRvtrXIP73p2fD/fUV+anxBdeNJblp0fvBOGagD+O3DBMl5dX20oJiPCt81vV
+         X5yhcun7TFoJVfgHm0NmfBIEzk/oBFQOKc28BIW5R3qeC8jd4nQXjzsK9YlHnDHxIv
+         ziQd+tGwxwNocMtMW/Dcqw21AXoWrx1dMC/vdKJQ=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6VCBX2W000718
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 31 Jul 2019 07:11:33 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 31
+ Jul 2019 07:11:32 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 31 Jul 2019 07:11:32 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6VCBWN0098626;
+        Wed, 31 Jul 2019 07:11:32 -0500
+Subject: Re: LEDs next branch
+From:   Dan Murphy <dmurphy@ti.com>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        Pavel Machek <pavel@ucw.cz>
+References: <99b075d0-e230-35bc-06c5-712a69fab91d@ti.com>
+ <5be9a3a2-810b-c08a-e631-b7afa005a136@gmail.com>
+ <aa841c27-d3af-01bf-6a90-afeea83e3775@ti.com>
+ <0aa100fc-70d1-e391-9196-4e987bd24d34@ti.com>
+Message-ID: <21774f35-3523-a964-a6e6-1ee363e2b727@ti.com>
+Date:   Wed, 31 Jul 2019 07:11:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="OwLcNYc0lM97+oe1"
-Content-Disposition: inline
-In-Reply-To: <ff91f577-98ad-d27b-02c2-6ed495cf4a38@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <0aa100fc-70d1-e391-9196-4e987bd24d34@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Jacek
 
---OwLcNYc0lM97+oe1
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/30/19 4:11 PM, Dan Murphy wrote:
+> Jacek
+>
+> On 7/30/19 3:47 PM, Dan Murphy wrote:
+>> Jacek
+>>
+>> On 7/30/19 3:30 PM, Jacek Anaszewski wrote:
+>>> Hi Dan,
+>>>
+>>> On 7/30/19 8:40 PM, Dan Murphy wrote:
+>>>> Jacek
+>>>>
+>>>> Did you see/fix this on the led-next branch?
+>>>>
+>>>> I saw this when booting trying to fix the lm3532
+>>>>
+>>>> [    8.651461] led_class: exports duplicate symbol
+>>>> devm_led_classdev_register_ext (owned by kernel)
+>>>>
+>>>> [    8.730063] led_class: exports duplicate symbol
+>>>> devm_led_classdev_register_ext (owned by kernel)
+>>> I've just tried next-20190730 and haven't noticed anything like that.
+>>> I've checked both with driver compiled-in and loaded as a module. 
+>>
+> [...]
+>
+> Try configuring the LEDS_CLASS as a built-in module.
+>
+> -CONFIG_LEDS_CLASS=m
+> +CONFIG_LEDS_CLASS=y
+>
+> I am also on for-next
+>
+I figured it out.  I had old modules which had the led_class as a module 
+as opposed to a
 
-Hi!
+built in.
 
-> >>>Looking at the rest of the code.
-> >>>
-> >>>The DT doc indicated that this was a required child property so this is
-> >>>why it
-> >>>
-> >>>errors out.
-> >>>
-> >>>Dan
-> >>>
-> >>><snip>
-> >>>
-> >>Did you want me to fix up the LM3532 and send the patch?
-> >If you could do that, that would be nice :-).
->=20
-> Ok I am working on this.
+Sorry for the noise
 
-Thanks!
+Dan
 
-> Is Droid4 supposed to boot off of mainline?=A0 I see blogs stating it
->  should
 
-> but the device locks up when it jumps to the kernel 5.3-rc1.
-
-It should, but I'm not sure if video will work for you. -next may be
-better target.
-
-If you have different board with lm3532, it may make sense to use that.
-
-> Unless I need to update my kexec or boot.cfg file but I cannot find any up
-> to date info on that.
-
-I don't know what boot.cfg is. I'm using safestrap to dual-boot
-between Android and mainline.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---OwLcNYc0lM97+oe1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1AvCEACgkQMOfwapXb+vIU0ACfVbS3WrpVraASIUWPfLIZLo5r
-ZpwAmwfCSRWvlx5KpSt4NYmWE8RoNk2i
-=saCx
------END PGP SIGNATURE-----
-
---OwLcNYc0lM97+oe1--
+> Dan
+>
