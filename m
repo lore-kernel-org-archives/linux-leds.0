@@ -1,95 +1,80 @@
-Return-Path: <SRS0=DBbi=WO=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=1z4C=WP=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA74C3A589
-	for <linux-leds@archiver.kernel.org>; Sun, 18 Aug 2019 19:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79EDAC3A589
+	for <linux-leds@archiver.kernel.org>; Mon, 19 Aug 2019 00:38:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AA44206C1
-	for <linux-leds@archiver.kernel.org>; Sun, 18 Aug 2019 19:07:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D5712087E
+	for <linux-leds@archiver.kernel.org>; Mon, 19 Aug 2019 00:38:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="PE3/GP8p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbfHRTH4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 18 Aug 2019 15:07:56 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45454 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726950AbfHRTH4 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 18 Aug 2019 15:07:56 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 3023F81452; Sun, 18 Aug 2019 21:07:41 +0200 (CEST)
-Date:   Sun, 18 Aug 2019 21:07:53 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: trigger: timer: remove redundant assignment to ret
-Message-ID: <20190818190753.GA1093@amd>
-References: <20190818190004.15833-1-colin.king@canonical.com>
+        id S1726120AbfHSAiG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 18 Aug 2019 20:38:06 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:40316 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726103AbfHSAiG (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 18 Aug 2019 20:38:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=BrMXY7EIAyVUBAzvqXeIobS9TRD0sVX9w0IwUrcpffM=; b=PE3/GP8p/ed33a+Wk6aGB3xX+E
+        c+IsGouiSzIwdwhHyMf3Beb+NbiyrdVlH4YtE6zTbwMdBj6lf29TplWtFf39rMMfYOevXfCBxJNnz
+        3iiFlEWu+C0ar56VsqIe0nprfyahzC1IE6Yb+KppQu3O0g33HGQjlt2ssdW7v775+9+Q=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hzVgL-0002VI-CB; Mon, 19 Aug 2019 02:37:57 +0200
+Date:   Mon, 19 Aug 2019 02:37:57 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Matthias Kaehlcke <mka@chromium.org>, jacek.anaszewski@gmail.com,
+        linux-leds@vger.kernel.org, dmurphy@ti.com,
+        "David S . Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v6 4/4] net: phy: realtek: Add LED configuration support
+ for RTL8211E
+Message-ID: <20190819003757.GB8981@lunn.ch>
+References: <20190813191147.19936-1-mka@chromium.org>
+ <20190813191147.19936-5-mka@chromium.org>
+ <20190816201342.GB1646@bug>
+ <20190816212728.GW250418@google.com>
+ <20190817140502.GA5878@amd>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190818190004.15833-1-colin.king@canonical.com>
+In-Reply-To: <20190817140502.GA5878@amd>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+> Yes, I believe the integration is neccessary. Using same binding is
+> neccessary for that, but not sufficient. For example, we need
+> compatible trigger names, too.
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Pavel
 
-On Sun 2019-08-18 20:00:03, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Variable ret is initialized to a value that is never read and it
-> is re-assigned later. The initialization is redundant and can be
-> removed.
+Please could you explain what you mean by compatible trigger names?
 
-Yes, it can. But it is not buggy or exceptionaly ugly.
+> So... I'd really like to see proper integration is possible before we
+> merge this.
 
-> diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/=
-ledtrig-timer.c
-> index 34a68604c46c..b4688d1d9d2b 100644
-> --- a/drivers/leds/trigger/ledtrig-timer.c
-> +++ b/drivers/leds/trigger/ledtrig-timer.c
-> @@ -28,7 +28,7 @@ static ssize_t led_delay_on_store(struct device *dev,
->  {
->  	struct led_classdev *led_cdev =3D led_trigger_get_led(dev);
->  	unsigned long state;
-> -	ssize_t ret =3D -EINVAL;
-> +	ssize_t ret;
-> =20
->  	ret =3D kstrtoul(buf, 10, &state);
->  	if (ret)
+Please let me turn that around. What do you see as being impossible at
+the moment? What do we need to convince you about?
 
-Make it ssizr_t ret =3D kstrtoul() and I may agree it is a cleanup...
-
-Best regards,
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---vkogqOf2sHV7VnPd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1ZogkACgkQMOfwapXb+vJi6gCgiHOeyae6/Zq/og/YqsyD6Tgf
-7r0AoIaNRD+K8OeIqL5cDXleOm/m5H97
-=w4eN
------END PGP SIGNATURE-----
-
---vkogqOf2sHV7VnPd--
+    Thanks
+	Andrew
