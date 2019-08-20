@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E07EC3A59E
-	for <linux-leds@archiver.kernel.org>; Tue, 20 Aug 2019 19:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 103A3C3A59D
+	for <linux-leds@archiver.kernel.org>; Tue, 20 Aug 2019 19:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6626A20C01
+	by mail.kernel.org (Postfix) with ESMTP id DCF4620C01
 	for <linux-leds@archiver.kernel.org>; Tue, 20 Aug 2019 19:53:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="COeJZCFG"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tOaiQTuJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730552AbfHTTx2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 20 Aug 2019 15:53:28 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:60926 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727358AbfHTTx2 (ORCPT
+        id S1730825AbfHTTxo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 20 Aug 2019 15:53:44 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:44754 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729950AbfHTTx2 (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Tue, 20 Aug 2019 15:53:28 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7KJrI9P074396;
-        Tue, 20 Aug 2019 14:53:18 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7KJrJbC074736;
+        Tue, 20 Aug 2019 14:53:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566330798;
-        bh=V6U4nR1WxqWcfL0/OWHdgADpknh3P+hm2/lQOtdCRsQ=;
+        s=ti-com-17Q1; t=1566330799;
+        bh=oH8rA+GYC1E9/xLKHbjhVcCj8L8mfXzFysEW/hW1eI0=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=COeJZCFGzVany4YYPoxNpbE6TWmMg6v4sJZVhVLhluA02l4xoQ3nc9QWOiLghXcOO
-         2h+xHFkEXW84QzixbSmWdaDDdj4O0jGScXHSo6YMUiLsLc1AjunCsp2N8/0ikaSyF9
-         gdWJgGoWtc+2fheYs84zuuEQSaQbxZmvJv2TrrU4=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7KJrISb026901
+        b=tOaiQTuJK7qdWCykBw0JATVt68L+WHITg5DIClTAwTCS4ir3zWkliUGY2HT1c2v4p
+         vCowxpSetk6j7TRqkEAE1g6QWRoghXU2Dn0P4raYQx/sHktW/YbvVuzLCCyGyJyFZ3
+         D06+ttDrb4ecteDoTLaqlnpkm09l7IxWDTAIfWJ8=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7KJrJNS116203
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 20 Aug 2019 14:53:18 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 20
- Aug 2019 14:53:17 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE108.ent.ti.com
+        Tue, 20 Aug 2019 14:53:19 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE108.ent.ti.com
  (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 20
+ Aug 2019 14:53:18 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 20 Aug 2019 14:53:17 -0500
+ Frontend Transport; Tue, 20 Aug 2019 14:53:18 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7KJrHRI098248;
-        Tue, 20 Aug 2019 14:53:17 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7KJrIqu008196;
+        Tue, 20 Aug 2019 14:53:18 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <tony@atomide.com>,
         <sre@kernel.org>, <nekit1000@gmail.com>, <mpartap@gmx.net>,
         <merlijn@wizzup.org>
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v3 2/5] leds: lm3532: Change the define for the fs current register
-Date:   Tue, 20 Aug 2019 14:53:04 -0500
-Message-ID: <20190820195307.27590-2-dmurphy@ti.com>
+Subject: [PATCH v3 5/5] leds: lm3532: Add full scale current configuration
+Date:   Tue, 20 Aug 2019 14:53:07 -0500
+Message-ID: <20190820195307.27590-5-dmurphy@ti.com>
 X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 In-Reply-To: <20190820195307.27590-1-dmurphy@ti.com>
 References: <20190820195307.27590-1-dmurphy@ti.com>
@@ -67,50 +67,89 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Change the define name of the full scale current registers.
+Allow the full scale current to be configured at init.
+Valid rangles are 5mA->29.8mA.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
 
-v3 - New patch - https://lore.kernel.org/patchwork/patch/1114542/
+v3 - Fixed variable movement change and updated the fs current register calculation -
+https://lore.kernel.org/patchwork/patch/1114544/
 
- drivers/leds/leds-lm3532.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/leds/leds-lm3532.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
 diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
-index 8132d05f7add..0c3d67671ab2 100644
+index 5e33ae4561f2..ba352d76a8fb 100644
 --- a/drivers/leds/leds-lm3532.c
 +++ b/drivers/leds/leds-lm3532.c
-@@ -23,11 +23,11 @@
- #define LM3532_REG_PWM_B_CFG	0x14
- #define LM3532_REG_PWM_C_CFG	0x15
- #define LM3532_REG_ZONE_CFG_A	0x16
--#define LM3532_REG_CTRL_A_BRT	0x17
-+#define LM3532_REG_CTRL_A_FS_CURR	0x17
- #define LM3532_REG_ZONE_CFG_B	0x18
--#define LM3532_REG_CTRL_B_BRT	0x19
-+#define LM3532_REG_CTRL_B_FS_CURR	0x19
- #define LM3532_REG_ZONE_CFG_C	0x1a
--#define LM3532_REG_CTRL_C_BRT	0x1b
-+#define LM3532_REG_CTRL_C_FS_CURR	0x1b
- #define LM3532_REG_ENABLE	0x1d
- #define LM3532_ALS_CONFIG	0x23
- #define LM3532_REG_ZN_0_HI	0x60
-@@ -173,11 +173,11 @@ static const struct reg_default lm3532_reg_defs[] = {
- 	{LM3532_REG_PWM_B_CFG, 0x82},
- 	{LM3532_REG_PWM_C_CFG, 0x82},
- 	{LM3532_REG_ZONE_CFG_A, 0xf1},
--	{LM3532_REG_CTRL_A_BRT, 0xf3},
-+	{LM3532_REG_CTRL_A_FS_CURR, 0xf3},
- 	{LM3532_REG_ZONE_CFG_B, 0xf1},
--	{LM3532_REG_CTRL_B_BRT, 0xf3},
-+	{LM3532_REG_CTRL_B_FS_CURR, 0xf3},
- 	{LM3532_REG_ZONE_CFG_C, 0xf1},
--	{LM3532_REG_CTRL_C_BRT, 0xf3},
-+	{LM3532_REG_CTRL_C_FS_CURR, 0xf3},
- 	{LM3532_REG_ENABLE, 0xf8},
- 	{LM3532_ALS_CONFIG, 0x44},
- 	{LM3532_REG_ZN_0_HI, 0x35},
+@@ -89,6 +89,10 @@
+ #define LM3532_NUM_AVG_VALS	8
+ #define LM3532_NUM_IMP_VALS	32
+ 
++#define LM3532_FS_CURR_MIN	5000
++#define LM3532_FS_CURR_MAX	29800
++#define LM3532_FS_CURR_STEP	800
++
+ /*
+  * struct lm3532_als_data
+  * @config - value of ALS configuration register
+@@ -121,6 +125,7 @@ struct lm3532_als_data {
+  * @mode - Mode of the LED string
+  * @ctrl_brt_pointer - Zone target register that controls the sink
+  * @num_leds - Number of LED strings are supported in this array
++ * @full_scale_current - The full-scale current setting for the current sink.
+  * @led_strings - The LED strings supported in this array
+  * @label - LED label
+  */
+@@ -132,6 +137,7 @@ struct lm3532_led {
+ 	int mode;
+ 	int ctrl_brt_pointer;
+ 	int num_leds;
++	int full_scale_current;
+ 	u32 led_strings[LM3532_MAX_CONTROL_BANKS];
+ 	char label[LED_MAX_NAME_SIZE];
+ };
+@@ -363,6 +369,8 @@ static int lm3532_init_registers(struct lm3532_led *led)
+ 	unsigned int output_cfg_mask = 0;
+ 	unsigned int brightness_config_reg;
+ 	unsigned int brightness_config_val;
++	int fs_current_reg;
++	int fs_current_val;
+ 	int ret, i;
+ 
+ 	if (drvdata->enable_gpio)
+@@ -385,6 +393,17 @@ static int lm3532_init_registers(struct lm3532_led *led)
+ 	if (ret)
+ 		return ret;
+ 
++	if (led->full_scale_current) {
++		fs_current_reg = LM3532_REG_CTRL_A_FS_CURR + led->control_bank * 2;
++		fs_current_val = (led->full_scale_current - LM3532_FS_CURR_MIN) /
++				 LM3532_FS_CURR_STEP;
++
++		ret = regmap_write(drvdata->regmap, fs_current_reg,
++				   fs_current_val);
++		if (ret)
++			return ret;
++	}
++
+ 	for (i = 0; i < led->num_leds; i++) {
+ 		output_cfg_shift = led->led_strings[i] * 2;
+ 		output_cfg_val |= (led->control_bank << output_cfg_shift);
+@@ -560,6 +579,12 @@ static int lm3532_parse_node(struct lm3532_data *priv)
+ 			goto child_out;
+ 		}
+ 
++		ret = fwnode_property_read_u32(child, "led-max-microamp",
++					       &led->full_scale_current);
++
++		if (led->full_scale_current > LM3532_FS_CURR_MAX)
++			led->full_scale_current = LM3532_FS_CURR_MAX;
++
+ 		if (led->mode == LM3532_BL_MODE_ALS) {
+ 			led->mode = LM3532_ALS_CTRL;
+ 			ret = lm3532_parse_als(priv);
 -- 
 2.22.0.214.g8dca754b1e
 
