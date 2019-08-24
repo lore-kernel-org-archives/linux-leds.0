@@ -2,69 +2,65 @@ Return-Path: <SRS0=Z1Ep=WU=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0063CC3A59E
-	for <linux-leds@archiver.kernel.org>; Sat, 24 Aug 2019 14:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C21C3A59E
+	for <linux-leds@archiver.kernel.org>; Sat, 24 Aug 2019 15:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B807721670
-	for <linux-leds@archiver.kernel.org>; Sat, 24 Aug 2019 14:08:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B2B5206E0
+	for <linux-leds@archiver.kernel.org>; Sat, 24 Aug 2019 15:18:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d+WsnGLR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ekfnuZsp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbfHXOIP (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 24 Aug 2019 10:08:15 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33572 "EHLO
+        id S1727248AbfHXPSt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 24 Aug 2019 11:18:49 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44992 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727440AbfHXOIP (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 24 Aug 2019 10:08:15 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u16so11165641wrr.0
-        for <linux-leds@vger.kernel.org>; Sat, 24 Aug 2019 07:08:12 -0700 (PDT)
+        with ESMTP id S1726855AbfHXPSt (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 24 Aug 2019 11:18:49 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p17so11238218wrf.11;
+        Sat, 24 Aug 2019 08:18:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=R9exhcV1aWmHkHMuL9P/EALnqb4Au14G1maoFn9lv9w=;
-        b=d+WsnGLRghgGT+iUXhL7hBdiX3wknBYmzsHIBdK2dip11u4rFspe7hlZZBazwgTQzV
-         KSW0Z+d6qWIbvH3GFv4ntK/vdHkHnKsyAAjJPLrP5m/3dp0hU44IbN46wUHDZdTdTNQ8
-         lkFOxGjsCfLoFnJAH2r94jUf6YbhvZH4Tp/TFRUTEF5CT8wB1E+ZrlzAyEUV3NF95iIA
-         6UmLiStMFA15YOm0HvZY0YfzMrcwckLmrDR0B0V33JwP3NcjHnjgIDdyJfFwRzOyxT6e
-         WOvM1MLI+1aMAV1dDy1Fd9ePzDLZC5v7M/EAnscrX+TbJmRG5EG5Tu1mmPNVZULOvWLx
-         NenA==
+        bh=dxisSCHOCPyLMPuzXwNXM1NTQPJznyVhrtka9jOq7XQ=;
+        b=ekfnuZsp4a4C5O5IKaVqGFkSU6MRt3Pm69ueJL71pqPPfSnKIuj60nbURDdEvXZh5/
+         fBEPYfTpnMiDDY3aQjkLQMG/HHdnQi2lj7HWUlasjARQNlDEUYbsoHOEz0qKIbn/ju7j
+         E1V8FV7filVzChLgNVXRwCNk822bNB+k9nvVjRJWMrOPtcu47qVPDSW83pJtbatFwH+i
+         PaMR+F6X2XOcP/nUpiONz4Xby947ywV5Tu7hXk3InhNKwDqNRaMvXFD8MJlGz1PEd+Wi
+         mvnm53KoRaiLWws1qsC2IZAJKJD2blRF3Q82bCZfImcs8m9WLY35kXwKYCipOWELlg1i
+         NpCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=R9exhcV1aWmHkHMuL9P/EALnqb4Au14G1maoFn9lv9w=;
-        b=BK/bxNS0ta9xvoHQV4j42Zwgi8EIYcPlHDre7dbIaTaOL3pbFAtJR7LLA0zrlspjkJ
-         29M3IBi/QSS9MRyPzlHJl/7h5EwzQYXjcwhlWJQq3JS8r9Wqyh7lkjkr3t0jPa/D9rBL
-         xC5r/U3e9xwnk50FQ0PB5nKe2T5GLZKTYeNFyHqkH6De8v4ZG2EujcMDBZEd0A/Y8aSV
-         xjeuO6sbiYVVzDQi2OoYa6FgeolXZ2P81nKE2b/nqFkPZnpyucfnfZfR+kzKjCDnAHhC
-         NwuKi9eT6B5TJ6d6UW8miSb7ooU+NN/QXXFBKd8miIjABJzkIGhh0gCteptyFtLriR0Y
-         UM2g==
-X-Gm-Message-State: APjAAAU6zBC7a/TfdK30s3wp+RGkoeaZHXA++QrIxnERqeHvJ3CTSpBF
-        QTib82rgoQ7W+e/ZWvb/+0Kn6cbo
-X-Google-Smtp-Source: APXvYqyuseXOuszkKCTY2LkCKSf78/oprN1g8p8mDia5mrKAnLwRxpPgdFrXB7+2gHqYf+AbwALKkA==
-X-Received: by 2002:adf:efd2:: with SMTP id i18mr11153672wrp.145.1566655691905;
-        Sat, 24 Aug 2019 07:08:11 -0700 (PDT)
+        bh=dxisSCHOCPyLMPuzXwNXM1NTQPJznyVhrtka9jOq7XQ=;
+        b=pYD6HgrIbulfR06Yx24DIIN1eZb3RZ4mv9LxCdIDyvbjLrc2i/GmR/PyEDtWlUDRyF
+         Tk9auA2hPM/I+kgwNyO0iB1yzJVp9Oynpv2SkE7zohm8/31OZ5fHn5djiQCmU6xjSy9P
+         +LIPoa8M+Q5GabAC9fAMNPghE9nvZ1213WUoKE1I9Ix9MlrU8spTe3niJepPhKBJZi04
+         sAS67jK/IULwY5ZY6432QohK2hEAMW7Js3DNpK3ONP6BTuxtQe0Jyb9G+B6+oc3kFiHX
+         IxbLz/r8WHioEf6IZDy70m1Vv2QFwOcHEysKA7BF05p8wXP6aXZcMC2EI5CsYJBm7Wp8
+         lsrA==
+X-Gm-Message-State: APjAAAXhzji/OYRDMhTxbc9O/07yxecqWp4hjWRPIU9zNjuuMAzRN3qe
+        4Nb/voDNns1oSARJ94AsL7Hep2Q/
+X-Google-Smtp-Source: APXvYqzXsALOqzS4Y3dYjAYbx2UmJObFqtsT6sXq16km7KbBFHjasaukFJJ2ivblBG921WK6DtrvhA==
+X-Received: by 2002:adf:c7cb:: with SMTP id y11mr12054607wrg.281.1566659926333;
+        Sat, 24 Aug 2019 08:18:46 -0700 (PDT)
 Received: from [192.168.1.19] (bkw182.neoplus.adsl.tpnet.pl. [83.28.190.182])
-        by smtp.gmail.com with ESMTPSA id x6sm13754783wmf.6.2019.08.24.07.08.09
+        by smtp.gmail.com with ESMTPSA id f197sm18119567wme.22.2019.08.24.08.18.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 24 Aug 2019 07:08:11 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] leds: Switch to use fwnode instead of be stuck
- with OF one
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-leds@vger.kernel.org
-References: <20190822151928.51274-1-andriy.shevchenko@linux.intel.com>
- <20190822151928.51274-2-andriy.shevchenko@linux.intel.com>
- <08858604-8a89-870f-9234-21c7fdd1d165@gmail.com>
- <20190823203634.GX30120@smile.fi.intel.com>
+        Sat, 24 Aug 2019 08:18:45 -0700 (PDT)
+Subject: Re: [PATCH] leds: ti-lmu-common: Fix coccinelle issue in TI LMU
+To:     Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190823195523.20950-1-dmurphy@ti.com>
 From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
@@ -123,12 +119,12 @@ Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
  qqFCBWmTHXfwsfW0VgBmRtPO7eXVBybjJ1VXKR2RZxwSq/GoNXh/yrRXQxbcpZ+QP3/Tttsb
  FdKciZ4u3ts+5UwYra0BRuvb51RiZR2wRNnUeBnXWagJVTlG7RHBO/2jJOE6wrcdCMjs0Iiw
  PNWmiVoZA930TvHA5UeGENxdGqo2MvMdRJ54YaIR
-Message-ID: <022e2ffc-3085-0a42-94c3-eb3291294771@gmail.com>
-Date:   Sat, 24 Aug 2019 16:08:08 +0200
+Message-ID: <4a1872e8-89a5-4bc4-6aa4-bcadbc48697a@gmail.com>
+Date:   Sat, 24 Aug 2019 17:18:43 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190823203634.GX30120@smile.fi.intel.com>
+In-Reply-To: <20190823195523.20950-1-dmurphy@ti.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -137,25 +133,43 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 8/23/19 10:36 PM, Andy Shevchenko wrote:
-> On Fri, Aug 23, 2019 at 08:14:49PM +0200, Jacek Anaszewski wrote:
->> On 8/22/19 5:19 PM, Andy Shevchenko wrote:
-> 
->>> -	if (!np)
->>> -		return NULL;
->>
->> Why aren't you checking fwnode for being not NULL?
->> It is not guaranteed to be always initialized.
-> 
-> And this is handled by the below. Even in the original code the check was
-> redundant. Note, led_parse_fwnode_props() is written with the same redundancy.
+Hi Dan,
 
-Indeed. Patch set applied, thanks.
+Thank you for the patch.
 
->>> -	count = of_property_count_u32_elems(np, "led-pattern");
->>> +	count = fwnode_property_count_u32(fwnode, "led-pattern");
->>>  	if (count < 0)
->>>  		return NULL;
+On 8/23/19 9:55 PM, Dan Murphy wrote:
+> Fix the coccinelle issues found in the TI LMU common code
+> 
+> drivers/leds/leds-ti-lmu-common.c:97:20-29: WARNING: Unsigned expression compared with zero: ramp_down < 0
+> drivers/leds/leds-ti-lmu-common.c:97:5-12: WARNING: Unsigned expression compared with zero: ramp_up < 0
+
+Wouldn't it make more sense to remove those pointless checks?
+Clearly a correct index of an array cannot be negative.
+Looking at the code I would make more int -> unsigned int conversions:
+
+- ramp_table should be unsigned int
+- ti_lmu_common_convert_ramp_to_index should return unsigned int
+
+
+> Fixes: f717460ba4d7 ("leds: TI LMU: Add common code for TI LMU devices")
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  drivers/leds/leds-ti-lmu-common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-ti-lmu-common.c b/drivers/leds/leds-ti-lmu-common.c
+> index adc7293004f1..c9ab40d5a6ba 100644
+> --- a/drivers/leds/leds-ti-lmu-common.c
+> +++ b/drivers/leds/leds-ti-lmu-common.c
+> @@ -84,7 +84,7 @@ static int ti_lmu_common_convert_ramp_to_index(unsigned int usec)
+>  int ti_lmu_common_set_ramp(struct ti_lmu_bank *lmu_bank)
+>  {
+>  	struct regmap *regmap = lmu_bank->regmap;
+> -	u8 ramp, ramp_up, ramp_down;
+> +	int ramp, ramp_up, ramp_down;
+>  
+>  	if (lmu_bank->ramp_up_usec == 0 && lmu_bank->ramp_down_usec == 0) {
+>  		ramp_up = 0;
 > 
 
 -- 
