@@ -2,103 +2,92 @@ Return-Path: <SRS0=zpnR=W2=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DBAC3A5A6
-	for <linux-leds@archiver.kernel.org>; Fri, 30 Aug 2019 15:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4965DC3A59B
+	for <linux-leds@archiver.kernel.org>; Fri, 30 Aug 2019 15:14:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC6C023407
-	for <linux-leds@archiver.kernel.org>; Fri, 30 Aug 2019 15:08:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 102A623405
+	for <linux-leds@archiver.kernel.org>; Fri, 30 Aug 2019 15:14:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lxMt6aFZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbfH3PIZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 30 Aug 2019 11:08:25 -0400
-Received: from mga07.intel.com ([134.134.136.100]:64119 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727603AbfH3PIZ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:08:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 08:08:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="332882469"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 30 Aug 2019 08:08:22 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 55FA810B; Fri, 30 Aug 2019 18:08:21 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-leds@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/2] leds: trigger: gpio: GPIO 0 is valid
-Date:   Fri, 30 Aug 2019 18:08:19 +0300
-Message-Id: <20190830150820.63450-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.23.0.rc1
+        id S1727859AbfH3POA (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 30 Aug 2019 11:14:00 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50633 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727754AbfH3POA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 30 Aug 2019 11:14:00 -0400
+Received: by mail-wm1-f68.google.com with SMTP id v15so7752279wml.0;
+        Fri, 30 Aug 2019 08:13:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:message-id:in-reply-to:references
+         :mime-version;
+        bh=E7PGOYI8rGQ02S2EYAIX+ke+QGmp3N+PyvHdu2tcGW0=;
+        b=lxMt6aFZ+Lw+pV8L6Tw7ARsCnDOr7PbB+glpwcRzc2q1qIkDzbb5p1tnLGdRvaI1w1
+         aOSmZTZXJ1QpsRr+enlJX9lbTKL3sbQN0g5LbNoFRf1FFBBfB9bE7dW0YZnR7Gl9yKUY
+         HdfQNqzg02yXGQrZokOpEu7w/TEXTQhScgHNmyzs0x4zPNZXQ4e0fxOewhWtVYvFVrGP
+         6/SGvWgB0K0UrUmM/nFta7tFJafJ7N9TbYUO+/XYCt8ytYd6XgmD80Iyog6rapTorQTB
+         /bwb2YdlNd2T/ZLhdBjT55rbJkhpv4HKPjy5rxkWaDPgRp8N0u6G9pGm9YkLUjK7jxm/
+         LjoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:subject:to:cc:message-id:in-reply-to
+         :references:mime-version;
+        bh=E7PGOYI8rGQ02S2EYAIX+ke+QGmp3N+PyvHdu2tcGW0=;
+        b=j+CHHRfw08TFqA+55/ib1sTpZ1cHtYzr0nJDLB00IFCvrwKRg5LDnKC09xTvoZvayj
+         pfuEQGq0Uyaf+LjmpZLRYqcK42eQcYKlbA+qD3V6BjwgTH+zRthHDf8oM7v4LPdsA2tM
+         h+Wp0nDiIr6YPmj9fDJr+3Ft6X40P3HZz4zRDt6xjvEgDYeeTA0H0EWUtVbq9q87GXTj
+         JtI9vH5c1it4VDvZPTgh/D8yXlyDQhNxnzHg2d3igxPPlnzYT9NyOP+0PHSwNBWKPfQB
+         Q0BxpOk96wBBLtpTyphra9d3rDrY+8MMsWmsA0JWzvbVnUFpA3foWrUqWOZ0kinEb2fM
+         pw5g==
+X-Gm-Message-State: APjAAAVrnQ1VScFXHU02IwqZUEAfWcy/U57rkqs0e2IBEwmEdvUp53M6
+        jId+02fIwbLjQokYDM3shIQ=
+X-Google-Smtp-Source: APXvYqxJyn0XZ/qM3MACfd810XJfxy3SvRZFOee7lYS28kbnXkUKguPS5L3ollXyo3A/ieoIGlEo7A==
+X-Received: by 2002:a1c:9950:: with SMTP id b77mr19687725wme.46.1567178038153;
+        Fri, 30 Aug 2019 08:13:58 -0700 (PDT)
+Received: from [192.168.1.105] (ip5b4096c3.dynamic.kabel-deutschland.de. [91.64.150.195])
+        by smtp.gmail.com with ESMTPSA id q15sm5162920wrv.1.2019.08.30.08.13.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 08:13:57 -0700 (PDT)
+Date:   Fri, 30 Aug 2019 17:13:56 +0200
+From:   Krzysztof Wilczynski <kswilczynski@gmail.com>
+Subject: Re: [PATCH] leds: Move static keyword to the front of declarations
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     Krzysztof Wilczynski <kw@linux.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-Id: <1567178036.21498.0@gmail.com>
+In-Reply-To: <bdf6bc22-bc82-68ac-d3f2-4f3954d9e9e0@ti.com>
+References: <20190830090958.27108-1-kw@linux.com>
+        <bdf6bc22-bc82-68ac-d3f2-4f3954d9e9e0@ti.com>
+X-Mailer: geary/3.32.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Allow all valid GPIOs to be used in the driver.
+Hello Dan,
 
-Fixes: 17354bfe8527 ("leds: Add gpio-led trigger")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-- set initial GPIO value to -ENOENT (Jacek)
- drivers/leds/trigger/ledtrig-gpio.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Thank you for feedback.
+[...]
+> This file is missing in the subject.
+> 
+> Maybe break it out into a separate patch since they do not have 
+> dependencies on each other.
 
-diff --git a/drivers/leds/trigger/ledtrig-gpio.c b/drivers/leds/trigger/ledtrig-gpio.c
-index 33cc99a1a16a..dc64679b1a92 100644
---- a/drivers/leds/trigger/ledtrig-gpio.c
-+++ b/drivers/leds/trigger/ledtrig-gpio.c
-@@ -131,10 +131,10 @@ static ssize_t gpio_trig_gpio_store(struct device *dev,
- 	if (gpio_data->gpio == gpio)
- 		return n;
- 
--	if (!gpio) {
--		if (gpio_data->gpio != 0)
-+	if (!gpio_is_valid(gpio)) {
-+		if (gpio_is_valid(gpio_data->gpio))
- 			free_irq(gpio_to_irq(gpio_data->gpio), led);
--		gpio_data->gpio = 0;
-+		gpio_data->gpio = gpio;
- 		return n;
- 	}
- 
-@@ -144,7 +144,7 @@ static ssize_t gpio_trig_gpio_store(struct device *dev,
- 	if (ret) {
- 		dev_err(dev, "request_irq failed with error %d\n", ret);
- 	} else {
--		if (gpio_data->gpio != 0)
-+		if (gpio_is_valid(gpio_data->gpio))
- 			free_irq(gpio_to_irq(gpio_data->gpio), led);
- 		gpio_data->gpio = gpio;
- 		/* After changing the GPIO, we need to update the LED. */
-@@ -172,6 +172,8 @@ static int gpio_trig_activate(struct led_classdev *led)
- 		return -ENOMEM;
- 
- 	gpio_data->led = led;
-+	gpio_data->gpio = -ENOENT;
-+
- 	led_set_trigger_data(led, gpio_data);
- 
- 	return 0;
-@@ -181,7 +183,7 @@ static void gpio_trig_deactivate(struct led_classdev *led)
- {
- 	struct gpio_trig_data *gpio_data = led_get_trigger_data(led);
- 
--	if (gpio_data->gpio != 0)
-+	if (gpio_is_valid(gpio_data->gpio))
- 		free_irq(gpio_to_irq(gpio_data->gpio), led);
- 	kfree(gpio_data);
- }
--- 
-2.23.0.rc1
+Will do.  Sorry about that.  I initially had these
+as separate patches, but after looking at who the
+maintainer is and thought that it perhaps makes
+sense to send as a single patch.  Good point.
+
+Krzysztof
+
 
