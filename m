@@ -1,140 +1,85 @@
-Return-Path: <SRS0=GsZ9=XB=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=/dtD=XC=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2B8C43331
-	for <linux-leds@archiver.kernel.org>; Fri,  6 Sep 2019 17:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F864C43331
+	for <linux-leds@archiver.kernel.org>; Sat,  7 Sep 2019 19:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B65420640
-	for <linux-leds@archiver.kernel.org>; Fri,  6 Sep 2019 17:46:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 616B721744
+	for <linux-leds@archiver.kernel.org>; Sat,  7 Sep 2019 19:36:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389559AbfIFRqL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 6 Sep 2019 13:46:11 -0400
-Received: from mga07.intel.com ([134.134.136.100]:28159 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726626AbfIFRqL (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 6 Sep 2019 13:46:11 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2019 10:46:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,473,1559545200"; 
-   d="scan'208";a="177706735"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga008.jf.intel.com with ESMTP; 06 Sep 2019 10:46:06 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1i6IJB-00032q-1U; Fri, 06 Sep 2019 20:46:05 +0300
-Date:   Fri, 6 Sep 2019 20:46:05 +0300
-From:   "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-To:     Nikolaus Voss <nv@vosn.de>
-Cc:     "Schmauss, Erik" <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        "Moore, Robert" <robert.moore@intel.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
-Subject: Re: [PATCH 1/3] ACPI: Resolve objects on host-directed table loads
-Message-ID: <20190906174605.GY2680@smile.fi.intel.com>
-References: <cover.1559127603.git.nikolaus.voss@loewensteinmedical.de>
- <8704391ae3004a6b4dd17975dbcc9e88bd28cf4b.1559127603.git.nikolaus.voss@loewensteinmedical.de>
- <20190814185055.GZ30120@smile.fi.intel.com>
- <CF6A88132359CE47947DB4C6E1709ED53C61A211@ORSMSX122.amr.corp.intel.com>
- <alpine.DEB.2.20.1908161345590.41303@fox.voss.local>
- <20190830145348.GM2680@smile.fi.intel.com>
- <alpine.DEB.2.20.1909040913230.15999@fox.voss.local>
+        id S1727130AbfIGTgP (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 7 Sep 2019 15:36:15 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40989 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbfIGTgP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 7 Sep 2019 15:36:15 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 55DF681D63; Sat,  7 Sep 2019 21:35:59 +0200 (CEST)
+Date:   Sat, 7 Sep 2019 21:36:12 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Oleh Kravchenko <oleg@kaa.org.ua>
+Cc:     linux-leds@vger.kernel.org
+Subject: Re: [PATCH 1/2] leds: mlxreg: Fix possible buffer overflow
+Message-ID: <20190907193612.GA25459@amd>
+References: <20190903125020.20482-1-oleg@kaa.org.ua>
+ <20190903141231.GA8199@amd>
+ <E8C449CE-405A-473F-9A2F-393070C0DA28@kaa.org.ua>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <alpine.DEB.2.20.1909040913230.15999@fox.voss.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <E8C449CE-405A-473F-9A2F-393070C0DA28@kaa.org.ua>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 09:20:03AM +0200, Nikolaus Voss wrote:
-> On Fri, 30 Aug 2019, Shevchenko, Andriy wrote:
-> > On Fri, Aug 16, 2019 at 01:57:26PM +0200, Nikolaus Voss wrote:
-> > > On Wed, 14 Aug 2019, Schmauss, Erik wrote:
-> > > > > -----Original Message-----
-> > > > > From: Shevchenko, Andriy
-> > > > > Sent: Wednesday, August 14, 2019 11:51 AM
-> > > > > To: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-> > > > > Cc: Rafael J. Wysocki <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>;
-> > > > > Moore, Robert <robert.moore@intel.com>; Schmauss, Erik
-> > > > > <erik.schmauss@intel.com>; Jacek Anaszewski <jacek.anaszewski@gmail.com>;
-> > > > > Pavel Machek <pavel@ucw.cz>; Dan Murphy <dmurphy@ti.com>; Thierry
-> > > > > Reding <thierry.reding@gmail.com>; linux-acpi@vger.kernel.org;
-> > > > > devel@acpica.org; linux-leds@vger.kernel.org; linux-pwm@vger.kernel.org
-> > > > > Subject: Re: [PATCH 1/3] ACPI: Resolve objects on host-directed table loads
-> > > > > 
-> > > > > On Wed, May 29, 2019 at 02:18:20PM +0200, Nikolaus Voss wrote:
-> > > > > > If an ACPI SSDT overlay is loaded after built-in tables have been
-> > > > > > loaded e.g. via configfs or efivar_ssdt_load() it is necessary to
-> > > > > > rewalk the namespace to resolve references. Without this, relative and
-> > > > > > absolute paths like ^PCI0.SBUS or \_SB.PCI0.SBUS are not resolved
-> > > > > > correctly.
-> > > > > > 
-> > > > > > Make configfs load use the same method as efivar_ssdt_load().
-> > > > > 
-> > > > > This patch brought a regression (bisect log below).
-> > > > > Now I'm unable to unload the table which was working before.
-> > > > > 
-> > > > > Reverting (manual, due to ACPICA changes) helps.
-> > > > > 
-> > > > > Please, consider to revert for this cycle, or fix. I will be glad to test any
-> > > > > proposed fix.
-> > > > 
-> > > > We submitted a patch (d1fb5b2f623b1af5a0d2a83d205df1b61f430dc6)
-> > > > in response to this suggestion and I was not aware that this had been applied.
-> > > > 
-> > > > Rafael, please revert at least the ACPICA portion of this patch.
-> > > 
-> > > As I see it, my ACPICA change is not part of 5.3-rc1 any more. Reverting my
-> > > fix is part of the patch above (d1fb5b2f623b1af5a0d2a83d205df1b61f430dc6)
-> > > which is already applied.
-> > > 
-> > > Nevertheless, what is new, is that acpi_ns_initialize_objects() is called in
-> > > acpi_load_table(). This is necessary to resolve the references in the newly
-> > > loaded table. Maybe this prevents the table from being unloaded?
-> > 
-> > So, can we do something about it? It's a regression.
-> > 
-> > Rafael, Nikolaus?
-> 
-> can you describe how you unload the table (from userspace?). I cannot
-> reproduce this regression. I was not aware of any working interface for
-> unloading ACPI tables, I ended up in kexec'ing the kernel for my tests each
-> time I had to unload a table.
 
-Sure.
+--qMm9M+Fa2AknHoGS
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have connected an I²C device(s) to my board where I have compiled ACPI tables
-which describes them (more details if you want to know is on [1]).
+On Tue 2019-09-03 21:11:30, Oleh Kravchenko wrote:
+> Hi Pavel,
+>=20
+> 3 =D0=B2=D0=B5=D1=80. 2019 =D1=80. =D0=BE 17:12 Pavel Machek <pavel@ucw.c=
+z> =D0=BF=D0=B8=D1=88=D0=B5:
+>=20
+> >> On Tue 2019-09-03 15:50:19, Oleh Kravchenko wrote:
+> >> Error was detected by PVS-Studio:
+> >> V512 A call of the 'sprintf' function will lead to overflow of
+> >> the buffer 'led_data->led_cdev_name'.
+> >=20
+> > Are you sure this is correct fix? Will the name be always properly
+> > null terminated?
+>=20
+> snprintf() always terminate string by NULL
 
-So, I create a folder in ConfigFS [1,2] and fill it up with SSDT (an *.aml file).
-After this, if I try to remove the folder in ConfigFS followed by table removal
-event, the actual nodes won't be removed, and this messes up with the internal
-representation of the ACPI device tree.
+You are right, sorry for the noise.
+									Pavel
 
-[1]: https://www.kernel.org/doc/html/latest/admin-guide/acpi/ssdt-overlays.html
-[2]: https://htot.github.io/meta-intel-edison/1.3-ACPI-or-not.html#run-time-loading-through-configfs
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
--- 
-With Best Regards,
-Andy Shevchenko
+--qMm9M+Fa2AknHoGS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
+iEYEARECAAYFAl10BqwACgkQMOfwapXb+vKaQACfcPPj5ywFzv3OgaijqINS98EJ
+f1cAoKwc4Ect3pQqvjFaUmQdEtbbWgnL
+=Kjnm
+-----END PGP SIGNATURE-----
+
+--qMm9M+Fa2AknHoGS--
