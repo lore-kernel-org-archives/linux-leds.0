@@ -2,251 +2,107 @@ Return-Path: <SRS0=S59t=XD=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4F8C4360D
-	for <linux-leds@archiver.kernel.org>; Sun,  8 Sep 2019 12:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7031EC433EF
+	for <linux-leds@archiver.kernel.org>; Sun,  8 Sep 2019 13:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F0E0218AE
-	for <linux-leds@archiver.kernel.org>; Sun,  8 Sep 2019 12:41:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BmuEx2QZ"
+	by mail.kernel.org (Postfix) with ESMTP id 3FD3E218AE
+	for <linux-leds@archiver.kernel.org>; Sun,  8 Sep 2019 13:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1567948070;
+	bh=cJcWacuGpD9PlZiTdR8FoX6vaAsWzW3r2Kl0j0eqRxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=eQC8IpCcFVma46DRr8JO92gMFlbp4rQnXOJZ5hFTkIF57V1Da8A/WgWYBn7RxyoSZ
+	 5voeRTi++f2e9SbTPBWlFy+kBVknhFDMfkowXbr/w9hBa0ZCNcex7BG2srZcrPOEBY
+	 jMmSp0he0OVv0+V2R/JUD5zmjobI+hcI/SN70N5s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbfIHMlo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 8 Sep 2019 08:41:44 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44828 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728770AbfIHMlm (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 8 Sep 2019 08:41:42 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q21so7427316pfn.11;
-        Sun, 08 Sep 2019 05:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6mQWtJ8RCa85NYb/NHarETCgw7xiqRuTUbpNaBTvJn8=;
-        b=BmuEx2QZbNmGw93q6oqX//YX+2SAearpPvZUnRKNR9UiJ0VBaK6ZUK+aFuglcyoYfp
-         X25vv+i+LxQSNuMGVOcIJFh95X1+VnNhl7bcpc2UtgYtBhC7JANrK4dBcNYnkUyeEiXa
-         BTHtNvvjImh/S5j/fiGGlU136iEgo3ChioIuVj7SYfOgOp1rdEGnZD8dGCvb6CcSijIk
-         lL8ZpENwzg2ZIFyiKbF1YM4LF8nt1yeGVBn6ZgJEu8UvtpIstoM7fJaXECZovuByAd+/
-         J8FSWrJ2eaCNK4bfBiNiNbcVJ2TS9Cwq0biHFdjO8j9TOC95uaYxq3smMGk+HO7stQz5
-         U6bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6mQWtJ8RCa85NYb/NHarETCgw7xiqRuTUbpNaBTvJn8=;
-        b=NUzuP1W+NTQd6rH7vudLhwa/NghU6U8JzMBY7CKsZQ9YAslJYlgzPafepWa4Y3+52h
-         JJQXFSmrYMcLP+ahf+DnY7KpwUQZ/aAJFXvl7oYbItgZkDai2TCxa+nRBOrJcZib5Enf
-         WbusHSDUQdlAAN8sWsOsHs3xtjlYVPG2omBgWcXmGrTR5MYfB/021eUtQrkXMwNwTbJu
-         aemZxe26vWBnOuGKxvClUTiHQtobbwwj3TWJldjP/Sof8WLWbehZHViOsHbvXdjpc+Gq
-         oh7hPvxDCb6jsAV0FQP9XVKvjScpwEPNBvs7/fK2Ie81aInA1tBD9A5AVnUfceg0W9AG
-         6zYA==
-X-Gm-Message-State: APjAAAW1KGBYgPblAq7ZUDByjlCg6IyhXFbAj5I/WpEKEYDFMNpIpVt9
-        fBIQjw7RHfQ+2BBeNILpO19CzfJr
-X-Google-Smtp-Source: APXvYqyOXirM+P7yHtDwGfULSuKMuoZRPRfYzG3wtf4jqKl+nlF3wtBLo04exmhUs5z3dBR/IEuGTg==
-X-Received: by 2002:a17:90a:c706:: with SMTP id o6mr15631670pjt.56.1567946501844;
-        Sun, 08 Sep 2019 05:41:41 -0700 (PDT)
-Received: from localhost.localdomain ([240f:34:212d:1:cae:1d92:a912:df67])
-        by smtp.gmail.com with ESMTPSA id s7sm10879582pjn.8.2019.09.08.05.41.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 08 Sep 2019 05:41:41 -0700 (PDT)
-From:   Akinobu Mita <akinobu.mita@gmail.com>
-To:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S1727580AbfIHNHt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 8 Sep 2019 09:07:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727568AbfIHNHt (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 8 Sep 2019 09:07:49 -0400
+Received: from localhost (unknown [62.28.240.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C23E218AC;
+        Sun,  8 Sep 2019 13:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567948068;
+        bh=cJcWacuGpD9PlZiTdR8FoX6vaAsWzW3r2Kl0j0eqRxU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xWAtzf2kDaiiJFlr85BNUsKFh1drlh7nCxHzJKtp+K+ib2cv9CGRLahQ4QIbI3jr0
+         K6LXwkUmHL0gRIwXapJB5eheuOvDb9a1ytkB4XFkoe/V+f4HSBNIF1p5EsrqBp8eUA
+         oAJqVe9Kf6zhaj3Ic4XkFt/T1KF/VL2rIAeNx7X4=
+Date:   Sun, 8 Sep 2019 14:07:46 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Akinobu Mita <akinobu.mita@gmail.com>
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 4/5] leds: add /sys/class/triggers/ that contains trigger sub-directories
-Date:   Sun,  8 Sep 2019 21:41:11 +0900
-Message-Id: <1567946472-10075-5-git-send-email-akinobu.mita@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567946472-10075-1-git-send-email-akinobu.mita@gmail.com>
+Subject: Re: [PATCH 2/5] leds: make sure leds_class is initialized before
+ triggers are registered
+Message-ID: <20190908130746.GA9466@kroah.com>
 References: <1567946472-10075-1-git-send-email-akinobu.mita@gmail.com>
+ <1567946472-10075-3-git-send-email-akinobu.mita@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1567946472-10075-3-git-send-email-akinobu.mita@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Reading /sys/class/leds/<led>/trigger returns all available LED triggers.
-However, this violates the "one value per file" rule of sysfs.
+On Sun, Sep 08, 2019 at 09:41:09PM +0900, Akinobu Mita wrote:
+> If the led-class and usb-common modules are built into the kernel, the
+> usb-common module could be initialized earlier than the led-class module.
+> 
+> So when the ledtrig_usb_gadget and ledtrig_usb_host LED triggers are
+> registered by usb-common module, the leds_class could not be initialized
+> yet.
+> 
+> We are going to populate sub-directories, each representing an LED
+> trigger in /sys/class/triggers/, so leds_class needs to be initialized
+> before any LED triggers is registered.
+> 
+> This makes led-class initialize earlier then usb-common by changing
+> initcall group.
+> 
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Dan Murphy <dmurphy@ti.com>
+> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+> ---
+>  drivers/leds/led-class.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 8b5a1d1..7d85181 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -424,7 +424,7 @@ static void __exit leds_exit(void)
+>  	class_destroy(leds_class);
+>  }
+>  
+> -subsys_initcall(leds_init);
+> +postcore_initcall(leds_init);
 
-This provides /sys/class/leds/triggers directory that contains a number of
-sub-directories, each representing an LED trigger. The name of the
-sub-directory matches the LED trigger name.
+This is a case of "whack a mole".
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Dan Murphy <dmurphy@ti.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
----
- Documentation/ABI/testing/sysfs-class-led |  9 +++++++++
- drivers/leds/led-class.c                  | 32 +++++++++++++++++++++++++++++++
- drivers/leds/led-triggers.c               | 19 ++++++++++++++++++
- drivers/leds/leds.h                       |  1 +
- include/linux/leds.h                      |  1 +
- 5 files changed, 62 insertions(+)
+Why not just initialize everything the first time the function is
+called?  That way you don't have to mess with any of the link order
+stuff and everything will always continue to work if things ever change
+in the future?
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 5f67f7a..14d91af 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -61,3 +61,12 @@ Description:
- 		gpio and backlight triggers. In case of the backlight trigger,
- 		it is useful when driving a LED which is intended to indicate
- 		a device in a standby like state.
-+
-+What:		/sys/class/leds/triggers/
-+Date:		September 2019
-+KernelVersion:	5.5
-+Contact:	linux-leds@vger.kernel.org
-+Description:
-+		This directory contains a number of sub-directories, each
-+		representing an LED trigger. The name of the sub-directory
-+		matches the LED trigger name.
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 7d85181..04e6c14 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -81,6 +81,28 @@ static struct bin_attribute *led_trigger_bin_attrs[] = {
- static const struct attribute_group led_trigger_group = {
- 	.bin_attrs = led_trigger_bin_attrs,
- };
-+
-+static int led_triggers_kobj_create(void)
-+{
-+	led_triggers_kobj = class_kobject_create_and_add("triggers",
-+							 leds_class);
-+
-+	return led_triggers_kobj ? 0 : -ENOMEM;
-+}
-+
-+static void led_triggers_kobj_destroy(void)
-+{
-+	kobject_put(led_triggers_kobj);
-+}
-+
-+#else
-+static inline int led_triggers_kobj_create(void)
-+{
-+	return 0;
-+}
-+static void led_triggers_kobj_destroy(void)
-+{
-+}
- #endif
- 
- static struct attribute *led_class_attrs[] = {
-@@ -411,16 +433,26 @@ EXPORT_SYMBOL_GPL(devm_led_classdev_unregister);
- 
- static int __init leds_init(void)
- {
-+	int ret;
-+
- 	leds_class = class_create(THIS_MODULE, "leds");
- 	if (IS_ERR(leds_class))
- 		return PTR_ERR(leds_class);
- 	leds_class->pm = &leds_class_dev_pm_ops;
- 	leds_class->dev_groups = led_groups;
-+
-+	ret = led_triggers_kobj_create();
-+	if (ret) {
-+		class_unregister(leds_class);
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
- static void __exit leds_exit(void)
- {
-+	led_triggers_kobj_destroy();
- 	class_destroy(leds_class);
- }
- 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index ed5a311..4a86964 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -268,16 +268,26 @@ void led_trigger_rename_static(const char *name, struct led_trigger *trig)
- }
- EXPORT_SYMBOL_GPL(led_trigger_rename_static);
- 
-+static struct kobj_type led_trigger_kobj_type = {
-+	.sysfs_ops = &kobj_sysfs_ops,
-+};
-+
-+struct kobject *led_triggers_kobj;
-+EXPORT_SYMBOL_GPL(led_triggers_kobj);
-+
- /* LED Trigger Interface */
- 
- int led_trigger_register(struct led_trigger *trig)
- {
- 	struct led_classdev *led_cdev;
- 	struct led_trigger *_trig;
-+	int ret;
- 
- 	rwlock_init(&trig->leddev_list_lock);
- 	INIT_LIST_HEAD(&trig->led_cdevs);
- 
-+	kobject_init(&trig->kobj, &led_trigger_kobj_type);
-+
- 	down_write(&triggers_list_lock);
- 	/* Make sure the trigger's name isn't already in use */
- 	list_for_each_entry(_trig, &trigger_list, next_trig) {
-@@ -286,6 +296,14 @@ int led_trigger_register(struct led_trigger *trig)
- 			return -EEXIST;
- 		}
- 	}
-+
-+	WARN_ON_ONCE(!led_triggers_kobj);
-+	ret = kobject_add(&trig->kobj, led_triggers_kobj, "%s", trig->name);
-+	if (ret) {
-+		up_write(&triggers_list_lock);
-+		return ret;
-+	}
-+
- 	/* Add to the list of led triggers */
- 	list_add_tail(&trig->next_trig, &trigger_list);
- 	up_write(&triggers_list_lock);
-@@ -316,6 +334,7 @@ void led_trigger_unregister(struct led_trigger *trig)
- 
- 	/* Remove from the list of led triggers */
- 	down_write(&triggers_list_lock);
-+	kobject_put(&trig->kobj);
- 	list_del_init(&trig->next_trig);
- 	up_write(&triggers_list_lock);
- 
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index a0ee33c..52debe0 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -33,5 +33,6 @@ ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
- extern struct rw_semaphore leds_list_lock;
- extern struct list_head leds_list;
- extern struct list_head trigger_list;
-+extern struct kobject *led_triggers_kobj;
- 
- #endif	/* __LEDS_H_INCLUDED */
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 33ae825..379f282 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -279,6 +279,7 @@ struct led_trigger {
- 	struct list_head  next_trig;
- 
- 	const struct attribute_group **groups;
-+	struct kobject kobj;
- };
- 
- /*
--- 
-2.7.4
+thanks,
 
+greg k-h
