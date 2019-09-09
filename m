@@ -1,55 +1,35 @@
-Return-Path: <SRS0=S59t=XD=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=3xN7=XE=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 556A0C4360D
-	for <linux-leds@archiver.kernel.org>; Sun,  8 Sep 2019 21:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3326CC433EF
+	for <linux-leds@archiver.kernel.org>; Mon,  9 Sep 2019 07:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CFC0218DE
-	for <linux-leds@archiver.kernel.org>; Sun,  8 Sep 2019 21:17:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="gWNUGaQH"
+	by mail.kernel.org (Postfix) with ESMTP id 0E53421920
+	for <linux-leds@archiver.kernel.org>; Mon,  9 Sep 2019 07:16:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730526AbfIHVRl (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 8 Sep 2019 17:17:41 -0400
-Received: from mail.andi.de1.cc ([85.214.55.253]:37340 "EHLO mail.andi.de1.cc"
+        id S1732269AbfIIHQl (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 9 Sep 2019 03:16:41 -0400
+Received: from smtp.220.in.ua ([89.184.67.205]:45532 "EHLO smtp.220.in.ua"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726080AbfIHVRl (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sun, 8 Sep 2019 17:17:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=WLNvj34w1pMydEMVCJGWGNCq90dYkz0edkv/6Infxco=; b=gWNUGaQHNjgOqY5zrZ+BPjNJ/t
-        nXKXYK8g5xv+b4o4OJ7PoWuZ4TdtVR+ADL8078ghBlGq5JIn7GX3YYYNPdBCd8dnAgS+fOnizKSk0
-        HOxJnNH3asiCrxW4OycyeZrRHWupr6FrA8586BBGINUZMWm25lwruT06eEB7eCFMQRMY=;
-Received: from p200300ccff4729001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff47:2900:1a3d:a2ff:febf:d33a] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1i73vn-0000wL-Aw; Sun, 08 Sep 2019 22:37:07 +0200
-Received: from andi by aktux with local (Exim 4.92)
-        (envelope-from <andreas@kemnade.info>)
-        id 1i73vm-0007rN-W2; Sun, 08 Sep 2019 22:37:07 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     lee.jones@linaro.org, daniel.thompson@linaro.org,
-        jingoohan1@gmail.com, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        dmurphy@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH 0/2] backlight_lm3630a: add enable_gpios property
-Date:   Sun,  8 Sep 2019 22:37:02 +0200
-Message-Id: <20190908203704.30147-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.20.1
+        id S1727546AbfIIHQl (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 9 Sep 2019 03:16:41 -0400
+Received: from oleh-pc.lan (unknown [95.67.115.55])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp.220.in.ua (Postfix) with ESMTPSA id 13E211A244A4;
+        Mon,  9 Sep 2019 10:16:39 +0300 (EEST)
+From:   Oleh Kravchenko <oleg@kaa.org.ua>
+To:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz
+Subject: v7 EL15203000
+Date:   Mon,  9 Sep 2019 10:16:30 +0300
+Message-Id: <20190909071632.14392-1-oleg@kaa.org.ua>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-leds-owner@vger.kernel.org
@@ -57,19 +37,9 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-To be able to handle the HWEN pin of the lm3630a, add
-an enable gpio to the driver and a property.
+[PATCH v7 1/2] dt-bindings: Add docs for EL15203000
+[PATCH v7 2/2] leds: add LED driver for EL15203000 board
 
-Tested on Kobo Clara HD
-
-Andreas Kemnade (2):
-  backlight: lm3630a: add an enable gpio for the HWEN pin
-  dt-bindings: backlight: lm3630a: add enable_gpios
-
- .../leds/backlight/lm3630a-backlight.yaml      |  4 ++++
- drivers/video/backlight/lm3630a_bl.c           | 18 ++++++++++++++++++
- 2 files changed, 22 insertions(+)
-
--- 
-2.20.1
+Fixed compilation error missing variable led.
+Compiled and checked on real device.
 
