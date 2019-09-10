@@ -2,112 +2,163 @@ Return-Path: <SRS0=RXPH=XF=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDB0C3A5A2
-	for <linux-leds@archiver.kernel.org>; Tue, 10 Sep 2019 11:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2298C49ED6
+	for <linux-leds@archiver.kernel.org>; Tue, 10 Sep 2019 11:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 529BD21019
-	for <linux-leds@archiver.kernel.org>; Tue, 10 Sep 2019 11:00:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A578B21019
+	for <linux-leds@archiver.kernel.org>; Tue, 10 Sep 2019 11:26:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="czbPDEr+"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SRBVq+k/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392792AbfIJLAO (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 10 Sep 2019 07:00:14 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:55964 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729647AbfIJLAC (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 10 Sep 2019 07:00:02 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8AAxuVP071833;
-        Tue, 10 Sep 2019 05:59:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568113196;
-        bh=J37WOYhcIEKzEnO3t8q5TtofJfu6T7iSB8tR2Bkh500=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=czbPDEr+OvH3hBFdUOyqld4eLuWL7baiMvvSfQAf9VV7NMerjSdQET1+1LdEKc6j4
-         fcKc9FR1xdet90ONeTo9s0LWV9uGYXe7CVOvWvaDG+TBLTQYg90R/hk5HJLayFzIF0
-         dWwj1o/uJ2TOdtCh9B48pjMuHo08U2llzAXfXkjQ=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8AAxuKf034417;
-        Tue, 10 Sep 2019 05:59:56 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 10
- Sep 2019 05:59:55 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 10 Sep 2019 05:59:55 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8AAxs7N018253;
-        Tue, 10 Sep 2019 05:59:55 -0500
-From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
-        <daniel.thompson@linaro.org>
-CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dridevel@lists.freedesktop.org>,
-        <tomi.valkeinen@ti.com>, Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v5 3/4] dt-bindings: backlight: Add led-backlight binding
-Date:   Tue, 10 Sep 2019 12:59:45 +0200
-Message-ID: <20190910105946.23057-4-jjhiblot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190910105946.23057-1-jjhiblot@ti.com>
+        id S1726119AbfIJL02 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 10 Sep 2019 07:26:28 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34019 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726475AbfIJL01 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 10 Sep 2019 07:26:27 -0400
+Received: by mail-wr1-f65.google.com with SMTP id a11so9668927wrx.1
+        for <linux-leds@vger.kernel.org>; Tue, 10 Sep 2019 04:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2U0vF9K5FUZesrb/f2dR+z0p/SVAlF7QvnXLB1ik3bo=;
+        b=SRBVq+k/9dc8SXn1wOvnBCc62YimdTFEAa7BaW0MnrQ46cgN9H+PU81Tp9sHi+xsDJ
+         1VSTFchloZhE48V5IFUIAurGh/6Hoe5uU1tpS8BYGUdnGZUOjcJzlb0IS/shw18Og+Cb
+         t/dsc5/OJzyVYaoRVjx49msQUe2jgVctiuKDTkRxpshWJrEdhC62UEMB9aWVc4adn0Ce
+         e49duMogzQrkfuF6b7Jrfm1mQx1qmlv49al+0aIW7ii4MEhz9RljbDMwtr71WfPrZDHI
+         9DiOaPjXpQQMw2I2yd1YNj5GJM/M5hvw8zscYctV5caP6llagJrzf/RgH1+JXEfwIbjg
+         cqDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2U0vF9K5FUZesrb/f2dR+z0p/SVAlF7QvnXLB1ik3bo=;
+        b=bSapp3WzOUT/7uu0MZvIo1NAzHP5AsfypgWXMphFU9uPVM6GpNlE6ofyhKScCW7OQX
+         Kjq/h1KWHjaqetKAk+ZMIAlbdQXmpwmMaRRC3WYH0BIgNaVPwKIarYmpDg6bOrA2/grE
+         lz0tL4ARXeWwiDeuuF/ejnUpljHI1FvuqmzD0837HQjQXORNFMdSoBU3IGhTZkQAmNUR
+         8uzm1HsLF7CbOBJj7ySmQ5JKTn4LBKNresIltMWC2QdbOrodh94iWIwstdgzSIjwBxUc
+         Nh1zOXwa63/FiVgc1HH0VjWFUeB/XDj5F09EO0VGwVx3BtAMzSxa9GMN6B/NfBzillDs
+         MENQ==
+X-Gm-Message-State: APjAAAUHXBNd9l5/lOI3zDzK4HinA/Kcug1EyUqOIiAdAirkwm5bLYzB
+        713PPAW0lBgUAMubNAO4NjlUlQ==
+X-Google-Smtp-Source: APXvYqwhEg3hf1AkS2G22feB0s4++EdgJF22iHMS+DuQWNtvuw8RWa4RD2zltWw9uEeHwxN8X39oTA==
+X-Received: by 2002:a5d:5689:: with SMTP id f9mr23802140wrv.224.1568114785307;
+        Tue, 10 Sep 2019 04:26:25 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id y13sm36988391wrg.8.2019.09.10.04.26.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2019 04:26:24 -0700 (PDT)
+Date:   Tue, 10 Sep 2019 12:26:22 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
+Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, dmurphy@ti.com,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dridevel@lists.freedesktop.org, tomi.valkeinen@ti.com
+Subject: Re: [PATCH v5 4/4] backlight: add led-backlight driver
+Message-ID: <20190910112622.iflmknh5qplbfoyu@holly.lan>
 References: <20190910105946.23057-1-jjhiblot@ti.com>
+ <20190910105946.23057-5-jjhiblot@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190910105946.23057-5-jjhiblot@ti.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add DT binding for led-backlight.
+On Tue, Sep 10, 2019 at 12:59:46PM +0200, Jean-Jacques Hiblot wrote:
+> From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> 
+> This patch adds a led-backlight driver (led_bl), which is similar to
+> pwm_bl except the driver uses a LED class driver to adjust the
+> brightness in the HW. Multiple LEDs can be used for a single backlight.
+> 
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> ---
+>  drivers/video/backlight/Kconfig  |   7 +
+>  drivers/video/backlight/Makefile |   1 +
+>  drivers/video/backlight/led_bl.c | 264 +++++++++++++++++++++++++++++++
+>  3 files changed, 272 insertions(+)
+>  create mode 100644 drivers/video/backlight/led_bl.c
+> 
+> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+> index 8b081d61773e..585a1787618c 100644
+> --- a/drivers/video/backlight/Kconfig
+> +++ b/drivers/video/backlight/Kconfig
+> @@ -458,6 +458,13 @@ config BACKLIGHT_RAVE_SP
+>  	help
+>  	  Support for backlight control on RAVE SP device.
+>  
+> +config BACKLIGHT_LED
+> +	tristate "Generic LED based Backlight Driver"
+> +	depends on LEDS_CLASS && OF
+> +	help
+> +	  If you have a LCD backlight adjustable by LED class driver, say Y
+> +	  to enable this driver.
+> +
+>  endif # BACKLIGHT_CLASS_DEVICE
+>  
+>  endmenu
+> diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
+> index 63c507c07437..2a67642966a5 100644
+> --- a/drivers/video/backlight/Makefile
+> +++ b/drivers/video/backlight/Makefile
+> @@ -57,3 +57,4 @@ obj-$(CONFIG_BACKLIGHT_TPS65217)	+= tps65217_bl.o
+>  obj-$(CONFIG_BACKLIGHT_WM831X)		+= wm831x_bl.o
+>  obj-$(CONFIG_BACKLIGHT_ARCXCNN) 	+= arcxcnn_bl.o
+>  obj-$(CONFIG_BACKLIGHT_RAVE_SP)		+= rave-sp-backlight.o
+> +obj-$(CONFIG_BACKLIGHT_LED)		+= led_bl.o
+> diff --git a/drivers/video/backlight/led_bl.c b/drivers/video/backlight/led_bl.c
+> new file mode 100644
+> index 000000000000..a72456e11fb9
+> --- /dev/null
+> +++ b/drivers/video/backlight/led_bl.c
+> @@ -0,0 +1,264 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2015-2019 Texas Instruments Incorporated -  http://www.ti.com/
+> + * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> + *
+> + * Based on pwm_bl.c
+> + */
+> +
+> +#include <linux/backlight.h>
+> +#include <linux/gpio/consumer.h>
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
----
- .../bindings/leds/backlight/led-backlight.txt | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+Maybe this is a nitpick but it is one I have now raised three times and
+I don't recall any response, what symbols from this header are used in
+this file?
 
-diff --git a/Documentation/devicetree/bindings/leds/backlight/led-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
-new file mode 100644
-index 000000000000..4c7dfbe7f67a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
-@@ -0,0 +1,28 @@
-+led-backlight bindings
-+
-+This binding is used to describe a basic backlight device made of LEDs.
-+It can also be used to describe a backlight device controlled by the output of
-+a LED driver.
-+
-+Required properties:
-+  - compatible: "led-backlight"
-+  - leds: a list of LEDs
-+
-+Optional properties:
-+  - brightness-levels: Array of distinct brightness levels. The levels must be
-+                       in the range accepted by the underlying LED devices.
-+                       This is used to translate a backlight brightness level
-+                       into a LED brightness level. If it is not provided, the
-+                       identity mapping is used.
-+
-+  - default-brightness-level: The default brightness level.
-+
-+Example:
-+
-+	backlight {
-+		compatible = "led-backlight";
-+
-+		leds = <&led1>, <&led2>;
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+	};
--- 
-2.17.1
+AFAICT everything defined in this header includes the string "gpio" and
+that string doesn't appear anywhere in the file (except this line).
 
+
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+
+Come to think of it, are you sure you need this include? devm_kzalloc()
+doesn't comes from this file.
+
+
+> +#define BKL_FULL_BRIGHTNESS 255
+
+This is unused. Please remove.
+
+
+Other than that, looks good!
+
+
+Daniel.
