@@ -2,146 +2,90 @@ Return-Path: <SRS0=AsW9=XG=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E681C49ED6
-	for <linux-leds@archiver.kernel.org>; Wed, 11 Sep 2019 17:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EC8C49ED6
+	for <linux-leds@archiver.kernel.org>; Wed, 11 Sep 2019 18:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 355A22084F
-	for <linux-leds@archiver.kernel.org>; Wed, 11 Sep 2019 17:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56EBD206A1
+	for <linux-leds@archiver.kernel.org>; Wed, 11 Sep 2019 18:01:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAZiwy34"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fT4ovEkL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbfIKR0C (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 11 Sep 2019 13:26:02 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34019 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728897AbfIKR0B (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 11 Sep 2019 13:26:01 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n9so11873170pgc.1;
-        Wed, 11 Sep 2019 10:26:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=dHzjWEjbmPZ/bJXnFMndg1gxGQSAtyDI2pcJRpM0tHQ=;
-        b=eAZiwy348jYbQ9tlPkJ6aw2DPNxIoNTmOn3/zeTYf2Bfd7KM24MTgiMA1meaVNBEMR
-         DbFpKTC2vaSHYL8T+Baf9pmU8A+aOQAD5Ni2VSPClPrhJUCsX8as6AQ/15NkRdN4BZuw
-         62Hhn0jY7AL8i/nT8S6G6mrKEftbh/lJVURnLMTpwXfkacEnvws3b7Q0G6ovCrRvlf0d
-         0z8hmePN55njAHE0LTQdofDEsaoAKCuCoP0YxEU12uRE++qnUydarz50FJ5fOiHA+pHP
-         uLpuCAjOFxYiin8vi1aLHJ8F7tSQ6nxlQtAVgvL2/pKYj3zwhOF2yZaEQU5mUy5hKIbg
-         Elsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=dHzjWEjbmPZ/bJXnFMndg1gxGQSAtyDI2pcJRpM0tHQ=;
-        b=GxnacMwAOxgZ3HOkaj2odWTJXpA2rauntl7MTcxJkYdZrZ5w1mCOonI8qoXOoT67N7
-         Q3q7Xk4mZPvPrDPXhxYULBWH2d4m5xai/0uL39H9DRj6MZHaBlDUN+DWevBryC6KxvsT
-         QuZIihX93r1eAI0eJYDzJx1a60eC4YXJjHy8s0Qt5WyEPoWkCOhyiyycmIdm1GYXc4Ig
-         sDzQxkgtzpRTTDOCkJ/dI+r0Mi2eVLQETvmXTBblwCk2/1G+GQnUCb+gwJ69vxV1Lml3
-         j7gY3lZJbPmGdqexmKSW64wySHdVmUfEGVsc76GUkmxEbwgLZHQRAh1lmncUZ5m/1eIq
-         xohA==
-X-Gm-Message-State: APjAAAWBMtLOr9xrkQu6WiMgVvbdPcLjlaXcet5N039UWVDUhQMCCeN3
-        VzK0Vhvz/EXs2XcouYuh1UOiy5Ryyc9oSSBEwww=
-X-Google-Smtp-Source: APXvYqzMRDssqpgsK8fSzya4V0/uXkWx/h2Ddhu3BRv6cUncAazQPvzvWNQgRlC9+H9UkzbUl2Qwc438VsPYjvzuMzY=
-X-Received: by 2002:a17:90a:3546:: with SMTP id q64mr6696670pjb.13.1568222759459;
- Wed, 11 Sep 2019 10:25:59 -0700 (PDT)
+        id S1729828AbfIKSBW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 11 Sep 2019 14:01:22 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:36752 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729730AbfIKSBW (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 11 Sep 2019 14:01:22 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8BI1Ieo040457;
+        Wed, 11 Sep 2019 13:01:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568224878;
+        bh=vNLixCA7rV3r89geVpDyZT2afzJln66pkNhtKdigswM=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=fT4ovEkLclgrgoZ1v34Cs0sapi+6kmlm9zz3FeQZgpLyWLPeUBZCH0tUF18vksrwH
+         F2XUbr3fcIWdCB2hfz1vSaji6J+DcWt7Rf+L4SUZ9IiMfoND3mkM/JY8avMyaYWtIE
+         zXn6LwrD5TBy5rWYkf/pe3/olIyjVMVrWFuxrHaI=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8BI1Iq3043770
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Sep 2019 13:01:18 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 11
+ Sep 2019 13:01:17 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 11 Sep 2019 13:01:17 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8BI1HnF052616;
+        Wed, 11 Sep 2019 13:01:17 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <robh+dt@kernel.org>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v5 5/9] leds: Add multicolor ID to the color ID list
+Date:   Wed, 11 Sep 2019 13:01:11 -0500
+Message-ID: <20190911180115.21035-6-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
+In-Reply-To: <20190911180115.21035-1-dmurphy@ti.com>
+References: <20190911180115.21035-1-dmurphy@ti.com>
 MIME-Version: 1.0
-References: <1567946472-10075-1-git-send-email-akinobu.mita@gmail.com>
- <1567946472-10075-2-git-send-email-akinobu.mita@gmail.com>
- <20190908131034.GD9466@kroah.com> <CAC5umyhZ_-Gdh7+EzNoHPs2zki2-dK1xBv5xpE5zwZPt_jvNEA@mail.gmail.com>
- <20190911153602.GB13865@kroah.com>
-In-Reply-To: <20190911153602.GB13865@kroah.com>
-From:   Akinobu Mita <akinobu.mita@gmail.com>
-Date:   Thu, 12 Sep 2019 02:25:48 +0900
-Message-ID: <CAC5umygQWrhN-=5g+87YeKYUzGGPGW01mtaVDJ3NERYbXBGKog@mail.gmail.com>
-Subject: Re: [PATCH 1/5] leds: remove PAGE_SIZE limit of /sys/class/leds/<led>/trigger
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-2019=E5=B9=B49=E6=9C=8812=E6=97=A5(=E6=9C=A8) 0:36 Greg Kroah-Hartman <greg=
-kh@linuxfoundation.org>:
->
-> On Thu, Sep 12, 2019 at 12:25:28AM +0900, Akinobu Mita wrote:
-> > 2019=E5=B9=B49=E6=9C=888=E6=97=A5(=E6=97=A5) 22:10 Greg Kroah-Hartman <=
-gregkh@linuxfoundation.org>:
-> > >
-> > > On Sun, Sep 08, 2019 at 09:41:08PM +0900, Akinobu Mita wrote:
-> > > > Reading /sys/class/leds/<led>/trigger returns all available LED tri=
-ggers.
-> > > > However, the size of this file is limited to PAGE_SIZE because of t=
-he
-> > > > limitation for sysfs attribute.
-> > > >
-> > > > Enabling LED CPU trigger on systems with thousands of CPUs easily h=
-its
-> > > > PAGE_SIZE limit, and makes it impossible to see all available LED t=
-riggers
-> > > > and which trigger is currently activated.
-> > > >
-> > > > This converts /sys/class/leds/<led>/trigger to bin attribute and re=
-moves
-> > > > the PAGE_SIZE limitation.
-> > > >
-> > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > > > Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> > > > Cc: Pavel Machek <pavel@ucw.cz>
-> > > > Cc: Dan Murphy <dmurphy@ti.com>
-> > > > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > > > Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-> > > > ---
-> > > >  drivers/leds/led-class.c    |  8 ++--
-> > > >  drivers/leds/led-triggers.c | 90 +++++++++++++++++++++++++++++++++=
-+-----------
-> > > >  drivers/leds/leds.h         |  6 +++
-> > > >  include/linux/leds.h        |  5 ---
-> > > >  4 files changed, 79 insertions(+), 30 deletions(-)
-> > > >
-> > > > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > > > index 4793e77..8b5a1d1 100644
-> > > > --- a/drivers/leds/led-class.c
-> > > > +++ b/drivers/leds/led-class.c
-> > > > @@ -73,13 +73,13 @@ static ssize_t max_brightness_show(struct devic=
-e *dev,
-> > > >  static DEVICE_ATTR_RO(max_brightness);
-> > > >
-> > > >  #ifdef CONFIG_LEDS_TRIGGERS
-> > > > -static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_st=
-ore);
-> > > > -static struct attribute *led_trigger_attrs[] =3D {
-> > > > -     &dev_attr_trigger.attr,
-> > > > +static BIN_ATTR(trigger, 0644, led_trigger_read, led_trigger_write=
-, 0);
-> > >
-> > > BIN_ATTR_RW()?
-> >
-> > We can use BIN_ATTR_RW() by renaming led_trigger_{read,write}() to
-> > trigger_{read,write}().  But led_trigger_{read,write}() are not static
-> > functions.  These are defined as export symbols for led-class module.
-> >
-> > So trigger_{read,write}() will be too generic symbol names, won't they?
->
-> Yes they would, sorry I didn't notice that.
->
-> Wait, why are those functions being exported?  Who is calling a sysfs
-> function from a different code path than sysfs?
+Add a new color ID that is declared as MULTICOLOR as with the
+multicolor framework declaring a definitive color is not accurate
+as the node can contain multiple colors.
 
-led-class.c :)
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ drivers/leds/led-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-led_trigger_{read,write}() are defined in led-triggers.c which is built
-into the kernel. led-class.c can be built as module.
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index f1f718dbe0f8..846248a0693d 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -34,6 +34,7 @@ const char * const led_colors[LED_COLOR_ID_MAX] = {
+ 	[LED_COLOR_ID_VIOLET] = "violet",
+ 	[LED_COLOR_ID_YELLOW] = "yellow",
+ 	[LED_COLOR_ID_IR] = "ir",
++	[LED_COLOR_ID_MULTI] = "multicolor",
+ };
+ EXPORT_SYMBOL_GPL(led_colors);
+ 
+-- 
+2.22.0.214.g8dca754b1e
+
