@@ -2,63 +2,67 @@ Return-Path: <SRS0=9WaQ=XI=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F90C49ED7
-	for <linux-leds@archiver.kernel.org>; Fri, 13 Sep 2019 13:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4807DC4CEC7
+	for <linux-leds@archiver.kernel.org>; Fri, 13 Sep 2019 14:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 743E2206BB
-	for <linux-leds@archiver.kernel.org>; Fri, 13 Sep 2019 13:41:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AB61205ED
+	for <linux-leds@archiver.kernel.org>; Fri, 13 Sep 2019 14:06:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZBykWoc9"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Fau/Eh2R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390313AbfIMNlz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 13 Sep 2019 09:41:55 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39828 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390169AbfIMNly (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 13 Sep 2019 09:41:54 -0400
+        id S2388863AbfIMOGq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 13 Sep 2019 10:06:46 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:59566 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388084AbfIMOGq (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 13 Sep 2019 10:06:46 -0400
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8DDfoaf094202;
-        Fri, 13 Sep 2019 08:41:50 -0500
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8DE6Q4g085351;
+        Fri, 13 Sep 2019 09:06:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568382110;
-        bh=z1V+v3q+InJeoYcLZ06aHyRBUiufpJvPRs8v6Mio0c8=;
+        s=ti-com-17Q1; t=1568383586;
+        bh=rF+4FIKlVSHlEEHXf6QhcIJo8Cxci4JVbaPWe8BeTLU=;
         h=Subject:To:References:From:Date:In-Reply-To;
-        b=ZBykWoc9JqVk3Kervj6A7s8CfmqgeF3d6/CP5ARCQAsKjoJa4Vwu7s5Nwy+nIVMer
-         9OUlm8kjyPUuAW8NgEFd34gEjzLk//iY2SXvsm4TZusx3eKz65fhRXVMLW9N9DswNL
-         5f1UE5xVzcsbXk8nqbZwgKfvXsKw9qKBsBQ+UdcE=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8DDfoS7021604
+        b=Fau/Eh2RkxT2FjWYINFwq5ybCkEMljIcv/34t118YnCLwX7NW6QTXF//tC0XsvuEr
+         ql/gd1dKIh53WiL5srBH0sxo3Qs8zcVuJMZqTC6/VIniqVf/Vtcwz5ixYYq2M1tRyu
+         v+sIGtV0rhH7HozaZPTqdhqoMy2Py9vWLbZS3o5w=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8DE6QNb056725
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 13 Sep 2019 08:41:50 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 13 Sep 2019 09:06:26 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 13
- Sep 2019 08:41:49 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2019 09:06:26 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 13 Sep 2019 08:41:49 -0500
+ Frontend Transport; Fri, 13 Sep 2019 09:06:25 -0500
 Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8DDfnlY014551;
-        Fri, 13 Sep 2019 08:41:49 -0500
-Subject: Re: [PATCH v8 2/2] leds: add LED driver for EL15203000 board
-To:     Oleh Kravchenko <oleg@kaa.org.ua>, <devicetree@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, <jacek.anaszewski@gmail.com>,
-        <pavel@ucw.cz>
-References: <20190912221115.23595-1-oleg@kaa.org.ua>
- <20190912221115.23595-3-oleg@kaa.org.ua>
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8DE6PlR112383;
+        Fri, 13 Sep 2019 09:06:25 -0500
+Subject: Re: [PATCH v4 1/2] dt-bindings: backlight: lm3630a: add enable_gpios
+To:     Andreas Kemnade <andreas@kemnade.info>, <lee.jones@linaro.org>,
+        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>,
+        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <b.zolnierkie@samsung.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-leds@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>
+References: <20190912213257.24147-1-andreas@kemnade.info>
+ <20190912213257.24147-2-andreas@kemnade.info>
 From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <ffae7af2-29f7-0d49-a77d-63c1ad3d27b3@ti.com>
-Date:   Fri, 13 Sep 2019 08:42:15 -0500
+Message-ID: <b6d9fa2c-c23b-7310-e192-cff6185a72b1@ti.com>
+Date:   Fri, 13 Sep 2019 09:06:51 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190912221115.23595-3-oleg@kaa.org.ua>
+In-Reply-To: <20190912213257.24147-2-andreas@kemnade.info>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -68,14 +72,45 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Oleh
+Andreas
 
-On 9/12/19 5:11 PM, Oleh Kravchenko wrote:
-> This patch adds a LED class driver for the LEDs found on
-> the Crane Merchandising System EL15203000 LEDs board
-> (aka RED LEDs board).
+On 9/12/19 4:32 PM, Andreas Kemnade wrote:
+> add enable-gpios to describe HWEN pin
 >
-> Signed-off-by: Oleh Kravchenko <oleg@kaa.org.ua>
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 
 Reviewed-by: Dan Murphy <dmurphy@ti.com>
 
+
+> ---
+> changes in v2: added example
+> changes in v3: added Acked-by
+> changes in v4: moved enable-gpios to the right position
+>    in the example
+>   .../bindings/leds/backlight/lm3630a-backlight.yaml           | 5 +++++
+>   1 file changed, 5 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+> index dc129d9a329e..c8470628fe02 100644
+> --- a/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+> +++ b/Documentation/devicetree/bindings/leds/backlight/lm3630a-backlight.yaml
+> @@ -29,6 +29,10 @@ properties:
+>     '#size-cells':
+>       const: 0
+>   
+> +  enable-gpios:
+> +    description: GPIO to use to enable/disable the backlight (HWEN pin).
+> +    maxItems: 1
+> +
+>   required:
+>     - compatible
+>     - reg
+> @@ -96,6 +100,7 @@ examples:
+>           led-controller@38 {
+>                   compatible = "ti,lm3630a";
+>                   reg = <0x38>;
+> +                enable-gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
+>   
+>                   #address-cells = <1>;
+>                   #size-cells = <0>;
