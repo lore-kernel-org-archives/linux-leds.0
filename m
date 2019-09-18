@@ -2,112 +2,74 @@ Return-Path: <SRS0=HUF4=XN=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E0EC4CECD
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 01:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2151CC4CEC9
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 02:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 810352053B
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 01:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEA6C21881
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 02:15:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568770856;
-	bh=B+mcMFY1lW5YzcNDF1nV15MQ42KQMb+AHEFiuEvs7F4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=daA/ypgO5XB8/X7hTh8jIXzaHMSv45vfzz0u25B8WWLXD9hpHClki/vj7TOL7/Up6
-	 CxTJz8jVMYcw0tn7vQ0/aaMLwakOlHl/OkOUsOpBAvQU6MfrUkMv+0AR5Zh+1KoVLn
-	 E8sbRaoGDf97lUB/3AIuH+e84BTBk/WQf4qto0j8=
+	s=default; t=1568772921;
+	bh=DR0loGiqK2wljNx0oNuGljAGhXvz3TqGOc/3YTZwPpc=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=VdcOO5NoSOILzaVloxFqtsiScTS4uXe99AirMJwnj5mYLel1TfRROR+WpoR2WSJ8T
+	 CzSnIpABTciPEd8EgKIDHwXCEjzpQTSDIH+HwDctnKYC8MhcpwDARehYvjDRrHLP0E
+	 qu1wiw7vxrAUPM8IVVo2qeVCVFhdPP0i2TFTx/Do=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfIRBkz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 17 Sep 2019 21:40:55 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45429 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728383AbfIRBkz (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 17 Sep 2019 21:40:55 -0400
-Received: by mail-lf1-f68.google.com with SMTP id r134so4326684lff.12
-        for <linux-leds@vger.kernel.org>; Tue, 17 Sep 2019 18:40:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fxZxgQXB1oaMwYliKzbFMQ3wWmFlE3pkMrUM3WHegTI=;
-        b=gll0QwYPhJXC5RJZMPEoVL65l3AwY9HheCrApLkuz9bM8z5Y6nQmWdcjiFnXXZD66l
-         wbKE8dQqumz0IA0gcfqzd7tQEKcaTkP2a0TZtm2uaU1XJ4P4e2jMjulleFNtwgmEhhT2
-         wZmpXrgJ61REEDlo/x/getB7PUdm6g7R/DNGE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fxZxgQXB1oaMwYliKzbFMQ3wWmFlE3pkMrUM3WHegTI=;
-        b=h8iSieaEQrx8giHyhWtfnxZgsUl/qzf+oWo0Lc6CKuI/GTvK0wUiIdIfEGHGHcsY5g
-         gdduNchLQm/xk8fkF7Wne4JAkv2SueGzxbYJ0pGq+DUmqV1nFpEF9gBH+lYugXtBGwqP
-         vlcXv7fy7A+y2z597+IBSVArIohZOlQwh8ZLPpLGh3lf4LLpUHRLw1ESOhUHNpghVr6q
-         s6fAP935U2LC2ZbvkuKaU3AUNUR+1/4B3m9VUzNpNSLpOS7F/nutEHq0Bbfz6yzQW+/6
-         4NmRLBDPELkQuLhBwpxblw00BxbJeIjHsz3SC6glEuj0IdTjKQGI4HVJPt0wxgxKEgox
-         msHg==
-X-Gm-Message-State: APjAAAWKL9/vxzh31I7p2G6hsucKtMUBFndAYVocbC0H8eGqxmM91m66
-        QgyozKusVc7Hr/N4nr9F0kK/HDzQbbc=
-X-Google-Smtp-Source: APXvYqxsJHiX1oiqsVzk33VOnfVDc1KL1b5hZraM1kbm/ZZPZIzfCNXttRDZfbMhcgul53JHboiUWA==
-X-Received: by 2002:a05:6512:14c:: with SMTP id m12mr597504lfo.27.1568770851118;
-        Tue, 17 Sep 2019 18:40:51 -0700 (PDT)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id m10sm727599lfo.69.2019.09.17.18.40.49
-        for <linux-leds@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2019 18:40:49 -0700 (PDT)
-Received: by mail-lj1-f177.google.com with SMTP id d5so5460851lja.10
-        for <linux-leds@vger.kernel.org>; Tue, 17 Sep 2019 18:40:49 -0700 (PDT)
-X-Received: by 2002:a2e:2c02:: with SMTP id s2mr678446ljs.156.1568770848787;
- Tue, 17 Sep 2019 18:40:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190916222133.9119-1-jacek.anaszewski@gmail.com>
- <CAHk-=wgxNj_RBpE0xRYnMQ9W6PtyLx+LS+pZ_BqG31vute1iAg@mail.gmail.com> <CAHk-=wjAVTCZ9-X6ETA7SASNhrOyJuCgn792E_Wmn+JaEQ8N0Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wjAVTCZ9-X6ETA7SASNhrOyJuCgn792E_Wmn+JaEQ8N0Q@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 17 Sep 2019 18:40:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjm422bg+ZPuKkjU6NffbAyysY2n8iLRFyiNKin4cvWgg@mail.gmail.com>
-Message-ID: <CAHk-=wjm422bg+ZPuKkjU6NffbAyysY2n8iLRFyiNKin4cvWgg@mail.gmail.com>
+        id S1727936AbfIRCPU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 17 Sep 2019 22:15:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727923AbfIRCPU (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 17 Sep 2019 22:15:20 -0400
 Subject: Re: [GIT PULL] LED updates for 5.4-rc1
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568772920;
+        bh=DR0loGiqK2wljNx0oNuGljAGhXvz3TqGOc/3YTZwPpc=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=hNntSZpx+n03sWbyaLHPWbdShwwGZXHSuQm5c1yR57mUQSfC0z542b+GCy2pCQo9f
+         t/OIQU3kHGo5v+374Zsymog68tTk5JJ3DRz+M5T6U6y/nPIuWqxZdAkLJ7jzSVu1Ek
+         uL90yuHAtXagw0szni1m35GaxC6lWcC6PBnT5+OQ=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190916222133.9119-1-jacek.anaszewski@gmail.com>
+References: <20190916222133.9119-1-jacek.anaszewski@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190916222133.9119-1-jacek.anaszewski@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
+ tags/leds-for-5.4-rc1
+X-PR-Tracked-Commit-Id: 6d4faf3b6b6eb3c8a750b2e6659a5b1ff3dd9e75
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4feaab05dc1eda3dbb57b097377766002e7a7cb9
+Message-Id: <156877291998.2898.7202928342345810092.pr-tracker-bot@kernel.org>
+Date:   Wed, 18 Sep 2019 02:15:19 +0000
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
         linux-leds@vger.kernel.org, ada@thorsis.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        andriy.shevchenko@linux.intel.com, bgolaszewski@baylibre.com,
         christophe.jaillet@wanadoo.fr, dmurphy@ti.com,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>, info@metux.net,
-        Joe Perches <joe@perches.com>, kw@linux.com,
-        Linus Walleij <linus.walleij@linaro.org>,
+        gustavo@embeddedor.com, info@metux.net, jacek.anaszewski@gmail.com,
+        joe@perches.com, kw@linux.com, linus.walleij@linaro.org,
         nishkadg.linux@gmail.com, nstoughton@logitech.com, oleg@kaa.org.ua,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Tony Lindgren <tony@atomide.com>, wenwen@cs.uga.edu,
-        wsa+renesas@sang-engineering.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        suzuki.poulose@arm.com, tony@atomide.com, wenwen@cs.uga.edu,
+        wsa+renesas@sang-engineering.com, yamada.masahiro@socionext.com
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 6:14 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Famous last words. I now get a new warning:
->
-> drivers/i2c/i2c-core-acpi.c:347:12: warning:
-> =E2=80=98i2c_acpi_find_match_adapter=E2=80=99 defined but not used [-Wunu=
-sed-function]
+The pull request you sent on Tue, 17 Sep 2019 00:21:33 +0200:
 
-Commit 00500147cbd3 ("drivers: Introduce device lookup variants by
-ACPI_COMPANION device") removed the use of that matching function, but
-didn't remove the function.
+> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds-for-5.4-rc1
 
-It also removed the use of i2c_acpi_find_match_device(), but in that
-case it _did_ remove the function.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4feaab05dc1eda3dbb57b097377766002e7a7cb9
 
-And apparently nobody bothers checking warnings. Tssk tssk.
+Thank you!
 
-                Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
