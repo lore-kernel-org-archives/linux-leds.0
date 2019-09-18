@@ -2,207 +2,97 @@ Return-Path: <SRS0=HUF4=XN=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE078C4CEC9
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 11:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 394A8C4CEC4
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 14:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A40D921924
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 11:54:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568807650;
-	bh=kzrm6fZngJglejuB9xzhoA67Tcw2osTIaU7fAwqMKGc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=JR5TI2UYM1CvlXKWtnngYgGecP0LrU1JVFxXTYrfNtxsbjyr4YmJujQaR0MoXvlqA
-	 Jaj5kF4mkVIZ6hRyxFYV921DSTJU0duprG2lVHD13178yMqO6P+8Yfmpz0YCXH3JW5
-	 5VGM0+waeL60An84eWLf/TZxQ1bnF8Gnrq5+pyzU=
+	by mail.kernel.org (Postfix) with ESMTP id 007AB218AF
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 14:57:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Yv+8xg8b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbfIRLyK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 18 Sep 2019 07:54:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59974 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbfIRLyK (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 18 Sep 2019 07:54:10 -0400
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2A0621925;
-        Wed, 18 Sep 2019 11:54:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568807648;
-        bh=kzrm6fZngJglejuB9xzhoA67Tcw2osTIaU7fAwqMKGc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=uQx0FUr8IoDdZVaq+Jj+7J6ZqUGHxuLlNwiVaVIlUi/OKI8xJVzEkICj7lvD6EP1D
-         cg3k8nHV8MGRGVhp0WG233Hvc9+LTsHjUbK+a2hgo+NtQSkpkdL23dcoRfVHHIcfnX
-         bwxS0rtdm1HKiG/JYxu29Q/pODBmUpenBF7llt/w=
-Received: by mail-ot1-f48.google.com with SMTP id z6so6064501otb.2;
-        Wed, 18 Sep 2019 04:54:08 -0700 (PDT)
-X-Gm-Message-State: APjAAAV7qHvVvch3UOLGybOOVUkTEgdCUKNW8UTFdtJOU1W+p9iVHpwF
-        IPHL+4ZkxJttqbfEbeZ5QrHdwifSIKyzOEBv1+I=
-X-Google-Smtp-Source: APXvYqxMySumqjsahTYagNepSWzduEcZjCnTcXjLZCN9ySJfnCXOJqZVYcNkW0eHFhR5aSfIMwQqCAuFtB0Zu2153L4=
-X-Received: by 2002:a9d:6c9a:: with SMTP id c26mr2573300otr.241.1568807648102;
- Wed, 18 Sep 2019 04:54:08 -0700 (PDT)
+        id S1731475AbfIRO5u (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 18 Sep 2019 10:57:50 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:35610 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731473AbfIRO5u (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 18 Sep 2019 10:57:50 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8IEvgaf084990;
+        Wed, 18 Sep 2019 09:57:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568818662;
+        bh=zHZNeDL779jJyDu708ggzOFMfXOscN51xWhlBD7mkHE=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=Yv+8xg8b9T6T7OXzED6lcXrePQaHfDux9/FxyqZM4bbOma4NLiGBMF37UUfWVDUrV
+         U2qpwFFM+IjTtw173jtmxjiH8XlgKyFmG/kg2ezkvCoxmD666XQXFL4JXa3zkVygpL
+         ydKFgb6TCJ7ipVlU/ytCS3MZ8zZYGp84ny19SX+o=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8IEvgWL003176
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Sep 2019 09:57:42 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 18
+ Sep 2019 09:57:38 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 18 Sep 2019 09:57:39 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8IEvf5m091969;
+        Wed, 18 Sep 2019 09:57:41 -0500
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
+        <daniel.thompson@linaro.org>
+CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <tomi.valkeinen@ti.com>, <jjhiblot@ti.com>
+Subject: [PATCH v7 1/5] leds: populate the device's of_node when possible
+Date:   Wed, 18 Sep 2019 16:57:26 +0200
+Message-ID: <20190918145730.22805-2-jjhiblot@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190918145730.22805-1-jjhiblot@ti.com>
+References: <20190918145730.22805-1-jjhiblot@ti.com>
 MIME-Version: 1.0
-References: <20190909183436.9045-1-krzk@kernel.org> <20190909183436.9045-2-krzk@kernel.org>
- <20190912175001.GA29884@bogus>
-In-Reply-To: <20190912175001.GA29884@bogus>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 18 Sep 2019 13:53:56 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeGMZhCNkKa73gE42baJUim3QtQiV_fRm=j7xL9bb1nFw@mail.gmail.com>
-Message-ID: <CAJKOXPeGMZhCNkKa73gE42baJUim3QtQiV_fRm=j7xL9bb1nFw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] dt-bindings: pwm: Convert Samsung PWM bindings to json-schema
-To:     Rob Herring <robh@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Fri, 13 Sep 2019 at 16:36, Rob Herring <robh@kernel.org> wrote:
->
-> On Mon, Sep 09, 2019 at 08:34:36PM +0200, Krzysztof Kozlowski wrote:
-> > Convert Samsung PWM (S3C, S5P and Exynos SoCs) bindings to DT schema
-> > format using json-schema.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  .../devicetree/bindings/pwm/pwm-samsung.txt   |  51 --------
-> >  .../devicetree/bindings/pwm/pwm-samsung.yaml  | 111 ++++++++++++++++++
-> >  2 files changed, 111 insertions(+), 51 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.txt
-> >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
->
->
-> > diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-> > new file mode 100644
-> > index 000000000000..90fb467bcdd5
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-> > @@ -0,0 +1,111 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pwm/pwm-samsung.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Samsung SoC PWM timers
-> > +
-> > +maintainers:
-> > +  - Thierry Reding <thierry.reding@gmail.com>
-> > +  - Krzysztof Kozlowski <krzk@kernel.org>
-> > +
-> > +description: |+
-> > +  Samsung SoCs contain PWM timer blocks which can be used for system clock source
-> > +  and clock event timers, as well as to drive SoC outputs with PWM signal. Each
-> > +  PWM timer block provides 5 PWM channels (not all of them can drive physical
-> > +  outputs - see SoC and board manual).
-> > +
-> > +  Be aware that the clocksource driver supports only uniprocessor systems.
-> > +
-> > +allOf:
-> > +  - $ref: pwm.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - samsung,s3c2410-pwm             # 16-bit, S3C24xx
-> > +      - samsung,s3c6400-pwm             # 32-bit, S3C64xx
-> > +      - samsung,s5p6440-pwm             # 32-bit, S5P64x0
-> > +      - samsung,s5pc100-pwm             # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
-> > +      - samsung,exynos4210-pwm          # 32-bit, Exynos
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    minItems: 1
-> > +    maxItems: 3
-> > +
-> > +  clock-names:
-> > +    description: |
-> > +      Should contain all following required clock names:
-> > +      - "timers" - PWM base clock used to generate PWM signals,
-> > +      and any subset of following optional clock names:
-> > +      - "pwm-tclk0" - first external PWM clock source,
-> > +      - "pwm-tclk1" - second external PWM clock source.
-> > +      Note that not all IP variants allow using all external clock sources.
-> > +      Refer to SoC documentation to learn which clock source configurations
-> > +      are available.
-> > +    oneOf:
-> > +      - items:
-> > +        - const: "timers"
-> > +      - items:
-> > +        - const: "timers"
-> > +        - const: "pwm-tclk0"
-> > +      - items:
-> > +        - const: "timers"
-> > +        - const: "pwm-tclk1"
-> > +      - items:
-> > +        - const: "timers"
-> > +        - const: "pwm-tclk0"
-> > +        - const: "pwm-tclk1"
-> > +
-> > +  interrupts:
-> > +    description:
-> > +      One interrupt per timer, starting at timer 0.
-> > +    minItems: 1
-> > +    maxItems: 5
-> > +
-> > +  "#pwm-cells":
-> > +    description:
-> > +      The only third cell flag supported by this binding
-> > +      is PWM_POLARITY_INVERTED.
-> > +    const: 3
-> > +
-> > +  samsung,pwm-outputs:
-> > +    description:
-> > +      A list of PWM channels used as PWM outputs on particular platform.
-> > +      It is an array of up to 5 elements being indices of PWM channels
-> > +      (from 0 to 4), the order does not matter.
-> > +    # TODO: Values should not repeat
->
-> uniqueItems: true
->
-> Though it looks like we have to enable that keyword. (As silently
-> ignoring unknown keywords (such as typos) is 'feature' of json-schema,
-> we explicitly list keywords we use.)
+If initialization data is available and its fwnode is actually a of_node,
+store this information in the led device's structure. This will allow the
+device to use or provide OF-based API such (devm_xxx).
 
-This works fine.
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+---
+ drivers/leds/led-class.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
->
-> > +    allOf:
-> > +      - $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +      # FIXME: min/max limit of items does not work
-> > +      - items:
-> > +          minItems: 1
-> > +          maxItems: 5
-> > +      - items:
-> > +          minimum: 0
-> > +          maximum: 4
->
-> I think you want:
->
-> minItems: 1
-> maxItems: 2
-> items:
->   minimum: 0
->   maximum: 4
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 647b1263c579..c2167b66b61f 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -276,8 +276,11 @@ int led_classdev_register_ext(struct device *parent,
+ 		mutex_unlock(&led_cdev->led_access);
+ 		return PTR_ERR(led_cdev->dev);
+ 	}
+-	if (init_data && init_data->fwnode)
++	if (init_data && init_data->fwnode) {
+ 		led_cdev->dev->fwnode = init_data->fwnode;
++		if (is_of_node(init_data->fwnode))
++			led_cdev->dev->of_node = to_of_node(init_data->fwnode);
++	}
+ 
+ 	if (ret)
+ 		dev_warn(parent, "Led %s renamed to %s due to name collision",
+-- 
+2.17.1
 
-This not. However I figured out it is not needed. Since these are
-unique values from 0 to 4, then the size of array cannot be longer
-than 5 or shorter than 1.
-
-Best regards,
-Krzysztof
