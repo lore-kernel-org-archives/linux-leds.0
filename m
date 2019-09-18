@@ -7,55 +7,53 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D926AC4CEC4
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 14:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D967C4CEC9
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 15:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACE67218AF
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 14:58:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1850D20665
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 15:26:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HHQRgiBr"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ojwPknxP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731492AbfIRO5u (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 18 Sep 2019 10:57:50 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:59140 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731432AbfIRO5u (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 18 Sep 2019 10:57:50 -0400
+        id S1726671AbfIRP0N (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 18 Sep 2019 11:26:13 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:57182 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727273AbfIRP0N (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 18 Sep 2019 11:26:13 -0400
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8IEvf7G030885;
-        Wed, 18 Sep 2019 09:57:41 -0500
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8IFQ9JG121562;
+        Wed, 18 Sep 2019 10:26:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568818661;
-        bh=YZMQQ9rDqkdsxQjmsPw71m3JOMBZg+cqKmNu/NVV8jw=;
+        s=ti-com-17Q1; t=1568820369;
+        bh=SFlBMSb3x783E4jty7qQwLL/6wBoBuWi+kOKaDtnFtw=;
         h=From:To:CC:Subject:Date;
-        b=HHQRgiBrlOd3HrxDcN/lDislCD07wT5VqZdN5uW3bCMkC7y/DGgGAeQKs5KbRxTH4
-         8dUlqPQlM3/FJLEeiInZkk1XXo6RNaLODKtX7xOTPEJEz93pBGtPGHwAIjdxyohVg/
-         6PmNHCKxui18FvXyCrXeihhwaxslA6fzDbdxciJc=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8IEvfLS003149
+        b=ojwPknxPFl/s3Rb98N2sqxnU5+I/AfrDmEg60oQ6J4u4aDtVDFhvGUcDcK7NHJVni
+         ofvXBC/DGijm/yb1N3QwPv8JQOb/VQq2fSBGGTMzl9fz/Wjxm5dVsKrWy/pxvikPyk
+         QjShmAXwC8uIyL6MFBy8QNApaFaFjzRtuSNBZppg=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8IFQ9dw038121
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 18 Sep 2019 09:57:41 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 18 Sep 2019 10:26:09 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 18
- Sep 2019 09:57:37 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2019 10:26:06 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 18 Sep 2019 09:57:37 -0500
+ Frontend Transport; Wed, 18 Sep 2019 10:26:09 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8IEvdlH012783;
-        Wed, 18 Sep 2019 09:57:40 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8IFQ8CY051498;
+        Wed, 18 Sep 2019 10:26:08 -0500
 From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
-        <daniel.thompson@linaro.org>
-CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <tomi.valkeinen@ti.com>, <jjhiblot@ti.com>
-Subject: [PATCH v7 0/5] Add a generic driver for LED-based backlight
-Date:   Wed, 18 Sep 2019 16:57:25 +0200
-Message-ID: <20190918145730.22805-1-jjhiblot@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <dmurphy@ti.com>
+CC:     <tomi.valkeinen@ti.com>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@ti.com>
+Subject: [PATCH v3 0/2] leds: tlc591xx: switch to managed LED registration
+Date:   Wed, 18 Sep 2019 17:25:54 +0200
+Message-ID: <20190918152556.9925-1-jjhiblot@ti.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -65,71 +63,32 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This series aims to add a led-backlight driver, similar to pwm-backlight,
-but using a LED class device underneath.
+This subject of this series used to be "leds: tlc591xx: switch to OF and
+managed API"
 
-A few years ago (2015), Tomi Valkeinen posted a series implementing a
-backlight driver on top of a LED device:
-https://patchwork.kernel.org/patch/7293991/
-https://patchwork.kernel.org/patch/7294001/
-https://patchwork.kernel.org/patch/7293981/
-
-The discussion stopped because Tomi lacked the time to work on it.
-
-changes in v7:
-- rebased on top of linux-leds/for-next
-- populate the of_node member of the LED device if fwnode is a of_node
-  (this is a new patch and the first of the series).
-- devm_led_get() works only when the device tree is used. Add a few checks
-  for that.  
-
-changes in v6:
-- trim the list of included headers
-- remove useless definition of BKL_FULL_BRIGHTNESS
-
-changes in v5:
-- removed LED brightness scaling
-- disable sysfs the interface of the LEDs when used by the backlight device
-
-changes in v4:
-- fix dev_err() messages and commit logs following the advices of Pavel
-- cosmetic changes (indents, getting rid of  "? 1 : 0" in
-  led_match_led_node())
+This mini-series updates the tlc591xx driver to use the managed API. The
+driver is also modified to pass the initialization data to the LED core
+layer. The goal is to be able to the generic led-backlight [0] driver on
+top of it.
 
 changes in v3:
-- dt binding: don't limit the brightness range to 0-255. Use the range of
-  the underlying LEDs. as a side-effect, all LEDs must now have the same
-  range
-- driver: Adapt to dt binding update.
-- driver: rework probe() for clarity and remove the remaining goto.
+- rebased on top of linux-leds/for-next
+- use devm_led_classdev_register_ext() instead of the late
+  devm_of_led_classdev_register()
+- let the LED core assign the names of the LEDs
 
 changes in v2:
-- handle more than one LED.
-- don't make the backlight device a child of the LED controller.
-- make brightness-levels and default-brightness-level optional
-- removed the option to use a GPIO enable.
-- removed the option to use a regulator. It should be handled by the LED
-  core
-- don't make any change to the LED core (not needed anymore)
+- fixed LED indexing. Previous version did not allow for holes: if n LEDs
+  were used, they had to be led(0) to led(n-1)
 
-Jean-Jacques Hiblot (3):
-  leds: populate the device's of_node when possible
-  leds: Add managed API to get a LED from a device driver
-  dt-bindings: backlight: Add led-backlight binding
+[0]: https://patchwork.kernel.org/project/dri-devel/list/?series=175709
 
-Tomi Valkeinen (2):
-  leds: Add of_led_get() and led_put()
-  backlight: add led-backlight driver
+Jean-Jacques Hiblot (2):
+  leds: tlc591xx: simplify driver by using the managed led API
+  leds: tlc591xx: use devm_led_classdev_register_ext()
 
- .../bindings/leds/backlight/led-backlight.txt |  28 ++
- drivers/leds/led-class.c                      | 106 ++++++-
- drivers/video/backlight/Kconfig               |   7 +
- drivers/video/backlight/Makefile              |   1 +
- drivers/video/backlight/led_bl.c              | 260 ++++++++++++++++++
- include/linux/leds.h                          |   6 +
- 6 files changed, 407 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
- create mode 100644 drivers/video/backlight/led_bl.c
+ drivers/leds/leds-tlc591xx.c | 83 ++++++++++--------------------------
+ 1 file changed, 23 insertions(+), 60 deletions(-)
 
 -- 
 2.17.1
