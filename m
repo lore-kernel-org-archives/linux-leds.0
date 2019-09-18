@@ -2,42 +2,39 @@ Return-Path: <SRS0=HUF4=XN=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A36C4CECD
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 02:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 043EDC4CECE
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 02:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E266221897
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 02:20:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6F0021897
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 02:20:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfIRCUR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 17 Sep 2019 22:20:17 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:35246 "EHLO honk.sigxcpu.org"
+        id S1727300AbfIRCUE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 17 Sep 2019 22:20:04 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:35218 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbfIRCUF (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 17 Sep 2019 22:20:05 -0400
+        id S1726185AbfIRCUE (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 17 Sep 2019 22:20:04 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 3F963FB05;
-        Wed, 18 Sep 2019 04:20:04 +0200 (CEST)
+        by honk.sigxcpu.org (Postfix) with ESMTP id AEAD6FB03;
+        Wed, 18 Sep 2019 04:20:02 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id oiC3oecV8-9U; Wed, 18 Sep 2019 04:20:03 +0200 (CEST)
+        with ESMTP id sRqiFUkGz7-a; Wed, 18 Sep 2019 04:20:02 +0200 (CEST)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 319F949246; Tue, 17 Sep 2019 19:19:58 -0700 (PDT)
+        id 19EF449243; Tue, 17 Sep 2019 19:19:58 -0700 (PDT)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] leds: lm3692x: Don't overwrite return value in error path
-Date:   Tue, 17 Sep 2019 19:19:55 -0700
-Message-Id: <bc1a6e64da58d65b61c7e9358c745b0d467fc24c.1568772964.git.agx@sigxcpu.org>
+Subject: [PATCH 0/5] leds: lm3692x: Probing and flag fixes
+Date:   Tue, 17 Sep 2019 19:19:53 -0700
+Message-Id: <cover.1568772964.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <cover.1568772964.git.agx@sigxcpu.org>
-References: <cover.1568772964.git.agx@sigxcpu.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,38 +43,20 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The driver currently reports successful initialization on every failure
-as long as it's able to power off the regulator. Don't check the return
-value of regulator_disable to avoid that.
+The driver currently returns success on init although probing fails and
+register setup uses flag values from other registers which is confusing
+when reading the driver. This series cleans this up.
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
- drivers/leds/leds-lm3692x.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Guido Günther (5):
+  leds: lm3692x: Print error value on dev_err
+  leds: lm3692x: Don't overwrite return value in error path
+  leds: lm3692x: Handle failure to probe the regulator
+  leds: lm3692x: Use flags from LM3692X_BOOST_CTRL
+  leds: lm3692x: Use flags from LM3692X_BRT_CTRL
 
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index 487228c2bed2..f394669ad8f2 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -312,15 +312,12 @@ static int lm3692x_init(struct lm3692x_led *led)
- 	if (led->enable_gpio)
- 		gpiod_direction_output(led->enable_gpio, 0);
- 
--	if (led->regulator) {
--		ret = regulator_disable(led->regulator);
--		if (ret)
--			dev_err(&led->client->dev,
--				"Failed to disable regulator\n");
--	}
-+	if (led->regulator)
-+		regulator_disable(led->regulator);
- 
- 	return ret;
- }
-+
- static int lm3692x_probe_dt(struct lm3692x_led *led)
- {
- 	struct fwnode_handle *child = NULL;
+ drivers/leds/leds-lm3692x.c | 45 ++++++++++++++++++++-----------------
+ 1 file changed, 25 insertions(+), 20 deletions(-)
+
 -- 
 2.23.0.rc1
 
