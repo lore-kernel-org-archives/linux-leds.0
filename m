@@ -2,62 +2,62 @@ Return-Path: <SRS0=HUF4=XN=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06AE9C4CEC4
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 07:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC58C4CEC4
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 07:30:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6591218AE
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 07:23:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E86A218AE
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 07:30:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDVRfN5z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LM26Nt9H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728716AbfIRHXm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 18 Sep 2019 03:23:42 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40270 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728728AbfIRHXm (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 18 Sep 2019 03:23:42 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w10so3471285pgj.7;
-        Wed, 18 Sep 2019 00:23:41 -0700 (PDT)
+        id S1726513AbfIRHaM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 18 Sep 2019 03:30:12 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38279 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725834AbfIRHaM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 18 Sep 2019 03:30:12 -0400
+Received: by mail-pf1-f193.google.com with SMTP id h195so3788003pfe.5;
+        Wed, 18 Sep 2019 00:30:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=2UrT7kWXq7Zv08Ux1ZFLXJe97a76AVYSBPn7eC+0dXc=;
-        b=QDVRfN5zmScR1Bqy85j7Aa/Cwhhp+1jdOzVCqNtz6M/p+LuItCJZIxaYIuuyigZuqs
-         PJcTyWD/Mp+skwAxUC205hMV0XMWhnU/HxVtjqZOdDA946uj0EGS3pYRchE1L5MEkOmd
-         q9QVplok9A7tUfVeMjUb1cY7uWttGIMxL8JRFZvkRVBjUFHbK5sesP/iCKFB4pqdpNp9
-         fyLmAPX93FeA1jO3mb2EZ5ympIz/IYBuizLx51p7iXyStOBecZHotROXrPK+C4xxpB13
-         X48pfb28LfbLUiIaVGJ+SyfLgM6AhYALzXrZGdOqokjvHUf4X4RicUjkZAlEIpI6SarT
-         swoQ==
+        bh=QUTOW7SYGhvEuMpoMsqm9wPl2xVghInSIZpBh/SUcUk=;
+        b=LM26Nt9HJM92nBkzwhuKXJ/TFFVRvuPeXdw8cueU2lG5HAMsOx3m0oVi3iwu/5Xk+Y
+         N4UzRamAPxp3eisEFchdP7nJknejziYf4sjcaGa4q8PwmYhNaQa1FvtUeJC17ILQkXxj
+         vIRSQpB59FX4R1DOVKhF7ZtTCf2oF0BfTa+U3qb2A7mjYc+XP/15lROqYEdBtYxIzFxt
+         Bc3+KuA39F6qudCLEZlxoydeCM9ADrpsebBbqgucIb9cHCfp4FZCs/GRY2F1K5UwR6hC
+         urYCyzc5uuFWdEiM+AGGCfrhVvpiktNKFPJFaTK7eSUGM42vwGHdP2e6MJh3VVsrm4wa
+         BnTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2UrT7kWXq7Zv08Ux1ZFLXJe97a76AVYSBPn7eC+0dXc=;
-        b=JWUTYO+v09CwNQB6qGS+V0Q58RW86pPlVL/HBBeL4U4DS30UJRXMafCB6Egqze9qpU
-         J+uth4LKA/HWBBNxAZRMSYJBR25EchCfJtwq7Xyc3uBIHvNTKJcjIJ7WaKMgmbTtjaus
-         pArbIysUNAuq3+ni8d+DniVJgpYLK7jaR6qVI0bodRor/8a9qnAX4NddKcwe96Q/E7MP
-         23/fZCq6BqtAO9OeSgAQyiy3B3mD7/f7JeumIS/9ZnXj8fRjrmfhgBPpwEQTwBo1T4x3
-         ze/RPBHaP5VpQoUPu/gZ5N7hzzZ2cGObDPUwM5JSSHyMeAhBX0v0IGzu9Y+TEKr3gNco
-         SX1g==
-X-Gm-Message-State: APjAAAWMFKfR3YgrahuM1tr5M2R+etHB6EE+kNJ1OOcWyVVx63yuwXnF
-        hzz4qNKLzc/yV8ue39gX8ELfTOJSQ06lK624/EU=
-X-Google-Smtp-Source: APXvYqx4GGiFYwR2caQijMB5QqJkgEa5lLfYzz9p0wIQOCj8rKC7aTmkjVrj7uSonkgit/GoTghxfejYgajtCBnUyVo=
-X-Received: by 2002:a63:1020:: with SMTP id f32mr2722800pgl.203.1568791421343;
- Wed, 18 Sep 2019 00:23:41 -0700 (PDT)
+        bh=QUTOW7SYGhvEuMpoMsqm9wPl2xVghInSIZpBh/SUcUk=;
+        b=q2s3Z7pdWJ2C+yw+TCdKkNpqKHea00gcIGbJ1sOUE3F3F7dZMe2VTw68lxDYGTWbGO
+         +P+u6gMZpGDYXgJWUrk/G3NIYkko1vX96PL47o1mYB3+vmjUdyjIoXsSHarg0VNSkI57
+         IV4xOG7B13yeE3qZaxF7BKCq/cr2gAY2dDXr30jp0Mo52TNUliwbFCxQBy32vjJe2Hs9
+         +Svp68WFbd63OJtuCaULqywwLX3H2R3k413zzLk27DLdKFfNspKHbgWVlrHzt7oDj8CX
+         HOiEhV8RBUBabYuEyhDzsqPsY+lJMyWTapf28++LhLu0JICvD3SNomgqLxc3lDUso0rv
+         Cb0A==
+X-Gm-Message-State: APjAAAWhdA8fZm4zLGNSqemRgalIc6QDWOBTfotU5+WKJNFqNUTlxz+F
+        cAfMyVTtREYqLbfWfpIOh3H4lwfOPFFSWcRPgkQ=
+X-Google-Smtp-Source: APXvYqxODHAnGNoo1M+FYBIaBIgkbTTYcS9ntGYAZGLVoHlN4Qo7fAGTV8pIM8b6s3rawj73lTeVjkJu886kGqrWRm0=
+X-Received: by 2002:a63:c842:: with SMTP id l2mr2685854pgi.4.1568791811184;
+ Wed, 18 Sep 2019 00:30:11 -0700 (PDT)
 MIME-Version: 1.0
 References: <20190916222133.9119-1-jacek.anaszewski@gmail.com>
- <CAHk-=wgxNj_RBpE0xRYnMQ9W6PtyLx+LS+pZ_BqG31vute1iAg@mail.gmail.com> <CAHk-=wjAVTCZ9-X6ETA7SASNhrOyJuCgn792E_Wmn+JaEQ8N0Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wjAVTCZ9-X6ETA7SASNhrOyJuCgn792E_Wmn+JaEQ8N0Q@mail.gmail.com>
+ <CAHk-=wgxNj_RBpE0xRYnMQ9W6PtyLx+LS+pZ_BqG31vute1iAg@mail.gmail.com>
+ <CAHk-=wjAVTCZ9-X6ETA7SASNhrOyJuCgn792E_Wmn+JaEQ8N0Q@mail.gmail.com> <CAHk-=wjm422bg+ZPuKkjU6NffbAyysY2n8iLRFyiNKin4cvWgg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjm422bg+ZPuKkjU6NffbAyysY2n8iLRFyiNKin4cvWgg@mail.gmail.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 18 Sep 2019 10:23:28 +0300
-Message-ID: <CAHp75VeRiNLhmWaSHnw=DhrgyFrshO5hzpnhAwsM+ZiMyaCSTw@mail.gmail.com>
+Date:   Wed, 18 Sep 2019 10:29:59 +0300
+Message-ID: <CAHp75Vdn5_U3rCvuK1_P_nf5gEO63r342dgp_wk77diPU8k06Q@mail.gmail.com>
 Subject: Re: [GIT PULL] LED updates for 5.4-rc1
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
@@ -85,35 +85,27 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 10:16 AM Linus Torvalds
+On Wed, Sep 18, 2019 at 10:24 AM Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
-> On Tue, Sep 17, 2019 at 6:13 PM Linus Torvalds
+> On Tue, Sep 17, 2019 at 6:14 PM Linus Torvalds
 > <torvalds@linux-foundation.org> wrote:
 > >
-> > So this is fine and I've pulled it,
+> > Famous last words. I now get a new warning:
+> >
+> > drivers/i2c/i2c-core-acpi.c:347:12: warning:
+> > =E2=80=98i2c_acpi_find_match_adapter=E2=80=99 defined but not used [-Wu=
+nused-function]
 >
-> Famous last words. I now get a new warning:
+> Commit 00500147cbd3 ("drivers: Introduce device lookup variants by
+> ACPI_COMPANION device") removed the use of that matching function, but
+> didn't remove the function.
 >
-> drivers/i2c/i2c-core-acpi.c:347:12: warning:
-> =E2=80=98i2c_acpi_find_match_adapter=E2=80=99 defined but not used [-Wunu=
-sed-function]
->   347 | static int i2c_acpi_find_match_adapter(struct device *dev,
-> const void *data)
->       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> with this pull request.  I'll have to look at it after dinner.
->
->               Linus
+> It also removed the use of i2c_acpi_find_match_device(), but in that
+> case it _did_ remove the function.
 
-One of those *device core* patch broke i2c ACPI, which has been fixed by
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/=
-drivers/i2c/i2c-core-acpi.c?id=3D644bf60088955421051e716ab9c8fe7fb7997fd7
-
-As I read above the merge commit didn't take this patch.
-
-Solution might be to merge this PR after corresponding bundle of
-device core stuff.
+I hope you have a chance to read my previous email.
+We still need that function.
 
 --=20
 With Best Regards,
