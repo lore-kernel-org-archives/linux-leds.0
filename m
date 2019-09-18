@@ -2,194 +2,110 @@ Return-Path: <SRS0=HUF4=XN=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA15C4CED2
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 15:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5A5C4CEC9
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 16:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 330F520665
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 15:26:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fRknr0n7"
+	by mail.kernel.org (Postfix) with ESMTP id 62DFA21848
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Sep 2019 16:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1568825661;
+	bh=tpAlTzvpZ/90Mi6REw190HsgXG1VRy+RT6l9swKF6Ok=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=mn/4lKPSIgE960B57AXahP1z7TwyhBWuBdWO8RRpYj4pfyIIchUDOGjY5Hx/NKi6D
+	 QCXt2FCvEPCfKoMHga+Hi/EUVqSM01LomRNy7q1s7MyslFUk9ea/x+4e2BmSBY8QjW
+	 kulwPOlBe7dVyM421AeHhvVFqBq2WiEINXgf6nmo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387437AbfIRP0P (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 18 Sep 2019 11:26:15 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:35762 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728784AbfIRP0O (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 18 Sep 2019 11:26:14 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8IFQAoG096245;
-        Wed, 18 Sep 2019 10:26:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568820370;
-        bh=VsiXL+zAxe9QV+2PwF448UVgiwJxHtymmgfX/kQ2kxQ=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=fRknr0n71HwWWhJuAm9fHL7KGHMOD//XuK7+LZdI1oWMbjCpeFIRSXTm9c4jGAWKq
-         PRZR1Rb6heeGHeXc9su6mxZWiZDs+mr6vxQVRgmrWK+aNyaoHRvO/8II/TW5JU1Ez9
-         f9DOA08xx3qYQmfLHUqj23IDgaZ4jkzS3WauI3gY=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8IFQAu3038154
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 18 Sep 2019 10:26:10 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 18
- Sep 2019 10:26:10 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 18 Sep 2019 10:26:10 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8IFQ94H003144;
-        Wed, 18 Sep 2019 10:26:10 -0500
-From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <dmurphy@ti.com>
-CC:     <tomi.valkeinen@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v3 1/2] leds: tlc591xx: simplify driver by using the managed led API
-Date:   Wed, 18 Sep 2019 17:25:55 +0200
-Message-ID: <20190918152556.9925-2-jjhiblot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190918152556.9925-1-jjhiblot@ti.com>
-References: <20190918152556.9925-1-jjhiblot@ti.com>
+        id S1732035AbfIRQyU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 18 Sep 2019 12:54:20 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35284 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731169AbfIRQyU (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 18 Sep 2019 12:54:20 -0400
+Received: by mail-lj1-f193.google.com with SMTP id m7so671192lji.2
+        for <linux-leds@vger.kernel.org>; Wed, 18 Sep 2019 09:54:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8VwfblmZ+e4fyFQouNlegNYvYNoRSmskQXhNh9EkLBA=;
+        b=hTbF/x1sm3Jzq49oZHqZoPNaFRwFunpf+5C65yxk9Rufw+9lbUdhUCNI9WxNFqYDhI
+         rEB8phARLo8Z30aVvWYY34efW+2WUH/E6AMzHD5MXBWOPqrWzUnOCMyObhZnc3yIs0ku
+         858p8fUsW9juBx8tfEpR6YaCHicSskxD1u2Ac=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8VwfblmZ+e4fyFQouNlegNYvYNoRSmskQXhNh9EkLBA=;
+        b=am7ySpmoUsw0y9WcYn7d9j4Oxs/l525toNChT/hUW2SeET3Vaa3+eFhzcFu8CtS+ff
+         xvqKovfvlnKO7tv2JhvlvrST0JBogkkJguUewR5r+tENH3ZSZOAhGVSmU5CcgBNQBjg0
+         P4T+wSVstW6R/pO6oA2H5Cu1YByZP6DGMoGzsVkNI8ZB0fEnMPtmiuwStrnvz2Hb6PqG
+         Q6NZ19kV7v+0KsqeB6/gkwQzqM0qsnM8lbcNRPAzxd6ltkCoXQW3e50W68jA9UUg6Ym4
+         AFKoTuU5DsxMztc9LZjvpvuPWAcvgB1lp8J3Lryv/RgupSM9Z1f6hjMHrZapQxF0Uqgq
+         j3MQ==
+X-Gm-Message-State: APjAAAWgKgNm5tioU2x/dBPc/ORroXvG4yVrJamCWYCGZk3q3hEOwbVY
+        EwpucKdVLe6r/x8PtA1pCn58ZiJGSDU=
+X-Google-Smtp-Source: APXvYqzPu5HRQsWrChy17b/nF9QusCnjFi6FW1CYIT1lOzZsNQ88FshGnS9iK86vL9yP+uFwApvSPA==
+X-Received: by 2002:a2e:919a:: with SMTP id f26mr2735685ljg.124.1568825656256;
+        Wed, 18 Sep 2019 09:54:16 -0700 (PDT)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id f5sm1093495lfh.52.2019.09.18.09.54.14
+        for <linux-leds@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2019 09:54:15 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id q11so169916lfc.11
+        for <linux-leds@vger.kernel.org>; Wed, 18 Sep 2019 09:54:14 -0700 (PDT)
+X-Received: by 2002:ac2:47f8:: with SMTP id b24mr2656966lfp.134.1568825654331;
+ Wed, 18 Sep 2019 09:54:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190916222133.9119-1-jacek.anaszewski@gmail.com>
+ <CAHk-=wgxNj_RBpE0xRYnMQ9W6PtyLx+LS+pZ_BqG31vute1iAg@mail.gmail.com>
+ <CAHk-=wjAVTCZ9-X6ETA7SASNhrOyJuCgn792E_Wmn+JaEQ8N0Q@mail.gmail.com>
+ <CAHk-=wjm422bg+ZPuKkjU6NffbAyysY2n8iLRFyiNKin4cvWgg@mail.gmail.com> <CAHp75Vdn5_U3rCvuK1_P_nf5gEO63r342dgp_wk77diPU8k06Q@mail.gmail.com>
+In-Reply-To: <CAHp75Vdn5_U3rCvuK1_P_nf5gEO63r342dgp_wk77diPU8k06Q@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 18 Sep 2019 09:53:58 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whg7WLb8mriT46iuMXCSj34FheRxGRPcifNsaLGuowiGw@mail.gmail.com>
+Message-ID: <CAHk-=whg7WLb8mriT46iuMXCSj34FheRxGRPcifNsaLGuowiGw@mail.gmail.com>
+Subject: Re: [GIT PULL] LED updates for 5.4-rc1
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        ada@thorsis.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Dan Murphy <dmurphy@ti.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Joe Perches <joe@perches.com>, kw@linux.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        nishkadg.linux@gmail.com, nstoughton@logitech.com, oleg@kaa.org.ua,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Tony Lindgren <tony@atomide.com>, wenwen@cs.uga.edu,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Use the managed API of the LED class (devm_led_classdev_register()
-instead of led_classdev_register()).
-This allows us to remove the code used to track-and-destroy the LED devices
+On Wed, Sep 18, 2019 at 12:30 AM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> I hope you have a chance to read my previous email.
+> We still need that function.
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
----
- drivers/leds/leds-tlc591xx.c | 79 +++++++++---------------------------
- 1 file changed, 20 insertions(+), 59 deletions(-)
+Your email came in after I did the merge with the fixup, so the kernel
+now has the broken code (but without the warning).
 
-diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
-index 59ff088c7d75..3d5a4b92f016 100644
---- a/drivers/leds/leds-tlc591xx.c
-+++ b/drivers/leds/leds-tlc591xx.c
-@@ -128,51 +128,6 @@ tlc591xx_brightness_set(struct led_classdev *led_cdev,
- 	return err;
- }
- 
--static void
--tlc591xx_destroy_devices(struct tlc591xx_priv *priv, unsigned int j)
--{
--	int i = j;
--
--	while (--i >= 0) {
--		if (priv->leds[i].active)
--			led_classdev_unregister(&priv->leds[i].ldev);
--	}
--}
--
--static int
--tlc591xx_configure(struct device *dev,
--		   struct tlc591xx_priv *priv,
--		   const struct tlc591xx *tlc591xx)
--{
--	unsigned int i;
--	int err = 0;
--
--	tlc591xx_set_mode(priv->regmap, MODE2_DIM);
--	for (i = 0; i < TLC591XX_MAX_LEDS; i++) {
--		struct tlc591xx_led *led = &priv->leds[i];
--
--		if (!led->active)
--			continue;
--
--		led->priv = priv;
--		led->led_no = i;
--		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
--		led->ldev.max_brightness = LED_FULL;
--		err = led_classdev_register(dev, &led->ldev);
--		if (err < 0) {
--			dev_err(dev, "couldn't register LED %s\n",
--				led->ldev.name);
--			goto exit;
--		}
--	}
--
--	return 0;
--
--exit:
--	tlc591xx_destroy_devices(priv, i);
--	return err;
--}
--
- static const struct regmap_config tlc591xx_regmap = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
-@@ -225,7 +180,11 @@ tlc591xx_probe(struct i2c_client *client,
- 
- 	i2c_set_clientdata(client, priv);
- 
-+	tlc591xx_set_mode(priv->regmap, MODE2_DIM);
-+
- 	for_each_child_of_node(np, child) {
-+		struct tlc591xx_led *led;
-+
- 		err = of_property_read_u32(child, "reg", &reg);
- 		if (err) {
- 			of_node_put(child);
-@@ -236,22 +195,25 @@ tlc591xx_probe(struct i2c_client *client,
- 			of_node_put(child);
- 			return -EINVAL;
- 		}
--		priv->leds[reg].active = true;
--		priv->leds[reg].ldev.name =
-+		led = &priv->leds[reg];
-+
-+		led->active = true;
-+		led->ldev.name =
- 			of_get_property(child, "label", NULL) ? : child->name;
--		priv->leds[reg].ldev.default_trigger =
-+		led->ldev.default_trigger =
- 			of_get_property(child, "linux,default-trigger", NULL);
--	}
--	return tlc591xx_configure(dev, priv, tlc591xx);
--}
--
--static int
--tlc591xx_remove(struct i2c_client *client)
--{
--	struct tlc591xx_priv *priv = i2c_get_clientdata(client);
--
--	tlc591xx_destroy_devices(priv, TLC591XX_MAX_LEDS);
- 
-+		led->priv = priv;
-+		led->led_no = reg;
-+		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
-+		led->ldev.max_brightness = LED_FULL;
-+		err = devm_led_classdev_register(dev, &led->ldev);
-+		if (err < 0) {
-+			dev_err(dev, "couldn't register LED %s\n",
-+				led->ldev.name);
-+			return err;
-+		}
-+	}
- 	return 0;
- }
- 
-@@ -268,7 +230,6 @@ static struct i2c_driver tlc591xx_driver = {
- 		.of_match_table = of_match_ptr(of_tlc591xx_leds_match),
- 	},
- 	.probe = tlc591xx_probe,
--	.remove = tlc591xx_remove,
- 	.id_table = tlc591xx_id,
- };
- 
--- 
-2.17.1
+I think (hope) the fixup commit is in one of Greg's pull requests that
+are now pending in my queue.
 
+              Linus
