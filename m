@@ -2,157 +2,178 @@ Return-Path: <SRS0=sauq=XO=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39DF1C3A5A6
-	for <linux-leds@archiver.kernel.org>; Thu, 19 Sep 2019 13:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C742EC3A5A6
+	for <linux-leds@archiver.kernel.org>; Thu, 19 Sep 2019 18:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D6AC21D7C
-	for <linux-leds@archiver.kernel.org>; Thu, 19 Sep 2019 13:46:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F47F21924
+	for <linux-leds@archiver.kernel.org>; Thu, 19 Sep 2019 18:34:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CH8I4cVY"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="n4O1iT1Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390517AbfISNqg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 19 Sep 2019 09:46:36 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:37000 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390323AbfISNqg (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 19 Sep 2019 09:46:36 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8JDkRnV100805;
-        Thu, 19 Sep 2019 08:46:27 -0500
+        id S2392083AbfISSeM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 19 Sep 2019 14:34:12 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:50534 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732834AbfISSeL (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 19 Sep 2019 14:34:11 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8JIY7eo112792;
+        Thu, 19 Sep 2019 13:34:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568900787;
-        bh=vGbwM4NbY+he7iaH6paryMD4bbgV3tLQKkI1ZMsbxNk=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=CH8I4cVYQ5OiiVKH+B2TRZQTQy8GJL5/ITI9ukdXjj1SLvISkpR3EXiuZB62Edpfn
-         8d0RdvkrWVshPbP+UHXwPm6rprXvgmwsb+xG8xTGJ48PqmWD6MSzbCOEtEA3pIR964
-         ZJNbOUfjuD5K62bJtSlTAT+lyEc1AP6wVXFwbhQc=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8JDkRKN003387
+        s=ti-com-17Q1; t=1568918047;
+        bh=Bww3DmLPInN+74zzf9x1fHcHAM7PHNA7A5KdfU8oS5o=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=n4O1iT1YlS2WTKwziF0THN0iEeeF+N/P5gRPN6pQ28CvqCcC1rzr+88oBOiv4bc4L
+         7AwHGNO2ZhBnhIxbbN1I3Nb1o3uiSaGyieTz2JiUD2BRMKOB1TKdiFp3TvqvOZ4VWa
+         dN2H6P2ihpvkcemt5PB7KL9EnOi41JBBYqwPneB4=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8JIY7Yd107070
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Sep 2019 08:46:27 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 19 Sep 2019 13:34:07 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 19
- Sep 2019 08:46:23 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2019 13:34:03 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 19 Sep 2019 08:46:26 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8JDkQ8T115113;
-        Thu, 19 Sep 2019 08:46:26 -0500
-Subject: Re: [PATCH v11 1/2] dt-bindings: Add docs for EL15203000
-To:     Oleh Kravchenko <oleg@kaa.org.ua>, <devicetree@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, <jacek.anaszewski@gmail.com>,
-        <pavel@ucw.cz>
-References: <20190919125313.24081-1-oleg@kaa.org.ua>
- <20190919125313.24081-2-oleg@kaa.org.ua>
+ Frontend Transport; Thu, 19 Sep 2019 13:34:03 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8JIY6q6034168;
+        Thu, 19 Sep 2019 13:34:07 -0500
 From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <76f24ad8-a375-45f8-a1e1-f9e90bcbc95d@ti.com>
-Date:   Thu, 19 Sep 2019 08:49:15 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v7 3/9] dt: bindings: Add multicolor class dt bindings documention
+Date:   Thu, 19 Sep 2019 13:36:51 -0500
+Message-ID: <20190919183657.1339-4-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
+In-Reply-To: <20190919183657.1339-1-dmurphy@ti.com>
+References: <20190919183657.1339-1-dmurphy@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20190919125313.24081-2-oleg@kaa.org.ua>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Oleh
+Add DT bindings for the LEDs multicolor class framework.
 
-On 9/19/19 7:53 AM, Oleh Kravchenko wrote:
-> Add documentation and example for dt-bindings EL15203000.
-> LED board (aka RED LED board) from Crane Merchandising Systems.
->
-> Signed-off-by: Oleh Kravchenko <oleg@kaa.org.ua>
-Reviewed-by: Dan Murphy <dmurphy@ti.com>
-> ---
->   .../bindings/leds/leds-el15203000.txt         | 69 +++++++++++++++++++
->   1 file changed, 69 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-el15203000.txt
->
-> diff --git a/Documentation/devicetree/bindings/leds/leds-el15203000.txt b/Documentation/devicetree/bindings/leds/leds-el15203000.txt
-> new file mode 100644
-> index 000000000000..1bcd341967f8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-el15203000.txt
-> @@ -0,0 +1,69 @@
-> +Crane Merchandising System - EL15203000 LED driver
-> +--------------------------------------------------
-> +
-> +This LED Board (aka RED LEDs board) is widely used in
-> +coffee vending machines produced by Crane Merchandising Systems.
-> +The board manages 3 LEDs and supports predefined blinking patterns
-> +for specific leds.
-> +
-> +Vending area LED encoded with symbol 'V' (hex code 0x56).
-> +Doesn't have any hardware blinking pattern.
-> +
-> +Screen light tube LED which surrounds vending machine screen and
-> +encoded with symbol 'S' (hex code 0x53). Supports blinking breathing pattern.
-> +
-> +Water Pipe LED encoded with symbol 'P' (hex code 0x50) and
-> +actually consists from 5 LEDs that exposed by protocol like one LED.
-> +Supports next patterns:
-> +- cascade pattern
-> +- inversed cascade pattern
-> +- bounce pattern
-> +- inversed bounce pattern
-> +
-> +Required properties:
-> +- compatible : "crane,el15203000"
-> +- #address-cells : must be 1
-> +- #size-cells : must be 0
-> +
-> +Property rules described in Documentation/devicetree/bindings/spi/spi-bus.txt
-> +apply. In particular, "reg" and "spi-max-frequency" properties must be given.
-> +
-> +Optional LED sub-node properties:
-> +- function:
-> +	see Documentation/devicetree/bindings/leds/common.txt
-> +- color:
-> +	see Documentation/devicetree/bindings/leds/common.txt
-> +
-> +Example
-> +-------
-> +
-> +#include <dt-bindings/leds/common.h>
-> +
-> +led-controller@0 {
-> +	compatible = "crane,el15203000";
-> +	reg = <0>;
-> +	spi-max-frequency = <50000>;
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	/* water pipe */
-> +	led@50 {
-> +		reg = <0x50>;
-> +		function = "pipe";
-> +		color = <LED_COLOR_ID_RED>;
-> +	};
-> +
-> +	/* screen frame */
-> +	led@53 {
-> +		reg = <0x53>;
-> +		function = "screen";
-> +		color = <LED_COLOR_ID_RED>;
-> +	};
-> +
-> +	/* vending area */
-> +	led@56 {
-> +		reg = <0x56>;
-> +		function = "vend";
-> +		color = <LED_COLOR_ID_RED>;
-> +	};
-> +};
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ .../bindings/leds/leds-class-multicolor.txt   | 95 +++++++++++++++++++
+ 1 file changed, 95 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+new file mode 100644
+index 000000000000..215d3c90f351
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+@@ -0,0 +1,95 @@
++* Multicolor LED properties
++
++Monochrome LEDs can grouped into LED clusters.  These clusters can provide a
++visible output that have a wide range of colors and intensities.
++
++The nodes and properties defined in this document are unique to the multicolor
++LED class.  Common LED nodes and properties are inherited from the common.txt
++within this documentation directory.
++
++Required LED Child properties:
++	- color : For multicolor LED support this property should be defined as
++		  LED_COLOR_ID_MULTI and further definition can be found in
++		  include/linux/leds/common.h.
++
++led-controller@30 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	compatible = "ti,lp5024";
++	reg = <0x29>;
++
++	multi-led@1 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <1>;
++		color = <LED_COLOR_ID_MULTI>;
++		function = LED_FUNCTION_STATUS;
++
++
++		led@3 {
++			reg = <3>;
++			color = <LED_COLOR_ID_RED>;
++		};
++
++		led@4 {
++			reg = <4>;
++			color = <LED_COLOR_ID_GREEN>;
++		};
++
++		led@5 {
++			reg = <5>;
++			color = <LED_COLOR_ID_BLUE>;
++		};
++	};
++
++	multi-led@2 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		color = <LED_COLOR_ID_MULTI>;
++		function = LED_FUNCTION_ACTIVITY;
++		reg = <2>;
++		ti,led-bank = <2 3 5>;
++
++		led@6 {
++			reg = <0x6>;
++			color = <LED_COLOR_ID_RED>;
++			led-sources = <6 9 15>;
++		};
++
++		led@7 {
++			reg = <0x7>;
++			color = <LED_COLOR_ID_GREEN>;
++			led-sources = <7 10 16>;
++		};
++
++		led@8 {
++			reg = <0x8>;
++			color = <LED_COLOR_ID_BLUE>;
++			led-sources = <8 11 17>;
++		};
++	};
++
++	multi-led@4 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <4>;
++		color = <LED_COLOR_ID_MULTI>;
++		function = LED_FUNCTION_ACTIVITY;
++
++		led@12 {
++			reg = <12>;
++			color = <LED_COLOR_ID_RED>;
++		};
++
++		led@13 {
++			reg = <13>;
++			color = <LED_COLOR_ID_GREEN>;
++		};
++
++		led@14 {
++			reg = <14>;
++			color = <LED_COLOR_ID_BLUE>;
++		};
++	};
++
++};
+-- 
+2.22.0.214.g8dca754b1e
+
