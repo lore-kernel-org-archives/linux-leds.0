@@ -2,38 +2,40 @@ Return-Path: <SRS0=sauq=XO=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F80DC3A5A6
-	for <linux-leds@archiver.kernel.org>; Thu, 19 Sep 2019 09:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF6FC49ED7
+	for <linux-leds@archiver.kernel.org>; Thu, 19 Sep 2019 10:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C8C721929
-	for <linux-leds@archiver.kernel.org>; Thu, 19 Sep 2019 09:54:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0760C217D6
+	for <linux-leds@archiver.kernel.org>; Thu, 19 Sep 2019 10:57:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388893AbfISJyS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 19 Sep 2019 05:54:18 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47392 "EHLO
+        id S2388002AbfISK5K (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 19 Sep 2019 06:57:10 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33129 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388941AbfISJyS (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 19 Sep 2019 05:54:18 -0400
+        with ESMTP id S2387931AbfISK5K (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 19 Sep 2019 06:57:10 -0400
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id C5D6580653; Thu, 19 Sep 2019 11:54:02 +0200 (CEST)
-Date:   Thu, 19 Sep 2019 11:54:15 +0200
+        id 01B8981AD9; Thu, 19 Sep 2019 12:56:53 +0200 (CEST)
+Date:   Thu, 19 Sep 2019 12:57:07 +0200
 From:   Pavel Machek <pavel@ucw.cz>
 To:     Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
 Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] leds: lm3692x: Probing and flag fixes
-Message-ID: <20190919095415.GA29939@amd>
+Subject: Re: [PATCH 2/5] leds: lm3692x: Don't overwrite return value in error
+ path
+Message-ID: <20190919105707.GB29939@amd>
 References: <cover.1568772964.git.agx@sigxcpu.org>
+ <bc1a6e64da58d65b61c7e9358c745b0d467fc24c.1568772964.git.agx@sigxcpu.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
+        protocol="application/pgp-signature"; boundary="rJwd6BRFiFCcLxzm"
 Content-Disposition: inline
-In-Reply-To: <cover.1568772964.git.agx@sigxcpu.org>
+In-Reply-To: <bc1a6e64da58d65b61c7e9358c745b0d467fc24c.1568772964.git.agx@sigxcpu.org>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
@@ -41,33 +43,60 @@ List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---WIyZ46R2i8wDzkSu
+--rJwd6BRFiFCcLxzm
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue 2019-09-17 19:19:53, Guido G=FCnther wrote:
-> The driver currently returns success on init although probing fails and
-> register setup uses flag values from other registers which is confusing
-> when reading the driver. This series cleans this up.
+On Tue 2019-09-17 19:19:55, Guido G=FCnther wrote:
+> The driver currently reports successful initialization on every failure
+> as long as it's able to power off the regulator. Don't check the return
+> value of regulator_disable to avoid that.
+>=20
+> Signed-off-by: Guido G=FCnther <agx@sigxcpu.org>
+> ---
+>  drivers/leds/leds-lm3692x.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+> index 487228c2bed2..f394669ad8f2 100644
+> --- a/drivers/leds/leds-lm3692x.c
+> +++ b/drivers/leds/leds-lm3692x.c
+> @@ -312,15 +312,12 @@ static int lm3692x_init(struct lm3692x_led *led)
+>  	if (led->enable_gpio)
+>  		gpiod_direction_output(led->enable_gpio, 0);
+> =20
+> -	if (led->regulator) {
+> -		ret =3D regulator_disable(led->regulator);
+> -		if (ret)
+> -			dev_err(&led->client->dev,
+> -				"Failed to disable regulator\n");
+> -	}
+> +	if (led->regulator)
+> +		regulator_disable(led->regulator);
+> =20
+>  	return ret;
 
-1,3,4,5: Acked-by: Pavel Machek <pavel@ucw.cz>
+Overwriting return value is bad, but we should still print some kind
+of error message.
 
+Best regards,
+									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---WIyZ46R2i8wDzkSu
+--rJwd6BRFiFCcLxzm
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl2DUEcACgkQMOfwapXb+vLkagCbBPMe4cm/BU7fNEulKOVcH2uI
-s0AAn1PKsRbkTG1+M3fn4yZLiIG5FYGr
-=y9/9
+iEYEARECAAYFAl2DXwMACgkQMOfwapXb+vLVKQCdFZRYN+Beq5zfxKwigBWPqQOT
+qf4An2eTJAoyLeS1QqbNHAPURS4A5BWn
+=rm1P
 -----END PGP SIGNATURE-----
 
---WIyZ46R2i8wDzkSu--
+--rJwd6BRFiFCcLxzm--
