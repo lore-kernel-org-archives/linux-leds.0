@@ -2,98 +2,92 @@ Return-Path: <SRS0=0rbx=XP=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47177C4CEC9
-	for <linux-leds@archiver.kernel.org>; Fri, 20 Sep 2019 16:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B36EC3A5A2
+	for <linux-leds@archiver.kernel.org>; Fri, 20 Sep 2019 17:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15573208C0
-	for <linux-leds@archiver.kernel.org>; Fri, 20 Sep 2019 16:23:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568996637;
-	bh=SDWrzZuVG71v0J2X6nPbnKE1kFEZUtHXnpXPTYAQdcM=;
-	h=References:In-Reply-To:From:Date:Subject:To:List-ID:From;
-	b=fF/4Cf6qFUXJzLHxXcD/TKZRAOkWYLl0o/52Nl5pR1sn0pFcM/rJ+4JJbgWAWZkTr
-	 1ZKnjustTAI0hL2lLnkcjff7Ntm+nyheU1YCgxSmMxOOJ8x/16GJDLO9gSok5YjFU2
-	 7atdkoZaQD2DL252fkzTwvdKC2wxvipfF+AgXEzI=
+	by mail.kernel.org (Postfix) with ESMTP id 1133E207FC
+	for <linux-leds@archiver.kernel.org>; Fri, 20 Sep 2019 17:38:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DC24iype"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390704AbfITQX4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 20 Sep 2019 12:23:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42530 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388479AbfITQX4 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:23:56 -0400
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6B5721882;
-        Fri, 20 Sep 2019 16:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568996635;
-        bh=SDWrzZuVG71v0J2X6nPbnKE1kFEZUtHXnpXPTYAQdcM=;
-        h=References:In-Reply-To:From:Date:Subject:To:From;
-        b=Y0NPYxXS5lxvCc5BrOJBS+38DHx4Vw4tGLuccuPjWhQHZjLN1+SP2QJbwffe6Fo6R
-         SGaBxYr0YFTOcZZ74KP24FDLyP9h6k+pQ2VXu9tF4gCqFBfBD4s3DyPTPENUcLZ1/t
-         wlNhYEZpL/2F2pyw54AFDUqkleli+20BjzwXfEhY=
-Received: by mail-ot1-f52.google.com with SMTP id g13so6665160otp.8;
-        Fri, 20 Sep 2019 09:23:54 -0700 (PDT)
-X-Gm-Message-State: APjAAAUCuy/u1YNhM7UeufgJOQkz3xHxAarqU3FarpNdvQ8qgvTl0NPW
-        aJJ0pKtxXvVhqUHS4LjkIkKkYoDrCP9QP9RJFjQ=
-X-Google-Smtp-Source: APXvYqzVXOyysg9607AyFbe3o2oRNE6mFVRauJhZAfa1N2RVl6I/Rt2f5iakVGo4VwLzm014Px6jKLwO2nAgy6rn4nA=
-X-Received: by 2002:a9d:6c9a:: with SMTP id c26mr12313571otr.241.1568996634274;
- Fri, 20 Sep 2019 09:23:54 -0700 (PDT)
+        id S2392303AbfITRia (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 20 Sep 2019 13:38:30 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54464 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387829AbfITRia (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 20 Sep 2019 13:38:30 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8KHcRd3016885;
+        Fri, 20 Sep 2019 12:38:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569001107;
+        bh=zV3cVdmjhCBXzQdA/5xCOaiT1n6XKbwdMaP1jdy4goo=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=DC24iypeTdrYq01VcVzWaBavszakGs2WH23VaFTYaQU7Yefjl9YWP7BSrZ2XeOM1O
+         xHbTiUqWjlpYSxPfdx9AHI3pynsWW+tbA44GHapfQjqVYiaNs9j6SFbWmGHHegPc0G
+         BT6mWq+hmQEik+tFr4JvVCcayqGnEv+JDScSzZUo=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8KHcRUn021380
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 20 Sep 2019 12:38:27 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 20
+ Sep 2019 12:38:22 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 20 Sep 2019 12:38:22 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8KHcQSV075344;
+        Fri, 20 Sep 2019 12:38:27 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v8 4/9] dt-bindings: leds: Add multicolor ID to the color ID list
+Date:   Fri, 20 Sep 2019 12:41:34 -0500
+Message-ID: <20190920174139.30079-5-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
+In-Reply-To: <20190920174139.30079-1-dmurphy@ti.com>
+References: <20190920174139.30079-1-dmurphy@ti.com>
 MIME-Version: 1.0
-References: <20190918173141.4314-1-krzk@kernel.org> <20190918173141.4314-5-krzk@kernel.org>
-In-Reply-To: <20190918173141.4314-5-krzk@kernel.org>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 20 Sep 2019 18:23:41 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPfQFg5wC-JcHUs8btYJRfpC=NW2FOpWTHkTD6zekzHV0A@mail.gmail.com>
-Message-ID: <CAJKOXPfQFg5wC-JcHUs8btYJRfpC=NW2FOpWTHkTD6zekzHV0A@mail.gmail.com>
-Subject: Re: [PATCH v2 5/8] dt-bindings: watchdog: Convert Samsung SoC
- watchdog bindings to json-schema
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-pwm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-crypto@vger.kernel.org, linux-watchdog@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Wed, 18 Sep 2019 at 19:32, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Convert Samsung S3C/S5P/Exynos watchdog bindings to DT schema format
-> using json-schema.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> ---
->
-> Changes since v1:
-> 1. Indent example with four spaces (more readable),
-> 2. Remove unneeded timeout-sec description.
+Add a new color ID that is declared as MULTICOLOR as with the
+multicolor framework declaring a definitive color is not accurate
+as the node can contain multiple colors.
 
-Superseded by v3 (although named v2...).
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ include/dt-bindings/leds/common.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
+index 9e1256a7c1bf..7006d15f71e8 100644
+--- a/include/dt-bindings/leds/common.h
++++ b/include/dt-bindings/leds/common.h
+@@ -29,7 +29,8 @@
+ #define LED_COLOR_ID_VIOLET	5
+ #define LED_COLOR_ID_YELLOW	6
+ #define LED_COLOR_ID_IR		7
+-#define LED_COLOR_ID_MAX	8
++#define LED_COLOR_ID_MULTI	8
++#define LED_COLOR_ID_MAX	9
+ 
+ /* Standard LED functions */
+ #define LED_FUNCTION_ACTIVITY "activity"
+-- 
+2.22.0.214.g8dca754b1e
+
