@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBC4C49ED7
-	for <linux-leds@archiver.kernel.org>; Fri, 20 Sep 2019 17:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE73C3A5A2
+	for <linux-leds@archiver.kernel.org>; Fri, 20 Sep 2019 17:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 622A9208C0
-	for <linux-leds@archiver.kernel.org>; Fri, 20 Sep 2019 17:38:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD619207FC
+	for <linux-leds@archiver.kernel.org>; Fri, 20 Sep 2019 17:38:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hYhcbgMo"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BU7LNvKB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392582AbfITRic (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 20 Sep 2019 13:38:32 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:47670 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392385AbfITRic (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 20 Sep 2019 13:38:32 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8KHcSmF042388;
-        Fri, 20 Sep 2019 12:38:28 -0500
+        id S2392515AbfITRib (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 20 Sep 2019 13:38:31 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:42676 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391941AbfITRib (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 20 Sep 2019 13:38:31 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8KHcRnY109370;
+        Fri, 20 Sep 2019 12:38:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569001108;
-        bh=IbyEubXtjrupSE6ZpBqV74zi00sNHXI2hyLvkDXzAq0=;
+        s=ti-com-17Q1; t=1569001107;
+        bh=i7z0jXWu4h+QrK0kZmroswBdR0G0VTTgimDuX0YJcX8=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=hYhcbgMo9/HI+XncDfb0hdN6CqWJGHzPa4ApEeZR2noHP/Q4hTt0YYMJTMwp9KD+g
-         jTFJB7rSR36wbRAmlXuh/nS8VSxfUzj4KGtSahr0XMbFWbsi4vcZ+fXlq1615C329/
-         4TdGx0ldPIIawrZfGVfOBulSt0/mQ8k3BvK3WTC8=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8KHcSB3021653
+        b=BU7LNvKBptNengXiFCJSNEQN/A0ZpKazRL7yNhKye+9t5OlHceNxAXfaIkiVaYlmC
+         w09trcgvwEF8BmlhpJRZuum0gQDhzAN2GkgMN1UgRxUth8b6Zx/xR5SPOFgK2z+/oe
+         MuS1qiDbR785pXirrrlHjr7mQAqwwxS3O2nRW5Mc=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8KHcRPj013176
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 20 Sep 2019 12:38:28 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 20 Sep 2019 12:38:27 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 20
- Sep 2019 12:38:24 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2019 12:38:23 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 20 Sep 2019 12:38:23 -0500
+ Frontend Transport; Fri, 20 Sep 2019 12:38:27 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8KHcS7c114680;
-        Fri, 20 Sep 2019 12:38:28 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8KHcRlI075359;
+        Fri, 20 Sep 2019 12:38:27 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v8 9/9] leds: Update the lp55xx to use the multi color framework
-Date:   Fri, 20 Sep 2019 12:41:39 -0500
-Message-ID: <20190920174139.30079-10-dmurphy@ti.com>
+Subject: [PATCH v8 6/9] leds: multicolor: Introduce a multicolor class definition
+Date:   Fri, 20 Sep 2019 12:41:36 -0500
+Message-ID: <20190920174139.30079-7-dmurphy@ti.com>
 X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 In-Reply-To: <20190920174139.30079-1-dmurphy@ti.com>
 References: <20190920174139.30079-1-dmurphy@ti.com>
@@ -65,315 +65,460 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Update the lp5523 to use the multi color framework.
+Introduce a multicolor class that groups colored LEDs
+within a LED node.
+
+The framework allows for dynamically setting individual LEDs
+or setting brightness levels of LEDs and updating them virtually
+simultaneously.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-lp5523.c                |  13 +++
- drivers/leds/leds-lp55xx-common.c         | 131 ++++++++++++++++++----
- drivers/leds/leds-lp55xx-common.h         |   9 ++
- include/linux/platform_data/leds-lp55xx.h |   6 +
- 4 files changed, 137 insertions(+), 22 deletions(-)
+ drivers/leds/Kconfig                 |  10 +
+ drivers/leds/Makefile                |   1 +
+ drivers/leds/led-class-multicolor.c  | 316 +++++++++++++++++++++++++++
+ include/linux/led-class-multicolor.h |  76 +++++++
+ 4 files changed, 403 insertions(+)
+ create mode 100644 drivers/leds/led-class-multicolor.c
+ create mode 100644 include/linux/led-class-multicolor.h
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index d0b931a136b9..8b2cdb98fed6 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -791,6 +791,18 @@ static ssize_t store_master_fader_leds(struct device *dev,
- 	return ret;
- }
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 6e7703fd03d0..cfb1ebb6517f 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -30,6 +30,16 @@ config LEDS_CLASS_FLASH
+ 	  for the flash related features of a LED device. It can be built
+ 	  as a module.
  
-+static int lp5523_led_intensity(struct lp55xx_led *led, int chan_num)
-+{
-+	struct lp55xx_chip *chip = led->chip;
-+	int ret;
++config LEDS_CLASS_MULTI_COLOR
++	tristate "LED Mulit Color LED Class Support"
++	depends on LEDS_CLASS
++	help
++	  This option enables the multicolor LED sysfs class in /sys/class/leds.
++	  It wraps LED class and adds multicolor LED specific sysfs attributes
++	  and kernel internal API to it. You'll need this to provide support
++	  for multicolor LEDs that are grouped together. This class is not
++	  intended for single color LEDs. It can be built as a module.
 +
-+	mutex_lock(&chip->lock);
-+	ret = lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + chan_num,
-+		     led->brightness);
-+	mutex_unlock(&chip->lock);
+ config LEDS_BRIGHTNESS_HW_CHANGED
+ 	bool "LED Class brightness_hw_changed attribute support"
+ 	depends on LEDS_CLASS
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 2da39e896ce8..841038cfe35b 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -4,6 +4,7 @@
+ obj-$(CONFIG_NEW_LEDS)			+= led-core.o
+ obj-$(CONFIG_LEDS_CLASS)		+= led-class.o
+ obj-$(CONFIG_LEDS_CLASS_FLASH)		+= led-class-flash.o
++obj-$(CONFIG_LEDS_CLASS_MULTI_COLOR)	+= led-class-multicolor.o
+ obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
+ 
+ # LED Platform Drivers
+diff --git a/drivers/leds/led-class-multicolor.c b/drivers/leds/led-class-multicolor.c
+new file mode 100644
+index 000000000000..5e0e3fce482b
+--- /dev/null
++++ b/drivers/leds/led-class-multicolor.c
+@@ -0,0 +1,316 @@
++// SPDX-License-Identifier: GPL-2.0
++// LED Multi Color class interface
++// Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
++
++#include <linux/device.h>
++#include <linux/init.h>
++#include <linux/led-class-multicolor.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/uaccess.h>
++
++#include "leds.h"
++
++#define INTENSITY_NAME		"_intensity"
++#define MAX_INTENSITY_NAME	"_max_intensity"
++
++struct led_mc_color_entry {
++	struct led_classdev_mc *mcled_cdev;
++
++	struct device_attribute max_intensity_attr;
++	struct device_attribute intensity_attr;
++
++	enum led_brightness max_intensity;
++	enum led_brightness intensity;
++
++	struct list_head list;
++
++	int led_color_id;
++};
++
++void led_mc_calc_brightness(struct led_classdev_mc *mcled_cdev,
++			    enum led_brightness brightness,
++			    int brightness_val[])
++{
++	struct led_classdev_mc_data *data = mcled_cdev->data;
++	struct led_mc_color_entry *priv;
++	int i = 0;
++
++	list_for_each_entry(priv, &data->color_list, list) {
++		brightness_val[i] = brightness *
++				    priv->intensity / priv->max_intensity;
++		i++;
++	}
++}
++EXPORT_SYMBOL_GPL(led_mc_calc_brightness);
++
++static ssize_t intensity_store(struct device *dev,
++				struct device_attribute *intensity_attr,
++				const char *buf, size_t size)
++{
++	struct led_mc_color_entry *priv = container_of(intensity_attr,
++						    struct led_mc_color_entry,
++						      intensity_attr);
++	struct led_classdev_mc_data *data = priv->mcled_cdev->data;
++	struct led_classdev_mc *mcled_cdev = data->mcled_cdev;
++	struct led_classdev *led_cdev = priv->mcled_cdev->led_cdev;
++	unsigned long value;
++	ssize_t ret;
++
++	mutex_lock(&led_cdev->led_access);
++
++	ret = kstrtoul(buf, 10, &value);
++	if (ret)
++		goto unlock;
++
++	if (value > priv->max_intensity) {
++		ret = -EINVAL;
++		goto unlock;
++	}
++
++	priv->intensity = value;
++
++	if (mcled_cdev->set_color_brightness) {
++		ret = mcled_cdev->set_color_brightness(mcled_cdev,
++						       priv->led_color_id,
++						       priv->intensity);
++		if (ret)
++			goto unlock;
++	}
++
++	ret = size;
++
++unlock:
++	mutex_unlock(&led_cdev->led_access);
 +	return ret;
 +}
 +
- static int lp5523_led_brightness(struct lp55xx_led *led)
- {
- 	struct lp55xx_chip *chip = led->chip;
-@@ -857,6 +869,7 @@ static struct lp55xx_device_config lp5523_cfg = {
- 	.max_channel  = LP5523_MAX_LEDS,
- 	.post_init_device   = lp5523_post_init_device,
- 	.brightness_fn      = lp5523_led_brightness,
-+	.color_intensity_fn = lp5523_led_intensity,
- 	.set_led_current    = lp5523_set_led_current,
- 	.firmware_cb        = lp5523_firmware_loaded,
- 	.run_engine         = lp5523_run_engine,
-diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index 44ced02b49f9..a5efe2407832 100644
---- a/drivers/leds/leds-lp55xx-common.c
-+++ b/drivers/leds/leds-lp55xx-common.c
-@@ -136,9 +136,26 @@ static int lp55xx_set_brightness(struct led_classdev *cdev,
- {
- 	struct lp55xx_led *led = cdev_to_lp55xx_led(cdev);
- 	struct lp55xx_device_config *cfg = led->chip->cfg;
-+	int adj_value[LED_COLOR_ID_MAX];
-+	int ret;
-+	int i;
++static ssize_t intensity_show(struct device *dev,
++			      struct device_attribute *intensity_attr,
++			      char *buf)
++{
++	struct led_mc_color_entry *priv = container_of(intensity_attr,
++						    struct led_mc_color_entry,
++						      intensity_attr);
 +
-+	if (led->mc_cdev.num_leds > 1) {
-+		led_mc_calc_brightness(&led->mc_cdev,
-+				       brightness, adj_value);
-+		for (i = 0; i < led->mc_cdev.num_leds; i++) {
-+			led->brightness = adj_value[i];
-+			ret = cfg->color_intensity_fn(led,
-+						      led->grouped_channels[i]);
++	return sprintf(buf, "%d\n", priv->intensity);
++}
++
++static ssize_t max_intensity_show(struct device *dev,
++				   struct device_attribute *max_intensity_attr,
++				   char *buf)
++{
++	struct led_mc_color_entry *priv = container_of(max_intensity_attr,
++						    struct led_mc_color_entry,
++						      max_intensity_attr);
++
++	return sprintf(buf, "%d\n", priv->max_intensity);
++}
++
++static struct attribute *led_color_attrs[] = {
++	NULL,
++};
++
++static struct attribute_group led_color_group = {
++	.name = "colors",
++	.attrs = led_color_attrs,
++};
++
++static int led_multicolor_init_color(struct led_classdev_mc_data *data,
++				     struct led_classdev_mc *mcled_cdev,
++				     int color_id, int color_index)
++{
++	struct led_classdev *led_cdev = mcled_cdev->led_cdev;
++	struct led_mc_color_entry *mc_priv;
++	char *intensity_file_name;
++	char *max_intensity_file_name;
++	size_t len;
++	int ret;
++
++	mc_priv = devm_kzalloc(led_cdev->dev, sizeof(*mc_priv), GFP_KERNEL);
++	if (!mc_priv)
++		return -ENOMEM;
++
++	mc_priv->led_color_id = color_id;
++	mc_priv->mcled_cdev = mcled_cdev;
++
++	sysfs_attr_init(&mc_priv->intensity_attr.attr);
++	len = strlen(led_colors[color_id]) + strlen(INTENSITY_NAME) + 1;
++	intensity_file_name = kzalloc(len, GFP_KERNEL);
++	if (!intensity_file_name) {
++		ret = -ENOMEM;
++		goto err_out;
++	}
++
++	snprintf(intensity_file_name, len, "%s%s",
++		 led_colors[color_id], INTENSITY_NAME);
++	mc_priv->intensity_attr.attr.name = intensity_file_name;
++	mc_priv->intensity_attr.attr.mode = 644;
++	mc_priv->intensity_attr.store = intensity_store;
++	mc_priv->intensity_attr.show = intensity_show;
++	ret = sysfs_add_file_to_group(&led_cdev->dev->kobj,
++				      &mc_priv->intensity_attr.attr,
++				      led_color_group.name);
++	if (ret)
++		goto intensity_err_out;
++
++	sysfs_attr_init(&mc_priv->max_intensity_attr.attr);
++	len = strlen(led_colors[color_id]) + strlen(MAX_INTENSITY_NAME) + 1;
++	max_intensity_file_name = kzalloc(len, GFP_KERNEL);
++	if (!max_intensity_file_name) {
++		ret = -ENOMEM;
++		goto intensity_err_out;
++	}
++
++	snprintf(max_intensity_file_name, len, "%s%s",
++		 led_colors[color_id], MAX_INTENSITY_NAME);
++	mc_priv->max_intensity_attr.attr.name = max_intensity_file_name;
++	mc_priv->max_intensity_attr.attr.mode = 444;
++	mc_priv->max_intensity_attr.show = max_intensity_show;
++	ret = sysfs_add_file_to_group(&led_cdev->dev->kobj,
++				      &mc_priv->max_intensity_attr.attr,
++				      led_color_group.name);
++	if (ret)
++		goto max_intensity_err_out;
++
++	mc_priv->max_intensity = LED_FULL;
++	list_add_tail(&mc_priv->list, &data->color_list);
++
++max_intensity_err_out:
++	kfree(max_intensity_file_name);
++intensity_err_out:
++	kfree(intensity_file_name);
++err_out:
++	return ret;
++}
++
++static int led_multicolor_init_color_dir(struct led_classdev_mc_data *data,
++					 struct led_classdev_mc *mcled_cdev)
++{
++	struct led_classdev *led_cdev = mcled_cdev->led_cdev;
++	u32 color_id;
++	int ret;
++	int i, j = 0;
++
++	data->mcled_cdev = mcled_cdev;
++
++	ret = sysfs_create_group(&led_cdev->dev->kobj, &led_color_group);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < LED_COLOR_ID_MAX; i++) {
++		color_id = (mcled_cdev->available_colors & (1 << i));
++		if (color_id) {
++			ret = led_multicolor_init_color(data, mcled_cdev, i, j);
 +			if (ret)
 +				break;
++
++			j++;
 +		}
-+	} else {
-+		led->brightness = (u8)brightness;
-+		ret = cfg->brightness_fn(led);
 +	}
- 
--	led->brightness = (u8)brightness;
--	return cfg->brightness_fn(led);
++
 +	return ret;
- }
- 
- static int lp55xx_init_led(struct lp55xx_led *led,
-@@ -147,9 +164,9 @@ static int lp55xx_init_led(struct lp55xx_led *led,
- 	struct lp55xx_platform_data *pdata = chip->pdata;
- 	struct lp55xx_device_config *cfg = chip->cfg;
- 	struct device *dev = &chip->cl->dev;
-+	int max_channel = cfg->max_channel;
- 	char name[32];
- 	int ret;
--	int max_channel = cfg->max_channel;
- 
- 	if (chan >= max_channel) {
- 		dev_err(dev, "invalid channel: %d / %d\n", chan, max_channel);
-@@ -159,10 +176,35 @@ static int lp55xx_init_led(struct lp55xx_led *led,
- 	if (pdata->led_config[chan].led_current == 0)
- 		return 0;
- 
-+	if (pdata->led_config[chan].name) {
-+		led->cdev.name = pdata->led_config[chan].name;
-+	} else {
-+		snprintf(name, sizeof(name), "%s:channel%d",
-+			pdata->label ? : chip->cl->name, chan);
-+		led->cdev.name = name;
-+	}
++}
 +
-+	if (pdata->led_config[chan].num_colors > 1) {
-+		led->mc_cdev.led_cdev = &led->cdev;
-+		led->cdev.brightness_set_blocking = lp55xx_set_brightness;
-+		led->cdev.groups = lp55xx_led_groups;
-+		led->mc_cdev.num_leds = pdata->led_config[chan].num_colors;
-+		led->mc_cdev.available_colors = pdata->led_config[chan].available_colors;
-+		memcpy(led->channel_color,
-+		       pdata->led_config[chan].channel_color,
-+		       sizeof(led->channel_color));
-+		memcpy(led->grouped_channels,
-+		       pdata->led_config[chan].grouped_channels,
-+		       sizeof(led->grouped_channels));
-+	} else {
-+
-+		led->cdev.default_trigger = pdata->led_config[chan].default_trigger;
-+		led->cdev.brightness_set_blocking = lp55xx_set_brightness;
-+	}	led->cdev.groups = lp55xx_led_groups;
-+
- 	led->led_current = pdata->led_config[chan].led_current;
- 	led->max_current = pdata->led_config[chan].max_current;
- 	led->chan_nr = pdata->led_config[chan].chan_nr;
--	led->cdev.default_trigger = pdata->led_config[chan].default_trigger;
- 
- 	if (led->chan_nr >= max_channel) {
- 		dev_err(dev, "Use channel numbers between 0 and %d\n",
-@@ -170,18 +212,11 @@ static int lp55xx_init_led(struct lp55xx_led *led,
- 		return -EINVAL;
- 	}
- 
--	led->cdev.brightness_set_blocking = lp55xx_set_brightness;
--	led->cdev.groups = lp55xx_led_groups;
-+	if (pdata->led_config[chan].num_colors > 1)
-+		ret = led_classdev_multicolor_register(dev, &led->mc_cdev);
-+	else
-+		ret = led_classdev_register(dev, &led->cdev);
- 
--	if (pdata->led_config[chan].name) {
--		led->cdev.name = pdata->led_config[chan].name;
--	} else {
--		snprintf(name, sizeof(name), "%s:channel%d",
--			pdata->label ? : chip->cl->name, chan);
--		led->cdev.name = name;
--	}
--
--	ret = led_classdev_register(dev, &led->cdev);
- 	if (ret) {
- 		dev_err(dev, "led register err: %d\n", ret);
- 		return ret;
-@@ -466,7 +501,6 @@ int lp55xx_register_leds(struct lp55xx_led *led, struct lp55xx_chip *chip)
- 		dev_err(&chip->cl->dev, "empty brightness configuration\n");
- 		return -EINVAL;
- 	}
--
- 	for (i = 0; i < num_channels; i++) {
- 
- 		/* do not initialize channels that are not connected */
-@@ -538,6 +572,38 @@ void lp55xx_unregister_sysfs(struct lp55xx_chip *chip)
- }
- EXPORT_SYMBOL_GPL(lp55xx_unregister_sysfs);
- 
-+static int lp5xx_parse_channel_child(struct device_node *np,
-+				     struct lp55xx_led_config *cfg,
-+				     int chan_num)
++int led_classdev_multicolor_register_ext(struct device *parent,
++				     struct led_classdev_mc *mcled_cdev,
++				     struct led_init_data *init_data)
 +{
-+	struct device_node *child;
-+	int num_colors = 0;
-+	u32 color_id;
-+	u32 led_number;
++	struct led_classdev *led_cdev;
++	struct led_classdev_mc_data *data;
 +	int ret;
 +
-+	cfg[chan_num].default_trigger =
-+			of_get_property(np, "linux,default-trigger", NULL);
++	if (!mcled_cdev)
++		return -EINVAL;
 +
-+	for_each_child_of_node(np, child) {
-+		of_property_read_string(child, "chan-name",
-+					&cfg[chan_num].name);
-+		of_property_read_u8(child, "led-cur",
-+				    &cfg[chan_num].led_current);
-+		of_property_read_u8(child, "max-cur",
-+				    &cfg[chan_num].max_current);
-+		of_property_read_u32(child, "color", &color_id);
-+		cfg[chan_num].channel_color[num_colors] = color_id;
-+		set_bit(color_id, &cfg[chan_num].available_colors);
-+		ret = of_property_read_u32(child, "reg", &led_number);
-+		cfg[chan_num].grouped_channels[num_colors] = led_number;
-+		num_colors++;
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	mcled_cdev->data = data;
++	led_cdev = mcled_cdev->led_cdev;
++	INIT_LIST_HEAD(&data->color_list);
++
++	/* Register led class device */
++	ret = led_classdev_register_ext(parent, led_cdev, init_data);
++	if (ret)
++		return ret;
++
++	return led_multicolor_init_color_dir(data, mcled_cdev);
++}
++EXPORT_SYMBOL_GPL(led_classdev_multicolor_register_ext);
++
++void led_classdev_multicolor_unregister(struct led_classdev_mc *mcled_cdev)
++{
++	if (!mcled_cdev)
++		return;
++
++	sysfs_remove_group(&mcled_cdev->led_cdev->dev->kobj, &led_color_group);
++	led_classdev_unregister(mcled_cdev->led_cdev);
++}
++EXPORT_SYMBOL_GPL(led_classdev_multicolor_unregister);
++
++static void devm_led_classdev_multicolor_release(struct device *dev, void *res)
++{
++	led_classdev_multicolor_unregister(*(struct led_classdev_mc **)res);
++}
++
++/**
++ * devm_of_led_classdev_register - resource managed led_classdev_register()
++ *
++ * @parent: parent of LED device
++ * @led_cdev: the led_classdev structure for this device.
++ */
++int devm_led_classdev_multicolor_register(struct device *parent,
++					  struct led_classdev_mc *mcled_cdev)
++{
++	struct led_classdev_mc **dr;
++	int ret;
++
++	dr = devres_alloc(devm_led_classdev_multicolor_release,
++			  sizeof(*dr), GFP_KERNEL);
++	if (!dr)
++		return -ENOMEM;
++
++	ret = led_classdev_multicolor_register(parent, mcled_cdev);
++	if (ret) {
++		devres_free(dr);
++		return ret;
 +	}
-+	cfg[chan_num].num_colors = num_colors;
++
++	*dr = mcled_cdev;
++	devres_add(parent, dr);
 +
 +	return 0;
 +}
++EXPORT_SYMBOL_GPL(devm_led_classdev_multicolor_register);
 +
- struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 						      struct device_node *np)
- {
-@@ -545,7 +611,10 @@ struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 	struct lp55xx_platform_data *pdata;
- 	struct lp55xx_led_config *cfg;
- 	int num_channels;
-+	int channel_color;
-+	u32 led_number;
- 	int i = 0;
-+	int ret;
- 
- 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
-@@ -565,13 +634,31 @@ struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 	pdata->num_channels = num_channels;
- 
- 	for_each_child_of_node(np, child) {
--		cfg[i].chan_nr = i;
-+		ret = of_property_read_u32(child, "color", &channel_color);
-+		if (ret) {
-+			dev_err(dev,"Missing color property setting white\n");
-+			channel_color = LED_COLOR_ID_WHITE;
-+		}
- 
--		of_property_read_string(child, "chan-name", &cfg[i].name);
--		of_property_read_u8(child, "led-cur", &cfg[i].led_current);
--		of_property_read_u8(child, "max-cur", &cfg[i].max_current);
--		cfg[i].default_trigger =
--			of_get_property(child, "linux,default-trigger", NULL);
-+		if (channel_color == LED_COLOR_ID_MULTI)
-+			lp5xx_parse_channel_child(child, cfg, i);
-+		else {
-+			of_property_read_string(child, "chan-name",
-+						&cfg[i].name);
-+			of_property_read_u8(child, "led-cur",
-+					    &cfg[i].led_current);
-+			of_property_read_u8(child, "max-cur",
-+					    &cfg[i].max_current);
-+			cfg[i].default_trigger =
-+				of_get_property(child, "linux,default-trigger",
-+						NULL);
-+			of_property_read_u32(child, "reg", &led_number);
++static int devm_led_classdev_multicolor_match(struct device *dev,
++					      void *res, void *data)
++{
++	struct mcled_cdev **p = res;
 +
-+			if (led_number < 0 || led_number > 6)
-+				return ERR_PTR(EINVAL);
++	if (WARN_ON(!p || !*p))
++		return 0;
 +
-+			cfg[i].chan_nr = led_number;
-+		}
- 
- 		i++;
- 	}
-diff --git a/drivers/leds/leds-lp55xx-common.h b/drivers/leds/leds-lp55xx-common.h
-index 783ed5103ce5..d9c114259dcb 100644
---- a/drivers/leds/leds-lp55xx-common.h
-+++ b/drivers/leds/leds-lp55xx-common.h
-@@ -12,6 +12,8 @@
- #ifndef _LEDS_LP55XX_COMMON_H
- #define _LEDS_LP55XX_COMMON_H
- 
-+#include <linux/led-class-multicolor.h>
++	return *p == data;
++}
 +
- enum lp55xx_engine_index {
- 	LP55XX_ENGINE_INVALID,
- 	LP55XX_ENGINE_1,
-@@ -109,6 +111,9 @@ struct lp55xx_device_config {
- 	/* access brightness register */
- 	int (*brightness_fn)(struct lp55xx_led *led);
- 
-+	/* access specific brightness register */
-+	int (*color_intensity_fn)(struct lp55xx_led *led, int chan_num);
++/**
++ * devm_led_classdev_multicolor_unregister() - resource managed
++ *					led_classdev_multicolor_unregister()
++ * @parent: The device to unregister.
++ * @mcled_cdev: the led_classdev_mc structure for this device.
++ */
++void devm_led_classdev_multicolor_unregister(struct device *dev,
++				  struct led_classdev_mc *mcled_cdev)
++{
++	WARN_ON(devres_release(dev,
++			       devm_led_classdev_multicolor_release,
++			       devm_led_classdev_multicolor_match, mcled_cdev));
++}
++EXPORT_SYMBOL_GPL(devm_led_classdev_multicolor_unregister);
 +
- 	/* current setting function */
- 	void (*set_led_current) (struct lp55xx_led *led, u8 led_current);
- 
-@@ -159,6 +164,7 @@ struct lp55xx_chip {
-  * struct lp55xx_led
-  * @chan_nr         : Channel number
-  * @cdev            : LED class device
-+ * @mc_cdev	    : Multi color class device
-  * @led_current     : Current setting at each led channel
-  * @max_current     : Maximun current at each led channel
-  * @brightness      : Brightness value
-@@ -167,9 +173,12 @@ struct lp55xx_chip {
- struct lp55xx_led {
- 	int chan_nr;
- 	struct led_classdev cdev;
-+	struct led_classdev_mc mc_cdev;
- 	u8 led_current;
- 	u8 max_current;
- 	u8 brightness;
-+	int channel_color[LED_COLOR_ID_MAX];
-+	int grouped_channels[LED_COLOR_ID_MAX];
- 	struct lp55xx_chip *chip;
- };
- 
-diff --git a/include/linux/platform_data/leds-lp55xx.h b/include/linux/platform_data/leds-lp55xx.h
-index 96a787100fda..0ac29f537ab6 100644
---- a/include/linux/platform_data/leds-lp55xx.h
-+++ b/include/linux/platform_data/leds-lp55xx.h
-@@ -12,6 +12,8 @@
- #ifndef _LEDS_LP55XX_H
- #define _LEDS_LP55XX_H
- 
-+#include <linux/led-class-multicolor.h>
++MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
++MODULE_DESCRIPTION("Multi Color LED class interface");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/led-class-multicolor.h b/include/linux/led-class-multicolor.h
+new file mode 100644
+index 000000000000..afcaf429fba5
+--- /dev/null
++++ b/include/linux/led-class-multicolor.h
+@@ -0,0 +1,76 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* LED Multicolor class interface
++ * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
++ */
 +
- /* Clock configuration */
- #define LP55XX_CLOCK_AUTO	0
- #define LP55XX_CLOCK_INT	1
-@@ -23,6 +25,10 @@ struct lp55xx_led_config {
- 	u8 chan_nr;
- 	u8 led_current; /* mA x10, 0 if led is not connected */
- 	u8 max_current;
-+	int num_colors;
++#ifndef __LINUX_MULTICOLOR_LEDS_H_INCLUDED
++#define __LINUX_MULTICOLOR_LEDS_H_INCLUDED
++
++#include <linux/leds.h>
++#include <dt-bindings/leds/common.h>
++
++struct led_classdev_mc;
++
++struct led_classdev_mc_data {
++	struct led_classdev_mc *mcled_cdev;
++	struct list_head color_list;
++};
++
++struct led_classdev_mc {
++	/* led class device */
++	struct led_classdev *led_cdev;
++
++	/* Set brightness for a specific color id */
++	int (*set_color_brightness)(struct led_classdev_mc *mcled_cdev,
++				    int color_id, int value);
++
++	struct led_classdev_mc_data *data;
++
 +	unsigned long available_colors;
-+	u32 channel_color[LED_COLOR_ID_MAX];
-+	int grouped_channels[LED_COLOR_ID_MAX];
- };
- 
- struct lp55xx_predef_pattern {
++	int num_leds;
++};
++
++static inline struct led_classdev_mc *lcdev_to_mccdev(
++						struct led_classdev *lcdev)
++{
++	return container_of(lcdev, struct led_classdev_mc, led_cdev);
++}
++
++/**
++ * led_classdev_multicolor_register_ext - register a new object of led_classdev
++ *				      class with support for multicolor LEDs
++ * @parent: the multicolor LED to register
++ * @mcled_cdev: the led_classdev_mc structure for this device
++ * @init_data: the LED class Multi color device initialization data
++ *
++ * Returns: 0 on success or negative error value on failure
++ */
++extern int led_classdev_multicolor_register_ext(struct device *parent,
++					    struct led_classdev_mc *mcled_cdev,
++					    struct led_init_data *init_data);
++
++#define led_classdev_multicolor_register(parent, mcled_cdev)		\
++	led_classdev_multicolor_register_ext(parent, mcled_cdev, NULL)
++
++/**
++ * led_classdev_multicolor_unregister - unregisters an object of led_classdev
++ *					class with support for multicolor LEDs
++ * @mcled_cdev: the multicolor LED to unregister
++ *
++ * Unregister a previously registered via led_classdev_multicolor_register
++ * object
++ */
++extern void led_classdev_multicolor_unregister(struct led_classdev_mc *mcled_cdev);
++
++extern int devm_led_classdev_multicolor_register(struct device *parent,
++					struct led_classdev_mc *mcled_cdev);
++
++extern void devm_led_classdev_multicolor_unregister(struct device *parent,
++					   struct led_classdev_mc *mcled_cdev);
++
++/* Set brightness for the monochrome LED cluster */
++extern void led_mc_calc_brightness(struct led_classdev_mc *mcled_cdev,
++			    enum led_brightness brightness,
++			    int brightness_val[]);
++
++#endif	/* __LINUX_MULTICOLOR_LEDS_H_INCLUDED */
 -- 
 2.22.0.214.g8dca754b1e
 
