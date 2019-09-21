@@ -2,39 +2,42 @@ Return-Path: <SRS0=I2Sf=XR=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DATE_IN_PAST_12_24,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DC6C3A5A2
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 10:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A045FC3A5A2
+	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 10:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0978208C0
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 10:24:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FE65208C0
+	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 10:24:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbfIVKYa (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 22 Sep 2019 06:24:30 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:36228 "EHLO honk.sigxcpu.org"
+        id S1727492AbfIVKY2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 22 Sep 2019 06:24:28 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:36224 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728172AbfIVKYa (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sun, 22 Sep 2019 06:24:30 -0400
+        id S1728141AbfIVKY2 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 22 Sep 2019 06:24:28 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 090C6FB05;
-        Sun, 22 Sep 2019 12:24:28 +0200 (CEST)
+        by honk.sigxcpu.org (Postfix) with ESMTP id F0F8EFB09;
+        Sun, 22 Sep 2019 12:24:26 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id AQR9nS1p7lvh; Sun, 22 Sep 2019 12:24:27 +0200 (CEST)
+        with ESMTP id XGQLeNF6M_9X; Sun, 22 Sep 2019 12:24:26 +0200 (CEST)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id B2A0548644; Sat, 21 Sep 2019 14:12:12 -0700 (PDT)
+        id E210248660; Sat, 21 Sep 2019 14:12:12 -0700 (PDT)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/5] leds: lm3692x: Probing and flag fixes
-Date:   Sat, 21 Sep 2019 14:12:07 -0700
-Message-Id: <cover.1569100154.git.agx@sigxcpu.org>
+Subject: [PATCH v3 5/5] leds: lm3692x: Use flags from LM3692X_BRT_CTRL
+Date:   Sat, 21 Sep 2019 14:12:12 -0700
+Message-Id: <8c9fb7dcb7ad64b5b84ca164c7bef414c991cd43.1569100154.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.23.0.rc1
+In-Reply-To: <cover.1569100154.git.agx@sigxcpu.org>
+References: <cover.1569100154.git.agx@sigxcpu.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -43,41 +46,30 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The driver currently returns success on init although probing fails and
-register setup uses flag values from other registers which is confusing when
-reading the driver. This series cleans this up.
+Use LM3692X_RAMP_EN instead of LM3692X_PWM_HYSTER_4LSB
+since the later is a flag for the PWM register. The
+actual register value remains unchanged.
 
-Changes from v2:
-- Add Acked-by from Pavel Machek, thanks!
-  https://lore.kernel.org/linux-leds/20190920114743.GA21835@amd/
-- As per review comment from Dan Murphy
-  https://lore.kernel.org/linux-leds/2bde2870-08a3-38b9-9cd7-fee0e2107743@ti.com/
-  - rename return value from ret2 to reg_ret
-  - print error code
+Signed-off-by: Guido Günther <agx@sigxcpu.org>
+Reviewed-by: Dan Murphy <dmurphy@ti.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+---
+ drivers/leds/leds-lm3692x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes from v1:
-- Add reviewed by's from Dan Murphy, thanks!
-  https://lore.kernel.org/linux-leds/cover.1568772964.git.agx@sigxcpu.org/T/#mc183f3f65931371fa9f9ca2e0e83e0b85010f24b
-  https://lore.kernel.org/linux-leds/cover.1568772964.git.agx@sigxcpu.org/T/#mb845fac36327a5d5dd03fe7e988eef0eb5626f82
-  https://lore.kernel.org/linux-leds/cover.1568772964.git.agx@sigxcpu.org/T/#m995bce73dda3e3bd4f0c2e8f98cbd04a39c13832
-- As per review comment from Dan Murphy
-  - Don't drop error message when disabling the regulator fails
-    https://lore.kernel.org/linux-leds/cover.1568772964.git.agx@sigxcpu.org/T/#m2ab6dc33b7277b71a197c3747847f1c4d9d9c1d8
-  - Handle -ENODEV (when the regulator is not set)
-    https://lore.kernel.org/linux-leds/cover.1568772964.git.agx@sigxcpu.org/T/#mf6212c29bbfa37b43200ea2c9744074de4f068ee
-- Add Acked-by from Pavel Machek, thanks!
-  https://lore.kernel.org/linux-leds/20190919095415.GA29939@amd/
-
-Guido Günther (5):
-  leds: lm3692x: Print error value on dev_err
-  leds: lm3692x: Don't overwrite return value in error path
-  leds: lm3692x: Handle failure to probe the regulator
-  leds: lm3692x: Use flags from LM3692X_BOOST_CTRL
-  leds: lm3692x: Use flags from LM3692X_BRT_CTRL
-
- drivers/leds/leds-lm3692x.c | 47 +++++++++++++++++++++++--------------
- 1 file changed, 30 insertions(+), 17 deletions(-)
-
+diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+index a57b1571e359..8b408102e138 100644
+--- a/drivers/leds/leds-lm3692x.c
++++ b/drivers/leds/leds-lm3692x.c
+@@ -269,7 +269,7 @@ static int lm3692x_init(struct lm3692x_led *led)
+ 		goto out;
+ 
+ 	ret = regmap_write(led->regmap, LM3692X_BRT_CTRL,
+-			LM3692X_BL_ADJ_POL | LM3692X_PWM_HYSTER_4LSB);
++			LM3692X_BL_ADJ_POL | LM3692X_RAMP_EN);
+ 	if (ret)
+ 		goto out;
+ 
 -- 
 2.23.0.rc1
 
