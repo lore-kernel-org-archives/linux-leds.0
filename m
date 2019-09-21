@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB0EC3A5A6
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 10:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D751C3A5A2
+	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 10:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61A3E20830
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 10:24:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 396AA208C0
+	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 10:24:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbfIVKY2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 22 Sep 2019 06:24:28 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:36200 "EHLO honk.sigxcpu.org"
+        id S1728247AbfIVKYb (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 22 Sep 2019 06:24:31 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:36246 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbfIVKY1 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sun, 22 Sep 2019 06:24:27 -0400
+        id S1728199AbfIVKYb (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 22 Sep 2019 06:24:31 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 6A804FB08;
-        Sun, 22 Sep 2019 12:24:25 +0200 (CEST)
+        by honk.sigxcpu.org (Postfix) with ESMTP id 331B0FB03;
+        Sun, 22 Sep 2019 12:24:30 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id wdARc2jl3Cpr; Sun, 22 Sep 2019 12:24:24 +0200 (CEST)
+        with ESMTP id ztD1R8-a_Uuj; Sun, 22 Sep 2019 12:24:29 +0200 (CEST)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id D112248664; Sat, 21 Sep 2019 14:12:12 -0700 (PDT)
+        id C2A9C48648; Sat, 21 Sep 2019 14:12:12 -0700 (PDT)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/5] leds: lm3692x: Handle failure to probe the regulator
-Date:   Sat, 21 Sep 2019 14:12:10 -0700
-Message-Id: <32fd08565f8dff39ce9a13f7b0a2546d22913b3a.1569100154.git.agx@sigxcpu.org>
+Subject: [PATCH v3 2/5] leds: lm3692x: Don't overwrite return value in error path
+Date:   Sat, 21 Sep 2019 14:12:09 -0700
+Message-Id: <be4c3e89e6285d8d1529967e6198abb51d28fe8b.1569100154.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <cover.1569100154.git.agx@sigxcpu.org>
 References: <cover.1569100154.git.agx@sigxcpu.org>
@@ -45,40 +45,48 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Instead use devm_regulator_get_optional since the regulator
-is optional and check for errors.
+The driver currently reports successful initialization on every failure
+as long as it's able to power off the regulator. Don't check the return
+value of regulator_disable to avoid that.
 
 Signed-off-by: Guido Günther <agx@sigxcpu.org>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
- drivers/leds/leds-lm3692x.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/leds/leds-lm3692x.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index ad76e34455ff..54e9bd2d288b 100644
+index 487228c2bed2..ad76e34455ff 100644
 --- a/drivers/leds/leds-lm3692x.c
 +++ b/drivers/leds/leds-lm3692x.c
-@@ -337,9 +337,18 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- 		return ret;
+@@ -198,7 +198,7 @@ static int lm3692x_brightness_set(struct led_classdev *led_cdev,
+ static int lm3692x_init(struct lm3692x_led *led)
+ {
+ 	int enable_state;
+-	int ret;
++	int ret, reg_ret;
+ 
+ 	if (led->regulator) {
+ 		ret = regulator_enable(led->regulator);
+@@ -313,14 +313,15 @@ static int lm3692x_init(struct lm3692x_led *led)
+ 		gpiod_direction_output(led->enable_gpio, 0);
+ 
+ 	if (led->regulator) {
+-		ret = regulator_disable(led->regulator);
+-		if (ret)
++		reg_ret = regulator_disable(led->regulator);
++		if (reg_ret)
+ 			dev_err(&led->client->dev,
+-				"Failed to disable regulator\n");
++				"Failed to disable regulator: %d\n", reg_ret);
  	}
  
--	led->regulator = devm_regulator_get(&led->client->dev, "vled");
--	if (IS_ERR(led->regulator))
-+	led->regulator = devm_regulator_get_optional(&led->client->dev, "vled");
-+	if (IS_ERR(led->regulator)) {
-+		ret = PTR_ERR(led->regulator);
-+		if (ret != -ENODEV) {
-+			if (ret != -EPROBE_DEFER)
-+				dev_err(&led->client->dev,
-+					"Failed to get vled regulator: %d\n",
-+					ret);
-+			return ret;
-+		}
- 		led->regulator = NULL;
-+	}
- 
- 	child = device_get_next_child_node(&led->client->dev, child);
- 	if (!child) {
+ 	return ret;
+ }
++
+ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ {
+ 	struct fwnode_handle *child = NULL;
 -- 
 2.23.0.rc1
 
