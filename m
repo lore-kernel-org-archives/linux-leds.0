@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E50C8C3A5A2
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 18:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59781C3A5A2
+	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 19:04:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D6A21907
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 18:47:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26D67206C2
+	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 19:04:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569178058;
-	bh=aRnDWCac5Rp2zw7MueiQHhEBPV+CE2W1Bm3OSFT9eFw=;
+	s=default; t=1569179083;
+	bh=74yDVWR/ILsO2aE70U+M2wJKsF551xYFuOmbv1Er/4I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fANO5kgqmkJC4ZusLJTonTkX6AIo6ZpXWqXnXoot9Q8+mKGLf87QuXz8NYxlyqUu7
-	 54Ur8l/EXFciDiMY44DGv/13srE17kkgF3NYwOEiJ6HKyNnP344y9EoTccDjl9NQ4N
-	 V6feTTuaCrkxGiDH6ytita2odPwu6y+eYmdRq+DI=
+	b=rPv8DuUKiYdZk7RSDA2G0DsomYDG1vRpPwDodvpF+tN4WJ6nzu/mJ6H7m84OdvH3N
+	 1iUVfpzW5tObtiMQQxy2F+1IMFVj2+XWbZJeKFPIf6rT3AM/sKjFs8zl3tFlyBNMha
+	 8TKiDEMCLGywRo4QsqI8XImY4n5PH+UL42vc6mXg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391039AbfIVSrh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 22 Sep 2019 14:47:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44058 "EHLO mail.kernel.org"
+        id S2395269AbfIVTBM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 22 Sep 2019 15:01:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391028AbfIVSrg (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:47:36 -0400
+        id S2395261AbfIVTBJ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 22 Sep 2019 15:01:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1196221A4A;
-        Sun, 22 Sep 2019 18:47:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC49B2070C;
+        Sun, 22 Sep 2019 19:01:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178055;
-        bh=aRnDWCac5Rp2zw7MueiQHhEBPV+CE2W1Bm3OSFT9eFw=;
+        s=default; t=1569178868;
+        bh=74yDVWR/ILsO2aE70U+M2wJKsF551xYFuOmbv1Er/4I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gb7J6871mN5HRtmpzgBV4vIpBdRF/Si1mraek+wji2wr7MoHD5n7EtsilFJHHvfJt
-         1IbtzuXH3WOYCsRqZznuqto5XeW/mxpqfvys4a9B4sC89t1rYcfFImwwXAYzEycPL+
-         b1DeACUScqLwuXN0cX0kwOMtUrXtGTEX4oOOkXDw=
+        b=j4OqDAeZgXjdpT9jkj3bgH888VEDmIfLUYGVzbxEiIIhsNbJZzRXUgut/blteUqB7
+         AQCb5KgWdS2qwIsphULi73vqIhW/5qGrbu1LJdkLoO47AZ3H0qizNdGq15HoBMOfk4
+         UT5uBtDOAYy+YhB5Np8XRYNUBnQoq3Uz0mHwTeUw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>,
+Cc:     Nick Stoughton <nstoughton@logitech.com>,
+        Pavel Machek <pavel@ucw.cz>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 132/203] leds: lm3532: Fixes for the driver for stability
-Date:   Sun, 22 Sep 2019 14:42:38 -0400
-Message-Id: <20190922184350.30563-132-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 04/44] leds: leds-lp5562 allow firmware files up to the maximum length
+Date:   Sun, 22 Sep 2019 15:00:22 -0400
+Message-Id: <20190922190103.4906-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
-References: <20190922184350.30563-1-sashal@kernel.org>
+In-Reply-To: <20190922190103.4906-1-sashal@kernel.org>
+References: <20190922190103.4906-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -58,85 +59,41 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Dan Murphy <dmurphy@ti.com>
+From: Nick Stoughton <nstoughton@logitech.com>
 
-[ Upstream commit 6559ac32998248182572e1ccae79dc2eb40ac7c6 ]
+[ Upstream commit ed2abfebb041473092b41527903f93390d38afa7 ]
 
-Fixed misspelled words, added error check during probe
-on the init of the registers, and fixed ALS/I2C control
-mode.
+Firmware files are in ASCII, using 2 hex characters per byte. The
+maximum length of a firmware string is therefore
 
-Fixes: bc1b8492c764 ("leds: lm3532: Introduce the lm3532 LED driver")
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
+16 (commands) * 2 (bytes per command) * 2 (characters per byte) = 64
+
+Fixes: ff45262a85db ("leds: add new LP5562 LED driver")
+Signed-off-by: Nick Stoughton <nstoughton@logitech.com>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/leds/leds-lm3532.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ drivers/leds/leds-lp5562.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
-index 180895b83b888..e55a64847fe2f 100644
---- a/drivers/leds/leds-lm3532.c
-+++ b/drivers/leds/leds-lm3532.c
-@@ -40,7 +40,7 @@
- #define LM3532_REG_ZN_3_LO	0x67
- #define LM3532_REG_MAX		0x7e
+diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
+index 0360c59dbdc91..fc8b2e7bcfef6 100644
+--- a/drivers/leds/leds-lp5562.c
++++ b/drivers/leds/leds-lp5562.c
+@@ -263,7 +263,11 @@ static void lp5562_firmware_loaded(struct lp55xx_chip *chip)
+ {
+ 	const struct firmware *fw = chip->fw;
  
--/* Contorl Enable */
-+/* Control Enable */
- #define LM3532_CTRL_A_ENABLE	BIT(0)
- #define LM3532_CTRL_B_ENABLE	BIT(1)
- #define LM3532_CTRL_C_ENABLE	BIT(2)
-@@ -302,7 +302,7 @@ static int lm3532_led_disable(struct lm3532_led *led_data)
- 	int ret;
- 
- 	ret = regmap_update_bits(led_data->priv->regmap, LM3532_REG_ENABLE,
--					 ctrl_en_val, ~ctrl_en_val);
-+					 ctrl_en_val, 0);
- 	if (ret) {
- 		dev_err(led_data->priv->dev, "Failed to set ctrl:%d\n", ret);
- 		return ret;
-@@ -321,7 +321,7 @@ static int lm3532_brightness_set(struct led_classdev *led_cdev,
- 
- 	mutex_lock(&led->priv->lock);
- 
--	if (led->mode == LM3532_BL_MODE_ALS) {
-+	if (led->mode == LM3532_ALS_CTRL) {
- 		if (brt_val > LED_OFF)
- 			ret = lm3532_led_enable(led);
- 		else
-@@ -542,11 +542,14 @@ static int lm3532_parse_node(struct lm3532_data *priv)
- 		}
- 
- 		if (led->mode == LM3532_BL_MODE_ALS) {
-+			led->mode = LM3532_ALS_CTRL;
- 			ret = lm3532_parse_als(priv);
- 			if (ret)
- 				dev_err(&priv->client->dev, "Failed to parse als\n");
- 			else
- 				lm3532_als_configure(priv, led);
-+		} else {
-+			led->mode = LM3532_I2C_CTRL;
- 		}
- 
- 		led->num_leds = fwnode_property_read_u32_array(child,
-@@ -590,7 +593,13 @@ static int lm3532_parse_node(struct lm3532_data *priv)
- 			goto child_out;
- 		}
- 
--		lm3532_init_registers(led);
-+		ret = lm3532_init_registers(led);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "register init err: %d\n",
-+				ret);
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
- 
- 		i++;
- 	}
+-	if (fw->size > LP5562_PROGRAM_LENGTH) {
++	/*
++	 * the firmware is encoded in ascii hex character, with 2 chars
++	 * per byte
++	 */
++	if (fw->size > (LP5562_PROGRAM_LENGTH * 2)) {
+ 		dev_err(&chip->cl->dev, "firmware data size overflow: %zu\n",
+ 			fw->size);
+ 		return;
 -- 
 2.20.1
 
