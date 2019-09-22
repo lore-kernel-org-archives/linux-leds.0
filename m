@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9BFC3A5A2
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 19:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D14F6C4740C
+	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 19:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78B682053B
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 19:17:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F775214D9
+	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 19:20:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569179834;
-	bh=CQ1VJV5SGEcxU1DDwi4WGZ9oGRxifBDjq7NGuSu/3LU=;
+	s=default; t=1569180050;
+	bh=Q5eWfRAxJJuBLgyyD9AiKcF+IJ+RFvFG/Wt0DJpUGNc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ECvrtBAAEC6lqDDCvIzISbBDBkIlf9FnlevPDV5aXzSIAAbtehSlOfrJ2vwAVTHJX
-	 aZPaUclV52s2zOI3Ox7wvXNhxlxmhiGyAf6PxSetVBnSlWBvIc0Ui+yhiQeyc5UpTX
-	 o+EFfTK3c/Zv44Bpu1YdCtpAcDwPqrNnu7em/CtA=
+	b=GXwaWh60OAWBp73R2i6rPI9EyUvkWyR6DgKZsYaPFpPTnt9mBf3STqnsjJkWFct3d
+	 jrW7IMcNLa76yWMciUWyQsQffIOAuYGylTqbXskMnFIcap5KNZMfO7aUlpQdAgTWe6
+	 i0xjW3NWq5xT8/F7nM2KxWAlFPAtwZstlGUfFgRA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729366AbfIVSzt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 22 Sep 2019 14:55:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57374 "EHLO mail.kernel.org"
+        id S1730970AbfIVTUq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 22 Sep 2019 15:20:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729358AbfIVSzs (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:55:48 -0400
+        id S2390586AbfIVSy3 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:54:29 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B4E421D7A;
-        Sun, 22 Sep 2019 18:55:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13B1521D7C;
+        Sun, 22 Sep 2019 18:54:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178548;
-        bh=CQ1VJV5SGEcxU1DDwi4WGZ9oGRxifBDjq7NGuSu/3LU=;
+        s=default; t=1569178468;
+        bh=Q5eWfRAxJJuBLgyyD9AiKcF+IJ+RFvFG/Wt0DJpUGNc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lfTbguNt8pquU8kETeVfq/A0DoHal+8cjyE3lXvM5Za38rSfx7fcrH6SsneOzU0oI
-         f402qs4IKNOuZWmUYoRHg0LrVq78VzRlOiixTEOTjNACIWHCswbnItqIDn8Z4zuQxh
-         t5kuvhObEUUtFEY4al8SwDw9P6Lvd6ddb6ntjn3c=
+        b=SZ5/dIMF+6yEWf5PSL/ySp+GyULFJEcqb7n9SBANtGO9qdbOy56EX+OHX+9pD4I0J
+         2lTLJuR276bmfMNnA5TlXLBTkES9UM6P4pBLunzAURFq8FthEtLE2HKjEDVKOkW9J5
+         HTt9I+fItQHQP/iPB1r6nm0IKVXn45O3jY4aHigs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wenwen Wang <wenwen@cs.uga.edu>, Pavel Machek <pavel@ucw.cz>,
+Cc:     Nick Stoughton <nstoughton@logitech.com>,
+        Pavel Machek <pavel@ucw.cz>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 066/128] led: triggers: Fix a memory leak bug
-Date:   Sun, 22 Sep 2019 14:53:16 -0400
-Message-Id: <20190922185418.2158-66-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 008/128] leds: leds-lp5562 allow firmware files up to the maximum length
+Date:   Sun, 22 Sep 2019 14:52:18 -0400
+Message-Id: <20190922185418.2158-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 References: <20190922185418.2158-1-sashal@kernel.org>
@@ -58,36 +59,41 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Nick Stoughton <nstoughton@logitech.com>
 
-[ Upstream commit 60e2dde1e91ae0addb21ac380cc36ebee7534e49 ]
+[ Upstream commit ed2abfebb041473092b41527903f93390d38afa7 ]
 
-In led_trigger_set(), 'event' is allocated in kasprintf(). However, it is
-not deallocated in the following execution if the label 'err_activate' or
-'err_add_groups' is entered, leading to memory leaks. To fix this issue,
-free 'event' before returning the error.
+Firmware files are in ASCII, using 2 hex characters per byte. The
+maximum length of a firmware string is therefore
 
-Fixes: 52c47742f79d ("leds: triggers: send uevent when changing triggers")
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+16 (commands) * 2 (bytes per command) * 2 (characters per byte) = 64
+
+Fixes: ff45262a85db ("leds: add new LP5562 LED driver")
+Signed-off-by: Nick Stoughton <nstoughton@logitech.com>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/leds/led-triggers.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/leds/leds-lp5562.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index 17d73db1456eb..e4cb3811e82a3 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -177,6 +177,7 @@ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
- 	list_del(&led_cdev->trig_list);
- 	write_unlock_irqrestore(&led_cdev->trigger->leddev_list_lock, flags);
- 	led_set_brightness(led_cdev, LED_OFF);
-+	kfree(event);
+diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
+index 2a9009fe5545d..18edc8bdc9f77 100644
+--- a/drivers/leds/leds-lp5562.c
++++ b/drivers/leds/leds-lp5562.c
+@@ -263,7 +263,11 @@ static void lp5562_firmware_loaded(struct lp55xx_chip *chip)
+ {
+ 	const struct firmware *fw = chip->fw;
  
- 	return ret;
- }
+-	if (fw->size > LP5562_PROGRAM_LENGTH) {
++	/*
++	 * the firmware is encoded in ascii hex character, with 2 chars
++	 * per byte
++	 */
++	if (fw->size > (LP5562_PROGRAM_LENGTH * 2)) {
+ 		dev_err(&chip->cl->dev, "firmware data size overflow: %zu\n",
+ 			fw->size);
+ 		return;
 -- 
 2.20.1
 
