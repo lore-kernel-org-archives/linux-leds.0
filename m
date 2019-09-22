@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59781C3A5A2
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 19:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A437CC3A5A2
+	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 19:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26D67206C2
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 19:04:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D5EC206C2
+	for <linux-leds@archiver.kernel.org>; Sun, 22 Sep 2019 19:08:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569179083;
-	bh=74yDVWR/ILsO2aE70U+M2wJKsF551xYFuOmbv1Er/4I=;
+	s=default; t=1569179312;
+	bh=aGsvxcF3MiDOMIrZQmref9om6M8hirxqvJMiDcxDmJQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rPv8DuUKiYdZk7RSDA2G0DsomYDG1vRpPwDodvpF+tN4WJ6nzu/mJ6H7m84OdvH3N
-	 1iUVfpzW5tObtiMQQxy2F+1IMFVj2+XWbZJeKFPIf6rT3AM/sKjFs8zl3tFlyBNMha
-	 8TKiDEMCLGywRo4QsqI8XImY4n5PH+UL42vc6mXg=
+	b=fq2c3j7MTtVIHQbuDnBXFJe8ou2lCWH9pABFzOCYTmFAq40I4H7gLSi2fkEz9zLQj
+	 NK8UUCHqkrMx/d9uss5MtCYUClDrbQqs6rfKAht+TRbdBIlZ+FTGrvoGE95CPmtAci
+	 TY52PrGatEccJ5SJ6Ohmj62PMK1+agtl3Z75CMng=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395269AbfIVTBM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 22 Sep 2019 15:01:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37214 "EHLO mail.kernel.org"
+        id S2395277AbfIVTIY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 22 Sep 2019 15:08:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395261AbfIVTBJ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sun, 22 Sep 2019 15:01:09 -0400
+        id S2438888AbfIVS7l (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:59:41 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC49B2070C;
-        Sun, 22 Sep 2019 19:01:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE40A21D7A;
+        Sun, 22 Sep 2019 18:59:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178868;
-        bh=74yDVWR/ILsO2aE70U+M2wJKsF551xYFuOmbv1Er/4I=;
+        s=default; t=1569178780;
+        bh=aGsvxcF3MiDOMIrZQmref9om6M8hirxqvJMiDcxDmJQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j4OqDAeZgXjdpT9jkj3bgH888VEDmIfLUYGVzbxEiIIhsNbJZzRXUgut/blteUqB7
-         AQCb5KgWdS2qwIsphULi73vqIhW/5qGrbu1LJdkLoO47AZ3H0qizNdGq15HoBMOfk4
-         UT5uBtDOAYy+YhB5Np8XRYNUBnQoq3Uz0mHwTeUw=
+        b=nOVEFMvH/COGqO1vYV5oZVehZJwlGoF9TrDVO1kJde+cxe4SzSfO8dcqjVNTt4rAR
+         0aVMEALUHO20vRypXQFH9Hxt25JnzT8IAU8LPly7FPLQ7pfek9W9CYxlC+erqNqRsl
+         aVye7WBa5cAp5MiMF2Jo0MerZ0t7mlWVwFJlME80=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nick Stoughton <nstoughton@logitech.com>,
         Pavel Machek <pavel@ucw.cz>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 04/44] leds: leds-lp5562 allow firmware files up to the maximum length
-Date:   Sun, 22 Sep 2019 15:00:22 -0400
-Message-Id: <20190922190103.4906-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 05/60] leds: leds-lp5562 allow firmware files up to the maximum length
+Date:   Sun, 22 Sep 2019 14:58:38 -0400
+Message-Id: <20190922185934.4305-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190922190103.4906-1-sashal@kernel.org>
-References: <20190922190103.4906-1-sashal@kernel.org>
+In-Reply-To: <20190922185934.4305-1-sashal@kernel.org>
+References: <20190922185934.4305-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -78,7 +78,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
-index 0360c59dbdc91..fc8b2e7bcfef6 100644
+index b75333803a637..9f5e4d04efad5 100644
 --- a/drivers/leds/leds-lp5562.c
 +++ b/drivers/leds/leds-lp5562.c
 @@ -263,7 +263,11 @@ static void lp5562_firmware_loaded(struct lp55xx_chip *chip)
