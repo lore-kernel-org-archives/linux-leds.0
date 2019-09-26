@@ -6,32 +6,35 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E46A1C432C2
-	for <linux-leds@archiver.kernel.org>; Thu, 26 Sep 2019 12:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D8B6C4360C
+	for <linux-leds@archiver.kernel.org>; Thu, 26 Sep 2019 12:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C60DC208C3
-	for <linux-leds@archiver.kernel.org>; Thu, 26 Sep 2019 12:07:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B041206E0
+	for <linux-leds@archiver.kernel.org>; Thu, 26 Sep 2019 12:12:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726004AbfIZMHg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 26 Sep 2019 08:07:36 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50680 "EHLO
+        id S1726010AbfIZMMP (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 26 Sep 2019 08:12:15 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51530 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfIZMHg (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 26 Sep 2019 08:07:36 -0400
+        with ESMTP id S1725815AbfIZMMP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 26 Sep 2019 08:12:15 -0400
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 4C9CA805C0; Thu, 26 Sep 2019 14:07:20 +0200 (CEST)
-Date:   Thu, 26 Sep 2019 14:07:34 +0200
+        id 56D738069F; Thu, 26 Sep 2019 14:11:59 +0200 (CEST)
+Date:   Thu, 26 Sep 2019 14:12:13 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Oleh Kravchenko <oleg@kaa.org.ua>
-Cc:     linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com
-Subject: Re: [PATCH] leds: mlxreg: Fix possible buffer overflow
-Message-ID: <20190926120734.GC9310@amd>
-References: <20190921220230.6850-1-oleg@kaa.org.ua>
+To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
+Cc:     jacek.anaszewski@gmail.com, dmurphy@ti.com, tomi.valkeinen@ti.com,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] leds: tlc591xx: use
+ devm_led_classdev_register_ext()
+Message-ID: <20190926121213.GD9310@amd>
+References: <20190918152556.9925-1-jjhiblot@ti.com>
+ <20190918152556.9925-3-jjhiblot@ti.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Sr1nOIr3CvdE5hEN"
+        protocol="application/pgp-signature"; boundary="yudcn1FV7Hsu/q59"
 Content-Disposition: inline
-In-Reply-To: <20190921220230.6850-1-oleg@kaa.org.ua>
+In-Reply-To: <20190918152556.9925-3-jjhiblot@ti.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
@@ -39,35 +42,35 @@ List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---Sr1nOIr3CvdE5hEN
+--yudcn1FV7Hsu/q59
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun 2019-09-22 01:02:30, Oleh Kravchenko wrote:
-> Error was detected by PVS-Studio:
-> V512 A call of the 'sprintf' function will lead to overflow of
-> the buffer 'led_data->led_cdev_name'.
+On Wed 2019-09-18 17:25:56, Jean-Jacques Hiblot wrote:
+> Use devm_led_classdev_register_ext() to pass the fwnode to the LED core.
+> The fwnode can then be used by the firmware core to create meaningful
+> names.
 >=20
-> Signed-off-by: Oleh Kravchenko <oleg@kaa.org.ua>
+> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
 
 Acked-by: Pavel Machek <pavel@ucw.cz>
-
+								Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---Sr1nOIr3CvdE5hEN
+--yudcn1FV7Hsu/q59
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl2MqgYACgkQMOfwapXb+vLgvwCfc51Sv7LDCcGjPf1nIq6X+HEb
-tCwAn0xzJNVx663ceEkezPOuUZWFGq1o
-=NRzX
+iEYEARECAAYFAl2Mqx0ACgkQMOfwapXb+vKKUwCgv+t+1j2lanpDTQy+tRGyly41
+VDEAnAvi2IR51jBB/3T6kJbA8+aUJIVr
+=33dy
 -----END PGP SIGNATURE-----
 
---Sr1nOIr3CvdE5hEN--
+--yudcn1FV7Hsu/q59--
