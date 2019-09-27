@@ -1,78 +1,75 @@
-Return-Path: <SRS0=p178=XV=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=AIK1=XW=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB7CC4360C
-	for <linux-leds@archiver.kernel.org>; Thu, 26 Sep 2019 12:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEEDC4360C
+	for <linux-leds@archiver.kernel.org>; Fri, 27 Sep 2019 06:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 788BF206E0
-	for <linux-leds@archiver.kernel.org>; Thu, 26 Sep 2019 12:13:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5147120872
+	for <linux-leds@archiver.kernel.org>; Fri, 27 Sep 2019 06:39:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569566363;
+	bh=Mhvb/y6R698xgZGIjNVfK3IRa23BD0DXn2mb6szDw+I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=j/zY8+JxN4TFYH1DODnAm/6j0m9qZCovy92ldOSp5APzPveEXOMpySgby+d8q7LSy
+	 CDZy1KnsU83pn/jBV7aShehVaMS0n1DTpKj2kTCsFBafd64jZFnAhUPSCXqogk1PWh
+	 So1N7dmLrREDv3/jruyg55sGDMgi9Q8FLjZf1DaQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726029AbfIZMNW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 26 Sep 2019 08:13:22 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51539 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbfIZMNW (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 26 Sep 2019 08:13:22 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id D0AAD8069F; Thu, 26 Sep 2019 14:13:05 +0200 (CEST)
-Date:   Thu, 26 Sep 2019 14:13:19 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
-Cc:     jacek.anaszewski@gmail.com, dmurphy@ti.com, tomi.valkeinen@ti.com,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] leds: tlc591xx: simplify driver by using the
- managed led API
-Message-ID: <20190926121319.GE9310@amd>
-References: <20190918152556.9925-1-jjhiblot@ti.com>
- <20190918152556.9925-2-jjhiblot@ti.com>
+        id S1725861AbfI0GjX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 27 Sep 2019 02:39:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51536 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725804AbfI0GjW (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 27 Sep 2019 02:39:22 -0400
+Received: from localhost (unknown [62.119.166.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1065206B7;
+        Fri, 27 Sep 2019 06:39:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569566362;
+        bh=Mhvb/y6R698xgZGIjNVfK3IRa23BD0DXn2mb6szDw+I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kKJdL5KWsnRBktC7HuWrlX8BYz0WTA9rbocMXzDL/hnNZ4T7YLwPkIwb5lfGzmcGk
+         +dDuSzLcHBxCxAh5/HCJP6xOFMA2ZhVWgT1pT4cCn3cfEQojJavDm7hBszIrQvgw/c
+         HkXqUPv60/boJjIGL16WR67xYFp64TamMTHtXLOs=
+Date:   Fri, 27 Sep 2019 08:27:36 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v2 1/1] leds: remove PAGE_SIZE limit of
+ /sys/class/leds/<led>/trigger
+Message-ID: <20190927062736.GD1786098@kroah.com>
+References: <1568387004-3802-1-git-send-email-akinobu.mita@gmail.com>
+ <1568387004-3802-2-git-send-email-akinobu.mita@gmail.com>
+ <54d4debc-470a-86f6-e43c-f51f1c7913e0@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="h56sxpGKRmy85csR"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190918152556.9925-2-jjhiblot@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <54d4debc-470a-86f6-e43c-f51f1c7913e0@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+On Tue, Sep 24, 2019 at 11:30:08PM +0200, Jacek Anaszewski wrote:
+> Hi Greg,
+> 
+> Akinobu seems to have addressed all issues that have been
+> raised regarding this patch. I'd be happy to have your ack before
+> applying it.
 
---h56sxpGKRmy85csR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You have to wait until after -rc1 is out before doing anything, so
+there's no rush :)
 
-On Wed 2019-09-18 17:25:55, Jean-Jacques Hiblot wrote:
-> Use the managed API of the LED class (devm_led_classdev_register()
-> instead of led_classdev_register()).
-> This allows us to remove the code used to track-and-destroy the LED devic=
-es
->=20
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+I'll go review it now...
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---h56sxpGKRmy85csR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl2Mq18ACgkQMOfwapXb+vKS9wCdG/pKEh6CoAubneruryXUJoXM
-LVMAn0SR+EjGGfj+wTZcrQ8cjmk2WInM
-=X1M3
------END PGP SIGNATURE-----
-
---h56sxpGKRmy85csR--
+greg k-h
