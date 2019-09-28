@@ -1,316 +1,225 @@
-Return-Path: <SRS0=AIK1=XW=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=uv2T=XX=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 126CCC4360C
-	for <linux-leds@archiver.kernel.org>; Fri, 27 Sep 2019 17:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B71C5C4360C
+	for <linux-leds@archiver.kernel.org>; Sat, 28 Sep 2019 04:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDF33217D7
-	for <linux-leds@archiver.kernel.org>; Fri, 27 Sep 2019 17:46:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569606405;
-	bh=WcEO23YAVLrDPnehWuLKxDFeVrU4c5TYJVFCM1t8jQ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=t4YT0vC2UkP3SRePeToeSXFGUMUrjSPMMwpNrpZr4gPPH8ydp/yRIPyi0FgPzE0FG
-	 94dOKHocDitjB4yHMyh44hN9COunOFXR25B5TUtCqsDBPjJRMStJUzBbmjKXCJi6uz
-	 a9VVZ86L2LMgUT8CwOyr3OitHn64v6MtZZ0eDbIk=
+	by mail.kernel.org (Postfix) with ESMTP id 77B0D20869
+	for <linux-leds@archiver.kernel.org>; Sat, 28 Sep 2019 04:08:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="md3JJhFf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbfI0Rqp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 27 Sep 2019 13:46:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43382 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfI0Rqp (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 27 Sep 2019 13:46:45 -0400
-Received: from localhost (unknown [62.119.166.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F7E721655;
-        Fri, 27 Sep 2019 17:46:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569606404;
-        bh=WcEO23YAVLrDPnehWuLKxDFeVrU4c5TYJVFCM1t8jQ8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kRx8jVYqdIa1zqHhO+pROkGgDo7HpdPlsIiMSdj7/XnPznJuRtxt/SzkBH9j1HjZH
-         dJXKuvEiUuX1xK7OPHHvCWCfNuyI5nDPAvp7PPSGHUQMyKbkwegCs5HeAXbfNWa1TL
-         dQ0cLDy9TPsFtbFLkLH8PHT0+bwuUDw4oKKn498U=
-Date:   Fri, 27 Sep 2019 19:46:33 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Akinobu Mita <akinobu.mita@gmail.com>
+        id S1725290AbfI1EIY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 28 Sep 2019 00:08:24 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39106 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725263AbfI1EIX (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 28 Sep 2019 00:08:23 -0400
+Received: by mail-pl1-f195.google.com with SMTP id s17so1802892plp.6;
+        Fri, 27 Sep 2019 21:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zd5LuW2dmAnavUG5b7g07Kd/6YYjFkpDKAGxGB0aM5w=;
+        b=md3JJhFfv/J3eueqTUw383MidijG/p5odcRw5Ls8wFMVLF+7GZkvbktSneeMmR555K
+         3EVMtqbrCCWE8ZFS0i8eJhWgnK4bWFwufthQ5kWlY9P2HQsFrngkNce4BmVnWV2NZYH+
+         DF8hYZz4IzYp10AHBj50lyOpK5Z+hxMWgwwWjtM4bMS+Hqx+llA6WyW2wsIhJo+QMrIq
+         Hpy6Fc3IecRjy0Yg7ARtuJfG5nGxi2v76khB5rBwBUpzNL0qAHnIPis9CKFWyLfz1puM
+         HVjxHxyLbm3eLDGu7SCfT1arqcda0WQURy7DCFjHUjKAsYguN4TLzuPrnUBzW9JI1SAn
+         yZXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zd5LuW2dmAnavUG5b7g07Kd/6YYjFkpDKAGxGB0aM5w=;
+        b=HHlIHba1iVSe1yjzw8R9fa8MFbMYKKB43AnasGYZ9Rk/aw98iXtNp9K7mswDQSWWkF
+         mQKrfO5SQCydh0vKvDO7TdCkUiIozmaSCZTz5huM6sHeeh249+aEbNOmNfLtkYRj8Uqb
+         wlX4qv00ABNH4p3lvcLNL1AJLQSGVlgh8ZeEhSFcpT0MDH5w26vHDGZX5Y2HriPuHb9Y
+         NjaUZAJFjKmIwt9bVQ15UlvtHTOdOSrxz16HiZu7bwAFHgS0kwHkSviLmZoUoEPDCmP7
+         oyifgpzAke2AuN4Vu9nMt6zNb5gvUXM5AjRLcyBBiRUdXjYDoj8I9TMHIXVGvpkmc1HD
+         XE/A==
+X-Gm-Message-State: APjAAAXJP2KnjqNVE9qAxEp2uttmQHg0Lw0b8wuMjNorgrxvjYS2k8nE
+        NqehSJ4U5JbbCQFRIwGTbtOgIPfVnRViX7V7FGI=
+X-Google-Smtp-Source: APXvYqwutDw2+zcRK1Wjw/PhrwnwtMZCxwTBQPNxExgBpn45KzbiLrL1szG2CTVXFXjcQvs4+4cDPAymMdBe0V0hsxE=
+X-Received: by 2002:a17:902:8690:: with SMTP id g16mr1820621plo.274.1569643702744;
+ Fri, 27 Sep 2019 21:08:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <1568387004-3802-1-git-send-email-akinobu.mita@gmail.com>
+ <1568387004-3802-2-git-send-email-akinobu.mita@gmail.com> <20190927063547.GA1786569@kroah.com>
+ <CAC5umyjdM1+4nPg_6UaCjcpikESamdA_ZpmP4Xfjx7_-1f=+0A@mail.gmail.com> <20190927174633.GB1802011@kroah.com>
+In-Reply-To: <20190927174633.GB1802011@kroah.com>
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+Date:   Sat, 28 Sep 2019 13:08:11 +0900
+Message-ID: <CAC5umyjZHtFnqrBujCEnBqAfYfsGHth6OnESyDFFdvtgEpZaDQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] leds: remove PAGE_SIZE limit of /sys/class/leds/<led>/trigger
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v2 1/1] leds: remove PAGE_SIZE limit of
- /sys/class/leds/<led>/trigger
-Message-ID: <20190927174633.GB1802011@kroah.com>
-References: <1568387004-3802-1-git-send-email-akinobu.mita@gmail.com>
- <1568387004-3802-2-git-send-email-akinobu.mita@gmail.com>
- <20190927063547.GA1786569@kroah.com>
- <CAC5umyjdM1+4nPg_6UaCjcpikESamdA_ZpmP4Xfjx7_-1f=+0A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAC5umyjdM1+4nPg_6UaCjcpikESamdA_ZpmP4Xfjx7_-1f=+0A@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Sat, Sep 28, 2019 at 01:47:21AM +0900, Akinobu Mita wrote:
-> 2019年9月27日(金) 15:39 Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
+2019=E5=B9=B49=E6=9C=8828=E6=97=A5(=E5=9C=9F) 2:46 Greg Kroah-Hartman <greg=
+kh@linuxfoundation.org>:
+>
+> On Sat, Sep 28, 2019 at 01:47:21AM +0900, Akinobu Mita wrote:
+> > 2019=E5=B9=B49=E6=9C=8827=E6=97=A5(=E9=87=91) 15:39 Greg Kroah-Hartman =
+<gregkh@linuxfoundation.org>:
+> > >
+> > > On Sat, Sep 14, 2019 at 12:03:24AM +0900, Akinobu Mita wrote:
+> > > > Reading /sys/class/leds/<led>/trigger returns all available LED tri=
+ggers.
+> > > > However, the size of this file is limited to PAGE_SIZE because of t=
+he
+> > > > limitation for sysfs attribute.
+> > > >
+> > > > Enabling LED CPU trigger on systems with thousands of CPUs easily h=
+its
+> > > > PAGE_SIZE limit, and makes it impossible to see all available LED t=
+riggers
+> > > > and which trigger is currently activated.
+> > > >
+> > > > We work around it here by converting /sys/class/leds/<led>/trigger =
+to
+> > > > binary attribute, which is not limited by length. This is _not_ goo=
+d
+> > > > design, do not copy it.
+> > > >
+> > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> > > > Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> > > > Cc: Pavel Machek <pavel@ucw.cz>
+> > > > Cc: Dan Murphy <dmurphy@ti.com>
+> > > > Acked-by: Pavel Machek <pavel@ucw.cz>
+> > > > Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+> > > > ---
+> > > >  drivers/leds/led-class.c    |  8 ++--
+> > > >  drivers/leds/led-triggers.c | 90 +++++++++++++++++++++++++++++++++=
++-----------
+> > > >  drivers/leds/leds.h         |  6 +++
+> > > >  include/linux/leds.h        |  5 ---
+> > > >  4 files changed, 79 insertions(+), 30 deletions(-)
+> > > >
+> > > > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> > > > index 4793e77..8b5a1d1 100644
+> > > > --- a/drivers/leds/led-class.c
+> > > > +++ b/drivers/leds/led-class.c
+> > > > @@ -73,13 +73,13 @@ static ssize_t max_brightness_show(struct devic=
+e *dev,
+> > > >  static DEVICE_ATTR_RO(max_brightness);
+> > > >
+> > > >  #ifdef CONFIG_LEDS_TRIGGERS
+> > > > -static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_st=
+ore);
+> > > > -static struct attribute *led_trigger_attrs[] =3D {
+> > > > -     &dev_attr_trigger.attr,
+> > > > +static BIN_ATTR(trigger, 0644, led_trigger_read, led_trigger_write=
+, 0);
+> > > > +static struct bin_attribute *led_trigger_bin_attrs[] =3D {
+> > > > +     &bin_attr_trigger,
+> > > >       NULL,
+> > > >  };
+> > > >  static const struct attribute_group led_trigger_group =3D {
+> > > > -     .attrs =3D led_trigger_attrs,
+> > > > +     .bin_attrs =3D led_trigger_bin_attrs,
+> > > >  };
+> > > >  #endif
+> > > >
+> > > > diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-trigger=
+s.c
+> > > > index 8d11a5e..ed5a311 100644
+> > > > --- a/drivers/leds/led-triggers.c
+> > > > +++ b/drivers/leds/led-triggers.c
+> > > > @@ -16,6 +16,7 @@
+> > > >  #include <linux/rwsem.h>
+> > > >  #include <linux/leds.h>
+> > > >  #include <linux/slab.h>
+> > > > +#include <linux/mm.h>
+> > > >  #include "leds.h"
+> > > >
+> > > >  /*
+> > > > @@ -26,9 +27,11 @@ LIST_HEAD(trigger_list);
+> > > >
+> > > >   /* Used by LED Class */
+> > > >
+> > > > -ssize_t led_trigger_store(struct device *dev, struct device_attrib=
+ute *attr,
+> > > > -             const char *buf, size_t count)
+> > > > +ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
+> > > > +                       struct bin_attribute *bin_attr, char *buf,
+> > > > +                       loff_t pos, size_t count)
+> > > >  {
+> > > > +     struct device *dev =3D kobj_to_dev(kobj);
+> > > >       struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+> > > >       struct led_trigger *trig;
+> > > >       int ret =3D count;
+> > > > @@ -64,39 +67,84 @@ ssize_t led_trigger_store(struct device *dev, s=
+truct device_attribute *attr,
+> > > >       mutex_unlock(&led_cdev->led_access);
+> > > >       return ret;
+> > > >  }
+> > > > -EXPORT_SYMBOL_GPL(led_trigger_store);
+> > > > +EXPORT_SYMBOL_GPL(led_trigger_write);
+> > > >
+> > > > -ssize_t led_trigger_show(struct device *dev, struct device_attribu=
+te *attr,
+> > > > -             char *buf)
+> > > > +__printf(4, 5)
+> > > > +static int led_trigger_snprintf(char *buf, size_t size, bool query=
+,
+> > > > +                             const char *fmt, ...)
+> > > > +{
+> > > > +     va_list args;
+> > > > +     int i;
+> > > > +
+> > > > +     va_start(args, fmt);
+> > > > +     if (query)
+> > > > +             i =3D vsnprintf(NULL, 0, fmt, args);
+> > > > +     else
+> > > > +             i =3D vscnprintf(buf, size, fmt, args);
+> > > > +     va_end(args);
+> > > > +
+> > > > +     return i;
+> > > > +}
+> > >
+> > > You only call this in one place, why is it needed like this?  The "ol=
+d"
+> > > code open-coded this, what is this helping with here?
+> > >
+> > > And what does "query" mean here?  I have no idea how that variable
+> > > matters, or what it does.  Why not just test if buf is NULL or not if
+> > > you don't want to use it?
+> > >
+> > > Ah, you are trying to see how "long" the buffer is going to be.  That
+> > > makes more sense, but just trigger off of the NULL buffer or not, mak=
+ing
+> > > this a bit more "obvious" what you are doing and not tieing two
+> > > parameters to each other (meaning one always reflects the other one).
 > >
-> > On Sat, Sep 14, 2019 at 12:03:24AM +0900, Akinobu Mita wrote:
-> > > Reading /sys/class/leds/<led>/trigger returns all available LED triggers.
-> > > However, the size of this file is limited to PAGE_SIZE because of the
-> > > limitation for sysfs attribute.
-> > >
-> > > Enabling LED CPU trigger on systems with thousands of CPUs easily hits
-> > > PAGE_SIZE limit, and makes it impossible to see all available LED triggers
-> > > and which trigger is currently activated.
-> > >
-> > > We work around it here by converting /sys/class/leds/<led>/trigger to
-> > > binary attribute, which is not limited by length. This is _not_ good
-> > > design, do not copy it.
-> > >
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > > Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> > > Cc: Pavel Machek <pavel@ucw.cz>
-> > > Cc: Dan Murphy <dmurphy@ti.com>
-> > > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > > Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-> > > ---
-> > >  drivers/leds/led-class.c    |  8 ++--
-> > >  drivers/leds/led-triggers.c | 90 ++++++++++++++++++++++++++++++++++-----------
-> > >  drivers/leds/leds.h         |  6 +++
-> > >  include/linux/leds.h        |  5 ---
-> > >  4 files changed, 79 insertions(+), 30 deletions(-)
-> > >
-> > > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > > index 4793e77..8b5a1d1 100644
-> > > --- a/drivers/leds/led-class.c
-> > > +++ b/drivers/leds/led-class.c
-> > > @@ -73,13 +73,13 @@ static ssize_t max_brightness_show(struct device *dev,
-> > >  static DEVICE_ATTR_RO(max_brightness);
-> > >
-> > >  #ifdef CONFIG_LEDS_TRIGGERS
-> > > -static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
-> > > -static struct attribute *led_trigger_attrs[] = {
-> > > -     &dev_attr_trigger.attr,
-> > > +static BIN_ATTR(trigger, 0644, led_trigger_read, led_trigger_write, 0);
-> > > +static struct bin_attribute *led_trigger_bin_attrs[] = {
-> > > +     &bin_attr_trigger,
-> > >       NULL,
-> > >  };
-> > >  static const struct attribute_group led_trigger_group = {
-> > > -     .attrs = led_trigger_attrs,
-> > > +     .bin_attrs = led_trigger_bin_attrs,
-> > >  };
-> > >  #endif
-> > >
-> > > diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> > > index 8d11a5e..ed5a311 100644
-> > > --- a/drivers/leds/led-triggers.c
-> > > +++ b/drivers/leds/led-triggers.c
-> > > @@ -16,6 +16,7 @@
-> > >  #include <linux/rwsem.h>
-> > >  #include <linux/leds.h>
-> > >  #include <linux/slab.h>
-> > > +#include <linux/mm.h>
-> > >  #include "leds.h"
-> > >
-> > >  /*
-> > > @@ -26,9 +27,11 @@ LIST_HEAD(trigger_list);
-> > >
-> > >   /* Used by LED Class */
-> > >
-> > > -ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
-> > > -             const char *buf, size_t count)
-> > > +ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
-> > > +                       struct bin_attribute *bin_attr, char *buf,
-> > > +                       loff_t pos, size_t count)
-> > >  {
-> > > +     struct device *dev = kobj_to_dev(kobj);
-> > >       struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> > >       struct led_trigger *trig;
-> > >       int ret = count;
-> > > @@ -64,39 +67,84 @@ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
-> > >       mutex_unlock(&led_cdev->led_access);
-> > >       return ret;
-> > >  }
-> > > -EXPORT_SYMBOL_GPL(led_trigger_store);
-> > > +EXPORT_SYMBOL_GPL(led_trigger_write);
-> > >
-> > > -ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
-> > > -             char *buf)
-> > > +__printf(4, 5)
-> > > +static int led_trigger_snprintf(char *buf, size_t size, bool query,
-> > > +                             const char *fmt, ...)
-> > > +{
-> > > +     va_list args;
-> > > +     int i;
-> > > +
-> > > +     va_start(args, fmt);
-> > > +     if (query)
-> > > +             i = vsnprintf(NULL, 0, fmt, args);
-> > > +     else
-> > > +             i = vscnprintf(buf, size, fmt, args);
-> > > +     va_end(args);
-> > > +
-> > > +     return i;
-> > > +}
-> >
-> > You only call this in one place, why is it needed like this?  The "old"
-> > code open-coded this, what is this helping with here?
-> >
-> > And what does "query" mean here?  I have no idea how that variable
-> > matters, or what it does.  Why not just test if buf is NULL or not if
-> > you don't want to use it?
-> >
-> > Ah, you are trying to see how "long" the buffer is going to be.  That
-> > makes more sense, but just trigger off of the NULL buffer or not, making
-> > this a bit more "obvious" what you are doing and not tieing two
-> > parameters to each other (meaning one always reflects the other one).
-> 
-> We cannot simply replace the "query" by checking the buffer is NULL or not.
-> Because led_trigger_snprintf() is repeatedly called by led_trigger_format()
-> while increasing 'buf' and decreasing 'size' by the return value of
-> led_trigger_snprintf() every time.
+> > We cannot simply replace the "query" by checking the buffer is NULL or =
+not.
+> > Because led_trigger_snprintf() is repeatedly called by led_trigger_form=
+at()
+> > while increasing 'buf' and decreasing 'size' by the return value of
+> > led_trigger_snprintf() every time.
+>
+> Odd, but ok, I'll trust you, this looks like very odd code :(
 
-Odd, but ok, I'll trust you, this looks like very odd code :(
+We can remove the "query" by checking if "size" is less than or equal to
+zero in led_trigger_snprintf(), instead of checking "buf".
 
-> > > +static int led_trigger_format(char *buf, size_t size, bool query,
-> > > +                           struct led_classdev *led_cdev)
-> > >  {
-> > > -     struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> > >       struct led_trigger *trig;
-> > > -     int len = 0;
-> > > +     int len = led_trigger_snprintf(buf, size, query, "%s",
-> > > +                                    led_cdev->trigger ? "none" : "[none]");
-> > > +
-> > > +     list_for_each_entry(trig, &trigger_list, next_trig) {
-> > > +             bool hit = led_cdev->trigger &&
-> > > +                     !strcmp(led_cdev->trigger->name, trig->name);
-> > > +
-> > > +             len += led_trigger_snprintf(buf + len, size - len, query,
-> > > +                                         " %s%s%s", hit ? "[" : "",
-> > > +                                         trig->name, hit ? "]" : "");
-> > > +     }
-> > > +
-> > > +     len += led_trigger_snprintf(buf + len, size - len, query, "\n");
-> > > +
-> > > +     return len;
-> > > +}
-> > > +
-> > > +/*
-> > > + * It was stupid to create 10000 cpu triggers, but we are stuck with it now.
-> > > + * Don't make that mistake again. We work around it here by creating binary
-> > > + * attribute, which is not limited by length. This is _not_ good design, do not
-> > > + * copy it.
-> > > + */
-> > > +ssize_t led_trigger_read(struct file *filp, struct kobject *kobj,
-> > > +                     struct bin_attribute *attr, char *buf,
-> > > +                     loff_t pos, size_t count)
-> > > +{
-> > > +     struct device *dev = kobj_to_dev(kobj);
-> > > +     struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> > > +     void *data;
-> > > +     int len;
-> > >
-> > >       down_read(&triggers_list_lock);
-> > >       down_read(&led_cdev->trigger_lock);
-> > >
-> > > -     if (!led_cdev->trigger)
-> > > -             len += scnprintf(buf+len, PAGE_SIZE - len, "[none] ");
-> > > +     len = led_trigger_format(NULL, 0, true, led_cdev);
-> > > +     data = kvmalloc(len + 1, GFP_KERNEL);
-> >
-> > Why kvmalloc() and not just kmalloc()?  How big is this buffer you are
-> > expecting to have here?
-> 
-> The ledtrig-cpu supports upto 9999 cpus.  If all these cpus were available,
-> the buffer size would be 78,890 bytes.
-> (for i in `seq 0 9999`;do echo -n " cpu$i"; done | wc -c)
-> 
-> The intention of this kvmalloc() allocation is to avoid costly allocation
-> if possible.
-
-Ah, forgot it could get that big.
-
-> > > +     if (data)
-> > > +             len = led_trigger_format(data, len + 1, false, led_cdev);
-> > >       else
-> > > -             len += scnprintf(buf+len, PAGE_SIZE - len, "none ");
-> > > +             len = -ENOMEM;
-> > >
-> > > -     list_for_each_entry(trig, &trigger_list, next_trig) {
-> > > -             if (led_cdev->trigger && !strcmp(led_cdev->trigger->name,
-> > > -                                                     trig->name))
-> > > -                     len += scnprintf(buf+len, PAGE_SIZE - len, "[%s] ",
-> > > -                                      trig->name);
-> > > -             else
-> > > -                     len += scnprintf(buf+len, PAGE_SIZE - len, "%s ",
-> > > -                                      trig->name);
-> > > -     }
-> > >       up_read(&led_cdev->trigger_lock);
-> > >       up_read(&triggers_list_lock);
-> >
-> > Two locks?  Why not 3?  5?  How about just 1?  :)
-> 
-> I don't touch these locks in this patch :)
-> 
-> Locking both locks seems to be necessary to prevent someone from changing
-> trigger_list or led_cdev->trigger.
-
-Ok, it just looked odd to me.
-
-> > > -     len += scnprintf(len+buf, PAGE_SIZE - len, "\n");
-> > > +     if (len < 0)
-> > > +             return len;
-> >
-> > You just leaked data if led_trigger_format() returned an error :(
-> >
-> > Just return -ENOMEM above if !data, which makes this much simpler.
-> 
-> We are holding the two locks, so we need to release them before return.
-> Which one do you prefer?
-> 
->         ...
->         data = kvmalloc(len + 1, GFP_KERNEL);
->         if (data)
->                 len = led_trigger_format(data, len + 1, false, led_cdev);
->         else
->                 len = -ENOMEM;
-> 
->         up_read(&led_cdev->trigger_lock);
->         up_read(&triggers_list_lock);
-> 
->         if (len < 0)
->                 return len;
-> 
-> vs.
-> 
->         ...
->         data = kvmalloc(len + 1, GFP_KERNEL);
->         if (!data) {
->                 up_read(&led_cdev->trigger_lock);
->                 up_read(&triggers_list_lock);
->                 return -ENOMEM;
->         }
->         len = led_trigger_format(data, len + 1, false, led_cdev);
-> 
->         up_read(&led_cdev->trigger_lock);
->         up_read(&triggers_list_lock);
-
-I don't care, as long as you do not leak memory I'm happy :)
-
-thanks,
-
-greg k-h
+Because the "size" keeps decreasing every time led_trigger_snprintf() is
+called by led_trigger_format().
