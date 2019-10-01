@@ -2,245 +2,146 @@ Return-Path: <SRS0=P8Ac=X2=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 587E9ECE587
-	for <linux-leds@archiver.kernel.org>; Tue,  1 Oct 2019 15:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE429C352AA
+	for <linux-leds@archiver.kernel.org>; Tue,  1 Oct 2019 18:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2392F21906
-	for <linux-leds@archiver.kernel.org>; Tue,  1 Oct 2019 15:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569943478;
-	bh=SRzR/19y35vKtCmezlBxxhi4fuH91TZ/EZTP/Qb2ZBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=E5VInAIH2RzkDfMgunO8APe5l4FABxlPDhsJ1cCVoE0nJdrr2DhoFGg2ERAhxu7K/
-	 CH3sr20ZKu7KMioMIfHO+dDxK+cZgcssrW6a6Wc0ygeRACHuOz3Xzb5IBKHvrhSQw2
-	 5fKLzIU7nXilz1aQJjnhtr5soJQbhY+yZZSI7ay8=
+	by mail.kernel.org (Postfix) with ESMTP id 8D9F021906
+	for <linux-leds@archiver.kernel.org>; Tue,  1 Oct 2019 18:04:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="G7aZZl8T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389495AbfJAPYe (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 1 Oct 2019 11:24:34 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52180 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389331AbfJAPYd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 1 Oct 2019 11:24:33 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 7so3876143wme.1;
-        Tue, 01 Oct 2019 08:24:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qIz20MyIeJ4YRS3q69VVUyLU1/qqd5R6Zf74yV/b9ww=;
-        b=tMJR1DKYuJ/HYqsTxR6if2fyU/wWMRmpHG62KZ1lIyk8JSPisThK+ZTZA0bRN3kEnu
-         iJxykDLKTqLRSjAlHGp4hAzoB6bnBZmdBteJ+qDSgQhAORi7GTtM709ySi2rfGB4vEN3
-         219q4uDcK6YA5/EWxdJU9yAkaUSaKoNT3LKOLeaA6ewjk3RUsN+1TMaiAzLk/V1MUoXW
-         4PTxHFlRMJa4jw/2xO4qPBt6sAvA7L+Bze5tfvRB9I7d4YfzL8lgjmsBDZnTvqVLXWz/
-         XGFDEAGo9bugFgonAmPeD1kBcRCxZnxB4W9aG5bA/UkMWXVtsdEcBCDmbDsbneYAfHYu
-         mP9w==
-X-Gm-Message-State: APjAAAUQXk3ONav8skZU1A/Cql1LXyee9IBgA4syfHBaHommjAKmA5ya
-        mQGyO+Vw1bmJHnRTu+tZJ84=
-X-Google-Smtp-Source: APXvYqzgA01GZd24cae9Ug02bMZVgbmEoHDdIAy+uHttgtTk16j30giNWmxHikB8fPnYof+FbNzouQ==
-X-Received: by 2002:a1c:60c1:: with SMTP id u184mr4104201wmb.32.1569943469278;
-        Tue, 01 Oct 2019 08:24:29 -0700 (PDT)
-Received: from pi3 ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id i1sm4699293wmb.19.2019.10.01.08.24.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 08:24:28 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 17:24:22 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-crypto@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] dt-bindings: sram: Convert SRAM bindings to
- json-schema
-Message-ID: <20191001152422.GA31358@pi3>
-References: <20190918173141.4314-1-krzk@kernel.org>
- <20190918173141.4314-2-krzk@kernel.org>
- <20191001140003.GA31344@bogus>
+        id S1727562AbfJASEY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 1 Oct 2019 14:04:24 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37688 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727536AbfJASEX (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 1 Oct 2019 14:04:23 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x91I4JCx039866;
+        Tue, 1 Oct 2019 13:04:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569953060;
+        bh=GGDOyQL+13uGomQIzn17lPQZjfrmmobRzDF35QsnYtE=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=G7aZZl8TjDZUPebnntJYia0rvpwZrWt9tckxhEtPSyPDXuD3pMm+HPNWM/30ndW62
+         lriQiXdWk6JpjkAn0CLMogGqoGH2WOteYyZRgx0foaEfwlhfPgns5/DqkAP66A5jBq
+         LP8W+UVFNs9aVqJSe6k4I8mJKr8K42XZk90/OhuU=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x91I4J1O025096
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 1 Oct 2019 13:04:19 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 1 Oct
+ 2019 13:04:09 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 1 Oct 2019 13:04:19 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x91I4JZp126163;
+        Tue, 1 Oct 2019 13:04:19 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH 3/5] leds: flash: Remove extern from the header file
+Date:   Tue, 1 Oct 2019 13:04:37 -0500
+Message-ID: <20191001180439.8312-3-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
+In-Reply-To: <20191001180439.8312-1-dmurphy@ti.com>
+References: <20191001180439.8312-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191001140003.GA31344@bogus>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 09:00:03AM -0500, Rob Herring wrote:
-> On Wed, Sep 18, 2019 at 07:31:35PM +0200, Krzysztof Kozlowski wrote:
-> > Convert generic mmio-sram bindings to DT schema format using
-> > json-schema.
-> 
-> I've been slow getting to this because I started on the same thing...
-> 
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > 
-> > ---
-> > 
-> > Changes since v1:
-> > 1. Indent example with four spaces (more readable).
-> > ---
-> >  .../devicetree/bindings/sram/sram.txt         |  80 ----------
-> >  .../devicetree/bindings/sram/sram.yaml        | 138 ++++++++++++++++++
-> >  2 files changed, 138 insertions(+), 80 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/sram/sram.txt
-> >  create mode 100644 Documentation/devicetree/bindings/sram/sram.yaml
-> 
-> > diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
-> > new file mode 100644
-> > index 000000000000..8d9d6ce494b2
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/sram/sram.yaml
-> > @@ -0,0 +1,138 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/sram/sram.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Generic on-chip SRAM
-> > +
-> > +maintainers:
-> > +  - FIXME <who@should.it.be>
-> 
-> You can put me.
+extern is implied and is not needed in the header file.
+Remove the extern keyword and re-align the code.
 
-Sure.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ include/linux/led-class-flash.h | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-> 
-> > +
-> > +description: |+
-> > +  Simple IO memory regions to be managed by the genalloc API.
-> > +
-> > +  Each child of the sram node specifies a region of reserved memory. Each
-> > +  child node should use a 'reg' property to specify a specific range of
-> > +  reserved memory.
-> > +
-> > +  Following the generic-names recommended practice, node names should
-> > +  reflect the purpose of the node. Unit address (@<address>) should be
-> > +  appended to the name.
-> > +
-> > +properties:
-> > +  $nodename:
-> > +    pattern: "^sram(@.*)?"
-> > +
-> > +  compatible:
-> > +    items:
-> > +      - enum:
-> > +          - mmio-sram
-> > +          - atmel,sama5d2-securam
-> 
-> I was trying to go down the path of putting all the compatibles for 
-> various SRAM bindings here, but I ran into some issues. I need to 
-> revisit as I've forgotten the exact issue.
-> 
-> This would need to be a 'contains' if this is going to work for others.
-
-OK.
-
-> 
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  "#address-cells":
-> > +    description: Should use the same values as the root node.
-> > +
-> > +  "#size-cells":
-> > +    description: Should use the same values as the root node.
-> 
-> I defined both of these to be 1 as 4GB of SRAM should be enough for a 
-> while. We can debate 1 or 2 cells vs. 1, but there's no reason it has to 
-> be the same as the root (unless we're failing to do address 
-> translation).
-
-That was copied from txt version. I can adjust them to 1 although this
-is will more than simple conversion.
-
-> 
-> > +
-> > +  ranges:
-> > +    description:
-> > +      Should translate from local addresses within the sram to bus addresses.
-> > +
-> > +  no-memory-wc:
-> > +    description:
-> > +      The flag indicating, that SRAM memory region has not to be remapped
-> > +      as write combining. WC is used by default.
-> > +    type: boolean
-> > +
-> > +  # TODO: additionalProperties: false
-> > +
-> > +patternProperties:
-> > +  "^([a-z]*-)?sram@[a-f0-9]$":
-> > +    type: object
-> > +    description:
-> > +      Each child of the sram node specifies a region of reserved memory.
-> > +    properties:
-> > +      reg:
-> > +        description:
-> > +          IO mem address range, relative to the SRAM range.
-> 
-> maxItems: 1
-
-OK
-
-> 
-> > +
-> > +      compatible:
-> > +        $ref: /schemas/types.yaml#/definitions/string
-> > +        description:
-> > +          Should contain a vendor specific string in the form
-> > +          <vendor>,[<device>-]<usage>
-> > +
-> > +      pool:
-> > +        description:
-> > +          Indicates that the particular reserved SRAM area is addressable
-> > +          and in use by another device or devices.
-> > +        type: boolean
-> > +
-> > +      export:
-> > +        description:
-> > +          Indicates that the reserved SRAM area may be accessed outside
-> > +          of the kernel, e.g. by bootloader or userspace.
-> > +        type: boolean
-> > +
-> > +      protect-exec:
-> > +        description: |
-> > +          Same as 'pool' above but with the additional constraint that code
-> > +          will be run from the region and that the memory is maintained as
-> > +          read-only, executable during code execution. NOTE: This region must
-> > +          be page aligned on start and end in order to properly allow
-> > +          manipulation of the page attributes.
-> > +        type: boolean
-> > +
-> > +      label:
-> > +        $ref: /schemas/types.yaml#/definitions/string
-> 
-> Already has a type definition.
-
-OK
-
-Best regards,
-Krzysztof
+diff --git a/include/linux/led-class-flash.h b/include/linux/led-class-flash.h
+index 7ff287a9e2a2..1bd83159fa4c 100644
+--- a/include/linux/led-class-flash.h
++++ b/include/linux/led-class-flash.h
+@@ -94,12 +94,12 @@ static inline struct led_classdev_flash *lcdev_to_flcdev(
+  *
+  * Returns: 0 on success or negative error value on failure
+  */
+-extern int led_classdev_flash_register_ext(struct device *parent,
+-					struct led_classdev_flash *fled_cdev,
+-					struct led_init_data *init_data);
++int led_classdev_flash_register_ext(struct device *parent,
++				    struct led_classdev_flash *fled_cdev,
++				    struct led_init_data *init_data);
+ 
+ static inline int led_classdev_flash_register(struct device *parent,
+-					struct led_classdev_flash *fled_cdev)
++					   struct led_classdev_flash *fled_cdev)
+ {
+ 	return led_classdev_flash_register_ext(parent, fled_cdev, NULL);
+ }
+@@ -111,7 +111,7 @@ static inline int led_classdev_flash_register(struct device *parent,
+  *
+  * Unregister a previously registered via led_classdev_flash_register object
+  */
+-extern void led_classdev_flash_unregister(struct led_classdev_flash *fled_cdev);
++void led_classdev_flash_unregister(struct led_classdev_flash *fled_cdev);
+ 
+ /**
+  * led_set_flash_strobe - setup flash strobe
+@@ -159,8 +159,8 @@ static inline int led_get_flash_strobe(struct led_classdev_flash *fled_cdev,
+  *
+  * Returns: 0 on success or negative error value on failure
+  */
+-extern int led_set_flash_brightness(struct led_classdev_flash *fled_cdev,
+-					u32 brightness);
++int led_set_flash_brightness(struct led_classdev_flash *fled_cdev,
++			     u32 brightness);
+ 
+ /**
+  * led_update_flash_brightness - update flash LED brightness
+@@ -171,7 +171,7 @@ extern int led_set_flash_brightness(struct led_classdev_flash *fled_cdev,
+  *
+  * Returns: 0 on success or negative error value on failure
+  */
+-extern int led_update_flash_brightness(struct led_classdev_flash *fled_cdev);
++int led_update_flash_brightness(struct led_classdev_flash *fled_cdev);
+ 
+ /**
+  * led_set_flash_timeout - set flash LED timeout
+@@ -182,8 +182,7 @@ extern int led_update_flash_brightness(struct led_classdev_flash *fled_cdev);
+  *
+  * Returns: 0 on success or negative error value on failure
+  */
+-extern int led_set_flash_timeout(struct led_classdev_flash *fled_cdev,
+-					u32 timeout);
++int led_set_flash_timeout(struct led_classdev_flash *fled_cdev, u32 timeout);
+ 
+ /**
+  * led_get_flash_fault - get the flash LED fault
+@@ -194,7 +193,6 @@ extern int led_set_flash_timeout(struct led_classdev_flash *fled_cdev,
+  *
+  * Returns: 0 on success or negative error value on failure
+  */
+-extern int led_get_flash_fault(struct led_classdev_flash *fled_cdev,
+-					u32 *fault);
++int led_get_flash_fault(struct led_classdev_flash *fled_cdev, u32 *fault);
+ 
+ #endif	/* __LINUX_FLASH_LEDS_H_INCLUDED */
+-- 
+2.22.0.214.g8dca754b1e
 
