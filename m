@@ -5,54 +5,54 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9046FECE58A
-	for <linux-leds@archiver.kernel.org>; Tue,  1 Oct 2019 18:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C083ECE587
+	for <linux-leds@archiver.kernel.org>; Tue,  1 Oct 2019 18:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59BEA21D80
-	for <linux-leds@archiver.kernel.org>; Tue,  1 Oct 2019 18:04:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13D6121924
+	for <linux-leds@archiver.kernel.org>; Tue,  1 Oct 2019 18:04:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="StMs0bl1"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BjM/0eE3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731213AbfJASE1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 1 Oct 2019 14:04:27 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37686 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727055AbfJASEY (ORCPT
+        id S1731555AbfJASEd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 1 Oct 2019 14:04:33 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:42210 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbfJASEY (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Tue, 1 Oct 2019 14:04:24 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x91I4Koq039874;
-        Tue, 1 Oct 2019 13:04:20 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x91I4Jop054153;
+        Tue, 1 Oct 2019 13:04:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569953060;
-        bh=0MAAkXKcdPthxYixT0lj3t8FWR9F4q7jJ98gke/CcJo=;
+        s=ti-com-17Q1; t=1569953059;
+        bh=2GcFghmzbOxrboNekJ5oh9fzsxmTa0oc0n6YrSflEMI=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=StMs0bl1+he7hgTa+KETPq8KbTJZT2gH68TxrzgITmj9KTgKHJfnGHpIT9MUqTnAL
-         YWUzO72oiq0cZh43Jq83UC674vxiZyIRRqlM4j/zTQVbBgKsJPRzRr9ut2dZ1kkUC0
-         saKoVjxuk735m4xFonoUoB2iito5kATs64UTHPGs=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x91I4KeC025102
+        b=BjM/0eE31GIF8cYhZhjX2MPveroV0odtGJ5z7GCVwOfZvqviqxbZIhlDV0sylvLkR
+         rZfc9B41ElRHqr+aFMLWc7ArV8v6Cg7Z8rkpsLBL6FCXE/XfJsY6Udvm3XkDrBfbLO
+         tt91laFPzyAFryJUQbvoBDAoKW7rs2BN3StulccI=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x91I4JMU036210
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 1 Oct 2019 13:04:20 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 1 Oct 2019 13:04:19 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 1 Oct
  2019 13:04:19 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
  Frontend Transport; Tue, 1 Oct 2019 13:04:19 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x91I4J4E061654;
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x91I4J0a075928;
         Tue, 1 Oct 2019 13:04:19 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 4/5] leds: flash: Add devm_* functions to the flash class
-Date:   Tue, 1 Oct 2019 13:04:38 -0500
-Message-ID: <20191001180439.8312-4-dmurphy@ti.com>
+Subject: [PATCH 2/5] leds: flash: Convert non extended registration to inline
+Date:   Tue, 1 Oct 2019 13:04:36 -0500
+Message-ID: <20191001180439.8312-2-dmurphy@ti.com>
 X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 In-Reply-To: <20191001180439.8312-1-dmurphy@ti.com>
 References: <20191001180439.8312-1-dmurphy@ti.com>
@@ -65,101 +65,32 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add the missing device managed API for registration and
-unregistration for the LED flash class.
+Convert the #define non-extended registration API to an
+inline function.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/led-class-flash.c  | 50 +++++++++++++++++++++++++++++++++
- include/linux/led-class-flash.h | 14 +++++++++
- 2 files changed, 64 insertions(+)
+ include/linux/led-class-flash.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
-index 60c3de5c6b9f..c2b4fd02a1bc 100644
---- a/drivers/leds/led-class-flash.c
-+++ b/drivers/leds/led-class-flash.c
-@@ -327,6 +327,56 @@ void led_classdev_flash_unregister(struct led_classdev_flash *fled_cdev)
- }
- EXPORT_SYMBOL_GPL(led_classdev_flash_unregister);
- 
-+static void devm_led_classdev_flash_release(struct device *dev, void *res)
-+{
-+	led_classdev_flash_unregister(*(struct led_classdev_flash **)res);
-+}
-+
-+int devm_led_classdev_flash_register_ext(struct device *parent,
-+				     struct led_classdev_flash *fled_cdev,
-+				     struct led_init_data *init_data)
-+{
-+	struct led_classdev_flash **dr;
-+	int ret;
-+
-+	dr = devres_alloc(devm_led_classdev_flash_release, sizeof(*dr),
-+			  GFP_KERNEL);
-+	if (!dr)
-+		return -ENOMEM;
-+
-+	ret = led_classdev_flash_register_ext(parent, fled_cdev, init_data);
-+	if (ret) {
-+		devres_free(dr);
-+		return ret;
-+	}
-+
-+	*dr = fled_cdev;
-+	devres_add(parent, dr);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(devm_led_classdev_flash_register_ext);
-+
-+static int devm_led_classdev_flash_match(struct device *dev,
-+					      void *res, void *data)
-+{
-+	struct fled_cdev **p = res;
-+
-+	if (WARN_ON(!p || !*p))
-+		return 0;
-+
-+	return *p == data;
-+}
-+
-+void devm_led_classdev_flash_unregister(struct device *dev,
-+				  	     struct led_classdev_flash *fled_cdev)
-+{
-+	WARN_ON(devres_release(dev,
-+			       devm_led_classdev_flash_release,
-+			       devm_led_classdev_flash_match, fled_cdev));
-+}
-+EXPORT_SYMBOL_GPL(devm_led_classdev_flash_unregister);
-+
- static void led_clamp_align(struct led_flash_setting *s)
- {
- 	u32 v, offset;
 diff --git a/include/linux/led-class-flash.h b/include/linux/led-class-flash.h
-index 1bd83159fa4c..21a3358a1731 100644
+index 1e824963af17..7ff287a9e2a2 100644
 --- a/include/linux/led-class-flash.h
 +++ b/include/linux/led-class-flash.h
-@@ -113,6 +113,20 @@ static inline int led_classdev_flash_register(struct device *parent,
-  */
- void led_classdev_flash_unregister(struct led_classdev_flash *fled_cdev);
+@@ -98,8 +98,11 @@ extern int led_classdev_flash_register_ext(struct device *parent,
+ 					struct led_classdev_flash *fled_cdev,
+ 					struct led_init_data *init_data);
  
-+int devm_led_classdev_flash_register_ext(struct device *parent,
-+				     struct led_classdev_flash *fled_cdev,
-+				     struct led_init_data *init_data);
-+
-+
-+static inline int devm_led_classdev_flash_register(struct device *parent,
-+				     struct led_classdev_flash *fled_cdev)
+-#define led_classdev_flash_register(parent, fled_cdev)		\
+-	led_classdev_flash_register_ext(parent, fled_cdev, NULL)
++static inline int led_classdev_flash_register(struct device *parent,
++					struct led_classdev_flash *fled_cdev)
 +{
-+	return devm_led_classdev_flash_register_ext(parent, fled_cdev, NULL);
++	return led_classdev_flash_register_ext(parent, fled_cdev, NULL);
 +}
-+
-+void devm_led_classdev_flash_unregister(struct device *parent,
-+					struct led_classdev_flash *fled_cdev);
-+
+ 
  /**
-  * led_set_flash_strobe - setup flash strobe
-  * @fled_cdev: the flash LED to set strobe on
+  * led_classdev_flash_unregister - unregisters an object of led_classdev class
 -- 
 2.22.0.214.g8dca754b1e
 
