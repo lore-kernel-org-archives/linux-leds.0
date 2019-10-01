@@ -7,54 +7,53 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC64BC352AA
-	for <linux-leds@archiver.kernel.org>; Tue,  1 Oct 2019 18:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36454ECE587
+	for <linux-leds@archiver.kernel.org>; Tue,  1 Oct 2019 18:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1CE921924
+	by mail.kernel.org (Postfix) with ESMTP id EE7C921D79
 	for <linux-leds@archiver.kernel.org>; Tue,  1 Oct 2019 18:04:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OOXuR11S"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X1HMrt9O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731575AbfJASEd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 1 Oct 2019 14:04:33 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37684 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727269AbfJASEY (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 1 Oct 2019 14:04:24 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x91I4KD6039878;
-        Tue, 1 Oct 2019 13:04:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569953060;
-        bh=WT/P1mEnJj8WBgXcn3xJJ5zXtDgJwUFTqbvfHlc/1d4=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=OOXuR11SyBzFS6yxZ4SvKUl3JFco8sOVmcUwsszet4vV6w64xazynBXFD3A03SrYI
-         VVVzBtAiMoUU2qyPLBqnjYEoLkRMbArd9C2Je9E6iUpjRJKq8tK8gxZnTlohgq2dEs
-         YS6WqBY2VjAoIYscmP1sPwpuUveXBipundRcI7UU=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x91I4K30037723;
-        Tue, 1 Oct 2019 13:04:20 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 1 Oct
- 2019 13:04:09 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 1 Oct 2019 13:04:09 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x91I4J9b126184;
+        id S1731030AbfJASEY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 1 Oct 2019 14:04:24 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:34464 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727176AbfJASEX (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 1 Oct 2019 14:04:23 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x91I4Jkq062621;
         Tue, 1 Oct 2019 13:04:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569953059;
+        bh=G5dE59ax181azOisHSqvm9h6ieZKUV+zX+MgaCfGHj8=;
+        h=From:To:CC:Subject:Date;
+        b=X1HMrt9OTxUASF5Eq5yoPjn/G0KYc+DRpOtRUiPAQ3ubsafzXgbrAs1kADn37a94A
+         Y2YAna15WGq6j4VpCmEyzJ0T+Uh0sq9xxYUoNM8JB1J+byGxzjV+El5fT4JNKCGnQc
+         y2wnEYU0cySaXwMFPokhcl68ZbpClrWjW5BPG9FY=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x91I4JMW036201
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 1 Oct 2019 13:04:19 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 1 Oct
+ 2019 13:04:19 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 1 Oct 2019 13:04:08 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x91I4IBK061630;
+        Tue, 1 Oct 2019 13:04:18 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 5/5] leds: lm3601x: Convert class registration to device managed
-Date:   Tue, 1 Oct 2019 13:04:39 -0500
-Message-ID: <20191001180439.8312-5-dmurphy@ti.com>
+Subject: [PATCH 1/5] leds: Kconfig: Be consistent with the usage of "LED"
+Date:   Tue, 1 Oct 2019 13:04:35 -0500
+Message-ID: <20191001180439.8312-1-dmurphy@ti.com>
 X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
-In-Reply-To: <20191001180439.8312-1-dmurphy@ti.com>
-References: <20191001180439.8312-1-dmurphy@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -64,27 +63,36 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Convert LED flash class registration to device managed class
-registration API.
+Update the Kconfig to be consistent in the case of using
+"LED" in the Kconfig.  LED is an acronym and should be
+capitalized.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-lm3601x.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/leds/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3601x.c b/drivers/leds/leds-lm3601x.c
-index b02972f1a341..a68e4f97739c 100644
---- a/drivers/leds/leds-lm3601x.c
-+++ b/drivers/leds/leds-lm3601x.c
-@@ -350,8 +350,7 @@ static int lm3601x_register_leds(struct lm3601x_led *led,
- 	init_data.devicename = led->client->name;
- 	init_data.default_label = (led->led_mode == LM3601X_LED_TORCH) ?
- 					"torch" : "infrared";
--
--	return led_classdev_flash_register_ext(&led->client->dev,
-+	return devm_led_classdev_flash_register_ext(&led->client->dev,
- 						&led->fled_cdev, &init_data);
- }
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 6e7703fd03d0..4b68520ac251 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -17,7 +17,7 @@ if NEW_LEDS
+ config LEDS_CLASS
+ 	tristate "LED Class Support"
+ 	help
+-	  This option enables the led sysfs class in /sys/class/leds.  You'll
++	  This option enables the LED sysfs class in /sys/class/leds.  You'll
+ 	  need this to do anything useful with LEDs.  If unsure, say N.
+ 
+ config LEDS_CLASS_FLASH
+@@ -35,7 +35,7 @@ config LEDS_BRIGHTNESS_HW_CHANGED
+ 	depends on LEDS_CLASS
+ 	help
+ 	  This option enables support for the brightness_hw_changed attribute
+-	  for led sysfs class devices under /sys/class/leds.
++	  for LED sysfs class devices under /sys/class/leds.
+ 
+ 	  See Documentation/ABI/testing/sysfs-class-led for details.
  
 -- 
 2.22.0.214.g8dca754b1e
