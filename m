@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71419C4360C
-	for <linux-leds@archiver.kernel.org>; Tue,  8 Oct 2019 20:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38946C10F14
+	for <linux-leds@archiver.kernel.org>; Tue,  8 Oct 2019 20:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4890821871
-	for <linux-leds@archiver.kernel.org>; Tue,  8 Oct 2019 20:48:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FF8221871
+	for <linux-leds@archiver.kernel.org>; Tue,  8 Oct 2019 20:48:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OmHvTmqp"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LYGHrPTn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731261AbfJHUst (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 8 Oct 2019 16:48:49 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:43492 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731134AbfJHUsZ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 8 Oct 2019 16:48:25 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x98KmMpG114907;
+        id S1731051AbfJHUsz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 8 Oct 2019 16:48:55 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:45800 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731127AbfJHUsY (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 8 Oct 2019 16:48:24 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x98KmMlk097369;
         Tue, 8 Oct 2019 15:48:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
         s=ti-com-17Q1; t=1570567702;
-        bh=nbVVUZ3Qhf2Oih+Vzfzrpge7klNd8/7wkUn5sxV3aTo=;
+        bh=DWlAPkPyGPLMlgt95vLmSAWY5AQ+1wT9MtJDSpag9us=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=OmHvTmqpYXk3YehzINLxlEUsn8Y8eJXtOKxzN8ef+hzdC2q+OWNj4EL25/9h8LkH5
-         F159exaMX4q3nMIFTFvAA6+CDV5k1G5RwZYSKeOYrm+V2R3OLWrUX6UE5ekzV6Ypad
-         yalNbSB+ghNpLKE7A7icLFl6twNL5iJFqcL9u6Bc=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x98KmMih027727
+        b=LYGHrPTnNtKtCzDRJsLgICNdgnZSZ9b3wbgwf4ovaCzoKPWOfo8bj1lVo0LmeGJrY
+         mD7tQENm72502kHdhA2hUfm+8UX1uhx0QeycmSAgom+KqTwwpkSfMOwCjRjOCFr645
+         YFVu9KB65NL4mUijJsGkLvNS+4Ib9yGhv73go6qk=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x98KmM2T042373
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
         Tue, 8 Oct 2019 15:48:22 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 8 Oct
- 2019 15:48:22 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 15:48:19 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 8 Oct 2019 15:48:19 -0500
+ Frontend Transport; Tue, 8 Oct 2019 15:48:22 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x98KmMXt066700;
-        Tue, 8 Oct 2019 15:48:22 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x98KmLSN073126;
+        Tue, 8 Oct 2019 15:48:21 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v11 16/16] leds: lp5523: Fix checkpatch issues in the code
-Date:   Tue, 8 Oct 2019 15:48:00 -0500
-Message-ID: <20191008204800.19870-17-dmurphy@ti.com>
+Subject: [PATCH v11 14/16] leds: lp5521: Add multicolor framework intensity support
+Date:   Tue, 8 Oct 2019 15:47:58 -0500
+Message-ID: <20191008204800.19870-15-dmurphy@ti.com>
 X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 In-Reply-To: <20191008204800.19870-1-dmurphy@ti.com>
 References: <20191008204800.19870-1-dmurphy@ti.com>
@@ -65,65 +65,53 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Fix checkpatch errors and warnings for the LP5523.c device
-driver.
+Add the intensity function call back to support the multicolor
+framework. This function allows setting a specific brightness on
+a specific channel.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-lp5523.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/leds/leds-lp5521.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index 5d6002e4d657..3c7c2e68e137 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -23,13 +23,13 @@
+diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+index 6f0272249dc8..05731f405c9a 100644
+--- a/drivers/leds/leds-lp5521.c
++++ b/drivers/leds/leds-lp5521.c
+@@ -349,6 +349,25 @@ static int lp5521_run_selftest(struct lp55xx_chip *chip, char *buf)
+ 	return 0;
+ }
  
- #define LP5523_PROGRAM_LENGTH		32	/* bytes */
- /* Memory is used like this:
--   0x00 engine 1 program
--   0x10 engine 2 program
--   0x20 engine 3 program
--   0x30 engine 1 muxing info
--   0x40 engine 2 muxing info
--   0x50 engine 3 muxing info
--*/
-+ * 0x00 engine 1 program
-+ * 0x10 engine 2 program
-+ * 0x20 engine 3 program
-+ * 0x30 engine 1 muxing info
-+ * 0x40 engine 2 muxing info
-+ * 0x50 engine 3 muxing info
-+ */
- #define LP5523_MAX_LEDS			9
- 
- /* Registers */
-@@ -326,7 +326,7 @@ static int lp5523_update_program_memory(struct lp55xx_chip *chip,
- 					const u8 *data, size_t size)
- {
- 	u8 pattern[LP5523_PROGRAM_LENGTH] = {0};
--	unsigned cmd;
-+	unsigned int cmd;
- 	char c[3];
- 	int nrchars;
- 	int ret;
-@@ -468,6 +468,7 @@ static int lp5523_mux_parse(const char *buf, u16 *mux, size_t len)
- static void lp5523_mux_to_array(u16 led_mux, char *array)
- {
- 	int i, pos = 0;
++static int lp5521_led_intensity(struct lp55xx_led *led)
++{
++	struct lp55xx_chip *chip = led->chip;
++	int ret;
++	int i;
 +
- 	for (i = 0; i < LP5523_MAX_LEDS; i++)
- 		pos += sprintf(array + pos, "%x", LED_ACTIVE(led_mux, i));
- 
-@@ -506,7 +507,7 @@ static int lp5523_load_mux(struct lp55xx_chip *chip, u16 mux, int nr)
- 	if (ret)
- 		return ret;
- 
--	ret = lp55xx_write(chip, LP5523_REG_PROG_MEM , (u8)(mux >> 8));
-+	ret = lp55xx_write(chip, LP5523_REG_PROG_MEM, (u8)(mux >> 8));
- 	if (ret)
- 		return ret;
- 
++	mutex_lock(&chip->lock);
++	for (i = 0; i < led->mc_cdev.num_leds; i++) {
++		ret = lp55xx_write(chip,
++				   LP5521_REG_LED_PWM_BASE +
++				   led->color_component[i].output_num,
++				   led->color_component[i].brightness);
++		if (ret)
++			break;
++	}
++	mutex_unlock(&chip->lock);
++	return ret;
++}
++
+ static int lp5521_led_brightness(struct lp55xx_led *led)
+ {
+ 	struct lp55xx_chip *chip = led->chip;
+@@ -490,6 +509,7 @@ static struct lp55xx_device_config lp5521_cfg = {
+ 	.max_channel  = LP5521_MAX_LEDS,
+ 	.post_init_device   = lp5521_post_init_device,
+ 	.brightness_fn      = lp5521_led_brightness,
++	.color_intensity_fn = lp5521_led_intensity,
+ 	.set_led_current    = lp5521_set_led_current,
+ 	.firmware_cb        = lp5521_firmware_loaded,
+ 	.run_engine         = lp5521_run_engine,
 -- 
 2.22.0.214.g8dca754b1e
 
