@@ -2,106 +2,163 @@ Return-Path: <SRS0=DJpu=YB=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B65CC4360C
-	for <linux-leds@archiver.kernel.org>; Tue,  8 Oct 2019 20:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3807CECE596
+	for <linux-leds@archiver.kernel.org>; Tue,  8 Oct 2019 20:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E95DB21835
-	for <linux-leds@archiver.kernel.org>; Tue,  8 Oct 2019 20:43:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 040F521871
+	for <linux-leds@archiver.kernel.org>; Tue,  8 Oct 2019 20:48:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OnuQJfIi"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pbPK9HYV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730720AbfJHUnI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 8 Oct 2019 16:43:08 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44537 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730523AbfJHUnI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 8 Oct 2019 16:43:08 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z9so20922757wrl.11;
-        Tue, 08 Oct 2019 13:43:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=WWwn+BDhcbOGBxgKsYFakYG+EwuX3cbPf1a14GVaBTU=;
-        b=OnuQJfIibD7d3RvSZZN35NnxUvR85Sf/r20VXLk3biySO4yxKmevZnQ/kQVQZ/Wzm6
-         TzpLZvszOoDVaibLNoJA/ahk0O0T9QlGkTIHmwZiZ4CJgcRC5YpDXJlD/W0ivkvtGmeq
-         HlgCzwBNy5j8T5q6+gZLDnujBLohWcmUz2+qRlk4AFF/WL4NS7+YYDhx1fpJZaauRlJ8
-         x/m2ZZ028CerRFTrONV1FbnS5ass2/2Brt8FaHpKzgzNA0YiMigbxpWSHZEzpPGFpPGP
-         bvlMZLIu0B2ZrzyWw2VkVE82pUFsd8XR0Vrh4U790DNdxADq8J62P0W+86GKW6S3+beD
-         Mivw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=WWwn+BDhcbOGBxgKsYFakYG+EwuX3cbPf1a14GVaBTU=;
-        b=UyfZ6oUBm+SxIXcNtnU2Mly2uTokKtALHJh0UbBvEAmpSArGw5H3aNIg7S6r4R1Igm
-         UAXxt4ctiwTc8PTM1vlrtrYVcnzrpP+gWgoGH7E7kDZNZt3YJxk9mCcaHCXZ70vkTxOa
-         8tL4Tt7YV3MrkQBB6HgqgA7sSqmVbkDmsrJGH1zw8h8ad2QXyB73t9b1jmts9Hozkko+
-         Hs6Q/kvu6BRBeSdol/7M6ahJ9WctzCNERAxol6RjL/q5B/i0Q+JX/g5qZI0honKkge1p
-         WX5uL7ul58fmjwuvc6+yD8lut+QDhX56TpaeIzylociUcl0DPcjhJA/vL2Ac67mxA7oO
-         HqmQ==
-X-Gm-Message-State: APjAAAVBl5AhJLLfukv45O2TNf4lx+zZltSmYX+U6n/t/vpBmlmWfLnk
-        sWmjmcLC5USZoXNOOWOcmFj3eZ19
-X-Google-Smtp-Source: APXvYqwcR1fV/EF1kGFCUEGey7i/HTucQnwdHVUFMdyl3+SmC/etQNtGJHI8CKcHrGRn+wnXKQKAbA==
-X-Received: by 2002:a5d:6a09:: with SMTP id m9mr26979486wru.12.1570567386394;
-        Tue, 08 Oct 2019 13:43:06 -0700 (PDT)
-Received: from myhost.home (bgs228.neoplus.adsl.tpnet.pl. [83.28.82.228])
-        by smtp.gmail.com with ESMTPSA id o22sm47057989wra.96.2019.10.08.13.43.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Oct 2019 13:43:05 -0700 (PDT)
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        jacek.anaszewski@gmail.com
-Subject: [GIT PULL] LED fixes for 5.4-rc3.
-Date:   Tue,  8 Oct 2019 22:42:58 +0200
-Message-Id: <20191008204258.22196-1-jacek.anaszewski@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        id S1731175AbfJHUs1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 8 Oct 2019 16:48:27 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:45052 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731135AbfJHUs0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 8 Oct 2019 16:48:26 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x98KmMuw092708;
+        Tue, 8 Oct 2019 15:48:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570567702;
+        bh=Z4PZA7STOJQqwmrnX0Trv7XrUhkqugQl6U0wq3z09nk=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=pbPK9HYVhsRW+ivkPANEXcP99CLpykzuerIIoS4FJ7p2yi3fO7a4NcV9B6NWSyhdP
+         kenZXCPnl1GyrNLKmuQ5RQXniZLpMep7vf3AK/DclEtamSoI+8mt60XdMe54ehZJnm
+         rCFFxS0jw8aBQ600xmT8xrCarp5mzI8u6YpmYiYs=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x98KmM1O062222
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Oct 2019 15:48:22 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 8 Oct
+ 2019 15:48:19 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 8 Oct 2019 15:48:22 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x98KmMqq095766;
+        Tue, 8 Oct 2019 15:48:22 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v11 15/16] leds: lp55xx: Fix checkpatch file permissions issues
+Date:   Tue, 8 Oct 2019 15:47:59 -0500
+Message-ID: <20191008204800.19870-16-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
+In-Reply-To: <20191008204800.19870-1-dmurphy@ti.com>
+References: <20191008204800.19870-1-dmurphy@ti.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Linus,
+Fix the checkpatch warnings for the use of the file permission macros.
+In converting the file permissions to the DEVICE_ATTR_XX macros the
+call back function names needed to be updated within the code.
 
-Please pull two patches for 5.4-rc3:
+This means that the lp55xx_ needed to be dropped in the name to keep in
+harmony with the ABI documentation.
 
-- fix a leftover from earlier stage of development in the documentation
-  of recently added led_compose_name() and fix old mistake in
-  the documentation of led_set_brightness_sync() parameter name.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ drivers/leds/leds-lp55xx-common.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-- MAINTAINERS: add pointer to Pavel Machek's linux-leds.git tree.
-  Pavel is going to take over LED tree maintainership
-  from myself.
+diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+index 85629f836082..fc5224108c64 100644
+--- a/drivers/leds/leds-lp55xx-common.c
++++ b/drivers/leds/leds-lp55xx-common.c
+@@ -78,7 +78,7 @@ static int lp55xx_post_init_device(struct lp55xx_chip *chip)
+ 	return cfg->post_init_device(chip);
+ }
+ 
+-static ssize_t lp55xx_show_current(struct device *dev,
++static ssize_t led_current_show(struct device *dev,
+ 			    struct device_attribute *attr,
+ 			    char *buf)
+ {
+@@ -87,7 +87,7 @@ static ssize_t lp55xx_show_current(struct device *dev,
+ 	return scnprintf(buf, PAGE_SIZE, "%d\n", led->led_current);
+ }
+ 
+-static ssize_t lp55xx_store_current(struct device *dev,
++static ssize_t led_current_store(struct device *dev,
+ 			     struct device_attribute *attr,
+ 			     const char *buf, size_t len)
+ {
+@@ -111,7 +111,7 @@ static ssize_t lp55xx_store_current(struct device *dev,
+ 	return len;
+ }
+ 
+-static ssize_t lp55xx_show_max_current(struct device *dev,
++static ssize_t max_current_show(struct device *dev,
+ 			    struct device_attribute *attr,
+ 			    char *buf)
+ {
+@@ -120,9 +120,8 @@ static ssize_t lp55xx_show_max_current(struct device *dev,
+ 	return scnprintf(buf, PAGE_SIZE, "%d\n", led->max_current);
+ }
+ 
+-static DEVICE_ATTR(led_current, S_IRUGO | S_IWUSR, lp55xx_show_current,
+-		lp55xx_store_current);
+-static DEVICE_ATTR(max_current, S_IRUGO , lp55xx_show_max_current, NULL);
++static DEVICE_ATTR_RW(led_current);
++static DEVICE_ATTR_RO(max_current);
+ 
+ static struct attribute *lp55xx_led_attrs[] = {
+ 	&dev_attr_led_current.attr,
+@@ -282,7 +281,7 @@ static int lp55xx_request_firmware(struct lp55xx_chip *chip)
+ 				GFP_KERNEL, chip, lp55xx_firmware_loaded);
+ }
+ 
+-static ssize_t lp55xx_show_engine_select(struct device *dev,
++static ssize_t select_engine_show(struct device *dev,
+ 			    struct device_attribute *attr,
+ 			    char *buf)
+ {
+@@ -292,7 +291,7 @@ static ssize_t lp55xx_show_engine_select(struct device *dev,
+ 	return sprintf(buf, "%d\n", chip->engine_idx);
+ }
+ 
+-static ssize_t lp55xx_store_engine_select(struct device *dev,
++static ssize_t select_engine_store(struct device *dev,
+ 			     struct device_attribute *attr,
+ 			     const char *buf, size_t len)
+ {
+@@ -334,7 +333,7 @@ static inline void lp55xx_run_engine(struct lp55xx_chip *chip, bool start)
+ 		chip->cfg->run_engine(chip, start);
+ }
+ 
+-static ssize_t lp55xx_store_engine_run(struct device *dev,
++static ssize_t run_engine_store(struct device *dev,
+ 			     struct device_attribute *attr,
+ 			     const char *buf, size_t len)
+ {
+@@ -359,9 +358,8 @@ static ssize_t lp55xx_store_engine_run(struct device *dev,
+ 	return len;
+ }
+ 
+-static DEVICE_ATTR(select_engine, S_IRUGO | S_IWUSR,
+-		   lp55xx_show_engine_select, lp55xx_store_engine_select);
+-static DEVICE_ATTR(run_engine, S_IWUSR, NULL, lp55xx_store_engine_run);
++static DEVICE_ATTR_RW(select_engine);
++static DEVICE_ATTR_WO(run_engine);
+ 
+ static struct attribute *lp55xx_engine_attributes[] = {
+ 	&dev_attr_select_engine.attr,
+-- 
+2.22.0.214.g8dca754b1e
 
-The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
-
-  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led-fixes-for-5.4-rc3
-
-for you to fetch changes up to 4050d21d2009faccae5cab74eeb9f460f25d5108:
-
-  Add my linux-leds branch to MAINTAINERS (2019-10-08 22:09:08 +0200)
-
-Thanks,
-Jacek Anaszewski
-
-----------------------------------------------------------------
-LED fixes for 5.4-rc3.
-----------------------------------------------------------------
-Dan Murphy (1):
-      leds: core: Fix leds.h structure documentation
-
-Pavel Machek (1):
-      Add my linux-leds branch to MAINTAINERS
-
- MAINTAINERS          | 1 +
- include/linux/leds.h | 5 ++---
- 2 files changed, 3 insertions(+), 3 deletions(-)
