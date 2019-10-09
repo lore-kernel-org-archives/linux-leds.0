@@ -7,56 +7,55 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F2DC47404
-	for <linux-leds@archiver.kernel.org>; Wed,  9 Oct 2019 08:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BA0C47404
+	for <linux-leds@archiver.kernel.org>; Wed,  9 Oct 2019 08:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3576206B6
-	for <linux-leds@archiver.kernel.org>; Wed,  9 Oct 2019 08:52:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3B48206B6
+	for <linux-leds@archiver.kernel.org>; Wed,  9 Oct 2019 08:52:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="usk5TxWf"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="h2iqrqDQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730495AbfJIIwU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 9 Oct 2019 04:52:20 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:43738 "EHLO
+        id S1730000AbfJIIv5 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 9 Oct 2019 04:51:57 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:43670 "EHLO
         lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730212AbfJIIwM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Oct 2019 04:52:12 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x998q4H2035244;
-        Wed, 9 Oct 2019 03:52:04 -0500
+        with ESMTP id S1725942AbfJIIv5 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Oct 2019 04:51:57 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x998pnj6035193;
+        Wed, 9 Oct 2019 03:51:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570611125;
-        bh=s5d/szql8fU2uDVYRw2K7PeI4Cnl3Z9+5CQzwG1wYJU=;
+        s=ti-com-17Q1; t=1570611109;
+        bh=MNtYkdAzVgE8Ou25bkrDZ4gd8PxFOPcx4cXOPWheoh0=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=usk5TxWfAR6ogFjaJI14GXUZfVYQq2jWISyTbJW95JeDsUsk/EqlSVxie8frZ3npV
-         AVZzuMjtOZqj2bNAlKKcAbR5Nme/YxHYxuCP1AwEo0OSEihMKsqNTAmZi/iUoyGOeV
-         /Yww1zCQ+FyLtOkBesUAmpSnCFBLe/GGiT/8HpUw=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x998q43U023525
+        b=h2iqrqDQTjhXuTQfqbA56rBtITHeAxuvTjNW16gT+hwuHOFwRphpDZWXfnEspC1Ov
+         ZfhkVg66RB5WdlJghLp8bqUdLdHp4BSYIt00IxooPvP84XWZJMI0iDRlJDuxn7ad7c
+         YGu43lsCqP6htNP/Bm+1BZmycvss1h8/6pq5DrtY=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x998pne0043422
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Oct 2019 03:52:04 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 9 Oct 2019 03:51:49 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 9 Oct
- 2019 03:52:01 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 03:51:48 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 9 Oct 2019 03:52:04 -0500
+ Frontend Transport; Wed, 9 Oct 2019 03:51:48 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x998q3SO099447;
-        Wed, 9 Oct 2019 03:52:04 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x998pmep099135;
+        Wed, 9 Oct 2019 03:51:48 -0500
 From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <sre@kernel.org>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <lee.jones@linaro.org>, <daniel.thompson@linaro.org>
 CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <tomi.valkeinen@ti.com>, Jean-Jacques Hiblot <jjhiblot@ti.com>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH v10 5/6] dt-bindings: backlight: Add led-backlight binding
-Date:   Wed, 9 Oct 2019 10:51:26 +0200
-Message-ID: <20191009085127.22843-6-jjhiblot@ti.com>
+        <tomi.valkeinen@ti.com>, Jean-Jacques Hiblot <jjhiblot@ti.com>
+Subject: [PATCH v10 3/6] leds: Add managed API to get a LED from a device driver
+Date:   Wed, 9 Oct 2019 10:51:24 +0200
+Message-ID: <20191009085127.22843-4-jjhiblot@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191009085127.22843-1-jjhiblot@ti.com>
 References: <20191009085127.22843-1-jjhiblot@ti.com>
@@ -68,78 +67,89 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add DT binding for led-backlight.
+If the LED is acquired by a consumer device with devm_led_get(), it is
+automatically released when the device is detached.
 
-Cc: devicetree@vger.kernel.org
 Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-
+Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
+ drivers/leds/led-class.c | 49 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/leds.h     |  2 ++
+ 2 files changed, 51 insertions(+)
 
-.../leds/backlight/led-backlight.yaml         | 55 +++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/backlight/led-backlight.yaml
-
-diff --git a/Documentation/devicetree/bindings/leds/backlight/led-backlight.yaml b/Documentation/devicetree/bindings/leds/backlight/led-backlight.yaml
-new file mode 100644
-index 000000000000..47ae3d6b4f31
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/backlight/led-backlight.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/backlight/led-backlight.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 1d1f1d546dc7..639224392ffa 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -264,6 +264,55 @@ void led_put(struct led_classdev *led_cdev)
+ }
+ EXPORT_SYMBOL_GPL(led_put);
+ 
++static void devm_led_release(struct device *dev, void *res)
++{
++	struct led_classdev **p = res;
 +
-+title: LED-based Backlight Device Tree Bindings
++	led_put(*p);
++}
 +
-+maintainers:
-+  - Jean-Jacques Hiblot <jjhiblot@ti.com>
++/**
++ * devm_of_led_get - Resource-managed request of a LED device
++ * @dev:	LED consumer
++ * @index:	index of the LED to obtain in the consumer
++ *
++ * The device node of the device is parse to find the request LED device.
++ * The LED device returned from this function is automatically released
++ * on driver detach.
++ *
++ * @return a pointer to a LED device or ERR_PTR(errno) on failure.
++ */
++struct led_classdev *__must_check devm_of_led_get(struct device *dev,
++						  int index)
++{
++	struct led_classdev *led;
++	struct led_classdev **dr;
 +
-+description: |
-+  This binding is used to describe a basic backlight device made of LEDs.
-+  It can also be used to describe a backlight device controlled by the
-+  output of a LED driver.
++	if (!dev)
++		return ERR_PTR(-EINVAL);
 +
-+properties:
-+  compatible:
-+    const: led-backlight
++	/* Consummer not using device tree? */
++	if (!dev_of_node(dev))
++		return ERR_PTR(-ENOTSUPP);
 +
-+  leds:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: List of LEDs constitutive of the backlight.
++	led = of_led_get(dev_of_node(dev), index);
++	if (IS_ERR(led))
++		return led;
 +
-+  default-brightness:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Default brightness level on boot.
-+    minimum: 0
++	dr = devres_alloc(devm_led_release, sizeof(struct led_classdev *),
++			  GFP_KERNEL);
++	if (!dr) {
++		led_put(led);
++		return ERR_PTR(-ENOMEM);
++	}
 +
-+  brightness-levels:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    description: Array of distinct brightness levels. The levels must be in
-+      the range accepted by the underlying LED devices. This is used to
-+      translate a backlight brightness level into a LED brightness level. If
-+      it is not provided, the identity mapping is used.
++	*dr = led;
++	devres_add(dev, dr);
 +
-+required:
-+  - compatible
-+  - backlight-leds
++	return led;
++}
++EXPORT_SYMBOL_GPL(devm_of_led_get);
 +
-+examples:
-+  - |
-+    backlight {
-+      compatible = "led-backlight";
-+      backlight-leds = <&led1>;
-+      brightness-levels = <0 4 8 16 32 64 128 255>;
-+      default-brightness = <6>; /*6th level => brightness of the LEDs is 128*/
-+    };
-+  - |
-+    backlight {
-+      compatible = "led-backlight";
-+      backlight-leds = <&led1>, <&led2>;
-+      default-brightness = <255>;
-+    };
-+...
+ static int led_classdev_next_name(const char *init_name, char *name,
+ 				  size_t len)
+ {
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 6f7371bc7757..9b94cf752012 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -199,6 +199,8 @@ extern void led_classdev_resume(struct led_classdev *led_cdev);
+ 
+ extern struct led_classdev *of_led_get(struct device_node *np, int index);
+ extern void led_put(struct led_classdev *led_cdev);
++struct led_classdev *__must_check devm_of_led_get(struct device *dev,
++						  int index);
+ 
+ /**
+  * led_blink_set - set blinking with software fallback
 -- 
 2.17.1
 
