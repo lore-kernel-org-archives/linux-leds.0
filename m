@@ -2,136 +2,114 @@ Return-Path: <SRS0=iGkR=YD=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB932C47404
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Oct 2019 00:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B754C47404
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Oct 2019 00:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D78D206C0
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Oct 2019 00:49:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZXwkh4Yf"
+	by mail.kernel.org (Postfix) with ESMTP id 07E59206C0
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Oct 2019 00:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731553AbfJJAtk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 9 Oct 2019 20:49:40 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41774 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731230AbfJJAtk (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Oct 2019 20:49:40 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9A0nb3J119893;
-        Wed, 9 Oct 2019 19:49:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570668577;
-        bh=bXA+tWGCPIN3ZK9prxHVq3q3UctX1VVbNkAauQN1QlE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ZXwkh4YfUWIIRkL0XwHCuU2dFC+0WKHbLoT9m9+J641lep4CDaqJcw3ZMJZQofPbL
-         ibZN8tQlF7vuiPZpkF7IQPRZEdokx0l6Q3npFoiXNsYdXwwN3y4q+VfNvqyOk8DThC
-         rLuu9UHx97PXDa1yzk5jB0/MFYrgwK+exoZAJKdI=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9A0nbtU111924
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Oct 2019 19:49:37 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 9 Oct
- 2019 19:49:33 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 9 Oct 2019 19:49:36 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9A0na8n030203;
-        Wed, 9 Oct 2019 19:49:36 -0500
-Subject: Re: [PATCH v11 01/16] dt: bindings: Add multicolor class dt bindings
- documention
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20191008204800.19870-1-dmurphy@ti.com>
- <20191008204800.19870-2-dmurphy@ti.com>
- <487f2425-1570-c946-c4a6-3da60ad21f2c@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <fc2de5ad-5dd6-0ea0-5ec6-2dfdd7429c09@ti.com>
-Date:   Wed, 9 Oct 2019 19:49:17 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731166AbfJJAw0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 9 Oct 2019 20:52:26 -0400
+Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:35198 "EHLO
+        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731134AbfJJAw0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Oct 2019 20:52:26 -0400
+IronPort-SDR: KP+TDw3abl/DSqy7bmalkCp0mt64Afpyaw8ueA2wPxhT6asjKAH659E0IXy3tFvNh1n1LkhDML
+ lyjCF3K8b5DlliavePxjFag9ZQAViMYS+iisgvUmUszaTXqZ5N/pVUrKf+7BS230BjsLZ1RkZQ
+ I6iDhCCAcugLP/0dXP2vyfpBRvh4mRBBOpEFSOOulSeETSys8RlR4ih3EBELR1LNUV5zy6ytwe
+ Qzbj/NLTEDvWB4/dG53T1dHaZabVUV6JWyeo4vTw1ZCbFztUyh9CtW6MLbZLib3H/CqBsz3i/S
+ LBc=
+Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 09 Oct 2019 17:52:25 -0700
+IronPort-SDR: 5L4sJ8Sf+cQwvwIsNeq9CncPt18G8SLD744ne+mRaFs2tNiU2kCQj/srsThOrW9NROl7I65kIR
+ eAqStAfEM9yay1jiJjwUoi98r2CcPvFHeojZwQJY3WeyKG3CB6oTlVFUrk76jeMPahcDczFrx9
+ F2JqFOR45KbcVbn/TNW5nZ/R2IfCp/H2Uo68JBFDIQ3Wjb6URqdWgFe10v5o/ldy5ORWU93v54
+ e3rSPU60ZBiUTH0v2Q9Rkmnk36ZNi9NjwZ0P91fikYUOqF6GQ+sCD6vlazxkIvLyyWMbRe2bEu
+ B3An10YkRKmlEkvSSQXMXyNM
+Received: from gurus-linux.qualcomm.com ([10.46.162.81])
+  by ironmsg02-sd.qualcomm.com with ESMTP; 09 Oct 2019 17:52:24 -0700
+Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
+        id C16E74714; Wed,  9 Oct 2019 17:52:24 -0700 (PDT)
+Date:   Wed, 9 Oct 2019 17:52:24 -0700
+From:   Guru Das Srinagesh <gurus@codeaurora.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, linux-leds@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, linux-kernel@vger.kernel.org,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>
+Subject: Re: [PATCH 1/2] leds: Add flag to keep trigger always
+Message-ID: <20191010005224.GA31702@codeaurora.org>
+References: <1565398367-11811-1-git-send-email-gurus@codeaurora.org>
+ <20190810071322.GA13760@amd>
+ <20190930133902.GA2249614@kroah.com>
+ <20190930172239.GA26107@amd>
+ <20190930172743.GA2409822@kroah.com>
+ <20191004200932.GA28140@codeaurora.org>
+ <20191008074731.GB633@amd>
 MIME-Version: 1.0
-In-Reply-To: <487f2425-1570-c946-c4a6-3da60ad21f2c@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191008074731.GB633@amd>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Jacek
+On Tue, Oct 08, 2019 at 09:47:31AM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> > > > > I don't understand.  The original commit broke userspace operations.
+> > > > > Shouldn't it be reverted, or fixed this way in order to have userspace
+> > > > > work properly again?
+> > > > 
+> > > > So, what it is exactly that is not working? :-). Yes, root can
+> > > > disconnect LED from v4l2 interface; he can also connect it
+> > > > back. Documentation says that happens.
+> > > > 
+> > > > Yes, root can do stupid things.
+> > > > 
+> > > > Commit 0013b23d66a2768f5babbb0ea9f03ab067a990d8 is from 2008. I'd
+> > > > prefer we did not apply it in 2008, but...
+> > > 
+> > > Ah, my fault, I thought this was a new commit.
+> > > 
+> > > Guru, what are you doing here that this is required all of a sudden?  No
+> > > other kernel seems to need these changes, what is different in your
+> > > Android userspace that requires this patch series?
+> > > 
+> > > thanks,
+> > > 
+> > > greg k-h
+> > 
+> > Hi Greg,
+> > 
+> > Our camera flash driver first requests the available current from the
+> > flash LED before setting its brightness. It passes a trigger as argument
+> > to the function that determines the available current. This function
+> > uses trigger_to_lcdev() to look up the led_classdev associated with that
+> > trigger as a first step. This lookup will fail if the trigger has been
+> > dissociated from its led_classdev as a result of a user setting that
+> > led_classdev's brightness to zero manually through sysfs. 
+> > 
+> > Why would the user set the brightness to zero? The user does this as
+> > part of camera and LED testing activities which include, amongst other
+> > things, visual inspection of the operation of various onboard LEDs. The
+> > user uses sysfs to manually turn on and off the LEDs by setting their
+> > brightness to max and then to zero in order to verify that they are
+> > working as expected.
+> 
+> Yes, so you should really set trigger to none before changing
+> brightness manually and restore it back to whatever it was when you
+> are done with manual testing.
 
-On 10/9/19 5:07 PM, Jacek Anaszewski wrote:
-> Dan,
->
-> On 10/8/19 10:47 PM, Dan Murphy wrote:
->> Add DT bindings for the LEDs multicolor class framework.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>   .../bindings/leds/leds-class-multicolor.txt   | 98 +++++++++++++++++++
->>   1 file changed, 98 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->> new file mode 100644
->> index 000000000000..8619c9bf1811
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->> @@ -0,0 +1,98 @@
->> +* Multicolor LED properties
->> +
->> +Bindings for multi color LEDs show how to describe current outputs of
->> +either integrated multi-color LED elements (like RGB, RGBW, RGBWA-UV
->> +etc.) or standalone LEDs, to achieve logically grouped multi-color LED
->> +modules. This is achieved by adding multi-led nodes layer to the
->> +monochrome LED bindings.
->> +
->> +The nodes and properties defined in this document are unique to the multicolor
->> +LED class.  Common LED nodes and properties are inherited from the common.txt
->> +within this documentation directory.
->> +
->> +Required LED Child properties:
-> s/Child/child/
+Hi Pavel,
 
-Ack
+Tried your suggestion to set the trigger to "none" before manual testing
+and to restore it afterwards, and it works.
 
-
->
->> +	- color : For multicolor LED support this property should be defined as
->> +		  LED_COLOR_ID_MULTI and further definition can be found in
->> +		  include/linux/leds/common.h.
->> +
->> +led-controller@30 {
->> +	#address-cells = <1>;
->> +	#size-cells = <0>;
->> +	compatible = "ti,lp5024";
->> +	reg = <0x29>;
->> +
->> +	multi-led@1 {
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		reg = <1>;
->> +		color = <LED_COLOR_ID_MULTI>;
->> +		function = LED_FUNCTION_STATUS;
-> Status is not too fancy function for multi color LED ;-)
-> I'd skip it entirely for this example if we don't have
-> anything suitable at the moment for our disposal.
-
-Not sure I understand.  Status is a good example as a RGB module can be 
-used to present charging status
-
-Unless I misinterpreted your comment.
-
-Dan
-
+Thanks a lot.
