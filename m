@@ -5,53 +5,54 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E25ECE597
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0FF7ECE596
 	for <linux-leds@archiver.kernel.org>; Fri, 11 Oct 2019 13:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18CA4206A1
+	by mail.kernel.org (Postfix) with ESMTP id BB080206A1
 	for <linux-leds@archiver.kernel.org>; Fri, 11 Oct 2019 13:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jIPeCsdQ"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QH0MLhbz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbfJKNHY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 11 Oct 2019 09:07:24 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:41590 "EHLO
+        id S1728258AbfJKNIB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 11 Oct 2019 09:08:01 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:41596 "EHLO
         lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728219AbfJKNHX (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 11 Oct 2019 09:07:23 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9BD7JH7033367;
-        Fri, 11 Oct 2019 08:07:19 -0500
+        with ESMTP id S1728240AbfJKNHY (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 11 Oct 2019 09:07:24 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9BD7LoQ033385;
+        Fri, 11 Oct 2019 08:07:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570799239;
-        bh=zV3cVdmjhCBXzQdA/5xCOaiT1n6XKbwdMaP1jdy4goo=;
+        s=ti-com-17Q1; t=1570799242;
+        bh=DWlAPkPyGPLMlgt95vLmSAWY5AQ+1wT9MtJDSpag9us=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=jIPeCsdQqtd7U4iCM3KCjhDAnAvIWPkyGZf0Yr7C5VhLh5Cf3y9gtb09+vljQ2NAX
-         cTct1T720yDWqZGu1QoL5zz8/hOc6EXqZcIOm6MAEN+g/0uEfonc9ZiRJYMLe3coRF
-         cKUvvrQgsCFN+aArecuCc/Q7vN4N8v1CBUjtwh3U=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9BD7JqD094080;
-        Fri, 11 Oct 2019 08:07:19 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+        b=QH0MLhbz4+0Mi7ppOSIPYNEHXBgj9dw1hZQAHTuRc2db4l6ZLgQtrwQfht1XFmGd8
+         Iqz1ebNj2nwn1ut1QQINl21A99pQ4XZnZVc2Y33zLdbH+WBsH1Y8gtZYY4xTKW3v13
+         9ERuCf/T+v1Nt4de1boSWzod2nCKg7iaPs3Ut88I=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9BD7L5B078723
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 11 Oct 2019 08:07:21 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 11
- Oct 2019 08:07:14 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2019 08:07:17 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 11 Oct 2019 08:07:19 -0500
+ Frontend Transport; Fri, 11 Oct 2019 08:07:17 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9BD7ILU118517;
-        Fri, 11 Oct 2019 08:07:18 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9BD7Ldn118581;
+        Fri, 11 Oct 2019 08:07:21 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v12 02/16] dt-bindings: leds: Add multicolor ID to the color ID list
-Date:   Fri, 11 Oct 2019 08:06:43 -0500
-Message-ID: <20191011130657.4713-3-dmurphy@ti.com>
+Subject: [PATCH v12 14/16] leds: lp5521: Add multicolor framework intensity support
+Date:   Fri, 11 Oct 2019 08:06:55 -0500
+Message-ID: <20191011130657.4713-15-dmurphy@ti.com>
 X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 In-Reply-To: <20191011130657.4713-1-dmurphy@ti.com>
 References: <20191011130657.4713-1-dmurphy@ti.com>
@@ -64,29 +65,53 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add a new color ID that is declared as MULTICOLOR as with the
-multicolor framework declaring a definitive color is not accurate
-as the node can contain multiple colors.
+Add the intensity function call back to support the multicolor
+framework. This function allows setting a specific brightness on
+a specific channel.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- include/dt-bindings/leds/common.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/leds/leds-lp5521.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
-index 9e1256a7c1bf..7006d15f71e8 100644
---- a/include/dt-bindings/leds/common.h
-+++ b/include/dt-bindings/leds/common.h
-@@ -29,7 +29,8 @@
- #define LED_COLOR_ID_VIOLET	5
- #define LED_COLOR_ID_YELLOW	6
- #define LED_COLOR_ID_IR		7
--#define LED_COLOR_ID_MAX	8
-+#define LED_COLOR_ID_MULTI	8
-+#define LED_COLOR_ID_MAX	9
+diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+index 6f0272249dc8..05731f405c9a 100644
+--- a/drivers/leds/leds-lp5521.c
++++ b/drivers/leds/leds-lp5521.c
+@@ -349,6 +349,25 @@ static int lp5521_run_selftest(struct lp55xx_chip *chip, char *buf)
+ 	return 0;
+ }
  
- /* Standard LED functions */
- #define LED_FUNCTION_ACTIVITY "activity"
++static int lp5521_led_intensity(struct lp55xx_led *led)
++{
++	struct lp55xx_chip *chip = led->chip;
++	int ret;
++	int i;
++
++	mutex_lock(&chip->lock);
++	for (i = 0; i < led->mc_cdev.num_leds; i++) {
++		ret = lp55xx_write(chip,
++				   LP5521_REG_LED_PWM_BASE +
++				   led->color_component[i].output_num,
++				   led->color_component[i].brightness);
++		if (ret)
++			break;
++	}
++	mutex_unlock(&chip->lock);
++	return ret;
++}
++
+ static int lp5521_led_brightness(struct lp55xx_led *led)
+ {
+ 	struct lp55xx_chip *chip = led->chip;
+@@ -490,6 +509,7 @@ static struct lp55xx_device_config lp5521_cfg = {
+ 	.max_channel  = LP5521_MAX_LEDS,
+ 	.post_init_device   = lp5521_post_init_device,
+ 	.brightness_fn      = lp5521_led_brightness,
++	.color_intensity_fn = lp5521_led_intensity,
+ 	.set_led_current    = lp5521_set_led_current,
+ 	.firmware_cb        = lp5521_firmware_loaded,
+ 	.run_engine         = lp5521_run_engine,
 -- 
 2.22.0.214.g8dca754b1e
 
