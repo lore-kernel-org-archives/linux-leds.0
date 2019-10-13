@@ -1,246 +1,133 @@
-Return-Path: <SRS0=OjIy=YF=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=5rb/=YG=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C55C4360C
-	for <linux-leds@archiver.kernel.org>; Sat, 12 Oct 2019 13:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64CCCC4360C
+	for <linux-leds@archiver.kernel.org>; Sun, 13 Oct 2019 10:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EB16206CD
-	for <linux-leds@archiver.kernel.org>; Sat, 12 Oct 2019 13:32:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F830207FF
+	for <linux-leds@archiver.kernel.org>; Sun, 13 Oct 2019 10:54:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRGMfUUy"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="Hazt7CS8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728636AbfJLNc2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 12 Oct 2019 09:32:28 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45110 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbfJLNc1 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 12 Oct 2019 09:32:27 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r5so14692234wrm.12;
-        Sat, 12 Oct 2019 06:32:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zDSzBmf5z3TxLRD0iah6O9fMN8pwfB2WeJ77hCxYLAA=;
-        b=PRGMfUUy9yHTmb4dbycfWLu/CSwPF3k6zkEic8Dc+B1F+ZNpn/7j1Fu1xae6YQddZV
-         6VOQdt2qT8LHmBWFfmpkaeySFLzK0QiCT6u2bmc3zIfWJOfAjNujuMeDcFOgL/qIq6DZ
-         6ZZtaUgSAw6JmXNgJTHepwZlWpxOURYnmTg2iijfNOdZq2ZXpIeMACrJijNFNd27smth
-         KL7eEFsqaR8kk/84NalYUJuyb1eG/rgl8qlEigchGhEPUlxz1RftnJD9TTN69pzQVsaK
-         H8ibzx7FLWOfVTCJ1+fYhCFc/WiS3+sOzLLltg9y6ejQl8cntvVX2Ts/T+BDxvVW5UKy
-         lB3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=zDSzBmf5z3TxLRD0iah6O9fMN8pwfB2WeJ77hCxYLAA=;
-        b=GLpIJ3YVP5jyqYpxbLp4D3kpbsAtvTVwLDsdb0vgoH+691xcycDPzDSOqmyRl5OFfP
-         wK+fnYzLoV+d2U17jx/bYtXVdZuxi120MtN6ulKiaVfbC58RgO39NaFKy8WJf2JP4BSl
-         oadTTb3V4dyMck7jO9KZWk72fxdKPmRaWcyLMn0qFPUQhzJR9zcnMDfaxtPYbbacj0kw
-         wlMW8kKaUMjeokUBu1NEnmL1D36EWXyFCiIOlzmyDQKowX5f3TfsJp2LTIkee+Q8aBD6
-         IeGTk2MMPrJo7jCdWkWt8wXiwbBnbY5aaGmehGo3in1aYeNE7i6gcGrwF8bHysK2b7M8
-         40BA==
-X-Gm-Message-State: APjAAAVDIX53wqn9Zf7WnCXZhvSsjxwaNkF9fW/F1urqujie+60GzgB9
-        RBl/raMx3aDV67Ds3/Y5rYI=
-X-Google-Smtp-Source: APXvYqzPrIDkW8twwEdQDQlXMMHtHuUEvtAnRKBzSDkhLsQnTl72ZBNyW4sIvKZ+5V6poimihZDTsg==
-X-Received: by 2002:adf:fd46:: with SMTP id h6mr16892209wrs.243.1570887143176;
-        Sat, 12 Oct 2019 06:32:23 -0700 (PDT)
-Received: from [192.168.1.19] (cjl71.neoplus.adsl.tpnet.pl. [83.31.61.71])
-        by smtp.gmail.com with ESMTPSA id e6sm17378270wre.29.2019.10.12.06.32.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 12 Oct 2019 06:32:22 -0700 (PDT)
-Subject: Re: [PATCH v12 08/16] dt: bindings: lp55xx: Update binding for
- Multicolor Framework
-To:     Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tony Lindgren <tony@atomide.com>,
-        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+        id S1728816AbfJMKyf (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 13 Oct 2019 06:54:35 -0400
+Received: from mout.gmx.net ([212.227.17.22]:37591 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728620AbfJMKye (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 13 Oct 2019 06:54:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1570964044;
+        bh=P1UgswCUcghz6yIDHCpeyknx90qBZRzXKgVlFd7eCdQ=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=Hazt7CS8w6v7l3PeNig4oBTVsQl+5I8ySOkCGte5W+gEnNzpCKMkb1dShKpoGAKCW
+         ns+js783PPeaES6CUDQ9WCawQ0osxmfnZ8mBk6U/lfw3/mDQO82KaMD3qK769L0gZo
+         91NtoEYrT08hXbMtIdcQ/9vNHbFYU+YsUxvJYeTU=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([37.4.249.112]) by mail.gmx.com
+ (mrgmx105 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1M1Hdq-1iLGCc1IeQ-002km6; Sun, 13 Oct 2019 12:54:04 +0200
+From:   Stefan Wahren <wahrenst@gmx.net>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc:     Dan Murphy <dmurphy@ti.com>, bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-leds@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-References: <20191011130657.4713-1-dmurphy@ti.com>
- <20191011130657.4713-9-dmurphy@ti.com>
- <42fb3f20-be4c-8e9e-8035-e4eafbc1e687@gmail.com>
- <0ab2250d-36ff-390a-04e2-48883a930a9a@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <3cecddfd-f4d4-0faa-2975-61517e402bd6@gmail.com>
-Date:   Sat, 12 Oct 2019 15:32:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <0ab2250d-36ff-390a-04e2-48883a930a9a@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] ARM: dts: bcm2837-rpi-cm3: Avoid leds-gpio probing issue
+Date:   Sun, 13 Oct 2019 12:53:23 +0200
+Message-Id: <1570964003-20227-1-git-send-email-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.7.4
+X-Provags-ID: V03:K1:rD0/Aj9OsYtuwDKTD1Asm7wvmhiAAdzSvgHj2hhtz4zJHwfn8gY
+ eQEqPkZg4HhyshXGfuuE5EO6kpFG5C4oBy5q6gGSXfR06cp5r4eBApjjJYja0GR98v1WSqm
+ zBGi0NiTAm8qgOCOzqYBTvYUEz8qdiuQIfxv+idJ1wtdVdVipSxYyMxrdwkMZ8hp64ZNZT/
+ nQGx5ZFIng+B30yOE2ZsA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:uxI6S7LwlPs=:mmtcYysXtk12sBd4sSpTyK
+ sH5Rac4tKDW3Jjzp9lXc5qGXFOnZ2xOoiS9WZTl1M7FvGTAzqg9WyHtVz3dQ6PyRRmGE6Aqzg
+ Wvj4VYE/Bxvppf3Cn1Qsa+zrguD5TbN310rcuNu8pBTSGwKuY/R+DB/H2mwc4jU8paWIeZOPF
+ AQ2fGoHT95vD5FLUgfe1/TqSxSdqxxW+1lGuJfoCHAjAtLpWbpG8QLjWCTq0O20lFJuT+XqYG
+ u5pJhG/S8d8spGPGacajBXARG9vfWjGHDJ8X0lBmuHJytInQI62IjDuQCJJONFqRfkJQb6Dj3
+ /p+4V1qwetdvUICCy2bZGwJOezGuhGFNwOelsZ5REg/x9huRfxDm8CWC0wdhFnAYO06xSwLEG
+ adIp3E1m8P9p7HV0FgKixZPI1Tw4rJi/uK2B+SLS6oXF8kHQ2EdpuS7WDVH7rK7bqHi/WVKCH
+ KZMkfKZnjgh4pAxK6Gp7Du2xrwL4yL22fg3jQAq9lu06QGU+taBKLRGP5FQksadz5hmKM9TIM
+ aSAG6buNXs2vnwUdZyYwwzfJRP/vsKBBbA0F75mtn4W7wiKzKg73EUfNSln1+Zg5TJ7mowVEz
+ k4dkVA7/wR8RcP2ZN7RZdB2EqWRWDp4VMIx/ok9rgzBzW0HWBvBdh/P4oICIoD+BK/sr6a9HZ
+ 2LvvcfcFOVi48EeSWuM8R0RDcxCEl9i9SHIIgz6EjWiZz9GgnCYX4lOK6F7Xw+3o7+0Jg8Y7z
+ 79B8WjdSNYAZsSFLJm/8X8jONQNmWPaL6K3fbv7Ai2r9pqmD/k0b1lftYXWU5wmwcpBvp+WUC
+ sbxo+5vAWGbJFKb+vPUPW2GDNqt59yfnBOf9gYT0eME7WARqv9T/pSFH41X6FLUBAksdjE1ZU
+ q9qs2nW1fkGwbgEVLS7UwVJ3sqUnB6dWjq6WRYmVyf+siRSu1yz0CI3dVz0u37IWEwxip3yUr
+ hqOkrsDCWQIUPTCpbkYI7NiEdztz3W51QygBPrewVwdCZLa+/8Z7+goJzZndlyw1hCJkdmA2c
+ jzk39CEEoSI//yOFlSc5ZBGMIKqup3laJoepfcsq3GoAnh70xl0I5RTkSVbRswd/AV/C7ItAb
+ YocSC3OqsqusQfWqgvhBeNKw++ksuAecLIFGZCmkzUk/OZ/PZ2HVcnIGPeEba/WE4opnAEjPD
+ NJ0J/Sen2FyL/1fp0VOx88AmhYlkbMx+StHX7JrPHbOf/zlAjCTZY+CKGISyQLBrM8YxpRJFf
+ KfKYVNWqP7TQmkSIN5ybCminYG6OcGq0itehPDQ==
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Dan,
+bcm2835-rpi.dtsi defines the behavior of the ACT LED, which is available
+on all Raspberry Pi boards. But there is no driver for this particual
+GPIO on CM3 in mainline yet, so this node was left incomplete without
+the actual GPIO definition. Since commit 025bf37725f1 ("gpio: Fix return
+value mismatch of function gpiod_get_from_of_node()") this causing probe
+issues of the leds-gpio driver for users of the CM3 dtsi file.
 
-On 10/12/19 2:54 AM, Dan Murphy wrote:
-> Jacek
-> 
-> On 10/11/19 3:15 PM, Jacek Anaszewski wrote:
->> Dan,
->>
->> On 10/11/19 3:06 PM, Dan Murphy wrote:
->>> Update the DT binding to include the properties to use the
->>> multicolor framework for the devices that use the LP55xx
->>> framework.
->>>
->>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>> CC: Tony Lindgren <tony@atomide.com>
->>> CC: "Benoît Cousson" <bcousson@baylibre.com>
->>> CC: Linus Walleij <linus.walleij@linaro.org>
->>> CC: Shawn Guo <shawnguo@kernel.org>
->>> CC: Sascha Hauer <s.hauer@pengutronix.de>
->>> CC: Pengutronix Kernel Team <kernel@pengutronix.de>
->>> CC: Fabio Estevam <festevam@gmail.com>
->>> CC: NXP Linux Team <linux-imx@nxp.com>
->>> ---
->>>   .../devicetree/bindings/leds/leds-lp55xx.txt  | 149 +++++++++++++++---
->>>   1 file changed, 124 insertions(+), 25 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
->>> b/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
->>> index bfe2805c5534..736a2e1538be 100644
->>> --- a/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
->>> +++ b/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
->>> @@ -1,6 +1,8 @@
->>>   Binding for TI/National Semiconductor LP55xx LED Drivers
->>>     Required properties:
->>> +- #address-cells: 1
->>> +- #size-cells: 0
->>>   - compatible: one of
->>>       national,lp5521
->>>       national,lp5523
->>> @@ -14,6 +16,18 @@ Required properties:
->>>   Each child has own specific current settings
->>>   - led-cur: Current setting at each LED channel (mA x10, 0 if LED is
->>> not connected)
->>>   - max-cur: Maximun current at each LED channel.
->>> +- reg: Output channel for the LED.  This is zero based channel
->>> identifier and
->>> +    the data sheet is a one based channel identifier.
->>> +    reg value to output to LED output number
->>> +    D1 = reg value is 0
->>> +    D2 = reg value is 1
->>> +    D3 = reg value is 2
->>> +    D4 = reg value is 3
->>> +    D5 = reg value is 4
->>> +    D6 = reg value is 5
->>> +    D7 = reg value is 6
->>> +    D8 = reg value is 7
->>> +    D9 = reg value is 8
->>>     Optional properties:
->>>   - enable-gpio: GPIO attached to the chip's enable pin
->>> @@ -35,23 +49,28 @@ example 1) LP5521
->>>   on channel 0.
->>>     lp5521@32 {
->> While at it let's fix node prefix to led-controller.
->> It will not break anyone and yet it will adapt the node naming
->> to what is now recommended.
-> 
-> I would love to do that but honestly I prefer to fix that in a different
-> patch series and not add more changes to this patch review.
+  leds-gpio: probe of leds failed with error -2
 
-ack
+Until we have the necessary GPIO driver hide the ACT node for CM3
+to avoid this.
 
->>> +    #address-cells = <1>;
->>> +    #size-cells = <0>;
->>>       compatible = "national,lp5521";
->>>       reg = <0x32>;
->>>       label = "lp5521_pri";
->>>       clock-mode = /bits/ 8 <2>;
->>>   -    chan0 {
->>> +    chan@0 {
->> Similarly in case of every child node:
->>
+Reported-by: Fredrik Yhlen <fredrik.yhlen@endian.se>
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+Fixes: a54fe8a6cf66 ("ARM: dts: add Raspberry Pi Compute Module 3 and IO b=
+oard")
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+=2D--
+ arch/arm/boot/dts/bcm2837-rpi-cm3.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
->>> +Multicolor LED example:
->>> +lp5523: lp5523@32 {
->> Do you really need "lp5523:" node label ?
->>
->> Besides:
->>
->> s/lp5523@32/led-controller@32/
-> 
-> This change I will make since I added this.
+Hi,
 
-Good, it was the first thing that struck me - if we're
-adding new bindings they should conform to the current
-standards.
+i'm not sure the behavior change in leds-gpio was intended.
 
--- 
-Best regards,
-Jacek Anaszewski
+Regards
+Stefan
+
+diff --git a/arch/arm/boot/dts/bcm2837-rpi-cm3.dtsi b/arch/arm/boot/dts/bc=
+m2837-rpi-cm3.dtsi
+index 7c3cb7e..925cb37 100644
+=2D-- a/arch/arm/boot/dts/bcm2837-rpi-cm3.dtsi
++++ b/arch/arm/boot/dts/bcm2837-rpi-cm3.dtsi
+@@ -9,6 +9,14 @@
+ 		reg =3D <0 0x40000000>;
+ 	};
+
++	leds {
++		/*
++		 * Since there is no upstream GPIO driver yet,
++		 * remove the incomplete node.
++		 */
++		/delete-node/ act;
++	};
++
+ 	reg_3v3: fixed-regulator {
+ 		compatible =3D "regulator-fixed";
+ 		regulator-name =3D "3V3";
+=2D-
+2.7.4
+
