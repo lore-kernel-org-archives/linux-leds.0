@@ -7,62 +7,63 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C794C4360C
-	for <linux-leds@archiver.kernel.org>; Sun, 13 Oct 2019 16:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8524AC4360C
+	for <linux-leds@archiver.kernel.org>; Sun, 13 Oct 2019 16:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1587A2067B
-	for <linux-leds@archiver.kernel.org>; Sun, 13 Oct 2019 16:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 511AA20679
+	for <linux-leds@archiver.kernel.org>; Sun, 13 Oct 2019 16:47:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="igNR26Sm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uva+87G7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbfJMQnn (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 13 Oct 2019 12:43:43 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37174 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727386AbfJMQnn (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 13 Oct 2019 12:43:43 -0400
-Received: by mail-wm1-f66.google.com with SMTP id f22so14437294wmc.2;
-        Sun, 13 Oct 2019 09:43:39 -0700 (PDT)
+        id S1728839AbfJMQrS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 13 Oct 2019 12:47:18 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45700 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727386AbfJMQrS (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 13 Oct 2019 12:47:18 -0400
+Received: by mail-wr1-f65.google.com with SMTP id r5so16901242wrm.12;
+        Sun, 13 Oct 2019 09:47:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=MX1zXgaX+X9ef/Z1zG/d5g/4qBYhVRp8VHXnKMwhz70=;
-        b=igNR26SmcrrFxypwwA12mCNM1liIuy3mwI5pRn2xiFBcGf/pmr0p33VdlT+oFNphAL
-         TS8i/W7YCU8br9N4AsdDoX4VD449GOHPF7LTqx+W0BZHLhFhKiKJMm9CfjgAYRRfQaCA
-         w/gBMPYICFUIYoqeUNVLCWxc7wboMoUfsjxlxBmi6u6jElTNNQAp2KuHb2LBLX30EwwJ
-         Yucr2NYhCQhgJqPDnxlqTryA0J7/OGi0u4em1ixsi/cFWlaBmrjatUEfk2oS6Q3gSnWN
-         3J2+84x4fpstntNtv+JvUj3vF122CH4kGkgJ0m2uinwm73wn8QxzC6hJeugX+fFSTtMk
-         qkqQ==
+        bh=L7SrkuU+SBZM7Dq5DKaJYDRokqS1TC03YIonaVv7A1s=;
+        b=Uva+87G7uOIz87dZKh+y9kp1tPBOeNYLQHGWAnFfIdScyOzCkAsT5yDjEpHoSKgHI1
+         1dKWAZIoWKXqbWwpH9A9WcQQLGcOFW6U20HTkrtCUA5ez5PwQbrVss3SoZTunFNdLhwN
+         uWUHam0pddkH1EuaY8l6ykc5QAX44nBurlvAO//h3QkawL7ZlsRoPp4HttKTAotlsmYT
+         2JDvvpbt474Ap3aHyeSnKQKRJaI4Bk4Y4yk77O4+sAJWfYXD+8LqMAHEmxQCFF1rkrk2
+         Nf+SQCJet58tBBwIUEgwe1wUjUm0J4XNR8F2lazAK4bzS00zDCcuBJkWBtiKHxpp/gxq
+         aL4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=MX1zXgaX+X9ef/Z1zG/d5g/4qBYhVRp8VHXnKMwhz70=;
-        b=SpFGGLKQutnWGq59zUdMR5hqDjdKwKrDO79Ph+YmqF8qMdkUdHJTSNFn+3WRhsoXDu
-         aYTVWzcF8odvxtWgZr88r9XccpEKIdBeGUJAy8jIssD/sx0HQDCohK9WiDbU9GSF2+uK
-         Lb6TxOmZ551qdxIKFbdpTqcRMyQjn/mumhsoCE2qg1QTcbjqprpbSH5/V7WflgB3vFIu
-         aZ/Zf0+oxNTLbylhXNstJ9mcZJYRlgkZhy00wiaa2R31OaJ0Qk/oU9SU3d/V7E49DlPz
-         MpTk1qskUlPovI10dbKmzDe5c/j1lpdMT4AGnkExHHA6OOtHzpyWpDDl9eJG8MUIucBP
-         2eEQ==
-X-Gm-Message-State: APjAAAU5bSOUclFsAPXpAeDk5H2nVNnBiXS722Ry11c0BFwWRs7TcFAT
-        6OuR5wIs0GF/jlkqG+GPTic=
-X-Google-Smtp-Source: APXvYqwEX0fY7so4uuo5sNIXU6vy+iUgCbNGLGS7ijbJwHlPxK1Z3e20PdYe/0W0S84ecHDLYOKj0Q==
-X-Received: by 2002:a05:600c:40f:: with SMTP id q15mr11682818wmb.30.1570984563891;
-        Sun, 13 Oct 2019 09:36:03 -0700 (PDT)
+        bh=L7SrkuU+SBZM7Dq5DKaJYDRokqS1TC03YIonaVv7A1s=;
+        b=GT86Y3j0O5QgVJXXTPwlnvm7HePBee1eoLREDsA2VHODN7IJIkCexiz1i17ClZrUgR
+         1RkpP13usmKhuRakq1HjQaEKKjLxk5bBaebhO//cOz1ckJ8y5+UK5OGxs0DXfW/gh2J4
+         bPkxSsLit2ZxzfO0ORrefvYuCQPSdVK8G5Q0w3AQB7/MuVnyjwIBxtv1vX0fOc0QNU3B
+         3W2aZYctpOO1hkIZM0FZvhFsm1FdwFHN6YFpcuS9vr4eEBbOHSiAEgA4+FrD4QL9dlan
+         d6xr6sbdQBWgxHIrqVH/tZrYVvCtLDPHa/6+B9pAkNSGbSmsN0VxIJHfAdxBMqiK7OsM
+         gcIw==
+X-Gm-Message-State: APjAAAVfMTCEd/8L/D23ke0jcK7sLIKOYBpNz4AQnnuTzGF0UqIXwpYH
+        qWtWzVjEqM+5Y840dvckyac=
+X-Google-Smtp-Source: APXvYqxqf4YDSNJkFDHvOZSItTriFT3eBs+hG9I7S47/sefrTxdXDr2RBXJg91ZwzHDGEI3SUee6eQ==
+X-Received: by 2002:a05:6000:49:: with SMTP id k9mr23019416wrx.289.1570985235276;
+        Sun, 13 Oct 2019 09:47:15 -0700 (PDT)
 Received: from [192.168.1.19] (ckd148.neoplus.adsl.tpnet.pl. [83.31.79.148])
-        by smtp.gmail.com with ESMTPSA id b62sm19658641wmc.13.2019.10.13.09.36.02
+        by smtp.gmail.com with ESMTPSA id z15sm1787254wrr.19.2019.10.13.09.47.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 13 Oct 2019 09:36:03 -0700 (PDT)
-Subject: Re: [PATCH] leds: tlc591xx: update the maximum brightness
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Jean-Jacques Hiblot <jjhiblot@ti.com>, dmurphy@ti.com,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>
-References: <20190923100250.22326-1-jjhiblot@ti.com>
- <91864098-a6e8-e275-4b07-e4bb15469f78@gmail.com> <20191013114508.GI5653@amd>
+        Sun, 13 Oct 2019 09:47:14 -0700 (PDT)
+Subject: Re: [PATCH v9 1/2] dt-bindings: Add docs for EL15203000
+To:     Pavel Machek <pavel@ucw.cz>, Oleh Kravchenko <oleg@kaa.org.ua>
+Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>
+References: <20190918105250.22855-1-oleg@kaa.org.ua>
+ <20190918105250.22855-2-oleg@kaa.org.ua>
+ <5219879e-84af-a98e-2fca-10684548d416@gmail.com>
+ <2ac88d9d-afe6-9629-eb11-28dff59461eb@kaa.org.ua> <20191013121110.GP5653@amd>
 From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
@@ -121,58 +122,55 @@ Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
  qqFCBWmTHXfwsfW0VgBmRtPO7eXVBybjJ1VXKR2RZxwSq/GoNXh/yrRXQxbcpZ+QP3/Tttsb
  FdKciZ4u3ts+5UwYra0BRuvb51RiZR2wRNnUeBnXWagJVTlG7RHBO/2jJOE6wrcdCMjs0Iiw
  PNWmiVoZA930TvHA5UeGENxdGqo2MvMdRJ54YaIR
-Message-ID: <844845d6-01fe-50c4-94cd-e19ce8a5d060@gmail.com>
-Date:   Sun, 13 Oct 2019 18:36:01 +0200
+Message-ID: <6cd93ad2-4622-4f11-037c-9799dff4c772@gmail.com>
+Date:   Sun, 13 Oct 2019 18:47:12 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191013114508.GI5653@amd>
+In-Reply-To: <20191013121110.GP5653@amd>
 Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 10/13/19 1:45 PM, Pavel Machek wrote:
+Hi Pavel.
+
+On 10/13/19 2:11 PM, Pavel Machek wrote:
 > Hi!
 > 
->>> @@ -112,11 +113,11 @@ tlc591xx_brightness_set(struct led_classdev *led_cdev,
->>>  	struct tlc591xx_priv *priv = led->priv;
->>>  	int err;
->>>  
->>> -	switch (brightness) {
->>> +	switch ((int)brightness) {
->>>  	case 0:
-> 
-> Can we get a rid of the cast here? Do we need to move away from the
-> enum for the brightness?
-
-I at first also wanted to ask for dropping the cast but first tried
-to do it myself. Then I found out compiler (or sparse, I don't recall
-exactly) complains about TLC591XX_MAX_BRIGHTNESS not being a value of
-enum led_brighteess type. That's the reason for the cast Jean added,
-I presume.
-
->> Added tag:
+>>> Regarding this ASCII art - I presume you wanted to follow
+>>> Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt.
+>>>
+>>> It was added to bindings because we support 'pattern' value
+>>> for linux,default-trigger, which in turn looks for 'led-pattern'
+>>> property, whose format needs to be documented in the LED bindings.
+>>>
+>>> leds-trigger-pattern.txt documents only common syntax for software
+>>> pattern engine. Currently we don't have a means to setup hw_pattern
+>>> for the pattern trigger from DT, which is obvious omission and your
+>>> patch just brings it to light.
+>>>
+>>> That said, I propose to fix it alongside and introduce led-hw-pattern
+>>> property. When present, ledtrig-pattern would setup the pattern
+>>> using pattern_set op, similarly as if it was set via sysfs hw_pattern
+>>> file.
+>>>
+>>> Only in this case placing the pattern depiction here would be justified.
+>>> Otherwise, it would have to land in the ABI documentation.
 >>
->> Fixes: e370d010a5fe ("leds: tlc591xx: Driver for the TI 8/16 Channel i2c
->> LED driver")
->>
->> and applied to the for-5.5 branch.
+>> You are okay, if I move it to Documentation/ABI/testing/sysfs-class-led-driver-el15203000 ?
 > 
-> Actually, careful with the Fixes tag. -stable people will want to
-> apply it, and it may not be a good idea in this case. Maximum
-> brightness of 256 is pretty unusual, so I'd call this "a bit risky".
+> I don't see if this got a reply. Yes,
+> Documentation/ABI/testing/sysfs-class-led-driver-el15203000 sounds
+> like a right place for the sysfs description.
 
-I entirely disagree. Not seeing anything risky in that since
-max_brightness is also initialized to this value. If userspace properly
-uses the ABI, then it will be safe.
-
-> Best regards,
-> 									Pavel
-> 
+There was no explicit reply because Oleh sent the update with this
+change before I managed to respond. And the patch is already in the
+for-next branch with the file in the discussed location. So the reply
+was in the form of my later confirmation that the patch was applied.
 
 -- 
 Best regards,
