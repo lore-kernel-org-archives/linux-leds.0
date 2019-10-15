@@ -1,215 +1,222 @@
-Return-Path: <SRS0=qMIs=YH=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=xs2J=YI=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_12_24,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8435BC4CECE
-	for <linux-leds@archiver.kernel.org>; Mon, 14 Oct 2019 21:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4521DECE58E
+	for <linux-leds@archiver.kernel.org>; Tue, 15 Oct 2019 08:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52ABF21835
-	for <linux-leds@archiver.kernel.org>; Mon, 14 Oct 2019 21:27:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571088429;
-	bh=+lFIzC8nwcFgT0bS6CLGv5ajlQHk5Qi8YrW2qfw1KQU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=cSQUK2SYwuEfDb3UMrc3YmcHYVwXnwB8LITEDCRVni2eeHDV3oKCQ647/lM0QmKLW
-	 OvTPMd4UbMAytFc3Vi+Q2z3hpOp0ApO2zySfEI4S414+BxT59PbwNA0378dt0FgUY6
-	 pKFVlquHHpRzCbnCuCln3y03ZlnXijHrcS9oGCKw=
+	by mail.kernel.org (Postfix) with ESMTP id 0C8AD2089C
+	for <linux-leds@archiver.kernel.org>; Tue, 15 Oct 2019 08:54:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FukvMCOk";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Cts81DNd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388968AbfJNV1E (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 14 Oct 2019 17:27:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731967AbfJNV0s (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 14 Oct 2019 17:26:48 -0400
-Received: from earth.universe (eth-west-pareq2-46-193-2-41.wb.wifirst.net [46.193.2.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3DD220650;
-        Mon, 14 Oct 2019 21:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571088406;
-        bh=+lFIzC8nwcFgT0bS6CLGv5ajlQHk5Qi8YrW2qfw1KQU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aGW8350aqDpJ9vKAVgGscRQHllSKdI8koknozbpeArVMJJ8jASoXjaKidiRcPhlzt
-         FuXg0gpDqYU/RKfMta7y7JZq+j9OtrD+Oe+qZGeI+x3zCDmmUdHOu3cUhyr64QC1Eb
-         hQa9Ss1VV7XwCwTXdGLoFUXad893Ei+Ciu7iYJi4=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 7579A3C0CA5; Mon, 14 Oct 2019 06:32:25 +0200 (CEST)
-Date:   Mon, 14 Oct 2019 06:32:25 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 4/6] dt-bindings: power: max77650: convert the binding
- document to yaml
-Message-ID: <20191014043225.ejpyccvo3jpkvz2r@earth.universe>
-References: <20190930130246.4860-1-brgl@bgdev.pl>
- <20190930130246.4860-5-brgl@bgdev.pl>
+        id S1727144AbfJOIyr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 15 Oct 2019 04:54:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbfJOIyr (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 15 Oct 2019 04:54:47 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 14A2060C04; Tue, 15 Oct 2019 08:54:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571129686;
+        bh=aEu5mpzn32x7rkyUlbfZ0xOhWov1nX00SdmGcW+iGoI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FukvMCOkMX0+h4rUDyGj+jeSj6Qgm7ZMj+Zjx49Tm+3ylBFf7z2ucK8iBv4YbD4Oj
+         YtShomCAE5yU4GNjqSV08wPw6F0WJnGxYp1qnB3FzEd+fLfh9kxnorxpSTCkPy23zy
+         tuL7R7svGNdKHlZol7FQhEjBsnT1v0x7IATuZe5w=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 3E70360907;
+        Tue, 15 Oct 2019 08:54:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571129681;
+        bh=aEu5mpzn32x7rkyUlbfZ0xOhWov1nX00SdmGcW+iGoI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Cts81DNd9f3YV99tFQWbWJR+ug5gXbEGlgczDEO504sISeM82eKMt7iwXN4v+Smvs
+         FB8SBdtw0smr+AFS6vahbYTpnEO3FrEEYFbmmiJhwRTEQdg3LZS0lRZi6f5PxuDyQz
+         OSbj3PXXw4CMu2OHsQPl0cuPeBrgC8Q3IowQjAZ8=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lvytl443p4a5vq52"
-Content-Disposition: inline
-In-Reply-To: <20190930130246.4860-5-brgl@bgdev.pl>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Tue, 15 Oct 2019 14:24:39 +0530
+From:   kgunda@codeaurora.org
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
+        lee.jones@linaro.org, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V6 3/8] backlight: qcom-wled: Add new properties for
+ PMI8998
+In-Reply-To: <3836b382-a4e6-d6db-9667-1851a9cf0112@ti.com>
+References: <1569825553-26039-1-git-send-email-kgunda@codeaurora.org>
+ <1569825553-26039-4-git-send-email-kgunda@codeaurora.org>
+ <3836b382-a4e6-d6db-9667-1851a9cf0112@ti.com>
+Message-ID: <2500384590b9f01116fc8ddf8f1b20b9@codeaurora.org>
+X-Sender: kgunda@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+On 2019-10-01 20:42, Dan Murphy wrote:
+> Kiran
+> 
+> On 9/30/19 1:39 AM, Kiran Gunda wrote:
+>> Update the bindings with the new properties used for
+>> PMI8998.
+>> 
+>> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+>> ---
+>>   .../bindings/leds/backlight/qcom-wled.txt          | 76 
+>> ++++++++++++++++++----
+>>   1 file changed, 62 insertions(+), 14 deletions(-)
+>> 
+>> diff --git 
+>> a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt 
+>> b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>> index 14f28f2..9d840d5 100644
+>> --- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>> @@ -20,8 +20,7 @@ platforms. The PMIC is connected to the host 
+>> processor via SPMI bus.
+>>   - default-brightness
+>>   	Usage:        optional
+>>   	Value type:   <u32>
+>> -	Definition:   brightness value on boot, value from: 0-4095
+>> -		      Default: 2048
+>> +	Definition:   brightness value on boot, value from: 0-4095.
+>>     - label
+>>   	Usage:        required
+>> @@ -48,20 +47,24 @@ platforms. The PMIC is connected to the host 
+>> processor via SPMI bus.
+>>   - qcom,current-limit
+>>   	Usage:        optional
+>>   	Value type:   <u32>
+>> -	Definition:   mA; per-string current limit
+>> -		      value: For pm8941: from 0 to 25 with 5 mA step
+>> -			     Default 20 mA.
+>> -			     For pmi8998: from 0 to 30 with 5 mA step
+>> -			     Default 25 mA.
+>> +	Definition:   mA; per-string current limit; value from 0 to 25 with
+>> +		      1 mA step.
+>> +		      This property is supported only for pm8941.
+>> +
+>> +- qcom,current-limit-microamp
+>> +	Usage:        optional
+>> +	Value type:   <u32>
+>> +	Definition:   uA; per-string current limit; value from 0 to 30000 
+>> with
+>> +		      2500 uA step.
+>>     - qcom,current-boost-limit
+>>   	Usage:        optional
+>>   	Value type:   <u32>
+>>   	Definition:   mA; boost current limit.
+>>   		      For pm8941: one of: 105, 385, 525, 805, 980, 1260, 1400,
+>> -		      1680. Default: 805 mA
+>> +		      1680.
+>>   		      For pmi8998: one of: 105, 280, 450, 620, 970, 1150, 1300,
+>> -		      1500. Default: 970 mA
+>> +		      1500.
+>>     - qcom,switching-freq
+>>   	Usage:        optional
+>> @@ -69,22 +72,66 @@ platforms. The PMIC is connected to the host 
+>> processor via SPMI bus.
+>>   	 Definition:   kHz; switching frequency; one of: 600, 640, 685, 
+>> 738,
+>>   		       800, 872, 960, 1066, 1200, 1371, 1600, 1920, 2400, 3200,
+>>   		       4800, 9600.
+>> -		       Default: for pm8941: 1600 kHz
+>> -				for pmi8998: 800 kHz
+>>     - qcom,ovp
+>>   	Usage:        optional
+>>   	Value type:   <u32>
+>>   	Definition:   V; Over-voltage protection limit; one of:
+>> -		      27, 29, 32, 35. default: 29V
+>> +		      27, 29, 32, 35.
+>>   		      This property is supported only for PM8941.
+>>   +- qcom,ovp-millivolt
+>> +	Usage:        optional
+>> +	Value type:   <u32>
+>> +	Definition:   mV; Over-voltage protection limit;
+>> +		      For pmi8998: one of 18100, 19600, 29600, 31100
+>> +		      If this property is not specified for PM8941, it
+>> +		      falls back to "qcom,ovp" property.
+>> +
+>>   - qcom,num-strings
+>>   	Usage:        optional
+>>   	Value type:   <u32>
+>>   	Definition:   #; number of led strings attached;
+>> -		      value from 1 to 3. default: 2
+>> -		      This property is supported only for PM8941.
+>> +		      value: For PM8941 from 1 to 3.
+>> +			     For PMI8998 from 1 to 4.
+> 
+> We probably don't need this since we define 1 led node per output. 
+> And if you need to define
+> 
+> multiple strings per node then you use led-sources.
+> 
+> Then you will use fwnode_property_count_u32(child, "led-sources"); to
+> get the number of outputs
+> 
+> 
+I have kept this property as is to have the backward compatibility with 
+pm8941-wled.
+The backward compatibility is broken if this property is removed.
 
---lvytl443p4a5vq52
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> +
+>> +- interrupts
+>> +	Usage:        optional
+>> +	Value type:   <prop encoded array>
+>> +	Definition:   Interrupts associated with WLED. This should be
+>> +		      "short" and "ovp" interrupts. Interrupts can be
+>> +		      specified as per the encoding listed under
+>> +		      Documentation/devicetree/bindings/spmi/
+>> +		      qcom,spmi-pmic-arb.txt.
+>> +
+>> +- interrupt-names
+>> +	Usage:        optional
+>> +	Value type:   <string>
+>> +	Definition:   Interrupt names associated with the interrupts.
+>> +		      Must be "short" and "ovp". The short circuit detection
+>> +		      is not supported for PM8941.
+>> +
+>> +- qcom,enabled-strings
+>> +	Usage:        optional
+>> +	Value tyoe:   <u32 array>
+>> +	Definition:   Array of the WLED strings numbered from 0 to 3. Each
+>> +		      string of leds are operated individually. Specify the
+>> +		      list of strings used by the device. Any combination of
+>> +		      led strings can be used.
+> 
+> We usually use the reg property per led node to denote what output is
+> associated with which
+> 
+> property node.  And if you want to define multiple outputs per node
+> then you need to use
+> 
+> led-sources
+> 
+> See leds-lm3697.txt for an example
+> 
+> Dan
+As per the Qualcomm hardware recommendation , all the strings (leds) 
+properties like
+OVP, FSC and brightness etc .. should have the same values. That's why 
+all the strings (leds)
+and it's properties are mentioned in a single node.
 
-Hi,
 
-On Mon, Sep 30, 2019 at 03:02:44PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->=20
-> Convert the binding document for max77650 charger module to yaml.
->=20
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
-
-Assuming, that Rob will merge the series:
-
-Acked-by: Sebastian Reichel <sre@kernel.org>
-
--- Sebastian
-
->  .../power/supply/max77650-charger.txt         | 29 +------------
->  .../power/supply/max77650-charger.yaml        | 42 +++++++++++++++++++
->  2 files changed, 43 insertions(+), 28 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/power/supply/max776=
-50-charger.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/power/supply/max77650-char=
-ger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charger.t=
-xt
-> index e6d0fb6ff94e..fbab7d3ac8e3 100644
-> --- a/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-> +++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-> @@ -1,28 +1 @@
-> -Battery charger driver for MAX77650 PMIC from Maxim Integrated.
-> -
-> -This module is part of the MAX77650 MFD device. For more details
-> -see Documentation/devicetree/bindings/mfd/max77650.txt.
-> -
-> -The charger is represented as a sub-node of the PMIC node on the device =
-tree.
-> -
-> -Required properties:
-> ---------------------
-> -- compatible:		Must be "maxim,max77650-charger"
-> -
-> -Optional properties:
-> ---------------------
-> -- input-voltage-min-microvolt:	Minimum CHGIN regulation voltage. Must be=
- one
-> -				of: 4000000, 4100000, 4200000, 4300000,
-> -				4400000, 4500000, 4600000, 4700000.
-> -- input-current-limit-microamp:	CHGIN input current limit (in microamps)=
-=2E Must
-> -				be one of: 95000, 190000, 285000, 380000,
-> -				475000.
-> -
-> -Example:
-> ---------
-> -
-> -	charger {
-> -		compatible =3D "maxim,max77650-charger";
-> -		input-voltage-min-microvolt =3D <4200000>;
-> -		input-current-limit-microamp =3D <285000>;
-> -	};
-> +This file was moved to max77650-charger.yaml.
-> diff --git a/Documentation/devicetree/bindings/power/supply/max77650-char=
-ger.yaml b/Documentation/devicetree/bindings/power/supply/max77650-charger.=
-yaml
-> new file mode 100644
-> index 000000000000..9dd0dad0f948
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.yaml
-> @@ -0,0 +1,42 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/power/supply/max77650-charger.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Battery charger driver for MAX77650 PMIC from Maxim Integrated.
-> +
-> +maintainers:
-> +  - Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> +
-> +description: |
-> +  This module is part of the MAX77650 MFD device. For more details
-> +  see Documentation/devicetree/bindings/mfd/max77650.txt.
-> +
-> +  The charger is represented as a sub-node of the PMIC node on the devic=
-e tree.
-> +
-> +properties:
-> +  compatible:
-> +    const: maxim,max77650-charger
-> +
-> +  input-voltage-min-microvolt:
-> +    description:
-> +      Minimum CHGIN regulation voltage.
-> +    enum: [ 4000000, 4100000, 4200000, 4300000,
-> +            4400000, 4500000, 4600000, 4700000 ]
-> +
-> +  input-current-limit-microamp:
-> +    description:
-> +      CHGIN input current limit (in microamps).
-> +    enum: [ 95000, 190000, 285000, 380000, 475000 ]
-> +
-> +required:
-> +  - compatible
-> +
-> +examples:
-> +  - |
-> +    charger {
-> +        compatible =3D "maxim,max77650-charger";
-> +        input-voltage-min-microvolt =3D <4200000>;
-> +        input-current-limit-microamp =3D <285000>;
-> +    };
-> --=20
-> 2.23.0
->=20
-
---lvytl443p4a5vq52
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl2j+lkACgkQ2O7X88g7
-+pomCA/7BKT68Dw2GbwGBoG4yadDJGw3mu+fWzAQF5R76k+9J5ic2r+Q/Gr1M3rZ
-zbwH0Isgl1RCAa/usmx1lDMG/CWPivdz4ofnr2sX1SLYNNz/fmtcrt3TtlyXwhxs
-3DR5eQQz9lOjcF5EVMptxaYNaoQtRV6Ptu7KFf5+graYuJ9U8Zvcb7P/gfzEKMTW
-tImGYv3ZqvQye1u5OaqgZrYgnULyB1Pibjz9FFTM6EjPomJP++9+T8MSLHV3wZEA
-bhy+e6cqIrEVfCy9f9t6a9y5PyvhuAVb59AKo3e6atYa4WwKObr47iCdI2GTcg+G
-5hLD80c3tS28T0LbKgtrHrOsA3V/0qY14tlWZvnrFpoDwKy5+hGTDVsXSXAE5whj
-hpyqYEQNWy8zYsZ+F73xGGqzGPWv/MoA4mBpvTLe9fuf+TN0M35p2nbycKReW4+a
-k0pnlPDfzwmfNiEmdl3UYJkMfLZk488ljkJe1tww0d4+LKQqtVb9w9bKVxxARVtg
-F3KXegzxNjnNNl584ucPZLZwGhJzNSJ9zwMbE6GDRJFCmH4MEkrWLnaTqesk9xLn
-3+M1A3PL9Cehdt0aAqU5bzFKYbPBLgk2b4UCxl1UL6nTLgM9KS8bd05zMMDYJJfs
-+GS5YKf1vPTceX6j0kDzV/kmJTQhESPw00rZ3b4jwNpETP7GMkw=
-=MbIN
------END PGP SIGNATURE-----
-
---lvytl443p4a5vq52--
