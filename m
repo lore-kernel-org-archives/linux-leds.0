@@ -2,56 +2,57 @@ Return-Path: <SRS0=fvon=YJ=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00376FA372F
-	for <linux-leds@archiver.kernel.org>; Wed, 16 Oct 2019 16:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE8FFA372A
+	for <linux-leds@archiver.kernel.org>; Wed, 16 Oct 2019 16:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8BAF21D71
-	for <linux-leds@archiver.kernel.org>; Wed, 16 Oct 2019 16:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86E8B2067D
+	for <linux-leds@archiver.kernel.org>; Wed, 16 Oct 2019 16:01:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="byTgUkKG"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bDSe7GXj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393130AbfJPQBS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S2393164AbfJPQBS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Wed, 16 Oct 2019 12:01:18 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:55614 "EHLO
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:55618 "EHLO
         lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393088AbfJPQAe (ORCPT
+        with ESMTP id S2393153AbfJPQAe (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Wed, 16 Oct 2019 12:00:34 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GG0VBR039218;
-        Wed, 16 Oct 2019 11:00:31 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9GG0WvU039222;
+        Wed, 16 Oct 2019 11:00:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
         s=ti-com-17Q1; t=1571241632;
-        bh=rjrKmRCxtLcAljHlXeRYkYtQjW+gz+DNteKwJQGVkFw=;
+        bh=LO8T+oi3M9BHoibd1b2irFGWiv0PLN6OFSHgyKGXrVo=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=byTgUkKG+8ZgBzVvzfMDI8wyiB+MLhRMfWglkoZMQM9LOSY4y7UdCi4CT5SCMB/JL
-         N3kakNOd6FK5VULIrQHG+9/EqGu2b2rPUIEEXWdHgUeZUCEXFnWlWddwVXSTr2vPAl
-         kxvPBi5BafAqTf+GPzRxB+M4mhC9QIePyc2T7YZM=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GG0VZJ083027;
-        Wed, 16 Oct 2019 11:00:31 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+        b=bDSe7GXjEnoCl0SmrDVVIEzKk/XwL9dy+5GdCznJdvFltaTUDoeVjuEto9T1o9iDX
+         vooQ23NQiVQ1s8yBt+JPJiD15l5bV10gdqure/C1Iq4Qa6OC6Xyr1IA5RigkTL7N90
+         dSqbn5K9I+EYij+3v/68nHeLblAysZn/VrEwHDJs=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9GG0Wbw053381
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Oct 2019 11:00:32 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 16
- Oct 2019 11:00:24 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2019 11:00:25 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
  Frontend Transport; Wed, 16 Oct 2019 11:00:25 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GG0VxL113275;
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9GG0VbA097003;
         Wed, 16 Oct 2019 11:00:31 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v13 14/18] leds: lp5523: Update the lp5523 code to add multicolor brightness function
-Date:   Wed, 16 Oct 2019 10:59:50 -0500
-Message-ID: <20191016155954.29044-15-dmurphy@ti.com>
+Subject: [PATCH v13 15/18] leds: lp5521: Add multicolor framework multicolor brightness support
+Date:   Wed, 16 Oct 2019 10:59:51 -0500
+Message-ID: <20191016155954.29044-16-dmurphy@ti.com>
 X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 In-Reply-To: <20191016155954.29044-1-dmurphy@ti.com>
 References: <20191016155954.29044-1-dmurphy@ti.com>
@@ -65,23 +66,23 @@ List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 Add the multicolor brightness call back to support the multicolor
-framework.  This call back allows setting  brightness on grouped channels
-in a single function.
+framework. This function allows setting the brightness across
+grouped LED channels in a single call.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-lp5523.c | 20 ++++++++++++++++++++
+ drivers/leds/leds-lp5521.c | 20 ++++++++++++++++++++
  1 file changed, 20 insertions(+)
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index d0b931a136b9..b5beed5bbd85 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -791,6 +791,25 @@ static ssize_t store_master_fader_leds(struct device *dev,
- 	return ret;
+diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+index 6f0272249dc8..5785bc04b874 100644
+--- a/drivers/leds/leds-lp5521.c
++++ b/drivers/leds/leds-lp5521.c
+@@ -349,6 +349,25 @@ static int lp5521_run_selftest(struct lp55xx_chip *chip, char *buf)
+ 	return 0;
  }
  
-+static int lp5523_multicolor_brightness(struct lp55xx_led *led)
++static int lp5521_multicolor_brightness(struct lp55xx_led *led)
 +{
 +	struct lp55xx_chip *chip = led->chip;
 +	int ret;
@@ -90,7 +91,7 @@ index d0b931a136b9..b5beed5bbd85 100644
 +	mutex_lock(&chip->lock);
 +	for (i = 0; i < led->mc_cdev.num_leds; i++) {
 +		ret = lp55xx_write(chip,
-+				   LP5523_REG_LED_PWM_BASE +
++				   LP5521_REG_LED_PWM_BASE +
 +				   led->color_component[i].output_num,
 +				   led->color_component[i].brightness);
 +		if (ret)
@@ -100,17 +101,17 @@ index d0b931a136b9..b5beed5bbd85 100644
 +	return ret;
 +}
 +
- static int lp5523_led_brightness(struct lp55xx_led *led)
+ static int lp5521_led_brightness(struct lp55xx_led *led)
  {
  	struct lp55xx_chip *chip = led->chip;
-@@ -857,6 +876,7 @@ static struct lp55xx_device_config lp5523_cfg = {
- 	.max_channel  = LP5523_MAX_LEDS,
- 	.post_init_device   = lp5523_post_init_device,
- 	.brightness_fn      = lp5523_led_brightness,
-+	.multicolor_brightness_fn = lp5523_multicolor_brightness,
- 	.set_led_current    = lp5523_set_led_current,
- 	.firmware_cb        = lp5523_firmware_loaded,
- 	.run_engine         = lp5523_run_engine,
+@@ -490,6 +509,7 @@ static struct lp55xx_device_config lp5521_cfg = {
+ 	.max_channel  = LP5521_MAX_LEDS,
+ 	.post_init_device   = lp5521_post_init_device,
+ 	.brightness_fn      = lp5521_led_brightness,
++	.multicolor_brightness_fn = lp5521_multicolor_brightness,
+ 	.set_led_current    = lp5521_set_led_current,
+ 	.firmware_cb        = lp5521_firmware_loaded,
+ 	.run_engine         = lp5521_run_engine,
 -- 
 2.22.0.214.g8dca754b1e
 
