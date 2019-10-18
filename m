@@ -2,141 +2,126 @@ Return-Path: <SRS0=89b7=YL=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A947CCA9EA4
-	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 12:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBA9CA9EA1
+	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 12:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81C712089C
-	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 12:28:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B66CA21852
+	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 12:33:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f+ks6zQg"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LMWQ/i1c";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aZLlw7Ul"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728735AbfJRM2p (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 18 Oct 2019 08:28:45 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:48392 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392707AbfJRMZ7 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Oct 2019 08:25:59 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9ICPti9066211;
-        Fri, 18 Oct 2019 07:25:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571401555;
-        bh=WYbItaF+PhoT25Xi4tBJupjh3c8kvM30RcC17GuTSik=;
-        h=From:To:CC:Subject:Date;
-        b=f+ks6zQgX+efJr2uq/08DLlF1zblCnTii1x2O8L4NmLr3q5pbTAJoFbLjdfLKmdph
-         5M4yr9gs1bzN10i9tPSuyf7jwAWLF4JgsUNAKJhcOtLvMc3HMxPmeIvmYJilqDiK+a
-         OW3lhrQi3kGvbYgvyuiCDUFiYtZ7e0bbU3H6zS/U=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9ICPtYF053618
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 18 Oct 2019 07:25:55 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 18
- Oct 2019 07:25:46 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 18 Oct 2019 07:25:46 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9ICPshL073298;
-        Fri, 18 Oct 2019 07:25:54 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v14 00/19] MultiColor Framework v14
-Date:   Fri, 18 Oct 2019 07:25:02 -0500
-Message-ID: <20191018122521.6757-1-dmurphy@ti.com>
-X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S2403940AbfJRMdx (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 18 Oct 2019 08:33:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51818 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731028AbfJRMdx (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Oct 2019 08:33:53 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B9FA761153; Fri, 18 Oct 2019 12:33:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571402031;
+        bh=3tRVjrnzdm7RkUk3GKY47Ahx002G46T/pICBBH7NvWA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LMWQ/i1cMrdzBvKrIelXLEd0/YNX5lIGVAq7JwADeaCXi1MSEeAzrFBrHxDEtwBON
+         bQ2vIEHKfSv0+HD4ktTxWhaPeCmRXk4mrnyakWhLNSXZE5r9LAWOR3VfyXr0ZF8f0c
+         rL39HRrd9IGKZFIRoY6O5GU6/FW788Db6QpsyDaU=
+Received: from kgunda-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kgunda@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6114260A64;
+        Fri, 18 Oct 2019 12:33:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571402030;
+        bh=3tRVjrnzdm7RkUk3GKY47Ahx002G46T/pICBBH7NvWA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=aZLlw7UlL4APffRlCQHbZt7Pz9Ox0LA5cc0jOFTDFCoExZsQKnfk3oYrOxhQSTqNZ
+         4WKVoclFZE0Jvog5DIr0s6oWvA5/0Ve0ooWplFkcV6ImRnK6duhWvvK8N+JfPG84bW
+         xy3sojx7QJaOL0AHSq72XZdtUDkmSqIY16ujIFww=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6114260A64
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kgunda@codeaurora.org
+From:   Kiran Gunda <kgunda@codeaurora.org>
+To:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
+        lee.jones@linaro.org, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, Kiran Gunda <kgunda@codeaurora.org>
+Subject: [PATCH V8 0/6] backlight: qcom-wled: Support for QCOM wled driver
+Date:   Fri, 18 Oct 2019 18:03:23 +0530
+Message-Id: <1571402009-8706-1-git-send-email-kgunda@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hello
+This patch series renames the pm8941-wled.c driver to qcom-wled.c to add
+the support for multiple PMICs supported by qualcomm. This patch series
+supports both PM8941 and PMI8998 WLED. The PMI8998 WLED has the support
+to handle the OVP (over voltage protection) and the SC (short circuit
+protection)
+interrupts. It also has the auto string detection algorithm support to
+configure the right strings if the user specified string configuration
+is in-correct. These three features are added in this series for PMI8998.
 
-Changes made from v13:
-https://lore.kernel.org/patchwork/project/lkml/list/?series=414566
+changes from v1:
+   - Fixed the commit message for
+   - backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
 
-Added 1 patch for removing extern from lp55xx-common header
+Changes from v2:
+   - Fixed bjorn and other reviewer's comments
+   - Seperated the device tree bindings
+   - Splitted out the WLED4 changes in seperate patch
+   - Merged OVP and auto string detection patch
 
-MC Class:
-Updated documentation to include statement on keeping max_intensity consistent
-across all clustered LEDs.
+Changes from v3:
+  - Added Reviewed-by/Acked-by tags
+  - Fixed comments from Bjorn/Vinod/Rob
+  - Splitting the "backlight: qcom-wled: Add support for WLED4 peripheral" patch
+    to seperate the WLED3 specific restructure.
 
-LP55xx:
-Renamed color_component to color_components
-ifdef out multicolor class code when CONFIG_MULTI_COLOR is not selected
-Removed devm_*_unregister code from LP55xx/21/23 and LP8501
+Changes from v4:
+  - Added reviewed-by/Acked-by tags
+  - Fixed comments from Bjorn/Daniel/Pavel
 
-n900:
-Fixed commit message
+Changes from v5:
+  - Fixed comments from Bjorn/Pavel
 
-Dan
+Changes from v5/v6:
+  - Fixed comments from Bjorn/Pavel on V5 series, which were missed in V6 series
+  - Patch 1 and 2, mentioned below, from V6 series are picked by Pavel In next.
+    Hence, dropped them in this series.
+    https://lore.kernel.org/patchwork/patch/1132467/
+    https://lore.kernel.org/patchwork/patch/1132468/
 
-Dan Murphy (19):
-  dt: bindings: Add multicolor class dt bindings documention
-  dt-bindings: leds: Add multicolor ID to the color ID list
-  leds: Add multicolor ID to the color ID list
-  leds: multicolor: Introduce a multicolor class definition
-  dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
-  leds: lp50xx: Add the LP50XX family of the RGB LED driver
-  dt: bindings: lp55xx: Be consistent in the document with LED acronym
-  dt: bindings: lp55xx: Update binding for Multicolor Framework
-  ARM: dts: n900: Add reg property to the LP5523 channel node
-  ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
-  ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
-  leds: lp55xx: Convert LED class registration to devm_*
-  leds: lp55xx: Add multicolor framework support to lp55xx
-  leds: lp5523: Update the lp5523 code to add multicolor brightness
-    function
-  leds: lp5521: Add multicolor framework multicolor brightness support
-  leds: lp55xx: Fix checkpatch file permissions issues
-  leds: lp5523: Fix checkpatch issues in the code
-  dt: bindings: Update lp55xx binding to recommended LED naming
-  leds: lp55xx-common: Remove extern from lp55xx-common header
+Changes from v7:
+  - Addressed comments from Daniel Thompson/Lee Jones
+  - Patch 1 and 2, mentioned below, from V6 series are picked by Pavel In next.
+    Hence, dropped them in this series.
+    https://lore.kernel.org/patchwork/patch/1132467/
+    https://lore.kernel.org/patchwork/patch/1132468/
 
- .../ABI/testing/sysfs-class-led-multicolor    |  36 +
- .../bindings/leds/leds-class-multicolor.txt   |  98 +++
- .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++
- .../devicetree/bindings/leds/leds-lp55xx.txt  | 163 +++-
- Documentation/leds/index.rst                  |   1 +
- Documentation/leds/leds-class-multicolor.rst  |  96 +++
- arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |  14 +-
- arch/arm/boot/dts/omap3-n900.dts              |  29 +-
- arch/arm/boot/dts/ste-href.dtsi               |  22 +-
- drivers/leds/Kconfig                          |  22 +
- drivers/leds/Makefile                         |   2 +
- drivers/leds/led-class-multicolor.c           | 271 ++++++
- drivers/leds/led-core.c                       |   1 +
- drivers/leds/leds-lp50xx.c                    | 799 ++++++++++++++++++
- drivers/leds/leds-lp5521.c                    |  29 +-
- drivers/leds/leds-lp5523.c                    |  48 +-
- drivers/leds/leds-lp55xx-common.c             | 220 +++--
- drivers/leds/leds-lp55xx-common.h             |  35 +-
- drivers/leds/leds-lp8501.c                    |   9 +-
- include/dt-bindings/leds/common.h             |   3 +-
- include/linux/led-class-multicolor.h          |  97 +++
- include/linux/platform_data/leds-lp55xx.h     |   7 +
- 22 files changed, 2008 insertions(+), 142 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
- create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
- create mode 100644 Documentation/leds/leds-class-multicolor.rst
- create mode 100644 drivers/leds/led-class-multicolor.c
- create mode 100644 drivers/leds/leds-lp50xx.c
- create mode 100644 include/linux/led-class-multicolor.h
+Kiran Gunda (6):
+  backlight: qcom-wled: Add new properties for PMI8998.
+  backlight: qcom-wled: Rename PM8941* to WLED3
+  backlight: qcom-wled: Restructure the driver for WLED3.
+  backlight: qcom-wled: Add support for WLED4 peripheral.
+  backlight: qcom-wled: add support for short circuit handling.
+  backlight: qcom-wled: Add auto string detection logic
+
+ .../bindings/leds/backlight/qcom-wled.txt          |   74 +-
+ drivers/video/backlight/qcom-wled.c                | 1254 +++++++++++++++++---
+ 2 files changed, 1125 insertions(+), 203 deletions(-)
 
 -- 
-2.22.0.214.g8dca754b1e
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+ a Linux Foundation Collaborative Project
 
