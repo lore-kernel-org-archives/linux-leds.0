@@ -2,208 +2,98 @@ Return-Path: <SRS0=89b7=YL=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC4BCA9EA3
-	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 06:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EF4CA9EA0
+	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 12:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1F7D20820
-	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 06:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFFD92089C
+	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 12:25:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="fdz+n06H"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eveFoLO2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504474AbfJRGpL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 18 Oct 2019 02:45:11 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42218 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729119AbfJRGpL (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Oct 2019 02:45:11 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c10so4063345otd.9
-        for <linux-leds@vger.kernel.org>; Thu, 17 Oct 2019 23:45:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=1lF1MIdaENKkNdKHx3QF8806cfpyw2N47Ri2S6zNu+A=;
-        b=fdz+n06HECsJp9I5yC12MLoPyso3cVdDWSygC4Y7XVo2s+raIUe7Kh+aLwemhLMU5k
-         i7dVQR2xfPsax9aa+5VJyUvt0/X84pN8bZr2I1IqodPrl3WJd8v/DQvU0Mn7HPDL3F9G
-         p2zjMx/ktE9PQCFIGtVBeHWjl+r/xzysY7yUr0+lRii3jz18vN6MqHlkSU45xQ55o05m
-         G1FSO9291SHGdzv4XiuXv+oNdb3MCs2XWDCdELcJYSDl+uaG/muocWgujsYLr1TZ5iXU
-         5ElzuYwPbcYqYAwmJUKvQibj3nrYv8cN7CxOJQhhzGPFEDhOSpyWjgAwj+3CpwrqQEHf
-         a/Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1lF1MIdaENKkNdKHx3QF8806cfpyw2N47Ri2S6zNu+A=;
-        b=TSNgqqRW2vcuRhR6sjLWI1SXbvaHWPrWfxKmQm3PtjPZyxTzt5yUWGPbrCrDsh2MGj
-         huG7pkZUBhxKbtYQ+5uJjTHhguVNNjWfnszX2+RS5vZd5yQACFz2kx1UV85gfQ+I49Uk
-         8JasUmvCmlc6W4n0wajb4ke2zftUoRZsI1aSCjk5sko+/lrfzbdULa2KuMbHVvKIF85/
-         YC5FN+TXO5XMWiuwWbKB8kTXBHEsjC9RHEln4X8prlraitf9Gh/NwaePI+vtQYCi3HIz
-         0hZaE3vgudwRqDZP9HL6jyJDtZAkHV/7iVGGntsippjhrTvuPsNWWSYNmJZ0EaeMNnt/
-         a80g==
-X-Gm-Message-State: APjAAAWAsJ/J3LsIgKIGsiJxYph7xtisrSglT713MiDp6G2lauGCuY8f
-        v/AO2U+sjz5I527HZbKUr8jod044Dj8UyTH4x0rc0A==
-X-Google-Smtp-Source: APXvYqxyM+v+SYTdyxQ4dtigF5DDcYtT8ndNrsXVrCyXLrBJJzjjCW0hbJvIcRwuifhyrCsk7IlYvVPciQR043PPUQs=
-X-Received: by 2002:a9d:7d09:: with SMTP id v9mr6404595otn.292.1571381108752;
- Thu, 17 Oct 2019 23:45:08 -0700 (PDT)
+        id S2407834AbfJRMZ7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 18 Oct 2019 08:25:59 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:48390 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387657AbfJRMZ7 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Oct 2019 08:25:59 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9ICPuxA066228;
+        Fri, 18 Oct 2019 07:25:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571401556;
+        bh=2mClMRVmQem6A4eXR7dKG+E8+5lp9Pdw27NqZQki0y8=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=eveFoLO287yglx4Bl0awzNkDzoeRUDgCtCSsaBSJsyoF/7vSlN5o4lZWVcpC6y1+F
+         Wga4uCaDDJNPFGX66DMk3d7Gwtr0bR7FKD7shgvX5Yg3AOJsS09B+PvitxE/TGWHs4
+         gD80lIorfSfiF286ZSjwvhYgSrOyfNI+PesBBEtM=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9ICPuGX060743
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Oct 2019 07:25:56 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 18
+ Oct 2019 07:25:48 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 18 Oct 2019 07:25:48 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9ICPuj3073321;
+        Fri, 18 Oct 2019 07:25:56 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v14 07/19] dt: bindings: lp55xx: Be consistent in the document with LED acronym
+Date:   Fri, 18 Oct 2019 07:25:09 -0500
+Message-ID: <20191018122521.6757-8-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
+In-Reply-To: <20191018122521.6757-1-dmurphy@ti.com>
+References: <20191018122521.6757-1-dmurphy@ti.com>
 MIME-Version: 1.0
-References: <20191017071234.8719-1-brgl@bgdev.pl> <20191017071234.8719-4-brgl@bgdev.pl>
- <20191017183543.GA28403@bogus>
-In-Reply-To: <20191017183543.GA28403@bogus>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 18 Oct 2019 08:44:57 +0200
-Message-ID: <CAMpxmJUMgqocphdPhS_zCYX3ib_hnwhnhBfQEVaY8hnpi4vxQg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/6] dt-bindings: regulator: max77650: convert the
- binding document to yaml
-To:     Rob Herring <robh@kernel.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        linux-pm <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-czw., 17 pa=C5=BA 2019 o 20:35 Rob Herring <robh@kernel.org> napisa=C5=82(a=
-):
->
-> On Thu, Oct 17, 2019 at 09:12:31AM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > Convert the binding document for MAX77650 regulator module to YAML.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >  .../bindings/regulator/max77650-regulator.txt | 41 -------------------
-> >  .../regulator/max77650-regulator.yaml         | 31 ++++++++++++++
-> >  2 files changed, 31 insertions(+), 41 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/regulator/max7765=
-0-regulator.txt
-> >  create mode 100644 Documentation/devicetree/bindings/regulator/max7765=
-0-regulator.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/regulator/max77650-regul=
-ator.txt b/Documentation/devicetree/bindings/regulator/max77650-regulator.t=
-xt
-> > deleted file mode 100644
-> > index f1cbe813c30f..000000000000
-> > --- a/Documentation/devicetree/bindings/regulator/max77650-regulator.tx=
-t
-> > +++ /dev/null
-> > @@ -1,41 +0,0 @@
-> > -Regulator driver for MAX77650 PMIC from Maxim Integrated.
-> > -
-> > -This module is part of the MAX77650 MFD device. For more details
-> > -see Documentation/devicetree/bindings/mfd/max77650.txt.
-> > -
-> > -The regulator controller is represented as a sub-node of the PMIC node
-> > -on the device tree.
-> > -
-> > -The device has a single LDO regulator and a SIMO buck-boost regulator =
-with
-> > -three independent power rails.
-> > -
-> > -Required properties:
-> > ---------------------
-> > -- compatible:                Must be "maxim,max77650-regulator"
-> > -
-> > -Each rail must be instantiated under the regulators subnode of the top=
- PMIC
-> > -node. Up to four regulators can be defined. For standard regulator pro=
-perties
-> > -refer to Documentation/devicetree/bindings/regulator/regulator.txt.
-> > -
-> > -Available regulator compatible strings are: "ldo", "sbb0", "sbb1", "sb=
-b2".
-> > -
-> > -Example:
-> > ---------
-> > -
-> > -     regulators {
-> > -             compatible =3D "maxim,max77650-regulator";
-> > -
-> > -             max77650_ldo: regulator@0 {
-> > -                     regulator-compatible =3D "ldo";
-> > -                     regulator-name =3D "max77650-ldo";
-> > -                     regulator-min-microvolt =3D <1350000>;
-> > -                     regulator-max-microvolt =3D <2937500>;
-> > -             };
-> > -
-> > -             max77650_sbb0: regulator@1 {
-> > -                     regulator-compatible =3D "sbb0";
-> > -                     regulator-name =3D "max77650-sbb0";
-> > -                     regulator-min-microvolt =3D <800000>;
-> > -                     regulator-max-microvolt =3D <1587500>;
-> > -             };
-> > -     };
-> > diff --git a/Documentation/devicetree/bindings/regulator/max77650-regul=
-ator.yaml b/Documentation/devicetree/bindings/regulator/max77650-regulator.=
-yaml
-> > new file mode 100644
-> > index 000000000000..a8770742836d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/regulator/max77650-regulator.ya=
-ml
-> > @@ -0,0 +1,31 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/regulator/max77650-regulator.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Regulator driver for MAX77650 PMIC from Maxim Integrated.
-> > +
-> > +maintainers:
-> > +  - Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > +
-> > +description: |
-> > +  This module is part of the MAX77650 MFD device. For more details
-> > +  see Documentation/devicetree/bindings/mfd/max77650.txt.
->
-> .yaml?
->
+Update the document to be consistent in case when using "LED".
+This acronym should be capital throughout the document.
 
-Is there any better way of referencing the main document than
-mentioning it in the description?
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ Documentation/devicetree/bindings/leds/leds-lp55xx.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Bart
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp55xx.txt b/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
+index 1b66a413fb9d..bfe2805c5534 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
+@@ -1,4 +1,4 @@
+-Binding for TI/National Semiconductor LP55xx Led Drivers
++Binding for TI/National Semiconductor LP55xx LED Drivers
+ 
+ Required properties:
+ - compatible: one of
+@@ -12,8 +12,8 @@ Required properties:
+ - clock-mode: Input clock mode, (0: automode, 1: internal, 2: external)
+ 
+ Each child has own specific current settings
+-- led-cur: Current setting at each led channel (mA x10, 0 if led is not connected)
+-- max-cur: Maximun current at each led channel.
++- led-cur: Current setting at each LED channel (mA x10, 0 if LED is not connected)
++- max-cur: Maximun current at each LED channel.
+ 
+ Optional properties:
+ - enable-gpio: GPIO attached to the chip's enable pin
+-- 
+2.22.0.214.g8dca754b1e
 
-> > +
-> > +  The regulator controller is represented as a sub-node of the PMIC no=
-de
-> > +  on the device tree.
-> > +
-> > +  The device has a single LDO regulator and a SIMO buck-boost regulato=
-r with
-> > +  three independent power rails.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: maxim,max77650-regulator
-> > +
-> > +patternProperties:
-> > +  "^regulator@[0-3]$":
-> > +    $ref: "regulator.yaml#"
-> > +
-> > +required:
-> > +  - compatible
-> > --
-> > 2.23.0
-> >
