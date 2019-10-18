@@ -2,49 +2,49 @@ Return-Path: <SRS0=89b7=YL=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BADECA9EA0
-	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 12:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EADECA9EA0
+	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 12:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E8E221852
-	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 12:34:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C826121925
+	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 12:34:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V7vkvNHb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hWXToaEj"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nqsjX+7m";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QNralay1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408075AbfJRMeO (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 18 Oct 2019 08:34:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52340 "EHLO
+        id S2410042AbfJRMeY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 18 Oct 2019 08:34:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52670 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408148AbfJRMeN (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Oct 2019 08:34:13 -0400
+        with ESMTP id S2408148AbfJRMeX (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Oct 2019 08:34:23 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7CBDC61201; Fri, 18 Oct 2019 12:34:06 +0000 (UTC)
+        id 4527661271; Fri, 18 Oct 2019 12:34:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571402051;
-        bh=WvjYruTJPKhN0T8fCcVqnyZhH8me5YcEVoLHJ5MpJBo=;
+        s=default; t=1571402062;
+        bh=t/BLTf0cERUXVQUVcHyoY8lz5zFk+ZnZaipERLONBCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V7vkvNHbaOi/LjYFfnSlVzRXYb2M1F9yDcEeWGvNlNfOhO92BAMzFvgA5YSbuoouF
-         xZq5yKAcJ7M/mM3gy0KOjdyDPS8sa2aG6T/jcUcmSgt/ag/40pAWIxMypFcKNJvdm1
-         pqKfA6F6EjLJublAQfHuupUSW8gkutIEXUZzvU/Y=
+        b=nqsjX+7mArAzXZIzw62ZROSAelgLcdAf2hRJHMPVrLfjJ01l/B/B/pmPy8gFV9ZrS
+         pPMf6q1eI2ofq8ZdjdgiA8zQoVr8xXcQohG/BjNHUzhwN07zEgtwvV1YAN8o6KW+yo
+         mwKr7k4zRXczSgKu4CZseqtTZAiT8wNVz5EdF4io=
 Received: from kgunda-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: kgunda@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 54340611B9;
-        Fri, 18 Oct 2019 12:33:57 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6E53660A61;
+        Fri, 18 Oct 2019 12:34:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571402043;
-        bh=WvjYruTJPKhN0T8fCcVqnyZhH8me5YcEVoLHJ5MpJBo=;
+        s=default; t=1571402055;
+        bh=t/BLTf0cERUXVQUVcHyoY8lz5zFk+ZnZaipERLONBCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hWXToaEj16FiRqO6IcvsmjAX47EXt7ZEHllVe6KVwwDeUVOD0TVWBuUhA9tY05GSr
-         Ie7xLeLEq6uDfG0x1x6lq1xeWJ+ucfLujbuVXciX8jf9ViTtXo0KG2O8aWQAViA1VR
-         tIdUwi9UGLcIQRIOlTdbrnE47zk/pxKOUhlviA8M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 54340611B9
+        b=QNralay1tpntRmFDAxks2NiNsKEt+iRVDic+LP19k6YF+2nC2nNqIVkFBaMr4cZgn
+         9v9yHeFVjol91NnYGzLqVEXKqO5mNP65JLbAKBgrge2/rpaH96MuS2jwwJE/Bku1Cj
+         gKKBzNuqjJOK90eRFzJ4wvw+xVyzO8SzP3s9aI+g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E53660A61
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kgunda@codeaurora.org
 From:   Kiran Gunda <kgunda@codeaurora.org>
@@ -57,9 +57,9 @@ To:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
         Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-fbdev@vger.kernel.org
 Cc:     Kiran Gunda <kgunda@codeaurora.org>
-Subject: [PATCH V8 2/6] backlight: qcom-wled: Rename PM8941* to WLED3
-Date:   Fri, 18 Oct 2019 18:03:25 +0530
-Message-Id: <1571402009-8706-3-git-send-email-kgunda@codeaurora.org>
+Subject: [PATCH V8 4/6] backlight: qcom-wled: Add support for WLED4 peripheral.
+Date:   Fri, 18 Oct 2019 18:03:27 +0530
+Message-Id: <1571402009-8706-5-git-send-email-kgunda@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1571402009-8706-1-git-send-email-kgunda@codeaurora.org>
 References: <1571402009-8706-1-git-send-email-kgunda@codeaurora.org>
@@ -68,513 +68,377 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Rename the PM8941* references as WLED3 to make the driver
-generic and have WLED support for other PMICs. Also rename
-"i_boost_limit" and "i_limit" variables to "boost_i_limit"
-and "string_i_limit" respectively to resemble the corresponding
-register names.
+WLED4 peripheral is present on some PMICs like pmi8998 and
+pm660l. It has a different register map and configurations
+are also different. Add support for it.
 
 Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
- drivers/video/backlight/qcom-wled.c | 248 ++++++++++++++++++------------------
- 1 file changed, 125 insertions(+), 123 deletions(-)
+ drivers/video/backlight/qcom-wled.c | 255 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 253 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-index 82b8572..f191242 100644
+index 45eeda4..5386ca9 100644
 --- a/drivers/video/backlight/qcom-wled.c
 +++ b/drivers/video/backlight/qcom-wled.c
-@@ -10,77 +10,79 @@
- #include <linux/regmap.h>
+@@ -17,7 +17,7 @@
  
- /* From DT binding */
--#define PM8941_WLED_DEFAULT_BRIGHTNESS		2048
-+#define WLED_DEFAULT_BRIGHTNESS				2048
+ #define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
  
--#define PM8941_WLED_REG_VAL_BASE		0x40
--#define  PM8941_WLED_REG_VAL_MAX		0xFFF
-+#define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
-+#define WLED3_CTRL_REG_VAL_BASE				0x40
+-/* WLED3 control registers */
++/* WLED3/WLED4 control registers */
+ #define WLED3_CTRL_REG_MOD_EN				0x46
+ #define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
+ #define  WLED3_CTRL_REG_MOD_EN_SHIFT			7
+@@ -31,7 +31,7 @@
+ #define WLED3_CTRL_REG_ILIMIT				0x4e
+ #define  WLED3_CTRL_REG_ILIMIT_MASK			GENMASK(2, 0)
  
--#define PM8941_WLED_REG_MOD_EN			0x46
--#define  PM8941_WLED_REG_MOD_EN_BIT		BIT(7)
--#define  PM8941_WLED_REG_MOD_EN_MASK		BIT(7)
-+/* WLED3 control registers */
-+#define WLED3_CTRL_REG_MOD_EN				0x46
-+#define  WLED3_CTRL_REG_MOD_EN_BIT			BIT(7)
-+#define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
+-/* WLED3 sink registers */
++/* WLED3/WLED4 sink registers */
+ #define WLED3_SINK_REG_SYNC				0x47
+ #define  WLED3_SINK_REG_SYNC_CLEAR			0x00
  
--#define PM8941_WLED_REG_SYNC			0x47
--#define  PM8941_WLED_REG_SYNC_MASK		0x07
--#define  PM8941_WLED_REG_SYNC_LED1		BIT(0)
--#define  PM8941_WLED_REG_SYNC_LED2		BIT(1)
--#define  PM8941_WLED_REG_SYNC_LED3		BIT(2)
--#define  PM8941_WLED_REG_SYNC_ALL		0x07
--#define  PM8941_WLED_REG_SYNC_CLEAR		0x00
-+#define WLED3_CTRL_REG_FREQ				0x4c
-+#define  WLED3_CTRL_REG_FREQ_MASK			0x0f
+@@ -56,6 +56,28 @@
+ #define WLED3_SINK_REG_STR_CABC(n)			(0x66 + (n * 0x10))
+ #define  WLED3_SINK_REG_STR_CABC_MASK			BIT(7)
  
--#define PM8941_WLED_REG_FREQ			0x4c
--#define  PM8941_WLED_REG_FREQ_MASK		0x0f
-+#define WLED3_CTRL_REG_OVP				0x4d
-+#define  WLED3_CTRL_REG_OVP_MASK			0x03
- 
--#define PM8941_WLED_REG_OVP			0x4d
--#define  PM8941_WLED_REG_OVP_MASK		0x03
-+#define WLED3_CTRL_REG_ILIMIT				0x4e
-+#define  WLED3_CTRL_REG_ILIMIT_MASK			0x07
- 
--#define PM8941_WLED_REG_BOOST			0x4e
--#define  PM8941_WLED_REG_BOOST_MASK		0x07
-+/* WLED3 sink registers */
-+#define WLED3_SINK_REG_SYNC				0x47
-+#define  WLED3_SINK_REG_SYNC_MASK			0x07
-+#define  WLED3_SINK_REG_SYNC_LED1			BIT(0)
-+#define  WLED3_SINK_REG_SYNC_LED2			BIT(1)
-+#define  WLED3_SINK_REG_SYNC_LED3			BIT(2)
-+#define  WLED3_SINK_REG_SYNC_ALL			0x07
-+#define  WLED3_SINK_REG_SYNC_CLEAR			0x00
- 
--#define PM8941_WLED_REG_SINK			0x4f
--#define  PM8941_WLED_REG_SINK_MASK		0xe0
--#define  PM8941_WLED_REG_SINK_SHFT		0x05
-+#define WLED3_SINK_REG_CURR_SINK			0x4f
-+#define  WLED3_SINK_REG_CURR_SINK_MASK			0xe0
-+#define  WLED3_SINK_REG_CURR_SINK_SHFT			0x05
- 
--/* Per-'string' registers below */
--#define PM8941_WLED_REG_STR_OFFSET		0x10
-+/* WLED3 per-'string' registers below */
-+#define WLED3_SINK_REG_STR_OFFSET			0x10
- 
--#define PM8941_WLED_REG_STR_MOD_EN_BASE		0x60
--#define  PM8941_WLED_REG_STR_MOD_MASK		BIT(7)
--#define  PM8941_WLED_REG_STR_MOD_EN		BIT(7)
-+#define WLED3_SINK_REG_STR_MOD_EN_BASE			0x60
-+#define  WLED3_SINK_REG_STR_MOD_MASK			BIT(7)
-+#define  WLED3_SINK_REG_STR_MOD_EN			BIT(7)
- 
--#define PM8941_WLED_REG_STR_SCALE_BASE		0x62
--#define  PM8941_WLED_REG_STR_SCALE_MASK		0x1f
-+#define WLED3_SINK_REG_STR_FULL_SCALE_CURR		0x62
-+#define  WLED3_SINK_REG_STR_FULL_SCALE_CURR_MASK	0x1f
- 
--#define PM8941_WLED_REG_STR_MOD_SRC_BASE	0x63
--#define  PM8941_WLED_REG_STR_MOD_SRC_MASK	0x01
--#define  PM8941_WLED_REG_STR_MOD_SRC_INT	0x00
--#define  PM8941_WLED_REG_STR_MOD_SRC_EXT	0x01
-+#define WLED3_SINK_REG_STR_MOD_SRC_BASE			0x63
-+#define  WLED3_SINK_REG_STR_MOD_SRC_MASK		0x01
-+#define  WLED3_SINK_REG_STR_MOD_SRC_INT			0x00
-+#define  WLED3_SINK_REG_STR_MOD_SRC_EXT			0x01
- 
--#define PM8941_WLED_REG_STR_CABC_BASE		0x66
--#define  PM8941_WLED_REG_STR_CABC_MASK		BIT(7)
--#define  PM8941_WLED_REG_STR_CABC_EN		BIT(7)
-+#define WLED3_SINK_REG_STR_CABC_BASE			0x66
-+#define  WLED3_SINK_REG_STR_CABC_MASK			BIT(7)
-+#define  WLED3_SINK_REG_STR_CABC_EN			BIT(7)
- 
--struct pm8941_wled_config {
--	u32 i_boost_limit;
-+struct wled_config {
-+	u32 boost_i_limit;
- 	u32 ovp;
- 	u32 switch_freq;
- 	u32 num_strings;
--	u32 i_limit;
-+	u32 string_i_limit;
- 	bool cs_out_en;
- 	bool ext_gen;
- 	bool cabc_en;
- };
- 
--struct pm8941_wled {
-+struct wled {
- 	const char *name;
++/* WLED4 specific sink registers */
++#define WLED4_SINK_REG_CURR_SINK			0x46
++#define  WLED4_SINK_REG_CURR_SINK_MASK			GENMASK(7, 4)
++#define  WLED4_SINK_REG_CURR_SINK_SHFT			4
++
++/* WLED4 specific per-'string' registers below */
++#define WLED4_SINK_REG_STR_MOD_EN(n)			(0x50 + (n * 0x10))
++#define  WLED4_SINK_REG_STR_MOD_MASK			BIT(7)
++
++#define WLED4_SINK_REG_STR_FULL_SCALE_CURR(n)		(0x52 + (n * 0x10))
++#define  WLED4_SINK_REG_STR_FULL_SCALE_CURR_MASK	GENMASK(3, 0)
++
++#define WLED4_SINK_REG_STR_MOD_SRC(n)			(0x53 + (n * 0x10))
++#define  WLED4_SINK_REG_STR_MOD_SRC_MASK		BIT(0)
++#define  WLED4_SINK_REG_STR_MOD_SRC_INT			0x00
++#define  WLED4_SINK_REG_STR_MOD_SRC_EXT			0x01
++
++#define WLED4_SINK_REG_STR_CABC(n)			(0x56 + (n * 0x10))
++#define  WLED4_SINK_REG_STR_CABC_MASK			BIT(7)
++
++#define WLED4_SINK_REG_BRIGHT(n)			(0x57 + (n * 0x10))
++
+ struct wled_var_cfg {
+ 	const u32 *values;
+ 	u32 (*fn)(u32);
+@@ -90,6 +112,7 @@ struct wled {
+ 	struct device *dev;
  	struct regmap *regmap;
- 	u16 addr;
- 
--	struct pm8941_wled_config cfg;
-+	struct wled_config cfg;
- };
- 
--static int pm8941_wled_update_status(struct backlight_device *bl)
-+static int wled_update_status(struct backlight_device *bl)
- {
--	struct pm8941_wled *wled = bl_get_data(bl);
-+	struct wled *wled = bl_get_data(bl);
- 	u16 val = bl->props.brightness;
- 	u8 ctrl = 0;
- 	int rc;
-@@ -92,11 +94,11 @@ static int pm8941_wled_update_status(struct backlight_device *bl)
- 		val = 0;
- 
- 	if (val != 0)
--		ctrl = PM8941_WLED_REG_MOD_EN_BIT;
-+		ctrl = WLED3_CTRL_REG_MOD_EN_BIT;
- 
- 	rc = regmap_update_bits(wled->regmap,
--			wled->addr + PM8941_WLED_REG_MOD_EN,
--			PM8941_WLED_REG_MOD_EN_MASK, ctrl);
-+			wled->addr + WLED3_CTRL_REG_MOD_EN,
-+			WLED3_CTRL_REG_MOD_EN_MASK, ctrl);
- 	if (rc)
- 		return rc;
- 
-@@ -104,89 +106,89 @@ static int pm8941_wled_update_status(struct backlight_device *bl)
- 		u8 v[2] = { val & 0xff, (val >> 8) & 0xf };
- 
- 		rc = regmap_bulk_write(wled->regmap,
--				wled->addr + PM8941_WLED_REG_VAL_BASE + 2 * i,
-+				wled->addr + WLED3_CTRL_REG_VAL_BASE + 2 * i,
- 				v, 2);
- 		if (rc)
- 			return rc;
- 	}
- 
- 	rc = regmap_update_bits(wled->regmap,
--			wled->addr + PM8941_WLED_REG_SYNC,
--			PM8941_WLED_REG_SYNC_MASK, PM8941_WLED_REG_SYNC_ALL);
-+			wled->addr + WLED3_SINK_REG_SYNC,
-+			WLED3_SINK_REG_SYNC_MASK, WLED3_SINK_REG_SYNC_ALL);
- 	if (rc)
- 		return rc;
- 
- 	rc = regmap_update_bits(wled->regmap,
--			wled->addr + PM8941_WLED_REG_SYNC,
--			PM8941_WLED_REG_SYNC_MASK, PM8941_WLED_REG_SYNC_CLEAR);
-+			wled->addr + WLED3_SINK_REG_SYNC,
-+			WLED3_SINK_REG_SYNC_MASK, WLED3_SINK_REG_SYNC_CLEAR);
- 	return rc;
- }
- 
--static int pm8941_wled_setup(struct pm8941_wled *wled)
-+static int wled_setup(struct wled *wled)
- {
- 	int rc;
- 	int i;
- 
- 	rc = regmap_update_bits(wled->regmap,
--			wled->addr + PM8941_WLED_REG_OVP,
--			PM8941_WLED_REG_OVP_MASK, wled->cfg.ovp);
-+			wled->addr + WLED3_CTRL_REG_OVP,
-+			WLED3_CTRL_REG_OVP_MASK, wled->cfg.ovp);
- 	if (rc)
- 		return rc;
- 
- 	rc = regmap_update_bits(wled->regmap,
--			wled->addr + PM8941_WLED_REG_BOOST,
--			PM8941_WLED_REG_BOOST_MASK, wled->cfg.i_boost_limit);
-+			wled->addr + WLED3_CTRL_REG_ILIMIT,
-+			WLED3_CTRL_REG_ILIMIT_MASK, wled->cfg.boost_i_limit);
- 	if (rc)
- 		return rc;
- 
- 	rc = regmap_update_bits(wled->regmap,
--			wled->addr + PM8941_WLED_REG_FREQ,
--			PM8941_WLED_REG_FREQ_MASK, wled->cfg.switch_freq);
-+			wled->addr + WLED3_CTRL_REG_FREQ,
-+			WLED3_CTRL_REG_FREQ_MASK, wled->cfg.switch_freq);
- 	if (rc)
- 		return rc;
- 
- 	if (wled->cfg.cs_out_en) {
- 		u8 all = (BIT(wled->cfg.num_strings) - 1)
--				<< PM8941_WLED_REG_SINK_SHFT;
-+				<< WLED3_SINK_REG_CURR_SINK_SHFT;
- 
- 		rc = regmap_update_bits(wled->regmap,
--				wled->addr + PM8941_WLED_REG_SINK,
--				PM8941_WLED_REG_SINK_MASK, all);
-+				wled->addr + WLED3_SINK_REG_CURR_SINK,
-+				WLED3_SINK_REG_CURR_SINK_MASK, all);
- 		if (rc)
- 			return rc;
- 	}
- 
- 	for (i = 0; i < wled->cfg.num_strings; ++i) {
--		u16 addr = wled->addr + PM8941_WLED_REG_STR_OFFSET * i;
-+		u16 addr = wled->addr + WLED3_SINK_REG_STR_OFFSET * i;
- 
- 		rc = regmap_update_bits(wled->regmap,
--				addr + PM8941_WLED_REG_STR_MOD_EN_BASE,
--				PM8941_WLED_REG_STR_MOD_MASK,
--				PM8941_WLED_REG_STR_MOD_EN);
-+				addr + WLED3_SINK_REG_STR_MOD_EN_BASE,
-+				WLED3_SINK_REG_STR_MOD_MASK,
-+				WLED3_SINK_REG_STR_MOD_EN);
- 		if (rc)
- 			return rc;
- 
- 		if (wled->cfg.ext_gen) {
- 			rc = regmap_update_bits(wled->regmap,
--					addr + PM8941_WLED_REG_STR_MOD_SRC_BASE,
--					PM8941_WLED_REG_STR_MOD_SRC_MASK,
--					PM8941_WLED_REG_STR_MOD_SRC_EXT);
-+					addr + WLED3_SINK_REG_STR_MOD_SRC_BASE,
-+					WLED3_SINK_REG_STR_MOD_SRC_MASK,
-+					WLED3_SINK_REG_STR_MOD_SRC_EXT);
- 			if (rc)
- 				return rc;
- 		}
- 
- 		rc = regmap_update_bits(wled->regmap,
--				addr + PM8941_WLED_REG_STR_SCALE_BASE,
--				PM8941_WLED_REG_STR_SCALE_MASK,
--				wled->cfg.i_limit);
-+				addr + WLED3_SINK_REG_STR_FULL_SCALE_CURR,
-+				WLED3_SINK_REG_STR_FULL_SCALE_CURR_MASK,
-+				wled->cfg.string_i_limit);
- 		if (rc)
- 			return rc;
- 
- 		rc = regmap_update_bits(wled->regmap,
--				addr + PM8941_WLED_REG_STR_CABC_BASE,
--				PM8941_WLED_REG_STR_CABC_MASK,
-+				addr + WLED3_SINK_REG_STR_CABC_BASE,
-+				WLED3_SINK_REG_STR_CABC_MASK,
- 				wled->cfg.cabc_en ?
--					PM8941_WLED_REG_STR_CABC_EN : 0);
-+					WLED3_SINK_REG_STR_CABC_EN : 0);
- 		if (rc)
- 			return rc;
- 	}
-@@ -194,9 +196,9 @@ static int pm8941_wled_setup(struct pm8941_wled *wled)
+ 	u16 ctrl_addr;
++	u16 sink_addr;
+ 	u16 max_string_count;
+ 	u32 brightness;
+ 	u32 max_brightness;
+@@ -116,6 +139,29 @@ static int wled3_set_brightness(struct wled *wled, u16 brightness)
  	return 0;
  }
  
--static const struct pm8941_wled_config pm8941_wled_config_defaults = {
--	.i_boost_limit = 3,
--	.i_limit = 20,
-+static const struct wled_config wled3_config_defaults = {
-+	.boost_i_limit = 3,
-+	.string_i_limit = 20,
- 	.ovp = 2,
- 	.switch_freq = 5,
- 	.num_strings = 0,
-@@ -205,55 +207,55 @@ static int pm8941_wled_setup(struct pm8941_wled *wled)
- 	.cabc_en = false,
++static int wled4_set_brightness(struct wled *wled, u16 brightness)
++{
++	int rc, i;
++	u16 low_limit = wled->max_brightness * 4 / 1000;
++	u8 v[2];
++
++	/* WLED4's lower limit of operation is 0.4% */
++	if (brightness > 0 && brightness < low_limit)
++		brightness = low_limit;
++
++	v[0] = brightness & 0xff;
++	v[1] = (brightness >> 8) & 0xf;
++
++	for (i = 0;  i < wled->cfg.num_strings; ++i) {
++		rc = regmap_bulk_write(wled->regmap, wled->sink_addr +
++				       WLED4_SINK_REG_BRIGHT(i), v, 2);
++		if (rc < 0)
++			return rc;
++	}
++
++	return 0;
++}
++
+ static int wled_module_enable(struct wled *wled, int val)
+ {
+ 	int rc;
+@@ -267,6 +313,120 @@ static int wled3_setup(struct wled *wled)
+ 	.enabled_strings = {0, 1, 2, 3},
  };
  
--struct pm8941_wled_var_cfg {
-+struct wled_var_cfg {
- 	const u32 *values;
- 	u32 (*fn)(u32);
- 	int size;
- };
- 
--static const u32 pm8941_wled_i_boost_limit_values[] = {
-+static const u32 wled3_boost_i_limit_values[] = {
++static int wled4_setup(struct wled *wled)
++{
++	int rc, temp, i, j;
++	u16 addr;
++	u8 sink_en = 0;
++	u32 sink_cfg = 0;
++
++	rc = regmap_update_bits(wled->regmap,
++				wled->ctrl_addr + WLED3_CTRL_REG_OVP,
++				WLED3_CTRL_REG_OVP_MASK, wled->cfg.ovp);
++	if (rc < 0)
++		return rc;
++
++	rc = regmap_update_bits(wled->regmap,
++				wled->ctrl_addr + WLED3_CTRL_REG_ILIMIT,
++				WLED3_CTRL_REG_ILIMIT_MASK,
++				wled->cfg.boost_i_limit);
++	if (rc < 0)
++		return rc;
++
++	rc = regmap_update_bits(wled->regmap,
++				wled->ctrl_addr + WLED3_CTRL_REG_FREQ,
++				WLED3_CTRL_REG_FREQ_MASK,
++				wled->cfg.switch_freq);
++	if (rc < 0)
++		return rc;
++
++	rc = regmap_read(wled->regmap, wled->sink_addr +
++			 WLED4_SINK_REG_CURR_SINK, &sink_cfg);
++	if (rc < 0)
++		return rc;
++
++	for (i = 0; i < wled->cfg.num_strings; i++) {
++		j = wled->cfg.enabled_strings[i];
++		temp = j + WLED4_SINK_REG_CURR_SINK_SHFT;
++		sink_en |= 1 << temp;
++	}
++
++	if (sink_cfg == sink_en)
++		return 0;
++
++	rc = regmap_update_bits(wled->regmap,
++				wled->sink_addr + WLED4_SINK_REG_CURR_SINK,
++				WLED4_SINK_REG_CURR_SINK_MASK, 0);
++	if (rc < 0)
++		return rc;
++
++	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
++				WLED3_CTRL_REG_MOD_EN,
++				WLED3_CTRL_REG_MOD_EN_MASK, 0);
++	if (rc < 0)
++		return rc;
++
++	/* Per sink/string configuration */
++	for (i = 0; i < wled->cfg.num_strings; i++) {
++		j = wled->cfg.enabled_strings[i];
++
++		addr = wled->sink_addr +
++				WLED4_SINK_REG_STR_MOD_EN(j);
++		rc = regmap_update_bits(wled->regmap, addr,
++					WLED4_SINK_REG_STR_MOD_MASK,
++					WLED4_SINK_REG_STR_MOD_MASK);
++		if (rc < 0)
++			return rc;
++
++		addr = wled->sink_addr +
++				WLED4_SINK_REG_STR_FULL_SCALE_CURR(j);
++		rc = regmap_update_bits(wled->regmap, addr,
++					WLED4_SINK_REG_STR_FULL_SCALE_CURR_MASK,
++					wled->cfg.string_i_limit);
++		if (rc < 0)
++			return rc;
++
++		addr = wled->sink_addr +
++				WLED4_SINK_REG_STR_CABC(j);
++		rc = regmap_update_bits(wled->regmap, addr,
++					WLED4_SINK_REG_STR_CABC_MASK,
++					wled->cfg.cabc ?
++					WLED4_SINK_REG_STR_CABC_MASK : 0);
++		if (rc < 0)
++			return rc;
++	}
++
++	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
++				WLED3_CTRL_REG_MOD_EN,
++				WLED3_CTRL_REG_MOD_EN_MASK,
++				WLED3_CTRL_REG_MOD_EN_MASK);
++	if (rc < 0)
++		return rc;
++
++	rc = regmap_update_bits(wled->regmap,
++				wled->sink_addr + WLED4_SINK_REG_CURR_SINK,
++				WLED4_SINK_REG_CURR_SINK_MASK, sink_en);
++	if (rc < 0)
++		return rc;
++
++	rc = wled_sync_toggle(wled);
++	if (rc < 0) {
++		dev_err(wled->dev, "Failed to toggle sync reg rc:%d\n", rc);
++		return rc;
++	}
++
++	return 0;
++}
++
++static const struct wled_config wled4_config_defaults = {
++	.boost_i_limit = 4,
++	.string_i_limit = 10,
++	.ovp = 1,
++	.num_strings = 4,
++	.switch_freq = 11,
++	.cabc = false,
++};
++
+ static const u32 wled3_boost_i_limit_values[] = {
  	105, 385, 525, 805, 980, 1260, 1400, 1680,
  };
- 
--static const struct pm8941_wled_var_cfg pm8941_wled_i_boost_limit_cfg = {
--	.values = pm8941_wled_i_boost_limit_values,
--	.size = ARRAY_SIZE(pm8941_wled_i_boost_limit_values),
-+static const struct wled_var_cfg wled3_boost_i_limit_cfg = {
-+	.values = wled3_boost_i_limit_values,
-+	.size = ARRAY_SIZE(wled3_boost_i_limit_values),
+@@ -276,6 +436,15 @@ static int wled3_setup(struct wled *wled)
+ 	.size = ARRAY_SIZE(wled3_boost_i_limit_values),
  };
  
--static const u32 pm8941_wled_ovp_values[] = {
-+static const u32 wled3_ovp_values[] = {
++static const u32 wled4_boost_i_limit_values[] = {
++	105, 280, 450, 620, 970, 1150, 1300, 1500,
++};
++
++static const struct wled_var_cfg wled4_boost_i_limit_cfg = {
++	.values = wled4_boost_i_limit_values,
++	.size = ARRAY_SIZE(wled4_boost_i_limit_values),
++};
++
+ static const u32 wled3_ovp_values[] = {
  	35, 32, 29, 27,
  };
- 
--static const struct pm8941_wled_var_cfg pm8941_wled_ovp_cfg = {
--	.values = pm8941_wled_ovp_values,
--	.size = ARRAY_SIZE(pm8941_wled_ovp_values),
-+static const struct wled_var_cfg wled3_ovp_cfg = {
-+	.values = wled3_ovp_values,
-+	.size = ARRAY_SIZE(wled3_ovp_values),
+@@ -285,6 +454,15 @@ static int wled3_setup(struct wled *wled)
+ 	.size = ARRAY_SIZE(wled3_ovp_values),
  };
  
--static u32 pm8941_wled_num_strings_values_fn(u32 idx)
-+static u32 wled3_num_strings_values_fn(u32 idx)
++static const u32 wled4_ovp_values[] = {
++	31100, 29600, 19600, 18100,
++};
++
++static const struct wled_var_cfg wled4_ovp_cfg = {
++	.values = wled4_ovp_values,
++	.size = ARRAY_SIZE(wled4_ovp_values),
++};
++
+ static u32 wled3_num_strings_values_fn(u32 idx)
  {
  	return idx + 1;
- }
- 
--static const struct pm8941_wled_var_cfg pm8941_wled_num_strings_cfg = {
--	.fn = pm8941_wled_num_strings_values_fn,
-+static const struct wled_var_cfg wled3_num_strings_cfg = {
-+	.fn = wled3_num_strings_values_fn,
+@@ -295,6 +473,11 @@ static u32 wled3_num_strings_values_fn(u32 idx)
  	.size = 3,
  };
  
--static u32 pm8941_wled_switch_freq_values_fn(u32 idx)
-+static u32 wled3_switch_freq_values_fn(u32 idx)
++static const struct wled_var_cfg wled4_num_strings_cfg = {
++	.fn = wled3_num_strings_values_fn,
++	.size = 4,
++};
++
+ static u32 wled3_switch_freq_values_fn(u32 idx)
  {
  	return 19200 / (2 * (1 + idx));
- }
- 
--static const struct pm8941_wled_var_cfg pm8941_wled_switch_freq_cfg = {
--	.fn = pm8941_wled_switch_freq_values_fn,
-+static const struct wled_var_cfg wled3_switch_freq_cfg = {
-+	.fn = wled3_switch_freq_values_fn,
- 	.size = 16,
- };
- 
--static const struct pm8941_wled_var_cfg pm8941_wled_i_limit_cfg = {
-+static const struct wled_var_cfg wled3_string_i_limit_cfg = {
+@@ -309,10 +492,24 @@ static u32 wled3_switch_freq_values_fn(u32 idx)
  	.size = 26,
  };
  
--static u32 pm8941_wled_values(const struct pm8941_wled_var_cfg *cfg, u32 idx)
-+static u32 wled3_values(const struct wled_var_cfg *cfg, u32 idx)
++static const u32 wled4_string_i_limit_values[] = {
++	0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000,
++	22500, 25000, 27500, 30000,
++};
++
++static const struct wled_var_cfg wled4_string_i_limit_cfg = {
++	.values = wled4_string_i_limit_values,
++	.size = ARRAY_SIZE(wled4_string_i_limit_values),
++};
++
+ static const struct wled_var_cfg wled3_string_cfg = {
+ 	.size = 8,
+ };
+ 
++static const struct wled_var_cfg wled4_string_cfg = {
++	.size = 16,
++};
++
+ static u32 wled_values(const struct wled_var_cfg *cfg, u32 idx)
  {
  	if (idx >= cfg->size)
- 		return UINT_MAX;
-@@ -264,9 +266,9 @@ static u32 pm8941_wled_values(const struct pm8941_wled_var_cfg *cfg, u32 idx)
- 	return idx;
- }
- 
--static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
-+static int wled_configure(struct wled *wled, struct device *dev)
- {
--	struct pm8941_wled_config *cfg = &wled->cfg;
-+	struct wled_config *cfg = &wled->cfg;
- 	u32 val;
- 	int rc;
- 	u32 c;
-@@ -276,32 +278,32 @@ static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
- 	const struct {
- 		const char *name;
- 		u32 *val_ptr;
--		const struct pm8941_wled_var_cfg *cfg;
-+		const struct wled_var_cfg *cfg;
- 	} u32_opts[] = {
- 		{
- 			"qcom,current-boost-limit",
--			&cfg->i_boost_limit,
--			.cfg = &pm8941_wled_i_boost_limit_cfg,
-+			&cfg->boost_i_limit,
-+			.cfg = &wled3_boost_i_limit_cfg,
- 		},
- 		{
- 			"qcom,current-limit",
--			&cfg->i_limit,
--			.cfg = &pm8941_wled_i_limit_cfg,
-+			&cfg->string_i_limit,
-+			.cfg = &wled3_string_i_limit_cfg,
- 		},
- 		{
- 			"qcom,ovp",
- 			&cfg->ovp,
--			.cfg = &pm8941_wled_ovp_cfg,
-+			.cfg = &wled3_ovp_cfg,
- 		},
- 		{
- 			"qcom,switching-freq",
- 			&cfg->switch_freq,
--			.cfg = &pm8941_wled_switch_freq_cfg,
-+			.cfg = &wled3_switch_freq_cfg,
- 		},
- 		{
- 			"qcom,num-strings",
- 			&cfg->num_strings,
--			.cfg = &pm8941_wled_num_strings_cfg,
-+			.cfg = &wled3_num_strings_cfg,
+@@ -361,6 +558,34 @@ static int wled_configure(struct wled *wled, int version)
  		},
  	};
- 	const struct {
-@@ -324,7 +326,7 @@ static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
- 	if (rc)
- 		wled->name = devm_kasprintf(dev, GFP_KERNEL, "%pOFn", dev->of_node);
  
--	*cfg = pm8941_wled_config_defaults;
-+	*cfg = wled3_config_defaults;
- 	for (i = 0; i < ARRAY_SIZE(u32_opts); ++i) {
- 		rc = of_property_read_u32(dev->of_node, u32_opts[i].name, &val);
- 		if (rc == -EINVAL) {
-@@ -336,7 +338,7 @@ static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
++	const struct wled_u32_opts wled4_opts[] = {
++		{
++			.name = "qcom,current-boost-limit",
++			.val_ptr = &cfg->boost_i_limit,
++			.cfg = &wled4_boost_i_limit_cfg,
++		},
++		{
++			.name = "qcom,current-limit-microamp",
++			.val_ptr = &cfg->string_i_limit,
++			.cfg = &wled4_string_i_limit_cfg,
++		},
++		{
++			.name = "qcom,ovp-millivolt",
++			.val_ptr = &cfg->ovp,
++			.cfg = &wled4_ovp_cfg,
++		},
++		{
++			.name = "qcom,switching-freq",
++			.val_ptr = &cfg->switch_freq,
++			.cfg = &wled3_switch_freq_cfg,
++		},
++		{
++			.name = "qcom,num-strings",
++			.val_ptr = &cfg->num_strings,
++			.cfg = &wled4_num_strings_cfg,
++		},
++	};
++
+ 	const struct wled_bool_opts bool_opts[] = {
+ 		{ "qcom,cs-out", &cfg->cs_out_en, },
+ 		{ "qcom,ext-gen", &cfg->ext_gen, },
+@@ -385,6 +610,22 @@ static int wled_configure(struct wled *wled, int version)
+ 		*cfg = wled3_config_defaults;
+ 		wled->wled_set_brightness = wled3_set_brightness;
+ 		wled->max_string_count = 3;
++		wled->sink_addr = wled->ctrl_addr;
++		break;
++
++	case 4:
++		u32_opts = wled4_opts;
++		size = ARRAY_SIZE(wled4_opts);
++		*cfg = wled4_config_defaults;
++		wled->wled_set_brightness = wled4_set_brightness;
++		wled->max_string_count = 4;
++
++		prop_addr = of_get_address(dev->of_node, 1, NULL, NULL);
++		if (!prop_addr) {
++			dev_err(wled->dev, "invalid IO resources\n");
++			return -EINVAL;
++		}
++		wled->sink_addr = be32_to_cpu(*prop_addr);
+ 		break;
  
- 		c = UINT_MAX;
- 		for (j = 0; c != val; j++) {
--			c = pm8941_wled_values(u32_opts[i].cfg, j);
-+			c = wled3_values(u32_opts[i].cfg, j);
- 			if (c == UINT_MAX) {
- 				dev_err(dev, "invalid value for '%s'\n",
- 					u32_opts[i].name);
-@@ -358,15 +360,15 @@ static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
- 	return 0;
- }
+ 	default:
+@@ -483,6 +724,14 @@ static int wled_probe(struct platform_device *pdev)
+ 		}
+ 		break;
  
--static const struct backlight_ops pm8941_wled_ops = {
--	.update_status = pm8941_wled_update_status,
-+static const struct backlight_ops wled_ops = {
-+	.update_status = wled_update_status,
- };
++	case 4:
++		rc = wled4_setup(wled);
++		if (rc) {
++			dev_err(&pdev->dev, "wled4_setup failed\n");
++			return rc;
++		}
++		break;
++
+ 	default:
+ 		dev_err(wled->dev, "Invalid WLED version\n");
+ 		break;
+@@ -503,6 +752,8 @@ static int wled_probe(struct platform_device *pdev)
  
--static int pm8941_wled_probe(struct platform_device *pdev)
-+static int wled_probe(struct platform_device *pdev)
- {
- 	struct backlight_properties props;
- 	struct backlight_device *bl;
--	struct pm8941_wled *wled;
-+	struct wled *wled;
- 	struct regmap *regmap;
- 	u32 val;
- 	int rc;
-@@ -383,42 +385,42 @@ static int pm8941_wled_probe(struct platform_device *pdev)
- 
- 	wled->regmap = regmap;
- 
--	rc = pm8941_wled_configure(wled, &pdev->dev);
-+	rc = wled_configure(wled, &pdev->dev);
- 	if (rc)
- 		return rc;
- 
--	rc = pm8941_wled_setup(wled);
-+	rc = wled_setup(wled);
- 	if (rc)
- 		return rc;
- 
--	val = PM8941_WLED_DEFAULT_BRIGHTNESS;
-+	val = WLED_DEFAULT_BRIGHTNESS;
- 	of_property_read_u32(pdev->dev.of_node, "default-brightness", &val);
- 
- 	memset(&props, 0, sizeof(struct backlight_properties));
- 	props.type = BACKLIGHT_RAW;
- 	props.brightness = val;
--	props.max_brightness = PM8941_WLED_REG_VAL_MAX;
-+	props.max_brightness = WLED3_SINK_REG_BRIGHT_MAX;
- 	bl = devm_backlight_device_register(&pdev->dev, wled->name,
- 					    &pdev->dev, wled,
--					    &pm8941_wled_ops, &props);
-+					    &wled_ops, &props);
- 	return PTR_ERR_OR_ZERO(bl);
- };
- 
--static const struct of_device_id pm8941_wled_match_table[] = {
-+static const struct of_device_id wled_match_table[] = {
- 	{ .compatible = "qcom,pm8941-wled" },
+ static const struct of_device_id wled_match_table[] = {
+ 	{ .compatible = "qcom,pm8941-wled", .data = (void *)3 },
++	{ .compatible = "qcom,pmi8998-wled", .data = (void *)4 },
++	{ .compatible = "qcom,pm660l-wled", .data = (void *)4 },
  	{}
  };
--MODULE_DEVICE_TABLE(of, pm8941_wled_match_table);
-+MODULE_DEVICE_TABLE(of, wled_match_table);
- 
--static struct platform_driver pm8941_wled_driver = {
--	.probe = pm8941_wled_probe,
-+static struct platform_driver wled_driver = {
-+	.probe = wled_probe,
- 	.driver	= {
--		.name = "pm8941-wled",
--		.of_match_table	= pm8941_wled_match_table,
-+		.name = "qcom,wled",
-+		.of_match_table	= wled_match_table,
- 	},
- };
- 
--module_platform_driver(pm8941_wled_driver);
-+module_platform_driver(wled_driver);
- 
--MODULE_DESCRIPTION("pm8941 wled driver");
-+MODULE_DESCRIPTION("Qualcomm WLED driver");
- MODULE_LICENSE("GPL v2");
+ MODULE_DEVICE_TABLE(of, wled_match_table);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
  a Linux Foundation Collaborative Project
