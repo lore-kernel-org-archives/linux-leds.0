@@ -2,659 +2,1430 @@ Return-Path: <SRS0=89b7=YL=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C62ACA9EA0
-	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 12:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1070CA9EAD
+	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 15:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5433321925
-	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 12:34:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LxWnEB+3";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hbsu+GNU"
+	by mail.kernel.org (Postfix) with ESMTP id 7A26A21852
+	for <linux-leds@archiver.kernel.org>; Fri, 18 Oct 2019 15:43:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410026AbfJRMeT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 18 Oct 2019 08:34:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52484 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408148AbfJRMeT (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Oct 2019 08:34:19 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D880361218; Fri, 18 Oct 2019 12:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571402057;
-        bh=XDDayIt0SyW3eZnIq3LHOzJB47k4lBZqsbBwsxBkEA8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LxWnEB+3jmsL4LixffW1Po9oVq42/wlm3I9dRu3pFkpfX7WvXfNqsw/zHmR+fmzLT
-         z+apjZs7fIqoplNSoMAocgq0ITF0EdUa/a+nbZBYN9T//TbWZs5IPa0gsLf8DxzMqY
-         zRlWN4xTjMuEJp+a5O3BQVP59at2uInyTa2jsZa0=
-Received: from kgunda-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kgunda@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DAB5A61220;
-        Fri, 18 Oct 2019 12:34:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571402049;
-        bh=XDDayIt0SyW3eZnIq3LHOzJB47k4lBZqsbBwsxBkEA8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hbsu+GNUdmfBViDo3SapL6IWK87AMtbELptyIOxxtjSZ8Zp+ILzgbBeWFVp6IUXUb
-         yufu+XSVoyIPPk9GbIP4SGjymQ6SQ4e0mYcK+d+n9nwevIYo25x/GLgOa+NzRZ3TNv
-         zvqvz2pXbmcPTSwaHGAv7A4VL/X3GlPUiNLXWMxE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DAB5A61220
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kgunda@codeaurora.org
-From:   Kiran Gunda <kgunda@codeaurora.org>
-To:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
-        lee.jones@linaro.org, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
-        jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-fbdev@vger.kernel.org
-Cc:     Kiran Gunda <kgunda@codeaurora.org>
-Subject: [PATCH V8 3/6] backlight: qcom-wled: Restructure the driver for WLED3.
-Date:   Fri, 18 Oct 2019 18:03:26 +0530
-Message-Id: <1571402009-8706-4-git-send-email-kgunda@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1571402009-8706-1-git-send-email-kgunda@codeaurora.org>
-References: <1571402009-8706-1-git-send-email-kgunda@codeaurora.org>
+        id S2505323AbfJRPnO (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 18 Oct 2019 11:43:14 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:47803 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2505260AbfJRPnM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Oct 2019 11:43:12 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MVNJ3-1iVcrd3w2R-00SPaU; Fri, 18 Oct 2019 17:42:19 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
+        linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: [PATCH 05/46] ARM: pxa: split up mach/hardware.h
+Date:   Fri, 18 Oct 2019 17:41:20 +0200
+Message-Id: <20191018154201.1276638-5-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20191018154052.1276506-1-arnd@arndb.de>
+References: <20191018154052.1276506-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:yhm82idl3F2KDOxjiRm1QvxhSlQ8ZbpPJ/+cEFqUtjhZ7JtPTVM
+ a17v92e5M45LjGukeDjUWk54UnQ8o1q8EyIJlv0O9uHH+NxK0IAZbfAWDgrF2/6sX7EadjQ
+ xxGe9K+VzCh57acrjl6EX1PDG8fjziDeyRLaUKrSbL/GIL1M0tYHc0mbac5sI/KZu4M9396
+ 9/DmKTLd3cjcc4IrUFaBA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:bKnHQk3qpr8=:oCpc3XbQmBBVUZBVEoC1XM
+ 8L0SFMIw/3Iqbm0iRHs69iAnsdNUFX2ldsGx4lKJol/opLipVlOOFE8CLB9Ey52tuivfD51Yl
+ WhyujnhyNylDG1F40A1Zfwtwycim1wxpP+aoaAaE3TciOk/kldbDVSKCmh87pb76BRqWaFbRr
+ VeXp/UeUUBG9RtR+XscJP5VMhUoZ0rnYO4bV8hP+1Nfcuc2j0MAHewXc2+nFTNgnOY9hGrGcQ
+ jWzk7uqKDfg/gvVN0ORsiyVv6WSm8iF4wNU2dQ8L7+H736H/nysm/zlsgv+MSv0GzyTShWafY
+ GbMNihJSUHGYP+2lCUP6Iug8quwj0jW+QwE/fEW72R8+3tKcVgJ19dStkJmR+4OP//43L7Eb/
+ 9mfQT7v7Ma+cJ62+1AsGWIqlhy0LlrZuLIxAZ/tcorbylm7ON1OW0D/zeZ4QmgPI40U0moqfj
+ nGLQjyHcjgr1zSPFeeZlhtdlmTHgjP7Jqyrguk2z87tnPSSRB1JQvPbla2/4PW/PoTgHACzh3
+ fJZc3gr60vc8/hDPIha4sCycVFPDxnuNrau1t8rjXqE+v8PmPe+nxPUOhfavILLsZhbZztuWJ
+ e/mHV+Htx/3HMnMsGl8X2H2WEzOr9qhl8/TnrjipyxCL2RtWp+e/7CaiIdXbKTdVMkklesimC
+ o4UC1kZ0RVuqf4PMPx2dYPS6Mob9zqKsXvE+aT3qzhnBlNix29ZVAQgetbGpLbGYzOiU2lfP+
+ AMi0HTnulAGu9TqcF9xjB9pQxQ0kbfjiBv//Q3tq0pT/7KRAiqKzOnLiRXn2bK7d2OsG5u367
+ uqCy02w0mrWXtH9NHl/ODzPIwSuVB0TN+xtC87FLMCOAwRphAbwrwW8o2HzuunHzy3LAaGJ6M
+ g5Bt76YeD5HC23Z959ww==
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Restructure the driver to add the support for new WLED
-peripherals.
+The mach/hardware.h is included in lots of places, and it provides
+three different things on pxa:
 
-Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+- the cpu_is_pxa* macros
+- an indirect inclusion of mach/addr-map.h
+- the __REG() and io_pv2() helper macros
+
+Split it up into separate <linux/soc/pxa/cpu.h> and mach/pxa-regs.h
+headers, then change all the files that use mach/hardware.h to
+include the exact set of those three headers that they actually
+need, allowing for further more targeted cleanup.
+
+linux/soc/pxa/cpu.h can remain permanently exported and is now in
+a global location along with similar headers. pxa-regs.h and
+addr-map.h are only used in a very small number of drivers now
+and can be moved to arch/arm/mach-pxa/ directly when those drivers
+are to pass the necessary data as resources.
+
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-input@vger.kernel.org
+Cc: linux-leds@vger.kernel.org
+Cc: linux-mmc@vger.kernel.org
+Cc: linux-mtd@lists.infradead.org
+Cc: linux-rtc@vger.kernel.org
+Cc: linux-usb@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-fbdev@vger.kernel.org
+Cc: linux-watchdog@vger.kernel.org
+Cc: alsa-devel@alsa-project.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/video/backlight/qcom-wled.c | 373 ++++++++++++++++++++++--------------
- 1 file changed, 234 insertions(+), 139 deletions(-)
+ arch/arm/common/locomo.c                      |  1 -
+ arch/arm/common/sa1111.c                      |  5 +-
+ arch/arm/mach-pxa/cm-x2xx.c                   |  2 +
+ arch/arm/mach-pxa/cm-x300.c                   |  2 +
+ arch/arm/mach-pxa/colibri-evalboard.c         |  1 -
+ arch/arm/mach-pxa/colibri-pxa270-income.c     |  1 -
+ arch/arm/mach-pxa/colibri-pxa300.c            |  1 +
+ arch/arm/mach-pxa/colibri-pxa3xx.c            |  1 -
+ arch/arm/mach-pxa/corgi.c                     |  1 -
+ arch/arm/mach-pxa/corgi_pm.c                  |  1 -
+ arch/arm/mach-pxa/csb726.c                    |  1 +
+ arch/arm/mach-pxa/devices.c                   |  2 +-
+ arch/arm/mach-pxa/ezx.c                       |  1 -
+ arch/arm/mach-pxa/generic.c                   |  3 +-
+ arch/arm/mach-pxa/gumstix.c                   |  1 -
+ arch/arm/mach-pxa/hx4700.c                    |  2 +-
+ arch/arm/mach-pxa/idp.c                       |  1 -
+ arch/arm/mach-pxa/include/mach/pxa-regs.h     | 52 ++++++++++++++++
+ arch/arm/mach-pxa/include/mach/pxa2xx-regs.h  |  2 +-
+ arch/arm/mach-pxa/include/mach/pxa3xx-regs.h  |  2 +-
+ arch/arm/mach-pxa/include/mach/regs-ac97.h    |  2 +-
+ arch/arm/mach-pxa/include/mach/regs-ost.h     |  2 +-
+ arch/arm/mach-pxa/include/mach/trizeps4.h     |  1 +
+ arch/arm/mach-pxa/irq.c                       |  3 +-
+ arch/arm/mach-pxa/littleton.c                 |  1 -
+ arch/arm/mach-pxa/lpd270.c                    |  2 +-
+ arch/arm/mach-pxa/lubbock.c                   |  1 -
+ arch/arm/mach-pxa/magician.c                  |  2 +-
+ arch/arm/mach-pxa/mainstone.c                 |  2 +-
+ arch/arm/mach-pxa/mfp-pxa2xx.c                |  1 +
+ arch/arm/mach-pxa/mfp-pxa3xx.c                |  1 -
+ arch/arm/mach-pxa/poodle.c                    |  1 -
+ arch/arm/mach-pxa/pxa-regs.h                  |  1 +
+ arch/arm/mach-pxa/pxa25x.c                    |  3 +-
+ arch/arm/mach-pxa/pxa25x.h                    |  2 +-
+ arch/arm/mach-pxa/pxa27x-udc.h                |  2 +
+ arch/arm/mach-pxa/pxa27x.c                    |  3 +-
+ arch/arm/mach-pxa/pxa27x.h                    |  2 +-
+ arch/arm/mach-pxa/pxa2xx.c                    |  1 -
+ arch/arm/mach-pxa/pxa300.c                    |  1 +
+ arch/arm/mach-pxa/pxa320.c                    |  1 +
+ arch/arm/mach-pxa/pxa3xx-ulpi.c               |  2 +-
+ arch/arm/mach-pxa/pxa3xx.c                    |  3 +-
+ arch/arm/mach-pxa/pxa3xx.h                    |  2 +-
+ arch/arm/mach-pxa/pxa930.c                    |  1 +
+ arch/arm/mach-pxa/regs-rtc.h                  |  2 +-
+ arch/arm/mach-pxa/regs-uart.h                 |  2 +
+ arch/arm/mach-pxa/sleep.S                     |  1 -
+ arch/arm/mach-pxa/smemc.c                     |  2 +-
+ arch/arm/mach-pxa/spitz_pm.c                  |  1 -
+ arch/arm/mach-pxa/standby.S                   |  1 -
+ arch/arm/mach-pxa/xcep.c                      |  2 +-
+ arch/arm/mach-pxa/zylonite.c                  |  1 +
+ arch/arm/mach-pxa/zylonite.h                  |  2 +
+ arch/arm/mach-pxa/zylonite_pxa300.c           |  1 +
+ arch/arm/mach-pxa/zylonite_pxa320.c           |  1 +
+ drivers/clk/pxa/clk-pxa3xx.c                  |  1 +
+ drivers/cpufreq/pxa2xx-cpufreq.c              |  1 +
+ drivers/cpufreq/pxa3xx-cpufreq.c              |  1 +
+ drivers/input/mouse/pxa930_trkball.c          |  1 -
+ drivers/input/touchscreen/zylonite-wm97xx.c   |  2 +-
+ drivers/leds/leds-locomo.c                    |  1 -
+ drivers/mmc/host/pxamci.c                     |  2 +-
+ drivers/mtd/maps/pxa2xx-flash.c               |  2 -
+ drivers/mtd/nand/raw/cmx270_nand.c            |  3 +-
+ drivers/pcmcia/pxa2xx_base.c                  |  2 +-
+ drivers/pcmcia/pxa2xx_cm_x2xx.c               |  2 +-
+ drivers/pcmcia/pxa2xx_sharpsl.c               |  1 -
+ drivers/pcmcia/sa1111_generic.c               |  1 -
+ drivers/pcmcia/sa1111_lubbock.c               |  1 -
+ drivers/pcmcia/soc_common.c                   |  2 -
+ drivers/rtc/rtc-pxa.c                         |  2 -
+ drivers/usb/host/ohci-pxa27x.c                |  3 +-
+ drivers/video/fbdev/pxafb.c                   |  2 +-
+ drivers/watchdog/sa1100_wdt.c                 |  1 -
+ .../hardware.h => include/linux/soc/pxa/cpu.h | 61 ++-----------------
+ sound/arm/pxa2xx-ac97-lib.c                   |  1 +
+ sound/soc/pxa/pxa2xx-ac97.c                   |  2 +-
+ sound/soc/pxa/pxa2xx-i2s.c                    |  2 +-
+ sound/soc/pxa/z2.c                            |  1 -
+ 80 files changed, 121 insertions(+), 119 deletions(-)
+ create mode 100644 arch/arm/mach-pxa/include/mach/pxa-regs.h
+ create mode 100644 arch/arm/mach-pxa/pxa-regs.h
+ rename arch/arm/mach-pxa/include/mach/hardware.h => include/linux/soc/pxa/cpu.h (75%)
 
-diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-index f191242..45eeda4 100644
---- a/drivers/video/backlight/qcom-wled.c
-+++ b/drivers/video/backlight/qcom-wled.c
-@@ -7,59 +7,71 @@
+diff --git a/arch/arm/common/locomo.c b/arch/arm/common/locomo.c
+index 62f241b09fe3..fd9157121406 100644
+--- a/arch/arm/common/locomo.c
++++ b/arch/arm/common/locomo.c
+@@ -23,7 +23,6 @@
+ #include <linux/spinlock.h>
+ #include <linux/io.h>
+ 
+-#include <mach/hardware.h>
+ #include <asm/irq.h>
+ #include <asm/mach/irq.h>
+ 
+diff --git a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
+index 947ef7981d92..e2829af69f96 100644
+--- a/arch/arm/common/sa1111.c
++++ b/arch/arm/common/sa1111.c
+@@ -26,13 +26,16 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ 
+-#include <mach/hardware.h>
+ #include <asm/mach/irq.h>
+ #include <asm/mach-types.h>
+ #include <linux/sizes.h>
+ 
+ #include <asm/hardware/sa1111.h>
+ 
++#ifdef CONFIG_ARCH_SA1100
++#include <mach/hardware.h>
++#endif
++
+ /* SA1111 IRQs */
+ #define IRQ_GPAIN0		(0)
+ #define IRQ_GPAIN1		(1)
+diff --git a/arch/arm/mach-pxa/cm-x2xx.c b/arch/arm/mach-pxa/cm-x2xx.c
+index ff976d1217eb..c731539add9f 100644
+--- a/arch/arm/mach-pxa/cm-x2xx.c
++++ b/arch/arm/mach-pxa/cm-x2xx.c
+@@ -14,6 +14,7 @@
+ 
+ #include <linux/dm9000.h>
+ #include <linux/leds.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach-types.h>
+@@ -32,6 +33,7 @@
+ #undef GPIO88_GPIO
+ #undef GPIO89_GPIO
+ #include <mach/audio.h>
++#include <mach/addr-map.h>
+ #include <linux/platform_data/video-pxafb.h>
+ #include <mach/smemc.h>
+ 
+diff --git a/arch/arm/mach-pxa/cm-x300.c b/arch/arm/mach-pxa/cm-x300.c
+index 425855f456f2..f3f2703fffc6 100644
+--- a/arch/arm/mach-pxa/cm-x300.c
++++ b/arch/arm/mach-pxa/cm-x300.c
+@@ -40,6 +40,8 @@
+ #include <linux/spi/spi_gpio.h>
+ #include <linux/spi/tdo24m.h>
+ 
++#include <linux/soc/pxa/cpu.h>
++
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+ #include <asm/setup.h>
+diff --git a/arch/arm/mach-pxa/colibri-evalboard.c b/arch/arm/mach-pxa/colibri-evalboard.c
+index b9c173ede891..b62af07b8f96 100644
+--- a/arch/arm/mach-pxa/colibri-evalboard.c
++++ b/arch/arm/mach-pxa/colibri-evalboard.c
+@@ -13,7 +13,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/gpio/machine.h>
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ #include <asm/mach/arch.h>
+ #include <linux/i2c.h>
+ #include <linux/platform_data/i2c-pxa.h>
+diff --git a/arch/arm/mach-pxa/colibri-pxa270-income.c b/arch/arm/mach-pxa/colibri-pxa270-income.c
+index dbad2f13706c..957dc9ad4873 100644
+--- a/arch/arm/mach-pxa/colibri-pxa270-income.c
++++ b/arch/arm/mach-pxa/colibri-pxa270-income.c
+@@ -25,7 +25,6 @@
+ #include <asm/irq.h>
+ #include <asm/mach-types.h>
+ 
+-#include <mach/hardware.h>
+ #include <linux/platform_data/mmc-pxamci.h>
+ #include <linux/platform_data/usb-ohci-pxa27x.h>
+ #include "pxa27x.h"
+diff --git a/arch/arm/mach-pxa/colibri-pxa300.c b/arch/arm/mach-pxa/colibri-pxa300.c
+index 82052dfd96b6..4ceeea142bfd 100644
+--- a/arch/arm/mach-pxa/colibri-pxa300.c
++++ b/arch/arm/mach-pxa/colibri-pxa300.c
+@@ -13,6 +13,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/gpio.h>
+ #include <linux/interrupt.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include <asm/mach-types.h>
+ #include <linux/sizes.h>
+diff --git a/arch/arm/mach-pxa/colibri-pxa3xx.c b/arch/arm/mach-pxa/colibri-pxa3xx.c
+index 3cead80a2b37..701dfef930eb 100644
+--- a/arch/arm/mach-pxa/colibri-pxa3xx.c
++++ b/arch/arm/mach-pxa/colibri-pxa3xx.c
+@@ -13,7 +13,6 @@
+ #include <linux/gpio.h>
+ #include <linux/etherdevice.h>
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ #include <linux/sizes.h>
+ #include <asm/system_info.h>
+ #include <asm/mach/arch.h>
+diff --git a/arch/arm/mach-pxa/corgi.c b/arch/arm/mach-pxa/corgi.c
+index f2d73289230f..e9743ebbee86 100644
+--- a/arch/arm/mach-pxa/corgi.c
++++ b/arch/arm/mach-pxa/corgi.c
+@@ -39,7 +39,6 @@
+ #include <asm/setup.h>
+ #include <asm/memory.h>
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ #include <asm/irq.h>
+ 
+ #include <asm/mach/arch.h>
+diff --git a/arch/arm/mach-pxa/corgi_pm.c b/arch/arm/mach-pxa/corgi_pm.c
+index 092dcb9fced5..ff1ac9bf37cb 100644
+--- a/arch/arm/mach-pxa/corgi_pm.c
++++ b/arch/arm/mach-pxa/corgi_pm.c
+@@ -19,7 +19,6 @@
+ 
+ #include <asm/irq.h>
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ 
+ #include <mach/corgi.h>
+ #include <mach/pxa2xx-regs.h>
+diff --git a/arch/arm/mach-pxa/csb726.c b/arch/arm/mach-pxa/csb726.c
+index 98fcdc6e2944..d48493445ae5 100644
+--- a/arch/arm/mach-pxa/csb726.c
++++ b/arch/arm/mach-pxa/csb726.c
+@@ -17,6 +17,7 @@
+ 
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
++
+ #include "csb726.h"
+ #include "pxa27x.h"
+ #include <linux/platform_data/mmc-pxamci.h>
+diff --git a/arch/arm/mach-pxa/devices.c b/arch/arm/mach-pxa/devices.c
+index 524d6093e0c7..c289a6c2311d 100644
+--- a/arch/arm/mach-pxa/devices.c
++++ b/arch/arm/mach-pxa/devices.c
+@@ -8,6 +8,7 @@
+ #include <linux/dmaengine.h>
+ #include <linux/spi/pxa2xx_spi.h>
+ #include <linux/platform_data/i2c-pxa.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include "udc.h"
+ #include <linux/platform_data/usb-pxa3xx-ulpi.h>
+@@ -19,7 +20,6 @@
+ #include <linux/platform_data/keypad-pxa27x.h>
+ #include <linux/platform_data/media/camera-pxa.h>
+ #include <mach/audio.h>
+-#include <mach/hardware.h>
+ #include <linux/platform_data/mmp_dma.h>
+ #include <linux/platform_data/mtd-nand-pxa3xx.h>
+ 
+diff --git a/arch/arm/mach-pxa/ezx.c b/arch/arm/mach-pxa/ezx.c
+index ec10851b63cf..a77c5988a446 100644
+--- a/arch/arm/mach-pxa/ezx.c
++++ b/arch/arm/mach-pxa/ezx.c
+@@ -29,7 +29,6 @@
+ #include "pxa27x.h"
+ #include <linux/platform_data/video-pxafb.h>
+ #include <linux/platform_data/usb-ohci-pxa27x.h>
+-#include <mach/hardware.h>
+ #include <linux/platform_data/keypad-pxa27x.h>
+ #include <linux/platform_data/media/camera-pxa.h>
+ 
+diff --git a/arch/arm/mach-pxa/generic.c b/arch/arm/mach-pxa/generic.c
+index ab7cdffd7ea8..3c3cd90bb9b4 100644
+--- a/arch/arm/mach-pxa/generic.c
++++ b/arch/arm/mach-pxa/generic.c
+@@ -17,11 +17,12 @@
  #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+-#include <mach/hardware.h>
+ #include <asm/mach/map.h>
+ #include <asm/mach-types.h>
+ 
++#include <mach/addr-map.h>
+ #include <mach/irqs.h>
+ #include <mach/reset.h>
+ #include <mach/smemc.h>
+diff --git a/arch/arm/mach-pxa/gumstix.c b/arch/arm/mach-pxa/gumstix.c
+index 4b4589cf431f..b50080d55fa4 100644
+--- a/arch/arm/mach-pxa/gumstix.c
++++ b/arch/arm/mach-pxa/gumstix.c
+@@ -28,7 +28,6 @@
+ #include <asm/setup.h>
+ #include <asm/memory.h>
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ #include <asm/irq.h>
+ #include <linux/sizes.h>
+ 
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index 311268d186ab..4dce8834c5b6 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -37,11 +37,11 @@
+ #include <linux/usb/gpio_vbus.h>
+ #include <linux/platform_data/i2c-pxa.h>
+ 
+-#include <mach/hardware.h>
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+ 
+ #include "pxa27x.h"
++#include <mach/addr-map.h>
+ #include <mach/hx4700.h>
+ #include <linux/platform_data/irda-pxaficp.h>
+ 
+diff --git a/arch/arm/mach-pxa/idp.c b/arch/arm/mach-pxa/idp.c
+index fb0850af8496..57c0511472bc 100644
+--- a/arch/arm/mach-pxa/idp.c
++++ b/arch/arm/mach-pxa/idp.c
+@@ -22,7 +22,6 @@
+ #include <asm/setup.h>
+ #include <asm/memory.h>
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ #include <asm/irq.h>
+ 
+ #include <asm/mach/arch.h>
+diff --git a/arch/arm/mach-pxa/include/mach/pxa-regs.h b/arch/arm/mach-pxa/include/mach/pxa-regs.h
+new file mode 100644
+index 000000000000..ba5120c06b8a
+--- /dev/null
++++ b/arch/arm/mach-pxa/include/mach/pxa-regs.h
+@@ -0,0 +1,52 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ *  Author:	Nicolas Pitre
++ *  Created:	Jun 15, 2001
++ *  Copyright:	MontaVista Software Inc.
++ */
++#ifndef __ASM_MACH_PXA_REGS_H
++#define __ASM_MACH_PXA_REGS_H
++
++/*
++ * Workarounds for at least 2 errata so far require this.
++ * The mapping is set in mach-pxa/generic.c.
++ */
++#define UNCACHED_PHYS_0		0xfe000000
++#define UNCACHED_PHYS_0_SIZE	0x00100000
++
++/*
++ * Intel PXA2xx internal register mapping:
++ *
++ * 0x40000000 - 0x41ffffff <--> 0xf2000000 - 0xf3ffffff
++ * 0x44000000 - 0x45ffffff <--> 0xf4000000 - 0xf5ffffff
++ * 0x48000000 - 0x49ffffff <--> 0xf6000000 - 0xf7ffffff
++ * 0x4c000000 - 0x4dffffff <--> 0xf8000000 - 0xf9ffffff
++ * 0x50000000 - 0x51ffffff <--> 0xfa000000 - 0xfbffffff
++ * 0x54000000 - 0x55ffffff <--> 0xfc000000 - 0xfdffffff
++ * 0x58000000 - 0x59ffffff <--> 0xfe000000 - 0xffffffff
++ *
++ * Note that not all PXA2xx chips implement all those addresses, and the
++ * kernel only maps the minimum needed range of this mapping.
++ */
++#define io_v2p(x) (0x3c000000 + ((x) & 0x01ffffff) + (((x) & 0x0e000000) << 1))
++#define io_p2v(x) IOMEM(0xf2000000 + ((x) & 0x01ffffff) + (((x) & 0x1c000000) >> 1))
++
++#ifndef __ASSEMBLY__
++# define __REG(x)	(*((volatile u32 __iomem *)io_p2v(x)))
++
++/* With indexed regs we don't want to feed the index through io_p2v()
++   especially if it is a variable, otherwise horrible code will result. */
++# define __REG2(x,y)	\
++	(*(volatile u32 __iomem*)((u32)&__REG(x) + (y)))
++
++# define __PREG(x)	(io_v2p((u32)&(x)))
++
++#else
++
++# define __REG(x)	io_p2v(x)
++# define __PREG(x)	io_v2p(x)
++
++#endif
++
++
++#endif
+diff --git a/arch/arm/mach-pxa/include/mach/pxa2xx-regs.h b/arch/arm/mach-pxa/include/mach/pxa2xx-regs.h
+index fa121e135915..f68b573ab4a0 100644
+--- a/arch/arm/mach-pxa/include/mach/pxa2xx-regs.h
++++ b/arch/arm/mach-pxa/include/mach/pxa2xx-regs.h
+@@ -11,7 +11,7 @@
+ #ifndef __PXA2XX_REGS_H
+ #define __PXA2XX_REGS_H
+ 
+-#include <mach/hardware.h>
++#include "pxa-regs.h"
+ 
+ /*
+  * Power Manager
+diff --git a/arch/arm/mach-pxa/include/mach/pxa3xx-regs.h b/arch/arm/mach-pxa/include/mach/pxa3xx-regs.h
+index 070f6c74196e..8eb1ba533e1c 100644
+--- a/arch/arm/mach-pxa/include/mach/pxa3xx-regs.h
++++ b/arch/arm/mach-pxa/include/mach/pxa3xx-regs.h
+@@ -10,7 +10,7 @@
+ #ifndef __ASM_ARCH_PXA3XX_REGS_H
+ #define __ASM_ARCH_PXA3XX_REGS_H
+ 
+-#include <mach/hardware.h>
++#include "pxa-regs.h"
+ 
+ /*
+  * Oscillator Configuration Register (OSCC)
+diff --git a/arch/arm/mach-pxa/include/mach/regs-ac97.h b/arch/arm/mach-pxa/include/mach/regs-ac97.h
+index 1db96fd4df32..ec09b9635e25 100644
+--- a/arch/arm/mach-pxa/include/mach/regs-ac97.h
++++ b/arch/arm/mach-pxa/include/mach/regs-ac97.h
+@@ -2,7 +2,7 @@
+ #ifndef __ASM_ARCH_REGS_AC97_H
+ #define __ASM_ARCH_REGS_AC97_H
+ 
+-#include <mach/hardware.h>
++#include "pxa-regs.h"
+ 
+ /*
+  * AC97 Controller registers
+diff --git a/arch/arm/mach-pxa/include/mach/regs-ost.h b/arch/arm/mach-pxa/include/mach/regs-ost.h
+index deb564ed8ee7..109d0ed264df 100644
+--- a/arch/arm/mach-pxa/include/mach/regs-ost.h
++++ b/arch/arm/mach-pxa/include/mach/regs-ost.h
+@@ -2,7 +2,7 @@
+ #ifndef __ASM_MACH_REGS_OST_H
+ #define __ASM_MACH_REGS_OST_H
+ 
+-#include <mach/hardware.h>
++#include "pxa-regs.h"
+ 
+ /*
+  * OS Timer & Match Registers
+diff --git a/arch/arm/mach-pxa/include/mach/trizeps4.h b/arch/arm/mach-pxa/include/mach/trizeps4.h
+index 3cddb1428c5e..27926629f9c6 100644
+--- a/arch/arm/mach-pxa/include/mach/trizeps4.h
++++ b/arch/arm/mach-pxa/include/mach/trizeps4.h
+@@ -11,6 +11,7 @@
+ #ifndef _TRIPEPS4_H_
+ #define _TRIPEPS4_H_
+ 
++#include <mach/addr-map.h>
+ #include "irqs.h" /* PXA_GPIO_TO_IRQ */
+ 
+ /* physical memory regions */
+diff --git a/arch/arm/mach-pxa/irq.c b/arch/arm/mach-pxa/irq.c
+index 74efc3ab595f..f25c30e8a834 100644
+--- a/arch/arm/mach-pxa/irq.c
++++ b/arch/arm/mach-pxa/irq.c
+@@ -17,13 +17,14 @@
+ #include <linux/irq.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include <asm/exception.h>
+ 
+-#include <mach/hardware.h>
+ #include <mach/irqs.h>
+ 
+ #include "generic.h"
++#include "pxa-regs.h"
+ 
+ #define ICIP			(0x000)
+ #define ICMR			(0x004)
+diff --git a/arch/arm/mach-pxa/littleton.c b/arch/arm/mach-pxa/littleton.c
+index 793f61375ee8..7486056e6cce 100644
+--- a/arch/arm/mach-pxa/littleton.c
++++ b/arch/arm/mach-pxa/littleton.c
+@@ -31,7 +31,6 @@
+ #include <asm/setup.h>
+ #include <asm/memory.h>
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ #include <asm/irq.h>
+ 
+ #include <asm/mach/arch.h>
+diff --git a/arch/arm/mach-pxa/lpd270.c b/arch/arm/mach-pxa/lpd270.c
+index 20e00e970385..1b7c2def3033 100644
+--- a/arch/arm/mach-pxa/lpd270.c
++++ b/arch/arm/mach-pxa/lpd270.c
+@@ -28,7 +28,6 @@
+ #include <asm/setup.h>
+ #include <asm/memory.h>
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ #include <asm/irq.h>
+ #include <linux/sizes.h>
+ 
+@@ -39,6 +38,7 @@
+ 
+ #include "pxa27x.h"
+ #include "lpd270.h"
++#include <mach/addr-map.h>
+ #include <mach/audio.h>
+ #include <linux/platform_data/video-pxafb.h>
+ #include <linux/platform_data/mmc-pxamci.h>
+diff --git a/arch/arm/mach-pxa/lubbock.c b/arch/arm/mach-pxa/lubbock.c
+index 742d18a1f7dc..477d144f039c 100644
+--- a/arch/arm/mach-pxa/lubbock.c
++++ b/arch/arm/mach-pxa/lubbock.c
+@@ -34,7 +34,6 @@
+ #include <asm/setup.h>
+ #include <asm/memory.h>
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ #include <asm/irq.h>
+ #include <linux/sizes.h>
+ 
+diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
+index e1a394ac3eea..ce4c677be868 100644
+--- a/arch/arm/mach-pxa/magician.c
++++ b/arch/arm/mach-pxa/magician.c
+@@ -30,12 +30,12 @@
+ #include <linux/usb/gpio_vbus.h>
+ #include <linux/platform_data/i2c-pxa.h>
+ 
+-#include <mach/hardware.h>
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+ #include <asm/system_info.h>
+ 
+ #include "pxa27x.h"
++#include <mach/addr-map.h>
+ #include <mach/magician.h>
+ #include <linux/platform_data/video-pxafb.h>
+ #include <linux/platform_data/mmc-pxamci.h>
+diff --git a/arch/arm/mach-pxa/mainstone.c b/arch/arm/mach-pxa/mainstone.c
+index ef79417ca001..16883c996c45 100644
+--- a/arch/arm/mach-pxa/mainstone.c
++++ b/arch/arm/mach-pxa/mainstone.c
+@@ -35,7 +35,6 @@
+ #include <asm/setup.h>
+ #include <asm/memory.h>
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ #include <asm/irq.h>
+ #include <linux/sizes.h>
+ 
+@@ -52,6 +51,7 @@
+ #include <linux/platform_data/irda-pxaficp.h>
+ #include <linux/platform_data/usb-ohci-pxa27x.h>
+ #include <linux/platform_data/keypad-pxa27x.h>
++#include <mach/addr-map.h>
+ #include <mach/smemc.h>
+ 
+ #include "generic.h"
+diff --git a/arch/arm/mach-pxa/mfp-pxa2xx.c b/arch/arm/mach-pxa/mfp-pxa2xx.c
+index 6a5451b186c2..6bc7206fd2ac 100644
+--- a/arch/arm/mach-pxa/mfp-pxa2xx.c
++++ b/arch/arm/mach-pxa/mfp-pxa2xx.c
+@@ -16,6 +16,7 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/syscore_ops.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include <mach/pxa2xx-regs.h>
+ #include "mfp-pxa2xx.h"
+diff --git a/arch/arm/mach-pxa/mfp-pxa3xx.c b/arch/arm/mach-pxa/mfp-pxa3xx.c
+index 56114df9700d..f26b5e5412cf 100644
+--- a/arch/arm/mach-pxa/mfp-pxa3xx.c
++++ b/arch/arm/mach-pxa/mfp-pxa3xx.c
+@@ -16,7 +16,6 @@
+ #include <linux/io.h>
+ #include <linux/syscore_ops.h>
+ 
+-#include <mach/hardware.h>
+ #include "mfp-pxa3xx.h"
+ #include <mach/pxa3xx-regs.h>
+ 
+diff --git a/arch/arm/mach-pxa/poodle.c b/arch/arm/mach-pxa/poodle.c
+index 3a4ecc3c8f8b..8dd791ee49bf 100644
+--- a/arch/arm/mach-pxa/poodle.c
++++ b/arch/arm/mach-pxa/poodle.c
+@@ -30,7 +30,6 @@
+ #include <linux/mtd/sharpsl.h>
+ #include <linux/memblock.h>
+ 
+-#include <mach/hardware.h>
+ #include <asm/mach-types.h>
+ #include <asm/irq.h>
+ #include <asm/setup.h>
+diff --git a/arch/arm/mach-pxa/pxa-regs.h b/arch/arm/mach-pxa/pxa-regs.h
+new file mode 100644
+index 000000000000..584d2ac592cc
+--- /dev/null
++++ b/arch/arm/mach-pxa/pxa-regs.h
+@@ -0,0 +1 @@
++#include <mach/pxa-regs.h>
+diff --git a/arch/arm/mach-pxa/pxa25x.c b/arch/arm/mach-pxa/pxa25x.c
+index 0d25cc45f825..305047ebd2f1 100644
+--- a/arch/arm/mach-pxa/pxa25x.c
++++ b/arch/arm/mach-pxa/pxa25x.c
+@@ -26,14 +26,15 @@
+ #include <linux/irq.h>
+ #include <linux/irqchip.h>
+ #include <linux/platform_data/mmp_dma.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include <asm/mach/map.h>
+ #include <asm/suspend.h>
+-#include <mach/hardware.h>
+ #include <mach/irqs.h>
+ #include "pxa25x.h"
+ #include <mach/reset.h>
+ #include "pm.h"
++#include <mach/addr-map.h>
+ #include <mach/smemc.h>
+ 
+ #include "generic.h"
+diff --git a/arch/arm/mach-pxa/pxa25x.h b/arch/arm/mach-pxa/pxa25x.h
+index b58d0fbdb4db..403bc16c2ed2 100644
+--- a/arch/arm/mach-pxa/pxa25x.h
++++ b/arch/arm/mach-pxa/pxa25x.h
+@@ -2,7 +2,7 @@
+ #ifndef __MACH_PXA25x_H
+ #define __MACH_PXA25x_H
+ 
+-#include <mach/hardware.h>
++#include <mach/addr-map.h>
+ #include <mach/pxa2xx-regs.h>
+ #include "mfp-pxa25x.h"
+ #include <mach/irqs.h>
+diff --git a/arch/arm/mach-pxa/pxa27x-udc.h b/arch/arm/mach-pxa/pxa27x-udc.h
+index faf73804697f..2d3df3b1cb68 100644
+--- a/arch/arm/mach-pxa/pxa27x-udc.h
++++ b/arch/arm/mach-pxa/pxa27x-udc.h
+@@ -2,6 +2,8 @@
+ #ifndef _ASM_ARCH_PXA27X_UDC_H
+ #define _ASM_ARCH_PXA27X_UDC_H
+ 
++#include "pxa-regs.h"
++
+ #ifdef _ASM_ARCH_PXA25X_UDC_H
+ #error You cannot include both PXA25x and PXA27x UDC support
+ #endif
+diff --git a/arch/arm/mach-pxa/pxa27x.c b/arch/arm/mach-pxa/pxa27x.c
+index f7e89831e85b..a81ac88ecbfd 100644
+--- a/arch/arm/mach-pxa/pxa27x.c
++++ b/arch/arm/mach-pxa/pxa27x.c
+@@ -23,9 +23,9 @@
+ #include <linux/irq.h>
+ #include <linux/platform_data/i2c-pxa.h>
+ #include <linux/platform_data/mmp_dma.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include <asm/mach/map.h>
+-#include <mach/hardware.h>
+ #include <asm/irq.h>
+ #include <asm/suspend.h>
+ #include <mach/irqs.h>
+@@ -33,6 +33,7 @@
+ #include <mach/reset.h>
+ #include <linux/platform_data/usb-ohci-pxa27x.h>
+ #include "pm.h"
++#include <mach/addr-map.h>
+ #include <mach/smemc.h>
+ 
+ #include "generic.h"
+diff --git a/arch/arm/mach-pxa/pxa27x.h b/arch/arm/mach-pxa/pxa27x.h
+index abdc02fb4f03..6c99090647d2 100644
+--- a/arch/arm/mach-pxa/pxa27x.h
++++ b/arch/arm/mach-pxa/pxa27x.h
+@@ -3,7 +3,7 @@
+ #define __MACH_PXA27x_H
+ 
+ #include <linux/suspend.h>
+-#include <mach/hardware.h>
++#include <mach/addr-map.h>
+ #include <mach/pxa2xx-regs.h>
+ #include "mfp-pxa27x.h"
+ #include <mach/irqs.h>
+diff --git a/arch/arm/mach-pxa/pxa2xx.c b/arch/arm/mach-pxa/pxa2xx.c
+index 2d26cd2afbf3..ac72acb43e26 100644
+--- a/arch/arm/mach-pxa/pxa2xx.c
++++ b/arch/arm/mach-pxa/pxa2xx.c
+@@ -12,7 +12,6 @@
+ #include <linux/device.h>
+ #include <linux/io.h>
+ 
+-#include <mach/hardware.h>
+ #include <mach/pxa2xx-regs.h>
+ #include "mfp-pxa25x.h"
+ #include <mach/reset.h>
+diff --git a/arch/arm/mach-pxa/pxa300.c b/arch/arm/mach-pxa/pxa300.c
+index 7f2f5a6a2263..f77ec118d5b9 100644
+--- a/arch/arm/mach-pxa/pxa300.c
++++ b/arch/arm/mach-pxa/pxa300.c
+@@ -14,6 +14,7 @@
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include "pxa300.h"
+ 
+diff --git a/arch/arm/mach-pxa/pxa320.c b/arch/arm/mach-pxa/pxa320.c
+index 78abcc741df7..e372e6c118de 100644
+--- a/arch/arm/mach-pxa/pxa320.c
++++ b/arch/arm/mach-pxa/pxa320.c
+@@ -14,6 +14,7 @@
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include "pxa320.h"
+ 
+diff --git a/arch/arm/mach-pxa/pxa3xx-ulpi.c b/arch/arm/mach-pxa/pxa3xx-ulpi.c
+index 4bd7da1f8657..c29a7f0fa1b0 100644
+--- a/arch/arm/mach-pxa/pxa3xx-ulpi.c
++++ b/arch/arm/mach-pxa/pxa3xx-ulpi.c
+@@ -21,8 +21,8 @@
+ #include <linux/clk.h>
+ #include <linux/usb.h>
+ #include <linux/usb/otg.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+-#include <mach/hardware.h>
+ #include "regs-u2d.h"
+ #include <linux/platform_data/usb-pxa3xx-ulpi.h>
+ 
+diff --git a/arch/arm/mach-pxa/pxa3xx.c b/arch/arm/mach-pxa/pxa3xx.c
+index 6eb1c24d7395..fc84aed99481 100644
+--- a/arch/arm/mach-pxa/pxa3xx.c
++++ b/arch/arm/mach-pxa/pxa3xx.c
+@@ -24,14 +24,15 @@
+ #include <linux/syscore_ops.h>
+ #include <linux/platform_data/i2c-pxa.h>
+ #include <linux/platform_data/mmp_dma.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include <asm/mach/map.h>
+ #include <asm/suspend.h>
+-#include <mach/hardware.h>
+ #include <mach/pxa3xx-regs.h>
+ #include <mach/reset.h>
+ #include <linux/platform_data/usb-ohci-pxa27x.h>
+ #include "pm.h"
++#include <mach/addr-map.h>
+ #include <mach/smemc.h>
+ #include <mach/irqs.h>
+ 
+diff --git a/arch/arm/mach-pxa/pxa3xx.h b/arch/arm/mach-pxa/pxa3xx.h
+index 6d4502aa9d06..22ace053ea25 100644
+--- a/arch/arm/mach-pxa/pxa3xx.h
++++ b/arch/arm/mach-pxa/pxa3xx.h
+@@ -2,7 +2,7 @@
+ #ifndef __MACH_PXA3XX_H	
+ #define __MACH_PXA3XX_H
+ 
+-#include <mach/hardware.h>
++#include <mach/addr-map.h>
+ #include <mach/pxa3xx-regs.h>
+ #include <mach/irqs.h>
+ 
+diff --git a/arch/arm/mach-pxa/pxa930.c b/arch/arm/mach-pxa/pxa930.c
+index bf91de4267e5..b9021a40cbd1 100644
+--- a/arch/arm/mach-pxa/pxa930.c
++++ b/arch/arm/mach-pxa/pxa930.c
+@@ -13,6 +13,7 @@
+ #include <linux/irq.h>
+ #include <linux/gpio-pxa.h>
+ #include <linux/platform_device.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include "pxa930.h"
+ 
+diff --git a/arch/arm/mach-pxa/regs-rtc.h b/arch/arm/mach-pxa/regs-rtc.h
+index b1f9ff14e335..96255a0f595e 100644
+--- a/arch/arm/mach-pxa/regs-rtc.h
++++ b/arch/arm/mach-pxa/regs-rtc.h
+@@ -2,7 +2,7 @@
+ #ifndef __ASM_MACH_REGS_RTC_H
+ #define __ASM_MACH_REGS_RTC_H
+ 
+-#include <mach/hardware.h>
++#include "pxa-regs.h"
+ 
+ /*
+  * Real Time Clock
+diff --git a/arch/arm/mach-pxa/regs-uart.h b/arch/arm/mach-pxa/regs-uart.h
+index 9a168f83afeb..490e9ca16297 100644
+--- a/arch/arm/mach-pxa/regs-uart.h
++++ b/arch/arm/mach-pxa/regs-uart.h
+@@ -2,6 +2,8 @@
+ #ifndef __ASM_ARCH_REGS_UART_H
+ #define __ASM_ARCH_REGS_UART_H
+ 
++#include "pxa-regs.h"
++
+ /*
+  * UARTs
+  */
+diff --git a/arch/arm/mach-pxa/sleep.S b/arch/arm/mach-pxa/sleep.S
+index 6c5b3ffd2cd3..272efeb954f4 100644
+--- a/arch/arm/mach-pxa/sleep.S
++++ b/arch/arm/mach-pxa/sleep.S
+@@ -13,7 +13,6 @@
+ 
+ #include <linux/linkage.h>
+ #include <asm/assembler.h>
+-#include <mach/hardware.h>
+ #include <mach/smemc.h>
+ #include <mach/pxa2xx-regs.h>
+ 
+diff --git a/arch/arm/mach-pxa/smemc.c b/arch/arm/mach-pxa/smemc.c
+index 32e82cc92ea5..47b99549d616 100644
+--- a/arch/arm/mach-pxa/smemc.c
++++ b/arch/arm/mach-pxa/smemc.c
+@@ -8,8 +8,8 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/syscore_ops.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+-#include <mach/hardware.h>
+ #include <mach/smemc.h>
+ 
+ #ifdef CONFIG_PM
+diff --git a/arch/arm/mach-pxa/spitz_pm.c b/arch/arm/mach-pxa/spitz_pm.c
+index 25a1f8c5a738..201dabe883b6 100644
+--- a/arch/arm/mach-pxa/spitz_pm.c
++++ b/arch/arm/mach-pxa/spitz_pm.c
+@@ -18,7 +18,6 @@
+ 
+ #include <asm/irq.h>
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ 
+ #include <mach/spitz.h>
+ #include "pxa27x.h"
+diff --git a/arch/arm/mach-pxa/standby.S b/arch/arm/mach-pxa/standby.S
+index eab1645bb4ad..626fecdefb1c 100644
+--- a/arch/arm/mach-pxa/standby.S
++++ b/arch/arm/mach-pxa/standby.S
+@@ -11,7 +11,6 @@
+ 
+ #include <linux/linkage.h>
+ #include <asm/assembler.h>
+-#include <mach/hardware.h>
+ 
+ #include <mach/pxa2xx-regs.h>
+ 
+diff --git a/arch/arm/mach-pxa/xcep.c b/arch/arm/mach-pxa/xcep.c
+index f485146b899f..e6ab428287ae 100644
+--- a/arch/arm/mach-pxa/xcep.c
++++ b/arch/arm/mach-pxa/xcep.c
+@@ -24,8 +24,8 @@
+ #include <asm/mach/irq.h>
+ #include <asm/mach/map.h>
+ 
+-#include <mach/hardware.h>
+ #include "pxa25x.h"
++#include <mach/addr-map.h>
+ #include <mach/smemc.h>
+ 
+ #include "generic.h"
+diff --git a/arch/arm/mach-pxa/zylonite.c b/arch/arm/mach-pxa/zylonite.c
+index bf2ab5bd49ec..c56c86b35025 100644
+--- a/arch/arm/mach-pxa/zylonite.c
++++ b/arch/arm/mach-pxa/zylonite.c
+@@ -20,6 +20,7 @@
+ #include <linux/pwm.h>
+ #include <linux/pwm_backlight.h>
+ #include <linux/smc91x.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+diff --git a/arch/arm/mach-pxa/zylonite.h b/arch/arm/mach-pxa/zylonite.h
+index 7300ec2aac0d..afe3efcb8e04 100644
+--- a/arch/arm/mach-pxa/zylonite.h
++++ b/arch/arm/mach-pxa/zylonite.h
+@@ -2,6 +2,8 @@
+ #ifndef __ASM_ARCH_ZYLONITE_H
+ #define __ASM_ARCH_ZYLONITE_H
+ 
++#include <linux/soc/pxa/cpu.h>
++
+ #define ZYLONITE_ETH_PHYS	0x14000000
+ 
+ #define EXT_GPIO(x)		(128 + (x))
+diff --git a/arch/arm/mach-pxa/zylonite_pxa300.c b/arch/arm/mach-pxa/zylonite_pxa300.c
+index 956fec1c4940..50a8a3547dbc 100644
+--- a/arch/arm/mach-pxa/zylonite_pxa300.c
++++ b/arch/arm/mach-pxa/zylonite_pxa300.c
+@@ -17,6 +17,7 @@
+ #include <linux/platform_data/i2c-pxa.h>
+ #include <linux/platform_data/pca953x.h>
+ #include <linux/gpio.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include "pxa300.h"
+ #include "devices.h"
+diff --git a/arch/arm/mach-pxa/zylonite_pxa320.c b/arch/arm/mach-pxa/zylonite_pxa320.c
+index 94cb834f36cd..67cab4f1194b 100644
+--- a/arch/arm/mach-pxa/zylonite_pxa320.c
++++ b/arch/arm/mach-pxa/zylonite_pxa320.c
+@@ -14,6 +14,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/gpio.h>
++#include <linux/soc/pxa/cpu.h>
+ 
+ #include "pxa320.h"
+ #include "zylonite.h"
+diff --git a/drivers/clk/pxa/clk-pxa3xx.c b/drivers/clk/pxa/clk-pxa3xx.c
+index 60db92772e72..027b78183565 100644
+--- a/drivers/clk/pxa/clk-pxa3xx.c
++++ b/drivers/clk/pxa/clk-pxa3xx.c
+@@ -14,6 +14,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+ #include <linux/of.h>
++#include <linux/soc/pxa/cpu.h>
+ #include <mach/smemc.h>
+ #include <mach/pxa3xx-regs.h>
+ 
+diff --git a/drivers/cpufreq/pxa2xx-cpufreq.c b/drivers/cpufreq/pxa2xx-cpufreq.c
+index f0b6f52eb2c3..0f0e676ff781 100644
+--- a/drivers/cpufreq/pxa2xx-cpufreq.c
++++ b/drivers/cpufreq/pxa2xx-cpufreq.c
+@@ -24,6 +24,7 @@
+ #include <linux/cpufreq.h>
+ #include <linux/err.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/soc/pxa/cpu.h>
+ #include <linux/io.h>
+ 
+ #include <mach/pxa2xx-regs.h>
+diff --git a/drivers/cpufreq/pxa3xx-cpufreq.c b/drivers/cpufreq/pxa3xx-cpufreq.c
+index 32f993c94675..d3b398b4aa6a 100644
+--- a/drivers/cpufreq/pxa3xx-cpufreq.c
++++ b/drivers/cpufreq/pxa3xx-cpufreq.c
+@@ -8,6 +8,7 @@
+ #include <linux/sched.h>
+ #include <linux/init.h>
+ #include <linux/cpufreq.h>
++#include <linux/soc/pxa/cpu.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
+ 
+diff --git a/drivers/input/mouse/pxa930_trkball.c b/drivers/input/mouse/pxa930_trkball.c
+index 41acde60b60f..fb04c851aaa7 100644
+--- a/drivers/input/mouse/pxa930_trkball.c
++++ b/drivers/input/mouse/pxa930_trkball.c
+@@ -15,7 +15,6 @@
+ #include <linux/io.h>
+ #include <linux/slab.h>
+ 
+-#include <mach/hardware.h>
+ #include <linux/platform_data/mouse-pxa930_trkball.h>
+ 
+ /* Trackball Controller Register Definitions */
+diff --git a/drivers/input/touchscreen/zylonite-wm97xx.c b/drivers/input/touchscreen/zylonite-wm97xx.c
+index 0f4ac7f844ce..f57bdf083188 100644
+--- a/drivers/input/touchscreen/zylonite-wm97xx.c
++++ b/drivers/input/touchscreen/zylonite-wm97xx.c
+@@ -21,9 +21,9 @@
+ #include <linux/irq.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/soc/pxa/cpu.h>
+ #include <linux/wm97xx.h>
+ 
+-#include <mach/hardware.h>
+ #include <mach/mfp.h>
+ #include <mach/regs-ac97.h>
+ 
+diff --git a/drivers/leds/leds-locomo.c b/drivers/leds/leds-locomo.c
+index 42dc46e3f00f..9aa3fccd71fb 100644
+--- a/drivers/leds/leds-locomo.c
++++ b/drivers/leds/leds-locomo.c
+@@ -11,7 +11,6 @@
+ #include <linux/device.h>
+ #include <linux/leds.h>
+ 
+-#include <mach/hardware.h>
+ #include <asm/hardware/locomo.h>
+ 
+ static void locomoled_brightness_set(struct led_classdev *led_cdev,
+diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
+index 024acc1b0a2e..26740966ca76 100644
+--- a/drivers/mmc/host/pxamci.c
++++ b/drivers/mmc/host/pxamci.c
+@@ -31,10 +31,10 @@
+ #include <linux/gfp.h>
  #include <linux/of.h>
  #include <linux/of_device.h>
-+#include <linux/of_address.h>
- #include <linux/regmap.h>
++#include <linux/soc/pxa/cpu.h>
  
- /* From DT binding */
-+#define WLED_MAX_STRINGS				4
-+
- #define WLED_DEFAULT_BRIGHTNESS				2048
+ #include <linux/sizes.h>
  
- #define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
--#define WLED3_CTRL_REG_VAL_BASE				0x40
+-#include <mach/hardware.h>
+ #include <linux/platform_data/mmc-pxamci.h>
  
- /* WLED3 control registers */
- #define WLED3_CTRL_REG_MOD_EN				0x46
--#define  WLED3_CTRL_REG_MOD_EN_BIT			BIT(7)
- #define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
-+#define  WLED3_CTRL_REG_MOD_EN_SHIFT			7
+ #include "pxamci.h"
+diff --git a/drivers/mtd/maps/pxa2xx-flash.c b/drivers/mtd/maps/pxa2xx-flash.c
+index 7d96758a8f04..1749dbbacc13 100644
+--- a/drivers/mtd/maps/pxa2xx-flash.c
++++ b/drivers/mtd/maps/pxa2xx-flash.c
+@@ -16,8 +16,6 @@
+ #include <linux/mtd/partitions.h>
  
- #define WLED3_CTRL_REG_FREQ				0x4c
--#define  WLED3_CTRL_REG_FREQ_MASK			0x0f
-+#define  WLED3_CTRL_REG_FREQ_MASK			GENMASK(3, 0)
- 
- #define WLED3_CTRL_REG_OVP				0x4d
--#define  WLED3_CTRL_REG_OVP_MASK			0x03
-+#define  WLED3_CTRL_REG_OVP_MASK				GENMASK(1, 0)
- 
- #define WLED3_CTRL_REG_ILIMIT				0x4e
--#define  WLED3_CTRL_REG_ILIMIT_MASK			0x07
-+#define  WLED3_CTRL_REG_ILIMIT_MASK			GENMASK(2, 0)
- 
- /* WLED3 sink registers */
- #define WLED3_SINK_REG_SYNC				0x47
--#define  WLED3_SINK_REG_SYNC_MASK			0x07
--#define  WLED3_SINK_REG_SYNC_LED1			BIT(0)
--#define  WLED3_SINK_REG_SYNC_LED2			BIT(1)
--#define  WLED3_SINK_REG_SYNC_LED3			BIT(2)
--#define  WLED3_SINK_REG_SYNC_ALL			0x07
- #define  WLED3_SINK_REG_SYNC_CLEAR			0x00
- 
- #define WLED3_SINK_REG_CURR_SINK			0x4f
--#define  WLED3_SINK_REG_CURR_SINK_MASK			0xe0
--#define  WLED3_SINK_REG_CURR_SINK_SHFT			0x05
-+#define  WLED3_SINK_REG_CURR_SINK_MASK			GENMASK(7, 5)
-+#define  WLED3_SINK_REG_CURR_SINK_SHFT			5
- 
--/* WLED3 per-'string' registers below */
--#define WLED3_SINK_REG_STR_OFFSET			0x10
-+/* WLED3 specific per-'string' registers below */
-+#define WLED3_SINK_REG_BRIGHT(n)			(0x40 + n)
- 
--#define WLED3_SINK_REG_STR_MOD_EN_BASE			0x60
-+#define WLED3_SINK_REG_STR_MOD_EN(n)			(0x60 + (n * 0x10))
- #define  WLED3_SINK_REG_STR_MOD_MASK			BIT(7)
--#define  WLED3_SINK_REG_STR_MOD_EN			BIT(7)
- 
--#define WLED3_SINK_REG_STR_FULL_SCALE_CURR		0x62
--#define  WLED3_SINK_REG_STR_FULL_SCALE_CURR_MASK	0x1f
-+#define WLED3_SINK_REG_STR_FULL_SCALE_CURR(n)		(0x62 + (n * 0x10))
-+#define  WLED3_SINK_REG_STR_FULL_SCALE_CURR_MASK	GENMASK(4, 0)
- 
--#define WLED3_SINK_REG_STR_MOD_SRC_BASE			0x63
--#define  WLED3_SINK_REG_STR_MOD_SRC_MASK		0x01
-+#define WLED3_SINK_REG_STR_MOD_SRC(n)			(0x63 + (n * 0x10))
-+#define  WLED3_SINK_REG_STR_MOD_SRC_MASK		BIT(0)
- #define  WLED3_SINK_REG_STR_MOD_SRC_INT			0x00
- #define  WLED3_SINK_REG_STR_MOD_SRC_EXT			0x01
- 
--#define WLED3_SINK_REG_STR_CABC_BASE			0x66
-+#define WLED3_SINK_REG_STR_CABC(n)			(0x66 + (n * 0x10))
- #define  WLED3_SINK_REG_STR_CABC_MASK			BIT(7)
--#define  WLED3_SINK_REG_STR_CABC_EN			BIT(7)
-+
-+struct wled_var_cfg {
-+	const u32 *values;
-+	u32 (*fn)(u32);
-+	int size;
-+};
-+
-+struct wled_u32_opts {
-+	const char *name;
-+	u32 *val_ptr;
-+	const struct wled_var_cfg *cfg;
-+};
-+
-+struct wled_bool_opts {
-+	const char *name;
-+	bool *val_ptr;
-+};
- 
- struct wled_config {
- 	u32 boost_i_limit;
-@@ -67,132 +79,179 @@ struct wled_config {
- 	u32 switch_freq;
- 	u32 num_strings;
- 	u32 string_i_limit;
-+	u32 enabled_strings[WLED_MAX_STRINGS];
- 	bool cs_out_en;
- 	bool ext_gen;
--	bool cabc_en;
-+	bool cabc;
- };
- 
- struct wled {
- 	const char *name;
-+	struct device *dev;
- 	struct regmap *regmap;
--	u16 addr;
-+	u16 ctrl_addr;
-+	u16 max_string_count;
-+	u32 brightness;
-+	u32 max_brightness;
- 
- 	struct wled_config cfg;
-+	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
- };
- 
-+static int wled3_set_brightness(struct wled *wled, u16 brightness)
-+{
-+	int rc, i;
-+	u8 v[2];
-+
-+	v[0] = brightness & 0xff;
-+	v[1] = (brightness >> 8) & 0xf;
-+
-+	for (i = 0;  i < wled->cfg.num_strings; ++i) {
-+		rc = regmap_bulk_write(wled->regmap, wled->ctrl_addr +
-+				       WLED3_SINK_REG_BRIGHT(i), v, 2);
-+		if (rc < 0)
-+			return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+static int wled_module_enable(struct wled *wled, int val)
-+{
-+	int rc;
-+
-+	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
-+				WLED3_CTRL_REG_MOD_EN,
-+				WLED3_CTRL_REG_MOD_EN_MASK,
-+				val << WLED3_CTRL_REG_MOD_EN_SHIFT);
-+	return rc;
-+}
-+
-+static int wled_sync_toggle(struct wled *wled)
-+{
-+	int rc;
-+	unsigned int mask = GENMASK(wled->max_string_count - 1, 0);
-+
-+	rc = regmap_update_bits(wled->regmap,
-+				wled->ctrl_addr + WLED3_SINK_REG_SYNC,
-+				mask, mask);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = regmap_update_bits(wled->regmap,
-+				wled->ctrl_addr + WLED3_SINK_REG_SYNC,
-+				mask, WLED3_SINK_REG_SYNC_CLEAR);
-+
-+	return rc;
-+}
-+
- static int wled_update_status(struct backlight_device *bl)
- {
- 	struct wled *wled = bl_get_data(bl);
--	u16 val = bl->props.brightness;
--	u8 ctrl = 0;
--	int rc;
--	int i;
-+	u16 brightness = bl->props.brightness;
-+	int rc = 0;
- 
- 	if (bl->props.power != FB_BLANK_UNBLANK ||
- 	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
- 	    bl->props.state & BL_CORE_FBBLANK)
--		val = 0;
+ #include <asm/io.h>
+-#include <mach/hardware.h>
 -
--	if (val != 0)
--		ctrl = WLED3_CTRL_REG_MOD_EN_BIT;
-+		brightness = 0;
+ #include <asm/mach/flash.h>
  
--	rc = regmap_update_bits(wled->regmap,
--			wled->addr + WLED3_CTRL_REG_MOD_EN,
--			WLED3_CTRL_REG_MOD_EN_MASK, ctrl);
--	if (rc)
--		return rc;
-+	if (brightness) {
-+		rc = wled->wled_set_brightness(wled, brightness);
-+		if (rc < 0) {
-+			dev_err(wled->dev, "wled failed to set brightness rc:%d\n",
-+				rc);
-+			return rc;
-+		}
+ #define CACHELINESIZE	32
+diff --git a/drivers/mtd/nand/raw/cmx270_nand.c b/drivers/mtd/nand/raw/cmx270_nand.c
+index 045b6175ae79..7af3d0bdcdb8 100644
+--- a/drivers/mtd/nand/raw/cmx270_nand.c
++++ b/drivers/mtd/nand/raw/cmx270_nand.c
+@@ -17,12 +17,13 @@
+ #include <linux/slab.h>
+ #include <linux/gpio.h>
+ #include <linux/module.h>
++#include <linux/soc/pxa/cpu.h>
  
--	for (i = 0; i < wled->cfg.num_strings; ++i) {
--		u8 v[2] = { val & 0xff, (val >> 8) & 0xf };
-+		rc = wled_sync_toggle(wled);
-+		if (rc < 0) {
-+			dev_err(wled->dev, "wled sync failed rc:%d\n", rc);
-+			return rc;
-+		}
-+	}
+ #include <asm/io.h>
+ #include <asm/irq.h>
+ #include <asm/mach-types.h>
  
--		rc = regmap_bulk_write(wled->regmap,
--				wled->addr + WLED3_CTRL_REG_VAL_BASE + 2 * i,
--				v, 2);
--		if (rc)
-+	if (!!brightness != !!wled->brightness) {
-+		rc = wled_module_enable(wled, !!brightness);
-+		if (rc < 0) {
-+			dev_err(wled->dev, "wled enable failed rc:%d\n", rc);
- 			return rc;
-+		}
- 	}
+-#include <mach/pxa2xx-regs.h>
++#include <mach/addr-map.h>
  
--	rc = regmap_update_bits(wled->regmap,
--			wled->addr + WLED3_SINK_REG_SYNC,
--			WLED3_SINK_REG_SYNC_MASK, WLED3_SINK_REG_SYNC_ALL);
--	if (rc)
--		return rc;
-+	wled->brightness = brightness;
+ #define GPIO_NAND_CS	(11)
+ #define GPIO_NAND_RB	(89)
+diff --git a/drivers/pcmcia/pxa2xx_base.c b/drivers/pcmcia/pxa2xx_base.c
+index d6d2f75f8f47..7cd1375d6087 100644
+--- a/drivers/pcmcia/pxa2xx_base.c
++++ b/drivers/pcmcia/pxa2xx_base.c
+@@ -23,8 +23,8 @@
+ #include <linux/kernel.h>
+ #include <linux/spinlock.h>
+ #include <linux/platform_device.h>
++#include <linux/soc/pxa/cpu.h>
  
--	rc = regmap_update_bits(wled->regmap,
--			wled->addr + WLED3_SINK_REG_SYNC,
--			WLED3_SINK_REG_SYNC_MASK, WLED3_SINK_REG_SYNC_CLEAR);
- 	return rc;
- }
+-#include <mach/hardware.h>
+ #include <mach/smemc.h>
+ #include <asm/io.h>
+ #include <asm/irq.h>
+diff --git a/drivers/pcmcia/pxa2xx_cm_x2xx.c b/drivers/pcmcia/pxa2xx_cm_x2xx.c
+index 14eae238131d..8c5040e55e24 100644
+--- a/drivers/pcmcia/pxa2xx_cm_x2xx.c
++++ b/drivers/pcmcia/pxa2xx_cm_x2xx.c
+@@ -7,9 +7,9 @@
+  */
  
--static int wled_setup(struct wled *wled)
-+static int wled3_setup(struct wled *wled)
- {
--	int rc;
--	int i;
-+	u16 addr;
-+	u8 sink_en = 0;
-+	int rc, i, j;
+ #include <linux/module.h>
++#include <linux/soc/pxa/cpu.h>
  
- 	rc = regmap_update_bits(wled->regmap,
--			wled->addr + WLED3_CTRL_REG_OVP,
--			WLED3_CTRL_REG_OVP_MASK, wled->cfg.ovp);
-+				wled->ctrl_addr + WLED3_CTRL_REG_OVP,
-+				WLED3_CTRL_REG_OVP_MASK, wled->cfg.ovp);
- 	if (rc)
- 		return rc;
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
  
- 	rc = regmap_update_bits(wled->regmap,
--			wled->addr + WLED3_CTRL_REG_ILIMIT,
--			WLED3_CTRL_REG_ILIMIT_MASK, wled->cfg.boost_i_limit);
-+				wled->ctrl_addr + WLED3_CTRL_REG_ILIMIT,
-+				WLED3_CTRL_REG_ILIMIT_MASK,
-+				wled->cfg.boost_i_limit);
- 	if (rc)
- 		return rc;
+ int cmx255_pcmcia_init(void);
+ int cmx270_pcmcia_init(void);
+diff --git a/drivers/pcmcia/pxa2xx_sharpsl.c b/drivers/pcmcia/pxa2xx_sharpsl.c
+index 5fdd25a9e28e..66fe1d1af12a 100644
+--- a/drivers/pcmcia/pxa2xx_sharpsl.c
++++ b/drivers/pcmcia/pxa2xx_sharpsl.c
+@@ -15,7 +15,6 @@
+ #include <linux/platform_device.h>
  
- 	rc = regmap_update_bits(wled->regmap,
--			wled->addr + WLED3_CTRL_REG_FREQ,
--			WLED3_CTRL_REG_FREQ_MASK, wled->cfg.switch_freq);
-+				wled->ctrl_addr + WLED3_CTRL_REG_FREQ,
-+				WLED3_CTRL_REG_FREQ_MASK,
-+				wled->cfg.switch_freq);
- 	if (rc)
- 		return rc;
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ #include <asm/irq.h>
+ #include <asm/hardware/scoop.h>
  
--	if (wled->cfg.cs_out_en) {
--		u8 all = (BIT(wled->cfg.num_strings) - 1)
--				<< WLED3_SINK_REG_CURR_SINK_SHFT;
+diff --git a/drivers/pcmcia/sa1111_generic.c b/drivers/pcmcia/sa1111_generic.c
+index 11783410223b..2f556fa37c43 100644
+--- a/drivers/pcmcia/sa1111_generic.c
++++ b/drivers/pcmcia/sa1111_generic.c
+@@ -17,7 +17,6 @@
+ 
+ #include <pcmcia/ss.h>
+ 
+-#include <mach/hardware.h>
+ #include <asm/hardware/sa1111.h>
+ #include <asm/mach-types.h>
+ #include <asm/irq.h>
+diff --git a/drivers/pcmcia/sa1111_lubbock.c b/drivers/pcmcia/sa1111_lubbock.c
+index 7feb8d61c639..f1b5160cb8fa 100644
+--- a/drivers/pcmcia/sa1111_lubbock.c
++++ b/drivers/pcmcia/sa1111_lubbock.c
+@@ -17,7 +17,6 @@
+ #include <linux/init.h>
+ #include <linux/delay.h>
+ 
+-#include <mach/hardware.h>
+ #include <asm/hardware/sa1111.h>
+ #include <asm/mach-types.h>
+ 
+diff --git a/drivers/pcmcia/soc_common.c b/drivers/pcmcia/soc_common.c
+index 3a8c84bb174d..9276a628473d 100644
+--- a/drivers/pcmcia/soc_common.c
++++ b/drivers/pcmcia/soc_common.c
+@@ -47,8 +47,6 @@
+ #include <linux/spinlock.h>
+ #include <linux/timer.h>
+ 
+-#include <mach/hardware.h>
 -
--		rc = regmap_update_bits(wled->regmap,
--				wled->addr + WLED3_SINK_REG_CURR_SINK,
--				WLED3_SINK_REG_CURR_SINK_MASK, all);
--		if (rc)
--			return rc;
--	}
+ #include "soc_common.h"
+ 
+ static irqreturn_t soc_common_pcmcia_interrupt(int irq, void *dev);
+diff --git a/drivers/rtc/rtc-pxa.c b/drivers/rtc/rtc-pxa.c
+index d2f1d8f754bf..ea5da3edacd8 100644
+--- a/drivers/rtc/rtc-pxa.c
++++ b/drivers/rtc/rtc-pxa.c
+@@ -16,8 +16,6 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ 
+-#include <mach/hardware.h>
 -
- 	for (i = 0; i < wled->cfg.num_strings; ++i) {
--		u16 addr = wled->addr + WLED3_SINK_REG_STR_OFFSET * i;
+ #include "rtc-sa1100.h"
+ 
+ #define RTC_DEF_DIVIDER		(32768 - 1)
+diff --git a/drivers/usb/host/ohci-pxa27x.c b/drivers/usb/host/ohci-pxa27x.c
+index 7679fb583e41..0dfe9b7c02e2 100644
+--- a/drivers/usb/host/ohci-pxa27x.c
++++ b/drivers/usb/host/ohci-pxa27x.c
+@@ -36,8 +36,7 @@
+ #include <linux/usb.h>
+ #include <linux/usb/hcd.h>
+ #include <linux/usb/otg.h>
 -
--		rc = regmap_update_bits(wled->regmap,
--				addr + WLED3_SINK_REG_STR_MOD_EN_BASE,
--				WLED3_SINK_REG_STR_MOD_MASK,
--				WLED3_SINK_REG_STR_MOD_EN);
-+		j = wled->cfg.enabled_strings[i];
-+		addr = wled->ctrl_addr + WLED3_SINK_REG_STR_MOD_EN(j);
-+		rc = regmap_update_bits(wled->regmap, addr,
-+					WLED3_SINK_REG_STR_MOD_MASK,
-+					WLED3_SINK_REG_STR_MOD_MASK);
- 		if (rc)
- 			return rc;
+-#include <mach/hardware.h>
++#include <linux/soc/pxa/cpu.h>
  
- 		if (wled->cfg.ext_gen) {
--			rc = regmap_update_bits(wled->regmap,
--					addr + WLED3_SINK_REG_STR_MOD_SRC_BASE,
--					WLED3_SINK_REG_STR_MOD_SRC_MASK,
--					WLED3_SINK_REG_STR_MOD_SRC_EXT);
-+			addr = wled->ctrl_addr + WLED3_SINK_REG_STR_MOD_SRC(j);
-+			rc = regmap_update_bits(wled->regmap, addr,
-+						WLED3_SINK_REG_STR_MOD_SRC_MASK,
-+						WLED3_SINK_REG_STR_MOD_SRC_EXT);
- 			if (rc)
- 				return rc;
- 		}
+ #include "ohci.h"
  
--		rc = regmap_update_bits(wled->regmap,
--				addr + WLED3_SINK_REG_STR_FULL_SCALE_CURR,
--				WLED3_SINK_REG_STR_FULL_SCALE_CURR_MASK,
--				wled->cfg.string_i_limit);
-+		addr = wled->ctrl_addr + WLED3_SINK_REG_STR_FULL_SCALE_CURR(j);
-+		rc = regmap_update_bits(wled->regmap, addr,
-+					WLED3_SINK_REG_STR_FULL_SCALE_CURR_MASK,
-+					wled->cfg.string_i_limit);
- 		if (rc)
- 			return rc;
+diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
+index f70c9f79622e..ece691a0f18a 100644
+--- a/drivers/video/fbdev/pxafb.c
++++ b/drivers/video/fbdev/pxafb.c
+@@ -57,10 +57,10 @@
+ #include <linux/console.h>
+ #include <linux/of_graph.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/soc/pxa/cpu.h>
+ #include <video/of_display_timing.h>
+ #include <video/videomode.h>
  
--		rc = regmap_update_bits(wled->regmap,
--				addr + WLED3_SINK_REG_STR_CABC_BASE,
--				WLED3_SINK_REG_STR_CABC_MASK,
--				wled->cfg.cabc_en ?
--					WLED3_SINK_REG_STR_CABC_EN : 0);
-+		addr = wled->ctrl_addr + WLED3_SINK_REG_STR_CABC(j);
-+		rc = regmap_update_bits(wled->regmap, addr,
-+					WLED3_SINK_REG_STR_CABC_MASK,
-+					wled->cfg.cabc ?
-+					WLED3_SINK_REG_STR_CABC_MASK : 0);
- 		if (rc)
- 			return rc;
-+
-+		sink_en |= BIT(j + WLED3_SINK_REG_CURR_SINK_SHFT);
- 	}
+-#include <mach/hardware.h>
+ #include <asm/io.h>
+ #include <asm/irq.h>
+ #include <asm/div64.h>
+diff --git a/drivers/watchdog/sa1100_wdt.c b/drivers/watchdog/sa1100_wdt.c
+index cbd8c957182f..0f6ffc1e7f4e 100644
+--- a/drivers/watchdog/sa1100_wdt.c
++++ b/drivers/watchdog/sa1100_wdt.c
+@@ -35,7 +35,6 @@
+ #endif
  
-+	rc = regmap_update_bits(wled->regmap,
-+				wled->ctrl_addr + WLED3_SINK_REG_CURR_SINK,
-+				WLED3_SINK_REG_CURR_SINK_MASK, sink_en);
-+	if (rc)
-+		return rc;
-+
- 	return 0;
- }
+ #include <mach/reset.h>
+-#include <mach/hardware.h>
  
-@@ -200,17 +259,12 @@ static int wled_setup(struct wled *wled)
- 	.boost_i_limit = 3,
- 	.string_i_limit = 20,
- 	.ovp = 2,
-+	.num_strings = 3,
- 	.switch_freq = 5,
--	.num_strings = 0,
- 	.cs_out_en = false,
- 	.ext_gen = false,
--	.cabc_en = false,
--};
+ static unsigned long oscr_freq;
+ static unsigned long sa1100wdt_users;
+diff --git a/arch/arm/mach-pxa/include/mach/hardware.h b/include/linux/soc/pxa/cpu.h
+similarity index 75%
+rename from arch/arm/mach-pxa/include/mach/hardware.h
+rename to include/linux/soc/pxa/cpu.h
+index ee7eab16135f..5782450ee45c 100644
+--- a/arch/arm/mach-pxa/include/mach/hardware.h
++++ b/include/linux/soc/pxa/cpu.h
+@@ -1,61 +1,16 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- *  arch/arm/mach-pxa/include/mach/hardware.h
+- *
+  *  Author:	Nicolas Pitre
+  *  Created:	Jun 15, 2001
+  *  Copyright:	MontaVista Software Inc.
+  */
+ 
+-#ifndef __ASM_ARCH_HARDWARE_H
+-#define __ASM_ARCH_HARDWARE_H
 -
--struct wled_var_cfg {
--	const u32 *values;
--	u32 (*fn)(u32);
--	int size;
-+	.cabc = false,
-+	.enabled_strings = {0, 1, 2, 3},
- };
- 
- static const u32 wled3_boost_i_limit_values[] = {
-@@ -255,7 +309,11 @@ static u32 wled3_switch_freq_values_fn(u32 idx)
- 	.size = 26,
- };
- 
--static u32 wled3_values(const struct wled_var_cfg *cfg, u32 idx)
-+static const struct wled_var_cfg wled3_string_cfg = {
-+	.size = 8,
-+};
-+
-+static u32 wled_values(const struct wled_var_cfg *cfg, u32 idx)
- {
- 	if (idx >= cfg->size)
- 		return UINT_MAX;
-@@ -266,68 +324,75 @@ static u32 wled3_values(const struct wled_var_cfg *cfg, u32 idx)
- 	return idx;
- }
- 
--static int wled_configure(struct wled *wled, struct device *dev)
-+static int wled_configure(struct wled *wled, int version)
- {
- 	struct wled_config *cfg = &wled->cfg;
--	u32 val;
--	int rc;
--	u32 c;
--	int i;
--	int j;
+-#include <mach/addr-map.h>
 -
--	const struct {
--		const char *name;
--		u32 *val_ptr;
--		const struct wled_var_cfg *cfg;
--	} u32_opts[] = {
-+	struct device *dev = wled->dev;
-+	const __be32 *prop_addr;
-+	u32 size, val, c, string_len;
-+	int rc, i, j;
-+
-+	const struct wled_u32_opts *u32_opts = NULL;
-+	const struct wled_u32_opts wled3_opts[] = {
- 		{
--			"qcom,current-boost-limit",
--			&cfg->boost_i_limit,
-+			.name = "qcom,current-boost-limit",
-+			.val_ptr = &cfg->boost_i_limit,
- 			.cfg = &wled3_boost_i_limit_cfg,
- 		},
- 		{
--			"qcom,current-limit",
--			&cfg->string_i_limit,
-+			.name = "qcom,current-limit",
-+			.val_ptr = &cfg->string_i_limit,
- 			.cfg = &wled3_string_i_limit_cfg,
- 		},
- 		{
--			"qcom,ovp",
--			&cfg->ovp,
-+			.name = "qcom,ovp",
-+			.val_ptr = &cfg->ovp,
- 			.cfg = &wled3_ovp_cfg,
- 		},
- 		{
--			"qcom,switching-freq",
--			&cfg->switch_freq,
-+			.name = "qcom,switching-freq",
-+			.val_ptr = &cfg->switch_freq,
- 			.cfg = &wled3_switch_freq_cfg,
- 		},
- 		{
--			"qcom,num-strings",
--			&cfg->num_strings,
-+			.name = "qcom,num-strings",
-+			.val_ptr = &cfg->num_strings,
- 			.cfg = &wled3_num_strings_cfg,
- 		},
- 	};
--	const struct {
--		const char *name;
--		bool *val_ptr;
--	} bool_opts[] = {
-+
-+	const struct wled_bool_opts bool_opts[] = {
- 		{ "qcom,cs-out", &cfg->cs_out_en, },
- 		{ "qcom,ext-gen", &cfg->ext_gen, },
--		{ "qcom,cabc", &cfg->cabc_en, },
-+		{ "qcom,cabc", &cfg->cabc, },
- 	};
+-/*
+- * Workarounds for at least 2 errata so far require this.
+- * The mapping is set in mach-pxa/generic.c.
+- */
+-#define UNCACHED_PHYS_0		0xfe000000
+-#define UNCACHED_PHYS_0_SIZE	0x00100000
+-
+-/*
+- * Intel PXA2xx internal register mapping:
+- *
+- * 0x40000000 - 0x41ffffff <--> 0xf2000000 - 0xf3ffffff
+- * 0x44000000 - 0x45ffffff <--> 0xf4000000 - 0xf5ffffff
+- * 0x48000000 - 0x49ffffff <--> 0xf6000000 - 0xf7ffffff
+- * 0x4c000000 - 0x4dffffff <--> 0xf8000000 - 0xf9ffffff
+- * 0x50000000 - 0x51ffffff <--> 0xfa000000 - 0xfbffffff
+- * 0x54000000 - 0x55ffffff <--> 0xfc000000 - 0xfdffffff
+- * 0x58000000 - 0x59ffffff <--> 0xfe000000 - 0xffffffff
+- *
+- * Note that not all PXA2xx chips implement all those addresses, and the
+- * kernel only maps the minimum needed range of this mapping.
+- */
+-#define io_v2p(x) (0x3c000000 + ((x) & 0x01ffffff) + (((x) & 0x0e000000) << 1))
+-#define io_p2v(x) IOMEM(0xf2000000 + ((x) & 0x01ffffff) + (((x) & 0x1c000000) >> 1))
+-
+-#ifndef __ASSEMBLY__
+-# define __REG(x)	(*((volatile u32 __iomem *)io_p2v(x)))
+-
+-/* With indexed regs we don't want to feed the index through io_p2v()
+-   especially if it is a variable, otherwise horrible code will result. */
+-# define __REG2(x,y)	\
+-	(*(volatile u32 __iomem*)((u32)&__REG(x) + (y)))
+-
+-# define __PREG(x)	(io_v2p((u32)&(x)))
+-
+-#else
+-
+-# define __REG(x)	io_p2v(x)
+-# define __PREG(x)	io_v2p(x)
+-
+-#endif
+-
+-#ifndef __ASSEMBLY__
++#ifndef __SOC_PXA_CPU_H
++#define __SOC_PXA_CPU_H
  
--	rc = of_property_read_u32(dev->of_node, "reg", &val);
--	if (rc || val > 0xffff) {
--		dev_err(dev, "invalid IO resources\n");
--		return rc ? rc : -EINVAL;
-+	prop_addr = of_get_address(dev->of_node, 0, NULL, NULL);
-+	if (!prop_addr) {
-+		dev_err(wled->dev, "invalid IO resources\n");
-+		return -EINVAL;
- 	}
--	wled->addr = val;
-+	wled->ctrl_addr = be32_to_cpu(*prop_addr);
++#ifdef CONFIG_ARM
+ #include <asm/cputype.h>
++#endif
  
- 	rc = of_property_read_string(dev->of_node, "label", &wled->name);
- 	if (rc)
- 		wled->name = devm_kasprintf(dev, GFP_KERNEL, "%pOFn", dev->of_node);
+ /*
+  *   CPU     Stepping     CPU_ID         JTAG_ID
+@@ -294,12 +249,4 @@
+ 		__cpu_is_pxa93x(read_cpuid_id());	\
+ 	 })
  
--	*cfg = wled3_config_defaults;
--	for (i = 0; i < ARRAY_SIZE(u32_opts); ++i) {
-+	switch (version) {
-+	case 3:
-+		u32_opts = wled3_opts;
-+		size = ARRAY_SIZE(wled3_opts);
-+		*cfg = wled3_config_defaults;
-+		wled->wled_set_brightness = wled3_set_brightness;
-+		wled->max_string_count = 3;
-+		break;
-+
-+	default:
-+		dev_err(wled->dev, "Invalid WLED version\n");
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < size; ++i) {
- 		rc = of_property_read_u32(dev->of_node, u32_opts[i].name, &val);
- 		if (rc == -EINVAL) {
- 			continue;
-@@ -338,12 +403,15 @@ static int wled_configure(struct wled *wled, struct device *dev)
+-
+-/*
+- * return current memory and LCD clock frequency in units of 10kHz
+- */
+-extern unsigned int get_memclk_frequency_10khz(void);
+-
+ #endif
+-
+-#endif  /* _ASM_ARCH_HARDWARE_H */
+diff --git a/sound/arm/pxa2xx-ac97-lib.c b/sound/arm/pxa2xx-ac97-lib.c
+index 58274b4a1f09..84d5f85073b9 100644
+--- a/sound/arm/pxa2xx-ac97-lib.c
++++ b/sound/arm/pxa2xx-ac97-lib.c
+@@ -17,6 +17,7 @@
+ #include <linux/io.h>
+ #include <linux/gpio.h>
+ #include <linux/of_gpio.h>
++#include <linux/soc/pxa/cpu.h>
  
- 		c = UINT_MAX;
- 		for (j = 0; c != val; j++) {
--			c = wled3_values(u32_opts[i].cfg, j);
-+			c = wled_values(u32_opts[i].cfg, j);
- 			if (c == UINT_MAX) {
- 				dev_err(dev, "invalid value for '%s'\n",
- 					u32_opts[i].name);
- 				return -EINVAL;
- 			}
-+
-+			if (c == val)
-+				break;
- 		}
+ #include <sound/pxa2xx-lib.h>
  
- 		dev_dbg(dev, "'%s' = %u\n", u32_opts[i].name, c);
-@@ -357,6 +425,15 @@ static int wled_configure(struct wled *wled, struct device *dev)
+diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
+index bf28187315db..eb99e01ee26f 100644
+--- a/sound/soc/pxa/pxa2xx-ac97.c
++++ b/sound/soc/pxa/pxa2xx-ac97.c
+@@ -21,7 +21,7 @@
+ #include <sound/pxa2xx-lib.h>
+ #include <sound/dmaengine_pcm.h>
  
- 	cfg->num_strings = cfg->num_strings + 1;
+-#include <mach/hardware.h>
++#include <mach/pxa-regs.h>
+ #include <mach/regs-ac97.h>
+ #include <mach/audio.h>
  
-+	string_len = of_property_count_elems_of_size(dev->of_node,
-+						     "qcom,enabled-strings",
-+						     sizeof(u32));
-+	if (string_len > 0)
-+		of_property_read_u32_array(dev->of_node,
-+						"qcom,enabled-strings",
-+						wled->cfg.enabled_strings,
-+						sizeof(u32));
-+
- 	return 0;
- }
+diff --git a/sound/soc/pxa/pxa2xx-i2s.c b/sound/soc/pxa/pxa2xx-i2s.c
+index 9f7fb7335ac0..e7c43fe46dff 100644
+--- a/sound/soc/pxa/pxa2xx-i2s.c
++++ b/sound/soc/pxa/pxa2xx-i2s.c
+@@ -21,7 +21,7 @@
+ #include <sound/pxa2xx-lib.h>
+ #include <sound/dmaengine_pcm.h>
  
-@@ -370,6 +447,7 @@ static int wled_probe(struct platform_device *pdev)
- 	struct backlight_device *bl;
- 	struct wled *wled;
- 	struct regmap *regmap;
-+	int version;
- 	u32 val;
- 	int rc;
+-#include <mach/hardware.h>
++#include <mach/pxa-regs.h>
+ #include <mach/audio.h>
  
-@@ -384,15 +462,32 @@ static int wled_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+ #include "pxa2xx-i2s.h"
+diff --git a/sound/soc/pxa/z2.c b/sound/soc/pxa/z2.c
+index f9a33cb36f5b..8f121ca13eee 100644
+--- a/sound/soc/pxa/z2.c
++++ b/sound/soc/pxa/z2.c
+@@ -21,7 +21,6 @@
+ #include <sound/jack.h>
  
- 	wled->regmap = regmap;
-+	wled->dev = &pdev->dev;
+ #include <asm/mach-types.h>
+-#include <mach/hardware.h>
+ #include <mach/audio.h>
+ #include <mach/z2.h>
  
--	rc = wled_configure(wled, &pdev->dev);
--	if (rc)
--		return rc;
-+	version = (uintptr_t)of_device_get_match_data(&pdev->dev);
-+	if (!version) {
-+		dev_err(&pdev->dev, "Unknown device version\n");
-+		return -ENODEV;
-+	}
- 
--	rc = wled_setup(wled);
-+	rc = wled_configure(wled, version);
- 	if (rc)
- 		return rc;
- 
-+	switch (version) {
-+	case 3:
-+		rc = wled3_setup(wled);
-+		if (rc) {
-+			dev_err(&pdev->dev, "wled3_setup failed\n");
-+			return rc;
-+		}
-+		break;
-+
-+	default:
-+		dev_err(wled->dev, "Invalid WLED version\n");
-+		break;
-+	}
-+
- 	val = WLED_DEFAULT_BRIGHTNESS;
- 	of_property_read_u32(pdev->dev.of_node, "default-brightness", &val);
- 
-@@ -407,7 +502,7 @@ static int wled_probe(struct platform_device *pdev)
- };
- 
- static const struct of_device_id wled_match_table[] = {
--	{ .compatible = "qcom,pm8941-wled" },
-+	{ .compatible = "qcom,pm8941-wled", .data = (void *)3 },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, wled_match_table);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
- a Linux Foundation Collaborative Project
+2.20.0
 
