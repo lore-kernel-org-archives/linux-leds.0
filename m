@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC28ACA9EBB
-	for <linux-leds@archiver.kernel.org>; Mon, 21 Oct 2019 12:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C0ECA9EB7
+	for <linux-leds@archiver.kernel.org>; Mon, 21 Oct 2019 12:44:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91D3A214B2
-	for <linux-leds@archiver.kernel.org>; Mon, 21 Oct 2019 12:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 140932173B
+	for <linux-leds@archiver.kernel.org>; Mon, 21 Oct 2019 12:44:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="dTdIgDUe"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="SBC1Jrc1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbfJUMoh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 21 Oct 2019 08:44:37 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51203 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728789AbfJUMog (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 21 Oct 2019 08:44:36 -0400
-Received: by mail-wm1-f68.google.com with SMTP id q70so5993552wme.1
-        for <linux-leds@vger.kernel.org>; Mon, 21 Oct 2019 05:44:35 -0700 (PDT)
+        id S1728853AbfJUMot (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 21 Oct 2019 08:44:49 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35074 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728850AbfJUMoo (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 21 Oct 2019 08:44:44 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 14so5992593wmu.0
+        for <linux-leds@vger.kernel.org>; Mon, 21 Oct 2019 05:44:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=e45fDRa6lt4TVk/xCaylRrJNDsL4rdRDWffuoxbFC/s=;
-        b=dTdIgDUe+rbxw9Er/S+hKUhvyYCM8dFCQpHzM3kQFpdrboIlN4qoBdh6qbSxSGqdJS
-         RAHBaQQeY6/e4PpMjOiCwFVSKrK1Jcj9N8PW6zFQhyquISkWjOP8+nLMWJtMu5IosAgx
-         A+WuhNAd3CdgaulIrkj0haFeApXmEMa9T+oyRENmW/JLjTmYlCpPVOSzYtVRbtzvAD+w
-         W5h3Yj+H9HZZRf2aOZAfOu26WsTrAt0bWrfrthVhdHd/YyPUD9F4WKeQj57Sqb/lZtXS
-         ZlS2u8rCz9kPfX0odggBoXQxvar7+TjvPlJycBdAvt99xG5EcG3ua7UdLfUfVMwA0pKb
-         EvzQ==
+        bh=rhQapm9fDV832oC+He0CVqLo8g+PxtpKOAzMRPE4ljA=;
+        b=SBC1Jrc19lIVahzliJlzcj/Hnqij4S94myxcPHBLA9zEUlN/GVXeoylmryNVMXOrJP
+         AMqM0TmWJeJ2jnwQW5jjozOzz85wMSTmu/qeq19DwD6Fe83klABDaLc5I1muCg+3552A
+         vBesukBR5YimyIIQuiQXj1aNW2bq1gtZkE7uDt2/axaLuQhQ5lDwT//z+kxpqfi7SOwJ
+         B842g6llfCc43wexMtAHB2ULxyKqFl21aSlroUBkH/M6PxtxIlmFCxKcB97pcNaMrdDF
+         U3T/VM2Pst7QUmtjBV0UHZLgvoenozdv3WjwfO8QDqoX+pREdnixx5AsqR6iw3jab1hf
+         xanA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=e45fDRa6lt4TVk/xCaylRrJNDsL4rdRDWffuoxbFC/s=;
-        b=kxEmLPwlItPr7p2MAVYLGoePjtD1Ppjh23iSQkWaGYdrcarCZ4i/sgaNgIZEj08nrk
-         DMnFTVB5aWgj6paUYdBqmZKBLXZV0z18dPu01+tycY2sgHFa6RacN69fzYi/Y3HXWuWm
-         ycYRqj30CFRZ6BBi3YSZ4nDmJvJuLmUPm6H2zFwRxa8TM0ZU/8MlqeqI4t2cFES0OEq+
-         sMCmM4zwRbTYoboO4lF0lgB0x+XFTWgzIo4Xuuy9+TS3QEhy1eqUlr6Hq5dIZLMsCNI8
-         Zjle3jS+dJpfxO0IKd/IjYBW92MBMz0KuM56vsYI3RW4PwHka/NA3RV2gUD8krb8QrLo
-         kj/A==
-X-Gm-Message-State: APjAAAXTCPjFBAyla1Kq5wxzVyZy7qCkU/bjQz7703MmAXgvU6rxcZQ9
-        E+imsa3SiBKMDmIo/jr9VqxuLA==
-X-Google-Smtp-Source: APXvYqz/r0eXO3ESbY8W2Yk8YiMyA2wNrEv41SgZfzo1fuCoUgFOhtw1QF8oY/U0ylwTDVWsFvzKxA==
-X-Received: by 2002:a1c:4907:: with SMTP id w7mr2508403wma.62.1571661874655;
-        Mon, 21 Oct 2019 05:44:34 -0700 (PDT)
+        bh=rhQapm9fDV832oC+He0CVqLo8g+PxtpKOAzMRPE4ljA=;
+        b=KS/ieCWT0Dxy7yhIiOpukOyV7wzQBhT9IpY3DKVNr3CSMSCWMPEJ016gzI0udQ/CYY
+         9oQCsNyIVkXEzzb7sGr94u8e+yf91GSvKBvXLjZU/Huka3KcDWq8VdlOC204mEGL1lKr
+         JRZs+O6mQRlEFfTBJIUiJrfR3ci36iD8ISkHBRs59slTC4YGGzmsvOTQziwRUX0pJdff
+         xk6gxKgUiFV6iwFZ8ok6b26VimoBeLu5HZ3tFkuIiHR6mWRrJtX22dg0PztnBayysYlJ
+         4UOvK+hebqhKK3uTg2GZiTDpDJuDmwpMrb+BeJAN13ELkS4shix4G9PJhzanbaOLadZQ
+         heDQ==
+X-Gm-Message-State: APjAAAV9xD++kEffcI3uUUg2kgl+oy6QOZ005DXFWqBZbhKOYI2mk4Uz
+        vmon3oEDmu3WC4IRBMtURZdOIg==
+X-Google-Smtp-Source: APXvYqy97iy8LODbmza0VVhEd9vUSnqiJRhFbIOhJEubSikBBqKyqGMAsMgyja4luXC1VK6jdC7/kw==
+X-Received: by 2002:a7b:cc07:: with SMTP id f7mr18270855wmh.56.1571661879823;
+        Mon, 21 Oct 2019 05:44:39 -0700 (PDT)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id a17sm10216150wmb.8.2019.10.21.05.44.33
+        by smtp.gmail.com with ESMTPSA id a17sm10216150wmb.8.2019.10.21.05.44.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 05:44:34 -0700 (PDT)
+        Mon, 21 Oct 2019 05:44:39 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -67,11 +67,10 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 1/6] dt-bindings: input: max77650: convert the binding document to yaml
-Date:   Mon, 21 Oct 2019 14:44:23 +0200
-Message-Id: <20191021124428.2541-2-brgl@bgdev.pl>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 5/6] dt-bindings: mfd: max77650: convert the binding document to yaml
+Date:   Mon, 21 Oct 2019 14:44:27 +0200
+Message-Id: <20191021124428.2541-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191021124428.2541-1-brgl@bgdev.pl>
 References: <20191021124428.2541-1-brgl@bgdev.pl>
@@ -84,90 +83,223 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Convert the binding document for MAX77650 onkey module to YAML.
+Convert the binding document for MAX77650 core MFD module to YAML.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/input/max77650-onkey.txt         | 26 --------------
- .../bindings/input/max77650-onkey.yaml        | 35 +++++++++++++++++++
- 2 files changed, 35 insertions(+), 26 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.txt
- create mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.yaml
+ .../devicetree/bindings/mfd/max77650.txt      |  46 ------
+ .../devicetree/bindings/mfd/max77650.yaml     | 149 ++++++++++++++++++
+ 2 files changed, 149 insertions(+), 46 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77650.yaml
 
-diff --git a/Documentation/devicetree/bindings/input/max77650-onkey.txt b/Documentation/devicetree/bindings/input/max77650-onkey.txt
+diff --git a/Documentation/devicetree/bindings/mfd/max77650.txt b/Documentation/devicetree/bindings/mfd/max77650.txt
 deleted file mode 100644
-index 477dc74f452a..000000000000
---- a/Documentation/devicetree/bindings/input/max77650-onkey.txt
+index b529d8d19335..000000000000
+--- a/Documentation/devicetree/bindings/mfd/max77650.txt
 +++ /dev/null
-@@ -1,26 +0,0 @@
--Onkey driver for MAX77650 PMIC from Maxim Integrated.
--
--This module is part of the MAX77650 MFD device. For more details
--see Documentation/devicetree/bindings/mfd/max77650.txt.
--
--The onkey controller is represented as a sub-node of the PMIC node on
--the device tree.
+@@ -1,46 +0,0 @@
+-MAX77650 ultra low-power PMIC from Maxim Integrated.
 -
 -Required properties:
----------------------
--- compatible:		Must be "maxim,max77650-onkey".
+--------------------
+-- compatible:		Must be "maxim,max77650"
+-- reg:			I2C device address.
+-- interrupts:		The interrupt on the parent the controller is
+-			connected to.
+-- interrupt-controller: Marks the device node as an interrupt controller.
+-- #interrupt-cells:	Must be <2>.
+-
+-- gpio-controller:	Marks the device node as a gpio controller.
+-- #gpio-cells:		Must be <2>. The first cell is the pin number and
+-			the second cell is used to specify the gpio active
+-			state.
 -
 -Optional properties:
--- linux,code:		The key-code to be reported when the key is pressed.
--			Defaults to KEY_POWER.
--- maxim,onkey-slide:	The system's button is a slide switch, not the default
--			push button.
+---------------------
+-gpio-line-names:	Single string containing the name of the GPIO line.
+-
+-The GPIO-controller module is represented as part of the top-level PMIC
+-node. The device exposes a single GPIO line.
+-
+-For device-tree bindings of other sub-modules (regulator, power supply,
+-LEDs and onkey) refer to the binding documents under the respective
+-sub-system directories.
+-
+-For more details on GPIO bindings, please refer to the generic GPIO DT
+-binding document <devicetree/bindings/gpio/gpio.txt>.
 -
 -Example:
 ---------
 -
--	onkey {
--		compatible = "maxim,max77650-onkey";
--		linux,code = <KEY_END>;
--		maxim,onkey-slide;
+-	pmic@48 {
+-		compatible = "maxim,max77650";
+-		reg = <0x48>;
+-
+-		interrupt-controller;
+-		interrupt-parent = <&gpio2>;
+-		#interrupt-cells = <2>;
+-		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+-
+-		gpio-controller;
+-		#gpio-cells = <2>;
+-		gpio-line-names = "max77650-charger";
 -	};
-diff --git a/Documentation/devicetree/bindings/input/max77650-onkey.yaml b/Documentation/devicetree/bindings/input/max77650-onkey.yaml
+diff --git a/Documentation/devicetree/bindings/mfd/max77650.yaml b/Documentation/devicetree/bindings/mfd/max77650.yaml
 new file mode 100644
-index 000000000000..2f2e0b6ebbbd
+index 000000000000..4a70f875a6eb
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/input/max77650-onkey.yaml
-@@ -0,0 +1,35 @@
++++ b/Documentation/devicetree/bindings/mfd/max77650.yaml
+@@ -0,0 +1,149 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/input/max77650-onkey.yaml#
++$id: http://devicetree.org/schemas/mfd/max77650.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Onkey driver for MAX77650 PMIC from Maxim Integrated.
++title: MAX77650 ultra low-power PMIC from Maxim Integrated.
 +
 +maintainers:
 +  - Bartosz Golaszewski <bgolaszewski@baylibre.com>
 +
 +description: |
-+  This module is part of the MAX77650 MFD device. For more details
-+  see Documentation/devicetree/bindings/mfd/max77650.yaml.
++  MAX77650 is an ultra-low power PMIC providing battery charging and power
++  supply for low-power IoT and wearable applications.
 +
-+  The onkey controller is represented as a sub-node of the PMIC node on
-+  the device tree.
++  The GPIO-controller module is represented as part of the top-level PMIC
++  node. The device exposes a single GPIO line.
++
++  For device-tree bindings of other sub-modules (regulator, power supply,
++  LEDs and onkey) refer to the binding documents under the respective
++  sub-system directories.
 +
 +properties:
 +  compatible:
-+    const: maxim,max77650-onkey
++    const: maxim,max77650
 +
-+  linux,code:
-+    $ref: /schemas/types.yaml#/definitions/uint32
++  reg:
 +    description:
-+      The key-code to be reported when the key is pressed. Defaults
-+      to KEY_POWER.
++      I2C device address.
++    maxItems: 1
 +
-+  maxim,onkey-slide:
-+    $ref: /schemas/types.yaml#/definitions/flag
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 2
 +    description:
-+      The system's button is a slide switch, not the default push button.
++      The first cell is the IRQ number, the second cell is the trigger type.
++
++  gpio-controller: true
++
++  "#gpio-cells":
++    const: 2
++    description:
++      The first cell is the pin number and the second cell is used to specify
++      the gpio active state.
++
++  gpio-line-names:
++    maxItems: 1
++    description:
++      Single string containing the name of the GPIO line.
++
++  regulators:
++    $ref: ../regulator/max77650-regulator.yaml
++
++  charger:
++    $ref: ../power/supply/max77650-charger.yaml
++
++  leds:
++    $ref: ../leds/leds-max77650.yaml
++
++  onkey:
++    $ref: ../input/max77650-onkey.yaml
 +
 +required:
 +  - compatible
++  - reg
++  - interrupts
++  - interrupt-controller
++  - "#interrupt-cells"
++  - gpio-controller
++  - "#gpio-cells"
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/input/linux-event-codes.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        pmic@48 {
++            compatible = "maxim,max77650";
++            reg = <0x48>;
++
++            interrupt-controller;
++            interrupt-parent = <&gpio2>;
++            #interrupt-cells = <2>;
++            interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
++
++            gpio-controller;
++            #gpio-cells = <2>;
++            gpio-line-names = "max77650-charger";
++
++            regulators {
++                compatible = "maxim,max77650-regulator";
++
++                max77650_ldo: regulator@0 {
++                    regulator-compatible = "ldo";
++                    regulator-name = "max77650-ldo";
++                    regulator-min-microvolt = <1350000>;
++                    regulator-max-microvolt = <2937500>;
++                };
++
++                max77650_sbb0: regulator@1 {
++                    regulator-compatible = "sbb0";
++                    regulator-name = "max77650-sbb0";
++                    regulator-min-microvolt = <800000>;
++                    regulator-max-microvolt = <1587500>;
++                };
++            };
++
++            charger {
++                compatible = "maxim,max77650-charger";
++                input-voltage-min-microvolt = <4200000>;
++                input-current-limit-microamp = <285000>;
++            };
++
++            leds {
++                compatible = "maxim,max77650-led";
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                led@0 {
++                    reg = <0>;
++                    label = "blue:usr0";
++                };
++
++                led@1 {
++                    reg = <1>;
++                    label = "red:usr1";
++                    linux,default-trigger = "heartbeat";
++                };
++
++                led@2 {
++                    reg = <2>;
++                    label = "green:usr2";
++                };
++            };
++
++            onkey {
++                compatible = "maxim,max77650-onkey";
++                linux,code = <KEY_END>;
++                maxim,onkey-slide;
++            };
++        };
++    };
 -- 
 2.23.0
 
