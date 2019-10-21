@@ -2,99 +2,142 @@ Return-Path: <SRS0=bGa2=YO=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A27CA9EB7
-	for <linux-leds@archiver.kernel.org>; Mon, 21 Oct 2019 08:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1181CA9EB5
+	for <linux-leds@archiver.kernel.org>; Mon, 21 Oct 2019 09:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09E8A20640
-	for <linux-leds@archiver.kernel.org>; Mon, 21 Oct 2019 08:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9583F2070B
+	for <linux-leds@archiver.kernel.org>; Mon, 21 Oct 2019 09:59:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A+lOYOm+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbfJUIS5 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 21 Oct 2019 04:18:57 -0400
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:61500 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbfJUIS5 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 21 Oct 2019 04:18:57 -0400
-X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Oct 2019 04:18:55 EDT
-X-AuditID: c0a8fbf4-183ff70000001fa6-9f-5dad66691d4b
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id B0.5E.08102.9666DAD5; Mon, 21 Oct 2019 10:03:53 +0200 (CEST)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Mon, 21 Oct 2019 10:03:42 +0200
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "dmurphy@ti.com" <dmurphy@ti.com>
-CC:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>
-Subject: Re: [RFC PATCH 12/13] dt-bindings: mfd: Document ROHM BD71282
- bindings
-Thread-Topic: [RFC PATCH 12/13] dt-bindings: mfd: Document ROHM BD71282
- bindings
-Thread-Index: AQHVhNEGlzssJjrQoU6zmYO2K0h2bqdewESAgAXgtIA=
-Date:   Mon, 21 Oct 2019 08:03:42 +0000
-Message-ID: <b8914c554e09c92b5a4602435fd60e314922a9c5.camel@fi.rohmeurope.com>
-References: <cover.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
-         <05841ff33ea166bc6934456a492adc3c67a90670.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
-         <1d2bc596-0329-d090-2e8d-037c8cad0585@ti.com>
-In-Reply-To: <1d2bc596-0329-d090-2e8d-037c8cad0585@ti.com>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <60A86E1DF0440C4BA4E5F28A4D53E8FA@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1727918AbfJUJ7P (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 21 Oct 2019 05:59:15 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:42008 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727433AbfJUJ7O (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 21 Oct 2019 05:59:14 -0400
+Received: by mail-ua1-f65.google.com with SMTP id r19so3604193uap.9
+        for <linux-leds@vger.kernel.org>; Mon, 21 Oct 2019 02:59:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pdHS5iTjhH216W3OQmstavgIx2TJJX3EShTQ+j4ScZ4=;
+        b=A+lOYOm+Xr9/QoAPbGmRqhJkdtF0Lqe8WUL4ACj5RU0nNNF8swHXxJ1znB4G8Os5Ny
+         GFNaGZ/ejdu+ewHfdHOPCmruyouYE59ddCzoE/xVdTrwx+9jDUvHxy7BDp9wIDVdNxfI
+         /6ZVUUwI4YOYuKQGiiojp4zvyT6amzLfph0exWZKznf04jiM3DxdRAExfvqYeyeqcqdD
+         +jHYiIvYbVFtFjJ+6C1ZbvLjFHV0Oba7w+6LuMl93+fW5xmlBomtFj1iieYNFONPPx+n
+         GuW5fPipC9llariB4WKqkEzYSA5LiCXyADKzbRoQItF2MbOokfHyNH6+nW64EQTg2+/Q
+         SDPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pdHS5iTjhH216W3OQmstavgIx2TJJX3EShTQ+j4ScZ4=;
+        b=A+D4ff03wrpxfejgs3aSpashujc576fkAO6HOdFaaLJ/SDHb+OMayEAunAhz3zY0bE
+         n7OeiwPlTyaJlfNS5194CqAuYrw1qH5lUNY9kBM1hnyTAZUW/Yjavj86nYwprYW/ISO0
+         t1G9XKqYf1PwbeIGck7geZg9SjJO1lEZ3ifEChUspQLfCkJ6BKUSoBlB7lqVSYzl+jDJ
+         Wq2eX7d323mIm8EPIgCx/647sjl4jIAsVun8jfo5sDj/sy7CnRC8jEF6ydBTID4/AXGG
+         fmC//j6cppv5tLZOV9yu0Qf4M5yy8RBXB9Mh7jyS8DZ3ZCejDDNVLtqBDmntqIXQncyg
+         OF0A==
+X-Gm-Message-State: APjAAAWMMaijA9o5DmRkqMFZhqIq4XDzpTjzN+rG2LNJJ5EZxJdBXfm5
+        wLwsqKJaNVzYRMWF6YziItve+bRuVzZ3KIVMtF+vhw==
+X-Google-Smtp-Source: APXvYqyX35z25w9uC+afBeqWkMX+7aKojU6riMDxod1s9TtFAaRTKL1Dky4gIujxC0cprlM32BbtJAeRhAkOs/Lhxl0=
+X-Received: by 2002:ab0:5a97:: with SMTP id w23mr2075364uae.129.1571651953620;
+ Mon, 21 Oct 2019 02:59:13 -0700 (PDT)
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ta0gUURiGOXN3a2LatD3ahdroftnsxqnsRgRjP0INEgLTMafdLd2V2VW0
-        /hhhpXYx6IJDuiLaxUvapmSmWKZmWyRL6hZpthVFkkZoiRnVjGPpr/Oe837v93w/vsPg+l4q
-        hLHanKJkExKNlI54cGPUvdJ6qCJmdeHbFajY20mjUwPXaDSU7yHQJf8HCrman5Mo52k1iV7X
-        VBGo93sLQD86TmPo4q/rGPp25g2J7rh+AfSi7iqFar7cAqi1rINCJT4vhq6WtBHI69mFejwt
-        FMpsaKbR767bxPYgvrygHPBfX2bSfEH5Mf6e3EPz7tIsiu/uqqf4xy/vYvyVghGMv1E2TPOD
-        7rkRuv1TwuIFZ+peq9lm2ho3xVLUfZJOlsm0U+26DHCazAYBDOTWwXNnvYrWMXquC8DW6x6g
-        XdoAfNc3iGUDhqG4MJj9ilYDgdwBeM37kFJrcG6Yhn1yzpgxg4uEraPtpFYUBYff5FKa3gRL
-        z/8hVE1wC+HH6stA1Sy3B57z5Y3DOgAc8vaPGQFK4HKna6wR4ObArIwBTNU4Z4Duj8PjY3Ow
-        uL4d13QQ/Pz+9/i7ETaM+Al1aJxbCivrTJrcDluHDmtd5sOLOX5aG2E6fJL3gcgFM+VJAHki
-        LE+E5UlheVK4EJClACYJ1kSz4BRDV0liyirJbklSjoP2JDfQFmaoFvxpCm8CGAOaQDCDGYNY
-        m6k8Rj8t3p6QbhEcllgpJVF0NAHI4MZAtnt1RYyeTRDSj4qS/Z81iyGMBnax/0KMnlNZR0Qx
-        WZT+ubMZxgjZgINKcLokmsW0Q9ZE54SNMQFqc11IoEO0JYiSkOK0xKrbEetQ1kO1pircx6LK
-        dSQLScqrFvWA5Uzu5/winGnOLynC9YTNbhNDDKwrTinl1FJLiu0/qA8YGGCcwfYmKO5U5df8
-        79OnIDAFURZcpiKcwoQVkgGC49IPx204O1qT2b8biRu3rDRHkFVVC5JPFIeFGr4W765nuVeG
-        zX5n447IJSa7IPSYukR6IG0kevDn2+WGqNDB6HbvvJuf8NQ2Pq9zT38Gueb50eMHZFOqr3JW
-        QaR3p6/wkePdttpn4Wtbsr4t2tVI4EeKXOt95poL4WtK9lXfNxIOixC6DJccwl/439tc8gMA
-        AA==
+References: <20191018154052.1276506-1-arnd@arndb.de> <20191018154201.1276638-5-arnd@arndb.de>
+In-Reply-To: <20191018154201.1276638-5-arnd@arndb.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 21 Oct 2019 11:58:37 +0200
+Message-ID: <CAPDyKFqHoPOPAA_0WpxQUjBTXJ-5BfMbcNXhFNr7rv3RObsgow@mail.gmail.com>
+Subject: Re: [PATCH 05/46] ARM: pxa: split up mach/hardware.h
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mark Brown <broonie@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-VGhhbmtzIERhbiwNCg0KT24gVGh1LCAyMDE5LTEwLTE3IGF0IDA5OjE4IC0wNTAwLCBEYW4gTXVy
-cGh5IHdyb3RlOg0KPiBNYXR0DQoNCkJ5IHRoZSB3YXksIGl0cyBNYXR0aSA7KQ0KDQo+IE9uIDEw
-LzE3LzE5IDQ6NTUgQU0sIE1hdHRpIFZhaXR0aW5lbiB3cm90ZToNCj4gPiBST0hNIEJENzE4Mjgg
-UG93ZXIgbWFuYWdlbWVudCBJQyBpbnRlZ3JhdGVzIDcgYnVjayBjb252ZXJ0ZXJzLCA3DQo+ID4g
-TERPcywNCj4gPiBhIHJlYWwtdGltZSBjbG9jayAoUlRDKSwgMyBHUE8vcmVndWxhdG9yIGNvbnRy
-b2wgcGlucywgSEFMTCBpbnB1dA0KPiA+IHBpbg0KPiA+IGFuZCBhIDMyLjc2OCBrSHogY2xvY2sg
-Z2F0ZS4NCj4gPiANCj4gPiBEb2N1bWVudCB0aGUgZHQgYmluZGluZ3MgZHJpdmVycyBhcmUgdXNp
-bmcuDQo+IA0KPiBUaGlzIHNob3VsZCBiZSBwYXRjaCAxIG9mIFgNCg0KSSB3aWxsIHJlYmFzZSA6
-KQ0KDQpCciwNCglNYXR0aSBWYWl0dGluZW4NCg==
+On Fri, 18 Oct 2019 at 17:43, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> The mach/hardware.h is included in lots of places, and it provides
+> three different things on pxa:
+>
+> - the cpu_is_pxa* macros
+> - an indirect inclusion of mach/addr-map.h
+> - the __REG() and io_pv2() helper macros
+>
+> Split it up into separate <linux/soc/pxa/cpu.h> and mach/pxa-regs.h
+> headers, then change all the files that use mach/hardware.h to
+> include the exact set of those three headers that they actually
+> need, allowing for further more targeted cleanup.
+>
+> linux/soc/pxa/cpu.h can remain permanently exported and is now in
+> a global location along with similar headers. pxa-regs.h and
+> addr-map.h are only used in a very small number of drivers now
+> and can be moved to arch/arm/mach-pxa/ directly when those drivers
+> are to pass the necessary data as resources.
+>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-input@vger.kernel.org
+> Cc: linux-leds@vger.kernel.org
+> Cc: linux-mmc@vger.kernel.org
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-rtc@vger.kernel.org
+> Cc: linux-usb@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-fbdev@vger.kernel.org
+> Cc: linux-watchdog@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+[...]
+
+For the mmc part:
+
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
