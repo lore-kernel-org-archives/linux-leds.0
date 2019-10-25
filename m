@@ -2,88 +2,107 @@ Return-Path: <SRS0=FPB9=YS=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0699CA9EA0
-	for <linux-leds@archiver.kernel.org>; Fri, 25 Oct 2019 07:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850A4CA9EBC
+	for <linux-leds@archiver.kernel.org>; Fri, 25 Oct 2019 10:51:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 996A621929
-	for <linux-leds@archiver.kernel.org>; Fri, 25 Oct 2019 07:11:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 632FC21D7F
+	for <linux-leds@archiver.kernel.org>; Fri, 25 Oct 2019 10:51:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406560AbfJYHLd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 25 Oct 2019 03:11:33 -0400
-Received: from host-88-217-225-28.customer.m-online.net ([88.217.225.28]:41441
-        "EHLO mail.dev.tdt.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2406166AbfJYHLd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 25 Oct 2019 03:11:33 -0400
-X-Greylist: delayed 566 seconds by postgrey-1.27 at vger.kernel.org; Fri, 25 Oct 2019 03:11:32 EDT
-Received: from mschiller01.dev.tdt.de (unknown [10.2.3.20])
-        by mail.dev.tdt.de (Postfix) with ESMTPSA id 1ED35200C4;
-        Fri, 25 Oct 2019 07:01:56 +0000 (UTC)
-From:   Martin Schiller <ms@dev.tdt.de>
-To:     jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
-        rafal@milecki.pl, linux@rasmusvillemoes.dk
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin Schiller <ms@dev.tdt.de>
-Subject: [PATCH] leds: trigger: netdev: fix handling on interface rename
-Date:   Fri, 25 Oct 2019 09:01:42 +0200
-Message-Id: <20191025070142.23654-1-ms@dev.tdt.de>
-X-Mailer: git-send-email 2.20.1
+        id S2394502AbfJYKvJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 25 Oct 2019 06:51:09 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:45981 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392198AbfJYKvJ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 25 Oct 2019 06:51:09 -0400
+Received: from mail-qk1-f181.google.com ([209.85.222.181]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Mj831-1hlZxU1VH3-00fEqI; Fri, 25 Oct 2019 12:51:05 +0200
+Received: by mail-qk1-f181.google.com with SMTP id q70so1261022qke.12;
+        Fri, 25 Oct 2019 03:51:04 -0700 (PDT)
+X-Gm-Message-State: APjAAAWA6fFViRcJqREnWWJ4XnLSnh9uc5TR3f3XkJRs4iop43nFUxmc
+        NGQ8ccT6lVNGOrvmjR3QEB2RQ+274bWdUrVtGAM=
+X-Google-Smtp-Source: APXvYqx2Oor6PcLHOX4Sy8TtHwX6a9dti7RuLVSJPm8RZ72aJo7WkeFnANJ7SePVIoWyJuP+ht+PknNC97FPJwMamtQ=
+X-Received: by 2002:a37:58d:: with SMTP id 135mr2252602qkf.394.1572000663226;
+ Fri, 25 Oct 2019 03:51:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191018154052.1276506-1-arnd@arndb.de> <87v9slg9k5.fsf@belgarion.home>
+ <CAK8P3a1JDtHsOW=iaxEycbJ4TBkR9MHUyDMeJnwxCtb=tefnBQ@mail.gmail.com>
+ <CAK8P3a0376Anmoc8VWXcEBg+z2B+1vcxJoywYYROBQNxpVmZuA@mail.gmail.com>
+ <87r239f2g8.fsf@belgarion.home> <87eez1rhqo.fsf@belgarion.home>
+In-Reply-To: <87eez1rhqo.fsf@belgarion.home>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 25 Oct 2019 12:50:46 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0L3_Hs48X5bh0UD2L_AaxLcUOQ_YS7ZpSd5W-8xcgAog@mail.gmail.com>
+Message-ID: <CAK8P3a0L3_Hs48X5bh0UD2L_AaxLcUOQ_YS7ZpSd5W-8xcgAog@mail.gmail.com>
+Subject: Re: [PATCH 00/46] ARM: pxa: towards multiplatform support
+To:     Robert Jarzmik <robert.jarzmik@free.fr>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        IDE-ML <linux-ide@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        linux-leds@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:bBFl5bX9BqXoDP8OrdvcfGlrYLRY5B1GUhWZJswEMUsHfqL7ZPS
+ wNKiBQqI9J4lWaKwMKWpeuRP8Q7gNW1Huux28MpdQbLQHsG8keYqULuxokAyz8cXvUuDQNr
+ Y4OmkYoxdwxMOhV/OoYmkmbTVaeZ1jGsBbuhOyjPDaixMEDPYwwWYKYrS8WnrToePTYktVe
+ isgPlih4bJp7b5na0cbDg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:+amIHTsvEsM=:wxrSdcXp8fCl0WvOtbji8T
+ eiMYbEG4cst6pRKOmo34ky4eqFrbI9L+1xHjnaiY+H7o5c4AvretiveY6HsD/8Q4GCTo+d4EF
+ 6KHQlLX/3bCOUITQRQRqZXMcO8+d/5yBWQ4PLvO/++od9zW+FSeEXlBspQqZItGbvkewyaSgM
+ V2RuqHgZsRHubh1xP1lsxIE2YLtSonVpvh2iNYDMLLKocefeURCWHULZHpLKqb637/1ILOFmh
+ oY55eIQP5dCvyMde+02h4Sc41A/coK0VSMYnmjZbIdabokN8wJmd5BpuqN52whvBKMyQB7Drx
+ +rJNk043np+L19CHym/KU1GD0+Jh/hYMmdbAesunIc/XFNfshrJppNPggA2jYuD+WHt0GoW0h
+ vIRvBMeg6dWxtHSt5iN2OWe8YRwmJozAghx6eaxs/+mtKjhlwdb8pg8wgjMJTT4UVZPNck6ai
+ ETIxAKLIg48ERY2PKPCwjHZWIF59mr9ihwrIm7/PoRVzhB2DgY1bXT+r0Xf1ifNLX95PYOB5M
+ zAGClTyzoyjzTzKwNgwcV4nTh4Je81xIc8FEG8D5S5n2odlouWYtMUHvQkobX+2UgP+dk+Rdq
+ Yf9piYlNy1SKL1OHQdycWsLTFQ3jMWeWKCJRb5PSzWdnYIqeBZU1jM0z+jjUqPYhNrA/3/oIY
+ 6RHI26+ovszi6E37l9e4YOUqQLgkyayuNJDsaLxUKkKdzoog8Z1n6LZPKD/u4+MRIXZCKCrGx
+ pWVDvdMh6MitMHpzAZXm52z3k1A8T63a1CoAVUlqw1z/kLR1+hrsr4BnhFtpR4HNXe8FSWIge
+ SE0Vg8VrS1FRrUX3m8HXrRagLwmAmfEk5PCq5WPOx/NjbgPEUnw5nqQ9HVCS9jOGnKIZvBw5Z
+ /NMhJY+Zi7eyYSpPjOOA==
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The NETDEV_CHANGENAME code is not "unneeded" like it is stated in commit
-4cb6560514fa ("leds: trigger: netdev: fix refcnt leak on interface
-rename").
+On Thu, Oct 24, 2019 at 10:50 PM Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+> Robert Jarzmik <robert.jarzmik@free.fr> writes:
+> >>> I've now pushed it to
+> >>>
+> >>> git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git
+> >>> pxa-multiplatform
+> >>
+> >> Sorry for the duplication, I had some problems with email configuration
+> >> so my reply got rejected, let's see if it goes through this time.
+> > I have it now, thanks, I'll test and review as soon as I can.
+> >
+> > Cheers.
+>
+> Ok Arnd, I have a preliminary test report.
+>
+> I tested only the pxa27x (mioa701), which happens to have a lot of drivers, and
+> only the platform_data flavor (ie. no device-tree test yet). Apart a panic in
+> the regulator framework (which is a known issue [1]), your version seems
+> equivalent so far in terms of runtime to Linux 5.4-rc3).
+>
+> The sound and RTC seem broken, but not by you ...
+>
+> I'll continue the test onwards for pxa3xx and pxa2xx when I'll gather a bit of
+> time, and try to review as well the mach-pxa part.
 
-The event was accidentally misinterpreted equivalent to
-NETDEV_UNREGISTER, but should be equivalent to NETDEV_REGISTER.
+Awesome, thanks for testing so far and for the report!
 
-This was the case in the original code from the openwrt project.
-
-Otherwise, you are unable to set netdev led triggers for (non-existent)
-netdevices, which has to be renamed. This is the case, for example, for
-ppp interfaces in openwrt.
-
-Fixes: 06f502f57d0d ("leds: trigger: Introduce a NETDEV trigger")
-Fixes: 4cb6560514fa ("leds: trigger: netdev: fix refcnt leak on interface rename")
-Signed-off-by: Martin Schiller <ms@dev.tdt.de>
----
- drivers/leds/trigger/ledtrig-netdev.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index 136f86a1627d..d5e774d83021 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -302,10 +302,12 @@ static int netdev_trig_notify(struct notifier_block *nb,
- 		container_of(nb, struct led_netdev_data, notifier);
- 
- 	if (evt != NETDEV_UP && evt != NETDEV_DOWN && evt != NETDEV_CHANGE
--	    && evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER)
-+	    && evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER
-+	    && evt != NETDEV_CHANGENAME)
- 		return NOTIFY_DONE;
- 
- 	if (!(dev == trigger_data->net_dev ||
-+	      (evt == NETDEV_CHANGENAME && !strcmp(dev->name, trigger_data->device_name)) ||
- 	      (evt == NETDEV_REGISTER && !strcmp(dev->name, trigger_data->device_name))))
- 		return NOTIFY_DONE;
- 
-@@ -315,6 +317,7 @@ static int netdev_trig_notify(struct notifier_block *nb,
- 
- 	clear_bit(NETDEV_LED_MODE_LINKUP, &trigger_data->mode);
- 	switch (evt) {
-+	case NETDEV_CHANGENAME:
- 	case NETDEV_REGISTER:
- 		if (trigger_data->net_dev)
- 			dev_put(trigger_data->net_dev);
--- 
-2.20.1
-
+        Arnd
