@@ -2,142 +2,241 @@ Return-Path: <SRS0=46xa=YV=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DDBCA9EC2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDACCA9EC4
 	for <linux-leds@archiver.kernel.org>; Mon, 28 Oct 2019 18:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 917CF214B2
+	by mail.kernel.org (Postfix) with ESMTP id BC53B21835
 	for <linux-leds@archiver.kernel.org>; Mon, 28 Oct 2019 18:37:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="J6F8dzl0"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pPgKAv6v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726071AbfJ1ShZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 28 Oct 2019 14:37:25 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:38300 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbfJ1ShZ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 28 Oct 2019 14:37:25 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9SIbJK5049577;
-        Mon, 28 Oct 2019 13:37:19 -0500
+        id S1727176AbfJ1Sho (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 28 Oct 2019 14:37:44 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:43206 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbfJ1Sho (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 28 Oct 2019 14:37:44 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9SIbf0r065636;
+        Mon, 28 Oct 2019 13:37:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572287839;
-        bh=PfamenJM3deYwpZXFakRAh5uzTF6DAO1HF1Fe5NgHbQ=;
-        h=From:To:CC:Subject:Date;
-        b=J6F8dzl0jhnnXmKrR6CqGDHFPGbxki3LllNAus09rhslvqsQ4EU+MtHa+XeV+41v2
-         EJs1DxdJA759aotjtP/1dD39KpqfgQGo0AwpB9JkzM4Qsi9QXa80rsPuvS8+FD7cyd
-         IXt4gyuhvRevFXotvdn4vzn8zbW+bmw7o1P6GAAY=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9SIbJbo095350;
-        Mon, 28 Oct 2019 13:37:19 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+        s=ti-com-17Q1; t=1572287861;
+        bh=rypLEJLbiDfP2WcD4ls+CXhyO//n5TYBDjfB1YBfbjc=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=pPgKAv6vIs9Hcgx3j26PetVwb6oEZQCqRMG1T0bQGpZoUw9y9dEQ0s324zYW3biXm
+         k6HAPo5h8IVRWOfoDv6WwzXiM+MI+6MHTrbhcWS9ah9zTB1DdDTyxaPWK8N+gVhKK7
+         d5fOKZnQZVZHRNH633bi7RKAiQPyFThS4nAtgwig=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9SIbfsK077371
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 28 Oct 2019 13:37:41 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 28
- Oct 2019 13:37:07 -0500
+ Oct 2019 13:37:28 -0500
 Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
  (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 28 Oct 2019 13:37:07 -0500
+ Frontend Transport; Mon, 28 Oct 2019 13:37:28 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9SIbJGa054891;
-        Mon, 28 Oct 2019 13:37:19 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9SIbetE055564;
+        Mon, 28 Oct 2019 13:37:40 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v15 00/19] Multicolor Framework
-Date:   Mon, 28 Oct 2019 13:36:10 -0500
-Message-ID: <20191028183629.11779-1-dmurphy@ti.com>
+Subject: [PATCH v15 05/19] dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
+Date:   Mon, 28 Oct 2019 13:36:15 -0500
+Message-ID: <20191028183629.11779-6-dmurphy@ti.com>
 X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
+In-Reply-To: <20191028183629.11779-1-dmurphy@ti.com>
+References: <20191028183629.11779-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hello
+Introduce the bindings for the Texas Instruments LP5036, LP5030, LP5024,
+LP5018, LP5012 and LP5009 RGB LED device driver.  The LP5036/30/24/18/12/9
+can control RGB LEDs individually or as part of a control bank group.
+These devices have the ability to adjust the mixing control for the RGB
+LEDs to obtain different colors independent of the overall brightness of
+the LED grouping.
 
-I am hoping that this is a final version to get pulled.  From there we can
-patch fixes on top of this code.
+Datasheet:
+http://www.ti.com/lit/ds/symlink/lp5012.pdf
+http://www.ti.com/lit/ds/symlink/lp5024.pdf
+http://www.ti.com/lit/ds/symlink/lp5036.pdf
 
-Changes from v14
-
-MC Framework:
-Fixed mc_calc_components from color_component->color_components
-Added back in inline devm functions for when MULTI_COLOR_FRAMEWORK flag is not
-set.
-
-LP55xx
-Update multi color and single LED DT parsing (From Jacek)
-
-Children devices (LP5521/23/62 & LP8501)
-
-Update the probe routines for each child device to pass in the chip->cfg so that
-the LP55xx common code can access the max_channel config data.
-
-Dan
-
-Dan Murphy (19):
-  dt: bindings: Add multicolor class dt bindings documention
-  dt-bindings: leds: Add multicolor ID to the color ID list
-  leds: Add multicolor ID to the color ID list
-  leds: multicolor: Introduce a multicolor class definition
-  dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
-  leds: lp50xx: Add the LP50XX family of the RGB LED driver
-  dt: bindings: lp55xx: Be consistent in the document with LED acronym
-  dt: bindings: lp55xx: Update binding for Multicolor Framework
-  ARM: dts: n900: Add reg property to the LP5523 channel node
-  ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
-  ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
-  leds: lp55xx: Convert LED class registration to devm_*
-  leds: lp55xx: Add multicolor framework support to lp55xx
-  leds: lp5523: Update the lp5523 code to add multicolor brightness
-    function
-  leds: lp5521: Add multicolor framework multicolor brightness support
-  leds: lp55xx: Fix checkpatch file permissions issues
-  leds: lp5523: Fix checkpatch issues in the code
-  dt: bindings: Update lp55xx binding to recommended LED naming
-  leds: lp55xx-common: Remove extern from lp55xx-common header
-
- .../ABI/testing/sysfs-class-led-multicolor    |  36 +
- .../bindings/leds/leds-class-multicolor.txt   |  98 +++
- .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++
- .../devicetree/bindings/leds/leds-lp55xx.txt  | 163 +++-
- Documentation/leds/index.rst                  |   1 +
- Documentation/leds/leds-class-multicolor.rst  | 100 +++
- arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |  14 +-
- arch/arm/boot/dts/omap3-n900.dts              |  29 +-
- arch/arm/boot/dts/ste-href.dtsi               |  22 +-
- drivers/leds/Kconfig                          |  22 +
- drivers/leds/Makefile                         |   2 +
- drivers/leds/led-class-multicolor.c           | 271 ++++++
- drivers/leds/led-core.c                       |   1 +
- drivers/leds/leds-lp50xx.c                    | 799 ++++++++++++++++++
- drivers/leds/leds-lp5521.c                    |  43 +-
- drivers/leds/leds-lp5523.c                    |  62 +-
- drivers/leds/leds-lp5562.c                    |  22 +-
- drivers/leds/leds-lp55xx-common.c             | 235 ++++--
- drivers/leds/leds-lp55xx-common.h             |  36 +-
- drivers/leds/leds-lp8501.c                    |  23 +-
- include/dt-bindings/leds/common.h             |   3 +-
- include/linux/led-class-multicolor.h          | 139 +++
- include/linux/platform_data/leds-lp55xx.h     |   8 +
- 23 files changed, 2105 insertions(+), 172 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
- create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++++++++++++++++
+ 1 file changed, 148 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
- create mode 100644 Documentation/leds/leds-class-multicolor.rst
- create mode 100644 drivers/leds/led-class-multicolor.c
- create mode 100644 drivers/leds/leds-lp50xx.c
- create mode 100644 include/linux/led-class-multicolor.h
 
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp50xx.txt b/Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+new file mode 100644
+index 000000000000..291d418642e0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+@@ -0,0 +1,148 @@
++* Texas Instruments - LP5009/12/18/24/30/36 RGB LED driver
++
++The LP50XX is multi-channel, I2C RGB LED Drivers that can group RGB LEDs into
++a LED group or control them individually.
++
++The difference in these RGB LED drivers is the number of supported RGB modules.
++
++Required parent properties:
++	- compatible:
++		"ti,lp5009"
++		"ti,lp5012"
++		"ti,lp5018"
++		"ti,lp5024"
++		"ti,lp5030"
++		"ti,lp5036"
++	- reg :  I2C slave address
++		lp5009/12 - 0x14, 0x15, 0x16, 0x17
++		lp5018/24 - 0x28, 0x29, 0x2a, 0x2b
++		lp5030/36 - 0x30, 0x31, 0x32, 0x33
++	- #address-cells : 1
++	- #size-cells : 0
++
++Optional parent properties:
++	- enable-gpios : gpio pin to enable/disable the device.
++	- vled-supply : LED supply
++
++Required child properties:
++	- #address-cells : 1
++	- #size-cells : 0
++	- reg : This is the LED module number.
++	- color : Must be LED_COLOR_ID_MULTI
++	- function : see Documentation/devicetree/bindings/leds/common.txt
++
++Required child properties only if LED modules will be banked:
++	- ti,led-bank : This property denotes the LED module numbers that will
++			be controlled as a single RGB cluster.  Each LED module
++			number will be controlled by a single LED class instance.
++			There can only be one instance of the ti,led-bank
++			property for each device node.
++
++Required grandchildren properties:
++	- reg : A single entry denoting the LED output that controls
++		the monochrome LED.
++	- color : see Documentation/devicetree/bindings/leds/common.txt
++	- led-sources : see Documentation/devicetree/bindings/leds/common.txt
++
++The LED outputs associated with the LED modules are defined in Table 1 of the
++corresponding data sheets.
++
++LP5009 - 3 Total RGB cluster LED outputs 0-2
++LP5012 - 4 Total RGB cluster LED outputs 0-3
++LP5018 - 6 Total RGB cluster LED outputs 0-5
++LP5024 - 8 Total RGB cluster LED outputs 0-7
++LP5030 - 10 Total RGB cluster LED outputs 0-9
++LP5036 - 12 Total RGB cluster LED outputs 0-11
++
++Optional child properties:
++	- label : see Documentation/devicetree/bindings/leds/common.txt
++	- linux,default-trigger :
++	   see Documentation/devicetree/bindings/leds/common.txt
++
++Examples:
++led-controller@29 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	compatible = "ti,lp5024";
++	reg = <0x29>;
++	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
++	vled-supply = <&vmmcsd_fixed>;
++
++	multi-led@1 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <1>;
++		color = <LED_COLOR_ID_MULTI>;
++		function = LED_FUNCTION_STATUS;
++
++		led@3 {
++			reg = <3>;
++			color = <LED_COLOR_ID_RED>;
++		};
++
++		led@4 {
++			reg = <4>;
++			color = <LED_COLOR_ID_GREEN>;
++		};
++
++		led@5 {
++			reg = <5>;
++			color = <LED_COLOR_ID_BLUE>;
++		};
++	};
++
++	multi-led@2 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <2>;
++		color = <LED_COLOR_ID_MULTI>;
++		function = LED_FUNCTION_STANDBY;
++		ti,led-bank = <2 3 5>;
++
++		led@6 {
++			reg = <0x6>;
++			color = <LED_COLOR_ID_RED>;
++			led-sources = <6 9 15>;
++		};
++
++		led@7 {
++			reg = <0x7>;
++			color = <LED_COLOR_ID_GREEN>;
++			led-sources = <7 10 16>;
++		};
++
++		led@8 {
++			reg = <0x8>;
++			color = <LED_COLOR_ID_BLUE>;
++			led-sources = <8 11 17>;
++		};
++	};
++
++	multi-led@4 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <4>;
++		color = <LED_COLOR_ID_MULTI>;
++		function = LED_FUNCTION_ACTIVITY;
++
++		led@12 {
++			reg = <12>;
++			color = <LED_COLOR_ID_RED>;
++		};
++
++		led@13 {
++			reg = <13>;
++			color = <LED_COLOR_ID_GREEN>;
++		};
++
++		led@14 {
++			reg = <14>;
++			color = <LED_COLOR_ID_BLUE>;
++		};
++	};
++};
++
++For more product information please see the link below:
++http://www.ti.com/lit/ds/symlink/lp5012.pdf
++http://www.ti.com/lit/ds/symlink/lp5024.pdf
++http://www.ti.com/lit/ds/symlink/lp5036.pdf
 -- 
 2.22.0.214.g8dca754b1e
 
