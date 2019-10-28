@@ -1,158 +1,134 @@
-Return-Path: <SRS0=q++u=YU=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=46xa=YV=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2315CCA9EAF
-	for <linux-leds@archiver.kernel.org>; Sun, 27 Oct 2019 21:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C996ECA9EAF
+	for <linux-leds@archiver.kernel.org>; Mon, 28 Oct 2019 02:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9372205F4
-	for <linux-leds@archiver.kernel.org>; Sun, 27 Oct 2019 21:38:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9454220B7C
+	for <linux-leds@archiver.kernel.org>; Mon, 28 Oct 2019 02:55:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572212289;
-	bh=ejTMU2PKQBIvXRez9MZn4+fwYEV5lq+acuqnLFVTjRk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Rwj0/4V0d/RpwlgH1zU5Oq/kdoBhPOdQmxD62+6hD8+VNRW7OMHB9pMoQreDcn4gN
-	 dyPoypCSnFfSAyxLJN4lXl/y98rrE1BYVvJnn84aiGDSuWiU2P/CDz8c+2wuQvkynq
-	 vOrjNKtaUBItfMsmpXnYC4QYmfixzuvMhRxFTGoQ=
+	s=default; t=1572231345;
+	bh=pb7IZTBRfkZVHAvZFuM2aHVe4OKL4bsoUZk1vFFsMic=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0K/gconmCUl8YM4s7LU4VXLzdfCXjDhQDhHiH+/mLj9ysjdrPAcQB6Lae4F9Tbgc+
+	 sKvvHRtH+C5NRDD7B6uPr0amRtAzw47xrlIkFUNLLJ1QsSz4SfEAc6PwVqNJToo/yh
+	 qJ+lsNm/ioygJoMDUiF8UCfYNBUP9nuIt7rGyooM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729541AbfJ0ViI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 27 Oct 2019 17:38:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49666 "EHLO mail.kernel.org"
+        id S1726816AbfJ1Czp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 27 Oct 2019 22:55:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728507AbfJ0VEE (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:04:04 -0400
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726789AbfJ1Czo (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 27 Oct 2019 22:55:44 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46EB6222BE;
-        Sun, 27 Oct 2019 21:04:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE302208C0;
+        Mon, 28 Oct 2019 02:55:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572210243;
-        bh=ejTMU2PKQBIvXRez9MZn4+fwYEV5lq+acuqnLFVTjRk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=YS5blBDgCLLdaVUBscufdzFBWqilByx/mzOp2lPJdgTGefAY0qo7zl3CToLksevf5
-         RXNIWsBQgj8DjxJbSlCw5u0MnvbfSlZbd31dvvM2s/w15qFbLDC356zis+nFLypp+y
-         yuu51CWefzALIDqXy6XOnj/tfiMfRjVJ+DlH3lgg=
-Received: by mail-qk1-f180.google.com with SMTP id w2so6699615qkf.2;
-        Sun, 27 Oct 2019 14:04:03 -0700 (PDT)
-X-Gm-Message-State: APjAAAWQjCkEogmbS7F72uuk9gf6P1BLLMRa82DuhREgwqfdZjxmB47d
-        as/hJcrlWEMSmkan7tzNtZ8AFkbXZ01qJPtpjA==
-X-Google-Smtp-Source: APXvYqxH6jcRbIdQqMyzEbVP8RBOqjV1tIloJha8kSXqB1poy40CPrXvcGOaIctBmE89+n7Vi2T5C7riiCYexD1eFZE=
-X-Received: by 2002:a37:9847:: with SMTP id a68mr13244112qke.223.1572210242357;
- Sun, 27 Oct 2019 14:04:02 -0700 (PDT)
+        s=default; t=1572231344;
+        bh=pb7IZTBRfkZVHAvZFuM2aHVe4OKL4bsoUZk1vFFsMic=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QeCp2KyO5HGNqs9LV5rCeAyHiDVHPizLKOXUYKZe9JMJNk5mejLTdbN1VT7KA+enL
+         nhFzRcexYUTqhoWNkmTETEes2aYa30k0oqjUzSXaNlImzHcJ79rLq8+3kmv1+p2Jsk
+         W9kfk5YiU0pAilyIEU7Qh9qOBeP9BnukZvoZ/wWg=
+Date:   Mon, 28 Oct 2019 10:55:26 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Subject: Re: [PATCH v13 10/18] ARM: dts: imx6dl-yapp4: Add reg property to
+ the lp5562 channel node
+Message-ID: <20191028025524.GF16985@dragon>
+References: <20191016155954.29044-1-dmurphy@ti.com>
+ <20191016155954.29044-11-dmurphy@ti.com>
 MIME-Version: 1.0
-References: <20191021124428.2541-1-brgl@bgdev.pl> <CAMRc=MeYS+rQMCEc_z1FudnremUhUsXnxdcB2heF6qdtOkH9uQ@mail.gmail.com>
-In-Reply-To: <CAMRc=MeYS+rQMCEc_z1FudnremUhUsXnxdcB2heF6qdtOkH9uQ@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Sun, 27 Oct 2019 16:03:51 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK+6-pz6gQyW3ZEEb6_2AOzwsM0aDZ1PwVCLy-=OeSjhw@mail.gmail.com>
-Message-ID: <CAL_JsqK+6-pz6gQyW3ZEEb6_2AOzwsM0aDZ1PwVCLy-=OeSjhw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] dt-bindings: max77650: convert the device-tree
- bindings to yaml
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linux Input <linux-input@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, Dan Murphy <dmurphy@ti.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191016155954.29044-11-dmurphy@ti.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Sat, Oct 26, 2019 at 6:54 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> pon., 21 pa=C5=BA 2019 o 14:44 Bartosz Golaszewski <brgl@bgdev.pl> napisa=
-=C5=82(a):
-> >
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > This series converts all DT binding documents for MAX77650 PMIC to YAML=
-.
-> >
-> > v1 -> v2:
-> > - use upper case for abbreviations in commit messages
-> >
-> > v2 -> v3:
-> > - pull all example fragments into the binding document for the core MFD=
- module
-> > - fix all dt_binding_check errors
-> > - add references to submodules to the main binding document
-> > - drop the type for gpio-line-names
-> > - drop the description for the interrupts property
-> > - completely delete the previous txt files
-> >
-> > v3 -> v4:
-> > - remove unnecessary parts of descriptions, added details on the chip
-> > - correct file references (.txt -> .yaml)
-> > - fix mixing scalar and array constraints
-> > - dropped type refs for globally defined properties
-> >
-> > Bartosz Golaszewski (6):
-> >   dt-bindings: input: max77650: convert the binding document to yaml
-> >   dt-bindings: regulator: max77650: convert the binding document to yam=
-l
-> >   dt-bindings: power: max77650: convert the binding document to yaml
-> >   dt-bindings: leds: max77650: convert the binding document to yaml
-> >   dt-bindings: mfd: max77650: convert the binding document to yaml
-> >   MAINTAINERS: update the list of maintained files for max77650
-> >
-> >  .../bindings/input/max77650-onkey.txt         |  26 ---
-> >  .../bindings/input/max77650-onkey.yaml        |  35 ++++
-> >  .../bindings/leds/leds-max77650.txt           |  57 -------
-> >  .../bindings/leds/leds-max77650.yaml          |  51 ++++++
-> >  .../devicetree/bindings/mfd/max77650.txt      |  46 ------
-> >  .../devicetree/bindings/mfd/max77650.yaml     | 149 ++++++++++++++++++
-> >  .../power/supply/max77650-charger.txt         |  28 ----
-> >  .../power/supply/max77650-charger.yaml        |  34 ++++
-> >  .../bindings/regulator/max77650-regulator.txt |  41 -----
-> >  .../regulator/max77650-regulator.yaml         |  31 ++++
-> >  MAINTAINERS                                   |   4 +-
-> >  11 files changed, 302 insertions(+), 200 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/input/max77650-on=
-key.txt
-> >  create mode 100644 Documentation/devicetree/bindings/input/max77650-on=
-key.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/leds/leds-max7765=
-0.txt
-> >  create mode 100644 Documentation/devicetree/bindings/leds/leds-max7765=
-0.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/max77650.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/power/supply/max7=
-7650-charger.txt
-> >  create mode 100644 Documentation/devicetree/bindings/power/supply/max7=
-7650-charger.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/regulator/max7765=
-0-regulator.txt
-> >  create mode 100644 Documentation/devicetree/bindings/regulator/max7765=
-0-regulator.yaml
-> >
-> > --
-> > 2.23.0
-> >
->
-> Hi Rob,
->
-> thanks for reviewing the series. Can you please take it through your
-> tree for v5.5? I think it'll be easier than bothering all the
-> respective maintainers and it only touches on bindings anyway.
+On Wed, Oct 16, 2019 at 10:59:46AM -0500, Dan Murphy wrote:
+> Add the reg property to each channel node.  This update is
+> to accomodate the multicolor framework.  In addition to the
+> accomodation this allows the LEDs to be placed on any channel
+> and allow designs to skip channels as opposed to requiring
+> sequential order.
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> CC: Shawn Guo <shawnguo@kernel.org>
+> CC: Sascha Hauer <s.hauer@pengutronix.de>
+> CC: Pengutronix Kernel Team <kernel@pengutronix.de>
+> CC: Fabio Estevam <festevam@gmail.com>
+> CC: NXP Linux Team <linux-imx@nxp.com>
+> ---
+>  arch/arm/boot/dts/imx6dl-yapp4-common.dtsi | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
+> index e8d800fec637..efc466ed1fea 100644
+> --- a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
+> +++ b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
+> @@ -257,29 +257,35 @@
+>  		reg = <0x30>;
+>  		clock-mode = /bits/ 8 <1>;
+>  		status = "disabled";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+>  
+> -		chan0 {
+> +		chan@0 {
 
-Okay, series applied.
+Patch #18 updates bindings example to use led as node name.  Maybe we
+should do the same here?
 
-Rob
+Shawn
+
+>  			chan-name = "R";
+>  			led-cur = /bits/ 8 <0x20>;
+>  			max-cur = /bits/ 8 <0x60>;
+> +			reg = <0>;
+>  		};
+>  
+> -		chan1 {
+> +		chan@1 {
+>  			chan-name = "G";
+>  			led-cur = /bits/ 8 <0x20>;
+>  			max-cur = /bits/ 8 <0x60>;
+> +			reg = <1>;
+>  		};
+>  
+> -		chan2 {
+> +		chan@2 {
+>  			chan-name = "B";
+>  			led-cur = /bits/ 8 <0x20>;
+>  			max-cur = /bits/ 8 <0x60>;
+> +			reg = <2>;
+>  		};
+>  
+> -		chan3 {
+> +		chan@3 {
+>  			chan-name = "W";
+>  			led-cur = /bits/ 8 <0x0>;
+>  			max-cur = /bits/ 8 <0x0>;
+> +			reg = <3>;
+>  		};
+>  	};
+>  
+> -- 
+> 2.22.0.214.g8dca754b1e
+> 
