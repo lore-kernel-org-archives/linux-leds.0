@@ -2,38 +2,43 @@ Return-Path: <SRS0=xwDw=Y4=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B56CA9ED3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FF8CA9ECF
 	for <linux-leds@archiver.kernel.org>; Mon,  4 Nov 2019 09:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31CAB2245D
-	for <linux-leds@archiver.kernel.org>; Mon,  4 Nov 2019 09:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D62672245D
+	for <linux-leds@archiver.kernel.org>; Mon,  4 Nov 2019 09:16:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbfKDJQH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 4 Nov 2019 04:16:07 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:33896 "EHLO
+        id S1728143AbfKDJQG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 4 Nov 2019 04:16:06 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:33890 "EHLO
         jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728138AbfKDJQG (ORCPT
+        with ESMTP id S1727989AbfKDJQG (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Mon, 4 Nov 2019 04:16:06 -0500
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 0400F1C06D3; Mon,  4 Nov 2019 10:09:59 +0100 (CET)
-Date:   Mon, 4 Nov 2019 10:09:58 +0100
+        id 9DB8E1C06CF; Mon,  4 Nov 2019 10:09:48 +0100 (CET)
+Date:   Mon, 4 Nov 2019 10:09:48 +0100
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Martin Schiller <ms@dev.tdt.de>
-Cc:     jacek.anaszewski@gmail.com, dmurphy@ti.com, rafal@milecki.pl,
-        linux@rasmusvillemoes.dk, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: trigger: netdev: fix handling on interface rename
-Message-ID: <20191104090958.GI12355@duo.ucw.cz>
-References: <20191025070142.23654-1-ms@dev.tdt.de>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Riku Voipio <riku.voipio@iki.fi>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Subject: Re: [PATCH 01/10] leds: pca953x: Use of_device_get_match_data()
+Message-ID: <20191104090948.GH12355@duo.ucw.cz>
+References: <20191004214334.149976-1-swboyd@chromium.org>
+ <20191004214334.149976-2-swboyd@chromium.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="yhze8HlyfmXt1APY"
+        protocol="application/pgp-signature"; boundary="tT3UgwmDxwvOMqfu"
 Content-Disposition: inline
-In-Reply-To: <20191025070142.23654-1-ms@dev.tdt.de>
+In-Reply-To: <20191004214334.149976-2-swboyd@chromium.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
@@ -41,51 +46,44 @@ List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---yhze8HlyfmXt1APY
+--tT3UgwmDxwvOMqfu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> The NETDEV_CHANGENAME code is not "unneeded" like it is stated in commit
-> 4cb6560514fa ("leds: trigger: netdev: fix refcnt leak on interface
-> rename").
->=20
-> The event was accidentally misinterpreted equivalent to
-> NETDEV_UNREGISTER, but should be equivalent to NETDEV_REGISTER.
->=20
-> This was the case in the original code from the openwrt project.
->=20
-> Otherwise, you are unable to set netdev led triggers for (non-existent)
-> netdevices, which has to be renamed. This is the case, for example, for
-> ppp interfaces in openwrt.
->=20
-> Fixes: 06f502f57d0d ("leds: trigger: Introduce a NETDEV trigger")
-> Fixes: 4cb6560514fa ("leds: trigger: netdev: fix refcnt leak on interface=
- rename")
-> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+> This driver can use the of_device_get_match_data() API to simplify the
+> code. Replace calls to of_match_device() with this newer API under the
+> assumption that where it is called will be when we know the device is
+> backed by a DT node. This nicely avoids referencing the match table when
+> it is undefined with configurations where CONFIG_OF=3Dn.
 
-Thanks, applied.
 
-I assume it does not fix _real bad_ bug to qualify for stable.
+> Please ack or pick for immediate merge so the last patch can be
+  merged.
+
+I see nothing obviously wrong, so...
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+=2E.. but it did not apply on top of leds-next tree.
 
 Best regards,
 									Pavel
-
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---yhze8HlyfmXt1APY
+--tT3UgwmDxwvOMqfu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXb/q5gAKCRAw5/Bqldv6
-8lRfAJ9218hA1HtD2txQdrnyAfZdMWB38ACgwBt2+abNumlOLi8NiQfUnIB05BI=
-=jtTa
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXb/q3AAKCRAw5/Bqldv6
+8s7OAJ9ckVxuB03nzIBp5YGyOjKGWbJUbwCbBI3dtPnhr0M5qongHi/gtWVsHX0=
+=+nqt
 -----END PGP SIGNATURE-----
 
---yhze8HlyfmXt1APY--
+--tT3UgwmDxwvOMqfu--
