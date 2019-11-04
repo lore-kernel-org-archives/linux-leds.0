@@ -6,42 +6,34 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B25CA9ED7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CCFCA9EDA
 	for <linux-leds@archiver.kernel.org>; Mon,  4 Nov 2019 09:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F1CB2245D
+	by mail.kernel.org (Postfix) with ESMTP id AFB9F22468
 	for <linux-leds@archiver.kernel.org>; Mon,  4 Nov 2019 09:16:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbfKDJQH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S1728121AbfKDJQH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Mon, 4 Nov 2019 04:16:07 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:33894 "EHLO
+Received: from jabberwock.ucw.cz ([46.255.230.98]:33902 "EHLO
         jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbfKDJQH (ORCPT
+        with ESMTP id S1728138AbfKDJQH (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Mon, 4 Nov 2019 04:16:07 -0500
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 94D8D1C06CD; Mon,  4 Nov 2019 10:09:36 +0100 (CET)
-Date:   Mon, 4 Nov 2019 10:09:36 +0100
+        id 0A5EF1C06D1; Mon,  4 Nov 2019 10:09:54 +0100 (CET)
+Date:   Mon, 4 Nov 2019 10:09:53 +0100
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Kiran Gunda <kgunda@codeaurora.org>, bjorn.andersson@linaro.org,
-        jingoohan1@gmail.com, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
-        jacek.anaszewski@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dan Murphy <dmurphy@ti.com>, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V6 2/8] backlight: qcom-wled: restructure the qcom-wled
- bindings
-Message-ID: <20191104090936.GF12355@duo.ucw.cz>
-References: <1569825553-26039-1-git-send-email-kgunda@codeaurora.org>
- <1569825553-26039-3-git-send-email-kgunda@codeaurora.org>
- <20191013121045.GN5653@amd>
- <20191014063553.GA4545@dell>
+To:     Zahari Petkov <zahari@balena.io>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: pca963x: Fix open-drain initialization
+Message-ID: <20191103170327.GA32107@duo.ucw.cz>
+References: <20191014123604.GA743117@majorz.localdomain>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="rMWmSaSbD7nr+du9"
+        protocol="application/pgp-signature"; boundary="YrQNB5Deg1WGKZi3"
 Content-Disposition: inline
-In-Reply-To: <20191014063553.GA4545@dell>
+In-Reply-To: <20191014123604.GA743117@majorz.localdomain>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
@@ -49,34 +41,64 @@ List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---rMWmSaSbD7nr+du9
+--YrQNB5Deg1WGKZi3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Mon 2019-10-14 15:36:04, Zahari Petkov wrote:
+> OUTDRV setting (bit 2) of Mode register 2 has a default value of 1.
+> During initialization when open-drain is used, instead of setting
+> OUTDRV to 0, the driver keeps it as 1. OUTDRV setting is now correctly
+> initialized to 0 when open-drain is used.
+>=20
+> Additionally the BIT macro is used for improved readibility.
 
-> If you're going to apply them, you need to send out an immutable
-> branch for me to pull from.
+You change more than you describe in the changelog.
 
-Aha, its backlight, not LED. I really should not be taking
-those. Sorry for the noise, I dropped them from my tree.
+> +++ b/drivers/leds/leds-pca963x.c
+> @@ -438,12 +438,12 @@ static int pca963x_probe(struct i2c_client *client,
+>  						    PCA963X_MODE2);
+>  		/* Configure output: open-drain or totem pole (push-pull) */
+>  		if (pdata->outdrv =3D=3D PCA963X_OPEN_DRAIN)
+> -			mode2 |=3D 0x01;
+> +			mode2 &=3D ~BIT(2);
 
-Best regards,
+| 0 -> & ~0x04;
+
+>  		else
+> -			mode2 |=3D 0x05;
+> +			mode2 |=3D BIT(2);
+
+| 5 -> | 0x04;
+
+Are you sure?
+
+Additionaly, we already have defines for bits in mode2 register:
+
+#define PCA963X_MODE2_DMBLNK    0x20    /* Enable blinking */
+
+So if you care about readability, perhaps you should add defines for
+invert/ open drain there, and then use them?
+
+Please keep using 0xab instead of BIT() for consistency with the rest
+of the driver.
+
+Thanks,
 									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---rMWmSaSbD7nr+du9
+--YrQNB5Deg1WGKZi3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXb/q0AAKCRAw5/Bqldv6
-8l1BAJ0bmVIcrnqsr2KzWzQTahM9WLj1hQCggLSSYOsNGZ9BiVClLoA4Mc1XKgU=
-=rRKG
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXb/q4QAKCRAw5/Bqldv6
+8pWYAKCNeL3o7KILasXNNJmBd0PmZDU7sQCcDF0QGo5nS/+txwnWzTJBaReK+ug=
+=6E28
 -----END PGP SIGNATURE-----
 
---rMWmSaSbD7nr+du9--
+--YrQNB5Deg1WGKZi3--
