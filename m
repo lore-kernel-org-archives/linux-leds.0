@@ -3,42 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FF8CA9ECF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0FA1CA9ED2
 	for <linux-leds@archiver.kernel.org>; Mon,  4 Nov 2019 09:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D62672245D
-	for <linux-leds@archiver.kernel.org>; Mon,  4 Nov 2019 09:16:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8218722469
+	for <linux-leds@archiver.kernel.org>; Mon,  4 Nov 2019 09:16:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbfKDJQG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 4 Nov 2019 04:16:06 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:33890 "EHLO
+        id S1728168AbfKDJQH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 4 Nov 2019 04:16:07 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:33892 "EHLO
         jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727989AbfKDJQG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 4 Nov 2019 04:16:06 -0500
+        with ESMTP id S1726100AbfKDJQH (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 4 Nov 2019 04:16:07 -0500
+X-Greylist: delayed 411 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Nov 2019 04:16:06 EST
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 9DB8E1C06CF; Mon,  4 Nov 2019 10:09:48 +0100 (CET)
-Date:   Mon, 4 Nov 2019 10:09:48 +0100
+        id A85DF1C06C5; Mon,  4 Nov 2019 10:09:14 +0100 (CET)
+Date:   Mon, 4 Nov 2019 10:09:14 +0100
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Riku Voipio <riku.voipio@iki.fi>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
-Subject: Re: [PATCH 01/10] leds: pca953x: Use of_device_get_match_data()
-Message-ID: <20191104090948.GH12355@duo.ucw.cz>
-References: <20191004214334.149976-1-swboyd@chromium.org>
- <20191004214334.149976-2-swboyd@chromium.org>
+To:     Akinobu Mita <akinobu.mita@gmail.com>
+Cc:     Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH] leds: gpio: support multi-level brightness
+Message-ID: <20191104090914.GB12355@duo.ucw.cz>
+References: <1570203299-4270-1-git-send-email-akinobu.mita@gmail.com>
+ <55a5ab0a-9a34-a7b0-cffe-9dab59f2c0ef@ti.com>
+ <CAC5umyhqL7PdHXaiD3cwvpxY=a_wCYh0xbgkbS7Nx2cra-oxVw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="tT3UgwmDxwvOMqfu"
+        protocol="application/pgp-signature"; boundary="hHWLQfXTYDoKhP50"
 Content-Disposition: inline
-In-Reply-To: <20191004214334.149976-2-swboyd@chromium.org>
+In-Reply-To: <CAC5umyhqL7PdHXaiD3cwvpxY=a_wCYh0xbgkbS7Nx2cra-oxVw@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
@@ -46,28 +46,38 @@ List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---tT3UgwmDxwvOMqfu
+--hHWLQfXTYDoKhP50
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> This driver can use the of_device_get_match_data() API to simplify the
-> code. Replace calls to of_match_device() with this newer API under the
-> assumption that where it is called will be when we know the device is
-> backed by a DT node. This nicely avoids referencing the match table when
-> it is undefined with configurations where CONFIG_OF=3Dn.
+> > On 10/4/19 10:34 AM, Akinobu Mita wrote:
+> > > Currently, GPIO LED driver allows the GPIO properties to contain one =
+GPIO
+> > > phandle.  This enables to contain more than one GPIO phandle and the
+> > > brightness of the LEDs is proportional to the number of active GPIOs.
+> >
+> > How would this work with the Multicolor framework?
+> >
+> > We have not adapted the GPIO LED driver to this yet so with this
+> > framework this patch may need to change.
+> >
+> > https://lore.kernel.org/patchwork/project/lkml/list/?series=3D412400
+>=20
+> If I understand the multi color framework correctly, I think we can add t=
+he
+> multi color framework and the multi brightness level support separately
+> into the GPIO LED driver.
 
+I'm not convinced we want to support multi-LED framework.
 
-> Please ack or pick for immediate merge so the last patch can be
-  merged.
+If 3 GPIOs control one physical LED, yes, we want to support that.
 
-I see nothing obviously wrong, so...
-
-Acked-by: Pavel Machek <pavel@ucw.cz>
-
-=2E.. but it did not apply on top of leds-next tree.
+If the goal is to create one virtual LED from 4 physical LEDs arranged
+side by side... I'd say... deal with the complexity in userland. It is
+not critical to do it in kernel.
 
 Best regards,
 									Pavel
@@ -76,14 +86,14 @@ Best regards,
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---tT3UgwmDxwvOMqfu
+--hHWLQfXTYDoKhP50
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXb/q3AAKCRAw5/Bqldv6
-8s7OAJ9ckVxuB03nzIBp5YGyOjKGWbJUbwCbBI3dtPnhr0M5qongHi/gtWVsHX0=
-=+nqt
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXb/qugAKCRAw5/Bqldv6
+8uCiAJ0c/8VKrUWpWML4kwrpQAMv7Y1oMACggxlri9K1K38fiTorbrhYaMTUDfY=
+=D1C0
 -----END PGP SIGNATURE-----
 
---tT3UgwmDxwvOMqfu--
+--hHWLQfXTYDoKhP50--
