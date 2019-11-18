@@ -2,144 +2,176 @@ Return-Path: <SRS0=oCt8=ZK=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE41C43141
-	for <linux-leds@archiver.kernel.org>; Mon, 18 Nov 2019 16:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE99C432C0
+	for <linux-leds@archiver.kernel.org>; Mon, 18 Nov 2019 16:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4103218AF
-	for <linux-leds@archiver.kernel.org>; Mon, 18 Nov 2019 16:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574094309;
-	bh=oMYkZuMf6WhUQSXdhLctDMiyyOcrJ2SLjyrX8pyDpF8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=E7yeQzJNu3wCTBo7qQA7Cn5f7Y59CoiPrSOyB4hwx+KeX3dQvtITz+4YUOcdPN4Gs
-	 q9w7ZOX2VKozyKOzekgDbUZOH2T0k5GzzTh3gRjw6U+4JUA4qPXsz72OLPXKvHguaU
-	 94TQHpt0JNluOnNlNpKRUFtHA/i1T1rGCURQn0B4=
+	by mail.kernel.org (Postfix) with ESMTP id 548D1214D9
+	for <linux-leds@archiver.kernel.org>; Mon, 18 Nov 2019 16:54:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLlAwlYD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbfKRQZG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 18 Nov 2019 11:25:06 -0500
-Received: from foss.arm.com ([217.140.110.172]:36762 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbfKRQZG (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 18 Nov 2019 11:25:06 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D16DEDA7;
-        Mon, 18 Nov 2019 08:25:04 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12FD93F703;
-        Mon, 18 Nov 2019 08:25:04 -0800 (PST)
-Date:   Mon, 18 Nov 2019 16:25:02 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1726638AbfKRQyM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 18 Nov 2019 11:54:12 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:38342 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbfKRQyL (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 18 Nov 2019 11:54:11 -0500
+Received: by mail-qv1-f68.google.com with SMTP id q19so6820385qvs.5;
+        Mon, 18 Nov 2019 08:54:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=wf3DTsSlDTcQxeXP7BWArBCMudBOYs4WioyXcAQS7sE=;
+        b=RLlAwlYDhzx/d6OKKkLRmeO3Jtlcc8B65q0/lWVHRRVoQLkQ0MXYsnTy5AsnUqQSHr
+         PZ556LVCWZGOqtEA+qH7+sy1RzdEOyC/1mpCJps44iKHY3WoyG2AcfQjvlko/xtvQsIc
+         nEJLQ2y7KmjGBurBOwtwA2mXsrwi9Swr9pGHWZvrlpK7QJzGXLzvwrVRNO9gjIWunv+o
+         Fks0BLdvUNyQw0Z0cbk6L8zml+9qywDYYICL7swzjhQ7NUy9/f0RVxrrXtlxDIIm/fBT
+         h5a3Hcn4XV4RkUOIhpgs6NSINBIQWMJLPegBWIJ3eCMovrUeZ/slOYwb0UGr7AED2ua2
+         qy1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=wf3DTsSlDTcQxeXP7BWArBCMudBOYs4WioyXcAQS7sE=;
+        b=HmK16qbCRaY0refwBFOCxzrDrqon7NEy/yjTqlnlTrsa7IMNT5KhMuxa/TQFNNRlr9
+         nTxszYY8bv1VI6uz35n5RilEceQEAWgvnY5Q21H5E05sANnVn7krj472mqOTw2JK2JIa
+         V1TWu9IpTW1BqjGx00tX7l7PnrCzKe5FmL5botSKYMx8LxQS01xVB/xfLSRi1rqrnIg7
+         gFl+D4ZqwCK2VB8zOEyj7MLs36lEEUSy1JanW4c1Xxzal5CBfmm5ee+J7Cr+KmrDTU6N
+         3EgGDX1qzCrf7CPqmFhUquclKl7K0tpmrAd1zf/3ILvKe6F5g2LsM5NUl2utgZ179t+M
+         c8Dw==
+X-Gm-Message-State: APjAAAUn87IZgpLnNuekgg//ZAcdtNciDytIDAd2ufzYGLhNNnnXaXhc
+        8Dk5aJCuueihYBtS4ykye28=
+X-Google-Smtp-Source: APXvYqyn1NSMDTjzTK87VIWey8nsvgExeWXpaBiJ8NvmMowPIq1B1v/EOeV0to4vGCpZligvcQ18qQ==
+X-Received: by 2002:a0c:ae99:: with SMTP id j25mr7213547qvd.51.1574096050661;
+        Mon, 18 Nov 2019 08:54:10 -0800 (PST)
+Received: from localhost.localdomain ([72.53.229.209])
+        by smtp.gmail.com with ESMTPSA id a3sm8634648qkf.76.2019.11.18.08.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2019 08:54:10 -0800 (PST)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
+To:     Lee Jones <lee.jones@linaro.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Nicholas Mc Guire <hofrat@osadl.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
- regulator bindings
-Message-ID: <20191118162502.GJ9761@sirena.org.uk>
-References: <cover.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
- <d29e0eb587b764f3ea77647392e45fac67bbd757.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8tZVdKiiYitVG083"
-Content-Disposition: inline
-In-Reply-To: <d29e0eb587b764f3ea77647392e45fac67bbd757.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
-X-Cookie: no maintenance:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mark Brown <broonie@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Grigoryev Denis <grigoryev@fastwel.ru>,
+        Axel Lin <axel.lin@ingics.com>, Dan Murphy <dmurphy@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: [PATCH v1 1/4] tps6105x: add optional devicetree support
+Date:   Mon, 18 Nov 2019 11:53:57 -0500
+Message-Id: <20191118165400.21985-2-TheSven73@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191118165400.21985-1-TheSven73@gmail.com>
+References: <20191118165400.21985-1-TheSven73@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+This driver currently requires platform data to specify the
+operational mode and regulator init data (in case of regulator
+mode).
 
---8tZVdKiiYitVG083
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Optionally specify the operational mode by looking at the
+'compatible' property of the devicetree child node.
 
-On Mon, Nov 18, 2019 at 08:53:57AM +0200, Matti Vaittinen wrote:
+Example: put chip in regulator mode:
 
-> +#Supported default DVS states:
-> +#buck		| run		| idle		| suspend	| lpsr
-> +#-----------------------------------------------------------------------=
------
-> +#1, 2, 6, and 7	| supported	| supported	| 	supported (*)
-> +#-----------------------------------------------------------------------=
------
-> +#3, 4, and 5	| 			supported (**)
-> +#-----------------------------------------------------------------------=
------
-> +#(*)  LPSR and SUSPEND states use same voltage but both states have own =
-enable /
-> +#     disable settings. Voltage 0 can be specified for a state to make r=
-egulator
-> +#     disabled on that state.
-> +#(**) All states use same voltage but have own enable / disable settings.
-> +#     Voltage 0 can be specified for a state to make regulator disabled =
-on that
-> +#     state.
-> +
-> +      rohm,dvs-runlvl-ctrl:
-> +        description: |
-> +          buck control is done based on run-level. Regulator is not
-> +          individually controllable. See ../mfd/rohm,bd71828-pmic.yaml f=
-or
-> +          how to specify run-level control mechanism. Only bucks 1, 2, 6
-> +          and 7 support this.
-> +        type: boolean
+i2c0 {
+	tps61052@33 {
+		compatible = "ti,tps61052";
+		reg = <0x33>;
 
-I don't think I saw this having the effect on set_voltage() that I'd
-have expected in the driver? =20
+		regulator {
+			compatible = "ti,tps6105x-regulator";
+		};
+	};
+};
 
-> +      rohm,dvs-runlevel-microvolts:
-> +        minimum: 0
-> +        maximum: 2000000
-> +        maxItems: 4
-> +        description:
-> +          Array of voltages for run-levels. First value is for run-level=
- 0,
-> +          second for run-level 1 etc. Microvolts.
+Tree: next-20191118
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+---
+ drivers/mfd/tps6105x.c | 36 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 33 insertions(+), 3 deletions(-)
 
-What's the mapping from array indexes to the names used elsewhere to
-support runlevels?
+diff --git a/drivers/mfd/tps6105x.c b/drivers/mfd/tps6105x.c
+index 6ac3607a79c2..401bd093b4ea 100644
+--- a/drivers/mfd/tps6105x.c
++++ b/drivers/mfd/tps6105x.c
+@@ -71,6 +71,7 @@ static struct mfd_cell tps6105x_gpio_cell = {
+ 
+ static struct mfd_cell tps6105x_leds_cell = {
+ 	.name = "tps6105x-leds",
++	.of_compatible = "ti,tps6105x-leds",
+ };
+ 
+ static struct mfd_cell tps6105x_flash_cell = {
+@@ -79,6 +80,7 @@ static struct mfd_cell tps6105x_flash_cell = {
+ 
+ static struct mfd_cell tps6105x_regulator_cell = {
+ 	.name = "tps6105x-regulator",
++	.of_compatible = "ti,tps6105x-regulator",
+ };
+ 
+ static int tps6105x_add_device(struct tps6105x *tps6105x,
+@@ -91,6 +93,32 @@ static int tps6105x_add_device(struct tps6105x *tps6105x,
+ 			       PLATFORM_DEVID_AUTO, cell, 1, NULL, 0, NULL);
+ }
+ 
++static struct tps6105x_platform_data *tps6105x_parse_dt(struct device *dev)
++{
++	struct device_node *np = dev->of_node;
++	struct tps6105x_platform_data *pdata;
++	struct device_node *child;
++
++	if (!np)
++		return ERR_PTR(-EINVAL);
++	if (of_get_available_child_count(np) > 1) {
++		dev_err(dev, "cannot support multiple operational modes");
++		return ERR_PTR(-EINVAL);
++	}
++	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return ERR_PTR(-ENOMEM);
++	pdata->mode = TPS6105X_MODE_SHUTDOWN;
++	for_each_available_child_of_node(np, child) {
++		if (of_device_is_compatible(child, "ti,tps6105x-regulator"))
++			pdata->mode = TPS6105X_MODE_VOLTAGE;
++		else if (of_device_is_compatible(child, "ti,tps6105x-leds"))
++			pdata->mode = TPS6105X_MODE_TORCH;
++	}
++
++	return pdata;
++}
++
+ static int tps6105x_probe(struct i2c_client *client,
+ 			const struct i2c_device_id *id)
+ {
+@@ -99,9 +127,11 @@ static int tps6105x_probe(struct i2c_client *client,
+ 	int ret;
+ 
+ 	pdata = dev_get_platdata(&client->dev);
+-	if (!pdata) {
+-		dev_err(&client->dev, "missing platform data\n");
+-		return -ENODEV;
++	if (!pdata)
++		pdata = tps6105x_parse_dt(&client->dev);
++	if (IS_ERR(pdata)) {
++		dev_err(&client->dev, "No platform data or DT found");
++		return PTR_ERR(pdata);
+ 	}
+ 
+ 	tps6105x = devm_kmalloc(&client->dev, sizeof(*tps6105x), GFP_KERNEL);
+-- 
+2.17.1
 
---8tZVdKiiYitVG083
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3Sxd0ACgkQJNaLcl1U
-h9CCTwf/XyyhpE5QABB0yoyT4n2JEfyYggDTfnGhWaILUDJBNnJ7inK77EpoLaGL
-ybxABHwiIONAnVzWxn+N2THjqO+fbukf7LO6DvYe8FCfoaIz8A6qgGm+P9IC1CWw
-xeWdZwGwWh63iRZ+fR422SlmmNtykgb4QHUdvwEZ9fqMhqPgRGP6YWl5RSuCnC8R
-oE9SPG2GlA/I4kadkV6O503q496yvB6hLiOgXWZ3yWJY2uYNYJvn0sNpd+k0iZK4
-H4iyzLTOIUiD3RpLgNTPrmYXn1D/wClO+l2FqRjpzgq7tDO4xVyEOY8bTH9MrFoD
-36C7jhTJbW2tecxGFK5eemuG+i4Vxg==
-=mxuN
------END PGP SIGNATURE-----
-
---8tZVdKiiYitVG083--
