@@ -2,56 +2,58 @@ Return-Path: <SRS0=FWjm=ZL=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2389C432C0
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Nov 2019 15:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9C0C43215
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Nov 2019 15:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4A5F222A2
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Nov 2019 15:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11323222AB
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Nov 2019 15:47:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KF2yFhky"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyzAEu/6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbfKSPqT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Nov 2019 10:46:19 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:40311 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727873AbfKSPqT (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Nov 2019 10:46:19 -0500
-Received: by mail-qk1-f194.google.com with SMTP id z16so18206079qkg.7;
-        Tue, 19 Nov 2019 07:46:18 -0800 (PST)
+        id S1728435AbfKSPqZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Nov 2019 10:46:25 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38104 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728420AbfKSPqY (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Nov 2019 10:46:24 -0500
+Received: by mail-qt1-f196.google.com with SMTP id p20so25106188qtq.5;
+        Tue, 19 Nov 2019 07:46:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=zs0qtVqeQ3xQBYktSESGlP6UO3aKjJ10cQ/av650v4s=;
-        b=KF2yFhky8rbMOiX6sRjOdSvysjr6FPV/LibdqcdGEq+utA4XFoeXwl2RD2JlaxHO0G
-         ZBnOl7dNjKCFcFhrFDiGhHBDAWQ6x+XWEFwoPfjhfLHdOADHYf92lNiTGOkDUCPROs3S
-         Pa8K/6I/tiapKhxcMN2XSJEVze5nkGQNgv8mECTPzFgGogiIQgvCwfC2C+N1hLlEDlPh
-         0jMJkxmsAcMyRuc4TGInXm/Z8jMqhz7xjS0l/Yki3OUJepConoYwo/rogTijnB1xuJWm
-         WXTQ64uvTzzUixxctUz9lVqf7aNGZj+IFqiBy85/AHPceMfbBMpgx0zl4Jr1MckyIviP
-         vgyg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=M8plwUGqzRu7vrgV7/AsiHy4S0SxA51BEoVHYwcW5lA=;
+        b=JyzAEu/6ws9pxBMKgWcKSYsKAY6v1iDQlhimW0fo3mVWXhlxvJxvDXQo0xctEUWGSE
+         Pt8VVy5rEJGIoAxhEfUPch66BMCN211Z8O6rUnIxw0Ru61N+MLcxuHR20pATQexpV5tB
+         ThZmMlEXQa5whche9/AeeFgvZx8/KQ41RRQV8hkgr6yluEr6jQI+8sNNuO3ZlhONLq/8
+         8C0wh/aiatk86HowX7vOXUxLffdZz5ExA9uPJmCroJnD7UypLzsVDyA0m8JtCx8d1lD8
+         zB73fwsvVtItCnQt4qzBwXO/liKX/Ixq4Vz0ILVKY+14uoEk95UN2b1K6fafL3xmpui2
+         3nTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=zs0qtVqeQ3xQBYktSESGlP6UO3aKjJ10cQ/av650v4s=;
-        b=Mf2syorBUQ9vuWu+hCeRrL9l5vVRh05G3aXRogeMMLA0bBXjcwUVBoAP6SQ5rI4wmT
-         bpO8aNgZTTGMdejNgQ0sx1hISFmVDrIGB78rFULdqkkqEkYnMuiUZgGnihERI3JG2ZfL
-         CnXpDcEsnXzLjctCwpU2lZNgfZTg+RIqz9HxZRBkZJtG0zcRehEsaLmI/woIvMfxTCur
-         bWrLBUEBQD9cuuz0DIS19FkjMhPMSi7B14KWTLSzpgXD8m/+XRrfLDAT/foY8nQm4O7k
-         o6j4z+v37I56TyLQQgH0Nlevp9ii7W8kON9fm4S3EW0+CAbfJNd8dz8Ta7YWLnVrPJ8t
-         gsVw==
-X-Gm-Message-State: APjAAAWJP0tOgadgJNdyoxRgW6Ky40KGOgjCGsOBGzNIu3IMyeAvbD+A
-        aNxH/fLwdwjDjEIOu78fT32CYOxQ
-X-Google-Smtp-Source: APXvYqwxJYMr9GDkoPi2ya3w2VSEr3Ardp8OON6AY639MSi6FIuRX4W5X1m5nBSS+cZqiE01lOiA8Q==
-X-Received: by 2002:ae9:e201:: with SMTP id c1mr29824966qkc.416.1574178377910;
-        Tue, 19 Nov 2019 07:46:17 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=M8plwUGqzRu7vrgV7/AsiHy4S0SxA51BEoVHYwcW5lA=;
+        b=tl+KwG+hSGKCdVpoiiOU2oglD0dYzyy2cIlLpYWxi1mHeRmeahsiORMaLsTG8XooTE
+         wBqDkkb7e/3dX25LHtW30WZW1tS/Ts02bzv2DnQCYfX0wkTK/VVBNPhVlsBwoQmtflOg
+         jWKW9JvaL2vWtcr4bd016x13q8cuXdy16NjNxC6/SrBeIHuM4NcOqLjwkY+yZUiOYEtm
+         JmHxNCLzmgWmaYC2/+vEGenz0/NBfHSJ5tV3tpd4/Qjx8aRkvAfYtje1xcSphTLoDY6e
+         U12OtcdSKEwPRiwGc4LUmHDlW/ShyOhddjFOMB5BcaxtQKWHGuVRSkFML0MypDi2IHaO
+         Bu7g==
+X-Gm-Message-State: APjAAAXc3DII/2JKDtQcf1jNM+U3I8yiWgBSrn0p9c/uGDkQwKx8wglh
+        sbdz2/24TzbezDBKcNNixMM=
+X-Google-Smtp-Source: APXvYqzTwS2JcKYsV+NK7gaJatS2f0ktlgeaG5oXB4W8nNqlmdDNWDRG8T4z6FvpvCEDV5SZJQDQBQ==
+X-Received: by 2002:ac8:44c3:: with SMTP id b3mr32324566qto.313.1574178383029;
+        Tue, 19 Nov 2019 07:46:23 -0800 (PST)
 Received: from localhost.localdomain ([72.53.229.209])
-        by smtp.gmail.com with ESMTPSA id 50sm12949919qtv.88.2019.11.19.07.46.16
+        by smtp.gmail.com with ESMTPSA id 50sm12949919qtv.88.2019.11.19.07.46.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2019 07:46:17 -0800 (PST)
+        Tue, 19 Nov 2019 07:46:22 -0800 (PST)
 From:   Sven Van Asbroeck <thesven73@gmail.com>
 X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
 To:     Lee Jones <lee.jones@linaro.org>,
@@ -65,44 +67,83 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-leds@vger.kernel.org
-Subject: [PATCH v2 0/4] tps6105x add devicetree and leds support
-Date:   Tue, 19 Nov 2019 10:46:07 -0500
-Message-Id: <20191119154611.29625-1-TheSven73@gmail.com>
+Subject: [PATCH v2 4/4] dt-bindings: mfd: update TI tps6105x chip bindings
+Date:   Tue, 19 Nov 2019 10:46:11 -0500
+Message-Id: <20191119154611.29625-5-TheSven73@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191119154611.29625-1-TheSven73@gmail.com>
+References: <20191119154611.29625-1-TheSven73@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-v1 -> v2:
-	Select chip operational mode by looking at subnode name, _not_ its
-	compatible property. Suggested by Mark Brown.
+The driver has been extended to optionally get its operational
+mode, regulator init data and led label from the devicetree.
 
-I needed led operation for this mfd chip, so I added a very simple
-driver for this.
+Tree: next-20191118
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+---
+ .../devicetree/bindings/mfd/tps6105x.txt      | 42 ++++++++++++++++++-
+ 1 file changed, 41 insertions(+), 1 deletion(-)
 
-My platform (arm imx6q) is devicetree-based, so I added optional
-devicetree support for this chip and its sub-drivers.
-
-Interestingly, the main mfd driver had a dt 'compatible' binding, but
-could not operate without platform data?
-
-Sven Van Asbroeck (4):
-  tps6105x: add optional devicetree support
-  regulator: tps6105x: add optional devicetree support
-  leds: tps6105x: add driver for mfd chip led mode
-  dt-bindings: mfd: update TI tps6105x chip bindings
-
- .../devicetree/bindings/mfd/tps6105x.txt      | 42 ++++++++-
- drivers/leds/Kconfig                          | 10 +++
- drivers/leds/Makefile                         |  1 +
- drivers/leds/leds-tps6105x.c                  | 87 +++++++++++++++++++
- drivers/mfd/tps6105x.c                        | 34 +++++++-
- drivers/regulator/tps6105x-regulator.c        |  2 +
- include/linux/mfd/tps6105x.h                  |  1 +
- 7 files changed, 173 insertions(+), 4 deletions(-)
- create mode 100644 drivers/leds/leds-tps6105x.c
-
+diff --git a/Documentation/devicetree/bindings/mfd/tps6105x.txt b/Documentation/devicetree/bindings/mfd/tps6105x.txt
+index 93602c7a19c8..ab5d4c52074f 100644
+--- a/Documentation/devicetree/bindings/mfd/tps6105x.txt
++++ b/Documentation/devicetree/bindings/mfd/tps6105x.txt
+@@ -7,11 +7,51 @@ Required properties:
+ - compatible:		"ti,tps61050" or "ti,tps61052"
+ - reg:			Specifies the I2C slave address
+ 
+-Example:
++Optional sub-node:
++
++This subnode selects the chip's operational mode.
++There can be at most one single available subnode.
++
++- regulator: presence of this sub-node puts the chip in regulator mode.
++	see Documentation/devicetree/bindings/regulator/regulator.txt
++
++- led: presence of this sub-node puts the chip in led mode.
++	Optional properties:
++		- label: see Documentation/devicetree/bindings/leds/common.txt
++
++Example (GPIO operation only):
++
++i2c0 {
++	tps61052@33 {
++		compatible = "ti,tps61052";
++		reg = <0x33>;
++	};
++};
++
++Example (GPIO + regulator operation):
+ 
+ i2c0 {
+ 	tps61052@33 {
+ 		compatible = "ti,tps61052";
+ 		reg = <0x33>;
++
++		regulator {
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-always-on;
++		};
++	};
++};
++
++Example (GPIO + led operation):
++
++i2c0 {
++	tps61052@33 {
++		compatible = "ti,tps61052";
++		reg = <0x33>;
++
++		led {
++			label = "tps-torch";
++		};
+ 	};
+ };
 -- 
 2.17.1
 
