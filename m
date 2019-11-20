@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BC5C432C0
-	for <linux-leds@archiver.kernel.org>; Wed, 20 Nov 2019 17:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496CAC33C9A
+	for <linux-leds@archiver.kernel.org>; Wed, 20 Nov 2019 17:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28060208C0
-	for <linux-leds@archiver.kernel.org>; Wed, 20 Nov 2019 17:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2137E2088F
+	for <linux-leds@archiver.kernel.org>; Wed, 20 Nov 2019 17:18:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574270326;
-	bh=/nvPoqr+O1UnrNlj1DYNJdSS66/1+AD18HCpXW54ozo=;
+	s=default; t=1574270327;
+	bh=6UL3mOuqbQF3XNitOSIaFv1K9JANTNBjW6Vpu6dHVCk=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=lMT6CzO1u78WlnS9FalkKPcNajwOyfxr7PAPIu8nwN8HP/G6311dInCkRSvIgolQY
-	 aFokK50QxpiBUzHjcr+2vVJl4wJ0nUxCKbSZc8317CalDcaaqNveghyMwJ69DjIJxf
-	 rbQpcdVUcfHiw0BB+rwWM/7SD9DHwzxOGh1pq3oA=
+	b=kLw/uRtKxSq2TfwE6NSX9dnIZsuYNQSzJHgqJD7aKJB5HFSxnePGlsD0Qyx4c1/7u
+	 bE35fpveDfznssfkkx465GrPr4j/BLT5jO3Ag61IMWGu9rSAtjouD49/Gg52IS9FHf
+	 Y07px7C3+jxGCwjJKPgHCC5ZmCco14rVQcZwdAgg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbfKTRSf (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 20 Nov 2019 12:18:35 -0500
-Received: from foss.arm.com ([217.140.110.172]:43416 "EHLO foss.arm.com"
+        id S1730625AbfKTRSd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 20 Nov 2019 12:18:33 -0500
+Received: from foss.arm.com ([217.140.110.172]:43398 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730674AbfKTRSf (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 20 Nov 2019 12:18:35 -0500
+        id S1728030AbfKTRSc (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 20 Nov 2019 12:18:32 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D969B12FC;
-        Wed, 20 Nov 2019 09:18:34 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59E851045;
+        Wed, 20 Nov 2019 09:18:32 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53F503F703;
-        Wed, 20 Nov 2019 09:18:34 -0800 (PST)
-Date:   Wed, 20 Nov 2019 17:18:32 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA63A3F703;
+        Wed, 20 Nov 2019 09:18:31 -0800 (PST)
+Date:   Wed, 20 Nov 2019 17:18:30 +0000
 From:   Mark Brown <broonie@kernel.org>
 To:     Sven Van Asbroeck <thesven73@gmail.com>
 Cc:     Axel Lin <axel.lin@ingics.com>, Dan Murphy <dmurphy@ti.com>,
@@ -46,9 +46,9 @@ Cc:     Axel Lin <axel.lin@ingics.com>, Dan Murphy <dmurphy@ti.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Sven Van Asbroeck <TheSven73@gmail.com>
-Subject: Applied "tps6105x: add optional devicetree support" to the regulator tree
-In-Reply-To: <20191119154611.29625-2-TheSven73@gmail.com>
-Message-Id: <applied-20191119154611.29625-2-TheSven73@gmail.com>
+Subject: Applied "regulator: tps6105x: add optional devicetree support" to the regulator tree
+In-Reply-To: <20191119154611.29625-3-TheSven73@gmail.com>
+Message-Id: <applied-20191119154611.29625-3-TheSven73@gmail.com>
 X-Patchwork-Hint: ignore
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
@@ -57,7 +57,7 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 The patch
 
-   tps6105x: add optional devicetree support
+   regulator: tps6105x: add optional devicetree support
 
 has been applied to the regulator tree at
 
@@ -82,19 +82,16 @@ to this mail.
 Thanks,
 Mark
 
-From 62f7f3eca4c30064ab37b42d97cef4292d75fdd0 Mon Sep 17 00:00:00 2001
+From f0a19fa823fb7b1f98d54b22a3ae0e5de88a1e50 Mon Sep 17 00:00:00 2001
 From: Sven Van Asbroeck <thesven73@gmail.com>
-Date: Tue, 19 Nov 2019 10:46:08 -0500
-Subject: [PATCH] tps6105x: add optional devicetree support
+Date: Tue, 19 Nov 2019 10:46:09 -0500
+Subject: [PATCH] regulator: tps6105x: add optional devicetree support
 
-This driver currently requires platform data to specify the
-operational mode and regulator init data (in case of regulator
-mode).
+Tell the regulator framework to retrieve regulator init
+data from the 'regulator' subnode, or from the parent mfd
+device's platform data.
 
-Optionally specify the operational mode by looking at the name
-of the devicetree child node.
-
-Example: put chip in regulator mode:
+Example:
 
 i2c0 {
 	tps61052@33 {
@@ -102,73 +99,41 @@ i2c0 {
 		reg = <0x33>;
 
 		regulator {
-                            regulator-min-microvolt = <5000000>;
-                            regulator-max-microvolt = <5000000>;
-                            regulator-always-on;
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			regulator-always-on;
 		};
 	};
 };
 
-Tree: linux-next
+Tree: next-20191118
 Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Link: https://lore.kernel.org/r/20191119154611.29625-2-TheSven73@gmail.com
+Link: https://lore.kernel.org/r/20191119154611.29625-3-TheSven73@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/mfd/tps6105x.c | 34 +++++++++++++++++++++++++++++++---
- 1 file changed, 31 insertions(+), 3 deletions(-)
+ drivers/regulator/tps6105x-regulator.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mfd/tps6105x.c b/drivers/mfd/tps6105x.c
-index 6ac3607a79c2..c906324d293e 100644
---- a/drivers/mfd/tps6105x.c
-+++ b/drivers/mfd/tps6105x.c
-@@ -91,6 +91,32 @@ static int tps6105x_add_device(struct tps6105x *tps6105x,
- 			       PLATFORM_DEVID_AUTO, cell, 1, NULL, 0, NULL);
- }
+diff --git a/drivers/regulator/tps6105x-regulator.c b/drivers/regulator/tps6105x-regulator.c
+index 06059a94f7c6..f8939af0bd2c 100644
+--- a/drivers/regulator/tps6105x-regulator.c
++++ b/drivers/regulator/tps6105x-regulator.c
+@@ -37,6 +37,7 @@ static struct regulator_ops tps6105x_regulator_ops = {
  
-+static struct tps6105x_platform_data *tps6105x_parse_dt(struct device *dev)
-+{
-+	struct device_node *np = dev->of_node;
-+	struct tps6105x_platform_data *pdata;
-+	struct device_node *child;
-+
-+	if (!np)
-+		return ERR_PTR(-EINVAL);
-+	if (of_get_available_child_count(np) > 1) {
-+		dev_err(dev, "cannot support multiple operational modes");
-+		return ERR_PTR(-EINVAL);
-+	}
-+	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata)
-+		return ERR_PTR(-ENOMEM);
-+	pdata->mode = TPS6105X_MODE_SHUTDOWN;
-+	for_each_available_child_of_node(np, child) {
-+		if (child->name && !of_node_cmp(child->name, "regulator"))
-+			pdata->mode = TPS6105X_MODE_VOLTAGE;
-+		else if (child->name && !of_node_cmp(child->name, "led"))
-+			pdata->mode = TPS6105X_MODE_TORCH;
-+	}
-+
-+	return pdata;
-+}
-+
- static int tps6105x_probe(struct i2c_client *client,
- 			const struct i2c_device_id *id)
- {
-@@ -99,9 +125,11 @@ static int tps6105x_probe(struct i2c_client *client,
- 	int ret;
+ static const struct regulator_desc tps6105x_regulator_desc = {
+ 	.name		= "tps6105x-boost",
++	.of_match	= of_match_ptr("regulator"),
+ 	.ops		= &tps6105x_regulator_ops,
+ 	.type		= REGULATOR_VOLTAGE,
+ 	.id		= 0,
+@@ -71,6 +72,7 @@ static int tps6105x_regulator_probe(struct platform_device *pdev)
+ 	config.dev = &tps6105x->client->dev;
+ 	config.init_data = pdata->regulator_data;
+ 	config.driver_data = tps6105x;
++	config.of_node = pdev->dev.parent->of_node;
+ 	config.regmap = tps6105x->regmap;
  
- 	pdata = dev_get_platdata(&client->dev);
--	if (!pdata) {
--		dev_err(&client->dev, "missing platform data\n");
--		return -ENODEV;
-+	if (!pdata)
-+		pdata = tps6105x_parse_dt(&client->dev);
-+	if (IS_ERR(pdata)) {
-+		dev_err(&client->dev, "No platform data or DT found");
-+		return PTR_ERR(pdata);
- 	}
- 
- 	tps6105x = devm_kmalloc(&client->dev, sizeof(*tps6105x), GFP_KERNEL);
+ 	/* Register regulator with framework */
 -- 
 2.20.1
 
