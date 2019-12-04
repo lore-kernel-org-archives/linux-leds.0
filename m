@@ -2,88 +2,94 @@ Return-Path: <SRS0=fIZg=Z2=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35007C43603
-	for <linux-leds@archiver.kernel.org>; Wed,  4 Dec 2019 12:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8CFC43603
+	for <linux-leds@archiver.kernel.org>; Wed,  4 Dec 2019 12:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 108C020803
-	for <linux-leds@archiver.kernel.org>; Wed,  4 Dec 2019 12:38:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29F3D2081B
+	for <linux-leds@archiver.kernel.org>; Wed,  4 Dec 2019 12:46:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f6PpFrzs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbfLDMiI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 4 Dec 2019 07:38:08 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:54902 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbfLDMiI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 4 Dec 2019 07:38:08 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id D52311C25E0; Wed,  4 Dec 2019 13:38:06 +0100 (CET)
-Date:   Wed, 4 Dec 2019 13:38:06 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Bjorn Andersson <bjorn@kryo.se>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 2/2] leds: meter: add leds-meter binding
-Message-ID: <20191204123806.GB29179@duo.ucw.cz>
-References: <1571756812-19005-1-git-send-email-akinobu.mita@gmail.com>
- <1571756812-19005-3-git-send-email-akinobu.mita@gmail.com>
- <CAL_JsqJ3+Ys5_JD0qnf7acS5wXUpAyU=Wdbfigud4p6fT1f9eg@mail.gmail.com>
+        id S1727906AbfLDMq7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 4 Dec 2019 07:46:59 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:46638 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727781AbfLDMq6 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 4 Dec 2019 07:46:58 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB4CkkgD061262;
+        Wed, 4 Dec 2019 06:46:46 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1575463606;
+        bh=7qbekqxk5cyz305GNEwUDyut5GgLfq4GzPplRlk6THw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=f6PpFrzsuN9/5muENmAeFIPnOxWw0GvGFDJ6h/ZNf8dhKOl4oD/UtuABqnZ2zCz7J
+         qKn8X7tJ12O1rfx83fi9hsldZHRD8f2dSNHgMOFTRnqdlAr8CAAjDEhK5F++UQdePn
+         0SPQ1d+c9CnXOMrpm154+XUy0KpgxCJMQMgayr3I=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB4Ckklx103420
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 4 Dec 2019 06:46:46 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Dec
+ 2019 06:46:45 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 4 Dec 2019 06:46:45 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB4CkjDu113804;
+        Wed, 4 Dec 2019 06:46:45 -0600
+Subject: Re: [PATCH v15 06/19] leds: lp50xx: Add the LP50XX family of the RGB
+ LED driver
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     kbuild test robot <lkp@intel.com>, <kbuild-all@lists.01.org>,
+        <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20191028183629.11779-7-dmurphy@ti.com>
+ <201910302027.2hNdR993%lkp@intel.com>
+ <29321f74-8200-90cd-40f9-8f5bdb86e34e@ti.com> <20191125150730.GA3816@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <e05148a1-2588-0b08-2bcf-1ef819c33683@ti.com>
+Date:   Wed, 4 Dec 2019 06:44:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="adJ1OR3c6QgCpb/j"
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqJ3+Ys5_JD0qnf7acS5wXUpAyU=Wdbfigud4p6fT1f9eg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191125150730.GA3816@amd>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Pavel
 
---adJ1OR3c6QgCpb/j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/25/19 9:07 AM, Pavel Machek wrote:
+> On Wed 2019-10-30 11:43:10, Dan Murphy wrote:
+>> Pavel
+>>
+>> On 10/30/19 7:07 AM, kbuild test robot wrote:
+>>> Hi Dan,
+>>>
+>>> I love your patch! Yet something to improve:
+>>>
+>>> [auto build test ERROR on j.anaszewski-leds/for-next]
+>> You might want to get your tree to be the base now.
+> Do you have an idea who I need to contact?
 
-On Wed 2019-10-23 09:56:03, Rob Herring wrote:
-> On Tue, Oct 22, 2019 at 10:07 AM Akinobu Mita <akinobu.mita@gmail.com> wr=
-ote:
-> >
-> > Add DT binding for leds-meter.
->=20
-> What's an leds meter? Need a better explanation to understand if this
-> makes sense at all, but some comments on the schema below.
+Not sure maybe the mail list for the kbuild lkp@intel.com?
 
-It groups several LEDs into one "virtual" LED.
 
-I'm not sure I like it. What is it good for?
 
-We do not have many triggers that dim the LEDs, and if it is only used
-=66rom userspace, it can stay in userspace...?
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---adJ1OR3c6QgCpb/j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXeeorgAKCRAw5/Bqldv6
-8rX7AKCfFNZstUnytqFhPWiVHS5USwHH5gCguiizcO24mmi2COmPy7igzck4b+o=
-=8pXm
------END PGP SIGNATURE-----
-
---adJ1OR3c6QgCpb/j--
+>
+> Best regards,
+> 									Pavel
