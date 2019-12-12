@@ -6,33 +6,32 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2BFC2D0C9
-	for <linux-leds@archiver.kernel.org>; Thu, 12 Dec 2019 03:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E63C2D0C7
+	for <linux-leds@archiver.kernel.org>; Thu, 12 Dec 2019 03:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 361EF22B48
-	for <linux-leds@archiver.kernel.org>; Thu, 12 Dec 2019 03:41:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCBEC22B48
+	for <linux-leds@archiver.kernel.org>; Thu, 12 Dec 2019 03:41:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbfLLDkC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 11 Dec 2019 22:40:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58596 "EHLO mx1.suse.de"
+        id S1726860AbfLLDlf (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 11 Dec 2019 22:41:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58520 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726759AbfLLDkB (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 11 Dec 2019 22:40:01 -0500
+        id S1727377AbfLLDkA (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 11 Dec 2019 22:40:00 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0861BAE57;
-        Thu, 12 Dec 2019 03:39:59 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id ECAB9AE40;
+        Thu, 12 Dec 2019 03:39:57 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org, linux-leds@vger.kernel.org
 Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        zypeng@titanmec.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [RFC 06/25] dt-bindings: leds: Add Titan Micro Electronics TM1628
-Date:   Thu, 12 Dec 2019 04:39:33 +0100
-Message-Id: <20191212033952.5967-7-afaerber@suse.de>
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Subject: [RFC 04/25] spi: gpio: Implement LSB First bitbang support
+Date:   Thu, 12 Dec 2019 04:39:31 +0100
+Message-Id: <20191212033952.5967-5-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191212033952.5967-1-afaerber@suse.de>
 References: <20191212033952.5967-1-afaerber@suse.de>
@@ -44,104 +43,209 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add a YAML schema binding for TM1628 LED controller.
+Add support for slave DT property spi-lsb-first, i.e., SPI_LSB_FIRST mode.
 
-Cc: zypeng@titanmec.com
+Duplicate the inline helpers bitbang_txrx_be_cpha{0,1} as LE versions.
+Make checkpatch.pl happy by changing "unsigned" to "unsigned int".
+
+Conditionally call them from all the spi-gpio txrx_word callbacks.
+
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- @Rob: How could we express constraints on two-cell reg value ranges here?
-       Should we also model constraints on reg range by #grids property?
- 
- .../devicetree/bindings/leds/titanmec,tm1628.yaml  | 80 ++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/titanmec,tm1628.yaml
+ drivers/spi/spi-bitbang-txrx.h | 68 ++++++++++++++++++++++++++++++++++++++++--
+ drivers/spi/spi-gpio.c         | 42 ++++++++++++++++++++------
+ 2 files changed, 99 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/titanmec,tm1628.yaml b/Documentation/devicetree/bindings/leds/titanmec,tm1628.yaml
-new file mode 100644
-index 000000000000..024875656e79
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/titanmec,tm1628.yaml
-@@ -0,0 +1,80 @@
-+# SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/titanmec,tm1628.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/spi/spi-bitbang-txrx.h b/drivers/spi/spi-bitbang-txrx.h
+index ae61d72c7d28..999a89325325 100644
+--- a/drivers/spi/spi-bitbang-txrx.h
++++ b/drivers/spi/spi-bitbang-txrx.h
+@@ -45,7 +45,7 @@
+ 
+ static inline u32
+ bitbang_txrx_be_cpha0(struct spi_device *spi,
+-		unsigned nsecs, unsigned cpol, unsigned flags,
++		unsigned int nsecs, unsigned int cpol, unsigned int flags,
+ 		u32 word, u8 bits)
+ {
+ 	/* if (cpol == 0) this is SPI_MODE_0; else this is SPI_MODE_2 */
+@@ -77,7 +77,7 @@ bitbang_txrx_be_cpha0(struct spi_device *spi,
+ 
+ static inline u32
+ bitbang_txrx_be_cpha1(struct spi_device *spi,
+-		unsigned nsecs, unsigned cpol, unsigned flags,
++		unsigned int nsecs, unsigned int cpol, unsigned int flags,
+ 		u32 word, u8 bits)
+ {
+ 	/* if (cpol == 0) this is SPI_MODE_1; else this is SPI_MODE_3 */
+@@ -106,3 +106,67 @@ bitbang_txrx_be_cpha1(struct spi_device *spi,
+ 	}
+ 	return word;
+ }
 +
-+title: Titan Micro Electronics TM1628 LED controller
++static inline u32
++bitbang_txrx_le_cpha0(struct spi_device *spi,
++		unsigned int nsecs, unsigned int cpol, unsigned int flags,
++		u32 word, u8 bits)
++{
++	/* if (cpol == 0) this is SPI_MODE_0; else this is SPI_MODE_2 */
 +
-+maintainers:
-+  - Andreas Färber <afaerber@suse.de>
++	u32 oldbit = !(word & 1);
++	/* clock starts at inactive polarity */
++	for (; likely(bits); bits--) {
 +
-+properties:
-+  compatible:
-+    enum:
-+    - titanmec,tm1628
++		/* setup LSB (to slave) on trailing edge */
++		if ((flags & SPI_MASTER_NO_TX) == 0) {
++			if ((word & 1) != oldbit) {
++				setmosi(spi, word & 1);
++				oldbit = word & 1;
++			}
++		}
++		spidelay(nsecs);	/* T(setup) */
 +
-+  reg:
-+    maxItems: 1
++		setsck(spi, !cpol);
++		spidelay(nsecs);
 +
-+  "#grids":
-+    description: |
-+      Number of GRID output lines to use.
-+      This limits the number of available SEG output lines.
-+    minimum: 4
-+    maximum: 7
++		/* sample LSB (from slave) on leading edge */
++		word >>= 1;
++		if ((flags & SPI_MASTER_NO_RX) == 0)
++			word |= getmiso(spi) << (bits - 1);
++		setsck(spi, cpol);
++	}
++	return word;
++}
 +
-+  "#address-cells":
-+    const: 2
++static inline u32
++bitbang_txrx_le_cpha1(struct spi_device *spi,
++		unsigned int nsecs, unsigned int cpol, unsigned int flags,
++		u32 word, u8 bits)
++{
++	/* if (cpol == 0) this is SPI_MODE_1; else this is SPI_MODE_3 */
 +
-+  "#size-cells":
-+    const: 0
++	u32 oldbit = !(word & 1);
++	/* clock starts at inactive polarity */
++	for (; likely(bits); bits--) {
 +
-+required:
-+  - compatible
-+  - reg
++		/* setup LSB (to slave) on leading edge */
++		setsck(spi, !cpol);
++		if ((flags & SPI_MASTER_NO_TX) == 0) {
++			if ((word & 1) != oldbit) {
++				setmosi(spi, word & 1);
++				oldbit = word & 1;
++			}
++		}
++		spidelay(nsecs); /* T(setup) */
 +
-+patternProperties:
-+  "^.*@[1-7],([1-9]|1[02-4])$":
-+    type: object
-+    description: |
-+      Properties for a single LED.
++		setsck(spi, cpol);
++		spidelay(nsecs);
 +
-+    properties:
-+      reg:
-+        description: |
-+          1-based grid number, followed by 1-based segment number.
-+        maxItems: 1
-+
-+      linux,default-trigger: true
-+
-+    required:
-+      - reg
-+
-+examples:
-+  - |
-+    #include <dt-bindings/leds/common.h>
-+
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        led-controller@0 {
-+            compatible = "titanmec,tm1628";
-+            reg = <0>;
-+            spi-3-wire;
-+            spi-lsb-first;
-+            spi-max-frequency = <500000>;
-+            #grids = <7>;
-+            #address-cells = <2>;
-+            #size-cells = <0>;
-+
-+            colon@5,4 {
-+                reg = <5 4>;
-+                color = <LED_COLOR_ID_WHITE>;
-+                function = LED_FUNCTION_INDICATOR;
-+                linux,default-trigger = "heartbeat";
-+            };
-+        };
-+    };
-+...
++		/* sample LSB (from slave) on trailing edge */
++		word >>= 1;
++		if ((flags & SPI_MASTER_NO_RX) == 0)
++			word |= getmiso(spi) << (bits - 1);
++	}
++	return word;
++}
+diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
+index 7ceb0ba27b75..493723eda844 100644
+--- a/drivers/spi/spi-gpio.c
++++ b/drivers/spi/spi-gpio.c
+@@ -135,25 +135,37 @@ static inline int getmiso(const struct spi_device *spi)
+ static u32 spi_gpio_txrx_word_mode0(struct spi_device *spi,
+ 		unsigned nsecs, u32 word, u8 bits, unsigned flags)
+ {
+-	return bitbang_txrx_be_cpha0(spi, nsecs, 0, flags, word, bits);
++	if (unlikely(spi->mode & SPI_LSB_FIRST))
++		return bitbang_txrx_le_cpha0(spi, nsecs, 0, flags, word, bits);
++	else
++		return bitbang_txrx_be_cpha0(spi, nsecs, 0, flags, word, bits);
+ }
+ 
+ static u32 spi_gpio_txrx_word_mode1(struct spi_device *spi,
+ 		unsigned nsecs, u32 word, u8 bits, unsigned flags)
+ {
+-	return bitbang_txrx_be_cpha1(spi, nsecs, 0, flags, word, bits);
++	if (unlikely(spi->mode & SPI_LSB_FIRST))
++		return bitbang_txrx_le_cpha1(spi, nsecs, 0, flags, word, bits);
++	else
++		return bitbang_txrx_be_cpha1(spi, nsecs, 0, flags, word, bits);
+ }
+ 
+ static u32 spi_gpio_txrx_word_mode2(struct spi_device *spi,
+ 		unsigned nsecs, u32 word, u8 bits, unsigned flags)
+ {
+-	return bitbang_txrx_be_cpha0(spi, nsecs, 1, flags, word, bits);
++	if (unlikely(spi->mode & SPI_LSB_FIRST))
++		return bitbang_txrx_le_cpha0(spi, nsecs, 1, flags, word, bits);
++	else
++		return bitbang_txrx_be_cpha0(spi, nsecs, 1, flags, word, bits);
+ }
+ 
+ static u32 spi_gpio_txrx_word_mode3(struct spi_device *spi,
+ 		unsigned nsecs, u32 word, u8 bits, unsigned flags)
+ {
+-	return bitbang_txrx_be_cpha1(spi, nsecs, 1, flags, word, bits);
++	if (unlikely(spi->mode & SPI_LSB_FIRST))
++		return bitbang_txrx_le_cpha1(spi, nsecs, 1, flags, word, bits);
++	else
++		return bitbang_txrx_be_cpha1(spi, nsecs, 1, flags, word, bits);
+ }
+ 
+ /*
+@@ -170,28 +182,40 @@ static u32 spi_gpio_spec_txrx_word_mode0(struct spi_device *spi,
+ 		unsigned nsecs, u32 word, u8 bits, unsigned flags)
+ {
+ 	flags = spi->master->flags;
+-	return bitbang_txrx_be_cpha0(spi, nsecs, 0, flags, word, bits);
++	if (unlikely(spi->mode & SPI_LSB_FIRST))
++		return bitbang_txrx_le_cpha0(spi, nsecs, 0, flags, word, bits);
++	else
++		return bitbang_txrx_be_cpha0(spi, nsecs, 0, flags, word, bits);
+ }
+ 
+ static u32 spi_gpio_spec_txrx_word_mode1(struct spi_device *spi,
+ 		unsigned nsecs, u32 word, u8 bits, unsigned flags)
+ {
+ 	flags = spi->master->flags;
+-	return bitbang_txrx_be_cpha1(spi, nsecs, 0, flags, word, bits);
++	if (unlikely(spi->mode & SPI_LSB_FIRST))
++		return bitbang_txrx_le_cpha1(spi, nsecs, 0, flags, word, bits);
++	else
++		return bitbang_txrx_be_cpha1(spi, nsecs, 0, flags, word, bits);
+ }
+ 
+ static u32 spi_gpio_spec_txrx_word_mode2(struct spi_device *spi,
+ 		unsigned nsecs, u32 word, u8 bits, unsigned flags)
+ {
+ 	flags = spi->master->flags;
+-	return bitbang_txrx_be_cpha0(spi, nsecs, 1, flags, word, bits);
++	if (unlikely(spi->mode & SPI_LSB_FIRST))
++		return bitbang_txrx_le_cpha0(spi, nsecs, 1, flags, word, bits);
++	else
++		return bitbang_txrx_be_cpha0(spi, nsecs, 1, flags, word, bits);
+ }
+ 
+ static u32 spi_gpio_spec_txrx_word_mode3(struct spi_device *spi,
+ 		unsigned nsecs, u32 word, u8 bits, unsigned flags)
+ {
+ 	flags = spi->master->flags;
+-	return bitbang_txrx_be_cpha1(spi, nsecs, 1, flags, word, bits);
++	if (unlikely(spi->mode & SPI_LSB_FIRST))
++		return bitbang_txrx_le_cpha1(spi, nsecs, 1, flags, word, bits);
++	else
++		return bitbang_txrx_be_cpha1(spi, nsecs, 1, flags, word, bits);
+ }
+ 
+ /*----------------------------------------------------------------------*/
+@@ -389,7 +413,7 @@ static int spi_gpio_probe(struct platform_device *pdev)
+ 
+ 	master->bits_per_word_mask = SPI_BPW_RANGE_MASK(1, 32);
+ 	master->mode_bits = SPI_3WIRE | SPI_3WIRE_HIZ | SPI_CPHA | SPI_CPOL |
+-			    SPI_CS_HIGH;
++			    SPI_CS_HIGH | SPI_LSB_FIRST;
+ 	if (!spi_gpio->mosi) {
+ 		/* HW configuration without MOSI pin
+ 		 *
 -- 
 2.16.4
 
