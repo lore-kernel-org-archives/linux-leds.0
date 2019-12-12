@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B341C43603
-	for <linux-leds@archiver.kernel.org>; Thu, 12 Dec 2019 03:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1038DC43603
+	for <linux-leds@archiver.kernel.org>; Thu, 12 Dec 2019 03:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEFA8214D8
-	for <linux-leds@archiver.kernel.org>; Thu, 12 Dec 2019 03:41:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDA7C214D8
+	for <linux-leds@archiver.kernel.org>; Thu, 12 Dec 2019 03:43:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfLLDj6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 11 Dec 2019 22:39:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58428 "EHLO mx1.suse.de"
+        id S1727381AbfLLDns (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 11 Dec 2019 22:43:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58556 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726638AbfLLDj6 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 11 Dec 2019 22:39:58 -0500
+        id S1727524AbfLLDkA (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 11 Dec 2019 22:40:00 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7A1F1ADBB;
-        Thu, 12 Dec 2019 03:39:56 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 9C4C9AE47;
+        Thu, 12 Dec 2019 03:39:58 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org, linux-leds@vger.kernel.org
 Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
+        zypeng@titanmec.com, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [RFC 01/25] dt-bindings: vendor-prefixes: Add Xnano
-Date:   Thu, 12 Dec 2019 04:39:28 +0100
-Message-Id: <20191212033952.5967-2-afaerber@suse.de>
+Subject: [RFC 05/25] dt-bindings: vendor-prefixes: Add Titan Micro Electronics
+Date:   Thu, 12 Dec 2019 04:39:32 +0100
+Message-Id: <20191212033952.5967-6-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191212033952.5967-1-afaerber@suse.de>
 References: <20191212033952.5967-1-afaerber@suse.de>
@@ -44,26 +44,27 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Xnano is a Chinese TV box brand, but not much more is publicly known.
+Assign vendor prefix "titanmec", matching their domain name.
 
+Cc: zypeng@titanmec.com
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 6046f4555852..84a76efad2a8 100644
+index 84a76efad2a8..31d0c4772b96 100644
 --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
 +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -1058,6 +1058,8 @@ patternProperties:
-     description: Xillybus Ltd.
-   "^xlnx,.*":
-     description: Xilinx
-+  "^xnano,.*":
-+    description: Xnano
-   "^xunlong,.*":
-     description: Shenzhen Xunlong Software CO.,Limited
-   "^yones-toptech,.*":
+@@ -951,6 +951,8 @@ patternProperties:
+     description: Texas Instruments
+   "^tianma,.*":
+     description: Tianma Micro-electronics Co., Ltd.
++  "^titanmec,.*":
++    description: Shenzhen Titan Micro Electronics Co., Ltd.
+   "^tlm,.*":
+     description: Trusted Logic Mobility
+   "^tmt,.*":
 -- 
 2.16.4
 
