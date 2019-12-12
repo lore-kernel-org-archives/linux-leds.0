@@ -1,105 +1,106 @@
-Return-Path: <SRS0=1kiJ=2B=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=cqGX=2C=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAEAC43603
-	for <linux-leds@archiver.kernel.org>; Wed, 11 Dec 2019 16:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1124DC2D0C8
+	for <linux-leds@archiver.kernel.org>; Thu, 12 Dec 2019 03:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D1A6208C3
-	for <linux-leds@archiver.kernel.org>; Wed, 11 Dec 2019 16:07:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576080458;
-	bh=augGkbXHJw6P2iLfo2wzGVeVGt69JYF7/I1eVjsO2S0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EcNMzBEALwU5dIoPvUlzshKxKZFkAIjQaIaSeimovFlSJvchIz0334uzNxNJnj216
-	 QQBTTQVfPXxjFdx9TuugY/0Umb9E15Z4uRTicSKmc7k+mW3GQddzHEyWqdm61OEpep
-	 i5vhhgOgG8YOafhghRiufa8jJ58837PnhtyJtKnI=
+	by mail.kernel.org (Postfix) with ESMTP id DB40424671
+	for <linux-leds@archiver.kernel.org>; Thu, 12 Dec 2019 03:40:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731303AbfLKQHh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 11 Dec 2019 11:07:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730779AbfLKPM0 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:12:26 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D16472173E;
-        Wed, 11 Dec 2019 15:12:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077145;
-        bh=augGkbXHJw6P2iLfo2wzGVeVGt69JYF7/I1eVjsO2S0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=maAnRy/f9Z/h47H+PvCAjReHyVQNPyjk+d5JUnKvRkCYxeF2YZ1tHmcgnPwKi0nOK
-         5EuFpwTxkNdoCD2DuPk2xguZAfvFoZ5vBoQ6QBU8ELw01NY3v6qixPC9QB9uuIsdIY
-         ELJJhQ3Ucgq5cI+osN8kPCui7wflTILAOVxO3LkI=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        id S1727595AbfLLDkA (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 11 Dec 2019 22:40:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58492 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726771AbfLLDj7 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 11 Dec 2019 22:39:59 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 665FAAD7B;
+        Thu, 12 Dec 2019 03:39:57 +0000 (UTC)
+From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+To:     linux-realtek-soc@lists.infradead.org, linux-leds@vger.kernel.org
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 032/134] leds: lm3692x: Handle failure to probe the regulator
-Date:   Wed, 11 Dec 2019 10:10:08 -0500
-Message-Id: <20191211151150.19073-32-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
-References: <20191211151150.19073-1-sashal@kernel.org>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [RFC 03/25] arm64: dts: realtek: rtd1295: Add Xnano X5
+Date:   Thu, 12 Dec 2019 04:39:30 +0100
+Message-Id: <20191212033952.5967-4-afaerber@suse.de>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20191212033952.5967-1-afaerber@suse.de>
+References: <20191212033952.5967-1-afaerber@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Guido Günther <agx@sigxcpu.org>
+The Xnano X5 is an OTT TV Box.
 
-[ Upstream commit 396128d2ffcba6e1954cfdc9a89293ff79cbfd7c ]
-
-Instead use devm_regulator_get_optional since the regulator
-is optional and check for errors.
-
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Reviewed-by: Dan Murphy <dmurphy@ti.com>
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- drivers/leds/leds-lm3692x.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/realtek/Makefile             |  1 +
+ arch/arm64/boot/dts/realtek/rtd1295-xnano-x5.dts | 30 ++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/realtek/rtd1295-xnano-x5.dts
 
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index 3d381f2f73d04..1ac9a44570eed 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -334,9 +334,18 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- 		return ret;
- 	}
+diff --git a/arch/arm64/boot/dts/realtek/Makefile b/arch/arm64/boot/dts/realtek/Makefile
+index 54bd02d11c02..ef8d8fcbaa05 100644
+--- a/arch/arm64/boot/dts/realtek/Makefile
++++ b/arch/arm64/boot/dts/realtek/Makefile
+@@ -4,6 +4,7 @@ dtb-$(CONFIG_ARCH_REALTEK) += rtd1293-ds418j.dtb
  
--	led->regulator = devm_regulator_get(&led->client->dev, "vled");
--	if (IS_ERR(led->regulator))
-+	led->regulator = devm_regulator_get_optional(&led->client->dev, "vled");
-+	if (IS_ERR(led->regulator)) {
-+		ret = PTR_ERR(led->regulator);
-+		if (ret != -ENODEV) {
-+			if (ret != -EPROBE_DEFER)
-+				dev_err(&led->client->dev,
-+					"Failed to get vled regulator: %d\n",
-+					ret);
-+			return ret;
-+		}
- 		led->regulator = NULL;
-+	}
+ dtb-$(CONFIG_ARCH_REALTEK) += rtd1295-mele-v9.dtb
+ dtb-$(CONFIG_ARCH_REALTEK) += rtd1295-probox2-ava.dtb
++dtb-$(CONFIG_ARCH_REALTEK) += rtd1295-xnano-x5.dtb
+ dtb-$(CONFIG_ARCH_REALTEK) += rtd1295-zidoo-x9s.dtb
  
- 	child = device_get_next_child_node(&led->client->dev, child);
- 	if (!child) {
+ dtb-$(CONFIG_ARCH_REALTEK) += rtd1296-ds418.dtb
+diff --git a/arch/arm64/boot/dts/realtek/rtd1295-xnano-x5.dts b/arch/arm64/boot/dts/realtek/rtd1295-xnano-x5.dts
+new file mode 100644
+index 000000000000..d7878ff942e6
+--- /dev/null
++++ b/arch/arm64/boot/dts/realtek/rtd1295-xnano-x5.dts
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
++/*
++ * Copyright (c) 2017-2019 Andreas Färber
++ */
++
++/dts-v1/;
++
++#include "rtd1295.dtsi"
++
++/ {
++	compatible = "xnano,x5", "realtek,rtd1295";
++	model = "Xnano X5";
++
++	memory@1f000 {
++		device_type = "memory";
++		reg = <0x1f000 0x3ffe1000>; /* boot ROM to 1 GiB or 2 GiB */
++	};
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
 -- 
-2.20.1
+2.16.4
 
