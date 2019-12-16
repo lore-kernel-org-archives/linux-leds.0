@@ -2,220 +2,113 @@ Return-Path: <SRS0=LQEF=2G=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD12C43603
-	for <linux-leds@archiver.kernel.org>; Mon, 16 Dec 2019 14:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77091C2D0D2
+	for <linux-leds@archiver.kernel.org>; Mon, 16 Dec 2019 14:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5236206D7
-	for <linux-leds@archiver.kernel.org>; Mon, 16 Dec 2019 14:33:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NJ9wL9UJ"
+	by mail.kernel.org (Postfix) with ESMTP id 49953206E0
+	for <linux-leds@archiver.kernel.org>; Mon, 16 Dec 2019 14:55:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576508137;
+	bh=G5qmjCDdT1w/WFe2hlox5kS/aHkrbDR0OUGRD1SamhA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZeEbDvA79+3oCohtCChi6+XmF+247n0oC41xBnob31tTzB4BWxSkE0FodK+0dEMcX
+	 +xYgNVzcyHIzvC8btzznaj/MXmzegNvvXDgMskqbrl7ghseDHZtOpKDm5Kq0x2Uu23
+	 dh9QYZPAhKsIEcQK/A88DDs5RmCj3a2be2ltJyZQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbfLPOdI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 16 Dec 2019 09:33:08 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36203 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728113AbfLPOdI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 16 Dec 2019 09:33:08 -0500
-Received: by mail-qk1-f196.google.com with SMTP id a203so4330767qkc.3;
-        Mon, 16 Dec 2019 06:33:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=I7c0SQN6HuCKKa1ZswlGHD9c4y7pPGDLaDBLm1SC07c=;
-        b=NJ9wL9UJux098I9Q6LjQJmmEutCAK4CwgS6ccMZAHJI96aoP04sjxzMIt2EsEszxlp
-         CQHHNcOmXs/UI7J0QefHoAHZLpl/2OnNrwzPZtooY4NJ2FWydjukP2yjI8/ySInzdXRl
-         CH8vjXRteTOwHoD5eK2STZIoSfef7/L+ieE/JgjUSnG7QSSMqzILRqJPW9vWulpnrK/n
-         S7zhM/f89mRSFMaf/14oHqOfZhh+Vfg88O1ivRmhh9ekj4cN2p8jzTikbbmWAZg4uUgo
-         6n81PpVBWbErVsTVC5zMKi5Hi1P0QDzelvSBgGwnzNAe0fvJTne1/yvO/pmWdx/nBUKL
-         rawg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=I7c0SQN6HuCKKa1ZswlGHD9c4y7pPGDLaDBLm1SC07c=;
-        b=ihMlZ50h0MKQkLbef90Poclc+PuqMM5TB3eKTB6hzlDdcsuTXndE+bHVPoSndZeqYB
-         TU891aQL/z3fWAW+EfDChpsDV61l3WlGVP7Lh0ZvH6LB2c7oyq/Ba8xuzVq1t3vdtcLW
-         /zdCfXitVCBhMnxVsd3QO/hK1xlhFwbsKUiWF2XIfgP3arjs/dqs0eSYfMm2oiqtRy6S
-         xnnawdqyPpHWmSsv4Q7JK3Pv7F5VyrNNZAW0489Uu5zB2LeWkLLeFu99xqUd64Nv4Gjh
-         d3bImuXD0gbjZ2SaOjHY6zOb6NqFKI1ALNCKLI65u1LTOi4lLQzY/attstMYqNBy7FG7
-         dV/A==
-X-Gm-Message-State: APjAAAVkP+TCd0A3FTs2WFH5UhOeSu6Ng+DpW06UMbz46Vhz+kX33qjs
-        sontNhUzGIDXjUbf7tEw85I=
-X-Google-Smtp-Source: APXvYqyZsQPaYeHb53qPQUGeu/sq1imNBkWprUzTTKPFGI5dNu6Tubq33ExNNUpMxK0MeWJtxQeY3g==
-X-Received: by 2002:a37:9f57:: with SMTP id i84mr27201376qke.29.1576506786547;
-        Mon, 16 Dec 2019 06:33:06 -0800 (PST)
-Received: from localhost.localdomain ([72.53.229.209])
-        by smtp.gmail.com with ESMTPSA id b3sm6966992qtr.86.2019.12.16.06.33.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 06:33:06 -0800 (PST)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
-To:     Lee Jones <lee.jones@linaro.org>, Pavel Machek <pavel@ucw.cz>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Grigoryev Denis <grigoryev@fastwel.ru>,
-        Axel Lin <axel.lin@ingics.com>,
+        id S1728167AbfLPOzd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 16 Dec 2019 09:55:33 -0500
+Received: from foss.arm.com ([217.140.110.172]:57962 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728008AbfLPOzd (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 16 Dec 2019 09:55:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6664A1FB;
+        Mon, 16 Dec 2019 06:55:32 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D91B93F718;
+        Mon, 16 Dec 2019 06:55:31 -0800 (PST)
+Date:   Mon, 16 Dec 2019 14:55:28 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: [PATCH v6 1/2] leds: tps6105x: add driver for MFD chip LED mode
-Date:   Mon, 16 Dec 2019 09:32:58 -0500
-Message-Id: <20191216143259.24587-2-TheSven73@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191216143259.24587-1-TheSven73@gmail.com>
-References: <20191216143259.24587-1-TheSven73@gmail.com>
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v6 09/15] regulator: bd71828: Basic support for ROHM
+ bd71828 PMIC regulators
+Message-ID: <20191216145528.GE4161@sirena.org.uk>
+References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+ <5b1c4a22c7945e97ff2a7924abfeb3239043f8eb.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vv4Sf/kQfcwinyKX"
+Content-Disposition: inline
+In-Reply-To: <5b1c4a22c7945e97ff2a7924abfeb3239043f8eb.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+X-Cookie: Backed up the system lately?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This driver adds support for the LED operational mode of the
-tps6105x MFD device.
 
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
----
- drivers/leds/Kconfig         | 10 ++++
- drivers/leds/Makefile        |  1 +
- drivers/leds/leds-tps6105x.c | 89 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 100 insertions(+)
- create mode 100644 drivers/leds/leds-tps6105x.c
+--vv4Sf/kQfcwinyKX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 4b68520ac251..d82f1dea3711 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -836,6 +836,16 @@ config LEDS_LM36274
- 	  Say Y to enable the LM36274 LED driver for TI LMU devices.
- 	  This supports the LED device LM36274.
- 
-+config LEDS_TPS6105X
-+	tristate "LED support for TI TPS6105X"
-+	depends on LEDS_CLASS
-+	depends on TPS6105X
-+	default y if TPS6105X
-+	help
-+	  This driver supports TPS61050/TPS61052 LED chips.
-+	  It is a single boost converter primarily for white LEDs and
-+	  audio amplifiers.
-+
- comment "LED Triggers"
- source "drivers/leds/trigger/Kconfig"
- 
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 2da39e896ce8..d7e1107753fb 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -85,6 +85,7 @@ obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
- obj-$(CONFIG_LEDS_TI_LMU_COMMON)	+= leds-ti-lmu-common.o
- obj-$(CONFIG_LEDS_LM3697)		+= leds-lm3697.o
- obj-$(CONFIG_LEDS_LM36274)		+= leds-lm36274.o
-+obj-$(CONFIG_LEDS_TPS6105X)		+= leds-tps6105x.o
- 
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
-diff --git a/drivers/leds/leds-tps6105x.c b/drivers/leds/leds-tps6105x.c
-new file mode 100644
-index 000000000000..09fd88a6c8f0
---- /dev/null
-+++ b/drivers/leds/leds-tps6105x.c
-@@ -0,0 +1,89 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2019 Sven Van Asbroeck
-+ */
-+
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/mfd/tps6105x.h>
-+#include <linux/regmap.h>
-+
-+struct tps6105x_priv {
-+	struct regmap *regmap;
-+	struct led_classdev cdev;
-+	struct fwnode_handle *fwnode;
-+};
-+
-+static void tps6105x_handle_put(void *data)
-+{
-+	struct tps6105x_priv *priv = data;
-+
-+	fwnode_handle_put(priv->fwnode);
-+}
-+
-+static int tps6105x_brightness_set(struct led_classdev *cdev,
-+				  enum led_brightness brightness)
-+{
-+	struct tps6105x_priv *priv = container_of(cdev, struct tps6105x_priv,
-+							cdev);
-+
-+	return regmap_update_bits(priv->regmap, TPS6105X_REG_0,
-+				  TPS6105X_REG0_TORCHC_MASK,
-+				  brightness << TPS6105X_REG0_TORCHC_SHIFT);
-+}
-+
-+static int tps6105x_led_probe(struct platform_device *pdev)
-+{
-+	struct tps6105x *tps6105x = dev_get_platdata(&pdev->dev);
-+	struct tps6105x_platform_data *pdata = tps6105x->pdata;
-+	struct led_init_data init_data = { };
-+	struct tps6105x_priv *priv;
-+	int ret;
-+
-+	/* This instance is not set for torch mode so bail out */
-+	if (pdata->mode != TPS6105X_MODE_TORCH) {
-+		dev_info(&pdev->dev,
-+			"chip not in torch mode, exit probe");
-+		return -EINVAL;
-+	}
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+	/* fwnode/devicetree is optional. NULL is allowed for priv->fwnode */
-+	priv->fwnode = device_get_next_child_node(pdev->dev.parent, NULL);
-+	ret = devm_add_action_or_reset(&pdev->dev, tps6105x_handle_put, priv);
-+	if (ret)
-+		return ret;
-+	priv->regmap = tps6105x->regmap;
-+	priv->cdev.brightness_set_blocking = tps6105x_brightness_set;
-+	priv->cdev.max_brightness = 7;
-+	init_data.devicename = "tps6105x";
-+	init_data.default_label = ":torch";
-+	init_data.fwnode = priv->fwnode;
-+
-+	ret = regmap_update_bits(tps6105x->regmap, TPS6105X_REG_0,
-+				 TPS6105X_REG0_MODE_MASK |
-+					TPS6105X_REG0_TORCHC_MASK,
-+				 TPS6105X_REG0_MODE_TORCH <<
-+					TPS6105X_REG0_MODE_SHIFT);
-+	if (ret)
-+		return ret;
-+
-+	return devm_led_classdev_register_ext(&pdev->dev, &priv->cdev,
-+					      &init_data);
-+}
-+
-+static struct platform_driver led_driver = {
-+	.probe = tps6105x_led_probe,
-+	.driver = {
-+		.name = "tps6105x-leds",
-+	},
-+};
-+
-+module_platform_driver(led_driver);
-+
-+MODULE_DESCRIPTION("TPS6105x LED driver");
-+MODULE_AUTHOR("Sven Van Asbroeck <TheSven73@gmail.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+On Wed, Dec 11, 2019 at 11:46:11AM +0200, Matti Vaittinen wrote:
 
+> +static int bd71828_ldo6_get_voltage(struct regulator_dev *rdev)
+> +{
+> +	return BD71828_LDO_6_VOLTAGE;
+> +}
+> +
+> +static const struct regulator_ops bd71828_ldo6_ops = {
+> +	.enable = regulator_enable_regmap,
+> +	.disable = regulator_disable_regmap,
+> +	.get_voltage = bd71828_ldo6_get_voltage,
+
+You can just set fixed_uV in the regulator_desc, you don't need a
+get_voltage() operation here.  Otherwise this looks good, I'll apply it
+and please send an incremental fix for this.
+
+--vv4Sf/kQfcwinyKX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl33mt8ACgkQJNaLcl1U
+h9DPqggAhcsF1ZeRBaP6Lzz9ZA0lX48wnM91c45AzpXxhBPVmVU8EJrJFkmUT+zI
+VYHCWzrWqZoUwoxRDUntTg0W7omOi4CoU10/2SGjxkdxHiAmutKvaV8e155DaKRj
+hhZGeaSRdWgD3uYUZGBB1W9OYmzuHx6NtlL76FfabMt6TTPQCq7X3VjSuI4wi4oN
+7JLtu6Gzf2WNSmP1uqZLMSqk1RvgZa2K1rgRwf+SYhTD21VWliTuq/qGtg0zmijW
+BA398k1yTl123ecTnS9Fnk+IsqPSTd/mBJT4TmFkdakxVm3JSYIqpqIiJYZtGOBs
+aUVTHrBVlYfYIk4raTP8w2l2xYiNdg==
+=0wbA
+-----END PGP SIGNATURE-----
+
+--vv4Sf/kQfcwinyKX--
