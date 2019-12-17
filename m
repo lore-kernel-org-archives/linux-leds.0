@@ -2,111 +2,116 @@ Return-Path: <SRS0=cj8m=2H=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BC4C2D0CD
-	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 06:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6F0C43603
+	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 08:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BB0821D7D
-	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 06:56:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0E31206A5
+	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 08:17:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfLQG4e (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 17 Dec 2019 01:56:34 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:45098 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbfLQG4d (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 17 Dec 2019 01:56:33 -0500
-X-AuditID: c0a8fbf4-183ff70000001fa6-5b-5df87c1ebcc5
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 31.34.08102.E1C78FD5; Tue, 17 Dec 2019 07:56:30 +0100 (CET)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0439.000; Tue, 17 Dec 2019 07:56:26 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "broonie@kernel.org" <broonie@kernel.org>
-CC:     "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "noralf@tronnes.org" <noralf@tronnes.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-Subject: Re: [PATCH v6 09/15] regulator: bd71828: Basic support for ROHM
- bd71828 PMIC regulators
-Thread-Topic: [PATCH v6 09/15] regulator: bd71828: Basic support for ROHM
- bd71828 PMIC regulators
-Thread-Index: AQHVsAfYI3uVDvKcOUypO4bwmJ45Qqe80OIAgAEMf4A=
-Date:   Tue, 17 Dec 2019 06:56:23 +0000
-Message-ID: <06f1f3529fc168daa513e0a6db7b4e0147f86358.camel@fi.rohmeurope.com>
-References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
-         <5b1c4a22c7945e97ff2a7924abfeb3239043f8eb.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
-         <20191216145528.GE4161@sirena.org.uk>
-In-Reply-To: <20191216145528.GE4161@sirena.org.uk>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <270552940107BB4D8F91F4EA5DFF4642@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1726536AbfLQIR4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 17 Dec 2019 03:17:56 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41411 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbfLQIRz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 17 Dec 2019 03:17:55 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ih839-0000yI-64; Tue, 17 Dec 2019 09:17:47 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ih838-0002IZ-2K; Tue, 17 Dec 2019 09:17:46 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-serial@vger.kernel.org, kernel@pengutronix.de
+Subject: [PATCH v2 2/3] tty: new helper function tty_get_icount()
+Date:   Tue, 17 Dec 2019 09:17:17 +0100
+Message-Id: <20191217081718.23807-3-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191217081718.23807-1-u.kleine-koenig@pengutronix.de>
+References: <20191217081718.23807-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfVAUZRzHe3af23142WY9MR4prU6LMULAzHmmmIaZatxmimFqppnSkxbY
-        OCa4o72DEW2KSQVBYsTzZLoA5XiRt+nwitEIhhs6DA8ijxej0AhlGNQGswgUxdplVfjr+T7P
-        9/l+P88fvwfR+jo2AmWYbZJsFjMNTDD0Ntw5Fb3+k1vG2IOthNQGRlhSOFPPksUjZ1kyW+mH
-        xDExyZBJbyEgx30DOnKo71sd2VfjZshYWysk4//2ADI3fJAiR++epMjNkt91pLqgFpJvjt8F
-        ZKi9giFtf34NyNnmYYbU/RKgSEVdLyQ3/i6iSMD/OnH4Z1hyyd/DkH2BUZoc6PSx5N6FU5CU
-        DmxPWCe0VLUA4c7CESDcGD3AClUte4XvnJdYwdNUxAgXL3QwQldlCyvUlNp1wlx/GRSmqt1Q
-        +HH0NCWUV92mBHeJDwgNzfOs8I9nfRL/fkh8imjLfScj3Rzzygchps6TTUx2O7v7/GmvLh+c
-        YItBEML8Vlx2pUBXDIKRnh8BeOiYg9U2vQBPLQ7AYoAQw8fj4l+XAmF8NHYs1DCqpvnhEPzV
-        9ztUvZpPwe4fCijtTirumq65r1/CPdMuWtWQfwZ7S1qBWsnxibix6mMN1Q/w2LB9qTOI34Iv
-        X/dCVQN+HS7Kn6E0Vjj2TM3rtEfzuLbjZ1rTa/DVK/funxtw5+2JpSfT/Cbsbo/Rogn44uI4
-        q+mn8dFDE0ua41fhc19OwsPgMecKgnM57VyRdq5IO1ekTwBdE8BZYkZmumiT4jbLUs5m2WLK
-        UpZUS5YHaGM3ewb81/1GN6AQ6AZrEWVYw4Vuv2XUP5piScsziVZTspyTKVm7AUa0IYw789S8
-        Uc+liXl7JNnywHocQUM4FzlRZtTzKusjScqW5AfuEwgZMPf8XqV0lSylS7s/zMi0LdsUClLL
-        gyPCrJI5TZLFHJspWR2PZKsyH6oVqnCH9ihxzpotZimnWtQPotDhq5UuGvkq61y0HpotZiki
-        nBtUSbx61ZRjfgi6BsIRMKzm/lKLQpW/97DnmoKgFMSWxDkVYROXrYh8YHl7xwsksr/8XUeS
-        /VXX9bLCRFvnuY0JjfW+F7dF+zZugOPlztiBxvPUF6l0c8zgs0mbovqmu36L9dd2oG3vWXeW
-        VPsf2WoHFW2zazfs90Tt7Nv1x1j8k/vl+ZG83F2labk3IwOX7QsJg0b08k9xxtdSGno/k01v
-        1n8uBr0FPw11QQO0msS452jZKv4PHr7zGzgEAAA=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-VGhhbmtzIE1hcmssDQoNCk9uIE1vbiwgMjAxOS0xMi0xNiBhdCAxNDo1NSArMDAwMCwgTWFyayBC
-cm93biB3cm90ZToNCj4gT24gV2VkLCBEZWMgMTEsIDIwMTkgYXQgMTE6NDY6MTFBTSArMDIwMCwg
-TWF0dGkgVmFpdHRpbmVuIHdyb3RlOg0KPiANCj4gPiArc3RhdGljIGludCBiZDcxODI4X2xkbzZf
-Z2V0X3ZvbHRhZ2Uoc3RydWN0IHJlZ3VsYXRvcl9kZXYgKnJkZXYpDQo+ID4gK3sNCj4gPiArCXJl
-dHVybiBCRDcxODI4X0xET182X1ZPTFRBR0U7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBj
-b25zdCBzdHJ1Y3QgcmVndWxhdG9yX29wcyBiZDcxODI4X2xkbzZfb3BzID0gew0KPiA+ICsJLmVu
-YWJsZSA9IHJlZ3VsYXRvcl9lbmFibGVfcmVnbWFwLA0KPiA+ICsJLmRpc2FibGUgPSByZWd1bGF0
-b3JfZGlzYWJsZV9yZWdtYXAsDQo+ID4gKwkuZ2V0X3ZvbHRhZ2UgPSBiZDcxODI4X2xkbzZfZ2V0
-X3ZvbHRhZ2UsDQo+IA0KPiBZb3UgY2FuIGp1c3Qgc2V0IGZpeGVkX3VWIGluIHRoZSByZWd1bGF0
-b3JfZGVzYywgeW91IGRvbid0IG5lZWQgYQ0KPiBnZXRfdm9sdGFnZSgpIG9wZXJhdGlvbiBoZXJl
-LiAgT3RoZXJ3aXNlIHRoaXMgbG9va3MgZ29vZCwgSSdsbCBhcHBseQ0KPiBpdA0KPiBhbmQgcGxl
-YXNlIHNlbmQgYW4gaW5jcmVtZW50YWwgZml4IGZvciB0aGlzLg0KDQpXaWxsIGRvIDopDQoNCkJy
-LA0KCU1hdHRpDQo=
+For a given struct tty_struct this yields the corresponding statistics
+about sent and received characters (and some more)
+
+Use the function to simplify tty_tiocgicount().
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/tty/tty_io.c | 20 ++++++++++++++++----
+ include/linux/tty.h  |  2 ++
+ 2 files changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 584025117cd3..df3942eb3468 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2497,15 +2497,27 @@ static int tty_tiocmset(struct tty_struct *tty, unsigned int cmd,
+ 	return tty->ops->tiocmset(tty, set, clear);
+ }
+ 
++int tty_get_icount(struct tty_struct *tty,
++		   struct serial_icounter_struct *icount)
++{
++	memset(icount, 0, sizeof(*icount));
++
++	if (tty->ops->get_icount)
++		return tty->ops->get_icount(tty, icount);
++	else
++		return -EINVAL;
++}
++EXPORT_SYMBOL(tty_get_icount);
++
+ static int tty_tiocgicount(struct tty_struct *tty, void __user *arg)
+ {
+-	int retval = -EINVAL;
+ 	struct serial_icounter_struct icount;
+-	memset(&icount, 0, sizeof(icount));
+-	if (tty->ops->get_icount)
+-		retval = tty->ops->get_icount(tty, &icount);
++	int retval;
++
++	retval = tty_get_icount(tty, &icount);
+ 	if (retval != 0)
+ 		return retval;
++
+ 	if (copy_to_user(arg, &icount, sizeof(icount)))
+ 		return -EFAULT;
+ 	return 0;
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index 616268eb1613..3c6f58032f57 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -495,6 +495,8 @@ extern void tty_unthrottle(struct tty_struct *tty);
+ extern int tty_throttle_safe(struct tty_struct *tty);
+ extern int tty_unthrottle_safe(struct tty_struct *tty);
+ extern int tty_do_resize(struct tty_struct *tty, struct winsize *ws);
++extern int tty_get_icount(struct tty_struct *tty,
++			  struct serial_icounter_struct *icount);
+ extern int is_current_pgrp_orphaned(void);
+ extern void tty_hangup(struct tty_struct *tty);
+ extern void tty_vhangup(struct tty_struct *tty);
+-- 
+2.24.0
+
