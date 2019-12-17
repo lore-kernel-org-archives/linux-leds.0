@@ -2,113 +2,266 @@ Return-Path: <SRS0=cj8m=2H=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B117CC2D0BF
-	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 14:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F81C3F68F
+	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 15:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 834552072D
-	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 14:50:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="Gi07bExC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IN/hScjO"
+	by mail.kernel.org (Postfix) with ESMTP id A65E224650
+	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 15:07:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbfLQOuJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 17 Dec 2019 09:50:09 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:42573 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727127AbfLQOuI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:50:08 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id A9CCD6395;
-        Tue, 17 Dec 2019 09:50:07 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 17 Dec 2019 09:50:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=4cIp2F9GZx6Q23WhgNIogqD6bW4
-        O5qNKgcTSyASlC+E=; b=Gi07bExCvjAN5nuKqBLZG/2jy5AaWcQ5uMg2TpS9idd
-        f2DZOM9lxNYv9Q2HIyHURhjyE3bAdY+wNeNSry5kiy6k0sqTi+z5AZTF46LMqSZI
-        9geI4AMMqQVK3ZxvSsg05x/u8nASRNEIpLq9mLRPJg3p5+cggr7QAiqegfRs6fm7
-        QNrXkJo64FxdVy+rT1GyGWzoLbQMBkEWBRUQKJe9PPynJIyOuNa/nyMn3TAqAUOO
-        /HDqWXqb5F8beAz6aLOSOmQzj/CwcM1Ll4HQspIBcdb/mrRcDGr6Dy8Bwjt/Qhjb
-        7y6nAjOfqn6c5TQ3KObMY0LG9RukN00NgofzHxBAQRQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=4cIp2F
-        9GZx6Q23WhgNIogqD6bW4O5qNKgcTSyASlC+E=; b=IN/hScjOmdr2LXAzMFThmY
-        ftq7zHz6ZA/FdebKUxQpUUk+NucUKkdRie8EoGP0M6ZXK/hNJubRrah3mU+7DDYg
-        ji4QQvChsgXOd/FpV+sNZLWb2utwe3vJM0y7SYtbccJCiZtCczioOyLW9a6exeTL
-        Da9qBZwlaFSDKmxdnCL+kyqVNOd/AGS345lkeQfvWpHWq/PwZ3Lco3xvNx9p5nLj
-        qeTNhJe49U0HM+oSy2ZX6o+I/VFCCodJpCyqAt2BCuF6iwCupzhdfU6LRGFZeq5k
-        N2eOivd26k9D5AuLw2hcmzu8H1TOzA3wwImkNZg9tj5EhQLLz4Du8WxkBA5nDnqA
-        ==
-X-ME-Sender: <xms:Huv4XaE6IPHj7TGEPCGQcFoOIxspKi3_l63oR-zCZNwWF1JLdQyXhQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvddtjedgieekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujgesthdtre
-    dttddtvdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheq
-    necukfhppeekfedrkeeirdekledruddtjeenucfrrghrrghmpehmrghilhhfrhhomhepgh
-    hrvghgsehkrhhorghhrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:Huv4XWeD6OmVXRDK67xOb7vsMpbu-4WODJ4MAJ2mFsAWOc43DngMKA>
-    <xmx:Huv4XbBgeDOnz5WCr93LDCx1d_VmpipmdFnHavoE60aJzEf4rE5JLw>
-    <xmx:Huv4XZZ54qRO_THZMvYkAtsSmgxGaFQtetIlonFHtaXeRd7O1TVp9g>
-    <xmx:H-v4XX43xI83jWx_a8WhLOU7T4gfG6swGrFd7heNb0ixK98hQnvaMQ>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 25BD880064;
-        Tue, 17 Dec 2019 09:50:05 -0500 (EST)
-Date:   Tue, 17 Dec 2019 15:50:03 +0100
-From:   Greg KH <greg@kroah.com>
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-kernel@vger.kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, dmitry.torokhov@gmail.com,
-        jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
-        arnd@arndb.de, masahiroy@kernel.org, michal.lkml@markovi.net,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
-        linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: Re: [PATCH] RFC: platform driver registering via initcall tables
-Message-ID: <20191217145003.GB3639802@kroah.com>
-References: <20191217102219.29223-1-info@metux.net>
- <20191217103152.GB2914497@kroah.com>
- <6422bc88-6d0a-7b51-aaa7-640c6961b177@metux.net>
- <20191217140646.GC3489463@kroah.com>
- <d938b8e1-d9ce-9ad6-4178-86219e99d4df@metux.net>
+        id S1727465AbfLQPHt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 17 Dec 2019 10:07:49 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:56045 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727671AbfLQPHs (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 17 Dec 2019 10:07:48 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ihERq-0008ET-3N; Tue, 17 Dec 2019 16:07:42 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ihERp-0000VU-Ll; Tue, 17 Dec 2019 16:07:41 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [PATCH v3 3/3] leds: trigger: implement a tty trigger
+Date:   Tue, 17 Dec 2019 16:07:36 +0100
+Message-Id: <20191217150736.1479-4-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191217150736.1479-1-u.kleine-koenig@pengutronix.de>
+References: <20191217150736.1479-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d938b8e1-d9ce-9ad6-4178-86219e99d4df@metux.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 03:43:56PM +0100, Enrico Weigelt, metux IT consult wrote:
-> On 17.12.19 15:06, Greg KH wrote:
-> 
-> > That's not needed, and you are going to break the implicit ordering we
-> > already have with link order.  
-> 
-> Ups, 10 points for you - I didn't consider that.
-> 
-> > You are going to have to figure out what
-> > bus type the driver is, to determine what segment it was in, to figure
-> > out what was loaded before what.
-> 
-> hmm, if it's just the ordering by bus type (but not within one bus
-> type), then it shouldn't be the big deal to fix, as I'll need one table
-> and register-loop per bus-type anyways.
-> 
-> By the way: how is there init order ensured with dynamically loaded
-> modules ? (for cases where there aren't explicit symbol dependencies)
+Usage is as follows:
 
-See the recent work in the driver core for DT fixes for that very issue.
+	myled=ledname
+	tty=ttyS0
 
-greg k-h
+	echo tty > /sys/class/leds/$myled/trigger
+	cat /sys/class/tty/$tty/dev > /sys/class/leds/$myled/dev
+
+. When this new trigger is active it periodically checks the tty's
+statistics and when it changed since the last check the led is flashed
+once.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/leds/trigger/Kconfig       |   7 ++
+ drivers/leds/trigger/Makefile      |   1 +
+ drivers/leds/trigger/ledtrig-tty.c | 159 +++++++++++++++++++++++++++++
+ 3 files changed, 167 insertions(+)
+ create mode 100644 drivers/leds/trigger/ledtrig-tty.c
+
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+index ce9429ca6dde..40ff08c93f56 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -144,4 +144,11 @@ config LEDS_TRIGGER_AUDIO
+ 	  the audio mute and mic-mute changes.
+ 	  If unsure, say N
+ 
++config LEDS_TRIGGER_TTY
++	tristate "LED Trigger for TTY devices"
++	depends on TTY
++	help
++	  This allows LEDs to be controlled by activity on ttys which includes
++	  serial devices like /dev/ttyS0.
++
+ endif # LEDS_TRIGGERS
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+index 733a83e2a718..25c4db97cdd4 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -15,3 +15,4 @@ obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
+ obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
+ obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+= ledtrig-pattern.o
+ obj-$(CONFIG_LEDS_TRIGGER_AUDIO)	+= ledtrig-audio.o
++obj-$(CONFIG_LEDS_TRIGGER_TTY)		+= ledtrig-tty.o
+diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/ledtrig-tty.c
+new file mode 100644
+index 000000000000..0157aa0b2ce3
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-tty.c
+@@ -0,0 +1,159 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/tty.h>
++#include <uapi/linux/serial.h>
++
++struct ledtrig_tty_data {
++	struct led_classdev *led_cdev;
++	struct delayed_work dwork;
++	struct tty_struct *tty;
++	dev_t device;
++	int rx, tx;
++};
++
++static void ledtrig_tty_halt(struct ledtrig_tty_data *trigger_data)
++{
++	cancel_delayed_work_sync(&trigger_data->dwork);
++}
++
++static void ledtrig_tty_restart(struct ledtrig_tty_data *trigger_data)
++{
++	if (!trigger_data->tty)
++		return;
++
++	schedule_delayed_work(&trigger_data->dwork, 0);
++}
++
++static ssize_t dev_show(struct device *dev,
++			struct device_attribute *attr, char *buf)
++{
++	struct ledtrig_tty_data *trigger_data = led_trigger_get_drvdata(dev);
++	ssize_t len = 0;
++
++	if (trigger_data->tty)
++		len = sprintf(buf, "%u\n", trigger_data->device);
++
++	return len;
++}
++
++static ssize_t dev_store(struct device *dev,
++			 struct device_attribute *attr, const char *buf,
++			 size_t size)
++{
++	struct ledtrig_tty_data *trigger_data = led_trigger_get_drvdata(dev);
++	struct tty_struct *tty;
++	unsigned major, minor;
++	int ret;
++
++	if (size == 0 || (size == 1 && buf[0] == '\n')) {
++		tty = NULL;
++	} else {
++		ret = sscanf(buf, "%u:%u", &major, &minor);
++		if (ret < 2) {
++			dev_err(dev, "invalid value\n");
++			return -EINVAL;
++		}
++
++		tty = tty_kopen_shared(MKDEV(major, minor));
++		if (IS_ERR(tty)) {
++			dev_err(dev, "failed to open tty: %pe\n", tty);
++			return PTR_ERR(tty);
++		}
++	}
++
++	ledtrig_tty_halt(trigger_data);
++
++	tty_kref_put(trigger_data->tty);
++	trigger_data->tty = tty;
++	trigger_data->device = MKDEV(major, minor);
++
++	if (tty) {
++		struct serial_icounter_struct icount;
++		ret = tty_get_icount(trigger_data->tty, &icount);
++		if (!ret) {
++			trigger_data->tx = icount.tx;
++			trigger_data->rx = icount.rx;
++		}
++	}
++
++	ledtrig_tty_restart(trigger_data);
++
++	return size;
++}
++static DEVICE_ATTR_RW(dev);
++
++static void ledtrig_tty_work(struct work_struct *work)
++{
++	struct ledtrig_tty_data *trigger_data =
++		container_of(work, struct ledtrig_tty_data, dwork.work);
++	struct serial_icounter_struct icount;
++	int ret;
++
++	if (!trigger_data->tty) {
++		led_set_brightness(trigger_data->led_cdev, LED_OFF);
++		return;
++	}
++
++	ret = tty_get_icount(trigger_data->tty, &icount);
++	if (ret)
++		return;
++
++	if (icount.rx != trigger_data->rx ||
++	    icount.tx != trigger_data->tx) {
++		unsigned long delay_on = 100, delay_off = 100;
++
++		led_blink_set_oneshot(trigger_data->led_cdev,
++				      &delay_on, &delay_off, 0);
++
++		trigger_data->rx = icount.rx;
++		trigger_data->tx = icount.tx;
++	}
++
++	schedule_delayed_work(&trigger_data->dwork, msecs_to_jiffies(100));
++}
++
++static struct attribute *ledtrig_tty_attrs[] = {
++	&dev_attr_dev.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(ledtrig_tty);
++
++static int ledtrig_tty_activate(struct led_classdev *led_cdev)
++{
++	struct ledtrig_tty_data *trigger_data;
++
++	trigger_data = kzalloc(sizeof(*trigger_data), GFP_KERNEL);
++	if (!trigger_data)
++		return -ENOMEM;
++
++	led_set_trigger_data(led_cdev, trigger_data);
++
++	INIT_DELAYED_WORK(&trigger_data->dwork, ledtrig_tty_work);
++	trigger_data->led_cdev = led_cdev;
++
++	return 0;
++}
++
++static void ledtrig_tty_deactivate(struct led_classdev *led_cdev)
++{
++	struct ledtrig_tty_data *trigger_data = led_get_trigger_data(led_cdev);
++
++	cancel_delayed_work_sync(&trigger_data->dwork);
++
++	kfree(trigger_data);
++}
++
++struct led_trigger ledtrig_tty = {
++	.name = "tty",
++	.activate = ledtrig_tty_activate,
++	.deactivate = ledtrig_tty_deactivate,
++	.groups = ledtrig_tty_groups,
++};
++module_led_trigger(ledtrig_tty);
++
++MODULE_AUTHOR("Uwe Kleine-König <u.kleine-koenig@pengutronix.de>");
++MODULE_DESCRIPTION("UART LED trigger");
++MODULE_LICENSE("GPL v2");
+-- 
+2.24.0
+
