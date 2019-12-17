@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFACC2D0C5
-	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 08:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7E9C2D0C5
+	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 08:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B14D206A5
-	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 08:18:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A751206A5
+	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 08:18:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbfLQIRx (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 17 Dec 2019 03:17:53 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:46959 "EHLO
+        id S1726494AbfLQISG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 17 Dec 2019 03:18:06 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:34051 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbfLQIRx (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 17 Dec 2019 03:17:53 -0500
+        with ESMTP id S1726496AbfLQIRw (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 17 Dec 2019 03:17:52 -0500
 Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1ih839-0000yH-65; Tue, 17 Dec 2019 09:17:47 +0100
+        id 1ih839-0000yJ-68; Tue, 17 Dec 2019 09:17:47 +0100
 Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
         (envelope-from <ukl@pengutronix.de>)
-        id 1ih837-0002IV-Mf; Tue, 17 Dec 2019 09:17:45 +0100
+        id 1ih838-0002Ib-Cu; Tue, 17 Dec 2019 09:17:46 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
@@ -34,9 +34,9 @@ To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Jiri Slaby <jslaby@suse.com>
 Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-serial@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH v2 1/3] tty: new helper function tty_kopen_shared
-Date:   Tue, 17 Dec 2019 09:17:16 +0100
-Message-Id: <20191217081718.23807-2-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH v2 3/3] leds: trigger: implement a tty trigger
+Date:   Tue, 17 Dec 2019 09:17:18 +0100
+Message-Id: <20191217081718.23807-4-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191217081718.23807-1-u.kleine-koenig@pengutronix.de>
 References: <20191217081718.23807-1-u.kleine-koenig@pengutronix.de>
@@ -52,64 +52,203 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This function gives a struct tty_struct for a given device number.
+Usage is as follows:
+
+	myled=ledname
+	tty=ttyS0
+
+	echo tty > /sys/class/led/$myled/trigger
+	cat /sys/class/tty/$tty/dev > /sys/class/led/$myled/dev
+
+. When this new trigger is active it periodically checks the tty's
+statistics and when it changed since the last check the led is flashed
+once.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/tty/tty_io.c | 27 +++++++++++++++++++++++++++
- include/linux/tty.h  |  1 +
- 2 files changed, 28 insertions(+)
+ drivers/leds/trigger/Kconfig       |   7 ++
+ drivers/leds/trigger/Makefile      |   1 +
+ drivers/leds/trigger/ledtrig-tty.c | 146 +++++++++++++++++++++++++++++
+ 3 files changed, 154 insertions(+)
+ create mode 100644 drivers/leds/trigger/ledtrig-tty.c
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index d9f54c7d94f2..584025117cd3 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1925,6 +1925,33 @@ struct tty_struct *tty_kopen(dev_t device)
- }
- EXPORT_SYMBOL_GPL(tty_kopen);
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+index ce9429ca6dde..40ff08c93f56 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -144,4 +144,11 @@ config LEDS_TRIGGER_AUDIO
+ 	  the audio mute and mic-mute changes.
+ 	  If unsure, say N
  
-+/*
-+ * Caller gets a reference on (non-error) ttys, that must be disposed using
-+ * tty_kref_put().
-+ */
-+struct tty_struct *tty_kopen_shared(dev_t device)
-+{
-+	struct tty_struct *tty;
-+	struct tty_driver *driver;
-+	int index = -1;
++config LEDS_TRIGGER_TTY
++	tristate "LED Trigger for TTY devices"
++	depends on TTY
++	help
++	  This allows LEDs to be controlled by activity on ttys which includes
++	  serial devices like /dev/ttyS0.
 +
-+	mutex_lock(&tty_mutex);
-+	driver = tty_lookup_driver(device, NULL, &index);
-+	if (IS_ERR(driver)) {
-+		tty = ERR_CAST(driver);
-+		goto err_lookup_driver;
+ endif # LEDS_TRIGGERS
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+index 733a83e2a718..25c4db97cdd4 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -15,3 +15,4 @@ obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
+ obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
+ obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+= ledtrig-pattern.o
+ obj-$(CONFIG_LEDS_TRIGGER_AUDIO)	+= ledtrig-audio.o
++obj-$(CONFIG_LEDS_TRIGGER_TTY)		+= ledtrig-tty.o
+diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/ledtrig-tty.c
+new file mode 100644
+index 000000000000..3f3197366700
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-tty.c
+@@ -0,0 +1,146 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/tty.h>
++#include <uapi/linux/serial.h>
++
++struct ledtrig_tty_data {
++	struct led_classdev *led_cdev;
++	struct delayed_work dwork;
++	struct tty_struct *tty;
++	dev_t device;
++	struct serial_icounter_struct icount;
++};
++
++static void ledtrig_tty_halt(struct ledtrig_tty_data *trigger_data)
++{
++	cancel_delayed_work_sync(&trigger_data->dwork);
++}
++
++static void ledtrig_tty_restart(struct ledtrig_tty_data *trigger_data)
++{
++	if (!trigger_data->tty)
++		return;
++
++	schedule_delayed_work(&trigger_data->dwork, 0);
++}
++
++static ssize_t dev_show(struct device *dev,
++			struct device_attribute *attr, char *buf)
++{
++	struct ledtrig_tty_data *trigger_data = led_trigger_get_drvdata(dev);
++	ssize_t len = 0;
++
++	if (trigger_data->tty)
++		len = sprintf(buf, "%u\n", trigger_data->device);
++
++	return len;
++}
++
++static ssize_t dev_store(struct device *dev,
++			 struct device_attribute *attr, const char *buf,
++			 size_t size)
++{
++	struct ledtrig_tty_data *trigger_data = led_trigger_get_drvdata(dev);
++	struct tty_struct *tty;
++	unsigned major, minor;
++	int ret;
++
++	if (size == 0 || (size == 1 && buf[0] == '\n')) {
++		tty = NULL;
++	} else {
++		ret = sscanf(buf, "%u:%u", &major, &minor);
++		if (ret < 2) {
++			dev_err(dev, "invalid value\n");
++			return -EINVAL;
++		}
++
++		tty = tty_kopen_shared(MKDEV(major, minor));
++		if (IS_ERR(tty)) {
++			dev_err(dev, "failed to open tty: %pe\n", tty);
++			return PTR_ERR(tty);
++		}
 +	}
 +
-+	tty = tty_driver_lookup_tty(driver, NULL, index);
++	ledtrig_tty_halt(trigger_data);
 +
-+	tty_driver_kref_put(driver);
-+err_lookup_driver:
++	tty_kref_put(trigger_data->tty);
++	trigger_data->tty = tty;
++	trigger_data->device = MKDEV(major, minor);
 +
-+	mutex_unlock(&tty_mutex);
-+	return tty;
++	ledtrig_tty_restart(trigger_data);
++
++	return size;
 +}
-+EXPORT_SYMBOL(tty_kopen_shared);
++static DEVICE_ATTR_RW(dev);
 +
- /**
-  *	tty_open_by_driver	-	open a tty device
-  *	@device: dev_t of device to open
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index bfa4e2ee94a9..616268eb1613 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -412,6 +412,7 @@ extern struct tty_struct *get_current_tty(void);
- extern int __init tty_init(void);
- extern const char *tty_name(const struct tty_struct *tty);
- extern struct tty_struct *tty_kopen(dev_t device);
-+extern struct tty_struct *tty_kopen_shared(dev_t device);
- extern void tty_kclose(struct tty_struct *tty);
- extern int tty_dev_name_to_number(const char *name, dev_t *number);
- extern int tty_ldisc_lock(struct tty_struct *tty, unsigned long timeout);
++static void ledtrig_tty_work(struct work_struct *work)
++{
++	struct ledtrig_tty_data *trigger_data =
++		container_of(work, struct ledtrig_tty_data, dwork.work);
++	struct serial_icounter_struct icount;
++	int ret;
++
++	if (!trigger_data->tty) {
++		led_set_brightness(trigger_data->led_cdev, LED_OFF);
++		return;
++	}
++
++	ret = tty_get_icount(trigger_data->tty, &icount);
++	if (icount.rx > trigger_data->icount.rx ||
++	    icount.tx > trigger_data->icount.tx) {
++		unsigned long delay_on = 100, delay_off = 100;
++
++		led_blink_set_oneshot(trigger_data->led_cdev,
++				      &delay_on, &delay_off, 0);
++
++		trigger_data->icount = icount;
++	}
++
++	schedule_delayed_work(&trigger_data->dwork, msecs_to_jiffies(100));
++}
++
++static struct attribute *ledtrig_tty_attrs[] = {
++	&dev_attr_dev.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(ledtrig_tty);
++
++static int ledtrig_tty_activate(struct led_classdev *led_cdev)
++{
++	struct ledtrig_tty_data *trigger_data;
++
++	trigger_data = kzalloc(sizeof(*trigger_data), GFP_KERNEL);
++	if (!trigger_data)
++		return -ENOMEM;
++
++	led_set_trigger_data(led_cdev, trigger_data);
++
++	INIT_DELAYED_WORK(&trigger_data->dwork, ledtrig_tty_work);
++	trigger_data->led_cdev = led_cdev;
++
++	return 0;
++}
++
++static void ledtrig_tty_deactivate(struct led_classdev *led_cdev)
++{
++	struct ledtrig_tty_data *trigger_data = led_get_trigger_data(led_cdev);
++
++	cancel_delayed_work_sync(&trigger_data->dwork);
++
++	kfree(trigger_data);
++}
++
++struct led_trigger ledtrig_tty = {
++	.name = "tty",
++	.activate = ledtrig_tty_activate,
++	.deactivate = ledtrig_tty_deactivate,
++	.groups = ledtrig_tty_groups,
++};
++module_led_trigger(ledtrig_tty);
++
++MODULE_AUTHOR("Uwe Kleine-König <u.kleine-koenig@pengutronix.de>");
++MODULE_DESCRIPTION("UART LED trigger");
++MODULE_LICENSE("GPL v2");
 -- 
 2.24.0
 
