@@ -2,126 +2,100 @@ Return-Path: <SRS0=cj8m=2H=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF7EC43603
-	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 16:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D51C43603
+	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 17:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB3521D7D
-	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 16:58:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF3CC21835
+	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 17:04:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ldwTZP2c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbfLQQ6d (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 17 Dec 2019 11:58:33 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34117 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfLQQ6c (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 17 Dec 2019 11:58:32 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ihGAx-0003dL-In; Tue, 17 Dec 2019 17:58:23 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ihGAw-000403-BT; Tue, 17 Dec 2019 17:58:22 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [PATCH v4 2/3] tty: new helper function tty_get_icount()
-Date:   Tue, 17 Dec 2019 17:58:15 +0100
-Message-Id: <20191217165816.19324-3-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191217165816.19324-1-u.kleine-koenig@pengutronix.de>
-References: <20191217165816.19324-1-u.kleine-koenig@pengutronix.de>
+        id S1727241AbfLQREZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 17 Dec 2019 12:04:25 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49488 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbfLQREZ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 17 Dec 2019 12:04:25 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBHH4G98059831;
+        Tue, 17 Dec 2019 11:04:16 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576602256;
+        bh=c5aNDJdm202QVz/ei0pWBemlPhzJ5FDI2ojZ/hTof/o=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ldwTZP2cZVtzeLKa5fQRMrGwhb6feqtwReIfenzbmy3hJD6PwxgDbf31IH1a4daAm
+         MPmbDOcKX/gwjUb9z4sivTnO/cRw+dujLC658BTWxRMaaADnTVDiAD1ISgcHEBlWH+
+         3syxJb63H6OrRvq5fCJTWNlXewsYk9jJJCa7G7qo=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHH4F5f018559;
+        Tue, 17 Dec 2019 11:04:15 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
+ Dec 2019 11:04:15 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 17 Dec 2019 11:04:15 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHH4F6D060212;
+        Tue, 17 Dec 2019 11:04:15 -0600
+Subject: Re: [PATCH 2/2] leds: lm3692x: Allow to set ovp and brigthness mode
+To:     =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>
+CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <cover.1576499103.git.agx@sigxcpu.org>
+ <9c87a17aefbf758d58f199f7046114ee7505a1fa.1576499103.git.agx@sigxcpu.org>
+ <3d66b07d-b4c5-43e6-4378-d63cc84b8d43@ti.com>
+ <20191217154059.GA3929@bogon.m.sigxcpu.org>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <1c233937-5d99-bd9d-b8ac-290fca8305d5@ti.com>
+Date:   Tue, 17 Dec 2019 11:01:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20191217154059.GA3929@bogon.m.sigxcpu.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-leds@vger.kernel.org
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-For a given struct tty_struct this yields the corresponding statistics
-about sent and received characters (and some more) which is needed to
-implement an LED trigger for tty devices.
+Guido
 
-The new function is then used to simplify tty_tiocgicount().
+On 12/17/19 9:40 AM, Guido Günther wrote:
+> Hi Dan,
+> On Tue, Dec 17, 2019 at 06:53:45AM -0600, Dan Murphy wrote:
+>> Guido
+>>
+>> On 12/16/19 6:28 AM, Guido Günther wrote:
+>>> Overvoltage protection and brightness mode are currently hardcoded
+>>> as disabled in the driver. Make these configurable via DT.
+>> Can we split these up to two separate patch series?
+> Sure, should the binding doc updates be split as well?
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/tty/tty_io.c | 29 +++++++++++++++++++++++++----
- include/linux/tty.h  |  2 ++
- 2 files changed, 27 insertions(+), 4 deletions(-)
+Yes.
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index b718666ce73c..3e74e6cec1a6 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2492,15 +2492,36 @@ static int tty_tiocmset(struct tty_struct *tty, unsigned int cmd,
- 	return tty->ops->tiocmset(tty, set, clear);
- }
- 
-+/**
-+ *	tty_get_icount		-	get tty statistics
-+ *	@tty: tty device
-+ *	@icount: output parameter
-+ *
-+ *	Gets a copy of the tty's icount statistics.
-+ *
-+ *	Locking: none (up to the driver)
-+ */
-+int tty_get_icount(struct tty_struct *tty,
-+		   struct serial_icounter_struct *icount)
-+{
-+	memset(icount, 0, sizeof(*icount));
-+
-+	if (tty->ops->get_icount)
-+		return tty->ops->get_icount(tty, icount);
-+	else
-+		return -EINVAL;
-+}
-+EXPORT_SYMBOL_GPL(tty_get_icount);
-+
- static int tty_tiocgicount(struct tty_struct *tty, void __user *arg)
- {
--	int retval = -EINVAL;
- 	struct serial_icounter_struct icount;
--	memset(&icount, 0, sizeof(icount));
--	if (tty->ops->get_icount)
--		retval = tty->ops->get_icount(tty, &icount);
-+	int retval;
-+
-+	retval = tty_get_icount(tty, &icount);
- 	if (retval != 0)
- 		return retval;
-+
- 	if (copy_to_user(arg, &icount, sizeof(icount)))
- 		return -EFAULT;
- 	return 0;
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index d0bcf3226fb2..40ea5c409619 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -495,6 +495,8 @@ extern void tty_unthrottle(struct tty_struct *tty);
- extern int tty_throttle_safe(struct tty_struct *tty);
- extern int tty_unthrottle_safe(struct tty_struct *tty);
- extern int tty_do_resize(struct tty_struct *tty, struct winsize *ws);
-+extern int tty_get_icount(struct tty_struct *tty,
-+			  struct serial_icounter_struct *icount);
- extern int is_current_pgrp_orphaned(void);
- extern void tty_hangup(struct tty_struct *tty);
- extern void tty_vhangup(struct tty_struct *tty);
--- 
-2.24.0
+<snip>
+>> extra debug statement
+> They're not extra but meant to ease debugging the driver long therm but
+> i can drop these if that's not wanted. The rest makes a lot of sense.
+> Thanks a lot for having a look so promptly!
+
+Yes please remove those we don't need extra noise in the log.
+
+If someone wants to debug this then they can add the statements themselves
+
+Dan
 
