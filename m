@@ -2,112 +2,230 @@ Return-Path: <SRS0=cj8m=2H=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C04DDC43603
-	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 11:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C53AC47409
+	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 12:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 930DA2082E
-	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 11:07:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D800921835
+	for <linux-leds@archiver.kernel.org>; Tue, 17 Dec 2019 12:39:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576580866;
-	bh=AirzzB8xv/znj29XGEFdRULSYNsGeW8KUz8c+5pRPEI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OJxzr/Zw0glUWeRSEP7RereyJajr4T6fLFhPO2PPIptpPllLYm/PnOhdqWf/CHhXo
-	 /otqO7Dh0WZ/wc7Md4wH8gLXIbEpKoqLFYnodU3NA0ntW41MprI20T8FWdSX8yRR+F
-	 b6JAH66oTXr1+roUlT9fz88wzlaM38Bb0C/VLHQU=
+	s=default; t=1576586374;
+	bh=4lc/ehSQDI9aWx5ZLmJtKG/CFsG3TglET/wIcWT4JM8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
+	b=w+iv+Y/3jAR9tf9zamcchqv0kxkBi5/UK3WcauF8Vr3cJr2YsHB9yf7yKrG3YVp3Y
+	 siYJmYDNRwEgKk4xtdqdxO1Dk6SvN/XaapcMoQbM51ip4gRwzuE9jzdPfN79+eAGHL
+	 DuF5dQPmG4P5VCpVrNJEv7sDeob2irF3ObNg6RNc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbfLQLHq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 17 Dec 2019 06:07:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43040 "EHLO mail.kernel.org"
+        id S1728179AbfLQMja (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 17 Dec 2019 07:39:30 -0500
+Received: from foss.arm.com ([217.140.110.172]:35638 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726487AbfLQLHq (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 17 Dec 2019 06:07:46 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F17D820716;
-        Tue, 17 Dec 2019 11:07:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576580865;
-        bh=AirzzB8xv/znj29XGEFdRULSYNsGeW8KUz8c+5pRPEI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=o/GSFQfBGqIOQQllfLXWRvnLIosb1kpmBhxLE5b06FAhKJzkVkAew971CbGrQDQHl
-         SSFKtwuJTaO6s8UirjcquNCI7zhL7WXVD6cS/MVUpA6um9ae0fpVFooUEEjXn8cBRY
-         uTMehj3NvZNhq/DaLxrUfGcCOflWRkd/wwXexDqU=
-Date:   Tue, 17 Dec 2019 12:07:43 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: Re: [PATCH v2 3/3] leds: trigger: implement a tty trigger
-Message-ID: <20191217110743.GB3055718@kroah.com>
-References: <20191217081718.23807-1-u.kleine-koenig@pengutronix.de>
- <20191217081718.23807-4-u.kleine-koenig@pengutronix.de>
- <20191217083211.GC2672708@kroah.com>
- <20191217105826.6d2odt4k5b4qknjk@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191217105826.6d2odt4k5b4qknjk@pengutronix.de>
+        id S1728051AbfLQMj3 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:39:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4CBD6328;
+        Tue, 17 Dec 2019 04:39:28 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98D8C3F718;
+        Tue, 17 Dec 2019 04:39:27 -0800 (PST)
+Date:   Tue, 17 Dec 2019 12:39:26 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Dan Murphy <dmurphy@ti.com>, devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        matti.vaittinen@fi.rohmeurope.com,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        mazziesaccount@gmail.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Applied "dt-bindings: regulator: Document ROHM BD71282 regulator bindings" to the regulator tree
+In-Reply-To: <0985fec1cce98b1db66e5df2d9bcf2dfd9c224a7.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+Message-Id: <applied-0985fec1cce98b1db66e5df2d9bcf2dfd9c224a7.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+X-Patchwork-Hint: ignore
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 11:58:26AM +0100, Uwe Kleine-König wrote:
-> Hello Greg,
-> 
-> On Tue, Dec 17, 2019 at 09:32:11AM +0100, Greg Kroah-Hartman wrote:
-> > On Tue, Dec 17, 2019 at 09:17:18AM +0100, Uwe Kleine-König wrote:
-> > > +	ret = tty_get_icount(trigger_data->tty, &icount);
-> > > +	if (icount.rx > trigger_data->icount.rx ||
-> > > +	    icount.tx > trigger_data->icount.tx) {
-> > 
-> > What happens when icount.rx and/or icount.tx wraps?  It's "only" an int.
-> 
-> Good catch. I wonder why this is not an unsigned quantity. Just grepping
-> through drivers/tty/serial most drivers just increment these counters
-> and don't care for overflow (which is undefined for ints) either. :-\
+The patch
 
-It is not undefined for the kernel, I'm pretty sure we tell the compiler
-to be sane for this type of thing.  It should "just wrap".  Oh wait
-"int" is "signed int" here, hah, that's funny.  Surely someone has
-noticed that in 20+ years by now?
+   dt-bindings: regulator: Document ROHM BD71282 regulator bindings
 
-> ..ooOO(Where is the can maintainer? --- We found a can of worms :-)
+has been applied to the regulator tree at
 
-:)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.6
 
-> 
-> > > +		unsigned long delay_on = 100, delay_off = 100;
-> > > +
-> > > +		led_blink_set_oneshot(trigger_data->led_cdev,
-> > > +				      &delay_on, &delay_off, 0);
-> > > +
-> > > +		trigger_data->icount = icount;
-> > 
-> > Implicit memcpy of a structure?  Ick.
-> 
-> I'd call that elegant ;-)
-> 
-> > All you care about are the two integers, why not just track them instead
-> > of the whole thing?
-> 
-> For now I only care about tx and rx, but I intend to add some bells and
-> whistles to trigger on other events. (But I don't care much, can add
-> that once I implement this support.)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Start small and add more as-needed, you can always move back to the full
-structure later on if you really need it.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-thanks,
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-greg k-h
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 84a867c078136887dea64fa6e336333b657bc6a1 Mon Sep 17 00:00:00 2001
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Date: Wed, 11 Dec 2019 11:35:57 +0200
+Subject: [PATCH] dt-bindings: regulator: Document ROHM BD71282 regulator
+ bindings
+
+Document ROHM BD71828 PMIC regulator device tree bindings.
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Link: https://lore.kernel.org/r/0985fec1cce98b1db66e5df2d9bcf2dfd9c224a7.1576054779.git.matti.vaittinen@fi.rohmeurope.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../regulator/rohm,bd71828-regulator.yaml     | 107 ++++++++++++++++++
+ 1 file changed, 107 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71828-regulator.yaml
+
+diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd71828-regulator.yaml b/Documentation/devicetree/bindings/regulator/rohm,bd71828-regulator.yaml
+new file mode 100644
+index 000000000000..71ce032b8cf8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/rohm,bd71828-regulator.yaml
+@@ -0,0 +1,107 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/rohm,bd71828-regulator.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ROHM BD71828 Power Management Integrated Circuit regulators
++
++maintainers:
++  - Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
++
++description: |
++  This module is part of the ROHM BD71828 MFD device. For more details
++  see Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml.
++
++  The regulator controller is represented as a sub-node of the PMIC node
++  on the device tree.
++
++  Regulator nodes should be named to BUCK_<number> and LDO_<number>.
++  The valid names for BD71828 regulator nodes are
++  BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6, BUCK7
++  LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7
++
++patternProperties:
++  "^LDO[1-7]$":
++    type: object
++    allOf:
++      - $ref: regulator.yaml#
++    description:
++      Properties for single LDO regulator.
++
++    properties:
++      regulator-name:
++        pattern: "^ldo[1-7]$"
++        description:
++          should be "ldo1", ..., "ldo7"
++
++  "^BUCK[1-7]$":
++    type: object
++    allOf:
++      - $ref: regulator.yaml#
++    description:
++      Properties for single BUCK regulator.
++
++    properties:
++      regulator-name:
++        pattern: "^buck[1-7]$"
++        description:
++          should be "buck1", ..., "buck7"
++
++      rohm,dvs-run-voltage:
++        allOf:
++          - $ref: "/schemas/types.yaml#/definitions/uint32"
++          - minimum: 0
++            maximum: 3300000
++        description:
++          PMIC default "RUN" state voltage in uV. See below table for
++          bucks which support this. 0 means disabled.
++
++      rohm,dvs-idle-voltage:
++        allOf:
++          - $ref: "/schemas/types.yaml#/definitions/uint32"
++          - minimum: 0
++            maximum: 3300000
++        description:
++          PMIC default "IDLE" state voltage in uV. See below table for
++          bucks which support this. 0 means disabled.
++
++      rohm,dvs-suspend-voltage:
++        allOf:
++          - $ref: "/schemas/types.yaml#/definitions/uint32"
++          - minimum: 0
++            maximum: 3300000
++        description:
++          PMIC default "SUSPEND" state voltage in uV. See below table for
++          bucks which support this. 0 means disabled.
++
++      rohm,dvs-lpsr-voltage:
++        allOf:
++          - $ref: "/schemas/types.yaml#/definitions/uint32"
++          - minimum: 0
++            maximum: 3300000
++        description:
++          PMIC default "LPSR" state voltage in uV. See below table for
++          bucks which support this. 0 means disabled.
++
++        # Supported default DVS states:
++        #     buck       |    run     |   idle    | suspend  | lpsr
++        #--------------------------------------------------------------
++        # 1, 2, 6, and 7 | supported  | supported | supported (*)
++        #--------------------------------------------------------------
++        # 3, 4, and 5    |                    supported (**)
++        #--------------------------------------------------------------
++        #
++        #(*)  LPSR and SUSPEND states use same voltage but both states have own
++        #     enable /
++        #     disable settings. Voltage 0 can be specified for a state to make
++        #     regulator disabled on that state.
++        #
++        #(**) All states use same voltage but have own enable / disable
++        #     settings. Voltage 0 can be specified for a state to make
++        #     regulator disabled on that state.
++
++    required:
++      - regulator-name
++  additionalProperties: false
++additionalProperties: false
+-- 
+2.20.1
+
