@@ -2,139 +2,118 @@ Return-Path: <SRS0=EX5p=2I=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AD4C43603
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Dec 2019 14:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 869B3C43603
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Dec 2019 17:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824C32176D
-	for <linux-leds@archiver.kernel.org>; Wed, 18 Dec 2019 14:47:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JZ97l2tU"
+	by mail.kernel.org (Postfix) with ESMTP id 5F6E12176D
+	for <linux-leds@archiver.kernel.org>; Wed, 18 Dec 2019 17:24:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576689858;
+	bh=J9mVnpcPRlh0mvJgCzhidZ1PLmoyNm+FA0e8Ks3E2p4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=zZ8ewmeE5/65L6vbD1Q9TCPmYkNOGljaosbCJHp14EyjCf+u9Gq/stbXdKg8MGZ8M
+	 iAT+OgAISXRdkDilbUgXC5zyq7fo3e0gYin6dq+u/XAcMYRxOVzgLO9eNlJPPpCif7
+	 VGRWJF0fQmdGeBVMB0f1u8ZfMxEJOWO8CtiYmgsw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbfLROry (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 18 Dec 2019 09:47:54 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:44882 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727186AbfLROry (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 18 Dec 2019 09:47:54 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBIElnw9091999;
-        Wed, 18 Dec 2019 08:47:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576680469;
-        bh=9QQbSS0rFH46BR10NFC7Q609jmka/ilJ1AcUNksp8Fo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=JZ97l2tUebr0TbqM/WnjQMc9swjxz6W/Tn97oPc6EhnSznVXHMtgIbLg5uHlpmuY1
-         NiMeHguJuWE/AhB+3KImvys8cEkiA6AwOJa9vxdBP3YvIsgHw6aSFZ3u0cwNo6a/em
-         Z42TZ5RhDeLiubGLZNdxY2hMlQ/R8P8hbNBj7pcg=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBIEln1I019031
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 18 Dec 2019 08:47:49 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 18
- Dec 2019 08:47:48 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 18 Dec 2019 08:47:48 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBIElmKj014309;
-        Wed, 18 Dec 2019 08:47:48 -0600
-Subject: Re: [PATCH v17 00/19] Multicolor Framework
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20191114133023.32185-1-dmurphy@ti.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <efdfcf1f-50b2-314f-3d46-93369229109a@ti.com>
-Date:   Wed, 18 Dec 2019 08:45:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727347AbfLRRYP (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 18 Dec 2019 12:24:15 -0500
+Received: from foss.arm.com ([217.140.110.172]:54788 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727193AbfLRRYP (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 18 Dec 2019 12:24:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2610231B;
+        Wed, 18 Dec 2019 09:24:14 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 984363F67D;
+        Wed, 18 Dec 2019 09:24:13 -0800 (PST)
+Date:   Wed, 18 Dec 2019 17:24:12 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "noralf@tronnes.org" <noralf@tronnes.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>
+Subject: Re: Applied "regulator: bd71828: Basic support for ROHM bd71828 PMIC
+ regulators" to the regulator tree
+Message-ID: <20191218172412.GK3219@sirena.org.uk>
+References: <applied-5b1c4a22c7945e97ff2a7924abfeb3239043f8eb.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+ <de7424126e285d9bbd21a70945415d78203c2ba7.camel@fi.rohmeurope.com>
+ <20191218131700.GB42175@sirena.org.uk>
+ <b72cd22df0bbbb159cda08e556037f1ccf490b3d.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <20191114133023.32185-1-dmurphy@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vk/v8fjDPiDepTtA"
+Content-Disposition: inline
+In-Reply-To: <b72cd22df0bbbb159cda08e556037f1ccf490b3d.camel@fi.rohmeurope.com>
+X-Cookie: Power is poison.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hello
 
-Bump for application to leds-next
+--vk/v8fjDPiDepTtA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Dan
+On Wed, Dec 18, 2019 at 02:01:27PM +0000, Vaittinen, Matti wrote:
+> On Wed, 2019-12-18 at 13:17 +0000, Mark Brown wrote:
+> > On Wed, Dec 18, 2019 at 08:06:04AM +0000, Vaittinen, Matti wrote:
 
-On 11/14/19 7:30 AM, Dan Murphy wrote:
-> Hello
->
-> Simple fix in the multicolor code where the extended registration call was not
-> called in the devm_* function
->
-> Thanks Martin F. for finding this issue.
->
-> Hopefully this will be pulled in for the 5.5 merge window.
->
-> Dan
->
-> Dan Murphy (19):
->    dt: bindings: Add multicolor class dt bindings documention
->    dt-bindings: leds: Add multicolor ID to the color ID list
->    leds: Add multicolor ID to the color ID list
->    leds: multicolor: Introduce a multicolor class definition
->    dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
->    leds: lp50xx: Add the LP50XX family of the RGB LED driver
->    dt: bindings: lp55xx: Be consistent in the document with LED acronym
->    dt: bindings: lp55xx: Update binding for Multicolor Framework
->    ARM: dts: n900: Add reg property to the LP5523 channel node
->    ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
->    ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
->    leds: lp55xx: Convert LED class registration to devm_*
->    leds: lp55xx: Add multicolor framework support to lp55xx
->    leds: lp5523: Update the lp5523 code to add multicolor brightness
->      function
->    leds: lp5521: Add multicolor framework multicolor brightness support
->    leds: lp55xx: Fix checkpatch file permissions issues
->    leds: lp5523: Fix checkpatch issues in the code
->    dt: bindings: Update lp55xx binding to recommended LED naming
->    leds: lp55xx-common: Remove extern from lp55xx-common header
->
->   .../ABI/testing/sysfs-class-led-multicolor    |  36 +
->   .../bindings/leds/leds-class-multicolor.txt   |  98 +++
->   .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++
->   .../devicetree/bindings/leds/leds-lp55xx.txt  | 163 +++-
->   Documentation/leds/index.rst                  |   1 +
->   Documentation/leds/leds-class-multicolor.rst  | 100 +++
->   arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |  14 +-
->   arch/arm/boot/dts/omap3-n900.dts              |  29 +-
->   arch/arm/boot/dts/ste-href.dtsi               |  22 +-
->   drivers/leds/Kconfig                          |  22 +
->   drivers/leds/Makefile                         |   2 +
->   drivers/leds/led-class-multicolor.c           | 272 ++++++
->   drivers/leds/led-core.c                       |   1 +
->   drivers/leds/leds-lp50xx.c                    | 799 ++++++++++++++++++
->   drivers/leds/leds-lp5521.c                    |  43 +-
->   drivers/leds/leds-lp5523.c                    |  62 +-
->   drivers/leds/leds-lp5562.c                    |  22 +-
->   drivers/leds/leds-lp55xx-common.c             | 235 ++++--
->   drivers/leds/leds-lp55xx-common.h             |  36 +-
->   drivers/leds/leds-lp8501.c                    |  23 +-
->   include/dt-bindings/leds/common.h             |   3 +-
->   include/linux/led-class-multicolor.h          | 139 +++
->   include/linux/platform_data/leds-lp55xx.h     |   8 +
->   23 files changed, 2106 insertions(+), 172 deletions(-)
->   create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
->   create mode 100644 Documentation/leds/leds-class-multicolor.rst
->   create mode 100644 drivers/leds/led-class-multicolor.c
->   create mode 100644 drivers/leds/leds-lp50xx.c
->   create mode 100644 include/linux/led-class-multicolor.h
->
+> > > I think you missed the [PATCH v6 08/15] regulator: bd718x7: Split
+> > > driver to common and bd718x7 specific parts
+
+> > I didn't miss it, it was queued but it doesn't apply.
+
+> Right. The rohm-generic.h is changed by
+> [PATCH v6 04/15] mfd: rohm PMICs - use platform_device_id to match MFD
+> sub-devices
+
+Ugh, right.  I guess that'll have to go in with the MFD changes then.
+
+--vk/v8fjDPiDepTtA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl36YLsACgkQJNaLcl1U
+h9BkDAf/XSz4D3T25M0yYqmY2TIMQ+uimSMMMoiwsyS2ivd9XZXc66Y8aQJ68D4k
+phnZsmDtIQL/WPGbI85z8igy1eup0r7RABEbUJsRFELudd9udrnrWBLBVKFdb5BF
+3WoB7YBfUOaIm22ktVjVLyawXe/hvxqaAvpiWdRM80GBqGufRnf3fcT/Auv15ImJ
++q5BE6k24FErC519kY8ZFw8B4fszmqCCK6UfOTVyFNvOlLMYcUFGs3BDbgWNxpSF
+fOhGp47IZj2RPA85Ut6fGeYuL/dpVa6VaPYPxpkwnDflZeIlY1U/hKpqAd4y+MTv
+aEKbFYlOE0P6HfjnUDEyZIs0eIORJQ==
+=fXt1
+-----END PGP SIGNATURE-----
+
+--vk/v8fjDPiDepTtA--
