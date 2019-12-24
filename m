@@ -2,83 +2,90 @@ Return-Path: <SRS0=SOvn=2O=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B1FC2D0CF
-	for <linux-leds@archiver.kernel.org>; Tue, 24 Dec 2019 06:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 201BBC2D0CF
+	for <linux-leds@archiver.kernel.org>; Tue, 24 Dec 2019 11:26:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF4BC2071A
-	for <linux-leds@archiver.kernel.org>; Tue, 24 Dec 2019 06:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577170459;
-	bh=ZKiiDeIHEimT5RF49wdxk08CEo4aIHjAHjFkXzaey7Y=;
-	h=In-Reply-To:References:Cc:From:To:Subject:Date:List-ID:From;
-	b=2X6Fk2bp/HncI7oANqmtETivEGLmh8r3GTvD2qXfthENUJ6Lm53YzFhcEduOyhRb7
-	 gj7N+Sxbo0lB+8QQ8eWz3Lg59bxzek6JVqx0bFGT2CkOtq2FS/wqJmwlJXaSnzYoMy
-	 sEdgcXs54UnzVGIQmt1aQ7FAMemB4e6Vhb7tiEZk=
+	by mail.kernel.org (Postfix) with ESMTP id E2401206B7
+	for <linux-leds@archiver.kernel.org>; Tue, 24 Dec 2019 11:26:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726070AbfLXGyQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 24 Dec 2019 01:54:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38866 "EHLO mail.kernel.org"
+        id S1726157AbfLXL0X (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 24 Dec 2019 06:26:23 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:42022 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726043AbfLXGyP (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 24 Dec 2019 01:54:15 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D09B620706;
-        Tue, 24 Dec 2019 06:54:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577170454;
-        bh=ZKiiDeIHEimT5RF49wdxk08CEo4aIHjAHjFkXzaey7Y=;
-        h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
-        b=XD/RA8iIKhhmqKRAYapiwrONvPCq/s/0rct5T1yVgKpw15dEQr4ILYfgyPZaPBQ0N
-         w2MGva0yTs/pjiEyEbMOCYXAOeYP9ZSfev1N/rA9WOhHHH8pu1G0qouZQNUj/1P3n+
-         kW+SQz5bkTrNMQWF30Q6IHU4RMWGk3jkJcoRpSX8=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4907f35240ae77bba4a27fd32f1e586e00cd434d.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1576745635.git.matti.vaittinen@fi.rohmeurope.com> <4907f35240ae77bba4a27fd32f1e586e00cd434d.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1726102AbfLXL0X (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 24 Dec 2019 06:26:23 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 8179BFB03;
+        Tue, 24 Dec 2019 12:26:18 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id nHMPm4X5RhAK; Tue, 24 Dec 2019 12:26:17 +0100 (CET)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id 91FB140BD8; Tue, 24 Dec 2019 12:26:16 +0100 (CET)
+Date:   Tue, 24 Dec 2019 12:26:16 +0100
+From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To:     Pavel Machek <pavel@ucw.cz>
 Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Subject: Re: [PATCH v7 07/12] clk: bd718x7: Support ROHM BD71828 clk block
-User-Agent: alot/0.8.1
-Date:   Mon, 23 Dec 2019 22:54:14 -0800
-Message-Id: <20191224065414.D09B620706@mail.kernel.org>
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] leds: lm3692x: Allow to set ovp and brigthness mode
+Message-ID: <20191224112616.GA23468@bogon.m.sigxcpu.org>
+References: <cover.1576499103.git.agx@sigxcpu.org>
+ <9c87a17aefbf758d58f199f7046114ee7505a1fa.1576499103.git.agx@sigxcpu.org>
+ <20191221191844.GH32732@amd>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191221191844.GH32732@amd>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Quoting Matti Vaittinen (2019-12-19 01:52:13)
-> BD71828GW is a single-chip power management IC for battery-powered portab=
-le
-> devices. Add support for controlling BD71828 clk using bd718x7 driver.
->=20
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> ---
+Hi,
+On Sat, Dec 21, 2019 at 08:18:44PM +0100, Pavel Machek wrote:
+> Hi!
+> 
+> > Overvoltage protection and brightness mode are currently hardcoded
+> > as disabled in the driver. Make these configurable via DT.
+> 
+> What exactly is overvoltage protection good for? Should we default to
+> 29V if we have no other information?
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+The OVP protects the IC from overvoltage conditions on the output side.
+While looking at the manual again I noticed that i misremembered the
+'00' value which means 17V - not unprotected. Also the chip defaults
+to 29V OVP so i've adjusted that too.
 
-I guess we can't win and break the build dependency on the "generic"
-header file :/
+Cheers,
+ -- Guido
+
+> 
+> > Signed-off-by: Guido Günther <agx@sigxcpu.org>
+> 
+> > +	ret = device_property_read_u32(&led->client->dev,
+> > +				       "ti,overvoltage-volts", &ovp);
+> > +	if (!ret) {
+> > +		switch (ovp) {
+> > +		case 0:
+> > +			break;
+> > +		case 22:
+> > +			led->boost_ctrl |= LM3692X_OVP_21V;
+> > +			break;
+> 
+> Should be case 21.
+> 								Pavel
+> -- 
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+
 
