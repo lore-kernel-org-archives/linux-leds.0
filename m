@@ -1,189 +1,103 @@
-Return-Path: <SRS0=nVTZ=2X=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=ISkk=2Y=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC8AC3276C
-	for <linux-leds@archiver.kernel.org>; Thu,  2 Jan 2020 21:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08ED1C3276C
+	for <linux-leds@archiver.kernel.org>; Fri,  3 Jan 2020 01:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36C1220863
-	for <linux-leds@archiver.kernel.org>; Thu,  2 Jan 2020 21:45:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFB062085B
+	for <linux-leds@archiver.kernel.org>; Fri,  3 Jan 2020 01:19:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JROiiOYC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725871AbgABVpv (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 2 Jan 2020 16:45:51 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:57248 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbgABVpu (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 2 Jan 2020 16:45:50 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 88A261C25EC; Thu,  2 Jan 2020 22:45:48 +0100 (CET)
-Date:   Thu, 2 Jan 2020 22:45:48 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmurphy@ti.com
-Subject: leds: lm3642: remove warnings for bad strtol, cleanup gotos
-Message-ID: <20200102214547.GA3616@amd>
+        id S1726019AbgACBTS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 2 Jan 2020 20:19:18 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45908 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbgACBTS (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 2 Jan 2020 20:19:18 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b22so18457006pls.12;
+        Thu, 02 Jan 2020 17:19:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=Pj7NnDsV8DAl7XvANKt95DF4vhQ5j9tx+hWo3+M62uk=;
+        b=JROiiOYCr5lwF8FppQZTwu4slm8bZjMyBXPs8OobqBdx0c5DWs6MswUYTUQESgvDaq
+         H6vtD/TWrexXCVTwg8eu43CZn+NbuMgU2qJ0RFZ89n6EWsuRcssXVn6WRq1HWqiZlJ3E
+         SOdGHik6DEfwM1AzHc0gCvxxWL/tD2XZ5xYHwNKuuzW76IhNFNYiD71ogIRnTUqEPnnT
+         U9ZyvQky1e8EHdSrkTDrx9Ro2DArdlLNzxaBRh9WKijHc4UTAG8TVnllw7mfiTPqaihm
+         QjEsZJa1q1vMGe5uXCQF2kARXjqv+egyOuG4g+uSb6kKVKtyh5HHkSWgT3B0cU4MVx9+
+         C6rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Pj7NnDsV8DAl7XvANKt95DF4vhQ5j9tx+hWo3+M62uk=;
+        b=OATCEcTet0lOx08nKKIxHdCBGYHcBbIvRyOH6lWI/qYAs+QD/BUipeHoVKsuQt6Ldw
+         yYqTT4BM4wDbYgpnaoTwzTUH9V00tarLmaAqKTJyhDoRd5tNuFgpbp0MYiSsBT1Q2oHT
+         lQUhWxH0RUXi+TtuLfL9oYL1YAHX5FRY77rDHPk6d1EKxuDwgok+cSHao5BXfbcLT8Rv
+         cEHWp4VW42NPfzuyolMzsUbCltFEXcDtzULgKCIsQotEvI/xaMXwd1wnhYqRN28ubREe
+         s2ki0nVPqBnhlJ99yehw8UQNuLHIkbhkMENT/E89cydnwPKmJf9oMEvJyWrJdP7Rs9LX
+         Jc/g==
+X-Gm-Message-State: APjAAAWopnqvloX9U2VQWRZFM6y23ZuPVDt4+bqRIlvzyyH7px2dRH4h
+        S4qLb8GH5eVTtU6mOOzdzomjpgye
+X-Google-Smtp-Source: APXvYqziU4V5sowOrbh/FwOCan3iwRxFbK5Qh/qmFR88ULJJjYcBVFUjB+m2cKUQ2BrDXsi0ogFyTQ==
+X-Received: by 2002:a17:90a:6587:: with SMTP id k7mr22448878pjj.40.1578014357462;
+        Thu, 02 Jan 2020 17:19:17 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id l14sm59177498pgt.42.2020.01.02.17.19.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jan 2020 17:19:17 -0800 (PST)
+Date:   Thu, 2 Jan 2020 17:19:15 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] leds: gpio: switch to using devm_fwnode_gpiod_get()
+Message-ID: <20200103011915.GA879@dtor-ws>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="AqsLC8rIMeq19msA"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+devm_fwnode_get_gpiod_from_child() is going away as the name is too
+unwieldy, let's switch to using the new devm_fwnode_gpiod_get().
 
---AqsLC8rIMeq19msA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/leds/leds-gpio.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Hi!
-
-I've applied this to for-next tree. If you see something very wrong,
-let me know.
-
---
-
-    leds: lm3642: remove warnings for bad strtol, cleanup gotos
-   =20
-    Bad string from userspace is not worth printing warning on; gotos that
-    just directly return are not good, plus a comment fix.
-   =20
-    Cc: jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org, linux-kerne=
-l@vger.kernel.org, dmurphy@ti.com
-    Signed-off-by: Pavel Machek <pavel@ucw.cz>
-
-diff --git a/drivers/leds/leds-lm3642.c b/drivers/leds/leds-lm3642.c
-index 480575442ed8..4232906fcb75 100644
---- a/drivers/leds/leds-lm3642.c
-+++ b/drivers/leds/leds-lm3642.c
-@@ -106,7 +106,7 @@ static int lm3642_control(struct lm3642_chip_data *chip,
- 	ret =3D regmap_read(chip->regmap, REG_FLAG, &chip->last_flag);
- 	if (ret < 0) {
- 		dev_err(chip->dev, "Failed to read REG_FLAG Register\n");
--		goto out;
-+		return ret;
- 	}
-=20
- 	if (chip->last_flag)
-@@ -146,11 +146,11 @@ static int lm3642_control(struct lm3642_chip_data *ch=
-ip,
- 		break;
-=20
- 	default:
--		return ret;
-+		return -EINVAL;
- 	}
- 	if (ret < 0) {
- 		dev_err(chip->dev, "Failed to write REG_I_CTRL Register\n");
--		goto out;
-+		return ret;
- 	}
-=20
- 	if (chip->tx_pin)
-@@ -159,13 +159,12 @@ static int lm3642_control(struct lm3642_chip_data *ch=
-ip,
- 	ret =3D regmap_update_bits(chip->regmap, REG_ENABLE,
- 				 MODE_BITS_MASK << MODE_BITS_SHIFT,
- 				 opmode << MODE_BITS_SHIFT);
--out:
- 	return ret;
- }
-=20
- /* torch */
-=20
--/* torch pin config for lm3642*/
-+/* torch pin config for lm3642 */
- static ssize_t lm3642_torch_pin_store(struct device *dev,
- 				      struct device_attribute *attr,
- 				      const char *buf, size_t size)
-@@ -178,7 +177,7 @@ static ssize_t lm3642_torch_pin_store(struct device *de=
-v,
-=20
- 	ret =3D kstrtouint(buf, 10, &state);
- 	if (ret)
--		goto out_strtoint;
-+		return ret;
- 	if (state !=3D 0)
- 		state =3D 0x01 << TORCH_PIN_EN_SHIFT;
-=20
-@@ -186,16 +185,12 @@ static ssize_t lm3642_torch_pin_store(struct device *=
-dev,
- 	ret =3D regmap_update_bits(chip->regmap, REG_ENABLE,
- 				 TORCH_PIN_EN_MASK << TORCH_PIN_EN_SHIFT,
- 				 state);
--	if (ret < 0)
--		goto out;
-+	if (ret < 0) {
-+		dev_err(chip->dev, "%s:i2c access fail to register\n", __func__);
-+		return ret;
-+	}
-=20
- 	return size;
--out:
--	dev_err(chip->dev, "%s:i2c access fail to register\n", __func__);
--	return ret;
--out_strtoint:
--	dev_err(chip->dev, "%s: fail to change str to int\n", __func__);
--	return ret;
- }
-=20
- static DEVICE_ATTR(torch_pin, S_IWUSR, NULL, lm3642_torch_pin_store);
-@@ -229,7 +224,7 @@ static ssize_t lm3642_strobe_pin_store(struct device *d=
-ev,
-=20
- 	ret =3D kstrtouint(buf, 10, &state);
- 	if (ret)
--		goto out_strtoint;
-+		return ret;
- 	if (state !=3D 0)
- 		state =3D 0x01 << STROBE_PIN_EN_SHIFT;
-=20
-@@ -237,16 +232,12 @@ static ssize_t lm3642_strobe_pin_store(struct device =
-*dev,
- 	ret =3D regmap_update_bits(chip->regmap, REG_ENABLE,
- 				 STROBE_PIN_EN_MASK << STROBE_PIN_EN_SHIFT,
- 				 state);
--	if (ret < 0)
--		goto out;
-+	if (ret < 0) {
-+		dev_err(chip->dev, "%s:i2c access fail to register\n", __func__);
-+		return ret;
-+	}
-=20
- 	return size;
--out:
--	dev_err(chip->dev, "%s:i2c access fail to register\n", __func__);
--	return ret;
--out_strtoint:
--	dev_err(chip->dev, "%s: fail to change str to int\n", __func__);
--	return ret;
- }
-=20
- static DEVICE_ATTR(strobe_pin, S_IWUSR, NULL, lm3642_strobe_pin_store);
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index a5c73f3d5f797..f57f33008f4f3 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -151,9 +151,8 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 		struct gpio_led led = {};
+ 		const char *state = NULL;
+ 
+-		led.gpiod = devm_fwnode_get_gpiod_from_child(dev, NULL, child,
+-							     GPIOD_ASIS,
+-							     led.name);
++		led.gpiod = devm_fwnode_gpiod_get(dev, child, NULL, GPIOD_ASIS,
++						  led.name);
+ 		if (IS_ERR(led.gpiod)) {
+ 			fwnode_handle_put(child);
+ 			return ERR_CAST(led.gpiod);
+-- 
+2.24.1.735.g03f4e72817-goog
 
 
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---AqsLC8rIMeq19msA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl4OZIsACgkQMOfwapXb+vJ5yQCeIEdYuR6T299iXmfBG1IzksO+
-VgwAoL3CJVlauuqPxDpaPAx3H/+p2q8N
-=K6X0
------END PGP SIGNATURE-----
-
---AqsLC8rIMeq19msA--
+-- 
+Dmitry
