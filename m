@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7F4C32771
-	for <linux-leds@archiver.kernel.org>; Sat,  4 Jan 2020 21:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB64C32771
+	for <linux-leds@archiver.kernel.org>; Sat,  4 Jan 2020 21:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 336A9222C4
-	for <linux-leds@archiver.kernel.org>; Sat,  4 Jan 2020 21:11:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54E10222C4
+	for <linux-leds@archiver.kernel.org>; Sat,  4 Jan 2020 21:12:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578172306;
-	bh=KAzTx1HoWyH1hLxbp7zwKilyS2Wgf6R1NOwfHPWv/8M=;
+	s=default; t=1578172323;
+	bh=Kc8R8PG2XjwdyEZc6dNj6JgJPNj/Pco8HHi++eEHxk0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=w14ggwSDAr+S35VMtW5jpdZXdvf3ePeekV1eq8WdAnAV84tdeajIYVz7p74OKWcyK
-	 Ib+P+Zoh955CtRW8w3L28LoPf53yHsVrTJ6qEcnAxfQSAfAyJ5fasHGGE77WKHFmyL
-	 Xz8X2sHeUAVRqU9AC+5ZryTdlpaRZaGBiBfppGiY=
+	b=rH2PugMJDzkbI6xkcKsROL50jjgrPtk3Jiph/wODjQvicpHlPfJk5L/+majHuREJL
+	 PA/dj+MIvBOOJg/RTtIWYF/fZcJSlK+wd4ZwzbTdb/vMRZNoCqv+pfU0Hn1sEMX4mL
+	 mCjw70stIVST3/e2/QWnBau7COedH58BZbaPAezw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbgADVLn (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 4 Jan 2020 16:11:43 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:42644 "EHLO
+        id S1726281AbgADVMC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 4 Jan 2020 16:12:02 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:38031 "EHLO
         mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbgADVLn (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 4 Jan 2020 16:11:43 -0500
-Received: by mail-il1-f193.google.com with SMTP id t2so24010580ilq.9
-        for <linux-leds@vger.kernel.org>; Sat, 04 Jan 2020 13:11:42 -0800 (PST)
+        with ESMTP id S1726234AbgADVMA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 4 Jan 2020 16:12:00 -0500
+Received: by mail-il1-f193.google.com with SMTP id f5so39365847ilq.5
+        for <linux-leds@vger.kernel.org>; Sat, 04 Jan 2020 13:11:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=2DHefjLQc6S51MdSwDdwJfZErHx2CFrIYRVhl6DWIYE=;
-        b=Xko1CIw4EdU3HdVWbsTlSRilY5cowK0WoswZYGt9IU8c2HQ5xFtqifh8bPXZY5kuXs
-         RWP9VutBuTHGFpwJqYf1MrMCurONGYHQBvbcVeH/tALPMBTIqW6GV1EYiuGUDK/94fJs
-         jD/RV9YPO7NvAW15VB2QLEOaafVDAx3cWFOzPRY18O3tGFIWcHQWhPig/Y+v2AP779NK
-         agOpdH5umWSiI/RT3EWtaBRpxtKwUK/Ujlv6UD6GjmKK1S6LMiJmSsKLxV8ZQ4n14ZpE
-         hLcQbDXQfQwQFobvgcLwxWSwykyL+vMbIKaKKgl3Xh07QBCJq/paM+btp4H5jK1n25fI
-         U/MQ==
-X-Gm-Message-State: APjAAAVUfqQz3xy9aZaXNOTJmXcxGhJ5OyIiFSHlhYmn91MpD1DxX/T7
-        FB6qUMMx8Gc3CVUjqv6tM47NLgc=
-X-Google-Smtp-Source: APXvYqwpWDmbd4geKabsPCmtvz3F5Iwg3FyOSEok1GNKaAa59liTXI14nYBS7ySKIGtEMdidWDjtOQ==
-X-Received: by 2002:a92:9a47:: with SMTP id t68mr76039125ili.155.1578172301943;
-        Sat, 04 Jan 2020 13:11:41 -0800 (PST)
+        bh=B0Hpin+TA8PZ/UPU++QRg3TQKcelVhxJf7UGPi4P5JQ=;
+        b=D+0WfPtRYfQUoCT4u4NBB5r67oLSQA0pOqs1mudrzc0NX4XBH95yxrSwqY3BEiOkP0
+         YzRTnVxfSQIaVRzGYbSKR3CKMN2yclsOF/APN3pO30RybJl6exRcSlkzFeoopal10yOc
+         ZGkqKXTjIScsy6ZPjNpAjFkh7q+r8ld6wgt5qqjfiL7H2GLVBLc+Oh8gqaNL08nntYlM
+         2HAu8bjRqWTw7YkJ2GAgoYptnbwcKgznWTJOyA6k2Mw+2LmTE/MK6DtN5+fUUQMqM8o0
+         2pc2hzyY0iElzpm5rMZ4nLzyFBO2yBmS8EueOboEJmzNk/luIcMuzVUaWOpbqI++qaKN
+         8swQ==
+X-Gm-Message-State: APjAAAV3T8keOrideYo7GFZXFoSYeqKi7JBd3VW+ShYwfNKonfr5JGS/
+        RnvN+4KZC5rVbLcYyAHU/IudXLI=
+X-Google-Smtp-Source: APXvYqy6DJuL3A5VYn6p1bpewrNUSDuYdX1pI7lPPQhzI1m7L4RxQ+ltUBd6Iafk74zMS6+BJ3GDzg==
+X-Received: by 2002:a92:7ec9:: with SMTP id q70mr57945176ill.185.1578172318630;
+        Sat, 04 Jan 2020 13:11:58 -0800 (PST)
 Received: from rob-hp-laptop ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id 16sm15952998ioe.84.2020.01.04.13.11.40
+        by smtp.gmail.com with ESMTPSA id l4sm15610217ioa.9.2020.01.04.13.11.57
         for <linux-leds@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Jan 2020 13:11:41 -0800 (PST)
+        Sat, 04 Jan 2020 13:11:58 -0800 (PST)
 Received: from rob (uid 1000)
         (envelope-from rob@rob-hp-laptop)
         id 2219b7
         by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Sat, 04 Jan 2020 14:11:40 -0700
-Date:   Sat, 4 Jan 2020 14:11:40 -0700
+        Sat, 04 Jan 2020 14:11:57 -0700
+Date:   Sat, 4 Jan 2020 14:11:57 -0700
 From:   Rob Herring <robh@kernel.org>
 To:     Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
 Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
@@ -63,30 +63,30 @@ Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/9] dt: bindings: lm3692x: Add
- ti,brightness-mapping-exponential property
-Message-ID: <20200104211140.GA20909@bogus>
+Subject: Re: [PATCH v3 5/9] dt: bindings: lm3692x: Add led-max-microamp
+ property
+Message-ID: <20200104211157.GA21511@bogus>
 References: <cover.1578134779.git.agx@sigxcpu.org>
- <7df957d4f7902a5d2a30695ab2a5de19eb7772d3.1578134779.git.agx@sigxcpu.org>
+ <015c9818d17d81783614da2b89ec46283468765b.1578134779.git.agx@sigxcpu.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7df957d4f7902a5d2a30695ab2a5de19eb7772d3.1578134779.git.agx@sigxcpu.org>
+In-Reply-To: <015c9818d17d81783614da2b89ec46283468765b.1578134779.git.agx@sigxcpu.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Sat,  4 Jan 2020 11:54:19 +0100, =?UTF-8?q?Guido=20G=C3=BCnther?= wrote:
-> This allows to select exponential brightness mode instead of the default
-> linear mode.
+On Sat,  4 Jan 2020 11:54:21 +0100, =?UTF-8?q?Guido=20G=C3=BCnther?= wrote:
+> This can be used to limit the current per LED strip.
 > 
 > Signed-off-by: Guido Günther <agx@sigxcpu.org>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 > ---
 >  Documentation/devicetree/bindings/leds/leds-lm3692x.txt | 3 +++
 >  1 file changed, 3 insertions(+)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
