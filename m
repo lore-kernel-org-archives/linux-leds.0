@@ -2,31 +2,31 @@ Return-Path: <SRS0=BG6f=2Z=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 858A0C32770
-	for <linux-leds@archiver.kernel.org>; Sat,  4 Jan 2020 10:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF63C2D0C2
+	for <linux-leds@archiver.kernel.org>; Sat,  4 Jan 2020 10:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64FD02464E
-	for <linux-leds@archiver.kernel.org>; Sat,  4 Jan 2020 10:55:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EABB2464E
+	for <linux-leds@archiver.kernel.org>; Sat,  4 Jan 2020 10:55:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726143AbgADKye (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 4 Jan 2020 05:54:34 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:40186 "EHLO honk.sigxcpu.org"
+        id S1726050AbgADKyd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 4 Jan 2020 05:54:33 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:40172 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725861AbgADKye (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sat, 4 Jan 2020 05:54:34 -0500
+        id S1725812AbgADKyd (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sat, 4 Jan 2020 05:54:33 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 803B2FB03;
-        Sat,  4 Jan 2020 11:54:31 +0100 (CET)
+        by honk.sigxcpu.org (Postfix) with ESMTP id 16572FB02;
+        Sat,  4 Jan 2020 11:54:30 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id RbqPPA8RJr8P; Sat,  4 Jan 2020 11:54:29 +0100 (CET)
+        with ESMTP id p7bQUniFPXNl; Sat,  4 Jan 2020 11:54:27 +0100 (CET)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 1A9E849AA8; Sat,  4 Jan 2020 11:54:26 +0100 (CET)
+        id 074E049AA7; Sat,  4 Jan 2020 11:54:25 +0100 (CET)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -34,12 +34,10 @@ To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/9] leds: lm3692x: Allow to configure over voltage protection
-Date:   Sat,  4 Jan 2020 11:54:18 +0100
-Message-Id: <35d70c7802ff9efb6d6f83b402f4d26587ffbb9b.1578134779.git.agx@sigxcpu.org>
+Subject: [PATCH v3 0/9] leds: lm3692x: Allow to set ovp and brigthness mode
+Date:   Sat,  4 Jan 2020 11:54:16 +0100
+Message-Id: <cover.1578134779.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1578134779.git.agx@sigxcpu.org>
-References: <cover.1578134779.git.agx@sigxcpu.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -48,81 +46,62 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Overvoltage protection is currently using the default of 29V.  Make it
-configurable via DT.
+Overvoltage protection and brightness mode are currently hardcoded
+as 29V and disabled in the driver. Make these configurable via DT.
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
----
- drivers/leds/leds-lm3692x.c | 34 ++++++++++++++++++++++++++++++----
- 1 file changed, 30 insertions(+), 4 deletions(-)
+Besides addressing review comments v3 folds in the patches to
+disable the chip and turn of the regulator on brightness 0 from
 
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index 8b408102e138..28973cc5a6cc 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -114,6 +114,8 @@ struct lm3692x_led {
- 	struct regulator *regulator;
- 	int led_enable;
- 	int model_id;
-+
-+	u8 boost_ctrl;
- };
- 
- static const struct reg_default lm3692x_reg_defs[] = {
-@@ -249,10 +251,7 @@ static int lm3692x_init(struct lm3692x_led *led)
- 	if (ret)
- 		goto out;
- 
--	ret = regmap_write(led->regmap, LM3692X_BOOST_CTRL,
--			LM3692X_BOOST_SW_1MHZ |
--			LM3692X_BOOST_SW_NO_SHIFT |
--			LM3692X_OCP_PROT_1_5A);
-+	ret = regmap_write(led->regmap, LM3692X_BOOST_CTRL, led->boost_ctrl);
- 	if (ret)
- 		goto out;
- 
-@@ -326,6 +325,7 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- {
- 	struct fwnode_handle *child = NULL;
- 	struct led_init_data init_data = {};
-+	u32 ovp;
- 	int ret;
- 
- 	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
-@@ -350,6 +350,32 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- 		led->regulator = NULL;
- 	}
- 
-+	led->boost_ctrl = LM3692X_BOOST_SW_1MHZ |
-+		LM3692X_BOOST_SW_NO_SHIFT |
-+		LM3692X_OCP_PROT_1_5A;
-+	ret = device_property_read_u32(&led->client->dev,
-+				       "ti,ovp-microvolt", &ovp);
-+	if (ret) {
-+		led->boost_ctrl |= LM3692X_OVP_29V;
-+	} else {
-+		switch (ovp) {
-+		case 17000000:
-+			break;
-+		case 21000000:
-+			led->boost_ctrl |= LM3692X_OVP_21V;
-+			break;
-+		case 25000000:
-+			led->boost_ctrl |= LM3692X_OVP_25V;
-+			break;
-+		case 29000000:
-+			led->boost_ctrl |= LM3692X_OVP_29V;
-+			break;
-+		default:
-+			dev_err(&led->client->dev, "Invalid OVP %d\n", ovp);
-+			return -EINVAL;
-+		}
-+	}
-+
- 	child = device_get_next_child_node(&led->client->dev, child);
- 	if (!child) {
- 		dev_err(&led->client->dev, "No LED Child node\n");
+  https://lore.kernel.org/linux-leds/20191226101419.GE4033@amd/T/#t
+
+Besides addressing review comments v2 also allows to limit the maximum led
+current.
+
+Patches are against next-20191220.
+
+Changes from v2
+- As per review comment from Pavel Machek
+  https://lore.kernel.org/linux-leds/20191226100615.GA4033@amd/T/#u
+  - Use default value in DT example
+  https://lore.kernel.org/linux-leds/20191226100842.GC4033@amd/T/#u
+  - Use uppercase LED in commit message
+  https://lore.kernel.org/linux-leds/20191226101336.GD4033@amd/T/#u
+  - Fix typo in commit message
+  - Use correct return value when checking if property is present
+  - Fold in
+    https://lore.kernel.org/linux-leds/20191226101419.GE4033@amd/T/#t
+- Add Acked-By's from Pavel Machek, thanks!
+
+Changes from v1
+- As per review comments by Dan Murphy
+  https://lore.kernel.org/linux-leds/3d66b07d-b4c5-43e6-4378-d63cc84b8d43@ti.com/
+  - Split commits per propoerty
+  - Add new properties to DT example too
+  - Drop dev_dbg() statements
+  - ovp: fix 21V value parsing
+  - ovp: Set correct default value if DT parsing fails
+- As per review comments by Pavel Machek
+  https://lore.kernel.org/linux-leds/20191221191515.GF32732@amd/
+  - Fix defaults (which is 29V)
+  - Use uV as Unit for ovp property
+- Change property name to 'ti,ovp-microvolt' to make it shorter
+- Honor led-max-microamp to not exceed the maximum led current
+
+Guido Günther (9):
+  dt: bindings: lm3692x: Add ti,ovp-microvolt property
+  leds: lm3692x: Allow to configure over voltage protection
+  dt: bindings: lm3692x: Add ti,brightness-mapping-exponential property
+  leds: lm3692x: Allow to configure brigthness mode
+  dt: bindings: lm3692x: Add led-max-microamp property
+  leds: lm3692x: Make sure we don't exceed the maximum led current
+  leds: lm3692x: Move lm3692x_init and rename to lm3692x_leds_enable
+  leds: lm3692x: Split out lm3692x_leds_disable
+  leds: lm3692x: Disable chip on brightness 0
+
+ .../devicetree/bindings/leds/leds-lm3692x.txt |  11 +
+ drivers/leds/leds-lm3692x.c                   | 195 +++++++++++++-----
+ 2 files changed, 149 insertions(+), 57 deletions(-)
+
 -- 
 2.23.0
 
