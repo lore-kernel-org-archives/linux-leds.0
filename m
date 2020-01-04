@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CDAC32770
-	for <linux-leds@archiver.kernel.org>; Sat,  4 Jan 2020 10:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A78E5C32771
+	for <linux-leds@archiver.kernel.org>; Sat,  4 Jan 2020 10:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D376C2464E
-	for <linux-leds@archiver.kernel.org>; Sat,  4 Jan 2020 10:54:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EC1624650
+	for <linux-leds@archiver.kernel.org>; Sat,  4 Jan 2020 10:55:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbgADKyy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 4 Jan 2020 05:54:54 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:40228 "EHLO honk.sigxcpu.org"
+        id S1726293AbgADKy7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 4 Jan 2020 05:54:59 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:40210 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbgADKyk (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sat, 4 Jan 2020 05:54:40 -0500
+        id S1726264AbgADKyj (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sat, 4 Jan 2020 05:54:39 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 69018FB02;
-        Sat,  4 Jan 2020 11:54:39 +0100 (CET)
+        by honk.sigxcpu.org (Postfix) with ESMTP id F205FFB05;
+        Sat,  4 Jan 2020 11:54:37 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 5zpYTwW8azHf; Sat,  4 Jan 2020 11:54:38 +0100 (CET)
+        with ESMTP id iYnawKQ_PTCn; Sat,  4 Jan 2020 11:54:35 +0100 (CET)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 49C7149AAD; Sat,  4 Jan 2020 11:54:26 +0100 (CET)
+        id 5B95949AAF; Sat,  4 Jan 2020 11:54:26 +0100 (CET)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -34,9 +34,9 @@ To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/9] leds: lm3692x: Make sure we don't exceed the maximum led current
-Date:   Sat,  4 Jan 2020 11:54:22 +0100
-Message-Id: <5826b77d42521595e93d01d53475a8881cad1875.1578134779.git.agx@sigxcpu.org>
+Subject: [PATCH v3 8/9] leds: lm3692x: Split out lm3692x_leds_disable
+Date:   Sat,  4 Jan 2020 11:54:24 +0100
+Message-Id: <33b134d8ddefe4b4855b5c3bffdbafbfe6087a51.1578134779.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1578134779.git.agx@sigxcpu.org>
 References: <cover.1578134779.git.agx@sigxcpu.org>
@@ -48,72 +48,76 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The current is given by the formular from page 12 of
-https://www.ti.com/lit/ds/symlink/lm36922.pdf. We use this to limit the
-led's max_brightness using the led-max-microamp DT property.
-
-The formula for the lm36923 is identical according to the data sheet.
+Move the relevant parts out of lm3692x_remove() and
+call it from there. No functional change.
 
 Signed-off-by: Guido Günther <agx@sigxcpu.org>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
- drivers/leds/leds-lm3692x.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+ drivers/leds/leds-lm3692x.c | 42 +++++++++++++++++++++++--------------
+ 1 file changed, 26 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index ff20560a8263..2e24316566f5 100644
+index 2b8f87b829ae..075dc4b6b3b6 100644
 --- a/drivers/leds/leds-lm3692x.c
 +++ b/drivers/leds/leds-lm3692x.c
-@@ -6,6 +6,7 @@
- #include <linux/i2c.h>
- #include <linux/init.h>
- #include <linux/leds.h>
-+#include <linux/log2.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
-@@ -320,11 +321,29 @@ static int lm3692x_init(struct lm3692x_led *led)
+@@ -288,6 +288,30 @@ static int lm3692x_leds_enable(struct lm3692x_led *led)
  	return ret;
  }
  
-+static enum led_brightness lm3692x_max_brightness(struct lm3692x_led *led,
-+						  u32 max_cur)
++static int lm3692x_leds_disable(struct lm3692x_led *led)
 +{
-+	u32 max_code;
++	int ret;
 +
-+	/* see p.12 of LM36922 data sheet for brightness formula */
-+	if (led->brightness_ctrl & LM3692X_MAP_MODE_EXP) {
-+		/*  228 =~ 1.0 / log2(1.003040572) */
-+		max_code = ilog2(max_cur/50) * 228;
-+	} else {
-+		max_code = ((max_cur * 1000) - 37806) / 12195;
++	ret = regmap_update_bits(led->regmap, LM3692X_EN, LM3692X_DEVICE_EN, 0);
++	if (ret) {
++		dev_err(&led->client->dev, "Failed to disable regulator: %d\n",
++			ret);
++		return ret;
 +	}
-+	if (max_code > 0x7FF)
-+		max_code = 0x7FF;
 +
-+	return max_code >> 3;
++	if (led->enable_gpio)
++		gpiod_direction_output(led->enable_gpio, 0);
++
++	if (led->regulator) {
++		ret = regulator_disable(led->regulator);
++		if (ret)
++			dev_err(&led->client->dev,
++				"Failed to disable regulator: %d\n", ret);
++	}
++
++	return ret;
 +}
 +
- static int lm3692x_probe_dt(struct lm3692x_led *led)
+ static int lm3692x_brightness_set(struct led_classdev *led_cdev,
+ 				enum led_brightness brt_val)
  {
- 	struct fwnode_handle *child = NULL;
- 	struct led_init_data init_data = {};
--	u32 ovp;
-+	u32 ovp, max_cur;
- 	bool exp_mode;
+@@ -474,23 +498,9 @@ static int lm3692x_remove(struct i2c_client *client)
+ 	struct lm3692x_led *led = i2c_get_clientdata(client);
  	int ret;
  
-@@ -397,6 +416,10 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+-	ret = regmap_update_bits(led->regmap, LM3692X_EN, LM3692X_DEVICE_EN, 0);
+-	if (ret) {
+-		dev_err(&led->client->dev, "Failed to disable regulator: %d\n",
+-			ret);
++	ret = lm3692x_leds_disable(led);
++	if (ret)
  		return ret;
- 	}
+-	}
+-
+-	if (led->enable_gpio)
+-		gpiod_direction_output(led->enable_gpio, 0);
+-
+-	if (led->regulator) {
+-		ret = regulator_disable(led->regulator);
+-		if (ret)
+-			dev_err(&led->client->dev,
+-				"Failed to disable regulator: %d\n", ret);
+-	}
+-
+ 	mutex_destroy(&led->lock);
  
-+	ret = fwnode_property_read_u32(child, "led-max-microamp", &max_cur);
-+	led->led_dev.max_brightness = ret ? LED_FULL :
-+		lm3692x_max_brightness(led, max_cur);
-+
- 	init_data.fwnode = child;
- 	init_data.devicename = led->client->name;
- 	init_data.default_label = ":";
+ 	return 0;
 -- 
 2.23.0
 
