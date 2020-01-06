@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B51C33C9E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F8BC33C9B
 	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 15:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEC27214D8
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 15:49:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A585C207FD
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 15:49:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbgAFPtG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 6 Jan 2020 10:49:06 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:41166 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726446AbgAFPtF (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        id S1726683AbgAFPtF (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Mon, 6 Jan 2020 10:49:05 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:41140 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726448AbgAFPtE (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 6 Jan 2020 10:49:04 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 7C33CFB04;
-        Mon,  6 Jan 2020 16:49:03 +0100 (CET)
+        by honk.sigxcpu.org (Postfix) with ESMTP id 9A3DFFB02;
+        Mon,  6 Jan 2020 16:49:00 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id eVdHpQW_EqiV; Mon,  6 Jan 2020 16:49:02 +0100 (CET)
+        with ESMTP id HywBlBE8BDas; Mon,  6 Jan 2020 16:48:57 +0100 (CET)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 5934949D44; Mon,  6 Jan 2020 16:48:56 +0100 (CET)
+        id 2969C40157; Mon,  6 Jan 2020 16:48:56 +0100 (CET)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -34,9 +34,9 @@ To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 5/6] dt: bindings: lm3692x: Add ti,brightness-mapping-exponential property
-Date:   Mon,  6 Jan 2020 16:48:54 +0100
-Message-Id: <3da232fdab3112a54d63bd42d5100c921d5b8b20.1578324703.git.agx@sigxcpu.org>
+Subject: [PATCH v4 2/6] leds: lm3692x: Move lm3692x_init and rename to lm3692x_leds_enable
+Date:   Mon,  6 Jan 2020 16:48:51 +0100
+Message-Id: <25e332c308bd175c0d7fc71689f1ac8494d144bb.1578324703.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1578324703.git.agx@sigxcpu.org>
 References: <cover.1578324703.git.agx@sigxcpu.org>
@@ -48,36 +48,111 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This allows to select exponential brightness mode instead of the default
-linear mode.
+This moves lm3692x_init so it can be used from
+lm3692x_brightness_set. Rename to lm3692_leds_enable to pair up
+with lm3692x_leds_disable. No functional change.
 
 Signed-off-by: Guido Günther <agx@sigxcpu.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
- Documentation/devicetree/bindings/leds/leds-lm3692x.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/leds/leds-lm3692x.c | 70 ++++++++++++++++++-------------------
+ 1 file changed, 35 insertions(+), 35 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
-index 501468aa4d38..b8939fdd19d6 100644
---- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
-@@ -18,6 +18,8 @@ Required properties:
- Optional properties:
- 	- enable-gpios : gpio pin to enable/disable the device.
- 	- vled-supply : LED supply
-+	- ti,brightness-mapping-exponential: Whether to use exponential
-+	    brightness mapping
- 	- ti,ovp-microvolt: Overvoltage protection in
- 	    micro-volt, can be 17000000, 21000000, 25000000 or
- 	    29000000. If ti,ovp-microvolt is not specified it
-@@ -51,6 +53,7 @@ led-controller@36 {
- 	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
- 	vled-supply = <&vbatt>;
- 	ti,ovp-microvolt = <29000000>;
-+	ti,brightness-mapping-exponential;
+diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+index 1b056af60bd6..f7fdfaee5ac5 100644
+--- a/drivers/leds/leds-lm3692x.c
++++ b/drivers/leds/leds-lm3692x.c
+@@ -165,40 +165,7 @@ static int lm3692x_fault_check(struct lm3692x_led *led)
+ 	return read_buf;
+ }
  
- 	led@0 {
- 		reg = <0>;
+-static int lm3692x_brightness_set(struct led_classdev *led_cdev,
+-				enum led_brightness brt_val)
+-{
+-	struct lm3692x_led *led =
+-			container_of(led_cdev, struct lm3692x_led, led_dev);
+-	int ret;
+-	int led_brightness_lsb = (brt_val >> 5);
+-
+-	mutex_lock(&led->lock);
+-
+-	ret = lm3692x_fault_check(led);
+-	if (ret) {
+-		dev_err(&led->client->dev, "Cannot read/clear faults: %d\n",
+-			ret);
+-		goto out;
+-	}
+-
+-	ret = regmap_write(led->regmap, LM3692X_BRT_MSB, brt_val);
+-	if (ret) {
+-		dev_err(&led->client->dev, "Cannot write MSB: %d\n", ret);
+-		goto out;
+-	}
+-
+-	ret = regmap_write(led->regmap, LM3692X_BRT_LSB, led_brightness_lsb);
+-	if (ret) {
+-		dev_err(&led->client->dev, "Cannot write LSB: %d\n", ret);
+-		goto out;
+-	}
+-out:
+-	mutex_unlock(&led->lock);
+-	return ret;
+-}
+-
+-static int lm3692x_init(struct lm3692x_led *led)
++static int lm3692x_leds_enable(struct lm3692x_led *led)
+ {
+ 	int enable_state;
+ 	int ret, reg_ret;
+@@ -322,6 +289,39 @@ static int lm3692x_init(struct lm3692x_led *led)
+ 	return ret;
+ }
+ 
++static int lm3692x_brightness_set(struct led_classdev *led_cdev,
++				enum led_brightness brt_val)
++{
++	struct lm3692x_led *led =
++			container_of(led_cdev, struct lm3692x_led, led_dev);
++	int ret;
++	int led_brightness_lsb = (brt_val >> 5);
++
++	mutex_lock(&led->lock);
++
++	ret = lm3692x_fault_check(led);
++	if (ret) {
++		dev_err(&led->client->dev, "Cannot read/clear faults: %d\n",
++			ret);
++		goto out;
++	}
++
++	ret = regmap_write(led->regmap, LM3692X_BRT_MSB, brt_val);
++	if (ret) {
++		dev_err(&led->client->dev, "Cannot write MSB: %d\n", ret);
++		goto out;
++	}
++
++	ret = regmap_write(led->regmap, LM3692X_BRT_LSB, led_brightness_lsb);
++	if (ret) {
++		dev_err(&led->client->dev, "Cannot write LSB: %d\n", ret);
++		goto out;
++	}
++out:
++	mutex_unlock(&led->lock);
++	return ret;
++}
++
+ static enum led_brightness lm3692x_max_brightness(struct lm3692x_led *led,
+ 						  u32 max_cur)
+ {
+@@ -451,7 +451,7 @@ static int lm3692x_probe(struct i2c_client *client,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = lm3692x_init(led);
++	ret = lm3692x_leds_enable(led);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.23.0
 
