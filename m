@@ -2,87 +2,113 @@ Return-Path: <SRS0=UHzG=23=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 639E1C32771
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 09:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D40B5C33C9B
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 15:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36A9B215A4
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 09:44:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0A3F207FD
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 15:49:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbgAFJos (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 6 Jan 2020 04:44:48 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:33898 "EHLO honk.sigxcpu.org"
+        id S1726939AbgAFPtM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 6 Jan 2020 10:49:12 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:41192 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726080AbgAFJor (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 6 Jan 2020 04:44:47 -0500
+        id S1726825AbgAFPtJ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 6 Jan 2020 10:49:09 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 99DCAFB03;
-        Mon,  6 Jan 2020 10:44:45 +0100 (CET)
+        by honk.sigxcpu.org (Postfix) with ESMTP id 197EDFB02;
+        Mon,  6 Jan 2020 16:49:07 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 2JLKIb8Jk-A7; Mon,  6 Jan 2020 10:44:44 +0100 (CET)
+        with ESMTP id UrIqahHrEVJn; Mon,  6 Jan 2020 16:49:05 +0100 (CET)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 03BB649C60; Mon,  6 Jan 2020 10:44:43 +0100 (CET)
-Date:   Mon, 6 Jan 2020 10:44:43 +0100
-From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        id 3842B49D41; Mon,  6 Jan 2020 16:48:56 +0100 (CET)
+From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/9] leds: lm3692x: Allow to set ovp and brigthness
- mode
-Message-ID: <20200106094443.GB13043@bogon.m.sigxcpu.org>
-References: <cover.1578134779.git.agx@sigxcpu.org>
- <20200105234708.GA7598@amd>
+Subject: [PATCH v4 1/6] leds: lm3692x: Make sure we don't exceed the maximum led current
+Date:   Mon,  6 Jan 2020 16:48:50 +0100
+Message-Id: <b00fc4fc813483e126cf078e38774a87256828af.1578324703.git.agx@sigxcpu.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <cover.1578324703.git.agx@sigxcpu.org>
+References: <cover.1578324703.git.agx@sigxcpu.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200105234708.GA7598@amd>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi,
-On Mon, Jan 06, 2020 at 12:47:08AM +0100, Pavel Machek wrote:
-> Hi!
-> 
-> > Overvoltage protection and brightness mode are currently hardcoded
-> > as 29V and disabled in the driver. Make these configurable via DT.
-> > 
-> > Besides addressing review comments v3 folds in the patches to
-> > disable the chip and turn of the regulator on brightness 0 from
-> > 
-> >   https://lore.kernel.org/linux-leds/20191226101419.GE4033@amd/T/#t
-> > 
-> > Besides addressing review comments v2 also allows to limit the maximum led
-> > current.
-> 
-> > Patches are against next-20191220.
-> 
-> I applied everything but the "exponential" changes and the last
-> one. I'll apply the last one if I get version that applies on top of
-> leds tree.
+The current is given by the formular from page 12 of
+https://www.ti.com/lit/ds/symlink/lm36922.pdf. We use this to limit the
+led's max_brightness using the led-max-microamp DT property.
 
-Thanks! Can I do anything to get the exponential part in? Is it because
-you want the exponential mode to move to the backlight binding?
+The formula for the lm36923 is identical according to the data sheet.
 
-Cheers,
- -- Guido
+Signed-off-by: Guido Günther <agx@sigxcpu.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+---
+ drivers/leds/leds-lm3692x.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-> 
-> Best regards,
-> 									Pavel
-> 
-> -- 
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
-
+diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+index 28973cc5a6cc..1b056af60bd6 100644
+--- a/drivers/leds/leds-lm3692x.c
++++ b/drivers/leds/leds-lm3692x.c
+@@ -6,6 +6,7 @@
+ #include <linux/i2c.h>
+ #include <linux/init.h>
+ #include <linux/leds.h>
++#include <linux/log2.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+@@ -321,11 +322,24 @@ static int lm3692x_init(struct lm3692x_led *led)
+ 	return ret;
+ }
+ 
++static enum led_brightness lm3692x_max_brightness(struct lm3692x_led *led,
++						  u32 max_cur)
++{
++	u32 max_code;
++
++	/* see p.12 of LM36922 data sheet for brightness formula */
++	max_code = ((max_cur * 1000) - 37806) / 12195;
++	if (max_code > 0x7FF)
++		max_code = 0x7FF;
++
++	return max_code >> 3;
++}
++
+ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ {
+ 	struct fwnode_handle *child = NULL;
+ 	struct led_init_data init_data = {};
+-	u32 ovp;
++	u32 ovp, max_cur;
+ 	int ret;
+ 
+ 	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
+@@ -391,6 +405,10 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ 		return ret;
+ 	}
+ 
++	ret = fwnode_property_read_u32(child, "led-max-microamp", &max_cur);
++	led->led_dev.max_brightness = ret ? LED_FULL :
++		lm3692x_max_brightness(led, max_cur);
++
+ 	init_data.fwnode = child;
+ 	init_data.devicename = led->client->name;
+ 	init_data.default_label = ":";
+-- 
+2.23.0
 
