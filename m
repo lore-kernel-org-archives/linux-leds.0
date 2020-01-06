@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C91C33C9B
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 15:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B51C33C9E
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 15:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A403207FD
+	by mail.kernel.org (Postfix) with ESMTP id CEC27214D8
 	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 15:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbgAFPtG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S1726793AbgAFPtG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Mon, 6 Jan 2020 10:49:06 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:41158 "EHLO honk.sigxcpu.org"
+Received: from honk.sigxcpu.org ([24.134.29.49]:41166 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726454AbgAFPtE (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 6 Jan 2020 10:49:04 -0500
+        id S1726446AbgAFPtF (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 6 Jan 2020 10:49:05 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 5B22AFB03;
-        Mon,  6 Jan 2020 16:49:02 +0100 (CET)
+        by honk.sigxcpu.org (Postfix) with ESMTP id 7C33CFB04;
+        Mon,  6 Jan 2020 16:49:03 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 7Hmxyg6x44up; Mon,  6 Jan 2020 16:49:00 +0100 (CET)
+        with ESMTP id eVdHpQW_EqiV; Mon,  6 Jan 2020 16:49:02 +0100 (CET)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 4330149D3D; Mon,  6 Jan 2020 16:48:56 +0100 (CET)
+        id 5934949D44; Mon,  6 Jan 2020 16:48:56 +0100 (CET)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -34,9 +34,9 @@ To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/6] leds: lm3692x: Split out lm3692x_leds_disable
-Date:   Mon,  6 Jan 2020 16:48:52 +0100
-Message-Id: <79793beed2ef175a64c28700fdd234a007ca39a5.1578324703.git.agx@sigxcpu.org>
+Subject: [PATCH v4 5/6] dt: bindings: lm3692x: Add ti,brightness-mapping-exponential property
+Date:   Mon,  6 Jan 2020 16:48:54 +0100
+Message-Id: <3da232fdab3112a54d63bd42d5100c921d5b8b20.1578324703.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1578324703.git.agx@sigxcpu.org>
 References: <cover.1578324703.git.agx@sigxcpu.org>
@@ -48,76 +48,36 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Move the relevant parts out of lm3692x_remove() and
-call it from there. No functional change.
+This allows to select exponential brightness mode instead of the default
+linear mode.
 
 Signed-off-by: Guido Günther <agx@sigxcpu.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/leds/leds-lm3692x.c | 42 +++++++++++++++++++++++--------------
- 1 file changed, 26 insertions(+), 16 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-lm3692x.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index f7fdfaee5ac5..1254695d7e94 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -289,6 +289,30 @@ static int lm3692x_leds_enable(struct lm3692x_led *led)
- 	return ret;
- }
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+index 501468aa4d38..b8939fdd19d6 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+@@ -18,6 +18,8 @@ Required properties:
+ Optional properties:
+ 	- enable-gpios : gpio pin to enable/disable the device.
+ 	- vled-supply : LED supply
++	- ti,brightness-mapping-exponential: Whether to use exponential
++	    brightness mapping
+ 	- ti,ovp-microvolt: Overvoltage protection in
+ 	    micro-volt, can be 17000000, 21000000, 25000000 or
+ 	    29000000. If ti,ovp-microvolt is not specified it
+@@ -51,6 +53,7 @@ led-controller@36 {
+ 	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+ 	vled-supply = <&vbatt>;
+ 	ti,ovp-microvolt = <29000000>;
++	ti,brightness-mapping-exponential;
  
-+static int lm3692x_leds_disable(struct lm3692x_led *led)
-+{
-+	int ret;
-+
-+	ret = regmap_update_bits(led->regmap, LM3692X_EN, LM3692X_DEVICE_EN, 0);
-+	if (ret) {
-+		dev_err(&led->client->dev, "Failed to disable regulator: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	if (led->enable_gpio)
-+		gpiod_direction_output(led->enable_gpio, 0);
-+
-+	if (led->regulator) {
-+		ret = regulator_disable(led->regulator);
-+		if (ret)
-+			dev_err(&led->client->dev,
-+				"Failed to disable regulator: %d\n", ret);
-+	}
-+
-+	return ret;
-+}
-+
- static int lm3692x_brightness_set(struct led_classdev *led_cdev,
- 				enum led_brightness brt_val)
- {
-@@ -463,23 +487,9 @@ static int lm3692x_remove(struct i2c_client *client)
- 	struct lm3692x_led *led = i2c_get_clientdata(client);
- 	int ret;
- 
--	ret = regmap_update_bits(led->regmap, LM3692X_EN, LM3692X_DEVICE_EN, 0);
--	if (ret) {
--		dev_err(&led->client->dev, "Failed to disable regulator: %d\n",
--			ret);
-+	ret = lm3692x_leds_disable(led);
-+	if (ret)
- 		return ret;
--	}
--
--	if (led->enable_gpio)
--		gpiod_direction_output(led->enable_gpio, 0);
--
--	if (led->regulator) {
--		ret = regulator_disable(led->regulator);
--		if (ret)
--			dev_err(&led->client->dev,
--				"Failed to disable regulator: %d\n", ret);
--	}
--
- 	mutex_destroy(&led->lock);
- 
- 	return 0;
+ 	led@0 {
+ 		reg = <0>;
 -- 
 2.23.0
 
