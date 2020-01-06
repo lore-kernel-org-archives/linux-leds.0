@@ -2,110 +2,158 @@ Return-Path: <SRS0=UHzG=23=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BE5C33C8C
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 15:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01BADC33C8C
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 18:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94C17207FD
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 15:49:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C83122072C
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Jan 2020 18:59:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1578337161;
+	bh=v9d35TVrIgudq/ZtG6CwFsc6NUWvH2KVrcE15fX6q9E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=fsVxLvP/BB9HjxzNloYzk8+7TVT2iPMkbCTzJZvjoxHDzs403iaZgQo9Mm7TVIvSs
+	 2pBcSLH57rYRq95prDfPhq14BcOSISeXEQHH7TpkC9oXvRh53vwk4jZDzScNbHNANy
+	 oHJqF3orLibN2CImAJJZVnv842hMjqfem4+OVVkM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbgAFPtD (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 6 Jan 2020 10:49:03 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:41128 "EHLO honk.sigxcpu.org"
+        id S1727169AbgAFS7V (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 6 Jan 2020 13:59:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726446AbgAFPtD (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 6 Jan 2020 10:49:03 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id B8FD1FB09;
-        Mon,  6 Jan 2020 16:48:59 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 9ozlM3C6QP1l; Mon,  6 Jan 2020 16:48:57 +0100 (CET)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 0C76649D3F; Mon,  6 Jan 2020 16:48:55 +0100 (CET)
-From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/6] leds: lm3692x: Allow to set ovp and brigthness mode
-Date:   Mon,  6 Jan 2020 16:48:49 +0100
-Message-Id: <cover.1578324703.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.23.0
+        id S1727074AbgAFS7V (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 6 Jan 2020 13:59:21 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E88B12072A;
+        Mon,  6 Jan 2020 18:59:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578337160;
+        bh=v9d35TVrIgudq/ZtG6CwFsc6NUWvH2KVrcE15fX6q9E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Cny6ABu/mU+myEV7taYl6RIQey4gbUi1362mYgSCcKsnwVDJRHWTqZlndb2yhRS4H
+         br5CM49+v3rUvzbUgtfNnyuYnenSm00XYxTCv2jOqkiGybzgBIW4jdyNv1psvYM0Hj
+         jIQCZNXoyQsXQ59oSCY6VsAQNTvsdQYZh7UVtfLY=
+Date:   Mon, 6 Jan 2020 19:59:18 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Pavel Machek <pavel@denx.de>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, Jiri Slaby <jslaby@suse.com>,
+        kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] leds: trigger: implement a tty trigger
+Message-ID: <20200106185918.GB597279@kroah.com>
+References: <20191219093947.15502-1-u.kleine-koenig@pengutronix.de>
+ <20191219093947.15502-4-u.kleine-koenig@pengutronix.de>
+ <20191221184047.GC32732@amd>
+ <20191223100828.bqtda4zilc74fqfk@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191223100828.bqtda4zilc74fqfk@pengutronix.de>
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Overvoltage protection and brightness mode are currently hardcoded
-as 29V and disabled in the driver. Make these configurable via DT.
+On Mon, Dec 23, 2019 at 11:08:28AM +0100, Uwe Kleine-König wrote:
+> Hello Pavel,
+> 
+> On Sat, Dec 21, 2019 at 07:40:47PM +0100, Pavel Machek wrote:
+> > > +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-tty
+> > > @@ -0,0 +1,6 @@
+> > > +What:		/sys/class/leds/<led>/dev
+> > > +Date:		Dec 2019
+> > > +KernelVersion:	5.6
+> > > +Contact:	linux-leds@vger.kernel.org
+> > > +Description:
+> > > +		Specifies $major:$minor of the triggering tty
+> > 
+> > Ok, sounds reasonable.
+> > 
+> > > +static ssize_t dev_store(struct device *dev,
+> > > +			 struct device_attribute *attr, const char *buf,
+> > > +			 size_t size)
+> > > +{
+> > > +	struct ledtrig_tty_data *trigger_data = led_trigger_get_drvdata(dev);
+> > > +	struct tty_struct *tty;
+> > > +	unsigned major, minor;
+> > > +	int ret;
+> > > +
+> > > +	if (size == 0 || (size == 1 && buf[0] == '\n')) {
+> > > +		tty = NULL;
+> > > +	} else {
+> > > +		ret = sscanf(buf, "%u:%u", &major, &minor);
+> > > +		if (ret < 2)
+> > > +			return -EINVAL;
+> > 
+> > If user writes 1:2:badparsingofdata into the file, it will pass, right?
+> 
+> Yes, and it will have the same effect as writing 1:2. I wonder if this
+> is bad.
+> 
+> > > +		tty = tty_kopen_shared(MKDEV(major, minor));
+> > > +		if (IS_ERR(tty))
+> > > +			return PTR_ERR(tty);
+> > > +	}
+> > 
+> > Do you need to do some kind of tty_kclose()? What happens if the
+> > device disappears, for example because the USB modem is unplugged?
+> 
+> Only tty_kref_put is needed to close.
+> 
+> > > +static void ledtrig_tty_work(struct work_struct *work)
+> > > +{
+> > > +	struct ledtrig_tty_data *trigger_data =
+> > > +		container_of(work, struct ledtrig_tty_data, dwork.work);
+> > > +	struct serial_icounter_struct icount;
+> > > +	int ret;
+> > > +
+> > > +	if (!trigger_data->tty) {
+> > > +		led_set_brightness(trigger_data->led_cdev, LED_OFF);
+> > > +		return;
+> > > +	}
+> > > +
+> > > +	ret = tty_get_icount(trigger_data->tty, &icount);
+> > > +	if (ret)
+> > > +		return;
+> > > +
+> > > +	if (icount.rx != trigger_data->rx ||
+> > > +	    icount.tx != trigger_data->tx) {
+> > > +		unsigned long delay_on = 100, delay_off = 100;
+> > > +
+> > > +		led_blink_set_oneshot(trigger_data->led_cdev,
+> > > +				      &delay_on, &delay_off, 0);
+> > > +
+> > > +		trigger_data->rx = icount.rx;
+> > > +		trigger_data->tx = icount.tx;
+> > > +	}
+> > 
+> > Since you are polling this, anyway, can you just manipulate brightness
+> > directly instead of using _oneshot()? _oneshot() will likely invoke
+> > another set of workqueues.
+> 
+> I copied that from the netdev trigger. I failed to find a suitable
+> helper function, did I miss that or does it need creating?
+>  
+> > LED triggers were meant to operate directly from the events, not based
+> > on statistics like this.
+> 
+> Ditto; just copied from the netdev trigger. I tried to find a suitable
+> place to add a trigger in the core, but this is hard without having to
+> modify all drivers; additionally this is in thier hot path. So I
+> considered using statistics a good idea. Greg also liked it and someone
+> before us for the network trigger, too ...
 
-This v4 moves the exponential brightness mode to the back of the series
-as per Pavel's request:
+This still looks ok to me, any objections to me merging it in my tty
+tree?
 
-  https://lore.kernel.org/linux-next/20200106103233.GA32426@amd/T/#m93270a9bf10b88e060f4e4cf5701c527476de985
+thanks,
 
-The end result is identical and i've tested everything still works when
-dropping the last to patches and checked compiltion via
-
-  git rebase -i ... -exec 'make ... Image dtbs'
-
-Patches are against linux-leds-next.
-
-Changes from v3
-- Move exponential mode patches to the back of the series
-  https://lore.kernel.org/linux-next/20200106103233.GA32426@amd/T/#m93270a9bf10b88e060f4e4cf5701c527476de985
-- Add Rob's Reviewed-by:, thanks!
-
-Changes from v2
-- As per review comment from Pavel Machek
-  https://lore.kernel.org/linux-leds/20191226100615.GA4033@amd/T/#u
-  - Use default value in DT example
-  https://lore.kernel.org/linux-leds/20191226100842.GC4033@amd/T/#u
-  - Use uppercase LED in commit message
-  https://lore.kernel.org/linux-leds/20191226101336.GD4033@amd/T/#u
-  - Fix typo in commit message
-  - Use correct return value when checking if property is present
-  - Fold in
-    https://lore.kernel.org/linux-leds/20191226101419.GE4033@amd/T/#t
-- Add Acked-By's from Pavel Machek, thanks!
-
-Changes from v1
-- As per review comments by Dan Murphy
-  https://lore.kernel.org/linux-leds/3d66b07d-b4c5-43e6-4378-d63cc84b8d43@ti.com/
-  - Split commits per propoerty
-  - Add new properties to DT example too
-  - Drop dev_dbg() statements
-  - ovp: fix 21V value parsing
-  - ovp: Set correct default value if DT parsing fails
-- As per review comments by Pavel Machek
-  https://lore.kernel.org/linux-leds/20191221191515.GF32732@amd/
-  - Fix defaults (which is 29V)
-  - Use uV as Unit for ovp property
-- Change property name to 'ti,ovp-microvolt' to make it shorter
-- Honor led-max-microamp to not exceed the maximum led current
-
-Guido GÃ¼nther (6):
-  leds: lm3692x: Make sure we don't exceed the maximum led current
-  leds: lm3692x: Move lm3692x_init and rename to lm3692x_leds_enable
-  leds: lm3692x: Split out lm3692x_leds_disable
-  leds: lm3692x: Disable chip on brightness 0
-  dt: bindings: lm3692x: Add ti,brightness-mapping-exponential property
-  leds: lm3692x: Allow to configure brigthness mode
-
- .../devicetree/bindings/leds/leds-lm3692x.txt |   3 +
- drivers/leds/leds-lm3692x.c                   | 165 ++++++++++++------
- 2 files changed, 113 insertions(+), 55 deletions(-)
-
--- 
-2.23.0
-
+greg k-h
