@@ -2,106 +2,95 @@ Return-Path: <SRS0=7gnB=24=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4630AC3F68F
-	for <linux-leds@archiver.kernel.org>; Tue,  7 Jan 2020 15:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71CB5C33C9E
+	for <linux-leds@archiver.kernel.org>; Tue,  7 Jan 2020 21:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21D992467D
-	for <linux-leds@archiver.kernel.org>; Tue,  7 Jan 2020 15:01:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4469B2077B
+	for <linux-leds@archiver.kernel.org>; Tue,  7 Jan 2020 21:13:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IP+X+P1Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbgAGPBZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 7 Jan 2020 10:01:25 -0500
-Received: from vm1.sequanux.org ([188.165.36.56]:51986 "EHLO vm1.sequanux.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727880AbgAGPBZ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 7 Jan 2020 10:01:25 -0500
-X-Greylist: delayed 373 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 Jan 2020 10:01:24 EST
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by vm1.sequanux.org (Postfix) with ESMTP id 742A91085E2;
-        Tue,  7 Jan 2020 15:55:10 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at vm1.sequanux.org
-Received: from vm1.sequanux.org ([127.0.0.1])
-        by localhost (vm1.sequanux.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id tPdmNcS--lMf; Tue,  7 Jan 2020 15:55:08 +0100 (CET)
-Received: from localhost (softwrestling.org [188.165.144.248])
-        by vm1.sequanux.org (Postfix) with ESMTPSA id 573591085A0;
-        Tue,  7 Jan 2020 15:55:08 +0100 (CET)
-Date:   Tue, 7 Jan 2020 15:55:08 +0100
-From:   Simon Guinot <simon.guinot@sequanux.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
-        Vincent Donnefort <vdonnefort@gmail.com>
-Subject: Re: [PATCH 2/2] leds: ns2: Convert to GPIO descriptors
-Message-ID: <20200107145508.GA21102@kw.sim.vm.gnt>
-References: <20200107141030.74052-1-linus.walleij@linaro.org>
- <20200107141030.74052-2-linus.walleij@linaro.org>
- <20200107141742.GA13954@duo.ucw.cz>
+        id S1730050AbgAGVNN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 7 Jan 2020 16:13:13 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43473 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730063AbgAGVNM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jan 2020 16:13:12 -0500
+Received: by mail-lf1-f67.google.com with SMTP id 9so781611lfq.10
+        for <linux-leds@vger.kernel.org>; Tue, 07 Jan 2020 13:13:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IGi8vX1/beRTA6iMMVbhICNfnE+SNCo5YclmR59f6vI=;
+        b=IP+X+P1YdDKA7nugszD5dZCNPhsdJerEkMg0kBnccZWGFrN1KxrTZ4lQdW1Hbzx0R4
+         OwdDogQlm8+cJmJ8elc3SToRAZClRJ1jTsa7urWbhGtQSI4dFvRzDFsk4KzLmXtTzHPo
+         fIcp5OMlksbsnoNzCqUsOd5PoNscXt7pI80LYYilmUa5mI304QU05DjgsbIVuumWqlpI
+         r2Y72IrIp+oskfHrmTzLGlQ8JkKxm23RW5s4JGR2dOvnrjIkymzo2dmVUsKsOE63grys
+         B+B8QMfGd936QR/KHn6Jsw5h4VHkvWlgJlPEceVSapspc11G3F1nPxAekz7fnOhtrHHs
+         L7zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IGi8vX1/beRTA6iMMVbhICNfnE+SNCo5YclmR59f6vI=;
+        b=V3itLD0wp+apT5aVX9LPGiSkh5dPnXugdd5vlwcILKpx70nX1f6IQUGQdF/pRBZp6d
+         +M4TVlFkhqIuZHP0+aNFusC+27/LIEaIzQf6O3bjvppLpNqR/jS+FxMBb09vn08OgV3t
+         36YYtnGqFE1mNWFtskdDt/b/C7Y43A/QnBSox7LdCyXxUfVbt5ii9xQSHy22GovR4PLp
+         tkEEVswr/CDAnagQeqhXr7P66sjkdK+k8HZx1RWP8XRWEpsHbgblb9+/A0FgkxG7ZGef
+         33FjUrhvkh+PBsea7zeJGYqQDe3Z9YiGlcD6A3/InzfdhfXZ2qBeYs9jDCqC7P10ZJ2Z
+         8kfA==
+X-Gm-Message-State: APjAAAUu75XG9YwRw20yu4iU8V6o+nT3fRwe+gxR75FoXrSxXU5HMywz
+        7S8z/Q66xi60JccT90Phk/Oy31jedd9/0PBoq8D2lQ==
+X-Google-Smtp-Source: APXvYqxeqj1Pu+ALjaJoeeYIze/VfUL6ekcrCLu+F0Extj2a1JWki5IQH+aBkA9qETgY9mIVob9LU1GJp0C0Q/lw3UU=
+X-Received: by 2002:a19:c0b:: with SMTP id 11mr837964lfm.135.1578431590574;
+ Tue, 07 Jan 2020 13:13:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
-Content-Disposition: inline
+References: <20200107141030.74052-1-linus.walleij@linaro.org>
+ <20200107141030.74052-2-linus.walleij@linaro.org> <20200107141742.GA13954@duo.ucw.cz>
 In-Reply-To: <20200107141742.GA13954@duo.ucw.cz>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 7 Jan 2020 22:12:59 +0100
+Message-ID: <CACRpkdYH4FgZTajhmtWvp2A7G_E8M1fZF2xZKY9TBouf9SLN1A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] leds: ns2: Convert to GPIO descriptors
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Simon Guinot <simon.guinot@sequanux.org>,
+        Vincent Donnefort <vdonnefort@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+On Tue, Jan 7, 2020 at 3:17 PM Pavel Machek <pavel@ucw.cz> wrote:
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Ok. But what is motivation for doing this?
 
-On Tue, Jan 07, 2020 at 03:17:42PM +0100, Pavel Machek wrote:
-> Hi!
->=20
-> > This converts the NS2 LED driver to use GPIO descriptors.
-> > We take care to request the GPIOs "as is" which is what
-> > the current driver goes to lengths to achieve, then we use
-> > GPIOs throughout.
-> >=20
-> > As the nodes for each LED does not have any corresponding
-> > device, we need to use the DT-specific accessors to get these
-> > GPIO descriptors from the device tree.
->=20
-> Ok. But what is motivation for doing this? Was this tested?
->=20
-> Does anyone still use leds-ns2?
+Zip from drivers/gpio/TODO:
 
-Hi,
+Starting with commit 79a9becda894 the GPIO subsystem embarked on a journey
+to move away from the global GPIO numberspace and toward a decriptor-based
+approach. This means that GPIO consumers, drivers and machine descriptions
+ideally have no use or idea of the global GPIO numberspace that has/was
+used in the inception of the GPIO subsystem.
 
-Yes the leds-ns2 driver is used by The LaCie Network Space v2 family of
-NAS and by the Seagate NAS 2 and 4-Bay. The latter is a bit old but not
-obsolete. AFAIK all this NASes are supported by Debian.
+The motivation for that in turn is that the GPIO number space has become
+unmanageable and is also unpredictable due to factors such as probe ordering
+and the introduction of -EPROBE_DEFER. The number space issue is the
+same as to why irq is moving away from irq numbers to IRQ descriptors.
 
-I'll do the testing this week-end.
+> Was this tested?
 
-Simon
+No, I change a lot of code I can't test, I rely on volunteers to test
+it, it seems
+Simon volunteered.
 
---jRHKVT23PllUwdXP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXW8DgovlR3VS5hA0zyg/RDPmszoFAl4Um8sACgkQzyg/RDPm
-szpZRA//QjPwNWTD7pLeT49nyTnjvfFBz/61WtKHwKHCNA1WSU+qwCFKE2cUFlyb
-3/dmd1ZC0qPnpriU9gWnT2ts4L7wO37iDKHudCAFrsxCaWYh6dBBs/QyAgqY4cUJ
-5gZpHUyopJSJcVsuRw7RIy0rBFQXwKOJcVy5FdSm+choijnl/e0v21dc0psof3e8
-syddMgN+6Uj2l6TGhsYZQoqj/T7jNoE0rhZZsfDXXzi/QxMKDn59gksZXfCDERU/
-pF42EnwplqSzECVWa7MBPdld3XIOaiSvCVc+ZsFcQX0WJc+dDHaOgEhM9/1wS5cV
-3EhyF9vOlAYDHbTfIYxEja1Fvsx3W/mrg5yzm6XRLOb8xe7rRwk5Qjog/fMHItjo
-xVNuAuFLi98gD7Ed4MgBp4CVWBa4d4pSC1uy5t4BUZ41tzCbQyegkYNqXR2Zxd6f
-b/kLmqYkirmvqhg7jWyY8jBHilmhGSY4vJHiMN+dNH7PIMtHw4f4Yi6iSQlG+Ndn
-zQ9iqsP44H5RWn+NOHn6JR1tYax1JvPQXEWuoxQXNzlmrATYt37WkZVIYelFj6kd
-THvSs7b8o/hMawpan97aYL54afKFtlL1s2wVFuLISm6iWNGvFCVYfAr9Zmv+4rwL
-Jz6xtW9GqWtkwLYivDbyOFa6WDdroT1Vl8qkmwRC5xj/61ZuOkU=
-=yzfU
------END PGP SIGNATURE-----
-
---jRHKVT23PllUwdXP--
+Yours,
+Linus Walleij
