@@ -1,179 +1,117 @@
-Return-Path: <SRS0=7522=3J=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=tdXK=3L=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D23FC2D0DB
-	for <linux-leds@archiver.kernel.org>; Mon, 20 Jan 2020 17:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE79C2D0DB
+	for <linux-leds@archiver.kernel.org>; Wed, 22 Jan 2020 20:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BF1E22314
-	for <linux-leds@archiver.kernel.org>; Mon, 20 Jan 2020 17:09:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B7132073A
+	for <linux-leds@archiver.kernel.org>; Wed, 22 Jan 2020 20:17:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbgATRJT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 20 Jan 2020 12:09:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60522 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726642AbgATRJT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 20 Jan 2020 12:09:19 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 6F20CAFF0;
-        Mon, 20 Jan 2020 17:09:17 +0000 (UTC)
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: [PATCH v2] leds: add SGI IP30 led support
-Date:   Mon, 20 Jan 2020 18:09:09 +0100
-Message-Id: <20200120170910.6501-1-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.24.1
+        id S1725933AbgAVURO (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 22 Jan 2020 15:17:14 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:52140 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbgAVURO (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 22 Jan 2020 15:17:14 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id A85F71C0357; Wed, 22 Jan 2020 21:17:12 +0100 (CET)
+Date:   Wed, 22 Jan 2020 21:17:11 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org
+Subject: [GIT PULL] LEDs changes for 5.5-rc8
+Message-ID: <20200122201711.GA29496@amd>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This patch implemenets a driver to support the front panel LEDs of
-SGI Octane (IP30) workstations.
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
----
+--y0ulUmNC+osPPQO6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v2:
-  - use led names conforming to include/dt-bindings/leds/common.h
-  - read LED state from firmware
-  - leave setting up to user
+The following changes since commit d1eef1c619749b2a57e514a3fa67d9a516ffa919:
 
- drivers/leds/Kconfig     | 11 ++++++
- drivers/leds/Makefile    |  1 +
- drivers/leds/leds-ip30.c | 80 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 92 insertions(+)
- create mode 100644 drivers/leds/leds-ip30.c
+  Linux 5.5-rc2 (2019-12-15 15:16:08 -0800)
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 4b68520ac251..8ef0fe900928 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -836,6 +836,17 @@ config LEDS_LM36274
- 	  Say Y to enable the LM36274 LED driver for TI LMU devices.
- 	  This supports the LED device LM36274.
- 
-+config LEDS_IP30
-+	tristate "LED support for SGI Octane machines"
-+	depends on LEDS_CLASS
-+	depends on SGI_MFD_IOC3
-+	help
-+	  This option enables support for the Red and White LEDs of
-+	  SGI Octane machines.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called leds-ip30.
-+
- comment "LED Triggers"
- source "drivers/leds/trigger/Kconfig"
- 
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 2da39e896ce8..89a527ac8ab6 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -85,6 +85,7 @@ obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
- obj-$(CONFIG_LEDS_TI_LMU_COMMON)	+= leds-ti-lmu-common.o
- obj-$(CONFIG_LEDS_LM3697)		+= leds-lm3697.o
- obj-$(CONFIG_LEDS_LM36274)		+= leds-lm36274.o
-+obj-$(CONFIG_LEDS_IP30)			+= leds-ip30.o
- 
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
-diff --git a/drivers/leds/leds-ip30.c b/drivers/leds/leds-ip30.c
-new file mode 100644
-index 000000000000..82453a216f81
---- /dev/null
-+++ b/drivers/leds/leds-ip30.c
-@@ -0,0 +1,80 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * LED Driver for SGI Octane machines
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/leds.h>
-+
-+struct ip30_led {
-+	struct led_classdev cdev;
-+	u32 __iomem *reg;
-+};
-+
-+static void ip30led_set(struct led_classdev *led_cdev,
-+			enum led_brightness value)
-+{
-+	struct ip30_led *led = container_of(led_cdev, struct ip30_led, cdev);
-+
-+	if (value)
-+		writel(1, led->reg);
-+	else
-+		writel(0, led->reg);
-+}
-+
-+static int ip30led_create(struct platform_device *pdev, int num)
-+{
-+	struct resource *res;
-+	struct ip30_led *data;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, num);
-+	if (!res)
-+		return -EBUSY;
-+
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->reg = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(data->reg))
-+		return PTR_ERR(data->reg);
-+
-+
-+	if (num == 0)
-+		data->cdev.name = "white:indicator";
-+	else
-+		data->cdev.name = "red:indicator";
-+
-+	data->cdev.brightness = readl(data->reg);
-+	data->cdev.max_brightness = 1;
-+	data->cdev.brightness_set = ip30led_set;
-+
-+	return devm_led_classdev_register(&pdev->dev, &data->cdev);
-+}
-+
-+static int ip30led_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+
-+	ret = ip30led_create(pdev, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	return ip30led_create(pdev, 1);
-+}
-+
-+static struct platform_driver ip30led_driver = {
-+	.probe		= ip30led_probe,
-+	.driver		= {
-+		.name		= "ip30-leds",
-+	},
-+};
-+
-+module_platform_driver(ip30led_driver);
-+
-+MODULE_AUTHOR("Thomas Bogendoerfer <tbogendoerfer@suse.de>");
-+MODULE_DESCRIPTION("SGI Octane LED driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:ip30-leds");
--- 
-2.24.1
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-leds.git/ tags/=
+leds-5.5-rc8
+
+for you to fetch changes up to 43108c72cf1d518f3ce62d3b1c8a9ffa38ddc28b:
+
+  leds: lm3532: add pointer to documentation and fix typo (2020-01-22 21:08=
+:24 +0100)
+
+----------------------------------------------------------------
+Changes for Linus for -rc8.
+
+Jacek's commit is why I'm requesting this pull; it fixes regression in
+debugging output in sysfs. Others are just bugfixes that should be
+safe. Everything was in -next for while.
+
+Now, I noticed one commit is from "Pavel" and it is supposed to be
+=66rom "Pavel Machek". Can you pull it anyway, or should I redo the
+request? Or feel free to edit/drop that commit.
+
+Best regards,
+								Pavel
+
+----------------------------------------------------------------
+Bartosz Golaszewski (1):
+      led: max77650: add of_match table
+
+Jacek Anaszewski (1):
+      leds: gpio: Fix uninitialized gpio label for fwnode based probe
+
+Pavel (1):
+      leds: lm3532: add pointer to documentation and fix typo
+
+Pavel Machek (2):
+      ledtrig-pattern: fix email address quoting in MODULE_AUTHOR()
+      leds: rb532: cleanup whitespace
+
+Sakari Ailus (1):
+      leds-as3645a: Drop fwnode reference on ignored node
+
+ drivers/leds/leds-as3645a.c            |  3 ++-
+ drivers/leds/leds-gpio.c               | 10 +++++++++-
+ drivers/leds/leds-lm3532.c             |  3 ++-
+ drivers/leds/leds-max77650.c           |  7 +++++++
+ drivers/leds/leds-rb532.c              |  1 -
+ drivers/leds/trigger/ledtrig-pattern.c |  4 ++--
+ 6 files changed, 22 insertions(+), 6 deletions(-)
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--y0ulUmNC+osPPQO6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl4orccACgkQMOfwapXb+vIhHACfUZ9wQ9GkIKpyxLKk2Rz93ne0
+GSMAn3v/CdOgceIvlx3tgc4WSrYfAEnb
+=VROh
+-----END PGP SIGNATURE-----
+
+--y0ulUmNC+osPPQO6--
