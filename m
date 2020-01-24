@@ -1,96 +1,59 @@
-Return-Path: <SRS0=npUA=3M=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=ywqp=3N=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A075BC33CAA
-	for <linux-leds@archiver.kernel.org>; Thu, 23 Jan 2020 21:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 005B7C2D0DB
+	for <linux-leds@archiver.kernel.org>; Fri, 24 Jan 2020 17:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6206F21D7D
-	for <linux-leds@archiver.kernel.org>; Thu, 23 Jan 2020 21:20:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579814440;
-	bh=6bfJPGTweHcN4RE4Nf0sOu2E23jDcC/V8Pnruypva6M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=1U3Uvtk0QOksRI0nV9KUYAL7oQeOSkfgwdkXVYI+BGO4td5b6gHagD8yGC3YTh+WX
-	 YPyak4jOwZmlT0jYkerIwZhQwVBGLfsnx2/siptz1hMCg5sJ/wis/YGjlkhj23wAND
-	 +sJkxUq8vFeG7GeqMFGl/Cp6t0BvwEa/UOJj2l4Y=
+	by mail.kernel.org (Postfix) with ESMTP id D26052072C
+	for <linux-leds@archiver.kernel.org>; Fri, 24 Jan 2020 17:00:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728797AbgAWVUk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 23 Jan 2020 16:20:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33806 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728765AbgAWVUk (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 23 Jan 2020 16:20:40 -0500
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD23822522;
-        Thu, 23 Jan 2020 21:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579814438;
-        bh=6bfJPGTweHcN4RE4Nf0sOu2E23jDcC/V8Pnruypva6M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=eA1OyuNt7UNNvU1NVydmw8P+6dWizAgxIZPrf92ykUVUmfFD4IHR5NRkLA8gHEXLz
-         6CMFuU2BCR3GzWU1nWJkqbzM8U4GAVfG2LHURlRbI2NpIpPrOeJJ72Zk6/K+d5OUY/
-         b1KhUwi8Kv20l3WkPSwaymwLy5pvMGndqUTyKqIU=
-Received: by mail-qv1-f47.google.com with SMTP id x1so2211427qvr.8;
-        Thu, 23 Jan 2020 13:20:38 -0800 (PST)
-X-Gm-Message-State: APjAAAWA3xbYrohDTLshNSlkpcEK5NzuutPL6afNjTK+oy20UQqMGHZk
-        8slCLY04bkoftcrOoms/liFxNGJ0xVaBgrj2eg==
-X-Google-Smtp-Source: APXvYqwfeUA2E65ZlwD9aQLhbra3MaVS5m9PQjYzX/SzG4yx5mpOwnX6H0ROMut79N7HqOydNgvdKOesVUrbMNpMPK0=
-X-Received: by 2002:a05:6214:11ac:: with SMTP id u12mr18692605qvv.85.1579814437960;
- Thu, 23 Jan 2020 13:20:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20200108001738.8209-1-robh@kernel.org> <bec9ab4a-da09-6ef1-7334-d19f11ab2523@gmail.com>
-In-Reply-To: <bec9ab4a-da09-6ef1-7334-d19f11ab2523@gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 23 Jan 2020 15:20:26 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+bOWJM5nvtY58+2DRtWQNzOPiVX9P===NOk4eBaE5OEA@mail.gmail.com>
-Message-ID: <CAL_Jsq+bOWJM5nvtY58+2DRtWQNzOPiVX9P===NOk4eBaE5OEA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: leds: Convert common LED binding to schema
+        id S2390011AbgAXRAM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 24 Jan 2020 12:00:12 -0500
+Received: from antares.kleine-koenig.org ([94.130.110.236]:38628 "EHLO
+        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389807AbgAXRAM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 24 Jan 2020 12:00:12 -0500
+Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
+        id 45F658CCA2A; Fri, 24 Jan 2020 17:54:13 +0100 (CET)
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>
-Cc:     Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Jeff LaBundy <jeff@labundy.com>, Dan Murphy <dmurphy@ti.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: [PATCH 0/3] leds: pwm: some cleanups
+Date:   Fri, 24 Jan 2020 17:54:06 +0100
+Message-Id: <20200124165409.12422-1-uwe@kleine-koenig.org>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Wed, Jan 8, 2020 at 1:02 PM Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
->
-> On 1/8/20 1:17 AM, Rob Herring wrote:
-> > Convert the common LEDs properties bindings to a schema. As trigger source
-> > providers are different nodes, we need to split trigger source properties
-> > to a separate file.
-> >
-> > Bindings for LED controllers can reference the common schema for the LED
-> > child nodes:
-> >
-> > patternProperties:
-> >   "^led@[0-4]":
-> >     type: object
-> >     allOf:
-> >       - $ref: common.yaml#
-> >
-> > Cc: Pavel Machek <pavel@ucw.cz>
-> > Cc: Dan Murphy <dmurphy@ti.com>
-> > Cc: linux-leds@vger.kernel.org
-> > Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> > Jacek, Please take this via led tree
->
-> Currently Pavel maintains LED tree. Pavel?
+Hello,
 
-As it doesn't look like there's any conflicts, I've applied this
-series to the DT tree.
+note that this series is only compile tested, as I don't have a hardware
+that uses this driver.
 
-Rob
+Best regards
+Uwe
+
+Uwe Kleine-König (3):
+  leds: pwm: simplify if condition
+  leds: pwm: convert to atomic PWM API
+  leds: pwm: don't set the brightness during .probe
+
+ drivers/leds/leds-pwm.c | 47 ++++++++++-------------------------------
+ 1 file changed, 11 insertions(+), 36 deletions(-)
+
+-- 
+2.24.0
+
