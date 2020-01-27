@@ -2,99 +2,92 @@ Return-Path: <SRS0=bvUD=3Q=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF567C32771
-	for <linux-leds@archiver.kernel.org>; Mon, 27 Jan 2020 07:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBC0C2D0DB
+	for <linux-leds@archiver.kernel.org>; Mon, 27 Jan 2020 15:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B9BC20842
-	for <linux-leds@archiver.kernel.org>; Mon, 27 Jan 2020 07:41:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0E7D214AF
+	for <linux-leds@archiver.kernel.org>; Mon, 27 Jan 2020 15:03:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ho9hBVkX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726054AbgA0Hl3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 27 Jan 2020 02:41:29 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41369 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbgA0Hl3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 27 Jan 2020 02:41:29 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ivz1O-0006lk-Dr; Mon, 27 Jan 2020 08:41:22 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ivz1N-0002Se-EY; Mon, 27 Jan 2020 08:41:21 +0100
-Date:   Mon, 27 Jan 2020 08:41:21 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Jeff LaBundy <jeff@labundy.com>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
-Subject: Re: [PATCH 3/3] leds: pwm: don't set the brightness during .probe
-Message-ID: <20200127074121.n2qawknactfjqvkr@pengutronix.de>
-References: <20200124165409.12422-1-uwe@kleine-koenig.org>
- <20200124165409.12422-4-uwe@kleine-koenig.org>
- <20200126194236.GC2569@labundy.com>
+        id S1729275AbgA0PDw (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 27 Jan 2020 10:03:52 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:51552 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729251AbgA0PDw (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 27 Jan 2020 10:03:52 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00RF3kQR048743;
+        Mon, 27 Jan 2020 09:03:46 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580137426;
+        bh=nwxwxA3dWA9AJXGU+2f5gX5e3cYCd5qxFJRJFc3CbHA=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=ho9hBVkXlYFy/l9F51PT9xh9wZHurxK3/qsIqPAxp4zRmasOPx/2tjhm6jWwp1uE6
+         FB0r6aOixoVvek5Ubo6dgv6DYUb1iA98tLAdk5bYMyvU6yUnifZZ5RWTFnVU7MtTNl
+         vLIeGbRSWSRNLe3NocWga8tYXgQeUShMXdzDbSbg=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00RF3kcG043994
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 27 Jan 2020 09:03:46 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 27
+ Jan 2020 09:03:46 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 27 Jan 2020 09:03:46 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00RF3ksW090919;
+        Mon, 27 Jan 2020 09:03:46 -0600
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [RESEND PATCH v17 01/17] dt-bindings: leds: Add multicolor ID to the color ID list
+Date:   Mon, 27 Jan 2020 09:00:16 -0600
+Message-ID: <20200127150032.31350-2-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200127150032.31350-1-dmurphy@ti.com>
+References: <20200127150032.31350-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200126194236.GC2569@labundy.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-leds@vger.kernel.org
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hello Jeff,
+Add a new color ID that is declared as MULTICOLOR as with the
+multicolor framework declaring a definitive color is not accurate
+as the node can contain multiple colors.
 
-On Sun, Jan 26, 2020 at 07:42:39PM +0000, Jeff LaBundy wrote:
-> My only concern here is whether or not there happen to be some hardware
-> out in the world whose PWM-related registers power on to a random state
-> and unknowingly depended on brightness being forced to zero.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ include/dt-bindings/leds/common.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-This might happen, and is (AFAIK) the same for other LED drivers.
-
-> The other folks on the thread probably have some better view into this,
-> but I wonder if the safest option would be to adopt the "default-state"
-> property from leds/common.txt, and only forgo the call to led_pwm_set()
-> if the property is set to "keep".
-
-I think it would be sane to add support for parsing the default-state
-property to the LED core. I was surprised to learn that this for now is
-only implemented in a few LED drivers.
-
-> I did test this and can confirm that the LED's state prior to the driver
-> being loaded is preserved. However as you've warned, the brightness read
-> back from user space is zero and does not match the actual brightness of
-> the LED.
-
-That is something that the core should handle, too. If there is no
-.get_brightness callback and 0 is assumed, calling .set_brightness to 0
-to ensure a right assumption sounds like the right thing to me.
+diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
+index 9e1256a7c1bf..7006d15f71e8 100644
+--- a/include/dt-bindings/leds/common.h
++++ b/include/dt-bindings/leds/common.h
+@@ -29,7 +29,8 @@
+ #define LED_COLOR_ID_VIOLET	5
+ #define LED_COLOR_ID_YELLOW	6
+ #define LED_COLOR_ID_IR		7
+-#define LED_COLOR_ID_MAX	8
++#define LED_COLOR_ID_MULTI	8
++#define LED_COLOR_ID_MAX	9
  
-> Understanding that it's more work, I wonder if this patch is not safe if
-> we don't also add a brightness_get callback in case there were any cases
-> where user space makes some decisions based on brightness == 0?
-> 
-> At any rate this patch does what is advertised, and so:
-> 
-> Tested-by: Jeff LaBundy <jeff@labundy.com>
-
-Thanks for your feedback.
-
-Best regards
-Uwe
-
+ /* Standard LED functions */
+ #define LED_FUNCTION_ACTIVITY "activity"
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+2.25.0
+
