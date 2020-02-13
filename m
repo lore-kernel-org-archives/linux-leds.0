@@ -1,119 +1,149 @@
-Return-Path: <SRS0=413A=4A=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=lfHb=4B=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19822C2BA83
-	for <linux-leds@archiver.kernel.org>; Wed, 12 Feb 2020 13:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD454C2BA83
+	for <linux-leds@archiver.kernel.org>; Thu, 13 Feb 2020 09:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E43892082F
-	for <linux-leds@archiver.kernel.org>; Wed, 12 Feb 2020 13:31:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hNq9i9gL"
+	by mail.kernel.org (Postfix) with ESMTP id 9B9EF20848
+	for <linux-leds@archiver.kernel.org>; Thu, 13 Feb 2020 09:16:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbgBLNbs (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 12 Feb 2020 08:31:48 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:43144 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbgBLNbs (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 12 Feb 2020 08:31:48 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01CDVfxg052623;
-        Wed, 12 Feb 2020 07:31:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1581514301;
-        bh=T994I6+GF8haALJGR/LjnbSPhpWFXFIVbbQeQCeVcuI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=hNq9i9gLsTBfnOMhrxXphl6hfNL9D+oWYSOq0lfpaqHteEEEj0uKFJ68kZgmBRxeq
-         odQ+vdSOO9HB3P8PWlcj+t6kmA2uqu0mEtDiQYHdpxAEP1TiY9K/IXdP+b43ddnBU2
-         fDQ4M4DY+OZhufbOY6vTGyhSo/l6oqRiOLYmGxYY=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01CDVf1u124371;
-        Wed, 12 Feb 2020 07:31:41 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 12
- Feb 2020 07:31:41 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 12 Feb 2020 07:31:41 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01CDVegh002399;
-        Wed, 12 Feb 2020 07:31:40 -0600
-Subject: Re: [PATCH 1/2 v2] leds: ns2: Absorb platform data
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>,
-        Vincent Donnefort <vdonnefort@gmail.com>,
-        Simon Guinot <simon.guinot@sequanux.org>
-References: <20200210101354.287045-1-linus.walleij@linaro.org>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <a7e4fefe-103c-7161-ef35-f7a0f8cb1453@ti.com>
-Date:   Wed, 12 Feb 2020 07:27:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1729596AbgBMJQM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 13 Feb 2020 04:16:12 -0500
+Received: from antares.kleine-koenig.org ([94.130.110.236]:43408 "EHLO
+        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729526AbgBMJQM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Feb 2020 04:16:12 -0500
+Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
+        id BC96790832B; Thu, 13 Feb 2020 10:16:08 +0100 (CET)
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de, linux-serial@vger.kernel.org
+Subject: [PATCH v6 1/4] lib: new helper kstrtodev_t()
+Date:   Thu, 13 Feb 2020 10:15:57 +0100
+Message-Id: <20200213091600.554-2-uwe@kleine-koenig.org>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20200213091600.554-1-uwe@kleine-koenig.org>
+References: <20200213091600.554-1-uwe@kleine-koenig.org>
 MIME-Version: 1.0
-In-Reply-To: <20200210101354.287045-1-linus.walleij@linaro.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Linus
+This function is in the same spirit as the other kstrto* functions and
+uses the same calling convention. It expects the input string to be in
+the format %u:%u and implements stricter parsing than sscanf as it
+returns an error on trailing data (other than the usual \n).
 
-On 2/10/20 4:13 AM, Linus Walleij wrote:
-> Nothing in the kernel includes the external header
-> <linux/platform_data/leds-kirkwood-ns2.h> so just push the
-> contents into the ns2 leds driver. If someone wants to use
-> platform data or board files to describe this device they
-> should be able to do so using GPIO machine descriptors but
-> in any case device tree should be the way forward for these
-> systems in all cases I can think of, and the driver already
-> supports that.
->
-> Cc: Vincent Donnefort <vdonnefort@gmail.com>
-> Tested-by: Simon Guinot <simon.guinot@sequanux.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Collect Simon's Tested-by tag
-> ---
->   drivers/leds/leds-ns2.c                       | 30 +++++++++++++--
->   .../linux/platform_data/leds-kirkwood-ns2.h   | 38 -------------------
->   2 files changed, 27 insertions(+), 41 deletions(-)
->   delete mode 100644 include/linux/platform_data/leds-kirkwood-ns2.h
->
-> diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
-> index 7c500dfdcfa3..6d37dda12c39 100644
-> --- a/drivers/leds/leds-ns2.c
-> +++ b/drivers/leds/leds-ns2.c
-> @@ -12,14 +12,38 @@
->   #include <linux/kernel.h>
->   #include <linux/platform_device.h>
->   #include <linux/slab.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->   #include <linux/leds.h>
->   #include <linux/module.h>
-> -#include <linux/platform_data/leds-kirkwood-ns2.h>
->   #include <linux/of.h>
-> -#include <linux/of_gpio.h>
->   #include "leds.h"
+Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
+---
+ include/linux/kdev_t.h |  2 ++
+ include/linux/kernel.h |  1 +
+ lib/kstrtox.c          | 46 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 49 insertions(+)
 
-These header file change for gpio seem to belong in patch 2/2.
-
-I don't see any gpio related changes in this patch
-
-Dan
-
+diff --git a/include/linux/kdev_t.h b/include/linux/kdev_t.h
+index 85b5151911cf..3a5c24bd8fa4 100644
+--- a/include/linux/kdev_t.h
++++ b/include/linux/kdev_t.h
+@@ -4,8 +4,10 @@
+ 
+ #include <uapi/linux/kdev_t.h>
+ 
++/* dev_t is 32 bit wide, 20 bits are used for MINOR, 12 for major */
+ #define MINORBITS	20
+ #define MINORMASK	((1U << MINORBITS) - 1)
++#define MAJORBITS	12
+ 
+ #define MAJOR(dev)	((unsigned int) ((dev) >> MINORBITS))
+ #define MINOR(dev)	((unsigned int) ((dev) & MINORMASK))
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 0d9db2a14f44..9cf694c5d2c3 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -410,6 +410,7 @@ int __must_check kstrtos16(const char *s, unsigned int base, s16 *res);
+ int __must_check kstrtou8(const char *s, unsigned int base, u8 *res);
+ int __must_check kstrtos8(const char *s, unsigned int base, s8 *res);
+ int __must_check kstrtobool(const char *s, bool *res);
++int __must_check kstrtodev_t(const char *s, dev_t *res);
+ 
+ int __must_check kstrtoull_from_user(const char __user *s, size_t count, unsigned int base, unsigned long long *res);
+ int __must_check kstrtoll_from_user(const char __user *s, size_t count, unsigned int base, long long *res);
+diff --git a/lib/kstrtox.c b/lib/kstrtox.c
+index 1006bf70bf74..e1b896635c6a 100644
+--- a/lib/kstrtox.c
++++ b/lib/kstrtox.c
+@@ -19,6 +19,7 @@
+ #include <linux/export.h>
+ #include <linux/types.h>
+ #include <linux/uaccess.h>
++#include <linux/kdev_t.h>
+ #include "kstrtox.h"
+ 
+ const char *_parse_integer_fixup_radix(const char *s, unsigned int *base)
+@@ -367,6 +368,51 @@ int kstrtobool(const char *s, bool *res)
+ }
+ EXPORT_SYMBOL(kstrtobool);
+ 
++/**
++ * kstrtodev_t - convert a string in format %u:%u to a dev_t
++ * @s: input string
++ * @res: result
++ *
++ * This is the reverse of print_dev_t. The first number is interpreted as major,
++ * the second as minor.
++ */
++int kstrtodev_t(const char *s, dev_t *res)
++{
++	unsigned long long _res;
++	unsigned int ma, mi;
++	int rv;
++
++	rv = _parse_integer(s, 10, &_res);
++	if (rv < 0)
++		return rv;
++	if (rv & KSTRTOX_OVERFLOW || _res >= (1U << MAJORBITS))
++		return -ERANGE;
++	ma = _res;
++
++	s += rv;
++
++	if (*s++ != ':')
++		return -EINVAL;
++
++	rv = _parse_integer(s, 10, &_res);
++	if (rv < 0)
++		return rv;
++	if (rv & KSTRTOX_OVERFLOW || _res >= (1U << MINORBITS))
++		return -ERANGE;
++	mi = _res;
++
++	s += rv;
++
++	if (*s == '\n')
++		s++;
++	if (*s)
++		return -EINVAL;
++
++	*res = MKDEV(ma, mi);
++	return 0;
++}
++EXPORT_SYMBOL(kstrtodev_t);
++
+ /*
+  * Since "base" would be a nonsense argument, this open-codes the
+  * _from_user helper instead of using the helper macro below.
+-- 
+2.24.0
 
