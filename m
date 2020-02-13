@@ -2,30 +2,30 @@ Return-Path: <SRS0=lfHb=4B=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 296B6C3F68F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48ACDC3B189
 	for <linux-leds@archiver.kernel.org>; Thu, 13 Feb 2020 09:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1A2120848
-	for <linux-leds@archiver.kernel.org>; Thu, 13 Feb 2020 09:16:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 295BC21734
+	for <linux-leds@archiver.kernel.org>; Thu, 13 Feb 2020 09:16:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729619AbgBMJQM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S1729531AbgBMJQM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Thu, 13 Feb 2020 04:16:12 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57221 "EHLO
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50687 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729531AbgBMJQM (ORCPT
+        with ESMTP id S1729532AbgBMJQM (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Feb 2020 04:16:12 -0500
 Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1j2AbQ-000802-Sl; Thu, 13 Feb 2020 10:16:08 +0100
+        id 1j2AbR-00080W-FS; Thu, 13 Feb 2020 10:16:09 +0100
 Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
         (envelope-from <ukl@pengutronix.de>)
-        id 1j2AbP-0005qx-BI; Thu, 13 Feb 2020 10:16:07 +0100
+        id 1j2AbR-0005r3-5i; Thu, 13 Feb 2020 10:16:09 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -35,10 +35,12 @@ Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
         <u.kleine-koenig@pengutronix.de>, linux-leds@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel@pengutronix.de,
         linux-serial@vger.kernel.org
-Subject: [PATCH v6 0/4] leds: trigger: implement a tty trigger
-Date:   Thu, 13 Feb 2020 10:15:56 +0100
-Message-Id: <20200213091600.554-1-uwe@kleine-koenig.org>
+Subject: [PATCH v6 3/4] tty: new helper function tty_get_icount()
+Date:   Thu, 13 Feb 2020 10:15:59 +0100
+Message-Id: <20200213091600.554-4-uwe@kleine-koenig.org>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20200213091600.554-1-uwe@kleine-koenig.org>
+References: <20200213091600.554-1-uwe@kleine-koenig.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -53,47 +55,76 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Hello,
+For a given struct tty_struct this yields the corresponding statistics
+about sent and received characters (and some more) which is needed to
+implement an LED trigger for tty devices.
 
-This is v6 of my quest to introduce ledtriggers for UARTs. The previous
-series is available at
+The new function is then used to simplify tty_tiocgicount().
 
-	http://lore.kernel.org/r/20191219093947.15502-1-u.kleine-koenig@pengutronix.de
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/tty/tty_io.c | 29 +++++++++++++++++++++++++----
+ include/linux/tty.h  |  2 ++
+ 2 files changed, 27 insertions(+), 4 deletions(-)
 
-The changes compared to that are that parsing of the dev parameter is
-more strict and that I set brightness directly from the kworker instead
-of using led_blink_set_oneshot which makes use of another kworker. (Both
-requested by Pavel Machek.)
-
-For the former I introduced a new helper kstrtodev_t() in the spirit of
-kstrtoul() to implement the stricter parsing (instead of the lax one
-using plain sscanf() in v5).
-
-Best regards
-Uwe
-
-Uwe Kleine-König (4):
-  lib: new helper kstrtodev_t()
-  tty: rename tty_kopen() and add new function tty_kopen_shared()
-  tty: new helper function tty_get_icount()
-  leds: trigger: implement a tty trigger
-
- .../ABI/testing/sysfs-class-led-trigger-tty   |   6 +
- drivers/leds/trigger/Kconfig                  |   7 +
- drivers/leds/trigger/Makefile                 |   1 +
- drivers/leds/trigger/ledtrig-tty.c            | 159 ++++++++++++++++++
- drivers/staging/speakup/spk_ttyio.c           |   2 +-
- drivers/tty/tty_io.c                          |  87 +++++++---
- include/linux/kdev_t.h                        |   2 +
- include/linux/kernel.h                        |   1 +
- include/linux/tty.h                           |   7 +-
- lib/kstrtox.c                                 |  46 +++++
- 10 files changed, 293 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-tty
- create mode 100644 drivers/leds/trigger/ledtrig-tty.c
-
-
-base-commit: 0bf999f9c5e74c7ecf9dafb527146601e5c848b9
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index b718666ce73c..3e74e6cec1a6 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2492,15 +2492,36 @@ static int tty_tiocmset(struct tty_struct *tty, unsigned int cmd,
+ 	return tty->ops->tiocmset(tty, set, clear);
+ }
+ 
++/**
++ *	tty_get_icount		-	get tty statistics
++ *	@tty: tty device
++ *	@icount: output parameter
++ *
++ *	Gets a copy of the tty's icount statistics.
++ *
++ *	Locking: none (up to the driver)
++ */
++int tty_get_icount(struct tty_struct *tty,
++		   struct serial_icounter_struct *icount)
++{
++	memset(icount, 0, sizeof(*icount));
++
++	if (tty->ops->get_icount)
++		return tty->ops->get_icount(tty, icount);
++	else
++		return -EINVAL;
++}
++EXPORT_SYMBOL_GPL(tty_get_icount);
++
+ static int tty_tiocgicount(struct tty_struct *tty, void __user *arg)
+ {
+-	int retval = -EINVAL;
+ 	struct serial_icounter_struct icount;
+-	memset(&icount, 0, sizeof(icount));
+-	if (tty->ops->get_icount)
+-		retval = tty->ops->get_icount(tty, &icount);
++	int retval;
++
++	retval = tty_get_icount(tty, &icount);
+ 	if (retval != 0)
+ 		return retval;
++
+ 	if (copy_to_user(arg, &icount, sizeof(icount)))
+ 		return -EFAULT;
+ 	return 0;
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index d0bcf3226fb2..40ea5c409619 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -495,6 +495,8 @@ extern void tty_unthrottle(struct tty_struct *tty);
+ extern int tty_throttle_safe(struct tty_struct *tty);
+ extern int tty_unthrottle_safe(struct tty_struct *tty);
+ extern int tty_do_resize(struct tty_struct *tty, struct winsize *ws);
++extern int tty_get_icount(struct tty_struct *tty,
++			  struct serial_icounter_struct *icount);
+ extern int is_current_pgrp_orphaned(void);
+ extern void tty_hangup(struct tty_struct *tty);
+ extern void tty_vhangup(struct tty_struct *tty);
 -- 
 2.24.0
 
