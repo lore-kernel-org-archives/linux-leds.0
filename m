@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9092C2BA83
-	for <linux-leds@archiver.kernel.org>; Fri, 14 Feb 2020 17:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AD3C3B1B1
+	for <linux-leds@archiver.kernel.org>; Fri, 14 Feb 2020 17:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FC85206CC
-	for <linux-leds@archiver.kernel.org>; Fri, 14 Feb 2020 17:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46C5620848
+	for <linux-leds@archiver.kernel.org>; Fri, 14 Feb 2020 17:46:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581700565;
-	bh=TWYKJH7EdXk4lvXiINzi24/zw7SjtOiQoX3rzjP6BGw=;
+	s=default; t=1581702382;
+	bh=7+wHRW/OFH6ZSv2n77YPfpKBJ3mqYTMJDhk1Z2zwpLs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0kCaQZe3+7XgRUlRsXJcBR7OwviGzuPHpwzq5haoUV9thVZdtbhOBiD3Q8pE2IxUi
-	 zfYvLVa+X/Vb/wP+ldGH6/DIHpiV37zCZyM5T3la4heKRYd0ovAylGUyBoskLJvq51
-	 T+L75UkE8BwLzmjcz3VhqvjOqt9d48Gx6bCvYWhQ=
+	b=iLLxO4qG953KAnza1kRfSiJYnew5b775J8R3Y6avco02tlfoHbze3FNCuw/+ml1Kd
+	 Yb3Ihhw3jO3NCdRT5THIJM8iaxXrb7nXlyedeaDUA/S5Pxwk1vGRgHgL6NSw7NT40k
+	 nDo97wkLFBI5jjR6Zre95oS3+LmYXFvb+vVp0z1Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391813AbgBNRQE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 14 Feb 2020 12:16:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39180 "EHLO mail.kernel.org"
+        id S2389338AbgBNQCZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 14 Feb 2020 11:02:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390425AbgBNQMA (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:12:00 -0500
+        id S2389343AbgBNQCZ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:02:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98CE1246A4;
-        Fri, 14 Feb 2020 16:11:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 003472082F;
+        Fri, 14 Feb 2020 16:02:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696720;
-        bh=TWYKJH7EdXk4lvXiINzi24/zw7SjtOiQoX3rzjP6BGw=;
+        s=default; t=1581696144;
+        bh=7+wHRW/OFH6ZSv2n77YPfpKBJ3mqYTMJDhk1Z2zwpLs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=onQso5oakTYtS0b9H5Jk7tb10+20fFuo09lgGId7489T9Yl/cyX+Vw+vRmJffciam
-         kx4ywbLo+JqnzjnvSMdcxEQQeWlMVdkb6m9oeY++oAKJQ1jtKqrS04xSAqp+x2z+lb
-         RNbMHCohw8pfG8NUKl5SemicBMxYZdl5eJcsbggw=
+        b=ueTnwcnF8mc+ZUVkZiU60A0kKuJkM7ME7JPQxuGv/Cyg9ot7RtJICvvN/7obuof5w
+         uGrUvCULs/3zk1EhXdJ1x9/LHGfeMYW0zXGPQvxu/n9MGfdKVUiaRJ15a3vigGzAqx
+         0LXlawWLY+ary4N02kLiYpM+jCBW7c4R1kZbjfi0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Zahari Petkov <zahari@balena.io>, Pavel Machek <pavel@ucw.cz>,
         Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 009/252] leds: pca963x: Fix open-drain initialization
-Date:   Fri, 14 Feb 2020 11:07:44 -0500
-Message-Id: <20200214161147.15842-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 025/459] leds: pca963x: Fix open-drain initialization
+Date:   Fri, 14 Feb 2020 10:54:35 -0500
+Message-Id: <20200214160149.11681-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
-References: <20200214161147.15842-1-sashal@kernel.org>
+In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
+References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -90,10 +90,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
-index 5c0908113e388..bbcde13b77f16 100644
+index 4afc317901a89..66cdc003b8f42 100644
 --- a/drivers/leds/leds-pca963x.c
 +++ b/drivers/leds/leds-pca963x.c
-@@ -43,6 +43,8 @@
+@@ -40,6 +40,8 @@
  #define PCA963X_LED_PWM		0x2	/* Controlled through PWM */
  #define PCA963X_LED_GRP_PWM	0x3	/* Controlled through PWM/GRPPWM */
  
@@ -102,7 +102,7 @@ index 5c0908113e388..bbcde13b77f16 100644
  #define PCA963X_MODE2_DMBLNK	0x20	/* Enable blinking */
  
  #define PCA963X_MODE1		0x00
-@@ -462,12 +464,12 @@ static int pca963x_probe(struct i2c_client *client,
+@@ -438,12 +440,12 @@ static int pca963x_probe(struct i2c_client *client,
  						    PCA963X_MODE2);
  		/* Configure output: open-drain or totem pole (push-pull) */
  		if (pdata->outdrv == PCA963X_OPEN_DRAIN)
