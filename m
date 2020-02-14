@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D482C2BA83
-	for <linux-leds@archiver.kernel.org>; Fri, 14 Feb 2020 16:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9092C2BA83
+	for <linux-leds@archiver.kernel.org>; Fri, 14 Feb 2020 17:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 570E2206CC
-	for <linux-leds@archiver.kernel.org>; Fri, 14 Feb 2020 16:58:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FC85206CC
+	for <linux-leds@archiver.kernel.org>; Fri, 14 Feb 2020 17:16:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581699493;
-	bh=60GmdPh2XpeV0iJcUXIp/N+gnXAsjfWyw7DREWS2aig=;
+	s=default; t=1581700565;
+	bh=TWYKJH7EdXk4lvXiINzi24/zw7SjtOiQoX3rzjP6BGw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=y9uzjNHE1iG8cbbJEcTvnfeZ0ImCr4R5twYslP4AQS7cJCi1lHIN/ns+/k5THc7zE
-	 7BWkAZWZDotaEiUduh0hNZRQohXM6+6phbaaItQy2sQ/wsOv5RMfVU8ff1rWZTGXsg
-	 WclP6tvyqGQx6Unzzbbz2ggJ7VtMFIJmjlO6BwGA=
+	b=0kCaQZe3+7XgRUlRsXJcBR7OwviGzuPHpwzq5haoUV9thVZdtbhOBiD3Q8pE2IxUi
+	 zfYvLVa+X/Vb/wP+ldGH6/DIHpiV37zCZyM5T3la4heKRYd0ovAylGUyBoskLJvq51
+	 T+L75UkE8BwLzmjcz3VhqvjOqt9d48Gx6bCvYWhQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404478AbgBNQR3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 14 Feb 2020 11:17:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48780 "EHLO mail.kernel.org"
+        id S2391813AbgBNRQE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 14 Feb 2020 12:16:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404464AbgBNQR3 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:17:29 -0500
+        id S2390425AbgBNQMA (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:12:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AD2A246E1;
-        Fri, 14 Feb 2020 16:17:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98CE1246A4;
+        Fri, 14 Feb 2020 16:11:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697048;
-        bh=60GmdPh2XpeV0iJcUXIp/N+gnXAsjfWyw7DREWS2aig=;
+        s=default; t=1581696720;
+        bh=TWYKJH7EdXk4lvXiINzi24/zw7SjtOiQoX3rzjP6BGw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F/cYZn+0Yy5UIb36bhWR4fKwhZsz2mlO3jdxfEqpidRjR2Y9OB7zDz2SHozAw2sIE
-         n0GvX6G+LXvLxOq8myd29wUiwWapbfU331qYDSMtYQD1hGGxIczrHklZyPC7Dl8aFa
-         U56UwvYS1V4sn1Gvcz14EfjcdXBg55SPDNqJdQcY=
+        b=onQso5oakTYtS0b9H5Jk7tb10+20fFuo09lgGId7489T9Yl/cyX+Vw+vRmJffciam
+         kx4ywbLo+JqnzjnvSMdcxEQQeWlMVdkb6m9oeY++oAKJQ1jtKqrS04xSAqp+x2z+lb
+         RNbMHCohw8pfG8NUKl5SemicBMxYZdl5eJcsbggw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Zahari Petkov <zahari@balena.io>, Pavel Machek <pavel@ucw.cz>,
         Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 009/186] leds: pca963x: Fix open-drain initialization
-Date:   Fri, 14 Feb 2020 11:14:18 -0500
-Message-Id: <20200214161715.18113-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 009/252] leds: pca963x: Fix open-drain initialization
+Date:   Fri, 14 Feb 2020 11:07:44 -0500
+Message-Id: <20200214161147.15842-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
-References: <20200214161715.18113-1-sashal@kernel.org>
+In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
+References: <20200214161147.15842-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -90,7 +90,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
-index 3bf9a12718192..88c7313cf8693 100644
+index 5c0908113e388..bbcde13b77f16 100644
 --- a/drivers/leds/leds-pca963x.c
 +++ b/drivers/leds/leds-pca963x.c
 @@ -43,6 +43,8 @@
