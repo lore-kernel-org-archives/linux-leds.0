@@ -2,124 +2,116 @@ Return-Path: <SRS0=8Df5=4N=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9C6C35DF5
-	for <linux-leds@archiver.kernel.org>; Tue, 25 Feb 2020 13:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B074C35E15
+	for <linux-leds@archiver.kernel.org>; Tue, 25 Feb 2020 21:43:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7228C2176D
-	for <linux-leds@archiver.kernel.org>; Tue, 25 Feb 2020 13:05:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CBFB20675
+	for <linux-leds@archiver.kernel.org>; Tue, 25 Feb 2020 21:43:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Em9lWr5g"
+	dkim=pass (2048-bit key) header.d=easyb-ch.20150623.gappssmtp.com header.i=@easyb-ch.20150623.gappssmtp.com header.b="oveJUVfN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730041AbgBYNFt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 25 Feb 2020 08:05:49 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:49288 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729193AbgBYNFt (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 25 Feb 2020 08:05:49 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01PD0LHw123433;
-        Tue, 25 Feb 2020 07:00:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1582635621;
-        bh=n4t+iSnVQ8VDVIb2I48j7hH+y8NZ1XyrKycrJ1RQK90=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Em9lWr5gFGAJGIVefw5xY+a+Dwwp3Pn1zqurQTmTa86QzSJfB61woe0HHUX/g8ehS
-         XLAlCnUyKrUCjo5oq/k/ku4iF5vXr4pkDEUhadl/PRi+CaazR50RDc2zCa/81FX0cB
-         wuXtBSeggje7gf1NyIoD0IKvmhnN45jt4LHXNtzo=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01PD0LKB096983
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 25 Feb 2020 07:00:21 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 25
- Feb 2020 07:00:20 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 25 Feb 2020 07:00:20 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01PD0KFe036379;
-        Tue, 25 Feb 2020 07:00:20 -0600
-Subject: Re: [PATCH 1/4] dt-bindings: leds: Add a binding for AXP813 charger
- led
-To:     Ondrej Jirman <megous@megous.com>, <linux-sunxi@googlegroups.com>,
+        id S1728979AbgBYVnC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 25 Feb 2020 16:43:02 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37964 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729016AbgBYVnC (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 25 Feb 2020 16:43:02 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a9so834654wmj.3
+        for <linux-leds@vger.kernel.org>; Tue, 25 Feb 2020 13:43:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=easyb-ch.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=kEVJ1n2NxQ1glfbZ9e15foebWC3MxMe0p/5A/jyD6H0=;
+        b=oveJUVfN4mGmIby/KrplpWvi32NOCpmb1Fej6u+eU25j1sso9bxSCmnS1HYlP5k+TS
+         MN55kLyOOXTrI5QiCGtP00bRnkJxE6q+aUpqdFsAsXwQh0dvu55FS/TXrAVS/ae6mu1l
+         NAlvopKlSspPGtPCVj0mdTNuFv+ZfhgIinLqRNatsNKvQI8KxR0B1VAiDYp321L4gtUZ
+         g8u+mkFIDr2NdhUV2f4JbQ3BTA7fhSsIoCINRAOSYNlefs7F0PuxzSG5YkiVtBklT+fO
+         oaD/MUhWA0PqDh9MWO9s+RAgppI/P3ICunuQwVb2PDrJVH31q6jq8+vTKG+aECdrMlUL
+         Kc9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=kEVJ1n2NxQ1glfbZ9e15foebWC3MxMe0p/5A/jyD6H0=;
+        b=gJGzOfZAkbgjOhGEiN1LMgGziipr+ZD3D29bfnyD3wx8JhI/0jM5elA/vHGqabdab+
+         ZbzrNeF+7p9CfTkjJMjnrEIw/yT58wRRBKWiFlhtWZMbVgpFgVqdyKtbg/b1/iXaVmTG
+         YVOXG3RCwa98chSQXybINkcFjCLk+CkmiUQl0ZzGituZSBm4NFhAEw1AwT4QllDR5G42
+         EJjjoAK1osVqmQjH9jELhS3rx6nIlbLvnAtadS+X2V+uK0kVoY4j46MXHZmG+hzYL4vI
+         s06fGz/U6G+WLmBKfqe/N92dwExezvHLBRgahXN7GTVoIbKnOVxpSjyhvJAHcKKjb+P2
+         hiNQ==
+X-Gm-Message-State: APjAAAWKbQY07NSbcgmIVvPLoFnOxEsCy79ZRmtj/Dt1kQ1AejRJkJcZ
+        K8MiMM2MhNNBH553L5zM4N8r1w==
+X-Google-Smtp-Source: APXvYqzT6vU3uivqK3LFISSNim+ES8rBV5I3PSPpMQoyPtAT6binkjIz4QcxUjjxxm7ATqtLrWgIdA==
+X-Received: by 2002:a1c:7ec5:: with SMTP id z188mr1188559wmc.52.1582666980570;
+        Tue, 25 Feb 2020 13:43:00 -0800 (PST)
+Received: from ?IPv6:2001:1715:4e22:c580:ed96:156f:9663:e7e4? ([2001:1715:4e22:c580:ed96:156f:9663:e7e4])
+        by smtp.gmail.com with ESMTPSA id f1sm212602wro.85.2020.02.25.13.42.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Feb 2020 13:43:00 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [RFC 00/25] arm64: realtek: Add Xnano X5 and implement
+ TM1628/FD628/AiP1618 LED controllers
+From:   Ezra Buehler <ezra@easyb.ch>
+In-Reply-To: <04e7d7cd-a8bc-621b-9205-1a058521cabe@arm.com>
+Date:   Tue, 25 Feb 2020 22:42:57 +0100
+Cc:     linux-realtek-soc@lists.infradead.org, linux-leds@vger.kernel.org,
+        linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        csd@princeton.com.tw, devicetree@vger.kernel.org, sales@fdhisi.com,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <mripard@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>, <linux-leds@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20200223131435.681620-1-megous@megous.com>
- <20200223131435.681620-2-megous@megous.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <8c4b9ef7-0c18-d5c1-9672-b7fc683c3ce9@ti.com>
-Date:   Tue, 25 Feb 2020 06:55:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200223131435.681620-2-megous@megous.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Pavel Machek <pavel@ucw.cz>, zypeng@titanmec.com,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, Dan Murphy <dmurphy@ti.com>,
+        linux-rockchip@lists.infradead.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E33E27B9-D33C-4182-A5B1-C72FA40470BC@easyb.ch>
+References: <20191212033952.5967-1-afaerber@suse.de>
+ <7110806f-ddbd-f055-e107-7a1f7e223102@arm.com>
+ <c86c6bc0-b0e5-c46e-da87-9d910b95f9f3@suse.de>
+ <04e7d7cd-a8bc-621b-9205-1a058521cabe@arm.com>
+To:     Robin Murphy <robin.murphy@arm.com>,
+        =?utf-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Ondrej
+Hi Robin,
+Hi Andreas,
 
-On 2/23/20 7:14 AM, Ondrej Jirman wrote:
-> The AXP813 PMIC can control one LED. Add binding to represent the LED.
->
-> Signed-off-by: Ondrej Jirman <megous@megous.com>
-> ---
->   .../devicetree/bindings/leds/leds-axp20x.yaml | 24 +++++++++++++++++++
->   1 file changed, 24 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-axp20x.yaml
->
-> diff --git a/Documentation/devicetree/bindings/leds/leds-axp20x.yaml b/Documentation/devicetree/bindings/leds/leds-axp20x.yaml
-> new file mode 100644
-> index 0000000000000..79282d55764bf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-axp20x.yaml
-> @@ -0,0 +1,24 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/leds-axp20x.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: LED driver for AXP813 PMIC from X-Powers.
-> +
-> +maintainers:
-> +  - Ondrej Jirman <megous@megous.com>
-> +
-> +description: |
-> +  This module is part of the AXP20x MFD device. For more details
-> +  see Documentation/devicetree/bindings/mfd/axp20x.txt.
-> +
-> +  The LED controller is represented as a sub-node of the PMIC node on
-> +  the device tree.
-> +
-> +properties:
-> +  compatible:
-> +    const: x-powers,axp813-charger-led
-> +
-> +required:
-> +  - compatible
+> On 13 Dec 2019, at 15:07, Robin Murphy <robin.murphy@arm.com> wrote:
+>=20
+> I also have one of the H96 Max boxes (which I picked up out of =
+curiosity
+> for the mysterious RK3318) with an FD6551, although I've not attacked
+> that one with the logic analyser yet to see how similar it is.
 
-You need to add the color and function properties for proper LED device 
-name presentation per the bindings/leds/common.yaml binding.
+I have a T9 (RK3328) TV box with the same chip in it. The FD6551 uses an
+I2C-like protocol. Every digit (and the symbols) have an I2C address,
+but, the display does not signal ACK. AFAIK the FD650 and FD655 which
+are used in other boxes (Amlogic) are very similar.
 
-Dan
+So far, I have whipped up a proof-of-cocept driver that uses i2c-gpio.
+The digits seem to be rotated by 180 degrees. So, in order to use
+map_to_7segment.h I had to define the BIT_SEG7_* constants differently.
+My display also has multiple symbols (WIFI, network, pause, play, USB,
+alarm) that are controlled by writing to the same address as for the
+colon.
 
+I=E2=80=99d love to work on a driver (similar to Andreas=E2=80=99 SPI =
+based driver) for
+these I2C connected chips.
+
+Cheers,
+Ezra.
 
