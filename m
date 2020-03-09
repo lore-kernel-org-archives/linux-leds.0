@@ -2,29 +2,46 @@ Return-Path: <SRS0=C/5G=42=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3805CC18E5A
-	for <linux-leds@archiver.kernel.org>; Mon,  9 Mar 2020 22:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D766C10F25
+	for <linux-leds@archiver.kernel.org>; Mon,  9 Mar 2020 22:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 112112465A
-	for <linux-leds@archiver.kernel.org>; Mon,  9 Mar 2020 22:49:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FB3424649
+	for <linux-leds@archiver.kernel.org>; Mon,  9 Mar 2020 22:52:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="YCKeCIdF";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="MWbyA1l+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726937AbgCIWt3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 9 Mar 2020 18:49:29 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:37754 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726656AbgCIWt3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 9 Mar 2020 18:49:29 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 5B0EC1C0316; Mon,  9 Mar 2020 23:49:27 +0100 (CET)
-Date:   Mon, 9 Mar 2020 23:49:27 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Sakari Ailus <sakari.ailus@iki.fi>
-Cc:     Luca Weiss <luca@z3ntu.xyz>, linux-leds@vger.kernel.org,
-        Dan Murphy <dmurphy@ti.com>, Heiko Stuebner <heiko@sntech.de>,
+        id S1726937AbgCIWwQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 9 Mar 2020 18:52:16 -0400
+Received: from mail.z3ntu.xyz ([128.199.32.197]:47360 "EHLO mail.z3ntu.xyz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726656AbgCIWwP (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 9 Mar 2020 18:52:15 -0400
+Received: by mail.z3ntu.xyz (Postfix, from userid 182)
+        id E5BE3C3FAC; Mon,  9 Mar 2020 22:52:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1583794332; bh=gQwhg6Y3501OZkUxA6UXYJ1D5RqvkeFPm6/Cqf5YXUA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=YCKeCIdFS7oLDvN3u1GGs5WpVo2300tfLiL6UOsUoDcSVZH+/8TNRsIMdzGbNSsnI
+         2oSQAsC36AtVwVDhZBEivXV1n/r7udCF+9DtDu/7HINaEGQ1OZlEKLggI/fogXsZ7N
+         u+V9+zmcwwh+vVsXKqY/MqpQesZS1OWTBCg+TRRo=
+Received: from g550jk.localnet (80-110-126-226.cgn.dynamic.surfer.at [80.110.126.226])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id A5234C3FAC;
+        Mon,  9 Mar 2020 22:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1583794327; bh=gQwhg6Y3501OZkUxA6UXYJ1D5RqvkeFPm6/Cqf5YXUA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=MWbyA1l+96Lqvu6rN9XUN0a6ng9lpjIdsEQkZysaXBPY4zArOd5F34z/AukWmKY9o
+         6mQ9lUeVpk2raOj09KWarUmACYAVDPEQ7ovigM76FVny4eAs5itD+L+UH0+YRFbYK4
+         PCbNXI1Ok+BzV1vjL539vF+uwIw91rMcEOxbJPXQ=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     Sakari Ailus <sakari.ailus@iki.fi>, Pavel Machek <pavel@ucw.cz>
+Cc:     linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        Heiko Stuebner <heiko@sntech.de>,
         Icenowy Zheng <icenowy@aosc.io>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -34,52 +51,67 @@ Cc:     Luca Weiss <luca@z3ntu.xyz>, linux-leds@vger.kernel.org,
         Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
 Subject: Re: [PATCH 3/3] leds: add sgm3140 driver
-Message-ID: <20200309224926.GA2917@duo.ucw.cz>
-References: <20200309203558.305725-1-luca@z3ntu.xyz>
- <20200309203558.305725-4-luca@z3ntu.xyz>
- <20200309221805.GD2619@valkosipuli.retiisi.org.uk>
+Date:   Mon, 09 Mar 2020 23:52:06 +0100
+Message-ID: <2804366.mvXUDI8C0e@g550jk>
+In-Reply-To: <20200309224926.GA2917@duo.ucw.cz>
+References: <20200309203558.305725-1-luca@z3ntu.xyz> <20200309221805.GD2619@valkosipuli.retiisi.org.uk> <20200309224926.GA2917@duo.ucw.cz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
-Content-Disposition: inline
-In-Reply-To: <20200309221805.GD2619@valkosipuli.retiisi.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Hi Pavel
 
---Dxnq1zWXvFF0Q93v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> > +#define FLASH_TIMEOUT_DEFAULT		250000 /* 250ms */
-> > +#define FLASH_MAX_TIMEOUT_DEFAULT	300000 /* 300ms */
+On Montag, 9. M=E4rz 2020 23:49:27 CET Pavel Machek wrote:
+> Hi!
 >=20
-> Add U, and you can remove the cast elsewhere.
+> > > +#define FLASH_TIMEOUT_DEFAULT		250000 /* 250ms */
+> > > +#define FLASH_MAX_TIMEOUT_DEFAULT	300000 /* 300ms */
+> >=20
+> > Add U, and you can remove the cast elsewhere.
+>=20
+> I'll disagree here. Avoid U, avoid cast. Neither is needed.
 
-I'll disagree here. Avoid U, avoid cast. Neither is needed.
+If neither cast to u32 nor the U suffix is used, then this warning will be=
+=20
+printed:
 
-Best regards,
-									Pavel
+In file included from ./include/asm-generic/bug.h:19,
+                 from ./arch/arm64/include/asm/bug.h:26,
+                 from ./include/linux/bug.h:5,
+                 from ./include/linux/gpio/consumer.h:5,
+                 from drivers/leds/leds-sgm3140.c:4:
+drivers/leds/leds-sgm3140.c: In function 'sgm3140_probe':
+=2E/include/linux/kernel.h:835:29: warning: comparison of distinct pointer =
+types=20
+lacks a cast
+  835 |   (!!(sizeof((typeof(x) *)1 =3D=3D (typeof(y) *)1)))
+      |                             ^~
+=2E/include/linux/kernel.h:849:4: note: in expansion of macro '__typecheck'
+  849 |   (__typecheck(x, y) && __no_side_effects(x, y))
+      |    ^~~~~~~~~~~
+=2E/include/linux/kernel.h:859:24: note: in expansion of macro '__safe_cmp'
+  859 |  __builtin_choose_expr(__safe_cmp(x, y), \
+      |                        ^~~~~~~~~~
+=2E/include/linux/kernel.h:868:19: note: in expansion of macro '__careful_c=
+mp'
+  868 | #define min(x, y) __careful_cmp(x, y, <)
+      |                   ^~~~~~~~~~~~~
+drivers/leds/leds-sgm3140.c:187:18: note: in expansion of macro 'min'
+  187 |  priv->timeout =3D min(priv->max_timeout, FLASH_TIMEOUT_DEFAULT);
+      |                  ^~~
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+So one of both is needed.
 
---Dxnq1zWXvFF0Q93v
-Content-Type: application/pgp-signature; name="signature.asc"
+>=20
+> Best regards,
+> 							=09
+	Pavel
 
------BEGIN PGP SIGNATURE-----
+Regards
+Luca
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXmbH9gAKCRAw5/Bqldv6
-8poqAJ9rNACtL9JpyMpvqirtegESYwcK8QCeN8Z00hKiQr3cmj19Hi3HDqYsp9A=
-=T86U
------END PGP SIGNATURE-----
 
---Dxnq1zWXvFF0Q93v--
