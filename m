@@ -2,83 +2,85 @@ Return-Path: <SRS0=C/5G=42=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3171C3F2D1
-	for <linux-leds@archiver.kernel.org>; Mon,  9 Mar 2020 20:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA8FC10F27
+	for <linux-leds@archiver.kernel.org>; Mon,  9 Mar 2020 21:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B83C62467D
-	for <linux-leds@archiver.kernel.org>; Mon,  9 Mar 2020 20:36:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="lS7kCk0C"
+	by mail.kernel.org (Postfix) with ESMTP id F35B62464B
+	for <linux-leds@archiver.kernel.org>; Mon,  9 Mar 2020 21:05:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583787930;
+	bh=g9N6of+fXMYEvQmQJ986K150eu5EoFj639M+Arl2mgg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=atr1oEYLT26+pQPpIlUoGN7dqF0jDXmvhYX+6XkP5WLkhGFe+bHZGpjIh0rVTm4aJ
+	 5bFn7qX2kUxMWzus0hepoOXF5Tr7O4SCXEB1ENkJDgjqOmkc7hUCw6OUaIp8yvqEra
+	 o2aRxqpHXkm+gcbLuIV/6F8u4V8Y81LtpPpmpT1Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbgCIUgo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 9 Mar 2020 16:36:44 -0400
-Received: from mail.z3ntu.xyz ([128.199.32.197]:57364 "EHLO mail.z3ntu.xyz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726266AbgCIUg3 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:36:29 -0400
-Received: from localhost.localdomain (80-110-126-226.cgn.dynamic.surfer.at [80.110.126.226])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id C62F4C3FCA;
-        Mon,  9 Mar 2020 20:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1583786187; bh=OHuOuAn8dDK8twim3X48JfmlWA8R2S+SMV+iVj445pE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=lS7kCk0CvDscR40c2+DWE5YXM1+8WXBRYev7dEzrcsoaNZ8LIZF4e+NHiUewURAem
-         cN5C9tA0vP6D5v61lUqar9pPb1iJXo1xyJUUtroTTJWQ4PWBw5L8JdVN1Yxc6Z+OX3
-         VUFSobg9lJrwz9HTrS1h3YvuNwfMkiBtE/DBPDoM=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     linux-leds@vger.kernel.org
-Cc:     Dan Murphy <dmurphy@ti.com>, Heiko Stuebner <heiko@sntech.de>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, Luca Weiss <luca@z3ntu.xyz>
-Subject: [PATCH 1/3] dt-bindings: Add vendor prefix for SG Micro Corp
-Date:   Mon,  9 Mar 2020 21:35:56 +0100
-Message-Id: <20200309203558.305725-2-luca@z3ntu.xyz>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200309203558.305725-1-luca@z3ntu.xyz>
-References: <20200309203558.305725-1-luca@z3ntu.xyz>
+        id S1726197AbgCIVF3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 9 Mar 2020 17:05:29 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46110 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbgCIVF3 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 9 Mar 2020 17:05:29 -0400
+Received: by mail-ot1-f68.google.com with SMTP id 111so6728818oth.13;
+        Mon, 09 Mar 2020 14:05:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=S3K7yVdnvROgRNjWoLKF7rzoU4Ko8/qyGdog+zSFEvY=;
+        b=txA2x6jRluRQuBoHlJ2KxeDu+bClLlE35DM2xjfr6rbt5He4Xevn7jzHu9lrEgmWmp
+         YaMWo5Bt8XwsxiDYx4z2Yua/EFdKCzOve0tOH4NcizFo+q3Tlmm/DcICzb1cQSEiRnG1
+         UYExfwiBsZCHexlUZ3VppXN2rMkX3VtKaXE9f3VpGFdtYMCzFhr8U6ulrgUbhZXj6soK
+         GxZvszN3bI6HUQAyLVNnrAJ5UfWxxKeYHM65q2C/4D/HeOhU0hZ0ifgSoQvouEyUppLf
+         o0D757n9rALL7RzUx0iOKEZg1EozSuFFkxVUb7rlfCasI6j4BLwQEkdtB+xjn3tegZRg
+         Zi8Q==
+X-Gm-Message-State: ANhLgQ0TYOnMpTMf53nfug56N8+2fryLmancNS5hmnNhy7UJi6n+6/6P
+        gLwRA7hqfD+Etg30jgSsEbmTVQQ=
+X-Google-Smtp-Source: ADFU+vsOLiOFN9ulRKpD6cuBbP+kcy4+3ReuiL4dSROeIWdMiRVn2TguKliq7tXm2P4zrNABYne43g==
+X-Received: by 2002:a9d:76d6:: with SMTP id p22mr14881833otl.37.1583787928705;
+        Mon, 09 Mar 2020 14:05:28 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s12sm3486510oic.31.2020.03.09.14.05.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 14:05:28 -0700 (PDT)
+Received: (nullmailer pid 7378 invoked by uid 1000);
+        Mon, 09 Mar 2020 21:05:27 -0000
+Date:   Mon, 9 Mar 2020 16:05:27 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Nicolas Belin <nbelin@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
+        devicetree@vger.kernel.org, baylibre-upstreaming@groups.io,
+        Nicolas Belin <nbelin@baylibre.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: Document shiji vendor-prefix
+Message-ID: <20200309210527.GA7275@bogus>
+References: <1583502010-16210-1-git-send-email-nbelin@baylibre.com>
+ <1583502010-16210-2-git-send-email-nbelin@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583502010-16210-2-git-send-email-nbelin@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-"SG Micro Corp (SGMICRO) specializes in high performance, high quality
-analog IC design, marketing and sales." (http://www.sg-micro.com/)
+On Fri,  6 Mar 2020 14:40:08 +0100, Nicolas Belin wrote:
+> Shenzhen Shiji Lighting Co.,Ltd is a LED manufacturer.
+> 
+> Signed-off-by: Nicolas Belin <nbelin@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
----
-Changes since RFC:
-- new patch
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 8d306af435a3..059ff7bc0c79 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -843,6 +843,8 @@ patternProperties:
-     description: Small Form Factor Committee
-   "^sgd,.*":
-     description: Solomon Goldentek Display Corporation
-+  "^sgmicro,.*":
-+    description: SG Micro Corp
-   "^sgx,.*":
-     description: SGX Sensortech
-   "^sharp,.*":
--- 
-2.25.1
-
+If a tag was not added on purpose, please state why and what changed.
