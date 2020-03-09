@@ -2,518 +2,427 @@ Return-Path: <SRS0=C/5G=42=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E11C18E5A
-	for <linux-leds@archiver.kernel.org>; Mon,  9 Mar 2020 10:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1ADC18E5A
+	for <linux-leds@archiver.kernel.org>; Mon,  9 Mar 2020 13:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98CCF21927
-	for <linux-leds@archiver.kernel.org>; Mon,  9 Mar 2020 10:00:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 004E020873
+	for <linux-leds@archiver.kernel.org>; Mon,  9 Mar 2020 13:26:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ykt2W3nY"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="cCw+/NYO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725796AbgCIKAD (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 9 Mar 2020 06:00:03 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33635 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbgCIKAD (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 9 Mar 2020 06:00:03 -0400
-Received: by mail-io1-f67.google.com with SMTP id r15so8534920iog.0
-        for <linux-leds@vger.kernel.org>; Mon, 09 Mar 2020 03:00:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=XYsp5YfT9GHQXn9e9Uo27I/6IbA8wOJ+MyIiypQnqBg=;
-        b=ykt2W3nYoRuWrtAqOa+Jsr1xjyONntaqQ876szsFgg3yWgfwa9XzXjUfH4F/gZVOBg
-         Y9xx8CFdkMRq7xUeBvduDNkuPFoYCglGOfhrApb5BAdr9kBgyCwIqK9Z84coYwaM/Adu
-         k9QLcYz62w2GtU1xDOZj1x+ELpMqDnZVm3dqgzFHFec2LLjNezgEyIZcAV3bU0E6rLHI
-         RJ6rxJr98//K83vCDNZ2VRBF8gze0k7o7Ae+SZDqK4pz0CrE7JMVKISOi/cLdxLcOCND
-         bE/65iiH3L6juRm+qDW85/MHQTiwS9ktu8u8535W0pjnP61bY7tl4PVcMqC8QZL/s3a8
-         0OkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XYsp5YfT9GHQXn9e9Uo27I/6IbA8wOJ+MyIiypQnqBg=;
-        b=qQDyeK5rH2IXu9uPfkM3nmoAIOKomLXZy7rCT9TUiNE49Ciy7kDZaStpiKqLqXaP4N
-         DxJOetuZU1iIiZaQCP5WEUCKGMDEeJ2ArwCAthB0jnK2Dw4rUvrcwNu1+J4Cf34rVB4f
-         TvTHPmBdk/4KG+2/sGHQfb1tKU2qmUegy7Ps94oAMJjxkooXZSGgpgL1b/hGomMVnk7Q
-         lxzdtGzrF1Efx0yehickPuTWXwXkpoEDTDgn+8Z4ydu6/18PrcbDAwprqmQoCwAXpG5J
-         +FG1M+a7Y57G2mSFAbcCTFNs5Lm3I21cQ1oe+WYaXqdjfm5cq47dKhWLqKzTw9l2Yk8f
-         iQkg==
-X-Gm-Message-State: ANhLgQ0FqYtzymy4bJF11Rzaaz0kG2Ff4W9WA4WudMmVS1brfd8nvwJd
-        V3j7grnq1olBj75UDY+trgs/tJTPV0e9sc0pwI2T8w==
-X-Google-Smtp-Source: ADFU+vv/Q5BFWC4z6ovabVtmzjjAwANH9fR51mgOt+AmYdVu7DeLah+kQkB3dEeMKXvxBunc5jReHmubRgb5xmImDZI=
-X-Received: by 2002:a02:ac90:: with SMTP id x16mr3235208jan.12.1583748001402;
- Mon, 09 Mar 2020 03:00:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <1583502010-16210-1-git-send-email-nbelin@baylibre.com>
- <1583502010-16210-4-git-send-email-nbelin@baylibre.com> <f599f5f7-4023-10c0-a582-4dce2a601b95@gmail.com>
-In-Reply-To: <f599f5f7-4023-10c0-a582-4dce2a601b95@gmail.com>
-From:   Nicolas Belin <nbelin@baylibre.com>
-Date:   Mon, 9 Mar 2020 10:59:50 +0100
-Message-ID: <CAJZgTGH4g79ohvGi0RbD3LS7p422Q44h4_7sTWFwjiqS4U+zvA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] drivers: leds: add support for apa102c leds
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        devicetree@vger.kernel.org, baylibre-upstreaming@groups.io
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1726487AbgCIN0n (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 9 Mar 2020 09:26:43 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:51227 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726445AbgCIN0n (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 9 Mar 2020 09:26:43 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1583760402; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=wMMrzD7T/RIwHvzv+Ze2mZTFGghdcHPfBa6bIbLUCGs=; b=cCw+/NYO5h3G4BhK6kSIF/JAe8Y1qSbA1G7Ow6Vc6HUca5fwpJ9F/dEmFgskAlYQHf1q9fTw
+ Ij2wrIaFWw3ZMXixDtJ5YfuKE5p/76LVYXKDkceKkZiujWWZ9kLzwdHtv94ibm9BPYO1ufFH
+ v4CoYp9mNF23ABw9AE5ckIGMFYQ=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyJkODczOCIsICJsaW51eC1sZWRzQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e664411.7fe1cfd17b20-smtp-out-n03;
+ Mon, 09 Mar 2020 13:26:41 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id C4ACAC44795; Mon,  9 Mar 2020 13:26:39 +0000 (UTC)
+Received: from kgunda-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kgunda)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0FC46C44788;
+        Mon,  9 Mar 2020 13:26:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0FC46C44788
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kgunda@codeaurora.org
+From:   Kiran Gunda <kgunda@codeaurora.org>
+To:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
+        lee.jones@linaro.org, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dan Murphy <dmurphy@ti.com>
+Cc:     linux-arm-msm@vger.kernel.org, Kiran Gunda <kgunda@codeaurora.org>
+Subject: [PATCH V3 1/4] backlight: qcom-wled: convert the wled bindings to .yaml format
+Date:   Mon,  9 Mar 2020 18:55:59 +0530
+Message-Id: <1583760362-26978-2-git-send-email-kgunda@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1583760362-26978-1-git-send-email-kgunda@codeaurora.org>
+References: <1583760362-26978-1-git-send-email-kgunda@codeaurora.org>
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Jacek,
+Convert the qcom-wled bindings from .txt to .yaml format.
 
-Le ven. 6 mars 2020 =C3=A0 21:20, Jacek Anaszewski
-<jacek.anaszewski@gmail.com> a =C3=A9crit :
->
-> Hi Nicolas,
->
-> On 3/6/20 2:40 PM, Nicolas Belin wrote:
-> > Initilial commit in order to support the apa102c RGB leds. The
-> > RGB and global brightness management is done by creating 4 leds
-> > from the Led Framework per apa102c led.
-> >
-> > Signed-off-by: Nicolas Belin <nbelin@baylibre.com>
-> > ---
-> >  drivers/leds/Kconfig        |  11 ++
-> >  drivers/leds/Makefile       |   1 +
-> >  drivers/leds/leds-apa102c.c | 306 ++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  3 files changed, 318 insertions(+)
-> >  create mode 100644 drivers/leds/leds-apa102c.c
-> >
-> > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> > index d82f1dea3711..28fa6c4f65cc 100644
-> > --- a/drivers/leds/Kconfig
-> > +++ b/drivers/leds/Kconfig
-> > @@ -69,6 +69,17 @@ config LEDS_AN30259A
-> >         To compile this driver as a module, choose M here: the module
-> >         will be called leds-an30259a.
-> >
-> > +config LEDS_APA102C
-> > +     tristate "LED Support for Shiji APA102C"
-> > +     depends on SPI
-> > +     depends on LEDS_CLASS
-> > +     help
-> > +       This option enables support for the APA102C RGB LEDs
-> > +       from Shiji Lighting.
-> > +
-> > +       To compile this driver as a module, choose M here: the module
-> > +       will be called leds-apa102c.
-> > +
-> >  config LEDS_APU
-> >       tristate "Front panel LED support for PC Engines APU/APU2/APU3 bo=
-ards"
-> >       depends on LEDS_CLASS
-> > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> > index d7e1107753fb..28dfe82900c5 100644
-> > --- a/drivers/leds/Makefile
-> > +++ b/drivers/leds/Makefile
-> > @@ -88,6 +88,7 @@ obj-$(CONFIG_LEDS_LM36274)          +=3D leds-lm36274=
-.o
-> >  obj-$(CONFIG_LEDS_TPS6105X)          +=3D leds-tps6105x.o
-> >
-> >  # LED SPI Drivers
-> > +obj-$(CONFIG_LEDS_APA102C)           +=3D leds-apa102c.o
-> >  obj-$(CONFIG_LEDS_CR0014114)         +=3D leds-cr0014114.o
-> >  obj-$(CONFIG_LEDS_DAC124S085)                +=3D leds-dac124s085.o
-> >  obj-$(CONFIG_LEDS_EL15203000)                +=3D leds-el15203000.o
-> > diff --git a/drivers/leds/leds-apa102c.c b/drivers/leds/leds-apa102c.c
-> > new file mode 100644
-> > index 000000000000..0043e7a6235b
-> > --- /dev/null
-> > +++ b/drivers/leds/leds-apa102c.c
-> > @@ -0,0 +1,306 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +#include <linux/leds.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of_device.h>
-> > +#include <linux/spi/spi.h>
-> > +#include <uapi/linux/uleds.h>
-> > +#include "leds.h"
-> > +
-> > +/*
-> > + * Copyright (C) 2020 BayLibre, SAS
-> > + * Author: Nicolas Belin <nbelin@baylibre.com>
-> > + */
-> > +
-> > +/*
-> > + *  APA102C SPI protocol description:
-> > + *  +------+----------------------------------------+------+
-> > + *  |START |               DATA FIELD:              | END  |
-> > + *  |FRAME |               N LED FRAMES             |FRAME |
-> > + *  +------+------+------+------+------+-----+------+------+
-> > + *  | 0*32 | LED1 | LED2 | LED3 | LED4 | --- | LEDN | 1*32 |
-> > + *  +------+------+------+------+------+-----+------+------+
-> > + *
-> > + *  +-----------------------------------+
-> > + *  |START FRAME 32bits                 |
-> > + *  +--------+--------+--------+--------+
-> > + *  |00000000|00000000|00000000|00000000|
-> > + *  +--------+--------+--------+--------+
-> > + *
-> > + *  +------------------------------------+
-> > + *  |LED  FRAME 32bits                   |
-> > + *  +---+-----+--------+--------+--------+
-> > + *  |111|LUMA |  BLUE  | GREEN  |  RED   |
-> > + *  +---+-----+--------+--------+--------+
-> > + *  |3b |5bits| 8bits  | 8bits  | 8bits  |
-> > + *  +---+-----+--------+--------+--------+
-> > + *  |MSB   LSB|MSB  LSB|MSB  LSB|MSB  LSB|
-> > + *  +---+-----+--------+--------+--------+
-> > + *
-> > + *  +-----------------------------------+
-> > + *  |END FRAME 32bits                   |
-> > + *  +--------+--------+--------+--------+
-> > + *  |11111111|11111111|11111111|11111111|
-> > + *  +--------+--------+--------+--------+
-> > + */
-> > +
-> > +/* apa102c default settings */
-> > +#define GLOBAL_MAX_BRIGHTNESS        GENMASK(4, 0)
-> > +#define RGB_MAX_BRIGHTNESS   GENMASK(7, 0)
-> > +#define START_BYTE           0
-> > +#define END_BYTE             GENMASK(7, 0)
-> > +#define LED_FRAME_HEADER     GENMASK(7, 5)
-> > +
-> > +struct apa102c_led {
-> > +     struct apa102c          *priv;
-> > +     char                    name[LED_MAX_NAME_SIZE];
->
-> This is not needed, LED core takes care of parsing LED name.
->
-> > +     int                     color_id;
-> > +     struct led_classdev     cdev;
-> > +};
-> > +
-> > +struct apa102c_rgbled {
-> > +     /* the 4 components of the apa102c rgb led:
-> > +      * global brightness, blue, green and red in that order
-> > +      */
-> > +     struct apa102c_led      component[4];
-> > +};
-> > +
-> > +struct apa102c {
-> > +     size_t                  led_count;
-> > +     struct device           *dev;
-> > +     struct mutex            lock;
-> > +     struct spi_device       *spi;
-> > +     u8                      *spi_buf;
-> > +     struct apa102c_rgbled   rgb_leds[];
-> > +};
-> > +
-> > +static int apa102c_sync(struct apa102c *priv)
-> > +{
-> > +     int     ret;
-> > +     size_t  i;
-> > +     struct apa102c_rgbled *leds =3D priv->rgb_leds;
-> > +     u8      *buf =3D priv->spi_buf;
-> > +
-> > +     /* creating the data that will be sent to all the leds at once */
-> > +     for (i =3D 0; i < 4; i++)
-> > +             *buf++ =3D START_BYTE;
-> > +
-> > +     /* looping on each RGB led component, getting the global brightne=
-ss
-> > +      * then B, G and R values
-> > +      */
-> > +     for (i =3D 0; i < priv->led_count; i++) {
-> > +             *buf++ =3D LED_FRAME_HEADER |
-> > +                      leds[i].component[0].cdev.brightness;
-> > +             *buf++ =3D leds[i].component[1].cdev.brightness;
-> > +             *buf++ =3D leds[i].component[2].cdev.brightness;
-> > +             *buf++ =3D leds[i].component[3].cdev.brightness;
-> > +     }
->
-> The problem is that in the monochrome LED approach (i.e. the only
-> available one) you have to alter the state of only one LED - that
-> on behalf of which the call is made.
->
-> And anyway, you're doing here much too much, taking into account
-> that this function is called from brightness_set op.
->
-> Isn't it possible to update only one LED ?
+Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+---
+ .../bindings/leds/backlight/qcom-wled.txt          | 154 -----------------
+ .../bindings/leds/backlight/qcom-wled.yaml         | 184 +++++++++++++++++++++
+ 2 files changed, 184 insertions(+), 154 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
 
-No, it is not possible. When one LED is updated and as all the leds
-are cascaded, the values for all the leds have to be sent using spi.
-However, what I can do is not updating the full buffer and simply the
-part that corresponds to the modified LED.
-
->
-> > +
-> > +     for (i =3D 0; i < 4; i++)
-> > +             *buf++ =3D END_BYTE;
-> > +
-> > +     ret =3D spi_write(priv->spi, priv->spi_buf,
-> > +                     (priv->led_count + 2) * sizeof(u32));
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int apa102c_brightness_set(struct led_classdev *cdev,
-> > +                        enum led_brightness brightness)
-> > +{
-> > +     int                     ret;
-> > +     struct apa102c_led      *led =3D container_of(cdev,
-> > +                                                 struct apa102c_led,
-> > +                                                 cdev);
-> > +
-> > +     mutex_lock(&led->priv->lock);
-> > +     /* updating the brightness then synching all the leds */
-> > +     cdev->brightness =3D brightness;
->
-> LED core handles that. Please drop this assignment.
-
-OK
-
->
-> > +     ret =3D apa102c_sync(led->priv);
-> > +     mutex_unlock(&led->priv->lock);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int apa102c_probe_dt(struct apa102c *priv)
-> > +{
-> > +     int                     ret =3D 0;
-> > +     u32                     i;
-> > +     struct apa102c_rgbled   *rgb_led;
-> > +     struct apa102c_led      *led;
-> > +     struct fwnode_handle    *child;
-> > +     const char              *rgb_led_name;
-> > +     const char              *led_component_name;
-> > +
-> > +     /* each node corresponds to an rgb led */
-> > +     device_for_each_child_node(priv->dev, child) {
-> > +
-> > +             ret =3D fwnode_property_read_u32(child, "reg", &i);
-> > +             if (ret) {
-> > +                     dev_err(priv->dev, "coudld not read reg %d\n", re=
-t);
-> > +                     goto child_out;
-> > +             }
-> > +
-> > +             if (i >=3D priv->led_count) {
-> > +                     ret =3D -EINVAL;
-> > +                     dev_err(priv->dev, "reg value too big\n");
-> > +                     goto child_out;
-> > +             }
-> > +
-> > +             rgb_led =3D &priv->rgb_leds[i];
-> > +             /* checking if this led config is already used by checkin=
-g if
-> > +              * the priv member of the global_brightness led as alread=
-y
-> > +              * been set
-> > +              */
-> > +             if (rgb_led->component[0].priv) {
-> > +                     ret =3D -EINVAL;
-> > +                     dev_err(priv->dev, "using the same reg value twic=
-e\n");
-> > +                     goto child_out;
-> > +             }
-> > +
-> > +             ret =3D fwnode_property_read_string(child, "label",
-> > +                                               &rgb_led_name);
-> > +             if (ret) {
-> > +                     ret =3D -EINVAL;
-> > +                     dev_err(priv->dev, "missing rgb led name\n");
-> > +                     goto child_out;
-> > +             }
-> > +
-> > +             /* setting a color_id value for each of the 4 components =
-of the
-> > +              * apa102c RGB led. The first component is the global bri=
-ghtness
-> > +              * of the led and thus has no color. The order of the col=
-ors
-> > +              * after the global brightness is then blue, green and re=
-d
-> > +              * in that order. It corresponds to the order in which th=
-e
-> > +              * values are sent using spi
-> > +              */
-> > +             rgb_led->component[0].color_id =3D -1; //no color
-> > +             rgb_led->component[1].color_id =3D LED_COLOR_ID_BLUE;
-> > +             rgb_led->component[2].color_id =3D LED_COLOR_ID_GREEN;
-> > +             rgb_led->component[3].color_id =3D LED_COLOR_ID_RED;
->
-> Each LED has to have separate DT node. We haven't had so far use case
-> with global brightness but I think it would be OK to add
-> LED_COLOR_ID_LUMA for that. But please hold on with making any changes
-> until Pavel will express his opinion on that.
-
-It would be nice to have LED_COLOR_ID_LUMA. However, I don't feel like
-it is really a color. I'll wait for Pavel's opinion.
-
->
-> > +
-> > +             /* now looping on each component and registering a corres=
-ponding
-> > +              * led
-> > +              */
-> > +             for (i =3D 0; i < 4; i++) {
-> > +                     led =3D &rgb_led->component[i];
-> > +                     if (led->color_id =3D=3D -1) {
-> > +                             /* the global brightness has no defined n=
-ame
-> > +                              * so setting it to "brightness". It also=
- has
-> > +                              * a different MAX_BRIGHTNESS value.
-> > +                              * If a trigger is present, setting it on=
- this
-> > +                              * component
-> > +                              */
-> > +                             led->cdev.max_brightness =3D
-> > +                                     GLOBAL_MAX_BRIGHTNESS;
-> > +                             led_component_name =3D "brightness";
-> > +                             fwnode_property_read_string(child,
-> > +                                     "linux,default-trigger",
-> > +                                     &led->cdev.default_trigger);
-> > +                     } else {
-> > +                             /* using the color name defined by the fr=
-amework
-> > +                              * for the B, G and R components
-> > +                              */
-> > +                             led->cdev.max_brightness =3D RGB_MAX_BRIG=
-HTNESS;
-> > +                             led_component_name =3D led_colors[led->co=
-lor_id];
-> > +                     }
-> > +
-> > +                     /* the rest is common to all the components */
-> > +                     led->priv =3D priv;
-> > +                     led->cdev.brightness_set_blocking =3D
-> > +                             apa102c_brightness_set;
-> > +                     /* creating our own led name to differentiate the=
- 4
-> > +                      * components
-> > +                      */
-> > +                     snprintf(led->name, sizeof(led->name),
-> > +                              "%s_%s", rgb_led_name, led_component_nam=
-e);
-> > +                     led->cdev.name =3D led->name;
-> > +
->
-> LED core can do the above for you, if only you provide it with LED
-> fwnode.
-
-I was doing that to have a led_name formatted as "label_color". I am
-going to check for LED functions that could work for me and come back
-to you if find other functions that are not present.
-
->
-> > +                     ret =3D devm_led_classdev_register_ext(priv->dev,
-> > +                                                          &led->cdev,
-> > +                                                          NULL);
->
-> There is no point in using *ext API and not passing led_init_data to it.
-> Please pass struct led_init_data in the third argument, with initialized
-> only its fwnode property.
->
-> > +                     if (ret) {
-> > +                             dev_err(priv->dev, "led register err: %d\=
-n",
-> > +                                     ret);
-> > +                             goto child_out;
-> > +                     }
-> > +             }
-> > +     }
-> > +
-> > +child_out:
-> > +     return ret;
-> > +}
-> > +
-> > +static int apa102c_probe(struct spi_device *spi)
-> > +{
-> > +     struct apa102c  *priv;
-> > +     size_t          led_count;
-> > +     int             ret;
-> > +
-> > +     led_count =3D device_get_child_node_count(&spi->dev);
-> > +     if (!led_count) {
-> > +             dev_err(&spi->dev, "No LEDs defined in device tree!");
-> > +             return -ENODEV;
-> > +     }
-> > +
-> > +     priv =3D devm_kzalloc(&spi->dev,
-> > +                         struct_size(priv, rgb_leds, led_count),
-> > +                         GFP_KERNEL);
-> > +     if (!priv)
-> > +             return -ENOMEM;
-> > +
-> > +     priv->spi_buf =3D devm_kzalloc(&spi->dev,
-> > +                                  (led_count + 2) * sizeof(u32),
-> > +                                   GFP_KERNEL);
-> > +     if (!priv->spi_buf)
-> > +             return -ENOMEM;
-> > +
-> > +     mutex_init(&priv->lock);
-> > +     priv->led_count =3D led_count;
-> > +     priv->dev       =3D &spi->dev;
-> > +     priv->spi       =3D spi;
-> > +
-> > +     ret =3D apa102c_probe_dt(priv);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     /* Set the LEDs with default values at start */
-> > +     apa102c_sync(priv);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     spi_set_drvdata(spi, priv);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int apa102c_remove(struct spi_device *spi)
-> > +{
-> > +     struct apa102c *priv =3D spi_get_drvdata(spi);
-> > +
-> > +     mutex_destroy(&priv->lock);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct of_device_id apa102c_dt_ids[] =3D {
-> > +     { .compatible =3D "shiji,apa102c", },
-> > +     {},
-> > +};
-> > +
-> > +MODULE_DEVICE_TABLE(of, apa102c_dt_ids);
-> > +
-> > +static struct spi_driver apa102c_driver =3D {
-> > +     .probe          =3D apa102c_probe,
-> > +     .remove         =3D apa102c_remove,
-> > +     .driver =3D {
-> > +             .name           =3D KBUILD_MODNAME,
-> > +             .of_match_table =3D apa102c_dt_ids,
-> > +     },
-> > +};
-> > +
-> > +module_spi_driver(apa102c_driver);
-> > +
-> > +MODULE_AUTHOR("Nicolas Belin <nbelin@baylibre.com>");
-> > +MODULE_DESCRIPTION("apa102c LED driver");
-> > +MODULE_LICENSE("GPL v2");
-> > +MODULE_ALIAS("spi:apa102c");
-> >
->
-> --
-> Best regards,
-> Jacek Anaszewski
-
-Thanks,
-
-Regards,
-
-Nicolas
+diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+deleted file mode 100644
+index c06863b..0000000
+--- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
++++ /dev/null
+@@ -1,154 +0,0 @@
+-Binding for Qualcomm Technologies, Inc. WLED driver
+-
+-WLED (White Light Emitting Diode) driver is used for controlling display
+-backlight that is part of PMIC on Qualcomm Technologies, Inc. reference
+-platforms. The PMIC is connected to the host processor via SPMI bus.
+-
+-- compatible
+-	Usage:        required
+-	Value type:   <string>
+-	Definition:   should be one of:
+-			"qcom,pm8941-wled"
+-			"qcom,pmi8998-wled"
+-			"qcom,pm660l-wled"
+-
+-- reg
+-	Usage:        required
+-	Value type:   <prop encoded array>
+-	Definition:   Base address of the WLED modules.
+-
+-- default-brightness
+-	Usage:        optional
+-	Value type:   <u32>
+-	Definition:   brightness value on boot, value from: 0-4095.
+-		      Default: 2048
+-
+-- label
+-	Usage:        required
+-	Value type:   <string>
+-	Definition:   The name of the backlight device
+-
+-- qcom,cs-out
+-	Usage:        optional
+-	Value type:   <bool>
+-	Definition:   enable current sink output.
+-		      This property is supported only for PM8941.
+-
+-- qcom,cabc
+-	Usage:        optional
+-	Value type:   <bool>
+-	Definition:   enable content adaptive backlight control.
+-
+-- qcom,ext-gen
+-	Usage:        optional
+-	Value type:   <bool>
+-	Definition:   use externally generated modulator signal to dim.
+-		      This property is supported only for PM8941.
+-
+-- qcom,current-limit
+-	Usage:        optional
+-	Value type:   <u32>
+-	Definition:   mA; per-string current limit; value from 0 to 25 with
+-		      1 mA step. Default 20 mA.
+-		      This property is supported only for pm8941.
+-
+-- qcom,current-limit-microamp
+-	Usage:        optional
+-	Value type:   <u32>
+-	Definition:   uA; per-string current limit; value from 0 to 30000 with
+-		      2500 uA step. Default 25 mA.
+-
+-- qcom,current-boost-limit
+-	Usage:        optional
+-	Value type:   <u32>
+-	Definition:   mA; boost current limit.
+-		      For pm8941: one of: 105, 385, 525, 805, 980, 1260, 1400,
+-		      1680. Default: 805 mA.
+-		      For pmi8998: one of: 105, 280, 450, 620, 970, 1150, 1300,
+-		      1500. Default: 970 mA.
+-
+-- qcom,switching-freq
+-	Usage:        optional
+-	Value type:   <u32>
+-	 Definition:   kHz; switching frequency; one of: 600, 640, 685, 738,
+-		       800, 872, 960, 1066, 1200, 1371, 1600, 1920, 2400, 3200,
+-		       4800, 9600.
+-		       Default: for pm8941: 1600 kHz
+-				for pmi8998: 800 kHz
+-
+-- qcom,ovp
+-	Usage:        optional
+-	Value type:   <u32>
+-	Definition:   V; Over-voltage protection limit; one of:
+-		      27, 29, 32, 35. Default: 29V
+-		      This property is supported only for PM8941.
+-
+-- qcom,ovp-millivolt
+-	Usage:        optional
+-	Value type:   <u32>
+-	Definition:   mV; Over-voltage protection limit;
+-		      For pmi8998: one of 18100, 19600, 29600, 31100.
+-		      Default 29600 mV.
+-		      If this property is not specified for PM8941, it
+-		      falls back to "qcom,ovp" property.
+-
+-- qcom,num-strings
+-	Usage:        optional
+-	Value type:   <u32>
+-	Definition:   #; number of led strings attached;
+-		      value: For PM8941 from 1 to 3. Default: 2
+-			     For PMI8998 from 1 to 4.
+-
+-- interrupts
+-	Usage:        optional
+-	Value type:   <prop encoded array>
+-	Definition:   Interrupts associated with WLED. This should be
+-		      "short" and "ovp" interrupts. Interrupts can be
+-		      specified as per the encoding listed under
+-		      Documentation/devicetree/bindings/spmi/
+-		      qcom,spmi-pmic-arb.txt.
+-
+-- interrupt-names
+-	Usage:        optional
+-	Value type:   <string>
+-	Definition:   Interrupt names associated with the interrupts.
+-		      Must be "short" and "ovp". The short circuit detection
+-		      is not supported for PM8941.
+-
+-- qcom,enabled-strings
+-	Usage:        optional
+-	Value tyoe:   <u32 array>
+-	Definition:   Array of the WLED strings numbered from 0 to 3. Each
+-		      string of leds are operated individually. Specify the
+-		      list of strings used by the device. Any combination of
+-		      led strings can be used.
+-
+-- qcom,external-pfet
+-	Usage:        optional
+-	Value type:   <bool>
+-	Definition:   Specify if external PFET control for short circuit
+-		      protection is used. This property is supported only
+-		      for PMI8998.
+-
+-- qcom,auto-string-detection
+-	Usage:        optional
+-	Value type:   <bool>
+-	Definition:   Enables auto-detection of the WLED string configuration.
+-		      This feature is not supported for PM8941.
+-
+-
+-Example:
+-
+-pm8941-wled@d800 {
+-	compatible = "qcom,pm8941-wled";
+-	reg = <0xd800>;
+-	label = "backlight";
+-
+-	qcom,cs-out;
+-	qcom,current-limit = <20>;
+-	qcom,current-boost-limit = <805>;
+-	qcom,switching-freq = <1600>;
+-	qcom,ovp = <29>;
+-	qcom,num-strings = <2>;
+-	qcom,enabled-strings = <0 1>;
+-};
+diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+new file mode 100644
+index 0000000..d334f81
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+@@ -0,0 +1,184 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/leds/backlight/qcom-wled.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Binding for Qualcomm Technologies, Inc. WLED driver
++
++maintainers:
++  - Lee Jones <lee.jones@linaro.org>
++
++description: |
++  WLED (White Light Emitting Diode) driver is used for controlling display
++  backlight that is part of PMIC on Qualcomm Technologies, Inc. reference
++  platforms. The PMIC is connected to the host processor via SPMI bus.
++
++properties:
++  compatible :
++    enum:
++       - qcom,pm8941-wled
++       - qcom,pmi8998-wled
++       - qcom,pm660l-wled
++
++  reg:
++    maxItems: 1
++
++  default-brightness:
++    maxItems: 1
++    description:
++      brightness value on boot, value from 0-4095.
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++        default: 2048
++
++  label:
++    maxItems: 1
++    description:
++      The name of the backlight device.
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/string
++
++  qcom,cs-out:
++    description:
++      enable current sink output.
++      This property is supported only for PM8941.
++    type: boolean
++
++  qcom,cabc:
++    description:
++      enable content adaptive backlight control.
++    type: boolean
++
++  qcom,ext-gen:
++    description:
++      use externally generated modulator signal to dim.
++      This property is supported only for PM8941.
++    type: boolean
++
++  qcom,current-limit:
++    maxItems: 1
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      mA; per-string current limit; value from 0 to 25 with
++      1 mA step. This property is supported only for pm8941.
++    default: 20
++
++  qcom,current-limit-microamp:
++    maxItems: 1
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      uA; per-string current limit; value from 0 to 30000 with
++      2500 uA step.
++    default: 25
++
++  qcom,current-boost-limit:
++    maxItems: 1
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      mA; boost current limit.
++      For pm8941 one of 105, 385, 525, 805, 980, 1260, 1400, 1680.
++      Default, 805 mA.
++      For pmi8998 one of 105, 280, 450, 620, 970, 1150, 1300,
++      1500. Default 970 mA.
++
++  qcom,switching-freq:
++    maxItems: 1
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      kHz; switching frequency; one of 600, 640, 685, 738,
++      800, 872, 960, 1066, 1200, 1371, 1600, 1920, 2400, 3200,
++      4800, 9600.
++      Default for pm8941 1600 kHz
++               for pmi8998 800 kHz
++
++  qcom,ovp:
++    maxItems: 1
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      V; Over-voltage protection limit; one of 27, 29, 32, 35. Default 29V
++      This property is supported only for PM8941.
++
++  qcom,ovp-millivolt:
++    maxItems: 1
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      mV; Over-voltage protection limit;
++      For pmi8998 one of 18100, 19600, 29600, 31100.
++      Default 29600 mV.
++      If this property is not specified for PM8941, it
++      falls back to "qcom,ovp" property.
++
++  qcom,num-strings:
++    maxItems: 1
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      number of led strings attached;
++      value for PM8941 from 1 to 3. Default 2
++      For PMI8998 from 1 to 4.
++
++  interrupts:
++    maxItems: 2
++    description:
++      Interrupts associated with WLED. This should be
++      "short" and "ovp" interrupts. Interrupts can be
++      specified as per the encoding listed under
++      Documentation/devicetree/bindings/spmi/
++      qcom,spmi-pmic-arb.txt.
++
++  interrupt-names:
++    description:
++      Interrupt names associated with the interrupts.
++      Must be "short" and "ovp". The short circuit detection
++      is not supported for PM8941.
++
++  qcom,enabled-strings:
++    maxItems: 1
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32-array
++    description:
++      Array of the WLED strings numbered from 0 to 3. Each
++      string of leds are operated individually. Specify the
++      list of strings used by the device. Any combination of
++      led strings can be used.
++
++  qcom,external-pfet:
++    description:
++      Specify if external PFET control for short circuit
++      protection is used. This property is supported only
++      for PMI8998.
++    type: boolean
++
++  qcom,auto-string-detection:
++    description:
++      Enables auto-detection of the WLED string configuration.
++      This feature is not supported for PM8941.
++    type: boolean
++
++required:
++  - compatible
++  - reg
++  - label
++
++examples:
++  - |
++    pm8941-wled@d800 {
++        compatible = "qcom,pm8941-wled";
++        reg = <0xd800 0x100>;
++        label = "backlight";
++
++        qcom,cs-out;
++        qcom,current-limit = <20>;
++        qcom,current-boost-limit = <805>;
++        qcom,switching-freq = <1600>;
++        qcom,ovp = <29>;
++        qcom,num-strings = <2>;
++        qcom,enabled-strings = <0 1>;
++     };
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+ a Linux Foundation Collaborative Project
