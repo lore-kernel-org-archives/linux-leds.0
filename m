@@ -2,102 +2,96 @@ Return-Path: <SRS0=y+HI=43=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EA5C18E5A
-	for <linux-leds@archiver.kernel.org>; Tue, 10 Mar 2020 17:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50509C18E5B
+	for <linux-leds@archiver.kernel.org>; Tue, 10 Mar 2020 18:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F501222C3
-	for <linux-leds@archiver.kernel.org>; Tue, 10 Mar 2020 17:47:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=blackhole.sk header.i=@blackhole.sk header.b="tgm5isMd"
+	by mail.kernel.org (Postfix) with ESMTP id 24A3E24677
+	for <linux-leds@archiver.kernel.org>; Tue, 10 Mar 2020 18:31:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583865088;
+	bh=KzEEBxuqORSag8YJEE1VdQTCHLnudqoIKvkv7V+Qmms=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HolFj5SBQhKtKn1+uAszBBleMQqDdHNvUAoOCS70cbH3mtOTCAqs0oOZynPAQVMcq
+	 lBSu58LEZIQMTNrs2ZETp0W8PF0JiiuLX/Bb34tMINLX+HUbQKvlHtGDE7ib5lM6B7
+	 l6F7pbC6gHh9C6erL8CfxnvZq7wHmKMKzuQat2V4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbgCJRrn (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 10 Mar 2020 13:47:43 -0400
-Received: from mail-proxyout-mua-31.websupport.eu ([37.9.172.181]:43954 "EHLO
-        mail-proxyout-mua-31.websupport.eu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727354AbgCJRrm (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 10 Mar 2020 13:47:42 -0400
-X-Greylist: delayed 554 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Mar 2020 13:47:41 EDT
-Received: from in-3.websupport.sk (unknown [10.10.2.103])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail-proxyout-mua-31.websupport.eu (Postfix) with ESMTPS id 6BDCFC8596;
-        Tue, 10 Mar 2020 18:38:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=blackhole.sk;
-        s=mail; t=1583861905;
-        bh=8OuXqSLvawrH4AYXXoi3pR7hm89dQfL/EYiVWisK4vM=;
-        h=Date:From:To:Cc:Subject;
-        b=tgm5isMdqagDRbbEyuOCeTxNowl3ZxsY0OdlvbiEJZYeOSpImUKmyCCA+0Ul2xWSR
-         gWBw0HT3iNkRasZlT8CAHU0Hecg+N1M+5FfN/X2mKyMsJrHxssG1GlMRDaQXv/IERN
-         L9x18eu/xy54kHTUmSiYG8fcnAB3IJdY/uRv9vHQ=
-Received: from localhost (otava-0257.koleje.cuni.cz [78.128.181.4])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kabel@blackhole.sk)
-        by in-3.websupport.sk (Postfix) with ESMTPSA id 48cMkn0hpPz3LyvB;
-        Tue, 10 Mar 2020 18:38:25 +0100 (CET)
-Date:   Tue, 10 Mar 2020 18:38:24 +0100
-From:   Marek Behun <kabel@blackhole.sk>
-To:     linux-leds@vger.kernel.org
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: turris omnia leds again: question
-Message-ID: <20200310183824.1e4ad91d@blackhole.sk>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727519AbgCJSbX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 10 Mar 2020 14:31:23 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45256 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbgCJSbX (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 10 Mar 2020 14:31:23 -0400
+Received: by mail-ot1-f66.google.com with SMTP id f21so14126283otp.12;
+        Tue, 10 Mar 2020 11:31:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kE8zJYod7DGw/iirznrwm04icms4ZonrW+m7De0Huos=;
+        b=tSgqnoILJO40vmXhVI6xPFpcIjeTu1NY8MVBWwOp0dkkpGIJOvxcGOq5562QZFwxmo
+         iHTpES6+SthX0zWQ/ZtVgiGk+gfBrmRAQ4TMS/nmgr5WnacdREt3KJ8CeHVVR5r3b+gy
+         vvLAiiPd1bD+2h3s/kcAPfnmjCDEDO28tX+dcdv0XUSb8zqAKw147h2S7Osa3HXlNm9A
+         DZGkNmuLBEiay6H1WkIpffoll1j7NQb2PCcsZFKZI8vKz360HjsGmNI6C0LtMVqLPkJn
+         Gt7Gb9xWujor6y21VtgYTPYqWUlAL5qSG2At9DWA0+y/eBGvFEVVU6VYbuJNlZI14sRM
+         XjQw==
+X-Gm-Message-State: ANhLgQ3eb1sugpOt6TN+1R3xeLOzuqrA+B7SyYTVbUE3+JONbfRhyW57
+        Q9/wihhIrSbURoOOEe5LNg==
+X-Google-Smtp-Source: ADFU+vs6BXU2RhaGOMkzDNdE03Xyflh1TY7gz7r9610og46G77Jwujiyd6QdA37f1IfNWYINzkfbHg==
+X-Received: by 2002:a9d:21b4:: with SMTP id s49mr17315918otb.294.1583865080731;
+        Tue, 10 Mar 2020 11:31:20 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id e206sm4490498oia.24.2020.03.10.11.31.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 11:31:19 -0700 (PDT)
+Received: (nullmailer pid 14370 invoked by uid 1000);
+        Tue, 10 Mar 2020 18:31:18 -0000
+Date:   Tue, 10 Mar 2020 13:31:18 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Kiran Gunda <kgunda@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
+        lee.jones@linaro.org, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dan Murphy <dmurphy@ti.com>, linux-arm-msm@vger.kernel.org,
+        Kiran Gunda <kgunda@codeaurora.org>
+Subject: Re: [PATCH V3 1/4] backlight: qcom-wled: convert the wled bindings
+ to .yaml format
+Message-ID: <20200310183118.GA13818@bogus>
+References: <1583760362-26978-1-git-send-email-kgunda@codeaurora.org>
+ <1583760362-26978-2-git-send-email-kgunda@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1583760362-26978-2-git-send-email-kgunda@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi,
+On Mon,  9 Mar 2020 18:55:59 +0530, Kiran Gunda wrote:
+> Convert the qcom-wled bindings from .txt to .yaml format.
+> 
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+> ---
+>  .../bindings/leds/backlight/qcom-wled.txt          | 154 -----------------
+>  .../bindings/leds/backlight/qcom-wled.yaml         | 184 +++++++++++++++++++++
+>  2 files changed, 184 insertions(+), 154 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>  create mode 100644 Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+> 
 
-I am going to try to send driver for Omnia LEDs again. The last time
-there was a problem: on 05/01/2019 Jacek wrote:
+My bot found errors running 'make dt_binding_check' on your patch:
 
-> I wonder if we're doing right merging this driver in this form.
-> We break the rule one-led-class-device-per-one-channel. We don't
-> have LED multi color support yet, so this should support RGB LEDs
-> in the old manner. Or switch to using LED multi color class.
+Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml: $id: relative path/filename doesn't match actual path or filename
+	expected: http://devicetree.org/schemas/leds/backlight/qcom-wled.yaml#
 
-> Once we will have LED multi color class, we will be able to add the
-> support for it to the driver and make the driver configurable to be
-> able to expose old interface or the LED multi color one.
-
-> Moreover, the bindings should use led-sources property for grouping
-> three channels under single LED class device. This is certainly to be
-> fixed.
-
-So I am going to try to modify the driver so that each channel creates
-one LED class device. Do I understand this correctly then, that this
-way when there are three channels (RGB) on one LED, all the 3 device
-tree nodes for should have the same reg property, but different
-led-sources property? Eg:
-
-  led@0,0 {
-    reg = <0>;
-    led-sources = <0>;
-    label = "omnia::heartbeat::red";
-  };
-
-  led@0,1 {
-    reg = <0>;
-    led-sources = <1>;
-    label = "omnia::heartbeat::green";
-  };
-
-  led@0,2 {
-    reg = <0>;
-    led-sources = <2>;
-    label = "omnia::heartbeat::blue";
-  };
-
-Or did I misinterpret the led-sources property?
-
-Thanks, Marek.
+See https://patchwork.ozlabs.org/patch/1251567
+Please check and re-submit.
