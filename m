@@ -6,49 +6,57 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B546C10F27
-	for <linux-leds@archiver.kernel.org>; Tue, 10 Mar 2020 17:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EA5C18E5A
+	for <linux-leds@archiver.kernel.org>; Tue, 10 Mar 2020 17:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6C5321D7E
-	for <linux-leds@archiver.kernel.org>; Tue, 10 Mar 2020 17:39:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F501222C3
+	for <linux-leds@archiver.kernel.org>; Tue, 10 Mar 2020 17:47:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="YhZYm2VD"
+	dkim=pass (1024-bit key) header.d=blackhole.sk header.i=@blackhole.sk header.b="tgm5isMd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbgCJRjt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 10 Mar 2020 13:39:49 -0400
-Received: from mail.nic.cz ([217.31.204.67]:46490 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726283AbgCJRjt (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 10 Mar 2020 13:39:49 -0400
-Received: from localhost (unknown [172.20.6.135])
-        by mail.nic.cz (Postfix) with ESMTPSA id A0186141A99
-        for <linux-leds@vger.kernel.org>; Tue, 10 Mar 2020 18:39:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1583861987; bh=dpY3UgiTOJWJrLlq/vfYcphCqQIV2DojNxZQ5XGukq8=;
-        h=Date:From:To;
-        b=YhZYm2VDs9SupJQWP0MNrMStiP40SMS9mUkS+4pTz9xL8XDkAoDmms0V7gS+vlJpy
-         JY871CSTBNrnFWMr5S9WZ7DCyY5ZovmYyaQRf0h3AVq2h5mEhOOVSD4LVxY0HIO1l0
-         KQqMtqP+bQSbUpGPQf+mA1SDJpR5Dk0bi4IzrriI=
-Date:   Tue, 10 Mar 2020 18:39:47 +0100
-From:   Marek Behun <marek.behun@nic.cz>
+        id S1726990AbgCJRrn (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 10 Mar 2020 13:47:43 -0400
+Received: from mail-proxyout-mua-31.websupport.eu ([37.9.172.181]:43954 "EHLO
+        mail-proxyout-mua-31.websupport.eu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727354AbgCJRrm (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 10 Mar 2020 13:47:42 -0400
+X-Greylist: delayed 554 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Mar 2020 13:47:41 EDT
+Received: from in-3.websupport.sk (unknown [10.10.2.103])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail-proxyout-mua-31.websupport.eu (Postfix) with ESMTPS id 6BDCFC8596;
+        Tue, 10 Mar 2020 18:38:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=blackhole.sk;
+        s=mail; t=1583861905;
+        bh=8OuXqSLvawrH4AYXXoi3pR7hm89dQfL/EYiVWisK4vM=;
+        h=Date:From:To:Cc:Subject;
+        b=tgm5isMdqagDRbbEyuOCeTxNowl3ZxsY0OdlvbiEJZYeOSpImUKmyCCA+0Ul2xWSR
+         gWBw0HT3iNkRasZlT8CAHU0Hecg+N1M+5FfN/X2mKyMsJrHxssG1GlMRDaQXv/IERN
+         L9x18eu/xy54kHTUmSiYG8fcnAB3IJdY/uRv9vHQ=
+Received: from localhost (otava-0257.koleje.cuni.cz [78.128.181.4])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kabel@blackhole.sk)
+        by in-3.websupport.sk (Postfix) with ESMTPSA id 48cMkn0hpPz3LyvB;
+        Tue, 10 Mar 2020 18:38:25 +0100 (CET)
+Date:   Tue, 10 Mar 2020 18:38:24 +0100
+From:   Marek Behun <kabel@blackhole.sk>
 To:     linux-leds@vger.kernel.org
-Subject: turris omnia leds again: question RESEND
-Message-ID: <20200310183947.198eac12@nic.cz>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Subject: turris omnia leds again: question
+Message-ID: <20200310183824.1e4ad91d@blackhole.sk>
 X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.101.4 at mail
-X-Virus-Status: Clean
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 Hi,
-
-(sorry for the spam, I accidently sent this e-mail from another
-email account).
 
 I am going to try to send driver for Omnia LEDs again. The last time
 there was a problem: on 05/01/2019 Jacek wrote:
