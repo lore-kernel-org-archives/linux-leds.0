@@ -1,132 +1,88 @@
-Return-Path: <SRS0=DPGh=5E=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=vZed=5F=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFB1C4332D
-	for <linux-leds@archiver.kernel.org>; Thu, 19 Mar 2020 22:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB62C43332
+	for <linux-leds@archiver.kernel.org>; Fri, 20 Mar 2020 19:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E66420663
-	for <linux-leds@archiver.kernel.org>; Thu, 19 Mar 2020 22:15:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 219C120781
+	for <linux-leds@archiver.kernel.org>; Fri, 20 Mar 2020 19:43:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="Te9Rcnks"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="QjNrkrqR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbgCSWPi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 19 Mar 2020 18:15:38 -0400
-Received: from gateway20.websitewelcome.com ([192.185.47.18]:40603 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727297AbgCSWPi (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 19 Mar 2020 18:15:38 -0400
-X-Greylist: delayed 1428 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Mar 2020 18:15:37 EDT
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 57418400CCC8E
-        for <linux-leds@vger.kernel.org>; Thu, 19 Mar 2020 15:36:20 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id F34vjzTz61s2xF34vjhrRL; Thu, 19 Mar 2020 16:51:49 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=JEikPqF6NxVfkvZjVP+cGq3DgK8l2GBx5Tnc9nIqPVg=; b=Te9RcnksN6yMkoH3gzTZsI6FL5
-        lrC4AYhR9cB28XuBX4opT8qJPThImwhGDa83tJ/WdSiA1IKTYXtxwNQR/xhHY9BvT2a8aJKaCrg8k
-        V0XCdiIE+1OJU+NsQwnPb+Or2Mw4gBQSIvn4fdcjpvk+V/Pc67TCILpiS4VKeQjNIsVFvuJ0kv5rv
-        FoDBj3i810Ug1Eefcv6d2i4RNJDU4pTnmBDezNEf14buSaWaSCmL13s01irthevxWHMXP8fHwDkEG
-        96QB35O0EqW3U4yShNQ35bO/YfkOgMUoRX2dQgNOvgMBZzKoBeds1Gi22D5T2a+hyOjKhqCGDg2NT
-        Ws9VYm3Q==;
-Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:53540 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jF34s-001noC-VK; Thu, 19 Mar 2020 16:51:47 -0500
-Date:   Thu, 19 Mar 2020 16:51:46 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] leds: leds-pwm: Replace zero-length array with
- flexible-array member
-Message-ID: <20200319215146.GA24054@embeddedor.com>
+        id S1726814AbgCTTnL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 20 Mar 2020 15:43:11 -0400
+Received: from lists.nic.cz ([217.31.204.67]:48048 "EHLO mail.nic.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726783AbgCTTnL (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 20 Mar 2020 15:43:11 -0400
+Received: from localhost (unknown [172.20.6.135])
+        by mail.nic.cz (Postfix) with ESMTPSA id 3B511143196;
+        Fri, 20 Mar 2020 20:43:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
+        t=1584733389; bh=QZINx6kGkvU4CMARM17tViMoG9NhLcbufVpqriQzpY4=;
+        h=Date:From:To;
+        b=QjNrkrqRKVM3huXvBJzhPlZgsLeUjrkI2j5g+6UYLSI1zYHgaysSoIFQZ0V6byc7c
+         DvaGCXyrW038ZmYhtH3kiWR/sHE6Vt96RdfcZ+FHAVU0stOiOZhnhhy0Y1WXmDDBfS
+         /NoFwyHo2RBw0RtjPDt3SzzTCxS4xWOgoB0M0ZBg=
+Date:   Fri, 20 Mar 2020 20:43:08 +0100
+From:   Marek Behun <marek.behun@nic.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
+Subject: HW LED triggers again
+Message-ID: <20200320204308.411f8d68@nic.cz>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.218.116.241
-X-Source-L: No
-X-Exim-ID: 1jF34s-001noC-VK
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:53540
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 73
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.101.4 at mail
+X-Virus-Status: Clean
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
+Hi Jacek,
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+I want to open the discussions about HW LED triggers again.
+The last time (which was almost a year ago, sorry for that) I proposed
+an API which used the same sysfs trigger file as for regular trigger
+setting, but the HW triggers were prefixed with "hw:" (and each LED
+classdev can have different ones).
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+You wrote:
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
+> I wonder what will be the gain of having hw triggers incorporated
+> into LED trigger mechanism, if they are meant not be generic
+> by design? Only the LED class driver exposing a hw trigger
+> will know how to set it up, and will define protocol via which
+> the settings will be passed from sysfs to the trigger (const char*
+> parameter in the hw_trigger_set() op).
+> 
+> And it has to be that way because hardware triggers are hardware
+> specific. LED class driver will have to create trigger specific
+> sysfs files regardless of whether they are to be shown on
+> trigger avtivation, or will persist for the whole LED class device
+> lifetime.
+> 
+> Maybe I'm missing some vital details from the previous discussions,
+> but this is what's come to my mind now, after analyzing the proposed
+> design.
+> 
+> The question is: what problem we solve by exposing non-generic
+> hw trigger, whose implementation will be in the driver anyway,
+> instead of just bypassing the trigger mechanism and exposing
+> the required interface directly?
 
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
+I would still like to go this way, so my answer to this questions is:
+- IMO this is simpler for users and existing scripts
+- the idea is that it should no be possible to set a software trigger
+  and a hardware trigger at the same time (this would just end up in
+  more complications), and introducing special hw_trigger file or
+  something could make users think that you can
 
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/leds/leds-pwm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 9111cdede0ee..31ac44dfb926 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -28,7 +28,7 @@ struct led_pwm_data {
- 
- struct led_pwm_priv {
- 	int num_leds;
--	struct led_pwm_data leds[0];
-+	struct led_pwm_data leds[];
- };
- 
- static int led_pwm_set(struct led_classdev *led_cdev,
--- 
-2.23.0
-
+Marek
