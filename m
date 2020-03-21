@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABC9C43332
-	for <linux-leds@archiver.kernel.org>; Sat, 21 Mar 2020 08:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0E0C4332B
+	for <linux-leds@archiver.kernel.org>; Sat, 21 Mar 2020 08:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E31E220753
-	for <linux-leds@archiver.kernel.org>; Sat, 21 Mar 2020 08:16:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0262D20753
+	for <linux-leds@archiver.kernel.org>; Sat, 21 Mar 2020 08:16:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=diehl.com header.i=@diehl.com header.b="tkRjZSXf"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=diehl.com header.i=@diehl.com header.b="Jo9ESMpk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbgCUIQL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 21 Mar 2020 04:16:11 -0400
-Received: from enterprise02.smtp.diehl.com ([193.201.238.220]:35350 "EHLO
-        enterprise02.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727961AbgCUIQK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
+        id S1728262AbgCUIQK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Sat, 21 Mar 2020 04:16:10 -0400
+Received: from enterprise01.smtp.diehl.com ([193.201.238.219]:12449 "EHLO
+        enterprise01.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728247AbgCUIQJ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Sat, 21 Mar 2020 04:16:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=diehl.com; i=@diehl.com; q=dns/txt; s=default;
-  t=1584778568; x=1616314568;
+  t=1584778569; x=1616314569;
   h=from:to:cc:subject:date:message-id:references:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=rAtuuWpp7vXQDSFUAnzPLYg0D3MrIJfjY3pxuv+eRv8=;
-  b=tkRjZSXflcGsXyH3PEfGP0D90hrJ6Gxc7lUi/Wzpo4d9EZ+upTeC2m/+
-   zFDBjOfMkDq79kxQpJzm3dOIr+UXfwRbsbdHnIgx66cJzb1fPfiB14Gug
-   6JvKb1H8+aS5xEjb+pnrfBEsWiG7UogQsEuimEmLOy2y9g3lXSIm0oIuZ
-   BLQG+jofrGRhpRNPDE+xkvMKvmmec+Ekklec1DlDYa27zV32R9pCYcsmn
-   +SK9eYYgkx5ofuNa1d6xA9fWePAu0pzIXrQ2lLQftcinklL7k+ntXgIT3
-   EbkVBTIx1MJ+pcPqWaHTNv1km3vGrT+QM8Gjb24PunLGOMcddnF+In5qX
-   Q==;
-IronPort-SDR: BBzvbF8Y0nVkkS3xYmIO5QL4B/KrkLKHQ7AyWbwm555p6szc13/7DA73R0W+3C8hr4XT7scgma
- xkkZ5mwXFXcA==
+  bh=PZZKSh2KXGWrjP7LgCelpSRuWflVunnD5QhUJZ1nsBQ=;
+  b=Jo9ESMpkOwP1MqlmPWDhFyYTt3uH8lRRhEm1PY60wUTO9zdsvX0BQdj+
+   SPzPwJG7fY9AcEQZMn2FDYFtCyOAD8iBA65ob9QIDv/1XWA3AyUTmzHsQ
+   ywrgPdjro6oQ8hSIQfxAeWQ1OTUPUG7wAylfUPecAMdH4CFLBjgZpiG4v
+   7208Mb7SbtfK7qMYk53CeaXR7sdN5kQaS77qEYMFODOPD3dzcCf9yXN2m
+   eQ5YIWQvaDk4sJaBV59bzewYlafhHm+3pAToFuSrk0TXEJ7icAZ9NArwQ
+   Zrq0VJ3CnvJrp3Vw/Zd3yOyCaUBK/EhIJ4zP52WNtVVmeJSlwc5mQ4yJG
+   g==;
+IronPort-SDR: nREVm1FwUL51wSzUEnDLB/DUwVk1OK6CQh1CH+YktPy9KeKGqc9kpzPl1C5IC6pnXcnatbujsG
+ UnyLQn1RaDNA==
 From:   Denis Osterland-Heim <denis.osterland@diehl.com>
 To:     "dmurphy@ti.com" <dmurphy@ti.com>, "pavel@ucw.cz" <pavel@ucw.cz>,
         "mark.rutland@arm.com" <mark.rutland@arm.com>,
@@ -46,13 +46,11 @@ CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "Denis Osterland-Heim" <denis.osterland@diehl.com>,
         "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: [PATCH v4 5/5] leds: pwm: add reference to common leds for
- default-state
-Thread-Topic: [PATCH v4 5/5] leds: pwm: add reference to common leds for
- default-state
-Thread-Index: AQHV/1jv4y0tSPQJv0Wp72clTKSY2Q==
-Date:   Sat, 21 Mar 2020 08:15:51 +0000
-Message-ID: <20200321081321.15614-6-Denis.Osterland@diehl.com>
+Subject: [PATCH v4 1/5] leds: pwm: remove header
+Thread-Topic: [PATCH v4 1/5] leds: pwm: remove header
+Thread-Index: AQHV/1jw95ejBv9Q1kWuOGZzdTUiGA==
+Date:   Sat, 21 Mar 2020 08:15:53 +0000
+Message-ID: <20200321081321.15614-2-Denis.Osterland@diehl.com>
 References: <20200321081321.15614-1-Denis.Osterland@diehl.com>
 In-Reply-To: <20200321081321.15614-1-Denis.Osterland@diehl.com>
 Accept-Language: de-DE, en-US
@@ -65,33 +63,80 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-TrailerSkip: 1
-X-GBS-PROC: 415AWy8o668fDtCxszluz7BUnjxMX1ojGuUiAGu+NGs/ca9CoLUYHDf57nxJ6T1T
+X-GBS-PROC: PkB65aL1SqtESF35r/jQn7YYrFe7TNyCmnU8Zv2PHXoOZwPucGHZVz6NcGmC5daB
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The default-state is now supported for PWM leds.
+The header is only used by leds_pwm.c, so move contents to leds_pwm.c
+and remove it.
+Apply minor changes suggested by checkpatch.
+Remove deprecated and unused pwm_id member.
 
+Suggested-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Denis Osterland-Heim <Denis.Osterland@diehl.com>
 ---
- Documentation/devicetree/bindings/leds/leds-pwm.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/leds/leds-pwm.c  | 14 +++++++++++++-
+ include/linux/leds_pwm.h | 22 ----------------------
+ 2 files changed, 13 insertions(+), 23 deletions(-)
+ delete mode 100644 include/linux/leds_pwm.h
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.txt b/Docume=
-ntation/devicetree/bindings/leds/leds-pwm.txt
-index 6c6583c35f2f..d0f489680594 100644
---- a/Documentation/devicetree/bindings/leds/leds-pwm.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-pwm.txt
-@@ -19,6 +19,8 @@ LED sub-node properties:
-   see Documentation/devicetree/bindings/leds/common.txt
- - linux,default-trigger :  (optional)
-   see Documentation/devicetree/bindings/leds/common.txt
-+- default-state : (optional)
-+  see Documentation/devicetree/bindings/leds/common.yaml
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index 9111cdede0ee..e1848e80aeb4 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -16,9 +16,21 @@
+ #include <linux/leds.h>
+ #include <linux/err.h>
+ #include <linux/pwm.h>
+-#include <linux/leds_pwm.h>
+ #include <linux/slab.h>
 =20
- Example:
-=20
++struct led_pwm {
++	const char	*name;
++	const char	*default_trigger;
++	u8		active_low;
++	unsigned int	max_brightness;
++	unsigned int	pwm_period_ns;
++};
++
++struct led_pwm_platform_data {
++	int		num_leds;
++	struct led_pwm	*leds;
++};
++
+ struct led_pwm_data {
+ 	struct led_classdev	cdev;
+ 	struct pwm_device	*pwm;
+diff --git a/include/linux/leds_pwm.h b/include/linux/leds_pwm.h
+deleted file mode 100644
+index 93d101d28943..000000000000
+--- a/include/linux/leds_pwm.h
++++ /dev/null
+@@ -1,22 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-/*
+- * PWM LED driver data - see drivers/leds/leds-pwm.c
+- */
+-#ifndef __LINUX_LEDS_PWM_H
+-#define __LINUX_LEDS_PWM_H
+-
+-struct led_pwm {
+-	const char	*name;
+-	const char	*default_trigger;
+-	unsigned	pwm_id __deprecated;
+-	u8 		active_low;
+-	unsigned 	max_brightness;
+-	unsigned	pwm_period_ns;
+-};
+-
+-struct led_pwm_platform_data {
+-	int			num_leds;
+-	struct led_pwm	*leds;
+-};
+-
+-#endif
 --=20
 2.25.1
 
