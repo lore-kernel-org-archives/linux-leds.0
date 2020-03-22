@@ -7,60 +7,61 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F30C3C4332B
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Mar 2020 15:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A806DC4332B
+	for <linux-leds@archiver.kernel.org>; Sun, 22 Mar 2020 15:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B830620724
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Mar 2020 15:28:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71B4920722
+	for <linux-leds@archiver.kernel.org>; Sun, 22 Mar 2020 15:51:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UcXGYOiE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0T6UaDQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbgCVP2s (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 22 Mar 2020 11:28:48 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44223 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbgCVP2s (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 22 Mar 2020 11:28:48 -0400
-Received: by mail-wr1-f65.google.com with SMTP id m17so4520480wrw.11
-        for <linux-leds@vger.kernel.org>; Sun, 22 Mar 2020 08:28:46 -0700 (PDT)
+        id S1725881AbgCVPvH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 22 Mar 2020 11:51:07 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38894 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgCVPvH (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 22 Mar 2020 11:51:07 -0400
+Received: by mail-wm1-f67.google.com with SMTP id l20so11738868wmi.3
+        for <linux-leds@vger.kernel.org>; Sun, 22 Mar 2020 08:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QOy/dSTtUPmTa0GgkpWkpeDl8Nvg4TaRRcSDcHxaIFw=;
-        b=UcXGYOiExH99L5Il3xBaXMD4w3EKwzC3ldXhhu8LhCwZqK6X9C38GDf8LfFHfneHLb
-         hhEfPRGQDAtG5Ac2CQD961Z2wDLlbZJHBk4GArUO1IdcdljWR8MhpMQtXwe/iN95b3c6
-         UlMqraWUJEzwg6KUTEh7liAegiwYEzKJAYCSuh5A8EWK+aiyq0JTPemfLksYgbX8pvIU
-         oF3lpFIZ2lwGcooQQDmFpUPeQnBomhuYAp5LUdxBRnz3fAXATyGr7WGxpcJLN0+1bKT1
-         Q1oc+x3lKiOXebOK1iMhcG550Eeg/rfVdBsm2PsR2PPVD5ZU3h5dHosjjLlO7r/3jWiR
-         H+Jg==
+        bh=G7c4c/Ucm+tID+oNxvJEh4J32os0yRCqbsA8dDoqb7E=;
+        b=f0T6UaDQV/dpyZgmMS4u7960NNnGxcMZjgHOlzdU/QV7vYbS/gNnKTe/heiv7B6z8C
+         x9K8Y1rsd/XeqKc9gYGTooMEl1yqMG+StldHZ7E0pWr1lDJqCLPBnebLTw7bT4QWXMOY
+         uCj9uoBK2gvSUTp3+0XSrZoEBrdVh9v9I6MWMwOOdmHXffmcqugDQuYEjGlxPXdOUZsr
+         A12qFcI/3gYalQrtxEsAPOVOSV5fM78FuiBpmK8Ryknca6AjQI8zmbLrYOb9G+LYWBeY
+         qQtMcXthvZBdNi4QiNLV+Zwi7C43LsKxAU3Zw7Jvigc9mc0lAJCWydxZ05iqKK+5npmJ
+         NTlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=QOy/dSTtUPmTa0GgkpWkpeDl8Nvg4TaRRcSDcHxaIFw=;
-        b=Vc3g8sITVPYbfXMQEBq/mYcBQOBAYPtDCJVwTOxMjiaviu46E8hH0rO0k2zSoiG3aT
-         b29Fr+OoXTcGCHStOQpcjj+5/FFdj7Q5O1cZR6Q/pky+/kdSqNk+mOHT4FTXVQpc61p5
-         q6AnoLXjBdYXcLyN3aJC3p5IyEkvXM4u8iCfaRVCUgOtCNMbzrZdLucLAyWUHw61iwRC
-         fs8LBBYvE32v9U0q/S4N7hNYBqLYDH9O7AMfvsB3rTg2exmp4QXB1nEV3s8WAYRRpRsq
-         zqmWMCN5KP8zEyYwutR90RjmHNOYPlD2z3bbHTylT6LAzb5CEE5SoMZI+f6oMsgFdude
-         7U+A==
-X-Gm-Message-State: ANhLgQ1OVQN/iYWO/T2GIug1hUOtzlpicwpKolzvIO0iOaKReAUIX3hk
-        q0OeO18JBe6obYjWJEBbCeF+ikKU
-X-Google-Smtp-Source: ADFU+vvjUy1TB3hvuspVXi0MaKCWuEo/FeA+1JvoDe5BxymLgdbxTwQH9D+iw+IQafYrjdQENHtgWg==
-X-Received: by 2002:adf:e502:: with SMTP id j2mr23973501wrm.259.1584890925484;
-        Sun, 22 Mar 2020 08:28:45 -0700 (PDT)
+        bh=G7c4c/Ucm+tID+oNxvJEh4J32os0yRCqbsA8dDoqb7E=;
+        b=N7sa6SVTH3Ma96A3hOuu5bwnHw9gJOxNNjoZhyWE8CACeMb/j/DMvFGv/hZgC/rPLt
+         RYYcc9wddC1OUNsy9CMF+CiC8z0AHkGyShm9WkX0Qraie3vYrD80FpVf7J9+ywQPNojt
+         43xO+hCvLztb3C5kL80e7sJyojuRB3huW5Oh4cODWh0pxf8s4aJ5ALOqTEdLUxTyV+fM
+         rCPnTmvBKQT+07p8xkr9SQgUwtUSyAyEPYIS0StYpsj/0vHFYPJoy9z1PVZNoONOyCgh
+         +smaeyazBkRYfgiepXxrXugmcQDJj/lfKoLMTvpnRd2OtQrI9Ms7mWIr5S+5VItwbW1s
+         inKA==
+X-Gm-Message-State: ANhLgQ0MlBobDHZ4If76IGvyS+z8w21K4UeKqtETgYJ+yeIG7Q/xH8x+
+        or+yDsAif2+1h0JUzTi4RSsLiByo
+X-Google-Smtp-Source: ADFU+vttPFfXCq3AZbn5VbCnAL95rHh8ohmr5c9G/hlq/2/DWHkY+h6mBplwJ8XuZUZ/Ow81g4/y0w==
+X-Received: by 2002:a7b:ce81:: with SMTP id q1mr22919744wmj.156.1584892264151;
+        Sun, 22 Mar 2020 08:51:04 -0700 (PDT)
 Received: from [192.168.1.23] (afam139.neoplus.adsl.tpnet.pl. [95.49.12.139])
-        by smtp.gmail.com with ESMTPSA id t193sm18011148wmt.14.2020.03.22.08.28.44
+        by smtp.gmail.com with ESMTPSA id b82sm17564007wmb.46.2020.03.22.08.51.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Mar 2020 08:28:44 -0700 (PDT)
+        Sun, 22 Mar 2020 08:51:03 -0700 (PDT)
 Subject: Re: [PATCH RFC leds-next] leds: initial support for Turris Omnia LEDs
 To:     Marek Behun <marek.behun@nic.cz>
-Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
+Cc:     Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
 References: <20200319181604.2425-1-marek.behun@nic.cz>
- <0279d61f-6366-02cf-3d65-93d76e52de93@gmail.com>
- <20200321214449.0564a524@nic.cz>
+ <20200321153444.GE8386@duo.ucw.cz>
+ <661959c3-cd24-1125-be35-f293212f4fe4@gmail.com>
+ <20200321215030.08b75ccc@nic.cz>
 From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
  xsFNBFWjfaEBEADd66EQbd6yd8YjG0kbEDT2QIkx8C7BqMXR8AdmA1OMApbfSvEZFT1D/ECR
@@ -121,43 +122,46 @@ Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
  hQNfg9em95lpAK+VOTocke8PSESy3GbEtmoMueW3caSeDHb5dRP6WrndaYhEOzAA/KjuPU7J
  LMXOABOMIq+R38y7e2B3TnVDCrccdZDseFPUWmH0cGCGihH/j2UZG+PImrSDCh3h5MedVHGo
  sI62tmWm0q6lrljwSZmMZ30w1QaGmdFpI3Q6V+nZ7TZldI3x
-Message-ID: <2f95d545-7a4e-be9d-2826-5ea7cfdccfd6@gmail.com>
-Date:   Sun, 22 Mar 2020 16:28:43 +0100
+Message-ID: <e6f20e72-0bfc-5fc1-839e-1283d8f15394@gmail.com>
+Date:   Sun, 22 Mar 2020 16:51:02 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20200321214449.0564a524@nic.cz>
+In-Reply-To: <20200321215030.08b75ccc@nic.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Marek,
+Marek,
 
-On 3/21/20 9:44 PM, Marek Behun wrote:
-> On Sat, 21 Mar 2020 19:55:15 +0100
+On 3/21/20 9:50 PM, Marek Behun wrote:
+> On Sat, 21 Mar 2020 19:01:15 +0100
 > Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
 > 
->> What is the rationale behind setting all LEDs to max_brighntess
->> on driver removal?
+>>> How will this look in the /sys/class/leds?
+>>>
+>>> We don't want to see omnia:xxx:xx there. For the ethernet activity
+>>> leds, it would be nice to get something like eth0:red:activity...?  
+>>
+>> devicename and devicename_mandatory should be removed.
 >>
 > 
-> For each RGB LED the microcontroller has ON/OFF setting, and color
-> setting. When in HW triggering mode, the HW triggering manipulates the
-> ON/OFF setting and the LED blinks with the color set by the color
-> setting.
+> Without this I have:
 > 
-> If I did not set color to white before driver removal, then the HW
-> triggering would blink the LEDs with the color they had set by the
-> user. That could be [0,0,0], so the LEDs wouldn't blink at all.
-> 
-> So on driver removal the LEDs are set into state in which they are after
-> reset.
+> omnialeds /sys/class/leds # ls
+> blue:power   red:power    white:lan-2  white:pci-1  white:user-1
+> green:power  white:lan-0  white:lan-3  white:pci-2  white:user-2
+> mmc0::       white:lan-1  white:lan-4  white:pci-3  white:wan
 
-Sounds reasonable, ack.
+You might want to associate the LED with actual eth interface,
+as Pavel mentioned, but that would require some more work.
+
+Anyway, "omnia" alone doesn't allow to tell the location of the
+LED either.
 
 -- 
 Best regards,
