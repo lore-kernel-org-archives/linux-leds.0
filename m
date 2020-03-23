@@ -1,100 +1,121 @@
-Return-Path: <SRS0=X5L8=5H=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=l+5V=5I=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 743ACC4332B
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Mar 2020 15:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8CBAC10F26
+	for <linux-leds@archiver.kernel.org>; Mon, 23 Mar 2020 06:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 459F520722
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Mar 2020 15:56:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F47E20732
+	for <linux-leds@archiver.kernel.org>; Mon, 23 Mar 2020 06:09:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T+5PHrWa"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=diehl.com header.i=@diehl.com header.b="opILcj5z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725881AbgCVP4a (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 22 Mar 2020 11:56:30 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:45456 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbgCVP4a (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 22 Mar 2020 11:56:30 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02MFuILH027029;
-        Sun, 22 Mar 2020 10:56:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584892578;
-        bh=krvSvCp4c3Z1zXot1CQc/uiYvmQjawtTqp0lfTNZk18=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=T+5PHrWaS84W3bB0chhjzmK35XezSDkob5ozoA6+cOqE/rqqogzpd+tKB70DDben2
-         4DHjIcwA4ZNqNFbZmu8OGMhvAMI+H53P6WaZBP/1GmNJD2VdtRfKP4jRNaVCzVG1Kb
-         OqFap1y03AK68P89Bzik92JpGiW9hWu6CFfJMCcA=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02MFuIZB096920
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 22 Mar 2020 10:56:18 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Sun, 22
- Mar 2020 10:56:17 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Sun, 22 Mar 2020 10:56:18 -0500
-Received: from [10.250.52.63] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02MFuHn0046658;
-        Sun, 22 Mar 2020 10:56:17 -0500
-Subject: Re: [PATCH RFC leds-next] leds: initial support for Turris Omnia LEDs
-To:     Marek Behun <marek.behun@nic.cz>, Pavel Machek <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-References: <20200319181604.2425-1-marek.behun@nic.cz>
- <20200321225342.7651547b@nic.cz> <20200321221653.GA13329@amd>
- <20200321233638.587d94cc@nic.cz>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <c3d33dab-e3b5-895d-7f50-f6370369677a@ti.com>
-Date:   Sun, 22 Mar 2020 10:50:29 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200321233638.587d94cc@nic.cz>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+        id S1726764AbgCWGJH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 23 Mar 2020 02:09:07 -0400
+Received: from enterprise02.smtp.diehl.com ([193.201.238.220]:33477 "EHLO
+        enterprise02.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726059AbgCWGJH (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 23 Mar 2020 02:09:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=diehl.com; i=@diehl.com; q=dns/txt; s=default;
+  t=1584943746; x=1616479746;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=DV4nHDiTsO9dWY3uhNYCYhJoyilaMOHIQk4sdtR6+24=;
+  b=opILcj5zLobn79ZXHdQMqkTOhwakCeCyRcWmr7euAiXRF1iPXfMj3sRM
+   RN64tHUqHFIE3AcsBmtSpSoZNSVKNrZPWZP53aifarsVWkMDhUGuJ5vhK
+   1UiheyZJa93A8BM7xtdItuuv4b59tOWePwyc7zJnXi83JvIhDI40VZ7My
+   ATOW0buoFHnB9BeNLWFzo44W7xbTdE/SFO95QaMGET06ENP5Pb9L1TSOC
+   2jKosAoCRb3TznJTt5SjgW9N2C79STI/ndzlVkbHhzR6R8q1g1RuSK/oa
+   832h36qqnu5xW38n7mPZ2v0sOnoM6UlOrf3xfSAVC4ma5pYnpPW3bsL7/
+   Q==;
+IronPort-SDR: zZhsEo+1SFDQ160x2e0cuQJ5sh1J1agpvAv/M3IST49JdxSEtIU/X6RxblVebdX+DOssLLy4fA
+ g1FSZPLC9RXQ==
+From:   Denis Osterland-Heim <denis.osterland@diehl.com>
+To:     "pavel@ucw.cz" <pavel@ucw.cz>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>
+CC:     "dmurphy@ti.com" <dmurphy@ti.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "uwe@kleine-koenig.org" <uwe@kleine-koenig.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Subject: Re: [PATCH v4 3/5] leds: pwm: check result of led_pwm_set() in
+ led_pwm_add()
+Thread-Topic: [PATCH v4 3/5] leds: pwm: check result of led_pwm_set() in
+ led_pwm_add()
+Thread-Index: AQHV/1jvS39qjeoyFEyBmW+H8QD2bqhTGRaAgAGLqoCAAP7igA==
+Date:   Mon, 23 Mar 2020 06:09:02 +0000
+Message-ID: <ca8f7ca4226de19c910440fde0c6f1e34a807fc6.camel@diehl.com>
+References: <20200321081321.15614-1-Denis.Osterland@diehl.com>
+         <20200321081321.15614-4-Denis.Osterland@diehl.com>
+         <20200321152037.GB8386@duo.ucw.cz>
+         <566ac991-2e38-6c70-4b07-c8dd78d47a06@gmail.com>
+In-Reply-To: <566ac991-2e38-6c70-4b07-c8dd78d47a06@gmail.com>
+Accept-Language: de-DE, en-US
 Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+x-ms-exchange-messagesentrepresentingtype: 1
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DB3F59BDD45B1C49A1326D7A5AD88203@diehl.internal>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-TrailerSkip: 1
+X-GBS-PROC: 415AWy8o668fDtCxszluz4NEbTdzvYfHwnlDueB0TshDKkqx0N2FbTxrbM/VCE05
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Marek
-
-On 3/21/20 5:36 PM, Marek Behun wrote:
-> On Sat, 21 Mar 2020 23:16:53 +0100
-> Pavel Machek <pavel@ucw.cz> wrote:
->
->> Hi!
->>
->>> The microcontroller on Turris Omnia supports more settings than just
->>> LEDs (usb3 port power and input button for example).
->>>
->>> I am wondering if this approach (registering LED driver to
->>> communicate with the microcontroller) is correct, since the
->>> microcontroller can do other things.
->>>
->>> For Turris Mox firmware I created a driver in
->>> drivers/firmware/turris-mox-rwtm.c.
->> this should be drivers/platform/turris/, I believe. It is not
->> _firmware_, is it?
->>
-> It is code that interacts with the firmware. It already is merged in
-> drivers/firmware/. The raspberrypi firmware interacting drivers is also
-> there...
-
-
-Would a MFD driver be better here?
-
-Dan
-
+SGksDQoNCkFtIFNvbm50YWcsIGRlbiAyMi4wMy4yMDIwLCAxNTo1NiArMDEwMCBzY2hyaWVi
+IEphY2VrIEFuYXN6ZXdza2k6DQo+IE9uIDMvMjEvMjAgNDoyMCBQTSwgUGF2ZWwgTWFjaGVr
+IHdyb3RlOg0KPiA+IEhpIQ0KPiA+IA0KPiA+ID4gbGVkX3B3bV9zZXQoKSBub3cgcmV0dXJu
+cyBhbiBlcnJvciB3aGVuIHNldHRpbmcgdGhlIFBXTSBmYWlscy4NCj4gPiA+IA0KPiA+ID4g
+Q2M6IFV3ZSBLbGVpbmUtS8O2bmlnIDx1d2VAa2xlaW5lLWtvZW5pZy5vcmc+DQo+ID4gPiBT
+aWduZWQtb2ZmLWJ5OiBEZW5pcyBPc3RlcmxhbmQtSGVpbSA8RGVuaXMuT3N0ZXJsYW5kQGRp
+ZWhsLmNvbT4NCj4gPiANCj4gPiBJIGFwcGxpZWQgMSBhbmQgMiwgYnV0IDMgZmFpbGVkIGZv
+ciBtZS4gSSdsbCBwdXNoIHVwZGF0ZWQgLW5leHQsIGNhbg0KPiA+IHlvdSBzZWUgd2hhdCBp
+cyBnb2luZyBvbiB0aGVyZT8NCj4gDQo+IENoZWNrIHRoZSBjb250ZW50cyBvZiB0aGUgcGF0
+Y2ggYWZ0ZXIgd3JpdGluZyBpdCBvbiBhIGRpc2suDQo+IEluIG15IGNhc2UgaXQgY29udGFp
+bnMgYSBibG9jayBvZiByYW5kb20gY2hhcmFjdGVycy4NCj4gSXQgaXMgcHJvYmFibHkgZHVl
+IHRvIENvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IGJhc2U2NC4NCj4gDQpzdHJhbmdlLg0K
+SW4gdGhlIHZlcnNpb24gSSByZWNlaXZlZCBieSBDQywgdGhlcmUgaXMgbm8gZ2FyYmFnZSwg
+YnV0IGFsc28gbm8gYXV0byBhcHBlbmRlZCBmb290ZXIuDQoNCkkgd2lsbCBzZW5kIHRoZSBt
+YWlsIGp1c3QgdG8gbGludXgtbGVkcyBzbyB3ZSBzaG91bGQgYWxsIHJlY2VpdmUgdGhlIHNh
+bWUgbWFpbC4NCg0KSSB3b25kZXIgaWYgdGhlICfDticgaW4gS8O2bmlnIGNhdXNlcyB0aGlz
+IHRyb3VibGUgaW4gbXkgc2VuZCBwYXRoLg0KDQpSZWdhcmRzIERlbmlzDQoNCg0KRGllaGwg
+Q29ubmVjdGl2aXR5IFNvbHV0aW9ucyBHbWJIDQpHZXNjaMOkZnRzZsO8aHJ1bmc6IEhvcnN0
+IExlb25iZXJnZXINClNpdHogZGVyIEdlc2VsbHNjaGFmdDogTsO8cm5iZXJnIC0gUmVnaXN0
+ZXJnZXJpY2h0OiBBbXRzZ2VyaWNodA0KTsO8cm5iZXJnOiBIUkIgMzIzMTUNCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KDQpEZXIgSW5oYWx0IGRl
+ciB2b3JzdGVoZW5kZW4gRS1NYWlsIGlzdCBuaWNodCByZWNodGxpY2ggYmluZGVuZC4gRGll
+c2UgRS1NYWlsIGVudGhhZWx0IHZlcnRyYXVsaWNoZSB1bmQvb2RlciByZWNodGxpY2ggZ2Vz
+Y2h1ZXR6dGUgSW5mb3JtYXRpb25lbi4NCkluZm9ybWllcmVuIFNpZSB1bnMgYml0dGUsIHdl
+bm4gU2llIGRpZXNlIEUtTWFpbCBmYWVsc2NobGljaGVyd2Vpc2UgZXJoYWx0ZW4gaGFiZW4u
+IEJpdHRlIGxvZXNjaGVuIFNpZSBpbiBkaWVzZW0gRmFsbCBkaWUgTmFjaHJpY2h0Lg0KSmVk
+ZSB1bmVybGF1YnRlIEZvcm0gZGVyIFJlcHJvZHVrdGlvbiwgQmVrYW5udGdhYmUsIEFlbmRl
+cnVuZywgVmVydGVpbHVuZyB1bmQvb2RlciBQdWJsaWthdGlvbiBkaWVzZXIgRS1NYWlsIGlz
+dCBzdHJlbmdzdGVucyB1bnRlcnNhZ3QuDQotIEluZm9ybWF0aW9uZW4genVtIERhdGVuc2No
+dXR6LCBpbnNiZXNvbmRlcmUgenUgSWhyZW4gUmVjaHRlbiwgZXJoYWx0ZW4gU2llIHVudGVy
+IGh0dHBzOi8vd3d3LmRpZWhsLmNvbS9ncm91cC9kZS90cmFuc3BhcmVuei11bmQtaW5mb3Jt
+YXRpb25zcGZsaWNodGVuLw0KDQpUaGUgY29udGVudHMgb2YgdGhlIGFib3ZlIG1lbnRpb25l
+ZCBlLW1haWwgaXMgbm90IGxlZ2FsbHkgYmluZGluZy4gVGhpcyBlLW1haWwgY29udGFpbnMg
+Y29uZmlkZW50aWFsIGFuZC9vciBsZWdhbGx5IHByb3RlY3RlZCBpbmZvcm1hdGlvbi4gUGxl
+YXNlIGluZm9ybSB1cyBpZiB5b3UgaGF2ZSByZWNlaXZlZCB0aGlzIGUtbWFpbCBieQ0KbWlz
+dGFrZSBhbmQgZGVsZXRlIGl0IGluIHN1Y2ggYSBjYXNlLiBFYWNoIHVuYXV0aG9yaXplZCBy
+ZXByb2R1Y3Rpb24sIGRpc2Nsb3N1cmUsIGFsdGVyYXRpb24sIGRpc3RyaWJ1dGlvbiBhbmQv
+b3IgcHVibGljYXRpb24gb2YgdGhpcyBlLW1haWwgaXMgc3RyaWN0bHkgcHJvaGliaXRlZC4g
+DQotIEZvciBnZW5lcmFsIGluZm9ybWF0aW9uIG9uIGRhdGEgcHJvdGVjdGlvbiBhbmQgeW91
+ciByZXNwZWN0aXZlIHJpZ2h0cyBwbGVhc2UgdmlzaXQgaHR0cHM6Ly93d3cuZGllaGwuY29t
+L2dyb3VwL2VuL3RyYW5zcGFyZW5jeS1hbmQtaW5mb3JtYXRpb24tb2JsaWdhdGlvbnMvDQo=
