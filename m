@@ -2,90 +2,104 @@ Return-Path: <SRS0=oDAj=5J=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FACCC54FCE
-	for <linux-leds@archiver.kernel.org>; Tue, 24 Mar 2020 09:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80909C2BAEE
+	for <linux-leds@archiver.kernel.org>; Tue, 24 Mar 2020 18:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC052080C
-	for <linux-leds@archiver.kernel.org>; Tue, 24 Mar 2020 09:42:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D41820714
+	for <linux-leds@archiver.kernel.org>; Tue, 24 Mar 2020 18:20:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RPz3pC5/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbgCXJm1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 24 Mar 2020 05:42:27 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:44776 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727230AbgCXJm1 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 24 Mar 2020 05:42:27 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 574CA1C0343; Tue, 24 Mar 2020 10:42:25 +0100 (CET)
-Date:   Tue, 24 Mar 2020 10:42:22 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Nicolas Belin <nbelin@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        jacek.anaszewski@gmail.com, dmurphy@ti.com,
-        devicetree@vger.kernel.org, baylibre-upstreaming@groups.io
-Subject: Re: [PATCH v3 3/3] drivers: leds: add support for apa102c leds
-Message-ID: <20200324094222.GA15096@amd>
-References: <1583502010-16210-1-git-send-email-nbelin@baylibre.com>
- <1583502010-16210-4-git-send-email-nbelin@baylibre.com>
+        id S1727894AbgCXSU3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 24 Mar 2020 14:20:29 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:37716 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727834AbgCXSU3 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 24 Mar 2020 14:20:29 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02OIKOEm076038;
+        Tue, 24 Mar 2020 13:20:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1585074024;
+        bh=J3mZ3nmzF0wHtBE0U1+YbpsX0WsYfOsuVjuEIKOh1Sk=;
+        h=From:To:CC:Subject:Date;
+        b=RPz3pC5/4VDZvh7wc9lDH2YkNVbi2H/P0Kkll4kLJDYYRGyimjc2We0tPzyFGSHhm
+         pLf9a2YgeaJpLrzchk6TDAeMVm3ReDTkQltuvFEAN0jUPEcuLczQMUyWJnPkPJ/gxw
+         vsZJEKLMNkBShWBllg0xKrOwZrRG48GJ8YTAyX6A=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02OIKO6u112968
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Mar 2020 13:20:24 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 24
+ Mar 2020 13:20:23 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 24 Mar 2020 13:20:23 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02OIKNww037641;
+        Tue, 24 Mar 2020 13:20:23 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v18 0/4] Multi Color LED Framework Patches
+Date:   Tue, 24 Mar 2020 13:14:30 -0500
+Message-ID: <20200324181434.24721-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
-Content-Disposition: inline
-In-Reply-To: <1583502010-16210-4-git-send-email-nbelin@baylibre.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Hello
 
---IS0zKkzwUGydFO0o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is the multi color LED framework.   This framework presents clustered
+colored LEDs into an array and allows the user space to adjust the brightness
+of the cluster using a single file write.  The individual colored LEDs
+intensities are controlled via a single file that is an array of LEDs
 
-On Fri 2020-03-06 14:40:10, Nicolas Belin wrote:
-> Initilial commit in order to support the apa102c RGB leds. The
+A design alternative to having files that have multiple values written to a
+single file is here:
 
-Initial
+https://lore.kernel.org/patchwork/patch/1186194/
 
-> RGB and global brightness management is done by creating 4 leds
-> from the Led Framework per apa102c led.
->=20
+Dan
 
-> +
-> +		/* setting a color_id value for each of the 4 components of the
-> +		 * apa102c RGB led. The first component is the global brightness
-> +		 * of the led and thus has no color. The order of the colors
-> +		 * after the global brightness is then blue, green and red
-> +		 * in that order. It corresponds to the order in which the
-> +		 * values are sent using spi
-> +		 */
-> +		rgb_led->component[0].color_id =3D -1; //no color
+Dan Murphy (4):
+  dt: bindings: Add multicolor class dt bindings documention
+  dt-bindings: leds: Add multicolor ID to the color ID list
+  leds: Add multicolor ID to the color ID list
+  leds: multicolor: Introduce a multicolor class definition
 
-Please follow codingstyle on comment style and avoid // comments.
+ .../ABI/testing/sysfs-class-led-multicolor    |  51 ++++
+ .../bindings/leds/leds-class-multicolor.txt   |  98 ++++++++
+ Documentation/leds/index.rst                  |   1 +
+ Documentation/leds/leds-class-multicolor.rst  | 110 +++++++++
+ drivers/leds/Kconfig                          |  10 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/led-class-multicolor.c           | 224 ++++++++++++++++++
+ drivers/leds/led-core.c                       |   1 +
+ include/dt-bindings/leds/common.h             |   3 +-
+ include/linux/led-class-multicolor.h          | 124 ++++++++++
+ 10 files changed, 622 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+ create mode 100644 Documentation/leds/leds-class-multicolor.rst
+ create mode 100644 drivers/leds/led-class-multicolor.c
+ create mode 100644 include/linux/led-class-multicolor.h
 
-Best regards,
-									Pavel
+-- 
+2.25.1
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---IS0zKkzwUGydFO0o
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl551f4ACgkQMOfwapXb+vKNAACdHyKBsVW3v6cli5ZVCgheH7ky
-D3kAnA22fu4Dv4StJjio2r7Ne6PEyWkM
-=IEwh
------END PGP SIGNATURE-----
-
---IS0zKkzwUGydFO0o--
