@@ -2,71 +2,87 @@ Return-Path: <SRS0=CrCS=5W=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D96C2BA19
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Apr 2020 13:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E68C2BA19
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Apr 2020 14:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71CBC22582
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Apr 2020 13:53:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93988206C3
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Apr 2020 14:39:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="MntAUMz7"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aSOq2Thc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728391AbgDFNxl (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 6 Apr 2020 09:53:41 -0400
-Received: from lists.nic.cz ([217.31.204.67]:59394 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728374AbgDFNxl (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 6 Apr 2020 09:53:41 -0400
-Received: from localhost (unknown [172.20.6.135])
-        by mail.nic.cz (Postfix) with ESMTPSA id B715314138B;
-        Mon,  6 Apr 2020 15:53:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1586181218; bh=UeqJJJiFMTg0tpjmMOH7YdRpeO1X/AOws16dUfgFRqg=;
-        h=Date:From:To;
-        b=MntAUMz7u82HvKKkDjAVq5GoXNcIuNgPmGtWxqhgHLL7ZoOVJfkuvSLUiMaKIrECM
-         BwNqvJsGV31KVoCB23bmmvWfpQJK9vCki/aNDfrRS/ZGP7JbeZyjezwm58/1jQkGPr
-         uUW4uq82mUGpRmYkgEcSSZxdSXzvDYrWFZ4+Po3Q=
-Date:   Mon, 6 Apr 2020 15:53:38 +0200
-From:   Marek Behun <marek.behun@nic.cz>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH RFC leds-next] leds: initial support for Turris Omnia
- LEDs
-Message-ID: <20200406155338.4aff9fed@nic.cz>
-In-Reply-To: <20200406083423.GA31120@duo.ucw.cz>
-References: <20200319181604.2425-1-marek.behun@nic.cz>
-        <20200321153444.GE8386@duo.ucw.cz>
-        <661959c3-cd24-1125-be35-f293212f4fe4@gmail.com>
-        <20200321215030.08b75ccc@nic.cz>
-        <e6f20e72-0bfc-5fc1-839e-1283d8f15394@gmail.com>
-        <20200406083423.GA31120@duo.ucw.cz>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728630AbgDFOja (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 6 Apr 2020 10:39:30 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:34456 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728566AbgDFOja (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Apr 2020 10:39:30 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 036EdPGB060058;
+        Mon, 6 Apr 2020 09:39:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1586183965;
+        bh=Mv9f2/SpVcCjK44c4OSC4J10mXtBoBKAIa6WVzJmjN8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=aSOq2ThcWUWgAYsv82oD+RoDrRY77LUBG5h0Y8S2ARwnMOvEw0pstORLh7b61o8jM
+         bwKsWMIfCPsF45RKqJynM/zD8iJ1vAM6zXFvvJ8UIqrmtSjE99Dzq5CRbgqdIlVRw8
+         EOPupvkgYn/7XOPX1v0+NQNHP+wJwjOtuXQ+lm2U=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 036EdO15012727;
+        Mon, 6 Apr 2020 09:39:24 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 6 Apr
+ 2020 09:39:24 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 6 Apr 2020 09:39:24 -0500
+Received: from [10.250.52.63] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 036EdOfs111481;
+        Mon, 6 Apr 2020 09:39:24 -0500
+Subject: Re: [PATCH v19 04/18] leds: multicolor: Introduce a multicolor class
+ definition
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200402204311.14998-1-dmurphy@ti.com>
+ <20200402204311.14998-5-dmurphy@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <6f8623ea-4f00-9521-e8d3-89d261c2a25e@ti.com>
+Date:   Mon, 6 Apr 2020 09:33:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200402204311.14998-5-dmurphy@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.101.4 at mail
-X-Virus-Status: Clean
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, 6 Apr 2020 10:34:23 +0200
-Pavel Machek <pavel@ucw.cz> wrote:
+Pavel
 
-> Yes please.
-> 
-> > Anyway, "omnia" alone doesn't allow to tell the location of the
-> > LED either.  
-> 
-> ACK.
+On 4/2/20 3:42 PM, Dan Murphy wrote:
+> Introduce a multicolor class that groups colored LEDs
+> within a LED node.
+>
+> The multi color class groups monochrome LEDs and allows controlling two
+> aspects of the final combined color: hue and lightness. The former is
+> controlled via <color>_intensity files and the latter is controlled
+> via brightness file.
+>
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
 
-Pavel, what about the other thread (starting with message ID 
-<20200402162950.5c2847be@nic.cz>, sent at 04/02/2020 16:29) ?
+Still looking for comments and reviews from you on this specific patch 
+and implementation
 
-Marek
+Dan
+
