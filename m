@@ -1,41 +1,40 @@
-Return-Path: <SRS0=CrCS=5W=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=LG8E=5X=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3673C2BA1A
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Apr 2020 21:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 453F7C2BA16
+	for <linux-leds@archiver.kernel.org>; Tue,  7 Apr 2020 07:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92AB5206B8
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Apr 2020 21:13:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1724720678
+	for <linux-leds@archiver.kernel.org>; Tue,  7 Apr 2020 07:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbgDFVNK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 6 Apr 2020 17:13:10 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:45032 "EHLO
+        id S1727528AbgDGH24 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 7 Apr 2020 03:28:56 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:35970 "EHLO
         jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbgDFVNK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Apr 2020 17:13:10 -0400
+        with ESMTP id S1726767AbgDGH24 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Apr 2020 03:28:56 -0400
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 403B91C47F0; Mon,  6 Apr 2020 23:13:08 +0200 (CEST)
-Date:   Mon, 6 Apr 2020 23:13:07 +0200
+        id D92AE1C4A5A; Tue,  7 Apr 2020 09:28:54 +0200 (CEST)
+Date:   Tue, 7 Apr 2020 09:28:54 +0200
 From:   Pavel Machek <pavel@ucw.cz>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>,
-        Dan Murphy <dmurphy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: core: Fix warning message when init_data
-Message-ID: <20200406211307.GD12611@amd.ucw.cz>
-References: <20200401095147.444353-1-ribalda@kernel.org>
- <ef851b8f-0232-ab09-482e-ae575fb8dbde@gmail.com>
+Cc:     linux-leds@vger.kernel.org
+Subject: Re: Cleanups in "next" tree
+Message-ID: <20200407072854.GA18673@amd.ucw.cz>
+References: <20200322115906.GA10623@duo.ucw.cz>
+ <3a103317-b9fb-5d0f-6944-0114b9af1629@gmail.com>
+ <20200402225745.GA9830@amd>
+ <a4802e70-106b-3476-536f-1d8798ce156f@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="P+33d92oIH25kiaB"
+        protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
 Content-Disposition: inline
-In-Reply-To: <ef851b8f-0232-ab09-482e-ae575fb8dbde@gmail.com>
+In-Reply-To: <a4802e70-106b-3476-536f-1d8798ce156f@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
@@ -43,62 +42,73 @@ List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---P+33d92oIH25kiaB
+--rwEMma7ioTxnRzrJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2020-04-01 21:49:00, Jacek Anaszewski wrote:
-> Hi Ricardo,
->=20
-> Thank you for the patch.
->=20
-> On 4/1/20 11:51 AM, Ricardo Ribalda Delgado wrote:
-> > The warning message when a led is renamed due to name collition can fail
-> > to show proper original name if init_data is used. Eg:
-> >=20
-> > [    9.073996] leds-gpio a0040000.leds_0: Led (null) renamed to red_led=
-_1 due to name collision
-> >=20
-> > Fixes: bb4e9af0348d ("leds: core: Add support for composing LED class d=
-evice names")
-> > Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> > ---
-> >  drivers/leds/led-class.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > index 1fc40e8af75e..3363a6551a70 100644
-> > --- a/drivers/leds/led-class.c
-> > +++ b/drivers/leds/led-class.c
-> > @@ -376,7 +376,7 @@ int led_classdev_register_ext(struct device *parent,
-> > =20
-> >  	if (ret)
-> >  		dev_warn(parent, "Led %s renamed to %s due to name collision",
-> > -				led_cdev->name, dev_name(led_cdev->dev));
-> > +				proposed_name, dev_name(led_cdev->dev));
-> > =20
-> >  	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
-> >  		ret =3D led_add_brightness_hw_changed(led_cdev);
-> >=20
->=20
-> Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Hi!
 
-Thanks, applied.
+> > I'm sorry I failed to meet your high expectations... But I don't
+> > believe I done anything completely outside of usual kernel procedures.
+>=20
+> I believe code review is quite usual kernel procedure.
+
+I don't disagree with that.
+
+> > Could you list the patches and objections you have?
+>=20
+> I already expressed my concerns regarding Turris Omnia patch.
+
+Ok.
+
+> My comments regarding remaining patches:
+>=20
+> - "Make label "white:power" to be consistent with"
+>=20
+> I disagree here. "system" was OK.
+
+It was too vague... I know the hardware and it is a LED above power
+button used as a power indicator.
+
+> - "Warn about old defines that probably should not be used."
+>=20
+> Obsolete is only LED_FULL, so the comment is in wrong line
+
+No, all of them are bad. Maybe LED_OFF could be used going forward,
+but... it is simply easier to write 0. The type is not really an en
+enumeration, it is brightness, with variable maximum value.
+
+> - "Group LED functions according to functionality, and add some"
+>=20
+> You're adding here some random comments referencing obsolete
+> naming. I think that it is enough to say what is current standard.
+
+Ok, I'll drop that part. But I really want to get that documented
+_somewhere_, because obsolete naming is currently in use, and we won't
+be able to change it :-(.
+
+> Also, I had a patch [0] describing standard LED functions in my LED
+> naming patch set, but it was not merged. It could be worth getting
+> back to it at this occasion.
+
+I'll take a look.
+
+Best regards,
 									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---P+33d92oIH25kiaB
+--rwEMma7ioTxnRzrJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXoubYwAKCRAw5/Bqldv6
-8v9UAJwKQZAnZW36XiePXAyyOrCUgSLxCgCgnW6AbwGI7UI3O8EXyEB+c3tRsOA=
-=61Fb
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXowrtgAKCRAw5/Bqldv6
+8md3AKCKwybQr0rzOq4IrTL2O9mJJg5z5wCfXHzpvm3WD1l2mHn7cCGwPXmJ4wM=
+=2BEK
 -----END PGP SIGNATURE-----
 
---P+33d92oIH25kiaB--
+--rwEMma7ioTxnRzrJ--
