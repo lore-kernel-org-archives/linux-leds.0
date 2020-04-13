@@ -1,170 +1,131 @@
-Return-Path: <SRS0=pyCi=52=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=ioB8=55=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE1CC2BB1D
-	for <linux-leds@archiver.kernel.org>; Fri, 10 Apr 2020 17:42:06 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 234B12064A
-	for <linux-leds@archiver.kernel.org>; Fri, 10 Apr 2020 17:42:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586540526;
-	bh=9M12dbp0MvcuBK52wZqAxWvUuK1E7s5Rz0bu2eoj3V4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=aUgDpYmRkIDEiCQpsLaiDUPiIbPwIF6F+UrZrFm+9zdh2+Lq3wIENpuNvG2SwtdIg
-	 haAsEwHiy99iNZEbhR0DxK0ihSVafYlLkoNYivk3YcZfAMWCG5DUw7wqHyoTH4fIRZ
-	 4mO4cNOEu5UB7ln+e9/SXUmVRatI6rkFC/DM5vMA=
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1122C2BBFD
+	for <linux-leds@archiver.kernel.org>; Mon, 13 Apr 2020 14:51:01 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 817D32075E
+	for <linux-leds@archiver.kernel.org>; Mon, 13 Apr 2020 14:51:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="JVE0Oy/n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbgDJRmF (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 10 Apr 2020 13:42:05 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34900 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbgDJRmF (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 10 Apr 2020 13:42:05 -0400
-Received: by mail-ot1-f68.google.com with SMTP id v2so2549474oto.2;
-        Fri, 10 Apr 2020 10:42:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=p3GtHQTWXIQaFnXHsApCjfV8Rah3qivLPAz5Wv7Len8=;
-        b=WfGq17R3KOlmRk7js0308DuU0DcA8+i9Ulx+l/FFmwtrvpZFKtaljT4T+rwJLmL8tf
-         T1F2r75x3n2yrhPSaiJluY1iaQSYn1ObLVHOd6XvL8uEQkFFFLkMGX5iD4Xg/jRWQDVr
-         Bf9Zy9QMCVxeHAK/Vm3B4H9fC3YTB/SvLz31S8yGIjlJ2/aTVpJmT3AaU6xIINiIbTzZ
-         5PHRSwDMLGBTdtC1gTSfGB7CQPiYgvhhupHW8a8/6cvhGsl7PSMk7mDtuyuUUxwUPSCG
-         2nu3B6uEgnwKhnG4WIEW6Da/r2A3b5lbPH4lrpK/NxhlYJZ2KzNTD1ni0Ni9jHkWCxbN
-         /fmg==
-X-Gm-Message-State: AGi0Pub1L+x5GB98/7rF0GRBYxoXZUTdQA1oEs8qccXxS+AM3sNSRw8S
-        L/9OmOO6K4IOYxtcozXCfg==
-X-Google-Smtp-Source: APiQypLbfE0LHYQU4L4WPZigiXumpsnf69cXj/bKN0IhyHFYdZOnCo6DveWu0AeZFY66o2O86cmTKg==
-X-Received: by 2002:a05:6830:199:: with SMTP id q25mr5250391ota.341.1586540524909;
-        Fri, 10 Apr 2020 10:42:04 -0700 (PDT)
-Received: from rob-hp-laptop (ip-99-203-29-27.pools.spcsdns.net. [99.203.29.27])
-        by smtp.gmail.com with ESMTPSA id i20sm1677495oos.19.2020.04.10.10.41.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Apr 2020 10:42:04 -0700 (PDT)
-Received: (nullmailer pid 18322 invoked by uid 1000);
-        Fri, 10 Apr 2020 17:41:42 -0000
-Date:   Fri, 10 Apr 2020 12:41:42 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Luca Weiss <luca@z3ntu.xyz>
-Cc:     linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Shawn Guo <shawnguo@kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v2 1/2] dt-bindings: leds: Add binding for sgm3140
-Message-ID: <20200410174142.GA14153@bogus>
-References: <20200330194757.2645388-1-luca@z3ntu.xyz>
- <20200330194757.2645388-2-luca@z3ntu.xyz>
+        id S1730892AbgDMOu6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 13 Apr 2020 10:50:58 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:20590 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730890AbgDMOu5 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 13 Apr 2020 10:50:57 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1586789456; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=uvf3bpTwOKniLL1tkFEZ8lUYaBxnlGE9DNXjmA347Xc=;
+ b=JVE0Oy/nbYlWJ2cLaPDvDLUAfV066FdCQDNMkvnkmXf9zUeA08NlACv4BRhWZy1UZ2z2PdNJ
+ BibB5/HMk3DptM0ViEtYVolDnwGEB99e5CvecAMiAncPyiZ8QujRhmoprcaDv9WynkXRILhO
+ oIJaQ/M0oY6qo6qsQxeWZQZRU0k=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyJkODczOCIsICJsaW51eC1sZWRzQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e947c4a.7f33307f5ab0-smtp-out-n01;
+ Mon, 13 Apr 2020 14:50:50 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 85830C433BA; Mon, 13 Apr 2020 14:50:48 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kgunda)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A50E3C433F2;
+        Mon, 13 Apr 2020 14:50:47 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200330194757.2645388-2-luca@z3ntu.xyz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 13 Apr 2020 20:20:47 +0530
+From:   kgunda@codeaurora.org
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
+        Rob Herring <robh@kernel.org>, bjorn.andersson@linaro.org,
+        jingoohan1@gmail.com, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, jacek.anaszewski@gmail.com,
+        pavel@ucw.cz, mark.rutland@arm.com, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dan Murphy <dmurphy@ti.com>, linux-arm-msm@vger.kernel.org,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH V4 1/4] backlight: qcom-wled: convert the wled bindings to
+ .yaml format
+In-Reply-To: <20200406085024.GF30614@dell>
+References: <1584985618-25689-1-git-send-email-kgunda@codeaurora.org>
+ <1584985618-25689-2-git-send-email-kgunda@codeaurora.org>
+ <20200331175401.GA9791@bogus>
+ <ac8f25113a3bb233c11fd7cd9e62c2cf@codeaurora.org>
+ <20200403114651.m6rholzufzqinanc@holly.lan> <20200406085024.GF30614@dell>
+Message-ID: <4fb0643342e512a248f57198cbafe50c@codeaurora.org>
+X-Sender: kgunda@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 09:47:56PM +0200, Luca Weiss wrote:
-> Add YAML devicetree binding for SGMICRO SGM3140 charge pump used for
-> camera flash LEDs.
+On 2020-04-06 14:20, Lee Jones wrote:
+> On Fri, 03 Apr 2020, Daniel Thompson wrote:
 > 
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> ---
-> Changes since v1:
-> - Add vin-supply
-> - Add led subnode (common.yaml)
+>> On Fri, Apr 03, 2020 at 04:45:49PM +0530, kgunda@codeaurora.org wrote:
+>> > On 2020-03-31 23:24, Rob Herring wrote:
+>> > > On Mon, Mar 23, 2020 at 11:16:55PM +0530, Kiran Gunda wrote:
+>> > > > diff --git
+>> > > > a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+>> > > > b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+>> > > > new file mode 100644
+>> > > > index 0000000..8a388bf
+>> > > > --- /dev/null
+>> > > > +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+>> > > > @@ -0,0 +1,184 @@
+>> > > > +# SPDX-License-Identifier: GPL-2.0-only
+>> > > > +%YAML 1.2
+>> > > > +---
+>> > > > +$id: http://devicetree.org/schemas/leds/backlight/qcom-wled.yaml#
+>> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> > > > +
+>> > > > +title: Binding for Qualcomm Technologies, Inc. WLED driver
+>> > > > +
+>> > > > +maintainers:
+>> > > > +  - Lee Jones <lee.jones@linaro.org>
+>> > >
+>> > > Should be the h/w owner (you), not who applies patches.
+>> > >
+>> > will address in next post.
+>> > <snip>
+>> > will address in next post.
+>> > <snip>
+>> > will address in next post.
+>> > <snip>
+>> > will address in next post.
+>> > <snip>
+>> > will address in next post.
+>> > <snip>
+>> > will address in next post.
+>> > <snip>
+>> > will address in next post.
+>> > <snip>
+>> > will address in next post.
+>> > <snip>
+>> > will address in next post.
+>> 
+>> If you agree on all points raised I doubt there is any need for a 
+>> point
+>> by point reply since everyone who reads it will have to scroll down
+>> simply to find out that you agree on all points.
+>> 
+>> Better just to acknowledge the feedback and reply to the first one
+>> saying you'll agree on all points and will address all feedback in the
+>> next revision (and then trim the reply to keep it short).
 > 
->  .../bindings/leds/leds-sgm3140.yaml           | 61 +++++++++++++++++++
->  1 file changed, 61 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
-> new file mode 100644
-> index 000000000000..24ca178e5d0a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/leds-sgm3140.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SGMICRO SGM3140 500mA Buck/Boost Charge Pump LED Driver
-> +
-> +maintainers:
-> +  - Luca Weiss <luca@z3ntu.xyz>
-> +
-> +description: |
-> +  The SGM3140 is a current-regulated charge pump which can regulate two current
-> +  levels for Flash and Torch modes.
-> +
-> +  The data sheet can be found at:
-> +    http://www.sg-micro.com/uploads/soft/20190626/1561535688.pdf
-> +
-> +properties:
-> +  compatible:
-> +    const: sgmicro,sgm3140
-> +
-> +  enable-gpios:
-> +    maxItems: 1
-> +    description: A connection to the 'EN' pin.
-> +
-> +  flash-gpios:
-> +    maxItems: 1
-> +    description: A connection to the 'FLASH' pin.
-> +
-> +  vin-supply:
-> +    description: Regulator providing power to the 'VIN' pin.
-> +
-> +  led:
-
-Needs 'type: object'
-
-With that,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-> +    allOf:
-> +      - $ref: common.yaml#
-> +
-> +required:
-> +  - compatible
-> +  - flash-gpios
-> +  - enable-gpios
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/leds/common.h>
-> +
-> +    sgm3140 {
-> +        compatible = "sgmicro,sgm3140";
-> +        flash-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* PD24 */
-> +        enable-gpios = <&pio 2 3 GPIO_ACTIVE_HIGH>; /* PC3 */
-> +        vin-supply = <&reg_dcdc1>;
-> +
-> +        sgm3140_flash: led {
-> +            function = LED_FUNCTION_FLASH;
-> +            color = <LED_COLOR_ID_WHITE>;
-> +            flash-max-timeout-us = <250000>;
-> +        };
-> +    };
-> -- 
-> 2.26.0
-> 
+> Or better still, just submit the next revision with all the fixes. :)
+Noted.
