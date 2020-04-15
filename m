@@ -1,95 +1,95 @@
-Return-Path: <SRS0=H0Np=56=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=3VIc=57=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D77C2BBC7
-	for <linux-leds@archiver.kernel.org>; Tue, 14 Apr 2020 13:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F340AC2BA19
+	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 12:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC9962064A
-	for <linux-leds@archiver.kernel.org>; Tue, 14 Apr 2020 13:29:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aVHNXMlc"
+	by mail.kernel.org (Postfix) with ESMTP id BDBE7206F9
+	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 12:23:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586953436;
+	bh=yaliotJxvLNaSp02wuihbJu/1ZddBCwFTwSf8FxJC0c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=EZdLxak6ijHIjgvdmN1K8eUh8BLpAAO7+kjzr60xgb0YrbZEfGtxOa8c3x6w5KkCE
+	 Li3jRcHTyCRcxttG1DyX9WkqDGLNFJ+WGk4sLlWwQwypuPiPVZgKyPZQ1QkyHhxORG
+	 uH620r3ErTgQkg6mo1hFTSeLWBQfk0HmyMn1rwtM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732100AbgDNN25 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 14 Apr 2020 09:28:57 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:45458 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732087AbgDNN2z (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 14 Apr 2020 09:28:55 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03EDSpA4083332;
-        Tue, 14 Apr 2020 08:28:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1586870931;
-        bh=u4MC3vP7IuttKDx8Z8LBQeVWaGt1BmFWT4OrNlLtjYI=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=aVHNXMlcX5EKbH3LTgr3Tjpgm5hRS8r743YqZgixAsfjpDuD99BXSG3fbAkolkifj
-         LfrAHM2RmtlIjxjlub0aFxAwvLfT9LElbnz/OEqQ/DNCTaRwXI7AeIzu47zDT1BhKC
-         oFvgU0YY19CZ6YWqQEVK+zqOy8TpEttwAsYm9U3s=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03EDSpq1003225;
-        Tue, 14 Apr 2020 08:28:51 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 14
- Apr 2020 08:28:51 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 14 Apr 2020 08:28:51 -0500
-Received: from [10.250.52.63] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03EDSpnA008906;
-        Tue, 14 Apr 2020 08:28:51 -0500
-Subject: Re: [PATCH v19 04/18] leds: multicolor: Introduce a multicolor class
- definition
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200402204311.14998-1-dmurphy@ti.com>
- <20200402204311.14998-5-dmurphy@ti.com>
- <e5a789d5-b622-df23-d540-99816851d5f1@ti.com>
-Message-ID: <aa642c7e-c3b5-d326-17e8-73f80babf7c0@ti.com>
-Date:   Tue, 14 Apr 2020 08:23:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S369158AbgDOMXs (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 15 Apr 2020 08:23:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40196 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2897229AbgDOLpt (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 15 Apr 2020 07:45:49 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A51A821582;
+        Wed, 15 Apr 2020 11:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586951149;
+        bh=yaliotJxvLNaSp02wuihbJu/1ZddBCwFTwSf8FxJC0c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jNeH36HjSXR9Unl8qY/dZBoYALMzZ0oJn8XRVGYx/Zyl3I5N3O3Fu7tEwGiybKYQ9
+         ZPf6efll4U8VxCcOsnS5+rdmxdLbC5jRS1Te8SqbC0DKerf+KwJngUqeXsXWvvB3is
+         5ucSH3M3kk6ecXNb+ORdDIcWFICtHz6H+N28EAsU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
+        linux-leds@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 56/84] leds: core: Fix warning message when init_data
+Date:   Wed, 15 Apr 2020 07:44:13 -0400
+Message-Id: <20200415114442.14166-56-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200415114442.14166-1-sashal@kernel.org>
+References: <20200415114442.14166-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <e5a789d5-b622-df23-d540-99816851d5f1@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Pavel
+From: Ricardo Ribalda Delgado <ribalda@kernel.org>
 
-On 4/8/20 11:35 AM, Dan Murphy wrote:
-> Pavel
->
-> On 4/2/20 3:42 PM, Dan Murphy wrote:
->> Introduce a multicolor class that groups colored LEDs
->> within a LED node.
->>
->> The multi color class groups monochrome LEDs and allows controlling two
->> aspects of the final combined color: hue and lightness. The former is
->> controlled via <color>_intensity files and the latter is controlled
->> via brightness file.
->
-> When you get a chance I would like to get your review on this patch as 
-> well before I submit v20
->
-Have you had a chance to review the code?  I want to be able to post the 
-next version but want to make sure there are currently no other major 
-changes.
+[ Upstream commit 64ed6588c2ea618d3f9ca9d8b365ae4c19f76225 ]
 
-Dan
+The warning message when a led is renamed due to name collition can fail
+to show proper original name if init_data is used. Eg:
 
-> Dan
->
+[    9.073996] leds-gpio a0040000.leds_0: Led (null) renamed to red_led_1 due to name collision
+
+Fixes: bb4e9af0348d ("leds: core: Add support for composing LED class device names")
+Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
+Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/leds/led-class.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 647b1263c5794..d3e83c33783e5 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -281,7 +281,7 @@ int led_classdev_register_ext(struct device *parent,
+ 
+ 	if (ret)
+ 		dev_warn(parent, "Led %s renamed to %s due to name collision",
+-				led_cdev->name, dev_name(led_cdev->dev));
++				proposed_name, dev_name(led_cdev->dev));
+ 
+ 	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
+ 		ret = led_add_brightness_hw_changed(led_cdev);
+-- 
+2.20.1
+
