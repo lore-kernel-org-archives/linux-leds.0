@@ -2,346 +2,315 @@ Return-Path: <SRS0=3VIc=57=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0AFC3815B
-	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 14:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD47AC3815B
+	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 15:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B54172137B
-	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 14:53:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oACkeqtY"
+	by mail.kernel.org (Postfix) with ESMTP id B455920857
+	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 15:09:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586963351;
+	bh=Zi63TDHc0SWtoedIqo/TgpSfp8hm8I33v4Z457DvElw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZgbMeGpTiRmifuzElJUbYgTt6KrVMlKUt0Twc/AObDNLjxM34CFMwwrlUy6qypDXm
+	 qPqXbBpcJ5DP5Y9u4LmWkNvPE5Gj1AZUIeBrCBg/F9YKTpVHPhP/1IA5abliptinD+
+	 3fd4rPJAy/qo2zahGku0R0yN4RpZEz4r6az8Y1so=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408866AbgDOOxt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 15 Apr 2020 10:53:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42590 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2407866AbgDOOxq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 15 Apr 2020 10:53:46 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5ED5C061A0C
-        for <linux-leds@vger.kernel.org>; Wed, 15 Apr 2020 07:53:45 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id r24so4010765ljd.4
-        for <linux-leds@vger.kernel.org>; Wed, 15 Apr 2020 07:53:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tGAp2DeBMo7UFxMwTS+22jVrCQrIg3mgc0Mp6iLCxX0=;
-        b=oACkeqtY1xxCNJlUtlFf6b5EQSTbPuLs6uRgRUpwc2qI9JD8IRwgAVAV8l0g1lA9E+
-         vVop4hNcmMteAJu48RacTRduFWMA2stV6YCQaS1+lkfsj2MW0sY840Wdb7035H241hYQ
-         EdQKM+ijMULczYS9pXmPRbmnYrUnWRBWjBr0/tKbLk9QDUspP8Uf3YC5CEEI5RYyhTcK
-         meOxvdsTgAi11cChhz9s8hfHMC0ohHHqkvGRf8ROGxgXpsxrBXnUsOr+44J6cnMtwNbK
-         dmSwKSkr5beLpQqIy80HDfZGrjshrzWEqQIYFbOAVwqqOdS/NKB4mr4vOVGvQfsJWKUE
-         wklA==
+        id S2388223AbgDOPJL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 15 Apr 2020 11:09:11 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46667 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730523AbgDOPJJ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 15 Apr 2020 11:09:09 -0400
+Received: by mail-ot1-f68.google.com with SMTP id w12so156473otm.13;
+        Wed, 15 Apr 2020 08:09:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tGAp2DeBMo7UFxMwTS+22jVrCQrIg3mgc0Mp6iLCxX0=;
-        b=Ld9fENk9A3rRqDRzoh91gYDmbSeRQLVlaP2rUfR6cYBnkTSA0lx3r+U34JbZpEMx/1
-         yKm8WccyPWMsZa91Ig+7wDpn6zV7y1NP1g3Yb/ObGyV/fo5QGaskCUUqqE2oEcmFoVeK
-         sN7AUP8mpDlPujlde/J5xPTcxbndOrB0pha+nPAwogjF0y2nIBy3rSWbo+mZzrb6B6ZZ
-         NR7HV+tYaxY+vfUIExiKmGOG7w+Ihf8JITT/NpAPxonMBhFpkz5SjwzlpjANSvasz134
-         702DIr6o+fanCt8yjtzX9lxFkHV3tu+hWN663Q29k1aBLIJonpafvkx9sXI6b8R0YlAw
-         YSFg==
-X-Gm-Message-State: AGi0PuaC6JSnZsNBTQ1yxKdvWpfhPn/BpduLcP6ZzzNGWf6bxNBDfnAb
-        Q42tVgwasMsTFvssng6XXIBi6A==
-X-Google-Smtp-Source: APiQypIWY9YiZy75vyQjiObOzikRx98eIJIYSpckh6Hp6l+oRCV4SwAuTwaprUF5ipMQFVPrlkSUOw==
-X-Received: by 2002:a2e:1616:: with SMTP id w22mr2704277ljd.261.1586962424289;
-        Wed, 15 Apr 2020 07:53:44 -0700 (PDT)
-Received: from localhost.localdomain (c-f3d7225c.014-348-6c756e10.bbcust.telenor.se. [92.34.215.243])
-        by smtp.gmail.com with ESMTPSA id b16sm11601987ljh.20.2020.04.15.07.53.43
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HdC/Q7+fvd6pSZDjuejBxq/m9TWf81AbZW8TK43Po2w=;
+        b=pnX9ieNGS0RndPaznJ1l7UvdhhhVhLLYXxUJ1hBawgQjQvcaasET9hREMd0ymzgrYE
+         z5wzQmysDg5P3Wls3vzbIujAkDkMPqnOImNiBpZRp99ot1aDDL0AtcrC8EEt4BXeqQwS
+         JN+rQ/z2BeNXpfZo6MNYJ34PvtBKQRzwAR31b7Mnef8KoIV1WSUVII9T0LszqPuHdRhs
+         ixwi+8rO27Z1nqnJ/9xmxfPaExmCo7qvXnWgO5dA59imkyi6k+pnRUwl+INnyGi3lTN9
+         cn/tyA8ctMvHggIFzOKniUCQcXx6UgUORBTODyAxLhlmOTzf7c54HNHYTFul1DKYDbB/
+         6bTg==
+X-Gm-Message-State: AGi0PuZW1YaOmQl6VyeUpdnVbG31yQ9cojPaUg7x3zIpGViOOIS9fEmK
+        e5PxppApQhdPk+KmpfTUCQ==
+X-Google-Smtp-Source: APiQypJ53WgVdOzShhlDqFQl48EdVSSIisnmrcFsbp5L/x6xXtHCUnsjBYHk71gAGFPCUdUr6AVHnQ==
+X-Received: by 2002:a4a:3f41:: with SMTP id x1mr13267212ooe.69.1586963346738;
+        Wed, 15 Apr 2020 08:09:06 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o73sm6310050ota.77.2020.04.15.08.09.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2020 07:53:43 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc:     linux-leds@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Guinot <simon.guinot@sequanux.org>
-Subject: [PATCH] leds: netxbig: Convert to use GPIO descriptors
-Date:   Wed, 15 Apr 2020 16:51:39 +0200
-Message-Id: <20200415145139.155663-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.25.2
+        Wed, 15 Apr 2020 08:09:05 -0700 (PDT)
+Received: (nullmailer pid 25557 invoked by uid 1000);
+        Wed, 15 Apr 2020 15:09:04 -0000
+Date:   Wed, 15 Apr 2020 10:09:04 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Kiran Gunda <kgunda@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
+        lee.jones@linaro.org, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        linux-arm-msm@vger.kernel.org,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>
+Subject: Re: [PATCH V5 1/4] backlight: qcom-wled: convert the wled bindings
+ to .yaml format
+Message-ID: <20200415150904.GA11174@bogus>
+References: <1586274430-28402-1-git-send-email-kgunda@codeaurora.org>
+ <1586274430-28402-2-git-send-email-kgunda@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1586274430-28402-2-git-send-email-kgunda@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This converts the NetXbig LED driver to use GPIO descriptors
-instead of using the legacy interfaces in <linux/of_gpio.h>
-and <linux/gpio.h> to iteratively parse the device tree for
-global GPIO numbers.
+On Tue, Apr 07, 2020 at 09:17:07PM +0530, Kiran Gunda wrote:
+> Convert the qcom-wled bindings from .txt to .yaml format.
+> Also replace PM8941 to WLED3 and PMI8998 to WLED4.
+> 
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+> Signed-off-by: Subbaraman Narayanamurthy <subbaram@codeaurora.org>
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> ---
+>  .../bindings/leds/backlight/qcom-wled.txt          | 154 ----------------
+>  .../bindings/leds/backlight/qcom-wled.yaml         | 201 +++++++++++++++++++++
+>  2 files changed, 201 insertions(+), 154 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+>  create mode 100644 Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
 
-Cc: Simon Guinot <simon.guinot@sequanux.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/leds/leds-netxbig.c | 148 ++++++++++++++++++++----------------
- 1 file changed, 81 insertions(+), 67 deletions(-)
 
-diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
-index 14ef4ccdda3a..ceceeb6a0e96 100644
---- a/drivers/leds/leds-netxbig.c
-+++ b/drivers/leds/leds-netxbig.c
-@@ -12,16 +12,17 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/platform_device.h>
--#include <linux/gpio.h>
--#include <linux/of_gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/leds.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
- 
- struct netxbig_gpio_ext {
--	unsigned int	*addr;
-+	struct gpio_desc **addr;
- 	int		num_addr;
--	unsigned int	*data;
-+	struct gpio_desc **data;
- 	int		num_data;
--	unsigned int	enable;
-+	struct gpio_desc *enable;
- };
- 
- enum netxbig_led_mode {
-@@ -69,7 +70,7 @@ static void gpio_ext_set_addr(struct netxbig_gpio_ext *gpio_ext, int addr)
- 	int pin;
- 
- 	for (pin = 0; pin < gpio_ext->num_addr; pin++)
--		gpio_set_value(gpio_ext->addr[pin], (addr >> pin) & 1);
-+		gpiod_set_value(gpio_ext->addr[pin], (addr >> pin) & 1);
- }
- 
- static void gpio_ext_set_data(struct netxbig_gpio_ext *gpio_ext, int data)
-@@ -77,14 +78,14 @@ static void gpio_ext_set_data(struct netxbig_gpio_ext *gpio_ext, int data)
- 	int pin;
- 
- 	for (pin = 0; pin < gpio_ext->num_data; pin++)
--		gpio_set_value(gpio_ext->data[pin], (data >> pin) & 1);
-+		gpiod_set_value(gpio_ext->data[pin], (data >> pin) & 1);
- }
- 
- static void gpio_ext_enable_select(struct netxbig_gpio_ext *gpio_ext)
- {
- 	/* Enable select is done on the raising edge. */
--	gpio_set_value(gpio_ext->enable, 0);
--	gpio_set_value(gpio_ext->enable, 1);
-+	gpiod_set_value(gpio_ext->enable, 0);
-+	gpiod_set_value(gpio_ext->enable, 1);
- }
- 
- static void gpio_ext_set_value(struct netxbig_gpio_ext *gpio_ext,
-@@ -99,41 +100,6 @@ static void gpio_ext_set_value(struct netxbig_gpio_ext *gpio_ext,
- 	spin_unlock_irqrestore(&gpio_ext_lock, flags);
- }
- 
--static int gpio_ext_init(struct platform_device *pdev,
--			 struct netxbig_gpio_ext *gpio_ext)
--{
--	int err;
--	int i;
--
--	if (unlikely(!gpio_ext))
--		return -EINVAL;
--
--	/* Configure address GPIOs. */
--	for (i = 0; i < gpio_ext->num_addr; i++) {
--		err = devm_gpio_request_one(&pdev->dev, gpio_ext->addr[i],
--					    GPIOF_OUT_INIT_LOW,
--					    "GPIO extension addr");
--		if (err)
--			return err;
--	}
--	/* Configure data GPIOs. */
--	for (i = 0; i < gpio_ext->num_data; i++) {
--		err = devm_gpio_request_one(&pdev->dev, gpio_ext->data[i],
--					    GPIOF_OUT_INIT_LOW,
--					    "GPIO extension data");
--		if (err)
--			return err;
--	}
--	/* Configure "enable select" GPIO. */
--	err = devm_gpio_request_one(&pdev->dev, gpio_ext->enable,
--				    GPIOF_OUT_INIT_LOW,
--				    "GPIO extension enable");
--	if (err)
--		return err;
--
--	return 0;
--}
--
- /*
-  * Class LED driver.
-  */
-@@ -347,15 +313,47 @@ static int create_netxbig_led(struct platform_device *pdev,
- 	return devm_led_classdev_register(&pdev->dev, &led_dat->cdev);
- }
- 
--static int gpio_ext_get_of_pdata(struct device *dev, struct device_node *np,
--				 struct netxbig_gpio_ext *gpio_ext)
-+/**
-+ * netxbig_gpio_ext_remove() - Clean up GPIO extension data
-+ * @data: managed resource data to clean up
-+ *
-+ * Since we pick GPIO descriptors from another device than the device our
-+ * driver is probing to, we need to register a specific callback to free
-+ * these up using managed resources.
-+ */
-+static void netxbig_gpio_ext_remove(void *data)
-+{
-+	struct netxbig_gpio_ext *gpio_ext = data;
-+	int i;
-+
-+	for (i = 0; i < gpio_ext->num_addr; i++)
-+		gpiod_put(gpio_ext->addr[i]);
-+	for (i = 0; i < gpio_ext->num_data; i++)
-+		gpiod_put(gpio_ext->data[i]);
-+	gpiod_put(gpio_ext->enable);
-+}
-+
-+/**
-+ * netxbig_gpio_ext_get() - Obtain GPIO extension device data
-+ * @dev: main LED device
-+ * @gpio_ext_dev: the GPIO extension device
-+ * @gpio_ext: the data structure holding the GPIO extension data
-+ *
-+ * This function walks the subdevice that only contain GPIO line
-+ * handles in the device tree and obtains the GPIO descriptors from that
-+ * device.
-+ */
-+static int netxbig_gpio_ext_get(struct device *dev,
-+				struct device *gpio_ext_dev,
-+				struct netxbig_gpio_ext *gpio_ext)
- {
--	int *addr, *data;
-+	struct gpio_desc **addr, **data;
- 	int num_addr, num_data;
-+	struct gpio_desc *gpiod;
- 	int ret;
- 	int i;
- 
--	ret = of_gpio_named_count(np, "addr-gpios");
-+	ret = gpiod_count(gpio_ext_dev, "addr");
- 	if (ret < 0) {
- 		dev_err(dev,
- 			"Failed to count GPIOs in DT property addr-gpios\n");
-@@ -366,16 +364,25 @@ static int gpio_ext_get_of_pdata(struct device *dev, struct device_node *np,
- 	if (!addr)
- 		return -ENOMEM;
- 
-+	/*
-+	 * We cannot use devm_ managed resources with these GPIO descriptors
-+	 * since they are associated with the "GPIO extension device" which
-+	 * does not probe any driver. The device tree parser will however
-+	 * populate a platform device for it so we can anyway obtain the
-+	 * GPIO descriptors from the device.
-+	 */
- 	for (i = 0; i < num_addr; i++) {
--		ret = of_get_named_gpio(np, "addr-gpios", i);
--		if (ret < 0)
--			return ret;
--		addr[i] = ret;
-+		gpiod = gpiod_get_index(gpio_ext_dev, "addr", i,
-+					GPIOD_OUT_LOW);
-+		if (IS_ERR(gpiod))
-+			return PTR_ERR(gpiod);
-+		gpiod_set_consumer_name(gpiod, "GPIO extension addr");
-+		addr[i] = gpiod;
- 	}
- 	gpio_ext->addr = addr;
- 	gpio_ext->num_addr = num_addr;
- 
--	ret = of_gpio_named_count(np, "data-gpios");
-+	ret = gpiod_count(gpio_ext_dev, "data");
- 	if (ret < 0) {
- 		dev_err(dev,
- 			"Failed to count GPIOs in DT property data-gpios\n");
-@@ -387,23 +394,26 @@ static int gpio_ext_get_of_pdata(struct device *dev, struct device_node *np,
- 		return -ENOMEM;
- 
- 	for (i = 0; i < num_data; i++) {
--		ret = of_get_named_gpio(np, "data-gpios", i);
--		if (ret < 0)
--			return ret;
--		data[i] = ret;
-+		gpiod = gpiod_get_index(gpio_ext_dev, "data", i,
-+					GPIOD_OUT_LOW);
-+		if (IS_ERR(gpiod))
-+			return PTR_ERR(gpiod);
-+		gpiod_set_consumer_name(gpiod, "GPIO extension data");
-+		data[i] = gpiod;
- 	}
- 	gpio_ext->data = data;
- 	gpio_ext->num_data = num_data;
- 
--	ret = of_get_named_gpio(np, "enable-gpio", 0);
--	if (ret < 0) {
-+	gpiod = gpiod_get(gpio_ext_dev, "enable", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod)) {
- 		dev_err(dev,
- 			"Failed to get GPIO from DT property enable-gpio\n");
--		return ret;
-+		return PTR_ERR(gpiod);
- 	}
--	gpio_ext->enable = ret;
-+	gpiod_set_consumer_name(gpiod, "GPIO extension enable");
-+	gpio_ext->enable = gpiod;
- 
--	return 0;
-+	return devm_add_action_or_reset(dev, netxbig_gpio_ext_remove, gpio_ext);
- }
- 
- static int netxbig_leds_get_of_pdata(struct device *dev,
-@@ -411,6 +421,8 @@ static int netxbig_leds_get_of_pdata(struct device *dev,
- {
- 	struct device_node *np = dev->of_node;
- 	struct device_node *gpio_ext_np;
-+	struct platform_device *gpio_ext_pdev;
-+	struct device *gpio_ext_dev;
- 	struct device_node *child;
- 	struct netxbig_gpio_ext *gpio_ext;
- 	struct netxbig_led_timer *timers;
-@@ -426,13 +438,19 @@ static int netxbig_leds_get_of_pdata(struct device *dev,
- 		dev_err(dev, "Failed to get DT handle gpio-ext\n");
- 		return -EINVAL;
- 	}
-+	gpio_ext_pdev = of_find_device_by_node(gpio_ext_np);
-+	if (!gpio_ext_pdev) {
-+		dev_err(dev, "Failed to find platform device for gpio-ext\n");
-+		return -ENODEV;
-+	}
-+	gpio_ext_dev = &gpio_ext_pdev->dev;
- 
- 	gpio_ext = devm_kzalloc(dev, sizeof(*gpio_ext), GFP_KERNEL);
- 	if (!gpio_ext) {
- 		of_node_put(gpio_ext_np);
- 		return -ENOMEM;
- 	}
--	ret = gpio_ext_get_of_pdata(dev, gpio_ext_np, gpio_ext);
-+	ret = netxbig_gpio_ext_get(dev, gpio_ext_dev, gpio_ext);
- 	of_node_put(gpio_ext_np);
- 	if (ret)
- 		return ret;
-@@ -585,10 +603,6 @@ static int netxbig_led_probe(struct platform_device *pdev)
- 	if (!leds_data)
- 		return -ENOMEM;
- 
--	ret = gpio_ext_init(pdev, pdata->gpio_ext);
--	if (ret < 0)
--		return ret;
--
- 	for (i = 0; i < pdata->num_leds; i++) {
- 		ret = create_netxbig_led(pdev, pdata,
- 					 &leds_data[i], &pdata->leds[i]);
--- 
-2.25.2
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+> new file mode 100644
+> index 0000000..770e780
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+> @@ -0,0 +1,201 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/backlight/qcom-wled.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Binding for Qualcomm Technologies, Inc. WLED driver
+> +
+> +maintainers:
+> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> +  - Kiran Gunda <kgunda@codeaurora.org>
+> +
+> +description: |
+> +  WLED (White Light Emitting Diode) driver is used for controlling display
+> +  backlight that is part of PMIC on Qualcomm Technologies, Inc. reference
+> +  platforms. The PMIC is connected to the host processor via SPMI bus.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,pm8941-wled
+> +      - qcom,pmi8998-wled
+> +      - qcom,pm660l-wled
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  default-brightness:
+> +    description:
+> +      brightness value on boot.
+> +    minimum: 0
+> +    maximum: 4095
+> +    default: 2048
+> +
+> +  label: true
+> +
+> +  qcom,cs-out:
+> +    description:
+> +      enable current sink output.
+> +      This property is supported only for WLED3.
+> +    type: boolean
+> +
+> +  qcom,cabc:
+> +    description:
+> +      enable content adaptive backlight control.
+> +    type: boolean
+> +
+> +  qcom,ext-gen:
+> +    description:
+> +      use externally generated modulator signal to dim.
+> +      This property is supported only for WLED3.
+> +    type: boolean
+> +
+> +  qcom,current-limit:
+> +    description:
+> +      mA; per-string current limit.
+> +      This property is supported only for WLED3.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 20
+> +    minimum: 0
+> +    maximum: 25
+> +    multipleOf: 1
 
+No point in defining a multiple of 1.
+
+> +
+> +  qcom,current-limit-microamp:
+> +    description:
+> +      uA; per-string current limit.
+> +    default: 25
+> +    minimum: 0
+> +    maximum: 30000
+> +    multipleOf: 25
+> +
+> +  qcom,current-boost-limit:
+> +    description:
+> +      mA; boost current limit.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  qcom,switching-freq:
+> +    description:
+> +      kHz; switching frequency.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +      - enum: [ 600, 640, 685, 738, 800, 872, 960, 1066, 1200, 1371, 1600, 1920, 2400, 3200, 4800, 9600 ]
+> +
+> +  qcom,ovp:
+> +    description:
+> +      V; Over-voltage protection limit.
+> +      This property is supported only for WLED3.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +      - enum: [ 27, 29, 32, 35 ]
+> +      - default: 29
+> +
+> +  qcom,ovp-millivolt:
+> +    description:
+> +      Over-voltage protection limit. This property is for WLED4 only.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +      - enum: [ 18100, 19600, 29600, 31100 ]
+> +      - default: 29600
+> +
+> +  qcom,num-strings:
+> +    description:
+> +      number of led strings attached.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  qcom,enabled-strings:
+> +    description:
+> +      Array of the WLED strings numbered from 0 to 3. Each
+> +      string of leds are operated individually. Specify the
+> +      list of strings used by the device. Any combination of
+> +      led strings can be used.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 1
+> +    maxItems: 4
+> +
+> +  qcom,external-pfet:
+> +    description:
+> +      Specify if external PFET control for short circuit
+> +      protection is used. This property is supported only
+> +      for WLED4.
+> +    type: boolean
+> +        
+> +  qcom,auto-string-detection:
+> +    description:
+> +      Enables auto-detection of the WLED string configuration.
+> +      This feature is not supported for WLED3.
+> +    type: boolean
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: qcom,pm8941-wled
+> +
+> +    then:
+> +      properties:
+> +        qcom,current-boost-limit:
+> +           enum: [ 105, 385, 525, 805, 980, 1260, 1400, 1680 ]
+> +           default: 805
+> +
+> +        qcom,switching-freq:
+> +           default: 1600
+> +
+> +        qcom,num-strings:
+> +           enum: [ 1, 2, 3 ]
+> +  
+> +        interrupts:
+> +          items:
+> +            - description: over voltage protection interrupt.
+> +
+> +        interrupt-names:
+> +          items:
+> +            - const: ovp
+> +
+> +    else:
+> +      properties:
+> +        qcom,current-boost-limit:
+> +           enum: [ 105, 280, 450, 620, 970, 1150, 1300, 1500 ]
+> +           default: 970
+> +
+> +        qcom,switching-freq:
+> +           default: 800
+> +
+> +        qcom,num-strings:
+> +           enum: [ 1, 2, 3, 4 ]
+> +
+> +        interrupts:
+> +          items:
+> +            - description: over voltage protection interrupt.
+> +            - description: short circuit interrupt.
+> +
+> +        interrupt-names:
+> +          items:
+> +            - const: ovp
+> +            - const: short
+
+Move these 2 props to the main section adding a 'minItems: 1'. Then just 
+define 'minItems: 2' here and 'maxItems: 1' in the 'then' clause.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - label
+
+Add:
+
+additionalProperties: false
+
+> +
+> +examples:
+> +  - |
+> +    backlight@d800 {
+> +        compatible = "qcom,pm8941-wled";
+> +        reg = <0xd800 0x100>;
+> +        label = "backlight";
+> +
+> +        qcom,cs-out;
+> +        qcom,current-limit = <20>;
+> +        qcom,current-boost-limit = <805>;
+> +        qcom,switching-freq = <1600>;
+> +        qcom,ovp = <29>;
+> +        qcom,num-strings = <2>;
+> +        qcom,enabled-strings = <0 1>;
+> +     };
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>  a Linux Foundation Collaborative Project
+> 
