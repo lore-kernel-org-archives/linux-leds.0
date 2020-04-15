@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60260C2BB55
-	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 12:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9DEC2BB55
+	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 13:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4198420737
-	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 12:42:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42C252076D
+	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 13:02:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586954528;
-	bh=GXGSjA7NBdSmlJIINRF+Qb+9W7TC8itEn3s06VY5gPk=;
+	s=default; t=1586955755;
+	bh=WNjl3YMguWAoEvZRF+md9N2/nSrx4fqcpqzIGbtCVDw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kmxIZsO4NWplMQ0tWH9I47WkEipJ0Nqu+jGV6VZaJfBlq9ZudJ4SmJHlRV9gk61oq
-	 mBW2I/B0bXwywrDyg1y34Reo4q2qatz+3xD/d1oJavKT3ZDYw008KBd0MFpm98LDzT
-	 Kpm/Vg5+tM4EgnaAMf1hPw/vahIkA/fyttWra+os=
+	b=c3FCy3xJn6UiJRkZsjV2vSv4IxlWW2x3SvF9qQA+COVON72kSMo6sNtz5SJF9fR/h
+	 1TeTHRwYp1udMV7as3fYlPwc7z4SLhD31H/Pa6tNQfk3FrivXgDevkWsH+f/RIoFsu
+	 LfvboArKRyhzVpDO6S2V7E6DfxtGt2QOKYL5m9LE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S369987AbgDOMlB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 15 Apr 2020 08:41:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36228 "EHLO mail.kernel.org"
+        id S2897167AbgDOLgf (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 15 Apr 2020 07:36:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409046AbgDOLn5 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 15 Apr 2020 07:43:57 -0400
+        id S2897147AbgDOLg2 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 15 Apr 2020 07:36:28 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28B3F20775;
-        Wed, 15 Apr 2020 11:43:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD39B20775;
+        Wed, 15 Apr 2020 11:36:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586951036;
-        bh=GXGSjA7NBdSmlJIINRF+Qb+9W7TC8itEn3s06VY5gPk=;
+        s=default; t=1586950587;
+        bh=WNjl3YMguWAoEvZRF+md9N2/nSrx4fqcpqzIGbtCVDw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uHzZ5gD4oggPaqTdvxm1MArkNm+vEviVCy8BgyEOLtU51AWJ3ztDQqP95F67seA7d
-         QoL1WMRP3djO4zcFrVcB5uTPkTfyh6WCK40S9CDEFaiZ2Zxr2W7REncMKdLHq7xjlU
-         uRXtiuucug2hj8M80DKgNWTkN1v8TDP/kSktOm+4=
+        b=c9uLMChNTGiTjTX5Ecku3SZOYQH6pnnxha+OjGZ55eRrC5QyOuvk9fvkTAfMMTcZa
+         2SRDlj+RRoRM2PyWBnbqD7KqOtVIzqfPRuK7LX0SC5DkghCBmTAL4bmueO5RRgimgM
+         7AELgoWuGvFZctmGgX89qvuiowCPcI0d4D4YANmQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
         linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 073/106] leds: core: Fix warning message when init_data
-Date:   Wed, 15 Apr 2020 07:41:53 -0400
-Message-Id: <20200415114226.13103-73-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.6 085/129] leds: core: Fix warning message when init_data
+Date:   Wed, 15 Apr 2020 07:34:00 -0400
+Message-Id: <20200415113445.11881-85-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200415114226.13103-1-sashal@kernel.org>
-References: <20200415114226.13103-1-sashal@kernel.org>
+In-Reply-To: <20200415113445.11881-1-sashal@kernel.org>
+References: <20200415113445.11881-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -78,10 +78,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 438774315e6c4..183de3cf6ef68 100644
+index 1fc40e8af75eb..3363a6551a708 100644
 --- a/drivers/leds/led-class.c
 +++ b/drivers/leds/led-class.c
-@@ -281,7 +281,7 @@ int led_classdev_register_ext(struct device *parent,
+@@ -376,7 +376,7 @@ int led_classdev_register_ext(struct device *parent,
  
  	if (ret)
  		dev_warn(parent, "Led %s renamed to %s due to name collision",
