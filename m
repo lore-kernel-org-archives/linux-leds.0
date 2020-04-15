@@ -2,101 +2,197 @@ Return-Path: <SRS0=3VIc=57=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66627C2BB55
-	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 15:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 972C4C2BB55
+	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 15:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3250120857
-	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 15:10:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ClSkVYPH"
+	by mail.kernel.org (Postfix) with ESMTP id 79A6120857
+	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 15:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586963562;
+	bh=tIhwo4Av+Ko1GexPfUE5H1cXeGMDMCxzkLiqEIVxS+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OAHNnIiVlNqqi/cShLpR9MjA9VH1FMQGtukcrjEBQ46wH92Uuvd/x+WLxYErQ4ABx
+	 thdjv6ubgiXsl0KsWcfFOXk08CztR8yudsBCRgjKqhAjukSDz+A9V/IJywSwuvmtS0
+	 oRv7cVOfu2P18qD6Xzh32LEbcca4cGmYcgCoERsA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393123AbgDOPKo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 15 Apr 2020 11:10:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726083AbgDOPKn (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 15 Apr 2020 11:10:43 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C467C061A0C
-        for <linux-leds@vger.kernel.org>; Wed, 15 Apr 2020 08:10:43 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id u15so4090029ljd.3
-        for <linux-leds@vger.kernel.org>; Wed, 15 Apr 2020 08:10:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yj+l6wFoURoG/5T12vWXbIe5t30o3THVRnPkkvWK26s=;
-        b=ClSkVYPHOsRNflEtETWu6aea/25plmC+CJK0fDeEnIPC3KpTBUKVWYCVcMPzjPaJJX
-         WSl8Q5q+9ql7bNMeHIdVyXjBAtIOddzHstE4ZhIhMqbOFcokfw7taUFkXI845o0c9abt
-         O/CgnMetg2sxXX0LYzHUtD7lBJ8J6lOlx6EHgKEJXy8wI7ToFZElMcmrL8GQsHDH7tdb
-         YKXCQ50zHigLNxQjhFgYpWfePlALToU2WLnH4+KlAyBmmsqrEEGjpSO2aOUGHpWMmU2H
-         inNN8HbvSkI851tVZNgahP9CwF/g7PjivvpNtUePIRvzIGceh2uXpxz8D26Sg747VG6V
-         HnVg==
+        id S2393214AbgDOPMl (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 15 Apr 2020 11:12:41 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34670 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393194AbgDOPMl (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 15 Apr 2020 11:12:41 -0400
+Received: by mail-ot1-f66.google.com with SMTP id m2so255639otr.1;
+        Wed, 15 Apr 2020 08:12:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yj+l6wFoURoG/5T12vWXbIe5t30o3THVRnPkkvWK26s=;
-        b=C0fO2Mp6usytJdKue/GW6QgH/o4q1OfgzNNnyKmiXinJSi2W2VR2/y3kpbmFl6HtJJ
-         SQPiatNThCNoXfZ2eiyFmG/CWeCwWch/YfmGyRZrqWWdPeldNVN3h3iE6LwhPrI5FXh2
-         Tm7KRluVCk7aIfCsDW9GMMfaAF9wHO4UCeyVkzZiW4rM7sOVKIsIv3wStauZ3lBXsEl7
-         Qj2ZzqQ/TP+6rJm0+cD413ZCcYXsD8LcHsuD0fHULNe76abQu5rhQI8giMNGk5RPaucd
-         g7NC/QrgA9ipqOGRoBS9SImCPynSClTQAujefZi6wNcwHP4ZfGxspzo5we5fY+iipsE9
-         6dqA==
-X-Gm-Message-State: AGi0PuY/kJF0xTYrGZEHxwzEN2LJ5rT1/kEjI8D8d4ea3EwudNnWqSpq
-        9219HbS4CUUpN3F2u1udOL97yw==
-X-Google-Smtp-Source: APiQypIIw/6QZbjGQGatsDl3Dz6nNsRlqxJxE3A1V8gYqG+YeDhfCbSZ6vNJLK9UkcmF/vedUALmpA==
-X-Received: by 2002:a05:651c:452:: with SMTP id g18mr3627242ljg.224.1586963441040;
-        Wed, 15 Apr 2020 08:10:41 -0700 (PDT)
-Received: from localhost.localdomain (c-f3d7225c.014-348-6c756e10.bbcust.telenor.se. [92.34.215.243])
-        by smtp.gmail.com with ESMTPSA id j13sm13024258lfb.19.2020.04.15.08.10.39
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZFCMh2H9Eh+ryRXkXK/V7+2w4B+PUgVzUEm1sj08lm0=;
+        b=Fm98cqyhkL7XLrDgNy/rlEpq9O/WJzzMDc30kjJPiRADv6woHOk6VQzx8mDS08ElmK
+         /22vou22tx5SGdhNo359jmILyph0DaoL+fSP5wO7+Vzwpqrjqo1aEQDAxPXKpBg7KupY
+         YtWiNumrL/doriIm1x8M1iI0/Nk7LGdOzCBNXN6vmxxlhxtO962usoGidE0D2lgo74T4
+         6cuTxRS/RMhr5hEfWhupz0p3IXjzuBAIhl7zQIxnHdrWEqJJGYQW2FugGDCq8BWaJy7D
+         f2e4qiTwBrZ9UlIMCT5UacEoPe58XLLkNsinAvje0mWjdCCqKsMocgaMytqnYN4gwRB9
+         8VjA==
+X-Gm-Message-State: AGi0PuaFshGLSjumyzPbpAIBwdC7FmhsxN5RvH2MVyIODqsGKhyzxrrK
+        esiZQHoj6FMV6W/EpbO0Dw==
+X-Google-Smtp-Source: APiQypIKxwXtUrjwfyuCqVzzKfMogJVdKDlcIeltnelwgqKhG6bH+DblCsEbrigze1USzStBxtor4A==
+X-Received: by 2002:a9d:4102:: with SMTP id o2mr22206640ote.98.1586963559689;
+        Wed, 15 Apr 2020 08:12:39 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r205sm6395829oih.47.2020.04.15.08.12.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2020 08:10:40 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc:     linux-leds@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        NeilBrown <neilb@suse.com>
-Subject: [PATCH] leds: tca6507: Include the right header
-Date:   Wed, 15 Apr 2020 17:08:37 +0200
-Message-Id: <20200415150837.188659-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.25.2
+        Wed, 15 Apr 2020 08:12:35 -0700 (PDT)
+Received: (nullmailer pid 30324 invoked by uid 1000);
+        Wed, 15 Apr 2020 15:12:34 -0000
+Date:   Wed, 15 Apr 2020 10:12:34 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Kiran Gunda <kgunda@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
+        lee.jones@linaro.org, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        linux-arm-msm@vger.kernel.org,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>
+Subject: Re: [PATCH V5 3/4] backlight: qcom-wled: Add WLED5 bindings
+Message-ID: <20200415151234.GA25862@bogus>
+References: <1586274430-28402-1-git-send-email-kgunda@codeaurora.org>
+ <1586274430-28402-4-git-send-email-kgunda@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1586274430-28402-4-git-send-email-kgunda@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The TCA6507 optionally presents a GPIO controller, so include
-<linux/gpio/driver.h> instead of the legacy <linux/gpio.h>.
+On Tue, Apr 07, 2020 at 09:17:09PM +0530, Kiran Gunda wrote:
+> Add WLED5 specific bindings.
+> 
 
-Cc: NeilBrown <neilb@suse.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/leds/leds-tca6507.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+checkpatch.pl complains about some trailing whitespace. The previous 
+patch too.
 
-diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-index 58be20cae183..1128ac75443c 100644
---- a/drivers/leds/leds-tca6507.c
-+++ b/drivers/leds/leds-tca6507.c
-@@ -93,7 +93,7 @@
- #include <linux/leds.h>
- #include <linux/err.h>
- #include <linux/i2c.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/driver.h>
- #include <linux/workqueue.h>
- #include <linux/leds-tca6507.h>
- #include <linux/of.h>
--- 
-2.25.2
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+> Signed-off-by: Subbaraman Narayanamurthy <subbaram@codeaurora.org>
+> ---
+>  .../bindings/leds/backlight/qcom-wled.yaml         | 60 ++++++++++++++++++++--
+>  1 file changed, 57 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+> index 770e780..5714631 100644
+> --- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+> @@ -21,6 +21,7 @@ properties:
+>        - qcom,pm8941-wled
+>        - qcom,pmi8998-wled
+>        - qcom,pm660l-wled
+> +      - qcom,pm8150l-wled
+>  
+>    reg:
+>      maxItems: 1
+> @@ -28,12 +29,13 @@ properties:
+>    default-brightness:
+>      description:
+>        brightness value on boot.
+> -    minimum: 0
+> -    maximum: 4095
+> -    default: 2048
+>  
+>    label: true
+>  
+> +  max-brightness:
+> +    description:
+> +      Maximum brightness level.
+> +
+>    qcom,cs-out:
+>      description:
+>        enable current sink output.
+> @@ -130,6 +132,31 @@ properties:
+>        This feature is not supported for WLED3.
+>      type: boolean
+>  
+> +  qcom,modulator-sel:
+> +    description:
 
+Need a '|' at the end to preserve formatting.
+
+> +      Selects the modulator used for brightness modulation.
+> +      Allowed values are,
+> +           0 - Modulator A
+> +           1 - Modulator B
+> +      This property is applicable only to WLED5 peripheral.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +      - enum: [ 0, 1 ]
+> +      - default: 0
+> +
+> +  qcom,cabc-sel:
+> +    description:
+
+Need a '|'.
+
+> +      Selects the CABC pin signal used for brightness modulation.
+> +      Allowed values are,
+> +           0 - CABC disabled
+> +           1 - CABC 1
+> +           2 - CABC 2
+> +           3 - External signal (e.g. LPG) is used for dimming
+> +      This property is applicable only to WLED5 peripheral.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +      - enum: [ 0, 1, 2, 3 ]
+> +
+>  allOf:
+>    - if:
+>        properties:
+> @@ -179,6 +206,33 @@ allOf:
+>              - const: ovp
+>              - const: short
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,pm8150l-wled
+> +
+> +    then:
+> +      properties:
+> +        default-brightness:
+> +          minimum: 0
+> +          maximum: 32767
+> +        
+> +        max-brightness:
+> +          minimum: 0
+> +          maximum: 32767
+> +
+> +    else:
+> +      properties:
+> +        default-brightness:
+> +            minimum: 0
+> +            maximum: 4095
+
+Wrong indentation.
+
+> +        
+> +        max-brightness:
+> +          minimum: 0
+> +          maximum: 4095
+> +
+>  required:
+>    - compatible
+>    - reg
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>  a Linux Foundation Collaborative Project
+> 
