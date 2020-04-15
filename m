@@ -2,94 +2,346 @@ Return-Path: <SRS0=3VIc=57=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9DEC2BB55
-	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 13:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0AFC3815B
+	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 14:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 42C252076D
-	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 13:02:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586955755;
-	bh=WNjl3YMguWAoEvZRF+md9N2/nSrx4fqcpqzIGbtCVDw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c3FCy3xJn6UiJRkZsjV2vSv4IxlWW2x3SvF9qQA+COVON72kSMo6sNtz5SJF9fR/h
-	 1TeTHRwYp1udMV7as3fYlPwc7z4SLhD31H/Pa6tNQfk3FrivXgDevkWsH+f/RIoFsu
-	 LfvboArKRyhzVpDO6S2V7E6DfxtGt2QOKYL5m9LE=
+	by mail.kernel.org (Postfix) with ESMTP id B54172137B
+	for <linux-leds@archiver.kernel.org>; Wed, 15 Apr 2020 14:53:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oACkeqtY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2897167AbgDOLgf (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 15 Apr 2020 07:36:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56234 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2897147AbgDOLg2 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 15 Apr 2020 07:36:28 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD39B20775;
-        Wed, 15 Apr 2020 11:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586950587;
-        bh=WNjl3YMguWAoEvZRF+md9N2/nSrx4fqcpqzIGbtCVDw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c9uLMChNTGiTjTX5Ecku3SZOYQH6pnnxha+OjGZ55eRrC5QyOuvk9fvkTAfMMTcZa
-         2SRDlj+RRoRM2PyWBnbqD7KqOtVIzqfPRuK7LX0SC5DkghCBmTAL4bmueO5RRgimgM
-         7AELgoWuGvFZctmGgX89qvuiowCPcI0d4D4YANmQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 085/129] leds: core: Fix warning message when init_data
-Date:   Wed, 15 Apr 2020 07:34:00 -0400
-Message-Id: <20200415113445.11881-85-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200415113445.11881-1-sashal@kernel.org>
-References: <20200415113445.11881-1-sashal@kernel.org>
+        id S2408866AbgDOOxt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 15 Apr 2020 10:53:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42590 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2407866AbgDOOxq (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 15 Apr 2020 10:53:46 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5ED5C061A0C
+        for <linux-leds@vger.kernel.org>; Wed, 15 Apr 2020 07:53:45 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id r24so4010765ljd.4
+        for <linux-leds@vger.kernel.org>; Wed, 15 Apr 2020 07:53:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tGAp2DeBMo7UFxMwTS+22jVrCQrIg3mgc0Mp6iLCxX0=;
+        b=oACkeqtY1xxCNJlUtlFf6b5EQSTbPuLs6uRgRUpwc2qI9JD8IRwgAVAV8l0g1lA9E+
+         vVop4hNcmMteAJu48RacTRduFWMA2stV6YCQaS1+lkfsj2MW0sY840Wdb7035H241hYQ
+         EdQKM+ijMULczYS9pXmPRbmnYrUnWRBWjBr0/tKbLk9QDUspP8Uf3YC5CEEI5RYyhTcK
+         meOxvdsTgAi11cChhz9s8hfHMC0ohHHqkvGRf8ROGxgXpsxrBXnUsOr+44J6cnMtwNbK
+         dmSwKSkr5beLpQqIy80HDfZGrjshrzWEqQIYFbOAVwqqOdS/NKB4mr4vOVGvQfsJWKUE
+         wklA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tGAp2DeBMo7UFxMwTS+22jVrCQrIg3mgc0Mp6iLCxX0=;
+        b=Ld9fENk9A3rRqDRzoh91gYDmbSeRQLVlaP2rUfR6cYBnkTSA0lx3r+U34JbZpEMx/1
+         yKm8WccyPWMsZa91Ig+7wDpn6zV7y1NP1g3Yb/ObGyV/fo5QGaskCUUqqE2oEcmFoVeK
+         sN7AUP8mpDlPujlde/J5xPTcxbndOrB0pha+nPAwogjF0y2nIBy3rSWbo+mZzrb6B6ZZ
+         NR7HV+tYaxY+vfUIExiKmGOG7w+Ihf8JITT/NpAPxonMBhFpkz5SjwzlpjANSvasz134
+         702DIr6o+fanCt8yjtzX9lxFkHV3tu+hWN663Q29k1aBLIJonpafvkx9sXI6b8R0YlAw
+         YSFg==
+X-Gm-Message-State: AGi0PuaC6JSnZsNBTQ1yxKdvWpfhPn/BpduLcP6ZzzNGWf6bxNBDfnAb
+        Q42tVgwasMsTFvssng6XXIBi6A==
+X-Google-Smtp-Source: APiQypIWY9YiZy75vyQjiObOzikRx98eIJIYSpckh6Hp6l+oRCV4SwAuTwaprUF5ipMQFVPrlkSUOw==
+X-Received: by 2002:a2e:1616:: with SMTP id w22mr2704277ljd.261.1586962424289;
+        Wed, 15 Apr 2020 07:53:44 -0700 (PDT)
+Received: from localhost.localdomain (c-f3d7225c.014-348-6c756e10.bbcust.telenor.se. [92.34.215.243])
+        by smtp.gmail.com with ESMTPSA id b16sm11601987ljh.20.2020.04.15.07.53.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Apr 2020 07:53:43 -0700 (PDT)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
+Cc:     linux-leds@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Guinot <simon.guinot@sequanux.org>
+Subject: [PATCH] leds: netxbig: Convert to use GPIO descriptors
+Date:   Wed, 15 Apr 2020 16:51:39 +0200
+Message-Id: <20200415145139.155663-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.25.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Ricardo Ribalda Delgado <ribalda@kernel.org>
+This converts the NetXbig LED driver to use GPIO descriptors
+instead of using the legacy interfaces in <linux/of_gpio.h>
+and <linux/gpio.h> to iteratively parse the device tree for
+global GPIO numbers.
 
-[ Upstream commit 64ed6588c2ea618d3f9ca9d8b365ae4c19f76225 ]
-
-The warning message when a led is renamed due to name collition can fail
-to show proper original name if init_data is used. Eg:
-
-[    9.073996] leds-gpio a0040000.leds_0: Led (null) renamed to red_led_1 due to name collision
-
-Fixes: bb4e9af0348d ("leds: core: Add support for composing LED class device names")
-Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: Simon Guinot <simon.guinot@sequanux.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/leds/led-class.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/leds/leds-netxbig.c | 148 ++++++++++++++++++++----------------
+ 1 file changed, 81 insertions(+), 67 deletions(-)
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 1fc40e8af75eb..3363a6551a708 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -376,7 +376,7 @@ int led_classdev_register_ext(struct device *parent,
+diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
+index 14ef4ccdda3a..ceceeb6a0e96 100644
+--- a/drivers/leds/leds-netxbig.c
++++ b/drivers/leds/leds-netxbig.c
+@@ -12,16 +12,17 @@
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/platform_device.h>
+-#include <linux/gpio.h>
+-#include <linux/of_gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/leds.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
  
+ struct netxbig_gpio_ext {
+-	unsigned int	*addr;
++	struct gpio_desc **addr;
+ 	int		num_addr;
+-	unsigned int	*data;
++	struct gpio_desc **data;
+ 	int		num_data;
+-	unsigned int	enable;
++	struct gpio_desc *enable;
+ };
+ 
+ enum netxbig_led_mode {
+@@ -69,7 +70,7 @@ static void gpio_ext_set_addr(struct netxbig_gpio_ext *gpio_ext, int addr)
+ 	int pin;
+ 
+ 	for (pin = 0; pin < gpio_ext->num_addr; pin++)
+-		gpio_set_value(gpio_ext->addr[pin], (addr >> pin) & 1);
++		gpiod_set_value(gpio_ext->addr[pin], (addr >> pin) & 1);
+ }
+ 
+ static void gpio_ext_set_data(struct netxbig_gpio_ext *gpio_ext, int data)
+@@ -77,14 +78,14 @@ static void gpio_ext_set_data(struct netxbig_gpio_ext *gpio_ext, int data)
+ 	int pin;
+ 
+ 	for (pin = 0; pin < gpio_ext->num_data; pin++)
+-		gpio_set_value(gpio_ext->data[pin], (data >> pin) & 1);
++		gpiod_set_value(gpio_ext->data[pin], (data >> pin) & 1);
+ }
+ 
+ static void gpio_ext_enable_select(struct netxbig_gpio_ext *gpio_ext)
+ {
+ 	/* Enable select is done on the raising edge. */
+-	gpio_set_value(gpio_ext->enable, 0);
+-	gpio_set_value(gpio_ext->enable, 1);
++	gpiod_set_value(gpio_ext->enable, 0);
++	gpiod_set_value(gpio_ext->enable, 1);
+ }
+ 
+ static void gpio_ext_set_value(struct netxbig_gpio_ext *gpio_ext,
+@@ -99,41 +100,6 @@ static void gpio_ext_set_value(struct netxbig_gpio_ext *gpio_ext,
+ 	spin_unlock_irqrestore(&gpio_ext_lock, flags);
+ }
+ 
+-static int gpio_ext_init(struct platform_device *pdev,
+-			 struct netxbig_gpio_ext *gpio_ext)
+-{
+-	int err;
+-	int i;
+-
+-	if (unlikely(!gpio_ext))
+-		return -EINVAL;
+-
+-	/* Configure address GPIOs. */
+-	for (i = 0; i < gpio_ext->num_addr; i++) {
+-		err = devm_gpio_request_one(&pdev->dev, gpio_ext->addr[i],
+-					    GPIOF_OUT_INIT_LOW,
+-					    "GPIO extension addr");
+-		if (err)
+-			return err;
+-	}
+-	/* Configure data GPIOs. */
+-	for (i = 0; i < gpio_ext->num_data; i++) {
+-		err = devm_gpio_request_one(&pdev->dev, gpio_ext->data[i],
+-					    GPIOF_OUT_INIT_LOW,
+-					    "GPIO extension data");
+-		if (err)
+-			return err;
+-	}
+-	/* Configure "enable select" GPIO. */
+-	err = devm_gpio_request_one(&pdev->dev, gpio_ext->enable,
+-				    GPIOF_OUT_INIT_LOW,
+-				    "GPIO extension enable");
+-	if (err)
+-		return err;
+-
+-	return 0;
+-}
+-
+ /*
+  * Class LED driver.
+  */
+@@ -347,15 +313,47 @@ static int create_netxbig_led(struct platform_device *pdev,
+ 	return devm_led_classdev_register(&pdev->dev, &led_dat->cdev);
+ }
+ 
+-static int gpio_ext_get_of_pdata(struct device *dev, struct device_node *np,
+-				 struct netxbig_gpio_ext *gpio_ext)
++/**
++ * netxbig_gpio_ext_remove() - Clean up GPIO extension data
++ * @data: managed resource data to clean up
++ *
++ * Since we pick GPIO descriptors from another device than the device our
++ * driver is probing to, we need to register a specific callback to free
++ * these up using managed resources.
++ */
++static void netxbig_gpio_ext_remove(void *data)
++{
++	struct netxbig_gpio_ext *gpio_ext = data;
++	int i;
++
++	for (i = 0; i < gpio_ext->num_addr; i++)
++		gpiod_put(gpio_ext->addr[i]);
++	for (i = 0; i < gpio_ext->num_data; i++)
++		gpiod_put(gpio_ext->data[i]);
++	gpiod_put(gpio_ext->enable);
++}
++
++/**
++ * netxbig_gpio_ext_get() - Obtain GPIO extension device data
++ * @dev: main LED device
++ * @gpio_ext_dev: the GPIO extension device
++ * @gpio_ext: the data structure holding the GPIO extension data
++ *
++ * This function walks the subdevice that only contain GPIO line
++ * handles in the device tree and obtains the GPIO descriptors from that
++ * device.
++ */
++static int netxbig_gpio_ext_get(struct device *dev,
++				struct device *gpio_ext_dev,
++				struct netxbig_gpio_ext *gpio_ext)
+ {
+-	int *addr, *data;
++	struct gpio_desc **addr, **data;
+ 	int num_addr, num_data;
++	struct gpio_desc *gpiod;
+ 	int ret;
+ 	int i;
+ 
+-	ret = of_gpio_named_count(np, "addr-gpios");
++	ret = gpiod_count(gpio_ext_dev, "addr");
+ 	if (ret < 0) {
+ 		dev_err(dev,
+ 			"Failed to count GPIOs in DT property addr-gpios\n");
+@@ -366,16 +364,25 @@ static int gpio_ext_get_of_pdata(struct device *dev, struct device_node *np,
+ 	if (!addr)
+ 		return -ENOMEM;
+ 
++	/*
++	 * We cannot use devm_ managed resources with these GPIO descriptors
++	 * since they are associated with the "GPIO extension device" which
++	 * does not probe any driver. The device tree parser will however
++	 * populate a platform device for it so we can anyway obtain the
++	 * GPIO descriptors from the device.
++	 */
+ 	for (i = 0; i < num_addr; i++) {
+-		ret = of_get_named_gpio(np, "addr-gpios", i);
+-		if (ret < 0)
+-			return ret;
+-		addr[i] = ret;
++		gpiod = gpiod_get_index(gpio_ext_dev, "addr", i,
++					GPIOD_OUT_LOW);
++		if (IS_ERR(gpiod))
++			return PTR_ERR(gpiod);
++		gpiod_set_consumer_name(gpiod, "GPIO extension addr");
++		addr[i] = gpiod;
+ 	}
+ 	gpio_ext->addr = addr;
+ 	gpio_ext->num_addr = num_addr;
+ 
+-	ret = of_gpio_named_count(np, "data-gpios");
++	ret = gpiod_count(gpio_ext_dev, "data");
+ 	if (ret < 0) {
+ 		dev_err(dev,
+ 			"Failed to count GPIOs in DT property data-gpios\n");
+@@ -387,23 +394,26 @@ static int gpio_ext_get_of_pdata(struct device *dev, struct device_node *np,
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < num_data; i++) {
+-		ret = of_get_named_gpio(np, "data-gpios", i);
+-		if (ret < 0)
+-			return ret;
+-		data[i] = ret;
++		gpiod = gpiod_get_index(gpio_ext_dev, "data", i,
++					GPIOD_OUT_LOW);
++		if (IS_ERR(gpiod))
++			return PTR_ERR(gpiod);
++		gpiod_set_consumer_name(gpiod, "GPIO extension data");
++		data[i] = gpiod;
+ 	}
+ 	gpio_ext->data = data;
+ 	gpio_ext->num_data = num_data;
+ 
+-	ret = of_get_named_gpio(np, "enable-gpio", 0);
+-	if (ret < 0) {
++	gpiod = gpiod_get(gpio_ext_dev, "enable", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod)) {
+ 		dev_err(dev,
+ 			"Failed to get GPIO from DT property enable-gpio\n");
+-		return ret;
++		return PTR_ERR(gpiod);
+ 	}
+-	gpio_ext->enable = ret;
++	gpiod_set_consumer_name(gpiod, "GPIO extension enable");
++	gpio_ext->enable = gpiod;
+ 
+-	return 0;
++	return devm_add_action_or_reset(dev, netxbig_gpio_ext_remove, gpio_ext);
+ }
+ 
+ static int netxbig_leds_get_of_pdata(struct device *dev,
+@@ -411,6 +421,8 @@ static int netxbig_leds_get_of_pdata(struct device *dev,
+ {
+ 	struct device_node *np = dev->of_node;
+ 	struct device_node *gpio_ext_np;
++	struct platform_device *gpio_ext_pdev;
++	struct device *gpio_ext_dev;
+ 	struct device_node *child;
+ 	struct netxbig_gpio_ext *gpio_ext;
+ 	struct netxbig_led_timer *timers;
+@@ -426,13 +438,19 @@ static int netxbig_leds_get_of_pdata(struct device *dev,
+ 		dev_err(dev, "Failed to get DT handle gpio-ext\n");
+ 		return -EINVAL;
+ 	}
++	gpio_ext_pdev = of_find_device_by_node(gpio_ext_np);
++	if (!gpio_ext_pdev) {
++		dev_err(dev, "Failed to find platform device for gpio-ext\n");
++		return -ENODEV;
++	}
++	gpio_ext_dev = &gpio_ext_pdev->dev;
+ 
+ 	gpio_ext = devm_kzalloc(dev, sizeof(*gpio_ext), GFP_KERNEL);
+ 	if (!gpio_ext) {
+ 		of_node_put(gpio_ext_np);
+ 		return -ENOMEM;
+ 	}
+-	ret = gpio_ext_get_of_pdata(dev, gpio_ext_np, gpio_ext);
++	ret = netxbig_gpio_ext_get(dev, gpio_ext_dev, gpio_ext);
+ 	of_node_put(gpio_ext_np);
  	if (ret)
- 		dev_warn(parent, "Led %s renamed to %s due to name collision",
--				led_cdev->name, dev_name(led_cdev->dev));
-+				proposed_name, dev_name(led_cdev->dev));
+ 		return ret;
+@@ -585,10 +603,6 @@ static int netxbig_led_probe(struct platform_device *pdev)
+ 	if (!leds_data)
+ 		return -ENOMEM;
  
- 	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
- 		ret = led_add_brightness_hw_changed(led_cdev);
+-	ret = gpio_ext_init(pdev, pdata->gpio_ext);
+-	if (ret < 0)
+-		return ret;
+-
+ 	for (i = 0; i < pdata->num_leds; i++) {
+ 		ret = create_netxbig_led(pdev, pdata,
+ 					 &leds_data[i], &pdata->leds[i]);
 -- 
-2.20.1
+2.25.2
 
