@@ -1,144 +1,89 @@
-Return-Path: <SRS0=Jqlh=6F=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=GEog=6H=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D104AC55181
-	for <linux-leds@archiver.kernel.org>; Tue, 21 Apr 2020 19:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB08C2BA19
+	for <linux-leds@archiver.kernel.org>; Thu, 23 Apr 2020 06:35:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9515206D9
-	for <linux-leds@archiver.kernel.org>; Tue, 21 Apr 2020 19:14:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="beL8A6cY"
+	by mail.kernel.org (Postfix) with ESMTP id 8C7132074F
+	for <linux-leds@archiver.kernel.org>; Thu, 23 Apr 2020 06:35:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726115AbgDUTOd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 21 Apr 2020 15:14:33 -0400
-Received: from mail.z3ntu.xyz ([128.199.32.197]:60988 "EHLO mail.z3ntu.xyz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726100AbgDUTOc (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 21 Apr 2020 15:14:32 -0400
-Received: from localhost.localdomain (80-110-124-168.cgn.dynamic.surfer.at [80.110.124.168])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 12403C4CB7;
-        Tue, 21 Apr 2020 19:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1587496470; bh=mOLV8x1mo4P72BrSbNMNW0QKdQku/B/uSphwcxsPkns=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=beL8A6cYYL5HNRXvU7KfvfJkPppTqMlfRmrP2DiuLuwZZJJVzj6KJqdBHTloi+45T
-         PE04g6RTWgrydlgWbwVEV/Mp0sQMiSlCn5D20D1BFnGOXKrloToIEGbxyIcwaINfE0
-         VsaTLUFp8H4tSzTUzBZY8jlVKA5Pm1WGnE5qLXiM=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     linux-leds@vger.kernel.org
-Cc:     Dan Murphy <dmurphy@ti.com>, Heiko Stuebner <heiko@sntech.de>,
-        Icenowy Zheng <icenowy@aosc.io>,
+        id S1725867AbgDWGfz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 23 Apr 2020 02:35:55 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:52470 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbgDWGfz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 23 Apr 2020 02:35:55 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 6685B1C01F2; Thu, 23 Apr 2020 08:35:53 +0200 (CEST)
+Date:   Thu, 23 Apr 2020 08:35:52 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>
+Cc:     linux-leds@vger.kernel.org,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, Luca Weiss <luca@z3ntu.xyz>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 1/2] dt-bindings: leds: Add binding for sgm3140
-Date:   Tue, 21 Apr 2020 21:13:53 +0200
-Message-Id: <20200421191354.1443017-2-luca@z3ntu.xyz>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200421191354.1443017-1-luca@z3ntu.xyz>
-References: <20200421191354.1443017-1-luca@z3ntu.xyz>
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: leds: add cznic,turris-omnia-leds
+ binding
+Message-ID: <20200423063552.GA22554@amd>
+References: <20200421171732.8277-1-marek.behun@nic.cz>
+ <20200421171732.8277-2-marek.behun@nic.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
+Content-Disposition: inline
+In-Reply-To: <20200421171732.8277-2-marek.behun@nic.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add YAML devicetree binding for SGMICRO SGM3140 charge pump used for
-camera flash LEDs.
 
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-Reviewed-by: Dan Murphy <dmurphy@ti.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes since v2:
- - add 'type: object' to led property
- - rename dt node in example from sgm3140 to led-controller to match dt spec
+--BXVAT5kNtrzKuDFl
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- .../bindings/leds/leds-sgm3140.yaml           | 62 +++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+Hi!
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
-new file mode 100644
-index 0000000000000..ecf7ac9ab0673
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
-@@ -0,0 +1,62 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/leds-sgm3140.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: SGMICRO SGM3140 500mA Buck/Boost Charge Pump LED Driver
-+
-+maintainers:
-+  - Luca Weiss <luca@z3ntu.xyz>
-+
-+description: |
-+  The SGM3140 is a current-regulated charge pump which can regulate two current
-+  levels for Flash and Torch modes.
-+
-+  The data sheet can be found at:
-+    http://www.sg-micro.com/uploads/soft/20190626/1561535688.pdf
-+
-+properties:
-+  compatible:
-+    const: sgmicro,sgm3140
-+
-+  enable-gpios:
-+    maxItems: 1
-+    description: A connection to the 'EN' pin.
-+
-+  flash-gpios:
-+    maxItems: 1
-+    description: A connection to the 'FLASH' pin.
-+
-+  vin-supply:
-+    description: Regulator providing power to the 'VIN' pin.
-+
-+  led:
-+    type: object
-+    allOf:
-+      - $ref: common.yaml#
-+
-+required:
-+  - compatible
-+  - flash-gpios
-+  - enable-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/leds/common.h>
-+
-+    led-controller {
-+        compatible = "sgmicro,sgm3140";
-+        flash-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* PD24 */
-+        enable-gpios = <&pio 2 3 GPIO_ACTIVE_HIGH>; /* PC3 */
-+        vin-supply = <&reg_dcdc1>;
-+
-+        sgm3140_flash: led {
-+            function = LED_FUNCTION_FLASH;
-+            color = <LED_COLOR_ID_WHITE>;
-+            flash-max-timeout-us = <250000>;
-+        };
-+    };
--- 
-2.26.1
+> Add device-tree bindings documentation for Turris Omnia RGB LEDs.
+>=20
+> Signed-off-by: Marek Beh=FAn <marek.behun@nic.cz>
+> Cc: Rob Herring <robh+dt@kernel.org>
 
+Rob already reviewed this one. Is there reason not to have his
+reviewed-by here?
+
+https://patchwork.ozlabs.org/project/devicetree-bindings/patch/201903281934=
+28.19273-3-marek.behun@nic.cz/
+
+>  MAINTAINERS                                   |   5 +-
+
+Please put MAINTAINERS change into separate patch. I don't think I can
+merge it throught the LEDs tree.
+
+Best regards,
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--BXVAT5kNtrzKuDFl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEUEARECAAYFAl6hN0gACgkQMOfwapXb+vLoiwCYw6TcjTE/K9oQ4das15s2Jx6J
+zQCgwY9c+n7fhct+h2bYLxLPE86pcTg=
+=gPI3
+-----END PGP SIGNATURE-----
+
+--BXVAT5kNtrzKuDFl--
