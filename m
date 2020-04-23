@@ -2,95 +2,111 @@ Return-Path: <SRS0=GEog=6H=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6F6C55195
-	for <linux-leds@archiver.kernel.org>; Thu, 23 Apr 2020 17:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBC7C54FD0
+	for <linux-leds@archiver.kernel.org>; Thu, 23 Apr 2020 22:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3C5420857
-	for <linux-leds@archiver.kernel.org>; Thu, 23 Apr 2020 17:09:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YIzqtZTQ"
+	by mail.kernel.org (Postfix) with ESMTP id 4F6C421473
+	for <linux-leds@archiver.kernel.org>; Thu, 23 Apr 2020 22:38:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729805AbgDWRJB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 23 Apr 2020 13:09:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40586 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729719AbgDWRJB (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 23 Apr 2020 13:09:01 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E975AC09B044
-        for <linux-leds@vger.kernel.org>; Thu, 23 Apr 2020 10:09:00 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id e26so7211009wmk.5
-        for <linux-leds@vger.kernel.org>; Thu, 23 Apr 2020 10:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=HyYauB8Zb4kPY2jhycDpuK1O3YKpPPWs1jRZhg3W+PY=;
-        b=YIzqtZTQ86QFuC3Fm4NBWsdOm0pT4cBdJ7LP5GP2m1Iy0O7jxZ4FN6lCTA4pC3+xEi
-         h8VeJgo2IBWMDWo+UMx5OdJyoS3Dq7CwWyqIzw+mpQOoXpKhW6CaDct1MaBX0WFNswe8
-         S0Fd49PA/VO1sC7i2qPSiJU2syTaaBJbrhV0dWWNbPVG3KxVQZW1Y6bEZIH9/6cxLJmM
-         L/T1dn/jbwKPs4moZuwT8rK7gg6iiHRx4h358kfomBb7V37Y/DqboBHiSGV8uTjXTW1C
-         2uJGiuc9P3sMJZlpspCAZFLGblsS6gZqFdijjC7UOcFH8G58rHKZgdYuqVqPEKasyViT
-         pdeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HyYauB8Zb4kPY2jhycDpuK1O3YKpPPWs1jRZhg3W+PY=;
-        b=g8SPlPMDy3ZhKYsyJdI9PxF69Sxe4yejw7uW+vtd5ObqoUNCGtCToXqXTn/ruO4pS+
-         su5e1QKZV9wtUVa3D+5Jjtyh5jYF0SWtjuhYaMl8oIUVnj2en2YVU2L6jehk3fsEgoIH
-         wCONPfb6ObmPBskFgP0b0YCaSgPHzGXY+6Z18J32wp71OfmeSiYyeqt8foXi6JZ4rpAY
-         eym2A+Xp5Ml5G/tJRPG+3ZLm0W+/Uemln6cdXWTclHQtEJAC2kTbB4zBpH/Q5raVuIrU
-         /4pmjjcOgTMmOw4AxGf4L8Irirj8qHemiD1ofSOWPik+F1bStj998vMGmudYpnp4bz3d
-         Qeew==
-X-Gm-Message-State: AGi0PuaxYhlSFsTSIVW+2kZszAu7A6XsKKMQiAystNc67782BXGnVci5
-        JhijJZ8BW06IFvjidbv+BILGUw==
-X-Google-Smtp-Source: APiQypLTFoqOzEEgVSqQsK2DVwkZLCzK4Qr3KYvzNDTrgnBoJM5h/atmfsvo1wLAjiYN7AmpJR6jMg==
-X-Received: by 2002:a1c:40c4:: with SMTP id n187mr5040344wma.28.1587661739472;
-        Thu, 23 Apr 2020 10:08:59 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id s30sm4475128wrb.67.2020.04.23.10.08.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Apr 2020 10:08:58 -0700 (PDT)
-Date:   Thu, 23 Apr 2020 18:08:56 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Kiran Gunda <kgunda@codeaurora.org>
-Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
-        lee.jones@linaro.org, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org, jacek.anaszewski@gmail.com,
-        pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com,
-        robh@kernel.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-fbdev@vger.kernel.org,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>
-Subject: Re: [PATCH V6 4/4] backlight: qcom-wled: Add support for WLED5
- peripheral that is present on PM8150L PMICs
-Message-ID: <20200423170856.f4r62iwcg7qtppva@holly.lan>
-References: <1587656017-27911-1-git-send-email-kgunda@codeaurora.org>
- <1587656017-27911-5-git-send-email-kgunda@codeaurora.org>
+        id S1726755AbgDWWiW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 23 Apr 2020 18:38:22 -0400
+Received: from vm1.sequanux.org ([188.165.36.56]:53215 "EHLO vm1.sequanux.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726057AbgDWWiV (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 23 Apr 2020 18:38:21 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by vm1.sequanux.org (Postfix) with ESMTP id B3340108124;
+        Fri, 24 Apr 2020 00:38:20 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at vm1.sequanux.org
+Received: from vm1.sequanux.org ([127.0.0.1])
+        by localhost (vm1.sequanux.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id XG-rTuFs_W0y; Fri, 24 Apr 2020 00:38:18 +0200 (CEST)
+Received: from localhost (softwrestling.org [188.165.144.248])
+        by vm1.sequanux.org (Postfix) with ESMTPSA id 946B41080D6;
+        Fri, 24 Apr 2020 00:38:18 +0200 (CEST)
+Date:   Fri, 24 Apr 2020 00:38:18 +0200
+From:   Simon Guinot <simon.guinot@sequanux.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>
+Subject: Re: [PATCH] leds: netxbig: Convert to use GPIO descriptors
+Message-ID: <20200423223818.GG15254@kw.sim.vm.gnt>
+References: <20200415145139.155663-1-linus.walleij@linaro.org>
+ <20200417125219.GC19028@duo.ucw.cz>
+ <20200417180746.GD15254@kw.sim.vm.gnt>
+ <CACRpkdaBTeVt-Fp2OVOS_T_E1T7q1wTFUDCQ=foN72SdhJnHjw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="JIpyCmsTxyPLrmrM"
 Content-Disposition: inline
-In-Reply-To: <1587656017-27911-5-git-send-email-kgunda@codeaurora.org>
+In-Reply-To: <CACRpkdaBTeVt-Fp2OVOS_T_E1T7q1wTFUDCQ=foN72SdhJnHjw@mail.gmail.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, Apr 23, 2020 at 09:03:37PM +0530, Kiran Gunda wrote:
-> From: Subbaraman Narayanamurthy <subbaram@codeaurora.org>
-> 
-> PM8150L WLED supports the following:
->     - Two modulators and each sink can use any of the modulator
->     - Multiple CABC selection options from which one can be selected/enabled
->     - Multiple brightness width selection (12 bits to 15 bits)
-> 
-> Signed-off-by: Subbaraman Narayanamurthy <subbaram@codeaurora.org>
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+--JIpyCmsTxyPLrmrM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Apr 17, 2020 at 10:58:24PM +0200, Linus Walleij wrote:
+> On Fri, Apr 17, 2020 at 8:07 PM Simon Guinot <simon.guinot@sequanux.org> =
+wrote:
+> > On Fri, Apr 17, 2020 at 02:52:19PM +0200, Pavel Machek wrote:
+> > > Hi!
+> > >
+> > > > This converts the NetXbig LED driver to use GPIO descriptors
+> > > > instead of using the legacy interfaces in <linux/of_gpio.h>
+> > > > and <linux/gpio.h> to iteratively parse the device tree for
+> > > > global GPIO numbers.
+> > > >
+> > > > Cc: Simon Guinot <simon.guinot@sequanux.org>
+> > > > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> > >
+> > > Nothing obviously wrong here, but I'd not mind some testing.
+> >
+> > Hi Pavel and Linux,
+> >
+> > If you are not in a hurry, then I'll try it next week.
+>=20
+> No hurry, take the time you need. If it explodes, please help me fix it!
+
+Well, nothing blew up. I successfully tested your patch on a LaCie
+"2Big NAS" board and it appears that the LEDs are working nicely.
+
+Thanks for converting this driver to use the GPIO descriptor API.
+
+Tested-by: Simon Guinot <simon.guinot@sequanux.org>
+
+Simon
+
+--JIpyCmsTxyPLrmrM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXW8DgovlR3VS5hA0zyg/RDPmszoFAl6iGNkACgkQzyg/RDPm
+szpFFhAA2iFeRw+JVqSTQXVD25lQEPyAXGBorClThslMUBLZVH8tCD23JbHbDh00
+E8oDXWBJz85s8AFgtGL18koIOAqxHOVxf3sEBgl7FE9uHGoC+6/bOpnWcWsp+hdY
+7KCpU0ACEhp5SC/QCs1/yDmywRhLGDY/hO1sf7EADUfwC4ZdFvgVvFYcIvKv9kC4
+BkBsz7LTpToXYVSYUybc0vG/03q33pPO18yhetokAqFXo5g7svbaNUJKmDgiDiRF
+Ws6uDX1WaiGamEpy2z4EpIAdAy6Q6DjBwjyzo5AxKDWFR5s/FyU4wGOYNjjZIF2s
+vx3wVpXy2zDcONKcGPm1hYqt8YMp9t5Ldoe8z5oYsFrllOQ9h+1MbQkZTLpOQ69z
+DRxIlrqQIP6eXYmiErP/6pNUyFdcRHfNEkTO/MBgPLXNOJ5K0uSr8bKbk5nJGlyx
+bhQjerfG9Mz8okqKcS6JhheFuwDXhphXGoFQXqfhP+lfdLs2T/ogXu37o5WSz+6o
+PSoYiWJZHyDPSuMrVsKhH8am+slLQXZKG7UaNcnK4YrMjLdpsb3UIL6b1Ih58GjB
+Lb9feIYUpieV0wIaVkTHvcby9jF288C2cb//MvSsUP7wbjc/yk+TWRkx8BkHOd9y
+ic2tk5v7bSAIWp8sf34dx6WSObk5yb4ikF1PIQ+HVsob2v1eNfk=
+=NAbS
+-----END PGP SIGNATURE-----
+
+--JIpyCmsTxyPLrmrM--
