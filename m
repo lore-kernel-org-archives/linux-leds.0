@@ -2,173 +2,144 @@ Return-Path: <SRS0=lV22=6M=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4107FC83000
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Apr 2020 16:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C82B8C83000
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Apr 2020 20:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21FB7206E2
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Apr 2020 16:11:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D93B221F4
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Apr 2020 20:25:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zLj/3Sw1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fVgHTUMt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbgD1QKM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 28 Apr 2020 12:10:12 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:43744 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728454AbgD1QKL (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2020 12:10:11 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03SGA5BZ043205;
-        Tue, 28 Apr 2020 11:10:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1588090205;
-        bh=JVuHq7/5uZf9v1Kex9j0T50EFcRdC8TXzYwYmMtLpyk=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=zLj/3Sw11cI9/jaKMGmjUVXa5WJxd8uGdDvZ+AEAEvS89sIHVO53j5Yfd9qdnpDu7
-         ei+bIth4hNcTzRnUtE1+X0PWwxOd+mMTdivd3dihODZqKkT/YLVs4yk3Zh/WS1XquE
-         ZQIy+RI5mb75P3gBAKhojj3MEun1n0tOnkGfq8qg=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03SGA5dk060813
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 28 Apr 2020 11:10:05 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 28
- Apr 2020 11:10:04 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Tue, 28 Apr 2020 11:10:04 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03SGA4Wq069653;
-        Tue, 28 Apr 2020 11:10:04 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>, Tony Lindgren <tony@atomide.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>
-Subject: [PATCH v21 07/16] ARM: dts: n900: Add reg property to the LP5523 channel node
-Date:   Tue, 28 Apr 2020 11:03:29 -0500
-Message-ID: <20200428160338.2793-8-dmurphy@ti.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200428160338.2793-1-dmurphy@ti.com>
+        id S1726307AbgD1UZK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 28 Apr 2020 16:25:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33390 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726286AbgD1UZK (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 28 Apr 2020 16:25:10 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9BB7C03C1AB;
+        Tue, 28 Apr 2020 13:25:09 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id b11so26229913wrs.6;
+        Tue, 28 Apr 2020 13:25:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tT5d0riiZZ18ek/9DKLrzDdyJ2JQ94/wqzkmlAGoP9k=;
+        b=fVgHTUMtLyN8PrFr/GKj+psd0vGnjoXWpD8FYvJOBmhHAICfHpyCj9oRNiW7tV5fYV
+         K6z/g3Q+6pa3/yIV4vcqzxWxrS9emyprXBxVSiOm5+fA12f2L7LGVym0zyQhM9rmrCn3
+         8OdzwV9PnClKvjLIR4PQ27nKPbbntvMha6ymcbJAFfvD+p8bijamk4EnuwJKLqspCLSm
+         f6MOHSYTQxie75jNZHC+DJ+v5wIUTV6GVSWVDHLMJsKPSSi8xHbpMXCwvfGqE9TEeqPJ
+         2LBKcMS14axkULNn1bGxdT5LYoYCjYbljrioKbPMg7IQN9qIVGjROEMGBfoMa6eq2C3D
+         Zi2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tT5d0riiZZ18ek/9DKLrzDdyJ2JQ94/wqzkmlAGoP9k=;
+        b=KCN96H+DzVKLlICMg5qmDYRrifFic0riBYcAjRuA/FLbvCFFhKp8Xwp8Ft/kcQUx/Q
+         tH4b/F7ZlixItaY6VE3jc9w3dNxkDips2IrKT2CKPwkY1f0GgfgKwXbtOvL9aX1SF5dA
+         nRX+n43sFIGiMKtLDGZes8bmP7yeSuB1ydO4q05K8w4W4ZkdMFyOk9A7GTsGcZSAa6oZ
+         iHwFv69n7xmlgjYwmip1GKp2QCBKilYeyZzVQ4o4/r7WWO4NmEaj/9WGvbfvxRfWcAjw
+         Dqc+kHozlFsmLhJEgvXHwJA/mi1zYJvbEPRk/UxcPrNGQmbFX0rRHIVxvo0/VmGxTOXE
+         Xifw==
+X-Gm-Message-State: AGi0PubFGuUdGIFFF+BjTkWZoPBVD4QKie8WPr6gGADJFgO3gML76Hye
+        1QzspOCYVLcEsSNgzLxjaeyfo5g7TVk=
+X-Google-Smtp-Source: APiQypKx04egV24/uBV75dgEWC3DPqEnSLJTGUt+k+CPuBQHWJLN7dDcxJN2g3h6Hu+b57AMRI7XTA==
+X-Received: by 2002:adf:ab1b:: with SMTP id q27mr37550151wrc.220.1588105507706;
+        Tue, 28 Apr 2020 13:25:07 -0700 (PDT)
+Received: from [192.168.1.23] (afcs235.neoplus.adsl.tpnet.pl. [95.49.70.235])
+        by smtp.gmail.com with ESMTPSA id l16sm26599482wrp.91.2020.04.28.13.25.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Apr 2020 13:25:07 -0700 (PDT)
+Subject: Re: [PATCH v21 04/16] leds: lp50xx: Add the LP50XX family of the RGB
+ LED driver
+To:     Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20200428160338.2793-1-dmurphy@ti.com>
+ <20200428160338.2793-5-dmurphy@ti.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <d3020c80-90f7-e73a-5ff3-6c503b9fdea9@gmail.com>
+Date:   Tue, 28 Apr 2020 22:25:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20200428160338.2793-5-dmurphy@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add the reg property to each channel node.  This update is
-to accomodate the multicolor framework.  In addition to the
-accomodation this allows the LEDs to be placed on any channel
-and allow designs to skip channels as opposed to requiring
-sequential order.
+Hi Dan,
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
-CC: Tony Lindgren <tony@atomide.com>
-CC: "Benoît Cousson" <bcousson@baylibre.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
----
- arch/arm/boot/dts/omap3-n900.dts | 29 ++++++++++++++++++++---------
- 1 file changed, 20 insertions(+), 9 deletions(-)
+Thanks for the update. There is one remnant from the
+previous stages that you already scheduled for removal AFAIR.
 
-diff --git a/arch/arm/boot/dts/omap3-n900.dts b/arch/arm/boot/dts/omap3-n900.dts
-index 4089d97405c9..ebe93b06b4f7 100644
---- a/arch/arm/boot/dts/omap3-n900.dts
-+++ b/arch/arm/boot/dts/omap3-n900.dts
-@@ -618,63 +618,74 @@ indicator {
- 	};
- 
- 	lp5523: lp5523@32 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		compatible = "national,lp5523";
- 		reg = <0x32>;
- 		clock-mode = /bits/ 8 <0>; /* LP55XX_CLOCK_AUTO */
- 		enable-gpio = <&gpio2 9 GPIO_ACTIVE_HIGH>; /* 41 */
- 
--		chan0 {
-+		chan@0 {
- 			chan-name = "lp5523:kb1";
- 			led-cur = /bits/ 8 <50>;
- 			max-cur = /bits/ 8 <100>;
-+			reg = <0>;
- 		};
- 
--		chan1 {
-+		chan@1 {
- 			chan-name = "lp5523:kb2";
- 			led-cur = /bits/ 8 <50>;
- 			max-cur = /bits/ 8 <100>;
-+			reg = <1>;
- 		};
- 
--		chan2 {
-+		chan@2 {
- 			chan-name = "lp5523:kb3";
- 			led-cur = /bits/ 8 <50>;
- 			max-cur = /bits/ 8 <100>;
-+			reg = <2>;
- 		};
- 
--		chan3 {
-+		chan@3 {
- 			chan-name = "lp5523:kb4";
- 			led-cur = /bits/ 8 <50>;
- 			max-cur = /bits/ 8 <100>;
-+			reg = <3>;
- 		};
- 
--		chan4 {
-+		chan@4 {
- 			chan-name = "lp5523:b";
- 			led-cur = /bits/ 8 <50>;
- 			max-cur = /bits/ 8 <100>;
-+			reg = <4>;
- 		};
- 
--		chan5 {
-+		chan@5 {
- 			chan-name = "lp5523:g";
- 			led-cur = /bits/ 8 <50>;
- 			max-cur = /bits/ 8 <100>;
-+			reg = <5>;
- 		};
- 
--		chan6 {
-+		chan@6 {
- 			chan-name = "lp5523:r";
- 			led-cur = /bits/ 8 <50>;
- 			max-cur = /bits/ 8 <100>;
-+			reg = <6>;
- 		};
- 
--		chan7 {
-+		chan@7 {
- 			chan-name = "lp5523:kb5";
- 			led-cur = /bits/ 8 <50>;
- 			max-cur = /bits/ 8 <100>;
-+			reg = <7>;
- 		};
- 
--		chan8 {
-+		chan@8 {
- 			chan-name = "lp5523:kb6";
- 			led-cur = /bits/ 8 <50>;
- 			max-cur = /bits/ 8 <100>;
-+			reg = <8>;
- 		};
- 	};
- 
+On 4/28/20 6:03 PM, Dan Murphy wrote:
+> Introduce the LP5036/30/24/18/12/9 RGB LED driver.
+> The difference in these parts are the number of
+> LED outputs where the:
+> 
+> LP5036 can control 36 LEDs
+> LP5030 can control 30 LEDs
+> LP5024 can control 24 LEDs
+> LP5018 can control 18 LEDs
+> LP5012 can control 12 LEDs
+> LP5009 can control 9 LEDs
+> 
+> The device has the ability to group LED output into control banks
+> so that multiple LED banks can be controlled with the same mixing and
+> brightness.  Inversely the LEDs can also be controlled independently.
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+[...]
+> +
+> +		init_data.fwnode = child;
+> +		init_data.devicename = priv->client->name;
+
+Namely this line. We don't need devicename for new drivers like this.
+
+> +		fwnode_property_read_string(child, "linux,default-trigger",
+> +				    &led->led_dev.default_trigger);
+> +		num_colors = 0;
+> +
+> +		/* There are only 3 LEDs per module otherwise they should be
+> +		   banked which also is presented as 3 LEDs*/
+> +		mc_led_info = devm_kcalloc(priv->dev, LP50XX_LEDS_PER_MODULE,
+> +					   sizeof(*mc_led_info), GFP_KERNEL);
+> +		if (!mc_led_info)
+> +			return -ENOMEM;
+> +
+> +		fwnode_for_each_child_node(child, led_node) {
+> +			ret = fwnode_property_read_u32(led_node, "color",
+> +						       &color_id);
+> +			if (ret)
+> +				dev_err(priv->dev, "Cannot read color\n");
+> +
+> +			mc_led_info[num_colors].color_index = color_id;
+> +			num_colors++;
+> +		}
+> +
+> +		led->priv = priv;
+> +		led->mc_cdev.num_colors = num_colors;
+> +		led->mc_cdev.subled_info = mc_led_info;
+> +		led_cdev = &led->mc_cdev.led_cdev;
+> +		led_cdev->brightness_set_blocking = lp50xx_brightness_set;
+> +		ret = devm_led_classdev_multicolor_register_ext(&priv->client->dev,
+> +						       &led->mc_cdev,
+> +						       &init_data);
+>[...]
 -- 
-2.25.1
-
+Best regards,
+Jacek Anaszewski
