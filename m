@@ -7,53 +7,52 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44228C83009
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Apr 2020 16:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B020C83001
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Apr 2020 16:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2537D2075E
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Apr 2020 16:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17E7020730
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Apr 2020 16:10:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pS/EW7tv"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ugPjmnM6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728547AbgD1QK0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 28 Apr 2020 12:10:26 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:49504 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728494AbgD1QKP (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2020 12:10:15 -0400
+        id S1728597AbgD1QKi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 28 Apr 2020 12:10:38 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56294 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728599AbgD1QKf (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2020 12:10:35 -0400
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03SGAAjQ098767;
-        Tue, 28 Apr 2020 11:10:10 -0500
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03SGAWit130895;
+        Tue, 28 Apr 2020 11:10:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1588090210;
-        bh=cpHOcxwnjho3INKT3sFhD9XlStpAaDQZ/SjiJomkzhM=;
+        s=ti-com-17Q1; t=1588090232;
+        bh=BPO3DIUs5lYKZDeCzdhXhfwpxNTbV8NK9KZqYQboank=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=pS/EW7tvocYygt92Ed8Yn2q/o3ZXc5gl5AgW94P7RAODgKdlmAwLt3R+xlV870AOf
-         Hi44V8QY8onmebTg9WJVW/3DaRWn+6FzmtoXpNwtl3mKsbuo2T4fJjzqrX5kfvu2uU
-         VPXnxPqK7gWCsaLwFJD5+hIFc4eaw8u48v0f3hDQ=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03SGAAqv001582
+        b=ugPjmnM6kvPY9BQV/INrfZ8nURIKQcaIYg5PWYNGpVHNsZZeEzf968xtP0nTIzbla
+         7sU0AnMPVuB2Lu48A9RYwZJdcgEB6cSNPuvQcdAbXLu05rCqvKs3vhH59whpTpbREV
+         pt0hMLDtzcENjYqcE1Vow21CtN3cjLCik4a9Aw1o=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03SGAWbN001903
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 28 Apr 2020 11:10:10 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 28
- Apr 2020 11:10:10 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE114.ent.ti.com
+        Tue, 28 Apr 2020 11:10:32 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE114.ent.ti.com
  (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 28
+ Apr 2020 11:10:31 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Tue, 28 Apr 2020 11:10:10 -0500
+ Frontend Transport; Tue, 28 Apr 2020 11:10:31 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03SGAABa079108;
-        Tue, 28 Apr 2020 11:10:10 -0500
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03SGAV7O079443;
+        Tue, 28 Apr 2020 11:10:31 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v21 09/16] ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
-Date:   Tue, 28 Apr 2020 11:03:31 -0500
-Message-ID: <20200428160338.2793-10-dmurphy@ti.com>
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v21 13/16] leds: lp5521: Add multicolor framework multicolor brightness support
+Date:   Tue, 28 Apr 2020 11:03:35 -0500
+Message-ID: <20200428160338.2793-14-dmurphy@ti.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200428160338.2793-1-dmurphy@ti.com>
 References: <20200428160338.2793-1-dmurphy@ti.com>
@@ -66,72 +65,54 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add the reg property to each channel node.  This update is
-to accomodate the multicolor framework.  In addition to the
-accomodation this allows the LEDs to be placed on any channel
-and allow designs to skip channels as opposed to requiring
-sequential order.
+Add the multicolor brightness call back to support the multicolor
+framework. This function allows setting the brightness across
+grouped LED channels in a single call.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
-CC: Linus Walleij <linus.walleij@linaro.org>
 Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- arch/arm/boot/dts/ste-href.dtsi | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+ drivers/leds/leds-lp5521.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/arch/arm/boot/dts/ste-href.dtsi b/arch/arm/boot/dts/ste-href.dtsi
-index 33e3b0b3c53d..ff47cbf6ed3b 100644
---- a/arch/arm/boot/dts/ste-href.dtsi
-+++ b/arch/arm/boot/dts/ste-href.dtsi
-@@ -58,16 +58,21 @@ lp5521@33 {
- 				reg = <0x33>;
- 				label = "lp5521_pri";
- 				clock-mode = /bits/ 8 <2>;
--				chan0 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				chan@0 {
-+					reg = <0>;
- 					led-cur = /bits/ 8 <0x2f>;
- 					max-cur = /bits/ 8 <0x5f>;
- 					linux,default-trigger = "heartbeat";
- 				};
--				chan1 {
-+				chan@1 {
-+					reg = <1>;
- 					led-cur = /bits/ 8 <0x2f>;
- 					max-cur = /bits/ 8 <0x5f>;
- 				};
--				chan2 {
-+				chan@2 {
-+					reg = <2>;
- 					led-cur = /bits/ 8 <0x2f>;
- 					max-cur = /bits/ 8 <0x5f>;
- 				};
-@@ -77,15 +82,20 @@ lp5521@34 {
- 				reg = <0x34>;
- 				label = "lp5521_sec";
- 				clock-mode = /bits/ 8 <2>;
--				chan0 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				chan@0 {
-+					reg = <0>;
- 					led-cur = /bits/ 8 <0x2f>;
- 					max-cur = /bits/ 8 <0x5f>;
- 				};
--				chan1 {
-+				chan@1 {
-+					reg = <1>;
- 					led-cur = /bits/ 8 <0x2f>;
- 					max-cur = /bits/ 8 <0x5f>;
- 				};
--				chan2 {
-+				chan@2 {
-+					reg = <2>;
- 					led-cur = /bits/ 8 <0x2f>;
- 					max-cur = /bits/ 8 <0x5f>;
- 				};
+diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+index 6ff81d6be789..ef8c3bfa8f3c 100644
+--- a/drivers/leds/leds-lp5521.c
++++ b/drivers/leds/leds-lp5521.c
+@@ -349,6 +349,25 @@ static int lp5521_run_selftest(struct lp55xx_chip *chip, char *buf)
+ 	return 0;
+ }
+ 
++static int lp5521_multicolor_brightness(struct lp55xx_led *led)
++{
++	struct lp55xx_chip *chip = led->chip;
++	int ret;
++	int i;
++
++	mutex_lock(&chip->lock);
++	for (i = 0; i < led->mc_cdev.num_colors; i++) {
++		ret = lp55xx_write(chip,
++				   LP5521_REG_LED_PWM_BASE +
++				   led->mc_cdev.subled_info[i].channel,
++				   led->mc_cdev.subled_info[i].brightness);
++		if (ret)
++			break;
++	}
++	mutex_unlock(&chip->lock);
++	return ret;
++}
++
+ static int lp5521_led_brightness(struct lp55xx_led *led)
+ {
+ 	struct lp55xx_chip *chip = led->chip;
+@@ -490,6 +509,7 @@ static struct lp55xx_device_config lp5521_cfg = {
+ 	.max_channel  = LP5521_MAX_LEDS,
+ 	.post_init_device   = lp5521_post_init_device,
+ 	.brightness_fn      = lp5521_led_brightness,
++	.multicolor_brightness_fn = lp5521_multicolor_brightness,
+ 	.set_led_current    = lp5521_set_led_current,
+ 	.firmware_cb        = lp5521_firmware_loaded,
+ 	.run_engine         = lp5521_run_engine,
 -- 
 2.25.1
 
