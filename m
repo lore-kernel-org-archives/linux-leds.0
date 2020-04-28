@@ -2,101 +2,126 @@ Return-Path: <SRS0=lV22=6M=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E86F3C83000
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Apr 2020 12:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED64C83000
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Apr 2020 16:09:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5B1E206D6
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Apr 2020 12:07:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4054206E2
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Apr 2020 16:09:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pnAJk7U/"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RKMz4XyV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbgD1MH7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 28 Apr 2020 08:07:59 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:59314 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgD1MH7 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2020 08:07:59 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03SC7sED071334;
-        Tue, 28 Apr 2020 07:07:54 -0500
+        id S1728131AbgD1QJm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 28 Apr 2020 12:09:42 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:43654 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728028AbgD1QJm (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Apr 2020 12:09:42 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03SG9bv3042986;
+        Tue, 28 Apr 2020 11:09:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1588075674;
-        bh=J604Nen4LCpyCHe23MsZVFIHdXnxQhSRkwuocVy4/78=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=pnAJk7U/aPphnf50wlKIH31/1/sVCQoGPzWiub3z32N7fExrLrx8Nq9U2nILA8OMc
-         kKDXArkyRJojQsS1ljmNeK39rWS/H6ci59d71Y+/3/2EuwzugMqjpjB59w2yHf8H80
-         iOE28jZ+SbILFAloP/EsVo4GzipNXb5fvH06y/aI=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03SC7sPa087544
+        s=ti-com-17Q1; t=1588090177;
+        bh=OQqzFbuvkzc375gGmqwBOZYGZM679V95R0vHQaPHA3Y=;
+        h=From:To:CC:Subject:Date;
+        b=RKMz4XyVp+4fwmCfJjuBrh2HVUM1wBAa63BJdKqnScwB8Mk4Nek8DIKqLSN8Npzof
+         Xfg93PNtzHt0osFoCB0ytaQsQjztPaTCsOj7sw4tFOQHMWu8FDPCdAdmcuIFETHhgG
+         +ErhmtF0sIEMHeZTOV7wD9SC2cz9ALCaTRX+0W3o=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03SG9bwc068061
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 28 Apr 2020 07:07:54 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 28 Apr 2020 11:09:37 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 28
- Apr 2020 07:07:54 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2020 11:09:36 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Tue, 28 Apr 2020 07:07:54 -0500
-Received: from [10.250.52.63] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03SC7sev008231;
-        Tue, 28 Apr 2020 07:07:54 -0500
-Subject: Re: [PATCH v20 02/17] leds: Add multicolor ID to the color ID list
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200423155524.13971-1-dmurphy@ti.com>
- <20200423155524.13971-3-dmurphy@ti.com> <20200425195242.GA1143@bug>
- <003891b8-a697-6d55-3862-5773e23a466a@ti.com> <20200428084301.GC20640@amd>
+ Frontend Transport; Tue, 28 Apr 2020 11:09:36 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03SG9a1g077640;
+        Tue, 28 Apr 2020 11:09:36 -0500
 From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <1166f584-8889-df61-393c-f240b7c3c041@ti.com>
-Date:   Tue, 28 Apr 2020 07:02:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v21 00/16] Multicolor Framework
+Date:   Tue, 28 Apr 2020 11:03:22 -0500
+Message-ID: <20200428160338.2793-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20200428084301.GC20640@amd>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Pavel
-
-On 4/28/20 3:43 AM, Pavel Machek wrote:
-> On Mon 2020-04-27 12:12:18, Dan Murphy wrote:
->> Pavel
->>
->> On 4/25/20 2:52 PM, Pavel Machek wrote:
->>> On Thu 2020-04-23 10:55:09, Dan Murphy wrote:
->>>> Add a new color ID that is declared as MULTICOLOR as with the
->>>> multicolor framework declaring a definitive color is not accurate
->>>> as the node can contain multiple colors.
->>>>
->>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>> Please merge with previous patch, and you can keep reviews.
->> Not sure we should do that.  The previous patches deals directly with the
->> bindings and this is code.
->>
->> I thought the rule was to keep bindings and code separated.
->>
->> It made sense to squash the bindings header patch to the bindings document
->> patch but it does not make sense to squash this patch to the bindings.
->>
->> Please let me know if you want me to proceed with the squash.
-> Well, OTOH it seems wrong to have array that is only
-> half-initialized... But it is not a big deal.
-
-I will squash it into the previous patch as you asked.  Like you said it 
-is not a big deal.
+This is the multi color LED framework.   This framework presents clustered
+colored LEDs into an array and allows the user space to adjust the brightness
+of the cluster using a single file write.  The individual colored LEDs
+intensities are controlled via a single file that is an array of LEDs
 
 Dan
+
+Dan Murphy (16):
+  dt: bindings: Add multicolor class dt bindings documention
+  leds: multicolor: Introduce a multicolor class definition
+  dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
+  leds: lp50xx: Add the LP50XX family of the RGB LED driver
+  dt: bindings: lp55xx: Be consistent in the document with LED acronym
+  dt: bindings: lp55xx: Update binding for Multicolor Framework
+  ARM: dts: n900: Add reg property to the LP5523 channel node
+  ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
+  ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
+  leds: lp55xx: Convert LED class registration to devm_*
+  leds: lp55xx: Add multicolor framework support to lp55xx
+  leds: lp5523: Update the lp5523 code to add multicolor brightness
+    function
+  leds: lp5521: Add multicolor framework multicolor brightness support
+  leds: lp55xx: Fix checkpatch file permissions issues
+  leds: lp5523: Fix checkpatch issues in the code
+  dt: bindings: Update lp55xx binding to recommended LED naming
+
+ .../ABI/testing/sysfs-class-led-multicolor    |  34 +
+ .../bindings/leds/leds-class-multicolor.txt   |  98 +++
+ .../devicetree/bindings/leds/leds-lp50xx.yaml | 117 +++
+ .../devicetree/bindings/leds/leds-lp55xx.txt  | 163 +++-
+ Documentation/leds/index.rst                  |   1 +
+ Documentation/leds/leds-class-multicolor.rst  |  88 ++
+ MAINTAINERS                                   |   8 +
+ arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |  14 +-
+ arch/arm/boot/dts/omap3-n900.dts              |  29 +-
+ arch/arm/boot/dts/ste-href.dtsi               |  22 +-
+ drivers/leds/Kconfig                          |  22 +
+ drivers/leds/Makefile                         |   2 +
+ drivers/leds/led-class-multicolor.c           | 210 +++++
+ drivers/leds/led-core.c                       |   1 +
+ drivers/leds/leds-lp50xx.c                    | 778 ++++++++++++++++++
+ drivers/leds/leds-lp5521.c                    |  43 +-
+ drivers/leds/leds-lp5523.c                    |  62 +-
+ drivers/leds/leds-lp5562.c                    |  22 +-
+ drivers/leds/leds-lp55xx-common.c             | 213 +++--
+ drivers/leds/leds-lp55xx-common.h             |  16 +-
+ drivers/leds/leds-lp8501.c                    |  23 +-
+ include/dt-bindings/leds/common.h             |   3 +-
+ include/linux/led-class-multicolor.h          | 121 +++
+ include/linux/platform_data/leds-lp55xx.h     |   8 +
+ 24 files changed, 1939 insertions(+), 159 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
+ create mode 100644 Documentation/leds/leds-class-multicolor.rst
+ create mode 100644 drivers/leds/led-class-multicolor.c
+ create mode 100644 drivers/leds/leds-lp50xx.c
+ create mode 100644 include/linux/led-class-multicolor.h
+
+-- 
+2.25.1
 
