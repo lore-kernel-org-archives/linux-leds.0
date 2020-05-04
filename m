@@ -2,119 +2,99 @@ Return-Path: <SRS0=0P3h=6S=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B04C3A5A9
-	for <linux-leds@archiver.kernel.org>; Mon,  4 May 2020 21:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1169CC3A5A9
+	for <linux-leds@archiver.kernel.org>; Mon,  4 May 2020 21:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8341206A4
-	for <linux-leds@archiver.kernel.org>; Mon,  4 May 2020 21:18:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8B3A206A4
+	for <linux-leds@archiver.kernel.org>; Mon,  4 May 2020 21:22:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ogmth6Hc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbgEDVSt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 4 May 2020 17:18:49 -0400
-Received: from mga14.intel.com ([192.55.52.115]:20056 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbgEDVSt (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 4 May 2020 17:18:49 -0400
-IronPort-SDR: Wt8WZn5408eWAAqiEkLELxSrHt8BoYkGheIG7BWO96vsE3GTK2s5X53wJzPZgvvh+6NA4wxEjR
- kyYeApbrh3dw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2020 14:18:48 -0700
-IronPort-SDR: sYeQx0a0gQVBS/v9cdNBZ0JhFJqfWuG0tO2fVanG8W0o6eY5lRQU+L52s4hrAx0hbjt0nDPPTe
- nGrPPRDdSj5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,353,1583222400"; 
-   d="scan'208";a="304291629"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 04 May 2020 14:18:46 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1jViUA-000HuC-8G; Tue, 05 May 2020 05:18:46 +0800
-Date:   Tue, 5 May 2020 05:18:28 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Dan Murphy <dmurphy@ti.com>, jacek.anaszewski@gmail.com,
-        pavel@ucw.cz
-Cc:     kbuild-all@lists.01.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v24 02/16] leds: multicolor: Introduce a multicolor class
- definition
-Message-ID: <202005050509.ulcDbkZ2%lkp@intel.com>
-References: <20200503123215.6449-3-dmurphy@ti.com>
+        id S1726756AbgEDVWe (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 4 May 2020 17:22:34 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:57866 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726291AbgEDVWe (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 4 May 2020 17:22:34 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 044LMUSC104259;
+        Mon, 4 May 2020 16:22:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1588627350;
+        bh=UTXA5hjm+EASqrbW/j1Ympdm84plN+wozM0vySeZ3x4=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=ogmth6HcPG045h44k9Ei4ytzWsXOLFzz2tng/YCRnFbJOH4B1RKOzNwo9oH40CN0g
+         MhVXz9N5tVSHOZpdCnx6Sv2Xd7IJMQyI24iy2dIuBcrHCNjmfVrn9L87Ja0uNAvSWX
+         3kbizX7WPxe65wH8sAf0dHCLL0xmmpq2N5RIth/w=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 044LMUVi088674;
+        Mon, 4 May 2020 16:22:30 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 4 May
+ 2020 16:22:30 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Mon, 4 May 2020 16:22:30 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 044LMU4h102065;
+        Mon, 4 May 2020 16:22:30 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v25 05/16] dt: bindings: lp55xx: Be consistent in the document with LED acronym
+Date:   Mon, 4 May 2020 16:13:33 -0500
+Message-ID: <20200504211344.13221-6-dmurphy@ti.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200504211344.13221-1-dmurphy@ti.com>
+References: <20200504211344.13221-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200503123215.6449-3-dmurphy@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Dan,
+Update the document to be consistent in case when using "LED".
+This acronym should be capital throughout the document.
 
-I love your patch! Yet something to improve:
-
-[auto build test ERROR on pavel-linux-leds/for-next]
-[also build test ERROR on robh/for-next linus/master j.anaszewski-leds/for-next v5.7-rc4 next-20200504]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-
-url:    https://github.com/0day-ci/linux/commits/Dan-Murphy/Multicolor-Framework-v24/20200505-031241
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-leds.git for-next
-config: parisc-allnoconfig
-compiler: hppa-linux-gcc (GCC) 9.3.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        COMPILER_INSTALL_PATH=$HOME/0day GCC_VERSION=9.3.0 make.cross ARCH=parisc  allnoconfig
-        COMPILER_INSTALL_PATH=$HOME/0day GCC_VERSION=9.3.0 make.cross ARCH=parisc 
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kbuild test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> drivers/leds/Kconfig:33:error: recursive dependency detected!
->> drivers/leds/Kconfig:33: symbol LEDS_CLASS_MULTI_COLOR depends on LEDS_CLASS_MULTI_COLOR
-   For a resolution refer to Documentation/kbuild/kconfig-language.rst
-   subsection "Kconfig recursive dependency limitations"
-
-vim +33 drivers/leds/Kconfig
-
-    16	
-    17	config LEDS_CLASS
-    18		tristate "LED Class Support"
-    19		help
-    20		  This option enables the LED sysfs class in /sys/class/leds.  You'll
-    21		  need this to do anything useful with LEDs.  If unsure, say N.
-    22	
-    23	config LEDS_CLASS_FLASH
-    24		tristate "LED Flash Class Support"
-    25		depends on LEDS_CLASS
-    26		help
-    27		  This option enables the flash LED sysfs class in /sys/class/leds.
-    28		  It wraps LED Class and adds flash LEDs specific sysfs attributes
-    29		  and kernel internal API to it. You'll need this to provide support
-    30		  for the flash related features of a LED device. It can be built
-    31		  as a module.
-    32	
-  > 33	config LEDS_CLASS_MULTI_COLOR
-    34		tristate "LED MultiColor LED Class Support"
-    35		depends on LEDS_CLASS
-    36		depends on LEDS_CLASS_MULTI_COLOR || !LEDS_CLASS_MULTI_COLOR
-    37		help
-    38		  This option enables the multicolor LED sysfs class in /sys/class/leds.
-    39		  It wraps LED class and adds multicolor LED specific sysfs attributes
-    40		  and kernel internal API to it. You'll need this to provide support
-    41		  for multicolor LEDs that are grouped together. This class is not
-    42		  intended for single color LEDs. It can be built as a module.
-    43	
-
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ Documentation/devicetree/bindings/leds/leds-lp55xx.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp55xx.txt b/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
+index 1b66a413fb9d..bfe2805c5534 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lp55xx.txt
+@@ -1,4 +1,4 @@
+-Binding for TI/National Semiconductor LP55xx Led Drivers
++Binding for TI/National Semiconductor LP55xx LED Drivers
+ 
+ Required properties:
+ - compatible: one of
+@@ -12,8 +12,8 @@ Required properties:
+ - clock-mode: Input clock mode, (0: automode, 1: internal, 2: external)
+ 
+ Each child has own specific current settings
+-- led-cur: Current setting at each led channel (mA x10, 0 if led is not connected)
+-- max-cur: Maximun current at each led channel.
++- led-cur: Current setting at each LED channel (mA x10, 0 if LED is not connected)
++- max-cur: Maximun current at each LED channel.
+ 
+ Optional properties:
+ - enable-gpio: GPIO attached to the chip's enable pin
+-- 
+2.25.1
+
