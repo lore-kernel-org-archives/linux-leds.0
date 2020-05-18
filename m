@@ -1,82 +1,84 @@
-Return-Path: <SRS0=+fsx=62=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=kzb+=7A=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F28BCA90AF
-	for <linux-leds@archiver.kernel.org>; Tue, 12 May 2020 19:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E0CC433E0
+	for <linux-leds@archiver.kernel.org>; Mon, 18 May 2020 22:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0644520673
-	for <linux-leds@archiver.kernel.org>; Tue, 12 May 2020 19:04:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Qz3xobuH"
+	by mail.kernel.org (Postfix) with ESMTP id 9812D2081A
+	for <linux-leds@archiver.kernel.org>; Mon, 18 May 2020 22:14:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589840078;
+	bh=RLcRUJrzBYiJDEKffT7YT45tQ3CDn6bDyuP1fuA1U8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qNZvuphJKzPmcKnq98sqGZcv/mQ/xtBgGyJzsCGRbdtog+GvMkkX7i/VmmV2Ah0Rv
+	 w39MyWCpNaiRxJUIfAoNLTUkd+rcOkfE+gu0mAo4UQwnjUQ2f70/d9NcRqdw9F6vMS
+	 FfRYp3yAW1pJ8HHZS7r2SGGR+Gka6yVfKzGXPGAU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725987AbgELTEA (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 12 May 2020 15:04:00 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:36144 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbgELTEA (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 May 2020 15:04:00 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 04CJ3spL029060;
-        Tue, 12 May 2020 14:03:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1589310234;
-        bh=qcbTpSQDtrJd8P3InK+kcQIpK4vn56pKJLFbaxEiX4U=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Qz3xobuHHP6zDA9LTYeq/ZP8Y6f3ZXsAm20QyrtRrbisC1Ph0xI/vPamOQXcmwnF7
-         TRsc9kqoo/bd1Hre7i8MR0AqkBeKIttPipNggrADjcXeMgM9laLw3rTo2A1fXOqRfD
-         RhDwkyDO7XCTsYIQwsKFAqwvENsXIm0P+WgzrfeQ=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 04CJ3snl125256
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 May 2020 14:03:54 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 12
- May 2020 14:03:54 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Tue, 12 May 2020 14:03:54 -0500
-Received: from [10.250.52.63] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 04CJ3sNs008199;
-        Tue, 12 May 2020 14:03:54 -0500
-Subject: Re: [PATCH v25 00/16] Multicolor Framework v25
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200504211344.13221-1-dmurphy@ti.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <eccbd882-b4f2-abc8-dddb-6c242d8ef0c0@ti.com>
-Date:   Tue, 12 May 2020 13:54:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1727819AbgERWOi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 18 May 2020 18:14:38 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:46983 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbgERWOi (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 18 May 2020 18:14:38 -0400
+Received: by mail-il1-f193.google.com with SMTP id w18so11450060ilm.13;
+        Mon, 18 May 2020 15:14:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EILzSJQ9ooYrSwPtQmh1JCJ6iFHH9cshXd0l+K0UWUg=;
+        b=nitLYRi2DhE+3ScFShOd22mpPlAvagEKFcVCY/nPk7rnc/h5YIRIk8dJjLTRA8wmVt
+         mESqCWMznttR2dw6nPqvXZ92eCmLzzxeeylWpzVnT7JomjksCcIjxLiJGRx7iUzhFiNa
+         kXnKBekKDyCylo3/QZ+A5m/IHvQb/ARptFVLVIfoM0cQ04ubABDh9AC+lTKNjUw3UgRq
+         qC5xuEu9ypmEOntz13s76m6t10J2oBoEQxiYq8Tb8FKRsr3J+2NsJzGICaH2nI1Z601t
+         RrDCWkjN3loMkgBeJPinrHqCfOz7MbtO/o+UwOcACLrHT7zVtwJLnZxm6g7YYbJd+g/1
+         yMEw==
+X-Gm-Message-State: AOAM532RsnHJzoVa9qnxHQPHVtrT98ob0CIpbCu9bbez+4irsx0xJPL8
+        Dk5M1WV/h7YS6/7U1olk9w==
+X-Google-Smtp-Source: ABdhPJxuDsDG4Q8cCZyp7eSxhiTFEEoCp3gbOuCrmvr18ODcvv037EWI9zIgOwCOuRr5OAWDWsrAAA==
+X-Received: by 2002:a92:5f5a:: with SMTP id t87mr18582791ilb.269.1589840077379;
+        Mon, 18 May 2020 15:14:37 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id r80sm5316136ilk.65.2020.05.18.15.14.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 May 2020 15:14:36 -0700 (PDT)
+Received: (nullmailer pid 6875 invoked by uid 1000);
+        Mon, 18 May 2020 22:14:35 -0000
+Date:   Mon, 18 May 2020 16:14:35 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     nikitos.tr@gmail.com
+Cc:     dmurphy@ti.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        pavel@ucw.cz, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v2 1/3] dt-bindings: vendor-prefixes: Add Shanghai Awinic
+ Technology Co., Ltd.
+Message-ID: <20200518221435.GA6734@bogus>
+References: <20200511111128.16210-1-nikitos.tr@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200504211344.13221-1-dmurphy@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200511111128.16210-1-nikitos.tr@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Pavel
+On Mon, 11 May 2020 16:11:26 +0500,  wrote:
+> From: Nikita Travkin <nikitos.tr@gmail.com>
+> 
+> Add the "awinic" vendor prefix for Shanghai Awinic Technology Co., Ltd.
+> Website: https://www.awinic.com/
+> 
+> Signed-off-by: Nikita Travkin <nikitos.tr@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-On 5/4/20 4:13 PM, Dan Murphy wrote:
-> Hello
->
-> This is the multi color LED framework.   This framework presents clustered
-> colored LEDs into an array and allows the user space to adjust the brightness
-> of the cluster using a single file write.  The individual colored LEDs
-> intensities are controlled via a single file that is an array of LEDs
-
-Please let me know if there are any issues with pulling this series in now
-
-Dan
-
+Reviewed-by: Rob Herring <robh@kernel.org>
