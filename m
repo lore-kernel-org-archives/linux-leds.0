@@ -1,85 +1,101 @@
-Return-Path: <SRS0=kzb+=7A=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=ftGX=7H=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978B7C433DF
-	for <linux-leds@archiver.kernel.org>; Mon, 18 May 2020 22:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFF6C433E0
+	for <linux-leds@archiver.kernel.org>; Mon, 25 May 2020 10:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65DB320715
-	for <linux-leds@archiver.kernel.org>; Mon, 18 May 2020 22:36:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589841407;
-	bh=UDtiReFY25s+f23VlmoZ6pnQHEcJoADgtqNLzJ6WKr4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=P+DqKM9a8SEUp31xl2Xh2jzK5DsuQPqBLNlV43I/5Y55UhWJGXnHuMuch8URTa+Oz
-	 XGo41qb/zCcoOO4OJI/ulnwQ9kha3thbDcSaDDjr1EdYkDL7K/mX4Frog7e2kOnNfn
-	 B9X11FctxaIlScEnPkRGGbOTZABjTWFvWxzBkyGQ=
+	by mail.kernel.org (Postfix) with ESMTP id CECB820787
+	for <linux-leds@archiver.kernel.org>; Mon, 25 May 2020 10:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbgERWgr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 18 May 2020 18:36:47 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:45702 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728223AbgERWgq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 18 May 2020 18:36:46 -0400
-Received: by mail-il1-f196.google.com with SMTP id b15so11512543ilq.12;
-        Mon, 18 May 2020 15:36:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lDHijTmy+IOAetUHiwAUcflxm9U9CcYAXapEIE7xXd0=;
-        b=FiAChHXI8kgtqgLRlbKTwvm76orL+nMD3DVsrRxRrDuzJE1ab37cNL03CBzd60wdWT
-         zK/YC8Uao8Os/rLk/VvYa+82T+OkTIc6l94yOxWpAsg10UQ6AS9jZ0wOI1/Id01Tl3jb
-         7LGYXSO7kkf/+UTP6EaYc1uLZXiHc+esG3D7Q0CCF+pWPnaCB0u7+3aiJ518i1uouLAJ
-         2uNs9TnLDqIBMGXCe6+dGASS7NiHnmQeVF3TP+X/KtNFjzVOdRYSK8phs/L7r5sElWl0
-         /e6jmii3Xnk4xL0I7NhuSG1t/pUeeOLv+ILLvZNVDteWKkVOnQb9/4X9LqkgQ5diQuMx
-         hpeA==
-X-Gm-Message-State: AOAM532UONrv4unyCjvh59l1fn5qWmidUFwHVFPCyR1kxj1CJMYGbrQR
-        goMz33fjSzI2qKnhw0rc/w==
-X-Google-Smtp-Source: ABdhPJyfB//q3n3N5C4f18+VIRekJCumkD01M8aTVQWfd0ekd3pS2p2Qu/LenJQcXvB2ZvLMqPEexw==
-X-Received: by 2002:a92:afcd:: with SMTP id v74mr18237211ill.305.1589841404926;
-        Mon, 18 May 2020 15:36:44 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id c26sm4336676iod.16.2020.05.18.15.36.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2020 15:36:44 -0700 (PDT)
-Received: (nullmailer pid 4555 invoked by uid 1000);
-        Mon, 18 May 2020 22:36:41 -0000
-Date:   Mon, 18 May 2020 16:36:41 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     nikitos.tr@gmail.com
-Cc:     dmurphy@ti.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, pavel@ucw.cz,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v2 2/3] dt-bindings: leds: Add binding for aw2013
-Message-ID: <20200518223641.GA4338@bogus>
-References: <20200511111128.16210-1-nikitos.tr@gmail.com>
- <20200511111128.16210-2-nikitos.tr@gmail.com>
+        id S2389522AbgEYKts (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 25 May 2020 06:49:48 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:40716 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389484AbgEYKts (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 25 May 2020 06:49:48 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 84E591C0256; Mon, 25 May 2020 12:49:46 +0200 (CEST)
+Date:   Mon, 25 May 2020 12:49:45 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Hongbo Yao <yaohongbo@huawei.com>
+Cc:     jansimon.moeller@gmx.de, jacek.anaszewski@gmail.com,
+        chenzhou10@huawei.com, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH -next] leds: blinkm: remove set but not used variable
+Message-ID: <20200525104945.GA27989@amd>
+References: <20200509142357.33702-1-yaohongbo@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
 Content-Disposition: inline
-In-Reply-To: <20200511111128.16210-2-nikitos.tr@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200509142357.33702-1-yaohongbo@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, 11 May 2020 16:11:27 +0500,  wrote:
-> From: Nikita Travkin <nikitos.tr@gmail.com>
-> 
-> Add YAML devicetree binding for AWINIC AW2013 3-channel led driver
-> 
-> Signed-off-by: Nikita Travkin <nikitos.tr@gmail.com>
-> ---
->  .../devicetree/bindings/leds/leds-aw2013.yaml | 91 +++++++++++++++++++
->  1 file changed, 91 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-aw2013.yaml
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat 2020-05-09 22:23:57, Hongbo Yao wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> drivers/leds/leds-blinkm.c:483:6: warning: variable =E2=80=98ret=E2=80=99=
+ set
+> but not used [-Wunused-but-set-variable]
+>   int ret;
+
+Should error be propagated?
+								Pavel
+							=09
+
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
+> ---
+>  drivers/leds/leds-blinkm.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
+> index e11fe1788242..a493ee0e0fc7 100644
+> --- a/drivers/leds/leds-blinkm.c
+> +++ b/drivers/leds/leds-blinkm.c
+> @@ -480,9 +480,8 @@ static int blinkm_led_blue_set(struct led_classdev *l=
+ed_cdev,
+> =20
+>  static void blinkm_init_hw(struct i2c_client *client)
+>  {
+> -	int ret;
+> -	ret =3D blinkm_transfer_hw(client, BLM_STOP_SCRIPT);
+> -	ret =3D blinkm_transfer_hw(client, BLM_GO_RGB);
+> +	blinkm_transfer_hw(client, BLM_STOP_SCRIPT);
+> +	blinkm_transfer_hw(client, BLM_GO_RGB);
+>  }
+> =20
+>  static int blinkm_test_run(struct i2c_client *client)
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl7LoskACgkQMOfwapXb+vKRLQCfTW75g1n1akDEJ892GY+dT3fo
+Ei4AoIFaJwilTcqvq6wj9im5fmu4flXX
+=FG0N
+-----END PGP SIGNATURE-----
+
+--azLHFNyN32YCQGCU--
