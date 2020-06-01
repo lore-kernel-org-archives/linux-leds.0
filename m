@@ -2,129 +2,90 @@ Return-Path: <SRS0=+B2z=7O=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DE6C433DF
-	for <linux-leds@archiver.kernel.org>; Mon,  1 Jun 2020 13:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E22C433E0
+	for <linux-leds@archiver.kernel.org>; Mon,  1 Jun 2020 13:51:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C8932068D
-	for <linux-leds@archiver.kernel.org>; Mon,  1 Jun 2020 13:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591018860;
-	bh=yQYrmcsO3nknpYNlssNmoLkomU0QdxsJPhlWmK17UdE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JXLgIsQURKPSat00HUTFRbzOVpCcaXh+n3f0y2+ioLg4qr0wh17VscgrO9bL6LsWk
-	 tZCvub+pS9VPSXZP4wSYdGbvzFwcL4UFMcX/DdTXX4LzDWF7gQeAvgaf0d3LMcGxGx
-	 yn0LPEUh0fVK2GxkfJI1IUNUGKpASzEKbXETKoLQ=
+	by mail.kernel.org (Postfix) with ESMTP id CCDD12074B
+	for <linux-leds@archiver.kernel.org>; Mon,  1 Jun 2020 13:51:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dD/yk3Kq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbgFANk4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 1 Jun 2020 09:40:56 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41172 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbgFANk1 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 1 Jun 2020 09:40:27 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 9so6713421ljc.8;
-        Mon, 01 Jun 2020 06:40:25 -0700 (PDT)
+        id S1726067AbgFANvN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 1 Jun 2020 09:51:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54308 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbgFANvN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 1 Jun 2020 09:51:13 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 486EBC05BD43;
+        Mon,  1 Jun 2020 06:51:13 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id d10so3530493pgn.4;
+        Mon, 01 Jun 2020 06:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V07abGvLsBx8obB0OPoaIdlm7yOU8GObbMFWPclA3w4=;
+        b=dD/yk3Kqs9wBRoh13WBxCkUhJ3JcJiAPWBhSLPE1naboNb7zvVECBjrObtzyTamB9r
+         VoaBVVOQ0JqonlH0PLXL66j/A9rU2ZeFiUcZeoH54uUrNLrLGeB8cFWMSTYlUUkw70En
+         GyxyMvlhYp+pZMuwuVvJ5ekpbMcwG/vwwCKGR2fV/qQIHKkjFfasrB3qEbPo6VxpG6xF
+         ccok/HTo9acBS19SgYW5vZ3OfSf9IW3EKg97HNxzufjE1qJpscguZ8kbfFr1uZ4VeOXA
+         jlK9qVqZaB/LeTwDyLeDw6dvls3VtTLEATaIf7DqYtP7yHhxLUzoa5Mfqk3wRctqWRjq
+         23qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=p8HfJKXte+/vUD+uOPGuKLv8QTkTUqBjgyWkHyXWfLc=;
-        b=Xdd4cr4pvHjRiM1VbDNRVb67sotqLDE2RIo/cA9HW+y+dOx8kC1V5pyVD4qfBNFrOz
-         eecKxT9XzuQshkUMKNNmwPVf6AJ9xyPLIRFc7YXblPORprsaPag84lc7QBXce2hudA52
-         QouacqOV25Mdseyl2gmgWYNGTg7Anv8O58+cx0nb9YW7+5WNiTJCoPyS5aWmAjvB5xag
-         aOojP28otSxTS5BEuDGC0I3UrxAPcJkH+qNpyQwDkGo/hM0PIlm8u1/bXTAt80/SdDXC
-         P/CO5COX2eWUDSvlG3FK8Lp0xmzZ3jeMaWvzgq9Z0eZosTGQO2AK41XN1k6WyY202nkE
-         4Lmw==
-X-Gm-Message-State: AOAM530A59SUUW585EEa231XKl+al3an+2HtOZa/ivol8AX/vo2all2a
-        1aX6uKGqqUKXEWylFOyEDxM=
-X-Google-Smtp-Source: ABdhPJypzFNCi9I9ZNF5CUH9dJi8WirZXzmy1CKrwunn6Q0sC7/+JBDI6bu7vShJW/hX3Wjsaepw5Q==
-X-Received: by 2002:a2e:b0f9:: with SMTP id h25mr11127603ljl.18.1591018824848;
-        Mon, 01 Jun 2020 06:40:24 -0700 (PDT)
-Received: from xi.terra (c-beaee455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.174.190])
-        by smtp.gmail.com with ESMTPSA id t4sm4818597ljo.36.2020.06.01.06.40.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jun 2020 06:40:23 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.93.0.4)
-        (envelope-from <johan@xi.terra>)
-        id 1jfkfp-0003Ff-1K; Mon, 01 Jun 2020 15:40:17 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc:     Dan Murphy <dmurphy@ti.com>,
-        Amitoj Kaur Chawla <amitoj1606@gmail.com>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>,
-        stable <stable@vger.kernel.org>
-Subject: [PATCH 1/6] leds: 88pm860x: fix use-after-free on unbind
-Date:   Mon,  1 Jun 2020 15:39:45 +0200
-Message-Id: <20200601133950.12420-2-johan@kernel.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200601133950.12420-1-johan@kernel.org>
-References: <20200601133950.12420-1-johan@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V07abGvLsBx8obB0OPoaIdlm7yOU8GObbMFWPclA3w4=;
+        b=QsqFZx6mnIVfr2qjtmW5jZ7U4fQ/aLIBRiREerA/zVHFfdpNvgSBDZ25prvGe5XR8Y
+         DhIaEltxh6CHJAHlglyc71cV0Yfnj7cl3Hto2OaG7iDrI3tDK93f/eQo2caA/fBHuLOi
+         rtUA7NWtHuYV1EE3WjwVAkjCmcfb0/UV9T9DOUcchqYf/6oy/sUZPzBpbhA7zNM74U40
+         trbzVnoUvFp5YQrGSuCbdXGZtJsoTo9PxgW9SuTnb+f5FSAqmylG/4rR4bmW/Ch9bVu1
+         uh0TKeMJ7reZsYpn1lv/RfiF5uhd3rbeC1+rRSUk4nGLNDd63QpiWWJK0O25D5bRCQWF
+         zb0Q==
+X-Gm-Message-State: AOAM532CN3GJCi6sSrUCtjGjiJ59oSGFgxuB7EKHULnCQGb/7s1p0hCU
+        SBQWGpYCWpbE3CtGH+XRfPxqdmjKNEsQwrqp1CXJM5P4zAg=
+X-Google-Smtp-Source: ABdhPJwhhsub9MERbTsMYc3VaYkN6I9l2QjYeJZh0Dzf9d0CRw6M1Bl0HbE5yLMBXPaMIR8EEAe05meTESQVIdsB+D0=
+X-Received: by 2002:a62:148f:: with SMTP id 137mr19895197pfu.130.1591019472784;
+ Mon, 01 Jun 2020 06:51:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200601133950.12420-1-johan@kernel.org>
+In-Reply-To: <20200601133950.12420-1-johan@kernel.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 1 Jun 2020 16:51:01 +0300
+Message-ID: <CAHp75Vc1JN4yOi5jkMkGj=POqbtXmz+N+Yr9yyhgBnSfQ3YAZg@mail.gmail.com>
+Subject: Re: [PATCH 0/6] leds: fix broken devres usage
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Amitoj Kaur Chawla <amitoj1606@gmail.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Several MFD child drivers register their class devices directly under
-the parent device. This means you cannot blindly do devres conversions
-so that deregistration ends up being tied to the parent device,
-something which leads to use-after-free on driver unbind when the class
-device is released while still being registered.
+On Mon, Jun 1, 2020 at 4:42 PM Johan Hovold <johan@kernel.org> wrote:
+>
+> Several MFD child drivers register their class devices directly under
+> the parent device (about half of the MFD LED drivers do so).
+>
+> This means you cannot blindly do devres conversions so that
+> deregistration ends up being tied to the parent device, something which
+> leads to use-after-free on driver unbind when the class device is
+> released while still being registered (and, for example, oopses on later
+> parent MFD driver unbind or LED class callbacks, or resource leaks and
+> name clashes on child driver reload).
 
-Fixes: 375446df95ee ("leds: 88pm860x: Use devm_led_classdev_register")
-Cc: stable <stable@vger.kernel.org>     # 4.6
-Cc: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/leds/leds-88pm860x.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+Shouldn't MFD take reference count for their children?
 
-diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
-index b3044c9a8120..465c3755cf2e 100644
---- a/drivers/leds/leds-88pm860x.c
-+++ b/drivers/leds/leds-88pm860x.c
-@@ -203,21 +203,33 @@ static int pm860x_led_probe(struct platform_device *pdev)
- 	data->cdev.brightness_set_blocking = pm860x_led_set;
- 	mutex_init(&data->lock);
- 
--	ret = devm_led_classdev_register(chip->dev, &data->cdev);
-+	ret = led_classdev_register(chip->dev, &data->cdev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to register LED: %d\n", ret);
- 		return ret;
- 	}
- 	pm860x_led_set(&data->cdev, 0);
-+
-+	platform_set_drvdata(pdev, data);
-+
- 	return 0;
- }
- 
-+static int pm860x_led_remove(struct platform_device *pdev)
-+{
-+	struct pm860x_led *data = platform_get_drvdata(pdev);
-+
-+	led_classdev_unregister(&data->cdev);
-+
-+	return 0;
-+}
- 
- static struct platform_driver pm860x_led_driver = {
- 	.driver	= {
- 		.name	= "88pm860x-led",
- 	},
- 	.probe	= pm860x_led_probe,
-+	.remove	= pm860x_led_remove,
- };
- 
- module_platform_driver(pm860x_led_driver);
 -- 
-2.26.2
-
+With Best Regards,
+Andy Shevchenko
