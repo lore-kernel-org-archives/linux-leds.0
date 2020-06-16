@@ -1,99 +1,62 @@
-Return-Path: <SRS0=VjqT=74=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=58zW=75=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.6 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E81F4C433E0
-	for <linux-leds@archiver.kernel.org>; Mon, 15 Jun 2020 20:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1583C433E0
+	for <linux-leds@archiver.kernel.org>; Tue, 16 Jun 2020 10:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7E1720663
-	for <linux-leds@archiver.kernel.org>; Mon, 15 Jun 2020 20:32:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="v1P4IOim"
+	by mail.kernel.org (Postfix) with ESMTP id BA9FB2078E
+	for <linux-leds@archiver.kernel.org>; Tue, 16 Jun 2020 10:54:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731583AbgFOUb7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 15 Jun 2020 16:31:59 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:53732 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728346AbgFOUbX (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 15 Jun 2020 16:31:23 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 05FKVIrP098992;
-        Mon, 15 Jun 2020 15:31:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1592253078;
-        bh=O7jkcz4ZeSjHhyhXjefbDQx00ANrTeDJE4DwrKvT2cQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=v1P4IOimcJS9ym8uO9nJDeATWPXCLwcEB5NkKzWWrjIJHv8KfPM7TvsgKhQQGasKO
-         aZjDtjf7S9zuRjIqrfDcsTKqTY2d5X6OQHUZ96dm4s7UCFXydzs1krFE1Sfqwq6r03
-         2m5X30U/4NfmeqZa49YRk4soAzXIsHyJK74VHaBc=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05FKVIt5068327;
-        Mon, 15 Jun 2020 15:31:18 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 15
- Jun 2020 15:31:18 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 15 Jun 2020 15:31:18 -0500
-Received: from [10.250.52.63] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05FKVIfr021151;
-        Mon, 15 Jun 2020 15:31:18 -0500
-Subject: Re: [RESEND PATCH v27 00/15] Multicolor Framework v27
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     <jacek.anaszewski@gmail.com>, <robh@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200615201522.19677-1-dmurphy@ti.com>
- <20200615202731.GA18028@duo.ucw.cz>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <55a4f116-30fd-b1b1-3ba3-188e1833c4e4@ti.com>
-Date:   Mon, 15 Jun 2020 15:31:13 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1727966AbgFPKyk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 16 Jun 2020 06:54:40 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:53754 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbgFPKyj (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 16 Jun 2020 06:54:39 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id A00DE1C0BD2; Tue, 16 Jun 2020 12:54:38 +0200 (CEST)
+Date:   Tue, 16 Jun 2020 12:54:29 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, devicetree@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v27 03/15] leds: multicolor: Introduce a multicolor class
+ definition
+Message-ID: <20200616105429.GI1718@bug>
+References: <20200608193917.13084-1-dmurphy@ti.com>
+ <20200608193917.13084-4-dmurphy@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20200615202731.GA18028@duo.ucw.cz>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200608193917.13084-4-dmurphy@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Pavel
+Hi!
 
-On 6/15/20 3:27 PM, Pavel Machek wrote:
-> Hi!
->
->> This is the multi color LED framework.   This framework presents clustered
->> colored LEDs into an array and allows the user space to adjust the brightness
->> of the cluster using a single file write.  The individual colored LEDs
->> intensities are controlled via a single file that is an array of
->> LEDs
-> Please don't do this. Pinging whoever you think is blocking the merge
-> is okay, but resending big series just because people are busy over
-> the merge window is not cool.
+> +static ssize_t multi_intensity_show(struct device *dev,
+> +			      struct device_attribute *intensity_attr,
+> +			      char *buf)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct led_classdev_mc *mcled_cdev = lcdev_to_mccdev(led_cdev);
+> +	int len = 0;
+> +	int i;
+> +
+> +	for (i = 0; i < mcled_cdev->num_colors; i++) {
+> +		len += sprintf(buf + len, "%d",
+> +			       mcled_cdev->subled_info[i].intensity);
+> +		if (i < mcled_cdev->num_colors)
+> +			len += sprintf(buf + len, " ");
 
-Actually that is not the case.  I missed adding Rob H to the series so I 
-resent the patches to add Rob in.
+Always false, AFAICT.
 
-There was no intent to resend because I thought it was blocked.
-
-I know we are in a merge window and thoroughly understand that ppl are busy.
-
-If I thought it was blocked I would have just bumped the first patch.
-
-Dan
-
-
-> Thanks,
->
-> 								Pavel
+									Pavel
