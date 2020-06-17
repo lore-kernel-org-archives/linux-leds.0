@@ -1,62 +1,140 @@
-Return-Path: <SRS0=58zW=75=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=4Etw=76=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1583C433E0
-	for <linux-leds@archiver.kernel.org>; Tue, 16 Jun 2020 10:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05475C433E0
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Jun 2020 15:09:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA9FB2078E
-	for <linux-leds@archiver.kernel.org>; Tue, 16 Jun 2020 10:54:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1A4420707
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Jun 2020 15:09:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yG/UGFgS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbgFPKyk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 16 Jun 2020 06:54:40 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:53754 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbgFPKyj (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 16 Jun 2020 06:54:39 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id A00DE1C0BD2; Tue, 16 Jun 2020 12:54:38 +0200 (CEST)
-Date:   Tue, 16 Jun 2020 12:54:29 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     jacek.anaszewski@gmail.com, devicetree@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v27 03/15] leds: multicolor: Introduce a multicolor class
- definition
-Message-ID: <20200616105429.GI1718@bug>
-References: <20200608193917.13084-1-dmurphy@ti.com>
- <20200608193917.13084-4-dmurphy@ti.com>
+        id S1726909AbgFQPJj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 17 Jun 2020 11:09:39 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:32774 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726879AbgFQPJi (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 17 Jun 2020 11:09:38 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 05HF9VIh116869;
+        Wed, 17 Jun 2020 10:09:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1592406571;
+        bh=Ris2/4w6GDy898Yv1LyxocRRHlnY97ZT12syvx8SG/4=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=yG/UGFgSXbMAc8GnVTd1ztLFNJwB9YdkXeGZmIFvzkR6CHFPcOX3u+oCk/Hx83tWk
+         7Cw6rLo4viz8q2ZNauE/+dywoPDQqjjl+oMepKYP4D/Zp+v4p+oQcHK4ROZR6r8De3
+         vO/m3vH7CSNiqhgYCj5UJw+cJwy4nfkPZ1yLFa/U=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 05HF9VUm088186
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 17 Jun 2020 10:09:31 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 17
+ Jun 2020 10:09:31 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 17 Jun 2020 10:09:31 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05HF9Vjk106931;
+        Wed, 17 Jun 2020 10:09:31 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh@kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v28 01/15] dt: bindings: Add multicolor class dt bindings documention
+Date:   Wed, 17 Jun 2020 10:09:10 -0500
+Message-ID: <20200617150924.12665-2-dmurphy@ti.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200617150924.12665-1-dmurphy@ti.com>
+References: <20200617150924.12665-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200608193917.13084-4-dmurphy@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi!
+Add DT bindings for the LEDs multicolor class framework.
+Add multicolor ID to the color ID list for device tree bindings.
 
-> +static ssize_t multi_intensity_show(struct device *dev,
-> +			      struct device_attribute *intensity_attr,
-> +			      char *buf)
-> +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +	struct led_classdev_mc *mcled_cdev = lcdev_to_mccdev(led_cdev);
-> +	int len = 0;
-> +	int i;
-> +
-> +	for (i = 0; i < mcled_cdev->num_colors; i++) {
-> +		len += sprintf(buf + len, "%d",
-> +			       mcled_cdev->subled_info[i].intensity);
-> +		if (i < mcled_cdev->num_colors)
-> +			len += sprintf(buf + len, " ");
+CC: Rob Herring <robh@kernel.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ .../bindings/leds/leds-class-multicolor.yaml  | 37 +++++++++++++++++++
+ include/dt-bindings/leds/common.h             |  3 +-
+ 2 files changed, 39 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
 
-Always false, AFAICT.
+diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+new file mode 100644
+index 000000000000..b55e1f1308a4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+@@ -0,0 +1,37 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/leds-class-multicolor.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Common properties for the multicolor LED class.
++
++maintainers:
++  - Dan Murphy <dmurphy@ti.com>
++
++description: |
++  Bindings for multi color LEDs show how to describe current outputs of
++  either integrated multi-color LED elements (like RGB, RGBW, RGBWA-UV
++  etc.) or standalone LEDs, to achieve logically grouped multi-color LED
++  modules. This is achieved by adding multi-led nodes layer to the
++  monochrome LED bindings.
++  The nodes and properties defined in this document are unique to the multicolor
++  LED class.  Common LED nodes and properties are inherited from the common.txt
++  within this documentation directory.
++
++patternProperties:
++  "^multi-led@([0-9a-f])$":
++    type: object
++    description: Represents the LEDs that are to be grouped.
++    properties:
++      color:
++        const: 8  # LED_COLOR_ID_MULTI
++        description: |
++          For multicolor LED support this property should be defined as
++          LED_COLOR_ID_MULTI which can be found in include/linux/leds/common.h.
++
++    $ref: "common.yaml#"
++
++    required:
++      - color
++...
+diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
+index 0ce7dfc00dcb..a463ce6a8794 100644
+--- a/include/dt-bindings/leds/common.h
++++ b/include/dt-bindings/leds/common.h
+@@ -30,7 +30,8 @@
+ #define LED_COLOR_ID_VIOLET	5
+ #define LED_COLOR_ID_YELLOW	6
+ #define LED_COLOR_ID_IR		7
+-#define LED_COLOR_ID_MAX	8
++#define LED_COLOR_ID_MULTI	8
++#define LED_COLOR_ID_MAX	9
+ 
+ /* Standard LED functions */
+ /* Keyboard LEDs, usually it would be input4::capslock etc. */
+-- 
+2.26.2
 
-									Pavel
