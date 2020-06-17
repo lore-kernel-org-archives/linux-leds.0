@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9677CC433DF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2276C433E2
 	for <linux-leds@archiver.kernel.org>; Wed, 17 Jun 2020 15:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 771E720734
+	by mail.kernel.org (Postfix) with ESMTP id B25FC20888
 	for <linux-leds@archiver.kernel.org>; Wed, 17 Jun 2020 15:11:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Mjuj0dqF"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ex5204sp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbgFQPKe (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 17 Jun 2020 11:10:34 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:32896 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727121AbgFQPKc (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 17 Jun 2020 11:10:32 -0400
+        id S1727075AbgFQPK0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 17 Jun 2020 11:10:26 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:40546 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727084AbgFQPKW (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 17 Jun 2020 11:10:22 -0400
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 05HFATQ5117079;
-        Wed, 17 Jun 2020 10:10:29 -0500
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 05HFAIqq005085;
+        Wed, 17 Jun 2020 10:10:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1592406629;
-        bh=+LYKN1Pq2F/LuV9iJvrrRWifuR4y4GQ5OVW8WFHqYck=;
+        s=ti-com-17Q1; t=1592406618;
+        bh=wCZ4MMAr4l2mgIibN19UwQ6B7f7fRNfZT+ZnfSiiaXc=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Mjuj0dqFIBqtUp92BS3SjGGdaO2dJfiE0413B+rz3zXaST7hJaaN0jPDV6hB28ipd
-         2f/YmXUUAd+plQvUh9UMHTPNyvPYa6IOo45RatBpQ/cc2iMUMI/jkRM6lTdLoldU/5
-         H75CL6C8nP2codtVew8FsX/ABwQdjDo/94uMSXwU=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05HFATOj112797;
-        Wed, 17 Jun 2020 10:10:29 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+        b=ex5204sp7pZR/YnMykl3+Dmnu5SBiZ+wmLCQ+Ab1xT8WMukZLUVkXtPlwoJu389Nm
+         Z8lckU7ugUpxHYFQavpm9m4cBdQ726P3FgTflUN/kM+F8epkRC7qJJNx+hz2b883e8
+         RkXaroxN4Ip4XibB5KLPSanToS7WN04T7Kvk0l0o=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05HFAIPa112661;
+        Wed, 17 Jun 2020 10:10:18 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 17
- Jun 2020 10:10:28 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2020 10:10:18 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Wed, 17 Jun 2020 10:10:28 -0500
+ Frontend Transport; Wed, 17 Jun 2020 10:10:18 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05HFASCi042118;
-        Wed, 17 Jun 2020 10:10:28 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05HFAIF1013986;
+        Wed, 17 Jun 2020 10:10:18 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh@kernel.org>
 CC:     <devicetree@vger.kernel.org>, <linux-leds@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v28 12/15] leds: lp5523: Update the lp5523 code to add multicolor brightness function
-Date:   Wed, 17 Jun 2020 10:09:21 -0500
-Message-ID: <20200617150924.12665-13-dmurphy@ti.com>
+Subject: [PATCH v28 10/15] leds: lp55xx: Convert LED class registration to devm_*
+Date:   Wed, 17 Jun 2020 10:09:19 -0500
+Message-ID: <20200617150924.12665-11-dmurphy@ti.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200617150924.12665-1-dmurphy@ti.com>
 References: <20200617150924.12665-1-dmurphy@ti.com>
@@ -64,68 +64,211 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add the multicolor brightness call back to support the multicolor
-framework.  This call back allows setting  brightness on grouped channels
-in a single function.
+Convert the LED class registration calls to the LED devm_*
+registration calls.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
 Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/Kconfig       |  1 +
- drivers/leds/leds-lp5523.c | 20 ++++++++++++++++++++
- 2 files changed, 21 insertions(+)
+ drivers/leds/leds-lp5521.c        |  9 +++------
+ drivers/leds/leds-lp5523.c        |  9 +++------
+ drivers/leds/leds-lp5562.c        |  9 +++------
+ drivers/leds/leds-lp55xx-common.c | 15 +--------------
+ drivers/leds/leds-lp55xx-common.h |  2 --
+ drivers/leds/leds-lp8501.c        |  9 +++------
+ 6 files changed, 13 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 04e0cb39f92e..44d8b2293436 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -418,6 +418,7 @@ config LEDS_LP5521
- config LEDS_LP5523
- 	tristate "LED Support for TI/National LP5523/55231 LED driver chip"
- 	depends on LEDS_CLASS && I2C
-+	depends on LEDS_CLASS_MULTI_COLOR || !LEDS_CLASS_MULTI_COLOR
- 	select LEDS_LP55XX_COMMON
- 	help
- 	  If you say yes here you get support for TI/National Semiconductor
+diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+index 6f0272249dc8..6d2163c0f625 100644
+--- a/drivers/leds/leds-lp5521.c
++++ b/drivers/leds/leds-lp5521.c
+@@ -541,19 +541,17 @@ static int lp5521_probe(struct i2c_client *client,
+ 
+ 	ret = lp55xx_register_leds(led, chip);
+ 	if (ret)
+-		goto err_register_leds;
++		goto err_out;
+ 
+ 	ret = lp55xx_register_sysfs(chip);
+ 	if (ret) {
+ 		dev_err(&client->dev, "registering sysfs failed\n");
+-		goto err_register_sysfs;
++		goto err_out;
+ 	}
+ 
+ 	return 0;
+ 
+-err_register_sysfs:
+-	lp55xx_unregister_leds(led, chip);
+-err_register_leds:
++err_out:
+ 	lp55xx_deinit_device(chip);
+ err_init:
+ 	return ret;
+@@ -566,7 +564,6 @@ static int lp5521_remove(struct i2c_client *client)
+ 
+ 	lp5521_stop_all_engines(chip);
+ 	lp55xx_unregister_sysfs(chip);
+-	lp55xx_unregister_leds(led, chip);
+ 	lp55xx_deinit_device(chip);
+ 
+ 	return 0;
 diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index b076c16df9ab..9776dc72a764 100644
+index d0b931a136b9..15e7051392f5 100644
 --- a/drivers/leds/leds-lp5523.c
 +++ b/drivers/leds/leds-lp5523.c
-@@ -791,6 +791,25 @@ static ssize_t store_master_fader_leds(struct device *dev,
+@@ -908,19 +908,17 @@ static int lp5523_probe(struct i2c_client *client,
+ 
+ 	ret = lp55xx_register_leds(led, chip);
+ 	if (ret)
+-		goto err_register_leds;
++		goto err_out;
+ 
+ 	ret = lp55xx_register_sysfs(chip);
+ 	if (ret) {
+ 		dev_err(&client->dev, "registering sysfs failed\n");
+-		goto err_register_sysfs;
++		goto err_out;
+ 	}
+ 
+ 	return 0;
+ 
+-err_register_sysfs:
+-	lp55xx_unregister_leds(led, chip);
+-err_register_leds:
++err_out:
+ 	lp55xx_deinit_device(chip);
+ err_init:
+ 	return ret;
+@@ -933,7 +931,6 @@ static int lp5523_remove(struct i2c_client *client)
+ 
+ 	lp5523_stop_all_engines(chip);
+ 	lp55xx_unregister_sysfs(chip);
+-	lp55xx_unregister_leds(led, chip);
+ 	lp55xx_deinit_device(chip);
+ 
+ 	return 0;
+diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
+index edb57c42e8b1..1c94422408b0 100644
+--- a/drivers/leds/leds-lp5562.c
++++ b/drivers/leds/leds-lp5562.c
+@@ -554,19 +554,17 @@ static int lp5562_probe(struct i2c_client *client,
+ 
+ 	ret = lp55xx_register_leds(led, chip);
+ 	if (ret)
+-		goto err_register_leds;
++		goto err_out;
+ 
+ 	ret = lp55xx_register_sysfs(chip);
+ 	if (ret) {
+ 		dev_err(&client->dev, "registering sysfs failed\n");
+-		goto err_register_sysfs;
++		goto err_out;
+ 	}
+ 
+ 	return 0;
+ 
+-err_register_sysfs:
+-	lp55xx_unregister_leds(led, chip);
+-err_register_leds:
++err_out:
+ 	lp55xx_deinit_device(chip);
+ err_init:
+ 	return ret;
+@@ -580,7 +578,6 @@ static int lp5562_remove(struct i2c_client *client)
+ 	lp5562_stop_engine(chip);
+ 
+ 	lp55xx_unregister_sysfs(chip);
+-	lp55xx_unregister_leds(led, chip);
+ 	lp55xx_deinit_device(chip);
+ 
+ 	return 0;
+diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+index 44ced02b49f9..882ef39e4965 100644
+--- a/drivers/leds/leds-lp55xx-common.c
++++ b/drivers/leds/leds-lp55xx-common.c
+@@ -181,7 +181,7 @@ static int lp55xx_init_led(struct lp55xx_led *led,
+ 		led->cdev.name = name;
+ 	}
+ 
+-	ret = led_classdev_register(dev, &led->cdev);
++	ret = devm_led_classdev_register(dev, &led->cdev);
+ 	if (ret) {
+ 		dev_err(dev, "led register err: %d\n", ret);
+ 		return ret;
+@@ -490,23 +490,10 @@ int lp55xx_register_leds(struct lp55xx_led *led, struct lp55xx_chip *chip)
+ 	return 0;
+ 
+ err_init_led:
+-	lp55xx_unregister_leds(led, chip);
  	return ret;
  }
+ EXPORT_SYMBOL_GPL(lp55xx_register_leds);
  
-+static int lp5523_multicolor_brightness(struct lp55xx_led *led)
-+{
-+	struct lp55xx_chip *chip = led->chip;
-+	int ret;
-+	int i;
-+
-+	mutex_lock(&chip->lock);
-+	for (i = 0; i < led->mc_cdev.num_colors; i++) {
-+		ret = lp55xx_write(chip,
-+				   LP5523_REG_LED_PWM_BASE +
-+				   led->mc_cdev.subled_info[i].channel,
-+				   led->mc_cdev.subled_info[i].brightness);
-+		if (ret)
-+			break;
-+	}
-+	mutex_unlock(&chip->lock);
-+	return ret;
-+}
-+
- static int lp5523_led_brightness(struct lp55xx_led *led)
+-void lp55xx_unregister_leds(struct lp55xx_led *led, struct lp55xx_chip *chip)
+-{
+-	int i;
+-	struct lp55xx_led *each;
+-
+-	for (i = 0; i < chip->num_leds; i++) {
+-		each = led + i;
+-		led_classdev_unregister(&each->cdev);
+-	}
+-}
+-EXPORT_SYMBOL_GPL(lp55xx_unregister_leds);
+-
+ int lp55xx_register_sysfs(struct lp55xx_chip *chip)
  {
- 	struct lp55xx_chip *chip = led->chip;
-@@ -857,6 +876,7 @@ static struct lp55xx_device_config lp5523_cfg = {
- 	.max_channel  = LP5523_MAX_LEDS,
- 	.post_init_device   = lp5523_post_init_device,
- 	.brightness_fn      = lp5523_led_brightness,
-+	.multicolor_brightness_fn = lp5523_multicolor_brightness,
- 	.set_led_current    = lp5523_set_led_current,
- 	.firmware_cb        = lp5523_firmware_loaded,
- 	.run_engine         = lp5523_run_engine,
+ 	struct device *dev = &chip->cl->dev;
+diff --git a/drivers/leds/leds-lp55xx-common.h b/drivers/leds/leds-lp55xx-common.h
+index 783ed5103ce5..b9b1041e8143 100644
+--- a/drivers/leds/leds-lp55xx-common.h
++++ b/drivers/leds/leds-lp55xx-common.h
+@@ -189,8 +189,6 @@ extern void lp55xx_deinit_device(struct lp55xx_chip *chip);
+ /* common LED class device functions */
+ extern int lp55xx_register_leds(struct lp55xx_led *led,
+ 				struct lp55xx_chip *chip);
+-extern void lp55xx_unregister_leds(struct lp55xx_led *led,
+-				struct lp55xx_chip *chip);
+ 
+ /* common device attributes functions */
+ extern int lp55xx_register_sysfs(struct lp55xx_chip *chip);
+diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
+index 2638dbf0e8ac..a58019cdb8c3 100644
+--- a/drivers/leds/leds-lp8501.c
++++ b/drivers/leds/leds-lp8501.c
+@@ -344,19 +344,17 @@ static int lp8501_probe(struct i2c_client *client,
+ 
+ 	ret = lp55xx_register_leds(led, chip);
+ 	if (ret)
+-		goto err_register_leds;
++		goto err_out;
+ 
+ 	ret = lp55xx_register_sysfs(chip);
+ 	if (ret) {
+ 		dev_err(&client->dev, "registering sysfs failed\n");
+-		goto err_register_sysfs;
++		goto err_out;
+ 	}
+ 
+ 	return 0;
+ 
+-err_register_sysfs:
+-	lp55xx_unregister_leds(led, chip);
+-err_register_leds:
++err_out:
+ 	lp55xx_deinit_device(chip);
+ err_init:
+ 	return ret;
+@@ -369,7 +367,6 @@ static int lp8501_remove(struct i2c_client *client)
+ 
+ 	lp8501_stop_engine(chip);
+ 	lp55xx_unregister_sysfs(chip);
+-	lp55xx_unregister_leds(led, chip);
+ 	lp55xx_deinit_device(chip);
+ 
+ 	return 0;
 -- 
 2.26.2
 
