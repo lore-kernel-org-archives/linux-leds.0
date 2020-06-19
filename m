@@ -2,164 +2,109 @@ Return-Path: <SRS0=FU52=AA=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6177C433E3
-	for <linux-leds@archiver.kernel.org>; Fri, 19 Jun 2020 21:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F40AC433E0
+	for <linux-leds@archiver.kernel.org>; Fri, 19 Jun 2020 22:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 952382223D
-	for <linux-leds@archiver.kernel.org>; Fri, 19 Jun 2020 21:58:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sV/TnUNG"
+	by mail.kernel.org (Postfix) with ESMTP id 1BBB62225D
+	for <linux-leds@archiver.kernel.org>; Fri, 19 Jun 2020 22:08:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592604521;
+	bh=FPujhuHy8XQ5w+xZmYoRx4eJBUret8iD8/H/jWW313U=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=jqKVBF1NrCSy+CeK+UNk3u6SOQG0TFEPMAJsFwCpu/jz5dQWYrPWxYTB5vkpV0n1+
+	 DtOt4sNxlzoPqEa4EDWys5GRTtEJKn8v10C09r1x+CDFHe80QM1vmIYjq99i3pd4R/
+	 W6kELNpnoJ3JYR2tlV1UlpXRO1zndGNuJeAKrfGU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbgFSV57 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 19 Jun 2020 17:57:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35424 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728308AbgFSV5L (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 19 Jun 2020 17:57:11 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ACAFC06174E
-        for <linux-leds@vger.kernel.org>; Fri, 19 Jun 2020 14:57:11 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id y13so11771185eju.2
-        for <linux-leds@vger.kernel.org>; Fri, 19 Jun 2020 14:57:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=4h+TQ0BUZvdXDrH1AX5kjJUZRkkimnTcgDdIKfXb9w4=;
-        b=sV/TnUNGxTDtCoo3/sVH99jPaBY9IV4J4FGtaw+TrGHgnNVwYoMU1YPQGTY2/Sj0l8
-         3G38ogrSDCpubc4aUmcxQ+NQp+z0uBXSzrutyyLpDL9nNmtfNeEGrDyfK09P2XIVJim9
-         yDNcPoaVS6barwdMP2Okg75hy7hfu3V3kcV5375uqYiEPb1mFBYtfdH0LCMNw6TZMEM1
-         rgM22MmgsWnXO33Es/DfuewstJ3s3Px+vtPjMANjSRT/xtshF5xgodZwsc4TdUCOZT+H
-         /M2IRuCV2UpeZKmhfiPl43J291ZZcTKiJUxNwKdlV/Fp7p5xP4/A4EYdk5gh+uoHXw1B
-         cf+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4h+TQ0BUZvdXDrH1AX5kjJUZRkkimnTcgDdIKfXb9w4=;
-        b=OqC9RBZlozgCYGpPtv9LertEWJaasynf+b6R34L3fIBWyxPgb7KO7K6qtUX2aGsCRa
-         cwhpT7phHkKBT+Cneqs0xWAhMm/f1x88gmFh2oD07k8vEYuIfUElK20yNzgyzWsNMhss
-         UQQdYMXXKYciGYMDzkaWm2IQ3KvU3dF7H5zG0XdOvPnOmsuNHXpKE5JMhNAp4YyfysmX
-         6I2sRvKb+kd+KOPSm2mc/5rXtz3BOk86B8N1IlvzH0WLQNl7LW9Vxk63CRli6crT8IIj
-         wVj9e93u2vQYrboEo+femB4sKpY3vLmHITD6F7d6a6OExFuE3qJBvBLIzoKIwDBGA8HA
-         Hk0w==
-X-Gm-Message-State: AOAM531qH+4o87z/etKOgvqUmXbbp+du5/E5cwph2UHQcN8b1vcMvT2k
-        pYEmcB55IG1Rmd9l97v8XFkMAAWw
-X-Google-Smtp-Source: ABdhPJx2e6Cpn8VtMrIXqkN9hFw3opQMUivnE5MlQE9rBpVsDSDPUdDLHLRlPGxJShI6YesFUyTAhQ==
-X-Received: by 2002:a17:906:f88a:: with SMTP id lg10mr1566331ejb.317.1592603829805;
-        Fri, 19 Jun 2020 14:57:09 -0700 (PDT)
-Received: from ?IPv6:2a01:110f:b59:fd00:98c8:c0f7:fd90:a9ec? ([2a01:110f:b59:fd00:98c8:c0f7:fd90:a9ec])
-        by smtp.gmail.com with ESMTPSA id 64sm5556582eda.85.2020.06.19.14.57.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jun 2020 14:57:09 -0700 (PDT)
-Subject: Re: Leds-gpio discarding the entries in /sys/class/leds : Linux
- 5.4.38
-To:     Vishwanatha Subbanna <vishwa@linux.vnet.ibm.com>, pavel@ucw.cz,
-        dmurphy@ti.com, linux-leds@vger.kernel.org
-References: <D70F5F6A-ECDB-41DE-AA3C-A2A93C9EC702@linux.vnet.ibm.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <124c90ad-e239-d5e8-4c86-be96e7aa7c26@gmail.com>
-Date:   Fri, 19 Jun 2020 23:57:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        id S1728977AbgFSWIk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 19 Jun 2020 18:08:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38976 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728906AbgFSWIk (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 19 Jun 2020 18:08:40 -0400
+Received: from embeddedor (unknown [189.207.59.248])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A222622254;
+        Fri, 19 Jun 2020 22:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592604520;
+        bh=FPujhuHy8XQ5w+xZmYoRx4eJBUret8iD8/H/jWW313U=;
+        h=Date:From:To:Cc:Subject:From;
+        b=0Ryv3eBhGBUzUiiK8HHrpWqnIbHamBIdJ9W8VYJABtLrT7GSebtO0uDCxWsLzEBrg
+         TOLyJHQt0PqnLJL2RcNY53JcAZ+ckZ7XHoxl0oX1ETb8fyHNwiGFh5iXMNzQO6C249
+         VNrs3JAzHYvSa8PFn/mq7Gr61vNdmpuh9cEUlEbE=
+Date:   Fri, 19 Jun 2020 17:14:03 -0500
+From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] leds: gpio: Use struct_size() in devm_kzalloc()
+Message-ID: <20200619221403.GA12097@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <D70F5F6A-ECDB-41DE-AA3C-A2A93C9EC702@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Vishwanatha,
+Make use of the struct_size() helper instead of an open-coded version
+in order to avoid any potential type mistakes. Also, remove unnecessary
+function sizeof_gpio_leds_priv().
 
-Please refer to Documentation/devicetree/bindings/leds/leds-pca955x.txt.
+This code was detected with the help of Coccinelle and, audited and
+fixed manually.
 
-At first glance I don't get why you have gpio-leds node, which is for
-leds-gpio driver.
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ drivers/leds/leds-gpio.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-On 6/19/20 3:34 PM, Vishwanatha Subbanna wrote:
-> Hello,
-> 
-> I am Vishwanath, working with IBM and looking for your help on one of the issues that I am running into. Would really appreciate help on this. I run Linux 5.4.38
-> 
-> I have 2 number of PCA9552 chips, one on the Planar and other on the card that is optionally pluggable. The optional card must be plugged prior to booting and is not hot pluggable. In my experiment, I am running *without* the optional card plugged in.
-> 
-> In the device tree, I have a "leds {" section that looks like below for the PCA9552 that is on the planar and everything works fine and I can see /sys/class/leds/fan0
-> 
->   leds {
->          compatible = "gpio-leds”;
-> 
->          fan0 {
->              retain-state-shutdown;
->              default-state = "keep";
->              gpios = <&pca0 0 GPIO_ACTIVE_LOW>;
->          };
-> };
-> 
-> &i2c7 {
->      status = "okay”;
-> 
->      pca0: pca9552@61 {
->         compatible = "nxp,pca9552";
->          reg = <0x61>;
->          #address-cells = <1>;
->          #size-cells = <0>;
-> 
->          gpio-controller;
->          #gpio-cells = <2>;
-> 
->          gpio@0 {
->              reg = <0>;
->              type = <PCA955X_TYPE_GPIO>;
->       	};
->      };
-> };
-> 
-> Similarly, if I update the device tree entry for PCA9552 for the card that is optionally pluggable, then I don’t see any leds entries in /sys/class/leds.
-
-Please share your DT node after the update.
-
-> I don’t even see “fan0” that is on the PCA9552 on planar also. I was expecting that I should see “/sys/class/leds/fan0”.
-> 
-> However, I could see all the entries in “/proc/device-tree/leds”.
-> 
-> Data from the failure.
-> 
-> [    7.895757] leds-pca955x 7-0061: leds-pca955x: Using pca9552 16-bit LED driver at slave address 0x61
-> [    7.907659] leds-pca955x 7-0061: gpios 168...183
-> [    7.913012] leds-pca955x 13-0060: leds-pca955x: Using pca9552 16-bit LED driver at slave address 0x60
-> [    7.923486] leds-pca955x 13-0060: pca955x_write_pwm: reg 0x0, val 0x80, err -6
-> [    7.931695] leds-pca955x 14-0060: leds-pca955x: Using pca9552 16-bit LED driver at slave address 0x60
-> [    7.942138] leds-pca955x 14-0060: pca955x_write_pwm: reg 0x0, val 0x80, err -6
-> [    7.950320] leds-pca955x 15-0060: leds-pca955x: Using pca9552 16-bit LED driver at slave address 0x60
-> 
-> root@bmc:/sys/class/gpio/# ls -l
-> lrwxrwxrwx    1 root     root             0 Jan  1  1970 gpiochip168 -> ../../devices/platform/ahb/ahb:apb/ahb:apb:bus@1e78a000/1e78a400.i2c-bus/i2c-7/7-0061/gpio/gpiochip168
-> 
-> root@bmc:/sys/class/gpio/gpiochip168/device# ls -l
-> lrwxrwxrwx    1 root     root             0 Jun  3 22:03 driver -> ../../../../../../../../bus/i2c/drivers/leds-pca955x
-> drwxr-xr-x    3 root     root             0 Jan  1  1970 gpio
-> drwxr-xr-x    3 root     root             0 Jan  1  1970 gpiochip3
-> -r--r--r--    1 root     root          4096 Jun  3 22:03 modalias
-> -r--r--r--    1 root     root          4096 Jan  1  1970 name
-> lrwxrwxrwx    1 root     root             0 Jun  3 22:03 of_node -> ../../../../../../../../firmware/devicetree/base/ahb/apb/bus@1e78a000/i2c-bus@400/pca9552@61
-> drwxr-xr-x    2 root     root             0 Jun  3 22:03 power
-> lrwxrwxrwx    1 root     root             0 Jan  1  1970 subsystem -> ../../../../../../../../bus/i2c
-> -rw-r--r--    1 root     root          4096 Jan  1  1970 uevent
-> root@bmc:/sys/class/gpio/gpiochip168/device# ls -l gpio
-> 
-> Thank you,
-> !! Vishwa !!
-> 
-
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 2bf74595610f..30ae453f32f7 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -125,12 +125,6 @@ struct gpio_leds_priv {
+ 	struct gpio_led_data leds[];
+ };
+ 
+-static inline int sizeof_gpio_leds_priv(int num_leds)
+-{
+-	return sizeof(struct gpio_leds_priv) +
+-		(sizeof(struct gpio_led_data) * num_leds);
+-}
+-
+ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -142,7 +136,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 	if (!count)
+ 		return ERR_PTR(-ENODEV);
+ 
+-	priv = devm_kzalloc(dev, sizeof_gpio_leds_priv(count), GFP_KERNEL);
++	priv = devm_kzalloc(dev, struct_size(priv, leds, count), GFP_KERNEL);
+ 	if (!priv)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -260,9 +254,8 @@ static int gpio_led_probe(struct platform_device *pdev)
+ 	int i, ret = 0;
+ 
+ 	if (pdata && pdata->num_leds) {
+-		priv = devm_kzalloc(&pdev->dev,
+-				sizeof_gpio_leds_priv(pdata->num_leds),
+-					GFP_KERNEL);
++		priv = devm_kzalloc(&pdev->dev, struct_size(priv, leds, pdata->num_leds),
++				    GFP_KERNEL);
+ 		if (!priv)
+ 			return -ENOMEM;
+ 
 -- 
-Best regards,
-Jacek Anaszewski
+2.27.0
+
