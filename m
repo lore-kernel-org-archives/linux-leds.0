@@ -5,55 +5,55 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61591C433E0
-	for <linux-leds@archiver.kernel.org>; Mon, 22 Jun 2020 19:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47952C433DF
+	for <linux-leds@archiver.kernel.org>; Mon, 22 Jun 2020 19:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 404E620706
-	for <linux-leds@archiver.kernel.org>; Mon, 22 Jun 2020 19:00:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27F4D20706
+	for <linux-leds@archiver.kernel.org>; Mon, 22 Jun 2020 19:00:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qyg3tID1"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pnZoUWZn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730453AbgFVS7r (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 22 Jun 2020 14:59:47 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:53998 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730439AbgFVS7r (ORCPT
+        id S1730110AbgFVTAS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 22 Jun 2020 15:00:18 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:51948 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730441AbgFVS7r (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Mon, 22 Jun 2020 14:59:47 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 05MIxWCa102688;
-        Mon, 22 Jun 2020 13:59:32 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 05MIxMLn067290;
+        Mon, 22 Jun 2020 13:59:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1592852372;
-        bh=4Fus+1STo6fJcdmND8htjDFw0u7LkR/zKPWh9+ob2Js=;
+        s=ti-com-17Q1; t=1592852362;
+        bh=Ris2/4w6GDy898Yv1LyxocRRHlnY97ZT12syvx8SG/4=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=qyg3tID1vrJyNSQsdOx4SLEYJiWxEaKzFXGiYYAaUVOdbogChUdwYEkuueZ5rxEpj
-         G73bxoNwoynr6vZ7mQi0HVmEPJaXltuJy09Gzj5rF1qUk2kxtpEiFURoDXTxsbXgOh
-         rcYL2WQ+rfsAgb2hhXfRDaNAJAEddkru+evl57r8=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 05MIxW7D038101
+        b=pnZoUWZn5zfsRjk+RjCes0S8QwR5u9cnhyApug+LhgdtJQ2j3nDRDoaOQjK2+Os9D
+         FK+zFvA4s9Sh1Bf6E2v1mrYQOAxheSGdPHGHt/RxKc/XsoEn4wk8JTqdAbRJgc5eke
+         9wAm71iaPZn4O6ALIuVU9i/HbeDRD3HoBgH6CSkM=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 05MIxMeR029763
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 22 Jun 2020 13:59:32 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 22 Jun 2020 13:59:22 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 22
- Jun 2020 13:59:32 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2020 13:59:22 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 22 Jun 2020 13:59:32 -0500
+ Frontend Transport; Mon, 22 Jun 2020 13:59:22 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05MIxWM0113512;
-        Mon, 22 Jun 2020 13:59:32 -0500
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05MIxL1Z113354;
+        Mon, 22 Jun 2020 13:59:22 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh@kernel.org>
 CC:     <devicetree@vger.kernel.org>, <linux-leds@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v29 16/16] leds: lp5523: Fix various formatting issues in the code
-Date:   Mon, 22 Jun 2020 13:59:19 -0500
-Message-ID: <20200622185919.2131-17-dmurphy@ti.com>
+Subject: [PATCH v29 01/16] dt: bindings: Add multicolor class dt bindings documention
+Date:   Mon, 22 Jun 2020 13:59:04 -0500
+Message-ID: <20200622185919.2131-2-dmurphy@ti.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200622185919.2131-1-dmurphy@ti.com>
 References: <20200622185919.2131-1-dmurphy@ti.com>
@@ -66,67 +66,76 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Fix checkpatch errors and warnings for the LP5523.c device
-driver.
+Add DT bindings for the LEDs multicolor class framework.
+Add multicolor ID to the color ID list for device tree bindings.
 
+CC: Rob Herring <robh@kernel.org>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-lp5523.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ .../bindings/leds/leds-class-multicolor.yaml  | 37 +++++++++++++++++++
+ include/dt-bindings/leds/common.h             |  3 +-
+ 2 files changed, 39 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index 9776dc72a764..f55d97258d5e 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -23,13 +23,13 @@
- 
- #define LP5523_PROGRAM_LENGTH		32	/* bytes */
- /* Memory is used like this:
--   0x00 engine 1 program
--   0x10 engine 2 program
--   0x20 engine 3 program
--   0x30 engine 1 muxing info
--   0x40 engine 2 muxing info
--   0x50 engine 3 muxing info
--*/
-+ * 0x00 engine 1 program
-+ * 0x10 engine 2 program
-+ * 0x20 engine 3 program
-+ * 0x30 engine 1 muxing info
-+ * 0x40 engine 2 muxing info
-+ * 0x50 engine 3 muxing info
-+ */
- #define LP5523_MAX_LEDS			9
- 
- /* Registers */
-@@ -326,7 +326,7 @@ static int lp5523_update_program_memory(struct lp55xx_chip *chip,
- 					const u8 *data, size_t size)
- {
- 	u8 pattern[LP5523_PROGRAM_LENGTH] = {0};
--	unsigned cmd;
-+	unsigned int cmd;
- 	char c[3];
- 	int nrchars;
- 	int ret;
-@@ -468,6 +468,7 @@ static int lp5523_mux_parse(const char *buf, u16 *mux, size_t len)
- static void lp5523_mux_to_array(u16 led_mux, char *array)
- {
- 	int i, pos = 0;
+diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+new file mode 100644
+index 000000000000..b55e1f1308a4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+@@ -0,0 +1,37 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/leds-class-multicolor.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 	for (i = 0; i < LP5523_MAX_LEDS; i++)
- 		pos += sprintf(array + pos, "%x", LED_ACTIVE(led_mux, i));
++title: Common properties for the multicolor LED class.
++
++maintainers:
++  - Dan Murphy <dmurphy@ti.com>
++
++description: |
++  Bindings for multi color LEDs show how to describe current outputs of
++  either integrated multi-color LED elements (like RGB, RGBW, RGBWA-UV
++  etc.) or standalone LEDs, to achieve logically grouped multi-color LED
++  modules. This is achieved by adding multi-led nodes layer to the
++  monochrome LED bindings.
++  The nodes and properties defined in this document are unique to the multicolor
++  LED class.  Common LED nodes and properties are inherited from the common.txt
++  within this documentation directory.
++
++patternProperties:
++  "^multi-led@([0-9a-f])$":
++    type: object
++    description: Represents the LEDs that are to be grouped.
++    properties:
++      color:
++        const: 8  # LED_COLOR_ID_MULTI
++        description: |
++          For multicolor LED support this property should be defined as
++          LED_COLOR_ID_MULTI which can be found in include/linux/leds/common.h.
++
++    $ref: "common.yaml#"
++
++    required:
++      - color
++...
+diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
+index 0ce7dfc00dcb..a463ce6a8794 100644
+--- a/include/dt-bindings/leds/common.h
++++ b/include/dt-bindings/leds/common.h
+@@ -30,7 +30,8 @@
+ #define LED_COLOR_ID_VIOLET	5
+ #define LED_COLOR_ID_YELLOW	6
+ #define LED_COLOR_ID_IR		7
+-#define LED_COLOR_ID_MAX	8
++#define LED_COLOR_ID_MULTI	8
++#define LED_COLOR_ID_MAX	9
  
-@@ -506,7 +507,7 @@ static int lp5523_load_mux(struct lp55xx_chip *chip, u16 mux, int nr)
- 	if (ret)
- 		return ret;
- 
--	ret = lp55xx_write(chip, LP5523_REG_PROG_MEM , (u8)(mux >> 8));
-+	ret = lp55xx_write(chip, LP5523_REG_PROG_MEM, (u8)(mux >> 8));
- 	if (ret)
- 		return ret;
- 
+ /* Standard LED functions */
+ /* Keyboard LEDs, usually it would be input4::capslock etc. */
 -- 
 2.26.2
 
