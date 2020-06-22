@@ -2,314 +2,264 @@ Return-Path: <SRS0=Twuc=AD=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD03EC433E0
-	for <linux-leds@archiver.kernel.org>; Mon, 22 Jun 2020 13:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB3DC433E0
+	for <linux-leds@archiver.kernel.org>; Mon, 22 Jun 2020 18:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B66882074D
-	for <linux-leds@archiver.kernel.org>; Mon, 22 Jun 2020 13:05:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R0bdvpht"
+	by mail.kernel.org (Postfix) with ESMTP id 20B0320656
+	for <linux-leds@archiver.kernel.org>; Mon, 22 Jun 2020 18:15:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbgFVNFJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 22 Jun 2020 09:05:09 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:38786 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728285AbgFVNFI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 22 Jun 2020 09:05:08 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 05MD4vbJ005545;
-        Mon, 22 Jun 2020 08:04:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1592831097;
-        bh=ojvHzEP+W5weiD3U8iXTrn7Sr/JD83klf87VZ0T55f8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=R0bdvphtcdg30tsnx/cm2ynCQbxTKNdEkcZAbLdi+GKpLmARJ2cTAukoGTbJyowRD
-         nph1jbpU1fhg3tXShMU5sDGfG063Au+S1QM1WcWNZo5+AaWGjXJAy6bmKQDD9wJAJa
-         gaWEvIN6Jl3Nsn++UkxEAwUOGxcUYGdjWpfFn/hI=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05MD4vcb101869;
-        Mon, 22 Jun 2020 08:04:57 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 22
- Jun 2020 08:04:57 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 22 Jun 2020 08:04:57 -0500
-Received: from [10.250.52.63] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 05MD4u5j010333;
-        Mon, 22 Jun 2020 08:04:56 -0500
-Subject: Re: [RESEND PATCH v27 11/15] leds: lp55xx: Add multicolor framework
- support to lp55xx
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-        <robh@kernel.org>
-CC:     <kbuild-all@lists.01.org>, <devicetree@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200615201522.19677-12-dmurphy@ti.com>
- <202006180032.JW0i39C6%lkp@intel.com>
- <0a8a6f57-678d-b1b9-41e5-5e58c15cfe6b@ti.com>
- <58ad7723-131f-6930-00d7-1144c993110c@gmail.com>
- <fc1ae702-0734-973d-9e3c-22b8f8d5c873@ti.com>
- <fc410dfb-70d1-1b8b-3b6d-0de1c6c84ec2@gmail.com>
- <56823113-4875-4813-8627-84b0d1792391@ti.com>
- <bd603f01-2c1b-6167-d88c-3895c1bfdf6c@gmail.com>
- <fad98aa3-cec6-3cde-951f-fa2b57c26d03@gmail.com>
- <04473d1d-5cd8-7d1f-7c5d-8d8b582df464@ti.com>
- <1f5dd2f9-01c7-1f74-9b93-0ae2a6dac915@gmail.com>
- <69c01524-c4a4-55c8-578e-24b26bc863b8@ti.com>
- <52d2c06a-d4ab-b9b2-b1d3-d5f81780cd7f@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <a95610f7-8ab4-fe04-0ecc-f1cf2ba8ff0e@ti.com>
-Date:   Mon, 22 Jun 2020 08:04:51 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <52d2c06a-d4ab-b9b2-b1d3-d5f81780cd7f@gmail.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1730276AbgFVSPo convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 22 Jun 2020 14:15:44 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:29982 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729873AbgFVSPn (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 22 Jun 2020 14:15:43 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05MI8rsX146571;
+        Mon, 22 Jun 2020 14:15:37 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31tyspbu6m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Jun 2020 14:15:37 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05MI9CvL147555;
+        Mon, 22 Jun 2020 14:15:37 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31tyspbu5u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Jun 2020 14:15:37 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05MI11II029154;
+        Mon, 22 Jun 2020 18:15:34 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma03ams.nl.ibm.com with ESMTP id 31sa383sx9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Jun 2020 18:15:34 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05MIFWbn56033530
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Jun 2020 18:15:32 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C553AE053;
+        Mon, 22 Jun 2020 18:15:32 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 05F0FAE058;
+        Mon, 22 Jun 2020 18:15:31 +0000 (GMT)
+Received: from [9.199.56.116] (unknown [9.199.56.116])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 22 Jun 2020 18:15:30 +0000 (GMT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
+Subject: Re: Leds-gpio discarding the entries in /sys/class/leds : Linux
+ 5.4.38
+From:   Vishwanatha Subbanna <vishwa@linux.vnet.ibm.com>
+In-Reply-To: <F6E7B2CD-3871-4C41-A7F0-8A77E824D155@linux.vnet.ibm.com>
+Date:   Mon, 22 Jun 2020 23:43:21 +0530
+Cc:     pavel@ucw.cz, dmurphy@ti.com, linux-leds@vger.kernel.org,
+        Vishwanatha Subbanna <vishwa@linux.vnet.ibm.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <AE5645E7-3EEA-419B-902E-C015AD0122A2@linux.vnet.ibm.com>
+References: <D70F5F6A-ECDB-41DE-AA3C-A2A93C9EC702@linux.vnet.ibm.com>
+ <124c90ad-e239-d5e8-4c86-be96e7aa7c26@gmail.com>
+ <6644A4B6-E6DA-413B-97CA-1E4D199D52CE@linux.vnet.ibm.com>
+ <4b7e95e5-0889-1502-2f0b-796874f90083@gmail.com>
+ <1084104E-3840-4BCE-A58F-8447DFC214FD@linux.vnet.ibm.com>
+ <0391e655-d6ef-b459-0c8c-b65d232006c4@gmail.com>
+ <C3359491-9196-466B-85FD-C85957F342DE@linux.vnet.ibm.com>
+ <346b0a22-12ce-150c-a7a1-fb1d066a4c16@gmail.com>
+ <F6E7B2CD-3871-4C41-A7F0-8A77E824D155@linux.vnet.ibm.com>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-22_10:2020-06-22,2020-06-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 cotscore=-2147483648 impostorscore=0
+ phishscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0 suspectscore=0
+ adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006220121
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Jacek
+Apologies if you already received. I got a mailer Damon error. Resending it
 
-On 6/21/20 3:24 PM, Jacek Anaszewski wrote:
-> Dan,
->
-> On 6/21/20 4:12 PM, Dan Murphy wrote:
->> Jacek
->>
->> On 6/19/20 5:10 PM, Jacek Anaszewski wrote:
->>> Dan,
->>>
->>> On 6/19/20 6:35 PM, Dan Murphy wrote:
->>>> Jacek
->>>>
->>>> On 6/18/20 6:26 PM, Jacek Anaszewski wrote:
->>>>> On 6/19/20 12:09 AM, Jacek Anaszewski wrote:
->>>>>> Dan,
->>>>>>
->>>>>> On 6/18/20 11:44 PM, Dan Murphy wrote:
->>>>>>> Jacek
->>>>>>>
->>>>>>> On 6/18/20 4:21 PM, Jacek Anaszewski wrote:
->>>>>>>> Dan,
->>>>>>>>
->>>>>>>> On 6/18/20 12:33 AM, Dan Murphy wrote:
->>>>>>>>> Jacek
->>>>>>>>>
->>>>>>>>> On 6/17/20 4:41 PM, Jacek Anaszewski wrote:
->>>>>>>>>> Dan,
->>>>>>>>>>
->>>>>>>>>> On 6/17/20 9:22 PM, Dan Murphy wrote:
->>>>>>>>>>> Pavel/Jacek
->>>>>>>>>>>
->>>>>>>>>>> On 6/17/20 11:28 AM, kernel test robot wrote:
->>>>>>>>>>>> Hi Dan,
->>>>>>>>>>>>
->>>>>>>>>>>> I love your patch! Yet something to improve:
->>>>>>>>>>>>
->>>>>>>>>>>> [auto build test ERROR on pavel-linux-leds/for-next]
->>>>>>>>>>>> [cannot apply to j.anaszewski-leds/for-next]
->>>>>>>>>>>> [if your patch is applied to the wrong git tree, please 
->>>>>>>>>>>> drop us a note to help
->>>>>>>>>>>> improve the system. BTW, we also suggest to use '--base' 
->>>>>>>>>>>> option to specify the
->>>>>>>>>>>> base tree in git format-patch, please see 
->>>>>>>>>>>> https://stackoverflow.com/a/37406982]
->>>>>>>>>>>>
->>>>>>>>>>>> url: 
->>>>>>>>>>>> https://github.com/0day-ci/linux/commits/Dan-Murphy/Multicolor-Framework-v27/20200616-042217 
->>>>>>>>>>>>
->>>>>>>>>>>> base: 
->>>>>>>>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-leds.git 
->>>>>>>>>>>> for-next
->>>>>>>>>>>> config: ia64-randconfig-r015-20200617 (attached as .config)
->>>>>>>>>>>> compiler: ia64-linux-gcc (GCC) 9.3.0
->>>>>>>>>>>> reproduce (this is a W=1 build):
->>>>>>>>>>>>          wget 
->>>>>>>>>>>> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross 
->>>>>>>>>>>> -O ~/bin/make.cross
->>>>>>>>>>>>          chmod +x ~/bin/make.cross
->>>>>>>>>>>>          # save the attached .config to linux build tree
->>>>>>>>>>>>          COMPILER_INSTALL_PATH=$HOME/0day 
->>>>>>>>>>>> COMPILER=gcc-9.3.0 make.cross ARCH=ia64
->>>>>>>>>>>>
->>>>>>>>>>>> If you fix the issue, kindly add following tag as appropriate
->>>>>>>>>>>> Reported-by: kernel test robot <lkp@intel.com>
->>>>>>>>>>>>
->>>>>>>>>>>> All errors (new ones prefixed by >>, old ones prefixed by <<):
->>>>>>>>>>>>
->>>>>>>>>>>> ia64-linux-ld: drivers/leds/leds-lp55xx-common.o: in 
->>>>>>>>>>>> function `lp55xx_set_mc_brightness':
->>>>>>>>>>>>>> drivers/leds/leds-lp55xx-common.c:146: undefined 
->>>>>>>>>>>>>> reference to `led_mc_calc_color_components'
->>>>>>>>>>>> ia64-linux-ld: drivers/leds/leds-lp55xx-common.o: in 
->>>>>>>>>>>> function `devm_led_classdev_multicolor_register':
->>>>>>>>>>>>>> include/linux/led-class-multicolor.h:74: undefined 
->>>>>>>>>>>>>> reference to `devm_led_classdev_multicolor_register_ext'
->>>>>>>>>>>> vim +146 drivers/leds/leds-lp55xx-common.c
->>>>>>>>>>>>
->>>>>>>>>>>>     138
->>>>>>>>>>>>     139    static int lp55xx_set_mc_brightness(struct 
->>>>>>>>>>>> led_classdev *cdev,
->>>>>>>>>>>>     140                        enum led_brightness brightness)
->>>>>>>>>>>>     141    {
->>>>>>>>>>>>     142        struct led_classdev_mc *mc_dev = 
->>>>>>>>>>>> lcdev_to_mccdev(cdev);
->>>>>>>>>>>>     143        struct lp55xx_led *led = 
->>>>>>>>>>>> mcled_cdev_to_led(mc_dev);
->>>>>>>>>>>>     144        struct lp55xx_device_config *cfg = 
->>>>>>>>>>>> led->chip->cfg;
->>>>>>>>>>>>     145
->>>>>>>>>>>>   > 146 led_mc_calc_color_components(&led->mc_cdev, 
->>>>>>>>>>>> brightness);
->>>>>>>>>>>>     147        return cfg->multicolor_brightness_fn(led);
->>>>>>>>>>>>     148
->>>>>>>>>>>
->>>>>>>>>>> Well this was a mess to figure out.
->>>>>>>>>>>
->>>>>>>>>>> The only fix I can figure out here is to remove the
->>>>>>>>>>>
->>>>>>>>>>>      depends on LEDS_CLASS_MULTI_COLOR || 
->>>>>>>>>>> !LEDS_CLASS_MULTI_COLOR
->>>>>>>>>>>
->>>>>>>>>>> from each child device and add
->>>>>>>>>>>
->>>>>>>>>>>      select LEDS_CLASS_MULTI_COLOR
->>>>>>>>>>>
->>>>>>>>>>> to the LP55XX_COMMON
->>>>>>>>>>>
->>>>>>>>>>> This way the Multi color framework will inherit the symbol 
->>>>>>>>>>> that was set by the COMMON flag which is inherited by 
->>>>>>>>>>> majority from the child flags.
->>>>>>>>>>
->>>>>>>>>> Did you try this?
->>>>>>>>>>
->>>>>>>>>> --- a/drivers/leds/Kconfig
->>>>>>>>>> +++ b/drivers/leds/Kconfig
->>>>>>>>>> @@ -398,6 +398,7 @@ config LEDS_LP50XX
->>>>>>>>>>  config LEDS_LP55XX_COMMON
->>>>>>>>>>         tristate "Common Driver for TI/National 
->>>>>>>>>> LP5521/5523/55231/5562/8501"
->>>>>>>>>>         depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 
->>>>>>>>>> || LEDS_LP8501
->>>>>>>>>> +       depends on LEDS_CLASS_MULTI_COLOR || 
->>>>>>>>>> !LEDS_CLASS_MULTI_COLOR
->>>>>>>>>>         depends on OF
->>>>>>>>>>         select FW_LOADER
->>>>>>>>>>         select FW_LOADER_USER_HELPER
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>> Yes I did
->>>>>>>>>
->>>>>>>>> That gave unmet dependencies.
->>>>>>>>>
->>>>>>>>> WARNING: unmet direct dependencies detected for 
->>>>>>>>> LEDS_LP55XX_COMMON
->>>>>>>>>    Depends on [m]: NEW_LEDS [=y] && (LEDS_LP5521 [=n] || 
->>>>>>>>> LEDS_LP5523 [=m] || LEDS_LP5562 [=y] || LEDS_LP8501 [=y]) && 
->>>>>>>>> (LEDS_CLASS_MULTI_COLOR [=m] || !LEDS_CLASS_MULTI_COLOR [=m]) 
->>>>>>>>> && OF [=y]
->>>>>>>>>    Selected by [y]:
->>>>>>>>>    - LEDS_LP5562 [=y] && NEW_LEDS [=y] && LEDS_CLASS [=y] && 
->>>>>>>>> I2C [=y]
->>>>>>>>>    - LEDS_LP8501 [=y] && NEW_LEDS [=y] && LEDS_CLASS [=y] && 
->>>>>>>>> I2C [=y]
->>>>>>>>>    Selected by [m]:
->>>>>>>>>    - LEDS_LP5523 [=m] && NEW_LEDS [=y] && LEDS_CLASS [=y] && 
->>>>>>>>> I2C [=y] && (LEDS_CLASS_MULTI_COLOR [=m] || 
->>>>>>>>> !LEDS_CLASS_MULTI_COLOR [=m])
->>>>>>>>>
->>>>>>>>
->>>>>>>> When I was testing that yesterday I also had the same warning 
->>>>>>>> at some
->>>>>>>> point of testing different Kconfig setups, but with what I 
->>>>>>>> showed above
->>>>>>>> it ceased to appear. Now every time I am doing "make oldconfig" 
->>>>>>>> the
->>>>>>>> CONFIG_LEDS_LP55XX_COMMON=y entry gets changed to =m with the 
->>>>>>>> config
->>>>>>>> from the test bot.
->>>>>>>>
->>>>>>> That is not what I saw in my testing especially after doing a 
->>>>>>> distclean
->>>>>>
->>>>>> Could you please give your exact steps after "make distclean" and
->>>>>> copying test bot config to the kernel root directory?
->>>>>>
->>>>>> Also, please share the toolchain you're using for tests.
->>>>>
->>>>> Actually at this stage the toolchain is of lesser relevance.
->>>>>
->>>>> I've tried once more and indeed the problem shows up.
->>>>>
->>>>> It is caused by the driver entries doing
->>>>>
->>>>> "select LEDS_LP55XX_COMMON".
->>>>>
->>>>> Select sets config to "y" so it conflicts with
->>>>> "depends on LEDS_CLASS_MULTI_COLOR || !LEDS_CLASS_MULTI_COLOR"
->>>>> in the "config LEDS_LP55XX_COMMON".
->>>>>
->>>>> Your proposed fix will block the possibility of building
->>>>> LED_CLASS_MULTI_COLOR as a module when LP55XX drivers
->>>>> are enabled so this is also not an option.
->>>>>
->>>>> Solving this riddle will require some more thinking.
->>>>> I haven't analyzed it in detail but maybe "imply" statement from
->>>>> kconfig-language.rst could help somehow here. 
->>>>
->>>> The multicolor framework will build as a module if the LED_CLASS is 
->>>> defined as a module.
->>>>
->>>> See attached test_defconfig
->>>
->>> But it will be impossible to enable CONFIG_LEDS_LP50XX without
->>> CONFIG_LEDS_CLASS_MULTI_COLOR if you will remove
->>>
->>> depends on LEDS_CLASS_MULTI_COLOR || !LEDS_CLASS_MULTI_COLOR.
->>>
->> I was not removing the dependency for the LP50xx only the LP55xx.
->
-> It was my typo, I meant LP55XX.
->
->>
->>> This is actually why the above entry was needed.
->>>
->>> LP55XX drivers have to work also without multicolor class.
->>>
->> Well I am not sure how else to resolve this problem.  Because the 
->> LP55xx has multi level dependencies.
->>
->> Only the LP55xx_common has the dependency on the MC framework. The 
->> device drivers do not.
->>
->> The issue is the mixing and matching of the MC fw as a module vs the 
->> LP55XX_COMMON as a built-in.
->
-> The simplest solution is to avoid selecting LP55XX_COMMON in favor
-> of making child drivers depending on it. Of course, maybe there exists
-> some trickier option to keep the selection, but I would have to play
-> a bit more with it to be sure.
->
-That actually makes more sense then what is there now.
+Thanks,
+!! Vishwa !!
 
-The children depend on the COMMON and the COMMON depends on the MC.
-
-Not sure why select was used originally.
-
-But this will prompt another patch to update the u8500_defconfig to 
-include the common.
-
-Dan
+> On 22-Jun-2020, at 6:42 PM, Vishwanatha Subbanna <vishwa@linux.vnet.ibm.com> wrote:
+> 
+> Hi Jacek,
+> 
+>> On 22-Jun-2020, at 5:06 PM, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>> 
+>> On 6/22/20 1:07 PM, Vishwanatha Subbanna wrote:
+>>> Hi Jacek,
+>>>> On 22-Jun-2020, at 4:24 PM, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>>>> 
+>>>> Hi Vishwanatha,
+>>>> 
+>>>> On 6/22/20 8:58 AM, Vishwanatha Subbanna wrote:
+>>>>> Thank you very much Jacek.
+>>>>>> On 22-Jun-2020, at 3:12 AM, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>>>>>> 
+>>>>>> Hi Vishwanatha,
+>>>>>> 
+>>>>>> On 6/20/20 7:25 PM, Vishwanatha Subbanna wrote:
+>>>>>>> Hi Jacek,
+>>>>>>> Thank you very much for the quick response. Greatly appreciate that.
+>>>>>> 
+>>>>>> You're welcome.
+>>>>>> 
+>>>>>>>> On 20-Jun-2020, at 3:27 AM, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>>>>>>>> 
+>>>>>>>> Hi Vishwanatha,
+>>>>>>>> 
+>>>>>>>> Please refer to Documentation/devicetree/bindings/leds/leds-pca955x.txt.
+>>>>>>>> 
+>>>>>>>> At first glance I don't get why you have gpio-leds node, which is for
+>>>>>>>> leds-gpio driver.
+>>>>>>> Not sure I understood it right.. But if you are asking me why I have "leds {"  and â€œgpio-ledsâ€ in there, then it is to get the entries in /sys/class/leds.
+>>>>>>> The GPIOs from PCA9552 are connected to LED. Also, that is how we have had in the past, and that worked.
+>>>>>>> Example: https://github.com/openbmc/linux/blob/dev-5.4/arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts#L115
+>>>>>> 
+>>>>>> Thanks. Yeah, that looks OK, I had to take closer look at the driver.
+>>>>>> 
+>>>>>>> The problem I am running into is for : https://github.com/openbmc/linux/blob/dev-5.4/arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts
+>>>>>>>> 
+>>>>>>>> On 6/19/20 3:34 PM, Vishwanatha Subbanna wrote:
+>>>>>>>>> Hello,
+>>>>>>>>> I am Vishwanath, working with IBM and looking for your help on one of the issues that I am running into. Would really appreciate help on this. I run Linux 5.4.38
+>>>>>>>>> I have 2 number of PCA9552 chips, one on the Planar and other on the card that is optionally pluggable. The optional card must be plugged prior to booting and is not hot pluggable. In my experiment, I am running *without* the optional card plugged in.
+>>>>>>>>> In the device tree, I have a "leds {" section that looks like below for the PCA9552 that is on the planar and everything works fine and I can see /sys/class/leds/fan0
+>>>>>>>>> leds {
+>>>>>>>>>        compatible = "gpio-ledsâ€;
+>>>>>>>>>        fan0 {
+>>>>>>>>>            retain-state-shutdown;
+>>>>>>>>>            default-state = "keep";
+>>>>>>>>>            gpios = <&pca0 0 GPIO_ACTIVE_LOW>;
+>>>>>>>>>        };
+>>>>>>>>> };
+>>>>>>>>> &i2c7 {
+>>>>>>>>>    status = "okayâ€;
+>>>>>>>>>    pca0: pca9552@61 {
+>>>>>>>>>       compatible = "nxp,pca9552";
+>>>>>>>>>        reg = <0x61>;
+>>>>>>>>>        #address-cells = <1>;
+>>>>>>>>>        #size-cells = <0>;
+>>>>>>>>>        gpio-controller;
+>>>>>>>>>        #gpio-cells = <2>;
+>>>>>>>>>        gpio@0 {
+>>>>>>>>>            reg = <0>;
+>>>>>>>>>            type = <PCA955X_TYPE_GPIO>;
+>>>>>>>>>     	};
+>>>>>>>>>    };
+>>>>>>>>> };
+>>>>>>>>> Similarly, if I update the device tree entry for PCA9552 for the card that is optionally pluggable, then I donâ€™t see any leds entries in /sys/class/leds.
+>>>>>>>> 
+>>>>>>>> Please share your DT node after the update.
+>>>>>>>> 
+>>>>>>> Pasting the GPIO_0 entry only here for brevity.
+>>>>>>> leds {
+>>>>>>>        compatible = "gpio-ledsâ€;
+>>>>>>>        fan0 {
+>>>>>>>            retain-state-shutdown;
+>>>>>>>            default-state = "keep";
+>>>>>>>            gpios = <&pca0 0 GPIO_ACTIVE_LOW>;
+>>>>>>>        };
+>>>>>>>        nvmeslot0 {
+>>>>>>>            retain-state-shutdown;
+>>>>>>>            default-state = "keep";
+>>>>>>>            gpios = <&pca1 0 GPIO_ACTIVE_LOW>;
+>>>>>>>        };
+>>>>>>> };
+>>>>>>> &i2c7 {
+>>>>>>>    status = "okayâ€;
+>>>>>>>    pca0: pca9552@61 {
+>>>>>>>       compatible = "nxp,pca9552";
+>>>>>>>        reg = <0x61>;
+>>>>>>>        #address-cells = <1>;
+>>>>>>>        #size-cells = <0>;
+>>>>>>>        gpio-controller;
+>>>>>>>        #gpio-cells = <2>;
+>>>>>>>        gpio@0 {
+>>>>>>>            reg = <0>;
+>>>>>>>            type = <PCA955X_TYPE_GPIO>;
+>>>>>>>     	};
+>>>>>>>    };
+>>>>>>> };
+>>>>>>> &i2c13
+>>>>>>> {
+>>>>>>>    pca1: pca9552@60 {
+>>>>>>>       compatible = "nxp,pca9552";
+>>>>>>>       reg = <0x60>;
+>>>>>>>       #address-cells = <1>;
+>>>>>>>       #size-cells = <0>;
+>>>>>>>       gpio-controller;
+>>>>>>>       #gpio-cells = <2>;
+>>>>>>>       gpio@0 {
+>>>>>>>           reg = <0>;
+>>>>>>>           type = <PCA955X_TYPE_GPIO>;
+>>>>>>>       };
+>>>>>>>    };
+>>>>>>> };
+>>>>>>> Thanks
+>>>>>>> !! Vishwa !!
+>>>>>>>>> I donâ€™t even see â€œfan0â€ that is on the PCA9552 on planar also. I was expecting that I should see â€œ/sys/class/leds/fan0â€.
+>>>>>>>>> However, I could see all the entries in â€œ/proc/device-tree/ledsâ€.
+>>>>>>>>> Data from the failure.
+>>>>>>>>> [    7.895757] leds-pca955x 7-0061: leds-pca955x: Using pca9552 16-bit LED driver at slave address 0x61
+>>>>>>>>> [    7.907659] leds-pca955x 7-0061: gpios 168...183
+>>>>>> 
+>>>>>> It is weird that you don't see "fan0" LED since this gpio seems to have
+>>>>>> been properly registered according to this log.
+>>>>>> 
+>>>>> This is exactly what I donâ€™t understand. I would expect â€œfan0â€ to appear in /sys/class/leds. Is there any reason why this might not be appearing ?..
+>>>> 
+>>>> OK, now the reason is clear to me. If leds-gpio driver fails to register
+>>>> any of the LEDs found in DT node it returns with an error from the
+>>>> probe(), which results in unregistering any of the LEDs registered in
+>>>> the previous iteration steps.
+>>>> 
+>>>> Look at the function gpio_leds_create() in
+>>>> drivers/leds/leds-gpio.c.
+>>>> 
+>>>> Probably it is devm_fwnode_get_gpiod_from_child() that fails
+>>>> while parsing nvmeslot0 node.
+>>> Is this how it is designed or a bug ?.. From a system standpoint, not having an optional card results in not seeing the ones that are present on the system.
+>>> Would you think it is worthwhile to modify to not chuck off what is existing because something optional is not plugged in ?.. I believe the I2C driver handles this scenario by putting an error message but still consumes what is present.
+>> 
+>> Well, this code is in mainline for some time and we cannot guarantee
+>> the someone does not rely on this behavior.
+>> 
+> 
+> Should someone assume those behaviours ?.. Would it be okay to put an email to the gpio-leds community ?. Just in my opinion, I see a lot of value in modifying it. Also, is there an IRC where we can discuss this than the email ?
+> 
+>> You mentioned, that your card is not hot-pluggable so it is even more
+>> justified to treat the two hardware setups as demanding a separate DT.
+>> 
+> 
+> I mean, it is the same system that can either have a card on the slot or donâ€™t have it. So, itâ€™s not really a different system needing different DT.
+> Also, it has 3 slots and we can have multiple combinations :)
+> 
+>> Otherwise you could probably employ DT overlays mechanism.
+>> 
+> 
+> Hmm.. this looks interesting in a quick glance. However, I feel the current leds-gpio driver needs to be updated to not discard the valid ones.
+> Besides someone may be counting on the existing behaviour, is there any reason why we want to maintain leds-gpio the way it is and not do what I2C driver does for example.
+> 
+> Thank you,
+> !! Vishwa !!
+> 
+>> -- 
+>> Best regards,
+>> Jacek Anaszewski
 
