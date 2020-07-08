@@ -1,197 +1,106 @@
-Return-Path: <SRS0=Tbax=AS=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=OaDm=AT=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 644E5C433E4
-	for <linux-leds@archiver.kernel.org>; Tue,  7 Jul 2020 17:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73CDCC433DF
+	for <linux-leds@archiver.kernel.org>; Wed,  8 Jul 2020 07:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F1402065F
-	for <linux-leds@archiver.kernel.org>; Tue,  7 Jul 2020 17:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FBAE206DF
+	for <linux-leds@archiver.kernel.org>; Wed,  8 Jul 2020 07:08:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="agDK8/jx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbgGGRAU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 7 Jul 2020 13:00:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47712 "EHLO
+        id S1729761AbgGHHIS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 8 Jul 2020 03:08:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728321AbgGGRAL (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Jul 2020 13:00:11 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ADEBC08C5E1
-        for <linux-leds@vger.kernel.org>; Tue,  7 Jul 2020 10:00:10 -0700 (PDT)
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1jsqwt-0004FP-U5; Tue, 07 Jul 2020 19:00:03 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1jsqws-00038n-M4; Tue, 07 Jul 2020 19:00:02 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     kernel@pengutronix.de, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH v7 1/3] tty: rename tty_kopen() and add new function tty_kopen_shared()
-Date:   Tue,  7 Jul 2020 18:59:56 +0200
-Message-Id: <20200707165958.16522-2-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200707165958.16522-1-u.kleine-koenig@pengutronix.de>
-References: <20200707165958.16522-1-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S1729225AbgGHHIR (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 8 Jul 2020 03:08:17 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EA9EC061755
+        for <linux-leds@vger.kernel.org>; Wed,  8 Jul 2020 00:08:17 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id f5so37052790ljj.10
+        for <linux-leds@vger.kernel.org>; Wed, 08 Jul 2020 00:08:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uPtUOLC7CmbWglkow01KEGsFdTlT5m8x2yfRI4QBTkQ=;
+        b=agDK8/jx0Tmm2Du/gTV8D7RWg9/uugyJMLsPLylok0jYet8BAVeJzi4obV6MvQzXjx
+         otsRhuioABtdf2/OEOW1SN9k+d+VS3hwvbjKZSJWf/UfPtb6MjyQXEuJNbFEg43Ltqfk
+         uH7/FQf40FiXVRX0d+4NJ7QVZIKN0lYl3O+XpzUgEkyUvSfkahnhvfJ5h8NVf8d0XipH
+         nm04u29aviPzIYHszP9oL39PYGa4EZUAFI7EFHI9DdQBcahNJ8rn5+ec2d/8fuNABxmD
+         asVV5xfjVu7uv7bfobb5et9b+RjNo606X8/+oIM0pFJi6SYgbzpzqCfmXIt8WwRq+fND
+         pSKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uPtUOLC7CmbWglkow01KEGsFdTlT5m8x2yfRI4QBTkQ=;
+        b=HdCQhCy2XH22Lm7TpY5ljOJpDCVv35N4iRpiYkiLis1/3WlbXp6lNAUM6rJHrLatHd
+         ilPAg08g+CNy1VSUhkcxdSaPtNsXEmX7UtfPn5JsbtRaZWfX3nzIesyVSQS9nFhanAkX
+         S+mUOb6EB/D1tpRbFrTqKS0H1i56TFtAYo59Wr+cudoHJtwWKJ2OZN6pOrdorBbcgn2v
+         pEGzW+3IPW6QwYcHQkvBd7b7g6tnszjKqw7sa4dAxCA/wCUXIVzIxLMyT1YWDH9rjK4r
+         AGH8yxaCHE+xoJdagGOf2aPJxIXXtphsqMfb51pZqB0u7S67/z3T9DZjL96AYFsbcYLa
+         FUXw==
+X-Gm-Message-State: AOAM530QBfDcMgaoyXjen7WF7Fxlw016fSvdMywAE//SCzAmAScYKXEG
+        anjdmDFg4KCyusT07yOGYcD7ITZmA3/Z0+lxIOX6YA==
+X-Google-Smtp-Source: ABdhPJwBozSMW7jVPJ9gDUfo1Or2o+vl8D5+x3lIHjgmMTBSkeUFOrPqJZv6zCo/Fbc/WGeltQ9aO3Yc5lZvHgaK1+A=
+X-Received: by 2002:a05:651c:1291:: with SMTP id 17mr31525891ljc.286.1594192096003;
+ Wed, 08 Jul 2020 00:08:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-leds@vger.kernel.org
+References: <20200627001015.427376-1-linus.walleij@linaro.org> <d0937cb8-69c8-8442-33b3-6f44bcb79f99@gmail.com>
+In-Reply-To: <d0937cb8-69c8-8442-33b3-6f44bcb79f99@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 8 Jul 2020 09:08:04 +0200
+Message-ID: <CACRpkdZ2F8LF8qeJgsJzweGHUL2bN63sDhYueLW1W7zfitOgAQ@mail.gmail.com>
+Subject: Re: [PATCH] leds: s3c24xx: Convert to use GPIO descriptors
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Ben Dooks <ben-linux@fluff.org>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Introduce a new function tty_kopen_shared() that yields a struct
-tty_struct. The semantic difference to tty_kopen() is that the tty is
-expected to be used already. So rename tty_kopen() to
-tty_kopen_exclusive() for clearness, adapt the single user and put the
-common code in a new static helper function.
+On Mon, Jun 29, 2020 at 11:49 PM Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
 
-tty_kopen_shared is to be used to implement an LED trigger for tty
-devices in one of the next patches.
+> > +static struct gpiod_lookup_table mini2440_led4_gpio_table = {
+> > +     .dev_id = "s3c24xx_led.4",
+> > +     .table = {
+> > +             GPIO_LOOKUP("GPB", 8, NULL, GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN),
+> > +             { },
+> > +     },
+> > +};
+> > +
+> > +static struct gpiod_lookup_table mini2440_led5_gpio_table = {
+>
+> Why not backlight for consistency with pdata?
+>
+> s/led5/led_backlight/
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/staging/speakup/spk_ttyio.c |  2 +-
- drivers/tty/tty_io.c                | 58 ++++++++++++++++++++---------
- include/linux/tty.h                 |  5 ++-
- 3 files changed, 44 insertions(+), 21 deletions(-)
+This platform boardfile is already using a confusion of "backlight"
+and "led" for this device. The platform device is named s3c24xx_led
+with .id 5 and gets named "s3c24xx_led.5". But I changed the
+name of the lookup so it is a bit clearer.
 
-diff --git a/drivers/staging/speakup/spk_ttyio.c b/drivers/staging/speakup/spk_ttyio.c
-index 9b95f77f9265..5a134718dac8 100644
---- a/drivers/staging/speakup/spk_ttyio.c
-+++ b/drivers/staging/speakup/spk_ttyio.c
-@@ -147,7 +147,7 @@ static int spk_ttyio_initialise_ldisc(struct spk_synth *synth)
- 	if (ret)
- 		return ret;
- 
--	tty = tty_kopen(dev);
-+	tty = tty_kopen_exclusive(dev);
- 	if (IS_ERR(tty))
- 		return PTR_ERR(tty);
- 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 5a6f36b391d9..05d42f226304 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1871,22 +1871,7 @@ static struct tty_driver *tty_lookup_driver(dev_t device, struct file *filp,
- 	return driver;
- }
- 
--/**
-- *	tty_kopen	-	open a tty device for kernel
-- *	@device: dev_t of device to open
-- *
-- *	Opens tty exclusively for kernel. Performs the driver lookup,
-- *	makes sure it's not already opened and performs the first-time
-- *	tty initialization.
-- *
-- *	Returns the locked initialized &tty_struct
-- *
-- *	Claims the global tty_mutex to serialize:
-- *	  - concurrent first-time tty initialization
-- *	  - concurrent tty driver removal w/ lookup
-- *	  - concurrent tty removal from driver table
-- */
--struct tty_struct *tty_kopen(dev_t device)
-+static struct tty_struct *tty_kopen(dev_t device, int shared)
- {
- 	struct tty_struct *tty;
- 	struct tty_driver *driver;
-@@ -1901,7 +1886,7 @@ struct tty_struct *tty_kopen(dev_t device)
- 
- 	/* check whether we're reopening an existing tty */
- 	tty = tty_driver_lookup_tty(driver, NULL, index);
--	if (IS_ERR(tty))
-+	if (IS_ERR(tty) || shared)
- 		goto out;
- 
- 	if (tty) {
-@@ -1919,7 +1904,44 @@ struct tty_struct *tty_kopen(dev_t device)
- 	tty_driver_kref_put(driver);
- 	return tty;
- }
--EXPORT_SYMBOL_GPL(tty_kopen);
-+
-+/**
-+ *	tty_kopen_exclusive	-	open a tty device for kernel
-+ *	@device: dev_t of device to open
-+ *
-+ *	Opens tty exclusively for kernel. Performs the driver lookup,
-+ *	makes sure it's not already opened and performs the first-time
-+ *	tty initialization.
-+ *
-+ *	Returns the locked initialized &tty_struct
-+ *
-+ *	Claims the global tty_mutex to serialize:
-+ *	  - concurrent first-time tty initialization
-+ *	  - concurrent tty driver removal w/ lookup
-+ *	  - concurrent tty removal from driver table
-+ */
-+struct tty_struct *tty_kopen_exclusive(dev_t device)
-+{
-+	return tty_kopen(device, 0);
-+}
-+EXPORT_SYMBOL_GPL(tty_kopen_exclusive);
-+
-+/**
-+ *	tty_kopen_shared	-	open a tty device for shared in-kernel use
-+ *	@device: dev_t of device to open
-+ *
-+ *	Opens an already existing tty
-+ *	rnel. Performs the driver lookup,
-+ *	makes sure it's not already opened and performs the first-time
-+ *	tty initialization.
-+ *
-+ *	Locking is identical to tty_kopen() above.
-+ */
-+struct tty_struct *tty_kopen_shared(dev_t device)
-+{
-+	return tty_kopen(device, 1);
-+}
-+EXPORT_SYMBOL_GPL(tty_kopen_shared);
- 
- /**
-  *	tty_open_by_driver	-	open a tty device
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index a99e9b8e4e31..c867d6fe67c4 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -413,7 +413,8 @@ extern struct tty_struct *get_current_tty(void);
- /* tty_io.c */
- extern int __init tty_init(void);
- extern const char *tty_name(const struct tty_struct *tty);
--extern struct tty_struct *tty_kopen(dev_t device);
-+extern struct tty_struct *tty_kopen_exclusive(dev_t device);
-+extern struct tty_struct *tty_kopen_shared(dev_t device);
- extern void tty_kclose(struct tty_struct *tty);
- extern int tty_dev_name_to_number(const char *name, dev_t *number);
- extern int tty_ldisc_lock(struct tty_struct *tty, unsigned long timeout);
-@@ -438,7 +439,7 @@ static inline int __init tty_init(void)
- { return 0; }
- static inline const char *tty_name(const struct tty_struct *tty)
- { return "(none)"; }
--static inline struct tty_struct *tty_kopen(dev_t device)
-+static inline struct tty_struct *tty_kopen_exclusive(dev_t device)
- { return ERR_PTR(-ENODEV); }
- static inline void tty_kclose(struct tty_struct *tty)
- { }
--- 
-2.27.0
+> > +     .dev_id = "s3c24xx_led.5",
+>
+> s/led.5/led_backlight/
 
+That will not work because this lookup is tied to the platform device
+name, not the LED name, which I don't change in this patch.
+
+I fixed the rest of the comments!
+
+Thanks,
+Linus Walleij
