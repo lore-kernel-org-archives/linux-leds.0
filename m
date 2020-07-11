@@ -7,36 +7,37 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD0EC433DF
-	for <linux-leds@archiver.kernel.org>; Sat, 11 Jul 2020 13:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A8DC433E5
+	for <linux-leds@archiver.kernel.org>; Sat, 11 Jul 2020 15:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81B2B207BC
-	for <linux-leds@archiver.kernel.org>; Sat, 11 Jul 2020 13:48:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DEB420786
+	for <linux-leds@archiver.kernel.org>; Sat, 11 Jul 2020 15:57:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbgGKNsS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 11 Jul 2020 09:48:18 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:35894 "EHLO
+        id S1728592AbgGKP5s (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 11 Jul 2020 11:57:48 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:46298 "EHLO
         jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727004AbgGKNsS (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 11 Jul 2020 09:48:18 -0400
+        with ESMTP id S1728412AbgGKP5r (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 11 Jul 2020 11:57:47 -0400
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 5D1471C0BD2; Sat, 11 Jul 2020 15:48:15 +0200 (CEST)
-Date:   Sat, 11 Jul 2020 15:48:14 +0200
+        id EB88B1C0BD2; Sat, 11 Jul 2020 17:57:44 +0200 (CEST)
+Date:   Sat, 11 Jul 2020 17:57:44 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Eddie James <eajames@linux.ibm.com>
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org, dmurphy@ti.com,
-        jacek.anaszewski@gmail.com, vishwa@linux.ibm.com
-Subject: Re: [PATCH 1/2] dt-bindings: leds: pca955x: Add IBM implementation
- compatible string
-Message-ID: <20200711134814.GB6407@amd>
-References: <20200709201220.13736-1-eajames@linux.ibm.com>
- <20200709201220.13736-2-eajames@linux.ibm.com>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, robh@kernel.org,
+        devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v29 12/16] ARM: defconfig: u8500: Add LP55XX_COMMON
+ config flag
+Message-ID: <20200711155744.GA22715@amd>
+References: <20200622185919.2131-1-dmurphy@ti.com>
+ <20200622185919.2131-13-dmurphy@ti.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
+        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
 Content-Disposition: inline
-In-Reply-To: <20200709201220.13736-2-eajames@linux.ibm.com>
+In-Reply-To: <20200622185919.2131-13-dmurphy@ti.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
@@ -44,51 +45,42 @@ List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---KFztAG8eRSV9hGtP
+--u3/rZRmxL6MmkK24
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Mon 2020-06-22 13:59:15, Dan Murphy wrote:
+> The dependencies for the LP55XX LED drivers have been updated so that
+> the child devices (i.e. LP5521) now depends on the LP55XX_COMMON config
+> flag as opposed to the device selecting the LP55XX_COMMON flag.  The
+> LP55XX_COMMON needs to be set in the defconfig.
+>=20
+> CC: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
 
-> IBM created an implementation of the PCA9552 on a PIC16F
-> microcontroller. Document the new compatible string for this device.
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-Is the implementation opensource?
-
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-
-> +++ b/Documentation/devicetree/bindings/leds/leds-pca955x.txt
-> @@ -9,6 +9,7 @@ Required properties:
->  	"nxp,pca9550"
->  	"nxp,pca9551"
->  	"nxp,pca9552"
-> +	"nxp,pca9552-ibm"
->  	"nxp,pca9553"
-
-Is it good idea to use nxp prefix for something that is
-software-defined and not built by nxp?
-
-Would ibm,pca9552 be better, or maybe even sw,pca9552 to indicate that
-is not real hardware, but software emulation?
+=2E..but I don't think I'm right person to apply this.
 
 Best regards,
 									Pavel
+								=09
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---KFztAG8eRSV9hGtP
+--u3/rZRmxL6MmkK24
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl8Jwx4ACgkQMOfwapXb+vIgMACgolyJryoAUGrvtZYcbrqprmGv
-rqgAn3oROytMSB/cAB9QLxtzJcFvZc3z
-=tTZV
+iEYEARECAAYFAl8J4XgACgkQMOfwapXb+vJ8NgCgqkzLjqf4w2ECex1vblPUD9bp
++xMAoISlat0I/z8Fb53YeEI7/Ja4BKX7
+=cSuE
 -----END PGP SIGNATURE-----
 
---KFztAG8eRSV9hGtP--
+--u3/rZRmxL6MmkK24--
