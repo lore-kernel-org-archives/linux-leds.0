@@ -2,39 +2,38 @@ Return-Path: <SRS0=Un9t=AX=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD84C433E0
-	for <linux-leds@archiver.kernel.org>; Sun, 12 Jul 2020 08:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE44C433DF
+	for <linux-leds@archiver.kernel.org>; Sun, 12 Jul 2020 08:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5379A2070B
-	for <linux-leds@archiver.kernel.org>; Sun, 12 Jul 2020 08:05:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FF312070B
+	for <linux-leds@archiver.kernel.org>; Sun, 12 Jul 2020 08:14:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbgGLIFo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 12 Jul 2020 04:05:44 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:49310 "EHLO
+        id S1728467AbgGLIOW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 12 Jul 2020 04:14:22 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:49738 "EHLO
         jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbgGLIFo (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 12 Jul 2020 04:05:44 -0400
+        with ESMTP id S1725974AbgGLIOW (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 12 Jul 2020 04:14:22 -0400
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 6327E1C0BD2; Sun, 12 Jul 2020 10:05:42 +0200 (CEST)
-Date:   Sun, 12 Jul 2020 10:05:41 +0200
+        id F268E1C0BDD; Sun, 12 Jul 2020 10:14:19 +0200 (CEST)
+Date:   Sun, 12 Jul 2020 10:14:19 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Alexander Dahl <ada@thorsis.com>
-Cc:     linux-leds@vger.kernel.org, Flavio Suligoi <f.suligoi@asem.it>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] leds: fix spelling mistake
-Message-ID: <20200712080541.GE8295@amd>
-References: <20200609154929.30248-1-f.suligoi@asem.it>
- <7016474.BTq5bZ2CBy@ada>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Subject: Re: [PATCH] leds: gpio: Fix semantic error
+Message-ID: <20200712081419.GH8295@amd>
+References: <20200703181338.602569-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="XuV1QlJbYrcVoo+x"
+        protocol="application/pgp-signature"; boundary="9sSKoi6Rw660DLir"
 Content-Disposition: inline
-In-Reply-To: <7016474.BTq5bZ2CBy@ada>
+In-Reply-To: <20200703181338.602569-1-linus.walleij@linaro.org>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
@@ -42,35 +41,40 @@ List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---XuV1QlJbYrcVoo+x
+--9sSKoi6Rw660DLir
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2020-06-10 08:16:31, Alexander Dahl wrote:
-> That one made me laugh. :-)
+On Fri 2020-07-03 20:13:38, Linus Walleij wrote:
+> The leds-gpio driver mixes up the legacy GPIO flags with the
+> GPIO descriptor flags and passes a legacy flag to
+> devm_gpiod_get_index().
 >=20
-> Reviewed-by: Alexander Dahl <ada@thorsis.com>
+> Fix this by replacing the flags variable with the strict
+> descriptor flag.
+>=20
+> Fixes: 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-:-).
-
-Applied.
-									Pavel
+Thanks, applied.
+								Pavel
+							=09
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---XuV1QlJbYrcVoo+x
+--9sSKoi6Rw660DLir
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl8KxFUACgkQMOfwapXb+vKhYACdF1mQ/YmrWK+el6jnMqLkhl2x
-hzYAoJZ8Qx7bF8BCEykgbsWTYDdrcL7h
-=jTE3
+iEYEARECAAYFAl8KxlsACgkQMOfwapXb+vL+WwCeLCKCJ79U141plWdAhAIUCht8
+ezQAn3UxlovM4Z5/KrfX7+30sYja2yIB
+=9QNy
 -----END PGP SIGNATURE-----
 
---XuV1QlJbYrcVoo+x--
+--9sSKoi6Rw660DLir--
