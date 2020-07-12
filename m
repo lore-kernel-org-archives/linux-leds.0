@@ -2,40 +2,40 @@ Return-Path: <SRS0=Un9t=AX=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 761DBC433E0
-	for <linux-leds@archiver.kernel.org>; Sun, 12 Jul 2020 08:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6687C433E1
+	for <linux-leds@archiver.kernel.org>; Sun, 12 Jul 2020 08:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 510102070B
-	for <linux-leds@archiver.kernel.org>; Sun, 12 Jul 2020 08:13:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B8D320720
+	for <linux-leds@archiver.kernel.org>; Sun, 12 Jul 2020 08:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728070AbgGLINi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 12 Jul 2020 04:13:38 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:49698 "EHLO
+        id S1728070AbgGLI0n (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 12 Jul 2020 04:26:43 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:50420 "EHLO
         jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbgGLINh (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 12 Jul 2020 04:13:37 -0400
+        with ESMTP id S1725974AbgGLI0n (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 12 Jul 2020 04:26:43 -0400
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 229E41C0BDD; Sun, 12 Jul 2020 10:13:35 +0200 (CEST)
-Date:   Sun, 12 Jul 2020 10:13:34 +0200
+        id 8F3BB1C0BD2; Sun, 12 Jul 2020 10:26:40 +0200 (CEST)
+Date:   Sun, 12 Jul 2020 10:26:40 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        anthony.wong@canonical.com, Dan Murphy <dmurphy@ti.com>,
-        "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] leds: core: Flush scheduled work for system suspend
-Message-ID: <20200712081334.GG8295@amd>
-References: <20200702054500.11251-1-kai.heng.feng@canonical.com>
- <a5a931e5-771d-3356-89c2-b0e49f74161c@gmail.com>
+To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: [PATCH][next] leds: ns2: Use struct_size() in devm_kzalloc()
+Message-ID: <20200712082639.GA12285@amd>
+References: <20200617230757.GA21324@embeddedor>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="bO4vSxwwZtUjUWHo"
+        protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
 Content-Disposition: inline
-In-Reply-To: <a5a931e5-771d-3356-89c2-b0e49f74161c@gmail.com>
+In-Reply-To: <20200617230757.GA21324@embeddedor>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
@@ -43,45 +43,38 @@ List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---bO4vSxwwZtUjUWHo
+--qMm9M+Fa2AknHoGS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> >  EXPORT_SYMBOL_GPL(led_classdev_suspend);
-> >
+On Wed 2020-06-17 18:07:57, Gustavo A. R. Silva wrote:
+> Make use of the struct_size() helper instead of an open-coded version
+> in order to avoid any potential type mistakes. Also, remove unnecessary
+> function sizeof_ns2_led_priv().
 >=20
-> Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> This code was detected with the help of Coccinelle and, audited and
+> fixed manually.
 >=20
-> Pavel, this needs to go to stable as well, so let's add the tag:
->=20
-> Fixes: 81fe8e5b73e3 ("leds: core: Add led_set_brightness_nosleep{nopm}
-> functions")
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-Applied, and I added the tag (thanks).
-
-Documentation says stable is for "very bad" bugs, but ... stable
-maintainers ignore documenation.
-
-Best regards,
-									Pavel
+Thanks, applied.
+							Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---bO4vSxwwZtUjUWHo
+--qMm9M+Fa2AknHoGS
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl8Kxi4ACgkQMOfwapXb+vKyJwCggYNk+9VwnZivV5ib2hpZ19vH
-HEEAnizCftZ9JV+k+qMVo0cR6amAGgm/
-=zBnL
+iEYEARECAAYFAl8KyT8ACgkQMOfwapXb+vKXxwCgt4kLekRi6hdGqTLkCZwJlnJn
+JVIAnAgYd1BInXZVgYW+tgJ2ycu5xSZg
+=uuy2
 -----END PGP SIGNATURE-----
 
---bO4vSxwwZtUjUWHo--
+--qMm9M+Fa2AknHoGS--
