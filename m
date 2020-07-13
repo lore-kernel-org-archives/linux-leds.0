@@ -8,54 +8,53 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF062C4345D
-	for <linux-leds@archiver.kernel.org>; Mon, 13 Jul 2020 15:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B94C43460
+	for <linux-leds@archiver.kernel.org>; Mon, 13 Jul 2020 15:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E45D2075B
+	by mail.kernel.org (Postfix) with ESMTP id D71E12075B
 	for <linux-leds@archiver.kernel.org>; Mon, 13 Jul 2020 15:46:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hznLXauI"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="c1hdcddx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730183AbgGMPqs (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 13 Jul 2020 11:46:48 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:35998 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729884AbgGMPqr (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 13 Jul 2020 11:46:47 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 06DFkYSY043762;
-        Mon, 13 Jul 2020 10:46:34 -0500
+        id S1730144AbgGMPqL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 13 Jul 2020 11:46:11 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:55500 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730029AbgGMPqI (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 13 Jul 2020 11:46:08 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 06DFjv4Y018935;
+        Mon, 13 Jul 2020 10:45:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1594655194;
-        bh=3U1YGou84u3VUbet9dKfDOd4OJ1M3iNBcC5HTyHhUDg=;
+        s=ti-com-17Q1; t=1594655157;
+        bh=jp9ffwGIzggvhdM7MTkwmVu/nsd5UU/IJirKmGdhbhs=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=hznLXauIvlTHAdIP441jCHAoes2jYJIGKq/wTNj3/MFnScT9bBKeX/fSeCW39ngry
-         LZzJSuxmVILdqriTjdWJ6NymzLq0g8vttPe0nHPAMChroGJKWgmvH6eNzU+pbSKK4t
-         FgdBbVm+CEUfUe1RbvsP7IV1Q1295PSBJTIeN9es=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 06DFkY93068109
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 13 Jul 2020 10:46:34 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+        b=c1hdcddx58PnO/JoNNBDKdwAgJxIXZrmpNm+Td5W3kEySZkLexWM0VQ2IjJVR2OEn
+         vqms885fexhR6KeNuPE9ok6OTiEZAV4cYwtvTNkx0zdg9NN2tBe/RHfHhFlydQq+sG
+         CKqHQFf1H2Yzia6lnfr7C78gHXlmkQ2Cik8Ngl/o=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06DFjv1T018791;
+        Mon, 13 Jul 2020 10:45:57 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 13
- Jul 2020 10:46:34 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ Jul 2020 10:45:56 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 13 Jul 2020 10:46:33 -0500
+ Frontend Transport; Mon, 13 Jul 2020 10:45:56 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06DFkXM3034427;
-        Mon, 13 Jul 2020 10:46:33 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06DFjudu033627;
+        Mon, 13 Jul 2020 10:45:56 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh@kernel.org>,
         <marek.behun@nic.cz>
 CC:     <devicetree@vger.kernel.org>, <linux-leds@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v30 13/16] leds: lp5521: Add multicolor framework multicolor brightness support
-Date:   Mon, 13 Jul 2020 10:45:41 -0500
-Message-ID: <20200713154544.1683-14-dmurphy@ti.com>
+Subject: [PATCH v30 04/16] leds: Add multicolor ID to the color ID list
+Date:   Mon, 13 Jul 2020 10:45:32 -0500
+Message-ID: <20200713154544.1683-5-dmurphy@ti.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200713154544.1683-1-dmurphy@ti.com>
 References: <20200713154544.1683-1-dmurphy@ti.com>
@@ -68,55 +67,27 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add the multicolor brightness call back to support the multicolor
-framework. This function allows setting the brightness across
-grouped LED channels in a single call.
+Add a new color ID that is declared as MULTICOLOR as with the
+multicolor framework declaring a definitive color is not accurate
+as the node can contain multiple colors.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-lp5521.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/leds/led-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
-index 6ff81d6be789..ef8c3bfa8f3c 100644
---- a/drivers/leds/leds-lp5521.c
-+++ b/drivers/leds/leds-lp5521.c
-@@ -349,6 +349,25 @@ static int lp5521_run_selftest(struct lp55xx_chip *chip, char *buf)
- 	return 0;
- }
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index f1f718dbe0f8..846248a0693d 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -34,6 +34,7 @@ const char * const led_colors[LED_COLOR_ID_MAX] = {
+ 	[LED_COLOR_ID_VIOLET] = "violet",
+ 	[LED_COLOR_ID_YELLOW] = "yellow",
+ 	[LED_COLOR_ID_IR] = "ir",
++	[LED_COLOR_ID_MULTI] = "multicolor",
+ };
+ EXPORT_SYMBOL_GPL(led_colors);
  
-+static int lp5521_multicolor_brightness(struct lp55xx_led *led)
-+{
-+	struct lp55xx_chip *chip = led->chip;
-+	int ret;
-+	int i;
-+
-+	mutex_lock(&chip->lock);
-+	for (i = 0; i < led->mc_cdev.num_colors; i++) {
-+		ret = lp55xx_write(chip,
-+				   LP5521_REG_LED_PWM_BASE +
-+				   led->mc_cdev.subled_info[i].channel,
-+				   led->mc_cdev.subled_info[i].brightness);
-+		if (ret)
-+			break;
-+	}
-+	mutex_unlock(&chip->lock);
-+	return ret;
-+}
-+
- static int lp5521_led_brightness(struct lp55xx_led *led)
- {
- 	struct lp55xx_chip *chip = led->chip;
-@@ -490,6 +509,7 @@ static struct lp55xx_device_config lp5521_cfg = {
- 	.max_channel  = LP5521_MAX_LEDS,
- 	.post_init_device   = lp5521_post_init_device,
- 	.brightness_fn      = lp5521_led_brightness,
-+	.multicolor_brightness_fn = lp5521_multicolor_brightness,
- 	.set_led_current    = lp5521_set_led_current,
- 	.firmware_cb        = lp5521_firmware_loaded,
- 	.run_engine         = lp5521_run_engine,
 -- 
 2.27.0
 
