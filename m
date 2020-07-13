@@ -2,138 +2,132 @@ Return-Path: <SRS0=HbVH=AY=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C4FC433EC
-	for <linux-leds@archiver.kernel.org>; Mon, 13 Jul 2020 15:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA41C433E1
+	for <linux-leds@archiver.kernel.org>; Mon, 13 Jul 2020 21:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D573220578
-	for <linux-leds@archiver.kernel.org>; Mon, 13 Jul 2020 15:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 794F32075D
+	for <linux-leds@archiver.kernel.org>; Mon, 13 Jul 2020 21:28:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Hum+kIBi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/ZP2DBc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729902AbgGMPrC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 13 Jul 2020 11:47:02 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:55586 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729649AbgGMPrC (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 13 Jul 2020 11:47:02 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 06DFkixQ019082;
-        Mon, 13 Jul 2020 10:46:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1594655204;
-        bh=P76IZRkED7dQ4c2udzasJMAbjx+227B6ANM3Dbv8Q3M=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Hum+kIBi6ah2BM1eYfUVl+vhY2UzV3m9c5SnYKfIA9YIXGLzN1WVmQmYWTBhsFe3f
-         tmc3+aQ6meR/1/An98hZQIH2K/xnTJMY50QjME5rLfDChF7m3Yobm3MIpPwl9gXvAN
-         fhU+IWnVPbBk2dK5h29hAlNU480IwN1EJO0iaGyM=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 06DFkidk001481
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 13 Jul 2020 10:46:44 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 13
- Jul 2020 10:46:44 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 13 Jul 2020 10:46:44 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06DFkicd126530;
-        Mon, 13 Jul 2020 10:46:44 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh@kernel.org>,
-        <marek.behun@nic.cz>
-CC:     <devicetree@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Dan Murphy <dmurphy@ti.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: [PATCH v30 15/16] ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
-Date:   Mon, 13 Jul 2020 10:45:43 -0500
-Message-ID: <20200713154544.1683-16-dmurphy@ti.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200713154544.1683-1-dmurphy@ti.com>
-References: <20200713154544.1683-1-dmurphy@ti.com>
+        id S1726428AbgGMV2x (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 13 Jul 2020 17:28:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38090 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726416AbgGMV2w (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 13 Jul 2020 17:28:52 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EB1DC061755;
+        Mon, 13 Jul 2020 14:28:52 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id a1so9592438edt.10;
+        Mon, 13 Jul 2020 14:28:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6Ko+tWmnzBB3nKRx32WCJEtNPAc5X2qQdpUQLqvYvwU=;
+        b=g/ZP2DBcYqX5d4g6Guf0sKImn0bMrQL4VroJiqYXhgtkH96/ScPoEFPPPO7At+DuK+
+         7hIkg8n7m/oszH/F+1bdw3O8j5Q+70rwAr29OM8swiw9z0vrfzyM7K3ImsPtaSXE6/3/
+         8Rhz7c6qjuJpB/MBYRpsrOR2g7wldTR5lxpMlhJu19Yo5lYi4WIct5C8Nu9USmgzAu7u
+         tmeDNJQ8I0zahDaSiozqtgAFxFM/HLMrydCKzPiBqsaeNn0GNmBOpTkObltU9nGeOFWx
+         h4IOGEUswfeeqjF3tpYpuEd4YVcnMb+qFXIbnvoQHwW1zyefRxdYFOV/hO/c9kZYYxwU
+         x1rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6Ko+tWmnzBB3nKRx32WCJEtNPAc5X2qQdpUQLqvYvwU=;
+        b=AdWp9MVBzkLK52rdQvdqDyMWnCps/fDACcjCepOIsP7vhBzH6Psv6WFx0zCietCkU4
+         G+WxAFPl4m6RMycu9h2ZtGd5tx6eoBO3SA2fczy/m4YV2Pd+Y9hQ+7RXpRBtdk18ttlJ
+         WMfLJbkVYCYb5h01qhLQ0c+rL76/MICIoI3dkhSphWDgQuyd4Y/MLL5AjsPhJ/0xAUjg
+         jtTuIEiIsb2OVLw2plSwQslOMDDlXHyEp8U31ZP/TLzv9NSvKwkwHRzKabEZ2SM6I/Vo
+         /wLGwXi8TO5oJ4YOe2tngCKDAHQDdCGs0etUer+wWMzoc0EQZcDEUcpJKy1o1TlltciB
+         fpNg==
+X-Gm-Message-State: AOAM531tSl4Y3J3JK6wgLbz50OAsvEt5qVcGoyrP9pL2pUEU5cSwOdFH
+        tvu1Ijp7h+KBVyo/M3yIW2dNllxP
+X-Google-Smtp-Source: ABdhPJwhCW2OW9B2YYFuzdPoyuFYuNZkft51XuoHfzoHy3EtZ88dfi4c9M8VvCVe1J9973X9UcnfNw==
+X-Received: by 2002:aa7:c606:: with SMTP id h6mr1295881edq.363.1594675731090;
+        Mon, 13 Jul 2020 14:28:51 -0700 (PDT)
+Received: from ?IPv6:2a01:110f:b59:fd00:e124:492d:3208:4365? ([2a01:110f:b59:fd00:e124:492d:3208:4365])
+        by smtp.gmail.com with ESMTPSA id d26sm12116076edz.93.2020.07.13.14.28.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jul 2020 14:28:50 -0700 (PDT)
+Subject: Re: [PATCH v3 1/2] dt-bindings: leds: add cznic,turris-omnia-leds
+ binding
+To:     Rob Herring <robh@kernel.org>
+Cc:     Marek Behun <marek.behun@nic.cz>, linux-leds@vger.kernel.org,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        devicetree@vger.kernel.org
+References: <20200712210601.5239-1-marek.behun@nic.cz>
+ <20200712210601.5239-2-marek.behun@nic.cz>
+ <4609c389-4be6-0987-5078-725b43153596@gmail.com>
+ <20200712234035.213348aa@nic.cz>
+ <ff707d34-8fc0-342e-3df2-e96e5493004b@gmail.com>
+ <20200713150634.GA176775@bogus>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <01ead073-71e0-6bd3-7fcf-32aa0fd9c7a5@gmail.com>
+Date:   Mon, 13 Jul 2020 23:28:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20200713150634.GA176775@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add the reg property to each channel node.  This update is
-to accommodate the multicolor framework.  In addition to the
-accommodation this allows the LEDs to be placed on any channel
-and allow designs to skip channels as opposed to requiring
-sequential order.
+On 7/13/20 5:06 PM, Rob Herring wrote:
+> On Mon, Jul 13, 2020 at 12:11:51AM +0200, Jacek Anaszewski wrote:
+>> On 7/12/20 11:40 PM, Marek Behun wrote:
+>>> On Sun, 12 Jul 2020 23:27:07 +0200
+>>> Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>>>
+>>>>> +            multi-led@0 {
+>>>>> +                reg = <0>;
+>>>>> +                color = <LED_COLOR_ID_MULTI>;
+>>>>> +                function = LED_FUNCTION_POWER;
+>>>>
+>>>> Please provide child nodes for each color LED. Let's stick
+>>>> to the bindings closely and not make any deviations from
+>>>> the beginning.
+>>>
+>>> Why? It would make sense if there were devices using this controller
+>>> having other configuration, but on Omnia, all LEDs are RGB.
+>>>
+>>> Also, if I do this, should I also make the driver check in the probe
+>>> function whether the per-channel child nodes are correct? Eg. if they
+>>> are always three: one for red, one for green and one for blue? Or
+>>> should the driver ignore this and only the device tree binding specify
+>>> it?
+>>>
+>>> Because the way the driver is written now, it only registers
+>>> multi-color RGB LEDs.
+>>
+>> This is not RGB framework, but multicolor framework. It is not justified
+>> to pretend that RGB is default. Unless you would state that clearly in
+>> the comment in DT, but that should be agreed upon with Rob.
+> 
+> If the LEDs are fixed in h/w and never vary for this controller, then
+> they don't need to be in DT. However, is it really possible that a
+> channel only supports 1 color of LED? I don't think so.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
-CC: Shawn Guo <shawnguo@kernel.org>
-CC: Sascha Hauer <s.hauer@pengutronix.de>
-CC: Pengutronix Kernel Team <kernel@pengutronix.de>
-CC: Fabio Estevam <festevam@gmail.com>
-CC: NXP Linux Team <linux-imx@nxp.com>
----
- arch/arm/boot/dts/imx6dl-yapp4-common.dtsi | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Theoretically we could allow for registering two LEDs as LED multi
+color device and the other one as monochrome LED class device
+but I admit that this would be a bit convoluted and entail unnecessary
+complexity in the driver.
 
-diff --git a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
-index 2b9423d55c37..77aa90640052 100644
---- a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
-+++ b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
-@@ -258,29 +258,35 @@ leds: led-controller@30 {
- 		reg = <0x30>;
- 		clock-mode = /bits/ 8 <1>;
- 		status = "disabled";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 
--		chan0 {
-+		chan@0 {
- 			chan-name = "R";
- 			led-cur = /bits/ 8 <0x20>;
- 			max-cur = /bits/ 8 <0x60>;
-+			reg = <0>;
- 		};
- 
--		chan1 {
-+		chan@1 {
- 			chan-name = "G";
- 			led-cur = /bits/ 8 <0x20>;
- 			max-cur = /bits/ 8 <0x60>;
-+			reg = <1>;
- 		};
- 
--		chan2 {
-+		chan@2 {
- 			chan-name = "B";
- 			led-cur = /bits/ 8 <0x20>;
- 			max-cur = /bits/ 8 <0x60>;
-+			reg = <2>;
- 		};
- 
--		chan3 {
-+		chan@3 {
- 			chan-name = "W";
- 			led-cur = /bits/ 8 <0x0>;
- 			max-cur = /bits/ 8 <0x0>;
-+			reg = <3>;
- 		};
- 	};
- 
+So I'm OK with no child nodes for these bindings, but let's add some
+comment justifying that.
+
 -- 
-2.27.0
-
+Best regards,
+Jacek Anaszewski
