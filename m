@@ -2,41 +2,45 @@ Return-Path: <SRS0=d0cc=A7=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31AC2C433E0
-	for <linux-leds@archiver.kernel.org>; Mon, 20 Jul 2020 09:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 664B9C433E4
+	for <linux-leds@archiver.kernel.org>; Mon, 20 Jul 2020 11:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16FE92080D
-	for <linux-leds@archiver.kernel.org>; Mon, 20 Jul 2020 09:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4536A2073A
+	for <linux-leds@archiver.kernel.org>; Mon, 20 Jul 2020 11:17:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728093AbgGTJyN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 20 Jul 2020 05:54:13 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:58632 "EHLO
+        id S1728517AbgGTLRJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 20 Jul 2020 07:17:09 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:40780 "EHLO
         jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727062AbgGTJyN (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 20 Jul 2020 05:54:13 -0400
+        with ESMTP id S1728504AbgGTLRI (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 20 Jul 2020 07:17:08 -0400
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 526A21C0BE7; Mon, 20 Jul 2020 11:54:10 +0200 (CEST)
-Date:   Mon, 20 Jul 2020 11:54:09 +0200
+        id E3C261C0BE5; Mon, 20 Jul 2020 13:17:05 +0200 (CEST)
+Date:   Mon, 20 Jul 2020 13:17:05 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     jacek.anaszewski@gmail.com, robh@kernel.org, marek.behun@nic.cz,
-        devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v31 01/12] leds: multicolor: Introduce a multicolor class
- definition
-Message-ID: <20200720095409.GA13137@amd>
-References: <20200716182007.18389-1-dmurphy@ti.com>
- <20200716182007.18389-2-dmurphy@ti.com>
+To:     Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>
+Cc:     linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com,
+        Dan Murphy <dmurphy@ti.com>,
+        =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        netdev@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC leds + net-next 2/3] leds: trigger: return error
+ value if .activate() failed
+Message-ID: <20200720111705.GA12916@amd>
+References: <20200716171730.13227-1-marek.behun@nic.cz>
+ <20200716171730.13227-3-marek.behun@nic.cz>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
 Content-Disposition: inline
-In-Reply-To: <20200716182007.18389-2-dmurphy@ti.com>
+In-Reply-To: <20200716171730.13227-3-marek.behun@nic.cz>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
@@ -44,43 +48,38 @@ List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---EeQfGwPcQSOJBaQU
-Content-Type: text/plain; charset=us-ascii
+--uAKRQypu60I7Lcqm
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> Introduce a multicolor class that groups colored LEDs
-> within a LED node.
+> Currently when the .activate() method fails and returns a negative error
+> code while writing to the /sys/class/leds/<LED>/trigger file, the write
+> system call does not inform the user abouth this failure.
 >=20
-> The multicolor class groups monochrome LEDs and allows controlling two
-> aspects of the final combined color: hue and lightness. The former is
-> controlled via the intensity file and the latter is controlled
-> via brightness file.
+> This patch fixes this.
 >=20
-> Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> Signed-off-by: Marek Beh=FAn <marek.behun@nic.cz>
+> ---
+>  drivers/leds/led-triggers.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> index 81e758d5a048..804e0d624f47 100644
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
+> @@ -40,7 +40,7 @@ ssize_t led_trigger_write(struct file *filp, struct kob=
+ject *kobj,
+>  	struct device *dev =3D kobj_to_dev(kobj);
+>  	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+>  	struct led_trigger *trig;
+> -	int ret =3D count;
+> +	int ret;
+>
 
-Thanks, applied and pushed out.
-
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +MultiColor LED handling under Linux
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=2E..
-> +Multicolor Class Control
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-AFAICT The first one should be "Multicolor" for consistency.
-
-> +config LEDS_CLASS_MULTICOLOR
-> +	tristate "LED MultiColor Class Support"
-
-Here too.
-
-Can you send a followup patch to fix it up?
+Please check the code. AFAICT you need ret =3D 0 here.
 
 Best regards,
 									Pavel
@@ -89,16 +88,16 @@ Best regards,
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---EeQfGwPcQSOJBaQU
+--uAKRQypu60I7Lcqm
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl8VacEACgkQMOfwapXb+vL47gCeJCu3DvOixmoJWqLguCyuTJCL
-hgoAoMBx7ND/jhL5P0SKhzIqU3p9701G
-=px13
+iEYEARECAAYFAl8VfTEACgkQMOfwapXb+vIcJgCdHh0TI1uzEPqwM776e4oRvh/M
+lNIAnA+KGNxSvpVuUFcl2Z9hP8ZQhxBM
+=thG+
 -----END PGP SIGNATURE-----
 
---EeQfGwPcQSOJBaQU--
+--uAKRQypu60I7Lcqm--
