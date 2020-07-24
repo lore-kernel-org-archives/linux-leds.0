@@ -2,257 +2,112 @@ Return-Path: <SRS0=2Xw6=BD=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE7DC43446
-	for <linux-leds@archiver.kernel.org>; Fri, 24 Jul 2020 16:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A46C433F7
+	for <linux-leds@archiver.kernel.org>; Fri, 24 Jul 2020 21:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF3F820674
-	for <linux-leds@archiver.kernel.org>; Fri, 24 Jul 2020 16:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7077F206EB
+	for <linux-leds@archiver.kernel.org>; Fri, 24 Jul 2020 21:37:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="n5s1lsjU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNs3Guih"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbgGXQqX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 24 Jul 2020 12:46:23 -0400
-Received: from mail.nic.cz ([217.31.204.67]:36608 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726326AbgGXQqH (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 24 Jul 2020 12:46:07 -0400
-Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 2A6781409D1;
-        Fri, 24 Jul 2020 18:46:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1595609164; bh=ekWiIinLAdpTYp1fD53vrA/hEgyTpgoQeB5n1DE3wYk=;
-        h=From:To:Date;
-        b=n5s1lsjU3xhdoWCWa933FnkWug/yPtpKNlkGqsjUb/0TnjYsTomL+L08/+w8PruRX
-         1kqR9tdehBntUuwk1TpGPPCzzdaRwtB4vomNr9FJIw5p730w8Sb1FMbSjEaEIX4U25
-         1dzVVpvm2QjZlJl9+AeFU/yMYJP7uiYwg2EyiSN4=
-From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-To:     netdev@vger.kernel.org
-Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        jacek.anaszewski@gmail.com, Dan Murphy <dmurphy@ti.com>,
-        =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megous@megous.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH RFC leds + net-next v3 1/2] net: phy: add API for LEDs controlled by PHY HW
-Date:   Fri, 24 Jul 2020 18:46:02 +0200
-Message-Id: <20200724164603.29148-2-marek.behun@nic.cz>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200724164603.29148-1-marek.behun@nic.cz>
-References: <20200724164603.29148-1-marek.behun@nic.cz>
+        id S1727834AbgGXVhb (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 24 Jul 2020 17:37:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57908 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbgGXVhb (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 24 Jul 2020 17:37:31 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C503FC0619D3;
+        Fri, 24 Jul 2020 14:37:30 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id a14so9513350wra.5;
+        Fri, 24 Jul 2020 14:37:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UyLweN+II0ZCIyIgBj5I2+zaWb8dHrtfnlcwzt5oGNM=;
+        b=UNs3GuihAWHCTR9hET3VEcxcq7WMVX+ELHyM4UHV7CETbtCF1m5+/7KO22va1IUkIq
+         +1fkKnqssP31mj0evgJ/Lwak8npUBRJeFIutSGGylvGSFeDF63rQQ74j8M085mtP6IdL
+         yShmUAjK8An6YFzSSwW5w1U9F9mOSINZajKEAnI6IzSs70PQLb+9P5NRjd2r9PV9qBsJ
+         EJ2rMG/KvJVR89ZkHgvCwD8PJbsWXtzjQ0HmW1FWmsa3dpChDcNYGXDYBYa4CizLFDqH
+         GiHBdw8jaoFdAFbMk0OmDQloGdu7JQ17rAd+BLyRfZcbhq54xt2JsahGGFzwma1p3Gk0
+         fG4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UyLweN+II0ZCIyIgBj5I2+zaWb8dHrtfnlcwzt5oGNM=;
+        b=JhVsmAS2srevKmz61TKXYIuVBxgFNJSdtFFXU/qmD5G08+IsYfLzFZjv1SooU6O7la
+         wDcdwLpBbsjh/Ht5J/EEYNFkPCKOdKvHNHu05iuuGO+Kcueu7NElBABcY85mFLsa6C/F
+         v18madTkL0zGZ3fTJx44JgPAKcx4zj99jCkBnCeyLlLvAouoquGi6C5JXw0ydjNZ7TJ4
+         OH/+5SkLfZwBJ0YIVdPV9GcgNwMqR1QACWFjFCtO5yxes/nDqv4epxrmd4jSnScST8KI
+         fE+cdjljtEl5rifyA8YC8wOegPglhajBcUJcyGYo75x3sG1Bww0/1L++I9I6t2LeKciQ
+         zFQA==
+X-Gm-Message-State: AOAM5322bxnvQarNm+xNpeg9p760qUw8N2i3s65K9oDz1QUL1Sm7ZNy/
+        lP2/6veTLIOsgh2wiV+LwLo=
+X-Google-Smtp-Source: ABdhPJwLF1RqObtNpTGBQwMpigWEhUqbE+eLdxny/Qtkb5+QTqBldol986Ypp/6PgZjOITEYjaDXNg==
+X-Received: by 2002:adf:ea85:: with SMTP id s5mr3155449wrm.55.1595626649546;
+        Fri, 24 Jul 2020 14:37:29 -0700 (PDT)
+Received: from TimeMachine.localdomain (bband-dyn34.178-41-255.t-com.sk. [178.41.255.34])
+        by smtp.googlemail.com with ESMTPSA id 129sm8853400wmd.48.2020.07.24.14.37.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jul 2020 14:37:29 -0700 (PDT)
+From:   Martin Botka <martin.botka1@gmail.com>
+Cc:     Martin Botka <martin.botka1@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: [PATCH RFC 0/6] Add QCOM pwm-lpg and tri-led drivers
+Date:   Fri, 24 Jul 2020 23:36:50 +0200
+Message-Id: <20200724213659.273599-1-martin.botka1@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: /
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-X-Virus-Status: Clean
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Many PHYs support various HW control modes for LEDs connected directly
-to them.
+Hello,
+This series brings QCOM pwm-lpg and tri-led drivers from 4.14 that is required to support pmic-connected notification LED.
+This comes straight from downstream and I'm ready for your comments.
 
-This code adds a new private LED trigger called phydev-hw-mode. When
-this trigger is enabled for a LED, the various HW control modes which
-the PHY supports for given LED can be get/set via hw_mode sysfs file.
+Fenglin Wu (6):
+  pwm: Add different PWM output types support
+  pwm: core: Add option to config PWM duty/period with u64 data length
+  pwm: pwm-qti-lpg: Add PWM driver for QTI LPG module
+  leds: leds-qti-tri-led: Add LED driver for QTI TRI_LED module
+  Documentation: Add binding for qti-tri-led
+  Documentation: Add binding for pwm-qti-lpg
 
-A PHY driver wishing to utilize this API needs to register the LEDs on
-its own and set the .trigger_type member of LED classdev to
-&phy_hw_led_trig_type. It also needs to implement the methods
-.led_iter_hw_mode, .led_set_hw_mode and .led_get_hw_mode in struct
-phydev.
+ .../bindings/leds/leds-qti-tri-led.txt        |   72 +
+ .../devicetree/bindings/pwm/pwm-qti-lpg.txt   |  163 +++
+ drivers/leds/Kconfig                          |    9 +
+ drivers/leds/Makefile                         |    1 +
+ drivers/leds/leds-qti-tri-led.c               |  640 ++++++++
+ drivers/pwm/Kconfig                           |   10 +
+ drivers/pwm/Makefile                          |    1 +
+ drivers/pwm/core.c                            |   56 +-
+ drivers/pwm/pwm-qti-lpg.c                     | 1284 +++++++++++++++++
+ drivers/pwm/sysfs.c                           |   56 +-
+ include/linux/pwm.h                           |  144 +-
+ 11 files changed, 2418 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-qti-tri-led.txt
+ create mode 100644 Documentation/devicetree/bindings/pwm/pwm-qti-lpg.txt
+ create mode 100644 drivers/leds/leds-qti-tri-led.c
+ create mode 100644 drivers/pwm/pwm-qti-lpg.c
 
-Signed-off-by: Marek Behún <marek.behun@nic.cz>
----
- drivers/net/phy/Kconfig           |  9 +++
- drivers/net/phy/Makefile          |  1 +
- drivers/net/phy/phy_hw_led_mode.c | 96 +++++++++++++++++++++++++++++++
- include/linux/phy.h               | 15 +++++
- 4 files changed, 121 insertions(+)
- create mode 100644 drivers/net/phy/phy_hw_led_mode.c
-
-diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index dd20c2c27c2f..ffea11f73acd 100644
---- a/drivers/net/phy/Kconfig
-+++ b/drivers/net/phy/Kconfig
-@@ -283,6 +283,15 @@ config LED_TRIGGER_PHY
- 		<Speed in megabits>Mbps OR <Speed in gigabits>Gbps OR link
- 		for any speed known to the PHY.
- 
-+config LED_TRIGGER_PHY_HW
-+	bool "Support HW LED control modes"
-+	depends on LEDS_TRIGGERS
-+	help
-+	  Many PHYs can control blinking of LEDs connected directly to them.
-+	  This adds a special LED trigger called phydev-hw-mode. When enabled,
-+	  the various control modes supported by the PHY on given LED can be
-+	  chosen via hw_mode sysfs file.
-+
- 
- comment "MII PHY device drivers"
- 
-diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
-index d84bab489a53..fd0253ab8097 100644
---- a/drivers/net/phy/Makefile
-+++ b/drivers/net/phy/Makefile
-@@ -20,6 +20,7 @@ endif
- obj-$(CONFIG_MDIO_DEVRES)	+= mdio_devres.o
- libphy-$(CONFIG_SWPHY)		+= swphy.o
- libphy-$(CONFIG_LED_TRIGGER_PHY)	+= phy_led_triggers.o
-+libphy-$(CONFIG_LED_TRIGGER_PHY_HW)	+= phy_hw_led_mode.o
- 
- obj-$(CONFIG_PHYLINK)		+= phylink.o
- obj-$(CONFIG_PHYLIB)		+= libphy.o
-diff --git a/drivers/net/phy/phy_hw_led_mode.c b/drivers/net/phy/phy_hw_led_mode.c
-new file mode 100644
-index 000000000000..b4c2f25266a5
---- /dev/null
-+++ b/drivers/net/phy/phy_hw_led_mode.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * drivers/net/phy/phy_hw_led_mode.c
-+ *
-+ * PHY HW LED mode trigger
-+ *
-+ * Copyright (C) 2020 Marek Behun <marek.behun@nic.cz>
-+ */
-+#include <linux/leds.h>
-+#include <linux/phy.h>
-+
-+static void phy_hw_led_trig_deactivate(struct led_classdev *cdev)
-+{
-+	struct phy_device *phydev = to_phy_device(cdev->dev->parent);
-+	int ret;
-+
-+	ret = phydev->drv->led_set_hw_mode(phydev, cdev, NULL);
-+	if (ret < 0) {
-+		phydev_err(phydev, "failed deactivating HW mode on LED %s\n", cdev->name);
-+		return;
-+	}
-+}
-+
-+static ssize_t hw_mode_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	struct led_classdev *cdev = led_trigger_get_led(dev);
-+	struct phy_device *phydev = to_phy_device(cdev->dev->parent);
-+	const char *mode, *cur_mode;
-+	void *iter = NULL;
-+	int len = 0;
-+
-+	cur_mode = phydev->drv->led_get_hw_mode(phydev, cdev);
-+
-+	for (mode = phydev->drv->led_iter_hw_mode(phydev, cdev, &iter);
-+	     mode;
-+	     mode = phydev->drv->led_iter_hw_mode(phydev, cdev, &iter)) {
-+		bool sel;
-+
-+		sel = cur_mode && !strcmp(mode, cur_mode);
-+
-+		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s%s ", sel ? "[" : "", mode,
-+				 sel ? "]" : "");
-+	}
-+
-+	if (buf[len - 1] == ' ')
-+		buf[len - 1] = '\n';
-+
-+	return len;
-+}
-+
-+static ssize_t hw_mode_store(struct device *dev, struct device_attribute *attr, const char *buf,
-+			     size_t count)
-+{
-+	struct led_classdev *cdev = led_trigger_get_led(dev);
-+	struct phy_device *phydev = to_phy_device(cdev->dev->parent);
-+	int ret;
-+
-+	ret = phydev->drv->led_set_hw_mode(phydev, cdev, buf);
-+	if (ret < 0)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_RW(hw_mode);
-+
-+static struct attribute *phy_hw_led_trig_attrs[] = {
-+	&dev_attr_hw_mode.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(phy_hw_led_trig);
-+
-+struct led_hw_trigger_type phy_hw_led_trig_type;
-+EXPORT_SYMBOL_GPL(phy_hw_led_trig_type);
-+
-+struct led_trigger phy_hw_led_trig = {
-+	.name		= "phydev-hw-mode",
-+	.deactivate	= phy_hw_led_trig_deactivate,
-+	.trigger_type	= &phy_hw_led_trig_type,
-+	.groups		= phy_hw_led_trig_groups,
-+};
-+EXPORT_SYMBOL_GPL(phy_hw_led_trig);
-+
-+static int __init phy_led_triggers_init(void)
-+{
-+	return led_trigger_register(&phy_hw_led_trig);
-+}
-+
-+module_init(phy_led_triggers_init);
-+
-+static void __exit phy_led_triggers_exit(void)
-+{
-+	led_trigger_unregister(&phy_hw_led_trig);
-+}
-+
-+module_exit(phy_led_triggers_exit);
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 0403eb799913..3abaed18f63d 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -14,6 +14,7 @@
- #include <linux/compiler.h>
- #include <linux/spinlock.h>
- #include <linux/ethtool.h>
-+#include <linux/leds.h>
- #include <linux/linkmode.h>
- #include <linux/netlink.h>
- #include <linux/mdio.h>
-@@ -736,6 +737,14 @@ struct phy_driver {
- 	int (*set_loopback)(struct phy_device *dev, bool enable);
- 	int (*get_sqi)(struct phy_device *dev);
- 	int (*get_sqi_max)(struct phy_device *dev);
-+
-+#if IS_ENABLED(CONFIG_LED_TRIGGER_PHY_HW)
-+	/* PHY LED HW modes support */
-+	const char *(*led_iter_hw_mode)(struct phy_device *dev, struct led_classdev *cdev,
-+					void **	iter);
-+	int (*led_set_hw_mode)(struct phy_device *dev, struct led_classdev *cdev, const char *mode);
-+	const char *(*led_get_hw_mode)(struct phy_device *dev, struct led_classdev *cdev);
-+#endif
- };
- #define to_phy_driver(d) container_of(to_mdio_common_driver(d),		\
- 				      struct phy_driver, mdiodrv)
-@@ -747,6 +756,12 @@ struct phy_driver {
- #define PHY_ID_MATCH_MODEL(id) .phy_id = (id), .phy_id_mask = GENMASK(31, 4)
- #define PHY_ID_MATCH_VENDOR(id) .phy_id = (id), .phy_id_mask = GENMASK(31, 10)
- 
-+#if IS_ENABLED(CONFIG_LED_TRIGGER_PHY_HW)
-+/* PHY LED HW mode private trigger */
-+extern struct led_hw_trigger_type phy_hw_led_trig_type;
-+extern struct led_trigger phy_hw_led_trig;
-+#endif
-+
- /* A Structure for boards to register fixups with the PHY Lib */
- struct phy_fixup {
- 	struct list_head list;
 -- 
-2.26.2
+2.27.0
 
