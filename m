@@ -2,781 +2,113 @@ Return-Path: <SRS0=2Xw6=BD=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 692EAC43462
-	for <linux-leds@archiver.kernel.org>; Fri, 24 Jul 2020 21:38:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C41C433E1
+	for <linux-leds@archiver.kernel.org>; Fri, 24 Jul 2020 22:05:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C93E206EB
-	for <linux-leds@archiver.kernel.org>; Fri, 24 Jul 2020 21:38:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdAEiG1h"
+	by mail.kernel.org (Postfix) with ESMTP id 28D722070B
+	for <linux-leds@archiver.kernel.org>; Fri, 24 Jul 2020 22:05:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbgGXViJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 24 Jul 2020 17:38:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58002 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbgGXViF (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 24 Jul 2020 17:38:05 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07FEDC0619D3;
-        Fri, 24 Jul 2020 14:38:05 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id f18so9426680wml.3;
-        Fri, 24 Jul 2020 14:38:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tiiDbTuCVzYN6r8S5ixABnhozGVxB5kadxzbnYKZfxo=;
-        b=IdAEiG1h3Wp+FIbVA6qaF8NVp7NuUrAn9Ma8NPxSkBy45XbYqwFinDGlw/AyO8b5Br
-         dfNjUMTevRm3Bi+WI/yW3DO07vY5pNsbausK8YAeMF7hf3yGMtugSJZDTcdHjeEjApD9
-         ePEfAJrcrfxPLGQ4wnf2urGvwH4j1WMKUYY+d8zaFLSdVzOotFnFo82L4N1km/1ON7R3
-         gzY5OiKmE1WuGV5n0H8Rzsyf/NUIC958NdTXo3rNs4scoJLCmAyB8R81X21SBRbRuMx3
-         sKuYD/zV/VHgUfkxyFoIoNaNRNVVhTiGyvS30CZ0+icM5rtkyn+axNGhCC1mYKtRZY8R
-         6klA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tiiDbTuCVzYN6r8S5ixABnhozGVxB5kadxzbnYKZfxo=;
-        b=dQ8E+XQtZBdZG5+NzxTgj0QhEHuqqnqo7huSULSnNoU2M89oq2MtXk4FPWgHkMT97s
-         HJf+VTmSy7IZHVp94/AeLCEtVzHcaNQjZSaBSrDrXRoRXgsrPueYMkCatCjCKp8Alijy
-         VVKS9AUCMNlotSR8kX+GavVt2x+tnE+nLRdb3pPNgVKigFDGODcTSIMVIxBOKSxtobG6
-         tnrTiJ12dBIorsJegkDps4d92rKpEpq5LzN1Kd86oXYrLkNDc0wVRPskhWhI5eMjxISx
-         JMnUheaLUatqIMwrBT0IzpcEdxlpN+aAkT0RBYAdkRkXOfI2ajwaa4NnJoW44gvfyED5
-         mtBw==
-X-Gm-Message-State: AOAM531FwLJIwFOV+Cl6LTX/t//6+aMaJrU6C/mqMA+hpLmU1X0aOq7T
-        W/1diBT/+iDWQQSzhgF+KJ+kJ+1iOzE=
-X-Google-Smtp-Source: ABdhPJywDZcj8aoGbR8pbPIXZjzWgaf6VjNFc04hBiysdmUJ9qzLGVCv0SU92Gdj/EskrY59sHz9wQ==
-X-Received: by 2002:a1c:19c6:: with SMTP id 189mr2558290wmz.98.1595626683479;
-        Fri, 24 Jul 2020 14:38:03 -0700 (PDT)
-Received: from TimeMachine.localdomain (bband-dyn34.178-41-255.t-com.sk. [178.41.255.34])
-        by smtp.googlemail.com with ESMTPSA id 129sm8853400wmd.48.2020.07.24.14.38.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2020 14:38:03 -0700 (PDT)
-From:   Martin Botka <martin.botka1@gmail.com>
-Cc:     Fenglin Wu <fenglinw@codeaurora.org>,
-        Martin Botka <martin.botka1@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1726711AbgGXWFT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 24 Jul 2020 18:05:19 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:47340 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbgGXWFT (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 24 Jul 2020 18:05:19 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 112D11C0BE2; Sat, 25 Jul 2020 00:05:17 +0200 (CEST)
+Date:   Sat, 25 Jul 2020 00:05:16 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Martin Botka <martin.botka1@gmail.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
         <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: [PATCH RFC 4/6] leds: leds-qti-tri-led: Add LED driver for QTI TRI_LED module
-Date:   Fri, 24 Jul 2020 23:36:54 +0200
-Message-Id: <20200724213659.273599-5-martin.botka1@gmail.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200724213659.273599-1-martin.botka1@gmail.com>
+Subject: Re: [PATCH RFC 0/6] Add QCOM pwm-lpg and tri-led drivers
+Message-ID: <20200724220516.GA21965@amd>
 References: <20200724213659.273599-1-martin.botka1@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="wac7ysb48OaltWcw"
+Content-Disposition: inline
+In-Reply-To: <20200724213659.273599-1-martin.botka1@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Fenglin Wu <fenglinw@codeaurora.org>
 
-QTI TRI_LED module has 3 current sinks at max for LED driver and
-each is controlled by a PWM channel used for LED dimming or blinking.
-Add the driver to support it.
+--wac7ysb48OaltWcw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
-[martin.botka1@@gmail.com: Fast-forward the driver from kernel 4.14 to 5.8]
-Signed-off-by: Martin Botka <martin.botka1@gmail.com>
----
- drivers/leds/Kconfig            |   9 +
- drivers/leds/Makefile           |   1 +
- drivers/leds/leds-qti-tri-led.c | 640 ++++++++++++++++++++++++++++++++
- 3 files changed, 650 insertions(+)
- create mode 100644 drivers/leds/leds-qti-tri-led.c
+Hi!
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index ed943140e1fd..37beff922945 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -768,6 +768,15 @@ config LEDS_POWERNV
- 	  To compile this driver as a module, choose 'm' here: the module
- 	  will be called leds-powernv.
- 
-+config LEDS_QTI_TRI_LED
-+	tristate "LED support for Qualcomm Technologies, Inc. TRI_LED"
-+	depends on LEDS_CLASS && MFD_SPMI_PMIC && PWM && OF
-+	help
-+	  This driver supports the TRI_LED module found in Qualcomm
-+	  Technologies, Inc. PMIC chips. TRI_LED supports 3 LED drivers
-+	  at max and each is controlled by a PWM channel used for dimming
-+	  or blinking.
-+
- config LEDS_SYSCON
- 	bool "LED support for LEDs on system controllers"
- 	depends on LEDS_CLASS=y
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index d6b8a792c936..16a5be936178 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -20,6 +20,7 @@ obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
- obj-$(CONFIG_LEDS_BCM6358)		+= leds-bcm6358.o
- obj-$(CONFIG_LEDS_BD2802)		+= leds-bd2802.o
- obj-$(CONFIG_LEDS_BLINKM)		+= leds-blinkm.o
-+obj-$(CONFIG_LEDS_QTI_TRI_LED)		+= leds-qti-tri-led.o
- obj-$(CONFIG_LEDS_CLEVO_MAIL)		+= leds-clevo-mail.o
- obj-$(CONFIG_LEDS_COBALT_QUBE)		+= leds-cobalt-qube.o
- obj-$(CONFIG_LEDS_COBALT_RAQ)		+= leds-cobalt-raq.o
-diff --git a/drivers/leds/leds-qti-tri-led.c b/drivers/leds/leds-qti-tri-led.c
-new file mode 100644
-index 000000000000..ea5069e22662
---- /dev/null
-+++ b/drivers/leds/leds-qti-tri-led.c
-@@ -0,0 +1,640 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/pwm.h>
-+#include <linux/regmap.h>
-+#include <linux/types.h>
-+
-+#define TRILED_REG_TYPE 0x04
-+#define TRILED_REG_SUBTYPE 0x05
-+#define TRILED_REG_EN_CTL 0x46
-+
-+/* TRILED_REG_EN_CTL */
-+#define TRILED_EN_CTL_MASK GENMASK(7, 5)
-+#define TRILED_EN_CTL_MAX_BIT 7
-+
-+#define TRILED_TYPE 0x19
-+#define TRILED_SUBTYPE_LED3H0L12 0x02
-+#define TRILED_SUBTYPE_LED2H0L12 0x03
-+#define TRILED_SUBTYPE_LED1H2L12 0x04
-+
-+#define TRILED_NUM_MAX 3
-+
-+#define PWM_PERIOD_DEFAULT_NS 1000000
-+
-+struct pwm_setting {
-+	u64 pre_period_ns;
-+	u64 period_ns;
-+	u64 duty_ns;
-+};
-+
-+struct led_setting {
-+	u64 on_ms;
-+	u64 off_ms;
-+	enum led_brightness brightness;
-+	bool blink;
-+	bool breath;
-+};
-+
-+struct qpnp_led_dev {
-+	struct led_classdev cdev;
-+	struct pwm_device *pwm_dev;
-+	struct pwm_setting pwm_setting;
-+	struct led_setting led_setting;
-+	struct qpnp_tri_led_chip *chip;
-+	struct mutex lock;
-+	const char *label;
-+	const char *default_trigger;
-+	u8 id;
-+	bool blinking;
-+	bool breathing;
-+};
-+
-+struct qpnp_tri_led_chip {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct qpnp_led_dev *leds;
-+	struct nvmem_device *pbs_nvmem;
-+	struct mutex bus_lock;
-+	int num_leds;
-+	u16 reg_base;
-+	u8 subtype;
-+	u8 bitmap;
-+};
-+
-+static int qpnp_tri_led_read(struct qpnp_tri_led_chip *chip, u16 addr, u8 *val)
-+{
-+	int rc;
-+	unsigned int tmp;
-+
-+	mutex_lock(&chip->bus_lock);
-+	rc = regmap_read(chip->regmap, chip->reg_base + addr, &tmp);
-+	if (rc < 0)
-+		dev_err(chip->dev, "Read addr 0x%x failed, rc=%d\n", addr, rc);
-+	else
-+		*val = (u8)tmp;
-+	mutex_unlock(&chip->bus_lock);
-+
-+	return rc;
-+}
-+
-+static int qpnp_tri_led_masked_write(struct qpnp_tri_led_chip *chip, u16 addr,
-+				     u8 mask, u8 val)
-+{
-+	int rc;
-+
-+	mutex_lock(&chip->bus_lock);
-+	rc = regmap_update_bits(chip->regmap, chip->reg_base + addr, mask, val);
-+	if (rc < 0)
-+		dev_err(chip->dev,
-+			"Update addr 0x%x to val 0x%x with mask 0x%x failed, rc=%d\n",
-+			addr, val, mask, rc);
-+	mutex_unlock(&chip->bus_lock);
-+
-+	return rc;
-+}
-+
-+static int __tri_led_config_pwm(struct qpnp_led_dev *led,
-+				struct pwm_setting *pwm)
-+{
-+	struct pwm_state pstate;
-+	int rc;
-+
-+	pwm_get_state(led->pwm_dev, &pstate);
-+	pstate.enabled = !!(pwm->duty_ns != 0);
-+	pstate.period = pwm->period_ns;
-+	pstate.duty_cycle = pwm->duty_ns;
-+	rc = pwm_apply_state(led->pwm_dev, &pstate);
-+
-+	if (rc < 0)
-+		dev_err(led->chip->dev,
-+			"Apply PWM state for %s led failed, rc=%d\n",
-+			led->cdev.name, rc);
-+
-+	return rc;
-+}
-+
-+#define PBS_ENABLE 1
-+#define PBS_DISABLE 2
-+#define PBS_ARG 0x42
-+#define PBS_TRIG_CLR 0xE6
-+#define PBS_TRIG_SET 0xE5
-+static int __tri_led_set(struct qpnp_led_dev *led)
-+{
-+	int rc = 0;
-+	u8 val = 0, mask = 0, pbs_val;
-+	u8 prev_bitmap;
-+
-+	rc = __tri_led_config_pwm(led, &led->pwm_setting);
-+	if (rc < 0) {
-+		dev_err(led->chip->dev,
-+			"Configure PWM for %s led failed, rc=%d\n",
-+			led->cdev.name, rc);
-+		return rc;
-+	}
-+
-+	mask |= 1 << (TRILED_EN_CTL_MAX_BIT - led->id);
-+
-+	if (led->pwm_setting.duty_ns == 0)
-+		val = 0;
-+	else
-+		val = mask;
-+
-+	if (led->chip->subtype == TRILED_SUBTYPE_LED2H0L12 &&
-+	    led->chip->pbs_nvmem) {
-+		/*
-+		 * Control BOB_CONFIG_EXT_CTRL2_FORCE_EN for HR_LED through
-+		 * PBS trigger. PBS trigger for enable happens if any one of
-+		 * LEDs are turned on. PBS trigger for disable happens only
-+		 * if both LEDs are turned off.
-+		 */
-+
-+		prev_bitmap = led->chip->bitmap;
-+		if (val)
-+			led->chip->bitmap |= (1 << led->id);
-+		else
-+			led->chip->bitmap &= ~(1 << led->id);
-+
-+		if (!(led->chip->bitmap & prev_bitmap)) {
-+			pbs_val = led->chip->bitmap ? PBS_ENABLE : PBS_DISABLE;
-+			rc = nvmem_device_write(led->chip->pbs_nvmem, PBS_ARG,
-+						1, &pbs_val);
-+			if (rc < 0) {
-+				dev_err(led->chip->dev,
-+					"Couldn't set PBS_ARG, rc=%d\n", rc);
-+				return rc;
-+			}
-+
-+			pbs_val = 1;
-+			rc = nvmem_device_write(led->chip->pbs_nvmem,
-+						PBS_TRIG_CLR, 1, &pbs_val);
-+			if (rc < 0) {
-+				dev_err(led->chip->dev,
-+					"Couldn't set PBS_TRIG_CLR, rc=%d\n",
-+					rc);
-+				return rc;
-+			}
-+
-+			pbs_val = 1;
-+			rc = nvmem_device_write(led->chip->pbs_nvmem,
-+						PBS_TRIG_SET, 1, &pbs_val);
-+			if (rc < 0) {
-+				dev_err(led->chip->dev,
-+					"Couldn't set PBS_TRIG_SET, rc=%d\n",
-+					rc);
-+				return rc;
-+			}
-+		}
-+	}
-+
-+	rc = qpnp_tri_led_masked_write(led->chip, TRILED_REG_EN_CTL, mask, val);
-+	if (rc < 0)
-+		dev_err(led->chip->dev, "Update addr 0x%x failed, rc=%d\n",
-+			TRILED_REG_EN_CTL, rc);
-+
-+	return rc;
-+}
-+
-+static int qpnp_tri_led_set(struct qpnp_led_dev *led)
-+{
-+	u64 on_ms, off_ms, period_ns, duty_ns;
-+	enum led_brightness brightness = led->led_setting.brightness;
-+	int rc = 0;
-+
-+	if (led->led_setting.blink) {
-+		on_ms = led->led_setting.on_ms;
-+		off_ms = led->led_setting.off_ms;
-+
-+		duty_ns = on_ms * NSEC_PER_MSEC;
-+		period_ns = (on_ms + off_ms) * NSEC_PER_MSEC;
-+
-+		if (period_ns < duty_ns && duty_ns != 0)
-+			period_ns = duty_ns + 1;
-+	} else {
-+		/* Use initial period if no blinking is required */
-+		period_ns = led->pwm_setting.pre_period_ns;
-+
-+		if (brightness == LED_OFF)
-+			duty_ns = 0;
-+
-+		duty_ns = period_ns * brightness;
-+		do_div(duty_ns, LED_FULL);
-+
-+		if (period_ns < duty_ns && duty_ns != 0)
-+			period_ns = duty_ns + 1;
-+	}
-+	dev_dbg(led->chip->dev,
-+		"PWM settings for %s led: period = %lluns, duty = %lluns\n",
-+		led->cdev.name, period_ns, duty_ns);
-+
-+	led->pwm_setting.duty_ns = duty_ns;
-+	led->pwm_setting.period_ns = period_ns;
-+
-+	rc = __tri_led_set(led);
-+	if (rc < 0) {
-+		dev_err(led->chip->dev, "__tri_led_set %s failed, rc=%d\n",
-+			led->cdev.name, rc);
-+		return rc;
-+	}
-+
-+	if (led->led_setting.blink) {
-+		led->cdev.brightness = LED_FULL;
-+		led->blinking = true;
-+		led->breathing = false;
-+	} else if (led->led_setting.breath) {
-+		led->cdev.brightness = LED_FULL;
-+		led->blinking = false;
-+		led->breathing = true;
-+	} else {
-+		led->cdev.brightness = led->led_setting.brightness;
-+		led->blinking = false;
-+		led->breathing = false;
-+	}
-+
-+	return rc;
-+}
-+
-+static int qpnp_tri_led_set_brightness(struct led_classdev *led_cdev,
-+				       enum led_brightness brightness)
-+{
-+	struct qpnp_led_dev *led =
-+		container_of(led_cdev, struct qpnp_led_dev, cdev);
-+	int rc = 0;
-+
-+	mutex_lock(&led->lock);
-+	if (brightness > LED_FULL)
-+		brightness = LED_FULL;
-+
-+	if (brightness == led->led_setting.brightness && !led->blinking &&
-+	    !led->breathing) {
-+		mutex_unlock(&led->lock);
-+		return 0;
-+	}
-+
-+	led->led_setting.brightness = brightness;
-+	if (!!brightness)
-+		led->led_setting.off_ms = 0;
-+	else
-+		led->led_setting.on_ms = 0;
-+	led->led_setting.blink = false;
-+	led->led_setting.breath = false;
-+
-+	rc = qpnp_tri_led_set(led);
-+	if (rc)
-+		dev_err(led->chip->dev, "Set led failed for %s, rc=%d\n",
-+			led->label, rc);
-+
-+	mutex_unlock(&led->lock);
-+
-+	return rc;
-+}
-+
-+static enum led_brightness
-+qpnp_tri_led_get_brightness(struct led_classdev *led_cdev)
-+{
-+	return led_cdev->brightness;
-+}
-+
-+static int qpnp_tri_led_set_blink(struct led_classdev *led_cdev,
-+				  unsigned long *on_ms, unsigned long *off_ms)
-+{
-+	struct qpnp_led_dev *led =
-+		container_of(led_cdev, struct qpnp_led_dev, cdev);
-+	int rc = 0;
-+
-+	mutex_lock(&led->lock);
-+	if (led->blinking && *on_ms == led->led_setting.on_ms &&
-+	    *off_ms == led->led_setting.off_ms) {
-+		dev_dbg(led_cdev->dev,
-+			"Ignore, on/off setting is not changed: on %lums, off %lums\n",
-+			*on_ms, *off_ms);
-+		mutex_unlock(&led->lock);
-+		return 0;
-+	}
-+
-+	if (*on_ms == 0) {
-+		led->led_setting.blink = false;
-+		led->led_setting.breath = false;
-+		led->led_setting.brightness = LED_OFF;
-+	} else if (*off_ms == 0) {
-+		led->led_setting.blink = false;
-+		led->led_setting.breath = false;
-+		led->led_setting.brightness = led->cdev.brightness;
-+	} else {
-+		led->led_setting.on_ms = *on_ms;
-+		led->led_setting.off_ms = *off_ms;
-+		led->led_setting.blink = true;
-+		led->led_setting.breath = false;
-+	}
-+
-+	rc = qpnp_tri_led_set(led);
-+	if (rc)
-+		dev_err(led->chip->dev, "Set led failed for %s, rc=%d\n",
-+			led->label, rc);
-+
-+	mutex_unlock(&led->lock);
-+	return rc;
-+}
-+
-+static ssize_t breath_show(struct device *dev, struct device_attribute *attr,
-+			   char *buf)
-+{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct qpnp_led_dev *led =
-+		container_of(led_cdev, struct qpnp_led_dev, cdev);
-+
-+	return snprintf(buf, PAGE_SIZE, "%d\n", led->led_setting.breath);
-+}
-+
-+static ssize_t breath_store(struct device *dev, struct device_attribute *attr,
-+			    const char *buf, size_t count)
-+{
-+	int rc;
-+	bool breath;
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct qpnp_led_dev *led =
-+		container_of(led_cdev, struct qpnp_led_dev, cdev);
-+
-+	rc = kstrtobool(buf, &breath);
-+	if (rc < 0)
-+		return rc;
-+
-+	cancel_work_sync(&led_cdev->set_brightness_work);
-+
-+	mutex_lock(&led->lock);
-+	if (led->breathing == breath)
-+		goto unlock;
-+
-+	led->led_setting.blink = false;
-+	led->led_setting.breath = breath;
-+	led->led_setting.brightness = breath ? LED_FULL : LED_OFF;
-+	rc = qpnp_tri_led_set(led);
-+	if (rc < 0)
-+		dev_err(led->chip->dev, "Set led failed for %s, rc=%d\n",
-+			led->label, rc);
-+
-+unlock:
-+	mutex_unlock(&led->lock);
-+	return (rc < 0) ? rc : count;
-+}
-+
-+static DEVICE_ATTR(breath, 0644, breath_show, breath_store);
-+static const struct attribute *breath_attrs[] = { &dev_attr_breath.attr, NULL };
-+
-+static int qpnp_tri_led_register(struct qpnp_tri_led_chip *chip)
-+{
-+	struct qpnp_led_dev *led;
-+	int rc, i, j;
-+
-+	for (i = 0; i < chip->num_leds; i++) {
-+		led = &chip->leds[i];
-+		mutex_init(&led->lock);
-+		led->cdev.name = led->label;
-+		led->cdev.max_brightness = LED_FULL;
-+		led->cdev.brightness_set_blocking = qpnp_tri_led_set_brightness;
-+		led->cdev.brightness_get = qpnp_tri_led_get_brightness;
-+		led->cdev.blink_set = qpnp_tri_led_set_blink;
-+		led->cdev.default_trigger = led->default_trigger;
-+		led->cdev.brightness = LED_OFF;
-+
-+		rc = devm_led_classdev_register(chip->dev, &led->cdev);
-+		if (rc < 0) {
-+			dev_err(chip->dev,
-+				"%s led class device registering failed, rc=%d\n",
-+				led->label, rc);
-+			goto err_out;
-+		}
-+
-+		/* Make sure to initialize the LEDs to known values */
-+		rc = qpnp_tri_led_set(led);
-+		if (rc)
-+			dev_warn(chip->dev,
-+				 "Cannot initialize %s LED to OFF value: %d\n",
-+				 led->label, rc);
-+	}
-+
-+	return 0;
-+
-+err_out:
-+	for (j = 0; j <= i; j++) {
-+		if (j < i)
-+			sysfs_remove_files(&chip->leds[j].cdev.dev->kobj,
-+					   breath_attrs);
-+		mutex_destroy(&chip->leds[j].lock);
-+	}
-+	return rc;
-+}
-+
-+static int qpnp_tri_led_hw_init(struct qpnp_tri_led_chip *chip)
-+{
-+	int rc = 0;
-+	u8 val;
-+
-+	rc = qpnp_tri_led_read(chip, TRILED_REG_TYPE, &val);
-+	if (rc < 0) {
-+		dev_err(chip->dev, "Read REG_TYPE failed, rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	if (val != TRILED_TYPE) {
-+		dev_err(chip->dev, "invalid subtype(%d)\n", val);
-+		return -ENODEV;
-+	}
-+
-+	rc = qpnp_tri_led_read(chip, TRILED_REG_SUBTYPE, &val);
-+	if (rc < 0) {
-+		dev_err(chip->dev, "Read REG_SUBTYPE failed, rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	chip->subtype = val;
-+
-+	return 0;
-+}
-+
-+static int qpnp_tri_led_parse_dt(struct qpnp_tri_led_chip *chip)
-+{
-+	struct device_node *node = chip->dev->of_node, *child_node;
-+	struct qpnp_led_dev *led;
-+	struct pwm_args pargs;
-+	const __be32 *addr;
-+	int rc = 0, id, i = 0;
-+
-+	addr = of_get_address(chip->dev->of_node, 0, NULL, NULL);
-+	if (!addr) {
-+		dev_err(chip->dev, "Getting address failed\n");
-+		return -EINVAL;
-+	}
-+	chip->reg_base = be32_to_cpu(addr[0]);
-+
-+	chip->num_leds = of_get_available_child_count(node);
-+	if (chip->num_leds == 0) {
-+		dev_err(chip->dev, "No led child node defined\n");
-+		return -ENODEV;
-+	}
-+
-+	if (chip->num_leds > TRILED_NUM_MAX) {
-+		dev_err(chip->dev, "can't support %d leds(max %d)\n",
-+			chip->num_leds, TRILED_NUM_MAX);
-+		return -EINVAL;
-+	}
-+
-+	if (of_find_property(chip->dev->of_node, "nvmem", NULL)) {
-+		chip->pbs_nvmem = devm_nvmem_device_get(chip->dev, "pbs_sdam");
-+		if (IS_ERR_OR_NULL(chip->pbs_nvmem)) {
-+			rc = PTR_ERR(chip->pbs_nvmem);
-+			if (rc != -EPROBE_DEFER) {
-+				dev_err(chip->dev,
-+					"Couldn't get nvmem device, rc=%d\n",
-+					rc);
-+				return -ENODEV;
-+			}
-+			chip->pbs_nvmem = NULL;
-+			return rc;
-+		}
-+	}
-+
-+	chip->leds = devm_kcalloc(chip->dev, chip->num_leds,
-+				  sizeof(struct qpnp_led_dev), GFP_KERNEL);
-+	if (!chip->leds)
-+		return -ENOMEM;
-+
-+	for_each_available_child_of_node (node, child_node) {
-+		rc = of_property_read_u32(child_node, "led-sources", &id);
-+		if (rc) {
-+			dev_err(chip->dev, "Get led-sources failed, rc=%d\n",
-+				rc);
-+			return rc;
-+		}
-+
-+		if (id >= TRILED_NUM_MAX) {
-+			dev_err(chip->dev, "only support 0~%d current source\n",
-+				TRILED_NUM_MAX - 1);
-+			return -EINVAL;
-+		}
-+
-+		led = &chip->leds[i++];
-+		led->chip = chip;
-+		led->id = id;
-+		led->label = of_get_property(child_node, "label", NULL) ?:
-+				     child_node->name;
-+
-+		led->pwm_dev = devm_of_pwm_get(chip->dev, child_node, NULL);
-+		if (IS_ERR(led->pwm_dev)) {
-+			rc = PTR_ERR(led->pwm_dev);
-+			if (rc != -EPROBE_DEFER)
-+				dev_err(chip->dev,
-+					"Get pwm device for %s led failed, rc=%d\n",
-+					led->label, rc);
-+			return rc;
-+		}
-+
-+		pwm_get_args(led->pwm_dev, &pargs);
-+		if (pargs.period == 0)
-+			led->pwm_setting.pre_period_ns = PWM_PERIOD_DEFAULT_NS;
-+		else
-+			led->pwm_setting.pre_period_ns = pargs.period;
-+
-+		led->default_trigger = of_get_property(
-+			child_node, "linux,default-trigger", NULL);
-+	}
-+
-+	return rc;
-+}
-+
-+static int qpnp_tri_led_probe(struct platform_device *pdev)
-+{
-+	struct qpnp_tri_led_chip *chip;
-+	int rc = 0;
-+
-+	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	chip->dev = &pdev->dev;
-+	chip->regmap = dev_get_regmap(chip->dev->parent, NULL);
-+	if (!chip->regmap) {
-+		dev_err(chip->dev, "Getting regmap failed\n");
-+		return -EINVAL;
-+	}
-+
-+	rc = qpnp_tri_led_parse_dt(chip);
-+	if (rc < 0) {
-+		dev_err(chip->dev,
-+			"Devicetree properties parsing failed, rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	mutex_init(&chip->bus_lock);
-+
-+	rc = qpnp_tri_led_hw_init(chip);
-+	if (rc) {
-+		dev_err(chip->dev, "HW initialization failed, rc=%d\n", rc);
-+		goto destroy;
-+	}
-+
-+	dev_set_drvdata(chip->dev, chip);
-+	rc = qpnp_tri_led_register(chip);
-+	if (rc < 0) {
-+		dev_err(chip->dev,
-+			"Registering LED class devices failed, rc=%d\n", rc);
-+		goto destroy;
-+	}
-+
-+	dev_dbg(chip->dev, "Tri-led module with subtype 0x%x is detected\n",
-+		chip->subtype);
-+	return 0;
-+destroy:
-+	mutex_destroy(&chip->bus_lock);
-+	dev_set_drvdata(chip->dev, NULL);
-+
-+	return rc;
-+}
-+
-+static int qpnp_tri_led_remove(struct platform_device *pdev)
-+{
-+	int i;
-+	struct qpnp_tri_led_chip *chip = dev_get_drvdata(&pdev->dev);
-+
-+	mutex_destroy(&chip->bus_lock);
-+	for (i = 0; i < chip->num_leds; i++) {
-+		sysfs_remove_files(&chip->leds[i].cdev.dev->kobj, breath_attrs);
-+		mutex_destroy(&chip->leds[i].lock);
-+	}
-+	dev_set_drvdata(chip->dev, NULL);
-+	return 0;
-+}
-+
-+static const struct of_device_id qpnp_tri_led_of_match[] = {
-+	{
-+		.compatible = "qcom,tri-led",
-+	},
-+	{},
-+};
-+
-+static struct platform_driver qpnp_tri_led_driver = {
-+	.driver		= {
-+		.name		= "qcom,tri-led",
-+		.of_match_table	= qpnp_tri_led_of_match,
-+	},
-+	.probe		= qpnp_tri_led_probe,
-+	.remove		= qpnp_tri_led_remove,
-+};
-+module_platform_driver(qpnp_tri_led_driver);
-+
-+MODULE_DESCRIPTION("QTI TRI_LED driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.27.0
+Dalsi cech co hackuje LEDky?
 
+> This series brings QCOM pwm-lpg and tri-led drivers from 4.14 that is req=
+uired to support pmic-connected notification LED.
+> This comes straight from downstream and I'm ready for your comments.
+
+Yeah, so...
+
+Bindings should go first, they may need to be converted to yml
+(devicetree people will know).
+
+Can generic pwm driver be used here?
+
+This is for RGB modules, right? It will need to use multicolor
+framework.
+
+"Breathing" will need to be figured out. It should become a trigger.
+
+Is this for phone, btw? If so, which one?
+
+Best regards,
+								Pavel
+
+>  .../bindings/leds/leds-qti-tri-led.txt        |   72 +
+>  .../devicetree/bindings/pwm/pwm-qti-lpg.txt   |  163 +++
+>  drivers/leds/Kconfig                          |    9 +
+>  drivers/leds/Makefile                         |    1 +
+>  drivers/leds/leds-qti-tri-led.c               |  640 ++++++++
+>  drivers/pwm/Kconfig                           |   10 +
+>  drivers/pwm/Makefile                          |    1 +
+>  drivers/pwm/core.c                            |   56 +-
+>  drivers/pwm/pwm-qti-lpg.c                     | 1284 +++++++++++++++++
+>  drivers/pwm/sysfs.c                           |   56 +-
+>  include/linux/pwm.h                           |  144 +-
+>  11 files changed, 2418 insertions(+), 18 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-qti-tri-l=
+ed.txt
+>  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-qti-lpg.txt
+>  create mode 100644 drivers/leds/leds-qti-tri-led.c
+>  create mode 100644 drivers/pwm/pwm-qti-lpg.c
+>=20
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--wac7ysb48OaltWcw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl8bWxwACgkQMOfwapXb+vLWJQCdHtl9UD/9yDfZ1yGURJGOFa/h
+BlsAmwV9txSx+kK7qN9Y9fI6OBfNv+A3
+=cLGg
+-----END PGP SIGNATURE-----
+
+--wac7ysb48OaltWcw--
