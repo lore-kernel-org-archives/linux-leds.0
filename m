@@ -2,106 +2,107 @@ Return-Path: <SRS0=SKgM=BH=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0EBC433DF
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Jul 2020 10:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A07CC433E3
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Jul 2020 13:39:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC13520775
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Jul 2020 10:26:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 234D620663
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Jul 2020 13:39:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="v2pj/FVZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728493AbgG1K0l (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 28 Jul 2020 06:26:41 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:59262 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728424AbgG1K0l (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jul 2020 06:26:41 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id A05491C0BEC; Tue, 28 Jul 2020 12:26:38 +0200 (CEST)
-Date:   Tue, 28 Jul 2020 12:26:37 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, Milo Kim <milo.kim@ti.com>,
-        Mathias Nyman <mathias.nyman@nokia.com>
-Subject: Re: [PATCH -next] leds: fix LEDS_LP55XX_COMMON dependency and build
- errors
-Message-ID: <20200728102637.GA30718@amd>
-References: <dba79c02-b7f1-dd75-b364-93d90538cc5e@infradead.org>
+        id S1730025AbgG1NjD (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 28 Jul 2020 09:39:03 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:52478 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729044AbgG1NjD (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jul 2020 09:39:03 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 06SDceok086218;
+        Tue, 28 Jul 2020 08:38:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1595943520;
+        bh=LF1KW3b5hNQ93VNK2QHQ2c1Hqq2jNqESiln7vaNb5mw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=v2pj/FVZBSdeoK7UrRluB53SZAjqMFqWQi/FBqkcSIMOrHjO/6OrC6fMf/fnV8v2g
+         N6qcOvCuXROYGhZAgCHi3c5yDICDzViFIKKyjMXRSmDyEO9889wJ53RbKalU4AwG/P
+         XWA1W7a6R/HWGH+FHYCDlnrPhtKkYda1GWcFhgRQ=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 06SDcebH042073
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 28 Jul 2020 08:38:40 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 28
+ Jul 2020 08:38:40 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Tue, 28 Jul 2020 08:38:40 -0500
+Received: from [10.250.35.192] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06SDcdWq054358;
+        Tue, 28 Jul 2020 08:38:39 -0500
+Subject: Re: [PATCH v32 3/6] ARM: defconfig: u8500: Add LP55XX_COMMON config
+ flag
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC:     <devicetree@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20200722153146.8767-1-dmurphy@ti.com>
+ <20200722153146.8767-4-dmurphy@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <372891d8-816e-f640-7356-90513f998702@ti.com>
+Date:   Tue, 28 Jul 2020 08:38:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
-Content-Disposition: inline
-In-Reply-To: <dba79c02-b7f1-dd75-b364-93d90538cc5e@infradead.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20200722153146.8767-4-dmurphy@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Russel and Linus
 
---zhXaljGHf11kAtnf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/22/20 10:31 AM, Dan Murphy wrote:
+> The dependencies for the LP55XX LED drivers have been updated so that
+> the child devices (i.e. LP5521) now depends on the LP55XX_COMMON config
+> flag as opposed to the device selecting the LP55XX_COMMON flag.  The
+> LP55XX_COMMON needs to be set in the defconfig.
+>
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>   arch/arm/configs/u8500_defconfig | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm/configs/u8500_defconfig b/arch/arm/configs/u8500_defconfig
+> index 28dd7cf56048..dea599e1c17e 100644
+> --- a/arch/arm/configs/u8500_defconfig
+> +++ b/arch/arm/configs/u8500_defconfig
+> @@ -113,6 +113,7 @@ CONFIG_NEW_LEDS=y
+>   CONFIG_LEDS_CLASS=y
+>   CONFIG_LEDS_LM3530=y
+>   CONFIG_LEDS_GPIO=y
+> +CONFIG_LEDS_LP55XX_COMMON=y
+>   CONFIG_LEDS_LP5521=y
+>   CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+>   CONFIG_RTC_CLASS=y
 
-Hi!
 
-> From: Randy Dunlap <rdunlap@infradead.org>
->=20
-> Make LEDS_LP55XX_COMMON depend on I2C to fix build errors:
->=20
-> leds-lp55xx-common.c:(.text+0x9d): undefined reference to `i2c_smbus_read=
-_byte_data'
-> leds-lp55xx-common.c:(.text+0x8fc): undefined reference to `i2c_smbus_wri=
-te_byte_data'
->=20
-> These errors happened when I2C=3Dm and LEDS_LP55XX_COMMON=3Dy, so
-> prevent that from being possible.
->=20
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Dan Murphy <dmurphy@ti.com>
-> Cc: linux-leds@vger.kernel.org
-> Cc: Milo Kim <milo.kim@ti.com>
-> Cc: Mathias Nyman <mathias.nyman@nokia.com>
+I missed adding you to the patch.
 
-git is unhappy with your patch for some reason:
+Can you kindly review this change?
 
-Applying: leds: fix LEDS_LP55XX_COMMON dependency and build errors
-error: corrupt patch at line 14
-Patch failed at 0001 leds: fix LEDS_LP55XX_COMMON dependency and build
-errors
-The copy of the patch that failed is found in: .git/rebase-apply/patch
-When you have resolved this problem, run "git am --continue".
-If you prefer to skip this patch, run "git am --skip" instead.
-To restore the original branch and stop patching, run "git am
---abort".
+Dan
 
-I somehow applied it by hand and pushed out. Thanks!
-
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---zhXaljGHf11kAtnf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl8f/V0ACgkQMOfwapXb+vIKEACcC2B6Tdxfc+eAnHH4bVH0ZrPb
-coUAnRusk7r2wgRTKIYQ5M64wF1LqD/l
-=2yqt
------END PGP SIGNATURE-----
-
---zhXaljGHf11kAtnf--
