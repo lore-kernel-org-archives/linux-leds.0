@@ -2,237 +2,433 @@ Return-Path: <SRS0=SKgM=BH=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C968C433E3
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Jul 2020 13:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FD0C433ED
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Jul 2020 15:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18EF720663
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Jul 2020 13:39:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C44CB207F5
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Jul 2020 15:05:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DgR3SBvj"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="uDGPJX9R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730080AbgG1Njq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 28 Jul 2020 09:39:46 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:46824 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729044AbgG1Njq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jul 2020 09:39:46 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 06SDdV4h088972;
-        Tue, 28 Jul 2020 08:39:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1595943571;
-        bh=dPv4YxIrwFuV3NudXMrtoCbaLmUQB+hhpnVi9I+m27g=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=DgR3SBvj1LP8atxh++0E+OE2NN4HRh9HizQIQ1C4WKvcmMjhRe9Unc33ehKw3jZMC
-         7LELVTFf2bFjD1ZEwt6J3noouEKTErAmVHFtJAvfLFCtO7hfxnKUy93p/hi8jqnUxS
-         n/RM45oGVtfVIDRk+6qOAxsOZTprq9tat9UBZpl4=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06SDdVit100388;
-        Tue, 28 Jul 2020 08:39:31 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 28
- Jul 2020 08:39:31 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Tue, 28 Jul 2020 08:39:31 -0500
-Received: from [10.250.35.192] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 06SDdTx9116558;
-        Tue, 28 Jul 2020 08:39:30 -0500
-Subject: Re: [PATCH v32 1/6] dt: bindings: lp50xx: Introduce the lp50xx family
- of RGB drivers
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh@kernel.org>,
-        <marek.behun@nic.cz>
-CC:     <devicetree@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20200722153146.8767-1-dmurphy@ti.com>
- <20200722153146.8767-2-dmurphy@ti.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <285e2038-6a90-e59a-d414-19cc0f8789e6@ti.com>
-Date:   Tue, 28 Jul 2020 08:39:29 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1730641AbgG1PFg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 28 Jul 2020 11:05:36 -0400
+Received: from lists.nic.cz ([217.31.204.67]:44806 "EHLO mail.nic.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730521AbgG1PFf (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 28 Jul 2020 11:05:35 -0400
+Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
+        by mail.nic.cz (Postfix) with ESMTP id 79A05140BAE;
+        Tue, 28 Jul 2020 17:05:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
+        t=1595948732; bh=alruMr1METBt+lv/grduwk/8NbGGqGvGG1bZlH0sia4=;
+        h=From:To:Date;
+        b=uDGPJX9RAMu5uAFAF39iif7wtI0LTjaLRztK009QhzIRSDM0ZwB8KErGy/z0booKR
+         TpXNtzO70hXwT/CqPlcJdrsVvNNKr6cOOWnY9Lo26IPSP301Y8LLMSJYVgiN5U6RHk
+         AugAMH/3I2E0IJ0fzkiExvX9pC2jS3Y7cBdbYsOs=
+From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
+To:     netdev@vger.kernel.org
+Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        jacek.anaszewski@gmail.com, Dan Murphy <dmurphy@ti.com>,
+        =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megous@megous.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
+Subject: [PATCH RFC leds + net-next v4 1/2] net: phy: add API for LEDs controlled by PHY HW
+Date:   Tue, 28 Jul 2020 17:05:29 +0200
+Message-Id: <20200728150530.28827-2-marek.behun@nic.cz>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200728150530.28827-1-marek.behun@nic.cz>
+References: <20200728150530.28827-1-marek.behun@nic.cz>
 MIME-Version: 1.0
-In-Reply-To: <20200722153146.8767-2-dmurphy@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: /
+X-Virus-Scanned: clamav-milter 0.102.2 at mail
+X-Virus-Status: Clean
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Pavel
+Many PHYs support various HW control modes for LEDs connected directly
+to them.
 
-On 7/22/20 10:31 AM, Dan Murphy wrote:
-> Introduce the bindings for the Texas Instruments LP5036, LP5030, LP5024,
-> LP5018, LP5012 and LP5009 RGB LED device driver.  The LP5036/30/24/18/12/9
-> can control RGB LEDs individually or as part of a control bank group.
-> These devices have the ability to adjust the mixing control for the RGB
-> LEDs to obtain different colors independent of the overall brightness of
-> the LED grouping.
+This adds code for registering such LEDs when described in device tree
+and also adds a new private LED trigger called phydev-hw-mode. When
+this trigger is enabled for a LED, the various HW control modes which
+the PHY supports for given LED can be get/set via hw_mode sysfs file.
 
-Were you going to pull this in as a user of the Multicolor framework?
+A PHY driver wishing to utilize this API needs to implement these
+methods:
+- led_brightness_set for software brightness changing
+- led_iter_hw_mode, led_set_hw_mode and led_get_hw_mode for
+  getting/setting HW control mode
+- led_init if the drivers wants phy-core to register the LEDs from
+  device tree
 
-Dan
+Signed-off-by: Marek Behún <marek.behun@nic.cz>
+---
+ drivers/net/phy/Kconfig      |   4 +
+ drivers/net/phy/Makefile     |   1 +
+ drivers/net/phy/phy_device.c |  25 +++--
+ drivers/net/phy/phy_led.c    | 176 +++++++++++++++++++++++++++++++++++
+ include/linux/phy.h          |  51 ++++++++++
+ 5 files changed, 250 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/net/phy/phy_led.c
 
+diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
+index dd20c2c27c2f..8972d2de25f6 100644
+--- a/drivers/net/phy/Kconfig
++++ b/drivers/net/phy/Kconfig
+@@ -283,6 +283,10 @@ config LED_TRIGGER_PHY
+ 		<Speed in megabits>Mbps OR <Speed in gigabits>Gbps OR link
+ 		for any speed known to the PHY.
+ 
++config PHY_LEDS
++	bool
++	default y if LEDS_TRIGGERS
++
+ 
+ comment "MII PHY device drivers"
+ 
+diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
+index d84bab489a53..ef3c83759f93 100644
+--- a/drivers/net/phy/Makefile
++++ b/drivers/net/phy/Makefile
+@@ -20,6 +20,7 @@ endif
+ obj-$(CONFIG_MDIO_DEVRES)	+= mdio_devres.o
+ libphy-$(CONFIG_SWPHY)		+= swphy.o
+ libphy-$(CONFIG_LED_TRIGGER_PHY)	+= phy_led_triggers.o
++libphy-$(CONFIG_PHY_LEDS)	+= phy_led.o
+ 
+ obj-$(CONFIG_PHYLINK)		+= phylink.o
+ obj-$(CONFIG_PHYLIB)		+= libphy.o
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 1b9523595839..9a1e9da30f71 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -2909,6 +2909,8 @@ static int phy_probe(struct device *dev)
+ 				 phydev->supported);
+ 	}
+ 
++	of_phy_register_leds(phydev);
++
+ 	/* Set the state to READY by default */
+ 	phydev->state = PHY_READY;
+ 
+@@ -3040,24 +3042,32 @@ static int __init phy_init(void)
+ {
+ 	int rc;
+ 
+-	rc = mdio_bus_init();
++	rc = phy_leds_init();
+ 	if (rc)
+ 		return rc;
+ 
++	rc = mdio_bus_init();
++	if (rc)
++		goto err_leds;
++
+ 	ethtool_set_ethtool_phy_ops(&phy_ethtool_phy_ops);
+ 	features_init();
+ 
+ 	rc = phy_driver_register(&genphy_c45_driver, THIS_MODULE);
+ 	if (rc)
+-		goto err_c45;
++		goto err_mdio;
+ 
+ 	rc = phy_driver_register(&genphy_driver, THIS_MODULE);
+-	if (rc) {
+-		phy_driver_unregister(&genphy_c45_driver);
+-err_c45:
+-		mdio_bus_exit();
+-	}
++	if (rc)
++		goto err_c45;
+ 
++	return 0;
++err_c45:
++	phy_driver_unregister(&genphy_c45_driver);
++err_mdio:
++	mdio_bus_exit();
++err_leds:
++	phy_leds_exit();
+ 	return rc;
+ }
+ 
+@@ -3067,6 +3077,7 @@ static void __exit phy_exit(void)
+ 	phy_driver_unregister(&genphy_driver);
+ 	mdio_bus_exit();
+ 	ethtool_set_ethtool_phy_ops(NULL);
++	phy_leds_exit();
+ }
+ 
+ subsys_initcall(phy_init);
+diff --git a/drivers/net/phy/phy_led.c b/drivers/net/phy/phy_led.c
+new file mode 100644
+index 000000000000..85f67f39594f
+--- /dev/null
++++ b/drivers/net/phy/phy_led.c
+@@ -0,0 +1,176 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * drivers/net/phy/phy_hw_led_mode.c
++ *
++ * PHY HW LED mode trigger
++ *
++ * Copyright (C) 2020 Marek Behun <marek.behun@nic.cz>
++ */
++#include <linux/leds.h>
++#include <linux/netdevice.h>
++#include <linux/of.h>
++#include <linux/phy.h>
++
++int phy_led_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
++{
++	struct phy_device_led *led = led_cdev_to_phy_device_led(cdev);
++	struct phy_device *phydev = to_phy_device(cdev->dev->parent);
++	int ret;
++
++	mutex_lock(&phydev->lock);
++	ret = phydev->drv->led_brightness_set(phydev, led, brightness);
++	mutex_unlock(&phydev->lock);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(phy_led_brightness_set);
++
++static int of_phy_register_led(struct phy_device *phydev, struct device_node *np)
++{
++	struct led_init_data init_data = {};
++	struct phy_device_led *led;
++	u32 reg;
++	int ret;
++
++	ret = of_property_read_u32(np, "reg", &reg);
++	if (ret < 0)
++		return ret;
++
++	led = devm_kzalloc(&phydev->mdio.dev, sizeof(struct phy_device_led), GFP_KERNEL);
++	if (!led)
++		return -ENOMEM;
++
++	led->cdev.brightness_set_blocking = phy_led_brightness_set;
++	led->cdev.trigger_type = &phy_hw_led_trig_type;
++	led->addr = reg;
++
++	of_property_read_string(np, "linux,default-trigger", &led->cdev.default_trigger);
++
++	init_data.fwnode = &np->fwnode;
++	init_data.devname_mandatory = true;
++	init_data.devicename = phydev->attached_dev ? netdev_name(phydev->attached_dev) : "";
++
++	ret = phydev->drv->led_init(phydev, led);
++	if (ret < 0)
++		goto err_free;
++
++	ret = devm_led_classdev_register_ext(&phydev->mdio.dev, &led->cdev, &init_data);
++	if (ret < 0)
++		goto err_free;
++
++	return 0;
++err_free:
++	devm_kfree(&phydev->mdio.dev, led);
++	return ret;
++}
++
++int of_phy_register_leds(struct phy_device *phydev)
++{
++	struct device_node *node = phydev->mdio.dev.of_node;
++	struct device_node *leds, *led;
++	int ret;
++
++	if (!IS_ENABLED(CONFIG_OF_MDIO))
++		return 0;
++
++	if (!phydev->drv->led_init)
++		return 0;
++
++	leds = of_get_child_by_name(node, "leds");
++	if (!leds)
++		return 0;
++
++	for_each_available_child_of_node(leds, led) {
++		ret = of_phy_register_led(phydev, led);
++		if (ret < 0)
++			phydev_err(phydev, "Nonfatal error: cannot register LED from node %pOFn: %i\n",
++				   led, ret);
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(of_phy_register_leds);
++
++static void phy_hw_led_trig_deactivate(struct led_classdev *cdev)
++{
++	struct phy_device *phydev = to_phy_device(cdev->dev->parent);
++	int ret;
++
++	mutex_lock(&phydev->lock);
++	ret = phydev->drv->led_set_hw_mode(phydev, led_cdev_to_phy_device_led(cdev), NULL);
++	mutex_unlock(&phydev->lock);
++	if (ret < 0) {
++		phydev_err(phydev, "failed deactivating HW mode on LED %s\n", cdev->name);
++		return;
++	}
++}
++
++static ssize_t hw_mode_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct phy_device *phydev = to_phy_device(dev->parent);
++	const char *mode, *cur_mode;
++	struct phy_device_led *led;
++	void *iter = NULL;
++	int len = 0;
++
++	led = led_cdev_to_phy_device_led(led_trigger_get_led(dev));
++
++	mutex_lock(&phydev->lock);
++
++	cur_mode = phydev->drv->led_get_hw_mode(phydev, led);
++
++	for (mode = phydev->drv->led_iter_hw_mode(phydev, led, &iter);
++	     mode;
++	     mode = phydev->drv->led_iter_hw_mode(phydev, led, &iter)) {
++		bool sel;
++
++		sel = cur_mode && !strcmp(mode, cur_mode);
++
++		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s%s ", sel ? "[" : "", mode,
++				 sel ? "]" : "");
++	}
++
++	if (buf[len - 1] == ' ')
++		buf[len - 1] = '\n';
++
++	mutex_unlock(&phydev->lock);
++
++	return len;
++}
++
++static ssize_t hw_mode_store(struct device *dev, struct device_attribute *attr, const char *buf,
++			     size_t count)
++{
++	struct phy_device *phydev = to_phy_device(dev->parent);
++	struct phy_device_led *led;
++	int ret;
++
++	led = led_cdev_to_phy_device_led(led_trigger_get_led(dev));
++
++	mutex_lock(&phydev->lock);
++	ret = phydev->drv->led_set_hw_mode(phydev, led, buf);
++	mutex_unlock(&phydev->lock);
++	if (ret < 0)
++		return ret;
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(hw_mode);
++
++static struct attribute *phy_hw_led_trig_attrs[] = {
++	&dev_attr_hw_mode.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(phy_hw_led_trig);
++
++struct led_hw_trigger_type phy_hw_led_trig_type;
++EXPORT_SYMBOL_GPL(phy_hw_led_trig_type);
++
++struct led_trigger phy_hw_led_trig = {
++	.name		= "phydev-hw-mode",
++	.deactivate	= phy_hw_led_trig_deactivate,
++	.trigger_type	= &phy_hw_led_trig_type,
++	.groups		= phy_hw_led_trig_groups,
++};
++EXPORT_SYMBOL_GPL(phy_hw_led_trig);
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 0403eb799913..d8901f97844f 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -14,6 +14,7 @@
+ #include <linux/compiler.h>
+ #include <linux/spinlock.h>
+ #include <linux/ethtool.h>
++#include <linux/leds.h>
+ #include <linux/linkmode.h>
+ #include <linux/netlink.h>
+ #include <linux/mdio.h>
+@@ -560,6 +561,46 @@ struct phy_tdr_config {
+ };
+ #define PHY_PAIR_ALL -1
+ 
++/* PHY LEDs support */
++struct phy_device_led {
++	struct led_classdev cdev;
++	int addr;
++	u32 flags;
++};
++#define led_cdev_to_phy_device_led(l) container_of(l, struct phy_device_led, cdev)
++
++#if IS_ENABLED(CONFIG_PHY_LEDS)
++int of_phy_register_leds(struct phy_device *phydev);
++
++extern struct led_hw_trigger_type phy_hw_led_trig_type;
++extern struct led_trigger phy_hw_led_trig;
++int phy_led_brightness_set(struct led_classdev *cdev, enum led_brightness brightness);
++
++static inline int phy_leds_init(void)
++{
++	return led_trigger_register(&phy_hw_led_trig);
++}
++
++static inline void phy_leds_exit(void)
++{
++	led_trigger_unregister(&phy_hw_led_trig);
++}
++#else /* !IS_ENABLED(CONFIG_PHY_LEDS) */
++static inline int of_phy_register_leds(struct phy_device *phydev)
++{
++	return 0;
++}
++
++static inline int phy_leds_init(void)
++{
++	return 0;
++}
++
++static inline void phy_leds_exit(void)
++{
++}
++#endif /* !IS_ENABLED(CONFIG_PHY_LEDS) */
++
+ /* struct phy_driver: Driver structure for a particular PHY type
+  *
+  * driver_data: static driver data
+@@ -736,6 +777,16 @@ struct phy_driver {
+ 	int (*set_loopback)(struct phy_device *dev, bool enable);
+ 	int (*get_sqi)(struct phy_device *dev);
+ 	int (*get_sqi_max)(struct phy_device *dev);
++
++	/* PHY LED support */
++	int (*led_init)(struct phy_device *dev, struct phy_device_led *led);
++	int (*led_brightness_set)(struct phy_device *dev, struct phy_device_led *led,
++				  enum led_brightness brightness);
++	const char *(*led_iter_hw_mode)(struct phy_device *dev, struct phy_device_led *led,
++					void **	iter);
++	int (*led_set_hw_mode)(struct phy_device *dev, struct phy_device_led *led,
++			       const char *mode);
++	const char *(*led_get_hw_mode)(struct phy_device *dev, struct phy_device_led *led);
+ };
+ #define to_phy_driver(d) container_of(to_mdio_common_driver(d),		\
+ 				      struct phy_driver, mdiodrv)
+-- 
+2.26.2
 
->
-> Datasheet:
-> http://www.ti.com/lit/ds/symlink/lp5012.pdf
-> http://www.ti.com/lit/ds/symlink/lp5024.pdf
-> http://www.ti.com/lit/ds/symlink/lp5036.pdf
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->   .../devicetree/bindings/leds/leds-lp50xx.yaml | 130 ++++++++++++++++++
->   1 file changed, 130 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
->
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml b/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
-> new file mode 100644
-> index 000000000000..b2dd1672f12a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
-> @@ -0,0 +1,130 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/leds-lp50xx.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: LED driver for LP50XX RGB LED from Texas Instruments.
-> +
-> +maintainers:
-> +  - Dan Murphy <dmurphy@ti.com>
-> +
-> +description: |
-> +  The LP50XX is multi-channel, I2C RGB LED Drivers that can group RGB LEDs into
-> +  a LED group or control them individually.
-> +
-> +  The difference in these RGB LED drivers is the number of supported RGB
-> +  modules.
-> +
-> +  For more product information please see the link below:
-> +  https://www.ti.com/lit/ds/symlink/lp5012.pdf
-> +  https://www.ti.com/lit/ds/symlink/lp5024.pdf
-> +  https://www.ti.com/lit/ds/symlink/lp5036.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,lp5009
-> +      - ti,lp5012
-> +      - ti,lp5018
-> +      - ti,lp5024
-> +      - ti,lp5030
-> +      - ti,lp5036
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description:
-> +      I2C slave address
-> +      lp5009/12 - 0x14, 0x15, 0x16, 0x17
-> +      lp5018/24 - 0x28, 0x29, 0x2a, 0x2b
-> +      lp5030/36 - 0x30, 0x31, 0x32, 0x33
-> +
-> +  enable-gpios:
-> +    maxItems: 1
-> +    description: GPIO pin to enable/disable the device.
-> +
-> +  vled-supply:
-> +    description: LED supply.
-> +
-> +patternProperties:
-> +  '^multi-led@[0-9a-f]$':
-> +    type: object
-> +    allOf:
-> +      - $ref: leds-class-multicolor.yaml#
-> +    properties:
-> +      reg:
-> +        minItems: 1
-> +        maxItems: 12
-> +        description:
-> +          This property denotes the LED module number(s) that is used on the
-> +          for the child node.  The LED modules can either be used stand alone
-> +          or grouped into a module bank.
-> +
-> +    patternProperties:
-> +      "(^led-[0-9a-f]$|led)":
-> +        type: object
-> +        $ref: common.yaml#
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +examples:
-> +  - |
-> +   #include <dt-bindings/gpio/gpio.h>
-> +   #include <dt-bindings/leds/common.h>
-> +
-> +   i2c {
-> +       #address-cells = <1>;
-> +       #size-cells = <0>;
-> +
-> +       led-controller@14 {
-> +           compatible = "ti,lp5009";
-> +           reg = <0x14>;
-> +           #address-cells = <1>;
-> +           #size-cells = <0>;
-> +           enable-gpios = <&gpio1 16>;
-> +
-> +           multi-led@1 {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               reg = <0x1>;
-> +               color = <LED_COLOR_ID_MULTI>;
-> +               function = LED_FUNCTION_CHARGING;
-> +
-> +               led-0 {
-> +                   color = <LED_COLOR_ID_RED>;
-> +               };
-> +
-> +               led-1 {
-> +                   color = <LED_COLOR_ID_GREEN>;
-> +               };
-> +
-> +               led-2 {
-> +                   color = <LED_COLOR_ID_BLUE>;
-> +               };
-> +          };
-> +
-> +          multi-led@2 {
-> +            #address-cells = <1>;
-> +            #size-cells = <2>;
-> +            reg = <0x2 0x3 0x5>;
-> +            color = <LED_COLOR_ID_MULTI>;
-> +            function = LED_FUNCTION_STANDBY;
-> +
-> +            led-6 {
-> +              color = <LED_COLOR_ID_RED>;
-> +            };
-> +
-> +            led-7 {
-> +              color = <LED_COLOR_ID_GREEN>;
-> +            };
-> +
-> +            led-8 {
-> +              color = <LED_COLOR_ID_BLUE>;
-> +            };
-> +         };
-> +       };
-> +    };
-> +
-> +...
