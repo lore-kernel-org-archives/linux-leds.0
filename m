@@ -2,104 +2,128 @@ Return-Path: <SRS0=rChS=BN=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3979C433E1
-	for <linux-leds@archiver.kernel.org>; Mon,  3 Aug 2020 14:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1747AC433DF
+	for <linux-leds@archiver.kernel.org>; Mon,  3 Aug 2020 16:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC6342076C
-	for <linux-leds@archiver.kernel.org>; Mon,  3 Aug 2020 14:51:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5897207FB
+	for <linux-leds@archiver.kernel.org>; Mon,  3 Aug 2020 16:42:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7MqE6FI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbgHCOvK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 3 Aug 2020 10:51:10 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40782 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728309AbgHCOvK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 3 Aug 2020 10:51:10 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 073EYKBb139790;
-        Mon, 3 Aug 2020 10:50:59 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 32pkrghyyk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Aug 2020 10:50:59 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 073EYwTB143770;
-        Mon, 3 Aug 2020 10:50:59 -0400
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 32pkrghyy6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Aug 2020 10:50:59 -0400
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 073Eo0ID016173;
-        Mon, 3 Aug 2020 14:50:58 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma04wdc.us.ibm.com with ESMTP id 32n018rrnd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Aug 2020 14:50:58 +0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 073EosVh30277916
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 3 Aug 2020 14:50:54 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D99F136051;
-        Mon,  3 Aug 2020 14:50:57 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AE4A4136055;
-        Mon,  3 Aug 2020 14:50:56 +0000 (GMT)
-Received: from ghost4.ibm.com (unknown [9.163.93.250])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon,  3 Aug 2020 14:50:56 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-leds@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, dmurphy@ti.com, pavel@ucw.cz,
-        jacek.anaszewski@gmail.com, vishwa@linux.ibm.com,
-        andy.shevchenko@gmail.com, eajames@linux.ibm.com
-Subject: [PATCH v2 1/2] dt-bindings: leds: pca955x: Add IBM implementation compatible string
-Date:   Mon,  3 Aug 2020 09:50:54 -0500
-Message-Id: <20200803145055.5203-2-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200803145055.5203-1-eajames@linux.ibm.com>
-References: <20200803145055.5203-1-eajames@linux.ibm.com>
+        id S1726511AbgHCQmd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 3 Aug 2020 12:42:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53630 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbgHCQmd (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 3 Aug 2020 12:42:33 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D1EC06174A;
+        Mon,  3 Aug 2020 09:42:33 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id z5so20192478pgb.6;
+        Mon, 03 Aug 2020 09:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Xdp/fS6+v2ditkJk+cvQMgK9TUqlS62v6zpMnXOv3Ic=;
+        b=a7MqE6FIile7iIvKc0LEMZJMZ6mV1ZL3hknPiZcAHiLJZJVxqLexKXD7MUs4PplR1k
+         32tgmF4SfgrHJDOiSxssO06fHJJU2C0I3z3YIyYXntvBRx5Y/eU7XbilTMMT6KQ65rDR
+         Fa4nsG/JJ/HRkbYr8blHKxHZ2JZ4km4rb/SInDaPLRiyac0407/0kMVuErVAGusfJ7NB
+         wLIHJ7wlCx+F2Av/UvG8cloZM9VRMUr6nuPyLZ+HcNFi8D+DV5kS6kdiOXeRYO6v+xre
+         FKbJmQ7nSvTLIvBS+5Fgn2BXAZIaEq4cQVM2Y6ch8o9/gIfZR5OSv/J4WL8Hfjwmmd6x
+         Wm0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xdp/fS6+v2ditkJk+cvQMgK9TUqlS62v6zpMnXOv3Ic=;
+        b=rdG4jbsyrsLLgnMYuhYN9cQrOtEAakbG5hI8lYnFZIev20N93bHYAPOO81mJgC8gev
+         TSfZZw90hI0DsbDQTnaiC1np/Y/NAprvxJQzkWHqTOprTJzHzrtkuo4spYc37zhXoIvM
+         VDtvvMPPQqKAlncIA1fMY3MbaB9dKbRGY3z4wBh4UP8edUdha7LWTmev4IhlihAKD6JR
+         kqpETh9YYqvIH+J9P3Uw2mNvnuYguNsjN4oy9n16DCUuo+t46/lPh6ntiyD1w8n16hCT
+         fMwO/DBzvDUwbsUuXELkjQeMZ/ZMwHVjICLuNB5pHSLD871Gov1xS3jhRXVZZL1Dq7HY
+         vkyw==
+X-Gm-Message-State: AOAM5337igv9+Pre58yc8pKs5QvyPLs31CNulbBblo2qptlUsB690pC7
+        MV0vEgzIyj2ElOO+9u6paBtt1f7R6nTLTPsZa1I=
+X-Google-Smtp-Source: ABdhPJyLd0xKU1fFXwew/qnMkherfYLTaf5EOHygn2taxpTZTjjFC3duVTdf5UT0qujpqNr/70s7InpKhau8tw1JCjM=
+X-Received: by 2002:a62:758f:: with SMTP id q137mr16020137pfc.170.1596472952830;
+ Mon, 03 Aug 2020 09:42:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-03_13:2020-08-03,2020-08-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- lowpriorityscore=0 impostorscore=0 mlxscore=0 priorityscore=1501
- phishscore=0 suspectscore=1 adultscore=0 bulkscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008030106
+References: <20200803145055.5203-1-eajames@linux.ibm.com> <20200803145055.5203-3-eajames@linux.ibm.com>
+In-Reply-To: <20200803145055.5203-3-eajames@linux.ibm.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 3 Aug 2020 19:42:17 +0300
+Message-ID: <CAHp75VevG65uuE4Vv49tSdvpNnxE7AC7W_QR2s8twCPZ=4da_g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] leds: pca955x: Add an IBM software implementation
+ of the PCA9552 chip
+To:     Eddie James <eajames@linux.ibm.com>
+Cc:     Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Dan Murphy <dmurphy@ti.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        vishwa@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-IBM created an implementation of the PCA9552 on a PIC16F
-microcontroller. Document the new compatible string for this device.
+On Mon, Aug 3, 2020 at 5:51 PM Eddie James <eajames@linux.ibm.com> wrote:
+>
+> IBM created an implementation of the PCA9552 on a PIC16F
+> microcontroller. The I2C device addresses are different from the
+> hardware PCA9552, so add a new compatible string and associated
+> platform data to be able to probe this device.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- Documentation/devicetree/bindings/leds/leds-pca955x.txt | 1 +
- 1 file changed, 1 insertion(+)
+...
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-pca955x.txt b/Documentation/devicetree/bindings/leds/leds-pca955x.txt
-index 7a5830f8d5ab..817f460f3a72 100644
---- a/Documentation/devicetree/bindings/leds/leds-pca955x.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-pca955x.txt
-@@ -9,6 +9,7 @@ Required properties:
- 	"nxp,pca9550"
- 	"nxp,pca9551"
- 	"nxp,pca9552"
-+	"ibm,pca9552"
- 	"nxp,pca9553"
- - #address-cells: must be 1
- - #size-cells: must be 0
+>         pca9550,
+>         pca9551,
+>         pca9552,
+> +       ibm_pca9552,
+>         pca9553,
+
+I would rather not mix like this, but use alpha order, for example.
+It's better to read and see which devices are supported by vendor.
+
+...
+
+>         },
+
+> +       [ibm_pca9552] = {
+
+> +       },
+>         [pca9553] = {
+
+Ditto.
+
+...
+
+>         { "pca9550", pca9550 },
+>         { "pca9551", pca9551 },
+>         { "pca9552", pca9552 },
+> +       { "ibm-pca9552", ibm_pca9552 },
+>         { "pca9553", pca9553 },
+
+Ditto.
+
+...
+
+>         { .compatible = "nxp,pca9550", .data = (void *)pca9550 },
+>         { .compatible = "nxp,pca9551", .data = (void *)pca9551 },
+>         { .compatible = "nxp,pca9552", .data = (void *)pca9552 },
+> +       { .compatible = "ibm,pca9552", .data = (void *)ibm_pca9552 },
+>         { .compatible = "nxp,pca9553", .data = (void *)pca9553 },
+
+Ditto.
+
 -- 
-2.24.0
-
+With Best Regards,
+Andy Shevchenko
