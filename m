@@ -5,47 +5,50 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5826AC433DF
-	for <linux-leds@archiver.kernel.org>; Thu,  6 Aug 2020 04:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FEDC43635
+	for <linux-leds@archiver.kernel.org>; Thu,  6 Aug 2020 11:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CDE02076E
-	for <linux-leds@archiver.kernel.org>; Thu,  6 Aug 2020 04:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2C9D22CAE
+	for <linux-leds@archiver.kernel.org>; Thu,  6 Aug 2020 11:04:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Fumor4Q8"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SN5MGle4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbgHFEMX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 6 Aug 2020 00:12:23 -0400
-Received: from m12-18.163.com ([220.181.12.18]:47678 "EHLO m12-18.163.com"
+        id S1728028AbgHFGiB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 6 Aug 2020 02:38:01 -0400
+Received: from m12-15.163.com ([220.181.12.15]:32968 "EHLO m12-15.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726403AbgHFEMX (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 6 Aug 2020 00:12:23 -0400
+        id S1726051AbgHFGiA (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 6 Aug 2020 02:38:00 -0400
+X-Greylist: delayed 939 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Aug 2020 02:37:57 EDT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=58O72jhnrDHl5eaGDS
-        i3G0TKF4cP/BfnN/97i4BIIUM=; b=Fumor4Q835MmuBAcAHETNxr5hii6jxVH79
-        hAmksMG7pjemk0jjpsoXtZ9YamDSQzSIa4iCYYP+pDIFJfoUMshf+Dx0mFiH8K2U
-        lnU5lUHIGYGvDgLTYtDnuyt3ehMnkiP0yI2PrMai6Irg4ygxgeQnxHS0FXFHnEKi
-        s6zlDhKkk=
-Received: from localhost.localdomain (unknown [58.33.79.182])
-        by smtp14 (Coremail) with SMTP id EsCowADn96PVgitfLPkDHw--.22232S2;
-        Thu, 06 Aug 2020 12:11:18 +0800 (CST)
+        s=s110527; h=From:Subject:Date:Message-Id; bh=b4Vljfz11N5B3BsXB/
+        jU+jLNNdpMd3l8kupGK/FIHnQ=; b=SN5MGle4MIp3KSKXRDPu290DgzSt7dTQJD
+        fGhFwn8vRFwNlRWqFKLxUn2oEe0BV14NgDRduHZobrliuXmYHOJ//xfcrpLKwMIP
+        59FW5K294r5swrb4TWJ8RACE+6l2YZtwag5bk3BtF9mRAlrnhko4xTdMAarFnO+B
+        bwUdHtark=
+Received: from localhost.localdomain (unknown [58.33.126.62])
+        by smtp11 (Coremail) with SMTP id D8CowADnbcp1oStf0rT5EQ--.55997S3;
+        Thu, 06 Aug 2020 14:21:48 +0800 (CST)
 From:   Grant Feng <von81@163.com>
 To:     von81@163.com, jacek.anaszewski@gmail.com, pavel@ucw.cz,
         dmurphy@ti.com, robh+dt@kernel.org, linux-leds@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] leds: Add an optional property named 'sdb-gpios'
-Date:   Thu,  6 Aug 2020 12:10:49 +0800
-Message-Id: <20200806041049.19255-1-von81@163.com>
+Subject: [PATCH 2/2] DT: leds: Add an optional property named 'sdb-gpios'
+Date:   Thu,  6 Aug 2020 14:21:30 +0800
+Message-Id: <20200806062130.25187-2-von81@163.com>
 X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: EsCowADn96PVgitfLPkDHw--.22232S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKw4fCFWfXFW7XFy3XrWfAFb_yoWDtFc_Ja
-        s7Cr4IgrZ8uF4vgw1DZr1avr4UCw4xAF1kCw4IqF1kAw1xt3sIgF92q34Yyr1UGana9r43
-        Ca97ta4UJ3ZFkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU055r5UUUUU==
-X-Originating-IP: [58.33.79.182]
-X-CM-SenderInfo: xyrqmii6rwjhhfrp/1tbiNwZ4OlWBhkqCiwAAsi
+In-Reply-To: <20200806062130.25187-1-von81@163.com>
+References: <20200806062130.25187-1-von81@163.com>
+X-CM-TRANSID: D8CowADnbcp1oStf0rT5EQ--.55997S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKw4fCFWfXFW7XFy3XrWfAFb_yoWkKFX_G3
+        Z7JrsFqas8uF1vgr4qvr15Wr43Cr47AF1kCw15ZF48Aw1fXas09FZ7t34Yyr15WFZxurZx
+        C3ykCr4qqr17GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0_Oz5UUUUU==
+X-Originating-IP: [58.33.126.62]
+X-CM-SenderInfo: xyrqmii6rwjhhfrp/1tbiNxx4OlWBhkubuAAAsT
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
@@ -56,30 +59,29 @@ The chip releases hardware shutdown when the SDB pin is pulled high.
 
 Signed-off-by: Grant Feng <von81@163.com>
 ---
- Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/leds/leds-is31fl319x.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
-index 926c2117942c..94f02827fd83 100644
---- a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
-@@ -15,6 +15,8 @@ Required properties:
- - reg: I2C slave address
- - address-cells : must be 1
- - size-cells : must be 0
-+- sdb-gpios : (optional)
-+  Specifier of the GPIO connected to SDB pin.
+diff --git a/Documentation/devicetree/bindings/leds/leds-is31fl319x.txt b/Documentation/devicetree/bindings/leds/leds-is31fl319x.txt
+index fc2603484544..e8bef4be57dc 100644
+--- a/Documentation/devicetree/bindings/leds/leds-is31fl319x.txt
++++ b/Documentation/devicetree/bindings/leds/leds-is31fl319x.txt
+@@ -16,6 +16,7 @@ Optional properties:
+ - audio-gain-db : audio gain selection for external analog modulation input.
+ 	Valid values: 0 - 21, step by 3 (rounded down)
+ 	Default: 0
++- sdb-gpios : Specifier of the GPIO connected to SDB pin.
  
- LED sub-node properties:
- - reg : LED channel number (1..N)
-@@ -31,6 +33,7 @@ is31fl3236: led-controller@3c {
- 	reg = <0x3c>;
+ Each led is represented as a sub-node of the issi,is31fl319x device.
+ There can be less leds subnodes than the chip can support but not more.
+@@ -44,6 +45,7 @@ fancy_leds: leds@65 {
  	#address-cells = <1>;
  	#size-cells = <0>;
+ 	reg = <0x65>;
 +	sdb-gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>;
  
- 	led@1 {
- 		reg = <1>;
+ 	red_aux: led@1 {
+ 		label = "red:aux";
 -- 
 2.17.1
 
