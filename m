@@ -2,25 +2,25 @@ Return-Path: <SRS0=ep0a=BQ=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 184D4C433E0
-	for <linux-leds@archiver.kernel.org>; Thu,  6 Aug 2020 16:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 737DCC433DF
+	for <linux-leds@archiver.kernel.org>; Thu,  6 Aug 2020 16:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59C992086A
-	for <linux-leds@archiver.kernel.org>; Thu,  6 Aug 2020 16:53:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF10323132
+	for <linux-leds@archiver.kernel.org>; Thu,  6 Aug 2020 16:59:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IydTJGkv"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IydTJGkv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbgHFQxW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 6 Aug 2020 12:53:22 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:56292 "EHLO
+        id S1729079AbgHFQ7Y (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 6 Aug 2020 12:59:24 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:56840 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729231AbgHFQwy (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 6 Aug 2020 12:52:54 -0400
+        with ESMTP id S1728970AbgHFQ7X (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 6 Aug 2020 12:59:23 -0400
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
         by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 076F15Ev107938;
         Thu, 6 Aug 2020 10:01:05 -0500
@@ -67,53 +67,6 @@ Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
-
-Grant
-
-On 8/6/20 1:21 AM, Grant Feng wrote:
-> generate a 5ms low pulse on sdb pin when startup, then the chip
-> becomes more stable in the complex EM environment.
->
-> Signed-off-by: Grant Feng <von81@163.com>
-> ---
->   drivers/leds/leds-is31fl319x.c | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
->
-> diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
-> index ca6634b8683c..b4f70002cec9 100644
-> --- a/drivers/leds/leds-is31fl319x.c
-> +++ b/drivers/leds/leds-is31fl319x.c
-> @@ -16,6 +16,8 @@
->   #include <linux/of_device.h>
->   #include <linux/regmap.h>
->   #include <linux/slab.h>
-> +#include <linux/delay.h>
-> +#include <linux/gpio/consumer.h>
->   
->   /* register numbers */
->   #define IS31FL319X_SHUTDOWN		0x00
-> @@ -61,6 +63,7 @@
->   struct is31fl319x_chip {
->   	const struct is31fl319x_chipdef *cdef;
->   	struct i2c_client               *client;
-> +	struct gpio_desc		*sdb_pin;
->   	struct regmap                   *regmap;
->   	struct mutex                    lock;
->   	u32                             audio_gain_db;
-> @@ -265,6 +268,15 @@ static int is31fl319x_parse_dt(struct device *dev,
->   		is31->audio_gain_db = min(is31->audio_gain_db,
->   					  IS31FL319X_AUDIO_GAIN_DB_MAX);
->   
-> +	is31->sdb_pin = gpiod_get(dev, "sdb", GPIOD_ASIS);
-
-Since this is optional maybe use devm_gpiod_get_optional.
-
-If this is required for stability then if the GPIO is not present then 
-the parse_dt should return the error.
-
-And use the devm_gpiod_get call.  Otherwise you are missing the 
-gpiod_put when exiting or removing the driver.
-
-Dan
+Message-ID: <20200806150059.bencMoSca82x2_rBIPPX077MBKZJCFu4nqxYe05aaTA@z>
 
 
