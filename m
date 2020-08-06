@@ -2,101 +2,118 @@ Return-Path: <SRS0=ep0a=BQ=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB64C4361C
-	for <linux-leds@archiver.kernel.org>; Thu,  6 Aug 2020 11:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 184D4C433E0
+	for <linux-leds@archiver.kernel.org>; Thu,  6 Aug 2020 16:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58B08221E2
-	for <linux-leds@archiver.kernel.org>; Thu,  6 Aug 2020 11:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59C992086A
+	for <linux-leds@archiver.kernel.org>; Thu,  6 Aug 2020 16:53:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="a3YFdVFv"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IydTJGkv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbgHFGiF (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 6 Aug 2020 02:38:05 -0400
-Received: from m12-15.163.com ([220.181.12.15]:33391 "EHLO m12-15.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbgHFGiE (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 6 Aug 2020 02:38:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=PtRFGMacX+QscZqfbZ
-        +Lu5FxPAgj+Rd4K44h0HnDPoQ=; b=a3YFdVFvhVRmHICzbfsIWhBZQD/rgvhTWF
-        QqabZ3we7Z8X5pN69cI6TvMH1VIjmZR24IqQUE1PQZ6UUsGIgQVv/D8llXC6y/zg
-        PcYOV6m9LG0jEZU2WJ5hxBgFM89l2A2GItkWczwvO75skBqUglVeD0sJvnjbohyj
-        fEJhsVyNM=
-Received: from localhost.localdomain (unknown [58.33.126.62])
-        by smtp11 (Coremail) with SMTP id D8CowADnbcp1oStf0rT5EQ--.55997S2;
-        Thu, 06 Aug 2020 14:21:45 +0800 (CST)
-From:   Grant Feng <von81@163.com>
-To:     von81@163.com, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        dmurphy@ti.com, robh+dt@kernel.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] leds: is31fl319x: Add sdb pin and generate a 5ms low pulse when startup
-Date:   Thu,  6 Aug 2020 14:21:29 +0800
-Message-Id: <20200806062130.25187-1-von81@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: D8CowADnbcp1oStf0rT5EQ--.55997S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7AF17try8JrWDGr18ur48WFg_yoW8GF4UpF
-        1DCFyrZFW3J3y2g3WfZFW7u345ta18KrZrJrWxXa4Sv3WkK3Wvga4ktFnIvF13XFWxuay5
-        ZanxtFW8Gr4vyw7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j73kZUUUUU=
-X-Originating-IP: [58.33.126.62]
-X-CM-SenderInfo: xyrqmii6rwjhhfrp/1tbiRBp4OlSIgamPWgAAs9
+        id S1728721AbgHFQxW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 6 Aug 2020 12:53:22 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:56292 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729231AbgHFQwy (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 6 Aug 2020 12:52:54 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 076F15Ev107938;
+        Thu, 6 Aug 2020 10:01:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1596726065;
+        bh=SsDht611ujdkNQFc6BFSfYMna5LmuK9AurW2tYiBVyU=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=IydTJGkvBiT7VaX6EBJOe1Z1CzhZiR6dHukbm9n8mlGN/ogWpgM04AcWOGWWqilRV
+         aVoxk2TSG5yjqHjWygESa/KQksSSpl/nyd+5j9Y0f+uKkuyeyay94f0K+0S0ahvi4w
+         a3NIvRw6BmqgBwxkkKa4qNyqzlfEDuB14CS9L//w=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 076F15G0015172
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Aug 2020 10:01:05 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 6 Aug
+ 2020 10:01:05 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Thu, 6 Aug 2020 10:01:05 -0500
+Received: from [10.250.38.37] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 076F14J2050834;
+        Thu, 6 Aug 2020 10:01:04 -0500
+Subject: Re: [PATCH 1/2] leds: is31fl319x: Add sdb pin and generate a 5ms low
+ pulse when startup
+To:     Grant Feng <von81@163.com>, <jacek.anaszewski@gmail.com>,
+        <pavel@ucw.cz>, <robh+dt@kernel.org>, <linux-leds@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20200806062130.25187-1-von81@163.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <7c828160-bef6-45b5-60d1-85c6074953c4@ti.com>
+Date:   Thu, 6 Aug 2020 10:00:59 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200806062130.25187-1-von81@163.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-generate a 5ms low pulse on sdb pin when startup, then the chip
-becomes more stable in the complex EM environment.
+Grant
 
-Signed-off-by: Grant Feng <von81@163.com>
----
- drivers/leds/leds-is31fl319x.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On 8/6/20 1:21 AM, Grant Feng wrote:
+> generate a 5ms low pulse on sdb pin when startup, then the chip
+> becomes more stable in the complex EM environment.
+>
+> Signed-off-by: Grant Feng <von81@163.com>
+> ---
+>   drivers/leds/leds-is31fl319x.c | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+>
+> diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
+> index ca6634b8683c..b4f70002cec9 100644
+> --- a/drivers/leds/leds-is31fl319x.c
+> +++ b/drivers/leds/leds-is31fl319x.c
+> @@ -16,6 +16,8 @@
+>   #include <linux/of_device.h>
+>   #include <linux/regmap.h>
+>   #include <linux/slab.h>
+> +#include <linux/delay.h>
+> +#include <linux/gpio/consumer.h>
+>   
+>   /* register numbers */
+>   #define IS31FL319X_SHUTDOWN		0x00
+> @@ -61,6 +63,7 @@
+>   struct is31fl319x_chip {
+>   	const struct is31fl319x_chipdef *cdef;
+>   	struct i2c_client               *client;
+> +	struct gpio_desc		*sdb_pin;
+>   	struct regmap                   *regmap;
+>   	struct mutex                    lock;
+>   	u32                             audio_gain_db;
+> @@ -265,6 +268,15 @@ static int is31fl319x_parse_dt(struct device *dev,
+>   		is31->audio_gain_db = min(is31->audio_gain_db,
+>   					  IS31FL319X_AUDIO_GAIN_DB_MAX);
+>   
+> +	is31->sdb_pin = gpiod_get(dev, "sdb", GPIOD_ASIS);
 
-diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
-index ca6634b8683c..b4f70002cec9 100644
---- a/drivers/leds/leds-is31fl319x.c
-+++ b/drivers/leds/leds-is31fl319x.c
-@@ -16,6 +16,8 @@
- #include <linux/of_device.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
- 
- /* register numbers */
- #define IS31FL319X_SHUTDOWN		0x00
-@@ -61,6 +63,7 @@
- struct is31fl319x_chip {
- 	const struct is31fl319x_chipdef *cdef;
- 	struct i2c_client               *client;
-+	struct gpio_desc		*sdb_pin;
- 	struct regmap                   *regmap;
- 	struct mutex                    lock;
- 	u32                             audio_gain_db;
-@@ -265,6 +268,15 @@ static int is31fl319x_parse_dt(struct device *dev,
- 		is31->audio_gain_db = min(is31->audio_gain_db,
- 					  IS31FL319X_AUDIO_GAIN_DB_MAX);
- 
-+	is31->sdb_pin = gpiod_get(dev, "sdb", GPIOD_ASIS);
-+	if (IS_ERR(is31->sdb_pin)) {
-+		dev_warn(dev, "failed to get gpio_sdb, try default\r\n");
-+	} else {
-+		gpiod_direction_output(is31->sdb_pin, 0);
-+		mdelay(5);
-+		gpiod_direction_output(is31->sdb_pin, 1);
-+	}
-+
- 	return 0;
- 
- put_child_node:
--- 
-2.17.1
+Since this is optional maybe use devm_gpiod_get_optional.
+
+If this is required for stability then if the GPIO is not present then 
+the parse_dt should return the error.
+
+And use the devm_gpiod_get call.  Otherwise you are missing the 
+gpiod_put when exiting or removing the driver.
+
+Dan
 
 
