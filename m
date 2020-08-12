@@ -2,98 +2,95 @@ Return-Path: <SRS0=w/Ho=BW=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED4EC433E0
-	for <linux-leds@archiver.kernel.org>; Wed, 12 Aug 2020 19:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E68C433E0
+	for <linux-leds@archiver.kernel.org>; Wed, 12 Aug 2020 19:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C6B520781
-	for <linux-leds@archiver.kernel.org>; Wed, 12 Aug 2020 19:50:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B612D20781
+	for <linux-leds@archiver.kernel.org>; Wed, 12 Aug 2020 19:50:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qi6quTcd"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="H5rqOfMt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbgHLTun (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 12 Aug 2020 15:50:43 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:44528 "EHLO
+        id S1726641AbgHLTuy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 12 Aug 2020 15:50:54 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:44540 "EHLO
         lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbgHLTum (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 12 Aug 2020 15:50:42 -0400
+        with ESMTP id S1726640AbgHLTuw (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 12 Aug 2020 15:50:52 -0400
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 07CJoQqV110975;
-        Wed, 12 Aug 2020 14:50:26 -0500
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 07CJobm6111032;
+        Wed, 12 Aug 2020 14:50:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1597261826;
-        bh=T0TvMRXLEYd7VyqjQ3n8OazCVX9xX3llTyDlXEMt8FM=;
-        h=From:To:CC:Subject:Date;
-        b=qi6quTcdTqtPa8SKIm7fGhi/eSbGBIxLANVZODNqQxIVVp9G58hhuM3rpd16uShTh
-         LSjXa8h1MwUhWvfgBRkb8OSy2I/1joEVsTVpws8JogBoDhCECGPMe1a7PF1sJ01GG+
-         DL+G0pky918/+t/SluvfK9ckSpT4C6uOhJ9FVx54=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07CJoQxl125945;
-        Wed, 12 Aug 2020 14:50:26 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+        s=ti-com-17Q1; t=1597261837;
+        bh=zH737v8+ekxHxtS/IZ+9IoMs2IBqoic2gOwxmSErk7E=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=H5rqOfMtDXmT2QWkyu3Qf2ueztmmK9HtzMRjBRSlPldCPPUrCLwb3UAfNYQ2KuMWg
+         ZDVSSjurEJN1zi/7zRfbiklFG0EFlQzNuRN839UF8AE0XSo5QORu2NFp8u1FBjK9hP
+         7zZRQbZTvPbe4yIAfddQ0okHHEzxIWWwUXXcN0bg=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07CJobbk126038;
+        Wed, 12 Aug 2020 14:50:37 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 12
- Aug 2020 14:50:26 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2020 14:50:36 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Wed, 12 Aug 2020 14:50:26 -0500
+ Frontend Transport; Wed, 12 Aug 2020 14:50:36 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07CJoQAc109760;
-        Wed, 12 Aug 2020 14:50:26 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07CJoadx088033;
+        Wed, 12 Aug 2020 14:50:36 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh@kernel.org>,
         <marek.behun@nic.cz>
 CC:     <devicetree@vger.kernel.org>, <linux-leds@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v33 0/6] LP50xx addition and remainder Multicolor patches
-Date:   Wed, 12 Aug 2020 14:50:14 -0500
-Message-ID: <20200812195020.13568-1-dmurphy@ti.com>
+        <linux-arm-kernel@lists.infradead.org>,
+        Dan Murphy <dmurphy@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v33 3/6] ARM: defconfig: u8500: Add LP55XX_COMMON config flag
+Date:   Wed, 12 Aug 2020 14:50:17 -0500
+Message-ID: <20200812195020.13568-4-dmurphy@ti.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200812195020.13568-1-dmurphy@ti.com>
+References: <20200812195020.13568-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hello
+The dependencies for the LP55XX LED drivers have been updated so that
+the child devices (i.e. LP5521) now depends on the LP55XX_COMMON config
+flag as opposed to the device selecting the LP55XX_COMMON flag.  The
+LP55XX_COMMON needs to be set in the defconfig.
 
-These are the final patches from the original multicolor framework patchset.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ arch/arm/configs/u8500_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes made were to the LP50xx to rework regmap_defaults to eliminate used
-only once #defines.  Also fixed putting the child node in the dt parsing and
-changed regmap regcache type to flat.
-
-Dan
-
-Dan Murphy (6):
-  dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
-  leds: lp50xx: Add the LP50XX family of the RGB LED driver
-  ARM: defconfig: u8500: Add LP55XX_COMMON config flag
-  ARM: dts: n900: Add reg property to the LP5523 channel node
-  ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
-  ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
-
- .../devicetree/bindings/leds/leds-lp50xx.yaml | 130 ++++
- arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |  14 +-
- arch/arm/boot/dts/omap3-n900.dts              |  29 +-
- arch/arm/boot/dts/ste-href.dtsi               |  22 +-
- arch/arm/configs/u8500_defconfig              |   1 +
- drivers/leds/Kconfig                          |  11 +
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-lp50xx.c                    | 634 ++++++++++++++++++
- 8 files changed, 823 insertions(+), 19 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
- create mode 100644 drivers/leds/leds-lp50xx.c
-
+diff --git a/arch/arm/configs/u8500_defconfig b/arch/arm/configs/u8500_defconfig
+index 28dd7cf56048..dea599e1c17e 100644
+--- a/arch/arm/configs/u8500_defconfig
++++ b/arch/arm/configs/u8500_defconfig
+@@ -113,6 +113,7 @@ CONFIG_NEW_LEDS=y
+ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_LM3530=y
+ CONFIG_LEDS_GPIO=y
++CONFIG_LEDS_LP55XX_COMMON=y
+ CONFIG_LEDS_LP5521=y
+ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+ CONFIG_RTC_CLASS=y
 -- 
 2.28.0
 
