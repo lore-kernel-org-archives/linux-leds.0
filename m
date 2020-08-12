@@ -7,53 +7,59 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 268AAC433DF
-	for <linux-leds@archiver.kernel.org>; Wed, 12 Aug 2020 19:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61FCFC433E0
+	for <linux-leds@archiver.kernel.org>; Wed, 12 Aug 2020 19:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0518220781
-	for <linux-leds@archiver.kernel.org>; Wed, 12 Aug 2020 19:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E73B20781
+	for <linux-leds@archiver.kernel.org>; Wed, 12 Aug 2020 19:51:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Nmb16x0x"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IVxwFpmq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbgHLTut (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 12 Aug 2020 15:50:49 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:46242 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbgHLTut (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 12 Aug 2020 15:50:49 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 07CJoVk0111094;
-        Wed, 12 Aug 2020 14:50:31 -0500
+        id S1726651AbgHLTvG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 12 Aug 2020 15:51:06 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:37788 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726611AbgHLTvG (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 12 Aug 2020 15:51:06 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 07CJolBq104542;
+        Wed, 12 Aug 2020 14:50:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1597261831;
-        bh=WKzss3WMunywsl3o4muwy52s2aaskTsLM2aRAf1XbsE=;
+        s=ti-com-17Q1; t=1597261847;
+        bh=xE9GH9QVzH3mR9TftmkDCfS+BSKhao0fKzHZSNXsnr0=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Nmb16x0xIi0mOyX4ZnBNGnPTIdolrKmU1gyXXjydNVsTK4DKw/bMisuoTASS5HwIf
-         LMiGFkDnfUsaHLNC9VGTldAA/J2jG85Ba2sObaY5Tc9k6Z6DNcTjefiCmkbSw+8x1p
-         gOzTfFZhHoSccD6XVILtdNGCF9DylDb/BtWEXlHk=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07CJoVoX125985;
-        Wed, 12 Aug 2020 14:50:31 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+        b=IVxwFpmqcZcONO8y0jamf85zYgV9V7giYv4I5IUfhQ+EB3i+JbNYzy1SJumkVdCDq
+         b6syjnicapNV0V5r3IX9vpN6cH12SEX5okv7t2cKJwWksGo4yLUbEn3/cBPWtR+PP6
+         y6fBsfbWq8BDRQJS4ja9JIQ9NrOc5dN8RuI9JnCk=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 07CJolDL080185
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Aug 2020 14:50:47 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 12
- Aug 2020 14:50:31 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2020 14:50:47 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Wed, 12 Aug 2020 14:50:31 -0500
+ Frontend Transport; Wed, 12 Aug 2020 14:50:47 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07CJoVwM087977;
-        Wed, 12 Aug 2020 14:50:31 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07CJole1014948;
+        Wed, 12 Aug 2020 14:50:47 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh@kernel.org>,
         <marek.behun@nic.cz>
 CC:     <devicetree@vger.kernel.org>, <linux-leds@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v33 1/6] dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
-Date:   Wed, 12 Aug 2020 14:50:15 -0500
-Message-ID: <20200812195020.13568-2-dmurphy@ti.com>
+        <linux-arm-kernel@lists.infradead.org>,
+        Dan Murphy <dmurphy@ti.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Subject: [PATCH v33 5/6] ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
+Date:   Wed, 12 Aug 2020 14:50:19 -0500
+Message-ID: <20200812195020.13568-6-dmurphy@ti.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200812195020.13568-1-dmurphy@ti.com>
 References: <20200812195020.13568-1-dmurphy@ti.com>
@@ -66,163 +72,67 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Introduce the bindings for the Texas Instruments LP5036, LP5030, LP5024,
-LP5018, LP5012 and LP5009 RGB LED device driver.  The LP5036/30/24/18/12/9
-can control RGB LEDs individually or as part of a control bank group.
-These devices have the ability to adjust the mixing control for the RGB
-LEDs to obtain different colors independent of the overall brightness of
-the LED grouping.
+Add the reg property to each channel node.  This update is
+to accommodate the multicolor framework.  In addition to the
+accommodation this allows the LEDs to be placed on any channel
+and allow designs to skip channels as opposed to requiring
+sequential order.
 
-Datasheet:
-http://www.ti.com/lit/ds/symlink/lp5012.pdf
-http://www.ti.com/lit/ds/symlink/lp5024.pdf
-http://www.ti.com/lit/ds/symlink/lp5036.pdf
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
+CC: Shawn Guo <shawnguo@kernel.org>
+CC: Sascha Hauer <s.hauer@pengutronix.de>
+CC: Pengutronix Kernel Team <kernel@pengutronix.de>
+CC: Fabio Estevam <festevam@gmail.com>
+CC: NXP Linux Team <linux-imx@nxp.com>
 ---
- .../devicetree/bindings/leds/leds-lp50xx.yaml | 130 ++++++++++++++++++
- 1 file changed, 130 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
+ arch/arm/boot/dts/imx6dl-yapp4-common.dtsi | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml b/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
-new file mode 100644
-index 000000000000..947542a253ec
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
-@@ -0,0 +1,130 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/leds-lp50xx.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: LED driver for LP50XX RGB LED from Texas Instruments.
-+
-+maintainers:
-+  - Dan Murphy <dmurphy@ti.com>
-+
-+description: |
-+  The LP50XX is multi-channel, I2C RGB LED Drivers that can group RGB LEDs into
-+  a LED group or control them individually.
-+
-+  The difference in these RGB LED drivers is the number of supported RGB
-+  modules.
-+
-+  For more product information please see the link below:
-+  https://www.ti.com/lit/ds/symlink/lp5012.pdf
-+  https://www.ti.com/lit/ds/symlink/lp5024.pdf
-+  https://www.ti.com/lit/ds/symlink/lp5036.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,lp5009
-+      - ti,lp5012
-+      - ti,lp5018
-+      - ti,lp5024
-+      - ti,lp5030
-+      - ti,lp5036
-+
-+  reg:
-+    maxItems: 1
-+    description:
-+      I2C slave address
-+      lp5009/12 - 0x14, 0x15, 0x16, 0x17
-+      lp5018/24 - 0x28, 0x29, 0x2a, 0x2b
-+      lp5030/36 - 0x30, 0x31, 0x32, 0x33
-+
-+  enable-gpios:
-+    maxItems: 1
-+    description: GPIO pin to enable/disable the device.
-+
-+  vled-supply:
-+    description: LED supply.
-+
-+patternProperties:
-+  '^multi-led@[0-9a-f]$':
-+    type: object
-+    allOf:
-+      - $ref: leds-class-multicolor.yaml#
-+    properties:
-+      reg:
-+        minItems: 1
-+        maxItems: 12
-+        description:
-+          This property denotes the LED module number(s) that is used on the
-+          for the child node.  The LED modules can either be used stand alone
-+          or grouped into a module bank.
-+
-+    patternProperties:
-+      "(^led-[0-9a-f]$|led)":
-+        type: object
-+        $ref: common.yaml#
-+
-+required:
-+  - compatible
-+  - reg
-+
-+examples:
-+  - |
-+   #include <dt-bindings/gpio/gpio.h>
-+   #include <dt-bindings/leds/common.h>
-+
-+   i2c {
-+       #address-cells = <1>;
-+       #size-cells = <0>;
-+
-+       led-controller@14 {
-+           compatible = "ti,lp5009";
-+           reg = <0x14>;
-+           #address-cells = <1>;
-+           #size-cells = <0>;
-+           enable-gpios = <&gpio1 16>;
-+
-+           multi-led@1 {
-+               #address-cells = <1>;
-+               #size-cells = <0>;
-+               reg = <0x1>;
-+               color = <LED_COLOR_ID_RGB>;
-+               function = LED_FUNCTION_CHARGING;
-+
-+               led-0 {
-+                   color = <LED_COLOR_ID_RED>;
-+               };
-+
-+               led-1 {
-+                   color = <LED_COLOR_ID_GREEN>;
-+               };
-+
-+               led-2 {
-+                   color = <LED_COLOR_ID_BLUE>;
-+               };
-+          };
-+
-+          multi-led@2 {
-+            #address-cells = <1>;
-+            #size-cells = <2>;
-+            reg = <0x2 0x3 0x5>;
-+            color = <LED_COLOR_ID_RGB>;
-+            function = LED_FUNCTION_STANDBY;
-+
-+            led-6 {
-+              color = <LED_COLOR_ID_RED>;
-+            };
-+
-+            led-7 {
-+              color = <LED_COLOR_ID_GREEN>;
-+            };
-+
-+            led-8 {
-+              color = <LED_COLOR_ID_BLUE>;
-+            };
-+         };
-+       };
-+    };
-+
-+...
+diff --git a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
+index 2b9423d55c37..77aa90640052 100644
+--- a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
++++ b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
+@@ -258,29 +258,35 @@ leds: led-controller@30 {
+ 		reg = <0x30>;
+ 		clock-mode = /bits/ 8 <1>;
+ 		status = "disabled";
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 
+-		chan0 {
++		chan@0 {
+ 			chan-name = "R";
+ 			led-cur = /bits/ 8 <0x20>;
+ 			max-cur = /bits/ 8 <0x60>;
++			reg = <0>;
+ 		};
+ 
+-		chan1 {
++		chan@1 {
+ 			chan-name = "G";
+ 			led-cur = /bits/ 8 <0x20>;
+ 			max-cur = /bits/ 8 <0x60>;
++			reg = <1>;
+ 		};
+ 
+-		chan2 {
++		chan@2 {
+ 			chan-name = "B";
+ 			led-cur = /bits/ 8 <0x20>;
+ 			max-cur = /bits/ 8 <0x60>;
++			reg = <2>;
+ 		};
+ 
+-		chan3 {
++		chan@3 {
+ 			chan-name = "W";
+ 			led-cur = /bits/ 8 <0x0>;
+ 			max-cur = /bits/ 8 <0x0>;
++			reg = <3>;
+ 		};
+ 	};
+ 
 -- 
 2.28.0
 
