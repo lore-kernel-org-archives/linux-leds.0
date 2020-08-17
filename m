@@ -1,68 +1,98 @@
-Return-Path: <SRS0=nvA9=B2=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=nAzK=B3=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F3FC433E1
-	for <linux-leds@archiver.kernel.org>; Sun, 16 Aug 2020 20:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4620BC433E1
+	for <linux-leds@archiver.kernel.org>; Mon, 17 Aug 2020 19:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9689220829
-	for <linux-leds@archiver.kernel.org>; Sun, 16 Aug 2020 20:41:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E9962072E
+	for <linux-leds@archiver.kernel.org>; Mon, 17 Aug 2020 19:12:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YQv9v4L5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726331AbgHPUlW convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 16 Aug 2020 16:41:22 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:38386 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbgHPUlW (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 16 Aug 2020 16:41:22 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 34E941C0BB5; Sun, 16 Aug 2020 22:41:19 +0200 (CEST)
-Date:   Sun, 16 Aug 2020 22:41:18 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "xing.zhang" <xing.zhang@mediatek.com>
-Cc:     Luotao Fu <l.fu@pengutronix.de>,
-        "; Jacek Anaszewski" <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org
-Subject: Re: leds-pwm  driver further requirement discussion
-Message-ID: <20200816204118.GA1481@bug>
-References: <1597377070.2687.35.camel@mbjsdccf07>
+        id S1731802AbgHQTLy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 17 Aug 2020 15:11:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40336 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730883AbgHQTLk (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 Aug 2020 15:11:40 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9119FC061389;
+        Mon, 17 Aug 2020 12:11:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:Cc:From:To:Sender:Reply-To:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=PkZn/PaagAcCwbgw5BUloqjClJwD2M7BqojCnadMl0I=; b=YQv9v4L5lj3mNuq1mmrEsKMOD2
+        GB0RAIgLMVH113uBQVGNMBFKK9Lk8gfl6QfGnLxQr5Ozb7FaJ7daGDVkcMELb7TcU2YXkUHcSoPqm
+        MVtDc2uANpWnuuk+4F79HxG6GooQP9WWL7jVlHyBt97Mdqv6ry6cHCmrOICzzH1KKb1rXjczbPbou
+        n5eIzEfNohUGJ7+kF4+QM7wqd8LPU2m+fF82pJehSXYCcGCYDkir7K+Rd8wMfKxz8XxED1ls+66e/
+        RBtcA4WCl7ncrAoaswaX188m9FEUMZWbifdyi1+fCPti7rUvTD+SxVP0Aal+KxPiDQnJqpcoSQiGO
+        6iK9LOpQ==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k7kXc-0000Wf-A4; Mon, 17 Aug 2020 19:11:33 +0000
+To:     LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Cc:     Milo Kim <milo.kim@ti.com>
+Subject: [PATCH] leds: LP55XX_COMMON needs to depend on LEDS_CLASS
+Message-ID: <0ad9338b-e2da-e269-db49-b448977bdc83@infradead.org>
+Date:   Mon, 17 Aug 2020 12:11:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <1597377070.2687.35.camel@mbjsdccf07>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi!
+From: Randy Dunlap <rdunlap@infradead.org>
 
->     We have used leds-pwm driver to control led in some mediatek IC, but
-> we have some further requirement, and want to add some common functions
-> for this driver, could you give us some suggestions?
->     For dts, we want to add led-bits and trans-bits, led-bits represents
-> the led bits(8->255, 10->1023) from user space, trans-bits represents
-> the led hardware IC bits.
+With these kernel configs:
+CONFIG_LEDS_CLASS=m
+# CONFIG_LEDS_CLASS_MULTICOLOR is not set
+CONFIG_LEDS_LP55XX_COMMON=y
+CONFIG_LEDS_LP5521=m
+CONFIG_LEDS_LP5562=m
 
-First, please make sure there is no existing functionality that can be used. If not, please
-use something like "max brightness", not bits.
+leds-lp55xx-common.c has a build error because it is builtin and
+calls an interface that is built as a loadable module (due to
+LEDS_CLASS=m). By making LEDS_LP55XX_COMMON depend on LEDS_CLASS,
+this config combination cannot happen, thus preventing the build error.
 
->     For function, we want to add led event notify, one event is for led
-> brightness change, the other one is for led shutdown.
->     We also want to add setMaxBrightness function and setLedBrightness
-> function for other module to call.
+ld: drivers/leds/leds-lp55xx-common.o: in function `lp55xx_register_leds':
+leds-lp55xx-common.c:(.text+0xc5f): undefined reference to `devm_led_classdev_register_ext'
 
-Umm. No?
+Fixes: 33b3a561f417 ("leds: support new LP8501 device - another LP55xx common")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Dan Murphy <dmurphy@ti.com>
+Cc: Milo Kim <milo.kim@ti.com>
+Cc: linux-leds@vger.kernel.org
+---
+The Fixes: tag might be incorrect...  I also considered:
+92a81562e695 ("leds: lp55xx: Add multicolor framework support to lp55xx")
 
-Best regards,
+ drivers/leds/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+--- linux-next-20200817.orig/drivers/leds/Kconfig
++++ linux-next-20200817/drivers/leds/Kconfig
+@@ -397,6 +397,7 @@ config LEDS_LP3952
+ 
+ config LEDS_LP55XX_COMMON
+ 	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
++	depends on LEDS_CLASS
+ 	depends on LEDS_CLASS_MULTICOLOR || !LEDS_CLASS_MULTICOLOR
+ 	depends on OF
+ 	depends on I2C
+
