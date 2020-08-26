@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83503C433E1
-	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 14:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 956F4C433DF
+	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 14:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AC732078D
-	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 14:50:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 754022078D
+	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 14:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598453429;
-	bh=HmqM7R3r2SqMGJttHaUpwqTq3zLTi/LuDmgVEImBqN0=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=NQ7U+SFBYMdfg/+/m1liIBbzQdRh//1PHJww/aufod/A916mlT/X36NMMdVFKaKNn
-	 m2Ldw0TGbybDlu9RSFDi23jLm6zj8M3Cq4at/FplcYcwDRUzK/JnJD6Cs+uhl4qoaP
-	 NLVqt6W02uPdj64TRLAdOaxDE17qQWwYNS4Tkzj0=
+	s=default; t=1598453431;
+	bh=hYmpse77FeS+EBcR36wkPeggezQprfRAztxgJRbgDMk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Zjv6e345gbiwZdmTaVyojz4JlgVdc9AB+qqZKulSUs9pCZ0B3E1Biajj59N0775vc
+	 1YbL7t2AwSc2jsjXXgjoQ6OLkQaLf4B5w4Oa+vovmgwulg1KAFO8ztqsoudBabGzRN
+	 v+VgMc688Lwclfxok/bL2TaSWHFyF9VK/16aTnk8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbgHZOuW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 26 Aug 2020 10:50:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35940 "EHLO mail.kernel.org"
+        id S1727950AbgHZOua (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 26 Aug 2020 10:50:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727937AbgHZOuT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 26 Aug 2020 10:50:19 -0400
+        id S1727945AbgHZOuZ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 26 Aug 2020 10:50:25 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 582732078D;
-        Wed, 26 Aug 2020 14:50:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 618632177B;
+        Wed, 26 Aug 2020 14:50:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598453419;
-        bh=HmqM7R3r2SqMGJttHaUpwqTq3zLTi/LuDmgVEImBqN0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hoYgeJw+MKxcZ21NRRGgN4SgmK+Qzc9G3xiLTMkOdVGX1Vrc1GFDQoNPqjDO9Ia2E
-         G9yxmL8JE2Ni43mBwN5kxebmcdQYDpe+iwO8gEAIsbC0lXId/Pem5hYlbo0RmOoh72
-         x/37RoL+6H4n1QuQwLcn7EqhA34LZslgxUI0G1x4=
+        s=default; t=1598453424;
+        bh=hYmpse77FeS+EBcR36wkPeggezQprfRAztxgJRbgDMk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cUPEd8i8eChq/x6xaKepI7J9w3XFS28759FRErtadof6D0/HjChrNSu7dSN86jmmx
+         cC9vL8wEP5WM1vQfBiDKcLPAzysg5CYOXS6swEcubXV4JVHOxE90dThA9CoLnp8ugS
+         JniYwYNzlHHW6vxhOhGENmwhW5DEcNQGIotDaiFo=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 1/4] leds: lm3692x: Simplify with dev_err_probe()
-Date:   Wed, 26 Aug 2020 16:50:10 +0200
-Message-Id: <20200826145013.10230-1-krzk@kernel.org>
+Subject: [PATCH 4/4] leds: tlc591xx: Simplify with dev_err_probe()
+Date:   Wed, 26 Aug 2020 16:50:13 +0200
+Message-Id: <20200826145013.10230-4-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200826145013.10230-1-krzk@kernel.org>
+References: <20200826145013.10230-1-krzk@kernel.org>
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
@@ -56,31 +58,30 @@ dev_err_probe().  Less code and also it prints the error value.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/leds/leds-lm3692x.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/leds/leds-tlc591xx.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index e1e2d2b64a56..1d7ea1b76a12 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -394,13 +394,10 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- 	led->regulator = devm_regulator_get_optional(&led->client->dev, "vled");
- 	if (IS_ERR(led->regulator)) {
- 		ret = PTR_ERR(led->regulator);
--		if (ret != -ENODEV) {
--			if (ret != -EPROBE_DEFER)
--				dev_err(&led->client->dev,
--					"Failed to get vled regulator: %d\n",
--					ret);
--			return ret;
+diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+index 0929f1275814..1dc14051639c 100644
+--- a/drivers/leds/leds-tlc591xx.c
++++ b/drivers/leds/leds-tlc591xx.c
+@@ -213,12 +213,10 @@ tlc591xx_probe(struct i2c_client *client,
+ 		led->ldev.max_brightness = TLC591XX_MAX_BRIGHTNESS;
+ 		err = devm_led_classdev_register_ext(dev, &led->ldev,
+ 						     &init_data);
+-		if (err < 0) {
+-			if (err != -EPROBE_DEFER)
+-				dev_err(dev, "couldn't register LED %s\n",
+-					led->ldev.name);
+-			return err;
 -		}
-+		if (ret != -ENODEV)
-+			return dev_err_probe(&led->client->dev, ret,
-+					     "Failed to get vled regulator\n");
-+
- 		led->regulator = NULL;
++		if (err < 0)
++			return dev_err_probe(dev, err,
++					     "couldn't register LED %s\n",
++					     led->ldev.name);
  	}
- 
+ 	return 0;
+ }
 -- 
 2.17.1
 
