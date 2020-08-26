@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BDAC433E3
-	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 14:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D857FC433E3
+	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 14:51:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4BE012078D
-	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 14:51:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEA1F2078D
+	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 14:51:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598453471;
-	bh=mLmHNNYAulsYIvuCLX3SOGim/VZfkqUsFtnN2e6UEk4=;
+	s=default; t=1598453473;
+	bh=mPxrskT16BTXZLsuW1Na7OVRaeDyD5RwQHrNqaXEdyo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=H3kpiItLgR0RfsUI7QlYPFa0yMJWEBD/i+IhE328TonwxSVh7M45W8ZvGnrSULVxL
-	 oAAto8G23d1hJfwel22O0/ekO57pPq2Ux26p/LtAnaRKdv/wZwPdChlr5SxgsueT1Z
-	 ffNCY0yHDq6GPlsNcaL3Fpkzq9sw/bx8Imv/3uBM=
+	b=Cvk1UhTYMFW/JC64AutGRF0jIN5LsAqb1Wt94o06Cm5d+2l8A950tjBreInYOtRhM
+	 TOpy/Vitb+VSIoy25cFLCIA7I0FxAyLqXH75/kOY0JckNpAcNniGUU3lujmfyUd8Q6
+	 rU/DP3q5tQIeWj4guq2AK6hQ1ctF6cIGpZuYQnr8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbgHZOuX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 26 Aug 2020 10:50:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36024 "EHLO mail.kernel.org"
+        id S1727012AbgHZOvL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 26 Aug 2020 10:51:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727939AbgHZOuV (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 26 Aug 2020 10:50:21 -0400
+        id S1727933AbgHZOuX (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 26 Aug 2020 10:50:23 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 099F9221E2;
-        Wed, 26 Aug 2020 14:50:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B19FA2224D;
+        Wed, 26 Aug 2020 14:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598453421;
-        bh=mLmHNNYAulsYIvuCLX3SOGim/VZfkqUsFtnN2e6UEk4=;
+        s=default; t=1598453422;
+        bh=mPxrskT16BTXZLsuW1Na7OVRaeDyD5RwQHrNqaXEdyo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2tN+CuPDaLD5qDm5Q7BEHLs124HFQ/2J81VX1LnwKl/ANWHd1JTLjgu5oJgFgrQiI
-         3vsFRpkyBJWVSu5r1i5yIXYMebESESMyDHoWyghcbH+LxEuV4NnkT21fPVKTvMGcmz
-         komlFQndmkPvafLK+a4dkWaLmE0USGNmeKLQif3w=
+        b=MVN95EpKseaVsjjqPh+floPvXJNIJCpyCH6EJxl2LHeopYGobeOcvip/Wb3habmiU
+         y4O07n84Bws14k3eO+c3Bbii/THS+JBwpsHf7glmStZBEiWM3TGsPYVeRMT9GRdkPs
+         dlmoheUc1pe2AANhI50VJPG9Oj8Dntg/RDO4NzIM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/4] leds: pwm: Simplify with dev_err_probe()
-Date:   Wed, 26 Aug 2020 16:50:11 +0200
-Message-Id: <20200826145013.10230-2-krzk@kernel.org>
+Subject: [PATCH 3/4] leds: sgm3140: Simplify with dev_err_probe()
+Date:   Wed, 26 Aug 2020 16:50:12 +0200
+Message-Id: <20200826145013.10230-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200826145013.10230-1-krzk@kernel.org>
 References: <20200826145013.10230-1-krzk@kernel.org>
@@ -58,31 +58,53 @@ dev_err_probe().  Less code and also it prints the error value.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/leds/leds-pwm.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/leds/leds-sgm3140.c | 27 +++++++++------------------
+ 1 file changed, 9 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index ef7b91bd2064..e35a97c1d828 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -78,13 +78,10 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 		led_data->pwm = devm_fwnode_pwm_get(dev, fwnode, NULL);
- 	else
- 		led_data->pwm = devm_pwm_get(dev, led->name);
--	if (IS_ERR(led_data->pwm)) {
--		ret = PTR_ERR(led_data->pwm);
+diff --git a/drivers/leds/leds-sgm3140.c b/drivers/leds/leds-sgm3140.c
+index 28c8b31fa952..f4f831570f11 100644
+--- a/drivers/leds/leds-sgm3140.c
++++ b/drivers/leds/leds-sgm3140.c
+@@ -195,30 +195,21 @@ static int sgm3140_probe(struct platform_device *pdev)
+ 
+ 	priv->flash_gpio = devm_gpiod_get(&pdev->dev, "flash", GPIOD_OUT_LOW);
+ 	ret = PTR_ERR_OR_ZERO(priv->flash_gpio);
+-	if (ret) {
 -		if (ret != -EPROBE_DEFER)
--			dev_err(dev, "unable to request PWM for %s: %d\n",
--				led->name, ret);
+-			dev_err(&pdev->dev,
+-				"Failed to request flash gpio: %d\n", ret);
 -		return ret;
 -	}
-+	if (IS_ERR(led_data->pwm))
-+		return dev_err_probe(dev, PTR_ERR(led_data->pwm),
-+				     "unable to request PWM for %s\n",
-+				     led->name);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Failed to request flash gpio\n");
  
- 	led_data->cdev.brightness_set_blocking = led_pwm_set;
+ 	priv->enable_gpio = devm_gpiod_get(&pdev->dev, "enable", GPIOD_OUT_LOW);
+ 	ret = PTR_ERR_OR_ZERO(priv->enable_gpio);
+-	if (ret) {
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(&pdev->dev,
+-				"Failed to request enable gpio: %d\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Failed to request enable gpio\n");
  
+ 	priv->vin_regulator = devm_regulator_get(&pdev->dev, "vin");
+ 	ret = PTR_ERR_OR_ZERO(priv->vin_regulator);
+-	if (ret) {
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(&pdev->dev,
+-				"Failed to request regulator: %d\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Failed to request regulator\n");
+ 
+ 	child_node = fwnode_get_next_available_child_node(pdev->dev.fwnode,
+ 							  NULL);
 -- 
 2.17.1
 
