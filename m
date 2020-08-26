@@ -2,112 +2,146 @@ Return-Path: <SRS0=in+t=CE=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C93CC433DF
-	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 09:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEA6C433DF
+	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 11:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1734E2087D
-	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 09:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFD272083B
+	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 11:38:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f2B57zh/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbgHZJhx (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 26 Aug 2020 05:37:53 -0400
-Received: from mail.thorsis.com ([92.198.35.195]:50379 "EHLO mail.thorsis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbgHZJhp (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 26 Aug 2020 05:37:45 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.thorsis.com (Postfix) with ESMTP id 6C7ED46E1;
-        Wed, 26 Aug 2020 11:37:42 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
-Received: from mail.thorsis.com ([127.0.0.1])
-        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Wtvtf5oFOyjP; Wed, 26 Aug 2020 11:37:42 +0200 (CEST)
-Received: by mail.thorsis.com (Postfix, from userid 109)
-        id 3E5BE471B; Wed, 26 Aug 2020 11:37:41 +0200 (CEST)
-Received: from adahl by ada.ifak-system.com with local (Exim 4.92)
-        (envelope-from <ada@thorsis.com>)
-        id 1kArs9-0007Yb-BO; Wed, 26 Aug 2020 11:37:37 +0200
-From:   Alexander Dahl <ada@thorsis.com>
-To:     linux-leds@vger.kernel.org
-Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-kernel@vger.kernel.org, Alexander Dahl <post@lespocky.de>
-Subject: [PATCH] leds: pwm: Allow automatic labels for DT based devices
-Date:   Wed, 26 Aug 2020 11:37:37 +0200
-Message-Id: <20200826093737.29008-1-ada@thorsis.com>
-Content-Transfer-Encoding: 8bit
+        id S1728989AbgHZLii (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 26 Aug 2020 07:38:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60008 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729018AbgHZLh5 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 26 Aug 2020 07:37:57 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18F91C0613ED;
+        Wed, 26 Aug 2020 04:37:35 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id v16so758328plo.1;
+        Wed, 26 Aug 2020 04:37:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Vt41UNzwhd7H8iOJWWQaJ2po5o89qJA4//y1ixZpDJA=;
+        b=f2B57zh/EGUaA7PQLarcSXY8LmHSM4t/5IYJRkigwlX2JbvU4mCjJbK99OdAz5Fx9I
+         xjmHmh9I8H1AHvVdd2PwLXb0gFNV/mooRXS2OwqCi5+sGqi39TovZMUZfMDS286/VsS/
+         xMJzF+yEA+5BhFqoAotNw/qi5ik02UPO+cDWl6MH0W9R0uiTGXjliFJEZbh91OL0MA4k
+         kWvRguE7ObqrX2wgJUeHpv0AKoGz+KLfMXfSCDMOjfUCVsmql4n3K7H7olz/rVwk1Hzi
+         ZmAeKUuIDxvF7WPhTifjjM4xGxN5zt8G9UJZVmK6p65sCH7wHudUKFXNZ8yM/VUC28qN
+         ewgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Vt41UNzwhd7H8iOJWWQaJ2po5o89qJA4//y1ixZpDJA=;
+        b=STciMdolYsDbj5UxKTYrb3KEILfAsQvaWioFYnyPVW9IXo6waLKL+Jry8RtQniJfr9
+         tDr+N9TABaWGC0ywahSeTELhpG1XuQHCYn9dTNPAxVhUwW8rDwQVtRjvgpZy/cssz1K4
+         1vPsPB1cNyMYKxhrKxKlgXVlAkowKmOvkpW77aXJNJSGv1/CLoBOk0uMO/9CxaNOqJh7
+         rx983QArY6YSYwz2Yky07QO1vZwIyEZAG1FOA9+TbveYezvjZstHSWmdivMcX6vVL6vs
+         wFSajKUom0mfZvagZPmSstgYZ89gPLrxyr4wy3z6Jpi+wai1txkNoeGmMOetTAj1bZxc
+         0ffA==
+X-Gm-Message-State: AOAM531Qfll3PYHZwBj/s8L06OR+nrkLPOMcM7gHpyc7kQq+n/tY+agd
+        ViKEtld11htoOS7ZtSw5CPD+c59MI0I=
+X-Google-Smtp-Source: ABdhPJzBGZnfnxqRta01CVr9x9ijWsljVtnE050DIPGOxgcWkmTkxadvUO5k7vIIYadCfhHoJ3ZuRg==
+X-Received: by 2002:a17:90a:9483:: with SMTP id s3mr5694994pjo.98.1598441854639;
+        Wed, 26 Aug 2020 04:37:34 -0700 (PDT)
+Received: from localhost.localdomain ([2402:7500:56a:2197:d2eb:7e49:dfa1:a882])
+        by smtp.gmail.com with ESMTPSA id x5sm2591047pfj.1.2020.08.26.04.37.31
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Aug 2020 04:37:34 -0700 (PDT)
+From:   Gene Chen <gene.chen.richtek@gmail.com>
+To:     jacek.anaszewski@gmail.com, pavel@ucw.cz, matthias.bgg@gmail.com
+Cc:     dmurphy@ti.com, linux-leds@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        gene_chen@richtek.com, Wilma.Wu@mediatek.com,
+        shufan_lee@richtek.com, cy_huang@richtek.com,
+        benjamin.chao@mediatek.com
+Subject: [PATCH 2/2] dt-bindings: leds: Add bindings for MT6360 LED
+Date:   Wed, 26 Aug 2020 19:37:20 +0800
+Message-Id: <1598441840-15226-3-git-send-email-gene.chen.richtek@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1598441840-15226-1-git-send-email-gene.chen.richtek@gmail.com>
+References: <1598441840-15226-1-git-send-email-gene.chen.richtek@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Alexander Dahl <post@lespocky.de>
+From: Gene Chen <gene_chen@richtek.com>
 
-If LEDs are configured through device tree and the property 'label' is
-omitted, the label is supposed to be generated from the properties
-'function' and 'color' if present.  While this works fine for e.g. the
-'leds-gpio' driver, it did not for 'leds-pwm'.
+Add bindings document for LED support on MT6360 PMIC
 
-The reason is, you get this label naming magic only if you add a LED
-device through 'devm_led_classdev_register_ext()' and pass a pointer to
-the current device tree node.  The approach to fix this was adopted from
-the 'leds-gpio' driver.
-
-For the following node from dts the LED appeared as 'led5' in sysfs
-before and as 'red:debug' after this change.
-
-        pwm_leds {
-                compatible = "pwm-leds";
-
-                led5 {
-                        function = LED_FUNCTION_DEBUG;
-                        color = <LED_COLOR_ID_RED>;
-                        pwms = <&pwm0 2 10000000 0>;
-                        max-brightness = <127>;
-
-                        linux,default-trigger = "heartbeat";
-                        panic-indicator;
-                };
-        };
-
-Signed-off-by: Alexander Dahl <post@lespocky.de>
+Signed-off-by: Gene Chen <gene_chen@richtek.com>
 ---
+ .../devicetree/bindings/leds/leds-mt6360.yaml      | 50 ++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6360.yaml
 
-Notes:
-    v1: based on v5.9-rc2, backport on v5.4.59 also works
-
- drivers/leds/leds-pwm.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index ef7b91bd2064..a27a1d75a3e9 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -65,6 +65,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 		       struct led_pwm *led, struct fwnode_handle *fwnode)
- {
- 	struct led_pwm_data *led_data = &priv->leds[priv->num_leds];
-+	struct led_init_data init_data = {};
- 	int ret;
- 
- 	led_data->active_low = led->active_low;
-@@ -90,7 +91,13 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 
- 	pwm_init_state(led_data->pwm, &led_data->pwmstate);
- 
--	ret = devm_led_classdev_register(dev, &led_data->cdev);
-+	if (fwnode) {
-+		init_data.fwnode = fwnode;
-+		ret = devm_led_classdev_register_ext(dev, &led_data->cdev,
-+						     &init_data);
-+	} else {
-+		ret = devm_led_classdev_register(dev, &led_data->cdev);
-+	}
- 	if (ret) {
- 		dev_err(dev, "failed to register PWM led for %s: %d\n",
- 			led->name, ret);
+diff --git a/Documentation/devicetree/bindings/leds/leds-mt6360.yaml b/Documentation/devicetree/bindings/leds/leds-mt6360.yaml
+new file mode 100644
+index 0000000..4598be5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-mt6360.yaml
+@@ -0,0 +1,50 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/leds-mt6360.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: LED driver for MT6360 PMIC from MediaTek Integrated.
++
++maintainers:
++  - Gene Chen <gene_chen@richtek.com>
++
++description: |
++  This module is part of the MT6360 MFD device. For more details
++  see Documentation/devicetree/bindings/mfd/mt6360.yaml.
++
++  The LED controller is represented as a sub-node of the PMIC node on
++  the device tree.
++
++  This device has six current sinks.
++
++properties:
++  compatible:
++    const: mediatek,mt6360-led
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++patternProperties:
++  "^led@[0-5]$":
++    type: object
++    description: |
++      Properties for a single LED.
++
++    properties:
++      reg:
++        description:
++          Index of the LED.
++        minimum: 0
++        maximum: 5
++
++required:
++  - compatible
++  - "#address-cells"
++  - "#size-cells"
++additionalProperties: false
++
++...
 -- 
-2.27.0
+2.7.4
 
