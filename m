@@ -2,109 +2,102 @@ Return-Path: <SRS0=in+t=CE=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D857FC433E3
-	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 14:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5716C433DF
+	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 15:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEA1F2078D
-	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 14:51:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598453473;
-	bh=mPxrskT16BTXZLsuW1Na7OVRaeDyD5RwQHrNqaXEdyo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Cvk1UhTYMFW/JC64AutGRF0jIN5LsAqb1Wt94o06Cm5d+2l8A950tjBreInYOtRhM
-	 TOpy/Vitb+VSIoy25cFLCIA7I0FxAyLqXH75/kOY0JckNpAcNniGUU3lujmfyUd8Q6
-	 rU/DP3q5tQIeWj4guq2AK6hQ1ctF6cIGpZuYQnr8=
+	by mail.kernel.org (Postfix) with ESMTP id 81A382078A
+	for <linux-leds@archiver.kernel.org>; Wed, 26 Aug 2020 15:30:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RaQnXZB2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbgHZOvL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 26 Aug 2020 10:51:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727933AbgHZOuX (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 26 Aug 2020 10:50:23 -0400
-Received: from localhost.localdomain (unknown [194.230.155.216])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B19FA2224D;
-        Wed, 26 Aug 2020 14:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598453422;
-        bh=mPxrskT16BTXZLsuW1Na7OVRaeDyD5RwQHrNqaXEdyo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MVN95EpKseaVsjjqPh+floPvXJNIJCpyCH6EJxl2LHeopYGobeOcvip/Wb3habmiU
-         y4O07n84Bws14k3eO+c3Bbii/THS+JBwpsHf7glmStZBEiWM3TGsPYVeRMT9GRdkPs
-         dlmoheUc1pe2AANhI50VJPG9Oj8Dntg/RDO4NzIM=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/4] leds: sgm3140: Simplify with dev_err_probe()
-Date:   Wed, 26 Aug 2020 16:50:12 +0200
-Message-Id: <20200826145013.10230-3-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200826145013.10230-1-krzk@kernel.org>
-References: <20200826145013.10230-1-krzk@kernel.org>
+        id S1727877AbgHZPav (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 26 Aug 2020 11:30:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39998 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727056AbgHZPav (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 26 Aug 2020 11:30:51 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F08BCC061756;
+        Wed, 26 Aug 2020 08:30:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=xlfXHnuuH2gInBuzkBHVhLFG54fPY1/qexAoARTTtw4=; b=RaQnXZB20d4JOEFetCvG5MTO5c
+        m6j1A2coIXyNV4KKTq3oTb8hkh9riRf+BmXobcnLKbvwdpC/wA/mc4Yi4CMHhXjjKfx2O1vRA+kYt
+        NOu7FaDqiOl1OMZZPrsNQqb9AJf+Glllx9hjPwHnYZki+JcM9MVqtULJK8GIVpF/xyr/JaxPczdrp
+        2m0LnJ6mtqKdDS74P929XjsyCn0JKWATMoTJdR6qk1tnnrPe+rBebTU5adIMFEya7FvRVOiDA5KnR
+        rzlWZ/o9XTQwZCWxpEDUt9OZpt4s2sXniVTLUMjthgf6jHQ8DpeeMERpsrEm7xz+I0ZAoQlfVsNTz
+        4d4DeJTA==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kAxNs-0004uD-AB; Wed, 26 Aug 2020 15:30:44 +0000
+Subject: Re: [PATCH 1/2] leds: mt6360: Add LED driver for MT6360
+To:     Gene Chen <gene.chen.richtek@gmail.com>,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, matthias.bgg@gmail.com
+Cc:     dmurphy@ti.com, linux-leds@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        gene_chen@richtek.com, Wilma.Wu@mediatek.com,
+        shufan_lee@richtek.com, cy_huang@richtek.com,
+        benjamin.chao@mediatek.com
+References: <1598441840-15226-1-git-send-email-gene.chen.richtek@gmail.com>
+ <1598441840-15226-2-git-send-email-gene.chen.richtek@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <f35bf9c1-6397-3369-954d-fe05d77438cd@infradead.org>
+Date:   Wed, 26 Aug 2020 08:30:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
+MIME-Version: 1.0
+In-Reply-To: <1598441840-15226-2-git-send-email-gene.chen.richtek@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Common pattern of handling deferred probe can be simplified with
-dev_err_probe().  Less code and also it prints the error value.
+On 8/26/20 4:37 AM, Gene Chen wrote:
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 1c181df..ce95ead 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -271,6 +271,17 @@ config LEDS_MT6323
+>  	  This option enables support for on-chip LED drivers found on
+>  	  Mediatek MT6323 PMIC.
+>  
+> +config LEDS_MT6360
+> +	tristate "LED Support for Mediatek MT6360 PMIC"
+> +	depends on LEDS_CLASS_FLASH && OF
+> +	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
+> +	depends on MFD_MT6360
+> +	help
+> +	  This option enables support for dual Flash LED drivers found on
+> +	  Mediatek MT6360 PMIC.
+> +	  Support Torch and Strobe mode independently current source.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/leds/leds-sgm3140.c | 27 +++++++++------------------
- 1 file changed, 9 insertions(+), 18 deletions(-)
+	  Supports                      independently of current source.
 
-diff --git a/drivers/leds/leds-sgm3140.c b/drivers/leds/leds-sgm3140.c
-index 28c8b31fa952..f4f831570f11 100644
---- a/drivers/leds/leds-sgm3140.c
-+++ b/drivers/leds/leds-sgm3140.c
-@@ -195,30 +195,21 @@ static int sgm3140_probe(struct platform_device *pdev)
- 
- 	priv->flash_gpio = devm_gpiod_get(&pdev->dev, "flash", GPIOD_OUT_LOW);
- 	ret = PTR_ERR_OR_ZERO(priv->flash_gpio);
--	if (ret) {
--		if (ret != -EPROBE_DEFER)
--			dev_err(&pdev->dev,
--				"Failed to request flash gpio: %d\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "Failed to request flash gpio\n");
- 
- 	priv->enable_gpio = devm_gpiod_get(&pdev->dev, "enable", GPIOD_OUT_LOW);
- 	ret = PTR_ERR_OR_ZERO(priv->enable_gpio);
--	if (ret) {
--		if (ret != -EPROBE_DEFER)
--			dev_err(&pdev->dev,
--				"Failed to request enable gpio: %d\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "Failed to request enable gpio\n");
- 
- 	priv->vin_regulator = devm_regulator_get(&pdev->dev, "vin");
- 	ret = PTR_ERR_OR_ZERO(priv->vin_regulator);
--	if (ret) {
--		if (ret != -EPROBE_DEFER)
--			dev_err(&pdev->dev,
--				"Failed to request regulator: %d\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "Failed to request regulator\n");
- 
- 	child_node = fwnode_get_next_available_child_node(pdev->dev.fwnode,
- 							  NULL);
+I'm guessing on that ending; I wasn't sure what was intended, but it doesn't
+make sense as posted.
+
+
+> +	  Include Low-VF and short protection.
+
+	  Includes
+
+> +
+>  config LEDS_S3C24XX
+>  	tristate "LED Support for Samsung S3C24XX GPIO LEDs"
+>  	depends on LEDS_CLASS
+
+
+thanks.
 -- 
-2.17.1
-
+~Randy
