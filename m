@@ -2,192 +2,81 @@ Return-Path: <SRS0=y0Z+=CG=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61AA6C433E2
-	for <linux-leds@archiver.kernel.org>; Fri, 28 Aug 2020 20:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD71C433E2
+	for <linux-leds@archiver.kernel.org>; Fri, 28 Aug 2020 22:20:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A9F220665
-	for <linux-leds@archiver.kernel.org>; Fri, 28 Aug 2020 20:43:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSs1tlg2"
+	by mail.kernel.org (Postfix) with ESMTP id DD87A2080C
+	for <linux-leds@archiver.kernel.org>; Fri, 28 Aug 2020 22:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598653241;
+	bh=+huswx3cUSjOQM67FOq/UnLNFaUBg01XnDsJO4m5zp0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=crhAhWE3FBfZhNv6zYXESDC5WG4ouE2rbZymhtwb2ClXER+bUq4CNntK4WvDxlXqq
+	 xcXg7S0DP15hJp811AWvHsLihSWSZ9qGUiVTvpXq6tJz2HOUIvMndjaq+zHNwCsD1y
+	 iyQOmPx1dYnFAlcv8X82b47lJqT9rBGKq64qUEk4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbgH1UnN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 28 Aug 2020 16:43:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57632 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbgH1UnH (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 28 Aug 2020 16:43:07 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E96FAC061264;
-        Fri, 28 Aug 2020 13:43:06 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id q4so278842eds.3;
-        Fri, 28 Aug 2020 13:43:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=28bk4YcTBqEPYcp2WU1z35XfYDmUQokqTfLxs/F8nV4=;
-        b=FSs1tlg2X1VdNxRt4vyRcZ5Zu8/59rfGq9kLL2SYC7BOJRRPR6sqbGL08R3B7VPK50
-         jB1Js3Gc5fMXYiDyc7sLrqXmG3v/rqc+AhjyDUAc/x6Oapd/4q3L5Vej6m1xIASvm//Y
-         M4Ad7s7zUNXvNoHxttvVPSrrApjgSy13mYpcuoVTqhJLWChjlKKYIDRiAcmwmyM5/lsw
-         H/yq7ee0mfChXs/gKwi62Ol9noIRxMqenic97HLP83JpIZ8zdk7Um4ps1PF6ceabh/vI
-         i/QBUsk6LldDc3ThKb+uVvL/IscfDkz7GPnwsAt+puaFaQWL3KX4MBKsmcbOHvl+FgHJ
-         HmkQ==
+        id S1726584AbgH1WUi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 28 Aug 2020 18:20:38 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:35474 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbgH1WUh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 28 Aug 2020 18:20:37 -0400
+Received: by mail-il1-f196.google.com with SMTP id q14so1982396ilm.2;
+        Fri, 28 Aug 2020 15:20:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=28bk4YcTBqEPYcp2WU1z35XfYDmUQokqTfLxs/F8nV4=;
-        b=tWkmTQBrFyvbkXeg2Hfo34HTHoMHCwPHqZC26kaYz6N0JftRhSR0pBvBqOxc25XASI
-         ratim0u+pC40zaf89KPkrD+6mxLaSZFO8Im6jrCs9QXig6o5WVH44Fl7I0wf+LukJ7bA
-         HRj9nUPi5Ob707BI4GTxF87uZsnVG4s/FQMfFAttMjlZPsSC9NM8oDnsRpNSl+vMbZyl
-         VA9qqiRtpO1AMcUk/5Klf74qVYt0QWrNSa1c3sOJJ4XtQVPPZR22xU9DWuLJXFsqGd3w
-         LNsRytlaOWXUiBJ0JGambzlrfH/DkbpS/kBBgth6bgmcyEACSYK30JEQRPUcx5yFn+cJ
-         gqwA==
-X-Gm-Message-State: AOAM530+FgLxC58rHgyCcN0TJu0eOLxz5yrCd5rDgnAVG3bKnlMlpIWB
-        HcemOpoBuKH9epX7wcp7kmY=
-X-Google-Smtp-Source: ABdhPJwYxN3AMoqkldp/4T1VeLmUWtkcuJaVp65u1IVVk2kOGdHhsiaklT1I/lz06LOE7dfmYEZWrg==
-X-Received: by 2002:a50:fd0b:: with SMTP id i11mr575308eds.298.1598647385569;
-        Fri, 28 Aug 2020 13:43:05 -0700 (PDT)
-Received: from ?IPv6:2a01:110f:b59:fd00:2c11:d1e6:276c:6a7f? ([2a01:110f:b59:fd00:2c11:d1e6:276c:6a7f])
-        by smtp.gmail.com with ESMTPSA id d20sm263356ejj.10.2020.08.28.13.43.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Aug 2020 13:43:05 -0700 (PDT)
-Subject: Re: [PATCH] leds: pwm: Allow automatic labels for DT based devices
-To:     Alexander Dahl <ada@thorsis.com>, linux-leds@vger.kernel.org
-Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-kernel@vger.kernel.org, Alexander Dahl <post@lespocky.de>
-References: <20200826093737.29008-1-ada@thorsis.com>
- <d6f69d4a-3e46-cad4-5756-4d15e5ef95ba@gmail.com> <7920560.iacgkFlgr8@ada>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <eff509d5-a5f7-0d5d-b39c-aac364e53aca@gmail.com>
-Date:   Fri, 28 Aug 2020 22:43:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=84tiJNvqXLzWGNNKW4M8qslA98P8c5Z+XOkx6/PTE94=;
+        b=Gvg2Up2dBSUOnwl5REcqowZ2JYOnoEybsi1bhghEh1g1LdW8k/hZTdLM19fTMzwG9H
+         sTgR1ClSlXOTdHJog8EwzdtEIUBgNIk5IFQAgqFmXUzuT6QMcZYqTWlpkJAxunvPGeqs
+         HNtiZ4p3TISvum74JKTAzGh4dIe/g+XdEnmbMhqtYoQGpNn6FpB8WjOO95og4ZuI5evB
+         Qab/fDdEs/FZAAxjLeox1OXabPyf1O6AlZ9rgG/Y4RHYSwlxnJidzhzp5DbcToIcIv0Q
+         +UHg2CLdHJLKjlHky+mOSClDdL62TqiNqWzW8osUdiMLl4tWz8PYAyI0imi+NgPeJvU5
+         nFLw==
+X-Gm-Message-State: AOAM531Tuy0S0PWMDfQoV1D91+k4WkdHb2FcqcCvTG0Gc/cXHzJGaNLz
+        91rX7c1Ud/+KkcvLvCTr+Q==
+X-Google-Smtp-Source: ABdhPJzCtRKSR3U3/rpXQVJxYIvZY+tOqpqfk8joLqp/qOw1Q/Iywr+mAqA/6IsF4a2siLlyxHqGFQ==
+X-Received: by 2002:a92:48da:: with SMTP id j87mr902382ilg.78.1598653236093;
+        Fri, 28 Aug 2020 15:20:36 -0700 (PDT)
+Received: from xps15 ([64.188.179.249])
+        by smtp.gmail.com with ESMTPSA id 3sm352652ily.31.2020.08.28.15.20.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Aug 2020 15:20:35 -0700 (PDT)
+Received: (nullmailer pid 3507112 invoked by uid 1000);
+        Fri, 28 Aug 2020 22:20:33 -0000
+Date:   Fri, 28 Aug 2020 16:20:33 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Grant Feng <von81@163.com>
+Cc:     linux-kernel@vger.kernel.org, jacek.anaszewski@gmail.com,
+        pavel@ucw.cz, linux-leds@vger.kernel.org, robh+dt@kernel.org,
+        dmurphy@ti.com, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] DT: leds: Add an optional property named
+ 'shutdown-gpios'
+Message-ID: <20200828222033.GA3506139@bogus>
+References: <20200825082206.26575-1-von81@163.com>
+ <20200825082206.26575-2-von81@163.com>
 MIME-Version: 1.0
-In-Reply-To: <7920560.iacgkFlgr8@ada>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200825082206.26575-2-von81@163.com>
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Alexander,
-
-On 8/28/20 9:00 AM, Alexander Dahl wrote:
-> Hello Jacek,
+On Tue, 25 Aug 2020 16:22:06 +0800, Grant Feng wrote:
+> The chip enters hardware shutdown when the SDB pin is pulled low.
+> The chip releases hardware shutdown when the SDB pin is pulled high.
 > 
-> Am Donnerstag, 27. August 2020, 23:28:45 CEST schrieb Jacek Anaszewski:
->> On 8/26/20 11:37 AM, Alexander Dahl wrote:
->>> From: Alexander Dahl <post@lespocky.de>
->>>
->>> If LEDs are configured through device tree and the property 'label' is
->>> omitted, the label is supposed to be generated from the properties
->>> 'function' and 'color' if present.  While this works fine for e.g. the
->>> 'leds-gpio' driver, it did not for 'leds-pwm'.
->>>
->>> The reason is, you get this label naming magic only if you add a LED
->>> device through 'devm_led_classdev_register_ext()' and pass a pointer to
->>> the current device tree node.  The approach to fix this was adopted from
->>> the 'leds-gpio' driver.
->>>
->>> For the following node from dts the LED appeared as 'led5' in sysfs
->>> before and as 'red:debug' after this change.
->>>
->>>           pwm_leds {
->>>           
->>>                   compatible = "pwm-leds";
->>>                   
->>>                   led5 {
->>>                   
->>>                           function = LED_FUNCTION_DEBUG;
->>>                           color = <LED_COLOR_ID_RED>;
->>>                           pwms = <&pwm0 2 10000000 0>;
->>>                           max-brightness = <127>;
->>>                           
->>>                           linux,default-trigger = "heartbeat";
->>>                           panic-indicator;
->>>                   
->>>                   };
->>>           
->>>           };
->>>
->>> Signed-off-by: Alexander Dahl <post@lespocky.de>
->>> ---
->>>
->>> Notes:
->>>       v1: based on v5.9-rc2, backport on v5.4.59 also works
->>>    
->>>    drivers/leds/leds-pwm.c | 9 ++++++++-
->>>    1 file changed, 8 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
->>> index ef7b91bd2064..a27a1d75a3e9 100644
->>> --- a/drivers/leds/leds-pwm.c
->>> +++ b/drivers/leds/leds-pwm.c
->>> @@ -65,6 +65,7 @@ static int led_pwm_add(struct device *dev, struct
->>> led_pwm_priv *priv,>
->>>    		       struct led_pwm *led, struct fwnode_handle *fwnode)
->>>    
->>>    {
->>>    
->>>    	struct led_pwm_data *led_data = &priv->leds[priv->num_leds];
->>>
->>> +	struct led_init_data init_data = {};
->>>
->>>    	int ret;
->>>    	
->>>    	led_data->active_low = led->active_low;
->>>
->>> @@ -90,7 +91,13 @@ static int led_pwm_add(struct device *dev, struct
->>> led_pwm_priv *priv,>
->>>    	pwm_init_state(led_data->pwm, &led_data->pwmstate);
->>>
->>> -	ret = devm_led_classdev_register(dev, &led_data->cdev);
->>> +	if (fwnode) {
->>> +		init_data.fwnode = fwnode;
->>> +		ret = devm_led_classdev_register_ext(dev, &led_data->cdev,
->>> +						     &init_data);
->>> +	} else {
->>> +		ret = devm_led_classdev_register(dev, &led_data->cdev);
->>> +	}
->>>
->>>    	if (ret) {
->>>    	
->>>    		dev_err(dev, "failed to register PWM led for %s: %d\n",
->>>    		
->>>    			led->name, ret);
->>
->> This part looks good, but corresponding update of
->> Documentation/devicetree/bindings/leds/leds-pwm.txt is needed as well.
+> Signed-off-by: Grant Feng <von81@163.com>
+> ---
+>  Documentation/devicetree/bindings/leds/leds-is31fl319x.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> I'm not sure, what needs updating. The properties 'function' and 'color' are
-> already documented in Documentation/devicetree/bindings/leds/common.yaml … the
-> only thing I can think of here is updating the examples? That would be nice,
-> as would be updating to yaml, but I don't see the strong relation, yet.
 
-It is necessary to tell the user that given driver is capable of
-utilizing a property. I thought of something like in commit [0].
-
->> It would be good to switch to yaml by this occassion.
-> 
-> Is there some guidance on that in general?
-
-I am not aware of, but surely sooner or later all bindings will
-need to be unified. Touching the file is always a good opportunity
-to address that. It's up to you, though.
-
-[0] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/Documentation/devicetree/bindings/leds/leds-lm3692x.txt?id=4dcbc8f8c59f4b618d651f5ba884ee5bf562c8de
-
--- 
-Best regards,
-Jacek Anaszewski
+Acked-by: Rob Herring <robh@kernel.org>
