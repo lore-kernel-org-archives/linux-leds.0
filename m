@@ -2,166 +2,188 @@ Return-Path: <SRS0=jX02=CI=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C2BC2BBDA
-	for <linux-leds@archiver.kernel.org>; Sun, 30 Aug 2020 18:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C41C433E6
+	for <linux-leds@archiver.kernel.org>; Sun, 30 Aug 2020 22:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CF612071B
-	for <linux-leds@archiver.kernel.org>; Sun, 30 Aug 2020 18:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C900520738
+	for <linux-leds@archiver.kernel.org>; Sun, 30 Aug 2020 22:56:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqfaNI4/"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="InX6j2UT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbgH3S4C (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 30 Aug 2020 14:56:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33268 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726412AbgH3SzF (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 30 Aug 2020 14:55:05 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2674BC061575;
-        Sun, 30 Aug 2020 11:55:05 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id c15so2325197lfi.3;
-        Sun, 30 Aug 2020 11:55:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gyFVRrq7oNAkyBDcab1pW5QCuvDZJBB4EknZ7t3FCyQ=;
-        b=eqfaNI4/kuXYQV3upPkbU1Poja6coHGtkB3x+Zbdd5q/kvBXoQ3WVV9lVlV7SmiKJ2
-         u21imvSfFW/H0FNjchmlvEAXLj4xmsNmVgUbbZrvwGeNwR9G/mRS4eRzGYBM+cyW+gTg
-         IZ17Q0jzzEWXu17fMMVPiuT5wqW0NWC57P0Pb8ZN+uf/HwK04jKAr42E5pQtSYOVOchw
-         3DbZh8uUm1VtQllkW3Oh6HsMoH+tB0dT2jLFkUdlyPf9BO8wKy9EN1j0BhBtphNMxdgg
-         UYiUIxzauGngNYfKiHmjcosKfLOX1vKH1B5D91Ft2SIqdsTRkvsZwLx0nLnm/4RChzTF
-         Y6HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gyFVRrq7oNAkyBDcab1pW5QCuvDZJBB4EknZ7t3FCyQ=;
-        b=jvMu5R0E45gw2ptg3+6JANJyTs4ec0hUXNN7cbDT3sIRpAJqO04fFM1wKJkd2eYvjt
-         nZfV1yRt1iPeLroCYAsiCp6o+bjz5bheuPsffytGejAsy3OpZQ0a0KML8B5iYlqTPTuZ
-         DYKUZ4uQa5Lw+kbmSqXFQ0DhrMKpp8R625fFlr2vMneJWbJOUyYv3bhH2stMoOnegC3g
-         S/y3lIcpBYFL1wbwQWoVsTcktQpZ/ccC1dCEyDjysSq7tHIKdnFbgPT2rWM5xDr3kZoO
-         sVFqlJ29uEj9Y8ZGFZArvzINagdFXvBB0Rfqzrfj7VFz7+NykoONkHd7r2ZuFuTDGx7c
-         iXKg==
-X-Gm-Message-State: AOAM532l4G5JV47ZAxThsu1HaAVoqBMyo9cH2yiG8k1ptXnXRIbwuaYh
-        XG/3nMHD4o0nqBgS2s4B+Hc=
-X-Google-Smtp-Source: ABdhPJxSgb/zvqZMjCfnMXtPsXy8CIvbp061yJoZhxOfVfnVI7ZEnO98gX7KcwhZ8GNi9zDUFR/Yeg==
-X-Received: by 2002:ac2:51b4:: with SMTP id f20mr3884946lfk.188.1598813703445;
-        Sun, 30 Aug 2020 11:55:03 -0700 (PDT)
-Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id n21sm21630ljc.89.2020.08.30.11.55.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Aug 2020 11:55:02 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Mark Brown <broonie@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/6] dt-bindings: mfd: Add ENE KB930 Embedded Controller binding
-Date:   Sun, 30 Aug 2020 21:53:51 +0300
-Message-Id: <20200830185356.5365-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200830185356.5365-1-digetx@gmail.com>
-References: <20200830185356.5365-1-digetx@gmail.com>
+        id S1726453AbgH3W4R (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 30 Aug 2020 18:56:17 -0400
+Received: from mail.nic.cz ([217.31.204.67]:52906 "EHLO mail.nic.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726179AbgH3W4Q (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 30 Aug 2020 18:56:16 -0400
+Received: from localhost (unknown [172.20.6.135])
+        by mail.nic.cz (Postfix) with ESMTPSA id B75E713FFFB;
+        Mon, 31 Aug 2020 00:56:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
+        t=1598828173; bh=YTHzXCb4ZdLDojUITwXuoxdvQt+Vc8tV3tMINYete5U=;
+        h=Date:From:To;
+        b=InX6j2UTCOUnMtb9JVcZ9l5pcOhbEsqQeJ2i3YIu1gIyKt42g/+/fTn6s2oeHsAw2
+         cuOyst+9NclOWosVIaZ21Dkv4OBHY66dLpB7E7I1UYjgW80nxl8APYORpN4Om+VSG4
+         9W+8v+0fBFlZSVwsIsf7MwdsvGqBzXJH+4TOCsNY=
+Date:   Mon, 31 Aug 2020 00:56:13 +0200
+From:   Marek Behun <marek.behun@nic.cz>
+To:     Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        jacek.anaszewski@gmail.com, Dan Murphy <dmurphy@ti.com>,
+        =?UTF-8?B?T25k?= =?UTF-8?B?xZllag==?= Jirman 
+        <megous@megous.com>, Russell King <linux@armlinux.org.uk>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH RFC leds + net-next v4 0/2] Add support for LEDs on
+ Marvell PHYs
+Message-ID: <20200831005613.3c00215a@nic.cz>
+In-Reply-To: <2b3604bf88082f8d8f6d21707907eff757b49362.camel@ew.tq-group.com>
+References: <20200728150530.28827-1-marek.behun@nic.cz>
+        <2b3604bf88082f8d8f6d21707907eff757b49362.camel@ew.tq-group.com>
+X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Virus-Scanned: clamav-milter 0.102.2 at mail
+X-Virus-Status: Clean
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add binding document for the ENE KB930 Embedded Controller.
+On Tue, 25 Aug 2020 10:13:59 +0200
+Matthias Schiffer <matthias.schiffer@ew.tq-group.com> wrote:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- .../devicetree/bindings/mfd/ene-kb930.yaml    | 66 +++++++++++++++++++
- 1 file changed, 66 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.yaml
+> On Tue, 2020-07-28 at 17:05 +0200, Marek Beh=C3=BAn wrote:
+> > Hi,
+> >=20
+> > this is v4 of my RFC adding support for LEDs connected to Marvell
+> > PHYs.
+> >=20
+> > Please note that if you want to test this, you still need to first
+> > apply
+> > the patch adding the LED private triggers support from Pavel's tree.
+> >  =20
+> https://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-leds.git/comm=
+it/?h=3Dfor-next&id=3D93690cdf3060c61dfce813121d0bfc055e7fa30d
+> >=20
+> > What I still don't like about this is that the LEDs created by the
+> > code
+> > don't properly support device names. LEDs should have name in format
+> > "device:color:function", for example "eth0:green:activity".
+> >=20
+> > The code currently looks for attached netdev for a given PHY, but
+> > at the time this happens there is no netdev attached, so the LEDs
+> > gets
+> > names without the device part (ie ":green:activity").
+> >=20
+> > This can be addressed in next version by renaming the LED when a
+> > netdev
+> > is attached to the PHY, but first a API for LED device renaming needs
+> > to
+> > be proposed. I am going to try to do that. This would also solve the
+> > same problem when userspace renames an interface.
+> >=20
+> > And no, I don't want phydev name there. =20
+>=20
+>=20
+> Hello Marek,
+>=20
+> thanks for your patches - Andrew suggested me to have a look at them as
+> I'm currently trying to add LED trigger support to the TI DP83867 PHY.
+>=20
+> Is there already a plan to add support for polarity and similiar
+> settings, at least to the generic part of your changes?
+>=20
 
-diff --git a/Documentation/devicetree/bindings/mfd/ene-kb930.yaml b/Documentation/devicetree/bindings/mfd/ene-kb930.yaml
-new file mode 100644
-index 000000000000..635c8966ca22
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/ene-kb930.yaml
-@@ -0,0 +1,66 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/ene-kb930.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ENE KB930 Embedded Controller bindings
-+
-+description: |
-+  This binding describes the ENE KB930 Embedded Controller attached to an
-+  I2C bus.
-+
-+maintainers:
-+  - Dmitry Osipenko <digetx@gmail.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+        - acer,a500-iconia-ec # Acer A500 Iconia tablet device
-+      - enum:
-+        - ene,kb930
-+  reg:
-+    maxItems: 1
-+
-+  monitored-battery: true
-+  power-supplies: true
-+  system-power-controller: true
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    battery: battery-cell {
-+      compatible = "simple-battery";
-+      charge-full-design-microamp-hours = <3260000>;
-+      energy-full-design-microwatt-hours = <24000000>;
-+      operating-range-celsius = <0 40>;
-+    };
-+
-+    mains: ac-adapter {
-+      compatible = "gpio-charger";
-+      charger-type = "mains";
-+      gpios = <&gpio 125 0>;
-+    };
-+
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      embedded-controller@58 {
-+        compatible = "acer,a500-iconia-ec", "ene,kb930";
-+        reg = <0x58>;
-+
-+        system-power-controller;
-+
-+        monitored-battery = <&battery>;
-+        power-supplies = <&mains>;
-+      };
-+    };
-+
-+...
--- 
-2.27.0
+Hello Matthias,
+
+sorry for answering with delay, I somehow overlooked your email.
+Yes, I plan to add some basic platform data properties (like polarity)
+in the generic part.
+
+> In the TI DP83867, there are 2 separate settings for each LED:
+>=20
+> - Trigger event
+> - Polarity or override (active-high/active-low/force-high/force-low -
+> the latter two would be used for led_brightness_set)
+> - (There is also a 3rd register that defines the blink frequency, but
+> as it allows only a single setting for all LEDs, I would ignore it for
+> now)
+
+I think that blink frequency should be in the generic part as well.
+
+>=20
+> At least the per-LED polarity setting would be essential to have for
+> this feature to be useful for our TQ-Systems mainboards with TI PHYs.
+>=20
+
+I will try to send new version next week (starting 7th September).
+
+Marek
+
+>=20
+> Kind regards,
+> Matthias
+>=20
+>=20
+>=20
+> >=20
+> > Changes since v3:
+> > - addressed some of Andrew's suggestions
+> > - phy_hw_led_mode.c renamed to phy_led.c
+> > - the DT reading code is now also generic, moved to phy_led.c and
+> > called
+> >   from phy_probe
+> > - the function registering the phydev-hw-mode trigger is now called
+> > from
+> >   phy_device.c function phy_init before registering genphy drivers
+> > - PHY LED functionality now depends on CONFIG_LEDS_TRIGGERS
+> >=20
+> > Changes since v2:
+> > - to share code with other drivers which may want to also offer PHY
+> > HW
+> >   control of LEDs some of the code was refactored and now resides in
+> >   phy_hw_led_mode.c. This code is compiled in when config option
+> >   LED_TRIGGER_PHY_HW is enabled. Drivers wanting to offer PHY HW
+> > control
+> >   of LEDs should depend on this option.
+> > - the "hw-control" trigger is renamed to "phydev-hw-mode" and is
+> >   registered by the code in phy_hw_led_mode.c
+> > - the "hw_control" sysfs file is renamed to "hw_mode"
+> > - struct phy_driver is extended by three methods to support PHY HW
+> > LED
+> >   control
+> > - I renamed the various HW control modes offeret by Marvell PHYs to
+> >   conform to other Linux mode names, for example the
+> > "1000/100/10/else"
+> >   mode was renamed to "1Gbps/100Mbps/10Mbps", or "recv/else" was
+> > renamed
+> >   to "rx" (this is the name of the mode in netdev trigger).
+> >=20
+> > Marek
+> >=20
+> >=20
+> > Marek Beh=C3=BAn (2):
+> >   net: phy: add API for LEDs controlled by PHY HW
+> >   net: phy: marvell: add support for PHY LEDs via LED class
+> >=20
+> >  drivers/net/phy/Kconfig      |   4 +
+> >  drivers/net/phy/Makefile     |   1 +
+> >  drivers/net/phy/marvell.c    | 287
+> > +++++++++++++++++++++++++++++++++++
+> >  drivers/net/phy/phy_device.c |  25 ++-
+> >  drivers/net/phy/phy_led.c    | 176 +++++++++++++++++++++
+> >  include/linux/phy.h          |  51 +++++++
+> >  6 files changed, 537 insertions(+), 7 deletions(-)
+> >  create mode 100644 drivers/net/phy/phy_led.c
+> >  =20
+>=20
 
