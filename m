@@ -1,113 +1,104 @@
-Return-Path: <SRS0=PVZK=CL=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=gFSj=CM=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 233AEC433E2
-	for <linux-leds@archiver.kernel.org>; Wed,  2 Sep 2020 12:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF55AC433E9
+	for <linux-leds@archiver.kernel.org>; Thu,  3 Sep 2020 16:10:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F170F20709
-	for <linux-leds@archiver.kernel.org>; Wed,  2 Sep 2020 12:56:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVYKoUM3"
+	by mail.kernel.org (Postfix) with ESMTP id B1A8420775
+	for <linux-leds@archiver.kernel.org>; Thu,  3 Sep 2020 16:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599149428;
+	bh=W32TLOkU1RN84JrGJ5PYMhalY4FOPtwlWcdZfX/Gyk4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OZOnBmnm8SRPl2W65eLMYtGf38O/ofvI+9zWWj8TXtjUFAtvq8zaIl1fkt0fLXEoP
+	 tDCSTXxykx3Z8V6xRoXGDHVPA+31s5JwtRhtgIjfGVygb1oF14RYEjtR9rHn6JaBRH
+	 dNvV3tS9OCjIA4XMuDi0LDzGS44GRNAvQone5k9o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbgIBM4e (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 2 Sep 2020 08:56:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54440 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbgIBM4b (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 2 Sep 2020 08:56:31 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CE13C061244;
-        Wed,  2 Sep 2020 05:56:30 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id w11so2768213lfn.2;
-        Wed, 02 Sep 2020 05:56:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZT5x+31ffQ1fSGTC6fc7HGVTmxRKwze1JkUzuev76fo=;
-        b=MVYKoUM3Qi3G4CUp4xP5XqgQvWvDo6PsrlPp55IW6273Lw81QISusbtPEsERRcR/3B
-         6Q9V3XlFUJX+GYIBnGeYqwwR874ISHS4jNWHMhiw3Xd9Cbj+/LCRCeKnA3PoLxkiV7/7
-         5Mv8uiLha6QtMHB1bcvZCBV/dmLOudMDK5KPo4gr3+uw85cQhRqjrrrRXXs3v5vfarZi
-         M3XO57ETyI3ba5lFOH2B1nqQ8sa5cAotWHZ3E4SjTQugzfR2BZbwQJXdi7G32HSxhpWZ
-         mxSgzvdo1Bwy2Jq/MPnxHYcDW70oYBulKZ2KTwNLhjhGYttHxAJ7+h9Y2O0+j8aOxN0r
-         EipA==
+        id S1728665AbgICQK1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 3 Sep 2020 12:10:27 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:35034 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbgICQK1 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 3 Sep 2020 12:10:27 -0400
+Received: by mail-il1-f194.google.com with SMTP id l4so3157741ilq.2;
+        Thu, 03 Sep 2020 09:10:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZT5x+31ffQ1fSGTC6fc7HGVTmxRKwze1JkUzuev76fo=;
-        b=R+s2Ri2as/Tiz9gkSkzG/ygagfWJLu549zSORD09nwtEFbcdoEGuJoYWnE6AyKvT2O
-         FBXhkZk/KIH9aBtM96ykXypZxra548xW9IthsxlzomOfQlYnjPdqsf2ftRMXqRY4vbp9
-         BIizcQa0Q5neNAgVRv8qtAY7PkZBbgtt99Kq0JMJPdn8cbPprgh0jiMVMC9W5Q+c1OZR
-         cURczM74HWOsAHX5HTOTwOJqc2QbdAPS9gaHs9WjLsytPwUKdzsRQZVaRH14P4onEwfO
-         o/5KCONHK/YR3ISUBNVZRJzgMMb8B34qRUqTrmrAmAQtjmnEWQ9ryPe8jhsmnI0hH+lc
-         xpSQ==
-X-Gm-Message-State: AOAM533DGlnTdOBo1B1QkBYwRsBPgSsTLoCNBlNQ3tWkmCfbZsVRXqah
-        vE7Aov1p15i1F+JEBYgN7VE=
-X-Google-Smtp-Source: ABdhPJxTy7FYR0Pg0Sm71v/FU6NwzEy2QsoacvE/ywzrQ6k+5uGvuu7pKbD5nySOHsJOa5oGFo3R7A==
-X-Received: by 2002:ac2:44b7:: with SMTP id c23mr3315115lfm.128.1599051388556;
-        Wed, 02 Sep 2020 05:56:28 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id b13sm1064037lfa.92.2020.09.02.05.56.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2020 05:56:27 -0700 (PDT)
-Subject: Re: [PATCH v2 2/6] regmap: Use flexible sleep
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ub/YDXcxHDsGS0dDuXZfKNg7N1487AgGtWs2ISNYV0w=;
+        b=KO3s42VYbzabC5gmMd9r54DJ0SZxApw7havc6vUUF8c+m0HBQkdS9PSyAKB1PvDkhH
+         xPVchF6YkwfTjUy2QW+KIRmp26MfNammQVt8hiqwWeqax2zvOH/ZH0XEAPFjKbSUtZWr
+         AOpUEc4c6F6JWeM+1A2MLCuAxyxhmEV2KGkFrMvNduXNfnbwFsfx6Gc60eAgd/wkj91M
+         rE371is2dFvMLtLDT3LCfU5Su/RIXy0cKVOq4qJJu2ahtsSYg6UW3K+lCPCM9AP84OqA
+         G3zYj5tkqP/XuTz53YdQMGFYXpUyzDiACbiWAYHPWJs5RXXGISbcMRlFcdmuGF11Xijv
+         VHJQ==
+X-Gm-Message-State: AOAM531ISQGDoCUQVwcz0dk4IVQUZ5k0hjqgIIeLmvaXVlw+sIZktbYE
+        YW4NaVXWeok470OX/Zxf6Q==
+X-Google-Smtp-Source: ABdhPJxLZ9ZiPkSL+rOvAxAf3g+LEBXr7Jjhv24bCXU19LypWZMrwzhwOhCFPx9l8w9NZ9RW+7oU5Q==
+X-Received: by 2002:a92:7991:: with SMTP id u139mr3437463ilc.62.1599149426172;
+        Thu, 03 Sep 2020 09:10:26 -0700 (PDT)
+Received: from xps15 ([64.188.179.249])
+        by smtp.gmail.com with ESMTPSA id c7sm1610386ilk.49.2020.09.03.09.10.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2020 09:10:25 -0700 (PDT)
+Received: (nullmailer pid 2870752 invoked by uid 1000);
+        Thu, 03 Sep 2020 16:10:22 -0000
+Date:   Thu, 3 Sep 2020 10:10:22 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Lubomir Rintel <lkundrak@v3.sk>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Mark Brown <broonie@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
+        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: mfd: Add ENE KB930 Embedded
+ Controller binding
+Message-ID: <20200903161022.GA2707794@bogus>
 References: <20200830185356.5365-1-digetx@gmail.com>
- <20200830185356.5365-3-digetx@gmail.com>
- <CGME20200902124731eucas1p13716070977dbef39d09147bb71e050f6@eucas1p1.samsung.com>
- <d936a2fc-8890-eec1-015c-d919e10d1dc5@samsung.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b580524a-d476-adbe-59b9-4ae7d62626b1@gmail.com>
-Date:   Wed, 2 Sep 2020 15:56:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <20200830185356.5365-2-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <d936a2fc-8890-eec1-015c-d919e10d1dc5@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200830185356.5365-2-digetx@gmail.com>
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-02.09.2020 15:47, Marek Szyprowski пишет:
-> Hi Dmitry,
+On Sun, 30 Aug 2020 21:53:51 +0300, Dmitry Osipenko wrote:
+> Add binding document for the ENE KB930 Embedded Controller.
 > 
-> On 30.08.2020 20:53, Dmitry Osipenko wrote:
->> The multi-reg write function uses udelay(), which is a busy-loop based
->> delaying function that is not suitable for a long delays. Hence let's
->> replace the udelay() with fsleep(), which is flexible sleep function that
->> selects best delay function based on the delay-time.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../devicetree/bindings/mfd/ene-kb930.yaml    | 66 +++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.yaml
 > 
-> This patch landed in today's linux-next (20200902) as commit 
-> 2b32d2f7ce0a. Sadly it breaks booting of ARM 64bit Amlogic S922X based 
-> Odroid N2 board. Here is the log:
 
-Hello, Marek! Thank you for the feedback! I missed that remap supports
-different types of locking, I'll make a another patch to fix this problem.
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/ene-kb930.example.dt.yaml: battery-cell: 'operating-range-celsius' does not match any of the regexes: '^ocv-capacity-table-[0-9]+$', 'pinctrl-[0-9]+'
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/power/supply/battery.yaml
+
+
+See https://patchwork.ozlabs.org/patch/1354004
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure dt-schema is up to date:
+
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+
+Please check and re-submit.
+
