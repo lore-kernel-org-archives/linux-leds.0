@@ -2,98 +2,89 @@ Return-Path: <SRS0=9Co6=CQ=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76446C43461
-	for <linux-leds@archiver.kernel.org>; Mon,  7 Sep 2020 10:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA63BC2BB84
+	for <linux-leds@archiver.kernel.org>; Mon,  7 Sep 2020 11:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3900921531
-	for <linux-leds@archiver.kernel.org>; Mon,  7 Sep 2020 10:29:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80945207C3
+	for <linux-leds@archiver.kernel.org>; Mon,  7 Sep 2020 11:51:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kWqWj4O3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NaTzQpnW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728797AbgIGK3z (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 7 Sep 2020 06:29:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34118 "EHLO
+        id S1728988AbgIGLu4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 7 Sep 2020 07:50:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728946AbgIGK2P (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 7 Sep 2020 06:28:15 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDE02C061755;
-        Mon,  7 Sep 2020 03:28:14 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id f18so8406157pfa.10;
-        Mon, 07 Sep 2020 03:28:14 -0700 (PDT)
+        with ESMTP id S1729161AbgIGLuj (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 7 Sep 2020 07:50:39 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB2CCC061575
+        for <linux-leds@vger.kernel.org>; Mon,  7 Sep 2020 04:50:38 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id t23so15815799ljc.3
+        for <linux-leds@vger.kernel.org>; Mon, 07 Sep 2020 04:50:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=CBAjwcA4hZoU/siThfOYzyCueHpWs1VgxUUUg5ulGQ0=;
-        b=kWqWj4O3Jx+m/ssQOZ00iU5lgeVEeWpcUrqXYL85RfPgNlQOAHeVGJUBJrIj7jBCtf
-         Y8NUcg6GsAsYi52Ok9Hu8fHOIPS3jlhSN7tWtHiiuJ/AnKemrTnRg75Q7OsNL+/4VQl1
-         +MmpZ6VzwgQek0rakGYay0eoe7GsmhNpUrwjCqraEM+10asJoZje0gFbdxgymQ8KR41A
-         2zsU8Nu51mzG2zGfG+3XTSZbHBx3tTZ1fy6ALPtverMG+1l5utw4Zpl/XvPhpgjQPYki
-         p/fjAXU2ocxRc6vmVzjz4YX0dxXuBLxYQ8sbAtUodxEsZvPtAr5B9/SR6f3NTCp/2K9d
-         ht4Q==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OprOp2em24X5m4o3PUof0yAN4YU+uTpPGAtCtWvXlNA=;
+        b=NaTzQpnWPET6m3hR4pMK+Fv+kYVcmvBc6HSvONrngdeQJAY5jSkF4I7Rh04pSSR5JH
+         f3s0qTUgVu8be6iyHOy5mo9ylnHUElRgWhD/DigPwM7XyshB28wNYN7Z+Zs1cZ3Wwc/P
+         muwbagslDBfXwYh1+Fb6Lh8Nl0efiAfVx3EWChUD1IgdKa86sd+l7Y04ox7i7MY4jwty
+         HGLaf1ULo8tpy3SATPrT9caiKm+MvfFuAbhI/acNo40ltH6M1kNuSjyeu6rRY3MUPB9R
+         uRaP0Qb09D7AbVkgl5uDt/qBs/jUl3yFSUjc8BpBcqOQBKmFXWO+SBJEL9ziVzUmJDsQ
+         OzXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CBAjwcA4hZoU/siThfOYzyCueHpWs1VgxUUUg5ulGQ0=;
-        b=DdCEcvNFcoPRGC3I3zScAcqtbLXjzS25cmXcYIz3NdameRiqCOW5Qlcu4kNhra99Oe
-         JgJeN0qquICC4lTtCI7KQu+gSIHIsBGUF9Eykp8/63Iuan/Flulqxyy3+OzDepIxrFRm
-         uEtHKZfkh0ZvxRwoADuU4EfRG99I2E+4oKHkJxyyYb7PUMiBldHQxImnBjIFi9fssXZs
-         wotvFWqc3yNBG/qsGuFL3psreaR01906MbVudWLzOOtZ6csTt/0rJbL+nogIrnXNWwUz
-         6BTD54O7H0WAQDzcZIJnpT1Hct61xrAGBGD13RmAqrVokUZvgu8Hmy6h9bCKGlOYoRax
-         0J1g==
-X-Gm-Message-State: AOAM531ekoYOMx+8iWOqpCP72kQe80GREASTOt/FP+3YO22IVaFoLK5Y
-        aVHDQ8/GTq9mWOS+cxoV5fy1S5Et0+w=
-X-Google-Smtp-Source: ABdhPJyz0ak7cYr71ekRNjFYcWrCNQYPqc6H+PRwgl7o7v2SVn0qNSINzfq7opvN8pkv0zZXhPtn+Q==
-X-Received: by 2002:a05:6a00:1688:: with SMTP id k8mr19948800pfc.33.1599474494511;
-        Mon, 07 Sep 2020 03:28:14 -0700 (PDT)
-Received: from localhost.localdomain ([2402:7500:568:81bf:545f:f984:753e:4bcc])
-        by smtp.gmail.com with ESMTPSA id q193sm15009717pfq.127.2020.09.07.03.28.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Sep 2020 03:28:14 -0700 (PDT)
-From:   Gene Chen <gene.chen.richtek@gmail.com>
-To:     jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
-        matthias.bgg@gmail.com
-Cc:     dmurphy@ti.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        gene_chen@richtek.com, Wilma.Wu@mediatek.com,
-        shufan_lee@richtek.com, cy_huang@richtek.com,
-        benjamin.chao@mediatek.com
-Subject: [PATCH v3 0/2] leds: mt6360: Add LED driver for MT6360
-Date:   Mon,  7 Sep 2020 18:27:37 +0800
-Message-Id: <1599474459-20853-1-git-send-email-gene.chen.richtek@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OprOp2em24X5m4o3PUof0yAN4YU+uTpPGAtCtWvXlNA=;
+        b=QYIaYscavNF+rKJ5o7IVynaVEmcUr2Zyyv179fAzHFaMh3jzoixsrFfcuvAOxmn2DK
+         t/WFonCCVawq+PZn04a+tDZY9l37l7E7V9aiiTdFRYGZRTWOj+r33Yxvs9D5OrMGva0E
+         ghHVJ7mboqdef197IVP4iTLHLeqYSDFhpOYLDuXgYD6d5jro6dyYVSRebwYXFBCA6Dpj
+         qu/GlerCTX6DM0eSst03XailC3mLvLI7PQQgzTI/WB5yKnzcxlay0DrFMzy7yx5ZiYav
+         1W+DsgYhM7yFRX2Iwo8UL5jx15gv9s0CiO/UAUgaf4A4CjP/1yS4hyOQ2B+sCVZIXCNE
+         Nj3A==
+X-Gm-Message-State: AOAM530ZJfhWKMPcnvqpiobnW2I86J9VGRpnsf8C7mzabRz7575wHBtW
+        US6fIYHpX+ExetLqj3EiYzFjuv4Yu/XgXI95mXIAoQ==
+X-Google-Smtp-Source: ABdhPJwvpzbst+CDx7Bzy8imZV6B8N4xGrr79yQL6ltKSsY4hsLQN+7461X7PW78zu3yPdvlRnWCw9G/oLrn1pHgrlU=
+X-Received: by 2002:a2e:9d04:: with SMTP id t4mr10548159lji.293.1599479433311;
+ Mon, 07 Sep 2020 04:50:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200812195020.13568-1-dmurphy@ti.com> <20200812195020.13568-7-dmurphy@ti.com>
+ <CACRpkdY1pCcUONFhEXeyXa3f+JFB=Wg1nSB-qRJF5njM=L+CVw@mail.gmail.com> <f253bf11-3422-4f49-fce3-ac6b51d91c25@ti.com>
+In-Reply-To: <f253bf11-3422-4f49-fce3-ac6b51d91c25@ti.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 7 Sep 2020 13:50:22 +0200
+Message-ID: <CACRpkdbSWdkZzHZ65jqz3=u=zLH1xivx_7+kwKDvK+58FKP0Ww@mail.gmail.com>
+Subject: Re: [PATCH v33 6/6] ARM: dts: ste-href: Add reg property to the
+ LP5521 channel nodes
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
+        =?UTF-8?B?TWFyZWsgQmVow7pu?= <marek.behun@nic.cz>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-In-Reply-To: 
+On Fri, Aug 28, 2020 at 8:39 PM Dan Murphy <dmurphy@ti.com> wrote:
 
-This patch series add MT6360 LED support contains driver and binding document
+> > I don't knof if I should just apply these two patches or if there are
+> > dependencies that need to go in first. I guess yes?
+>
+> I believe all dependencies have been met for these
 
-Gene Chen (2)
- leds: mt6360: Add LED driver for MT6360
- dt-bindings: leds: Add bindings for MT6360 LED
+OK I applied this patch to the Ux500 tree!
 
- Documentation/devicetree/bindings/leds/leds-mt6360.yaml |  105 ++
- drivers/leds/Kconfig                                    |   11 
- drivers/leds/Makefile                                   |    1 
- drivers/leds/leds-mt6360.c                              |  681 ++++++++++++++++
- 4 files changed, 798 insertions(+)
-
-changelogs between v1 & v2
- - add led driver with mfd
-
-changelogs between v2 & v3
- - independent add led driver
- - add dt-binding document
- - refactor macros definition for easy to debug
- - parse device tree by fwnode
- - use devm*ext to register led class device
-
+Yours,
+Linus Walleij
