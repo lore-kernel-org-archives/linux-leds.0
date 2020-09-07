@@ -1,152 +1,238 @@
-Return-Path: <SRS0=pyWU=CP=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=9Co6=CQ=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0B8C433E2
-	for <linux-leds@archiver.kernel.org>; Sun,  6 Sep 2020 19:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA4B4C43461
+	for <linux-leds@archiver.kernel.org>; Mon,  7 Sep 2020 04:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16EA2208B3
-	for <linux-leds@archiver.kernel.org>; Sun,  6 Sep 2020 19:52:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFFOmnBe"
+	by mail.kernel.org (Postfix) with ESMTP id B065521556
+	for <linux-leds@archiver.kernel.org>; Mon,  7 Sep 2020 04:35:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbgIFTv0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 6 Sep 2020 15:51:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41340 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbgIFTvZ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 6 Sep 2020 15:51:25 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA08C061573;
-        Sun,  6 Sep 2020 12:51:23 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id k25so1077320ljk.0;
-        Sun, 06 Sep 2020 12:51:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KKOOgijjR/92Dyk3rP5J/nsEG2qLUBoxqdTru9X+hgI=;
-        b=lFFOmnBe2UZCUQKrBPxMkjUS4KBZG9dLjwTtEYeXoNaZE0tSNH3zkX5ZAyzDQ5rTUJ
-         C+NuFRwWxLEB5dZLrqQW0ucODz9NpBUDPtDxih8F05CDK29OfgFanQDAheLqoW4pSiEO
-         s9Mckd6SrWobS33yGOc3GdQ1Ck/r8l4+fgdWBMTi3R8gMNsHkPHmJ6dP6rKrPfmYX6sC
-         L0O6ovOLJp8Y8ulVjnboJDV2K3NWwHZpm2mglrFag70/TakY41NaDYbSYHk/8z3GepaW
-         WjLMZJnkNV4GeVkDZS/FBJWQD7/BtTGTB1qkXVLJYqw5n5WQDZ8uKkK1fO5MDHtxMqnU
-         AdTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KKOOgijjR/92Dyk3rP5J/nsEG2qLUBoxqdTru9X+hgI=;
-        b=udewuvjashe4+cfDliWqRjTTo45l9q3IQkkLKeFy2V2TjsOzezC2Tx+TttdEfu9nua
-         RBGN9LZTWfeQfIP2YFi5o6BwsjbuufsX1h5AwEkhs96a/3yH44mponEvSF32PAI7zclp
-         uQNjBlIaD73Rzfm6alom1LXNeOTolXW20Uh+YVeRAlliQpa1xT5IsABRFMJcvrLcZ6ML
-         otDIO3tmNfm0fPiMzYtpQSwCROLiB0zoy2MRbKUmSJBQqw/pidwA+5lEGNA4dEqYMbTu
-         KMiUIXMLzaPxEmBjV4ZDbT5ILG8ia4+Lw4Om23mSYJv/l/fsxyBMgHEe9C79L18Xr5ds
-         PR4g==
-X-Gm-Message-State: AOAM530I5aqg2cLI2B+TA3I7JimxXpn2mafHAyNPfWsQ0/3nBovV3/dI
-        caNfo/C2COjjV67TrtqzjF9PqN/YI1M=
-X-Google-Smtp-Source: ABdhPJzAEdF4AUFyTVhOHqZygcOU4OH4QMk+olkQY9XA4FzMWKvcUKQi62sBm06iwGewygR7RrGPcg==
-X-Received: by 2002:a2e:8182:: with SMTP id e2mr8707788ljg.142.1599421882162;
-        Sun, 06 Sep 2020 12:51:22 -0700 (PDT)
-Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id b7sm4942574lfq.36.2020.09.06.12.51.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Sep 2020 12:51:21 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
+        id S1725925AbgIGEfq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 7 Sep 2020 00:35:46 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:42261 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbgIGEfo (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 7 Sep 2020 00:35:44 -0400
+Received: from methusalix.internal.home.lespocky.de ([109.250.103.148]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1Mo7eX-1kv1HS40OB-00peP4; Mon, 07 Sep 2020 06:35:26 +0200
+Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
+        by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+        (Exim 4.94)
+        (envelope-from <alex@home.lespocky.de>)
+        id 1kF8sF-0003Dt-8E; Mon, 07 Sep 2020 06:35:24 +0200
+Received: (nullmailer pid 3034 invoked by uid 2001);
+        Mon, 07 Sep 2020 04:35:22 -0000
+From:   Alexander Dahl <post@lespocky.de>
+To:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/5] Introduce Embedded Controller driver for Acer A500
-Date:   Sun,  6 Sep 2020 22:50:58 +0300
-Message-Id: <20200906195103.1347-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.27.0
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        Alexander Dahl <ada@thorsis.com>,
+        Alexander Dahl <post@lespocky.de>
+Subject: [PATCH v3 2/2] dt-bindings: leds: Convert pwm to yaml
+Date:   Mon,  7 Sep 2020 06:34:59 +0200
+Message-Id: <20200907043459.2961-3-post@lespocky.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200907043459.2961-1-post@lespocky.de>
+References: <20200907043459.2961-1-post@lespocky.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scan-Signature: aeccb8aefab59fbde7e356a50a7ae5d4
+X-Provags-ID: V03:K1:reAS4raqoeBOUkE3pXwNeoECAwdzbFetknoL5wqhuRmCwuihMnV
+ 1ZA2QqR121kH2MBavLTZh5DY6h40G7ewnCDnEGkGd4oECGRQupquxnGhOYjoCqgL7HKOwdd
+ +dgI10b/DDLjgf8nk4RB7rXRI0bC5SBIOgdsLWbvoYgNnt/rww5lIKPPVM+XVY+v9rp9LLJ
+ Iiz0iHLNZ/gdMEZWo8XHA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:rheK7m+48fI=:W/b0BQN9Xwwjub3wYBxRgM
+ 6w+IjiA/Vu6AnAWXqQLramWgJFksk2/4fwB+Hk3t2jHH5cPk0RLfLvWfX2CtamFssVwLyj+VP
+ ARl2gbGvJF49Twxwj2KXdq0JDn4jbWDClvEolYWlAP9eheBl13noNq9xOzKQOfJpIzimPyNRV
+ k89WwMMNjmOLio+yNZWKS7WOdN2g/paEwRnBBQdy70kxb4QhLsG7GR01Cjlnr29vYYWUfJCl+
+ womAydpDAmOALUsUjewb5jNGTwrPuBW77Z5OrPNBoH565R5Dyy0eeZylDVsq0vQmT7ZE8PqpC
+ GpzCRxOqTQCTQfkTFgAlSI7lxUv3jsice0fGPE1eJynlS7jMnp9IL5+PkusqoYyhSI2aOuEil
+ 1xOIZX4FG8RWtHmuTxbI35OM59eBWu4R3u+o++ZkSmo1M3Y4NKthK2jGk3qBnfOPV9RS3NBy7
+ x98OJuwGIyFqWjB0AJIw2qet4YOAfmmkauvYSGVyQ/g9728pQBMNWT5PfxDOiwlusajt7WBVe
+ lrkkTBWHn5dsrlxazLTMyW/js1cE1Cyt22N0eX4m5Aoes11aVw/lsfik6t13CLJ10o/jKKDRt
+ ObEjjlNGNdiXjMUxlulT8i09mANMajyk6pysEDeir2ubylsP3VOp7N0X4WxUG7uVCYEwsllJx
+ XDn8fqwWlygYtJ6nDIKCXMw2jvhlUrvDdlq6T5P3ATUjMZLAlbclPrnMAKfCuiQE/wOFwSNel
+ AREp3IncXThZN9zUp7y5PChUd0P91LG5Wx8hixOtYCBjZvXoNB+yRUaFG8MrZu9NoB1lIQRdr
+ laYHtDMW48ARNXL1QR9wAI4yzMfYYUZzizB0l+a4REUr82DHQr1AaHtGd3AT6DCBFYptUR1
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hello!
+The example was adapted slightly to make use of the 'function' and
+'color' properties.
 
-This series adds support for the Embedded Controller which is found on
-Acer Iconia Tab A500 (Android tablet device).
+Suggested-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Alexander Dahl <post@lespocky.de>
+Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+---
 
-The Embedded Controller is ENE KB930 and it's running firmware customized
-for the A500. The firmware interface may be reused by some other sibling
-Acer tablets, although none of those tablets are supported in upstream yet.
-Please review and apply, thanks in advance!
+Notes:
+    v2 -> v3:
+      * change license identifier to recommended one
+      * added Acked-by
 
-Changelog:
+ .../devicetree/bindings/leds/leds-pwm.txt     | 50 -----------
+ .../devicetree/bindings/leds/leds-pwm.yaml    | 85 +++++++++++++++++++
+ 2 files changed, 85 insertions(+), 50 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/leds/leds-pwm.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-pwm.yaml
 
-v3: - Rebased on a recent linux-next. Fixed new merge conflict and dropped
-      "regmap: Use flexible sleep" patch because it's already applied.
-
-v2: - Factored out KB930 device-tree binding into a separate file, like it
-      was suggested by Lubomir Rintel.
-
-    - Switched to use regmap API like it was suggested by Lubomir Rintel.
-
-    - Added patch "regmap: Use flexible sleep" which allows not to hog
-      CPU while LED is switching state.
-
-    - Corrected MODULE_LICENSE to use "GPL" in all patches.
-
-    - Corrected MFD driver Kconfig entry like it was suggested by
-      Lubomir Rintel, it now depends on I2C.
-
-    - Switched to use I2C probe_new() in the MFD driver.
-
-    - Renamed the global pm_off variable, like it was suggested by
-      Lubomir Rintel and Lee Jones.
-
-    - Dropped serial number from the battery driver because I realized
-      that it's not a battery serial, but a device serial.
-
-    - Battery driver now uses dev_err_probe(), like it was suggested by
-      Sebastian Reichel.
-
-    - Dropped legacy LED_ON usage from the LED driver and renamed the
-      LEDs, like it was suggested by Pavel Machek. I also checked whether
-      LED-name customization via device-tree could be needed by other
-      potentially compatible devices and it shouldn't be needed, anyways it
-      won't be difficult to extend the code even if I'm wrong.
-
-Dmitry Osipenko (5):
-  dt-bindings: mfd: Add ENE KB930 Embedded Controller binding
-  mfd: Add driver for Embedded Controller found on Acer Iconia Tab A500
-  power: supply: Add battery gauge driver for Acer Iconia Tab A500
-  leds: Add driver for Acer Iconia Tab A500
-  ARM: tegra: acer-a500: Add Embedded Controller
-
- .../devicetree/bindings/mfd/ene-kb930.yaml    |  66 ++++
- .../boot/dts/tegra20-acer-a500-picasso.dts    |  17 +
- drivers/leds/Kconfig                          |   7 +
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-acer-a500.c                 | 129 ++++++++
- drivers/mfd/Kconfig                           |  12 +
- drivers/mfd/Makefile                          |   1 +
- drivers/mfd/acer-ec-a500.c                    | 203 ++++++++++++
- drivers/power/supply/Kconfig                  |   6 +
- drivers/power/supply/Makefile                 |   1 +
- drivers/power/supply/acer_a500_battery.c      | 297 ++++++++++++++++++
- 11 files changed, 740 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.yaml
- create mode 100644 drivers/leds/leds-acer-a500.c
- create mode 100644 drivers/mfd/acer-ec-a500.c
- create mode 100644 drivers/power/supply/acer_a500_battery.c
-
+diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.txt b/Documentation/devicetree/bindings/leds/leds-pwm.txt
+deleted file mode 100644
+index 6c6583c35f2f..000000000000
+--- a/Documentation/devicetree/bindings/leds/leds-pwm.txt
++++ /dev/null
+@@ -1,50 +0,0 @@
+-LED connected to PWM
+-
+-Required properties:
+-- compatible : should be "pwm-leds".
+-
+-Each LED is represented as a sub-node of the pwm-leds device.  Each
+-node's name represents the name of the corresponding LED.
+-
+-LED sub-node properties:
+-- pwms : PWM property to point to the PWM device (phandle)/port (id) and to
+-  specify the period time to be used: <&phandle id period_ns>;
+-- pwm-names : (optional) Name to be used by the PWM subsystem for the PWM device
+-  For the pwms and pwm-names property please refer to:
+-  Documentation/devicetree/bindings/pwm/pwm.txt
+-- max-brightness : Maximum brightness possible for the LED
+-- active-low : (optional) For PWMs where the LED is wired to supply
+-  rather than ground.
+-- label :  (optional)
+-  see Documentation/devicetree/bindings/leds/common.txt
+-- linux,default-trigger :  (optional)
+-  see Documentation/devicetree/bindings/leds/common.txt
+-
+-Example:
+-
+-twl_pwm: pwm {
+-	/* provides two PWMs (id 0, 1 for PWM1 and PWM2) */
+-	compatible = "ti,twl6030-pwm";
+-	#pwm-cells = <2>;
+-};
+-
+-twl_pwmled: pwmled {
+-	/* provides one PWM (id 0 for Charing indicator LED) */
+-	compatible = "ti,twl6030-pwmled";
+-	#pwm-cells = <2>;
+-};
+-
+-pwmleds {
+-	compatible = "pwm-leds";
+-	kpad {
+-		label = "omap4::keypad";
+-		pwms = <&twl_pwm 0 7812500>;
+-		max-brightness = <127>;
+-	};
+-
+-	charging {
+-		label = "omap4:green:chrg";
+-		pwms = <&twl_pwmled 0 7812500>;
+-		max-brightness = <255>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.yaml b/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+new file mode 100644
+index 000000000000..c74867492424
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+@@ -0,0 +1,85 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/leds-pwm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: LEDs connected to PWM
++
++maintainers:
++  - Pavel Machek <pavel@ucw.cz>
++
++description:
++  Each LED is represented as a sub-node of the pwm-leds device.  Each
++  node's name represents the name of the corresponding LED.
++
++properties:
++  compatible:
++    const: pwm-leds
++
++patternProperties:
++  "^pwm-led-([0-9a-f])$":
++    type: object
++
++    $ref: common.yaml#
++
++    properties:
++      pwms:
++        description:
++          "PWM property to point to the PWM device (phandle)/port (id)
++          and to specify the period time to be used:
++          <&phandle id period_ns>;"
++
++      pwm-names:
++        description:
++          "Name to be used by the PWM subsystem for the PWM device For
++          the pwms and pwm-names property please refer to:
++          Documentation/devicetree/bindings/pwm/pwm.txt"
++
++      max-brightness:
++        description:
++          Maximum brightness possible for the LED
++
++      active-low:
++        description:
++          For PWMs where the LED is wired to supply rather than ground.
++
++    required:
++      - pwms
++      - max-brightness
++
++examples:
++  - |
++
++    #include <dt-bindings/leds/common.h>
++
++    twl_pwm: pwm {
++        /* provides two PWMs (id 0, 1 for PWM1 and PWM2) */
++        compatible = "ti,twl6030-pwm";
++        #pwm-cells = <2>;
++    };
++
++    twl_pwmled: pwmled {
++        /* provides one PWM (id 0 for Charing indicator LED) */
++        compatible = "ti,twl6030-pwmled";
++        #pwm-cells = <2>;
++    };
++
++    pwm_leds {
++        compatible = "pwm-leds";
++
++        pwm-led-1 {
++            label = "omap4::keypad";
++            pwms = <&twl_pwm 0 7812500>;
++            max-brightness = <127>;
++        };
++
++        pwm-led-2 {
++            color = <LED_COLOR_ID_GREEN>;
++            function = LED_FUNCTION_CHARGING;
++            pwms = <&twl_pwmled 0 7812500>;
++            max-brightness = <255>;
++        };
++    };
++
++...
 -- 
-2.27.0
+2.20.1
 
