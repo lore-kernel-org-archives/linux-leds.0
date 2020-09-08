@@ -6,22 +6,26 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD6AC43461
-	for <linux-leds@archiver.kernel.org>; Tue,  8 Sep 2020 22:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 263BDC433E2
+	for <linux-leds@archiver.kernel.org>; Tue,  8 Sep 2020 22:03:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 433A52087D
-	for <linux-leds@archiver.kernel.org>; Tue,  8 Sep 2020 22:02:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED7502087D
+	for <linux-leds@archiver.kernel.org>; Tue,  8 Sep 2020 22:03:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726369AbgIHWC7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 8 Sep 2020 18:02:59 -0400
-Received: from mail.nic.cz ([217.31.204.67]:52778 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726002AbgIHWC5 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 8 Sep 2020 18:02:57 -0400
+        id S1729785AbgIHWDM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 8 Sep 2020 18:03:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55488 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbgIHWDM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 8 Sep 2020 18:03:12 -0400
+X-Greylist: delayed 79203 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Sep 2020 15:03:11 PDT
+Received: from mail.nic.cz (mail.nic.cz [IPv6:2001:1488:800:400::400])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F5AC061573;
+        Tue,  8 Sep 2020 15:03:11 -0700 (PDT)
 Received: from localhost (unknown [IPv6:2a0e:b107:ae1:0:3e97:eff:fe61:c680])
-        by mail.nic.cz (Postfix) with ESMTPSA id 9ECD2140AE4;
-        Wed,  9 Sep 2020 00:02:54 +0200 (CEST)
-Date:   Wed, 9 Sep 2020 00:02:54 +0200
+        by mail.nic.cz (Postfix) with ESMTPSA id E27F7140BBD;
+        Wed,  9 Sep 2020 00:03:05 +0200 (CEST)
+Date:   Wed, 9 Sep 2020 00:03:05 +0200
 From:   Marek Behun <marek.behun@nic.cz>
 To:     netdev@vger.kernel.org
 Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
@@ -33,7 +37,7 @@ Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
         Rob Herring <robh+dt@kernel.org>
 Subject: Re: [PATCH net-next v1 1/3] dt-bindings: net: ethernet-phy: add
  description for PHY LEDs
-Message-ID: <20200909000254.13ce9923@nic.cz>
+Message-ID: <20200909000305.69cdfdd6@nic.cz>
 In-Reply-To: <20200908000300.6982-2-marek.behun@nic.cz>
 References: <20200908000300.6982-1-marek.behun@nic.cz>
         <20200908000300.6982-2-marek.behun@nic.cz>
@@ -48,4 +52,4 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Please ignore this patch, still refactoring...
+Please ignore this series, still refactoring...
