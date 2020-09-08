@@ -1,90 +1,113 @@
-Return-Path: <SRS0=9Co6=CQ=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=3s9S=CR=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA63BC2BB84
-	for <linux-leds@archiver.kernel.org>; Mon,  7 Sep 2020 11:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBADC43461
+	for <linux-leds@archiver.kernel.org>; Tue,  8 Sep 2020 00:03:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80945207C3
-	for <linux-leds@archiver.kernel.org>; Mon,  7 Sep 2020 11:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A16E62080A
+	for <linux-leds@archiver.kernel.org>; Tue,  8 Sep 2020 00:03:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NaTzQpnW"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="SZfogk/y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728988AbgIGLu4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 7 Sep 2020 07:50:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46918 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729161AbgIGLuj (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 7 Sep 2020 07:50:39 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB2CCC061575
-        for <linux-leds@vger.kernel.org>; Mon,  7 Sep 2020 04:50:38 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id t23so15815799ljc.3
-        for <linux-leds@vger.kernel.org>; Mon, 07 Sep 2020 04:50:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OprOp2em24X5m4o3PUof0yAN4YU+uTpPGAtCtWvXlNA=;
-        b=NaTzQpnWPET6m3hR4pMK+Fv+kYVcmvBc6HSvONrngdeQJAY5jSkF4I7Rh04pSSR5JH
-         f3s0qTUgVu8be6iyHOy5mo9ylnHUElRgWhD/DigPwM7XyshB28wNYN7Z+Zs1cZ3Wwc/P
-         muwbagslDBfXwYh1+Fb6Lh8Nl0efiAfVx3EWChUD1IgdKa86sd+l7Y04ox7i7MY4jwty
-         HGLaf1ULo8tpy3SATPrT9caiKm+MvfFuAbhI/acNo40ltH6M1kNuSjyeu6rRY3MUPB9R
-         uRaP0Qb09D7AbVkgl5uDt/qBs/jUl3yFSUjc8BpBcqOQBKmFXWO+SBJEL9ziVzUmJDsQ
-         OzXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OprOp2em24X5m4o3PUof0yAN4YU+uTpPGAtCtWvXlNA=;
-        b=QYIaYscavNF+rKJ5o7IVynaVEmcUr2Zyyv179fAzHFaMh3jzoixsrFfcuvAOxmn2DK
-         t/WFonCCVawq+PZn04a+tDZY9l37l7E7V9aiiTdFRYGZRTWOj+r33Yxvs9D5OrMGva0E
-         ghHVJ7mboqdef197IVP4iTLHLeqYSDFhpOYLDuXgYD6d5jro6dyYVSRebwYXFBCA6Dpj
-         qu/GlerCTX6DM0eSst03XailC3mLvLI7PQQgzTI/WB5yKnzcxlay0DrFMzy7yx5ZiYav
-         1W+DsgYhM7yFRX2Iwo8UL5jx15gv9s0CiO/UAUgaf4A4CjP/1yS4hyOQ2B+sCVZIXCNE
-         Nj3A==
-X-Gm-Message-State: AOAM530ZJfhWKMPcnvqpiobnW2I86J9VGRpnsf8C7mzabRz7575wHBtW
-        US6fIYHpX+ExetLqj3EiYzFjuv4Yu/XgXI95mXIAoQ==
-X-Google-Smtp-Source: ABdhPJwvpzbst+CDx7Bzy8imZV6B8N4xGrr79yQL6ltKSsY4hsLQN+7461X7PW78zu3yPdvlRnWCw9G/oLrn1pHgrlU=
-X-Received: by 2002:a2e:9d04:: with SMTP id t4mr10548159lji.293.1599479433311;
- Mon, 07 Sep 2020 04:50:33 -0700 (PDT)
+        id S1727927AbgIHADE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 7 Sep 2020 20:03:04 -0400
+Received: from lists.nic.cz ([217.31.204.67]:51566 "EHLO mail.nic.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727819AbgIHADD (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 7 Sep 2020 20:03:03 -0400
+Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:8982:ed8c:62b1:c0c8])
+        by mail.nic.cz (Postfix) with ESMTP id 9A0D814004F;
+        Tue,  8 Sep 2020 02:03:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
+        t=1599523381; bh=KJLbvvPf3CNkGwBOxwMT2kh3dnbZ2rdGErRO9MBVcvw=;
+        h=From:To:Date;
+        b=SZfogk/yX5tpva+/dx/6CVc+cOfcMbn0cpy7z1Mh6ygUm2qLYfLvIUYmfvH3h3FRO
+         0SncuqXRqF2BrYNGOJGbZYJEa3hrtOznOoAFww76U+n8evuFXhAG6naVGlZ1wZUlTg
+         jFgem5HqWS9DgWs42yc/3HNKDk8pnoTeoMJ9hT/8=
+From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
+To:     netdev@vger.kernel.org
+Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Dan Murphy <dmurphy@ti.com>,
+        =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megous@megous.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH net-next v1 1/3] dt-bindings: net: ethernet-phy: add description for PHY LEDs
+Date:   Tue,  8 Sep 2020 02:02:58 +0200
+Message-Id: <20200908000300.6982-2-marek.behun@nic.cz>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200908000300.6982-1-marek.behun@nic.cz>
+References: <20200908000300.6982-1-marek.behun@nic.cz>
 MIME-Version: 1.0
-References: <20200812195020.13568-1-dmurphy@ti.com> <20200812195020.13568-7-dmurphy@ti.com>
- <CACRpkdY1pCcUONFhEXeyXa3f+JFB=Wg1nSB-qRJF5njM=L+CVw@mail.gmail.com> <f253bf11-3422-4f49-fce3-ac6b51d91c25@ti.com>
-In-Reply-To: <f253bf11-3422-4f49-fce3-ac6b51d91c25@ti.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 7 Sep 2020 13:50:22 +0200
-Message-ID: <CACRpkdbSWdkZzHZ65jqz3=u=zLH1xivx_7+kwKDvK+58FKP0Ww@mail.gmail.com>
-Subject: Re: [PATCH v33 6/6] ARM: dts: ste-href: Add reg property to the
- LP5521 channel nodes
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
-        =?UTF-8?B?TWFyZWsgQmVow7pu?= <marek.behun@nic.cz>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: /
+X-Virus-Scanned: clamav-milter 0.102.2 at mail
+X-Virus-Status: Clean
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Fri, Aug 28, 2020 at 8:39 PM Dan Murphy <dmurphy@ti.com> wrote:
+Document binding for LEDs connected to and controlled by ethernet PHY
+chips.
 
-> > I don't knof if I should just apply these two patches or if there are
-> > dependencies that need to go in first. I guess yes?
->
-> I believe all dependencies have been met for these
+Signed-off-by: Marek Behún <marek.behun@nic.cz>
+Cc: Rob Herring <robh+dt@kernel.org>
+---
+ .../devicetree/bindings/net/ethernet-phy.yaml | 31 +++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-OK I applied this patch to the Ux500 tree!
+diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+index a9e547ac79051..11839265cc2f9 100644
+--- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
++++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+@@ -174,6 +174,37 @@ properties:
+       PHY's that have configurable TX internal delays. If this property is
+       present then the PHY applies the TX delay.
+ 
++patternProperties:
++  "^led@[0-9a-f]+$":
++    type: object
++    description:
++      This node represents a LED device connected to the PHY chip.
++    $ref: /schemas/leds/common.yaml#
++
++    properties:
++      reg:
++        maxItems: 1
++
++      enable-active-high:
++        description:
++          Polarity of LED is active high. If missing, assumed default is active low.
++        type: boolean
++
++      led-open-drain:
++        description:
++          LED pin is open drain type. If missing, assumed false.
++        type: boolean
++
++      linux,default-hw-mode:
++        description:
++          This parameter, if present, specifies the default HW triggering mode of the LED
++          when LED trigger is set to `phydev-hw-mode`.
++          Available values are specific per PHY chip and per LED.
++        $ref: /schemas/types.yaml#definitions/string
++
++    required:
++      - reg
++
+ required:
+   - reg
+ 
+-- 
+2.26.2
 
-Yours,
-Linus Walleij
