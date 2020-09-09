@@ -2,90 +2,101 @@ Return-Path: <SRS0=GaCg=CS=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 261D2C2D0E1
-	for <linux-leds@archiver.kernel.org>; Wed,  9 Sep 2020 16:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F619C43461
+	for <linux-leds@archiver.kernel.org>; Wed,  9 Sep 2020 16:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9A782087C
-	for <linux-leds@archiver.kernel.org>; Wed,  9 Sep 2020 16:37:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A3B520C09
+	for <linux-leds@archiver.kernel.org>; Wed,  9 Sep 2020 16:38:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="esEDFi4f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQpvhIB8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731014AbgIIQhN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 9 Sep 2020 12:37:13 -0400
-Received: from mail.nic.cz ([217.31.204.67]:34678 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731057AbgIIQ0A (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 9 Sep 2020 12:26:00 -0400
-Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 503A6140A73;
-        Wed,  9 Sep 2020 18:25:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1599668755; bh=MvXQD34WvMImgeFSgU4h5cxDM9wpALrPc1U2c97TNVY=;
-        h=From:To:Date;
-        b=esEDFi4f3TDJKUxF7mN6MzWKDJGWacG1D+Spd1xIHmg6lLdcjm+uuP3eEEmy+ElKF
-         GjuPZAc1ZUJBazQibj2HS2xM7O0h2Hc2UKz3xfHunBg1krjXxGRpiNIx3Eww8D1xmI
-         i/4QBWcehwJMgM4deFm8xFympqFdLIWqITJajpas=
-From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-To:     netdev@vger.kernel.org
-Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Dan Murphy <dmurphy@ti.com>,
-        =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megous@megous.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH net-next + leds v2 4/7] dt-bindings: net: ethernet-phy: add description for PHY LEDs
-Date:   Wed,  9 Sep 2020 18:25:49 +0200
-Message-Id: <20200909162552.11032-5-marek.behun@nic.cz>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200909162552.11032-1-marek.behun@nic.cz>
-References: <20200909162552.11032-1-marek.behun@nic.cz>
+        id S1731029AbgIIQif (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 9 Sep 2020 12:38:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57990 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731082AbgIIQhP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Sep 2020 12:37:15 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A532C061346;
+        Wed,  9 Sep 2020 06:52:39 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id n3so1346340pjq.1;
+        Wed, 09 Sep 2020 06:52:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ijCapkR9xLuIbyX+brDKlgI4YJ2GKv1b98NiflJOr8c=;
+        b=TQpvhIB8mAoPHnxUUYHYKh2Ojvveec7c3l080EdGK6DjVlkNL7tt/oXWaOi12qruOJ
+         ORV2aFSYWalR+IXpmNVrbLUQMg/Q55iVMlFlxCIjsCKVAoz2OVuMIVCkE/0Ff3m+PO/g
+         OswWzMFWgr2ukwyRUkIn3t0iWJS9OopSbCdVbJMyIArhz9tzwEm44GCURB/hJk91s0/t
+         IUyaFEhqjDuHP46OGkZ2Gcr9dp7J9UCSEo3hSkyCtHer6bab9RmesX8lnkr449IBu7Nr
+         xFYmK6adO1SjRkCLXaYjA3y2sRciVPZkgzEw1z+eG4nn3CleWdtKNDm/yLzM2DPvE+fc
+         C3jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ijCapkR9xLuIbyX+brDKlgI4YJ2GKv1b98NiflJOr8c=;
+        b=CglJo5YTMwhZy6U/qo+JoIXISbuolyyt7myATNBC3mKtQ8KD1D82kt4OEzlfgGqide
+         EnEhXDrBScygWoLIaxmfoF0xo3iTKAmLDIHF3AA+seH8HAT16kHuCHveBXiXJoNLtBRg
+         e2igbncgiPTkmrJJgOgOy217F9Q98u6mkBwdeNsLQCxba5DxzcX4KtDBoTY+VAZXRjsh
+         JeuMlhmQeOMN9ebNUyAFhnty86hn/gpZ9r9mQLcWFBb78eVL45/YvIlVdVz295+HyiFc
+         9EEqhAwsIQqhSGrbTz/Nd08IBkVIxjR2RduxQWrsU1nZeb0HSgIUmFDzrbKr6K3GneKl
+         Ni8g==
+X-Gm-Message-State: AOAM531HH9pqd3h36lP/O+pmmNmmB0U48Tmd1Zd3osG/oXyd4friVn9S
+        yMk0ZmjGv5NNm2mZoBXgR5WHVJYgKvsrF/swyRyKj2oocmJmUA==
+X-Google-Smtp-Source: ABdhPJxlkAfs7B9JEE/N2GFojP20lgwfdq5VPigaVxLUUrzzdVSRxRi6pB9QGT8N3cLXmxdkUNF42Nav5QPJpu2ug4U=
+X-Received: by 2002:a17:90b:fc4:: with SMTP id gd4mr931343pjb.129.1599659558356;
+ Wed, 09 Sep 2020 06:52:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: /
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-X-Virus-Status: Clean
+References: <20200905130336.967622-1-luka.kovacic@sartura.hr>
+ <20200905130336.967622-5-luka.kovacic@sartura.hr> <CAHp75VfwPa9zL6HCz+qqXJ1rK2JB=ewRiK1qdrgsyxixA5R5Lg@mail.gmail.com>
+ <20200909103638.GB9222@amd>
+In-Reply-To: <20200909103638.GB9222@amd>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 9 Sep 2020 16:52:20 +0300
+Message-ID: <CAHp75VcV6Tn8dVjWhOW7bfcjwA_Vabw91FJ=OYit3e1rvPp1qQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] drivers: leds: Add the iEi WT61P803 PUZZLE LED driver
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Luka Kovacic <luka.kovacic@sartura.hr>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-hwmon@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        luka.perkov@sartura.hr
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Document binding for LEDs connected to an ethernet PHY chip.
+On Wed, Sep 9, 2020 at 1:36 PM Pavel Machek <pavel@ucw.cz> wrote:
+> > > Add support for the iEi WT61P803 PUZZLE LED driver.
+> > > Currently only the front panel power LED is supported.
+> > >
+> > > This driver depends on the iEi WT61P803 PUZZLE MFD driver.
+> >
+> > Can we make it OF independent?
+> > See below how to achieve this.
+>
+> Is there reason to believe this will be found in non-OF systems?
 
-Signed-off-by: Marek Behún <marek.behun@nic.cz>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
----
- Documentation/devicetree/bindings/net/ethernet-phy.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
+It's one aspect. Another one is to give a better example to anybody
+who might use this to copy'n'paste from. I believe that most of the
+LED drivers can appear on non-DT systems.
 
-diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-index a9e547ac79051..f593e8709dd0d 100644
---- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-@@ -174,6 +174,14 @@ properties:
-       PHY's that have configurable TX internal delays. If this property is
-       present then the PHY applies the TX delay.
- 
-+  leds:
-+    type: object
-+    description: |
-+      This is used to described LEDs that are connected to the PHY chip and
-+      their blinking can be controlled by the PHY.
-+    allOf:
-+      - $ref: /schemas/leds/linux,hw-controlled-leds.yaml#
-+
- required:
-   - reg
- 
 -- 
-2.26.2
-
+With Best Regards,
+Andy Shevchenko
