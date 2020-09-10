@@ -2,132 +2,79 @@ Return-Path: <SRS0=wlg3=CT=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C37DC433E2
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Sep 2020 20:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 715EAC433E2
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Sep 2020 20:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C62EA20829
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Sep 2020 20:25:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Md9/FDi2"
+	by mail.kernel.org (Postfix) with ESMTP id 251C320BED
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Sep 2020 20:27:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbgIJUZN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 10 Sep 2020 16:25:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55152 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbgIJUXZ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 10 Sep 2020 16:23:25 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72470C061756;
-        Thu, 10 Sep 2020 13:23:22 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id a12so7645397eds.13;
-        Thu, 10 Sep 2020 13:23:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dW7YjxHc1ZzJ6SX3ZapZTyVcg2BZ2MrVhHy85wYAM7s=;
-        b=Md9/FDi2UjXqMZ/r9zTDvWPc7EStWF1BrZkVX0n0rB6Plr9i6GajBhtdIytxV3tKuX
-         rgEuLKaAvTuXJnRCs8eDnunMlw7oe9kT+MLG4tXOH6el8N3ZQwISu5/L/Bu9YEtUicla
-         iOhWNNLMURqUJ+LO3LLtuDmtQvpHsdwz+WDLjF0vvuDVySEH1qig9lfrF6nu2cVQGcQr
-         I/87h+NoyYId+iaX2/sZQrMw342JCxOwhgjf+hW2vos7DOoRnmVTIjgUEBcOe2Qow6v3
-         u4UxPzPTvmwMl5FZv9AvU3DuxVXQU+vpkM6rEpSe99BS+70BxtwObtsc056guNjXKbmx
-         Mwjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dW7YjxHc1ZzJ6SX3ZapZTyVcg2BZ2MrVhHy85wYAM7s=;
-        b=iI74UfLJe5BosuLAaH8M6rBgEGu3kEIe6sr02T/KLlORmyDMPscfva1fvJpTUlME9e
-         hUnjrTYyNvPU4HfMZjxyOp0+zjLyU9twd1YrJo0sWgzBDNDMRGKAtmm3NXO5ksSkkZgZ
-         Xl1zmfS83tUn1x3CiFx5UQoWGJDw5a3Lnoqsnx6P43jcXWMpDV4bZRH1JFpYPoIvGKso
-         5k86UUJd6komcV9iHgVAkCf04m9TfBYQ3Mz+DbDY4GrOvHA/aPWgoHAJWNJu59LKaNyP
-         +6d9pOptRm54R5EdbMJSRwYX/OANOPIv5oCOCV1bOVXqxXkVmLlrZonLRnenqdw9GLNU
-         Oixw==
-X-Gm-Message-State: AOAM530/BRECKKYQ2FZ90bCGv8/DK6lASR3Tti+Vyid9+Pi0cmhGiVst
-        XX023RHeMdbb/yhTNTu1IZ4=
-X-Google-Smtp-Source: ABdhPJz5MaQV71/AFS75F/hFw0qE/EwQO1ZoaAl2WyDBhKG+riuqvQJ28JycZSAGOmthz7MbQu3otw==
-X-Received: by 2002:aa7:dc16:: with SMTP id b22mr11083008edu.252.1599769401165;
-        Thu, 10 Sep 2020 13:23:21 -0700 (PDT)
-Received: from ?IPv6:2a01:110f:b59:fd00:a856:4fc0:9f1:73f6? ([2a01:110f:b59:fd00:a856:4fc0:9f1:73f6])
-        by smtp.gmail.com with ESMTPSA id dh3sm8455572edb.84.2020.09.10.13.23.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Sep 2020 13:23:20 -0700 (PDT)
-Subject: Re: [PATCH v3 1/2] leds: mt6360: Add LED driver for MT6360
-To:     Pavel Machek <pavel@ucw.cz>,
-        Gene Chen <gene.chen.richtek@gmail.com>
-Cc:     robh+dt@kernel.org, Matthias Brugger <matthias.bgg@gmail.com>,
+        id S1726480AbgIJU1H (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 10 Sep 2020 16:27:07 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:35970 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbgIJUZO (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 10 Sep 2020 16:25:14 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 62CDA1C0B76; Thu, 10 Sep 2020 22:25:10 +0200 (CEST)
+Date:   Thu, 10 Sep 2020 22:25:10 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Gene Chen <gene.chen.richtek@gmail.com>, robh+dt@kernel.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         Gene Chen <gene_chen@richtek.com>, Wilma.Wu@mediatek.com,
         shufan_lee@richtek.com, cy_huang@richtek.com,
         benjamin.chao@mediatek.com
+Subject: Re: [PATCH v3 1/2] leds: mt6360: Add LED driver for MT6360
+Message-ID: <20200910202510.GB18431@ucw.cz>
 References: <1599474459-20853-1-git-send-email-gene.chen.richtek@gmail.com>
  <1599474459-20853-2-git-send-email-gene.chen.richtek@gmail.com>
  <20200908222544.GF1005@bug>
  <CAE+NS34h9qbdHkYDYDnHGgk+9mFNTRpKEMKNEFZ+Secf6JyoZg@mail.gmail.com>
  <20200910122958.GF7907@duo.ucw.cz>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <489fc92f-f6f5-839e-e417-7761d404e6ae@gmail.com>
-Date:   Thu, 10 Sep 2020 22:23:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+ <489fc92f-f6f5-839e-e417-7761d404e6ae@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200910122958.GF7907@duo.ucw.cz>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <489fc92f-f6f5-839e-e417-7761d404e6ae@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 9/10/20 2:29 PM, Pavel Machek wrote:
-> Hi!
+Hi!
+
+> > > 1. set FLED1 brightness
+> > > # echo 1 > /sys/class/leds/white:flash1/flash_brightness
+> > > 2. enable FLED1 strobe
+> > > # echo 1 > /sys/class/leds/white:flash1/flash_strobe
+> > > 3 . turn off FLED1 strobe (just used to gaurantee the strobe mode
+> > > flash leds must be turned off)
+> > > # echo 0 > /sys/class/leds/white:flash1/flash_strobe
+> > 
+> > I believe I'd preffer only exposing torch functionality in
+> > /sys/class/leds. .. strobe can be supported using v4l2 APIs.
 > 
->>>> +{
->>>> +     struct mt6360_led *led = container_of(lcdev, struct mt6360_led, flash.led_cdev);
->>>> +     struct mt6360_priv *priv = led->priv;
->>>> +     u32 enable_mask = MT6360_TORCHEN_MASK | MT6360_FLCSEN_MASK(led->led_no);
->>>> +     u32 val = (level) ? MT6360_FLCSEN_MASK(led->led_no) : 0;
->>>> +     u32 prev = priv->fled_torch_used, curr;
->>>> +     int ret;
->>>> +
->>>> +     dev_dbg(lcdev->dev, "[%d] brightness %d\n", led->led_no, level);
->>>> +     if (priv->fled_strobe_used) {
->>>> +             dev_warn(lcdev->dev, "Please disable strobe first [%d]\n", priv->fled_strobe_used);
->>>> +             return -EINVAL;
->>>> +     }
->>>
->>> So... how does its userland interface look like?
->>>
->>
->> 1. set FLED1 brightness
->> # echo 1 > /sys/class/leds/white:flash1/flash_brightness
->> 2. enable FLED1 strobe
->> # echo 1 > /sys/class/leds/white:flash1/flash_strobe
->> 3 . turn off FLED1 strobe (just used to gaurantee the strobe mode
->> flash leds must be turned off)
->> # echo 0 > /sys/class/leds/white:flash1/flash_strobe
+> Actually having LED flash class without strobe is pointless.
+> If you looked at led_classdev_flash_register_ext() you would see that
+> it fails with uninitialized strobe_set op. And V4L2 API for strobing
+> flash calls strobe_set from LED flash class beneath.
 > 
-> I believe I'd preffer only exposing torch functionality in
-> /sys/class/leds. .. strobe can be supported using v4l2 APIs.
+> That was the idea behind LED and V4L2 flash API unification - there
+> is one hardware driver needed, the V4L2 Flash layer just takes over
+> control over it when needed.
 
-Actually having LED flash class without strobe is pointless.
-If you looked at led_classdev_flash_register_ext() you would see that
-it fails with uninitialized strobe_set op. And V4L2 API for strobing
-flash calls strobe_set from LED flash class beneath.
+I agree that one driver is enough.
 
-That was the idea behind LED and V4L2 flash API unification - there
-is one hardware driver needed, the V4L2 Flash layer just takes over
-control over it when needed.
+But we should not need flash_strobe file in sysfs. Simply use V4L2 for
+that.
 
--- 
 Best regards,
-Jacek Anaszewski
+								Pavel
