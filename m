@@ -2,154 +2,77 @@ Return-Path: <SRS0=wlg3=CT=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF647C43461
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Sep 2020 20:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AFCBC2D0A7
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Sep 2020 21:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7673D20829
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Sep 2020 20:43:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D682D2080A
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Sep 2020 21:00:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbgIJUnM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 10 Sep 2020 16:43:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57994 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbgIJUlt (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 10 Sep 2020 16:41:49 -0400
-Received: from mail.nic.cz (mail.nic.cz [IPv6:2001:1488:800:400::400])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7991CC061757;
-        Thu, 10 Sep 2020 13:41:48 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2a0e:b107:ae1:0:3e97:eff:fe61:c680])
-        by mail.nic.cz (Postfix) with ESMTPSA id 81BBB13FD86;
-        Thu, 10 Sep 2020 22:41:46 +0200 (CEST)
-Date:   Thu, 10 Sep 2020 22:41:46 +0200
-From:   Marek Behun <marek.behun@nic.cz>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+        id S1730269AbgIJOsC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 10 Sep 2020 10:48:02 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:55232 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730669AbgIJOrK (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 10 Sep 2020 10:47:10 -0400
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
+        (envelope-from <andrew@lunn.ch>)
+        id 1kGNqf-00E57e-Cn; Thu, 10 Sep 2020 16:46:53 +0200
+Date:   Thu, 10 Sep 2020 16:46:53 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>
+Cc:     Pavel Machek <pavel@ucw.cz>, netdev@vger.kernel.org,
         linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
-        =?UTF-8?B?T25k?= =?UTF-8?B?xZllag==?= Jirman 
-        <megous@megous.com>, Russell King <linux@armlinux.org.uk>,
+        =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        Russell King <linux@armlinux.org.uk>,
         linux-kernel@vger.kernel.org,
         Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
         "David S. Miller" <davem@davemloft.net>
 Subject: Re: [PATCH net-next + leds v2 6/7] net: phy: marvell: add support
  for LEDs controlled by Marvell PHYs
-Message-ID: <20200910224146.60d21a60@nic.cz>
-In-Reply-To: <20200910202345.GA18431@ucw.cz>
+Message-ID: <20200910144653.GA3354160@lunn.ch>
 References: <20200909162552.11032-1-marek.behun@nic.cz>
-        <20200909162552.11032-7-marek.behun@nic.cz>
-        <20200910122341.GC7907@duo.ucw.cz>
-        <20200910131541.GD3316362@lunn.ch>
-        <20200910161522.3cf3ad63@dellmb.labs.office.nic.cz>
-        <20200910202345.GA18431@ucw.cz>
-X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+ <20200909162552.11032-7-marek.behun@nic.cz>
+ <20200910122341.GC7907@duo.ucw.cz>
+ <20200910131541.GD3316362@lunn.ch>
+ <20200910161522.3cf3ad63@dellmb.labs.office.nic.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200910161522.3cf3ad63@dellmb.labs.office.nic.cz>
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, 10 Sep 2020 22:23:45 +0200
-Pavel Machek <pavel@ucw.cz> wrote:
+> Moreover I propose (and am willing to do) this:
+>   Rewrite phy_led_trigger so that it registers one trigger, `phydev`.
+>   The identifier of the PHY which should be source of the trigger can be
+>   set via a separate sysfs file, `device_name`, like in netdev trigger.
+>   The linked speed on which the trigger should light the LED will be
+>   selected via sysfs file `mode` (or do you propose another name?
+>   `trigger_on` or something?)
+> 
+>   Example:
+>     # cd /sys/class/leds/<LED>
+>     # echo phydev >trigger
+>     # echo XYZ >device_name
+>     # cat mode
+>     1Gbps 100Mbps 10Mbps
+>     # echo 1Gbps >mode
+>     # cat mode
+>     [1Gbps] 100Mbps 10Mbps
+> 
+>   Also the code should be moved from driver/net/phy to
+>   drivers/leds/trigger.
+> 
+>   The old API can be declared deprecated or removed, but outright
+>   removal may cause some people to complain.
 
-> Hi!
-> 
-> > Okay, so the netdev trigger offers modes `link`, `rx`, `tx`.
-> > You can enable/disable either of these (via separate sysfs files). `rx`
-> > and `tx` blink the LED, `link` turns the LED on if the interface is
-> > linked.  
-> 
-> I wonder if people really need separate rx and tx, but... this sounds
-> reasonable.
-> 
-> > The phy_led_trigger subsystem works differently. Instead of registering
-> > one trigger (like netdev) it registers one trigger per PHY device and
-> > per speed. So for a PHY with name XYZ and supported speeds 1Gbps,
-> > 100Mbps, 10Mbps it registers 3 triggers:
-> >   XYZ:1Gbps XYZ:100Mbps XYZ:10Mbps  
-> 
-> That is not reasonable.
-> 
-> > I propose that at least these HW modes should be available (and
-> > documented) for ethernet PHY controlled LEDs:  
-> 
-> Ok, and which of these will you actually use?
-> 
-> >   mode to determine link on:
-> >     - `link`
-> >   mode for activity (these should blink):
-> >     - `activity` (both rx and tx), `rx`, `tx`
-> >   mode for link (on) and activity (blink)
-> >     - `link/activity`, maybe `link/rx` and `link/tx`
-> >   mode for every supported speed:
-> >     - `1Gbps`, `100Mbps`, `10Mbps`, ...
-> >   mode for every supported cable type:
-> >     - `copper`, `fiber`, ... (are there others?)  
-> 
-> That's ... way too many options.
-> 
-> Can we do it like netdev trigger? link? yes/no. rx? yes/no. tx? yes/no.
-> 
-> If displaying link only for certain speeds is useful, have link_min
-> and link_max, specifying values in Mbps? Default would be link_min ==
-> 0, and link_max = 25000, so it would react on any link speed.
-> 
-> Is mode for cable type really useful? Then we should have link_fiber?
-> yes/no. link_copper? yes/no.
-> 
+This is ABI, so you cannot remove it, or change it. You can however
+add to it, in a backwards compatible way.
 
-I want to put the speed differentiating mode by default on MOX on one
-LED, and activity on other LED.
-
-I think there are devices which have written on the case next to the
-LED that this LED is on for this specific speed, that LED is on for
-other specific speed. So modes for speed are reasonable, I think.
-
-In my opinion the disjunctive modes the Marvell PHYs support are useless
-(like ON when 1000Mbps or 10Mbps).
-
-You can't have link_min and link_max setting. The hardware does not
-support it this way. You can tell the hardware to light the LED when
-linked on a specific speed, and this is actually used on some devices
-(as I have written above, some devices have this written on the case).
-
-In my opinion the set `link`, `link/activity`, `activity`, `speed`,
-and one mode for each supported speed on the PHY is reasonable. This could
-be also compatible with software triggering via the proposed phydev
-trigger.
-
-> >   mode that allows the user to determine link speed
-> >     - `speed` (or maybe `linkspeed` ?)
-> >     - on some Marvell PHYs the speed can be determined by how fast
-> >       the LED is blinking (ie. 1Gbps blinks with default blinking
-> >       frequency, 100Mbps with half blinking frequeny of 1Gbps, 10Mbps
-> >       of half blinking frequency of 100Mbps)
-> >     - on other Marvell PHYs this is instead:
-> >       1Gpbs blinks 3 times, pause, 3 times, pause, ...
-> >       100Mpbs blinks 2 times, pause, 2 times, pause, ...
-> >       10Mpbs blinks 1 time, pause, 1 time, pause, ...
-> >     - we don't need to differentiate these modes with different names,
-> >       because the important thing is just that this mode allows the
-> >       user to determine the speed from how the LED blinks  
-> 
-> I'd be very careful. Userspace should know what they are asking
-> for. I'd propose simply ignoring this feature.
-
-As I wrote above, I think this mode is rather useful when you have just
-two LEDs for a port. You can tell speed by looking on one LED and
-activity by looking at the other LED. And I want to set this as default
-on Turris MOX.
-
-> >   mode to just force blinking - `blink`  
-> 
-> We already have different support for blinking in LED subsystem. Lets use that.
-> 
-> Best regards,
-> 									Pavel
-
+    Andrew
