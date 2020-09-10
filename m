@@ -2,105 +2,90 @@ Return-Path: <SRS0=wlg3=CT=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97064C433E2
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Sep 2020 21:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A79BC43461
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Sep 2020 21:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 617E020719
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Sep 2020 21:52:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ZMcMkaW/"
+	by mail.kernel.org (Postfix) with ESMTP id 3973620719
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Sep 2020 21:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725536AbgIJVwn (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 10 Sep 2020 17:52:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40650 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbgIJVwh (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 10 Sep 2020 17:52:37 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8F8CC061573;
-        Thu, 10 Sep 2020 14:45:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Fg/b55yxoFWkolyAkcEjzousJpXve06w9VMuL5Sdnkk=; b=ZMcMkaW/c2U4wME0yN3lN8iyq
-        Cabjm7Hra/p2QLrT5mmKewtEBX98jKbULNaeCzksnOjXFd/KBPMjWzggqocB6CD3soSxk08QfgkWj
-        n9IShJX5HFbbZEejR0jEf+mNi4loEuaPf3zI+zz2liShClwNpC0+1q6T15cbGEijkp+yBWD2tqfjW
-        sbvjsE1c0h9pMsh/XzqMtZSYdfSDxQrX8/XS/GPQqcsqDjkuQrVtt1xRqvAF/iAJkp5MRdlrs/gHy
-        IgqIc3Q/VXMM0vvUJTXwsBbAHpB+d9p+sH/F9wMsGxVs53ENrxphr7fW4/Qo2vEIBhSJJI8gh1bKv
-        N7TWu3fvg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:32992)
-        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1kGUNG-0006e5-W4; Thu, 10 Sep 2020 22:44:59 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1kGUNC-0007bp-S9; Thu, 10 Sep 2020 22:44:54 +0100
-Date:   Thu, 10 Sep 2020 22:44:54 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Marek Behun <marek.behun@nic.cz>
-Cc:     Andrew Lunn <andrew@lunn.ch>, Pavel Machek <pavel@ucw.cz>,
-        netdev@vger.kernel.org, linux-leds@vger.kernel.org,
+        id S1727933AbgIJVnC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 10 Sep 2020 17:43:02 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:41780 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728526AbgIJMXn (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 10 Sep 2020 08:23:43 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 172D01C0B9E; Thu, 10 Sep 2020 14:23:42 +0200 (CEST)
+Date:   Thu, 10 Sep 2020 14:23:41 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>
+Cc:     netdev@vger.kernel.org, linux-leds@vger.kernel.org,
         Dan Murphy <dmurphy@ti.com>,
         =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
-        linux-kernel@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
         Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
         "David S. Miller" <davem@davemloft.net>
 Subject: Re: [PATCH net-next + leds v2 6/7] net: phy: marvell: add support
  for LEDs controlled by Marvell PHYs
-Message-ID: <20200910214454.GE1551@shell.armlinux.org.uk>
+Message-ID: <20200910122341.GC7907@duo.ucw.cz>
 References: <20200909162552.11032-1-marek.behun@nic.cz>
  <20200909162552.11032-7-marek.behun@nic.cz>
- <20200910122341.GC7907@duo.ucw.cz>
- <20200910131541.GD3316362@lunn.ch>
- <20200910182434.GA22845@duo.ucw.cz>
- <20200910183154.GF3354160@lunn.ch>
- <20200910183435.GC1551@shell.armlinux.org.uk>
- <20200910223112.26b57dd6@nic.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="JWEK1jqKZ6MHAcjA"
 Content-Disposition: inline
-In-Reply-To: <20200910223112.26b57dd6@nic.cz>
+In-Reply-To: <20200909162552.11032-7-marek.behun@nic.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, Sep 10, 2020 at 10:31:12PM +0200, Marek Behun wrote:
-> On Thu, 10 Sep 2020 19:34:35 +0100
-> Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:
-> 
-> > On Thu, Sep 10, 2020 at 08:31:54PM +0200, Andrew Lunn wrote:
-> > > Generally the driver will default to the hardware reset blink
-> > > pattern. There are a few PHY drivers which change this at probe, but
-> > > not many. The silicon defaults are pretty good.  
-> > 
-> > The "right" blink pattern can be a matter of how the hardware is
-> > wired.  For example, if you have bi-colour LEDs and the PHY supports
-> > special bi-colour mixing modes.
-> > 
-> 
-> Have you seen such, Russell? This could be achieved via the multicolor
-> LED framework, but I don't have a device which uses such LEDs, so I
-> did not write support for this in the Marvell PHY driver.
-> 
-> (I guess I could test it though, since on my device LED0 and LED1
-> are used, and this to can be put into bi-colour LED mode.)
 
-I haven't, much to my dismay. The Macchiatobin would have been ideal -
-the 10G RJ45s have bi-colour on one side and green on the other. It
-would have been useful if they were wired to support the PHYs bi-
-colour mode.
+--JWEK1jqKZ6MHAcjA
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+On Wed 2020-09-09 18:25:51, Marek Beh=FAn wrote:
+> This patch adds support for controlling the LEDs connected to several
+> families of Marvell PHYs via the PHY HW LED trigger API. These families
+> are: 88E1112, 88E1121R, 88E1240, 88E1340S, 88E1510 and 88E1545. More can
+> be added.
+>=20
+> This patch does not yet add support for compound LED modes. This could
+> be achieved via the LED multicolor framework.
+>=20
+> Settings such as HW blink rate or pulse stretch duration are not yet
+> supported.
+>=20
+> Signed-off-by: Marek Beh=FAn <marek.behun@nic.cz>
+
+I suggest limiting to "useful" hardware modes, and documenting what
+those modes do somewhere.
+
+Best regards,
+								Pavel
+							=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--JWEK1jqKZ6MHAcjA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX1oazQAKCRAw5/Bqldv6
+8r1rAJ0SjhIyIQqbj9KUZqddKARSesMANwCffOTWiRmn+HILo9WjGID7UjPc2AQ=
+=oSP7
+-----END PGP SIGNATURE-----
+
+--JWEK1jqKZ6MHAcjA--
