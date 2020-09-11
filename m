@@ -2,100 +2,73 @@ Return-Path: <SRS0=d8/L=CU=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7EAAC2BC11
-	for <linux-leds@archiver.kernel.org>; Fri, 11 Sep 2020 17:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E979C2BC11
+	for <linux-leds@archiver.kernel.org>; Fri, 11 Sep 2020 17:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 255B1221E7
-	for <linux-leds@archiver.kernel.org>; Fri, 11 Sep 2020 17:36:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="UC0k2g4q"
+	by mail.kernel.org (Postfix) with ESMTP id 2520C221E7
+	for <linux-leds@archiver.kernel.org>; Fri, 11 Sep 2020 17:38:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbgIKRgO (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 11 Sep 2020 13:36:14 -0400
-Received: from lists.nic.cz ([217.31.204.67]:38016 "EHLO mail.nic.cz"
+        id S1726009AbgIKMp6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 11 Sep 2020 08:45:58 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:57652 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbgIKMxd (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 11 Sep 2020 08:53:33 -0400
-Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTPSA id A6E96140868;
-        Fri, 11 Sep 2020 14:53:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1599828795; bh=httgpWCNHkS6Y7iHmeNNUnrdcyZV1boIageh9o40vZ4=;
-        h=Date:From:To;
-        b=UC0k2g4qfycx8IkCGvz+bWxdO3Uu5A3QSu8OayTPy5cUNaOI0zJhCv++kOhhGtj+O
-         4BJAjIjfhhxnOn0IA+OXklkEyilSSOUkXzWx2ZRP/ZmHbwMPC6OekH5meoZeeBRzZW
-         k7KZmOV2mTvAX+MI1JYuqmTg51pd3YUoxOpLKWMA=
-Date:   Fri, 11 Sep 2020 14:53:15 +0200
-From:   Marek =?ISO-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Andrew Lunn <andrew@lunn.ch>, Pavel Machek <pavel@ucw.cz>,
-        netdev@vger.kernel.org, linux-leds@vger.kernel.org,
-        Dan Murphy <dmurphy@ti.com>,
-        =?UTF-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        id S1725951AbgIKMnT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 11 Sep 2020 08:43:19 -0400
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
+        (envelope-from <andrew@lunn.ch>)
+        id 1kGiOI-00EE62-Lc; Fri, 11 Sep 2020 14:42:58 +0200
+Date:   Fri, 11 Sep 2020 14:42:58 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc:     Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>,
+        Pavel Machek <pavel@ucw.cz>, netdev@vger.kernel.org,
+        linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        Russell King <linux@armlinux.org.uk>,
         linux-kernel@vger.kernel.org,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
         "David S. Miller" <davem@davemloft.net>
 Subject: Re: [PATCH net-next + leds v2 6/7] net: phy: marvell: add support
  for LEDs controlled by Marvell PHYs
-Message-ID: <20200911145315.0492ec5c@dellmb.labs.office.nic.cz>
-In-Reply-To: <20200910214454.GE1551@shell.armlinux.org.uk>
+Message-ID: <20200911124258.GB3390477@lunn.ch>
 References: <20200909162552.11032-1-marek.behun@nic.cz>
-        <20200909162552.11032-7-marek.behun@nic.cz>
-        <20200910122341.GC7907@duo.ucw.cz>
-        <20200910131541.GD3316362@lunn.ch>
-        <20200910182434.GA22845@duo.ucw.cz>
-        <20200910183154.GF3354160@lunn.ch>
-        <20200910183435.GC1551@shell.armlinux.org.uk>
-        <20200910223112.26b57dd6@nic.cz>
-        <20200910214454.GE1551@shell.armlinux.org.uk>
-X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+ <20200909162552.11032-7-marek.behun@nic.cz>
+ <20200910122341.GC7907@duo.ucw.cz>
+ <20200910131541.GD3316362@lunn.ch>
+ <20200910161522.3cf3ad63@dellmb.labs.office.nic.cz>
+ <20200910150040.GB3354160@lunn.ch>
+ <3d4dd05f2597c66fb429580095eed91c2b3be76a.camel@ew.tq-group.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3d4dd05f2597c66fb429580095eed91c2b3be76a.camel@ew.tq-group.com>
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, 10 Sep 2020 22:44:54 +0100
-Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:
+> - Do all PHYs support manual setting of the LED level, or are the PHYs
+> that can only work with HW triggers?
 
-> On Thu, Sep 10, 2020 at 10:31:12PM +0200, Marek Behun wrote:
-> > On Thu, 10 Sep 2020 19:34:35 +0100
-> > Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:
-> >   
-> > > On Thu, Sep 10, 2020 at 08:31:54PM +0200, Andrew Lunn wrote:  
-> > > > Generally the driver will default to the hardware reset blink
-> > > > pattern. There are a few PHY drivers which change this at
-> > > > probe, but not many. The silicon defaults are pretty good.    
-> > > 
-> > > The "right" blink pattern can be a matter of how the hardware is
-> > > wired.  For example, if you have bi-colour LEDs and the PHY
-> > > supports special bi-colour mixing modes.
-> > >   
-> > 
-> > Have you seen such, Russell? This could be achieved via the
-> > multicolor LED framework, but I don't have a device which uses such
-> > LEDs, so I did not write support for this in the Marvell PHY driver.
-> > 
-> > (I guess I could test it though, since on my device LED0 and LED1
-> > are used, and this to can be put into bi-colour LED mode.)  
-> 
-> I haven't, much to my dismay. The Macchiatobin would have been ideal -
-> the 10G RJ45s have bi-colour on one side and green on the other. It
-> would have been useful if they were wired to support the PHYs bi-
-> colour mode.
-> 
+There are PHYs with do not have simple on/off.
 
-I have access to a Macchiatobin here at work. I am willing to add
-support for bicolor LEDs, but only after we solve and merge this first
-proposal.
+> - Is setting PHY registers always efficiently possible, or should SW
+> triggers be avoided in certain cases? I'm thinking about setups like
+> mdio-gpio. I guess this can only become an issue for triggers that
+> blink.
 
-Marek
+There are uses cases where not using software frequently writing
+registers would be good. PTP time stamping is one, where the extra
+jitter can reduce the accuracy of the clock.
+
+I also think activity blinking in software is unlikely to be
+accepted. Nothing extra is allowed in the hot path, when you can be
+dealing with a million or more packets per second.
+
+So i would say limit software fallback to link and speed, and don't
+assume that is even possible depending on the hardware.
+
+	Andrew
