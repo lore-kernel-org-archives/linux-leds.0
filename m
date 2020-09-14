@@ -2,119 +2,140 @@ Return-Path: <SRS0=e6g7=CX=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C71A1C2D0E3
-	for <linux-leds@archiver.kernel.org>; Mon, 14 Sep 2020 08:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5698AC433E2
+	for <linux-leds@archiver.kernel.org>; Mon, 14 Sep 2020 18:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C0C52074B
-	for <linux-leds@archiver.kernel.org>; Mon, 14 Sep 2020 08:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BBFC2076C
+	for <linux-leds@archiver.kernel.org>; Mon, 14 Sep 2020 18:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600107618;
+	bh=AIlVeicgns0m0+yx3sGQ+NOHh5wJ9ydV9Uia2bP1lKg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Z4kzshreX09j68jlB4jVXG9Z0B9d6IbzBh55X8kcYI3r1xm24xmID1sXFrOORqWrS
+	 djbPKWDTdNCK4vmitIgceo4ilFotGYpSgCOcEvYiQdM1/MN9WPYHaXdpI/RNohYTpg
+	 15xHjsdcF6RM6unHhgkDC/hzhwK+TKed2l8EMlZk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbgINIM2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 14 Sep 2020 04:12:28 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53711 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbgINIHP (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 14 Sep 2020 04:07:15 -0400
-Received: from [125.35.49.90] (helo=localhost.localdomain)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <hui.wang@canonical.com>)
-        id 1kHjW2-0002qc-1N; Mon, 14 Sep 2020 08:07:10 +0000
-From:   Hui Wang <hui.wang@canonical.com>
-To:     alsa-devel@alsa-project.org, tiwai@suse.de, pavel@ucw.cz
-Cc:     linux-leds@vger.kernel.org, kai.heng.feng@canonical.com
-Subject: [PATCH 1/2] leds: trigger: audio: Add audio jack plugging indicator led
-Date:   Mon, 14 Sep 2020 16:06:54 +0800
-Message-Id: <20200914080655.14576-1-hui.wang@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726007AbgINSUQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 14 Sep 2020 14:20:16 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:33216 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbgINSUN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 14 Sep 2020 14:20:13 -0400
+Received: by mail-il1-f195.google.com with SMTP id x2so531230ilm.0;
+        Mon, 14 Sep 2020 11:20:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fdtDbq+D2wXO2AxeziDQlx8lKWQCn+eKp58GeSBc8HI=;
+        b=Ftl6V+Cq0t6FXqm5i0EIFs+5gdCQGXTrQawphpIBkzNemEOpp0efTfyyTU0YFN73Dd
+         fyWadD8cD1vKQ6jkbJTOStMFJwa87YJznkx9/NaoEbkfByYPpZlrYmI2nz02982bJUjL
+         H+fBOQAddAT92doesxaJf5VJ8731JLCC1LP0M0MARCkDTX43mR+2YnAvnH8lf2zbBxkX
+         uIwXNPreNiCXCNGwI/1lJ+bhKYfigUVMgVCM0ANiHxYM2WFrraW9I3FPYkcozlpGZqnp
+         IkymxpYsNpwwRFZLyETlDN2KBy7epBfmj85mqTCYrXesyTWNU+Yqf+1IDEbWjIuE5LwV
+         XEcw==
+X-Gm-Message-State: AOAM530qyPwW8tx0ZWVM2JaDp7SP9fya31fE8bXnEJTfetJeI8Hz0JRf
+        F+uSVj0WZRNdlgM8FOmxlq+Vi2PZjwt0
+X-Google-Smtp-Source: ABdhPJyaLnrvBR1GirLP6z7PnAvaEZSPl/7FkU07rnTPTggjjrfaUZoZ9Dtaxv533+HXIQmc4RkcFg==
+X-Received: by 2002:a92:7984:: with SMTP id u126mr13816635ilc.139.1600107611878;
+        Mon, 14 Sep 2020 11:20:11 -0700 (PDT)
+Received: from xps15 ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id v20sm7265643ile.42.2020.09.14.11.20.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Sep 2020 11:20:11 -0700 (PDT)
+Received: (nullmailer pid 4178218 invoked by uid 1000);
+        Mon, 14 Sep 2020 18:20:10 -0000
+Date:   Mon, 14 Sep 2020 12:20:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: leds: common: Add mmc0 as default trigger
+Message-ID: <20200914182010.GA4172388@bogus>
+References: <20200830111115.32623-1-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200830111115.32623-1-krzk@kernel.org>
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On the Lenovo P520 front panel, there is a headset plugging indicator
-led. According to LENOVO's requirement, this led should be on if the
-front headset audio jack is plugged, otherwise the led should be off.
+On Sun, Aug 30, 2020 at 01:11:15PM +0200, Krzysztof Kozlowski wrote:
+> MMC could be a default trigger so add a pattern to match it and fix
+> dtbs_check warnings like:
+> 
+>   arch/arm/boot/dts/exynos4412-odroidx.dt.yaml: leds: led2:linux,default-trigger:0:
+>     'mmc0' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'ide-disk', 'timer', 'pattern']
+>     From schema: Documentation/devicetree/bindings/leds/leds-gpio.yaml
 
-We tested with windows, if we plugged a headphone/headset in that
-jack, the led was on, if we removed the headphone/headset from that
-jack, the led was off.
+The preference is to move from 'linux,default-trigger' to 'function' 
+with some standardization of the names or use the trigger-source binding.
 
-Here we add JACKPLUG led in the ledtrig_audio, then we could call
-ledtrig_audio_set() in the alsa driver to control that led.
-
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
----
- drivers/leds/trigger/Kconfig         | 4 ++--
- drivers/leds/trigger/ledtrig-audio.c | 7 +++++--
- include/linux/leds.h                 | 1 +
- 3 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-index ce9429ca6dde..a61893a6e3e4 100644
---- a/drivers/leds/trigger/Kconfig
-+++ b/drivers/leds/trigger/Kconfig
-@@ -138,10 +138,10 @@ config LEDS_TRIGGER_PATTERN
- 	  If unsure, say N
- 
- config LEDS_TRIGGER_AUDIO
--	tristate "Audio Mute LED Trigger"
-+	tristate "Audio Mute and Jack Plugging LED Trigger"
- 	help
- 	  This allows LEDs to be controlled by audio drivers for following
--	  the audio mute and mic-mute changes.
-+	  the audio mute, mic-mute and jack plugging changes.
- 	  If unsure, say N
- 
- endif # LEDS_TRIGGERS
-diff --git a/drivers/leds/trigger/ledtrig-audio.c b/drivers/leds/trigger/ledtrig-audio.c
-index f76621e88482..fa66bb982400 100644
---- a/drivers/leds/trigger/ledtrig-audio.c
-+++ b/drivers/leds/trigger/ledtrig-audio.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- //
--// Audio Mute LED trigger
-+// Audio Mute And Jack Plugging LED trigger
- //
- 
- #include <linux/kernel.h>
-@@ -29,6 +29,8 @@ static int __init ledtrig_audio_init(void)
- 				    &ledtrig_audio[LED_AUDIO_MUTE]);
- 	led_trigger_register_simple("audio-micmute",
- 				    &ledtrig_audio[LED_AUDIO_MICMUTE]);
-+	led_trigger_register_simple("audio-jackplug",
-+				    &ledtrig_audio[LED_AUDIO_JACKPLUG]);
- 	return 0;
- }
- module_init(ledtrig_audio_init);
-@@ -37,8 +39,9 @@ static void __exit ledtrig_audio_exit(void)
- {
- 	led_trigger_unregister_simple(ledtrig_audio[LED_AUDIO_MUTE]);
- 	led_trigger_unregister_simple(ledtrig_audio[LED_AUDIO_MICMUTE]);
-+	led_trigger_unregister_simple(ledtrig_audio[LED_AUDIO_JACKPLUG]);
- }
- module_exit(ledtrig_audio_exit);
- 
--MODULE_DESCRIPTION("LED trigger for audio mute control");
-+MODULE_DESCRIPTION("LED trigger for audio mute and jack plugging control");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 6a8d6409c993..1858c2d30ecd 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -584,6 +584,7 @@ struct led_pattern {
- enum led_audio {
- 	LED_AUDIO_MUTE,		/* master mute LED */
- 	LED_AUDIO_MICMUTE,	/* mic mute LED */
-+	LED_AUDIO_JACKPLUG,	/* audio jack plug indicator LED */
- 	NUM_AUDIO_LEDS
- };
- 
--- 
-2.17.1
-
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../devicetree/bindings/leds/common.yaml      | 39 ++++++++++---------
+>  1 file changed, 20 insertions(+), 19 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+> index a2a541bca73c..6b38f9f3792c 100644
+> --- a/Documentation/devicetree/bindings/leds/common.yaml
+> +++ b/Documentation/devicetree/bindings/leds/common.yaml
+> @@ -78,25 +78,26 @@ properties:
+>        This parameter, if present, is a string defining the trigger assigned to
+>        the LED.
+>      $ref: /schemas/types.yaml#definitions/string
+> -
+> -    enum:
+> -        # LED will act as a back-light, controlled by the framebuffer system
+> -      - backlight
+> -        # LED will turn on (but for leds-gpio see "default-state" property in
+> -        # Documentation/devicetree/bindings/leds/leds-gpio.yaml)
+> -      - default-on
+> -        # LED "double" flashes at a load average based rate
+> -      - heartbeat
+> -        # LED indicates disk activity
+> -      - disk-activity
+> -        # LED indicates IDE disk activity (deprecated), in new implementations
+> -        # use "disk-activity"
+> -      - ide-disk
+> -        # LED flashes at a fixed, configurable rate
+> -      - timer
+> -        # LED alters the brightness for the specified duration with one software
+> -        # timer (requires "led-pattern" property)
+> -      - pattern
+> +    oneOf:
+> +      - enum:
+> +            # LED will act as a back-light, controlled by the framebuffer system
+> +          - backlight
+> +            # LED will turn on (but for leds-gpio see "default-state" property in
+> +            # Documentation/devicetree/bindings/leds/leds-gpio.yaml)
+> +          - default-on
+> +            # LED "double" flashes at a load average based rate
+> +          - heartbeat
+> +            # LED indicates disk activity
+> +          - disk-activity
+> +            # LED indicates IDE disk activity (deprecated), in new implementations
+> +            # use "disk-activity"
+> +          - ide-disk
+> +            # LED flashes at a fixed, configurable rate
+> +          - timer
+> +            # LED alters the brightness for the specified duration with one software
+> +            # timer (requires "led-pattern" property)
+> +          - pattern
+> +      - pattern: "^mmc[0-9]+$"
+>  
+>    led-pattern:
+>      description: |
+> -- 
+> 2.17.1
+> 
