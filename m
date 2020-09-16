@@ -7,42 +7,45 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC98C2BB84
-	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 23:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0F9C43461
+	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 23:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B04822208
-	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 23:17:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D457D22208
+	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 23:17:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="TBqITmuF"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="KfbvsnSP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgIPXRh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 16 Sep 2020 19:17:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58804 "EHLO
+        id S1726951AbgIPXRn (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 16 Sep 2020 19:17:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726951AbgIPXQ6 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 16 Sep 2020 19:16:58 -0400
+        with ESMTP id S1726929AbgIPXQ5 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 16 Sep 2020 19:16:57 -0400
 Received: from mail.nic.cz (lists.nic.cz [IPv6:2001:1488:800:400::400])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E97AC06178C;
-        Wed, 16 Sep 2020 16:16:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B96EC06178A;
+        Wed, 16 Sep 2020 16:16:56 -0700 (PDT)
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id B6F99140A47;
-        Thu, 17 Sep 2020 01:16:53 +0200 (CEST)
+        by mail.nic.cz (Postfix) with ESMTP id E1D431409E8;
+        Thu, 17 Sep 2020 01:16:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600298213; bh=H5VMRYwbsOWAo3NkkolRcqZJexc2xLi1wrEFjmU2HDE=;
+        t=1600298213; bh=ikxpzf3wICdcK+yMuEdRy/OOF3e2Dp+p6C7zCXktDwo=;
         h=From:To:Date;
-        b=TBqITmuFgMjAlxys/jMc5JVgo7wxMtsYkaSCk+420YfT3deqdy7R9AxoTbSRpvEx7
-         xwbMvbN54PwXdVaAo6sK+uPilrD+geumzOkBn/M6cluKDnCLnjxHKXV1Ksp49KCfCf
-         MAVa0sfJATq6f2tvTDL/eyWc2vy1K8jAFWYT53a4=
+        b=KfbvsnSP3X10+0ghHiGydNaGKQc/JsXf5cVwubFXmqjMWKDUdWCgcWQkW+tnNnkYH
+         C9re3Db9737/f/Pi1dBBCKegJPfJZnQULV8fiKSqPUPFuOeoLxEWOb2/wlPITtv37f
+         wl9EbHExrJ9GuKAn+AKgrCz7STLXyjES2GShtRk4=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megous@megous.com>,
         linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH leds v1 09/10] leds: lm36274: use struct led_init_data when registering
-Date:   Thu, 17 Sep 2020 01:16:49 +0200
-Message-Id: <20200916231650.11484-10-marek.behun@nic.cz>
+        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
+        Sean Wang <sean.wang@mediatek.com>,
+        John Crispin <john@phrozen.org>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH leds v1 05/10] leds: mt6323: use struct led_init_data when registering
+Date:   Thu, 17 Sep 2020 01:16:45 +0200
+Message-Id: <20200916231650.11484-6-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200916231650.11484-1-marek.behun@nic.cz>
 References: <20200916231650.11484-1-marek.behun@nic.cz>
@@ -59,182 +62,57 @@ X-Mailing-List: linux-leds@vger.kernel.org
 By using struct led_init_data when registering we do not need to parse
 `label` DT property nor `linux,default-trigger` property.
 
-A small refactor was also done:
-- with using devm_led_classdev_register_ext the driver remove method is
-  not needed
-- since only one child node is allowed for this driver, use
-  device_get_next_child_node instead of device_for_each_child_node
-
-Previously if the `label` DT property was not present, the code composed
-name for the LED in the form
-  "parent_name::"
-For backwards compatibility we therefore set
-  init_data->default_label = ":";
-so that the LED will not get a different name if `label` property is not
-present.
-
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
-Cc: Dan Murphy <dmurphy@ti.com>
+Cc: Sean Wang <sean.wang@mediatek.com>
+Cc: John Crispin <john@phrozen.org>
+Cc: Ryder Lee <ryder.lee@mediatek.com>
 ---
- drivers/leds/leds-lm36274.c | 100 ++++++++++++++++++------------------
- 1 file changed, 49 insertions(+), 51 deletions(-)
+ drivers/leds/leds-mt6323.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/leds/leds-lm36274.c b/drivers/leds/leds-lm36274.c
-index bfeee03a0053c..7ec53b4669eac 100644
---- a/drivers/leds/leds-lm36274.c
-+++ b/drivers/leds/leds-lm36274.c
-@@ -67,61 +67,53 @@ static int lm36274_init(struct lm36274 *lm36274_data)
- 			    enable_val);
- }
+diff --git a/drivers/leds/leds-mt6323.c b/drivers/leds/leds-mt6323.c
+index 7b240771e45bb..c2dfafb694cfe 100644
+--- a/drivers/leds/leds-mt6323.c
++++ b/drivers/leds/leds-mt6323.c
+@@ -342,11 +342,6 @@ static int mt6323_led_set_dt_default(struct led_classdev *cdev,
+ 	const char *state;
+ 	int ret = 0;
  
--static int lm36274_parse_dt(struct lm36274 *lm36274_data)
-+static int lm36274_parse_dt(struct lm36274 *lm36274_data,
-+			    struct led_init_data *init_data)
- {
--	struct fwnode_handle *child = NULL;
--	char label[LED_MAX_NAME_SIZE];
- 	struct device *dev = &lm36274_data->pdev->dev;
--	const char *name;
--	int child_cnt;
--	int ret = -EINVAL;
-+	struct fwnode_handle *fwnode;
-+	int ret;
- 
- 	/* There should only be 1 node */
--	child_cnt = device_get_child_node_count(dev);
--	if (child_cnt != 1)
-+	if (device_get_child_node_count(dev) != 1)
- 		return -EINVAL;
- 
--	device_for_each_child_node(dev, child) {
--		ret = fwnode_property_read_string(child, "label", &name);
--		if (ret)
--			snprintf(label, sizeof(label),
--				"%s::", lm36274_data->pdev->name);
--		else
--			snprintf(label, sizeof(label),
--				 "%s:%s", lm36274_data->pdev->name, name);
+-	led->cdev.name = of_get_property(np, "label", NULL) ? : np->name;
+-	led->cdev.default_trigger = of_get_property(np,
+-						    "linux,default-trigger",
+-						    NULL);
 -
--		lm36274_data->num_leds = fwnode_property_count_u32(child, "led-sources");
--		if (lm36274_data->num_leds <= 0)
--			return -ENODEV;
--
--		ret = fwnode_property_read_u32_array(child, "led-sources",
--						     lm36274_data->led_sources,
--						     lm36274_data->num_leds);
--		if (ret) {
--			dev_err(dev, "led-sources property missing\n");
--			return ret;
--		}
--
--		fwnode_property_read_string(child, "linux,default-trigger",
--					&lm36274_data->led_dev.default_trigger);
-+	fwnode = device_get_next_child_node(dev, NULL);
-+	if (!fwnode)
-+		return -ENODEV;
+ 	state = of_get_property(np, "default-state", NULL);
+ 	if (state) {
+ 		if (!strcmp(state, "keep")) {
+@@ -402,6 +397,8 @@ static int mt6323_led_probe(struct platform_device *pdev)
+ 	}
  
--	}
-+	init_data->fwnode = fwnode;
-+	init_data->devicename = lm36274_data->pdev->name;
- 
--	lm36274_data->lmu_data.regmap = lm36274_data->regmap;
--	lm36274_data->lmu_data.max_brightness = MAX_BRIGHTNESS_11BIT;
--	lm36274_data->lmu_data.msb_brightness_reg = LM36274_REG_BRT_MSB;
--	lm36274_data->lmu_data.lsb_brightness_reg = LM36274_REG_BRT_LSB;
-+	/* for backwards compatibility when `label` property is not present */
-+	init_data->default_label = ":";
- 
--	lm36274_data->led_dev.name = label;
--	lm36274_data->led_dev.max_brightness = MAX_BRIGHTNESS_11BIT;
--	lm36274_data->led_dev.brightness_set_blocking = lm36274_brightness_set;
-+	lm36274_data->num_leds = fwnode_property_count_u32(fwnode,
-+							   "led-sources");
-+	if (lm36274_data->num_leds <= 0) {
-+		ret = -ENODEV;
-+		goto err;
-+	}
+ 	for_each_available_child_of_node(np, child) {
++		struct led_init_data init_data = {};
 +
-+	ret = fwnode_property_read_u32_array(fwnode, "led-sources",
-+					     lm36274_data->led_sources,
-+					     lm36274_data->num_leds);
-+	if (ret) {
-+		dev_err(dev, "led-sources property missing\n");
-+		goto err;
-+	}
+ 		ret = of_property_read_u32(child, "reg", &reg);
+ 		if (ret) {
+ 			dev_err(dev, "Failed to read led 'reg' property\n");
+@@ -437,13 +434,15 @@ static int mt6323_led_probe(struct platform_device *pdev)
+ 			goto put_child_node;
+ 		}
+ 
+-		ret = devm_led_classdev_register(dev, &leds->led[reg]->cdev);
++		init_data.fwnode = of_fwnode_handle(child);
++
++		ret = devm_led_classdev_register_ext(dev, &leds->led[reg]->cdev,
++						     &init_data);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "Failed to register LED: %d\n",
+ 				ret);
+ 			goto put_child_node;
+ 		}
+-		leds->led[reg]->cdev.dev->of_node = child;
+ 	}
  
  	return 0;
-+err:
-+	fwnode_handle_put(fwnode);
-+	return ret;
- }
- 
- static int lm36274_probe(struct platform_device *pdev)
- {
- 	struct ti_lmu *lmu = dev_get_drvdata(pdev->dev.parent);
-+	struct led_init_data init_data = {};
-+	struct device *dev = lmu->dev;
- 	struct lm36274 *lm36274_data;
- 	int ret;
- 
-@@ -131,32 +123,39 @@ static int lm36274_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	lm36274_data->pdev = pdev;
--	lm36274_data->dev = lmu->dev;
-+	lm36274_data->dev = dev;
- 	lm36274_data->regmap = lmu->regmap;
- 	platform_set_drvdata(pdev, lm36274_data);
- 
--	ret = lm36274_parse_dt(lm36274_data);
-+	ret = lm36274_parse_dt(lm36274_data, &init_data);
- 	if (ret) {
--		dev_err(lm36274_data->dev, "Failed to parse DT node\n");
-+		dev_err(dev, "Failed to parse DT node\n");
- 		return ret;
- 	}
- 
-+	lm36274_data->lmu_data.regmap = lm36274_data->regmap;
-+	lm36274_data->lmu_data.max_brightness = MAX_BRIGHTNESS_11BIT;
-+	lm36274_data->lmu_data.msb_brightness_reg = LM36274_REG_BRT_MSB;
-+	lm36274_data->lmu_data.lsb_brightness_reg = LM36274_REG_BRT_LSB;
-+
- 	ret = lm36274_init(lm36274_data);
- 	if (ret) {
--		dev_err(lm36274_data->dev, "Failed to init the device\n");
-+		dev_err(dev, "Failed to init the device\n");
- 		return ret;
- 	}
- 
--	return led_classdev_register(lm36274_data->dev, &lm36274_data->led_dev);
--}
-+	lm36274_data->led_dev.max_brightness = MAX_BRIGHTNESS_11BIT;
-+	lm36274_data->led_dev.brightness_set_blocking = lm36274_brightness_set;
- 
--static int lm36274_remove(struct platform_device *pdev)
--{
--	struct lm36274 *lm36274_data = platform_get_drvdata(pdev);
-+	ret = devm_led_classdev_register_ext(dev, &lm36274_data->led_dev,
-+					     &init_data);
-+	if (ret)
-+		dev_err(dev, "Failed to register LED for node %pfw\n",
-+			init_data.fwnode);
- 
--	led_classdev_unregister(&lm36274_data->led_dev);
-+	fwnode_handle_put(init_data.fwnode);
- 
--	return 0;
-+	return ret;
- }
- 
- static const struct of_device_id of_lm36274_leds_match[] = {
-@@ -167,7 +166,6 @@ MODULE_DEVICE_TABLE(of, of_lm36274_leds_match);
- 
- static struct platform_driver lm36274_driver = {
- 	.probe  = lm36274_probe,
--	.remove = lm36274_remove,
- 	.driver = {
- 		.name = "lm36274-leds",
- 	},
 -- 
 2.26.2
 
