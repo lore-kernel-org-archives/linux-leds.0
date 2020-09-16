@@ -5,41 +5,42 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1810AC43461
-	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 23:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C6EC43461
+	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 23:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 555CC22205
-	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 23:17:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82A1D22205
+	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 23:17:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="mc52j3ij"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="WjhooCPM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbgIPXQ6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 16 Sep 2020 19:16:58 -0400
-Received: from mail.nic.cz ([217.31.204.67]:53746 "EHLO mail.nic.cz"
+        id S1727028AbgIPXRA (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 16 Sep 2020 19:17:00 -0400
+Received: from lists.nic.cz ([217.31.204.67]:53874 "EHLO mail.nic.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726420AbgIPXQ4 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 16 Sep 2020 19:16:56 -0400
+        id S1726764AbgIPXQ7 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 16 Sep 2020 19:16:59 -0400
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 3EDB91408AF;
-        Thu, 17 Sep 2020 01:16:52 +0200 (CEST)
+        by mail.nic.cz (Postfix) with ESMTP id 8382C140A46;
+        Thu, 17 Sep 2020 01:16:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600298212; bh=AbnPnVWt+Da37oxuFuXapS3hCWqJtAW5p1XQuwmXBVg=;
+        t=1600298213; bh=gFpKulJnh3+bCyFKyHCzqOwtUL//wPu/7KvlFipY1/c=;
         h=From:To:Date;
-        b=mc52j3ijX0U/PYTbi7tDxZLx3/QfoMABUe4pz4frbfTn1hW3uhjB+MQSQGQVtqzpw
-         GyUqITCSnQyqE0BhKNsV5QIJOsLmUN9DwIt4t28oPEBOxLPOeHwvDSNtn+sbstAPv8
-         SBRuvxNV28jnv/9yn/LOA5y8OVucIgw89OBlwtbE=
+        b=WjhooCPMMiC/MPugWqvrtwMJccw7M+/Zj+8eywOkhBvZeP/XljB8ClzArsxR2pMqX
+         /PSj6/kLrbhVAmMZ5RgAVp4X07IZ3lH20i3c0tZlzcSE5lM7fYpswQK29i4ZqZdnL2
+         pzCX6BZh38P9z60vFDS8edO76RVufoFBnbgb/9m4=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megous@megous.com>,
         linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH leds v1 01/10] leds: parse linux,default-trigger DT property in LED core
-Date:   Thu, 17 Sep 2020 01:16:41 +0200
-Message-Id: <20200916231650.11484-2-marek.behun@nic.cz>
+        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
+        "H . Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH leds v1 08/10] leds: is31fl319x: use struct led_init_data when registering
+Date:   Thu, 17 Sep 2020 01:16:48 +0200
+Message-Id: <20200916231650.11484-9-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200916231650.11484-1-marek.behun@nic.cz>
 References: <20200916231650.11484-1-marek.behun@nic.cz>
@@ -53,198 +54,310 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Do parsing of `linux,default-trigger` DT property to LED core. Currently
-it is done in many different drivers and the code is repeated.
+By using struct led_init_data when registering we do not need to parse
+`label` DT property nor `linux,default-trigger` property.
 
-This commit removes the parsing only from drivers where the removal is
-simple, i.e. those which pass struct led_init_data with fwnode handle to
-the LED classdev registering function.
+This driver needed bigger refactor because it first parsed DT for all
+LEDs and only after that started registering them.
 
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
+Cc: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- drivers/leds/led-class.c         | 5 +++++
- drivers/leds/leds-an30259a.c     | 3 ---
- drivers/leds/leds-aw2013.c       | 3 ---
- drivers/leds/leds-cr0014114.c    | 3 ---
- drivers/leds/leds-el15203000.c   | 3 ---
- drivers/leds/leds-gpio.c         | 3 ---
- drivers/leds/leds-lm3532.c       | 3 ---
- drivers/leds/leds-lm3692x.c      | 3 ---
- drivers/leds/leds-lp8860.c       | 4 ----
- drivers/leds/leds-lt3593.c       | 3 ---
- drivers/leds/leds-tlc591xx.c     | 2 --
- drivers/leds/leds-turris-omnia.c | 2 --
- 12 files changed, 5 insertions(+), 32 deletions(-)
+ drivers/leds/leds-is31fl319x.c | 204 ++++++++++++++-------------------
+ 1 file changed, 89 insertions(+), 115 deletions(-)
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index cc3929f858b68..131ca83f5fb38 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -354,6 +354,11 @@ int led_classdev_register_ext(struct device *parent,
- 		ret = led_compose_name(parent, init_data, composed_name);
- 		if (ret < 0)
- 			return ret;
+diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
+index 54ac50740d43d..3995f41687e16 100644
+--- a/drivers/leds/leds-is31fl319x.c
++++ b/drivers/leds/leds-is31fl319x.c
+@@ -63,7 +63,6 @@
+ struct is31fl319x_chip {
+ 	const struct is31fl319x_chipdef *cdef;
+ 	struct i2c_client               *client;
+-	struct gpio_desc		*shutdown_gpio;
+ 	struct regmap                   *regmap;
+ 	struct mutex                    lock;
+ 	u32                             audio_gain_db;
+@@ -71,7 +70,6 @@ struct is31fl319x_chip {
+ 	struct is31fl319x_led {
+ 		struct is31fl319x_chip  *chip;
+ 		struct led_classdev     cdev;
+-		u32                     max_microamp;
+ 		bool                    configured;
+ 	} leds[IS31FL319X_MAX_LEDS];
+ };
+@@ -171,117 +169,100 @@ static int is31fl319x_brightness_set(struct led_classdev *cdev,
+ 	return ret;
+ }
+ 
+-static int is31fl319x_parse_child_dt(const struct device *dev,
+-				     const struct device_node *child,
+-				     struct is31fl319x_led *led)
++static int is31fl319x_parse_max_current(struct device *dev, u32 *aggregated)
+ {
+-	struct led_classdev *cdev = &led->cdev;
++	struct device_node *np;
++	u32 max_microamp;
+ 	int ret;
+ 
+-	if (of_property_read_string(child, "label", &cdev->name))
+-		cdev->name = child->name;
+-
+-	ret = of_property_read_string(child, "linux,default-trigger",
+-				      &cdev->default_trigger);
+-	if (ret < 0 && ret != -EINVAL) /* is optional */
+-		return ret;
++	*aggregated = IS31FL319X_CURRENT_MAX;
 +
-+		if (init_data->fwnode)
-+			fwnode_property_read_string(init_data->fwnode,
-+				"linux,default-trigger",
-+				&led_cdev->default_trigger);
- 	} else {
- 		proposed_name = led_cdev->name;
- 	}
-diff --git a/drivers/leds/leds-an30259a.c b/drivers/leds/leds-an30259a.c
-index 82350a28a5644..d8aea64563414 100644
---- a/drivers/leds/leds-an30259a.c
-+++ b/drivers/leds/leds-an30259a.c
-@@ -238,9 +238,6 @@ static int an30259a_dt_init(struct i2c_client *client,
- 				led->default_state = STATE_OFF;
- 		}
++	for_each_child_of_node(dev_of_node(dev), np) {
++		max_microamp = IS31FL319X_CURRENT_DEFAULT;
++		ret = of_property_read_u32(np, "led-max-microamp",
++					   &max_microamp);
++		if (!ret)
++			max_microamp = min(max_microamp,
++					   IS31FL319X_CURRENT_MAX);
++
++		if (max_microamp < IS31FL319X_CURRENT_MIN) {
++			dev_err(dev,
++				"Node %pOF led-max-microamp below supported value\n",
++				np);
++			of_node_put(np);
++			return -EINVAL;
++		}
  
--		of_property_read_string(child, "linux,default-trigger",
--					&led->cdev.default_trigger);
--
- 		i++;
- 	}
- 
-diff --git a/drivers/leds/leds-aw2013.c b/drivers/leds/leds-aw2013.c
-index d709cc1f949e3..8be8a185bfa30 100644
---- a/drivers/leds/leds-aw2013.c
-+++ b/drivers/leds/leds-aw2013.c
-@@ -297,9 +297,6 @@ static int aw2013_probe_dt(struct aw2013 *chip)
- 				 "DT property led-max-microamp is missing\n");
- 		}
- 
--		of_property_read_string(child, "linux,default-trigger",
--					&led->cdev.default_trigger);
--
- 		led->cdev.brightness_set_blocking = aw2013_brightness_set;
- 		led->cdev.blink_set = aw2013_blink_set;
- 
-diff --git a/drivers/leds/leds-cr0014114.c b/drivers/leds/leds-cr0014114.c
-index 2da448ae718e9..d03cfd3c0bfbe 100644
---- a/drivers/leds/leds-cr0014114.c
-+++ b/drivers/leds/leds-cr0014114.c
-@@ -188,9 +188,6 @@ static int cr0014114_probe_dt(struct cr0014114 *priv)
- 	device_for_each_child_node(priv->dev, child) {
- 		led = &priv->leds[i];
- 
--		fwnode_property_read_string(child, "linux,default-trigger",
--					    &led->ldev.default_trigger);
--
- 		led->priv			  = priv;
- 		led->ldev.max_brightness	  = CR_MAX_BRIGHTNESS;
- 		led->ldev.brightness_set_blocking = cr0014114_set_sync;
-diff --git a/drivers/leds/leds-el15203000.c b/drivers/leds/leds-el15203000.c
-index 298b13e4807a8..6ca47f2a20041 100644
---- a/drivers/leds/leds-el15203000.c
-+++ b/drivers/leds/leds-el15203000.c
-@@ -263,9 +263,6 @@ static int el15203000_probe_dt(struct el15203000 *priv)
- 			return -EINVAL;
- 		}
- 
--		fwnode_property_read_string(child, "linux,default-trigger",
--					    &led->ldev.default_trigger);
--
- 		led->priv			  = priv;
- 		led->ldev.max_brightness	  = LED_ON;
- 		led->ldev.brightness_set_blocking = el15203000_set_blocking;
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index cf84096d88cec..93f5b1b60fdec 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -160,9 +160,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 
- 		led_dat->gpiod = led.gpiod;
- 
--		fwnode_property_read_string(child, "linux,default-trigger",
--					    &led.default_trigger);
--
- 		if (!fwnode_property_read_string(child, "default-state",
- 						 &state)) {
- 			if (!strcmp(state, "keep"))
-diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
-index 946ad67eaecb7..dac037141d445 100644
---- a/drivers/leds/leds-lm3532.c
-+++ b/drivers/leds/leds-lm3532.c
-@@ -643,9 +643,6 @@ static int lm3532_parse_node(struct lm3532_data *priv)
- 			goto child_out;
- 		}
- 
--		fwnode_property_read_string(child, "linux,default-trigger",
--					    &led->led_dev.default_trigger);
--
- 		ret = fwnode_property_read_string(child, "label", &name);
- 		if (ret)
- 			snprintf(led->label, sizeof(led->label),
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index 1d7ea1b76a125..e945de45388ca 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -433,9 +433,6 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- 		return -ENODEV;
+-	led->max_microamp = IS31FL319X_CURRENT_DEFAULT;
+-	ret = of_property_read_u32(child, "led-max-microamp",
+-				   &led->max_microamp);
+-	if (!ret) {
+-		if (led->max_microamp < IS31FL319X_CURRENT_MIN)
+-			return -EINVAL;	/* not supported */
+-		led->max_microamp = min(led->max_microamp,
+-					  IS31FL319X_CURRENT_MAX);
++		if (max_microamp < *aggregated)
++			*aggregated = max_microamp;
  	}
  
--	fwnode_property_read_string(child, "linux,default-trigger",
--				    &led->led_dev.default_trigger);
+ 	return 0;
+ }
+ 
+-static int is31fl319x_parse_dt(struct device *dev,
+-			       struct is31fl319x_chip *is31)
++static int is31fl319x_led_register(struct device *dev,
++				   struct is31fl319x_chip *is31,
++				   struct device_node *np)
+ {
+-	struct device_node *np = dev->of_node, *child;
+-	const struct of_device_id *of_dev_id;
+-	int count;
++	struct led_init_data init_data = {};
++	struct is31fl319x_led *led;
++	u32 reg;
+ 	int ret;
+ 
+-	if (!np)
+-		return -ENODEV;
 -
- 	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
- 	if (ret) {
- 		dev_err(&led->client->dev, "reg DT property missing\n");
-diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-index ac2f5d6272dc0..20b463f290431 100644
---- a/drivers/leds/leds-lp8860.c
-+++ b/drivers/leds/leds-lp8860.c
-@@ -392,10 +392,6 @@ static int lp8860_probe(struct i2c_client *client,
- 	if (!child_node)
+-	is31->shutdown_gpio = devm_gpiod_get_optional(dev,
+-						"shutdown",
+-						GPIOD_OUT_HIGH);
+-	if (IS_ERR(is31->shutdown_gpio)) {
+-		ret = PTR_ERR(is31->shutdown_gpio);
+-		dev_err(dev, "Failed to get shutdown gpio: %d\n", ret);
++	ret = of_property_read_u32(np, "reg", &reg);
++	if (ret) {
++		dev_err(dev, "Cannot read reg property of %pOF\n", np);
+ 		return ret;
+ 	}
+ 
+-	of_dev_id = of_match_device(of_is31fl319x_match, dev);
+-	if (!of_dev_id) {
+-		dev_err(dev, "Failed to match device with supported chips\n");
++	if (reg < 1 || reg > is31->cdef->num_leds) {
++		dev_err(dev, "Node %pOF has invalid reg property\n", np);
  		return -EINVAL;
+ 	}
  
--	led->led_dev.default_trigger = of_get_property(child_node,
--					    "linux,default-trigger",
--					    NULL);
+-	is31->cdef = of_dev_id->data;
 -
- 	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
- 						   "enable", GPIOD_OUT_LOW);
- 	if (IS_ERR(led->enable_gpio)) {
-diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
-index 9079850e6ea44..da96340271dfe 100644
---- a/drivers/leds/leds-lt3593.c
-+++ b/drivers/leds/leds-lt3593.c
-@@ -86,9 +86,6 @@ static int lt3593_led_probe(struct platform_device *pdev)
+-	count = of_get_child_count(np);
++	led = &is31->leds[reg - 1];
  
- 	child = device_get_next_child_node(dev, NULL);
- 
--	fwnode_property_read_string(child, "linux,default-trigger",
--				    &led_data->cdev.default_trigger);
+-	dev_dbg(dev, "probe %s with %d leds defined in DT\n",
+-		of_dev_id->compatible, count);
 -
- 	if (!fwnode_property_read_string(child, "default-state", &tmp)) {
- 		if (!strcmp(tmp, "on"))
- 			state = LEDS_GPIO_DEFSTATE_ON;
-diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
-index 1dc14051639c9..de22c28c42a56 100644
---- a/drivers/leds/leds-tlc591xx.c
-+++ b/drivers/leds/leds-tlc591xx.c
-@@ -204,8 +204,6 @@ tlc591xx_probe(struct i2c_client *client,
- 		led = &priv->leds[reg];
+-	if (!count || count > is31->cdef->num_leds) {
+-		dev_err(dev, "Number of leds defined must be between 1 and %u\n",
+-			is31->cdef->num_leds);
+-		return -ENODEV;
++	if (led->configured) {
++		dev_err(dev, "Node %pOF reg property already used\n", np);
++		return -EEXIST;
+ 	}
  
- 		led->active = true;
--		led->ldev.default_trigger =
--			of_get_property(child, "linux,default-trigger", NULL);
+-	for_each_child_of_node(np, child) {
+-		struct is31fl319x_led *led;
+-		u32 reg;
++	led->configured = true;
++	led->chip = is31;
++	led->cdev.brightness_set_blocking = is31fl319x_brightness_set;
++	init_data.fwnode = of_fwnode_handle(np);
  
- 		led->priv = priv;
- 		led->led_no = reg;
-diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-omnia.c
-index bb23d8e166144..7ef5ee2c0773e 100644
---- a/drivers/leds/leds-turris-omnia.c
-+++ b/drivers/leds/leds-turris-omnia.c
-@@ -121,8 +121,6 @@ static int omnia_led_register(struct i2c_client *client, struct omnia_led *led,
- 	cdev->max_brightness = 255;
- 	cdev->brightness_set_blocking = omnia_led_brightness_set_blocking;
- 
--	of_property_read_string(np, "linux,default-trigger", &cdev->default_trigger);
+-		ret = of_property_read_u32(child, "reg", &reg);
+-		if (ret) {
+-			dev_err(dev, "Failed to read led 'reg' property\n");
+-			goto put_child_node;
+-		}
 -
- 	/* put the LED into software mode */
- 	ret = i2c_smbus_write_byte_data(client, CMD_LED_MODE,
- 					CMD_LED_MODE_LED(led->reg) |
+-		if (reg < 1 || reg > is31->cdef->num_leds) {
+-			dev_err(dev, "invalid led reg %u\n", reg);
+-			ret = -EINVAL;
+-			goto put_child_node;
+-		}
++	ret = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
++	if (ret)
++		dev_err(dev, "Failed to register LED for node %pOF\n", np);
+ 
+-		led = &is31->leds[reg - 1];
+-
+-		if (led->configured) {
+-			dev_err(dev, "led %u is already configured\n", reg);
+-			ret = -EINVAL;
+-			goto put_child_node;
+-		}
++	return ret;
++}
+ 
+-		ret = is31fl319x_parse_child_dt(dev, child, led);
+-		if (ret) {
+-			dev_err(dev, "led %u DT parsing failed\n", reg);
+-			goto put_child_node;
+-		}
++static int is31fl319x_parse_and_register(struct device *dev,
++					 struct is31fl319x_chip *is31)
++{
++	struct device_node *np = dev_of_node(dev), *child;
++	int ret, count;
+ 
+-		led->configured = true;
++	count = of_get_child_count(np);
++	if (count < 1 || count > is31->cdef->num_leds) {
++		dev_err(dev, "Between 1 and %u LEDs have to be defined\n",
++			is31->cdef->num_leds);
++		return -ENODEV;
+ 	}
+ 
+-	is31->audio_gain_db = 0;
+-	ret = of_property_read_u32(np, "audio-gain-db", &is31->audio_gain_db);
+-	if (!ret)
++	if (!of_property_read_u32(np, "audio-gain-db", &is31->audio_gain_db))
+ 		is31->audio_gain_db = min(is31->audio_gain_db,
+ 					  IS31FL319X_AUDIO_GAIN_DB_MAX);
+ 
+-	return 0;
++	for_each_child_of_node(np, child) {
++		ret = is31fl319x_led_register(dev, is31, child);
++		if (ret)
++			return ret;
++	}
+ 
+-put_child_node:
+-	of_node_put(child);
+-	return ret;
++	return 0;
+ }
+ 
+ static bool is31fl319x_readable_reg(struct device *dev, unsigned int reg)
+@@ -345,30 +326,43 @@ static int is31fl319x_probe(struct i2c_client *client,
+ {
+ 	struct is31fl319x_chip *is31;
+ 	struct device *dev = &client->dev;
++	struct gpio_desc *shutdown_gpio;
++	u32 aggregated_led_microamp;
+ 	int err;
+-	int i = 0;
+-	u32 aggregated_led_microamp = IS31FL319X_CURRENT_MAX;
+ 
+ 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
+ 		return -EIO;
+ 
++	/*
++	 * Kernel conventions require per-LED led-max-microamp property.
++	 * But the chip does not allow to limit individual LEDs.
++	 * So we take minimum from all subnodes for safety of hardware.
++	 */
++	err = is31fl319x_parse_max_current(dev, &aggregated_led_microamp);
++	if (err)
++		return err;
++
+ 	is31 = devm_kzalloc(&client->dev, sizeof(*is31), GFP_KERNEL);
+ 	if (!is31)
+ 		return -ENOMEM;
+ 
+-	mutex_init(&is31->lock);
+-
+-	err = is31fl319x_parse_dt(&client->dev, is31);
+-	if (err)
+-		goto free_mutex;
++	shutdown_gpio = gpiod_get_optional(dev, "shutdown", GPIOD_OUT_HIGH);
++	if (IS_ERR(shutdown_gpio)) {
++		dev_err(dev, "Failed to get shutdown gpio\n");
++		return PTR_ERR(shutdown_gpio);
++	}
+ 
+-	if (is31->shutdown_gpio) {
+-		gpiod_direction_output(is31->shutdown_gpio, 0);
++	if (shutdown_gpio) {
++		gpiod_direction_output(shutdown_gpio, 0);
+ 		mdelay(5);
+-		gpiod_direction_output(is31->shutdown_gpio, 1);
++		gpiod_direction_output(shutdown_gpio, 1);
++		gpiod_put(shutdown_gpio);
+ 	}
+ 
++	mutex_init(&is31->lock);
++
+ 	is31->client = client;
++	is31->cdef = device_get_match_data(dev);
+ 	is31->regmap = devm_regmap_init_i2c(client, &regmap_config);
+ 	if (IS_ERR(is31->regmap)) {
+ 		dev_err(&client->dev, "failed to allocate register map\n");
+@@ -387,33 +381,13 @@ static int is31fl319x_probe(struct i2c_client *client,
+ 		goto free_mutex;
+ 	}
+ 
+-	/*
+-	 * Kernel conventions require per-LED led-max-microamp property.
+-	 * But the chip does not allow to limit individual LEDs.
+-	 * So we take minimum from all subnodes for safety of hardware.
+-	 */
+-	for (i = 0; i < is31->cdef->num_leds; i++)
+-		if (is31->leds[i].configured &&
+-		    is31->leds[i].max_microamp < aggregated_led_microamp)
+-			aggregated_led_microamp = is31->leds[i].max_microamp;
+-
+ 	regmap_write(is31->regmap, IS31FL319X_CONFIG2,
+ 		     is31fl319x_microamp_to_cs(dev, aggregated_led_microamp) |
+ 		     is31fl319x_db_to_gain(is31->audio_gain_db));
+ 
+-	for (i = 0; i < is31->cdef->num_leds; i++) {
+-		struct is31fl319x_led *led = &is31->leds[i];
+-
+-		if (!led->configured)
+-			continue;
+-
+-		led->chip = is31;
+-		led->cdev.brightness_set_blocking = is31fl319x_brightness_set;
+-
+-		err = devm_led_classdev_register(&client->dev, &led->cdev);
+-		if (err < 0)
+-			goto free_mutex;
+-	}
++	err = is31fl319x_parse_and_register(dev, is31);
++	if (err)
++		goto free_mutex;
+ 
+ 	return 0;
+ 
 -- 
 2.26.2
 
