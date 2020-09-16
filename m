@@ -2,90 +2,92 @@ Return-Path: <SRS0=SVvq=CZ=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=BAYES_00,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7906FC433E2
-	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 03:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E0CC433E2
+	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 17:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FCA121D7B
-	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 03:02:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600225367;
-	bh=xTRRQfwYnHFeS9THmHPOO5pjGhiHGWMosCKlC/pCB3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1IDbBQo5xwEk3Gssatd6Lf58s6tjfXgXf1uloDzviH15meoeYwrNHweEuQGu9cMso
-	 TwB8N3WpbPwuR+9irJir1t99jE2pF/758E363q1rX84eoIiVZ1Ae/RvQ2akF21gRSs
-	 If6mQCdDDqdvz87zUzgU178I22h/3NCWPNM37HZI=
+	by mail.kernel.org (Postfix) with ESMTP id 70E512080C
+	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 17:31:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbgIPDCo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 15 Sep 2020 23:02:44 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:33301 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbgIPDCo (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 15 Sep 2020 23:02:44 -0400
-Received: by mail-il1-f195.google.com with SMTP id x2so5109089ilm.0;
-        Tue, 15 Sep 2020 20:02:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=2kkH+fKPwIcaA8L2IaDFfCxB/WkdvPOHAQcrCuc384I=;
-        b=K2E14KXMu7tskY3RxfxdkZzk2JXbviXoZjbBtdTESugsiLpZKqDgtqELJOyudLLu1P
-         kAVN3zogh4mL0+8WIskdOPfPcRvPh1vXAY1aBXTWP+2nwq6KPvaIBLXSi1qqMzcLa8NU
-         Qh97di5zxEqggXslZwxSxhb6g23q7vmpEs4CLM+9rEtR00gm5Lk19mKv0r6pUUcYt/0a
-         TQdYGP2yjDIDjgpmI21HSmKNBfLEWMyiy0SdkMtaNhTq1x/jbWhf1/ZO6/VC7hiYqVum
-         5NaktcM+iNLThc7dzwv9f8pybh/3mShU98OrrT5Va4WB16C19XHSMRhUk4jnKvkc5st1
-         Q3TQ==
-X-Gm-Message-State: AOAM530RrJMfH+3JXlYgZ3m3W6KpUWRztOPUdibSbvppZrPqJj9IFJ1v
-        a8UnOwGIwslDUX1HKAakazVAEzRK2Bsj
-X-Google-Smtp-Source: ABdhPJzYwJwL9THFwHCRfYMkFq/xktTWk+gu/EShuPHhwHDK+Q/7lWRIUd0vD5fTUXBZExXeOGKIvw==
-X-Received: by 2002:a92:9fcc:: with SMTP id z73mr12383512ilk.234.1600225362774;
-        Tue, 15 Sep 2020 20:02:42 -0700 (PDT)
-Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id h15sm9714074ils.74.2020.09.15.20.02.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Sep 2020 20:02:42 -0700 (PDT)
-Received: (nullmailer pid 2978329 invoked by uid 1000);
-        Wed, 16 Sep 2020 03:02:39 -0000
-Date:   Tue, 15 Sep 2020 21:02:39 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>
-Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH leds] dt-bindings: leds: cznic,turris-omnia-leds: fix
- error in binding
-Message-ID: <20200916030239.GA2978272@bogus>
-References: <20200915005426.15957-1-marek.behun@nic.cz>
+        id S1727102AbgIPRbH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 16 Sep 2020 13:31:07 -0400
+Received: from mx009.vodafonemail.xion.oxcs.net ([153.92.174.39]:38115 "EHLO
+        mx009.vodafonemail.xion.oxcs.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727143AbgIPRaR (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 16 Sep 2020 13:30:17 -0400
+Received: from vsmx002.vodafonemail.xion.oxcs.net (unknown [192.168.75.192])
+        by mta-6-out.mta.xion.oxcs.net (Postfix) with ESMTP id 52172605F75;
+        Wed, 16 Sep 2020 11:14:12 +0000 (UTC)
+Received: from app-33.app.xion.oxcs.net (app-33.app.xion.oxcs.net [10.10.1.33])
+        by mta-6-out.mta.xion.oxcs.net (Postfix) with ESMTPA id 0B5F7605F72;
+        Wed, 16 Sep 2020 11:14:05 +0000 (UTC)
+Date:   Wed, 16 Sep 2020 13:14:05 +0200 (CEST)
+From:   Markus Moll <moll.markus@arcor.de>
+To:     linux-leds@vger.kernel.org
+Cc:     Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>
+Message-ID: <2101433321.26224.1600254845932@mail.vodafone.de>
+In-Reply-To: <1023311712.12962.1600197989828@mail.vodafone.de>
+References: <1023311712.12962.1600197989828@mail.vodafone.de>
+Subject: [PATCH 2/2] dt: bindings: pca9532: add description of pwm and psc
+ properties
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200915005426.15957-1-marek.behun@nic.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev73
+X-Originating-Client: open-xchange-appsuite
+X-VADE-STATUS: LEGIT
 Sender: linux-leds-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Tue, 15 Sep 2020 02:54:26 +0200, Marek Behún wrote:
-> There is a bug in the device tree binding for cznic,turris-omnia-leds
-> which causes make dt_binding_check to complain.
-> 
-> The reason is that the multi-led property binding's regular expression
-> does not contain the `@` character, while the example nodes do.
-> 
-> Fix this, and also allow for longer address in property name.
-> 
-> Signed-off-by: Marek Behún <marek.behun@nic.cz>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: Pavel Machek <pavel@ucw.cz>
-> ---
->  .../devicetree/bindings/leds/cznic,turris-omnia-leds.yaml       | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+These new properties allow users to configure the PWM when the device is
+probed. This is useful for e.g. uninterrupted blinking during boot.
 
-Applied, thanks!
+Signed-off-by: Markus Moll <mmoll@de.pepperl-fuchs.com>
+---
+
+Resending this patch as it seems the first attempt wasn't successful.
+Apologies if you received this patch twice.
+
+ .../devicetree/bindings/leds/leds-pca9532.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-pca9532.txt b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+index f769c52e364..3aa05eca9df 100644
+--- a/Documentation/devicetree/bindings/leds/leds-pca9532.txt
++++ b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+@@ -11,6 +11,14 @@ Required properties:
+ "nxp,pca9533"
+ - reg - I2C slave address
+ 
++Optional properties:
++ - nxp,pwm: array of two 8-bit values specifying the blink duty cycle
++ fractions of each pwm (default )
++ The duty cycle is pwm/256.
++ - nxp,psc: array of two 8-bit values specifying the blink period of
++ each pwm (default )
++ The period is (psc+1)/152 seconds.
++
+ Each led is represented as a sub-node of the nxp,pca9530.
+
+ Optional sub-node properties:
+@@ -26,6 +34,8 @@ Example:
+ leds: pca9530@60 {
+ compatible = "nxp,pca9530";
+ reg = ;
++ nxp,pwm = /bits/ 8 ; // 50% duty cycle
++ nxp,psc = /bits/ 8 ; // 1Hz and 4Hz, respectively
+ 
+ red-power {
+ label = "pca:red:power";
+-- 
+2.25.1
