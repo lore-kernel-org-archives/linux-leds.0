@@ -5,34 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 231FFC35257
-	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 23:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE40DC433E2
+	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 23:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1A1522209
+	by mail.kernel.org (Postfix) with ESMTP id BBE8422208
 	for <linux-leds@archiver.kernel.org>; Wed, 16 Sep 2020 23:17:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="oZTCZ0t5"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="eFyzz/rH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbgIPXRp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 16 Sep 2020 19:17:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58790 "EHLO
+        id S1727464AbgIPXRo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 16 Sep 2020 19:17:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbgIPXQ4 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 16 Sep 2020 19:16:56 -0400
+        with ESMTP id S1726917AbgIPXQ5 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 16 Sep 2020 19:16:57 -0400
 Received: from mail.nic.cz (lists.nic.cz [IPv6:2001:1488:800:400::400])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB967C06174A;
-        Wed, 16 Sep 2020 16:16:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E443C061788;
+        Wed, 16 Sep 2020 16:16:56 -0700 (PDT)
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 5D487140971;
-        Thu, 17 Sep 2020 01:16:52 +0200 (CEST)
+        by mail.nic.cz (Postfix) with ESMTP id 20C79140A3F;
+        Thu, 17 Sep 2020 01:16:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600298212; bh=BHjYnLEwWCkyeXHq4xpUx10FJ5OgjPr0x73Yx4NQ6oI=;
+        t=1600298213; bh=NLdLBB/xYveBEvoEdmCbn72+W7/dMLpcsR0cKBC7yTA=;
         h=From:To:Date;
-        b=oZTCZ0t5Z7zYl0RRlUdwf7UrJT4tAIWVQjmfHWnMn3NPsB3W3CHDgB7+48BdPon9d
-         OR1uis0feQfDEtASxLT/AZuvm1n7Fo/M1k8QJkUb0us7KtFmsgxihQccKHB1Mvrv2S
-         cCdjtWWF3IMpBKyZtWtk2apwZ1O/Qx0m8sEnFNGQ=
+        b=eFyzz/rHyz+pFA91N1RYZqWayp+btcJsPS4Ig+d5OJCSqyk7GxxnmlxAetr8iNeY+
+         2OCHvjDnSk6qAdNy+QwNwLucoKIOP7LWmHqIAxszYHDMz0JAIybS/zlpr3xEKQuVcT
+         qZYpbw9EaAzDNIx2utO1792nYXpcqOUylhuVUJD4=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -40,12 +40,11 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
-        =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>, Kevin Cernekee <cernekee@gmail.com>,
-        Jaedon Shin <jaedon.shin@gmail.com>
-Subject: [PATCH leds v1 02/10] leds: bcm6328, bcm6358: use struct led_init_data when registering
-Date:   Thu, 17 Sep 2020 01:16:42 +0200
-Message-Id: <20200916231650.11484-3-marek.behun@nic.cz>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH leds v1 06/10] leds: pm8058: use struct led_init_data when registering
+Date:   Thu, 17 Sep 2020 01:16:46 +0200
+Message-Id: <20200916231650.11484-7-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200916231650.11484-1-marek.behun@nic.cz>
 References: <20200916231650.11484-1-marek.behun@nic.cz>
@@ -63,84 +62,95 @@ By using struct led_init_data when registering we do not need to parse
 `label` DT property nor `linux,default-trigger` property.
 
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
-Cc: Álvaro Fernández Rojas <noltari@gmail.com>
-Cc: Kevin Cernekee <cernekee@gmail.com>
-Cc: Jaedon Shin <jaedon.shin@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/leds/leds-bcm6328.c | 10 ++++------
- drivers/leds/leds-bcm6358.c | 10 ++++------
- 2 files changed, 8 insertions(+), 12 deletions(-)
+ drivers/leds/leds-pm8058.c | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
-index bad7efb751120..1aa47f3086060 100644
---- a/drivers/leds/leds-bcm6328.c
-+++ b/drivers/leds/leds-bcm6328.c
-@@ -328,6 +328,9 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
- 		       void __iomem *mem, spinlock_t *lock,
- 		       unsigned long *blink_leds, unsigned long *blink_delay)
+diff --git a/drivers/leds/leds-pm8058.c b/drivers/leds/leds-pm8058.c
+index 7869ccdf70ce6..f6190e4af60fe 100644
+--- a/drivers/leds/leds-pm8058.c
++++ b/drivers/leds/leds-pm8058.c
+@@ -87,36 +87,37 @@ static enum led_brightness pm8058_led_get(struct led_classdev *cled)
+ 
+ static int pm8058_led_probe(struct platform_device *pdev)
  {
-+	struct led_init_data init_data = {
-+		.fwnode = of_fwnode_handle(nc),
-+	};
- 	struct bcm6328_led *led;
++	struct led_init_data init_data = {};
++	struct device *dev = &pdev->dev;
++	enum led_brightness maxbright;
++	struct device_node *np;
+ 	struct pm8058_led *led;
+-	struct device_node *np = pdev->dev.of_node;
+-	int ret;
+ 	struct regmap *map;
  	const char *state;
- 	int rc;
-@@ -345,11 +348,6 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
- 	if (of_property_read_bool(nc, "active-low"))
- 		led->active_low = true;
+-	enum led_brightness maxbright;
++	int ret;
  
--	led->cdev.name = of_get_property(nc, "label", NULL) ? : nc->name;
--	led->cdev.default_trigger = of_get_property(nc,
--						    "linux,default-trigger",
--						    NULL);
--
- 	if (!of_property_read_string(nc, "default-state", &state)) {
- 		if (!strcmp(state, "on")) {
- 			led->cdev.brightness = LED_FULL;
-@@ -383,7 +381,7 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
- 	led->cdev.brightness_set = bcm6328_led_set;
- 	led->cdev.blink_set = bcm6328_blink_set;
+-	led = devm_kzalloc(&pdev->dev, sizeof(*led), GFP_KERNEL);
++	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+ 	if (!led)
+ 		return -ENOMEM;
  
--	rc = led_classdev_register(dev, &led->cdev);
-+	rc = led_classdev_register_ext(dev, &led->cdev, &init_data);
- 	if (rc < 0)
- 		return rc;
+-	led->ledtype = (u32)(unsigned long)of_device_get_match_data(&pdev->dev);
++	led->ledtype = (u32)(unsigned long)device_get_match_data(dev);
  
-diff --git a/drivers/leds/leds-bcm6358.c b/drivers/leds/leds-bcm6358.c
-index 94fefd456ba07..2be38211f5383 100644
---- a/drivers/leds/leds-bcm6358.c
-+++ b/drivers/leds/leds-bcm6358.c
-@@ -94,6 +94,9 @@ static void bcm6358_led_set(struct led_classdev *led_cdev,
- static int bcm6358_led(struct device *dev, struct device_node *nc, u32 reg,
- 		       void __iomem *mem, spinlock_t *lock)
- {
-+	struct led_init_data init_data = {
-+		.fwnode = of_fwnode_handle(nc),
-+	};
- 	struct bcm6358_led *led;
- 	const char *state;
- 	int rc;
-@@ -109,11 +112,6 @@ static int bcm6358_led(struct device *dev, struct device_node *nc, u32 reg,
- 	if (of_property_read_bool(nc, "active-low"))
- 		led->active_low = true;
+-	map = dev_get_regmap(pdev->dev.parent, NULL);
++	map = dev_get_regmap(dev->parent, NULL);
+ 	if (!map) {
+-		dev_err(&pdev->dev, "Parent regmap unavailable.\n");
++		dev_err(dev, "Parent regmap unavailable.\n");
+ 		return -ENXIO;
+ 	}
+ 	led->map = map;
  
--	led->cdev.name = of_get_property(nc, "label", NULL) ? : nc->name;
--	led->cdev.default_trigger = of_get_property(nc,
--						    "linux,default-trigger",
--						    NULL);
--
- 	if (!of_property_read_string(nc, "default-state", &state)) {
- 		if (!strcmp(state, "on")) {
- 			led->cdev.brightness = LED_FULL;
-@@ -137,7 +135,7 @@ static int bcm6358_led(struct device *dev, struct device_node *nc, u32 reg,
++	np = dev_of_node(dev);
++
+ 	ret = of_property_read_u32(np, "reg", &led->reg);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "no register offset specified\n");
++		dev_err(dev, "no register offset specified\n");
+ 		return -EINVAL;
+ 	}
  
- 	led->cdev.brightness_set = bcm6358_led_set;
+ 	/* Use label else node name */
+-	led->cdev.name = of_get_property(np, "label", NULL) ? : np->name;
+-	led->cdev.default_trigger =
+-		of_get_property(np, "linux,default-trigger", NULL);
+ 	led->cdev.brightness_set = pm8058_led_set;
+ 	led->cdev.brightness_get = pm8058_led_get;
+ 	if (led->ledtype == PM8058_LED_TYPE_COMMON)
+@@ -142,14 +143,13 @@ static int pm8058_led_probe(struct platform_device *pdev)
+ 	    led->ledtype == PM8058_LED_TYPE_FLASH)
+ 		led->cdev.flags	= LED_CORE_SUSPENDRESUME;
  
--	rc = led_classdev_register(dev, &led->cdev);
-+	rc = led_classdev_register_ext(dev, &led->cdev, &init_data);
- 	if (rc < 0)
- 		return rc;
+-	ret = devm_led_classdev_register(&pdev->dev, &led->cdev);
+-	if (ret) {
+-		dev_err(&pdev->dev, "unable to register led \"%s\"\n",
+-			led->cdev.name);
+-		return ret;
+-	}
++	init_data.fwnode = of_fwnode_handle(np);
++
++	ret = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
++	if (ret)
++		dev_err(dev, "Failed to register LED for node %pOF\n", np);
  
+-	return 0;
++	return ret;
+ }
+ 
+ static const struct of_device_id pm8058_leds_id_table[] = {
+@@ -173,7 +173,7 @@ static struct platform_driver pm8058_led_driver = {
+ 	.probe		= pm8058_led_probe,
+ 	.driver		= {
+ 		.name	= "pm8058-leds",
+-		.of_match_table = pm8058_leds_id_table,
++		.of_match_table = of_match_ptr(pm8058_leds_id_table),
+ 	},
+ };
+ module_platform_driver(pm8058_led_driver);
 -- 
 2.26.2
 
