@@ -5,31 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F02B3C43463
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2583AC43464
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B5588208DB
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E71782344C
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="NPcxlibo"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="QePUZ4WS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726305AbgIQWfL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 17 Sep 2020 18:35:11 -0400
-Received: from lists.nic.cz ([217.31.204.67]:35542 "EHLO mail.nic.cz"
+        id S1726677AbgIQWfR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 17 Sep 2020 18:35:17 -0400
+Received: from lists.nic.cz ([217.31.204.67]:35560 "EHLO mail.nic.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726304AbgIQWeO (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 17 Sep 2020 18:34:14 -0400
+        id S1726302AbgIQWeN (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 17 Sep 2020 18:34:13 -0400
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 674F714205C;
+        by mail.nic.cz (Postfix) with ESMTP id 0267F142059;
         Fri, 18 Sep 2020 00:34:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600382040; bh=8soMub3ZeY/I7d2RuEFY0nhJleKrPzEpa9mQS1vUimA=;
+        t=1600382040; bh=/t1nSFHylk9lL02X5X71l6V/n4Ec26C/fK5mF77jSUw=;
         h=From:To:Date;
-        b=NPcxlibo9s7NcnHGBoW8uWy14DqZsOYDs2hkoFeBuwm48xm+e/xPpIMgLidFfHF8Z
-         ScEfT2ovF0j/X3jiUnt14OsayEb/jai/6jxbtisrP970ckUpcUkEBkm5qlzxScjseh
-         g9bF/cw1BsGVHXfJU6Y8F+Yk5XjQdNlVaCf5qFI4=
+        b=QePUZ4WSxKcsjqjbBBPydWuWluzIw8q2qPiQR3I1HI9esw5BzC/DRPS0jxb4Ue3zS
+         bH0HY+FC4ol75s5YIQhNI30Cv8kE1z496SU7FKVyu6omwL39RH0PX7+ZD734EcHI5t
+         /6KEFXuoNgXUqr2anma4vNT8fUWKFBC+jO/qJ+7E=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -42,9 +42,9 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Vincent Donnefort <vdonnefort@gmail.com>,
         Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH leds v2 39/50] leds: ns2: move parsing of one LED into separate function
-Date:   Fri, 18 Sep 2020 00:33:27 +0200
-Message-Id: <20200917223338.14164-40-marek.behun@nic.cz>
+Subject: [PATCH leds v2 37/50] leds: ns2: alloc simple array instead of struct ns2_led_priv
+Date:   Fri, 18 Sep 2020 00:33:25 +0200
+Message-Id: <20200917223338.14164-38-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200917223338.14164-1-marek.behun@nic.cz>
 References: <20200917223338.14164-1-marek.behun@nic.cz>
@@ -58,8 +58,9 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Move parsing of DT properties of one LED into separate function. This
-saves indentation level and is nicer to read.
+Since .remove method is not needed now that we use devres, there is no
+need to remember the number of LEDs in struct ns2_led_priv. Alloc simple
+array of ns2_led_data structs.
 
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
 Cc: Simon Guinot <simon.guinot@sequanux.org>
@@ -68,154 +69,57 @@ Cc: Vincent Donnefort <vdonnefort@gmail.com>
 Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/leds/leds-ns2.c | 120 ++++++++++++++++++----------------------
- 1 file changed, 55 insertions(+), 65 deletions(-)
+ drivers/leds/leds-ns2.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
-index 0e9c2f49b6350..46d4f7e963c04 100644
+index 1a7ef66464b5d..8cd020b340840 100644
 --- a/drivers/leds/leds-ns2.c
 +++ b/drivers/leds/leds-ns2.c
-@@ -230,6 +230,57 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
- 	return devm_led_classdev_register(&pdev->dev, &led_dat->cdev);
- }
+@@ -334,15 +334,10 @@ static const struct of_device_id of_ns2_leds_match[] = {
+ MODULE_DEVICE_TABLE(of, of_ns2_leds_match);
+ #endif /* CONFIG_OF_GPIO */
  
-+static int ns2_leds_parse_one(struct device *dev, struct device_node *np,
-+			      struct ns2_led *led)
-+{
-+	struct ns2_led_modval *modval;
-+	int nmodes, ret, i;
-+
-+	ret = of_property_read_string(np, "label", &led->name);
-+	if (ret)
-+		led->name = np->name;
-+
-+	led->cmd = gpiod_get_from_of_node(np, "cmd-gpio", 0, GPIOD_ASIS,
-+					  led->name);
-+	if (IS_ERR(led->cmd))
-+		return PTR_ERR(led->cmd);
-+
-+	led->slow = gpiod_get_from_of_node(np, "slow-gpio", 0, GPIOD_ASIS,
-+					   led->name);
-+	if (IS_ERR(led->slow))
-+		return PTR_ERR(led->slow);
-+
-+	of_property_read_string(np, "linux,default-trigger",
-+				&led->default_trigger);
-+
-+	ret = of_property_count_u32_elems(np, "modes-map");
-+	if (ret < 0 || ret % 3) {
-+		dev_err(dev, "Missing or malformed modes-map for %pOF\n", np);
-+		return -EINVAL;
-+	}
-+
-+	nmodes = ret / 3;
-+	modval = devm_kcalloc(dev, nmodes, sizeof(*modval), GFP_KERNEL);
-+	if (!modval)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < nmodes; i++) {
-+		u32 val;
-+
-+		of_property_read_u32_index(np, "modes-map", 3 * i, &val);
-+		modval[i].mode = val;
-+		of_property_read_u32_index(np, "modes-map", 3 * i + 1, &val);
-+		modval[i].cmd_level = val;
-+		of_property_read_u32_index(np, "modes-map", 3 * i + 2, &val);
-+		modval[i].slow_level = val;
-+	}
-+
-+	led->num_modes = nmodes;
-+	led->modval = modval;
-+
-+	return 0;
-+}
-+
- /*
-  * Translate OpenFirmware node properties into platform_data.
-  */
-@@ -252,78 +303,17 @@ ns2_leds_parse_of(struct device *dev, struct ns2_led_of *ofdata)
+-struct ns2_led_priv {
+-	int num_leds;
+-	struct ns2_led_data leds_data[];
+-};
+-
+ static int ns2_led_probe(struct platform_device *pdev)
+ {
+ 	struct ns2_led_platform_data *pdata = dev_get_platdata(&pdev->dev);
+-	struct ns2_led_priv *priv;
++	struct ns2_led_data *leds;
+ 	int i;
+ 	int ret;
  
- 	led = leds;
- 	for_each_available_child_of_node(np, child) {
--		const char *string;
--		int i, num_modes;
--		struct ns2_led_modval *modval;
--		struct gpio_desc *gd;
--
--		ret = of_property_read_string(child, "label", &string);
--		led->name = (ret == 0) ? string : child->name;
--
--		gd = gpiod_get_from_of_node(child, "cmd-gpio", 0,
--					    GPIOD_ASIS, led->name);
--		if (IS_ERR(gd)) {
--			ret = PTR_ERR(gd);
--			goto err_node_put;
--		}
--		led->cmd = gd;
--		gd = gpiod_get_from_of_node(child, "slow-gpio", 0,
--					    GPIOD_ASIS, led->name);
--		if (IS_ERR(gd)) {
--			ret = PTR_ERR(gd);
--			goto err_node_put;
--		}
--		led->slow = gd;
--
--		ret = of_property_read_string(child, "linux,default-trigger",
--					      &string);
--		if (ret == 0)
--			led->default_trigger = string;
--
--		ret = of_property_count_u32_elems(child, "modes-map");
--		if (ret < 0 || ret % 3) {
--			dev_err(dev,
--				"Missing or malformed modes-map property\n");
--			ret = -EINVAL;
--			goto err_node_put;
--		}
--
--		num_modes = ret / 3;
--		modval = devm_kcalloc(dev,
--				      num_modes,
--				      sizeof(struct ns2_led_modval),
--				      GFP_KERNEL);
--		if (!modval) {
--			ret = -ENOMEM;
--			goto err_node_put;
--		}
--
--		for (i = 0; i < num_modes; i++) {
--			of_property_read_u32_index(child,
--						"modes-map", 3 * i,
--						(u32 *) &modval[i].mode);
--			of_property_read_u32_index(child,
--						"modes-map", 3 * i + 1,
--						(u32 *) &modval[i].cmd_level);
--			of_property_read_u32_index(child,
--						"modes-map", 3 * i + 2,
--						(u32 *) &modval[i].slow_level);
-+		ret = ns2_leds_parse_one(dev, child, led++);
-+		if (ret < 0) {
-+			of_node_put(child);
-+			return ret;
- 		}
--
--		led->num_modes = num_modes;
--		led->modval = modval;
--
--		led++;
+@@ -363,20 +358,18 @@ static int ns2_led_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ #endif /* CONFIG_OF_GPIO */
+ 
+-	priv = devm_kzalloc(&pdev->dev, struct_size(priv, leds_data, pdata->num_leds), GFP_KERNEL);
+-	if (!priv)
++	leds = devm_kzalloc(&pdev->dev, array_size(sizeof(*leds),
++						   pdata->num_leds),
++			    GFP_KERNEL);
++	if (!leds)
+ 		return -ENOMEM;
+-	priv->num_leds = pdata->num_leds;
+ 
+-	for (i = 0; i < priv->num_leds; i++) {
+-		ret = create_ns2_led(pdev, &priv->leds_data[i],
+-				     &pdata->leds[i]);
++	for (i = 0; i < pdata->num_leds; i++) {
++		ret = create_ns2_led(pdev, &leds[i], &pdata->leds[i]);
+ 		if (ret < 0)
+ 			return ret;
  	}
  
- 	ofdata->leds = leds;
- 	ofdata->num_leds = num_leds;
- 
- 	return 0;
+-	platform_set_drvdata(pdev, priv);
 -
--err_node_put:
--	of_node_put(child);
--	return ret;
+ 	return 0;
  }
  
- static const struct of_device_id of_ns2_leds_match[] = {
 -- 
 2.26.2
 
