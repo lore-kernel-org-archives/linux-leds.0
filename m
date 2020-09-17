@@ -2,34 +2,37 @@ Return-Path: <SRS0=SVrG=C2=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD68C43464
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09614C43465
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8542C208DB
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:36:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3395208DB
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:36:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="EomSSvdO"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="o+GnToks"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726250AbgIQWeB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 17 Sep 2020 18:34:01 -0400
-Received: from lists.nic.cz ([217.31.204.67]:35328 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725987AbgIQWd4 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 17 Sep 2020 18:33:56 -0400
+        id S1726862AbgIQWgj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 17 Sep 2020 18:36:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49412 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbgIQWeA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 17 Sep 2020 18:34:00 -0400
+Received: from mail.nic.cz (mail.nic.cz [IPv6:2001:1488:800:400::400])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3A5EC06174A;
+        Thu, 17 Sep 2020 15:33:56 -0700 (PDT)
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 5E0D1140A46;
-        Fri, 18 Sep 2020 00:33:52 +0200 (CEST)
+        by mail.nic.cz (Postfix) with ESMTP id AD65B140A7D;
+        Fri, 18 Sep 2020 00:33:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600382032; bh=TJuUID/L9eaDnNRsRdqcK0Cxl9UEdL6iLjD3qM5pZTs=;
+        t=1600382034; bh=jJvOc2XdLe1mhBOZdhONqVvFbjD8Z3fnX62K60JuT7Y=;
         h=From:To:Date;
-        b=EomSSvdO1o33fzVItTb4OJuriitP+/LnsNdlUuTNyoOP3XGJY6Edm8M9YVDA8vxL4
-         H74xSIGK/PJBrfKmnIJtrilTwmGK39TFHjDHsJwROakmcWDbGblKejg7wpDLyQwxnq
-         GB/w+wUkZ98VuTz26zPlICIRc9PKjfJVesgTFsGI=
+        b=o+GnToks2H1CpY3tK8E7CP00lpn7vNtxiarRbi07022j9IqelYpblTpnGh+GNwAP6
+         +WxQwI+JqV3pIAFYdWAITa3b2rkjaHNUaFnUCu630kwhwcS642qHQ/6vyTdBx772dJ
+         KHx89Oz+8Wdh+4IE0L35c26evRSTp+0MONGgvOdE=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -37,56 +40,27 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
-        =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Andrey Utkin <andrey_utkin@fastmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Christian Mauderer <oss@c-mauderer.de>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Daniel Mack <daniel@caiaq.de>,
-        David Rivshin <drivshin@allworx.com>,
-        Grant Feng <von81@163.com>,
-        Haojian Zhuang <haojian.zhuang@marvell.com>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Jaedon Shin <jaedon.shin@gmail.com>,
-        John Crispin <john@phrozen.org>,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        Milo Kim <milo.kim@ti.com>, NeilBrown <neilb@suse.de>,
-        Nikita Travkin <nikitos.tr@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
-        Philippe Retornaz <philippe.retornaz@epfl.ch>,
-        Riku Voipio <riku.voipio@iki.fi>,
-        Rod Whitby <rod@whitby.id.au>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Simon Guinot <sguinot@lacie.com>,
-        Simon Guinot <simon.guinot@sequanux.org>,
-        Simon Shields <simon@lineageos.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Vasant Hegde <hegdevasant@linux.vnet.ibm.com>,
-        Vincent Donnefort <vdonnefort@gmail.com>,
-        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-Subject: [PATCH leds v2 00/50] Start moving parsing of `linux,default-trigger` to LED core (a cleanup of LED drivers)
-Date:   Fri, 18 Sep 2020 00:32:48 +0200
-Message-Id: <20200917223338.14164-1-marek.behun@nic.cz>
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH leds v2 05/50] leds: various: guard of_match_table member value with of_match_ptr
+Date:   Fri, 18 Sep 2020 00:32:53 +0200
+Message-Id: <20200917223338.14164-6-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200917223338.14164-1-marek.behun@nic.cz>
+References: <20200917223338.14164-1-marek.behun@nic.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -97,184 +71,453 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi,
+Change
+  .of_match_table = xxx,
+to
+  .of_match_table = of_match_ptr(xxx),
+in various drivers.
 
-this series is also available at [1].
+This should be standard even for drivers that depend on OF.
 
-This is v2, you can read cover letter of v1 at [2] (togehter with
-explanation of why I did this).
-
-Changes since v1:
-- split big changes into several patches of little changes
-- added many cosmetic fixes (helper variables, reversal christmas tree
-  variables declaration, ...)
-- fixed some bugs in various drivers (memory leaks, iteration over
-  unavailable OF nodes)
-- made some drivers compilable when COMPILE_TEST=y (since allyesconfig
-  did not compile them). Not all though, some still don't compile with
-  allyesconfig
-- the commit that moves parsing of `linux,default-trigger` property from
-  drivers to LED core is now last in the series, instead of first
-
-Marek
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/kabel/linux.git/log/?h=leds-cleanup-for-pavel
-[2] https://lore.kernel.org/linux-leds/20200916231650.11484-1-marek.behun@nic.cz/T/#m826493318174b0f38a3d4ba107092b5420ce440c
-
-Cc: Álvaro Fernández Rojas <noltari@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrey Utkin <andrey_utkin@fastmail.com>
-Cc: Baolin Wang <baolin.wang7@gmail.com>
-Cc: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Marek Behún <marek.behun@nic.cz>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Christian Mauderer <oss@c-mauderer.de>
-Cc: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Daniel Mack <daniel@caiaq.de>
-Cc: Dan Murphy <dmurphy@ti.com>
-Cc: David Rivshin <drivshin@allworx.com>
-Cc: Grant Feng <von81@163.com>
-Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
-Cc: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Jaedon Shin <jaedon.shin@gmail.com>
-Cc: John Crispin <john@phrozen.org>
-Cc: Kevin Cernekee <cernekee@gmail.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
+Cc: Sean Wang <sean.wang@mediatek.com>
 Cc: Matthias Brugger <matthias.bgg@gmail.com>
 Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Milo Kim <milo.kim@ti.com>
-Cc: NeilBrown <neilb@suse.de>
-Cc: Nikita Travkin <nikitos.tr@gmail.com>
-Cc: Orson Zhai <orsonzhai@gmail.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc: Paul Mackerras <paulus@samba.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Philippe Retornaz <philippe.retornaz@epfl.ch>
-Cc: Riku Voipio <riku.voipio@iki.fi>
-Cc: Rod Whitby <rod@whitby.id.au>
-Cc: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Sean Wang <sean.wang@mediatek.com>
-Cc: Sebastian Reichel <sre@kernel.org>
-Cc: Simon Guinot <sguinot@lacie.com>
-Cc: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Simon Shields <simon@lineageos.org>
+Cc: Orson Zhai <orsonzhai@gmail.com>
+Cc: Baolin Wang <baolin.wang7@gmail.com>
+Cc: Chunyan Zhang <zhang.lyra@gmail.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: "Uwe Kleine-König" <u.kleine-koenig@pengutronix.de>
-Cc: Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
-Cc: Vincent Donnefort <vdonnefort@gmail.com>
-Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+---
+ drivers/leds/leds-aat1290.c      | 2 +-
+ drivers/leds/leds-as3645a.c      | 2 +-
+ drivers/leds/leds-bcm6328.c      | 2 +-
+ drivers/leds/leds-bcm6358.c      | 2 +-
+ drivers/leds/leds-cpcap.c        | 2 +-
+ drivers/leds/leds-cr0014114.c    | 2 +-
+ drivers/leds/leds-el15203000.c   | 2 +-
+ drivers/leds/leds-gpio.c         | 2 +-
+ drivers/leds/leds-is31fl32xx.c   | 2 +-
+ drivers/leds/leds-ktd2692.c      | 2 +-
+ drivers/leds/leds-lm3532.c       | 2 +-
+ drivers/leds/leds-lm3601x.c      | 2 +-
+ drivers/leds/leds-lm3692x.c      | 2 +-
+ drivers/leds/leds-lm3697.c       | 2 +-
+ drivers/leds/leds-lp50xx.c       | 2 +-
+ drivers/leds/leds-lp8860.c       | 2 +-
+ drivers/leds/leds-max77650.c     | 2 +-
+ drivers/leds/leds-max77693.c     | 2 +-
+ drivers/leds/leds-mt6323.c       | 2 +-
+ drivers/leds/leds-netxbig.c      | 2 +-
+ drivers/leds/leds-pca955x.c      | 2 +-
+ drivers/leds/leds-pca963x.c      | 2 +-
+ drivers/leds/leds-pm8058.c       | 2 +-
+ drivers/leds/leds-powernv.c      | 2 +-
+ drivers/leds/leds-pwm.c          | 2 +-
+ drivers/leds/leds-sc27xx-bltc.c  | 2 +-
+ drivers/leds/leds-sgm3140.c      | 2 +-
+ drivers/leds/leds-spi-byte.c     | 2 +-
+ drivers/leds/leds-syscon.c       | 2 +-
+ drivers/leds/leds-turris-omnia.c | 2 +-
+ 30 files changed, 30 insertions(+), 30 deletions(-)
 
-Marek Behún (50):
-  leds: various: compile if COMPILE_TEST=y
-  leds: ip30: compile if COMPILE_TEST=y
-  leds: fsg: compile if COMPILE_TEST=y
-  leds: various: use device_get_match_data
-  leds: various: guard of_match_table member value with of_match_ptr
-  leds: various: use dev_of_node(dev) instead of dev->of_node
-  leds: lt3593: do not rewrite .of_node of new LED device to wrong value
-  leds: various: use only available OF children
-  leds: various: fix OF node leaks
-  leds: bcm6328, bcm6358: use devres LED registering function
-  leds: bcm6328, bcm6358: use struct led_init_data when registering
-  leds: bcm6328: cosmetic: use reverse christmas tree
-  leds: bcm6358: cosmetic: use reverse christmas tree
-  leds: lm3697: use struct led_init_data when registering
-  leds: lm3697: cosmetic change: use helper variable, reverse christmas
-    tree
-  leds: max77650: use struct led_init_data when registering
-  leds: max77650: use reverse christmas tree
-  leds: mt6323: use struct led_init_data when registering
-  leds: mt6323: cosmetic change: use helper variable
-  leds: pm8058: use struct led_init_data when registering
-  leds: pm8058: cosmetic change: use helper variable
-  leds: pm8058: cosmetic change: no need to return in if guard
-  leds: pm8058: cosmetic: use reverse christmas tree
-  leds: is31fl32xx: use struct led_init_data when registering
-  leds: is31fl319x: compute aggregated max current separately
-  leds: is31fl319x: don't store shutdown gpio descriptor
-  leds: is31fl319x: don't store audio gain value, simply set it
-  leds: is31fl319x: refactor to register LEDs while parsing DT
-  leds: is31fl319x: cosmetic: use reverse christmas tree
-  leds: is31fl319x: use struct led_init_data when registering
-  leds: lm36274: use devres LED registering function
-  leds: lm36274: cosmetic: rename lm36274_data to chip
-  leds: lm36274: don't iterate through children since there is only one
-  leds: lm36274: use struct led_init_data when registering
-  leds: lm36274: do not set chip settings in DT parsing function
-  leds: ns2: use devres LED registering function
-  leds: ns2: alloc simple array instead of struct ns2_led_priv
-  leds: ns2: support OF probing only, forget platdata
-  leds: ns2: move parsing of one LED into separate function
-  leds: ns2: use devres API for getting GPIO descriptors
-  leds: ns2: cosmetic structure rename
-  leds: ns2: cosmetic variable rename
-  leds: ns2: cosmetic change
-  leds: ns2: cosmetic change: use helper variable
-  leds: ns2: register LED immediately after parsing DT properties
-  leds: ns2: remove unneeded variable
-  leds: ns2: cosmetic: use reverse christmas tree
-  leds: ns2: reorder headers alphabetically
-  leds: ns2: use struct led_init_data when registering
-  leds: parse linux,default-trigger DT property in LED core
-
- drivers/leds/Kconfig              |  14 +-
- drivers/leds/led-class.c          |   5 +
- drivers/leds/leds-88pm860x.c      |   6 +-
- drivers/leds/leds-aat1290.c       |   4 +-
- drivers/leds/leds-an30259a.c      |   7 +-
- drivers/leds/leds-as3645a.c       |   2 +-
- drivers/leds/leds-aw2013.c        |  11 +-
- drivers/leds/leds-bcm6328.c       |  28 ++-
- drivers/leds/leds-bcm6358.c       |  20 +-
- drivers/leds/leds-cpcap.c         |   9 +-
- drivers/leds/leds-cr0014114.c     |   5 +-
- drivers/leds/leds-el15203000.c    |   5 +-
- drivers/leds/leds-fsg.c           |   6 +
- drivers/leds/leds-gpio.c          |   5 +-
- drivers/leds/leds-ip30.c          |   1 +
- drivers/leds/leds-is31fl319x.c    | 260 +++++++++++-----------
- drivers/leds/leds-is31fl32xx.c    |  35 ++-
- drivers/leds/leds-ktd2692.c       |   6 +-
- drivers/leds/leds-lm3532.c        |   5 +-
- drivers/leds/leds-lm3601x.c       |   2 +-
- drivers/leds/leds-lm36274.c       | 122 +++++------
- drivers/leds/leds-lm3692x.c       |   5 +-
- drivers/leds/leds-lm3697.c        |  96 ++++----
- drivers/leds/leds-lp50xx.c        |   2 +-
- drivers/leds/leds-lp5521.c        |   2 +-
- drivers/leds/leds-lp5523.c        |   2 +-
- drivers/leds/leds-lp5562.c        |   2 +-
- drivers/leds/leds-lp55xx-common.c |  14 +-
- drivers/leds/leds-lp8501.c        |   2 +-
- drivers/leds/leds-lp8860.c        |   8 +-
- drivers/leds/leds-lt3593.c        |   6 +-
- drivers/leds/leds-max77650.c      |  28 +--
- drivers/leds/leds-max77693.c      |   4 +-
- drivers/leds/leds-mc13783.c       |   8 +-
- drivers/leds/leds-mt6323.c        |  22 +-
- drivers/leds/leds-netxbig.c       |   8 +-
- drivers/leds/leds-ns2.c           | 349 ++++++++++--------------------
- drivers/leds/leds-pca9532.c       |   4 +-
- drivers/leds/leds-pca955x.c       |   2 +-
- drivers/leds/leds-pca963x.c       |   2 +-
- drivers/leds/leds-pm8058.c        |  43 ++--
- drivers/leds/leds-powernv.c       |   4 +-
- drivers/leds/leds-pwm.c           |   2 +-
- drivers/leds/leds-sc27xx-bltc.c   |   8 +-
- drivers/leds/leds-sgm3140.c       |   2 +-
- drivers/leds/leds-spi-byte.c      |  13 +-
- drivers/leds/leds-syscon.c        |   6 +-
- drivers/leds/leds-tca6507.c       |   8 +-
- drivers/leds/leds-tlc591xx.c      |  16 +-
- drivers/leds/leds-turris-omnia.c  |  10 +-
- 50 files changed, 511 insertions(+), 725 deletions(-)
-
+diff --git a/drivers/leds/leds-aat1290.c b/drivers/leds/leds-aat1290.c
+index 5a0fe7b7b8bc7..c78a29ab8e9fb 100644
+--- a/drivers/leds/leds-aat1290.c
++++ b/drivers/leds/leds-aat1290.c
+@@ -545,7 +545,7 @@ static struct platform_driver aat1290_led_driver = {
+ 	.remove		= aat1290_led_remove,
+ 	.driver		= {
+ 		.name	= "aat1290",
+-		.of_match_table = aat1290_led_dt_match,
++		.of_match_table = of_match_ptr(aat1290_led_dt_match),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+index e8922fa033796..50b12e440d88d 100644
+--- a/drivers/leds/leds-as3645a.c
++++ b/drivers/leds/leds-as3645a.c
+@@ -757,7 +757,7 @@ MODULE_DEVICE_TABLE(of, as3645a_of_table);
+ 
+ static struct i2c_driver as3645a_i2c_driver = {
+ 	.driver	= {
+-		.of_match_table = as3645a_of_table,
++		.of_match_table = of_match_ptr(as3645a_of_table),
+ 		.name = AS_NAME,
+ 	},
+ 	.probe_new	= as3645a_probe,
+diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
+index bad7efb751120..65a3857efa4ed 100644
+--- a/drivers/leds/leds-bcm6328.c
++++ b/drivers/leds/leds-bcm6328.c
+@@ -477,7 +477,7 @@ static struct platform_driver bcm6328_leds_driver = {
+ 	.probe = bcm6328_leds_probe,
+ 	.driver = {
+ 		.name = "leds-bcm6328",
+-		.of_match_table = bcm6328_leds_of_match,
++		.of_match_table = of_match_ptr(bcm6328_leds_of_match),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-bcm6358.c b/drivers/leds/leds-bcm6358.c
+index 94fefd456ba07..44fd1ba4be57e 100644
+--- a/drivers/leds/leds-bcm6358.c
++++ b/drivers/leds/leds-bcm6358.c
+@@ -220,7 +220,7 @@ static struct platform_driver bcm6358_leds_driver = {
+ 	.probe = bcm6358_leds_probe,
+ 	.driver = {
+ 		.name = "leds-bcm6358",
+-		.of_match_table = bcm6358_leds_of_match,
++		.of_match_table = of_match_ptr(bcm6358_leds_of_match),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-cpcap.c b/drivers/leds/leds-cpcap.c
+index 7d41ce8c9bb1e..263e4bbf3fda5 100644
+--- a/drivers/leds/leds-cpcap.c
++++ b/drivers/leds/leds-cpcap.c
+@@ -216,7 +216,7 @@ static struct platform_driver cpcap_led_driver = {
+ 	.probe = cpcap_led_probe,
+ 	.driver = {
+ 		.name = "cpcap-led",
+-		.of_match_table = cpcap_led_of_match,
++		.of_match_table = of_match_ptr(cpcap_led_of_match),
+ 	},
+ };
+ module_platform_driver(cpcap_led_driver);
+diff --git a/drivers/leds/leds-cr0014114.c b/drivers/leds/leds-cr0014114.c
+index 2da448ae718e9..a2f5638eda5f7 100644
+--- a/drivers/leds/leds-cr0014114.c
++++ b/drivers/leds/leds-cr0014114.c
+@@ -291,7 +291,7 @@ static struct spi_driver cr0014114_driver = {
+ 	.remove		= cr0014114_remove,
+ 	.driver = {
+ 		.name		= KBUILD_MODNAME,
+-		.of_match_table	= cr0014114_dt_ids,
++		.of_match_table	= of_match_ptr(cr0014114_dt_ids),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-el15203000.c b/drivers/leds/leds-el15203000.c
+index 298b13e4807a8..bcd13a7fc9d02 100644
+--- a/drivers/leds/leds-el15203000.c
++++ b/drivers/leds/leds-el15203000.c
+@@ -345,7 +345,7 @@ static struct spi_driver el15203000_driver = {
+ 	.remove		= el15203000_remove,
+ 	.driver = {
+ 		.name		= KBUILD_MODNAME,
+-		.of_match_table	= el15203000_dt_ids,
++		.of_match_table	= of_match_ptr(el15203000_dt_ids),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index cf84096d88cec..aa740267eb232 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -311,7 +311,7 @@ static struct platform_driver gpio_led_driver = {
+ 	.shutdown	= gpio_led_shutdown,
+ 	.driver		= {
+ 		.name	= "leds-gpio",
+-		.of_match_table = of_gpio_leds_match,
++		.of_match_table = of_match_ptr(of_gpio_leds_match),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
+index acf51e17e8df6..408eb5fad4cb0 100644
+--- a/drivers/leds/leds-is31fl32xx.c
++++ b/drivers/leds/leds-is31fl32xx.c
+@@ -485,7 +485,7 @@ MODULE_DEVICE_TABLE(i2c, is31fl32xx_id);
+ static struct i2c_driver is31fl32xx_driver = {
+ 	.driver = {
+ 		.name	= "is31fl32xx",
+-		.of_match_table = of_is31fl32xx_match,
++		.of_match_table = of_match_ptr(of_is31fl32xx_match),
+ 	},
+ 	.probe		= is31fl32xx_probe,
+ 	.remove		= is31fl32xx_remove,
+diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
+index 670efee9b1317..63917db8cac39 100644
+--- a/drivers/leds/leds-ktd2692.c
++++ b/drivers/leds/leds-ktd2692.c
+@@ -402,7 +402,7 @@ MODULE_DEVICE_TABLE(of, ktd2692_match);
+ static struct platform_driver ktd2692_driver = {
+ 	.driver = {
+ 		.name  = "ktd2692",
+-		.of_match_table = ktd2692_match,
++		.of_match_table = of_match_ptr(ktd2692_match),
+ 	},
+ 	.probe  = ktd2692_probe,
+ 	.remove = ktd2692_remove,
+diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
+index 946ad67eaecb7..3670cc64eee7b 100644
+--- a/drivers/leds/leds-lm3532.c
++++ b/drivers/leds/leds-lm3532.c
+@@ -752,7 +752,7 @@ static struct i2c_driver lm3532_i2c_driver = {
+ 	.id_table = lm3532_id,
+ 	.driver = {
+ 		.name = LM3532_NAME,
+-		.of_match_table = of_lm3532_leds_match,
++		.of_match_table = of_match_ptr(of_lm3532_leds_match),
+ 	},
+ };
+ module_i2c_driver(lm3532_i2c_driver);
+diff --git a/drivers/leds/leds-lm3601x.c b/drivers/leds/leds-lm3601x.c
+index d0e1d4814042e..e12b9fbac4c1a 100644
+--- a/drivers/leds/leds-lm3601x.c
++++ b/drivers/leds/leds-lm3601x.c
+@@ -468,7 +468,7 @@ MODULE_DEVICE_TABLE(of, of_lm3601x_leds_match);
+ static struct i2c_driver lm3601x_i2c_driver = {
+ 	.driver = {
+ 		.name = "lm3601x",
+-		.of_match_table = of_lm3601x_leds_match,
++		.of_match_table = of_match_ptr(of_lm3601x_leds_match),
+ 	},
+ 	.probe_new = lm3601x_probe,
+ 	.remove = lm3601x_remove,
+diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+index 1d7ea1b76a125..ba535ee8fd252 100644
+--- a/drivers/leds/leds-lm3692x.c
++++ b/drivers/leds/leds-lm3692x.c
+@@ -525,7 +525,7 @@ MODULE_DEVICE_TABLE(of, of_lm3692x_leds_match);
+ static struct i2c_driver lm3692x_driver = {
+ 	.driver = {
+ 		.name	= "lm3692x",
+-		.of_match_table = of_lm3692x_leds_match,
++		.of_match_table = of_match_ptr(of_lm3692x_leds_match),
+ 	},
+ 	.probe		= lm3692x_probe,
+ 	.remove		= lm3692x_remove,
+diff --git a/drivers/leds/leds-lm3697.c b/drivers/leds/leds-lm3697.c
+index 024983088d599..5d14f3d2220af 100644
+--- a/drivers/leds/leds-lm3697.c
++++ b/drivers/leds/leds-lm3697.c
+@@ -379,7 +379,7 @@ MODULE_DEVICE_TABLE(of, of_lm3697_leds_match);
+ static struct i2c_driver lm3697_driver = {
+ 	.driver = {
+ 		.name	= "lm3697",
+-		.of_match_table = of_lm3697_leds_match,
++		.of_match_table = of_match_ptr(of_lm3697_leds_match),
+ 	},
+ 	.probe		= lm3697_probe,
+ 	.remove		= lm3697_remove,
+diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
+index 47144a37cb945..1f8be335084d5 100644
+--- a/drivers/leds/leds-lp50xx.c
++++ b/drivers/leds/leds-lp50xx.c
+@@ -621,7 +621,7 @@ MODULE_DEVICE_TABLE(of, of_lp50xx_leds_match);
+ static struct i2c_driver lp50xx_driver = {
+ 	.driver = {
+ 		.name	= "lp50xx",
+-		.of_match_table = of_lp50xx_leds_match,
++		.of_match_table = of_match_ptr(of_lp50xx_leds_match),
+ 	},
+ 	.probe		= lp50xx_probe,
+ 	.remove		= lp50xx_remove,
+diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+index ac2f5d6272dc0..6eb323212da3c 100644
+--- a/drivers/leds/leds-lp8860.c
++++ b/drivers/leds/leds-lp8860.c
+@@ -484,7 +484,7 @@ MODULE_DEVICE_TABLE(of, of_lp8860_leds_match);
+ static struct i2c_driver lp8860_driver = {
+ 	.driver = {
+ 		.name	= "lp8860",
+-		.of_match_table = of_lp8860_leds_match,
++		.of_match_table = of_match_ptr(of_lp8860_leds_match),
+ 	},
+ 	.probe		= lp8860_probe,
+ 	.remove		= lp8860_remove,
+diff --git a/drivers/leds/leds-max77650.c b/drivers/leds/leds-max77650.c
+index a0d4b725c9178..56a37d4b7df63 100644
+--- a/drivers/leds/leds-max77650.c
++++ b/drivers/leds/leds-max77650.c
+@@ -144,7 +144,7 @@ MODULE_DEVICE_TABLE(of, max77650_led_of_match);
+ static struct platform_driver max77650_led_driver = {
+ 	.driver = {
+ 		.name = "max77650-led",
+-		.of_match_table = max77650_led_of_match,
++		.of_match_table = of_match_ptr(max77650_led_of_match),
+ 	},
+ 	.probe = max77650_led_probe,
+ };
+diff --git a/drivers/leds/leds-max77693.c b/drivers/leds/leds-max77693.c
+index fec56090c2ba3..1d8e2ffe7ad46 100644
+--- a/drivers/leds/leds-max77693.c
++++ b/drivers/leds/leds-max77693.c
+@@ -1047,7 +1047,7 @@ static struct platform_driver max77693_led_driver = {
+ 	.remove		= max77693_led_remove,
+ 	.driver		= {
+ 		.name	= "max77693-led",
+-		.of_match_table = max77693_led_dt_match,
++		.of_match_table = of_match_ptr(max77693_led_dt_match),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-mt6323.c b/drivers/leds/leds-mt6323.c
+index 7b240771e45bb..80b57a39445cb 100644
+--- a/drivers/leds/leds-mt6323.c
++++ b/drivers/leds/leds-mt6323.c
+@@ -482,7 +482,7 @@ static struct platform_driver mt6323_led_driver = {
+ 	.remove		= mt6323_led_remove,
+ 	.driver		= {
+ 		.name	= "mt6323-led",
+-		.of_match_table = mt6323_led_dt_match,
++		.of_match_table = of_match_ptr(mt6323_led_dt_match),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
+index ceceeb6a0e966..7f3313e321fa6 100644
+--- a/drivers/leds/leds-netxbig.c
++++ b/drivers/leds/leds-netxbig.c
+@@ -617,7 +617,7 @@ static struct platform_driver netxbig_led_driver = {
+ 	.probe		= netxbig_led_probe,
+ 	.driver		= {
+ 		.name		= "leds-netxbig",
+-		.of_match_table	= of_netxbig_leds_match,
++		.of_match_table	= of_match_ptr(of_netxbig_leds_match),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index 7087ca4592fc9..7da2b88a89197 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -579,7 +579,7 @@ static int pca955x_probe(struct i2c_client *client,
+ static struct i2c_driver pca955x_driver = {
+ 	.driver = {
+ 		.name	= "leds-pca955x",
+-		.of_match_table = of_pca955x_match,
++		.of_match_table = of_match_ptr(of_pca955x_match),
+ 	},
+ 	.probe	= pca955x_probe,
+ 	.id_table = pca955x_id,
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index d288acbc99c7c..d3969c7914656 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -473,7 +473,7 @@ static int pca963x_remove(struct i2c_client *client)
+ static struct i2c_driver pca963x_driver = {
+ 	.driver = {
+ 		.name	= "leds-pca963x",
+-		.of_match_table = of_pca963x_match,
++		.of_match_table = of_match_ptr(of_pca963x_match),
+ 	},
+ 	.probe	= pca963x_probe,
+ 	.remove	= pca963x_remove,
+diff --git a/drivers/leds/leds-pm8058.c b/drivers/leds/leds-pm8058.c
+index 7869ccdf70ce6..d9e8ea80cd167 100644
+--- a/drivers/leds/leds-pm8058.c
++++ b/drivers/leds/leds-pm8058.c
+@@ -173,7 +173,7 @@ static struct platform_driver pm8058_led_driver = {
+ 	.probe		= pm8058_led_probe,
+ 	.driver		= {
+ 		.name	= "pm8058-leds",
+-		.of_match_table = pm8058_leds_id_table,
++		.of_match_table = of_match_ptr(pm8058_leds_id_table),
+ 	},
+ };
+ module_platform_driver(pm8058_led_driver);
+diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+index cd43d5dff7f48..d803726300ff4 100644
+--- a/drivers/leds/leds-powernv.c
++++ b/drivers/leds/leds-powernv.c
+@@ -338,7 +338,7 @@ static struct platform_driver powernv_led_driver = {
+ 	.remove = powernv_led_remove,
+ 	.driver = {
+ 		.name = "powernv-led-driver",
+-		.of_match_table = powernv_led_match,
++		.of_match_table = of_match_ptr(powernv_led_match),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index e35a97c1d8285..02c9c7a32251e 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -190,7 +190,7 @@ static struct platform_driver led_pwm_driver = {
+ 	.probe		= led_pwm_probe,
+ 	.driver		= {
+ 		.name	= "leds_pwm",
+-		.of_match_table = of_pwm_leds_match,
++		.of_match_table = of_match_ptr(of_pwm_leds_match),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
+index 0ede87420bfc7..3401ad389c8d9 100644
+--- a/drivers/leds/leds-sc27xx-bltc.c
++++ b/drivers/leds/leds-sc27xx-bltc.c
+@@ -347,7 +347,7 @@ MODULE_DEVICE_TABLE(of, sc27xx_led_of_match);
+ static struct platform_driver sc27xx_led_driver = {
+ 	.driver = {
+ 		.name = "sprd-bltc",
+-		.of_match_table = sc27xx_led_of_match,
++		.of_match_table = of_match_ptr(sc27xx_led_of_match),
+ 	},
+ 	.probe = sc27xx_led_probe,
+ 	.remove = sc27xx_led_remove,
+diff --git a/drivers/leds/leds-sgm3140.c b/drivers/leds/leds-sgm3140.c
+index f4f831570f11c..92ce22024d91b 100644
+--- a/drivers/leds/leds-sgm3140.c
++++ b/drivers/leds/leds-sgm3140.c
+@@ -300,7 +300,7 @@ static struct platform_driver sgm3140_driver = {
+ 	.remove	= sgm3140_remove,
+ 	.driver	= {
+ 		.name	= "sgm3140",
+-		.of_match_table = sgm3140_dt_match,
++		.of_match_table = of_match_ptr(sgm3140_dt_match),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-spi-byte.c b/drivers/leds/leds-spi-byte.c
+index 9632eb84f8de1..21ec02c4f8dac 100644
+--- a/drivers/leds/leds-spi-byte.c
++++ b/drivers/leds/leds-spi-byte.c
+@@ -144,7 +144,7 @@ static struct spi_driver spi_byte_driver = {
+ 	.remove		= spi_byte_remove,
+ 	.driver = {
+ 		.name		= KBUILD_MODNAME,
+-		.of_match_table	= spi_byte_dt_ids,
++		.of_match_table	= of_match_ptr(spi_byte_dt_ids),
+ 	},
+ };
+ 
+diff --git a/drivers/leds/leds-syscon.c b/drivers/leds/leds-syscon.c
+index b58f3cafe16f4..b56a5c82bf759 100644
+--- a/drivers/leds/leds-syscon.c
++++ b/drivers/leds/leds-syscon.c
+@@ -134,7 +134,7 @@ static struct platform_driver syscon_led_driver = {
+ 	.probe		= syscon_led_probe,
+ 	.driver		= {
+ 		.name	= "leds-syscon",
+-		.of_match_table = of_syscon_leds_match,
++		.of_match_table = of_match_ptr(of_syscon_leds_match),
+ 		.suppress_bind_attrs = true,
+ 	},
+ };
+diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-omnia.c
+index bb23d8e166144..2a69d2085a225 100644
+--- a/drivers/leds/leds-turris-omnia.c
++++ b/drivers/leds/leds-turris-omnia.c
+@@ -284,7 +284,7 @@ static struct i2c_driver omnia_leds_driver = {
+ 	.id_table	= omnia_id,
+ 	.driver		= {
+ 		.name	= "leds-turris-omnia",
+-		.of_match_table = of_omnia_leds_match,
++		.of_match_table = of_match_ptr(of_omnia_leds_match),
+ 	},
+ };
+ 
 -- 
 2.26.2
 
