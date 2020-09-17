@@ -5,31 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78211C43464
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 562DCC43464
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 371D02087D
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:34:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18E882087D
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="OgRyHIN4"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="wBbttyCD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726154AbgIQWe6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 17 Sep 2020 18:34:58 -0400
-Received: from lists.nic.cz ([217.31.204.67]:35608 "EHLO mail.nic.cz"
+        id S1726333AbgIQWfC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 17 Sep 2020 18:35:02 -0400
+Received: from mail.nic.cz ([217.31.204.67]:36256 "EHLO mail.nic.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726333AbgIQWeR (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 17 Sep 2020 18:34:17 -0400
+        id S1726311AbgIQWeQ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 17 Sep 2020 18:34:16 -0400
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id F0E8014206A;
+        by mail.nic.cz (Postfix) with ESMTP id 1E94E14205E;
         Fri, 18 Sep 2020 00:34:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600382042; bh=HVFvswxzbeVibIz+rP76hH502Bso/ThNxjGcG/8nNV4=;
+        t=1600382041; bh=jZ8ZKbCaBfpOTI42umXMwjZ8PS6Z/JhU+RtfKD5P5nA=;
         h=From:To:Date;
-        b=OgRyHIN4ZntvYawIHcV9oepEUjzkurpVyXAsBiIag0UAKc/AJYNVmoHqth+gL9aE6
-         fGEgVLnwsDmbX1ZNHJ6PIN+fFvAriiYLfgcj3yG5lGBCNmditTucb376OE1NuEEuk4
-         gakDBjOyDocE5bKG4jtve7zPjm83te4dRZl695SA=
+        b=wBbttyCDphE/Gi2vKHzPd6S9NX3XrNgyZXCoQ3E8dgMUWQBjULofqPvCjpV+EvDs8
+         Fbi7BFBUpTHXHIve5a2mkeSSvOgVzFMveu/TMAQ4i9ql5/B/9rYjTDASd/BMWxvB5F
+         bRoD0QZ0XtovbPi7ELc0Xh2em7/uowQLxykqV6oQ=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -42,9 +42,9 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Vincent Donnefort <vdonnefort@gmail.com>,
         Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH leds v2 46/50] leds: ns2: remove unneeded variable
-Date:   Fri, 18 Sep 2020 00:33:34 +0200
-Message-Id: <20200917223338.14164-47-marek.behun@nic.cz>
+Subject: [PATCH leds v2 42/50] leds: ns2: cosmetic variable rename
+Date:   Fri, 18 Sep 2020 00:33:30 +0200
+Message-Id: <20200917223338.14164-43-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200917223338.14164-1-marek.behun@nic.cz>
 References: <20200917223338.14164-1-marek.behun@nic.cz>
@@ -58,8 +58,7 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-No need to use variable found, we can determine whether the mode was
-found by comparing iterator variable to its limit.
+Rename variable led_dat to led in various functions.
 
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
 Cc: Simon Guinot <simon.guinot@sequanux.org>
@@ -68,32 +67,217 @@ Cc: Vincent Donnefort <vdonnefort@gmail.com>
 Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/leds/leds-ns2.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/leds/leds-ns2.c | 103 ++++++++++++++++++----------------------
+ 1 file changed, 47 insertions(+), 56 deletions(-)
 
 diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
-index 9d9c9ff4dce61..e94bb8535f0a7 100644
+index 6dba6208433ca..dde476420a733 100644
 --- a/drivers/leds/leds-ns2.c
 +++ b/drivers/leds/leds-ns2.c
-@@ -71,16 +71,13 @@ static int ns2_led_get_mode(struct ns2_led *led, enum ns2_led_modes *mode)
- static void ns2_led_set_mode(struct ns2_led *led, enum ns2_led_modes mode)
+@@ -62,21 +62,20 @@ struct ns2_led {
+ 	struct ns2_led_modval	*modval;
+ };
+ 
+-static int ns2_led_get_mode(struct ns2_led *led_dat,
+-			    enum ns2_led_modes *mode)
++static int ns2_led_get_mode(struct ns2_led *led, enum ns2_led_modes *mode)
  {
  	int i;
--	bool found = false;
+ 	int ret = -EINVAL;
+ 	int cmd_level;
+ 	int slow_level;
+ 
+-	cmd_level = gpiod_get_value_cansleep(led_dat->cmd);
+-	slow_level = gpiod_get_value_cansleep(led_dat->slow);
++	cmd_level = gpiod_get_value_cansleep(led->cmd);
++	slow_level = gpiod_get_value_cansleep(led->slow);
+ 
+-	for (i = 0; i < led_dat->num_modes; i++) {
+-		if (cmd_level == led_dat->modval[i].cmd_level &&
+-		    slow_level == led_dat->modval[i].slow_level) {
+-			*mode = led_dat->modval[i].mode;
++	for (i = 0; i < led->num_modes; i++) {
++		if (cmd_level == led->modval[i].cmd_level &&
++		    slow_level == led->modval[i].slow_level) {
++			*mode = led->modval[i].mode;
+ 			ret = 0;
+ 			break;
+ 		}
+@@ -85,15 +84,14 @@ static int ns2_led_get_mode(struct ns2_led *led_dat,
+ 	return ret;
+ }
+ 
+-static void ns2_led_set_mode(struct ns2_led *led_dat,
+-			     enum ns2_led_modes mode)
++static void ns2_led_set_mode(struct ns2_led *led, enum ns2_led_modes mode)
+ {
+ 	int i;
+ 	bool found = false;
  	unsigned long flags;
  
- 	for (i = 0; i < led->num_modes; i++)
--		if (mode == led->modval[i].mode) {
--			found = true;
-+		if (mode == led->modval[i].mode)
+-	for (i = 0; i < led_dat->num_modes; i++)
+-		if (mode == led_dat->modval[i].mode) {
++	for (i = 0; i < led->num_modes; i++)
++		if (mode == led->modval[i].mode) {
+ 			found = true;
  			break;
--		}
- 
--	if (!found)
-+	if (i == led->num_modes)
+ 		}
+@@ -101,38 +99,35 @@ static void ns2_led_set_mode(struct ns2_led *led_dat,
+ 	if (!found)
  		return;
  
- 	write_lock_irqsave(&led->rw_lock, flags);
+-	write_lock_irqsave(&led_dat->rw_lock, flags);
++	write_lock_irqsave(&led->rw_lock, flags);
+ 
+-	if (!led_dat->can_sleep) {
+-		gpiod_set_value(led_dat->cmd,
+-				led_dat->modval[i].cmd_level);
+-		gpiod_set_value(led_dat->slow,
+-				led_dat->modval[i].slow_level);
++	if (!led->can_sleep) {
++		gpiod_set_value(led->cmd, led->modval[i].cmd_level);
++		gpiod_set_value(led->slow, led->modval[i].slow_level);
+ 		goto exit_unlock;
+ 	}
+ 
+-	gpiod_set_value_cansleep(led_dat->cmd, led_dat->modval[i].cmd_level);
+-	gpiod_set_value_cansleep(led_dat->slow, led_dat->modval[i].slow_level);
++	gpiod_set_value_cansleep(led->cmd, led->modval[i].cmd_level);
++	gpiod_set_value_cansleep(led->slow, led->modval[i].slow_level);
+ 
+ exit_unlock:
+-	write_unlock_irqrestore(&led_dat->rw_lock, flags);
++	write_unlock_irqrestore(&led->rw_lock, flags);
+ }
+ 
+ static void ns2_led_set(struct led_classdev *led_cdev,
+ 			enum led_brightness value)
+ {
+-	struct ns2_led *led_dat =
+-		container_of(led_cdev, struct ns2_led, cdev);
++	struct ns2_led *led = container_of(led_cdev, struct ns2_led, cdev);
+ 	enum ns2_led_modes mode;
+ 
+ 	if (value == LED_OFF)
+ 		mode = NS_V2_LED_OFF;
+-	else if (led_dat->sata)
++	else if (led->sata)
+ 		mode = NS_V2_LED_SATA;
+ 	else
+ 		mode = NS_V2_LED_ON;
+ 
+-	ns2_led_set_mode(led_dat, mode);
++	ns2_led_set_mode(led, mode);
+ }
+ 
+ static int ns2_led_set_blocking(struct led_classdev *led_cdev,
+@@ -147,8 +142,7 @@ static ssize_t ns2_led_sata_store(struct device *dev,
+ 				  const char *buff, size_t count)
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+-	struct ns2_led *led_dat =
+-		container_of(led_cdev, struct ns2_led, cdev);
++	struct ns2_led *led = container_of(led_cdev, struct ns2_led, cdev);
+ 	int ret;
+ 	unsigned long enable;
+ 
+@@ -158,18 +152,18 @@ static ssize_t ns2_led_sata_store(struct device *dev,
+ 
+ 	enable = !!enable;
+ 
+-	if (led_dat->sata == enable)
++	if (led->sata == enable)
+ 		goto exit;
+ 
+-	led_dat->sata = enable;
++	led->sata = enable;
+ 
+ 	if (!led_get_brightness(led_cdev))
+ 		goto exit;
+ 
+ 	if (enable)
+-		ns2_led_set_mode(led_dat, NS_V2_LED_SATA);
++		ns2_led_set_mode(led, NS_V2_LED_SATA);
+ 	else
+-		ns2_led_set_mode(led_dat, NS_V2_LED_ON);
++		ns2_led_set_mode(led, NS_V2_LED_ON);
+ 
+ exit:
+ 	return count;
+@@ -179,10 +173,9 @@ static ssize_t ns2_led_sata_show(struct device *dev,
+ 				 struct device_attribute *attr, char *buf)
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+-	struct ns2_led *led_dat =
+-		container_of(led_cdev, struct ns2_led, cdev);
++	struct ns2_led *led = container_of(led_cdev, struct ns2_led, cdev);
+ 
+-	return sprintf(buf, "%d\n", led_dat->sata);
++	return sprintf(buf, "%d\n", led->sata);
+ }
+ 
+ static DEVICE_ATTR(sata, 0644, ns2_led_sata_show, ns2_led_sata_store);
+@@ -194,40 +187,38 @@ static struct attribute *ns2_led_attrs[] = {
+ ATTRIBUTE_GROUPS(ns2_led);
+ 
+ static int
+-create_ns2_led(struct platform_device *pdev, struct ns2_led *led_dat,
++create_ns2_led(struct platform_device *pdev, struct ns2_led *led,
+ 	       const struct ns2_led_of_one *template)
+ {
+ 	int ret;
+ 	enum ns2_led_modes mode;
+ 
+-	rwlock_init(&led_dat->rw_lock);
+-
+-	led_dat->cdev.name = template->name;
+-	led_dat->cdev.default_trigger = template->default_trigger;
+-	led_dat->cdev.blink_set = NULL;
+-	led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
+-	led_dat->cdev.groups = ns2_led_groups;
+-	led_dat->cmd = template->cmd;
+-	led_dat->slow = template->slow;
+-	led_dat->can_sleep = gpiod_cansleep(led_dat->cmd) |
+-				gpiod_cansleep(led_dat->slow);
+-	if (led_dat->can_sleep)
+-		led_dat->cdev.brightness_set_blocking = ns2_led_set_blocking;
++	rwlock_init(&led->rw_lock);
++
++	led->cdev.name = template->name;
++	led->cdev.default_trigger = template->default_trigger;
++	led->cdev.blink_set = NULL;
++	led->cdev.flags |= LED_CORE_SUSPENDRESUME;
++	led->cdev.groups = ns2_led_groups;
++	led->cmd = template->cmd;
++	led->slow = template->slow;
++	led->can_sleep = gpiod_cansleep(led->cmd) | gpiod_cansleep(led->slow);
++	if (led->can_sleep)
++		led->cdev.brightness_set_blocking = ns2_led_set_blocking;
+ 	else
+-		led_dat->cdev.brightness_set = ns2_led_set;
+-	led_dat->modval = template->modval;
+-	led_dat->num_modes = template->num_modes;
++		led->cdev.brightness_set = ns2_led_set;
++	led->modval = template->modval;
++	led->num_modes = template->num_modes;
+ 
+-	ret = ns2_led_get_mode(led_dat, &mode);
++	ret = ns2_led_get_mode(led, &mode);
+ 	if (ret < 0)
+ 		return ret;
+ 
+ 	/* Set LED initial state. */
+-	led_dat->sata = (mode == NS_V2_LED_SATA) ? 1 : 0;
+-	led_dat->cdev.brightness =
+-		(mode == NS_V2_LED_OFF) ? LED_OFF : LED_FULL;
++	led->sata = (mode == NS_V2_LED_SATA) ? 1 : 0;
++	led->cdev.brightness = (mode == NS_V2_LED_OFF) ? LED_OFF : LED_FULL;
+ 
+-	return devm_led_classdev_register(&pdev->dev, &led_dat->cdev);
++	return devm_led_classdev_register(&pdev->dev, &led->cdev);
+ }
+ 
+ static int ns2_leds_parse_one(struct device *dev, struct device_node *np,
 -- 
 2.26.2
 
