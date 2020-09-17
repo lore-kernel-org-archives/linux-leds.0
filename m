@@ -5,31 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E1DC43464
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78211C43464
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:34:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 528882087D
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:34:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 371D02087D
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:34:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="EuhGpqLf"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="OgRyHIN4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbgIQWeu (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 17 Sep 2020 18:34:50 -0400
-Received: from mail.nic.cz ([217.31.204.67]:35812 "EHLO mail.nic.cz"
+        id S1726154AbgIQWe6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 17 Sep 2020 18:34:58 -0400
+Received: from lists.nic.cz ([217.31.204.67]:35608 "EHLO mail.nic.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726154AbgIQWeR (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        id S1726333AbgIQWeR (ORCPT <rfc822;linux-leds@vger.kernel.org>);
         Thu, 17 Sep 2020 18:34:17 -0400
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 50D15142064;
+        by mail.nic.cz (Postfix) with ESMTP id F0E8014206A;
         Fri, 18 Sep 2020 00:34:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600382041; bh=FAMJe7ITJwHvd1FSQ0yZOsBfv9QEw/KPWeoHMgngVTg=;
+        t=1600382042; bh=HVFvswxzbeVibIz+rP76hH502Bso/ThNxjGcG/8nNV4=;
         h=From:To:Date;
-        b=EuhGpqLf8WvukoxqnkqlVo7N7F+M0/SnvrfyARgExn6P4fsR05N2cL92GWPjUVw4g
-         BnD++AoZBUpMENF2CahaNhM/OP/ftITLDpqi1avAeY+foN9CIrqF9o7rVwrtsjhTxB
-         QjpqnV2A6TbiPZ1rgdlAdxdJ37Z9YRTQQsYea/BE=
+        b=OgRyHIN4ZntvYawIHcV9oepEUjzkurpVyXAsBiIag0UAKc/AJYNVmoHqth+gL9aE6
+         fGEgVLnwsDmbX1ZNHJ6PIN+fFvAriiYLfgcj3yG5lGBCNmditTucb376OE1NuEEuk4
+         gakDBjOyDocE5bKG4jtve7zPjm83te4dRZl695SA=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -42,9 +42,9 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Vincent Donnefort <vdonnefort@gmail.com>,
         Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH leds v2 43/50] leds: ns2: cosmetic change
-Date:   Fri, 18 Sep 2020 00:33:31 +0200
-Message-Id: <20200917223338.14164-44-marek.behun@nic.cz>
+Subject: [PATCH leds v2 46/50] leds: ns2: remove unneeded variable
+Date:   Fri, 18 Sep 2020 00:33:34 +0200
+Message-Id: <20200917223338.14164-47-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200917223338.14164-1-marek.behun@nic.cz>
 References: <20200917223338.14164-1-marek.behun@nic.cz>
@@ -58,7 +58,8 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Return directly instead of setting result and breaking.
+No need to use variable found, we can determine whether the mode was
+found by comparing iterator variable to its limit.
 
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
 Cc: Simon Guinot <simon.guinot@sequanux.org>
@@ -67,36 +68,32 @@ Cc: Vincent Donnefort <vdonnefort@gmail.com>
 Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/leds/leds-ns2.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/leds/leds-ns2.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
-index dde476420a733..912db40c51183 100644
+index 9d9c9ff4dce61..e94bb8535f0a7 100644
 --- a/drivers/leds/leds-ns2.c
 +++ b/drivers/leds/leds-ns2.c
-@@ -65,7 +65,6 @@ struct ns2_led {
- static int ns2_led_get_mode(struct ns2_led *led, enum ns2_led_modes *mode)
+@@ -71,16 +71,13 @@ static int ns2_led_get_mode(struct ns2_led *led, enum ns2_led_modes *mode)
+ static void ns2_led_set_mode(struct ns2_led *led, enum ns2_led_modes mode)
  {
  	int i;
--	int ret = -EINVAL;
- 	int cmd_level;
- 	int slow_level;
+-	bool found = false;
+ 	unsigned long flags;
  
-@@ -76,12 +75,11 @@ static int ns2_led_get_mode(struct ns2_led *led, enum ns2_led_modes *mode)
- 		if (cmd_level == led->modval[i].cmd_level &&
- 		    slow_level == led->modval[i].slow_level) {
- 			*mode = led->modval[i].mode;
--			ret = 0;
--			break;
-+			return 0;
- 		}
- 	}
+ 	for (i = 0; i < led->num_modes; i++)
+-		if (mode == led->modval[i].mode) {
+-			found = true;
++		if (mode == led->modval[i].mode)
+ 			break;
+-		}
  
--	return ret;
-+	return -EINVAL;
- }
+-	if (!found)
++	if (i == led->num_modes)
+ 		return;
  
- static void ns2_led_set_mode(struct ns2_led *led, enum ns2_led_modes mode)
+ 	write_lock_irqsave(&led->rw_lock, flags);
 -- 
 2.26.2
 
