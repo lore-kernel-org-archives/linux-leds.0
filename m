@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C02BBC43465
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E1DC43464
 	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78384208DB
+	by mail.kernel.org (Postfix) with ESMTP id 528882087D
 	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:34:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="Aqc1zzfn"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="EuhGpqLf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbgIQWeu (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S1726589AbgIQWeu (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Thu, 17 Sep 2020 18:34:50 -0400
-Received: from lists.nic.cz ([217.31.204.67]:35720 "EHLO mail.nic.cz"
+Received: from mail.nic.cz ([217.31.204.67]:35812 "EHLO mail.nic.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbgIQWeS (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 17 Sep 2020 18:34:18 -0400
+        id S1726154AbgIQWeR (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 17 Sep 2020 18:34:17 -0400
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id A9710142070;
-        Fri, 18 Sep 2020 00:34:02 +0200 (CEST)
+        by mail.nic.cz (Postfix) with ESMTP id 50D15142064;
+        Fri, 18 Sep 2020 00:34:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600382042; bh=miG+OrQL2mOeZJTyg/24ok7NmhQ7y6FtesErJ/4bw4E=;
+        t=1600382041; bh=FAMJe7ITJwHvd1FSQ0yZOsBfv9QEw/KPWeoHMgngVTg=;
         h=From:To:Date;
-        b=Aqc1zzfnogZhx8F7WickLfm1VuQV4HneQH5Zf549bf0fMGj7LbAGfreRJlVJZZgMj
-         tIxscvcErp5himhNgCOY4I4g7Hj804Fe00zI00TRWbvyHjqxHTVrDktL2MkJtFbqLW
-         osFoeB8ijEzJJ2CEtsU5WmEpsd25FVfddjXcCaEQ=
+        b=EuhGpqLf8WvukoxqnkqlVo7N7F+M0/SnvrfyARgExn6P4fsR05N2cL92GWPjUVw4g
+         BnD++AoZBUpMENF2CahaNhM/OP/ftITLDpqi1avAeY+foN9CIrqF9o7rVwrtsjhTxB
+         QjpqnV2A6TbiPZ1rgdlAdxdJ37Z9YRTQQsYea/BE=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -42,9 +42,9 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Vincent Donnefort <vdonnefort@gmail.com>,
         Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH leds v2 49/50] leds: ns2: use struct led_init_data when registering
-Date:   Fri, 18 Sep 2020 00:33:37 +0200
-Message-Id: <20200917223338.14164-50-marek.behun@nic.cz>
+Subject: [PATCH leds v2 43/50] leds: ns2: cosmetic change
+Date:   Fri, 18 Sep 2020 00:33:31 +0200
+Message-Id: <20200917223338.14164-44-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200917223338.14164-1-marek.behun@nic.cz>
 References: <20200917223338.14164-1-marek.behun@nic.cz>
@@ -58,10 +58,7 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-By using struct led_init_data when registering we do not need to parse
-`label` DT property. Moreover `label` is deprecated and if it is not
-present but `color` and `function` are, LED core will compose a name
-from these properties instead.
+Return directly instead of setting result and breaking.
 
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
 Cc: Simon Guinot <simon.guinot@sequanux.org>
@@ -70,40 +67,36 @@ Cc: Vincent Donnefort <vdonnefort@gmail.com>
 Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/leds/leds-ns2.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/leds/leds-ns2.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
-index 01c54ab0aa00e..b021e94d512c9 100644
+index dde476420a733..912db40c51183 100644
 --- a/drivers/leds/leds-ns2.c
 +++ b/drivers/leds/leds-ns2.c
-@@ -174,14 +174,11 @@ ATTRIBUTE_GROUPS(ns2_led);
- static int ns2_led_register(struct device *dev, struct device_node *np,
- 			    struct ns2_led *led)
+@@ -65,7 +65,6 @@ struct ns2_led {
+ static int ns2_led_get_mode(struct ns2_led *led, enum ns2_led_modes *mode)
  {
-+	struct led_init_data init_data = {};
- 	struct ns2_led_modval *modval;
- 	enum ns2_led_modes mode;
- 	int nmodes, ret, i;
+ 	int i;
+-	int ret = -EINVAL;
+ 	int cmd_level;
+ 	int slow_level;
  
--	ret = of_property_read_string(np, "label", &led->cdev.name);
--	if (ret)
--		led->cdev.name = np->name;
--
- 	led->cmd = devm_gpiod_get_from_of_node(dev, np, "cmd-gpio", 0,
- 					       GPIOD_ASIS, np->name);
- 	if (IS_ERR(led->cmd))
-@@ -238,7 +235,9 @@ static int ns2_led_register(struct device *dev, struct device_node *np,
- 	led->sata = (mode == NS_V2_LED_SATA) ? 1 : 0;
- 	led->cdev.brightness = (mode == NS_V2_LED_OFF) ? LED_OFF : LED_FULL;
+@@ -76,12 +75,11 @@ static int ns2_led_get_mode(struct ns2_led *led, enum ns2_led_modes *mode)
+ 		if (cmd_level == led->modval[i].cmd_level &&
+ 		    slow_level == led->modval[i].slow_level) {
+ 			*mode = led->modval[i].mode;
+-			ret = 0;
+-			break;
++			return 0;
+ 		}
+ 	}
  
--	ret = devm_led_classdev_register(dev, &led->cdev);
-+	init_data.fwnode = of_fwnode_handle(np);
-+
-+	ret = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
- 	if (ret)
- 		dev_err(dev, "Failed to register LED for node %pOF\n", np);
+-	return ret;
++	return -EINVAL;
+ }
  
+ static void ns2_led_set_mode(struct ns2_led *led, enum ns2_led_modes mode)
 -- 
 2.26.2
 
