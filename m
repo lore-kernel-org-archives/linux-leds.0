@@ -5,41 +5,46 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5244AC43465
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6DDC43465
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CB6C20684
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B524A20707
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="mOsFgB5b"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="iwY4iYXt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbgIQWf3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 17 Sep 2020 18:35:29 -0400
-Received: from lists.nic.cz ([217.31.204.67]:36028 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726249AbgIQWeN (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 17 Sep 2020 18:34:13 -0400
+        id S1726390AbgIQWeM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 17 Sep 2020 18:34:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49442 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbgIQWeL (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 17 Sep 2020 18:34:11 -0400
+Received: from mail.nic.cz (lists.nic.cz [IPv6:2001:1488:800:400::400])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5410C061351;
+        Thu, 17 Sep 2020 15:33:58 -0700 (PDT)
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 3E3DE142054;
-        Fri, 18 Sep 2020 00:33:59 +0200 (CEST)
+        by mail.nic.cz (Postfix) with ESMTP id DCC33140B01;
+        Fri, 18 Sep 2020 00:33:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600382039; bh=tivwh2DcPiZASHR0lzvsXcp4L2R3N4MOgua61D2xaI4=;
+        t=1600382037; bh=B7cn78RkSXn32ihMhDkeA5HTyA02Mxx1cSSRI4SAV7I=;
         h=From:To:Date;
-        b=mOsFgB5bScxWOZhXGekCz9+dWKDsdGrOCjcJGZPYYStLpBYPqobU4bu+L5foAdmwG
-         nDHNr1RJ4DuqnoP12o5hNBtlFJUAZrhjBzbFEShkvNPWEb4hjNN4AyZpXZa4/0vEF/
-         vOi7tF7Mz6SHU8t/KdL+2q1n/ZTTwfEqxwJzdb5M=
+        b=iwY4iYXt3Rcin1C/gHjbZG+W5bnkJw3nkeSVeZv7Jj65xJ1p1vmZTpC73BWV+vwSk
+         fpJxkev2kqlgB5l2sURP58EWWyakbpvqc3At/7t4Hi3hH7eA9UtvGU4mb9s/dSGq/W
+         6Ti1oqJ0CnB5sYKwZyJXoZqHE1SidwOqu8Qj/7zU=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megous@megous.com>,
         linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH leds v2 33/50] leds: lm36274: don't iterate through children since there is only one
-Date:   Fri, 18 Sep 2020 00:33:21 +0200
-Message-Id: <20200917223338.14164-34-marek.behun@nic.cz>
+        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH leds v2 20/50] leds: pm8058: use struct led_init_data when registering
+Date:   Fri, 18 Sep 2020 00:33:08 +0200
+Message-Id: <20200917223338.14164-21-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200917223338.14164-1-marek.behun@nic.cz>
 References: <20200917223338.14164-1-marek.behun@nic.cz>
@@ -53,84 +58,55 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Do not use device_for_each_child_node. Since this driver works only with
-once child node present, use device_get_next_child_node instead.
-This also saves one level of indentation.
+By using struct led_init_data when registering we do not need to parse
+`label` DT property. Moreover `label` is deprecated and if it is not
+present but `color` and `function` are, LED core will compose a name
+from these properties instead.
 
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
-Cc: Dan Murphy <dmurphy@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/leds/leds-lm36274.c | 50 +++++++++++++++++--------------------
- 1 file changed, 23 insertions(+), 27 deletions(-)
+ drivers/leds/leds-pm8058.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/leds/leds-lm36274.c b/drivers/leds/leds-lm36274.c
-index 2569659836e8f..4282b7392f2b5 100644
---- a/drivers/leds/leds-lm36274.c
-+++ b/drivers/leds/leds-lm36274.c
-@@ -72,40 +72,36 @@ static int lm36274_parse_dt(struct lm36274 *chip)
- 	char label[LED_MAX_NAME_SIZE];
- 	struct device *dev = &chip->pdev->dev;
- 	const char *name;
--	int child_cnt;
--	int ret = -EINVAL;
-+	int ret;
+diff --git a/drivers/leds/leds-pm8058.c b/drivers/leds/leds-pm8058.c
+index dcd7d8c3d6b44..e085bf9ffc1de 100644
+--- a/drivers/leds/leds-pm8058.c
++++ b/drivers/leds/leds-pm8058.c
+@@ -87,6 +87,7 @@ static enum led_brightness pm8058_led_get(struct led_classdev *cled)
  
- 	/* There should only be 1 node */
--	child_cnt = device_get_child_node_count(dev);
--	if (child_cnt != 1)
-+	if (device_get_child_node_count(dev) != 1)
+ static int pm8058_led_probe(struct platform_device *pdev)
+ {
++	struct led_init_data init_data = {};
+ 	struct pm8058_led *led;
+ 	struct device_node *np = dev_of_node(&pdev->dev);
+ 	int ret;
+@@ -113,8 +114,6 @@ static int pm8058_led_probe(struct platform_device *pdev)
  		return -EINVAL;
- 
--	device_for_each_child_node(dev, child) {
--		ret = fwnode_property_read_string(child, "label", &name);
--		if (ret)
--			snprintf(label, sizeof(label), "%s::",
--				 chip->pdev->name);
--		else
--			snprintf(label, sizeof(label), "%s:%s", chip->pdev->name,
--				 name);
--
--		chip->num_leds = fwnode_property_count_u32(child, "led-sources");
--		if (chip->num_leds <= 0)
--			return -ENODEV;
--
--		ret = fwnode_property_read_u32_array(child, "led-sources",
--						     chip->led_sources,
--						     chip->num_leds);
--		if (ret) {
--			dev_err(dev, "led-sources property missing\n");
--			return ret;
--		}
--
--		fwnode_property_read_string(child, "linux,default-trigger",
--					    &chip->led_dev.default_trigger);
-+	child = device_get_next_child_node(dev, NULL);
-+
-+	ret = fwnode_property_read_string(child, "label", &name);
-+	if (ret)
-+		snprintf(label, sizeof(label), "%s::", chip->pdev->name);
-+	else
-+		snprintf(label, sizeof(label), "%s:%s", chip->pdev->name, name);
- 
-+	chip->num_leds = fwnode_property_count_u32(child, "led-sources");
-+	if (chip->num_leds <= 0)
-+		return -ENODEV;
-+
-+	ret = fwnode_property_read_u32_array(child, "led-sources",
-+					     chip->led_sources, chip->num_leds);
-+	if (ret) {
-+		dev_err(dev, "led-sources property missing\n");
-+		return ret;
  	}
  
-+	fwnode_property_read_string(child, "linux,default-trigger",
-+				    &chip->led_dev.default_trigger);
+-	/* Use label else node name */
+-	led->cdev.name = of_get_property(np, "label", NULL) ? : np->name;
+ 	led->cdev.default_trigger =
+ 		of_get_property(np, "linux,default-trigger", NULL);
+ 	led->cdev.brightness_set = pm8058_led_set;
+@@ -142,10 +141,12 @@ static int pm8058_led_probe(struct platform_device *pdev)
+ 	    led->ledtype == PM8058_LED_TYPE_FLASH)
+ 		led->cdev.flags	= LED_CORE_SUSPENDRESUME;
+ 
+-	ret = devm_led_classdev_register(&pdev->dev, &led->cdev);
++	init_data.fwnode = of_fwnode_handle(np);
 +
-+	fwnode_handle_put(child);
-+
- 	chip->lmu_data.regmap = chip->regmap;
- 	chip->lmu_data.max_brightness = MAX_BRIGHTNESS_11BIT;
- 	chip->lmu_data.msb_brightness_reg = LM36274_REG_BRT_MSB;
++	ret = devm_led_classdev_register_ext(&pdev->dev, &led->cdev,
++					     &init_data);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "unable to register led \"%s\"\n",
+-			led->cdev.name);
++		dev_err(&pdev->dev, "Failed to register LED for %pOF\n", np);
+ 		return ret;
+ 	}
+ 
 -- 
 2.26.2
 
