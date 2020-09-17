@@ -2,115 +2,97 @@ Return-Path: <SRS0=SVrG=C2=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B23C43463
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C280C43463
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34911208DB
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:37:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6770E208DB
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:59:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="HgUI2zRu"
+	dkim=pass (1024-bit key) header.d=blackhole.sk header.i=@blackhole.sk header.b="qRgNrW8Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726040AbgIQWdz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 17 Sep 2020 18:33:55 -0400
-Received: from lists.nic.cz ([217.31.204.67]:35296 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725858AbgIQWdz (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 17 Sep 2020 18:33:55 -0400
-X-Greylist: delayed 25787 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 18:33:54 EDT
-Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id DC359140A4F;
-        Fri, 18 Sep 2020 00:33:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600382033; bh=79YEnALFxfE9ebU2M2e/J2Lo4oN/NscfLB82bk7fYXM=;
-        h=From:To:Date;
-        b=HgUI2zRulwaZDlvuc/mhRodL3TpS4vijWu6ZWSyt9ZyTSF4UnABBqNEm5kRTcaJrl
-         764SLBWEAM0W75Ks1JfEa8PUdAlcYrsu1FBIIPO8MSeJ2hfWWeiZ39iGjWknshKqeH
-         mIJi1LJilgaJJuQ5aZStxcj6riSU6MApypCFLI4c=
-From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-To:     linux-leds@vger.kernel.org
-Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megous@megous.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH leds v2 01/50] leds: various: compile if COMPILE_TEST=y
-Date:   Fri, 18 Sep 2020 00:32:49 +0200
-Message-Id: <20200917223338.14164-2-marek.behun@nic.cz>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200917223338.14164-1-marek.behun@nic.cz>
-References: <20200917223338.14164-1-marek.behun@nic.cz>
+        id S1726002AbgIQW7V (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 17 Sep 2020 18:59:21 -0400
+Received: from mail-proxyout-mua-31.websupport.eu ([37.9.172.181]:55812 "EHLO
+        mail-proxyout-mua-31.websupport.eu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725886AbgIQW7U (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 17 Sep 2020 18:59:20 -0400
+X-Greylist: delayed 378 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 18:59:19 EDT
+Received: from in-2.websupport.sk (unknown [10.10.2.102])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail-proxyout-mua-31.websupport.eu (Postfix) with ESMTPS id D76A4BEED7;
+        Fri, 18 Sep 2020 00:52:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=blackhole.sk;
+        s=mail; t=1600383179;
+        bh=1bsHg7QEcrqHq2OVpZYecuhWKG10VHToHH+y8lx7CT4=;
+        h=Date:From:To:Cc:Subject;
+        b=qRgNrW8Y2Zch5lCT2SUYU9tsqc8xbiscGqpTt4V/y2UY+LehphoR/BB8FywlO9cKF
+         wsV+nWHbHixJO1n0UVoha8LVvj1NQCglvccjmPWk2P6hf/KEzfbgC4XRQhEGAuw9Q5
+         ZDoHKlGRZF2Y9+Cb9EPoD3V75Rl6rjNkKJMISZzU=
+Received: from localhost (otava-0257.koleje.cuni.cz [78.128.181.4])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kabel@blackhole.sk)
+        by in-2.websupport.sk (Postfix) with ESMTPSA id 4Bssgb3RJ8z40X2M;
+        Fri, 18 Sep 2020 00:52:59 +0200 (CEST)
+Date:   Fri, 18 Sep 2020 00:52:58 +0200
+From:   Marek Behun <kabel@blackhole.sk>
+To:     Simon Guinot <simon.guinot@sequanux.org>,
+        Simon Guinot <sguinot@lacie.com>,
+        Vincent Donnefort <vdonnefort@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        linux-leds@vger.kernel.org
+Subject: question about Network Space v2 LED driver
+Message-ID: <20200918005258.44c0bfc6@blackhole.sk>
+X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: /
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Out-Rspamd-Queue-Id: 4Bssgb3RJ8z40X2M
+Authentication-Results: in-2.websupport.sk;
+        auth=pass smtp.auth=kabel@blackhole.sk smtp.mailfrom=kabel@blackhole.sk
+X-Out-Rspamd-Server: mail-antispam-5
+X-Out-Spamd-Result: default: False [-3.10 / 24.00];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         RCPT_COUNT_FIVE(0.00)[6];
+         FREEMAIL_TO(0.00)[sequanux.org,lacie.com,gmail.com,linaro.org];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:2852, ipnet:78.128.128.0/17, country:CZ];
+         MID_RHS_MATCH_FROM(0.00)[];
+         BAYES_HAM(-3.00)[99.99%]
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-These drivers can be compiled without modification when COMPILE_TEST=y:
-  cobalt-qube, cobalt-raq, netxbig, ns2 and s3c24xx
+Hi,
 
-Signed-off-by: Marek Behún <marek.behun@nic.cz>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Dan Murphy <dmurphy@ti.com>
----
- drivers/leds/Kconfig | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+the leds-ns2 kernel driver has allows 3 modes for a LED:
+  OFF, ON and blinking on SATA activity
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 4f6464a169d57..96d54e36e3b55 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -274,7 +274,7 @@ config LEDS_MT6323
- config LEDS_S3C24XX
- 	tristate "LED Support for Samsung S3C24XX GPIO LEDs"
- 	depends on LEDS_CLASS
--	depends on ARCH_S3C24XX
-+	depends on ARCH_S3C24XX || COMPILE_TEST
- 	help
- 	  This option enables support for LEDs connected to GPIO lines
- 	  on Samsung S3C24XX series CPUs, such as the S3C2410 and S3C2440.
-@@ -304,13 +304,13 @@ config LEDS_WRAP
- config LEDS_COBALT_QUBE
- 	tristate "LED Support for the Cobalt Qube series front LED"
- 	depends on LEDS_CLASS
--	depends on MIPS_COBALT
-+	depends on MIPS_COBALT || COMPILE_TEST
- 	help
- 	  This option enables support for the front LED on Cobalt Qube series
- 
- config LEDS_COBALT_RAQ
- 	bool "LED Support for the Cobalt Raq series"
--	depends on LEDS_CLASS=y && MIPS_COBALT
-+	depends on LEDS_CLASS=y && (MIPS_COBALT || COMPILE_TEST)
- 	select LEDS_TRIGGERS
- 	help
- 	  This option enables support for the Cobalt Raq series LEDs.
-@@ -644,7 +644,7 @@ config LEDS_MC13783
- config LEDS_NS2
- 	tristate "LED support for Network Space v2 GPIO LEDs"
- 	depends on LEDS_CLASS
--	depends on MACH_KIRKWOOD || MACH_ARMADA_370
-+	depends on MACH_KIRKWOOD || MACH_ARMADA_370 || COMPILE_TEST
- 	default y
- 	help
- 	  This option enables support for the dual-GPIO LEDs found on the
-@@ -658,7 +658,7 @@ config LEDS_NS2
- config LEDS_NETXBIG
- 	tristate "LED support for Big Network series LEDs"
- 	depends on LEDS_CLASS
--	depends on MACH_KIRKWOOD
-+	depends on MACH_KIRKWOOD || COMPILE_TEST
- 	depends on OF_GPIO
- 	default y
- 	help
--- 
-2.26.2
+This third mode is activated via another sysfs file in the LED device
+sysfs directory: /sys/class/leds/<LED>/sata.
 
+Since we now support LED private HW triggers, it would be better if
+this was rewritten to use this new API.
+
+The question is how many people use this mode and may complain if we
+change this sysfs ABI?
+
+Another question is whether the LED supports another HW blinking mode,
+or just SATA? How is this wired on the board?
+
+Marek
