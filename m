@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34432C43468
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B86EAC43465
 	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F32DD2087D
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:34:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74A142087D
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:34:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="m6Sfyn2a"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="TjMBLYd9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbgIQWeL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 17 Sep 2020 18:34:11 -0400
-Received: from mail.nic.cz ([217.31.204.67]:35854 "EHLO mail.nic.cz"
+        id S1726382AbgIQWeM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 17 Sep 2020 18:34:12 -0400
+Received: from mail.nic.cz ([217.31.204.67]:35812 "EHLO mail.nic.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbgIQWeK (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 17 Sep 2020 18:34:10 -0400
+        id S1726170AbgIQWeJ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 17 Sep 2020 18:34:09 -0400
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 33054142042;
-        Fri, 18 Sep 2020 00:33:58 +0200 (CEST)
+        by mail.nic.cz (Postfix) with ESMTP id 7772A140A77;
+        Fri, 18 Sep 2020 00:33:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600382038; bh=jF62DFUspv0dwhNKqUBBbK3qw4wrbt7E6Hsa+iFaoe8=;
+        t=1600382037; bh=NfiKEaEUAJO2bf4FPxglihEBwosP24Qc7Px6/FPjqjo=;
         h=From:To:Date;
-        b=m6Sfyn2abv80e1kfOUaIwNcxcQf0ylGoG7T9u365XHENPoMRa+zu65SqI7D11w0i1
-         xh/E5dXaog285nnBl3FxOqt0ItDodJTbyuQ16YyRpZjLp20QaCzyaM1yotB7MIn93z
-         QhNiFimnDpDnyXMpyUfkGCGqJkApriTN4N8kJk7I=
+        b=TjMBLYd9ZwxWUxikfygf7/XJq3tMys5NcxULPRx90XroUUj4XPZeGvopUF+Vzlmxx
+         /TaoiaFUjBm4IDDXQeidcUyioZMVRZixmqF/0ExR8IUhiJtFQbV38FoBHfdlxXhvoa
+         XyAETDA/JN3b3ge7g/oHFpfwAqd/BxQ74hV5NdQA=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -37,11 +37,11 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Grant Feng <von81@163.com>
-Subject: [PATCH leds v2 27/50] leds: is31fl319x: don't store audio gain value, simply set it
-Date:   Fri, 18 Sep 2020 00:33:15 +0200
-Message-Id: <20200917223338.14164-28-marek.behun@nic.cz>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH leds v2 23/50] leds: pm8058: cosmetic: use reverse christmas tree
+Date:   Fri, 18 Sep 2020 00:33:11 +0200
+Message-Id: <20200917223338.14164-24-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200917223338.14164-1-marek.behun@nic.cz>
 References: <20200917223338.14164-1-marek.behun@nic.cz>
@@ -55,81 +55,56 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Since this value is only used in device probe, don't store it in private
-structure. Simply parse the value and set it.
+Only a cosmetic change: use reverse christmas tree variables
+declaration.
 
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
-Cc: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Grant Feng <von81@163.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/leds/leds-is31fl319x.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/leds/leds-pm8058.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
-index 595112958617e..8e3e02d959989 100644
---- a/drivers/leds/leds-is31fl319x.c
-+++ b/drivers/leds/leds-is31fl319x.c
-@@ -65,7 +65,6 @@ struct is31fl319x_chip {
- 	struct i2c_client               *client;
- 	struct regmap                   *regmap;
- 	struct mutex                    lock;
--	u32                             audio_gain_db;
+diff --git a/drivers/leds/leds-pm8058.c b/drivers/leds/leds-pm8058.c
+index 193780a8c0522..80db7e2de420c 100644
+--- a/drivers/leds/leds-pm8058.c
++++ b/drivers/leds/leds-pm8058.c
+@@ -29,9 +29,9 @@ static void pm8058_led_set(struct led_classdev *cled,
+ 	enum led_brightness value)
+ {
+ 	struct pm8058_led *led;
+-	int ret = 0;
+ 	unsigned int mask = 0;
+ 	unsigned int val = 0;
++	int ret = 0;
  
- 	struct is31fl319x_led {
- 		struct is31fl319x_chip  *chip;
-@@ -198,6 +197,18 @@ static int is31fl319x_parse_max_current(struct device *dev, u32 *aggregated)
- 	return 0;
- }
+ 	led = container_of(cled, struct pm8058_led, cdev);
+ 	switch (led->ledtype) {
+@@ -56,8 +56,8 @@ static void pm8058_led_set(struct led_classdev *cled,
+ static enum led_brightness pm8058_led_get(struct led_classdev *cled)
+ {
+ 	struct pm8058_led *led;
+-	int ret;
+ 	unsigned int val;
++	int ret;
  
-+static u32 is31fl319x_parse_audio_gain(struct device *dev)
-+{
-+	u32 result;
-+
-+	if (!of_property_read_u32(dev_of_node(dev), "audio-gain-db", &result))
-+		result = min(result, IS31FL319X_AUDIO_GAIN_DB_MAX);
-+	else
-+		result = 0;
-+
-+	return result;;
-+}
-+
- static int is31fl319x_parse_child_dt(const struct device *dev,
- 				     const struct device_node *child,
- 				     struct is31fl319x_led *led)
-@@ -271,12 +282,6 @@ static int is31fl319x_parse_dt(struct device *dev,
- 		led->configured = true;
- 	}
+ 	led = container_of(cled, struct pm8058_led, cdev);
  
--	is31->audio_gain_db = 0;
--	ret = of_property_read_u32(np, "audio-gain-db", &is31->audio_gain_db);
--	if (!ret)
--		is31->audio_gain_db = min(is31->audio_gain_db,
--					  IS31FL319X_AUDIO_GAIN_DB_MAX);
--
- 	return 0;
+@@ -89,12 +89,12 @@ static int pm8058_led_probe(struct platform_device *pdev)
+ {
+ 	struct led_init_data init_data = {};
+ 	struct device *dev = &pdev->dev;
++	enum led_brightness maxbright;
+ 	struct pm8058_led *led;
+ 	struct device_node *np;
+-	int ret;
+ 	struct regmap *map;
+ 	const char *state;
+-	enum led_brightness maxbright;
++	int ret;
  
- put_child_node:
-@@ -346,6 +351,7 @@ static int is31fl319x_probe(struct i2c_client *client,
- 	struct is31fl319x_chip *is31;
- 	struct device *dev = &client->dev;
- 	struct gpio_desc *shutdown_gpio;
-+	u32 audio_gain_db;
- 	int err;
- 	int i = 0;
- 	u32 aggregated_led_microamp;
-@@ -405,9 +411,11 @@ static int is31fl319x_probe(struct i2c_client *client,
- 		goto free_mutex;
- 	}
- 
-+	audio_gain_db = is31fl319x_parse_audio_gain(dev);
-+
- 	regmap_write(is31->regmap, IS31FL319X_CONFIG2,
- 		     is31fl319x_microamp_to_cs(dev, aggregated_led_microamp) |
--		     is31fl319x_db_to_gain(is31->audio_gain_db));
-+		     is31fl319x_db_to_gain(audio_gain_db));
- 
- 	for (i = 0; i < is31->cdef->num_leds; i++) {
- 		struct is31fl319x_led *led = &is31->leds[i];
+ 	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+ 	if (!led)
 -- 
 2.26.2
 
