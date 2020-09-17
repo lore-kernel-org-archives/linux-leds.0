@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 176E6C43463
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B68EBC43464
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1CE4214D8
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F508214D8
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:35:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="WyufPwDE"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="Z7KdQ2N8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbgIQWfR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 17 Sep 2020 18:35:17 -0400
-Received: from mail.nic.cz ([217.31.204.67]:36162 "EHLO mail.nic.cz"
+        id S1726671AbgIQWfQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 17 Sep 2020 18:35:16 -0400
+Received: from lists.nic.cz ([217.31.204.67]:35524 "EHLO mail.nic.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726273AbgIQWeN (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        id S1726303AbgIQWeN (ORCPT <rfc822;linux-leds@vger.kernel.org>);
         Thu, 17 Sep 2020 18:34:13 -0400
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id BEBBA142057;
-        Fri, 18 Sep 2020 00:33:59 +0200 (CEST)
+        by mail.nic.cz (Postfix) with ESMTP id 9E7DB14205F;
+        Fri, 18 Sep 2020 00:34:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600382039; bh=r26L0sWbFofPCK5+uBb+ErS6T+5q3senbfA1NrJl0WA=;
+        t=1600382040; bh=QCP2wLMmyumTwoOiIgbl7vvdMWG8GVtVNf+P0fK63Q0=;
         h=From:To:Date;
-        b=WyufPwDEgDkCFWxv20zn7pofIKA0QKGszWLW5eamCBLQKlpm+lSvW8E1dqkiSRLRw
-         E/LV7r+cW8SakWeX55LBvqMKynu93PJQTvOEvE4ECZfD2GhWnGFsYkjQJ9TMEkT9QP
-         Av3Y6cTGg83/7m8QsbxyzQihngDokMnpZ56ZD/YE=
+        b=Z7KdQ2N8E/YUa9YZlM1g5neLzYJRc0vCN5v5+RkyxEG9r3z0cWtem7HTwavFiW6ns
+         o/ypoUMK8TJKzGoBvagozhPans/1tL4AXlYOp9bGRWAT8PMVhB0fKMO1v3Y/P8Vop1
+         YzcYskLbwoP9Qg0l8kGjeSgG3/l5s2CJpY9Q1i8A=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -42,9 +42,9 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Vincent Donnefort <vdonnefort@gmail.com>,
         Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH leds v2 36/50] leds: ns2: use devres LED registering function
-Date:   Fri, 18 Sep 2020 00:33:24 +0200
-Message-Id: <20200917223338.14164-37-marek.behun@nic.cz>
+Subject: [PATCH leds v2 40/50] leds: ns2: use devres API for getting GPIO descriptors
+Date:   Fri, 18 Sep 2020 00:33:28 +0200
+Message-Id: <20200917223338.14164-41-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200917223338.14164-1-marek.behun@nic.cz>
 References: <20200917223338.14164-1-marek.behun@nic.cz>
@@ -58,8 +58,9 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-By using devres version of LED registering function we can remove the
-.remove method from this driver. The probe method also gets simpler.
+This drivers leaks GPIO descriptors on driver removal. Use devres API
+function devm_gpiod_get_from_of_node instead of gpiod_get_from_of_node
+to avoid this.
 
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
 Cc: Simon Guinot <simon.guinot@sequanux.org>
@@ -68,67 +69,31 @@ Cc: Vincent Donnefort <vdonnefort@gmail.com>
 Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/leds/leds-ns2.c | 30 ++----------------------------
- 1 file changed, 2 insertions(+), 28 deletions(-)
+ drivers/leds/leds-ns2.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/leds/leds-ns2.c b/drivers/leds/leds-ns2.c
-index 22d38c83b6dca..1a7ef66464b5d 100644
+index 46d4f7e963c04..fa06ab40ee143 100644
 --- a/drivers/leds/leds-ns2.c
 +++ b/drivers/leds/leds-ns2.c
-@@ -227,16 +227,7 @@ create_ns2_led(struct platform_device *pdev, struct ns2_led_data *led_dat,
- 	led_dat->cdev.brightness =
- 		(mode == NS_V2_LED_OFF) ? LED_OFF : LED_FULL;
+@@ -240,13 +240,13 @@ static int ns2_leds_parse_one(struct device *dev, struct device_node *np,
+ 	if (ret)
+ 		led->name = np->name;
  
--	ret = led_classdev_register(&pdev->dev, &led_dat->cdev);
--	if (ret < 0)
--		return ret;
--
--	return 0;
--}
--
--static void delete_ns2_led(struct ns2_led_data *led_dat)
--{
--	led_classdev_unregister(&led_dat->cdev);
-+	return devm_led_classdev_register(&pdev->dev, &led_dat->cdev);
- }
+-	led->cmd = gpiod_get_from_of_node(np, "cmd-gpio", 0, GPIOD_ASIS,
+-					  led->name);
++	led->cmd = devm_gpiod_get_from_of_node(dev, np, "cmd-gpio", 0,
++					       GPIOD_ASIS, led->name);
+ 	if (IS_ERR(led->cmd))
+ 		return PTR_ERR(led->cmd);
  
- #ifdef CONFIG_OF_GPIO
-@@ -380,11 +371,8 @@ static int ns2_led_probe(struct platform_device *pdev)
- 	for (i = 0; i < priv->num_leds; i++) {
- 		ret = create_ns2_led(pdev, &priv->leds_data[i],
- 				     &pdata->leds[i]);
--		if (ret < 0) {
--			for (i = i - 1; i >= 0; i--)
--				delete_ns2_led(&priv->leds_data[i]);
-+		if (ret < 0)
- 			return ret;
--		}
- 	}
+-	led->slow = gpiod_get_from_of_node(np, "slow-gpio", 0, GPIOD_ASIS,
+-					   led->name);
++	led->slow = devm_gpiod_get_from_of_node(dev, np, "slow-gpio", 0,
++						GPIOD_ASIS, led->name);
+ 	if (IS_ERR(led->slow))
+ 		return PTR_ERR(led->slow);
  
- 	platform_set_drvdata(pdev, priv);
-@@ -392,22 +380,8 @@ static int ns2_led_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int ns2_led_remove(struct platform_device *pdev)
--{
--	int i;
--	struct ns2_led_priv *priv;
--
--	priv = platform_get_drvdata(pdev);
--
--	for (i = 0; i < priv->num_leds; i++)
--		delete_ns2_led(&priv->leds_data[i]);
--
--	return 0;
--}
--
- static struct platform_driver ns2_led_driver = {
- 	.probe		= ns2_led_probe,
--	.remove		= ns2_led_remove,
- 	.driver		= {
- 		.name		= "leds-ns2",
- 		.of_match_table	= of_match_ptr(of_ns2_leds_match),
 -- 
 2.26.2
 
