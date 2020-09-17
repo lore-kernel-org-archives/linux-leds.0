@@ -7,32 +7,29 @@ X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0280FC43465
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD9CC43464
 	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4294208DB
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AF02214D8
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Sep 2020 22:37:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="YmZAuXUK"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="CMNq3jgX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbgIQWg7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 17 Sep 2020 18:36:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49408 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbgIQWd4 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 17 Sep 2020 18:33:56 -0400
-Received: from mail.nic.cz (lists.nic.cz [IPv6:2001:1488:800:400::400])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA921C06174A;
-        Thu, 17 Sep 2020 15:33:55 -0700 (PDT)
+        id S1726906AbgIQWg6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 17 Sep 2020 18:36:58 -0400
+Received: from mail.nic.cz ([217.31.204.67]:35544 "EHLO mail.nic.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726126AbgIQWd7 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 17 Sep 2020 18:33:59 -0400
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 498E0140A75;
-        Fri, 18 Sep 2020 00:33:53 +0200 (CEST)
+        by mail.nic.cz (Postfix) with ESMTP id 3D8E8140A85;
+        Fri, 18 Sep 2020 00:33:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600382033; bh=LCbu6+SF9pg2hwGFGY/TLzTM7tBJKXuL6iP8UeZY++4=;
+        t=1600382034; bh=w0VTf8xLT7i3JlWTDmTp8v8/O+TbzLFJV1MeEcUgegw=;
         h=From:To:Date;
-        b=YmZAuXUKMg7enG6rXX50aOCM1XrH1jMnzkFvoedfXL+fdcbzAsxTvcrZDahguyEOl
-         0RIG1YDSm2WhxYWXS6HbOK+M3Njjad5XOjN1qeKWbZ07EihTYSVs41YK7wmy/dV/di
-         Jv/O2SViFPZOWk5vZdTIX8LQLzhLHlkVXRDD0u9M=
+        b=CMNq3jgXWbgNa+C7BlS2IwtRc6mGe5gwlTa6CDaePUn5+MH8CPj3EGdX4mVY4tCWe
+         oNFOyBpXn9ZmsK1NXB7RQVDyplaeJYuGGxzIITB2mIA/6iki14ke46KjfIUq+qtzhi
+         aBWb7bLwLBzn8MJ5DAd41oqCecHq6mUWsOyXwzI4=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -40,10 +37,10 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
-        Rod Whitby <rod@whitby.id.au>
-Subject: [PATCH leds v2 03/50] leds: fsg: compile if COMPILE_TEST=y
-Date:   Fri, 18 Sep 2020 00:32:51 +0200
-Message-Id: <20200917223338.14164-4-marek.behun@nic.cz>
+        Daniel Mack <daniel@caiaq.de>
+Subject: [PATCH leds v2 07/50] leds: lt3593: do not rewrite .of_node of new LED device to wrong value
+Date:   Fri, 18 Sep 2020 00:32:55 +0200
+Message-Id: <20200917223338.14164-8-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200917223338.14164-1-marek.behun@nic.cz>
 References: <20200917223338.14164-1-marek.behun@nic.cz>
@@ -57,49 +54,29 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This driver can be compiled on other platforms with small change if
-COMPILE_TEST=y.
+The devm_led_classdev_register_ext is given init_data with fwnode set,
+so the LED core sets .of_node of the new LED classdev correctly.
+
+Do not rewrite this value to parent of_node.
 
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Dan Murphy <dmurphy@ti.com>
-Cc: Rod Whitby <rod@whitby.id.au>
+Cc: Daniel Mack <daniel@caiaq.de>
 ---
- drivers/leds/Kconfig    | 2 +-
- drivers/leds/leds-fsg.c | 6 ++++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ drivers/leds/leds-lt3593.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index a008170e73cd8..7f3d16d4f0652 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -290,7 +290,7 @@ config LEDS_NET48XX
- config LEDS_FSG
- 	tristate "LED Support for the Freecom FSG-3"
- 	depends on LEDS_CLASS
--	depends on MACH_FSG
-+	depends on MACH_FSG || COMPILE_TEST
- 	help
- 	  This option enables support for the LEDs on the Freecom FSG-3.
+diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
+index c2d7ffebacc56..061f02e3995ae 100644
+--- a/drivers/leds/leds-lt3593.c
++++ b/drivers/leds/leds-lt3593.c
+@@ -107,7 +107,6 @@ static int lt3593_led_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
-diff --git a/drivers/leds/leds-fsg.c b/drivers/leds/leds-fsg.c
-index bc6b420637d61..1ffb34baee341 100644
---- a/drivers/leds/leds-fsg.c
-+++ b/drivers/leds/leds-fsg.c
-@@ -16,7 +16,13 @@
- #include <linux/leds.h>
- #include <linux/module.h>
- #include <linux/io.h>
-+
-+#if IS_ENABLED(MACH_FSG)
- #include <mach/hardware.h>
-+#else
-+/* for COMPILE_TEST */
-+#define IXP4XX_EXP_BUS_BASE(x) (0x12345678 + (x))
-+#endif
+-	led_data->cdev.dev->of_node = dev->of_node;
+ 	platform_set_drvdata(pdev, led_data);
  
- #define FSG_LED_WLAN_BIT	0
- #define FSG_LED_WAN_BIT		1
+ 	return 0;
 -- 
 2.26.2
 
