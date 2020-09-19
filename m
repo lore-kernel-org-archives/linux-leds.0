@@ -2,37 +2,35 @@ Return-Path: <SRS0=48XR=C4=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3256CC43478
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D98C4347E
 	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 22:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA5C12084C
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 22:15:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B49220665
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 22:15:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="pS5OnIlL"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="dzuH5R96"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbgISWPy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 19 Sep 2020 18:15:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39502 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726740AbgISWPy (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 19 Sep 2020 18:15:54 -0400
-Received: from mail.nic.cz (lists.nic.cz [IPv6:2001:1488:800:400::400])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53518C0613CF
-        for <linux-leds@vger.kernel.org>; Sat, 19 Sep 2020 15:15:54 -0700 (PDT)
+        id S1726707AbgISWPz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 19 Sep 2020 18:15:55 -0400
+Received: from mail.nic.cz ([217.31.204.67]:50108 "EHLO mail.nic.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726598AbgISWPz (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sat, 19 Sep 2020 18:15:55 -0400
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id D54D9140A98;
-        Sun, 20 Sep 2020 00:15:51 +0200 (CEST)
+        by mail.nic.cz (Postfix) with ESMTP id D66E8140A8A;
+        Sun, 20 Sep 2020 00:15:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600553752; bh=l5EZnvD0y3TF1B58/iFHlosNxgMfoWrFOqjt3P7RTFQ=;
+        t=1600553751; bh=p1J4GCBWLOMg/lbUnYKnK8LI8tcukk/W7PkUQakYTl4=;
         h=From:To:Date;
-        b=pS5OnIlLoySwCSvP59eGRB0VIuuFRZILAb6UOAzAVdDG/33MqCZlw2qSqaGVkbsgH
-         Gl4ovi5CoF8JBBWmnlSpHp8fBVr9RMz8i+98e10b4BDoHvRP15iGsG9CvOYtYXG1nL
-         su2uwyeFvnr3IFr2I3gPtVZjZ2UsvcWuzRycrBrs=
+        b=dzuH5R96pm3hInhDAGVjgnw4Im7ohvUxx7gQprM/uagwLyJogzTjx0P/gFDvrexar
+         0Rdk5IWxqmPW422eUjyq/Yt3VC+No94oTaUOUs0ABxKFCw1xDuAJUXnBqqlILs+oM+
+         BU4eXgK8JdIy/sm1Ri27AoW8wKzagkMytI3ckTpo=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -40,9 +38,9 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         NeilBrown <neilb@suse.de>,
         Linus Walleij <linus.walleij@linaro.org>,
         "H . Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH leds + devicetree 12/13] leds: tca6507: set registers to zero before LEDs/GPIOs registration
-Date:   Sun, 20 Sep 2020 00:15:47 +0200
-Message-Id: <20200919221548.29984-13-marek.behun@nic.cz>
+Subject: [PATCH leds + devicetree 07/13] leds: tca6507: register LEDs and GPIOs immediately after parsing
+Date:   Sun, 20 Sep 2020 00:15:42 +0200
+Message-Id: <20200919221548.29984-8-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200919221548.29984-1-marek.behun@nic.cz>
 References: <20200919221548.29984-1-marek.behun@nic.cz>
@@ -56,41 +54,269 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The LED registering functions can internally call brightness changes. If
-we zero the registers only after LEDs are registered, then the values
-set by registration code are lost.
+Register LEDs immediately after parsing the properties.
+Register GPIOs afterwards, at the moment we know all their IDs.
 
-Therefore set chip's registers to zero before registering LEDs/GPIOs.
+This allows us to be rid of platdata structure.
 
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
 Cc: NeilBrown <neilb@suse.de>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- drivers/leds/leds-tca6507.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/leds/leds-tca6507.c | 161 ++++++++++++++----------------------
+ 1 file changed, 62 insertions(+), 99 deletions(-)
 
 diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-index e32e628f2e460..ad4af6b6e94c7 100644
+index 6323539e54ae7..e9c7c19481702 100644
 --- a/drivers/leds/leds-tca6507.c
 +++ b/drivers/leds/leds-tca6507.c
-@@ -732,14 +732,14 @@ static int tca6507_probe(struct i2c_client *client,
+@@ -107,15 +107,6 @@
+ #define TCA6507_LS_BLINK0	0x6	/* Blink at Bank0 rate */
+ #define TCA6507_LS_BLINK1	0x7	/* Blink at Bank1 rate */
+ 
+-struct tca6507_platform_data {
+-	struct led_platform_data leds;
+-#ifdef CONFIG_GPIOLIB
+-	int gpio_base;
+-#endif
+-};
+-
+-#define	TCA6507_MAKE_GPIO 1
+-
+ enum {
+ 	BANK0,
+ 	BANK1,
+@@ -635,27 +626,21 @@ static int tca6507_gpio_direction_output(struct gpio_chip *gc,
+ 	return 0;
+ }
+ 
+-static int tca6507_probe_gpios(struct device *dev,
+-			       struct tca6507_chip *tca,
+-			       struct tca6507_platform_data *pdata)
++static int tca6507_register_gpios(struct device *dev,
++				  struct tca6507_chip *tca,
++				  unsigned long gpio_bitmap)
+ {
+-	int err;
+-	int i = 0;
+-	int gpios = 0;
+-
+-	for (i = 0; i < NUM_LEDS; i++)
+-		if (pdata->leds.leds[i].name && pdata->leds.leds[i].flags) {
+-			/* Configure as a gpio */
+-			tca->gpio_map[gpios] = i;
+-			gpios++;
+-		}
++	int i, gpios, ret;
+ 
+-	if (!gpios)
++	if (!gpio_bitmap)
+ 		return 0;
+ 
++	for_each_set_bit(i, &gpio_bitmap, NUM_LEDS)
++		tca->gpio_map[gpios++] = i;
++
+ 	tca->gpio.label = "gpio-tca6507";
+ 	tca->gpio.ngpio = gpios;
+-	tca->gpio.base = pdata->gpio_base;
++	tca->gpio.base = -1;
+ 	tca->gpio.owner = THIS_MODULE;
+ 	tca->gpio.direction_output = tca6507_gpio_direction_output;
+ 	tca->gpio.set = tca6507_gpio_set_value;
+@@ -663,12 +648,11 @@ static int tca6507_probe_gpios(struct device *dev,
+ #ifdef CONFIG_OF_GPIO
+ 	tca->gpio.of_node = of_node_get(dev_of_node(dev));
+ #endif
+-	err = gpiochip_add_data(&tca->gpio, tca);
+-	if (err) {
++	ret = gpiochip_add_data(&tca->gpio, tca);
++	if (ret)
+ 		tca->gpio.ngpio = 0;
+-		return err;
+-	}
+-	return 0;
++
++	return ret;
+ }
+ 
+ static void tca6507_remove_gpio(struct tca6507_chip *tca)
+@@ -677,9 +661,9 @@ static void tca6507_remove_gpio(struct tca6507_chip *tca)
+ 		gpiochip_remove(&tca->gpio);
+ }
+ #else /* CONFIG_GPIOLIB */
+-static int tca6507_probe_gpios(struct device *dev,
+-			       struct tca6507_chip *tca,
+-			       struct tca6507_platform_data *pdata)
++static int tca6507_register_gpios(struct device *dev,
++				  struct tca6507_chip *tca,
++				  unsigned long gpio_bitmap)
+ {
+ 	return 0;
+ }
+@@ -688,60 +672,62 @@ static void tca6507_remove_gpio(struct tca6507_chip *tca)
+ }
+ #endif /* CONFIG_GPIOLIB */
+ 
+-static struct tca6507_platform_data *
+-tca6507_led_dt_init(struct device *dev)
++static int tca6507_register_leds_and_gpios(struct device *dev,
++					   struct tca6507_chip *tca)
+ {
+-	struct tca6507_platform_data *pdata;
++	unsigned long gpio_bitmap = 0;
+ 	struct fwnode_handle *child;
+-	struct led_info *tca_leds;
+-	int count;
++	int count, ret;
+ 
+ 	count = device_get_child_node_count(dev);
+-	if (!count || count > NUM_LEDS)
+-		return ERR_PTR(-ENODEV);
+-
+-	tca_leds = devm_kcalloc(dev, NUM_LEDS, sizeof(struct led_info),
+-				GFP_KERNEL);
+-	if (!tca_leds)
+-		return ERR_PTR(-ENOMEM);
++	if (!count)
++		return -ENODEV;
++	else if (count > NUM_LEDS)
++		return -EINVAL;
+ 
+ 	device_for_each_child_node(dev, child) {
+-		struct led_info led;
++		struct tca6507_led *led;
+ 		u32 reg;
+-		int ret;
+-
+-		if (fwnode_property_read_string(child, "label", &led.name))
+-			led.name = fwnode_get_name(child);
+-
+-		fwnode_property_read_string(child, "linux,default-trigger",
+-					    &led.default_trigger);
+-
+-		led.flags = 0;
+-		if (fwnode_property_match_string(child, "compatible",
+-						 "gpio") >= 0)
+-			led.flags |= TCA6507_MAKE_GPIO;
+ 
+ 		ret = fwnode_property_read_u32(child, "reg", &reg);
+ 		if (ret || reg >= NUM_LEDS) {
+-			fwnode_handle_put(child);
+-			return ERR_PTR(ret);
++			dev_err(dev, "Invalid 'reg' property for node %pfw\n",
++				child);
++			goto err;
+ 		}
+ 
+-		tca_leds[reg] = led;
+-	}
++		if (fwnode_property_match_string(child, "compatible",
++						 "gpio") >= 0) {
++			gpio_bitmap |= BIT(reg);
++			continue;
++		}
+ 
+-	pdata = devm_kzalloc(dev, sizeof(struct tca6507_platform_data),
+-			     GFP_KERNEL);
+-	if (!pdata)
+-		return ERR_PTR(-ENOMEM);
++		led = &tca->leds[reg];
++		led->chip = tca;
++		led->num = reg;
+ 
+-	pdata->leds.leds = tca_leds;
+-	pdata->leds.num_leds = NUM_LEDS;
+-#ifdef CONFIG_GPIOLIB
+-	pdata->gpio_base = -1;
+-#endif
++		if (fwnode_property_read_string(child, "label",
++						&led->led_cdev.name))
++			led->led_cdev.name = fwnode_get_name(child);
++
++		fwnode_property_read_string(child, "linux,default-trigger",
++					    &led->led_cdev.default_trigger);
++
++		led->led_cdev.brightness_set = tca6507_brightness_set;
++		led->led_cdev.blink_set = tca6507_blink_set;
++		led->bank = -1;
++		ret = led_classdev_register(dev, &led->led_cdev);
++		if (ret) {
++			dev_err(dev, "Failed to register LED for node %pfw\n",
++				child);
++			goto err;
++		}
++	}
+ 
+-	return pdata;
++	return tca6507_register_gpios(dev, tca, gpio_bitmap);
++err:
++	fwnode_handle_put(child);
++	return ret;
+ }
+ 
+ static const struct of_device_id of_tca6507_leds_match[] = {
+@@ -756,20 +742,13 @@ static int tca6507_probe(struct i2c_client *client,
+ 	struct device *dev = &client->dev;
+ 	struct i2c_adapter *adapter;
+ 	struct tca6507_chip *tca;
+-	struct tca6507_platform_data *pdata;
+-	int err;
+-	int i = 0;
++	int err, i;
+ 
+ 	adapter = client->adapter;
+ 
+ 	if (!i2c_check_functionality(adapter, I2C_FUNC_I2C))
+ 		return -EIO;
+ 
+-	pdata = tca6507_led_dt_init(dev);
+-	if (IS_ERR(pdata)) {
+-		dev_err(dev, "Need %d entries in platform-data list\n", NUM_LEDS);
+-		return PTR_ERR(pdata);
+-	}
+ 	tca = devm_kzalloc(dev, sizeof(*tca), GFP_KERNEL);
+ 	if (!tca)
+ 		return -ENOMEM;
+@@ -779,36 +758,20 @@ static int tca6507_probe(struct i2c_client *client,
  	spin_lock_init(&tca->lock);
  	i2c_set_clientdata(client, tca);
  
-+	/* set all registers to known state - zero */
-+	tca->reg_set = 0x7f;
-+	tca6507_work(&tca->work);
-+
- 	err = tca6507_register_leds_and_gpios(dev, tca);
- 	if (err)
- 		return err;
- 
--	/* set all registers to known state - zero */
--	tca->reg_set = 0x7f;
--	schedule_work(&tca->work);
+-	for (i = 0; i < NUM_LEDS; i++) {
+-		struct tca6507_led *l = tca->leds + i;
 -
+-		l->chip = tca;
+-		l->num = i;
+-		if (pdata->leds.leds[i].name && !pdata->leds.leds[i].flags) {
+-			l->led_cdev.name = pdata->leds.leds[i].name;
+-			l->led_cdev.default_trigger
+-				= pdata->leds.leds[i].default_trigger;
+-			l->led_cdev.brightness_set = tca6507_brightness_set;
+-			l->led_cdev.blink_set = tca6507_blink_set;
+-			l->bank = -1;
+-			err = led_classdev_register(dev, &l->led_cdev);
+-			if (err < 0)
+-				goto exit;
+-		}
+-	}
+-	err = tca6507_probe_gpios(dev, tca, pdata);
++	err = tca6507_register_leds_and_gpios(dev, tca);
+ 	if (err)
+ 		goto exit;
++
+ 	/* set all registers to known state - zero */
+ 	tca->reg_set = 0x7f;
+ 	schedule_work(&tca->work);
+ 
  	return 0;
+ exit:
+-	while (i--) {
++	for (i = 0; i < NUM_LEDS; ++i)
+ 		if (tca->leds[i].led_cdev.name)
+ 			led_classdev_unregister(&tca->leds[i].led_cdev);
+-	}
++
+ 	return err;
  }
  
 -- 
