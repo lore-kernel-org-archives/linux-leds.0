@@ -2,166 +2,77 @@ Return-Path: <SRS0=48XR=C4=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE90C43465
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 05:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3901CC43463
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 09:23:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BAD820758
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 05:45:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDAB121582
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 09:23:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726321AbgISFpj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 19 Sep 2020 01:45:39 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:59377 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbgISFpj (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 19 Sep 2020 01:45:39 -0400
-Received: from methusalix.internal.home.lespocky.de ([92.117.44.159]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1N0nOF-1ke2RV0sfF-00wooU; Sat, 19 Sep 2020 07:32:20 +0200
-Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
-        by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.94)
-        (envelope-from <alex@home.lespocky.de>)
-        id 1kJVTt-0004nF-K2; Sat, 19 Sep 2020 07:32:18 +0200
-Received: (nullmailer pid 7641 invoked by uid 2001);
-        Sat, 19 Sep 2020 05:32:17 -0000
-From:   Alexander Dahl <post@lespocky.de>
-To:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
-        Alexander Dahl <ada@thorsis.com>,
-        Alexander Dahl <post@lespocky.de>,
-        Denis Osterland-Heim <denis.osterland@diehl.com>
-Subject: [PATCH v5 1/3] leds: pwm: Remove platform_data support
-Date:   Sat, 19 Sep 2020 07:31:43 +0200
-Message-Id: <20200919053145.7564-2-post@lespocky.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200919053145.7564-1-post@lespocky.de>
-References: <20200919053145.7564-1-post@lespocky.de>
+        id S1726202AbgISJX0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 19 Sep 2020 05:23:26 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:40148 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbgISJX0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 19 Sep 2020 05:23:26 -0400
+X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Sat, 19 Sep 2020 05:23:25 EDT
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id C2DDF1C0B88; Sat, 19 Sep 2020 11:18:20 +0200 (CEST)
+Date:   Sat, 19 Sep 2020 11:18:20 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>
+Cc:     linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org,
+        =?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>,
+        Kevin Cernekee <cernekee@gmail.com>,
+        Jaedon Shin <jaedon.shin@gmail.com>
+Subject: Re: [PATCH leds v2 12/50] leds: bcm6328: cosmetic: use reverse
+ christmas tree
+Message-ID: <20200919091820.GA18034@amd>
+References: <20200917223338.14164-1-marek.behun@nic.cz>
+ <20200917223338.14164-13-marek.behun@nic.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 4bf9351666375fa7ad51de20efbfb169
-X-Provags-ID: V03:K1:ZapwOjmSjjVYc3LmLhMI3dSVtvP2XiO/5ktb3Tr2uTUx0YpWQPt
- t1eZHLdQadXU+YYjDWSA1BJD3onv11nsn4VGz+dl4rNkHZsSrgwAAZkVffoAj3en7Y3Dcxn
- WDOxyHDuYOwtodFrTnGsCKN6UWsqlhelLySCHfFcdXrH4xRjW0y1aWWdl7gT8osNfVekBFf
- Psp3QF9uFsysCmTEuRa+A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:NE+LY5/+wtw=:jynDN0i9tG/sDxNaF6gynw
- PgX3yUk1FwMiMfQkZdhFC8nZp9FjQsZieR23OglQYhIQaPMqopX+e/E2LxfNknkH861xeppCR
- iveS7zRrrRmLMvoJZbp80jOmW1m7eJqzSIb9Afleb3YXpdNofJb3nWfTYKsDBIjHDFe6hHlVl
- ZL+VwDPOTue3WpTNkOcJVu5Ys0CL5eH2YlHYvowaotuRaVjH4DXjsviDSdP/A+D8pj8eV/GZT
- uFXkAnr0b/gAds1cZ0PdZr8a3DPtrGtCX/0qPCBNnT9JqCnSttMcNk9ya17VG8W/os+l0npgu
- w11jXxM+/Omjf5r080Lmmtyoa6U6osUW8vMU8vduXydUgQs5cXr4QHHn+4h4EmHi6DTCjcgLu
- YeOufNwkUNke5OxocG7IjyBPZnltxi31NAyeT0LAU9//o3mwjEBtEwlH8j2YprwpQNMYG+Shh
- IfLPzsevktz+ejHt3iefN7xCz2ZDKSMYitpsDwbHenFkLZDDtd+2B5guWT7EkGRWxK+HkOaxr
- XEkgInirybe9IrqvZUFAIWiSbOducCQT8S7Adph+ryWxlyHBD9o4eniQ7Sl8/lB9Za50OILD9
- sna9wKePjjnLbP0xuRPPGM5wI3GghPEMgl1CCkicEHnlqTeRLKQ8qK+/nQV/99mHn/hlVu0X6
- vnN9vdlgrHzBg12HUaj1ge275B8r6VFgYHrONMNjeofc+HLniPNXaRD6isqVJxRISylGAGcv1
- nMdLFNyPpTvUWKw8kFeMjuhHeNMNSiN1P4WdXFXor8Ebnz/mWdpDfMX5d/B8oeoqdTNDGDsCC
- szjg+Crgdf0R11l1+QDvAPY88Rf5eta9E23YIaBgLOTF98vQDMVgi6R/G5k/0XnkLHJe32J
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Content-Disposition: inline
+In-Reply-To: <20200917223338.14164-13-marek.behun@nic.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Since commit 141f15c66d94 ("leds: pwm: remove header") that platform
-interface is not usable from outside and there seems to be no in tree
-user anymore.  All in-tree users of the leds-pwm driver seem to use DT
-currently.  Getting rid of the old platform interface will allow the
-leds-pwm driver to switch over from 'devm_led_classdev_register()' to
-'devm_led_classdev_register_ext()' later.
 
-Signed-off-by: Alexander Dahl <post@lespocky.de>
-Cc: Denis Osterland-Heim <denis.osterland@diehl.com>
-Cc: Marek Behún <marek.behun@nic.cz>
----
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Notes:
-    v5:
-     * added this patch to series (replacing another patch with a not
-       working, different approach)
+On Fri 2020-09-18 00:33:00, Marek Beh=FAn wrote:
+> Only a cosmetic change: use reverse christmas tree variables
+> declaration.
 
- drivers/leds/leds-pwm.c | 30 +++++-------------------------
- 1 file changed, 5 insertions(+), 25 deletions(-)
+Yeah. Don't do that. Code changes for no reason.
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index e35a97c1d828..4e9954f8f7eb 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -25,11 +25,6 @@ struct led_pwm {
- 	unsigned int	max_brightness;
- };
- 
--struct led_pwm_platform_data {
--	int		num_leds;
--	struct led_pwm	*leds;
--};
--
- struct led_pwm_data {
- 	struct led_classdev	cdev;
- 	struct pwm_device	*pwm;
-@@ -61,6 +56,7 @@ static int led_pwm_set(struct led_classdev *led_cdev,
- 	return pwm_apply_state(led_dat->pwm, &led_dat->pwmstate);
- }
- 
-+__attribute__((nonnull))
- static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 		       struct led_pwm *led, struct fwnode_handle *fwnode)
- {
-@@ -74,10 +70,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 	led_data->cdev.max_brightness = led->max_brightness;
- 	led_data->cdev.flags = LED_CORE_SUSPENDRESUME;
- 
--	if (fwnode)
--		led_data->pwm = devm_fwnode_pwm_get(dev, fwnode, NULL);
--	else
--		led_data->pwm = devm_pwm_get(dev, led->name);
-+	led_data->pwm = devm_fwnode_pwm_get(dev, fwnode, NULL);
- 	if (IS_ERR(led_data->pwm))
- 		return dev_err_probe(dev, PTR_ERR(led_data->pwm),
- 				     "unable to request PWM for %s\n",
-@@ -143,15 +136,11 @@ static int led_pwm_create_fwnode(struct device *dev, struct led_pwm_priv *priv)
- 
- static int led_pwm_probe(struct platform_device *pdev)
- {
--	struct led_pwm_platform_data *pdata = dev_get_platdata(&pdev->dev);
- 	struct led_pwm_priv *priv;
--	int count, i;
- 	int ret = 0;
-+	int count;
- 
--	if (pdata)
--		count = pdata->num_leds;
--	else
--		count = device_get_child_node_count(&pdev->dev);
-+	count = device_get_child_node_count(&pdev->dev);
- 
- 	if (!count)
- 		return -EINVAL;
-@@ -161,16 +150,7 @@ static int led_pwm_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	if (pdata) {
--		for (i = 0; i < count; i++) {
--			ret = led_pwm_add(&pdev->dev, priv, &pdata->leds[i],
--					  NULL);
--			if (ret)
--				break;
--		}
--	} else {
--		ret = led_pwm_create_fwnode(&pdev->dev, priv);
--	}
-+	ret = led_pwm_create_fwnode(&pdev->dev, priv);
- 
- 	if (ret)
- 		return ret;
--- 
-2.20.1
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl9lzNwACgkQMOfwapXb+vLJvACcD0vLQD6i6rq1yLChubBfrCj+
+9XgAn39SLCKSUnzregAPCR/15/5OW9YD
+=J83J
+-----END PGP SIGNATURE-----
+
+--xHFwDpU9dbj6ez1V--
