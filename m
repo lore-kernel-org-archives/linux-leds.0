@@ -7,32 +7,29 @@ X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C187AC4346B
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 22:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A36C43464
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 22:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97CBF2084C
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 22:15:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2023920665
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 22:15:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="CpB1sL+1"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="YsI9W0fo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbgISWPy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S1726740AbgISWPz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 19 Sep 2020 18:15:55 -0400
+Received: from mail.nic.cz ([217.31.204.67]:50116 "EHLO mail.nic.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726617AbgISWPy (ORCPT <rfc822;linux-leds@vger.kernel.org>);
         Sat, 19 Sep 2020 18:15:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39494 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726749AbgISWPy (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 19 Sep 2020 18:15:54 -0400
-Received: from mail.nic.cz (lists.nic.cz [IPv6:2001:1488:800:400::400])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13FC3C0613CE
-        for <linux-leds@vger.kernel.org>; Sat, 19 Sep 2020 15:15:54 -0700 (PDT)
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 421C0140A84;
+        by mail.nic.cz (Postfix) with ESMTP id A2CDB140A95;
         Sun, 20 Sep 2020 00:15:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600553751; bh=vzSvdQrOWGNH1dxpbdbbhheFqh4N+DKhDr+pGP0PLTA=;
+        t=1600553751; bh=ciK44SgWm/0erGft2af72dTBuEF0hx6Ckl3+Gl9aV+g=;
         h=From:To:Date;
-        b=CpB1sL+1jKziJblJ6kj2JWsy7lhBHkdNLzyCkQHFv8wuu+z2VWUKaj5H5fYPOAWZ/
-         UzkUPcuIBVxVNlRoY8j7VJIWNi47aCTbqg3B087s5UyVKq/qSfNKVaeyem09PEBhsu
-         MLvCqKDrIGZ0gDwjlgtYCLuR+9ZJJwVAmV6ANaMc=
+        b=YsI9W0foU8Z88sij9Ib/K+YioDPTfl+ZxmB1QrVh4Qr5J/iuOcM6e3UepzLKb/E5/
+         OVjw2SoCsdHopHqQkBlHlTYDwcynth/w1XtVpaH5a7kVYDf61jfwiZ/B0bsCt+4QLR
+         bEw5VyUAvNMYEOHWJn8H8v9xTcj2J/fLdyYHn6ZE=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
@@ -40,9 +37,9 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         NeilBrown <neilb@suse.de>,
         Linus Walleij <linus.walleij@linaro.org>,
         "H . Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH leds + devicetree 09/13] leds: tca6507: use devres for LED and gpiochip registration
-Date:   Sun, 20 Sep 2020 00:15:44 +0200
-Message-Id: <20200919221548.29984-10-marek.behun@nic.cz>
+Subject: [PATCH leds + devicetree 11/13] leds: tca6507: fail on reg value conflict
+Date:   Sun, 20 Sep 2020 00:15:46 +0200
+Message-Id: <20200919221548.29984-12-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200919221548.29984-1-marek.behun@nic.cz>
 References: <20200919221548.29984-1-marek.behun@nic.cz>
@@ -56,111 +53,48 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-By using devres for LED and gpiochip registration the driver gets
-simpler.
+Fail if two child nodes have the same `reg` property value.
 
 Signed-off-by: Marek Behún <marek.behun@nic.cz>
 Cc: NeilBrown <neilb@suse.de>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- drivers/leds/leds-tca6507.c | 36 +++++-------------------------------
- 1 file changed, 5 insertions(+), 31 deletions(-)
+ drivers/leds/leds-tca6507.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-index 03858b61c7af1..e2be615855ae3 100644
+index 77a36e4da2508..e32e628f2e460 100644
 --- a/drivers/leds/leds-tca6507.c
 +++ b/drivers/leds/leds-tca6507.c
-@@ -613,7 +613,7 @@ static int tca6507_register_gpios(struct device *dev,
- 				  struct tca6507_chip *tca,
- 				  unsigned long gpio_bitmap)
- {
--	int i, gpios, ret;
-+	int i, gpios;
- 
- 	if (!gpio_bitmap)
- 		return 0;
-@@ -631,17 +631,7 @@ static int tca6507_register_gpios(struct device *dev,
- #ifdef CONFIG_OF_GPIO
- 	tca->gpio.of_node = of_node_get(dev_of_node(dev));
- #endif
--	ret = gpiochip_add_data(&tca->gpio, tca);
--	if (ret)
--		tca->gpio.ngpio = 0;
--
--	return ret;
--}
--
--static void tca6507_remove_gpio(struct tca6507_chip *tca)
--{
--	if (tca->gpio.ngpio)
--		gpiochip_remove(&tca->gpio);
-+	return devm_gpiochip_add_data(dev, &tca->gpio, tca);
- }
- #else /* CONFIG_GPIOLIB */
- static int tca6507_register_gpios(struct device *dev,
-@@ -650,9 +640,6 @@ static int tca6507_register_gpios(struct device *dev,
- {
- 	return 0;
- }
--static void tca6507_remove_gpio(struct tca6507_chip *tca)
--{
--}
- #endif /* CONFIG_GPIOLIB */
- 
+@@ -643,7 +643,7 @@ static int tca6507_register_gpios(struct device *dev,
  static int tca6507_register_leds_and_gpios(struct device *dev,
-@@ -699,7 +686,7 @@ static int tca6507_register_leds_and_gpios(struct device *dev,
- 		led->led_cdev.brightness_set = tca6507_brightness_set;
- 		led->led_cdev.blink_set = tca6507_blink_set;
- 		led->bank = -1;
--		ret = led_classdev_register(dev, &led->led_cdev);
-+		ret = devm_led_classdev_register(dev, &led->led_cdev);
- 		if (ret) {
- 			dev_err(dev, "Failed to register LED for node %pfw\n",
- 				child);
-@@ -725,7 +712,7 @@ static int tca6507_probe(struct i2c_client *client,
- 	struct device *dev = &client->dev;
- 	struct i2c_adapter *adapter;
- 	struct tca6507_chip *tca;
--	int err, i;
-+	int err;
- 
- 	adapter = client->adapter;
- 
-@@ -743,32 +730,19 @@ static int tca6507_probe(struct i2c_client *client,
- 
- 	err = tca6507_register_leds_and_gpios(dev, tca);
- 	if (err)
--		goto exit;
-+		return err;
- 
- 	/* set all registers to known state - zero */
- 	tca->reg_set = 0x7f;
- 	schedule_work(&tca->work);
- 
- 	return 0;
--exit:
--	for (i = 0; i < NUM_LEDS; ++i)
--		if (tca->leds[i].led_cdev.name)
--			led_classdev_unregister(&tca->leds[i].led_cdev);
--
--	return err;
- }
- 
- static int tca6507_remove(struct i2c_client *client)
+ 					   struct tca6507_chip *tca)
  {
--	int i;
- 	struct tca6507_chip *tca = i2c_get_clientdata(client);
--	struct tca6507_led *tca_leds = tca->leds;
+-	unsigned long gpio_bitmap = 0;
++	unsigned long gpio_bitmap = 0, led_bitmap = 0;
+ 	struct fwnode_handle *child;
+ 	int count, ret;
  
--	for (i = 0; i < NUM_LEDS; i++) {
--		if (tca_leds[i].led_cdev.name)
--			led_classdev_unregister(&tca_leds[i].led_cdev);
--	}
--	tca6507_remove_gpio(tca);
- 	cancel_work_sync(&tca->work);
+@@ -662,12 +662,18 @@ static int tca6507_register_leds_and_gpios(struct device *dev,
+ 			dev_err(dev, "Invalid 'reg' property for node %pfw\n",
+ 				child);
+ 			goto err;
++		} else if ((gpio_bitmap | led_bitmap) & BIT(reg)) {
++			dev_err(dev, "LED channel already used for node %pfw\n",
++				child);
++			goto err;
+ 		}
  
- 	return 0;
+ 		if (fwnode_property_match_string(child, "compatible",
+ 						 "gpio") >= 0) {
+ 			gpio_bitmap |= BIT(reg);
+ 			continue;
++		} else {
++			led_bitmap |= BIT(reg);
+ 		}
+ 
+ 		led = &tca->leds[reg];
 -- 
 2.26.2
 
