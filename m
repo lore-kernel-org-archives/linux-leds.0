@@ -2,34 +2,33 @@ Return-Path: <SRS0=48XR=C4=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B972C43463
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 05:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C85BC43464
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 05:45:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7636207D3
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 05:38:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA81720758
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 05:45:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbgISFiD (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 19 Sep 2020 01:38:03 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:35647 "EHLO
+        id S1726119AbgISFpf (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 19 Sep 2020 01:45:35 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:43765 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726119AbgISFiD (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 19 Sep 2020 01:38:03 -0400
-X-Greylist: delayed 312 seconds by postgrey-1.27 at vger.kernel.org; Sat, 19 Sep 2020 01:38:02 EDT
+        with ESMTP id S1726054AbgISFpf (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 19 Sep 2020 01:45:35 -0400
+X-Greylist: delayed 780 seconds by postgrey-1.27 at vger.kernel.org; Sat, 19 Sep 2020 01:45:34 EDT
 Received: from methusalix.internal.home.lespocky.de ([92.117.44.159]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MAtoX-1kCfqh2xQ1-00BLrK; Sat, 19 Sep 2020 07:32:30 +0200
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MtfeD-1kcPbe3KyF-00v676; Sat, 19 Sep 2020 07:32:13 +0200
 Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
         by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <alex@home.lespocky.de>)
-        id 1kJVTv-0004nL-2Z; Sat, 19 Sep 2020 07:32:28 +0200
-Received: (nullmailer pid 7650 invoked by uid 2001);
-        Sat, 19 Sep 2020 05:32:18 -0000
+        id 1kJVTm-0004mv-6F; Sat, 19 Sep 2020 07:32:11 +0200
+Received: (nullmailer pid 7638 invoked by uid 2001);
+        Sat, 19 Sep 2020 05:32:09 -0000
 From:   Alexander Dahl <post@lespocky.de>
 To:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
@@ -39,105 +38,93 @@ Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
         Alexander Dahl <ada@thorsis.com>,
         Alexander Dahl <post@lespocky.de>
-Subject: [PATCH v5 2/3] leds: pwm: Allow automatic labels for DT based devices
-Date:   Sat, 19 Sep 2020 07:31:44 +0200
-Message-Id: <20200919053145.7564-3-post@lespocky.de>
+Subject: [PATCH v5 0/3] leds: pwm: Make automatic labels work
+Date:   Sat, 19 Sep 2020 07:31:42 +0200
+Message-Id: <20200919053145.7564-1-post@lespocky.de>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200919053145.7564-1-post@lespocky.de>
-References: <20200919053145.7564-1-post@lespocky.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 09af0b23b5b967e4a9b70abe2712470c
-X-Provags-ID: V03:K1:0ROL4hCNah2uLQm6AeiHUgcNWsVO18uCbMk7h8IfdBnTQ7ZBM/h
- cloPvjgiH2stTOVhu0HWMffuADoAL0QA+zuvDrbAM9v60EkR1SG95xf4xys/mQYmgjORqJ1
- I6/six9CnKdg11rdqQF4wv+xEbxg2t/lKTlNfEht2gYTsybdYKSZsxmZTvBKyVDuXGXazQt
- b5A+V6jP3bcKlikfe7sVg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:CQr5XYCP1Hk=:4dlZ+SN/2rAP/OxMoXeTn1
- DkuvohQXqsSkzFnzxZdkSmjoKArGUV5YazbClPMl7jIj0U2ipjsVz4dTbDw1kPjDM4onTQNiS
- rH7kHHMlOnJBZnQSfd+US3AazVqFAQJgOqp99WkwwPu5OLVetP0R+eFPlpH8iUM7PQYcPnp5K
- i06MGTDpl5y1tbWsyc3iA4UPx2HJ2kPAKCa7TpCLQHxXyj01kQ2phuHvs7Sbi535mZh5mWuFG
- sm4iJQ66nTbgxqUUpWrxzB2lzyB5H3Xk5iDsGKvrNmD4Nm6l1RpM2gNcSlWRP3m/N76xRRQal
- p5TslcyVzTYMjMQZ/LcVfse7kf4/4RLtZcH/suL5XpE+A+z8AGmC8uctYPcJpJ2xXXYA+avgK
- BgraezcFuVem57Mtv7hU05cP+vphdQBfjB+UM5QyzuRnMWWraag/WxYSnNmF5RA7ZknGaEsTX
- wmtyEXyNW40Fl8lM6ETVlRorSsA/EM2T6l2rW8kv/FYm+O5SHi4SbAH9J5qZ5pRvtaArDGlz6
- GEmqsvJ2v/AQECq5FrI11Vw3ggm0C6w8muQPTQnbNy66n9jomGS+OE4SInmJ8U85j4jdA0SOs
- RVvWjYYyJpAo4QTiREIqMppsWg85aRLFAKj+H+O4R1xobC7df6Mb/8xG9F+FgTVJbNJIU5vaI
- XfYAt7O9tiS0/rBv6w8H4Xgc1mhD2+vzyuIycIS87SX1R+9ARsyvtKHB2PgCWc7dTCctCJGKI
- Rfx3lD0jZzlm8swC7CVwhVR+r2Hl1jaRhqB/IEWoYmxtjXIeUBIoUITeBDFfAfZg63fO/k1PB
- 4zMbyN9z6IQ9RLtJSjfdQIFZGNtpeR1hGgK9qGwY/fckk7070MXtw0hdlt83P6mR3y/Hlxf
+X-Scan-Signature: 3b5b4ff3ca3583cb7f12014899502a35
+X-Provags-ID: V03:K1:lq4IJsOe1g2SSinIL81Ac6vmNVDBhOTg7BqnGfzcGHy4V6soo2J
+ uH7qOPwmitn/GQitYIFZWIVY4BTvpHXF7nwqQQBpeI0Ae4zjy5POOAyulbsr3gzIRmuA2yw
+ tzEH9RyzvShIpJGZ1ykaVN+C4r8ePANfO5VjeF3NoX44AAfTnQN5DjEAMQnXsiggkmhNOMd
+ AH9NOWXHnumPpVajy67EQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gnHs68amGnY=:VSrlcf9W5TJlXhsenUwuKN
+ HeozVt3iH3lWYD6yjMEJSch83arRnaFdF64UrdBkef6ywGbTYOd6k0yxQ3b8AUecV2CwB8eEX
+ Yzv1YjAIUVt/RVdG/6ZC6Hmjd8OKq5/CzUfZNbt+ktIfjb/GaMZsQd+Ih5CB41uxL/L7+fHWU
+ x2Ejf8MaugQ9kNcYBSI6qwAEL06blzPZvjKlnRVZSwcwz9egeMymmk1d6aZ6Ip5HSvPlrquuJ
+ nDxxpAxkJuhEnda5Ui8n8xcEWZ7HIJnhPvmQWqWI5DPvIxoKi9Isc19Hf38XW+lIyklfQzoo+
+ CeklTaFJ+99m2XTL29owAwFaXvRtSTcdnJIqWIBHOXMXNodhAToV/XAKyXvrExoKXMQq31D3q
+ efKYSsybp7ZAHCZQDSgCfWnq6DvXRNeYqqkFsi5aTfTXidEWDJ25Gec5KFG+Lmljn20CxNed7
+ 3nDD08DQhFTz4MyFSyKAsa1L9DBFoStR9BER6E6cYyNtqSdf+4aCke8yAM2gGX6k4a9IQ536t
+ CZMXvyN+paVb7KEhJYXOv1boiHOKC/huFfpU0ere+e8zCB7fM+jAa9cliejtXCFoNUlnWI8rz
+ zDYjQ0sg3WRyt9UUXOuO3L2Y3KUd5938Wez82e4LlRcEFZBr7M2F3b7Hh9ArOMsX0d7pW0rPc
+ OHRDDyCM6hzqWa0YrS+l3zYyxAgCOYihJC6bXv+hRr9owxJ1ixqZDqp7aMa6jZWhnU6XOHvmF
+ is/lEaCdq/1pCe57Z5nwcSWnkByMAwhxLH7dZU7fZp8r6b3HJFmwHK17QrksqSRGxRbN6GRWy
+ opBaDTjuydQKnieduAQRBy2tGprM4U5JCDfo+1crFkTw1vqDay8TyWfmGRMrNw+XvPvpzmk
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-If LEDs are configured through device tree and the property 'label' is
-omitted, the label is supposed to be generated from the properties
-'function' and 'color' if present.  While this works fine for e.g. the
-'leds-gpio' driver, it did not for 'leds-pwm'.
+Hei hei,
 
-The reason is, you get this label naming magic only if you add a LED
-device through 'devm_led_classdev_register_ext()' and pass a pointer to
-the current device tree node.
+for leds-gpio you can use the properties 'function' and 'color' in the
+devicetree node and omit 'label', the label is constructed
+automatically.  This is a common feature supposed to be working for all
+LED drivers.  However it did not yet work for the 'leds-pwm' driver.
 
-For the following node from dts the LED appeared as 'led-5' in sysfs
-before and as 'red:debug' after this change.
+This series removes platform_data support for the leds-pwm driver and
+takes the opportunity to update the leds-pwm dt-bindings accordingly.
 
-        pwm_leds {
-                compatible = "pwm-leds";
+v5 was tested on a at91 sama5d2 based platform with LEDs connected to
+GPIO and PWM.
 
-                led-5 {
-                        function = LED_FUNCTION_DEBUG;
-                        color = <LED_COLOR_ID_RED>;
-                        pwms = <&pwm0 2 10000000 0>;
-                        max-brightness = <127>;
+Greets
+Alex
 
-                        linux,default-trigger = "heartbeat";
-                        panic-indicator;
-                };
-        };
+v5:
+- replaced patch 1/3 by a new patch removing platform_data support for
+  the leds-pwm driver
+- little rewording of commit message in patch 2/3
+- updated patch 3/3 based on feedback by Rob Herring
+- added Marek Behún to Cc, because he also works on removing
+  platform_data support
+- rebased series on pavel/for-next
 
-Signed-off-by: Alexander Dahl <post@lespocky.de>
-Cc: Marek Behún <marek.behun@nic.cz>
----
+v4:
+- added led-class patch handling fwnode passing differently (patch 1/3)
+- adapted leds-pwm patch to new led-class (patch 2/3)
+- contacted original author of leds-pwm dt binding on license issue
+  (patch 3/3)
 
-Notes:
-    v4 -> v5:
-      * updated commit message
-    
-    v3 -> v4:
-      * simplified implementation based on a new change in led-core
-      * removed Acked-by due to changed implementation
-    
-    v2 -> v3:
-      * added Acked-by
-    
-    v1 -> v2:
-      * no change to this patch
+v3:
+- series rebased on v5.9-rc4
+- changed license of .yaml file to recommended one (patch 2/2)
+- added Acked-by to both patches
 
- drivers/leds/leds-pwm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v2:
+- series rebased on v5.9-rc3
+- added the dt-bindings update patch (2/2)
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 4e9954f8f7eb..8881d465701d 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -61,6 +61,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 		       struct led_pwm *led, struct fwnode_handle *fwnode)
- {
- 	struct led_pwm_data *led_data = &priv->leds[priv->num_leds];
-+	struct led_init_data init_data = { .fwnode = fwnode };
- 	int ret;
- 
- 	led_data->active_low = led->active_low;
-@@ -80,7 +81,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 
- 	pwm_init_state(led_data->pwm, &led_data->pwmstate);
- 
--	ret = devm_led_classdev_register(dev, &led_data->cdev);
-+	ret = devm_led_classdev_register_ext(dev, &led_data->cdev, &init_data);
- 	if (ret) {
- 		dev_err(dev, "failed to register PWM led for %s: %d\n",
- 			led->name, ret);
+v1:
+- based on v5.9-rc2
+- backport on v5.4.59 tested and working
+
+Alexander Dahl (3):
+  leds: pwm: Remove platform_data support
+  leds: pwm: Allow automatic labels for DT based devices
+  dt-bindings: leds: Convert pwm to yaml
+
+ .../devicetree/bindings/leds/leds-pwm.txt     | 50 -----------
+ .../devicetree/bindings/leds/leds-pwm.yaml    | 82 +++++++++++++++++++
+ drivers/leds/leds-pwm.c                       | 33 ++------
+ 3 files changed, 89 insertions(+), 76 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/leds/leds-pwm.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-pwm.yaml
+
+
+base-commit: 03eb2ca44a95105d1482d5e7471016cf8b383f97
 -- 
 2.20.1
 
