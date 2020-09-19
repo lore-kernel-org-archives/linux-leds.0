@@ -2,84 +2,73 @@ Return-Path: <SRS0=48XR=C4=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64797C43463
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 09:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACDCC43464
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 09:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA0721741
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 09:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC1D621582
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 09:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726245AbgISJoe (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 19 Sep 2020 05:44:34 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:43342 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbgISJoe (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 19 Sep 2020 05:44:34 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id A54C41C0B85; Sat, 19 Sep 2020 11:44:31 +0200 (CEST)
-Date:   Sat, 19 Sep 2020 11:44:31 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Alexander Dahl <post@lespocky.de>
-Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>,
-        Alexander Dahl <ada@thorsis.com>
-Subject: Re: [PATCH v5 2/3] leds: pwm: Allow automatic labels for DT based
- devices
-Message-ID: <20200919094431.GD12294@duo.ucw.cz>
-References: <20200919053145.7564-1-post@lespocky.de>
- <20200919053145.7564-3-post@lespocky.de>
+        id S1726298AbgISJqg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 19 Sep 2020 05:46:36 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13724 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726097AbgISJqg (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sat, 19 Sep 2020 05:46:36 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id AC6DB9C4F879D1014F4E;
+        Sat, 19 Sep 2020 17:46:33 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Sat, 19 Sep 2020
+ 17:46:25 +0800
+From:   Liu Shixin <liushixin2@huawei.com>
+To:     Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>,
+        Dan Murphy <dmurphy@ti.com>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Liu Shixin <liushixin2@huawei.com>
+Subject: [PATCH -next] leds: pca9532 - simplify the return expression of pca9532_remove
+Date:   Sat, 19 Sep 2020 18:08:53 +0800
+Message-ID: <20200919100853.1639215-1-liushixin2@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="qGV0fN9tzfkG3CxV"
-Content-Disposition: inline
-In-Reply-To: <20200919053145.7564-3-post@lespocky.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.32]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Simplify the return expression.
 
---qGV0fN9tzfkG3CxV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+---
+ drivers/leds/leds-pca9532.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-On Sat 2020-09-19 07:31:44, Alexander Dahl wrote:
-> If LEDs are configured through device tree and the property 'label' is
-> omitted, the label is supposed to be generated from the properties
-> 'function' and 'color' if present.  While this works fine for e.g. the
-> 'leds-gpio' driver, it did not for 'leds-pwm'.
->=20
-> The reason is, you get this label naming magic only if you add a LED
-> device through 'devm_led_classdev_register_ext()' and pass a pointer to
-> the current device tree node.
->=20
-> For the following node from dts the LED appeared as 'led-5' in sysfs
-> before and as 'red:debug' after this change.
+diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+index 7d515d5e57bd..88d2edf285c2 100644
+--- a/drivers/leds/leds-pca9532.c
++++ b/drivers/leds/leds-pca9532.c
+@@ -545,13 +545,8 @@ static int pca9532_probe(struct i2c_client *client,
+ static int pca9532_remove(struct i2c_client *client)
+ {
+ 	struct pca9532_data *data = i2c_get_clientdata(client);
+-	int err;
+ 
+-	err = pca9532_destroy_devices(data, data->chip_info->num_leds);
+-	if (err)
+-		return err;
+-
+-	return 0;
++	return pca9532_destroy_devices(data, data->chip_info->num_leds);
+ }
+ 
+ module_i2c_driver(pca9532_driver);
+-- 
+2.25.1
 
-Thanks, applied.
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---qGV0fN9tzfkG3CxV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX2XS/wAKCRAw5/Bqldv6
-8ob7AJ9r8q2IyOv76Bdhrp1yp2IBmXH+qQCfe4DTLqYtC1J0A0xjwpUn4gu3Lyw=
-=0r//
------END PGP SIGNATURE-----
-
---qGV0fN9tzfkG3CxV--
