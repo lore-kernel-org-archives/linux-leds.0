@@ -2,52 +2,50 @@ Return-Path: <SRS0=48XR=C4=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2A9C43469
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4033C4346E
 	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 22:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C116E2311B
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 22:15:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F0B820665
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 22:15:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="M+YV9S1l"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="mNMB3a9v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbgISWPx (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 19 Sep 2020 18:15:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39486 "EHLO
+        id S1726738AbgISWPy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 19 Sep 2020 18:15:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbgISWPx (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 19 Sep 2020 18:15:53 -0400
-Received: from mail.nic.cz (mail.nic.cz [IPv6:2001:1488:800:400::400])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16548C0613CE;
-        Sat, 19 Sep 2020 15:15:52 -0700 (PDT)
+        with ESMTP id S1726740AbgISWPy (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 19 Sep 2020 18:15:54 -0400
+Received: from mail.nic.cz (lists.nic.cz [IPv6:2001:1488:800:400::400])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C46A4C0613CF
+        for <linux-leds@vger.kernel.org>; Sat, 19 Sep 2020 15:15:53 -0700 (PDT)
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 5A00A140925;
-        Sun, 20 Sep 2020 00:15:49 +0200 (CEST)
+        by mail.nic.cz (Postfix) with ESMTP id 1AC77140A8B;
+        Sun, 20 Sep 2020 00:15:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600553749; bh=zCbpIM/C4TLd7NaidOQ92vSkSL8MTP7HW502znmDqcE=;
+        t=1600553751; bh=THU05AS8cM8S66T0HM2dKmIyx2xbBNwDT60pTXBwSK0=;
         h=From:To:Date;
-        b=M+YV9S1lx1aeX/qUFLBHxb6+4fmWRQQ1JJpCisjFf5kH3RcScov34gpsJAssT114w
-         Wye+CM+hQzE9ZWdWkU++pzUVGZQHVzgm8lCIzg2f5SgvF0q7BGFgPQ+2XtUmetRU0J
-         11JNGPwYTvV/a11/MgrROdYkM5Wo5U15tCjdbIC4=
+        b=mNMB3a9vj0iCXkHgCm2Jao/o2dGiuD8aLJjPUEIpRDm5GoSrRUZreLDvLjO+LAUne
+         TQnFHC0C6cZ5tt0TOUAEwKW71XIPi3sGsGXWcAU/qGLbauuaLXDjU3VC4KP7lpBaMW
+         88EyrgAWc2rZVAUT69v4dItAi1mBbPr6VmX1XPYQ=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
         NeilBrown <neilb@suse.de>,
         Linus Walleij <linus.walleij@linaro.org>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Adam Ford <aford173@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH leds + devicetree 00/13] leds: tca6507 cleanup
-Date:   Sun, 20 Sep 2020 00:15:35 +0200
-Message-Id: <20200919221548.29984-1-marek.behun@nic.cz>
+        "H . Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH leds + devicetree 08/13] leds: tca6507: remove binding comment
+Date:   Sun, 20 Sep 2020 00:15:43 +0200
+Message-Id: <20200919221548.29984-9-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200919221548.29984-1-marek.behun@nic.cz>
+References: <20200919221548.29984-1-marek.behun@nic.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -58,57 +56,46 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Pavel,
+Remove the binding comment at the beginning. The information for
+platdata is now obsolete and DT binding is documented in device-tree
+bindings.
 
-this is a cleanup of tca6507 LED driver.
-
-This series applies on your for-next, but:
-- the last patch should be added only after LED core parses
-  `linux,default-trigger` property
-- there is DT binding change and device tree change, I am not sure
-  who should apply those patches
-
-Mainly we are getting rid of platform data, but also a potential bug is
-being fixed and bindings are DT being aligned.
-
-Marek
-
+Signed-off-by: Marek Behún <marek.behun@nic.cz>
 Cc: NeilBrown <neilb@suse.de>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Adam Ford <aford173@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
+---
+ drivers/leds/leds-tca6507.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-Marek Behún (13):
-  leds: tca6507: Absorb platform data
-  leds: tca6507: use fwnode API instead of OF
-  dt-bindings: leds: tca6507: convert to YAML
-  ARM: dts: omap3: gta04: rename LED controlled subnodes
-  leds: tca6507: do not set GPIO names
-  leds: tca6507: cosmetic change: use helper variable
-  leds: tca6507: register LEDs and GPIOs immediately after parsing
-  leds: tca6507: remove binding comment
-  leds: tca6507: use devres for LED and gpiochip registration
-  leds: tca6507: let gpiolib set gpiochip's of_node
-  leds: tca6507: fail on reg value conflict
-  leds: tca6507: set registers to zero before LEDs/GPIOs registration
-  leds: tca6507: use struct led_init_data when registering
-
- .../devicetree/bindings/leds/tca6507.txt      |  49 ----
- .../devicetree/bindings/leds/ti,tca6507.yaml  | 134 ++++++++++
- arch/arm/boot/dts/omap3-gta04.dtsi            |  12 +-
- drivers/leds/leds-tca6507.c                   | 234 ++++++------------
- include/linux/leds-tca6507.h                  |  21 --
- 5 files changed, 217 insertions(+), 233 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/leds/tca6507.txt
- create mode 100644 Documentation/devicetree/bindings/leds/ti,tca6507.yaml
- delete mode 100644 include/linux/leds-tca6507.h
-
-
-base-commit: a0e550dc351ab5fabe8ea86e45b974494a0a6bf8
+diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
+index e9c7c19481702..03858b61c7af1 100644
+--- a/drivers/leds/leds-tca6507.c
++++ b/drivers/leds/leds-tca6507.c
+@@ -69,23 +69,6 @@
+  * defaulted.  Similarly the banks know if each time was explicit or a
+  * default.  Defaults are permitted to be changed freely - they are
+  * not recognised when matching.
+- *
+- *
+- * An led-tca6507 device must be provided with platform data or
+- * configured via devicetree.
+- *
+- * The platform-data lists for each output: the name, default trigger,
+- * and whether the signal is being used as a GPIO rather than an LED.
+- * 'struct led_plaform_data' is used for this.  If 'name' is NULL, the
+- * output isn't used.  If 'flags' is TCA6507_MAKE_GPIO, the output is
+- * a GPO.  The "struct led_platform_data" can be embedded in a "struct
+- * tca6507_platform_data" which adds a 'gpio_base' for the GPIOs, and
+- * a 'setup' callback which is called once the GPIOs are available.
+- *
+- * When configured via devicetree there is one child for each output.
+- * The "reg" determines the output number and "compatible" determines
+- * whether it is an LED or a GPIO.  "linux,default-trigger" can set a
+- * default trigger.
+  */
+ 
+ #include <linux/module.h>
 -- 
 2.26.2
 
