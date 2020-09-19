@@ -2,44 +2,42 @@ Return-Path: <SRS0=48XR=C4=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA2FC43464
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 18:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F00C43466
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 18:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D499721741
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 18:03:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 995C821707
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Sep 2020 18:03:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="R4lMoWY+"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="xcrNTMnh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbgISSDI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 19 Sep 2020 14:03:08 -0400
-Received: from lists.nic.cz ([217.31.204.67]:52594 "EHLO mail.nic.cz"
+        id S1726559AbgISSDJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 19 Sep 2020 14:03:09 -0400
+Received: from mail.nic.cz ([217.31.204.67]:52574 "EHLO mail.nic.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726449AbgISSDH (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        id S1726481AbgISSDH (ORCPT <rfc822;linux-leds@vger.kernel.org>);
         Sat, 19 Sep 2020 14:03:07 -0400
 Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id B1866140A46;
+        by mail.nic.cz (Postfix) with ESMTP id 591551409ED;
         Sat, 19 Sep 2020 20:03:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1600538585; bh=SXNjItpHJm2u9vyr5Sn4JZbCGVR05CZj84BN2k2cn+I=;
+        t=1600538585; bh=HGvcLVwpyTZiR9gkCs18hJV4VUPiUmymIRmCaSweAE0=;
         h=From:To:Date;
-        b=R4lMoWY+zhxqHtjiUoUi6j+qzsqctPc7AC0PJ/4z+YnToi1r9AJoNXdWbQ4LBTwyg
-         JXc690EzYm1KMjOYr33a+w1vjBw+YnXUO6oxqkUrMLrDrHzon3XK43Dw9q3+1OwhcY
-         X/dBUYKGRZpbL/RJ1Bhw3wEZPmA6qAvIo1rwUgpM=
+        b=xcrNTMnhl9Kj42S/ai8Wxgvmf8E5AKPpm8PAuEWVRZ3rGhZsLdinhxABkTMZU89rU
+         0KjT6lURFRIC2q6OKNrlXE97oAYJ2B2HjgspCNV3sWfv7eZPjBYA05Y5JZebF1a2NS
+         6slvQr0GZiH6NbzrnhRUdepvrtsyJsxBW0JPgWLg=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 To:     linux-leds@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH leds v3 2/9] leds: lm36274: don't iterate through children since there is only one
-Date:   Sat, 19 Sep 2020 20:02:57 +0200
-Message-Id: <20200919180304.2885-3-marek.behun@nic.cz>
+Subject: [PATCH leds v3 0/9] Start moving parsing of `linux,default-trigger` to LED core (a cleanup of LED drivers)
+Date:   Sat, 19 Sep 2020 20:02:55 +0200
+Message-Id: <20200919180304.2885-1-marek.behun@nic.cz>
 X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200919180304.2885-1-marek.behun@nic.cz>
-References: <20200919180304.2885-1-marek.behun@nic.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -50,84 +48,58 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Do not use device_for_each_child_node. Since this driver works only with
-once child node present, use device_get_next_child_node instead.
-This also saves one level of indentation.
+Hi Pavel,
 
-Signed-off-by: Marek Behún <marek.behun@nic.cz>
-Cc: Dan Murphy <dmurphy@ti.com>
----
- drivers/leds/leds-lm36274.c | 50 +++++++++++++++++--------------------
- 1 file changed, 23 insertions(+), 27 deletions(-)
+this is v3, on top of your current for-next branch.
 
-diff --git a/drivers/leds/leds-lm36274.c b/drivers/leds/leds-lm36274.c
-index 4a9f786bb9727..e0fce74a76675 100644
---- a/drivers/leds/leds-lm36274.c
-+++ b/drivers/leds/leds-lm36274.c
-@@ -72,40 +72,36 @@ static int lm36274_parse_dt(struct lm36274 *chip)
- 	char label[LED_MAX_NAME_SIZE];
- 	struct device *dev = &chip->pdev->dev;
- 	const char *name;
--	int child_cnt;
--	int ret = -EINVAL;
-+	int ret;
- 
- 	/* There should only be 1 node */
--	child_cnt = device_get_child_node_count(dev);
--	if (child_cnt != 1)
-+	if (device_get_child_node_count(dev) != 1)
- 		return -EINVAL;
- 
--	device_for_each_child_node(dev, child) {
--		ret = fwnode_property_read_string(child, "label", &name);
--		if (ret)
--			snprintf(label, sizeof(label), "%s::",
--				 chip->pdev->name);
--		else
--			snprintf(label, sizeof(label), "%s:%s",
--				 chip->pdev->name, name);
--
--		chip->num_leds = fwnode_property_count_u32(child, "led-sources");
--		if (chip->num_leds <= 0)
--			return -ENODEV;
--
--		ret = fwnode_property_read_u32_array(child, "led-sources",
--						     chip->led_sources,
--						     chip->num_leds);
--		if (ret) {
--			dev_err(dev, "led-sources property missing\n");
--			return ret;
--		}
--
--		fwnode_property_read_string(child, "linux,default-trigger",
--					    &chip->led_dev.default_trigger);
-+	child = device_get_next_child_node(dev, NULL);
-+
-+	ret = fwnode_property_read_string(child, "label", &name);
-+	if (ret)
-+		snprintf(label, sizeof(label), "%s::", chip->pdev->name);
-+	else
-+		snprintf(label, sizeof(label), "%s:%s", chip->pdev->name, name);
- 
-+	chip->num_leds = fwnode_property_count_u32(child, "led-sources");
-+	if (chip->num_leds <= 0)
-+		return -ENODEV;
-+
-+	ret = fwnode_property_read_u32_array(child, "led-sources",
-+					     chip->led_sources, chip->num_leds);
-+	if (ret) {
-+		dev_err(dev, "led-sources property missing\n");
-+		return ret;
- 	}
- 
-+	fwnode_property_read_string(child, "linux,default-trigger",
-+				    &chip->led_dev.default_trigger);
-+
-+	fwnode_handle_put(child);
-+
- 	chip->lmu_data.regmap = chip->regmap;
- 	chip->lmu_data.max_brightness = MAX_BRIGHTNESS_11BIT;
- 	chip->lmu_data.msb_brightness_reg = LM36274_REG_BRT_MSB;
+Changes:
+- lm36274 again with the use-after-free issue you mentioned solved
+- lm3532 does not need to parse `label` since it uses init_data
+- leds-syscon can also use init_data by simple change
+- the last patch, which moves parsing of `linux,default-trigger`, is now
+  compatible with current version of the patches
+
+Marek
+
+Marek Behún (9):
+  leds: lm36274: cosmetic: rename lm36274_data to chip
+  leds: lm36274: don't iterate through children since there is only one
+  leds: lm36274: use struct led_init_data when registering
+  leds: lm36274: do not set chip settings in DT parsing function
+  leds: lm36274: use platform device as parent of LED
+  leds: lm36274: use devres LED registering function
+  leds: lm3532: don't parse label DT property
+  leds: syscon: use struct led_init_data when registering
+  leds: parse linux,default-trigger DT property in LED core
+
+ drivers/leds/led-class.c         |   5 ++
+ drivers/leds/leds-an30259a.c     |   3 -
+ drivers/leds/leds-aw2013.c       |   3 -
+ drivers/leds/leds-bcm6328.c      |   4 -
+ drivers/leds/leds-bcm6358.c      |   4 -
+ drivers/leds/leds-cr0014114.c    |   3 -
+ drivers/leds/leds-el15203000.c   |   3 -
+ drivers/leds/leds-gpio.c         |   3 -
+ drivers/leds/leds-is31fl32xx.c   |   3 -
+ drivers/leds/leds-lm3532.c       |  15 ----
+ drivers/leds/leds-lm36274.c      | 128 ++++++++++++++-----------------
+ drivers/leds/leds-lm3692x.c      |   3 -
+ drivers/leds/leds-lm3697.c       |   3 -
+ drivers/leds/leds-lp50xx.c       |   3 -
+ drivers/leds/leds-lp8860.c       |   4 -
+ drivers/leds/leds-lt3593.c       |   3 -
+ drivers/leds/leds-max77650.c     |   3 -
+ drivers/leds/leds-mt6323.c       |   4 -
+ drivers/leds/leds-ns2.c          |   3 -
+ drivers/leds/leds-pm8058.c       |   2 -
+ drivers/leds/leds-pwm.c          |   5 --
+ drivers/leds/leds-syscon.c       |   9 +--
+ drivers/leds/leds-tlc591xx.c     |   3 -
+ drivers/leds/leds-turris-omnia.c |   2 -
+ 24 files changed, 68 insertions(+), 153 deletions(-)
+
+
+base-commit: a0e550dc351ab5fabe8ea86e45b974494a0a6bf8
 -- 
 2.26.2
 
