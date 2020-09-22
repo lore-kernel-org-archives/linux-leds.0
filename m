@@ -2,155 +2,99 @@ Return-Path: <SRS0=VYW2=C7=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C84A1C4363D
-	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 17:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A402EC4363D
+	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 19:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 978B522206
-	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 17:32:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 315BC2311C
+	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 19:06:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mpNHno2P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbgIVRco (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 22 Sep 2020 13:32:44 -0400
-Received: from vm1.sequanux.org ([188.165.36.56]:57543 "EHLO vm1.sequanux.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726526AbgIVRco (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 22 Sep 2020 13:32:44 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by vm1.sequanux.org (Postfix) with ESMTP id 18740108646;
-        Tue, 22 Sep 2020 19:32:42 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at vm1.sequanux.org
-Received: from vm1.sequanux.org ([127.0.0.1])
-        by localhost (vm1.sequanux.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 8oeo1XofqNEz; Tue, 22 Sep 2020 19:32:40 +0200 (CEST)
-Received: from localhost (softwrestling.org [188.165.144.248])
-        by vm1.sequanux.org (Postfix) with ESMTPSA id 4756A108638;
-        Tue, 22 Sep 2020 19:32:40 +0200 (CEST)
-Date:   Tue, 22 Sep 2020 19:32:40 +0200
-From:   Simon Guinot <simon.guinot@sequanux.org>
-To:     Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>
-Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Dan Murphy <dmurphy@ti.com>,
-        =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org,
-        =?utf-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= Rojas <noltari@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Andrey Utkin <andrey_utkin@fastmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Christian Mauderer <oss@c-mauderer.de>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Daniel Mack <daniel@caiaq.de>,
-        David Rivshin <drivshin@allworx.com>,
-        Grant Feng <von81@163.com>,
-        Haojian Zhuang <haojian.zhuang@marvell.com>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Jaedon Shin <jaedon.shin@gmail.com>,
-        John Crispin <john@phrozen.org>,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Milo Kim <milo.kim@ti.com>, NeilBrown <neilb@suse.de>,
-        Nikita Travkin <nikitos.tr@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Philippe Retornaz <philippe.retornaz@epfl.ch>,
-        Riku Voipio <riku.voipio@iki.fi>,
-        Rod Whitby <rod@whitby.id.au>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Simon Guinot <sguinot@lacie.com>,
-        Simon Shields <simon@lineageos.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Vasant Hegde <hegdevasant@linux.vnet.ibm.com>,
-        Vincent Donnefort <vdonnefort@gmail.com>,
-        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-Subject: Re: [PATCH leds v2 00/50] Start moving parsing of
- `linux,default-trigger` to LED core (a cleanup of LED drivers)
-Message-ID: <20200922173240.GG4828@kw.sim.vm.gnt>
-References: <20200917223338.14164-1-marek.behun@nic.cz>
+        id S1726614AbgIVTG4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 22 Sep 2020 15:06:56 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:60140 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbgIVTGz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 22 Sep 2020 15:06:55 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 08MJ6nSL104668;
+        Tue, 22 Sep 2020 14:06:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1600801609;
+        bh=FXdbHyKP4OzNMIPypLxJLv10RnWs+v7R3nDuBJSAw6Q=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=mpNHno2PW+BcB4HeOBpbFHKx9ydO48kRdmI1NjZfb6oLgjdxaG7z19z24NYtyV18C
+         4D8hJ5P4g6RrKmMEEBivjAiB2zjti/IuP+/EI9i6bclVVQPG/tUJqGd6ZftXCrj5dx
+         dHlDDgwmESHID+T5b71TGIHHhQaHfBP8IXn771iQ=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 08MJ6nlh093212
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 22 Sep 2020 14:06:49 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 22
+ Sep 2020 14:06:49 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Tue, 22 Sep 2020 14:06:49 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 08MJ6n2P130557;
+        Tue, 22 Sep 2020 14:06:49 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <marek.behun@nic.cz>, Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH 2/2] leds: lm36274: Fix warning for undefined parameters
+Date:   Tue, 22 Sep 2020 14:06:38 -0500
+Message-ID: <20200922190638.5323-2-dmurphy@ti.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200922190638.5323-1-dmurphy@ti.com>
+References: <20200922190638.5323-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pyE8wggRBhVBcj8z"
-Content-Disposition: inline
-In-Reply-To: <20200917223338.14164-1-marek.behun@nic.cz>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Fix warnings for undefined parameters when building with W=1.
 
---pyE8wggRBhVBcj8z
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 11e1bbc116a75 ("leds: lm36274: Introduce the TI LM36274 LED driver")
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ drivers/leds/leds-lm36274.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-On Fri, Sep 18, 2020 at 12:32:48AM +0200, Marek Beh=C3=BAn wrote:
-> Hi,
->=20
-> this series is also available at [1].
->=20
-> This is v2, you can read cover letter of v1 at [2] (togehter with
-> explanation of why I did this).
+diff --git a/drivers/leds/leds-lm36274.c b/drivers/leds/leds-lm36274.c
+index 10a63b7f2ecc..bf6487e9a1f4 100644
+--- a/drivers/leds/leds-lm36274.c
++++ b/drivers/leds/leds-lm36274.c
+@@ -26,8 +26,8 @@
+  * @lmu_data: Register and setting values for common code
+  * @regmap: Devices register map
+  * @dev: Pointer to the devices device struct
+- * @led_sources - The LED strings supported in this array
+- * @num_leds - Number of LED strings are supported in this array
++ * @led_sources: The LED strings supported in this array
++ * @num_leds: Number of LED strings are supported in this array
+  */
+ struct lm36274 {
+ 	struct platform_device *pdev;
+@@ -163,6 +163,7 @@ static struct platform_driver lm36274_driver = {
+ 	.probe  = lm36274_probe,
+ 	.driver = {
+ 		.name = "lm36274-leds",
++		.of_match_table = of_lm36274_leds_match,
+ 	},
+ };
+ module_platform_driver(lm36274_driver)
+-- 
+2.28.0
 
-=2E..
-
->   leds: ns2: use devres LED registering function
->   leds: ns2: alloc simple array instead of struct ns2_led_priv
->   leds: ns2: support OF probing only, forget platdata
->   leds: ns2: move parsing of one LED into separate function
->   leds: ns2: use devres API for getting GPIO descriptors
->   leds: ns2: cosmetic structure rename
->   leds: ns2: cosmetic variable rename
->   leds: ns2: cosmetic change
->   leds: ns2: cosmetic change: use helper variable
->   leds: ns2: register LED immediately after parsing DT properties
->   leds: ns2: remove unneeded variable
->   leds: ns2: cosmetic: use reverse christmas tree
->   leds: ns2: reorder headers alphabetically
->   leds: ns2: use struct led_init_data when registering
-
-Hi Marek,
-
-If you agree, I'll wait the fwnode support before reviewing and testing
-this patches.
-
-Simon
-
---pyE8wggRBhVBcj8z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXW8DgovlR3VS5hA0zyg/RDPmszoFAl9qNTcACgkQzyg/RDPm
-szrw9Q/+IX/cwi/lHhvzrSlcq8Zbv/kJa44/0dyAmXhWnU8fabW2bYhT1JTwGroN
-XiMPOwC6u3PWi7B17KaqoXm2U3HlESZy7tGQhG2cSjadm99aKlKqPOW+YVrkLgo1
-LwVlVY6on1/neUM367LC8I+XoltPpOUNv0LbaKm2bGEkMhGGJXrjtWTNfEv9BqJt
-X54su5DHrigGVwD3vpv6VVjgx//uk8bhiVhbCE/nHqWOuU9LjWTCRioHa92slCLS
-k3vudoCKXUontO1a0v9iUs6IdSMN5SIUVuK2WQWZRdWa9CbH4n4jr5UUFy58iX81
-TiNae8AzOpoAjQWvMXmY1Fxv0hJ0A6ql6GXtk42mXlsS89RITdr0+kF4eoj2JW7E
-3K+/UOJV+uA/kl+XgjtI3ya68AkQGRjMpYU0NjkMB5ag+VDOyKX1bul8Dt0MPqqK
-f9pD2Ko6i1IbbYejkyjtMqmUWrenkvN82YmVwH0zfvvdN8BP2IiKGWzIjWSo1vzu
-b4oldw/9OZV7eQxQWWHAHhgwiLX77CINueDYSH8dBWGPL4SBsQp87YL3Eo7nKFbP
-7Oh5R94Rjc63EiilhzG4IEmMLF+n9nENu3Zw/UmqygkYDenXX2SiwD68EVFTKG5o
-CtWjDvMLPtUcS3ZLJIhZqHRE57NmNF3qJjef/1pYTuQ1TBurkeA=
-=8FNN
------END PGP SIGNATURE-----
-
---pyE8wggRBhVBcj8z--
