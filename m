@@ -2,94 +2,75 @@ Return-Path: <SRS0=VYW2=C7=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B24EC4363D
-	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 16:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F302EC4363D
+	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 17:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D22A323119
-	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 16:58:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A541C2084C
+	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 17:12:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbgIVQ6m convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 22 Sep 2020 12:58:42 -0400
-Received: from mail.nic.cz ([217.31.204.67]:40180 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726526AbgIVQ6m (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 22 Sep 2020 12:58:42 -0400
-Received: from localhost (unknown [IPv6:2a0e:b107:ae1:0:3e97:eff:fe61:c680])
-        by mail.nic.cz (Postfix) with ESMTPSA id C1CE9140B11;
-        Tue, 22 Sep 2020 18:58:40 +0200 (CEST)
-Date:   Tue, 22 Sep 2020 18:58:40 +0200
-From:   Marek Behun <marek.behun@nic.cz>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH leds v3 6/9] leds: lm36274: use devres LED registering
- function
-Message-ID: <20200922185840.61396186@nic.cz>
-In-Reply-To: <20200922163842.GB25550@duo.ucw.cz>
-References: <20200919180304.2885-1-marek.behun@nic.cz>
-        <20200919180304.2885-7-marek.behun@nic.cz>
-        <20200920214532.GB31397@duo.ucw.cz>
-        <20200920235436.185ceebc@nic.cz>
-        <20200922163842.GB25550@duo.ucw.cz>
-X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726625AbgIVRML (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 22 Sep 2020 13:12:11 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:37368 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726566AbgIVRML (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 22 Sep 2020 13:12:11 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id C98191C0B76; Tue, 22 Sep 2020 19:12:08 +0200 (CEST)
+Date:   Tue, 22 Sep 2020 19:12:08 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>
+Cc:     linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        Peter Meerwald <p.meerwald@bct-electronic.com>,
+        Ricardo Ribalda <ribalda@kernel.org>,
+        Zahari Petkov <zahari@balena.io>
+Subject: Re: [PATCH leds 0/7] leds: pca963x cleanup
+Message-ID: <20200922171208.GC25550@duo.ucw.cz>
+References: <20200920002500.5851-1-marek.behun@nic.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-X-Virus-Status: Clean
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="0lnxQi9hkpPO77W3"
+Content-Disposition: inline
+In-Reply-To: <20200920002500.5851-1-marek.behun@nic.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Tue, 22 Sep 2020 18:38:42 +0200
-Pavel Machek <pavel@ucw.cz> wrote:
 
-> On Sun 2020-09-20 23:54:36, Marek Behun wrote:
-> > On Sun, 20 Sep 2020 23:45:32 +0200
-> > Pavel Machek <pavel@ucw.cz> wrote:
-> >   
-> > > Hi!
-> > >   
-> > > > Now that the potential use-after-free issue is resolved we can use
-> > > > devres for LED registration in this driver.
-> > > > 
-> > > > By using devres version of LED registering function we can remove the
-> > > > .remove method from this driver.
-> > > > 
-> > > > Signed-off-by: Marek Behún <marek.behun@nic.cz>
-> > > > Cc: Dan Murphy <dmurphy@ti.com>    
-> > > 
-> > > AFAICT this one is buggy, I sent explanation before. Why are you
-> > > resubmitting it?  
-> > 
-> > The previous patch in this series (v3 5/9) should solve this issue and
-> > th commit message explains how.  
-> 
-> Aha, let me see.
-> 
-> Will 5/9 have some side-effects, like device appearing at different
-> place in sysfs?
+--0lnxQi9hkpPO77W3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, unfortunately. Before this path the led should be in
- /sys/devices/.../i2c-client/leds/led
-or somthing like that, and after
- /sys/devices/..c/i2c-client/mfd/leds/led
+Hi!
 
-But it should have been this way from beginning, I think. The other
-driver, regulator, registers its device under the mfd device.
+> this is a cleanup of pca963x LED driver, in spirit of previous
+> patches I sent recently.
+>=20
+> This series should apply on your for-next.
 
-The question is whether this will break something for someone. I don't
-think so, but...
+I like the series. Looks good on quick review. Someone testing it
+would be very welcome...
 
-> 
-> First few patches look ok, but it would be really nice someone tested
-> complete sereies.
-> 
-> Best regards,
-> 									Pavel
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
+--0lnxQi9hkpPO77W3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX2owaAAKCRAw5/Bqldv6
+8l1yAJ4xytH0qsgjUiE3ntaGhNaHf6xSswCfY0ml6LuR4VbLyPpKcCWgLTt6RNI=
+=QIaJ
+-----END PGP SIGNATURE-----
+
+--0lnxQi9hkpPO77W3--
