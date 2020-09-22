@@ -2,152 +2,119 @@ Return-Path: <SRS0=VYW2=C7=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F56BC2D0E2
-	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 19:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58253C4363D
+	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 19:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28E062311C
-	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 19:07:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 179312311C
+	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 19:09:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rGSDZyLW"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ikN2VmV5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbgIVTG5 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 22 Sep 2020 15:06:57 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:60138 "EHLO
+        id S1726607AbgIVTJ4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 22 Sep 2020 15:09:56 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:60752 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbgIVTG4 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 22 Sep 2020 15:06:56 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 08MJ6iV5104639;
-        Tue, 22 Sep 2020 14:06:44 -0500
+        with ESMTP id S1726563AbgIVTJ4 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 22 Sep 2020 15:09:56 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 08MJ9n3Y105950;
+        Tue, 22 Sep 2020 14:09:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1600801604;
-        bh=hHCft0Z7puAqxwACe5iL+aqiPFUH5k+ZEto93fiGLwg=;
-        h=From:To:CC:Subject:Date;
-        b=rGSDZyLWVw37cF15v9EWtO9uC1tqSBZFlPDO0buB5ADKwX50MisIYsRfNt8SiaZvB
-         RFeXCwPeCNnF3U4gmc0FBWsgNR2Ux2CZojfORB1GUnXK62stcOVRlgoOp5k5nOYQfH
-         kvuU283JkwEnsZokdlND+D72kq30ZU05cqfSFYrE=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 08MJ6iM9093174
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Sep 2020 14:06:44 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+        s=ti-com-17Q1; t=1600801789;
+        bh=U49MIpNzHfADOvkiNb6w6PJ3+Ffy5gYQc+kJx1KrV+I=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ikN2VmV5gnnCQwIa0X82jxX+IbkmiO3VJq+DNzctRWOYy84U/GLvpmITZ057foRE4
+         CPuQDc/QmqwWTFZBIy5sArVCIA7O43HU0sLNMIqxg/uSjEEl1cn1M7TysivvdziQhC
+         PgVrrmZlxw1Pu2+fDbbhSZDsm3vQ3Fc5SzeYR+LE=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 08MJ9mAY118523;
+        Tue, 22 Sep 2020 14:09:48 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 22
- Sep 2020 14:06:44 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2020 14:09:48 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Tue, 22 Sep 2020 14:06:44 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 08MJ6i8e026124;
-        Tue, 22 Sep 2020 14:06:44 -0500
+ Frontend Transport; Tue, 22 Sep 2020 14:09:48 -0500
+Received: from [10.250.36.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 08MJ9mTE004674;
+        Tue, 22 Sep 2020 14:09:48 -0500
+Subject: Re: [PATCH leds v3 6/9] leds: lm36274: use devres LED registering
+ function
+To:     Marek Behun <marek.behun@nic.cz>, Pavel Machek <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>
+References: <20200919180304.2885-1-marek.behun@nic.cz>
+ <20200919180304.2885-7-marek.behun@nic.cz>
+ <20200920214532.GB31397@duo.ucw.cz> <20200920235436.185ceebc@nic.cz>
+ <20200922163842.GB25550@duo.ucw.cz> <20200922185840.61396186@nic.cz>
 From:   Dan Murphy <dmurphy@ti.com>
-To:     <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <marek.behun@nic.cz>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 1/2] leds: lm3552: Fix warnings for undefined parameters
-Date:   Tue, 22 Sep 2020 14:06:37 -0500
-Message-ID: <20200922190638.5323-1-dmurphy@ti.com>
-X-Mailer: git-send-email 2.27.0
+Message-ID: <3d48fa2f-db26-85fd-96ab-f6461fd5c843@ti.com>
+Date:   Tue, 22 Sep 2020 14:09:43 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20200922185840.61396186@nic.cz>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Language: en-US
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Fix warnings for undefined parameters when W=1 is used.
+Pavel
 
-Fixes: bc1b8492c764f ("leds: lm3532: Introduce the lm3532 LED driver")
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/leds/leds-lm3532.c | 50 +++++++++++++++++++-------------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
+On 9/22/20 11:58 AM, Marek Behun wrote:
+> On Tue, 22 Sep 2020 18:38:42 +0200
+> Pavel Machek <pavel@ucw.cz> wrote:
+>
+>> On Sun 2020-09-20 23:54:36, Marek Behun wrote:
+>>> On Sun, 20 Sep 2020 23:45:32 +0200
+>>> Pavel Machek <pavel@ucw.cz> wrote:
+>>>    
+>>>> Hi!
+>>>>    
+>>>>> Now that the potential use-after-free issue is resolved we can use
+>>>>> devres for LED registration in this driver.
+>>>>>
+>>>>> By using devres version of LED registering function we can remove the
+>>>>> .remove method from this driver.
+>>>>>
+>>>>> Signed-off-by: Marek Behún <marek.behun@nic.cz>
+>>>>> Cc: Dan Murphy <dmurphy@ti.com>
+>>>> AFAICT this one is buggy, I sent explanation before. Why are you
+>>>> resubmitting it?
+>>> The previous patch in this series (v3 5/9) should solve this issue and
+>>> th commit message explains how.
+>> Aha, let me see.
+>>
+>> Will 5/9 have some side-effects, like device appearing at different
+>> place in sysfs?
+> Yes, unfortunately. Before this path the led should be in
+>   /sys/devices/.../i2c-client/leds/led
+> or somthing like that, and after
+>   /sys/devices/..c/i2c-client/mfd/leds/led
+>
+> But it should have been this way from beginning, I think. The other
+> driver, regulator, registers its device under the mfd device.
+>
+> The question is whether this will break something for someone. I don't
+> think so, but...
+>
+>> First few patches look ok, but it would be really nice someone tested
+>> complete sereies.
 
-diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
-index 9b6973217cc0..95221d1e3861 100644
---- a/drivers/leds/leds-lm3532.c
-+++ b/drivers/leds/leds-lm3532.c
-@@ -96,15 +96,15 @@
- 
- /*
-  * struct lm3532_als_data
-- * @config - value of ALS configuration register
-- * @als1_imp_sel - value of ALS1 resistor select register
-- * @als2_imp_sel - value of ALS2 resistor select register
-- * @als_avrg_time - ALS averaging time
-- * @als_input_mode - ALS input mode for brightness control
-- * @als_vmin - Minimum ALS voltage
-- * @als_vmax - Maximum ALS voltage
-- * @zone_lo - values of ALS lo ZB(Zone Boundary) registers
-- * @zone_hi - values of ALS hi ZB(Zone Boundary) registers
-+ * @config: value of ALS configuration register
-+ * @als1_imp_sel: value of ALS1 resistor select register
-+ * @als2_imp_sel: value of ALS2 resistor select register
-+ * @als_avrg_time: ALS averaging time
-+ * @als_input_mode: ALS input mode for brightness control
-+ * @als_vmin: Minimum ALS voltage
-+ * @als_vmax: Maximum ALS voltage
-+ * @zone_lo: values of ALS lo ZB(Zone Boundary) registers
-+ * @zone_hi: values of ALS hi ZB(Zone Boundary) registers
-  */
- struct lm3532_als_data {
- 	u8 config;
-@@ -121,14 +121,14 @@ struct lm3532_als_data {
- /**
-  * struct lm3532_led
-  * @led_dev: led class device
-- * @priv - Pointer the device data structure
-- * @control_bank - Control bank the LED is associated to
-- * @mode - Mode of the LED string
-- * @ctrl_brt_pointer - Zone target register that controls the sink
-- * @num_leds - Number of LED strings are supported in this array
-- * @full_scale_current - The full-scale current setting for the current sink.
-- * @led_strings - The LED strings supported in this array
-- * @enabled - Enabled status
-+ * @priv: Pointer the device data structure
-+ * @control_bank: Control bank the LED is associated to
-+ * @mode: Mode of the LED string
-+ * @ctrl_brt_pointer: Zone target register that controls the sink
-+ * @num_leds: Number of LED strings are supported in this array
-+ * @full_scale_current: The full-scale current setting for the current sink.
-+ * @led_strings: The LED strings supported in this array
-+ * @enabled: Enabled status
-  */
- struct lm3532_led {
- 	struct led_classdev led_dev;
-@@ -145,16 +145,16 @@ struct lm3532_led {
- 
- /**
-  * struct lm3532_data
-- * @enable_gpio - Hardware enable gpio
-+ * @enable_gpio: Hardware enable gpio
-  * @regulator: regulator
-  * @client: i2c client
-- * @regmap - Devices register map
-- * @dev - Pointer to the devices device struct
-- * @lock - Lock for reading/writing the device
-- * @als_data - Pointer to the als data struct
-- * @runtime_ramp_up - Runtime ramp up setting
-- * @runtime_ramp_down - Runtime ramp down setting
-- * @leds - Array of LED strings
-+ * @regmap: Devices register map
-+ * @dev: Pointer to the devices device struct
-+ * @lock: Lock for reading/writing the device
-+ * @als_data: Pointer to the als data struct
-+ * @runtime_ramp_up: Runtime ramp up setting
-+ * @runtime_ramp_down: Runtime ramp down setting
-+ * @leds: Array of LED strings
-  */
- struct lm3532_data {
- 	struct gpio_desc *enable_gpio;
--- 
-2.28.0
+For the LM36274 patches
+
+Tested-by: Dan Murphy <dmurphy@ti.com>
+
+Also found some other legacy issues I sent patches for.
+
+Dan
 
