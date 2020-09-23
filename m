@@ -1,75 +1,95 @@
-Return-Path: <SRS0=VYW2=C7=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=kkVv=DA=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02880C4727D
-	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 21:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0E9C2D0A8
+	for <linux-leds@archiver.kernel.org>; Wed, 23 Sep 2020 13:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BAFE0206FB
-	for <linux-leds@archiver.kernel.org>; Tue, 22 Sep 2020 21:05:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32186221E7
+	for <linux-leds@archiver.kernel.org>; Wed, 23 Sep 2020 13:10:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600866645;
+	bh=gPdtthN3zIEZHEiesBpvqVcc10/UOJSsYkiCJAIbYLs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=JzEzCM7rfHTkNQDn+ZqQxbZKRFnOD6hbPS91fpoX/x+qlhPWfjULv7F67/s2WqKQE
+	 5fB/pSQDLgKYnRgq/7F7PpLEOtSxN7D+Xoew4GlzeCAUDbVagMp4zNpPhoB0YKbNWp
+	 Gu/EJFWPSVctneK19F+kNi84hN+hpe9fNRUaJ/0E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbgIVVFi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 22 Sep 2020 17:05:38 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:26269 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbgIVVFi (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 22 Sep 2020 17:05:38 -0400
-Received: from localhost.localdomain ([93.23.13.13])
-        by mwinf5d10 with ME
-        id X95a230060Gtiid0395aX5; Tue, 22 Sep 2020 23:05:35 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 22 Sep 2020 23:05:35 +0200
-X-ME-IP: 93.23.13.13
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     pavel@ucw.cz, dmurphy@ti.com, jacek.anaszewski@gmail.com
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] leds: lp50xx: Fix an error handling path in 'lp50xx_probe_dt()'
-Date:   Tue, 22 Sep 2020 23:05:15 +0200
-Message-Id: <20200922210515.385099-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.25.1
+        id S1726130AbgIWNKo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 23 Sep 2020 09:10:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57732 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726476AbgIWNKo (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 23 Sep 2020 09:10:44 -0400
+Received: from localhost (otava-0257.koleje.cuni.cz [78.128.181.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BFA421BE5;
+        Wed, 23 Sep 2020 13:10:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600866644;
+        bh=gPdtthN3zIEZHEiesBpvqVcc10/UOJSsYkiCJAIbYLs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Wzm1zYP9v2PTIk7Xs9sw/0GVCkbSwfBwhRlLIuHi+HBgikqBuq26zK7SrTKu0BCgR
+         zftdOlt/JBusm9XIZVx4DQ769ne4sJ0bIpjrpuFhVLVAHHnC3Ucnk3ktBvq8vzCRhp
+         tIQGVGdp90kVMM3bUwp2QAo/FG5fwUQo/a5Sjpy0=
+Date:   Wed, 23 Sep 2020 15:10:40 +0200
+From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     <pavel@ucw.cz>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] leds: lm36274: Fix warning for undefined parameters
+Message-ID: <20200923151040.2237af86@kernel.org>
+In-Reply-To: <20200922190638.5323-2-dmurphy@ti.com>
+References: <20200922190638.5323-1-dmurphy@ti.com>
+        <20200922190638.5323-2-dmurphy@ti.com>
+X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-In case of memory allocation failure, we must release some resources as
-done in all other error handling paths of the function.
+On Tue, 22 Sep 2020 14:06:38 -0500
+Dan Murphy <dmurphy@ti.com> wrote:
 
-'goto child_out' instead of a direct return so that 'fwnode_handle_put()'
-is called when we break out of a 'device_for_each_child_node' loop.
+> Fix warnings for undefined parameters when building with W=3D1.
+>=20
+> Fixes: 11e1bbc116a75 ("leds: lm36274: Introduce the TI LM36274 LED driver=
+")
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  drivers/leds/leds-lm36274.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/leds/leds-lm36274.c b/drivers/leds/leds-lm36274.c
+> index 10a63b7f2ecc..bf6487e9a1f4 100644
+> --- a/drivers/leds/leds-lm36274.c
+> +++ b/drivers/leds/leds-lm36274.c
+> @@ -26,8 +26,8 @@
+>   * @lmu_data: Register and setting values for common code
+>   * @regmap: Devices register map
+>   * @dev: Pointer to the devices device struct
+> - * @led_sources - The LED strings supported in this array
+> - * @num_leds - Number of LED strings are supported in this array
+> + * @led_sources: The LED strings supported in this array
+> + * @num_leds: Number of LED strings are supported in this array
+>   */
+>  struct lm36274 {
+>  	struct platform_device *pdev;
+> @@ -163,6 +163,7 @@ static struct platform_driver lm36274_driver =3D {
+>  	.probe  =3D lm36274_probe,
+>  	.driver =3D {
+>  		.name =3D "lm36274-leds",
+> +		.of_match_table =3D of_lm36274_leds_match,
+>  	},
+>  };
+>  module_platform_driver(lm36274_driver)
 
-Fixes: 242b81170fb8 ("leds: lp50xx: Add the LP50XX family of the RGB LED driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/leds/leds-lp50xx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
-index 47144a37cb94..8178782f2a8a 100644
---- a/drivers/leds/leds-lp50xx.c
-+++ b/drivers/leds/leds-lp50xx.c
-@@ -487,8 +487,10 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
- 		 */
- 		mc_led_info = devm_kcalloc(priv->dev, LP50XX_LEDS_PER_MODULE,
- 					   sizeof(*mc_led_info), GFP_KERNEL);
--		if (!mc_led_info)
--			return -ENOMEM;
-+		if (!mc_led_info) {
-+			ret = -ENOMEM;
-+			goto child_out;
-+		}
- 
- 		fwnode_for_each_child_node(child, led_node) {
- 			ret = fwnode_property_read_u32(led_node, "color",
--- 
-2.25.1
-
+Reviewed-by: Marek Beh=C3=BAn <kabel@kernel.org>
