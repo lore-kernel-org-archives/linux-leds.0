@@ -4,31 +4,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D468C4363D
-	for <linux-leds@archiver.kernel.org>; Wed, 30 Sep 2020 23:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E08EAC4363D
+	for <linux-leds@archiver.kernel.org>; Wed, 30 Sep 2020 23:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1096220BED
-	for <linux-leds@archiver.kernel.org>; Wed, 30 Sep 2020 23:47:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B42AB20B1F
+	for <linux-leds@archiver.kernel.org>; Wed, 30 Sep 2020 23:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731975AbgI3Xrv (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 30 Sep 2020 19:47:51 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:38083 "EHLO
+        id S1731989AbgI3Xr4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 30 Sep 2020 19:47:56 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:38859 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725800AbgI3Xrv (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Sep 2020 19:47:51 -0400
+        with ESMTP id S1725800AbgI3Xrz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Sep 2020 19:47:55 -0400
 Received: from methusalix.internal.home.lespocky.de ([92.117.51.117]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MBDrM-1kGeY90zPi-00CgJ0; Thu, 01 Oct 2020 01:47:23 +0200
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1M7sQ6-1kJuCR17Ok-0050dZ; Thu, 01 Oct 2020 01:47:37 +0200
 Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
         by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <alex@home.lespocky.de>)
-        id 1kNlod-0007Z0-T1; Thu, 01 Oct 2020 01:47:21 +0200
-Received: (nullmailer pid 7728 invoked by uid 2001);
-        Wed, 30 Sep 2020 23:47:19 -0000
+        id 1kNlos-0007ZT-EL; Thu, 01 Oct 2020 01:47:35 +0200
+Received: (nullmailer pid 7769 invoked by uid 2001);
+        Wed, 30 Sep 2020 23:47:34 -0000
 From:   Alexander Dahl <post@lespocky.de>
 To:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -40,141 +40,68 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Alexander Dahl <ada@thorsis.com>,
         Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Alexander Dahl <post@lespocky.de>,
-        Denis Osterland-Heim <denis.osterland@diehl.com>,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH v6 1/7] leds: pwm: Remove platform_data support
-Date:   Thu,  1 Oct 2020 01:46:31 +0200
-Message-Id: <20200930234637.7573-2-post@lespocky.de>
+        Alexander Dahl <post@lespocky.de>
+Subject: [PATCH v6 3/7] dt-bindings: mfd: Fix schema warnings for pwm-leds
+Date:   Thu,  1 Oct 2020 01:46:33 +0200
+Message-Id: <20200930234637.7573-4-post@lespocky.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200930234637.7573-1-post@lespocky.de>
 References: <20200930234637.7573-1-post@lespocky.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 257374c4a781fc070d55e21f439eb91a
-X-Provags-ID: V03:K1:jOBjAF/CkF48hBbOCUr5Z1QgpCLc02GeaEYNbCwJ99PA1LLbkiZ
- xHzp1rqs9sSPt1xHxyhq4jLizqlO9LFAw++h6YE0LN//pXOKbLHkKBiiiGwmFPlz7CdFDLg
- JNaqS1r+44GEpZCiXEfTEmJDd8Qp1ji40AAzKG+i3m1nCi1cNdsx/EgsVuJ4zuovoJNDa6y
- dgbxd+LBEval1wn5/02LQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:GSF88Ru63gE=:fVUBUUaVYcOB8FBvPO/ppG
- wJ59KSFdKkPsDDQGJulkZ5RoXmTDDno1WSs/s35+AqRr9FKp6arQHplZDE21a7pYiwtgllW5f
- Iz4fjCCTRN5u17zN4sswYwd+eQqtN0wgC/GeJh3iLP/0u7qw9IliGjLSWXZEvbFjKpT4W71Yy
- y6DigH3OgpQzKihT4hSu5Rz2tBRCkajY8u0zKaU9Qm0kDCY8uL3qQ4qU49vq11zwA1uxz0be9
- 0gA0tBAVQrEaH2Azi1eiQnDL29uTWE3NUyVa91wMRJuqeQfQnJEcGqUYRH99H+ID+iZx2UXSX
- 135mff55LNYdB51u1Q8ewbc69X7R3jejwgV/oS2uVMU78KzrzBTPIDiP2/CYmBmNq2ROPQN+X
- rlPaV8YVwJlkzpzfhycj/dy/sJKJONYJuqi80chS0VIIOpvElOpa9C4g99xISgXTnT+g++y8o
- 5MVXRv3HFv3re8X4xU87/qXhDSz4cI5Xd4cXj0LkejP52cP0NQEAdDpu7n27WbzFRAicuHyJQ
- JGGQJMnjBQjuYqBEdAIpw0g7UvhNi6+AYteUj6D+eI7eMe4mO/iC/OwZhz/xBQFu5swmtmxp+
- 37JYjxZeCRLfQXSso6sY76nyyu7+MaJR4QtOW/dzjgI61Rg8hjgO78AGQAVBKNbDqMDnegHGA
- v21NWOYBOO+ELiQ75QGMhBDYJyheeAhgj7KgZlT/crfVomMf/89fWO5ExILEQ40RXA3DUHoEJ
- +PvwlulIjGeMh4OkzpSFeh6K+sJNwiz7XSwpH2K5IQPxwzeStDqTJdSd2C4XvCI+ch4LzcVgK
- qmlUPtqBhjiIEV5MW9QoH1MskQUCHctAMNH81W+xNDO0usOJkcQwuIhlKPm5rs/NATCucwJ
+X-Scan-Signature: 2beb02607f6eb8f9cf7f14ab96a8f994
+X-Provags-ID: V03:K1:bP90eXR+w48aTn1ppXN+URCgE4TjDapabKR3j+t/0oN2he6UhS4
+ m6ghKbSHJkVGW+jQn/1s17fu0hH++ewc1KAf1hb8c6rbXVTMJqhqGfghejlKAXTk2KnVt4u
+ h8COnj2ZoHZ2irrHbvClLgCbfgW76zmIICkfLfSaLRqsttzfOoomDwOmdDJ9wQS0PwVO3A7
+ j4ZxtfGDHC5halIijwdXA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:rgwX+3edwsM=:+F+Lk5lVZWeAg1oAkNSG2l
+ SeNBwiXso4jjoA9hE5cjQmT5n1frhfkYKkSwkP8a+PRRUQk3OtDpB7imMHJcy/tyb1QhjucOx
+ nTaigEyQCndAl7P1/tyOBj1iqi4pG8eXsFzwTmyO4++fa2WZ6GsanWGyNcFezGStaDM5JpGgx
+ mDiNjkdTBAkvEfYa2KnfFKWPwfizSuQums2wQqeqEdQgrqPjbvBUPq6DuGEmZ3Gf5L4vvRdDY
+ H3kNDrfmtK/HGq71MqNte9mz/ZQlP3TiHqiYC2Z0ViB8FYTGhWs9OoJZZ+LlgigwRLu3d+LAb
+ QByBZNMQU+xQxc83GT6CmOzDkrhHMoUG6n/OZJTC2slrWkinAwZJ8/8UXhChLua1odpvo+eaC
+ jyZdaaZALVM29FucV6cqPi70jJiZaXO+Zk/CzYw79AsXA5KiHPvIwoGMcRCmvAmGGR3+XQ0h8
+ UKa4FPHw1WIm4/pxlj/Ux1wxmGodnkQsN+jTugFS1Q3RKfEWOkcWpDL26bWy9ynkk/pxXhEFx
+ jhJZE3mkhzPFXAGqMDBNkGjYsdQo9xRiXYG9FJc1k8BGgQtHbj4PMJO2rUskedyqNjcfhCXMD
+ pQ58YgwQsyFFeM06xF0W51AvBYs3vdSK66cQ3p8i+tO0yurEJKYM2tIulI8on3Ewl1ei4DbmC
+ fGuUkIVAUO81ELOJAu+TfxWclLAKO63cwGNfldBu2hW4zNV9wIpSmCbkHzLT8h7uTAVR4syt7
+ l6UxZrGSMg2flMZpQ/1gnTrQ+euWQnpB7tL5PdiDHevMhJo18i4EF1LCJ6OFMhgxH0olQQQBN
+ BeaDR6IfQd7ypj/La2v4cK7MtSCIur+WrysyIE8UB0CpHTr1YadNhb1kkz5B/W6muFmzLHw
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Since commit 141f15c66d94 ("leds: pwm: remove header") that platform
-interface is not usable from outside and there seems to be no in tree
-user anymore.  All in-tree users of the leds-pwm driver seem to use DT
-currently.  Getting rid of the old platform interface allows the
-leds-pwm driver to switch over from 'devm_led_classdev_register()' to
-'devm_led_classdev_register_ext()'.
+The node names for devices using the pwm-leds driver follow a certain
+naming scheme (now).
 
 Signed-off-by: Alexander Dahl <post@lespocky.de>
-Cc: Denis Osterland-Heim <denis.osterland@diehl.com>
-Reviewed-by: Marek Behún <marek.behun@nic.cz>
 ---
 
 Notes:
-    v5 -> v6:
-      * added Reviewed-by from Marek
-      * minimal commit message rewording, because a later patch was
-        already applied
-    
-    v5:
-      * added this patch to series (replacing another patch with a not
-        working, different approach)
-    
-    v5:
-     * added this patch to series (replacing another patch with a not
-       working, different approach)
+    v6:
+      * added this patch to series
 
- drivers/leds/leds-pwm.c | 30 +++++-------------------------
- 1 file changed, 5 insertions(+), 25 deletions(-)
+ Documentation/devicetree/bindings/mfd/iqs62x.yaml | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 2a16ae0bf022..f53f9309ca6c 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -24,11 +24,6 @@ struct led_pwm {
- 	unsigned int	max_brightness;
- };
+diff --git a/Documentation/devicetree/bindings/mfd/iqs62x.yaml b/Documentation/devicetree/bindings/mfd/iqs62x.yaml
+index 541b06d80e73..92dc48a8dfa7 100644
+--- a/Documentation/devicetree/bindings/mfd/iqs62x.yaml
++++ b/Documentation/devicetree/bindings/mfd/iqs62x.yaml
+@@ -90,10 +90,11 @@ examples:
+             };
+     };
  
--struct led_pwm_platform_data {
--	int		num_leds;
--	struct led_pwm	*leds;
--};
--
- struct led_pwm_data {
- 	struct led_classdev	cdev;
- 	struct pwm_device	*pwm;
-@@ -60,6 +55,7 @@ static int led_pwm_set(struct led_classdev *led_cdev,
- 	return pwm_apply_state(led_dat->pwm, &led_dat->pwmstate);
- }
+-    pwmleds {
++    led-controller {
+             compatible = "pwm-leds";
  
-+__attribute__((nonnull))
- static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 		       struct led_pwm *led, struct fwnode_handle *fwnode)
- {
-@@ -73,10 +69,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 	led_data->cdev.max_brightness = led->max_brightness;
- 	led_data->cdev.flags = LED_CORE_SUSPENDRESUME;
- 
--	if (fwnode)
--		led_data->pwm = devm_fwnode_pwm_get(dev, fwnode, NULL);
--	else
--		led_data->pwm = devm_pwm_get(dev, led->name);
-+	led_data->pwm = devm_fwnode_pwm_get(dev, fwnode, NULL);
- 	if (IS_ERR(led_data->pwm))
- 		return dev_err_probe(dev, PTR_ERR(led_data->pwm),
- 				     "unable to request PWM for %s\n",
-@@ -139,15 +132,11 @@ static int led_pwm_create_fwnode(struct device *dev, struct led_pwm_priv *priv)
- 
- static int led_pwm_probe(struct platform_device *pdev)
- {
--	struct led_pwm_platform_data *pdata = dev_get_platdata(&pdev->dev);
- 	struct led_pwm_priv *priv;
--	int count, i;
- 	int ret = 0;
-+	int count;
- 
--	if (pdata)
--		count = pdata->num_leds;
--	else
--		count = device_get_child_node_count(&pdev->dev);
-+	count = device_get_child_node_count(&pdev->dev);
- 
- 	if (!count)
- 		return -EINVAL;
-@@ -157,16 +146,7 @@ static int led_pwm_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	if (pdata) {
--		for (i = 0; i < count; i++) {
--			ret = led_pwm_add(&pdev->dev, priv, &pdata->leds[i],
--					  NULL);
--			if (ret)
--				break;
--		}
--	} else {
--		ret = led_pwm_create_fwnode(&pdev->dev, priv);
--	}
-+	ret = led_pwm_create_fwnode(&pdev->dev, priv);
- 
- 	if (ret)
- 		return ret;
+-            panel {
++            led-1 {
++                    label = "panel";
+                     pwms = <&iqs620a_pwm 0 1000000>;
+                     max-brightness = <255>;
+             };
 -- 
 2.20.1
 
