@@ -1,155 +1,93 @@
-Return-Path: <SRS0=EaiZ=DH=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=3gHT=DI=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E74C47426
-	for <linux-leds@archiver.kernel.org>; Wed, 30 Sep 2020 23:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E547CC4741F
+	for <linux-leds@archiver.kernel.org>; Thu,  1 Oct 2020 15:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78A77206FA
-	for <linux-leds@archiver.kernel.org>; Wed, 30 Sep 2020 23:53:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D0FB20719
+	for <linux-leds@archiver.kernel.org>; Thu,  1 Oct 2020 15:22:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qdjH7Ti/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731484AbgI3Xxa (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 30 Sep 2020 19:53:30 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:50677 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731302AbgI3Xxa (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Sep 2020 19:53:30 -0400
-X-Greylist: delayed 313 seconds by postgrey-1.27 at vger.kernel.org; Wed, 30 Sep 2020 19:53:28 EDT
-Received: from methusalix.internal.home.lespocky.de ([92.117.51.117]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MWiYo-1jvFXk1OsC-00X0F6; Thu, 01 Oct 2020 01:47:52 +0200
-Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
-        by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.94)
-        (envelope-from <alex@home.lespocky.de>)
-        id 1kNlp7-0007a8-MI; Thu, 01 Oct 2020 01:47:50 +0200
-Received: (nullmailer pid 7811 invoked by uid 2001);
-        Wed, 30 Sep 2020 23:47:49 -0000
-From:   Alexander Dahl <post@lespocky.de>
-To:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org
+        id S1732498AbgJAPWT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 1 Oct 2020 11:22:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37852 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732342AbgJAPWT (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Oct 2020 11:22:19 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C31AC0613D0;
+        Thu,  1 Oct 2020 08:22:17 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id a3so7862057ejy.11;
+        Thu, 01 Oct 2020 08:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HoIzt4luxNMRncgYUJgF/hrsLcD9YCcpUexpLitKXBo=;
+        b=qdjH7Ti/HvtqGQpFSMw0Fsuw9Kj4+6ua8k1cpxYlw4o6XOhUGjBJsMLbeifphhZmpC
+         rKCsU4vVJQRgVaVGelUyj+nqCXC2E4RroQm4WhZ1ufMwbMQN/g+TTcd87FPrHvpMuKC9
+         63gZhG0GuorM92KWPIvfPuuV52275Dgqg/Wcsb5VmtKbT4SSsjYsjuCjRqXEvb9aIkg6
+         xk9AfhPrR14Qw0ndG9I4JgE4i11LzsvkGp7mAG+1r5TPxxqsmde/zPQfdWEbhP4jqzxb
+         Nv2p9sgTEhtDGE3g/Qy/x90kMPRfklKWDZqPH0o0qovQWxFlOP+DfTN4ITJvlTspULSZ
+         f75g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HoIzt4luxNMRncgYUJgF/hrsLcD9YCcpUexpLitKXBo=;
+        b=ohlCbSoJ0coD02SyWbh/VG/alXonrlVialZZtqH6EwD6YlIJp8LsLF5UpkgiJOxjob
+         tGbIvM/p35SuBq+arpbFWh0vrwNf3VxCY3KXZvSqPtKAUop/9D3NekU5VzaAe6kOPbus
+         s4fVg7vAy1lEIQaxS0o9jbVdZTyfSgivZjwP4admB47Cx7WXrCZ+7HRnS16MniVOapOx
+         UrGq64vsk6ahreabegv3IPBpP00fVvF4c28Fqs6HUeHLmRZQI6pk3Yojqmhaga1HcMhc
+         n0Yc8uuAClDci/WckfyA7WoCyArpC8madrDiIpe3kN1hzOos7ypzV3k7TWJaGrYntHs6
+         4E0A==
+X-Gm-Message-State: AOAM531NJRhMMY7s2SRQXz6+FiIoZV9BvtIVE7YY8IUb5N5ksuSkQu0u
+        wFwa1g+4gpITV25Fc9+XLfAI6380blE0rA==
+X-Google-Smtp-Source: ABdhPJz4O60VU6XyO7VdMH1JS2bW36AWBbn9ny5fhwFCwnSYh7MdWaXsp0606UcP1kh2IXdIbs6Efg==
+X-Received: by 2002:a17:906:14c9:: with SMTP id y9mr9095332ejc.523.1601565736206;
+        Thu, 01 Oct 2020 08:22:16 -0700 (PDT)
+Received: from [192.168.1.110] (abab147.neoplus.adsl.tpnet.pl. [83.6.165.147])
+        by smtp.gmail.com with ESMTPSA id v25sm4266120edr.29.2020.10.01.08.22.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Oct 2020 08:22:15 -0700 (PDT)
+Subject: Re: [PATCH v4 3/4] arm64: dts: qcom: msm8996: Add mpp and lpg blocks
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>
 Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Alexander Dahl <ada@thorsis.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Alexander Dahl <post@lespocky.de>
-Subject: [PATCH v6 6/7] arm64: dts: meson: Fix schema warnings for pwm-leds
-Date:   Thu,  1 Oct 2020 01:46:36 +0200
-Message-Id: <20200930234637.7573-7-post@lespocky.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200930234637.7573-1-post@lespocky.de>
-References: <20200930234637.7573-1-post@lespocky.de>
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Martin Botka <martin.botka1@gmail.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+References: <20200929031544.1000204-1-bjorn.andersson@linaro.org>
+ <20200929031544.1000204-4-bjorn.andersson@linaro.org>
+From:   Konrad Dybcio <konradybcio@gmail.com>
+Message-ID: <424f7b71-fb7e-fb45-c449-987ec3578290@gmail.com>
+Date:   Thu, 1 Oct 2020 17:22:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 57fe0bff746948a1c00c1c012c955907
-X-Provags-ID: V03:K1:aZN4vsQ09FD4ST1oiQw/j/zmw/WZNfS+WwJm4ljdYqSrse6wOJB
- HIwUSHD8ea0pFYgoq2609uGTcfq+/wDtaLXxV06FrmGKixxlLClh9iiByk498n0mUczE2FF
- F/K5zjrNkCk6f5MbiWHQn7sUxo+NM/BUwyGjUIuw14TGdLjs4Kwa+ZFrJCRuLIfO/DnScWu
- 5T8JxfvsL1SFxYJ42c6Uw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:uZY0ejErFkM=:NJi+ShfstAl+ru7Y3A3K4A
- t9i94xEbc0pNzV+Gx4LOFVA6cDdAY+MmTJNXvg5uP2Mfi9So0D3dBi/23arNLuKDV+tlX4/Uu
- pVdf0NMh1b6XXnVG/spPFE2D4qiePwUTTIRipJoJTc/8c4A6PYhWG5WwjwWFWH7/xiS6f5vqm
- eIaqvUS7QY3Pn9jIKtIQWXeADY1jjDVuToulKk8UiUg4vFQGyNfuQuySqCZ3bW3H7uJbQZehN
- LKIeokXpkqz3Y/35LU9LfwixGjAa+g3kTFxrp0Ytii3e+7sqJT1++SU2qxY+L4WlMBDb0056E
- 6yzofW4o6OQebcOYsp6gTf8tIrIfv1po/2GZg0OKFD2FlwrSi94G1ruJeQyRrShLaz1VzTRPY
- VAEYcxypEzZckQPwjIGGfNKzIh5tXRhSr8Q2BLOK1v0S8wEEW0EdpKi5HCDr2K43BdDPP4W4c
- xqW3Qop8IcCFSJAa5TxAM5tgUSkXgVxNS+j0vC/DIfnEMgjB3Wcnoc9DTItafvexYaDHFvrR1
- FOuWLgiQ6jWsXJSm5XX9kbecfUL6U4R3PVmk3TiIoDy/4MB4nDmN9O7jphi2ApuPrwJ9lMG2Z
- GjjIMYoiOJT81WY2+xiPhc6LoeA0aGC7SECJEB24rW8hXGPogI9nHoM/TFa+DRcl/Fme1rIDg
- BV8oivJqfSrPLMAVODjiHDi6XArUHJ3u+ZxSrPcqwfKFSM/36mQujJjVBupzsOsBKMl4M580f
- cDGvhVO4IorZyPWsE0JNblCY6yYxyZ1AwjjfpH30CXJMA2DJqJyRCDNYRunSLcWUNNHmMeEro
- 8reaqK85WPUu2z/Nzo4PMNiR7PF75FO+9lSo8cu7nbXAX0Iho/mgoYl9B2y9/DK7NiMu+hT
+In-Reply-To: <20200929031544.1000204-4-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The node names for devices using the pwm-leds driver follow a certain
-naming scheme (now).
+Hi, 
 
-Signed-off-by: Alexander Dahl <post@lespocky.de>
----
+Just a nitpick: the title says "qcom: msm8996", whereas the file being changed is pm(i)8994.dtsi. This also applies to most msm8992/94 platforms, as the PMIC was used there too.
 
-Notes:
-    v6:
-      * added this patch to series
-
- .../arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts | 4 ++--
- arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts     | 4 ++--
- arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts          | 8 ++++----
- 3 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-index 8bcdffdf55d0..adfc72500e66 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-@@ -42,10 +42,10 @@
- 		};
- 	};
- 
--	pwmleds {
-+	led-controller {
- 		compatible = "pwm-leds";
- 
--		power {
-+		led-1 {
- 			label = "vim:red:power";
- 			pwms = <&pwm_AO_ab 1 7812500 0>;
- 			max-brightness = <255>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-index bff8ec2c1c70..dcb435af4e0b 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-@@ -81,10 +81,10 @@
- 		};
- 	};
- 
--	pwmleds {
-+	led-controller {
- 		compatible = "pwm-leds";
- 
--		power {
-+		led-1 {
- 			label = "vim:red:power";
- 			pwms = <&pwm_AO_ab 1 7812500 0>;
- 			max-brightness = <255>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-index 5ab139a34c01..039a8d0d1e9b 100644
---- a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-@@ -101,20 +101,20 @@
- 		};
- 	};
- 
--	leds {
-+	led-controller-1 {
- 		compatible = "gpio-leds";
- 
--		led-bluetooth {
-+		led-1 {
- 			label = "sei610:blue:bt";
- 			gpios = <&gpio GPIOC_7 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
- 			default-state = "off";
- 		};
- 	};
- 
--	pwmleds {
-+	led-controller-2 {
- 		compatible = "pwm-leds";
- 
--		power {
-+		led-2 {
- 			label = "sei610:red:power";
- 			pwms = <&pwm_AO_ab 0 30518 0>;
- 			max-brightness = <255>;
--- 
-2.20.1
-
+Konrad
