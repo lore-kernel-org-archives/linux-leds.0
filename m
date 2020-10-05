@@ -2,141 +2,161 @@ Return-Path: <SRS0=CCcr=DM=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF06C4727D
-	for <linux-leds@archiver.kernel.org>; Mon,  5 Oct 2020 20:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41772C47423
+	for <linux-leds@archiver.kernel.org>; Mon,  5 Oct 2020 20:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F13E21534
-	for <linux-leds@archiver.kernel.org>; Mon,  5 Oct 2020 20:37:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 131BE2078E
+	for <linux-leds@archiver.kernel.org>; Mon,  5 Oct 2020 20:56:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1601931362;
+	bh=RauhoP+lY6PB4M6PjyFmPFjt0my1MIgv0r1A7kpjI2k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=tHeuIBJgtI/TH0V90gjmsEF+2Di9LYV78jsi4MP4F2L6RJgyTIwwjiSPCigvu7CsL
+	 YJf5ZnQjS1EfSLsbGotX4dralM6/MXxw/GGaiLZrS7wAR+WrOv4mLb2cYVuGENGTG6
+	 8nX5/xXtukQMwIZLhLbaQ/OQ5MSyoslgqpbyQJw4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbgJEUhd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 5 Oct 2020 16:37:33 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:46417 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729196AbgJEUh3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 5 Oct 2020 16:37:29 -0400
-Received: from methusalix.internal.home.lespocky.de ([92.117.55.152]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MUGuZ-1jyPZb1tMx-00REKR; Mon, 05 Oct 2020 22:36:00 +0200
-Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
-        by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.94)
-        (envelope-from <alex@home.lespocky.de>)
-        id 1kPXDC-0004XF-0c; Mon, 05 Oct 2020 22:35:58 +0200
-Received: (nullmailer pid 10388 invoked by uid 2001);
-        Mon, 05 Oct 2020 20:35:40 -0000
-From:   Alexander Dahl <post@lespocky.de>
-To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Alexander Dahl <ada@thorsis.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Alexander Dahl <post@lespocky.de>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH v7 10/12] ARM: dts: stm32: Fix schema warnings for pwm-leds
-Date:   Mon,  5 Oct 2020 22:34:49 +0200
-Message-Id: <20201005203451.9985-11-post@lespocky.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20201005203451.9985-1-post@lespocky.de>
-References: <20201005203451.9985-1-post@lespocky.de>
+        id S1727612AbgJEUzz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 5 Oct 2020 16:55:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46660 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725997AbgJEUzt (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 5 Oct 2020 16:55:49 -0400
+Received: from earth.universe (dyndsl-095-033-158-146.ewe-ip-backbone.de [95.33.158.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8DB5207EA;
+        Mon,  5 Oct 2020 20:55:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601931347;
+        bh=RauhoP+lY6PB4M6PjyFmPFjt0my1MIgv0r1A7kpjI2k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HkOPmEqswDfagOwa/8h6eYeJ28nUpx4kzUzMEiO5C2WpZ/JyxwPsMpOCvfalXuv/N
+         SHdwGJl0wavO+zZoAFWHwvQtMiirhu1+TeuQnuYzBjE+S+5qOuOKtkPXd2EjrwLySS
+         ddJlXztUaG/j988mXtEhLvSqV8GY7zi9RJGnOy4s=
+Received: by earth.universe (Postfix, from userid 1000)
+        id B9D193C0C87; Mon,  5 Oct 2020 22:55:45 +0200 (CEST)
+Date:   Mon, 5 Oct 2020 22:55:45 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>, dmaengine@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Jens Axboe <axboe@kernel.dk>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Richard Weinberger <richard@nod.at>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 4/4] dt-bindings: Explicitly allow additional properties
+ in common schemas
+Message-ID: <20201005205545.sqvohrh7jpt7w63w@earth.universe>
+References: <20201005183830.486085-1-robh@kernel.org>
+ <20201005183830.486085-5-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 5d1699e822705c24f051c25a2c63fb4e
-X-Provags-ID: V03:K1:6ZKlG0rDZ5U1HQ7ILaIQAQNhKsTXV0TSWVRTzdpESm8fmO/tqwD
- iK4rNm/LJgtYztQSGYN9mW2xOwWJqbOhPMTtcK0uMXIKykp/wPaXJdVtzJPD9fS68IFAo13
- m8pjTU++ifqTH58lQckSCePhpI7rOcl9djtxrldlZORvq75IKTz+HyXe6R1Ro14yadqgFaT
- yWxI/4fKVjFWSsSAD+Scw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:HfmFjwagyQ0=:h4dYDYwyiy8+d8FNw1Tme/
- r9lDpQaopjx5uAFoZpCL/Sfgflnwwqv7WCVOingGfgSngvmlV8afjKAsdcbXb1invDLOs/m4o
- FRTZ0gcC2VNPdbdZ6gNpvxbSVQFyKlAIoDJstuxvz7C9Xia1cZwKeZQzvbpMOex8Iftfxb+ri
- pvBb/pE0O1Iy2okCv/W4sRx1kFtwJN6Qj2BAFuilTCk9M74ttuKlqRC3pGDq3wb4MuRO5nOhM
- bCrgUYF1thmP0ZWnlJQvAuu+XAlvbrlf0xBPtNaDnrCOG0bj3OfYsUnVw7Pl3ItulFUgoGjwR
- bTN6k+2rYXcKHYWWx7JTQEEJAJZ/v10n6Idw7NqrbwHlN/kAWMssThoV7eL56F3fIW9gi6fJr
- 7oz7b5beUetnfvzz8GKLKxZ71DYKKnyzdV6gOVKi/wXHq1IgJr9GaC/02nJJboX3QtNo+z8SD
- XPd6uZGSiq/M7DU4xiAomk8WVT3O/+gxRhpr0lIWm5Q1lt5RF8GJU/7ySadWVWtFTAXHb7R9f
- cWmfIPSLFqWbwuj3hf0Zma1sC55eMQ5NEvJA/00bE8hRE+gTXzZBBFUgxhaLkJXT0KkHfGRw6
- xBiTtP7BsZza7AMHilLGg07Dbji5b19SqrKQET728usCQvFHGjyecAjd41SPv6TzidPqNyojd
- ipJphF2BvRdYxHWsKqS0zDJbdxVZPOFftntG20ilDgZG/L0HyN3VCxm1cDYiNK4utBnpkNbDl
- 6d046gXSkxPW0BHlPdD5I0LSChWLPT+BEu4NZchrs5hwMzCHmaA87WM/b0WmUp9zMYoAT2xtM
- FXPk2j6rpzJswBRN3vrEoGBNNux4O4JMoZ17KgGvguzn9fZ6HoQA1AHShUJEtC/9W/vwvpN
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7db5qni5yh4rtlce"
+Content-Disposition: inline
+In-Reply-To: <20201005183830.486085-5-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The node names for devices using the pwm-leds driver follow a certain
-naming scheme (now).  Parent node name is not enforced, but recommended
-by DT project.
 
-  DTC     arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
-  CHECK   arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
-/home/alex/build/linux/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml: led-rgb: 'led-blue', 'led-green', 'led-red' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
-        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+--7db5qni5yh4rtlce
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Alexander Dahl <post@lespocky.de>
----
+Hi,
 
-Notes:
-    v6 -> v7:
-      * split up patch (one per sub arch)
-      * added actual warnings to commit message
+On Mon, Oct 05, 2020 at 01:38:30PM -0500, Rob Herring wrote:
+> In order to add meta-schema checks for additional/unevaluatedProperties
+> being present, all schema need to make this explicit. As common/shared
+> schema are included by other schemas, they should always allow for
+> additionalProperties.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  [...]
+>  .../devicetree/bindings/power/supply/power-supply.yaml       | 2 ++
+>  [...]
 
- arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Acked-by: Sebastian Reichel <sre@kernel.org>
 
-diff --git a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
-index 5700e6b700d3..25d548cb975b 100644
---- a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
-@@ -36,34 +36,34 @@
- 		stdout-path = &uart4;
- 	};
- 
--	led-act {
-+	led-controller-1 {
- 		compatible = "gpio-leds";
- 
--		led-green {
-+		led-1 {
- 			label = "mc1:green:act";
- 			gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
- 			linux,default-trigger = "heartbeat";
- 		};
- 	};
- 
--	led-rgb {
-+	led-controller-2 {
- 		compatible = "pwm-leds";
- 
--		led-red {
-+		led-2 {
- 			label = "mc1:red:rgb";
- 			pwms = <&leds_pwm 1 1000000 0>;
- 			max-brightness = <255>;
- 			active-low;
- 		};
- 
--		led-green {
-+		led-3 {
- 			label = "mc1:green:rgb";
- 			pwms = <&leds_pwm 2 1000000 0>;
- 			max-brightness = <255>;
- 			active-low;
- 		};
- 
--		led-blue {
-+		led-4 {
- 			label = "mc1:blue:rgb";
- 			pwms = <&leds_pwm 3 1000000 0>;
- 			max-brightness = <255>;
--- 
-2.20.1
+-- Sebastian
 
+--7db5qni5yh4rtlce
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl97iEsACgkQ2O7X88g7
++pr9vg//fpVYpKsaZc4pw203Kmzwve+W4z3OPaQS7g1Y93QHWykKxFYpCgOrbmA7
+Ikwy3xwBLfMhPIUs8KZDsiaLVkKTi9XJifhEKiG4Uz772vFOZqAPgskcT6Sx4+iN
+4lqd7WmgV3hGelDss8qw6dQ1FY0/MHuMXvoDeNHTvqi0ZhttRrQmOEO6spkWL1io
+39Au/Pxbh2dK06Y7Y0qoKlqCKxnL4fWlUjFqJkJI+d4LjK/XYvukOTPmAhEYfP2H
+tZ38WZd/3SxwQD+Nh6ZJCfKC54D00G54g+fkxhaiypSSgI1IPWfIsrqPfPnVMowq
+wI2fo/C10LMZ1kqUi/LCW+OET8aePRkYjUMWZ2GBNRY9MJCJH/WkOPy7PaKHrOfU
+EdJx9OH7guvFWaEJGhClazwYS6QkM8CEKy7Nd5nJTeQOBEg/p2Lb2etNPNq34nju
+o9euArIjrnqbHK5X9Ijyvhaqw3bxsVPmPkOGUayDMB44UtwHNFqIosmboJnkJ6bt
+BGS1zVnJs2sdLMqMZcCwfHGoX00rThZgvCACDas7fVEdsZgtaEnCW8aySbWCKPdY
+1gtR+xdosJheKba+kMxfhmR0nm62rAmJvS9XOZaBY+cveye5NtC3kvk+Al5ixucd
+jYmH3Iudn+0hC44ZPGUl49YUa5cwsX8NZlyh8ItyWm/x+WiVyb8=
+=9y9P
+-----END PGP SIGNATURE-----
+
+--7db5qni5yh4rtlce--
