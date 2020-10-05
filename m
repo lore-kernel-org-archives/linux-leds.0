@@ -4,31 +4,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF71C47095
-	for <linux-leds@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51173C47426
+	for <linux-leds@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A103204EA
-	for <linux-leds@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2444C20853
+	for <linux-leds@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729858AbgJEUge (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 5 Oct 2020 16:36:34 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:46925 "EHLO
+        id S1729839AbgJEUg3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 5 Oct 2020 16:36:29 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:51353 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729837AbgJEUgd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 5 Oct 2020 16:36:33 -0400
+        with ESMTP id S1729313AbgJEUgT (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 5 Oct 2020 16:36:19 -0400
 Received: from methusalix.internal.home.lespocky.de ([92.117.55.152]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1M7JrG-1kK4681bhc-007kJO; Mon, 05 Oct 2020 22:36:00 +0200
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1Md6AP-1kxlZ32Jsp-00aH1b; Mon, 05 Oct 2020 22:35:46 +0200
 Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
         by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <alex@home.lespocky.de>)
-        id 1kPXD9-0004X3-UD; Mon, 05 Oct 2020 22:35:56 +0200
-Received: (nullmailer pid 10395 invoked by uid 2001);
-        Mon, 05 Oct 2020 20:35:40 -0000
+        id 1kPXCx-0004Vb-Sq; Mon, 05 Oct 2020 22:35:44 +0200
+Received: (nullmailer pid 10367 invoked by uid 2001);
+        Mon, 05 Oct 2020 20:35:39 -0000
 From:   Alexander Dahl <post@lespocky.de>
 To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -40,36 +40,38 @@ Cc:     Alexander Dahl <ada@thorsis.com>,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v7 11/12] arm64: dts: meson: Fix schema warnings for pwm-leds
-Date:   Mon,  5 Oct 2020 22:34:50 +0200
-Message-Id: <20201005203451.9985-12-post@lespocky.de>
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v7 08/12] ARM: dts: imx: Fix schema warnings for pwm-leds
+Date:   Mon,  5 Oct 2020 22:34:47 +0200
+Message-Id: <20201005203451.9985-9-post@lespocky.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201005203451.9985-1-post@lespocky.de>
 References: <20201005203451.9985-1-post@lespocky.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 9f5b2199e4483c1fbb1603fea470fc05
-X-Provags-ID: V03:K1:A4oxbG+VP4keve1usN9ADR72uw0WccVPSSBWokgSTOYr4HO0wXU
- h4RFD7nLJIzovO2Gs4xcpY+0BKCCyDjL8Mjxgi3z2Qh1iU+WASkkhFmghKKTEFF9Q/f9rpM
- +4/nJcVli6ea+DZquPU/7SLA2oHuGw4PxnchPmtnsm62Gi6nxZo4lk2B3bw2RvLv0lA+h58
- 0lhR3dJRtVTCUoBXhvr9g==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:5ovu7SMkV4Q=:PH7u5YKYkwCKqj8o1agAGk
- rWTBchz6xUWT2uBSBXi4dbo0qLg3hNmYgVIEtS3KljJSK0tQ/ZLNwX0FwAf2o1n6GZV35GHDg
- Jev9Z/2ImNZJWCyjAGly9esRXyLPPGZnlTM+ucRmiyjGDBkdLS1RBRRWm5htpCycF2YDJKD0X
- a7HX+Te79Z9hJoLGOYvYCZcBQKJoVj9kdvnFiAmBUI/joN8vflOmZYlZxvBMaZTtiLpmQUN8X
- NUMVCZaJmNkNjn0GfnEnqR/BAfdulIS4Vbx9bwMIDHotBFwTY/SDyTCTgsWgHD6LSwfWEVFT0
- gMkGvSZPyPfnG0T/xmgRSHDEAcJclkHy5TjCSfKHvpki8FGS1IXA+ealzJ3oZ0FoHMtRyoGMD
- ycuGqk+TUjj1N8lV2KqzWDUEcDtwgPzg44iNfa17ioq0yCrwE0b6Hdzt+CgT2XNTJE3DWUaeu
- C6ZojrgnplPxhZkym+Kg1RhZTYmmkFevC3MXgq0CZ6leahy9wN7F7ahrVVLo7MGWQ5lvvGsC5
- XkeegLfcMAHcVIvcbPvjFy2lFzkylqe7lfcW1H2cVOArjikK0zTArJ1ycQa6XHL+1kERqjZGf
- HLPMbza2Pkdgk/pgtdPI5RWswwsxEfwPO/npXiIuM27iW66XnD43Lo7uWVpNgiDZ2o9dyKgrX
- H00a1LUmLwEaV6nBG+Gi5WnVff118/hBl7bNoRiipRWzQSJR4yAE/yYbkzkqgYJ8dRJ/L8D+A
- G3DHdcyiJ6iDDAMwrXygXjhlNm8BB1dHQVxyDpjin+Ybt5QkGqvLuawPQ/MOZ6aVSH366W1z3
- cpzBuPnSl/RVFuPEsY35bJ/23eZOxWq0BhWdwzPKCXcwJ7t67FnX1VKZ5E3TEhM+ZgiScVK
+X-Scan-Signature: 68681318e863c9f5270c704b7be598c0
+X-Provags-ID: V03:K1:lWn/Muqkqh4PPb1qlIzjSTvDw1aTRx7hjYe/2nooxhQ/hIT1n06
+ kdYYros5syyoKmfYgkwMvoyStyjCTqgrQNKE0tQpi1NlqX4bCwN8glJUUmKX/FvR9a1CG07
+ m0Ikhogvv0C4eK98r+nJ5dvcEOWSKt50vAaxIyznza7kqWKhBEvuXIW+AwDshdD+5vAVRMC
+ gr0fKbKzGUfSO9WV/CedA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:q5iI14eylOg=:UvTYIYQig8trsx5KyLUhMc
+ z5VOu5BFYQTkckWR1rCDxGi1B39SaYDfKVZOT71HwLJd9CNg3WkN8BA2cY3tBnSYig+3MXSa7
+ YQfY8R9pYVnpD3JLjAzqbahwLZpWUx5+Guo6sz+R6yXUGCQI9aZsvFIIFxEzJo7rPkIk3Zzvv
+ /XSTT2c+rYAmQoj6DWazJEcuZvzCv4atkQHyd4mpiSofsIYdTrTrOqZ7HnmtPEHwcqK9DrYXS
+ 0y0B25+xTRmYsR3PrIVSiDFns+8ky28WUzAQKPH+sslbk0f4epAI33KLhbwNArOfVUUSJVCW0
+ p89rocq16MPmP2VC10vfr2PfHtl3cucdKX6nzmGKXqm/Zf8BMjzP7hoN0XzA93jAp7jC+ZmTS
+ N/5T62WUWVPYKtX5vC5WqiEQbBJM2IgyyIRq9cRV34/Gc2tKNfJrjOU349A+ikpwyu0tsgkWJ
+ BvYPD2zPLHEDQmmTQHuuRh3dpXiMDggqrNWlGwYq3z/EO2mKfEjKTm8ySHdQjQYZo8UbGhH4R
+ ICRG+k4HRDLkQetcr0WZfhp4KmcTRSsibJqPCWosIOeWu5AyyLHymXE7wLP9s7eJTuqfaB/lt
+ PWUk2S2qi3RztwuJZBo8ykF1DTY60G+E3jfAKx+DFbuDAefEm6sffclPSISGb6ykab/rOipCi
+ ev9H86atvLoVFslwP80qGZLWfHW3QJWRdOaBMJD+ZwHwcjMZ6spOv6llleYrncMGxBRxgv227
+ 3BazHS2RQgDiC3AcnulVeGv982eHNj1j904MSba87OSL0WzFtYjxeqXg2VfEMttIzCCBKD8rK
+ 2FjAGfFGQS7uFzyoy1IwfiFlomts9kTGGSdzrBAnBeIcx2EJMoyKytoTl8watUfEzMPjLKk
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
@@ -78,86 +80,139 @@ The node names for devices using the pwm-leds driver follow a certain
 naming scheme (now).  Parent node name is not enforced, but recommended
 by DT project.
 
+  DTC     arch/arm/boot/dts/imx53-ppd.dt.yaml
+  CHECK   arch/arm/boot/dts/imx53-ppd.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/imx53-ppd.dt.yaml: leds-brightness: 'alarm-brightness' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/imx6dl-cubox-i.dt.yaml
+  CHECK   arch/arm/boot/dts/imx6dl-cubox-i.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/imx6dl-cubox-i.dt.yaml: pwmleds: 'front' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/imx6dl-cubox-i-emmc-som-v15.dt.yaml
+  CHECK   arch/arm/boot/dts/imx6dl-cubox-i-emmc-som-v15.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/imx6dl-cubox-i-emmc-som-v15.dt.yaml: pwmleds: 'front' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/imx6dl-cubox-i-som-v15.dt.yaml
+  CHECK   arch/arm/boot/dts/imx6dl-cubox-i-som-v15.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/imx6dl-cubox-i-som-v15.dt.yaml: pwmleds: 'front' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/imx6sx-softing-vining-2000.dt.yaml
+  CHECK   arch/arm/boot/dts/imx6sx-softing-vining-2000.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/imx6sx-softing-vining-2000.dt.yaml: pwmleds: 'blue', 'green', 'red' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+
 Signed-off-by: Alexander Dahl <post@lespocky.de>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
 
 Notes:
     v6 -> v7:
-      * added Reviewed-by
-      * added another explaining sentence to commit message
-    
-    v6:
-      * added this patch to series
+      * split up patch (one per sub arch)
+      * added actual warnings to commit message
 
- .../arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts | 4 ++--
- arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts     | 4 ++--
- arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts          | 8 ++++----
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/imx53-ppd.dts                  | 15 ++++++++-------
+ arch/arm/boot/dts/imx6qdl-cubox-i.dtsi           |  4 ++--
+ arch/arm/boot/dts/imx6sx-softing-vining-2000.dts |  8 ++++----
+ 3 files changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-index 8bcdffdf55d0..adfc72500e66 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-@@ -42,10 +42,10 @@
- 		};
+diff --git a/arch/arm/boot/dts/imx53-ppd.dts b/arch/arm/boot/dts/imx53-ppd.dts
+index f7dcdf96e5c0..b480614efb30 100644
+--- a/arch/arm/boot/dts/imx53-ppd.dts
++++ b/arch/arm/boot/dts/imx53-ppd.dts
+@@ -176,36 +176,37 @@
+ 		power-supply = <&reg_3v3_lcd>;
  	};
  
--	pwmleds {
-+	led-controller {
+-	leds-brightness {
++	led-controller-1 {
  		compatible = "pwm-leds";
  
--		power {
+-		alarm-brightness {
 +		led-1 {
- 			label = "vim:red:power";
- 			pwms = <&pwm_AO_ab 1 7812500 0>;
++			label = "alarm-brightness";
+ 			pwms = <&pwm1 0 100000>;
  			max-brightness = <255>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-index bff8ec2c1c70..dcb435af4e0b 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-@@ -81,10 +81,10 @@
- 		};
- 	};
- 
--	pwmleds {
-+	led-controller {
- 		compatible = "pwm-leds";
- 
--		power {
-+		led-1 {
- 			label = "vim:red:power";
- 			pwms = <&pwm_AO_ab 1 7812500 0>;
- 			max-brightness = <255>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-index 5ab139a34c01..039a8d0d1e9b 100644
---- a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-@@ -101,20 +101,20 @@
  		};
  	};
  
 -	leds {
-+	led-controller-1 {
++	led-controller-2 {
  		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_alarmled_pins>;
  
--		led-bluetooth {
-+		led-1 {
- 			label = "sei610:blue:bt";
- 			gpios = <&gpio GPIOC_7 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
- 			default-state = "off";
+-		alarm1 {
++		led-2 {
+ 			label = "alarm:red";
+ 			gpios = <&gpio7 3 GPIO_ACTIVE_HIGH>;
  		};
+ 
+-		alarm2 {
++		led-3 {
+ 			label = "alarm:yellow";
+ 			gpios = <&gpio7 7 GPIO_ACTIVE_HIGH>;
+ 		};
+ 
+-		alarm3 {
++		led-4 {
+ 			label = "alarm:blue";
+ 			gpios = <&gpio7 8 GPIO_ACTIVE_HIGH>;
+ 		};
+ 
+-		alarm4 {
++		led-5 {
+ 			label = "alarm:silenced";
+ 			gpios = <&gpio7 13 GPIO_ACTIVE_HIGH>;
+ 		};
+diff --git a/arch/arm/boot/dts/imx6qdl-cubox-i.dtsi b/arch/arm/boot/dts/imx6qdl-cubox-i.dtsi
+index 67042793b0ca..1e530d892b76 100644
+--- a/arch/arm/boot/dts/imx6qdl-cubox-i.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-cubox-i.dtsi
+@@ -55,12 +55,12 @@
+ 		pinctrl-0 = <&pinctrl_cubox_i_ir>;
  	};
  
 -	pwmleds {
-+	led-controller-2 {
++	led-controller {
+ 		compatible = "pwm-leds";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_cubox_i_pwm1>;
+ 
+-		front {
++		led-1 {
+ 			active-low;
+ 			label = "imx6:red:front";
+ 			max-brightness = <248>;
+diff --git a/arch/arm/boot/dts/imx6sx-softing-vining-2000.dts b/arch/arm/boot/dts/imx6sx-softing-vining-2000.dts
+index d25e27d0315f..83bff1a129ec 100644
+--- a/arch/arm/boot/dts/imx6sx-softing-vining-2000.dts
++++ b/arch/arm/boot/dts/imx6sx-softing-vining-2000.dts
+@@ -40,22 +40,22 @@
+ 		regulator-max-microvolt = <3300000>;
+ 	};
+ 
+-	pwmleds {
++	led-controller {
  		compatible = "pwm-leds";
  
--		power {
-+		led-2 {
- 			label = "sei610:red:power";
- 			pwms = <&pwm_AO_ab 0 30518 0>;
+-		red {
++		led-1 {
+ 			label = "red";
  			max-brightness = <255>;
+ 			pwms = <&pwm6 0 50000>;
+ 		};
+ 
+-		green {
++		led-2 {
+ 			label = "green";
+ 			max-brightness = <255>;
+ 			pwms = <&pwm2 0 50000>;
+ 		};
+ 
+-		blue {
++		led-3 {
+ 			label = "blue";
+ 			max-brightness = <255>;
+ 			pwms = <&pwm1 0 50000>;
 -- 
 2.20.1
 
