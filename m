@@ -2,101 +2,83 @@ Return-Path: <SRS0=0K9/=DO=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB422C4363D
-	for <linux-leds@archiver.kernel.org>; Wed,  7 Oct 2020 13:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C91C4363D
+	for <linux-leds@archiver.kernel.org>; Wed,  7 Oct 2020 14:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85261206F0
-	for <linux-leds@archiver.kernel.org>; Wed,  7 Oct 2020 13:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602078643;
-	bh=Lb7rezODF8QPQgyNju+hSfsV1I8EXMk9HyTJ/nPARvg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EPMYmRSyEzV60c1X75YkuOSEoMqVMcn3+JA1wIc8zWMwBiUO5/e+JcacwXRuupMEj
-	 Px0SoeBAGrQeUP3sejtiO/Tm78hI0+Vit/v4iESNPUqRJS/LNa45fjnPLg4j4upfVT
-	 WRnrFI1hBBF58fn307iLNpRx4hNYw+rL2W7quFu0=
+	by mail.kernel.org (Postfix) with ESMTP id 2BC99208C7
+	for <linux-leds@archiver.kernel.org>; Wed,  7 Oct 2020 14:56:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LTkReH9J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbgJGNun (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 7 Oct 2020 09:50:43 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44180 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728177AbgJGNun (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 7 Oct 2020 09:50:43 -0400
-Received: by mail-oi1-f193.google.com with SMTP id x62so2436082oix.11;
-        Wed, 07 Oct 2020 06:50:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tHjfssJN4xtGC2v26gavuA3JBazoT19809Dqj28cIXc=;
-        b=YTw11Z7jywMgODubZ9K6RH5T5jx78hdihDAiAMpQno2zjcbHLMOfGLH8GHqYf27SQv
-         AIcGmV0sX+67HU6fRyaP3nyR5SN85ZzJ1ZRSgmqaqFs/Z7rGwguLtWVYmfqkfllBoLOA
-         t+RRHCZFP8S6ER9fL6E4l5yTrVj55dPS9PTvGHGbqH+4rJJ+cQ5S8sa4MjvNKVFvAxk8
-         LtpwB6WTzypO3d82CyvZUDhbGQ5fanv283UdIzRGFlS2D5uAIlT3Os8go9QLS3Pi0eYT
-         wloMc+hPUOWiqzP03OOlfY49bcf31dTeDKVhLbq1dbaBxhjU7BY9fV9aEM1POIEK95Yg
-         eQbg==
-X-Gm-Message-State: AOAM533wb+Qb4M2atPOQ24ztG7u+0xiblxonAY6z9fJawBxj88PkoPmo
-        918ggj63Nzpj9QIkX1jwFg==
-X-Google-Smtp-Source: ABdhPJwItZ2iHWEIWP2OBnOgPnQrGMhJQqTy5o/IN8sbPTbtIrR7N7hUK9M/gtjrMkQrM7fyqIDCTg==
-X-Received: by 2002:aca:53d7:: with SMTP id h206mr1990127oib.113.1602078641716;
-        Wed, 07 Oct 2020 06:50:41 -0700 (PDT)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h3sm2260548oom.18.2020.10.07.06.50.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Oct 2020 06:50:40 -0700 (PDT)
-Received: (nullmailer pid 123982 invoked by uid 1000);
-        Wed, 07 Oct 2020 13:50:39 -0000
-Date:   Wed, 7 Oct 2020 08:50:39 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Gene Chen <gene.chen.richtek@gmail.com>
-Cc:     robh+dt@kernel.org, shufan_lee@richtek.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, gene_chen@richtek.com,
-        matthias.bgg@gmail.com, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        benjamin.chao@mediatek.com, cy_huang@richtek.com, dmurphy@ti.com,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        Wilma.Wu@mediatek.com
-Subject: Re: [PATCH v5 1/2] dt-bindings: leds: Add bindings for MT6360 LED
-Message-ID: <20201007135039.GA123258@bogus>
-References: <1602034966-3524-1-git-send-email-gene.chen.richtek@gmail.com>
- <1602034966-3524-2-git-send-email-gene.chen.richtek@gmail.com>
+        id S1728641AbgJGO44 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 7 Oct 2020 10:56:56 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:42256 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728637AbgJGO44 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 7 Oct 2020 10:56:56 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 097EuO0G077454;
+        Wed, 7 Oct 2020 09:56:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1602082584;
+        bh=67uOMzd2/z5aPdWJGGmYdVbEfaUxAlC1A5+y2mSmvPQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=LTkReH9J+vm3PZMYumPiso2D3wzau/eZ3an1mRAWyurw4GfeGQryumuYBo/N7daL+
+         feZN+EhXPdX/VLpjtm5C29hrInlFIlfx/X161fXphTGGiefbau5zVh8H5IVleu0U9S
+         VBfWqR4qk9IpzQ7NEaZKHmxqVd1OG0aIGhObWnQg=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 097EuObl085587
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 7 Oct 2020 09:56:24 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 7 Oct
+ 2020 09:56:24 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 7 Oct 2020 09:56:24 -0500
+Received: from [10.250.71.177] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 097EuNEU020180;
+        Wed, 7 Oct 2020 09:56:23 -0500
+Subject: Re: [PATCH] lm3697: Rename struct into more appropiate name
+To:     <ultracoolguy@tutanota.com>, Marek Behun <kabel@blackhole.sk>
+CC:     Pavel <pavel@ucw.cz>, Linux Leds <linux-leds@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+References: <MIuPIKy--3-2@tutanota.com> <20201007012600.3b3e7779@blackhole.sk>
+ <MJ2-gcy----2@tutanota.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <346621c1-757e-d182-d290-877fccc8b4aa@ti.com>
+Date:   Wed, 7 Oct 2020 09:56:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1602034966-3524-2-git-send-email-gene.chen.richtek@gmail.com>
+In-Reply-To: <MJ2-gcy----2@tutanota.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Wed, 07 Oct 2020 09:42:45 +0800, Gene Chen wrote:
-> From: Gene Chen <gene_chen@richtek.com>
-> 
-> Add bindings document for LED support on MT6360 PMIC
-> 
-> Signed-off-by: Gene Chen <gene_chen@richtek.com>
-> ---
->  .../devicetree/bindings/leds/leds-mt6360.yaml      | 95 ++++++++++++++++++++++
->  1 file changed, 95 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6360.yaml
-> 
+Gabriel
 
+On 10/7/20 7:21 AM, ultracoolguy@tutanota.com wrote:
+> The reason I didn't use git send-mail earlier is because Tutanota doesn't supports SMTP and Protonmail requires a paid account for using SMTP/IMAP. However, I made an account creation request for Disroot(which does support SMTP for free), so when/if the account gets created I'll send future patches through there.
+> Oct 6, 2020, 23:26 by kabel@blackhole.sk:
+>
+>
+Also please note top posting on emails is not preferred. As you will 
+find in the LED domain bottom posts and trimming emails to what is being 
+commented on is preferred.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+As demonstrated.
 
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/leds/leds-mt6360.example.dt.yaml: led-controller: led@0:color:0:0: 9 is greater than the maximum of 8
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/leds/leds-mt6360.yaml
-
-
-See https://patchwork.ozlabs.org/patch/1377747
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure dt-schema is up to date:
-
-pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
-
-Please check and re-submit.
+Dan
 
