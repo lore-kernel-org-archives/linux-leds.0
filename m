@@ -2,86 +2,119 @@ Return-Path: <SRS0=0K9/=DO=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A86DC4363D
-	for <linux-leds@archiver.kernel.org>; Wed,  7 Oct 2020 10:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C9CC4363C
+	for <linux-leds@archiver.kernel.org>; Wed,  7 Oct 2020 11:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39F582076C
-	for <linux-leds@archiver.kernel.org>; Wed,  7 Oct 2020 10:09:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F36E206F7
+	for <linux-leds@archiver.kernel.org>; Wed,  7 Oct 2020 11:28:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbgJGKJB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 7 Oct 2020 06:09:01 -0400
-Received: from mail.thorsis.com ([92.198.35.195]:35513 "EHLO mail.thorsis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727996AbgJGKI6 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 7 Oct 2020 06:08:58 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.thorsis.com (Postfix) with ESMTP id 0C54D3579;
-        Wed,  7 Oct 2020 12:08:55 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
-Received: from mail.thorsis.com ([127.0.0.1])
-        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id a5gx01CScUQn; Wed,  7 Oct 2020 12:08:54 +0200 (CEST)
-Received: by mail.thorsis.com (Postfix, from userid 109)
-        id D21B536BC; Wed,  7 Oct 2020 12:08:54 +0200 (CEST)
-From:   Alexander Dahl <ada@thorsis.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Alexander Dahl <post@lespocky.de>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Jeff LaBundy <jeff@labundy.com>
-Subject: Re: [PATCH v7 03/12] dt-bindings: mfd: Fix schema warnings for pwm-leds
-Date:   Wed, 07 Oct 2020 12:08:46 +0200
-Message-ID: <2640582.VKub60Wb7X@ada>
-In-Reply-To: <20201007100359.GC12224@duo.ucw.cz>
-References: <20201005203451.9985-1-post@lespocky.de> <20201005203451.9985-4-post@lespocky.de> <20201007100359.GC12224@duo.ucw.cz>
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1727559AbgJGL17 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 7 Oct 2020 07:27:59 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:59568 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbgJGL16 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 7 Oct 2020 07:27:58 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id BB2F61C0BAE; Wed,  7 Oct 2020 13:27:56 +0200 (CEST)
+Date:   Wed, 7 Oct 2020 13:27:56 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Luka Kovacic <luka.kovacic@sartura.hr>
+Cc:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-leds@vger.kernel.org, lee.jones@linaro.org, dmurphy@ti.com,
+        robh+dt@kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+        marek.behun@nic.cz, luka.perkov@sartura.hr, robert.marko@sartura.hr
+Subject: Re: [PATCH v4 4/6] drivers: leds: Add the iEi WT61P803 PUZZLE LED
+ driver
+Message-ID: <20201007112756.GD12224@duo.ucw.cz>
+References: <20201007004901.39859-1-luka.kovacic@sartura.hr>
+ <20201007004901.39859-5-luka.kovacic@sartura.hr>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="fXStkuK2IQBfcDe+"
+Content-Disposition: inline
+In-Reply-To: <20201007004901.39859-5-luka.kovacic@sartura.hr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hei Pavel,
 
-Am Mittwoch, 7. Oktober 2020, 12:03:59 CEST schrieb Pavel Machek:
-> > The node names for devices using the pwm-leds driver follow a certain
-> > naming scheme (now).  Parent node name is not enforced, but recommended
-> > by DT project.
-> > 
-> >   DTC     Documentation/devicetree/bindings/mfd/iqs62x.example.dt.yaml
-> >   CHECK   Documentation/devicetree/bindings/mfd/iqs62x.example.dt.yaml
-> > 
-> > /home/alex/build/linux/Documentation/devicetree/bindings/mfd/iqs62x.exampl
-> > e.dt.yaml: pwmleds: 'panel' does not match any of the regexes:
-> > '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'> 
-> >         From schema:
-> >         /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/
-> >         leds-pwm.yaml> 
-> > Signed-off-by: Alexander Dahl <post@lespocky.de>
-> 
-> Okay, so I need Rob's ack here, I guess... and rest of the series is
-> not really for my tree.
+--fXStkuK2IQBfcDe+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think so, too.
+Hi!
 
-I saw you applied patch number 1, all the other patches are DT and from my 
-side those can wait for the Acks required and maybe I change the indexes again 
-and I'm fine resending all that after the 5.10 merge window.
+> Add support for the iEi WT61P803 PUZZLE LED driver.
+> Currently only the front panel power LED is supported.
+>=20
+> This driver depends on the iEi WT61P803 PUZZLE MFD driver.
 
-Thanks for applying the non-DT patches for leds subsystem, the rest will be 
-sorted out without hurry.
+> +static int iei_wt61p803_puzzle_led_brightness_set_blocking(struct led_cl=
+assdev *cdev,
+> +							   enum led_brightness brightness)
+> +{
+> +	struct iei_wt61p803_puzzle_led *priv =3D cdev_to_iei_wt61p803_puzzle_le=
+d(cdev);
+> +	unsigned char *resp_buf =3D priv->response_buffer;
+> +	unsigned char led_power_cmd[5] =3D {
+> +		IEI_WT61P803_PUZZLE_CMD_HEADER_START,
+> +		IEI_WT61P803_PUZZLE_CMD_LED,
+> +		IEI_WT61P803_PUZZLE_CMD_LED_POWER,
+> +		(char)IEI_LED_OFF
+> +	};
+> +	size_t reply_size;
+> +
+> +	mutex_lock(&priv->lock);
+> +	if (brightness =3D=3D LED_OFF) {
+> +		led_power_cmd[3] =3D (char)IEI_LED_OFF;
+> +		priv->led_power_state =3D LED_OFF;
+> +	} else {
+> +		led_power_cmd[3] =3D (char)IEI_LED_ON;
+> +		priv->led_power_state =3D LED_ON;
+> +	}
+> +	mutex_unlock(&priv->lock);
 
-Greets
-Alex
+Are you sure you need the mutex?
 
+> +	ret =3D devm_led_classdev_register_ext(dev, &priv->cdev, &init_data);
+> +	if (ret) {
+> +		dev_err(dev, "Could not register LED\n");
+> +		goto err_child_node;
+> +	}
+> +	return 0;
+> +err_child_node:
+> +	fwnode_handle_put(child);
+> +	return ret;
+> +}
 
+Is the fwnode_handle_put(child); missing in non-error path somewhere?
 
+> +MODULE_LICENSE("GPL");
+
+Make sure this is consistent with file header. GPLv2+, if you can.
+
+Best regards,
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--fXStkuK2IQBfcDe+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX32mPAAKCRAw5/Bqldv6
+8qoDAJsGLSdnj7pS5+jNN106nqxPCn+sIwCgjgVV9LxT/eQ1kyFjPAxMgU23t+U=
+=NwvO
+-----END PGP SIGNATURE-----
+
+--fXStkuK2IQBfcDe+--
