@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58219C43467
-	for <linux-leds@archiver.kernel.org>; Tue, 13 Oct 2020 16:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AAF5C433DF
+	for <linux-leds@archiver.kernel.org>; Tue, 13 Oct 2020 16:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 263B22523D
-	for <linux-leds@archiver.kernel.org>; Tue, 13 Oct 2020 16:09:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FDD22523E
+	for <linux-leds@archiver.kernel.org>; Tue, 13 Oct 2020 16:09:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389186AbgJMQJQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 13 Oct 2020 12:09:16 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:55504 "EHLO huawei.com"
+        id S2389454AbgJMQJW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 13 Oct 2020 12:09:22 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:55500 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731455AbgJMQJP (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 13 Oct 2020 12:09:15 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D9044DF491D456F3C172;
-        Wed, 14 Oct 2020 00:09:06 +0800 (CST)
+        id S1731375AbgJMQJQ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 13 Oct 2020 12:09:16 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0F299DB26D260622FD5E;
+        Wed, 14 Oct 2020 00:09:07 +0800 (CST)
 Received: from thunder-town.china.huawei.com (10.174.177.134) by
  DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.487.0; Wed, 14 Oct 2020 00:09:00 +0800
+ 14.3.487.0; Wed, 14 Oct 2020 00:08:58 +0800
 From:   Zhen Lei <thunder.leizhen@huawei.com>
 To:     Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
         Dan Murphy <dmurphy@ti.com>,
@@ -40,9 +40,9 @@ To:     Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 CC:     Zhen Lei <thunder.leizhen@huawei.com>
-Subject: [PATCH 3/6] spi: dt-bindings: spi-controller: explicitly require #address-cells=<0> for slave mode
-Date:   Wed, 14 Oct 2020 00:08:42 +0800
-Message-ID: <20201013160845.1772-4-thunder.leizhen@huawei.com>
+Subject: [PATCH 1/6] dt-bindings: leds: choose correct color value of multi-led
+Date:   Wed, 14 Oct 2020 00:08:40 +0800
+Message-ID: <20201013160845.1772-2-thunder.leizhen@huawei.com>
 X-Mailer: git-send-email 2.26.0.windows.1
 In-Reply-To: <20201013160845.1772-1-thunder.leizhen@huawei.com>
 References: <20201013160845.1772-1-thunder.leizhen@huawei.com>
@@ -55,60 +55,27 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-scripts/dtc/checks.c:
-if (get_property(node, "spi-slave"))
-	spi_addr_cells = 0;
-if (node_addr_cells(node) != spi_addr_cells)
-	FAIL(c, dti, node, "incorrect #address-cells for SPI bus");
-if (node_size_cells(node) != 0)
-	FAIL(c, dti, node, "incorrect #size-cells for SPI bus");
-
-The above code in check_spi_bus_bridge() require that the number of address
-cells must be 0. So we should explicitly declare "#address-cells = <0>".
+The color value of multi-led is fixed to "const: 8 #LED_COLOR_ID_MULTI",
+which is required by leds-class-multicolor.yaml.
 
 Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 ---
- .../devicetree/bindings/spi/spi-controller.yaml      | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-lp55xx.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-controller.yaml b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-index 2b154803b181c8b..1b56d5e40f1fcde 100644
---- a/Documentation/devicetree/bindings/spi/spi-controller.yaml
-+++ b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-@@ -20,7 +20,7 @@ properties:
-     pattern: "^spi(@.*|-[0-9a-f])*$"
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+index 58e974793a7976b..cd877e817ad1a1c 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+@@ -197,7 +197,7 @@ examples:
+                #address-cells = <1>;
+                #size-cells = <0>;
+                reg = <0x2>;
+-               color = <LED_COLOR_ID_RGB>;
++               color = <LED_COLOR_ID_MULTI>;
+                function = LED_FUNCTION_STANDBY;
+                linux,default-trigger = "heartbeat";
  
-   "#address-cells":
--    const: 1
-+    enum: [0, 1]
- 
-   "#size-cells":
-     const: 0
-@@ -52,11 +52,19 @@ properties:
-     description:
-       The SPI controller acts as a slave, instead of a master.
- 
--oneOf:
--  - required:
--      - "#address-cells"
--  - required:
--      - spi-slave
-+allOf:
-+  - if:
-+      not:
-+        required:
-+          - spi-slave
-+    then:
-+      properties:
-+        "#address-cells":
-+          const: 1
-+    else:
-+      properties:
-+        "#address-cells":
-+          const: 0
- 
- patternProperties:
-   "^slave$":
 -- 
 1.8.3
 
