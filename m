@@ -2,102 +2,96 @@ Return-Path: <SRS0=kD89=DV=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BE7C433DF
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Oct 2020 08:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B06C433E7
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Oct 2020 08:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73DDE212CC
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Oct 2020 08:27:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D1D820BED
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Oct 2020 08:29:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Q4rL/F2A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbgJNI1w (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 14 Oct 2020 04:27:52 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:57066 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbgJNI1w (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Oct 2020 04:27:52 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 75E391C0B87; Wed, 14 Oct 2020 10:27:53 +0200 (CEST)
-Date:   Wed, 14 Oct 2020 10:27:52 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Udo van den Heuvel <udovdh@xs4all.nl>
-Cc:     Takashi Iwai <tiwai@suse.de>, Randy Dunlap <rdunlap@infradead.org>,
+        id S1727464AbgJNI3e (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 14 Oct 2020 04:29:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60236 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728357AbgJNI3d (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Oct 2020 04:29:33 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27AA7C041E74;
+        Tue, 13 Oct 2020 21:49:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description;
+        bh=yGwm+FYf1veFap07M7lkxRVGaScE5egn/D1JUgzguhg=; b=Q4rL/F2ADS2XBPMl//gX5IiWbo
+        g1pSgZ1cMBOhCSYts36M97tS7csbaZd1jzpX1Nc91e8sAj01jxiv5Yp/Iyed6+BDq/LBm/zNdetWc
+        O19XG3OQ52CPXeRVLFouo0ixmbSnT3z0boTKKSli/FQZpKH5T1q3Ee7viIQtfgRKwCJhBEV0h9N3S
+        CMgek8dxTvPc18V6tRqDplmfg0D+cFK+iB7xthhYOLdvBWOMb9B/Rma/a7hE14GdR+Vaa3/Z8/LDg
+        rl85RnX/ND+USirofs66TwmtF4Qg7S4mqVEq/ZHJgLakOtwRL+ZI+XS9rYrLoLoOBI6z7FaXbFNeN
+        l8Amab6g==;
+Received: from [2601:1c0:6280:3f0::507c]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kSYjF-00062K-2M; Wed, 14 Oct 2020 04:49:33 +0000
+Subject: Re: disabling CONFIG_LED_CLASS
+To:     Udo van den Heuvel <udovdh@xs4all.nl>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>
-Subject: Re: disabling CONFIG_LED_CLASS (SND_HDA_CODEC_REALTEK)
-Message-ID: <20201014082752.GA31728@amd>
-References: <eadc23e7-b383-e2fc-6e20-ed22745d0bfc@xs4all.nl>
- <2739e1fd-75c6-4e43-cd79-9028479f91bf@infradead.org>
- <1e6b1961-9e9b-5f82-86a1-bf838cb68f55@xs4all.nl>
- <d7774b58-caf5-5bd8-845d-a5d45aaef4c6@infradead.org>
- <s5hblh5mele.wl-tiwai@suse.de>
- <s5ha6wpmei5.wl-tiwai@suse.de>
- <20201014075853.GB29881@amd>
- <056a8933-378f-30f2-c7af-5514d93d3c36@xs4all.nl>
- <20201014081116.GC29881@amd>
- <2be6e184-97d4-a2b1-a500-6ea3528cff37@xs4all.nl>
+        Pavel Machek <pavel@ucw.cz>
+References: <2835d02a-380b-6a3a-0e4d-abf07aee18bc@xs4all.nl>
+ <53e698c1-86e4-8b1f-afb0-b8471349e701@xs4all.nl>
+ <43b79598-1592-683f-46df-9e5489110780@infradead.org>
+ <6fd1e91e-19d0-6682-dfc6-49f1cd60408b@infradead.org>
+ <3c6d174c-30db-3d03-3d16-42df405f38d9@xs4all.nl>
+ <58e774c5-fc80-2060-2091-9a6398582cc5@infradead.org>
+ <9fc679e9-e9a9-ad80-b24c-f04489b98aa7@xs4all.nl>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <27e159be-4376-e87b-5e60-803bc3749ec2@infradead.org>
+Date:   Tue, 13 Oct 2020 21:49:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
-Content-Disposition: inline
-In-Reply-To: <2be6e184-97d4-a2b1-a500-6ea3528cff37@xs4all.nl>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <9fc679e9-e9a9-ad80-b24c-f04489b98aa7@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+On 10/13/20 9:39 PM, Udo van den Heuvel wrote:
+> On 14-10-2020 06:34, Randy Dunlap wrote:
+>> On 10/13/20 9:29 PM, Udo van den Heuvel wrote:
+>>> So we still are stuck.
+> 
+> (...)
+> 
+> 
+>> Please post your .config file.
+> 
+> Attached to this message.
+> This is the version stripped from LED references.
 
---tThc/1wpZn/ma/RB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is the problem:
 
-On Wed 2020-10-14 10:22:01, Udo van den Heuvel wrote:
-> On 14-10-2020 10:11, Pavel Machek wrote:
-> >> It's a computer, not a disco-light or anything like that.
-> >=20
-> > And you probably have numlock LED.
->=20
-> On the case? no way.
-> It is on the keyboard, a separate device, and already has a function.
-> We also have a caps lock LED and scroll lock LED there, with separate
-> functions.
-> I do not need 'extra' functionality for those.
->=20
-> > Additional config options have costs, too, and we don't want to
-> > support gazillion config options.=20
->=20
-> That is not the issue.
-> One should have thought about stuff beforehand.
+config SND_HDA_CODEC_REALTEK
+	tristate "Build Realtek HD-audio codec support"
+	select SND_HDA_GENERIC
+	select SND_HDA_GENERIC_LEDS
 
-We did. And decided this is best solution.
+If you disable SND_HDA_CODEC_REALTEK, then the rest of the
+LED kconfig symbols can be disabled.
 
-> The non-selectability is not my fault.
+lnx-59> grep LEDS xx64/.config
+# CONFIG_NEW_LEDS is not set
 
-It also does not affect you in any way.
 
-Feel free to go to the mic LED discussion to see why we did it like
-this. Then you can come up with better solution for problem at hand.
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
 
---tThc/1wpZn/ma/RB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+-- 
+~Randy
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl+GtogACgkQMOfwapXb+vKayQCdGTNvHRcPHVDdAHQuiZy/dWhE
-ODEAn24xZ2THmW5GhEwvQEVN6M8lSC7g
-=Hwxk
------END PGP SIGNATURE-----
-
---tThc/1wpZn/ma/RB--
