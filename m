@@ -2,115 +2,117 @@ Return-Path: <SRS0=kD89=DV=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2242EC433DF
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Oct 2020 08:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B77C433E7
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Oct 2020 10:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C01C920878
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Oct 2020 08:55:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39E7820878
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Oct 2020 10:52:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XieZQoWF"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HRq+149o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbgJNIyg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 14 Oct 2020 04:54:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35970 "EHLO
+        id S1730423AbgJNKwY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 14 Oct 2020 06:52:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725960AbgJNIyg (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Oct 2020 04:54:36 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBAE3C041E70;
-        Tue, 13 Oct 2020 21:35:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description;
-        bh=ql+dCyUK9kY2qN4wsOvbY1tfjExUIKy+/6GCJYebouI=; b=XieZQoWFkPQsPtrrth/jHm1uPm
-        Vd2i2pzFfD9NE9Q7O2p96hlqonmiPuh1UV96Cr7/6WUElOOVtuuGeVOTLUn3B6kHgaoxW/JKXFgqQ
-        3HTP53+JhzGbJfEkj+GSlvJ0rbGJV/5+KDhnpZa3NKxR6qzsHEj8lhEbbxs7qPf11cu0GPrvo/RVR
-        k9FOG5abqhfFlbB4vFynpmbLdHHAT3NocxoVueKTz2rqyOnPPiLtr4ECZkRsLB5C28mOgSdBfEN1v
-        uV+OoFNh3sqg/PJhnrv3a6DU1aPznRwKcxaJy9PQW/L0SNi9SqfsNjX4RwNkea2IwG93JeE7/KtZe
-        442b969A==;
-Received: from [2601:1c0:6280:3f0::507c]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSYV7-0005NO-8B; Wed, 14 Oct 2020 04:34:57 +0000
-Subject: Re: disabling CONFIG_LED_CLASS
-To:     Udo van den Heuvel <udovdh@xs4all.nl>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
-        Pavel Machek <pavel@ucw.cz>
-References: <2835d02a-380b-6a3a-0e4d-abf07aee18bc@xs4all.nl>
- <53e698c1-86e4-8b1f-afb0-b8471349e701@xs4all.nl>
- <43b79598-1592-683f-46df-9e5489110780@infradead.org>
- <6fd1e91e-19d0-6682-dfc6-49f1cd60408b@infradead.org>
- <3c6d174c-30db-3d03-3d16-42df405f38d9@xs4all.nl>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <58e774c5-fc80-2060-2091-9a6398582cc5@infradead.org>
-Date:   Tue, 13 Oct 2020 21:34:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        with ESMTP id S1725922AbgJNKwX (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Oct 2020 06:52:23 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41965C0613D2
+        for <linux-leds@vger.kernel.org>; Wed, 14 Oct 2020 03:52:23 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id l2so3215661lfk.0
+        for <linux-leds@vger.kernel.org>; Wed, 14 Oct 2020 03:52:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K+Bm1q8Wd1o8LXJJfeloOHhF8l9fz3lJzW7zhkVyulA=;
+        b=HRq+149oYRUHEa0ZlPFC+B8N0Z73OpNT7e49YRhUhzYTlBiXsL3s1O/i5yCzYjJFSG
+         qv73V41puLT/Od3m8j1N7zxlJZB0e9iMKLU3xZqBmxt+DfbmSrQMM92bU2N4zHLiz9Of
+         TUJDeu3gaYQm4u6+fzeB+OB6ny4TD96kta5YpMT6HevRLAZYkRHO25PwzRBXvqyalgEW
+         yF+UwqsO1w/oo1nglIALVOUmmjnzuqofH+qA09a3NQbwe6w4tZc4Nnn8xVM4f7JecKZ8
+         2DVBRsLbkX7XgB0XTqxv1sOElv7ovGIaYokuhr45VvcF2u878mu/3Aw1uGzcOeqyBMZ0
+         l1Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K+Bm1q8Wd1o8LXJJfeloOHhF8l9fz3lJzW7zhkVyulA=;
+        b=cEVevO45AsXOHuJL28Vwm0vKzOQVYORIQGI28+NwfEnz4R+6G4PIZnSW3kqNJaYs6m
+         6U5aTRmAQ87fp7tvgGrQCRf7rjxMzI9+aPfSoObCy398ycqw/LPW3xEhV7/xxGdBvUYs
+         zBzkf6aQPQdEphwaS/abtI+Ok+aPtO8Huu8vm17Fq9VdX9fjn9Pl4QVb3iJLPddSBdIx
+         O7GdYmYwo6ZWizr1R7ZFsS6lp162aIje5eRt4iD5ollJHzp9f6mIR1s21uHHbhnpojOH
+         yC9NqnYy12zhvWlDNImFjMRCBtvTVqcQOJyghZjRG1ozAQEzhJXSfDR6lCZKC12PSWCn
+         J3uA==
+X-Gm-Message-State: AOAM5326N8uBUzrznX8TeiRYWYugtIcsNGwUIskpEOzAzUkaw/ICH1iP
+        gYUxGiR9zAtcpBvaB7RJn2hUtXws2HyYy4cWmOaBlw==
+X-Google-Smtp-Source: ABdhPJxAChlb/T6jV0dJCIy/l94YXNy1w3RwYSAAHWPRr2RwihUzfact8MV5Qnw31p8MBBd2NKsS4sAekGvnOmi2Cvg=
+X-Received: by 2002:a19:e55:: with SMTP id 82mr1099586lfo.571.1602672741685;
+ Wed, 14 Oct 2020 03:52:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <3c6d174c-30db-3d03-3d16-42df405f38d9@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200812090711.2644688-1-linus.walleij@linaro.org>
+ <20200812090711.2644688-2-linus.walleij@linaro.org> <c45a2758-cb43-2ccb-4056-ed25d73fa3f8@gmail.com>
+In-Reply-To: <c45a2758-cb43-2ccb-4056-ed25d73fa3f8@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 14 Oct 2020 12:52:10 +0200
+Message-ID: <CACRpkdYgf8OPc2EqmPu=O2dr+ns4e3kTGyVi3A2Thd9v1wQGuA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] leds: rt8515: Add Richtek RT8515 LED driver
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        newbytee@protonmail.com, Stephan Gerhold <stephan@gerhold.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 10/13/20 9:29 PM, Udo van den Heuvel wrote:
-> 
-> 
-> On 13-10-2020 18:03, Randy Dunlap wrote:
->> On 10/13/20 8:53 AM, Randy Dunlap wrote:
->>> [adding LED people + list]
->>>
->>> On 10/13/20 6:24 AM, Udo van den Heuvel wrote:
-> (...)
->>>>> So how do I disable this stuff?
->>>>>
->>
->> I was able to disable LEDS_CLASS and NEW_LEDS after I disabled the following
->> config symbols:
->>
->>
->> --- xx64/config-def64	2020-10-13 08:53:56.050501724 -0700
->> +++ xx64/.config	2020-10-13 08:58:12.439205389 -0700
->> -CONFIG_MAC80211_LEDS=y
->> -CONFIG_RFKILL_LEDS=y
->> -# CONFIG_LED_TRIGGER_PHY is not set
->> -CONFIG_INPUT_LEDS=y
->> -# CONFIG_HID_LED is not set
->> -# CONFIG_USB_LED_TRIG is not set
->> -# CONFIG_USB_LEDS_TRIGGER_USBPORT is not set
->> -CONFIG_LEDS_TRIGGERS=y
->> -CONFIG_EEEPC_LAPTOP=y
->> +# CONFIG_EEEPC_LAPTOP is not set
->>
->> This last one was the biggest problem for me.
->> I started with x86_64 defconfig.
-> 
-> # grep LED .config
-> # grep LEDS .config
-> # grep EEPC .config
-> # make oldconfig
-> (...)
-> *
-> * LED Support
-> *
-> LED Support (NEW_LEDS) [Y/?] (NEW) y
->   LED Class Support (LEDS_CLASS) [M/y/?] (NEW) n
-> 
-> So we still are stuck.
-> 
-> Udo
-> 
+Hi Jakub!
 
-Please post your .config file.
+thanks for the review. I fixed all comments but I have a problem
+with the below:
 
--- 
-~Randy
+On Thu, Aug 13, 2020 at 11:04 PM Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+> On 8/12/20 11:07 AM, Linus Walleij wrote:
 
+> > +     /* Init flash intensity setting */
+> > +     s = &v4l2_sd_cfg->intensity;
+> > +     s->min = 0;
+> > +     s->max = rt->fled.led_cdev.max_brightness;
+> > +     s->step = 1;
+>
+> struct v4l2_flash_config's intensity property tells V4L2 flash framework
+> how to convert LED class brightness levels to microamperes used by
+> the V4L2 flash subdevice.
+>
+> See max77693_init_v4l2_flash_config() in drivers/leds/leds-max77693.c
+> for a reference.
+
+I understand, but I'm a bit of lost here, because I do not have
+any datsheet for the Richtek RT8515. The outoftree code
+that exists for example for Asus Zenfone:
+https://github.com/ZenfoneArea/android_kernel_asus_zenfone5/blob/master/linux/modules/camera/drivers/media/i2c/rt8515.c
+
+The intensity is set to min/max in percent
+(0-100%) so the numerals 1-100 step 1 so
+the same as the brightness.
+
+Is the V4L2 API such defined that if you don't know
+what microamperes that correspond to a certain setting
+it is better to simply not implement it? I can certainly
+remove it.
+
+I don't quite understand why V4L2 needs to control this
+in uA but I suppose they have a good reason. It however
+creates a really high bar for out-of-tree code from
+non-cooperative vendors. I'll try to send a mail to
+Richtek and ask for the datasheet though, stranger things
+have happened.
+
+Yours,
+Linus Walleij
