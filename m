@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB3DC433DF
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Oct 2020 04:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6C0C433E7
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Oct 2020 05:16:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A56320BED
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Oct 2020 04:56:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F119620B1F
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Oct 2020 05:16:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="dr1UMk7Z"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="JipUxK1A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbgJNE4f (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 14 Oct 2020 00:56:35 -0400
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:43361 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726037AbgJNE4f (ORCPT
+        id S1730179AbgJNFQX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 14 Oct 2020 01:16:23 -0400
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:54713 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726037AbgJNFQX (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 14 Oct 2020 00:56:35 -0400
+        Wed, 14 Oct 2020 01:16:23 -0400
 Received: from cust-57f2be97 ([IPv6:fc0c:c196:c6c4:fdf1:aa47:ab6:e251:d2a8])
         by smtp-cloud7.xs4all.net with ESMTPA
-        id SYpzkXDIDv4gESYq0kqf9E; Wed, 14 Oct 2020 06:56:32 +0200
+        id SZ99kXJupv4gESZ9AkqsRC; Wed, 14 Oct 2020 07:16:20 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1602651392; bh=IVwfBSG6XJytpDdk5ZBGLvTPAt5ZZWknQxriWw+b0AI=;
+        t=1602652580; bh=od8+PLwNsste1/Dwq9+ekpCY4B3qUplWVaZHT5Bori8=;
         h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
          Subject;
-        b=dr1UMk7ZsYCxWwsf8J6E7Uf5zu1xnqt0h88dcw07Gof2v9TLUHfRYh4Tz8yHbP+dA
-         NKYkzXJj8W5SPqZJ8HnCDs3fJvJN6mf9VSKjD7VigJ9n4QDUky9MF7iU8MhJJdcqHF
-         y+soxAtbn4t2SYPOMfaj0q/FipaLeEK6HKGB5Jp2rkv7wdiKZnuXOaxNWqwQi+/U7w
-         ZgeM5ba2b8l8mEDMMVV18f+pmIXtiqNzbXiggegpUWkoaUSd8JXMfSkHaK75Sdr+x9
-         BXz2if+r4D5+YEc/7zc1W2Zgl+pLJsBc8tlwTSVA4WQu/piYXnc2Srtku9zMs9Qs8l
-         IpJVxAnaBPzww==
+        b=JipUxK1A0Yn9Tugu4MElKfzHTiSTH8mgqwUrnksQ7DypinKjNBsLc+ugU0+wpoWS2
+         8APof+fZLVRx2vUr/F8cU67IulxJ+VUQs8jTCb5jl2dOYTAIW/SQHxMKpiXGIWMcxw
+         8exSg91zHtu9x8FR7RAa+sv7cr8DjqQbBlB9dwrxlINldIyNkDya7iZKoTsoMntPMw
+         lBbqKih+V68q2i9tXbur8FxNZgrPpeD/TBDKHjmBgsnlfM+N5PdZzmUNw7enxErzq6
+         8Om0aKTNr0mARKyn1iTTlk8DCHP4z3XDpJyOAYtKBXb91EpwzVA54LX3MZEBSqyQwI
+         F1ccLcdyT52dw==
 Subject: Re: disabling CONFIG_LED_CLASS
 To:     Randy Dunlap <rdunlap@infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -48,6 +48,8 @@ References: <2835d02a-380b-6a3a-0e4d-abf07aee18bc@xs4all.nl>
  <58e774c5-fc80-2060-2091-9a6398582cc5@infradead.org>
  <9fc679e9-e9a9-ad80-b24c-f04489b98aa7@xs4all.nl>
  <27e159be-4376-e87b-5e60-803bc3749ec2@infradead.org>
+ <eadc23e7-b383-e2fc-6e20-ed22745d0bfc@xs4all.nl>
+ <2739e1fd-75c6-4e43-cd79-9028479f91bf@infradead.org>
 From:   Udo van den Heuvel <udovdh@xs4all.nl>
 Autocrypt: addr=udovdh@xs4all.nl; prefer-encrypt=mutual; keydata=
  mQINBFTtuO0BEACwwf5qDINuMWL9poNLJdZh/FM5RxwfCFgfbM29Aip4wAUD3CaQHRLILtNO
@@ -94,61 +96,37 @@ Autocrypt: addr=udovdh@xs4all.nl; prefer-encrypt=mutual; keydata=
  ab1cwvYgiEJVbXxsOglb6vdonKm3c0GK5RW7FQlzjPU7zuaaaiaMH3SpqhVI0DwLDuNG8G6Y
  ZLdTQWpYGWsTAop6ahIIFZv6xqm49iY8kQHzvJBJMApE2evzJ68bLp8fVTSxgxM=
 Organization: hierzo
-Message-ID: <eadc23e7-b383-e2fc-6e20-ed22745d0bfc@xs4all.nl>
-Date:   Wed, 14 Oct 2020 06:56:31 +0200
+Message-ID: <1e6b1961-9e9b-5f82-86a1-bf838cb68f55@xs4all.nl>
+Date:   Wed, 14 Oct 2020 07:16:19 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <27e159be-4376-e87b-5e60-803bc3749ec2@infradead.org>
+In-Reply-To: <2739e1fd-75c6-4e43-cd79-9028479f91bf@infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfHXqzLTsEIS5k8cyXDRUuan9IVwIoHQ55pfM3+61t1c4BOE8K/QWLxZO54gCx4NQ8/jFBFZVDVgLGpGnTOIu1NmZsOWFuMKvkuNRsdOnpvecOxJCdlQM
- NvGlYo1rundOK/g23wUfAitCo29Zb2ZOYK4tQEha9lN9oc0Bzy00y1T+tnEUYGt+ZthN1TjWmceP1ZiACDEy86rN/UwoWZrKShxguXVQN45eGxa5JyX5tmtC
- kjY+x67rVK0tKh9tYlOkjPAo7o1Dx785mdRGAPxX+u5oYW8hmXK5sjCc0H6OtfP2db/nvFqdR1JwO/BGi3++p0rCpvlpxAr3z/tlQN/QFVe7EDkKI5qehh1j
- AYnjxliPhW5AjA/PfGrX+fZ1jSiOlQ==
+X-CMAE-Envelope: MS4xfAxAx+xruliRHgbttE8PT0Y75UB4aLfp+EE3lSl3VnjN2SPCGtqBcp5MwG7c/J5SddJN54KIflnVgHUZAoNSYprwGV19n2PqNT7ylp6Za9a2m0J2YIns
+ KuQiLHAGfQwRUhPqPF8emYzg/57rZQV+X1lFmCZFruoGGraRbPPMwooqWcouL2yIuH/t3oHZI2NnsruLhAEAo8Ztu4QSKdHxgKQnp5IJuP+dVjB1EVKC23yj
+ cJr62aP1FVsdjX3lY3Mwmbnaq761Pf1qrIDgL9W8e4u9zCOw/pfIjJs44IPKaAgbeVZU++vQaa+hOm80jI1IakrRT9UQfckg8DGixShbnwsBGLo+j1R58Vtn
+ T2E/+clkQej3CQZyh5za3VQmscPTdg==
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 14-10-2020 06:49, Randy Dunlap wrote:
-> If you disable SND_HDA_CODEC_REALTEK, then the rest of the
-> LED kconfig symbols can be disabled.
+On 14-10-2020 07:07, Randy Dunlap wrote:
+> On 10/13/20 9:56 PM, Udo van den Heuvel wrote:
 
-Sure,
+>> I.e.: it looks like I will lose some funcionality when I disable
+>> SND_HDA_CODEC_REALTEK.
+> 
+> OK. At present you can't have it both ways, i.e., SND_HDA_CODEC_REALTEK
+> with no LEDS. That driver apparently wants LEDS.
 
-but:
+Thanks but why have I gone for years without LEDS?
+I do not need LEDS, I do not want LEDS, I do not have LEDS (that are
+visible, usable, etc).
 
-# dmesg|grep audi
-(...)
-
-[   19.971537] snd_hda_codec_generic hdaudioC0D0: ignore pin 0x7, too
-many assigned pins
-[   19.973547] snd_hda_codec_generic hdaudioC0D0: autoconfig for
-Generic: line_outs=0 (0x0/0x0/0x0/0x0/0x0) type:line
-[   19.975642] snd_hda_codec_generic hdaudioC0D0:    speaker_outs=0
-(0x0/0x0/0x0/0x0/0x0)
-[   19.977774] snd_hda_codec_generic hdaudioC0D0:    hp_outs=0
-(0x0/0x0/0x0/0x0/0x0)
-[   19.980176] snd_hda_codec_generic hdaudioC0D0:    mono: mono_out=0x0
-[   19.982257] snd_hda_codec_generic hdaudioC0D0:    dig-out=0x3/0x5
-[   19.984412] snd_hda_codec_generic hdaudioC0D0:    inputs:
-[   20.035088] snd_hda_codec_realtek hdaudioC1D0: autoconfig for
-ALC1220: line_outs=3 (0x14/0x15/0x16/0x0/0x0) type:line
-[   20.036940] snd_hda_codec_realtek hdaudioC1D0:    speaker_outs=0
-(0x0/0x0/0x0/0x0/0x0)
-[   20.039579] snd_hda_codec_realtek hdaudioC1D0:    hp_outs=1
-(0x1b/0x0/0x0/0x0/0x0)
-[   20.041690] snd_hda_codec_realtek hdaudioC1D0:    mono: mono_out=0x0
-[   20.044076] snd_hda_codec_realtek hdaudioC1D0:    dig-out=0x1e/0x0
-[   20.046173] snd_hda_codec_realtek hdaudioC1D0:    inputs:
-[   20.049252] snd_hda_codec_realtek hdaudioC1D0:      Front Mic=0x19
-[   20.051287] snd_hda_codec_realtek hdaudioC1D0:      Rear Mic=0x18
-[   20.053084] snd_hda_codec_realtek hdaudioC1D0:      Line=0x1a
-[   20.427487] usbcore: registered new interface driver snd-usb-audio
-
-I.e.: it looks like I will lose some funcionality when I disable
-SND_HDA_CODEC_REALTEK.
+Please make this selectable instead of forcing more bulk into my kernel.
 
 Kind regards,
 Udo
