@@ -1,83 +1,119 @@
-Return-Path: <SRS0=hlk9=DW=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=X1xx=DX=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C61D4C433E7
-	for <linux-leds@archiver.kernel.org>; Thu, 15 Oct 2020 22:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC501C433E7
+	for <linux-leds@archiver.kernel.org>; Fri, 16 Oct 2020 11:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 692142076A
-	for <linux-leds@archiver.kernel.org>; Thu, 15 Oct 2020 22:33:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C05A2071A
+	for <linux-leds@archiver.kernel.org>; Fri, 16 Oct 2020 11:57:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VdMjyGZg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731636AbgJOWdJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 15 Oct 2020 18:33:09 -0400
-Received: from mga17.intel.com ([192.55.52.151]:50389 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730352AbgJOWdJ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 15 Oct 2020 18:33:09 -0400
-IronPort-SDR: ukFtMdvhaGvea59Lw4LcnrcjBipHoCY8T2BMi7LakdHaqA04cjkq2OcGsx98fcO5PHdKWGudSC
- BgzXwhUCW8Uw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9775"; a="146327629"
-X-IronPort-AV: E=Sophos;i="5.77,380,1596524400"; 
-   d="scan'208";a="146327629"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2020 15:33:08 -0700
-IronPort-SDR: jV+GInFu3HUKxAHj+n0syZqRxNl2VkMilsYqxBc4ldyL1YTp8hgjOoWMmk8tlgJQLWgsc7vmDz
- yx006Sl5k6bQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.77,380,1596524400"; 
-   d="scan'208";a="531437319"
-Received: from lkp-server01.sh.intel.com (HELO 5003fa193bf3) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 15 Oct 2020 15:33:05 -0700
-Received: from kbuild by 5003fa193bf3 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1kTBo0-00008C-Sg; Thu, 15 Oct 2020 22:33:04 +0000
-Date:   Fri, 16 Oct 2020 06:32:03 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     kbuild-all@lists.01.org, Johan Hovold <johan@kernel.org>,
-        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] leds: trigger: ledtrig_tty can be static
-Message-ID: <20201015223203.GA33862@68c68aa7e201>
-References: <20201012123358.1475928-4-u.kleine-koenig@pengutronix.de>
+        id S2407022AbgJPL5X (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 16 Oct 2020 07:57:23 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:38418 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405338AbgJPL5X (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Oct 2020 07:57:23 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 09GBv5HT099566;
+        Fri, 16 Oct 2020 06:57:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1602849425;
+        bh=4pH+/woBUpBKSK9xeykEFihRWeBGnOvEESWTk+SR7eA=;
+        h=From:To:CC:Subject:Date;
+        b=VdMjyGZgzEnILaHORr6rJW0ZcWQ+fGDc2XMLTThUNupgPjUn1gFC4LeN48+Ol6HnJ
+         S4z3HqkkzwN+RgG07XIKG8ynNLyPL8CB4uPy/3VrTTRsj5IxlKtEVcFBg+LrDBm+UU
+         P3nPPTRkg1GLlXFZPdJ6d1DCO0nDMlb+2KsywhWE=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 09GBv5hj080755
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 16 Oct 2020 06:57:05 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Fri, 16
+ Oct 2020 06:57:04 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Fri, 16 Oct 2020 06:57:04 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 09GBv4Ac004386;
+        Fri, 16 Oct 2020 06:57:04 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <pavel@ucw.cz>, <robh+dt@kernel.org>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>,
+        Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH v2] dt-bindings: leds: Update devicetree documents for ID_RGB
+Date:   Fri, 16 Oct 2020 06:57:03 -0500
+Message-ID: <20201016115703.30184-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201012123358.1475928-4-u.kleine-koenig@pengutronix.de>
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Update the leds/common.yaml to indicate that the max color ID is 9.
+Reflect the same change in the leds-class-multicolor.yaml
 
-Signed-off-by: kernel test robot <lkp@intel.com>
+Reported-by: Zhen Lei <thunder.leizhen@huawei.com>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- ledtrig-tty.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/leds/common.yaml       | 2 +-
+ .../devicetree/bindings/leds/leds-class-multicolor.yaml  | 9 +++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/ledtrig-tty.c
-index 806548e33cd874..09cba818fb65c7 100644
---- a/drivers/leds/trigger/ledtrig-tty.c
-+++ b/drivers/leds/trigger/ledtrig-tty.c
-@@ -174,7 +174,7 @@ static void ledtrig_tty_deactivate(struct led_classdev *led_cdev)
- 	kfree(trigger_data);
- }
+diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+index a2a541bca73c..0c9f912dfee6 100644
+--- a/Documentation/devicetree/bindings/leds/common.yaml
++++ b/Documentation/devicetree/bindings/leds/common.yaml
+@@ -43,7 +43,7 @@ properties:
+       LED_COLOR_ID available, add a new one.
+     $ref: /schemas/types.yaml#definitions/uint32
+     minimum: 0
+-    maximum: 8
++    maximum: 9
  
--struct led_trigger ledtrig_tty = {
-+static struct led_trigger ledtrig_tty = {
- 	.name = "tty",
- 	.activate = ledtrig_tty_activate,
- 	.deactivate = ledtrig_tty_deactivate,
+   function-enumerator:
+     description:
+diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+index b55e1f1308a4..5e2c850ec9c5 100644
+--- a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+@@ -16,7 +16,7 @@ description: |
+   modules. This is achieved by adding multi-led nodes layer to the
+   monochrome LED bindings.
+   The nodes and properties defined in this document are unique to the multicolor
+-  LED class.  Common LED nodes and properties are inherited from the common.txt
++  LED class.  Common LED nodes and properties are inherited from the common.yaml
+   within this documentation directory.
+ 
+ patternProperties:
+@@ -25,10 +25,11 @@ patternProperties:
+     description: Represents the LEDs that are to be grouped.
+     properties:
+       color:
+-        const: 8  # LED_COLOR_ID_MULTI
+         description: |
+-          For multicolor LED support this property should be defined as
+-          LED_COLOR_ID_MULTI which can be found in include/linux/leds/common.h.
++          For multicolor LED support this property should be defined as either
++          LED_COLOR_ID_RGB or LED_COLOR_ID_MULTI which can be found in
++          include/linux/leds/common.h.
++        enum: [ 8, 9 ]
+ 
+     $ref: "common.yaml#"
+ 
+-- 
+2.28.0.585.ge1cfff676549
+
