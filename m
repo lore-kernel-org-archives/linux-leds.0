@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 162D1C43467
-	for <linux-leds@archiver.kernel.org>; Sat, 17 Oct 2020 05:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7229C433E7
+	for <linux-leds@archiver.kernel.org>; Sat, 17 Oct 2020 05:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA3CE208E4
-	for <linux-leds@archiver.kernel.org>; Sat, 17 Oct 2020 05:29:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A99F2076A
+	for <linux-leds@archiver.kernel.org>; Sat, 17 Oct 2020 05:29:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GgJ0F82R"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bLxO1DyD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411659AbgJQF3q (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 17 Oct 2020 01:29:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52252 "EHLO
+        id S2411630AbgJQF3y (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 17 Oct 2020 01:29:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2411628AbgJQF3n (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 17 Oct 2020 01:29:43 -0400
-Received: from mail-oo1-xc41.google.com (mail-oo1-xc41.google.com [IPv6:2607:f8b0:4864:20::c41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35433C051109
-        for <linux-leds@vger.kernel.org>; Fri, 16 Oct 2020 22:20:22 -0700 (PDT)
-Received: by mail-oo1-xc41.google.com with SMTP id l18so1155858ooa.9
-        for <linux-leds@vger.kernel.org>; Fri, 16 Oct 2020 22:20:22 -0700 (PDT)
+        with ESMTP id S2411656AbgJQF3q (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 17 Oct 2020 01:29:46 -0400
+Received: from mail-oo1-xc43.google.com (mail-oo1-xc43.google.com [IPv6:2607:f8b0:4864:20::c43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6369C05BD38
+        for <linux-leds@vger.kernel.org>; Fri, 16 Oct 2020 22:20:18 -0700 (PDT)
+Received: by mail-oo1-xc43.google.com with SMTP id w25so1147916oos.10
+        for <linux-leds@vger.kernel.org>; Fri, 16 Oct 2020 22:20:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Am11ttHsA0DQGqbaWBINshvKBjWKydVsOnpvVxHgLqA=;
-        b=GgJ0F82RgLNPenXfBHY3Yuam0WuUgNNRsHU3kZ9RxCI0cztz44uqB65UALb8JACGqO
-         b/kwohjUGJMdgoy5SuW5bvE3iO3PptyjJLvsTe0m4S2/wg3CdZPL6SbhmcafhKaf9uHq
-         BHr4kioSB89b1RaD2OIGaDnzaPowIRJ5nc+RtPJ7lJ37mAWueTfNfTzS+NSgN4cRGswd
-         y0xWxaTrNWDxU6W1vfI0PAezq1EFPRXarkP8uhYGcXGnoyH9/DQDyhB+qTzrODTZOJLG
-         QwWgQLdrOfUqNxzBvB+yWAxfD9Fn3bkPRvczHRfr5Y8vZMsMunwbr76YVbSuvUUbPUoZ
-         j1aQ==
+        bh=9e/IBYO317qxh+k1PgUNvYuepVlTAW7gAlmjMH8Is2Y=;
+        b=bLxO1DyD7WvKNbZ1qoNgdML8S06NyThXquGQr4XnUlUt9D4aVwZhUg0gExq4WLd4XB
+         moDieBVHzm0EFujGt5u7mdbuXsOR4fm7sHvpnkiLPCWTIgY66YAincSyXbmuMcDGuqKi
+         R6DHtHmCUuFVXmREnQqhl5wAsiiQLVFw+v7z/TfIqolMUQcFepstkBmPlZGHP4+exHvk
+         pijkfCU+QyiOtC3wm0MA5tdZbusHUv2L7bFUufXqVnIfHd/96x2u7h0owK6oSnG7uQJP
+         +C1pASGGslJtcalIIRC4vYTb67Os481jQ8802H+N6KqIz8EMTOEmNEaWrbYpfk/L/izs
+         YkIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Am11ttHsA0DQGqbaWBINshvKBjWKydVsOnpvVxHgLqA=;
-        b=pHk6666ZTZpumlxfpflcCzMH3P17IsD95j2Ihoc3uwsXlNhcxbUJczNtr9yYxr3iff
-         4/aT5hIOWKL7jgNMeHtDHTpVAyxzeqvuF5sueBFhdb7W6Papb9O/azb31ztYG+oRr3Z0
-         sI5w5Q6F0Ow1mHlCmgxkHDqFofho6fs9BYaU041DaEN0BCUDg/64kj7aT8i3D57dj6ds
-         BH0JqwLJaZ+F1jZw4sd62J5rUFu+a8DhOB8v3JT7kZ1ZiYmfUeYHkNVI9dmZud/aGUTx
-         hwiAXKNVBDCRnvED75i1w+L8Vjda9ouwfgkr3kGk/6iqyF96lxASfzLTu0tC+OxfDevr
-         jvmQ==
-X-Gm-Message-State: AOAM531zAL87F7qIIwooSRxiQGzKZJUd+Oq3OA8XDnLs0jr56c+K5G05
-        NSuKNsD+eXwjUSnsofjdE5PvEQ==
-X-Google-Smtp-Source: ABdhPJylLggLu5AkxzhvDUwAo5oPqq2BFPVnonhOahpzng8sR+Z2KckCismnGoNPMyY4/Y0/5QJA6Q==
-X-Received: by 2002:a4a:b78f:: with SMTP id a15mr5211950oop.33.1602912021584;
-        Fri, 16 Oct 2020 22:20:21 -0700 (PDT)
+        bh=9e/IBYO317qxh+k1PgUNvYuepVlTAW7gAlmjMH8Is2Y=;
+        b=h8WMeavv7KIKCV4lnQaHHtENheWAQ1mLQJx8EjQJ7pWFq+Cssizk1leDH0USwhobFb
+         b9UmTsgw13Mndbv3UMAK/9T1eWIotraf42AYv3wh7wKQSXVAqPUnLkP2aEYO6+PkF6b5
+         7o3J/EyTm1W1ZPaTEa7wtNShcEQy1il05vbpM3dE61dyYxCMJ1eYu3mt/Zpqou8YS1F6
+         itbyrRXnc24kayJNdBJDaI1MVzTwtIJ40xEGwY0uXIOwVo456dYafoAdzLIJNgeh1oxg
+         FJkfI9xqXtXdx7IihsLTofHlebGWiBAeb8A1WLItNV5amKgxGbgzBPYQGyyGoRqzGZR1
+         J9aw==
+X-Gm-Message-State: AOAM532LSMLKUREKNRwBiJn/s+E/Pd/KlzKOKbEysE50IHd0s/e7GPnk
+        qESqBclP3QHymuwrzhF1LY0jWw==
+X-Google-Smtp-Source: ABdhPJwQqm5S0AzDUW5rkgNpkeYRRBP0fX2RJNYHWemLAyHX8mF1SGm5s8tmjHHwkVuryF+KzABJ4Q==
+X-Received: by 2002:a4a:9fd1:: with SMTP id b17mr5228553oom.86.1602912017986;
+        Fri, 16 Oct 2020 22:20:17 -0700 (PDT)
 Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id f2sm1572769ots.64.2020.10.16.22.20.20
+        by smtp.gmail.com with ESMTPSA id f2sm1572769ots.64.2020.10.16.22.20.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Oct 2020 22:20:20 -0700 (PDT)
+        Fri, 16 Oct 2020 22:20:17 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -69,9 +69,9 @@ To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
 Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-pwm@vger.kernel.org
-Subject: [PATCH v5 4/4] arm64: dts: qcom: Add user LEDs on db820c
-Date:   Fri, 16 Oct 2020 22:20:57 -0700
-Message-Id: <20201017052057.2698588-5-bjorn.andersson@linaro.org>
+Subject: [PATCH v5 1/4] dt-bindings: leds: Add Qualcomm Light Pulse Generator binding
+Date:   Fri, 16 Oct 2020 22:20:54 -0700
+Message-Id: <20201017052057.2698588-2-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201017052057.2698588-1-bjorn.andersson@linaro.org>
 References: <20201017052057.2698588-1-bjorn.andersson@linaro.org>
@@ -81,89 +81,198 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The db820c has 4 "user LEDs", all connected to the PMI8994. The first
-three are connected to the three current sinks provided by the TRILED
-and the fourth is connected to MPP2.
-
-By utilizing the DTEST bus the MPP is fed the control signal from the
-fourth LPG block, providing a consistent interface to the user.
+This adds the binding document describing the three hardware blocks
+related to the Light Pulse Generator found in a wide range of Qualcomm
+PMICs.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
 Changes since v4:
-- None
+- Dropped quotes around power-source
+- Moved "multi-led" to properties
+- Corrected tab-indented line in example
 
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 49 ++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+ .../bindings/leds/leds-qcom-lpg.yaml          | 170 ++++++++++++++++++
+ 1 file changed, 170 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-index defcbd15edf9..7e51677d256e 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-@@ -8,6 +8,7 @@
- #include "pmi8994.dtsi"
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
- #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
- #include <dt-bindings/sound/qcom,q6afe.h>
- #include <dt-bindings/sound/qcom,q6asm.h>
-@@ -682,6 +683,54 @@ pinconf {
- 	};
- };
- 
-+&pmi8994_mpps {
-+	pmi8994_mpp2_userled4: mpp2-userled4 {
-+		pins = "mpp2";
-+		function = "sink";
+diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
+new file mode 100644
+index 000000000000..5ccf0f3d8f1b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
+@@ -0,0 +1,170 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/leds-qcom-lpg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+		output-low;
-+		qcom,dtest = <4>;
-+	};
-+};
++title: Qualcomm Light Pulse Generator
 +
-+&pmi8994_lpg {
-+	qcom,power-source = <1>;
++maintainers:
++  - Bjorn Andersson <bjorn.andersson@linaro.org>
 +
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pmi8994_mpp2_userled4>;
++description: >
++  The Qualcomm Light Pulse Generator consists of three different hardware blocks;
++  a ramp generator with lookup table, the light pulse generator and a three
++  channel current sink. These blocks are found in a wide range of Qualcomm PMICs.
 +
-+	status = "okay";
++properties:
++  compatible:
++    enum:
++      - qcom,pm8916-pwm
++      - qcom,pm8941-lpg
++      - qcom,pm8994-lpg
++      - qcom,pmi8994-lpg
++      - qcom,pmi8998-lpg
 +
-+	#address-cells = <1>;
-+	#size-cells = <0>;
++  "#pwm-cells":
++    const: 2
 +
-+	led@1 {
-+		reg = <1>;
-+		label = "green:user1";
++  "#address-cells":
++    const: 1
 +
-+		linux,default-trigger = "heartbeat";
-+		default-state = "on";
-+	};
++  "#size-cells":
++    const: 0
 +
-+	led@2 {
-+		reg = <2>;
-+		label = "green:user0";
-+		default-state = "on";
-+	};
++  qcom,power-source:
++    $ref: /schemas/types.yaml#definitions/uint32
++    description: >
++      power-source used to drive the output, as defined in the datasheet.
++      Should be specified if the TRILED block is present
++    enum:
++      - 0
++      - 1
++      - 3
 +
-+	led@3 {
-+		reg = <3>;
-+		label = "green:user2";
-+	};
++  multi-led:
++    type: object
++    $ref: leds-class-multicolor.yaml#
++    properties:
++      "#address-cells":
++        const: 1
 +
-+	led@4 {
-+		reg = <4>;
-+		label = "green:user3";
++      "#size-cells":
++        const: 0
 +
-+		qcom,dtest = <4 1>;
-+	};
-+};
++      "^led@[0-9a-f]$":
++        type: object
++        $ref: common.yaml#
 +
- &pmi8994_spmi_regulators {
- 	vdd_gfx: s2@1700 {
- 		reg = <0x1700 0x100>;
++        properties:
++          "qcom,dtest":
++            $ref: /schemas/types.yaml#definitions/uint32-array
++            description: >
++              configures the output into an internal test line of the pmic. Specified
++              by a list of u32 pairs, one pair per channel, where each pair denotes the
++              test line to drive and the second configures how the value should be
++              outputed, as defined in the datasheet
++            minItems: 2
++            maxItems: 2
++
++        required:
++          - reg
++
++patternProperties:
++  "^led@[0-9a-f]$":
++    type: object
++    $ref: common.yaml#
++    properties:
++      "qcom,dtest":
++        $ref: /schemas/types.yaml#definitions/uint32-array
++        description: >
++          configures the output into an internal test line of the pmic. Specified
++          by a list of u32 pairs, one pair per channel, where each pair denotes the
++          test line to drive and the second configures how the value should be
++          outputed, as defined in the datasheet
++        minItems: 2
++        maxItems: 2
++
++    required:
++      - reg
++
++required:
++  - compatible
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    lpg {
++      compatible = "qcom,pmi8994-lpg";
++
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      qcom,power-source = <1>;
++
++      led@1 {
++        reg = <1>;
++        label = "green:user1";
++      };
++
++      led@2 {
++        reg = <2>;
++        label = "green:user0";
++        default-state = "on";
++      };
++
++      led@3 {
++        reg = <3>;
++        label = "green:user2";
++      };
++
++      led@4 {
++        reg = <4>;
++        label = "green:user3";
++
++        qcom,dtest = <4 1>;
++      };
++    };
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    lpg {
++      compatible = "qcom,pmi8994-lpg";
++
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      qcom,power-source = <1>;
++
++      multi-led {
++        color = <LED_COLOR_ID_MULTI>;
++        label = "rgb:notification";
++
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led@1 {
++          reg = <1>;
++          color = <LED_COLOR_ID_RED>;
++        };
++
++        led@2 {
++          reg = <2>;
++          color = <LED_COLOR_ID_GREEN>;
++        };
++
++        led@3 {
++          reg = <3>;
++          color = <LED_COLOR_ID_BLUE>;
++        };
++      };
++    };
++  - |
++    lpg {
++      compatible = "qcom,pm8916-pwm";
++      #pwm-cells = <2>;
++    };
++...
 -- 
 2.28.0
 
