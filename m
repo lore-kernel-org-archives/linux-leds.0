@@ -1,142 +1,159 @@
-Return-Path: <SRS0=X1xx=DX=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=CFB6=DY=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9213FC433DF
-	for <linux-leds@archiver.kernel.org>; Fri, 16 Oct 2020 14:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5747AC433E7
+	for <linux-leds@archiver.kernel.org>; Sat, 17 Oct 2020 05:29:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 35B6920848
-	for <linux-leds@archiver.kernel.org>; Fri, 16 Oct 2020 14:14:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602857644;
-	bh=/Wy1dqxW7oC6Qye976pyOHB3NEyzVajEMIVxWnNoiWI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=F06NhrvVhpwXwi0Jgf5+We1dLfM2eUV2DrZ0CDCnlrWT4ZX1JI35To78SMll+lYId
-	 fKxqsIizu5un11+IwOICnMPv5KGm5nMmKOFFlFS5+p7dM5Ry7kO4wCc9PSZ1hueRoy
-	 +WY2YsQGPLu/HDu+v2os9pE5WmJCdUEJgL/iBBz8=
+	by mail.kernel.org (Postfix) with ESMTP id 0F413207EA
+	for <linux-leds@archiver.kernel.org>; Sat, 17 Oct 2020 05:29:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nxrCglaD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387689AbgJPOOE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 16 Oct 2020 10:14:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395282AbgJPOOD (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 16 Oct 2020 10:14:03 -0400
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7339321527;
-        Fri, 16 Oct 2020 14:14:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602857642;
-        bh=/Wy1dqxW7oC6Qye976pyOHB3NEyzVajEMIVxWnNoiWI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GvfirHosPoQlrZ9dHvK/MiR7ld0pnZ1gIqpgnPDdlppchrxHv71dL73zET/FkkRbX
-         tpqynbY8hwuhIjWFSMFkHjBO9r32xo2deIPkDs7E/9OfxpB5pjmz47kNzImHNVhmWP
-         Gky4SSBzFgYnYuDePGs3dGZiWfdwrzyOS730N2ug=
-Received: by mail-oi1-f180.google.com with SMTP id h10so2597082oie.5;
-        Fri, 16 Oct 2020 07:14:02 -0700 (PDT)
-X-Gm-Message-State: AOAM5332Zt9j9+/2e3ssCOcDCWxTZ2BFwwWZRU0xSKaHVO8SRA8RNBNQ
-        it5k5E9hTlDFu4inXIjklq1Mv4BeEcGzLm2SBg==
-X-Google-Smtp-Source: ABdhPJwvkvemmhvQLSwCQm4gpIYMftfka7WMIAmWLyZGAJSnJ52MchXcPRDmVK7L+Va3qkbuIITfwhAYwzEjNkMAFBA=
-X-Received: by 2002:aca:4c52:: with SMTP id z79mr2691947oia.147.1602857641568;
- Fri, 16 Oct 2020 07:14:01 -0700 (PDT)
+        id S2411640AbgJQF3n (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 17 Oct 2020 01:29:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52240 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2411624AbgJQF3m (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 17 Oct 2020 01:29:42 -0400
+Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E443CC051107
+        for <linux-leds@vger.kernel.org>; Fri, 16 Oct 2020 22:20:20 -0700 (PDT)
+Received: by mail-ot1-x341.google.com with SMTP id i12so4548367ota.5
+        for <linux-leds@vger.kernel.org>; Fri, 16 Oct 2020 22:20:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Y2qSucd31//Bn6PoGsGONNCcXz8Qt6ALmPzdRCPRn4c=;
+        b=nxrCglaDP0clgIznNSAsvdpdmfide2Y0JX6QsZtr5dicNl/WppOcSXRAtH7RSm6PtM
+         ZOcg5dFhMlpv4o2x9aaJW8Msfluqll2FGyfE7eK2Zq2jI49in/PL+CFUYWjdkQlbsM/q
+         H7kL3QoMasXVYz4gzCboTyZpb/XKdC+0+85yrPs59kXgj9Njzunqe1lkcxs9HqsdQEHe
+         naP0mZjyuKlQVJgap8Y1SFlktN9a+mJSTpeOq8HmZuCaesdu65vc8X0nFvBoNcGT2XdQ
+         oJoVci5s/VqakDovEdUeVN88kqzxb64kTG6dqgCxe8aRJKifXV5JG+Vc1pRJa4zZu/+q
+         acgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Y2qSucd31//Bn6PoGsGONNCcXz8Qt6ALmPzdRCPRn4c=;
+        b=C8uLbi7Dr0FQr4lzN3zXWeS/clSAcvjC19uxdeVteIfwvRNnpg0+q6uT2SaF07RhhV
+         JNsG1yFDNJTW8+PYjZw/RVVV9l43RI219f4qmwu89UnxUz4j+armj23urTMGRkF2JjWB
+         YqthfKbl7Ed+Oe2A+Ko2idcjOTu8eUoK8VTfuElvCkpPPmadNW1f6gXaqQ0m8jMrMHDR
+         6hZqdlz6S8/BkJEFv7JS1QfAgqtn7GR+e+Ap+QnJiTOxX53oVJwlJ3oziTaFFEfo8P9r
+         lSZAdFI9x1ZTGYATUSjZpcikiLYoq7ZMI13uXhipgM4dlNZbsX0taRU/6CRcwgwJArd2
+         vXnw==
+X-Gm-Message-State: AOAM533HUjoz/cBRHiZBYVy5oSXraBcDR9A1mciYwAeFNKxQ8ZK7YZkZ
+        fby+bCgRpCAmJGfusSb2NCxoCQ==
+X-Google-Smtp-Source: ABdhPJwnxFgcXB6YhtoDRpfk67xGvKxdhmZJ31vwsN3/+X7D98Jo+U6LVR3NLLjfT1m/8MK2VBy/Nw==
+X-Received: by 2002:a9d:67cc:: with SMTP id c12mr4879502otn.359.1602912020274;
+        Fri, 16 Oct 2020 22:20:20 -0700 (PDT)
+Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id f2sm1572769ots.64.2020.10.16.22.20.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Oct 2020 22:20:19 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Martin Botka <martin.botka1@gmail.com>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+Subject: [PATCH v5 3/4] arm64: dts: qcom: pm(i)8994: Add mpp and lpg blocks
+Date:   Fri, 16 Oct 2020 22:20:56 -0700
+Message-Id: <20201017052057.2698588-4-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201017052057.2698588-1-bjorn.andersson@linaro.org>
+References: <20201017052057.2698588-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-References: <20201013160845.1772-1-thunder.leizhen@huawei.com>
- <20201013160845.1772-7-thunder.leizhen@huawei.com> <bda5f620-7140-51fb-fadd-6ebd3c0db935@ti.com>
- <4f5f9b55-9fad-9318-82d4-6b258643738b@huawei.com> <20201014135019.GA1563910@bogus>
- <49b680f8-d7d7-8ea3-894c-73cbfacc5ba4@huawei.com>
-In-Reply-To: <49b680f8-d7d7-8ea3-894c-73cbfacc5ba4@huawei.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 16 Oct 2020 09:13:49 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJKOeZybxnu+Z2ugaGwebrnbtmJ8n0st-=n3NbAf9_pyw@mail.gmail.com>
-Message-ID: <CAL_JsqJKOeZybxnu+Z2ugaGwebrnbtmJ8n0st-=n3NbAf9_pyw@mail.gmail.com>
-Subject: Re: [PATCH 6/6] dt-bindings: misc: correct the property name
- cmd-gpios to cmd-gpio
-To:     "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Cc:     Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>,
-        linux-leds <linux-leds@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 10:23 PM Leizhen (ThunderTown)
-<thunder.leizhen@huawei.com> wrote:
->
->
->
-> On 2020/10/14 21:50, Rob Herring wrote:
-> > On Wed, Oct 14, 2020 at 09:29:26AM +0800, Leizhen (ThunderTown) wrote:
-> >>
-> >>
-> >> On 2020/10/14 1:32, Dan Murphy wrote:
-> >>> Zhen
-> >>>
-> >>> On 10/13/20 11:08 AM, Zhen Lei wrote:
-> >>>> The property name used in arch/arm/boot/dts/mmp2-olpc-xo-1-75.dts is
-> >>>> cmd-gpio.
-> >>>>
-> >>>> arch/arm/boot/dts/mmp2-olpc-xo-1-75.dts:235:
-> >>>> cmd-gpio = <&gpio 155 GPIO_ACTIVE_HIGH>;
-> >>>>
-> >>>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> >>>> ---
-> >>>>   Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.yaml | 6 +++---
-> >>>>   1 file changed, 3 insertions(+), 3 deletions(-)
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.yaml b/Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.yaml
-> >>>> index b3c45c046ba5e37..c7a06a9650db2ed 100644
-> >>>> --- a/Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.yaml
-> >>>> +++ b/Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.yaml
-> >>>> @@ -24,7 +24,7 @@ properties:
-> >>>>     compatible:
-> >>>>       const: olpc,xo1.75-ec
-> >>>>   -  cmd-gpios:
-> >>>> +  cmd-gpio:
-> >>>
-> >>> Preference is gpios not gpio. But Rob H accept or reject
-> >>
-> >> Look at the search result below. It seems that the driver have not been merged into mainline.
-> >
-> > Yes, in drivers/platform/olpc/olpc-xo175-ec.c.
-> >
-> > Your mistake is the gpiod api takes just 'cmd' as the GPIO core handles
-> > both forms.
->
-> OK, thanks for your information. I have found that it defined by gpio_suffixes[].
->
-> >
-> >> But the property name is really used as cmd-gpio at mmp2-olpc-xo-1-75.dts:235, I don't think
-> >> the mmp2-olpc-xo-1-75.dts can make a mistake. Otherwise, the driver will not work properly.
-> >> Meanwhile, Both names cmd-gpios and cmd-gpio seem to be in use. But I prefer cmd-gpio, after
-> >> all, only one gpio is assigned now. The motorola,cmd-gpios add "s" because it contains 3 gpio.
-> >
-> > The preference is it is always '-gpios' just like it's always
-> > 'interrupts' or 'clocks'.
-> >
-> > However, whether to change this is really up to the OLPC folks. Given
-> > the driver has always supported both forms, it should be okay to change
-> > the dts. Though there could be other users besides the kernel.
->
-> If both "cmd-gpios" and "cmd-gpio" are supported, should we use enum to list both
-> of them in yaml? or use patternProperties?
+The pm8994 contains a 6 LPG channels and the pmi8994 contains 4 MPP
+channels and a 4 channel LPG, with TRILED and LUT blocks.
 
-No, we pick one or the other. Given Lubomir is okay with a dts change,
-we should use just 'cmd-gpios'.
+Add nodes for these blocks.
 
-Rob
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+
+Changes since v4:
+- Replaced msm8996 with pm(i)8994 in subject
+
+ arch/arm64/boot/dts/qcom/pm8994.dtsi  |  9 +++++++++
+ arch/arm64/boot/dts/qcom/pmi8994.dtsi | 20 ++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/pm8994.dtsi b/arch/arm64/boot/dts/qcom/pm8994.dtsi
+index 7e4f777746cb..b5bef687aa3c 100644
+--- a/arch/arm64/boot/dts/qcom/pm8994.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm8994.dtsi
+@@ -86,6 +86,15 @@ pmic@1 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
++		pm8994_lpg: lpg {
++			compatible = "qcom,pm8994-lpg";
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			status = "disabled";
++		};
++
+ 		pm8994_spmi_regulators: regulators {
+ 			compatible = "qcom,pm8994-regulators";
+ 		};
+diff --git a/arch/arm64/boot/dts/qcom/pmi8994.dtsi b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+index e5ed28ab9b2d..23f41328d191 100644
+--- a/arch/arm64/boot/dts/qcom/pmi8994.dtsi
++++ b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+@@ -19,6 +19,17 @@ pmi8994_gpios: gpios@c000 {
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
++
++		pmi8994_mpps: mpps@a000 {
++			compatible = "qcom,pm8994-mpp";
++			reg = <0xa000>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupts = <0 0xa0 0 IRQ_TYPE_NONE>,
++				     <0 0xa1 0 IRQ_TYPE_NONE>,
++				     <0 0xa2 0 IRQ_TYPE_NONE>,
++				     <0 0xa3 0 IRQ_TYPE_NONE>;
++		};
+ 	};
+ 
+ 	pmic@3 {
+@@ -27,6 +38,15 @@ pmic@3 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
++		pmi8994_lpg: lpg@b100 {
++			compatible = "qcom,pmi8994-lpg";
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			status = "disabled";
++		};
++
+ 		pmi8994_spmi_regulators: regulators {
+ 			compatible = "qcom,pmi8994-regulators";
+ 			#address-cells = <1>;
+-- 
+2.28.0
+
