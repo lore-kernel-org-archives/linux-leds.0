@@ -2,82 +2,96 @@ Return-Path: <SRS0=t1//=D3=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81554C388F9
-	for <linux-leds@archiver.kernel.org>; Tue, 20 Oct 2020 12:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DFFC433E7
+	for <linux-leds@archiver.kernel.org>; Tue, 20 Oct 2020 12:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D9462222F
-	for <linux-leds@archiver.kernel.org>; Tue, 20 Oct 2020 12:21:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E83222282
+	for <linux-leds@archiver.kernel.org>; Tue, 20 Oct 2020 12:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394268AbgJTMVw (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 20 Oct 2020 08:21:52 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:46368 "EHLO
+        id S2394360AbgJTMZQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 20 Oct 2020 08:25:16 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:46658 "EHLO
         jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394212AbgJTMVw (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 20 Oct 2020 08:21:52 -0400
+        with ESMTP id S2394323AbgJTMZQ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 20 Oct 2020 08:25:16 -0400
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id B8CD21C0B8D; Tue, 20 Oct 2020 14:21:49 +0200 (CEST)
-Date:   Tue, 20 Oct 2020 14:21:49 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Bollinger, Seth" <Seth.Bollinger@digi.com>
-Cc:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        id DD2F21C0B87; Tue, 20 Oct 2020 14:25:14 +0200 (CEST)
+Date:   Tue, 20 Oct 2020 14:25:14 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Dan Murphy <dmurphy@ti.com>,
-        Seth Bollinger <seth.boll@gmail.com>
-Subject: Re: Strange timer LED behavior
-Message-ID: <20201020122149.GA19856@duo.ucw.cz>
-References: <A2C38AF0-0CE8-4312-8329-54B7E9653223@digi.com>
- <20201019140617.GA25480@duo.ucw.cz>
- <3D108EE8-F4B6-490B-9B97-59B8E008F63B@digi.com>
- <2A80CF0E-1022-4673-86E8-12BF0696708E@digi.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, kernel@pengutronix.de,
+        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v9 1/3] tty: rename tty_kopen() and add new function
+ tty_kopen_shared()
+Message-ID: <20201020122514.GB19856@duo.ucw.cz>
+References: <20201018204022.910815-1-u.kleine-koenig@pengutronix.de>
+ <20201018204022.910815-2-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Kj7319i9nmIyA2yE"
+        protocol="application/pgp-signature"; boundary="ADZbWkCsHQ7r3kzd"
 Content-Disposition: inline
-In-Reply-To: <2A80CF0E-1022-4673-86E8-12BF0696708E@digi.com>
+In-Reply-To: <20201018204022.910815-2-u.kleine-koenig@pengutronix.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---Kj7319i9nmIyA2yE
-Content-Type: text/plain; charset=utf-8
+--ADZbWkCsHQ7r3kzd
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
+Hi1
 
-> >> Yep. It allows hardware to provide different values if it can only
-> >> blink at fixed rate.
-> >=20
-> > Ok, I understand how hardware might make a different choice, but in thi=
-s scenario we=E2=80=99re using software to blink, so everything is handled =
-by the kernel.  Also, if the interface is hardware enabled, isn=E2=80=99t t=
-he path at line 177 used (which returns before the default is set)?
+> Introduce a new function tty_kopen_shared() that yields a struct
+> tty_struct. The semantic difference to tty_kopen() is that the tty is
+> expected to be used already. So rename tty_kopen() to
+> tty_kopen_exclusive() for clearness, adapt the single user and put the
+> common code in a new static helper function.
 >=20
-> Why should software blink need to select a default rate since it should b=
-e able to handle all requests (even 0, 0)?
+> tty_kopen_shared is to be used to implement an LED trigger for tty
+> devices in one of the next patches.
 >=20
+> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> ---
+>  drivers/accessibility/speakup/spk_ttyio.c |  2 +-
+>  drivers/tty/tty_io.c                      | 56 +++++++++++++++--------
+>  include/linux/tty.h                       |  5 +-
+>  3 files changed, 42 insertions(+), 21 deletions(-)
 
-How can software blink at "0, 0"?
+> -struct tty_struct *tty_kopen(dev_t device)
+> +static struct tty_struct *tty_kopen(dev_t device, int shared)
+>  {
 
-0, 0 simply means "use defaults", for hardware and software. Its old
-API, so you'll have to live with it.
+bool? Otherwise I see nothing obviously wrong here.
 
+But this is for Greg..
+
+Best regards,
 								Pavel
+
 --=20
 http://www.livejournal.com/~pavelmachek
 
---Kj7319i9nmIyA2yE
+--ADZbWkCsHQ7r3kzd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX47WXQAKCRAw5/Bqldv6
-8r/bAJ9AX79ai5TZdFi5U3CrP3QQhvQEowCeLJyGxoEr8NHc+DbfwzTwC82igHE=
-=vSVb
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX47XKgAKCRAw5/Bqldv6
+8poUAJ47GGYkX0YR4cHDjohRyEs37ykMqACfeZ5CWvzwaW2K1qVEzjEWXbYwCZ8=
+=70vk
 -----END PGP SIGNATURE-----
 
---Kj7319i9nmIyA2yE--
+--ADZbWkCsHQ7r3kzd--
