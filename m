@@ -2,61 +2,61 @@ Return-Path: <SRS0=y9UB=D4=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BD7C6369E
-	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 20:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC110C56201
+	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 20:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84C5124180
-	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 20:12:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68AEC24196
+	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 20:12:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rpbvkLyJ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aqYmhFx9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505145AbgJUULx (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 21 Oct 2020 16:11:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33572 "EHLO
+        id S2505174AbgJUUMG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 21 Oct 2020 16:12:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505137AbgJUULw (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Oct 2020 16:11:52 -0400
-Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79CACC0613CF
-        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:11:52 -0700 (PDT)
-Received: by mail-oi1-x242.google.com with SMTP id u127so3442042oib.6
-        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:11:52 -0700 (PDT)
+        with ESMTP id S2505131AbgJUULu (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Oct 2020 16:11:50 -0400
+Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09279C0613D4
+        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:11:49 -0700 (PDT)
+Received: by mail-oi1-x244.google.com with SMTP id 16so3435988oix.9
+        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:11:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CTQjXkyBU+AXR4n3+CD+/Udf1tnLCv+grrFndIKi/I8=;
-        b=rpbvkLyJKFEWhkI0bl3iRJ+6Poue7ZjikFm+j1wMw19BQi6vVa2w+6A7TGM4i5AvyJ
-         FLoZ+56T1NEJM6CnMG5xvbV4BZ3aTwgZlOpE4elptBwWTWUTiwXEYciyvTWCF9mgW5kO
-         nHLnEdd7zEnzst/FkZ1nUrX+w01wrlpCzhQpiMj5TjFp9YR/p8z01F8O/OdyiuvL5dAN
-         8+cxJbZJW5I6nERd6vGo3ztfMoIi7HTdSi18LDcBVYaMiMpJxUbXhbjCskQin9kGq5M8
-         wKylvPzXTkMyZGExbYQZaHjA/jcY96t7sXYPv4LDgvAF8IyCntAftflBr8R6so9a1/j6
-         LJGw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zFNQ+PC2ugn0ZH4XH+Yai9nfPHIHh9+q2qTiKV5XAG8=;
+        b=aqYmhFx9BHVizqNDFb6BG2m5tnEfevj676TZ9bpuleaMRde1k9xWNV+wakhrM4lfAf
+         LQisUNSFT3kNIQTYxbdpWuN/y5v1Vwz6gVndOPD7ZKXwk1/6Gb9FFk08j1NMucWxmN9p
+         5/t15bTw0eOYLHeW2aXbxDqMX9I+Wr8KAh4OHY7moFOOS+9EKLUSaitpRCzvt7YkMuaU
+         IznhxycJbjcyMt0jlKq6HMEVTTRVKuG8W36QlJib8zlAROiP1nyY9JY2VneoEQ5J5FbG
+         v16zfFvWPUsXUFBXBJZ48F/euM2HYf7ttqP6/6kwJBEwF2jwa0j4pr5zcB/uGiVqUXhJ
+         bl4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CTQjXkyBU+AXR4n3+CD+/Udf1tnLCv+grrFndIKi/I8=;
-        b=D6k88fsENtT9KBwrnPpR3R4KOMZz2fPDPMCIer8zq4s7lCE6LFLy5oGUz290FEFAWF
-         WIbPV+KkNrgawMiIxJzX8jIRQ0TbCWQjNnL5k8KlcSNQjEq7C1IsMrUP1GGtu6p5fmKb
-         3bNGfWgJp0MHWhAIuLHnlM18JsX80mgDT6PlI4uAWEI5/yJJhjyDvyjyX/tG3JjRFijW
-         /m8mexbC5VQtY3nAN5YZe7o9MO1vqqjAdwmCEK29XSMwvFGC5NLOzI7kK4Cugyw8bScZ
-         89Skm55igsMf5q+rJPvHZdC4U6D6F3z01MT63qeQWv/wnQ5Ow24LIxs+zalWb+QoAkH8
-         YgUQ==
-X-Gm-Message-State: AOAM532Bh+vznPYrnfInq9lKIxkZenGVK4ZHuBeJK8sjTzObD7Ivb7cx
-        RLNiAvlzSpIaEDM5QQCxz25xTQ==
-X-Google-Smtp-Source: ABdhPJxVvM2KS6NoTYQZqhWxtTSGGTGaDlEmqecZLtPRRYaUhla2A0ek/tTe7tHT+zFDTkG92bLCOA==
-X-Received: by 2002:aca:4c0d:: with SMTP id z13mr3207502oia.78.1603311111876;
-        Wed, 21 Oct 2020 13:11:51 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zFNQ+PC2ugn0ZH4XH+Yai9nfPHIHh9+q2qTiKV5XAG8=;
+        b=jWEzCeNNON7pPFbaE2SqwOF3I0BUHttxqOLRqCstRtZ6C0idg9YcPo/WNw85NObCPU
+         4JEKA/15qRrRVZATi4a5doSoIdnwwvr64+IukW2u+4thk/wE3kSCVhR27nsHngUfrmxQ
+         h6wdDe/6WRKWMFybowqSDx4vi1UJVU+I/93lKebvI3CFwqbQKcrYHJWqAx9/zoI17rPu
+         ItJ9GXQbHy3Nb8QQ3vXlCdlVtuISW4bVCfqm9w802LtBr0OoEh91ST70VHbqClEVzQVq
+         9pEcsRz7XtHf9Hdj9UznqQT1NUb+CjQcrSZsJCry2CQMl7A04Z08IAy6gwD20M6w6sQq
+         zqqA==
+X-Gm-Message-State: AOAM531meMelsueou643FK20eqH1rsJLs1DePwj9En/Yd5s72pIInizi
+        dr4DYov/NFDM4O6CeY2F0iJvuQ==
+X-Google-Smtp-Source: ABdhPJy9RuxoB4C2z7/dCyMDWvpZbU2MPiLTAl2SFifNjPspHhgQndQrDVvF5JxrEHSiIetovgujlA==
+X-Received: by 2002:a05:6808:3bc:: with SMTP id n28mr3224777oie.171.1603311108171;
+        Wed, 21 Oct 2020 13:11:48 -0700 (PDT)
 Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id t5sm838166otl.22.2020.10.21.13.11.50
+        by smtp.gmail.com with ESMTPSA id t5sm838166otl.22.2020.10.21.13.11.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2020 13:11:51 -0700 (PDT)
+        Wed, 21 Oct 2020 13:11:47 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -69,91 +69,45 @@ To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
 Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-pwm@vger.kernel.org
-Subject: [PATCH v6 3/4] arm64: dts: qcom: pm(i)8994: Add mpp and lpg blocks
-Date:   Wed, 21 Oct 2020 13:12:23 -0700
-Message-Id: <20201021201224.3430546-4-bjorn.andersson@linaro.org>
+Subject: [PATCH v6 0/4] Qualcomm Light Pulse Generator
+Date:   Wed, 21 Oct 2020 13:12:20 -0700
+Message-Id: <20201021201224.3430546-1-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201021201224.3430546-1-bjorn.andersson@linaro.org>
-References: <20201021201224.3430546-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The pm8994 contains a 6 LPG channels and the pmi8994 contains 4 MPP
-channels and a 4 channel LPG, with TRILED and LUT blocks.
+This series introduces a generic pattern interface in the LED class and
+a driver for the Qualcomm Light Pulse Generator.
 
-Add nodes for these blocks.
+It seems like it's been almost 3 years since I posted v3, which was hung
+up on the lack of conclusion on the hw_pattern and multicolor support.
+Now that those are concluded I hope we can make some progress on the LPG
+support again.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+The dts patches are included in the series as "examples", ultimately my
+expectation is that the dt binding and driver patches are picked up
+through the leds tree, while Andy or myself take the dts patches.
 
-Changes since v5:
-- None
+Bjorn Andersson (4):
+  dt-bindings: leds: Add Qualcomm Light Pulse Generator binding
+  leds: Add driver for Qualcomm LPG
+  arm64: dts: qcom: pm(i)8994: Add mpp and lpg blocks
+  arm64: dts: qcom: Add user LEDs on db820c
 
- arch/arm64/boot/dts/qcom/pm8994.dtsi  |  9 +++++++++
- arch/arm64/boot/dts/qcom/pmi8994.dtsi | 20 ++++++++++++++++++++
- 2 files changed, 29 insertions(+)
+ .../bindings/leds/leds-qcom-lpg.yaml          |  170 +++
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi  |   49 +
+ arch/arm64/boot/dts/qcom/pm8994.dtsi          |    9 +
+ arch/arm64/boot/dts/qcom/pmi8994.dtsi         |   20 +
+ drivers/leds/Kconfig                          |    9 +
+ drivers/leds/Makefile                         |    1 +
+ drivers/leds/leds-qcom-lpg.c                  | 1190 +++++++++++++++++
+ 7 files changed, 1448 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
+ create mode 100644 drivers/leds/leds-qcom-lpg.c
 
-diff --git a/arch/arm64/boot/dts/qcom/pm8994.dtsi b/arch/arm64/boot/dts/qcom/pm8994.dtsi
-index 7e4f777746cb..b5bef687aa3c 100644
---- a/arch/arm64/boot/dts/qcom/pm8994.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pm8994.dtsi
-@@ -86,6 +86,15 @@ pmic@1 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
-+		pm8994_lpg: lpg {
-+			compatible = "qcom,pm8994-lpg";
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			status = "disabled";
-+		};
-+
- 		pm8994_spmi_regulators: regulators {
- 			compatible = "qcom,pm8994-regulators";
- 		};
-diff --git a/arch/arm64/boot/dts/qcom/pmi8994.dtsi b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
-index e5ed28ab9b2d..23f41328d191 100644
---- a/arch/arm64/boot/dts/qcom/pmi8994.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
-@@ -19,6 +19,17 @@ pmi8994_gpios: gpios@c000 {
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
-+
-+		pmi8994_mpps: mpps@a000 {
-+			compatible = "qcom,pm8994-mpp";
-+			reg = <0xa000>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupts = <0 0xa0 0 IRQ_TYPE_NONE>,
-+				     <0 0xa1 0 IRQ_TYPE_NONE>,
-+				     <0 0xa2 0 IRQ_TYPE_NONE>,
-+				     <0 0xa3 0 IRQ_TYPE_NONE>;
-+		};
- 	};
- 
- 	pmic@3 {
-@@ -27,6 +38,15 @@ pmic@3 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
-+		pmi8994_lpg: lpg@b100 {
-+			compatible = "qcom,pmi8994-lpg";
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			status = "disabled";
-+		};
-+
- 		pmi8994_spmi_regulators: regulators {
- 			compatible = "qcom,pmi8994-regulators";
- 			#address-cells = <1>;
 -- 
 2.28.0
 
