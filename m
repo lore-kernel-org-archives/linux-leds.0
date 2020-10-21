@@ -2,275 +2,120 @@ Return-Path: <SRS0=y9UB=D4=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F55C63798
-	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 20:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A48C4363A
+	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 20:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4CC5124181
-	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 20:12:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1000A21D6C
+	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 20:23:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AnGy9r3R"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y+MAi+WS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438933AbgJUUMG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 21 Oct 2020 16:12:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33570 "EHLO
+        id S2505286AbgJUUX7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 21 Oct 2020 16:23:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438832AbgJUULv (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Oct 2020 16:11:51 -0400
-Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03F40C0613D8
-        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:11:49 -0700 (PDT)
-Received: by mail-ot1-x341.google.com with SMTP id 32so3053937otm.3
-        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:11:49 -0700 (PDT)
+        with ESMTP id S2505285AbgJUUX7 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Oct 2020 16:23:59 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1197C0613CE
+        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:23:57 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id u8so5140200ejg.1
+        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:23:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qB8P/6WO1D6RZP2Pmqy7a+v/iyOu8tobujQ8YoHYu9I=;
-        b=AnGy9r3RaoiobqjMi1OhPVgQAkMoaUMobsDw3HMdNpbDxPb8FNA4oJzYnCIeq/+Mhy
-         ycqSFIMTNOrkzeSBI/hljp9SxfKD7XP/GTtZJ6S7EE7XU7t5gRrr/YBJXdP3cGmY210s
-         Fp2JT+PeoDJX8YWBCV9wDAeTrtZDRJAAoIMmRVR2ep4lcBcRSQbcm87zfy+h0Ne/0Kiv
-         TUn7O67/Me13fRrKkigibHhCpJgzr2r1cMWaE/3ijIl/Cg7SH+MX9NQpcXG0FhO+vuQD
-         gd2zBWGH5qii83CBsGnxkf/t5exldlS09wgDEkU5YiHri6G8YLFRNo2d3//6WmiZxM1o
-         8iGw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VOMYR7I6tppRcm25XJ3IlnDwPcHal3U4V1WTzXEskaY=;
+        b=Y+MAi+WSl6+RlrT1iMeBLZ5AFgfqerxp0B53ACbs5J4+S4aHR90Bb+9AIHzgTkxN/0
+         ZO1iXwStYMIEw2CGsnGSliOKHh296mHseCyUONo0UPmAaIlR9KAaNEuHxUEQ7jEBCXvj
+         sjM9DNB+kFfYY0DW3/Ng/HVqO41h2DVCICPXZW0oHv2etmU8SKDo4NcGOBm71MYuJdnT
+         vHf/JfKM5odmZtGL4UKnvBy/fQRlBYhBKRjeN3WW7RQMS30xT3uQU/Jk9RJZWO51ndOe
+         LQ74XMBvbfIvvEvqkSqP1Z7ZXGc6c/I5r9+B1Lw8cjtMv9B01MsfehnVBtawFDFJ7m4i
+         MYoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qB8P/6WO1D6RZP2Pmqy7a+v/iyOu8tobujQ8YoHYu9I=;
-        b=X9HKIfFIseKlFS4VdY+PMuMoTBbrJX+guc/FjYt4AsVgb5vi2fi1XRlhZ+MuWTuWRJ
-         BwhS4tjCA65cTLwqPbauEwyApxWNEFo4Va8VIxuGijdw8yDIc752emGfOOz3i6an1TVd
-         y8pJxWmHDVB5+LzcfR87CHRmNOLrkfIeBaRr/ywA8gNygAFMSsASxNMfr+UjoTBnjWVq
-         NkLmyYDC6/q2n7kbrGG1ilY2efQQbKekTePhHfTq6Jt7OHxFQQwfTEsj4Yyh8Sea3y/1
-         Xp5zJrIZZ3tCrkaqqJHMGhpzLGsflY+M49PP2/UFb5Xy10mnXpKNvIg1I7ni9v8Ugqzm
-         nkBg==
-X-Gm-Message-State: AOAM5304j/LqRMCZSbnA85zCuy3rJ6tNf0NSlC6mZ0BfNNI2c4mM7rkU
-        Pzzwzy3zo/tZ+qZ/0Hpmp4WduS8mMM+8ew==
-X-Google-Smtp-Source: ABdhPJyDgqkT/pt/hrWNYpqUXUrfNe7GQUKRCVxdMSeS1moog0IYT2oQ9rDKMKSIAWkGLUbyusJ6SA==
-X-Received: by 2002:a9d:73c6:: with SMTP id m6mr3795879otk.105.1603311109298;
-        Wed, 21 Oct 2020 13:11:49 -0700 (PDT)
-Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id t5sm838166otl.22.2020.10.21.13.11.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2020 13:11:48 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
-        Martin Botka <martin.botka1@gmail.com>
-Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-pwm@vger.kernel.org
-Subject: [PATCH v6 1/4] dt-bindings: leds: Add Qualcomm Light Pulse Generator binding
-Date:   Wed, 21 Oct 2020 13:12:21 -0700
-Message-Id: <20201021201224.3430546-2-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201021201224.3430546-1-bjorn.andersson@linaro.org>
-References: <20201021201224.3430546-1-bjorn.andersson@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VOMYR7I6tppRcm25XJ3IlnDwPcHal3U4V1WTzXEskaY=;
+        b=gAalGEZR3DUzcrgouijxft67GxWUP47Mwwv0bkgcv3Y+jRxELCtppnSNPPhw0VTEM5
+         5tLwTFVTcJg1seEyduymFR8o8NIvKNE+j54xRMqRIfvlW2E1yYcqgwwTz3DZXMErtd/R
+         bJbmPF2oZytCed4trjc8TT67Fndr51cPti0eUkyLiquSgk9Q0Z/oyW2hoKIFgC3HOzi9
+         YDG2ZIw+woXp7dFI3IEIZHobMNUu6DpADPFbtob9UHZcigexUxWd88PdIcv4vSZk8BL6
+         h/g9jv8FuNKU9omf0cNL3COUz71rodySoVi2OdSHpxiRwzLramJScOUobph6ysJ193W9
+         Ui2w==
+X-Gm-Message-State: AOAM533i1uyN9XORTx4CKABf9CHOW133Iaen3A65aHS+5/ow63sldB9C
+        2hvGUFymCsocsTsIy4m/pgE=
+X-Google-Smtp-Source: ABdhPJwRMrG3Utr47rR/pDD6tDonfj/Cpf0xCThixcJU77k8sWoLwdyBNuZSzyZBI+fdKkPgtbwrQg==
+X-Received: by 2002:a17:906:564d:: with SMTP id v13mr5502258ejr.217.1603311836347;
+        Wed, 21 Oct 2020 13:23:56 -0700 (PDT)
+Received: from ?IPv6:2a01:110f:b59:fd00:599f:b8ad:89c7:99e7? ([2a01:110f:b59:fd00:599f:b8ad:89c7:99e7])
+        by smtp.gmail.com with ESMTPSA id q25sm2708298eja.86.2020.10.21.13.23.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Oct 2020 13:23:55 -0700 (PDT)
+Subject: Re: Strange timer LED behavior
+To:     "Bollinger, Seth" <Seth.Bollinger@digi.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>,
+        Seth Bollinger <seth.boll@gmail.com>
+References: <A2C38AF0-0CE8-4312-8329-54B7E9653223@digi.com>
+ <20201019140617.GA25480@duo.ucw.cz>
+ <3D108EE8-F4B6-490B-9B97-59B8E008F63B@digi.com>
+ <2A80CF0E-1022-4673-86E8-12BF0696708E@digi.com>
+ <20201020122149.GA19856@duo.ucw.cz>
+ <DF67F732-7B99-4C32-A7E9-4595E2B1E82A@digi.com>
+ <20201020180813.GA25906@duo.ucw.cz>
+ <CF36FC5F-6FA9-4797-A6D6-6533D795DAD1@digi.com>
+ <20201020183300.GB25906@duo.ucw.cz>
+ <78785807-3DB7-4A70-B135-2B20A260EA57@digi.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <1a86fe05-d8a3-b4b9-4065-b31abce287e2@gmail.com>
+Date:   Wed, 21 Oct 2020 22:23:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.1
 MIME-Version: 1.0
+In-Reply-To: <78785807-3DB7-4A70-B135-2B20A260EA57@digi.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This adds the binding document describing the three hardware blocks
-related to the Light Pulse Generator found in a wide range of Qualcomm
-PMICs.
+Hi Seth,
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+On 10/20/20 8:35 PM, Bollinger, Seth wrote:
+> 
+>>>
+>>> In this case we’re switching from on:86400, off:0 -> on:0, off:86400.  We write off first, then on using fwrite() to a file.  From the trace, it looks like on is always stored first.  So, the first store is on:0, off:0 for a brief period (enough to trigger the default), and then off is stored.  We’re already trying to not have them not both be zero at the same time.  I tried putting fflush() between them, but that didn’t help.  I suppose we could try to sleep some period of time, but this seems bad as well.  Maybe write and read to verify the value is correctly stored?
+>>>
+>>
+>> I don't understand. Why would you use blink with on:86400, off:0?
+> 
+> In this case we’re using the api to turn the LED on and off, without blinking (in this case only).
+> 
+>>
+>>>> If there's no reasonable value to change the frequency, we'll need to
+>>>> fix that.
+>>>
+>>> I think if we could control the delays with trigger set to none, then we could set the delays and enable the timer trigger for a no glitch operation.  I suppose if there was a timer-off trigger, that would work as well, but seems kind of silly.
+>>>
+>>
+>> You may want to look at ledtrig-transient and ledtrig-oneshot...?
+> 
+> Ok, I’ll take a look.  Thanks!
 
-Changes since v5:
-- None
+You might want to check also ledtrig-pattern and paragraph 2.
+of its documentation [0].
 
- .../bindings/leds/leds-qcom-lpg.yaml          | 170 ++++++++++++++++++
- 1 file changed, 170 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
+[0] Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
-new file mode 100644
-index 000000000000..5ccf0f3d8f1b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
-@@ -0,0 +1,170 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/leds-qcom-lpg.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Light Pulse Generator
-+
-+maintainers:
-+  - Bjorn Andersson <bjorn.andersson@linaro.org>
-+
-+description: >
-+  The Qualcomm Light Pulse Generator consists of three different hardware blocks;
-+  a ramp generator with lookup table, the light pulse generator and a three
-+  channel current sink. These blocks are found in a wide range of Qualcomm PMICs.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,pm8916-pwm
-+      - qcom,pm8941-lpg
-+      - qcom,pm8994-lpg
-+      - qcom,pmi8994-lpg
-+      - qcom,pmi8998-lpg
-+
-+  "#pwm-cells":
-+    const: 2
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+  qcom,power-source:
-+    $ref: /schemas/types.yaml#definitions/uint32
-+    description: >
-+      power-source used to drive the output, as defined in the datasheet.
-+      Should be specified if the TRILED block is present
-+    enum:
-+      - 0
-+      - 1
-+      - 3
-+
-+  multi-led:
-+    type: object
-+    $ref: leds-class-multicolor.yaml#
-+    properties:
-+      "#address-cells":
-+        const: 1
-+
-+      "#size-cells":
-+        const: 0
-+
-+      "^led@[0-9a-f]$":
-+        type: object
-+        $ref: common.yaml#
-+
-+        properties:
-+          "qcom,dtest":
-+            $ref: /schemas/types.yaml#definitions/uint32-array
-+            description: >
-+              configures the output into an internal test line of the pmic. Specified
-+              by a list of u32 pairs, one pair per channel, where each pair denotes the
-+              test line to drive and the second configures how the value should be
-+              outputed, as defined in the datasheet
-+            minItems: 2
-+            maxItems: 2
-+
-+        required:
-+          - reg
-+
-+patternProperties:
-+  "^led@[0-9a-f]$":
-+    type: object
-+    $ref: common.yaml#
-+    properties:
-+      "qcom,dtest":
-+        $ref: /schemas/types.yaml#definitions/uint32-array
-+        description: >
-+          configures the output into an internal test line of the pmic. Specified
-+          by a list of u32 pairs, one pair per channel, where each pair denotes the
-+          test line to drive and the second configures how the value should be
-+          outputed, as defined in the datasheet
-+        minItems: 2
-+        maxItems: 2
-+
-+    required:
-+      - reg
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/leds/common.h>
-+
-+    lpg {
-+      compatible = "qcom,pmi8994-lpg";
-+
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      qcom,power-source = <1>;
-+
-+      led@1 {
-+        reg = <1>;
-+        label = "green:user1";
-+      };
-+
-+      led@2 {
-+        reg = <2>;
-+        label = "green:user0";
-+        default-state = "on";
-+      };
-+
-+      led@3 {
-+        reg = <3>;
-+        label = "green:user2";
-+      };
-+
-+      led@4 {
-+        reg = <4>;
-+        label = "green:user3";
-+
-+        qcom,dtest = <4 1>;
-+      };
-+    };
-+  - |
-+    #include <dt-bindings/leds/common.h>
-+
-+    lpg {
-+      compatible = "qcom,pmi8994-lpg";
-+
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      qcom,power-source = <1>;
-+
-+      multi-led {
-+        color = <LED_COLOR_ID_MULTI>;
-+        label = "rgb:notification";
-+
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        led@1 {
-+          reg = <1>;
-+          color = <LED_COLOR_ID_RED>;
-+        };
-+
-+        led@2 {
-+          reg = <2>;
-+          color = <LED_COLOR_ID_GREEN>;
-+        };
-+
-+        led@3 {
-+          reg = <3>;
-+          color = <LED_COLOR_ID_BLUE>;
-+        };
-+      };
-+    };
-+  - |
-+    lpg {
-+      compatible = "qcom,pm8916-pwm";
-+      #pwm-cells = <2>;
-+    };
-+...
 -- 
-2.28.0
-
+Best regards,
+Jacek Anaszewski
