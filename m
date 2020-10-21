@@ -2,249 +2,1335 @@ Return-Path: <SRS0=y9UB=D4=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 769B9C388F9
-	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 12:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC62C4363A
+	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 20:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC7C621707
-	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 12:29:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12C8E24180
+	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 20:12:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="eA6WVlkt"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XPrpX2eD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440325AbgJUM3r (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 21 Oct 2020 08:29:47 -0400
-Received: from nat-hk.nvidia.com ([203.18.50.4]:38492 "EHLO nat-hk.nvidia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2439911AbgJUM3r (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 21 Oct 2020 08:29:47 -0400
-Received: from HKMAIL102.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f9029b90000>; Wed, 21 Oct 2020 20:29:45 +0800
-Received: from HKMAIL101.nvidia.com (10.18.16.10) by HKMAIL102.nvidia.com
- (10.18.16.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Oct
- 2020 12:29:45 +0000
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.100)
- by HKMAIL101.nvidia.com (10.18.16.10) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3 via Frontend Transport; Wed, 21 Oct 2020 12:29:45 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XfEapCGv5IbBmOZiY2qrs8HZ0AMIQka8RDM3AgbOUjZFT5gYX/BZCtA/aYMhRAwDurfLhSyQc9z8d8bMB0Cxuz41KVHKr+ay7x/iQ2pPEBzZ8dsjVAPvFxeBjVbbGSEweRd/ULHQ2jU5wabFDCjSSuSl4u2aeVl00Az37DG4buOgZHFXTozqz3epM0Y1+7WgUtwGSWh0t9vEdc/KE4layK3Gnv0cg2BgTZ9i1VZhicEcnOBt7D3EmhZp1nJirmGKaYgyw192UqGEw9YyG9qt9oPAT2G6g3yoWyvporpC2V0yYnw6DMgZfc/MOUAAj2JthA8+5Ue9mcvkrPbDNRG6Ug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iygyZknMfcMwrHLk2LR/pJ3O6akJeAGTTKK/e+Zj+To=;
- b=XHXUe29yx1ReJxC2t3aUWeNHR1NXUWcI9qMxBha2/JU/VfnjXi7Ncz0s2UKCwDQSGaguy1itKO2UVGFR5LjDr/0Hp2+qZkT5F4Km7oJaWMn+dFJoj1XGrNcfUxAipXz2eAnlapeBlFs5aMNQ/mh+TikEbAv+bfOAiKEDqqq7I1zpvR56g1yVmAXTxPwJYMu2Dx2tAa1bYv70TZ6/+l0DiqqCeJ5zYPEwOx5+M99JM3TAJnWqyO9jTMAtEC2flEmd2pPmujwI+q/Zj5H5Tt1AGbL0fTltNNOlq5hSvmAsSfBjbTQ2oOmTK6VK2djOCOn3TjcjyRzTk9NMP2rJxgDpng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-Received: from DM6PR12MB3898.namprd12.prod.outlook.com (2603:10b6:5:1c6::18)
- by DM5PR12MB2344.namprd12.prod.outlook.com (2603:10b6:4:b2::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.25; Wed, 21 Oct
- 2020 12:29:42 +0000
-Received: from DM6PR12MB3898.namprd12.prod.outlook.com
- ([fe80::ed54:cdbb:aa11:13fd]) by DM6PR12MB3898.namprd12.prod.outlook.com
- ([fe80::ed54:cdbb:aa11:13fd%5]) with mapi id 15.20.3477.028; Wed, 21 Oct 2020
- 12:29:42 +0000
-From:   Vadim Pasternak <vadimp@nvidia.com>
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     Marek Behun <marek.behun@nic.cz>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-Subject: RE: [PATCH led-next 1/1] leds: mlxreg: Allow multi-instantiation of
- same name LED for modular systems
-Thread-Topic: [PATCH led-next 1/1] leds: mlxreg: Allow multi-instantiation of
- same name LED for modular systems
-Thread-Index: AQHWnAINfoo/2MAw0k+EDTNnWZDZ0amMAquAgAAN5YCAAShOcIAAICCAgAAMliCAAAQLAIAACL5AgAASMQCABkCe4IAODIkAgAA4/+A=
-Date:   Wed, 21 Oct 2020 12:29:42 +0000
-Message-ID: <DM6PR12MB38982F973CA7D42A528478C1AF1C0@DM6PR12MB3898.namprd12.prod.outlook.com>
-References: <20201006165850.17790-1-vadimp@nvidia.com>
- <20201007113105.GE12224@duo.ucw.cz> <20201007142049.02d8c3ba@nic.cz>
- <DM6PR12MB38986A442F12A2DFB5769235AF0B0@DM6PR12MB3898.namprd12.prod.outlook.com>
- <20201008075619.GB32424@amd>
- <DM6PR12MB389877E86421231E18EF7DCDAF0B0@DM6PR12MB3898.namprd12.prod.outlook.com>
- <20201008105550.44fa3165@nic.cz>
- <DM6PR12MB3898D2BDC4AC32036E792548AF0B0@DM6PR12MB3898.namprd12.prod.outlook.com>
- <20201008123214.2a5de507@nic.cz>
- <DM6PR12MB38989BFE9D1967C69E397A6BAF070@DM6PR12MB3898.namprd12.prod.outlook.com>
- <20201021083334.GA29124@duo.ucw.cz>
-In-Reply-To: <20201021083334.GA29124@duo.ucw.cz>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: ucw.cz; dkim=none (message not signed)
- header.d=none;ucw.cz; dmarc=none action=none header.from=nvidia.com;
-x-originating-ip: [93.173.199.98]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c28f0120-f284-4550-4435-08d875bcfcae
-x-ms-traffictypediagnostic: DM5PR12MB2344:
-x-microsoft-antispam-prvs: <DM5PR12MB2344C996C7FBE322A38EA230AF1C0@DM5PR12MB2344.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: LrERtPkgo/Z7Oh04Kc/Xw9jkqLSydmEfQE05EfHDhZzOUOVCaXwAJsJLykTOcBiJn3grMpRbmQKNL1IPke0Bj2tIEkRwRUCwTGoziHpRDrwc9wwLC/SuQvh3DzRw+Cf9L9TLCmxXbQH3WkuHJBMbMhKYHCoBBYVIsVb44fKbYrphJIj3R4J1wgz6WVxHPImo+cLU5Cf5Um4F0/1VmgeL0c1VLdcvoyYfrjhurlLr8VCw2zY2m5PPngj8o5bHqIfVFGwFMfXyuxTncLOIdirLyalsuuWTXCoYnmRCn6YKD6tbO1zRDuSOUwLH/GyikmaWquDa9iKdIEHOhKu5Ws+neoRYTwkT92/xflzh6UrA90m09CGMe5B9qtW0EDQlDHpBu1WyGR//4DKt9wgKNSgZwg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3898.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(136003)(366004)(376002)(346002)(396003)(76116006)(966005)(66556008)(478600001)(6916009)(55016002)(316002)(54906003)(5660300002)(66476007)(66946007)(52536014)(7696005)(64756008)(9686003)(26005)(66446008)(8676002)(6506007)(8936002)(53546011)(2906002)(186003)(86362001)(4326008)(83380400001)(71200400001)(33656002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: 3j9YnAyDDCul4gmL9jy/h/wFoeeXVjMad82hFefpw0bQsKTkh5PaVIwQr21bcPmbbgm6x8ahIWyUaTr1uQ33HDoR+FxVRCF3uF1ASdMDGmgfWTLyBQxoU4NAWiF/1yVWYvQylTGjVwZ4tbDD9Y7JI+LqIuD/fT5vRs3MMNfSKzNvQbuNxovL/jVScYrbyqtt8uuKO1kk/XjvXw/rTRhGqTW2fHbeesbfh6YIz4GS9gJpFp1hJynGZq6Sma76gyDiNdmiGbX7Hld7aBQkoTrbWlWzu/PbxSLCLnjfp1XwVdMO5HNiyx5QSDv9Se3qGJA0fT0BgL0b2bj6z5Ilid+eUdIxVkhM/7+4YASSJTWtKis7uL2/M4yDkT0rSWoxaELT63QedQewp/wpyU8W9z+907U5id2Q6EovoJBbJKyWf8OO3a8VZtTzOJy8Cpd/gyp4MLxoIcCm3mVCUrlUzDdRH9Ri2YuyGjWJkqg5PjGmTsb7XXzko1i5bekyEJ5f1mveuvIUJlJHwC5CL/TEdwbpZxWNGzqVR6LZg+rQeBCHSrdHyjP5N5jthEFivt7UGtDy0rrryDxNzFCQg2IFL5DPI5qS+paZQ/iHpCdJIEufBvetNFKIJNXzVo2I2Ns7CQYBLJ26L6qAw0tMPsLL4tjhTA==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2505150AbgJUULy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 21 Oct 2020 16:11:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33582 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2505133AbgJUULx (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Oct 2020 16:11:53 -0400
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1908C0613DA
+        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:11:51 -0700 (PDT)
+Received: by mail-ot1-x343.google.com with SMTP id h62so3017306oth.9
+        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:11:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=oodlSNxO/ySemIeyezX7eBwlZ/EFFo7QAsf7rpgR3WY=;
+        b=XPrpX2eDZ4Z0XcZydx2EpCNy0pf7uYo4a6MYeM7YqVeUZSl5XGLEnQvhtN+HagDssr
+         kAMwUF5J5/zmEcqkYeZQoccJdJvlDMKezGEqcXpwum9mM8qryTGHPfRQQ2aX8+H/UxYd
+         vIKm8ROndDk+qf/KsjCHSpCuMftlaCiMmcORDnb/eHlVkT85DReNuiRg1j7uKcMxma+6
+         pfsh7vvkkmniW5mNlkVmrpOl2gbyoK8jmBpdXGzbpkIzp26Dh2lQDdPRq6RtjPCLEjNF
+         lydPskozxfEP7U+BgndIgZTaPvSk0Kbj2cMQ8rOMVs9eCUAxXzAymh2scUnlDVqrD0Z+
+         KN4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=oodlSNxO/ySemIeyezX7eBwlZ/EFFo7QAsf7rpgR3WY=;
+        b=pdjYQNfa2+Jch+CgIhfUgShRzqnD3sscwWilIWBtPIBrM3B9mjJc0J6flRBXJSVxSM
+         LGJrgSHqI4uX4/v2bjQRWqIqVEf9XRZHJFf+e2B/fjrQhxVaUzmxUc76sNx6YQ8JxBQU
+         UUEAaKTgtL30qY2BtvUUqzzonyw/sLP54iu+L+6zNwPVDC3EKLdOO7mqEhbs6QRG6aNq
+         5cQRPCBUgIQyQKu8soKB1ZM2yDSOVI4U+jo872G3ChmpBGef50murfNZX3e9d3rlLLYo
+         9JhZyynWfjx+zzniFhegRg7lgq1zguiKJABNQ9nGa3ZYXdc6y8jP9qKPaEX2fNZVchOb
+         v4uQ==
+X-Gm-Message-State: AOAM530sp9TRIwqVh3YgiYeX2KmOCUufvS5N0+ezL8c5JwEVZLvXyNqH
+        OkbDNpSQbmyan2b8ggJl97TXgg==
+X-Google-Smtp-Source: ABdhPJxbgEbHJ0mr0GekKJiZXS5cu7Paw1X/TAwWrXa8AEzZJllZlzkoC+8Rt09NwZDqGaJwOG/kkw==
+X-Received: by 2002:a05:6830:3081:: with SMTP id f1mr3583414ots.269.1603311110771;
+        Wed, 21 Oct 2020 13:11:50 -0700 (PDT)
+Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id t5sm838166otl.22.2020.10.21.13.11.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Oct 2020 13:11:50 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Martin Botka <martin.botka1@gmail.com>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+Subject: [PATCH v6 2/4] leds: Add driver for Qualcomm LPG
+Date:   Wed, 21 Oct 2020 13:12:22 -0700
+Message-Id: <20201021201224.3430546-3-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201021201224.3430546-1-bjorn.andersson@linaro.org>
+References: <20201021201224.3430546-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3898.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c28f0120-f284-4550-4435-08d875bcfcae
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2020 12:29:42.4966
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wlQtLhXUNtnAMdZzvPnv8uI3Ghci6UwyCe6dmCIoaxgWN+DxXNseD8mVBYblduyxARqtkT+uRhJ9baYNakUHZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2344
-X-OriginatorOrg: Nvidia.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603283385; bh=iygyZknMfcMwrHLk2LR/pJ3O6akJeAGTTKK/e+Zj+To=;
-        h=ARC-Seal:ARC-Message-Signature:ARC-Authentication-Results:From:To:
-         CC:Subject:Thread-Topic:Thread-Index:Date:Message-ID:References:
-         In-Reply-To:Accept-Language:Content-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-ms-office365-filtering-correlation-id:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
-         x-ms-oob-tlc-oobclassifiers:x-ms-exchange-senderadcheck:
-         x-microsoft-antispam:x-microsoft-antispam-message-info:
-         x-forefront-antispam-report:x-ms-exchange-antispam-messagedata:
-         x-ms-exchange-transport-forked:Content-Type:
-         Content-Transfer-Encoding:MIME-Version:
-         X-MS-Exchange-CrossTenant-AuthAs:
-         X-MS-Exchange-CrossTenant-AuthSource:
-         X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-CrossTenant-userprincipalname:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg;
-        b=eA6WVlkt8xeqaH21MlMwCrEHBycZryRdj7YrWGmIn4z6HOsf+Pd/s+jNkTX6Ghr1D
-         YuUJsgPAUsFtn9o70u3lIND1YAuSxJ7OhhiQZn9VXCddINepAXHyQIsg8CjOYkcE2R
-         J6Cgu39hXOBUkXzmmncrjyO7rzAjVnohKKRlWPya3SYbxrdSDf+Ksd0f8FHPHYPu5n
-         lxX2e7VY2FXF2DBOUE88A9gpHiz5f2j0ynSiSP3EzIy29pgBXMMNpkfQIX1mh6x3KZ
-         gfyEIoSQMHUMLSjVi1Zfjm/1Cg2lX4Jd++XLx3SbVO0JHeSnYldIIXJsBb0CjPg+q7
-         PqEiKzkEPhl0A==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+The Light Pulse Generator (LPG) is a PWM-block found in a wide range of
+PMICs from Qualcomm. It can operate on fixed parameters or based on a
+lookup-table, altering the duty cycle over time - which provides the
+means for e.g. hardware assisted transitions of LED brightness.
 
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-> -----Original Message-----
-> From: Pavel Machek <pavel@ucw.cz>
-> Sent: Wednesday, October 21, 2020 11:34 AM
-> To: Vadim Pasternak <vadimp@nvidia.com>
-> Cc: Marek Behun <marek.behun@nic.cz>; jacek.anaszewski@gmail.com; linux-
-> leds@vger.kernel.org
-> Subject: Re: [PATCH led-next 1/1] leds: mlxreg: Allow multi-instantiation=
- of
-> same name LED for modular systems
->=20
-> Hi!
->=20
-> > > > But why you consider it as function enumerator?
-> > > > For example card48, card56 are two different devices of same type.
-> > > > Both have 'status' LED.
-> > >
-> > > OK this is a fair point.
-> > >
-> > > I was thinking such because in my mind I had this idea that for an
-> > > ethernet switch with interfaces lan0 - lan4 it would make sense to
-> > > use the LED_FUNCTION_LAN function with function enumerator. But
-> > > thinking about this now again makes me wonder if instead the lan0 -
-> > > lan4 should be devicenames instead, since normally they are network
-> interface names.
-> > >
-> > > Vadim, the reason why Pavel and I think that mlxreg (or mlxregN) is
-> > > not valid devicename part (although mlxreg has to stay since many
-> > > users already depend on it, as you say), is that the mlxreg name is
-> > > not exposed anywhere else in Linux from userspace point of view.
-> > >
-> > > Devicename eth0 is okay, because it is network interface name.
-> > > Devicename sda would be okay, because everyone knows it is a block
-> > > device and you can access it via /dev/sda.
-> > > Devicename hci0 would be okay because it is bluetooth interface
-> > > accessible via hcitool.
-> > > Devicenames mtd0, kbd0, mouse0 would be okay, I think.
-> > >
-> > > But mlxreg is not accessible via anything else in the system. Unless
-> > > your systems also have something like /dev/mlxreg, that is.
-> > >
-> > > Do the LEDs on these cards only indicate status of the cards
-> > > themselves as a whole? Or are there LEDs on these cards dedicated to
-> > > their peripherals? For example if there is an ethernet port with
-> > > LEDs on one of these cards, the devicename part for these LEDs
-> > > should be of the device of that ethernet port, not mlxreg...
-> >
-> > Hi Marek,
-> >
-> > Each line card must have 'status' LED, indicating status of line card i=
-tself.
-> > User can set non-green in case some there are some alarms on different
-> > devices, equipped on this line card. It can be set blink during line ca=
-rd
-> initialization.
-> >
-> > Line card could be equipped with UID LED. User can set this LED in
-> > order to find physical location of line card. Sometimes it's hard to
-> > see the sticker on chassis.
-> >
-> > Line card also equipped with per port LED, but those LEDs are handled b=
-y
-> FW.
-> >
-> > So, the device in this case is 'line card'.
-> >
-> > In my previous reply I suggest name 'fru' stands for the filed replacea=
-ble unit.
-> > This is not something, that is exposed in '/dev', but it describes any
-> > replaceable unit within the system.
->=20
-> So.. you'd use the LED to locate right PCI card, or the LED would indicat=
-e that
-> whole card is failing, etc...?
->=20
-> Could we use pci00:1b.0 as the device name? (same as lspci). Probably rep=
-lace
-> : with _...
->=20
+Changes since v5:
+- Make sure to not used the state of the last channel in a group to determine
+  if the current sink should be active for all channels in the group.
+- Replacement of unsigned -1 with UINT_MAX
+- Work around potential overflow by using larger data types, instead of separate code paths
+- Use cpu_to_l16() rather than hand rolling them
+- Minor style cleanups
 
-Hi Pavel,
+ drivers/leds/Kconfig         |    9 +
+ drivers/leds/Makefile        |    1 +
+ drivers/leds/leds-qcom-lpg.c | 1190 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 1200 insertions(+)
+ create mode 100644 drivers/leds/leds-qcom-lpg.c
 
-Yes, STATU and UID LED indicates whole line card status/location.
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 849d3c5f908e..d500648c586f 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -803,6 +803,15 @@ config LEDS_POWERNV
+ 	  To compile this driver as a module, choose 'm' here: the module
+ 	  will be called leds-powernv.
+ 
++config LEDS_QCOM_LPG
++	tristate "LED support for Qualcomm LPG"
++	depends on LEDS_CLASS_MULTICOLOR
++	depends on OF
++	depends on SPMI
++	help
++	  This option enables support for the Light Pulse Generator found in a
++	  wide variety of Qualcomm PMICs.
++
+ config LEDS_SYSCON
+ 	bool "LED support for LEDs on system controllers"
+ 	depends on LEDS_CLASS=y
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 73e603e1727e..52d0ea26fc35 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -79,6 +79,7 @@ obj-$(CONFIG_LEDS_PCA963X)		+= leds-pca963x.o
+ obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
+ obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
+ obj-$(CONFIG_LEDS_PWM)			+= leds-pwm.o
++obj-$(CONFIG_LEDS_QCOM_LPG)		+= leds-qcom-lpg.o
+ obj-$(CONFIG_LEDS_REGULATOR)		+= leds-regulator.o
+ obj-$(CONFIG_LEDS_S3C24XX)		+= leds-s3c24xx.o
+ obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
+diff --git a/drivers/leds/leds-qcom-lpg.c b/drivers/leds/leds-qcom-lpg.c
+new file mode 100644
+index 000000000000..86131a65d2c5
+--- /dev/null
++++ b/drivers/leds/leds-qcom-lpg.c
+@@ -0,0 +1,1190 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2017-2020 Linaro Ltd
++ * Copyright (c) 2010-2012, The Linux Foundation. All rights reserved.
++ */
++#include <linux/bits.h>
++#include <linux/led-class-multicolor.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/pwm.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++#define LPG_PATTERN_CONFIG_REG	0x40
++#define LPG_SIZE_CLK_REG	0x41
++#define LPG_PREDIV_CLK_REG	0x42
++#define PWM_TYPE_CONFIG_REG	0x43
++#define PWM_VALUE_REG		0x44
++#define PWM_ENABLE_CONTROL_REG	0x46
++#define PWM_SYNC_REG		0x47
++#define LPG_RAMP_DURATION_REG	0x50
++#define LPG_HI_PAUSE_REG	0x52
++#define LPG_LO_PAUSE_REG	0x54
++#define LPG_HI_IDX_REG		0x56
++#define LPG_LO_IDX_REG		0x57
++#define PWM_SEC_ACCESS_REG	0xd0
++#define PWM_DTEST_REG(x)	(0xe2 + (x) - 1)
++
++#define TRI_LED_SRC_SEL		0x45
++#define TRI_LED_EN_CTL		0x46
++#define TRI_LED_ATC_CTL		0x47
++
++#define LPG_LUT_REG(x)		(0x40 + (x) * 2)
++#define RAMP_CONTROL_REG	0xc8
++
++struct lpg_channel;
++struct lpg_data;
++
++/**
++ * struct lpg - LPG device context
++ * @dev:	struct device for LPG device
++ * @map:	regmap for register access
++ * @pwm:	PWM-chip object, if operating in PWM mode
++ * @lut_base:	base address of the LUT block (optional)
++ * @lut_size:	number of entries in the LUT block
++ * @lut_bitmap:	allocation bitmap for LUT entries
++ * @triled_base: base address of the TRILED block (optional)
++ * @triled_src:	power-source for the TRILED
++ * @channels:	list of PWM channels
++ * @num_channels: number of @channels
++ */
++struct lpg {
++	struct device *dev;
++	struct regmap *map;
++
++	struct pwm_chip pwm;
++
++	const struct lpg_data *data;
++
++	u32 lut_base;
++	u32 lut_size;
++	unsigned long *lut_bitmap;
++
++	u32 triled_base;
++	u32 triled_src;
++
++	struct lpg_channel *channels;
++	unsigned int num_channels;
++};
++
++/**
++ * struct lpg_channel - per channel data
++ * @lpg:	reference to parent lpg
++ * @base:	base address of the PWM channel
++ * @triled_mask: mask in TRILED to enable this channel
++ * @lut_mask:	mask in LUT to start pattern generator for this channel
++ * @in_use:	channel is exposed to LED framework
++ * @color:	color of the LED attached to this channel
++ * @dtest_line:	DTEST line for output, or 0 if disabled
++ * @dtest_value: DTEST line configuration
++ * @pwm_value:	duty (in microseconds) of the generated pulses, overridden by LUT
++ * @enabled:	output enabled?
++ * @period_us:	period (in microseconds) of the generated pulses
++ * @pwm_size:	resolution of the @pwm_value, 6 or 9 bits
++ * @clk:	base frequency of the clock generator
++ * @pre_div:	divider of @clk
++ * @pre_div_exp: exponential divider of @clk
++ * @ramp_enabled: duty cycle is driven by iterating over lookup table
++ * @ramp_ping_pong: reverse through pattern, rather than wrapping to start
++ * @ramp_oneshot: perform only a single pass over the pattern
++ * @ramp_reverse: iterate over pattern backwards
++ * @ramp_duration_ms: length (in milliseconds) of one pattern run
++ * @ramp_lo_pause_ms: pause (in milliseconds) before iterating over pattern
++ * @ramp_hi_pause_ms: pause (in milliseconds) after iterating over pattern
++ * @pattern_lo_idx: start index of associated pattern
++ * @pattern_hi_idx: last index of associated pattern
++ */
++struct lpg_channel {
++	struct lpg *lpg;
++
++	u32 base;
++	unsigned int triled_mask;
++	unsigned int lut_mask;
++
++	bool in_use;
++
++	int color;
++
++	u32 dtest_line;
++	u32 dtest_value;
++
++	u16 pwm_value;
++	bool enabled;
++
++	unsigned int period_us;
++	unsigned int pwm_size;
++	unsigned int clk;
++	unsigned int pre_div;
++	unsigned int pre_div_exp;
++
++	bool ramp_enabled;
++	bool ramp_ping_pong;
++	bool ramp_oneshot;
++	bool ramp_reverse;
++	unsigned long ramp_duration_ms;
++	unsigned long ramp_lo_pause_ms;
++	unsigned long ramp_hi_pause_ms;
++
++	unsigned int pattern_lo_idx;
++	unsigned int pattern_hi_idx;
++};
++
++/**
++ * struct lpg_led - logical LED object
++ * @lpg:		lpg context reference
++ * @cdev:		LED class device
++ * @mcdev:		Multicolor LED class device
++ * @num_channels:	number of @channels
++ * @channels:		list of channels associated with the LED
++ */
++struct lpg_led {
++	struct lpg *lpg;
++
++	struct led_classdev cdev;
++	struct led_classdev_mc mcdev;
++
++	unsigned int num_channels;
++	struct lpg_channel *channels[];
++};
++
++/**
++ * struct lpg_channel_data - per channel initialization data
++ * @base:		base address for PWM channel registers
++ * @triled_mask:	bitmask for controlling this channel in TRILED
++ */
++struct lpg_channel_data {
++	unsigned int base;
++	u8 triled_mask;
++};
++
++/**
++ * struct lpg_data - initialization data
++ * @lut_base:		base address of LUT block
++ * @lut_size:		number of entries in LUT
++ * @triled_base:	base address of TRILED
++ * @pwm_9bit_mask:	bitmask for switching from 6bit to 9bit pwm
++ * @num_channels:	number of channels in LPG
++ * @channels:		list of channel initialization data
++ */
++struct lpg_data {
++	unsigned int lut_base;
++	unsigned int lut_size;
++	unsigned int triled_base;
++	unsigned int pwm_9bit_mask;
++	int num_channels;
++	struct lpg_channel_data *channels;
++};
++
++static int triled_set(struct lpg *lpg, unsigned int mask, unsigned int enable)
++{
++	/* Skip if we don't have a triled block */
++	if (!lpg->triled_base)
++		return 0;
++
++	return regmap_update_bits(lpg->map, lpg->triled_base + TRI_LED_EN_CTL,
++				  mask, enable);
++}
++
++static int lpg_lut_store(struct lpg *lpg, struct led_pattern *pattern,
++			 size_t len, unsigned int *lo_idx, unsigned int *hi_idx)
++{
++	unsigned int idx;
++	__le16 val;
++	int i;
++
++	/* Hardware does not behave when LO_IDX == HI_IDX */
++	if (len == 1)
++		return -EINVAL;
++
++	idx = bitmap_find_next_zero_area(lpg->lut_bitmap, lpg->lut_size,
++					 0, len, 0);
++	if (idx >= lpg->lut_size)
++		return -ENOMEM;
++
++	for (i = 0; i < len; i++) {
++		val = cpu_to_le16(pattern[i].brightness);
++
++		regmap_bulk_write(lpg->map, lpg->lut_base + LPG_LUT_REG(idx + i),
++				  &val, sizeof(val));
++	}
++
++	bitmap_set(lpg->lut_bitmap, idx, len);
++
++	*lo_idx = idx;
++	*hi_idx = idx + len - 1;
++
++	return 0;
++}
++
++static void lpg_lut_free(struct lpg *lpg, unsigned int lo_idx, unsigned int hi_idx)
++{
++	int len;
++
++	if (lo_idx == hi_idx)
++		return;
++
++	len = hi_idx - lo_idx + 1;
++	bitmap_clear(lpg->lut_bitmap, lo_idx, len);
++}
++
++static int lpg_lut_sync(struct lpg *lpg, unsigned int mask)
++{
++	return regmap_write(lpg->map, lpg->lut_base + RAMP_CONTROL_REG, mask);
++}
++
++#define NUM_PWM_PREDIV	4
++#define NUM_PWM_CLK	3
++#define NUM_EXP		7
++
++static const unsigned int lpg_clk_table[NUM_PWM_PREDIV][NUM_PWM_CLK] = {
++	{
++		1 * (NSEC_PER_SEC / 1024),
++		1 * (NSEC_PER_SEC / 32768),
++		1 * (NSEC_PER_SEC / 19200000),
++	},
++	{
++		3 * (NSEC_PER_SEC / 1024),
++		3 * (NSEC_PER_SEC / 32768),
++		3 * (NSEC_PER_SEC / 19200000),
++	},
++	{
++		5 * (NSEC_PER_SEC / 1024),
++		5 * (NSEC_PER_SEC / 32768),
++		5 * (NSEC_PER_SEC / 19200000),
++	},
++	{
++		6 * (NSEC_PER_SEC / 1024),
++		6 * (NSEC_PER_SEC / 32768),
++		6 * (NSEC_PER_SEC / 19200000),
++	},
++};
++
++/*
++ * PWM Frequency = Clock Frequency / (N * T)
++ *      or
++ * PWM Period = Clock Period * (N * T)
++ *      where
++ * N = 2^9 or 2^6 for 9-bit or 6-bit PWM size
++ * T = Pre-divide * 2^m, where m = 0..7 (exponent)
++ *
++ * This is the formula to figure out m for the best pre-divide and clock:
++ * (PWM Period / N) = (Pre-divide * Clock Period) * 2^m
++ */
++static void lpg_calc_freq(struct lpg_channel *chan, unsigned int period_us)
++{
++	int             n, m, clk, div;
++	int             best_m, best_div, best_clk;
++	unsigned int    last_err, cur_err, min_err;
++	unsigned int    tmp_p, period_n;
++
++	if (period_us == chan->period_us)
++		return;
++
++	/* PWM Period / N */
++	if (period_us < UINT_MAX / NSEC_PER_USEC)
++		n = 6;
++	else
++		n = 9;
++
++	period_n = ((u64)period_us * NSEC_PER_USEC) >> n;
++
++	min_err = UINT_MAX;
++	last_err = UINT_MAX;
++	best_m = 0;
++	best_clk = 0;
++	best_div = 0;
++	for (clk = 0; clk < NUM_PWM_CLK; clk++) {
++		for (div = 0; div < NUM_PWM_PREDIV; div++) {
++			/* period_n = (PWM Period / N) */
++			/* tmp_p = (Pre-divide * Clock Period) * 2^m */
++			tmp_p = lpg_clk_table[div][clk];
++			for (m = 0; m <= NUM_EXP; m++) {
++				cur_err = abs(period_n - tmp_p);
++				if (cur_err < min_err) {
++					min_err = cur_err;
++					best_m = m;
++					best_clk = clk;
++					best_div = div;
++				}
++
++				if (m && cur_err > last_err)
++					/* Break for bigger cur_err */
++					break;
++
++				last_err = cur_err;
++				tmp_p <<= 1;
++			}
++		}
++	}
++
++	/* Use higher resolution */
++	if (best_m >= 3 && n == 6) {
++		n += 3;
++		best_m -= 3;
++	}
++
++	chan->clk = best_clk;
++	chan->pre_div = best_div;
++	chan->pre_div_exp = best_m;
++	chan->pwm_size = n;
++
++	chan->period_us = period_us;
++}
++
++static void lpg_calc_duty(struct lpg_channel *chan, unsigned int duty_us)
++{
++	unsigned int max = (1 << chan->pwm_size) - 1;
++	unsigned int val = div_u64((u64)duty_us << chan->pwm_size, chan->period_us);
++
++	chan->pwm_value = min(val, max);
++}
++
++static void lpg_apply_freq(struct lpg_channel *chan)
++{
++	unsigned long val;
++	struct lpg *lpg = chan->lpg;
++
++	if (!chan->enabled)
++		return;
++
++	/* Clock register values are off-by-one from lpg_clk_table */
++	val = chan->clk + 1;
++
++	if (chan->pwm_size == 9)
++		val |= lpg->data->pwm_9bit_mask;
++
++	regmap_write(lpg->map, chan->base + LPG_SIZE_CLK_REG, val);
++
++	val = chan->pre_div << 5 | chan->pre_div_exp;
++	regmap_write(lpg->map, chan->base + LPG_PREDIV_CLK_REG, val);
++}
++
++#define LPG_ENABLE_GLITCH_REMOVAL	BIT(5)
++
++static void lpg_enable_glitch(struct lpg_channel *chan)
++{
++	struct lpg *lpg = chan->lpg;
++
++	regmap_update_bits(lpg->map, chan->base + PWM_TYPE_CONFIG_REG,
++			   LPG_ENABLE_GLITCH_REMOVAL, 0);
++}
++
++static void lpg_disable_glitch(struct lpg_channel *chan)
++{
++	struct lpg *lpg = chan->lpg;
++
++	regmap_update_bits(lpg->map, chan->base + PWM_TYPE_CONFIG_REG,
++			   LPG_ENABLE_GLITCH_REMOVAL,
++			   LPG_ENABLE_GLITCH_REMOVAL);
++}
++
++static void lpg_apply_pwm_value(struct lpg_channel *chan)
++{
++	__le16 val = cpu_to_le16(chan->pwm_value);
++	struct lpg *lpg = chan->lpg;
++
++	if (!chan->enabled)
++		return;
++
++	regmap_bulk_write(lpg->map, chan->base + PWM_VALUE_REG, &val, sizeof(val));
++}
++
++#define LPG_PATTERN_CONFIG_LO_TO_HI	BIT(4)
++#define LPG_PATTERN_CONFIG_REPEAT	BIT(3)
++#define LPG_PATTERN_CONFIG_TOGGLE	BIT(2)
++#define LPG_PATTERN_CONFIG_PAUSE_HI	BIT(1)
++#define LPG_PATTERN_CONFIG_PAUSE_LO	BIT(0)
++
++static void lpg_apply_lut_control(struct lpg_channel *chan)
++{
++	struct lpg *lpg = chan->lpg;
++	unsigned int hi_pause;
++	unsigned int lo_pause;
++	unsigned int step;
++	unsigned int conf = 0;
++	unsigned int lo_idx = chan->pattern_lo_idx;
++	unsigned int hi_idx = chan->pattern_hi_idx;
++	int pattern_len;
++
++	if (!chan->ramp_enabled || chan->pattern_lo_idx == chan->pattern_hi_idx)
++		return;
++
++	pattern_len = hi_idx - lo_idx + 1;
++
++	step = DIV_ROUND_UP(chan->ramp_duration_ms, pattern_len);
++	hi_pause = DIV_ROUND_UP(chan->ramp_hi_pause_ms, step);
++	lo_pause = DIV_ROUND_UP(chan->ramp_lo_pause_ms, step);
++
++	if (!chan->ramp_reverse)
++		conf |= LPG_PATTERN_CONFIG_LO_TO_HI;
++	if (!chan->ramp_oneshot)
++		conf |= LPG_PATTERN_CONFIG_REPEAT;
++	if (chan->ramp_ping_pong)
++		conf |= LPG_PATTERN_CONFIG_TOGGLE;
++	if (chan->ramp_hi_pause_ms)
++		conf |= LPG_PATTERN_CONFIG_PAUSE_HI;
++	if (chan->ramp_lo_pause_ms)
++		conf |= LPG_PATTERN_CONFIG_PAUSE_LO;
++
++	regmap_write(lpg->map, chan->base + LPG_PATTERN_CONFIG_REG, conf);
++	regmap_write(lpg->map, chan->base + LPG_HI_IDX_REG, hi_idx);
++	regmap_write(lpg->map, chan->base + LPG_LO_IDX_REG, lo_idx);
++
++	regmap_write(lpg->map, chan->base + LPG_RAMP_DURATION_REG, step);
++	regmap_write(lpg->map, chan->base + LPG_HI_PAUSE_REG, hi_pause);
++	regmap_write(lpg->map, chan->base + LPG_LO_PAUSE_REG, lo_pause);
++}
++
++#define LPG_ENABLE_CONTROL_OUTPUT		BIT(7)
++#define LPG_ENABLE_CONTROL_BUFFER_TRISTATE	BIT(5)
++#define LPG_ENABLE_CONTROL_SRC_PWM		BIT(2)
++#define LPG_ENABLE_CONTROL_RAMP_GEN		BIT(1)
++
++static void lpg_apply_control(struct lpg_channel *chan)
++{
++	unsigned int ctrl;
++	struct lpg *lpg = chan->lpg;
++
++	ctrl = LPG_ENABLE_CONTROL_BUFFER_TRISTATE;
++
++	if (chan->enabled)
++		ctrl |= LPG_ENABLE_CONTROL_OUTPUT;
++
++	if (chan->pattern_lo_idx != chan->pattern_hi_idx)
++		ctrl |= LPG_ENABLE_CONTROL_RAMP_GEN;
++	else
++		ctrl |= LPG_ENABLE_CONTROL_SRC_PWM;
++
++	regmap_write(lpg->map, chan->base + PWM_ENABLE_CONTROL_REG, ctrl);
++
++	/*
++	 * Due to LPG hardware bug, in the PWM mode, having enabled PWM,
++	 * We have to write PWM values one more time.
++	 */
++	if (chan->enabled)
++		lpg_apply_pwm_value(chan);
++}
++
++#define LPG_SYNC_PWM	BIT(0)
++
++static void lpg_apply_sync(struct lpg_channel *chan)
++{
++	struct lpg *lpg = chan->lpg;
++
++	regmap_write(lpg->map, chan->base + PWM_SYNC_REG, LPG_SYNC_PWM);
++}
++
++static void lpg_apply_dtest(struct lpg_channel *chan)
++{
++	struct lpg *lpg = chan->lpg;
++
++	if (!chan->dtest_line)
++		return;
++
++	regmap_write(lpg->map, chan->base + PWM_SEC_ACCESS_REG, 0xa5);
++	regmap_write(lpg->map, chan->base + PWM_DTEST_REG(chan->dtest_line),
++		     chan->dtest_value);
++}
++
++static void lpg_apply(struct lpg_channel *chan)
++{
++	lpg_disable_glitch(chan);
++	lpg_apply_freq(chan);
++	lpg_apply_pwm_value(chan);
++	lpg_apply_control(chan);
++	lpg_apply_sync(chan);
++	lpg_apply_lut_control(chan);
++	lpg_enable_glitch(chan);
++}
++
++static void lpg_brightness_set(struct lpg_led *led, struct led_classdev *cdev,
++			       struct mc_subled *subleds)
++{
++	enum led_brightness brightness;
++	struct lpg_channel *chan;
++	unsigned int triled_enabled = 0;
++	unsigned int triled_mask = 0;
++	unsigned int lut_mask = 0;
++	unsigned int duty_us;
++	struct lpg *lpg = led->lpg;
++	int i;
++
++	for (i = 0; i < led->num_channels; i++) {
++		chan = led->channels[i];
++		brightness = subleds[i].brightness;
++
++		if (brightness == LED_OFF) {
++			chan->enabled = false;
++			chan->ramp_enabled = false;
++		} else if (chan->pattern_lo_idx != chan->pattern_hi_idx) {
++			lpg_calc_freq(chan, NSEC_PER_USEC);
++
++			chan->enabled = true;
++			chan->ramp_enabled = true;
++
++			lut_mask |= chan->lut_mask;
++			triled_enabled |= chan->triled_mask;
++		} else {
++			lpg_calc_freq(chan, NSEC_PER_USEC);
++
++			duty_us = brightness * chan->period_us / cdev->max_brightness;
++			lpg_calc_duty(chan, duty_us);
++			chan->enabled = true;
++			chan->ramp_enabled = false;
++
++			triled_enabled |= chan->triled_mask;
++		}
++
++		triled_mask |= chan->triled_mask;
++
++		lpg_apply(chan);
++	}
++
++	/* Toggle triled lines */
++	if (triled_mask)
++		triled_set(lpg, triled_mask, triled_enabled);
++
++	/* Trigger start of ramp generator(s) */
++	if (lut_mask)
++		lpg_lut_sync(lpg, lut_mask);
++}
++
++static void lpg_brightness_single_set(struct led_classdev *cdev,
++				      enum led_brightness value)
++{
++	struct lpg_led *led = container_of(cdev, struct lpg_led, cdev);
++	struct mc_subled info;
++
++	info.brightness = value;
++	lpg_brightness_set(led, cdev, &info);
++}
++
++static void lpg_brightness_mc_set(struct led_classdev *cdev,
++				  enum led_brightness value)
++{
++	struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
++	struct lpg_led *led = container_of(mc, struct lpg_led, mcdev);
++
++	led_mc_calc_color_components(mc, value);
++	lpg_brightness_set(led, cdev, mc->subled_info);
++}
++
++static int lpg_blink_set(struct lpg_led *led,
++			 unsigned long delay_on, unsigned long delay_off)
++{
++	struct lpg_channel *chan;
++	unsigned int period_us;
++	unsigned int duty_us;
++	int i;
++
++	if (!delay_on && !delay_off) {
++		delay_on = 500;
++		delay_off = 500;
++	}
++
++	duty_us = delay_on * USEC_PER_MSEC;
++	period_us = (delay_on + delay_off) * USEC_PER_MSEC;
++
++	for (i = 0; i < led->num_channels; i++) {
++		chan = led->channels[i];
++
++		lpg_calc_freq(chan, period_us);
++		lpg_calc_duty(chan, duty_us);
++
++		chan->enabled = true;
++		chan->ramp_enabled = false;
++
++		lpg_apply(chan);
++	}
++
++	return 0;
++}
++
++static int lpg_blink_single_set(struct led_classdev *cdev,
++				unsigned long *delay_on, unsigned long *delay_off)
++{
++	struct lpg_led *led = container_of(cdev, struct lpg_led, cdev);
++
++	return lpg_blink_set(led, *delay_on, *delay_off);
++}
++
++static int lpg_blink_mc_set(struct led_classdev *cdev,
++			    unsigned long *delay_on, unsigned long *delay_off)
++{
++	struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
++	struct lpg_led *led = container_of(mc, struct lpg_led, mcdev);
++
++	return lpg_blink_set(led, *delay_on, *delay_off);
++}
++
++static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *pattern,
++			   u32 len, int repeat)
++{
++	struct lpg_channel *chan;
++	struct lpg *lpg = led->lpg;
++	unsigned int hi_pause;
++	unsigned int lo_pause;
++	unsigned int lo_idx;
++	unsigned int hi_idx;
++	bool ping_pong = true;
++	int brightness_a;
++	int brightness_b;
++	int ret;
++	int i;
++
++	/* Only support oneshot or indefinite loops, due to limited pattern space */
++	if (repeat != -1 && repeat != 1)
++		return -EINVAL;
++
++	/*
++	 * The LPG plays patterns with at a fixed pace, a "low pause" can be
++	 * performed before the pattern and a "high pause" after. In order to
++	 * save space the pattern can be played in "ping pong" mode, in which
++	 * the pattern is first played forward, then "high pause" is applied,
++	 * then the pattern is played backwards and finally the "low pause" is
++	 * applied.
++	 *
++	 * The delta_t of the first entry is used to determine the pace of the
++	 * pattern.
++	 *
++	 * If the specified pattern is a palindrome the ping pong mode is
++	 * enabled. In this scenario the delta_t of the last entry determines
++	 * the "low pause" time and the delta_t of the middle entry (i.e. the
++	 * last in the programmed pattern) determines the "high pause". If the
++	 * pattern consists of an odd number of values, no "high pause" is
++	 * used.
++	 *
++	 * When ping pong mode is not selected, the delta_t of the last entry
++	 * is used as "high pause". No "low pause" is used.
++	 *
++	 * delta_t of any other members of the pattern is ignored.
++	 */
++
++	/* Detect palindromes and use "ping pong" to reduce LUT usage */
++	for (i = 0; i < len / 2; i++) {
++		brightness_a = pattern[i].brightness;
++		brightness_b = pattern[len - i - 1].brightness;
++
++		if (brightness_a != brightness_b) {
++			ping_pong = false;
++			break;
++		}
++	}
++
++	if (ping_pong) {
++		if (len % 2)
++			hi_pause = 0;
++		else
++			hi_pause = pattern[len + 1 / 2].delta_t;
++		lo_pause = pattern[len - 1].delta_t;
++
++		len = (len + 1) / 2;
++	} else {
++		hi_pause = pattern[len - 1].delta_t;
++		lo_pause = 0;
++	}
++
++	ret = lpg_lut_store(lpg, pattern, len, &lo_idx, &hi_idx);
++	if (ret < 0)
++		goto out;
++
++	for (i = 0; i < led->num_channels; i++) {
++		chan = led->channels[i];
++
++		chan->ramp_duration_ms = pattern[0].delta_t * len;
++		chan->ramp_ping_pong = ping_pong;
++		chan->ramp_oneshot = repeat != -1;
++
++		chan->ramp_lo_pause_ms = lo_pause;
++		chan->ramp_hi_pause_ms = hi_pause;
++
++		chan->pattern_lo_idx = lo_idx;
++		chan->pattern_hi_idx = hi_idx;
++	}
++
++out:
++	return ret;
++}
++
++static int lpg_pattern_single_set(struct led_classdev *cdev,
++				  struct led_pattern *pattern, u32 len,
++				  int repeat)
++{
++	struct lpg_led *led = container_of(cdev, struct lpg_led, cdev);
++	int ret;
++
++	ret = lpg_pattern_set(led, pattern, len, repeat);
++	if (ret < 0)
++		return ret;
++
++	lpg_brightness_single_set(cdev, LED_FULL);
++
++	return 0;
++}
++
++static int lpg_pattern_mc_set(struct led_classdev *cdev,
++			      struct led_pattern *pattern, u32 len,
++			      int repeat)
++{
++	struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
++	struct lpg_led *led = container_of(mc, struct lpg_led, mcdev);
++	int ret;
++
++	ret = lpg_pattern_set(led, pattern, len, repeat);
++	if (ret < 0)
++		return ret;
++
++	led_mc_calc_color_components(mc, LED_FULL);
++	lpg_brightness_set(led, cdev, mc->subled_info);
++
++	return 0;
++}
++
++static int lpg_pattern_clear(struct lpg_led *led)
++{
++	struct lpg_channel *chan;
++	struct lpg *lpg = led->lpg;
++	int i;
++
++	chan = led->channels[0];
++	lpg_lut_free(lpg, chan->pattern_lo_idx, chan->pattern_hi_idx);
++
++	for (i = 0; i < led->num_channels; i++) {
++		chan = led->channels[i];
++		chan->pattern_lo_idx = 0;
++		chan->pattern_hi_idx = 0;
++	}
++
++	return 0;
++}
++
++static int lpg_pattern_single_clear(struct led_classdev *cdev)
++{
++	struct lpg_led *led = container_of(cdev, struct lpg_led, cdev);
++
++	return lpg_pattern_clear(led);
++}
++
++static int lpg_pattern_mc_clear(struct led_classdev *cdev)
++{
++	struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
++	struct lpg_led *led = container_of(mc, struct lpg_led, mcdev);
++
++	return lpg_pattern_clear(led);
++}
++
++static int lpg_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
++{
++	struct lpg *lpg = container_of(chip, struct lpg, pwm);
++	struct lpg_channel *chan = &lpg->channels[pwm->hwpwm];
++
++	return chan->in_use ? -EBUSY : 0;
++}
++
++static int lpg_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
++			 const struct pwm_state *state)
++{
++	struct lpg *lpg = container_of(chip, struct lpg, pwm);
++	struct lpg_channel *chan = &lpg->channels[pwm->hwpwm];
++
++	lpg_calc_freq(chan, div_u64(state->period, NSEC_PER_USEC));
++	lpg_calc_duty(chan, div_u64(state->duty_cycle, NSEC_PER_USEC));
++	chan->enabled = state->enabled;
++
++	lpg_apply(chan);
++
++	triled_set(lpg, chan->triled_mask, chan->enabled ? chan->triled_mask : 0);
++
++	return 0;
++}
++
++static const struct pwm_ops lpg_pwm_ops = {
++	.request = lpg_pwm_request,
++	.apply = lpg_pwm_apply,
++	.owner = THIS_MODULE,
++};
++
++static int lpg_add_pwm(struct lpg *lpg)
++{
++	int ret;
++
++	lpg->pwm.base = -1;
++	lpg->pwm.dev = lpg->dev;
++	lpg->pwm.npwm = lpg->num_channels;
++	lpg->pwm.ops = &lpg_pwm_ops;
++
++	ret = pwmchip_add(&lpg->pwm);
++	if (ret)
++		dev_err(lpg->dev, "failed to add PWM chip: ret %d\n", ret);
++
++	return ret;
++}
++
++static int lpg_parse_channel(struct lpg *lpg, struct device_node *np,
++			     struct lpg_channel **channel)
++{
++	struct lpg_channel *chan;
++	u32 dtest[2];
++	u32 color = LED_COLOR_ID_GREEN;
++	u32 reg;
++	int ret;
++
++	ret = of_property_read_u32(np, "reg", &reg);
++	if (ret || !reg || reg > lpg->num_channels) {
++		dev_err(lpg->dev, "invalid reg of %pOFn\n", np);
++		return -EINVAL;
++	}
++
++	chan = &lpg->channels[reg - 1];
++	chan->in_use = true;
++
++	ret = of_property_read_u32(np, "color", &color);
++	if (ret < 0 && ret != -EINVAL)
++		return ret;
++
++	chan->color = color;
++
++	ret = of_property_read_u32_array(np, "qcom,dtest", dtest, 2);
++	if (ret < 0 && ret != -EINVAL) {
++		dev_err(lpg->dev, "malformed qcom,dtest of %pOFn\n", np);
++		return ret;
++	} else if (!ret) {
++		chan->dtest_line = dtest[0];
++		chan->dtest_value = dtest[1];
++	}
++
++	*channel = chan;
++
++	return 0;
++}
++
++static int lpg_add_led(struct lpg *lpg, struct device_node *np)
++{
++	struct led_classdev *cdev;
++	struct device_node *child;
++	struct mc_subled *info;
++	struct lpg_led *led;
++	const char *state;
++	int num_channels;
++	u32 color = 0;
++	int ret;
++	int i;
++
++	ret = of_property_read_u32(np, "color", &color);
++	if (ret < 0 && ret != -EINVAL)
++		return ret;
++
++	if (color == LED_COLOR_ID_MULTI)
++		num_channels = of_get_available_child_count(np);
++	else
++		num_channels = 1;
++
++	led = devm_kzalloc(lpg->dev, struct_size(led, channels, num_channels), GFP_KERNEL);
++	if (!led)
++		return -ENOMEM;
++
++	led->lpg = lpg;
++	led->num_channels = num_channels;
++
++	if (color == LED_COLOR_ID_MULTI) {
++		info = devm_kcalloc(lpg->dev, num_channels, sizeof(*info), GFP_KERNEL);
++		if (!info)
++			return -ENOMEM;
++		i = 0;
++		for_each_available_child_of_node(np, child) {
++			ret = lpg_parse_channel(lpg, child, &led->channels[i]);
++			if (ret < 0)
++				return ret;
++
++			info[i].color_index = led->channels[i]->color;
++			info[i].intensity = LED_FULL;
++			i++;
++		}
++
++		led->mcdev.subled_info = info;
++		led->mcdev.num_colors = num_channels;
++
++		cdev = &led->mcdev.led_cdev;
++		cdev->brightness_set = lpg_brightness_mc_set;
++		cdev->blink_set = lpg_blink_mc_set;
++
++		/* Register pattern accessors only if we have a LUT block */
++		if (lpg->lut_base) {
++			cdev->pattern_set = lpg_pattern_mc_set;
++			cdev->pattern_clear = lpg_pattern_mc_clear;
++		}
++	} else {
++		ret = lpg_parse_channel(lpg, np, &led->channels[0]);
++		if (ret < 0)
++			return ret;
++
++		cdev = &led->cdev;
++		cdev->brightness_set = lpg_brightness_single_set;
++		cdev->blink_set = lpg_blink_single_set;
++
++		/* Register pattern accessors only if we have a LUT block */
++		if (lpg->lut_base) {
++			cdev->pattern_set = lpg_pattern_single_set;
++			cdev->pattern_clear = lpg_pattern_single_clear;
++		}
++	}
++
++	/* Use label else node name */
++	cdev->name = of_get_property(np, "label", NULL) ? : np->name;
++	cdev->default_trigger = of_get_property(np, "linux,default-trigger", NULL);
++	cdev->max_brightness = 255;
++
++	if (!of_property_read_string(np, "default-state", &state) &&
++	    !strcmp(state, "on"))
++		cdev->brightness = LED_FULL;
++	else
++		cdev->brightness = LED_OFF;
++
++	cdev->brightness_set(cdev, cdev->brightness);
++
++	if (color == LED_COLOR_ID_MULTI)
++		ret = devm_led_classdev_multicolor_register(lpg->dev, &led->mcdev);
++	else
++		ret = devm_led_classdev_register(lpg->dev, &led->cdev);
++	if (ret)
++		dev_err(lpg->dev, "unable to register %s\n", cdev->name);
++
++	return ret;
++}
++
++static int lpg_init_channels(struct lpg *lpg)
++{
++	const struct lpg_data *data = lpg->data;
++	int i;
++
++	lpg->num_channels = data->num_channels;
++	lpg->channels = devm_kcalloc(lpg->dev, data->num_channels,
++				     sizeof(struct lpg_channel), GFP_KERNEL);
++	if (!lpg->channels)
++		return -ENOMEM;
++
++	for (i = 0; i < data->num_channels; i++) {
++		lpg->channels[i].lpg = lpg;
++		lpg->channels[i].base = data->channels[i].base;
++		lpg->channels[i].triled_mask = data->channels[i].triled_mask;
++		lpg->channels[i].lut_mask = BIT(i);
++	}
++
++	return 0;
++}
++
++static int lpg_init_triled(struct lpg *lpg)
++{
++	struct device_node *np = lpg->dev->of_node;
++	int ret;
++
++	/* Skip initialization if we don't have a triled block */
++	if (!lpg->data->triled_base)
++		return 0;
++
++	lpg->triled_base = lpg->data->triled_base;
++
++	ret = of_property_read_u32(np, "qcom,power-source", &lpg->triled_src);
++	if (ret || lpg->triled_src == 2 || lpg->triled_src > 3) {
++		dev_err(lpg->dev, "invalid power source\n");
++		return -EINVAL;
++	}
++
++	/* Disable automatic trickle charge LED */
++	regmap_write(lpg->map, lpg->triled_base + TRI_LED_ATC_CTL, 0);
++
++	/* Configure power source */
++	regmap_write(lpg->map, lpg->triled_base + TRI_LED_SRC_SEL, lpg->triled_src);
++
++	/* Default all outputs to off */
++	regmap_write(lpg->map, lpg->triled_base + TRI_LED_EN_CTL, 0);
++
++	return 0;
++}
++
++static int lpg_init_lut(struct lpg *lpg)
++{
++	const struct lpg_data *data = lpg->data;
++	size_t bitmap_size;
++
++	if (!data->lut_base)
++		return 0;
++
++	lpg->lut_base = data->lut_base;
++	lpg->lut_size = data->lut_size;
++
++	bitmap_size = BITS_TO_LONGS(lpg->lut_size) * sizeof(unsigned long);
++	lpg->lut_bitmap = devm_kzalloc(lpg->dev, bitmap_size, GFP_KERNEL);
++
++	bitmap_clear(lpg->lut_bitmap, 0, lpg->lut_size);
++	return lpg->lut_bitmap ? 0 : -ENOMEM;
++}
++
++static int lpg_probe(struct platform_device *pdev)
++{
++	struct device_node *np;
++	struct lpg *lpg;
++	int ret;
++	int i;
++
++	lpg = devm_kzalloc(&pdev->dev, sizeof(*lpg), GFP_KERNEL);
++	if (!lpg)
++		return -ENOMEM;
++
++	lpg->data = of_device_get_match_data(&pdev->dev);
++	if (!lpg->data)
++		return -EINVAL;
++
++	lpg->dev = &pdev->dev;
++
++	lpg->map = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!lpg->map) {
++		dev_err(&pdev->dev, "parent regmap unavailable\n");
++		return -ENXIO;
++	}
++
++	ret = lpg_init_channels(lpg);
++	if (ret < 0)
++		return ret;
++
++	ret = lpg_init_triled(lpg);
++	if (ret < 0)
++		return ret;
++
++	ret = lpg_init_lut(lpg);
++	if (ret < 0)
++		return ret;
++
++	for_each_available_child_of_node(pdev->dev.of_node, np) {
++		ret = lpg_add_led(lpg, np);
++		if (ret)
++			return ret;
++	}
++
++	for (i = 0; i < lpg->num_channels; i++)
++		lpg_apply_dtest(&lpg->channels[i]);
++
++	ret = lpg_add_pwm(lpg);
++	if (ret)
++		return ret;
++
++	platform_set_drvdata(pdev, lpg);
++
++	return 0;
++}
++
++static int lpg_remove(struct platform_device *pdev)
++{
++	struct lpg *lpg = platform_get_drvdata(pdev);
++
++	pwmchip_remove(&lpg->pwm);
++
++	return 0;
++}
++
++static const struct lpg_data pm8916_pwm_data = {
++	.pwm_9bit_mask = BIT(2),
++
++	.num_channels = 1,
++	.channels = (struct lpg_channel_data[]) {
++		{ .base = 0xbc00 },
++	},
++};
++
++static const struct lpg_data pm8941_lpg_data = {
++	.lut_base = 0xb000,
++	.lut_size = 64,
++
++	.triled_base = 0xd000,
++
++	.pwm_9bit_mask = 3 << 4,
++
++	.num_channels = 8,
++	.channels = (struct lpg_channel_data[]) {
++		{ .base = 0xb100 },
++		{ .base = 0xb200 },
++		{ .base = 0xb300 },
++		{ .base = 0xb400 },
++		{ .base = 0xb500, .triled_mask = BIT(5) },
++		{ .base = 0xb600, .triled_mask = BIT(6) },
++		{ .base = 0xb700, .triled_mask = BIT(7) },
++		{ .base = 0xb800 },
++	},
++};
++
++static const struct lpg_data pm8994_lpg_data = {
++	.lut_base = 0xb000,
++	.lut_size = 64,
++
++	.pwm_9bit_mask = 3 << 4,
++
++	.num_channels = 6,
++	.channels = (struct lpg_channel_data[]) {
++		{ .base = 0xb100 },
++		{ .base = 0xb200 },
++		{ .base = 0xb300 },
++		{ .base = 0xb400 },
++		{ .base = 0xb500 },
++		{ .base = 0xb600 },
++	},
++};
++
++static const struct lpg_data pmi8994_lpg_data = {
++	.lut_base = 0xb000,
++	.lut_size = 24,
++
++	.triled_base = 0xd000,
++
++	.pwm_9bit_mask = BIT(4),
++
++	.num_channels = 4,
++	.channels = (struct lpg_channel_data[]) {
++		{ .base = 0xb100, .triled_mask = BIT(5) },
++		{ .base = 0xb200, .triled_mask = BIT(6) },
++		{ .base = 0xb300, .triled_mask = BIT(7) },
++		{ .base = 0xb400 },
++	},
++};
++
++static const struct lpg_data pmi8998_lpg_data = {
++	.lut_base = 0xb000,
++	.lut_size = 49,
++
++	.pwm_9bit_mask = BIT(4),
++
++	.num_channels = 6,
++	.channels = (struct lpg_channel_data[]) {
++		{ .base = 0xb100 },
++		{ .base = 0xb200 },
++		{ .base = 0xb300, .triled_mask = BIT(5) },
++		{ .base = 0xb400, .triled_mask = BIT(6) },
++		{ .base = 0xb500, .triled_mask = BIT(7) },
++		{ .base = 0xb600 },
++	},
++};
++
++static const struct of_device_id lpg_of_table[] = {
++	{ .compatible = "qcom,pm8916-pwm", .data = &pm8916_pwm_data },
++	{ .compatible = "qcom,pm8941-lpg", .data = &pm8941_lpg_data },
++	{ .compatible = "qcom,pm8994-lpg", .data = &pm8994_lpg_data },
++	{ .compatible = "qcom,pmi8994-lpg", .data = &pmi8994_lpg_data },
++	{ .compatible = "qcom,pmi8998-lpg", .data = &pmi8998_lpg_data },
++	{}
++};
++MODULE_DEVICE_TABLE(of, lpg_of_table);
++
++static struct platform_driver lpg_driver = {
++	.probe = lpg_probe,
++	.remove = lpg_remove,
++	.driver = {
++		.name = "qcom-spmi-lpg",
++		.of_match_table = lpg_of_table,
++	},
++};
++module_platform_driver(lpg_driver);
++
++MODULE_DESCRIPTION("Qualcomm LPG LED driver");
++MODULE_LICENSE("GPL v2");
+-- 
+2.28.0
 
-Some line cards could be connected through PCIe, but not all.
-From chassis management perspective they are connected by I2C.
-And CPLD register map is accessed through I2C.
-
-Following your suggestion it could be i2c-{n} as device name (pdev->id is I=
-2C bus):
-
- 		if (priv->pdev->id > 0)
- 			sprintf(led_data->led_cdev_name, "%s%d:%s", "i2c-",
- 				priv->pdev->id, data->label);
- 		else
- 			sprintf(led_data->led_cdev_name, "%s:%s", "mlxreg",
- 				data->label);
-
-Or bus name could be passed through the 'identity' filed:
-		if (priv->pdev->id > 0)
-			sprintf(led_data->led_cdev_name, "%s%d:%s", led_pdata->identity,
-				priv->pdev->id, data->label);
-		else
-			sprintf(led_data->led_cdev_name, "%s:%s", "mlxreg",
-				data->label);
-
-Thanks,
-Vadim.
-
-> Best regards,
-> 								Pavel
-> --
-> http://www.livejournal.com/~pavelmachek
