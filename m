@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BC0C56202
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BD7C6369E
 	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 20:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25FBA24181
+	by mail.kernel.org (Postfix) with ESMTP id 84C5124180
 	for <linux-leds@archiver.kernel.org>; Wed, 21 Oct 2020 20:12:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bsil/4/V"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rpbvkLyJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505149AbgJUUMB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 21 Oct 2020 16:12:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33566 "EHLO
+        id S2505145AbgJUULx (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 21 Oct 2020 16:11:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505140AbgJUULx (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Oct 2020 16:11:53 -0400
+        with ESMTP id S2505137AbgJUULw (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Oct 2020 16:11:52 -0400
 Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9AC5C0613D2
-        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:11:53 -0700 (PDT)
-Received: by mail-oi1-x242.google.com with SMTP id m128so3437882oig.7
-        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:11:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79CACC0613CF
+        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:11:52 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id u127so3442042oib.6
+        for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2020 13:11:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=h3IjEKBycl4AdV4pHmY8x7WaZ0Ptwe7SpKSP+5fA0v0=;
-        b=Bsil/4/VIe8KiAFM+fsJ3dsLu5fJ+LYGHFp8iH99zcx6Djp2uzo6FD2YjXSd82lkVg
-         piz/Xirt+WifCSz0l7gLClPZiP14tb0WYUyQ1zMTlVmshXF5Pz67/vDfyp2wt9XTPsFA
-         Fki4xWfLpSGf3CdTu/ToVli9ItQoWdBLKslbw39xMVutqkMO5lA39tyHb0vI3OtID41X
-         G7EuxKdKKEWeAa1c1hB4lNV0Et9TDTU7mqWIovKwHX1KCyWvWgOWqKJpPaMRWW8ursu2
-         CFBMyaLzPkkNQwauUzoy+G+anTLhUQY3fTNYAeSL6JKYR/OZo6RewIblcuW9ngtEzREg
-         XCLg==
+        bh=CTQjXkyBU+AXR4n3+CD+/Udf1tnLCv+grrFndIKi/I8=;
+        b=rpbvkLyJKFEWhkI0bl3iRJ+6Poue7ZjikFm+j1wMw19BQi6vVa2w+6A7TGM4i5AvyJ
+         FLoZ+56T1NEJM6CnMG5xvbV4BZ3aTwgZlOpE4elptBwWTWUTiwXEYciyvTWCF9mgW5kO
+         nHLnEdd7zEnzst/FkZ1nUrX+w01wrlpCzhQpiMj5TjFp9YR/p8z01F8O/OdyiuvL5dAN
+         8+cxJbZJW5I6nERd6vGo3ztfMoIi7HTdSi18LDcBVYaMiMpJxUbXhbjCskQin9kGq5M8
+         wKylvPzXTkMyZGExbYQZaHjA/jcY96t7sXYPv4LDgvAF8IyCntAftflBr8R6so9a1/j6
+         LJGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=h3IjEKBycl4AdV4pHmY8x7WaZ0Ptwe7SpKSP+5fA0v0=;
-        b=cnMQz/SBWG22w8faJggu7ILnnLYw4pnEXB06fBdeOYz8OfE0cfuwT73SHyMZtAlDQa
-         WppHb09cXEC2a/OsoyGB/TRLqJ5kN5O9h9fW8uOARmiQ+Lng0h0G5eAazIJMtQqPNKPA
-         2U79NMQiHH2HuwvP/OOr0baqSys2FAFTTqcAMokQUBn3SEhZfsZ2/3+HyUQ39xJbuRRx
-         VloAZzEn4DBwW3v39wbdDq56582C3qRpREQqztRKwXUvCjT0uUbjFmfk88g8sp6DigUH
-         ZaQbSiuJtCQ9Q2Sukk9UFAWB7nJUNiVON1SaKMtZOder12c71658bubHDIXbtc0mf+KA
-         QnBA==
-X-Gm-Message-State: AOAM531+MOYaqqgyYTMc7OXWSHae3599+BMDBhocUXFd2ZwT6EvfphrZ
-        a1XWtGaesZAnC6xEuPtZAOKFmg==
-X-Google-Smtp-Source: ABdhPJwpXwGpMMY0lOzWhIQyAznwBP9uD5c44odQWyNTc7tB26G8V2bFUSw/A6eCXg3EraLWJUhDoQ==
-X-Received: by 2002:aca:442:: with SMTP id 63mr3195841oie.111.1603311113085;
-        Wed, 21 Oct 2020 13:11:53 -0700 (PDT)
+        bh=CTQjXkyBU+AXR4n3+CD+/Udf1tnLCv+grrFndIKi/I8=;
+        b=D6k88fsENtT9KBwrnPpR3R4KOMZz2fPDPMCIer8zq4s7lCE6LFLy5oGUz290FEFAWF
+         WIbPV+KkNrgawMiIxJzX8jIRQ0TbCWQjNnL5k8KlcSNQjEq7C1IsMrUP1GGtu6p5fmKb
+         3bNGfWgJp0MHWhAIuLHnlM18JsX80mgDT6PlI4uAWEI5/yJJhjyDvyjyX/tG3JjRFijW
+         /m8mexbC5VQtY3nAN5YZe7o9MO1vqqjAdwmCEK29XSMwvFGC5NLOzI7kK4Cugyw8bScZ
+         89Skm55igsMf5q+rJPvHZdC4U6D6F3z01MT63qeQWv/wnQ5Ow24LIxs+zalWb+QoAkH8
+         YgUQ==
+X-Gm-Message-State: AOAM532Bh+vznPYrnfInq9lKIxkZenGVK4ZHuBeJK8sjTzObD7Ivb7cx
+        RLNiAvlzSpIaEDM5QQCxz25xTQ==
+X-Google-Smtp-Source: ABdhPJxVvM2KS6NoTYQZqhWxtTSGGTGaDlEmqecZLtPRRYaUhla2A0ek/tTe7tHT+zFDTkG92bLCOA==
+X-Received: by 2002:aca:4c0d:: with SMTP id z13mr3207502oia.78.1603311111876;
+        Wed, 21 Oct 2020 13:11:51 -0700 (PDT)
 Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id t5sm838166otl.22.2020.10.21.13.11.51
+        by smtp.gmail.com with ESMTPSA id t5sm838166otl.22.2020.10.21.13.11.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2020 13:11:52 -0700 (PDT)
+        Wed, 21 Oct 2020 13:11:51 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -69,9 +69,9 @@ To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
 Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-pwm@vger.kernel.org
-Subject: [PATCH v6 4/4] arm64: dts: qcom: Add user LEDs on db820c
-Date:   Wed, 21 Oct 2020 13:12:24 -0700
-Message-Id: <20201021201224.3430546-5-bjorn.andersson@linaro.org>
+Subject: [PATCH v6 3/4] arm64: dts: qcom: pm(i)8994: Add mpp and lpg blocks
+Date:   Wed, 21 Oct 2020 13:12:23 -0700
+Message-Id: <20201021201224.3430546-4-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201021201224.3430546-1-bjorn.andersson@linaro.org>
 References: <20201021201224.3430546-1-bjorn.andersson@linaro.org>
@@ -81,12 +81,10 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The db820c has 4 "user LEDs", all connected to the PMI8994. The first
-three are connected to the three current sinks provided by the TRILED
-and the fourth is connected to MPP2.
+The pm8994 contains a 6 LPG channels and the pmi8994 contains 4 MPP
+channels and a 4 channel LPG, with TRILED and LUT blocks.
 
-By utilizing the DTEST bus the MPP is fed the control signal from the
-fourth LPG block, providing a consistent interface to the user.
+Add nodes for these blocks.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
@@ -94,76 +92,68 @@ Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Changes since v5:
 - None
 
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 49 ++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+ arch/arm64/boot/dts/qcom/pm8994.dtsi  |  9 +++++++++
+ arch/arm64/boot/dts/qcom/pmi8994.dtsi | 20 ++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-index defcbd15edf9..7e51677d256e 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-@@ -8,6 +8,7 @@
- #include "pmi8994.dtsi"
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
- #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
- #include <dt-bindings/sound/qcom,q6afe.h>
- #include <dt-bindings/sound/qcom,q6asm.h>
-@@ -682,6 +683,54 @@ pinconf {
- 	};
- };
+diff --git a/arch/arm64/boot/dts/qcom/pm8994.dtsi b/arch/arm64/boot/dts/qcom/pm8994.dtsi
+index 7e4f777746cb..b5bef687aa3c 100644
+--- a/arch/arm64/boot/dts/qcom/pm8994.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm8994.dtsi
+@@ -86,6 +86,15 @@ pmic@1 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
-+&pmi8994_mpps {
-+	pmi8994_mpp2_userled4: mpp2-userled4 {
-+		pins = "mpp2";
-+		function = "sink";
++		pm8994_lpg: lpg {
++			compatible = "qcom,pm8994-lpg";
 +
-+		output-low;
-+		qcom,dtest = <4>;
-+	};
-+};
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
-+&pmi8994_lpg {
-+	qcom,power-source = <1>;
++			status = "disabled";
++		};
 +
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pmi8994_mpp2_userled4>;
+ 		pm8994_spmi_regulators: regulators {
+ 			compatible = "qcom,pm8994-regulators";
+ 		};
+diff --git a/arch/arm64/boot/dts/qcom/pmi8994.dtsi b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+index e5ed28ab9b2d..23f41328d191 100644
+--- a/arch/arm64/boot/dts/qcom/pmi8994.dtsi
++++ b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+@@ -19,6 +19,17 @@ pmi8994_gpios: gpios@c000 {
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
 +
-+	status = "okay";
++		pmi8994_mpps: mpps@a000 {
++			compatible = "qcom,pm8994-mpp";
++			reg = <0xa000>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupts = <0 0xa0 0 IRQ_TYPE_NONE>,
++				     <0 0xa1 0 IRQ_TYPE_NONE>,
++				     <0 0xa2 0 IRQ_TYPE_NONE>,
++				     <0 0xa3 0 IRQ_TYPE_NONE>;
++		};
+ 	};
+ 
+ 	pmic@3 {
+@@ -27,6 +38,15 @@ pmic@3 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
++		pmi8994_lpg: lpg@b100 {
++			compatible = "qcom,pmi8994-lpg";
 +
-+	#address-cells = <1>;
-+	#size-cells = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
-+	led@1 {
-+		reg = <1>;
-+		label = "green:user1";
++			status = "disabled";
++		};
 +
-+		linux,default-trigger = "heartbeat";
-+		default-state = "on";
-+	};
-+
-+	led@2 {
-+		reg = <2>;
-+		label = "green:user0";
-+		default-state = "on";
-+	};
-+
-+	led@3 {
-+		reg = <3>;
-+		label = "green:user2";
-+	};
-+
-+	led@4 {
-+		reg = <4>;
-+		label = "green:user3";
-+
-+		qcom,dtest = <4 1>;
-+	};
-+};
-+
- &pmi8994_spmi_regulators {
- 	vdd_gfx: s2@1700 {
- 		reg = <0x1700 0x100>;
+ 		pmi8994_spmi_regulators: regulators {
+ 			compatible = "qcom,pmi8994-regulators";
+ 			#address-cells = <1>;
 -- 
 2.28.0
 
