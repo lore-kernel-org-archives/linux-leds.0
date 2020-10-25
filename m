@@ -2,310 +2,347 @@ Return-Path: <SRS0=Bo3J=EA=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DBEC2D0A3
-	for <linux-leds@archiver.kernel.org>; Sun, 25 Oct 2020 00:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC3EC55179
+	for <linux-leds@archiver.kernel.org>; Sun, 25 Oct 2020 01:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F71D2098B
-	for <linux-leds@archiver.kernel.org>; Sun, 25 Oct 2020 00:59:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA869222C4
+	for <linux-leds@archiver.kernel.org>; Sun, 25 Oct 2020 01:26:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura-hr.20150623.gappssmtp.com header.i=@sartura-hr.20150623.gappssmtp.com header.b="xn4SrHuf"
+	dkim=pass (2048-bit key) header.d=sartura-hr.20150623.gappssmtp.com header.i=@sartura-hr.20150623.gappssmtp.com header.b="z1/9xfa0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1766546AbgJYA74 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 24 Oct 2020 20:59:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37760 "EHLO
+        id S1766588AbgJYB0W (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 24 Oct 2020 21:26:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1765976AbgJYA7g (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 24 Oct 2020 20:59:36 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D360BC0613CE
-        for <linux-leds@vger.kernel.org>; Sat, 24 Oct 2020 17:59:34 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id z5so8181978ejw.7
-        for <linux-leds@vger.kernel.org>; Sat, 24 Oct 2020 17:59:34 -0700 (PDT)
+        with ESMTP id S1766589AbgJYB0V (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 24 Oct 2020 21:26:21 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2517C0613D2
+        for <linux-leds@vger.kernel.org>; Sat, 24 Oct 2020 18:26:21 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id p9so5000494ilr.1
+        for <linux-leds@vger.kernel.org>; Sat, 24 Oct 2020 18:26:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sartura-hr.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=aH5lWPXQedbYF5LSN3GmPneR24giitxJlZaOPlHn8X4=;
-        b=xn4SrHufyIdk3ZW8fhVbEwY/Cfexu7XrDPDOsJs0k8hA+mzZMMAh1p9OlrTcqIKpuc
-         HyikUU4gKtRsD3NFH5Cs1/C5Q2f5839USzyoESq3Eu+srs/r37rAOFy/u2rQIO2/bUMY
-         aGikyb+iYKIiuzQv5PpB+rfPaqIqVDYcHdEaS3KxV0cBcoVD5VkFEgQOD/hmUmRHxd1F
-         mP1pZdrPMrdPEQtOhT0H8gXLYn0PR/6TL7mLml+KPsH4N5eABgfuTjivGo+B2Ff2IrIc
-         2bMk7lwjntIgu+maPYKOVcbEeNm8GqPKcjM2LrDlAQgLxD8i4ZOPBh+mzwlaCeuN4gd+
-         h9qg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VxZ3UxYxPemlnwMfICb3ouhVPNv37y0m3jFPS6sTZAI=;
+        b=z1/9xfa0xNt9bKy6jznsVmPFDEft1KY6ada9+geUK3QxnnX9QmdrHGdxvctK2NBZB1
+         4o6nAEiUYnrLrcC9+0okKny0+z4ntOu86oDV+bntPBd2imDzjloNtMpswPOEwnDs7mjF
+         t8Wh/B+g6zWtIKuXce4nhueNoWlx65Pl0pMHX1gYxfeyAc8l6nrgKWGDzc0Q6sHiXKI0
+         cujDKrUPvoKFULaR4INtdxCt7tQfEIKlTzNOEPnvMXYDGag8tze/uwSw1fNPHZtsCYMC
+         WxyfZX2e9ANHngGx5sgrJCj+fGaeIUYDrX6akqLBHPADD6nntQKdJ32Wi48LdaINFxxF
+         YgkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=aH5lWPXQedbYF5LSN3GmPneR24giitxJlZaOPlHn8X4=;
-        b=twsVMkZ0WhfeIrD507QMMC6vqXNm7lyYRkTTsCQHSTKuKB4u/C0WsKaIGkIPoN3iZa
-         ziSt0tpkUtUFUsoxGX0vEQ5rRhdRvBmGXO14d4KSR50gVXthRZBblmGXzDrchSmMGxXD
-         GR78y7b0GI3AS8kBs+Ls+DsJQmj5IxSv3ZHM9zcvkpVmuTGOV6z8xAHlptYz6GO31T3n
-         bjGda3HzBUdK9UqBwIonNR15O3ZjWpdB1yzFY7HsGMo3c6YcdMLZF//Y0BZ/8SAvptgU
-         G1LWB1hB1HA9DdkDYu1HsDxWJQvhxktpOZRZ3QROPrreXlgZPo2Y08Smv+hwbZYQixM+
-         0tWw==
-X-Gm-Message-State: AOAM531RUG1GVHJkjGQE39dNJknOiFi6lNjusba1KEBtlB1d55CHVr3l
-        qO8W+1NJ+WqgIPxYxIpbWkEJJA==
-X-Google-Smtp-Source: ABdhPJylLKFGX7abLq0mKkvDiVjAO12knb97BYuUnm7XN8ZSdPRY3x1e9gk2+GW1ieunzok3TbhOEw==
-X-Received: by 2002:a17:906:3bd7:: with SMTP id v23mr9414507ejf.100.1603587572043;
-        Sat, 24 Oct 2020 17:59:32 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:ee2:4b0d:3001:fbc5:498b:ed6d:cfac])
-        by smtp.gmail.com with ESMTPSA id q5sm2797274edt.79.2020.10.24.17.59.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Oct 2020 17:59:31 -0700 (PDT)
-From:   Luka Kovacic <luka.kovacic@sartura.hr>
-To:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     lee.jones@linaro.org, pavel@ucw.cz, dmurphy@ti.com,
-        robh+dt@kernel.org, jdelvare@suse.com, linux@roeck-us.net,
-        marek.behun@nic.cz, luka.perkov@sartura.hr,
-        andy.shevchenko@gmail.com, robert.marko@sartura.hr,
-        Luka Kovacic <luka.kovacic@sartura.hr>
-Subject: [PATCH v7 1/6] dt-bindings: Add IEI vendor prefix and IEI WT61P803 PUZZLE driver bindings
-Date:   Sun, 25 Oct 2020 02:59:11 +0200
-Message-Id: <20201025005916.64747-2-luka.kovacic@sartura.hr>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20201025005916.64747-1-luka.kovacic@sartura.hr>
-References: <20201025005916.64747-1-luka.kovacic@sartura.hr>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VxZ3UxYxPemlnwMfICb3ouhVPNv37y0m3jFPS6sTZAI=;
+        b=raQOU6tmdwCKhvaki6C4zBSSVBShAFf0bAZRISYsopSV5Wp1MBzC6G1Kk4UWVqMLcO
+         G6aAsBdZvuLPQIHkYssPr8QjDP8qfQavew0kEankSlmYDs2WEqv2leFS/6E90Y8g2yGx
+         J2v94AST8PFAvbTzUcqKeBqklZmH7XEmCxt9nZdrWuOJeGULcRmZNN6wEicg4nKZj56f
+         Wd46779IVbZ0JjpkOn6aaerdTdLsENiwVkCuEzC9Wqwe4MCYDYrYPdNFVdR1VKs9XJWf
+         HGLPbjuDgxytyIfQlP8n4DOzbdXSLcHw1HSBFDsCtt4uu8kBs0bbk5zcVH5GwYMz8UmD
+         fM7A==
+X-Gm-Message-State: AOAM5334CBhQo/it1qNkNvD1d4Y8PDIlv42CGEALM/wrMAPcIFc9LlPQ
+        oX4V9rfkZg+bHWbM+NvyjIzFoiRqwe8PW8EaakOxWA==
+X-Google-Smtp-Source: ABdhPJyQ5F1jYZX1GW3RGMs0me1Sbr5z1qRVTDsOlzdRwvUaGoafecphAFiH9UrCRY+479pEq5XNthpQ3n8Sowkp/ug=
+X-Received: by 2002:a92:1e02:: with SMTP id e2mr6770636ile.294.1603589180763;
+ Sat, 24 Oct 2020 18:26:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201019221859.56680-1-luka.kovacic@sartura.hr>
+ <20201019221859.56680-4-luka.kovacic@sartura.hr> <CAHp75VdnOJKwvZUOsj3bbT8tK9uZN=NufDrdhUvS886bNUpWhA@mail.gmail.com>
+ <CADZsf3ZmeUZppsJaR7bT8y16L3Mj12tUfzo=hkV4nFgjN64Jqw@mail.gmail.com>
+In-Reply-To: <CADZsf3ZmeUZppsJaR7bT8y16L3Mj12tUfzo=hkV4nFgjN64Jqw@mail.gmail.com>
+From:   Luka Kovacic <luka.kovacic@sartura.hr>
+Date:   Sun, 25 Oct 2020 02:26:09 +0100
+Message-ID: <CADZsf3Yp7LvZU7DNaOBP6KDx3cdV-fqsg74cMzXxSV1Rc+tt4g@mail.gmail.com>
+Subject: Re: [PATCH v6 3/6] drivers: hwmon: Add the iEi WT61P803 PUZZLE HWMON driver
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-hwmon@vger.kernel.org,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, Pavel Machek <pavel@ucw.cz>,
+        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        =?UTF-8?B?TWFyZWsgQmVow7pu?= <marek.behun@nic.cz>,
+        Luka Perkov <luka.perkov@sartura.hr>,
+        Robert Marko <robert.marko@sartura.hr>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add the IEI WT61P803 PUZZLE Device Tree bindings for MFD, HWMON and LED
-drivers. A new vendor prefix is also added accordingly for
-IEI Integration Corp.
+Hello Andy,
 
-Signed-off-by: Luka Kovacic <luka.kovacic@sartura.hr>
-Cc: Luka Perkov <luka.perkov@sartura.hr>
-Cc: Robert Marko <robert.marko@sartura.hr>
----
- .../hwmon/iei,wt61p803-puzzle-hwmon.yaml      | 53 ++++++++++++
- .../leds/iei,wt61p803-puzzle-leds.yaml        | 45 ++++++++++
- .../bindings/mfd/iei,wt61p803-puzzle.yaml     | 83 +++++++++++++++++++
- .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
- 4 files changed, 183 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwmon/iei,wt61p803-puzzle-hwmon.yaml
- create mode 100644 Documentation/devicetree/bindings/leds/iei,wt61p803-puzzle-leds.yaml
- create mode 100644 Documentation/devicetree/bindings/mfd/iei,wt61p803-puzzle.yaml
+On Fri, Oct 23, 2020 at 11:47 PM Luka Kovacic <luka.kovacic@sartura.hr> wrote:
+>
+> Hi Andy,
+>
+> On Tue, Oct 20, 2020 at 10:59 AM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> >
+> > On Tue, Oct 20, 2020 at 1:19 AM Luka Kovacic <luka.kovacic@sartura.hr> wrote:
+> > >
+> > > Add the iEi WT61P803 PUZZLE HWMON driver, that handles the fan speed
+> > > control via PWM, reading fan speed and reading on-board temperature
+> > > sensors.
+> > >
+> > > The driver registers a HWMON device and a simple thermal cooling device to
+> > > enable in-kernel fan management.
+> > >
+> > > This driver depends on the iEi WT61P803 PUZZLE MFD driver.
+> >
+> > ...
+> >
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/* iEi WT61P803 PUZZLE MCU HWMON Driver
+> >
+> > Shouldn't be
+> > /*
+> >  * IEI ...
+> >
+> > ?
+> >
+> > ...
+> >
+> > > +/**
+> > > + * struct iei_wt61p803_puzzle_thermal_cooling_device - Thermal cooling device instance
+> >
+> > > + *
+> >
+> > Please, remove all these blank lines in kernel doc descriptions.
+> >
+> > > + * @mcu_hwmon:         MCU HWMON struct pointer
+> > > + * @tcdev:             Thermal cooling device pointer
+> > > + * @name:              Thermal cooling device name
+> > > + * @pwm_channel:       PWM channel (0 or 1)
+> > > + * @cooling_levels:    Thermal cooling device cooling levels
+> > > + */
+> >
+> > ...
+> >
+> > > +struct iei_wt61p803_puzzle_hwmon {
+> > > +       struct iei_wt61p803_puzzle *mcu;
+> > > +       unsigned char *response_buffer;
+> > > +       bool thermal_cooling_dev_present[IEI_WT61P803_PUZZLE_HWMON_MAX_PWM_NUM];
+> > > +       struct iei_wt61p803_puzzle_thermal_cooling_device
+> > > +               *cdev[IEI_WT61P803_PUZZLE_HWMON_MAX_PWM_NUM];
+> >
+> > Isn't this constant a bit too long? Perhaps drop NUM (MAX would
+> > suffice I think) for a starter.
+>
+> Okay, I'll drop NUM.
+>
+> >
+> > > +};
+> >
+> > ...
+> >
+> > > +       static unsigned char temp_sensor_ntc_cmd[4] = {
+> > > +               IEI_WT61P803_PUZZLE_CMD_HEADER_START,
+> > > +               IEI_WT61P803_PUZZLE_CMD_TEMP,
+> > > +               IEI_WT61P803_PUZZLE_CMD_TEMP_ALL
+> >
+> > + comma.
+> >
+> > > +       };
+> >
+> > Why not to be consistent with the rest assignments, choose either
+> > above form, or like you have done in the below functions.
+>
+> Assignments, where the array content will not be modified with custom
+> values are done as above.
+> Although I could change these to the other form, if that makes it clearer.
 
-diff --git a/Documentation/devicetree/bindings/hwmon/iei,wt61p803-puzzle-hwmon.yaml b/Documentation/devicetree/bindings/hwmon/iei,wt61p803-puzzle-hwmon.yaml
-new file mode 100644
-index 000000000000..c24a24e90495
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwmon/iei,wt61p803-puzzle-hwmon.yaml
-@@ -0,0 +1,53 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/hwmon/iei,wt61p803-puzzle-hwmon.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: IEI WT61P803 PUZZLE MCU HWMON module from IEI Integration Corp.
-+
-+maintainers:
-+  - Luka Kovacic <luka.kovacic@sartura.hr>
-+
-+description: |
-+  This module is a part of the IEI WT61P803 PUZZLE MFD device. For more details
-+  see Documentation/devicetree/bindings/mfd/iei,wt61p803-puzzle.yaml.
-+
-+  The HWMON module is a sub-node of the MCU node in the Device Tree.
-+
-+properties:
-+  compatible:
-+    const: iei,wt61p803-puzzle-hwmon
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+patternProperties:
-+  "^fan-group@[0-1]$":
-+    type: object
-+    properties:
-+      reg:
-+        minimum: 0
-+        maximum: 1
-+        description:
-+          Fan group ID
-+
-+      cooling-levels:
-+        minItems: 1
-+        maxItems: 255
-+        description:
-+          Cooling levels for the fans (PWM value mapping)
-+    description: |
-+      Properties for each fan group.
-+    required:
-+      - reg
-+
-+required:
-+  - compatible
-+  - "#address-cells"
-+  - "#size-cells"
-+
-+additionalProperties: false
-diff --git a/Documentation/devicetree/bindings/leds/iei,wt61p803-puzzle-leds.yaml b/Documentation/devicetree/bindings/leds/iei,wt61p803-puzzle-leds.yaml
-new file mode 100644
-index 000000000000..bbf264c13189
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/iei,wt61p803-puzzle-leds.yaml
-@@ -0,0 +1,45 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/iei,wt61p803-puzzle-leds.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: IEI WT61P803 PUZZLE MCU LED module from IEI Integration Corp.
-+
-+maintainers:
-+  - Luka Kovacic <luka.kovacic@sartura.hr>
-+
-+description: |
-+  This module is a part of the IEI WT61P803 PUZZLE MFD device. For more details
-+  see Documentation/devicetree/bindings/mfd/iei,wt61p803-puzzle.yaml.
-+
-+  The LED module is a sub-node of the MCU node in the Device Tree.
-+
-+properties:
-+  compatible:
-+    const: iei,wt61p803-puzzle-leds
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+  "led@0":
-+    type: object
-+    $ref: common.yaml
-+    description: |
-+      Properties for a single LED.
-+    properties:
-+      reg:
-+        description:
-+          Index of the LED. Only one LED is supported at the moment.
-+        minimum: 0
-+        maximum: 0
-+
-+required:
-+  - compatible
-+  - "#address-cells"
-+  - "#size-cells"
-+
-+additionalProperties: false
-diff --git a/Documentation/devicetree/bindings/mfd/iei,wt61p803-puzzle.yaml b/Documentation/devicetree/bindings/mfd/iei,wt61p803-puzzle.yaml
-new file mode 100644
-index 000000000000..64264c664c48
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/iei,wt61p803-puzzle.yaml
-@@ -0,0 +1,83 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/iei,wt61p803-puzzle.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: IEI WT61P803 PUZZLE MCU from IEI Integration Corp.
-+
-+maintainers:
-+  - Luka Kovacic <luka.kovacic@sartura.hr>
-+
-+description: |
-+  IEI WT61P803 PUZZLE MCU is embedded in some IEI Puzzle series boards.
-+  It's used for controlling system power states, fans, LEDs and temperature
-+  sensors.
-+
-+  For Device Tree bindings of other sub-modules (HWMON, LEDs) refer to the
-+  binding documents under the respective subsystem directories.
-+
-+properties:
-+  compatible:
-+    const: iei,wt61p803-puzzle
-+
-+  current-speed:
-+    description:
-+      Serial bus speed in bps
-+    maxItems: 1
-+
-+  enable-beep: true
-+
-+  hwmon:
-+    $ref: ../hwmon/iei,wt61p803-puzzle-hwmon.yaml
-+
-+  leds:
-+    $ref: ../leds/iei,wt61p803-puzzle-leds.yaml
-+
-+required:
-+  - compatible
-+  - current-speed
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/leds/common.h>
-+    serial {
-+        status = "okay";
-+        mcu {
-+            compatible = "iei,wt61p803-puzzle";
-+            current-speed = <115200>;
-+            enable-beep;
-+
-+            leds {
-+                compatible = "iei,wt61p803-puzzle-leds";
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+
-+                led@0 {
-+                    reg = <0>;
-+                    function = LED_FUNCTION_POWER;
-+                    color = <LED_COLOR_ID_BLUE>;
-+                };
-+            };
-+
-+            hwmon {
-+                compatible = "iei,wt61p803-puzzle-hwmon";
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+
-+                fan-group@0 {
-+                    #cooling-cells = <2>;
-+                    reg = <0x00>;
-+                    cooling-levels = <64 102 170 230 250>;
-+                };
-+
-+                fan-group@1 {
-+                    #cooling-cells = <2>;
-+                    reg = <0x01>;
-+                    cooling-levels = <64 102 170 230 250>;
-+                };
-+            };
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 63996ab03521..5f2595f0b2ad 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -467,6 +467,8 @@ patternProperties:
-     description: IC Plus Corp.
-   "^idt,.*":
-     description: Integrated Device Technologies, Inc.
-+  "^iei,.*":
-+    description: IEI Integration Corp.
-   "^ifi,.*":
-     description: Ingenieurburo Fur Ic-Technologie (I/F/I)
-   "^ilitek,.*":
--- 
-2.26.2
+I sent out a new patchset that fixes all of the mentioned points,
+except this one.
+I'd like to keep the assignments, which aren't changed later in the
+code assigned,
+when the variable is defined.
 
+Kind regards,
+Luka
+
+>
+> > Also, why 4?
+>
+> 1 additional character is always required, as this array is passed by reference
+> to the iei_wt61p803_puzzle_write_command() function, which requires it to
+> store a calculated checksum of the array content.
+>
+> This is done to avoid unnecessary copying of the array inside the MFD driver.
+>
+> The checksum is a part of the command, so the driver and the MCU can check
+> the integrity of the sent data.
+>
+> >
+> > > +       size_t reply_size = 0;
+> >
+> > How is it used in all these functions?
+>
+> I will add an additional check for the size of the received reply, as
+> it should be fixed.
+>
+> >
+> > > +       int ret;
+> > > +
+> > > +       ret = iei_wt61p803_puzzle_write_command(mcu_hwmon->mcu, temp_sensor_ntc_cmd,
+> > > +                                               sizeof(temp_sensor_ntc_cmd), resp_buf,
+> > > +                                               &reply_size);
+> > > +
+> > > +       if (ret)
+> > > +               return ret;
+> > > +
+> > > +       /* Check the number of NTC values (should be 0x32/'2') */
+> >
+> > > +       if (resp_buf[3] != 0x32)
+> >
+> > Instead of comment in the parentheses, just do it here
+> > " != '2')"
+> >
+> > > +               return -EIO;
+> >
+> > ...
+> >
+> > > +static int iei_wt61p803_puzzle_read(struct device *dev, enum hwmon_sensor_types type,
+> > > +                                   u32 attr, int channel, long *val)
+> > > +{
+> > > +       struct iei_wt61p803_puzzle_hwmon *mcu_hwmon = dev_get_drvdata(dev->parent);
+> > > +       int ret;
+> > > +
+> > > +       switch (type) {
+> > > +       case hwmon_pwm:
+> >
+> > > +               ret = iei_wt61p803_puzzle_read_pwm_channel(mcu_hwmon, channel, val);
+> > > +               return ret;
+> >
+> >   return iei_...(...);
+> > in all such cases.
+> >
+> > > +       case hwmon_fan:
+> > > +               ret = iei_wt61p803_puzzle_read_fan_speed(mcu_hwmon, channel, val);
+> > > +               return ret;
+> > > +       case hwmon_temp:
+> > > +               ret = iei_wt61p803_puzzle_read_temp_sensor(mcu_hwmon, channel, val);
+> > > +               return ret;
+> > > +       default:
+> > > +               return -EINVAL;
+> > > +       }
+> > > +}
+> >
+> > ...
+> >
+> > > +static umode_t iei_wt61p803_puzzle_is_visible(const void *data, enum hwmon_sensor_types type,
+> > > +                                             u32 attr, int channel)
+> > > +{
+> > > +       switch (type) {
+> > > +       case hwmon_pwm:
+> >
+> > > +               switch (attr) {
+> > > +               case hwmon_pwm_input:
+> > > +                       return 0644;
+> > > +               default:
+> > > +                       return 0;
+> > > +               }
+> >
+> > Isn't too long for
+> >   if (attr == ...)
+> >     return 0644;
+> >   break;
+> >
+> > ...see below...
+> >
+> > > +       case hwmon_fan:
+> > > +               switch (attr) {
+> > > +               case hwmon_fan_input:
+> > > +                       return 0444;
+> > > +               default:
+> > > +                       return 0;
+> > > +               }
+> > > +       case hwmon_temp:
+> > > +               switch (attr) {
+> > > +               case hwmon_temp_input:
+> > > +                       return 0444;
+> > > +               default:
+> > > +                       return 0;
+> > > +               }
+> >
+> > > +       default:
+> > > +               return 0;
+> >
+> > break;
+> >
+> > > +       }
+> >
+> > return 0;
+> >
+> > ?
+> >
+> > > +}
+> >
+> > ...
+> >
+> > > +       mcu_hwmon->thermal_cooling_dev_present[pwm_channel] = true;
+> > > +
+> >
+> > > +       num_levels = fwnode_property_read_u8_array(child, "cooling-levels", NULL, 0);
+> >
+> > fwnode_property_count_u8()
+> >
+> > > +       if (num_levels > 0) {
+> >
+> > You can improve readability by reducing indentation level via
+> > replacement to negative conditional.
+> >
+> > > +               cdev = devm_kzalloc(dev, sizeof(*cdev), GFP_KERNEL);
+> > > +               if (!cdev)
+> > > +                       return -ENOMEM;
+> > > +
+> > > +               cdev->cooling_levels = devm_kzalloc(dev, num_levels, GFP_KERNEL);
+> >
+> > For the sake of cleaness, shouldn't it be devm_kmalloc_array() ?
+> > (Note, zeroing is not needed if you read entire array)
+>
+> I agree, this can be converted to devm_kmalloc_array().
+>
+> >
+> > > +               if (!cdev->cooling_levels)
+> > > +                       return -ENOMEM;
+> > > +
+> > > +               ret = fwnode_property_read_u8_array(child, "cooling-levels",
+> > > +                                                   cdev->cooling_levels,
+> > > +                                                   num_levels);
+> > > +               if (ret) {
+> > > +                       dev_err(dev, "Couldn't read property 'cooling-levels'");
+> > > +                       return ret;
+> > > +               }
+> > > +
+> > > +               snprintf(cdev->name, THERMAL_NAME_LENGTH, "iei_wt61p803_puzzle_%d", pwm_channel);
+> > > +
+> > > +               cdev->tcdev = devm_thermal_of_cooling_device_register(dev, NULL,
+> > > +                               cdev->name, cdev, &iei_wt61p803_puzzle_cooling_ops);
+> > > +               if (IS_ERR(cdev->tcdev))
+> > > +                       return PTR_ERR(cdev->tcdev);
+> > > +
+> > > +               cdev->mcu_hwmon = mcu_hwmon;
+> > > +               cdev->pwm_channel = pwm_channel;
+> > > +
+> > > +               mcu_hwmon->cdev[pwm_channel] = cdev;
+> > > +       }
+> > > +       return 0;
+> > > +}
+> >
+> > --
+> > With Best Regards,
+> > Andy Shevchenko
+>
+> I'll fix the issues you have mentioned above in the next patchset.
+>
+> Kind regards,
+> Luka
