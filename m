@@ -1,184 +1,324 @@
-Return-Path: <SRS0=CLhX=EC=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=Hscl=ED=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC17EC55178
-	for <linux-leds@archiver.kernel.org>; Tue, 27 Oct 2020 17:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08493C55179
+	for <linux-leds@archiver.kernel.org>; Wed, 28 Oct 2020 21:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E176208B8
-	for <linux-leds@archiver.kernel.org>; Tue, 27 Oct 2020 17:28:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9619724842
+	for <linux-leds@archiver.kernel.org>; Wed, 28 Oct 2020 21:37:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sRONzpWb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="STLAEU3X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1819192AbgJ0R2W (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 27 Oct 2020 13:28:22 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54138 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1819190AbgJ0R2T (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 27 Oct 2020 13:28:19 -0400
-Received: by mail-wm1-f68.google.com with SMTP id d78so2143077wmd.3;
-        Tue, 27 Oct 2020 10:28:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jHNrAaSQ3QPMQMLs/NiD36NA12e7sFRL6CjasTy60tY=;
-        b=sRONzpWbOTrTbXWLhwnjJ4pSlr9TlSsb0qJD+a4NOoGC3sHh2dK/CgSLDY+Kir7phZ
-         LVHY3joN3uGKNM5fpcFjslSJzqk5jTDD31JLy7gwx+As8wd64ZNSKCMcAqUzIGHY2m4n
-         7pQdkvmexEfaBbVPGIwKGfjs3umIdU6H1cPr8mDWxsKXoutN8Y7kRGsPcKNCf2R47eEp
-         IOuiMrDoVtRiBzbtwHatEJoGJVcMtMAzRCT3/MxLaPppSf4KsQal1vqEOEBfOJ8kUD6C
-         2zgyYj16PENWBrtRdxTF6HHFDPd94vRxJhwmL5VFZCX1u7aG2kr32e9p3ba2arBedtU0
-         RvKw==
+        id S1726863AbgJ1VhE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 28 Oct 2020 17:37:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54602 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726849AbgJ1VhE (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Wed, 28 Oct 2020 17:37:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603921021;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3PN8li90MQEODpG7uKAlxNFFjh3wZGx6qB1VA0YAdTY=;
+        b=STLAEU3XcaJALN5ShQPxpH6YHzJS44qfrjxl+4nEqf4KfTjKak7XAzSwRYuwM1v3B3PS8W
+        C+ULVCK2eJkh1CA1G92v5v1urHJZ0KNs0WmaLHwpEm96JmyNXFGtg/dKfAdgOv4cT45RDR
+        XHsDdq76tMtocVM2z9m4SISQZRaYeFA=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-275-Z2XMEMomOb2iht6LEyo21A-1; Wed, 28 Oct 2020 16:35:13 -0400
+X-MC-Unique: Z2XMEMomOb2iht6LEyo21A-1
+Received: by mail-ej1-f70.google.com with SMTP id mm21so287655ejb.18
+        for <linux-leds@vger.kernel.org>; Wed, 28 Oct 2020 13:35:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=jHNrAaSQ3QPMQMLs/NiD36NA12e7sFRL6CjasTy60tY=;
-        b=GnqQg0eSvGGuD32uH1mAVrCrJenD66HdGnjXktATav+vtfV0+mXjgCds1jK2c9+A8E
-         s1o5VB/KViSNNtGXfwWDuykbfqKpAmzy1+pgMCGAH/VldA0+R8bEi1FK9WkJNJj8uv1E
-         JlkmxiVc1BJybqY8Mmb0fWgNY22MxDCRDD0vgksVUDT21WeQfI6k3eeCjxnEIYQTrqCf
-         4GDN1yR0t47uMunqNWY9g3nxVOhm2Og8x4M8EzRXNPraDleSobCn7wnQtdx24ibt+IFj
-         efJxEgVfbt9kogfQ8ESsgP+nDRh7SrAHMeR4tO62P4UijBExtYLKAi30CBr4jKjYUkil
-         QG6g==
-X-Gm-Message-State: AOAM531uhcu4+zBX2kv1MeOrE4qQ4rn5N+/L9+7mZ9PSKoTaJKDkcgDe
-        v7MsLaYHndum0cImBTmunfI=
-X-Google-Smtp-Source: ABdhPJwOyy0uznYALf7m26/ANTk1qCm2a4G5ZZqF1+WWAI9V86Ho3xQ3yfOEOJmZZdLM1DktsR8VWQ==
-X-Received: by 2002:a7b:cc8b:: with SMTP id p11mr3977468wma.100.1603819696811;
-        Tue, 27 Oct 2020 10:28:16 -0700 (PDT)
-Received: from ?IPv6:2a01:110f:b59:fd00:659b:3847:24e3:b881? ([2a01:110f:b59:fd00:659b:3847:24e3:b881])
-        by smtp.gmail.com with ESMTPSA id b5sm2807131wrs.97.2020.10.27.10.28.14
+        bh=3PN8li90MQEODpG7uKAlxNFFjh3wZGx6qB1VA0YAdTY=;
+        b=KTDf3IhlO4O2yO4AvriH9aE2CINga1Z0y5ZazWOq+ZApc+rqMJvEhA4O7tZUKp7rFx
+         Ch8JbYbtUiWh6fd76UZlBMir5+1yRb40Kvzk/kGyay8IyS1baK9mrZp2diwOuH9phMRd
+         PPbzhEi3IqajXuIawLmf1uWvJLeAHhd8iggQMsE/EFlExwmSiJTqmXWsFb1Onzg7/Ri8
+         KKgbpl6fT1oLlQ5CUrOO8a/d87grIRtANys5X8kFTfU4Gsd8jDuyHoPrqS+tP1v5U2qD
+         fgimAl7ioOam2BE9GwuryZeT2HCvQC8faL7xjCzeV/u5Y9ggrr0jh/KyJtCIWLBXaBs2
+         1opw==
+X-Gm-Message-State: AOAM5314TcfH1z7J4cA4RaT68r9gld5hJClQD/52k+iRfIJTnEWrCmdi
+        5DK4+AoyWGMnqhqP6QhEo+oQ/WFBdXYbfT870JwrpKBoN4L7lrl659RnsUHnZpw7nS2qYD+tof3
+        YlZneIPuVcpiGHltvVJXDTA==
+X-Received: by 2002:a50:fd17:: with SMTP id i23mr727346eds.50.1603917312282;
+        Wed, 28 Oct 2020 13:35:12 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxQpVmMC85/uYP4ywhmAg3+8R38d2cO03kqeV9fRLbZDvJODVlNFcG/q/XwN/ngYqbeqRwSnQ==
+X-Received: by 2002:a50:fd17:: with SMTP id i23mr727328eds.50.1603917311967;
+        Wed, 28 Oct 2020 13:35:11 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-6c10-fbf3-14c4-884c.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:6c10:fbf3:14c4:884c])
+        by smtp.gmail.com with ESMTPSA id a1sm421062edk.52.2020.10.28.13.35.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Oct 2020 10:28:16 -0700 (PDT)
-Subject: Re: [PATCH v5 2/2] leds: mt6360: Add LED driver for MT6360
-To:     Gene Chen <gene.chen.richtek@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        Wed, 28 Oct 2020 13:35:11 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] Input: i8042 - Prevent intermixing i8042 commands
+To:     Raul E Rangel <rrangel@chromium.org>, linux-input@vger.kernel.org
+Cc:     dmitry.torokhov@gmail.com, Shirish.S@amd.com,
+        Andy Shevchenko <andy@infradead.org>,
         Dan Murphy <dmurphy@ti.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Gene Chen <gene_chen@richtek.com>, Wilma.Wu@mediatek.com,
-        shufan_lee@richtek.com, cy_huang@richtek.com,
-        benjamin.chao@mediatek.com
-References: <1602034966-3524-1-git-send-email-gene.chen.richtek@gmail.com>
- <1602034966-3524-3-git-send-email-gene.chen.richtek@gmail.com>
- <5a9b31c4-739c-06fc-2015-ed474993ad22@gmail.com>
- <CAE+NS35Y41mFKNhj+54BeeSYFu2J9BtvMWOxyMcf9a==39cbdA@mail.gmail.com>
- <8925db23-5cc4-3c5f-932a-461fe6450dad@gmail.com>
- <CAE+NS379bgtRotqzioR+Ya3mE1kZrKfe9qV=W2p=hH7Omrn8Hw@mail.gmail.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <1bb76c54-14af-6c78-4623-77c6678b262e@gmail.com>
-Date:   Tue, 27 Oct 2020 18:28:13 +0100
+        Darren Hart <dvhart@infradead.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        "Lee, Chun-Yi" <jlee@suse.com>, Pavel Machek <pavel@ucw.cz>,
+        Rajat Jain <rajatja@google.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+References: <20200827144112.v2.1.I6981f9a9f0c12e60f8038f3b574184f8ffc1b9b5@changeid>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <00524d2b-b734-ffd4-0d99-e8cbda8510b3@redhat.com>
+Date:   Wed, 28 Oct 2020 21:35:09 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+ Thunderbird/78.3.1
 MIME-Version: 1.0
-In-Reply-To: <CAE+NS379bgtRotqzioR+Ya3mE1kZrKfe9qV=W2p=hH7Omrn8Hw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200827144112.v2.1.I6981f9a9f0c12e60f8038f3b574184f8ffc1b9b5@changeid>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 10/27/20 10:28 AM, Gene Chen wrote:
-> Jacek Anaszewski <jacek.anaszewski@gmail.com> 於 2020年10月21日 週三 上午5:47寫道：
->>
->> On 10/20/20 8:44 AM, Gene Chen wrote:
->>> Jacek Anaszewski <jacek.anaszewski@gmail.com> 於 2020年10月9日 週五 上午5:51寫道：
->>>>
->>>> Hi Gene,
->>>>
->>>> On 10/7/20 3:42 AM, Gene Chen wrote:
->>>>> From: Gene Chen <gene_chen@richtek.com>
->>>>>
->>>>> Add MT6360 LED driver include 2-channel Flash LED with torch/strobe mode,
->>>>> 3-channel RGB LED support Register/Flash/Breath Mode, and 1-channel for
->>>>> moonlight LED.
->>>>>
->>>>> Signed-off-by: Gene Chen <gene_chen@richtek.com>
->>>>> ---
->>>>>     drivers/leds/Kconfig       |  12 +
->>>>>     drivers/leds/Makefile      |   1 +
->>>>>     drivers/leds/leds-mt6360.c | 783 +++++++++++++++++++++++++++++++++++++++++++++
->>>>>     3 files changed, 796 insertions(+)
->>>>>     create mode 100644 drivers/leds/leds-mt6360.c
->>>>>
->>>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->>>>> index 1c181df..c7192dd 100644
->>>>> --- a/drivers/leds/Kconfig
->>>>> +++ b/drivers/leds/Kconfig
->>>>> @@ -271,6 +271,18 @@ config LEDS_MT6323
->>>>>           This option enables support for on-chip LED drivers found on
->>>>>           Mediatek MT6323 PMIC.
->>>>>
->>>>> +config LEDS_MT6360
->>>>> +     tristate "LED Support for Mediatek MT6360 PMIC"
->>>>> +     depends on LEDS_CLASS_FLASH && OF
->>>>> +     depends on LEDS_CLASS_MULTICOLOR
->>>>
->>>> Since CONFIG_LED_CLASS_MULTICOLOR can be turned off you need to have
->>>> below instead:
->>>>
->>>> depends on LEDS_CLASS_MULTICOLOR || !!LEDS_CLASS_MULTICOLOR
+Hi,
 
-My typo here, should be one "!":
+Quick self intro: I have take over drivers/platform/x86
+maintainership from Andy; and I'm working my way through
+the backlog of old patches in patchwork:
+https://patchwork.kernel.org/project/platform-driver-x86/list/
 
-depends on LEDS_CLASS_MULTICOLOR || !LEDS_CLASS_MULTICOLOR
-
-And you should also have
-
-depends on LEDS_CLASS_FLASH || !LEDS_CLASS_FLASH
-
-But to make it work correctly you would have to add registration
-stubs to include/linux/led-class-flash.h similarly to LED mc stubs
-in include/linux/led-class-multicolor.h.
-
->>>>
->>>> Unless you want to prevent enabling the driver without RGB LED,
->>>> but that does not seem to be reasonable at first glance.
->>>>
->>>
->>> May I change to "select LEDS_CLASS_MULTICOLOR"?
->>> I suppose RGB always use multicolor mode.
->>
->> You will also have moonlight LED that will not need multicolor
->> framework. Is it somehow troublesome to keep "depends on"?
->>
+On 8/27/20 10:41 PM, Raul E Rangel wrote:
+> The i8042_mutex must be held by writers of the AUX and KBD ports, as
+> well as users of i8042_command. There were a lot of users of
+> i8042_command that were not calling i8042_lock_chip/i8042_unlock_chip.
+> This resulted in i8042_commands being issues in between PS/2
+> transactions.
 > 
-> If only use ML LED and FLED,  DTSI will only define ML LED and FLED.
-> Therefore, the drivers probe will not register rgb multicolor device.
+> This change moves the mutex lock into i8042_command and removes the
+> burden of locking the mutex from the callers.
+> 
+> It is expected that the i8042_mutex is locked before calling
+> i8042_aux_write or i8042_kbd_write. This is currently done by the PS/2
+> layer via ps2_begin_command and ps2_end_command. Other modules
+> (serio_raw) do not currently lock the mutex, so there is still a
+> possibility for intermixed commands.
+> 
+> Link: https://lore.kernel.org/linux-input/CAHQZ30ANTeM-pgdYZ4AbgxsnevBJnJgKZ1Kg+Uy8oSXZUvz=og@mail.gmail.com
+> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
 
-Please test your use case again with my fixed "depends on".
+Patch looks good to me, you can add my:
 
-In case when there is only ML LED and FLED in the DT it should
-register both devices if LEDS_CLASS_FLASH is turned on.
-Multicolor framework has nothing to do in this case.
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-But if you additionally had MC LED node, then it should
-be registered only if LEDS_CLASS_MULTICOLOR is enabled.
+(for both the drivers/platform/x86 bits and in general).
 
-Similarly, when FLED node is present, but LEDS_CLASS_FLASH
-is off, and LEDS_CLASS_MULTICOLOR is on, the driver should still
-compile, but register only LED MC device (if its node is present).
+Dmitry, feel free to merge this through the input tree, I don't
+expect the touched pdx86 parts to see any changes this cycle.
 
-Possible should be also the case when both LEDS_CLASS_FLASH
-and LEDS_CLASS_MULTICOLOR are off. Then only LED class device
-for ML LED will be registered (provided there is ML DT node).
-But to make it possible you should have also "depends on LEDS_CLASS"
-in the Kconfig entry.
+Regards,
 
-> I will remove "depends", use "select" instead.
+Hans
 
--- 
-Best regards,
-Jacek Anaszewski
+
+
+
+
+> ---
+> Tested this on a device with only a PS/2 keyboard. I was able to do
+> 1200+ suspend/resume cycles.
+> 
+> Also tested this on a device with a PS/2 keyboard and a PS/2 mouse.
+> I was able to do 250+ iterations with out problems.
+> 
+> Changes in v2:
+> - Fixed bad indent
+> - Added Link: tag
+> - Removed left over rc variable
+> 
+>  drivers/input/serio/i8042.c         | 29 ++++++++++++++---------------
+>  drivers/leds/leds-clevo-mail.c      |  9 ---------
+>  drivers/platform/x86/acer-wmi.c     |  2 --
+>  drivers/platform/x86/amilo-rfkill.c |  6 +-----
+>  include/linux/i8042.h               | 10 ----------
+>  5 files changed, 15 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
+> index 0dddf273afd94..65ca6b47f41e8 100644
+> --- a/drivers/input/serio/i8042.c
+> +++ b/drivers/input/serio/i8042.c
+> @@ -137,8 +137,7 @@ static DEFINE_SPINLOCK(i8042_lock);
+>  
+>  /*
+>   * Writers to AUX and KBD ports as well as users issuing i8042_command
+> - * directly should acquire i8042_mutex (by means of calling
+> - * i8042_lock_chip() and i8042_unlock_ship() helpers) to ensure that
+> + * directly should acquire i8042_mutex to ensure that
+>   * they do not disturb each other (unfortunately in many i8042
+>   * implementations write to one of the ports will immediately abort
+>   * command that is being processed by another port).
+> @@ -173,18 +172,6 @@ static irqreturn_t i8042_interrupt(int irq, void *dev_id);
+>  static bool (*i8042_platform_filter)(unsigned char data, unsigned char str,
+>  				     struct serio *serio);
+>  
+> -void i8042_lock_chip(void)
+> -{
+> -	mutex_lock(&i8042_mutex);
+> -}
+> -EXPORT_SYMBOL(i8042_lock_chip);
+> -
+> -void i8042_unlock_chip(void)
+> -{
+> -	mutex_unlock(&i8042_mutex);
+> -}
+> -EXPORT_SYMBOL(i8042_unlock_chip);
+> -
+>  int i8042_install_filter(bool (*filter)(unsigned char data, unsigned char str,
+>  					struct serio *serio))
+>  {
+> @@ -343,10 +330,14 @@ int i8042_command(unsigned char *param, int command)
+>  	unsigned long flags;
+>  	int retval;
+>  
+> +	mutex_lock(&i8042_mutex);
+> +
+>  	spin_lock_irqsave(&i8042_lock, flags);
+>  	retval = __i8042_command(param, command);
+>  	spin_unlock_irqrestore(&i8042_lock, flags);
+>  
+> +	mutex_unlock(&i8042_mutex);
+> +
+>  	return retval;
+>  }
+>  EXPORT_SYMBOL(i8042_command);
+> @@ -379,10 +370,18 @@ static int i8042_kbd_write(struct serio *port, unsigned char c)
+>  static int i8042_aux_write(struct serio *serio, unsigned char c)
+>  {
+>  	struct i8042_port *port = serio->port_data;
+> +	unsigned long flags;
+> +	int retval = 0;
+> +
+> +	spin_lock_irqsave(&i8042_lock, flags);
+>  
+> -	return i8042_command(&c, port->mux == -1 ?
+> +	retval = __i8042_command(&c, port->mux == -1 ?
+>  					I8042_CMD_AUX_SEND :
+>  					I8042_CMD_MUX_SEND + port->mux);
+> +
+> +	spin_unlock_irqrestore(&i8042_lock, flags);
+> +
+> +	return retval;
+>  }
+>  
+>  
+> diff --git a/drivers/leds/leds-clevo-mail.c b/drivers/leds/leds-clevo-mail.c
+> index f512e99b976b1..6c3d7e54f95cf 100644
+> --- a/drivers/leds/leds-clevo-mail.c
+> +++ b/drivers/leds/leds-clevo-mail.c
+> @@ -95,17 +95,12 @@ MODULE_DEVICE_TABLE(dmi, clevo_mail_led_dmi_table);
+>  static void clevo_mail_led_set(struct led_classdev *led_cdev,
+>  				enum led_brightness value)
+>  {
+> -	i8042_lock_chip();
+> -
+>  	if (value == LED_OFF)
+>  		i8042_command(NULL, CLEVO_MAIL_LED_OFF);
+>  	else if (value <= LED_HALF)
+>  		i8042_command(NULL, CLEVO_MAIL_LED_BLINK_0_5HZ);
+>  	else
+>  		i8042_command(NULL, CLEVO_MAIL_LED_BLINK_1HZ);
+> -
+> -	i8042_unlock_chip();
+> -
+>  }
+>  
+>  static int clevo_mail_led_blink(struct led_classdev *led_cdev,
+> @@ -114,8 +109,6 @@ static int clevo_mail_led_blink(struct led_classdev *led_cdev,
+>  {
+>  	int status = -EINVAL;
+>  
+> -	i8042_lock_chip();
+> -
+>  	if (*delay_on == 0 /* ms */ && *delay_off == 0 /* ms */) {
+>  		/* Special case: the leds subsystem requested us to
+>  		 * chose one user friendly blinking of the LED, and
+> @@ -142,8 +135,6 @@ static int clevo_mail_led_blink(struct led_classdev *led_cdev,
+>  		       *delay_on, *delay_off);
+>  	}
+>  
+> -	i8042_unlock_chip();
+> -
+>  	return status;
+>  }
+>  
+> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
+> index 60c18f21588dd..6cb6f800503b2 100644
+> --- a/drivers/platform/x86/acer-wmi.c
+> +++ b/drivers/platform/x86/acer-wmi.c
+> @@ -1044,9 +1044,7 @@ static acpi_status WMID_set_u32(u32 value, u32 cap)
+>  			return AE_BAD_PARAMETER;
+>  		if (quirks->mailled == 1) {
+>  			param = value ? 0x92 : 0x93;
+> -			i8042_lock_chip();
+>  			i8042_command(&param, 0x1059);
+> -			i8042_unlock_chip();
+>  			return 0;
+>  		}
+>  		break;
+> diff --git a/drivers/platform/x86/amilo-rfkill.c b/drivers/platform/x86/amilo-rfkill.c
+> index 493e169c8f615..c981c6e07ff94 100644
+> --- a/drivers/platform/x86/amilo-rfkill.c
+> +++ b/drivers/platform/x86/amilo-rfkill.c
+> @@ -28,12 +28,8 @@
+>  static int amilo_a1655_rfkill_set_block(void *data, bool blocked)
+>  {
+>  	u8 param = blocked ? A1655_WIFI_OFF : A1655_WIFI_ON;
+> -	int rc;
+>  
+> -	i8042_lock_chip();
+> -	rc = i8042_command(&param, A1655_WIFI_COMMAND);
+> -	i8042_unlock_chip();
+> -	return rc;
+> +	return i8042_command(&param, A1655_WIFI_COMMAND);
+>  }
+>  
+>  static const struct rfkill_ops amilo_a1655_rfkill_ops = {
+> diff --git a/include/linux/i8042.h b/include/linux/i8042.h
+> index 0261e2fb36364..1c081081c161d 100644
+> --- a/include/linux/i8042.h
+> +++ b/include/linux/i8042.h
+> @@ -55,8 +55,6 @@ struct serio;
+>  
+>  #if defined(CONFIG_SERIO_I8042) || defined(CONFIG_SERIO_I8042_MODULE)
+>  
+> -void i8042_lock_chip(void);
+> -void i8042_unlock_chip(void);
+>  int i8042_command(unsigned char *param, int command);
+>  int i8042_install_filter(bool (*filter)(unsigned char data, unsigned char str,
+>  					struct serio *serio));
+> @@ -65,14 +63,6 @@ int i8042_remove_filter(bool (*filter)(unsigned char data, unsigned char str,
+>  
+>  #else
+>  
+> -static inline void i8042_lock_chip(void)
+> -{
+> -}
+> -
+> -static inline void i8042_unlock_chip(void)
+> -{
+> -}
+> -
+>  static inline int i8042_command(unsigned char *param, int command)
+>  {
+>  	return -ENODEV;
+> 
+
