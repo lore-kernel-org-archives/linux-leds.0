@@ -2,72 +2,77 @@ Return-Path: <SRS0=O/xm=EE=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 690B1C55179
-	for <linux-leds@archiver.kernel.org>; Thu, 29 Oct 2020 17:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C84FBC4363A
+	for <linux-leds@archiver.kernel.org>; Thu, 29 Oct 2020 17:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 176D320720
-	for <linux-leds@archiver.kernel.org>; Thu, 29 Oct 2020 17:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 696CB20725
+	for <linux-leds@archiver.kernel.org>; Thu, 29 Oct 2020 17:49:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725777AbgJ2Rpc (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 29 Oct 2020 13:45:32 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:60242 "EHLO
+        id S1725777AbgJ2Rtz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 29 Oct 2020 13:49:55 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:33236 "EHLO
         jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbgJ2Rpb (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 29 Oct 2020 13:45:31 -0400
+        with ESMTP id S1725876AbgJ2Rty (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 29 Oct 2020 13:49:54 -0400
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id C6DD51C0B7A; Thu, 29 Oct 2020 18:45:29 +0100 (CET)
-Date:   Thu, 29 Oct 2020 18:45:29 +0100
+        id 0EAF91C0B7A; Thu, 29 Oct 2020 18:49:53 +0100 (CET)
+Date:   Thu, 29 Oct 2020 18:49:52 +0100
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
-Cc:     Ben Whitten <ben.whitten@gmail.com>, linux-leds@vger.kernel.org
-Subject: Re: ledtrig netdev: what is the purpose of spinlock usage?
-Message-ID: <20201029174529.GA26053@duo.ucw.cz>
-References: <20201029070000.15472666@kernel.org>
+To:     Yu Kuai <yukuai3@huawei.com>
+Cc:     linus.walleij@linaro.org, j.anaszewski@samsung.com,
+        simon.guinot@sequanux.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yi.zhang@huawei.com
+Subject: Re: [PATCH] leds: various: add missing put_device() call in
+ netxbig_leds_get_of_pdata()
+Message-ID: <20201029174952.GB26053@duo.ucw.cz>
+References: <20201029092305.900767-1-yukuai3@huawei.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
+        protocol="application/pgp-signature"; boundary="MW5yreqqjyrRcusr"
 Content-Disposition: inline
-In-Reply-To: <20201029070000.15472666@kernel.org>
+In-Reply-To: <20201029092305.900767-1-yukuai3@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---3V7upXqbjpZ4EhLz
+--MW5yreqqjyrRcusr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> since you are the original author of netdev LED trigger, I guess this
-> question should go to you. Why are spinlocks used as locks in the
-> netdev trigger code? Is this for performance? Would it be a drastic
-> performance hit to use mutexes?
+> if of_find_device_by_node() succeed, netxbig_leds_get_of_pdata() doesn't
+> have a corresponding put_device(). Thus add jump target to fix the
+> exception handling for this function implementation.
+>=20
+> Fixes: 2976b1798909 ("leds: netxbig: add device tree binding")
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-Triggers can be called from interrupt context, IIRC, and many simple
-LEDs can be operated from interrupt context, too.
+Thanks, applied.
 
-Thus you need spinlocks...
+But it seems to me similar handling is needed in "success" paths, no?
 
 Best regards,
 								Pavel
 --=20
 http://www.livejournal.com/~pavelmachek
 
---3V7upXqbjpZ4EhLz
+--MW5yreqqjyrRcusr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX5r/uQAKCRAw5/Bqldv6
-8nsCAJ9uLX5vOC31VeSzZRR9dpgOPs9FZQCaAlQxrT1duTsUXDc7/k7nZvgSi/I=
-=YNNT
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX5sAwAAKCRAw5/Bqldv6
+8nRfAJ9uiMVB0gb+8m/CP8bgrqR3cf4hLQCfadajXrLWwINndft04WA/RXfZ9ak=
+=uoXS
 -----END PGP SIGNATURE-----
 
---3V7upXqbjpZ4EhLz--
+--MW5yreqqjyrRcusr--
