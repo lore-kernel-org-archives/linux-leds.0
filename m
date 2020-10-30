@@ -2,123 +2,83 @@ Return-Path: <SRS0=i1Fh=EF=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A46BCC4363A
-	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 13:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3A8C00A89
+	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 18:59:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33CCF206FA
-	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 13:08:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eyoRz811"
+	by mail.kernel.org (Postfix) with ESMTP id BB8652072C
+	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 18:59:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604084356;
+	bh=4qp7RvXPQ9jgBiqCY+Jtkw/DSSan2yTy/jFkB/fvaqc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=AwbkN7csiCmpJPSAYprLjuDn6qKbd9HCOTx0SxzD/NdPZScOI0lrOy5+Le3KCwMH/
+	 y09+25iQLWIJ4bOjpYXCbFHRKHzSaHQXlirnKd6xYICYchJ88pMPKG7qVikF2sz0UE
+	 t7E2q/d4b8Yr5PLE13A9HYpnQWCQ/NCJ+gZfsAx0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbgJ3NIJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 30 Oct 2020 09:08:09 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:60676 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbgJ3NIJ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 30 Oct 2020 09:08:09 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 09UD83PG080643;
-        Fri, 30 Oct 2020 08:08:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1604063283;
-        bh=9+CYzSOFDYNTGUiNg6UZ2lIvLADoLJc3gxHDtO4B+D4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=eyoRz811gpUxEQg4m4Rg1EklP3IQUrDbP+i3NSmLJh1pLn9BsCQOsdiXyJaVofbkY
-         8EICU1ltDnNmOoYrvTbeuIqXd6wxG8sTZxMbFG82001FrM4Br1GI1R34is+gfO2Hlg
-         odvkcvylsCdVfjUPt08MzsoFilJLsqy0CgM68AUU=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 09UD82dl047974
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 30 Oct 2020 08:08:03 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Fri, 30
- Oct 2020 08:08:01 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Fri, 30 Oct 2020 08:08:01 -0500
-Received: from [10.250.70.26] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 09UD812C104901;
-        Fri, 30 Oct 2020 08:08:01 -0500
-Subject: Re: [PATCH leds 4/5] dt-bindings: leds: leds-class-multicolor: use
- LED_COLOR_ID_RGB for now
-To:     =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>,
-        <linux-leds@vger.kernel.org>
-CC:     Pavel Machek <pavel@ucw.cz>, <devicetree@vger.kernel.org>,
-        <robh+dt@kernel.org>
-References: <20201030023906.24259-1-kabel@kernel.org>
- <20201030023906.24259-4-kabel@kernel.org>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <b22f8d21-7625-dcff-616c-0c68008b5ab2@ti.com>
-Date:   Fri, 30 Oct 2020 08:08:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727391AbgJ3S7Q (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 30 Oct 2020 14:59:16 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36733 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbgJ3S7Q (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 30 Oct 2020 14:59:16 -0400
+Received: by mail-oi1-f195.google.com with SMTP id d9so1694597oib.3;
+        Fri, 30 Oct 2020 11:59:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=vMBIyMUlBrEcQlciDxDXiIdqa41BHi05WIMz48oNq0g=;
+        b=FgVNRdk8fDBob3QU5zaBGpnx8utyUukl7aBxQmk3bSae+uWdIY4RYT64tqDiB+qBYk
+         mSmz7mkyMCsJLZcvu3zuip4wYr4aclRxKqrKOJ1FT0dKN8Ha9aKt6pUeT2n2CGTusWam
+         12cTTNCN3GDqYNpuOUf+vQHE+ifjEc5+moAJ7htZQqXL9Ia2MyuabMp4aYsxKLJEZBEW
+         HzYXvCsGXmvKWaJRPpNC8f9Bstbe4Etma61E33ki9S9r8sy58IngCmVznw3n7MuQXDYW
+         FZnIjQTif+a0PPa+pKDGSqn1PPBbpMT/UhLrNlUoP35hPqM3H3IDeTyzF8b38cceQfnY
+         y4uA==
+X-Gm-Message-State: AOAM530mNTGld18jBK0o204JSVipxx4QPwr5U6yQ0CMEA9tFCCrhG4Bt
+        GoN/v/zHmDm4dIMQbt8Bog==
+X-Google-Smtp-Source: ABdhPJzo0GHeNsVCmC1cRNr5h0jZEf5NiMo+QojfN7yhg25NT/B/HXEkdBEpJ0TRWW9/tPmCxakmfA==
+X-Received: by 2002:aca:3882:: with SMTP id f124mr2402548oia.111.1604084355359;
+        Fri, 30 Oct 2020 11:59:15 -0700 (PDT)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q22sm1537142ood.32.2020.10.30.11.59.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2020 11:59:14 -0700 (PDT)
+Received: (nullmailer pid 4147475 invoked by uid 1000);
+        Fri, 30 Oct 2020 18:59:13 -0000
+Date:   Fri, 30 Oct 2020 13:59:13 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     cy_huang <u0084500@gmail.com>
+Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
+        linux-leds@vger.kernel.org, pavel@ucw.cz, dmurphy@ti.com,
+        linux-kernel@vger.kernel.org, cy_huang@richtek.com
+Subject: Re: [PATCH v1 2/2] leds: rt4505: Add DT binding document for Richtek
+ RT4505
+Message-ID: <20201030185913.GA4147421@bogus>
+References: <1603784069-24114-1-git-send-email-u0084500@gmail.com>
+ <1603784069-24114-2-git-send-email-u0084500@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201030023906.24259-4-kabel@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1603784069-24114-2-git-send-email-u0084500@gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Marek
-
-On 10/29/20 9:39 PM, Marek Behún wrote:
-> Commit 77dce3a22e89 ("leds: disallow /sys/class/leds/*:multi:* for now")
-> disallows LED_COLOR_ID_MULTI for now, and instead LED_COLOR_ID_RGB
-> should be used. Fix this is leds-class-multicolor binding.
->
-> After we have some usecases for non-RGB multicolor LEDs, this can be
-> changed.
->
-> Signed-off-by: Marek Behún <kabel@kernel.org>
-> Fixes: 77dce3a22e89 ("leds: disallow /sys/class/leds/*:multi:* for now")
-> Cc: devicetree@vger.kernel.org
-> Cc: robh+dt@kernel.org
+On Tue, 27 Oct 2020 15:34:29 +0800, cy_huang wrote:
+> From: ChiYuan Huang <cy_huang@richtek.com>
+> 
+> Add DT binding document for Richtek RT4505 flash led controller.
+> 
+> Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
 > ---
->   .../devicetree/bindings/leds/cznic,turris-omnia-leds.yaml     | 4 ++--
->   .../devicetree/bindings/leds/leds-class-multicolor.yaml       | 4 ++--
->   2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/leds/cznic,turris-omnia-leds.yaml b/Documentation/devicetree/bindings/leds/cznic,turris-omnia-leds.yaml
-> index fe7fa25877fd..2015db9b7618 100644
-> --- a/Documentation/devicetree/bindings/leds/cznic,turris-omnia-leds.yaml
-> +++ b/Documentation/devicetree/bindings/leds/cznic,turris-omnia-leds.yaml
-> @@ -73,14 +73,14 @@ examples:
->                    * LEDs.
->                    */
->                   reg = <0>;
-> -                color = <LED_COLOR_ID_MULTI>;
-> +                color = <LED_COLOR_ID_RGB>;
->                   function = LED_FUNCTION_POWER;
->                   linux,default-trigger = "heartbeat";
->               };
->   
->               multi-led@a {
->                   reg = <0xa>;
-> -                color = <LED_COLOR_ID_MULTI>;
-> +                color = <LED_COLOR_ID_RGB>;
->                   function = LED_FUNCTION_INDICATOR;
->                   function-enumerator = <1>;
->               };
-> diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
-> index b1a53f054b89..9faa3609a6bb 100644
-> --- a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
-> +++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+>  .../devicetree/bindings/leds/leds-rt4505.yaml      | 57 ++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-rt4505.yaml
+> 
 
-Why are you resubmitting the multicolor.yaml?
-
-https://lore.kernel.org/patchwork/patch/1320863/
-
-This is waiting on DT review.
-
-Dan
-
+Reviewed-by: Rob Herring <robh@kernel.org>
