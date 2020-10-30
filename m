@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D46C4363A
-	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 02:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D2FC4363A
+	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 02:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45813207EA
-	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 02:39:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CEC620BED
+	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 02:39:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604025558;
-	bh=HsClZEDGxlq82oxpxV8qrf/vdoS7IOQxuddZOtDDaQM=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=VYONBEVrSsOiwrmvVDkrowO2R65FhiAV/OL4JSe4Luyqe7KfY09lSARps1EGS9F/l
-	 sfyk3HEWwh7ENtbYSVvh2m273zZ8+/0WtYbxi+FgMC1iKWOlcmfupFu6g0dTOy/7Hx
-	 kNbVRbBaA7hS8vr3d53ieirEBqabwa3ijT02KRrc=
+	s=default; t=1604025560;
+	bh=7ApjWrbK+81tG2Jo9OLTPOnAWPvl1ezzu8+HgeLFjZE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=EBHcKKooBVUu4gDqgvNbgD9NX2KUbi1+qhNtRHGNCHKwZG/4BbpWRopM8gyTqHpki
+	 G5bKTKpZaxTbat9VUmZJACsh1DBGDESWh2BsKVPKba7i6IDsleSR3R5vBXBRFHAfjA
+	 JlzO/iG3AhsS61C7YlNtzWL3mg7F7mE+L85G00T0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725815AbgJ3CjR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 29 Oct 2020 22:39:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38600 "EHLO mail.kernel.org"
+        id S1725797AbgJ3CjU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 29 Oct 2020 22:39:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725797AbgJ3CjR (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 29 Oct 2020 22:39:17 -0400
+        id S1725831AbgJ3CjT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 29 Oct 2020 22:39:19 -0400
 Received: from dellmb.labs.office.nic.cz (nat-1.nic.cz [217.31.205.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 869012076E;
-        Fri, 30 Oct 2020 02:39:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D2872087D;
+        Fri, 30 Oct 2020 02:39:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604025556;
-        bh=HsClZEDGxlq82oxpxV8qrf/vdoS7IOQxuddZOtDDaQM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=mVm6RrR3jOReLRnmiZa1NgdYfJ9tZT/Brrd0OQxIm7AHkRkJUWRAWILhx2maKSyot
-         pukvVZ/dw5p/a5VTZAik/GzanPuyzHN6Urr9sSnYGvHAyQycJJPrSsZaUCMCfBbZm3
-         tuE/dGNzFnAqQrFsiOz5hnDqdruc0sXXTDtd6LDo=
+        s=default; t=1604025559;
+        bh=7ApjWrbK+81tG2Jo9OLTPOnAWPvl1ezzu8+HgeLFjZE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=I0ery7OYRMBGifrzZgb+6JmSXsi2JLlCWREB++RQ39WGIYkQvZ4g2wb1IR4SyRcRE
+         PoEm4CydFu6scr2z6bdHCrfat9n3ckTjelayiU7usLtmYKw8aM+kPunGo2Be+kUOmn
+         07tYEnJ9SHyDWeRxP0YkRvxT3hAz4CbxEozZY9hQ=
 From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
 To:     linux-leds@vger.kernel.org
 Cc:     Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
-Subject: [PATCH leds 1/5] leds: turris-omnia: use constants instead of macros for color command
-Date:   Fri, 30 Oct 2020 03:39:02 +0100
-Message-Id: <20201030023906.24259-1-kabel@kernel.org>
+Subject: [PATCH leds 3/5] leds: turris-omnia: fix checkpatch warning
+Date:   Fri, 30 Oct 2020 03:39:04 +0100
+Message-Id: <20201030023906.24259-3-kabel@kernel.org>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20201030023906.24259-1-kabel@kernel.org>
+References: <20201030023906.24259-1-kabel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -53,90 +55,30 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Use integer constants directly when building I2C messages for LED color
-change command, instead of macros. The command is simple enough to
-understand what is going on even without these names.
+Use kstrtoul instead of sscanf to satisfy checkpatch.
 
 Signed-off-by: Marek Behún <kabel@kernel.org>
 ---
- drivers/leds/leds-turris-omnia.c | 34 ++++++++++++--------------------
- 1 file changed, 13 insertions(+), 21 deletions(-)
+ drivers/leds/leds-turris-omnia.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-omnia.c
-index 8c5bdc3847ee..80b2d94844f2 100644
+index 096ed7b81957..c0b4e1e0e945 100644
 --- a/drivers/leds/leds-turris-omnia.c
 +++ b/drivers/leds/leds-turris-omnia.c
-@@ -27,14 +27,6 @@
- #define CMD_LED_SET_BRIGHTNESS		7
- #define CMD_LED_GET_BRIGHTNESS		8
- 
--#define OMNIA_CMD			0
--
--#define OMNIA_CMD_LED_COLOR_LED		1
--#define OMNIA_CMD_LED_COLOR_R		2
--#define OMNIA_CMD_LED_COLOR_G		3
--#define OMNIA_CMD_LED_COLOR_B		4
--#define OMNIA_CMD_LED_COLOR_LEN		5
--
- struct omnia_led {
- 	struct led_classdev_mc mc_cdev;
- 	struct mc_subled subled_info[OMNIA_LED_NUM_CHANNELS];
-@@ -55,21 +47,21 @@ static int omnia_led_brightness_set_blocking(struct led_classdev *cdev,
- 	struct led_classdev_mc *mc_cdev = lcdev_to_mccdev(cdev);
- 	struct omnia_leds *leds = dev_get_drvdata(cdev->dev->parent);
- 	struct omnia_led *led = to_omnia_led(mc_cdev);
--	u8 buf[OMNIA_CMD_LED_COLOR_LEN], state;
-+	u8 buf[5], state;
+@@ -174,10 +174,10 @@ static ssize_t brightness_store(struct device *dev, struct device_attribute *a,
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct omnia_leds *leds = i2c_get_clientdata(client);
+-	unsigned int brightness;
++	unsigned long brightness;
  	int ret;
  
- 	mutex_lock(&leds->lock);
+-	if (sscanf(buf, "%u", &brightness) != 1)
++	if (kstrtoul(buf, 10, &brightness))
+ 		return -EINVAL;
  
- 	led_mc_calc_color_components(&led->mc_cdev, brightness);
- 
--	buf[OMNIA_CMD] = CMD_LED_COLOR;
--	buf[OMNIA_CMD_LED_COLOR_LED] = led->reg;
--	buf[OMNIA_CMD_LED_COLOR_R] = mc_cdev->subled_info[0].brightness;
--	buf[OMNIA_CMD_LED_COLOR_G] = mc_cdev->subled_info[1].brightness;
--	buf[OMNIA_CMD_LED_COLOR_B] = mc_cdev->subled_info[2].brightness;
-+	buf[0] = CMD_LED_COLOR;
-+	buf[1] = led->reg;
-+	buf[2] = mc_cdev->subled_info[0].brightness;
-+	buf[3] = mc_cdev->subled_info[1].brightness;
-+	buf[4] = mc_cdev->subled_info[2].brightness;
- 
- 	state = CMD_LED_STATE_LED(led->reg);
--	if (buf[OMNIA_CMD_LED_COLOR_R] || buf[OMNIA_CMD_LED_COLOR_G] || buf[OMNIA_CMD_LED_COLOR_B])
-+	if (buf[2] || buf[3] || buf[4])
- 		state |= CMD_LED_STATE_ON;
- 
- 	ret = i2c_smbus_write_byte_data(leds->client, CMD_LED_STATE, state);
-@@ -250,18 +242,18 @@ static int omnia_leds_probe(struct i2c_client *client,
- 
- static int omnia_leds_remove(struct i2c_client *client)
- {
--	u8 buf[OMNIA_CMD_LED_COLOR_LEN];
-+	u8 buf[5];
- 
- 	/* put all LEDs into default (HW triggered) mode */
- 	i2c_smbus_write_byte_data(client, CMD_LED_MODE,
- 				  CMD_LED_MODE_LED(OMNIA_BOARD_LEDS));
- 
- 	/* set all LEDs color to [255, 255, 255] */
--	buf[OMNIA_CMD] = CMD_LED_COLOR;
--	buf[OMNIA_CMD_LED_COLOR_LED] = OMNIA_BOARD_LEDS;
--	buf[OMNIA_CMD_LED_COLOR_R] = 255;
--	buf[OMNIA_CMD_LED_COLOR_G] = 255;
--	buf[OMNIA_CMD_LED_COLOR_B] = 255;
-+	buf[0] = CMD_LED_COLOR;
-+	buf[1] = OMNIA_BOARD_LEDS;
-+	buf[2] = 255;
-+	buf[3] = 255;
-+	buf[4] = 255;
- 
- 	i2c_master_send(client, buf, 5);
- 
-
-base-commit: 041883d044672852fcb8254cfc7b683fd306c943
+ 	if (brightness > 100)
 -- 
 2.26.2
 
