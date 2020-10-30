@@ -5,67 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5E5C55179
-	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 01:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE86C55178
+	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 01:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2AC620729
-	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 01:07:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2B8820729
+	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 01:07:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="je1ZvvYr"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aZyFNJB8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbgJ3BHW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 29 Oct 2020 21:07:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51614 "EHLO
+        id S1726111AbgJ3BHZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 29 Oct 2020 21:07:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725771AbgJ3BHW (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 29 Oct 2020 21:07:22 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08AA7C0613D3
-        for <linux-leds@vger.kernel.org>; Thu, 29 Oct 2020 18:07:22 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id x6so5170391ljd.3
-        for <linux-leds@vger.kernel.org>; Thu, 29 Oct 2020 18:07:21 -0700 (PDT)
+        with ESMTP id S1725771AbgJ3BHZ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 29 Oct 2020 21:07:25 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9E51C0613D2
+        for <linux-leds@vger.kernel.org>; Thu, 29 Oct 2020 18:07:24 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id y16so5191328ljk.1
+        for <linux-leds@vger.kernel.org>; Thu, 29 Oct 2020 18:07:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zzF+iD2bQtsVAEAnO2ufhYknySXRFrdpCxNsou50eyA=;
-        b=je1ZvvYry/NJgExvAEw0TUT67uPAXNEHkdvRgMqiDF3uVrrHeogsZaPoApMb68NJf9
-         0OFBiT/WqDdXCYscYN6HlZwzFVRbZklDMfkA/ZSG/9gOPavBVZlG7NcuwxZReGGS650G
-         0J13WH7ozOrQ62sSjGPOeNuZlF99yIcHA5IXJACPgOrQ7ijHnqeUmJ3Mh17/QAHgtMSk
-         aobnEO/qWNmJfnKKmwU5jSQuMISh6J5HKJm7UTn6lpv+C3PqFx4wdvuy3k9WNYgNUngh
-         l0A2LD/Shm/gH4Qyuc3yNnIK4HZ4o1BegAlGWQ06O7vqvVGSQtfegfZCicua2ss6d/Lh
-         o9RQ==
+        bh=BwMmGlmMLcmqzYJ99gKjkUq1Wudan5TSJn8Ws/0M4Fo=;
+        b=aZyFNJB8da1k2pfCYzco1TTbsjCFiv8Gvrhvf+dokA9bi9ZwJSTXcZLrCzC1jZIE77
+         nN+51GLd/uTe+fqkk67784XDB+QxBJH6D7+wocH6K2C7aqgXB0EVmuR7g7wX9vOCVtVX
+         rOlGABMtk3f7WWHw0+5MTgF9j1k5MXe4hoqvFBoMCLDYdoRi7xfY0fr0gUmZh39UdyKb
+         AZ/nbj8M5DXsJpTtbtOXEw1Kgz8P9fHwra3oG+i7hHXK61MsBloD2mJ/ouQdIt/6b0Mv
+         DFQjYjSteSUnUt1hYlKcul4jKEajEG0jTY/kdH/HogdcW66w5KPkcWtvtoxmHAdFqKUQ
+         RHwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zzF+iD2bQtsVAEAnO2ufhYknySXRFrdpCxNsou50eyA=;
-        b=RFTpyBYZv+rKb3Pxr1IlLZihC+U+IX7/3gwxK+XZCMWBfN8NAbeQY5JDog825G8gfz
-         GEPYjnKk0g25hKjEm9bouTPqpLMcVnezagGlwjUgbfycgmcs4j1yNNe2T0Q1trUeHwJ6
-         YQs3CL6T5V0ClV8TiqMheuFONAFKruLw6oYx42hH/85L9Xh71kKX8kgyivXTs0A6rpAw
-         MBZdhOP2hTSidwVxOLCf/oaC9/FvxUOYIvt/ZFSWHINYiBiBv0BbNLbg5m/qefpShI/Z
-         uXgish5Q4ggJ6/Q1jGkbnGlcbk5Ide02PqFOHZwJ7+xKLCqujA+rX06WXO8S9X16tAbF
-         oTzg==
-X-Gm-Message-State: AOAM533ylNrdSTgI7t5wm7M1uCc4lutRqmbU7WLUi/I80UrseQdBCNh5
-        etKfzuRSAy4D+7CrbdWDAwKVZQ==
-X-Google-Smtp-Source: ABdhPJzbX8Mvkqnvj67XhvIU50pcIFgdBIpv9KZgdQFiTDPX9pqlOfzMvB+26ALvTYx8NS9UQ4u8Wg==
-X-Received: by 2002:a2e:b0e4:: with SMTP id h4mr2708905ljl.119.1604020040402;
-        Thu, 29 Oct 2020 18:07:20 -0700 (PDT)
+        bh=BwMmGlmMLcmqzYJ99gKjkUq1Wudan5TSJn8Ws/0M4Fo=;
+        b=h6MrPmocdiQFd8xhvp8qFQW35BhqHWRqOYLR14wlv/++1050JPWGg4+NKxqJDpOeyJ
+         0/YHNxSJvTQR32ODAjwIslYxCskcZ4b92vPI44+aK4DyytLGwg9rpenJf5Eb3sE+3YBv
+         Xfd0Adp9nQRHTYCPm5PnBiNO4ujaLcTsRpcp74lafMHaYZxBHxVs/f4rVf1vQ/2Mbo8G
+         xxiVLwSgI7S3/iBCMH5dhs84QF/eKlRwHlA3H5Uqy5TIKXpbIHaVpzKocvnzek/DVgD1
+         sz7dG829cJFtenntSUqvkFK2Hd8WIbwpi1Y9SbttJbWhovE3VfH8kFhWquqfi15+gT6h
+         o/2w==
+X-Gm-Message-State: AOAM531w/vukUZtxcTlvibk7UG3WwOs0g9NaNXKrWxBVQCP77y5W3byn
+        R/4DJ6h8VYq5HZ20hGn59Ly3cw==
+X-Google-Smtp-Source: ABdhPJx4//2VJE2i01TQOxJzPGp6fxZJabT1/zncubmKp651pgiNQxMNSiEThV/1hG2iyvDpPWRCwA==
+X-Received: by 2002:a2e:8702:: with SMTP id m2mr2624598lji.21.1604020043137;
+        Thu, 29 Oct 2020 18:07:23 -0700 (PDT)
 Received: from eriador.lan ([188.162.64.219])
-        by smtp.gmail.com with ESMTPSA id c6sm447130lfm.226.2020.10.29.18.07.19
+        by smtp.gmail.com with ESMTPSA id c6sm447130lfm.226.2020.10.29.18.07.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2020 18:07:19 -0700 (PDT)
+        Thu, 29 Oct 2020 18:07:22 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
 Cc:     linux-leds@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 1/5] dt-bindings: leds: leds-qcom-lpg: add pm8150[bl] compatible strings
-Date:   Fri, 30 Oct 2020 04:07:09 +0300
-Message-Id: <20201030010713.247009-2-dmitry.baryshkov@linaro.org>
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH v2 3/5] arm64: dts: pm8150b: add Light Pulse Generator device node
+Date:   Fri, 30 Oct 2020 04:07:11 +0300
+Message-Id: <20201030010713.247009-4-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201030010713.247009-1-dmitry.baryshkov@linaro.org>
 References: <20201030010713.247009-1-dmitry.baryshkov@linaro.org>
@@ -75,28 +74,32 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add two more compatible strings for Light Pulse Generator blocks as
-found on PM8150B and PM8150A/L chips.
+Add device node defining LPG/PWM block on PM8150B PMIC chip.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/qcom/pm8150b.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
-index 5ccf0f3d8f1b..0474f1d998ff 100644
---- a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
-+++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
-@@ -17,6 +17,8 @@ description: >
- properties:
-   compatible:
-     enum:
-+      - qcom,pm8150b-lpg
-+      - qcom,pm8150l-lpg
-       - qcom,pm8916-pwm
-       - qcom,pm8941-lpg
-       - qcom,pm8994-lpg
+diff --git a/arch/arm64/boot/dts/qcom/pm8150b.dtsi b/arch/arm64/boot/dts/qcom/pm8150b.dtsi
+index d6e075f92b1e..30e7a5f19e5f 100644
+--- a/arch/arm64/boot/dts/qcom/pm8150b.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm8150b.dtsi
+@@ -133,5 +133,14 @@ pmic@3 {
+ 		reg = <0x3 SPMI_USID>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++
++		pm8150b_lpg: lpg {
++			compatible = "qcom,pm8150b-lpg";
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
 2.28.0
 
