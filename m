@@ -1,82 +1,145 @@
-Return-Path: <SRS0=i1Fh=EF=vger.kernel.org=linux-leds-owner@kernel.org>
+Return-Path: <SRS0=AIqf=EH=vger.kernel.org=linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31798C00A89
-	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 23:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F78BC2D0A3
+	for <linux-leds@archiver.kernel.org>; Sun,  1 Nov 2020 09:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CFCE520A8B
-	for <linux-leds@archiver.kernel.org>; Fri, 30 Oct 2020 23:46:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604101569;
-	bh=ZfF4RTtFvziN1B/oL/EJPYQE9v7+IqqByCucjDK5Mwc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=YTlFWtauyRb0Jr5GYX6Lq25SgOWyFuTj8wcgv5655UZU3ENV1wNL1Qwmi1SKJ8eUN
-	 73hugOwIYW9ywcwACqBX1Rowr/hS1l114TCUq2BJprANUzpJeH6jC1dJnpsuvlnFis
-	 4N+XMi1hK84wUMUebPj5HE+BuHyVydcAQI2dtHps=
+	by mail.kernel.org (Postfix) with ESMTP id 56E8220870
+	for <linux-leds@archiver.kernel.org>; Sun,  1 Nov 2020 09:34:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sartura-hr.20150623.gappssmtp.com header.i=@sartura-hr.20150623.gappssmtp.com header.b="WkVwm8W6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725768AbgJ3XqJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 30 Oct 2020 19:46:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50060 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbgJ3XqJ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 30 Oct 2020 19:46:09 -0400
-Received: from localhost (otava-0257.koleje.cuni.cz [78.128.181.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1388C208B6;
-        Fri, 30 Oct 2020 23:46:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604101569;
-        bh=ZfF4RTtFvziN1B/oL/EJPYQE9v7+IqqByCucjDK5Mwc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Aw6BqvbF8qTCx4t2/v92dqtd/Fz9gsGVCD0bo4nRqtK/VnIAVismWlLDHnseLrVPT
-         GMUEbG+7da2H+82H+x3JwiAJdF1WkIq4ZiqDyp6kIgUih6q3GjRRANJBZYOVWGad9z
-         E1U5YxvsnzYSurwDpznQ0n4qVKbbbgX6YPUstUTQ=
-Date:   Sat, 31 Oct 2020 00:45:56 +0100
-From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-leds@vger.kernel.org,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ben Whitten <ben.whitten@gmail.com>
-Subject: Re: [PATCH RFC leds + net-next 2/7] leds: trigger: netdev: simplify
- the driver by using bit field members
-Message-ID: <20201031004556.32c61a9d@kernel.org>
-In-Reply-To: <64419e33-ffcd-4082-01bd-3370dae86b4b@gmail.com>
-References: <20201030114435.20169-1-kabel@kernel.org>
-        <20201030114435.20169-3-kabel@kernel.org>
-        <64419e33-ffcd-4082-01bd-3370dae86b4b@gmail.com>
-X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726155AbgKAJe1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 1 Nov 2020 04:34:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36594 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbgKAJe0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 1 Nov 2020 04:34:26 -0500
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 992B2C0617A6
+        for <linux-leds@vger.kernel.org>; Sun,  1 Nov 2020 01:34:26 -0800 (PST)
+Received: by mail-il1-x142.google.com with SMTP id x7so10342789ili.5
+        for <linux-leds@vger.kernel.org>; Sun, 01 Nov 2020 01:34:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura-hr.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=feEafZUghxfj0r5ehU1s8Cn33RCu4DgdtZG8O8W28q4=;
+        b=WkVwm8W6d5z3BiH3mqEaxtpzm5JHDkQ2qO+Lm7pDbVmbp4zj2nxf5i3YTWPnO8jFUE
+         UaLi3KvxE4JXDgbwd9TxjEIpaoXKQ5Y3PAoS6m7ujQGjV58sjQLZtY20FC7zvgpRgOhx
+         SSPXrD4BXYmE5dYsTpMA8FooZLxH8Ol6J8cULSZZWS3gACsscDhPDgwQqnVoKvEy7cbx
+         weUNM5mPzt/HtVXfTJLtP+p2jrG9tB4CYrzISin0mh+26T3hQqP8ZEg4PD5OUvDswKzV
+         vufbtim0LI+4BsW685/COWuwMetSI0DFYlM/cPQSAGBZj6HMTKL7W/LQw0FcjdTP7nmE
+         tVRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=feEafZUghxfj0r5ehU1s8Cn33RCu4DgdtZG8O8W28q4=;
+        b=cMkovwsTrDre5XJQZv9Cf1tIXrgz/HW7VWaJtrPcCk5eoGQEyftedR040GzBdA97CV
+         Q3CMG2A5y/dRmevJZ/c2HdFsmWP98DXmI1nOUFR9Nrk/Lfk1AReSGn3A1ALoorumRKKM
+         AU66evND+W48EZZKbEBfMzqddBC9mXjyBhXWxT5uTzkDbZShkYB7945tOdbz9ayvRVRi
+         X3bQHxgLS3mDGdbd7BW7NdPW0oH7riSOVs3fK4xC6PyWQspDE9Eyv8dbpVVpk8wLXtqq
+         Eb+oTO8K6b48xW2JB6El8Rma4gYuvwfJWAZEto6DAcJX8UfRNpM8yck0ssmLYWF7XV7J
+         D+Ww==
+X-Gm-Message-State: AOAM530ZeQMIuCSdwUPueJLsNewQX5SMo2WGPtk1tUy9eB07CqEN+Z9+
+        n5Yw1Bzaj+t/TfE8FwEAnSLv4qwzB2GCqWdSZb6KBQ==
+X-Google-Smtp-Source: ABdhPJxhywKjvwLEbVG0Q4jm4ZwrctHRgWmYcvrw1ePGWRxW/2fhcJJeQK6WrcJ3rj3fCkBmAxMMU2qWmxihLX0/D8E=
+X-Received: by 2002:a92:41cf:: with SMTP id o198mr7403679ila.262.1604223265873;
+ Sun, 01 Nov 2020 01:34:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20201025005916.64747-1-luka.kovacic@sartura.hr>
+ <20201025005916.64747-5-luka.kovacic@sartura.hr> <20201029175823.GC26053@duo.ucw.cz>
+In-Reply-To: <20201029175823.GC26053@duo.ucw.cz>
+From:   Luka Kovacic <luka.kovacic@sartura.hr>
+Date:   Sun, 1 Nov 2020 10:34:14 +0100
+Message-ID: <CADZsf3bChWDv02v=LR-abC5rNmh09JsdabWVLcuuWaOhejBBjg@mail.gmail.com>
+Subject: Re: [PATCH v7 4/6] drivers: leds: Add the IEI WT61P803 PUZZLE LED driver
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-hwmon@vger.kernel.org,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Marek Behun <marek.behun@nic.cz>,
+        Luka Perkov <luka.perkov@sartura.hr>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Robert Marko <robert.marko@sartura.hr>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Fri, 30 Oct 2020 23:37:52 +0100
-Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+Hello Pavel,
 
-> Hi Marek,
-> 
-> Bitops are guaranteed to be atomic and this was done for a reason.
+On Thu, Oct 29, 2020 at 6:58 PM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> Hi!
+>
+> > Add support for the IEI WT61P803 PUZZLE LED driver.
+> > Currently only the front panel power LED is supported,
+> > since it is the only LED on this board wired through the
+> > MCU.
+> >
+> > The LED is wired directly to the on-board MCU controller
+> > and is toggled using an MCU command.
+> >
+> > Support for more LEDs is going to be added in case more
+> > boards implement this microcontroller, as LEDs use many
+> > different GPIOs.
+>
+> Not too bad.
+>
+> > This driver depends on the IEI WT61P803 PUZZLE MFD driver.
+> >
+> > Signed-off-by: Luka Kovacic <luka.kovacic@sartura.hr>
+> > Cc: Luka Perkov <luka.perkov@sartura.hr>
+> > Cc: Robert Marko <robert.marko@sartura.hr>
+> > ---
+> >  drivers/leds/Kconfig                    |   8 ++
+> >  drivers/leds/Makefile                   |   1 +
+> >  drivers/leds/leds-iei-wt61p803-puzzle.c | 161 ++++++++++++++++++++++++
+> >  3 files changed, 170 insertions(+)
+>
+> Can you put it into drivers/leds/simple? You'll have to create it.
 
-Hmm okay...
-Sooo, netdev_trig_work cannot be executed at the same time as the
-link/linkup/rx/tx changing stuff from netdev_trig_notify,
-interval_store or netdev_led_attr_store, because all these functions
-ensure cancelation of netdev_trig_work by calling
-cancel_delayed_work_sync. Doesn't this somehow prevent the need for
-memory barriers provided by atomic bitops?
+Sure, I'll move the driver there.
 
-BTW Jacek what do you think about the other patches?
+>
+> > +++ b/drivers/leds/leds-iei-wt61p803-puzzle.c
+> > @@ -0,0 +1,161 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+>
+> Make sure this is consistent with MODULE_LICENSE("GPL");. GPLv2+ would
+> be nicer if you can.
 
-Marek
+Okay, I'll see what I can do...
+Although isn't it okay to use either GPL-2.0-only or GPL-2.0+ with
+MODULE_LICENSE("GPL") as described in Documentation/process/license-rules.rst
+on line 441?
+
+>
+> > +     struct mutex lock;
+>
+> Mutex is _way_ overkill for this. Please check that locking provided
+> by LED core is not sufficient. If not, please use atomic_t or
+> something.
+
+Ok.
+
+>
+> Best regards,
+>                                                                 Pavel
+> --
+> http://www.livejournal.com/~pavelmachek
+
+Kind regards,
+Luka
