@@ -2,107 +2,87 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72147C2D0E4
-	for <linux-leds@archiver.kernel.org>; Tue, 17 Nov 2020 10:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09BA6C2D0E4
+	for <linux-leds@archiver.kernel.org>; Tue, 17 Nov 2020 18:00:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 196F120781
-	for <linux-leds@archiver.kernel.org>; Tue, 17 Nov 2020 10:57:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8818C2465E
+	for <linux-leds@archiver.kernel.org>; Tue, 17 Nov 2020 18:00:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m16pyCmz"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AoiQ74SN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbgKQK4V (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 17 Nov 2020 05:56:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37094 "EHLO
+        id S1729833AbgKQSAJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 17 Nov 2020 13:00:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727952AbgKQK4T (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 17 Nov 2020 05:56:19 -0500
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5FE3C0613CF;
-        Tue, 17 Nov 2020 02:56:17 -0800 (PST)
-Received: by mail-pj1-x1044.google.com with SMTP id js21so246399pjb.0;
-        Tue, 17 Nov 2020 02:56:17 -0800 (PST)
+        with ESMTP id S1726697AbgKQSAI (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 17 Nov 2020 13:00:08 -0500
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 741ABC0613CF
+        for <linux-leds@vger.kernel.org>; Tue, 17 Nov 2020 10:00:08 -0800 (PST)
+Received: by mail-lj1-x241.google.com with SMTP id r17so25309174ljg.5
+        for <linux-leds@vger.kernel.org>; Tue, 17 Nov 2020 10:00:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=NLioOEcjfW/MmxTk00oamg+ivAVVHPp1FiA+wpjNbWQ=;
-        b=m16pyCmzxROuHGcdnv2Xv4oL6krzQq0Gt2whfw3SxwIGX6hcYcu9GDcMI+kZfnOlfk
-         JwynXS8svraxDwOQL3//C8AK+vnlfskp4OstdzkF7aFMPq+YqWNlGyxVp6zcQfV8vnuN
-         PzcyaR8upFUAwpppzQDFaiLB91QxvCk4cDbczEqh8PHlS9rlBXdWyUoZkECp63RijA7f
-         EDqgMuWJsBOvjyFZJ/rmui1rv+e9d9AEt8YCO7ebt6V/Rm9Srto8iN01GghqLq6x6MSW
-         QJg5zleOp+e2usSrbOkRlcw62xxT/aqw0U0dRKwvplQhqd/9qlUvCVgeBZR9oQC+6unj
-         kT1A==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UL81rwXcfbyusrE2QAmwq30h1yMrtrFOVYAuzQEKqis=;
+        b=AoiQ74SNR+8Tm50Y+Qr5w01hgvui8+bo0BQSUel/fKzvO347Sq0+FU0GwHazApvqZr
+         pkwf26jpWpglpYFKAmCM3c0z9AaikljMn3jlFtT85MZiyJzytAZEpl34lekvS5CyFwmM
+         yOKaJcMYH2gLzR6cX9pLh/dnDakRMAANg62kVaRTGWZ854UkSTqOkDfWYxDFNjzJIuog
+         26q70ZfIW/ogP6qs3K2/PlIsQVb7zyiUzfD1xd2PsKE7zRtxl3uRLXhDd/soirkjAu+P
+         UrC7Xq640rNh2CfOdNbRGWqpZrjoZ/XlfOmK5cQ/EVr2hZ3koEXnBYM6j4eyfzwH5w8i
+         XtnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=NLioOEcjfW/MmxTk00oamg+ivAVVHPp1FiA+wpjNbWQ=;
-        b=o52Y1h2aZwe5Ab2phQON6yJyorFbwZpjumXnmXj0O8BTtN69d6gKv+6JesC7IewraL
-         DnUXJttNkANqS35MRopDpe3kDVK6PolHcAnMZKmAuiVw2191m7FtuzqO4lgOb5qCUG4l
-         32FxDHjxvlEz3KUbVILgH24PJmsOX45gC/bRkOTSdlHKYZAL3Og6R7iYya9ahQLKYYvr
-         pe8i/BCpzHjW+/IrmiJ3p9wQDSJyYk4v0AC8UKF6ZTgX/MIuyk+/QD1BLO9pAt4J61cK
-         migJpl+z0aQTPuLOfBF6NlWa1duPjCa8woXdy+yp5r1/KQ0rFZrajr/Fn909UKXuEORX
-         mAlA==
-X-Gm-Message-State: AOAM5317EewSMSTs/ETHqOY794C6QgCC0AsYoJiCIU2JLzAV9xT6fDYu
-        d12apqY8dxSDmV1xNFRogQE=
-X-Google-Smtp-Source: ABdhPJzOnlyq5JZKywoPCUL0ozBIsDw0gn8Ce0wd4hCMagPJR9P7t/9xKX9Pruuso/Sx+MXfdcBbOA==
-X-Received: by 2002:a17:90b:208:: with SMTP id fy8mr1101286pjb.204.1605610577432;
-        Tue, 17 Nov 2020 02:56:17 -0800 (PST)
-Received: from localhost.localdomain ([2402:7500:462:32e6:3119:2966:5eda:751d])
-        by smtp.gmail.com with ESMTPSA id j11sm17708214pgp.82.2020.11.17.02.56.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Nov 2020 02:56:16 -0800 (PST)
-From:   Gene Chen <gene.chen.richtek@gmail.com>
-To:     jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
-        matthias.bgg@gmail.com
-Cc:     dmurphy@ti.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        gene_chen@richtek.com, Wilma.Wu@mediatek.com,
-        shufan_lee@richtek.com, cy_huang@richtek.com,
-        benjamin.chao@mediatek.com
-Subject: [PATCH v6 0/2] leds: mt6360: Add LED driver for MT6360
-Date:   Tue, 17 Nov 2020 18:55:35 +0800
-Message-Id: <1605610537-18085-1-git-send-email-gene.chen.richtek@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UL81rwXcfbyusrE2QAmwq30h1yMrtrFOVYAuzQEKqis=;
+        b=mhBVkPyzDBzJecY4K28JWpvCbbyOGjYgoneMvZnKqdYYWt2MQcOQgvkNR7JuCAO8cm
+         AXed1T/qgby6InhCFOqSaa4YguYpqPTuL3HAF7rqaaLtuOdeu4ckg2gwXVwzsxKm03Pz
+         e0O0IfrUdbMAbhE3/gEecB7XvuxHn/oXn2yDGvpA/7p/FlRo15Me1p3tqA9immOdniQW
+         7RkDAWDUXU5XBoYD8bf+YbtDVOZyUdQ8u47ARP0qOfS7fAHArpWH4+itx2sUoqMfcLlW
+         EFb9wPw0mjanIVRxwUleKQi4HBPVS8RbCSrUpAz9Myx55hEmdmybXwKrFTB0J3m7F3F8
+         LDFA==
+X-Gm-Message-State: AOAM532AAefrZvC2jQm2N8Xb8WbtpL5qJFuMG7areuFgh7uDmoKak5ge
+        aIR1X7eyTcpiUsqCD4lzFXft89WDHSyvtll9ILz5Eg==
+X-Google-Smtp-Source: ABdhPJz9pbSO1bvBKMQf9hNngCUPe/9hMg/wrGmoD5lgT38hr+pU9clV3sQiI6mLMYfkK6pUR6v2mmcn7N56Mmg671s=
+X-Received: by 2002:a2e:998e:: with SMTP id w14mr2607908lji.100.1605636006789;
+ Tue, 17 Nov 2020 10:00:06 -0800 (PST)
+MIME-Version: 1.0
+References: <1604284946-16254-1-git-send-email-u0084500@gmail.com>
+ <CACRpkdbGs-LEWie2uzZEHxrac-0tuHqRtdDP0D22KnXKQ3rqGQ@mail.gmail.com> <CADiBU3_C2J0p-gWx9KyZWXqX43VAn+bh6ac5TgvPp9xK9HjSQQ@mail.gmail.com>
+In-Reply-To: <CADiBU3_C2J0p-gWx9KyZWXqX43VAn+bh6ac5TgvPp9xK9HjSQQ@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 17 Nov 2020 18:59:55 +0100
+Message-ID: <CACRpkdb_WWYHKUYWUO1T32fV3T3wLGe5G9D65ejrUgwEo_=XwQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] leds: rt4505: Add support for Richtek RT4505 flash
+ LED controller
+To:     ChiYuan Huang <u0084500@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        cy_huang <cy_huang@richtek.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This patch series add MT6360 LED support contains driver and binding document
+On Tue, Nov 17, 2020 at 2:10 AM ChiYuan Huang <u0084500@gmail.com> wrote:
 
-Gene Chen (2)
- dt-bindings: leds: Add bindings for MT6360 LED
- leds: mt6360: Add LED driver for MT6360
+> From linus walleij's mail, how can I support him?
+> Or just  wait my patch to be committed on linux main stream?
 
- Documentation/devicetree/bindings/leds/leds-mt6360.yaml |   95 +
- drivers/leds/Kconfig                                    |   12 
- drivers/leds/Makefile                                   |    1 
- drivers/leds/leds-mt6360.c                              |  783 ++++++++++++++++
- 4 files changed, 891 insertions(+)
+I think it's chill, Lee has a good habit to sync with other
+maintainers with immutable branches, so the LED maintainers
+should be able to get something from him to pull once he is
+happy with the series, then I can rebase my patch.
 
-changelogs between v1 & v2
- - add led driver with mfd
-
-changelogs between v2 & v3
- - independent add led driver
- - add dt-binding document
- - refactor macros definition for easy to debug
- - parse device tree by fwnode
- - use devm*ext to register led class device
-
-changelogs between v3 & v4
- - fix binding document description
- - use GENMASK and add unit postfix to definition
- - isink register led class device
-
-changelogs between v4 & v5
- - change rgb isink to multicolor control
- - add binding reference to mfd yaml
-
-changelogs between v5 & v6
- - Use DT to decide RGB LED is multicolor device or indicator device only
-
+Yours,
+Linus Walleij
