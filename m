@@ -2,88 +2,104 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3780C64E69
-	for <linux-leds@archiver.kernel.org>; Thu, 19 Nov 2020 07:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73BEC63798
+	for <linux-leds@archiver.kernel.org>; Thu, 19 Nov 2020 07:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83D49246B8
-	for <linux-leds@archiver.kernel.org>; Thu, 19 Nov 2020 07:05:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBB0C246BB
+	for <linux-leds@archiver.kernel.org>; Thu, 19 Nov 2020 07:44:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbgKSHFW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 19 Nov 2020 02:05:22 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7702 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726355AbgKSHFU (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 19 Nov 2020 02:05:20 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Cc9fd5C6JzkWt8;
-        Thu, 19 Nov 2020 15:04:57 +0800 (CST)
-Received: from [10.174.177.149] (10.174.177.149) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.487.0; Thu, 19 Nov 2020 15:05:14 +0800
-Subject: Re: [PATCH] leds: lp50xx: add missing fwnode_handle_put in error
- handling case
-To:     Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20201111032159.17833-1-miaoqinglang@huawei.com>
- <e803008d-2d68-6048-90dc-d05c311a5fb9@ti.com>
-From:   Qinglang Miao <miaoqinglang@huawei.com>
-Message-ID: <9ddeebab-85c2-3597-4cea-4129b1d7f8ae@huawei.com>
-Date:   Thu, 19 Nov 2020 15:05:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1725813AbgKSHoU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 19 Nov 2020 02:44:20 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:38636 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbgKSHoU (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 19 Nov 2020 02:44:20 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 2D57E1C0B8C; Thu, 19 Nov 2020 08:44:17 +0100 (CET)
+Date:   Thu, 19 Nov 2020 08:44:16 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Gene Chen <gene.chen.richtek@gmail.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Gene Chen <gene_chen@richtek.com>, Wilma.Wu@mediatek.com,
+        shufan_lee@richtek.com, cy_huang@richtek.com,
+        benjamin.chao@mediatek.com
+Subject: Re: [PATCH v7 2/5] dt-bindings: leds: Add LED_COLOR_ID_MOONLIGHT
+ definitions
+Message-ID: <20201119074416.GA27576@amd>
+References: <1605696462-391-1-git-send-email-gene.chen.richtek@gmail.com>
+ <1605696462-391-3-git-send-email-gene.chen.richtek@gmail.com>
+ <20201118213712.GA22371@amd>
+ <CAE+NS36rnHzhdk5Os+vL=uK225HJT-bUHSRJ6KccaOHc-kCjpA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <e803008d-2d68-6048-90dc-d05c311a5fb9@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.149]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Content-Disposition: inline
+In-Reply-To: <CAE+NS36rnHzhdk5Os+vL=uK225HJT-bUHSRJ6KccaOHc-kCjpA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-在 2020/11/11 21:27, Dan Murphy 写道:
-> Hello
-> 
-> On 11/10/20 9:21 PM, Qinglang Miao wrote:
->> Fix to goto child_out to do fwnode_handle_put(child)
->> from the error handling case rather than simply return,
->> as done elsewhere in this function.
->>
->> Fixes: 242b81170fb8 ("leds: lp50xx: Add the LP50XX family of the RGB 
->> LED driver")
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
->> ---
->>   drivers/leds/leds-lp50xx.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
->> index 5fb4f24aeb2e..49a997b2c781 100644
->> --- a/drivers/leds/leds-lp50xx.c
->> +++ b/drivers/leds/leds-lp50xx.c
->> @@ -488,7 +488,7 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
->>           mc_led_info = devm_kcalloc(priv->dev, LP50XX_LEDS_PER_MODULE,
->>                          sizeof(*mc_led_info), GFP_KERNEL);
->>           if (!mc_led_info)
->> -            return -ENOMEM;
->> +            goto child_out;
-> 
-> Thanks for the patch.
-> 
-> Need to set ret = -ENOMEM; then do child_out so the error is reported 
-> properly
-> 
-> Dan
-> .
-Hi Dan,
+Hi!
 
-I've sent v2 on this fix, setting ret as well.
+> > > From: Gene Chen <gene_chen@richtek.com>
+> > >
+> > > Add LED_COLOR_ID_MOONLIGHT definitions
+> >
+> > Why is moonlight a color? Camera flashes are usually white, no?
+> >
+> > At least it needs a comment...
+> >
+> > Best regards,
+> >                                                                 Pavel
+> >
+>=20
+> Moonlight has more current level(150mA) from general RGB LED (24mA).
+> It can be used as night-light and usually use color AMBER.
+> Camera flashes are usually use two flash LED. One is YELLOW, and one
+>is WHITE.
 
-Thanks!
+=46rom what I seen, night-lights are usually differetent "temperatures"
+of white. Cool white + warm white.
+
+I believe "warm white" would be easier to understand than
+"moonlight"...
+
+Best regards,
+								Pavel
+
+--=20
+http://www.livejournal.com/~pavelmachek
+
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl+2IlAACgkQMOfwapXb+vLdBQCgw6Mjjjv/SdV6hkGTYQl/7cQh
+GQgAn3WXoyjkpxWPpQZ9WyjNM0ewu0S2
+=DlK0
+-----END PGP SIGNATURE-----
+
+--mP3DRpeJDSE+ciuQ--
