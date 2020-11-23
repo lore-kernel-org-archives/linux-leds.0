@@ -2,73 +2,135 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B00E8C5519F
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Nov 2020 12:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB01AC63777
+	for <linux-leds@archiver.kernel.org>; Mon, 23 Nov 2020 03:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FED2206F7
-	for <linux-leds@archiver.kernel.org>; Sun, 22 Nov 2020 12:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1F3F2100A
+	for <linux-leds@archiver.kernel.org>; Mon, 23 Nov 2020 03:00:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0bCyjkQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbgKVMAd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 22 Nov 2020 07:00:33 -0500
-Received: from retiisi.eu ([95.216.213.190]:56310 "EHLO hillosipuli.retiisi.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727318AbgKVMAd (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sun, 22 Nov 2020 07:00:33 -0500
-X-Greylist: delayed 573 seconds by postgrey-1.27 at vger.kernel.org; Sun, 22 Nov 2020 07:00:32 EST
-Received: from valkosipuli.localdomain (unknown [IPv6:fd35:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by hillosipuli.retiisi.eu (Postfix) with ESMTPS id A4F7A634C24;
-        Sun, 22 Nov 2020 13:50:28 +0200 (EET)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1kgnsy-0001Fz-Vy; Sun, 22 Nov 2020 13:50:28 +0200
-Date:   Sun, 22 Nov 2020 13:50:28 +0200
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-leds@vger.kernel.org, newbytee@protonmail.com,
-        Stephan Gerhold <stephan@gerhold.net>,
-        linux-media@vger.kernel.org, phone-devel@vger.kernel.org
-Subject: Re: [PATCH 2/2 v5] leds: rt8515: Add Richtek RT8515 LED driver
-Message-ID: <20201122115028.GB4351@valkosipuli.retiisi.org.uk>
-References: <20201113124239.2667502-1-linus.walleij@linaro.org>
- <20201113124239.2667502-2-linus.walleij@linaro.org>
+        id S1726407AbgKWDAV (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 22 Nov 2020 22:00:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53070 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbgKWDAV (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 22 Nov 2020 22:00:21 -0500
+Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C3B0C0613CF;
+        Sun, 22 Nov 2020 19:00:19 -0800 (PST)
+Received: by mail-ot1-x341.google.com with SMTP id f16so14588430otl.11;
+        Sun, 22 Nov 2020 19:00:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=X6ea8y+7o1VS2+hJJcwmIepII7pozzGa349DC5946o4=;
+        b=O0bCyjkQ/bAlyYl/p3JN/CYCEM/L/vJ4GpfrG23A/z6KykNoJ0gli/NpFZQfNj+czP
+         i0o0sQFjZ8RE/zL1dwgb1guZ56q5RD8nsTO0UvvMq751OO8OiGxqJGmY3SonCTQ5Lspn
+         XYg6yJmsGkLWVLETDQprpFj4DNoJABK7ArAqKLW42zHl+xnpn/Bu7Jl4x/N17ilhzZwe
+         +WJgrpCpIVAxxg+jOcLHmFvQ0OGa4ag0BSPCNfNWxztnDy2ZR3/vPrbEta1KIF+CuicY
+         PhU93xVocYP8DlMNsSHS63hBpQhFIk79H4pGuTgLP9A/oooIGopj4i/hhUNDRA4Fq3V/
+         WVuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=X6ea8y+7o1VS2+hJJcwmIepII7pozzGa349DC5946o4=;
+        b=k4d8fmP/N+La4DkcKvKmm/I+ezxXIDTqE0ZEvOTTIlyZ819a4GF53Apgg8OEtexh4k
+         SpEsLWLiY/MJlHrj++lm6AfhGPPQodteBOmsFR+KSsNzgw8hxvb/qO2G5YVILtcka65f
+         US8CHqGyIwXCXRebh5Ibl2gEkSrgDJSyUvImn0z3MRk4aZlVnY4iEWm3xFRZHR0Yvg8X
+         zOPuQPqOeBaV7njBj7p/PBlYEazKlHedywPEm/jYQ/GNo+a+fo368gRj784VIafudM8o
+         WnOBvvkMe0yGBoAW4Bs+uIQAueltJmszGvjpBc6PmcOlRMwpWS2s/lYSrDl/Yf5KHQpR
+         QS1g==
+X-Gm-Message-State: AOAM530zh/xr9oxP31c2PVOphuzLvpu8LprlLOSUCUDh3PCWSsxHUHoM
+        iFVVe5HxtHdGlRe0rpcbfaBuMsF9kCCtgs2S8Yc=
+X-Google-Smtp-Source: ABdhPJxZjezUseMBEoGgj0Bb6+2zeayiCYTxLMkNBbkr2KfxEZ23lfObPxA14lZP64GdkYiIRfDnVIR4/Qm0SWsI+Vc=
+X-Received: by 2002:a9d:6c99:: with SMTP id c25mr22787464otr.327.1606100418882;
+ Sun, 22 Nov 2020 19:00:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201113124239.2667502-2-linus.walleij@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1605696462-391-1-git-send-email-gene.chen.richtek@gmail.com>
+ <1605696462-391-3-git-send-email-gene.chen.richtek@gmail.com>
+ <20201118213712.GA22371@amd> <6068b1e3-a4c8-6c7d-d33d-f2238e905e43@gmail.com>
+ <20201119215721.GA5337@amd> <0700c32d-643b-fedb-06f0-21547b18205d@gmail.com>
+In-Reply-To: <0700c32d-643b-fedb-06f0-21547b18205d@gmail.com>
+From:   Gene Chen <gene.chen.richtek@gmail.com>
+Date:   Mon, 23 Nov 2020 11:00:09 +0800
+Message-ID: <CAE+NS363BpytNGZzfZHLa7KLKL8gjGj14oNvRi3oaH9KT79REg@mail.gmail.com>
+Subject: Re: [PATCH v7 2/5] dt-bindings: leds: Add LED_COLOR_ID_MOONLIGHT definitions
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Gene Chen <gene_chen@richtek.com>, Wilma.Wu@mediatek.com,
+        shufan_lee@richtek.com, cy_huang@richtek.com,
+        benjamin.chao@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Linus,
+Jacek Anaszewski <jacek.anaszewski@gmail.com> =E6=96=BC 2020=E5=B9=B411=E6=
+=9C=8820=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8A=E5=8D=886:26=E5=AF=AB=E9=81=
+=93=EF=BC=9A
+>
+> On 11/19/20 10:57 PM, Pavel Machek wrote:
+> > On Thu 2020-11-19 22:03:14, Jacek Anaszewski wrote:
+> >> Hi Pavel, Gene,
+> >>
+> >> On 11/18/20 10:37 PM, Pavel Machek wrote:
+> >>> Hi!
+> >>>
+> >>>> From: Gene Chen <gene_chen@richtek.com>
+> >>>>
+> >>>> Add LED_COLOR_ID_MOONLIGHT definitions
+> >>>
+> >>> Why is moonlight a color? Camera flashes are usually white, no?
+> >>>
+> >>> At least it needs a comment...
+> >>
+> >> That's my fault, In fact I should have asked about adding
+> >> LED_FUNCTION_MOONLIGHT, it was evidently too late for me that evening.=
+..
+> >
+> > Aha, that makes more sense.
+> >
+> > But please let's call it "torch" if we do that, as that is already
+> > used in kernel sources... and probably in the interface, too:
+>
+> I'd say that torch is something different that moonlight,
+> but we would need more input from Gene to learn more about
+> the nature of light emitted by ML LED on his device.
+>
+> Please note that torch is usually meant as the other mode of
+> flash LED (sometimes it is called "movie mode"), which is already
+> handled by brightness file of LED class flash device (i.e. its LED class
+> subset), and which also maps to v4l2-flash TORCH mode.
+>
 
-Thanks for the update.
+It's used to front camera fill light.
+More brightness than screen backlight, and more soft light than flash.
+I think LED_ID_COLOR_WHITE is okay.
 
-On Fri, Nov 13, 2020 at 01:42:39PM +0100, Linus Walleij wrote:
-...
-> +static int rt8515_led_flash_strobe_set(struct led_classdev_flash *fled,
-> +				       bool state)
-> +{
-> +	struct rt8515 *rt = to_rt8515(fled);
-> +	struct led_flash_setting *timeout = &fled->timeout;
-> +	int brightness = 4; /* max 16 */
-
-Just a question on the unit --- did the other spec shed any light on what
-the relation between this setting and the current might be?
-
-But if it's not known, or even estimated, then I guess you could use these
-values.
-
-4 seems like a random number though. I'd use maximum as the default.
-
--- 
-Sakari Ailus
+> > ./arch/arm/mach-pxa/ezx.c:                      .name =3D "a910::torch"=
+,
+> >
+> > Best regards,
+> >                                                       Pavel
+> >
+>
+> --
+> Best regards,
+> Jacek Anaszewski
