@@ -2,61 +2,62 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C4BC63777
-	for <linux-leds@archiver.kernel.org>; Wed, 25 Nov 2020 10:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E3DC5519F
+	for <linux-leds@archiver.kernel.org>; Wed, 25 Nov 2020 10:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0ABEA206E5
-	for <linux-leds@archiver.kernel.org>; Wed, 25 Nov 2020 10:51:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2433F20678
+	for <linux-leds@archiver.kernel.org>; Wed, 25 Nov 2020 10:52:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bTkEAlNd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m4UOb7/V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729312AbgKYKvk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 25 Nov 2020 05:51:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34236 "EHLO
+        id S1729327AbgKYKvo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 25 Nov 2020 05:51:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728264AbgKYKvj (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 25 Nov 2020 05:51:39 -0500
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F61C0613D6;
-        Wed, 25 Nov 2020 02:51:39 -0800 (PST)
-Received: by mail-pf1-x430.google.com with SMTP id 131so1927936pfb.9;
-        Wed, 25 Nov 2020 02:51:39 -0800 (PST)
+        with ESMTP id S1728264AbgKYKvn (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 25 Nov 2020 05:51:43 -0500
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 438B7C0613D4;
+        Wed, 25 Nov 2020 02:51:28 -0800 (PST)
+Received: by mail-pl1-x644.google.com with SMTP id t18so940186plo.0;
+        Wed, 25 Nov 2020 02:51:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tYTwl9UyzE7O08dqCyL0rs00lmC5U5Wi10EjecyWl6k=;
-        b=bTkEAlNdfgadrGnjzxHjZzVwFW0EJEYJkB0ibL8YpOkC8fl5JKii37NIHGO59oqBd2
-         WJMsrPmfeYLprG0UIHzFyXEvaYa9bdMEgzzeOAvdcoKlr8E71bB8FQkp9yM0wJCXJmnD
-         xp4wxIxO5YDXvBk+4LrApKYcz2DEZaBOj3Keuc5+ETqovP68RfgX0K3XQIoUMVVqFZ3+
-         fxrjfvyiQx5uR/XvQVLsHDuE2D8k0yC8bRNnNtiC8NgyThuWQ8IP/IhCKt3ETYLETB/Z
-         RsA2jd6TOMYCem4VuMWAmE6EGxFmzOee2+1M8skLwOCtvFDAsnrLES/pfgRFTfXslWkD
-         nDFA==
+        bh=HdfyyrxnElJwDt41ZW/Dyzf78ymH1BXPai7vmDeW4Ts=;
+        b=m4UOb7/VuH/ZpMia0pBkb2WT64Ij3iHzjUmoXIe0t8RPFuQEDl0r7AyTk0NcMWm6Dt
+         h/P9kYiwx9872GvQe7T8PQlVevCi6IhnYBVrhDly1rWST+s7gxzRU6QL/6Gf1Dr+Hd93
+         DT7DAMZrp+RYNU244figNQnEYOdHMa9aokj81lSMrs1q4fnuYEDs/Bl9kp3plKUz1X4U
+         CbvvaO6KReoAl2Lrtz0Mj9mnuoBMRI7XrLPib3mIkYtKPjrE6uk86TGiISEuvqMlstsS
+         ixRXUnEMf5vfUKl9DbNzEVnxEYMpH42F27vO/TF2rEmJ2DZD9euD+jRhxAqPEoD3Cjs4
+         4Clw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tYTwl9UyzE7O08dqCyL0rs00lmC5U5Wi10EjecyWl6k=;
-        b=FX7dfcAJTKDvr4BcHkOimRHYMbf2P7eqYz4gdNUred2+oH54QT2//Ph9k88/ti16hM
-         OAIywANuh5ftGZNDmgWOdJVryC+8IlrOd0QZ1o9UBXZYYuMVO6f6j9ZPiEiXHcPaYKt8
-         lNfmDB5NNTlY8ZQeOpyq/cKkLKdc6hn2kH5rg71yIzkghExwM0hzXr4cEU74MAD47FP4
-         s76dNMUwcIooormRMdTH7HTiSJfj+xC/ALlGJD2RVac7nVr0cTRxwf5bYBZPNjbHAJbf
-         D7t5mjQuKxMG8Fm7dlCBtZV1/tTS5136GAwBrjbNBGltKGUOKMsK1aob/T6a1Mw1zS77
-         egug==
-X-Gm-Message-State: AOAM5315uHD50NNlt++0vhip81ErN9D7ynSL5aiI6UETHy/6x/jbxH5r
-        W5aN98OWF3tC+nE6CNh9rMk=
-X-Google-Smtp-Source: ABdhPJxkCo2NB3VMtqBYMczVycJrUhJPChTbNkRn1v8GR5fyek9rkb0/e+ltHQy6gV+XGKSIz9tfKQ==
-X-Received: by 2002:a63:443:: with SMTP id 64mr2572625pge.127.1606301499549;
-        Wed, 25 Nov 2020 02:51:39 -0800 (PST)
+        bh=HdfyyrxnElJwDt41ZW/Dyzf78ymH1BXPai7vmDeW4Ts=;
+        b=cRo0u5+OiFSZVyLzsXaQ/l0aj0m98/Gy+0tQMvNkZhXQHOZNb6UW7QmLTkk/bgR4EC
+         OD9SIVuhZWBZm8+smpaPc4rQlf1wuyOLqoks+DiJYdmkn1BN4ylV9/ZssOJqf/9qLR5A
+         okCi4p6+XJ6iFt+igOxIvUpum4o83a+BZnMzEQa/2hblDLFkAzt4r5Vao/GFOZMg5cQJ
+         69XykshefyOgHz0/51hC3QPzt2so0eAyQJcpODuBK9PXPzCCKjRiMPvtLg0GiAWZLuJx
+         XkOB8AvRDXwY8cM+knV0X6Y+a2YCO+Oibt1POaQzaAvDH8cLZhuEFQPps/Lw+zNk75Gj
+         5hUw==
+X-Gm-Message-State: AOAM530QgTUwy09m/SVEYn7uSq+uSpTKvDKvyfVMeGMQ7MvnPpkgNdI2
+        vfQNoawalMqBOQFoMmHrKjs=
+X-Google-Smtp-Source: ABdhPJwynFK/qp9LVcEP18rNXNCg2T/QIUC6iHWSoWqS09knnetHnfVquPSLM9sLRlkCqggDKFoUvQ==
+X-Received: by 2002:a17:902:b283:b029:d6:b2a7:3913 with SMTP id u3-20020a170902b283b02900d6b2a73913mr2706376plr.54.1606301487900;
+        Wed, 25 Nov 2020 02:51:27 -0800 (PST)
 Received: from localhost.localdomain ([2402:7500:48b:4d7:7339:ae2d:114e:3859])
-        by smtp.gmail.com with ESMTPSA id j10sm2049520pgc.85.2020.11.25.02.51.35
+        by smtp.gmail.com with ESMTPSA id j10sm2049520pgc.85.2020.11.25.02.51.24
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Nov 2020 02:51:39 -0800 (PST)
+        Wed, 25 Nov 2020 02:51:27 -0800 (PST)
 From:   Gene Chen <gene.chen.richtek@gmail.com>
 To:     jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
         matthias.bgg@gmail.com
@@ -66,9 +67,9 @@ Cc:     dmurphy@ti.com, linux-leds@vger.kernel.org,
         gene_chen@richtek.com, Wilma.Wu@mediatek.com,
         shufan_lee@richtek.com, cy_huang@richtek.com,
         benjamin.chao@mediatek.com
-Subject: [PATCH v8 4/6] dt-bindings: leds: common: Increase LED_COLOR_ID_* maximum size
-Date:   Wed, 25 Nov 2020 18:51:13 +0800
-Message-Id: <1606301475-7030-5-git-send-email-gene.chen.richtek@gmail.com>
+Subject: [PATCH v8 1/6] leds: flash: Add flash registration with undefined CONFIG_LEDS_CLASS_FLASH
+Date:   Wed, 25 Nov 2020 18:51:10 +0800
+Message-Id: <1606301475-7030-2-git-send-email-gene.chen.richtek@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1606301475-7030-1-git-send-email-gene.chen.richtek@gmail.com>
 References: <1606301475-7030-1-git-send-email-gene.chen.richtek@gmail.com>
@@ -78,26 +79,67 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Gene Chen <gene_chen@richtek.com>
 
-Increase LED_COLOR_ID maximum size for LED_COLOR_ID_RGB
+Add flash registration with undefined CONFIG_LEDS_CLASS_FLASH
 
 Signed-off-by: Gene Chen <gene_chen@richtek.com>
 ---
- Documentation/devicetree/bindings/leds/common.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/led-class-flash.h | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
-index a2a541b..0c9f912 100644
---- a/Documentation/devicetree/bindings/leds/common.yaml
-+++ b/Documentation/devicetree/bindings/leds/common.yaml
-@@ -43,7 +43,7 @@ properties:
-       LED_COLOR_ID available, add a new one.
-     $ref: /schemas/types.yaml#definitions/uint32
-     minimum: 0
--    maximum: 8
-+    maximum: 9
+diff --git a/include/linux/led-class-flash.h b/include/linux/led-class-flash.h
+index 21a3358..5f36eae 100644
+--- a/include/linux/led-class-flash.h
++++ b/include/linux/led-class-flash.h
+@@ -85,6 +85,7 @@ static inline struct led_classdev_flash *lcdev_to_flcdev(
+ 	return container_of(lcdev, struct led_classdev_flash, led_cdev);
+ }
  
-   function-enumerator:
-     description:
++#if IS_ENABLED(CONFIG_LEDS_CLASS_FLASH)
+ /**
+  * led_classdev_flash_register_ext - register a new object of LED class with
+  *				     init data and with support for flash LEDs
+@@ -127,6 +128,41 @@ static inline int devm_led_classdev_flash_register(struct device *parent,
+ void devm_led_classdev_flash_unregister(struct device *parent,
+ 					struct led_classdev_flash *fled_cdev);
+ 
++#else
++
++static inline int led_classdev_flash_register_ext(struct device *parent,
++				    struct led_classdev_flash *fled_cdev,
++				    struct led_init_data *init_data)
++{
++	return 0;
++}
++
++static inline int led_classdev_flash_register(struct device *parent,
++					   struct led_classdev_flash *fled_cdev)
++{
++	return led_classdev_flash_register_ext(parent, fled_cdev, NULL);
++}
++
++static inline void led_classdev_flash_unregister(struct led_classdev_flash *fled_cdev) {};
++static inline int devm_led_classdev_flash_register_ext(struct device *parent,
++				     struct led_classdev_flash *fled_cdev,
++				     struct led_init_data *init_data)
++{
++	return 0;
++}
++
++static inline int devm_led_classdev_flash_register(struct device *parent,
++				     struct led_classdev_flash *fled_cdev)
++{
++	return devm_led_classdev_flash_register_ext(parent, fled_cdev, NULL);
++}
++
++static inline void devm_led_classdev_flash_unregister(struct device *parent,
++					struct led_classdev_flash *fled_cdev)
++{};
++
++#endif  /* IS_ENABLED(CONFIG_LEDS_CLASS_FLASH) */
++
+ /**
+  * led_set_flash_strobe - setup flash strobe
+  * @fled_cdev: the flash LED to set strobe on
 -- 
 2.7.4
 
