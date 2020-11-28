@@ -2,157 +2,117 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7498AC83010
-	for <linux-leds@archiver.kernel.org>; Sat, 28 Nov 2020 21:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C3DC63777
+	for <linux-leds@archiver.kernel.org>; Sat, 28 Nov 2020 21:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FDD422240
-	for <linux-leds@archiver.kernel.org>; Sat, 28 Nov 2020 21:57:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BB5B2224C
+	for <linux-leds@archiver.kernel.org>; Sat, 28 Nov 2020 21:57:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391374AbgK1V5Q (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 28 Nov 2020 16:57:16 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:47487 "EHLO
+        id S2391300AbgK1V5g (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 28 Nov 2020 16:57:36 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:49501 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387418AbgK1V5M (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 28 Nov 2020 16:57:12 -0500
+        with ESMTP id S2391339AbgK1V5f (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 28 Nov 2020 16:57:35 -0500
 Received: from methusalix.internal.home.lespocky.de ([92.117.45.147]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MdwRi-1kAL7K2rmY-00b77Y; Sat, 28 Nov 2020 22:54:20 +0100
+ mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MWiYo-1kgvGg011s-00X6B6; Sat, 28 Nov 2020 22:54:46 +0100
 Received: from lemmy.internal.home.lespocky.de ([192.168.243.175] helo=lemmy.home.lespocky.de)
         by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <alex@home.lespocky.de>)
-        id 1kj8AZ-00027T-9a; Sat, 28 Nov 2020 22:54:16 +0100
-Received: (nullmailer pid 4070 invoked by uid 2001);
-        Sat, 28 Nov 2020 21:54:14 -0000
+        id 1kj8B0-000288-DU; Sat, 28 Nov 2020 22:54:44 +0100
+Received: (nullmailer pid 4111 invoked by uid 2001);
+        Sat, 28 Nov 2020 21:54:42 -0000
 From:   Alexander Dahl <post@lespocky.de>
 To:     Rob Herring <robh+dt@kernel.org>
 Cc:     Alexander Dahl <ada@thorsis.com>, linux-leds@vger.kernel.org,
         Alexander Dahl <post@lespocky.de>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org
-Subject: [PATCH v8 0/5] leds: pwm: Make automatic labels work
-Date:   Sat, 28 Nov 2020 22:53:48 +0100
-Message-Id: <20201128215353.3991-1-post@lespocky.de>
+        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: [PATCH v8 2/5] ARM: dts: berlin: Fix schema warnings for pwm-leds
+Date:   Sat, 28 Nov 2020 22:53:50 +0100
+Message-Id: <20201128215353.3991-3-post@lespocky.de>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20201128215353.3991-1-post@lespocky.de>
+References: <20201128215353.3991-1-post@lespocky.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scan-Signature: e9056562e10c809dee3344e50e145a1f
-X-Provags-ID: V03:K1:QBfiUPuOf14kX4Nz47jAYJt1cUoOTDn1E/pEQC0D93UIwKSk9LO
- pApkfselXX82TbxUTNh8KHQ+CU+2c4pzwJtAt9bworExKtWkMMo11sQBGbbaRZV4CvXMvnA
- 9YBrjc9ERoyaWnteYtxeb1ArUz7jfIMFuB3eBRAU64w3d7VMMmtayx6rnaFNch45egLYrE8
- ndlA9RHZPJuId6tbeCmew==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:db2FVXCJ0IQ=:rGUF+QkkUhs0EKaPyIQuUg
- ybFnHRPwkBnLFoJzP1nJuiDJYGMjkgvpHNfYJxhkOZGHhhqCNRb0Ltb6SZlhGIYo9iYB/4GV/
- 4hCM3Vpve/XfUOsEGEpDlviPUYPXT+dRUt+wvBYHXc9TFbAJKTYR0QXj33O1ix2/YHCZRiFMS
- 13KuMpQPkCGx3Y9ZbSTiEEW4els06BHzfagxTp1J+uTDlYI2xG0g8t1MOgFafvkwk0EEHc6K8
- ZyoznGlLSkcEWOEJgdDfnffdgfsM2u+zzIfNIF+RXTUvJV5Ij1AgcURwSHcbZqBEC5zjUs+p6
- sprAnKWfh3tMH+DBc8RM0osqot7HMr6L633xcdNiBzLSws/ycSa1TWmphHF/JLCakwdGNVq+b
- 6V9cGMQzbwbU8Ae1QPCF5ke3HFEBTQDThzImW9foPNqjDdH9no6dCZ1GYks3quFcTwkKsosxR
- tdtiik2UTg==
+X-Scan-Signature: 467395612c70a9d75b41506b3ac52c2b
+X-Provags-ID: V03:K1:yLxbQe4fLlXjVIaFuag2S2PxaFAqe3BTGyh1CJ6YB9L6+GIZdAz
+ SFmE94IzR094e/EdVMhrwcx7BUeFyUtjXwpE9KlI/WtZJG2V8lU4H2gMeA+zHaSPVabwvQX
+ IU04uuFDKF3HKybmoNvlRalIKPSH6n8T0wNwhvAxisGg+2T1MWOLEiXyg5oapanB3SVFD3B
+ Tz/I/ipnH1jMBIWuaGlPg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:VoId4h40b8E=:NvSURxE0qdKPIEw05FiB/W
+ l/ch44701hupU0PgW3Pa0l3SMKOBB0kAgiNrVUbSvleykRjPTMlQUw2irN2rlGPwBXwf5LRuE
+ XhILhZ1Ko2oGVUCBu/XjOmHCPcHNIRpg8juJIhUoLT2iQuNMpTdr1qpBZth3SG5wvZstmo32s
+ k7nI1x5cfP/+b01nhAlfrGsEpUsgencXoLF89/95RO3v1LORM8oEyKwq7TyxzWUHcI509p5Xo
+ o4o9njOqr4SFtraNOVe+x6V8+twLdrvji+QrvbcndJ9Jg6uQKfJVdzGz0Z0QBHWGZ7csUYM2o
+ 0Sj72o42CwSJ6yMi7HmaENumcy0J3ms05q0900ScH6tk7G1QsSWRVvvDt/2uEINo7mOY9TBQm
+ hbTLRp91Zeoeo3gjwaPBH5Kwv6mvTVhhxQNYADbQcZ7Jfkaytkn0KDtWTUQQMkNWtHTNAJYJR
+ 1zG2QhmTbw==
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hei hei,
+The node names for devices using the pwm-leds driver follow a certain
+naming scheme (now).  Parent node name is not enforced, but recommended
+by DT project.
 
-these are the not yet taken patches from a series which originally fixed
-a minor issue in the leds pwm driver, then migrated the leds pwm dts
-docs to yaml (by request), and then fixed all the dts files triggering
-warnings on those new bindings.  The remaining five patches now only fix
-warnings, the base fix and the yaml conversion is already taken by
-subsystem maintainers.  Although this is only dts content now, I rebased
-it on the current for-next tree of the leds subsystem maintainer,
-because that contains the yaml-conversion changeset.
+  DTC     arch/arm/boot/dts/berlin2cd-google-chromecast.dt.yaml
+  CHECK   arch/arm/boot/dts/berlin2cd-google-chromecast.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/berlin2cd-google-chromecast.dt.yaml: leds: 'red', 'white' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
 
-Series changelog below …
+Signed-off-by: Alexander Dahl <post@lespocky.de>
+---
 
-Greets
-Alex
+Notes:
+    v7 -> v8:
+      * rebased on v5.10-rc1
+    
+    v6 -> v7:
+      * split up patch (one per sub arch)
+      * added actual warnings to commit message
 
-v8:
-- rebased series on recent pavel/for-next (post v5.10-rc1)
-- removed already applied patches
-- added Acked-by on patch 1/5
-- updated patch 3/5 based on comments by Ahmad Fatoum
+ arch/arm/boot/dts/berlin2cd-google-chromecast.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-v7:
-- rebased series on recent pavel/for-next
-- split up arm dts patch by arm sub arch (suggested by Krzysztof Kozlowski)
-- added multiple Reviewed-by tags
-- slightly reworded commit messages (suggested by Krzysztof Kozlowski)
-- added actual dtbs_check warnings to commit messages
-- added Russell King to Cc for binding conversion patch (because license)
-
-v6:
-- rebased series on recent pavel/for-next
-- added Reviewed-by from Marek to patch 1
-- patch 2 from v5 was picked by Pavel and is already in his for-next
-  branch
-- previous patch 3/3 (now 2/7) was reworked based on feedback by Rob
-- added more dt patches fixing warnings after binding conversion to yaml
-
-v5:
-- replaced patch 1/3 by a new patch removing platform_data support for
-  the leds-pwm driver
-- little rewording of commit message in patch 2/3
-- updated patch 3/3 based on feedback by Rob Herring
-- added Marek Behún to Cc, because he also works on removing
-  platform_data support
-- rebased series on pavel/for-next
-
-v4:
-- added led-class patch handling fwnode passing differently (patch 1/3)
-- adapted leds-pwm patch to new led-class (patch 2/3)
-- contacted original author of leds-pwm dt binding on license issue
-  (patch 3/3)
-
-v3:
-- series rebased on v5.9-rc4
-- changed license of .yaml file to recommended one (patch 2/2)
-- added Acked-by to both patches
-
-v2:
-- series rebased on v5.9-rc3
-- added the dt-bindings update patch (2/2)
-
-v1:
-- based on v5.9-rc2
-- backport on v5.4.59 tested and working
-
-Cc: linux-leds@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-amlogic@lists.infradead.org
-Cc: linux-mips@vger.kernel.org
-
-
-Alexander Dahl (5):
-  dt-bindings: mfd: Fix schema warnings for pwm-leds
-  ARM: dts: berlin: Fix schema warnings for pwm-leds
-  ARM: dts: stm32: Fix schema warnings for pwm-leds
-  arm64: dts: meson: Fix schema warnings for pwm-leds
-  MIPS: DTS: img: Fix schema warnings for pwm-leds
-
- Documentation/devicetree/bindings/mfd/iqs62x.yaml   |  5 +++--
- arch/arm/boot/dts/berlin2cd-google-chromecast.dts   |  6 +++---
- arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts           | 13 +++++++------
- .../boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts |  4 ++--
- .../boot/dts/amlogic/meson-gxm-khadas-vim2.dts      |  4 ++--
- arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts    |  8 ++++----
- arch/mips/boot/dts/img/pistachio_marduk.dts         |  5 +++--
- 7 files changed, 24 insertions(+), 21 deletions(-)
-
-
-base-commit: 98650b0874171cc443251f7b369d3b1544db9d4e
+diff --git a/arch/arm/boot/dts/berlin2cd-google-chromecast.dts b/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
+index 56fa951bc86f..c1d91424e658 100644
+--- a/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
++++ b/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
+@@ -34,19 +34,19 @@
+ 		linux,usable-memory = <0x00000000 0x20000000>; /* 512 MB */
+ 	};
+ 
+-	leds {
++	led-controller {
+ 		compatible = "pwm-leds";
+ 		pinctrl-0 = <&ledpwm_pmux>;
+ 		pinctrl-names = "default";
+ 
+-		white {
++		led-1 {
+ 			label = "white";
+ 			pwms = <&pwm 0 600000 0>;
+ 			max-brightness = <255>;
+ 			linux,default-trigger = "default-on";
+ 		};
+ 
+-		red {
++		led-2 {
+ 			label = "red";
+ 			pwms = <&pwm 1 600000 0>;
+ 			max-brightness = <255>;
 -- 
 2.20.1
 
