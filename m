@@ -2,156 +2,140 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA43C71155
-	for <linux-leds@archiver.kernel.org>; Sat, 28 Nov 2020 21:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E88AC63777
+	for <linux-leds@archiver.kernel.org>; Sat, 28 Nov 2020 22:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2594F2225B
-	for <linux-leds@archiver.kernel.org>; Sat, 28 Nov 2020 21:58:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB92B22280
+	for <linux-leds@archiver.kernel.org>; Sat, 28 Nov 2020 22:01:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391339AbgK1V6M (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 28 Nov 2020 16:58:12 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:58613 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391429AbgK1V6J (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 28 Nov 2020 16:58:09 -0500
-Received: from methusalix.internal.home.lespocky.de ([92.117.45.147]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MZTa2-1kfG2R1Nfq-00WWi4; Sat, 28 Nov 2020 22:55:05 +0100
-Received: from lemmy.internal.home.lespocky.de ([192.168.243.175] helo=lemmy.home.lespocky.de)
-        by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.94)
-        (envelope-from <alex@home.lespocky.de>)
-        id 1kj8BI-00028S-QM; Sat, 28 Nov 2020 22:55:03 +0100
-Received: (nullmailer pid 4138 invoked by uid 2001);
-        Sat, 28 Nov 2020 21:55:00 -0000
-From:   Alexander Dahl <post@lespocky.de>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Alexander Dahl <ada@thorsis.com>, linux-leds@vger.kernel.org,
-        Alexander Dahl <post@lespocky.de>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S2391176AbgK1WAv (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 28 Nov 2020 17:00:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42820 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390668AbgK1WAu (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 28 Nov 2020 17:00:50 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F7ADC0613D1
+        for <linux-leds@vger.kernel.org>; Sat, 28 Nov 2020 14:00:10 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1kj8GF-0005eW-NB; Sat, 28 Nov 2020 23:00:07 +0100
+Subject: Re: [Linux-stm32] [PATCH v8 3/5] ARM: dts: stm32: Fix schema warnings
+ for pwm-leds
+To:     Alexander Dahl <post@lespocky.de>, Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, Alexander Dahl <ada@thorsis.com>,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-amlogic@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v8 4/5] arm64: dts: meson: Fix schema warnings for pwm-leds
-Date:   Sat, 28 Nov 2020 22:53:52 +0100
-Message-Id: <20201128215353.3991-5-post@lespocky.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20201128215353.3991-1-post@lespocky.de>
+        linux-leds@vger.kernel.org
 References: <20201128215353.3991-1-post@lespocky.de>
+ <20201128215353.3991-4-post@lespocky.de>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <044d49be-2016-818e-b1b0-ee50c3b744e7@pengutronix.de>
+Date:   Sat, 28 Nov 2020 23:00:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 5bb92339bba0719d578836d7c87c3e13
-X-Provags-ID: V03:K1:oP/0XxMu+IgX5ka7POmxyYzMfJNDIbeKHwEoeasrGNTNlD5ScoB
- EmEpbu+lG6L1dYxFJlcEF/ZOgP7W9ABXMTBTW0v4vYsTqLPXVcdhC7J1+3oHtJKW13jG5Xh
- 15r8apDXGY3HPFKueJhObR4agVGLxp4iFocRv792ALlW41z0PaiZOWkukpYBs+j0gCZdI2K
- yveTZDhzS6pxCo8uUg8tw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:HaqRyB1cjtI=:ko1C0VzfNs5z5lWW2DzZCL
- tpZY83uas9zOqAK2PQqfGMhM5qqtMqGDT4Z+9MPUZZp088fT82sbYmOtZwqFZVt80LWVDEWrb
- ca4KBMzY0r37/g6X6n6rY7hYXv2CHSBSnj/mdw5ckGa9RxOVOf4rwwS00p/kQHw/QgiWv2YqE
- H6FNccRksRklLWkAoMIHUI7BWRA5rfpwK1mCLbS2BA+/T/Tc8UErtxfq1wRiy0lNeAer2Fekh
- psnOVHHHSx9VCQmpZ4oiKqCswre9wxY8mh9JGfvdp5giatgmBIn3W4eZbMfLhQJczUKqJrPPx
- OMXmOwHmg3ZLWJGV9OGvB1EHatloSLxUEmdjBkEOu7r6YNjwDqxMrcTBt34LnKFlpUT9cYzIJ
- mtpORoy2IVSA50VHQoGlq0i0fqAw/vn2qwyp0ork5ZVwz/Wg/90ja2LvKmiix0+VUVKc/ov0Q
- 7Vq8Nrk90g==
+In-Reply-To: <20201128215353.3991-4-post@lespocky.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The node names for devices using the pwm-leds driver follow a certain
-naming scheme (now).  Parent node name is not enforced, but recommended
-by DT project.
+On 28.11.20 22:53, Alexander Dahl wrote:
+> The node names for devices using the pwm-leds driver follow a certain
+> naming scheme (now).  Parent node name is not enforced, but recommended
+> by DT project.
+> 
+>   DTC     arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
+>   CHECK   arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
+> /home/alex/build/linux/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml: led-rgb: 'led-blue', 'led-green', 'led-red' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+>         From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+> 
+> Signed-off-by: Alexander Dahl <post@lespocky.de>
+> ---
+> 
+> Notes:
+>     v7 -> v8:
+>       * rebased on v5.10-rc1
+>       * updated indexes and added comment (Ahmad Fatoum)
 
-Signed-off-by: Alexander Dahl <post@lespocky.de>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
----
+Acked-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-Notes:
-    v7 -> v8:
-      * rebased on v5.10-rc1
-    
-    v6 -> v7:
-      * added Reviewed-by
-      * added another explaining sentence to commit message
-    
-    v6:
-      * added this patch to series
+Thanks,
 
- .../arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts | 4 ++--
- arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts     | 4 ++--
- arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts          | 8 ++++----
- 3 files changed, 8 insertions(+), 8 deletions(-)
+>     
+>     v6 -> v7:
+>       * split up patch (one per sub arch)
+>       * added actual warnings to commit message
+> 
+>  arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
+> index 1e5333fd437f..5ed58110d963 100644
+> --- a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
+> +++ b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
+> @@ -36,34 +36,35 @@
+>  		stdout-path = &uart4;
+>  	};
+>  
+> -	led-act {
+> +	led-controller-0 {
+>  		compatible = "gpio-leds";
+>  
+> -		led-green {
+> +		led-0 {
+>  			label = "mc1:green:act";
+>  			gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
+>  			linux,default-trigger = "heartbeat";
+>  		};
+>  	};
+>  
+> -	led-rgb {
+> +	led-controller-1 {
+>  		compatible = "pwm-leds";
+>  
+> -		led-red {
+> +		/* led-1 to led-3 are part of a single RGB led */
+> +		led-1 {
+>  			label = "mc1:red:rgb";
+>  			pwms = <&leds_pwm 1 1000000 0>;
+>  			max-brightness = <255>;
+>  			active-low;
+>  		};
+>  
+> -		led-green {
+> +		led-2 {
+>  			label = "mc1:green:rgb";
+>  			pwms = <&leds_pwm 2 1000000 0>;
+>  			max-brightness = <255>;
+>  			active-low;
+>  		};
+>  
+> -		led-blue {
+> +		led-3 {
+>  			label = "mc1:blue:rgb";
+>  			pwms = <&leds_pwm 3 1000000 0>;
+>  			max-brightness = <255>;
+> 
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-index 8bcdffdf55d0..adfc72500e66 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-@@ -42,10 +42,10 @@
- 		};
- 	};
- 
--	pwmleds {
-+	led-controller {
- 		compatible = "pwm-leds";
- 
--		power {
-+		led-1 {
- 			label = "vim:red:power";
- 			pwms = <&pwm_AO_ab 1 7812500 0>;
- 			max-brightness = <255>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-index bff8ec2c1c70..dcb435af4e0b 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-@@ -81,10 +81,10 @@
- 		};
- 	};
- 
--	pwmleds {
-+	led-controller {
- 		compatible = "pwm-leds";
- 
--		power {
-+		led-1 {
- 			label = "vim:red:power";
- 			pwms = <&pwm_AO_ab 1 7812500 0>;
- 			max-brightness = <255>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-index 5ab139a34c01..039a8d0d1e9b 100644
---- a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-@@ -101,20 +101,20 @@
- 		};
- 	};
- 
--	leds {
-+	led-controller-1 {
- 		compatible = "gpio-leds";
- 
--		led-bluetooth {
-+		led-1 {
- 			label = "sei610:blue:bt";
- 			gpios = <&gpio GPIOC_7 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
- 			default-state = "off";
- 		};
- 	};
- 
--	pwmleds {
-+	led-controller-2 {
- 		compatible = "pwm-leds";
- 
--		power {
-+		led-2 {
- 			label = "sei610:red:power";
- 			pwms = <&pwm_AO_ab 0 30518 0>;
- 			max-brightness = <255>;
 -- 
-2.20.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
