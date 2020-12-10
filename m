@@ -2,57 +2,59 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CCDC4361B
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Dec 2020 06:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0414EC4361B
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Dec 2020 06:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59EF4235F7
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Dec 2020 06:02:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC0B1235F7
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Dec 2020 06:02:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728565AbgLJGCT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 10 Dec 2020 01:02:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39068 "EHLO
+        id S1732927AbgLJGCm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 10 Dec 2020 01:02:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727004AbgLJGCT (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 10 Dec 2020 01:02:19 -0500
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EEF9C0613D6;
-        Wed,  9 Dec 2020 22:01:39 -0800 (PST)
-Received: by mail-pf1-x444.google.com with SMTP id f9so3015228pfc.11;
-        Wed, 09 Dec 2020 22:01:39 -0800 (PST)
+        with ESMTP id S1732919AbgLJGCj (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 10 Dec 2020 01:02:39 -0500
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FF55C06179C;
+        Wed,  9 Dec 2020 22:01:59 -0800 (PST)
+Received: by mail-pl1-x644.google.com with SMTP id y8so2226171plp.8;
+        Wed, 09 Dec 2020 22:01:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=AzWxFLY7pNZaeT3/xb0mQOVSBc85yc1XVJMoO/4h93Y=;
-        b=btBGJnNwXko0u3o32l76Eel7YEXjoyDFa8RM0+X3IeXp+pNa3Ch6hQzyeJzN9TT/Yf
-         A+gOWSRu2PF8aDRFLAHSVd4uYi+imtTAwiu2DlrEW7kgLVCF+vhTqLxMoyMpGqRk6XHI
-         aj3ykPytUxyEKFHtUIWMdLAIkj6ZfTk3lOX4ABHgzszT122safOjd/iiMaZ/gXR3y32c
-         1nfVJL1/Fwp3cAQf1LvzPu0c+gfhFDU2TDRDxlZXKNIdMPuJzK6rF0Ppkv3WEoYYMPwS
-         E2Rv9aWRdSr35nbqESK5bW4iSLs/P+BOJPYaUtvbPe6+pL4jkyUIXILPYfc1zdcI/fey
-         9k4w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=OsAt27GJx/yfIuSismvAOUoH5ALaVjBNeqL7IyNT1i8=;
+        b=tvVLvrNy3ad7bqs2d/NtQuKs/U6j37CWI639yg/aU33vGTcEYC/2J9A50oByK3sx3M
+         T0TQ85B1pAEv91bJiqzeqw6rAZp1mqPgoN3zD+gErT7GxYpfLiTBk+End1tOdUtI3/oy
+         jWPxkpVexn6+qR3bW2+u1YyshdAKVh5V2VuSg9RP5KUH8BDo68O48DEd0FxodlXp9D2v
+         1WqKapyDS6jc8ChHv3qldSRozpirhHf8zuntY+YHV/vQtNEaN7uwRtT1EmkVnb9qDTz1
+         dLV0qgfDOKodGww4wVXkEUv4BVMZ3ZOqikuYjPSD4AFNZ+u4wafZ6os1v18KOY1z2Fy5
+         TCdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=AzWxFLY7pNZaeT3/xb0mQOVSBc85yc1XVJMoO/4h93Y=;
-        b=Q/CNE1F/u3Ks7qQt6LadlqK/dEuldM6eZFN2mSuY7DqhOiBvDZ1nsIz+b5AOBQ6/XX
-         4CRNXFw9fNO6VtPxhGnHuU4+aw2UIKxF/YvZgS9pP0W2PD8qAjCsgZ3dHSevrkBZ2ok0
-         QeMxGXW0N/KUn4USR55TtI4LAuZ3jK8AEpgdXb+kP8RNgPX0iScdGKns47fXo4pVMwaQ
-         QbKjG1MkTslf5IGUddimOxQTvOgdmpKa3G4JAZftTY3MfbHeoN4aeHu0irdwFuG4DSzg
-         DyAP+pfO0sSGBRaQTOMkHWpaHVo8HX4EyAwVXWHJ2Ynbo3YARIJqlyE0nwQfY0ZzXtp6
-         ZL3w==
-X-Gm-Message-State: AOAM530UHNXyjVZR+Rw7sNNN+ls6Dnut9HOIdzuvAN8yswx6ISk5wX03
-        hdSaqcriNzLJb2Y4vVApTFc=
-X-Google-Smtp-Source: ABdhPJzsiSmV/F5GXNMJ0EE1mhNhLiUyLcgxJWbJljMbl4eSmJ2tg6JTjzwr+yzn4pnjrykJQYAL7w==
-X-Received: by 2002:a17:90b:a04:: with SMTP id gg4mr5911162pjb.8.1607580099216;
-        Wed, 09 Dec 2020 22:01:39 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=OsAt27GJx/yfIuSismvAOUoH5ALaVjBNeqL7IyNT1i8=;
+        b=ls2E4eMqmgQ8mB8ENf7UKVnoXoXw8KoP3DxvdFEfenE0hTjP94eOQM+MstXqZPqHt+
+         Ci6KihhBzISriByLm3rB67KCQrgTi8X+bq+vRcAihma5idrt21gDlBsxr7U1IV5r/Nd5
+         2HKPuGV63sHJxdz8k9fFt7Ia3Z88f3y6wWA8paa+/BYSVUZhQpjeiimQ9w2lQk9izUmt
+         0S7tYFxs/CaRSLUlhiPQ6TTug7hEqvdAnE7+F7QNMl5dJZ/0ZOG2ztOH9PI4tvt59Y79
+         +yzqVQOMYPSwUL648Rp4eV4PpepxqwafSn+qvwCsGBNfEN4yMYb+YXVPj2bt4Jyal2eJ
+         g87g==
+X-Gm-Message-State: AOAM531XHsR2ygdcwHYI2pcPd2gYUmjy6v02PFRBLhZAWJZztE/eKjHC
+        nWAl2ftczc724GEa91yLwdQ=
+X-Google-Smtp-Source: ABdhPJx7bDM1TUZWjqvmAGdFk9Y1r8aozHgW1VTC8bWlfhPgav/dJSwyZTvjD4ZnI/6aUY/151a2lA==
+X-Received: by 2002:a17:902:9f8b:b029:da:726d:3f17 with SMTP id g11-20020a1709029f8bb02900da726d3f17mr5058904plq.35.1607580119035;
+        Wed, 09 Dec 2020 22:01:59 -0800 (PST)
 Received: from localhost.localdomain ([2402:7500:568:b3ad:229b:9ee7:b946:7876])
-        by smtp.gmail.com with ESMTPSA id j19sm4355377pff.74.2020.12.09.22.01.33
+        by smtp.gmail.com with ESMTPSA id j19sm4355377pff.74.2020.12.09.22.01.55
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Dec 2020 22:01:37 -0800 (PST)
+        Wed, 09 Dec 2020 22:01:58 -0800 (PST)
 From:   Gene Chen <gene.chen.richtek@gmail.com>
 To:     jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
         matthias.bgg@gmail.com
@@ -62,76 +64,191 @@ Cc:     dmurphy@ti.com, linux-leds@vger.kernel.org,
         gene_chen@richtek.com, Wilma.Wu@mediatek.com,
         shufan_lee@richtek.com, cy_huang@richtek.com,
         benjamin.chao@mediatek.com
-Subject: [PATCH v12 0/5] leds: mt6360: Add LED driver for MT6360
-Date:   Thu, 10 Dec 2020 14:00:52 +0800
-Message-Id: <1607580057-4408-1-git-send-email-gene.chen.richtek@gmail.com>
+Subject: [PATCH v12 4/5] dt-bindings: leds: Add bindings for MT6360 LED
+Date:   Thu, 10 Dec 2020 14:00:56 +0800
+Message-Id: <1607580057-4408-5-git-send-email-gene.chen.richtek@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1607580057-4408-1-git-send-email-gene.chen.richtek@gmail.com>
+References: <1607580057-4408-1-git-send-email-gene.chen.richtek@gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This patch series add MT6360 LED support contains driver and binding document
+From: Gene Chen <gene_chen@richtek.com>
 
-Gene Chen (5)
- leds: flash: Add flash registration with undefined CONFIG_LEDS_CLASS_FLASH
- leds: flash: Fix multicolor no-ops registration by return 0
- dt-bindings: leds: Add LED_COLOR_ID_MOONLIGHT definitions
- dt-bindings: leds: Add bindings for MT6360 LED
- leds: mt6360: Add LED driver for MT6360
+Add bindings document for LED support on MT6360 PMIC
 
- Documentation/devicetree/bindings/leds/leds-mt6360.yaml |  159 +++
- drivers/leds/Kconfig                                    |   13 
- drivers/leds/Makefile                                   |    1 
- drivers/leds/leds-mt6360.c                              |  827 ++++++++++++++++
- include/dt-bindings/leds/common.h                       |    1 
- include/linux/led-class-flash.h                         |   42 
- include/linux/led-class-multicolor.h                    |   42 
- 7 files changed, 1049 insertions(+), 36 deletions(-)
+Signed-off-by: Gene Chen <gene_chen@richtek.com>
+---
+ .../devicetree/bindings/leds/leds-mt6360.yaml      | 159 +++++++++++++++++++++
+ 1 file changed, 159 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6360.yaml
 
-changelogs between v1 & v2
- - add led driver with mfd
-
-changelogs between v2 & v3
- - independent add led driver
- - add dt-binding document
- - refactor macros definition for easy to debug
- - parse device tree by fwnode
- - use devm*ext to register led class device
-
-changelogs between v3 & v4
- - fix binding document description
- - use GENMASK and add unit postfix to definition
- - isink register led class device
-
-changelogs between v4 & v5
- - change rgb isink to multicolor control
- - add binding reference to mfd yaml
-
-changelogs between v5 & v6
- - Use DT to decide RGB LED is multicolor device or indicator device only
-
-changelogs between v6 & v7
- - Add binding multicolor device sample code
- - Add flash ops mutex lock
- - Remove V4L2 init with indicator device
-
-changelogs between v7 & v8
- - Add mutex for led fault get ops
- - Fix flash and multicolor no-ops return 0
- - Add LED_FUNCTION_MOONLIGHT
-
-changelogs between v8 & v9
- - reuse api in flash and multicolor header
-
-changelogs between v9 & v10
- - add comment for reuse registration functions in flash and multicolor
-
-changelogs between v10 & v11
- - match dt-binding reg property comment to the functionality name
- - remove exist patch in linux-next
- - dicide multicolor channel by color definitiion
-
-changelogs between v11 & v12
- - Fix print size_t by %lu
- - Fix dt-binding name regular experssion
+diff --git a/Documentation/devicetree/bindings/leds/leds-mt6360.yaml b/Documentation/devicetree/bindings/leds/leds-mt6360.yaml
+new file mode 100644
+index 0000000..cb1f4b7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-mt6360.yaml
+@@ -0,0 +1,159 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/leds-mt6360.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: LED driver for MT6360 PMIC from MediaTek Integrated.
++
++maintainers:
++  - Gene Chen <gene_chen@richtek.com>
++
++description: |
++  This module is part of the MT6360 MFD device.
++  see Documentation/devicetree/bindings/mfd/mt6360.yaml
++  Add MT6360 LED driver include 2-channel Flash LED with torch/strobe mode,
++  and 4-channel RGB LED support Register/Flash/Breath Mode
++
++properties:
++  compatible:
++    const: mediatek,mt6360-led
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++patternProperties:
++  "^(multi-)?led@[0-5]$":
++    type: object
++    $ref: common.yaml#
++    description:
++      Properties for a single LED.
++
++    properties:
++      reg:
++        description: Index of the LED.
++        enum:
++          - 0 # LED output ISINK1
++          - 1 # LED output ISINK2
++          - 2 # LED output ISINK3
++          - 3 # LED output ISINKML
++          - 4 # LED output FLASH1
++          - 5 # LED output FLASH2
++
++unevaluatedProperties: false
++
++required:
++  - compatible
++  - "#address-cells"
++  - "#size-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++   #include <dt-bindings/leds/common.h>
++   led-controller {
++     compatible = "mediatek,mt6360-led";
++     #address-cells = <1>;
++     #size-cells = <0>;
++
++     multi-led@0 {
++       reg = <0>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_RGB>;
++       led-max-microamp = <24000>;
++       #address-cells = <1>;
++       #size-cells = <0>;
++       led@0 {
++         reg = <0>;
++         color = <LED_COLOR_ID_RED>;
++       };
++       led@1 {
++         reg = <1>;
++         color = <LED_COLOR_ID_GREEN>;
++       };
++       led@2 {
++         reg = <2>;
++         color = <LED_COLOR_ID_BLUE>;
++       };
++     };
++     led@3 {
++       reg = <3>;
++       function = LED_FUNCTION_MOONLIGHT;
++       color = <LED_COLOR_ID_WHITE>;
++       led-max-microamp = <150000>;
++     };
++     led@4 {
++       reg = <4>;
++       function = LED_FUNCTION_FLASH;
++       color = <LED_COLOR_ID_WHITE>;
++       function-enumerator = <1>;
++       led-max-microamp = <200000>;
++       flash-max-microamp = <500000>;
++       flash-max-timeout-us = <1024000>;
++     };
++     led@5 {
++       reg = <5>;
++       function = LED_FUNCTION_FLASH;
++       color = <LED_COLOR_ID_WHITE>;
++       function-enumerator = <2>;
++       led-max-microamp = <200000>;
++       flash-max-microamp = <500000>;
++       flash-max-timeout-us = <1024000>;
++     };
++   };
++
++  - |
++
++   led-controller {
++     compatible = "mediatek,mt6360-led";
++     #address-cells = <1>;
++     #size-cells = <0>;
++
++     led@0 {
++       reg = <0>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_RED>;
++       led-max-microamp = <24000>;
++     };
++     led@1 {
++       reg = <1>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_GREEN>;
++       led-max-microamp = <24000>;
++     };
++     led@2 {
++       reg = <2>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_BLUE>;
++       led-max-microamp = <24000>;
++     };
++     led@3 {
++       reg = <3>;
++       function = LED_FUNCTION_MOONLIGHT;
++       color = <LED_COLOR_ID_WHITE>;
++       led-max-microamp = <150000>;
++     };
++     led@4 {
++       reg = <4>;
++       function = LED_FUNCTION_FLASH;
++       color = <LED_COLOR_ID_WHITE>;
++       function-enumerator = <1>;
++       led-max-microamp = <200000>;
++       flash-max-microamp = <500000>;
++       flash-max-timeout-us = <1024000>;
++     };
++     led@5 {
++       reg = <5>;
++       function = LED_FUNCTION_FLASH;
++       color = <LED_COLOR_ID_WHITE>;
++       function-enumerator = <2>;
++       led-max-microamp = <200000>;
++       flash-max-microamp = <500000>;
++       flash-max-timeout-us = <1024000>;
++     };
++   };
++...
+-- 
+2.7.4
 
