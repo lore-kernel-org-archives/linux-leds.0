@@ -2,173 +2,168 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0FFEC433FE
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Dec 2020 06:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C4BC4361B
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Dec 2020 06:16:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2F392184D
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Dec 2020 06:04:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1198A23A1D
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Dec 2020 06:16:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733007AbgLJGEG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 10 Dec 2020 01:04:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39102 "EHLO
+        id S1733157AbgLJGPh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 10 Dec 2020 01:15:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732896AbgLJGCb (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 10 Dec 2020 01:02:31 -0500
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1BCAC0613CF;
-        Wed,  9 Dec 2020 22:01:50 -0800 (PST)
-Received: by mail-pg1-x544.google.com with SMTP id c12so2727085pgm.4;
-        Wed, 09 Dec 2020 22:01:50 -0800 (PST)
+        with ESMTP id S1729637AbgLJGPZ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 10 Dec 2020 01:15:25 -0500
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9317AC061793
+        for <linux-leds@vger.kernel.org>; Wed,  9 Dec 2020 22:14:45 -0800 (PST)
+Received: by mail-pf1-x442.google.com with SMTP id p4so3073306pfg.0
+        for <linux-leds@vger.kernel.org>; Wed, 09 Dec 2020 22:14:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=p0JP7C0xlsVyWNi+wA1zhFtAvLDEH/NgpOed0jz9w0E=;
-        b=cR/JxMMuhbeJcPwCkqBgdDyFnrMKBa0+fG4l1D6nKLGXwLAnP/YUpXmHxiIae+9R2t
-         F1naM+jlFHUjf4rvun+WO8r12gxABYEgjSKOH6/H/xqpQO3UsemB/PoRUCV8ili5gERt
-         v00GhE1kgrIOmro4IduGfAbyBWAZJK+ZGemOvq43Q/JjMk6QOY/t2bQEqfrv62Li8mPC
-         yeT3vjfgJxqM5xa2b3UIu3jEMfYVqN4dMcCaULpup1wHMlrjOugyGvOus8Eev58uKSfP
-         RfIzQdCf83TBs4S0Nlz8qQEwqZ14ZuGzEghp70JJl03vBiPkRyz2RnAWlNiLqW/7SVdt
-         r/wA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MqeM3I8rabKhAIEdk1wwGjmL1P9GZYH14bcbbNjM89o=;
+        b=Sm+XVhMiBcu2Y0owzP9+IkqVAcH3SQUqbeMaKb6I84kiDIZ9R3OpBHfVnJ6hR6IbMv
+         Mjbs0UyL4MZ8UUo7b1HcbmQXbcWg8dbSFESMae/pKh/9gF8DDqWCoDkHvrEfwQ3ScwR0
+         aI/YLTvUxu2gLWW1hOuI0XmWieZQiBD+Ybs9B62upawpUmtgxDGG9JGXCCHI9p6gV4Jl
+         qbPQSK9gMvtGnRD0j/+o/7b8GhHG+dlsak2IMQbCoYXgumDdv+hXt9VYhKwOdqtYAyRk
+         VTra7XtDnXbai55arYFn1qlzFHFZWQoj/VuVuRmq+SkY5LZHL82jzgFMjqTY4H47d09t
+         5Xkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=p0JP7C0xlsVyWNi+wA1zhFtAvLDEH/NgpOed0jz9w0E=;
-        b=b5ASbcV/LguwzPF9LBI+N2ZdhvIsHR8OJo4dHntZunwBMueHxgd6rP2JmedNATpIik
-         wbo1ht84pnGKyjERoYTk2w1AQUse9W/tl4mBP3Hnmn3J6bnw31NoPS6P4dLotfx61f0h
-         vlNIxDDAC4+lEMvsnp2/R6c8PGO4BQ7EKsr87FW0ouUvtu9RpAY9NPydb+JSUT31P5mZ
-         nZX264i7z/1TPjVBdEOo0MYO9C+bJOnLbK/PJcVUmmj6bS6RDl1RdqAir4Gzw7NqvK2W
-         +8SjM/vpfN6RcdSSj6n08rqhBM6ZUfoip96um49Rnk66PgWBL1zk8a0bggyOYxr3oB17
-         YiBg==
-X-Gm-Message-State: AOAM533qwHDpsvk9FFv5FY4efq6zdsrpnWq1w2auQAqISH/4oCGgZ5ES
-        Cjjecg0Q0vjySaOKP3+nM6A=
-X-Google-Smtp-Source: ABdhPJyodIySalE6+AOcU90QrCtBp+oBtWOZU4KNyH6gmjj0Ts8EWEXN9Ghlh9Hupbb0ZiBMMaDHXA==
-X-Received: by 2002:aa7:9af4:0:b029:19d:975a:3ef2 with SMTP id y20-20020aa79af40000b029019d975a3ef2mr5228990pfp.5.1607580110404;
-        Wed, 09 Dec 2020 22:01:50 -0800 (PST)
-Received: from localhost.localdomain ([2402:7500:568:b3ad:229b:9ee7:b946:7876])
-        by smtp.gmail.com with ESMTPSA id j19sm4355377pff.74.2020.12.09.22.01.45
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Dec 2020 22:01:49 -0800 (PST)
-From:   Gene Chen <gene.chen.richtek@gmail.com>
-To:     jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
-        matthias.bgg@gmail.com
-Cc:     dmurphy@ti.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        gene_chen@richtek.com, Wilma.Wu@mediatek.com,
-        shufan_lee@richtek.com, cy_huang@richtek.com,
-        benjamin.chao@mediatek.com
-Subject: [PATCH v12 2/5] leds: flash: Fix multicolor no-ops registration by return 0
-Date:   Thu, 10 Dec 2020 14:00:54 +0800
-Message-Id: <1607580057-4408-3-git-send-email-gene.chen.richtek@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1607580057-4408-1-git-send-email-gene.chen.richtek@gmail.com>
-References: <1607580057-4408-1-git-send-email-gene.chen.richtek@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MqeM3I8rabKhAIEdk1wwGjmL1P9GZYH14bcbbNjM89o=;
+        b=f3+TdrgQNNDX4J11o5nTrgYb1TlP5ZWVloKaUBT0L7OTiD22zrY2aNxoNRQ5k2Oa7K
+         aWIplcXoYWCRhRB3zfkEpRly8Fy/QgagROeGoTAm5kZxeVzvqRcCcCSl6dfmh0cDU/pb
+         YmQ8q0dFr2xadqlkI1qxgzp1TBdzar/indGcrH56jGg2Dfxs4clrAPD+djdYIsqEDniF
+         Sc+Ua/prDFDTNz3iuwVdKYfaRJ925zDSvfvqiJzZWg4bcy9SR7SYH/l0N42Mkm0uWsYs
+         hjPKQlnaekZds/NiIlg5M1DOTCusDjNYJ2JboRZ2Pp3gJlWbbHNN+h/hOfe55sE0RACd
+         IfkA==
+X-Gm-Message-State: AOAM5330SY5jk7qTf8QW+uZOHgZin5HaciwIO0q6uXL87tcG2xvqdo9d
+        qrz60fEbQME62lgrZSiBxNgz
+X-Google-Smtp-Source: ABdhPJxuBIEiPbMTblacsQFD6iV9B6VDy2R38bS3mMhHr3l5GQl93NvJ0Wv9l96KG3TTwYPODwy2AQ==
+X-Received: by 2002:a62:de01:0:b029:19e:a3f6:8eef with SMTP id h1-20020a62de010000b029019ea3f68eefmr3919519pfg.48.1607580884833;
+        Wed, 09 Dec 2020 22:14:44 -0800 (PST)
+Received: from localhost.localdomain ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id e2sm4492694pjv.10.2020.12.09.22.14.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Dec 2020 22:14:44 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
+        robh+dt@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, thunder.leizhen@huawei.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH] dt-bindings: leds: Document commonly used LED triggers
+Date:   Thu, 10 Dec 2020 11:44:31 +0530
+Message-Id: <20201210061431.23144-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Gene Chen <gene_chen@richtek.com>
+This commit documents the LED triggers used commonly in the SoCs. Not
+all triggers are documented as some of them are very application specific.
+Most of the triggers documented here are currently used in devicetrees
+of many SoCs.
 
-Fix multicolor no-ops registration by return 0,
-and move the same registration functions outside of #ifdef block.
-
-Signed-off-by: Gene Chen <gene_chen@richtek.com>
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- include/linux/led-class-multicolor.h | 42 +++++++++++++-----------------------
- 1 file changed, 15 insertions(+), 27 deletions(-)
+ .../devicetree/bindings/leds/common.yaml      | 72 ++++++++++++++-----
+ 1 file changed, 54 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/led-class-multicolor.h b/include/linux/led-class-multicolor.h
-index 5116f9a..210d57b 100644
---- a/include/linux/led-class-multicolor.h
-+++ b/include/linux/led-class-multicolor.h
-@@ -44,12 +44,6 @@ int led_classdev_multicolor_register_ext(struct device *parent,
- 					    struct led_classdev_mc *mcled_cdev,
- 					    struct led_init_data *init_data);
+diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+index f1211e7045f1..eee4eb7a4535 100644
+--- a/Documentation/devicetree/bindings/leds/common.yaml
++++ b/Documentation/devicetree/bindings/leds/common.yaml
+@@ -79,24 +79,60 @@ properties:
+       the LED.
+     $ref: /schemas/types.yaml#definitions/string
  
--static inline int led_classdev_multicolor_register(struct device *parent,
--					    struct led_classdev_mc *mcled_cdev)
--{
--	return led_classdev_multicolor_register_ext(parent, mcled_cdev, NULL);
--}
--
- /**
-  * led_classdev_multicolor_unregister - unregisters an object of led_classdev
-  *					class with support for multicolor LEDs
-@@ -68,13 +62,6 @@ int devm_led_classdev_multicolor_register_ext(struct device *parent,
- 					  struct led_classdev_mc *mcled_cdev,
- 					  struct led_init_data *init_data);
+-    enum:
+-        # LED will act as a back-light, controlled by the framebuffer system
+-      - backlight
+-        # LED will turn on (but for leds-gpio see "default-state" property in
+-        # Documentation/devicetree/bindings/leds/leds-gpio.yaml)
+-      - default-on
+-        # LED "double" flashes at a load average based rate
+-      - heartbeat
+-        # LED indicates disk activity
+-      - disk-activity
+-        # LED indicates IDE disk activity (deprecated), in new implementations
+-        # use "disk-activity"
+-      - ide-disk
+-        # LED flashes at a fixed, configurable rate
+-      - timer
+-        # LED alters the brightness for the specified duration with one software
+-        # timer (requires "led-pattern" property)
+-      - pattern
++    oneOf:
++      - items:
++          - enum:
++                # LED will act as a back-light, controlled by the framebuffer system
++              - backlight
++                # LED will turn on (but for leds-gpio see "default-state" property in
++                # Documentation/devicetree/bindings/leds/leds-gpio.yaml)
++              - default-on
++                # LED "double" flashes at a load average based rate
++              - heartbeat
++                # LED indicates disk activity
++              - disk-activity
++                # LED indicates IDE disk activity (deprecated), in new implementations
++                # use "disk-activity"
++              - ide-disk
++                # LED flashes at a fixed, configurable rate
++              - timer
++                # LED alters the brightness for the specified duration with one software
++                # timer (requires "led-pattern" property)
++              - pattern
++                # LED indicates camera flash state
++              - flash
++                # LED indicates camera torch state
++              - torch
++                # LED indicates audio mute state
++              - audio-mute
++                # LED indicates mic mute state
++              - audio-micmute
++                # LED indicates bluetooth power state
++              - bluetooth-power
++                # LED indicates USB gadget activity
++              - usb-gadget
++                # LED indicates USB host activity
++              - usb-host
++                # LED indicates MTD memory activity
++              - mtd
++                # LED indicates NAND memory activity (deprecated),
++                # in new implementations use "mtd"
++              - nand-disk
++                # LED indicates disk read activity
++              - disk-read
++                # LED indicates disk write activity
++              - disk-write
++                # No trigger assigned to the LED. This is the default mode
++                # if trigger is absent
++              - none
++                # LED indicates activity of all CPUs
++              - cpu
++      - items:
++            # LED indicates activity of [N]th CPU
++          - pattern: "^cpu[0-9][0-9]$"
++      - items:
++            # LED indicates [N]th MMC storage activity
++          - pattern: '^mmc[0-9][0-9]$'
  
--static inline int devm_led_classdev_multicolor_register(struct device *parent,
--				     struct led_classdev_mc *mcled_cdev)
--{
--	return devm_led_classdev_multicolor_register_ext(parent, mcled_cdev,
--							 NULL);
--}
--
- void devm_led_classdev_multicolor_unregister(struct device *parent,
- 					    struct led_classdev_mc *mcled_cdev);
- #else
-@@ -83,27 +70,33 @@ static inline int led_classdev_multicolor_register_ext(struct device *parent,
- 					    struct led_classdev_mc *mcled_cdev,
- 					    struct led_init_data *init_data)
- {
--	return -EINVAL;
--}
--
--static inline int led_classdev_multicolor_register(struct device *parent,
--					    struct led_classdev_mc *mcled_cdev)
--{
--	return led_classdev_multicolor_register_ext(parent, mcled_cdev, NULL);
-+	return 0;
- }
- 
- static inline void led_classdev_multicolor_unregister(struct led_classdev_mc *mcled_cdev) {};
- static inline int led_mc_calc_color_components(struct led_classdev_mc *mcled_cdev,
- 					       enum led_brightness brightness)
- {
--	return -EINVAL;
-+	return 0;
- }
- 
- static inline int devm_led_classdev_multicolor_register_ext(struct device *parent,
- 					  struct led_classdev_mc *mcled_cdev,
- 					  struct led_init_data *init_data)
- {
--	return -EINVAL;
-+	return 0;
-+}
-+
-+static inline void devm_led_classdev_multicolor_unregister(struct device *parent,
-+					    struct led_classdev_mc *mcled_cdev)
-+{};
-+
-+#endif  /* IS_ENABLED(CONFIG_LEDS_CLASS_MULTICOLOR) */
-+
-+static inline int led_classdev_multicolor_register(struct device *parent,
-+					    struct led_classdev_mc *mcled_cdev)
-+{
-+	return led_classdev_multicolor_register_ext(parent, mcled_cdev, NULL);
- }
- 
- static inline int devm_led_classdev_multicolor_register(struct device *parent,
-@@ -113,9 +106,4 @@ static inline int devm_led_classdev_multicolor_register(struct device *parent,
- 							 NULL);
- }
- 
--static inline void devm_led_classdev_multicolor_unregister(struct device *parent,
--					    struct led_classdev_mc *mcled_cdev)
--{};
--
--#endif  /* IS_ENABLED(CONFIG_LEDS_CLASS_MULTICOLOR) */
- #endif	/* _LINUX_MULTICOLOR_LEDS_H_INCLUDED */
+   led-pattern:
+     description: |
 -- 
-2.7.4
+2.25.1
 
