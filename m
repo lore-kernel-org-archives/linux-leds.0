@@ -2,138 +2,75 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EADCC433FE
-	for <linux-leds@archiver.kernel.org>; Sun, 13 Dec 2020 08:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CBFC4361B
+	for <linux-leds@archiver.kernel.org>; Sun, 13 Dec 2020 08:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C244123122
-	for <linux-leds@archiver.kernel.org>; Sun, 13 Dec 2020 08:20:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D47332250E
+	for <linux-leds@archiver.kernel.org>; Sun, 13 Dec 2020 08:52:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404418AbgLMIUJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 13 Dec 2020 03:20:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404178AbgLMIUJ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 13 Dec 2020 03:20:09 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAB63C0613CF;
-        Sun, 13 Dec 2020 00:19:28 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id m25so22343552lfc.11;
-        Sun, 13 Dec 2020 00:19:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gGpGJE117uuu0mrJjD3uk83rQznDbmUGhxCc2a6Owt0=;
-        b=VafUivgY/GTbQUK7U+t47larm9y1WZVXfFLko+4/fILf0w9h1+1YXiOrObZxalMVXv
-         74DOYg6i7o+jDeCMR6MmeDgA6B3ITUEtILbcKgTTRFsRpoYXPJG8ZltVQoC0d83UW85+
-         2ObAsi0WHefdn0gWwxnAPS8gUJ4LYL3B0ao9ikkrjvCzb7ucD8DOlnxXHehG05g8rTcL
-         DSMZUJQ+ZNkmIyklyaCG/zQipNGiNurpo4yerBfjYqk74YlOTvIW1wc46sZH36bAihJG
-         Ne7beno5RVLSMdZYUbj6FN1hAqM7Nlm3id88ysyNnQwHXKjWu14bKtb7oywSUf7hon0s
-         Kqgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gGpGJE117uuu0mrJjD3uk83rQznDbmUGhxCc2a6Owt0=;
-        b=k8MVtUca6CVwLMUaZhYxKsATKhB4ggSfdh+LOyprkDLT+n+5jkABUCdDWigT/Cu3r6
-         TPwnB26aq54SDtzaieaw3QAF8IOHCEKbvx2EPeVY03wRboEKjCRkmkZsaau64TnrTTwO
-         70nskNuOtPoeBiSAY5iSyXGnm/PN89r/Q4/gL8L536rrIAtX2H2QrMmOYUrmhp8KCyTt
-         f9OZxP4f4FE1rBglvJr7c8J/EKzNepAd9efZVgWTMVvrACzDroEqrQpgh8SwClKF8Sxo
-         hlWf0735zZUlnpTvoa249HRvGAQMJe1hkE+1WuXs1k+VzDYTitsv1K78aQxaRen/6Dw8
-         7x+A==
-X-Gm-Message-State: AOAM530OYQVybBW8Bn+HU+oAnvk+8y8fa4SSPUaRQ5aYsxoF+ReDE881
-        Thyjwcn3VsKx2Yuo8aohkGj7YnzrBauuNLBn48Q=
-X-Google-Smtp-Source: ABdhPJzB1WJVmw6oioR+YnA3WOh0S77J//JsdipVKPwKjVz/MpcQscWUBzPJZk2Xs7h70pReIf9bMvQmtdxPEsLvjY4=
-X-Received: by 2002:a2e:3312:: with SMTP id d18mr7486964ljc.284.1607847562396;
- Sun, 13 Dec 2020 00:19:22 -0800 (PST)
-MIME-Version: 1.0
-References: <20201212195548.231494-1-dwaipayanray1@gmail.com> <CAKXUXMx9EnhWhGAJf4ousAgkxDUrN=g2zGaPEk6ijJYse7VJaQ@mail.gmail.com>
-In-Reply-To: <CAKXUXMx9EnhWhGAJf4ousAgkxDUrN=g2zGaPEk6ijJYse7VJaQ@mail.gmail.com>
-From:   Dwaipayan Ray <dwaipayanray1@gmail.com>
-Date:   Sun, 13 Dec 2020 13:48:58 +0530
-Message-ID: <CABJPP5BeB-aXDDk-8vy-8dOaNaM5jitx6QWKtV7Y3zXM5DgvUA@mail.gmail.com>
+        id S2405183AbgLMIvy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 13 Dec 2020 03:51:54 -0500
+Received: from smtprelay0076.hostedemail.com ([216.40.44.76]:38286 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728170AbgLMIvr (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 13 Dec 2020 03:51:47 -0500
+X-Greylist: delayed 646 seconds by postgrey-1.27 at vger.kernel.org; Sun, 13 Dec 2020 03:51:47 EST
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave02.hostedemail.com (Postfix) with ESMTP id 3959D1800084D
+        for <linux-leds@vger.kernel.org>; Sun, 13 Dec 2020 08:40:55 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 172151E06;
+        Sun, 13 Dec 2020 08:40:14 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: neck30_631061227410
+X-Filterd-Recvd-Size: 1954
+Received: from XPS-9350.home (unknown [47.151.137.21])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 13 Dec 2020 08:40:11 +0000 (UTC)
+Message-ID: <3ce8fa0c0d7a2c38b532bd4944f4158cfa0db072.camel@perches.com>
 Subject: Re: [PATCH] leds: Use DEVICE_ATTR_{RW, RO, WO} macros
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+From:   Joe Perches <joe@perches.com>
+To:     Dwaipayan Ray <dwaipayanray1@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     linux-leds@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-kernel-mentees@lists.linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
+Date:   Sun, 13 Dec 2020 00:40:10 -0800
+In-Reply-To: <CABJPP5BeB-aXDDk-8vy-8dOaNaM5jitx6QWKtV7Y3zXM5DgvUA@mail.gmail.com>
+References: <20201212195548.231494-1-dwaipayanray1@gmail.com>
+         <CAKXUXMx9EnhWhGAJf4ousAgkxDUrN=g2zGaPEk6ijJYse7VJaQ@mail.gmail.com>
+         <CABJPP5BeB-aXDDk-8vy-8dOaNaM5jitx6QWKtV7Y3zXM5DgvUA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.38.1-1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Sun, Dec 13, 2020 at 1:31 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> On Sat, Dec 12, 2020 at 8:56 PM Dwaipayan Ray <dwaipayanray1@gmail.com> wrote:
-> >
-> > Instead of open coding DEVICE_ATTR() defines, use the
-> > DEVICE_ATTR_RW(), DEVICE_ATTR_WO(), and DEVICE_ATTR_RO()
-> > macros intead.
->
-> typo: s/intead/instead/
->
-> No need to use the word "instead" twice in one sentence, though, we got it :)
->
-> >
-> > This required a few functions to be renamed, but the functionality
-> > itself is unchanged.
-> >
-> > Note that this is compile tested only.
-> >
->
-> This note does not go in the commit message. In the future, this will
-> be simply not true anymore, but this below the "---" (see HERE! as
-> marker).
->
-> For testing, you can generate the objdump of the binary before and
-> after and compare if that is as expected.
->
-> Other than that, the change itself looks good to me, so:
->
-> Reviewed-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
->
-> Thanks, Dwaipayan, for fixing this up.
->
-> Will you also add a checkpatch rule to identify other DEVICE_ATTR(...)
-> that can be adjusted to the refined macros, so that checkpatch informs
-> other submitters as well?
->
+On Sun, 2020-12-13 at 13:48 +0530, Dwaipayan Ray wrote:
+> On Sun, Dec 13, 2020 at 1:31 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+[]
+> > Will you also add a checkpatch rule to identify other DEVICE_ATTR(...)
+> > that can be adjusted to the refined macros, so that checkpatch informs
+> > other submitters as well?
+> > 
+> I think a checkpatch rule for this already exists. But it cannot automatically
+> rename the function names. That might be the only drawback we got.
+> Probably clang-format could fix these automatically.
 
-I think a checkpatch rule for this already exists. But it cannot automatically
-rename the function names. That might be the only drawback we got.
-Probably clang-format could fix these automatically.
+clang-format is not a tool to rewrite code only neaten its layout.
 
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Dan Murphy <dmurphy@ti.com>
-> > Cc: Pavel Machek <pavel@ucw.cz>
-> > Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > Cc: linux-leds@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: linux-kernel-mentees@lists.linuxfoundation.org
->
-> As far as I know, the maintainers will add the Cc lines---if they like
-> those---with script support.
->
+coccinelle _might_ be able to do this for limited cases where the
+show function is in the same compilation unit/file, but even then
+it would not be a trivial script.
 
-I thought I might ease the work of maintainers to add those lines :(
-But nevertheless I will remove them.
 
-> > Signed-off-by: Dwaipayan Ray <dwaipayanray1@gmail.com>
-> > ---
->
-> HERE!
->
-
-Thanks Lukas.
-I will be sending in a v2 if the led maintainers have no problem with
-this patch.
-
-Thank you,
-Dwaipayan.
