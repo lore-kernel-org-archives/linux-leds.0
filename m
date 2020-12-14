@@ -2,75 +2,180 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E0DC4361B
-	for <linux-leds@archiver.kernel.org>; Mon, 14 Dec 2020 13:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CC2C4361B
+	for <linux-leds@archiver.kernel.org>; Mon, 14 Dec 2020 22:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3F96229EF
-	for <linux-leds@archiver.kernel.org>; Mon, 14 Dec 2020 13:46:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D310C20731
+	for <linux-leds@archiver.kernel.org>; Mon, 14 Dec 2020 22:37:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438047AbgLNNqJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 14 Dec 2020 08:46:09 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9528 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438193AbgLNNqF (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 14 Dec 2020 08:46:05 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CvjLR1PfYzhtJG;
-        Mon, 14 Dec 2020 21:44:47 +0800 (CST)
-Received: from ubuntu.network (10.175.138.68) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 14 Dec 2020 21:45:14 +0800
-From:   Zheng Yongjun <zhengyongjun3@huawei.com>
-To:     <pavel@ucw.cz>, <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Zheng Yongjun <zhengyongjun3@huawei.com>
-Subject: [PATCH -next] leds: leds-ariel: convert comma to semicolon
-Date:   Mon, 14 Dec 2020 21:45:45 +0800
-Message-ID: <20201214134545.4884-1-zhengyongjun3@huawei.com>
-X-Mailer: git-send-email 2.22.0
+        id S2502102AbgLNWhK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 14 Dec 2020 17:37:10 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39868 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2441166AbgLNWhE (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 14 Dec 2020 17:37:04 -0500
+Received: by mail-ot1-f67.google.com with SMTP id d8so17458471otq.6;
+        Mon, 14 Dec 2020 14:36:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=muRKuV6p86ck6Xh8iJfHfvWMBV8uDpANRpY7OayqqoY=;
+        b=NnWqV7pGuSUIvi4oDYNEPVuR9RV4/q3zTye4hhykcUv6RNPWxbM9dN4SozG18M/yQZ
+         VMkIIX0TmN+F0smdcXf0q1YHjgVQ3UtGM15EllhTK0RmfnWMqaxUTkNI9yZBOGg0KmRW
+         K/PKyJ2pgaZuNqdJhlVdK3h6N0PO4GIPL9ihEhI29d7h8CTwTaUPXFm29XQlRHLJ54D7
+         54IUww/axtQ+/9q/1gemgXX1KpnERj8X7digEFx8uwu53Tv5Gw1hTnHgMlReEm3+BbqS
+         dUa2cgTmSRJMPTyZFqV5gxxX8DiKs8YZXtM29XZkhQVJXTODwv4Z6ZkTfExF0tVl8LIT
+         Lc2g==
+X-Gm-Message-State: AOAM532RzR9b7IdfzFxctTImJWYimvqD5J92Sj3CkW+/u4QY4+oHTU9O
+        lJM7JX6a8JgO6Uh2ls2ciA==
+X-Google-Smtp-Source: ABdhPJyhS6m8TRT1cXi677SphG9iioyteB4JQ+m46tBfZpNxy4D7/3LPFPEzKarrgDjh4d0erS/9UA==
+X-Received: by 2002:a9d:4e87:: with SMTP id v7mr11804853otk.302.1607985383468;
+        Mon, 14 Dec 2020 14:36:23 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o49sm4649683ota.51.2020.12.14.14.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Dec 2020 14:36:22 -0800 (PST)
+Received: (nullmailer pid 2509929 invoked by uid 1000);
+        Mon, 14 Dec 2020 22:36:21 -0000
+Date:   Mon, 14 Dec 2020 16:36:21 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, thunder.leizhen@huawei.com
+Subject: Re: [PATCH v2] dt-bindings: leds: Document commonly used LED triggers
+Message-ID: <20201214223621.GA2493849@robh.at.kernel.org>
+References: <20201210082449.30586-1-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.138.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201210082449.30586-1-manivannan.sadhasivam@linaro.org>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Replace a comma between expression statements by a semicolon.
+On Thu, Dec 10, 2020 at 01:54:49PM +0530, Manivannan Sadhasivam wrote:
+> This commit documents the LED triggers used commonly in the SoCs. Not
+> all triggers are documented as some of them are very application specific.
+> Most of the triggers documented here are currently used in devicetrees
+> of many SoCs.
 
-Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
----
- drivers/leds/leds-ariel.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The idea with recent LED binding changes is to move away from 
+'linux,default-trigger' to 'function' and 'trigger-sources' and to have 
+some sort of standardized names.
 
-diff --git a/drivers/leds/leds-ariel.c b/drivers/leds/leds-ariel.c
-index bb68ba23a7d4..49e1bddaa15e 100644
---- a/drivers/leds/leds-ariel.c
-+++ b/drivers/leds/leds-ariel.c
-@@ -96,14 +96,14 @@ static int ariel_led_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	leds[0].ec_index = EC_BLUE_LED;
--	leds[0].led_cdev.name = "blue:power",
-+	leds[0].led_cdev.name = "blue:power";
- 	leds[0].led_cdev.default_trigger = "default-on";
- 
- 	leds[1].ec_index = EC_AMBER_LED;
--	leds[1].led_cdev.name = "amber:status",
-+	leds[1].led_cdev.name = "amber:status";
- 
- 	leds[2].ec_index = EC_GREEN_LED;
--	leds[2].led_cdev.name = "green:status",
-+	leds[2].led_cdev.name = "green:status";
- 	leds[2].led_cdev.default_trigger = "default-on";
- 
- 	for (i = 0; i < NLEDS; i++) {
--- 
-2.22.0
+> 
+> While at it, let's also sort the triggers in ascending order.
 
+I'm not sure we want that. Probably better to keep related functions 
+together.
+
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+> 
+> Changes in v2:
+> 
+> * Added more triggers, fixed the regex
+> * Sorted triggers in ascending order
+> 
+>  .../devicetree/bindings/leds/common.yaml      | 78 ++++++++++++++-----
+>  1 file changed, 60 insertions(+), 18 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+> index f1211e7045f1..3c2e2208c1da 100644
+> --- a/Documentation/devicetree/bindings/leds/common.yaml
+> +++ b/Documentation/devicetree/bindings/leds/common.yaml
+> @@ -79,24 +79,66 @@ properties:
+>        the LED.
+>      $ref: /schemas/types.yaml#definitions/string
+>  
+> -    enum:
+> -        # LED will act as a back-light, controlled by the framebuffer system
+> -      - backlight
+> -        # LED will turn on (but for leds-gpio see "default-state" property in
+> -        # Documentation/devicetree/bindings/leds/leds-gpio.yaml)
+> -      - default-on
+> -        # LED "double" flashes at a load average based rate
+> -      - heartbeat
+> -        # LED indicates disk activity
+> -      - disk-activity
+> -        # LED indicates IDE disk activity (deprecated), in new implementations
+> -        # use "disk-activity"
+> -      - ide-disk
+> -        # LED flashes at a fixed, configurable rate
+> -      - timer
+> -        # LED alters the brightness for the specified duration with one software
+> -        # timer (requires "led-pattern" property)
+> -      - pattern
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +                # LED indicates mic mute state
+> +              - audio-micmute
+> +                # LED indicates audio mute state
+> +              - audio-mute
+> +                # LED will act as a back-light, controlled by the framebuffer system
+> +              - backlight
+> +                # LED indicates bluetooth power state
+> +              - bluetooth-power
+> +                # LED indicates activity of all CPUs
+> +              - cpu
+> +                # LED will turn on (but for leds-gpio see "default-state" property in
+> +                # Documentation/devicetree/bindings/leds/leds-gpio.yaml)
+> +              - default-on
+> +                # LED indicates disk activity
+> +              - disk-activity
+> +                # LED indicates disk read activity
+> +              - disk-read
+> +                # LED indicates disk write activity
+> +              - disk-write
+> +                # LED indicates camera flash state
+> +              - flash
+> +                # LED "double" flashes at a load average based rate
+> +              - heartbeat
+> +                # LED indicates IDE disk activity (deprecated), in new implementations
+> +                # use "disk-activity"
+> +              - ide-disk
+> +                # LED indicates MTD memory activity
+> +              - mtd
+> +                # LED indicates NAND memory activity (deprecated),
+> +                # in new implementations use "mtd"
+> +              - nand-disk
+> +                # No trigger assigned to the LED. This is the default mode
+> +                # if trigger is absent
+> +              - none
+> +                # LED alters the brightness for the specified duration with one software
+> +                # timer (requires "led-pattern" property)
+> +              - pattern
+> +                # LED flashes at a fixed, configurable rate
+> +              - timer
+> +                # LED indicates camera torch state
+> +              - torch
+> +                # LED indicates USB gadget activity
+> +              - usb-gadget
+> +                # LED indicates USB host activity
+> +              - usb-host
+> +      - items:
+> +            # LED indicates activity of [N]th CPU
+> +          - pattern: "^cpu[0-9]{1,2}$"
+> +      - items:
+> +            # LED indicates power status of [N]th Bluetooth HCI device
+> +          - pattern: "^hci[0-9]{1,2}-power$"
+> +      - items:
+> +            # LED indicates [N]th MMC storage activity
+> +          - pattern: "^mmc[0-9]{1,2}$"
+> +      - items:
+> +            # LED indicates [N]th WLAN Tx activity
+> +          - pattern: "^phy[0-9]{1,2}tx$"
+>  
+>    led-pattern:
+>      description: |
+> -- 
+> 2.25.1
+> 
