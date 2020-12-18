@@ -2,98 +2,315 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E81C4361B
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Dec 2020 23:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FD1C2BBD4
+	for <linux-leds@archiver.kernel.org>; Fri, 18 Dec 2020 10:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 235D123A51
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Dec 2020 23:01:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A2FB23A7B
+	for <linux-leds@archiver.kernel.org>; Fri, 18 Dec 2020 10:43:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730665AbgLQXAo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 17 Dec 2020 18:00:44 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:54902 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730054AbgLQXAo (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 17 Dec 2020 18:00:44 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 821971C0B7D; Thu, 17 Dec 2020 23:59:46 +0100 (CET)
-Date:   Thu, 17 Dec 2020 23:59:43 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Marek Behun' <marek.behun@nic.cz>,
-        Abanoub Sameh <abanoubsameh8@gmail.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Abanoub Sameh <abanoubsameh@protonmail.com>,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] leds: led-core: Get rid of enum led_brightness
-Message-ID: <20201217225942.GA8241@amd>
-References: <20201211014840.1554095-1-abanoubsameh@protonmail.com>
- <20201211135628.1fe1af79@nic.cz>
- <2ae41868b2604a489927b5903529afb4@AcuMS.aculab.com>
+        id S1733208AbgLRKnh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 18 Dec 2020 05:43:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53444 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728248AbgLRKng (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Dec 2020 05:43:36 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25A3CC0617B0
+        for <linux-leds@vger.kernel.org>; Fri, 18 Dec 2020 02:42:55 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kqDDk-00006y-RO; Fri, 18 Dec 2020 11:42:48 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kqDDk-0004hW-8X; Fri, 18 Dec 2020 11:42:48 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-serial@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH v10 3/3] leds: trigger: implement a tty trigger
+Date:   Fri, 18 Dec 2020 11:42:46 +0100
+Message-Id: <20201218104246.591315-4-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201218104246.591315-1-u.kleine-koenig@pengutronix.de>
+References: <20201218104246.591315-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
-Content-Disposition: inline
-In-Reply-To: <2ae41868b2604a489927b5903529afb4@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Usage is as follows:
 
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+	myled=ledname
+	tty=ttyS0
 
-Hi!
+	echo tty > /sys/class/leds/$myled/trigger
+	echo $tty > /sys/class/leds/$myled/ttyname
 
-> > On Fri, 11 Dec 2020 03:48:40 +0200
-> > Abanoub Sameh <abanoubsameh8@gmail.com> wrote:
-> >=20
-> > > This gets rid of enum led_brightness in the main led files,
-> > > because it is deprecated, and an int can be used instead,
-> > > or maybe even a uint8_t since it only goes up to 255.
-> > > Next we can also patch the other files to get rid of it completely.
-> >=20
-> > 1. unsigned int should be used IMO
-> >   - using int may force all implementers to check for negative value
-> >     and return -EINVAL, which is stupid
-> >   - some LED controllers may offer more than 8bit brightness value, so
-> >     no uint8_t
->=20
-> More than 8 bits would be good.
-> While not really relevant for actual 'brightness' it allows
-> for 'strange' things be encoded in the brightness field.
+. When this new trigger is active it periodically checks the tty's
+statistics and when it changed since the last check the led is flashed
+once.
 
-I have headlamp which can do 0.1lumens to 750lumens. Some go down to
-0.01 lumens. More than 8 bits definitely makes sense.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ .../ABI/testing/sysfs-class-led-trigger-tty   |   6 +
+ drivers/leds/trigger/Kconfig                  |   9 +
+ drivers/leds/trigger/Makefile                 |   1 +
+ drivers/leds/trigger/ledtrig-tty.c            | 188 ++++++++++++++++++
+ 4 files changed, 204 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-tty
+ create mode 100644 drivers/leds/trigger/ledtrig-tty.c
 
-Display backlights also need great ranges.
+diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-tty b/Documentation/ABI/testing/sysfs-class-led-trigger-tty
+new file mode 100644
+index 000000000000..2bf6b24e781b
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-class-led-trigger-tty
+@@ -0,0 +1,6 @@
++What:		/sys/class/leds/<led>/ttyname
++Date:		Dec 2020
++KernelVersion:	5.10
++Contact:	linux-leds@vger.kernel.org
++Description:
++		Specifies the tty device name of the triggering tty
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+index ce9429ca6dde..b77a01bd27f4 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -144,4 +144,13 @@ config LEDS_TRIGGER_AUDIO
+ 	  the audio mute and mic-mute changes.
+ 	  If unsure, say N
+ 
++config LEDS_TRIGGER_TTY
++	tristate "LED Trigger for TTY devices"
++	depends on TTY
++	help
++	  This allows LEDs to be controlled by activity on ttys which includes
++	  serial devices like /dev/ttyS0.
++
++	  When build as a module this driver will be called ledtrig-tty.
++
+ endif # LEDS_TRIGGERS
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+index 733a83e2a718..25c4db97cdd4 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -15,3 +15,4 @@ obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
+ obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
+ obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+= ledtrig-pattern.o
+ obj-$(CONFIG_LEDS_TRIGGER_AUDIO)	+= ledtrig-audio.o
++obj-$(CONFIG_LEDS_TRIGGER_TTY)		+= ledtrig-tty.o
+diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/ledtrig-tty.c
+new file mode 100644
+index 000000000000..c1e87c0d23c3
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-tty.c
+@@ -0,0 +1,188 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/delay.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/tty.h>
++#include <uapi/linux/serial.h>
++
++struct ledtrig_tty_data {
++	struct led_classdev *led_cdev;
++	struct delayed_work dwork;
++	struct mutex mutex;
++	const char *ttyname;
++	struct tty_struct *tty;
++	int rx, tx;
++};
++
++static void ledtrig_tty_halt(struct ledtrig_tty_data *trigger_data)
++{
++	cancel_delayed_work_sync(&trigger_data->dwork);
++}
++
++static void ledtrig_tty_restart(struct ledtrig_tty_data *trigger_data)
++{
++	schedule_delayed_work(&trigger_data->dwork, 0);
++}
++
++static ssize_t ttyname_show(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	struct ledtrig_tty_data *trigger_data = led_trigger_get_drvdata(dev);
++	ssize_t len = 0;
++
++	mutex_lock(&trigger_data->mutex);
++
++	if (trigger_data->ttyname)
++		len = sprintf(buf, "%s\n", trigger_data->ttyname);
++
++	mutex_unlock(&trigger_data->mutex);
++
++	return len;
++}
++
++static ssize_t ttyname_store(struct device *dev,
++			     struct device_attribute *attr, const char *buf,
++			     size_t size)
++{
++	struct ledtrig_tty_data *trigger_data = led_trigger_get_drvdata(dev);
++	char *ttyname;
++	ssize_t ret = size;
++	bool running;
++
++	if (size > 0 && buf[size - 1] == '\n')
++		size -= 1;
++
++	if (size) {
++		ttyname = kmemdup_nul(buf, size, GFP_KERNEL);
++		if (!ttyname) {
++			ret = -ENOMEM;
++			goto out_unlock;
++		}
++	} else {
++		ttyname = NULL;
++	}
++
++	mutex_lock(&trigger_data->mutex);
++
++	running = trigger_data->ttyname != NULL;
++
++	kfree(trigger_data->ttyname);
++	tty_kref_put(trigger_data->tty);
++	trigger_data->tty = NULL;
++
++	trigger_data->ttyname = ttyname;
++
++out_unlock:
++	mutex_unlock(&trigger_data->mutex);
++
++	if (ttyname && !running)
++		ledtrig_tty_restart(trigger_data);
++
++	return ret;
++}
++static DEVICE_ATTR_RW(ttyname);
++
++static void ledtrig_tty_work(struct work_struct *work)
++{
++	struct ledtrig_tty_data *trigger_data =
++		container_of(work, struct ledtrig_tty_data, dwork.work);
++	struct serial_icounter_struct icount;
++	int ret;
++
++	mutex_lock(&trigger_data->mutex);
++
++	if (!trigger_data->ttyname) {
++		/* exit without rescheduling */
++		mutex_unlock(&trigger_data->mutex);
++		return;
++	}
++
++	/* try to get the tty corresponding to $ttyname */
++	if (!trigger_data->tty) {
++		dev_t devno;
++		struct tty_struct *tty;
++		int ret;
++
++		ret = tty_dev_name_to_number(trigger_data->ttyname, &devno);
++		if (ret < 0)
++			/*
++			 * A device with this name might appear later, so keep
++			 * retrying.
++			 */
++			goto out;
++
++		tty = tty_kopen_shared(devno);
++		if (IS_ERR(tty) || !tty)
++			/* What to do? retry or abort */
++			goto out;
++
++		trigger_data->tty = tty;
++	}
++
++	ret = tty_get_icount(trigger_data->tty, &icount);
++	if (ret) {
++		dev_info(trigger_data->tty->dev, "Failed to get icount, stopped polling\n");
++		mutex_unlock(&trigger_data->mutex);
++		return;
++	}
++
++	if (icount.rx != trigger_data->rx ||
++	    icount.tx != trigger_data->tx) {
++		led_set_brightness(trigger_data->led_cdev, LED_ON);
++
++		trigger_data->rx = icount.rx;
++		trigger_data->tx = icount.tx;
++	} else {
++		led_set_brightness(trigger_data->led_cdev, LED_OFF);
++	}
++
++out:
++	mutex_unlock(&trigger_data->mutex);
++	schedule_delayed_work(&trigger_data->dwork, msecs_to_jiffies(100));
++}
++
++static struct attribute *ledtrig_tty_attrs[] = {
++	&dev_attr_ttyname.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(ledtrig_tty);
++
++static int ledtrig_tty_activate(struct led_classdev *led_cdev)
++{
++	struct ledtrig_tty_data *trigger_data;
++
++	trigger_data = kzalloc(sizeof(*trigger_data), GFP_KERNEL);
++	if (!trigger_data)
++		return -ENOMEM;
++
++	led_set_trigger_data(led_cdev, trigger_data);
++
++	INIT_DELAYED_WORK(&trigger_data->dwork, ledtrig_tty_work);
++	trigger_data->led_cdev = led_cdev;
++	mutex_init(&trigger_data->mutex);
++
++	return 0;
++}
++
++static void ledtrig_tty_deactivate(struct led_classdev *led_cdev)
++{
++	struct ledtrig_tty_data *trigger_data = led_get_trigger_data(led_cdev);
++
++	cancel_delayed_work_sync(&trigger_data->dwork);
++
++	kfree(trigger_data);
++}
++
++static struct led_trigger ledtrig_tty = {
++	.name = "tty",
++	.activate = ledtrig_tty_activate,
++	.deactivate = ledtrig_tty_deactivate,
++	.groups = ledtrig_tty_groups,
++};
++module_led_trigger(ledtrig_tty);
++
++MODULE_AUTHOR("Uwe Kleine-König <u.kleine-koenig@pengutronix.de>");
++MODULE_DESCRIPTION("UART LED trigger");
++MODULE_LICENSE("GPL v2");
+-- 
+2.29.2
 
-> While extra parameters could be added, they are only really usable
-> by code that knows they are present.
-> So encoding in the 'brightness' sort of makes sense.
-
-No.
-								Pavel
---=20
-http://www.livejournal.com/~pavelmachek
-
---ZPt4rx8FFjLCG7dd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl/b4t4ACgkQMOfwapXb+vLCvwCfQaX9fJwM0k0zZHrmFS8c8AS7
-udMAniG4GbiBy7E61PVgFrlWfMn5E7+k
-=LUnF
------END PGP SIGNATURE-----
-
---ZPt4rx8FFjLCG7dd--
