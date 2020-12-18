@@ -5,190 +5,86 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFE9C2BBD4
-	for <linux-leds@archiver.kernel.org>; Fri, 18 Dec 2020 10:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A000C4361B
+	for <linux-leds@archiver.kernel.org>; Fri, 18 Dec 2020 11:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31F8823A9A
-	for <linux-leds@archiver.kernel.org>; Fri, 18 Dec 2020 10:44:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 220CE23A53
+	for <linux-leds@archiver.kernel.org>; Fri, 18 Dec 2020 11:45:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389197AbgLRKoR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 18 Dec 2020 05:44:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389177AbgLRKoR (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Dec 2020 05:44:17 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55CA8C0611CA
-        for <linux-leds@vger.kernel.org>; Fri, 18 Dec 2020 02:42:55 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kqDDk-00006w-RO; Fri, 18 Dec 2020 11:42:48 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kqDDj-0004hQ-Pd; Fri, 18 Dec 2020 11:42:47 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-serial@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH v10 1/3] tty: rename tty_kopen() and add new function tty_kopen_shared()
-Date:   Fri, 18 Dec 2020 11:42:44 +0100
-Message-Id: <20201218104246.591315-2-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201218104246.591315-1-u.kleine-koenig@pengutronix.de>
-References: <20201218104246.591315-1-u.kleine-koenig@pengutronix.de>
+        id S1726313AbgLRLpC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 18 Dec 2020 06:45:02 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:9464 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbgLRLpC (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Dec 2020 06:45:02 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Cy6T10vg3zhtN3;
+        Fri, 18 Dec 2020 19:43:49 +0800 (CST)
+Received: from use12-sp2.huawei.com (10.67.189.174) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 18 Dec 2020 19:44:12 +0800
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+        <pavel@ucw.cz>, <dmurphy@ti.com>, <akpm@linux-foundation.org>,
+        <keescook@chromium.org>, <gpiccoli@canonical.com>,
+        <penguin-kernel@i-love.sakura.ne.jp>
+CC:     <nixiaoming@huawei.com>, <wangle6@huawei.com>
+Subject: [PATCH 1/4] panic: Add new API is_being_panic()
+Date:   Fri, 18 Dec 2020 19:44:03 +0800
+Message-ID: <20201218114406.61906-2-nixiaoming@huawei.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201218114406.61906-1-nixiaoming@huawei.com>
+References: <20201218114406.61906-1-nixiaoming@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-leds@vger.kernel.org
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.67.189.174]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Introduce a new function tty_kopen_shared() that yields a struct
-tty_struct. The semantic difference to tty_kopen() is that the tty is
-expected to be used already. So rename tty_kopen() to
-tty_kopen_exclusive() for clearness, adapt the single user and put the
-common code in a new static helper function.
+Add is_being_panic() to check whether the system is in panic state.
+Used to replace the global variable used to determine the panic status
+in other features: hung_task ledtrig-activity ledtrig-heartbeat
 
-tty_kopen_shared is to be used to implement an LED trigger for tty
-devices in one of the next patches.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
 ---
- drivers/accessibility/speakup/spk_ttyio.c |  2 +-
- drivers/tty/tty_io.c                      | 56 +++++++++++++++--------
- include/linux/tty.h                       |  5 +-
- 3 files changed, 42 insertions(+), 21 deletions(-)
+ include/linux/kernel.h | 1 +
+ kernel/panic.c         | 6 ++++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/accessibility/speakup/spk_ttyio.c b/drivers/accessibility/speakup/spk_ttyio.c
-index 6284aff434a1..835d17455fcd 100644
---- a/drivers/accessibility/speakup/spk_ttyio.c
-+++ b/drivers/accessibility/speakup/spk_ttyio.c
-@@ -152,7 +152,7 @@ static int spk_ttyio_initialise_ldisc(struct spk_synth *synth)
- 	if (ret)
- 		return ret;
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index f7902d8c1048..3d6f344771c1 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -167,6 +167,7 @@ void __might_fault(const char *file, int line);
+ static inline void might_fault(void) { }
+ #endif
  
--	tty = tty_kopen(dev);
-+	tty = tty_kopen_exclusive(dev);
- 	if (IS_ERR(tty))
- 		return PTR_ERR(tty);
++extern bool is_being_panic(void);
+ extern struct atomic_notifier_head panic_notifier_list;
+ extern long (*panic_blink)(int state);
+ __printf(1, 2)
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 332736a72a58..3b6a487702b0 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -125,6 +125,12 @@ void __weak crash_smp_send_stop(void)
  
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 56ade99ef99f..d0c1f97adc17 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1873,22 +1873,7 @@ static struct tty_driver *tty_lookup_driver(dev_t device, struct file *filp,
- 	return driver;
- }
+ atomic_t panic_cpu = ATOMIC_INIT(PANIC_CPU_INVALID);
  
--/**
-- *	tty_kopen	-	open a tty device for kernel
-- *	@device: dev_t of device to open
-- *
-- *	Opens tty exclusively for kernel. Performs the driver lookup,
-- *	makes sure it's not already opened and performs the first-time
-- *	tty initialization.
-- *
-- *	Returns the locked initialized &tty_struct
-- *
-- *	Claims the global tty_mutex to serialize:
-- *	  - concurrent first-time tty initialization
-- *	  - concurrent tty driver removal w/ lookup
-- *	  - concurrent tty removal from driver table
-- */
--struct tty_struct *tty_kopen(dev_t device)
-+static struct tty_struct *tty_kopen(dev_t device, int shared)
- {
- 	struct tty_struct *tty;
- 	struct tty_driver *driver;
-@@ -1903,7 +1888,7 @@ struct tty_struct *tty_kopen(dev_t device)
- 
- 	/* check whether we're reopening an existing tty */
- 	tty = tty_driver_lookup_tty(driver, NULL, index);
--	if (IS_ERR(tty))
-+	if (IS_ERR(tty) || shared)
- 		goto out;
- 
- 	if (tty) {
-@@ -1921,7 +1906,42 @@ struct tty_struct *tty_kopen(dev_t device)
- 	tty_driver_kref_put(driver);
- 	return tty;
- }
--EXPORT_SYMBOL_GPL(tty_kopen);
-+
-+/**
-+ *	tty_kopen_exclusive	-	open a tty device for kernel
-+ *	@device: dev_t of device to open
-+ *
-+ *	Opens tty exclusively for kernel. Performs the driver lookup,
-+ *	makes sure it's not already opened and performs the first-time
-+ *	tty initialization.
-+ *
-+ *	Returns the locked initialized &tty_struct
-+ *
-+ *	Claims the global tty_mutex to serialize:
-+ *	  - concurrent first-time tty initialization
-+ *	  - concurrent tty driver removal w/ lookup
-+ *	  - concurrent tty removal from driver table
-+ */
-+struct tty_struct *tty_kopen_exclusive(dev_t device)
++bool is_being_panic(void)
 +{
-+	return tty_kopen(device, 0);
++	return (atomic_read(&panic_cpu) != PANIC_CPU_INVALID);
 +}
-+EXPORT_SYMBOL_GPL(tty_kopen_exclusive);
++EXPORT_SYMBOL(is_being_panic);
 +
-+/**
-+ *	tty_kopen_shared	-	open a tty device for shared in-kernel use
-+ *	@device: dev_t of device to open
-+ *
-+ *	Opens an already existing tty for in-kernel use. Compared to
-+ *	tty_kopen_exclusive() above it doesn't ensure to be the only user.
-+ *
-+ *	Locking is identical to tty_kopen() above.
-+ */
-+struct tty_struct *tty_kopen_shared(dev_t device)
-+{
-+	return tty_kopen(device, 1);
-+}
-+EXPORT_SYMBOL_GPL(tty_kopen_shared);
- 
- /**
-  *	tty_open_by_driver	-	open a tty device
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index eb33d948788c..7c3b5f156f03 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -417,7 +417,8 @@ extern struct tty_struct *get_current_tty(void);
- /* tty_io.c */
- extern int __init tty_init(void);
- extern const char *tty_name(const struct tty_struct *tty);
--extern struct tty_struct *tty_kopen(dev_t device);
-+extern struct tty_struct *tty_kopen_exclusive(dev_t device);
-+extern struct tty_struct *tty_kopen_shared(dev_t device);
- extern void tty_kclose(struct tty_struct *tty);
- extern int tty_dev_name_to_number(const char *name, dev_t *number);
- extern int tty_ldisc_lock(struct tty_struct *tty, unsigned long timeout);
-@@ -442,7 +443,7 @@ static inline int __init tty_init(void)
- { return 0; }
- static inline const char *tty_name(const struct tty_struct *tty)
- { return "(none)"; }
--static inline struct tty_struct *tty_kopen(dev_t device)
-+static inline struct tty_struct *tty_kopen_exclusive(dev_t device)
- { return ERR_PTR(-ENODEV); }
- static inline void tty_kclose(struct tty_struct *tty)
- { }
+ /*
+  * A variant of panic() called from NMI context. We return if we've already
+  * panicked on this CPU. If another CPU already panicked, loop in
 -- 
-2.29.2
+2.27.0
 
