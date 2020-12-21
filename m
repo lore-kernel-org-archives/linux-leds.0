@@ -8,53 +8,53 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15072C43332
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97ADEC43333
 	for <linux-leds@archiver.kernel.org>; Mon, 21 Dec 2020 10:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E011122BF3
-	for <linux-leds@archiver.kernel.org>; Mon, 21 Dec 2020 10:53:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64C7E22C7E
+	for <linux-leds@archiver.kernel.org>; Mon, 21 Dec 2020 10:53:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725954AbgLUKwZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 21 Dec 2020 05:52:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36880 "EHLO
+        id S1726499AbgLUKxB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 21 Dec 2020 05:53:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbgLUKwY (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 21 Dec 2020 05:52:24 -0500
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC55EC0613D6;
-        Mon, 21 Dec 2020 02:51:44 -0800 (PST)
-Received: by mail-pg1-x529.google.com with SMTP id z21so6135281pgj.4;
-        Mon, 21 Dec 2020 02:51:44 -0800 (PST)
+        with ESMTP id S1725791AbgLUKxA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 21 Dec 2020 05:53:00 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49B00C061248;
+        Mon, 21 Dec 2020 02:52:00 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id m5so6230889pjv.5;
+        Mon, 21 Dec 2020 02:52:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4grD7Th+x9uvL3+IHonwI2oI5c9zZZYb+5MfV4KDZ/E=;
-        b=OuyMMqDuTq2byb20apbddLdGFxSeRNXUBWUDt7ZPrUCwmfuGJvSwkqN3XHSILxNH5o
-         TgGkd4Uv/Acian7iXIwlICc3cI1kiRYP+DOPyoNWCvIu/CQm56a9h1q2tpGWPDOu/IR1
-         NL+HuhEgYD+cRXwayONn9n8WDTXYu4Y6EZ/26Bzt04piTgCKQ1T7IZXokLQK3ca6eNQn
-         GtJ97so95DVzQh4a7Noop5WBYganYhbd0hsB2qvghEfFTkcLA3rZGlmAaIxJByLmYrfD
-         SVknbsZ3+W/IxipsBjJ0p7Eess1TigPDPJXzQiADFUAHUXa5lMmY7C4Wi7clzgByZcrA
-         oiiA==
+        bh=YCb/WX7jYkxYBGiGcndgZSShZvSpoJWAB1n8TjnlLUo=;
+        b=b38qve1raqBnja17o0vCNhKoxCdEqtI4YFpqPcpHqdjb57wQPAOLEX1ad65ad2glKQ
+         I3qns6h5Nmi8jwezyKrRAFS17mnByaLgoun5QrAETFRHr+e7m7wubigszIshyZ9tWMK9
+         RxN8aSvckb1o3Jl2+ulM3BifLJEDlu0pOvqFDFcaBdXu5oweEXqkEPDiw3OKcV0fAr3D
+         ckIjDgPdv0aEru+mGm859d875ZbHTcx2ek5zeN/fnOn1EdWN4ht1iRyufxYQwibcjc8z
+         /Kj9W6uD5uG4gWbCDvxCK0kd8+H1cY2HzdM8SOMi04/Dj6zonxRZYw5K6ttVp062i6+x
+         ADrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4grD7Th+x9uvL3+IHonwI2oI5c9zZZYb+5MfV4KDZ/E=;
-        b=CScE/81cJnSMQLsszueF+Fd4EeaWMLSnsdYMlxAAnsPB5vD0Rb1HtIiqwXXD2rDkD4
-         MxgF4c3mefrsbsmW3Ln7VvFt3yYN8rVXkpnJ8nD/f31vuZs6XKy/QUqA1Wc+LbH94VSJ
-         by8vEIH5cEf6kpcQXhR8bsEijU4I8nGxk7VCpVR0OiZr+flh6ULQhIpXONnrFBQl954j
-         D9ZFYA+TSu3aON5VbjfSTDsXMM7sbZINUC9x1xs7GV3TEdEEOxJNTx1EURqdvdg2Mbbw
-         Rqn/KBUsbUgv2X9/0tcB6YSfwfHBDJyANN931O/r9eyQ1RlqvxSHkxJ+Z/22+JgNyWfc
-         Z8EA==
-X-Gm-Message-State: AOAM533kEDjDlCAm/RNjO52ZDyTbmsTRpiTeSFZ3jVWRGDn1fMMyzjyv
-        gzu8LfLifCohI+W++APNeZA=
-X-Google-Smtp-Source: ABdhPJzCYGc96On1kM36O56w2EfkcKMVZf181RyVdsehYq9EChXmuL3srhM7ukO5JFLhMB53cL1Kfg==
-X-Received: by 2002:a63:e108:: with SMTP id z8mr11633102pgh.363.1608547904359;
-        Mon, 21 Dec 2020 02:51:44 -0800 (PST)
+        bh=YCb/WX7jYkxYBGiGcndgZSShZvSpoJWAB1n8TjnlLUo=;
+        b=tUxIxm6MQ0ThpxZKX0hziYaHqxmTg8zGRMcW5OjRmguR/xek3qkbN/kLsSrnt7TWNL
+         NE8FFu6QdhnHAF3vZSQlbkzVtxROKciXbH6P5dcgxDkj9+jp9LQWdYiqf6clIMIePsxn
+         kKkgsrMlctTFQO4oJ2vQUxb1MndtC71ZksrNCXybGkMbQUtgZsbv+Td26rbEZnCHAsAU
+         CTvxJjNEfblOyuHd2P/kjHcYsdx0swOgxyElQE6ibLga7cn4ZGbSzzGq92i4zBmLz5wx
+         KKTO4lmyebS8bfDsGrdWdkDpdI/2D7V4llglS7n/OkBXs1sUvACuEGj53n+MMeqR0fDd
+         AvsQ==
+X-Gm-Message-State: AOAM531oCeaEMq/jc8z8pzy/9zjHjbqTdb2Tvrxyi6OPwYLS8qOnnHUJ
+        X5h8DgcBbQtqJ/De//2K8yQ=
+X-Google-Smtp-Source: ABdhPJzmoAxlpNc4tgzqH6WA3iOzt+HxuhJHDR/ZE9ds8kDtOcjnFkT168mB8cPb72ahWebfjrljnQ==
+X-Received: by 2002:a17:90a:9483:: with SMTP id s3mr16409320pjo.61.1608547919870;
+        Mon, 21 Dec 2020 02:51:59 -0800 (PST)
 Received: from localhost.localdomain ([2402:7500:469:a113:4308:e075:646d:7374])
-        by smtp.gmail.com with ESMTPSA id p4sm15364193pjl.30.2020.12.21.02.51.40
+        by smtp.gmail.com with ESMTPSA id p4sm15364193pjl.30.2020.12.21.02.51.54
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Dec 2020 02:51:43 -0800 (PST)
+        Mon, 21 Dec 2020 02:51:59 -0800 (PST)
 From:   Gene Chen <gene.chen.richtek@gmail.com>
 To:     jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
         matthias.bgg@gmail.com
@@ -64,9 +64,9 @@ Cc:     dmurphy@ti.com, linux-leds@vger.kernel.org,
         gene_chen@richtek.com, Wilma.Wu@mediatek.com,
         shufan_lee@richtek.com, cy_huang@richtek.com,
         benjamin.chao@mediatek.com
-Subject: [PATCH v13 1/5] leds: flash: Add flash registration with undefined CONFIG_LEDS_CLASS_FLASH
-Date:   Mon, 21 Dec 2020 18:45:50 +0800
-Message-Id: <1608547554-6602-2-git-send-email-gene.chen.richtek@gmail.com>
+Subject: [PATCH v13 4/5] dt-bindings: leds: Add bindings for MT6360 LED
+Date:   Mon, 21 Dec 2020 18:45:53 +0800
+Message-Id: <1608547554-6602-5-git-send-email-gene.chen.richtek@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1608547554-6602-1-git-send-email-gene.chen.richtek@gmail.com>
 References: <1608547554-6602-1-git-send-email-gene.chen.richtek@gmail.com>
@@ -76,88 +76,180 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Gene Chen <gene_chen@richtek.com>
 
-Add flash registration with undefined CONFIG_LEDS_CLASS_FLASH,
-and move the same registration functions outside of #ifdef block.
+Add bindings document for LED support on MT6360 PMIC
 
 Signed-off-by: Gene Chen <gene_chen@richtek.com>
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- include/linux/led-class-flash.h | 42 ++++++++++++++++++++++++++++++++---------
- 1 file changed, 33 insertions(+), 9 deletions(-)
+ .../devicetree/bindings/leds/leds-mt6360.yaml      | 159 +++++++++++++++++++++
+ 1 file changed, 159 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6360.yaml
 
-diff --git a/include/linux/led-class-flash.h b/include/linux/led-class-flash.h
-index 21a3358..612b4ca 100644
---- a/include/linux/led-class-flash.h
-+++ b/include/linux/led-class-flash.h
-@@ -85,6 +85,7 @@ static inline struct led_classdev_flash *lcdev_to_flcdev(
- 	return container_of(lcdev, struct led_classdev_flash, led_cdev);
- }
- 
-+#if IS_ENABLED(CONFIG_LEDS_CLASS_FLASH)
- /**
-  * led_classdev_flash_register_ext - register a new object of LED class with
-  *				     init data and with support for flash LEDs
-@@ -98,12 +99,6 @@ int led_classdev_flash_register_ext(struct device *parent,
- 				    struct led_classdev_flash *fled_cdev,
- 				    struct led_init_data *init_data);
- 
--static inline int led_classdev_flash_register(struct device *parent,
--					   struct led_classdev_flash *fled_cdev)
--{
--	return led_classdev_flash_register_ext(parent, fled_cdev, NULL);
--}
--
- /**
-  * led_classdev_flash_unregister - unregisters an object of led_classdev class
-  *				   with support for flash LEDs
-@@ -118,15 +113,44 @@ int devm_led_classdev_flash_register_ext(struct device *parent,
- 				     struct led_init_data *init_data);
- 
- 
-+void devm_led_classdev_flash_unregister(struct device *parent,
-+					struct led_classdev_flash *fled_cdev);
+diff --git a/Documentation/devicetree/bindings/leds/leds-mt6360.yaml b/Documentation/devicetree/bindings/leds/leds-mt6360.yaml
+new file mode 100644
+index 0000000..cb1f4b7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-mt6360.yaml
+@@ -0,0 +1,159 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/leds-mt6360.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#else
++title: LED driver for MT6360 PMIC from MediaTek Integrated.
 +
-+static inline int led_classdev_flash_register_ext(struct device *parent,
-+				    struct led_classdev_flash *fled_cdev,
-+				    struct led_init_data *init_data)
-+{
-+	return 0;
-+}
++maintainers:
++  - Gene Chen <gene_chen@richtek.com>
 +
-+static inline void led_classdev_flash_unregister(struct led_classdev_flash *fled_cdev) {};
-+static inline int devm_led_classdev_flash_register_ext(struct device *parent,
-+				     struct led_classdev_flash *fled_cdev,
-+				     struct led_init_data *init_data)
-+{
-+	return 0;
-+}
++description: |
++  This module is part of the MT6360 MFD device.
++  see Documentation/devicetree/bindings/mfd/mt6360.yaml
++  Add MT6360 LED driver include 2-channel Flash LED with torch/strobe mode,
++  and 4-channel RGB LED support Register/Flash/Breath Mode
 +
-+static inline void devm_led_classdev_flash_unregister(struct device *parent,
-+					struct led_classdev_flash *fled_cdev)
-+{};
++properties:
++  compatible:
++    const: mediatek,mt6360-led
 +
-+#endif  /* IS_ENABLED(CONFIG_LEDS_CLASS_FLASH) */
++  "#address-cells":
++    const: 1
 +
-+static inline int led_classdev_flash_register(struct device *parent,
-+					   struct led_classdev_flash *fled_cdev)
-+{
-+	return led_classdev_flash_register_ext(parent, fled_cdev, NULL);
-+}
++  "#size-cells":
++    const: 0
 +
- static inline int devm_led_classdev_flash_register(struct device *parent,
- 				     struct led_classdev_flash *fled_cdev)
- {
- 	return devm_led_classdev_flash_register_ext(parent, fled_cdev, NULL);
- }
- 
--void devm_led_classdev_flash_unregister(struct device *parent,
--					struct led_classdev_flash *fled_cdev);
--
- /**
-  * led_set_flash_strobe - setup flash strobe
-  * @fled_cdev: the flash LED to set strobe on
++patternProperties:
++  "^(multi-)?led@[0-5]$":
++    type: object
++    $ref: common.yaml#
++    description:
++      Properties for a single LED.
++
++    properties:
++      reg:
++        description: Index of the LED.
++        enum:
++          - 0 # LED output ISINK1
++          - 1 # LED output ISINK2
++          - 2 # LED output ISINK3
++          - 3 # LED output ISINKML
++          - 4 # LED output FLASH1
++          - 5 # LED output FLASH2
++
++unevaluatedProperties: false
++
++required:
++  - compatible
++  - "#address-cells"
++  - "#size-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++   #include <dt-bindings/leds/common.h>
++   led-controller {
++     compatible = "mediatek,mt6360-led";
++     #address-cells = <1>;
++     #size-cells = <0>;
++
++     multi-led@0 {
++       reg = <0>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_RGB>;
++       led-max-microamp = <24000>;
++       #address-cells = <1>;
++       #size-cells = <0>;
++       led@0 {
++         reg = <0>;
++         color = <LED_COLOR_ID_RED>;
++       };
++       led@1 {
++         reg = <1>;
++         color = <LED_COLOR_ID_GREEN>;
++       };
++       led@2 {
++         reg = <2>;
++         color = <LED_COLOR_ID_BLUE>;
++       };
++     };
++     led@3 {
++       reg = <3>;
++       function = LED_FUNCTION_MOONLIGHT;
++       color = <LED_COLOR_ID_WHITE>;
++       led-max-microamp = <150000>;
++     };
++     led@4 {
++       reg = <4>;
++       function = LED_FUNCTION_FLASH;
++       color = <LED_COLOR_ID_WHITE>;
++       function-enumerator = <1>;
++       led-max-microamp = <200000>;
++       flash-max-microamp = <500000>;
++       flash-max-timeout-us = <1024000>;
++     };
++     led@5 {
++       reg = <5>;
++       function = LED_FUNCTION_FLASH;
++       color = <LED_COLOR_ID_WHITE>;
++       function-enumerator = <2>;
++       led-max-microamp = <200000>;
++       flash-max-microamp = <500000>;
++       flash-max-timeout-us = <1024000>;
++     };
++   };
++
++  - |
++
++   led-controller {
++     compatible = "mediatek,mt6360-led";
++     #address-cells = <1>;
++     #size-cells = <0>;
++
++     led@0 {
++       reg = <0>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_RED>;
++       led-max-microamp = <24000>;
++     };
++     led@1 {
++       reg = <1>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_GREEN>;
++       led-max-microamp = <24000>;
++     };
++     led@2 {
++       reg = <2>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_BLUE>;
++       led-max-microamp = <24000>;
++     };
++     led@3 {
++       reg = <3>;
++       function = LED_FUNCTION_MOONLIGHT;
++       color = <LED_COLOR_ID_WHITE>;
++       led-max-microamp = <150000>;
++     };
++     led@4 {
++       reg = <4>;
++       function = LED_FUNCTION_FLASH;
++       color = <LED_COLOR_ID_WHITE>;
++       function-enumerator = <1>;
++       led-max-microamp = <200000>;
++       flash-max-microamp = <500000>;
++       flash-max-timeout-us = <1024000>;
++     };
++     led@5 {
++       reg = <5>;
++       function = LED_FUNCTION_FLASH;
++       color = <LED_COLOR_ID_WHITE>;
++       function-enumerator = <2>;
++       led-max-microamp = <200000>;
++       flash-max-microamp = <500000>;
++       flash-max-timeout-us = <1024000>;
++     };
++   };
++...
 -- 
 2.7.4
 
