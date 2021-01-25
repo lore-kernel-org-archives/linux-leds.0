@@ -2,78 +2,94 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E447C433E0
-	for <linux-leds@archiver.kernel.org>; Fri, 22 Jan 2021 21:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98941C433E0
+	for <linux-leds@archiver.kernel.org>; Mon, 25 Jan 2021 20:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D682823B06
-	for <linux-leds@archiver.kernel.org>; Fri, 22 Jan 2021 21:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45A7622583
+	for <linux-leds@archiver.kernel.org>; Mon, 25 Jan 2021 20:14:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729226AbhAVVm5 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 22 Jan 2021 16:42:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60570 "EHLO
+        id S1726753AbhAYUO0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 25 Jan 2021 15:14:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728474AbhAVVlB (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 22 Jan 2021 16:41:01 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D789C061786
-        for <linux-leds@vger.kernel.org>; Fri, 22 Jan 2021 13:40:21 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id v67so9581174lfa.0
-        for <linux-leds@vger.kernel.org>; Fri, 22 Jan 2021 13:40:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fVQGipISqL+GidmgskuqE54mrZNWSegyyQUFD/qGixM=;
-        b=DBYc+xh+//BuisFJO7Qj1/JPZY3GmA6Q6VyAQhmchMrcnNdQgI3jZFePMXCHUuaEGg
-         5RGO80cSZyrTGMfD5NST6y8FzE5ZHd23XF5yoG3UYaBQDzFj4EBslBBv+RMkVdaje+V7
-         1w8G104HZiAVP9Xw4H9rO76cPe9oNYOh3DJhL4jOXrv0KPDJz0j53J/JhIHOT3M43fAm
-         w0FEQ+PVt5C4c9c+XLzX44lm3z0UUqXZrPr489pWycIYpyiq4GPqoBcsQfZi8tPWdPI3
-         PJGhLhoQrjfWBxZf2vgIATJgsgdEu5EAdBl5KswwMCDnuF9udk8RL7pcv6HehjvmkuOr
-         eezw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fVQGipISqL+GidmgskuqE54mrZNWSegyyQUFD/qGixM=;
-        b=nxvi4xh0I9jiPVAI1LBJ6BKNsHGt1Yzk8EvNAEtWRZGPtzNvhLBRgcdD7qp15S7MFZ
-         tftVsRc3OkEljnnmvZVL9ITIAAvtMQN/QKgELiAQGn89/xX56xDPvseYTIpoaJoRePnI
-         d04MFoFhHHbFjBHRLkyB+ykExxopemCGQ0ttDflfFFtSu3UnTdt2RGJ+w4Hyf+BVeIV8
-         z0maCR/rBUf2eSGAKEJdJTP0hFG9sh07R3xgf7i84ytSrBDKyptUFqVXL3P4xulXh95+
-         GNexBKq5QiJ1nchZQGFNInvgdco13qnIxiQQddN4SyzE5d0ndp2Ls4iG+9JsM7aoa2sY
-         /SGQ==
-X-Gm-Message-State: AOAM530IsPA/fMu/4BTHL7X0NU8PQg9iIFugPlRuT3QHJLvbtSeqHo4g
-        8GwYtaWIigFb5CKSAt4z+P1qeJWKzZ+4FLF+6UUQ8w==
-X-Google-Smtp-Source: ABdhPJxfbwAudp1weWzfAaiCkKvD4TAjwf6Rim6UybIVL3cqXpXKCe6HdRAIpeeYqM+DRPelpzMSFkQEYdi9Ys2JH6I=
-X-Received: by 2002:a05:6512:3238:: with SMTP id f24mr3247513lfe.29.1611351619532;
- Fri, 22 Jan 2021 13:40:19 -0800 (PST)
+        with ESMTP id S1726420AbhAYUOP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 25 Jan 2021 15:14:15 -0500
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050::465:202])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F73C061573;
+        Mon, 25 Jan 2021 12:13:35 -0800 (PST)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4DPgz71gwVzQlRT;
+        Mon, 25 Jan 2021 21:13:07 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dylanvanassche.be;
+        s=MBO0001; t=1611605585;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=fW70VQsfx1iS6yKV+TnS95XSsveNmLFJUkcB4V1UMko=;
+        b=nr0Qj+ICbleoKF4cbGXuxJwGnVzGYA17FBTzKYwo71sItjoDWBZA0gokKOmwExoNNN1ZyY
+        sDOHaB1iiTNHT2AGGC/eKJ5UV/rdO59j4G0um0Ess+Lw4XDJYwoZ9oeve4gifOG8ftP13+
+        D7ck8MqXOZFBoyip7IoGXOhpZ4TgL9V1f/jPjQsznbpiqZmMGSCmsfRXoT2o3rAbOeR94W
+        kFnIzODu/AZF+hdqox9mZT9QH2lwKcLZLz8b0/bRm/Fmv+V2/IXk52nl/ZXEz9V16u0GQD
+        JfYEfLQDGvKqbqkUECZsyT3RDsDNjtydVj3MPJ1ZeN+vGKBMRWSx1TdVv8PtBQ==
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id kv44TnqRXBQh; Mon, 25 Jan 2021 21:13:04 +0100 (CET)
+From:   Dylan Van Assche <me@dylanvanassche.be>
+To:     pavel@ucw.cz, dmurphy@ti.com, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Dylan Van Assche <me@dylanvanassche.be>
+Subject: [PATCH v3] leds: gpio: Set max brightness to 1
+Date:   Mon, 25 Jan 2021 21:08:57 +0100
+Message-Id: <20210125200856.1976-1-me@dylanvanassche.be>
 MIME-Version: 1.0
-References: <20210102231510.2068851-1-linus.walleij@linaro.org> <20210102231510.2068851-2-linus.walleij@linaro.org>
-In-Reply-To: <20210102231510.2068851-2-linus.walleij@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 22 Jan 2021 22:40:08 +0100
-Message-ID: <CACRpkdbihCo+OYuu8ffokOO=eXeTDAYG1k91dFh+2HGh0jQCWQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2 v9] leds: rt8515: Add Richtek RT8515 LED driver
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc:     Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>, newbytee@protonmail.com,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        phone-devel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-MBO-SPAM-Probability: 
+X-Rspamd-Score: -6.11 / 15.00 / 15.00
+X-Rspamd-Queue-Id: 4FD791848
+X-Rspamd-UID: 40e9dc
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi LED folks,
+GPIO LEDs only know 2 states: ON or OFF and do not have PWM capabilities.
+However, the max brightness is reported as 255.
 
-I think this version has covered all review comments, at least it's been silent,
-can the driver be merged?
+This patch sets the max brightness value of a GPIO controlled LED to 1.
 
-Yours,
-Linus Walleij
+Tested on my PinePhone 1.2.
+
+Signed-off-by: Dylan Van Assche <me@dylanvanassche.be>
+---
+v2 drops an obsolete change in include/linux/leds.h
+v3 simplifies the patch for better readability
+
+ drivers/leds/leds-gpio.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 93f5b1b60fde..242bb38cadee 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -96,7 +96,9 @@ static int create_gpio_led(const struct gpio_led *template,
+ 	} else {
+ 		state = (template->default_state == LEDS_GPIO_DEFSTATE_ON);
+ 	}
+-	led_dat->cdev.brightness = state ? LED_FULL : LED_OFF;
++	led_dat->cdev.brightness = state;
++	led_dat->cdev.max_brightness = 1;
++
+ 	if (!template->retain_state_suspended)
+ 		led_dat->cdev.flags |= LED_CORE_SUSPENDRESUME;
+ 	if (template->panic_indicator)
+-- 
+2.30.0
+
