@@ -5,29 +5,29 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AE6C433E9
-	for <linux-leds@archiver.kernel.org>; Tue, 26 Jan 2021 14:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C25B9C4332B
+	for <linux-leds@archiver.kernel.org>; Tue, 26 Jan 2021 14:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1F7F230FD
-	for <linux-leds@archiver.kernel.org>; Tue, 26 Jan 2021 14:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E65022B2C
+	for <linux-leds@archiver.kernel.org>; Tue, 26 Jan 2021 14:07:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405622AbhAZOE5 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 26 Jan 2021 09:04:57 -0500
-Received: from mail-40134.protonmail.ch ([185.70.40.134]:13562 "EHLO
-        mail-40134.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405609AbhAZOEz (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 26 Jan 2021 09:04:55 -0500
-Date:   Tue, 26 Jan 2021 14:04:08 +0000
+        id S2405704AbhAZOHf (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 26 Jan 2021 09:07:35 -0500
+Received: from mail-40133.protonmail.ch ([185.70.40.133]:16953 "EHLO
+        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392713AbhAZOHN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 26 Jan 2021 09:07:13 -0500
+Date:   Tue, 26 Jan 2021 14:06:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1611669852;
-        bh=mbQbonKTWOJG/8gSURwb2HOD/90QOtBxSCKvG2gI4So=;
+        s=protonmail; t=1611669988;
+        bh=xmb8JiMZ0qx9ONDljEb7E5aB5mcbUdJjKenPUDfOyPQ=;
         h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
-        b=asITbJ20piki8V4dq2FdGySHW4Jz9wuRLKpSqWyrGCxQPMshDoQ/XcALmQeSuyzz4
-         P0eiekzy+SfZaNA9+NNENnX04w/6I5M7a2MEm894adRHiGdTYySJLBhQrACjywokPB
-         X8I9M7BUJXOly0k33ZSgzwMDhwhXkAUoelhSjv/w=
+        b=uUFWznkp8eoW+NjmZWxGUqIaeWNxq03xsZtc+3vb/Wq/S9qz91T50bTpBlWOes7Bz
+         lgr5ZmTZrdZsq9XHyEn4r/QA4ZNz8i78DyX/dB5kH8CYIjW/XcOWnCKEE2D/MKsJkm
+         gCxLig/uHPh4dvcoNt2mviYnZwgDQT+CZWmuqunI=
 To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -45,8 +45,8 @@ Cc:     linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         lkcamp@lists.libreplanetbr.org, andrealmeid@collabora.com
 Reply-To: =?utf-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= 
           <nfraprado@protonmail.com>
-Subject: [PATCH v2 1/4] dt-bindings: leds: Add binding for qcom-spmi-flash
-Message-ID: <20210126140240.1517044-2-nfraprado@protonmail.com>
+Subject: [PATCH v2 3/4] ARM: qcom_defconfig: Enable QCOM SPMI Flash LEDs
+Message-ID: <20210126140240.1517044-4-nfraprado@protonmail.com>
 In-Reply-To: <20210126140240.1517044-1-nfraprado@protonmail.com>
 References: <20210126140240.1517044-1-nfraprado@protonmail.com>
 MIME-Version: 1.0
@@ -56,148 +56,35 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add devicetree binding for QCOM SPMI Flash LEDs, which are part of
-PM8941, and are used both as lantern and camera flash.
+Enable module for the Qualcomm SPMI Flash LEDs present on the PM8941
+PMIC.
 
 Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@protonmail.com>
 ---
 Changes in v2:
-- Add this commit
+- Enabled CONFIG_LEDS_CLASS_FLASH since the driver now depends on it.
 
- .../bindings/leds/leds-qcom-spmi-flash.yaml   | 94 +++++++++++++++++++
- .../dt-bindings/leds/leds-qcom-spmi-flash.h   | 15 +++
- 2 files changed, 109 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-spmi-f=
-lash.yaml
- create mode 100644 include/dt-bindings/leds/leds-qcom-spmi-flash.h
+ arch/arm/configs/qcom_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-spmi-flash.ya=
-ml b/Documentation/devicetree/bindings/leds/leds-qcom-spmi-flash.yaml
-new file mode 100644
-index 000000000000..169716e14f67
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-qcom-spmi-flash.yaml
-@@ -0,0 +1,94 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/leds-qcom-spmi-flash.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm SPMI Flash LEDs
-+
-+maintainers:
-+  - N=C3=ADcolas F. R. A. Prado <nfraprado@protonmail.com>
-+
-+description: |
-+  The Qualcomm SPMI Flash LEDs are part of Qualcomm PMICs and are used pri=
-marily
-+  as a camera or video flash. They can also be used as a lantern when on t=
-orch
-+  mode.
-+  The PMIC is connected to Host processor via SPMI bus.
-+
-+properties:
-+  compatible:
-+    const: qcom,spmi-flash
-+
-+  reg:
-+    maxItems: 1
-+
-+  flash-boost-supply:
-+    description: SMBB regulator for LED flash mode
-+
-+  torch-boost-supply:
-+    description: SMBB regulator for LED torch mode
-+
-+patternProperties:
-+  "^led[0-1]$":
-+    type: object
-+    $ref: common.yaml#
-+
-+    properties:
-+      qcom,clamp-curr:
-+        description: current to clamp at, in uA
-+        $ref: /schemas/types.yaml#definitions/uint32
-+
-+      qcom,headroom:
-+        description: |
-+          headroom to use. Use one of QCOM_SPMI_FLASH_HEADROOM_* defined i=
-n
-+          include/dt-bindings/leds/leds-qcom-spmi-flash.h
-+        $ref: /schemas/types.yaml#definitions/uint32
-+        minimum: 0
-+        maximum: 3
-+
-+      qcom,startup-dly:
-+        description: |
-+          delay before flashing. Use one of QCOM_SPMI_FLASH_STARTUP_DLY_*
-+          defined in include/dt-bindings/leds/leds-qcom-spmi-flash.h
-+        $ref: /schemas/types.yaml#definitions/uint32
-+        minimum: 0
-+        maximum: 3
-+
-+      qcom,safety-timer:
-+        description: include for safety timer use, otherwise watchdog time=
-r will be used
-+        type: boolean
-+
-+required:
-+  - compatible
-+  - reg
-+  - flash-boost-supply
-+  - torch-boost-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/leds/common.h>
-+    #include <dt-bindings/leds/leds-qcom-spmi-flash.h>
-+
-+    qcom,leds@d300 {
-+        compatible =3D "qcom,spmi-flash";
-+        reg =3D <0xd300 0x100>;
-+        flash-boost-supply =3D <&pm8941_5vs1>;
-+        torch-boost-supply =3D <&pm8941_5v>;
-+
-+        led0 {
-+            led-sources =3D <0>;
-+            function =3D LED_FUNCTION_FLASH;
-+            color =3D <LED_COLOR_ID_WHITE>;
-+            led-max-microamp =3D <200000>;
-+            flash-max-microamp =3D <1000000>;
-+            flash-max-timeout-us =3D <1280000>;
-+            default-state =3D "off";
-+            qcom,clamp-curr =3D <200000>;
-+            qcom,headroom =3D <QCOM_SPMI_FLASH_HEADROOM_500MV>;
-+            qcom,startup-dly =3D <QCOM_SPMI_FLASH_STARTUP_DLY_128US>;
-+            qcom,safety-timer;
-+        };
-+    };
-+...
-diff --git a/include/dt-bindings/leds/leds-qcom-spmi-flash.h b/include/dt-b=
-indings/leds/leds-qcom-spmi-flash.h
-new file mode 100644
-index 000000000000..8bd54a8e831d
---- /dev/null
-+++ b/include/dt-bindings/leds/leds-qcom-spmi-flash.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _DT_BINDINGS_LEDS_QCOM_SPMI_FLASH_H
-+#define _DT_BINDINGS_LEDS_QCOM_SPMI_FLASH_H
-+
-+#define QCOM_SPMI_FLASH_HEADROOM_250MV=090
-+#define QCOM_SPMI_FLASH_HEADROOM_300MV=091
-+#define QCOM_SPMI_FLASH_HEADROOM_400MV=092
-+#define QCOM_SPMI_FLASH_HEADROOM_500MV=093
-+
-+#define QCOM_SPMI_FLASH_STARTUP_DLY_10US=090
-+#define QCOM_SPMI_FLASH_STARTUP_DLY_32US=091
-+#define QCOM_SPMI_FLASH_STARTUP_DLY_64US=092
-+#define QCOM_SPMI_FLASH_STARTUP_DLY_128US=093
-+
-+#endif
+diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defcon=
+fig
+index f6e9675f639c..05cacc59087e 100644
+--- a/arch/arm/configs/qcom_defconfig
++++ b/arch/arm/configs/qcom_defconfig
+@@ -202,6 +202,7 @@ CONFIG_MMC_SDHCI_PLTFM=3Dy
+ CONFIG_MMC_SDHCI_MSM=3Dy
+ CONFIG_NEW_LEDS=3Dy
+ CONFIG_LEDS_CLASS=3Dy
++CONFIG_LEDS_CLASS_FLASH=3Dy
+ CONFIG_LEDS_GPIO=3Dy
+ CONFIG_LEDS_PM8058=3Dy
+ CONFIG_LEDS_TRIGGERS=3Dy
+@@ -284,3 +285,4 @@ CONFIG_DYNAMIC_DEBUG=3Dy
+ CONFIG_DEBUG_INFO=3Dy
+ CONFIG_MAGIC_SYSRQ=3Dy
+ # CONFIG_SCHED_DEBUG is not set
++CONFIG_LEDS_QCOM_SPMI_FLASH=3Dm
 --=20
 2.30.0
 
