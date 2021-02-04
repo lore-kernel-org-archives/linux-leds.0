@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DEDC433DB
-	for <linux-leds@archiver.kernel.org>; Thu,  4 Feb 2021 14:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDBC9C433DB
+	for <linux-leds@archiver.kernel.org>; Thu,  4 Feb 2021 14:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C042164DDD
-	for <linux-leds@archiver.kernel.org>; Thu,  4 Feb 2021 14:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A954264F4D
+	for <linux-leds@archiver.kernel.org>; Thu,  4 Feb 2021 14:41:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236836AbhBDOkM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 4 Feb 2021 09:40:12 -0500
-Received: from mail-eopbgr50110.outbound.protection.outlook.com ([40.107.5.110]:42563
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        id S236866AbhBDOk7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 4 Feb 2021 09:40:59 -0500
+Received: from mail-eopbgr130123.outbound.protection.outlook.com ([40.107.13.123]:56965
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S236851AbhBDOiT (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 4 Feb 2021 09:38:19 -0500
+        id S236782AbhBDOit (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 4 Feb 2021 09:38:49 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QSjgosloYwHgrsHQRoyRo7oSBKWjzF2LyJ0Fvv7TfOBJL+DSgtJHZIfL107E+bjYsDb66NVPfVKsuY5JchS6a7l/lQMCjOKWvNShtNCtmo+7VwqiraMs/FuCuifd6DirMieF36coK4TZmYGSzJcpJ8tjXJxfXThO0AQ6aXoSNvpejXi6bugKQPC0WvVw9fmHJ9g2uTtmfu6HTiTRjOKvkeSxmVq6URrkVoJFglyEeuMHJfUQ30QxSwHpvoR0jk9O7y473eFPk8GWJpSgnzGa4HPKcgIdFMAWb30BsLk0GJ0f+YzdzfsCUXUiGyFQ4dN5vqjLVNEUbGeJFFSLbGyqpA==
+ b=KIMTX1dry8vQrnTSSazGWEaxj3gtnD/Rxs8fkdaMnW3F1v3H1sLC7Kz9nlx1HwFVfJs+Z4moMbAA8YKtzTTdv/l1e9MM7oBNV1UkruY/t0rlsEPGRQOxN/yzSjF2XK1PsC1LP4Rm3eUw65Dzd4hIhaitXJ1jfYr/pU0AFyDHIhV9gWg6crATWVv+4PMYqBkIBBMjwtzbw4j//nPB1e76iEItW/I4AOZUkLf5mLqYoA+2WbOMbifogClfmP6cGR8agMpyg+K5mCiLQiDO1NU7NHBRAD4V1Ep3WVRTeQP7mPP/X+C6d9wsKTNPH/Gp06oLidtCYUnzEWCE25gL3eXFng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7y2dgRYVshTRN1Kzw/WSNFjbXsyrnW+GuDbIdQobtuM=;
- b=lWkvY4CGkD2NBIhGuCF5kiugLxJUQ0zd4sZh68+NvVnlHwfVsk3csv+TmzWd8Mo2iCaLTg4LWplbpwl6GTNgy+fZk1IxdU38p20vH4rKJo/qug4ql2pTXGeQCOS1ieoqdZOFstqH4epYsAjYG/uACuoLLc194oNWutDB3mgsnYJZYc/CRW5rd7o2Tp0v5lcoYhSqza1Rw2S2auKpb/FlF6RbXG+SuTXtyDx8U3aNQxwNdJqiAQReU/Qw1W/AkgJHsX7iFabtZubDHCRrU0rUeDF+pgBWrtLbzrfuphGdNsbSGeFgT4CZFAVHtdVV/XXIRLh0Qi93IJ1FVIjOgwNNlQ==
+ bh=dFrn7Vt1je7kdjp8cC5anRNu7TqR8GzlT3IrLRF893c=;
+ b=Q0kdwi92jnEYO1eaqwXK3EeT7qB2pQmvaxJYJTHGeNUH2qLxEh9be6FkIPTWZRxQQfkcxNPiy+gwqEjUt6TJMSj9zvxWNh88+Dmr37aiEq2TaA5NhqIw0HYy7cf6IiTtNU/fH9dJUP3Pu7FB1FetQzjCLwRw1KXL2lWO6CakGFhi2/DhyuDgMH6/sP7dVpY1+0sEFBN1Qv9ufK4XI1SRWQAmgd8nf2t1SuSgoGW8MM4rbBXY1VU8qMfg9TnQr7yam063rNgdZ6lcKglX6xRfGuS9bAzrKSA3St1gWbbxyTC5m6UEbtuDTlRwb6BimIXvFgBcUhlSua4BnXlXd8piwA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  62.153.209.162) smtp.rcpttodomain=vger.kernel.org
  smtp.mailfrom=schleissheimer.de; dmarc=none action=none
@@ -35,18 +35,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=schleissheimer.onmicrosoft.com; s=selector1-schleissheimer-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7y2dgRYVshTRN1Kzw/WSNFjbXsyrnW+GuDbIdQobtuM=;
- b=F2M32kAkWZ+Fs27/EAyu0j+e8xVhJZYkV+ZRLW7TsBbhQatFA6frRpH0BZ8wsN0Loi9KUQEjZYoedp5hPORnE5QTUHlkoMrx1lbT56mv2p5DagX2m0fZKrNCDFmwPu1xJnFtlSJ5l+gdbqMNfbH8mcDr2KkMuc7ThOXEJjgvD6E=
-Received: from AM5PR1001CA0022.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:206:2::35)
- by PR3P190MB0826.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:92::13) with
+ bh=dFrn7Vt1je7kdjp8cC5anRNu7TqR8GzlT3IrLRF893c=;
+ b=P5fkwEvpPauRFsKqswLqQn+vep8BseCU//n43ra1GOhJ1Ed/WK9b+1mnzNZgszt37sP/mxySpzOh5Re8bgTdcr0ll48u6X5zmxjXye3EtBmHeBQF4yOhF4yUK5fmS/kZatrMMCgHB/w2nG8fry+kS28qyVPYLLIA3iGkMKBIBu4=
+Received: from DB8PR04CA0013.eurprd04.prod.outlook.com (2603:10a6:10:110::23)
+ by VI1P190MB0221.EURP190.PROD.OUTLOOK.COM (2603:10a6:800:9b::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.20; Thu, 4 Feb
- 2021 14:37:31 +0000
-Received: from VI1EUR04FT049.eop-eur04.prod.protection.outlook.com
- (2603:10a6:206:2:cafe::a1) by AM5PR1001CA0022.outlook.office365.com
- (2603:10a6:206:2::35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.19 via Frontend
- Transport; Thu, 4 Feb 2021 14:37:31 +0000
+ 2021 14:38:01 +0000
+Received: from DB3EUR04FT057.eop-eur04.prod.protection.outlook.com
+ (2603:10a6:10:110:cafe::3c) by DB8PR04CA0013.outlook.office365.com
+ (2603:10a6:10:110::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.17 via Frontend
+ Transport; Thu, 4 Feb 2021 14:38:01 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 62.153.209.162)
  smtp.mailfrom=schleissheimer.de; vger.kernel.org; dkim=fail (no key for
  signature) header.d=schleissheimer.de;vger.kernel.org; dmarc=none action=none
@@ -56,48 +56,47 @@ Received-SPF: Fail (protection.outlook.com: domain of schleissheimer.de does
  receiver=protection.outlook.com; client-ip=62.153.209.162;
  helo=mail.schleissheimer.de;
 Received: from mail.schleissheimer.de (62.153.209.162) by
- VI1EUR04FT049.mail.protection.outlook.com (10.152.28.177) with Microsoft SMTP
+ DB3EUR04FT057.mail.protection.outlook.com (10.152.24.125) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.3784.11 via Frontend Transport; Thu, 4 Feb 2021 14:37:31 +0000
+ 15.20.3784.11 via Frontend Transport; Thu, 4 Feb 2021 14:38:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=schleissheimer.de; s=dkim1;
-        h=Message-Id:Date:Subject:Cc:To:From; bh=7y2dgRYVshTRN1Kzw/WSNFjbXsyrnW+GuDbIdQobtuM=;
-        b=NuSiNFtH97zcwyZW7lAVx4Oq4UBw/ugQQbaawLWijlvR7qoiSdM5SQn/XDy9kMgWP2vqXS8gRQDD0Xml9DJcpuqXufRkc+WGwreg/s0oyISm7YYlNsBXwimwZgkdQKsd9zX+Aib6OZ7gIb5QVYu/6YkOM5GTxvMJazSKaiQckec=;
-Received: from [192.168.10.165] (port=41970 helo=contiredmine.schleissheimer.de)
+        h=Message-Id:Date:Subject:Cc:To:From; bh=dFrn7Vt1je7kdjp8cC5anRNu7TqR8GzlT3IrLRF893c=;
+        b=PwBeeBShfeX9QSZk4jqnhs/IGysUq8cuLP05N4Nb1Fnn4WGWQFap5HzzeRQ+FAe2DDbm20BCap8guNOZ47F3XP0j69swlg9v/Ha63BKEUkKTarGT2ekqjS2+svtH70P5PY4FSwry/EuLyU5wsR2e2C+QXVruvGzJGvktPkQni5E=;
+Received: from [192.168.10.165] (port=41974 helo=contiredmine.schleissheimer.de)
         by mail.schleissheimer.de with esmtp (Exim 4.82_1-5b7a7c0-XX)
         (envelope-from <schuchmann@schleissheimer.de>)
-        id 1l7fl9-0003vV-30; Thu, 04 Feb 2021 15:37:28 +0100
-X-CTCH-RefID: str=0001.0A782F24.601C06A8.0001,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+        id 1l7fld-000419-0I; Thu, 04 Feb 2021 15:37:57 +0100
+X-CTCH-RefID: str=0001.0A782F1F.601C06C5.0018,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
 From:   Sven Schuchmann <schuchmann@schleissheimer.de>
 Cc:     Sven Schuchmann <schuchmann@schleissheimer.de>,
         Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/4] leds: lp50xx: add setting of default intensity from DT
-Date:   Thu,  4 Feb 2021 14:37:26 +0000
-Message-Id: <20210204143726.27977-1-schuchmann@schleissheimer.de>
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/4] leds: lp50xx: add setting of default intensity from DT
+Date:   Thu,  4 Feb 2021 14:37:56 +0000
+Message-Id: <20210204143756.28088-1-schuchmann@schleissheimer.de>
 X-Mailer: git-send-email 2.17.1
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: e881dd8a-2ff4-4ae2-0be7-08d8c91a6739
-X-MS-TrafficTypeDiagnostic: PR3P190MB0826:
-X-Microsoft-Antispam-PRVS: <PR3P190MB082685D554514826B3536DF286B39@PR3P190MB0826.EURP190.PROD.OUTLOOK.COM>
+X-MS-Office365-Filtering-Correlation-Id: eeea7ab8-6e88-42e8-ff48-08d8c91a78f5
+X-MS-TrafficTypeDiagnostic: VI1P190MB0221:
+X-Microsoft-Antispam-PRVS: <VI1P190MB0221C86575B9474D1DDC75E786B39@VI1P190MB0221.EURP190.PROD.OUTLOOK.COM>
 X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ZpksaKArr//u+0OrlD0nQqmCQQ7xQUg5SnRh1s20fbKvnVGXQOlnfsPQ5Pi7WiOvVgDtatxGwsCxTyyvV76fjPUtd/LZ2ytnwvzLc39yD+/8vIetPgMrIG50S9tabsHTx01U+Cmbp2gpQr5FF4Evr4Tsedjjo/m9ZrMOno3nVDfFjX1tn2GzDau776ByXqvbBM72nYDZTRKVyBpBeetkdXCsxzhLy5/YYtGDGwIp9aOERK7VuaI0WV8aookNXjkfJPkH6ggF82r19P9idrcBZzZkOM64Sbz+3Nd33CMwXMEYWJF+WqHuPbLE7O+DIOU83zJCl53KKFBvXjQCPQCiea2LIc33FUfMTPBCi+wfKiMB5Nt394hZ1VqbQR1QPb0VxMz4ipQfUL4c2nENbEC8pv30kOmBXYxVlD0dtbpAhi0omj6JkhkPD3K4LTQeqNjhCqTcitzCKyHcCzYv5mDd8lFkLuSxvUXyOr+EHv0uwuDtSzxsYoQwce3wdpHP2ufx4uD2es6N3l2rlX30ypuuxIMZiHv5MTlwNZhEhBfwSDbcRojiI5r9kvyl2a+IjntvJpg7owc/Yiv4gSqQBAeKL0gLEpZIQNof5g9oFCJrSrlzmsOb409aWuMr5BNOdrq0XhZSsIaE77IJg5Ej/pveLN71/1fNBiS6J33LwhafVYk=
-X-Forefront-Antispam-Report: CIP:62.153.209.162;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.schleissheimer.de;PTR:www.schleissheimer.de;CAT:NONE;SFS:(39840400004)(376002)(396003)(136003)(346002)(46966006)(36840700001)(8936002)(5660300002)(47076005)(26005)(2906002)(336012)(70586007)(7696005)(186003)(4326008)(356005)(1076003)(8676002)(478600001)(109986005)(82310400003)(83380400001)(316002)(36860700001)(2616005)(7636003)(36756003)(426003)(9786002)(54906003)(70206006)(266003);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: t7FyVm09h9AZYuLZFzSNV3x9QNx/L8eCl6jYgGzwqz23y8iFh2Tq4ZjXJhZ3oj2t0HnFWq7NmePrsIQB0S8sUrv3vs5X2STydPownXErpwdx27lrFZNP7TAQuiuZTD9LTU++wU+QqdoXdGrjw2724/JlP1MTT4hxvkxwVhrFcDvasGjTPaFTm5+PW9NEAQR9raUliLh67Q0+hdDarC3dYpQVuUEyMAJBihnOte4IBJQDGM3uLyfOQnzzIU2LCxCo7rnDwwRyZlWp5dHtueOdDmTo74pBUOlAIf+Ckv7CKVeMH0+hx7wpQ9eiHcNzk5u58Tzr/uvCfyazuZX5hipWFYkmSn3I2pvcnGXBILRFxae+Bi9Vz1HG/ghFHJYgpy/Vs1nRDaigQjYOjCgyzxWu3wt6cG+5tbB21z2Z3dP9ELuu9Xru3lJdyt3/fDRxdI46I8Fu0oi4tXZkOHGxzGWnqiIANsd85A7kdBP+eLW5UDwD/l7+hSt2Ry7tyvWNlcBwH6fZBrkyxftF3sZeGPr/dUMmI6dVv1eCgP5GYzCDjaNwPWx/P+9vPUIiDqaUrralM5JfgiB25gmVjHMzaxTSN+QDj5+44aSztW1ohxgE+b0RkACcnBJt2M/zrghXtEZlnK50d2clHgNfpC0Y5cpJrr5/HwNL8I6AzWTewG85za0=
+X-Forefront-Antispam-Report: CIP:62.153.209.162;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.schleissheimer.de;PTR:www.schleissheimer.de;CAT:NONE;SFS:(39840400004)(136003)(396003)(346002)(376002)(36840700001)(46966006)(478600001)(8936002)(426003)(9786002)(36756003)(5660300002)(4326008)(8676002)(2616005)(7636003)(1076003)(26005)(70586007)(336012)(356005)(54906003)(7696005)(47076005)(70206006)(82310400003)(36860700001)(109986005)(83380400001)(186003)(2906002)(316002)(266003);DIR:OUT;SFP:1102;
 X-OriginatorOrg: schleissheimer.de
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2021 14:37:31.0300
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2021 14:38:00.7715
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e881dd8a-2ff4-4ae2-0be7-08d8c91a6739
+X-MS-Exchange-CrossTenant-Network-Message-Id: eeea7ab8-6e88-42e8-ff48-08d8c91a78f5
 X-MS-Exchange-CrossTenant-Id: ba05321a-a007-44df-8805-c7e62d5887b5
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ba05321a-a007-44df-8805-c7e62d5887b5;Ip=[62.153.209.162];Helo=[mail.schleissheimer.de]
-X-MS-Exchange-CrossTenant-AuthSource: VI1EUR04FT049.eop-eur04.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DB3EUR04FT057.eop-eur04.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3P190MB0826
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1P190MB0221
 To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
@@ -127,33 +126,21 @@ changes in v2
 
 Signed-off-by: Sven Schuchmann <schuchmann@schleissheimer.de>
 ---
- Documentation/devicetree/bindings/leds/leds-lp50xx.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/leds/leds-lp50xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml b/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
-index c192b5feadc7..2bc25b2fc94d 100644
---- a/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
-+++ b/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
-@@ -65,6 +65,11 @@ patternProperties:
-           This property denotes the LED module number(s) that is used on the
-           for the child node.  The LED modules can either be used stand alone
-           or grouped into a module bank.
-+      default-intensity:
-+        minItems: 1
-+        maxItems: 3
-+        description:
-+          The default intensity the multi-led gets initialised with.
+diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
+index 4b40bf66483c..79bc071c31fb 100644
+--- a/drivers/leds/leds-lp50xx.c
++++ b/drivers/leds/leds-lp50xx.c
+@@ -500,6 +500,7 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
+ 			}
  
-     patternProperties:
-       "(^led-[0-9a-f]$|led)":
-@@ -99,6 +104,7 @@ examples:
-                reg = <0x1>;
-                color = <LED_COLOR_ID_RGB>;
-                function = LED_FUNCTION_CHARGING;
-+               default-intensity = <100 0 0>;
+ 			mc_led_info[num_colors].color_index = color_id;
++			mc_led_info[num_colors].intensity = LED_FULL;
+ 			num_colors++;
+ 		}
  
-                led-0 {
-                    color = <LED_COLOR_ID_RED>;
 -- 
 2.17.1
 
