@@ -2,87 +2,84 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E382C433E0
-	for <linux-leds@archiver.kernel.org>; Thu,  4 Feb 2021 15:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78964C433E0
+	for <linux-leds@archiver.kernel.org>; Thu,  4 Feb 2021 16:15:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2560064F48
-	for <linux-leds@archiver.kernel.org>; Thu,  4 Feb 2021 15:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40D0C64E2C
+	for <linux-leds@archiver.kernel.org>; Thu,  4 Feb 2021 16:15:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237476AbhBDPlK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 4 Feb 2021 10:41:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60544 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237484AbhBDPkg (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 4 Feb 2021 10:40:36 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CE22464F44;
-        Thu,  4 Feb 2021 15:39:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612453195;
-        bh=0rVADc8DYJLXUAngr6xcgCUGDPQO+hMeabdF0zLfXo4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=H5sF/SYuycmnMlgZhrvfUXPg0873Tnnv2nfG/NCRpXpfiu9mWOaW/GS88wyeziszZ
-         bR3UkQ4kP0jbD7zfhCcpdJ02L+koBL5rhv7B7+89pZy7s5EDedVpgmRKSl5Oxy2OOU
-         q8xvGCzmp4oU9ODpI23hN5y3YNM9WxwMDeUxlTtb4ECVfjXenMvV3ARd0LihO8buNY
-         VZXazqBb8lXAWQC0cjmsg+w9Mjz0eDHO1kZfuO0PSAhHGkp4/HHlvyORqEwdCYG5Vx
-         V6PR+Cj6EdAuEj3ONWO65KUFOYhogMthXXtm5jb3QIKegtsziVuK6REM3bE9IEarBh
-         jdqgjSp1uicbQ==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Dan Murphy <dmurphy@ti.com>,
+        id S237486AbhBDQPD (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 4 Feb 2021 11:15:03 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:53742 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237870AbhBDQN5 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 4 Feb 2021 11:13:57 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 44B691C0B77; Thu,  4 Feb 2021 17:12:43 +0100 (CET)
+Date:   Thu, 4 Feb 2021 17:12:42 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Dan Murphy <dmurphy@ti.com>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] leds: rt8515: add V4L2_FLASH_LED_CLASS dependency
-Date:   Thu,  4 Feb 2021 16:39:44 +0100
-Message-Id: <20210204153951.1551156-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
+Subject: Re: [PATCH] leds: rt8515: add V4L2_FLASH_LED_CLASS dependency
+Message-ID: <20210204161242.GE14305@duo.ucw.cz>
+References: <20210204153951.1551156-1-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ILuaRSyQpoVaJ1HG"
+Content-Disposition: inline
+In-Reply-To: <20210204153951.1551156-1-arnd@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-The leds-rt8515 driver can optionall use the v4l2 flash led class,
-but it causes a link error when that class is in a loadable module
-and the rt8515 driver itself is built-in:
+--ILuaRSyQpoVaJ1HG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-ld.lld: error: undefined symbol: v4l2_flash_init
->>> referenced by leds-rt8515.c
->>>               leds/flash/leds-rt8515.o:(rt8515_probe) in archive
-drivers/built-in.a
+On Thu 2021-02-04 16:39:44, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> The leds-rt8515 driver can optionall use the v4l2 flash led class,
 
-Adding 'depends on V4L2_FLASH_LED_CLASS' in Kconfig would avoid that,
-but it would make it impossible to use the driver without the
-v4l2 support.
+Optionally.
 
-Add the same dependency that the other users of this class have
-instead, which just prevents the broken configuration.
+> Add the same dependency that the other users of this class have
+> instead, which just prevents the broken configuration.
+>=20
+> Fixes: e1c6edcbea13 ("leds: rt8515: Add Richtek RT8515 LED driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Fixes: e1c6edcbea13 ("leds: rt8515: Add Richtek RT8515 LED driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/leds/flash/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for the fix. If you plan to send a pull request to linus before
+5.11, feel free to add it.
 
-diff --git a/drivers/leds/flash/Kconfig b/drivers/leds/flash/Kconfig
-index d21d273ef3da..b580b416b9a4 100644
---- a/drivers/leds/flash/Kconfig
-+++ b/drivers/leds/flash/Kconfig
-@@ -5,6 +5,7 @@ if LEDS_CLASS_FLASH
- config LEDS_RT8515
- 	tristate "LED support for Richtek RT8515 flash/torch LED"
- 	depends on GPIOLIB
-+	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
- 	help
- 	  This option enables support for the Richtek RT8515 flash
- 	  and torch LEDs found on some mobile phones.
--- 
-2.29.2
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
+Otherwise I'll queue it for -rc1, I guess.
+
+Best regards,
+								Pavel
+--=20
+http://www.livejournal.com/~pavelmachek
+
+--ILuaRSyQpoVaJ1HG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYBwc+gAKCRAw5/Bqldv6
+8h6XAJwPVXcS26ScGLxjsgJDhXn/gY9QdgCdEj+hPjkck79RV7CoI2RHiyLtbn4=
+=aYuu
+-----END PGP SIGNATURE-----
+
+--ILuaRSyQpoVaJ1HG--
