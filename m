@@ -2,154 +2,151 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 135CAC433DB
-	for <linux-leds@archiver.kernel.org>; Sat,  6 Feb 2021 20:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D00C433E6
+	for <linux-leds@archiver.kernel.org>; Fri, 12 Feb 2021 16:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B766564E57
-	for <linux-leds@archiver.kernel.org>; Sat,  6 Feb 2021 20:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FCD664DF2
+	for <linux-leds@archiver.kernel.org>; Fri, 12 Feb 2021 16:35:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbhBFU7Y (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 6 Feb 2021 15:59:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48132 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbhBFU7X (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 6 Feb 2021 15:59:23 -0500
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E49EC06174A;
-        Sat,  6 Feb 2021 12:58:43 -0800 (PST)
-Received: by mail-lj1-x22d.google.com with SMTP id s18so11750383ljg.7;
-        Sat, 06 Feb 2021 12:58:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fODc4Y13jnUgYFxRk0/SlJ0oEOTVWjVViI6j6TXwrmA=;
-        b=i+BNW/3lPIn8qBEL4dJSYVVoNBe4G3m2fgH7TV4qRli2Y4zuXfrL3ikjrrJSXN9QOV
-         /jx3qFgEgkW+O7Gl44iV8Vi3upllIZM4E2ARLbwYwztquYKNqOGjsor5pdhM8G8dx1C1
-         bqw6EKRkRC51ozp047gC4F2wIBPE/O2iVcpAUOkCoD3oCzOY4NzC9fkdQZL3gGeI8cYC
-         3hCFf/DBMCKnopIFFpORPEg8kciDMfINbpVT2nUvJ2W1glufCsg4bkGr7iN3vNQgexUs
-         dL1a++FA+Mh8vP8liREDQuw0Ewsjbq+A6ZWdFDV/K51vKCH2hQOxq39Rm/Y+F9I+SxK5
-         8RUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fODc4Y13jnUgYFxRk0/SlJ0oEOTVWjVViI6j6TXwrmA=;
-        b=IBWliyORz+uqgxjXBHQ0pZDtFdSRCu0TV71mA0ccCXvwNTZCUB0NCZKElZrGKLbAOq
-         czK9LPIEvKY4Xa+oSSv8wAIq37HbbcWFNDoML5uo9Y0pyAKJ2enIuvW0xvIpQC/0SXIF
-         hHYJWpD0fV0/7ZotBH8L0kS6JLRWDLkcRpV1nj+josW030wDCw7OlUNYTJ0lESHPlDYi
-         Yza2Y+OYk3hdGSK4LBTFog0cF5Qq/qRhF9C41ZNmoIpt4wqlSKFZoiM7j/oqz7/3DxcU
-         ZHXc5tw5QwLau0kMNb04encKal5vx50fEuzT3hiVJFD7wAcbBnaUJpwVa4VabVuD+DYo
-         MeTA==
-X-Gm-Message-State: AOAM532132npUc0fQgrD09OwR9TiykG3ZOFrXtqhq6G8zZgb5WiLd9iH
-        Rab2yV/kurl35nQ6chdZy2ZmECumMTQ=
-X-Google-Smtp-Source: ABdhPJz0+XIQ0VmKOXwuXGw+Yp6c6LpRsX19zuZPttNlimegwkGn6w0xU0Bd08AOaN/VgftdtgH/Fg==
-X-Received: by 2002:a2e:8444:: with SMTP id u4mr1155075ljh.342.1612645121429;
-        Sat, 06 Feb 2021 12:58:41 -0800 (PST)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id b39sm1376435ljf.68.2021.02.06.12.58.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Feb 2021 12:58:40 -0800 (PST)
-Subject: Re: AW: [PATCH v2 1/4] leds: lp50xx: add setting of default intensity
- from DT
-To:     Sven Schuchmann <schuchmann@schleissheimer.de>,
-        Pavel Machek <pavel@ucw.cz>
-Cc:     Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20210204143726.27977-1-schuchmann@schleissheimer.de>
- <20210204145201.GB14305@duo.ucw.cz>
- <DB8P190MB063482D8E38C0529AD16A4D5D9B29@DB8P190MB0634.EURP190.PROD.OUTLOOK.COM>
- <20210205102338.GA27854@amd> <c107d3b9-2141-7cad-837a-f8ef107df61c@gmail.com>
- <DB8P190MB06344FAD6492E56D28A4E916D9B19@DB8P190MB0634.EURP190.PROD.OUTLOOK.COM>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <d5631e35-cd62-106f-2ec4-de3163367bc0@gmail.com>
-Date:   Sat, 6 Feb 2021 21:58:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        id S230385AbhBLQfd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 12 Feb 2021 11:35:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36966 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231307AbhBLQdW (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 12 Feb 2021 11:33:22 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E138F64DB1;
+        Fri, 12 Feb 2021 16:32:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613147557;
+        bh=u1/9qFb1jcDrE7vnQF9/4iC4Sa1MsRCfL+IXvC69710=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bj9TAl6rU/VSmGsk4jINUW3SBmVXm8I4saZ1pOqYDX2pwqiuktm+7BhosA+XtmQ3T
+         MW+eeJJqlS3Tr07yRiuZvi2CpvGq6cvvhiVq+xKtu/5clbEw8Nx1DaNZJEK4w5exoM
+         NNwsu5HMxi5zzeNjo1H2295SMj2q6FiVtQNEs9mC2MicMCDN+wHT5+lSXir4fQpC9T
+         Ld24ZMWwMXSm51Kb36ttYGe6GAobtE6KB7QE8hCSIRh3ydQLwmz7DjHaiRQtos28hC
+         HtiMUfsaEwahiUNvI0FwgWbY9AR5Tpz0w4clg5GE7TS/EsVUPWqkJOrBsIcWHaCgRq
+         0meT4kgrRmH7A==
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-iio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-pwm@vger.kernel.org
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Dan Murphy <dmurphy@ti.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH v4] MAINTAINERS: move Milo Kim to credits
+Date:   Fri, 12 Feb 2021 17:32:29 +0100
+Message-Id: <20210212163229.68270-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <DB8P190MB06344FAD6492E56D28A4E916D9B19@DB8P190MB0634.EURP190.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Sven,
+Milo Kim's email in TI bounces with permanent error (550: Invalid
+recipient).  Last email from him on LKML was in 2017.  Move Milo Kim to
+credits and remove the separate driver entries for:
+ - TI LP855x backlight driver,
+ - TI LP8727 charger driver,
+ - TI LP8788 MFD (ADC, LEDs, charger and regulator) drivers.
 
-On 2/6/21 2:14 PM, Sven Schuchmann wrote:
-> Hello Dan,
-> 
->> Von: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->> Gesendet: Freitag, 5. Februar 2021 19:37
->> Hi Pavel,
->>
->> On 2/5/21 11:23 AM, Pavel Machek wrote:
->>> Hi!
->>>
->>>>>>        patternProperties:
->>>>>>          "(^led-[0-9a-f]$|led)":
->>>>>> @@ -99,6 +104,7 @@ examples:
->>>>>>                   reg = <0x1>;
->>>>>>                   color = <LED_COLOR_ID_RGB>;
->>>>>>                   function = LED_FUNCTION_CHARGING;
->>>>>> +               default-intensity = <100 0 0>;
->>
->> How will you know which array position is for which child LED?
->> I presume DT child nodes are not guaranteed to be parsed in the order
->> of declaration?
-> 
-> I tried to fiddle this out, but it seems Jacek is right over here.
-> The multi-led definition looks like this (from the documentation leds-lp50xx.yaml)
-> 
->          multi-led@1 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x1>;
->                 color = <LED_COLOR_ID_RGB>;
->                 function = LED_FUNCTION_CHARGING;
-> 
->                 led-0 {
->                     color = <LED_COLOR_ID_RED>;
->                 };
-> 
->                 led-1 {
->                     color = <LED_COLOR_ID_GREEN>;
->                 };
-> 
->                 led-2 {
->                     color = <LED_COLOR_ID_BLUE>;
->                 };
->            };
-> 
-> But it seems that the color definition of each led is ignored.
-> By ignored I mean the driver does not take care which color
-> is at which position. So if I change led-0 to be LED_COLOR_ID_BLUE
-> and led-2 to be LED_COLOR_ID_RED nothing will change if I write
-> from userspace. Could you help to clarify?
-> Then it is even hard to know which led to set with default-intensity.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
 
-See Documentation/ABI/testing/sysfs-class-led-multicolor and
-documentation of multi_index and multi_intensity files.
-It is the multi_index file that tells what is the order of colors
-in the multi_intensity file.
+---
 
-And that depends on the order of enumeration of the nodes by DT parser.
+Dear Lee,
 
-> Also it seems that the enumeration of the multi-leds should
-> start with multi-led@0 (and not 1 as in the documentation).
+Could you take care about this patch?
 
-The @unit-address part of node name must match the first address
-specified in the reg property of the node, so this is correct.
--- 
 Best regards,
-Jacek Anaszewski
+Krzysztof
+
+Changes since v3:
+1. Remove the entries as Dan Murphy won't be mainaining them.
+
+Changes since v2:
+1. Fix subject (TP -> TI).
+
+Changes since v1:
+1. Add Dan Murphy, do not remove the entries.
+---
+ CREDITS     |  3 +++
+ MAINTAINERS | 23 -----------------------
+ 2 files changed, 3 insertions(+), 23 deletions(-)
+
+diff --git a/CREDITS b/CREDITS
+index be097156bd71..71552790774d 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -1933,6 +1933,9 @@ N: Kukjin Kim
+ E: kgene@kernel.org
+ D: Samsung S3C, S5P and Exynos ARM architectures
+ 
++N: Milo Kim
++D: TI LP855x, LP8727 and LP8788 drivers
++
+ N: Sangbeom Kim
+ E: sbkim73@samsung.com
+ D: Samsung SoC Audio (ASoC) drivers
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 00bca3e220cc..3478082debd1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17880,29 +17880,6 @@ S:	Maintained
+ F:	sound/soc/codecs/isabelle*
+ F:	sound/soc/codecs/lm49453*
+ 
+-TI LP855x BACKLIGHT DRIVER
+-M:	Milo Kim <milo.kim@ti.com>
+-S:	Maintained
+-F:	Documentation/driver-api/backlight/lp855x-driver.rst
+-F:	drivers/video/backlight/lp855x_bl.c
+-F:	include/linux/platform_data/lp855x.h
+-
+-TI LP8727 CHARGER DRIVER
+-M:	Milo Kim <milo.kim@ti.com>
+-S:	Maintained
+-F:	drivers/power/supply/lp8727_charger.c
+-F:	include/linux/platform_data/lp8727.h
+-
+-TI LP8788 MFD DRIVER
+-M:	Milo Kim <milo.kim@ti.com>
+-S:	Maintained
+-F:	drivers/iio/adc/lp8788_adc.c
+-F:	drivers/leds/leds-lp8788.c
+-F:	drivers/mfd/lp8788*.c
+-F:	drivers/power/supply/lp8788-charger.c
+-F:	drivers/regulator/lp8788-*.c
+-F:	include/linux/mfd/lp8788*.h
+-
+ TI NETCP ETHERNET DRIVER
+ M:	Wingman Kwok <w-kwok2@ti.com>
+ M:	Murali Karicheri <m-karicheri2@ti.com>
+-- 
+2.25.1
+
