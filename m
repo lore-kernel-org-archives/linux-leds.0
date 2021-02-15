@@ -2,107 +2,97 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF0EC433E0
-	for <linux-leds@archiver.kernel.org>; Mon, 15 Feb 2021 09:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3C1C433DB
+	for <linux-leds@archiver.kernel.org>; Mon, 15 Feb 2021 13:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8729A64E6A
-	for <linux-leds@archiver.kernel.org>; Mon, 15 Feb 2021 09:49:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2FAD64E30
+	for <linux-leds@archiver.kernel.org>; Mon, 15 Feb 2021 13:35:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230254AbhBOJtq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 15 Feb 2021 04:49:46 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:59292 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230300AbhBOJtq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 15 Feb 2021 04:49:46 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 340731C0B76; Mon, 15 Feb 2021 10:49:02 +0100 (CET)
-Date:   Mon, 15 Feb 2021 10:49:00 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Arnd Bergmann <arnd@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, Dan Murphy <dmurphy@ti.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] leds: rt8515: add V4L2_FLASH_LED_CLASS dependency
-Message-ID: <20210215094900.GA27528@amd>
-References: <20210204153951.1551156-1-arnd@kernel.org>
- <CACRpkdYpHAN5XYLxRj4Rktzj+LbGRFYwtUU72gqUwE=AEt0j6g@mail.gmail.com>
+        id S229802AbhBONfE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 15 Feb 2021 08:35:04 -0500
+Received: from lists.nic.cz ([217.31.204.67]:40690 "EHLO mail.nic.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230218AbhBONcu (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Mon, 15 Feb 2021 08:32:50 -0500
+Received: from localhost (unknown [IPv6:2a0e:b107:ae1:0:3e97:eff:fe61:c680])
+        by mail.nic.cz (Postfix) with ESMTPSA id 06030140A94;
+        Mon, 15 Feb 2021 14:31:45 +0100 (CET)
+Date:   Mon, 15 Feb 2021 14:31:44 +0100
+From:   Marek Behun <marek.behun@nic.cz>
+To:     Roderick Colenbrander <roderick@gaikai.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Pavel Machek <pavel@ucw.cz>, dmitry.torokhov@gmail.com,
+        pobm@protonmail.com, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org,
+        Roderick Colenbrander <roderick.colenbrander@sony.com>
+Subject: Re: [PATCH v6 1/4] HID: playstation: add DualSense lightbar support
+Message-ID: <20210215143144.060fdbe6@nic.cz>
+In-Reply-To: <20210215004549.135251-2-roderick@gaikai.com>
+References: <20210215004549.135251-1-roderick@gaikai.com>
+        <20210215004549.135251-2-roderick@gaikai.com>
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYpHAN5XYLxRj4Rktzj+LbGRFYwtUU72gqUwE=AEt0j6g@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.102.2 at mail
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+On Sun, 14 Feb 2021 16:45:46 -0800
+Roderick Colenbrander <roderick@gaikai.com> wrote:
 
---qDbXVdCdHGoSgWSk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +	led_cdev->name = devm_kasprintf(&hdev->dev, GFP_KERNEL, "playstation::%pMR::rgb",
+> +			ps_dev->mac_address);
+...
+> +	ret = devm_led_classdev_multicolor_register(&hdev->dev, lightbar_mc_dev);
 
-Hi!
+The LED subsystem has a predefined schema by which LED names should
+look like:
+  devicename:color:function
+(Not all fields are required, but the order must be preserved. The ':'
+ character should be used only as separator of these fields, so not MAC
+ addresses in these names, it will confuse userspace parsers.)
+See Documentation/leds/leds-class.rst
 
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
-> > The leds-rt8515 driver can optionall use the v4l2 flash led class,
-> > but it causes a link error when that class is in a loadable module
-> > and the rt8515 driver itself is built-in:
-> >
-> > ld.lld: error: undefined symbol: v4l2_flash_init
-> > >>> referenced by leds-rt8515.c
-> > >>>               leds/flash/leds-rt8515.o:(rt8515_probe) in archive
-> > drivers/built-in.a
-> >
-> > Adding 'depends on V4L2_FLASH_LED_CLASS' in Kconfig would avoid that,
-> > but it would make it impossible to use the driver without the
-> > v4l2 support.
-> >
-> > Add the same dependency that the other users of this class have
-> > instead, which just prevents the broken configuration.
-> >
-> > Fixes: e1c6edcbea13 ("leds: rt8515: Add Richtek RT8515 LED driver")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->=20
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->=20
-> > +       depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
->=20
-> This kind of thing that looks like a truism but isn't is one of the
-> most unintuitive
-> things about KConfig :/ no idea what to do about it though.
+The devicename part should not be "playstation". It should be something
+otherwise recognizable from userspace. For example an mmc indicator has
+devicename "mmc0", keyboard capslock LED can have devicename "input0"...
 
-This is the way it is usually fixed. Anyway, I applied it and pushed
-it to Linus and it is now merged.
+In your case the name should be something like:
+  input3:rgb:indicator
 
-> I remember making a program for the C64 in early 1990ies with joke input
-> such as y/n/m (yes/no/maybe), sadly in Kconfig this is no joke.
+Different existing functions are defined in
+include/dt-bindings/leds/common.h.
 
-:-).
+BTW there are extended versions of LED registering functions, suffixed
+by "_ext". These accept a struct led_init_data. If a fwnode of the LED
+is passed to the registering function via this struct, the LED core
+will compose a name for the LED itself. But since your LEDs don't have
+device-tree nodes because they are on USB/BlueTooth joysticks, you
+either have to compose the name itself like your code is doing now, or
+you can propose a patch to the LED core, so that LED core will be able
+to compose the LED name even without a device-tree node.
 
-Best regards,
-									Pavel
---=20
-http://www.livejournal.com/~pavelmachek
+JFI, the function part is (in the future) supposed to somehow define LED
+trigger which the system will assign to the LED on probe, but this is
+not implemented yet. Currently when the LED has a devicetree node,
+the trigger is assigned from the `linux,default-trigger` property, but
+the idea is to infer it from the `function` property.
 
---qDbXVdCdHGoSgWSk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+What is this RGB LED supposed to do on the joystick? Is it just for
+nice colors? Or should it blink somehow? Can the hardware in the
+joystick blink the LED itself? Or maybe fade between colors?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+There is for example the pattern LED trigger which changes the LED
+brightness by a defined pattern. I am planning to add multicolor
+support to this trigger, because our RGB LED controller can offload
+such thing to hardware.
 
-iEYEARECAAYFAmAqQ4wACgkQMOfwapXb+vJ84wCePlrB8GFpTx6yYq42G0Et6bnE
-gywAoIIxpXsLxLBNQVJHh2dDlDsr/FYJ
-=Uyd8
------END PGP SIGNATURE-----
-
---qDbXVdCdHGoSgWSk--
+Marek
