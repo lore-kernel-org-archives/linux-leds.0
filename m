@@ -7,163 +7,78 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A25C433E0
-	for <linux-leds@archiver.kernel.org>; Tue, 16 Feb 2021 15:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C18AC433E6
+	for <linux-leds@archiver.kernel.org>; Tue, 16 Feb 2021 15:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B623664DF0
-	for <linux-leds@archiver.kernel.org>; Tue, 16 Feb 2021 15:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32B4364DF0
+	for <linux-leds@archiver.kernel.org>; Tue, 16 Feb 2021 15:54:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229916AbhBPPyR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 16 Feb 2021 10:54:17 -0500
-Received: from mga03.intel.com ([134.134.136.65]:56586 "EHLO mga03.intel.com"
+        id S230073AbhBPPyU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 16 Feb 2021 10:54:20 -0500
+Received: from mga03.intel.com ([134.134.136.65]:56597 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229585AbhBPPyL (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 16 Feb 2021 10:54:11 -0500
-IronPort-SDR: nczbWbgtJppHhkovBM4nEkuUlpQeV1BxXcFhqigf24p3BEgw3bS2/Qyha5vSBsa7Tw7jwN2IeY
- JcxvTNxm539g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9897"; a="182993768"
+        id S229787AbhBPPyP (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 16 Feb 2021 10:54:15 -0500
+IronPort-SDR: uFxRYTFChpiJliSYlvD73+cDX1QnlP2q1EkWIKk5KFj7VpA2yBlGqBHPUiEl0c5kabWt4LfWFk
+ JdCh6aP6hTng==
+X-IronPort-AV: E=McAfee;i="6000,8403,9897"; a="182993763"
 X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
-   d="scan'208";a="182993768"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
+   d="scan'208";a="182993763"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
   by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 07:51:01 -0800
-IronPort-SDR: ibXDlAKLdROqB+hyM/gkpKKM650rV2hYphsAlXM26EhhXth16q5htTXHqmhc5McMLeh2zWI4sl
- fa0Q4MZLnvTw==
+IronPort-SDR: iBvJFjhniTxxdNc4/RTkPjD0M2S0ohTwbRcN6KtHkNPp8clIvTB6KHKbArxCWrP3cHPJUxoinK
+ HoHO8nuqrO3Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
-   d="scan'208";a="580539164"
+   d="scan'208";a="384458645"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 16 Feb 2021 07:51:00 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 16 Feb 2021 07:51:00 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 3A0EF220; Tue, 16 Feb 2021 17:50:59 +0200 (EET)
+        id 23B931F1; Tue, 16 Feb 2021 17:50:58 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v1 3/7] leds: lp50xx: Reduce level of dereferences
-Date:   Tue, 16 Feb 2021 17:50:46 +0200
-Message-Id: <20210216155050.29322-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/7] leds: lp50xx: Don't spam logs when probe is deferred
+Date:   Tue, 16 Feb 2021 17:50:44 +0200
+Message-Id: <20210216155050.29322-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210216155050.29322-1-andriy.shevchenko@linux.intel.com>
-References: <20210216155050.29322-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The priv->dev is effectively the same as &priv->client->dev.
-So, drop the latter for the former.
+When requesting GPIO line the probe can be deferred.
+In such case don't spam logs with an error message.
+This can be achieved by switching to dev_err_probe().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/leds/leds-lp50xx.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ drivers/leds/leds-lp50xx.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
-index 19aec80e527a..0723b2688552 100644
+index f13117eed976..a2d18ec8fd2b 100644
 --- a/drivers/leds/leds-lp50xx.c
 +++ b/drivers/leds/leds-lp50xx.c
-@@ -322,7 +322,7 @@ static int lp50xx_brightness_set(struct led_classdev *cdev,
+@@ -455,12 +455,9 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
+ 	int i = 0;
  
- 	ret = regmap_write(led->priv->regmap, reg_val, brightness);
- 	if (ret) {
--		dev_err(&led->priv->client->dev,
-+		dev_err(led->priv->dev,
- 			"Cannot write brightness value %d\n", ret);
- 		goto out;
- 	}
-@@ -338,7 +338,7 @@ static int lp50xx_brightness_set(struct led_classdev *cdev,
- 		ret = regmap_write(led->priv->regmap, reg_val,
- 				   mc_dev->subled_info[i].intensity);
- 		if (ret) {
--			dev_err(&led->priv->client->dev,
-+			dev_err(led->priv->dev,
- 				"Cannot write intensity value %d\n", ret);
- 			goto out;
- 		}
-@@ -404,7 +404,7 @@ static int lp50xx_probe_leds(struct fwnode_handle *child, struct lp50xx *priv,
+ 	priv->enable_gpio = devm_gpiod_get_optional(priv->dev, "enable", GPIOD_OUT_LOW);
+-	if (IS_ERR(priv->enable_gpio)) {
+-		ret = PTR_ERR(priv->enable_gpio);
+-		dev_err(&priv->client->dev, "Failed to get enable gpio: %d\n",
+-			ret);
+-		return ret;
+-	}
++	if (IS_ERR(priv->enable_gpio))
++		return dev_err_probe(priv->dev, PTR_ERR(priv->enable_gpio),
++				     "Failed to get enable GPIO\n");
  
- 	if (num_leds > 1) {
- 		if (num_leds > priv->chip_info->max_modules) {
--			dev_err(&priv->client->dev, "reg property is invalid\n");
-+			dev_err(priv->dev, "reg property is invalid\n");
- 			return -EINVAL;
- 		}
- 
-@@ -412,13 +412,13 @@ static int lp50xx_probe_leds(struct fwnode_handle *child, struct lp50xx *priv,
- 
- 		ret = fwnode_property_read_u32_array(child, "reg", led_banks, num_leds);
- 		if (ret) {
--			dev_err(&priv->client->dev, "reg property is missing\n");
-+			dev_err(priv->dev, "reg property is missing\n");
- 			return ret;
- 		}
- 
- 		ret = lp50xx_set_banks(priv, led_banks);
- 		if (ret) {
--			dev_err(&priv->client->dev, "Cannot setup banked LEDs\n");
-+			dev_err(priv->dev, "Cannot setup banked LEDs\n");
- 			return ret;
- 		}
- 
-@@ -426,12 +426,12 @@ static int lp50xx_probe_leds(struct fwnode_handle *child, struct lp50xx *priv,
- 	} else {
- 		ret = fwnode_property_read_u32(child, "reg", &led_number);
- 		if (ret) {
--			dev_err(&priv->client->dev, "led reg property missing\n");
-+			dev_err(priv->dev, "led reg property missing\n");
- 			return ret;
- 		}
- 
- 		if (led_number > priv->chip_info->num_leds) {
--			dev_err(&priv->client->dev, "led-sources property is invalid\n");
-+			dev_err(priv->dev, "led-sources property is invalid\n");
- 			return -EINVAL;
- 		}
- 
-@@ -467,7 +467,7 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
- 		led = &priv->leds[i];
- 		ret = fwnode_property_count_u32(child, "reg");
- 		if (ret < 0) {
--			dev_err(&priv->client->dev, "reg property is invalid\n");
-+			dev_err(priv->dev, "reg property is invalid\n");
- 			goto child_out;
- 		}
- 
-@@ -507,12 +507,11 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
- 		led_cdev = &led->mc_cdev.led_cdev;
- 		led_cdev->brightness_set_blocking = lp50xx_brightness_set;
- 
--		ret = devm_led_classdev_multicolor_register_ext(&priv->client->dev,
-+		ret = devm_led_classdev_multicolor_register_ext(priv->dev,
- 						       &led->mc_cdev,
- 						       &init_data);
- 		if (ret) {
--			dev_err(&priv->client->dev, "led register err: %d\n",
--				ret);
-+			dev_err(priv->dev, "led register err: %d\n", ret);
- 			goto child_out;
- 		}
- 		i++;
-@@ -575,15 +574,14 @@ static int lp50xx_remove(struct i2c_client *client)
- 
- 	ret = lp50xx_enable_disable(led, 0);
- 	if (ret) {
--		dev_err(&led->client->dev, "Failed to disable chip\n");
-+		dev_err(led->dev, "Failed to disable chip\n");
- 		return ret;
- 	}
- 
- 	if (led->regulator) {
- 		ret = regulator_disable(led->regulator);
- 		if (ret)
--			dev_err(&led->client->dev,
--				"Failed to disable regulator\n");
-+			dev_err(led->dev, "Failed to disable regulator\n");
- 	}
- 
- 	mutex_destroy(&led->lock);
+ 	priv->regulator = devm_regulator_get(priv->dev, "vled");
+ 	if (IS_ERR(priv->regulator))
 -- 
 2.30.0
 
