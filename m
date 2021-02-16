@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26511C433E0
-	for <linux-leds@archiver.kernel.org>; Tue, 16 Feb 2021 15:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F532C433E9
+	for <linux-leds@archiver.kernel.org>; Tue, 16 Feb 2021 15:52:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE36B64DE0
-	for <linux-leds@archiver.kernel.org>; Tue, 16 Feb 2021 15:52:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36E4464E07
+	for <linux-leds@archiver.kernel.org>; Tue, 16 Feb 2021 15:52:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230218AbhBPPww (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 16 Feb 2021 10:52:52 -0500
-Received: from mga03.intel.com ([134.134.136.65]:56586 "EHLO mga03.intel.com"
+        id S230378AbhBPPwx (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 16 Feb 2021 10:52:53 -0500
+Received: from mga11.intel.com ([192.55.52.93]:6756 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230017AbhBPPws (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 16 Feb 2021 10:52:48 -0500
-IronPort-SDR: 6MWFD37tK38RrYykBOiUdINivz2yvqqon9My7ZfdNL6QGue42SErsfvh64HyfgxIVezC/womLm
- E3JU93KeXnig==
-X-IronPort-AV: E=McAfee;i="6000,8403,9897"; a="182993765"
+        id S230059AbhBPPwv (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 16 Feb 2021 10:52:51 -0500
+IronPort-SDR: 43Dxz9MApAOVV9RHa0NrFdzfn4wlllQktVf9tcb1p2c4Eq6mWToepxCSSGayHUFyNXO9MdUg5d
+ +mhZj9T8dUrw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9897"; a="179417994"
 X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
-   d="scan'208";a="182993765"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 07:51:01 -0800
-IronPort-SDR: EJUMPQZh1iTHYX5ohBQCpyuT/xmVWXfkpS15FmSPjMV87gTye2hO9YiVye0gf6/dottRSKNEh5
- CwG0jeHRYUuw==
+   d="scan'208";a="179417994"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2021 07:51:03 -0800
+IronPort-SDR: Hy5Ez2qMCmZgFthigJdzemOKsXhT4LQpiGSWDkqYtVBGFkVo6AMx8ip5Zh/TL4Z7SVIIs8/a1G
+ KpgOXszbdvEA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.81,184,1610438400"; 
-   d="scan'208";a="580539163"
+   d="scan'208";a="512563338"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 16 Feb 2021 07:51:00 -0800
+  by orsmga004.jf.intel.com with ESMTP; 16 Feb 2021 07:51:02 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 34508169; Tue, 16 Feb 2021 17:50:59 +0200 (EET)
+        id 5F17D2D5; Tue, 16 Feb 2021 17:50:59 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v1 2/7] leds: lp50xx: Switch to new style i2c-driver probe function
-Date:   Tue, 16 Feb 2021 17:50:45 +0200
-Message-Id: <20210216155050.29322-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 6/7] leds: lp50xx: Add missed bits.h and convert to BIT()
+Date:   Tue, 16 Feb 2021 17:50:49 +0200
+Message-Id: <20210216155050.29322-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210216155050.29322-1-andriy.shevchenko@linux.intel.com>
 References: <20210216155050.29322-1-andriy.shevchenko@linux.intel.com>
@@ -52,85 +52,34 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Switch to the new style i2c-driver probe_new probe function.
-Note we do not have any old style board files using this but
-user still has a possibility to instantiate device from sysfs.
+Add missed bits.h and convert to BIT() in lp50xx_set_banks().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/leds/leds-lp50xx.c | 33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+ drivers/leds/leds-lp50xx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
-index a2d18ec8fd2b..19aec80e527a 100644
+index 2b4981b5778d..0c6a5a9dd162 100644
 --- a/drivers/leds/leds-lp50xx.c
 +++ b/drivers/leds/leds-lp50xx.c
-@@ -526,8 +526,7 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
- 	return ret;
- }
+@@ -2,6 +2,7 @@
+ // TI LP50XX LED chip family driver
+ // Copyright (C) 2018-20 Texas Instruments Incorporated - https://www.ti.com/
  
--static int lp50xx_probe(struct i2c_client *client,
--			const struct i2c_device_id *id)
-+static int lp50xx_probe(struct i2c_client *client)
- {
- 	struct lp50xx *led;
- 	int count;
-@@ -547,7 +546,7 @@ static int lp50xx_probe(struct i2c_client *client,
- 	mutex_init(&led->lock);
- 	led->client = client;
- 	led->dev = &client->dev;
--	led->chip_info = &lp50xx_chip_info_tbl[id->driver_data];
-+	led->chip_info = device_get_match_data(&client->dev);
- 	i2c_set_clientdata(client, led);
- 	led->regmap = devm_regmap_init_i2c(client,
- 					led->chip_info->lp50xx_regmap_config);
-@@ -593,24 +592,24 @@ static int lp50xx_remove(struct i2c_client *client)
- }
++#include <linux/bits.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
+ #include <linux/init.h>
+@@ -357,7 +358,7 @@ static int lp50xx_set_banks(struct lp50xx *priv, u32 led_banks[])
  
- static const struct i2c_device_id lp50xx_id[] = {
--	{ "lp5009", LP5009 },
--	{ "lp5012", LP5012 },
--	{ "lp5018", LP5018 },
--	{ "lp5024", LP5024 },
--	{ "lp5030", LP5030 },
--	{ "lp5036", LP5036 },
-+	{ "lp5009", (kernel_ulong_t)&lp50xx_chip_info_tbl[LP5009] },
-+	{ "lp5012", (kernel_ulong_t)&lp50xx_chip_info_tbl[LP5012] },
-+	{ "lp5018", (kernel_ulong_t)&lp50xx_chip_info_tbl[LP5018] },
-+	{ "lp5024", (kernel_ulong_t)&lp50xx_chip_info_tbl[LP5024] },
-+	{ "lp5030", (kernel_ulong_t)&lp50xx_chip_info_tbl[LP5030] },
-+	{ "lp5036", (kernel_ulong_t)&lp50xx_chip_info_tbl[LP5036] },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, lp50xx_id);
+ 	for (i = 0; i < priv->chip_info->max_modules; i++) {
+ 		if (led_banks[i])
+-			bank_enable_mask |= (1 << led_banks[i]);
++			bank_enable_mask |= BIT(led_banks[i]);
+ 	}
  
- static const struct of_device_id of_lp50xx_leds_match[] = {
--	{ .compatible = "ti,lp5009", .data = (void *)LP5009 },
--	{ .compatible = "ti,lp5012", .data = (void *)LP5012 },
--	{ .compatible = "ti,lp5018", .data = (void *)LP5018 },
--	{ .compatible = "ti,lp5024", .data = (void *)LP5024 },
--	{ .compatible = "ti,lp5030", .data = (void *)LP5030 },
--	{ .compatible = "ti,lp5036", .data = (void *)LP5036 },
--	{},
-+	{ .compatible = "ti,lp5009", .data = &lp50xx_chip_info_tbl[LP5009] },
-+	{ .compatible = "ti,lp5012", .data = &lp50xx_chip_info_tbl[LP5012] },
-+	{ .compatible = "ti,lp5018", .data = &lp50xx_chip_info_tbl[LP5018] },
-+	{ .compatible = "ti,lp5024", .data = &lp50xx_chip_info_tbl[LP5024] },
-+	{ .compatible = "ti,lp5030", .data = &lp50xx_chip_info_tbl[LP5030] },
-+	{ .compatible = "ti,lp5036", .data = &lp50xx_chip_info_tbl[LP5036] },
-+	{}
- };
- MODULE_DEVICE_TABLE(of, of_lp50xx_leds_match);
- 
-@@ -619,7 +618,7 @@ static struct i2c_driver lp50xx_driver = {
- 		.name	= "lp50xx",
- 		.of_match_table = of_lp50xx_leds_match,
- 	},
--	.probe		= lp50xx_probe,
-+	.probe_new	= lp50xx_probe,
- 	.remove		= lp50xx_remove,
- 	.id_table	= lp50xx_id,
- };
+ 	led_config_lo = bank_enable_mask;
 -- 
 2.30.0
 
