@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA606C433E9
-	for <linux-leds@archiver.kernel.org>; Wed, 17 Feb 2021 17:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A23DAC4332B
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Feb 2021 17:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87CB960C3E
-	for <linux-leds@archiver.kernel.org>; Wed, 17 Feb 2021 17:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8464764E4B
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Feb 2021 17:36:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234498AbhBQRfq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 17 Feb 2021 12:35:46 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:24714 "EHLO
+        id S234480AbhBQRgL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 17 Feb 2021 12:36:11 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54380 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234469AbhBQRdx (ORCPT
+        by vger.kernel.org with ESMTP id S234539AbhBQReA (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 17 Feb 2021 12:33:53 -0500
+        Wed, 17 Feb 2021 12:34:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613583147;
+        s=mimecast20190719; t=1613583153;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ybFvUxcR//kDarBM6awWL2j71GwnzCbGvA+DvUqEZKw=;
-        b=QXWr57NZ6i0xP9BPzNoTbLYX/EiZ8bMXL0d/TghiNk1x+gf9yfKUFD2mbkz20PMUG1jQ4B
-        Fx0OJyO+5ypzlq0VXv4dMZFnZC7yhGlFIr/1Y52KPDZNOtOtqqtlV15+h820C2pFWDIwzR
-        FdWOAtX898Ntz6pds+NUCcDMz7sWqRk=
+        bh=ZqUM20Jnpq/LUhZZfBQ2FAbfuIXf/VVhp2IoFI1zVAE=;
+        b=FtH+u2qN6kaDz0sH4RI5lTbggH9asUVBBCdo24DQgZZ/vZ06xGWeiw1v0BkgzoON/ved47
+        c+XBhs/GCt2nh0NK5lVuKCUMwgyq5cTRh7Oh0+F+RWrLswTxJvn39ElWZBAp9wkWtiwMSz
+        9KVvYa1FXNK+SBY3D1/vVmS/U0XXMMA=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-208-6WG-x0ICOT-Vl-3ZcOOZfw-1; Wed, 17 Feb 2021 12:32:25 -0500
-X-MC-Unique: 6WG-x0ICOT-Vl-3ZcOOZfw-1
+ us-mta-599-Sa7LZTvfNCm7EfEkhmSyjg-1; Wed, 17 Feb 2021 12:32:31 -0500
+X-MC-Unique: Sa7LZTvfNCm7EfEkhmSyjg-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C0F8B801976;
-        Wed, 17 Feb 2021 17:32:23 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E9C051020C20;
+        Wed, 17 Feb 2021 17:32:29 +0000 (UTC)
 Received: from plouf.redhat.com (ovpn-116-25.ams2.redhat.com [10.36.116.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E962E60C61;
-        Wed, 17 Feb 2021 17:32:18 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 45E5060C61;
+        Wed, 17 Feb 2021 17:32:28 +0000 (UTC)
 From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Roderick Colenbrander <roderick.colenbrander@sony.com>,
@@ -49,9 +49,9 @@ To:     Jiri Kosina <jikos@kernel.org>,
 Cc:     linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 07/11] HID: playstation: report DualSense hardware and firmware version.
-Date:   Wed, 17 Feb 2021 18:31:54 +0100
-Message-Id: <20210217173158.3122868-8-benjamin.tissoires@redhat.com>
+Subject: [PATCH 10/11] HID: playstation: add microphone mute support for DualSense.
+Date:   Wed, 17 Feb 2021 18:31:57 +0100
+Message-Id: <20210217173158.3122868-11-benjamin.tissoires@redhat.com>
 In-Reply-To: <20210217173158.3122868-1-benjamin.tissoires@redhat.com>
 References: <20210217173158.3122868-1-benjamin.tissoires@redhat.com>
 MIME-Version: 1.0
@@ -64,152 +64,114 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Roderick Colenbrander <roderick.colenbrander@sony.com>
 
-Retrieve DualSense hardware and firmware information using a vendor
-specific feature report. Report the data through sysfs and also
-report using hid_info as there can be signficant differences between
-versions.
+The DualSense controller has a built-in microphone exposed as an
+audio device over USB (or HID using Bluetooth). A dedicated
+button on the controller handles mute, but software has to configure
+the device to mute the audio stream.
+
+This patch captures the mute button and schedules an output report
+to mute/unmute the audio stream as well as toggle the mute LED.
 
 Signed-off-by: Roderick Colenbrander <roderick.colenbrander@sony.com>
 Reviewed-by: Barnabás Pőcze <pobrn@protonmail.com>
 Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 ---
- drivers/hid/hid-playstation.c | 81 +++++++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+ drivers/hid/hid-playstation.c | 44 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
 diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
-index 64193fdeaa0d..84f484fce1ee 100644
+index b141b1be6453..04743fa0e03d 100644
 --- a/drivers/hid/hid-playstation.c
 +++ b/drivers/hid/hid-playstation.c
-@@ -34,6 +34,8 @@ struct ps_device {
- 	int battery_status;
+@@ -85,6 +85,7 @@ struct ps_calibration_data {
+ #define DS_BUTTONS1_R3		BIT(7)
+ #define DS_BUTTONS2_PS_HOME	BIT(0)
+ #define DS_BUTTONS2_TOUCHPAD	BIT(1)
++#define DS_BUTTONS2_MIC_MUTE	BIT(2)
  
- 	uint8_t mac_address[6]; /* Note: stored in little endian order. */
-+	uint32_t hw_version;
-+	uint32_t fw_version;
+ /* Status field of DualSense input report. */
+ #define DS_STATUS_BATTERY_CAPACITY	GENMASK(3, 0)
+@@ -103,9 +104,12 @@ struct ps_calibration_data {
+ /* Flags for DualSense output report. */
+ #define DS_OUTPUT_VALID_FLAG0_COMPATIBLE_VIBRATION BIT(0)
+ #define DS_OUTPUT_VALID_FLAG0_HAPTICS_SELECT BIT(1)
++#define DS_OUTPUT_VALID_FLAG1_MIC_MUTE_LED_CONTROL_ENABLE BIT(0)
++#define DS_OUTPUT_VALID_FLAG1_POWER_SAVE_CONTROL_ENABLE BIT(1)
+ #define DS_OUTPUT_VALID_FLAG1_LIGHTBAR_CONTROL_ENABLE BIT(2)
+ #define DS_OUTPUT_VALID_FLAG1_RELEASE_LEDS BIT(3)
+ #define DS_OUTPUT_VALID_FLAG2_LIGHTBAR_SETUP_CONTROL_ENABLE BIT(1)
++#define DS_OUTPUT_POWER_SAVE_CONTROL_MIC_MUTE BIT(4)
+ #define DS_OUTPUT_LIGHTBAR_SETUP_LIGHT_OUT BIT(1)
  
- 	int (*parse_report)(struct ps_device *dev, struct hid_report *report, u8 *data, int size);
- };
-@@ -64,6 +66,8 @@ struct ps_calibration_data {
- #define DS_FEATURE_REPORT_CALIBRATION_SIZE	41
- #define DS_FEATURE_REPORT_PAIRING_INFO		0x09
- #define DS_FEATURE_REPORT_PAIRING_INFO_SIZE	20
-+#define DS_FEATURE_REPORT_FIRMWARE_INFO		0x20
-+#define DS_FEATURE_REPORT_FIRMWARE_INFO_SIZE	64
+ /* DualSense hardware limits */
+@@ -142,6 +146,11 @@ struct dualsense {
+ 	uint8_t lightbar_green;
+ 	uint8_t lightbar_blue;
  
- /* Button masks for DualSense input report. */
- #define DS_BUTTONS0_HAT_SWITCH	GENMASK(3, 0)
-@@ -538,6 +542,40 @@ static struct input_dev *ps_touchpad_create(struct hid_device *hdev, int width,
- 	return touchpad;
- }
- 
-+static ssize_t firmware_version_show(struct device *dev,
-+				struct device_attribute
-+				*attr, char *buf)
-+{
-+	struct hid_device *hdev = to_hid_device(dev);
-+	struct ps_device *ps_dev = hid_get_drvdata(hdev);
++	/* Microphone */
++	bool update_mic_mute;
++	bool mic_muted;
++	bool last_btn_mic_state;
 +
-+	return sysfs_emit(buf, "0x%08x\n", ps_dev->fw_version);
-+}
-+
-+static DEVICE_ATTR_RO(firmware_version);
-+
-+static ssize_t hardware_version_show(struct device *dev,
-+				struct device_attribute
-+				*attr, char *buf)
-+{
-+	struct hid_device *hdev = to_hid_device(dev);
-+	struct ps_device *ps_dev = hid_get_drvdata(hdev);
-+
-+	return sysfs_emit(buf, "0x%08x\n", ps_dev->hw_version);
-+}
-+
-+static DEVICE_ATTR_RO(hardware_version);
-+
-+static struct attribute *ps_device_attributes[] = {
-+	&dev_attr_firmware_version.attr,
-+	&dev_attr_hardware_version.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group ps_device_attribute_group = {
-+	.attrs = ps_device_attributes,
-+};
-+
- static int dualsense_get_calibration_data(struct dualsense *ds)
- {
- 	short gyro_pitch_bias, gyro_pitch_plus, gyro_pitch_minus;
-@@ -628,6 +666,30 @@ static int dualsense_get_calibration_data(struct dualsense *ds)
- 	return ret;
- }
- 
-+static int dualsense_get_firmware_info(struct dualsense *ds)
-+{
-+	uint8_t *buf;
-+	int ret;
-+
-+	buf = kzalloc(DS_FEATURE_REPORT_FIRMWARE_INFO_SIZE, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	ret = ps_get_report(ds->base.hdev, DS_FEATURE_REPORT_FIRMWARE_INFO, buf,
-+			DS_FEATURE_REPORT_FIRMWARE_INFO_SIZE);
-+	if (ret) {
-+		hid_err(ds->base.hdev, "Failed to retrieve DualSense firmware info: %d\n", ret);
-+		goto err_free;
-+	}
-+
-+	ds->base.hw_version = get_unaligned_le32(&buf[24]);
-+	ds->base.fw_version = get_unaligned_le32(&buf[28]);
-+
-+err_free:
-+	kfree(buf);
-+	return ret;
-+}
-+
- static int dualsense_get_mac_address(struct dualsense *ds)
- {
- 	uint8_t *buf;
-@@ -956,6 +1018,12 @@ static struct ps_device *dualsense_create(struct hid_device *hdev)
+ 	struct work_struct output_worker;
+ 	void *output_report_dmabuf;
+ 	uint8_t output_seq; /* Sequence number for output report. */
+@@ -815,6 +824,23 @@ static void dualsense_output_worker(struct work_struct *work)
+ 		ds->update_lightbar = false;
  	}
- 	snprintf(hdev->uniq, sizeof(hdev->uniq), "%pMR", ds->base.mac_address);
  
-+	ret = dualsense_get_firmware_info(ds);
-+	if (ret) {
-+		hid_err(hdev, "Failed to get firmware info from DualSense\n");
-+		return ERR_PTR(ret);
++	if (ds->update_mic_mute) {
++		common->valid_flag1 |= DS_OUTPUT_VALID_FLAG1_MIC_MUTE_LED_CONTROL_ENABLE;
++		common->mute_button_led = ds->mic_muted;
++
++		if (ds->mic_muted) {
++			/* Disable microphone */
++			common->valid_flag1 |= DS_OUTPUT_VALID_FLAG1_POWER_SAVE_CONTROL_ENABLE;
++			common->power_save_control |= DS_OUTPUT_POWER_SAVE_CONTROL_MIC_MUTE;
++		} else {
++			/* Enable microphone */
++			common->valid_flag1 |= DS_OUTPUT_VALID_FLAG1_POWER_SAVE_CONTROL_ENABLE;
++			common->power_save_control &= ~DS_OUTPUT_POWER_SAVE_CONTROL_MIC_MUTE;
++		}
++
++		ds->update_mic_mute = false;
 +	}
 +
- 	ret = ps_devices_list_add(ps_dev);
- 	if (ret)
- 		return ERR_PTR(ret);
-@@ -989,6 +1057,13 @@ static struct ps_device *dualsense_create(struct hid_device *hdev)
- 	if (ret)
- 		goto err;
+ 	spin_unlock_irqrestore(&ds->base.lock, flags);
+ 
+ 	dualsense_send_output_report(ds, &report);
+@@ -829,6 +855,7 @@ static int dualsense_parse_report(struct ps_device *ps_dev, struct hid_report *r
+ 	uint8_t battery_data, battery_capacity, charging_status, value;
+ 	int battery_status;
+ 	uint32_t sensor_timestamp;
++	bool btn_mic_state;
+ 	unsigned long flags;
+ 	int i;
+ 
+@@ -884,6 +911,23 @@ static int dualsense_parse_report(struct ps_device *ps_dev, struct hid_report *r
+ 	input_report_key(ds->gamepad, BTN_MODE,   ds_report->buttons[2] & DS_BUTTONS2_PS_HOME);
+ 	input_sync(ds->gamepad);
  
 +	/*
-+	 * Reporting hardware and firmware is important as there are frequent updates, which
-+	 * can change behavior.
++	 * The DualSense has an internal microphone, which can be muted through a mute button
++	 * on the device. The driver is expected to read the button state and program the device
++	 * to mute/unmute audio at the hardware level.
 +	 */
-+	hid_info(hdev, "Registered DualSense controller hw_version=0x%08x fw_version=0x%08x\n",
-+			ds->base.hw_version, ds->base.fw_version);
++	btn_mic_state = !!(ds_report->buttons[2] & DS_BUTTONS2_MIC_MUTE);
++	if (btn_mic_state && !ds->last_btn_mic_state) {
++		spin_lock_irqsave(&ps_dev->lock, flags);
++		ds->update_mic_mute = true;
++		ds->mic_muted = !ds->mic_muted; /* toggle */
++		spin_unlock_irqrestore(&ps_dev->lock, flags);
 +
- 	return &ds->base;
- 
- err:
-@@ -1039,6 +1114,12 @@ static int ps_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 		}
- 	}
- 
-+	ret = devm_device_add_group(&hdev->dev, &ps_device_attribute_group);
-+	if (ret) {
-+		hid_err(hdev, "Failed to register sysfs nodes.\n");
-+		goto err_close;
++		/* Schedule updating of microphone state at hardware level. */
++		schedule_work(&ds->output_worker);
 +	}
++	ds->last_btn_mic_state = btn_mic_state;
 +
- 	return ret;
- 
- err_close:
+ 	/* Parse and calibrate gyroscope data. */
+ 	for (i = 0; i < ARRAY_SIZE(ds_report->gyro); i++) {
+ 		int raw_data = (short)le16_to_cpu(ds_report->gyro[i]);
 -- 
 2.29.2
 
