@@ -5,43 +5,43 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5C1C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCC5C433E9
 	for <linux-leds@archiver.kernel.org>; Wed, 17 Feb 2021 17:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D175564DCF
-	for <linux-leds@archiver.kernel.org>; Wed, 17 Feb 2021 17:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F778600CF
+	for <linux-leds@archiver.kernel.org>; Wed, 17 Feb 2021 17:35:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234504AbhBQRep (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 17 Feb 2021 12:34:45 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25376 "EHLO
+        id S234443AbhBQRe7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 17 Feb 2021 12:34:59 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:54699 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234505AbhBQRdh (ORCPT
+        by vger.kernel.org with ESMTP id S234519AbhBQRdn (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 17 Feb 2021 12:33:37 -0500
+        Wed, 17 Feb 2021 12:33:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613583130;
+        s=mimecast20190719; t=1613583136;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=L/SLrY6Dr+of38vaWIpXiDXossh0WQU+rKd8tehKfFM=;
-        b=RgGXo6qH91KwuQDs/n/jJOuP3cuq62DJ5pOuSPjFQEgkRMjHxK38rtHn4fm0+jaih6fBw9
-        GIgkurcHYw901V4e0jknn6rXm7Q9qA/UMzFvF4PJlhRPvIxTDAYSQrKtBLu06G57NgZm0H
-        6TTMBi4uu/XiPj+wO1X3JPTkg06QRUk=
+        bh=sDTOgUIEuEM7FQrqTpcMCOXLpfzqhPkgfJcNxhVfhqQ=;
+        b=OXQJH/ckAo1J1fEezrpsypEGu+NoblzfPvsd5Pa5YK3QQ47eqNvJxp9JnDNhCpzGSBPx3u
+        /T1d7PIOS0infv4JNtGKR7j6cC/rLGLRU7a3WRQ7bdDTlNiiQSk63WMg1NbXM31MU01wg5
+        V5YLcHaXdXi35NzOI0eT0xmjjXivQlw=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-589-Hx6TvH97OWiz_Mz-iszgTg-1; Wed, 17 Feb 2021 12:32:09 -0500
-X-MC-Unique: Hx6TvH97OWiz_Mz-iszgTg-1
+ us-mta-562-S1I1SHYVMda519shZ8CrPQ-1; Wed, 17 Feb 2021 12:32:12 -0500
+X-MC-Unique: S1I1SHYVMda519shZ8CrPQ-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9CF23192CC55;
-        Wed, 17 Feb 2021 17:32:06 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A646A192CC40;
+        Wed, 17 Feb 2021 17:32:10 +0000 (UTC)
 Received: from plouf.redhat.com (ovpn-116-25.ams2.redhat.com [10.36.116.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ED2DA60C61;
-        Wed, 17 Feb 2021 17:32:04 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0196F60C61;
+        Wed, 17 Feb 2021 17:32:08 +0000 (UTC)
 From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Roderick Colenbrander <roderick.colenbrander@sony.com>,
@@ -49,9 +49,9 @@ To:     Jiri Kosina <jikos@kernel.org>,
 Cc:     linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 01/11] Revert "HID: playstation: fix unused variable in ps_battery_get_property."
-Date:   Wed, 17 Feb 2021 18:31:48 +0100
-Message-Id: <20210217173158.3122868-2-benjamin.tissoires@redhat.com>
+Subject: [PATCH 03/11] Revert "HID: playstation: DualSense set LEDs to default player id."
+Date:   Wed, 17 Feb 2021 18:31:50 +0100
+Message-Id: <20210217173158.3122868-4-benjamin.tissoires@redhat.com>
 In-Reply-To: <20210217173158.3122868-1-benjamin.tissoires@redhat.com>
 References: <20210217173158.3122868-1-benjamin.tissoires@redhat.com>
 MIME-Version: 1.0
@@ -61,45 +61,153 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This reverts commit 3847d15b41ce ("HID: playstation: fix unused variable
-in ps_battery_get_property.")
+From: Roderick Colenbrander <roderick.colenbrander@sony.com>
+
+This reverts commit 05afe02ac24f ("HID: playstation: DualSense
+set LEDs to default player id.")
 
 There is currently an ongoing discussion on linux-leds LKML,
 and so to give us more room, we need to revert those related
-LEDs patches from linux-next.
-
-To have a cleaner merge with the new version, we also revert
-all patches on top of the LED ones.
+patches from linux-next.
 
 This is not a big deal, they are still not pushed to Linus.
 
+Signed-off-by: Roderick Colenbrander <roderick.colenbrander@sony.com>
 Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 ---
- drivers/hid/hid-playstation.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hid/hid-playstation.c | 70 +----------------------------------
+ 1 file changed, 1 insertion(+), 69 deletions(-)
 
 diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
-index 408b651174cf..cc93c16cc822 100644
+index 973c1fe61e8a..2d96785c397d 100644
 --- a/drivers/hid/hid-playstation.c
 +++ b/drivers/hid/hid-playstation.c
-@@ -391,7 +391,7 @@ static int ps_battery_get_property(struct power_supply *psy,
+@@ -9,7 +9,6 @@
+ #include <linux/crc32.h>
+ #include <linux/device.h>
+ #include <linux/hid.h>
+-#include <linux/idr.h>
+ #include <linux/input/mt.h>
+ #include <linux/leds.h>
+ #include <linux/led-class-multicolor.h>
+@@ -23,8 +22,6 @@
+ static DEFINE_MUTEX(ps_devices_lock);
+ static LIST_HEAD(ps_devices_list);
+ 
+-static DEFINE_IDA(ps_player_id_allocator);
+-
+ #define HID_PLAYSTATION_VERSION_PATCH 0x8000
+ 
+ /* Base class for playstation devices. */
+@@ -33,8 +30,6 @@ struct ps_device {
+ 	struct hid_device *hdev;
+ 	spinlock_t lock;
+ 
+-	uint32_t player_id;
+-
+ 	struct power_supply_desc battery_desc;
+ 	struct power_supply *battery;
  	uint8_t battery_capacity;
- 	int battery_status;
- 	unsigned long flags;
--	int ret = 0;
-+	int ret;
- 
- 	spin_lock_irqsave(&dev->lock, flags);
- 	battery_capacity = dev->battery_capacity;
-@@ -416,7 +416,7 @@ static int ps_battery_get_property(struct power_supply *psy,
- 		break;
- 	}
- 
--	return ret;
-+	return 0;
+@@ -326,24 +321,6 @@ static int ps_devices_list_remove(struct ps_device *dev)
+ 	return 0;
  }
  
- static int ps_device_register_battery(struct ps_device *dev)
+-static int ps_device_set_player_id(struct ps_device *dev)
+-{
+-	int ret = ida_alloc(&ps_player_id_allocator, GFP_KERNEL);
+-
+-	if (ret < 0)
+-		return ret;
+-
+-	dev->player_id = ret;
+-	return 0;
+-}
+-
+-static void ps_device_release_player_id(struct ps_device *dev)
+-{
+-	ida_free(&ps_player_id_allocator, dev->player_id);
+-
+-	dev->player_id = U32_MAX;
+-}
+-
+ static struct input_dev *ps_allocate_input_dev(struct hid_device *hdev, const char *name_suffix)
+ {
+ 	struct input_dev *input_dev;
+@@ -1179,29 +1156,6 @@ static int dualsense_reset_leds(struct dualsense *ds)
+ 	return 0;
+ }
+ 
+-static void dualsense_set_player_leds(struct dualsense *ds)
+-{
+-	/*
+-	 * The DualSense controller has a row of 5 LEDs used for player ids.
+-	 * Behavior on the PlayStation 5 console is to center the player id
+-	 * across the LEDs, so e.g. player 1 would be "--x--" with x being 'on'.
+-	 * Follow a similar mapping here.
+-	 */
+-	static const int player_ids[5] = {
+-		BIT(2),
+-		BIT(3) | BIT(1),
+-		BIT(4) | BIT(2) | BIT(0),
+-		BIT(4) | BIT(3) | BIT(1) | BIT(0),
+-		BIT(4) | BIT(3) | BIT(2) | BIT(1) | BIT(0)
+-	};
+-
+-	uint8_t player_id = ds->base.player_id % ARRAY_SIZE(player_ids);
+-
+-	ds->update_player_leds = true;
+-	ds->player_leds_state = player_ids[player_id];
+-	schedule_work(&ds->output_worker);
+-}
+-
+ static struct ps_device *dualsense_create(struct hid_device *hdev)
+ {
+ 	struct dualsense *ds;
+@@ -1310,15 +1264,6 @@ static struct ps_device *dualsense_create(struct hid_device *hdev)
+ 			goto err;
+ 	}
+ 
+-	ret = ps_device_set_player_id(ps_dev);
+-	if (ret) {
+-		hid_err(hdev, "Failed to assign player id for DualSense: %d\n", ret);
+-		goto err;
+-	}
+-
+-	/* Set player LEDs to our player id. */
+-	dualsense_set_player_leds(ds);
+-
+ 	return &ds->base;
+ 
+ err:
+@@ -1383,7 +1328,6 @@ static void ps_remove(struct hid_device *hdev)
+ 	struct ps_device *dev = hid_get_drvdata(hdev);
+ 
+ 	ps_devices_list_remove(dev);
+-	ps_device_release_player_id(dev);
+ 
+ 	hid_hw_close(hdev);
+ 	hid_hw_stop(hdev);
+@@ -1404,19 +1348,7 @@ static struct hid_driver ps_driver = {
+ 	.raw_event	= ps_raw_event,
+ };
+ 
+-static int __init ps_init(void)
+-{
+-	return hid_register_driver(&ps_driver);
+-}
+-
+-static void __exit ps_exit(void)
+-{
+-	hid_unregister_driver(&ps_driver);
+-	ida_destroy(&ps_player_id_allocator);
+-}
+-
+-module_init(ps_init);
+-module_exit(ps_exit);
++module_hid_driver(ps_driver);
+ 
+ MODULE_AUTHOR("Sony Interactive Entertainment");
+ MODULE_DESCRIPTION("HID Driver for PlayStation peripherals.");
 -- 
 2.29.2
 
