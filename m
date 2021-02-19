@@ -2,93 +2,80 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 950F3C433E6
-	for <linux-leds@archiver.kernel.org>; Fri, 19 Feb 2021 13:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCE0C433DB
+	for <linux-leds@archiver.kernel.org>; Fri, 19 Feb 2021 13:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F81D64E38
-	for <linux-leds@archiver.kernel.org>; Fri, 19 Feb 2021 13:33:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ED9B64ED2
+	for <linux-leds@archiver.kernel.org>; Fri, 19 Feb 2021 13:44:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229799AbhBSNdw (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 19 Feb 2021 08:33:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59492 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229947AbhBSNdv (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 19 Feb 2021 08:33:51 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D593C061786
-        for <linux-leds@vger.kernel.org>; Fri, 19 Feb 2021 05:33:11 -0800 (PST)
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lD5u9-0007P6-8A; Fri, 19 Feb 2021 14:33:09 +0100
-Received: from ukl by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lD5u8-0001aK-Pc; Fri, 19 Feb 2021 14:33:08 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Pavel Machek <pavel@ucw.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     kernel@pengutronix.de, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [PATCH v2 1/2] leds: trigger: Fix error path to not unlock the unlocked mutex
-Date:   Fri, 19 Feb 2021 14:33:06 +0100
-Message-Id: <20210219133307.4840-2-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210219133307.4840-1-u.kleine-koenig@pengutronix.de>
-References: <20210219133307.4840-1-u.kleine-koenig@pengutronix.de>
+        id S230306AbhBSNoA (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 19 Feb 2021 08:44:00 -0500
+Received: from mga01.intel.com ([192.55.52.88]:8794 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230299AbhBSNn7 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 19 Feb 2021 08:43:59 -0500
+IronPort-SDR: zFU465set7nEVqTudvGcSn+AvXkOd5/0sUGqhJ+JV2HUmSKVGgl5Q09Ux2IMTeovMiPHyDbyZo
+ SJCM/xxqRr6g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9899"; a="203127216"
+X-IronPort-AV: E=Sophos;i="5.81,189,1610438400"; 
+   d="scan'208";a="203127216"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2021 05:42:11 -0800
+IronPort-SDR: ClK7nKCC1NulLIONlpcICidg6Ynxo/EEYGHIufPxGJaaeBPafFG6nuKeA6I6Ai7mbltlmZCe6Q
+ YCRPUvHOeB+w==
+X-IronPort-AV: E=Sophos;i="5.81,189,1610438400"; 
+   d="scan'208";a="440260183"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2021 05:42:09 -0800
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1lD62o-006Dr5-O8; Fri, 19 Feb 2021 15:42:06 +0200
+Date:   Fri, 19 Feb 2021 15:42:06 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 6/7] leds: lp50xx: Add missed bits.h and convert to
+ BIT()
+Message-ID: <YC/ALoRpoov/JaQN@smile.fi.intel.com>
+References: <20210216155050.29322-1-andriy.shevchenko@linux.intel.com>
+ <20210216155050.29322-6-andriy.shevchenko@linux.intel.com>
+ <20210219112755.GN19207@duo.ucw.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210219112755.GN19207@duo.ucw.cz>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-ttyname is allocated before the mutex is taken, so it must not be
-unlocked in the error path.
+On Fri, Feb 19, 2021 at 12:27:55PM +0100, Pavel Machek wrote:
+> Hi!
+> 
+> > Add missed bits.h and convert to BIT() in lp50xx_set_banks().
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Thanks,
 
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Fixes: fd4a641ac88f ("leds: trigger: implement a tty trigger")
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/leds/trigger/ledtrig-tty.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Thanks!
 
-diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/ledtrig-tty.c
-index d2ab6ab080ac..af61281dc6a1 100644
---- a/drivers/leds/trigger/ledtrig-tty.c
-+++ b/drivers/leds/trigger/ledtrig-tty.c
-@@ -51,10 +51,8 @@ static ssize_t ttyname_store(struct device *dev,
- 
- 	if (size) {
- 		ttyname = kmemdup_nul(buf, size, GFP_KERNEL);
--		if (!ttyname) {
--			ret = -ENOMEM;
--			goto out_unlock;
--		}
-+		if (!ttyname)
-+			return -ENOMEM;
- 	} else {
- 		ttyname = NULL;
- 	}
-@@ -69,7 +67,6 @@ static ssize_t ttyname_store(struct device *dev,
- 
- 	trigger_data->ttyname = ttyname;
- 
--out_unlock:
- 	mutex_unlock(&trigger_data->mutex);
- 
- 	if (ttyname && !running)
+>	I applied whole series except this one...
+> 
+> << is well known C, it can stay.
+
+Shall we drop BIT() in the other place?
+Otherwise it is inconsistency.
+
+
 -- 
-2.29.2
+With Best Regards,
+Andy Shevchenko
+
 
