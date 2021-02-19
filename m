@@ -2,25 +2,26 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B88C433E0
-	for <linux-leds@archiver.kernel.org>; Fri, 19 Feb 2021 10:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E6AC433E0
+	for <linux-leds@archiver.kernel.org>; Fri, 19 Feb 2021 10:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C28464EB1
-	for <linux-leds@archiver.kernel.org>; Fri, 19 Feb 2021 10:56:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DA9C64EB1
+	for <linux-leds@archiver.kernel.org>; Fri, 19 Feb 2021 10:57:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230357AbhBSKz6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 19 Feb 2021 05:55:58 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:47370 "EHLO
+        id S229720AbhBSK5V (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 19 Feb 2021 05:57:21 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:47502 "EHLO
         jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230257AbhBSKyC (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 19 Feb 2021 05:54:02 -0500
+        with ESMTP id S230306AbhBSKzQ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 19 Feb 2021 05:55:16 -0500
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 2AAE61C0B8B; Fri, 19 Feb 2021 11:53:04 +0100 (CET)
-Date:   Fri, 19 Feb 2021 11:53:03 +0100
+        id BE18A1C0B80; Fri, 19 Feb 2021 11:54:31 +0100 (CET)
+Date:   Fri, 19 Feb 2021 11:54:31 +0100
 From:   Pavel Machek <pavel@ucw.cz>
 To:     Gene Chen <gene.chen.richtek@gmail.com>
 Cc:     jacek.anaszewski@gmail.com, robh+dt@kernel.org,
@@ -30,71 +31,52 @@ Cc:     jacek.anaszewski@gmail.com, robh+dt@kernel.org,
         gene_chen@richtek.com, Wilma.Wu@mediatek.com,
         shufan_lee@richtek.com, cy_huang@richtek.com,
         benjamin.chao@mediatek.com
-Subject: Re: [PATCH v13 5/5] leds: mt6360: Add LED driver for MT6360
-Message-ID: <20210219105303.GD19207@duo.ucw.cz>
+Subject: Re: [PATCH v13 2/5] leds: flash: Fix multicolor no-ops registration
+ by return 0
+Message-ID: <20210219105431.GE19207@duo.ucw.cz>
 References: <1608547554-6602-1-git-send-email-gene.chen.richtek@gmail.com>
- <1608547554-6602-6-git-send-email-gene.chen.richtek@gmail.com>
+ <1608547554-6602-3-git-send-email-gene.chen.richtek@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Km1U/tdNT/EmXiR1"
+        protocol="application/pgp-signature"; boundary="5xSkJheCpeK0RUEJ"
 Content-Disposition: inline
-In-Reply-To: <1608547554-6602-6-git-send-email-gene.chen.richtek@gmail.com>
+In-Reply-To: <1608547554-6602-3-git-send-email-gene.chen.richtek@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---Km1U/tdNT/EmXiR1
+--5xSkJheCpeK0RUEJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
+On Mon 2020-12-21 18:45:51, Gene Chen wrote:
 > From: Gene Chen <gene_chen@richtek.com>
 >=20
-> Add MT6360 LED driver include 2-channel Flash LED with torch/strobe mode,
-> 3-channel RGB LED support Register/Flash/Breath Mode, and 1-channel for
-> moonlight LED.
+> Fix multicolor no-ops registration by return 0,
+> and move the same registration functions outside of #ifdef block.
+>=20
+> Signed-off-by: Gene Chen <gene_chen@richtek.com>
+> Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-What kind of ninja mutant hardware is this?
-
-Can we make this go to  drivers/leds/flash?
-
-> +static int mt6360_flash_brightness_set(struct led_classdev_flash *fl_cde=
-v, u32 brightness)
-> +{
-> +	/*
-> +	 * Due to the current spike when turning on flash, let brightness to be=
- kept by framework.
-> +	 * This empty function is used to prevent led_classdev_flash register o=
-ps check failure.
-> +	 */
-
-Please stick to 80 columns.
-
-> +static int mt6360_init_common_properties(struct mt6360_led *led, struct =
-led_init_data *init_data)
-> +{
-> +	const char * const states[] =3D { "off", "keep", "on" };
-
-No need for space between * and const.
+I applied the first two.
 
 Best regards,
 									Pavel
-
+								=09
 --=20
 http://www.livejournal.com/~pavelmachek
 
---Km1U/tdNT/EmXiR1
+--5xSkJheCpeK0RUEJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYC+YjwAKCRAw5/Bqldv6
-8renAJ0fPFfR2F+/nrLVIeNTWJMfpcfluwCgknpgj5y/xjX67RIYZ+WE4vP0BqA=
-=J0FT
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYC+Y5wAKCRAw5/Bqldv6
+8qb1AJ9XxeNlZH+EPgrXOniC/RLIiLZs7QCgxLA9z8wbAPEn/KIJHJ6l4gOaNmM=
+=5iwm
 -----END PGP SIGNATURE-----
 
---Km1U/tdNT/EmXiR1--
+--5xSkJheCpeK0RUEJ--
