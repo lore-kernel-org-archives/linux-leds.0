@@ -2,134 +2,131 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E76C433E0
-	for <linux-leds@archiver.kernel.org>; Tue, 23 Feb 2021 09:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80171C4332E
+	for <linux-leds@archiver.kernel.org>; Tue, 23 Feb 2021 17:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF0DE64DA1
-	for <linux-leds@archiver.kernel.org>; Tue, 23 Feb 2021 09:56:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FD3F64EC8
+	for <linux-leds@archiver.kernel.org>; Tue, 23 Feb 2021 17:01:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232088AbhBWJ4T (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 23 Feb 2021 04:56:19 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:43522 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232069AbhBWJyM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 23 Feb 2021 04:54:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614073958;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XBaCiawHuHxF7z3D+NjLyiPcqq6H/HI2WrKdgh3jyJY=;
-        b=b9DLPeMD6atuMkVs1whn1qAYfmZoo9efvukfnoiULITbaizIeTVq2toOWh3dLOSRDi0hQk
-        x3+0MbfLax2PJaZ68RYYyQhEeW1679CTNC15Y6isvabNUJW6ZfKulXs+bmmQ24YLjP4lQ8
-        xDdEOuo0A53odgoBbRwDsj+msT1lpU4=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-464-X0XkvfoyMm2WqJ4jCsOuEQ-1; Tue, 23 Feb 2021 04:52:37 -0500
-X-MC-Unique: X0XkvfoyMm2WqJ4jCsOuEQ-1
-Received: by mail-ej1-f71.google.com with SMTP id yd24so5119854ejb.9
-        for <linux-leds@vger.kernel.org>; Tue, 23 Feb 2021 01:52:36 -0800 (PST)
+        id S233682AbhBWRBG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 23 Feb 2021 12:01:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33398 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233674AbhBWRBA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 23 Feb 2021 12:01:00 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3EF0C06178B;
+        Tue, 23 Feb 2021 09:00:19 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id ds5so2362086pjb.2;
+        Tue, 23 Feb 2021 09:00:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+I+A05vCm3IG7TRzAH4tvspVQ7ImjwYeEeSSkYCANAs=;
+        b=R1t58opIvMu6BVczn3RijvvqcNo0e2Ug758tJd6DCw7LwJTaya7RiMzn4CeIgtjZ0Z
+         ES2khhXQ4Sge4r4D+IVLQMLoA/8TRJKFPv7ZwWs2KdrX24TRmWWFg1gYdHIggMXRgcFZ
+         gS6SH3Fefq8qtkJZwoWp1V4iEzjz9uQ6Lru0cFl3GL+7W2ED1zzDCTbWW5J45BcpXPYe
+         Cy5TOPbe0tTDnblbIHd2HShCXcramRxfGsXeeKBRbIW9eM0pGjryZ4YeIU7qeouZxK/R
+         24ZZk4RAKaTjutVrFB5/9Hx5l7og4ViCbHobzIBTX9WAEx4qMNPTjAfMtGsbKPR4XlFV
+         P/bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=XBaCiawHuHxF7z3D+NjLyiPcqq6H/HI2WrKdgh3jyJY=;
-        b=gzlng66xRuYygSO2PY1beMLkYrv2IJbL0QO/icCFJ6abrvJlQEX1t/5wxnvh4TsyM7
-         1QCbrZo9s+OhBE9pWpGjkMsZF95sY3tOjHAvV5/rLYFTjw1kkyLIhtdnjkLEE/Pj2DDW
-         3ld9XDMQ8cah6WThPzxhYxZsTpOUJnCVvNiyPRjZKM0uZsrbj8O7lIhvEz7JEB+G4t7K
-         LJLQNOcELzAHafTLiZ0In83R/cUCw0BnGvSrmrSDg3uQdQaIyDSYYE9ofo/dWDK2xyh2
-         J9ZrL7eKjgQ3a+2Za0PMOuv22hRwdbs4EKqlXB4ECzkcPrV5HwW8qs0cN7MsobYR0hDE
-         mn8A==
-X-Gm-Message-State: AOAM531P1zhVwOfCuHwmIfNI4XNh9rnU377lQjvku5RVw1Ciftyl3XYN
-        jF1hgtPmmERbpGHzrNGxv1RUykJvG1dRTA/CgVBkBh2FBmKXcbmbrL/Z15FsIL2uGLDQDk2ZLhV
-        fzU0jPbZST/rqAg8vlt4b2A==
-X-Received: by 2002:a05:6402:893:: with SMTP id e19mr17439894edy.206.1614073955758;
-        Tue, 23 Feb 2021 01:52:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJweuDHvamB9xP8reZNw7UlHYvMPZ07GR1VWJy1ZAQV5CHfJXceMQoMzDN8k5sn6ryEOwgoLwg==
-X-Received: by 2002:a05:6402:893:: with SMTP id e19mr17439880edy.206.1614073955590;
-        Tue, 23 Feb 2021 01:52:35 -0800 (PST)
-Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
-        by smtp.gmail.com with ESMTPSA id bn2sm12402271ejb.35.2021.02.23.01.52.34
+        bh=+I+A05vCm3IG7TRzAH4tvspVQ7ImjwYeEeSSkYCANAs=;
+        b=dEurHKRbP8gnzrJ7n5yrhRKUKHnPeFBlc5oyvL81wHgMMmDDrRRtGB6Ux6qmKV+9DU
+         OLvxiC5pnAUhq6Wx2RA1vawKcCb0jVQ9MvdfjHG7AbIUiEsH/bf+l5GUJlXLwDctBErE
+         dvg15F7bN35bFXZnnftNAjAUnqYLTIEcc9EIpSvthOD7NFMiqYpRj89JVHk3+6jQF6Y8
+         0A91j93AicJS/HD140SzBFJVbDXAfUtwDqiRQAPd2nu3JWQMfpa9jLwQ4Sm6cj+DGIru
+         sMmmbHaWQMheyS7ldgmbZFcD+HiYDQ2StF3XV1UFS71yJL/l1s1imDa4f8/bJ+DeFTd7
+         tpag==
+X-Gm-Message-State: AOAM532t/wYt2DHFpCvgvxkUEzdiHq/gHQ8TEBlp7ORue4ua+WHccnwD
+        90dGhxyu2ne1LYp4lzswLuEJ+LhPv4o=
+X-Google-Smtp-Source: ABdhPJyFe1yeJcpb80fsxw7qM8DuCagN1Qd/QSqAQAfueCVDENRijEsLnCDcU8KV3iVVn+xMqeRIzg==
+X-Received: by 2002:a17:90a:7f8a:: with SMTP id m10mr30136637pjl.102.1614099618881;
+        Tue, 23 Feb 2021 09:00:18 -0800 (PST)
+Received: from [10.230.29.30] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 8sm4157654pjl.55.2021.02.23.09.00.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Feb 2021 01:52:35 -0800 (PST)
-Subject: Re: [PATCH v2] leds: trigger: audio: Add an activate callback to
- ensure the initial brightness is set
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>,
-        linux-leds@vger.kernel.org, alsa-devel@alsa-project.org,
-        Takashi Iwai <tiwai@suse.de>
-References: <20210221115208.105203-1-hdegoede@redhat.com>
- <20210223091230.GI9750@amd>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <6d5f521e-0484-cb22-fde5-8a6e133075a5@redhat.com>
-Date:   Tue, 23 Feb 2021 10:52:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Tue, 23 Feb 2021 09:00:18 -0800 (PST)
+Subject: Re: [PATCH 1/2] leds: bcm6328: improve write and read functions
+To:     =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc:     Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210223081732.9362-1-noltari@gmail.com>
+ <20210223081732.9362-2-noltari@gmail.com> <20210223083449.GA9750@amd>
+ <3826ACDE-EFF2-4CC5-82EE-2DBC991CF996@gmail.com> <20210223085819.GB9750@amd>
+ <F349F1C2-4D4F-4BF7-9ADC-6E879197405B@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <a2da8ee6-a941-de04-3d45-56fb6cae596a@gmail.com>
+Date:   Tue, 23 Feb 2021 09:00:16 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <20210223091230.GI9750@amd>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <F349F1C2-4D4F-4BF7-9ADC-6E879197405B@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi,
 
-On 2/23/21 10:12 AM, Pavel Machek wrote:
-> Hi!
+
+On 2/23/2021 1:05 AM, Álvaro Fernández Rojas wrote:
 > 
->> Some 2-in-1s with a detachable (USB) keyboard(dock) have mute-LEDs in
->> the speaker- and/or mic-mute keys on the keyboard.
->>
->> Examples of this are the Lenovo Thinkpad10 tablet (with its USB kbd-dock)
->> and the HP x2 10 series.
->>
->> The detachable nature of these keyboards means that the keyboard and
->> thus the mute LEDs may show up after the user (or userspace restoring
->> old mixer settings) has muted the speaker and/or mic.
->>
->> Current LED-class devices with a default_trigger of "audio-mute" or
->> "audio-micmute" initialize the brightness member of led_classdev with
->> ledtrig_audio_get() before registering the LED.
->>
->> This makes the software state after attaching the keyboard match the
->> actual audio mute state, e.g. cat /sys/class/leds/foo/brightness will
->> show the right value.
 > 
-> Makes sense.
+>> El 23 feb 2021, a las 9:58, Pavel Machek <pavel@ucw.cz> escribió:
+>>
+>> Hi!
+>>
+>>>>> This is proven to work in BMIPS BE/LE and ARM BE/LE, as used in bcm2835-rng
+>>>>> and bcmgenet drivers.
+>>>>> Both should also be inline functions.
+>>>>
+>>>>
+>>>>
+>>>>> -#ifdef CONFIG_CPU_BIG_ENDIAN
+>>>>> -	iowrite32be(data, reg);
+>>>>> -#else
+>>>>> -	writel(data, reg);
+>>>>> -#endif
+>>>>> +	/* MIPS chips strapped for BE will automagically configure the
+>>>>> +	 * peripheral registers for CPU-native byte order.
+>>>>> +	 */
+>>>>
+>>>> Bad comment style.
+>>>
+>>> I just wanted to copy the same comment as the one in bcm2835-rng and bcmgenet…
+>>> https://github.com/torvalds/linux/blob/3b9cdafb5358eb9f3790de2f728f765fef100731/drivers/char/hw_random/bcm2835-rng.c#L42-L60
+>>> https://github.com/torvalds/linux/blob/3b9cdafb5358eb9f3790de2f728f765fef100731/drivers/net/ethernet/broadcom/genet/bcmgenet.c#L71-L88
+>>>
+>>
+>> Yeah, but ideally you should not be copying comments; there should be
+>> one central place which does it and does it right.
 > 
->> +++ b/drivers/leds/trigger/ledtrig-audio.c
->> @@ -6,10 +6,33 @@
->>  #include <linux/kernel.h>
->>  #include <linux/leds.h>
->>  #include <linux/module.h>
->> +#include "../leds.h"
->>  
->> -static struct led_trigger *ledtrig_audio[NUM_AUDIO_LEDS];
->>  static enum led_brightness audio_state[NUM_AUDIO_LEDS];
->>  
->> +static int ledtrig_audio_mute_activate(struct led_classdev *led_cdev)
->> +{
->> +	led_set_brightness_nosleep(led_cdev, audio_state[LED_AUDIO_MUTE]);
->> +	return 0;
->> +}
-> 
-> Is mute_activate called from atomic context?
+> I’m open to suggestions :).
+> Which central place would be a good place for you?
 
-All the other ledtrig-foo.c activate callbacks use led_set_brightness_nosleep(),
-so yes I would assume so (I did not check, I assumed the others have good
-reasons to do this).
+I did consider creating an include/linux/brcm/brcm_io.h header or
+something like that but I am really not sure what the benefit would be.
 
-Regards,
+As far as using _relaxed() this is absolutely correct because the bus
+logic that connects the CPU to its on-chip registers is non re-ordering
+non posted. That is true on the MIPS BE/LE and ARM when configured in LE
+or BE.
 
-Hans
-
+We need the swapping for ARM because when running in ARM BE32, the data
+is going to be in the host CPU endian, but the register bus is hard
+wired to little endian.
+-- 
+Florian
