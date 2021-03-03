@@ -2,29 +2,28 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FF0C433DB
-	for <linux-leds@archiver.kernel.org>; Thu,  4 Mar 2021 00:08:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAACFC433E0
+	for <linux-leds@archiver.kernel.org>; Thu,  4 Mar 2021 00:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B99B64F8F
-	for <linux-leds@archiver.kernel.org>; Thu,  4 Mar 2021 00:08:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB3E864FCE
+	for <linux-leds@archiver.kernel.org>; Thu,  4 Mar 2021 00:08:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233328AbhCCX7w (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 3 Mar 2021 18:59:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48952 "EHLO
+        id S234423AbhCCX7x (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 3 Mar 2021 18:59:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386182AbhCCRq7 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 3 Mar 2021 12:46:59 -0500
+        with ESMTP id S233368AbhCCTgH (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 3 Mar 2021 14:36:07 -0500
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [IPv6:2a00:da80:fff0:2::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 450F5C061756;
-        Wed,  3 Mar 2021 09:46:15 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D41FC061760;
+        Wed,  3 Mar 2021 11:35:26 -0800 (PST)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id F25D51C0B8E; Wed,  3 Mar 2021 18:40:40 +0100 (CET)
-Date:   Wed, 3 Mar 2021 18:40:40 +0100
+        id 1509A1C0B88; Wed,  3 Mar 2021 20:31:35 +0100 (CET)
+Date:   Wed, 3 Mar 2021 20:31:34 +0100
 From:   Pavel Machek <pavel@ucw.cz>
 To:     Henning Schild <henning.schild@siemens.com>
 Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
@@ -39,64 +38,71 @@ Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
         Hans de Goede <hdegoede@redhat.com>
 Subject: Re: [PATCH 2/4] leds: simatic-ipc-leds: add new driver for Siemens
  Industial PCs
-Message-ID: <20210303174040.GA3305@amd>
+Message-ID: <20210303193134.GB8720@amd>
 References: <20210302163309.25528-1-henning.schild@siemens.com>
  <20210302163309.25528-3-henning.schild@siemens.com>
  <20210302205452.GA32573@duo.ucw.cz>
- <20210303183714.62c0f06f@md1za8fc.ad001.siemens.net>
+ <20210303141052.30641e6b@md1za8fc.ad001.siemens.net>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+        protocol="application/pgp-signature"; boundary="uQr8t48UFsdbeI+V"
 Content-Disposition: inline
-In-Reply-To: <20210303183714.62c0f06f@md1za8fc.ad001.siemens.net>
+In-Reply-To: <20210303141052.30641e6b@md1za8fc.ad001.siemens.net>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---ibTvN161/egqYuK8
+--uQr8t48UFsdbeI+V
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> > > index 2a698df9da57..c15e1e3c5958 100644
-> > > --- a/drivers/leds/Makefile
-> > > +++ b/drivers/leds/Makefile
-> > > @@ -93,6 +93,7 @@ obj-$(CONFIG_LEDS_TURRIS_OMNIA)		+=3D
-> > > leds-turris-omnia.o obj-$(CONFIG_LEDS_WM831X_STATUS)	+=3D
-> > > leds-wm831x-status.o obj-$(CONFIG_LEDS_WM8350)		+=3D
-> > > leds-wm8350.o obj-$(CONFIG_LEDS_WRAP)			+=3D
-> > > leds-wrap.o +obj-$(CONFIG_LEDS_SIEMENS_SIMATIC_IPC)	+=3D
-> > > simatic-ipc-leds.o =20
+> > > +static struct simatic_ipc_led simatic_ipc_leds_io[] =3D {
+> > > +	{1 << 15, "simatic-ipc:green:run-stop"},
+> > > +	{1 << 7,  "simatic-ipc:yellow:run-stop"},
+> > > +	{1 << 14, "simatic-ipc:red:error"},
+> > > +	{1 << 6,  "simatic-ipc:yellow:error"},
+> > > +	{1 << 13, "simatic-ipc:red:maint"},
+> > > +	{1 << 5,  "simatic-ipc:yellow:maint"},
+> > > +	{0, ""},
+> > > +}; =20
 > >=20
-> > Let's put this into drivers/leds/simple. You'll have to create it.
+> > Please use names consistent with other systems, this is user
+> > visible. If you have two-color power led, it should be
+> > :green:power... See include/dt-bindings/leds/common.h .
 >=20
-> Can you please go into detail why? We plan to add more devices in the
-> future, which might in fact make this a little less simple. But we can
-> discuss that when the time is right and start with simple.
+> Well we wanted to pick names that are printed on the devices and would
+> like to stick to those. Has been a discussion ...
+> Can we have symlinks to have multiple names per LED?
 
-There's already way too many drivers in the directory, and your driver
-is very different from drivers for camera flash (for example).
+No symlinks. We plan to have command line tool to manipulate LEDs,
+aliases might be possible there.
+
+> How strong would you feel about us using our names?
+
+Strongly. :-)
+
+Do you have a picture how the leds look like?
 
 Best regards,
-								Pavel
+							Pavel
 --=20
 http://www.livejournal.com/~pavelmachek
 
---ibTvN161/egqYuK8
+--uQr8t48UFsdbeI+V
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAmA/yhgACgkQMOfwapXb+vJwawCff7t7AFisGfmOn1cjlZXTC+KH
-ZiYAni5b8V20pcW5uaex2w2HX/rRX3RA
-=W9Dz
+iEYEARECAAYFAmA/5BYACgkQMOfwapXb+vIK9wCfQwnYrmkVRInVpriJCbZaZoMW
+uVcAn0kh4wxyuJCBuz8Fi4tylz+NNX38
+=INzV
 -----END PGP SIGNATURE-----
 
---ibTvN161/egqYuK8--
+--uQr8t48UFsdbeI+V--
