@@ -2,126 +2,103 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD816C433DB
-	for <linux-leds@archiver.kernel.org>; Thu, 18 Mar 2021 12:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C19E7C433DB
+	for <linux-leds@archiver.kernel.org>; Thu, 18 Mar 2021 19:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB8F964F6E
-	for <linux-leds@archiver.kernel.org>; Thu, 18 Mar 2021 12:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8605364EE1
+	for <linux-leds@archiver.kernel.org>; Thu, 18 Mar 2021 19:53:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231368AbhCRMp7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 18 Mar 2021 08:45:59 -0400
-Received: from m42-10.mailgun.net ([69.72.42.10]:35064 "EHLO
-        m42-10.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231582AbhCRMpt (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 18 Mar 2021 08:45:49 -0400
-X-Greylist: delayed 305 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Mar 2021 08:45:49 EDT
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1616071549; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=sXAGynqSLidMzR64Daok0xr8LMCoEyfeck8DvZcB7b4=; b=U7E/R9DUY2Z2o18UjQfJfKZw0jXoB29gSZHCWAa00iB4ZALDad2xHxGHGPzvO4dAlTHmshTN
- ST4dtuEU+QzAEiofOqIf+OzCHkSSFxwe3XAO3E7pm3JfNlNwCnVCMmFGD2fMtIXkRKYMOlEe
- Wo3J5jtthpl65UVYRQI+d5J66hk=
-X-Mailgun-Sending-Ip: 69.72.42.10
-X-Mailgun-Sid: WyJkODczOCIsICJsaW51eC1sZWRzQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
- 60534a364db3bb68012ff844 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 18 Mar 2021 12:40:22
- GMT
-Sender: kgunda=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id DA017C433ED; Thu, 18 Mar 2021 12:40:21 +0000 (UTC)
-Received: from kgunda-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kgunda)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AE246C43462;
-        Thu, 18 Mar 2021 12:40:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE246C43462
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kgunda@codeaurora.org
-From:   Kiran Gunda <kgunda@codeaurora.org>
-To:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
-        lee.jones@linaro.org, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
-        jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        phone-devel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc:     Kiran Gunda <kgunda@codeaurora.org>
-Subject: [PATCH V5 2/2] backlight: qcom-wled: Correct the sync_toggle sequence
-Date:   Thu, 18 Mar 2021 18:09:40 +0530
-Message-Id: <1616071180-24493-3-git-send-email-kgunda@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1616071180-24493-1-git-send-email-kgunda@codeaurora.org>
-References: <1616071180-24493-1-git-send-email-kgunda@codeaurora.org>
+        id S232923AbhCRTwh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 18 Mar 2021 15:52:37 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:32771 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229958AbhCRTwH (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 18 Mar 2021 15:52:07 -0400
+Received: from [192.168.1.155] ([77.4.36.33]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MgwBv-1lufP905V7-00hQZc; Thu, 18 Mar 2021 20:51:50 +0100
+Subject: Re: [PATCH v2] leds: apu: extend support for PC Engines APU1 with
+ newer firmware
+To:     Andreas Eberlein <foodeas@aeberlein.de>,
+        Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org, post@lespocky.de
+References: <20210216133028.4025-1-foodeas@aeberlein.de>
+ <c7eebbb6-df0c-51df-7701-ecb8f6543466@metux.net>
+ <20210306165101.fnv6ytqofbolpf6s@falbala.internal.home.lespocky.de>
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+Message-ID: <798a0265-7f06-4894-7f84-64db6f236bcd@metux.net>
+Date:   Thu, 18 Mar 2021 20:51:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
+MIME-Version: 1.0
+In-Reply-To: <20210306165101.fnv6ytqofbolpf6s@falbala.internal.home.lespocky.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:+bxIoX9ov4yiSVwImzHj09VyZcNPfr/TN9tv/1ZJyuvm1sVy44m
+ LIxKaLhUnIidc2PMjXyP0/UY7ZVr29HjL5Y3Bn6k7SfQllsPDzPsQo27WU21mX6ltzy4LRV
+ rLllmhBoPJxNoJ0sIQ3bXAFScaGQcp3JikNdaAM5ulNoyvD16QbXC9rsha3wCmN1BRXhnE8
+ 3ifS2d9r/PlHNcHFJi5Og==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ZWcJYdXul5c=:Uz3yFNBC/c23mmVRznUkSy
+ JHY7rslghyaUXjFaH0HmFezSUFOxLvNy5ACieLZyfsTx+3usCMYhcBiH7DgRkSWgdRj1j47B9
+ OtCuF4dW2rHwIJSCTs+qVIU2kT0QkBNGDRJVUH1UPlElsDgtHzJjf+s5fy8Ccu0vBt5OVxhin
+ Jcfp8BI3jcOqQEyNXc9yaI2MxpbMpEZgh3HYgUPDUCRik+WII8weuKiJbRSYuOeNnowntWhIl
+ gOX3BzcWN7c0n3rm/OJ2qWbRlnRLhWaLOE3HGs5+no82xLk7WY2eOzcE9Bn9ZKGLnlxWl1mNY
+ h/RtlzNP2BO6ssG3ijlphHRRVRYt28uLG4FraehgVouzZ3EadVPIFmKpgUi5dIG5DRBNh6Z3h
+ lRgcZyeIVfPP+A+6qgAqZe9cEulx1PeFnblYkKx3mZHE8bT8YdtN9AifOQDlj
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-As per the current implementation, after FSC (Full Scale Current)
-and brightness update the sync bits are set-then-cleared.
-But, the FSC and brightness sync takes place when the sync bits are
-set (e.g. on a rising edge). So the hardware team recommends a
-clear-then-set approach in order to guarantee such a transition
-regardless of the previous register state.
+On 06.03.21 17:51, Alexander Dahl wrote:
 
-Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
----
- drivers/video/backlight/qcom-wled.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Hi,
 
-diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-index e9fbe24..7c02f87 100644
---- a/drivers/video/backlight/qcom-wled.c
-+++ b/drivers/video/backlight/qcom-wled.c
-@@ -337,13 +337,13 @@ static int wled3_sync_toggle(struct wled *wled)
- 
- 	rc = regmap_update_bits(wled->regmap,
- 				wled->sink_addr + WLED3_SINK_REG_SYNC,
--				mask, mask);
-+				mask, WLED3_SINK_REG_SYNC_CLEAR);
- 	if (rc < 0)
- 		return rc;
- 
- 	rc = regmap_update_bits(wled->regmap,
- 				wled->sink_addr + WLED3_SINK_REG_SYNC,
--				mask, WLED3_SINK_REG_SYNC_CLEAR);
-+				mask, mask);
- 
- 	return rc;
- }
-@@ -353,17 +353,17 @@ static int wled5_mod_sync_toggle(struct wled *wled)
- 	int rc;
- 	u8 val;
- 
--	val = (wled->cfg.mod_sel == MOD_A) ? WLED5_SINK_REG_SYNC_MOD_A_BIT :
--					     WLED5_SINK_REG_SYNC_MOD_B_BIT;
- 	rc = regmap_update_bits(wled->regmap,
- 				wled->sink_addr + WLED5_SINK_REG_MOD_SYNC_BIT,
--				WLED5_SINK_REG_SYNC_MASK, val);
-+				WLED5_SINK_REG_SYNC_MASK, 0);
- 	if (rc < 0)
- 		return rc;
- 
-+	val = (wled->cfg.mod_sel == MOD_A) ? WLED5_SINK_REG_SYNC_MOD_A_BIT :
-+					     WLED5_SINK_REG_SYNC_MOD_B_BIT;
- 	return regmap_update_bits(wled->regmap,
- 				  wled->sink_addr + WLED5_SINK_REG_MOD_SYNC_BIT,
--				  WLED5_SINK_REG_SYNC_MASK, 0);
-+				  WLED5_SINK_REG_SYNC_MASK, val);
- }
- 
- static int wled_ovp_fault_status(struct wled *wled, bool *fault_set)
+> If you give me a hint, which tree or patchset should be tested, and
+> some hints what should be tested, I can try.
+
+haven't written anything for apu1 yet (as I dont have one), but I wrote
+the drivers for apu2/3/4.
+
+My idea (which I never actually started on) was writing a separate gpio
+driver (not LED) for the old Soc in apu1 and add instantiation w/ 
+leds-gpio, keys, etc, into the pcengines-apu2 driver.
+
+> Thanks for that work.  I have to admit someone from the fli4l linux
+> router distribution team also wrote LED and button drivers for the APU
+> boards, but never managed to upstream those. :-/
+> 
+> If someone is interested, those are spread in our Subversion
+> repository, but the apu drivers are here:
+> 
+> https://repo.nettworks.org/svn/fli4l/branches/4.0/trunk/src/packages/src/src/fli4l/hwsupp/pcengines-apu/
+
+hmm, maybe I could pick up pieces for the FCH functionality that's
+not supported yet (eg. wdt) ... not sure how much they differ between
+different SoC versions.
+
+> Personally, I'd rather have mainline drivers for all that boards.
+> Don't know if it still makes sense for the older wrap or alix boards,
+> though.  I also have those lying around. ;-)
+
+Well, somebody has to make his hands dirty, write those drivers, bring
+them to mainline, and maintain them.
+
+
+--mtx
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
- a Linux Foundation Collaborative Project
-
+-- 
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
