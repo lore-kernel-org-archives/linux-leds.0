@@ -2,105 +2,85 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAFBC433E9
-	for <linux-leds@archiver.kernel.org>; Thu, 18 Mar 2021 12:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E6EC433DB
+	for <linux-leds@archiver.kernel.org>; Thu, 18 Mar 2021 12:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB6F664F4D
-	for <linux-leds@archiver.kernel.org>; Thu, 18 Mar 2021 12:41:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93ECC64F6A
+	for <linux-leds@archiver.kernel.org>; Thu, 18 Mar 2021 12:41:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230204AbhCRMkg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 18 Mar 2021 08:40:36 -0400
-Received: from a0.mail.mailgun.net ([198.61.254.59]:51031 "EHLO
-        a0.mail.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231278AbhCRMkY (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 18 Mar 2021 08:40:24 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1616071224; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=s6VV7GTQncp21xvrXYojy8gPu45408PlPCy0aMnUmSc=; b=kYoE3XcxdN6UO4SKexKc7npnqykFB1crTNChe04OvrtM4cKPegM6vwogFEjRq8ZSqd004nrm
- TqmCoaOCYPNcAouprZr4a514kI14GkuFZLBKg2mpbjCrP9QfdsPHtWxSFxjQcJ6V1Nkd9NEw
- /VsC4tvKf9gWZ1eM8L9dpBR/VJw=
-X-Mailgun-Sending-Ip: 198.61.254.59
-X-Mailgun-Sid: WyJkODczOCIsICJsaW51eC1sZWRzQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
- 60534a2a3f267701a4e26bd3 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 18 Mar 2021 12:40:10
- GMT
-Sender: kgunda=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 1A5ADC4346E; Thu, 18 Mar 2021 12:40:09 +0000 (UTC)
-Received: from kgunda-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kgunda)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 508BCC433C6;
-        Thu, 18 Mar 2021 12:40:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 508BCC433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kgunda@codeaurora.org
-From:   Kiran Gunda <kgunda@codeaurora.org>
-To:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
-        lee.jones@linaro.org, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
-        jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        phone-devel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, Kiran Gunda <kgunda@codeaurora.org>
-Subject: [PATCH V5 0/2] Fix WLED FSC Sync and brightness Sync settings
-Date:   Thu, 18 Mar 2021 18:09:38 +0530
-Message-Id: <1616071180-24493-1-git-send-email-kgunda@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S231250AbhCRMlK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 18 Mar 2021 08:41:10 -0400
+Received: from mail.thorsis.com ([92.198.35.195]:59046 "EHLO mail.thorsis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231201AbhCRMlJ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Thu, 18 Mar 2021 08:41:09 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.thorsis.com (Postfix) with ESMTP id DD7991C61;
+        Thu, 18 Mar 2021 13:41:07 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
+Received: from mail.thorsis.com ([127.0.0.1])
+        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id WqZl_3cqu2bQ; Thu, 18 Mar 2021 13:41:07 +0100 (CET)
+Received: by mail.thorsis.com (Postfix, from userid 109)
+        id AFA98282A; Thu, 18 Mar 2021 13:41:07 +0100 (CET)
+Date:   Thu, 18 Mar 2021 13:40:58 +0100 (CET)
+From:   Alexander Dahl <ada@thorsis.com>
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Henning Schild <henning.schild@siemens.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org,
+        Srikanth Krishnakar <skrishnakar@gmail.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Gerd Haeussler <gerd.haeussler.ext@siemens.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mark Gross <mgross@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Pavel Machek <pavel@ucw.cz>
+Message-ID: <1819093001.11427.1616071258857@seven.thorsis.com>
+In-Reply-To: <e2c6bec5-1f8e-c69a-9219-5c0a9f63ba56@metux.net>
+References: <20210315095710.7140-1-henning.schild@siemens.com>
+ <20210315095710.7140-3-henning.schild@siemens.com>
+ <CAHp75VcBdR8xqfWqKe+DwGAUYByVL7SBK0p7tHcKPs7m4Ay1iw@mail.gmail.com>
+ <e2c6bec5-1f8e-c69a-9219-5c0a9f63ba56@metux.net>
+Subject: Re: [PATCH v2 2/4] leds: simatic-ipc-leds: add new driver for
+ Siemens Industial PCs
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Originating-Client: open-xchange-appsuite
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This patch series has the following two WLED fixes
- 1. As per the current implementation, for WLED5, after
-    the FSC (Full Scale Current) update the driver is incorrectly
-    toggling the MOD_SYNC register instead of toggling the SYNC register.
-    The patch 1/2 fixes this by toggling the SYNC register after
-    FSC update.
+Hei hei,
 
- 2. Currently, the sync bits are set-then-cleared after FSC and brightness
-    update. As per hardware team recommendation the FSC and brightness sync
-    takes place from clear-then-set transition of the sync bits.
-    The patch 2/2 fies this issue.
+> Enrico Weigelt, metux IT consult <lkml@metux.net> hat am 18.03.2021 11:27 geschrieben:
+> 
+>  
+> On 15.03.21 11:48, Andy Shevchenko wrote:
+> 
+> Hi,
+> 
+> > I have a question, why we can't provide a GPIO driver which is already
+> > in the kernel and, with use of the patch series I sent, to convert
+> > this all magic to GPIO LEDs as it's done for all normal cases?
+> 
+> Do we alread have a generic led driver that for cases that just
+> set/clear bits in some mem/io location ? If not, that would be really
+> great to have.
 
-changes from V4:
-  1. Rebased this patch series on the below patch.
-     "backlight-qcom-wled-Use-sink_addr-for-sync-toggle.patch".
+Yes, there is. Look out for compatible "register-bit-led" in device tree. That's from driver in drivers/leds/leds-syscon.c and you can use it inside a syscon node in dts.
 
-Changes from V3:
-  1. Updated the patch description as per Daneil's suggestion.
-  2. Added Daniel's "Reviewed-by" tag for patch 2/2.
-  3. Updated the cover letter to use "set" and "clear" properly.
- 
-Changes from V2:
-  1. Added Daniel's "Reviewed-by" tag for patch 1/2.
-  2. Updated the patch 2/2 description with "set" and "clear"
-     terminology instead of "1" and "0".
-  3. Updated the cover letter with "set" and "clear" terminology
-     instead of "1" and "0".
+It assumes one bit per LED.
 
-Changes from V1:
-  1. Updated the cover letter.
-  2. Updated the description of the patches as per Daniel's suggestion.
-
-Kiran Gunda (2):
-  backlight: qcom-wled: Fix FSC update issue for WLED5
-  backlight: qcom-wled: Correct the sync_toggle sequence
-
- drivers/video/backlight/qcom-wled.c | 37 +++++++++++++++++++++++++------------
- 1 file changed, 25 insertions(+), 12 deletions(-)
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
- a Linux Foundation Collaborative Project
-
+Greets
+Alex
