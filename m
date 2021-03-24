@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB4DC433C1
-	for <linux-leds@archiver.kernel.org>; Wed, 24 Mar 2021 09:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE841C433E0
+	for <linux-leds@archiver.kernel.org>; Wed, 24 Mar 2021 09:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05604619AE
-	for <linux-leds@archiver.kernel.org>; Wed, 24 Mar 2021 09:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A021061A02
+	for <linux-leds@archiver.kernel.org>; Wed, 24 Mar 2021 09:41:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236118AbhCXJeg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 24 Mar 2021 05:34:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42158 "EHLO
+        id S235078AbhCXJlJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 24 Mar 2021 05:41:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232548AbhCXJef (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 24 Mar 2021 05:34:35 -0400
-Received: from mail.nic.cz (mail.nic.cz [IPv6:2001:1488:800:400::400])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 486BFC061763;
-        Wed, 24 Mar 2021 02:34:35 -0700 (PDT)
+        with ESMTP id S232788AbhCXJkh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 24 Mar 2021 05:40:37 -0400
+X-Greylist: delayed 361 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 24 Mar 2021 02:40:36 PDT
+Received: from mail.nic.cz (lists.nic.cz [IPv6:2001:1488:800:400::400])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2190C061763;
+        Wed, 24 Mar 2021 02:40:36 -0700 (PDT)
 Received: from thinkpad (unknown [IPv6:2a0e:b107:ae1:0:3e97:eff:fe61:c680])
-        by mail.nic.cz (Postfix) with ESMTPSA id A0E62140A26;
-        Wed, 24 Mar 2021 10:34:32 +0100 (CET)
-Date:   Wed, 24 Mar 2021 10:34:31 +0000
+        by mail.nic.cz (Postfix) with ESMTPSA id 1354F1409CA;
+        Wed, 24 Mar 2021 10:40:33 +0100 (CET)
+Date:   Wed, 24 Mar 2021 10:40:31 +0000
 From:   Marek Behun <marek.behun@nic.cz>
 To:     Hermes Zhang <chenhui.zhang@axis.com>
 Cc:     <pavel@ucw.cz>, <dmurphy@ti.com>, <robh+dt@kernel.org>,
         <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <chenhuiz@axis.com>,
         <lkml@axis.com>, <kernel@axis.com>
-Subject: Re: [PATCH 1/2] leds: leds-multi-gpio: Add multiple GPIOs LED
- driver
-Message-ID: <20210324103431.4b945915@thinkpad>
-In-Reply-To: <20210324075631.5004-2-chenhui.zhang@axis.com>
+Subject: Re: [PATCH 2/2] dt-binding: leds: Document leds-multi-gpio bindings
+Message-ID: <20210324104031.10c6216c@thinkpad>
+In-Reply-To: <20210324075631.5004-3-chenhui.zhang@axis.com>
 References: <20210324075631.5004-1-chenhui.zhang@axis.com>
-        <20210324075631.5004-2-chenhui.zhang@axis.com>
+        <20210324075631.5004-3-chenhui.zhang@axis.com>
 X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -47,141 +47,71 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Wed, 24 Mar 2021 15:56:30 +0800
+On Wed, 24 Mar 2021 15:56:31 +0800
 Hermes Zhang <chenhui.zhang@axis.com> wrote:
 
 > From: Hermes Zhang <chenhuiz@axis.com>
 > 
-> Introduce a new multiple GPIOs LED driver. This LED will made of
-> multiple GPIOs (up to 8) and will map different brightness to different
-> GPIOs states which defined in dts file.
+> Document the device tree bindings of the multiple GPIOs LED driver
+> Documentation/devicetree/bindings/leds/leds-multi-gpio.yaml.
 
-I wonder how many boards have such LEDs.
+The dt-binding should come before the actual driver. Otherwise there
+will be a commit with the driver existing but no documentation for its
+bindings.
 
-Also if it wouldn't be better to expand the original leds-gpio driver.
-Probably depends on how much larger would such expansion make the
-leds-gpio driver.
+> +description:
+> +  This will support some LED made of multiple GPIOs and the brightness of the
+> +  LED could map to different states of the GPIOs.
 
-> +#include <linux/err.h>
-> +#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/kernel.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_gpio.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/property.h>
-> +#include <linux/slab.h>
+Don't use future tense. Don't mention drivers in device tree
+binding documentation, if it can be helped. The device tree binding
+documentation should describe devices and their nodes... (and I see
+that I did a similar mistake for the cznic,turris-omnia-leds.yaml
+binding, I will have to fix that).
 
-Why do you include slab.h?
-
-> +
-> +#define MAX_GPIO_NUM  8
-> +
-> +struct multi_gpio_led_priv {
-> +	struct led_classdev cdev;
-> +
-> +	struct gpio_descs *gpios;
-> +
-> +	u8 *states;
-> +	int nr_states;
-> +};
-
-Use flexible array members. Allocate with
-  devm_kzalloc(dev, struct_size(priv, states, priv->nr_states),
-               GFP_KERNEL)
+Instead the description should be something like this:
+  This binding represents LED devices which are controller with
+  multiple GPIO lines in order to achieve more than two brightness
+  states.
+  
 
 > +
+> +properties:
+> +  compatible:
+> +    const: multi-gpio-led
 > +
-> +static void multi_gpio_led_set(struct led_classdev *led_cdev,
-> +	enum led_brightness value)
-> +{
-> +	struct multi_gpio_led_priv *priv;
-> +	int idx;
+> +  led-gpios:
+> +    description: Array of one or more GPIOs pins used to control the LED.
+> +    minItems: 1
+> +    maxItems: 8  # Should be enough
 > +
-> +	DECLARE_BITMAP(values, MAX_GPIO_NUM);
-> +
-> +	priv = container_of(led_cdev, struct multi_gpio_led_priv, cdev);
-> +
-> +	idx = (value - LED_OFF) * priv->nr_states / (LED_FULL + 1);
+> +  led-states:
+> +    description: |
+> +      The array list the supported states here which will map to brightness
+> +      from 0 to maximum. Each item in the array will present all the GPIOs
+> +      value by bit.
 
-LED_FULL / LED_OFF are deprecated, don't use them.
+Again future tense...
 
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    minItems: 1
+> +    maxItems: 16 # Should be enough
 > +
-> +	values[0] = priv->states[idx];
+> +required:
+> +  - compatible
+> +  - led-gpios
+> +  - led-states
 > +
-> +	gpiod_set_array_value(priv->gpios->ndescs, priv->gpios->desc,
-> +	    priv->gpios->info, values);
-> +}
+> +additionalProperties: false
 > +
-> +static int multi_gpio_led_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->of_node;
-> +	struct multi_gpio_led_priv *priv = NULL;
-> +	int ret;
-> +	const char *state = NULL;
-> +	struct led_init_data init_data = {};
+> +examples:
+> +  - |
+> +    gpios-led {
+> +      compatible = "multi-gpio-led";
 > +
-> +	priv = devm_kzalloc(dev, sizeof(struct multi_gpio_led_priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->gpios = devm_gpiod_get_array(dev, "led", GPIOD_OUT_LOW);
-> +	if (IS_ERR(priv->gpios))
-> +		return PTR_ERR(priv->gpios);
-> +
-> +	if (priv->gpios->ndescs >= MAX_GPIO_NUM) {
-> +		dev_err(dev, "Too many GPIOs\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = of_property_count_u8_elems(node, "led-states");
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	priv->nr_states = ret;
-> +	priv->states = devm_kzalloc(dev, sizeof(*priv->states) * priv->nr_states, GFP_KERNEL);
-> +	if (!priv->states)
-> +		return -ENOMEM;
-> +
-> +	ret = of_property_read_u8_array(node, "led-states", priv->states, priv->nr_states);
-> +	if (ret)
-> +		return ret;
-> +
-> +	priv->cdev.max_brightness = LED_FULL;
+> +      led-gpios = <&gpio0 23 0x1>,
+> +                  <&gpio0 24 0x1>;
+> +      led-states = /bits/ 8 <0x00 0x01 0x02 0x03>;
+> +    };
+> +...
 
-???? max_brightness is not 255 (= LED_FULL). max_brightness must be
-derived from the led-states property.
-
-
-> +	priv->cdev.default_trigger = of_get_property(node, "linux,default-trigger", NULL);
-> +	priv->cdev.brightness_set = multi_gpio_led_set;
-> +
-> +	init_data.fwnode = of_fwnode_handle(node);
-> +
-> +	ret = devm_led_classdev_register_ext(dev, &priv->cdev, &init_data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	of_property_read_string(node, "default-state", &state);
-> +	if (!strcmp(state, "on"))
-> +		multi_gpio_led_set(&priv->cdev, LED_FULL);
-> +	else
-> +		multi_gpio_led_set(&priv->cdev, LED_OFF);
-
-Again LED_FULL and LED_OFF...
-What about default-state = "keep" ?
-
-Hermes, do you actually have a device that controls LEDs this way? How
-many brightness options do they have?
-
-Also I think this functionality could be easily incorporated into the
-existing leds-gpio driver, instead of creating new driver.
-
-Moreover your driver can control only one LED, so it needs to be
-probed multiple times for multiple LEDs. Meanwhile the leds-gpio driver
-can register multiple LEDs in one probe...
-
-Marek
