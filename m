@@ -2,94 +2,129 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F17C433E0
-	for <linux-leds@archiver.kernel.org>; Sat, 27 Mar 2021 22:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F19F6C433DB
+	for <linux-leds@archiver.kernel.org>; Sun, 28 Mar 2021 20:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C39E4619A2
-	for <linux-leds@archiver.kernel.org>; Sat, 27 Mar 2021 22:20:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB3E361883
+	for <linux-leds@archiver.kernel.org>; Sun, 28 Mar 2021 20:47:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230514AbhC0WTg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 27 Mar 2021 18:19:36 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:52908 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231187AbhC0WT3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 27 Mar 2021 18:19:29 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 625DE1C0B78; Sat, 27 Mar 2021 23:19:25 +0100 (CET)
-Date:   Sat, 27 Mar 2021 23:19:25 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Robin van der Gracht <robin@protonic.nl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-leds <linux-leds@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 17/17] auxdisplay: ht16k33: Add segment display LED
- support
-Message-ID: <20210327221925.GA2875@duo.ucw.cz>
-References: <20210322144848.1065067-1-geert@linux-m68k.org>
- <20210322144848.1065067-18-geert@linux-m68k.org>
- <543ec200931af3192541fef51bc8e96a@protonic.nl>
- <CAMuHMdXMQYoGbyLsbiZSEWKK0+iPZe7WELmtDUTjqK-VKMZURg@mail.gmail.com>
- <20210323204038.GA10002@duo.ucw.cz>
- <CAMuHMdVF30BCA-7vCiwmKO6KVFhtNLbL+VEW59oxcAfwJ+jXyg@mail.gmail.com>
+        id S231142AbhC1Uq1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 28 Mar 2021 16:46:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40804 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230294AbhC1UqN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 28 Mar 2021 16:46:13 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE222C061756;
+        Sun, 28 Mar 2021 13:46:08 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id n138so15383872lfa.3;
+        Sun, 28 Mar 2021 13:46:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HL8YMDEmnVju0LcsFeN/jzyg7+yi9VknOC+AA9XVzkg=;
+        b=CwdeypQOJCwjbPNgdF3D1sYZ7jajgF3bEjGw03HpAKYmnTG022kkkl5fyLja+RgE4H
+         CCxn1GyyTfENpUYu5pQ7o8IOOkwiPL4ykbNdvqW5qrhBVuBAOogiEfYtOMJRj6udTnTa
+         w6kxu8DmDsa6rO8flU0LVZY8RHWOhPXIzarppjzJQhflSLh214yf26Ywi/LzcWxzsu4i
+         MhUlgE+XFQQOPgo7H/2OfHIFxFVSlsze+wmY/nAp1XyuPwXt3E+d3R8A53RXFUP5fCwS
+         6D9O+z4BoRuDFCZwO6I5kmbSdfgrBUWTVAjzyWT30TNIlJba2gfmEzY1+FxMtPHJwOAq
+         xcHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HL8YMDEmnVju0LcsFeN/jzyg7+yi9VknOC+AA9XVzkg=;
+        b=D8PBAG+Y4lSpfUw9EiISeM5V86+4B4kNnKsreuYXtDaDHUNrh5hIfqvQLLwzHl2QwD
+         mx1rjSkLvTnmrfoSpzT2Ls45CZ97lQSLogeU4e86VMporbd1FEKczsjHnTYBuoyUvaJB
+         c8ePmTlJXGIYy5lj6mgZknpGCi1zSqTO+Umc7kwNwl/GTK+776HswmCb0I2gJf855XZc
+         581Kx9WJfS2Q12ARRPcbMUAa2uRyrtOBfJLS9hcpAGfwIbll9/LocYhpmCH+ByV4YCyU
+         1msnTEelz5Ysgps4kxNUwPvRGMC13VTNhESIrtHFwdMQmhzofHUsZzK+dw7XDRJnga1z
+         A24w==
+X-Gm-Message-State: AOAM531c0lUZJHINi2O0WE+D5VZndxiq5kYm0BNtY9B7UXtFb58f3dk3
+        JBknPbkZ+VTe/5gCnBito1nsAyTkFhB/kbNr
+X-Google-Smtp-Source: ABdhPJwvZpiz8Kbli6vf6mJZLztxovbEYmAKYgSSIudyyICYsPUtFuzzzZemjpyOOZ+jNCHSXGLHRg==
+X-Received: by 2002:ac2:5977:: with SMTP id h23mr15153971lfp.156.1616964367188;
+        Sun, 28 Mar 2021 13:46:07 -0700 (PDT)
+Received: from [192.168.1.221] (87-92-162-34.rev.dnainternet.fi. [87.92.162.34])
+        by smtp.googlemail.com with ESMTPSA id j27sm1587771lfp.186.2021.03.28.13.46.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Mar 2021 13:46:06 -0700 (PDT)
+Subject: Re: [PATCH 2/2] dt-binding: leds: Document leds-multi-gpio bindings
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Hermes Zhang <chenhui.zhang@axis.com>, dmurphy@ti.com,
+        robh+dt@kernel.org, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chenhuiz@axis.com, lkml@axis.com, kernel@axis.com
+References: <20210324075631.5004-1-chenhui.zhang@axis.com>
+ <20210324075631.5004-3-chenhui.zhang@axis.com>
+ <0648fff2-5b38-66da-7eb0-9969e517421f@gmail.com>
+ <20210325184140.GA16039@duo.ucw.cz>
+From:   =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
+Message-ID: <6313e117-e0f8-ef7c-9165-96c5d2b9d318@gmail.com>
+Date:   Sun, 28 Mar 2021 23:46:16 +0300
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
+ Gecko/20100101 Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVF30BCA-7vCiwmKO6KVFhtNLbL+VEW59oxcAfwJ+jXyg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210325184140.GA16039@duo.ucw.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Hi,
 
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 25.3.2021 20.41, Pavel Machek wrote:
+>>> +  led-gpios:
+>>> +    description: Array of one or more GPIOs pins used to control the LED.
+>>> +    minItems: 1
+>>> +    maxItems: 8  # Should be enough
+>>
+>> We also have a case with multi color LEDs (which is probably a more common
+>> than multi intensity LED. So I am wondering how these both could co-exist.
+>>
+>> From: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/leds/leds-gpio.yaml?h=v5.12-rc4#n58
+>>
+>>          led-0 {
+>>              gpios = <&mcu_pio 0 GPIO_ACTIVE_LOW>;
+>>              linux,default-trigger = "disk-activity";
+>>              function = LED_FUNCTION_DISK;
+>>          };
+>>
+>> Now 'gpios' (and in LED context) and 'led-gpios' is very close to each other
+>> and could easily be confused.
+>>
+>> Perhaps this could be something like:
+>>
+>> intensity-gpios = ...
+>>
+>> or even simplified then just to gpios = <...>
+> 
+> ...
+>> How would this sound?
+> 
+> Well, not too bad on a quick look.
+> 
+> Are you willing to implement such multi-color-multi-bit-multi-gpio
+> driver?
 
-Hi!
+We have a need for multi color GPIO LED support so I can work on that if 
+no one else gets there before me -- I do not have hardware with multiple 
+GPIO lines controlling the brightness so that needs a bit more effort in 
+order to test that out.
 
-> > > > > -     err =3D ht16k33_brightness_set(priv, MAX_BRIGHTNESS);
-> > > > > +     of_property_read_u32(node, "color", &color);
-> > > > > +     seg->led.name =3D devm_kasprintf(dev, GFP_KERNEL,
-> > > > > +                     DRIVER_NAME ":%s:" LED_FUNCTION_BACKLIGHT,
-> > > > > +                     color < LED_COLOR_ID_MAX ? led_colors[color=
-] : "");
-> >
-> > And would prefer not to see driver_name as part of LED name.
->=20
-> OK. So what should I use instead? Or just leave the part before the
-> first colon empty?
+At some point of time I could also revive the PWM stuff if no one else 
+beats me to it -- but probably the GPIO variant is easier to get done as 
+binary states are easier.
 
-I'd suggest auxdisplay:...:backlight.
-
-And we should start documenting this somewhere.
-
-Best regards,
-									Pavel
---=20
-http://www.livejournal.com/~pavelmachek
-
---J2SCkAp4GZ/dPZZf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYF+vbQAKCRAw5/Bqldv6
-8vIVAJ4qlSRzvhciUBHaas551C0aXPZaagCdHZUf4XdLOddTipE09Am0CLnpWDE=
-=QSsl
------END PGP SIGNATURE-----
-
---J2SCkAp4GZ/dPZZf--
+Thanks,
+Vesa Jääskeläinen
