@@ -2,96 +2,89 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A072DC43460
-	for <linux-leds@archiver.kernel.org>; Thu,  1 Apr 2021 18:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7A4C433ED
+	for <linux-leds@archiver.kernel.org>; Sun,  4 Apr 2021 07:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63FCE60FF1
-	for <linux-leds@archiver.kernel.org>; Thu,  1 Apr 2021 18:18:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BB366124B
+	for <linux-leds@archiver.kernel.org>; Sun,  4 Apr 2021 07:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237017AbhDASSo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:18:44 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:45439 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238618AbhDASJs (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Apr 2021 14:09:48 -0400
-Received: from [192.168.1.155] ([95.114.120.255]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1Mxlio-1lpRFh0GyM-00zFhl; Thu, 01 Apr 2021 18:15:43 +0200
-Subject: Re: [PATCH v3 3/4] watchdog: simatic-ipc-wdt: add new driver for
- Siemens Industrial PCs
-To:     Henning Schild <henning.schild@siemens.com>,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-watchdog@vger.kernel.org
-Cc:     Srikanth Krishnakar <skrishnakar@gmail.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Gerd Haeussler <gerd.haeussler.ext@siemens.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Mark Gross <mgross@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20210329174928.18816-1-henning.schild@siemens.com>
- <20210329174928.18816-4-henning.schild@siemens.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <ffdfe9a9-ab17-18af-300e-062b79d132f3@metux.net>
-Date:   Thu, 1 Apr 2021 18:15:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        id S229822AbhDDHxG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 4 Apr 2021 03:53:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45042 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229569AbhDDHxF (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 4 Apr 2021 03:53:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617522781;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=QiBE4JCwxfJTX/2T2eyN9vFpWvIlenE2CBBehmUcF+g=;
+        b=gbzvMfrlSSvx6X0bWBFHBcPHOb8XDSJBeEtD2hqmsuXuL8s93vX+UwS9MRLGK+4RpSo/G2
+        83GZNLeUp50uBH7zQ0YfZ5dTf2JeGi35mLUCzn7MPBgIrBN8atCkau7g/1DylaB/cJgl+L
+        GRxBUlBNF0uLnQACKsI0WldwmIW0lBU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-306-Y-AsQbgeOT-YBbRElAJXxw-1; Sun, 04 Apr 2021 03:52:59 -0400
+X-MC-Unique: Y-AsQbgeOT-YBbRElAJXxw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 40B8F8030A1;
+        Sun,  4 Apr 2021 07:52:58 +0000 (UTC)
+Received: from x1.localdomain (ovpn-112-48.ams2.redhat.com [10.36.112.48])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8AC3F5C5DF;
+        Sun,  4 Apr 2021 07:52:53 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org,
+        =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH resend 0/3] HID: elan: Mute LED support fixes
+Date:   Sun,  4 Apr 2021 09:52:49 +0200
+Message-Id: <20210404075252.4032-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20210329174928.18816-4-henning.schild@siemens.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: tl
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:mZl+/Fxt0NAigmLCH+RKccI3nE5xVjZG1xhGoPUgCxNSXAPqiMk
- S9U84N7eW7dsD5O10wzfTPVnBv3R4PqEnqCSUCAC0WPCG0h2NbnNAl+zUpmSy7xb6z34dWa
- W7Sp+3iSb/gJINI7M6KgJlUZoRypT/s5uqJ2mpqPT1/wsHl/phqOpvzs0ebTMg5vgbZL0f2
- jv/KHgLgD3iBP1j67CACw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:vWF9FgB7mL8=:UG6L83VGSPgRsVAviCBrxt
- KXA9dc0Vp+RuCgdsB+XC/Qwyr/LgC+xNnFeLHgByex/68aGjqseF8jord8HHgtvn1/sL3Qh9P
- qjATQnm0IBEwteNtgjRUYOGZhJLd8aBFj3GoMBfHhkOld+f4iXwjrJGmcPGojmRSVXkICDFeQ
- JqJEcnXPizz7ntzhqY9PggqHlO6VhLxrWMDIGeaHJgMFUciombnIDONf8iX6K39sVJFAkfccS
- u7CvrQELD2gjN3DvjrqwcR9V5jhBqPa5Zc4UdX2loNXuwEkSGSVGQtn6Xwi0r2cGZ3UN74Usx
- XD3UJKVWJlCQjzbaIiEXIpq9qiqzIEtIF48kH9gzNRmOlrIIqLJ97CLy9LJNV+Peo4fc3B742
- 2B1eJcMlor/v7G2WuVCl9kjivhJdRBd9gluP1JlJqACC12epgJX06mKA7y4JRE2J8jaCdgEGC
- 3ivlcz7rxOS2m0lC3t5Hb3ism7N0KdglsVHyrG8gm0V1NDKXN2TX
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 29.03.21 19:49, Henning Schild wrote:
+Hi Jiri,
 
-Hi,
+This series seems to have fallen through the cracks, can you
+please pick this up?
 
-> This driver adds initial support for several devices from Siemens. It is
-> based on a platform driver introduced in an earlier commit.
+All 3 patches have these 2 tags
 
-Where does the wdt actually come from ?
+Reviewed-by: Marek Behún <kabel@kernel.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-Is it in the SoC ? (which SoC exactly). SoC-builtin wdt is a pretty 
-usual case.
+With Pavel being the LED subsys maintainer and his ack indicating
+that the LED class API usage in these patches is correct.
 
-Or some external chip ?
+Regards,
 
-The code smells a bit like two entirely different wdt's that just have
-some similarities. If that's the case, I'd rather split it into two
-separate drivers and let the parent driver (board file) instantiate
-the correct one.
+Hans
 
 
---mtx
+Hans de Goede (3):
+  HID: elan: Silence mute LED errors being logged when the device is
+    unplugged
+  HID: elan: Set default_trigger for the mute LED
+  HID: elan: Remove elan_mute_led_get_brigtness()
+
+ drivers/hid/hid-elan.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
 -- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+2.30.2
+
