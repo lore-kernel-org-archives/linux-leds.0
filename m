@@ -2,89 +2,78 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E128C433B4
-	for <linux-leds@archiver.kernel.org>; Thu, 15 Apr 2021 10:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAF2C433B4
+	for <linux-leds@archiver.kernel.org>; Sun, 18 Apr 2021 21:44:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31DA86115C
-	for <linux-leds@archiver.kernel.org>; Thu, 15 Apr 2021 10:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F3C561078
+	for <linux-leds@archiver.kernel.org>; Sun, 18 Apr 2021 21:44:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232603AbhDOKxV (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 15 Apr 2021 06:53:21 -0400
-Received: from mail-41104.protonmail.ch ([185.70.41.104]:26695 "EHLO
-        mail-41104.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232617AbhDOKxO (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Apr 2021 06:53:14 -0400
-X-Greylist: delayed 345 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Apr 2021 06:53:13 EDT
-Received: from mail-02.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+        id S231218AbhDRVoa (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 18 Apr 2021 17:44:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52848 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230258AbhDRVo3 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 18 Apr 2021 17:44:29 -0400
+X-Greylist: delayed 555 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 18 Apr 2021 14:44:00 PDT
+Received: from m-r1.th.seeweb.it (m-r1.th.seeweb.it [IPv6:2001:4b7a:2000:18::170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBDB5C06174A
+        for <linux-leds@vger.kernel.org>; Sun, 18 Apr 2021 14:44:00 -0700 (PDT)
+Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail-41104.protonmail.ch (Postfix) with ESMTPS id 4FLbd504l7z4xn8w;
-        Thu, 15 Apr 2021 10:47:04 +0000 (UTC)
-Authentication-Results: mail-41104.protonmail.ch;
-        dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="VFX0DLTP"
-Date:   Thu, 15 Apr 2021 10:46:50 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1618483619;
-        bh=FqqoljThLpOkKq3HVnBx6falyOkeZosZYHA11X1CY4Q=;
-        h=Date:To:From:Cc:Reply-To:Subject:From;
-        b=VFX0DLTPJGS+E8PEcqknTVMEkNY7s7p4wpU5cvvYem3E8esQCFuXBkL+29Y0d6+JE
-         kihOVEXGKkBxFg+Jd+M949kBliz9opJXziMSQm/bmxJ3mQ8xUw5yQdC3RRIt9pkmV+
-         PFwQA241d7BNnb9o1b1tfpjYnhhooef105I4Lnvo=
-To:     bjorn.andersson@linaro.org
-From:   Yassine Oudjana <y.oudjana@protonmail.com>
-Cc:     agross@kernel.org, devicetree@vger.kernel.org, dmurphy@ti.com,
-        lee.jones@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-pwm@vger.kernel.org, martin.botka1@gmail.com, pavel@ucw.cz,
-        robh+dt@kernel.org, thierry.reding@gmail.com,
-        u.kleine-koenig@pengutronix.de,
-        Yassine Oudjana <y.oudjana@protonmail.com>
-Reply-To: Yassine Oudjana <y.oudjana@protonmail.com>
-Subject: Re: [PATCH v6 2/4] leds: Add driver for Qualcomm LPG
-Message-ID: <MhLF908GTTNiXzyq2bkuFfK30ETPKJrYqVSGyeT4rY@cp4-web-038.plabs.ch>
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id A2D4D1F542;
+        Sun, 18 Apr 2021 23:34:37 +0200 (CEST)
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     linux-leds@vger.kernel.org
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org
+Subject: [PATCH] leds: ledtrig-pattern: Use last_repeat when applying hw pattern
+Date:   Sun, 18 Apr 2021 23:34:26 +0200
+Message-Id: <20210418213427.220638-1-marijn.suijten@somainline.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi,
+`last_repeat` holds the actual value requested by the user whereas
+`repeat` is a software iteration variable that is unused in hardware
+patterns.
 
-On Wed, 21 Oct 2020 13:12:22 -0700 Bjorn Andersson wrote:
-> The Light Pulse Generator (LPG) is a PWM-block found in a wide range of
-> PMICs from Qualcomm. It can operate on fixed parameters or based on a
-> lookup-table, altering the duty cycle over time - which provides the
-> means for e.g. hardware assisted transitions of LED brightness.
->=20
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->=20
-> Changes since v5:
-> - Make sure to not used the state of the last channel in a group to
-> determine if the current sink should be active for all channels in the
-> group. - Replacement of unsigned -1 with UINT_MAX
-> - Work around potential overflow by using larger data types, instead of
-> separate code paths - Use cpu_to_l16() rather than hand rolling them
-> - Minor style cleanups
->=20
->  drivers/leds/Kconfig         |    9 +
->  drivers/leds/Makefile        |    1 +
->  drivers/leds/leds-qcom-lpg.c | 1190 ++++++++++++++++++++++++++++++++++
->  3 files changed, 1200 insertions(+)
->  create mode 100644 drivers/leds/leds-qcom-lpg.c
+Furthermore `last_repeat` is the field returned to the user when reading
+the `repeat` sysfs property.  This field is initialized to `-1` which is
+- together with `1` - the only valid value in the upcoming Qualcomm LPG
+driver.  It is thus unexpected when `repeat` with an initialization
+value of `0` is passed into the the driver, when the sysfs property
+clearly presents a value of `-1`.
 
-Works well on the Xiaomi Mi Note 2 (msm8996pro/pmi8996).
+Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+---
+ drivers/leds/trigger/ledtrig-pattern.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
-
-Regards,
-Yassine
+diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+index 4d138d5317e9..2853b75df338 100644
+--- a/drivers/leds/trigger/ledtrig-pattern.c
++++ b/drivers/leds/trigger/ledtrig-pattern.c
+@@ -126,7 +126,8 @@ static int pattern_trig_start_pattern(struct led_classdev *led_cdev)
+ 
+ 	if (data->is_hw_pattern) {
+ 		return led_cdev->pattern_set(led_cdev, data->patterns,
+-					     data->npatterns, data->repeat);
++					     data->npatterns,
++					     data->last_repeat);
+ 	}
+ 
+ 	/* At least 2 tuples for software pattern. */
+-- 
+2.31.1
 
