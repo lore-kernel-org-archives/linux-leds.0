@@ -2,118 +2,268 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 884C9C433B4
-	for <linux-leds@archiver.kernel.org>; Thu, 29 Apr 2021 21:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40844C43460
+	for <linux-leds@archiver.kernel.org>; Thu, 29 Apr 2021 21:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66E81610FA
-	for <linux-leds@archiver.kernel.org>; Thu, 29 Apr 2021 21:12:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E5D061441
+	for <linux-leds@archiver.kernel.org>; Thu, 29 Apr 2021 21:15:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235228AbhD2VNP (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 29 Apr 2021 17:13:15 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:58834 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234795AbhD2VNM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 29 Apr 2021 17:13:12 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 151021C0BA1; Thu, 29 Apr 2021 23:12:24 +0200 (CEST)
-Date:   Thu, 29 Apr 2021 23:12:23 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        id S236983AbhD2VQE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 29 Apr 2021 17:16:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45634 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236890AbhD2VQD (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 29 Apr 2021 17:16:03 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FAF5C061347
+        for <linux-leds@vger.kernel.org>; Thu, 29 Apr 2021 14:15:15 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id t24so10515475oic.10
+        for <linux-leds@vger.kernel.org>; Thu, 29 Apr 2021 14:15:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Fe89kRGBfUr3nhPy9Di5M1WD0v7Pf3Rw9gqCGNTJqLs=;
+        b=Xl5WS50eO7JhaA30CSUPZ/gtio09TI1cD0J1XdZrPp11SlXRNxkzGK3p7FAyBA6oKT
+         r5eT9LyOZOKut5BvjAOP53cpdbe4sFrgJVMzdIu72op02LdjpNT0SH8XezzOO02+ErEL
+         HNuLtbUmqgJN/l854LJ8zl6NtrqriPlA8Ito4sXl0hY9aSrNn6u0QYRhXMeKsLF2R6zH
+         oeBo+aHunYuBTQoaf3OzrNpoLyVPXrRhxWXQV6Zs9ZODDvuGWJnU4Pax787VX1Xjyxk4
+         YBgCNVy4OVDi0XGYOisDB8xl5GX1m33E6HSaIm56OOKSPPVgcezQQ2FS78TshrOmY27y
+         NqSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Fe89kRGBfUr3nhPy9Di5M1WD0v7Pf3Rw9gqCGNTJqLs=;
+        b=YJ/rS71zKB1qrI4xcygK+XHhyiFJEPkk2VTOLge/bKMe5mhg1WlBXajDNwC4dELbCX
+         deQDcjwGSmjC68q8ehH1XVHSw71oT2Cx9BTszfEZ7yE+3dsczLICxa8qe/hzYEl6HfYX
+         AIHuif426fRIuTgzA4pFfrwXomL2Eraffq+syCZ9/l4t6VAxixvK4WVbzBrFsSI3jKZ9
+         EEUxj+n5jfv+VV2vNcZKt+JkGNbMmLPNL+T3TI5dfjEmN+jQOjKo2HkMYqZoo0zVa8vi
+         xC7dK70unep/ZsW2Qt2LRpd1g2+4bSBphBG0zpZaiBy8AVxJ2W/oyl2MYFcizD/LES8Z
+         fvmg==
+X-Gm-Message-State: AOAM533KtNHtoB2MLfV/SU4ru3qkD4QIRrHGiKC5Y0vz80kk3lVGh+d2
+        KaHIsFstVqny+wff7Xw14F4uIg==
+X-Google-Smtp-Source: ABdhPJzmbILKUfma1enx9Jt1H6fWGUWfyMGDXtrOFGfokLTZly4fmdLih+gMENgUekqtVCwplEBDkg==
+X-Received: by 2002:aca:c206:: with SMTP id s6mr1395445oif.177.1619730915354;
+        Thu, 29 Apr 2021 14:15:15 -0700 (PDT)
+Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id y67sm242707otb.1.2021.04.29.14.15.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Apr 2021 14:15:14 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Martin Botka <martin.botka1@gmail.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v6 2/4] leds: Add driver for Qualcomm LPG
-Message-ID: <20210429211223.GA5480@amd>
-References: <20201021201224.3430546-1-bjorn.andersson@linaro.org>
- <20201021201224.3430546-3-bjorn.andersson@linaro.org>
- <20201029181357.GE26053@duo.ucw.cz>
- <YIn50NW+Pimqfsih@builder.lan>
+        linux-pwm@vger.kernel.org,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>
+Subject: [PATCH v7 1/6] dt-bindings: leds: Add Qualcomm Light Pulse Generator binding
+Date:   Thu, 29 Apr 2021 14:15:12 -0700
+Message-Id: <20210429211517.312792-2-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210429211517.312792-1-bjorn.andersson@linaro.org>
+References: <20210429211517.312792-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
-Content-Disposition: inline
-In-Reply-To: <YIn50NW+Pimqfsih@builder.lan>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+This adds the binding document describing the three hardware blocks
+related to the Light Pulse Generator found in a wide range of Qualcomm
+PMICs.
 
---wRRV7LY7NUeQGEoC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-Hi!
+Changes since v6:
+- Backed qcom,dtest out of the child nodes again, as it's useful to be able to
+  route pwm signals through dtest lines as well (and pwm channels aren't
+  described as children).
+- Added pm8150[bl] compatibles
+- Dropped quotes around qcom,dtest
+- Fixed indentation errors in subnode definition
 
-> > > +static int lpg_add_pwm(struct lpg *lpg)
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	lpg->pwm.base =3D -1;
-> > > +	lpg->pwm.dev =3D lpg->dev;
-> > > +	lpg->pwm.npwm =3D lpg->num_channels;
-> > > +	lpg->pwm.ops =3D &lpg_pwm_ops;
-> > > +
-> > > +	ret =3D pwmchip_add(&lpg->pwm);
-> > > +	if (ret)
-> > > +		dev_err(lpg->dev, "failed to add PWM chip: ret %d\n", ret);
-> > > +
-> > > +	return ret;
-> > > +}
-> >=20
-> > Do we need to do this? I'd rather have LED driver, than LED+PWM
-> > driver...
-> >=20
->=20
-> Yes, I believe we need to do this.
->=20
-> Because each piece of hardware has N channels, which can be wired to
-> LEDs, grouped with other channels and wired to multicolor LEDs or be
-> used as PWM signals. And this configuration is board specific.
->=20
-> One such example is the laptop in front of me, which has 3 channels
-> wired to an RGB LED and 1 channel wired as a backlight control signal
-> (i.e. using pwm-backlight).  Another example is a devboard where the
-> 4 channels are wired to 4 LEDs.
+ .../bindings/leds/leds-qcom-lpg.yaml          | 158 ++++++++++++++++++
+ 1 file changed, 158 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
 
-Ok, so this is actually important. In this case you should have PWM
-layer, exporting PWMs, and then rgb-LED driver that takes three of
-those PWMs and turns them into LED, no?
+diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
+new file mode 100644
+index 000000000000..2998598e8785
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
+@@ -0,0 +1,158 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/leds-qcom-lpg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Light Pulse Generator
++
++maintainers:
++  - Bjorn Andersson <bjorn.andersson@linaro.org>
++
++description: >
++  The Qualcomm Light Pulse Generator consists of three different hardware blocks;
++  a ramp generator with lookup table, the light pulse generator and a three
++  channel current sink. These blocks are found in a wide range of Qualcomm PMICs.
++
++properties:
++  compatible:
++    enum:
++      - qcom,pm8150b-lpg
++      - qcom,pm8150l-lpg
++      - qcom,pm8916-pwm
++      - qcom,pm8941-lpg
++      - qcom,pm8994-lpg
++      - qcom,pmi8994-lpg
++      - qcom,pmi8998-lpg
++
++  "#pwm-cells":
++    const: 2
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  qcom,power-source:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      power-source used to drive the output, as defined in the datasheet.
++      Should be specified if the TRILED block is present
++
++  qcom,dtest:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    description: >
++      A list of integer pairs, where each pair represent the dtest line the
++      particular channel should be connected to and the flags denoting how the
++      value should be outputed, as defined in the datasheet. The number of
++      pairs should be the same as the number of channels.
++
++  multi-led:
++    type: object
++    $ref: leds-class-multicolor.yaml#
++    properties:
++      "#address-cells":
++        const: 1
++
++      "#size-cells":
++        const: 0
++
++      "^led@[0-9a-f]$":
++        type: object
++        $ref: common.yaml#
++
++patternProperties:
++  "^led@[0-9a-f]$":
++    type: object
++    $ref: common.yaml#
++
++    properties:
++      reg: true
++
++    required:
++      - reg
++
++required:
++  - compatible
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    lpg {
++      compatible = "qcom,pmi8994-lpg";
++
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      qcom,power-source = <1>;
++
++      qcom,dtest = <0 0
++                    0 0
++                    0 0
++                    4 1>;
++
++      led@1 {
++        reg = <1>;
++        label = "green:user1";
++      };
++
++      led@2 {
++        reg = <2>;
++        label = "green:user0";
++        default-state = "on";
++      };
++
++      led@3 {
++        reg = <3>;
++        label = "green:user2";
++      };
++
++      led@4 {
++        reg = <4>;
++        label = "green:user3";
++      };
++    };
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    lpg {
++      compatible = "qcom,pmi8994-lpg";
++
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      qcom,power-source = <1>;
++
++      multi-led {
++        color = <LED_COLOR_ID_MULTI>;
++        label = "rgb:notification";
++
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led@1 {
++          reg = <1>;
++          color = <LED_COLOR_ID_RED>;
++        };
++
++        led@2 {
++          reg = <2>;
++          color = <LED_COLOR_ID_GREEN>;
++        };
++
++        led@3 {
++          reg = <3>;
++          color = <LED_COLOR_ID_BLUE>;
++        };
++      };
++    };
++  - |
++    lpg {
++      compatible = "qcom,pm8916-pwm";
++      #pwm-cells = <2>;
++    };
++...
+-- 
+2.29.2
 
-And ... surprise ... that is likely to help other people, as LEDs
-connected to PWMs are quite common.
-
-Hmm.?
-
-If you can't do this for some reason, you should probably explain in
-the changelog, because this is going to be FAQ.
-
-Best regards,
-								Pavel
---=20
-http://www.livejournal.com/~pavelmachek
-
---wRRV7LY7NUeQGEoC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAmCLITcACgkQMOfwapXb+vK+BACeMLv8lEYnpH1WKHwqzQQfYMGc
-5O4AoKuyGX4vAejCvrj2ZaEI2S6+fTMH
-=al0Q
------END PGP SIGNATURE-----
-
---wRRV7LY7NUeQGEoC--
