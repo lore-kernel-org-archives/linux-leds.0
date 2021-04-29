@@ -2,108 +2,180 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0886DC43600
-	for <linux-leds@archiver.kernel.org>; Thu, 29 Apr 2021 21:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5AC6C43611
+	for <linux-leds@archiver.kernel.org>; Thu, 29 Apr 2021 21:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA3E161445
-	for <linux-leds@archiver.kernel.org>; Thu, 29 Apr 2021 21:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89E3E61461
+	for <linux-leds@archiver.kernel.org>; Thu, 29 Apr 2021 21:15:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237032AbhD2VQF (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 29 Apr 2021 17:16:05 -0400
+        id S237190AbhD2VQH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 29 Apr 2021 17:16:07 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236795AbhD2VQE (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 29 Apr 2021 17:16:04 -0400
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A619CC061344
-        for <linux-leds@vger.kernel.org>; Thu, 29 Apr 2021 14:15:14 -0700 (PDT)
-Received: by mail-ot1-x32f.google.com with SMTP id 65-20020a9d03470000b02902808b4aec6dso57888004otv.6
-        for <linux-leds@vger.kernel.org>; Thu, 29 Apr 2021 14:15:14 -0700 (PDT)
+        with ESMTP id S237088AbhD2VQG (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 29 Apr 2021 17:16:06 -0400
+Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF05CC06138B
+        for <linux-leds@vger.kernel.org>; Thu, 29 Apr 2021 14:15:18 -0700 (PDT)
+Received: by mail-ot1-x32a.google.com with SMTP id z25-20020a9d65d90000b02902a560806ca7so3954201oth.11
+        for <linux-leds@vger.kernel.org>; Thu, 29 Apr 2021 14:15:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kTyxnJ1yi531R5AZDzagRwpZVx/RNSIurfNN65budp8=;
-        b=S6rFyfWZAPendWMKR6bwGEcvDFTkl7QZLv//CsPWs+gx5rzHkpv+sGP88ks6qDSNaH
-         yHN6ZqScV5txpDI8SwAvPcaUDwIEgzHVsJBkGLgTb/4qwU28wKmqTdyUhxmMAnKd+ytL
-         /18rCLhTWe8cX6f9HkzQLxy18ftGaLtCNZ7iq7juIYFOhmpM0o13hevqD7lhXRSMf+PU
-         Bs03VQ+W355RD1yv/iSyz6EyealoMwz++a7c7AT5JTXnzZGfO75KsFhPvyqUxugGhreQ
-         O00JjuuTaEmpw0pk+dRuuOVGwpnPVvQIUAE51vIpaL34lv+ia+ehFbCmiOdZ1s9qkZFS
-         uySA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=tsKgUNXVkGSV16m25rstq3CPA/gSdKXqhwk9cYckag4=;
+        b=XTZkSmSldMj2DthYQn68iIY0GQk/RayHkBNO8nBqBkHe7X1YKbV2ojbkU7S/tS7PB8
+         oKn6Sa0re/qA3YkVmWAHsYGK6zmTU40L2PXEeWcWlmbzUmJxMc7GmJ7Uhwk7R+EbzbGR
+         5RDaf4uVeSRoS76x2p7Fq/gij5ar4dX/VfA9ECmUHMApmYOZWX6UPMQY0shRFpyQJHSO
+         Az4sulYgg2ZGXOKfmoAVTITn1Ls6SI9qXsABB1nERrIlGqaVsX39KhUIWpehsKDk0OMh
+         95mxG4jEbg6sESUYl1bcPFB6NegMEBmm2qrNH2KI/cmwsryZ+kE/EfOivfzX7sJ0wEIJ
+         zhFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kTyxnJ1yi531R5AZDzagRwpZVx/RNSIurfNN65budp8=;
-        b=KlVpinLDmjLmo6SE1FO2JL/Rr5+Ti+13F2U1BL4E12AwK9mue7adA+Rs8TbkoKV1qD
-         X/3mw5hDNgrYKNYzhvYBH9hcfL4j7l8sGzvAbxvkI8L1BJSJCPqNzG5/6ZZS6Ey9EWHA
-         ixFzpCDX1Ru+PH1z280u+R/jc/94kFwlRiJPfmqU6Y5ZJ3UnwLaoL/xg0U/QN+y0jELO
-         XUj15wFx1HkNaXVqEibxW7QJfmLhrVerImBhG7SjUZAFzRBhv8A8kVJw+Cap3GLpDri4
-         KJHXQkv1mt3JhXgXmK66drYLZakTP9M+/z7ai4q0Nbp6KJjiK1E6gQb/LiFLn8XrKp21
-         M5nQ==
-X-Gm-Message-State: AOAM531KpOQq/8a1GpjfpWKb9TldNvUM/IHJPTL11/wkDX5OdgJXPmm4
-        eukHhk/8I9sqlhg2WXPzO4E0Ew==
-X-Google-Smtp-Source: ABdhPJwI/aV509jX6FittC3nahit3zZyjvjjwFAwUQTbcgiygCVzFvo2c9Z6rxsC+CBfEC0jSr/55g==
-X-Received: by 2002:a9d:74c6:: with SMTP id a6mr1053267otl.290.1619730914250;
-        Thu, 29 Apr 2021 14:15:14 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tsKgUNXVkGSV16m25rstq3CPA/gSdKXqhwk9cYckag4=;
+        b=k86QiYKP9NyFxdb7+UaZhG/ITFnGUylyBZBPpCiy7GR+PzaUYXglWC5KpnCpeU24D+
+         8Y6IxH8WfKhxEWSdy1lmHXX4mcQQBObCY0Aj9uP+rUj6jE1I1/RUuGp9a1l/pG5dRvXY
+         bgKQ4gFaT1Djwcz9mCbrZvJ+8XpAB67RhsRZ572dmo3KUSDw1bno1KyCB/5YY73lKQBS
+         FzslE2viUrLMyJVdXhYwmy0TL1da9hGEuUYHHzyfp3IJx4BaCUAlZP/75VPM63pUD/UH
+         K6F4G3jBcfMd3JCRUEd+9szb1gazOVN55pUncPR607kuOgw5TeUxvEAqiH+aY3dSDpdO
+         7ytw==
+X-Gm-Message-State: AOAM533jBfPbovAvNrtcrxIbbe7Zx8KoJDtGrgFFjWI/Ilkc10uEZLqN
+        77Ut9YHzGccbM1BrVEj2A6XuXA==
+X-Google-Smtp-Source: ABdhPJwC5O52GGITTLwu57jDvhGGAEtG+5OGIBKu2XvxDTMLZyDOpHsGbZ9LMUdI5frDzrD8cMjprQ==
+X-Received: by 2002:a9d:4e05:: with SMTP id p5mr1087643otf.264.1619730918199;
+        Thu, 29 Apr 2021 14:15:18 -0700 (PDT)
 Received: from localhost.localdomain (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id y67sm242707otb.1.2021.04.29.14.15.13
+        by smtp.gmail.com with ESMTPSA id y67sm242707otb.1.2021.04.29.14.15.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Apr 2021 14:15:13 -0700 (PDT)
+        Thu, 29 Apr 2021 14:15:17 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>
-Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-pwm@vger.kernel.org,
         Marijn Suijten <marijn.suijten@somainline.org>,
         Yassine Oudjana <y.oudjana@protonmail.com>,
         Luca Weiss <luca@z3ntu.xyz>,
         Subbaraman Narayanamurthy <subbaram@codeaurora.org>
-Subject: [PATCH v7 0/6] Qualcomm Light Pulse Generator
-Date:   Thu, 29 Apr 2021 14:15:11 -0700
-Message-Id: <20210429211517.312792-1-bjorn.andersson@linaro.org>
+Subject: [PATCH v7 3/6] arm64: dts: qcom: Add LPG to pm8916, pm8994, pmi8994 and pmi8998
+Date:   Thu, 29 Apr 2021 14:15:14 -0700
+Message-Id: <20210429211517.312792-4-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210429211517.312792-1-bjorn.andersson@linaro.org>
+References: <20210429211517.312792-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This introduces support for the Qualcomm Light Pulse Generator block found in a
-wide range of Qualcomm PMICs.
+Add PWM/LPG nodes to the PMICs currently supported by the binding.
 
-Bjorn Andersson (6):
-  dt-bindings: leds: Add Qualcomm Light Pulse Generator binding
-  leds: Add driver for Qualcomm LPG
-  arm64: dts: qcom: Add LPG to pm8916, pm8994, pmi8994 and pmi8998
-  arm64: dts: qcom: sdm845: Enable user LEDs on DB845c
-  arm64: dts: qcom: pmi8994: Define MPP block
-  arm64: dts: qcom: db820c: Add user LEDs
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
- .../bindings/leds/leds-qcom-lpg.yaml          |  158 ++
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi  |   49 +
- arch/arm64/boot/dts/qcom/pm8916.dtsi          |    8 +
- arch/arm64/boot/dts/qcom/pm8994.dtsi          |   10 +
- arch/arm64/boot/dts/qcom/pmi8994.dtsi         |   22 +
- arch/arm64/boot/dts/qcom/pmi8998.dtsi         |   10 +
- arch/arm64/boot/dts/qcom/sdm845-db845c.dts    |   24 +
- drivers/leds/Kconfig                          |    3 +
- drivers/leds/Makefile                         |    3 +
- drivers/leds/rgb/leds-qcom-lpg.c              | 1286 +++++++++++++++++
- 10 files changed, 1573 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
- create mode 100644 drivers/leds/rgb/leds-qcom-lpg.c
+Changes since v6:
+- Extended patch to cover all the supported (arm64) PMICs
 
+ arch/arm64/boot/dts/qcom/pm8916.dtsi  |  8 ++++++++
+ arch/arm64/boot/dts/qcom/pm8994.dtsi  | 10 ++++++++++
+ arch/arm64/boot/dts/qcom/pmi8994.dtsi | 10 ++++++++++
+ arch/arm64/boot/dts/qcom/pmi8998.dtsi | 10 ++++++++++
+ 4 files changed, 38 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/pm8916.dtsi b/arch/arm64/boot/dts/qcom/pm8916.dtsi
+index f931cb0de231..db973e4ef9d3 100644
+--- a/arch/arm64/boot/dts/qcom/pm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm8916.dtsi
+@@ -119,6 +119,14 @@ pm8916_1: pmic@1 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
++		pm8916_pwm: pwm {
++			compatible = "qcom,pm8916-pwm";
++
++			#pwm-cells = <2>;
++
++			status = "disabled";
++		};
++
+ 		pm8916_vib: vibrator@c000 {
+ 			compatible = "qcom,pm8916-vib";
+ 			reg = <0xc000>;
+diff --git a/arch/arm64/boot/dts/qcom/pm8994.dtsi b/arch/arm64/boot/dts/qcom/pm8994.dtsi
+index c3876c82c874..9386cf12867d 100644
+--- a/arch/arm64/boot/dts/qcom/pm8994.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm8994.dtsi
+@@ -134,6 +134,16 @@ pmic@1 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
++		pm8994_lpg: lpg {
++			compatible = "qcom,pm8994-lpg";
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++			#pwm-cells = <2>;
++
++			status = "disabled";
++		};
++
+ 		pm8994_spmi_regulators: regulators {
+ 			compatible = "qcom,pm8994-regulators";
+ 		};
+diff --git a/arch/arm64/boot/dts/qcom/pmi8994.dtsi b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+index e5ed28ab9b2d..b118e87ef59e 100644
+--- a/arch/arm64/boot/dts/qcom/pmi8994.dtsi
++++ b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+@@ -27,6 +27,16 @@ pmic@3 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
++		pmi8994_lpg: lpg {
++			compatible = "qcom,pmi8994-lpg";
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++			#pwm-cells = <2>;
++
++			status = "disabled";
++		};
++
+ 		pmi8994_spmi_regulators: regulators {
+ 			compatible = "qcom,pmi8994-regulators";
+ 			#address-cells = <1>;
+diff --git a/arch/arm64/boot/dts/qcom/pmi8998.dtsi b/arch/arm64/boot/dts/qcom/pmi8998.dtsi
+index d230c510d4b7..a600c25d6667 100644
+--- a/arch/arm64/boot/dts/qcom/pmi8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/pmi8998.dtsi
+@@ -41,5 +41,15 @@ lab: lab {
+ 				interrupt-names = "sc-err", "ocp";
+ 			};
+ 		};
++
++		pmi8998_lpg: lpg {
++			compatible = "qcom,pmi8998-lpg";
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++			#pwm-cells = <2>;
++
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
 2.29.2
 
