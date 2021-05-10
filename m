@@ -8,23 +8,23 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8348BC43462
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0988C43470
 	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6B6613DC
+	by mail.kernel.org (Postfix) with ESMTP id BCDB26146D
 	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231296AbhEJJxB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 10 May 2021 05:53:01 -0400
-Received: from fgw22-7.mail.saunalahti.fi ([62.142.5.83]:17448 "EHLO
-        fgw22-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230480AbhEJJw0 (ORCPT
+        id S230480AbhEJJxC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 10 May 2021 05:53:02 -0400
+Received: from fgw20-7.mail.saunalahti.fi ([62.142.5.81]:64418 "EHLO
+        fgw20-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231190AbhEJJwg (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 10 May 2021 05:52:26 -0400
+        Mon, 10 May 2021 05:52:36 -0400
 Received: from localhost (88-115-248-186.elisa-laajakaista.fi [88.115.248.186])
-        by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-        id 41384c34-b175-11eb-88cb-005056bdf889;
-        Mon, 10 May 2021 12:51:13 +0300 (EEST)
+        by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+        id 458a1905-b175-11eb-ba24-005056bd6ce9;
+        Mon, 10 May 2021 12:51:20 +0300 (EEST)
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -37,9 +37,9 @@ To:     Pavel Machek <pavel@ucw.cz>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v1 17/28] leds: lm36274: Correct headers (of*.h -> mod_devicetable.h)
-Date:   Mon, 10 May 2021 12:50:34 +0300
-Message-Id: <20210510095045.3299382-18-andy.shevchenko@gmail.com>
+Subject: [PATCH v1 26/28] leds: pwm: Make error handling more robust
+Date:   Mon, 10 May 2021 12:50:43 +0300
+Message-Id: <20210510095045.3299382-27-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
 References: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
@@ -49,28 +49,58 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-There is no user of of*.h headers, but mod_devicetable.h.
-Update header block accordingly.
+It's easy to miss necessary clean up, e.g. firmware node reference counting,
+during error path in ->probe(). Make it more robust by moving to a single
+point of return.
 
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/leds/leds-lm36274.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/leds/leds-pwm.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/leds/leds-lm36274.c b/drivers/leds/leds-lm36274.c
-index a23a9424c2f3..90dc5cbebed4 100644
---- a/drivers/leds/leds-lm36274.c
-+++ b/drivers/leds/leds-lm36274.c
-@@ -7,8 +7,8 @@
- #include <linux/err.h>
- #include <linux/leds.h>
- #include <linux/leds-ti-lmu-common.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index f53f9309ca6c..d71e9fa5c8de 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -101,7 +101,7 @@ static int led_pwm_create_fwnode(struct device *dev, struct led_pwm_priv *priv)
+ {
+ 	struct fwnode_handle *fwnode;
+ 	struct led_pwm led;
+-	int ret = 0;
++	int ret;
  
- #include <linux/mfd/ti-lmu.h>
+ 	memset(&led, 0, sizeof(led));
+ 
+@@ -111,8 +111,8 @@ static int led_pwm_create_fwnode(struct device *dev, struct led_pwm_priv *priv)
+ 			led.name = to_of_node(fwnode)->name;
+ 
+ 		if (!led.name) {
+-			fwnode_handle_put(fwnode);
+-			return -EINVAL;
++			ret = EINVAL;
++			goto err_child_out;
+ 		}
+ 
+ 		led.active_low = fwnode_property_read_bool(fwnode,
+@@ -121,12 +121,14 @@ static int led_pwm_create_fwnode(struct device *dev, struct led_pwm_priv *priv)
+ 					 &led.max_brightness);
+ 
+ 		ret = led_pwm_add(dev, priv, &led, fwnode);
+-		if (ret) {
+-			fwnode_handle_put(fwnode);
+-			break;
+-		}
++		if (ret)
++			goto err_child_out;
+ 	}
+ 
++	return 0;
++
++err_child_out:
++	fwnode_handle_put(fwnode);
+ 	return ret;
+ }
+ 
 -- 
 2.31.1
 
