@@ -8,23 +8,23 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5553C43461
-	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3E2C43600
+	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFAC36147E
-	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC7DD613DC
+	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230154AbhEJJwS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S231127AbhEJJwS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Mon, 10 May 2021 05:52:18 -0400
-Received: from fgw20-7.mail.saunalahti.fi ([62.142.5.81]:63850 "EHLO
-        fgw20-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230493AbhEJJwP (ORCPT
+Received: from fgw21-7.mail.saunalahti.fi ([62.142.5.82]:42414 "EHLO
+        fgw21-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230492AbhEJJwP (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
         Mon, 10 May 2021 05:52:15 -0400
 Received: from localhost (88-115-248-186.elisa-laajakaista.fi [88.115.248.186])
-        by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-        id 3cb47c1a-b175-11eb-ba24-005056bd6ce9;
-        Mon, 10 May 2021 12:51:05 +0300 (EEST)
+        by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+        id 3b98e3ef-b175-11eb-9eb8-005056bdd08f;
+        Mon, 10 May 2021 12:51:03 +0300 (EEST)
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -37,9 +37,9 @@ To:     Pavel Machek <pavel@ucw.cz>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v1 08/28] leds: lgm-sso: Put fwnode in any case during ->probe()
-Date:   Mon, 10 May 2021 12:50:25 +0300
-Message-Id: <20210510095045.3299382-9-andy.shevchenko@gmail.com>
+Subject: [PATCH v1 06/28] leds: el15203000: Introduce to_el15203000_led() helper
+Date:   Mon, 10 May 2021 12:50:23 +0300
+Message-Id: <20210510095045.3299382-7-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
 References: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
@@ -49,66 +49,83 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-fwnode_get_next_child_node() bumps a reference counting of a returned variable.
-We have to balance it whenever we return to the caller.
+Introduce a helper to replace open coded container_of() calls.
+At the same time move ldev member to be first in the struct el15203000_led,
+that makes container_of() effectivelly a no-op.
 
-All the same in fwnode_for_each_child_node() case.
-
-Fixes: c3987cd2bca3 ("leds: lgm: Add LED controller driver for LGM SoC")
-Cc: Amireddy Mallikarjuna reddy <mallikarjunax.reddy@linux.intel.com>
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/leds/blink/leds-lgm-sso.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/leds/leds-el15203000.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/leds/blink/leds-lgm-sso.c b/drivers/leds/blink/leds-lgm-sso.c
-index 6a6d75f07af0..f6c7a5d0c2f7 100644
---- a/drivers/leds/blink/leds-lgm-sso.c
-+++ b/drivers/leds/blink/leds-lgm-sso.c
-@@ -633,8 +633,10 @@ __sso_led_dt_parse(struct sso_led_priv *priv, struct fwnode_handle *fw_ssoled)
+diff --git a/drivers/leds/leds-el15203000.c b/drivers/leds/leds-el15203000.c
+index fcb90d7cd42f..e81a93d57210 100644
+--- a/drivers/leds/leds-el15203000.c
++++ b/drivers/leds/leds-el15203000.c
+@@ -69,8 +69,8 @@ enum el15203000_command {
+ };
  
- 	fwnode_for_each_child_node(fw_ssoled, fwnode_child) {
- 		led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
--		if (!led)
--			return -ENOMEM;
-+		if (!led) {
-+			ret = -ENOMEM;
-+			goto __dt_err;
-+		}
+ struct el15203000_led {
+-	struct el15203000	*priv;
+ 	struct led_classdev	ldev;
++	struct el15203000	*priv;
+ 	u32			reg;
+ };
  
- 		INIT_LIST_HEAD(&led->list);
- 		led->priv = priv;
-@@ -704,11 +706,11 @@ __sso_led_dt_parse(struct sso_led_priv *priv, struct fwnode_handle *fw_ssoled)
- 		if (sso_create_led(priv, led, fwnode_child))
- 			goto __dt_err;
- 	}
--	fwnode_handle_put(fw_ssoled);
+@@ -83,6 +83,8 @@ struct el15203000 {
+ 	struct el15203000_led	leds[];
+ };
  
- 	return 0;
++#define to_el15203000_led(d)	container_of(d, struct el15203000_led, ldev)
 +
- __dt_err:
--	fwnode_handle_put(fw_ssoled);
-+	fwnode_handle_put(fwnode_child);
- 	/* unregister leds */
- 	list_for_each(p, &priv->led_list) {
- 		led = list_entry(p, struct sso_led, list);
-@@ -734,10 +736,15 @@ static int sso_led_dt_parse(struct sso_led_priv *priv)
- 	if (fw_ssoled) {
- 		ret = __sso_led_dt_parse(priv, fw_ssoled);
- 		if (ret)
--			return ret;
-+			goto err_child_out;
- 	}
+ static int el15203000_cmd(struct el15203000_led *led, u8 brightness)
+ {
+ 	int		ret;
+@@ -124,9 +126,7 @@ static int el15203000_cmd(struct el15203000_led *led, u8 brightness)
+ static int el15203000_set_blocking(struct led_classdev *ldev,
+ 				   enum led_brightness brightness)
+ {
+-	struct el15203000_led *led = container_of(ldev,
+-						  struct el15203000_led,
+-						  ldev);
++	struct el15203000_led *led = to_el15203000_led(ldev);
  
-+	fwnode_handle_put(fw_ssoled);
- 	return 0;
-+
-+err_child_out:
-+	fwnode_handle_put(fw_ssoled);
-+	return ret;
+ 	return el15203000_cmd(led, brightness == LED_OFF ? EL_OFF : EL_ON);
  }
+@@ -135,9 +135,7 @@ static int el15203000_pattern_set_S(struct led_classdev *ldev,
+ 				    struct led_pattern *pattern,
+ 				    u32 len, int repeat)
+ {
+-	struct el15203000_led *led = container_of(ldev,
+-						  struct el15203000_led,
+-						  ldev);
++	struct el15203000_led *led = to_el15203000_led(ldev);
  
- static int sso_probe_gpios(struct sso_led_priv *priv)
+ 	if (repeat > 0 || len != 2 ||
+ 	    pattern[0].delta_t != 4000 || pattern[0].brightness != 0 ||
+@@ -188,10 +186,8 @@ static int el15203000_pattern_set_P(struct led_classdev *ldev,
+ 				    struct led_pattern *pattern,
+ 				    u32 len, int repeat)
+ {
++	struct el15203000_led	*led = to_el15203000_led(ldev);
+ 	u8			cmd;
+-	struct el15203000_led	*led = container_of(ldev,
+-						    struct el15203000_led,
+-						    ldev);
+ 
+ 	if (repeat > 0)
+ 		return -EINVAL;
+@@ -228,9 +224,7 @@ static int el15203000_pattern_set_P(struct led_classdev *ldev,
+ 
+ static int el15203000_pattern_clear(struct led_classdev *ldev)
+ {
+-	struct el15203000_led	*led = container_of(ldev,
+-						    struct el15203000_led,
+-						    ldev);
++	struct el15203000_led *led = to_el15203000_led(ldev);
+ 
+ 	return el15203000_cmd(led, EL_OFF);
+ }
 -- 
 2.31.1
 
