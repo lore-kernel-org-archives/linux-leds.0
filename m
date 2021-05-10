@@ -8,23 +8,23 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF46C433ED
-	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B099C433B4
+	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F23A1613DC
-	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62169613DC
+	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231174AbhEJJwy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 10 May 2021 05:52:54 -0400
-Received: from fgw20-7.mail.saunalahti.fi ([62.142.5.81]:64333 "EHLO
-        fgw20-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231180AbhEJJwe (ORCPT
+        id S231226AbhEJJw7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 10 May 2021 05:52:59 -0400
+Received: from fgw23-7.mail.saunalahti.fi ([62.142.5.84]:14679 "EHLO
+        fgw23-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230429AbhEJJw2 (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 10 May 2021 05:52:34 -0400
+        Mon, 10 May 2021 05:52:28 -0400
 Received: from localhost (88-115-248-186.elisa-laajakaista.fi [88.115.248.186])
-        by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-        id 449686de-b175-11eb-ba24-005056bd6ce9;
-        Mon, 10 May 2021 12:51:18 +0300 (EEST)
+        by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+        id 41a1ad77-b175-11eb-8ccd-005056bdfda7;
+        Mon, 10 May 2021 12:51:13 +0300 (EEST)
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -36,11 +36,10 @@ To:     Pavel Machek <pavel@ucw.cz>,
         Dan Murphy <dmurphy@ti.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Daniel Mack <daniel@zonque.org>
-Subject: [PATCH v1 24/28] leds: lt3593: Put fwnode in any case during ->probe()
-Date:   Mon, 10 May 2021 12:50:41 +0300
-Message-Id: <20210510095045.3299382-25-andy.shevchenko@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v1 18/28] leds: lm3692x: Put fwnode in any case during ->probe()
+Date:   Mon, 10 May 2021 12:50:35 +0300
+Message-Id: <20210510095045.3299382-19-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
 References: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
@@ -53,30 +52,41 @@ X-Mailing-List: linux-leds@vger.kernel.org
 device_get_next_child_node() bumps a reference counting of a returned variable.
 We have to balance it whenever we return to the caller.
 
-Fixes: 8cd7d6daba93 ("leds: lt3593: Add device tree probing glue")
-Cc: Daniel Mack <daniel@zonque.org>
+Fixes: 9a5c1c64ac0a ("leds: lm3692x: Change DT calls to fwnode calls")
+Cc: Dan Murphy <dmurphy@ti.com>
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/leds/leds-lt3593.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/leds/leds-lm3692x.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
-index 68e06434ac08..7dab08773a34 100644
---- a/drivers/leds/leds-lt3593.c
-+++ b/drivers/leds/leds-lt3593.c
-@@ -99,10 +99,9 @@ static int lt3593_led_probe(struct platform_device *pdev)
- 	init_data.default_label = ":";
+diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+index e945de45388c..55e6443997ec 100644
+--- a/drivers/leds/leds-lm3692x.c
++++ b/drivers/leds/leds-lm3692x.c
+@@ -435,6 +435,7 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
  
- 	ret = devm_led_classdev_register_ext(dev, &led_data->cdev, &init_data);
--	if (ret < 0) {
--		fwnode_handle_put(child);
-+	fwnode_handle_put(child);
-+	if (ret < 0)
+ 	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
+ 	if (ret) {
++		fwnode_handle_put(child);
+ 		dev_err(&led->client->dev, "reg DT property missing\n");
  		return ret;
+ 	}
+@@ -449,12 +450,11 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ 
+ 	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
+ 					     &init_data);
+-	if (ret) {
++	if (ret)
+ 		dev_err(&led->client->dev, "led register err: %d\n", ret);
+-		return ret;
 -	}
  
- 	platform_set_drvdata(pdev, led_data);
+-	return 0;
++	fwnode_handle_put(init_data.fwnode);
++	return ret;
+ }
  
+ static int lm3692x_probe(struct i2c_client *client,
 -- 
 2.31.1
 
