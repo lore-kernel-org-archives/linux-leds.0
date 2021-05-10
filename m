@@ -8,23 +8,23 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3288DC43470
-	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B39ACC4360C
+	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03C6361433
-	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 996B761433
+	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230449AbhEJJwL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 10 May 2021 05:52:11 -0400
-Received: from fgw20-7.mail.saunalahti.fi ([62.142.5.81]:63649 "EHLO
-        fgw20-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230458AbhEJJwK (ORCPT
+        id S230520AbhEJJwO (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 10 May 2021 05:52:14 -0400
+Received: from fgw23-7.mail.saunalahti.fi ([62.142.5.84]:14395 "EHLO
+        fgw23-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230481AbhEJJwM (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 10 May 2021 05:52:10 -0400
+        Mon, 10 May 2021 05:52:12 -0400
 Received: from localhost (88-115-248-186.elisa-laajakaista.fi [88.115.248.186])
-        by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-        id 38a60b87-b175-11eb-ba24-005056bd6ce9;
-        Mon, 10 May 2021 12:50:58 +0300 (EEST)
+        by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+        id 3aa10d04-b175-11eb-8ccd-005056bdfda7;
+        Mon, 10 May 2021 12:51:01 +0300 (EEST)
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -36,11 +36,10 @@ To:     Pavel Machek <pavel@ucw.cz>,
         Dan Murphy <dmurphy@ti.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v1 01/28] leds: class: The -ENOTSUPP should never be seen by user space
-Date:   Mon, 10 May 2021 12:50:18 +0300
-Message-Id: <20210510095045.3299382-2-andy.shevchenko@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v1 04/28] leds: el15203000: Make error handling more robust
+Date:   Mon, 10 May 2021 12:50:21 +0300
+Message-Id: <20210510095045.3299382-5-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
 References: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
@@ -50,31 +49,59 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Drop the bogus error code and let of_led_get() to take care about absent
-of_node.
+It's easy to miss necessary clean up, e.g. firmware node reference counting,
+during error path in ->probe(). Make it more robust by moving to a single
+point of return.
 
-Fixes: e389240ad992 ("leds: Add managed API to get a LED from a device driver")
-Cc: Jean-Jacques Hiblot <jjhiblot@ti.com>
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/leds/led-class.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/leds/leds-el15203000.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 2e495ff67856..fa3f5f504ff7 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -285,10 +285,6 @@ struct led_classdev *__must_check devm_of_led_get(struct device *dev,
- 	if (!dev)
- 		return ERR_PTR(-EINVAL);
- 
--	/* Not using device tree? */
--	if (!IS_ENABLED(CONFIG_OF) || !dev->of_node)
--		return ERR_PTR(-ENOTSUPP);
+diff --git a/drivers/leds/leds-el15203000.c b/drivers/leds/leds-el15203000.c
+index 912451db05e6..bcdbbbc9c187 100644
+--- a/drivers/leds/leds-el15203000.c
++++ b/drivers/leds/leds-el15203000.c
+@@ -246,16 +246,13 @@ static int el15203000_probe_dt(struct el15203000 *priv)
+ 		ret = fwnode_property_read_u32(child, "reg", &led->reg);
+ 		if (ret) {
+ 			dev_err(priv->dev, "LED without ID number");
+-			fwnode_handle_put(child);
 -
- 	led = of_led_get(dev->of_node, index);
- 	if (IS_ERR(led))
- 		return led;
+-			break;
++			goto err_child_out;
+ 		}
+ 
+ 		if (led->reg > U8_MAX) {
+ 			dev_err(priv->dev, "LED value %d is invalid", led->reg);
+-			fwnode_handle_put(child);
+-
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto err_child_out;
+ 		}
+ 
+ 		led->priv			  = priv;
+@@ -277,14 +274,16 @@ static int el15203000_probe_dt(struct el15203000 *priv)
+ 			dev_err(priv->dev,
+ 				"failed to register LED device %s, err %d",
+ 				led->ldev.name, ret);
+-			fwnode_handle_put(child);
+-
+-			break;
++			goto err_child_out;
+ 		}
+ 
+ 		led++;
+ 	}
+ 
++	return 0;
++
++err_child_out:
++	fwnode_handle_put(child);
+ 	return ret;
+ }
+ 
 -- 
 2.31.1
 
