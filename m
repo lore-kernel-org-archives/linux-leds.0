@@ -8,23 +8,23 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3E2C43600
-	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FF6C433B4
+	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC7DD613DC
-	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98523613DC
+	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231127AbhEJJwS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 10 May 2021 05:52:18 -0400
-Received: from fgw21-7.mail.saunalahti.fi ([62.142.5.82]:42414 "EHLO
-        fgw21-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230492AbhEJJwP (ORCPT
+        id S231151AbhEJJwT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 10 May 2021 05:52:19 -0400
+Received: from fgw20-7.mail.saunalahti.fi ([62.142.5.81]:63917 "EHLO
+        fgw20-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230507AbhEJJwQ (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 10 May 2021 05:52:15 -0400
+        Mon, 10 May 2021 05:52:16 -0400
 Received: from localhost (88-115-248-186.elisa-laajakaista.fi [88.115.248.186])
-        by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-        id 3b98e3ef-b175-11eb-9eb8-005056bdd08f;
-        Mon, 10 May 2021 12:51:03 +0300 (EEST)
+        by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+        id 3d9aba8c-b175-11eb-ba24-005056bd6ce9;
+        Mon, 10 May 2021 12:51:06 +0300 (EEST)
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -37,9 +37,9 @@ To:     Pavel Machek <pavel@ucw.cz>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v1 06/28] leds: el15203000: Introduce to_el15203000_led() helper
-Date:   Mon, 10 May 2021 12:50:23 +0300
-Message-Id: <20210510095045.3299382-7-andy.shevchenko@gmail.com>
+Subject: [PATCH v1 10/28] leds: lgm-sso: Remove unneeded of_match_ptr()
+Date:   Mon, 10 May 2021 12:50:27 +0300
+Message-Id: <20210510095045.3299382-11-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
 References: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
@@ -49,83 +49,29 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Introduce a helper to replace open coded container_of() calls.
-At the same time move ldev member to be first in the struct el15203000_led,
-that makes container_of() effectivelly a no-op.
+LGM SSO is an OF dependent driver, so of_match_ptr() can be safely
+removed.
+
+Remove the unneeded of_match_ptr().
 
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/leds/leds-el15203000.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+ drivers/leds/blink/leds-lgm-sso.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-el15203000.c b/drivers/leds/leds-el15203000.c
-index fcb90d7cd42f..e81a93d57210 100644
---- a/drivers/leds/leds-el15203000.c
-+++ b/drivers/leds/leds-el15203000.c
-@@ -69,8 +69,8 @@ enum el15203000_command {
+diff --git a/drivers/leds/blink/leds-lgm-sso.c b/drivers/leds/blink/leds-lgm-sso.c
+index 91844dcb8bc7..e76be25480b4 100644
+--- a/drivers/leds/blink/leds-lgm-sso.c
++++ b/drivers/leds/blink/leds-lgm-sso.c
+@@ -878,7 +878,7 @@ static struct platform_driver intel_sso_led_driver = {
+ 	.remove		= intel_sso_led_remove,
+ 	.driver		= {
+ 			.name = "lgm-ssoled",
+-			.of_match_table = of_match_ptr(of_sso_led_match),
++			.of_match_table = of_sso_led_match,
+ 	},
  };
  
- struct el15203000_led {
--	struct el15203000	*priv;
- 	struct led_classdev	ldev;
-+	struct el15203000	*priv;
- 	u32			reg;
- };
- 
-@@ -83,6 +83,8 @@ struct el15203000 {
- 	struct el15203000_led	leds[];
- };
- 
-+#define to_el15203000_led(d)	container_of(d, struct el15203000_led, ldev)
-+
- static int el15203000_cmd(struct el15203000_led *led, u8 brightness)
- {
- 	int		ret;
-@@ -124,9 +126,7 @@ static int el15203000_cmd(struct el15203000_led *led, u8 brightness)
- static int el15203000_set_blocking(struct led_classdev *ldev,
- 				   enum led_brightness brightness)
- {
--	struct el15203000_led *led = container_of(ldev,
--						  struct el15203000_led,
--						  ldev);
-+	struct el15203000_led *led = to_el15203000_led(ldev);
- 
- 	return el15203000_cmd(led, brightness == LED_OFF ? EL_OFF : EL_ON);
- }
-@@ -135,9 +135,7 @@ static int el15203000_pattern_set_S(struct led_classdev *ldev,
- 				    struct led_pattern *pattern,
- 				    u32 len, int repeat)
- {
--	struct el15203000_led *led = container_of(ldev,
--						  struct el15203000_led,
--						  ldev);
-+	struct el15203000_led *led = to_el15203000_led(ldev);
- 
- 	if (repeat > 0 || len != 2 ||
- 	    pattern[0].delta_t != 4000 || pattern[0].brightness != 0 ||
-@@ -188,10 +186,8 @@ static int el15203000_pattern_set_P(struct led_classdev *ldev,
- 				    struct led_pattern *pattern,
- 				    u32 len, int repeat)
- {
-+	struct el15203000_led	*led = to_el15203000_led(ldev);
- 	u8			cmd;
--	struct el15203000_led	*led = container_of(ldev,
--						    struct el15203000_led,
--						    ldev);
- 
- 	if (repeat > 0)
- 		return -EINVAL;
-@@ -228,9 +224,7 @@ static int el15203000_pattern_set_P(struct led_classdev *ldev,
- 
- static int el15203000_pattern_clear(struct led_classdev *ldev)
- {
--	struct el15203000_led	*led = container_of(ldev,
--						    struct el15203000_led,
--						    ldev);
-+	struct el15203000_led *led = to_el15203000_led(ldev);
- 
- 	return el15203000_cmd(led, EL_OFF);
- }
 -- 
 2.31.1
 
