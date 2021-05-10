@@ -8,23 +8,23 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B099C433B4
-	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 082E1C43460
+	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62169613DC
+	by mail.kernel.org (Postfix) with ESMTP id C54CB61468
 	for <linux-leds@archiver.kernel.org>; Mon, 10 May 2021 09:51:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231226AbhEJJw7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S231280AbhEJJw7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Mon, 10 May 2021 05:52:59 -0400
-Received: from fgw23-7.mail.saunalahti.fi ([62.142.5.84]:14679 "EHLO
-        fgw23-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230429AbhEJJw2 (ORCPT
+Received: from fgw22-7.mail.saunalahti.fi ([62.142.5.83]:17626 "EHLO
+        fgw22-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231187AbhEJJwg (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 10 May 2021 05:52:28 -0400
+        Mon, 10 May 2021 05:52:36 -0400
 Received: from localhost (88-115-248-186.elisa-laajakaista.fi [88.115.248.186])
-        by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-        id 41a1ad77-b175-11eb-8ccd-005056bdfda7;
-        Mon, 10 May 2021 12:51:13 +0300 (EEST)
+        by fgw22.mail.saunalahti.fi (Halon) with ESMTP
+        id 44ff04ed-b175-11eb-88cb-005056bdf889;
+        Mon, 10 May 2021 12:51:19 +0300 (EEST)
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -37,9 +37,9 @@ To:     Pavel Machek <pavel@ucw.cz>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v1 18/28] leds: lm3692x: Put fwnode in any case during ->probe()
-Date:   Mon, 10 May 2021 12:50:35 +0300
-Message-Id: <20210510095045.3299382-19-andy.shevchenko@gmail.com>
+Subject: [PATCH v1 25/28] leds: lt3593: Make use of device properties
+Date:   Mon, 10 May 2021 12:50:42 +0300
+Message-Id: <20210510095045.3299382-26-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
 References: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
@@ -49,44 +49,63 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-device_get_next_child_node() bumps a reference counting of a returned variable.
-We have to balance it whenever we return to the caller.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Fixes: 9a5c1c64ac0a ("leds: lm3692x: Change DT calls to fwnode calls")
-Cc: Dan Murphy <dmurphy@ti.com>
+Device property API allows to gather device resources from different sources,
+such as ACPI. Convert the driver to unleash the power of device property API.
+
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/leds/leds-lm3692x.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/leds/Kconfig       | 1 -
+ drivers/leds/leds-lt3593.c | 8 +++-----
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index e945de45388c..55e6443997ec 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -435,6 +435,7 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index e3ee3c34d535..9ab706d5ded7 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -616,7 +616,6 @@ config LEDS_LT3593
+ 	tristate "LED driver for LT3593 controllers"
+ 	depends on LEDS_CLASS
+ 	depends on GPIOLIB || COMPILE_TEST
+-	depends on OF
+ 	help
+ 	  This option enables support for LEDs driven by a Linear Technology
+ 	  LT3593 controller. This controller uses a special one-wire pulse
+diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
+index 7dab08773a34..d0160fde0f94 100644
+--- a/drivers/leds/leds-lt3593.c
++++ b/drivers/leds/leds-lt3593.c
+@@ -7,8 +7,9 @@
+ #include <linux/delay.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
++#include <linux/property.h>
  
- 	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
- 	if (ret) {
-+		fwnode_handle_put(child);
- 		dev_err(&led->client->dev, "reg DT property missing\n");
- 		return ret;
- 	}
-@@ -449,12 +450,11 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ #define LED_LT3593_NAME "lt3593"
  
- 	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
- 					     &init_data);
--	if (ret) {
-+	if (ret)
- 		dev_err(&led->client->dev, "led register err: %d\n", ret);
--		return ret;
--	}
+@@ -68,9 +69,6 @@ static int lt3593_led_probe(struct platform_device *pdev)
+ 	struct led_init_data init_data = {};
+ 	const char *tmp;
  
--	return 0;
-+	fwnode_handle_put(init_data.fwnode);
-+	return ret;
- }
+-	if (!dev_of_node(dev))
+-		return -ENODEV;
+-
+ 	led_data = devm_kzalloc(dev, sizeof(*led_data), GFP_KERNEL);
+ 	if (!led_data)
+ 		return -ENOMEM;
+@@ -118,7 +116,7 @@ static struct platform_driver lt3593_led_driver = {
+ 	.probe		= lt3593_led_probe,
+ 	.driver		= {
+ 		.name	= "leds-lt3593",
+-		.of_match_table = of_match_ptr(of_lt3593_leds_match),
++		.of_match_table = of_lt3593_leds_match,
+ 	},
+ };
  
- static int lm3692x_probe(struct i2c_client *client,
 -- 
 2.31.1
 
