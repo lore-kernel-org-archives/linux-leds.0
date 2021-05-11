@@ -2,40 +2,41 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED1CC433ED
-	for <linux-leds@archiver.kernel.org>; Tue, 11 May 2021 12:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43588C43462
+	for <linux-leds@archiver.kernel.org>; Tue, 11 May 2021 12:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A9A661919
-	for <linux-leds@archiver.kernel.org>; Tue, 11 May 2021 12:25:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 217006191A
+	for <linux-leds@archiver.kernel.org>; Tue, 11 May 2021 12:25:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231510AbhEKM0j (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 11 May 2021 08:26:39 -0400
-Received: from polaris.svanheule.net ([84.16.241.116]:35880 "EHLO
+        id S231587AbhEKM0k (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 11 May 2021 08:26:40 -0400
+Received: from polaris.svanheule.net ([84.16.241.116]:35924 "EHLO
         polaris.svanheule.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230458AbhEKM0i (ORCPT
+        with ESMTP id S231478AbhEKM0i (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Tue, 11 May 2021 08:26:38 -0400
 Received: from terra.local.svanheule.net (unknown [IPv6:2a02:a03f:eafb:ee01:a5bf:613f:4f5:f348])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 33A251FCC1D;
-        Tue, 11 May 2021 14:25:30 +0200 (CEST)
+        by polaris.svanheule.net (Postfix) with ESMTPSA id 31EA71FCC20;
+        Tue, 11 May 2021 14:25:31 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1620735930;
+        s=mail1707; t=1620735931;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=pXFaVKy+wOmrEMOM/qypVknWMmqZIUQ8HWg1Wk58Nog=;
-        b=TWR+oI/pYIXBY09oaovraxNH/t2wtW94gjy2gKL2OBx97uK6shZ6G7RyrHFGZNfi9Iq6zq
-        zuTqQbRmQNCb0wFTw/xa35Eh+53NpIqjprfk79srhtc7xkQ7KoYy+QnBORgzzjTdwCwSwP
-        ZkCqrqHNICjn20ppyc4APQXzURnIfBkIfINn7qZIJ17y5Vogot9ZaXLPD/YpDjLo8+DhvR
-        x1+VEtu7qXWD+moX75raBZoX2J5Irb1dKH79BHzrSO+Yy91l4MbDkXPXQPxi99Uw5tISZH
-        tIAmqh7Pk374OaHF7roTED/rhGphcVHgomUl6Sq5F1ECrqeN0OufZ8eUZNwUVQ==
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Pt5VbHjv7TStXCyOId4oblbPWK+NoFcaQiOp8x5WPqo=;
+        b=LgkPSm1BZM3fRNKHQUxbn2GffmERC4XYR3V+zLw9ZkfrbnnaGXfAy22kAdD7V13Z7Wm+m4
+        Wh/AUbcehTDyX5cRKRhkkKuBgSzC8+humvzL6los91XWrZouDxxnb/gtIDbRzpl6q1dNf1
+        9UQo2UYJZLjOEshIqFDfsIEjLoLLVQfpYcf3KqLMa3malwDmRIl3Zlh2CJZyy7IoiNKAfR
+        qye7czyIges5qODmQNJZP84AMV2QLZWQ42yf7TmufnOXYt5y1ATpvk2CPb3b/LhBnWktSc
+        uzlgi4YQ9zSbtJspgomIvu0cZc99saLV/hT9WZMgAyr7/ro2lEaQIVbFXVy/tw==
 From:   Sander Vanheule <sander@svanheule.net>
 To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Lee Jones <lee.jones@linaro.org>,
@@ -44,78 +45,241 @@ To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         linux-gpio@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Sander Vanheule <sander@svanheule.net>
-Subject: [PATCH 0/5] RTL8231 GPIO expander support
-Date:   Tue, 11 May 2021 14:25:18 +0200
-Message-Id: <cover.1620735871.git.sander@svanheule.net>
+Subject: [PATCH 2/5] dt-bindings: mfd: Binding for RTL8231
+Date:   Tue, 11 May 2021 14:25:20 +0200
+Message-Id: <73e017d08117cee1290b9483c23f79f956f41a6d.1620735871.git.sander@svanheule.net>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <cover.1620735871.git.sander@svanheule.net>
+References: <cover.1620735871.git.sander@svanheule.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The RTL8231 GPIO and LED expander can be configured for use as an MDIO or SMI
-bus device. Currently only the MDIO mode is supported, although SMI mode
-support should be fairly straightforward, once an SMI bus driver is available.
+Add a binding description for the Realtek RTL8231, a GPIO and LED
+expander chip commonly used in ethernet switches based on a Realtek
+switch SoC. These chips can be addressed via an MDIO or SMI bus, or used
+as a plain 36-bit shift register.
 
-Provided features by the RTL8231:
-  - Up to 37 GPIOs
-    - Configurable drive strength: 8mA or 4mA (currently unsupported)
-    - Input debouncing on high GPIOs (currently unsupported)
-  - Up to 88 LEDs in multiple scan matrix groups
-    - On, off, or one of six toggling intervals
-    - "single-color mode": 2×36 single color LEDs + 8 bi-color LEDs
-    - "bi-color mode": (12 + 2×6) bi-color LEDs + 24 single color LEDs
-  - Up to one PWM output (currently unsupported)
-    - Fixed duty cycle, 8 selectable frequencies (1.2kHz - 4.8kHz)
+This binding only describes the feature set provided by the MDIO/SMI
+configuration, and covers the GPIO, PWM, and pin control properties. The
+LED properties are defined in a separate binding.
 
-There remain some log warnings when probing the device, possibly due to the way
-I'm using the MFD subsystem. Would it be possible to avoid these?
-[    2.602242] rtl8231-pinctrl: Failed to locate of_node [id: -2]
-[    2.609380] rtl8231-pinctrl rtl8231-pinctrl.0.auto: no of_node; not parsing pinctrl DT
-
-When no 'leds' sub-node is specified:
-[    2.922262] rtl8231-leds: Failed to locate of_node [id: -2]
-[    2.967149] rtl8231-leds rtl8231-leds.1.auto: no of_node; not parsing pinctrl DT
-[    2.975673] rtl8231-leds rtl8231-leds.1.auto: scan mode missing or invalid
-[    2.983531] rtl8231-leds: probe of rtl8231-leds.1.auto failed with error -22
-
-Changes since RFC:
-  - Dropped MDIO regmap interface. I was unable to resolve the Kconfig
-    dependency issue, so have reverted to using regmap_config.reg_read/write.
-  - Added pinctrl support
-  - Added LED support
-  - Changed root device to MFD, with pinctrl and leds child devices. Root
-    device is now an mdio_device driver.
-
-Sander Vanheule (5):
-  dt-bindings: leds: Binding for RTL8231 scan matrix
-  dt-bindings: mfd: Binding for RTL8231
-  mfd: Add RTL8231 core device
-  pinctrl: Add RTL8231 pin control and GPIO support
-  leds: Add support for RTL8231 LED scan matrix
-
- .../bindings/leds/realtek,rtl8231-leds.yaml   | 159 ++++++
- .../bindings/mfd/realtek,rtl8231.yaml         | 202 +++++++
- drivers/leds/Kconfig                          |  10 +
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-rtl8231.c                   | 281 ++++++++++
- drivers/mfd/Kconfig                           |   9 +
- drivers/mfd/Makefile                          |   1 +
- drivers/mfd/rtl8231.c                         | 163 ++++++
- drivers/pinctrl/Kconfig                       |  10 +
- drivers/pinctrl/Makefile                      |   1 +
- drivers/pinctrl/pinctrl-rtl8231.c             | 497 ++++++++++++++++++
- include/linux/mfd/rtl8231.h                   |  49 ++
- 12 files changed, 1383 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/realtek,rtl8231-leds.yaml
+Signed-off-by: Sander Vanheule <sander@svanheule.net>
+---
+ .../bindings/mfd/realtek,rtl8231.yaml         | 202 ++++++++++++++++++
+ 1 file changed, 202 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
- create mode 100644 drivers/leds/leds-rtl8231.c
- create mode 100644 drivers/mfd/rtl8231.c
- create mode 100644 drivers/pinctrl/pinctrl-rtl8231.c
- create mode 100644 include/linux/mfd/rtl8231.h
 
+diff --git a/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml b/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
+new file mode 100644
+index 000000000000..2023cfa887a3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
+@@ -0,0 +1,202 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/realtek,rtl8231.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Realtek RTL8231 GPIO and LED expander.
++
++maintainers:
++  - Sander Vanheule <sander@svanheule.net>
++
++description: |
++  The RTL8231 is a GPIO and LED expander chip, providing up to 37 GPIOs, up to
++  88 LEDs, and up to one PWM output. This device is frequently used alongside
++  Realtek switch SoCs, to provide additional I/O capabilities.
++
++  To manage the RTL8231's features, its strapping pins can be used to configure
++  it in one of three modes: shift register, MDIO device, or SMI device. The
++  shift register mode does not need special support. In MDIO or SMI mode, most
++  pins can be configured as a GPIO output, LED matrix scan line/column, or as a
++  PWM output.
++
++  The GPIO and pin control are part of the main node. PWM and LED support are
++  configured as sub-nodes.
++
++properties:
++  compatible:
++    const: realtek,rtl8231
++
++  reg:
++    description: MDIO or SMI device address.
++    maxItems: 1
++
++  # GPIO support
++  gpio-controller: true
++
++  "#gpio-cells":
++    const: 2
++    description: |
++      The first cell is the pin number and the second cell is used to specify
++      the gpio active state.
++
++  gpio-ranges:
++    description: |
++      Must reference itself, and provide a zero-based mapping for 37 pins.
++    maxItems: 1
++
++  # Pin muxing and configuration
++  realtek,drive-strength:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Common drive strength used for all GPIO output pins, must be 4mA or 8mA.
++      On reset, this value will default to 8mA.
++    enum: [4, 8]
++
++  # LED scanning matrix
++  leds:
++    $ref: ../leds/realtek,rtl8231-leds.yaml#
++
++  # PWM output
++  pwm:
++    type: object
++    description: |
++      Subnode describing the PWM peripheral. To use the PWM output, gpio35 must
++      be muxed to its 'pwm' function. Valid frequency values for consumers are
++      1200, 1600, 2000, 2400, 2800, 3200, 4000, and 4800.
++
++    properties:
++      "#pwm-cells":
++        description: |
++          Twos cells with PWM index (must be 0) and PWM frequency in Hz.
++        const: 2
++
++    required:
++      - "#pwm-cells"
++
++patternProperties:
++  "-pins$":
++    type: object
++    $ref: ../pinctrl/pinmux-node.yaml#
++
++    properties:
++      pins:
++        items:
++          oneOf:
++            - enum: ["gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6",
++                     "gpio7", "gpio8", "gpio9", "gpio10", "gpio11", "gpio12", "gpio13",
++                     "gpio14", "gpio15", "gpio16", "gpio17", "gpio18", "gpio19", "gpio20",
++                     "gpio21", "gpio22", "gpio23", "gpio24", "gpio25", "gpio26", "gpio27",
++                     "gpio28", "gpio29", "gpio30", "gpio31", "gpio32", "gpio33", "gpio34",
++                     "gpio35", "gpio36"]
++        minItems: 1
++        maxItems: 37
++      function:
++        description: |
++          Select which function to use. "gpio" is supported for all pins, "led" is supported
++          for pins 0-34, "pwm" is supported for for pin 35.
++        enum: ["gpio", "led", "pwm"]
++
++    required:
++      - pins
++      - function
++
++required:
++  - compatible
++  - reg
++  - gpio-controller
++  - "#gpio-cells"
++  - gpio-ranges
++
++additionalProperties: false
++
++examples:
++  - |
++    // Minimal example
++    mdio {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        expander0: expander@0 {
++            compatible = "realtek,rtl8231";
++            reg = <0>;
++
++            gpio-controller;
++            #gpio-cells = <2>;
++            gpio-ranges = <&expander0 0 0 37>;
++        };
++    };
++  - |
++    // All bells and whistles included
++    #include <dt-bindings/leds/common.h>
++    mdio {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        expander1: expander@1 {
++            compatible = "realtek,rtl8231";
++            reg = <1>;
++
++            gpio-controller;
++            #gpio-cells = <2>;
++            gpio-ranges = <&expander1 0 0 37>;
++
++            realtek,drive-strength = <4>;
++
++            button-pins {
++                pins = "gpio36";
++                function = "gpio";
++                input-debounce = "100000";
++            };
++
++            pwm-pins {
++                pins = "gpio35";
++                function = "pwm";
++            };
++
++            led-pins {
++                pins = "gpio0", "gpio1", "gpio3", "gpio4";
++                function = "led";
++            };
++
++            pwm {
++                #pwm-cells = <2>;
++            };
++
++            leds {
++                compatible = "realtek,rtl8231-leds";
++                #address-cells = <2>;
++                #size-cells = <0>;
++
++                realtek,led-scan-mode = "single-color";
++
++                led@0,0 {
++                    reg = <0 0>;
++                    color = <LED_COLOR_ID_GREEN>;
++                    function = LED_FUNCTION_LAN;
++                    function-enumerator = <0>;
++                };
++
++                led@0,1 {
++                    reg = <0 1>;
++                    color = <LED_COLOR_ID_AMBER>;
++                    function = LED_FUNCTION_LAN;
++                    function-enumerator = <0>;
++                };
++
++                led@1,0 {
++                    reg = <1 0>;
++                    color = <LED_COLOR_ID_GREEN>;
++                    function = LED_FUNCTION_LAN;
++                    function-enumerator = <1>;
++                };
++
++                led@1,1 {
++                    reg = <1 1>;
++                    color = <LED_COLOR_ID_AMBER>;
++                    function = LED_FUNCTION_LAN;
++                    function-enumerator = <1>;
++                };
++            };
++        };
++    };
 -- 
 2.31.1
 
