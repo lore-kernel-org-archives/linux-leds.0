@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-19.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0068EC43600
-	for <linux-leds@archiver.kernel.org>; Sun, 16 May 2021 10:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA7DC433B4
+	for <linux-leds@archiver.kernel.org>; Sun, 16 May 2021 10:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5746613C1
-	for <linux-leds@archiver.kernel.org>; Sun, 16 May 2021 10:53:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01E92611BF
+	for <linux-leds@archiver.kernel.org>; Sun, 16 May 2021 10:53:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230332AbhEPKzK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S230350AbhEPKzK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Sun, 16 May 2021 06:55:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47704 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:47750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229506AbhEPKzH (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Sun, 16 May 2021 06:55:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C84BB61184;
+        id S229910AbhEPKzI (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 16 May 2021 06:55:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DAB4D611BD;
         Sun, 16 May 2021 10:53:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1621162433;
-        bh=aZccJ0bg/mMgG/HBTCLEB1mjUvqzsT/zeGhH0Y0dcso=;
+        bh=VffAjVEGj0KnqZ+dbqyEYxecX+Dvk1FJFfEgTWX3FtY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lkqdUBTy526rucId3KtQ5MCl4lXEcDc5LNLl4NTtmNNqzIrbmTShG9v2bUGaHKBsn
-         M90QREspNhIVy0SlIY06u78EJTMfHAzMOwJveeG6Zm3+5nbKSacWG9oegLK3iZ7iEz
-         POt8ZpQR334yGCvV7SPNOU13dBQCT53KeJs2e+Ax+Pj/DuPYEVHDlruGBvh6KbRGuq
-         44mY/4tcBMJHGeQHNM+0vsfc2c19WVEzqE1DlYAnI9B8uM2Mv3wtfmT69xIcOklIZn
-         TQRIbQQGX2I9fLlQqE1PQPo1uvXemeNQ6+gu/O1ZBjjIOP5+3dQciZ8v/1xnTPDumw
-         FCSznUCoa8tNA==
+        b=IOx1mooElKYtzRqYX8Volrk8T0GkXx2GaHSTpMBDqL2+/8GWoCqPNbsKbHaPNKoGG
+         CwQzYBK7qlJ2pGFQh4G31jCRDPh3O73yJtWEqFQDigDDBZh8jQBQF1lJlLgoNU40/L
+         12cbx9sfxCGE5eR+FO82DpOavuiMv8X0A/Zgov9alk1eTMo93DPYI6UKClm28HV5dl
+         OM62jb1ks9yi4vajoqTWR4O/fIOHocO1sZNjF955zp4ONdb1J/dZkRXiO2GLSpEQx1
+         u/deomzZv2gqSR1HXdNy6q111BdEVSyGnRZnYZOLqWqxZ3/Kvq6/r1B32x73jB//BI
+         roVicJS4ZLMTg==
 Received: by mail.kernel.org with local (Exim 4.94.2)
         (envelope-from <mchehab@kernel.org>)
-        id 1liEP8-003s8S-Vu; Sun, 16 May 2021 12:53:51 +0200
+        id 1liEP8-003s8G-RT; Sun, 16 May 2021 12:53:50 +0200
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
@@ -42,9 +42,9 @@ Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         linux-leds@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: [PATCH 08/17] staging: muc-wmi: add brightness and color for NUC6 API
-Date:   Sun, 16 May 2021 12:53:36 +0200
-Message-Id: <58e10bcb33ea936a7971c222a57b03f79e60302f.1621161037.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 05/17] staging: nuc-wmi: allow changing the LED colors
+Date:   Sun, 16 May 2021 12:53:33 +0200
+Message-Id: <bedb5f44cee75ed242e95f8fccc5d93acfc2b382.1621161037.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1621161037.git.mchehab+huawei@kernel.org>
 References: <cover.1621161037.git.mchehab+huawei@kernel.org>
@@ -55,281 +55,336 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The NUC6 WMI API is really simple: it has just 2 messages,
-that retrieves everything for a LED, and it has just 2 LEDs.
-
-Add support for retrieving and set brightness and color.
+Add routines to allow seeing and changing the LED colors.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/staging/nuc-led/nuc-wmi.c | 198 ++++++++++++++++++++++++++++--
- 1 file changed, 191 insertions(+), 7 deletions(-)
+ drivers/staging/nuc-led/nuc-wmi.c | 244 ++++++++++++++++++++++++++++--
+ 1 file changed, 228 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/staging/nuc-led/nuc-wmi.c b/drivers/staging/nuc-led/nuc-wmi.c
-index db38c40c223a..a365a8603182 100644
+index 711897ba4666..07cf18e6f4c4 100644
 --- a/drivers/staging/nuc-led/nuc-wmi.c
 +++ b/drivers/staging/nuc-led/nuc-wmi.c
-@@ -302,14 +302,13 @@ static int nuc_wmi_query_leds_nuc6(struct device *dev)
- {
- 	// FIXME: add a check for the specific models that are known to work
- 	struct nuc_wmi *priv = dev_get_drvdata(dev);
--	u8 cmd, input[NUM_INPUT_ARGS] = { 0 };
-+	u8 input[NUM_INPUT_ARGS] = { 0 };
- 	u8 output[NUM_OUTPUT_ARGS];
- 	struct nuc_nmi_led *led;
- 	int ret;
+@@ -58,8 +58,6 @@ enum led_new_get_subcmd {
+ enum led_function {
+ 	LED_FUNC_BRIGHTNESS,
+ 	LED_FUNC_COLOR1,
+-	LED_FUNC_COLOR_GREEN,
+-	LED_FUNC_COLOR_BLUE,
  
--	cmd = LED_OLD_GET_STATUS;
- 	input[0] = LED_OLD_GET_S0_POWER;
--	ret = nuc_nmi_cmd(dev, cmd, input, output);
-+	ret = nuc_nmi_cmd(dev, LED_OLD_GET_STATUS, input, output);
- 	if (ret) {
- 		dev_warn(dev, "Get S0 Power: error %d\n", ret);
- 		return ret;
-@@ -322,9 +321,8 @@ static int nuc_wmi_query_leds_nuc6(struct device *dev)
- 	led->indicator = fls(led->avail_indicators);
- 	priv->num_leds++;
+ 	LED_FUNC_BLINK_BEHAVIOR,
+ 	LED_FUNC_BLINK_FREQ,
+@@ -92,43 +90,31 @@ static const u8 led_func_rev_0_64[MAX_IND][MAX_LED_FUNC] = {
+ 		[LED_FUNC_BLINK_BEHAVIOR]	= 0x01,
+ 		[LED_FUNC_BLINK_FREQ]		= 0x02,
+ 		[LED_FUNC_COLOR1]		= 0x03,
+-		[LED_FUNC_COLOR_GREEN]		= 0x04,
+-		[LED_FUNC_COLOR_BLUE]		= 0x05
+ 	},
+ 	[LED_IND_HDD_ACTIVITY] = {
+ 		[LED_FUNC_BRIGHTNESS]		= 0x00,
+ 		[LED_FUNC_COLOR1]		= 0x01,
+-		[LED_FUNC_COLOR_GREEN]		= 0x02,
+-		[LED_FUNC_COLOR_BLUE]		= 0x03,
+ 		[LED_FUNC_HDD_BEHAVIOR]		= 0x04
+ 	},
+ 	[LED_IND_ETHERNET] = {
+ 		[LED_FUNC_ETH_TYPE]		= 0x00,
+ 		[LED_FUNC_BRIGHTNESS]		= 0x01,
+ 		[LED_FUNC_COLOR1]		= 0x02,
+-		[LED_FUNC_COLOR_GREEN]		= 0x03,
+-		[LED_FUNC_COLOR_BLUE]		= 0x04
+ 	},
+ 	[LED_IND_WIFI] = {
+ 		[LED_FUNC_BRIGHTNESS]		= 0x00,
+ 		[LED_FUNC_COLOR1]		= 0x01,
+-		[LED_FUNC_COLOR_GREEN]		= 0x02,
+-		[LED_FUNC_COLOR_BLUE]		= 0x03
+ 	},
+ 	[LED_IND_SOFTWARE] = {
+ 		[LED_FUNC_BRIGHTNESS]		= 0x00,
+ 		[LED_FUNC_BLINK_BEHAVIOR]	= 0x01,
+ 		[LED_FUNC_BLINK_FREQ]		= 0x02,
+ 		[LED_FUNC_COLOR1]		= 0x03,
+-		[LED_FUNC_COLOR_GREEN]		= 0x04,
+-		[LED_FUNC_COLOR_BLUE]		= 0x05
+ 	},
+ 	[LED_IND_POWER_LIMIT] = {
+ 		[LED_FUNC_POWER_LIMIT_SCHEME]	= 0x00,
+ 		[LED_FUNC_BRIGHTNESS]		= 0x01,
+ 		[LED_FUNC_COLOR1]		= 0x02,
+-		[LED_FUNC_COLOR_GREEN]		= 0x03,
+-		[LED_FUNC_COLOR_BLUE]		= 0x04
+ 	},
+ };
  
--	cmd = LED_OLD_GET_STATUS;
- 	input[0] = LED_OLD_GET_S0_RING;
--	ret = nuc_nmi_cmd(dev, cmd, input, output);
-+	ret = nuc_nmi_cmd(dev, LED_OLD_GET_STATUS, input, output);
- 	if (ret) {
- 		dev_warn(dev, "Get S0 Ring: error %d\n", ret);
- 		return ret;
-@@ -544,6 +542,167 @@ static ssize_t nuc_wmi_set_brightness_offset(struct device *dev,
+@@ -459,6 +445,8 @@ static ssize_t nuc_wmi_set_brightness_offset(struct device *dev,
  	}								       \
  	static DEVICE_ATTR(_name, 0644, show_##_name, store_##_name)
  
-+/*
-+ * NUC6 specific logic
-+ */
++/* Show/change the LED indicator */
 +
-+static int nuc_wmi_nuc6_led_get_set(struct device *dev,
-+				    struct nuc_nmi_led *led, int *brightness,
-+				    int *blink_fade, int *color_state)
-+{
-+	u8 input[NUM_INPUT_ARGS] = { 0 };
-+	u8 output[NUM_OUTPUT_ARGS];
-+	int ret;
+ static const char * const led_indicators[] = {
+ 	"Power State",
+ 	"HDD Activity",
+@@ -531,7 +519,220 @@ static ssize_t store_indicator(struct device *dev,
+ 	return -EINVAL;
+ }
+ 
+-/* Get brightness */
++/* Show/change the LED color */
 +
-+	if (led->id == POWER_LED)
-+		input[0] = LED_OLD_GET_S0_POWER;
-+	else
-+		input[0] = LED_OLD_GET_S0_RING;
-+
-+	ret = nuc_nmi_cmd(dev, LED_OLD_GET_STATUS, input, output);
-+	if (ret) {
-+		dev_warn(dev, "Get %s: error %d\n", led_names[led->id], ret);
-+		return ret;
-+	}
-+
-+	if (brightness && *brightness >= 0)
-+		input[1] = *brightness;
-+	else
-+		input[1] = output[0];
-+
-+	if (blink_fade && *blink_fade >= 0)
-+		input[2] = *blink_fade;
-+	else
-+		input[2] = output[1];
-+
-+	if (color_state && *color_state >= 0)
-+		input[3] = *color_state;
-+	else
-+		input[3] = output[2];
-+
-+	ret = nuc_nmi_cmd(dev, LED_OLD_SET_LED, input, output);
-+	if (ret) {
-+		dev_warn(dev, "Get %s: error %d\n", led_names[led->id], ret);
-+		return ret;
-+	}
-+
-+	if (brightness)
-+		*brightness = output[0];
-+	if (blink_fade)
-+		*blink_fade = output[1];
-+	if (color_state)
-+		*color_state = output[2];
-+
-+	return 0;
-+}
-+
-+static enum led_brightness nuc_wmi_nuc6_get_brightness(struct led_classdev *cdev)
-+{
-+	struct nuc_nmi_led *led = container_of(cdev, struct nuc_nmi_led, cdev);
-+	int ret, brightness = -1;
-+
-+	ret = nuc_wmi_nuc6_led_get_set(cdev->dev, led, &brightness, NULL, NULL);
-+	if (ret)
-+		return ret;
-+
-+	return brightness;
-+}
-+
-+static int nuc_wmi_nuc6_set_brightness(struct led_classdev *cdev,
-+				       enum led_brightness bright)
-+{
-+	int brightness = bright;
-+	struct nuc_nmi_led *led = container_of(cdev, struct nuc_nmi_led, cdev);
-+
-+	return nuc_wmi_nuc6_led_get_set(cdev->dev, led, &brightness,
-+					NULL, NULL);
-+}
-+
-+static const char * const nuc6_power_colors[] = {
-+	"disable",
-+	"blue",
-+	"amber"
++enum led_colors {
++	LED_COLOR_BLUE,
++	LED_COLOR_AMBER,
++	LED_COLOR_WHITE
 +};
 +
-+static const char * const nuc6_ring_colors[] = {
-+	"disable",
-+	"cyan",
-+	"pink",
-+	"yellow",
-+	"blue",
-+	"red",
-+	"green",
-+	"white"
++struct led_color_name {
++	const char *name;
++	u8 r, g, b;
 +};
 +
-+static ssize_t nuc6_show_color(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf)
++static const struct led_color_name led_colors[] = {
++	/* The first colors should match the dual-LED colorset */
++	[LED_COLOR_BLUE]  = { "blue",  0,       0, 0xff },
++	[LED_COLOR_AMBER] = { "amber", 0xff, 0xbf,    0 },
++	[LED_COLOR_WHITE] = { "white", 0xff, 0xff, 0xff },
++
++	/* Let's add a couple of common color names as well */
++	{ "red",     0xff,    0,    0 },
++	{ "green",      0, 0xff,    0 },
++	{ "yellow",  0xff, 0xff,    0 },
++	{ "cyan",       0, 0xff, 0xff },
++	{ "magenta", 0xff,    0, 0xff },
++};
++
++static ssize_t show_color(struct device *dev,
++			  struct device_attribute *attr,				 char *buf)
 +{
 +	struct led_classdev *cdev = dev_get_drvdata(dev);
 +	struct nuc_nmi_led *led = container_of(cdev, struct nuc_nmi_led, cdev);
-+	int color = -1, ret, arr_size, i, n;
-+	const char * const*color_names;
++	u8 input[NUM_INPUT_ARGS];
++	u8 output[NUM_OUTPUT_ARGS];
++	int ret, ctrl;
 +	int size = PAGE_SIZE;
 +	char *p = buf;
++	int color, r, g, b;
 +
-+	ret = nuc_wmi_nuc6_led_get_set(dev, led, NULL, NULL, &color);
++	if (led->indicator == LED_IND_DISABLE)
++		return -ENODEV;
++
++	ctrl = led_func_rev_0_64[led->indicator][LED_FUNC_COLOR1];
++
++	if (!nuc_wmi_test_control(dev, led, ctrl))
++		return -ENODEV;
++
++	input[0] = LED_NEW_GET_CONTROL_ITEM;
++	input[1] = led->id;
++	input[2] = led->indicator;
++	input[3] = ctrl;
++
++	ret = nuc_nmi_cmd(dev, LED_NEW_GET_STATUS, input, output);
 +	if (ret)
 +		return ret;
 +
-+	if (led->id == POWER_LED) {
-+		color_names = nuc6_power_colors;
-+		arr_size = ARRAY_SIZE(nuc6_power_colors);
-+	} else {
-+		color_names = nuc6_ring_colors;
-+		arr_size = ARRAY_SIZE(nuc6_ring_colors);
++	if (led->color_type & LED_RGB) {
++		r = output[0];
++
++		input[3]++;
++		ret = nuc_nmi_cmd(dev, LED_NEW_GET_STATUS, input, output);
++		if (ret)
++			return ret;
++
++		g = output[0];
++
++		input[3]++;
++		ret = nuc_nmi_cmd(dev, LED_NEW_GET_STATUS, input, output);
++		if (ret)
++			return ret;
++
++		b = output[0];
++
++		for (color = 0; color < ARRAY_SIZE(led_colors); color++)
++			if (led_colors[color].r == r &&
++			    led_colors[color].g == g &&
++			    led_colors[color].b == b)
++				    return scnprintf(p, size, "%s\n",
++						     led_colors[color].name);
++
++		return scnprintf(p, size, "%d,%d,%d\n", r, g, b);
 +	}
 +
-+	for (i = 0; i < arr_size; i++) {
-+		if (i == color)
-+			n = scnprintf(p, size, "[%s]  ", color_names[i]);
-+		else
-+			n = scnprintf(p, size, "%s  ", color_names[i]);
-+		p += n;
-+		size -= n;
-+	}
-+	size -= scnprintf(p, size, "\n");
++	if (!output[0])
++		return scnprintf(p, size, "%s\n",
++				 led_colors[LED_COLOR_BLUE].name);
 +
-+	return PAGE_SIZE - size;
++	if (led->color_type & LED_BLUE_AMBER)
++		return scnprintf(p, size, "%s\n",
++				 led_colors[LED_COLOR_AMBER].name);
 +
++	return scnprintf(p, size, "%s\n", led_colors[LED_COLOR_WHITE].name);
 +}
 +
-+static ssize_t nuc6_store_color(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t len)
++static ssize_t store_color(struct device *dev,
++			   struct device_attribute *attr,
++			   const char *buf, size_t len)
 +{
 +	struct led_classdev *cdev = dev_get_drvdata(dev);
 +	struct nuc_nmi_led *led = container_of(cdev, struct nuc_nmi_led, cdev);
++	u8 input[NUM_INPUT_ARGS] = { 0 };
++	int ret, ctrl, color;
 +	const char *tmp;
-+	int ret, color;
++	u8 r, g, b, val;
++
++	if (led->indicator == LED_IND_DISABLE)
++		return -ENODEV;
 +
 +	tmp = strsep((char **)&buf, ",\n");
 +
-+	if (led->id == POWER_LED) {
-+		for (color = ARRAY_SIZE(nuc6_power_colors)+1; color >= 0; color--)
-+			if (!strcasecmp(tmp, nuc6_power_colors[color]))
-+				    break;
++	for (color = 0; color < ARRAY_SIZE(led_colors); color++)
++		if (!strcasecmp(tmp, led_colors[color].name))
++			    break;
++
++	if (color < ARRAY_SIZE(led_colors)) {
++		r = led_colors[color].r;
++		g = led_colors[color].g;
++		b = led_colors[color].b;
 +	} else {
-+		for (color = ARRAY_SIZE(nuc6_ring_colors)+1; color >= 0; color--)
-+			if (!strcasecmp(tmp, nuc6_ring_colors[color]))
-+				    break;
++		if (kstrtou8(tmp, 0, &r) || r > 255)
++			return -EINVAL;
++
++		tmp = strsep((char **)&buf, ",\n");
++		if (kstrtou8(tmp, 0, &g) || g > 255)
++			return -EINVAL;
++
++		tmp = strsep((char **)&buf, " \n");
++		if (kstrtou8(tmp, 0, &b) || b > 255)
++			return -EINVAL;
++
++		if (led->color_type & LED_SINGLE_COLOR) {
++			for (color = 0; color <= LED_COLOR_WHITE; color++)
++				if (led_colors[color].r == r &&
++				    led_colors[color].g == g &&
++				    led_colors[color].b == b)
++					    break;
++		}
 +	}
 +
-+	if (color < 0)
-+		return -EINVAL;
++	ctrl = led_func_rev_0_64[led->indicator][LED_FUNC_COLOR1];
 +
-+	ret = nuc_wmi_nuc6_led_get_set(dev, led, NULL, NULL, &color);
++	/* Dual color LEDs */
++	if (!(led->color_type & LED_RGB)) {
++		if (color == LED_COLOR_BLUE)
++			val = 0;
++		else {
++			if (led->color_type & LED_BLUE_AMBER &&
++			    color != LED_COLOR_AMBER)
++				return -EINVAL;
++			else if (color != LED_COLOR_WHITE)
++				return -EINVAL;
++			val =1;
++		}
++
++		input[0] = led->id;
++		input[1] = led->indicator;
++		input[2] = ctrl;
++		input[3] = val;
++
++		ret = nuc_nmi_cmd(dev, LED_SET_VALUE, input, NULL);
++		if (ret)
++			return ret;
++
++		return len;
++	}
++
++	/* RGB LEDs */
++	input[0] = led->id;
++	input[1] = led->indicator;
++	input[2] = ctrl;
++	input[3] = r;
++
++	ret = nuc_nmi_cmd(dev, LED_SET_VALUE, input, NULL);
++	if (ret)
++		return ret;
++
++	input[0] = led->id;
++	input[1] = led->indicator;
++	input[2]++;
++	input[3] = g;
++
++	ret = nuc_nmi_cmd(dev, LED_SET_VALUE, input, NULL);
++	if (ret)
++		return ret;
++
++	input[0] = led->id;
++	input[1] = led->indicator;
++	input[2]++;
++	input[3] = b;
++
++	ret = nuc_nmi_cmd(dev, LED_SET_VALUE, input, NULL);
 +	if (ret)
 +		return ret;
 +
 +	return len;
++
++	return -EINVAL;
 +}
 +
- /* Show/change the LED indicator */
- 
- static const char * const led_indicators[] = {
-@@ -657,6 +816,9 @@ static ssize_t show_color(struct device *dev,
- 	char *p = buf;
- 	int color, r, g, b;
- 
-+	if (led->api_rev == LED_API_NUC6)
-+		return nuc6_show_color(dev, attr, buf);
++static umode_t nuc_wmi_led_color_is_visible(struct kobject *kobj,
++					    struct attribute *attr, int idx)
++{
++	struct device *dev = kobj_to_dev(kobj);
++	struct led_classdev *cdev = dev_get_drvdata(dev);
++	struct nuc_nmi_led *led = container_of(cdev, struct nuc_nmi_led, cdev);
++	umode_t mode = attr->mode;
 +
- 	if (led->indicator == LED_IND_DISABLE)
- 		return -ENODEV;
- 
-@@ -723,6 +885,9 @@ static ssize_t store_color(struct device *dev,
- 	const char *tmp;
- 	u8 r, g, b, val;
- 
-+	if (led->api_rev == LED_API_NUC6)
-+		return nuc6_store_color(dev, attr, buf, len);
++	if (led->color_type & LED_SINGLE_COLOR)
++		return 0;
 +
- 	if (led->indicator == LED_IND_DISABLE)
- 		return -ENODEV;
- 
-@@ -825,6 +990,9 @@ static umode_t nuc_wmi_led_color_is_visible(struct kobject *kobj,
- 	struct nuc_nmi_led *led = container_of(cdev, struct nuc_nmi_led, cdev);
- 	umode_t mode = attr->mode;
- 
-+	if (led->api_rev == LED_API_NUC6)
-+		return mode;
++	return mode;
++}
 +
- 	if (led->color_type & LED_SINGLE_COLOR)
- 		return 0;
++/* Show/store brightness */
+ static ssize_t show_brightness_offset(struct device *dev,
+ 				      struct device_attribute *attr,
+ 				      u8 offset,
+@@ -551,7 +752,6 @@ static ssize_t show_brightness_offset(struct device *dev,
+ 	return scnprintf(buf, PAGE_SIZE, "%d\n", ret);
+ }
  
-@@ -978,17 +1146,33 @@ static const struct attribute_group *nuc_wmi_led_attribute_groups[] = {
- 	NULL
+-/* Change brightness */
+ static ssize_t store_brightness_offset(struct device *dev,
+ 				       struct device_attribute *attr,
+ 				       u8 offset,
+@@ -597,6 +797,7 @@ static int nuc_wmi_set_brightness(struct led_classdev *cdev,
+ }
+ 
+ static LED_ATTR_RW(indicator);
++static LED_ATTR_RW(color);
+ 
+ LED_ATTR_POWER_STATE_RW(s0_brightness, 0x00);
+ LED_ATTR_POWER_STATE_RW(s3_brightness, 0x06);
+@@ -620,8 +821,19 @@ static const struct attribute_group nuc_wmi_led_attribute_group = {
+ 	.attrs = nuc_wmi_led_attr,
  };
  
-+static const struct attribute_group *nuc_wmi_nuc6_led_attribute_groups[] = {
-+	&nuc_wmi_led_color_attribute_group,
-+	NULL
++static struct attribute *nuc_wmi_led_color_attr[] = {
++	&dev_attr_color.attr,
++	NULL,
 +};
 +
- static int nuc_wmi_led_register(struct device *dev, struct nuc_nmi_led *led,
- 				enum led_api_rev api_rev)
- {
--	int brightness;
-+	int ret, brightness;
- 
- 	led->cdev.name = led_names[led->id];
- 	led->dev = dev;
- 	led->api_rev = api_rev;
- 
- 	if (led->api_rev == LED_API_NUC6) {
--		// FIXME: add NUC6-specific API bits here
-+		brightness = -1;
-+		ret = nuc_wmi_nuc6_led_get_set(dev, led, &brightness,
-+					       NULL, NULL);
-+		if (ret)
-+			return ret;
++static const struct attribute_group nuc_wmi_led_color_attribute_group = {
++	.is_visible = nuc_wmi_led_color_is_visible,
++	.attrs = nuc_wmi_led_color_attr,
++};
 +
-+		led->cdev.groups = nuc_wmi_nuc6_led_attribute_groups;
-+		led->cdev.delayed_set_value = brightness;
-+		led->cdev.max_brightness = 100;
-+		led->cdev.brightness_get = nuc_wmi_nuc6_get_brightness;
-+		led->cdev.brightness_set_blocking = nuc_wmi_nuc6_set_brightness;
-+
- 		return devm_led_classdev_register(dev, &led->cdev);
- 	}
+ static const struct attribute_group *nuc_wmi_led_attribute_groups[] = {
+ 	&nuc_wmi_led_attribute_group,
++	&nuc_wmi_led_color_attribute_group,
+ 	NULL
+ };
  
 -- 
 2.31.1
