@@ -2,72 +2,138 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D78FBC433ED
-	for <linux-leds@archiver.kernel.org>; Sat, 15 May 2021 03:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BFAC433B4
+	for <linux-leds@archiver.kernel.org>; Sun, 16 May 2021 10:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B383261428
-	for <linux-leds@archiver.kernel.org>; Sat, 15 May 2021 03:07:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB1F0613C1
+	for <linux-leds@archiver.kernel.org>; Sun, 16 May 2021 10:53:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234182AbhEODIM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 14 May 2021 23:08:12 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3689 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230371AbhEODIM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 14 May 2021 23:08:12 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FhqxD0yxsz1BMMr;
-        Sat, 15 May 2021 11:04:16 +0800 (CST)
-Received: from thunder-town.china.huawei.com (10.174.177.72) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.498.0; Sat, 15 May 2021 11:06:52 +0800
-From:   Zhen Lei <thunder.leizhen@huawei.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Pavel Machek <pavel@ucw.cz>,
+        id S230050AbhEPKzI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 16 May 2021 06:55:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47668 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229454AbhEPKzH (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 16 May 2021 06:55:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D41B361185;
+        Sun, 16 May 2021 10:53:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621162433;
+        bh=bQ3MnldJSx8+sco79kPklGNg7LH+HvdUVOXzNu/8s/I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=q28opKS/7NRZM/NCZVZkBIcKBjPAMhx4qof2EOdhzzDcPx+zuGFs0QPXdMIu0MNNV
+         WHLbPQOvsLGkCXVbWA2S6PysQLbHS4wcRmL6oaAbm0ox4B/hWyh4EqatcKGHwCc3lu
+         NO5TmD4+HZJRfj/KH9hdvVsoiWBn0iPf82LowooqYBhipK5L9j4hFCcHazngjdAIHK
+         ApCvE9DDOiKBDTyO1JX3ug3YKw4O0DOz4eATPUjxEjrfNos1vXUULUQfZvxDtyQoqv
+         OeaUOS6jVgnaf0PHwjYZfq8wNqspfzaslZjcyjA9QXmmSStEh7o1GnrT94GAV5qJZC
+         CWnFmJI7GUUbg==
+Received: by mail.kernel.org with local (Exim 4.94.2)
+        (envelope-from <mchehab@kernel.org>)
+        id 1liEP8-003s84-NE; Sun, 16 May 2021 12:53:50 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "Pavel Machek" <pavel@ucw.cz>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds <linux-leds@vger.kernel.org>
-CC:     Zhen Lei <thunder.leizhen@huawei.com>
-Subject: [PATCH 1/1] leds: as3645a: Fix error return code in as3645a_parse_node()
-Date:   Sat, 15 May 2021 11:06:46 +0800
-Message-ID: <20210515030646.6877-1-thunder.leizhen@huawei.com>
-X-Mailer: git-send-email 2.26.0.windows.1
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: [PATCH 02/17] staging: nuc-wmi: detect WMI API detection
+Date:   Sun, 16 May 2021 12:53:30 +0200
+Message-Id: <602bd7c90e1e569f52db10bbe451af0436300b78.1621161037.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <cover.1621161037.git.mchehab+huawei@kernel.org>
+References: <cover.1621161037.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.174.177.72]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Return error code -ENODEV rather than '0' when the indicator node can not
-be found.
+There are currently 3 known API releases:
+            - https://www.intel.com/content/www/us/en/support/articles/000023426/intel-nuc/intel-nuc-kits.html
+            - https://raw.githubusercontent.com/nomego/intel_nuc_led/master/specs/INTEL_WMI_LED_0.64.pdf
+            - https://www.intel.com/content/dam/support/us/en/documents/intel-nuc/WMI-Spec-Intel-NUC-NUC10ixFNx.pdf
 
-Fixes: a56ba8fbcb55 ("media: leds: as3645a: Add LED flash class driver")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+Add a logic to detect between them, preventing the driver
+to work with an unsupported version.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/leds/leds-as3645a.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/nuc-led/nuc-wmi.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-index e8922fa03379620..80411d41e802d46 100644
---- a/drivers/leds/leds-as3645a.c
-+++ b/drivers/leds/leds-as3645a.c
-@@ -545,6 +545,7 @@ static int as3645a_parse_node(struct as3645a *flash,
- 	if (!flash->indicator_node) {
- 		dev_warn(&flash->client->dev,
- 			 "can't find indicator node\n");
-+		rval = -ENODEV;
- 		goto out_err;
+diff --git a/drivers/staging/nuc-led/nuc-wmi.c b/drivers/staging/nuc-led/nuc-wmi.c
+index 15d956ad8556..b75ddd47e443 100644
+--- a/drivers/staging/nuc-led/nuc-wmi.c
++++ b/drivers/staging/nuc-led/nuc-wmi.c
+@@ -26,6 +26,13 @@
+ #define NUM_INPUT_ARGS		4
+ #define NUM_OUTPUT_ARGS		3
+ 
++enum led_api_rev {
++	LED_API_UNKNOWN,
++	LED_API_NUC6,
++	LED_API_REV_0_64,
++	LED_API_REV_1_0,
++};
++
+ enum led_cmds {
+ 	LED_QUERY			= 0x03,
+ 	LED_NEW_GET_STATUS		= 0x04,
+@@ -33,6 +40,7 @@ enum led_cmds {
+ 	LED_SET_VALUE			= 0x06,
+ 	LED_NOTIFICATION		= 0x07,
+ 	LED_SWITCH_TYPE			= 0x08,
++	LED_VERSION_CONTROL             = 0x09,
+ };
+ 
+ enum led_query_subcmd {
+@@ -195,7 +203,7 @@ static int nuc_wmi_query_leds(struct device *dev)
+ 	struct nuc_wmi *priv = dev_get_drvdata(dev);
+ 	u8 cmd, input[NUM_INPUT_ARGS] = { 0 };
+ 	u8 output[NUM_OUTPUT_ARGS];
+-	int i, id, ret;
++	int i, id, ret, ver = LED_API_UNKNOWN;
+ 	u8 leds;
+ 
+ 	/*
+@@ -209,12 +217,28 @@ static int nuc_wmi_query_leds(struct device *dev)
+ 	cmd = LED_QUERY;
+ 	input[0] = LED_QUERY_LIST_ALL;
+ 	ret = nuc_nmi_cmd(dev, cmd, input, output);
+-	if (ret) {
++	if (ret == -ENOENT) {
++		ver = LED_API_NUC6;
++	} else if (ret) {
+ 		dev_warn(dev, "error %d while listing all LEDs\n", ret);
+ 		return ret;
++	} else {
++		leds = output[0];
  	}
  
+-	leds = output[0];
++	if (ver != LED_API_NUC6) {
++		ret = nuc_nmi_cmd(dev, LED_VERSION_CONTROL, input, output);
++		ver = output[0] | output[1] << 16;
++		if (!ver)
++			ver = LED_API_REV_0_64;
++		else if (ver == 0x0126)
++			ver = LED_API_REV_1_0;
++	}
++
++	/* Currently, only API Revision 0.64 is supported */
++	if (ver != LED_API_REV_0_64)
++		return -ENODEV;
++
+ 	if (!leds) {
+ 		dev_warn(dev, "No LEDs found\n");
+ 		return -ENODEV;
 -- 
-2.26.0.106.g9fadedd
-
+2.31.1
 
