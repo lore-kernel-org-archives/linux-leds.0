@@ -2,183 +2,158 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C27C433B4
-	for <linux-leds@archiver.kernel.org>; Mon, 17 May 2021 15:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 982B1C433B4
+	for <linux-leds@archiver.kernel.org>; Mon, 17 May 2021 19:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BAC5361108
-	for <linux-leds@archiver.kernel.org>; Mon, 17 May 2021 15:46:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7884761285
+	for <linux-leds@archiver.kernel.org>; Mon, 17 May 2021 19:28:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244071AbhEQPrY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 17 May 2021 11:47:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57350 "EHLO
+        id S233625AbhEQT3v (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 17 May 2021 15:29:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344267AbhEQPoJ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 May 2021 11:44:09 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8B2AC04314D;
-        Mon, 17 May 2021 07:36:22 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id k5so3797157pjj.1;
-        Mon, 17 May 2021 07:36:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tVgAkGBFVimZZBUracvErIwvpUEHqs66nyqdBflm5/U=;
-        b=YBH3amJiMJnrbPOp7sVB3I1m+0RcelfLdyqqN2hTYxW4p4RBQiYvBQ7qcpMRCqx2mv
-         G1jpwj+gIiHynxXIBaw0PThQ3tMHtcGC0krAoZFtD0GSVEVX80WTZzACN3APXdaq2Dhc
-         OrjADuOzor1n/YJ0ms+Hot2PFrjz5RtG7j2Nt+a5q3UtnP3Eyu5kMvoh2wQWE0iYOE8E
-         6lOkIos/8mWxHa5AYBe9nF7fvGa6XMGRrho/fgg6gwADyXvY1Y+c549wwFAmoXtsl4B1
-         c6JYSWzmKvmER1oqZjiw1Esg2cJl2bh1De67ew+SAhhSHNyoNAUBbsxqqLNr8MYsVe74
-         qoGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tVgAkGBFVimZZBUracvErIwvpUEHqs66nyqdBflm5/U=;
-        b=JMa9Wjf5jskXDbDhg06b/DBjh42mC9a5HXa7zEDlppm9Guk6RzWqmtENPwtnG6c52G
-         qO2EsmTzcOlWidi5igjwCL+Yn9XY9YbmpwM2wGL3Esf/xlsTyxKDX3fbBpnXjAoKkDaN
-         CC/iFaLP0YseXaiu0Hm085Vw7E7xVkQasJ59eGwHyzwZEH7B7UrAdYfvubrqs4BzX6yU
-         BjwB62oNxvMGhYjVvxtvDnEC/i7Fq9pqSXHlrVQS/QvTgqNj5qIDy5aB0Qoq0W3yWnsV
-         DNX3JVqjG6uoLED0igA2li84krfiXDqigd204C6E3me9pKF4IhRvcDrfyvjbSbyD5f/u
-         +AcQ==
-X-Gm-Message-State: AOAM530OQ7uN9F3RI0Cz/YbZZyUAI7wjpex4vUDGjPGZ1S42q/ohyqi2
-        voHbpIQ6ThQG0yruyFYCAbg=
-X-Google-Smtp-Source: ABdhPJyYzVlYxSXt+guqxsJKMRKd9MOJDoF6khl6nCKsHjuU2j3kVogEewBRLBVnnaQVscAvVLfiFw==
-X-Received: by 2002:a17:903:30c4:b029:f0:ad43:4ca with SMTP id s4-20020a17090330c4b02900f0ad4304camr130663plc.70.1621262182190;
-        Mon, 17 May 2021 07:36:22 -0700 (PDT)
-Received: from localhost.localdomain (1-171-3-209.dynamic-ip.hinet.net. [1.171.3.209])
-        by smtp.gmail.com with ESMTPSA id f5sm13880259pjp.37.2021.05.17.07.36.18
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 May 2021 07:36:21 -0700 (PDT)
-From:   cy_huang <u0084500@gmail.com>
-To:     lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-        daniel.thompson@linaro.org, jingoohan1@gmail.com,
-        b.zolnierkie@samsung.com, pavel@ucw.cz, robh+dt@kernel.org
-Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, cy_huang@richtek.com
-Subject: [PATCH v7 3/4] mfd: rt4831: Adds DT binding document for Richtek RT4831
-Date:   Mon, 17 May 2021 22:36:00 +0800
-Message-Id: <1621262161-9972-3-git-send-email-u0084500@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1621262161-9972-1-git-send-email-u0084500@gmail.com>
-References: <1621262161-9972-1-git-send-email-u0084500@gmail.com>
+        with ESMTP id S233591AbhEQT3u (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 May 2021 15:29:50 -0400
+X-Greylist: delayed 78454 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 17 May 2021 12:28:32 PDT
+Received: from polaris.svanheule.net (polaris.svanheule.net [IPv6:2a00:c98:2060:a004:1::200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A173AC061573
+        for <linux-leds@vger.kernel.org>; Mon, 17 May 2021 12:28:32 -0700 (PDT)
+Received: from terra.local.svanheule.net (unknown [IPv6:2a02:a03f:eafb:ee01:404a:340a:91cb:c07b])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: sander@svanheule.net)
+        by polaris.svanheule.net (Postfix) with ESMTPSA id 8287C1FFBF5;
+        Mon, 17 May 2021 21:28:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+        s=mail1707; t=1621279710;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=z892+cBMUoR6h2qwKMWaHXpyck1ubQ4aEjm1aZtw54w=;
+        b=zih5OlFARljwGDVd2qvYp/GSifRKtFvaWFyQ/5ka2KVzWmZh2ZwvZ5xDxFfDIGVRW/YJyS
+        XF0wv0kJKPLkWieJ9AUcsZ79yyuGW82xeBiL8BrSeny+IBXCgarzV5erxUTHOC5X+HXU7H
+        wdbdlwhT1zYIt9z6voiXX4OyYCqPl424SRL0gg6fgQ8uujrBm+sKjA+x28F2V6bMYKGbkQ
+        yOTkDfDNTH5Fx1xKgTameT5b7F7y6Iz78Pykc/MdYajACzRzAOZo7DjeNPScQDEDEGB3qO
+        G5iglzOsI/ycZ0/Eqov/W3xq3c7kgJxC4uqJzRq7/Zm5ooFgU3xJ5I3dG/rogg==
+From:   Sander Vanheule <sander@svanheule.net>
+To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Michael Walle <michael@walle.cc>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Sander Vanheule <sander@svanheule.net>
+Subject: [PATCH v2 0/7] RTL8231 GPIO expander support
+Date:   Mon, 17 May 2021 21:28:02 +0200
+Message-Id: <cover.1621279162.git.sander@svanheule.net>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <cover.1620735871.git.sander@svanheule.net>
+References: <cover.1620735871.git.sander@svanheule.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: ChiYuan Huang <cy_huang@richtek.com>
+The RTL8231 GPIO and LED expander can be configured for use as an MDIO or SMI
+bus device. Currently only the MDIO mode is supported, although SMI mode
+support should be fairly straightforward, once an SMI bus driver is available.
 
-Adds DT binding document for Richtek RT4831.
+Provided features by the RTL8231:
+  - Up to 37 GPIOs
+    - Configurable drive strength: 8mA or 4mA (currently unsupported)
+    - Input debouncing on high GPIOs (currently unsupported)
+  - Up to 88 LEDs in multiple scan matrix groups
+    - On, off, or one of six toggling intervals
+    - "single-color mode": 2×36 single color LEDs + 8 bi-color LEDs
+    - "bi-color mode": (12 + 2×6) bi-color LEDs + 24 single color LEDs
+  - Up to one PWM output (currently unsupported)
+    - Fixed duty cycle, 8 selectable frequencies (1.2kHz - 4.8kHz)
 
-Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/mfd/richtek,rt4831.yaml    | 90 ++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/richtek,rt4831.yaml
+Register access is provided through a new MDIO regmap provider. The GPIO
+controller uses gpio-regmap, although a patch is required to support a
+limitation of the chip.
 
-diff --git a/Documentation/devicetree/bindings/mfd/richtek,rt4831.yaml b/Documentation/devicetree/bindings/mfd/richtek,rt4831.yaml
-new file mode 100644
-index 00000000..4762eb1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/richtek,rt4831.yaml
-@@ -0,0 +1,90 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/richtek,rt4831.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Richtek RT4831 DSV and Backlight Integrated IC
-+
-+maintainers:
-+  - ChiYuan Huang <cy_huang@richtek.com>
-+
-+description: |
-+  RT4831 is a multifunctional device that can provide power to the LCD display
-+  and LCD backlight.
-+
-+  For Display Bias Voltage DSVP and DSVN, the output range is about 4V to 6.5V.
-+  It's sufficient to meet the current LCD power requirement.
-+
-+  For the LCD backlight, it can provide four channel WLED driving capability.
-+  Each channel driving current is up to 30mA
-+
-+  Datasheet is available at
-+  https://www.richtek.com/assets/product_file/RT4831A/DS4831A-05.pdf
-+
-+properties:
-+  compatible:
-+    const: richtek,rt4831
-+
-+  reg:
-+    description: I2C device address.
-+    maxItems: 1
-+
-+  enable-gpios:
-+    description: |
-+      GPIO to enable/disable the chip. It is optional.
-+      Some usage directly tied this pin to follow VIO 1.8V power on sequence.
-+    maxItems: 1
-+
-+  regulators:
-+    $ref: ../regulator/richtek,rt4831-regulator.yaml
-+
-+  backlight:
-+    $ref: ../leds/backlight/richtek,rt4831-backlight.yaml
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/leds/rt4831-backlight.h>
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      rt4831@11 {
-+        compatible = "richtek,rt4831";
-+        reg = <0x11>;
-+
-+        regulators {
-+          DSVLCM {
-+            regulator-min-microvolt = <4000000>;
-+            regulator-max-microvolt = <7150000>;
-+            regulator-allow-bypass;
-+          };
-+          DSVP {
-+            regulator-name = "rt4831-dsvp";
-+            regulator-min-microvolt = <4000000>;
-+            regulator-max-microvolt = <6500000>;
-+            regulator-boot-on;
-+          };
-+          DSVN {
-+            regulator-name = "rt4831-dsvn";
-+            regulator-min-microvolt = <4000000>;
-+            regulator-max-microvolt = <6500000>;
-+            regulator-boot-on;
-+          };
-+        };
-+
-+        backlight {
-+          compatible = "richtek,rt4831-backlight";
-+          default-brightness = <1024>;
-+          max-brightness = <2048>;
-+          richtek,bled-ovp-sel = /bits/ 8 <RT4831_BLOVPLVL_21V>;
-+          richtek,channel-use = /bits/ 8 <RT4831_BLED_ALLCHEN>;
-+        };
-+      };
-+    };
+There remain some log warnings when probing the device, possibly due to the way
+I'm using the MFD subsystem. Would it be possible to avoid these?
+[    2.602242] rtl8231-pinctrl: Failed to locate of_node [id: -2]
+[    2.609380] rtl8231-pinctrl rtl8231-pinctrl.0.auto: no of_node; not parsing pinctrl DT
+
+When no 'leds' sub-node is specified:
+[    2.922262] rtl8231-leds: Failed to locate of_node [id: -2]
+[    2.967149] rtl8231-leds rtl8231-leds.1.auto: no of_node; not parsing pinctrl DT
+[    2.975673] rtl8231-leds rtl8231-leds.1.auto: scan mode missing or invalid
+[    2.983531] rtl8231-leds: probe of rtl8231-leds.1.auto failed with error -22
+
+Changes since v1:
+  - Reintroduce MDIO regmap, with fixed Kconfig dependencies
+  - Add configurable dir/value order for gpio-regmap direction_out call
+  - Drop allocations for regmap fields that are used only on init
+  - Move some definitions to MFD header
+  - Add PM ops to replace driver remove for MFD
+  - Change pinctrl driver to (modified) gpio-regmap
+  - Change leds driver to use fwnode
+Link: https://lore.kernel.org/lkml/cover.1620735871.git.sander@svanheule.net/
+
+Changes since RFC:
+  - Dropped MDIO regmap interface. I was unable to resolve the Kconfig
+    dependency issue, so have reverted to using regmap_config.reg_read/write.
+  - Added pinctrl support
+  - Added LED support
+  - Changed root device to MFD, with pinctrl and leds child devices. Root
+    device is now an mdio_device driver.
+Link: https://lore.kernel.org/linux-gpio/cover.1617914861.git.sander@svanheule.net/
+
+Sander Vanheule (7):
+  regmap: Add MDIO bus support
+  gpio: regmap: Add configurable dir/value order
+  dt-bindings: leds: Binding for RTL8231 scan matrix
+  dt-bindings: mfd: Binding for RTL8231
+  mfd: Add RTL8231 core device
+  pinctrl: Add RTL8231 pin control and GPIO support
+  leds: Add support for RTL8231 LED scan matrix
+
+ .../bindings/leds/realtek,rtl8231-leds.yaml   | 159 ++++++++
+ .../bindings/mfd/realtek,rtl8231.yaml         | 202 ++++++++++
+ drivers/base/regmap/Kconfig                   |   6 +-
+ drivers/base/regmap/Makefile                  |   1 +
+ drivers/base/regmap/regmap-mdio.c             |  57 +++
+ drivers/gpio/gpio-regmap.c                    |  20 +-
+ drivers/leds/Kconfig                          |  10 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-rtl8231.c                   | 293 ++++++++++++++
+ drivers/mfd/Kconfig                           |   9 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/rtl8231.c                         | 153 +++++++
+ drivers/pinctrl/Kconfig                       |  11 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-rtl8231.c             | 377 ++++++++++++++++++
+ include/linux/gpio/regmap.h                   |   3 +
+ include/linux/mfd/rtl8231.h                   |  57 +++
+ include/linux/regmap.h                        |  36 ++
+ 18 files changed, 1393 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/realtek,rtl8231-leds.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
+ create mode 100644 drivers/base/regmap/regmap-mdio.c
+ create mode 100644 drivers/leds/leds-rtl8231.c
+ create mode 100644 drivers/mfd/rtl8231.c
+ create mode 100644 drivers/pinctrl/pinctrl-rtl8231.c
+ create mode 100644 include/linux/mfd/rtl8231.h
+
 -- 
-2.7.4
+2.31.1
 
