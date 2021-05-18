@@ -2,105 +2,139 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D07C433B4
-	for <linux-leds@archiver.kernel.org>; Tue, 18 May 2021 11:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD63C433B4
+	for <linux-leds@archiver.kernel.org>; Tue, 18 May 2021 15:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 813CE61350
-	for <linux-leds@archiver.kernel.org>; Tue, 18 May 2021 11:39:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6FCC61364
+	for <linux-leds@archiver.kernel.org>; Tue, 18 May 2021 15:09:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244750AbhERLkf (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 18 May 2021 07:40:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44248 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241908AbhERLkf (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 18 May 2021 07:40:35 -0400
-Received: from polaris.svanheule.net (polaris.svanheule.net [IPv6:2a00:c98:2060:a004:1::200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8449AC061573
-        for <linux-leds@vger.kernel.org>; Tue, 18 May 2021 04:39:17 -0700 (PDT)
-Received: from [IPv6:2a02:a03f:eafb:ee01:6102:7bbd:c7da:85a4] (unknown [IPv6:2a02:a03f:eafb:ee01:6102:7bbd:c7da:85a4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 075CB200155;
-        Tue, 18 May 2021 13:39:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1621337955;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uwmdW801vRB3PpGUwtnmy412PKt6fejTaQGhH97dxaI=;
-        b=imcG4dei6UyHr6SFf4F0c1hXxbKSIYueqDyCAEL6DmGi6QLXqliwyNb1JJNNfBl6mJSlfS
-        qVltN5tq7OFNwOi9jF4V1GE2FyHOldZzf+OzNxW8BWL1yOy2Hq4BOZjIVQ5j8k2BzFseRH
-        5aMb1AYhrH9qSJo2HGU+l/Pk3H4D7BMx23a2RnlfoOUGsiKEqahAQmLL7vGHZHPep59Ljs
-        43xZLHZwCK33fKKvAhVx5zRruPkqsGtbTMCtBKns6tk4Caahdb+z2OpElDa2b6V+qxp6Lk
-        Z7AWze8mtSLPjIyTCxnDiD7jvoTKovM20Dpz6RtFx8+/JISHB80d0LQBa6NBrg==
-Message-ID: <1fcbaf8029f3b9f79a138d423413f625886c8415.camel@svanheule.net>
-Subject: Re: [PATCH v2 2/7] gpio: regmap: Add configurable dir/value order
-From:   Sander Vanheule <sander@svanheule.net>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Michael Walle <michael@walle.cc>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Date:   Tue, 18 May 2021 13:39:12 +0200
-In-Reply-To: <YKMbF3Ow8IrBBlXW@lunn.ch>
-References: <cover.1621279162.git.sander@svanheule.net>
-         <d5f294489d31a80b69169f358da89bb7f70d1328.1621279162.git.sander@svanheule.net>
-         <YKMbF3Ow8IrBBlXW@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S245562AbhERPK2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 18 May 2021 11:10:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49412 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237974AbhERPK2 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 18 May 2021 11:10:28 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1C4AC61042;
+        Tue, 18 May 2021 15:09:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621350550;
+        bh=IPk6MBpB/XcYX8hxt1d+r0HxwF2eMb4v4R5nHNEAMoA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=o9MbXM51OrGYylej2Azv0sWdy0oIXvObDT9T1v/FiizWiyNlbwE2kaQmcgJr0CW2d
+         EUzyBl8A35i409JCm22FvwTjF0KkY34l3ScM3VzOERiTMMBUgm9PV/GQ+bcIRshywi
+         DFixOHyA9y+PoJKBWE2IgI49Qggjm3opWocxYgJannksbgI5ElhYkaKE8xCNB0MLVs
+         Jole2D+301QF8mp8GoIcPxxE3LRdFrtSsUmHkc2v73ESPUUnZI7ObWozbJRdN5+Bzm
+         D7kAMlrU4tm3ta1M6bjHCZ3ln0MaKzvuN1ajkWAB4MY2v81NANduVXhRlfTPlWATjp
+         g5l2sHDVFyfBQ==
+Received: by mail.kernel.org with local (Exim 4.94.2)
+        (envelope-from <mchehab@kernel.org>)
+        id 1lj1LI-007HO6-2k; Tue, 18 May 2021 17:09:08 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: [PATCH v2 03/17] leds: leds-nuc: detect WMI API detection
+Date:   Tue, 18 May 2021 17:08:52 +0200
+Message-Id: <db42809795aaabd0b11702a5c39cafc1594b6675.1621349814.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <cover.1621349813.git.mchehab+huawei@kernel.org>
+References: <cover.1621349813.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Andrew,
+There are currently 3 known API releases:
+            - https://www.intel.com/content/www/us/en/support/articles/000023426/intel-nuc/intel-nuc-kits.html
+            - https://raw.githubusercontent.com/nomego/intel_nuc_led/master/specs/INTEL_WMI_LED_0.64.pdf
+            - https://www.intel.com/content/dam/support/us/en/documents/intel-nuc/WMI-Spec-Intel-NUC-NUC10ixFNx.pdf
 
-On Tue, 2021-05-18 at 03:40 +0200, Andrew Lunn wrote:
-> On Mon, May 17, 2021 at 09:28:04PM +0200, Sander Vanheule wrote:
-> > GPIO chips may not support setting the output value when a pin is
-> > configured as an input
-> 
-> Could you describe what happens with the hardware you are playing
-> with. Not being able to do this means you will get glitches when
-> enabling the output so you should not use these GPIOs with bit banging
-> busses like i2c.
+Add a logic to detect between them, preventing the driver
+to work with an unsupported version.
 
-As I was testing this driver, I noticed that output settings for GPIO LEDs,
-connected to the RTL8231, weren't being properly set. The actual LED brightness
-didn't correspond to the one reported by sysfs. Changing the operation order
-fixed this.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ drivers/leds/leds-nuc.c | 33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
 
-However, the vendor code uses I2C bitbanging quite extensively on these chips,
-so I decided to have another look.
-
-From u-boot on my device, I can manipulate the RTL8231 registeres relatively
-easily. I performed the following short tests:
- * Set pin to input, pull pin high, write output low, change direction: pin
-   output changes to low value
- * Set pin to input pull pin low, write output high, change direction: pin
-   output changes to high value
-
-Which seems to indicate that I _can_ set output values on input pins... I'll
-need to look into this in more detail when I have a bit more time, later this
-week.
-
-
-Best,
-Sander
+diff --git a/drivers/leds/leds-nuc.c b/drivers/leds/leds-nuc.c
+index 69bab319122e..26bc4a4bb57c 100644
+--- a/drivers/leds/leds-nuc.c
++++ b/drivers/leds/leds-nuc.c
+@@ -26,6 +26,13 @@
+ #define NUM_INPUT_ARGS		4
+ #define NUM_OUTPUT_ARGS		3
+ 
++enum led_api_rev {
++	LED_API_UNKNOWN,
++	LED_API_NUC6,
++	LED_API_REV_0_64,
++	LED_API_REV_1_0,
++};
++
+ enum led_cmds {
+ 	LED_QUERY			= 0x03,
+ 	LED_NEW_GET_STATUS		= 0x04,
+@@ -33,6 +40,7 @@ enum led_cmds {
+ 	LED_SET_VALUE			= 0x06,
+ 	LED_NOTIFICATION		= 0x07,
+ 	LED_SWITCH_TYPE			= 0x08,
++	LED_VERSION_CONTROL             = 0x09,
+ };
+ 
+ enum led_query_subcmd {
+@@ -195,7 +203,7 @@ static int nuc_wmi_query_leds(struct device *dev)
+ 	struct nuc_wmi *priv = dev_get_drvdata(dev);
+ 	u8 cmd, input[NUM_INPUT_ARGS] = { 0 };
+ 	u8 output[NUM_OUTPUT_ARGS];
+-	int i, id, ret;
++	int i, id, ret, ver = LED_API_UNKNOWN;
+ 	u8 leds;
+ 
+ 	/*
+@@ -209,12 +217,31 @@ static int nuc_wmi_query_leds(struct device *dev)
+ 	cmd = LED_QUERY;
+ 	input[0] = LED_QUERY_LIST_ALL;
+ 	ret = nuc_nmi_cmd(dev, cmd, input, output);
+-	if (ret) {
++	if (ret == -ENOENT) {
++		ver = LED_API_NUC6;
++	} else if (ret) {
+ 		dev_warn(dev, "error %d while listing all LEDs\n", ret);
+ 		return ret;
++	} else {
++		leds = output[0];
+ 	}
+ 
+-	leds = output[0];
++	if (ver != LED_API_NUC6) {
++		ret = nuc_nmi_cmd(dev, LED_VERSION_CONTROL, input, output);
++		if (ret)
++			return ret;
++
++		ver = output[0] | output[1] << 16;
++		if (!ver)
++			ver = LED_API_REV_0_64;
++		else if (ver == 0x0126)
++			ver = LED_API_REV_1_0;
++	}
++
++	/* Currently, only API Revision 0.64 is supported */
++	if (ver != LED_API_REV_0_64)
++		return -ENODEV;
++
+ 	if (!leds) {
+ 		dev_warn(dev, "No LEDs found\n");
+ 		return -ENODEV;
+-- 
+2.31.1
 
