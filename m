@@ -3,201 +3,141 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC36EC2B9F7
-	for <linux-leds@archiver.kernel.org>; Mon, 24 May 2021 15:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4BFC47084
+	for <linux-leds@archiver.kernel.org>; Mon, 24 May 2021 16:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A479F6108D
-	for <linux-leds@archiver.kernel.org>; Mon, 24 May 2021 15:10:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0B4561260
+	for <linux-leds@archiver.kernel.org>; Mon, 24 May 2021 16:05:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234367AbhEXPMQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 24 May 2021 11:12:16 -0400
-Received: from polaris.svanheule.net ([84.16.241.116]:34538 "EHLO
-        polaris.svanheule.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234633AbhEXPEe (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 24 May 2021 11:04:34 -0400
-Received: from [IPv6:2a02:a03f:eafb:ee01:cbcc:e481:3e58:4db1] (unknown [IPv6:2a02:a03f:eafb:ee01:cbcc:e481:3e58:4db1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 01655202FCC;
-        Mon, 24 May 2021 17:03:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1621868583;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8MATKxCuMn4nkMdLEuLNhFbcf7uVicrwkqafbfBr9eg=;
-        b=1h53zmIIMaFpLm4CSRKhMGwEBDMHczUNgRi0S+mgn2cg4jIRuqHA9E11lLejd8xVPw3y0r
-        BdsHMs+YEKMrTqNfFIzLlo79yq+1hPDmgCFABw9f3MbWd/dVY4tnDPRzeemS9QlUStFCM7
-        rywfeCIxAKl67kegIngCVN9nsd7oJWwuTzjMyet9NAKK9takN6OR/pq/XT+rIYyccekHDI
-        auY7viemnNLEK2mM3KLw9r53Pn5BPe5Bh/31yAAx4wOkNYsIkMjv14OPMh1+YBzZcBZCM2
-        oFqoaW+PtFNM5/52cp7sGAybshVAGUa8QZIWEdYUe870KAjmF2TqBZoT3Q8jkQ==
-Message-ID: <8f96b24d782e5bdeabf5370ccf3475794d0c2818.camel@svanheule.net>
-Subject: Re: [PATCH v3 0/6] RTL8231 GPIO expander support
-From:   Sander Vanheule <sander@svanheule.net>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Michael Walle <michael@walle.cc>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Mon, 24 May 2021 17:03:01 +0200
-In-Reply-To: <CAHp75Vf_dAfoMmziVLkEQ2Yr-e7Cj5=61ua5Q05Cyz-pLwVjpw@mail.gmail.com>
-References: <cover.1620735871.git.sander@svanheule.net>
-         <cover.1621809029.git.sander@svanheule.net> <YKr9G3EfrM34gCsL@lunn.ch>
-         <CAHp75VewCw8ES_9S48qmeCtSXMkGWt0s4iub0Fu4ZuwWANHpaQ@mail.gmail.com>
-         <02bbf73ea8a14119247f07a677993aad2f45b088.camel@svanheule.net>
-         <CAHp75Vf_dAfoMmziVLkEQ2Yr-e7Cj5=61ua5Q05Cyz-pLwVjpw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S235809AbhEXQGl (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 24 May 2021 12:06:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53996 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237689AbhEXQFe (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 24 May 2021 12:05:34 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CFA6C045A53;
+        Mon, 24 May 2021 08:24:49 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id d16so21082965pfn.12;
+        Mon, 24 May 2021 08:24:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SdxJSqfgziagedBw0XrcHxZm8bidCvv9boVgE9SVO4w=;
+        b=hRKZ1Gc0eU5QYIkceJ3FdfaYPJ3pvcLbpZYHC5KjSd8N9Tg9XclrQHK3NfXeo79O5G
+         N6N7COZ8ES2eMkzfe0JwoskjL5A0FlPA0vx5WaWzKcyDh8y2ys5Y/IUFsBsS0sKWQph1
+         MLH0Rzo9nmN+fuADpeYMd+H1f3TUOBi9DChfyfWc36sgsbsBIPLYC0o/6YVM9lq6dV6X
+         NjAV/V+rkQi9fYjZw2B/3837zs+UlHvcpHIUd1qi2B7bZA/zYlsVlUIBnou8mGTt/355
+         SbwY6v9ePCvsgH+Xjzd8J3k34iBbC5/b1lsbfhMai1f9GgrKWgQKYCchQNoM9xVAESgn
+         cmvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SdxJSqfgziagedBw0XrcHxZm8bidCvv9boVgE9SVO4w=;
+        b=TpJ1DRiRAYEOQfv0Ig5945IpuRKfgLStC5XQIbP8bMIzdw556J3c3IwKsIpyk4i/yZ
+         4QBCoUNwrvlD2i6odpo37RFP5Db+o5vimqy2SNrbPzHAgZRR7dwXVefqF0UK5qtg7F7x
+         c9c86eYgUFQIDBr7jOcEk6aAeM1DKsgZXLxKS2qXf0B3s/lUidYtmjj8YFthvXhLpHlv
+         Yg8QJyDxCP16OcqRs67Ef4daF9/0bFc0D5PNNUb3Xie9DXd9FDCT34hHN+B+SBd5E7Oh
+         eRJJEyeRD30p5cbdoJnRC2++5RSa7bZCowlTrG78XNUmEygEFaWdEKt2Ui614jxKTbeB
+         FDFA==
+X-Gm-Message-State: AOAM531b3vsDKokNNjyYvUVSZuH27tYDeZ9Aqu455luH/35sf4ekWYhV
+        21WFH3ot7n+p/o6SQyRuaH4=
+X-Google-Smtp-Source: ABdhPJx7/6fAdLIu67aceMeF+xCB7VOiL6cBF8XdU3nRpUQ1xRRLy7NlNTpqHtuhxgEEEc0sdnudBw==
+X-Received: by 2002:a62:4ecc:0:b029:2d7:d315:2579 with SMTP id c195-20020a624ecc0000b02902d7d3152579mr25028889pfb.21.1621869888526;
+        Mon, 24 May 2021 08:24:48 -0700 (PDT)
+Received: from localhost.localdomain ([2402:7500:469:b4c4:1464:a4f2:334c:afaf])
+        by smtp.gmail.com with ESMTPSA id a15sm10821597pff.128.2021.05.24.08.24.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 May 2021 08:24:47 -0700 (PDT)
+From:   Gene Chen <gene.chen.richtek@gmail.com>
+To:     jacek.anaszewski@gmail.com, pavel@ucw.cz, matthias.bgg@gmail.com
+Cc:     dmurphy@ti.com, linux-leds@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        gene_chen@richtek.com, Wilma.Wu@mediatek.com,
+        shufan_lee@richtek.com, cy_huang@richtek.com,
+        benjamin.chao@mediatek.com
+Subject: [PATCH v14 0/2] leds: mt6360: Add LED driver for MT6360
+Date:   Mon, 24 May 2021 23:24:25 +0800
+Message-Id: <20210524152427.123856-1-gene.chen.richtek@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, 2021-05-24 at 15:54 +0300, Andy Shevchenko wrote:
-> On Mon, May 24, 2021 at 2:41 PM Sander Vanheule <sander@svanheule.net> wrote:
-> > On Mon, 2021-05-24 at 10:53 +0300, Andy Shevchenko wrote:
-> > > On Mon, May 24, 2021 at 4:11 AM Andrew Lunn <andrew@lunn.ch> wrote:
-> 
-> ...
-> 
-> > > > > Changes since v2:
-> > > > >   - MDIO regmap support was merged, so patch is dropped here
-> > > > 
-> > > > Do you have any idea how this will get merged. It sounds like one of
-> > > > the Maintainers will need a stable branch of regmap.
-> > > 
-> > > This is not a problem if Mark provides an immutable branch to pull from.
-> > 
-> > Mark has a tag (regmap-mdio) for this patch:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git/tag/?h=regmap-mdio
-> 
-> Also works but you have to provide this information in the cover letter.
-> 
+This patch series add MT6360 LED support contains driver and binding document
 
-Ok, I will add the link to the cover letter for the next version. Does it need
-to be in a Link-tag, or can just be a reference?
+Gene Chen (2)
+ dt-bindings: leds: Add bindings for MT6360 LED
+ leds: mt6360: Add LED driver for MT6360
 
+ Documentation/devicetree/bindings/leds/leds-mt6360.yaml |  159 ++
+ drivers/leds/flash/Kconfig                              |   13 
+ drivers/leds/flash/Makefile                             |    1 
+ drivers/leds/flash/leds-mt6360.c                        |  910 ++++++++++++++++
+ 4 files changed, 1083 insertions(+)
 
-> ...
-> 
-> > > > >   - Introduce GPIO regmap quirks to set output direction first
-> > > > 
-> > > > I thought you had determined it was possible to set output before
-> > > > direction?
-> > > 
-> > > Same thoughts when I saw an updated version of that patch. My
-> > > anticipation was to not see it at all.
-> > 
-> > The two devices I've been trying to test the behaviour on are:
-> >  * Netgear GS110TPP: has an RTL8231 with three LEDs, each driven via a pin
-> >    configured as (active-low) GPIO. The LEDs are easy for a quick visual
-> > check.
-> >  * Zyxel GS1900-8: RTL8231 used for the front panel button, and an active-
-> > low
-> >    GPIO used to hard reset the main SoC (an RTL8380). I've modified this
-> > board
-> >    to change some of the strapping pin values, but testing with the jumpers
-> > and
-> >    pull-up/down resistors is a bit more tedious.
-> > 
-> > On the Netgear, I tested the following with and without the quirk:
-> > 
-> >    # Set as OUT-LOW twice, to avoid the quirk. Always turns the LED on
-> >    gpioset 1 32=0; gpioset 1 32=0
-> >    # Get value to change to input, turns the LED off (high impedance)
-> >    # Will return 1 due to (weak) internal pull-up
-> >    gpioget 1 32
-> >    # Set as OUT-HIGH, should result in LED off
-> >    # When the quirk is disabled, the LED turns on (i.e. old OUT-LOW value)
-> >    # When the quirk is enabled, the LED remains off (i.e. correct OUT-HIGH
-> > value)
-> >    gpioset 1 32=1
-> > 
-> > Now, what's confusing (to me) is that the inverse doesn't depend on the
-> > quirk:
-> > 
-> >    # Set as OUT-HIGH twice
-> >    gpioset 1 32=1; gpioset 1 32=1
-> >    # Change to high-Z
-> >    gpioget 1 32
-> >    # Set to OUT-LOW, always results in LED on, with or without quirk
-> >    gpioset 1 32=0
-> > 
-> > Any idea why this would be (or appear) broken on the former case, but not on
-> > the
-> > latter?
-> 
-> GPIO tools for the shell are context-less. Can you reproduce this with
-> the legacy sysfs interface?
-> 
-> > I was trying to reproduce this behaviour on the Zyxel, but using the
-> > strapping
-> > pins that are also used to configure the device's address. So perhaps the
-> > pull-
-> > ups/-downs were confusing the results. Using a separate pin on the Zyxel's
-> > RTL8231, I've now been able to confirm the same behaviour as on the Netgear,
-> > including capturing the resulting glitch (with my simple logic analyser)
-> > when
-> > enabling the quirk in the first test case.
-> > 
-> > I hope this explains why I've still included the quirk in this revision. If
-> > not,
-> > please let me know what isn't clear.
-> 
-> Do you possess a schematic of either of the devices and a link to the
-> RTL datasheet (Btw, if it's publicly available, or you have a link
-> that will ask for necessary sign-in it would be nice to include the
-> link to it as a Datasheet: tag)?
+changelogs between v1 & v2
+ - add led driver with mfd
 
-Sadly, I don't. Most of the info we have comes from code archives of switch
-vendors (Zyxel, Cisco etc). Boards need to be reverse engineered, and the few
-leaked datasheets that can be found on the internet aren't exactly thick in
-information.
+changelogs between v2 & v3
+ - independent add led driver
+ - add dt-binding document
+ - refactor macros definition for easy to debug
+ - parse device tree by fwnode
+ - use devm*ext to register led class device
 
-The RTL8231 datasheet is actually quite useful, but makes no mention of the
-output value isse. Since this isn't an official resource, I don't think it would
-be appropriate to link it via a Datasheet: tag.
-https://github.com/libc0607/Realtek_switch_hacking/blob/files/RTL8231_Datasheet_
-1.2.pdf
+changelogs between v3 & v4
+ - fix binding document description
+ - use GENMASK and add unit postfix to definition
+ - isink register led class device
 
-Looking at the datasheet again, I came up with a... terrible hack to work around
-the output value issue.
+changelogs between v4 & v5
+ - change rgb isink to multicolor control
+ - add binding reference to mfd yaml
 
-The chip also has GPIO_INVERT registers that I hadn't used until now, because
-the logical inversion is handled in the kernel. However, these inversion
-registers only apply to the output values. So, I could implement glitch-free
-output behaviour in the following way:
- * After chip reset, and before enabling the output driver (MFD initialisation):
-    - Mux all pins as GPIO
-    - Change all pins to outputs, so the data registers (0x1c-0x1e) become writable
-    - Write value 0 to all pins
-    - Change all pins to GPI to change them into high-Z
- * In the pinctrl/gpio driver:
-    - Use data registers as input-only
-    - Use inversion register to determine output value (can be written any time)
+changelogs between v5 & v6
+ - Use DT to decide RGB LED is multicolor device or indicator device only
 
-The above gives glitch-free outputs, but the values that are read back (when
-configured as output), come from the data registers. They should now be coming
-from the inversion (reg_set_base) registers, but the code prefers to use the
-data registers (reg_dat_base).
+changelogs between v6 & v7
+ - Add binding multicolor device sample code
+ - Add flash ops mutex lock
+ - Remove V4L2 init with indicator device
 
+changelogs between v7 & v8
+ - Add mutex for led fault get ops
+ - Fix flash and multicolor no-ops return 0
+ - Add LED_FUNCTION_MOONLIGHT
 
-Best,
-Sander
+changelogs between v8 & v9
+ - reuse api in flash and multicolor header
+
+changelogs between v9 & v10
+ - add comment for reuse registration functions in flash and multicolor
+
+changelogs between v10 & v11
+ - match dt-binding reg property comment to the functionality name
+ - remove exist patch in linux-next
+ - dicide multicolor channel by color definitiion
+
+changelogs between v11 & v12
+ - Fix print size_t by %zu
+ - Fix dt-binding name regular experssion
+
+changelogs between v12 & v13
+ - Fix kbuild test rebot build error
+
+changelogs between v13 & v14
+ - Move driver to flash folder
+ - Remove LED FUNCTION MOONLIGHT
+ - Keep 80 char per line
+
 
