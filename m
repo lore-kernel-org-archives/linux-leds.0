@@ -2,132 +2,256 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC60C47087
-	for <linux-leds@archiver.kernel.org>; Mon, 24 May 2021 16:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A6CC2B9F8
+	for <linux-leds@archiver.kernel.org>; Mon, 24 May 2021 16:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7607561376
-	for <linux-leds@archiver.kernel.org>; Mon, 24 May 2021 16:05:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01EC961436
+	for <linux-leds@archiver.kernel.org>; Mon, 24 May 2021 16:05:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236316AbhEXQGo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 24 May 2021 12:06:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54126 "EHLO
+        id S235019AbhEXQGm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 24 May 2021 12:06:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237797AbhEXQFk (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 24 May 2021 12:05:40 -0400
-Received: from polaris.svanheule.net (polaris.svanheule.net [IPv6:2a00:c98:2060:a004:1::200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72E20C061345
-        for <linux-leds@vger.kernel.org>; Mon, 24 May 2021 08:30:33 -0700 (PDT)
-Received: from [IPv6:2a02:a03f:eafb:ee01:cbcc:e481:3e58:4db1] (unknown [IPv6:2a02:a03f:eafb:ee01:cbcc:e481:3e58:4db1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id A19BD202FF0;
-        Mon, 24 May 2021 17:30:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1621870231;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5MVM5bUeOBcoLoP3W/nxVP4OlAB5bSPoQyJKgckUz8I=;
-        b=Hmt76Wx3Cn2CJMDd4/vkYSZjhlGEll5naZ+AkO0EURp37WRFFvQgim6ZFQ9EwiPDGmags3
-        9IVFxsG7TCrGSMhThwoJqgjp6kUCbMxUh+izP9iLsySTh6L4HlF4cSVzDh9GnNVz+7A0gK
-        mljJApeRhSZdiANKVcKSfEIdont1J8KcgVi+VZSb0c2bg6dT9CZ5rz7rOhHIaPKz6cWFzL
-        W3hSGYMlsEL69aXJbGeHVpeVLKo83eir9rdGsR9qG8Jny63q5YiU+sG4RhERTY6zZWhlaS
-        gJ4XQNgGMnrTHGCCWRdNnF6poHSTG3O2HKB8ORb6fnv68ZRApU7NliM3KXQ+2Q==
-Message-ID: <867b81680fdf3076e8ce3fbc2dc36247d8e724a8.camel@svanheule.net>
-Subject: Re: [PATCH v3 6/6] leds: Add support for RTL8231 LED scan matrix
-From:   Sander Vanheule <sander@svanheule.net>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Michael Walle <michael@walle.cc>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Mon, 24 May 2021 17:30:30 +0200
-In-Reply-To: <CAHp75VfbdmHPsscHOAnH-WjGyWF-8V_00FjQu1PD+xFLcUytig@mail.gmail.com>
-References: <cover.1621809029.git.sander@svanheule.net>
-         <213ab7580a1d3229d32f7aac67bf4e828612153a.1621809029.git.sander@svanheule.net>
-         <CAHp75VdoSfO3Y9Lf+fcoG2=Rb+SBJKq+B0tG+gS7TaHUmN-iYg@mail.gmail.com>
-         <08375439546c04d32b158c20fb59446c3bbafb46.camel@svanheule.net>
-         <CAHp75VfbdmHPsscHOAnH-WjGyWF-8V_00FjQu1PD+xFLcUytig@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        with ESMTP id S237722AbhEXQFf (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 24 May 2021 12:05:35 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8644C045A55;
+        Mon, 24 May 2021 08:24:53 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id v13-20020a17090abb8db029015f9f7d7290so154416pjr.0;
+        Mon, 24 May 2021 08:24:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=uzzcXIffejAkWyzdFpgb0HO7sS9re1Oy9rLKP31iBDE=;
+        b=MLxtYKaaVll8pWz5+nbVi/IfMBRtx4DyjzB8VCy8RDUkUMw+tKWP6lE/Qy9mjynuQK
+         O3wgJcW/kIlEFNVnkXSwNPmVujBx99MMssFDcafUx8NvWKRjC0hSPXAagZ9KyVdSEPan
+         GuH58Ty4fRkBNK6t0pGXJuzRly51HjreFOwL6wyoQirzCZqqQM7E7jTLKTMKWCWeGPCV
+         KU5BDOhhBlVgRoQwDUaMjHYi9Wniecjyz3oIso2LBlBeJCQGWockHSY39kEWgl5gGEYW
+         JdsXVY5R8CORXyd2TCKXaOGNz3tpbo+o2UvbDzcFHONA6DljIlfdJSeKeh7my14N6Qwv
+         IACg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=uzzcXIffejAkWyzdFpgb0HO7sS9re1Oy9rLKP31iBDE=;
+        b=sI8GjFgnQC28DYVL4TRzkGwRlBCIYaD2KUfMV2jKHahknpFArHKzH2EkpYvXAQd02p
+         j1R+H1rz3dHa99wYnrcJmOVqEV2xb22HpQ6ok5sUlGEKS2Q6Qm00nqkX23L8QRo8cyMY
+         lH/dTAQ2of9O5q6FoaCpDL97fGJO5PbxSe1tcujDDp6tsGEsg1xJpH4DzWtUbqukW+RH
+         kx2nHn4nENYtLWcUknsS/h9MiwVMYa+UfguMK5joTbjP0TN23kurmhwogWVKogk2QlZ6
+         nFoR3JG1fOYvaIJgh/0LuyFnRtwAMWeL2ELEUE10FP81arQTLiSIUJRkkVHX4BjzyCWo
+         AuHQ==
+X-Gm-Message-State: AOAM5323A6zxcM4RRyw5LvGA8BbQl2oSDinNPBKz8/gwTS3DsHjFNfwH
+        YNWg0ppGvzhLsJMJF93h5cF+yI5YPrU=
+X-Google-Smtp-Source: ABdhPJwTr/Qpj2lQO22nca5tCgF7+O0qzNIiGrZITrSnMb5xGM0u5fQPJNms44pcBnVIi+ouIu6Xxg==
+X-Received: by 2002:a17:902:bd90:b029:f2:c88c:5b2c with SMTP id q16-20020a170902bd90b02900f2c88c5b2cmr25951360pls.8.1621869893326;
+        Mon, 24 May 2021 08:24:53 -0700 (PDT)
+Received: from localhost.localdomain ([2402:7500:469:b4c4:1464:a4f2:334c:afaf])
+        by smtp.gmail.com with ESMTPSA id a15sm10821597pff.128.2021.05.24.08.24.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 May 2021 08:24:53 -0700 (PDT)
+From:   Gene Chen <gene.chen.richtek@gmail.com>
+To:     jacek.anaszewski@gmail.com, pavel@ucw.cz, matthias.bgg@gmail.com
+Cc:     dmurphy@ti.com, linux-leds@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        gene_chen@richtek.com, Wilma.Wu@mediatek.com,
+        shufan_lee@richtek.com, cy_huang@richtek.com,
+        benjamin.chao@mediatek.com, Rob Herring <robh@kernel.org>
+Subject: [PATCH v14 1/2] dt-bindings: leds: Add bindings for MT6360 LED
+Date:   Mon, 24 May 2021 23:24:26 +0800
+Message-Id: <20210524152427.123856-2-gene.chen.richtek@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210524152427.123856-1-gene.chen.richtek@gmail.com>
+References: <20210524152427.123856-1-gene.chen.richtek@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, 2021-05-24 at 15:47 +0300, Andy Shevchenko wrote:
-> On Mon, May 24, 2021 at 3:04 PM Sander Vanheule <sander@svanheule.net> wrote:
-> > On Mon, 2021-05-24 at 13:24 +0300, Andy Shevchenko wrote:
-> > > On Mon, May 24, 2021 at 1:34 AM Sander Vanheule <sander@svanheule.net>
-> > > wrote:
-> 
-> ...
-> 
-> > > > +       if (ret != 2)
-> > > > +               return -ENODEV;
-> > > 
-> > > I would say -EINVAL, but -ENODEV is similarly okay.
-> > 
-> > Any specific reason you think EINVAL is more appropriate than ENODEV?
-> 
-> My logic is that the initial values (from resource provider) are incorrect.
-> But as I said, I'm fine with either.
+From: Gene Chen <gene_chen@richtek.com>
 
-Ok, that makes sense. Actually, I'm already using "address invalid" in the error
-messages when reading the address fails, so I'll change to EINVAL for
-consistency.
+Add bindings document for LED support on MT6360 PMIC
 
+Signed-off-by: Gene Chen <gene_chen@richtek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/leds/leds-mt6360.yaml | 159 ++++++++++++++++++
+ 1 file changed, 159 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6360.yaml
 
-> 
-> > > > +       int err;
-> > > 
-> > > ret or err? Be consistent across a single driver.
-> > 
-> > I had first used 'err' for both fwnode_property_count_u32() and
-> > fwnode_property_read_u32_array(). The former returns "actual count or error
-> > code", while the latter is only "error code". And I found it weird to read
-> > the
-> > code as "does error code equal 2", if I used 'err' as variable name.
-> > 
-> > I've split this up:
-> >  * addr_count for fwnode_property_count_u32's result
-> >  * err for fwnode_property_read_u32_array's result
-> > 
-> > Since addr_count is only used before err is touched, I guess the compiler
-> > will
-> > optimize this out anyway?
-> 
-> Usually we do this pattern (and it seems you missed the point, name of
-> variable is ret in some functions and err in the rest):
-> 
-> err /* ret */ = foo();
-> if (err < 0)
->   return err;
-> count = err;
-
-I had only used 'ret' specifically in this one function, because I didn't like 
-"if (err != 2)" (and I apparently decided that I disliked that more than the
-inconsistency introduced by using 'ret'). I'll stick to calling the variable
-'err', and change the clause to (err != ARRAY_SIZE(addr)) to make it more
-obvious that 2 isn't just some random return value.
-
-
-Best,
-Sander
+diff --git a/Documentation/devicetree/bindings/leds/leds-mt6360.yaml b/Documentation/devicetree/bindings/leds/leds-mt6360.yaml
+new file mode 100644
+index 000000000000..235315531d3b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-mt6360.yaml
+@@ -0,0 +1,159 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/leds-mt6360.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: LED driver for MT6360 PMIC from MediaTek Integrated.
++
++maintainers:
++  - Gene Chen <gene_chen@richtek.com>
++
++description: |
++  This module is part of the MT6360 MFD device.
++  see Documentation/devicetree/bindings/mfd/mt6360.yaml
++  Add MT6360 LED driver include 2-channel Flash LED with torch/strobe mode,
++  and 4-channel RGB LED support Register/Flash/Breath Mode
++
++properties:
++  compatible:
++    const: mediatek,mt6360-led
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++patternProperties:
++  "^(multi-)?led@[0-5]$":
++    type: object
++    $ref: common.yaml#
++    description:
++      Properties for a single LED.
++
++    properties:
++      reg:
++        description: Index of the LED.
++        enum:
++          - 0 # LED output ISINK1
++          - 1 # LED output ISINK2
++          - 2 # LED output ISINK3
++          - 3 # LED output ISINKML
++          - 4 # LED output FLASH1
++          - 5 # LED output FLASH2
++
++unevaluatedProperties: false
++
++required:
++  - compatible
++  - "#address-cells"
++  - "#size-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++   #include <dt-bindings/leds/common.h>
++   led-controller {
++     compatible = "mediatek,mt6360-led";
++     #address-cells = <1>;
++     #size-cells = <0>;
++
++     multi-led@0 {
++       reg = <0>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_RGB>;
++       led-max-microamp = <24000>;
++       #address-cells = <1>;
++       #size-cells = <0>;
++       led@0 {
++         reg = <0>;
++         color = <LED_COLOR_ID_RED>;
++       };
++       led@1 {
++         reg = <1>;
++         color = <LED_COLOR_ID_GREEN>;
++       };
++       led@2 {
++         reg = <2>;
++         color = <LED_COLOR_ID_BLUE>;
++       };
++     };
++     led@3 {
++       reg = <3>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_WHITE>;
++       led-max-microamp = <150000>;
++     };
++     led@4 {
++       reg = <4>;
++       function = LED_FUNCTION_FLASH;
++       color = <LED_COLOR_ID_WHITE>;
++       function-enumerator = <1>;
++       led-max-microamp = <200000>;
++       flash-max-microamp = <500000>;
++       flash-max-timeout-us = <1024000>;
++     };
++     led@5 {
++       reg = <5>;
++       function = LED_FUNCTION_FLASH;
++       color = <LED_COLOR_ID_WHITE>;
++       function-enumerator = <2>;
++       led-max-microamp = <200000>;
++       flash-max-microamp = <500000>;
++       flash-max-timeout-us = <1024000>;
++     };
++   };
++
++  - |
++
++   led-controller {
++     compatible = "mediatek,mt6360-led";
++     #address-cells = <1>;
++     #size-cells = <0>;
++
++     led@0 {
++       reg = <0>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_RED>;
++       led-max-microamp = <24000>;
++     };
++     led@1 {
++       reg = <1>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_GREEN>;
++       led-max-microamp = <24000>;
++     };
++     led@2 {
++       reg = <2>;
++       function = LED_FUNCTION_INDICATOR;
++       color = <LED_COLOR_ID_BLUE>;
++       led-max-microamp = <24000>;
++     };
++     led@3 {
++       reg = <3>;
++       function = LED_FUNCTION_MOONLIGHT;
++       color = <LED_COLOR_ID_WHITE>;
++       led-max-microamp = <150000>;
++     };
++     led@4 {
++       reg = <4>;
++       function = LED_FUNCTION_FLASH;
++       color = <LED_COLOR_ID_WHITE>;
++       function-enumerator = <1>;
++       led-max-microamp = <200000>;
++       flash-max-microamp = <500000>;
++       flash-max-timeout-us = <1024000>;
++     };
++     led@5 {
++       reg = <5>;
++       function = LED_FUNCTION_FLASH;
++       color = <LED_COLOR_ID_WHITE>;
++       function-enumerator = <2>;
++       led-max-microamp = <200000>;
++       flash-max-microamp = <500000>;
++       flash-max-timeout-us = <1024000>;
++     };
++   };
++...
+-- 
+2.25.1
 
