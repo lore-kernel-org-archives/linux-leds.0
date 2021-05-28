@@ -2,104 +2,154 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C85ACC4708D
-	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 09:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C1EC4708F
+	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 09:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2FE961222
-	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 09:06:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C2D361222
+	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 09:06:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236492AbhE1JI1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 28 May 2021 05:08:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45250 "EHLO
+        id S236528AbhE1JI2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 28 May 2021 05:08:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236528AbhE1JIO (ORCPT
+        with ESMTP id S236557AbhE1JIO (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Fri, 28 May 2021 05:08:14 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94118C061342
-        for <linux-leds@vger.kernel.org>; Fri, 28 May 2021 02:06:36 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id l11-20020a05600c4f0bb029017a7cd488f5so1994481wmq.0
-        for <linux-leds@vger.kernel.org>; Fri, 28 May 2021 02:06:36 -0700 (PDT)
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96FCFC0613ED
+        for <linux-leds@vger.kernel.org>; Fri, 28 May 2021 02:06:33 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id v12so2528001wrq.6
+        for <linux-leds@vger.kernel.org>; Fri, 28 May 2021 02:06:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yCHwgdsgQ6fJQNC1IP1vbSWWrvc2ky/5/NAN71BbxeE=;
-        b=PG5t4BCUUCZooJ+B3jhYXhsmN9ESA6HHKQ7dYImvqyNpS4TK5JYGjV8uPIJjAcZUB6
-         Z1OF0JP58MOJBdVS8ccjTb6NLQpUTTBBPppVoFhTF8iMIlqlflIXbN/mbzSSl+yRSha4
-         7/HGmym0jQn/uMk2ST2NDNGGCcI5suIHkdBE/jORz5P8NMOoLpt5QvQ3v0D5tFtnUAUA
-         ue6n4vvDmpkRlQNbEVaYCVJBrxWAtIB//7yDgx2xdsvooR0ZUouAoOQFD4guyuRGPkuK
-         kBpleCuybKvFmTzIEffaIEznno/uMEmQK2ECSQ6AR4Q4o9c/Vs1Jmjjn0wOK56wAMYfP
-         xiAQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tGA8vkDLt6dYLZnFFwRntWhzZURhB1wDtuAWGHGZ0NM=;
+        b=Orl9heiY0WR6vfa1sp2uKVJBULCCWQBHzPu5Lh3vGfSzdqHqVgcmj2maT6xL0ewPvm
+         fMESRMK80AVeCB7bPkKPxaLQwkjhx2hptthg/pDSwXvFzPPqIB98JwSRumkKsqNthFEA
+         OUrExMGN+RHSqcEbU083dTPh8OHyR/LIHGYObkpB8UbUbKQNeKHrhAwqlyvalDrpiHgL
+         q/GFZBmIQsp1u5yiVimytPxDEN2FCX36aXXl37ZSyc/oE/HPDaAZpiioccEiFaEyLqN3
+         T9XmUny5HMmHpvUiGqaUCN16/UtORgj58t8nS4JEHziOhuxCC4NxjLiqHZo4PtCOfNul
+         +TFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yCHwgdsgQ6fJQNC1IP1vbSWWrvc2ky/5/NAN71BbxeE=;
-        b=Uh9ZWSTnl1wCIyubPGqhUyh2xMIhDyeNbVGQ6/tRr6eZVansrT75vBHyF/wDSS3Lpg
-         Jaw7+36Bf7LUXJ+QEp9c3tYP54gZEOHuD3r7YcmC9zczoYUbCOJ0hEisTWpDI5+9xriX
-         J6hT7oVa2Io0Xo6ed/he0P+tDkGIGpKNpJciUPGE66OI6Q59VostwFxf8mt7SytaPmQC
-         h5FnLVuYkCVGnTGN0ZALmaIFkxeE75ecQ9tYoNKMVxuVT/ZedZT+b5v8Epq+1E1nB6ZN
-         E4SdD3SkX2gYSLw73yQsMRq5JeUubYm9Fg5X96+nGorBVjtiQNkj0qvURQ5pJNE2qdxm
-         L4uw==
-X-Gm-Message-State: AOAM533H5gW8iCnp2FlblPTsLmegjxnHSQaOzCJTKpqWwchX2Rrp9Do+
-        V/flAPkoHgY0Crxt5OG/Ioidngvyz/qi8w==
-X-Google-Smtp-Source: ABdhPJxyfm6pDw+DMnxXCmn5D2PdL8QainP2YGqTXuiWGdEN+yP7MpJAKHmRyYINo5bQCc/bXzTW3A==
-X-Received: by 2002:a1c:6782:: with SMTP id b124mr12124040wmc.159.1622192795140;
-        Fri, 28 May 2021 02:06:35 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tGA8vkDLt6dYLZnFFwRntWhzZURhB1wDtuAWGHGZ0NM=;
+        b=dAv3hiLQxDXweBsT54GzwA3coBbfjeM1yt0hfyuU04yBRE6gEdj3fMq+qkMNFT8k2W
+         bGRPFaEU58orrqkh8XOf93kS7ftfdmQQGgfWQBKIHf60Z2XoEurNb/DJUhciI19UFdcX
+         qqobU+s4tql8j/BPKte89l26/GDuvFf85F/ToPjzksGYJMaJvKsgD5+And3RzdpI0e3P
+         UqShZo2N4XZcg6R1V8M+AhJSPqTDOr3qfXKCCmgVEdQSjZL2YNntlwlrAHRna5m2T6nr
+         HqzkInhtOP+4Wh56lL0ttmWAH0+sYBVVrJ6cCtRXYlspqHgrUSwh3zKPHn1JwssmFtzE
+         30Sg==
+X-Gm-Message-State: AOAM530mbXwFNo6/IHAf1ah5sIZt03v5rioxwuyKNlq6pNY7RfNC7QJA
+        srwkssSRvQa06zpwBjFPGTS4kA==
+X-Google-Smtp-Source: ABdhPJyxh6txemxNNSAzlGyU3fdAEk1CnxtSlJUlkkd7Uv3vvL2kNSG56ZoGAZBGGuTHu//WXep3zg==
+X-Received: by 2002:adf:8bc9:: with SMTP id w9mr6653902wra.378.1622192792246;
+        Fri, 28 May 2021 02:06:32 -0700 (PDT)
 Received: from dell.default ([91.110.221.223])
-        by smtp.gmail.com with ESMTPSA id m132sm6105911wmf.11.2021.05.28.02.06.34
+        by smtp.gmail.com with ESMTPSA id m132sm6105911wmf.11.2021.05.28.02.06.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 May 2021 02:06:34 -0700 (PDT)
+        Fri, 28 May 2021 02:06:31 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        John Lenz <lenz@cs.wisc.edu>,
+Cc:     linux-kernel@vger.kernel.org,
+        Antonio Ospite <ospite@studenti.unina.it>,
+        Bryan Wu <bryan.wu@canonical.com>,
+        Dan Murphy <D.Murphy@motorola.com>,
+        Dan Murphy <dmurphy@ti.com>,
+        David Rivshin <drivshin@allworx.com>,
+        =?UTF-8?q?Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>,
+        Jan-Simon Moeller <jansimon.moeller@gmx.de>,
+        =?UTF-8?q?Jan-Simon=20M=C3=B6ller?= <dl9pf@gmx.de>,
+        John Lenz <lenz@cs.wisc.edu>, Jonas Gorski <jogo@openwrt.org>,
+        Kumar SAHU <shreshthakumar.sahu@stericsson.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-leds@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
         Richard Purdie <rpurdie@openedhand.com>,
-        linux-leds@vger.kernel.org
-Subject: [PATCH 03/15] leds: led-class: Fix incorrectly documented param 'dev'
-Date:   Fri, 28 May 2021 10:06:17 +0100
-Message-Id: <20210528090629.1800173-4-lee.jones@linaro.org>
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+        Vadim Pasternak <vadimp@nvidia.com>
+Subject: [PATCH 00/15] Rid W=1 warnings from LED
+Date:   Fri, 28 May 2021 10:06:14 +0100
+Message-Id: <20210528090629.1800173-1-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210528090629.1800173-1-lee.jones@linaro.org>
-References: <20210528090629.1800173-1-lee.jones@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Fixes the following W=1 kernel build warning(s):
+This set is part of a larger effort attempting to clean-up W=1
+kernel builds, which are currently overwhelmingly riddled with
+niggly little warnings.
 
- drivers/leds/led-class.c:521: warning: Function parameter or member 'dev' not described in 'devm_led_classdev_unregister'
- drivers/leds/led-class.c:521: warning: Excess function parameter 'parent' description in 'devm_led_classdev_unregister'
+Lee Jones (15):
+  leds: trigger: ledtrig-cpu: Fix incorrectly documented param 'ledevt'
+  leds: leds-gpio-register: Supply description for param 'id'
+  leds: led-class: Fix incorrectly documented param 'dev'
+  leds: leds-bcm6328: Demote kernel-doc abuse
+  leds: leds-as3645a: Fix function name 'as3645a_set_current()'
+  leds: leds-blinkm: Remove unused variable 'ret'
+  leds: leds-is31fl32xx: Provide missing description for member
+    'sw_shutdown_func'
+  leds: leds-lp3944: Provide missing function names in documentation
+    headers
+  leds: leds-lm3530: Fix incorrect spelling of 'brightness'
+  leds: leds-lm3692x: Fix some kernel-doc formatting issues
+  leds: leds-lm3697: Provide some missing descriptions for struct
+    members
+  leds: leds-mlxreg: Fix incorrect documentation of struct member
+    'led_cdev' and 'led_cdev_name'
+  leds: leds-lp8860: Fix kernel-doc related formatting issues
+  leds: leds-lm3692x: Demote non-complete kernel-doc
+  leds: leds-mlxcpld: Fix a bunch of kernel-doc formatting issues
 
-Cc: Pavel Machek <pavel@ucw.cz>
+ drivers/leds/led-class.c           |  2 +-
+ drivers/leds/leds-as3645a.c        |  2 +-
+ drivers/leds/leds-bcm6328.c        |  2 +-
+ drivers/leds/leds-blinkm.c         |  5 ++--
+ drivers/leds/leds-gpio-register.c  |  1 +
+ drivers/leds/leds-is31fl32xx.c     |  3 ++-
+ drivers/leds/leds-lm3530.c         |  2 +-
+ drivers/leds/leds-lm3692x.c        | 20 ++++++++--------
+ drivers/leds/leds-lm3697.c         |  4 ++++
+ drivers/leds/leds-lp3944.c         |  6 ++---
+ drivers/leds/leds-lp8860.c         | 16 ++++++-------
+ drivers/leds/leds-mlxcpld.c        | 38 +++++++++++++++---------------
+ drivers/leds/leds-mlxreg.c         |  3 ++-
+ drivers/leds/trigger/ledtrig-cpu.c |  2 +-
+ 14 files changed, 56 insertions(+), 50 deletions(-)
+
+Cc: Antonio Ospite <ospite@studenti.unina.it>
+Cc: Bryan Wu <bryan.wu@canonical.com>
+Cc: Dan Murphy <D.Murphy@motorola.com>
+Cc: Dan Murphy <dmurphy@ti.com>
+Cc: David Rivshin <drivshin@allworx.com>
+Cc: "Fernández Rojas" <noltari@gmail.com>
+Cc: Jan-Simon Moeller <jansimon.moeller@gmx.de>
+Cc: "Jan-Simon Möller" <dl9pf@gmx.de>
 Cc: John Lenz <lenz@cs.wisc.edu>
-Cc: Richard Purdie <rpurdie@openedhand.com>
+Cc: Jonas Gorski <jogo@openwrt.org>
+Cc: Kumar SAHU <shreshthakumar.sahu@stericsson.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-leds@vger.kernel.org
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/leds/led-class.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 2e495ff678562..16271a1de12a7 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -513,7 +513,7 @@ static int devm_led_classdev_match(struct device *dev, void *res, void *data)
- 
- /**
-  * devm_led_classdev_unregister() - resource managed led_classdev_unregister()
-- * @parent: The device to unregister.
-+ * @dev: The device to unregister.
-  * @led_cdev: the led_classdev structure for this device.
-  */
- void devm_led_classdev_unregister(struct device *dev,
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Richard Purdie <rpurdie@openedhand.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>
+Cc: Vadim Pasternak <vadimp@nvidia.com>
 -- 
 2.31.1
 
