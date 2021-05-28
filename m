@@ -2,154 +2,104 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C1EC4708F
-	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 09:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCF7C47090
+	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 09:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C2D361222
-	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 09:06:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98DB6613ED
+	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 09:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236528AbhE1JI2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 28 May 2021 05:08:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45236 "EHLO
+        id S236555AbhE1JIa (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 28 May 2021 05:08:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236557AbhE1JIO (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 28 May 2021 05:08:14 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96FCFC0613ED
-        for <linux-leds@vger.kernel.org>; Fri, 28 May 2021 02:06:33 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id v12so2528001wrq.6
-        for <linux-leds@vger.kernel.org>; Fri, 28 May 2021 02:06:33 -0700 (PDT)
+        with ESMTP id S236519AbhE1JIP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 28 May 2021 05:08:15 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A3B3C061345
+        for <linux-leds@vger.kernel.org>; Fri, 28 May 2021 02:06:38 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id x8so2514397wrq.9
+        for <linux-leds@vger.kernel.org>; Fri, 28 May 2021 02:06:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tGA8vkDLt6dYLZnFFwRntWhzZURhB1wDtuAWGHGZ0NM=;
-        b=Orl9heiY0WR6vfa1sp2uKVJBULCCWQBHzPu5Lh3vGfSzdqHqVgcmj2maT6xL0ewPvm
-         fMESRMK80AVeCB7bPkKPxaLQwkjhx2hptthg/pDSwXvFzPPqIB98JwSRumkKsqNthFEA
-         OUrExMGN+RHSqcEbU083dTPh8OHyR/LIHGYObkpB8UbUbKQNeKHrhAwqlyvalDrpiHgL
-         q/GFZBmIQsp1u5yiVimytPxDEN2FCX36aXXl37ZSyc/oE/HPDaAZpiioccEiFaEyLqN3
-         T9XmUny5HMmHpvUiGqaUCN16/UtORgj58t8nS4JEHziOhuxCC4NxjLiqHZo4PtCOfNul
-         +TFA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=flWkEvuyWcSWIehnz5RywDGRAA/KaDRdI7W1OSESvMU=;
+        b=N7DNOKE1+iD8ct5UbAYF1i+FbbX6L3oE0dq3C1Ur3V+MmQmE/Dadn+x0H0xtaRCG/U
+         bDoc3pEMC2klFvGV5r/s1ATH/Gn8OeZfNY8cUmvLTCAJWzDfawAoMgPvU1miyTZXViNI
+         1xcWJQENF/QQXujVAQcC9hnBAxSzFzJHu9OGS0AX3utGnUOrZrWOYXkVazdNQ72cE6aY
+         b3J8+kxm1ZezBhm9QGacpTl3nGMIHQa2a6L0x1iBdC5ZPfJKlQlzVgKoGMHlAZ4e/Aeb
+         ElwVDOclzc7n8YOEfHWcMbOnEHkwllCyVaMwL70SliomfxCfAbpWGiBn6TypNpQnftBp
+         VRfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tGA8vkDLt6dYLZnFFwRntWhzZURhB1wDtuAWGHGZ0NM=;
-        b=dAv3hiLQxDXweBsT54GzwA3coBbfjeM1yt0hfyuU04yBRE6gEdj3fMq+qkMNFT8k2W
-         bGRPFaEU58orrqkh8XOf93kS7ftfdmQQGgfWQBKIHf60Z2XoEurNb/DJUhciI19UFdcX
-         qqobU+s4tql8j/BPKte89l26/GDuvFf85F/ToPjzksGYJMaJvKsgD5+And3RzdpI0e3P
-         UqShZo2N4XZcg6R1V8M+AhJSPqTDOr3qfXKCCmgVEdQSjZL2YNntlwlrAHRna5m2T6nr
-         HqzkInhtOP+4Wh56lL0ttmWAH0+sYBVVrJ6cCtRXYlspqHgrUSwh3zKPHn1JwssmFtzE
-         30Sg==
-X-Gm-Message-State: AOAM530mbXwFNo6/IHAf1ah5sIZt03v5rioxwuyKNlq6pNY7RfNC7QJA
-        srwkssSRvQa06zpwBjFPGTS4kA==
-X-Google-Smtp-Source: ABdhPJyxh6txemxNNSAzlGyU3fdAEk1CnxtSlJUlkkd7Uv3vvL2kNSG56ZoGAZBGGuTHu//WXep3zg==
-X-Received: by 2002:adf:8bc9:: with SMTP id w9mr6653902wra.378.1622192792246;
-        Fri, 28 May 2021 02:06:32 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=flWkEvuyWcSWIehnz5RywDGRAA/KaDRdI7W1OSESvMU=;
+        b=hoBKi4n3qy2PbtRy55hQBb0+JAFngo+CLbz6/8ATFgxclfc3BgQA+JzZgN2YPR4dDg
+         T3zsetiBEvnyeolsArCLCS0jNScorslU+0XEiTPhMJ2Y6YL1oIwjeQhynwDVjSy+EfOH
+         n15POjJbNT4I40AdmYt6hMzYXhWz4fIGOylqBfOKoGRadgPdMBeGO8p26gJDj0WzcHqe
+         rjhdSDzYJrMP9IS7/8knVGdE8hB02xZjmgf90G/bGNCvMsbkKDCwPspxl/pRfJ2ZnRl1
+         S9jZA9MRG2ewwfP46+JY7ruhBEHnWGKnEVxRBdDOH0cVtT7Os+Qm6u9h9ELm5PsCgWW+
+         tKVw==
+X-Gm-Message-State: AOAM530qDtJ5IoS8iu/g0IcZI0YxFbTBT1COnlFhvAhikeniLs9L9zVt
+        dBwMsCi09TIrmcSPFEK9NrvV5w==
+X-Google-Smtp-Source: ABdhPJwvni6BEcxdc2txs0qIKQHQDLukoLHzIgV658ueYUmKWHQN5ymZssb6iUC8NYILMoCFJi1PWg==
+X-Received: by 2002:a5d:4151:: with SMTP id c17mr7671732wrq.262.1622192797055;
+        Fri, 28 May 2021 02:06:37 -0700 (PDT)
 Received: from dell.default ([91.110.221.223])
-        by smtp.gmail.com with ESMTPSA id m132sm6105911wmf.11.2021.05.28.02.06.31
+        by smtp.gmail.com with ESMTPSA id m132sm6105911wmf.11.2021.05.28.02.06.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 May 2021 02:06:31 -0700 (PDT)
+        Fri, 28 May 2021 02:06:36 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
 Cc:     linux-kernel@vger.kernel.org,
-        Antonio Ospite <ospite@studenti.unina.it>,
-        Bryan Wu <bryan.wu@canonical.com>,
-        Dan Murphy <D.Murphy@motorola.com>,
-        Dan Murphy <dmurphy@ti.com>,
-        David Rivshin <drivshin@allworx.com>,
-        =?UTF-8?q?Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>,
-        Jan-Simon Moeller <jansimon.moeller@gmx.de>,
-        =?UTF-8?q?Jan-Simon=20M=C3=B6ller?= <dl9pf@gmx.de>,
-        John Lenz <lenz@cs.wisc.edu>, Jonas Gorski <jogo@openwrt.org>,
-        Kumar SAHU <shreshthakumar.sahu@stericsson.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-leds@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Richard Purdie <rpurdie@openedhand.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-        Vadim Pasternak <vadimp@nvidia.com>
-Subject: [PATCH 00/15] Rid W=1 warnings from LED
-Date:   Fri, 28 May 2021 10:06:14 +0100
-Message-Id: <20210528090629.1800173-1-lee.jones@linaro.org>
+        Pavel Machek <pavel@ucw.cz>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-leds@vger.kernel.org
+Subject: [PATCH 05/15] leds: leds-as3645a: Fix function name 'as3645a_set_current()'
+Date:   Fri, 28 May 2021 10:06:19 +0100
+Message-Id: <20210528090629.1800173-6-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210528090629.1800173-1-lee.jones@linaro.org>
+References: <20210528090629.1800173-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This set is part of a larger effort attempting to clean-up W=1
-kernel builds, which are currently overwhelmingly riddled with
-niggly little warnings.
+Fixes the following W=1 kernel build warning(s):
 
-Lee Jones (15):
-  leds: trigger: ledtrig-cpu: Fix incorrectly documented param 'ledevt'
-  leds: leds-gpio-register: Supply description for param 'id'
-  leds: led-class: Fix incorrectly documented param 'dev'
-  leds: leds-bcm6328: Demote kernel-doc abuse
-  leds: leds-as3645a: Fix function name 'as3645a_set_current()'
-  leds: leds-blinkm: Remove unused variable 'ret'
-  leds: leds-is31fl32xx: Provide missing description for member
-    'sw_shutdown_func'
-  leds: leds-lp3944: Provide missing function names in documentation
-    headers
-  leds: leds-lm3530: Fix incorrect spelling of 'brightness'
-  leds: leds-lm3692x: Fix some kernel-doc formatting issues
-  leds: leds-lm3697: Provide some missing descriptions for struct
-    members
-  leds: leds-mlxreg: Fix incorrect documentation of struct member
-    'led_cdev' and 'led_cdev_name'
-  leds: leds-lp8860: Fix kernel-doc related formatting issues
-  leds: leds-lm3692x: Demote non-complete kernel-doc
-  leds: leds-mlxcpld: Fix a bunch of kernel-doc formatting issues
+ drivers/leds/leds-as3645a.c:198: warning: expecting prototype for as3645a_set_config(). Prototype was for as3645a_set_current() instead
 
- drivers/leds/led-class.c           |  2 +-
- drivers/leds/leds-as3645a.c        |  2 +-
- drivers/leds/leds-bcm6328.c        |  2 +-
- drivers/leds/leds-blinkm.c         |  5 ++--
- drivers/leds/leds-gpio-register.c  |  1 +
- drivers/leds/leds-is31fl32xx.c     |  3 ++-
- drivers/leds/leds-lm3530.c         |  2 +-
- drivers/leds/leds-lm3692x.c        | 20 ++++++++--------
- drivers/leds/leds-lm3697.c         |  4 ++++
- drivers/leds/leds-lp3944.c         |  6 ++---
- drivers/leds/leds-lp8860.c         | 16 ++++++-------
- drivers/leds/leds-mlxcpld.c        | 38 +++++++++++++++---------------
- drivers/leds/leds-mlxreg.c         |  3 ++-
- drivers/leds/trigger/ledtrig-cpu.c |  2 +-
- 14 files changed, 56 insertions(+), 50 deletions(-)
-
-Cc: Antonio Ospite <ospite@studenti.unina.it>
-Cc: Bryan Wu <bryan.wu@canonical.com>
-Cc: Dan Murphy <D.Murphy@motorola.com>
-Cc: Dan Murphy <dmurphy@ti.com>
-Cc: David Rivshin <drivshin@allworx.com>
-Cc: "Fernández Rojas" <noltari@gmail.com>
-Cc: Jan-Simon Moeller <jansimon.moeller@gmx.de>
-Cc: "Jan-Simon Möller" <dl9pf@gmx.de>
-Cc: John Lenz <lenz@cs.wisc.edu>
-Cc: Jonas Gorski <jogo@openwrt.org>
-Cc: Kumar SAHU <shreshthakumar.sahu@stericsson.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-leds@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Richard Purdie <rpurdie@openedhand.com>
 Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>
-Cc: Vadim Pasternak <vadimp@nvidia.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-leds@vger.kernel.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/leds/leds-as3645a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+index e8922fa033796..c41937ff8fd33 100644
+--- a/drivers/leds/leds-as3645a.c
++++ b/drivers/leds/leds-as3645a.c
+@@ -185,7 +185,7 @@ static int as3645a_read(struct as3645a *flash, u8 addr)
+  */
+ 
+ /**
+- * as3645a_set_config - Set flash configuration registers
++ * as3645a_set_current - Set flash configuration registers
+  * @flash: The flash
+  *
+  * Configure the hardware with flash, assist and indicator currents, as well as
 -- 
 2.31.1
 
