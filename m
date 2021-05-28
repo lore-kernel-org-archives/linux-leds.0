@@ -2,40 +2,40 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C359C47087
-	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 10:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA39C47087
+	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 10:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FDD2613B6
-	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 10:45:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CB1F60FDA
+	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 10:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236530AbhE1KrO (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 28 May 2021 06:47:14 -0400
-Received: from mga01.intel.com ([192.55.52.88]:53668 "EHLO mga01.intel.com"
+        id S236436AbhE1Ks3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 28 May 2021 06:48:29 -0400
+Received: from mga11.intel.com ([192.55.52.93]:5341 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236340AbhE1KrN (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 28 May 2021 06:47:13 -0400
-IronPort-SDR: YsePYQJD8tTo0UOVaqrZINZuuC98X7vZS8IWuIzoIVLrzteSE3um5PPRJcf8olZwbkWQ0ED/b+
- /dvtD+TPqJuw==
-X-IronPort-AV: E=McAfee;i="6200,9189,9997"; a="224166045"
+        id S236170AbhE1Ks2 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 28 May 2021 06:48:28 -0400
+IronPort-SDR: v4pvy+yHtENu2uYZfZULGVMA3G3srmdxGhzT6K7ui6LtRTcVLYxI1daKfBsIQOZ69xqMTMAIuy
+ lKDcEyuIFsKA==
+X-IronPort-AV: E=McAfee;i="6200,9189,9997"; a="199898280"
 X-IronPort-AV: E=Sophos;i="5.83,229,1616482800"; 
-   d="scan'208";a="224166045"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2021 03:45:38 -0700
-IronPort-SDR: bbuC1joOym2GH0be1kABCGUGS8fy59so6ikZaWMxUoC1GT44vRQcUTA1V8pg5ys7z54svUUn6x
- AStv45sMm1lw==
+   d="scan'208";a="199898280"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2021 03:46:53 -0700
+IronPort-SDR: PpMwCDE4MI4SGk+UU0CugHN7WxxW+Hm503k+o2vpa8QaOhXGPlftJRZXGioDZ7DaETq2+SRvpD
+ 1aLmDMPaytKg==
 X-IronPort-AV: E=Sophos;i="5.83,229,1616482800"; 
-   d="scan'208";a="465837093"
+   d="scan'208";a="615721783"
 Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2021 03:45:34 -0700
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2021 03:46:50 -0700
 Received: from andy by smile with local (Exim 4.94)
         (envelope-from <andy.shevchenko@gmail.com>)
-        id 1lmZzf-00FIDS-NS; Fri, 28 May 2021 13:45:31 +0300
-Date:   Fri, 28 May 2021 13:45:31 +0300
+        id 1lma0t-00FIEU-Rc; Fri, 28 May 2021 13:46:47 +0300
+Date:   Fri, 28 May 2021 13:46:47 +0300
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>
 Cc:     Amireddy Mallikarjuna reddy <mallikarjunax.reddy@linux.intel.com>,
@@ -45,33 +45,45 @@ Cc:     Amireddy Mallikarjuna reddy <mallikarjunax.reddy@linux.intel.com>,
         Dan Murphy <dmurphy@ti.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 03/28] leds: el15203000: Give better margin for
- usleep_range()
-Message-ID: <YLDJy5NE+xKmGL21@smile.fi.intel.com>
+Subject: Re: [PATCH v1 08/28] leds: lgm-sso: Put fwnode in any case during
+ ->probe()
+Message-ID: <YLDKF32PmNP0ZDTK@smile.fi.intel.com>
 References: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
- <20210510095045.3299382-4-andy.shevchenko@gmail.com>
- <20210528100440.GE2209@amd>
+ <20210510095045.3299382-9-andy.shevchenko@gmail.com>
+ <20210528100800.GF2209@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210528100440.GE2209@amd>
+In-Reply-To: <20210528100800.GF2209@amd>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Fri, May 28, 2021 at 12:04:40PM +0200, Pavel Machek wrote:
-> On Mon 2021-05-10 12:50:20, Andy Shevchenko wrote:
-> > 1 microsecond with 20 millisecond parameter is too low margin for
-> > usleep_range(). Give 100 to make scheduler happier.
-> > 
-> > While at it, fix indentation in cases where EL_FW_DELAY_USEC is in use.
-> > In the loop, move it to the end to avoid a conditional.
+On Fri, May 28, 2021 at 12:08:00PM +0200, Pavel Machek wrote:
+> > @@ -734,10 +736,15 @@ static int sso_led_dt_parse(struct sso_led_priv *priv)
+> >  	if (fw_ssoled) {
+> >  		ret = __sso_led_dt_parse(priv, fw_ssoled);
+> >  		if (ret)
+> > -			return ret;
+> > +			goto err_child_out;
+> >  	}
+> >  
+> > +	fwnode_handle_put(fw_ssoled);
+> >  	return 0;
+> > +
+> > +err_child_out:
+> > +	fwnode_handle_put(fw_ssoled);
+> > +	return ret;
+> >  }
 > 
-> Its not like unhappy schedulers are problem...
+> Just delete the return and you get the same effect, no? No need to
+> have two exits here.
 
-Any hints then? To me it sounds like torturing scheduler is the real problem
-and that's why scheduler is unhappy.
+I prefer to see it clear and follow the same pattern, but if you insist, I can
+change in proposed way.
+
+Thanks for review!
 
 -- 
 With Best Regards,
