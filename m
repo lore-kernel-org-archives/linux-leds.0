@@ -2,97 +2,76 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BAAC4708B
-	for <linux-leds@archiver.kernel.org>; Thu, 27 May 2021 23:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B80C4708C
+	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 06:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F6E3613D8
-	for <linux-leds@archiver.kernel.org>; Thu, 27 May 2021 23:31:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81659613E3
+	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 06:29:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235643AbhE0XdU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 27 May 2021 19:33:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57854 "EHLO
+        id S230311AbhE1GbO (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 28 May 2021 02:31:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235259AbhE0XdU (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 27 May 2021 19:33:20 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 888C8C061763
-        for <linux-leds@vger.kernel.org>; Thu, 27 May 2021 16:31:45 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id q1so2599017lfo.3
-        for <linux-leds@vger.kernel.org>; Thu, 27 May 2021 16:31:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zEQifLQbx7qMjLNpqdbbcwOi4tSxAnfnz+SiV7JkMHM=;
-        b=RjuZYS2Lzk+yFeTTveAHMZqaz8NRFV7AtDbckUD0/6Ya4ZV48Tmdi4ALUNHYLGHRSw
-         K0S1eM+XBmdWzfjcuDsVpAzA1hHTPFP9tA/V2RnjGtMepQWB5LAdPuD+NLxz+LoLRiVE
-         G0p1NFcKaIRJVmQmOCVCsulA3enIMaRDnxtdBQ8boRxF+ZVEe+/uH5zJJ1VIZA73DfeI
-         Ps2QBdtbao+wpoByqopEdTj3FHLU5Y1lMSH29HigfARM5QBfkR6qgNTxreAnnf6EfH93
-         JjSy2G8qy9kCJK0ANf4mAJLp7z/SPSsLy3hxwco8+kC1eZBcevsUgMCaDdV+rNWQGzhz
-         Drsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zEQifLQbx7qMjLNpqdbbcwOi4tSxAnfnz+SiV7JkMHM=;
-        b=F7YZO9B9aHYu9DEHGTCli060Ut1lDtZRodPND+/3IJBq/vWW9lSwOXpR1sRb8O1hYM
-         fcFOUhErS7xF/OLK7IE6hFv4uImYhC8tEbRggTvC5WYffOnY2T+EWWbml6E6DaNnAvEl
-         uFlG8iOanoRl2XasxWcclMbt7XcT7ciozm+Q9DwGwFKFdKGLK2EiTaiRfcdgjWo6C2MK
-         VqRWKmY4DLIigp09zeUipjA2axpxwIDSLQeyY/+uuGF4OieGDgywlVOHd+g6MJwL4Mxj
-         E8j1tY5IAzygIjre3sA6QXZ5h3Q2igt3DegO6kszE86KID3UyYSchdI85qt5CoLu6ntr
-         hJxA==
-X-Gm-Message-State: AOAM5322fJlcDNWXW+S/1UnNO1duTONxkoSaIxowRp6l2d5d/mOszjIL
-        6DLr4/sx09IhsMDYio2Nof63ph8bZYo15SxDVOAQ8w==
-X-Google-Smtp-Source: ABdhPJzLFvvQ+aJrZwMojq8FmCCIj9AXSsxEuVHW+WJfnUMnz2EU/9OuRPqjkFwIuybMyU2NlANPMyxjSzmN95s05vo=
-X-Received: by 2002:ac2:544f:: with SMTP id d15mr3874671lfn.465.1622158303739;
- Thu, 27 May 2021 16:31:43 -0700 (PDT)
+        with ESMTP id S229753AbhE1GbO (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 28 May 2021 02:31:14 -0400
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 270B2C061574;
+        Thu, 27 May 2021 23:29:40 -0700 (PDT)
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 3577F22239;
+        Fri, 28 May 2021 08:29:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1622183376;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=tvDryGjFc2b0KujgcUtBe5I3gcYMEk3E/mVvu6Bxf/A=;
+        b=LjKnecBf9GWDYelaXriWtkwJLN0XzciFDPhk3Py6yqDSW73C1NwfxuMyy9lCqPtU8rzdvc
+        CwAxmkDMpa/6TXJzBSxvbbOaHxLaufxpeSwWkbl53Ml1b3+IJEymd8ydw8x/j/8tjYm9PO
+        8YkC/Nr1g8H9TgFJZnNJGEvnDe5ntYE=
 MIME-Version: 1.0
-References: <cover.1621809029.git.sander@svanheule.net> <ea03804a538ecf45287f8cc356b8d9536c91e688.1621809029.git.sander@svanheule.net>
-In-Reply-To: <ea03804a538ecf45287f8cc356b8d9536c91e688.1621809029.git.sander@svanheule.net>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 28 May 2021 01:31:32 +0200
-Message-ID: <CACRpkdaLdfe6mBTW61uL2ZifnkWDzPTqOaYqZwH1EVbQFpzSjA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/6] dt-bindings: mfd: Binding for RTL8231
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 28 May 2021 08:29:33 +0200
+From:   Michael Walle <michael@walle.cc>
 To:     Sander Vanheule <sander@svanheule.net>
 Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Lee Jones <lee.jones@linaro.org>,
         Mark Brown <broonie@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
-        Michael Walle <michael@walle.cc>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] pinctrl: Add RTL8231 pin control and GPIO support
+In-Reply-To: <185e8c61893502575c542750c8f27b09029e3078.1621809029.git.sander@svanheule.net>
+References: <cover.1621809029.git.sander@svanheule.net>
+ <185e8c61893502575c542750c8f27b09029e3078.1621809029.git.sander@svanheule.net>
+User-Agent: Roundcube Webmail/1.4.11
+Message-ID: <452144b056cb474321481c011ac9ccfb@walle.cc>
+X-Sender: michael@walle.cc
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, May 24, 2021 at 12:34 AM Sander Vanheule <sander@svanheule.net> wrote:
+> +	gpio_cfg.reg_dat_base = GPIO_REGMAP_ADDR(RTL8231_REG_GPIO_DATA0);
+> +	gpio_cfg.reg_set_base = GPIO_REGMAP_ADDR(RTL8231_REG_GPIO_DATA0);
+> +	gpio_cfg.reg_dir_in_base = GPIO_REGMAP_ADDR(RTL8231_REG_GPIO_DIR0);
 
-> Add a binding description for the Realtek RTL8231, a GPIO and LED
-> expander chip commonly used in ethernet switches based on a Realtek
-> switch SoC. These chips can be addressed via an MDIO or SMI bus, or used
-> as a plain 36-bit shift register.
->
-> This binding only describes the feature set provided by the MDIO/SMI
-> configuration, and covers the GPIO, PWM, and pin control properties. The
-> LED properties are defined in a separate binding.
->
-> Signed-off-by: Sander Vanheule <sander@svanheule.net>
+Btw. you'd only need GPIO_REGMAP_ADDR(x) if x might be 0. Because you 
+have
+a constant != 0 there, you could save the GPIO_REGMAP_ADDR() call. You
+could drop this if you like, but no need to respin the series for this.
 
-This looks good to me from a GPIO and pin control PoV:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+-michael
