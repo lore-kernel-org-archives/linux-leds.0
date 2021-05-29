@@ -8,23 +8,23 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D81C47090
-	for <linux-leds@archiver.kernel.org>; Sat, 29 May 2021 11:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABC1C4708F
+	for <linux-leds@archiver.kernel.org>; Sat, 29 May 2021 11:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40403613B6
-	for <linux-leds@archiver.kernel.org>; Sat, 29 May 2021 11:19:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38EAB613DD
+	for <linux-leds@archiver.kernel.org>; Sat, 29 May 2021 11:19:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229746AbhE2LVT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 29 May 2021 07:21:19 -0400
-Received: from fgw23-7.mail.saunalahti.fi ([62.142.5.84]:13869 "EHLO
+        id S229719AbhE2LVW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 29 May 2021 07:21:22 -0400
+Received: from fgw23-7.mail.saunalahti.fi ([62.142.5.84]:13939 "EHLO
         fgw23-7.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229710AbhE2LVR (ORCPT
+        by vger.kernel.org with ESMTP id S229737AbhE2LVU (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Sat, 29 May 2021 07:21:17 -0400
+        Sat, 29 May 2021 07:21:20 -0400
 Received: from localhost (88-115-248-186.elisa-laajakaista.fi [88.115.248.186])
         by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-        id c15494ef-c06f-11eb-8ccd-005056bdfda7;
-        Sat, 29 May 2021 14:19:38 +0300 (EEST)
+        id c3b53ab9-c06f-11eb-8ccd-005056bdfda7;
+        Sat, 29 May 2021 14:19:42 +0300 (EEST)
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
@@ -35,9 +35,9 @@ To:     Pavel Machek <pavel@ucw.cz>,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/13] leds: el15203000: Give better margin for usleep_range()
-Date:   Sat, 29 May 2021 14:19:24 +0300
-Message-Id: <20210529111935.3849707-2-andy.shevchenko@gmail.com>
+Subject: [PATCH v2 06/13] leds: lgm-sso: Remove explicit managed GPIO resource cleanup
+Date:   Sat, 29 May 2021 14:19:28 +0300
+Message-Id: <20210529111935.3849707-6-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210529111935.3849707-1-andy.shevchenko@gmail.com>
 References: <20210529111935.3849707-1-andy.shevchenko@gmail.com>
@@ -47,62 +47,28 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-1 microsecond with 20 millisecond parameter is too low margin for
-usleep_range(). Give 100 to make scheduler been less tortured.
-
-While at it, fix indentation in cases where EL_FW_DELAY_USEC is in use.
-In the loop, move it to the end to avoid a conditional.
+The idea of managed resources is that they will be cleaned up automatically
+and in the proper order. Remove explicit GPIO cleanup.
 
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
-v2: amended the commit message
- drivers/leds/leds-el15203000.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+v2: dropped one part of the change, i.e. LED unregistration (Pavel)
+ drivers/leds/blink/leds-lgm-sso.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/leds/leds-el15203000.c b/drivers/leds/leds-el15203000.c
-index 76b455e87574..77e76f775385 100644
---- a/drivers/leds/leds-el15203000.c
-+++ b/drivers/leds/leds-el15203000.c
-@@ -97,27 +97,22 @@ static int el15203000_cmd(struct el15203000_led *led, u8 brightness)
+diff --git a/drivers/leds/blink/leds-lgm-sso.c b/drivers/leds/blink/leds-lgm-sso.c
+index 877b44594b26..24f4057d5a05 100644
+--- a/drivers/leds/blink/leds-lgm-sso.c
++++ b/drivers/leds/blink/leds-lgm-sso.c
+@@ -613,9 +613,6 @@ static void sso_led_shutdown(struct sso_led *led)
+ 	if (led->desc.hw_trig)
+ 		regmap_update_bits(priv->mmap, SSO_CON3, BIT(led->desc.pin), 0);
  
- 	/* to avoid SPI mistiming with firmware we should wait some time */
- 	if (time_after(led->priv->delay, jiffies)) {
--		dev_dbg(led->priv->dev, "Wait %luus to sync",
--			EL_FW_DELAY_USEC);
-+		dev_dbg(led->priv->dev, "Wait %luus to sync", EL_FW_DELAY_USEC);
- 
--		usleep_range(EL_FW_DELAY_USEC,
--			     EL_FW_DELAY_USEC + 1);
-+		usleep_range(EL_FW_DELAY_USEC, EL_FW_DELAY_USEC + 100);
- 	}
- 
- 	cmd[0] = led->reg;
- 	cmd[1] = brightness;
- 
- 	for (i = 0; i < ARRAY_SIZE(cmd); i++) {
--		if (i)
--			usleep_range(EL_FW_DELAY_USEC,
--				     EL_FW_DELAY_USEC + 1);
+-	if (led->gpiod)
+-		devm_gpiod_put(priv->dev, led->gpiod);
 -
- 		ret = spi_write(led->priv->spi, &cmd[i], sizeof(cmd[i]));
- 		if (ret) {
- 			dev_err(led->priv->dev,
- 				"spi_write() error %d", ret);
- 			break;
- 		}
-+		usleep_range(EL_FW_DELAY_USEC, EL_FW_DELAY_USEC + 100);
- 	}
- 
- 	led->priv->delay = jiffies + usecs_to_jiffies(EL_FW_DELAY_USEC);
-@@ -306,8 +301,7 @@ static int el15203000_probe(struct spi_device *spi)
- 	priv->count	= count;
- 	priv->dev	= &spi->dev;
- 	priv->spi	= spi;
--	priv->delay	= jiffies -
--			  usecs_to_jiffies(EL_FW_DELAY_USEC);
-+	priv->delay	= jiffies - usecs_to_jiffies(EL_FW_DELAY_USEC);
- 
- 	spi_set_drvdata(spi, priv);
+ 	led->priv = NULL;
+ }
  
 -- 
 2.31.1
