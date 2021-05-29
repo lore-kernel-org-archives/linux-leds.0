@@ -2,96 +2,78 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53513C4708E
-	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 21:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AB7C47082
+	for <linux-leds@archiver.kernel.org>; Sat, 29 May 2021 06:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39851613ED
-	for <linux-leds@archiver.kernel.org>; Fri, 28 May 2021 21:07:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D8DE613B6
+	for <linux-leds@archiver.kernel.org>; Sat, 29 May 2021 06:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229563AbhE1VI6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 28 May 2021 17:08:58 -0400
-Received: from smtp.220.in.ua ([89.184.67.205]:53102 "EHLO smtp.220.in.ua"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229575AbhE1VI5 (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 28 May 2021 17:08:57 -0400
-Received: from [192.168.202.100] (unknown [95.67.115.55])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by smtp.220.in.ua (Postfix) with ESMTPSA id EC5951A205EA;
-        Sat, 29 May 2021 00:00:27 +0300 (EEST)
-Subject: Re: [PATCH v1 05/28] leds: el15203000: Correct headers (of*.h ->
- mod_devicetable.h)
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Amireddy Mallikarjuna reddy 
-        <mallikarjunax.reddy@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?Q?Marek_Beh=c3=ban?= <marek.behun@nic.cz>,
-        Abanoub Sameh <abanoubsameh8@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210510095045.3299382-1-andy.shevchenko@gmail.com>
- <20210510095045.3299382-6-andy.shevchenko@gmail.com>
-From:   Oleh Kravchenko <oleg@kaa.org.ua>
-Message-ID: <f21ff98f-8728-eea1-f9ef-c14f64d31d0e@kaa.org.ua>
-Date:   Sat, 29 May 2021 00:00:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        id S229559AbhE2G4Q (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 29 May 2021 02:56:16 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2459 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229547AbhE2G4Q (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 29 May 2021 02:56:16 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4FsXK85wX2z66Vc;
+        Sat, 29 May 2021 14:51:40 +0800 (CST)
+Received: from dggpeml500006.china.huawei.com (7.185.36.76) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Sat, 29 May 2021 14:54:35 +0800
+Received: from code-website.localdomain (10.175.127.227) by
+ dggpeml500006.china.huawei.com (7.185.36.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Sat, 29 May 2021 14:54:34 +0800
+From:   Luo Meng <luomeng12@huawei.com>
+To:     <jansimon.moeller@gmx.de>, <pavel@ucw.cz>, <nathan@kernel.org>,
+        <ndesaulniers@google.com>, <linux-leds@vger.kernel.org>,
+        <luomeng12@huawei.com>
+Subject: [PATCH] leds: remove unused variable
+Date:   Sat, 29 May 2021 15:03:57 +0800
+Message-ID: <20210529070357.2872533-1-luomeng12@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-In-Reply-To: <20210510095045.3299382-6-andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: uk-UA
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500006.china.huawei.com (7.185.36.76)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-10.05.21 12:50, Andy Shevchenko пише:
-> There is no user of of*.h headers, but mod_devicetable.h.
-> Update header block accordingly.
-> 
-> While at it, drop unneeded dependency to OF.
-> 
-> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> ---
->  drivers/leds/Kconfig           | 1 -
->  drivers/leds/leds-el15203000.c | 3 ++-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index dcbfcd491fd0..531c79155717 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -167,7 +167,6 @@ config LEDS_EL15203000
->  	tristate "LED Support for Crane EL15203000"
->  	depends on LEDS_CLASS
->  	depends on SPI
-> -	depends on OF
->  	help
->  	  This option enables support for EL15203000 LED Board
->  	  (aka RED LED board) which is widely used in coffee vending
-> diff --git a/drivers/leds/leds-el15203000.c b/drivers/leds/leds-el15203000.c
-> index bcdbbbc9c187..fcb90d7cd42f 100644
-> --- a/drivers/leds/leds-el15203000.c
-> +++ b/drivers/leds/leds-el15203000.c
-> @@ -4,8 +4,9 @@
->  
->  #include <linux/delay.h>
->  #include <linux/leds.h>
-> +#include <linux/mod_devicetable.h>
->  #include <linux/module.h>
-> -#include <linux/of_device.h>
-> +#include <linux/property.h>
->  #include <linux/spi/spi.h>
->  
->  /*
-> 
+Fix the following clang warning:
+drivers/leds/leds-blinkm.c:483:6: warning:
+variable ‘ret’ set but not used [-Wunused-but-set-variable]
 
-Reviewed-by: Oleh Kravchenko <oleg@kaa.org.ua>
+Signed-off-by: Luo Meng <luomeng12@huawei.com>
+---
+ drivers/leds/leds-blinkm.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
+index b4e1fdff4186..bd7d0d5cf3b6 100644
+--- a/drivers/leds/leds-blinkm.c
++++ b/drivers/leds/leds-blinkm.c
+@@ -480,9 +480,8 @@ static int blinkm_led_blue_set(struct led_classdev *led_cdev,
+ 
+ static void blinkm_init_hw(struct i2c_client *client)
+ {
+-	int ret;
+-	ret = blinkm_transfer_hw(client, BLM_STOP_SCRIPT);
+-	ret = blinkm_transfer_hw(client, BLM_GO_RGB);
++	blinkm_transfer_hw(client, BLM_STOP_SCRIPT);
++	blinkm_transfer_hw(client, BLM_GO_RGB);
+ }
+ 
+ static int blinkm_test_run(struct i2c_client *client)
+-- 
+2.25.4
+
