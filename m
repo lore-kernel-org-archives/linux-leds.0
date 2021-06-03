@@ -2,114 +2,114 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 772CAC4708F
-	for <linux-leds@archiver.kernel.org>; Wed,  2 Jun 2021 22:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5558C47096
+	for <linux-leds@archiver.kernel.org>; Thu,  3 Jun 2021 08:20:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C7F4613F2
-	for <linux-leds@archiver.kernel.org>; Wed,  2 Jun 2021 22:41:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9CB2613E6
+	for <linux-leds@archiver.kernel.org>; Thu,  3 Jun 2021 08:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229786AbhFBWmp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 2 Jun 2021 18:42:45 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:45762 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbhFBWmp (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 2 Jun 2021 18:42:45 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 1F91F1C0B76; Thu,  3 Jun 2021 00:41:00 +0200 (CEST)
-Date:   Thu, 3 Jun 2021 00:40:59 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     stuart hayes <stuart.w.hayes@gmail.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Keith Busch <kbusch@kernel.org>, kw@linux.com,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-Subject: Re: [PATCH v2] Add support for PCIe SSD status LED management
-Message-ID: <20210602224059.GA19673@duo.ucw.cz>
-References: <20210601203820.3647-1-stuart.w.hayes@gmail.com>
- <3d1272b8-4edc-f2b1-85ea-f5cea65b4871@infradead.org>
- <20210601223812.GA5128@amd>
- <6ee11975-fad7-1a82-f7f3-279ebd4f67cb@gmail.com>
- <20210602090504.GA10900@amd>
- <552ca26f-c7ab-3496-743f-f95e80eb578b@gmail.com>
+        id S229486AbhFCIVs (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 3 Jun 2021 04:21:48 -0400
+Received: from mail-pj1-f48.google.com ([209.85.216.48]:44568 "EHLO
+        mail-pj1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229479AbhFCIVr (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 3 Jun 2021 04:21:47 -0400
+Received: by mail-pj1-f48.google.com with SMTP id h12-20020a17090aa88cb029016400fd8ad8so3391815pjq.3
+        for <linux-leds@vger.kernel.org>; Thu, 03 Jun 2021 01:20:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/sNX4mumXu2c+Ng1l217/qU0peCUh1MdGzV1rqEY8zk=;
+        b=NNnZFIslIEAs3i1dDDoFryJpGlhlZVLUnJR9YXE3+MhBm8dRLRIRZzhxs4PFkZ0RvR
+         biulvUcDQjwca9L7PLx82ToRTyoysNoNDbZB88bsM8TGSpxh1iJDXCTZw19+qLaO4WF0
+         xZjqVmwDuYsU+510k/q4kkS18413TUXgnb9Z2G1dPJZ+IHrZOr2NVStyMsXHFf/FSbWv
+         rsv4lIBsPr3a4pYM+4bGnZ29rbiRbYEtMt6d01FPpSfAaQBBuTOciaAwfujBT8V5+g7D
+         VPti16FpaI2AYrVOb8ZjV6qQnmeN93/deEyCxZUbbxX05Ar4uRlWl3RMVjCEb8KDiBbf
+         HFaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=/sNX4mumXu2c+Ng1l217/qU0peCUh1MdGzV1rqEY8zk=;
+        b=MBBETMjPAAqcPKi+QmFGHCZpGA5+0KgQE8I/Kar0hHzKl5wbxAy73ZPHhYPfVQ0wnl
+         NHhcX1oxYLOqpv+1AS/tokPMgdfz3lxAi1H5VDgfPzwcs8EcZBlTWB1jHwX7k48h5mle
+         /7HHmP3o7cG4QmgLM0RC/+NHEgj75jjXLR8Nt00N7FybhTkG/kRF9zbLIJRgAf+SaR7k
+         u5y60CZwCjDRU+m8H9l3Zmiho8Ja9I0cJdkPmQBc1XmTvDFpDeK9Pb85lzExpFOfHwil
+         mELkca9ZEPN1cCEKCfuGddpkNMcvjV79eksGUSGFEzfZqv+vSafLG7fbay6RBgYARYF+
+         5MLQ==
+X-Gm-Message-State: AOAM533PHFUNhXCca6IONM8jPh7vA0UmyOiEWxZJhiTt/TDUceZL2LXV
+        K4BgF+5mWSaqhRTaazSOIB0=
+X-Google-Smtp-Source: ABdhPJwyBPtPaOHNDdOWjCE88XJWWKM12RfAEQX7mGW84hxF8fqLhr46oabZWwC8dl5GQczMkCZWdA==
+X-Received: by 2002:a17:90a:71c7:: with SMTP id m7mr9931392pjs.9.1622708343375;
+        Thu, 03 Jun 2021 01:19:03 -0700 (PDT)
+Received: from voyager.lan ([45.124.203.14])
+        by smtp.gmail.com with ESMTPSA id 2sm1588101pjg.0.2021.06.03.01.18.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jun 2021 01:19:02 -0700 (PDT)
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From:   Joel Stanley <joel@jms.id.au>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Vishwanatha Subbanna <vishwa@linux.vnet.ibm.com>,
+        linux-leds@vger.kernel.org
+Subject: [PATCH v2] leds: pca955x: Allow platform datato set full name
+Date:   Thu,  3 Jun 2021 17:48:41 +0930
+Message-Id: <20210603081841.208639-1-joel@jms.id.au>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
-Content-Disposition: inline
-In-Reply-To: <552ca26f-c7ab-3496-743f-f95e80eb578b@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+The PCA955x driver since it was merged has added a "pca955x:" prefix to
+LED names. This meanas platform data (such as the device tree) cannot
+fully control the name. Here's what this produces using the example in
+the device tree bindings:
 
---VS++wcV0S1rZb1Fb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ # ls /sys/class/leds/
+ pca955x:green:power/
+ pca955x:pca9552:white/
+ pca955x:pca9552:yellow/
+ pca955x:red:power/
 
-Hi!
+Instead use the platform data when provided to name the LED device.
 
-> > > This would cause the system to somehow show the user that that this d=
-rive
-> > > (or drive slot) is the one that it wants a person to be able to physi=
-cally
-> > > locate (possibly by flashing a blue LED on/near the drive), and also =
-that
-> > > the drive is OK.  It would presumably do that by lighting the LEDs on=
-/near
-> > > the drive with certain colors and/or flashing patterns, though it cou=
-ld, in
-> > > theory, put "OK" in an LCD on the drive slot.  How the states are dis=
-played
-> > > to the user is beyond the scope of the specs.
-> > >=20
-> > > (The _DSM and NPEM specs provide for a way to control status LEDs on =
-a drive
-> > > or drive slot.  Typically drives will have 2 or 3 LEDs that are illum=
-inated
-> > > in different colors or flashing patterns to indicate various states (=
-like
-> > > those listed in IBPI / SFF-8489), though the _DSM / NPEM specs do not
-> > > specify how the states are displayed.)
-> >=20
-> > Well, LED subsystem expects to know how many LEDs are there and what
-> > the LEDs are, and expects individual control over them.
-> >=20
-> > "2 or 3 LEDs with unknown patterns", or LCD display is outside of scope
-> > of LED subsystem, so this should be independend.
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+v2: Drop kconfig option, per Pavel's review:
 
->=20
-> Yes... I had originally submitted this without using the LED subsystem, a=
-nd
-> Greg K-H said I had to (see
-> https://www.spinics.net/lists/linux-pci/msg102013.html).  Here's the
-> relevant bit.
+ > No. Config option is not acceptable for this.
+ >
+ > Just delete the prefix and fix the breakage.
 
-=2E..
+ drivers/leds/leds-pca955x.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> So I'm not sure what to do.
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index 7087ca4592fc..4c5cc62c107a 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -503,9 +503,9 @@ static int pca955x_probe(struct i2c_client *client,
+ 				snprintf(pdata->leds[i].name,
+ 					sizeof(pdata->leds[i].name), "%d", i);
+ 
+-			snprintf(pca955x_led->name,
+-				sizeof(pca955x_led->name), "pca955x:%s",
+-				pdata->leds[i].name);
++			strscpy(pca955x_led->name,
++				pdata->leds[i].name,
++				sizeof(pca955x_led->name));
+ 
+ 			if (pdata->leds[i].default_trigger)
+ 				pca955x_led->led_cdev.default_trigger =
+-- 
+2.30.2
 
-Explain to Greg that you don't know how particular system implements
-the indication. It can be small display, 2 LEDs, 3 LEDs, etc... LED
-subsystem expects direct LED control.
-
-Best regards,
-								Pavel
---=20
-http://www.livejournal.com/~pavelmachek
-
---VS++wcV0S1rZb1Fb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYLgI+wAKCRAw5/Bqldv6
-8kykAJ9dyoWhTggfJ0iwRUlJlM9S4ODhugCfZFeHTIX7D/7Axs8FeMCfV7dnViU=
-=Xqva
------END PGP SIGNATURE-----
-
---VS++wcV0S1rZb1Fb--
