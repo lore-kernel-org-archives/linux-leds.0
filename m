@@ -2,88 +2,108 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA409C48BCF
-	for <linux-leds@archiver.kernel.org>; Sun, 13 Jun 2021 00:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB2BC48BDF
+	for <linux-leds@archiver.kernel.org>; Sun, 13 Jun 2021 23:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9FBA61179
-	for <linux-leds@archiver.kernel.org>; Sun, 13 Jun 2021 00:21:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CC786136E
+	for <linux-leds@archiver.kernel.org>; Sun, 13 Jun 2021 23:20:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229985AbhFMAXi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 12 Jun 2021 20:23:38 -0400
-Received: from mail-lf1-f52.google.com ([209.85.167.52]:44592 "EHLO
-        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229753AbhFMAXh (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 12 Jun 2021 20:23:37 -0400
-Received: by mail-lf1-f52.google.com with SMTP id r198so14547032lff.11
-        for <linux-leds@vger.kernel.org>; Sat, 12 Jun 2021 17:21:21 -0700 (PDT)
+        id S232168AbhFMXWJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 13 Jun 2021 19:22:09 -0400
+Received: from mail-lf1-f45.google.com ([209.85.167.45]:42975 "EHLO
+        mail-lf1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232154AbhFMXWI (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 13 Jun 2021 19:22:08 -0400
+Received: by mail-lf1-f45.google.com with SMTP id j2so17855108lfg.9
+        for <linux-leds@vger.kernel.org>; Sun, 13 Jun 2021 16:19:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TofpLR5WbO4L4sqebkQj8lhl0paD+VPJ18+ddxHLW1Q=;
-        b=F8mOGbkO3sF4ZNvUJ+F5Fd51Yp0FDAxTQNfRkncVeBSN7FynNaDC4Q6RilZvGKCPxF
-         Q66KMM+/Zq/iDOOySGMFjZhrAllIXtdu52/XpDCqXMwuCud3XZPJa0d9sp20iWEVWUSn
-         TKV1lgUSIaCS3zEAaBJ+gWrWDJL3DyUTKvE7tRdu988fKwHgUcjiyv8DJ+fbeooGdVG5
-         51+27mcNV66C8XPpeY1BKaJ2+JNVs6YXg6Pafr/UcaBzvn+6hzfIGZQNkiVRj6/BXZnK
-         iIHEmRIHst5vMIzi/iS42ZLN0RnpkM5pGYRxJRXzi5zlf/Ycy63OogybW3td77kXZSS8
-         7S/Q==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hRCpeFmIYg1JEjTMc8/Ljy8Q0O+bWExH/qyGdjQ4Qss=;
+        b=TxcVq8hqCuc+T+N2Wfds3XQrEZzsvkf0Yxb26VeHRn07YVIOllCCvPTNQsyntTv2nv
+         pjMdY8aazKodij8tVBphYmaXpbiuh81XQafg5a23NaUN2zU9DLqV2O0U1B4RDxoUbwn2
+         Ci8BKZer5JDjnFct1mqVXuQLsk89Ltgjke6gmqSTw0cWgfK7vyHe3vwklK/rBRCy7pTB
+         SoFsalp3HRY+vBxWSuEJ9sHzhYncGvj+krzK/OGxRZTKp6eyCY1gmGu69GvmGmkjIMGl
+         2VZjgqDcWJXhlxZBCUwqY5SkJRsIZLy1TK+DVoPcmTI0JzD8YRdDYCDDRrFsn0HxHJQj
+         7QGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TofpLR5WbO4L4sqebkQj8lhl0paD+VPJ18+ddxHLW1Q=;
-        b=D0ui66Q0dpt+bDsPBidBDnU8WX/2ybPrs4TnXzPwtg9nN4dkQ2YOi2OE3qCm/phYS+
-         caKkrj0EBB6i+RhmaR9+3WIfPUitCoYp6Edc5NUeZxJrkvR2ykuhBbHRB/J7X9EOAglg
-         8bTJOo+gbgXjAKUrzNRJQZ3Dq3u4XI6ceL+RYGxhXPdPqMKMD2DasD+CAnedNQyDw2tN
-         cwa7C2DalgO4d5O8mz9Kx7Ftano7fS95OjhjlHQ9wvaf7kcKp/dGF3CbK7AzyigRzG+U
-         F9GzOuqgzMxDlCVOD5UKs5N1ufVyfFRBSaECY8bTy4VzCA6/CYRAAXc/yJzwHrjBmHpa
-         evFg==
-X-Gm-Message-State: AOAM530XEUHX8/2KW7pfMfHfGyfrfV0lcZVX9lcOl1Ya7iK7lMngCJMz
-        EZ7yO/8HVKCd6icg+7pk4IpUUMtVWwn43ZlPZzBf0Q==
-X-Google-Smtp-Source: ABdhPJxYZPQOCl2yJcmUXHfEEO1ZTmaIMG4LNuYIojVQXDP7Fne0jZOz1o7CQc9yPDnxKRVCiRnI+ZD0CTyykWewlRQ=
-X-Received: by 2002:a05:6512:2105:: with SMTP id q5mr6891124lfr.649.1623543620740;
- Sat, 12 Jun 2021 17:20:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210613000302.421268-1-linus.walleij@linaro.org>
-In-Reply-To: <20210613000302.421268-1-linus.walleij@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hRCpeFmIYg1JEjTMc8/Ljy8Q0O+bWExH/qyGdjQ4Qss=;
+        b=keDqwB1hZ28dRfWVN8xEr1tXjY9kSWMo5S74wtmnkfcFWj0Cs7FP3miBNQLIiqNYnx
+         wOYl9jZV9voB99YtzTNMZEQdC4oxSUoiswkiUMDOcajDmBInTDRYtFzKd5381w2ZKsHf
+         bCiGOgZl3ba/gQfPAwM6mOyvsNGpAxoO9DQB0dozEd4liaI3gcYmYLdnxQUc/zF8KAza
+         Gy6Z/T4YTLh9+E1UqVbBJmfScBM/Bd/J/HCil8pjU4dRxAEHIk4mgMiKJFdEEA1rj+op
+         0oGIypLGQjKMhvxTcGr7jcplEPe36tvvYXc/DWbkXfKtUKlkaWX1s95lF3LljbZET5Kl
+         vS4g==
+X-Gm-Message-State: AOAM533+bT2/GWCJIn04bo4SLDIJkXfmp80+ay6ShyoQtG6giPpgeLi1
+        NHYGifEo78ToOCh8HTvmY7YrpQ==
+X-Google-Smtp-Source: ABdhPJw3/e4AMcVHCpBpnrVY13ajERn93hcptp9zsAdJfs/ciX39oDrL3Sp7lHhHQhjkGLfMoN6LKw==
+X-Received: by 2002:a19:7402:: with SMTP id v2mr6641845lfe.398.1623626329589;
+        Sun, 13 Jun 2021 16:18:49 -0700 (PDT)
+Received: from localhost.localdomain (c-fdcc225c.014-348-6c756e10.bbcust.telenor.se. [92.34.204.253])
+        by smtp.gmail.com with ESMTPSA id y20sm1295781lfj.236.2021.06.13.16.18.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Jun 2021 16:18:49 -0700 (PDT)
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 13 Jun 2021 02:20:09 +0200
-Message-ID: <CACRpkdZnCb50kuHDPe36YLZqKarPEak4OhHV18aAbe=SBZBe-w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: davinci: dm644x: Convert LEDs to GPIO descriptor table
 To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-leds@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Amireddy Mallikarjuna reddy 
+        <mallikarjunax.reddy@linux.intel.com>
+Subject: [PATCH] leds: lgm: Fix up includes
+Date:   Mon, 14 Jun 2021 01:16:47 +0200
+Message-Id: <20210613231647.511805-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.31.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Sun, Jun 13, 2021 at 2:05 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+This driver is including the legacy GPIO header <linux/gpio.h>
+but the only thing it is using from that header is the wrong
+define for GPIOF_DIR_OUT.
 
-> This converts the DaVinci DM644x LEDs to use GPIO
-> descriptor look-ups.
->
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v3->v4:
-> - Rebase on v5.13-rc1
-> - Resend
-> - LED maintainers: please apply this patch, it is ACKed by a DaVinci
->   maintainer
+Fix it up by using GPIO_LINE_DIRECTION_OUT and including the
+correct consumer and driver headers.
 
-Scratch that! I realized I have an old mail from Sekhar and there are
-some issues with the patch that I have to drill into and fix.
+Cc: Amireddy Mallikarjuna reddy <mallikarjunax.reddy@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/leds/blink/leds-lgm-sso.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Sorry for the confusion, do not apply this.
+diff --git a/drivers/leds/blink/leds-lgm-sso.c b/drivers/leds/blink/leds-lgm-sso.c
+index 6a63846d10b5..4c70f7d022ac 100644
+--- a/drivers/leds/blink/leds-lgm-sso.c
++++ b/drivers/leds/blink/leds-lgm-sso.c
+@@ -7,7 +7,8 @@
+ 
+ #include <linux/bitfield.h>
+ #include <linux/clk.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
++#include <linux/gpio/driver.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/leds.h>
+@@ -423,7 +424,7 @@ static void sso_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ 
+ static int sso_gpio_get_dir(struct gpio_chip *chip, unsigned int offset)
+ {
+-	return GPIOF_DIR_OUT;
++	return GPIO_LINE_DIRECTION_OUT;
+ }
+ 
+ static int
+-- 
+2.31.1
 
-Yours,
-Linus Walleij
