@@ -2,163 +2,89 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6476EC48BCF
-	for <linux-leds@archiver.kernel.org>; Sun, 13 Jun 2021 00:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C67C48BE5
+	for <linux-leds@archiver.kernel.org>; Sun, 13 Jun 2021 00:21:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39AAB60C3D
-	for <linux-leds@archiver.kernel.org>; Sun, 13 Jun 2021 00:06:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D89F0610A0
+	for <linux-leds@archiver.kernel.org>; Sun, 13 Jun 2021 00:21:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229985AbhFMAIk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 12 Jun 2021 20:08:40 -0400
-Received: from mail-lj1-f182.google.com ([209.85.208.182]:35642 "EHLO
-        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229753AbhFMAIk (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 12 Jun 2021 20:08:40 -0400
-Received: by mail-lj1-f182.google.com with SMTP id n17so14774925ljg.2
-        for <linux-leds@vger.kernel.org>; Sat, 12 Jun 2021 17:06:28 -0700 (PDT)
+        id S229777AbhFMAXX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 12 Jun 2021 20:23:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43328 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229753AbhFMAXW (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 12 Jun 2021 20:23:22 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 521CFC061574
+        for <linux-leds@vger.kernel.org>; Sat, 12 Jun 2021 17:21:03 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id p7so14593769lfg.4
+        for <linux-leds@vger.kernel.org>; Sat, 12 Jun 2021 17:21:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ZFYKxf7UW0S2RQWgaBSC4f2Mnxv2hI1hJP96MEozwjU=;
-        b=nlbjgu0UvGK2B7MCax3AtJuHG9c9qI3LwMvt/PWNmbQO7b3TMj6sXDmX4GPBJ0UjVs
-         IlYNCwgVd291KABpV6A70atdht8fEtquels0QzJdn1A/Y3PAXpgSgx2B3Eu3a+68cZu/
-         8LwDpXhg6c9yZW27llxJ15Nuac1Gqwrck7cz5gc6ASQWDpe38DlO/7rdKsV0oRrS8zO0
-         gMP8Nxwk5pJXxHO/SVDTIix/TH5CWlcmP9v5S7loxFR34bJO4T1/0YPdu7852b1fk99F
-         9HlL6w9BbjM1lA5YJKUyUr3ggCLYkG3vVGjBKJ8llu+V5+rMtUbWWBsE1j88jWfE83cS
-         QJIQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kLgm/naPKo94DUlmpKFkLYCsXS9yC5D9UG7AzupGIgM=;
+        b=M0aGyGIgYoEIYsdhgNFnmaYw4hq863WqbNdWfOq38fZZ3s0wLE5A4yDaq/7RYsf2/+
+         /GEXkluEd/hJRFSk/b/VqpoOHEh64m3ADtRgLBGoPjMDQ0NtU2EoAy0IKGpXUAw9680C
+         LKpUjVPBQxjrcIcH8CU0/g8B9Y4GM7Fqlfd+d96Ufht8PkdEQ0WTorHfiFpEUB49mZW5
+         vlsVDyq20E4LVVBjcgJXL7YXXsn0Qg8+X8QZ/yAnMHPglk6h7gnxBl2D9muzHUGSTrBB
+         g6Kjs5gMG9aOvi0WUHZCobnlHSmk4W7rgV7BrCX6hUqJ1ahCKYW7RTaOdN369khmUV9H
+         5Ddw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZFYKxf7UW0S2RQWgaBSC4f2Mnxv2hI1hJP96MEozwjU=;
-        b=QtdnpGGpMdXQtwHvjXLjv04wGKeDpyKp7XdXWzIO2T/ZEdKqN88n3ES9aXLv7g0hwH
-         uUVqR9xitm4CwFWaEYJx47lxnPIGKFGMUlOynpMrLX2+aSNIvHWz6PcUJj7c4BqCZxQy
-         GZUIpmFj+SYWPJwVp2C2ccILeGhcfMYtRvOTfo16A9DKLK2cyO8RyhrIMM2fAmCC3KP/
-         MNDWK5RM85W08+qCkU20yR1IFgOBDfw8idWX+iKniB0Qead8r5vMen8wxKiZRpWT0txV
-         vqQ5C8WT4H5bRNhIWM60FUXVyWoU6fVTrsIe+E3mtdxpwfKvFOsC2JcpINwrDRZrrxqz
-         x5Jg==
-X-Gm-Message-State: AOAM531x9OsCqRLLhHS87+dA8z8m1pzfDv2qhfexpnY5R1w01cDMK1e/
-        P91RKuXXxhmFtb+HNC/rMA2Oag==
-X-Google-Smtp-Source: ABdhPJyp5l4OtvQSGoI0WRjiU41xl/0XfQi95ON2e7+4SMIhL8dEG6oG8KB4+f/7wHEwO3kJV2IroA==
-X-Received: by 2002:a2e:711e:: with SMTP id m30mr8510936ljc.489.1623542727502;
-        Sat, 12 Jun 2021 17:05:27 -0700 (PDT)
-Received: from localhost.localdomain (c-fdcc225c.014-348-6c756e10.bbcust.telenor.se. [92.34.204.253])
-        by smtp.gmail.com with ESMTPSA id n10sm1022702lfl.104.2021.06.12.17.05.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Jun 2021 17:05:27 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kLgm/naPKo94DUlmpKFkLYCsXS9yC5D9UG7AzupGIgM=;
+        b=QpfI1qh5WSLtB6utsOw9bbQ2cvdfNqsvF4OZB5NrJCTNays5lCLFUqyeeiiBYyC5I+
+         KjX6SRRpuDtgbzi72qspOfCL4eX7AGo0PEO6WPFtVCcdD4fJhiZZW3jFi87gp4SpiBHz
+         xgOk2Kkorc+ahSifckeIWfbfemkT2bAWlKbXrE9qvWruDfuG2usjza6ZeaAAC0ef0f/D
+         qnBywEWxFoijGp2Xzk0CcUmqB9sUUOzhNqXeUhY+CNFbcPh0a2XZoQ2GG7QOfVe3MKTK
+         o2YlF00xcICCc8ivVX1E++y+zIxt5bpMbbIcMCYUAjN5r9hl75chtfLwSNasAoyRKwpJ
+         Eb1w==
+X-Gm-Message-State: AOAM533wweAIERVt93M9+CX4hFCALWD8oBdcl1jpX3LsRWJI6HmjOO8a
+        AKd2/19c74QOIufbhm6QG+1UNOBppazsXmjgXiSgeA==
+X-Google-Smtp-Source: ABdhPJw4xs5UzEAlSh6vTIJqAx964aQLL9ZfLtyiPfXI6Ws95BxtxWw5h3xTCVYJ/pzvZeyQRfFFi7asQL49qf4BIEM=
+X-Received: by 2002:a19:8157:: with SMTP id c84mr7326808lfd.529.1623543661424;
+ Sat, 12 Jun 2021 17:21:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210613000302.421268-1-linus.walleij@linaro.org> <20210613000302.421268-2-linus.walleij@linaro.org>
+In-Reply-To: <20210613000302.421268-2-linus.walleij@linaro.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 13 Jun 2021 02:20:50 +0200
+Message-ID: <CACRpkdbxSscUZpPvgo62jonBqK5t6givsu-oVUcZ35yKOOHOEQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: davinci: dm646x: Convert LEDs to GPIO descriptor table
 To:     Pavel Machek <pavel@ucw.cz>
-Cc:     linux-leds@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Linux LED Subsystem <linux-leds@vger.kernel.org>,
         Sekhar Nori <nsekhar@ti.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 2/2] ARM: davinci: dm646x: Convert LEDs to GPIO descriptor table
-Date:   Sun, 13 Jun 2021 02:03:02 +0200
-Message-Id: <20210613000302.421268-2-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210613000302.421268-1-linus.walleij@linaro.org>
-References: <20210613000302.421268-1-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This converts the DaVinci DM646x LEDs to use GPIO
-descriptor look-ups.
+On Sun, Jun 13, 2021 at 2:05 AM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Cc: Sekhar Nori <nsekhar@ti.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v3->v4:
-- Rebase on v5.13-rc1
-- Resend
-- LED maintainers: please apply this patch, it is ACKed by a DaVinci
-  maintainer
-ChangeLog v2->v3:
-- Rebase on v5.10-rc1
-- Resend
-ChangeLog v1->v2:
-- Collect Bartosz' review tag
-- Rebase on v5.9-rc1
-- Resend
----
- arch/arm/mach-davinci/board-dm646x-evm.c | 33 +++++++++++++++++-------
- 1 file changed, 24 insertions(+), 9 deletions(-)
+> This converts the DaVinci DM646x LEDs to use GPIO
+> descriptor look-ups.
+>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v3->v4:
+> - Rebase on v5.13-rc1
+> - Resend
+> - LED maintainers: please apply this patch, it is ACKed by a DaVinci
+>   maintainer
 
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index ee91d81ebbfd..a7d720e8f0e2 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -20,6 +20,7 @@
- #include <linux/init.h>
- #include <linux/leds.h>
- #include <linux/gpio.h>
-+#include <linux/gpio/machine.h>
- #include <linux/platform_device.h>
- #include <linux/i2c.h>
- #include <linux/property.h>
-@@ -202,10 +203,10 @@ static struct i2c_driver dm6467evm_cpld_driver = {
- /* LEDS */
- 
- static struct gpio_led evm_leds[] = {
--	{ .name = "DS1", .active_low = 1, },
--	{ .name = "DS2", .active_low = 1, },
--	{ .name = "DS3", .active_low = 1, },
--	{ .name = "DS4", .active_low = 1, },
-+	{ .name = "DS1" },
-+	{ .name = "DS2" },
-+	{ .name = "DS3" },
-+	{ .name = "DS4" },
- };
- 
- static const struct gpio_led_platform_data evm_led_data = {
-@@ -213,18 +214,32 @@ static const struct gpio_led_platform_data evm_led_data = {
- 	.leds     = evm_leds,
- };
- 
-+static struct gpiod_lookup_table evm_leds_gpio_table = {
-+	.dev_id = "leds-gpio.0",
-+	.table = {
-+		/*
-+		 * These GPIOs are on a PCF8574a GPIO expander, which
-+		 * is in turn named after the I2C device name. This is
-+		 * device "u2" on I2C bus 1 with address 0x38. These
-+		 * leds are at offset 4, 5, 6, 7.
-+		 */
-+		GPIO_LOOKUP_IDX("1-0038", 4, NULL, 0, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("1-0038", 5, NULL, 1, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("1-0038", 6, NULL, 2, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("1-0038", 7, NULL, 3, GPIO_ACTIVE_LOW),
-+		{ },
-+	},
-+};
-+
- static struct platform_device *evm_led_dev;
- 
- static int evm_led_setup(struct i2c_client *client, int gpio,
- 			unsigned int ngpio, void *c)
- {
--	struct gpio_led *leds = evm_leds;
- 	int status;
- 
--	while (ngpio--) {
--		leds->gpio = gpio++;
--		leds++;
--	}
-+	/* Add the lookup table */
-+	gpiod_add_lookup_table(&evm_leds_gpio_table);
- 
- 	evm_led_dev = platform_device_alloc("leds-gpio", 0);
- 	platform_device_add_data(evm_led_dev, &evm_led_data,
--- 
-2.31.1
+Do not apply this either until I figured out what the problem is,
+thanks!
 
+Yours,
+Linus Walleij
