@@ -2,122 +2,112 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96370C48BE5
-	for <linux-leds@archiver.kernel.org>; Wed, 16 Jun 2021 17:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 705ABC48BC2
+	for <linux-leds@archiver.kernel.org>; Mon, 21 Jun 2021 19:23:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82024610EA
-	for <linux-leds@archiver.kernel.org>; Wed, 16 Jun 2021 17:50:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E0B361358
+	for <linux-leds@archiver.kernel.org>; Mon, 21 Jun 2021 19:23:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231459AbhFPRwe (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 16 Jun 2021 13:52:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48722 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230291AbhFPRwd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 16 Jun 2021 13:52:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623865827;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9vFsoaVhirzwZutCLqdeJ5X6zDH2UXTDC/gHzEnPo6M=;
-        b=YODqgIX6hH/o4sghL4ID8Duci8gO3a5bMqG0RA4T/rlgcoQAx7MNe50+Nl0GdUFBDNiF+p
-        cNcwER7xtMkE/JURhLX1eaVR/Yz+QiGMTDBT+wDZwaVfvKG2a5jkwuiCt6x2DzqDBDC5hs
-        hRKrPK5Ej6YXdjAfFzg4oDKtIOxCWC4=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-251-MgY8V_dZNkaVsmzmP6rPmQ-1; Wed, 16 Jun 2021 13:50:09 -0400
-X-MC-Unique: MgY8V_dZNkaVsmzmP6rPmQ-1
-Received: by mail-ej1-f72.google.com with SMTP id q7-20020a1709063607b02903f57f85ac45so1246218ejb.15
-        for <linux-leds@vger.kernel.org>; Wed, 16 Jun 2021 10:50:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9vFsoaVhirzwZutCLqdeJ5X6zDH2UXTDC/gHzEnPo6M=;
-        b=SEnJfI+PDNohferYi2T9EKbgPMo75xd2izPKAfsI06N8WSUzg6xuFxCQosyzW0F/qp
-         IydEZ8ntAjzGi2mJanblUf+Q7O0LdExrQMlj7+jQ+AdzNQ+Jz19mtiwlcvTkQqpzf3d1
-         1SXM3SwaqVUQ34v7CVBW/Ta/7Buw7/G8I1oXRqjKAXd9Az1DSi6EZb7hixEV+dW9nSuu
-         YyHxLK1Bnoqhq9bq2FnyEaL5XsLiYMbt61ErG3ojkl8P7bLu2bRvKawrSpx1JAP+TI52
-         mcfZk0/BwVlrsZ4yHEbadWXZyuLIRcKknDxo5CrKyZptpIAcxTflAG1+xtjPIVxXDOJt
-         Tzkw==
-X-Gm-Message-State: AOAM530pFT1jzOhrTpeRg8Pq1TDWqXJXgyAEJccHuBmjQKGIBQYuDc6l
-        BgdI3CNW/Lu/sMcgPxMNuK2s/xZ21G3FYmpzHplYyMZ9jOXNggCAFvZMPdXd1Nf6IwC/7HXWK2D
-        yL+zRWhxi1ADGDp7HbKz9tg==
-X-Received: by 2002:aa7:cdc5:: with SMTP id h5mr1057021edw.217.1623865808752;
-        Wed, 16 Jun 2021 10:50:08 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzPVQRfLVZ6xrhMEJJgDbjLbUmkGN3zjTjUbkoi+Hf7VGNx/AgCRErmc8Bbn1LonQqtQfB8hg==
-X-Received: by 2002:aa7:cdc5:: with SMTP id h5mr1057007edw.217.1623865808581;
-        Wed, 16 Jun 2021 10:50:08 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
-        by smtp.gmail.com with ESMTPSA id au11sm2089496ejc.88.2021.06.16.10.50.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jun 2021 10:50:08 -0700 (PDT)
+        id S231168AbhFUTZc (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 21 Jun 2021 15:25:32 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:51265 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230052AbhFUTZc (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 21 Jun 2021 15:25:32 -0400
+Received: from [192.168.1.155] ([95.118.106.223]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MdNwm-1lM4lE3FxI-00ZRYS; Mon, 21 Jun 2021 21:23:12 +0200
 Subject: Re: [PATCH v2] platform/x86: add support for Acer Predator LEDs
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        leo60228 <leo@60228.dev>, platform-driver-x86@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-input@vger.kernel.org
+To:     Hans de Goede <hdegoede@redhat.com>, leo60228 <leo@60228.dev>,
+        platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-input@vger.kernel.org
 References: <20210615221931.18148-1-leo@60228.dev>
  <20210616005147.26212-1-leo@60228.dev>
  <87e6f17f-3d82-ac63-b5eb-e7f3205f59e8@metux.net>
  <ae4e7db3-ffc5-b8f3-c08c-bba6882d44ad@60228.dev>
  <62d2de8d-e539-5b4f-447a-5e6116844992@metux.net>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <0148a2e3-c91e-7422-df3d-6942c38334ed@redhat.com>
-Date:   Wed, 16 Jun 2021 19:50:07 +0200
+ <0148a2e3-c91e-7422-df3d-6942c38334ed@redhat.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <436b87c1-5c24-05ce-98fd-c3664c7765e2@metux.net>
+Date:   Mon, 21 Jun 2021 21:23:11 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <62d2de8d-e539-5b4f-447a-5e6116844992@metux.net>
+In-Reply-To: <0148a2e3-c91e-7422-df3d-6942c38334ed@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:pssvFtUXCsKqPabfMS3MfR5mWNP3oGs46zYpeqHlY03AhyYToJq
+ OZBUO+yvxTojMEOnEco1QsHElQQwAhiv3agEKPDigXhDclBzjgrGDdTXRwN8Z52rj98u2uG
+ wTOUokDLp5Tepye2OjEZubps/lpQB8utp9ZNGH8L0N+b61X0FVd0JLwXaxWN4JePGu0ZwcT
+ D1Uzw15IHfJHQqX6hsXkA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:QCtZMNliL7o=:JyTuljuGLp200MJtuMMENa
+ h1n8vyNqcyQWSBrTSiUrsqu35I+G9Ws7dyEmgVs/1zEI+cwg5nh5HoJmcF+kRu3oiY1a17lu5
+ pUCp122Sx0K5sozf9wsrFAZ9SMlZyg4yZivzgK7m35G/rxd1DmFCSJrsN82lcVCY5m4FiQ5EL
+ e65puVTwLobzVSR6Cx26nSGyrTaZVzNFisbdd1b6FBtC1OfxoN+4iJxcAQwGgY0d7mHWTZe9t
+ CUo+eVJL+XExOku2vOeW3qsfsV5x5J/TpXbF9Tw4i1+oIF6FEjHQM2v2/KytTIvESrUwcjfxF
+ XloA6D7WpYYIUuj5WB159TEPt29tJbRKZdRjsRmYj7zZ2OgTZIrzbYY5j8kWS7V+JCyu+Jt7/
+ zbpIKdf7MEJ69a2oZe5AyVUPfLZXhIErU4F54LUmFGk6LMO06gaK1WqC1coNBE6E0XLjHCHxU
+ rL/ewgL5iwKpDnLQoMWplBUCbYhN7rHUjXir4BvwJIO6ANOVpaA07DcU1YZBFr4B6AZVfwTc3
+ Y4AuZk/3pvGzeZTAa9fZ6E=
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+On 16.06.21 19:50, Hans de Goede wrote:
+
 Hi,
 
-On 6/16/21 7:20 PM, Enrico Weigelt, metux IT consult wrote:
-> On 16.06.21 17:56, leo60228 wrote:
->>> Can you please tell a bit more what these LEDs are actually used for ?
->>> Do they have some names or symbols ? Are they also controlled by
->>> something else (e.g. numlock or shiftlock leds)
->>
->> They're used for the keyboard backlight. This functionality is pretty common on gaming laptops.
+>> hmm, keyboard backlight ... don't we already have something for that
+>> in input subsys ? I believe that some lone LEDs aren't the right subsys
+>> for those stuff.
 > 
-> hmm, keyboard backlight ... don't we already have something for that
-> in input subsys ? I believe that some lone LEDs aren't the right subsys
-> for those stuff.
+> Actually the standardized userspace API for exporting keyboard backlights
+> is using the LED class sysfs API, e.g.:
+> 
+> cat /sys/class/leds/tpacpi\:\:kbd_backlight/brightnes
 
-Actually the standardized userspace API for exporting keyboard backlights
-is using the LED class sysfs API, e.g.:
+Sounds like we don't have an API for that particular case at all.
+Everbody just exposes LED class devices and userland always needs
+hardware specific code to practically use it.
 
-cat /sys/class/leds/tpacpi\:\:kbd_backlight/brightnes
+We should at least have some standard mechanism for get least getting
+the connection between an input device and it's backlight device(s).
 
-And the same for Dell and other kbd backlights, also the upower
-daemon even has code for dealing with kbd-backlights:
-https://gitlab.freedesktop.org/upower/upower/-/blob/master/src/up-kbd-backlight.c
-exporting them over its dbus API so that non-root users can
-control them.
+> And the same for Dell and other kbd backlights, also the upower
+> daemon even has code for dealing with kbd-backlights:
+> https://gitlab.freedesktop.org/upower/upower/-/blob/master/src/up-kbd-backlight.c
+> exporting them over its dbus API so that non-root users can
+> control them.
 
-Basically using the LED class for kbd-backlight functionality
-basically is the defacto standard under Linux, so exposing this
-through the LED class is definitely the right thing to do.
+Looks like a very complicated way to do that. But actually I've never
+understood why I should use this strange upower thing anways :p
 
-Since these are zones however, we probably wat to avoid the
-kbd_backlight suffix of the name, otherwise upower will
-pick the first device it enumerates and control that, while
-leaving the other zones alone, which is not what we want.
+> Basically using the LED class for kbd-backlight functionality
+> basically is the defacto standard under Linux, so exposing this
+> through the LED class is definitely the right thing to do.
 
-Regards,
+In general, LED class isn't so bad, as it already gives us LED control
+(*1), but I don't see any portable way for finding the corresponding
+LED for some input device. In DRM I see the backlight as subdevice.
 
-Hans
 
+
+--mtx
+
+
+*1) just recognized that on my toshiba portege (TOS6208) it only works
+    for readout - writing to "brightness" does nothing at all
+-- 
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
