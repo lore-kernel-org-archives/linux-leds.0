@@ -2,76 +2,70 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D37C4743C
-	for <linux-leds@archiver.kernel.org>; Wed, 23 Jun 2021 13:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A28FC48BC2
+	for <linux-leds@archiver.kernel.org>; Wed, 23 Jun 2021 20:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0FA860FF2
-	for <linux-leds@archiver.kernel.org>; Wed, 23 Jun 2021 13:15:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7BEA608FE
+	for <linux-leds@archiver.kernel.org>; Wed, 23 Jun 2021 20:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231128AbhFWNRr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 23 Jun 2021 09:17:47 -0400
-Received: from mga17.intel.com ([192.55.52.151]:54901 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231127AbhFWNRr (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 23 Jun 2021 09:17:47 -0400
-IronPort-SDR: Iajfa+PReLhQUtGxST/O/rpPO3Y5RQ7OYyh7fusDAjIJsko2dJjKi/7vV94HirIAt/SDqaKnKP
- o59oXVh7Z26Q==
-X-IronPort-AV: E=McAfee;i="6200,9189,10023"; a="187638815"
-X-IronPort-AV: E=Sophos;i="5.83,293,1616482800"; 
-   d="scan'208";a="187638815"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2021 06:15:26 -0700
-IronPort-SDR: 5g/zksFLyxZZs31WhAZ9wcBMwnIFj2s9RS5yOHj9RFyya9cECjmoJEwaEBDmw2kUyEVWvC8o6f
- tz/s23u6oyDw==
-X-IronPort-AV: E=Sophos;i="5.83,293,1616482800"; 
-   d="scan'208";a="406304926"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2021 06:15:23 -0700
-Received: from andy by smile with local (Exim 4.94.2)
-        (envelope-from <andy.shevchenko@gmail.com>)
-        id 1lw2it-004kaA-DG; Wed, 23 Jun 2021 16:15:19 +0300
-Date:   Wed, 23 Jun 2021 16:15:19 +0300
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     Pavel Machek <pavel@ucw.cz>,
-        Amireddy Mallikarjuna reddy 
-        <mallikarjunax.reddy@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Abanoub Sameh <abanoubsameh8@gmail.com>,
-        Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 01/13] leds: core: The -ENOTSUPP should never be seen
- by user space
-Message-ID: <YNMz59WLCMwr0rVD@smile.fi.intel.com>
-References: <20210529111935.3849707-1-andy.shevchenko@gmail.com>
+        id S229755AbhFWUNR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 23 Jun 2021 16:13:17 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:35144 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229523AbhFWUNQ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 23 Jun 2021 16:13:16 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 130951C0B76; Wed, 23 Jun 2021 22:10:58 +0200 (CEST)
+Date:   Wed, 23 Jun 2021 22:10:57 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Doug Zobel <dougdev334@gmail.com>
+Cc:     linux-leds@vger.kernel.org
+Subject: Re: [PATCH] leds: lp55xx: Initialize enable GPIO direction to output
+Message-ID: <20210623201057.GA8540@amd>
+References: <20210510204000.GA3714758@odessy>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
 Content-Disposition: inline
-In-Reply-To: <20210529111935.3849707-1-andy.shevchenko@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20210510204000.GA3714758@odessy>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Sat, May 29, 2021 at 02:19:23PM +0300, Andy Shevchenko wrote:
-> Luckily there is no user which checks for returned code and actually
-> returns it, but since the function is exported any user may try to return
-> an error code from it to user space, usually during probe phase,
-> 
-> Replace -ENOTSUPP by -EOPNOTSUPP when returning from exported function.
 
-There were no issue reported by bots, no comments from people (except one tag),
-can we do something about this series or should I amend it?
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon 2021-05-10 15:40:00, Doug Zobel wrote:
+> The "Convert to use GPIO descriptors" commit changed the
+> initialization of the enable GPIO from GPIOF_DIR_OUT to
+> GPIOD_ASIS.  This breaks systems where the GPIO does not
+> default to output.  Changing the enable initialization
+> to GPIOD_OUT_LOW.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks, applied.
+							Pavel
 
+--=20
+http://www.livejournal.com/~pavelmachek
 
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAmDTlVEACgkQMOfwapXb+vJfggCbBDDXJP9+24bNLzwe77Lxp8zu
+cFkAoMDHBExA2hQfL8OYJ23VhKEFJTed
+=GJhw
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
