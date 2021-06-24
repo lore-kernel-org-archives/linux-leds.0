@@ -2,98 +2,93 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9D0C49EA6
-	for <linux-leds@archiver.kernel.org>; Thu, 24 Jun 2021 13:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCACC49EA5
+	for <linux-leds@archiver.kernel.org>; Thu, 24 Jun 2021 21:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C926B613DC
-	for <linux-leds@archiver.kernel.org>; Thu, 24 Jun 2021 13:25:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C3EC613B3
+	for <linux-leds@archiver.kernel.org>; Thu, 24 Jun 2021 21:39:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbhFXN2M (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 24 Jun 2021 09:28:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229881AbhFXN2L (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 24 Jun 2021 09:28:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4BD5D61074;
-        Thu, 24 Jun 2021 13:25:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624541152;
-        bh=tWunjCgimVyMEhbYavDkqwUe8wS7IKZbRXg1CpFPpm8=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=JtxnsM46RYCtgwr57yvp9cVyiQFm6XzvKswX7kXlDTqOEK39IorV0Q1OAcYDtFnBy
-         1XjUv8rygdMaykzsy4WicCG4ZIQme2T7g5Ta7tDKYIjAEzRfLDy8lVcv/K/wfSoofW
-         YkXLs8soKsmoo4RmRMWVA76BeQCAxn6M+gARtjkdBLQBsI/AH0XtfeTmGGSGLh9DY4
-         /eV5wj+5SnxQ41+4/gXXEY5TWjxFmFScLfxBWbZGmIE0cf5Mm8MX5EL4nJcLzbtV0+
-         vVEkVi1zXg4j38487J4KjejisspkRmLAN/7lbRyupfWoxuJWTFuLFSIpq1fYdJ0twq
-         vnRoyA6s5viDA==
-Date:   Thu, 24 Jun 2021 15:25:49 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Roderick Colenbrander <roderick@gaikai.com>
-cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org,
-        =?ISO-8859-2?Q?Barnab=E1s_P=F5cze?= <pobrn@protonmail.com>,
-        "Daniel J . Ogorchock" <djogorchock@gmail.com>,
-        Roderick Colenbrander <roderick.colenbrander@sony.com>
-Subject: Re: [PATCH 2/3] leds: add new LED_FUNCTION_PLAYER for player LEDs
- for game controllers.
-In-Reply-To: <20210602061253.5747-3-roderick@gaikai.com>
-Message-ID: <nycvar.YFH.7.76.2106241525330.18969@cbobk.fhfr.pm>
-References: <20210602061253.5747-1-roderick@gaikai.com> <20210602061253.5747-3-roderick@gaikai.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S232713AbhFXVlp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 24 Jun 2021 17:41:45 -0400
+Received: from mail-io1-f52.google.com ([209.85.166.52]:38690 "EHLO
+        mail-io1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232029AbhFXVlo (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 24 Jun 2021 17:41:44 -0400
+Received: by mail-io1-f52.google.com with SMTP id k11so10127207ioa.5;
+        Thu, 24 Jun 2021 14:39:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=YnXB8ehdV2cGFafejEyJV7Eeti9SxAJw4sYhn9A6WGo=;
+        b=N4cC8LmDAxWRK4jmA3tCYV4E/MYELtc+psm51Ii36C86SaqLWfMHBWf1z7J7KPSJLk
+         2kJI8rZVYEzt0yjvgWk4CwezE8iALCxwf5IEXfXpEBGtxSVD2dvaI0nIP7z1F5/lK4iR
+         2kMjGf8LG+KqukGXRccWe4R3KLkS+WtdAl6TwhL5T1YC0I3at64Fxz8GlT7GphJi+vCF
+         1DydY5FrkA97L2zUjAV0LgL3VV54ZfSgDB+8gJIPoqZjI0F3jirjhzsKx+/ZX2onGwmO
+         YRGCJhoW8p/4iUdxsv5zE+NHQKPrQgATKnL/FRgSZyFnI2sjJdxcX9dQlduXrF2hC4Q7
+         ZW+Q==
+X-Gm-Message-State: AOAM533kZKpPiLFENYyZ/5tNib9LsH++Kc9hubVfByf6NkYMkbunsC0T
+        GUCWFAHu9rspmNKfFQ8q5w==
+X-Google-Smtp-Source: ABdhPJxUY7xgMb5yo9OZEwj8jvIQPxS3q+2Txh9MVuVIhZrZr+Q1IgcLy5cH6KnDO/7UR9dTvm4Y2Q==
+X-Received: by 2002:a5d:8242:: with SMTP id n2mr5853357ioo.198.1624570763893;
+        Thu, 24 Jun 2021 14:39:23 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id t21sm1983944ioj.10.2021.06.24.14.39.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jun 2021 14:39:22 -0700 (PDT)
+Received: (nullmailer pid 2032229 invoked by uid 1000);
+        Thu, 24 Jun 2021 21:39:17 -0000
+Date:   Thu, 24 Jun 2021 15:39:17 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v9 1/2] dt-bindings: leds: Add Qualcomm Light Pulse
+ Generator binding
+Message-ID: <20210624213917.GA2032180@robh.at.kernel.org>
+References: <20210623035039.772660-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210623035039.772660-1-bjorn.andersson@linaro.org>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Tue, 1 Jun 2021, Roderick Colenbrander wrote:
-
-> From: Roderick Colenbrander <roderick.colenbrander@sony.com>
+On Tue, 22 Jun 2021 20:50:38 -0700, Bjorn Andersson wrote:
+> This adds the binding document describing the three hardware blocks
+> related to the Light Pulse Generator found in a wide range of Qualcomm
+> PMICs.
 > 
-> Player LEDs are commonly found on game controllers from Nintendo and Sony
-> to indicate a player ID across a number of LEDs. For example, "Player 2"
-> might be indicated as "-x--" on a device with 4 LEDs where "x" means on.
-> 
-> This patch introduces a new LED_FUNCTION_PLAYER to properly indicate
-> player LEDs from the kernel. Until now there was no good standard, which
-> resulted in inconsistent behavior across xpad, hid-sony, hid-wiimote and
-> other drivers. Moving forward new drivers should use LED_FUNCTION_PLAYER.
-> 
-> Note: management of Player IDs is left to user space, though a kernel
-> driver may pick a default value.
-> 
-> Signed-off-by: Roderick Colenbrander <roderick.colenbrander@sony.com>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  include/dt-bindings/leds/common.h | 3 +++
->  1 file changed, 3 insertions(+)
 > 
-> diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
-> index 52b619d44ba2..94999c250e4d 100644
-> --- a/include/dt-bindings/leds/common.h
-> +++ b/include/dt-bindings/leds/common.h
-> @@ -60,6 +60,9 @@
->  #define LED_FUNCTION_MICMUTE "micmute"
->  #define LED_FUNCTION_MUTE "mute"
->  
-> +/* Used for player LEDs as found on game controllers from e.g. Nintendo, Sony. */
-> +#define LED_FUNCTION_PLAYER "player"
-> +
->  /* Miscelleaus functions. Use functions above if you can. */
->  #define LED_FUNCTION_ACTIVITY "activity"
->  #define LED_FUNCTION_ALARM "alarm"
+> Changes since v8:
+> - None
+> 
+> Changes since v7:
+> - Added qcom,pmc8180c-lpg
+> - Defined constraints for qcom,power-source
+> - Changes qcom,dtest to matrix and added constraints
+> - Changed example from LED_COLOR_ID_MULTI to LED_COLOR_ID_RGB
+> 
+>  .../bindings/leds/leds-qcom-lpg.yaml          | 164 ++++++++++++++++++
+>  1 file changed, 164 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
+> 
 
-Pavel, can I please get your Ack on this one, so that I can take it with 
-the rest of the series?
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+Reviewed-by: Rob Herring <robh@kernel.org>
