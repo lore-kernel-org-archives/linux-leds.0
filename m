@@ -2,36 +2,37 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D98DC49EAF
-	for <linux-leds@archiver.kernel.org>; Fri, 25 Jun 2021 12:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3611EC49EB7
+	for <linux-leds@archiver.kernel.org>; Fri, 25 Jun 2021 12:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 546396194B
-	for <linux-leds@archiver.kernel.org>; Fri, 25 Jun 2021 12:59:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21F4461926
+	for <linux-leds@archiver.kernel.org>; Fri, 25 Jun 2021 12:59:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231617AbhFYNBj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 25 Jun 2021 09:01:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37124 "EHLO
+        id S231684AbhFYNBm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 25 Jun 2021 09:01:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231575AbhFYNBi (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 25 Jun 2021 09:01:38 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F02C0613A2
+        with ESMTP id S231607AbhFYNBj (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 25 Jun 2021 09:01:39 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B7B4C061787
         for <linux-leds@vger.kernel.org>; Fri, 25 Jun 2021 05:59:17 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:1476:ce84:e216:add8])
-        by baptiste.telenet-ops.be with bizsmtp
-        id MQzC250052B1U9901QzC7K; Fri, 25 Jun 2021 14:59:13 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id MQzC2500T2B1U9901QzCdp; Fri, 25 Jun 2021 14:59:14 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lwlQN-003TM9-PD; Fri, 25 Jun 2021 14:59:11 +0200
+        id 1lwlQO-003TMC-CD; Fri, 25 Jun 2021 14:59:12 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lwlQN-004sPw-Dn; Fri, 25 Jun 2021 14:59:11 +0200
+        id 1lwlQN-004sQE-Gl; Fri, 25 Jun 2021 14:59:11 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Robin van der Gracht <robin@protonic.nl>,
         Rob Herring <robh+dt@kernel.org>,
@@ -42,108 +43,63 @@ To:     Robin van der Gracht <robin@protonic.nl>,
 Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 00/18] auxdisplay: ht16k33: Add character display support
-Date:   Fri, 25 Jun 2021 14:58:44 +0200
-Message-Id: <20210625125902.1162428-1-geert@linux-m68k.org>
+Subject: [PATCH v2 03/18] auxdisplay: img-ascii-lcd: Fix lock-up when displaying empty string
+Date:   Fri, 25 Jun 2021 14:58:47 +0200
+Message-Id: <20210625125902.1162428-4-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210625125902.1162428-1-geert@linux-m68k.org>
+References: <20210625125902.1162428-1-geert@linux-m68k.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-	Hi all,
+While writing an empty string to a device attribute is a no-op, and thus
+does not need explicit safeguards, the user can still write a single
+newline to an attribute file:
 
-The Holtek HT16K33 LED controller is not only used for driving
-dot-matrix displays, but also for driving segment displays.
-The current auxdisplay driver is limited to dot-matrix displays, which
-are exposed as a frame buffer device.
+    echo > .../message
 
-This patch series extends the driver to 4-digit 7-segment and quad
-14-segment alphanumeric displays, allowing the user to display and
-scroll text messages.
+If that happens, img_ascii_lcd_display() trims the newline, yielding an
+empty string, and causing an infinite loop in img_ascii_lcd_scroll().
 
-List of patches:
-  - Patch 1 provides font data for displaying ASCII characters on
-    14-segment displays,
-  - Patch 2 updates the HT16K33 DT bindings for segment displays,
-  - Patches 3-5 contain a bug fix and small improvements for the
-    Imagination Technologies ASCII LCD Display driver,
-  - Patch 6 extracts the character line display core support from the
-    Imagination Technologies ASCII LCD Display driver, for reuse,
-  - Patches 7-8 contain cleanups and improvements for the character line
-    display core driver,
-  - Patches 9-16 contain a bug fix, cleanups and improvements for the
-    HT16K33 driver, to prepare for segment display support,
-  - Patch 17 adds support for 7/14-segment displays to the HT16K33
-    driver,
-  - Patch 18 adds segment display LED support to the HT16K33 driver,
-    to make use of hardware blinking, and to expose display color.
+Fix this by adding a check for empty strings.  Clear the display in case
+one is encountered.
 
-Changes compared to v1[1]:
-  - Fix type of color to uint32,
-  - "refresh-rate-hz" is still required for dot-matrix displays.
-  - Move "select LINEDISP" for HT16K33 symbol to correct patch,
-  - Add backwards compatibility "message" symlink to img-ascii-lcd,
-  - Connect backlight to fbdev in ht16k33 dot-matrix mode,
-  - Set "err = -EINVAL" in switch() case that cannot happen,
-  - Use "auxdisplay" instead of DRIVER_NAME in LED name.
+Fixes: 0cad855fbd083ee5 ("auxdisplay: img-ascii-lcd: driver for simple ASCII LCD displays")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+Untested with img-ascii-lcd, but triggered with my initial version of
+linedisp.
 
-This series has been tested using an Adafruit 0.54" Quad Alphanumeric
-Red FeatherWing Display, plugged into an OrangeCrab ECP5-based FPGA
-board running linux-on-litex-vexriscv.
-7-segment display support is based purely on schematics, and has not
-been tested on actual hardware.  The changes to img-ascii-lcd.c are also
-untested, due to lack of hardware.
+v2:
+  - No changes.
+---
+ drivers/auxdisplay/img-ascii-lcd.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Thanks for your comments!
-
-[1] "[PATCH 00/17] auxdisplay: ht16k33: Add character display support"
-    https://lore.kernel.org/r/20210322144848.1065067-1-geert@linux-m68k.org/
-
-Geert Uytterhoeven (18):
-  uapi: Add <linux/map_to_14segment.h>
-  dt-bindings: auxdisplay: ht16k33: Document Adafruit segment displays
-  auxdisplay: img-ascii-lcd: Fix lock-up when displaying empty string
-  auxdisplay: img-ascii-lcd: Add helper variable dev
-  auxdisplay: img-ascii-lcd: Convert device attribute to sysfs_emit()
-  auxdisplay: Extract character line display core support
-  auxdisplay: linedisp: Use kmemdup_nul() helper
-  auxdisplay: linedisp: Add support for changing scroll rate
-  auxdisplay: ht16k33: Connect backlight to fbdev
-  auxdisplay: ht16k33: Use HT16K33_FB_SIZE in ht16k33_initialize()
-  auxdisplay: ht16k33: Remove unneeded error check in keypad probe()
-  auxdisplay: ht16k33: Convert to simple i2c probe function
-  auxdisplay: ht16k33: Add helper variable dev
-  auxdisplay: ht16k33: Move delayed work
-  auxdisplay: ht16k33: Extract ht16k33_brightness_set()
-  auxdisplay: ht16k33: Extract frame buffer probing
-  auxdisplay: ht16k33: Add support for segment displays
-  auxdisplay: ht16k33: Add segment display LED support
-
- .../bindings/auxdisplay/holtek,ht16k33.yaml   |  31 +-
- drivers/auxdisplay/Kconfig                    |   8 +
- drivers/auxdisplay/Makefile                   |   1 +
- drivers/auxdisplay/ht16k33.c                  | 458 ++++++++++++++----
- drivers/auxdisplay/img-ascii-lcd.c            | 206 ++------
- drivers/auxdisplay/line-display.c             | 261 ++++++++++
- drivers/auxdisplay/line-display.h             |  43 ++
- include/uapi/linux/map_to_14segment.h         | 239 +++++++++
- 8 files changed, 989 insertions(+), 258 deletions(-)
- create mode 100644 drivers/auxdisplay/line-display.c
- create mode 100644 drivers/auxdisplay/line-display.h
- create mode 100644 include/uapi/linux/map_to_14segment.h
-
+diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
+index 1cce409ce5cacbc8..e33ce0151cdfd150 100644
+--- a/drivers/auxdisplay/img-ascii-lcd.c
++++ b/drivers/auxdisplay/img-ascii-lcd.c
+@@ -280,6 +280,16 @@ static int img_ascii_lcd_display(struct img_ascii_lcd_ctx *ctx,
+ 	if (msg[count - 1] == '\n')
+ 		count--;
+ 
++	if (!count) {
++		/* clear the LCD */
++		devm_kfree(&ctx->pdev->dev, ctx->message);
++		ctx->message = NULL;
++		ctx->message_len = 0;
++		memset(ctx->curr, ' ', ctx->cfg->num_chars);
++		ctx->cfg->update(ctx);
++		return 0;
++	}
++
+ 	new_msg = devm_kmalloc(&ctx->pdev->dev, count + 1, GFP_KERNEL);
+ 	if (!new_msg)
+ 		return -ENOMEM;
 -- 
 2.25.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
