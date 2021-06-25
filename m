@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5E4C49EAF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B92EAC49EAB
 	for <linux-leds@archiver.kernel.org>; Fri, 25 Jun 2021 12:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27E726146B
+	by mail.kernel.org (Postfix) with ESMTP id A19FD61469
 	for <linux-leds@archiver.kernel.org>; Fri, 25 Jun 2021 12:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231817AbhFYNB7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S231825AbhFYNB7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Fri, 25 Jun 2021 09:01:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37154 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231621AbhFYNBq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 25 Jun 2021 09:01:46 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 003BAC061148
+        with ESMTP id S231723AbhFYNBr (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 25 Jun 2021 09:01:47 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0078EC06114C
         for <linux-leds@vger.kernel.org>; Fri, 25 Jun 2021 05:59:17 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:1476:ce84:e216:add8])
-        by laurent.telenet-ops.be with bizsmtp
-        id MQzD2500v2B1U9901QzDBq; Fri, 25 Jun 2021 14:59:14 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id MQzD2500P2B1U9906QzDHz; Fri, 25 Jun 2021 14:59:14 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lwlQO-003TMX-UH; Fri, 25 Jun 2021 14:59:12 +0200
+        id 1lwlQO-003TMK-SL; Fri, 25 Jun 2021 14:59:12 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lwlQN-004sRa-PZ; Fri, 25 Jun 2021 14:59:11 +0200
+        id 1lwlQN-004sQn-L2; Fri, 25 Jun 2021 14:59:11 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Robin van der Gracht <robin@protonic.nl>,
         Rob Herring <robh+dt@kernel.org>,
@@ -43,9 +43,9 @@ To:     Robin van der Gracht <robin@protonic.nl>,
 Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 15/18] auxdisplay: ht16k33: Extract ht16k33_brightness_set()
-Date:   Fri, 25 Jun 2021 14:58:59 +0200
-Message-Id: <20210625125902.1162428-16-geert@linux-m68k.org>
+Subject: [PATCH v2 08/18] auxdisplay: linedisp: Add support for changing scroll rate
+Date:   Fri, 25 Jun 2021 14:58:52 +0200
+Message-Id: <20210625125902.1162428-9-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210625125902.1162428-1-geert@linux-m68k.org>
 References: <20210625125902.1162428-1-geert@linux-m68k.org>
@@ -55,61 +55,92 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Extract brightness handling into a helper function, so it can be called
-from multiple places.
+If the message to display is longer than the number of characters that
+the display can show, the message will be scrolled.  Currently the
+scroll rate is fixed, moving every 500 ms.
+
+Add support for changing the scroll rate through a "scroll_step_ms"
+device attribute in sysfs.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
 v2:
   - No changes.
 ---
- drivers/auxdisplay/ht16k33.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+ drivers/auxdisplay/line-display.c | 37 +++++++++++++++++++++++++++++--
+ 1 file changed, 35 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-index c7a3a0e1fbb5d03e..ed5aab2627e028ed 100644
---- a/drivers/auxdisplay/ht16k33.c
-+++ b/drivers/auxdisplay/ht16k33.c
-@@ -113,6 +113,22 @@ static int ht16k33_display_off(struct ht16k33_priv *priv)
- 	return i2c_smbus_write_byte(priv->client, REG_DISPLAY_SETUP);
+diff --git a/drivers/auxdisplay/line-display.c b/drivers/auxdisplay/line-display.c
+index 3f35199bc39f511f..03e7f104aa1add32 100644
+--- a/drivers/auxdisplay/line-display.c
++++ b/drivers/auxdisplay/line-display.c
+@@ -19,6 +19,8 @@
+ 
+ #include "line-display.h"
+ 
++#define DEFAULT_SCROLL_RATE	(HZ / 2)
++
+ /**
+  * linedisp_scroll() - scroll the display by a character
+  * @t: really a pointer to the private data structure
+@@ -50,7 +52,7 @@ static void linedisp_scroll(struct timer_list *t)
+ 	linedisp->scroll_pos %= linedisp->message_len;
+ 
+ 	/* rearm the timer */
+-	if (linedisp->message_len > num_chars)
++	if (linedisp->message_len > num_chars && linedisp->scroll_rate)
+ 		mod_timer(&linedisp->timer, jiffies + linedisp->scroll_rate);
  }
  
-+static int ht16k33_brightness_set(struct ht16k33_priv *priv,
-+				  unsigned int brightness)
+@@ -149,8 +151,39 @@ static ssize_t message_store(struct device *dev, struct device_attribute *attr,
+ 
+ static DEVICE_ATTR_RW(message);
+ 
++static ssize_t scroll_step_ms_show(struct device *dev,
++				   struct device_attribute *attr, char *buf)
 +{
-+	int error;
++	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
 +
-+	if (brightness == 0)
-+		return ht16k33_display_off(priv);
-+
-+	error = ht16k33_display_on(priv);
-+	if (error)
-+		return error;
-+
-+	return i2c_smbus_write_byte(priv->client,
-+				    REG_BRIGHTNESS | (brightness - 1));
++	return sysfs_emit(buf, "%u\n", jiffies_to_msecs(linedisp->scroll_rate));
 +}
 +
- static void ht16k33_fb_queue(struct ht16k33_priv *priv)
- {
- 	struct ht16k33_fbdev *fbdev = &priv->fbdev;
-@@ -197,13 +213,10 @@ static int ht16k33_bl_update_status(struct backlight_device *bl)
++static ssize_t scroll_step_ms_store(struct device *dev,
++				    struct device_attribute *attr,
++				    const char *buf, size_t count)
++{
++	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
++	unsigned int ms;
++
++	if (kstrtouint(buf, 10, &ms) != 0)
++		return -EINVAL;
++
++	linedisp->scroll_rate = msecs_to_jiffies(ms);
++	if (linedisp->message && linedisp->message_len > linedisp->num_chars) {
++		del_timer_sync(&linedisp->timer);
++		if (linedisp->scroll_rate)
++			linedisp_scroll(&linedisp->timer);
++	}
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(scroll_step_ms);
++
+ static struct attribute *linedisp_attrs[] = {
+ 	&dev_attr_message.attr,
++	&dev_attr_scroll_step_ms.attr,
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(linedisp);
+@@ -182,7 +215,7 @@ int linedisp_register(struct linedisp *linedisp, struct device *parent,
+ 	linedisp->update = update;
+ 	linedisp->buf = buf;
+ 	linedisp->num_chars = num_chars;
+-	linedisp->scroll_rate = HZ / 2;
++	linedisp->scroll_rate = DEFAULT_SCROLL_RATE;
  
- 	if (bl->props.power != FB_BLANK_UNBLANK ||
- 	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
--	    bl->props.state & BL_CORE_FBBLANK || brightness == 0) {
--		return ht16k33_display_off(priv);
--	}
-+	    bl->props.state & BL_CORE_FBBLANK)
-+		brightness = 0;
- 
--	ht16k33_display_on(priv);
--	return i2c_smbus_write_byte(priv->client,
--				    REG_BRIGHTNESS | (brightness - 1));
-+	return ht16k33_brightness_set(priv, brightness);
- }
- 
- static int ht16k33_bl_check_fb(struct backlight_device *bl, struct fb_info *fi)
+ 	device_initialize(&linedisp->dev);
+ 	dev_set_name(&linedisp->dev, "linedisp.%lu",
 -- 
 2.25.1
 
