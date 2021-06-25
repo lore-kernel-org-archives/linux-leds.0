@@ -2,63 +2,36 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CFDC49EA6
-	for <linux-leds@archiver.kernel.org>; Thu, 24 Jun 2021 23:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E24E8C49EA7
+	for <linux-leds@archiver.kernel.org>; Fri, 25 Jun 2021 08:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92CC0610A0
-	for <linux-leds@archiver.kernel.org>; Thu, 24 Jun 2021 23:45:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C30F96141C
+	for <linux-leds@archiver.kernel.org>; Fri, 25 Jun 2021 08:39:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229741AbhFXXrS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 24 Jun 2021 19:47:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57312 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbhFXXrS (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 24 Jun 2021 19:47:18 -0400
-Received: from mail-oo1-xc2e.google.com (mail-oo1-xc2e.google.com [IPv6:2607:f8b0:4864:20::c2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C49BC061574
-        for <linux-leds@vger.kernel.org>; Thu, 24 Jun 2021 16:44:58 -0700 (PDT)
-Received: by mail-oo1-xc2e.google.com with SMTP id s20-20020a4ae9940000b02902072d5df239so2099150ood.2
-        for <linux-leds@vger.kernel.org>; Thu, 24 Jun 2021 16:44:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/IZo+xMlntd1OPotYsAVSJXAdOf8XBCFm8hpgOD3AFg=;
-        b=AfbC8GUOrGiQ8wmQ44iEw4DbrAILKvySD0JZd8pYtbCZY+ekpRhYJmeY9a9vlLZO0W
-         TLhSAmN2KJ0v5+kL3d5oSjkPIhRsBHoa5yjedwB/iE2GW3V5jiQR5yQTNGNKt45aj0IX
-         RhaZfVSTvkWIPxrDVNYG0iuatUSYpf8ZEfSyLoo7rxPEMXkex0D6LI/ZKthaqXsZ7T9/
-         iAS5EbMp+vVOVpPSd6pjrYRihgMaPAc6kP1kZX/LgKh/6YwUa+U4+neU88eOL72zNn30
-         BUMICqoJfoLnHIxAXKooFmy5UK1eIMFjMLE6EdXkN91pao8KfVTcPkfQNE6Dq/wlPjyl
-         i6kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/IZo+xMlntd1OPotYsAVSJXAdOf8XBCFm8hpgOD3AFg=;
-        b=BW/U1ahgxVEMfwKyesMI+EFmwprcmYSPA8N8/BKGmh4jsU9R/rMBQV2P9TCNb9wwTr
-         xUZRM5DX2zJOOj5Vrf01vhaJwZKyz/JqgE6D2j3w2C/qnk99gipa+HBwhdboi0bwRIcY
-         8Y4GHzbJ6d/NVsHtTTEwYyz5XpqC2p/kal5Y4Zlm7hjAtiIMbZtLwg4hfp6xQbBI2cc+
-         Jy2jgTCr5ZuJ/4phb6vZFZYtJgIYRPhJZ2qv8Nk4Sr6/wpVgBps2OcdyhNwWVjPL4aL+
-         kXw44x+7xvWsas8LFxfLTlBywcGjD4WzXjDLr1EY+qrGs40AldRlsuftEsstL8qY6NQB
-         /6Ew==
-X-Gm-Message-State: AOAM530Xj2cuARCD9TmrfvS2IJuQkxOC5B0C84e7McL31QjqrjIU4FKH
-        84xI867i8hmMjLeQkHsPcc0NUA==
-X-Google-Smtp-Source: ABdhPJwMXtC7tWjEChYW9HirB1ul2n/Er3ur/GzHXRcQfV3ZScePSyTVNBRmWl7SHAjdME54L0HrIA==
-X-Received: by 2002:a4a:cb06:: with SMTP id r6mr6597797ooq.15.1624578297522;
-        Thu, 24 Jun 2021 16:44:57 -0700 (PDT)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 35sm980557oti.65.2021.06.24.16.44.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jun 2021 16:44:57 -0700 (PDT)
-Date:   Thu, 24 Jun 2021 18:44:54 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Marek Behun <marek.behun@nic.cz>
-Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        id S230020AbhFYImG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 25 Jun 2021 04:42:06 -0400
+Received: from mail.thorsis.com ([92.198.35.195]:44139 "EHLO mail.thorsis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229902AbhFYImF (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 25 Jun 2021 04:42:05 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.thorsis.com (Postfix) with ESMTP id C61C23593;
+        Fri, 25 Jun 2021 10:39:43 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
+Received: from mail.thorsis.com ([127.0.0.1])
+        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 1foNQkjRn8tw; Fri, 25 Jun 2021 10:39:43 +0200 (CEST)
+Received: by mail.thorsis.com (Postfix, from userid 109)
+        id 4118435C5; Fri, 25 Jun 2021 10:39:42 +0200 (CEST)
+Date:   Fri, 25 Jun 2021 10:39:32 +0200
+From:   Alexander Dahl <ada@thorsis.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Marek Behun <marek.behun@nic.cz>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>,
@@ -71,57 +44,53 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Subbaraman Narayanamurthy <subbaram@codeaurora.org>
 Subject: Re: [PATCH v9 1/2] dt-bindings: leds: Add Qualcomm Light Pulse
  Generator binding
-Message-ID: <YNUY9ncs34E6aJMe@yoga>
+Message-ID: <YNWWRM+6p/lgJ28W@ada.ifak-system.com>
+Mail-Followup-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Marek Behun <marek.behun@nic.cz>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>,
+        Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>
 References: <20210623035039.772660-1-bjorn.andersson@linaro.org>
  <20210625011932.6354e397@thinkpad>
-MIME-Version: 1.0
+ <YNUY9ncs34E6aJMe@yoga>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210625011932.6354e397@thinkpad>
+In-Reply-To: <YNUY9ncs34E6aJMe@yoga>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu 24 Jun 18:19 CDT 2021, Marek Behun wrote:
+Hello Bjorn,
 
-> On Tue, 22 Jun 2021 20:50:38 -0700
-> Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+Am Thu, Jun 24, 2021 at 06:44:54PM -0500 schrieb Bjorn Andersson:
+> On Thu 24 Jun 18:19 CDT 2021, Marek Behun wrote:
+> > please don't use in new bindings in examples.
+> > Instead use color, function and function-enumerator, i.e.
+> > 
+> >   color = <LED_COLOR_ID_GREEN>;
+> >   function = LED_FUNCTION_xxx;
+> >   function-enumerator = <N>;
+> > 
 > 
-> > +++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
+> Can you point me to something helping me regarding what "function" to
+> use?
 > 
-> The file name should be based on one of the compatible strings, for
-> example the first one:
->   qcom,pm8150b-lpg.yaml
-> 
+> For this particular devboard that the example comes from I have 4 LEDs
+> that are named "user1", "user2", "user3" and "user4" in the board
+> documentation. I can make up whatever for the example, but I would like
+> to get the following dts additions follow the expected guidelines.
 
-The majority of the files in leds/ are named leds-*.yaml, is this a new
-scheme for LED bindings?
+I asked myself the same question in the past.  The wohle list is in
+'include/dt-bindings/leds/common.h' and I in my personal project I
+opted for LED_FUNCTION_INDICATOR, but yes, the confusion is real.
 
-> > +      led@1 {
-> > +        reg = <1>;
-> > +        label = "green:user1";
-> > +      };
-> 
-> `label` is deprecated,
+Greets
+Alex
 
-Sorry, I missed the comment in the middle of the description about this.
-Is there any particular reason why this isn't marked deprecated: true?
-
-> please don't use in new bindings in examples.
-> Instead use color, function and function-enumerator, i.e.
-> 
->   color = <LED_COLOR_ID_GREEN>;
->   function = LED_FUNCTION_xxx;
->   function-enumerator = <N>;
-> 
-
-Can you point me to something helping me regarding what "function" to
-use?
-
-For this particular devboard that the example comes from I have 4 LEDs
-that are named "user1", "user2", "user3" and "user4" in the board
-documentation. I can make up whatever for the example, but I would like
-to get the following dts additions follow the expected guidelines.
-
-Regards,
-Bjorn
