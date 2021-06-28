@@ -2,78 +2,109 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6F4C2B9F4
-	for <linux-leds@archiver.kernel.org>; Fri, 25 Jun 2021 20:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2BEC2B9F4
+	for <linux-leds@archiver.kernel.org>; Mon, 28 Jun 2021 09:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B2296197C
-	for <linux-leds@archiver.kernel.org>; Fri, 25 Jun 2021 20:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCCE761C51
+	for <linux-leds@archiver.kernel.org>; Mon, 28 Jun 2021 09:21:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229794AbhFYUmZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 25 Jun 2021 16:42:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55394 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbhFYUmZ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 25 Jun 2021 16:42:25 -0400
-Received: from mail.nic.cz (mail.nic.cz [IPv6:2001:1488:800:400::400])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B128C061574;
-        Fri, 25 Jun 2021 13:40:04 -0700 (PDT)
-Received: from thinkpad (unknown [172.20.6.87])
-        by mail.nic.cz (Postfix) with ESMTPSA id CA0A2140BC1;
-        Fri, 25 Jun 2021 22:40:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1624653601; bh=7qzL0OX4Gpt8h15fDizf86ZLAdjUeEyyZG8sbTqv9AE=;
-        h=Date:From:To;
-        b=VmHOr7sE0at2TEWZbQpSRpDKFEgJDru6nmA+jyeDNZ+hyBmmzgvIU/k3qS0VSwlFw
-         Sd7Cr+14ogs6k7HA5fGYvlI/FkzyjtMH7aIIiV72LwzZJOHNMaMoc0hYChL/hQbHHw
-         06g/FWRTirvK2tOOAfsZo2f59tKfAXL8kxPGBmhA=
-Date:   Fri, 25 Jun 2021 22:40:01 +0200
-From:   Marek Behun <marek.behun@nic.cz>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+        id S232452AbhF1JXn (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 28 Jun 2021 05:23:43 -0400
+Received: from mail-ua1-f44.google.com ([209.85.222.44]:43673 "EHLO
+        mail-ua1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230256AbhF1JXl (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 28 Jun 2021 05:23:41 -0400
+Received: by mail-ua1-f44.google.com with SMTP id f1so6698323uaj.10;
+        Mon, 28 Jun 2021 02:21:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Nz4gBHNnVTKqYWPORJVI9vqQQJHDi/JvYhL68Opd7n4=;
+        b=IvFgFcalWBL7x6esMAIgxvDcOyn1d0HYuP8EfBdK6RZPIOq4ZtueVwcwyx8ir89Buw
+         vH6VCkxDGeVUzpwsSNTumMx9gebCAPQWbrpRzUB5tXMh1vqT5zNRYMRb3U64GlkMPNm2
+         JAGCpX1Yfri1xdRCIHb7BwZDW+5clm/AaQXGQC2fjHs0vnX43NUA6W4BeHY0C7vFQQAL
+         Sx8eQGkTogPRK49aBX/b8ChiuS57AiVLM64iC351u7Gej0uEdJyfQ1Pk/bl0gGXHwbwg
+         /l4RtMOTcsd3Ee8h42vyEaqvOplG/8haiWjCejltmMuPeu5lr3J/5IVoj9POZuQO2Lo/
+         OofQ==
+X-Gm-Message-State: AOAM530HFH6SR2VB4xGCyWNhcSTW47UhPWFBvfvAkws10WtsFML67DiO
+        kRgTmVW82t9qVm2YjVHeF/Y+ThG2ULTzbFm8VklD3FUwjJvpVQ==
+X-Google-Smtp-Source: ABdhPJxMSZ00u8nhN9dBzbg8ZSuzKnronkfo2nq+w8WeuwJk4V1l7/qdW7ZjN8RF8UMjOi8X44C61rRdzsx6XQG8kRo=
+X-Received: by 2002:ab0:70b3:: with SMTP id q19mr19594260ual.2.1624872075339;
+ Mon, 28 Jun 2021 02:21:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210625125902.1162428-1-geert@linux-m68k.org>
+ <20210625125902.1162428-19-geert@linux-m68k.org> <20210625223916.7e00e710@thinkpad>
+In-Reply-To: <20210625223916.7e00e710@thinkpad>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 28 Jun 2021 11:21:04 +0200
+Message-ID: <CAMuHMdV5fywjF63MqE_SqfumwN3EY=jBTEiMfqbjFO12c_nj0Q@mail.gmail.com>
+Subject: Re: [PATCH v2 18/18] auxdisplay: ht16k33: Add segment display LED support
+To:     Marek Behun <marek.behun@nic.cz>
 Cc:     Robin van der Gracht <robin@protonic.nl>,
         Rob Herring <robh+dt@kernel.org>,
         Miguel Ojeda <ojeda@kernel.org>,
         Paul Burton <paulburton@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 18/18] auxdisplay: ht16k33: Add segment display LED
- support
-Message-ID: <20210625224001.115c938a@thinkpad>
-In-Reply-To: <20210625223916.7e00e710@thinkpad>
-References: <20210625125902.1162428-1-geert@linux-m68k.org>
-        <20210625125902.1162428-19-geert@linux-m68k.org>
-        <20210625223916.7e00e710@thinkpad>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-X-Virus-Status: Clean
+        Pavel Machek <pavel@ucw.cz>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-leds <linux-leds@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Fri, 25 Jun 2021 22:39:16 +0200
-Marek Behun <marek.behun@nic.cz> wrote:
+Hi Marek,
 
+On Fri, Jun 25, 2021 at 10:39 PM Marek Behun <marek.behun@nic.cz> wrote:
 > On Fri, 25 Jun 2021 14:59:02 +0200
 > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> 
+>
 > > Instantiate a single LED for a segment display.  This allows the user to
 > > control display brightness and blinking through the LED class API and
 > > triggers, and exposes the display color.
-> > The LED will be named "auxdisplay:<color>:backlight".  
-> 
+> > The LED will be named "auxdisplay:<color>:backlight".
+>
 > What if there are multiple "auxdisplay"s ?
+
+I understand the LED core will just add a suffix on a name collision.
+
 > Doesn't this subsystem have IDs? So that you can use auxdisplayN for
 > device name, for example?
 
-Or if this driver creates a fbdev, maybe "fb<N>" for devicename?
+Auxdisplay does not have IDs, as there is no subsystem to register
+with.  It's just a collection of drivers for auxiliary displays with
+no common API.  Some drivers use fbdev, others use a chardev, or an
+attribute file in sysfs.
 
-Marek
+BTW, I just followed Pavel's advice in naming.
+
+> > +     of_property_read_u32(node, "color", &color);
+> > +     seg->led.name = devm_kasprintf(dev, GFP_KERNEL,
+> > +                     "auxdisplay:%s:" LED_FUNCTION_BACKLIGHT,
+> > +                     color < LED_COLOR_ID_MAX ? led_colors[color] : "");
+>
+> If you use devm_led_classdev_register_ext and pass struct
+> led_init_data, LED core will generate name of the LED itself.
+
+Will that make any difference, except for adding more code?
+Looking at the implementation, I still have to use devm_kasprintf()
+to combine color and function for led_init_data.default_label?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
