@@ -2,87 +2,205 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92326C11F66
-	for <linux-leds@archiver.kernel.org>; Tue, 29 Jun 2021 10:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2C6C11F65
+	for <linux-leds@archiver.kernel.org>; Wed, 30 Jun 2021 20:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7166461DB3
-	for <linux-leds@archiver.kernel.org>; Tue, 29 Jun 2021 10:47:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E24146144C
+	for <linux-leds@archiver.kernel.org>; Wed, 30 Jun 2021 20:14:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233054AbhF2KuC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 29 Jun 2021 06:50:02 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:50421 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231956AbhF2KuB (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 29 Jun 2021 06:50:01 -0400
-Received: from [192.168.1.155] ([95.114.16.105]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MfHMj-1lHwdv3YsN-00glWJ; Tue, 29 Jun 2021 12:47:28 +0200
-Subject: Re: [PATCH] leds: remove ide-disk trigger
-To:     Corentin Labbe <clabbe@baylibre.com>, pavel@ucw.cz,
-        robh+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <20210628191719.2823947-1-clabbe@baylibre.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <1153e311-e0cf-d869-e3f8-b679eb2e60de@metux.net>
-Date:   Tue, 29 Jun 2021 12:47:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S233899AbhF3UQy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 30 Jun 2021 16:16:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47396 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233847AbhF3UQx (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Jun 2021 16:16:53 -0400
+Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60A4DC061756;
+        Wed, 30 Jun 2021 13:14:24 -0700 (PDT)
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.94.2)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1lygb9-00DuUv-Ok; Wed, 30 Jun 2021 22:14:15 +0200
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     linux-leds@vger.kernel.org
+Cc:     Pavel Machek <pavel@ucw.cz>, Boqun Feng <boqun.feng@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Righi <andrea.righi@canonical.com>,
+        linux-kernel@vger.kernel.org,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [RFC PATCH] leds: trigger: use RCU to protect the led_cdevs list
+Date:   Wed, 30 Jun 2021 22:14:11 +0200
+Message-Id: <20210630221411.30af93c6dce6.I1a28b342d2d52cdeeeb81ecd6020c25cbf1dbfc0@changeid>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <20210628191719.2823947-1-clabbe@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: tl
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:6vQ2Xfy8TKXEaEWXevy9tkuDioKXIKBHq1uW40xyBrykVOS1MSg
- R8MnogpqjdqqkK33FfSabJ+eFluTpXZ5W6pOUTuDU70Zu8k1SHa7TprBrlXJW81cdlGAld/
- NFKzpaXrgq3tHOMNhG15dtqM0pjUQY72/gULyZQpN/uXUk3MDOscTYdjjRGh/JUEE8CZS/W
- KH8UqhJPKigddOdxG0GFw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xYLlKKk3dwM=:o1KHUE8P22pH6kHb+zqy/e
- NTr6jwvqjkCQ5sos6tlcx5muJMSf/P0+FN/Q2ao2seWZzFeK1kxuAlaUPrkHFsU3Pso6xNoT9
- S2gAB5oDnSfI95JpD2PH27xotp16a4JOad/+0piwcmus1ibvgWSWIEnlG5SCqsc2eLOiU0njX
- W+FxgAzj47kF5XlRnICxeEhhMKDbrpQz+i4oqmBSNzGCtgUAC1HQlQU6QP4v0bMom9O92qE82
- iJNQ+K8I8l9AQJTRar6MYsTr9Yt7YyUHH+oF1qcfNLguejvxtNhSIyWT5RVNKIoD12mMuA/Sw
- PdnzSDYiu5rvcxSDRQI1oNnpY8aORoNeEtufjxWJIwIab86rJW0QYliq4JMo0Oauupd8az+lY
- W1iQdTjyAONYRtbmrGZ1ADyaSK0RfuQX/pa5xoPK5S/gIklMEaB/PxLBO8aBg92L0sU+/rFhz
- zzAO2bJTde/fRohnC9yIcihD6r4TTFN1CfTdjcsd+kyMAHp4M6aVAu8hDny8sz2jWNBkv6A2N
- in2oTbj1YKTOHOpdTRFzg4=
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 28.06.21 21:17, Corentin Labbe wrote:
+From: Johannes Berg <johannes.berg@intel.com>
 
-> diff --git a/drivers/leds/trigger/ledtrig-disk.c b/drivers/leds/trigger/ledtrig-disk.c
-> index 0741910785bb..38a5c21c0466 100644
-> --- a/drivers/leds/trigger/ledtrig-disk.c
-> +++ b/drivers/leds/trigger/ledtrig-disk.c
-> @@ -40,7 +40,6 @@ static int __init ledtrig_disk_init(void)
->   	led_trigger_register_simple("disk-activity", &ledtrig_disk);
->   	led_trigger_register_simple("disk-read", &ledtrig_disk_read);
->   	led_trigger_register_simple("disk-write", &ledtrig_disk_write);
-> -	led_trigger_register_simple("ide-disk", &ledtrig_ide);
->   
->   	return 0;
->   }
+Even with the previous commit 27af8e2c90fb
+("leds: trigger: fix potential deadlock with libata")
+to this file, we still get lockdep unhappy, and Boqun
+explained the report here:
+https://lore.kernel.org/r/YNA+d1X4UkoQ7g8a@boqun-archlinux
 
-Shouldn't this line also be removed ?
+Effectively, this means that the read_lock_irqsave() isn't
+enough here because another CPU might be trying to do a
+write lock, and thus block the readers.
 
-   DEFINE_LED_TRIGGER(ledtrig_ide);
+This is all pretty messy, but it doesn't seem right that
+the LEDs framework imposes some locking requirements on
+users, in particular we'd have to make the spinlock in the
+iwlwifi driver always disable IRQs, even if we don't need
+that for any other reason, just to avoid this deadlock.
 
+Since writes to the led_cdevs list are rare (and are done
+by userspace), just switch the list to RCU. This costs a
+synchronize_rcu() at removal time so we can ensure things
+are correct, but that seems like a small price to pay for
+getting lock-free iterations and no deadlocks (nor any
+locking requirements imposed on users.)
 
---mtx
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+RFC for now because I haven't actually tested it in the
+situation that caused the referenced lockdep report, but
+it seems fairly obvious that it'll prevent it since only
+the read-side was involved there.
+---
+ drivers/leds/led-triggers.c | 41 +++++++++++++++++++------------------
+ include/linux/leds.h        |  2 +-
+ 2 files changed, 22 insertions(+), 21 deletions(-)
 
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 4e7b78a84149..072491d3e17b 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -157,7 +157,6 @@ EXPORT_SYMBOL_GPL(led_trigger_read);
+ /* Caller must ensure led_cdev->trigger_lock held */
+ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ {
+-	unsigned long flags;
+ 	char *event = NULL;
+ 	char *envp[2];
+ 	const char *name;
+@@ -171,10 +170,13 @@ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ 
+ 	/* Remove any existing trigger */
+ 	if (led_cdev->trigger) {
+-		write_lock_irqsave(&led_cdev->trigger->leddev_list_lock, flags);
+-		list_del(&led_cdev->trig_list);
+-		write_unlock_irqrestore(&led_cdev->trigger->leddev_list_lock,
+-			flags);
++		spin_lock(&led_cdev->trigger->leddev_list_lock);
++		list_del_rcu(&led_cdev->trig_list);
++		spin_unlock(&led_cdev->trigger->leddev_list_lock);
++
++		/* ensure it's no longer visible on the led_cdevs list */
++		synchronize_rcu();
++
+ 		cancel_work_sync(&led_cdev->set_brightness_work);
+ 		led_stop_software_blink(led_cdev);
+ 		if (led_cdev->trigger->deactivate)
+@@ -186,9 +188,9 @@ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ 		led_set_brightness(led_cdev, LED_OFF);
+ 	}
+ 	if (trig) {
+-		write_lock_irqsave(&trig->leddev_list_lock, flags);
+-		list_add_tail(&led_cdev->trig_list, &trig->led_cdevs);
+-		write_unlock_irqrestore(&trig->leddev_list_lock, flags);
++		spin_lock(&trig->leddev_list_lock);
++		list_add_tail_rcu(&led_cdev->trig_list, &trig->led_cdevs);
++		spin_unlock(&trig->leddev_list_lock);
+ 		led_cdev->trigger = trig;
+ 
+ 		if (trig->activate)
+@@ -223,9 +225,10 @@ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ 		trig->deactivate(led_cdev);
+ err_activate:
+ 
+-	write_lock_irqsave(&led_cdev->trigger->leddev_list_lock, flags);
+-	list_del(&led_cdev->trig_list);
+-	write_unlock_irqrestore(&led_cdev->trigger->leddev_list_lock, flags);
++	spin_lock(&led_cdev->trigger->leddev_list_lock);
++	list_del_rcu(&led_cdev->trig_list);
++	spin_unlock(&led_cdev->trigger->leddev_list_lock);
++	synchronize_rcu();
+ 	led_cdev->trigger = NULL;
+ 	led_cdev->trigger_data = NULL;
+ 	led_set_brightness(led_cdev, LED_OFF);
+@@ -285,7 +288,7 @@ int led_trigger_register(struct led_trigger *trig)
+ 	struct led_classdev *led_cdev;
+ 	struct led_trigger *_trig;
+ 
+-	rwlock_init(&trig->leddev_list_lock);
++	spin_lock_init(&trig->leddev_list_lock);
+ 	INIT_LIST_HEAD(&trig->led_cdevs);
+ 
+ 	down_write(&triggers_list_lock);
+@@ -378,15 +381,14 @@ void led_trigger_event(struct led_trigger *trig,
+ 			enum led_brightness brightness)
+ {
+ 	struct led_classdev *led_cdev;
+-	unsigned long flags;
+ 
+ 	if (!trig)
+ 		return;
+ 
+-	read_lock_irqsave(&trig->leddev_list_lock, flags);
+-	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list)
++	rcu_read_lock();
++	list_for_each_entry_rcu(led_cdev, &trig->led_cdevs, trig_list)
+ 		led_set_brightness(led_cdev, brightness);
+-	read_unlock_irqrestore(&trig->leddev_list_lock, flags);
++	rcu_read_unlock();
+ }
+ EXPORT_SYMBOL_GPL(led_trigger_event);
+ 
+@@ -397,20 +399,19 @@ static void led_trigger_blink_setup(struct led_trigger *trig,
+ 			     int invert)
+ {
+ 	struct led_classdev *led_cdev;
+-	unsigned long flags;
+ 
+ 	if (!trig)
+ 		return;
+ 
+-	read_lock_irqsave(&trig->leddev_list_lock, flags);
+-	list_for_each_entry(led_cdev, &trig->led_cdevs, trig_list) {
++	rcu_read_lock();
++	list_for_each_entry_rcu(led_cdev, &trig->led_cdevs, trig_list) {
+ 		if (oneshot)
+ 			led_blink_set_oneshot(led_cdev, delay_on, delay_off,
+ 					      invert);
+ 		else
+ 			led_blink_set(led_cdev, delay_on, delay_off);
+ 	}
+-	read_unlock_irqrestore(&trig->leddev_list_lock, flags);
++	rcu_read_unlock();
+ }
+ 
+ void led_trigger_blink(struct led_trigger *trig,
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 329fd914cf24..fa59326b0ad9 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -354,7 +354,7 @@ struct led_trigger {
+ 	struct led_hw_trigger_type *trigger_type;
+ 
+ 	/* LEDs under control by this trigger (for simple triggers) */
+-	rwlock_t	  leddev_list_lock;
++	spinlock_t	  leddev_list_lock;
+ 	struct list_head  led_cdevs;
+ 
+ 	/* Link to next registered trigger */
 -- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+2.31.1
+
