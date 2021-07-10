@@ -2,115 +2,94 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 060AFC07E96
-	for <linux-leds@archiver.kernel.org>; Thu,  8 Jul 2021 14:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 909DCC07E9C
+	for <linux-leds@archiver.kernel.org>; Sat, 10 Jul 2021 02:17:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D628661878
-	for <linux-leds@archiver.kernel.org>; Thu,  8 Jul 2021 14:23:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71DF0613D1
+	for <linux-leds@archiver.kernel.org>; Sat, 10 Jul 2021 02:17:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231785AbhGHO0W (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 8 Jul 2021 10:26:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39358 "EHLO mail.kernel.org"
+        id S231215AbhGJCUf (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 9 Jul 2021 22:20:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231515AbhGHO0V (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 8 Jul 2021 10:26:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 62D026186A;
-        Thu,  8 Jul 2021 14:23:39 +0000 (UTC)
+        id S229606AbhGJCUf (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 9 Jul 2021 22:20:35 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3DCC5613B5;
+        Sat, 10 Jul 2021 02:17:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625754219;
-        bh=Jbd9IggvJ7GGkRHDwp6su00yw5ijHxncZTTO5Mzqt1A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eC4wsD6j5bH6p7WZt0YH1p1eB7no1QxWQuvdLMm4N4LKTOfeltnYJwpXDJzSVk6T2
-         cMkBaXpMN5ew16pafUOItx1h/k0VvsLm754saMKVv5hV5SNMlkeomNyufNmv80Pmld
-         hwMAYxkVwhH83wS0AAkZt3eN6nQAE2jrbHETzeBoW1xAX4nhJTBQ9rjzlaGNrt5wMN
-         8s+DiXzsKgf/RBgOqbk/0KzmgbQnlLDeW6Ryz+VfTw021aGM+lvFl2dXPvZkorgAjI
-         43vJ9VmYKQHUVTQqEOTA0AhBJg+9rx4B2cnzrf8FqbPCaTCi2nqai2QH1hQDTUYuOo
-         uBVI2fhfumyhQ==
-Date:   Thu, 8 Jul 2021 15:23:06 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Sander Vanheule <sander@svanheule.net>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Michael Walle <michael@walle.cc>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 2/8] gpio: regmap: Add quirk for aliased data registers
-Message-ID: <20210708142306.GA4106@sirena.org.uk>
-References: <cover.1623532208.git.sander@svanheule.net>
- <5d8e5e8a29ecf39da48beb94c42003a5c686ec4e.1623532208.git.sander@svanheule.net>
- <CAHp75VeOMb2xUJ+g2UQJnBybmehmYr0dGPEzDZObUGr=Q95+wA@mail.gmail.com>
- <dee12a4f5dc1a37feb14e20074cf365dbb86bc05.camel@svanheule.net>
+        s=k20201202; t=1625883471;
+        bh=YUEniXoGWoNOiBcC3NU1p9VwfWhDIBz0E7edYEnC7PY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oJFhjhyiDa0KFohUJM4PDOYDMlmiz/Q4uQqn6a2tfAkMpNZH/fOGHbLbt6ptu6bFp
+         rFo0LO7lw3rn8gBwpWEgRvA8B8biGrvvOb88LdBKABpoJpdJeeLBHJWtrE0tnvCXfQ
+         XkEdskU0ddNhM3asfwArinOyP1Ewi3ryJXYQ/xT0RaBTV63L0OE4dgR9qLfE5A5ZIA
+         6UECK+QLbYtDRz8Gv/EyTwM3F9gXUJS9NUUmzoCoANBb+/d5UkDqUv6qOhq0kyUmnZ
+         Duw8h0jqs83suObO1DbAaiBhbf1y1gqV01vcLF4imnp28hOBU/e+bbJqiyvzSGO36q
+         /enTRc5+8LAug==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Yang Yingliang <yangyingliang@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>, Pavel Machek <pavel@ucw.cz>,
+        Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.13 001/114] leds: tlc591xx: fix return value check in tlc591xx_probe()
+Date:   Fri,  9 Jul 2021 22:15:55 -0400
+Message-Id: <20210710021748.3167666-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
-Content-Disposition: inline
-In-Reply-To: <dee12a4f5dc1a37feb14e20074cf365dbb86bc05.camel@svanheule.net>
-X-Cookie: You do not have mail.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+From: Yang Yingliang <yangyingliang@huawei.com>
 
---82I3+IH0IqGh5yIs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[ Upstream commit ee522bcf026ec82ada793979c3a906274430595a ]
 
-On Wed, Jul 07, 2021 at 10:53:19PM +0200, Sander Vanheule wrote:
+After device_get_match_data(), tlc591xx is not checked, add
+check for it and also check np after dev_of_node.
 
-> I've made an attempt at implementing a "regmap_aliased()", similar to
-> "regmap_volatile()". However, this meant I had to make _regmap_read() aware of
-> wether the read- or write-alias was being read (from cache), touching some parts
-> of the regmap code I'm not using myself. Furthermore, this "aliased" property
-> isn't really perpendicular to "volatile", since writes should never be volatile,
-> and non-volatile reads don't make much sense (to me) on a read-only register.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/leds/leds-tlc591xx.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-As far as the abstractions in regmap are concerned these registers are
-volatile, that's currently how regmap undertands registers where
-readback won't give you the last written value.  Trying to convince the
-framework to handle these registers as anything other than volatile is
-going to of need be an invasive change.
+diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+index 5b9dfdf743ec..cb7bd1353f9f 100644
+--- a/drivers/leds/leds-tlc591xx.c
++++ b/drivers/leds/leds-tlc591xx.c
+@@ -148,16 +148,20 @@ static int
+ tlc591xx_probe(struct i2c_client *client,
+ 	       const struct i2c_device_id *id)
+ {
+-	struct device_node *np = dev_of_node(&client->dev), *child;
++	struct device_node *np, *child;
+ 	struct device *dev = &client->dev;
+ 	const struct tlc591xx *tlc591xx;
+ 	struct tlc591xx_priv *priv;
+ 	int err, count, reg;
+ 
+-	tlc591xx = device_get_match_data(dev);
++	np = dev_of_node(dev);
+ 	if (!np)
+ 		return -ENODEV;
+ 
++	tlc591xx = device_get_match_data(dev);
++	if (!tlc591xx)
++		return -ENODEV;
++
+ 	count = of_get_available_child_count(np);
+ 	if (!count || count > tlc591xx->max_leds)
+ 		return -EINVAL;
+-- 
+2.30.2
 
-> If a regmap_field could overwrite the specifiers of it's parent register, I
-> think this may provide quite a natural solution to the aliasing problem: just
-> create two regmap_field defintions. One definition would be 'write-only' (and
-> cached for RMW), the other 'volatile read-only'. All regmap_fields could still
-> rely on a single cached register value, I think. I didn't try to implement this
-> though, so maybe I'm missing some behaviour that would disqualify this solution.
-> Would you think this could be an acceptable way to move forward here?
-
-This feels like a painful and potentially high overhead approach to
-things - at the minute fields are layered on top of registers and are
-totally invisible at the register level, pulling the two together would
-touch a lot of places and make things tense, especially if we ended up
-with two different fields aliasing each other.  I'd need to see code but
-it feels like a difficult approach to take.
-
---82I3+IH0IqGh5yIs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmDnCkkACgkQJNaLcl1U
-h9BgWQf9EXRMoRdnrVCUNqRa20ezBb+4TyMBmX2rqTraVIEfms7khy2lloQFA0t9
-ArWkAGDXYDTGJE5e4sHFNTKNHqSbdWkFSjl0chkoamwv5GgpBuyA3YIOXplpet2J
-eYxbvsuYh/TBYo2NFgKCVa0UXYjuD0aemNElyfrIltjBZqfAMlFJah40HsoZdDQj
-LwNmxou2+oaRmQw7u9qtzQvHbxv4a4dRMga7KdP6QK2gpqIGK04DnFMjAqaiv5uk
-L6BgvcrHDvhWOSNpguXdt4Actyyae0qPjs6258E4t1S3weKO5ZXOB8C1eQtQDxP2
-+Zqh5cDxsxPtObuk4e7Bj2tJvlGEQw==
-=4IS2
------END PGP SIGNATURE-----
-
---82I3+IH0IqGh5yIs--
