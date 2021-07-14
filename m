@@ -5,34 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8362C11F7A
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E95C11F80
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1622613D3
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E93D7613B6
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239842AbhGNPOu (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 14 Jul 2021 11:14:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42396 "EHLO
+        id S239785AbhGNPOv (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 14 Jul 2021 11:14:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239678AbhGNPOi (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Jul 2021 11:14:38 -0400
+        with ESMTP id S239791AbhGNPOn (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Jul 2021 11:14:43 -0400
 Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91CA3C061793
-        for <linux-leds@vger.kernel.org>; Wed, 14 Jul 2021 08:11:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71E8FC0613B4
+        for <linux-leds@vger.kernel.org>; Wed, 14 Jul 2021 08:11:43 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:bcf3:b2b1:dff6:480b])
         by baptiste.telenet-ops.be with bizsmtp
-        id V3Be2500E4sai0K013Be5v; Wed, 14 Jul 2021 17:11:40 +0200
+        id V3Bf250014sai0K013Bf64; Wed, 14 Jul 2021 17:11:41 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3gXy-001ARD-3E; Wed, 14 Jul 2021 17:11:38 +0200
+        id 1m3gXy-001ARQ-M2; Wed, 14 Jul 2021 17:11:38 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3gXx-00AcfG-3S; Wed, 14 Jul 2021 17:11:37 +0200
+        id 1m3gXx-00AcgH-IP; Wed, 14 Jul 2021 17:11:37 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Robin van der Gracht <robin@protonic.nl>,
         Rob Herring <robh+dt@kernel.org>,
@@ -43,9 +43,9 @@ To:     Robin van der Gracht <robin@protonic.nl>,
 Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3 02/19] dt-bindings: auxdisplay: ht16k33: Document Adafruit segment displays
-Date:   Wed, 14 Jul 2021 17:11:13 +0200
-Message-Id: <20210714151130.2531831-3-geert@linux-m68k.org>
+Subject: [PATCH v3 11/19] auxdisplay: ht16k33: Remove unneeded error check in keypad probe()
+Date:   Wed, 14 Jul 2021 17:11:22 +0200
+Message-Id: <20210714151130.2531831-12-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210714151130.2531831-1-geert@linux-m68k.org>
 References: <20210714151130.2531831-1-geert@linux-m68k.org>
@@ -55,141 +55,38 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The Holtek HT16K33 LED controller is not only used for driving
-dot-matrix displays, but also for driving segment displays.
-
-Document compatible values for the Adafruit 7-segment[1] and
-14-segment[2] FeatherWing expansion boards with red displays.  According
-to the schematics, all other Adafruit 7-segment and 14-segment display
-backpack and FeatherWing expansion boards (including bare boards and
-boards fitted with displays) are compatible with these two boards.
-
-[1] https://www.adafruit.com/product/3108
-[2] https://www.adafruit.com/product/3130
+There is no need to check the return code of input_register_device(),
+just propagate it to the caller.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Robin van der Gracht <robin@protonic.nl>
 ---
 v3:
-  - Drop color property,
+  - No changes,
 
 v2:
-  - Fix type of color to uint32,
-  - "refresh-rate-hz" is still required for dot-matrix displays.
-
-Alternatives I considered:
-  1. Document the attached display type in a child node.
-     I.e. specify segment type, number of characters, and wiring.
-     Especially the latter would become really complex, due to the sheer
-     amount of possible wiring combinations.
-     Using this method, you also loose the ability to just connect a
-     display to an i2c bus, and instantiate the device from sysfs,
-     without using DT:
-
-	echo adafruit,3130 0x70 > /sys/class/i2c/i2c-adapter/.../new_device
-
-  2. Document all Adafruit 7-segment and 14-segment display backpack and
-     FeatherWing expansion boards.
-     This would lead to a myriad of compatible values:
-
-      - items:
-	  - enum:
-	      - adafruit,878      # 0.56" 4-Digit 7-Segment Display Backpack (Red)
-	      - adafruit,879      # 0.56" 4-Digit 7-Segment Display Backpack (Yellow)
-	      - adafruit,880      # 0.56" 4-Digit 7-Segment Display Backpack (Green)
-	      - adafruit,881      # 0.56" 4-Digit 7-Segment Display Backpack (Blue)
-	      - adafruit,1002     # 0.56" 4-Digit 7-Segment Display Backpack (White)
-	  - const: adafruit,877   # 0.56" 4-Digit 7-Segment Backpack
-	  - const: holtek,ht16k33
-
-      - items:
-	  - enum:
-	      - adafruit,1268     # 1.2" 4-Digit 7-Segment Display Backpack (Green)
-	      - adafruit,1269     # 1.2" 4-Digit 7-Segment Display Backpack (Yellow)
-	      - adafruit,1270     # 1.2" 4-Digit 7-Segment Display Backpack (Red)
-	  - const: adafruit,1271  # 1.2" 4-Digit 7-Segment Backpack
-	  - const: holtek,ht16k33
-
-      - items:
-	  - enum:
-	      - adafruit,1911     # 0.54" Quad Alphanumeric Display Backpack (Red)
-	      - adafruit,1912     # 0.54" Quad Alphanumeric Display Backpack (Blue)
-	      - adafruit,2157     # 0.54" Quad Alphanumeric Display Backpack (White)
-	      - adafruit,2158     # 0.54" Quad Alphanumeric Display Backpack (Yellow)
-	      - adafruit,2159     # 0.54" Quad Alphanumeric Display Backpack (Yellow-Green)
-	      - adafruit,2160     # 0.54" Quad Alphanumeric Display Backpack (Green)
-	  - const: adafruit,1910  # 0.54" Quad 14-segment Alphanumeric Backpack
-	  - const: holtek,ht16k33
-
-      - items:
-	  - enum:
-	      - adafruit,3106     # 0.56" 4-Digit 7-Segment FeatherWing Display (Blue)
-	      - adafruit,3107     # 0.56" 4-Digit 7-Segment FeatherWing Display (Green)
-	      - adafruit,3108     # 0.56" 4-Digit 7-Segment FeatherWing Display (Red)
-	      - adafruit,3109     # 0.56" 4-Digit 7-Segment FeatherWing Display (White)
-	      - adafruit,3110     # 0.56" 4-Digit 7-Segment FeatherWing Display (Yellow)
-	  - const: adafruit,3088  # 0.56" 4-Digit 7-Segment FeatherWing
-	  - const: holtek,ht16k33
-
-      - items:
-	  - enum:
-	      - adafruit,3127     # 0.54" Quad Alphanumeric FeatherWing Display (White)
-	      - adafruit,3128     # 0.54" Quad Alphanumeric FeatherWing Display (Blue)
-	      - adafruit,3129     # 0.54" Quad Alphanumeric FeatherWing Display (Green)
-	      - adafruit,3130     # 0.54" Quad Alphanumeric FeatherWing Display (Red)
-	      - adafruit,3131     # 0.54" Quad Alphanumeric FeatherWing Display (Yellow)
-	      - adafruit,3132     # 0.54" Quad Alphanumeric FeatherWing Display (Yellow-Green)
-	  - const: adafruit,3089  # 0.54" Quad 14-segment Alphanumeric FeatherWing
-	  - const: holtek,ht16k33
+  - Add Acked-by.
 ---
- .../bindings/auxdisplay/holtek,ht16k33.yaml   | 22 ++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+ drivers/auxdisplay/ht16k33.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-index 64ffff460026040f..2a58f883a08cb199 100644
---- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-+++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-@@ -14,14 +14,23 @@ allOf:
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index 99daf1974980b435..8c9acc4800bc94e0 100644
+--- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16k33.c
+@@ -378,11 +378,7 @@ static int ht16k33_keypad_probe(struct i2c_client *client,
  
- properties:
-   compatible:
--    const: holtek,ht16k33
-+    oneOf:
-+      - items:
-+          - const: adafruit,3108  # 0.56" 4-Digit 7-Segment FeatherWing Display (Red)
-+          - const: holtek,ht16k33
-+
-+      - items:
-+          - const: adafruit,3130  # 0.54" Quad Alphanumeric FeatherWing Display (Red)
-+          - const: holtek,ht16k33
-+
-+      - const: holtek,ht16k33     # Generic 16*8 LED controller with dot-matrix display
+ 	ht16k33_keypad_stop(keypad->dev);
  
-   reg:
-     maxItems: 1
+-	err = input_register_device(keypad->dev);
+-	if (err)
+-		return err;
+-
+-	return 0;
++	return input_register_device(keypad->dev);
+ }
  
-   refresh-rate-hz:
-     maxItems: 1
--    description: Display update interval in Hertz
-+    description: Display update interval in Hertz for dot-matrix displays
- 
-   interrupts:
-     maxItems: 1
-@@ -44,7 +53,14 @@ properties:
- required:
-   - compatible
-   - reg
--  - refresh-rate-hz
-+
-+if:
-+  properties:
-+    compatible:
-+      const: holtek,ht16k33
-+then:
-+  required:
-+    - refresh-rate-hz
- 
- additionalProperties: false
- 
+ static int ht16k33_probe(struct i2c_client *client,
 -- 
 2.25.1
 
