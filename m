@@ -2,95 +2,118 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D524BC07E95
-	for <linux-leds@archiver.kernel.org>; Tue, 13 Jul 2021 07:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DED5C11F66
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ABC9F61249
-	for <linux-leds@archiver.kernel.org>; Tue, 13 Jul 2021 07:35:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49414613D6
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234121AbhGMHiR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 13 Jul 2021 03:38:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33582 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233762AbhGMHiQ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 13 Jul 2021 03:38:16 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56110C0613DD;
-        Tue, 13 Jul 2021 00:35:27 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id v7so20873844pgl.2;
-        Tue, 13 Jul 2021 00:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lDXX6aLRLFwz2lfT6sXQWOct2gpF65UcPwyHGrne0Co=;
-        b=FuDtjjEEv8z4K71c2XZNdoUpw/GLqIkymVWoS0dExrqNTrNVncs9H7Nj3TxK17kJgP
-         AOmxt5MuCyqGpf+U5ZUOGw8z7K1gmB0gxSa4rroTIQe8V16Zdk0KEHNmSAwhn4YNaqLe
-         oi9wWsQi4aRjiyQAJABg56p3S/HsAluDXqZCXo6hryVHu9DffgYKvuqfe9HhKCTH+kVl
-         pMLO0vw+cfs65f2suu/5JDSBlSV2Py2JKvobQBCa6Nmvaduwz4tTw7ayrRu54OmJCSYU
-         u+yhdDbUnT/nMocKsL2ptMcTraQDO8GhVUVLzHFGObiPSeyglliCGdMqRGNFj74dggOL
-         J+BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lDXX6aLRLFwz2lfT6sXQWOct2gpF65UcPwyHGrne0Co=;
-        b=cSxcXvZRz3c5d0R3Gn2k2LLRvNekGjDpQZF6Bwrj++RtTzyBHUN7IBE8oDcYf3sMTc
-         iZ2PH1uD5ItMspuZAfds+XqxHPPnNyr/XzaJV83i7YyFaCVfTak8gx6jvZonZFirU18M
-         qRfW8zbcUj4KncPlKdMRP0aQl3Sx10Jmr6xj1SiAokjwRt27txlh67HzgONHJ5oPIb4l
-         +b3wuTfQrSvOaAbP8r68KugVfQte/lNt+Xt7kPQjVgHljgCu9O+1MrLt0NKgjzKPblvP
-         JiWKCjJ82CaIo7cwG3CLIOcmB07uGjbbQXpitcyzUuuPqX5w4Qeh4ZDwRfz1xmCC5E02
-         dGSw==
-X-Gm-Message-State: AOAM532xFScP+5XrTwTB+2IGlrxcqojgKJ4/9p/1b9mEaGYtHHWuCwSd
-        MTkebHsxKIp3MyoS57BbXNLTXHIyPOKJnG+/TlA=
-X-Google-Smtp-Source: ABdhPJzhTjL9ZI8zsvkBliQ7IYB+YYzPt6Bu37UPa4OIsdmd3BNZmELfrm3UQrUzTm/ZfEqad9mvifZvRXWvxyjxNJs=
-X-Received: by 2002:a05:6a00:2451:b029:329:df3d:62f2 with SMTP id
- d17-20020a056a002451b0290329df3d62f2mr3293864pfj.7.1626161726846; Tue, 13 Jul
- 2021 00:35:26 -0700 (PDT)
+        id S239714AbhGNPOj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 14 Jul 2021 11:14:39 -0400
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:58196 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239745AbhGNPOe (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Jul 2021 11:14:34 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4GQ1Ds2w6tzMqbfV
+        for <linux-leds@vger.kernel.org>; Wed, 14 Jul 2021 17:11:41 +0200 (CEST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:bcf3:b2b1:dff6:480b])
+        by baptiste.telenet-ops.be with bizsmtp
+        id V3Be2500a4sai0K013Bf63; Wed, 14 Jul 2021 17:11:41 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1m3gXy-001ARV-Ko; Wed, 14 Jul 2021 17:11:38 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1m3gXx-00Acgv-Nz; Wed, 14 Jul 2021 17:11:37 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Robin van der Gracht <robin@protonic.nl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@ucw.cz>, Marek Behun <marek.behun@nic.cz>
+Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v3 15/19] auxdisplay: ht16k33: Extract ht16k33_brightness_set()
+Date:   Wed, 14 Jul 2021 17:11:26 +0200
+Message-Id: <20210714151130.2531831-16-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210714151130.2531831-1-geert@linux-m68k.org>
+References: <20210714151130.2531831-1-geert@linux-m68k.org>
 MIME-Version: 1.0
-References: <20210529111935.3849707-1-andy.shevchenko@gmail.com> <YNMz59WLCMwr0rVD@smile.fi.intel.com>
-In-Reply-To: <YNMz59WLCMwr0rVD@smile.fi.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 13 Jul 2021 10:34:50 +0300
-Message-ID: <CAHp75VcsaPs3GGEZDBxDj=0oEpTWPcqUP75kFOo8LG_JfQkhmA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/13] leds: core: The -ENOTSUPP should never be seen
- by user space
-To:     Pavel Machek <pavel@ucw.cz>,
-        Amireddy Mallikarjuna reddy 
-        <mallikarjunax.reddy@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Abanoub Sameh <abanoubsameh8@gmail.com>,
-        =?UTF-8?B?TWFyZWsgQmVow7pu?= <marek.behun@nic.cz>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     Jacek Anaszewski <j.anaszewski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 4:16 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Sat, May 29, 2021 at 02:19:23PM +0300, Andy Shevchenko wrote:
-> > Luckily there is no user which checks for returned code and actually
-> > returns it, but since the function is exported any user may try to return
-> > an error code from it to user space, usually during probe phase,
-> >
-> > Replace -ENOTSUPP by -EOPNOTSUPP when returning from exported function.
->
-> There were no issue reported by bots, no comments from people (except one tag),
-> can we do something about this series or should I amend it?
+Extract brightness handling into a helper function, so it can be called
+from multiple places.
 
-Pavel, do I need to resend this series? It mostly should be the part
-of v5.14 cycle (half of it is the fixes).
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+v3:
+  - Use "err" instead of "error" to be consistent with existing driver
+    naming style,
 
+v2:
+  - No changes.
+---
+ drivers/auxdisplay/ht16k33.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index c7a3a0e1fbb5d03e..928ac9722c142855 100644
+--- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16k33.c
+@@ -113,6 +113,22 @@ static int ht16k33_display_off(struct ht16k33_priv *priv)
+ 	return i2c_smbus_write_byte(priv->client, REG_DISPLAY_SETUP);
+ }
+ 
++static int ht16k33_brightness_set(struct ht16k33_priv *priv,
++				  unsigned int brightness)
++{
++	int err;
++
++	if (brightness == 0)
++		return ht16k33_display_off(priv);
++
++	err = ht16k33_display_on(priv);
++	if (err)
++		return err;
++
++	return i2c_smbus_write_byte(priv->client,
++				    REG_BRIGHTNESS | (brightness - 1));
++}
++
+ static void ht16k33_fb_queue(struct ht16k33_priv *priv)
+ {
+ 	struct ht16k33_fbdev *fbdev = &priv->fbdev;
+@@ -197,13 +213,10 @@ static int ht16k33_bl_update_status(struct backlight_device *bl)
+ 
+ 	if (bl->props.power != FB_BLANK_UNBLANK ||
+ 	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
+-	    bl->props.state & BL_CORE_FBBLANK || brightness == 0) {
+-		return ht16k33_display_off(priv);
+-	}
++	    bl->props.state & BL_CORE_FBBLANK)
++		brightness = 0;
+ 
+-	ht16k33_display_on(priv);
+-	return i2c_smbus_write_byte(priv->client,
+-				    REG_BRIGHTNESS | (brightness - 1));
++	return ht16k33_brightness_set(priv, brightness);
+ }
+ 
+ static int ht16k33_bl_check_fb(struct backlight_device *bl, struct fb_info *fi)
 -- 
-With Best Regards,
-Andy Shevchenko
+2.25.1
+
