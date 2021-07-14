@@ -5,34 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E62FAC11F67
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A22E3C11F66
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C8E25613D9
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 867E2613D1
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239755AbhGNPOp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 14 Jul 2021 11:14:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42432 "EHLO
+        id S239689AbhGNPOs (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 14 Jul 2021 11:14:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239773AbhGNPOm (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Jul 2021 11:14:42 -0400
+        with ESMTP id S239735AbhGNPOk (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Jul 2021 11:14:40 -0400
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD32C0613AC
-        for <linux-leds@vger.kernel.org>; Wed, 14 Jul 2021 08:11:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5EAEC0617A7
+        for <linux-leds@vger.kernel.org>; Wed, 14 Jul 2021 08:11:42 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:bcf3:b2b1:dff6:480b])
         by xavier.telenet-ops.be with bizsmtp
-        id V3Be2500S4sai0K013Be50; Wed, 14 Jul 2021 17:11:41 +0200
+        id V3Be2500R4sai0K013Be4z; Wed, 14 Jul 2021 17:11:40 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3gXy-001ARb-Kq; Wed, 14 Jul 2021 17:11:38 +0200
+        id 1m3gXy-001ART-D8; Wed, 14 Jul 2021 17:11:38 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3gXx-00AchF-Sn; Wed, 14 Jul 2021 17:11:37 +0200
+        id 1m3gXx-00Acgc-MA; Wed, 14 Jul 2021 17:11:37 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Robin van der Gracht <robin@protonic.nl>,
         Rob Herring <robh+dt@kernel.org>,
@@ -43,9 +43,9 @@ To:     Robin van der Gracht <robin@protonic.nl>,
 Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3 18/19] dt-bindings: auxdisplay: ht16k33: Document LED subnode
-Date:   Wed, 14 Jul 2021 17:11:29 +0200
-Message-Id: <20210714151130.2531831-19-geert@linux-m68k.org>
+Subject: [PATCH v3 14/19] auxdisplay: ht16k33: Move delayed work
+Date:   Wed, 14 Jul 2021 17:11:25 +0200
+Message-Id: <20210714151130.2531831-15-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210714151130.2531831-1-geert@linux-m68k.org>
 References: <20210714151130.2531831-1-geert@linux-m68k.org>
@@ -55,56 +55,78 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Extend the Holtek HT16K33 LED controller Device Tree bindings with an
-LED subnode, conforming to the standard LED bindings.
-
-This allows the user to exert more control, like specifying LED color,
-function, and/or trigger, to extend LED functionality beyond a simple
-display backlight.
+Move delayed_work from ht16k33_fbdev to ht16k33_priv, as it is not
+specific to dot-matrix displays, but common to all display types.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
 v3:
-  - New.
----
- .../bindings/auxdisplay/holtek,ht16k33.yaml           | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+  - No changes,
 
-diff --git a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-index 2a58f883a08cb199..c750c1a915bdbecb 100644
---- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-+++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-@@ -50,6 +50,11 @@ properties:
-     default: 16
-     description: Initial brightness level
+v2:
+  - No changes.
+---
+ drivers/auxdisplay/ht16k33.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index 75d326a823543898..c7a3a0e1fbb5d03e 100644
+--- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16k33.c
+@@ -65,11 +65,11 @@ struct ht16k33_fbdev {
+ 	uint32_t refresh_rate;
+ 	uint8_t *buffer;
+ 	uint8_t *cache;
+-	struct delayed_work work;
+ };
  
-+  led:
-+    type: object
-+    $ref: /schemas/leds/common.yaml#
-+    unevaluatedProperties: false
-+
- required:
-   - compatible
-   - reg
-@@ -68,6 +73,7 @@ examples:
-   - |
-     #include <dt-bindings/interrupt-controller/irq.h>
-     #include <dt-bindings/input/input.h>
-+    #include <dt-bindings/leds/common.h>
-     i2c1 {
-             #address-cells = <1>;
-             #size-cells = <0>;
-@@ -89,5 +95,10 @@ examples:
-                                    <MATRIX_KEY(4, 1, KEY_F9)>,
-                                    <MATRIX_KEY(5, 1, KEY_F3)>,
-                                    <MATRIX_KEY(6, 1, KEY_F1)>;
-+
-+                    led {
-+                            color = <LED_COLOR_ID_RED>;
-+                            function = LED_FUNCTION_BACKLIGHT;
-+                    };
-             };
-       };
+ struct ht16k33_priv {
+ 	struct i2c_client *client;
++	struct delayed_work work;
+ 	struct ht16k33_keypad keypad;
+ 	struct ht16k33_fbdev fbdev;
+ };
+@@ -117,7 +117,7 @@ static void ht16k33_fb_queue(struct ht16k33_priv *priv)
+ {
+ 	struct ht16k33_fbdev *fbdev = &priv->fbdev;
+ 
+-	schedule_delayed_work(&fbdev->work, HZ / fbdev->refresh_rate);
++	schedule_delayed_work(&priv->work, HZ / fbdev->refresh_rate);
+ }
+ 
+ /*
+@@ -125,10 +125,9 @@ static void ht16k33_fb_queue(struct ht16k33_priv *priv)
+  */
+ static void ht16k33_fb_update(struct work_struct *work)
+ {
+-	struct ht16k33_fbdev *fbdev =
+-		container_of(work, struct ht16k33_fbdev, work.work);
+-	struct ht16k33_priv *priv =
+-		container_of(fbdev, struct ht16k33_priv, fbdev);
++	struct ht16k33_priv *priv = container_of(work, struct ht16k33_priv,
++						 work.work);
++	struct ht16k33_fbdev *fbdev = &priv->fbdev;
+ 
+ 	uint8_t *p1, *p2;
+ 	int len, pos = 0, first = -1;
+@@ -462,7 +461,7 @@ static int ht16k33_probe(struct i2c_client *client)
+ 	}
+ 	fb_bl_default_curve(fbdev->info, 0, MIN_BRIGHTNESS, MAX_BRIGHTNESS);
+ 
+-	INIT_DELAYED_WORK(&fbdev->work, ht16k33_fb_update);
++	INIT_DELAYED_WORK(&priv->work, ht16k33_fb_update);
+ 	fbdev->info->fbops = &ht16k33_fb_ops;
+ 	fbdev->info->screen_base = (char __iomem *) fbdev->buffer;
+ 	fbdev->info->screen_size = HT16K33_FB_SIZE;
+@@ -502,7 +501,7 @@ static int ht16k33_remove(struct i2c_client *client)
+ 	struct ht16k33_priv *priv = i2c_get_clientdata(client);
+ 	struct ht16k33_fbdev *fbdev = &priv->fbdev;
+ 
+-	cancel_delayed_work_sync(&fbdev->work);
++	cancel_delayed_work_sync(&priv->work);
+ 	unregister_framebuffer(fbdev->info);
+ 	framebuffer_release(fbdev->info);
+ 	free_page((unsigned long) fbdev->buffer);
 -- 
 2.25.1
 
