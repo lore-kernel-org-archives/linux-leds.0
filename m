@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DED5C11F66
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A225C11F69
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49414613D6
+	by mail.kernel.org (Postfix) with ESMTP id E979A613CF
 	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239714AbhGNPOj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 14 Jul 2021 11:14:39 -0400
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:58196 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239745AbhGNPOe (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Jul 2021 11:14:34 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4GQ1Ds2w6tzMqbfV
-        for <linux-leds@vger.kernel.org>; Wed, 14 Jul 2021 17:11:41 +0200 (CEST)
+        id S239737AbhGNPOk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 14 Jul 2021 11:14:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42420 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239776AbhGNPOh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Jul 2021 11:14:37 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96CF4C0613DE
+        for <linux-leds@vger.kernel.org>; Wed, 14 Jul 2021 08:11:41 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:bcf3:b2b1:dff6:480b])
-        by baptiste.telenet-ops.be with bizsmtp
-        id V3Be2500a4sai0K013Bf63; Wed, 14 Jul 2021 17:11:41 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id V3Bd2500P4sai0K013BdMS; Wed, 14 Jul 2021 17:11:40 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3gXy-001ARV-Ko; Wed, 14 Jul 2021 17:11:38 +0200
+        id 1m3gXx-001ARE-KN; Wed, 14 Jul 2021 17:11:37 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3gXx-00Acgv-Nz; Wed, 14 Jul 2021 17:11:37 +0200
+        id 1m3gXx-00AcfN-5R; Wed, 14 Jul 2021 17:11:37 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Robin van der Gracht <robin@protonic.nl>,
         Rob Herring <robh+dt@kernel.org>,
@@ -43,9 +43,9 @@ To:     Robin van der Gracht <robin@protonic.nl>,
 Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3 15/19] auxdisplay: ht16k33: Extract ht16k33_brightness_set()
-Date:   Wed, 14 Jul 2021 17:11:26 +0200
-Message-Id: <20210714151130.2531831-16-geert@linux-m68k.org>
+Subject: [PATCH v3 03/19] auxdisplay: img-ascii-lcd: Fix lock-up when displaying empty string
+Date:   Wed, 14 Jul 2021 17:11:14 +0200
+Message-Id: <20210714151130.2531831-4-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210714151130.2531831-1-geert@linux-m68k.org>
 References: <20210714151130.2531831-1-geert@linux-m68k.org>
@@ -55,65 +55,54 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Extract brightness handling into a helper function, so it can be called
-from multiple places.
+While writing an empty string to a device attribute is a no-op, and thus
+does not need explicit safeguards, the user can still write a single
+newline to an attribute file:
 
+    echo > .../message
+
+If that happens, img_ascii_lcd_display() trims the newline, yielding an
+empty string, and causing an infinite loop in img_ascii_lcd_scroll().
+
+Fix this by adding a check for empty strings.  Clear the display in case
+one is encountered.
+
+Fixes: 0cad855fbd083ee5 ("auxdisplay: img-ascii-lcd: driver for simple ASCII LCD displays")
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
+Untested with img-ascii-lcd, but triggered with my initial version of
+linedisp.
+
 v3:
-  - Use "err" instead of "error" to be consistent with existing driver
-    naming style,
+  - No changes,
 
 v2:
   - No changes.
 ---
- drivers/auxdisplay/ht16k33.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+ drivers/auxdisplay/img-ascii-lcd.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-index c7a3a0e1fbb5d03e..928ac9722c142855 100644
---- a/drivers/auxdisplay/ht16k33.c
-+++ b/drivers/auxdisplay/ht16k33.c
-@@ -113,6 +113,22 @@ static int ht16k33_display_off(struct ht16k33_priv *priv)
- 	return i2c_smbus_write_byte(priv->client, REG_DISPLAY_SETUP);
- }
+diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
+index 1cce409ce5cacbc8..e33ce0151cdfd150 100644
+--- a/drivers/auxdisplay/img-ascii-lcd.c
++++ b/drivers/auxdisplay/img-ascii-lcd.c
+@@ -280,6 +280,16 @@ static int img_ascii_lcd_display(struct img_ascii_lcd_ctx *ctx,
+ 	if (msg[count - 1] == '\n')
+ 		count--;
  
-+static int ht16k33_brightness_set(struct ht16k33_priv *priv,
-+				  unsigned int brightness)
-+{
-+	int err;
++	if (!count) {
++		/* clear the LCD */
++		devm_kfree(&ctx->pdev->dev, ctx->message);
++		ctx->message = NULL;
++		ctx->message_len = 0;
++		memset(ctx->curr, ' ', ctx->cfg->num_chars);
++		ctx->cfg->update(ctx);
++		return 0;
++	}
 +
-+	if (brightness == 0)
-+		return ht16k33_display_off(priv);
-+
-+	err = ht16k33_display_on(priv);
-+	if (err)
-+		return err;
-+
-+	return i2c_smbus_write_byte(priv->client,
-+				    REG_BRIGHTNESS | (brightness - 1));
-+}
-+
- static void ht16k33_fb_queue(struct ht16k33_priv *priv)
- {
- 	struct ht16k33_fbdev *fbdev = &priv->fbdev;
-@@ -197,13 +213,10 @@ static int ht16k33_bl_update_status(struct backlight_device *bl)
- 
- 	if (bl->props.power != FB_BLANK_UNBLANK ||
- 	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
--	    bl->props.state & BL_CORE_FBBLANK || brightness == 0) {
--		return ht16k33_display_off(priv);
--	}
-+	    bl->props.state & BL_CORE_FBBLANK)
-+		brightness = 0;
- 
--	ht16k33_display_on(priv);
--	return i2c_smbus_write_byte(priv->client,
--				    REG_BRIGHTNESS | (brightness - 1));
-+	return ht16k33_brightness_set(priv, brightness);
- }
- 
- static int ht16k33_bl_check_fb(struct backlight_device *bl, struct fb_info *fi)
+ 	new_msg = devm_kmalloc(&ctx->pdev->dev, count + 1, GFP_KERNEL);
+ 	if (!new_msg)
+ 		return -ENOMEM;
 -- 
 2.25.1
 
