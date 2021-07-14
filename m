@@ -5,34 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AA1C11F67
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C82C07E9A
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C63E613D1
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FAB0613B6
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239729AbhGNPOk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 14 Jul 2021 11:14:40 -0400
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:58204 "EHLO
+        id S239745AbhGNPOl (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 14 Jul 2021 11:14:41 -0400
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:58258 "EHLO
         leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239747AbhGNPOe (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Jul 2021 11:14:34 -0400
+        with ESMTP id S239772AbhGNPOh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Jul 2021 11:14:37 -0400
 Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4GQ1Ds4GWczMqcPB
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4GQ1Ds32W2zMqcMH
         for <linux-leds@vger.kernel.org>; Wed, 14 Jul 2021 17:11:41 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:bcf3:b2b1:dff6:480b])
         by baptiste.telenet-ops.be with bizsmtp
-        id V3Bf250064sai0K013Bf66; Wed, 14 Jul 2021 17:11:41 +0200
+        id V3Bf250024sai0K013Bf65; Wed, 14 Jul 2021 17:11:41 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3gXy-001ARX-Sw; Wed, 14 Jul 2021 17:11:38 +0200
+        id 1m3gXy-001ARe-PW; Wed, 14 Jul 2021 17:11:38 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3gXx-00Ach9-RQ; Wed, 14 Jul 2021 17:11:37 +0200
+        id 1m3gXx-00AchN-UO; Wed, 14 Jul 2021 17:11:37 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Robin van der Gracht <robin@protonic.nl>,
         Rob Herring <robh+dt@kernel.org>,
@@ -43,9 +43,9 @@ To:     Robin van der Gracht <robin@protonic.nl>,
 Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3 17/19] auxdisplay: ht16k33: Add support for segment displays
-Date:   Wed, 14 Jul 2021 17:11:28 +0200
-Message-Id: <20210714151130.2531831-18-geert@linux-m68k.org>
+Subject: [PATCH v3 19/19] auxdisplay: ht16k33: Add LED support
+Date:   Wed, 14 Jul 2021 17:11:30 +0200
+Message-Id: <20210714151130.2531831-20-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210714151130.2531831-1-geert@linux-m68k.org>
 References: <20210714151130.2531831-1-geert@linux-m68k.org>
@@ -55,327 +55,243 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The Holtek HT16K33 LED controller is not only used for driving
-dot-matrix displays, but also for driving segment displays.
+Instantiate a single LED based on the "led" subnode in DT.
+This allows the user to control display brightness and blinking (backed
+by hardware support) through the LED class API and triggers, and exposes
+the display color.  The LED will be named
+"auxdisplay:<color>:<function>".
 
-Add support for 4-digit 7-segment and quad 14-segment alphanumeric
-displays, like the Adafruit 7-segment and 14-segment display backpack
-and FeatherWing expansion boards.  Use the character line display core
-support to display a message, which will be scrolled if it doesn't fit.
+When running in dot-matrix mode and if no "led" subnode is found, the
+driver falls back to the traditional backlight mode, to preserve
+backwards compatibility.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
-The 7-segment support is based on schematics, and untested on actual
-hardware.
-
 v3:
-  - Pass "dev" instead of "client" to ht16k33_seg_probe(),
-  - Remove unneeded inclusion of <linux/leds.h> and <linux/of_device.h>,
+  - Remove unneeded C++ comment,
+  - Use "err" instead of "error" to be consistent with existing driver
+    naming style,
+  - Make the creation of the LED device dependent on the presence of the
+    "led" subnode in DT, so it can be used in dot-matrix mode too.
+  - Use led_init_data() and devm_led_classdev_register_ext() to retrieve
+    all LED properties from DT, instead of manual LED name construction
+    based on just the "color" property,
 
 v2:
-  - Move "select LINEDISP" to this patch,
-  - Set "err = -EINVAL" in switch() case that cannot happen.
+  - Use "auxdisplay" instead of DRIVER_NAME in LED name.
 ---
- drivers/auxdisplay/Kconfig   |   1 +
- drivers/auxdisplay/ht16k33.c | 196 +++++++++++++++++++++++++++++++++--
- 2 files changed, 190 insertions(+), 7 deletions(-)
+ drivers/auxdisplay/ht16k33.c | 124 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 107 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
-index b41fdc5f7bf72a1b..42fc7b155de09dbc 100644
---- a/drivers/auxdisplay/Kconfig
-+++ b/drivers/auxdisplay/Kconfig
-@@ -176,6 +176,7 @@ config HT16K33
- 	select FB_SYS_IMAGEBLIT
- 	select INPUT_MATRIXKMAP
- 	select FB_BACKLIGHT
-+	select LINEDISP
- 	help
- 	  Say yes here to add support for Holtek HT16K33, RAM mapping 16*8
- 	  LED controller driver with keyscan.
 diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-index 27ac167dae74bd82..3b555e119e326cec 100644
+index 3b555e119e326cec..8c9a4a554a680ff2 100644
 --- a/drivers/auxdisplay/ht16k33.c
 +++ b/drivers/auxdisplay/ht16k33.c
-@@ -5,6 +5,7 @@
-  * Author: Robin van der Gracht <robin@protonic.nl>
-  *
-  * Copyright: (C) 2016 Protonic Holland.
-+ * Copyright (C) 2021 Glider bv
-  */
- 
- #include <linux/kernel.h>
-@@ -20,6 +21,13 @@
+@@ -18,6 +18,7 @@
+ #include <linux/backlight.h>
+ #include <linux/input.h>
+ #include <linux/input/matrix_keypad.h>
++#include <linux/leds.h>
  #include <linux/workqueue.h>
  #include <linux/mm.h>
  
-+#include <linux/map_to_7segment.h>
-+#include <linux/map_to_14segment.h>
-+
-+#include <asm/unaligned.h>
-+
-+#include "line-display.h"
-+
- /* Registers */
- #define REG_SYSTEM_SETUP		0x20
- #define REG_SYSTEM_SETUP_OSC_ON		BIT(0)
-@@ -47,6 +55,12 @@
- #define BYTES_PER_ROW		(HT16K33_MATRIX_LED_MAX_ROWS / 8)
- #define HT16K33_FB_SIZE		(HT16K33_MATRIX_LED_MAX_COLS * BYTES_PER_ROW)
+@@ -34,6 +35,10 @@
  
-+enum display_type {
-+	DISP_MATRIX = 0,
-+	DISP_QUAD_7SEG,
-+	DISP_QUAD_14SEG,
-+};
-+
- struct ht16k33_keypad {
- 	struct i2c_client *client;
- 	struct input_dev *dev;
-@@ -67,11 +81,25 @@ struct ht16k33_fbdev {
- 	uint8_t *cache;
- };
+ #define REG_DISPLAY_SETUP		0x80
+ #define REG_DISPLAY_SETUP_ON		BIT(0)
++#define REG_DISPLAY_SETUP_BLINK_OFF	(0 << 1)
++#define REG_DISPLAY_SETUP_BLINK_2HZ	(1 << 1)
++#define REG_DISPLAY_SETUP_BLINK_1HZ	(2 << 1)
++#define REG_DISPLAY_SETUP_BLINK_0HZ5	(3 << 1)
  
-+struct ht16k33_seg {
-+	struct linedisp linedisp;
-+	union {
-+		struct seg7_conversion_map seg7;
-+		struct seg14_conversion_map seg14;
-+	} map;
-+	unsigned int map_size;
-+	char curr[4];
-+};
-+
+ #define REG_ROWINT_SET			0xA0
+ #define REG_ROWINT_SET_INT_EN		BIT(0)
+@@ -94,12 +99,14 @@ struct ht16k33_seg {
  struct ht16k33_priv {
  	struct i2c_client *client;
  	struct delayed_work work;
++	struct led_classdev led;
  	struct ht16k33_keypad keypad;
--	struct ht16k33_fbdev fbdev;
-+	union {
-+		struct ht16k33_fbdev fbdev;
-+		struct ht16k33_seg seg;
-+	};
-+	enum display_type type;
+ 	union {
+ 		struct ht16k33_fbdev fbdev;
+ 		struct ht16k33_seg seg;
+ 	};
+ 	enum display_type type;
++	uint8_t blink;
  };
  
  static const struct fb_fix_screeninfo ht16k33_fb_fix = {
-@@ -101,6 +129,33 @@ static const struct fb_var_screeninfo ht16k33_fb_var = {
- 	.vmode = FB_VMODE_NONINTERLACED,
- };
+@@ -158,7 +165,7 @@ static DEVICE_ATTR(map_seg14, 0644, map_seg_show, map_seg_store);
  
-+static const SEG7_DEFAULT_MAP(initial_map_seg7);
-+static const SEG14_DEFAULT_MAP(initial_map_seg14);
-+
-+static ssize_t map_seg_show(struct device *dev, struct device_attribute *attr,
-+			    char *buf)
-+{
-+	struct ht16k33_priv *priv = dev_get_drvdata(dev);
-+
-+	memcpy(buf, &priv->seg.map, priv->seg.map_size);
-+	return priv->seg.map_size;
-+}
-+
-+static ssize_t map_seg_store(struct device *dev, struct device_attribute *attr,
-+			     const char *buf, size_t cnt)
-+{
-+	struct ht16k33_priv *priv = dev_get_drvdata(dev);
-+
-+	if (cnt != priv->seg.map_size)
-+		return -EINVAL;
-+
-+	memcpy(&priv->seg.map, buf, cnt);
-+	return cnt;
-+}
-+
-+static DEVICE_ATTR(map_seg7, 0644, map_seg_show, map_seg_store);
-+static DEVICE_ATTR(map_seg14, 0644, map_seg_show, map_seg_store);
-+
  static int ht16k33_display_on(struct ht16k33_priv *priv)
  {
- 	uint8_t data = REG_DISPLAY_SETUP | REG_DISPLAY_SETUP_ON;
-@@ -325,6 +380,51 @@ static void ht16k33_keypad_stop(struct input_dev *dev)
- 	disable_irq(keypad->client->irq);
+-	uint8_t data = REG_DISPLAY_SETUP | REG_DISPLAY_SETUP_ON;
++	uint8_t data = REG_DISPLAY_SETUP | REG_DISPLAY_SETUP_ON | priv->blink;
+ 
+ 	return i2c_smbus_write_byte(priv->client, data);
+ }
+@@ -173,8 +180,10 @@ static int ht16k33_brightness_set(struct ht16k33_priv *priv,
+ {
+ 	int err;
+ 
+-	if (brightness == 0)
++	if (brightness == 0) {
++		priv->blink = REG_DISPLAY_SETUP_BLINK_OFF;
+ 		return ht16k33_display_off(priv);
++	}
+ 
+ 	err = ht16k33_display_on(priv);
+ 	if (err)
+@@ -184,6 +193,49 @@ static int ht16k33_brightness_set(struct ht16k33_priv *priv,
+ 				    REG_BRIGHTNESS | (brightness - 1));
  }
  
-+static void ht16k33_linedisp_update(struct linedisp *linedisp)
++static int ht16k33_brightness_set_blocking(struct led_classdev *led_cdev,
++					   enum led_brightness brightness)
 +{
-+	struct ht16k33_priv *priv = container_of(linedisp, struct ht16k33_priv,
-+						 seg.linedisp);
++	struct ht16k33_priv *priv = container_of(led_cdev, struct ht16k33_priv,
++						 led);
 +
-+	schedule_delayed_work(&priv->work, 0);
++	return ht16k33_brightness_set(priv, brightness);
 +}
 +
-+static void ht16k33_seg7_update(struct work_struct *work)
++static int ht16k33_blink_set(struct led_classdev *led_cdev,
++			     unsigned long *delay_on, unsigned long *delay_off)
 +{
-+	struct ht16k33_priv *priv = container_of(work, struct ht16k33_priv,
-+						 work.work);
-+	struct ht16k33_seg *seg = &priv->seg;
-+	char *s = seg->curr;
-+	uint8_t buf[9];
++	struct ht16k33_priv *priv = container_of(led_cdev, struct ht16k33_priv,
++						 led);
++	unsigned int delay;
++	uint8_t blink;
++	int err;
 +
-+	buf[0] = map_to_seg7(&seg->map.seg7, *s++);
-+	buf[1] = 0;
-+	buf[2] = map_to_seg7(&seg->map.seg7, *s++);
-+	buf[3] = 0;
-+	buf[4] = 0;
-+	buf[5] = 0;
-+	buf[6] = map_to_seg7(&seg->map.seg7, *s++);
-+	buf[7] = 0;
-+	buf[8] = map_to_seg7(&seg->map.seg7, *s++);
++	if (!*delay_on && !*delay_off) {
++		blink = REG_DISPLAY_SETUP_BLINK_1HZ;
++		delay = 1000;
++	} else if (*delay_on <= 750) {
++		blink = REG_DISPLAY_SETUP_BLINK_2HZ;
++		delay = 500;
++	} else if (*delay_on <= 1500) {
++		blink = REG_DISPLAY_SETUP_BLINK_1HZ;
++		delay = 1000;
++	} else {
++		blink = REG_DISPLAY_SETUP_BLINK_0HZ5;
++		delay = 2000;
++	}
 +
-+	i2c_smbus_write_i2c_block_data(priv->client, 0, ARRAY_SIZE(buf), buf);
++	err = i2c_smbus_write_byte(priv->client,
++				   REG_DISPLAY_SETUP | REG_DISPLAY_SETUP_ON |
++				   blink);
++	if (err)
++		return err;
++
++	priv->blink = blink;
++	*delay_on = *delay_off = delay;
++	return 0;
 +}
 +
-+static void ht16k33_seg14_update(struct work_struct *work)
+ static void ht16k33_fb_queue(struct ht16k33_priv *priv)
+ {
+ 	struct ht16k33_fbdev *fbdev = &priv->fbdev;
+@@ -425,6 +477,35 @@ static void ht16k33_seg14_update(struct work_struct *work)
+ 	i2c_smbus_write_i2c_block_data(priv->client, 0, ARRAY_SIZE(buf), buf);
+ }
+ 
++static int ht16k33_led_probe(struct device *dev, struct led_classdev *led,
++			     unsigned int brightness)
 +{
-+	struct ht16k33_priv *priv = container_of(work, struct ht16k33_priv,
-+						 work.work);
-+	struct ht16k33_seg *seg = &priv->seg;
-+	char *s = seg->curr;
-+	uint8_t buf[8];
++	struct led_init_data init_data = {};
++	struct device_node *node;
++	int err;
 +
-+	put_unaligned_le16(map_to_seg14(&seg->map.seg14, *s++), buf);
-+	put_unaligned_le16(map_to_seg14(&seg->map.seg14, *s++), buf + 2);
-+	put_unaligned_le16(map_to_seg14(&seg->map.seg14, *s++), buf + 4);
-+	put_unaligned_le16(map_to_seg14(&seg->map.seg14, *s++), buf + 6);
++	/* The LED is optional */
++	node = of_get_child_by_name(dev->of_node, "led");
++	if (!node)
++		return 0;
 +
-+	i2c_smbus_write_i2c_block_data(priv->client, 0, ARRAY_SIZE(buf), buf);
++	led->brightness_set_blocking = ht16k33_brightness_set_blocking;
++	led->blink_set = ht16k33_blink_set;
++	led->flags = LED_CORE_SUSPENDRESUME;
++	led->brightness = brightness;
++	led->max_brightness = MAX_BRIGHTNESS;
++
++	init_data.fwnode = of_fwnode_handle(node);
++	init_data.devicename = "auxdisplay";
++	init_data.devname_mandatory = true;
++
++	err = devm_led_classdev_register_ext(dev, led, &init_data);
++	if (err)
++		dev_err(dev, "Failed to register LED\n");
++
++	return err;
 +}
 +
  static int ht16k33_keypad_probe(struct i2c_client *client,
  				struct ht16k33_keypad *keypad)
  {
-@@ -469,9 +569,56 @@ static int ht16k33_fbdev_probe(struct device *dev, struct ht16k33_priv *priv,
- 	return err;
- }
- 
-+static int ht16k33_seg_probe(struct device *dev, struct ht16k33_priv *priv,
-+			     uint32_t brightness)
-+{
-+	struct ht16k33_seg *seg = &priv->seg;
-+	int err;
-+
-+	err = ht16k33_brightness_set(priv, MAX_BRIGHTNESS);
-+	if (err)
-+		return err;
-+
-+	switch (priv->type) {
-+	case DISP_MATRIX:
-+		/* not handled here */
-+		err = -EINVAL;
-+		break;
-+
-+	case DISP_QUAD_7SEG:
-+		INIT_DELAYED_WORK(&priv->work, ht16k33_seg7_update);
-+		seg->map.seg7 = initial_map_seg7;
-+		seg->map_size = sizeof(seg->map.seg7);
-+		err = device_create_file(dev, &dev_attr_map_seg7);
-+		break;
-+
-+	case DISP_QUAD_14SEG:
-+		INIT_DELAYED_WORK(&priv->work, ht16k33_seg14_update);
-+		seg->map.seg14 = initial_map_seg14;
-+		seg->map_size = sizeof(seg->map.seg14);
-+		err = device_create_file(dev, &dev_attr_map_seg14);
-+		break;
-+	}
-+	if (err)
-+		return err;
-+
-+	err = linedisp_register(&seg->linedisp, dev, 4, seg->curr,
-+				ht16k33_linedisp_update);
-+	if (err)
-+		goto err_remove_map_file;
-+
-+	return 0;
-+
-+err_remove_map_file:
-+	device_remove_file(dev, &dev_attr_map_seg7);
-+	device_remove_file(dev, &dev_attr_map_seg14);
-+	return err;
-+}
-+
- static int ht16k33_probe(struct i2c_client *client)
+@@ -498,24 +579,28 @@ static int ht16k33_fbdev_probe(struct device *dev, struct ht16k33_priv *priv,
+ 			       uint32_t brightness)
  {
- 	struct device *dev = &client->dev;
-+	const struct of_device_id *id;
- 	struct ht16k33_priv *priv;
- 	uint32_t dft_brightness;
+ 	struct ht16k33_fbdev *fbdev = &priv->fbdev;
+-	struct backlight_properties bl_props;
+-	struct backlight_device *bl;
++	struct backlight_device *bl = NULL;
  	int err;
-@@ -486,6 +633,9 @@ static int ht16k33_probe(struct i2c_client *client)
- 		return -ENOMEM;
  
- 	priv->client = client;
-+	id = i2c_of_match_device(dev->driver->of_match_table, client);
-+	if (id)
-+		priv->type = (uintptr_t)id->data;
- 	i2c_set_clientdata(client, priv);
+-	/* Backlight */
+-	memset(&bl_props, 0, sizeof(struct backlight_properties));
+-	bl_props.type = BACKLIGHT_RAW;
+-	bl_props.max_brightness = MAX_BRIGHTNESS;
++	if (!priv->led.dev) {
++		/* backwards compatibility with DT lacking an led subnode */
++		struct backlight_properties bl_props;
  
- 	err = ht16k33_initialize(priv);
-@@ -510,8 +660,19 @@ static int ht16k33_probe(struct i2c_client *client)
- 			return err;
+-	bl = devm_backlight_device_register(dev, DRIVER_NAME"-bl", dev, priv,
+-					    &ht16k33_bl_ops, &bl_props);
+-	if (IS_ERR(bl)) {
+-		dev_err(dev, "failed to register backlight\n");
+-		return PTR_ERR(bl);
+-	}
++		memset(&bl_props, 0, sizeof(struct backlight_properties));
++		bl_props.type = BACKLIGHT_RAW;
++		bl_props.max_brightness = MAX_BRIGHTNESS;
++
++		bl = devm_backlight_device_register(dev, DRIVER_NAME"-bl", dev,
++						    priv, &ht16k33_bl_ops,
++						    &bl_props);
++		if (IS_ERR(bl)) {
++			dev_err(dev, "failed to register backlight\n");
++			return PTR_ERR(bl);
++		}
+ 
+-	bl->props.brightness = brightness;
+-	ht16k33_bl_update_status(bl);
++		bl->props.brightness = brightness;
++		ht16k33_bl_update_status(bl);
++	}
+ 
+ 	/* Framebuffer (2 bytes per column) */
+ 	BUILD_BUG_ON(PAGE_SIZE < HT16K33_FB_SIZE);
+@@ -575,7 +660,7 @@ static int ht16k33_seg_probe(struct device *dev, struct ht16k33_priv *priv,
+ 	struct ht16k33_seg *seg = &priv->seg;
+ 	int err;
+ 
+-	err = ht16k33_brightness_set(priv, MAX_BRIGHTNESS);
++	err = ht16k33_brightness_set(priv, brightness);
+ 	if (err)
+ 		return err;
+ 
+@@ -653,6 +738,11 @@ static int ht16k33_probe(struct i2c_client *client)
+ 		dft_brightness = MAX_BRIGHTNESS;
  	}
  
--	/* Frame Buffer Display */
--	return ht16k33_fbdev_probe(dev, priv, dft_brightness);
-+	switch (priv->type) {
-+	case DISP_MATRIX:
-+		/* Frame Buffer Display */
-+		err = ht16k33_fbdev_probe(dev, priv, dft_brightness);
-+		break;
++	/* LED */
++	err = ht16k33_led_probe(dev, &priv->led, dft_brightness);
++	if (err)
++		return err;
 +
-+	case DISP_QUAD_7SEG:
-+	case DISP_QUAD_14SEG:
-+		/* Segment Display */
-+		err = ht16k33_seg_probe(dev, priv, dft_brightness);
-+		break;
-+	}
-+	return err;
- }
- 
- static int ht16k33_remove(struct i2c_client *client)
-@@ -520,9 +681,21 @@ static int ht16k33_remove(struct i2c_client *client)
- 	struct ht16k33_fbdev *fbdev = &priv->fbdev;
- 
- 	cancel_delayed_work_sync(&priv->work);
--	unregister_framebuffer(fbdev->info);
--	framebuffer_release(fbdev->info);
--	free_page((unsigned long) fbdev->buffer);
-+
-+	switch (priv->type) {
-+	case DISP_MATRIX:
-+		unregister_framebuffer(fbdev->info);
-+		framebuffer_release(fbdev->info);
-+		free_page((unsigned long)fbdev->buffer);
-+		break;
-+
-+	case DISP_QUAD_7SEG:
-+	case DISP_QUAD_14SEG:
-+		linedisp_unregister(&priv->seg.linedisp);
-+		device_remove_file(&client->dev, &dev_attr_map_seg7);
-+		device_remove_file(&client->dev, &dev_attr_map_seg14);
-+		break;
-+	}
- 
- 	return 0;
- }
-@@ -534,7 +707,16 @@ static const struct i2c_device_id ht16k33_i2c_match[] = {
- MODULE_DEVICE_TABLE(i2c, ht16k33_i2c_match);
- 
- static const struct of_device_id ht16k33_of_match[] = {
--	{ .compatible = "holtek,ht16k33", },
-+	{
-+		/* 0.56" 4-Digit 7-Segment FeatherWing Display (Red) */
-+		.compatible = "adafruit,3108", .data = (void *)DISP_QUAD_7SEG,
-+	}, {
-+		/* 0.54" Quad Alphanumeric FeatherWing Display (Red) */
-+		.compatible = "adafruit,3130", .data = (void *)DISP_QUAD_14SEG,
-+	}, {
-+		/* Generic, assumed Dot-Matrix Display */
-+		.compatible = "holtek,ht16k33", .data = (void *)DISP_MATRIX,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ht16k33_of_match);
+ 	/* Keypad */
+ 	if (client->irq > 0) {
+ 		err = ht16k33_keypad_probe(client, &priv->keypad);
 -- 
 2.25.1
 
