@@ -5,34 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A9DC11F76
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E62FAC11F67
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3CC52613D3
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8E25613D9
+	for <linux-leds@archiver.kernel.org>; Wed, 14 Jul 2021 15:11:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239747AbhGNPOr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 14 Jul 2021 11:14:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42424 "EHLO
+        id S239755AbhGNPOp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 14 Jul 2021 11:14:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239743AbhGNPOk (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Jul 2021 11:14:40 -0400
+        with ESMTP id S239773AbhGNPOm (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Jul 2021 11:14:42 -0400
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D23C2C0617AA
-        for <linux-leds@vger.kernel.org>; Wed, 14 Jul 2021 08:11:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD32C0613AC
+        for <linux-leds@vger.kernel.org>; Wed, 14 Jul 2021 08:11:43 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:bcf3:b2b1:dff6:480b])
         by xavier.telenet-ops.be with bizsmtp
-        id V3Be2500P4sai0K013Be4y; Wed, 14 Jul 2021 17:11:40 +0200
+        id V3Be2500S4sai0K013Be50; Wed, 14 Jul 2021 17:11:41 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3gXy-001ARG-Ci; Wed, 14 Jul 2021 17:11:38 +0200
+        id 1m3gXy-001ARb-Kq; Wed, 14 Jul 2021 17:11:38 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3gXx-00Acfa-8t; Wed, 14 Jul 2021 17:11:37 +0200
+        id 1m3gXx-00AchF-Sn; Wed, 14 Jul 2021 17:11:37 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Robin van der Gracht <robin@protonic.nl>,
         Rob Herring <robh+dt@kernel.org>,
@@ -43,9 +43,9 @@ To:     Robin van der Gracht <robin@protonic.nl>,
 Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3 05/19] auxdisplay: img-ascii-lcd: Convert device attribute to sysfs_emit()
-Date:   Wed, 14 Jul 2021 17:11:16 +0200
-Message-Id: <20210714151130.2531831-6-geert@linux-m68k.org>
+Subject: [PATCH v3 18/19] dt-bindings: auxdisplay: ht16k33: Document LED subnode
+Date:   Wed, 14 Jul 2021 17:11:29 +0200
+Message-Id: <20210714151130.2531831-19-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210714151130.2531831-1-geert@linux-m68k.org>
 References: <20210714151130.2531831-1-geert@linux-m68k.org>
@@ -55,33 +55,56 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Convert the "message" device attribute from sprintf() to sysfs_emit(),
-as the latter is aware of the PAGE_SIZE buffer.
+Extend the Holtek HT16K33 LED controller Device Tree bindings with an
+LED subnode, conforming to the standard LED bindings.
+
+This allows the user to exert more control, like specifying LED color,
+function, and/or trigger, to extend LED functionality beyond a simple
+display backlight.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
 v3:
-  - No changes,
-
-v2:
-  - No changes.
+  - New.
 ---
- drivers/auxdisplay/img-ascii-lcd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/auxdisplay/holtek,ht16k33.yaml           | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
-index 2b6e41ec57544faa..2b5640b638900a90 100644
---- a/drivers/auxdisplay/img-ascii-lcd.c
-+++ b/drivers/auxdisplay/img-ascii-lcd.c
-@@ -326,7 +326,7 @@ static ssize_t message_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct img_ascii_lcd_ctx *ctx = dev_get_drvdata(dev);
+diff --git a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
+index 2a58f883a08cb199..c750c1a915bdbecb 100644
+--- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
++++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
+@@ -50,6 +50,11 @@ properties:
+     default: 16
+     description: Initial brightness level
  
--	return sprintf(buf, "%s\n", ctx->message);
-+	return sysfs_emit(buf, "%s\n", ctx->message);
- }
- 
- /**
++  led:
++    type: object
++    $ref: /schemas/leds/common.yaml#
++    unevaluatedProperties: false
++
+ required:
+   - compatible
+   - reg
+@@ -68,6 +73,7 @@ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/irq.h>
+     #include <dt-bindings/input/input.h>
++    #include <dt-bindings/leds/common.h>
+     i2c1 {
+             #address-cells = <1>;
+             #size-cells = <0>;
+@@ -89,5 +95,10 @@ examples:
+                                    <MATRIX_KEY(4, 1, KEY_F9)>,
+                                    <MATRIX_KEY(5, 1, KEY_F3)>,
+                                    <MATRIX_KEY(6, 1, KEY_F1)>;
++
++                    led {
++                            color = <LED_COLOR_ID_RED>;
++                            function = LED_FUNCTION_BACKLIGHT;
++                    };
+             };
+       };
 -- 
 2.25.1
 
