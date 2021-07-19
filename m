@@ -2,200 +2,108 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32660C6377A
-	for <linux-leds@archiver.kernel.org>; Fri, 16 Jul 2021 22:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33282C636CB
+	for <linux-leds@archiver.kernel.org>; Mon, 19 Jul 2021 07:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE13613F1
-	for <linux-leds@archiver.kernel.org>; Fri, 16 Jul 2021 22:03:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19A81611AC
+	for <linux-leds@archiver.kernel.org>; Mon, 19 Jul 2021 07:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237438AbhGPWGq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 16 Jul 2021 18:06:46 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:14526 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S236106AbhGPWGh (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 16 Jul 2021 18:06:37 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16GLWsmU178579;
-        Fri, 16 Jul 2021 18:03:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=jX3q+vq0d+05week6S3F0/wSQMjJlxTuY2TLUEtG38c=;
- b=bjGqUjOxvmPI1aiDpMZKAD0/9tTdH8JJzMhmIEuO2uEtzQDIMEbkdeMw1tqBBzi7Wk+q
- sHRf5j54RfJvBZO38LSDTz4Y4jBHDNLpik2/+RXixuW/EGhldNS1hbi2sME1BtmKPqHI
- RdNko1u2oojfBlcvmBSXrNxSP5yW7mJjyHj8XOhyELdS+N5SnUlb97cgSRrYKD+l2Fwm
- yRbGoT/nYNJx5yqiXdZdyWSarb0a2CN0AnkDvOOLeKd1G2BUZvZ7ToDGaalLsO4UaXIJ
- hlD8uk++gtx8EjPTJ+ChEPnWHwdu8XlfoH50dRTRwHSw1c9Vct0y1tJVRqeKZSZWAm2Y ww== 
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 39ugakb7p2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Jul 2021 18:03:38 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16GLwWK3016408;
-        Fri, 16 Jul 2021 22:03:38 GMT
-Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma02wdc.us.ibm.com with ESMTP id 39q36efwbq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Jul 2021 22:03:38 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16GM3bbJ22151498
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Jul 2021 22:03:37 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F01D5C6061;
-        Fri, 16 Jul 2021 22:03:36 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ACE4EC6055;
-        Fri, 16 Jul 2021 22:03:36 +0000 (GMT)
-Received: from v0005c16.aus.stglabs.ibm.com (unknown [9.211.92.96])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 16 Jul 2021 22:03:36 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-leds@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, pavel@ucw.cz,
-        Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH v2 5/7] leds: pca955x: Implement the default-state property
-Date:   Fri, 16 Jul 2021 17:03:29 -0500
-Message-Id: <20210716220331.49303-6-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210716220331.49303-1-eajames@linux.ibm.com>
-References: <20210716220331.49303-1-eajames@linux.ibm.com>
+        id S234648AbhGSHT7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 19 Jul 2021 03:19:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45774 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234617AbhGSHT7 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 19 Jul 2021 03:19:59 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F18B6C061766
+        for <linux-leds@vger.kernel.org>; Mon, 19 Jul 2021 00:16:59 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:80b1:eb38:fde3:179e])
+        by andre.telenet-ops.be with bizsmtp
+        id WvGt250040UDlMe01vGtJ9; Mon, 19 Jul 2021 09:16:55 +0200
+Received: from geert (helo=localhost)
+        by ramsan.of.borg with local-esmtp (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1m5NWG-000kQw-VC; Mon, 19 Jul 2021 09:16:52 +0200
+Date:   Mon, 19 Jul 2021 09:16:52 +0200 (CEST)
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+X-X-Sender: geert@ramsan.of.borg
+To:     Amy Parker <apark0006@student.cerritos.edu>
+cc:     pavel@ucw.cz, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] swap led_brightness from enum to typedef
+In-Reply-To: <9b5902665dcc4c0fca7546987303e348d8657f59.1626383424.git.apark0006@student.cerritos.edu>
+Message-ID: <alpine.DEB.2.22.394.2107190912320.178229@ramsan.of.borg>
+References: <cover.1626383424.git.apark0006@student.cerritos.edu> <9b5902665dcc4c0fca7546987303e348d8657f59.1626383424.git.apark0006@student.cerritos.edu>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pwpIOSERPG4jddETZMHxpj9KkKngmRx4
-X-Proofpoint-ORIG-GUID: pwpIOSERPG4jddETZMHxpj9KkKngmRx4
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-16_10:2021-07-16,2021-07-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- priorityscore=1501 malwarescore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
- adultscore=0 lowpriorityscore=0 suspectscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2107160136
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-In order to retain the LED state after a system reboot, check the
-documented default-state device tree property during initialization.
-Modify the behavior of the probe according to the property.
+ 	Hi Amy,
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- drivers/leds/leds-pca955x.c | 54 +++++++++++++++++++++++++++++++------
- 1 file changed, 46 insertions(+), 8 deletions(-)
+On Thu, 15 Jul 2021, Amy Parker wrote:
+> This commit changes how led_brightness, declared in header file
+> include/linux/leds.h, works throughout the kernel, and updates other
+> files in accordance.
+>
+> The TODO located at drivers/leds/TODO requests:
+>
+> * Get rid of led_brightness
+>
+> It is really an integer, as maximum is configurable. Get rid of it, or
+> make it into typedef or something.
+>
+> This patch changes the declaration of led_brightness from an enum to a
+> typedef. In order to hold the currently existing enum values, macro
+> definitions are provided. Files which use led_brightness are updated to
+> conform to the new types.
+>
+> Signed-off-by: Amy Parker <apark0006@student.cerritos.edu>
 
-diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-index e47ba7c3b7c7..fa1d77d86ef6 100644
---- a/drivers/leds/leds-pca955x.c
-+++ b/drivers/leds/leds-pca955x.c
-@@ -129,6 +129,7 @@ struct pca955x_led {
- 	int			led_num;	/* 0 .. 15 potentially */
- 	char			name[32];
- 	u32			type;
-+	int			default_state;
- 	const char		*default_trigger;
- };
- 
-@@ -439,6 +440,7 @@ pca955x_get_pdata(struct i2c_client *client, struct pca955x_chipdef *chip)
- 
- 	device_for_each_child_node(&client->dev, child) {
- 		const char *name;
-+		const char *state;
- 		u32 reg;
- 		int res;
- 
-@@ -457,6 +459,18 @@ pca955x_get_pdata(struct i2c_client *client, struct pca955x_chipdef *chip)
- 		fwnode_property_read_u32(child, "type", &led->type);
- 		fwnode_property_read_string(child, "linux,default-trigger",
- 					    &led->default_trigger);
-+
-+		if (!fwnode_property_read_string(child, "default-state",
-+						 &state)) {
-+			if (!strcmp(state, "keep"))
-+				led->default_state = LEDS_GPIO_DEFSTATE_KEEP;
-+			else if (!strcmp(state, "on"))
-+				led->default_state = LEDS_GPIO_DEFSTATE_ON;
-+			else
-+				led->default_state = LEDS_GPIO_DEFSTATE_OFF;
-+		} else {
-+			led->default_state = LEDS_GPIO_DEFSTATE_OFF;
-+		}
- 	}
- 
- 	pdata->num_leds = chip->bits;
-@@ -485,6 +499,7 @@ static int pca955x_probe(struct i2c_client *client,
- 	int i, err;
- 	struct pca955x_platform_data *pdata;
- 	int ngpios = 0;
-+	bool keep_pwm = false;
- 
- 	chip = &pca955x_chipdefs[id->driver_data];
- 	adapter = client->adapter;
-@@ -565,14 +580,35 @@ static int pca955x_probe(struct i2c_client *client,
- 			led->brightness_set_blocking = pca955x_led_set;
- 			led->brightness_get = pca955x_led_get;
- 
-+			if (pdata->leds[i].default_state ==
-+			    LEDS_GPIO_DEFSTATE_OFF) {
-+				err = pca955x_led_set(led, LED_OFF);
-+				if (err)
-+					return err;
-+			} else if (pdata->leds[i].default_state ==
-+				   LEDS_GPIO_DEFSTATE_ON) {
-+				err = pca955x_led_set(led, LED_FULL);
-+				if (err)
-+					return err;
-+			}
-+
- 			err = devm_led_classdev_register(&client->dev, led);
- 			if (err)
- 				return err;
- 
--			/* Turn off LED */
--			err = pca955x_led_set(led, LED_OFF);
--			if (err)
--				return err;
-+			/*
-+			 * For default-state == "keep", let the core update the
-+			 * brightness from the hardware, then check the
-+			 * brightness to see if it's using PWM1. If so, PWM1
-+			 * should not be written below.
-+			 */
-+			if (pdata->leds[i].default_state ==
-+			    LEDS_GPIO_DEFSTATE_KEEP) {
-+				if (led->brightness != LED_FULL &&
-+				    led->brightness != LED_OFF &&
-+				    led->brightness != LED_HALF)
-+					keep_pwm = true;
-+			}
- 		}
- 	}
- 
-@@ -581,10 +617,12 @@ static int pca955x_probe(struct i2c_client *client,
- 	if (err)
- 		return err;
- 
--	/* PWM1 is used for variable brightness, default to OFF */
--	err = pca955x_write_pwm(client, 1, 0);
--	if (err)
--		return err;
-+	if (!keep_pwm) {
-+		/* PWM1 is used for variable brightness, default to OFF */
-+		err = pca955x_write_pwm(client, 1, 0);
-+		if (err)
-+			return err;
-+	}
- 
- 	/* Set to fast frequency so we do not see flashing */
- 	err = pca955x_write_psc(client, 0, 0);
--- 
-2.27.0
+Thanks for your patch!
 
+> 207 files changed, 437 insertions(+), 438 deletions(-)
+
+This touches a lot of files, so we better get it right.
+
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -26,12 +26,11 @@ struct device_node;
+>  */
+>
+> /* This is obsolete/useless. We now support variable maximum brightness. */
+> -enum led_brightness {
+> -	LED_OFF		= 0,
+> -	LED_ON		= 1,
+> -	LED_HALF	= 127,
+> -	LED_FULL	= 255,
+> -};
+> +typedef u8 led_brightness;
+
+In general, typedefs are frowned upon in the kernel, but there can be a
+good reason to use one.
+What if the maximum brightness is larger than 255?
+Using "unsigned int" sounds better to me, but let's wait for Pavel...
+
+> +#define LED_OFF 0
+> +#define LED_ON 1
+> +#define LED_HALF 127
+> +#define LED_FULL 255
+
+Gr{oetje,eeting}s,
+
+ 						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+ 							    -- Linus Torvalds
