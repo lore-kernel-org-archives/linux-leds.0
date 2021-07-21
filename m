@@ -2,36 +2,61 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B44C636C9
-	for <linux-leds@archiver.kernel.org>; Wed, 21 Jul 2021 14:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C61EC636C9
+	for <linux-leds@archiver.kernel.org>; Wed, 21 Jul 2021 16:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 747EB611C1
-	for <linux-leds@archiver.kernel.org>; Wed, 21 Jul 2021 14:35:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 158C461245
+	for <linux-leds@archiver.kernel.org>; Wed, 21 Jul 2021 16:03:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238499AbhGUNzO (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 21 Jul 2021 09:55:14 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:38316 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232160AbhGUNzN (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Wed, 21 Jul 2021 09:55:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=ajdrKYl+mdvVy6NRBRpq4GHIFDRVTvgDHU6NF9M0u9k=; b=r/KZlOIRI2I9emSi07nWzaiHGb
-        NmppCG/LWqWnUp3Ej5za69iuMnTNM2TREx+hcVhaAdYIQYHo86W8HDzo/oJuBxec4XbBrl4D+jo6n
-        rCX9vrPAr8gyMRkgOJyMzs17OsGJdRazsZzJqijiPA6aFqZlXin0HDKlEK2rDoaMn3qk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1m6DJn-00ECyH-GB; Wed, 21 Jul 2021 16:35:27 +0200
-Date:   Wed, 21 Jul 2021 16:35:27 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
+        id S229854AbhGUPWc (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 21 Jul 2021 11:22:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49544 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229463AbhGUPWb (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Jul 2021 11:22:31 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38684C061757;
+        Wed, 21 Jul 2021 09:03:07 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id w13so1635678wmc.3;
+        Wed, 21 Jul 2021 09:03:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BFihmPhDKn1OhO3mdovxiKJBe1gvrjecydHMmuTPY9g=;
+        b=kwZtja13WI2/q4mfIvW5354h8ruJssSuAAkwaZVJoXVvABDwlFcqV2MOubIYc02FHc
+         lQ8VHn4Gc4DaiOSmpU3OWG2jgdPeaSJ2jWTsjUa89eI3vRitLNfU9wUUUUje3CWExULl
+         ZvuK7ne48qMjDS3d4dfGCqKoeTzfSQ1psjlQXNZj4wOZmKJ64CfsHb5CYYIT6GQfU+8G
+         ikoO3yNl+a+ymUCUwGvBjNch0/aLwzo68cOCb6TyaBiDl0SrC0whslDPS8CbEPyLrxfQ
+         Ic2ISDgdPZPjZRK/KEAZPLKSPKzxFsMnj+kNgGBjSPL00NHUVHM3BAOdR8zVtEJUBnZt
+         b2Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BFihmPhDKn1OhO3mdovxiKJBe1gvrjecydHMmuTPY9g=;
+        b=eckybjKL24z7mvnW4nZpRxmuUyQYIOo28gi+/Z2aG2PQIH23QLzF/h5/87p3GXOpb8
+         Gx3aajIEuKnk40wBxgKgi0KbsmoWvjP7/fmxP0xJ5EunJ0U2nBvLBGlMm4rtshuwFqMs
+         NUBFGfPhcqjeNs2XrbNQmc4w3WnEegAOPZYTT5fM2gw5Tx3mG3aLnZBPv7MFsAdr/3Xr
+         SNWgDrVpIR8iQS3dzikUziFiI0iFfqRRmEnL/pjxqKCZXjkfuAPocgf7XaXESuT95klw
+         vNjRvtkw1xCZwqHThYtMifAmpRnQEEOd3vgXXRaKGkuQrJr301e/thtLPQeNNiHTeBx2
+         ZS3A==
+X-Gm-Message-State: AOAM532QuPhM1E4eLy/85zBf5G+GXZl4UDhEYcxMHBf3zwokdpsloEoH
+        fskZ3qObBlRT5qHscfAkm9YC6YV1sf3dcA==
+X-Google-Smtp-Source: ABdhPJzTPKwkPCR5cofqigN5E9PkljO644M51V1sUYdA+G2BVYFnQ1pn7IjR0rsVZH0TI2sCtRESDw==
+X-Received: by 2002:a1c:7e53:: with SMTP id z80mr1829898wmc.153.1626883385552;
+        Wed, 21 Jul 2021 09:03:05 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8f3f:3d00:b167:4d03:da2:9d58? (p200300ea8f3f3d00b1674d030da29d58.dip0.t-ipconnect.de. [2003:ea:8f3f:3d00:b167:4d03:da2:9d58])
+        by smtp.googlemail.com with ESMTPSA id q72sm20352272wme.14.2021.07.21.09.03.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Jul 2021 09:03:04 -0700 (PDT)
+To:     Andrew Lunn <andrew@lunn.ch>
 Cc:     Pavel Machek <pavel@ucw.cz>,
         Tony Nguyen <anthony.l.nguyen@intel.com>, davem@davemloft.net,
         kuba@kernel.org, Kurt Kanzenbach <kurt@linutronix.de>,
@@ -40,44 +65,61 @@ Cc:     Pavel Machek <pavel@ucw.cz>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Dvora Fuxbrumer <dvorax.fuxbrumer@linux.intel.com>,
         "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-Subject: Re: [PATCH net-next 5/5] igc: Export LEDs
-Message-ID: <YPgwr2MB5gQVgDff@lunn.ch>
 References: <20210716212427.821834-1-anthony.l.nguyen@intel.com>
  <20210716212427.821834-6-anthony.l.nguyen@intel.com>
- <f705bcd6-c55c-0b07-612f-38348d85bbee@gmail.com>
- <YPTKB0HGEtsydf9/@lunn.ch>
- <88d23db8-d2d2-5816-6ba1-3bd80738c398@gmail.com>
- <YPbu8xOFDRZWMTBe@lunn.ch>
- <3b7ad100-643e-c173-0d43-52e65d41c8c3@gmail.com>
+ <f705bcd6-c55c-0b07-612f-38348d85bbee@gmail.com> <YPTKB0HGEtsydf9/@lunn.ch>
+ <88d23db8-d2d2-5816-6ba1-3bd80738c398@gmail.com> <YPbu8xOFDRZWMTBe@lunn.ch>
+ <3b7ad100-643e-c173-0d43-52e65d41c8c3@gmail.com> <YPgwr2MB5gQVgDff@lunn.ch>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH net-next 5/5] igc: Export LEDs
+Message-ID: <0bf24356-0090-a2d7-cd77-40cf04e05097@gmail.com>
+Date:   Wed, 21 Jul 2021 18:02:57 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b7ad100-643e-c173-0d43-52e65d41c8c3@gmail.com>
+In-Reply-To: <YPgwr2MB5gQVgDff@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-> Thanks for the hint, Andrew. If I make &netdev->dev the parent,
-> then I get:
+On 21.07.2021 16:35, Andrew Lunn wrote:
+>> Thanks for the hint, Andrew. If I make &netdev->dev the parent,
+>> then I get:
+>>
+>> ll /sys/class/leds/
+>> total 0
+>> lrwxrwxrwx 1 root root 0 Jul 20 21:37 led0 -> ../../devices/pci0000:00/0000:00:1d.0/0000:03:00.0/net/enp3s0/led0
+>> lrwxrwxrwx 1 root root 0 Jul 20 21:37 led1 -> ../../devices/pci0000:00/0000:00:1d.0/0000:03:00.0/net/enp3s0/led1
+>> lrwxrwxrwx 1 root root 0 Jul 20 21:37 led2 -> ../../devices/pci0000:00/0000:00:1d.0/0000:03:00.0/net/enp3s0/led2
+>>
+>> Now the (linked) LED devices are under /sys/class/net/<ifname>, but still
+>> the primary LED devices are under /sys/class/leds and their names have
+>> to be unique therefore. The LED subsystem takes care of unique names,
+>> but in case of a second network interface the LED device name suddenly
+>> would be led0_1 (IIRC). So the names wouldn't be predictable, and I think
+>> that's not what we want.
 > 
-> ll /sys/class/leds/
-> total 0
-> lrwxrwxrwx 1 root root 0 Jul 20 21:37 led0 -> ../../devices/pci0000:00/0000:00:1d.0/0000:03:00.0/net/enp3s0/led0
-> lrwxrwxrwx 1 root root 0 Jul 20 21:37 led1 -> ../../devices/pci0000:00/0000:00:1d.0/0000:03:00.0/net/enp3s0/led1
-> lrwxrwxrwx 1 root root 0 Jul 20 21:37 led2 -> ../../devices/pci0000:00/0000:00:1d.0/0000:03:00.0/net/enp3s0/led2
+> We need input from the LED maintainers, but do we actually need the
+> symbolic links in /sys/class/leds/? For this specific use case, not
+> generally. Allow an LED to opt out of the /sys/class/leds symlink.
 > 
-> Now the (linked) LED devices are under /sys/class/net/<ifname>, but still
-> the primary LED devices are under /sys/class/leds and their names have
-> to be unique therefore. The LED subsystem takes care of unique names,
-> but in case of a second network interface the LED device name suddenly
-> would be led0_1 (IIRC). So the names wouldn't be predictable, and I think
-> that's not what we want.
 
-We need input from the LED maintainers, but do we actually need the
-symbolic links in /sys/class/leds/? For this specific use case, not
-generally. Allow an LED to opt out of the /sys/class/leds symlink.
+The links are created here:
 
-If we could drop those, we can relax the naming requirements so that
-the names is unique to a parent device, not globally unique.
+led_classdev_register_ext()
+-> device_create_with_groups()
+   -> device_add()
+      -> device_add_class_symlinks()
 
-    Andrew
+So it seems we'd need an extension to the device core to support
+class link opt-out.
+
+> If we could drop those, we can relax the naming requirements so that
+> the names is unique to a parent device, not globally unique.
+> 
+>     Andrew
+> 
+Heiner
