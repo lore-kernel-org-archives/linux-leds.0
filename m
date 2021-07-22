@@ -2,140 +2,119 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7DFC63799
-	for <linux-leds@archiver.kernel.org>; Thu, 22 Jul 2021 16:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9351C4338F
+	for <linux-leds@archiver.kernel.org>; Thu, 22 Jul 2021 20:16:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC3236101B
-	for <linux-leds@archiver.kernel.org>; Thu, 22 Jul 2021 16:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A039160EB2
+	for <linux-leds@archiver.kernel.org>; Thu, 22 Jul 2021 20:16:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229681AbhGVPl6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 22 Jul 2021 11:41:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43468 "EHLO
+        id S230079AbhGVTfs (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 22 Jul 2021 15:35:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbhGVPl5 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 22 Jul 2021 11:41:57 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 039F2C061575;
-        Thu, 22 Jul 2021 09:22:32 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id v189so5310511ybg.3;
-        Thu, 22 Jul 2021 09:22:31 -0700 (PDT)
+        with ESMTP id S229649AbhGVTfs (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 22 Jul 2021 15:35:48 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD84CC061575
+        for <linux-leds@vger.kernel.org>; Thu, 22 Jul 2021 13:16:21 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id o3-20020a05600c5103b029024c0f9e1a5fso2000003wms.4
+        for <linux-leds@vger.kernel.org>; Thu, 22 Jul 2021 13:16:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dMYf4pzancIK2Asihj8gU3R0yHPVZZfKrlyCz6qtoLE=;
-        b=FABhe+DnqSOco/bLTHXW6PTIafMY/Es/tNC1ptu60s7yibz/a6FWgDDDqlFiY4pcaz
-         B0iwXgrI6xHLYRM8u9pxwo1QjDAcuesBeWy5GB9z6AeBs/wScXaffJeEt+6A1gnkD9Ad
-         a4diqQfhbdlv6gkJy/aHR9DNYY/Ir9cRP7zqlVRAHMIv7MjVozRjeAA1h/eakoZmckS2
-         3qHUxBq24J5pzf6LEWfBrK1Dgrvws9ik5nthpiCRTJMhKosM6WXzbXERPxLDDP20fxrl
-         w60MR+xgoQo0Rf48i02iWtO9vkeLyXBAZ9a8gyJKJQbDu4wu0q/zRT2ZtIAy9AgAM5Vx
-         pFNg==
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=oZxbDaL+1Q05JtVdj9k7Hi6WhPkT39YJUB+Ls+m1W/w=;
+        b=jRiQj+2oTUvoxErSXpfYDhpv02ee9Cg5HrgJuTMBhlSL0H+gwIl7h0AmtDYgKC50IM
+         CoPssn8DoGSMU+Oi/39NLkqegJE4udp7YMAHBU1JcpAj0YQ+EykCJTcCcvyzxmRwz2Ly
+         DkVcHn2CPwfgkzWBc6fbrw3T9FaiNxGNSWVfyBAF0gOwGYp/vKzYmXTI03r6CPmVLJkY
+         aD4y6Mtu8bmg2XjQggcMifGSxiTvLO0XiJZ9WsU9h/T9n8O5VSfnlNQ1rWUURRjWeg48
+         HFQCpmWlyjyYDsfDw3GnkrUvl5Ebl5hsJNG7VHoVq5MME2ccKs4ddIYYW5UvS/Ffw6y3
+         PDNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dMYf4pzancIK2Asihj8gU3R0yHPVZZfKrlyCz6qtoLE=;
-        b=RCwjd+jGurSPS//EWZXBEeW8VTIr35knzR8AFYRumofd6Uzpoi37da2EiztRKDo9q0
-         PhPRZ6FoTGvDjXaVvMGkBS5OWdc9d05Le8qi3NXOoQJkH2U68LLecGzQd6hxJr7hX612
-         wVw2SC0TE7OdCEBa+nsbkrHUzkEtKeIMmc0S9w8jnvmoenA+8Q1sOWzaDD1pX6Mf83pR
-         06Uhj5aQ+jCZafJKrZ+D/HG6iHWeoqqbHURMvFsS0WW85ClfuNyjRd7PbbCWOihT3v+9
-         8g0o5HLHJrNpyqFrsfhbqpk2rwnVMuH29GcLL7g/LlQXpvnlqjjui3RtJuObS4wZEu6A
-         y2Hg==
-X-Gm-Message-State: AOAM533jozQJZe7ie3eAzpgI3AfXnBgXDsXy6OWiWBYluG7mF7221TE7
-        XVeZgJC5M7n6+IkIonlzcPYUvRmKX5QWBscAOBY=
-X-Google-Smtp-Source: ABdhPJxL54ILaZnBa+H9VZepcZE2c8UfQzbcK76bfjSGkgwgAI3Oy9V4ZqkyCTXNLowehv/1u7EDfmnfuGrFX8j09Qs=
-X-Received: by 2002:a25:ada1:: with SMTP id z33mr402873ybi.438.1626970951302;
- Thu, 22 Jul 2021 09:22:31 -0700 (PDT)
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=oZxbDaL+1Q05JtVdj9k7Hi6WhPkT39YJUB+Ls+m1W/w=;
+        b=VVsA20oarYsHRLtDSj6pC38ToeHHVU4RdMPKBNMcyOWVXNvjmgtnBLKfyka1dug5AP
+         +JGFw2QWgnlaV3czSln0TFU6UK648mUZShxmIPkF5Y/3GjD5MehDPbliLi58NM7+j0Tg
+         UJbbfP8CpVhzHv6+Z7Aoe/8Jno4n8/RKtVhqLY5ElRm82lCNs3e5xCp8xr2xNbl0WvHg
+         pHUXJIZztPxLsEa9SscpXXfeoG6ztVGHLHu2HhTeOd/w49ohswRWRvjcKMKfvn1VyhBX
+         53mUFwTbj3w+ZQ4TRfJfMRHp3e1mg8AxnrrgzRiYm/UXRpLhekP5tKBYbG2i6c9UyS55
+         xMHA==
+X-Gm-Message-State: AOAM531zAwU6Mxm+kc7L13Xf5IHujEu9Ae/+3RTMmLa22E8HEHQfWb2p
+        pODwHmX3LFX/Ode1OOCHxjlQciolkuY=
+X-Google-Smtp-Source: ABdhPJxSAKejoTYcn1k0LcvaQN2bKRi7vP1nwNdJ6Ti91+f2TDxwWNSB3yWM66H8WFRgOMU3vKy5Ew==
+X-Received: by 2002:a05:600c:4ec9:: with SMTP id g9mr1235674wmq.54.1626984980210;
+        Thu, 22 Jul 2021 13:16:20 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8f3f:3d00:5025:6a08:c954:44d4? (p200300ea8f3f3d0050256a08c95444d4.dip0.t-ipconnect.de. [2003:ea:8f3f:3d00:5025:6a08:c954:44d4])
+        by smtp.googlemail.com with ESMTPSA id v30sm33348674wrv.85.2021.07.22.13.16.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Jul 2021 13:16:19 -0700 (PDT)
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH] leds: triggers: Improve handling of LEDs supporting hw
+ triggers only
+Message-ID: <cfacb5b8-e7bf-c7c8-c5ab-4a8048a67db2@gmail.com>
+Date:   Thu, 22 Jul 2021 22:16:05 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-References: <20210602061253.5747-1-roderick@gaikai.com> <20210602061253.5747-3-roderick@gaikai.com>
- <nycvar.YFH.7.76.2106241525330.18969@cbobk.fhfr.pm> <CAEc3jaDN7iHDYD868LeMBSr-zrgGEu7s-_PQgh9ffzgL1BWBtg@mail.gmail.com>
-In-Reply-To: <CAEc3jaDN7iHDYD868LeMBSr-zrgGEu7s-_PQgh9ffzgL1BWBtg@mail.gmail.com>
-From:   Roderick Colenbrander <thunderbird2k@gmail.com>
-Date:   Thu, 22 Jul 2021 09:22:20 -0700
-Message-ID: <CAEc3jaDsGGvExn_-p7ybZGwWmQx9cKXgb3cB+fx07AWM+aE5+A@mail.gmail.com>
-Subject: Re: [PATCH 2/3] leds: add new LED_FUNCTION_PLAYER for player LEDs for
- game controllers.
-To:     Jiri Kosina <jikos@kernel.org>, Pavel Machek <pavel@ucw.cz>
-Cc:     Roderick Colenbrander <roderick@gaikai.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        linux-leds@vger.kernel.org,
-        =?UTF-8?B?QmFybmFiw6FzIFDFkWN6ZQ==?= <pobrn@protonmail.com>,
-        "Daniel J . Ogorchock" <djogorchock@gmail.com>,
-        Roderick Colenbrander <roderick.colenbrander@sony.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Pavel,
+A LED supporting HW triggers only (example: network PHY LED indicating
+100M link or 1000M link or ..) may have none of the software LED
+control callbacks implemented. As of today the software LED control
+triggers would be available nevertheless. This doesn't make sense.
+If a LED supports HW triggers only, offer only the matching HW triggers.
 
-Any update on this topic?
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+---
+ drivers/leds/led-triggers.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-Thanks,
-Roderick
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 4e7b78a84..48924bad2 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -27,10 +27,23 @@ LIST_HEAD(trigger_list);
+ 
+  /* Used by LED Class */
+ 
+-static inline bool
+-trigger_relevant(struct led_classdev *led_cdev, struct led_trigger *trig)
++static bool led_hw_trig_only(struct led_classdev *led_cdev)
+ {
+-	return !trig->trigger_type || trig->trigger_type == led_cdev->trigger_type;
++	return !led_cdev->brightness_set && !led_cdev->brightness_set_blocking &&
++	       !led_cdev->blink_set && !led_cdev->pattern_set;
++}
++
++static bool trigger_relevant(struct led_classdev *led_cdev,
++			     struct led_trigger *trig)
++{
++	if (trig->trigger_type == led_cdev->trigger_type)
++		return true;
++
++	/* LED supports matching hw triggers only */
++	if (led_hw_trig_only(led_cdev))
++		return false;
++
++	return !trig->trigger_type;
+ }
+ 
+ ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
+-- 
+2.32.0
 
-On Mon, Jul 5, 2021 at 9:51 PM Roderick Colenbrander
-<thunderbird2k@gmail.com> wrote:
->
-> Hi Pavel,
->
-> Any feedback on this patch, which introduces a new player led type,
-> which is common on game controllers?
->
-> Thanks,
-> Roderick Colenbrander
->
-> On Thu, Jun 24, 2021 at 6:26 AM Jiri Kosina <jikos@kernel.org> wrote:
-> >
-> > On Tue, 1 Jun 2021, Roderick Colenbrander wrote:
-> >
-> > > From: Roderick Colenbrander <roderick.colenbrander@sony.com>
-> > >
-> > > Player LEDs are commonly found on game controllers from Nintendo and Sony
-> > > to indicate a player ID across a number of LEDs. For example, "Player 2"
-> > > might be indicated as "-x--" on a device with 4 LEDs where "x" means on.
-> > >
-> > > This patch introduces a new LED_FUNCTION_PLAYER to properly indicate
-> > > player LEDs from the kernel. Until now there was no good standard, which
-> > > resulted in inconsistent behavior across xpad, hid-sony, hid-wiimote and
-> > > other drivers. Moving forward new drivers should use LED_FUNCTION_PLAYER.
-> > >
-> > > Note: management of Player IDs is left to user space, though a kernel
-> > > driver may pick a default value.
-> > >
-> > > Signed-off-by: Roderick Colenbrander <roderick.colenbrander@sony.com>
-> > > ---
-> > >  include/dt-bindings/leds/common.h | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
-> > > index 52b619d44ba2..94999c250e4d 100644
-> > > --- a/include/dt-bindings/leds/common.h
-> > > +++ b/include/dt-bindings/leds/common.h
-> > > @@ -60,6 +60,9 @@
-> > >  #define LED_FUNCTION_MICMUTE "micmute"
-> > >  #define LED_FUNCTION_MUTE "mute"
-> > >
-> > > +/* Used for player LEDs as found on game controllers from e.g. Nintendo, Sony. */
-> > > +#define LED_FUNCTION_PLAYER "player"
-> > > +
-> > >  /* Miscelleaus functions. Use functions above if you can. */
-> > >  #define LED_FUNCTION_ACTIVITY "activity"
-> > >  #define LED_FUNCTION_ALARM "alarm"
-> >
-> > Pavel, can I please get your Ack on this one, so that I can take it with
-> > the rest of the series?
-> >
-> > Thanks,
-> >
-> > --
-> > Jiri Kosina
-> > SUSE Labs
-> >
