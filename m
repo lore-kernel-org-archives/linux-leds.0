@@ -2,98 +2,93 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6624BC4338F
-	for <linux-leds@archiver.kernel.org>; Tue, 27 Jul 2021 13:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07233C4338F
+	for <linux-leds@archiver.kernel.org>; Tue, 27 Jul 2021 14:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46CE461AAB
-	for <linux-leds@archiver.kernel.org>; Tue, 27 Jul 2021 13:55:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1D6D61ADF
+	for <linux-leds@archiver.kernel.org>; Tue, 27 Jul 2021 14:05:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230500AbhG0NzQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 27 Jul 2021 09:55:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50768 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232314AbhG0NzQ (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 27 Jul 2021 09:55:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9C36161220;
-        Tue, 27 Jul 2021 13:55:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627394116;
-        bh=r9Ehp4FfQF7Ry5rGGdla1pRbvCkTzIIe34SMTERdObQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=tLxD0EQCwjABQSMiNKxgRYy9KCkP95Ydc+VCMvnRhsVI8qF+H33MDE5QobYrwUDNa
-         +jjp2s8duvSDqLOnb/DwkJ8Qr3e0ocwqm/DiH3qXK8C2o+iii/xoYa/rb21WT6B7V8
-         cZga3W+WbfvW6zoM0erRpaQjs5egu9Trag8yMhY9KdCkIt31AKMqLFiNcASxE+Opva
-         qpchHVz1mBgXGIqypUAqXNhcmqMiaNyb5oGCVE3MMGyUvBLE1JPNbuJ1rPC+ScZZ34
-         UG3JaO+U+eQpZIYh9bSXC9enOFSDou4J2GRfLXRxIIk1FUAMVi++uPEfYhtCbc1MX2
-         g8iKJ5JI6UjJA==
-Date:   Tue, 27 Jul 2021 15:55:10 +0200
-From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>, davem@davemloft.net,
-        kuba@kernel.org, Kurt Kanzenbach <kurt@linutronix.de>,
-        netdev@vger.kernel.org, sasha.neftin@intel.com,
-        vitaly.lifshits@intel.com, vinicius.gomes@intel.com,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Dvora Fuxbrumer <dvorax.fuxbrumer@linux.intel.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-Subject: Re: [PATCH net-next 5/5] igc: Export LEDs
-Message-ID: <20210727155510.256e5fcc@thinkpad>
-In-Reply-To: <YP9n+VKcRDIvypes@lunn.ch>
-References: <YPTKB0HGEtsydf9/@lunn.ch>
-        <88d23db8-d2d2-5816-6ba1-3bd80738c398@gmail.com>
-        <YPbu8xOFDRZWMTBe@lunn.ch>
-        <3b7ad100-643e-c173-0d43-52e65d41c8c3@gmail.com>
-        <20210721204543.08e79fac@thinkpad>
-        <YPh6b+dTZqQNX+Zk@lunn.ch>
-        <20210721220716.539f780e@thinkpad>
-        <4d8db4ce-0413-1f41-544d-fe665d3e104c@gmail.com>
-        <6d2697b1-f0f6-aa9f-579c-48a7abb8559d@gmail.com>
-        <20210727020619.2ba78163@thinkpad>
-        <YP9n+VKcRDIvypes@lunn.ch>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        id S236712AbhG0OFM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 27 Jul 2021 10:05:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42662 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232384AbhG0OFM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 27 Jul 2021 10:05:12 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65CD9C061764
+        for <linux-leds@vger.kernel.org>; Tue, 27 Jul 2021 07:05:11 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b0a9:7e88:5ca4:551a])
+        by albert.telenet-ops.be with bizsmtp
+        id aE57250021fSPfK06E57wc; Tue, 27 Jul 2021 16:05:09 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1m8Nhi-001PuS-Ke; Tue, 27 Jul 2021 16:05:06 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1m8Nhh-00FoCx-JY; Tue, 27 Jul 2021 16:05:05 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Robin van der Gracht <robin@protonic.nl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@ucw.cz>, Marek Behun <marek.behun@nic.cz>
+Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v4 10/19] auxdisplay: ht16k33: Use HT16K33_FB_SIZE in ht16k33_initialize()
+Date:   Tue, 27 Jul 2021 16:04:50 +0200
+Message-Id: <20210727140459.3767788-11-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210727140459.3767788-1-geert@linux-m68k.org>
+References: <20210727140459.3767788-1-geert@linux-m68k.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Andrew,
+Use the existing HT16K33_FB_SIZE definition instead of open-coding the
+same calculation using an hardcoded value.
+While at it, restore reverse Christmas tree variable declaration order.
 
-On Tue, 27 Jul 2021 03:57:13 +0200
-Andrew Lunn <andrew@lunn.ch> wrote:
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Robin van der Gracht <robin@protonic.nl>
+---
+v4:
+  - No changes,
 
-> > The last time we discussed this (Andrew, Pavel and I), we've decided
-> > that for ethernet PHY controlled LEDs we want the devicename part
-> > should be something like
-> >    phyN  or  ethphyN  or  ethernet-phyN
-> > with N a number unique for every PHY (a simple atomically increased
-> > integer for every ethernet PHY).  
-> 
-> We might want to rethink this. PHYs typically have 2 or 3 LEDs. So we
-> want a way to indicate which LED of a PHY it is. So i suspect we will
-> want something like
-> 
-> ethphyN-led0, ethphyN-led1, ethphyN-led2.
+v3:
+  - No changes,
 
-But... there is still color and function and possibly function-numerator
-to differentiate them. I was talking only about the devicename part. So
-for three LEDs you can have, for example:
-  ethphyN:green:link
-  ethphyN:yellow:activity
-Even if you don't have information about color, the default function
-(on chip reset) should be different. And even if it is not, the
-function enumerator would fix this:
-  ethphyN::link-1
-  ethphyN::link-2
+v2:
+  - Add Acked-by.
+---
+ drivers/auxdisplay/ht16k33.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Marek
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index 2b630e194570f6e5..99daf1974980b435 100644
+--- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16k33.c
+@@ -168,9 +168,9 @@ static void ht16k33_fb_update(struct work_struct *work)
+ 
+ static int ht16k33_initialize(struct ht16k33_priv *priv)
+ {
++	uint8_t data[HT16K33_FB_SIZE];
+ 	uint8_t byte;
+ 	int err;
+-	uint8_t data[HT16K33_MATRIX_LED_MAX_COLS * 2];
+ 
+ 	/* Clear RAM (8 * 16 bits) */
+ 	memset(data, 0, sizeof(data));
+-- 
+2.25.1
+
