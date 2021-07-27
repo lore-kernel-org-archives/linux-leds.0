@@ -5,34 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D16C4320A
-	for <linux-leds@archiver.kernel.org>; Tue, 27 Jul 2021 14:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4561C4338F
+	for <linux-leds@archiver.kernel.org>; Tue, 27 Jul 2021 14:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3586761A84
-	for <linux-leds@archiver.kernel.org>; Tue, 27 Jul 2021 14:06:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3CA561A84
+	for <linux-leds@archiver.kernel.org>; Tue, 27 Jul 2021 14:06:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236873AbhG0OF7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 27 Jul 2021 10:05:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42704 "EHLO
+        id S237049AbhG0OGD (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 27 Jul 2021 10:06:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236905AbhG0OFQ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 27 Jul 2021 10:05:16 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7067FC0613C1
-        for <linux-leds@vger.kernel.org>; Tue, 27 Jul 2021 07:05:12 -0700 (PDT)
+        with ESMTP id S236824AbhG0OFO (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 27 Jul 2021 10:05:14 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BB62C061385
+        for <linux-leds@vger.kernel.org>; Tue, 27 Jul 2021 07:05:11 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b0a9:7e88:5ca4:551a])
-        by albert.telenet-ops.be with bizsmtp
-        id aE57250041fSPfK06E57wd; Tue, 27 Jul 2021 16:05:10 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id aE572500K1fSPfK06E57zv; Tue, 27 Jul 2021 16:05:09 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m8Nhi-001Puk-Nl; Tue, 27 Jul 2021 16:05:06 +0200
+        id 1m8Nhi-001PuQ-ML; Tue, 27 Jul 2021 16:05:06 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m8Nhh-00FoE5-Vw; Tue, 27 Jul 2021 16:05:06 +0200
+        id 1m8Nhh-00FoCk-I0; Tue, 27 Jul 2021 16:05:05 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Robin van der Gracht <robin@protonic.nl>,
         Rob Herring <robh+dt@kernel.org>,
@@ -42,11 +42,10 @@ To:     Robin van der Gracht <robin@protonic.nl>,
         Pavel Machek <pavel@ucw.cz>, Marek Behun <marek.behun@nic.cz>
 Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 18/19] dt-bindings: auxdisplay: ht16k33: Document LED subnode
-Date:   Tue, 27 Jul 2021 16:04:58 +0200
-Message-Id: <20210727140459.3767788-19-geert@linux-m68k.org>
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v4 08/19] auxdisplay: linedisp: Add support for changing scroll rate
+Date:   Tue, 27 Jul 2021 16:04:48 +0200
+Message-Id: <20210727140459.3767788-9-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210727140459.3767788-1-geert@linux-m68k.org>
 References: <20210727140459.3767788-1-geert@linux-m68k.org>
@@ -56,60 +55,98 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Extend the Holtek HT16K33 LED controller Device Tree bindings with an
-LED subnode, conforming to the standard LED bindings.
+If the message to display is longer than the number of characters that
+the display can show, the message will be scrolled.  Currently the
+scroll rate is fixed, moving every 500 ms.
 
-This allows the user to exert more control, like specifying LED color,
-function, and/or trigger, to extend LED functionality beyond a simple
-display backlight.
+Add support for changing the scroll rate through a "scroll_step_ms"
+device attribute in sysfs.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 v4:
-  - Add Reviewed-by,
+  - No changes,
 
 v3:
-  - New.
----
- .../bindings/auxdisplay/holtek,ht16k33.yaml           | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+  - No changes,
 
-diff --git a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-index 6baf1200c9d8488e..0f1414185fefc1a9 100644
---- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-+++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-@@ -48,6 +48,11 @@ properties:
-     default: 16
-     description: Initial brightness level
+v2:
+  - No changes.
+---
+ drivers/auxdisplay/line-display.c | 37 +++++++++++++++++++++++++++++--
+ 1 file changed, 35 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/auxdisplay/line-display.c b/drivers/auxdisplay/line-display.c
+index 3f35199bc39f511f..03e7f104aa1add32 100644
+--- a/drivers/auxdisplay/line-display.c
++++ b/drivers/auxdisplay/line-display.c
+@@ -19,6 +19,8 @@
  
-+  led:
-+    type: object
-+    $ref: /schemas/leds/common.yaml#
-+    unevaluatedProperties: false
+ #include "line-display.h"
+ 
++#define DEFAULT_SCROLL_RATE	(HZ / 2)
 +
- required:
-   - compatible
-   - reg
-@@ -66,6 +71,7 @@ examples:
-   - |
-     #include <dt-bindings/interrupt-controller/irq.h>
-     #include <dt-bindings/input/input.h>
-+    #include <dt-bindings/leds/common.h>
-     i2c1 {
-             #address-cells = <1>;
-             #size-cells = <0>;
-@@ -87,5 +93,10 @@ examples:
-                                    <MATRIX_KEY(4, 1, KEY_F9)>,
-                                    <MATRIX_KEY(5, 1, KEY_F3)>,
-                                    <MATRIX_KEY(6, 1, KEY_F1)>;
+ /**
+  * linedisp_scroll() - scroll the display by a character
+  * @t: really a pointer to the private data structure
+@@ -50,7 +52,7 @@ static void linedisp_scroll(struct timer_list *t)
+ 	linedisp->scroll_pos %= linedisp->message_len;
+ 
+ 	/* rearm the timer */
+-	if (linedisp->message_len > num_chars)
++	if (linedisp->message_len > num_chars && linedisp->scroll_rate)
+ 		mod_timer(&linedisp->timer, jiffies + linedisp->scroll_rate);
+ }
+ 
+@@ -149,8 +151,39 @@ static ssize_t message_store(struct device *dev, struct device_attribute *attr,
+ 
+ static DEVICE_ATTR_RW(message);
+ 
++static ssize_t scroll_step_ms_show(struct device *dev,
++				   struct device_attribute *attr, char *buf)
++{
++	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
 +
-+                    led {
-+                            color = <LED_COLOR_ID_RED>;
-+                            function = LED_FUNCTION_BACKLIGHT;
-+                    };
-             };
-       };
++	return sysfs_emit(buf, "%u\n", jiffies_to_msecs(linedisp->scroll_rate));
++}
++
++static ssize_t scroll_step_ms_store(struct device *dev,
++				    struct device_attribute *attr,
++				    const char *buf, size_t count)
++{
++	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
++	unsigned int ms;
++
++	if (kstrtouint(buf, 10, &ms) != 0)
++		return -EINVAL;
++
++	linedisp->scroll_rate = msecs_to_jiffies(ms);
++	if (linedisp->message && linedisp->message_len > linedisp->num_chars) {
++		del_timer_sync(&linedisp->timer);
++		if (linedisp->scroll_rate)
++			linedisp_scroll(&linedisp->timer);
++	}
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(scroll_step_ms);
++
+ static struct attribute *linedisp_attrs[] = {
+ 	&dev_attr_message.attr,
++	&dev_attr_scroll_step_ms.attr,
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(linedisp);
+@@ -182,7 +215,7 @@ int linedisp_register(struct linedisp *linedisp, struct device *parent,
+ 	linedisp->update = update;
+ 	linedisp->buf = buf;
+ 	linedisp->num_chars = num_chars;
+-	linedisp->scroll_rate = HZ / 2;
++	linedisp->scroll_rate = DEFAULT_SCROLL_RATE;
+ 
+ 	device_initialize(&linedisp->dev);
+ 	dev_set_name(&linedisp->dev, "linedisp.%lu",
 -- 
 2.25.1
 
