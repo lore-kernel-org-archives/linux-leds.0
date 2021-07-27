@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7E2C4320A
-	for <linux-leds@archiver.kernel.org>; Tue, 27 Jul 2021 14:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F36EFC19F33
+	for <linux-leds@archiver.kernel.org>; Tue, 27 Jul 2021 14:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B46E61ADF
-	for <linux-leds@archiver.kernel.org>; Tue, 27 Jul 2021 14:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9D0D619E7
+	for <linux-leds@archiver.kernel.org>; Tue, 27 Jul 2021 14:05:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236775AbhG0OFN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 27 Jul 2021 10:05:13 -0400
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:45806 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232378AbhG0OFM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 27 Jul 2021 10:05:12 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4GYz866d0hzMqhJg
-        for <linux-leds@vger.kernel.org>; Tue, 27 Jul 2021 16:05:10 +0200 (CEST)
+        id S236901AbhG0OFP (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 27 Jul 2021 10:05:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42702 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236815AbhG0OFO (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 27 Jul 2021 10:05:14 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B43AC061383
+        for <linux-leds@vger.kernel.org>; Tue, 27 Jul 2021 07:05:11 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b0a9:7e88:5ca4:551a])
-        by baptiste.telenet-ops.be with bizsmtp
-        id aE582500U1fSPfK01E585z; Tue, 27 Jul 2021 16:05:10 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id aE572500T1fSPfK01E578K; Tue, 27 Jul 2021 16:05:09 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m8Nhj-001PuL-Qd; Tue, 27 Jul 2021 16:05:07 +0200
+        id 1m8Nhj-001PuP-2E; Tue, 27 Jul 2021 16:05:07 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m8Nhh-00FoCA-Dz; Tue, 27 Jul 2021 16:05:05 +0200
+        id 1m8Nhh-00FoCc-HJ; Tue, 27 Jul 2021 16:05:05 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Robin van der Gracht <robin@protonic.nl>,
         Rob Herring <robh+dt@kernel.org>,
@@ -43,9 +43,9 @@ To:     Robin van der Gracht <robin@protonic.nl>,
 Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v4 03/19] auxdisplay: img-ascii-lcd: Fix lock-up when displaying empty string
-Date:   Tue, 27 Jul 2021 16:04:43 +0200
-Message-Id: <20210727140459.3767788-4-geert@linux-m68k.org>
+Subject: [PATCH v4 07/19] auxdisplay: linedisp: Use kmemdup_nul() helper
+Date:   Tue, 27 Jul 2021 16:04:47 +0200
+Message-Id: <20210727140459.3767788-8-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210727140459.3767788-1-geert@linux-m68k.org>
 References: <20210727140459.3767788-1-geert@linux-m68k.org>
@@ -55,24 +55,11 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-While writing an empty string to a device attribute is a no-op, and thus
-does not need explicit safeguards, the user can still write a single
-newline to an attribute file:
+Use the existing kmemdup_nul() helper instead of open-coding the same
+operation.
 
-    echo > .../message
-
-If that happens, img_ascii_lcd_display() trims the newline, yielding an
-empty string, and causing an infinite loop in img_ascii_lcd_scroll().
-
-Fix this by adding a check for empty strings.  Clear the display in case
-one is encountered.
-
-Fixes: 0cad855fbd083ee5 ("auxdisplay: img-ascii-lcd: driver for simple ASCII LCD displays")
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
-Untested with img-ascii-lcd, but triggered with my initial version of
-linedisp.
-
 v4:
   - No changes,
 
@@ -82,30 +69,28 @@ v3:
 v2:
   - No changes.
 ---
- drivers/auxdisplay/img-ascii-lcd.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/auxdisplay/line-display.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
-index 1cce409ce5cacbc8..e33ce0151cdfd150 100644
---- a/drivers/auxdisplay/img-ascii-lcd.c
-+++ b/drivers/auxdisplay/img-ascii-lcd.c
-@@ -280,6 +280,16 @@ static int img_ascii_lcd_display(struct img_ascii_lcd_ctx *ctx,
- 	if (msg[count - 1] == '\n')
- 		count--;
+diff --git a/drivers/auxdisplay/line-display.c b/drivers/auxdisplay/line-display.c
+index 4b97c20ac0b381ee..3f35199bc39f511f 100644
+--- a/drivers/auxdisplay/line-display.c
++++ b/drivers/auxdisplay/line-display.c
+@@ -91,13 +91,10 @@ static int linedisp_display(struct linedisp *linedisp, const char *msg,
+ 		return 0;
+ 	}
  
-+	if (!count) {
-+		/* clear the LCD */
-+		devm_kfree(&ctx->pdev->dev, ctx->message);
-+		ctx->message = NULL;
-+		ctx->message_len = 0;
-+		memset(ctx->curr, ' ', ctx->cfg->num_chars);
-+		ctx->cfg->update(ctx);
-+		return 0;
-+	}
-+
- 	new_msg = devm_kmalloc(&ctx->pdev->dev, count + 1, GFP_KERNEL);
+-	new_msg = kmalloc(count + 1, GFP_KERNEL);
++	new_msg = kmemdup_nul(msg, count, GFP_KERNEL);
  	if (!new_msg)
  		return -ENOMEM;
+ 
+-	memcpy(new_msg, msg, count);
+-	new_msg[count] = 0;
+-
+ 	kfree(linedisp->message);
+ 
+ 	linedisp->message = new_msg;
 -- 
 2.25.1
 
