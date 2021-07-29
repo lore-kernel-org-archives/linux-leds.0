@@ -5,64 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C841CC19F33
-	for <linux-leds@archiver.kernel.org>; Thu, 29 Jul 2021 01:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE4DFC4320E
+	for <linux-leds@archiver.kernel.org>; Thu, 29 Jul 2021 01:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A85B26101C
-	for <linux-leds@archiver.kernel.org>; Thu, 29 Jul 2021 01:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99EBB6101C
+	for <linux-leds@archiver.kernel.org>; Thu, 29 Jul 2021 01:54:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233488AbhG2Byk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 28 Jul 2021 21:54:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54004 "EHLO
+        id S233442AbhG2Byq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 28 Jul 2021 21:54:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233342AbhG2Byf (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 28 Jul 2021 21:54:35 -0400
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76CD3C061757;
-        Wed, 28 Jul 2021 18:54:32 -0700 (PDT)
-Received: by mail-oi1-x236.google.com with SMTP id y18so6368257oiv.3;
-        Wed, 28 Jul 2021 18:54:32 -0700 (PDT)
+        with ESMTP id S233440AbhG2Byh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 28 Jul 2021 21:54:37 -0400
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F99BC0613C1;
+        Wed, 28 Jul 2021 18:54:35 -0700 (PDT)
+Received: by mail-oi1-x22f.google.com with SMTP id a19so6351530oiw.6;
+        Wed, 28 Jul 2021 18:54:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=IXsGqm421WCEa+uNZfI8JQ6N8WTvSJdhDMDnpsXLO40=;
-        b=sbO+GKQPOuYSoVEj0dWJThzQL+8BSjmWLzmMbnzB9QZaarb4p4F7qJUSyPP4lPWic+
-         xUEJPigJ03l7hMB2zpGHSllrSoxJKyatDiLfPd+WUfgDygXFVffOV1TZKLl5jWXwZlse
-         jrQKTbmyNEE7yqaH/LoYy6v17yks+Q/UcEAasqxVYch+QOrzxFyIj1bYLYtvlqG1TNbn
-         JcEfcQC+uKWF7pGiAkAG1ClCUHojl5dkcF4BcZvWss9eAF8TIGVjz0iybilrdHNc4EhS
-         sPmmqQOsjMs0IcuD6mJr1k2D0dG+cmNEJsOUHXc0Ud0Wdc4xVm/PO+H9zAWs7fCCHpQh
-         LuvA==
+        bh=As8Tkf4mRo7Mi47sb2gawTIsMDIBW35dWzDfuJXzf24=;
+        b=KAXxg7WDVZEiBctmG67MeAut2sjCZTRyAlgzgozM0u4dV10MjAmjS86P3FlU+oRh+d
+         ghx90pJrqPDbf7Bp8D/UAD3HFl51KaHhxydnKfpWLyaL/lMrpvgZ3tOl4MwjPhzpuU+m
+         HPQNjmomvkHC98rUTLOnoCCxeLQfa+I167ai5XSSD2UE721s6UCl8ozJgaYAwteTKkc/
+         10Ba3iV2uv7CC4zjuuYBIFTWALir0n3mP/oci/LS9L7K0k2CHxZKeMPFwp89VepBYeqQ
+         +aK0bJS6GnSwYJZbCRS02GZriHFHuWNQZ5GesGwVxHEC+cDkoT3Dy8sqWFM86au913Bh
+         oeVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=IXsGqm421WCEa+uNZfI8JQ6N8WTvSJdhDMDnpsXLO40=;
-        b=nlRO+hUsJ9uEotn+ELaD/Hza1QLjLYJrBfYtk35521jymNxq7RGSQWgnhx5i4pPm6p
-         GmxYDHyENbQPF6XEjpow7rqdamlQW9lD82SMcp7kZGWwIIWBBFttY7swWLjPfDJ4s1Rw
-         gNMxGYifxFVMyeTCbEN9iaTtOopBnofwdIefVOwhRell0Gono81Te6omBMRJaXju8EPG
-         iqVGoVzIGVzMrqKLlK2+Pj0puYMLs1M2uWpE4f4pxlqk32aZ0Rpq/zN0chAE4iakXCzJ
-         18DXNkQ/+9vxKOqj+PpPe0sRaToXF+ff4lDp5vR+Otbvduswhr+PCil0++8NdPsjpLxC
-         UMbg==
-X-Gm-Message-State: AOAM533BHOqDbqHK57QJzCl5pCA7Z9ENEWdrcbfHKX8l+n9r+P7/4Ysp
-        N681OCIb1YlaDO8Ac8Vr6WabaP0v++nSvz+q
-X-Google-Smtp-Source: ABdhPJynUEtutX2shrkIN9s2qUx8+ygnzu8SLmc3+T0FSAsIUtMwMV62UOTZ7ZfUyPe4Qa3IHsW9Yw==
-X-Received: by 2002:aca:fcc3:: with SMTP id a186mr7975388oii.105.1627523671883;
-        Wed, 28 Jul 2021 18:54:31 -0700 (PDT)
+        bh=As8Tkf4mRo7Mi47sb2gawTIsMDIBW35dWzDfuJXzf24=;
+        b=KO4NOOonAyouTT5YH1+vMsSQHPCB93ltYX3Nb0cD/IL56VbrzTmhNxMayjFrjFSLMW
+         8p07DfPQCrBqCSETQCAVDgnxCd3I6zILk6axhdS1OHp/IhrXFbtS8k7Qh/m48en7MiOW
+         1HCt8gGOIeFpAYmnqfW/wewPSxT3KZmVPJv3ar3mbTBGWLjyDSCi1zBRzb8Xq9JU+5MT
+         nMmKRvdV8tC2C8VvdB/B3Pla2pomVyhLSf6KiWQvgZdLUxB12LeW7ApvKV7XcGxB31Jm
+         XWi52H9joQVkHdhSu22h5SmE03Y9MtB6ILUgpDCr5oJRi4g83RU7k6xz1FRtSChMGS+u
+         4x3Q==
+X-Gm-Message-State: AOAM532cudXDXSAyVdc9ZZj55YT7cyia7De7T6/nLLIL5qvFJSjrX1uw
+        id92Rp5hF6H9Ve1e6/DURtZLqAUbxHFieS/S
+X-Google-Smtp-Source: ABdhPJxzLQsJ5CMubDia3i29fHRTGMkjAZX1g4DtO40aQk4OXdjunp+l7c/f+gIhfdtLP3dwYUm99g==
+X-Received: by 2002:aca:d11:: with SMTP id 17mr8341809oin.19.1627523674550;
+        Wed, 28 Jul 2021 18:54:34 -0700 (PDT)
 Received: from ian.penurio.us ([47.184.51.90])
-        by smtp.gmail.com with ESMTPSA id c11sm311424otm.37.2021.07.28.18.54.31
+        by smtp.gmail.com with ESMTPSA id c11sm311424otm.37.2021.07.28.18.54.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jul 2021 18:54:31 -0700 (PDT)
+        Wed, 28 Jul 2021 18:54:33 -0700 (PDT)
 From:   Ian Pilcher <arequipeno@gmail.com>
 To:     linux-block@vger.kernel.org, linux-leds@vger.kernel.org
 Cc:     axboe@kernel.dk, pavel@ucw.cz, linux-kernel@vger.kernel.org,
         kernelnewbies@kernelnewbies.org, Ian Pilcher <arequipeno@gmail.com>
-Subject: [RFC PATCH 5/8] block: Add block device LED trigger info to struct genhd
-Date:   Wed, 28 Jul 2021 20:53:41 -0500
-Message-Id: <20210729015344.3366750-6-arequipeno@gmail.com>
+Subject: [RFC PATCH 8/8] block: Blink device LED when request is sent to low-level driver
+Date:   Wed, 28 Jul 2021 20:53:44 -0500
+Message-Id: <20210729015344.3366750-9-arequipeno@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210729015344.3366750-1-arequipeno@gmail.com>
 References: <20210729015344.3366750-1-arequipeno@gmail.com>
@@ -72,63 +72,93 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-* Initialize trigger info when device is added.
+* Don't wait to lock the device's LED trigger mutex; just don't
+  blink the LED this time if it can't be locked right away, i.e.
+  if mutex_trylock() fails.
 
 Signed-off-by: Ian Pilcher <arequipeno@gmail.com>
 ---
- block/blk-ledtrig.h   | 7 +++++++
- block/genhd.c         | 1 +
- include/linux/genhd.h | 4 ++++
- 3 files changed, 12 insertions(+)
+ block/blk-ledtrig.c | 24 ++++++++++++++++++++++++
+ block/blk-ledtrig.h |  9 +++++++++
+ block/blk-mq.c      |  2 ++
+ 3 files changed, 35 insertions(+)
 
+diff --git a/block/blk-ledtrig.c b/block/blk-ledtrig.c
+index 2d324df45149..1b475530ce6c 100644
+--- a/block/blk-ledtrig.c
++++ b/block/blk-ledtrig.c
+@@ -544,3 +544,27 @@ ssize_t blk_ledtrig_devattr_show(struct device *const dev,
+ 
+ 	return (ssize_t)(name_len + 1);
+ }
++
++
++/*
++ *
++ *	Try to blink an LED
++ *
++ */
++
++void __blk_ledtrig_try_blink(struct gendisk *const gd)
++{
++	if (mutex_trylock(&gd->ledtrig_mutex)) {
++
++		if (gd->ledtrig != NULL) {
++
++			unsigned long delay_on = 75;
++			unsigned long delay_off = 25;
++
++			led_trigger_blink_oneshot(&gd->ledtrig->trigger,
++						  &delay_on, &delay_off, 0);
++		}
++
++		mutex_unlock(&gd->ledtrig_mutex);
++	}
++}
 diff --git a/block/blk-ledtrig.h b/block/blk-ledtrig.h
-index 894843249deb..5854b21a210c 100644
+index 5d228905edbf..146deda92a8e 100644
 --- a/block/blk-ledtrig.h
 +++ b/block/blk-ledtrig.h
-@@ -13,9 +13,16 @@
+@@ -27,10 +27,19 @@ ssize_t blk_ledtrig_devattr_show(struct device *const dev,
+ 				 struct device_attribute *const attr,
+ 				 char *const buf);
  
- void blk_ledtrig_init(void);
- 
-+static inline void blk_ledtrig_disk_init(struct gendisk *const gd)
++void __blk_ledtrig_try_blink(struct gendisk *gd);
++
++static inline void blk_ledtrig_try_blink(struct gendisk *const gd)
 +{
-+	gd->ledtrig = NULL;
-+	mutex_init(&gd->ledtrig_mutex);
++	if (gd != NULL)
++		__blk_ledtrig_try_blink(gd);
 +}
 +
  #else	// CONFIG_BLK_LED_TRIGGERS
  
  static inline void blk_ledtrig_init(void) {}
-+static inline void blk_ledtrig_disk_init(const struct gendisk *gd) {}
+ static inline void blk_ledtrig_disk_init(const struct gendisk *gd) {}
++static inline void blk_ledtrig_try_blink(const struct gendisk *gd) {}
  
- #endif	// CONFIG_BLK_LED_TRIGGERS
+ // Real function (declared in include/linux/blk-ledtrig.h) returns a bool.
+ // This is only here for del_gendisk() (in genhd.c), which doesn't check
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 2c4ac51e54eb..5593ece7b676 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -40,6 +40,7 @@
+ #include "blk-stat.h"
+ #include "blk-mq-sched.h"
+ #include "blk-rq-qos.h"
++#include "blk-ledtrig.h"
  
-diff --git a/block/genhd.c b/block/genhd.c
-index d0b1d8f743ae..420325447c5d 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -540,6 +540,7 @@ static void __device_add_disk(struct device *parent, struct gendisk *disk,
+ static DEFINE_PER_CPU(struct llist_head, blk_cpu_done);
  
- 	disk_add_events(disk);
- 	blk_integrity_add(disk);
-+	blk_ledtrig_disk_init(disk);
- }
- 
- void device_add_disk(struct device *parent, struct gendisk *disk,
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 13b34177cc85..3409334c9b4c 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -169,6 +169,10 @@ struct gendisk {
- #if IS_ENABLED(CONFIG_CDROM)
- 	struct cdrom_device_info *cdi;
- #endif
-+#ifdef CONFIG_BLK_LED_TRIGGERS
-+	struct blk_ledtrig *ledtrig;
-+	struct mutex ledtrig_mutex;
-+#endif	/* CONFIG_BLK_LED_TRIGGERS */
- 	int node_id;
- 	struct badblocks *bb;
- 	struct lockdep_map lockdep_map;
+@@ -1381,6 +1382,7 @@ bool blk_mq_dispatch_rq_list(struct blk_mq_hw_ctx *hctx, struct list_head *list,
+ 		switch (ret) {
+ 		case BLK_STS_OK:
+ 			queued++;
++			blk_ledtrig_try_blink(rq->rq_disk);
+ 			break;
+ 		case BLK_STS_RESOURCE:
+ 		case BLK_STS_DEV_RESOURCE:
 -- 
 2.31.1
 
