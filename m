@@ -2,109 +2,79 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7703EC4338F
-	for <linux-leds@archiver.kernel.org>; Thu,  5 Aug 2021 11:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3350BC4320A
+	for <linux-leds@archiver.kernel.org>; Sat,  7 Aug 2021 07:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C12960560
-	for <linux-leds@archiver.kernel.org>; Thu,  5 Aug 2021 11:26:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15DC561163
+	for <linux-leds@archiver.kernel.org>; Sat,  7 Aug 2021 07:17:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241028AbhHEL0R (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 5 Aug 2021 07:26:17 -0400
-Received: from mga03.intel.com ([134.134.136.65]:43033 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241017AbhHEL0Q (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Thu, 5 Aug 2021 07:26:16 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10066"; a="214158748"
-X-IronPort-AV: E=Sophos;i="5.84,296,1620716400"; 
-   d="scan'208";a="214158748"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2021 04:26:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.84,296,1620716400"; 
-   d="scan'208";a="458987333"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 05 Aug 2021 04:25:58 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id A0164142; Thu,  5 Aug 2021 14:26:28 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Pavel Machek <pavel@ucw.cz>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Amireddy Mallikarjuna reddy 
-        <mallikarjunax.reddy@linux.intel.com>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     kernel test robot <lkp@intel.com>
-Subject: [PATCH v1 1/1] leds: lgm-sso: Propagate error codes from callee to caller
-Date:   Thu,  5 Aug 2021 14:26:19 +0300
-Message-Id: <20210805112619.65116-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.30.2
+        id S231408AbhHGHRQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 7 Aug 2021 03:17:16 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:54436 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231405AbhHGHRP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 7 Aug 2021 03:17:15 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id D5C141C0B7C; Sat,  7 Aug 2021 09:16:57 +0200 (CEST)
+Date:   Sat, 7 Aug 2021 09:16:57 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Amireddy Mallikarjuna reddy <mallikarjunax.reddy@linux.intel.com>,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v1 1/1] leds: lgm-sso: Propagate error codes from callee
+ to caller
+Message-ID: <20210807071656.GB25211@amd>
+References: <20210805112619.65116-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="EuxKj2iCbKjpUGkD"
+Content-Disposition: inline
+In-Reply-To: <20210805112619.65116-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The one of the latest change to the driver reveals the problem that
-the error codes from callee aren't propagated to the caller of
-__sso_led_dt_parse(). Fix this accordingly.
 
-Fixes: 9999908ca1ab ("leds: lgm-sso: Put fwnode in any case during ->probe()")
-Fixes: c3987cd2bca3 ("leds: lgm: Add LED controller driver for LGM SoC")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/leds/blink/leds-lgm-sso.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+--EuxKj2iCbKjpUGkD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/leds/blink/leds-lgm-sso.c b/drivers/leds/blink/leds-lgm-sso.c
-index e47c47e421d6..fd8b7573285a 100644
---- a/drivers/leds/blink/leds-lgm-sso.c
-+++ b/drivers/leds/blink/leds-lgm-sso.c
-@@ -640,7 +640,7 @@ __sso_led_dt_parse(struct sso_led_priv *priv, struct fwnode_handle *fw_ssoled)
- 							      fwnode_child,
- 							      GPIOD_ASIS, NULL);
- 		if (IS_ERR(led->gpiod)) {
--			dev_err_probe(dev, PTR_ERR(led->gpiod), "led: get gpio fail!\n");
-+			ret = dev_err_probe(dev, PTR_ERR(led->gpiod), "led: get gpio fail!\n");
- 			goto __dt_err;
- 		}
- 
-@@ -660,8 +660,11 @@ __sso_led_dt_parse(struct sso_led_priv *priv, struct fwnode_handle *fw_ssoled)
- 			desc->panic_indicator = 1;
- 
- 		ret = fwnode_property_read_u32(fwnode_child, "reg", &prop);
--		if (ret != 0 || prop >= SSO_LED_MAX_NUM) {
-+		if (ret)
-+			goto __dt_err;
-+		if (prop >= SSO_LED_MAX_NUM) {
- 			dev_err(dev, "invalid LED pin:%u\n", prop);
-+			ret = -EINVAL;
- 			goto __dt_err;
- 		}
- 		desc->pin = prop;
-@@ -697,7 +700,8 @@ __sso_led_dt_parse(struct sso_led_priv *priv, struct fwnode_handle *fw_ssoled)
- 				desc->brightness = LED_FULL;
- 		}
- 
--		if (sso_create_led(priv, led, fwnode_child))
-+		ret = sso_create_led(priv, led, fwnode_child);
-+		if (ret)
- 			goto __dt_err;
- 	}
- 
-@@ -709,7 +713,7 @@ __sso_led_dt_parse(struct sso_led_priv *priv, struct fwnode_handle *fw_ssoled)
- 	list_for_each_entry(led, &priv->led_list, list)
- 		sso_led_shutdown(led);
- 
--	return -EINVAL;
-+	return ret;
- }
- 
- static int sso_led_dt_parse(struct sso_led_priv *priv)
--- 
-2.30.2
+Hi!
 
+> The one of the latest change to the driver reveals the problem that
+> the error codes from callee aren't propagated to the caller of
+> __sso_led_dt_parse(). Fix this accordingly.
+>=20
+> Fixes: 9999908ca1ab ("leds: lgm-sso: Put fwnode in any case during ->prob=
+e()")
+> Fixes: c3987cd2bca3 ("leds: lgm: Add LED controller driver for LGM SoC")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Thank you, applied.
+								Pavel
+							=09
+--=20
+http://www.livejournal.com/~pavelmachek
+
+--EuxKj2iCbKjpUGkD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAmEOM2gACgkQMOfwapXb+vKZFQCgnFbou3kuO9HcC7i0jYUS1BiD
+9L4AnRlYQyCHrnINiQJ/lZ/97DCJx4c6
+=BrKj
+-----END PGP SIGNATURE-----
+
+--EuxKj2iCbKjpUGkD--
