@@ -2,28 +2,39 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EFDC4338F
-	for <linux-leds@archiver.kernel.org>; Tue, 10 Aug 2021 17:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFEAC432BE
+	for <linux-leds@archiver.kernel.org>; Tue, 10 Aug 2021 18:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B550600EF
-	for <linux-leds@archiver.kernel.org>; Tue, 10 Aug 2021 17:29:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65CCA60F38
+	for <linux-leds@archiver.kernel.org>; Tue, 10 Aug 2021 18:06:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229484AbhHJR3v (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 10 Aug 2021 13:29:51 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:54662 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbhHJR3v (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 10 Aug 2021 13:29:51 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 3FB451C0B76; Tue, 10 Aug 2021 19:29:28 +0200 (CEST)
-Date:   Tue, 10 Aug 2021 19:29:27 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+        id S237257AbhHJSHK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 10 Aug 2021 14:07:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37564 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239319AbhHJSFI (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 10 Aug 2021 14:05:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5A07860C3F;
+        Tue, 10 Aug 2021 17:55:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628618167;
+        bh=hTphWofcwmhv4y/QPpL80leJAprSLTNgUO0Meevwp1o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dcYVwzswX3e/hXHRTOnSU/F+s2Bd68cqknKcsPoh8p55uMJGMcItNIHBcTHosXaSa
+         YNwlWYFIOKxdS7Zg4p/iR7/36IQmJiBSPad5oawJycY4E9tQLQgrwsIFNOPFUPgOWF
+         3OXJ35rXVoftRxPNjIEa0Jx1ziqBXxyuXrpRS4sutSGNmh6I+tnMTNbn6SQqt4NBfq
+         ojZF9lkTddGTcCG1R679M6ifkVpONX3Wgj5NMaP53/nSJP36M1UL6R2+RhEU18tAco
+         ctfmkgpOIBBtboANW2sUW6l6MbX7IsDJZ/v7ejSvkM8j8yh/IaizdZopPWCedMiYQ1
+         uh9/eYexRGDBQ==
+Date:   Tue, 10 Aug 2021 19:55:50 +0200
+From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
         Michael Walle <michael@walle.cc>, andrew@lunn.ch,
         anthony.l.nguyen@intel.com, bigeasy@linutronix.de,
         davem@davemloft.net, dvorax.fuxbrumer@linux.intel.com,
@@ -32,63 +43,34 @@ Cc:     Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
         netdev@vger.kernel.org, sasha.neftin@intel.com,
         vinicius.gomes@intel.com, vitaly.lifshits@intel.com
 Subject: Re: [PATCH net-next 5/5] igc: Export LEDs
-Message-ID: <20210810172927.GB3302@amd>
+Message-ID: <20210810195550.261189b3@thinkpad>
+In-Reply-To: <20210810172927.GB3302@amd>
 References: <YP9n+VKcRDIvypes@lunn.ch>
- <20210727081528.9816-1-michael@walle.cc>
- <20210727165605.5c8ddb68@thinkpad>
- <c56fd3dbe1037a5c2697b311f256b3d8@walle.cc>
- <20210727172828.1529c764@thinkpad>
- <8edcc387025a6212d58fe01865725734@walle.cc>
- <20210727183213.73f34141@thinkpad>
- <25d3e798-09f5-56b5-5764-c60435109dd2@gmail.com>
+        <20210727081528.9816-1-michael@walle.cc>
+        <20210727165605.5c8ddb68@thinkpad>
+        <c56fd3dbe1037a5c2697b311f256b3d8@walle.cc>
+        <20210727172828.1529c764@thinkpad>
+        <8edcc387025a6212d58fe01865725734@walle.cc>
+        <20210727183213.73f34141@thinkpad>
+        <25d3e798-09f5-56b5-5764-c60435109dd2@gmail.com>
+        <20210810172927.GB3302@amd>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="eAbsdosE1cNLO4uF"
-Content-Disposition: inline
-In-Reply-To: <25d3e798-09f5-56b5-5764-c60435109dd2@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+On Tue, 10 Aug 2021 19:29:27 +0200
+Pavel Machek <pavel@ucw.cz> wrote:
 
---eAbsdosE1cNLO4uF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> So "r8159-0300:green:activity" would be closer to the naming we want,
+> but lets not do that, we really want this to be similar to what others
+> are doing, and that probably means "ethphy3:green:activity" AFAICT.
 
-Hi!
+Pavel, one point of the discussion is that in this case the LED is
+controlled by MAC, not PHY. So the question is whether we want to do
+"ethmacN" (in addition to "ethphyN").
 
-> > Yes, this still persists. But we really do not want to start
-> > introducing namespaces to the LED subsystem.
->=20
-> Did we come to any conclusion?
->=20
-> My preliminary r8169 implementation now creates the following LED names:
->=20
-> lrwxrwxrwx 1 root root 0 Jul 26 22:50 r8169-led0-0300 ->
-> > ../../devices/pci0000:00/0000:00:1d.0/0000:03:00.0/net/enp3s0/r8169-led=
-0-0300
-
-So "r8159-0300:green:activity" would be closer to the naming we want,
-but lets not do that, we really want this to be similar to what others
-are doing, and that probably means "ethphy3:green:activity" AFAICT.
-
-Best regards,
-								Pavel
---=20
-http://www.livejournal.com/~pavelmachek
-
---eAbsdosE1cNLO4uF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAmESt3cACgkQMOfwapXb+vKYpwCgpEoYBuVyi5Ip8gI6t6ZnVsq9
-onoAn0ZyFRyXBRj63c0SZWqdfuKzXrWM
-=fwhc
------END PGP SIGNATURE-----
-
---eAbsdosE1cNLO4uF--
+Marek
