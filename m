@@ -5,34 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A440DC4320E
-	for <linux-leds@archiver.kernel.org>; Wed, 11 Aug 2021 09:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4830CC4320A
+	for <linux-leds@archiver.kernel.org>; Wed, 11 Aug 2021 09:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D62D61019
-	for <linux-leds@archiver.kernel.org>; Wed, 11 Aug 2021 09:58:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E60E60D07
+	for <linux-leds@archiver.kernel.org>; Wed, 11 Aug 2021 09:58:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236860AbhHKJ6k (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 11 Aug 2021 05:58:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49108 "EHLO
+        id S236852AbhHKJ6u (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 11 Aug 2021 05:58:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236852AbhHKJ6e (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 11 Aug 2021 05:58:34 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5CA9C061369
-        for <linux-leds@vger.kernel.org>; Wed, 11 Aug 2021 02:58:09 -0700 (PDT)
+        with ESMTP id S236749AbhHKJ6i (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 11 Aug 2021 05:58:38 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F39B1C0619C0
+        for <linux-leds@vger.kernel.org>; Wed, 11 Aug 2021 02:58:10 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:438:1ff1:1071:f524])
-        by albert.telenet-ops.be with bizsmtp
-        id g9y5250041gJxCh069y59E; Wed, 11 Aug 2021 11:58:07 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id g9y52500H1gJxCh019y5qN; Wed, 11 Aug 2021 11:58:09 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mDkzs-001zgK-Nb; Wed, 11 Aug 2021 11:58:04 +0200
+        id 1mDkzs-001zgd-SJ; Wed, 11 Aug 2021 11:58:04 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mDkzr-005NOV-CH; Wed, 11 Aug 2021 11:58:03 +0200
+        id 1mDkzr-005NQ8-Rm; Wed, 11 Aug 2021 11:58:03 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Robin van der Gracht <robin@protonic.nl>,
         Miguel Ojeda <ojeda@kernel.org>,
@@ -42,10 +42,11 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Pavel Machek <pavel@ucw.cz>, Marek Behun <marek.behun@nic.cz>,
         devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v5 04/19] auxdisplay: img-ascii-lcd: Add helper variable dev
-Date:   Wed, 11 Aug 2021 11:57:44 +0200
-Message-Id: <20210811095759.1281480-5-geert@linux-m68k.org>
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 18/19] dt-bindings: auxdisplay: ht16k33: Document LED subnode
+Date:   Wed, 11 Aug 2021 11:57:58 +0200
+Message-Id: <20210811095759.1281480-19-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210811095759.1281480-1-geert@linux-m68k.org>
 References: <20210811095759.1281480-1-geert@linux-m68k.org>
@@ -55,71 +56,63 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-img_ascii_lcd_probe() has many users of "pdev->dev".  Add a shorthand to
-simplify the code.
+Extend the Holtek HT16K33 LED controller Device Tree bindings with an
+LED subnode, conforming to the standard LED bindings.
+
+This allows the user to exert more control, like specifying LED color,
+function, and/or trigger, to extend LED functionality beyond a simple
+display backlight.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 v5:
   - No changes,
 
 v4:
-  - No changes,
+  - Add Reviewed-by,
 
 v3:
-  - No changes,
-
-v2:
-  - No changes.
+  - New.
 ---
- drivers/auxdisplay/img-ascii-lcd.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ .../bindings/auxdisplay/holtek,ht16k33.yaml           | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
-index e33ce0151cdfd150..2b6e41ec57544faa 100644
---- a/drivers/auxdisplay/img-ascii-lcd.c
-+++ b/drivers/auxdisplay/img-ascii-lcd.c
-@@ -365,26 +365,25 @@ static int img_ascii_lcd_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
- 	const struct img_ascii_lcd_config *cfg;
-+	struct device *dev = &pdev->dev;
- 	struct img_ascii_lcd_ctx *ctx;
- 	int err;
+diff --git a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
+index 6baf1200c9d8488e..0f1414185fefc1a9 100644
+--- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
++++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
+@@ -48,6 +48,11 @@ properties:
+     default: 16
+     description: Initial brightness level
  
--	match = of_match_device(img_ascii_lcd_matches, &pdev->dev);
-+	match = of_match_device(img_ascii_lcd_matches, dev);
- 	if (!match)
- 		return -ENODEV;
- 
- 	cfg = match->data;
--	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx) + cfg->num_chars,
--			   GFP_KERNEL);
-+	ctx = devm_kzalloc(dev, sizeof(*ctx) + cfg->num_chars, GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
- 
- 	if (cfg->external_regmap) {
--		ctx->regmap = syscon_node_to_regmap(pdev->dev.parent->of_node);
-+		ctx->regmap = syscon_node_to_regmap(dev->parent->of_node);
- 		if (IS_ERR(ctx->regmap))
- 			return PTR_ERR(ctx->regmap);
- 
--		if (of_property_read_u32(pdev->dev.of_node, "offset",
--					 &ctx->offset))
-+		if (of_property_read_u32(dev->of_node, "offset", &ctx->offset))
- 			return -EINVAL;
- 	} else {
- 		ctx->base = devm_platform_ioremap_resource(pdev, 0);
-@@ -408,7 +407,7 @@ static int img_ascii_lcd_probe(struct platform_device *pdev)
- 	if (err)
- 		goto out_del_timer;
- 
--	err = device_create_file(&pdev->dev, &dev_attr_message);
-+	err = device_create_file(dev, &dev_attr_message);
- 	if (err)
- 		goto out_del_timer;
- 
++  led:
++    type: object
++    $ref: /schemas/leds/common.yaml#
++    unevaluatedProperties: false
++
+ required:
+   - compatible
+   - reg
+@@ -66,6 +71,7 @@ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/irq.h>
+     #include <dt-bindings/input/input.h>
++    #include <dt-bindings/leds/common.h>
+     i2c1 {
+             #address-cells = <1>;
+             #size-cells = <0>;
+@@ -87,5 +93,10 @@ examples:
+                                    <MATRIX_KEY(4, 1, KEY_F9)>,
+                                    <MATRIX_KEY(5, 1, KEY_F3)>,
+                                    <MATRIX_KEY(6, 1, KEY_F1)>;
++
++                    led {
++                            color = <LED_COLOR_ID_RED>;
++                            function = LED_FUNCTION_BACKLIGHT;
++                    };
+             };
+       };
 -- 
 2.25.1
 
