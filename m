@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CCEC4338F
-	for <linux-leds@archiver.kernel.org>; Wed, 11 Aug 2021 09:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C459C43214
+	for <linux-leds@archiver.kernel.org>; Wed, 11 Aug 2021 09:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B4F16113E
+	by mail.kernel.org (Postfix) with ESMTP id 01C94610CF
 	for <linux-leds@archiver.kernel.org>; Wed, 11 Aug 2021 09:58:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236679AbhHKJ6c (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S236784AbhHKJ6c (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Wed, 11 Aug 2021 05:58:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49084 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236580AbhHKJ6b (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 11 Aug 2021 05:58:31 -0400
+        with ESMTP id S236632AbhHKJ6c (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 11 Aug 2021 05:58:32 -0400
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D554C061765
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2265C06179E
         for <linux-leds@vger.kernel.org>; Wed, 11 Aug 2021 02:58:08 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:438:1ff1:1071:f524])
         by laurent.telenet-ops.be with bizsmtp
-        id g9y4250071gJxCh019y48L; Wed, 11 Aug 2021 11:58:06 +0200
+        id g9y42500P1gJxCh019y48V; Wed, 11 Aug 2021 11:58:06 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mDkzr-001zgJ-TO; Wed, 11 Aug 2021 11:58:03 +0200
+        id 1mDkzs-001zgS-Gb; Wed, 11 Aug 2021 11:58:04 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mDkzr-005NOP-At; Wed, 11 Aug 2021 11:58:03 +0200
+        id 1mDkzr-005NPS-LO; Wed, 11 Aug 2021 11:58:03 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Robin van der Gracht <robin@protonic.nl>,
         Miguel Ojeda <ojeda@kernel.org>,
@@ -43,9 +43,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v5 03/19] auxdisplay: img-ascii-lcd: Fix lock-up when displaying empty string
-Date:   Wed, 11 Aug 2021 11:57:43 +0200
-Message-Id: <20210811095759.1281480-4-geert@linux-m68k.org>
+Subject: [PATCH v5 12/19] auxdisplay: ht16k33: Convert to simple i2c probe function
+Date:   Wed, 11 Aug 2021 11:57:52 +0200
+Message-Id: <20210811095759.1281480-13-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210811095759.1281480-1-geert@linux-m68k.org>
 References: <20210811095759.1281480-1-geert@linux-m68k.org>
@@ -55,24 +55,12 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-While writing an empty string to a device attribute is a no-op, and thus
-does not need explicit safeguards, the user can still write a single
-newline to an attribute file:
+ht16k33_probe() does not use the passed i2c_device_id, so the driver can
+be converted trivially to the new-style of i2c probing.
 
-    echo > .../message
-
-If that happens, img_ascii_lcd_display() trims the newline, yielding an
-empty string, and causing an infinite loop in img_ascii_lcd_scroll().
-
-Fix this by adding a check for empty strings.  Clear the display in case
-one is encountered.
-
-Fixes: 0cad855fbd083ee5 ("auxdisplay: img-ascii-lcd: driver for simple ASCII LCD displays")
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Robin van der Gracht <robin@protonic.nl>
 ---
-Untested with img-ascii-lcd, but triggered with my initial version of
-linedisp.
-
 v5:
   - No changes,
 
@@ -83,32 +71,34 @@ v3:
   - No changes,
 
 v2:
-  - No changes.
+  - Add Acked-by.
 ---
- drivers/auxdisplay/img-ascii-lcd.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/auxdisplay/ht16k33.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
-index 1cce409ce5cacbc8..e33ce0151cdfd150 100644
---- a/drivers/auxdisplay/img-ascii-lcd.c
-+++ b/drivers/auxdisplay/img-ascii-lcd.c
-@@ -280,6 +280,16 @@ static int img_ascii_lcd_display(struct img_ascii_lcd_ctx *ctx,
- 	if (msg[count - 1] == '\n')
- 		count--;
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index 8c9acc4800bc94e0..8c1689b77db95676 100644
+--- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16k33.c
+@@ -381,8 +381,7 @@ static int ht16k33_keypad_probe(struct i2c_client *client,
+ 	return input_register_device(keypad->dev);
+ }
  
-+	if (!count) {
-+		/* clear the LCD */
-+		devm_kfree(&ctx->pdev->dev, ctx->message);
-+		ctx->message = NULL;
-+		ctx->message_len = 0;
-+		memset(ctx->curr, ' ', ctx->cfg->num_chars);
-+		ctx->cfg->update(ctx);
-+		return 0;
-+	}
-+
- 	new_msg = devm_kmalloc(&ctx->pdev->dev, count + 1, GFP_KERNEL);
- 	if (!new_msg)
- 		return -ENOMEM;
+-static int ht16k33_probe(struct i2c_client *client,
+-				  const struct i2c_device_id *id)
++static int ht16k33_probe(struct i2c_client *client)
+ {
+ 	int err;
+ 	uint32_t dft_brightness;
+@@ -523,7 +522,7 @@ static const struct of_device_id ht16k33_of_match[] = {
+ MODULE_DEVICE_TABLE(of, ht16k33_of_match);
+ 
+ static struct i2c_driver ht16k33_driver = {
+-	.probe		= ht16k33_probe,
++	.probe_new	= ht16k33_probe,
+ 	.remove		= ht16k33_remove,
+ 	.driver		= {
+ 		.name		= DRIVER_NAME,
 -- 
 2.25.1
 
