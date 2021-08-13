@@ -2,209 +2,232 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC82C43214
-	for <linux-leds@archiver.kernel.org>; Wed, 11 Aug 2021 18:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B3EC4338F
+	for <linux-leds@archiver.kernel.org>; Fri, 13 Aug 2021 06:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73E3E6109F
-	for <linux-leds@archiver.kernel.org>; Wed, 11 Aug 2021 18:36:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D7406104F
+	for <linux-leds@archiver.kernel.org>; Fri, 13 Aug 2021 06:00:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229946AbhHKSga (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 11 Aug 2021 14:36:30 -0400
-Received: from mail-pj1-f51.google.com ([209.85.216.51]:52219 "EHLO
-        mail-pj1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbhHKSg3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 11 Aug 2021 14:36:29 -0400
-Received: by mail-pj1-f51.google.com with SMTP id oa17so4942937pjb.1;
-        Wed, 11 Aug 2021 11:36:06 -0700 (PDT)
+        id S238772AbhHMGBO (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 13 Aug 2021 02:01:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60974 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238766AbhHMGBN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 13 Aug 2021 02:01:13 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A053C061756;
+        Thu, 12 Aug 2021 23:00:47 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id z128so16750092ybc.10;
+        Thu, 12 Aug 2021 23:00:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gZZX1SNwCRBnn0U8Sid0RbkcxFib76QfV6XCZITDmnY=;
+        b=om4mEgwIV25ngYdR6U9NqzIcVjXBL1duBcEy+NFwUedW4/5IQ/StArjOpVlqjZ684Z
+         I2EGKq6ZspEq15DPR1qnmRKGrcggRrj4lZUMwKj4FhI1suruJ5WLZI8b9VjTZmbF2wXP
+         Fej46wrc/t4wWAbFM3uvVVlfwIK9uE6PNLCugpYVNzUUdOoYJ3PrIKHLcx7H0yjY3f7m
+         uHxpR6XcfnmBS5sVUxIbAtSVJY08KU+XO8RenMbTxSMXaCYB2gtWkdWQGPDE58tQQcSv
+         trt9P+/8eDuN5Yhy7LDokZ3NHJvEoQD6R0yf78u4fYieyO3qyEefPkuxm8plyE0G1tg4
+         e8Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=glqU11Z7nUR7hehweN2GYI7VV4V/0DA8qz5QPW5UH5o=;
-        b=PlhdRNZ4DJTbjf/jYMPHkMqcZmqKkqqHx+xAZ6fYIvh0DsifGaoio635Pi8Aqm+FmK
-         6jYmXRHKwJi4mJ9aF7Wek5UoUuCBVq77SPq/rbA7vxOmCPeKzI7dgT9cnLmHA89NXs8u
-         gPMpfqkSn1kfvg3pfzdMlAITRPGMGbeZ+/W44TWgdfOPhUqrzR3kmw7etTQPlcKJuv3C
-         b/Aw2TmrbbFhnDEiRyy16lsxUgSpAGI7rG6lWTvIIRduP0DeNys0HZFfFsTFguDwpkam
-         SVnXR5lPas3U+WQ4VZ5HK9BCZYNvhSlXsqsKEwVJuH0Rwi9ubUSkvk/bFYRxpz2HkOP4
-         1z8Q==
-X-Gm-Message-State: AOAM531oSzQxBrliEwS98oCo+TInTT56bundBBD6h/u5Evqk6/nL1gwK
-        C57x6dhdOVTEGhr2s7FuSQ==
-X-Google-Smtp-Source: ABdhPJy1lIURcbSLGNDx7psgyKmkVt4jzczQsNUqlJIMdUhGsaoUjTuug+XLYYeIPqnx17C6mREhzw==
-X-Received: by 2002:a63:111f:: with SMTP id g31mr119420pgl.80.1628706965598;
-        Wed, 11 Aug 2021 11:36:05 -0700 (PDT)
-Received: from robh.at.kernel.org ([208.184.162.215])
-        by smtp.gmail.com with ESMTPSA id a11sm153376pgj.75.2021.08.11.11.36.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 11:36:04 -0700 (PDT)
-Received: (nullmailer pid 59304 invoked by uid 1000);
-        Wed, 11 Aug 2021 18:35:59 -0000
-Date:   Wed, 11 Aug 2021 12:35:59 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado 
-        <nfraprado@collabora.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        Brian Masney <masneyb@onstation.org>,
-        Luca Weiss <luca@z3ntu.xyz>,
-        Russell King <linux@armlinux.org.uk>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, ~lkcamp/patches@lists.sr.ht,
-        =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@collabora.com>,
-        kernel@collabora.com
-Subject: Re: [PATCH v3 1/5] dt-bindings: leds: Add binding for qcom-spmi-flash
-Message-ID: <YRQYjwaZCcm6blHT@robh.at.kernel.org>
-References: <20210803162641.1525980-1-nfraprado@collabora.com>
- <20210803162641.1525980-2-nfraprado@collabora.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gZZX1SNwCRBnn0U8Sid0RbkcxFib76QfV6XCZITDmnY=;
+        b=WfYoXZ5erNy/1asROjxraNb8kbbqaq64YQk2vnXaFaLS206M/eSZBPWoxX0bpdiacq
+         0fOpJ4TqkK0NHfYuQBd4i5v2JbIt7PFeI3jdJViTxJezOpKRXWrTqVnherPqeMdMr2Gz
+         G0CfBEbILbSR0+QJgKFb60OFnxnIceaLdRimkW5JLQiE+C6tMk4g0zktCyhodJm/C0T4
+         8pHm+0EkJ+VwQlACBm1CxFel9dd1aM09hxPE06rwAQXezCGjVx5cd77/z0KUXDO70x65
+         inI7T+XANgAqF2Z2YKsK4syKetoSgpP947YN9aeSMpvfQ7xtOWG9IdpW1oKEArpJ5nxS
+         /oMw==
+X-Gm-Message-State: AOAM530hUmYu6kuOb/j/nwERjZau3nKMqREt4CYxHDDnj+vIif/PkOZC
+        TN6qTkrJM26qUnK+5rzhOX5Uco5MGgv0xfwttPI=
+X-Google-Smtp-Source: ABdhPJwIv3gKu0b6gimf0i6fuzjyyNpCjIHJtjlErgwrcyE7I29Ro5o6YZFDUmafGwak+DdTcS/UAAMaEuzVttX4nVA=
+X-Received: by 2002:a25:1056:: with SMTP id 83mr958088ybq.52.1628834446559;
+ Thu, 12 Aug 2021 23:00:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210803162641.1525980-2-nfraprado@collabora.com>
+References: <20210602061253.5747-1-roderick@gaikai.com> <20210602061253.5747-3-roderick@gaikai.com>
+ <nycvar.YFH.7.76.2106241525330.18969@cbobk.fhfr.pm> <20210803221055.GA32527@amd>
+ <CAEc3jaAoDfJD92q9q_HoFq3nsjkDqfZHu-VO+Ei8xSP8QrE8rg@mail.gmail.com>
+In-Reply-To: <CAEc3jaAoDfJD92q9q_HoFq3nsjkDqfZHu-VO+Ei8xSP8QrE8rg@mail.gmail.com>
+From:   Daniel Ogorchock <djogorchock@gmail.com>
+Date:   Fri, 13 Aug 2021 02:00:35 -0400
+Message-ID: <CAEVj2tkfLjWKOaecY7t-idGaqjZ45wXhmjbUR87AoC2Dkm45vQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] leds: add new LED_FUNCTION_PLAYER for player LEDs for
+ game controllers.
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Roderick Colenbrander <roderick@gaikai.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        linux-leds@vger.kernel.org,
+        =?UTF-8?B?QmFybmFiw6FzIFDFkWN6ZQ==?= <pobrn@protonmail.com>,
+        Roderick Colenbrander <roderick.colenbrander@sony.com>,
+        Roderick Colenbrander <thunderbird2k@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Tue, Aug 03, 2021 at 01:26:37PM -0300, Nícolas F. R. A. Prado wrote:
-> Add devicetree binding for Qualcomm's SPMI Flash LEDs which are part of
-> the PM8941 PMIC. These LEDs are used both as lantern and camera flash on
-> phones based on the MSM8974 SoC, like the Nexus 5.
-> 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
-> 
-> Changes in v3:
-> - Removed clamp-curr, headroom, startup-dly and safety-timer properties since
->   they didn't impact the behavior. They're now hardcoded in the driver (patch 2)
-> - Added valid ranges for led-max-microamp, flash-max-microamp and
->   flash-max-timeout-us
-> - Removed dt-bindings header file that held some constants (moved to inside the
->   driver in patch 2)
-> 
-> Added in v2
-> 
->  .../bindings/leds/leds-qcom-spmi-flash.yaml   | 93 +++++++++++++++++++
->  1 file changed, 93 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-qcom-spmi-flash.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-spmi-flash.yaml b/Documentation/devicetree/bindings/leds/leds-qcom-spmi-flash.yaml
-> new file mode 100644
-> index 000000000000..da674d73c033
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-qcom-spmi-flash.yaml
-> @@ -0,0 +1,93 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/leds-qcom-spmi-flash.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SPMI Flash LEDs
-> +
-> +maintainers:
-> +  - Nícolas F. R. A. Prado <n@nfraprado.net>
-> +
-> +description: |
-> +  The Qualcomm SPMI Flash LEDs are part of Qualcomm PMICs and are used primarily
-> +  as a camera or video flash. They can also be used as a lantern when on torch
-> +  mode.
-> +  The PMIC is connected to Host processor via SPMI bus.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,spmi-flash-leds
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  flash-boost-supply:
-> +    description: SMBB regulator for LED flash mode
-> +
-> +  torch-boost-supply:
-> +    description: SMBB regulator for LED torch mode
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +patternProperties:
-> +  "^led@[0-1]$":
-> +    type: object
-> +    $ref: common.yaml#
-> +
-> +    properties:
-> +      reg:
-> +        maxItems: 1
+Hi Pavel,
 
-Instead of maxItems, this would be a bit more specific:
+Do you have any recommendations on what would be an appropriate
+function string for player indicator LEDs? Would some variant such as:
+  "status-x"
+  "player-status-x"
+  "indicator-x"
+  "player-indicator-x"
+be more suitable? It looks like the string "status" has been used for
+other existing LED names.
 
-enum: [ 0, 1 ]
+I think we are pretty happy to use whatever naming scheme fits the
+standards of the led subsystem's userspace api for the Nintendo/Sony
+HID drivers, and any future game controller drivers featuring player
+LEDs could conform to that going forward.
 
-With that,
+Thanks,
+Daniel
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On Tue, Aug 3, 2021 at 7:30 PM Roderick Colenbrander
+<thunderbird2k@gmail.com> wrote:
+>
+> Hi Pavel,
+>
+> See some quick comments inline.
+>
+> On Tue, Aug 3, 2021 at 3:39 PM Pavel Machek <pavel@ucw.cz> wrote:
+> >
+> > Hi!
+> >
+> > > > From: Roderick Colenbrander <roderick.colenbrander@sony.com>
+> > > >
+> > > > Player LEDs are commonly found on game controllers from Nintendo and Sony
+> > > > to indicate a player ID across a number of LEDs. For example, "Player 2"
+> > > > might be indicated as "-x--" on a device with 4 LEDs where "x" means on.
+> > > >
+> > > > This patch introduces a new LED_FUNCTION_PLAYER to properly indicate
+> > > > player LEDs from the kernel. Until now there was no good standard, which
+> > > > resulted in inconsistent behavior across xpad, hid-sony, hid-wiimote and
+> > > > other drivers. Moving forward new drivers should use LED_FUNCTION_PLAYER.
+> > > >
+> > > > Note: management of Player IDs is left to user space, though a kernel
+> > > > driver may pick a default value.
+> > > >
+> > > > Signed-off-by: Roderick Colenbrander <roderick.colenbrander@sony.com>
+> > > > ---
+> > > >  include/dt-bindings/leds/common.h | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > >
+> > > > diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
+> > > > index 52b619d44ba2..94999c250e4d 100644
+> > > > --- a/include/dt-bindings/leds/common.h
+> > > > +++ b/include/dt-bindings/leds/common.h
+> > > > @@ -60,6 +60,9 @@
+> > > >  #define LED_FUNCTION_MICMUTE "micmute"
+> > > >  #define LED_FUNCTION_MUTE "mute"
+> > > >
+> > > > +/* Used for player LEDs as found on game controllers from e.g. Nintendo, Sony. */
+> > > > +#define LED_FUNCTION_PLAYER "player"
+> > > > +
+> > > >  /* Miscelleaus functions. Use functions above if you can. */
+> > > >  #define LED_FUNCTION_ACTIVITY "activity"
+> > > >  #define LED_FUNCTION_ALARM "alarm"
+> > >
+> > > Pavel, can I please get your Ack on this one, so that I can take it with
+> > > the rest of the series?
+> >
+> > I'm sorry for delays.
+> >
+> > But no, player is not suitable function. Function would be "player1"
+> > AFAICT, right?
+>
+> A given gaming device such as Sony or Nintendo controllers have a
+> multiple of these LEDs, which are meant to be configured with a player
+> number. A typical device has like 4 of these LEDs, so a single
+> controller would have: "player-1", "player-2", "player-3" and
+> "player-4". It is up to userspace to configure the player number (a
+> driver may set a default number across a number of LEDs).
+>
+> If player is not the right term (many people know it), what would it be?
+>
+> >
+> > I'm not sure "function" is suitable here, and we may want to create
+> > documentation like this... where it would be explained which functions
+> > apply to which devices and what they actually mean.
+> >
+> > Best regards,
+> >                                                                 Pavel
+> >
+> > -*- org -*-
+> >
+> > It is somehow important to provide consistent interface to the
+> > userland. LED devices have one problem there, and that is naming of
+> > directories in /sys/class/leds. It would be nice if userland would
+> > just know right "name" for given LED function, but situation got more
+> > complex.
+> >
+> > Anyway, if backwards compatibility is not an issue, new code should
+> > use one of the "good" names from this list, and you should extend the
+> > list where applicable.
+> >
+> > Bad names are listed, too; in case you are writing application that
+> > wants to use particular feature, you should probe for good name, first,
+> > but then try the bad ones, too.
+> >
+> > * Keyboards
+> >
+> > Good: "input*:*:capslock"
+> > Good: "input*:*:scrolllock"
+> > Good: "input*:*:numlock"
+> > Bad: "shift-key-light" (Motorola Droid 4, capslock)
+> >
+> > Set of common keyboard LEDs, going back to PC AT or so.
+> >
+> > Good: "platform::kbd_backlight"
+> > Bad: "tpacpi::thinklight" (IBM/Lenovo Thinkpads)
+> > Bad: "lp5523:kb{1,2,3,4,5,6}" (Nokia N900)
+> >
+> > Frontlight/backlight of main keyboard.
+> >
+> > Bad: "button-backlight" (Motorola Droid 4)
+> >
+> > Some phones have touch buttons below screen; it is different from main
+> > keyboard. And this is their backlight.
+> >
+> > * Sound subsystem
+> >
+> > Good: "platform:*:mute"
+> > Good: "platform:*:micmute"
+> >
+> > LEDs on notebook body, indicating that sound input / output is muted.
+> >
+> > * System notification
+> >
+> > Good: "status-led:{red,green,blue}" (Motorola Droid 4)
+> > Bad: "lp5523:{r,g,b}" (Nokia N900)
+> >
+> > Phones usually have multi-color status LED.
+> >
+> > * Power management
+> >
+> > Good: "platform:*:charging" (allwinner sun50i)
+> >
+> > * Screen
+> >
+> > Good: ":backlight" (Motorola Droid 4)
+> >
+> >
+> > --
+> > http://www.livejournal.com/~pavelmachek
 
-> +
-> +      led-max-microamp:
-> +        minimum: 12500
-> +        maximum: 200000
-> +        multipleOf: 12500
-> +
-> +      flash-max-microamp:
-> +        minimum: 12500
-> +        maximum: 1000000
-> +        multipleOf: 12500
-> +
-> +      flash-max-timeout-us:
-> +        minimum: 10000
-> +        maximum: 1280000
-> +        multipleOf: 10000
-> +
-> +    required:
-> +      - reg
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - flash-boost-supply
-> +  - torch-boost-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/leds/common.h>
-> +
-> +    spmi-flash-leds@d300 {
-> +        compatible = "qcom,spmi-flash-leds";
-> +        reg = <0xd300 0x100>;
-> +        flash-boost-supply = <&pm8941_5vs1>;
-> +        torch-boost-supply = <&pm8941_5v>;
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        led@0 {
-> +            reg = <0>;
-> +            function = LED_FUNCTION_FLASH;
-> +            color = <LED_COLOR_ID_WHITE>;
-> +            led-max-microamp = <200000>;
-> +            flash-max-microamp = <1000000>;
-> +            flash-max-timeout-us = <1280000>;
-> +        };
-> +    };
-> +...
-> -- 
-> 2.32.0
-> 
-> 
+
+
+-- 
+Daniel Ogorchock
