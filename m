@@ -2,213 +2,241 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 257A5C4320A
-	for <linux-leds@archiver.kernel.org>; Wed,  1 Sep 2021 22:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B186C433F5
+	for <linux-leds@archiver.kernel.org>; Thu,  2 Sep 2021 23:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 092436108E
-	for <linux-leds@archiver.kernel.org>; Wed,  1 Sep 2021 22:30:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A0C8610E9
+	for <linux-leds@archiver.kernel.org>; Thu,  2 Sep 2021 23:42:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231153AbhIAWby (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 1 Sep 2021 18:31:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57486 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244062AbhIAWbt (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 1 Sep 2021 18:31:49 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B614EC061760
-        for <linux-leds@vger.kernel.org>; Wed,  1 Sep 2021 15:30:52 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id q68so967358pga.9
-        for <linux-leds@vger.kernel.org>; Wed, 01 Sep 2021 15:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gaikai-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=oRuhT6i1tBBxLhxOXeUFVO7p2TBVNmAAOTAtaIiqi0M=;
-        b=sS4XnGqBkVd9N8XpnQdp+udPfiw04J0fhuKzY/0bWkITYkwOoRWBYl/iwMBViPNXdP
-         o5+1vrE5/0n6228t0HrprCgIK43oVwqaT36RGhAFtjjhfj67Zx+YrAP5vOoV5Xh1WZSD
-         IKPAA6flB0jQR88GIcICYnPmCVVgut0V/FAbJ03NNPVObe6BjsnWV5KCLTQACjJ27L9U
-         BfOUrOBpXBXLEVu6FKOjaIxf8biGDu3KLvcAEuQxNPitFHmsK+Ay4Bf9ybcZcfQWeAPu
-         O2R/Ehs4Lzsp0l4hbYnQZcEFb3BY9KSO4thwAM/oTBI9vvgLn94giqFyVr8cGN0sRXq9
-         /I/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=oRuhT6i1tBBxLhxOXeUFVO7p2TBVNmAAOTAtaIiqi0M=;
-        b=TldvnCpsxMNU660V3ipX6KWrAUzZD5gKWLJyR4Kja/DlZ9Q2NtsLIto6wAKakdbM6n
-         lSGKSrF3gS4sUTET0VpTrhsBkRfaGNiX62TKce2VpwUAkKCEPA1QdB7q0Wgf/mK5mktX
-         GQMVmFjrs5aO6TuouVbVUGWYKuRgqs00RBhUdvrp0SEOdYBq96IaepMia/9Z2DcWsqvS
-         WLuYdzXSvqIRVRIuTUIQIdXUY+C0KDkAFoIl9LsCHi1e+G1R9ji2BJNl2IpOIlKsRuKA
-         jSMV7wmisvKTjSC32+xKdK6Le8NoWhRpMATnQNwNSKuMHOHDINN9+na40pbkzWI230xu
-         CKaQ==
-X-Gm-Message-State: AOAM530xFMuR/M7bn8jVGOXVcNsU+I0DhiKkmUhAO+w166n8hWSnYkGo
-        7r4lpC5q3IfpkX2lwFIX9qyCSw==
-X-Google-Smtp-Source: ABdhPJx0nc9xXVzQLBT+sMMRaf4O9VpuXvYPLNaTaJnJ0p7aLO5pG6RvM7inCN8F7AzIe/QCyxMVtg==
-X-Received: by 2002:a62:32c6:0:b0:3fd:7c78:2a9a with SMTP id y189-20020a6232c6000000b003fd7c782a9amr163376pfy.33.1630535452299;
-        Wed, 01 Sep 2021 15:30:52 -0700 (PDT)
-Received: from localhost.localdomain (rrcs-24-43-218-40.west.biz.rr.com. [24.43.218.40])
-        by smtp.gmail.com with ESMTPSA id j2sm9623pfe.201.2021.09.01.15.30.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Sep 2021 15:30:51 -0700 (PDT)
-From:   Roderick Colenbrander <roderick@gaikai.com>
-X-Google-Original-From: Roderick Colenbrander <roderick.colenbrander@sony.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc:     linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-        "Daniel J . Ogorchock" <djogorchock@gmail.com>,
-        Roderick Colenbrander <roderick.colenbrander@sony.com>
-Subject: [PATCH v2 3/3] HID: playstation: expose DualSense player LEDs through LED class.
-Date:   Wed,  1 Sep 2021 15:30:37 -0700
-Message-Id: <20210901223037.2964665-4-roderick.colenbrander@sony.com>
+        id S1346850AbhIBXnb (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 2 Sep 2021 19:43:31 -0400
+Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:60003 "EHLO
+        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1346276AbhIBXna (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 2 Sep 2021 19:43:30 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.west.internal (Postfix) with ESMTP id E683C2B006E9;
+        Thu,  2 Sep 2021 19:42:30 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Thu, 02 Sep 2021 19:42:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=fqnnQ1mT7IKeUBNRXAaLi2gjg5
+        OvGtbLCaioyw+wFps=; b=coycE8AWLtqpoIJAbk5IFV5eTJ1CgPhT2DlDYzlGOn
+        5RirMUKBDb7+x1APv778s2mpChS2AUGMTsF1BeZGfWDl6rIC373KyNv2v4/6HOWv
+        IbDs1B30/kPpM2h7FXQh54yeV8HYwt/KBuHFV1DUKcci80m2yKEGqBtngv5fyt+Q
+        D5EGnWWkqsI4B5k/qMS0WGbj7ZclD0ol2qwlsq71+Pmj3906C8Ik3l0E5qBIWLEX
+        9hNrezQ6Ry/OKiJhgFBLZU20oze//MMzd5BkGMWe2Ocw7NtXRdkZJsMOOlX5eSHu
+        8/iUndzziDnJTlsbJ7RA8jgnO6lpq6/Jq7IMUPfhEpGA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=fqnnQ1mT7IKeUBNRX
+        AaLi2gjg5OvGtbLCaioyw+wFps=; b=TVQz/P3X9YN1RzDFFUAfwkQbC8AVexJzZ
+        EAji+q5+lHhZeqqfoBME7fD7uYxR0IgN9aJay7bTnaS4t8GlrhDJSXYjZC3krUkA
+        grhcP8SdL8ZCeLlJyuAjL0hO8laFux3jW0FuFes9kq2shaFRxJWGVHN/Fu01vf6X
+        NgHCPz4pElWQRYgf6iA+7ha1IwJeAKg1lz1SD74W0EKQNa4Sq4eKIU5LuPRLQLLG
+        y9ngUPP0OXdHKbzfaL0reXrfsNoamFWocxYivYDNu/k7dRI+Lqwpu2cwEVfJzyLI
+        MpSqa6DzIa2v61Igg+ryUxnkEYsICy8mlU1/411M5w5kk0xBxnHqg==
+X-ME-Sender: <xms:ZWExYSrtzL1awoKw2ZH47OCm-0F8C4GtzdWHkFV-soEPZa42dezG4w>
+    <xme:ZWExYQrTAkSIDTff9MTK-YKcYyesgN9BWjSQrjyFazg6EV79m9d07I3K9cQyvO57f
+    9RY83mJB4W4SowsIA>
+X-ME-Received: <xmr:ZWExYXMvZ6-SjdSgiS0-WVuGbZSFR2eorgJ33YTG1N8OdtTa0olu6-Rfvs1AWUS_9rknikr1or-saVKuuYLM_0OsKRnk8AJ2NECx9jDMWXnh4YOiaqixY6vGH0m_zu3BWhWjpw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddviedgvdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
+    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtffrrg
+    htthgvrhhnpeegffdtvdevgfeljeduveefgfefffejhfdtudeiudejueehtdelgefgjeeu
+    ffduueenucffohhmrghinhepuggvvhhitggvthhrvggvrdhorhhgnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhl
+    rghnugdrohhrgh
+X-ME-Proxy: <xmx:ZWExYR7ydyCRgabIscZCGzyfxm9iU4wE5IW_5YnU0AMZhTawcWmrow>
+    <xmx:ZWExYR7PhAoR4Ppth8FSy1AizcKKBdxeJrH4Ev7bn35ediU272AFXA>
+    <xmx:ZWExYRjAL0E5WLgD26TorOUG8K0qioJld8T7AaTC8-BykE2BxzqIbg>
+    <xmx:ZmExYWHWBUGKATd21fG-4X6PMI_aXZv2C8GJmaDDpO8WsTmjLzc4w62BZqQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 2 Sep 2021 19:42:29 -0400 (EDT)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc:     Icenowy Zheng <icenowy@aosc.io>, devicetree@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, Samuel Holland <samuel@sholland.org>
+Subject: [PATCH 1/2] dt-bindings: leds: Add Allwinner R329/D1 LED controller
+Date:   Thu,  2 Sep 2021 18:42:27 -0500
+Message-Id: <20210902234228.32223-1-samuel@sholland.org>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210901223037.2964665-1-roderick.colenbrander@sony.com>
-References: <20210901223037.2964665-1-roderick.colenbrander@sony.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The DualSense player LEDs were so far not adjustable from user-space.
-This patch exposes each LED individually through the LED class. Each
-LED uses the new 'player' function resulting in a name like:
-'inputX:white:player-1' for the first LED.
+The Allwinner R329 and D1 SoCs contain an LED controller designed to
+drive a series of RGB LED pixels. It supports PIO and DMA transfers, and
+has configurable timing and pixel format.
 
-Signed-off-by: Roderick Colenbrander <roderick.colenbrander@sony.com>
+Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- drivers/hid/hid-playstation.c | 85 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 84 insertions(+), 1 deletion(-)
+ .../leds/allwinner,sun50i-r329-ledc.yaml      | 141 ++++++++++++++++++
+ 1 file changed, 141 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/allwinner,sun50i-r329-ledc.yaml
 
-diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
-index ff2fc315a89d..9b96239bba5f 100644
---- a/drivers/hid/hid-playstation.c
-+++ b/drivers/hid/hid-playstation.c
-@@ -56,6 +56,13 @@ struct ps_calibration_data {
- 	int sens_denom;
- };
- 
-+struct ps_led_info {
-+	const char *name;
-+	const char *color;
-+	enum led_brightness (*brightness_get)(struct led_classdev *cdev);
-+	void (*brightness_set)(struct led_classdev *cdev, enum led_brightness);
-+};
+diff --git a/Documentation/devicetree/bindings/leds/allwinner,sun50i-r329-ledc.yaml b/Documentation/devicetree/bindings/leds/allwinner,sun50i-r329-ledc.yaml
+new file mode 100644
+index 000000000000..bf883944e911
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/allwinner,sun50i-r329-ledc.yaml
+@@ -0,0 +1,141 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/allwinner,sun50i-r329-ledc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- /* Seed values for DualShock4 / DualSense CRC32 for different report types. */
- #define PS_INPUT_CRC32_SEED	0xA1
- #define PS_OUTPUT_CRC32_SEED	0xA2
-@@ -531,6 +538,32 @@ static int ps_get_report(struct hid_device *hdev, uint8_t report_id, uint8_t *bu
- 	return 0;
- }
- 
-+static int ps_led_register(struct ps_device *ps_dev, struct led_classdev *led,
-+		const struct ps_led_info *led_info)
-+{
-+	int ret;
++title: Allwinner sunxi LED Controller Bindings
 +
-+	led->name = devm_kasprintf(&ps_dev->hdev->dev, GFP_KERNEL,
-+			"%s:%s:%s", ps_dev->input_dev_name, led_info->color, led_info->name);
++maintainers:
++  - Samuel Holland <samuel@sholland.org>
 +
-+	if (!led->name)
-+		return -ENOMEM;
++description:
++  The LED controller found in Allwinner sunxi SoCs uses a one-wire serial
++  interface to drive up to 1024 RGB LEDs.
 +
-+	led->brightness = 0;
-+	led->max_brightness = 1;
-+	led->flags = LED_CORE_SUSPENDRESUME;
-+	led->brightness_get = led_info->brightness_get;
-+	led->brightness_set = led_info->brightness_set;
++properties:
++  compatible:
++    oneOf:
++      - const: allwinner,sun50i-r329-ledc
++      - items:
++          - enum:
++              - allwinner,sun20i-d1-ledc
++          - const: allwinner,sun50i-r329-ledc
 +
-+	ret = devm_led_classdev_register(&ps_dev->hdev->dev, led);
-+	if (ret) {
-+		hid_err(ps_dev->hdev, "Failed to register LED %s: %d\n", led_info->name, ret);
-+		return ret;
-+	}
++  reg:
++    maxItems: 1
 +
-+	return 0;
-+}
++  "#address-cells":
++    const: 1
 +
- /* Register a DualSense/DualShock4 RGB lightbar represented by a multicolor LED. */
- static int ps_lightbar_register(struct ps_device *ps_dev, struct led_classdev_mc *lightbar_mc_dev,
- 	int (*brightness_set)(struct led_classdev *, enum led_brightness))
-@@ -822,6 +855,35 @@ static int dualsense_lightbar_set_brightness(struct led_classdev *cdev,
- 	return 0;
- }
- 
-+static enum led_brightness dualsense_player_led_get_brightness(struct led_classdev *led)
-+{
-+	struct hid_device *hdev = to_hid_device(led->dev->parent);
-+	struct dualsense *ds = hid_get_drvdata(hdev);
++  "#size-cells":
++    const: 0
 +
-+	return !!(ds->player_leds_state & BIT(led - ds->player_leds));
-+}
++  clocks:
++    items:
++      - description: Bus clock
++      - description: Module clock
 +
-+static void dualsense_player_led_set_brightness(struct led_classdev *led, enum led_brightness value)
-+{
-+	struct hid_device *hdev = to_hid_device(led->dev->parent);
-+	struct dualsense *ds = hid_get_drvdata(hdev);
-+	unsigned long flags;
-+	unsigned int led_index;
++  clock-names:
++    items:
++      - const: bus
++      - const: mod
 +
-+	spin_lock_irqsave(&ds->base.lock, flags);
++  resets:
++    maxItems: 1
 +
-+	led_index = led - ds->player_leds;
-+	if (value == LED_OFF)
-+		ds->player_leds_state &= ~BIT(led_index);
-+	else
-+		ds->player_leds_state |= BIT(led_index);
++  dmas:
++    items:
++      - description: TX DMA channel
 +
-+	ds->update_player_leds = true;
-+	spin_unlock_irqrestore(&ds->base.lock, flags);
++  dma-names:
++    items:
++      - const: tx
 +
-+	schedule_work(&ds->output_worker);
-+}
++  interrupts:
++    maxItems: 1
 +
- static void dualsense_init_output_report(struct dualsense *ds, struct dualsense_output_report *rp,
- 		void *buf)
- {
-@@ -1207,7 +1269,20 @@ static struct ps_device *dualsense_create(struct hid_device *hdev)
- 	struct dualsense *ds;
- 	struct ps_device *ps_dev;
- 	uint8_t max_output_report_size;
--	int ret;
-+	int i, ret;
++  vled-supply:
++    description: Regulator supplying power to external LEDs
 +
-+	static const struct ps_led_info player_leds_info[] = {
-+		{ LED_FUNCTION_PLAYER "-1", "white", dualsense_player_led_get_brightness,
-+				dualsense_player_led_set_brightness },
-+		{ LED_FUNCTION_PLAYER "-2", "white", dualsense_player_led_get_brightness,
-+				dualsense_player_led_set_brightness },
-+		{ LED_FUNCTION_PLAYER "-3", "white", dualsense_player_led_get_brightness,
-+				dualsense_player_led_set_brightness },
-+		{ LED_FUNCTION_PLAYER "-4", "white", dualsense_player_led_get_brightness,
-+				dualsense_player_led_set_brightness },
-+		{ LED_FUNCTION_PLAYER "-5", "white", dualsense_player_led_get_brightness,
-+				dualsense_player_led_set_brightness }
-+	};
- 
- 	ds = devm_kzalloc(&hdev->dev, sizeof(*ds), GFP_KERNEL);
- 	if (!ds)
-@@ -1297,6 +1372,14 @@ static struct ps_device *dualsense_create(struct hid_device *hdev)
- 	/* Set default lightbar color. */
- 	dualsense_set_lightbar(ds, 0, 0, 128); /* blue */
- 
-+	for (i = 0; i < ARRAY_SIZE(player_leds_info); i++) {
-+		const struct ps_led_info *led_info = &player_leds_info[i];
++  format:
++    description: Pixel format (subpixel transmission order), default is "grb"
++    enum:
++      - "bgr"
++      - "brg"
++      - "gbr"
++      - "grb"
++      - "rbg"
++      - "rgb"
 +
-+		ret = ps_led_register(ps_dev, &ds->player_leds[i], led_info);
-+		if (ret < 0)
-+			goto err;
-+	}
++  t0h-ns:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Length of high pulse when transmitting a "0" bit
 +
- 	ret = ps_device_set_player_id(ps_dev);
- 	if (ret) {
- 		hid_err(hdev, "Failed to assign player id for DualSense: %d\n", ret);
++  t0l-ns:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Length of low pulse when transmitting a "0" bit
++
++  t1h-ns:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Length of high pulse when transmitting a "1" bit
++
++  t1h-ns:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Length of low pulse when transmitting a "1" bit
++
++  treset-ns:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Minimum delay between transmission frames
++
++patternProperties:
++  "^multi-led@[0-9a-f]+$":
++    type: object
++    $ref: leds-class-multicolor.yaml#
++    properties:
++      reg:
++        minimum: 0
++        maximum: 1023
++        description: Index of the LED in the series (must be contiguous)
++
++    required:
++      - reg
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - resets
++  - dmas
++  - dma-names
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/leds/common.h>
++
++    ledc: led-controller@2008000 {
++      compatible = "allwinner,sun20i-d1-ledc",
++                   "allwinner,sun50i-r329-ledc";
++      reg = <0x2008000 0x400>;
++      #address-cells = <1>;
++      #size-cells = <0>;
++      clocks = <&ccu 12>, <&ccu 34>;
++      clock-names = "bus", "mod";
++      resets = <&ccu 12>;
++      dmas = <&dma 42>;
++      dma-names = "tx";
++      interrupts = <36 IRQ_TYPE_LEVEL_HIGH>;
++
++      multi-led@0 {
++        reg = <0x0>;
++        color = <LED_COLOR_ID_RGB>;
++        function = LED_FUNCTION_INDICATOR;
++      };
++    };
++
++...
 -- 
 2.31.1
 
