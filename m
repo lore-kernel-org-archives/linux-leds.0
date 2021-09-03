@@ -5,64 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28ECCC4332F
-	for <linux-leds@archiver.kernel.org>; Fri,  3 Sep 2021 20:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0968C43219
+	for <linux-leds@archiver.kernel.org>; Fri,  3 Sep 2021 20:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E80F603E7
-	for <linux-leds@archiver.kernel.org>; Fri,  3 Sep 2021 20:46:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B64CE61100
+	for <linux-leds@archiver.kernel.org>; Fri,  3 Sep 2021 20:46:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350253AbhICUq7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 3 Sep 2021 16:46:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41414 "EHLO
+        id S1350987AbhICUrB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 3 Sep 2021 16:47:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235953AbhICUq7 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 3 Sep 2021 16:46:59 -0400
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB8C3C061575;
-        Fri,  3 Sep 2021 13:45:58 -0700 (PDT)
-Received: by mail-oi1-x22f.google.com with SMTP id q39so648199oiw.12;
-        Fri, 03 Sep 2021 13:45:58 -0700 (PDT)
+        with ESMTP id S1350971AbhICUrA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 3 Sep 2021 16:47:00 -0400
+Received: from mail-oo1-xc2c.google.com (mail-oo1-xc2c.google.com [IPv6:2607:f8b0:4864:20::c2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51706C061757;
+        Fri,  3 Sep 2021 13:46:00 -0700 (PDT)
+Received: by mail-oo1-xc2c.google.com with SMTP id m14-20020a4ad50e000000b002912a944a47so53421oos.12;
+        Fri, 03 Sep 2021 13:46:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DcmHwQY+Etz5k7FUE3JqhXtdTnQXSGBqgITy4Qw50K4=;
-        b=CuHn2SNGr+271aKjZ9ZM6ouKgChjkF5acCD6vX8d6uny0T+NL1Q8Jl52YDY3/Hlazi
-         EcxHkiocTKZCq/QD39znsE+Yfbqvr/G4rphdsVv6Z5HbgRvLFcDBnFB7PfvElMcPk4Ec
-         gq1iRuZ9HKgKBYOcWJoec1+Ll6yZssKPw7BGbtk1QK+wTOV5swMw0Yn+hlsyPJvYdsPw
-         8MfyfFvdXDHrtcqYAU4kqnEv5Z/FoFSfPFzWMxu7VeRhZFL9XdK8JK2VtTYUS/ZjC+CH
-         XteBwfmfx8A0QiOc5qCzrPswZD7sySieoRtl3793/BOTzYE1OROimZ9jYjDXHK25WcWs
-         ocqw==
+        bh=9NNm8UV+NJ/s6uGLWClpSwEu83DssbVn3I+chz3NRB0=;
+        b=nYR8Pw5XZyQayzbXEwey3+oMRPG0fTFlrZRaPJYu4DJfpIFbSajDBvltlKpxu0ifge
+         qCHpfzCsZPtWfJRXTAC5v80TEK6cMiYxH1a0gE3C/IIGb10E8wdelo0XCHO085OqoetT
+         5xNiwe22fqdSM8TJl7zip79oy1jgbzYUDDpXzoZ3sARgRZPUAId7UY03j81lIFXXSNrx
+         vEtr+RpJsphBGmeBkpdsWL4oHaTUHzQX5q1UuBkr5zmL3pb+neTre+I/WYCNpU+8z4Lg
+         qlsqPbBo5UOITfjNJ81xcShFRrmS8+dNmaxLKh48w+zpyEmXR3/Z3xzg+J7+ItqWfS+z
+         cpog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DcmHwQY+Etz5k7FUE3JqhXtdTnQXSGBqgITy4Qw50K4=;
-        b=Xx9WE90svnurBvFZEFPwHe+KkDyfotrbC9u7Z4uS0NvjFaPkmn+++mS28Ap4xUqdNA
-         uqquCao9wPEypZJ3ch4j5fW2ViibgxJa6OpzrJBjGELhMpF46ngBK+Bmjwo3QzOs6SE7
-         TIHuS5WpWKr4Md8laNhkqV3Yr6Juh9E+IgMXRkUh5pUxWvl50dnywuRE+833t+QOVixB
-         KyqB+WSDcMUxLF1plEtEC/1WJgPyi+e7C/bylLnCZgQSmw0tf0fGcqkog0edjoX607vC
-         dabWHFLed2crN8yyH+FVca36P7onSJRlLM75UoA+2Nh39z27Wzi/S4y5eYI/zJ3JBsp7
-         PplA==
-X-Gm-Message-State: AOAM531D9dLk8T6B8OR8s5fLfaLMKcD8/liKB3FFHdvriBkTBdcprRpQ
-        vSJWoFhI4GE3JiVQ662T8q8=
-X-Google-Smtp-Source: ABdhPJzKs8vv7VRGpciVIKeCNbKtdqvZ0tCV4n6/gjHjcQazfAzAybzFF0oFvkPHZQrtDcXAGTBbbA==
-X-Received: by 2002:aca:c481:: with SMTP id u123mr487740oif.23.1630701958251;
-        Fri, 03 Sep 2021 13:45:58 -0700 (PDT)
+        bh=9NNm8UV+NJ/s6uGLWClpSwEu83DssbVn3I+chz3NRB0=;
+        b=WmOLCNTDljEaliRQ0DXyiq8SwrgPdPhD5fuNYI1lAjJRsOUuYP9Xc+SXY+VW0au3GS
+         pF4R8dMhUc6o8LuMVs4JyxdKa3BwqU2VpCSF+9jg3wRn1zNUB+MGaDZWra0BY+LgPlfQ
+         wBQDD5yYuecV6f8+wT0MiSwe66rwzV4Z4l5g859sXeMEn1VHETUfu7S2BsbEioE4AgAw
+         yYILFxBmb8Hqnjj9fSRhNraS5C7MqgM4Ga5EPcnVw63O/xNGmnYxAudOP7XqZwqMcl54
+         JjESmV4m9TnVRtAP+mD+UCVKwEnsHUnnOpOBnJhw99qbaY9uyNeUypgHiYR4/ExvNBDl
+         G+mQ==
+X-Gm-Message-State: AOAM533Y77Z3t1LHhX8ujNxUwzr+2FPkbax6r7xWBuhkMgXkcXadvBJt
+        izPWgUeYQiJVca5LkQm87v8=
+X-Google-Smtp-Source: ABdhPJyabuCrCZz4NiJWv65TjdVZndPyUien4ErM5hTT3ZFxyA64avQnRkULN5TWfcv1zePVbhpjCg==
+X-Received: by 2002:a05:6820:16a8:: with SMTP id bc40mr4556576oob.63.1630701959730;
+        Fri, 03 Sep 2021 13:45:59 -0700 (PDT)
 Received: from ian.penurio.us ([47.184.51.90])
-        by smtp.gmail.com with ESMTPSA id be5sm90023oib.10.2021.09.03.13.45.57
+        by smtp.gmail.com with ESMTPSA id be5sm90023oib.10.2021.09.03.13.45.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Sep 2021 13:45:57 -0700 (PDT)
+        Fri, 03 Sep 2021 13:45:59 -0700 (PDT)
 From:   Ian Pilcher <arequipeno@gmail.com>
 To:     axboe@kernel.dk, pavel@ucw.cz
 Cc:     linux-leds@vger.kernel.org, linux-block@vger.kernel.org,
         linux@vger.kernel.org, gregkh@linuxfoundation.org, kabel@kernel.org
-Subject: [PATCH 01/18] docs: Add block device (blkdev) LED trigger documentation
-Date:   Fri,  3 Sep 2021 15:45:31 -0500
-Message-Id: <20210903204548.2745354-2-arequipeno@gmail.com>
+Subject: [PATCH 03/18] ledtrig-blkdev: Add function placeholders needed by block changes
+Date:   Fri,  3 Sep 2021 15:45:33 -0500
+Message-Id: <20210903204548.2745354-4-arequipeno@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210903204548.2745354-1-arequipeno@gmail.com>
 References: <20210903204548.2745354-1-arequipeno@gmail.com>
@@ -72,263 +72,71 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add Documentation/ABI/testing/sysfs-class-led-trigger-blkdev to
-document:
-
-  * /sys/class/leds/<led>/blink_time
-  * /sys/class/leds/<led>/interval
-  * /sys/class/leds/<led>/mode
-  * /sys/class/leds/<led>/add_blkdev
-  * /sys/class/leds/<led>/delete_blkdev
-  * /sys/class/leds/<led>/block_devices
-
-Add /sys/block/<disk>/blkdev_leds to Documentation/ABI/testing/sysfs-block
-
-Add overview in Documentation/leds/ledtrig-blkdev.rst
+Add ledtrig_blkdev_disk_init() and ledtrig_blkdev_disk_cleanup()
+placeholders.  (Implementations depend on block subsystem changes in
+next commit.)
 
 Signed-off-by: Ian Pilcher <arequipeno@gmail.com>
 ---
- Documentation/ABI/testing/sysfs-block         |   9 ++
- .../testing/sysfs-class-led-trigger-blkdev    |  48 ++++++
- Documentation/leds/index.rst                  |   1 +
- Documentation/leds/ledtrig-blkdev.rst         | 144 ++++++++++++++++++
- 4 files changed, 202 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-blkdev
- create mode 100644 Documentation/leds/ledtrig-blkdev.rst
+ drivers/leds/trigger/ledtrig-blkdev-core.c | 11 +++++++++++
+ include/linux/leds.h                       | 19 +++++++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-block b/Documentation/ABI/testing/sysfs-block
-index a0ed87386639..4d27e2d98091 100644
---- a/Documentation/ABI/testing/sysfs-block
-+++ b/Documentation/ABI/testing/sysfs-block
-@@ -328,3 +328,12 @@ Description:
- 		does not complete in this time then the block driver timeout
- 		handler is invoked. That timeout handler can decide to retry
- 		the request, to fail it or to start a device recovery strategy.
+diff --git a/drivers/leds/trigger/ledtrig-blkdev-core.c b/drivers/leds/trigger/ledtrig-blkdev-core.c
+index a126c7fc0f9f..f5b92d37f0df 100644
+--- a/drivers/leds/trigger/ledtrig-blkdev-core.c
++++ b/drivers/leds/trigger/ledtrig-blkdev-core.c
+@@ -6,4 +6,15 @@
+  *	Copyright 2021 Ian Pilcher <arequipeno@gmail.com>
+  */
+ 
++#include <linux/leds.h>
 +
-+What:		/sys/block/<disk>/blkdev_leds
-+Date:		September 2021
-+Contact:	Ian Pilcher <arequipeno@gmail.com>
-+Description:
-+		Directory containing links to all LEDs that are associated
-+		with this block device through the blkdev LED trigger.  Only
-+		present when at least one LED is associated.  (See
-+		Documentation/leds/ledtrig-blkdev.rst.)
-diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-blkdev b/Documentation/ABI/testing/sysfs-class-led-trigger-blkdev
-new file mode 100644
-index 000000000000..514f23f9a72d
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-led-trigger-blkdev
-@@ -0,0 +1,48 @@
-+What:		/sys/class/leds/<led>/blink_time
-+Date:		September 2021
-+Contact:	Ian Pilcher <arequipeno@gmail.com>
-+Description:
-+		Time (in milliseconds) that the LED will be on during a single
-+		"blink".
+ #include "ledtrig-blkdev.h"
 +
-+What:		/sys/class/leds/<led>/interval
-+Date:		September 2021
-+Contact:	Ian Pilcher <arequipeno@gmail.com>
-+Description:
-+		Frequency (in milliseconds) with which block devices associated
-+		with the blkdev LED trigger will be checked for activity.
++/**
++ * ledtrig_blkdev_disk_cleanup - remove a block device from the blkdev LED
++ * trigger
++ * @gd:	the disk to be removed
++ */
++void ledtrig_blkdev_disk_cleanup(struct gendisk *const gd)
++{
++}
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index a0b730be40ad..5d53921e4229 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -10,6 +10,7 @@
+ 
+ #include <dt-bindings/leds/common.h>
+ #include <linux/device.h>
++#include <linux/genhd.h>
+ #include <linux/kernfs.h>
+ #include <linux/list.h>
+ #include <linux/mutex.h>
+@@ -605,4 +606,22 @@ static inline void ledtrig_audio_set(enum led_audio type,
+ }
+ #endif
+ 
++#if IS_ENABLED(CONFIG_LEDS_TRIGGER_BLKDEV)
++/**
++ * ledtrig_blkdev_disk_init - initialize the ledtrig field of a new gendisk
++ * @gd:	the gendisk to be initialized
++ */
++static inline void ledtrig_blkdev_disk_init(struct gendisk *const gd)
++{
++}
++void ledtrig_blkdev_disk_cleanup(struct gendisk *const gd);
++#else	/* CONFIG_LEDS_TRIGGER_BLKDEV */
++static inline void ledtrig_blkdev_disk_init(const struct gendisk *gd)
++{
++}
++static inline void ledtrig_blkdev_disk_cleanup(const struct gendisk *gd)
++{
++}
++#endif	/* CONFIG_LEDS_TRIGGER_BLKDEV */
 +
-+		NOTE that this attribute is a global setting.  All changes
-+		apply to all LEDs associated with the blkdev LED trigger.
-+
-+What:		/sys/class/leds/<led>/mode
-+Date:		September 2021
-+Contact:	Ian Pilcher <arequipeno@gmail.com>
-+Description:
-+		Type of events for which LED will blink - read, write,
-+		or rw (both).  Note that any activity that changes the state of
-+		the device's non-volatile storage (including discards and cache
-+		flushes) is considered to be a write.
-+
-+What:		/sys/class/leds/<led>/add_blkdev
-+Date:		September 2021
-+Contact:	Ian Pilcher <arequipeno@gmail.com>
-+Description:
-+		Associate a block device with this LED by writing its kernel
-+		name (as shown in /sys/block) to this attribute.  Multiple
-+		device names may be written at once, separated by whitespace.
-+
-+What:		/sys/class/leds/<led>/delete_blkdev
-+Date:		September 2021
-+Contact:	Ian Pilcher <arequipeno@gmail.com>
-+Description:
-+		Remove the association between this LED and a block device by
-+		writing the device's kernel name to this attribute.  Multiple
-+		device names may be written at once, separated by whitespace.
-+
-+What:		/sys/class/leds/<led>/block_devices
-+Date:		September 2021
-+Contact:	Ian Pilcher <arequipeno@gmail.com>
-+Description:
-+		Directory containing links to all block devices that are
-+		associated with this LED.
-diff --git a/Documentation/leds/index.rst b/Documentation/leds/index.rst
-index e5d63b940045..e3c24e468cbc 100644
---- a/Documentation/leds/index.rst
-+++ b/Documentation/leds/index.rst
-@@ -10,6 +10,7 @@ LEDs
-    leds-class
-    leds-class-flash
-    leds-class-multicolor
-+   ledtrig-blkdev
-    ledtrig-oneshot
-    ledtrig-transient
-    ledtrig-usbport
-diff --git a/Documentation/leds/ledtrig-blkdev.rst b/Documentation/leds/ledtrig-blkdev.rst
-new file mode 100644
-index 000000000000..1a2b6c406258
---- /dev/null
-+++ b/Documentation/leds/ledtrig-blkdev.rst
-@@ -0,0 +1,144 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=================================
-+Block Device (blkdev) LED Trigger
-+=================================
-+
-+Available when ``CONFIG_LEDS_TRIGGER_BLKDEV=y`` or
-+``CONFIG_LEDS_TRIGGER_BLKDEV=m``.
-+
-+See also:
-+
-+* ``Documentation/ABI/testing/sysfs-class-led-trigger-blkdev``
-+* ``Documentation/ABI/testing/sysfs-block`` (``/sys/block/<disk>/leds``)
-+
-+Overview
-+========
-+
-+.. note::
-+	The examples below use ``<LED>`` to refer to the name of a
-+	system-specific LED.  If no suitable LED is available on a test
-+	system (in a virtual machine, for example), it is possible to
-+	use a userspace LED.  (See ``Documentation/leds/uleds.rst``.)
-+
-+Verify that the ``blkdev`` LED trigger is available::
-+
-+	# grep blkdev /sys/class/leds/<LED>/trigger
-+	... rfkill-none blkdev
-+
-+(If the previous command produces no output, you may need to load the trigger
-+module - ``modprobe ledtrig_blkdev``.  If the module is not available, check
-+the value of ``CONFIG_LEDS_TRIGGER_BLKDEV`` in your kernel configuration.)
-+
-+Associate the LED with the ``blkdev`` LED trigger::
-+
-+	# echo blkdev > /sys/class/leds/<LED>/trigger
-+
-+	# cat /sys/class/leds/<LED>/trigger
-+	... rfkill-none [blkdev]
-+
-+Note that several new device attributes are available in the
-+``/sys/class/leds/<LED>`` directory.
-+
-+* ``add_blkdev`` and ``delete_blkdev`` are used to associate block devices with
-+  this LED, and to remove associations.
-+
-+* ``mode`` is used to control the type of device activity that will cause this
-+  LED to blink - read activity, write activity, or both.  (Note that any
-+  activity that changes the state of a device's non-volatile storage is
-+  considered to be a write.  This includes discard and cache flush requests.)
-+
-+* ``blink_time`` is the duration (in milliseconds) of each blink of this LED.
-+
-+* ``interval`` is the frequency (in milliseconds) with which devices are checked
-+  for activity.  (Note that this is a global setting.  Any change affects all
-+  LEDs associated with the ``blkdev`` trigger.)
-+
-+* The ``block_devices`` directory will contain a symbolic link to every device
-+  that is associated with this LED.
-+
-+Associate the LED with the block device::
-+
-+	# echo sda > /sys/class/leds/<LED>/add_blkdev
-+
-+	# ls /sys/class/leds/<LED>/block_devices
-+	sda
-+
-+Reads and write activity on the device should cause the LED to blink.  The
-+duration of each blink (in milliseconds) can be adjusted by setting
-+``/sys/class/leds/<LED>/blink_on``, and the minimum delay between blinks can
-+be set via ``/sys/class/leds/<LED>/blink_off``.
-+
-+Associate a second device with the LED::
-+
-+	# echo sdb > /sys/class/leds/<LED>/add_blkdev
-+
-+	# ls /sys/class/leds/<LED>/block_devices
-+	sda  sdb
-+
-+When a block device is associated with one or more LEDs, the LEDs are linked
-+from the device's ``blkdev_leds`` directory::
-+
-+	# ls /sys/block/sd{a,b}/blkdev_leds
-+	/sys/block/sda/blkdev_leds:
-+	<LED>
-+
-+	/sys/block/sdb/blkdev_leds:
-+	<LED>
-+
-+(The ``blkdev_leds`` directory only exists when the block device is associated
-+with at least one LED.)
-+
-+The ``add_blkdev`` and ``delete_blkdev`` attributes both accept multiple,
-+whitespace separated, devices.  For example::
-+
-+	# echo sda sdb > /sys/class/leds/<LED>/delete_blkdev
-+
-+	# ls /sys/class/leds/<LED>/block_devices
-+
-+``interval`` and ``blink_time``
-+===============================
-+
-+* The ``interval`` attribute is a global setting.  Changing the value via
-+  ``/sys/class/leds/<LED>/interval`` will affect all LEDs associated with
-+  the ``blkdev`` LED trigger.
-+
-+* All associated devices are checked for activity every ``interval``
-+  milliseconds, and a blink is triggered on appropriate LEDs.  The duration
-+  of an LED's blink is determined by its ``blink_time`` attribute (also in
-+  milliseconds).  Thus (assuming that activity of the relevant type has occurred
-+  on one of an LED's associated devices), the LED will be on for ``blink_time``
-+  milliseconds and off for ``interval - blink_time`` milliseconds.
-+
-+* The LED subsystem ignores new blink requests for an LED that is currently in
-+  in the process of blinking, so setting a ``blink_time`` greater than or equal
-+  to ``interval`` will cause some blinks to be dropped.
-+
-+* Because of processing times, scheduling latencies, etc., avoiding missed
-+  blinks actually requires a difference of at least a few milliseconds between
-+  the ``blink_time`` and ``interval``.  The required difference is likely to
-+  vary from system to system.  As a  reference, a Thecus N5550 NAS requires a
-+  difference of 7 milliseconds (``interval == 100``, ``blink_time == 93``).
-+
-+* The default values (``interval == 100``, ``blink_time == 75``) cause the LED
-+  associated with a continuously active device to blink rapidly.  For a more
-+  "constantly on" effect, increase the ``blink_time`` (but not too much; see
-+  the previous bullet).
-+
-+Other Notes
-+===========
-+
-+* Many (possibly all) types of block devices work with this trigger, including:
-+
-+  * SCSI (including SATA and USB) hard disk drives and SSDs
-+  * SCSI (including SATA and USB) optical drives
-+  * NVMe SSDs
-+  * SD cards
-+  * loopback block devices (``/dev/loop*``)
-+  * device mapper devices, such as LVM logical volumes
-+  * MD RAID devices
-+  * zRAM compressed RAM-disks
-+
-+* The ``blkdev`` LED trigger supports many-to-many device/LED associations.
-+  A device can be associated with multiple LEDs, and an LED can be associated
-+  with multiple devices.
+ #endif		/* __LINUX_LEDS_H_INCLUDED */
 -- 
 2.31.1
 
