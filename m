@@ -8,61 +8,61 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 318A7C43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72771C19F38
 	for <linux-leds@archiver.kernel.org>; Fri,  3 Sep 2021 20:46:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D93860041
+	by mail.kernel.org (Postfix) with ESMTP id 55E2D610F7
 	for <linux-leds@archiver.kernel.org>; Fri,  3 Sep 2021 20:46:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351038AbhICUrQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 3 Sep 2021 16:47:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41512 "EHLO
+        id S1351049AbhICUrR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 3 Sep 2021 16:47:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351033AbhICUrN (ORCPT
+        with ESMTP id S1351036AbhICUrN (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Fri, 3 Sep 2021 16:47:13 -0400
-Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC78C06129E;
+Received: from mail-oo1-xc30.google.com (mail-oo1-xc30.google.com [IPv6:2607:f8b0:4864:20::c30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9509CC0612A4;
         Fri,  3 Sep 2021 13:46:11 -0700 (PDT)
-Received: by mail-oo1-xc31.google.com with SMTP id m14-20020a4ad50e000000b002912a944a47so53560oos.12;
+Received: by mail-oo1-xc30.google.com with SMTP id j11-20020a4a92cb000000b002902ae8cb10so57843ooh.7;
         Fri, 03 Sep 2021 13:46:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uE+OoM267dFPh/kKA/VGTkuQVxZM2722ivJ6mdLlhA0=;
-        b=Weo3JI/uObhJNd0BU5gCrAEnyYCkGdwpndCtmmqpOE2Po43fuU7yHbO4+WkTLeX397
-         F0LdVDGZu/e1GsqSb6UVEJ9JWOrelRxEXQGiP9sKd7euKz41x7lbiod+ngwBOR/8xxaU
-         /d3wijX0eWH6HlrB2RzLD3QxtJIpJAQx8wdFezq38IbQ2myTl9fBcYHPzjH4ybU56S86
-         1/M4GX26Hkhql1+CG/MStOBb7DvL91T7HeaoAa1h1kkNQL/T3Wl7EPVhP31uao/VxUrX
-         P8wIKa/NgKSMn6GtNmA1snNHuq/EGXyHCZM41a0FybbeqFVs5vNs4M6HXzNePEpnWl/u
-         02cw==
+        bh=V5mTctvAaHxbdM02zl0VqaWHQiOVodrcZQi3t2zf4Y8=;
+        b=FmiVmMRWMlGyrDFBSvi0IEW2we6uTdpDIZ7jqELZ9axnTlwpDY6dAIE5SIWHX68ZM7
+         uzLM8Yo0Am0HGCd8hmMb+E/w9zLXPtbc4rVP0GDETnporsfmTFjOCaSkdqPRC7nur6qz
+         4c53/bNROTn3WZguDe1/zQMFaSGMejQuMCK91MGd9m4ljIvXY86YM6CfmOwjp1aG37lV
+         zzXSu5PAuPZhjpviE7vGgEc9RfiwZ5Hm1e1dQbKNMtTwdFEKK6iwE+cfDZ0A94Tu2TtG
+         RuGDypcdbzzSJWcWJ6c+t2pSTtY3kdOGnY63IgVvRY8Y4/pG1slIl5iaA4DcWrzXu3yg
+         uSbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uE+OoM267dFPh/kKA/VGTkuQVxZM2722ivJ6mdLlhA0=;
-        b=Z3js19uxUPhk+TqmBJLlWg8USuWfDeotvMssyRL6ZtcM2LZHTfWChdo3cPjRBC7PmR
-         i4Mh8gZ1x6BW/T4p6sBiS9hOyRl0Zwnm6mOc6cKNYu9muotypLjpLLCdOfZ4gGYyTYQn
-         RYsTObgZk1YjP0Q+IgbIANBj0pUc+OYRWZZWm9GtBQ4hon2LBHSgeRPuQbsmBIclsO6U
-         mKtBT+X5NsPvISmSbRiA0JsOO86Wg8DT8hoV4ZWw/d5qeIUT6NqVaMiVrs8ElNklFsH/
-         8rFlrqg0TzwwSjyvZoVlJaABPREx9gghpO3L5Gz00byJbYpAHdiqGP7+AshagEIjqWH8
-         s++A==
-X-Gm-Message-State: AOAM530ocioAPM+r4FT8Vf3C7rTwt6Ld/zwT6ihoxy3SzjgIW3U2GB6e
-        P54jRUCjmNSMbm3FpkEwDWk=
-X-Google-Smtp-Source: ABdhPJzbX6P/qtWzYtqTYF/9QJ5d1VZCn3vDqoTEcCyU2jaoLAyBFHtjlQ+RtdPuMCFgsFGQixh6Tw==
-X-Received: by 2002:a4a:c119:: with SMTP id s25mr4645248oop.22.1630701969395;
-        Fri, 03 Sep 2021 13:46:09 -0700 (PDT)
+        bh=V5mTctvAaHxbdM02zl0VqaWHQiOVodrcZQi3t2zf4Y8=;
+        b=D/Z7ilkeDFk09JQTLIrZo696HIiKasWi7ucbBZF2XbPMHXzFfatbqA94vuoLQnKbDF
+         uaCYyrBMNTGQy+wTv34dNouBg9EAUuQfBSRQBYmoyPFcXANwL2xzY2++TlAqFpr4am98
+         YyCBGOyy2UxxoGP6ljfB+jw6cwDDiFqT8RPRLCrlFNJY1UsBmVlE3T3OTaSzW85cAeYr
+         E4GMdb4/U0bgCgD/AQYC+jc1SJpSV/uGWh4S1wxY1vyGSrln+RwkQh87hQehvJ6/qLST
+         Dga31RfVeZdR27ZFN+TJZFNnhQu3gJcFC+8lTpLAI3MyP3GfglqR2gwk/iIrlxeVF4WN
+         5rAw==
+X-Gm-Message-State: AOAM531QnnwQFGPzcFSn/e0MHyFgMi7EZo1nBsgPfP+xLdqLjsoIrVOB
+        F618LmZecNj89C7e4VMjl9Q=
+X-Google-Smtp-Source: ABdhPJyI18JIHGoRZ8qFNC/9Mxd9Kv3bk3ZrTwbSFkLgy7EoKwkQM2BKqFS7g+ytKW8bbYaytPlqbA==
+X-Received: by 2002:a05:6820:235:: with SMTP id j21mr4490189oob.75.1630701970882;
+        Fri, 03 Sep 2021 13:46:10 -0700 (PDT)
 Received: from ian.penurio.us ([47.184.51.90])
-        by smtp.gmail.com with ESMTPSA id be5sm90023oib.10.2021.09.03.13.46.08
+        by smtp.gmail.com with ESMTPSA id be5sm90023oib.10.2021.09.03.13.46.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Sep 2021 13:46:09 -0700 (PDT)
+        Fri, 03 Sep 2021 13:46:10 -0700 (PDT)
 From:   Ian Pilcher <arequipeno@gmail.com>
 To:     axboe@kernel.dk, pavel@ucw.cz
 Cc:     linux-leds@vger.kernel.org, linux-block@vger.kernel.org,
         linux@vger.kernel.org, gregkh@linuxfoundation.org, kabel@kernel.org
-Subject: [PATCH 15/18] ledtrig-blkdev: Add sysfs attributes to [un]link LEDs & devices
-Date:   Fri,  3 Sep 2021 15:45:45 -0500
-Message-Id: <20210903204548.2745354-16-arequipeno@gmail.com>
+Subject: [PATCH 17/18] ledtrig-blkdev: Add mode (read/write/rw) sysfs attributue
+Date:   Fri,  3 Sep 2021 15:45:47 -0500
+Message-Id: <20210903204548.2745354-18-arequipeno@gmail.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210903204548.2745354-1-arequipeno@gmail.com>
 References: <20210903204548.2745354-1-arequipeno@gmail.com>
@@ -72,73 +72,88 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-/sys/class/leds/<led>/add_blkdev - to create device/LED associations
-
-/sys/class/leds/<led>/delete_blkdev to remove device/LED associations
-
-For both attributes, accept multiple device names separated by whitespace
+Show all modes, with current mode in square brackets, in show function
 
 Signed-off-by: Ian Pilcher <arequipeno@gmail.com>
 ---
- drivers/leds/trigger/ledtrig-blkdev.c | 48 +++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ drivers/leds/trigger/ledtrig-blkdev.c | 67 +++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
 diff --git a/drivers/leds/trigger/ledtrig-blkdev.c b/drivers/leds/trigger/ledtrig-blkdev.c
-index b2ec85b805d0..db82d37fc721 100644
+index b23a5c98de98..ec167633e329 100644
 --- a/drivers/leds/trigger/ledtrig-blkdev.c
 +++ b/drivers/leds/trigger/ledtrig-blkdev.c
-@@ -509,3 +509,51 @@ static void blkdev_deactivate(struct led_classdev *const led_dev)
+@@ -620,3 +620,70 @@ static ssize_t blkdev_time_store(struct device *const dev,
  
- 	module_put(THIS_MODULE);
+ 	return count;
  }
 +
 +
 +/*
 + *
-+ *	sysfs attributes to add & delete devices from LEDs
++ *	LED mode device attribute
 + *
 + */
 +
-+static ssize_t blkdev_add_or_del(struct device *const dev,
-+				 struct device_attribute *const attr,
-+				 const char *const buf, const size_t count);
++static const struct {
++	const char	*name;
++	const char	*show;
++} blkdev_modes[] = {
++	[LEDTRIG_BLKDEV_MODE_RO] = {
++		.name	= "read",
++		.show	= "[read] write rw\n",
++	},
++	[LEDTRIG_BLKDEV_MODE_WO] = {
++		.name	= "write",
++		.show	= "read [write] rw\n",
++	},
++	[LEDTRIG_BLKDEV_MODE_RW] = {
++		.name	= "rw",
++		.show	= "read write [rw]\n",
++	},
++};
 +
-+static struct device_attribute ledtrig_blkdev_attr_add =
-+	__ATTR(add_blkdev, 0200, NULL, blkdev_add_or_del);
++static ssize_t blkdev_mode_show(struct device *const dev,
++				struct device_attribute *const attr,
++				char *const buf)
++{
++	const struct ledtrig_blkdev_led *const led =
++					led_trigger_get_drvdata(dev);
 +
-+static struct device_attribute ledtrig_blkdev_attr_del =
-+	__ATTR(delete_blkdev, 0200, NULL, blkdev_add_or_del);
++	return sprintf(buf, blkdev_modes[READ_ONCE(led->mode)].show);
++}
 +
-+static ssize_t blkdev_add_or_del(struct device *const dev,
++static ssize_t blkdev_mode_store(struct device *const dev,
 +				 struct device_attribute *const attr,
 +				 const char *const buf, const size_t count)
 +{
 +	struct ledtrig_blkdev_led *const led = led_trigger_get_drvdata(dev);
-+	const char *const disk_name = blkdev_skip_space(buf);
-+	const char *const endp = blkdev_find_space(disk_name);
-+	const ptrdiff_t name_len = endp - disk_name;	/* always >= 0 */
-+	int ret;
++	const char *const mode_name = blkdev_skip_space(buf);
++	const char *const endp = blkdev_find_space(mode_name);
++	const ptrdiff_t name_len = endp - mode_name;	/* always >= 0 */
++	enum ledtrig_blkdev_mode mode;
 +
 +	if (name_len == 0) {
-+		pr_info("blkdev LED: empty block device name\n");
++		pr_info("blkdev LED: empty mode\n");
 +		return -EINVAL;
 +	}
 +
-+	if (attr == &ledtrig_blkdev_attr_del) {
-+		blkdev_disk_delete(led, disk_name, name_len);
-+	} else {	/* attr == &ledtrig_blkdev_attr_add */
-+		ret = blkdev_disk_add(led, disk_name, name_len);
-+		if (ret != 0)
-+			return ret;
++	for (mode = LEDTRIG_BLKDEV_MODE_RO;
++				mode <= LEDTRIG_BLKDEV_MODE_RW; ++mode) {
++
++		if (ledtrig_blkdev_streq(blkdev_modes[mode].name,
++						mode_name, name_len)) {
++			WRITE_ONCE(led->mode, mode);
++			return count;
++		}
 +	}
 +
-+	/*
-+	 * Consume everything up to the next non-whitespace token (or the end
-+	 * of the input).  Avoids "empty block device name" error if there is
-+	 * whitespace (such as a newline) after the last token.
-+	 */
-+	return blkdev_skip_space(endp) - buf;
++	pr_info("blkdev LED: invalid mode (%.*s)\n", (int)name_len, mode_name);
++	return -EINVAL;
 +}
++
++static struct device_attribute ledtrig_blkdev_attr_mode =
++	__ATTR(mode, 0644, blkdev_mode_show, blkdev_mode_store);
 -- 
 2.31.1
 
