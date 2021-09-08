@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 236FBC433F5
-	for <linux-leds@archiver.kernel.org>; Tue,  7 Sep 2021 20:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD98FC433EF
+	for <linux-leds@archiver.kernel.org>; Wed,  8 Sep 2021 03:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC06761139
-	for <linux-leds@archiver.kernel.org>; Tue,  7 Sep 2021 20:20:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCAFB61151
+	for <linux-leds@archiver.kernel.org>; Wed,  8 Sep 2021 03:34:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242646AbhIGUVa (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 7 Sep 2021 16:21:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39640 "EHLO
+        id S241137AbhIHDf6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 7 Sep 2021 23:35:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234414AbhIGUVa (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Sep 2021 16:21:30 -0400
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6C57C0613C1
-        for <linux-leds@vger.kernel.org>; Tue,  7 Sep 2021 13:20:23 -0700 (PDT)
-Received: by mail-ot1-x333.google.com with SMTP id q11-20020a9d4b0b000000b0051acbdb2869so671675otf.2
-        for <linux-leds@vger.kernel.org>; Tue, 07 Sep 2021 13:20:23 -0700 (PDT)
+        with ESMTP id S230454AbhIHDf5 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Sep 2021 23:35:57 -0400
+Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7401EC061575
+        for <linux-leds@vger.kernel.org>; Tue,  7 Sep 2021 20:34:50 -0700 (PDT)
+Received: by mail-ot1-x330.google.com with SMTP id x10-20020a056830408a00b004f26cead745so1141102ott.10
+        for <linux-leds@vger.kernel.org>; Tue, 07 Sep 2021 20:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:in-reply-to:references:from:user-agent:date:message-id
          :subject:to:cc;
-        bh=ukPiPPE2rZ88vZN1HP1lB0rTF2OeXPBUpUGvxMb6w7A=;
-        b=kyqoGXnxMsNL5PFmmBaRpA3fUSFzACYYEJxAgrqLqfisBC7GAJWkod8Uqn55/K35Mi
-         yM23x2n0ovoqTTeaQJXg169ZYYouKU+wFJaCdxnSrs/TVE2An7bwq6vDk8vFjK/cjlL6
-         zFC7Yj++kgWDa/LOxFnG3zcLCHHyZSJ8anrw8=
+        bh=L3P6E94KgYTggNi34VPrDx8IIAdEhyLCWWiN3zBY9Js=;
+        b=JlNtynvnkpQ9cbDenz1tsa/nlyMA0maw6rFk81Gw0aVDGffXlQTTa+6b7htWTRdSK+
+         NEVM+wK8g5PbVzZzPOq81FZZ98qHdAbLYXSFQBwE3yxL0ns2D4V+OZwja1z77ctRXV/u
+         gpPA05WutWMCzrtTk6LL0g8uHqZ9KAJG7Ghv8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from
          :user-agent:date:message-id:subject:to:cc;
-        bh=ukPiPPE2rZ88vZN1HP1lB0rTF2OeXPBUpUGvxMb6w7A=;
-        b=CGD8pxc9w3iwlWQ3++zFyEdbxj/6/G/7taNIsN9A80mOOAWkBJQqo2FXtHwEkH6bA+
-         FNYW3nk2txG1QU95wV5IJVlbikLjkr7J+XVdaOx0X+vqacgtfBy2Whg8K01GRLo4sRKo
-         idK1Dg1135oaGFW5In8dhNukTFo6CyUL0kcTY5PYjbcFxuQYx5PGTAQ+/ALa94js00/9
-         PAOl+fB7Yj37lx0Bz3ifzaRalfcFzZT1YXrg8enNZMmjSODtC9fjssUMHAEYPR/vII11
-         oSyR9ZwIOGHzdfnwfMVOlHvx6e6nTR/vZLSODPIwnUirT+bYO3zKu7G9E8R85X4npKtz
-         ClVw==
-X-Gm-Message-State: AOAM530mcVlP9d+cGfRZKCUT/oRLSlTeAg2p2WLYhZcQbSBG3y6WwPOO
-        +4k/+B2KhcxwBrf98QwIT4zXB/eeRX71htRCAeOLoA==
-X-Google-Smtp-Source: ABdhPJwYa1VNZ8SWZ957Teoa4i0325fu9DZgnTn3d3Vrdn657RvBqUeJFE1e8/tQPlx1wh3Bf/tNEWc0pG6yKORbGsk=
-X-Received: by 2002:a05:6830:719:: with SMTP id y25mr174735ots.77.1631046023013;
- Tue, 07 Sep 2021 13:20:23 -0700 (PDT)
+        bh=L3P6E94KgYTggNi34VPrDx8IIAdEhyLCWWiN3zBY9Js=;
+        b=jrzpL0SgsGPQjxGEpAhSKTNs+PyJ2uAYiRLz6J5z2Rh0soTI0LQyWsiTAEV546iusA
+         U3+qNVBVH8wNv3PgmgSOovVRrBftvsHFEwxAAlT0ux38mU6WUJ19zrTEA5+69AyfCtZj
+         EsjLsYcUnb2t4cpwj+lPtTIdsH+5h83lmEqtRHHJWiQnwTMLMUIr3cGQA7F/ePTmMgse
+         CnYFDpFbCoJmdjEn2V6BU8KxjPCqDfXwZJ4YgnUPfOzRtik+S/BSfmnHBeHqeU6iGwuI
+         uncSirX/u1u0zW4+pJzaQgL3yvCbViKu+SgKcm1wcUSdB7AmfzcPbjZgk97vfHFae9fB
+         JJMw==
+X-Gm-Message-State: AOAM532w+rfibWfX+M/biZjPX6q4Qbv2dIXpAghX6v7TTKV8/tR/S7WJ
+        f+8EtRcSMp16jaYxkFWFWQiPwCZTb+IOVHb9soO9uNsGx+g=
+X-Google-Smtp-Source: ABdhPJyg6igS7IIqsGysq/0S3geeIlQjSOmbIIyrAPs2dYADUam233q3f/f5Bbz2/xP4NNavIoeMzXqtJhdu5C4/8ws=
+X-Received: by 2002:a05:6830:1212:: with SMTP id r18mr1328000otp.159.1631072089755;
+ Tue, 07 Sep 2021 20:34:49 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 7 Sep 2021 20:20:22 +0000
+ HTTPREST; Wed, 8 Sep 2021 03:34:49 +0000
 MIME-Version: 1.0
-In-Reply-To: <1630924867-4663-3-git-send-email-skakit@codeaurora.org>
-References: <1630924867-4663-1-git-send-email-skakit@codeaurora.org> <1630924867-4663-3-git-send-email-skakit@codeaurora.org>
+In-Reply-To: <1630924867-4663-4-git-send-email-skakit@codeaurora.org>
+References: <1630924867-4663-1-git-send-email-skakit@codeaurora.org> <1630924867-4663-4-git-send-email-skakit@codeaurora.org>
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.9.1
-Date:   Tue, 7 Sep 2021 20:20:22 +0000
-Message-ID: <CAE-0n52Jb9nw9rbbQJrKNDQ_O2iCahDr8WLGkWORcNks9ptH-g@mail.gmail.com>
-Subject: Re: [PATCH 2/3] leds: Add pm8350c support to Qualcomm LPG driver
+Date:   Wed, 8 Sep 2021 03:34:49 +0000
+Message-ID: <CAE-0n51CCqrbKr9NCkzaK3JxCtJgRKdXTeR4kxnnOK_wNKpP6A@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: pm8350c: Add pwm support
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
@@ -70,39 +70,35 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Quoting satya priya (2021-09-06 03:41:06)
-> Add pm8350c compatible and lpg_data to the driver.
+Quoting satya priya (2021-09-06 03:41:07)
+> Add pwm support for PM8350C pmic.
 >
 > Signed-off-by: satya priya <skakit@codeaurora.org>
 > ---
->  drivers/leds/rgb/leds-qcom-lpg.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  arch/arm64/boot/dts/qcom/pm8350c.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
 >
-> diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-> index 327e81a..6ee80d6 100644
-> --- a/drivers/leds/rgb/leds-qcom-lpg.c
-> +++ b/drivers/leds/rgb/leds-qcom-lpg.c
-> @@ -1275,9 +1275,19 @@ static const struct lpg_data pm8150l_lpg_data = {
->         },
+> diff --git a/arch/arm64/boot/dts/qcom/pm8350c.dtsi b/arch/arm64/boot/dts/qcom/pm8350c.dtsi
+> index e1b75ae..ecdae55 100644
+> --- a/arch/arm64/boot/dts/qcom/pm8350c.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/pm8350c.dtsi
+> @@ -29,6 +29,12 @@
+>                         interrupt-controller;
+>                         #interrupt-cells = <2>;
+>                 };
+> +
+> +               pm8350c_pwm4: pwm {
+> +                       compatible = "qcom,pm8350c-pwm";
+
+Shouldn't there be a reg property?
+
+> +                       #pwm-cells = <2>;
+> +                       status = "okay";
+> +               };
+>         };
 >  };
 >
-> +static const struct lpg_data pm8350c_pwm_data = {
-> +       .pwm_9bit_mask = BIT(2),
-> +
-> +       .num_channels = 1,
-> +       .channels = (struct lpg_channel_data[]) {
-
-Can this be const struct lpg_channel_data? I think that will move it to
-rodata which is only a good thing.
-
-> +               { .base = 0xeb00 },
-> +       },
-> +};
-> +
->  static const struct of_device_id lpg_of_table[] = {
->         { .compatible = "qcom,pm8150b-lpg", .data = &pm8150b_lpg_data },
->         { .compatible = "qcom,pm8150l-lpg", .data = &pm8150l_lpg_data },
-> +       { .compatible = "qcom,pm8350c-pwm", .data = &pm8350c_pwm_data },
->         { .compatible = "qcom,pm8916-pwm", .data = &pm8916_pwm_data },
->         { .compatible = "qcom,pm8941-lpg", .data = &pm8941_lpg_data },
->         { .compatible = "qcom,pm8994-lpg", .data = &pm8994_lpg_data },
+> --
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+>
