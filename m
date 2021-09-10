@@ -7,99 +7,97 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DF7C433EF
-	for <linux-leds@archiver.kernel.org>; Fri, 10 Sep 2021 16:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6216DC433F5
+	for <linux-leds@archiver.kernel.org>; Fri, 10 Sep 2021 21:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13EA760F35
-	for <linux-leds@archiver.kernel.org>; Fri, 10 Sep 2021 16:28:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3672C61209
+	for <linux-leds@archiver.kernel.org>; Fri, 10 Sep 2021 21:23:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229466AbhIJQ3Y (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 10 Sep 2021 12:29:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55818 "EHLO
+        id S234458AbhIJVYT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 10 Sep 2021 17:24:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbhIJQ3X (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 10 Sep 2021 12:29:23 -0400
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D89AC061574;
-        Fri, 10 Sep 2021 09:28:12 -0700 (PDT)
-Received: by mail-oi1-x233.google.com with SMTP id w144so3610728oie.13;
-        Fri, 10 Sep 2021 09:28:12 -0700 (PDT)
+        with ESMTP id S234331AbhIJVYR (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 10 Sep 2021 17:24:17 -0400
+Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B1E8C061574;
+        Fri, 10 Sep 2021 14:23:04 -0700 (PDT)
+Received: by mail-ot1-x329.google.com with SMTP id l7-20020a0568302b0700b0051c0181deebso4055266otv.12;
+        Fri, 10 Sep 2021 14:23:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8G7cvQswihFWAazcGsIyLUOsBBl0E9MiiAh80yrTnGw=;
-        b=KPU2Q4wSB9SzEp4o1d0Kw8OTn60RUAozaxLOAq60CTuCjrXULRuI/IAf5ZkF5xvYPJ
-         QHBk7dWDPpOotULVBBiHAgKTHfCDaDi4KPXh1qw06pv2Zyp/BiEQ99RROXdeHcpk5/bh
-         Tt4ZRYV60YkmsbiuI4ZQq9OzXssUB58HzpjlnNK0A9Nk6kpGPFVK9F6V6lcRbxmNElX+
-         7mBW5K/pizRrpmmRsEg+iPCgvN3hTcptvmCdCz7TBPB301DZ0h42ArRK86zDaKmoec1g
-         Ohr8mD7BrRMydZuCtbF8JNuXgZj1kLWTiqSF6EU33gvax0RVVpS3KMOmU7Z8V2wdiiFp
-         Ho5Q==
+        bh=kiPr0VA4llBq0cLdvqK4IheV72+wX8xwDjal038cGwk=;
+        b=NAJiZg1Qp+Vzk6wNyzdhAxYX9E3T4PYTAEka2KCcCEyt6TC0a/oOB2jIvCpI9rbJCj
+         e2iRyCxbizmDW+pwNJyEDuDIfz86ClTHu8BlOJ6bRqaJObcUNiv9/GPggiw4dh0WE2DB
+         mbpvbFB74ArOke8Dg2J4vn1/1ZH9IezJ/EYBbgGsGFArLplzg/cMSSPd2xIs0+g4LPaO
+         Ho40TAiIpUHQgVeONJu/ybII5riuk2r/A51SdAo8y7LXUYjFSnRul77zTdTEmnosMcGF
+         Osg0vYlYAiNKOlf72jGsKqKL8cMfG2WGWhFwYX6h2hY1/9ArgwyhgCrSg1gn6V0R8lY/
+         RQxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=8G7cvQswihFWAazcGsIyLUOsBBl0E9MiiAh80yrTnGw=;
-        b=1MADpFClL/xf20gq9RPtRmpwZ+5BSid4O4Kke5mpYF17DBOIQif6gS0b17hcSz2Urx
-         KTeDyGGRq3n2iuXeLzD1JUILxi25QHMAAjKmHEkoJfZAWLr+UDamKjU63hs08r4qC+2+
-         wX6FLKLutmWevRITWvyk1r5IuMSVCW5nz+0xO8p616rTDukpbMLdOeCykue0KsTENYH6
-         FVbVhq77APFasSqkFJieieqSJlda1mtza7MCzQgcy2u5GnK9RrvdJ889oODBOoASgw0M
-         FZVHBmlD+s5d3Ik5sB7bdvffNGxdFsmczZsMIciGULJW5CxxRSHlM05pNcKemqD5D5IL
-         kyYQ==
-X-Gm-Message-State: AOAM533PfK/OnXKgkfsdMFCwltPbEgxWF9YaMOOSsLv4QMuj8sryYizu
-        NI4vda1LGrC/hfFXcPIpYRY=
-X-Google-Smtp-Source: ABdhPJwKhmGH8Ry9crSHy946O1RDEza5R0WDpHrtJfwT8v3oho8sEzaemJ43fx3K+bzTzER7jj0YLA==
-X-Received: by 2002:a05:6808:56a:: with SMTP id j10mr4892216oig.79.1631291291473;
-        Fri, 10 Sep 2021 09:28:11 -0700 (PDT)
+        bh=kiPr0VA4llBq0cLdvqK4IheV72+wX8xwDjal038cGwk=;
+        b=OEIkTGiPgb/R+CiltY1pvOie6ZjMohvgiUmttzfeNo9z3PQp06es3PHrZdYhD0pHjI
+         EOAbEHnrrZONMjgJbvuzSy1vLKOYoJIq3cEYMkkkq6tESyDdFMTApNtgSoSckTdxG2Ka
+         O2cMrY9YbkbEhVeDdCALMMmd9Gu6H89iOhKuDvGow6imRRk9N1Bwy2ulX9dUv0yp7i4D
+         R0KbhGiKVHijKB/pwh4aJQQ/aT8l0lUkLnzopHPPVbjGDt8t7JIBaQfoxzz9u5wOzB4A
+         AxHCzY+V6I8Dgsw6wHjYU6E7qs+w6Tu+o/5UsK+E1ciWmdH6PcPcg2n6MjIeLrYgzJRv
+         hPxQ==
+X-Gm-Message-State: AOAM531sOMD9baI1xIrkiUeV9wTiLlcyjtNvzXyVttCuamZHbLAlgPQa
+        eBM+Z0IqzEPvfKAUCwjyVEU=
+X-Google-Smtp-Source: ABdhPJyZdrUeixHbtvWTBYk8MjtJJAy8X0S9xfPjQWwd/cuNQHBdNtqJ0YEiugNUDd8GKqud10c+SA==
+X-Received: by 2002:a9d:4a88:: with SMTP id i8mr6198525otf.290.1631308983739;
+        Fri, 10 Sep 2021 14:23:03 -0700 (PDT)
 Received: from ian.penurio.us ([47.184.51.90])
-        by smtp.gmail.com with ESMTPSA id v19sm1331738oic.31.2021.09.10.09.28.11
+        by smtp.gmail.com with ESMTPSA id k8sm1397988oom.20.2021.09.10.14.23.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Sep 2021 09:28:11 -0700 (PDT)
-Subject: Re: [PATCH v2 06/15] leds: trigger: blkdev: Add function to get
- gendisk by name
-To:     Greg KH <gregkh@linuxfoundation.org>
+        Fri, 10 Sep 2021 14:23:03 -0700 (PDT)
+Subject: Re: [PATCH v2 09/15] leds: trigger: blkdev: Check devices for
+ activity and blink LEDs
+To:     =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>
 Cc:     axboe@kernel.dk, pavel@ucw.cz, linux-leds@vger.kernel.org,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kabel@kernel.org
+        gregkh@linuxfoundation.org
 References: <20210909222513.2184795-1-arequipeno@gmail.com>
- <20210909222513.2184795-7-arequipeno@gmail.com> <YTr+8h12z7kMLlV/@kroah.com>
+ <20210909222513.2184795-10-arequipeno@gmail.com>
+ <20210910041713.4722760a@thinkpad>
+ <77111c57-dfb5-44c6-c4e9-e18afb468b6e@gmail.com>
+ <20210910171211.3c2236c3@thinkpad>
 From:   Ian Pilcher <arequipeno@gmail.com>
-Message-ID: <4a69b13f-6f7e-98ba-7b9b-35bde571462e@gmail.com>
-Date:   Fri, 10 Sep 2021 11:28:10 -0500
+Message-ID: <1e4986e2-53ba-9a0f-06d1-7cfb25d9f0e6@gmail.com>
+Date:   Fri, 10 Sep 2021 16:23:02 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <YTr+8h12z7kMLlV/@kroah.com>
+In-Reply-To: <20210910171211.3c2236c3@thinkpad>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 9/10/21 1:45 AM, Greg KH wrote:
-> On Thu, Sep 09, 2021 at 05:25:04PM -0500, Ian Pilcher wrote:
->> +/* Must be built-in to access block_class */
->> +struct gendisk *ledtrig_blkdev_get_disk(const char *const name)
->> +{
->> +	struct device *dev;
->> +
->> +	dev = class_find_device(&block_class, NULL, name, blkdev_match_name);
->> +	if (dev == NULL)
->> +		return NULL;
+On 9/10/21 10:12 AM, Marek Behún wrote:
+> On Fri, 10 Sep 2021 10:09:09 -0500
+> Ian Pilcher <arequipeno@gmail.com> wrote:
+>> You can't add partitions, only whole devices.
 > 
-> You now have bumped the reference count on this structure.  Where do you
-> decrement it when you are finished with it?
+> But I should be able to, since partition is a block device in /dev.
+> Any block device from /sys/class/block should be possible to add.
 
-With context this time.  Sorry about that.
+I wasn't aware that was something that you were interested in doing.
+This will require working with the block_device structure rather than
+the gendisk.
 
-
-That happens when I "unlink" the block device from the LED in
-blkdev_disk_unlink_locked() at ledtrig-blkdev.c:410.
-
-(And also in the error path of link_device_store() at
-ledtrig-blkdev.c:372.)
+One possible benefit of this change ... Assuming that block_device
+structures are always allocated by bdev_alloc() *and* I'm correct in
+thinking that this means that they are always allocated from the inode
+cache, then they are always zeroed out when allocated, so there won't
+be any need to explicitly initialize the pointer.
 
 -- 
 ========================================================================
