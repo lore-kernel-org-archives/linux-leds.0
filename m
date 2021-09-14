@@ -4,35 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D33AC43217
-	for <linux-leds@archiver.kernel.org>; Tue, 14 Sep 2021 14:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E0DC4167B
+	for <linux-leds@archiver.kernel.org>; Tue, 14 Sep 2021 14:38:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E20F60698
-	for <linux-leds@archiver.kernel.org>; Tue, 14 Sep 2021 14:38:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 629EC61107
+	for <linux-leds@archiver.kernel.org>; Tue, 14 Sep 2021 14:38:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234045AbhINOkD (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 14 Sep 2021 10:40:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40440 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233883AbhINOkB (ORCPT
+        id S234089AbhINOkE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 14 Sep 2021 10:40:04 -0400
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:54990 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233850AbhINOkB (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Tue, 14 Sep 2021 10:40:01 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A94C061768
-        for <linux-leds@vger.kernel.org>; Tue, 14 Sep 2021 07:38:43 -0700 (PDT)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4H85ZB57bqzMqpGC
+        for <linux-leds@vger.kernel.org>; Tue, 14 Sep 2021 16:38:42 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:d46f:7eb5:4a37:9d14])
-        by andre.telenet-ops.be with bizsmtp
-        id tqef2500P2aSKa101qef69; Tue, 14 Sep 2021 16:38:41 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id tqeg250092aSKa101qeghD; Tue, 14 Sep 2021 16:38:42 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mQ9a2-004VGg-TQ; Tue, 14 Sep 2021 16:38:38 +0200
+        id 1mQ9a3-004VGv-Ml; Tue, 14 Sep 2021 16:38:39 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mQ9a2-0028yG-HL; Tue, 14 Sep 2021 16:38:38 +0200
+        id 1mQ9a2-0028yv-OB; Tue, 14 Sep 2021 16:38:38 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Robin van der Gracht <robin@protonic.nl>,
         Miguel Ojeda <ojeda@kernel.org>,
@@ -43,9 +43,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v6 04/19] auxdisplay: img-ascii-lcd: Add helper variable dev
-Date:   Tue, 14 Sep 2021 16:38:20 +0200
-Message-Id: <20210914143835.511051-5-geert@linux-m68k.org>
+Subject: [PATCH v6 10/19] auxdisplay: ht16k33: Use HT16K33_FB_SIZE in ht16k33_initialize()
+Date:   Tue, 14 Sep 2021 16:38:26 +0200
+Message-Id: <20210914143835.511051-11-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210914143835.511051-1-geert@linux-m68k.org>
 References: <20210914143835.511051-1-geert@linux-m68k.org>
@@ -55,10 +55,12 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-img_ascii_lcd_probe() has many users of "pdev->dev".  Add a shorthand to
-simplify the code.
+Use the existing HT16K33_FB_SIZE definition instead of open-coding the
+same calculation using an hardcoded value.
+While at it, restore reverse Christmas tree variable declaration order.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Robin van der Gracht <robin@protonic.nl>
 ---
 v6:
   - No changes,
@@ -73,56 +75,26 @@ v3:
   - No changes,
 
 v2:
-  - No changes.
+  - Add Acked-by.
 ---
- drivers/auxdisplay/img-ascii-lcd.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/auxdisplay/ht16k33.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
-index e33ce0151cdfd150..2b6e41ec57544faa 100644
---- a/drivers/auxdisplay/img-ascii-lcd.c
-+++ b/drivers/auxdisplay/img-ascii-lcd.c
-@@ -365,26 +365,25 @@ static int img_ascii_lcd_probe(struct platform_device *pdev)
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index 2b630e194570f6e5..99daf1974980b435 100644
+--- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16k33.c
+@@ -168,9 +168,9 @@ static void ht16k33_fb_update(struct work_struct *work)
+ 
+ static int ht16k33_initialize(struct ht16k33_priv *priv)
  {
- 	const struct of_device_id *match;
- 	const struct img_ascii_lcd_config *cfg;
-+	struct device *dev = &pdev->dev;
- 	struct img_ascii_lcd_ctx *ctx;
++	uint8_t data[HT16K33_FB_SIZE];
+ 	uint8_t byte;
  	int err;
+-	uint8_t data[HT16K33_MATRIX_LED_MAX_COLS * 2];
  
--	match = of_match_device(img_ascii_lcd_matches, &pdev->dev);
-+	match = of_match_device(img_ascii_lcd_matches, dev);
- 	if (!match)
- 		return -ENODEV;
- 
- 	cfg = match->data;
--	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx) + cfg->num_chars,
--			   GFP_KERNEL);
-+	ctx = devm_kzalloc(dev, sizeof(*ctx) + cfg->num_chars, GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
- 
- 	if (cfg->external_regmap) {
--		ctx->regmap = syscon_node_to_regmap(pdev->dev.parent->of_node);
-+		ctx->regmap = syscon_node_to_regmap(dev->parent->of_node);
- 		if (IS_ERR(ctx->regmap))
- 			return PTR_ERR(ctx->regmap);
- 
--		if (of_property_read_u32(pdev->dev.of_node, "offset",
--					 &ctx->offset))
-+		if (of_property_read_u32(dev->of_node, "offset", &ctx->offset))
- 			return -EINVAL;
- 	} else {
- 		ctx->base = devm_platform_ioremap_resource(pdev, 0);
-@@ -408,7 +407,7 @@ static int img_ascii_lcd_probe(struct platform_device *pdev)
- 	if (err)
- 		goto out_del_timer;
- 
--	err = device_create_file(&pdev->dev, &dev_attr_message);
-+	err = device_create_file(dev, &dev_attr_message);
- 	if (err)
- 		goto out_del_timer;
- 
+ 	/* Clear RAM (8 * 16 bits) */
+ 	memset(data, 0, sizeof(data));
 -- 
 2.25.1
 
