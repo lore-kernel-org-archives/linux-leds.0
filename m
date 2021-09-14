@@ -2,207 +2,113 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF541C433F5
-	for <linux-leds@archiver.kernel.org>; Tue, 14 Sep 2021 14:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FF4C433EF
+	for <linux-leds@archiver.kernel.org>; Tue, 14 Sep 2021 15:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C99AA610CE
-	for <linux-leds@archiver.kernel.org>; Tue, 14 Sep 2021 14:49:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2F556112D
+	for <linux-leds@archiver.kernel.org>; Tue, 14 Sep 2021 15:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234274AbhINOuj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 14 Sep 2021 10:50:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41670 "EHLO
+        id S234308AbhINPPL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 14 Sep 2021 11:15:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236194AbhINOtu (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 14 Sep 2021 10:49:50 -0400
-X-Greylist: delayed 417 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 14 Sep 2021 07:45:43 PDT
-Received: from newton.telenet-ops.be (newton.telenet-ops.be [IPv6:2a02:1800:120:4::f00:d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33822C0613DF
-        for <linux-leds@vger.kernel.org>; Tue, 14 Sep 2021 07:45:42 -0700 (PDT)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 4H85ZC1796zMr03T
-        for <linux-leds@vger.kernel.org>; Tue, 14 Sep 2021 16:38:43 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:d46f:7eb5:4a37:9d14])
-        by baptiste.telenet-ops.be with bizsmtp
-        id tqef2500L2aSKa101qefh3; Tue, 14 Sep 2021 16:38:43 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mQ9a2-004VGe-TF; Tue, 14 Sep 2021 16:38:38 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mQ9a2-0028y1-Dm; Tue, 14 Sep 2021 16:38:38 +0200
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Robin van der Gracht <robin@protonic.nl>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Burton <paulburton@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>, Marek Behun <marek.behun@nic.cz>,
-        devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v6 02/19] dt-bindings: auxdisplay: ht16k33: Document Adafruit segment displays
-Date:   Tue, 14 Sep 2021 16:38:18 +0200
-Message-Id: <20210914143835.511051-3-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210914143835.511051-1-geert@linux-m68k.org>
-References: <20210914143835.511051-1-geert@linux-m68k.org>
+        with ESMTP id S234810AbhINPPG (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 14 Sep 2021 11:15:06 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99CCFC0613DF
+        for <linux-leds@vger.kernel.org>; Tue, 14 Sep 2021 08:13:48 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id k4so29569510lfj.7
+        for <linux-leds@vger.kernel.org>; Tue, 14 Sep 2021 08:13:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vs4JzNzYOIkiMNCXl/BXAxJoRkCBxorofWXnQlKIKTc=;
+        b=pRPWsNXgrIohQph/8NpbL+8CQcifHOg3AtasJUc6ewrlqivFf7tNOnOev6xbHNeScy
+         5lUw0JKVS2bKoFDpADjDZDubGnxK5+M9NWO2BpPX9q2R9b58vLMbE5CMjgmeiW2mNU8s
+         o7ThsamuF+OksBlmKnCdC/Nw0BTW4A0/yGHr6VSMZWFPhdhurnzjm6uYfu9gnLkkCbv0
+         lpdeXMq9bL2t29SyoDO11ImlthHn7AXkSS4a0zy/pQiHkSYi566+PTsS85skBEHoByF1
+         ZgvNHr/rm3TIdw1ErNJ7E4dDZUpJCDskQV8oxzwthUO37ZBKKoQhbdM/zIrykMAFIsCq
+         Kl9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vs4JzNzYOIkiMNCXl/BXAxJoRkCBxorofWXnQlKIKTc=;
+        b=b6ujtN1O1IoliuQdj9n0ULGtZMpZfs4JpZi8c32OSKCPPJ5bubcGZw/0T0ga8hDijr
+         OFl+vBMXt/2KRcb8cE1y50UDfCT2t2NPj5yV8cJFgO8KVqa6fNGo9BRVX3M2RPM6yW2n
+         H4lHB+tP1+Jpue3tHys/+O/IPlJ/lGUvj5rQv+xFqscp8NJM6tyOkHZgbLymhhj8uAUY
+         2bRcD5Pj5Lhx5PKs2Mnefo8DBxl4KK2LuSVeofd+u0CSnU6bz8gqWiQbbQXofZ6BarzT
+         ymrE2pIxzG0Enw4nJGnaICOXjM/NHTEqvH67UN85nVKMDosvLrZR3vs8wzfLxe3fYDD+
+         48Sg==
+X-Gm-Message-State: AOAM530/KXDfpTDs9rXg0K4yMqrvYCiiOgyKothZDVZ3PtGSBWahT4Nh
+        swwSPf5qOiUjjunoxbJzcClLnhMm+jyNQdC8vCQ1ww==
+X-Google-Smtp-Source: ABdhPJz/nB2X7ZhjAGNpGQ+wUMu55D7srT5Jv3DFOroslyMj15lcS2R9RnxlnBnfcSTTFydrMt0Pg3Xb7m3aCBq9Pto=
+X-Received: by 2002:a05:6512:318a:: with SMTP id i10mr14107059lfe.444.1631632426763;
+ Tue, 14 Sep 2021 08:13:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210913192816.1225025-1-robh@kernel.org> <20210913192816.1225025-9-robh@kernel.org>
+In-Reply-To: <20210913192816.1225025-9-robh@kernel.org>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 14 Sep 2021 08:13:35 -0700
+Message-ID: <CAKwvOdnNOMDWar2jpEw_yt8-dzW6KX-NVWh=UHc2FeYzux4tVw@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] kbuild: Enable dtc 'unit_address_format' warning
+ by default
+To:     Rob Herring <robh@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>,
+        linux-kbuild@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The Holtek HT16K33 LED controller is not only used for driving
-dot-matrix displays, but also for driving segment displays.
+On Mon, Sep 13, 2021 at 12:28 PM Rob Herring <robh@kernel.org> wrote:
+>
+> With all the 'unit_address_format' warnings fixed, enable the warning by
+> default.
+>
+> Cc: Michal Marek <michal.lkml@markovi.net>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: linux-kbuild@vger.kernel.org
+> Acked-by: Masahiro Yamada <masahiroy@kernel.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Document compatible values for the Adafruit 7-segment[1] and
-14-segment[2] FeatherWing expansion boards with red displays.  According
-to the schematics, all other Adafruit 7-segment and 14-segment display
-backpack and FeatherWing expansion boards (including bare boards and
-boards fitted with displays) are compatible with these two boards.
+Acked-by: Nick Desaulniers <ndesaulniers@google.com>
 
-[1] https://www.adafruit.com/product/3108
-[2] https://www.adafruit.com/product/3130
+> ---
+>  scripts/Makefile.lib | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 54582673fc1a..56d50eb0cd80 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -310,7 +310,6 @@ DTC_FLAGS += -Wno-interrupt_provider
+>  # Disable noisy checks by default
+>  ifeq ($(findstring 1,$(KBUILD_EXTRA_WARN)),)
+>  DTC_FLAGS += -Wno-unit_address_vs_reg \
+> -       -Wno-unit_address_format \
+>         -Wno-avoid_unnecessary_addr_size \
+>         -Wno-alias_paths \
+>         -Wno-graph_child_address \
+> --
+> 2.30.2
+>
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-v6:
-  - No changes,
 
-v5:
-  - Add Reviewed-by,
-
-v4:
-  - Combine compatible values for 7/14 segment displays into an enum,
-
-v3:
-  - Drop color property,
-
-v2:
-  - Fix type of color to uint32,
-  - "refresh-rate-hz" is still required for dot-matrix displays.
-
-Alternatives I considered:
-  1. Document the attached display type in a child node.
-     I.e. specify segment type, number of characters, and wiring.
-     Especially the latter would become really complex, due to the sheer
-     amount of possible wiring combinations.
-     Using this method, you also loose the ability to just connect a
-     display to an i2c bus, and instantiate the device from sysfs,
-     without using DT:
-
-	echo adafruit,3130 0x70 > /sys/class/i2c/i2c-adapter/.../new_device
-
-  2. Document all Adafruit 7-segment and 14-segment display backpack and
-     FeatherWing expansion boards.
-     This would lead to a myriad of compatible values:
-
-      - items:
-	  - enum:
-	      - adafruit,878      # 0.56" 4-Digit 7-Segment Display Backpack (Red)
-	      - adafruit,879      # 0.56" 4-Digit 7-Segment Display Backpack (Yellow)
-	      - adafruit,880      # 0.56" 4-Digit 7-Segment Display Backpack (Green)
-	      - adafruit,881      # 0.56" 4-Digit 7-Segment Display Backpack (Blue)
-	      - adafruit,1002     # 0.56" 4-Digit 7-Segment Display Backpack (White)
-	  - const: adafruit,877   # 0.56" 4-Digit 7-Segment Backpack
-	  - const: holtek,ht16k33
-
-      - items:
-	  - enum:
-	      - adafruit,1268     # 1.2" 4-Digit 7-Segment Display Backpack (Green)
-	      - adafruit,1269     # 1.2" 4-Digit 7-Segment Display Backpack (Yellow)
-	      - adafruit,1270     # 1.2" 4-Digit 7-Segment Display Backpack (Red)
-	  - const: adafruit,1271  # 1.2" 4-Digit 7-Segment Backpack
-	  - const: holtek,ht16k33
-
-      - items:
-	  - enum:
-	      - adafruit,1911     # 0.54" Quad Alphanumeric Display Backpack (Red)
-	      - adafruit,1912     # 0.54" Quad Alphanumeric Display Backpack (Blue)
-	      - adafruit,2157     # 0.54" Quad Alphanumeric Display Backpack (White)
-	      - adafruit,2158     # 0.54" Quad Alphanumeric Display Backpack (Yellow)
-	      - adafruit,2159     # 0.54" Quad Alphanumeric Display Backpack (Yellow-Green)
-	      - adafruit,2160     # 0.54" Quad Alphanumeric Display Backpack (Green)
-	  - const: adafruit,1910  # 0.54" Quad 14-segment Alphanumeric Backpack
-	  - const: holtek,ht16k33
-
-      - items:
-	  - enum:
-	      - adafruit,3106     # 0.56" 4-Digit 7-Segment FeatherWing Display (Blue)
-	      - adafruit,3107     # 0.56" 4-Digit 7-Segment FeatherWing Display (Green)
-	      - adafruit,3108     # 0.56" 4-Digit 7-Segment FeatherWing Display (Red)
-	      - adafruit,3109     # 0.56" 4-Digit 7-Segment FeatherWing Display (White)
-	      - adafruit,3110     # 0.56" 4-Digit 7-Segment FeatherWing Display (Yellow)
-	  - const: adafruit,3088  # 0.56" 4-Digit 7-Segment FeatherWing
-	  - const: holtek,ht16k33
-
-      - items:
-	  - enum:
-	      - adafruit,3127     # 0.54" Quad Alphanumeric FeatherWing Display (White)
-	      - adafruit,3128     # 0.54" Quad Alphanumeric FeatherWing Display (Blue)
-	      - adafruit,3129     # 0.54" Quad Alphanumeric FeatherWing Display (Green)
-	      - adafruit,3130     # 0.54" Quad Alphanumeric FeatherWing Display (Red)
-	      - adafruit,3131     # 0.54" Quad Alphanumeric FeatherWing Display (Yellow)
-	      - adafruit,3132     # 0.54" Quad Alphanumeric FeatherWing Display (Yellow-Green)
-	  - const: adafruit,3089  # 0.54" Quad 14-segment Alphanumeric FeatherWing
-	  - const: holtek,ht16k33
----
- .../bindings/auxdisplay/holtek,ht16k33.yaml   | 20 ++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-index 64ffff460026040f..6baf1200c9d8488e 100644
---- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-+++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-@@ -14,14 +14,21 @@ allOf:
- 
- properties:
-   compatible:
--    const: holtek,ht16k33
-+    oneOf:
-+      - items:
-+          - enum:
-+              - adafruit,3108  # 0.56" 4-Digit 7-Segment FeatherWing Display (Red)
-+              - adafruit,3130  # 0.54" Quad Alphanumeric FeatherWing Display (Red)
-+          - const: holtek,ht16k33
-+
-+      - const: holtek,ht16k33     # Generic 16*8 LED controller with dot-matrix display
- 
-   reg:
-     maxItems: 1
- 
-   refresh-rate-hz:
-     maxItems: 1
--    description: Display update interval in Hertz
-+    description: Display update interval in Hertz for dot-matrix displays
- 
-   interrupts:
-     maxItems: 1
-@@ -44,7 +51,14 @@ properties:
- required:
-   - compatible
-   - reg
--  - refresh-rate-hz
-+
-+if:
-+  properties:
-+    compatible:
-+      const: holtek,ht16k33
-+then:
-+  required:
-+    - refresh-rate-hz
- 
- additionalProperties: false
- 
 -- 
-2.25.1
-
+Thanks,
+~Nick Desaulniers
