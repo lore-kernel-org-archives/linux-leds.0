@@ -2,91 +2,105 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFD1C433EF
-	for <linux-leds@archiver.kernel.org>; Wed, 22 Sep 2021 17:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E9FC433EF
+	for <linux-leds@archiver.kernel.org>; Thu, 23 Sep 2021 06:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59CC461090
-	for <linux-leds@archiver.kernel.org>; Wed, 22 Sep 2021 17:21:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FF0E61131
+	for <linux-leds@archiver.kernel.org>; Thu, 23 Sep 2021 06:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236758AbhIVRXR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 22 Sep 2021 13:23:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41358 "EHLO
+        id S239406AbhIWG5K (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 23 Sep 2021 02:57:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236701AbhIVRXR (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 22 Sep 2021 13:23:17 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17D91C061574;
-        Wed, 22 Sep 2021 10:21:47 -0700 (PDT)
-Received: from sandvich.training.denx.de (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: hws@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 2EE7C832FB;
-        Wed, 22 Sep 2021 19:21:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1632331303;
-        bh=BFyTMvottiIYx7K8jxjbZ/Lv8MzpO0zJc3PvHju9+G4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=xhyeM86XwGvJPOkGGR09vc+EykYk29/eUmfMRVG3ul19/jXFW4l5l5qr/MhCOlxSm
-         DAnf9q6s+N8ENHl9MfTJY/wCVo4HO3RPrC4GPHJUPH/B8L5ZXPcnAPbnEJd+RFQ1Yv
-         c3pBagRaYQxNkEs5UH6ff+b0dycdPTZHDEYQrPSyzSBqKG298Eo3+uO8m9rc03XGGJ
-         LmZ/zGmZ8Wm19cVM8PLW0W1N7CEUEG228RrgSyZ0vo7esqOgYKyvdWhpUNdad3l006
-         fu7pkJUS2kysC3NKZ2U1UoQ+g64XI7NrFXbLwsgKgWIngGEmFOA0283Zvz9yI22oJu
-         d9L8kqId92DnA==
-From:   Harald Seiler <hws@denx.de>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Harald Seiler <hws@denx.de>,
-        Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH] leds: gpio: Always provide cdev->brightness_set_blocking()
-Date:   Wed, 22 Sep 2021 19:21:33 +0200
-Message-Id: <20210922172133.2257467-1-hws@denx.de>
+        with ESMTP id S239358AbhIWG5J (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 23 Sep 2021 02:57:09 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 918C7C061574
+        for <linux-leds@vger.kernel.org>; Wed, 22 Sep 2021 23:55:38 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id d13-20020a17090ad3cd00b0019e746f7bd4so1029933pjw.0
+        for <linux-leds@vger.kernel.org>; Wed, 22 Sep 2021 23:55:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AmWq9SbwrmVcYQXqbOudIpr4L0AR6cg4qMF13tN786o=;
+        b=On0oxMzCr2gt/8NejZK3kYR/EO3dvskZYTlcGLu8gDKR+DnZf5k5y/rjK6myt08FKq
+         E8B27+oFGcZ7XXAlkmpWzHn3vdIEgCmbuGuugm1fhOfqg6+JqaZAYM7H8WKsegqpGtt4
+         1hOCHLvJkXoe3t/Ct42W9nKgIXHq5uXAZmYmI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AmWq9SbwrmVcYQXqbOudIpr4L0AR6cg4qMF13tN786o=;
+        b=SR+4fr6vGC6ysq+pI4TkcAe+/ndrbr8ZDoQ9XSQkF19UXiOAnJveEY92IFQd4a/IX5
+         lS7RXELVkySjdyOcUebNJi6EQX9YwaMaJ6dSgRrYnCZdtClyuy8V5/zrLbcFgJmOGDU0
+         OZQg3yQ+mLNFc9O6vm04K3wUzP9C/b1z3pYRqqjJumoB1Vz2Vrl/gIFSCCgwYPs/8LVz
+         q63FGHYAKEVVN3GRxXJz32prDSRbXlc5aCiDOlnuod3hPVWCtVZHESm/b1s1ExpV/mRK
+         V7d8WJAi5Dk8Hq8txCKmJjkq1rHcBymub5Ykn03tBOvaSuuFRj+6AQZl+nqMG5BG/dIO
+         o1eQ==
+X-Gm-Message-State: AOAM531vIvpZiGkXdNRObbRQz0YrjYSvJneMqYUE8gqoGY6sGOJO/Tgs
+        Vm1nYgo+fnEAeB1QCyJca31YDQ==
+X-Google-Smtp-Source: ABdhPJzwl9SAOMvhQ9teA4ReWM9oVUM2ZPM+DZVNLVyVCtjew7NBoOmLZS6RHuD9OjQuNz8J5ui5zQ==
+X-Received: by 2002:a17:902:7882:b0:131:2e12:c928 with SMTP id q2-20020a170902788200b001312e12c928mr2876342pll.74.1632380137887;
+        Wed, 22 Sep 2021 23:55:37 -0700 (PDT)
+Received: from shiro.work ([2400:4162:2428:2f01:7285:c2ff:fe8e:66d7])
+        by smtp.googlemail.com with ESMTPSA id e12sm1581888pgv.82.2021.09.22.23.55.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Sep 2021 23:55:37 -0700 (PDT)
+From:   Daniel Palmer <daniel@0x0f.com>
+To:     devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        robh+dt@kernel.org, pavel@ucw.cz,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Daniel Palmer <daniel@0x0f.com>
+Subject: [PATCH v2 00/11] gpio: msc313: Add gpio support for ssd20xd
+Date:   Thu, 23 Sep 2021 15:54:49 +0900
+Message-Id: <20210923065500.2284347-1-daniel@0x0f.com>
 X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.2 at phobos.denx.de
-X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Even if the GPIO driver will never sleep, setting
-cdev->brightness_set_blocking() makes sense so
-led_set_brightness_sync() can be used with such LEDs.
+This is a little series to add a compatible string for the Sigmastar
+SSD201 and SSD202D to the msc313 gpio driver, add the specific offsets
+for the pins on these chips, and then a bunch of DT wiring stuff so
+that the LEDs on the M5 stack unitv2 work and it can control the
+power switch for the USB connected.
 
-Internally, both gpio_led_set_blocking() and gpio_led_set() call
-the same implementation anyway.
+Changes since v1:
+  - Add a fix for the led binding to squash the warning about the
+    activity trigger in the unitv2 dts.
+  - Fix up the regulator node names so they pass dtb check
 
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
-Signed-off-by: Harald Seiler <hws@denx.de>
----
- drivers/leds/leds-gpio.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Daniel Palmer (11):
+  dt-bindings: gpio: msc313: Add compatible for ssd20xd
+  dt-bindings: gpio: msc313: Add offsets for ssd20xd
+  dt-bindings: leds: Document "activity" trigger
+  gpio: msc313: Code clean ups
+  gpio: msc313: Add support for SSD201 and SSD202D
+  ARM: dts: mstar: Set gpio compatible for ssd20xd
+  ARM: dts: mstar: unitv2: Wire up LEDs
+  ARM: dts: mstar: unitv2: Add core regulator
+  ARM: dts: mstar: unitv2: Add io regulator
+  ARM: dts: mstar: unitv2: Add DRAM regulator
+  ARM: dts: mstar: unitv2: Add wifi switch
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index b5d5e22d2d1e..bbe582e47607 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -79,11 +79,12 @@ static int create_gpio_led(const struct gpio_led *template,
- 	int ret, state;
- 
- 	led_dat->cdev.default_trigger = template->default_trigger;
-+	led_dat->cdev.brightness_set_blocking = gpio_led_set_blocking;
-+
- 	led_dat->can_sleep = gpiod_cansleep(led_dat->gpiod);
- 	if (!led_dat->can_sleep)
- 		led_dat->cdev.brightness_set = gpio_led_set;
--	else
--		led_dat->cdev.brightness_set_blocking = gpio_led_set_blocking;
-+
- 	led_dat->blinking = 0;
- 	if (blink_set) {
- 		led_dat->platform_gpio_blink_set = blink_set;
+ .../bindings/gpio/mstar,msc313-gpio.yaml      |   4 +-
+ .../devicetree/bindings/leds/common.yaml      |   2 +
+ .../dts/mstar-infinity2m-ssd202d-unitv2.dts   |  46 +++
+ .../boot/dts/mstar-infinity2m-ssd20xd.dtsi    |   5 +
+ drivers/gpio/gpio-msc313.c                    | 266 +++++++++++++++++-
+ include/dt-bindings/gpio/msc313-gpio.h        |  71 +++++
+ 6 files changed, 389 insertions(+), 5 deletions(-)
+
 -- 
 2.33.0
 
