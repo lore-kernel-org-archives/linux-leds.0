@@ -2,393 +2,133 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EAEC433F5
-	for <linux-leds@archiver.kernel.org>; Thu, 30 Sep 2021 10:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59884C433EF
+	for <linux-leds@archiver.kernel.org>; Fri,  1 Oct 2021 10:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70C7F60FF2
-	for <linux-leds@archiver.kernel.org>; Thu, 30 Sep 2021 10:57:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3783561A7B
+	for <linux-leds@archiver.kernel.org>; Fri,  1 Oct 2021 10:09:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350229AbhI3K65 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 30 Sep 2021 06:58:57 -0400
-Received: from protonic.xs4all.nl ([83.163.252.89]:43930 "EHLO
-        protonic.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350206AbhI3K6y (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 30 Sep 2021 06:58:54 -0400
-Received: from fiber.protonic.nl (edge2.prtnl [192.168.1.170])
-        by sparta.prtnl (Postfix) with ESMTP id 70F2944A024E;
-        Thu, 30 Sep 2021 12:57:09 +0200 (CEST)
+        id S1353393AbhJAKLm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 1 Oct 2021 06:11:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230073AbhJAKLm (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 1 Oct 2021 06:11:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 038A061A71;
+        Fri,  1 Oct 2021 10:09:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633082998;
+        bh=yGcc2/IH57GL8/dGeCk7gJu5M47+x3PqFv2lP+zivkM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dnWdZ29jm8d83BjZYRBo+9sBMR0C5HVnqcfgBHpWDxNCfovNNXImE85uV/uSaOPWy
+         +aRma9NA3iC8jXwF4rkuWrHnKU03jow/7QB7r41B7kGt5YLYulWQdHFuC9koXvGUBF
+         2gUBNDU0vNVaswBU/2ZKbj4OgtzahHeOp5Ct+Yqm2kdkLJMKs9TxBRulGFoHSw3M2P
+         tC5g7XLezFqLFYGWCC8VAkO2p8wQXtWldKUS2uGJfh225quUeknBogL7xhFgEHgprD
+         AGrxVEBjvHy90anYKNZiTBAociTEBvNQQproS/D8GlLtx/LpgspbtKfWI62XTiwZqZ
+         IdA+77qv781Mw==
+Date:   Fri, 1 Oct 2021 12:09:52 +0200
+From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To:     Frieder Schrempf <frieder.schrempf@kontron.de>,
+        linux-leds@vger.kernel.org
+Cc:     Andrew Lunn <andrew@lunn.ch>, Frieder Schrempf <frieder@fris.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Bjarni Jonasson <bjarni.jonasson@microchip.com>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Steen Hegelund <steen.hegelund@microchip.com>
+Subject: Re: [PATCH 1/3] net: phy: mscc: Add possibilty to disable combined
+ LED mode
+Message-ID: <20211001120952.6be6bb36@thinkpad>
+In-Reply-To: <18de5e10-f41f-0790-89c8-3a70d48539be@kontron.de>
+References: <20210930125747.2511954-1-frieder@fris.de>
+        <YVZQuIr2poOfWvcO@lunn.ch>
+        <18de5e10-f41f-0790-89c8-3a70d48539be@kontron.de>
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Date:   Thu, 30 Sep 2021 12:57:09 +0200
-From:   Robin van der Gracht <robin@protonic.nl>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>, Marek Behun <marek.behun@nic.cz>,
-        devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>
-Subject: Re: [PATCH v6 19/19] auxdisplay: ht16k33: Add LED support
-Reply-To: robin@protonic.nl
-In-Reply-To: <20210914143835.511051-20-geert@linux-m68k.org>
-References: <20210914143835.511051-1-geert@linux-m68k.org>
- <20210914143835.511051-20-geert@linux-m68k.org>
-User-Agent: Roundcube Webmail/1.4.11
-Message-ID: <4602a8e681db4d0ebc43e4dafee8c28e@protonic.nl>
-X-Sender: robin@protonic.nl
-Organization: Protonic Holland
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Geert,
+On Fri, 1 Oct 2021 11:20:36 +0200
+Frieder Schrempf <frieder.schrempf@kontron.de> wrote:
 
-On 2021-09-14 16:38, Geert Uytterhoeven wrote:
-> Instantiate a single LED based on the "led" subnode in DT.
-> This allows the user to control display brightness and blinking (backed
-> by hardware support) through the LED class API and triggers, and exposes
-> the display color.  The LED will be named
-> "auxdisplay:<color>:<function>".
+> On 01.10.21 02:05, Andrew Lunn wrote:
+> > On Thu, Sep 30, 2021 at 02:57:43PM +0200, Frieder Schrempf wrote:  
+> >> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+> >>
+> >> By default the LED modes offer to combine two indicators like speed/link
+> >> and activity in one LED. In order to use a LED only for the first of the
+> >> two modes, the combined feature needs to be disabled.
+> >>
+> >> In order to do this we introduce a boolean devicetree property
+> >> 'vsc8531,led-[N]-combine-disable' and wire it up to the matching
+> >> bits in the LED behavior register.  
+> > 
+> > Sorry, but no DT property. Each PHY has its own magic combination of
+> > DT properties, nothing shared, nothing common. This does not scale.
+> > 
+> > Please look at the work being done to control PHY LEDs using the Linux
+> > LED infrastructure. That should give us one uniform interface for all
+> > PHY LEDs.  
 > 
-> When running in dot-matrix mode and if no "led" subnode is found, the
-> driver falls back to the traditional backlight mode, to preserve
-> backwards compatibility.
+> +Cc: Marek
 > 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reviewed-by: Marek Behún <kabel@kernel.org>
-> ---
-> v6:
->   - Add Reviewed-by,
->   - Reorder operations in ht16k33_led_probe() to ease future conversion
->     to device properties,
+> I guess you are referring to this: [1]?
 > 
-> v5:
->   - Add missing select NEW_LEDS,
-> 
-> v4:
->   - Add missing select LEDS_CLASS,
-> 
-> v3:
->   - Remove unneeded C++ comment,
->   - Use "err" instead of "error" to be consistent with existing driver
->     naming style,
->   - Make the creation of the LED device dependent on the presence of the
->     "led" subnode in DT, so it can be used in dot-matrix mode too.
->   - Use led_init_data() and devm_led_classdev_register_ext() to retrieve
->     all LED properties from DT, instead of manual LED name construction
->     based on just the "color" property,
-> 
-> v2:
->   - Use "auxdisplay" instead of DRIVER_NAME in LED name.
-> ---
->  drivers/auxdisplay/Kconfig   |   2 +
->  drivers/auxdisplay/ht16k33.c | 124 ++++++++++++++++++++++++++++++-----
->  2 files changed, 109 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
-> index 42fc7b155de09dbc..e32ef7f9945d49b2 100644
-> --- a/drivers/auxdisplay/Kconfig
-> +++ b/drivers/auxdisplay/Kconfig
-> @@ -176,6 +176,8 @@ config HT16K33
->  	select FB_SYS_IMAGEBLIT
->  	select INPUT_MATRIXKMAP
->  	select FB_BACKLIGHT
-> +	select NEW_LEDS
-> +	select LEDS_CLASS
->  	select LINEDISP
->  	help
->  	  Say yes here to add support for Holtek HT16K33, RAM mapping 16*8
-> diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-> index 3b555e119e326cec..89ee5b4b3dfccb68 100644
-> --- a/drivers/auxdisplay/ht16k33.c
-> +++ b/drivers/auxdisplay/ht16k33.c
-> @@ -18,6 +18,7 @@
->  #include <linux/backlight.h>
->  #include <linux/input.h>
->  #include <linux/input/matrix_keypad.h>
-> +#include <linux/leds.h>
->  #include <linux/workqueue.h>
->  #include <linux/mm.h>
-> 
-> @@ -34,6 +35,10 @@
-> 
->  #define REG_DISPLAY_SETUP		0x80
->  #define REG_DISPLAY_SETUP_ON		BIT(0)
-> +#define REG_DISPLAY_SETUP_BLINK_OFF	(0 << 1)
-> +#define REG_DISPLAY_SETUP_BLINK_2HZ	(1 << 1)
-> +#define REG_DISPLAY_SETUP_BLINK_1HZ	(2 << 1)
-> +#define REG_DISPLAY_SETUP_BLINK_0HZ5	(3 << 1)
-> 
->  #define REG_ROWINT_SET			0xA0
->  #define REG_ROWINT_SET_INT_EN		BIT(0)
-> @@ -94,12 +99,14 @@ struct ht16k33_seg {
->  struct ht16k33_priv {
->  	struct i2c_client *client;
->  	struct delayed_work work;
-> +	struct led_classdev led;
->  	struct ht16k33_keypad keypad;
->  	union {
->  		struct ht16k33_fbdev fbdev;
->  		struct ht16k33_seg seg;
->  	};
->  	enum display_type type;
-> +	uint8_t blink;
->  };
-> 
->  static const struct fb_fix_screeninfo ht16k33_fb_fix = {
-> @@ -158,7 +165,7 @@ static DEVICE_ATTR(map_seg14, 0644, map_seg_show, 
-> map_seg_store);
-> 
->  static int ht16k33_display_on(struct ht16k33_priv *priv)
->  {
-> -	uint8_t data = REG_DISPLAY_SETUP | REG_DISPLAY_SETUP_ON;
-> +	uint8_t data = REG_DISPLAY_SETUP | REG_DISPLAY_SETUP_ON | priv->blink;
-> 
->  	return i2c_smbus_write_byte(priv->client, data);
->  }
-> @@ -173,8 +180,10 @@ static int ht16k33_brightness_set(struct ht16k33_priv 
-> *priv,
->  {
->  	int err;
-> 
-> -	if (brightness == 0)
-> +	if (brightness == 0) {
-> +		priv->blink = REG_DISPLAY_SETUP_BLINK_OFF;
->  		return ht16k33_display_off(priv);
-> +	}
-> 
->  	err = ht16k33_display_on(priv);
->  	if (err)
-> @@ -184,6 +193,49 @@ static int ht16k33_brightness_set(struct ht16k33_priv 
-> *priv,
->  				    REG_BRIGHTNESS | (brightness - 1));
->  }
-> 
-> +static int ht16k33_brightness_set_blocking(struct led_classdev *led_cdev,
-> +					   enum led_brightness brightness)
-> +{
-> +	struct ht16k33_priv *priv = container_of(led_cdev, struct ht16k33_priv,
-> +						 led);
-> +
-> +	return ht16k33_brightness_set(priv, brightness);
-> +}
-> +
-> +static int ht16k33_blink_set(struct led_classdev *led_cdev,
-> +			     unsigned long *delay_on, unsigned long *delay_off)
-> +{
-> +	struct ht16k33_priv *priv = container_of(led_cdev, struct ht16k33_priv,
-> +						 led);
-> +	unsigned int delay;
-> +	uint8_t blink;
-> +	int err;
-> +
-> +	if (!*delay_on && !*delay_off) {
-> +		blink = REG_DISPLAY_SETUP_BLINK_1HZ;
-> +		delay = 1000;
-> +	} else if (*delay_on <= 750) {
-> +		blink = REG_DISPLAY_SETUP_BLINK_2HZ;
-> +		delay = 500;
-> +	} else if (*delay_on <= 1500) {
-> +		blink = REG_DISPLAY_SETUP_BLINK_1HZ;
-> +		delay = 1000;
-> +	} else {
-> +		blink = REG_DISPLAY_SETUP_BLINK_0HZ5;
-> +		delay = 2000;
-> +	}
-> +
-> +	err = i2c_smbus_write_byte(priv->client,
-> +				   REG_DISPLAY_SETUP | REG_DISPLAY_SETUP_ON |
-> +				   blink);
-> +	if (err)
-> +		return err;
-> +
-> +	priv->blink = blink;
-> +	*delay_on = *delay_off = delay;
-> +	return 0;
-> +}
-> +
->  static void ht16k33_fb_queue(struct ht16k33_priv *priv)
->  {
->  	struct ht16k33_fbdev *fbdev = &priv->fbdev;
-> @@ -425,6 +477,35 @@ static void ht16k33_seg14_update(struct work_struct 
-> *work)
->  	i2c_smbus_write_i2c_block_data(priv->client, 0, ARRAY_SIZE(buf), buf);
->  }
-> 
-> +static int ht16k33_led_probe(struct device *dev, struct led_classdev *led,
-> +			     unsigned int brightness)
-> +{
-> +	struct led_init_data init_data = {};
-> +	struct device_node *node;
-> +	int err;
-> +
-> +	/* The LED is optional */
-> +	node = of_get_child_by_name(dev->of_node, "led");
-> +	if (!node)
-> +		return 0;
-> +
-> +	init_data.fwnode = of_fwnode_handle(node);
-> +	init_data.devicename = "auxdisplay";
-> +	init_data.devname_mandatory = true;
-> +
-> +	led->brightness_set_blocking = ht16k33_brightness_set_blocking;
-> +	led->blink_set = ht16k33_blink_set;
-> +	led->flags = LED_CORE_SUSPENDRESUME;
-> +	led->brightness = brightness;
-> +	led->max_brightness = MAX_BRIGHTNESS;
+> If so, the last version I could find is a year old now. Is anyone still
+> working on this?
 
-What do you think about adding a default trigger and making it 'backlight'?
+Yes, I am still working on this.
 
-led->default_trigger = "blacklight";
+Anyway the last version is not one year old, the last version to add
+this support is 4 months old:
+https://lore.kernel.org/netdev/20210602144439.4d20b295@dellmb/T/
 
-Or as an alternative, suggesting linux,default-trigger = "backlight" in the
-docs? Since the led class won't respond to blank events by just making it's
-function LED_FUNCTION_BACKLIGHT.
+This version does not add the code for ethernet PHYs, instead it just
+tries to touch only the LED subsystem by adding the API for offloading
+LED triggers and an example implementation for Turris Omnia LED
+controller.
 
-led {
-	function = LED_FUNCTION_BACKLIGHT;
-	color = <LED_COLOR_ID_GREEN>;
-	linux,default-trigger = "backlight";
-};
+I will probably send another version this weekend. Sorry this takes
+this long.
 
-I noticed blanking is broken. The backlight device (or LED device with
-backlight trigger) doens't get notified when the framebuffer is blanked since
-the driver doesn't implement fb_blank.
 
-Right now:
+> I understand, that the generic approach is the one we want to have, but
+> does this really mean adding PHY led configuration via DT to existing
+> drivers (that already use DT properties for LED modes) is not accepted
+> anymore, even if the new API is not yet in place?
 
-echo 1 > /sys/class/graphics/fb0/blank                                        
-                                                             |
-sh: write error: Invalid argument
+I don't know about Rob, but I would be against it.
 
-Due to: 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/video/fbdev/core/fbmem.c?h=v5.15-rc3#n1078
+But if you need to have your PHY LED configured with via devicetree
+ASAP, instead of proposing the vendor specific property, you can
+propose LED subnodes and properties that will be generic and compatible
+with the LED subsystem API, i.e. something like:
 
-Something like this fixes it.
+  ethernet-phy@1 {
+    .... eth phy properties;
 
-diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-index 89ee5b4b3dfc..0883d5252c81 100644
---- a/drivers/auxdisplay/ht16k33.c
-+++ b/drivers/auxdisplay/ht16k33.c
-@@ -346,6 +346,15 @@ static int ht16k33_mmap(struct fb_info *info, struct 
-vm_area_struct *vma)
-         return vm_map_pages_zero(vma, &pages, 1);
+    leds {
+      led@0 {
+        reg = <0>;
+        color = <LED_COLOR_ID_GREEN>;
+        /* this LED should indicate link/speed */
+        function = LED_FUNCTION_LINK; 
+      };
+    };
   }
 
-+/*
-+ * Blank events will be passed to the backlight device (or the LED device if
-+ * it's trigger is 'backlight') when we return 0 here.
-+ */
-+static int ht16k33_blank(int blank, struct fb_info *info)
-+{
-+       return 0;
-+}
-+
-  static const struct fb_ops ht16k33_fb_ops = {
-         .owner = THIS_MODULE,
-         .fb_read = fb_sys_read,
-@@ -354,6 +363,7 @@ static const struct fb_ops ht16k33_fb_ops = {
-         .fb_copyarea = sys_copyarea,
-         .fb_imageblit = sys_imageblit,
-         .fb_mmap = ht16k33_mmap,
-+       .fb_blank = ht16k33_blank,
-  };
+Then make your PHY driver parse this, and make it so that if
+function is LED_FUNCTION_LINK or LED_FUNCTION_ACTIVITY, the driver will
+disable combined mode.
 
-  /*
+Afterwards, when LED subsystem has support for trigger offloading, you
+can update mscc driver so that instead of just disabling combined mode,
+it will register the LEDs via LED subsystem...
 
-Feel free to include (something like) this in the patch stack.
-
-
-> +
-> +	err = devm_led_classdev_register_ext(dev, led, &init_data);
-> +	if (err)
-> +		dev_err(dev, "Failed to register LED\n");
-
-You might want to call ht16k33_brightness_set(priv, brightness) here to get a
-know value into the display setup register (0x80).
-
-Right now if I enable hardware blinking and (soft)reboot my board it keeps on
-blinking even after a re-probe.
-
-> +
-> +	return err;
-> +}
-> +
->  static int ht16k33_keypad_probe(struct i2c_client *client,
->  				struct ht16k33_keypad *keypad)
->  {
-> @@ -498,24 +579,28 @@ static int ht16k33_fbdev_probe(struct device *dev,
-> struct ht16k33_priv *priv,
->  			       uint32_t brightness)
->  {
->  	struct ht16k33_fbdev *fbdev = &priv->fbdev;
-> -	struct backlight_properties bl_props;
-> -	struct backlight_device *bl;
-> +	struct backlight_device *bl = NULL;
->  	int err;
-> 
-> -	/* Backlight */
-> -	memset(&bl_props, 0, sizeof(struct backlight_properties));
-> -	bl_props.type = BACKLIGHT_RAW;
-> -	bl_props.max_brightness = MAX_BRIGHTNESS;
-> +	if (!priv->led.dev) {
-> +		/* backwards compatibility with DT lacking an led subnode */
-> +		struct backlight_properties bl_props;
-> 
-> -	bl = devm_backlight_device_register(dev, DRIVER_NAME"-bl", dev, priv,
-> -					    &ht16k33_bl_ops, &bl_props);
-> -	if (IS_ERR(bl)) {
-> -		dev_err(dev, "failed to register backlight\n");
-> -		return PTR_ERR(bl);
-> -	}
-> +		memset(&bl_props, 0, sizeof(struct backlight_properties));
-> +		bl_props.type = BACKLIGHT_RAW;
-> +		bl_props.max_brightness = MAX_BRIGHTNESS;
-> +
-> +		bl = devm_backlight_device_register(dev, DRIVER_NAME"-bl", dev,
-> +						    priv, &ht16k33_bl_ops,
-> +						    &bl_props);
-> +		if (IS_ERR(bl)) {
-> +			dev_err(dev, "failed to register backlight\n");
-> +			return PTR_ERR(bl);
-> +		}
-> 
-> -	bl->props.brightness = brightness;
-> -	ht16k33_bl_update_status(bl);
-> +		bl->props.brightness = brightness;
-> +		ht16k33_bl_update_status(bl);
-> +	}
-> 
->  	/* Framebuffer (2 bytes per column) */
->  	BUILD_BUG_ON(PAGE_SIZE < HT16K33_FB_SIZE);
-> @@ -575,7 +660,7 @@ static int ht16k33_seg_probe(struct device *dev, struct
-> ht16k33_priv *priv,
->  	struct ht16k33_seg *seg = &priv->seg;
->  	int err;
-> 
-> -	err = ht16k33_brightness_set(priv, MAX_BRIGHTNESS);
-> +	err = ht16k33_brightness_set(priv, brightness);
-
-This looks like a bugfix for patch 17, maybe move this change there?
-
->  	if (err)
->  		return err;
-> 
-> @@ -653,6 +738,11 @@ static int ht16k33_probe(struct i2c_client *client)
->  		dft_brightness = MAX_BRIGHTNESS;
->  	}
-> 
-> +	/* LED */
-> +	err = ht16k33_led_probe(dev, &priv->led, dft_brightness);
-> +	if (err)
-> +		return err;
-> +
->  	/* Keypad */
->  	if (client->irq > 0) {
->  		err = ht16k33_keypad_probe(client, &priv->keypad);
-
-Gr{oetje,eeting}s,
-Robin
+Marek
