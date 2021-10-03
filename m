@@ -2,217 +2,142 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E988C433EF
-	for <linux-leds@archiver.kernel.org>; Fri,  1 Oct 2021 15:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B11EC433EF
+	for <linux-leds@archiver.kernel.org>; Sun,  3 Oct 2021 18:56:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0287561A7D
-	for <linux-leds@archiver.kernel.org>; Fri,  1 Oct 2021 15:51:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1973D613CF
+	for <linux-leds@archiver.kernel.org>; Sun,  3 Oct 2021 18:56:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232071AbhJAPxF convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 1 Oct 2021 11:53:05 -0400
-Received: from mail-ua1-f51.google.com ([209.85.222.51]:37815 "EHLO
-        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231649AbhJAPxE (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 1 Oct 2021 11:53:04 -0400
-Received: by mail-ua1-f51.google.com with SMTP id t36so7006468uad.4;
-        Fri, 01 Oct 2021 08:51:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=V6QG7RVsPgL4MT7taFNIN3h9Vdu7FgpTMDBW2+9dAy4=;
-        b=7BnA7/BKelXoYxWK8iaAnS6yK1zR/K2UeEcIieD0HuVZDzmmHpNWuWD0+p/WMQn5zO
-         0o3P2pYBxATEpAw0PsG/kcug113d8V8cvcpNKwh/tzcx/5wiRsSvZoiA9WziVNJxMDYk
-         XoZ6gmV/i6ppNwnjN4y2cAgmPppHcSw6fsC/J2sEdfDQVL6nx69wEPjVU2CDsf/ID6f9
-         5bWAC90hkywi3Wfi9q1Na9f6trFJ+PAenh6GgdsXn5W37kaDRKdbK0eb3653pvTvx0Em
-         lFiFs8gz9jElGNwc36+qxh7cbBBYXFmnAWEmv0PiQpEwaWL3piF43XG3feD6s1aeN4dC
-         8Ijg==
-X-Gm-Message-State: AOAM531+5owAxqxQU0/RlnGdH32liuXwueZ5mM92fMX93t5+MQNb2UoN
-        30t+y/RfS8CoXG7PKIHzhgTSmqNf2PpV4bF3+R0=
-X-Google-Smtp-Source: ABdhPJxSLKh9AvpGnMkJMf+4rL5ey13Duasr9b9pl5UUVIbEI9s1F181091Vc8CdXHhLM8BddUTmHotIzJX01V/YUxw=
-X-Received: by 2002:ab0:16d4:: with SMTP id g20mr10998662uaf.114.1633103479588;
- Fri, 01 Oct 2021 08:51:19 -0700 (PDT)
+        id S231312AbhJCS6S (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 3 Oct 2021 14:58:18 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:46368 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231239AbhJCS6R (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Sun, 3 Oct 2021 14:58:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+        Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+        In-Reply-To:References; bh=nWD2iY3wGzp1ITvaMwjDQ1EeA8ClBEIaE0kzTWhx2To=; b=qf
+        YO//2rH86hkBwOO73judt2e77GFbNoS0oAeC6pFHjAGVQhLq1TszTSl2gFjR1in7A8Njhh8kQOZQg
+        1xbMSZR99gOaTZ3xUWPRfJLAXeEAzJ2NIRlhrSMOLQ2V3sKJ3SM+sMvQgYbcnn0Uu+tVr6kPzhlJP
+        dz/HOtlN3pG/Buc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1mX6et-009Q7z-9C; Sun, 03 Oct 2021 20:56:23 +0200
+Date:   Sun, 3 Oct 2021 20:56:23 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: lets settle the LED `function` property regarding the netdev
+ trigger
+Message-ID: <YVn815h7JBtVSfwZ@lunn.ch>
+References: <20211001143601.5f57eb1a@thinkpad>
 MIME-Version: 1.0
-References: <20210914143835.511051-1-geert@linux-m68k.org> <20210914143835.511051-20-geert@linux-m68k.org>
- <4602a8e681db4d0ebc43e4dafee8c28e@protonic.nl>
-In-Reply-To: <4602a8e681db4d0ebc43e4dafee8c28e@protonic.nl>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 1 Oct 2021 17:51:08 +0200
-Message-ID: <CAMuHMdVOa8DAGJQpJ8AotARxfh9PvpskJJa6k48jE92-P+GLRA@mail.gmail.com>
-Subject: Re: [PATCH v6 19/19] auxdisplay: ht16k33: Add LED support
-To:     Robin van der Gracht <robin@protonic.nl>
-Cc:     Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>, Marek Behun <marek.behun@nic.cz>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-leds <linux-leds@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211001143601.5f57eb1a@thinkpad>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hoi Robin,
+On Fri, Oct 01, 2021 at 02:36:01PM +0200, Marek Beh˙n wrote:
+> Hello Pavel, Jacek, Rob and others,
+> 
+> I'd like to settle DT binding for the LED function property regarding
+> the netdev LED trigger.
+> 
+> Currently we have, in include/dt-bindings/leds/common.h, the following
+> functions defined that could be interpreted as request to enable netdev
+> trigger on given LEDs:
+>   activity
+>   lan
+>   rx tx
+>   wan
+>   wlan
+> 
+> The "activity" function was originally meant to imply the CPU
+> activity trigger, while "rx" and "tx" are AFAIK meant as UART indicators
+> (tty LED trigger), see
+> https://lore.kernel.org/linux-leds/20190609190803.14815-27-jacek.anaszewski@gmail.com/
+> 
+> The netdev trigger supports different settings:
+> - indicate link
+> - blink on rx, blink on tx, blink on both
+> 
+> The current scheme does not allow for implying these.
+> 
+> I therefore propose that when a LED has a network device handle in the
+> trigger-sources property, the "rx", "tx" and "activity" functions
+> should also imply netdev trigger (with the corresponding setting).
+> A "link" function should be added, also implying netdev trigger.
+> 
+> What about if a LED is meant by the device vendor to indicate both link
+> (on) and activity (blink)?
+> The function property is currently a string. This could be changed to
+> array of strings, and then we can have
+>   function = "link", "activity";
+> Since the function property is also used for composing LED classdev
+> names, I think only the first member should be used for that.
+> 
+> This would allow for ethernet LEDs with names
+>   ethphy-0:green:link
+>   ethphy-0:yellow:activity
+> to be controlled by netdev trigger in a specific setting without the
+> need to set the trigger in /sys/class/leds.
 
-On Thu, Sep 30, 2021 at 12:57 PM Robin van der Gracht <robin@protonic.nl> wrote:
-> On 2021-09-14 16:38, Geert Uytterhoeven wrote:
-> > Instantiate a single LED based on the "led" subnode in DT.
-> > This allows the user to control display brightness and blinking (backed
-> > by hardware support) through the LED class API and triggers, and exposes
-> > the display color.  The LED will be named
-> > "auxdisplay:<color>:<function>".
-> >
-> > When running in dot-matrix mode and if no "led" subnode is found, the
-> > driver falls back to the traditional backlight mode, to preserve
-> > backwards compatibility.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Reviewed-by: Marek Beh√∫n <kabel@kernel.org>
-> > ---
-> > v6:
-> >   - Add Reviewed-by,
-> >   - Reorder operations in ht16k33_led_probe() to ease future conversion
-> >     to device properties,
+Hi Marek
 
-> > --- a/drivers/auxdisplay/ht16k33.c
-> > +++ b/drivers/auxdisplay/ht16k33.c
-> > @@ -425,6 +477,35 @@ static void ht16k33_seg14_update(struct work_struct
-> > *work)
-> >       i2c_smbus_write_i2c_block_data(priv->client, 0, ARRAY_SIZE(buf), buf);
-> >  }
-> >
-> > +static int ht16k33_led_probe(struct device *dev, struct led_classdev *led,
-> > +                          unsigned int brightness)
-> > +{
-> > +     struct led_init_data init_data = {};
-> > +     struct device_node *node;
-> > +     int err;
-> > +
-> > +     /* The LED is optional */
-> > +     node = of_get_child_by_name(dev->of_node, "led");
-> > +     if (!node)
-> > +             return 0;
-> > +
-> > +     init_data.fwnode = of_fwnode_handle(node);
-> > +     init_data.devicename = "auxdisplay";
-> > +     init_data.devname_mandatory = true;
-> > +
-> > +     led->brightness_set_blocking = ht16k33_brightness_set_blocking;
-> > +     led->blink_set = ht16k33_blink_set;
-> > +     led->flags = LED_CORE_SUSPENDRESUME;
-> > +     led->brightness = brightness;
-> > +     led->max_brightness = MAX_BRIGHTNESS;
->
-> What do you think about adding a default trigger and making it 'backlight'?
->
-> led->default_trigger = "blacklight";
->
-> Or as an alternative, suggesting linux,default-trigger = "backlight" in the
-> docs? Since the led class won't respond to blank events by just making it's
-> function LED_FUNCTION_BACKLIGHT.
->
-> led {
->         function = LED_FUNCTION_BACKLIGHT;
->         color = <LED_COLOR_ID_GREEN>;
->         linux,default-trigger = "backlight";
-> };
+There is no real standardization here. Which means PHYs differ a lot
+in what they can do. We need to strike a balance between over
+simplifying and only supporting a very small set of PHY LED features,
+and allowing great flexibility and having each PHY implement its own
+specific features and having little in common.
 
-The latter makes perfect sense to me.  Will do.
+I think your current proposal is currently on the too simple side.
 
-> I noticed blanking is broken. The backlight device (or LED device with
-> backlight trigger) doens't get notified when the framebuffer is blanked since
-> the driver doesn't implement fb_blank.
->
-> Right now:
->
-> echo 1 > /sys/class/graphics/fb0/blank
->                                                              |
-> sh: write error: Invalid argument
->
-> Due to:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/video/fbdev/core/fbmem.c?h=v5.15-rc3#n1078
+One common feature is that there are multiple modes for indicating
+link, which take into account the link speed. Look at for example
+include/dt-bindings/net/microchip-lan78xx.h
 
-That's a pre-existing problem, righ? ;-)
+#define LAN78XX_LINK_ACTIVITY           0
+#define LAN78XX_LINK_1000_ACTIVITY      1
+#define LAN78XX_LINK_100_ACTIVITY       2
+#define LAN78XX_LINK_10_ACTIVITY        3
+#define LAN78XX_LINK_100_1000_ACTIVITY  4
+#define LAN78XX_LINK_10_1000_ACTIVITY   5
+#define LAN78XX_LINK_10_100_ACTIVITY    6
 
-> Something like this fixes it.
->
-> diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-> index 89ee5b4b3dfc..0883d5252c81 100644
-> --- a/drivers/auxdisplay/ht16k33.c
-> +++ b/drivers/auxdisplay/ht16k33.c
-> @@ -346,6 +346,15 @@ static int ht16k33_mmap(struct fb_info *info, struct
-> vm_area_struct *vma)
->          return vm_map_pages_zero(vma, &pages, 1);
->   }
->
-> +/*
-> + * Blank events will be passed to the backlight device (or the LED device if
-> + * it's trigger is 'backlight') when we return 0 here.
-> + */
-> +static int ht16k33_blank(int blank, struct fb_info *info)
-> +{
-> +       return 0;
-> +}
-> +
->   static const struct fb_ops ht16k33_fb_ops = {
->          .owner = THIS_MODULE,
->          .fb_read = fb_sys_read,
-> @@ -354,6 +363,7 @@ static const struct fb_ops ht16k33_fb_ops = {
->          .fb_copyarea = sys_copyarea,
->          .fb_imageblit = sys_imageblit,
->          .fb_mmap = ht16k33_mmap,
-> +       .fb_blank = ht16k33_blank,
->   };
->
->   /*
->
-> Feel free to include (something like) this in the patch stack.
+And:
 
-Thanks, will do.
+intel-xway.c:#define  XWAY_MMD_LEDxL_BLINKS_LINK10	0x0010
+intel-xway.c:#define  XWAY_MMD_LEDxL_BLINKS_LINK100	0x0020
+intel-xway.c:#define  XWAY_MMD_LEDxL_BLINKS_LINK10X	0x0030
+intel-xway.c:#define  XWAY_MMD_LEDxL_BLINKS_LINK1000	0x0040
+intel-xway.c:#define  XWAY_MMD_LEDxL_BLINKS_LINK10_0	0x0050
+intel-xway.c:#define  XWAY_MMD_LEDxL_BLINKS_LINK100X	0x0060
+intel-xway.c:#define  XWAY_MMD_LEDxL_BLINKS_LINK10XX	0x0070
 
-> > +
-> > +     err = devm_led_classdev_register_ext(dev, led, &init_data);
-> > +     if (err)
-> > +             dev_err(dev, "Failed to register LED\n");
->
-> You might want to call ht16k33_brightness_set(priv, brightness) here to get a
-> know value into the display setup register (0x80).
->
-> Right now if I enable hardware blinking and (soft)reboot my board it keeps on
-> blinking even after a re-probe.
+Marvell PHYs have similar LINK modes which can either be one specific
+speed, or a combination of speeds.
 
-I don't have that issue.
-Aha, ht16k33_seg_probe() calls ht16k33_brightness_set(), but
-ht16k33_fbdev_probe() doesn't.  The latter should do that, too,
-when not using backwards compatibility mode.
+This is a common enough feature, and a frequently used feature, we
+need to support it. We also need to forward looking. We should not
+limit ourselves to 10/100/1G. We have 3 PHY drivers which support
+2.5G, 5G and 10G. 25G and 40G are standardized so are likely to come
+along at some point.
 
-> > @@ -575,7 +660,7 @@ static int ht16k33_seg_probe(struct device *dev, struct
-> > ht16k33_priv *priv,
-> >       struct ht16k33_seg *seg = &priv->seg;
-> >       int err;
-> >
-> > -     err = ht16k33_brightness_set(priv, MAX_BRIGHTNESS);
-> > +     err = ht16k33_brightness_set(priv, brightness);
->
-> This looks like a bugfix for patch 17, maybe move this change there?
+One way we could support this is:
 
-Indeed. Bad rebase. Will move.
+function = "link100", "link1G", "activity";
 
-Thanks a lot for your comments!
+for LAN78XX_LINK_100_1000_ACTIVITY, etc.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+    Andrew
