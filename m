@@ -2,32 +2,35 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE72C433EF
-	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB73EC4332F
+	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C884E610A2
-	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:56:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0E606103D
+	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:56:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235741AbhJLS6Z (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 12 Oct 2021 14:58:25 -0400
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:34670 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234776AbhJLS6H (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Oct 2021 14:58:07 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4HTPTS00k6zMqgqy
-        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 20:34:36 +0200 (CEST)
+        id S233602AbhJLS61 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 12 Oct 2021 14:58:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37014 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234124AbhJLS6I (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Oct 2021 14:58:08 -0400
+Received: from leibniz.telenet-ops.be (leibniz.telenet-ops.be [IPv6:2a02:1800:110:4::f00:d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E392DC061570
+        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 11:56:05 -0700 (PDT)
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4HTPTR00NbzMqglp
+        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 20:34:35 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:9c93:91ff:d58:ecfb])
-        by laurent.telenet-ops.be with bizsmtp
-        id 56ZY260070KW32a016ZYuW; Tue, 12 Oct 2021 20:33:35 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id 56ZY260060KW32a066ZYkc; Tue, 12 Oct 2021 20:33:34 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1maMah-004RUN-Hb; Tue, 12 Oct 2021 20:33:31 +0200
+        id 1maMah-004RUE-LZ; Tue, 12 Oct 2021 20:33:31 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1maMag-002j7g-E4; Tue, 12 Oct 2021 20:33:30 +0200
+        id 1maMag-002j7S-9o; Tue, 12 Oct 2021 20:33:30 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Miguel Ojeda <ojeda@kernel.org>
 Cc:     Robin van der Gracht <robin@protonic.nl>,
@@ -37,11 +40,10 @@ Cc:     Robin van der Gracht <robin@protonic.nl>,
         Pavel Machek <pavel@ucw.cz>, Marek Behun <marek.behun@nic.cz>,
         devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v7 19/21] dt-bindings: auxdisplay: ht16k33: Document LED subnode
-Date:   Tue, 12 Oct 2021 20:33:25 +0200
-Message-Id: <20211012183327.649865-20-geert@linux-m68k.org>
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v7 17/21] auxdisplay: ht16k33: Extract frame buffer probing
+Date:   Tue, 12 Oct 2021 20:33:23 +0200
+Message-Id: <20211012183327.649865-18-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20211012183327.649865-1-geert@linux-m68k.org>
 References: <20211012183327.649865-1-geert@linux-m68k.org>
@@ -51,18 +53,17 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Extend the Holtek HT16K33 LED controller Device Tree bindings with an
-LED subnode, conforming to the standard LED bindings.
+Extract all frame buffer (including backlight) probing into
+ht16k33_fbdev_probe().
 
-This allows the user to exert more control, like specifying LED color,
-function, and/or trigger, to extend LED functionality beyond a simple
-display backlight.
+Call ht16k33_fbdev_probe() after ht16k33_keypad_probe(), as the latter
+does not need any manual cleanup in the probe error path.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Robin van der Gracht <robin@protonic.nl>
 ---
 v7:
-  - Add linux,default-trigger to example,
+  - Add Reviewed-by,
 
 v6:
   - No changes,
@@ -71,50 +72,163 @@ v5:
   - No changes,
 
 v4:
-  - Add Reviewed-by,
+  - No changes,
 
 v3:
-  - New.
----
- .../bindings/auxdisplay/holtek,ht16k33.yaml          | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+  - Pass "dev" instead of "client" to ht16k33_fbdev_probe(),
+  - Drop local variable "node",
 
-diff --git a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-index 6baf1200c9d8488e..fc4873deb76f3190 100644
---- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-+++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-@@ -48,6 +48,11 @@ properties:
-     default: 16
-     description: Initial brightness level
+v2:
+  - Rebased.
+---
+ drivers/auxdisplay/ht16k33.c | 101 ++++++++++++++++++-----------------
+ 1 file changed, 53 insertions(+), 48 deletions(-)
+
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index 60e616c0e932cd84..8993d27909109a98 100644
+--- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16k33.c
+@@ -404,33 +404,13 @@ static int ht16k33_keypad_probe(struct i2c_client *client,
+ 	return input_register_device(keypad->dev);
+ }
  
-+  led:
-+    type: object
-+    $ref: /schemas/leds/common.yaml#
-+    unevaluatedProperties: false
+-static int ht16k33_probe(struct i2c_client *client)
++static int ht16k33_fbdev_probe(struct device *dev, struct ht16k33_priv *priv,
++			       uint32_t brightness)
+ {
+-	int err;
+-	uint32_t dft_brightness;
+-	struct backlight_device *bl;
++	struct ht16k33_fbdev *fbdev = &priv->fbdev;
+ 	struct backlight_properties bl_props;
+-	struct ht16k33_priv *priv;
+-	struct ht16k33_fbdev *fbdev;
+-	struct device *dev = &client->dev;
+-	struct device_node *node = dev->of_node;
+-
+-	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+-		dev_err(dev, "i2c_check_functionality error\n");
+-		return -EIO;
+-	}
+-
+-	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv)
+-		return -ENOMEM;
+-
+-	priv->client = client;
+-	i2c_set_clientdata(client, priv);
+-	fbdev = &priv->fbdev;
+-
+-	err = ht16k33_initialize(priv);
+-	if (err)
+-		return err;
++	struct backlight_device *bl;
++	int err;
+ 
+ 	/* Backlight */
+ 	memset(&bl_props, 0, sizeof(struct backlight_properties));
+@@ -444,18 +424,7 @@ static int ht16k33_probe(struct i2c_client *client)
+ 		return PTR_ERR(bl);
+ 	}
+ 
+-	err = of_property_read_u32(node, "default-brightness-level",
+-				   &dft_brightness);
+-	if (err) {
+-		dft_brightness = MAX_BRIGHTNESS;
+-	} else if (dft_brightness > MAX_BRIGHTNESS) {
+-		dev_warn(dev,
+-			 "invalid default brightness level: %u, using %u\n",
+-			 dft_brightness, MAX_BRIGHTNESS);
+-		dft_brightness = MAX_BRIGHTNESS;
+-	}
+-
+-	bl->props.brightness = dft_brightness;
++	bl->props.brightness = brightness;
+ 	ht16k33_bl_update_status(bl);
+ 
+ 	/* Framebuffer (2 bytes per column) */
+@@ -476,8 +445,8 @@ static int ht16k33_probe(struct i2c_client *client)
+ 		goto err_fbdev_buffer;
+ 	}
+ 
+-	err = of_property_read_u32(node, "refresh-rate-hz",
+-		&fbdev->refresh_rate);
++	err = of_property_read_u32(dev->of_node, "refresh-rate-hz",
++				   &fbdev->refresh_rate);
+ 	if (err) {
+ 		dev_err(dev, "refresh rate not specified\n");
+ 		goto err_fbdev_info;
+@@ -499,18 +468,9 @@ static int ht16k33_probe(struct i2c_client *client)
+ 	if (err)
+ 		goto err_fbdev_info;
+ 
+-	/* Keypad */
+-	if (client->irq > 0) {
+-		err = ht16k33_keypad_probe(client, &priv->keypad);
+-		if (err)
+-			goto err_fbdev_unregister;
+-	}
+-
+ 	ht16k33_fb_queue(priv);
+ 	return 0;
+ 
+-err_fbdev_unregister:
+-	unregister_framebuffer(fbdev->info);
+ err_fbdev_info:
+ 	framebuffer_release(fbdev->info);
+ err_fbdev_buffer:
+@@ -519,6 +479,51 @@ static int ht16k33_probe(struct i2c_client *client)
+ 	return err;
+ }
+ 
++static int ht16k33_probe(struct i2c_client *client)
++{
++	struct device *dev = &client->dev;
++	struct ht16k33_priv *priv;
++	uint32_t dft_brightness;
++	int err;
 +
- required:
-   - compatible
-   - reg
-@@ -66,6 +71,7 @@ examples:
-   - |
-     #include <dt-bindings/interrupt-controller/irq.h>
-     #include <dt-bindings/input/input.h>
-+    #include <dt-bindings/leds/common.h>
-     i2c1 {
-             #address-cells = <1>;
-             #size-cells = <0>;
-@@ -87,5 +93,11 @@ examples:
-                                    <MATRIX_KEY(4, 1, KEY_F9)>,
-                                    <MATRIX_KEY(5, 1, KEY_F3)>,
-                                    <MATRIX_KEY(6, 1, KEY_F1)>;
++	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
++		dev_err(dev, "i2c_check_functionality error\n");
++		return -EIO;
++	}
 +
-+                    led {
-+                            color = <LED_COLOR_ID_RED>;
-+                            function = LED_FUNCTION_BACKLIGHT;
-+                            linux,default-trigger = "backlight";
-+                    };
-             };
-       };
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->client = client;
++	i2c_set_clientdata(client, priv);
++
++	err = ht16k33_initialize(priv);
++	if (err)
++		return err;
++
++	err = of_property_read_u32(dev->of_node, "default-brightness-level",
++				   &dft_brightness);
++	if (err) {
++		dft_brightness = MAX_BRIGHTNESS;
++	} else if (dft_brightness > MAX_BRIGHTNESS) {
++		dev_warn(dev,
++			 "invalid default brightness level: %u, using %u\n",
++			 dft_brightness, MAX_BRIGHTNESS);
++		dft_brightness = MAX_BRIGHTNESS;
++	}
++
++	/* Keypad */
++	if (client->irq > 0) {
++		err = ht16k33_keypad_probe(client, &priv->keypad);
++		if (err)
++			return err;
++	}
++
++	/* Frame Buffer Display */
++	return ht16k33_fbdev_probe(dev, priv, dft_brightness);
++}
++
+ static int ht16k33_remove(struct i2c_client *client)
+ {
+ 	struct ht16k33_priv *priv = i2c_get_clientdata(client);
 -- 
 2.25.1
 
