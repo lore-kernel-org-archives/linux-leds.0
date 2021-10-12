@@ -2,35 +2,35 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF348C4321E
-	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E93BAC433FE
+	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92DDC61050
-	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:48:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1EC06103D
+	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:49:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235576AbhJLSuu (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 12 Oct 2021 14:50:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35124 "EHLO
+        id S234934AbhJLSux (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 12 Oct 2021 14:50:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235469AbhJLSup (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Oct 2021 14:50:45 -0400
+        with ESMTP id S234546AbhJLSus (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Oct 2021 14:50:48 -0400
 Received: from newton.telenet-ops.be (newton.telenet-ops.be [IPv6:2a02:1800:120:4::f00:d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F056CC061768
-        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 11:48:38 -0700 (PDT)
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 4HTPZ75x4YzMqkdX
-        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 20:38:39 +0200 (CEST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9E3CC06176F
+        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 11:48:41 -0700 (PDT)
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 4HTPZ905c8zMqrtD
+        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 20:38:41 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:9c93:91ff:d58:ecfb])
-        by albert.telenet-ops.be with bizsmtp
-        id 56ZX2600K0KW32a066ZXkX; Tue, 12 Oct 2021 20:33:33 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id 56ZX260090KW32a016ZXBs; Tue, 12 Oct 2021 20:33:33 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1maMah-004RTo-39; Tue, 12 Oct 2021 20:33:31 +0200
+        id 1maMah-004RU1-36; Tue, 12 Oct 2021 20:33:31 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1maMaf-002j5Y-NN; Tue, 12 Oct 2021 20:33:29 +0200
+        id 1maMaf-002j6A-U1; Tue, 12 Oct 2021 20:33:29 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Miguel Ojeda <ojeda@kernel.org>
 Cc:     Robin van der Gracht <robin@protonic.nl>,
@@ -41,9 +41,9 @@ Cc:     Robin van der Gracht <robin@protonic.nl>,
         devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v7 04/21] auxdisplay: img-ascii-lcd: Add helper variable dev
-Date:   Tue, 12 Oct 2021 20:33:10 +0200
-Message-Id: <20211012183327.649865-5-geert@linux-m68k.org>
+Subject: [PATCH v7 09/21] auxdisplay: ht16k33: Connect backlight to fbdev
+Date:   Tue, 12 Oct 2021 20:33:15 +0200
+Message-Id: <20211012183327.649865-10-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20211012183327.649865-1-geert@linux-m68k.org>
 References: <20211012183327.649865-1-geert@linux-m68k.org>
@@ -53,13 +53,17 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-img_ascii_lcd_probe() has many users of "pdev->dev".  Add a shorthand to
-simplify the code.
+Currently /sys/class/graphics/fb0/bl_curve is not accessible (-ENODEV),
+as the driver does not connect the backlight to the frame buffer device.
+Fix this moving backlight initialization up, and filling in
+fb_info.bl_dev.
 
+Fixes: 8992da44c6805d53 ("auxdisplay: ht16k33: Driver for LED controller")
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Robin van der Gracht <robin@protonic.nl>
 ---
 v7:
-  - No changes,
+  - Add Reviewed-by,
 
 v6:
   - No changes,
@@ -74,55 +78,91 @@ v3:
   - No changes,
 
 v2:
-  - No changes.
+  - New.
 ---
- drivers/auxdisplay/img-ascii-lcd.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/auxdisplay/ht16k33.c | 56 ++++++++++++++++++------------------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
-index e33ce0151cdfd150..2b6e41ec57544faa 100644
---- a/drivers/auxdisplay/img-ascii-lcd.c
-+++ b/drivers/auxdisplay/img-ascii-lcd.c
-@@ -365,26 +365,25 @@ static int img_ascii_lcd_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
- 	const struct img_ascii_lcd_config *cfg;
-+	struct device *dev = &pdev->dev;
- 	struct img_ascii_lcd_ctx *ctx;
- 	int err;
- 
--	match = of_match_device(img_ascii_lcd_matches, &pdev->dev);
-+	match = of_match_device(img_ascii_lcd_matches, dev);
- 	if (!match)
- 		return -ENODEV;
- 
- 	cfg = match->data;
--	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx) + cfg->num_chars,
--			   GFP_KERNEL);
-+	ctx = devm_kzalloc(dev, sizeof(*ctx) + cfg->num_chars, GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
- 
- 	if (cfg->external_regmap) {
--		ctx->regmap = syscon_node_to_regmap(pdev->dev.parent->of_node);
-+		ctx->regmap = syscon_node_to_regmap(dev->parent->of_node);
- 		if (IS_ERR(ctx->regmap))
- 			return PTR_ERR(ctx->regmap);
- 
--		if (of_property_read_u32(pdev->dev.of_node, "offset",
--					 &ctx->offset))
-+		if (of_property_read_u32(dev->of_node, "offset", &ctx->offset))
- 			return -EINVAL;
- 	} else {
- 		ctx->base = devm_platform_ioremap_resource(pdev, 0);
-@@ -408,7 +407,7 @@ static int img_ascii_lcd_probe(struct platform_device *pdev)
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index 1e69cc6d21a0dca2..2b630e194570f6e5 100644
+--- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16k33.c
+@@ -413,6 +413,33 @@ static int ht16k33_probe(struct i2c_client *client,
  	if (err)
- 		goto out_del_timer;
+ 		return err;
  
--	err = device_create_file(&pdev->dev, &dev_attr_message);
-+	err = device_create_file(dev, &dev_attr_message);
- 	if (err)
- 		goto out_del_timer;
++	/* Backlight */
++	memset(&bl_props, 0, sizeof(struct backlight_properties));
++	bl_props.type = BACKLIGHT_RAW;
++	bl_props.max_brightness = MAX_BRIGHTNESS;
++
++	bl = devm_backlight_device_register(&client->dev, DRIVER_NAME"-bl",
++					    &client->dev, priv,
++					    &ht16k33_bl_ops, &bl_props);
++	if (IS_ERR(bl)) {
++		dev_err(&client->dev, "failed to register backlight\n");
++		return PTR_ERR(bl);
++	}
++
++	err = of_property_read_u32(node, "default-brightness-level",
++				   &dft_brightness);
++	if (err) {
++		dft_brightness = MAX_BRIGHTNESS;
++	} else if (dft_brightness > MAX_BRIGHTNESS) {
++		dev_warn(&client->dev,
++			 "invalid default brightness level: %u, using %u\n",
++			 dft_brightness, MAX_BRIGHTNESS);
++		dft_brightness = MAX_BRIGHTNESS;
++	}
++
++	bl->props.brightness = dft_brightness;
++	ht16k33_bl_update_status(bl);
++
+ 	/* Framebuffer (2 bytes per column) */
+ 	BUILD_BUG_ON(PAGE_SIZE < HT16K33_FB_SIZE);
+ 	fbdev->buffer = (unsigned char *) get_zeroed_page(GFP_KERNEL);
+@@ -445,6 +472,7 @@ static int ht16k33_probe(struct i2c_client *client,
+ 	fbdev->info->screen_size = HT16K33_FB_SIZE;
+ 	fbdev->info->fix = ht16k33_fb_fix;
+ 	fbdev->info->var = ht16k33_fb_var;
++	fbdev->info->bl_dev = bl;
+ 	fbdev->info->pseudo_palette = NULL;
+ 	fbdev->info->flags = FBINFO_FLAG_DEFAULT;
+ 	fbdev->info->par = priv;
+@@ -460,34 +488,6 @@ static int ht16k33_probe(struct i2c_client *client,
+ 			goto err_fbdev_unregister;
+ 	}
+ 
+-	/* Backlight */
+-	memset(&bl_props, 0, sizeof(struct backlight_properties));
+-	bl_props.type = BACKLIGHT_RAW;
+-	bl_props.max_brightness = MAX_BRIGHTNESS;
+-
+-	bl = devm_backlight_device_register(&client->dev, DRIVER_NAME"-bl",
+-					    &client->dev, priv,
+-					    &ht16k33_bl_ops, &bl_props);
+-	if (IS_ERR(bl)) {
+-		dev_err(&client->dev, "failed to register backlight\n");
+-		err = PTR_ERR(bl);
+-		goto err_fbdev_unregister;
+-	}
+-
+-	err = of_property_read_u32(node, "default-brightness-level",
+-				   &dft_brightness);
+-	if (err) {
+-		dft_brightness = MAX_BRIGHTNESS;
+-	} else if (dft_brightness > MAX_BRIGHTNESS) {
+-		dev_warn(&client->dev,
+-			 "invalid default brightness level: %u, using %u\n",
+-			 dft_brightness, MAX_BRIGHTNESS);
+-		dft_brightness = MAX_BRIGHTNESS;
+-	}
+-
+-	bl->props.brightness = dft_brightness;
+-	ht16k33_bl_update_status(bl);
+-
+ 	ht16k33_fb_queue(priv);
+ 	return 0;
  
 -- 
 2.25.1
