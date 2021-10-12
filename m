@@ -2,35 +2,32 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E93BAC433FE
-	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AB6C433F5
+	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:50:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1EC06103D
-	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:49:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 039BF61050
+	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:50:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234934AbhJLSux (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 12 Oct 2021 14:50:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35094 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234546AbhJLSus (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Oct 2021 14:50:48 -0400
-Received: from newton.telenet-ops.be (newton.telenet-ops.be [IPv6:2a02:1800:120:4::f00:d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9E3CC06176F
-        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 11:48:41 -0700 (PDT)
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 4HTPZ905c8zMqrtD
-        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 20:38:41 +0200 (CEST)
+        id S232532AbhJLSwV (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 12 Oct 2021 14:52:21 -0400
+Received: from newton.telenet-ops.be ([195.130.132.45]:44202 "EHLO
+        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234564AbhJLSwE (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Oct 2021 14:52:04 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 4HTPcj4Cx8zMrBb5
+        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 20:40:53 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:9c93:91ff:d58:ecfb])
-        by andre.telenet-ops.be with bizsmtp
-        id 56ZX260090KW32a016ZXBs; Tue, 12 Oct 2021 20:33:33 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id 56ZX2600F0KW32a016ZX0e; Tue, 12 Oct 2021 20:33:33 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1maMah-004RU1-36; Tue, 12 Oct 2021 20:33:31 +0200
+        id 1maMah-004RTq-HP; Tue, 12 Oct 2021 20:33:31 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1maMaf-002j6A-U1; Tue, 12 Oct 2021 20:33:29 +0200
+        id 1maMaf-002j5p-Ok; Tue, 12 Oct 2021 20:33:29 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Miguel Ojeda <ojeda@kernel.org>
 Cc:     Robin van der Gracht <robin@protonic.nl>,
@@ -41,9 +38,9 @@ Cc:     Robin van der Gracht <robin@protonic.nl>,
         devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v7 09/21] auxdisplay: ht16k33: Connect backlight to fbdev
-Date:   Tue, 12 Oct 2021 20:33:15 +0200
-Message-Id: <20211012183327.649865-10-geert@linux-m68k.org>
+Subject: [PATCH v7 06/21] auxdisplay: Extract character line display core support
+Date:   Tue, 12 Oct 2021 20:33:12 +0200
+Message-Id: <20211012183327.649865-7-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20211012183327.649865-1-geert@linux-m68k.org>
 References: <20211012183327.649865-1-geert@linux-m68k.org>
@@ -53,17 +50,21 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Currently /sys/class/graphics/fb0/bl_curve is not accessible (-ENODEV),
-as the driver does not connect the backlight to the frame buffer device.
-Fix this moving backlight initialization up, and filling in
-fb_info.bl_dev.
+Extract the character line display core support from the simple ASCII
+LCD driver for the MIPS Boston, Malta & SEAD3 development boards into
+its own subdriver, so it can be reused for other displays.
 
-Fixes: 8992da44c6805d53 ("auxdisplay: ht16k33: Driver for LED controller")
+As this moves the "message" device attribute in sysfs in a "linedisp.N"
+subdirectory, a symlink is added to preserve backwards compatibility.
+
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Robin van der Gracht <robin@protonic.nl>
 ---
+Changes to img-ascii-lcd.c are untested due to lack of hardware.
+The backwards compatibility symlink has been tested by adding similar
+code to drivers/auxdisplay/ht16k33.c.
+
 v7:
-  - Add Reviewed-by,
+  - No changes,
 
 v6:
   - No changes,
@@ -75,95 +76,644 @@ v4:
   - No changes,
 
 v3:
-  - No changes,
+  - Use compat_only_sysfs_link_entry_to_kobj() instead of cooking our
+    own helper on top of kernfs_create_link(),
 
 v2:
-  - New.
+  - Drop "select LINEDISP" from HT16K33 symbol,
+  - Add backwards compatibility symlink.
 ---
- drivers/auxdisplay/ht16k33.c | 56 ++++++++++++++++++------------------
- 1 file changed, 28 insertions(+), 28 deletions(-)
+ drivers/auxdisplay/Kconfig         |   7 +
+ drivers/auxdisplay/Makefile        |   1 +
+ drivers/auxdisplay/img-ascii-lcd.c | 204 ++++---------------------
+ drivers/auxdisplay/line-display.c  | 231 +++++++++++++++++++++++++++++
+ drivers/auxdisplay/line-display.h  |  43 ++++++
+ 5 files changed, 312 insertions(+), 174 deletions(-)
+ create mode 100644 drivers/auxdisplay/line-display.c
+ create mode 100644 drivers/auxdisplay/line-display.h
 
-diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-index 1e69cc6d21a0dca2..2b630e194570f6e5 100644
---- a/drivers/auxdisplay/ht16k33.c
-+++ b/drivers/auxdisplay/ht16k33.c
-@@ -413,6 +413,33 @@ static int ht16k33_probe(struct i2c_client *client,
- 	if (err)
- 		return err;
+diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
+index 1509cb74705a30ad..b41fdc5f7bf72a1b 100644
+--- a/drivers/auxdisplay/Kconfig
++++ b/drivers/auxdisplay/Kconfig
+@@ -25,6 +25,12 @@ config CHARLCD
+ 	  This is some character LCD core interface that multiple drivers can
+ 	  use.
  
-+	/* Backlight */
-+	memset(&bl_props, 0, sizeof(struct backlight_properties));
-+	bl_props.type = BACKLIGHT_RAW;
-+	bl_props.max_brightness = MAX_BRIGHTNESS;
++config LINEDISP
++	tristate "Character line display core support" if COMPILE_TEST
++	help
++	  This is the core support for single-line character displays, to be
++	  selected by drivers that use it.
 +
-+	bl = devm_backlight_device_register(&client->dev, DRIVER_NAME"-bl",
-+					    &client->dev, priv,
-+					    &ht16k33_bl_ops, &bl_props);
-+	if (IS_ERR(bl)) {
-+		dev_err(&client->dev, "failed to register backlight\n");
-+		return PTR_ERR(bl);
-+	}
+ config HD44780_COMMON
+ 	tristate "Common functions for HD44780 (and compatibles) LCD displays" if COMPILE_TEST
+ 	select CHARLCD
+@@ -155,6 +161,7 @@ config IMG_ASCII_LCD
+ 	depends on HAS_IOMEM
+ 	default y if MIPS_MALTA
+ 	select MFD_SYSCON
++	select LINEDISP
+ 	help
+ 	  Enable this to support the simple ASCII LCD displays found on
+ 	  development boards such as the MIPS Boston, MIPS Malta & MIPS SEAD3
+diff --git a/drivers/auxdisplay/Makefile b/drivers/auxdisplay/Makefile
+index 307771027c893a5b..6968ed4d3f0a8930 100644
+--- a/drivers/auxdisplay/Makefile
++++ b/drivers/auxdisplay/Makefile
+@@ -13,3 +13,4 @@ obj-$(CONFIG_HD44780)		+= hd44780.o
+ obj-$(CONFIG_HT16K33)		+= ht16k33.o
+ obj-$(CONFIG_PARPORT_PANEL)	+= panel.o
+ obj-$(CONFIG_LCD2S)		+= lcd2s.o
++obj-$(CONFIG_LINEDISP)		+= line-display.o
+diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
+index 2b5640b638900a90..fa23e415f260ec56 100644
+--- a/drivers/auxdisplay/img-ascii-lcd.c
++++ b/drivers/auxdisplay/img-ascii-lcd.c
+@@ -4,7 +4,6 @@
+  * Author: Paul Burton <paul.burton@mips.com>
+  */
+ 
+-#include <generated/utsrelease.h>
+ #include <linux/kernel.h>
+ #include <linux/io.h>
+ #include <linux/mfd/syscon.h>
+@@ -14,7 +13,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+-#include <linux/sysfs.h>
 +
-+	err = of_property_read_u32(node, "default-brightness-level",
-+				   &dft_brightness);
-+	if (err) {
-+		dft_brightness = MAX_BRIGHTNESS;
-+	} else if (dft_brightness > MAX_BRIGHTNESS) {
-+		dev_warn(&client->dev,
-+			 "invalid default brightness level: %u, using %u\n",
-+			 dft_brightness, MAX_BRIGHTNESS);
-+		dft_brightness = MAX_BRIGHTNESS;
-+	}
-+
-+	bl->props.brightness = dft_brightness;
-+	ht16k33_bl_update_status(bl);
-+
- 	/* Framebuffer (2 bytes per column) */
- 	BUILD_BUG_ON(PAGE_SIZE < HT16K33_FB_SIZE);
- 	fbdev->buffer = (unsigned char *) get_zeroed_page(GFP_KERNEL);
-@@ -445,6 +472,7 @@ static int ht16k33_probe(struct i2c_client *client,
- 	fbdev->info->screen_size = HT16K33_FB_SIZE;
- 	fbdev->info->fix = ht16k33_fb_fix;
- 	fbdev->info->var = ht16k33_fb_var;
-+	fbdev->info->bl_dev = bl;
- 	fbdev->info->pseudo_palette = NULL;
- 	fbdev->info->flags = FBINFO_FLAG_DEFAULT;
- 	fbdev->info->par = priv;
-@@ -460,34 +488,6 @@ static int ht16k33_probe(struct i2c_client *client,
- 			goto err_fbdev_unregister;
++#include "line-display.h"
+ 
+ struct img_ascii_lcd_ctx;
+ 
+@@ -27,36 +27,26 @@ struct img_ascii_lcd_ctx;
+ struct img_ascii_lcd_config {
+ 	unsigned int num_chars;
+ 	bool external_regmap;
+-	void (*update)(struct img_ascii_lcd_ctx *ctx);
++	void (*update)(struct linedisp *linedisp);
+ };
+ 
+ /**
+  * struct img_ascii_lcd_ctx - Private data structure
+- * @pdev: the ASCII LCD platform device
+  * @base: the base address of the LCD registers
+  * @regmap: the regmap through which LCD registers are accessed
+  * @offset: the offset within regmap to the start of the LCD registers
+  * @cfg: pointer to the LCD model configuration
+- * @message: the full message to display or scroll on the LCD
+- * @message_len: the length of the @message string
+- * @scroll_pos: index of the first character of @message currently displayed
+- * @scroll_rate: scroll interval in jiffies
+- * @timer: timer used to implement scrolling
++ * @linedisp: line display structure
+  * @curr: the string currently displayed on the LCD
+  */
+ struct img_ascii_lcd_ctx {
+-	struct platform_device *pdev;
+ 	union {
+ 		void __iomem *base;
+ 		struct regmap *regmap;
+ 	};
+ 	u32 offset;
+ 	const struct img_ascii_lcd_config *cfg;
+-	char *message;
+-	unsigned int message_len;
+-	unsigned int scroll_pos;
+-	unsigned int scroll_rate;
+-	struct timer_list timer;
++	struct linedisp linedisp;
+ 	char curr[] __aligned(8);
+ };
+ 
+@@ -64,8 +54,10 @@ struct img_ascii_lcd_ctx {
+  * MIPS Boston development board
+  */
+ 
+-static void boston_update(struct img_ascii_lcd_ctx *ctx)
++static void boston_update(struct linedisp *linedisp)
+ {
++	struct img_ascii_lcd_ctx *ctx =
++		container_of(linedisp, struct img_ascii_lcd_ctx, linedisp);
+ 	ulong val;
+ 
+ #if BITS_PER_LONG == 64
+@@ -90,12 +82,14 @@ static struct img_ascii_lcd_config boston_config = {
+  * MIPS Malta development board
+  */
+ 
+-static void malta_update(struct img_ascii_lcd_ctx *ctx)
++static void malta_update(struct linedisp *linedisp)
+ {
++	struct img_ascii_lcd_ctx *ctx =
++		container_of(linedisp, struct img_ascii_lcd_ctx, linedisp);
+ 	unsigned int i;
+ 	int err = 0;
+ 
+-	for (i = 0; i < ctx->cfg->num_chars; i++) {
++	for (i = 0; i < linedisp->num_chars; i++) {
+ 		err = regmap_write(ctx->regmap,
+ 				   ctx->offset + (i * 8), ctx->curr[i]);
+ 		if (err)
+@@ -173,12 +167,14 @@ static int sead3_wait_lcd_idle(struct img_ascii_lcd_ctx *ctx)
+ 	return 0;
+ }
+ 
+-static void sead3_update(struct img_ascii_lcd_ctx *ctx)
++static void sead3_update(struct linedisp *linedisp)
+ {
++	struct img_ascii_lcd_ctx *ctx =
++		container_of(linedisp, struct img_ascii_lcd_ctx, linedisp);
+ 	unsigned int i;
+ 	int err = 0;
+ 
+-	for (i = 0; i < ctx->cfg->num_chars; i++) {
++	for (i = 0; i < linedisp->num_chars; i++) {
+ 		err = sead3_wait_lcd_idle(ctx);
+ 		if (err)
+ 			break;
+@@ -218,140 +214,6 @@ static const struct of_device_id img_ascii_lcd_matches[] = {
+ };
+ MODULE_DEVICE_TABLE(of, img_ascii_lcd_matches);
+ 
+-/**
+- * img_ascii_lcd_scroll() - scroll the display by a character
+- * @t: really a pointer to the private data structure
+- *
+- * Scroll the current message along the LCD by one character, rearming the
+- * timer if required.
+- */
+-static void img_ascii_lcd_scroll(struct timer_list *t)
+-{
+-	struct img_ascii_lcd_ctx *ctx = from_timer(ctx, t, timer);
+-	unsigned int i, ch = ctx->scroll_pos;
+-	unsigned int num_chars = ctx->cfg->num_chars;
+-
+-	/* update the current message string */
+-	for (i = 0; i < num_chars;) {
+-		/* copy as many characters from the string as possible */
+-		for (; i < num_chars && ch < ctx->message_len; i++, ch++)
+-			ctx->curr[i] = ctx->message[ch];
+-
+-		/* wrap around to the start of the string */
+-		ch = 0;
+-	}
+-
+-	/* update the LCD */
+-	ctx->cfg->update(ctx);
+-
+-	/* move on to the next character */
+-	ctx->scroll_pos++;
+-	ctx->scroll_pos %= ctx->message_len;
+-
+-	/* rearm the timer */
+-	if (ctx->message_len > ctx->cfg->num_chars)
+-		mod_timer(&ctx->timer, jiffies + ctx->scroll_rate);
+-}
+-
+-/**
+- * img_ascii_lcd_display() - set the message to be displayed
+- * @ctx: pointer to the private data structure
+- * @msg: the message to display
+- * @count: length of msg, or -1
+- *
+- * Display a new message @msg on the LCD. @msg can be longer than the number of
+- * characters the LCD can display, in which case it will begin scrolling across
+- * the LCD display.
+- *
+- * Return: 0 on success, -ENOMEM on memory allocation failure
+- */
+-static int img_ascii_lcd_display(struct img_ascii_lcd_ctx *ctx,
+-			     const char *msg, ssize_t count)
+-{
+-	char *new_msg;
+-
+-	/* stop the scroll timer */
+-	del_timer_sync(&ctx->timer);
+-
+-	if (count == -1)
+-		count = strlen(msg);
+-
+-	/* if the string ends with a newline, trim it */
+-	if (msg[count - 1] == '\n')
+-		count--;
+-
+-	if (!count) {
+-		/* clear the LCD */
+-		devm_kfree(&ctx->pdev->dev, ctx->message);
+-		ctx->message = NULL;
+-		ctx->message_len = 0;
+-		memset(ctx->curr, ' ', ctx->cfg->num_chars);
+-		ctx->cfg->update(ctx);
+-		return 0;
+-	}
+-
+-	new_msg = devm_kmalloc(&ctx->pdev->dev, count + 1, GFP_KERNEL);
+-	if (!new_msg)
+-		return -ENOMEM;
+-
+-	memcpy(new_msg, msg, count);
+-	new_msg[count] = 0;
+-
+-	if (ctx->message)
+-		devm_kfree(&ctx->pdev->dev, ctx->message);
+-
+-	ctx->message = new_msg;
+-	ctx->message_len = count;
+-	ctx->scroll_pos = 0;
+-
+-	/* update the LCD */
+-	img_ascii_lcd_scroll(&ctx->timer);
+-
+-	return 0;
+-}
+-
+-/**
+- * message_show() - read message via sysfs
+- * @dev: the LCD device
+- * @attr: the LCD message attribute
+- * @buf: the buffer to read the message into
+- *
+- * Read the current message being displayed or scrolled across the LCD display
+- * into @buf, for reads from sysfs.
+- *
+- * Return: the number of characters written to @buf
+- */
+-static ssize_t message_show(struct device *dev, struct device_attribute *attr,
+-			    char *buf)
+-{
+-	struct img_ascii_lcd_ctx *ctx = dev_get_drvdata(dev);
+-
+-	return sysfs_emit(buf, "%s\n", ctx->message);
+-}
+-
+-/**
+- * message_store() - write a new message via sysfs
+- * @dev: the LCD device
+- * @attr: the LCD message attribute
+- * @buf: the buffer containing the new message
+- * @count: the size of the message in @buf
+- *
+- * Write a new message to display or scroll across the LCD display from sysfs.
+- *
+- * Return: the size of the message on success, else -ERRNO
+- */
+-static ssize_t message_store(struct device *dev, struct device_attribute *attr,
+-			     const char *buf, size_t count)
+-{
+-	struct img_ascii_lcd_ctx *ctx = dev_get_drvdata(dev);
+-	int err;
+-
+-	err = img_ascii_lcd_display(ctx, buf, count);
+-	return err ?: count;
+-}
+-
+-static DEVICE_ATTR_RW(message);
+-
+ /**
+  * img_ascii_lcd_probe() - probe an LCD display device
+  * @pdev: the LCD platform device
+@@ -391,29 +253,23 @@ static int img_ascii_lcd_probe(struct platform_device *pdev)
+ 			return PTR_ERR(ctx->base);
  	}
  
--	/* Backlight */
--	memset(&bl_props, 0, sizeof(struct backlight_properties));
--	bl_props.type = BACKLIGHT_RAW;
--	bl_props.max_brightness = MAX_BRIGHTNESS;
+-	ctx->pdev = pdev;
+-	ctx->cfg = cfg;
+-	ctx->message = NULL;
+-	ctx->scroll_pos = 0;
+-	ctx->scroll_rate = HZ / 2;
 -
--	bl = devm_backlight_device_register(&client->dev, DRIVER_NAME"-bl",
--					    &client->dev, priv,
--					    &ht16k33_bl_ops, &bl_props);
--	if (IS_ERR(bl)) {
--		dev_err(&client->dev, "failed to register backlight\n");
--		err = PTR_ERR(bl);
--		goto err_fbdev_unregister;
--	}
+-	/* initialise a timer for scrolling the message */
+-	timer_setup(&ctx->timer, img_ascii_lcd_scroll, 0);
 -
--	err = of_property_read_u32(node, "default-brightness-level",
--				   &dft_brightness);
--	if (err) {
--		dft_brightness = MAX_BRIGHTNESS;
--	} else if (dft_brightness > MAX_BRIGHTNESS) {
--		dev_warn(&client->dev,
--			 "invalid default brightness level: %u, using %u\n",
--			 dft_brightness, MAX_BRIGHTNESS);
--		dft_brightness = MAX_BRIGHTNESS;
--	}
+-	platform_set_drvdata(pdev, ctx);
 -
--	bl->props.brightness = dft_brightness;
--	ht16k33_bl_update_status(bl);
--
- 	ht16k33_fb_queue(priv);
- 	return 0;
+-	/* display a default message */
+-	err = img_ascii_lcd_display(ctx, "Linux " UTS_RELEASE "       ", -1);
++	err = linedisp_register(&ctx->linedisp, dev, cfg->num_chars, ctx->curr,
++				cfg->update);
+ 	if (err)
+-		goto out_del_timer;
++		return err;
  
+-	err = device_create_file(dev, &dev_attr_message);
++	/* for backwards compatibility */
++	err = compat_only_sysfs_link_entry_to_kobj(&dev->kobj,
++						   &ctx->linedisp.dev.kobj,
++						   "message", NULL);
+ 	if (err)
+-		goto out_del_timer;
++		goto err_unregister;
+ 
++	platform_set_drvdata(pdev, ctx);
+ 	return 0;
+-out_del_timer:
+-	del_timer_sync(&ctx->timer);
++
++err_unregister:
++	linedisp_unregister(&ctx->linedisp);
+ 	return err;
+ }
+ 
+@@ -430,8 +286,8 @@ static int img_ascii_lcd_remove(struct platform_device *pdev)
+ {
+ 	struct img_ascii_lcd_ctx *ctx = platform_get_drvdata(pdev);
+ 
+-	device_remove_file(&pdev->dev, &dev_attr_message);
+-	del_timer_sync(&ctx->timer);
++	sysfs_remove_link(&pdev->dev.kobj, "message");
++	linedisp_unregister(&ctx->linedisp);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/auxdisplay/line-display.c b/drivers/auxdisplay/line-display.c
+new file mode 100644
+index 0000000000000000..4b97c20ac0b381ee
+--- /dev/null
++++ b/drivers/auxdisplay/line-display.c
+@@ -0,0 +1,231 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Character line display core support
++ *
++ * Copyright (C) 2016 Imagination Technologies
++ * Author: Paul Burton <paul.burton@mips.com>
++ *
++ * Copyright (C) 2021 Glider bv
++ */
++
++#include <generated/utsrelease.h>
++
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/string.h>
++#include <linux/sysfs.h>
++#include <linux/timer.h>
++
++#include "line-display.h"
++
++/**
++ * linedisp_scroll() - scroll the display by a character
++ * @t: really a pointer to the private data structure
++ *
++ * Scroll the current message along the display by one character, rearming the
++ * timer if required.
++ */
++static void linedisp_scroll(struct timer_list *t)
++{
++	struct linedisp *linedisp = from_timer(linedisp, t, timer);
++	unsigned int i, ch = linedisp->scroll_pos;
++	unsigned int num_chars = linedisp->num_chars;
++
++	/* update the current message string */
++	for (i = 0; i < num_chars;) {
++		/* copy as many characters from the string as possible */
++		for (; i < num_chars && ch < linedisp->message_len; i++, ch++)
++			linedisp->buf[i] = linedisp->message[ch];
++
++		/* wrap around to the start of the string */
++		ch = 0;
++	}
++
++	/* update the display */
++	linedisp->update(linedisp);
++
++	/* move on to the next character */
++	linedisp->scroll_pos++;
++	linedisp->scroll_pos %= linedisp->message_len;
++
++	/* rearm the timer */
++	if (linedisp->message_len > num_chars)
++		mod_timer(&linedisp->timer, jiffies + linedisp->scroll_rate);
++}
++
++/**
++ * linedisp_display() - set the message to be displayed
++ * @linedisp: pointer to the private data structure
++ * @msg: the message to display
++ * @count: length of msg, or -1
++ *
++ * Display a new message @msg on the display. @msg can be longer than the
++ * number of characters the display can display, in which case it will begin
++ * scrolling across the display.
++ *
++ * Return: 0 on success, -ENOMEM on memory allocation failure
++ */
++static int linedisp_display(struct linedisp *linedisp, const char *msg,
++			    ssize_t count)
++{
++	char *new_msg;
++
++	/* stop the scroll timer */
++	del_timer_sync(&linedisp->timer);
++
++	if (count == -1)
++		count = strlen(msg);
++
++	/* if the string ends with a newline, trim it */
++	if (msg[count - 1] == '\n')
++		count--;
++
++	if (!count) {
++		/* Clear the display */
++		kfree(linedisp->message);
++		linedisp->message = NULL;
++		linedisp->message_len = 0;
++		memset(linedisp->buf, ' ', linedisp->num_chars);
++		linedisp->update(linedisp);
++		return 0;
++	}
++
++	new_msg = kmalloc(count + 1, GFP_KERNEL);
++	if (!new_msg)
++		return -ENOMEM;
++
++	memcpy(new_msg, msg, count);
++	new_msg[count] = 0;
++
++	kfree(linedisp->message);
++
++	linedisp->message = new_msg;
++	linedisp->message_len = count;
++	linedisp->scroll_pos = 0;
++
++	/* update the display */
++	linedisp_scroll(&linedisp->timer);
++
++	return 0;
++}
++
++/**
++ * message_show() - read message via sysfs
++ * @dev: the display device
++ * @attr: the display message attribute
++ * @buf: the buffer to read the message into
++ *
++ * Read the current message being displayed or scrolled across the display into
++ * @buf, for reads from sysfs.
++ *
++ * Return: the number of characters written to @buf
++ */
++static ssize_t message_show(struct device *dev, struct device_attribute *attr,
++			    char *buf)
++{
++	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
++
++	return sysfs_emit(buf, "%s\n", linedisp->message);
++}
++
++/**
++ * message_store() - write a new message via sysfs
++ * @dev: the display device
++ * @attr: the display message attribute
++ * @buf: the buffer containing the new message
++ * @count: the size of the message in @buf
++ *
++ * Write a new message to display or scroll across the display from sysfs.
++ *
++ * Return: the size of the message on success, else -ERRNO
++ */
++static ssize_t message_store(struct device *dev, struct device_attribute *attr,
++			     const char *buf, size_t count)
++{
++	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
++	int err;
++
++	err = linedisp_display(linedisp, buf, count);
++	return err ?: count;
++}
++
++static DEVICE_ATTR_RW(message);
++
++static struct attribute *linedisp_attrs[] = {
++	&dev_attr_message.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(linedisp);
++
++static const struct device_type linedisp_type = {
++	.groups	= linedisp_groups,
++};
++
++/**
++ * linedisp_register - register a character line display
++ * @linedisp: pointer to character line display structure
++ * @parent: parent device
++ * @num_chars: the number of characters that can be displayed
++ * @buf: pointer to a buffer that can hold @num_chars characters
++ * @update: Function called to update the display.  This must not sleep!
++ *
++ * Return: zero on success, else a negative error code.
++ */
++int linedisp_register(struct linedisp *linedisp, struct device *parent,
++		      unsigned int num_chars, char *buf,
++		      void (*update)(struct linedisp *linedisp))
++{
++	static atomic_t linedisp_id = ATOMIC_INIT(-1);
++	int err;
++
++	memset(linedisp, 0, sizeof(*linedisp));
++	linedisp->dev.parent = parent;
++	linedisp->dev.type = &linedisp_type;
++	linedisp->update = update;
++	linedisp->buf = buf;
++	linedisp->num_chars = num_chars;
++	linedisp->scroll_rate = HZ / 2;
++
++	device_initialize(&linedisp->dev);
++	dev_set_name(&linedisp->dev, "linedisp.%lu",
++		     (unsigned long)atomic_inc_return(&linedisp_id));
++
++	/* initialise a timer for scrolling the message */
++	timer_setup(&linedisp->timer, linedisp_scroll, 0);
++
++	err = device_add(&linedisp->dev);
++	if (err)
++		goto out_del_timer;
++
++	/* display a default message */
++	err = linedisp_display(linedisp, "Linux " UTS_RELEASE "       ", -1);
++	if (err)
++		goto out_del_dev;
++
++	return 0;
++
++out_del_dev:
++	device_del(&linedisp->dev);
++out_del_timer:
++	del_timer_sync(&linedisp->timer);
++	put_device(&linedisp->dev);
++	return err;
++}
++EXPORT_SYMBOL_GPL(linedisp_register);
++
++/**
++ * linedisp_unregister - unregister a character line display
++ * @linedisp: pointer to character line display structure registered previously
++ *	      with linedisp_register()
++ */
++void linedisp_unregister(struct linedisp *linedisp)
++{
++	device_del(&linedisp->dev);
++	del_timer_sync(&linedisp->timer);
++	kfree(linedisp->message);
++	put_device(&linedisp->dev);
++}
++EXPORT_SYMBOL_GPL(linedisp_unregister);
++
++MODULE_LICENSE("GPL");
+diff --git a/drivers/auxdisplay/line-display.h b/drivers/auxdisplay/line-display.h
+new file mode 100644
+index 0000000000000000..0f5891d34c485871
+--- /dev/null
++++ b/drivers/auxdisplay/line-display.h
+@@ -0,0 +1,43 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Character line display core support
++ *
++ * Copyright (C) 2016 Imagination Technologies
++ * Author: Paul Burton <paul.burton@mips.com>
++ *
++ * Copyright (C) 2021 Glider bv
++ */
++
++#ifndef _LINEDISP_H
++#define _LINEDISP_H
++
++/**
++ * struct linedisp - character line display private data structure
++ * @dev: the line display device
++ * @timer: timer used to implement scrolling
++ * @update: function called to update the display
++ * @buf: pointer to the buffer for the string currently displayed
++ * @message: the full message to display or scroll on the display
++ * @num_chars: the number of characters that can be displayed
++ * @message_len: the length of the @message string
++ * @scroll_pos: index of the first character of @message currently displayed
++ * @scroll_rate: scroll interval in jiffies
++ */
++struct linedisp {
++	struct device dev;
++	struct timer_list timer;
++	void (*update)(struct linedisp *linedisp);
++	char *buf;
++	char *message;
++	unsigned int num_chars;
++	unsigned int message_len;
++	unsigned int scroll_pos;
++	unsigned int scroll_rate;
++};
++
++int linedisp_register(struct linedisp *linedisp, struct device *parent,
++		      unsigned int num_chars, char *buf,
++		      void (*update)(struct linedisp *linedisp));
++void linedisp_unregister(struct linedisp *linedisp);
++
++#endif /* LINEDISP_H */
 -- 
 2.25.1
 
