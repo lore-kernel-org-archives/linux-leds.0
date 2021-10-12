@@ -2,36 +2,32 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAFAC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD6FC4332F
 	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 470E2610EA
+	by mail.kernel.org (Postfix) with ESMTP id D67E3610C9
 	for <linux-leds@archiver.kernel.org>; Tue, 12 Oct 2021 18:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233528AbhJLSxG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 12 Oct 2021 14:53:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35736 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233456AbhJLSxG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Oct 2021 14:53:06 -0400
-X-Greylist: delayed 888 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 12 Oct 2021 11:51:04 PDT
-Received: from leibniz.telenet-ops.be (leibniz.telenet-ops.be [IPv6:2a02:1800:110:4::f00:d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60410C061745
-        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 11:51:04 -0700 (PDT)
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4HTPZc01k1zMqhHx
-        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 20:39:04 +0200 (CEST)
+        id S232858AbhJLSxM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 12 Oct 2021 14:53:12 -0400
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:60494 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233644AbhJLSxH (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Oct 2021 14:53:07 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4HTPZ575SCzMqh30
+        for <linux-leds@vger.kernel.org>; Tue, 12 Oct 2021 20:38:37 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:9c93:91ff:d58:ecfb])
-        by xavier.telenet-ops.be with bizsmtp
-        id 56ZX260030KW32a016ZX0W; Tue, 12 Oct 2021 20:33:33 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id 56ZY260070KW32a066ZYkd; Tue, 12 Oct 2021 20:33:34 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1maMag-004RTp-NW; Tue, 12 Oct 2021 20:33:30 +0200
+        id 1maMah-004RU2-NL; Tue, 12 Oct 2021 20:33:31 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1maMaf-002j5h-O5; Tue, 12 Oct 2021 20:33:29 +0200
+        id 1maMaf-002j6H-W8; Tue, 12 Oct 2021 20:33:30 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Miguel Ojeda <ojeda@kernel.org>
 Cc:     Robin van der Gracht <robin@protonic.nl>,
@@ -42,9 +38,9 @@ Cc:     Robin van der Gracht <robin@protonic.nl>,
         devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v7 05/21] auxdisplay: img-ascii-lcd: Convert device attribute to sysfs_emit()
-Date:   Tue, 12 Oct 2021 20:33:11 +0200
-Message-Id: <20211012183327.649865-6-geert@linux-m68k.org>
+Subject: [PATCH v7 10/21] auxdisplay: ht16k33: Fix frame buffer device blanking
+Date:   Tue, 12 Oct 2021 20:33:16 +0200
+Message-Id: <20211012183327.649865-11-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20211012183327.649865-1-geert@linux-m68k.org>
 References: <20211012183327.649865-1-geert@linux-m68k.org>
@@ -54,45 +50,54 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Convert the "message" device attribute from sprintf() to sysfs_emit(),
-as the latter is aware of the PAGE_SIZE buffer.
+As the ht16k33 frame buffer sub-driver does not register an
+fb_ops.fb_blank() handler, blanking does not work:
 
+    $ echo 1 > /sys/class/graphics/fb0/blank
+    sh: write error: Invalid argument
+
+Fix this by providing a handler that always returns zero, to make sure
+blank events will be sent to the actual device handling the backlight.
+
+Reported-by: Robin van der Gracht <robin@protonic.nl>
+Suggested-by: Robin van der Gracht <robin@protonic.nl>
+Fixes: 8992da44c6805d53 ("auxdisplay: ht16k33: Driver for LED controller")
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
 v7:
-  - No changes,
-
-v6:
-  - No changes,
-
-v5:
-  - No changes,
-
-v4:
-  - No changes,
-
-v3:
-  - No changes,
-
-v2:
-  - No changes.
+  - New.
 ---
- drivers/auxdisplay/img-ascii-lcd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/auxdisplay/ht16k33.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
-index 2b6e41ec57544faa..2b5640b638900a90 100644
---- a/drivers/auxdisplay/img-ascii-lcd.c
-+++ b/drivers/auxdisplay/img-ascii-lcd.c
-@@ -326,7 +326,7 @@ static ssize_t message_show(struct device *dev, struct device_attribute *attr,
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index 2b630e194570f6e5..ed5808349990782c 100644
+--- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16k33.c
+@@ -219,6 +219,15 @@ static const struct backlight_ops ht16k33_bl_ops = {
+ 	.check_fb	= ht16k33_bl_check_fb,
+ };
+ 
++/*
++ * Blank events will be passed to the actual device handling the backlight when
++ * we return zero here.
++ */
++static int ht16k33_blank(int blank, struct fb_info *info)
++{
++	return 0;
++}
++
+ static int ht16k33_mmap(struct fb_info *info, struct vm_area_struct *vma)
  {
- 	struct img_ascii_lcd_ctx *ctx = dev_get_drvdata(dev);
- 
--	return sprintf(buf, "%s\n", ctx->message);
-+	return sysfs_emit(buf, "%s\n", ctx->message);
- }
- 
- /**
+ 	struct ht16k33_priv *priv = info->par;
+@@ -231,6 +240,7 @@ static const struct fb_ops ht16k33_fb_ops = {
+ 	.owner = THIS_MODULE,
+ 	.fb_read = fb_sys_read,
+ 	.fb_write = fb_sys_write,
++	.fb_blank = ht16k33_blank,
+ 	.fb_fillrect = sys_fillrect,
+ 	.fb_copyarea = sys_copyarea,
+ 	.fb_imageblit = sys_imageblit,
 -- 
 2.25.1
 
