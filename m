@@ -2,32 +2,32 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D03C4332F
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B113FC4332F
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2BF5611EF
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:46:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AC486115A
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:46:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234091AbhJSOsm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Oct 2021 10:48:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40072 "EHLO
+        id S233533AbhJSOsu (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Oct 2021 10:48:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231893AbhJSOsP (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Oct 2021 10:48:15 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46C25C0617BD
-        for <linux-leds@vger.kernel.org>; Tue, 19 Oct 2021 07:45:32 -0700 (PDT)
+        with ESMTP id S233550AbhJSOsR (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Oct 2021 10:48:17 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C65D0C06174E
+        for <linux-leds@vger.kernel.org>; Tue, 19 Oct 2021 07:45:34 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b4c3:ba80:54db:46f])
-        by michel.telenet-ops.be with bizsmtp
-        id 7qlS2600r12AN0U06qlSRE; Tue, 19 Oct 2021 16:45:31 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id 7qlU2600G12AN0U01qlUcJ; Tue, 19 Oct 2021 16:45:31 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mcqMo-006B4Y-IO; Tue, 19 Oct 2021 16:45:26 +0200
+        id 1mcqMp-006B4k-UH; Tue, 19 Oct 2021 16:45:27 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mcqMo-00FACo-0j; Tue, 19 Oct 2021 16:45:26 +0200
+        id 1mcqMn-00FACN-VM; Tue, 19 Oct 2021 16:45:25 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Miguel Ojeda <ojeda@kernel.org>
 Cc:     Robin van der Gracht <robin@protonic.nl>,
@@ -38,150 +38,86 @@ Cc:     Robin van der Gracht <robin@protonic.nl>,
         devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v8 21/21] auxdisplay: ht16k33: Make use of device properties
-Date:   Tue, 19 Oct 2021 16:45:20 +0200
-Message-Id: <20211019144520.3613926-22-geert@linux-m68k.org>
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v8 19/21] dt-bindings: auxdisplay: ht16k33: Document LED subnode
+Date:   Tue, 19 Oct 2021 16:45:18 +0200
+Message-Id: <20211019144520.3613926-20-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20211019144520.3613926-1-geert@linux-m68k.org>
 References: <20211019144520.3613926-1-geert@linux-m68k.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The device property API allows drivers to gather device resources from
-different sources, such as ACPI, and lift the dependency on Device Tree.
-Convert the driver to unleash the power of the device property API.
+Extend the Holtek HT16K33 LED controller Device Tree bindings with an
+LED subnode, conforming to the standard LED bindings.
 
-Suggested-by: Marek Behún <kabel@kernel.org>
+This allows the user to exert more control, like specifying LED color,
+function, and/or trigger, to extend LED functionality beyond a simple
+display backlight.
+
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Robin van der Gracht <robin@protonic.nl>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 v8:
-  - Add Acked-by,
+  - No changes,
 
 v7:
-  - Integrate into this series,
-  - Add Reviewed-by,
-  - Use device_property_read_bool() as replacement for
-    of_get_property(),
-  - Call matrix_keypad_parse_properties() instead of
-    matrix_keypad_parse_of_params().
----
- drivers/auxdisplay/Kconfig   |  2 +-
- drivers/auxdisplay/ht16k33.c | 27 ++++++++++++---------------
- 2 files changed, 13 insertions(+), 16 deletions(-)
+  - Add linux,default-trigger to example,
 
-diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
-index e32ef7f9945d49b2..64012cda4d126707 100644
---- a/drivers/auxdisplay/Kconfig
-+++ b/drivers/auxdisplay/Kconfig
-@@ -169,7 +169,7 @@ config IMG_ASCII_LCD
+v6:
+  - No changes,
+
+v5:
+  - No changes,
+
+v4:
+  - Add Reviewed-by,
+
+v3:
+  - New.
+---
+ .../bindings/auxdisplay/holtek,ht16k33.yaml          | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
+index 6baf1200c9d8488e..fc4873deb76f3190 100644
+--- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
++++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
+@@ -48,6 +48,11 @@ properties:
+     default: 16
+     description: Initial brightness level
  
- config HT16K33
- 	tristate "Holtek Ht16K33 LED controller with keyscan"
--	depends on FB && OF && I2C && INPUT
-+	depends on FB && I2C && INPUT
- 	select FB_SYS_FOPS
- 	select FB_SYS_FILLRECT
- 	select FB_SYS_COPYAREA
-diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-index aef3dc87dc9f5ed2..1134ae9f30de4baa 100644
---- a/drivers/auxdisplay/ht16k33.c
-+++ b/drivers/auxdisplay/ht16k33.c
-@@ -12,7 +12,7 @@
- #include <linux/module.h>
- #include <linux/interrupt.h>
- #include <linux/i2c.h>
--#include <linux/of.h>
-+#include <linux/property.h>
- #include <linux/fb.h>
- #include <linux/slab.h>
- #include <linux/backlight.h>
-@@ -491,15 +491,13 @@ static int ht16k33_led_probe(struct device *dev, struct led_classdev *led,
- 			     unsigned int brightness)
- {
- 	struct led_init_data init_data = {};
--	struct device_node *node;
- 	int err;
- 
- 	/* The LED is optional */
--	node = of_get_child_by_name(dev->of_node, "led");
--	if (!node)
-+	init_data.fwnode = device_get_named_child_node(dev, "led");
-+	if (!init_data.fwnode)
- 		return 0;
- 
--	init_data.fwnode = of_fwnode_handle(node);
- 	init_data.devicename = "auxdisplay";
- 	init_data.devname_mandatory = true;
- 
-@@ -520,7 +518,6 @@ static int ht16k33_keypad_probe(struct i2c_client *client,
- 				struct ht16k33_keypad *keypad)
- {
- 	struct device *dev = &client->dev;
--	struct device_node *node = dev->of_node;
- 	u32 rows = HT16K33_MATRIX_KEYPAD_MAX_ROWS;
- 	u32 cols = HT16K33_MATRIX_KEYPAD_MAX_COLS;
- 	int err;
-@@ -539,17 +536,17 @@ static int ht16k33_keypad_probe(struct i2c_client *client,
- 	keypad->dev->open = ht16k33_keypad_start;
- 	keypad->dev->close = ht16k33_keypad_stop;
- 
--	if (!of_get_property(node, "linux,no-autorepeat", NULL))
-+	if (!device_property_read_bool(dev, "linux,no-autorepeat"))
- 		__set_bit(EV_REP, keypad->dev->evbit);
- 
--	err = of_property_read_u32(node, "debounce-delay-ms",
--				   &keypad->debounce_ms);
-+	err = device_property_read_u32(dev, "debounce-delay-ms",
-+				       &keypad->debounce_ms);
- 	if (err) {
- 		dev_err(dev, "key debounce delay not specified\n");
- 		return err;
- 	}
- 
--	err = matrix_keypad_parse_of_params(dev, &rows, &cols);
-+	err = matrix_keypad_parse_properties(dev, &rows, &cols);
- 	if (err)
- 		return err;
- 	if (rows > HT16K33_MATRIX_KEYPAD_MAX_ROWS ||
-@@ -634,8 +631,8 @@ static int ht16k33_fbdev_probe(struct device *dev, struct ht16k33_priv *priv,
- 		goto err_fbdev_buffer;
- 	}
- 
--	err = of_property_read_u32(dev->of_node, "refresh-rate-hz",
--				   &fbdev->refresh_rate);
-+	err = device_property_read_u32(dev, "refresh-rate-hz",
-+				       &fbdev->refresh_rate);
- 	if (err) {
- 		dev_err(dev, "refresh rate not specified\n");
- 		goto err_fbdev_info;
-@@ -741,8 +738,8 @@ static int ht16k33_probe(struct i2c_client *client)
- 	if (err)
- 		return err;
- 
--	err = of_property_read_u32(dev->of_node, "default-brightness-level",
--				   &dft_brightness);
-+	err = device_property_read_u32(dev, "default-brightness-level",
-+				       &dft_brightness);
- 	if (err) {
- 		dft_brightness = MAX_BRIGHTNESS;
- 	} else if (dft_brightness > MAX_BRIGHTNESS) {
-@@ -830,7 +827,7 @@ static struct i2c_driver ht16k33_driver = {
- 	.remove		= ht16k33_remove,
- 	.driver		= {
- 		.name		= DRIVER_NAME,
--		.of_match_table	= of_match_ptr(ht16k33_of_match),
-+		.of_match_table	= ht16k33_of_match,
- 	},
- 	.id_table = ht16k33_i2c_match,
- };
++  led:
++    type: object
++    $ref: /schemas/leds/common.yaml#
++    unevaluatedProperties: false
++
+ required:
+   - compatible
+   - reg
+@@ -66,6 +71,7 @@ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/irq.h>
+     #include <dt-bindings/input/input.h>
++    #include <dt-bindings/leds/common.h>
+     i2c1 {
+             #address-cells = <1>;
+             #size-cells = <0>;
+@@ -87,5 +93,11 @@ examples:
+                                    <MATRIX_KEY(4, 1, KEY_F9)>,
+                                    <MATRIX_KEY(5, 1, KEY_F3)>,
+                                    <MATRIX_KEY(6, 1, KEY_F1)>;
++
++                    led {
++                            color = <LED_COLOR_ID_RED>;
++                            function = LED_FUNCTION_BACKLIGHT;
++                            linux,default-trigger = "backlight";
++                    };
+             };
+       };
 -- 
 2.25.1
 
