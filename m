@@ -2,32 +2,32 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0EFC433FE
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA6FC433F5
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 662A0600CC
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:46:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72BF1600CC
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:47:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233014AbhJSOtF (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Oct 2021 10:49:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40082 "EHLO
+        id S232579AbhJSOtN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Oct 2021 10:49:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233707AbhJSOsZ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Oct 2021 10:48:25 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38A73C06176C
-        for <linux-leds@vger.kernel.org>; Tue, 19 Oct 2021 07:45:37 -0700 (PDT)
+        with ESMTP id S232658AbhJSOsA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Oct 2021 10:48:00 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C649DC0617AE
+        for <linux-leds@vger.kernel.org>; Tue, 19 Oct 2021 07:45:32 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b4c3:ba80:54db:46f])
-        by laurent.telenet-ops.be with bizsmtp
-        id 7qlS2600b12AN0U01qlSA5; Tue, 19 Oct 2021 16:45:29 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id 7qlT2600H12AN0U01qlTMz; Tue, 19 Oct 2021 16:45:30 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mcqMo-006B4S-Jy; Tue, 19 Oct 2021 16:45:26 +0200
+        id 1mcqMp-006B4e-DQ; Tue, 19 Oct 2021 16:45:27 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mcqMn-00FAAl-L8; Tue, 19 Oct 2021 16:45:25 +0200
+        id 1mcqMn-00FABg-R1; Tue, 19 Oct 2021 16:45:25 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Miguel Ojeda <ojeda@kernel.org>
 Cc:     Robin van der Gracht <robin@protonic.nl>,
@@ -38,9 +38,9 @@ Cc:     Robin van der Gracht <robin@protonic.nl>,
         devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v8 05/21] auxdisplay: img-ascii-lcd: Convert device attribute to sysfs_emit()
-Date:   Tue, 19 Oct 2021 16:45:04 +0200
-Message-Id: <20211019144520.3613926-6-geert@linux-m68k.org>
+Subject: [PATCH v8 13/21] auxdisplay: ht16k33: Convert to simple i2c probe function
+Date:   Tue, 19 Oct 2021 16:45:12 +0200
+Message-Id: <20211019144520.3613926-14-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20211019144520.3613926-1-geert@linux-m68k.org>
 References: <20211019144520.3613926-1-geert@linux-m68k.org>
@@ -50,10 +50,11 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Convert the "message" device attribute from sprintf() to sysfs_emit(),
-as the latter is aware of the PAGE_SIZE buffer.
+ht16k33_probe() does not use the passed i2c_device_id, so the driver can
+be converted trivially to the new-style of i2c probing.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Robin van der Gracht <robin@protonic.nl>
 ---
 v8:
   - No changes,
@@ -74,24 +75,34 @@ v3:
   - No changes,
 
 v2:
-  - No changes.
+  - Add Acked-by.
 ---
- drivers/auxdisplay/img-ascii-lcd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/auxdisplay/ht16k33.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
-index 2b6e41ec57544faa..2b5640b638900a90 100644
---- a/drivers/auxdisplay/img-ascii-lcd.c
-+++ b/drivers/auxdisplay/img-ascii-lcd.c
-@@ -326,7 +326,7 @@ static ssize_t message_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct img_ascii_lcd_ctx *ctx = dev_get_drvdata(dev);
- 
--	return sprintf(buf, "%s\n", ctx->message);
-+	return sysfs_emit(buf, "%s\n", ctx->message);
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index 1ce73c4172c89244..d0d7b55059aa181e 100644
+--- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16k33.c
+@@ -391,8 +391,7 @@ static int ht16k33_keypad_probe(struct i2c_client *client,
+ 	return input_register_device(keypad->dev);
  }
  
- /**
+-static int ht16k33_probe(struct i2c_client *client,
+-				  const struct i2c_device_id *id)
++static int ht16k33_probe(struct i2c_client *client)
+ {
+ 	int err;
+ 	uint32_t dft_brightness;
+@@ -533,7 +532,7 @@ static const struct of_device_id ht16k33_of_match[] = {
+ MODULE_DEVICE_TABLE(of, ht16k33_of_match);
+ 
+ static struct i2c_driver ht16k33_driver = {
+-	.probe		= ht16k33_probe,
++	.probe_new	= ht16k33_probe,
+ 	.remove		= ht16k33_remove,
+ 	.driver		= {
+ 		.name		= DRIVER_NAME,
 -- 
 2.25.1
 
