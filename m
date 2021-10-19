@@ -2,107 +2,88 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA6FC433F5
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D67BC433EF
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 16:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72BF1600CC
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:47:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2192061260
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 16:44:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232579AbhJSOtN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Oct 2021 10:49:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40098 "EHLO
+        id S233642AbhJSQrK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Oct 2021 12:47:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232658AbhJSOsA (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Oct 2021 10:48:00 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C649DC0617AE
-        for <linux-leds@vger.kernel.org>; Tue, 19 Oct 2021 07:45:32 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b4c3:ba80:54db:46f])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 7qlT2600H12AN0U01qlTMz; Tue, 19 Oct 2021 16:45:30 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mcqMp-006B4e-DQ; Tue, 19 Oct 2021 16:45:27 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mcqMn-00FABg-R1; Tue, 19 Oct 2021 16:45:25 +0200
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Miguel Ojeda <ojeda@kernel.org>
-Cc:     Robin van der Gracht <robin@protonic.nl>,
+        with ESMTP id S229991AbhJSQrJ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Oct 2021 12:47:09 -0400
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC2DFC06161C;
+        Tue, 19 Oct 2021 09:44:56 -0700 (PDT)
+Received: by mail-io1-xd2e.google.com with SMTP id b188so16221203iof.8;
+        Tue, 19 Oct 2021 09:44:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m9fn5L6c5k5bZQVkLpvPb3DcbU31aZHyPs/0zFNYnKw=;
+        b=Qmc8AKuvYSGTXy1UfB1lkKw1L+FWpdGg2Hfm0XmOQHqKbWb+Uw/ybPukwBAYFg59In
+         drTwnh7LC3GXfBPHcoBfUjXF7MYNqy00J/EgwNMMtWvVQoo8RKI3SNpGBaRivhtFz3FE
+         X9xd/aly8rPbbPk7C4czUV7nZCQMFkVmn47+fO/kFtQ7L416n4FVdqK/Z4Yb53JkcOt9
+         gA2DxHPB5v9h+Vx/59Cc5Bm5aTiyAJZ2uuSbxbGVekbbT1LDOH5WzXkrnVhHvRIr9rC7
+         mGXm8AaihAP2VlfpgpH7nYiTRMCFXjnZQ3QeelO/cmZ+y6cgK1VTndw01/pPSCO14sDo
+         qymA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m9fn5L6c5k5bZQVkLpvPb3DcbU31aZHyPs/0zFNYnKw=;
+        b=jGD90NOisi306wwNsZbtOBh7EwKm4saXRW9ONY9rc4vspEJWsmPQ5jaNXcp/idNODy
+         p0l4TSWnUaAm/41dxfx/koVFStTtRsRCzXZiUCZZd9288F4tEwQZl3GMRKcBgBUNQufQ
+         zOqQ1jgO5fmujoTtmLW8D7Bg7v1T5hY8d7XDj/ZBDWEJ/sFjKnLE93ozOthNALIaaLOy
+         VXeIhUoF05QkzzTZ6ixd2nz4rNeyag39bAwD1lYYv65JK6nwfLanTtKHwALkq3pnM+Ou
+         xdGoXMN6+v4BQIvLiQfNBHi7CEKWryz+yjY9lJ/grdaymkDgJsFiKoi6OWvUHjB4AXYL
+         ONCQ==
+X-Gm-Message-State: AOAM533bJMKrePhDbxYZcGBCdUoyH0o/RSoEUwKFezYwCdUn0smDy0RS
+        PhE6uaUV5Cktrp81F3BBNmaewdvpH6bLKMtl0AM=
+X-Google-Smtp-Source: ABdhPJwZgjBGY3VH8kD4PIFTbQ7BW6MwBzb9/uTGndsGv78ts4EkogRu9XIq17it5wCIg9iUyhd6DkWedo6YwdQ/8ws=
+X-Received: by 2002:a05:6602:2d4e:: with SMTP id d14mr20346152iow.172.1634661896156;
+ Tue, 19 Oct 2021 09:44:56 -0700 (PDT)
+MIME-Version: 1.0
+References: <20211019144520.3613926-1-geert@linux-m68k.org>
+In-Reply-To: <20211019144520.3613926-1-geert@linux-m68k.org>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Tue, 19 Oct 2021 18:44:45 +0200
+Message-ID: <CANiq72=wnrwGbWygt2R_rsyKf3hq6vJUad4NDJwR4FeNFHZ55Q@mail.gmail.com>
+Subject: Re: [PATCH v8 00/21] auxdisplay: ht16k33: Add character display support
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Miguel Ojeda <ojeda@kernel.org>,
+        Robin van der Gracht <robin@protonic.nl>,
         Rob Herring <robh+dt@kernel.org>,
         Paul Burton <paulburton@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Pavel Machek <pavel@ucw.cz>, Marek Behun <marek.behun@nic.cz>,
-        devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v8 13/21] auxdisplay: ht16k33: Convert to simple i2c probe function
-Date:   Tue, 19 Oct 2021 16:45:12 +0200
-Message-Id: <20211019144520.3613926-14-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20211019144520.3613926-1-geert@linux-m68k.org>
-References: <20211019144520.3613926-1-geert@linux-m68k.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-ht16k33_probe() does not use the passed i2c_device_id, so the driver can
-be converted trivially to the new-style of i2c probing.
+Hi Geert,
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Acked-by: Robin van der Gracht <robin@protonic.nl>
----
-v8:
-  - No changes,
+On Tue, Oct 19, 2021 at 4:45 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> The Holtek HT16K33 LED controller is not only used for driving
+> dot-matrix displays, but also for driving segment displays.
+> The current auxdisplay driver is limited to dot-matrix displays, which
+> are exposed as a frame buffer device.
+>
+> This patch series extends the driver to 4-digit 7-segment and quad
+> 14-segment alphanumeric displays, allowing the user to display and
+> scroll text messages.
 
-v7:
-  - No changes,
+Thanks for all your work on this. Unless somebody is against this, I
+will pick it up.
 
-v6:
-  - No changes,
-
-v5:
-  - No changes,
-
-v4:
-  - No changes,
-
-v3:
-  - No changes,
-
-v2:
-  - Add Acked-by.
----
- drivers/auxdisplay/ht16k33.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-index 1ce73c4172c89244..d0d7b55059aa181e 100644
---- a/drivers/auxdisplay/ht16k33.c
-+++ b/drivers/auxdisplay/ht16k33.c
-@@ -391,8 +391,7 @@ static int ht16k33_keypad_probe(struct i2c_client *client,
- 	return input_register_device(keypad->dev);
- }
- 
--static int ht16k33_probe(struct i2c_client *client,
--				  const struct i2c_device_id *id)
-+static int ht16k33_probe(struct i2c_client *client)
- {
- 	int err;
- 	uint32_t dft_brightness;
-@@ -533,7 +532,7 @@ static const struct of_device_id ht16k33_of_match[] = {
- MODULE_DEVICE_TABLE(of, ht16k33_of_match);
- 
- static struct i2c_driver ht16k33_driver = {
--	.probe		= ht16k33_probe,
-+	.probe_new	= ht16k33_probe,
- 	.remove		= ht16k33_remove,
- 	.driver		= {
- 		.name		= DRIVER_NAME,
--- 
-2.25.1
-
+Cheers,
+Miguel
