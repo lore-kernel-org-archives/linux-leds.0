@@ -2,84 +2,168 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 443A3C4332F
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 10:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C97C433EF
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DFAA6137B
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 10:49:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B47E6115A
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:45:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235321AbhJSKvm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Oct 2021 06:51:42 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:24050 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235307AbhJSKvk (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Oct 2021 06:51:40 -0400
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 19 Oct 2021 03:49:28 -0700
-X-QCInternal: smtphost
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 19 Oct 2021 03:49:26 -0700
-X-QCInternal: smtphost
-Received: from c-skakit-linux.ap.qualcomm.com (HELO c-skakit-linux.qualcomm.com) ([10.242.51.242])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 19 Oct 2021 16:19:09 +0530
-Received: by c-skakit-linux.qualcomm.com (Postfix, from userid 2344709)
-        id 5681C5514; Tue, 19 Oct 2021 16:19:08 +0530 (IST)
-From:   Satya Priya <skakit@codeaurora.org>
-To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     Matthias Kaehlcke <mka@chromium.org>, swboyd@chromium.org,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        satya priya <skakit@codeaurora.org>
-Subject: [PATCH V2 2/3] leds: Add pm8350c support to Qualcomm LPG driver
-Date:   Tue, 19 Oct 2021 16:18:50 +0530
-Message-Id: <1634640531-15813-3-git-send-email-skakit@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1634640531-15813-1-git-send-email-skakit@codeaurora.org>
-References: <1634640531-15813-1-git-send-email-skakit@codeaurora.org>
+        id S231977AbhJSOrr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Oct 2021 10:47:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40058 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231775AbhJSOrp (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Oct 2021 10:47:45 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 948D4C06174E
+        for <linux-leds@vger.kernel.org>; Tue, 19 Oct 2021 07:45:30 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b4c3:ba80:54db:46f])
+        by laurent.telenet-ops.be with bizsmtp
+        id 7qlS2600V12AN0U01qlSA3; Tue, 19 Oct 2021 16:45:29 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mcqMo-006B4Y-Gv; Tue, 19 Oct 2021 16:45:26 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mcqMn-00FABE-OJ; Tue, 19 Oct 2021 16:45:25 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Miguel Ojeda <ojeda@kernel.org>
+Cc:     Robin van der Gracht <robin@protonic.nl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@ucw.cz>, Marek Behun <marek.behun@nic.cz>,
+        devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v8 09/21] auxdisplay: ht16k33: Connect backlight to fbdev
+Date:   Tue, 19 Oct 2021 16:45:08 +0200
+Message-Id: <20211019144520.3613926-10-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20211019144520.3613926-1-geert@linux-m68k.org>
+References: <20211019144520.3613926-1-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: satya priya <skakit@codeaurora.org>
+Currently /sys/class/graphics/fb0/bl_curve is not accessible (-ENODEV),
+as the driver does not connect the backlight to the frame buffer device.
+Fix this moving backlight initialization up, and filling in
+fb_info.bl_dev.
 
-Add pm8350c compatible and lpg_data to the driver.
-
-Signed-off-by: satya priya <skakit@codeaurora.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Fixes: 8992da44c6805d53 ("auxdisplay: ht16k33: Driver for LED controller")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Robin van der Gracht <robin@protonic.nl>
 ---
-Changes in V2:
- - Added const for lpg_channel_data[] struct.
+v8:
+  - No changes,
 
- drivers/leds/rgb/leds-qcom-lpg.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+v7:
+  - Add Reviewed-by,
 
-diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-index 45ef4ec..99235af 100644
---- a/drivers/leds/rgb/leds-qcom-lpg.c
-+++ b/drivers/leds/rgb/leds-qcom-lpg.c
-@@ -1275,9 +1275,19 @@ static const struct lpg_data pm8150l_lpg_data = {
- 	},
- };
+v6:
+  - No changes,
+
+v5:
+  - No changes,
+
+v4:
+  - No changes,
+
+v3:
+  - No changes,
+
+v2:
+  - New.
+---
+ drivers/auxdisplay/ht16k33.c | 56 ++++++++++++++++++------------------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index 1e69cc6d21a0dca2..2b630e194570f6e5 100644
+--- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16k33.c
+@@ -413,6 +413,33 @@ static int ht16k33_probe(struct i2c_client *client,
+ 	if (err)
+ 		return err;
  
-+static const struct lpg_data pm8350c_pwm_data = {
-+	.pwm_9bit_mask = BIT(2),
++	/* Backlight */
++	memset(&bl_props, 0, sizeof(struct backlight_properties));
++	bl_props.type = BACKLIGHT_RAW;
++	bl_props.max_brightness = MAX_BRIGHTNESS;
 +
-+	.num_channels = 1,
-+	.channels = (const struct lpg_channel_data[]) {
-+		{ .base = 0xeb00 },
-+	},
-+};
++	bl = devm_backlight_device_register(&client->dev, DRIVER_NAME"-bl",
++					    &client->dev, priv,
++					    &ht16k33_bl_ops, &bl_props);
++	if (IS_ERR(bl)) {
++		dev_err(&client->dev, "failed to register backlight\n");
++		return PTR_ERR(bl);
++	}
 +
- static const struct of_device_id lpg_of_table[] = {
- 	{ .compatible = "qcom,pm8150b-lpg", .data = &pm8150b_lpg_data },
- 	{ .compatible = "qcom,pm8150l-lpg", .data = &pm8150l_lpg_data },
-+	{ .compatible = "qcom,pm8350c-pwm", .data = &pm8350c_pwm_data },
- 	{ .compatible = "qcom,pm8916-pwm", .data = &pm8916_pwm_data },
- 	{ .compatible = "qcom,pm8941-lpg", .data = &pm8941_lpg_data },
- 	{ .compatible = "qcom,pm8994-lpg", .data = &pm8994_lpg_data },
++	err = of_property_read_u32(node, "default-brightness-level",
++				   &dft_brightness);
++	if (err) {
++		dft_brightness = MAX_BRIGHTNESS;
++	} else if (dft_brightness > MAX_BRIGHTNESS) {
++		dev_warn(&client->dev,
++			 "invalid default brightness level: %u, using %u\n",
++			 dft_brightness, MAX_BRIGHTNESS);
++		dft_brightness = MAX_BRIGHTNESS;
++	}
++
++	bl->props.brightness = dft_brightness;
++	ht16k33_bl_update_status(bl);
++
+ 	/* Framebuffer (2 bytes per column) */
+ 	BUILD_BUG_ON(PAGE_SIZE < HT16K33_FB_SIZE);
+ 	fbdev->buffer = (unsigned char *) get_zeroed_page(GFP_KERNEL);
+@@ -445,6 +472,7 @@ static int ht16k33_probe(struct i2c_client *client,
+ 	fbdev->info->screen_size = HT16K33_FB_SIZE;
+ 	fbdev->info->fix = ht16k33_fb_fix;
+ 	fbdev->info->var = ht16k33_fb_var;
++	fbdev->info->bl_dev = bl;
+ 	fbdev->info->pseudo_palette = NULL;
+ 	fbdev->info->flags = FBINFO_FLAG_DEFAULT;
+ 	fbdev->info->par = priv;
+@@ -460,34 +488,6 @@ static int ht16k33_probe(struct i2c_client *client,
+ 			goto err_fbdev_unregister;
+ 	}
+ 
+-	/* Backlight */
+-	memset(&bl_props, 0, sizeof(struct backlight_properties));
+-	bl_props.type = BACKLIGHT_RAW;
+-	bl_props.max_brightness = MAX_BRIGHTNESS;
+-
+-	bl = devm_backlight_device_register(&client->dev, DRIVER_NAME"-bl",
+-					    &client->dev, priv,
+-					    &ht16k33_bl_ops, &bl_props);
+-	if (IS_ERR(bl)) {
+-		dev_err(&client->dev, "failed to register backlight\n");
+-		err = PTR_ERR(bl);
+-		goto err_fbdev_unregister;
+-	}
+-
+-	err = of_property_read_u32(node, "default-brightness-level",
+-				   &dft_brightness);
+-	if (err) {
+-		dft_brightness = MAX_BRIGHTNESS;
+-	} else if (dft_brightness > MAX_BRIGHTNESS) {
+-		dev_warn(&client->dev,
+-			 "invalid default brightness level: %u, using %u\n",
+-			 dft_brightness, MAX_BRIGHTNESS);
+-		dft_brightness = MAX_BRIGHTNESS;
+-	}
+-
+-	bl->props.brightness = dft_brightness;
+-	ht16k33_bl_update_status(bl);
+-
+ 	ht16k33_fb_queue(priv);
+ 	return 0;
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member 
-of Code Aurora Forum, hosted by The Linux Foundation
+2.25.1
 
