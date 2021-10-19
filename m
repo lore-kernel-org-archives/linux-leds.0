@@ -2,32 +2,32 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE857C4321E
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C480C433FE
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 914E46134F
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:45:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23B216128B
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:45:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232093AbhJSOru (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Oct 2021 10:47:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40074 "EHLO
+        id S232694AbhJSOsA (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Oct 2021 10:48:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231915AbhJSOrq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Oct 2021 10:47:46 -0400
+        with ESMTP id S232149AbhJSOrs (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Oct 2021 10:47:48 -0400
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2F0CC06176A
-        for <linux-leds@vger.kernel.org>; Tue, 19 Oct 2021 07:45:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56FB5C0613E6
+        for <linux-leds@vger.kernel.org>; Tue, 19 Oct 2021 07:45:31 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b4c3:ba80:54db:46f])
         by michel.telenet-ops.be with bizsmtp
-        id 7qlS2600w12AN0U06qlTRK; Tue, 19 Oct 2021 16:45:29 +0200
+        id 7qlT2600D12AN0U06qlTRS; Tue, 19 Oct 2021 16:45:29 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mcqMo-006B4h-Jl; Tue, 19 Oct 2021 16:45:26 +0200
+        id 1mcqMp-006B4g-9J; Tue, 19 Oct 2021 16:45:27 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mcqMn-00FAC1-T7; Tue, 19 Oct 2021 16:45:25 +0200
+        id 1mcqMn-00FABs-SS; Tue, 19 Oct 2021 16:45:25 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Miguel Ojeda <ojeda@kernel.org>
 Cc:     Robin van der Gracht <robin@protonic.nl>,
@@ -38,9 +38,9 @@ Cc:     Robin van der Gracht <robin@protonic.nl>,
         devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v8 16/21] auxdisplay: ht16k33: Extract ht16k33_brightness_set()
-Date:   Tue, 19 Oct 2021 16:45:15 +0200
-Message-Id: <20211019144520.3613926-17-geert@linux-m68k.org>
+Subject: [PATCH v8 15/21] auxdisplay: ht16k33: Move delayed work
+Date:   Tue, 19 Oct 2021 16:45:14 +0200
+Message-Id: <20211019144520.3613926-16-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20211019144520.3613926-1-geert@linux-m68k.org>
 References: <20211019144520.3613926-1-geert@linux-m68k.org>
@@ -50,17 +50,17 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Extract brightness handling into a helper function, so it can be called
-from multiple places.
+Move delayed_work from ht16k33_fbdev to ht16k33_priv, as it is not
+specific to dot-matrix displays, but common to all display types.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Robin van der Gracht <robin@protonic.nl>
+Acked-by: Robin van der Gracht <robin@protonic.nl>
 ---
 v8:
   - No changes,
 
 v7:
-  - Add Reviewed-by,
+  - Add Acked-by,
 
 v6:
   - No changes,
@@ -72,59 +72,72 @@ v4:
   - No changes,
 
 v3:
-  - Use "err" instead of "error" to be consistent with existing driver
-    naming style,
+  - No changes,
 
 v2:
   - No changes.
 ---
- drivers/auxdisplay/ht16k33.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+ drivers/auxdisplay/ht16k33.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-index b50cbf7e57ba26d7..60e616c0e932cd84 100644
+index dcf530a9390b6f9c..b50cbf7e57ba26d7 100644
 --- a/drivers/auxdisplay/ht16k33.c
 +++ b/drivers/auxdisplay/ht16k33.c
-@@ -113,6 +113,22 @@ static int ht16k33_display_off(struct ht16k33_priv *priv)
- 	return i2c_smbus_write_byte(priv->client, REG_DISPLAY_SETUP);
- }
+@@ -65,11 +65,11 @@ struct ht16k33_fbdev {
+ 	uint32_t refresh_rate;
+ 	uint8_t *buffer;
+ 	uint8_t *cache;
+-	struct delayed_work work;
+ };
  
-+static int ht16k33_brightness_set(struct ht16k33_priv *priv,
-+				  unsigned int brightness)
-+{
-+	int err;
-+
-+	if (brightness == 0)
-+		return ht16k33_display_off(priv);
-+
-+	err = ht16k33_display_on(priv);
-+	if (err)
-+		return err;
-+
-+	return i2c_smbus_write_byte(priv->client,
-+				    REG_BRIGHTNESS | (brightness - 1));
-+}
-+
- static void ht16k33_fb_queue(struct ht16k33_priv *priv)
+ struct ht16k33_priv {
+ 	struct i2c_client *client;
++	struct delayed_work work;
+ 	struct ht16k33_keypad keypad;
+ 	struct ht16k33_fbdev fbdev;
+ };
+@@ -117,7 +117,7 @@ static void ht16k33_fb_queue(struct ht16k33_priv *priv)
  {
  	struct ht16k33_fbdev *fbdev = &priv->fbdev;
-@@ -197,13 +213,10 @@ static int ht16k33_bl_update_status(struct backlight_device *bl)
  
- 	if (bl->props.power != FB_BLANK_UNBLANK ||
- 	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
--	    bl->props.state & BL_CORE_FBBLANK || brightness == 0) {
--		return ht16k33_display_off(priv);
--	}
-+	    bl->props.state & BL_CORE_FBBLANK)
-+		brightness = 0;
- 
--	ht16k33_display_on(priv);
--	return i2c_smbus_write_byte(priv->client,
--				    REG_BRIGHTNESS | (brightness - 1));
-+	return ht16k33_brightness_set(priv, brightness);
+-	schedule_delayed_work(&fbdev->work, HZ / fbdev->refresh_rate);
++	schedule_delayed_work(&priv->work, HZ / fbdev->refresh_rate);
  }
  
- static int ht16k33_bl_check_fb(struct backlight_device *bl, struct fb_info *fi)
+ /*
+@@ -125,10 +125,9 @@ static void ht16k33_fb_queue(struct ht16k33_priv *priv)
+  */
+ static void ht16k33_fb_update(struct work_struct *work)
+ {
+-	struct ht16k33_fbdev *fbdev =
+-		container_of(work, struct ht16k33_fbdev, work.work);
+-	struct ht16k33_priv *priv =
+-		container_of(fbdev, struct ht16k33_priv, fbdev);
++	struct ht16k33_priv *priv = container_of(work, struct ht16k33_priv,
++						 work.work);
++	struct ht16k33_fbdev *fbdev = &priv->fbdev;
+ 
+ 	uint8_t *p1, *p2;
+ 	int len, pos = 0, first = -1;
+@@ -472,7 +471,7 @@ static int ht16k33_probe(struct i2c_client *client)
+ 	}
+ 	fb_bl_default_curve(fbdev->info, 0, MIN_BRIGHTNESS, MAX_BRIGHTNESS);
+ 
+-	INIT_DELAYED_WORK(&fbdev->work, ht16k33_fb_update);
++	INIT_DELAYED_WORK(&priv->work, ht16k33_fb_update);
+ 	fbdev->info->fbops = &ht16k33_fb_ops;
+ 	fbdev->info->screen_base = (char __iomem *) fbdev->buffer;
+ 	fbdev->info->screen_size = HT16K33_FB_SIZE;
+@@ -512,7 +511,7 @@ static int ht16k33_remove(struct i2c_client *client)
+ 	struct ht16k33_priv *priv = i2c_get_clientdata(client);
+ 	struct ht16k33_fbdev *fbdev = &priv->fbdev;
+ 
+-	cancel_delayed_work_sync(&fbdev->work);
++	cancel_delayed_work_sync(&priv->work);
+ 	unregister_framebuffer(fbdev->info);
+ 	framebuffer_release(fbdev->info);
+ 	free_page((unsigned long) fbdev->buffer);
 -- 
 2.25.1
 
