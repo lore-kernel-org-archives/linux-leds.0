@@ -2,32 +2,32 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C67C43219
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D50C433FE
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDFDA6135F
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:46:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DFD4600CC
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 14:46:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232157AbhJSOsV (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Oct 2021 10:48:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40078 "EHLO
+        id S232852AbhJSOsW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Oct 2021 10:48:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232852AbhJSOsC (ORCPT
+        with ESMTP id S232931AbhJSOsC (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Oct 2021 10:48:02 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80EC3C061787
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FE55C06178A
         for <linux-leds@vger.kernel.org>; Tue, 19 Oct 2021 07:45:32 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b4c3:ba80:54db:46f])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 7qlT2600G12AN0U01qlTMy; Tue, 19 Oct 2021 16:45:30 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id 7qlU2600312AN0U01qlUka; Tue, 19 Oct 2021 16:45:30 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mcqMp-006B4a-D3; Tue, 19 Oct 2021 16:45:27 +0200
+        id 1mcqMp-006B4i-Iw; Tue, 19 Oct 2021 16:45:27 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mcqMn-00FABL-P2; Tue, 19 Oct 2021 16:45:25 +0200
+        id 1mcqMn-00FAC8-Tn; Tue, 19 Oct 2021 16:45:25 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Miguel Ojeda <ojeda@kernel.org>
 Cc:     Robin van der Gracht <robin@protonic.nl>,
@@ -38,9 +38,9 @@ Cc:     Robin van der Gracht <robin@protonic.nl>,
         devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v8 10/21] auxdisplay: ht16k33: Fix frame buffer device blanking
-Date:   Tue, 19 Oct 2021 16:45:09 +0200
-Message-Id: <20211019144520.3613926-11-geert@linux-m68k.org>
+Subject: [PATCH v8 17/21] auxdisplay: ht16k33: Extract frame buffer probing
+Date:   Tue, 19 Oct 2021 16:45:16 +0200
+Message-Id: <20211019144520.3613926-18-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20211019144520.3613926-1-geert@linux-m68k.org>
 References: <20211019144520.3613926-1-geert@linux-m68k.org>
@@ -50,57 +50,185 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-As the ht16k33 frame buffer sub-driver does not register an
-fb_ops.fb_blank() handler, blanking does not work:
+Extract all frame buffer (including backlight) probing into
+ht16k33_fbdev_probe().
 
-    $ echo 1 > /sys/class/graphics/fb0/blank
-    sh: write error: Invalid argument
+Call ht16k33_fbdev_probe() after ht16k33_keypad_probe(), as the latter
+does not need any manual cleanup in the probe error path.
 
-Fix this by providing a handler that always returns zero, to make sure
-blank events will be sent to the actual device handling the backlight.
-
-Reported-by: Robin van der Gracht <robin@protonic.nl>
-Suggested-by: Robin van der Gracht <robin@protonic.nl>
-Fixes: 8992da44c6805d53 ("auxdisplay: ht16k33: Driver for LED controller")
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Robin van der Gracht <robin@protonic.nl>
 ---
 v8:
   - No changes,
 
 v7:
-  - New.
+  - Add Reviewed-by,
+
+v6:
+  - No changes,
+
+v5:
+  - No changes,
+
+v4:
+  - No changes,
+
+v3:
+  - Pass "dev" instead of "client" to ht16k33_fbdev_probe(),
+  - Drop local variable "node",
+
+v2:
+  - Rebased.
 ---
- drivers/auxdisplay/ht16k33.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/auxdisplay/ht16k33.c | 101 ++++++++++++++++++-----------------
+ 1 file changed, 53 insertions(+), 48 deletions(-)
 
 diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-index 2b630e194570f6e5..ed5808349990782c 100644
+index 60e616c0e932cd84..8993d27909109a98 100644
 --- a/drivers/auxdisplay/ht16k33.c
 +++ b/drivers/auxdisplay/ht16k33.c
-@@ -219,6 +219,15 @@ static const struct backlight_ops ht16k33_bl_ops = {
- 	.check_fb	= ht16k33_bl_check_fb,
- };
+@@ -404,33 +404,13 @@ static int ht16k33_keypad_probe(struct i2c_client *client,
+ 	return input_register_device(keypad->dev);
+ }
  
-+/*
-+ * Blank events will be passed to the actual device handling the backlight when
-+ * we return zero here.
-+ */
-+static int ht16k33_blank(int blank, struct fb_info *info)
+-static int ht16k33_probe(struct i2c_client *client)
++static int ht16k33_fbdev_probe(struct device *dev, struct ht16k33_priv *priv,
++			       uint32_t brightness)
+ {
+-	int err;
+-	uint32_t dft_brightness;
+-	struct backlight_device *bl;
++	struct ht16k33_fbdev *fbdev = &priv->fbdev;
+ 	struct backlight_properties bl_props;
+-	struct ht16k33_priv *priv;
+-	struct ht16k33_fbdev *fbdev;
+-	struct device *dev = &client->dev;
+-	struct device_node *node = dev->of_node;
+-
+-	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+-		dev_err(dev, "i2c_check_functionality error\n");
+-		return -EIO;
+-	}
+-
+-	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv)
+-		return -ENOMEM;
+-
+-	priv->client = client;
+-	i2c_set_clientdata(client, priv);
+-	fbdev = &priv->fbdev;
+-
+-	err = ht16k33_initialize(priv);
+-	if (err)
+-		return err;
++	struct backlight_device *bl;
++	int err;
+ 
+ 	/* Backlight */
+ 	memset(&bl_props, 0, sizeof(struct backlight_properties));
+@@ -444,18 +424,7 @@ static int ht16k33_probe(struct i2c_client *client)
+ 		return PTR_ERR(bl);
+ 	}
+ 
+-	err = of_property_read_u32(node, "default-brightness-level",
+-				   &dft_brightness);
+-	if (err) {
+-		dft_brightness = MAX_BRIGHTNESS;
+-	} else if (dft_brightness > MAX_BRIGHTNESS) {
+-		dev_warn(dev,
+-			 "invalid default brightness level: %u, using %u\n",
+-			 dft_brightness, MAX_BRIGHTNESS);
+-		dft_brightness = MAX_BRIGHTNESS;
+-	}
+-
+-	bl->props.brightness = dft_brightness;
++	bl->props.brightness = brightness;
+ 	ht16k33_bl_update_status(bl);
+ 
+ 	/* Framebuffer (2 bytes per column) */
+@@ -476,8 +445,8 @@ static int ht16k33_probe(struct i2c_client *client)
+ 		goto err_fbdev_buffer;
+ 	}
+ 
+-	err = of_property_read_u32(node, "refresh-rate-hz",
+-		&fbdev->refresh_rate);
++	err = of_property_read_u32(dev->of_node, "refresh-rate-hz",
++				   &fbdev->refresh_rate);
+ 	if (err) {
+ 		dev_err(dev, "refresh rate not specified\n");
+ 		goto err_fbdev_info;
+@@ -499,18 +468,9 @@ static int ht16k33_probe(struct i2c_client *client)
+ 	if (err)
+ 		goto err_fbdev_info;
+ 
+-	/* Keypad */
+-	if (client->irq > 0) {
+-		err = ht16k33_keypad_probe(client, &priv->keypad);
+-		if (err)
+-			goto err_fbdev_unregister;
+-	}
+-
+ 	ht16k33_fb_queue(priv);
+ 	return 0;
+ 
+-err_fbdev_unregister:
+-	unregister_framebuffer(fbdev->info);
+ err_fbdev_info:
+ 	framebuffer_release(fbdev->info);
+ err_fbdev_buffer:
+@@ -519,6 +479,51 @@ static int ht16k33_probe(struct i2c_client *client)
+ 	return err;
+ }
+ 
++static int ht16k33_probe(struct i2c_client *client)
 +{
-+	return 0;
++	struct device *dev = &client->dev;
++	struct ht16k33_priv *priv;
++	uint32_t dft_brightness;
++	int err;
++
++	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
++		dev_err(dev, "i2c_check_functionality error\n");
++		return -EIO;
++	}
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->client = client;
++	i2c_set_clientdata(client, priv);
++
++	err = ht16k33_initialize(priv);
++	if (err)
++		return err;
++
++	err = of_property_read_u32(dev->of_node, "default-brightness-level",
++				   &dft_brightness);
++	if (err) {
++		dft_brightness = MAX_BRIGHTNESS;
++	} else if (dft_brightness > MAX_BRIGHTNESS) {
++		dev_warn(dev,
++			 "invalid default brightness level: %u, using %u\n",
++			 dft_brightness, MAX_BRIGHTNESS);
++		dft_brightness = MAX_BRIGHTNESS;
++	}
++
++	/* Keypad */
++	if (client->irq > 0) {
++		err = ht16k33_keypad_probe(client, &priv->keypad);
++		if (err)
++			return err;
++	}
++
++	/* Frame Buffer Display */
++	return ht16k33_fbdev_probe(dev, priv, dft_brightness);
 +}
 +
- static int ht16k33_mmap(struct fb_info *info, struct vm_area_struct *vma)
+ static int ht16k33_remove(struct i2c_client *client)
  {
- 	struct ht16k33_priv *priv = info->par;
-@@ -231,6 +240,7 @@ static const struct fb_ops ht16k33_fb_ops = {
- 	.owner = THIS_MODULE,
- 	.fb_read = fb_sys_read,
- 	.fb_write = fb_sys_write,
-+	.fb_blank = ht16k33_blank,
- 	.fb_fillrect = sys_fillrect,
- 	.fb_copyarea = sys_copyarea,
- 	.fb_imageblit = sys_imageblit,
+ 	struct ht16k33_priv *priv = i2c_get_clientdata(client);
 -- 
 2.25.1
 
