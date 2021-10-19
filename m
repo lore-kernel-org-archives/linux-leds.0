@@ -2,69 +2,76 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5FFC433EF
-	for <linux-leds@archiver.kernel.org>; Mon, 18 Oct 2021 15:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F964C433F5
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 10:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EA9C60F44
-	for <linux-leds@archiver.kernel.org>; Mon, 18 Oct 2021 15:40:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 528A861154
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Oct 2021 10:49:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232408AbhJRPmv (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 18 Oct 2021 11:42:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50506 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232164AbhJRPmr (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Mon, 18 Oct 2021 11:42:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 20AEE60F44;
-        Mon, 18 Oct 2021 15:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634571631;
-        bh=HUd0g/z/EO0D4YBzcpbH+S+qKvPv6M+AkEmBASmlmcE=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=PknwlF4t/mWb06wqPPCkmgczIasP8nxPClxmEW+bU8FIddaQdupLVPhZZX3IKOEm3
-         wnHtNgk/LcaLNhr68EiQniEUlfQM4u7+nsZgHdLDUuP+KunH4l7nfyMDPt5VLWfVA7
-         303HGSn34ig/KtX5NlO0015YLVbZqOlIOG70Kb2Y1HF9Gtqga4dpSk40vd3AoRguW2
-         BSt0t0h7vP5L1uOCXrBR7hG26e1UU4WTqqR4IHfQS8wF5codmCWe8SBzaZlXQb2nmh
-         2cWdZL73zT9Nfc+ADOEt0PjHNBVETawx7HmEaZd5G7NMTDQae4OvbACw0Y4+qLd/Mj
-         wa5/OG2xYqL7A==
-Date:   Mon, 18 Oct 2021 17:40:27 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-cc:     Roderick Colenbrander <thunderbird2k@gmail.com>,
-        Roderick Colenbrander <roderick@gaikai.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        linux-leds@vger.kernel.org,
-        "Daniel J . Ogorchock" <djogorchock@gmail.com>,
-        Roderick Colenbrander <roderick.colenbrander@sony.com>
-Subject: Re: [PATCH v3 2/3] leds: add new LED_FUNCTION_PLAYER for player LEDs
- for game controllers.
-In-Reply-To: <20211013074849.GA10172@amd>
-Message-ID: <nycvar.YFH.7.76.2110181739310.12554@cbobk.fhfr.pm>
-References: <20210908165539.3102929-1-roderick.colenbrander@sony.com> <20210908165539.3102929-3-roderick.colenbrander@sony.com> <nycvar.YFH.7.76.2109221150110.15944@cbobk.fhfr.pm> <20210927141109.GB5809@duo.ucw.cz> <CAEc3jaCxBn=2UU5bDva0mnjhwJpQBwKqmWnyAwFDNjBAV7MBng@mail.gmail.com>
- <20211013074849.GA10172@amd>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S235297AbhJSKvi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Oct 2021 06:51:38 -0400
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:46252 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235291AbhJSKvg (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Oct 2021 06:51:36 -0400
+Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
+  by alexa-out.qualcomm.com with ESMTP; 19 Oct 2021 03:49:24 -0700
+X-QCInternal: smtphost
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 19 Oct 2021 03:49:22 -0700
+X-QCInternal: smtphost
+Received: from c-skakit-linux.ap.qualcomm.com (HELO c-skakit-linux.qualcomm.com) ([10.242.51.242])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 19 Oct 2021 16:19:09 +0530
+Received: by c-skakit-linux.qualcomm.com (Postfix, from userid 2344709)
+        id 78DC45554; Tue, 19 Oct 2021 16:19:08 +0530 (IST)
+From:   Satya Priya <skakit@codeaurora.org>
+To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>, swboyd@chromium.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        satya priya <skakit@codeaurora.org>
+Subject: [PATCH V2 3/3] arm64: dts: qcom: pm8350c: Add pwm support
+Date:   Tue, 19 Oct 2021 16:18:51 +0530
+Message-Id: <1634640531-15813-4-git-send-email-skakit@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1634640531-15813-1-git-send-email-skakit@codeaurora.org>
+References: <1634640531-15813-1-git-send-email-skakit@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Wed, 13 Oct 2021, Pavel Machek wrote:
+From: satya priya <skakit@codeaurora.org>
 
-> Ok, so let's put it in the common place. I'll take this patch through
-> LED tree if you resubmit it. You still may want to use local defines
-> so you can apply the other patches without waiting.
+Add pwm support for PM8350C pmic.
 
-Pavel, why complicate it so much? Given how trivial the patch is, the 
-easiest way is what's usually done in such cases (where substantial patch 
-depends on a tiny trivial change elsewhere) -- take it through HID tree 
-with your Reviewed-by / Acked-by:.
+Signed-off-by: satya priya <skakit@codeaurora.org>
+---
+Changes in V2:
+ - Dropped suffix '4' from pwm phandle and removed "status=ok".
 
-Do you see any issue with that?
+ arch/arm64/boot/dts/qcom/pm8350c.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Thanks,
-
+diff --git a/arch/arm64/boot/dts/qcom/pm8350c.dtsi b/arch/arm64/boot/dts/qcom/pm8350c.dtsi
+index e1b75ae..08fc0a8 100644
+--- a/arch/arm64/boot/dts/qcom/pm8350c.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm8350c.dtsi
+@@ -29,6 +29,12 @@
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
++
++		pm8350c_pwm: pwm {
++			compatible = "qcom,pm8350c-pwm";
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
+ 	};
+ };
+ 
 -- 
-Jiri Kosina
-SUSE Labs
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member 
+of Code Aurora Forum, hosted by The Linux Foundation
 
