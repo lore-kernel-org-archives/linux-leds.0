@@ -2,1257 +2,1490 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B424C4332F
-	for <linux-leds@archiver.kernel.org>; Fri, 22 Oct 2021 17:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E5EC433EF
+	for <linux-leds@archiver.kernel.org>; Fri, 22 Oct 2021 17:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C84E6124D
-	for <linux-leds@archiver.kernel.org>; Fri, 22 Oct 2021 17:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F07061246
+	for <linux-leds@archiver.kernel.org>; Fri, 22 Oct 2021 17:23:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233884AbhJVRXX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 22 Oct 2021 13:23:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37178 "EHLO
+        id S233571AbhJVR0O (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 22 Oct 2021 13:26:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233875AbhJVRXW (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 22 Oct 2021 13:23:22 -0400
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2163C061766;
-        Fri, 22 Oct 2021 10:21:04 -0700 (PDT)
-Received: by mail-ot1-x329.google.com with SMTP id l24-20020a9d1c98000000b00552a5c6b23cso5216784ota.9;
-        Fri, 22 Oct 2021 10:21:04 -0700 (PDT)
+        with ESMTP id S231893AbhJVR0N (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 22 Oct 2021 13:26:13 -0400
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44BE2C061766
+        for <linux-leds@vger.kernel.org>; Fri, 22 Oct 2021 10:23:55 -0700 (PDT)
+Received: by mail-oi1-x22a.google.com with SMTP id q129so5957022oib.0
+        for <linux-leds@vger.kernel.org>; Fri, 22 Oct 2021 10:23:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UpNMPWCMcJ+iP7hD3pkJn0VGwRn5gPYBHuwRPfuodLA=;
-        b=Mdy3YGMaHHsPl8UKGqKXSmR52PavR1QctXGnae9T20Bj5XElApu7Cba0arGKWFxVu2
-         ma3PleV2fhOA4ciCGkzdueBK0fCS2tYC8ejxZKO2+oyK3xX9gCC5v2lF91LG0yGYhB5t
-         dtiqsptwmPAGTEg89XI/b5azPdtEQoYZCjWcFqxGX57p8eKE7nRfXkQFyeyycgbH4G7/
-         dk6Mqrpk66YeiMWcWtYIR8pu2GDndtzIt9ReHDCGD5GR59bh6WPsjv9blHlFahtCXnfz
-         qFoMMVE9qPI+w3NUhoX7NILHJ1Un6LpYZLT6tvzuFWqVc+UEFHcWaKqoDBRx1cxYz1n/
-         bKEw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Lw4VDliH+4e2dmwRstSYJn5XPmuu/pHR96+roptqhDg=;
+        b=MeKg39amkwbUZMcEGvMTOInEQrVMYAXaEt3Le1oeUq/dKU4hTttwxh11kI+vzbcv5T
+         SE6rju5CUyR0J94OLLh4vvYkvHSuW7SiR68S1Ri/RkqJ6FnATC8B/9y3v1YEv4aF5ypT
+         /VeL2vf4zVl4ENVSp9KZ12pArRJagxBMuOlWiEoJyUI+DO8IxksCjOoMp/qGFhjQnhJD
+         AgUjOFKvcnfmQE8grCdD/9f4XYonqIFpJ33+O3QJli7h7jxoUW6YSVUCmjeNHoa2/bJ7
+         gky6t/kCicA3x94iOjUHcafcAJzgF/Nf56EHVK89n4yDJAi/EZng+Z20EAYJh2hMSm1/
+         lfng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UpNMPWCMcJ+iP7hD3pkJn0VGwRn5gPYBHuwRPfuodLA=;
-        b=4bEZ8SKTIeMeO0JLyiWhtMnizKi9JFJ66nz+du/HsalU1r7Rqe5btbs1g6K8UFb7It
-         JX2FJdW6OpLwDhq5KswFcA/Lb2C3FEBFaJ3oZZjdCgZ+wKsnpIxLeKzMgI973+xv8Vlt
-         DZo2bIWOSckjdolvZueky1YnsgPp2qRPzxALVFl6vnid4XqPFUj5jRvzlrYnzP9g9be6
-         UcGWya2UTf6CyVaHxgplp95WJq1/LgjRYWyNIy2aCqFe/GMOgtFQeUpaFwB9UMBxeJBq
-         0VZlLIfbKlmsSliAK/FbCUt6aSDof+LjWVeNCPMAWZw1+JPV4eByYvd7n5knJN/0DPNZ
-         cV2A==
-X-Gm-Message-State: AOAM530895DetKkGadcN1KbHy/aOH9PdBZN3Ge97SoACR4g+HHpM1zm4
-        sHB7ZShyaXzO3jMYjByyK34=
-X-Google-Smtp-Source: ABdhPJzYkqANPQu45MqFSTnO3ZQzG7kXAXmal0Om53crhnwmNUVrlA9OnrrEhqQb1OBP7gV0UiOUYw==
-X-Received: by 2002:a9d:384:: with SMTP id f4mr937775otf.94.1634923263676;
-        Fri, 22 Oct 2021 10:21:03 -0700 (PDT)
-Received: from ian.penurio.us ([47.184.51.90])
-        by smtp.gmail.com with ESMTPSA id n7sm1856927oij.46.2021.10.22.10.21.03
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Lw4VDliH+4e2dmwRstSYJn5XPmuu/pHR96+roptqhDg=;
+        b=gNbQhKzjELbFJsvzqS91ea+6Yjcw+BzdmiAi6zOZQRh9Odsax/nod7ehWrurZ+m3LP
+         u4/8fnyDxWrN+isVOyK/YGybGR7dI/vdd11D3dEXoTPWVYw2YzRAtDSkRL7PNpuc0AEE
+         Km+x55FkXTqMqqcnbOiQ6wERzmy8DRYARFncOkR8mLO2aRXL52Jwsgp8PDAilInq+vOv
+         eIbhDMS7/8RUkDdr79TrvkPWaUJysFrgbbO9PcP2NGW324/b/qpSl0eCo7aw8g4jzQ/H
+         PQdn6CqqJyMYcTv71mQYlaWzTUeEhLsy6XhhJbSWvR8lhyietVqTkBSumgoZE3ggbBGe
+         GuVg==
+X-Gm-Message-State: AOAM532aHt7a+Wp1mh0DcLZ0tLs5IBwbSAHAhYoGVsDLV4yTyEyuEEvr
+        8yeerrCzwq+o5PUbrE8KKIwRUg==
+X-Google-Smtp-Source: ABdhPJycBBWBjrH4npDarLedu6sZSiMjmRy/Dg6TIOExg+7dHQqUqNIlE+U38mY28ApATNwznuLSKg==
+X-Received: by 2002:a05:6808:bd3:: with SMTP id o19mr815822oik.42.1634923434321;
+        Fri, 22 Oct 2021 10:23:54 -0700 (PDT)
+Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
+        by smtp.gmail.com with ESMTPSA id n12sm1771842otq.32.2021.10.22.10.23.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Oct 2021 10:21:03 -0700 (PDT)
-From:   Ian Pilcher <arequipeno@gmail.com>
-To:     pavel@ucw.cz
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, kabel@kernel.org, hch@infradead.org
-Subject: [RESEND PATCH v8 2/2] leds: trigger: Add block device LED trigger
-Date:   Fri, 22 Oct 2021 12:20:33 -0500
-Message-Id: <20211022172033.210435-3-arequipeno@gmail.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211022172033.210435-1-arequipeno@gmail.com>
-References: <20211022172033.210435-1-arequipeno@gmail.com>
+        Fri, 22 Oct 2021 10:23:53 -0700 (PDT)
+Date:   Fri, 22 Oct 2021 10:25:35 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-pwm@vger.kernel.org,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>
+Subject: Re: [PATCH v10 2/2] leds: Add driver for Qualcomm LPG
+Message-ID: <YXL0DyyPkS4/wfB7@ripper>
+References: <20211010043912.136640-1-bjorn.andersson@linaro.org>
+ <20211010043912.136640-2-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211010043912.136640-2-bjorn.andersson@linaro.org>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add "blkdev" LED trigger to blink LEDs in response to block device
-activity.
+On Sat 09 Oct 21:39 PDT 2021, Bjorn Andersson wrote:
 
-Add LEDS_TRIGGER_BLKDEV (tristate) config option to control building of
-the trigger.
+> The Light Pulse Generator (LPG) is a PWM-block found in a wide range of
+> PMICs from Qualcomm. These PMICs typically comes with 1-8 LPG instances,
+> with their output being routed to various other components, such as
+> current sinks or GPIOs.
+> 
+> Each LPG instance can operate on fixed parameters or based on a shared
+> lookup-table, altering the duty cycle over time. This provides the means
+> for hardware assisted transitions of LED brightness.
+> 
+> A typical use case for the fixed parameter mode is to drive a PWM
+> backlight control signal, the driver therefor allows each LPG instance
+> to be exposed to the kernel either through the LED framework or the PWM
+> framework.
+> 
+> A typical use case for the LED configuration is to drive RGB LEDs in
+> smartphones etc, for which the driver support multiple channels to be
+> ganged up to a MULTICOLOR LED. In this configuration the pattern
+> generators will be synchronized, to allow for multi-color patterns.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 
-Signed-off-by: Ian Pilcher <arequipeno@gmail.com>
----
- drivers/leds/trigger/Kconfig          |    9 +
- drivers/leds/trigger/Makefile         |    1 +
- drivers/leds/trigger/ledtrig-blkdev.c | 1140 +++++++++++++++++++++++++
- 3 files changed, 1150 insertions(+)
- create mode 100644 drivers/leds/trigger/ledtrig-blkdev.c
+Any feedback on this?
 
-diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-index 1f1d57288085..219d15c046d7 100644
---- a/drivers/leds/trigger/Kconfig
-+++ b/drivers/leds/trigger/Kconfig
-@@ -153,4 +153,13 @@ config LEDS_TRIGGER_TTY
- 
- 	  When build as a module this driver will be called ledtrig-tty.
- 
-+config LEDS_TRIGGER_BLKDEV
-+	tristate "LED Trigger for block devices"
-+	depends on BLOCK
-+	help
-+	  The blkdev LED trigger allows LEDs to be controlled by block device
-+	  activity (reads and writes).
-+
-+	  See Documentation/leds/ledtrig-blkdev.rst.
-+
- endif # LEDS_TRIGGERS
-diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
-index 25c4db97cdd4..d53bab5d93f1 100644
---- a/drivers/leds/trigger/Makefile
-+++ b/drivers/leds/trigger/Makefile
-@@ -16,3 +16,4 @@ obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
- obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+= ledtrig-pattern.o
- obj-$(CONFIG_LEDS_TRIGGER_AUDIO)	+= ledtrig-audio.o
- obj-$(CONFIG_LEDS_TRIGGER_TTY)		+= ledtrig-tty.o
-+obj-$(CONFIG_LEDS_TRIGGER_BLKDEV)	+= ledtrig-blkdev.o
-diff --git a/drivers/leds/trigger/ledtrig-blkdev.c b/drivers/leds/trigger/ledtrig-blkdev.c
-new file mode 100644
-index 000000000000..52ec11e4fc0b
---- /dev/null
-+++ b/drivers/leds/trigger/ledtrig-blkdev.c
-@@ -0,0 +1,1140 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+/*
-+ *	Block device LED trigger
-+ *
-+ *	Copyright 2021 Ian Pilcher <arequipeno@gmail.com>
-+ */
-+
-+#include <linux/blkdev.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/part_stat.h>
-+#include <linux/xarray.h>
-+
-+/* Default, minimum & maximum blink duration (milliseconds) */
-+#define BLKDEV_TRIG_BLINK_DEF	75
-+#define BLKDEV_TRIG_BLINK_MIN	10
-+#define BLKDEV_TRIG_BLINK_MAX	86400000  /* 24 hours */
-+
-+/* Default, minimum & maximum activity check interval (milliseconds) */
-+#define BLKDEV_TRIG_CHECK_DEF	100
-+#define BLKDEV_TRIG_CHECK_MIN	25
-+#define BLKDEV_TRIG_CHECK_MAX	86400000
-+
-+/*
-+ * If blkdev_trig_check() can't lock the mutex, how long to wait before trying
-+ * again (milliseconds)
-+ */
-+#define BLKDEV_TRIG_CHECK_RETRY	5
-+
-+/* Mode for blkdev_get_by_path() & blkdev_put() */
-+#define BLKDEV_TRIG_FMODE	0
-+
-+/* Device activity type(s) that will make LED blink */
-+#define BLKDEV_TRIG_READ	(1 << STAT_READ)
-+#define BLKDEV_TRIG_WRITE	(1 << STAT_WRITE)
-+#define BLKDEV_TRIG_DISCARD	(1 << STAT_DISCARD)
-+#define BLKDEV_TRIG_FLUSH	(1 << STAT_FLUSH)
-+
-+/* When unlinking a block device from an LED, is the blkdev being released? */
-+enum blkdev_trig_unlink_mode {
-+	BLKDEV_TRIG_RELEASING,
-+	BLKDEV_TRIG_NOT_RELEASING
-+};
-+
-+/* Every block device linked to at least one LED gets a "BTB" */
-+struct blkdev_trig_bdev {
-+	unsigned long		last_checked;
-+	unsigned long		last_activity[NR_STAT_GROUPS];
-+	unsigned long		ios[NR_STAT_GROUPS];
-+	unsigned long		index;
-+	struct block_device	*bdev;
-+	struct xarray		linked_leds;
-+};
-+
-+/* Every LED associated with the blkdev trigger gets one of these */
-+struct blkdev_trig_led {
-+	unsigned long		last_checked;
-+	unsigned long		index;
-+	unsigned long		mode;  /* must be ulong for atomic bit ops */
-+	struct led_classdev	*led_cdev;
-+	unsigned int		blink_msec;
-+	unsigned int		check_jiffies;
-+	struct xarray		linked_btbs;
-+	struct hlist_node	all_leds_node;
-+};
-+
-+/* Forward declarations to make this file compile in a more readable order */
-+static void blkdev_trig_check(struct work_struct *work);
-+static struct blkdev_trig_bdev *blkdev_trig_get_btb(const char *buf,
-+						    size_t size);
-+static struct block_device *blkdev_trig_get_bdev(const char *buf, size_t size,
-+						 fmode_t mode);
-+static int blkdev_trig_link(struct blkdev_trig_led *led,
-+			    struct blkdev_trig_bdev *btb);
-+static void blkdev_trig_put_btb(struct blkdev_trig_bdev *btb);
-+static void blkdev_trig_btb_release(struct device *dev, void *res);
-+static void blkdev_trig_unlink(struct blkdev_trig_led *led,
-+			       struct blkdev_trig_bdev *btb,
-+			       enum blkdev_trig_unlink_mode unlink_mode);
-+static void blkdev_trig_update_btb(struct blkdev_trig_bdev *btb,
-+				   unsigned long now);
-+static bool blkdev_trig_blink(const struct blkdev_trig_led *led,
-+			      const struct blkdev_trig_bdev *btb);
-+static void blkdev_trig_sched_led(const struct blkdev_trig_led *led);
-+
-+/* Index for next BTB or LED */
-+static unsigned long blkdev_trig_next_index;
-+
-+/* Protects everything except sysfs attributes */
-+static DEFINE_MUTEX(blkdev_trig_mutex);
-+
-+/* All LEDs associated with the trigger */
-+static HLIST_HEAD(blkdev_trig_all_leds);
-+
-+/* Delayed work to periodically check for activity & blink LEDs */
-+static DECLARE_DELAYED_WORK(blkdev_trig_work, blkdev_trig_check);
-+
-+/* When is the delayed work scheduled to run next (jiffies) */
-+static unsigned long blkdev_trig_next_check;
-+
-+/* Total number of device-to-LED associations (links) */
-+static unsigned int blkdev_trig_link_count;
-+
-+/* Empty attribute list for the linked_leds & linked_devices "groups" */
-+static struct attribute *blkdev_trig_attrs_empty[] = { NULL };
-+
-+/* linked_leds sysfs directory for block devs linked to 1 or more LEDs */
-+static const struct attribute_group blkdev_trig_linked_leds = {
-+	.name	= "linked_leds",
-+	.attrs	= blkdev_trig_attrs_empty,
-+};
-+
-+/* linked_devices sysfs directory for each LED associated with the trigger */
-+static const struct attribute_group blkdev_trig_linked_devs = {
-+	.name	= "linked_devices",
-+	.attrs	= blkdev_trig_attrs_empty,
-+};
-+
-+/**
-+ * blkdev_trig_activate() - Called when an LED is associated with the trigger.
-+ * @led_cdev:	The LED
-+ *
-+ * Allocates & initializes the @blkdev_trig_led structure, adds it to the
-+ * @blkdev_trig_all_leds list, and sets the LED's trigger data.
-+ *
-+ * Context:	Process context.  Takes and releases @blkdev_trig_mutex.
-+ * Return:	``0`` on success, ``-errno`` on error.
-+ */
-+static int blkdev_trig_activate(struct led_classdev *led_cdev)
-+{
-+	struct blkdev_trig_led *led;
-+	int err;
-+
-+	led = kzalloc(sizeof(*led), GFP_KERNEL);
-+	if (led == NULL)
-+		return -ENOMEM;
-+
-+	err = mutex_lock_interruptible(&blkdev_trig_mutex);
-+	if (err)
-+		goto exit_free;
-+
-+	if (blkdev_trig_next_index == ULONG_MAX) {
-+		err = -EOVERFLOW;
-+		goto exit_unlock;
-+	}
-+
-+	led->index = blkdev_trig_next_index++;
-+	led->last_checked = jiffies;
-+	led->mode = -1;  /* set all bits */
-+	led->led_cdev = led_cdev;
-+	led->blink_msec = BLKDEV_TRIG_BLINK_DEF;
-+	led->check_jiffies = msecs_to_jiffies(BLKDEV_TRIG_CHECK_DEF);
-+	xa_init(&led->linked_btbs);
-+
-+	hlist_add_head(&led->all_leds_node, &blkdev_trig_all_leds);
-+	led_set_trigger_data(led_cdev, led);
-+
-+exit_unlock:
-+	mutex_unlock(&blkdev_trig_mutex);
-+exit_free:
-+	if (err)
-+		kfree(led);
-+	return err;
-+}
-+
-+/**
-+ * link_device_store() - ``link_device`` device attribute store function.
-+ * @dev:	The LED device
-+ * @attr:	The ``link_device`` attribute (@dev_attr_link_device)
-+ * @buf:	The value written to the attribute, which should be the path to
-+ *		the special file that represents the block device to be linked
-+ *		to the LED (e.g. /dev/sda)
-+ * @count:	The number of characters in @buf
-+ *
-+ * Calls blkdev_trig_get_btb() to find or create the BTB for the block device,
-+ * checks that the device isn't already linked to this LED, and calls
-+ * blkdev_trig_link() to create the link.
-+ *
-+ * Context:	Process context.  Takes and releases @blkdev_trig_mutex.
-+ * Return:	@count on success, ``-errno`` on error.
-+ */
-+static ssize_t link_device_store(struct device *dev,
-+				 struct device_attribute *attr,
-+				 const char *buf, size_t count)
-+{
-+	struct blkdev_trig_led *led = led_trigger_get_drvdata(dev);
-+	struct blkdev_trig_bdev *btb;
-+	int err;
-+
-+	err = mutex_lock_interruptible(&blkdev_trig_mutex);
-+	if (err)
-+		return err;
-+
-+	btb = blkdev_trig_get_btb(buf, count);
-+	if (IS_ERR(btb)) {
-+		err = PTR_ERR(btb);
-+		goto exit_unlock;
-+	}
-+
-+	if (xa_load(&btb->linked_leds, led->index) != NULL) {
-+		err = -EEXIST;
-+		goto exit_put_btb;
-+	}
-+
-+	err = blkdev_trig_link(led, btb);
-+
-+exit_put_btb:
-+	if (err)
-+		blkdev_trig_put_btb(btb);
-+exit_unlock:
-+	mutex_unlock(&blkdev_trig_mutex);
-+	return err ? : count;
-+}
-+
-+/**
-+ * blkdev_trig_get_btb() - Find or create the BTB for a block device.
-+ * @buf:	The value written to the ``link_device`` attribute, which should
-+ *		be the path to a special file that represents a block device
-+ * @count:	The number of characters in @buf
-+ *
-+ * Calls blkdev_trig_get_bdev() to get the block device represented by the path
-+ * in @buf.  If the device already has a BTB (because it is already linked to
-+ * an LED), simply returns the existing BTB.
-+ *
-+ * Otherwise, allocates a new BTB (as a device resource), creates the block
-+ * device's ``linked_leds`` directory (attribute group), calls
-+ * blkdev_trig_update_btb() to set the BTB's activity counters, and adds the
-+ * BTB resource to the block device.
-+ *
-+ * Context:	Process context.  Caller must hold @blkdev_trig_mutex.
-+ * Return:	Pointer to the BTB, error pointer on error.
-+ */
-+static struct blkdev_trig_bdev *blkdev_trig_get_btb(const char *buf,
-+						    size_t count)
-+{
-+	struct block_device *bdev;
-+	struct blkdev_trig_bdev *btb;
-+	int err;
-+
-+	bdev = blkdev_trig_get_bdev(buf, count, BLKDEV_TRIG_FMODE);
-+	if (IS_ERR(bdev))
-+		return ERR_CAST(bdev);
-+
-+	btb = devres_find(&bdev->bd_device, blkdev_trig_btb_release,
-+			  NULL, NULL);
-+	if (btb != NULL) {
-+		err = 0;
-+		goto exit_put_bdev;
-+	}
-+
-+	if (blkdev_trig_next_index == ULONG_MAX) {
-+		err = -EOVERFLOW;
-+		goto exit_put_bdev;
-+	}
-+
-+	btb = devres_alloc(blkdev_trig_btb_release, sizeof(*btb), GFP_KERNEL);
-+	if (btb == NULL) {
-+		err = -ENOMEM;
-+		goto exit_put_bdev;
-+	}
-+
-+	err = sysfs_create_group(bdev_kobj(bdev), &blkdev_trig_linked_leds);
-+	if (err)
-+		goto exit_free_btb;
-+
-+	btb->index = blkdev_trig_next_index++;
-+	btb->bdev = bdev;
-+	xa_init(&btb->linked_leds);
-+	blkdev_trig_update_btb(btb, jiffies);
-+
-+	devres_add(&bdev->bd_device, btb);
-+
-+exit_free_btb:
-+	if (err)
-+		devres_free(btb);
-+exit_put_bdev:
-+	blkdev_put(bdev, BLKDEV_TRIG_FMODE);
-+	return err ? ERR_PTR(err) : btb;
-+}
-+
-+/**
-+ * blkdev_trig_get_bdev() - Get a block device by path.
-+ * @buf:	The value written to the ``link_device`` or ``unlink_device``
-+ *		attribute, which should be the path to a special file that
-+ *		represents a block device
-+ * @count:	The number of characters in @buf (not including its terminating
-+ *		null)
-+ *
-+ * Copies @buf to a writable buffer, trims the trailing newline (if any), and
-+ * calls blkdev_get_by_path() to resolve the block device.
-+ *
-+ * The caller must call blkdev_put() when finished with the device.
-+ *
-+ * Context:	Process context.
-+ * Return:	The block device, or an error pointer.
-+ */
-+static struct block_device *blkdev_trig_get_bdev(const char *buf, size_t count,
-+						 fmode_t mode)
-+{
-+	struct block_device *bdev;
-+	char *path;
-+
-+	path = kmemdup(buf, count + 1, GFP_KERNEL);  /* +1 to include null */
-+	if (path == NULL)
-+		return ERR_PTR(-ENOMEM);
-+
-+	if (path[count - 1] == '\n')
-+		path[count - 1] = 0;
-+
-+	bdev = blkdev_get_by_path(path, mode, THIS_MODULE);
-+	kfree(path);
-+	return bdev;
-+}
-+
-+/**
-+ * blkdev_trig_update_btb() - Update a BTB's activity counters.
-+ * @btb:	The BTB
-+ *
-+ * Checks each of the BTB's block device's I/O counters.  If the counter has
-+ * changed since the last check, updates the counter and its timestamp in the
-+ * BTB.
-+ *
-+ * Context:	Process context.  Caller must hold @blkdev_trig_mutex.
-+ */
-+static void blkdev_trig_update_btb(struct blkdev_trig_bdev *btb,
-+				   unsigned long now)
-+{
-+	unsigned long new_ios;
-+	enum stat_group i;
-+
-+	for (i = STAT_READ; i <= STAT_FLUSH; ++i) {
-+
-+		new_ios = part_stat_read(btb->bdev, ios[i]);
-+
-+		if (new_ios != btb->ios[i]) {
-+			btb->ios[i] = new_ios;
-+			btb->last_activity[i] = now;
-+		}
-+	}
-+
-+	btb->last_checked = now;
-+}
-+
-+/**
-+ * blkdev_trig_link() - "Link" a block device to an LED.
-+ * @led:	The LED
-+ * @btb:	The block device
-+ *
-+ * Called from link_device_store() to create the link between an LED and a
-+ * block device.
-+ *
-+ *   * Adds block device symlink to LED's ``linked_devices`` directory.
-+ *   * Adds LED symlink to block devices's ``linked_leds`` directory.
-+ *   * Adds the BTB to the LED's @linked_btbs and adds the LED to the BTB's
-+ *     @linked_leds.
-+ *   * If this is the first block device linked to this LED, calls
-+ *     blkdev_trig_new_sched() to (if needed) schedule or reschedule the delayed
-+ *     work which periodically checks for block device activity and blinks LEDs.
-+ *
-+ * Context:	Process context.  Caller must hold @blkdev_trig_mutex.
-+ * Return:	0 on success, ``-errno`` on error.
-+ */
-+static int blkdev_trig_link(struct blkdev_trig_led *led,
-+			    struct blkdev_trig_bdev *btb)
-+{
-+	bool led_first_link;
-+	int err;
-+
-+	led_first_link = xa_empty(&led->linked_btbs);
-+
-+	err = xa_insert(&btb->linked_leds, led->index, led, GFP_KERNEL);
-+	if (err)
-+		return err;
-+
-+	err = xa_insert(&led->linked_btbs, btb->index, btb, GFP_KERNEL);
-+	if (err)
-+		goto error_erase_led;
-+
-+	/* Create /sys/class/block/<bdev>/linked_leds/<led> symlink */
-+	err = sysfs_add_link_to_group(bdev_kobj(btb->bdev),
-+				      blkdev_trig_linked_leds.name,
-+				      &led->led_cdev->dev->kobj,
-+				      led->led_cdev->name);
-+	if (err)
-+		goto error_erase_btb;
-+
-+	/* Create /sys/class/leds/<led>/linked_devices/<bdev> symlink */
-+	err = sysfs_add_link_to_group(&led->led_cdev->dev->kobj,
-+				      blkdev_trig_linked_devs.name,
-+				      bdev_kobj(btb->bdev),
-+				      dev_name(&btb->bdev->bd_device));
-+	if (err)
-+		goto error_remove_symlink;
-+
-+	/*
-+	 * If this isn't the first block device linked to this LED, then the
-+	 * delayed work schedule already reflects this LED.
-+	 */
-+	if (led_first_link)
-+		blkdev_trig_sched_led(led);
-+
-+	++blkdev_trig_link_count;
-+
-+	return 0;
-+
-+error_remove_symlink:
-+	sysfs_remove_link_from_group(bdev_kobj(btb->bdev),
-+				     blkdev_trig_linked_leds.name,
-+				     led->led_cdev->name);
-+error_erase_btb:
-+	xa_erase(&led->linked_btbs, btb->index);
-+error_erase_led:
-+	xa_erase(&btb->linked_leds, led->index);
-+	return err;
-+}
-+
-+/**
-+ * blkdev_trig_sched_led() - Set the schedule of the delayed work when a new
-+ *			     LED is added to the schedule.
-+ * @led:	The LED
-+ *
-+ * Called from blkdev_trig_link() to set or adjust the schedule of the delayed
-+ * work which periodically checks block devices for activity and blinks LEDs,
-+ * if necessary.
-+ *
-+ *   * If no other links exist, the delayed work is scheduled.
-+ *   * If the delayed work is already scheduled to run soon enough to
-+ *     accommodate the newly linked LED's @check_jiffies, no change is made to
-+ *     the delayed work's schedule.
-+ *   * If the delayed work is already scheduled, but it isn't scheduled to
-+ *     run soon enough, the schedule is modified.
-+ *
-+ * Context:	Process context.  Caller must hold @blkdev_trig_mutex.
-+ */
-+static void blkdev_trig_sched_led(const struct blkdev_trig_led *led)
-+{
-+	unsigned long delay = READ_ONCE(led->check_jiffies);
-+	unsigned long check_by = jiffies + delay;
-+
-+	if (blkdev_trig_link_count == 0) {
-+		WARN_ON(!schedule_delayed_work(&blkdev_trig_work, delay));
-+		blkdev_trig_next_check = check_by;
-+		return;
-+	}
-+
-+	if (time_after_eq(check_by, blkdev_trig_next_check))
-+		return;
-+
-+	WARN_ON(!mod_delayed_work(system_wq, &blkdev_trig_work, delay));
-+	blkdev_trig_next_check = check_by;
-+}
-+
-+/**
-+ * unlink_device_store() - ``unlink_device`` device attribute store function.
-+ * @dev:	The LED device
-+ * @attr:	The ``unlink_device`` attribute (@dev_attr_unlink_device)
-+ * @buf:	The value written to the attribute, which should be the path to
-+ *		the special file that represents the block device to be unlinked
-+ *		from the LED (e.g. /dev/sda)
-+ * @count:	The number of characters in @buf
-+ *
-+ * Block device name is written to the attribute to "unlink" the block device
-+ * from the LED.  I.e. the LED will no longer blink to show activity on that
-+ * block device.
-+ *
-+ * Calls blkdev_trig_get_bdev() to get the block device represented by the path
-+ * in @buf.  If the device has a BTB, searches the BTB's list of LEDs for a
-+ * link to this LED and (if found) calls blkdev_trig_unlink() to destroy the
-+ * link.
-+ *
-+ * Context:	Process context.  Takes and releases @blkdev_trig_mutex.
-+ * Return:	@count on success, ``-errno`` on error.
-+ */
-+static ssize_t unlink_device_store(struct device *dev,
-+				   struct device_attribute *attr,
-+				   const char *buf, size_t count)
-+{
-+	struct blkdev_trig_led *led = led_trigger_get_drvdata(dev);
-+	struct block_device *bdev;
-+	struct blkdev_trig_bdev *btb;
-+	int err;
-+
-+	bdev = blkdev_trig_get_bdev(buf, count, BLKDEV_TRIG_FMODE);
-+	if (IS_ERR(bdev))
-+		return PTR_ERR(bdev);
-+
-+	err = mutex_lock_interruptible(&blkdev_trig_mutex);
-+	if (err)
-+		goto exit_put_bdev;
-+
-+	btb = devres_find(&bdev->bd_device, blkdev_trig_btb_release,
-+			  NULL, NULL);
-+	if (btb == NULL) {
-+		err = -EUNATCH;  /* bdev isn't linked to any LED */
-+		goto exit_unlock;
-+	}
-+
-+	if (xa_load(&btb->linked_leds, led->index) == NULL) {
-+		err = -EUNATCH;  /* bdev isn't linked to this LED */
-+		goto exit_unlock;
-+	}
-+
-+	blkdev_trig_unlink(led, btb, BLKDEV_TRIG_NOT_RELEASING);
-+
-+exit_unlock:
-+	mutex_unlock(&blkdev_trig_mutex);
-+exit_put_bdev:
-+	blkdev_put(bdev, BLKDEV_TRIG_FMODE);
-+	return err ? : count;
-+}
-+
-+/**
-+ * blkdev_trig_unlink() - "Unlink" a block device from an LED.
-+ * @led:		The LED
-+ * @btb:		The block device
-+ * @unlink_mode:	Indicates whether the BTB is being released (because
-+ *			the block device has been removed)
-+ *
-+ * Removes the link between an LED and a block device.
-+ *
-+ *   * Removes the BTB from the LED's @linked_btbs and removes the LED from
-+ *     the BTB's @linked_leds.
-+ *   * Removes the block device symlink from the LED's ``linked_devices``
-+ *     directory.
-+ *
-+ * If the block device is **not** being released:
-+ *
-+ *   * Removes the LED symlink from the block device's ``linked_leds``
-+ *     directory.
-+ *   * Calls blkdev_trig_put_btb() to clean up the BTB, if required.
-+ *
-+ * If the removed link was the only one (i.e. there are no existing block
-+ * device/LED links after its removal), cancels the periodic delayed work
-+ * which checks for device activity.
-+ *
-+ * This function is called from multiple locations.
-+ *
-+ *   * unlink_device_store() calls this function when a block device is unlinked
-+ *     from an LED via the ``unlink_device`` sysfs attribute.  (@unlink_mode ==
-+ *     ``BLKDEV_TRIG_NOT_RELEASING``)
-+ *   * blkdev_trig_deactivate() calls this function for each block device linked
-+ *     to an LED that is being deactivated (disassociated from the trigger).
-+ *     (@unlink_mode == ``BLKDEV_TRIG_NOT_RELEASING``).
-+ *   * blkdev_trig_btb_release() calls this function for each LED linked to a
-+ *     block device that has been removed from the system.  (@unlink_mode ==
-+ *     ``BLKDEV_TRIG_RELEASING).
-+ *
-+ * Context:	Process context.  Caller must hold @blkdev_trig_mutex.
-+ */
-+static void blkdev_trig_unlink(struct blkdev_trig_led *led,
-+			       struct blkdev_trig_bdev *btb,
-+			       enum blkdev_trig_unlink_mode unlink_mode)
-+{
-+	--blkdev_trig_link_count;
-+
-+	if (blkdev_trig_link_count == 0)
-+		WARN_ON(!cancel_delayed_work_sync(&blkdev_trig_work));
-+
-+	xa_erase(&btb->linked_leds, led->index);
-+	xa_erase(&led->linked_btbs, btb->index);
-+
-+	/* Remove /sys/class/leds/<led>/linked_devices/<bdev> symlink */
-+	sysfs_remove_link_from_group(&led->led_cdev->dev->kobj,
-+				     blkdev_trig_linked_devs.name,
-+				     dev_name(&btb->bdev->bd_device));
-+
-+	/*
-+	 * If the BTB is being released, the device's attribute groups have
-+	 * already been removed, and the BTB will be freed automatically, so
-+	 * only do these steps if the BTB is not being released.
-+	 */
-+	if (unlink_mode == BLKDEV_TRIG_NOT_RELEASING) {
-+
-+		/* Remove /sys/class/block/<bdev>/linked_leds/<led> symlink */
-+		sysfs_remove_link_from_group(bdev_kobj(btb->bdev),
-+					     blkdev_trig_linked_leds.name,
-+					     led->led_cdev->name);
-+		blkdev_trig_put_btb(btb);
-+	}
-+}
-+
-+/**
-+ * blkdev_trig_put_btb() - Remove and free a BTB, if it is no longer needed.
-+ * @btb:	The BTB
-+ *
-+ * Does nothing if the BTB (block device) is still linked to at least one LED.
-+ *
-+ * If the BTB is no longer linked to any LEDs, removes the block device's
-+ * ``linked_leds`` directory (attribute group), removes the BTB from the
-+ * block device's resource list, and frees the BTB.
-+ *
-+ * Called from blkdev_trig_unlink() (and in the link_device_store() error path).
-+ *
-+ * Context:	Process context.  Caller must hold @blkdev_trig_mutex.
-+ */
-+static void blkdev_trig_put_btb(struct blkdev_trig_bdev *btb)
-+{
-+	struct block_device *bdev = btb->bdev;
-+	int err;
-+
-+	if (xa_empty(&btb->linked_leds)) {
-+
-+		sysfs_remove_group(bdev_kobj(bdev), &blkdev_trig_linked_leds);
-+		err = devres_destroy(&bdev->bd_device, blkdev_trig_btb_release,
-+				     NULL, NULL);
-+		WARN_ON(err);
-+	}
-+}
-+
-+/**
-+ * blkdev_trig_deactivate() - Called when an LED is disassociated from the
-+ *			      trigger.
-+ * @led_cdev:	The LED
-+ *
-+ * Calls blkdev_trig_unlink() for each block device linked to the LED, removes
-+ * the LED from the @blkdevtrig_all_leds list, and frees the @blkdev_trig_led.
-+ *
-+ * Context:	Process context.  Takes and releases @blkdev_trig_mutex.
-+ */
-+static void blkdev_trig_deactivate(struct led_classdev *led_cdev)
-+{
-+	struct blkdev_trig_led *led = led_get_trigger_data(led_cdev);
-+	struct blkdev_trig_bdev *btb;
-+	unsigned long index;
-+
-+	mutex_lock(&blkdev_trig_mutex);
-+
-+	xa_for_each (&led->linked_btbs, index, btb)
-+		blkdev_trig_unlink(led, btb, BLKDEV_TRIG_NOT_RELEASING);
-+
-+	hlist_del(&led->all_leds_node);
-+	kfree(led);
-+
-+	mutex_unlock(&blkdev_trig_mutex);
-+}
-+
-+/**
-+ * blkdev_trig_btb_release() - BTB device resource release function.
-+ * @dev:	The block device
-+ * @res:	The BTB
-+ *
-+ * Called by the driver core when a block device with a BTB is removed from
-+ * the system.  Calls blkdev_trig_unlink() for each LED linked to the block
-+ * device.
-+ *
-+ * Context:	Process context.  Takes and releases @blkdev_trig_mutex.
-+ */
-+static void blkdev_trig_btb_release(struct device *dev, void *res)
-+{
-+	struct blkdev_trig_bdev *btb = res;
-+	struct blkdev_trig_led *led;
-+	unsigned long index;
-+
-+	mutex_lock(&blkdev_trig_mutex);
-+
-+	xa_for_each (&btb->linked_leds, index, led)
-+		blkdev_trig_unlink(led, btb, BLKDEV_TRIG_RELEASING);
-+
-+	mutex_unlock(&blkdev_trig_mutex);
-+}
-+
-+/**
-+ * blkdev_trig_check() - Check linked devices for activity and blink LEDs.
-+ * @work:	Delayed work (@blkdev_trig_work)
-+ *
-+ * Called periodically (as delayed work) to check linked block devices for
-+ * activity and blink LEDs.
-+ *
-+ *   * Iterates through all LEDs associated with the trigger.
-+ *   * If an LED is due to be checked, iterates through the block devices (BTBs)
-+ *     linked to the LED.
-+ *   * If a block device has not already been checked during this pass, calls
-+ *     blkdev_trig_update_btb() to update the BTB's activity counters and
-+ *     timestamps.
-+ *   * If the LED has not already been blinked during this pass, calls
-+ *     blkdev_trig_blink() to blink it if the correct type of activity has
-+ *     occurred since the LED was last checked.
-+ *
-+ * When finished, schedules itself to run again when the next LED is due to be
-+ * checked.
-+ *
-+ * Context:	Process context.  Takes and releases @blkdev_trig_mutex.
-+ */
-+static void blkdev_trig_check(struct work_struct *work)
-+{
-+	struct blkdev_trig_led *led;
-+	struct blkdev_trig_bdev *btb;
-+	unsigned long index, delay, now, led_check, led_delay;
-+	bool blinked;
-+
-+	if (!mutex_trylock(&blkdev_trig_mutex)) {
-+		delay = msecs_to_jiffies(BLKDEV_TRIG_CHECK_RETRY);
-+		goto exit_reschedule;
-+	}
-+
-+	now = jiffies;
-+	delay = ULONG_MAX;
-+
-+	hlist_for_each_entry (led, &blkdev_trig_all_leds, all_leds_node) {
-+
-+		led_check = led->last_checked + led->check_jiffies;
-+
-+		if (time_before_eq(led_check, now)) {
-+
-+			blinked = false;
-+
-+			xa_for_each (&led->linked_btbs, index, btb) {
-+
-+				if (btb->last_checked != now)
-+					blkdev_trig_update_btb(btb, now);
-+				if (!blinked)
-+					blinked = blkdev_trig_blink(led, btb);
-+			}
-+
-+			led->last_checked = now;
-+			led_delay = led->check_jiffies;
-+
-+		} else {
-+			led_delay = led_check - now;
-+		}
-+
-+		if (led_delay < delay)
-+			delay = led_delay;
-+	}
-+
-+	mutex_unlock(&blkdev_trig_mutex);
-+
-+exit_reschedule:
-+	WARN_ON_ONCE(delay == ULONG_MAX);
-+	WARN_ON_ONCE(!schedule_delayed_work(&blkdev_trig_work, delay));
-+}
-+
-+/**
-+ * blkdev_trig_blink() - Blink an LED, if the correct type of activity has
-+ *			 occurred on the block device.
-+ * @led:	The LED
-+ * @btb:	The block device
-+ *
-+ * Context:	Process context.  Caller must hold @blkdev_trig_mutex.
-+ * Return:	``true`` if the LED is blinked, ``false`` if not.
-+ */
-+static bool blkdev_trig_blink(const struct blkdev_trig_led *led,
-+			      const struct blkdev_trig_bdev *btb)
-+{
-+	unsigned long delay_on, delay_off;
-+	enum stat_group i;
-+	unsigned long mode, mask;
-+
-+	mode = READ_ONCE(led->mode);
-+
-+	for (i = STAT_READ, mask = 1; i <= STAT_FLUSH; ++i, mask <<= 1) {
-+
-+		if (!(mode & mask))
-+			continue;
-+
-+		if (time_before_eq(btb->last_activity[i], led->last_checked))
-+			continue;
-+
-+		delay_on = READ_ONCE(led->blink_msec);
-+		delay_off = 1;	/* 0 leaves LED turned on */
-+
-+		led_blink_set_oneshot(led->led_cdev, &delay_on, &delay_off, 0);
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+/**
-+ * blink_time_show() - ``blink_time`` device attribute show function.
-+ * @dev:	The LED device
-+ * @attr:	The ``blink_time`` attribute (@dev_attr_blink_time)
-+ * @buf:	Output buffer
-+ *
-+ * Writes the current value of the LED's @blink_msec to @buf.
-+ *
-+ * Context:	Process context.
-+ * Return:	The number of characters written to @buf.
-+ */
-+static ssize_t blink_time_show(struct device *dev,
-+			       struct device_attribute *attr, char *buf)
-+{
-+	const struct blkdev_trig_led *led = led_trigger_get_drvdata(dev);
-+
-+	return sprintf(buf, "%u\n", READ_ONCE(led->blink_msec));
-+}
-+
-+/**
-+ * blink_time_store() - ``blink_time`` device attribute store function.
-+ * @dev:	The LED device
-+ * @attr:	The ``blink_time`` attribute (@dev_attr_blink_time)
-+ * @buf:	The new value (as written to the sysfs attribute)
-+ * @count:	The number of characters in @buf
-+ *
-+ * Sets the LED's @blink_msec (the duration in milliseconds of one blink).
-+ *
-+ * Context:	Process context.
-+ * Return:	@count on success, ``-errno`` on error.
-+ */
-+static ssize_t blink_time_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t count)
-+{
-+	struct blkdev_trig_led *led = led_trigger_get_drvdata(dev);
-+	unsigned int value;
-+	int err;
-+
-+	err = kstrtouint(buf, 0, &value);
-+	if (err)
-+		return err;
-+
-+	if (value < BLKDEV_TRIG_BLINK_MIN || value > BLKDEV_TRIG_BLINK_MAX)
-+		return -ERANGE;
-+
-+	WRITE_ONCE(led->blink_msec, value);
-+	return count;
-+}
-+
-+/**
-+ * check_interval_show() - ``check_interval`` device attribute show function.
-+ * @dev:	The LED device
-+ * @attr:	The ``check_interval`` attribute (@dev_attr_check_interval)
-+ * @buf:	Output buffer
-+ *
-+ * Writes the current value of the LED's @check_jiffies (converted to
-+ * milliseconds) to @buf.
-+ *
-+ * Context:	Process context.
-+ * Return:	The number of characters written to @buf.
-+ */
-+static ssize_t check_interval_show(struct device *dev,
-+				   struct device_attribute *attr, char *buf)
-+{
-+	struct blkdev_trig_led *led = led_trigger_get_drvdata(dev);
-+
-+	return sprintf(buf, "%u\n",
-+		       jiffies_to_msecs(READ_ONCE(led->check_jiffies)));
-+}
-+
-+/**
-+ * check_interval_store() - ``check_interval`` device attribute store function
-+ * @dev:	The LED device
-+ * @attr:	The ``check_interval`` attribute (@dev_attr_check_interval)
-+ * @buf:	The new value (as written to the sysfs attribute)
-+ * @count:	The number of characters in @buf
-+ *
-+ * Sets the LED's @check_jiffies (after converting from milliseconds).
-+ *
-+ * Context:	Process context.
-+ * Return:	@count on success, ``-errno`` on error.
-+ */
-+static ssize_t check_interval_store(struct device *dev,
-+				    struct device_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	struct blkdev_trig_led *led = led_trigger_get_drvdata(dev);
-+	unsigned int value;
-+	int err;
-+
-+	err = kstrtouint(buf, 0, &value);
-+	if (err)
-+		return err;
-+
-+	if (value < BLKDEV_TRIG_CHECK_MIN || value > BLKDEV_TRIG_CHECK_MAX)
-+		return -ERANGE;
-+
-+	WRITE_ONCE(led->check_jiffies, msecs_to_jiffies(value));
-+
-+	return count;
-+}
-+
-+/**
-+ * blkdev_trig_mode_show() - Helper for boolean attribute show functions.
-+ * @led:	The LED
-+ * @buf:	Output buffer
-+ * @mask:	Which bit to show (@BLKDEV_TRIG_READ, etc.)
-+ *
-+ * Context:	Process context.
-+ * Return:	The number of characters written to @buf.
-+ */
-+static int blkdev_trig_mode_show(const struct blkdev_trig_led *led, char *buf,
-+				 unsigned long mask)
-+{
-+	return sprintf(buf, READ_ONCE(led->mode) & mask ? "Y\n" : "N\n");
-+}
-+
-+/**
-+ * blkdev_trig_mode_store() - Helper for boolean attribute store functions.
-+ * @led:	The LED
-+ * @buf:	The new value (as written to the sysfs attribute)
-+ * @count:	The number of characters in @buf
-+ * @mask:	Which bit to set (@BLKDEV_TRIG_READ, etc.)
-+ *
-+ * Context:	Process context.
-+ * Return:	@count on success, ``-errno`` on error.
-+ */
-+static int blkdev_trig_mode_store(struct blkdev_trig_led *led,
-+				  const char *buf, size_t count,
-+				  enum stat_group bit)
-+{
-+	bool set;
-+	int err;
-+
-+	err = kstrtobool(buf, &set);
-+	if (err)
-+		return err;
-+
-+	if (set)
-+		set_bit(bit, &led->mode);
-+	else
-+		clear_bit(bit, &led->mode);
-+
-+	return count;
-+}
-+
-+/**
-+ * blink_on_read_show() - ``blink_on_read`` device attribute show function.
-+ * @dev:	The LED device
-+ * @attr:	The ``blink_on_read`` attribute (@dev_attr_blink_on_read)
-+ * @buf:	Output buffer
-+ *
-+ * Writes the current value of the LED's @BLKDEV_TRIG_READ @mode bit to @buf.
-+ *
-+ * Context:	Process context.
-+ * Return:	The number of characters written to @buf.
-+ */
-+static ssize_t blink_on_read_show(struct device *dev,
-+				  struct device_attribute *attr, char *buf)
-+{
-+	return blkdev_trig_mode_show(led_trigger_get_drvdata(dev), buf,
-+				     BLKDEV_TRIG_READ);
-+}
-+
-+/**
-+ * blink_on_read_store() - ``blink_on_read`` device attribute store function.
-+ * @dev:	The LED device
-+ * @attr:	The ``blink_on_read`` attribute (@dev_attr_blink_on_read)
-+ * @buf:	The new value (as written to the sysfs attribute)
-+ * @count:	The number of characters in @buf
-+ *
-+ * Sets or clears the LED's @BLKDEV_TRIG_READ @mode bit.
-+ *
-+ * Context:	Process context.
-+ * Return:	@count on success, ``-errno`` on error.
-+ */
-+static ssize_t blink_on_read_store(struct device *dev,
-+				   struct device_attribute *attr,
-+				   const char *buf, size_t count)
-+{
-+	return blkdev_trig_mode_store(led_trigger_get_drvdata(dev), buf, count,
-+				      STAT_READ);
-+}
-+
-+/**
-+ * blink_on_write_show() - ``blink_on_write`` device attribute show function.
-+ * @dev:	The LED device
-+ * @attr:	The ``blink_on_write`` attribute (@dev_attr_blink_on_write)
-+ * @buf:	Output buffer
-+ *
-+ * Writes the current value of the LED's @BLKDEV_TRIG_WRITE @mode bit to @buf.
-+ *
-+ * Context:	Process context.
-+ * Return:	The number of characters written to @buf.
-+ */
-+static ssize_t blink_on_write_show(struct device *dev,
-+				   struct device_attribute *attr, char *buf)
-+{
-+	return blkdev_trig_mode_show(led_trigger_get_drvdata(dev), buf,
-+				     BLKDEV_TRIG_WRITE);
-+}
-+
-+/**
-+ * blink_on_write_store() - ``blink_on_write`` device attribute store function.
-+ * @dev:	The LED device
-+ * @attr:	The ``blink_on_write`` attribute (@dev_attr_blink_on_write)
-+ * @buf:	The new value (as written to the sysfs attribute)
-+ * @count:	The number of characters in @buf
-+ *
-+ * Sets or clears the LED's @BLKDEV_TRIG_WRITE @mode bit.
-+ *
-+ * Context:	Process context.
-+ * Return:	@count on success, ``-errno`` on error.
-+ */
-+static ssize_t blink_on_write_store(struct device *dev,
-+				    struct device_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	return blkdev_trig_mode_store(led_trigger_get_drvdata(dev), buf, count,
-+				      STAT_WRITE);
-+}
-+
-+/**
-+ * blink_on_flush_show() - ``blink_on_flush`` device attribute show function.
-+ * @dev:	The LED device
-+ * @attr:	The ``blink_on_flush`` attribute (@dev_attr_blink_on_flush)
-+ * @buf:	Output buffer
-+ *
-+ * Writes the current value of the LED's @BLKDEV_TRIG_FLUSH @mode bit to @buf.
-+ *
-+ * Context:	Process context.
-+ * Return:	The number of characters written to @buf.
-+ */
-+static ssize_t blink_on_flush_show(struct device *dev,
-+				   struct device_attribute *attr, char *buf)
-+{
-+	return blkdev_trig_mode_show(led_trigger_get_drvdata(dev), buf,
-+				     BLKDEV_TRIG_FLUSH);
-+}
-+
-+/**
-+ * blink_on_flush_store() - ``blink_on_flush`` device attribute store function.
-+ * @dev:	The LED device
-+ * @attr:	The ``blink_on_flush`` attribute (@dev_attr_blink_on_flush)
-+ * @buf:	The new value (as written to the sysfs attribute)
-+ * @count:	The number of characters in @buf
-+ *
-+ * Sets or clears the LED's @BLKDEV_TRIG_FLUSH @mode bit.
-+ *
-+ * Context:	Process context.
-+ * Return:	@count on success, ``-errno`` on error.
-+ */
-+static ssize_t blink_on_flush_store(struct device *dev,
-+				    struct device_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	return blkdev_trig_mode_store(led_trigger_get_drvdata(dev), buf, count,
-+				      STAT_FLUSH);
-+}
-+
-+/**
-+ * blink_on_discard_show() - ``blink_on_discard`` device attribute show
-+ *			     function.
-+ * @dev:	The LED device
-+ * @attr:	The ``blink_on_discard`` attribute (@dev_attr_blink_on_discard)
-+ * @buf:	Output buffer
-+ *
-+ * Writes the current value of the LED's @BLKDEV_TRIG_DISCARD @mode bit to @buf.
-+ *
-+ * Context:	Process context.
-+ * Return:	The number of characters written to @buf.
-+ */
-+static ssize_t blink_on_discard_show(struct device *dev,
-+				     struct device_attribute *attr, char *buf)
-+{
-+	return blkdev_trig_mode_show(led_trigger_get_drvdata(dev), buf,
-+				     BLKDEV_TRIG_DISCARD);
-+}
-+
-+/**
-+ * blink_on_discard_store() - ``blink_on_discard`` device attribute store
-+ *			      function.
-+ * @dev:	The LED device
-+ * @attr:	The ``blink_on_discard`` attribute (@dev_attr_blink_on_discard)
-+ * @buf:	The new value (as written to the sysfs attribute)
-+ * @count:	The number of characters in @buf
-+ *
-+ * Sets the LED's @BLKDEV_TRIG_DISCARD @mode bit.
-+ *
-+ * Context:	Process context.
-+ * Return:	@count on success, ``-errno`` on error.
-+ */
-+static ssize_t blink_on_discard_store(struct device *dev,
-+				      struct device_attribute *attr,
-+				      const char *buf, size_t count)
-+{
-+	return blkdev_trig_mode_store(led_trigger_get_drvdata(dev), buf, count,
-+				      STAT_DISCARD);
-+}
-+
-+/* Device attributes */
-+static DEVICE_ATTR_WO(link_device);
-+static DEVICE_ATTR_WO(unlink_device);
-+static DEVICE_ATTR_RW(blink_time);
-+static DEVICE_ATTR_RW(check_interval);
-+static DEVICE_ATTR_RW(blink_on_read);
-+static DEVICE_ATTR_RW(blink_on_write);
-+static DEVICE_ATTR_RW(blink_on_flush);
-+static DEVICE_ATTR_RW(blink_on_discard);
-+
-+/* Device attributes in LED directory (/sys/class/leds/<led>/...) */
-+static struct attribute *blkdev_trig_attrs[] = {
-+	&dev_attr_link_device.attr,
-+	&dev_attr_unlink_device.attr,
-+	&dev_attr_blink_time.attr,
-+	&dev_attr_check_interval.attr,
-+	&dev_attr_blink_on_read.attr,
-+	&dev_attr_blink_on_write.attr,
-+	&dev_attr_blink_on_flush.attr,
-+	&dev_attr_blink_on_discard.attr,
-+	NULL
-+};
-+
-+/* Unnamed attribute group == no subdirectory */
-+static const struct attribute_group blkdev_trig_attr_group = {
-+	.attrs	= blkdev_trig_attrs,
-+};
-+
-+/* Attribute groups for the trigger */
-+static const struct attribute_group *blkdev_trig_attr_groups[] = {
-+	&blkdev_trig_attr_group,   /* /sys/class/leds/<led>/... */
-+	&blkdev_trig_linked_devs,  /* /sys/class/leds/<led>/linked_devices/ */
-+	NULL
-+};
-+
-+/* Trigger registration data */
-+static struct led_trigger blkdev_trig_trigger = {
-+	.name		= "blkdev",
-+	.activate	= blkdev_trig_activate,
-+	.deactivate	= blkdev_trig_deactivate,
-+	.groups		= blkdev_trig_attr_groups,
-+};
-+
-+/**
-+ * blkdev_trig_init() - Block device LED trigger initialization.
-+ *
-+ * Registers the LED trigger.
-+ *
-+ * Return:	0 on success, ``-errno`` on failure.
-+ */
-+static int __init blkdev_trig_init(void)
-+{
-+	return led_trigger_register(&blkdev_trig_trigger);
-+}
-+module_init(blkdev_trig_init);
-+
-+/**
-+ * blkdev_trig_exit() - Block device LED trigger module exit.
-+ *
-+ * Unregisters the LED trigger.
-+ */
-+static void __exit blkdev_trig_exit(void)
-+{
-+	led_trigger_unregister(&blkdev_trig_trigger);
-+}
-+module_exit(blkdev_trig_exit);
-+
-+MODULE_DESCRIPTION("Block device LED trigger");
-+MODULE_AUTHOR("Ian Pilcher <arequipeno@gmail.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.31.1
+Thanks,
+Bjorn
 
+> 
+> Change since v9:
+> - Replac magic 381 second as upper bound of period length
+> - Declare variables inside the blocks where they are used in lpg_calc_freq()
+> - Reworked duty calculation to avoid loosing precision
+> - Reject inverted polarity in pwm_apply
+> 
+>  drivers/leds/Kconfig             |    3 +
+>  drivers/leds/Makefile            |    3 +
+>  drivers/leds/rgb/Kconfig         |   13 +
+>  drivers/leds/rgb/Makefile        |    3 +
+>  drivers/leds/rgb/leds-qcom-lpg.c | 1302 ++++++++++++++++++++++++++++++
+>  5 files changed, 1324 insertions(+)
+>  create mode 100644 drivers/leds/rgb/Kconfig
+>  create mode 100644 drivers/leds/rgb/Makefile
+>  create mode 100644 drivers/leds/rgb/leds-qcom-lpg.c
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index ed800f5da7d8..ffb8777842ff 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -876,6 +876,9 @@ source "drivers/leds/blink/Kconfig"
+>  comment "Flash and Torch LED drivers"
+>  source "drivers/leds/flash/Kconfig"
+>  
+> +comment "RGB LED drivers"
+> +source "drivers/leds/rgb/Kconfig"
+> +
+>  comment "LED Triggers"
+>  source "drivers/leds/trigger/Kconfig"
+>  
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index c636ec069612..351153f84070 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -100,6 +100,9 @@ obj-$(CONFIG_LEDS_USER)			+= uleds.o
+>  # Flash and Torch LED Drivers
+>  obj-$(CONFIG_LEDS_CLASS_FLASH)		+= flash/
+>  
+> +# RGB LED Drivers
+> +obj-$(CONFIG_LEDS_CLASS_MULTICOLOR)	+= rgb/
+> +
+>  # LED Triggers
+>  obj-$(CONFIG_LEDS_TRIGGERS)		+= trigger/
+>  
+> diff --git a/drivers/leds/rgb/Kconfig b/drivers/leds/rgb/Kconfig
+> new file mode 100644
+> index 000000000000..20be3e11fe4a
+> --- /dev/null
+> +++ b/drivers/leds/rgb/Kconfig
+> @@ -0,0 +1,13 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +if LEDS_CLASS_MULTICOLOR
+> +
+> +config LEDS_QCOM_LPG
+> +	tristate "LED support for Qualcomm LPG"
+> +	depends on OF
+> +	depends on SPMI
+> +	help
+> +	  This option enables support for the Light Pulse Generator found in a
+> +	  wide variety of Qualcomm PMICs.
+> +
+> +endif # LEDS_CLASS_MULTICOLOR
+> diff --git a/drivers/leds/rgb/Makefile b/drivers/leds/rgb/Makefile
+> new file mode 100644
+> index 000000000000..83114f44c4ea
+> --- /dev/null
+> +++ b/drivers/leds/rgb/Makefile
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +obj-$(CONFIG_LEDS_QCOM_LPG)	+= leds-qcom-lpg.o
+> diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
+> new file mode 100644
+> index 000000000000..45ef4ec5ff17
+> --- /dev/null
+> +++ b/drivers/leds/rgb/leds-qcom-lpg.c
+> @@ -0,0 +1,1302 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2017-2021 Linaro Ltd
+> + * Copyright (c) 2010-2012, The Linux Foundation. All rights reserved.
+> + */
+> +#include <linux/bits.h>
+> +#include <linux/led-class-multicolor.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +
+> +#define LPG_PATTERN_CONFIG_REG	0x40
+> +#define LPG_SIZE_CLK_REG	0x41
+> +#define LPG_PREDIV_CLK_REG	0x42
+> +#define PWM_TYPE_CONFIG_REG	0x43
+> +#define PWM_VALUE_REG		0x44
+> +#define PWM_ENABLE_CONTROL_REG	0x46
+> +#define PWM_SYNC_REG		0x47
+> +#define LPG_RAMP_DURATION_REG	0x50
+> +#define LPG_HI_PAUSE_REG	0x52
+> +#define LPG_LO_PAUSE_REG	0x54
+> +#define LPG_HI_IDX_REG		0x56
+> +#define LPG_LO_IDX_REG		0x57
+> +#define PWM_SEC_ACCESS_REG	0xd0
+> +#define PWM_DTEST_REG(x)	(0xe2 + (x) - 1)
+> +
+> +#define TRI_LED_SRC_SEL		0x45
+> +#define TRI_LED_EN_CTL		0x46
+> +#define TRI_LED_ATC_CTL		0x47
+> +
+> +#define LPG_LUT_REG(x)		(0x40 + (x) * 2)
+> +#define RAMP_CONTROL_REG	0xc8
+> +
+> +#define LPG_RESOLUTION		512
+> +#define LPG_MAX_M		7
+> +
+> +struct lpg_channel;
+> +struct lpg_data;
+> +
+> +/**
+> + * struct lpg - LPG device context
+> + * @dev:	struct device for LPG device
+> + * @map:	regmap for register access
+> + * @pwm:	PWM-chip object, if operating in PWM mode
+> + * @data:	reference to version specific data
+> + * @lut_base:	base address of the LUT block (optional)
+> + * @lut_size:	number of entries in the LUT block
+> + * @lut_bitmap:	allocation bitmap for LUT entries
+> + * @triled_base: base address of the TRILED block (optional)
+> + * @triled_src:	power-source for the TRILED
+> + * @triled_has_atc_ctl:	true if there is TRI_LED_ATC_CTL register
+> + * @triled_has_src_sel:	true if there is TRI_LED_SRC_SEL register
+> + * @channels:	list of PWM channels
+> + * @num_channels: number of @channels
+> + */
+> +struct lpg {
+> +	struct device *dev;
+> +	struct regmap *map;
+> +
+> +	struct pwm_chip pwm;
+> +
+> +	const struct lpg_data *data;
+> +
+> +	u32 lut_base;
+> +	u32 lut_size;
+> +	unsigned long *lut_bitmap;
+> +
+> +	u32 triled_base;
+> +	u32 triled_src;
+> +	bool triled_has_atc_ctl;
+> +	bool triled_has_src_sel;
+> +
+> +	struct lpg_channel *channels;
+> +	unsigned int num_channels;
+> +};
+> +
+> +/**
+> + * struct lpg_channel - per channel data
+> + * @lpg:	reference to parent lpg
+> + * @base:	base address of the PWM channel
+> + * @triled_mask: mask in TRILED to enable this channel
+> + * @lut_mask:	mask in LUT to start pattern generator for this channel
+> + * @in_use:	channel is exposed to LED framework
+> + * @color:	color of the LED attached to this channel
+> + * @dtest_line:	DTEST line for output, or 0 if disabled
+> + * @dtest_value: DTEST line configuration
+> + * @pwm_value:	duty (in microseconds) of the generated pulses, overridden by LUT
+> + * @enabled:	output enabled?
+> + * @period:	period (in nanoseconds) of the generated pulses
+> + * @clk:	base frequency of the clock generator
+> + * @pre_div:	divider of @clk
+> + * @pre_div_exp: exponential divider of @clk
+> + * @ramp_enabled: duty cycle is driven by iterating over lookup table
+> + * @ramp_ping_pong: reverse through pattern, rather than wrapping to start
+> + * @ramp_oneshot: perform only a single pass over the pattern
+> + * @ramp_reverse: iterate over pattern backwards
+> + * @ramp_tick_ms: length (in milliseconds) of one step in the pattern
+> + * @ramp_lo_pause_ms: pause (in milliseconds) before iterating over pattern
+> + * @ramp_hi_pause_ms: pause (in milliseconds) after iterating over pattern
+> + * @pattern_lo_idx: start index of associated pattern
+> + * @pattern_hi_idx: last index of associated pattern
+> + */
+> +struct lpg_channel {
+> +	struct lpg *lpg;
+> +
+> +	u32 base;
+> +	unsigned int triled_mask;
+> +	unsigned int lut_mask;
+> +
+> +	bool in_use;
+> +
+> +	int color;
+> +
+> +	u32 dtest_line;
+> +	u32 dtest_value;
+> +
+> +	u16 pwm_value;
+> +	bool enabled;
+> +
+> +	u64 period;
+> +	unsigned int clk;
+> +	unsigned int pre_div;
+> +	unsigned int pre_div_exp;
+> +
+> +	bool ramp_enabled;
+> +	bool ramp_ping_pong;
+> +	bool ramp_oneshot;
+> +	bool ramp_reverse;
+> +	unsigned long ramp_tick_ms;
+> +	unsigned long ramp_lo_pause_ms;
+> +	unsigned long ramp_hi_pause_ms;
+> +
+> +	unsigned int pattern_lo_idx;
+> +	unsigned int pattern_hi_idx;
+> +};
+> +
+> +/**
+> + * struct lpg_led - logical LED object
+> + * @lpg:		lpg context reference
+> + * @cdev:		LED class device
+> + * @mcdev:		Multicolor LED class device
+> + * @num_channels:	number of @channels
+> + * @channels:		list of channels associated with the LED
+> + */
+> +struct lpg_led {
+> +	struct lpg *lpg;
+> +
+> +	struct led_classdev cdev;
+> +	struct led_classdev_mc mcdev;
+> +
+> +	unsigned int num_channels;
+> +	struct lpg_channel *channels[];
+> +};
+> +
+> +/**
+> + * struct lpg_channel_data - per channel initialization data
+> + * @base:		base address for PWM channel registers
+> + * @triled_mask:	bitmask for controlling this channel in TRILED
+> + */
+> +struct lpg_channel_data {
+> +	unsigned int base;
+> +	u8 triled_mask;
+> +};
+> +
+> +/**
+> + * struct lpg_data - initialization data
+> + * @lut_base:		base address of LUT block
+> + * @lut_size:		number of entries in LUT
+> + * @triled_base:	base address of TRILED
+> + * @triled_has_atc_ctl:	true if there is TRI_LED_ATC_CTL register
+> + * @triled_has_src_sel:	true if there is TRI_LED_SRC_SEL register
+> + * @pwm_9bit_mask:	bitmask for switching from 6bit to 9bit pwm
+> + * @num_channels:	number of channels in LPG
+> + * @channels:		list of channel initialization data
+> + */
+> +struct lpg_data {
+> +	unsigned int lut_base;
+> +	unsigned int lut_size;
+> +	unsigned int triled_base;
+> +	bool triled_has_atc_ctl;
+> +	bool triled_has_src_sel;
+> +	unsigned int pwm_9bit_mask;
+> +	int num_channels;
+> +	const struct lpg_channel_data *channels;
+> +};
+> +
+> +static int triled_set(struct lpg *lpg, unsigned int mask, unsigned int enable)
+> +{
+> +	/* Skip if we don't have a triled block */
+> +	if (!lpg->triled_base)
+> +		return 0;
+> +
+> +	return regmap_update_bits(lpg->map, lpg->triled_base + TRI_LED_EN_CTL,
+> +				  mask, enable);
+> +}
+> +
+> +static int lpg_lut_store(struct lpg *lpg, struct led_pattern *pattern,
+> +			 size_t len, unsigned int *lo_idx, unsigned int *hi_idx)
+> +{
+> +	unsigned int idx;
+> +	u16 val;
+> +	int i;
+> +
+> +	/* Hardware does not behave when LO_IDX == HI_IDX */
+> +	if (len == 1)
+> +		return -EINVAL;
+> +
+> +	idx = bitmap_find_next_zero_area(lpg->lut_bitmap, lpg->lut_size,
+> +					 0, len, 0);
+> +	if (idx >= lpg->lut_size)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < len; i++) {
+> +		val = pattern[i].brightness;
+> +
+> +		regmap_bulk_write(lpg->map, lpg->lut_base + LPG_LUT_REG(idx + i),
+> +				  &val, sizeof(val));
+> +	}
+> +
+> +	bitmap_set(lpg->lut_bitmap, idx, len);
+> +
+> +	*lo_idx = idx;
+> +	*hi_idx = idx + len - 1;
+> +
+> +	return 0;
+> +}
+> +
+> +static void lpg_lut_free(struct lpg *lpg, unsigned int lo_idx, unsigned int hi_idx)
+> +{
+> +	int len;
+> +
+> +	if (lo_idx == hi_idx)
+> +		return;
+> +
+> +	len = hi_idx - lo_idx + 1;
+> +	bitmap_clear(lpg->lut_bitmap, lo_idx, len);
+> +}
+> +
+> +static int lpg_lut_sync(struct lpg *lpg, unsigned int mask)
+> +{
+> +	return regmap_write(lpg->map, lpg->lut_base + RAMP_CONTROL_REG, mask);
+> +}
+> +
+> +static const unsigned int lpg_clk_rates[] = {1024, 32768, 19200000};
+> +static const unsigned int lpg_pre_divs[] = {1, 3, 5, 6};
+> +
+> +static int lpg_calc_freq(struct lpg_channel *chan, uint64_t period)
+> +{
+> +	unsigned int clk, best_clk = 0;
+> +	unsigned int div, best_div = 0;
+> +	unsigned int m, best_m = 0;
+> +	unsigned int error;
+> +	unsigned int best_err = UINT_MAX;
+> +	u64 best_period = 0;
+> +
+> +	/*
+> +	 * The PWM period is determined by:
+> +	 *
+> +	 *          resolution * pre_div * 2^M
+> +	 * period = --------------------------
+> +	 *                   refclk
+> +	 *
+> +	 * With resolution fixed at 2^9 bits, pre_div = {1, 3, 5, 6} and
+> +	 * M = [0..7].
+> +	 *
+> +	 * This allows for periods between 27uS and 384s, as the PWM framework
+> +	 * wants a period of equal or lower length than requested, reject
+> +	 * anything below 27uS.
+> +	 */
+> +	if (period <= (u64)NSEC_PER_SEC * LPG_RESOLUTION / 19200000)
+> +		return -EINVAL;
+> +
+> +	/* Limit period to largest possible value, to avoid overflows */
+> +	if (period > (u64)NSEC_PER_SEC * LPG_RESOLUTION * 6 * (1 << LPG_MAX_M) / 1024)
+> +		period = (u64)NSEC_PER_SEC * LPG_RESOLUTION * 6 * (1 << LPG_MAX_M) / 2014;
+> +
+> +	/*
+> +	 * Search for the pre_div, clk and M by solving the rewritten formula
+> +	 * for each clk and pre_div value:
+> +	 *
+> +	 *                       period * clk
+> +	 * M = log2 -------------------------------------
+> +	 *           NSEC_PER_SEC * pre_div * resolution
+> +	 */
+> +	for (clk = 0; clk < ARRAY_SIZE(lpg_clk_rates); clk++) {
+> +		u64 nom = period * lpg_clk_rates[clk];
+> +
+> +		for (div = 0; div < ARRAY_SIZE(lpg_pre_divs); div++) {
+> +			u64 denom = (u64)NSEC_PER_SEC * lpg_pre_divs[div] * (1 << 9);
+> +			u64 actual;
+> +			u64 ratio;
+> +
+> +			if (nom < denom)
+> +				continue;
+> +
+> +			ratio = div64_u64(nom, denom);
+> +			m = ilog2(ratio);
+> +			if (m > LPG_MAX_M)
+> +				m = LPG_MAX_M;
+> +
+> +			actual = DIV_ROUND_UP_ULL(denom * (1 << m), lpg_clk_rates[clk]);
+> +
+> +			error = period - actual;
+> +			if (error < best_err) {
+> +				best_err = error;
+> +
+> +				best_div = div;
+> +				best_m = m;
+> +				best_clk = clk;
+> +				best_period = actual;
+> +			}
+> +		}
+> +	}
+> +
+> +	chan->clk = best_clk;
+> +	chan->pre_div = best_div;
+> +	chan->pre_div_exp = best_m;
+> +	chan->period = best_period;
+> +
+> +	return 0;
+> +}
+> +
+> +static void lpg_calc_duty(struct lpg_channel *chan, uint64_t duty)
+> +{
+> +	unsigned int max = LPG_RESOLUTION - 1;
+> +	unsigned int val;
+> +
+> +	val = div64_u64(duty * lpg_clk_rates[chan->clk],
+> +			(u64)NSEC_PER_SEC * lpg_pre_divs[chan->pre_div] * (1 << chan->pre_div_exp));
+> +
+> +	chan->pwm_value = min(val, max);
+> +}
+> +
+> +static void lpg_apply_freq(struct lpg_channel *chan)
+> +{
+> +	unsigned long val;
+> +	struct lpg *lpg = chan->lpg;
+> +
+> +	if (!chan->enabled)
+> +		return;
+> +
+> +	/* Clock register values are off-by-one from lpg_clk_table */
+> +	val = chan->clk + 1;
+> +
+> +	/* Enable 9bit resolution */
+> +	val |= lpg->data->pwm_9bit_mask;
+> +
+> +	regmap_write(lpg->map, chan->base + LPG_SIZE_CLK_REG, val);
+> +
+> +	val = chan->pre_div << 5 | chan->pre_div_exp;
+> +	regmap_write(lpg->map, chan->base + LPG_PREDIV_CLK_REG, val);
+> +}
+> +
+> +#define LPG_ENABLE_GLITCH_REMOVAL	BIT(5)
+> +
+> +static void lpg_enable_glitch(struct lpg_channel *chan)
+> +{
+> +	struct lpg *lpg = chan->lpg;
+> +
+> +	regmap_update_bits(lpg->map, chan->base + PWM_TYPE_CONFIG_REG,
+> +			   LPG_ENABLE_GLITCH_REMOVAL, 0);
+> +}
+> +
+> +static void lpg_disable_glitch(struct lpg_channel *chan)
+> +{
+> +	struct lpg *lpg = chan->lpg;
+> +
+> +	regmap_update_bits(lpg->map, chan->base + PWM_TYPE_CONFIG_REG,
+> +			   LPG_ENABLE_GLITCH_REMOVAL,
+> +			   LPG_ENABLE_GLITCH_REMOVAL);
+> +}
+> +
+> +static void lpg_apply_pwm_value(struct lpg_channel *chan)
+> +{
+> +	struct lpg *lpg = chan->lpg;
+> +	u16 val = chan->pwm_value;
+> +
+> +	if (!chan->enabled)
+> +		return;
+> +
+> +	regmap_bulk_write(lpg->map, chan->base + PWM_VALUE_REG, &val, sizeof(val));
+> +}
+> +
+> +#define LPG_PATTERN_CONFIG_LO_TO_HI	BIT(4)
+> +#define LPG_PATTERN_CONFIG_REPEAT	BIT(3)
+> +#define LPG_PATTERN_CONFIG_TOGGLE	BIT(2)
+> +#define LPG_PATTERN_CONFIG_PAUSE_HI	BIT(1)
+> +#define LPG_PATTERN_CONFIG_PAUSE_LO	BIT(0)
+> +
+> +static void lpg_apply_lut_control(struct lpg_channel *chan)
+> +{
+> +	struct lpg *lpg = chan->lpg;
+> +	unsigned int hi_pause;
+> +	unsigned int lo_pause;
+> +	unsigned int conf = 0;
+> +	unsigned int step = chan->ramp_tick_ms;
+> +	unsigned int lo_idx = chan->pattern_lo_idx;
+> +	unsigned int hi_idx = chan->pattern_hi_idx;
+> +
+> +	if (!chan->ramp_enabled || chan->pattern_lo_idx == chan->pattern_hi_idx)
+> +		return;
+> +
+> +	hi_pause = DIV_ROUND_UP(chan->ramp_hi_pause_ms, step);
+> +	lo_pause = DIV_ROUND_UP(chan->ramp_lo_pause_ms, step);
+> +
+> +	if (!chan->ramp_reverse)
+> +		conf |= LPG_PATTERN_CONFIG_LO_TO_HI;
+> +	if (!chan->ramp_oneshot)
+> +		conf |= LPG_PATTERN_CONFIG_REPEAT;
+> +	if (chan->ramp_ping_pong)
+> +		conf |= LPG_PATTERN_CONFIG_TOGGLE;
+> +	if (chan->ramp_hi_pause_ms)
+> +		conf |= LPG_PATTERN_CONFIG_PAUSE_HI;
+> +	if (chan->ramp_lo_pause_ms)
+> +		conf |= LPG_PATTERN_CONFIG_PAUSE_LO;
+> +
+> +	regmap_write(lpg->map, chan->base + LPG_PATTERN_CONFIG_REG, conf);
+> +	regmap_write(lpg->map, chan->base + LPG_HI_IDX_REG, hi_idx);
+> +	regmap_write(lpg->map, chan->base + LPG_LO_IDX_REG, lo_idx);
+> +
+> +	regmap_write(lpg->map, chan->base + LPG_RAMP_DURATION_REG, step);
+> +	regmap_write(lpg->map, chan->base + LPG_HI_PAUSE_REG, hi_pause);
+> +	regmap_write(lpg->map, chan->base + LPG_LO_PAUSE_REG, lo_pause);
+> +}
+> +
+> +#define LPG_ENABLE_CONTROL_OUTPUT		BIT(7)
+> +#define LPG_ENABLE_CONTROL_BUFFER_TRISTATE	BIT(5)
+> +#define LPG_ENABLE_CONTROL_SRC_PWM		BIT(2)
+> +#define LPG_ENABLE_CONTROL_RAMP_GEN		BIT(1)
+> +
+> +static void lpg_apply_control(struct lpg_channel *chan)
+> +{
+> +	unsigned int ctrl;
+> +	struct lpg *lpg = chan->lpg;
+> +
+> +	ctrl = LPG_ENABLE_CONTROL_BUFFER_TRISTATE;
+> +
+> +	if (chan->enabled)
+> +		ctrl |= LPG_ENABLE_CONTROL_OUTPUT;
+> +
+> +	if (chan->pattern_lo_idx != chan->pattern_hi_idx)
+> +		ctrl |= LPG_ENABLE_CONTROL_RAMP_GEN;
+> +	else
+> +		ctrl |= LPG_ENABLE_CONTROL_SRC_PWM;
+> +
+> +	regmap_write(lpg->map, chan->base + PWM_ENABLE_CONTROL_REG, ctrl);
+> +
+> +	/*
+> +	 * Due to LPG hardware bug, in the PWM mode, having enabled PWM,
+> +	 * We have to write PWM values one more time.
+> +	 */
+> +	if (chan->enabled)
+> +		lpg_apply_pwm_value(chan);
+> +}
+> +
+> +#define LPG_SYNC_PWM	BIT(0)
+> +
+> +static void lpg_apply_sync(struct lpg_channel *chan)
+> +{
+> +	struct lpg *lpg = chan->lpg;
+> +
+> +	regmap_write(lpg->map, chan->base + PWM_SYNC_REG, LPG_SYNC_PWM);
+> +}
+> +
+> +static int lpg_parse_dtest(struct lpg *lpg)
+> +{
+> +	struct lpg_channel *chan;
+> +	struct device_node *np = lpg->dev->of_node;
+> +	int count;
+> +	int ret;
+> +	int i;
+> +
+> +	count = of_property_count_u32_elems(np, "qcom,dtest");
+> +	if (count == -EINVAL) {
+> +		return 0;
+> +	} else if (count < 0) {
+> +		ret = count;
+> +		goto err_malformed;
+> +	} else if (count != lpg->data->num_channels * 2) {
+> +		dev_err(lpg->dev, "qcom,dtest needs to be %d items\n",
+> +			lpg->data->num_channels * 2);
+> +		return -EINVAL;
+> +	}
+> +
+> +	for (i = 0; i < lpg->data->num_channels; i++) {
+> +		chan = &lpg->channels[i];
+> +
+> +		ret = of_property_read_u32_index(np, "qcom,dtest", i * 2,
+> +						 &chan->dtest_line);
+> +		if (ret)
+> +			goto err_malformed;
+> +
+> +		ret = of_property_read_u32_index(np, "qcom,dtest", i * 2 + 1,
+> +						 &chan->dtest_value);
+> +		if (ret)
+> +			goto err_malformed;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_malformed:
+> +	dev_err(lpg->dev, "malformed qcom,dtest\n");
+> +	return ret;
+> +}
+> +
+> +static void lpg_apply_dtest(struct lpg_channel *chan)
+> +{
+> +	struct lpg *lpg = chan->lpg;
+> +
+> +	if (!chan->dtest_line)
+> +		return;
+> +
+> +	regmap_write(lpg->map, chan->base + PWM_SEC_ACCESS_REG, 0xa5);
+> +	regmap_write(lpg->map, chan->base + PWM_DTEST_REG(chan->dtest_line),
+> +		     chan->dtest_value);
+> +}
+> +
+> +static void lpg_apply(struct lpg_channel *chan)
+> +{
+> +	lpg_disable_glitch(chan);
+> +	lpg_apply_freq(chan);
+> +	lpg_apply_pwm_value(chan);
+> +	lpg_apply_control(chan);
+> +	lpg_apply_sync(chan);
+> +	lpg_apply_lut_control(chan);
+> +	lpg_enable_glitch(chan);
+> +}
+> +
+> +static void lpg_brightness_set(struct lpg_led *led, struct led_classdev *cdev,
+> +			       struct mc_subled *subleds)
+> +{
+> +	enum led_brightness brightness;
+> +	struct lpg_channel *chan;
+> +	unsigned int triled_enabled = 0;
+> +	unsigned int triled_mask = 0;
+> +	unsigned int lut_mask = 0;
+> +	unsigned int duty;
+> +	struct lpg *lpg = led->lpg;
+> +	int i;
+> +
+> +	for (i = 0; i < led->num_channels; i++) {
+> +		chan = led->channels[i];
+> +		brightness = subleds[i].brightness;
+> +
+> +		if (brightness == LED_OFF) {
+> +			chan->enabled = false;
+> +			chan->ramp_enabled = false;
+> +		} else if (chan->pattern_lo_idx != chan->pattern_hi_idx) {
+> +			lpg_calc_freq(chan, NSEC_PER_MSEC);
+> +
+> +			chan->enabled = true;
+> +			chan->ramp_enabled = true;
+> +
+> +			lut_mask |= chan->lut_mask;
+> +			triled_enabled |= chan->triled_mask;
+> +		} else {
+> +			lpg_calc_freq(chan, NSEC_PER_MSEC);
+> +
+> +			duty = div_u64(brightness * chan->period, cdev->max_brightness);
+> +			lpg_calc_duty(chan, duty);
+> +			chan->enabled = true;
+> +			chan->ramp_enabled = false;
+> +
+> +			triled_enabled |= chan->triled_mask;
+> +		}
+> +
+> +		triled_mask |= chan->triled_mask;
+> +
+> +		lpg_apply(chan);
+> +	}
+> +
+> +	/* Toggle triled lines */
+> +	if (triled_mask)
+> +		triled_set(lpg, triled_mask, triled_enabled);
+> +
+> +	/* Trigger start of ramp generator(s) */
+> +	if (lut_mask)
+> +		lpg_lut_sync(lpg, lut_mask);
+> +}
+> +
+> +static void lpg_brightness_single_set(struct led_classdev *cdev,
+> +				      enum led_brightness value)
+> +{
+> +	struct lpg_led *led = container_of(cdev, struct lpg_led, cdev);
+> +	struct mc_subled info;
+> +
+> +	info.brightness = value;
+> +	lpg_brightness_set(led, cdev, &info);
+> +}
+> +
+> +static void lpg_brightness_mc_set(struct led_classdev *cdev,
+> +				  enum led_brightness value)
+> +{
+> +	struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
+> +	struct lpg_led *led = container_of(mc, struct lpg_led, mcdev);
+> +
+> +	led_mc_calc_color_components(mc, value);
+> +	lpg_brightness_set(led, cdev, mc->subled_info);
+> +}
+> +
+> +static int lpg_blink_set(struct lpg_led *led,
+> +			 unsigned long *delay_on, unsigned long *delay_off)
+> +{
+> +	struct lpg_channel *chan;
+> +	unsigned int period;
+> +	unsigned int triled_mask = 0;
+> +	struct lpg *lpg = led->lpg;
+> +	u64 duty;
+> +	int i;
+> +
+> +	if (!*delay_on && !*delay_off) {
+> +		*delay_on = 500;
+> +		*delay_off = 500;
+> +	}
+> +
+> +	duty = *delay_on * NSEC_PER_MSEC;
+> +	period = (*delay_on + *delay_off) * NSEC_PER_MSEC;
+> +
+> +	for (i = 0; i < led->num_channels; i++) {
+> +		chan = led->channels[i];
+> +
+> +		lpg_calc_freq(chan, period);
+> +		lpg_calc_duty(chan, duty);
+> +
+> +		chan->enabled = true;
+> +		chan->ramp_enabled = false;
+> +
+> +		triled_mask |= chan->triled_mask;
+> +
+> +		lpg_apply(chan);
+> +	}
+> +
+> +	/* Enable triled lines */
+> +	triled_set(lpg, triled_mask, triled_mask);
+> +
+> +	chan = led->channels[0];
+> +	duty = div_u64(chan->pwm_value * chan->period, LPG_RESOLUTION);
+> +	*delay_on = div_u64(duty, NSEC_PER_MSEC);
+> +	*delay_off = div_u64(chan->period - duty, NSEC_PER_MSEC);
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpg_blink_single_set(struct led_classdev *cdev,
+> +				unsigned long *delay_on, unsigned long *delay_off)
+> +{
+> +	struct lpg_led *led = container_of(cdev, struct lpg_led, cdev);
+> +
+> +	return lpg_blink_set(led, delay_on, delay_off);
+> +}
+> +
+> +static int lpg_blink_mc_set(struct led_classdev *cdev,
+> +			    unsigned long *delay_on, unsigned long *delay_off)
+> +{
+> +	struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
+> +	struct lpg_led *led = container_of(mc, struct lpg_led, mcdev);
+> +
+> +	return lpg_blink_set(led, delay_on, delay_off);
+> +}
+> +
+> +static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *pattern,
+> +			   u32 len, int repeat)
+> +{
+> +	struct lpg_channel *chan;
+> +	struct lpg *lpg = led->lpg;
+> +	unsigned int hi_pause;
+> +	unsigned int lo_pause;
+> +	unsigned int lo_idx;
+> +	unsigned int hi_idx;
+> +	bool ping_pong = true;
+> +	int brightness_a;
+> +	int brightness_b;
+> +	int ret;
+> +	int i;
+> +
+> +	/* Only support oneshot or indefinite loops, due to limited pattern space */
+> +	if (repeat != -1 && repeat != 1)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * The LPG plays patterns with at a fixed pace, a "low pause" can be
+> +	 * performed before the pattern and a "high pause" after. In order to
+> +	 * save space the pattern can be played in "ping pong" mode, in which
+> +	 * the pattern is first played forward, then "high pause" is applied,
+> +	 * then the pattern is played backwards and finally the "low pause" is
+> +	 * applied.
+> +	 *
+> +	 * The delta_t of the first entry is used to determine the pace of the
+> +	 * pattern.
+> +	 *
+> +	 * If the specified pattern is a palindrome the ping pong mode is
+> +	 * enabled. In this scenario the delta_t of the last entry determines
+> +	 * the "low pause" time and the delta_t of the middle entry (i.e. the
+> +	 * last in the programmed pattern) determines the "high pause". If the
+> +	 * pattern consists of an odd number of values, no "high pause" is
+> +	 * used.
+> +	 *
+> +	 * When ping pong mode is not selected, the delta_t of the last entry
+> +	 * is used as "high pause". No "low pause" is used.
+> +	 *
+> +	 * delta_t of any other members of the pattern is ignored.
+> +	 */
+> +
+> +	/* Detect palindromes and use "ping pong" to reduce LUT usage */
+> +	for (i = 0; i < len / 2; i++) {
+> +		brightness_a = pattern[i].brightness;
+> +		brightness_b = pattern[len - i - 1].brightness;
+> +
+> +		if (brightness_a != brightness_b) {
+> +			ping_pong = false;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (ping_pong) {
+> +		if (len % 2)
+> +			hi_pause = 0;
+> +		else
+> +			hi_pause = pattern[(len + 1) / 2].delta_t;
+> +		lo_pause = pattern[len - 1].delta_t;
+> +
+> +		len = (len + 1) / 2;
+> +	} else {
+> +		hi_pause = pattern[len - 1].delta_t;
+> +		lo_pause = 0;
+> +	}
+> +
+> +	ret = lpg_lut_store(lpg, pattern, len, &lo_idx, &hi_idx);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	for (i = 0; i < led->num_channels; i++) {
+> +		chan = led->channels[i];
+> +
+> +		chan->ramp_tick_ms = pattern[0].delta_t;
+> +		chan->ramp_ping_pong = ping_pong;
+> +		chan->ramp_oneshot = repeat != -1;
+> +
+> +		chan->ramp_lo_pause_ms = lo_pause;
+> +		chan->ramp_hi_pause_ms = hi_pause;
+> +
+> +		chan->pattern_lo_idx = lo_idx;
+> +		chan->pattern_hi_idx = hi_idx;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpg_pattern_single_set(struct led_classdev *cdev,
+> +				  struct led_pattern *pattern, u32 len,
+> +				  int repeat)
+> +{
+> +	struct lpg_led *led = container_of(cdev, struct lpg_led, cdev);
+> +	int ret;
+> +
+> +	ret = lpg_pattern_set(led, pattern, len, repeat);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	lpg_brightness_single_set(cdev, LED_FULL);
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpg_pattern_mc_set(struct led_classdev *cdev,
+> +			      struct led_pattern *pattern, u32 len,
+> +			      int repeat)
+> +{
+> +	struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
+> +	struct lpg_led *led = container_of(mc, struct lpg_led, mcdev);
+> +	int ret;
+> +
+> +	ret = lpg_pattern_set(led, pattern, len, repeat);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	led_mc_calc_color_components(mc, LED_FULL);
+> +	lpg_brightness_set(led, cdev, mc->subled_info);
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpg_pattern_clear(struct lpg_led *led)
+> +{
+> +	struct lpg_channel *chan;
+> +	struct lpg *lpg = led->lpg;
+> +	int i;
+> +
+> +	chan = led->channels[0];
+> +	lpg_lut_free(lpg, chan->pattern_lo_idx, chan->pattern_hi_idx);
+> +
+> +	for (i = 0; i < led->num_channels; i++) {
+> +		chan = led->channels[i];
+> +		chan->pattern_lo_idx = 0;
+> +		chan->pattern_hi_idx = 0;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpg_pattern_single_clear(struct led_classdev *cdev)
+> +{
+> +	struct lpg_led *led = container_of(cdev, struct lpg_led, cdev);
+> +
+> +	return lpg_pattern_clear(led);
+> +}
+> +
+> +static int lpg_pattern_mc_clear(struct led_classdev *cdev)
+> +{
+> +	struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
+> +	struct lpg_led *led = container_of(mc, struct lpg_led, mcdev);
+> +
+> +	return lpg_pattern_clear(led);
+> +}
+> +
+> +static int lpg_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+> +{
+> +	struct lpg *lpg = container_of(chip, struct lpg, pwm);
+> +	struct lpg_channel *chan = &lpg->channels[pwm->hwpwm];
+> +
+> +	return chan->in_use ? -EBUSY : 0;
+> +}
+> +
+> +/*
+> + * Limitations:
+> + * - Updating both duty and period is not done atomically, so the output signal
+> + *   will momentarily be a mix of the settings.
+> + */
+> +static int lpg_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+> +			 const struct pwm_state *state)
+> +{
+> +	struct lpg *lpg = container_of(chip, struct lpg, pwm);
+> +	struct lpg_channel *chan = &lpg->channels[pwm->hwpwm];
+> +	int ret;
+> +
+> +	if (state->polarity != PWM_POLARITY_NORMAL)
+> +		return -EINVAL;
+> +
+> +	ret = lpg_calc_freq(chan, state->period);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	lpg_calc_duty(chan, state->duty_cycle);
+> +	chan->enabled = state->enabled;
+> +
+> +	lpg_apply(chan);
+> +
+> +	triled_set(lpg, chan->triled_mask, chan->enabled ? chan->triled_mask : 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static void lpg_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+> +			      struct pwm_state *state)
+> +{
+> +	struct lpg *lpg = container_of(chip, struct lpg, pwm);
+> +	struct lpg_channel *chan = &lpg->channels[pwm->hwpwm];
+> +	u64 duty = DIV_ROUND_UP_ULL(chan->pwm_value * chan->period, LPG_RESOLUTION - 1);
+> +
+> +	state->period = chan->period;
+> +	state->duty_cycle = duty;
+> +	state->polarity = PWM_POLARITY_NORMAL;
+> +	state->enabled = chan->enabled;
+> +}
+> +
+> +static const struct pwm_ops lpg_pwm_ops = {
+> +	.request = lpg_pwm_request,
+> +	.apply = lpg_pwm_apply,
+> +	.get_state = lpg_pwm_get_state,
+> +	.owner = THIS_MODULE,
+> +};
+> +
+> +static int lpg_add_pwm(struct lpg *lpg)
+> +{
+> +	int ret;
+> +
+> +	lpg->pwm.base = -1;
+> +	lpg->pwm.dev = lpg->dev;
+> +	lpg->pwm.npwm = lpg->num_channels;
+> +	lpg->pwm.ops = &lpg_pwm_ops;
+> +
+> +	ret = pwmchip_add(&lpg->pwm);
+> +	if (ret)
+> +		dev_err(lpg->dev, "failed to add PWM chip: ret %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static int lpg_parse_channel(struct lpg *lpg, struct device_node *np,
+> +			     struct lpg_channel **channel)
+> +{
+> +	struct lpg_channel *chan;
+> +	u32 color = LED_COLOR_ID_GREEN;
+> +	u32 reg;
+> +	int ret;
+> +
+> +	ret = of_property_read_u32(np, "reg", &reg);
+> +	if (ret || !reg || reg > lpg->num_channels) {
+> +		dev_err(lpg->dev, "invalid \"reg\" of %pOFn\n", np);
+> +		return -EINVAL;
+> +	}
+> +
+> +	chan = &lpg->channels[reg - 1];
+> +	chan->in_use = true;
+> +
+> +	ret = of_property_read_u32(np, "color", &color);
+> +	if (ret < 0 && ret != -EINVAL) {
+> +		dev_err(lpg->dev, "failed to parse \"color\" of %pOF\n", np);
+> +		return ret;
+> +	}
+> +
+> +	chan->color = color;
+> +
+> +	*channel = chan;
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpg_add_led(struct lpg *lpg, struct device_node *np)
+> +{
+> +	struct led_init_data init_data = {};
+> +	struct led_classdev *cdev;
+> +	struct device_node *child;
+> +	struct mc_subled *info;
+> +	struct lpg_led *led;
+> +	const char *state;
+> +	int num_channels;
+> +	u32 color = 0;
+> +	int ret;
+> +	int i;
+> +
+> +	ret = of_property_read_u32(np, "color", &color);
+> +	if (ret < 0 && ret != -EINVAL) {
+> +		dev_err(lpg->dev, "failed to parse \"color\" of %pOF\n", np);
+> +		return ret;
+> +	}
+> +
+> +	if (color == LED_COLOR_ID_RGB)
+> +		num_channels = of_get_available_child_count(np);
+> +	else
+> +		num_channels = 1;
+> +
+> +	led = devm_kzalloc(lpg->dev, struct_size(led, channels, num_channels), GFP_KERNEL);
+> +	if (!led)
+> +		return -ENOMEM;
+> +
+> +	led->lpg = lpg;
+> +	led->num_channels = num_channels;
+> +
+> +	if (color == LED_COLOR_ID_RGB) {
+> +		info = devm_kcalloc(lpg->dev, num_channels, sizeof(*info), GFP_KERNEL);
+> +		if (!info)
+> +			return -ENOMEM;
+> +		i = 0;
+> +		for_each_available_child_of_node(np, child) {
+> +			ret = lpg_parse_channel(lpg, child, &led->channels[i]);
+> +			if (ret < 0)
+> +				return ret;
+> +
+> +			info[i].color_index = led->channels[i]->color;
+> +			info[i].intensity = LED_FULL;
+> +			i++;
+> +		}
+> +
+> +		led->mcdev.subled_info = info;
+> +		led->mcdev.num_colors = num_channels;
+> +
+> +		cdev = &led->mcdev.led_cdev;
+> +		cdev->brightness_set = lpg_brightness_mc_set;
+> +		cdev->blink_set = lpg_blink_mc_set;
+> +
+> +		/* Register pattern accessors only if we have a LUT block */
+> +		if (lpg->lut_base) {
+> +			cdev->pattern_set = lpg_pattern_mc_set;
+> +			cdev->pattern_clear = lpg_pattern_mc_clear;
+> +		}
+> +	} else {
+> +		ret = lpg_parse_channel(lpg, np, &led->channels[0]);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		cdev = &led->cdev;
+> +		cdev->brightness_set = lpg_brightness_single_set;
+> +		cdev->blink_set = lpg_blink_single_set;
+> +
+> +		/* Register pattern accessors only if we have a LUT block */
+> +		if (lpg->lut_base) {
+> +			cdev->pattern_set = lpg_pattern_single_set;
+> +			cdev->pattern_clear = lpg_pattern_single_clear;
+> +		}
+> +	}
+> +
+> +	cdev->default_trigger = of_get_property(np, "linux,default-trigger", NULL);
+> +	cdev->max_brightness = 255;
+> +
+> +	if (!of_property_read_string(np, "default-state", &state) &&
+> +	    !strcmp(state, "on"))
+> +		cdev->brightness = LED_FULL;
+> +	else
+> +		cdev->brightness = LED_OFF;
+> +
+> +	cdev->brightness_set(cdev, cdev->brightness);
+> +
+> +	init_data.fwnode = of_fwnode_handle(np);
+> +
+> +	if (color == LED_COLOR_ID_RGB)
+> +		ret = devm_led_classdev_multicolor_register_ext(lpg->dev, &led->mcdev, &init_data);
+> +	else
+> +		ret = devm_led_classdev_register_ext(lpg->dev, &led->cdev, &init_data);
+> +	if (ret)
+> +		dev_err(lpg->dev, "unable to register %s\n", cdev->name);
+> +
+> +	return ret;
+> +}
+> +
+> +static int lpg_init_channels(struct lpg *lpg)
+> +{
+> +	const struct lpg_data *data = lpg->data;
+> +	int i;
+> +
+> +	lpg->num_channels = data->num_channels;
+> +	lpg->channels = devm_kcalloc(lpg->dev, data->num_channels,
+> +				     sizeof(struct lpg_channel), GFP_KERNEL);
+> +	if (!lpg->channels)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < data->num_channels; i++) {
+> +		lpg->channels[i].lpg = lpg;
+> +		lpg->channels[i].base = data->channels[i].base;
+> +		lpg->channels[i].triled_mask = data->channels[i].triled_mask;
+> +		lpg->channels[i].lut_mask = BIT(i);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpg_init_triled(struct lpg *lpg)
+> +{
+> +	struct device_node *np = lpg->dev->of_node;
+> +	int ret;
+> +
+> +	/* Skip initialization if we don't have a triled block */
+> +	if (!lpg->data->triled_base)
+> +		return 0;
+> +
+> +	lpg->triled_base = lpg->data->triled_base;
+> +	lpg->triled_has_atc_ctl = lpg->data->triled_has_atc_ctl;
+> +	lpg->triled_has_src_sel = lpg->data->triled_has_src_sel;
+> +
+> +	if (lpg->triled_has_src_sel) {
+> +		ret = of_property_read_u32(np, "qcom,power-source", &lpg->triled_src);
+> +		if (ret || lpg->triled_src == 2 || lpg->triled_src > 3) {
+> +			dev_err(lpg->dev, "invalid power source\n");
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	/* Disable automatic trickle charge LED */
+> +	if (lpg->triled_has_atc_ctl)
+> +		regmap_write(lpg->map, lpg->triled_base + TRI_LED_ATC_CTL, 0);
+> +
+> +	/* Configure power source */
+> +	if (lpg->triled_has_src_sel)
+> +		regmap_write(lpg->map, lpg->triled_base + TRI_LED_SRC_SEL, lpg->triled_src);
+> +
+> +	/* Default all outputs to off */
+> +	regmap_write(lpg->map, lpg->triled_base + TRI_LED_EN_CTL, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpg_init_lut(struct lpg *lpg)
+> +{
+> +	const struct lpg_data *data = lpg->data;
+> +	size_t bitmap_size;
+> +
+> +	if (!data->lut_base)
+> +		return 0;
+> +
+> +	lpg->lut_base = data->lut_base;
+> +	lpg->lut_size = data->lut_size;
+> +
+> +	bitmap_size = BITS_TO_BYTES(lpg->lut_size);
+> +	lpg->lut_bitmap = devm_kzalloc(lpg->dev, bitmap_size, GFP_KERNEL);
+> +	if (!lpg->lut_bitmap)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpg_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *np;
+> +	struct lpg *lpg;
+> +	int ret;
+> +	int i;
+> +
+> +	lpg = devm_kzalloc(&pdev->dev, sizeof(*lpg), GFP_KERNEL);
+> +	if (!lpg)
+> +		return -ENOMEM;
+> +
+> +	lpg->data = of_device_get_match_data(&pdev->dev);
+> +	if (!lpg->data)
+> +		return -EINVAL;
+> +
+> +	platform_set_drvdata(pdev, lpg);
+> +
+> +	lpg->dev = &pdev->dev;
+> +
+> +	lpg->map = dev_get_regmap(pdev->dev.parent, NULL);
+> +	if (!lpg->map) {
+> +		dev_err(&pdev->dev, "parent regmap unavailable\n");
+> +		return -ENXIO;
+> +	}
+> +
+> +	ret = lpg_init_channels(lpg);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = lpg_parse_dtest(lpg);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = lpg_init_triled(lpg);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = lpg_init_lut(lpg);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	for_each_available_child_of_node(pdev->dev.of_node, np) {
+> +		ret = lpg_add_led(lpg, np);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	for (i = 0; i < lpg->num_channels; i++)
+> +		lpg_apply_dtest(&lpg->channels[i]);
+> +
+> +	return lpg_add_pwm(lpg);
+> +}
+> +
+> +static int lpg_remove(struct platform_device *pdev)
+> +{
+> +	struct lpg *lpg = platform_get_drvdata(pdev);
+> +
+> +	pwmchip_remove(&lpg->pwm);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct lpg_data pm8916_pwm_data = {
+> +	.pwm_9bit_mask = BIT(2),
+> +
+> +	.num_channels = 1,
+> +	.channels = (const struct lpg_channel_data[]) {
+> +		{ .base = 0xbc00 },
+> +	},
+> +};
+> +
+> +static const struct lpg_data pm8941_lpg_data = {
+> +	.lut_base = 0xb000,
+> +	.lut_size = 64,
+> +
+> +	.triled_base = 0xd000,
+> +	.triled_has_atc_ctl = true,
+> +	.triled_has_src_sel = true,
+> +
+> +	.pwm_9bit_mask = 3 << 4,
+> +
+> +	.num_channels = 8,
+> +	.channels = (const struct lpg_channel_data[]) {
+> +		{ .base = 0xb100 },
+> +		{ .base = 0xb200 },
+> +		{ .base = 0xb300 },
+> +		{ .base = 0xb400 },
+> +		{ .base = 0xb500, .triled_mask = BIT(5) },
+> +		{ .base = 0xb600, .triled_mask = BIT(6) },
+> +		{ .base = 0xb700, .triled_mask = BIT(7) },
+> +		{ .base = 0xb800 },
+> +	},
+> +};
+> +
+> +static const struct lpg_data pm8994_lpg_data = {
+> +	.lut_base = 0xb000,
+> +	.lut_size = 64,
+> +
+> +	.pwm_9bit_mask = 3 << 4,
+> +
+> +	.num_channels = 6,
+> +	.channels = (const struct lpg_channel_data[]) {
+> +		{ .base = 0xb100 },
+> +		{ .base = 0xb200 },
+> +		{ .base = 0xb300 },
+> +		{ .base = 0xb400 },
+> +		{ .base = 0xb500 },
+> +		{ .base = 0xb600 },
+> +	},
+> +};
+> +
+> +static const struct lpg_data pmi8994_lpg_data = {
+> +	.lut_base = 0xb000,
+> +	.lut_size = 24,
+> +
+> +	.triled_base = 0xd000,
+> +	.triled_has_atc_ctl = true,
+> +	.triled_has_src_sel = true,
+> +
+> +	.pwm_9bit_mask = BIT(4),
+> +
+> +	.num_channels = 4,
+> +	.channels = (const struct lpg_channel_data[]) {
+> +		{ .base = 0xb100, .triled_mask = BIT(5) },
+> +		{ .base = 0xb200, .triled_mask = BIT(6) },
+> +		{ .base = 0xb300, .triled_mask = BIT(7) },
+> +		{ .base = 0xb400 },
+> +	},
+> +};
+> +
+> +static const struct lpg_data pmi8998_lpg_data = {
+> +	.lut_base = 0xb000,
+> +	.lut_size = 49,
+> +
+> +	.triled_base = 0xd000,
+> +
+> +	.pwm_9bit_mask = BIT(4),
+> +
+> +	.num_channels = 6,
+> +	.channels = (const struct lpg_channel_data[]) {
+> +		{ .base = 0xb100 },
+> +		{ .base = 0xb200 },
+> +		{ .base = 0xb300, .triled_mask = BIT(5) },
+> +		{ .base = 0xb400, .triled_mask = BIT(6) },
+> +		{ .base = 0xb500, .triled_mask = BIT(7) },
+> +		{ .base = 0xb600 },
+> +	},
+> +};
+> +
+> +static const struct lpg_data pm8150b_lpg_data = {
+> +	.lut_base = 0xb000,
+> +	.lut_size = 24,
+> +
+> +	.triled_base = 0xd000,
+> +
+> +	.pwm_9bit_mask = BIT(4),
+> +
+> +	.num_channels = 2,
+> +	.channels = (const struct lpg_channel_data[]) {
+> +		{ .base = 0xb100, .triled_mask = BIT(7) },
+> +		{ .base = 0xb200, .triled_mask = BIT(6) },
+> +	},
+> +};
+> +
+> +static const struct lpg_data pm8150l_lpg_data = {
+> +	.lut_base = 0xb000,
+> +	.lut_size = 48,
+> +
+> +	.triled_base = 0xd000,
+> +
+> +	.pwm_9bit_mask = BIT(4),
+> +
+> +	.num_channels = 5,
+> +	.channels = (const struct lpg_channel_data[]) {
+> +		{ .base = 0xb100, .triled_mask = BIT(7) },
+> +		{ .base = 0xb200, .triled_mask = BIT(6) },
+> +		{ .base = 0xb300, .triled_mask = BIT(5) },
+> +		{ .base = 0xbc00 },
+> +		{ .base = 0xbd00 },
+> +
+> +	},
+> +};
+> +
+> +static const struct of_device_id lpg_of_table[] = {
+> +	{ .compatible = "qcom,pm8150b-lpg", .data = &pm8150b_lpg_data },
+> +	{ .compatible = "qcom,pm8150l-lpg", .data = &pm8150l_lpg_data },
+> +	{ .compatible = "qcom,pm8916-pwm", .data = &pm8916_pwm_data },
+> +	{ .compatible = "qcom,pm8941-lpg", .data = &pm8941_lpg_data },
+> +	{ .compatible = "qcom,pm8994-lpg", .data = &pm8994_lpg_data },
+> +	{ .compatible = "qcom,pmi8994-lpg", .data = &pmi8994_lpg_data },
+> +	{ .compatible = "qcom,pmi8998-lpg", .data = &pmi8998_lpg_data },
+> +	{ .compatible = "qcom,pmc8180c-lpg", .data = &pm8150l_lpg_data },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, lpg_of_table);
+> +
+> +static struct platform_driver lpg_driver = {
+> +	.probe = lpg_probe,
+> +	.remove = lpg_remove,
+> +	.driver = {
+> +		.name = "qcom-spmi-lpg",
+> +		.of_match_table = lpg_of_table,
+> +	},
+> +};
+> +module_platform_driver(lpg_driver);
+> +
+> +MODULE_DESCRIPTION("Qualcomm LPG LED driver");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.29.2
+> 
