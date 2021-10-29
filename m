@@ -2,89 +2,79 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A69CFC433F5
-	for <linux-leds@archiver.kernel.org>; Wed, 27 Oct 2021 21:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 738B6C433F5
+	for <linux-leds@archiver.kernel.org>; Fri, 29 Oct 2021 11:45:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 875E960E74
-	for <linux-leds@archiver.kernel.org>; Wed, 27 Oct 2021 21:29:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5769E60FC4
+	for <linux-leds@archiver.kernel.org>; Fri, 29 Oct 2021 11:45:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232566AbhJ0Vbp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 27 Oct 2021 17:31:45 -0400
-Received: from relay04.th.seeweb.it ([5.144.164.165]:45369 "EHLO
-        relay04.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233423AbhJ0Vb1 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 27 Oct 2021 17:31:27 -0400
-Received: from SoMainline.org (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 810521F673;
-        Wed, 27 Oct 2021 23:19:29 +0200 (CEST)
-Date:   Wed, 27 Oct 2021 23:19:28 +0200
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        id S229816AbhJ2Lrr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 29 Oct 2021 07:47:47 -0400
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:11457 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229692AbhJ2Lrq (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 29 Oct 2021 07:47:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1635507918; x=1667043918;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=E5Oi1K3kkRiAM71vuOqErVhZeeiDouXckBeZRHGiwKA=;
+  b=BAupIeHwEtW5siaRSxsP6+hO4PUWAPhmQbOXvFud34x1JLcjBlTW4EfB
+   vTufZd/xmEiIBTOjD7xy8r4ZsQ1vO0zjUKMpV0OyCronyaesfmhhnu3+m
+   wUW1zHNwORIF5WgF4HYnnsezJpiOeS2NSICUYziHZMGAUDHdhyU4iP595
+   k=;
+Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
+  by alexa-out.qualcomm.com with ESMTP; 29 Oct 2021 04:45:18 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2021 04:45:17 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.922.7;
+ Fri, 29 Oct 2021 04:45:16 -0700
+Received: from c-skakit-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.922.7;
+ Fri, 29 Oct 2021 04:45:13 -0700
+From:   Satya Priya <quic_c_skakit@quicinc.com>
+To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Andy Gross <agross@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>,
-        Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Luca Weiss <luca@z3ntu.xyz>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>
-Subject: Re: [PATCH v10 2/2] leds: Add driver for Qualcomm LPG
-Message-ID: <20211027211928.tjybwy2lokj6eoun@SoMainline.org>
-References: <20211010043912.136640-1-bjorn.andersson@linaro.org>
- <20211010043912.136640-2-bjorn.andersson@linaro.org>
- <YXL0DyyPkS4/wfB7@ripper>
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     <mka@chromium.org>, <swboyd@chromium.org>,
+        <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        Satya Priya <quic_c_skakit@quicinc.com>
+Subject: [PATCH V3 0/4] Add PM8350C PMIC PWM support for backlight
+Date:   Fri, 29 Oct 2021 17:14:49 +0530
+Message-ID: <1635507893-25490-1-git-send-email-quic_c_skakit@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YXL0DyyPkS4/wfB7@ripper>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Bjorn,
+This series depends on [1], which adds driver for Qualcomm LPG.
 
-On 2021-10-22 10:25:35, Bjorn Andersson wrote:
-> On Sat 09 Oct 21:39 PDT 2021, Bjorn Andersson wrote:
-> 
-> > The Light Pulse Generator (LPG) is a PWM-block found in a wide range of
-> > PMICs from Qualcomm. These PMICs typically comes with 1-8 LPG instances,
-> > with their output being routed to various other components, such as
-> > current sinks or GPIOs.
-> > 
-> > Each LPG instance can operate on fixed parameters or based on a shared
-> > lookup-table, altering the duty cycle over time. This provides the means
-> > for hardware assisted transitions of LED brightness.
-> > 
-> > A typical use case for the fixed parameter mode is to drive a PWM
-> > backlight control signal, the driver therefor allows each LPG instance
-> > to be exposed to the kernel either through the LED framework or the PWM
-> > framework.
-> > 
-> > A typical use case for the LED configuration is to drive RGB LEDs in
-> > smartphones etc, for which the driver support multiple channels to be
-> > ganged up to a MULTICOLOR LED. In this configuration the pattern
-> > generators will be synchronized, to allow for multi-color patterns.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> 
-> Any feedback on this?
+[1] https://patchwork.kernel.org/project/linux-arm-msm/list/?series=560587&state=%2A&archive=both
 
-I asked in #linux-msm whether anything is wrong with the patterns,
-since my Sony Discovery (sdm630 with a pm660l) blinks way quicker on a
-pattern that's supposed to stay on for 1s and off for 1s:
+Satya Priya (1):
+  arm64: dts: qcom: Enable pm8350c pwm for sc7280-idp2
 
-    echo "0 1000 255 1000" > /sys/class/leds/rgb\:status/hw_pattern
+satya priya (3):
+  dt-bindings: leds: Add pm8350c pmic support
+  leds: Add pm8350c support to Qualcomm LPG driver
+  arm64: dts: qcom: pm8350c: Add pwm support
 
-It however seems to be broken in the same way on an older version now
-(this might be v9 or v8) which I don't remember to be the case.  Can you
-double-check if this is all working fine on your side?  If so, I'll have
-to find some time to debug it on my end.
+ Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml |  1 +
+ arch/arm64/boot/dts/qcom/pm8350c.dtsi                     |  7 +++++++
+ arch/arm64/boot/dts/qcom/sc7280-idp2.dts                  |  4 ++++
+ drivers/leds/rgb/leds-qcom-lpg.c                          | 13 +++++++++++++
+ 4 files changed, 25 insertions(+)
 
-Thanks!
-- Marijn
+-- 
+2.7.4
+
