@@ -2,57 +2,89 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86392C433F5
-	for <linux-leds@archiver.kernel.org>; Tue, 16 Nov 2021 09:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B56EBC433FE
+	for <linux-leds@archiver.kernel.org>; Tue, 16 Nov 2021 16:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EA6A63214
-	for <linux-leds@archiver.kernel.org>; Tue, 16 Nov 2021 09:01:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 951BF61A52
+	for <linux-leds@archiver.kernel.org>; Tue, 16 Nov 2021 16:50:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232486AbhKPJEW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 16 Nov 2021 04:04:22 -0500
-Received: from mail.bizjoindeal.pl ([80.211.97.164]:56636 "EHLO
-        mail.bizjoindeal.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232694AbhKPJEQ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 16 Nov 2021 04:04:16 -0500
-X-Greylist: delayed 579 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Nov 2021 04:04:16 EST
-Received: by mail.bizjoindeal.pl (Postfix, from userid 1001)
-        id 81993A299C; Tue, 16 Nov 2021 08:51:33 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=bizjoindeal.pl;
-        s=mail; t=1637052696;
-        bh=JZuQ1fK7zFtz2oeUB7Xfid9vb7kUywdmDd2OluR8ywA=;
-        h=Date:From:To:Subject:From;
-        b=sf7j2Z3P4vifTwzULPkJnO9G7reQw/oGZPl6dvfA5lmmMixe8DO8NDjeXI2PBSDeX
-         E2x0Jv17VJFkKbBfwIXyvJ/oG+BGNesgaHV+khfphy10hIj8eoqfmDf8FJ5MY4LH5q
-         d81hg5zwssrxE/FV0XXQg7NRANuxW49n1h0jYUJ8aeYFxvc78BcrFjGMRw37VQZ8id
-         d9pY5PuH2kkP6AzK/6slJok5mxa9TIwun9GwfpJwnKRvPtE9L67VkNpgzqt7MSF6Pc
-         QNKq3Pm2dtYI673EYBe7VKIUdnI35/9q1GQg9nDsWSEiylEMvH1eNmoYRPjKHEVLlC
-         S+F5QJ1gFtwbg==
-Received: by mail.bizjoindeal.pl for <linux-leds@vger.kernel.org>; Tue, 16 Nov 2021 08:51:12 GMT
-Message-ID: <20211116074500-0.1.60.f149.0.gm96bp1rg6@bizjoindeal.pl>
-Date:   Tue, 16 Nov 2021 08:51:12 GMT
-From:   "Dorian Kwiatkowski" <dorian.kwiatkowski@bizjoindeal.pl>
-To:     <linux-leds@vger.kernel.org>
-Subject: Fotowoltaika dla firm
-X-Mailer: mail.bizjoindeal.pl
+        id S236882AbhKPQxW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 16 Nov 2021 11:53:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55490 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237079AbhKPQxS (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 16 Nov 2021 11:53:18 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9989D61549;
+        Tue, 16 Nov 2021 16:50:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637081421;
+        bh=mariJGJLRCU1V8U+1zEQDC5Ctn63ipS/SXz7gKdrEJY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=URYP1lNgzTC7I0AONpafX2DmXTz/LIpjEjSlEj6zUe6r98sT1Uq5Q8TVH0nR6Y6hj
+         PxSYXxaxYEYy3AWKu0e27AcRZdELlwc64BRZsbYfU0f0mItA32Z+aYxKSTvRGua5nW
+         +l/16Zc5umP+RVX+1AC7hwjiWfBS0HaACNqSqExEh9pzqStgjAIjD3IabAuGV3gdWz
+         7tb/+Mf/6lF2Jxg58V0JxhO7foZJAyPP5/BWvnby69wes1OXhN2mXMaSCtRqtpeLi4
+         s21SNqlBuNAXp4EiNRUPxkRvhQYra7FIms6cQQXmhVUN2GCchZ8wtzFd7nzCJLUV+/
+         FJecgFbodz2mw==
+Received: by mail-ed1-f41.google.com with SMTP id r11so26879409edd.9;
+        Tue, 16 Nov 2021 08:50:21 -0800 (PST)
+X-Gm-Message-State: AOAM530qnI7oqlLdm3SGnfMYlAt1mINm1QH+hCzN3muw3yixp9VlWK+m
+        Re3+HaCZr0SoOqhoEVStcAUr5A3d1nxLFe8OAw==
+X-Google-Smtp-Source: ABdhPJwpeeor9bitplv96OWutWrM/OLr2WsQy9llndEbBRodAS9WBBUdGUQgDXJ0BT5D5eEOLQjQxhlVbVhuQKqgH9g=
+X-Received: by 2002:a17:907:16ac:: with SMTP id hc44mr11230766ejc.363.1637081419992;
+ Tue, 16 Nov 2021 08:50:19 -0800 (PST)
 MIME-Version: 1.0
+References: <20210716081731.80118-1-gene.chen.richtek@gmail.com>
+ <20210716081731.80118-3-gene.chen.richtek@gmail.com> <20211115140343.GA13493@duo.ucw.cz>
+In-Reply-To: <20211115140343.GA13493@duo.ucw.cz>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 16 Nov 2021 10:50:08 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJRMVE163LaHTbtFARc4f_qg33bfQx+sD3ukce_xQF+gA@mail.gmail.com>
+Message-ID: <CAL_JsqJRMVE163LaHTbtFARc4f_qg33bfQx+sD3ukce_xQF+gA@mail.gmail.com>
+Subject: Re: [PATCH v15 2/2] leds: mt6360: Add LED driver for MT6360
+To:     Pavel Machek <pavel@ucw.cz>,
+        Gene Chen <gene.chen.richtek@gmail.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Gene Chen <gene_chen@richtek.com>, Wilma.Wu@mediatek.com,
+        =?UTF-8?B?c2h1ZmFuX2xlZSjmnY7mm7jluIYp?= <shufan_lee@richtek.com>,
+        =?UTF-8?B?Y3lfaHVhbmco6buD5ZWf5Y6fKQ==?= <cy_huang@richtek.com>,
+        benjamin.chao@mediatek.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Mon, Nov 15, 2021 at 8:04 AM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> On Fri 2021-07-16 16:17:31, Gene Chen wrote:
+> > From: Gene Chen <gene_chen@richtek.com>
+> >
+> > Add MT6360 LED driver include 2-channel Flash LED with torch/strobe mode,
+> > 3-channel RGB LED support Register/Flash/Breath Mode, and 1-channel for
+> > moonlight LED.
+> >
+> > Signed-off-by: Gene Chen <gene_chen@richtek.com>
+> > Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>
+> Thanks, applied.
 
-kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC dostrzegam mo=C5=BC=
-liwo=C5=9B=C4=87 redukcji op=C5=82at za pr=C4=85d.
+Now linux-next is broken:
 
-Odpowiednio dobrana instalacja fotowoltaiczna to rozwi=C4=85zanie, kt=C3=B3=
-re pozwala wygenerowa=C4=87 spore oszcz=C4=99dno=C5=9Bci w skali roku.
+Error: Documentation/devicetree/bindings/leds/leds-mt6360.example.dts:114.24-25
+syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:385:
+Documentation/devicetree/bindings/leds/leds-mt6360.example.dt.yaml]
+Error 1
 
-Chcia=C5=82bym porozmawia=C4=87 z Pa=C5=84stwem o tego typu rozwi=C4=85za=
-niu, a tak=C5=BCe przedstawi=C4=87 wst=C4=99pne kalkulacje.
+I may have reviewed this, but the last 2 versions didn't go to DT list
+and no checks ran.
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani?
-
-Pozdrawiam,
-Dorian Kwiatkowski
+Rob
