@@ -2,22 +2,23 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51047C4321E
-	for <linux-leds@archiver.kernel.org>; Fri, 26 Nov 2021 14:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB29AC433EF
+	for <linux-leds@archiver.kernel.org>; Fri, 26 Nov 2021 14:24:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377744AbhKZOQP (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 26 Nov 2021 09:16:15 -0500
-Received: from thoth.sbs.de ([192.35.17.2]:47657 "EHLO thoth.sbs.de"
+        id S1353548AbhKZO2C (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 26 Nov 2021 09:28:02 -0500
+Received: from lizzard.sbs.de ([194.138.37.39]:57752 "EHLO lizzard.sbs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1377704AbhKZOOL (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Fri, 26 Nov 2021 09:14:11 -0500
+        id S240922AbhKZO0C (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Fri, 26 Nov 2021 09:26:02 -0500
+X-Greylist: delayed 713 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Nov 2021 09:26:01 EST
 Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id 1AQEAWjK018587
+        by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 1AQEAVDo014275
         (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Nov 2021 15:10:32 +0100
+        Fri, 26 Nov 2021 15:10:31 +0100
 Received: from localhost.localdomain ([139.22.47.90])
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1AQEAUXH030519;
-        Fri, 26 Nov 2021 15:10:32 +0100
+        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1AQEAUXF030519;
+        Fri, 26 Nov 2021 15:10:30 +0100
 From:   Henning Schild <henning.schild@siemens.com>
 To:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
         platform-driver-x86@vger.kernel.org, linux-watchdog@vger.kernel.org
@@ -32,289 +33,90 @@ Cc:     Srikanth Krishnakar <skrishnakar@gmail.com>,
         Pavel Machek <pavel@ucw.cz>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         Enrico Weigelt <lkml@metux.net>
-Subject: [PATCH v4 2/4] leds: simatic-ipc-leds: add new driver for Siemens Industial PCs
-Date:   Fri, 26 Nov 2021 15:10:25 +0100
-Message-Id: <20211126141027.16161-3-henning.schild@siemens.com>
+Subject: [PATCH v4 0/4] add device drivers for Siemens Industrial PCs
+Date:   Fri, 26 Nov 2021 15:10:23 +0100
+Message-Id: <20211126141027.16161-1-henning.schild@siemens.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211126141027.16161-1-henning.schild@siemens.com>
-References: <20211126141027.16161-1-henning.schild@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This driver adds initial support for several devices from Siemens. It is
-based on a platform driver introduced in an earlier commit.
+changes since v3:
 
-Signed-off-by: Henning Schild <henning.schild@siemens.com>
----
- drivers/leds/Kconfig                   |   3 +
- drivers/leds/Makefile                  |   3 +
- drivers/leds/simple/Kconfig            |  11 ++
- drivers/leds/simple/Makefile           |   2 +
- drivers/leds/simple/simatic-ipc-leds.c | 202 +++++++++++++++++++++++++
- 5 files changed, 221 insertions(+)
+- fix io access width and region reservations
+- fix style in p1
+
+changes since v2:
+
+- remove "simatic-ipc" prefix from LED names
+- fix style issues found in v2, mainly LED driver
+- fix OEM specific dmi code, and remove magic numbers
+- more "simatic_ipc" name prefixing
+- improved pmc quirk code using callbacks
+
+changes since v1:
+
+- fixed lots of style issues found in v1
+  - (debug) printing
+  - header ordering
+- fixed license issues GPLv2 and SPDX in all files
+- module_platform_driver instead of __init __exit
+- wdt simplifications cleanup
+- lots of fixes in wdt driver, all that was found in v1
+- fixed dmi length in dmi helper
+- changed LED names to allowed ones
+- move led driver to simple/
+- switched pmc_atom to dmi callback with global variable
+
+
+This series adds support for watchdogs and leds of several x86 devices
+from Siemens.
+
+It is structured with a platform driver that mainly does identification
+of the machines. It might trigger loading of the actual device drivers
+by attaching devices to the platform bus.
+
+The identification is vendor specific, parsing a special binary DMI
+entry. The implementation of that platform identification is applied on
+pmc_atom clock quirks in the final patch.
+
+It is all structured in a way that we can easily add more devices and
+more platform drivers later. Internally we have some more code for
+hardware monitoring, more leds, watchdogs etc. This will follow some
+day.
+
+Henning Schild (4):
+  platform/x86: simatic-ipc: add main driver for Siemens devices
+  leds: simatic-ipc-leds: add new driver for Siemens Industial PCs
+  watchdog: simatic-ipc-wdt: add new driver for Siemens Industrial PCs
+  platform/x86: pmc_atom: improve critclk_systems matching for Siemens
+    PCs
+
+ drivers/leds/Kconfig                          |   3 +
+ drivers/leds/Makefile                         |   3 +
+ drivers/leds/simple/Kconfig                   |  11 +
+ drivers/leds/simple/Makefile                  |   2 +
+ drivers/leds/simple/simatic-ipc-leds.c        | 202 ++++++++++++++++
+ drivers/platform/x86/Kconfig                  |  12 +
+ drivers/platform/x86/Makefile                 |   3 +
+ drivers/platform/x86/pmc_atom.c               |  54 +++--
+ drivers/platform/x86/simatic-ipc.c            | 168 +++++++++++++
+ drivers/watchdog/Kconfig                      |  11 +
+ drivers/watchdog/Makefile                     |   1 +
+ drivers/watchdog/simatic-ipc-wdt.c            | 228 ++++++++++++++++++
+ .../platform_data/x86/simatic-ipc-base.h      |  29 +++
+ include/linux/platform_data/x86/simatic-ipc.h |  72 ++++++
+ 14 files changed, 778 insertions(+), 21 deletions(-)
  create mode 100644 drivers/leds/simple/Kconfig
  create mode 100644 drivers/leds/simple/Makefile
  create mode 100644 drivers/leds/simple/simatic-ipc-leds.c
+ create mode 100644 drivers/platform/x86/simatic-ipc.c
+ create mode 100644 drivers/watchdog/simatic-ipc-wdt.c
+ create mode 100644 include/linux/platform_data/x86/simatic-ipc-base.h
+ create mode 100644 include/linux/platform_data/x86/simatic-ipc.h
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index ed800f5da7d8..ac6688d7a3f4 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -879,4 +879,7 @@ source "drivers/leds/flash/Kconfig"
- comment "LED Triggers"
- source "drivers/leds/trigger/Kconfig"
- 
-+comment "Simple LED drivers"
-+source "drivers/leds/simple/Kconfig"
-+
- endif # NEW_LEDS
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index c636ec069612..1a719caf14c0 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -105,3 +105,6 @@ obj-$(CONFIG_LEDS_TRIGGERS)		+= trigger/
- 
- # LED Blink
- obj-y					+= blink/
-+
-+# Simple LED drivers
-+obj-y					+= simple/
-diff --git a/drivers/leds/simple/Kconfig b/drivers/leds/simple/Kconfig
-new file mode 100644
-index 000000000000..9f6a68336659
---- /dev/null
-+++ b/drivers/leds/simple/Kconfig
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+config LEDS_SIEMENS_SIMATIC_IPC
-+	tristate "LED driver for Siemens Simatic IPCs"
-+	depends on LEDS_CLASS
-+	depends on SIEMENS_SIMATIC_IPC
-+	help
-+	  This option enables support for the LEDs of several Industrial PCs
-+	  from Siemens.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called simatic-ipc-leds.
-diff --git a/drivers/leds/simple/Makefile b/drivers/leds/simple/Makefile
-new file mode 100644
-index 000000000000..8481f1e9e360
---- /dev/null
-+++ b/drivers/leds/simple/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_LEDS_SIEMENS_SIMATIC_IPC)	+= simatic-ipc-leds.o
-diff --git a/drivers/leds/simple/simatic-ipc-leds.c b/drivers/leds/simple/simatic-ipc-leds.c
-new file mode 100644
-index 000000000000..ff2c96e73241
---- /dev/null
-+++ b/drivers/leds/simple/simatic-ipc-leds.c
-@@ -0,0 +1,202 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Siemens SIMATIC IPC driver for LEDs
-+ *
-+ * Copyright (c) Siemens AG, 2018-2021
-+ *
-+ * Authors:
-+ *  Henning Schild <henning.schild@siemens.com>
-+ *  Jan Kiszka <jan.kiszka@siemens.com>
-+ *  Gerd Haeussler <gerd.haeussler.ext@siemens.com>
-+ */
-+
-+#include <linux/ioport.h>
-+#include <linux/kernel.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
-+#include <linux/platform_data/x86/simatic-ipc-base.h>
-+#include <linux/platform_device.h>
-+#include <linux/sizes.h>
-+#include <linux/spinlock.h>
-+
-+#define SIMATIC_IPC_LED_PORT_BASE	0x404E
-+
-+struct simatic_ipc_led {
-+	unsigned int value; /* mask for io and offset for mem */
-+	char *name;
-+	struct led_classdev cdev;
-+};
-+
-+static struct simatic_ipc_led simatic_ipc_leds_io[] = {
-+	{1 << 15, "green:" LED_FUNCTION_STATUS "-1" },
-+	{1 << 7,  "yellow:" LED_FUNCTION_STATUS "-1" },
-+	{1 << 14, "red:" LED_FUNCTION_STATUS "-2" },
-+	{1 << 6,  "yellow:" LED_FUNCTION_STATUS "-2" },
-+	{1 << 13, "red:" LED_FUNCTION_STATUS "-3" },
-+	{1 << 5,  "yellow:" LED_FUNCTION_STATUS "-3" },
-+	{ }
-+};
-+
-+/* the actual start will be discovered with PCI, 0 is a placeholder */
-+struct resource simatic_ipc_led_mem_res = DEFINE_RES_MEM_NAMED(0, SZ_4K, KBUILD_MODNAME);
-+
-+static void *simatic_ipc_led_memory;
-+
-+static struct simatic_ipc_led simatic_ipc_leds_mem[] = {
-+	{0x500 + 0x1A0, "red:" LED_FUNCTION_STATUS "-1"},
-+	{0x500 + 0x1A8, "green:" LED_FUNCTION_STATUS "-1"},
-+	{0x500 + 0x1C8, "red:" LED_FUNCTION_STATUS "-2"},
-+	{0x500 + 0x1D0, "green:" LED_FUNCTION_STATUS "-2"},
-+	{0x500 + 0x1E0, "red:" LED_FUNCTION_STATUS "-3"},
-+	{0x500 + 0x198, "green:" LED_FUNCTION_STATUS "-3"},
-+	{ }
-+};
-+
-+static struct resource simatic_ipc_led_io_res =
-+	DEFINE_RES_IO_NAMED(SIMATIC_IPC_LED_PORT_BASE, SZ_2, KBUILD_MODNAME);
-+
-+static DEFINE_SPINLOCK(reg_lock);
-+
-+static inline struct simatic_ipc_led *cdev_to_led(struct led_classdev *led_cd)
-+{
-+	return container_of(led_cd, struct simatic_ipc_led, cdev);
-+}
-+
-+static void simatic_ipc_led_set_io(struct led_classdev *led_cd,
-+				   enum led_brightness brightness)
-+{
-+	struct simatic_ipc_led *led = cdev_to_led(led_cd);
-+	unsigned long flags;
-+	unsigned int val;
-+
-+	spin_lock_irqsave(&reg_lock, flags);
-+
-+	val = inw(SIMATIC_IPC_LED_PORT_BASE);
-+	if (brightness == LED_OFF)
-+		outw(val | led->value, SIMATIC_IPC_LED_PORT_BASE);
-+	else
-+		outw(val & ~led->value, SIMATIC_IPC_LED_PORT_BASE);
-+
-+	spin_unlock_irqrestore(&reg_lock, flags);
-+}
-+
-+static enum led_brightness simatic_ipc_led_get_io(struct led_classdev *led_cd)
-+{
-+	struct simatic_ipc_led *led = cdev_to_led(led_cd);
-+
-+	return inw(SIMATIC_IPC_LED_PORT_BASE) & led->value ? LED_OFF : led_cd->max_brightness;
-+}
-+
-+static void simatic_ipc_led_set_mem(struct led_classdev *led_cd,
-+				    enum led_brightness brightness)
-+{
-+	struct simatic_ipc_led *led = cdev_to_led(led_cd);
-+
-+	u32 *p;
-+
-+	p = simatic_ipc_led_memory + led->value;
-+	*p = (*p & ~1) | (brightness == LED_OFF);
-+}
-+
-+static enum led_brightness simatic_ipc_led_get_mem(struct led_classdev *led_cd)
-+{
-+	struct simatic_ipc_led *led = cdev_to_led(led_cd);
-+
-+	u32 *p;
-+
-+	p = simatic_ipc_led_memory + led->value;
-+	return (*p & 1) ? LED_OFF : led_cd->max_brightness;
-+}
-+
-+static int simatic_ipc_leds_probe(struct platform_device *pdev)
-+{
-+	const struct simatic_ipc_platform *plat = pdev->dev.platform_data;
-+	struct device *dev = &pdev->dev;
-+	struct simatic_ipc_led *ipcled;
-+	struct led_classdev *cdev;
-+	struct resource *res;
-+	int err, type;
-+	u32 *p;
-+
-+	switch (plat->devmode) {
-+	case SIMATIC_IPC_DEVICE_227D:
-+	case SIMATIC_IPC_DEVICE_427E:
-+		res = &simatic_ipc_led_io_res;
-+		ipcled = simatic_ipc_leds_io;
-+		/* on 227D the two bytes work the other way araound */
-+		if (plat->devmode == SIMATIC_IPC_DEVICE_227D) {
-+			while (ipcled->value) {
-+				ipcled->value = swab16(ipcled->value);
-+				ipcled++;
-+			}
-+			ipcled = simatic_ipc_leds_io;
-+		}
-+		type = IORESOURCE_IO;
-+		if (!devm_request_region(dev, res->start, resource_size(res), KBUILD_MODNAME)) {
-+			dev_err(dev, "Unable to register IO resource at %pR\n", res);
-+			return -EBUSY;
-+		}
-+		break;
-+	case SIMATIC_IPC_DEVICE_127E:
-+		res = &simatic_ipc_led_mem_res;
-+		ipcled = simatic_ipc_leds_mem;
-+		type = IORESOURCE_MEM;
-+
-+		/* get GPIO base from PCI */
-+		res->start = simatic_ipc_get_membase0(PCI_DEVFN(13, 0));
-+		if (res->start == 0)
-+			return -ENODEV;
-+
-+		/* do the final address calculation */
-+		res->start = res->start + (0xC5 << 16);
-+		res->end += res->start;
-+
-+		simatic_ipc_led_memory = devm_ioremap_resource(dev, res);
-+		if (IS_ERR(simatic_ipc_led_memory))
-+			return PTR_ERR(simatic_ipc_led_memory);
-+
-+		/* initialize power/watchdog LED */
-+		p = simatic_ipc_led_memory + 0x500 + 0x1D8; /* PM_WDT_OUT */
-+		*p = (*p & ~1);
-+		p = simatic_ipc_led_memory + 0x500 + 0x1C0; /* PM_BIOS_BOOT_N */
-+		*p = (*p | 1);
-+
-+		break;
-+	default:
-+		return -ENODEV;
-+	}
-+
-+	while (ipcled->value) {
-+		cdev = &ipcled->cdev;
-+		if (type == IORESOURCE_MEM) {
-+			cdev->brightness_set = simatic_ipc_led_set_mem;
-+			cdev->brightness_get = simatic_ipc_led_get_mem;
-+		} else {
-+			cdev->brightness_set = simatic_ipc_led_set_io;
-+			cdev->brightness_get = simatic_ipc_led_get_io;
-+		}
-+		cdev->max_brightness = LED_ON;
-+		cdev->name = ipcled->name;
-+
-+		err = devm_led_classdev_register(dev, cdev);
-+		if (err < 0)
-+			return err;
-+		ipcled++;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct platform_driver simatic_ipc_led_driver = {
-+	.probe = simatic_ipc_leds_probe,
-+	.driver = {
-+		.name = KBUILD_MODNAME,
-+	}
-+};
-+
-+module_platform_driver(simatic_ipc_led_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:" KBUILD_MODNAME);
-+MODULE_AUTHOR("Henning Schild <henning.schild@siemens.com>");
 -- 
 2.32.0
 
