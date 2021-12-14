@@ -2,52 +2,77 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4616C433F5
-	for <linux-leds@archiver.kernel.org>; Tue, 14 Dec 2021 08:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B0CDC433EF
+	for <linux-leds@archiver.kernel.org>; Tue, 14 Dec 2021 14:27:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231909AbhLNIkt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 14 Dec 2021 03:40:49 -0500
-Received: from mail.thebizzie.pl ([192.236.147.111]:41866 "EHLO
-        mail.thebizzie.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229846AbhLNIks (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 14 Dec 2021 03:40:48 -0500
-X-Greylist: delayed 466 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 Dec 2021 03:40:48 EST
-Received: by mail.thebizzie.pl (Postfix, from userid 1002)
-        id 61CE3181518; Tue, 14 Dec 2021 08:32:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=thebizzie.pl; s=mail;
-        t=1639470780; bh=kU+//Lu71IqgcFfjayWXuIc0mZtoyrYJc2YuqyU8eS8=;
-        h=Date:From:To:Subject:From;
-        b=i0DizTmxv5TCPJovd26q8gxFMiMwRAg4Up5mAJZklPcjV4OdEnYus9W920vBg6ZMh
-         P/Mz03De28lBUcgEICWqAUcLcVCi4K6ghYRtsX17t2pMOkMk30rBSIEYq4jX47hqYF
-         65h2cTmY9s9nlaF3eK1mpHQRWxg34QUEF09vrPvpogj/1D8mJGtlsP/jkGj3yUc9vl
-         XxI+nTYwjd8qyuYfjzrl9XEWWy31f49FYr+iLWJ3MEGREmCuWpkAHhLCeWpQVMGehT
-         6V7tHSjMvBfdrc4ALiuCVoGMNqYOmrDn1Sbq1XmXzTDDK4F/p9MSGqux+s5Q0tmn91
-         ZXseTzBh1um9g==
-Received: by mail.thebizzie.pl for <linux-leds@vger.kernel.org>; Tue, 14 Dec 2021 08:31:44 GMT
-Message-ID: <20211214074500-0.1.7.298.0.6bb2dfdi8a@thebizzie.pl>
-Date:   Tue, 14 Dec 2021 08:31:44 GMT
-From:   "Mateusz Adamczyk" <mateusz.adamczyk@thebizzie.pl>
-To:     <linux-leds@vger.kernel.org>
-Subject: Wycena paneli fotowoltaicznych
-X-Mailer: mail.thebizzie.pl
+        id S231841AbhLNO1i (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 14 Dec 2021 09:27:38 -0500
+Received: from mga06.intel.com ([134.134.136.31]:63265 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231845AbhLNO1g (ORCPT <rfc822;linux-leds@vger.kernel.org>);
+        Tue, 14 Dec 2021 09:27:36 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10197"; a="299765346"
+X-IronPort-AV: E=Sophos;i="5.88,205,1635231600"; 
+   d="scan'208";a="299765346"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2021 06:27:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,205,1635231600"; 
+   d="scan'208";a="519235252"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 14 Dec 2021 06:27:34 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 675AC81; Tue, 14 Dec 2021 16:27:41 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Pavel Machek <pavel@ucw.cz>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Amireddy Mallikarjuna reddy 
+        <mallikarjunax.reddy@linux.intel.com>,
+        Yihao Han <hanyihao@vivo.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] leds: lgm-sso: Get rid of duplicate of_node assignment
+Date:   Tue, 14 Dec 2021 16:27:39 +0200
+Message-Id: <20211214142739.60071-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211214142739.60071-1-andriy.shevchenko@linux.intel.com>
+References: <20211214142739.60071-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Dzie=C5=84 dobry,
+GPIO library does copy the of_node from the parent device of
+the GPIO chip, there is no need to repeat this in the individual
+drivers. Remove assignment here.
 
-dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
-irm=C4=85.
+For the details one may look into the of_gpio_dev_init() implementation.
 
-=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
-ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
+Call graph:
+   --> sso_gpio_gc_init()
+     --> devm_gpiochip_add_data
+       --> devm_gpiochip_add_data_with_key
+         --> gpiochip_add_data_with_key()
+           --> of_gpio_dev_init()
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
-ropozycji?
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: new patch
+ drivers/leds/blink/leds-lgm-sso.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/leds/blink/leds-lgm-sso.c b/drivers/leds/blink/leds-lgm-sso.c
+index fd8b7573285a..6f270c0272fb 100644
+--- a/drivers/leds/blink/leds-lgm-sso.c
++++ b/drivers/leds/blink/leds-lgm-sso.c
+@@ -477,7 +477,6 @@ static int sso_gpio_gc_init(struct device *dev, struct sso_led_priv *priv)
+ 	gc->ngpio               = priv->gpio.pins;
+ 	gc->parent              = dev;
+ 	gc->owner               = THIS_MODULE;
+-	gc->of_node             = dev->of_node;
+ 
+ 	return devm_gpiochip_add_data(dev, gc, priv);
+ }
+-- 
+2.33.0
 
-Pozdrawiam,
-Mateusz Adamczyk
