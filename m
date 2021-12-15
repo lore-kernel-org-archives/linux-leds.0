@@ -2,76 +2,178 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D00CC433F5
-	for <linux-leds@archiver.kernel.org>; Tue, 14 Dec 2021 14:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE130C433F5
+	for <linux-leds@archiver.kernel.org>; Wed, 15 Dec 2021 20:18:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232577AbhLNO1l (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 14 Dec 2021 09:27:41 -0500
-Received: from mga11.intel.com ([192.55.52.93]:28000 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231845AbhLNO1l (ORCPT <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 14 Dec 2021 09:27:41 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10197"; a="236519594"
-X-IronPort-AV: E=Sophos;i="5.88,205,1635231600"; 
-   d="scan'208";a="236519594"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2021 06:27:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,205,1635231600"; 
-   d="scan'208";a="754828313"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 14 Dec 2021 06:27:34 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 5C0FF15C; Tue, 14 Dec 2021 16:27:41 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Pavel Machek <pavel@ucw.cz>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Amireddy Mallikarjuna reddy 
-        <mallikarjunax.reddy@linux.intel.com>,
-        Yihao Han <hanyihao@vivo.com>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] leds: tca6507: Get rid of duplicate of_node assignment
-Date:   Tue, 14 Dec 2021 16:27:38 +0200
-Message-Id: <20211214142739.60071-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.33.0
+        id S232684AbhLOUSE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 15 Dec 2021 15:18:04 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:44876 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235425AbhLOUSE (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 15 Dec 2021 15:18:04 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 1873F1C0B98; Wed, 15 Dec 2021 21:18:02 +0100 (CET)
+Date:   Wed, 15 Dec 2021 21:18:00 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Henning Schild <henning.schild@siemens.com>
+Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        Srikanth Krishnakar <skrishnakar@gmail.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Gerd Haeussler <gerd.haeussler.ext@siemens.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mark Gross <mgross@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Enrico Weigelt <lkml@metux.net>
+Subject: Re: [PATCH v5 2/4] leds: simatic-ipc-leds: add new driver for
+ Siemens Industial PCs
+Message-ID: <20211215201800.GA28336@duo.ucw.cz>
+References: <20211213120502.20661-1-henning.schild@siemens.com>
+ <20211213120502.20661-3-henning.schild@siemens.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
+Content-Disposition: inline
+In-Reply-To: <20211213120502.20661-3-henning.schild@siemens.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-GPIO library does copy the of_node from the parent device of
-the GPIO chip, there is no need to repeat this in the individual
-drivers. Remove assignment here.
 
-For the details one may look into the of_gpio_dev_init() implementation.
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Call graph:
-   --> tca6507_probe_gpios()
-     --> gpiochip_add_data()
-       --> gpiochip_add_data_with_key()
-         --> of_gpio_dev_init()
+On Mon 2021-12-13 13:05:00, Henning Schild wrote:
+> This driver adds initial support for several devices from Siemens. It is
+> based on a platform driver introduced in an earlier commit.
+>=20
+> One of the supported machines has GPIO connected LEDs, here we poke GPIO
+> memory directly because pinctrl does not come up.
+>=20
+> Signed-off-by: Henning Schild <henning.schild@siemens.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: added call graph to the commit message (Pavel)
- drivers/leds/leds-tca6507.c | 3 ---
- 1 file changed, 3 deletions(-)
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-index de8eed9b667d..1473ced8664c 100644
---- a/drivers/leds/leds-tca6507.c
-+++ b/drivers/leds/leds-tca6507.c
-@@ -641,9 +641,6 @@ static int tca6507_probe_gpios(struct device *dev,
- 	tca->gpio.direction_output = tca6507_gpio_direction_output;
- 	tca->gpio.set = tca6507_gpio_set_value;
- 	tca->gpio.parent = dev;
--#ifdef CONFIG_OF_GPIO
--	tca->gpio.of_node = of_node_get(dev_of_node(dev));
--#endif
- 	err = gpiochip_add_data(&tca->gpio, tca);
- 	if (err) {
- 		tca->gpio.ngpio = 0;
--- 
-2.33.0
+> index c636ec069612..1a719caf14c0 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -105,3 +105,6 @@ obj-$(CONFIG_LEDS_TRIGGERS)		+=3D trigger/
+> =20
+>  # LED Blink
+>  obj-y					+=3D blink/
+> +
+> +# Simple LED drivers
+> +obj-y					+=3D simple/
+> diff --git a/drivers/leds/simple/Kconfig b/drivers/leds/simple/Kconfig
+> new file mode 100644
+> index 000000000000..9f6a68336659
+> --- /dev/null
+> +++ b/drivers/leds/simple/Kconfig
+> @@ -0,0 +1,11 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +config LEDS_SIEMENS_SIMATIC_IPC
+> +	tristate "LED driver for Siemens Simatic IPCs"
+> +	depends on LEDS_CLASS
+> +	depends on SIEMENS_SIMATIC_IPC
+> +	help
+> +	  This option enables support for the LEDs of several Industrial PCs
+> +	  from Siemens.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called simatic-ipc-leds.
+> diff --git a/drivers/leds/simple/Makefile b/drivers/leds/simple/Makefile
+> new file mode 100644
+> index 000000000000..8481f1e9e360
+> --- /dev/null
+> +++ b/drivers/leds/simple/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +obj-$(CONFIG_LEDS_SIEMENS_SIMATIC_IPC)	+=3D simatic-ipc-leds.o
+> diff --git a/drivers/leds/simple/simatic-ipc-leds.c b/drivers/leds/simple=
+/simatic-ipc-leds.c
+> new file mode 100644
+> index 000000000000..ff2c96e73241
+> --- /dev/null
+> +++ b/drivers/leds/simple/simatic-ipc-leds.c
+> @@ -0,0 +1,202 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Siemens SIMATIC IPC driver for LEDs
+> + *
+> + * Copyright (c) Siemens AG, 2018-2021
+> + *
+> + * Authors:
+> + *  Henning Schild <henning.schild@siemens.com>
+> + *  Jan Kiszka <jan.kiszka@siemens.com>
+> + *  Gerd Haeussler <gerd.haeussler.ext@siemens.com>
+> + */
+> +
+> +#include <linux/ioport.h>
+> +#include <linux/kernel.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/pci.h>
+> +#include <linux/platform_data/x86/simatic-ipc-base.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/sizes.h>
+> +#include <linux/spinlock.h>
+> +
+> +#define SIMATIC_IPC_LED_PORT_BASE	0x404E
+> +
+> +struct simatic_ipc_led {
+> +	unsigned int value; /* mask for io and offset for mem */
+> +	char *name;
+> +	struct led_classdev cdev;
+> +};
+> +
+> +static struct simatic_ipc_led simatic_ipc_leds_io[] =3D {
+> +	{1 << 15, "green:" LED_FUNCTION_STATUS "-1" },
+> +	{1 << 7,  "yellow:" LED_FUNCTION_STATUS "-1" },
+> +	{1 << 14, "red:" LED_FUNCTION_STATUS "-2" },
+> +	{1 << 6,  "yellow:" LED_FUNCTION_STATUS "-2" },
+> +	{1 << 13, "red:" LED_FUNCTION_STATUS "-3" },
+> +	{1 << 5,  "yellow:" LED_FUNCTION_STATUS "-3" },
+> +	{ }
+> +};
+> +
+> +/* the actual start will be discovered with PCI, 0 is a placeholder */
+> +struct resource simatic_ipc_led_mem_res =3D DEFINE_RES_MEM_NAMED(0, SZ_4=
+K, KBUILD_MODNAME);
+> +
+> +static void *simatic_ipc_led_memory;
+> +
+> +static struct simatic_ipc_led simatic_ipc_leds_mem[] =3D {
+> +	{0x500 + 0x1A0, "red:" LED_FUNCTION_STATUS "-1"},
+> +	{0x500 + 0x1A8, "green:" LED_FUNCTION_STATUS "-1"},
+> +	{0x500 + 0x1C8, "red:" LED_FUNCTION_STATUS "-2"},
+> +	{0x500 + 0x1D0, "green:" LED_FUNCTION_STATUS "-2"},
+> +	{0x500 + 0x1E0, "red:" LED_FUNCTION_STATUS "-3"},
+> +	{0x500 + 0x198, "green:" LED_FUNCTION_STATUS "-3"},
+> +	{ }
+> +};
 
+Would it be possible to get some better naming for leds? status-1 to
+status-3 is not quite useful.
+
+Best regards,
+								Pavel
+--=20
+http://www.livejournal.com/~pavelmachek
+
+--+HP7ph2BbKc20aGI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYbpNeAAKCRAw5/Bqldv6
+8uoeAJ4sl3uW+00Q8GOt0tXn49BH4Z1o1wCgvOZQDi8nnAbyEUDsGST+vgva3F4=
+=0S8D
+-----END PGP SIGNATURE-----
+
+--+HP7ph2BbKc20aGI--
