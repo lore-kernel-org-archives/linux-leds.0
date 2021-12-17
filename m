@@ -2,80 +2,118 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20306C433EF
-	for <linux-leds@archiver.kernel.org>; Thu, 16 Dec 2021 14:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7846C433F5
+	for <linux-leds@archiver.kernel.org>; Fri, 17 Dec 2021 17:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237997AbhLPOa0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 16 Dec 2021 09:30:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43806 "EHLO
+        id S239129AbhLQRHU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 17 Dec 2021 12:07:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237137AbhLPOa0 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 16 Dec 2021 09:30:26 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7D3EC061574;
-        Thu, 16 Dec 2021 06:30:25 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id b7so28377295edd.6;
-        Thu, 16 Dec 2021 06:30:25 -0800 (PST)
+        with ESMTP id S239636AbhLQRHT (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 17 Dec 2021 12:07:19 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40A77C061574;
+        Fri, 17 Dec 2021 09:07:19 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id bg2-20020a05600c3c8200b0034565c2be15so4543844wmb.0;
+        Fri, 17 Dec 2021 09:07:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Zyz6+SeIOSQpRQFeqW/jl3kpfCV7scubV1qfNlvUGW8=;
-        b=T2h/q+j0Fhb4j4mST1mvsmpvduhyEyyO62tQ/qn75YiGGaJXvpH+eBKoxvzGMM+3jm
-         +STU02p47WKVCS4oqjOpjPQ2lqbYp37OuY1K5IqM7KPyWksU1mjIUMSkNvQviHstaC1W
-         U+KeNesene1w5vO4URMf815cFZa48IA+8U0opVjos0UTDTLSlNrh8W6/DsR30sTRAXRE
-         YZaj17EKg8bjfcqvZyvQ2xSsPq8V/AV6l5bTtOvOFc/4yWMYgMsDqsAl3luO8dOEY+RX
-         lZIgaLVEFsrKPtQ4/Ei0g/O7CzceM6VsYfDMjfZeH2/FSUNP7RE/9OQcg10RMjokEwK9
-         6iMA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rj5IyEdB5LfycbzI0ZIjHtZ0iD/3vI9d8AkqKZ9gT38=;
+        b=adHyDt0K5r7da7gXAlO/cl46F93q8YB11ACsGn9ohSPiTWVmEGrZpe0QikzYVTH78z
+         aiJDKCfXGbsebmia2ilp44/EOrdOcVWqUfzZHxwaalhR8nLduf9pLfYkaVS3PkuYqAb4
+         oRZp8ZyUN9uYyyoXvzOC/Utcs6+1U1zwUplvNZ3kKIq7JcFhAMwhs4ybfLAd9V6WGQe6
+         XRRjscRRLnTA+VfxmhwD6p9o2BxVthAR9D6R9/Uq87/Zf/hL4dD7+/00wXk18SPZRGys
+         3KCrSGtBCsf/+wOcRwywCcVwr97gT8p/zrGNvfHgQT/E7MNNgwJZuhFntOp9fKMYhtbN
+         xJ2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Zyz6+SeIOSQpRQFeqW/jl3kpfCV7scubV1qfNlvUGW8=;
-        b=c09W74xeEi0cdgEIYdP35wyH5e0WQ3YVnZd7ueGPQTazJMI1+6uOfFwvzKcJewB4E1
-         ozheHKt4LEjcs+nFookCBASWV1QC42QHbwduK6PbXbyFqFphpefqxWe8MY6s0o6Ljwzw
-         3ny3vH79hm0EbuQ2bwtw/PO5+G8Jd9z9c+pFgle+/KeJ9eaGy5QcseO+QrbO7//SG/Oa
-         lMfBsDdq3J/IaN3qGo4sTivRyIpfcp1uDrl28SmUoFWPdvbtenxCyVeQT7R1ncgoYQwW
-         bDLqpJC0Nwvj5n8tTTt/n7s8GiNIy97zKbS0STqgq8WprmNx6PowHO+EL8CleZX01wL7
-         oLAg==
-X-Gm-Message-State: AOAM531ZQ6XfY5cCzNlAQ1reCxxsZ24ytPLoFvT3yBHImziU1WLVsUfz
-        mIDDNZZUNqoJCXY7ppBDW75R6VOCqfErleNRJSs=
-X-Google-Smtp-Source: ABdhPJww9DNdDNu0vk0vZXFbGdrhr+pzPK2m2gNSPePV7PzOmPXKijxWGR49cZnA6Vt3yHTKvtePsTC16lV3svMsZsE=
-X-Received: by 2002:a17:906:3ed0:: with SMTP id d16mr8028998ejj.636.1639665024183;
- Thu, 16 Dec 2021 06:30:24 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rj5IyEdB5LfycbzI0ZIjHtZ0iD/3vI9d8AkqKZ9gT38=;
+        b=KbYE1QxjI/mir7ZWjJhbPRYq4VMNnoR1zuSAKYor0i7+CGr4EDFewl6pRan4sXbUHZ
+         T1pQUqyFC2G1/fcnG9q+s016K6zDi3PWJS38PT/DvUyr/1PNqt9NvTChFe/1GvTDGIng
+         8+W0yMCuxyFFMuaTqKTb0+X4GSoc+FVodpIEwosBBa7shI1Mj3WwewirGdaI2x/d1IG/
+         DvrJZ9NXcxsmeKqZDOS5FJhaRP2pcX7fWM1QCuKgXBeN2yfM8GJDSUWA1buRcq1GVbMX
+         Jz0XlgU+9foIzHGURmIL5+FcGSah7aF/TMZmM3GDXtzryoK/DLA5ZH+n4ZwNG1yw2rI3
+         6F0Q==
+X-Gm-Message-State: AOAM5331FKf+9OEnHhc5mmvtt1ArDxFGpSDE+gF9wATo5idd1FmZV3Xh
+        wbPb+/e3zpmNXy6gXndv1Xo=
+X-Google-Smtp-Source: ABdhPJwmvDx62eDbmIAfL5AeTax+2/vdjtBv/diBvtkgm60FDAly3+dkMrD9dNIXOBOkgVaXBkjQbg==
+X-Received: by 2002:a1c:8015:: with SMTP id b21mr10219610wmd.161.1639760837868;
+        Fri, 17 Dec 2021 09:07:17 -0800 (PST)
+Received: from localhost ([193.209.96.43])
+        by smtp.gmail.com with ESMTPSA id l8sm11940149wmc.40.2021.12.17.09.07.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Dec 2021 09:07:16 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Milo Kim <milo.kim@ti.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: leds: Document rfkill* trigger
+Date:   Fri, 17 Dec 2021 18:07:14 +0100
+Message-Id: <20211217170715.2893923-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20211214142739.60071-1-andriy.shevchenko@linux.intel.com>
- <20211214142739.60071-2-andriy.shevchenko@linux.intel.com> <20211215202736.GC28336@duo.ucw.cz>
-In-Reply-To: <20211215202736.GC28336@duo.ucw.cz>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 16 Dec 2021 16:28:55 +0200
-Message-ID: <CAHp75Vf05OW3bLLP+vCAvrh=YUOF_1BDLBt2LwAtGLxOABhhRw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] leds: lgm-sso: Get rid of duplicate of_node assignment
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Amireddy Mallikarjuna reddy 
-        <mallikarjunax.reddy@linux.intel.com>,
-        Yihao Han <hanyihao@vivo.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, Dec 16, 2021 at 12:29 AM Pavel Machek <pavel@ucw.cz> wrote:
-> On Tue 2021-12-14 16:27:39, Andy Shevchenko wrote:
-> > GPIO library does copy the of_node from the parent device of
-> > the GPIO chip, there is no need to repeat this in the individual
-> > drivers. Remove assignment here.
-> >
-> > For the details one may look into the of_gpio_dev_init()
-> implementation.
->
-> Thank you, applied the series.
+From: Thierry Reding <treding@nvidia.com>
 
-Thanks!
+LEDs can use rfkill events as a trigger source, so document these in the
+device tree bindings.
 
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ .../devicetree/bindings/leds/common.yaml        | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+index 697102707703..f686907b4907 100644
+--- a/Documentation/devicetree/bindings/leds/common.yaml
++++ b/Documentation/devicetree/bindings/leds/common.yaml
+@@ -79,24 +79,25 @@ properties:
+       the LED.
+     $ref: /schemas/types.yaml#/definitions/string
+ 
+-    enum:
++    oneOf:
+         # LED will act as a back-light, controlled by the framebuffer system
+-      - backlight
++      - const: backlight
+         # LED will turn on (but for leds-gpio see "default-state" property in
+         # Documentation/devicetree/bindings/leds/leds-gpio.yaml)
+-      - default-on
++      - const: default-on
+         # LED "double" flashes at a load average based rate
+-      - heartbeat
++      - const: heartbeat
+         # LED indicates disk activity
+-      - disk-activity
++      - const: disk-activity
+         # LED indicates IDE disk activity (deprecated), in new implementations
+         # use "disk-activity"
+-      - ide-disk
++      - const: ide-disk
+         # LED flashes at a fixed, configurable rate
+-      - timer
++      - const: timer
+         # LED alters the brightness for the specified duration with one software
+         # timer (requires "led-pattern" property)
+-      - pattern
++      - const: pattern
++      - pattern: "^rfkill[0-9]+$"
+ 
+   led-pattern:
+     description: |
 -- 
-With Best Regards,
-Andy Shevchenko
+2.34.1
+
