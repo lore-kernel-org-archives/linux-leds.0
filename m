@@ -2,58 +2,58 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE2EC433FE
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Dec 2021 16:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE2AC433EF
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Dec 2021 16:39:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236052AbhL1Qjj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 28 Dec 2021 11:39:39 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:49220
+        id S236194AbhL1Qjq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 28 Dec 2021 11:39:46 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:49270
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236044AbhL1Qji (ORCPT
+        by vger.kernel.org with ESMTP id S236172AbhL1Qjl (ORCPT
         <rfc822;linux-leds@vger.kernel.org>);
-        Tue, 28 Dec 2021 11:39:38 -0500
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com [209.85.208.197])
+        Tue, 28 Dec 2021 11:39:41 -0500
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com [209.85.208.200])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 988973FFDF
-        for <linux-leds@vger.kernel.org>; Tue, 28 Dec 2021 16:39:36 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E790D3FFD5
+        for <linux-leds@vger.kernel.org>; Tue, 28 Dec 2021 16:39:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640709576;
-        bh=Ky4Nsy7oalY16bNXsSxGbr4iSjVK2d1F92X5y/VROW8=;
+        s=20210705; t=1640709579;
+        bh=3/vCHuLU2olwZq+6aS9XDTfCwLrWAXWmzqRCmFjm31Q=;
         h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=GO365K0Ens3Tp9dyB8AXv3os/1eP9l0LI16MdQ9IK9rJ68xYhK9emV60PTBlj+kMT
-         sOxz4R45Vndfx+hNw+khUjXJxBbBVBBQay/NoNBn/IrGwNzqr9cj6QsJ3qpGpj+b54
-         Tqh3F1WzBMEgM7SDxwSnqm1+b/VHyhpxsk3Q8QvNNPl/SgHvcJSJVL25cfv6O3sJqV
-         2/ygY+pxJHSwqzs8Xy362bl9pYfbGHnQLESKjBMPcQclYb9irSW3z4BMrM9vj3JX/A
-         3+tOWKZ1Q87oww0p3U0cRTJCImbxQoU3IuNWJou39tGpdCgTZarJBX8qdZtptBtZhx
-         /FiVIeRHJkXqw==
-Received: by mail-lj1-f197.google.com with SMTP id u9-20020a05651c140900b0022dd165d92bso2658161lje.4
-        for <linux-leds@vger.kernel.org>; Tue, 28 Dec 2021 08:39:36 -0800 (PST)
+        b=oHqniLA4g03OdCG5FwHUlun9pBLy+RokGiIOheDNGs4o1GHs/G6CrMedISe1kmjo4
+         Fy/cc9/OUBpPFCV/p4iMZFsSWcq/sTG0a1GpVyPcApZOtMDVuZGKg5ZLbpTx/Ao2dM
+         GNwzHwg6awpfP7u904M1SSu+f6PP2gYIbWr4I9iaTsa8+OLLWMLCBOSEHoPvl3ZKQ3
+         NwyUT6uOSfndvRxqENkMI7Sa2XacI+bPr/udG4hauY5ycezbbshrzpP41CK1ubM6MW
+         HJY4Qn+zncZHUDcESfF2o3N+q1KRTml/765pSasu/A1ElPPRR6BpW0ukaGsF3Srk46
+         AYdh+dMetUT9Q==
+Received: by mail-lj1-f200.google.com with SMTP id u8-20020a05651c130800b0022d6dad0418so6236433lja.11
+        for <linux-leds@vger.kernel.org>; Tue, 28 Dec 2021 08:39:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Ky4Nsy7oalY16bNXsSxGbr4iSjVK2d1F92X5y/VROW8=;
-        b=A5TtVm1MGsMosKUZDw146ZbJhKwkLEOt9Ymz3v00H4T58IUoppBwKpRVP6M9St//tz
-         JpNsxuxDbjUXyxIi7WBoGhqCdxQeCBc9ggiRTo+TfGgGyuvhYCGAxSrticGzOKBRXh/u
-         dRV8X7TSbolePbNp09Dvi6khhdCFgBxzLzvPPpdOglx4QuvTpmRj7D8yd/+6x5tCPJom
-         6jwrGbaeb787E8X4qHUAdqU3EjEugX30MIGai8eZ5FhMywciZ8kV+DxaUO8zmJsRQlbo
-         YOVgwfpJ2eSP3IZjaivXNWHetbzhG66UOsFirEzSjYIyhibreklftlDXgi+/vU6tVfFF
-         boTg==
-X-Gm-Message-State: AOAM533hKxccY3hN36leNBHqNbZd6JAFHvu3pbFV5tUa/6HmxYlC63Fc
-        KH9cDuQDFY9l166VekwaddjybktQn4IQpJbbxVZnS5RbuvTRXkinB6W6U14ENQBEMS0jwEHu1Nm
-        CoqykVdQUdbqJcapcq0f8tUdsyrw0RRd6rzkBANk=
-X-Received: by 2002:ac2:4e06:: with SMTP id e6mr19280521lfr.295.1640709575934;
-        Tue, 28 Dec 2021 08:39:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwn49giUa0jb5mjyDBDwC6FHVyt0eQwfiCTQgcQWOInXEW1g5gUzmTg54LYWNpL3GkXApDSFw==
-X-Received: by 2002:ac2:4e06:: with SMTP id e6mr19280485lfr.295.1640709575622;
-        Tue, 28 Dec 2021 08:39:35 -0800 (PST)
+        bh=3/vCHuLU2olwZq+6aS9XDTfCwLrWAXWmzqRCmFjm31Q=;
+        b=6G2SusvDYId9az5NOKhPcIvUmbkAp4YB71GnJUh6RovlpfYAlv2BB4d+krcTLr3Vcx
+         n6IL7htoxqEWKQz4p0pHrDUcdsLvlJWLgh42okBmY3URTio6RQHiHtg3zOoJVLEx6geg
+         XgVTG6tDgAj9wr9mtZsJEmqyGl4Zd5dDzBJCXgJBjXDaK/8Yq0hXfqrRdA7/j0Q8KMPV
+         hGZRQcqPB6JPch2lkpDvI9FzMW4dhBPIexpMm84NUGFY1J4q94HbDVRykTPP/E9s5Im1
+         opsMwCX3pLr17CJoXz+34zPUCmEUrijdUOxTzbL43+O/kXIfLLGTXiNovDavPLnn/lKa
+         RM2Q==
+X-Gm-Message-State: AOAM530DNL4AHq7rK/ZcRs1RG7UK5UuU7TvUh8tnl/XaBOmXfzJerQ6/
+        9GDd08YNNZMvVWG0ZKofo3RpANXJXxdFs2LJZ/6i2XeICjsad+rxJZyeFRhVR4vz9lBzMK6s//l
+        QnspLeqVat0oyTzAMfZ3dNlZPxmpV+dlhP96u+n0=
+X-Received: by 2002:a05:6512:1286:: with SMTP id u6mr20850791lfs.342.1640709579416;
+        Tue, 28 Dec 2021 08:39:39 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzUIm63tQ1i2xPZhWNHW+jQYMkShWkPt/35yD+8djNtjXFgkoaNDLdZbKoC9UYgmfYxQoNdIw==
+X-Received: by 2002:a05:6512:1286:: with SMTP id u6mr20850774lfs.342.1640709579251;
+        Tue, 28 Dec 2021 08:39:39 -0800 (PST)
 Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id d3sm1972876lfs.204.2021.12.28.08.39.34
+        by smtp.gmail.com with ESMTPSA id d3sm1972876lfs.204.2021.12.28.08.39.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Dec 2021 08:39:34 -0800 (PST)
+        Tue, 28 Dec 2021 08:39:38 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Chanwoo Choi <cw00.choi@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -65,9 +65,9 @@ To:     Chanwoo Choi <cw00.choi@samsung.com>,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH 1/4] dt-bindings: leds: maxim,max77693: convert to dtschema
-Date:   Tue, 28 Dec 2021 17:39:27 +0100
-Message-Id: <20211228163930.35524-2-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 3/4] regulator: dt-bindings: maxim,max77693: convert to dtschema
+Date:   Tue, 28 Dec 2021 17:39:29 +0100
+Message-Id: <20211228163930.35524-4-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20211228163930.35524-1-krzysztof.kozlowski@canonical.com>
 References: <20211228163930.35524-1-krzysztof.kozlowski@canonical.com>
@@ -77,124 +77,68 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Convert the LEDs bindings of Maxim MAX77693 MUIC to DT schema format.
+Convert the regulator bindings of Maxim MAX77693 MUIC to DT schema format.
 The existing bindings were defined in ../bindings/mfd/max77693.txt.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- .../bindings/leds/maxim,max77693.yaml         | 105 ++++++++++++++++++
- 1 file changed, 105 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/maxim,max77693.yaml
+ .../bindings/regulator/maxim,max77693.yaml    | 49 +++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/maxim,max77693.yaml
 
-diff --git a/Documentation/devicetree/bindings/leds/maxim,max77693.yaml b/Documentation/devicetree/bindings/leds/maxim,max77693.yaml
+diff --git a/Documentation/devicetree/bindings/regulator/maxim,max77693.yaml b/Documentation/devicetree/bindings/regulator/maxim,max77693.yaml
 new file mode 100644
-index 000000000000..86a0005cf156
+index 000000000000..81242c8cd77c
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/maxim,max77693.yaml
-@@ -0,0 +1,105 @@
++++ b/Documentation/devicetree/bindings/regulator/maxim,max77693.yaml
+@@ -0,0 +1,49 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/leds/maxim,max77693.yaml#
++$id: http://devicetree.org/schemas/regulator/maxim,max77693.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Maxim MAX77693 MicroUSB and Companion Power Management IC LEDs
++title: Maxim MAX77693 MicroUSB and Companion Power Management IC regulators
 +
 +maintainers:
++  - Chanwoo Choi <cw00.choi@samsung.com>
 +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 +
 +description: |
 +  This is a part of device tree bindings for Maxim MAX77693 MicroUSB Integrated
 +  Circuit (MUIC).
 +
-+  There are two LED outputs available - FLED1 and FLED2. Each of them can
-+  control a separate LED or they can be connected together to double the
-+  maximum current for a single connected LED. One LED is represented by one
-+  child node.
-+
 +  See also Documentation/devicetree/bindings/mfd/maxim,max77693.yaml for
 +  additional information and example.
 +
-+properties:
-+  compatible:
-+    const: maxim,max77693-led
-+
-+  maxim,boost-mode:
-+    description:
-+      In boost mode the device can produce up to 1.2A of total current on both
-+      outputs. The maximum current on each output is reduced to 625mA then. If
-+      not enabled explicitly, boost setting defaults to LEDS_BOOST_FIXED in
-+      case both current sources are used.
-+      See LEDS_BOOST_* in include/dt-bindings/leds/common.h.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2]
-+
-+  maxim,boost-mvout:
-+    description: |
-+      Output voltage of the boost module in millivolts.
-+      Valid values: 3300 - 5500, step by 25 (rounded down)
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 3300
-+    maximum: 5500
-+    default: 3300
-+
-+  maxim,mvsys-min:
-+    description: |
-+      Low input voltage level in millivolts. Flash is not fired if chip
-+      estimates that system voltage could drop below this level due to flash
-+      power consumption.
-+      Valid values: 2400 - 3400, step by 33 (rounded down)
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 2400
-+    maximum: 3400
-+    default: 2400
-+
 +patternProperties:
-+  "^([a-z]+-)?led[01]?$":
++  "^ESAFEOUT[12]$":
 +    type: object
-+    $ref: common.yaml#
++    $ref: regulator.yaml#
 +    unevaluatedProperties: false
++    description: |
++      Safeout LDO regulator.
 +
 +    properties:
-+      led-sources:
-+        allOf:
-+          - minItems: 1
-+            maxItems: 2
-+            items:
-+              minimum: 0
-+              maximum: 1
-+
-+      led-max-microamp:
-+        description: |
-+          Valid values for a LED connected to one FLED output:
-+            15625 - 250000, step by 15625 (rounded down)
-+          Valid values for a LED connected to both FLED outputs:
-+            15625 - 500000, step by 15625 (rounded down)
-+
-+      flash-max-microamp:
-+        description: |
-+          Valid values for a single LED connected to one FLED output
-+          (boost mode must be turned off):
-+            15625 - 1000000, step by 15625 (rounded down)
-+          Valid values for a single LED connected to both FLED outputs:
-+            15625 - 1250000, step by 15625 (rounded down)
-+          Valid values for two LEDs case:
-+            15625 - 625000, step by 15625 (rounded down)
-+
-+      flash-max-timeout-us:
-+        description: |
-+          Valid values: 62500 - 1000000, step by 62500 (rounded down)
-+        minimum: 62500
-+        maximum: 1000000
++      regulator-min-microvolt: true
++      regulator-max-microvolt: true
 +
 +    required:
-+      - flash-max-microamp
-+      - flash-max-timeout-us
-+      - led-max-microamp
-+      - led-sources
++      - regulator-name
 +
-+required:
-+  - compatible
++  "^CHARGER$":
++    type: object
++    $ref: regulator.yaml#
++    unevaluatedProperties: false
++    description: |
++      Current regulator.
++
++    properties:
++      regulator-min-microamp: true
++      regulator-max-microamp: true
++
++    required:
++      - regulator-name
 +
 +additionalProperties: false
 -- 
