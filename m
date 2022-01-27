@@ -2,121 +2,222 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BC4C433F5
-	for <linux-leds@archiver.kernel.org>; Wed, 26 Jan 2022 21:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C780AC433FE
+	for <linux-leds@archiver.kernel.org>; Thu, 27 Jan 2022 09:08:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232378AbiAZV03 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 26 Jan 2022 16:26:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43384 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232426AbiAZV01 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 26 Jan 2022 16:26:27 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E20CC061747;
-        Wed, 26 Jan 2022 13:26:26 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id x23so1531695lfc.0;
-        Wed, 26 Jan 2022 13:26:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uMgRCvZXgTQsC5uLKUTLh7AlqDc/eRPo2Oj35RP14+A=;
-        b=EoyL7Lm3UZtCFAuPYOYF5b3ZOOE6HYtr4Qk/rySj2L8dJNCxY7GU5oNUxRYzx0Ec6y
-         TQjzxQPuJk3F/ozWFDA5Ix7YPrx0Vwi9mc4mrEryUh4v9Sv5jiyhs5V3Gec3Akqyf3ye
-         304XHiC6NFDU/XSYKs+cttkI9GCtyx+Wf0ygImV0HuhgI27aqNAnXEjMJ+yGGB7ZG+Da
-         Go6MdR7prl0zVVRYWBBNWcWj2ppkB3WU1vpVTwzd4KmOPSjm5DzKqyEDlPDZhri4zF6b
-         QoI1omZd5nlaVwFijMvDpac7hlO/omzII1KBu3+REApvweAXmFUZn+Y+bYRy6GFgxD3M
-         iX6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uMgRCvZXgTQsC5uLKUTLh7AlqDc/eRPo2Oj35RP14+A=;
-        b=sXVK0zl/Y+3xIJJao6O/PNLX5cLxomjkKfOfAD8FILgsRBVJy0x3HLhkz+PccbHmq7
-         PWZD5jh54x9E/rXIMZUpcodwr4actnFuWuzyz5sihG15w9WFcmelh4I4RWcUvO+/J+LF
-         meQia0xUdzqHCiRNU6IRziWdIfYTo+/kRAt3pkkhMNe0QGm5GdoIA5YGlvUQOg3feVcq
-         GbTVlGAOhvXmkiqrmxQgTINhjzXJTVBEwMS+URJesplFTzn4p+Oyua9NVmhqcnJ7yoH2
-         VhvsxIUvRhPlfLmCmfQIRTEqt5jXxK9hH7ssU6EnZR+0GWMTIZBKmNFHPtoi0C3FWCAN
-         Lkug==
-X-Gm-Message-State: AOAM5319rt7jC+L8/cLUIePCc5g6dpo7TDMHR2L4+gIpO3j2rtpvqW0Q
-        qkMdqn5Alrl99mQhALcaCCo=
-X-Google-Smtp-Source: ABdhPJxkhkfSovSMdAR4dU3hxYsZXihvHfcXVtab8drHG97zE1tXAk94uR6MpRQ8d3Ei7Fnc59SSuw==
-X-Received: by 2002:a05:6512:33c8:: with SMTP id d8mr595823lfg.41.1643232384736;
-        Wed, 26 Jan 2022 13:26:24 -0800 (PST)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id e7sm1951288lfb.17.2022.01.26.13.26.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jan 2022 13:26:24 -0800 (PST)
-Subject: Re: [RFC PATCH 0/2] Multicolor PWM LED support
-To:     Sven Schwermer <sven@svenschwermer.de>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org
-Cc:     Sven Schwermer <sven.schwermer@disruptive-technologies.com>,
-        pavel@ucw.cz, robh+dt@kernel.org, thierry.reding@gmail.com,
-        u.kleine-koenig@pengutronix.de, lee.jones@linaro.org
-References: <20220125092239.2006333-1-sven@svenschwermer.de>
- <a147897a-2823-ad45-d727-0b96f48b4da3@gmail.com>
- <70bfabe5-7f53-5c80-e1de-dc73e85232de@svenschwermer.de>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <609c58de-67ee-3c1d-512b-66bad482addb@gmail.com>
-Date:   Wed, 26 Jan 2022 22:26:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S238230AbiA0JI6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 27 Jan 2022 04:08:58 -0500
+Received: from mxout70.expurgate.net ([194.37.255.70]:60899 "EHLO
+        mxout70.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229487AbiA0JI6 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 27 Jan 2022 04:08:58 -0500
+Received: from [127.0.0.1] (helo=localhost)
+        by relay.expurgate.net with smtp (Exim 4.92)
+        (envelope-from <fe@dev.tdt.de>)
+        id 1nD0lx-0007K6-4e; Thu, 27 Jan 2022 10:08:53 +0100
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+        by relay.expurgate.net with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <fe@dev.tdt.de>)
+        id 1nD0lw-00071J-BO; Thu, 27 Jan 2022 10:08:52 +0100
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+        by securemail.tdt.de (Postfix) with ESMTP id 410F0240040;
+        Thu, 27 Jan 2022 10:08:51 +0100 (CET)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+        by securemail.tdt.de (Postfix) with ESMTP id AA727240049;
+        Thu, 27 Jan 2022 10:08:50 +0100 (CET)
+Received: from localhost.localdomain (unknown [10.2.3.40])
+        by mail.dev.tdt.de (Postfix) with ESMTPSA id 4B8E623F59;
+        Thu, 27 Jan 2022 10:08:50 +0100 (CET)
+From:   Florian Eckert <fe@dev.tdt.de>
+To:     pavel@ucw.cz, robh+dt@kernel.org, andy.shevchenko@gmail.com
+Cc:     Eckert.Florian@googlemail.com, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 2/2] dt: bindings: KTD20xx: Introduce the ktd20xx family of RGB drivers
+Date:   Thu, 27 Jan 2022 10:08:41 +0100
+Message-ID: <20220127090841.396-3-fe@dev.tdt.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20220127090841.396-1-fe@dev.tdt.de>
+References: <20220127090841.396-1-fe@dev.tdt.de>
 MIME-Version: 1.0
-In-Reply-To: <70bfabe5-7f53-5c80-e1de-dc73e85232de@svenschwermer.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-purgate: clean
+X-purgate-ID: 151534::1643274533-000044EC-A79DC336/0/0
+X-purgate-type: clean
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Sven,
+Introduce the bindings for the Kinetic KTD2061/58/59/60RGB LED device
+driver. The KTD20xx can control RGB LEDs individually. Because of the
+hardware limitations, only 7 colors and the color black (off) can be set.
 
-On 1/26/22 8:51 AM, Sven Schwermer wrote:
-> Hi Jacek,
-> 
-> Thank you for your feedback!
-> 
-> On 1/25/22 23:31, Jacek Anaszewski wrote:
-> 
->>>    1. Currently, the max-brightness property is expected as a 
->>> property to
->>>       the multi-led node. That seems consistent with the existing
->>>       multicolor class code, but I'm wondering whether it would make
->>>       sense to have a max-brigthness for the individual LEDs as well?
->>
->> For the proper mixed color calculation all sub-leds should have
->> the same max_brightness as the global max_brightness.
->>
->> Look at how sub-led intensities are calculated in
->> led_mc_calc_color_components().
->>
->> See also [0] and [1].
-> 
-> OK, thanks. That makes sense.
-> 
->>>    2. The current multi-led node definition calls for a node index which
->>>       would in turn require the reg property to be set within the node.
->>>       In this context, that doesn't seem to make sense. Should this
->>>       requirement be lifted from leds-class-multicolor.yaml?
->>
->> reg is required for all DT nodes with address unit in the name.
->> If you skipped the address unit, then reg would be also not required.
-> 
-> Yes, I realize this. However, leds-class-multicolor.yaml [0] requires 
-> the address unit: "^multi-led@([0-9a-f])$"
+Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/leds/leds-ktd20xx.yaml           | 130 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ 2 files changed, 131 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-ktd20xx.y=
+aml
 
-This is only an example and nothing prevents you from dropping address
-unit in leds-pwm-multicolor DT bindings. We don't have common DT parser
-for multicolor LEDs and it will be hard to come up with something that
-will fit neatly for all possible LED controllers anyway.
+diff --git a/Documentation/devicetree/bindings/leds/leds-ktd20xx.yaml b/D=
+ocumentation/devicetree/bindings/leds/leds-ktd20xx.yaml
+new file mode 100644
+index 000000000000..c4e440cc6945
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-ktd20xx.yaml
+@@ -0,0 +1,130 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/leds-ktd20xx.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: LED driver for KTD20xx RGB LED from Kinetic.
++
++maintainers:
++  - Florian Eckert <fe@dev.tdt.de>
++
++description: |
++  The KTD20XX is multi-channel, I2C LED driver. Into can control up to 1=
+2
++  LEDs per device. The RGB value can be set for each LED. Due to hardwar=
+e
++  limitations, the full RGB range cannot be used. Only 7 colors and the
++  color black can be set (black means off).
++  R G B
++  0 0 0 =3D Black (off)
++  0 0 1 =3D Blue
++  0 1 0 =3D Green
++  0 1 1 =3D Cyan
++  1 0 0 =3D Red
++  1 0 1 =3D Magenta
++  1 1 0 =3D Yellow
++  1 1 1 =3D White
++
++properties:
++  compatible:
++    enum:
++      - kinetic,ktd20xx
++
++  reg:
++    maxItems: 1
++    description:
++      I2C slave address
++      ktd2061/58/59/60 0x68 0x69 0x6A 0x6B
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  'kinetic,led-current':
++    $ref: /schemas/types.yaml#/definitions/uint8
++    description:
++      This value is a current setting for all LEDs connected to this dev=
+ice.
++      If this value is not set then the default value off 0x28 (5mA) is =
+set.
++      This means all LEDs get 5mA. The max value is 24mA. We have the
++      following mapping in 125uA steps. We can set a maximum of 24mA.
++      0000 0000 (0x00) =3D 0uA
++      0000 0001 (0x01) =3D 125uA
++      .... ....
++      0010 1000 (0x28) =3D 5mA
++      .... ....
++      1100 0000 (0xC0) =3D 24mA
++      1100 0001 (0xC1) =3D 24mA
++      .... ....
++      1111 1111 (0xFF) =3D 24mA
++    minimum: 0
++    maximum: 255
++
++patternProperties:
++  '^multi-led@[0-9a-f]$':
++    type: object
++    allOf:
++      - $ref: leds-class-multicolor.yaml#
++    description:
++      This node represents one of the Multicolor LED. No subnodes need t=
+o
++      be added for subchannels since this controller only supports 1bit
++      RGB values. We could display seven different colors and the color
++      black which means off.
++
++    properties:
++      reg:
++        minimum: 0
++        maximum: 11
++        description:
++          This property identifies wired connection of the LED to this d=
+evice.
++          0x00  LEDA1
++          0x01  LEDA2
++          0x02  LEDA3
++          0x03  LEDA4
++          0x04  LEDB1
++          0x05  LEDB2
++          0x06  LEDB3
++          0x07  LEDB4
++          0x08  LEDC1
++          0x09  LEDC2
++          0x0A  LEDC3
++          0x0B  LEDC4
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++   #include <dt-bindings/leds/common.h>
++
++   i2c {
++       #address-cells =3D <1>;
++       #size-cells =3D <0>;
++
++       led-controller@14 {
++           compatible =3D "kinetic,ktd20xx";
++           reg =3D <0x68>;
++           #address-cells =3D <1>;
++           #size-cells =3D <0>;
++           kinetic,led-current =3D <0x28>; // Current for all LEDs is 5m=
+A
++
++           multi-led@0 {
++               reg =3D <0x0>;
++               color =3D <LED_COLOR_ID_MULTI>;
++               function =3D LED_FUNCTION_CHARGING;
++               linux,default-trigger =3D "default-on";
++          };
++
++          multi-led@2 {
++            reg =3D <0x2>;
++            color =3D <LED_COLOR_ID_MULTI>;
++            function =3D LED_FUNCTION_STANDBY;
++            linux,default-trigger =3D "default-on";
++         };
++       };
++    };
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 04d68985d348..b56d8392119c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10743,6 +10743,7 @@ KTD20XX LED CONTROLLER DRIVER
+ M:	Florian Eckert <fe@dev.tdt.de>
+ L:	linux-leds@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/leds/leds-ktd20xx.yaml
+ F:	drivers/leds/leds-ktd20xx.c
+=20
+ KTEST
+--=20
+2.20.1
 
-Dropping address unit from leds-class-multicolor.yaml would be too much
-since it is useful in some cases, see e.g. [2].
-
-[2] Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
-
--- 
-Best regards,
-Jacek Anaszewski
