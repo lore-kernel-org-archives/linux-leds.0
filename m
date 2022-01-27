@@ -2,222 +2,105 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C780AC433FE
-	for <linux-leds@archiver.kernel.org>; Thu, 27 Jan 2022 09:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE63C433EF
+	for <linux-leds@archiver.kernel.org>; Thu, 27 Jan 2022 09:09:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238230AbiA0JI6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 27 Jan 2022 04:08:58 -0500
-Received: from mxout70.expurgate.net ([194.37.255.70]:60899 "EHLO
+        id S238243AbiA0JI7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 27 Jan 2022 04:08:59 -0500
+Received: from mxout70.expurgate.net ([194.37.255.70]:47671 "EHLO
         mxout70.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbiA0JI6 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 27 Jan 2022 04:08:58 -0500
+        with ESMTP id S238225AbiA0JI7 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 27 Jan 2022 04:08:59 -0500
 Received: from [127.0.0.1] (helo=localhost)
         by relay.expurgate.net with smtp (Exim 4.92)
         (envelope-from <fe@dev.tdt.de>)
-        id 1nD0lx-0007K6-4e; Thu, 27 Jan 2022 10:08:53 +0100
+        id 1nD0lv-00081x-CS; Thu, 27 Jan 2022 10:08:51 +0100
 Received: from [195.243.126.94] (helo=securemail.tdt.de)
         by relay.expurgate.net with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <fe@dev.tdt.de>)
-        id 1nD0lw-00071J-BO; Thu, 27 Jan 2022 10:08:52 +0100
+        id 1nD0lu-00071D-Hx; Thu, 27 Jan 2022 10:08:50 +0100
 Received: from securemail.tdt.de (localhost [127.0.0.1])
-        by securemail.tdt.de (Postfix) with ESMTP id 410F0240040;
-        Thu, 27 Jan 2022 10:08:51 +0100 (CET)
+        by securemail.tdt.de (Postfix) with ESMTP id C789E240049;
+        Thu, 27 Jan 2022 10:08:49 +0100 (CET)
 Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-        by securemail.tdt.de (Postfix) with ESMTP id AA727240049;
-        Thu, 27 Jan 2022 10:08:50 +0100 (CET)
+        by securemail.tdt.de (Postfix) with ESMTP id 4AC9D240040;
+        Thu, 27 Jan 2022 10:08:49 +0100 (CET)
 Received: from localhost.localdomain (unknown [10.2.3.40])
-        by mail.dev.tdt.de (Postfix) with ESMTPSA id 4B8E623F59;
-        Thu, 27 Jan 2022 10:08:50 +0100 (CET)
+        by mail.dev.tdt.de (Postfix) with ESMTPSA id CB3F723F59;
+        Thu, 27 Jan 2022 10:08:48 +0100 (CET)
 From:   Florian Eckert <fe@dev.tdt.de>
 To:     pavel@ucw.cz, robh+dt@kernel.org, andy.shevchenko@gmail.com
 Cc:     Eckert.Florian@googlemail.com, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 2/2] dt: bindings: KTD20xx: Introduce the ktd20xx family of RGB drivers
-Date:   Thu, 27 Jan 2022 10:08:41 +0100
-Message-ID: <20220127090841.396-3-fe@dev.tdt.de>
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v5 0/2] leds: add ktd20xx LED driver support
+Date:   Thu, 27 Jan 2022 10:08:39 +0100
+Message-ID: <20220127090841.396-1-fe@dev.tdt.de>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20220127090841.396-1-fe@dev.tdt.de>
-References: <20220127090841.396-1-fe@dev.tdt.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-purgate: clean
-X-purgate-ID: 151534::1643274533-000044EC-A79DC336/0/0
 X-purgate-type: clean
+X-purgate-ID: 151534::1643274531-0000321A-DA8EF093/0/0
+X-purgate: clean
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Introduce the bindings for the Kinetic KTD2061/58/59/60RGB LED device
-driver. The KTD20xx can control RGB LEDs individually. Because of the
-hardware limitations, only 7 colors and the color black (off) can be set.
+v1: Initial send
+v2: Remove variant 1 from source
+v3: Changes requested by Andy Shevchenko added. Thanks for reviewing
+  - Removing OF dependency
+  - Add missing includes
+  - Use device_property_read_u32() instead of fwnode_property_read_u32()
+  - Use one liner function pattern <test> ? <value-true> : <value-false>
+  - Remove switch case call for intensity color selection use BIT()
+    instead
+  - Remove not needed fwnode_handle_put() in ktd200xx_probe_dt()
+    function
+  - Use dev_get_drvdata() instead of i2c_get_clientdata() function call
+  - Use sysfs_emit() function call
+  - Use kstrtobool() function call
+  - Remove not needed comma after last array element
+  - Use dev_err_probe() instead of dev_error() in driver probe function
+  - Do not use dev_group registration function set .dev_groups directly
+    into ktd20xx_driver struct.
+v4: Changes requested by Andy Shevchenko. Thanks again for your review
+  - Fix Author indentation
+  - Reduce logging noise
+  - Use 'if' standard pattern
+  - Use set_bit function to make code cleaner
+  - Use meaningful jump labels
+  - Updating the logging output to better match the source code
+  - Remove duplicate dev pointer usage. This is not necessary as the
+    information can be used directly from the client structure
+  - Do not hide return value from kstrbool function
+  - Do not use mutex_destroy function in devm mananged structs
+v5: Changes requested by Andy Shevchenko. Thanks again for your review
+so I could learn a lot about good coding style.
+  - Update file header
+  - Add missing comma to last array element
+  - Fix spelling
+  - Replace not needed atomic bit set function set_bit() with __set_bit()
+  - Use more meaningful goto jump labels
+  - Use return statement and not goto jump labels where possible
+  - Use probe_new function
+  - Use dev_dbg() function instead of dev_info() function in probe
 
-Signed-off-by: Florian Eckert <fe@dev.tdt.de>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/leds/leds-ktd20xx.yaml           | 130 ++++++++++++++++++
- MAINTAINERS                                   |   1 +
- 2 files changed, 131 insertions(+)
+Florian Eckert (2):
+  leds: ktd20xx: Extension of the KTD20xx family of LED drivers from
+    Kinetic
+  dt: bindings: KTD20xx: Introduce the ktd20xx family of RGB drivers
+
+ .../bindings/leds/leds-ktd20xx.yaml           | 130 ++++
+ MAINTAINERS                                   |   7 +
+ drivers/leds/Kconfig                          |  12 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-ktd20xx.c                   | 572 ++++++++++++++++++
+ 5 files changed, 722 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/leds/leds-ktd20xx.y=
 aml
+ create mode 100644 drivers/leds/leds-ktd20xx.c
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-ktd20xx.yaml b/D=
-ocumentation/devicetree/bindings/leds/leds-ktd20xx.yaml
-new file mode 100644
-index 000000000000..c4e440cc6945
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-ktd20xx.yaml
-@@ -0,0 +1,130 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/leds-ktd20xx.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: LED driver for KTD20xx RGB LED from Kinetic.
-+
-+maintainers:
-+  - Florian Eckert <fe@dev.tdt.de>
-+
-+description: |
-+  The KTD20XX is multi-channel, I2C LED driver. Into can control up to 1=
-2
-+  LEDs per device. The RGB value can be set for each LED. Due to hardwar=
-e
-+  limitations, the full RGB range cannot be used. Only 7 colors and the
-+  color black can be set (black means off).
-+  R G B
-+  0 0 0 =3D Black (off)
-+  0 0 1 =3D Blue
-+  0 1 0 =3D Green
-+  0 1 1 =3D Cyan
-+  1 0 0 =3D Red
-+  1 0 1 =3D Magenta
-+  1 1 0 =3D Yellow
-+  1 1 1 =3D White
-+
-+properties:
-+  compatible:
-+    enum:
-+      - kinetic,ktd20xx
-+
-+  reg:
-+    maxItems: 1
-+    description:
-+      I2C slave address
-+      ktd2061/58/59/60 0x68 0x69 0x6A 0x6B
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+  'kinetic,led-current':
-+    $ref: /schemas/types.yaml#/definitions/uint8
-+    description:
-+      This value is a current setting for all LEDs connected to this dev=
-ice.
-+      If this value is not set then the default value off 0x28 (5mA) is =
-set.
-+      This means all LEDs get 5mA. The max value is 24mA. We have the
-+      following mapping in 125uA steps. We can set a maximum of 24mA.
-+      0000 0000 (0x00) =3D 0uA
-+      0000 0001 (0x01) =3D 125uA
-+      .... ....
-+      0010 1000 (0x28) =3D 5mA
-+      .... ....
-+      1100 0000 (0xC0) =3D 24mA
-+      1100 0001 (0xC1) =3D 24mA
-+      .... ....
-+      1111 1111 (0xFF) =3D 24mA
-+    minimum: 0
-+    maximum: 255
-+
-+patternProperties:
-+  '^multi-led@[0-9a-f]$':
-+    type: object
-+    allOf:
-+      - $ref: leds-class-multicolor.yaml#
-+    description:
-+      This node represents one of the Multicolor LED. No subnodes need t=
-o
-+      be added for subchannels since this controller only supports 1bit
-+      RGB values. We could display seven different colors and the color
-+      black which means off.
-+
-+    properties:
-+      reg:
-+        minimum: 0
-+        maximum: 11
-+        description:
-+          This property identifies wired connection of the LED to this d=
-evice.
-+          0x00  LEDA1
-+          0x01  LEDA2
-+          0x02  LEDA3
-+          0x03  LEDA4
-+          0x04  LEDB1
-+          0x05  LEDB2
-+          0x06  LEDB3
-+          0x07  LEDB4
-+          0x08  LEDC1
-+          0x09  LEDC2
-+          0x0A  LEDC3
-+          0x0B  LEDC4
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+   #include <dt-bindings/leds/common.h>
-+
-+   i2c {
-+       #address-cells =3D <1>;
-+       #size-cells =3D <0>;
-+
-+       led-controller@14 {
-+           compatible =3D "kinetic,ktd20xx";
-+           reg =3D <0x68>;
-+           #address-cells =3D <1>;
-+           #size-cells =3D <0>;
-+           kinetic,led-current =3D <0x28>; // Current for all LEDs is 5m=
-A
-+
-+           multi-led@0 {
-+               reg =3D <0x0>;
-+               color =3D <LED_COLOR_ID_MULTI>;
-+               function =3D LED_FUNCTION_CHARGING;
-+               linux,default-trigger =3D "default-on";
-+          };
-+
-+          multi-led@2 {
-+            reg =3D <0x2>;
-+            color =3D <LED_COLOR_ID_MULTI>;
-+            function =3D LED_FUNCTION_STANDBY;
-+            linux,default-trigger =3D "default-on";
-+         };
-+       };
-+    };
-+
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 04d68985d348..b56d8392119c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10743,6 +10743,7 @@ KTD20XX LED CONTROLLER DRIVER
- M:	Florian Eckert <fe@dev.tdt.de>
- L:	linux-leds@vger.kernel.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/leds/leds-ktd20xx.yaml
- F:	drivers/leds/leds-ktd20xx.c
-=20
- KTEST
 --=20
 2.20.1
 
