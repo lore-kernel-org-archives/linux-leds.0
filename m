@@ -2,75 +2,88 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC479C433F5
-	for <linux-leds@archiver.kernel.org>; Mon, 31 Jan 2022 08:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82748C43219
+	for <linux-leds@archiver.kernel.org>; Tue,  1 Feb 2022 05:21:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230476AbiAaI4B (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 31 Jan 2022 03:56:01 -0500
-Received: from mail.schwermer.no ([49.12.228.226]:55784 "EHLO
-        mail.schwermer.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232658AbiAaI4B (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 31 Jan 2022 03:56:01 -0500
-Message-ID: <16e48f33-2a69-ad59-3fd5-f1e25f46e413@svenschwermer.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=svenschwermer.de;
-        s=mail; t=1643619359;
-        bh=T3ma9mCJ2JsuAY8MDWeX8vBvjjws4kKntfplZ2nV6MM=;
-        h=Subject:To:References:From:In-Reply-To;
-        b=lI3cXfJRzWRlYWJ3B+Yy6JJUIrdZgvNze28eVelKDqbqrDYzn8l1EQbJSMoYD6ELp
-         lMG1R2SWrubOCeeSwT6Nhs308B4EcNeIkDPxr4GzWxOYUjR/oi1xd0vZOiYLBv5EYj
-         n95kHHHoenyQLstL5Yr9i6VSBIkTf89AH1fbWAbFjK+ULcYBlXFArckpAFV3lY3q4F
-         4W7Z866qnNex5z7pKBkSX34+i1MOV0o3UoT5HOJZwDtbN245TZPCfrBl6sm+VtxUQ2
-         9nCpebFKPw0v1b4o7rw9exB2Fw+YYjcavm7pe36KXkxBI+BTgQjIwP48RlCvHOUrnA
-         m+gWrO0sOShHA==
-Date:   Mon, 31 Jan 2022 09:55:58 +0100
-Mime-Version: 1.0
-Subject: Re: [PATCH v3 1/2] dt-bindings: leds: Add multicolor PWM LED bindings
-Content-Language: en-US
-To:     =?UTF-8?Q?Marek_Beh=c3=ban?= <marek.behun@nic.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>, pavel@ucw.cz,
-        linux-leds@vger.kernel.org, thierry.reding@gmail.com,
-        u.kleine-koenig@pengutronix.de, lee.jones@linaro.org,
-        post@lespocky.de
-References: <20220126104844.246068-1-sven@svenschwermer.de>
- <20220126104844.246068-2-sven@svenschwermer.de>
- <00d8de09-360e-4e0f-1496-642ba1cbf863@gmail.com>
- <20220128213609.7a60e9fe@thinkpad>
- <09b46d05-5dd0-a585-2ca3-0bc04e613343@gmail.com>
- <20220129002639.33c7d4c0@thinkpad>
- <YfeLTxVAmwjU6PFr@ada-deb-carambola.ifak-system.com>
-From:   Sven Schwermer <sven@svenschwermer.de>
-In-Reply-To: <YfeLTxVAmwjU6PFr@ada-deb-carambola.ifak-system.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        id S233619AbiBAFVb (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 1 Feb 2022 00:21:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42242 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233820AbiBAFUn (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 1 Feb 2022 00:20:43 -0500
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E01CDC06176E
+        for <linux-leds@vger.kernel.org>; Mon, 31 Jan 2022 21:20:42 -0800 (PST)
+Received: by mail-ot1-x336.google.com with SMTP id b17-20020a9d4791000000b005a17fc2dfc1so15186182otf.1
+        for <linux-leds@vger.kernel.org>; Mon, 31 Jan 2022 21:20:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=AxUIbjg3SvCLBVXCrv9jIsGx71GsTQ6qIWnsAt6VTbY=;
+        b=BiSXSMEsNtBTkDinyXlJ67kpwdj31ar6lPoZA/5iikJbtUTbyv+x8iSa7vv7ZCPYq6
+         R7Nv0ANSJk6YgAKMwKENalGwcFVeYxJ7V2bekO9F5h1eAxArRCkEJ+lG56yEr9XWpOxd
+         j2UrqPc78k5N69ULMd+CcgKOfYHmCINMvzaZAjVplmKnLYhCFakcrm4CQledQ5fmW064
+         2J0OepZDuPZHszaOu2m/zgWix3+PDZZGPT2LMzNHLZVSXKE7Jp/jdpgT+cVMmsIampR7
+         hre70NoxFVAjnX75mUVPc1J863wP7tru5EaM0vZP9LKpUoOAE8n6/QQyI2vekIi4LFOB
+         I8cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=AxUIbjg3SvCLBVXCrv9jIsGx71GsTQ6qIWnsAt6VTbY=;
+        b=xuteSKwol+R39Th2QwHtfwuFW5nnxW/5y5O1uiDWvrQ2I56omsLD4aMh9e3yjak2U0
+         GizMKkibfcuUVeE7GM5JSYXwY9RwFjQx4x8kFFJaqzj1vv7lgSYxDMklcdDyo23zJAHu
+         G2NuKCTSOqx2ZAzcoATKnasmLo3cb6qDazrNgTRDNlAF2FVbLPlfm3pTjC+B4bx5hiGU
+         GwqsiOQy7S6RIuJ110j7FQV7bXqMgsYbU4GMVTfqzxtfccukIIkpe28KEYFLlnTEOJ+I
+         xhkg56vTbwxDAi6npKTUvm9+2QLJWOL0ndRzNESL53Ons1C4nZHyDenG9FjCAicka3aw
+         ylOQ==
+X-Gm-Message-State: AOAM5338rqZQXUG/81PcGouXMVjhnb/S2V3rM5dFlpZ9aJbQfKdrAONY
+        M//8822XLp5Zv5uMzeiyOn7Tyw==
+X-Google-Smtp-Source: ABdhPJz7xSZzfdlELJEKFP+8VoUH7pamHFIqMvwPRNtJNI8E/x0hnVAHOllmRicnrMtz2Q1gMZswNw==
+X-Received: by 2002:a05:6830:1084:: with SMTP id y4mr9564994oto.42.1643692842301;
+        Mon, 31 Jan 2022 21:20:42 -0800 (PST)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id u3sm8193107ooh.19.2022.01.31.21.20.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Jan 2022 21:20:41 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     linux-arm-msm@vger.kernel.org,
+        Luca Weiss <luca.weiss@fairphone.com>
+Cc:     dri-devel@lists.freedesktop.org, phone-devel@vger.kernel.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        linux-kernel@vger.kernel.org, Kiran Gunda <kgunda@codeaurora.org>
+Subject: Re: (subset) [PATCH 0/4] Enable display backlight on Fairphone 4
+Date:   Mon, 31 Jan 2022 23:19:51 -0600
+Message-Id: <164369277344.3095904.11289204126111973872.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20211229170358.2457006-1-luca.weiss@fairphone.com>
+References: <20211229170358.2457006-1-luca.weiss@fairphone.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi,
-
-On 1/31/22 08:10, Alexander Dahl wrote:
->> I know that color curves were being discussed at the time multicolor
->> was being introduced, and AFAIK Pavel didn't like it, but I don't
->> remember the reasons anymore.
->>
->> As far as I understand it though, for PWM LEDs there is an equation for
->> gamma correction.
+On Wed, 29 Dec 2021 18:03:54 +0100, Luca Weiss wrote:
+> Add and enable PM6150L wled which is used for controlling the display
+> backlight on Fairphone 4.
 > 
-> That's right, and it gets a little more complicated if you have RGB
-> instead of a single LED.  A start for reading might be this:
+> This series depends on the recent wled series by Marijn Suijten,
+> currently applied in the for-backlight-next branch of
+> kernel/git/lee/backlight.git (or linux-next).
 > 
-> https://hackaday.com/2016/08/23/rgb-leds-how-to-master-gamma-and-hue-for-perfect-brightness/
-> 
-> (I had bookmarked that back when I was hacking on firmware for an 8bit
-> microcontroller controlling an RGB LED through soft PWM few years
-> ago.  A very simple solution is a precalculated static lookup table.)
+> [...]
 
-This is a very interesting topic which I was gonna ask about on this 
-list anyways. IMHO, the Linux leds subsystem needs a uniform way to deal 
-with lightness/gamma correction. There is some previous work in pwm_bl 
-and led_bl with their `brightness-levels` device tree property and 
-cie1931 correction function (drivers/video/backlight/pwm_bl.c). It would 
-be very nice to have this functionality in the led class. Having 
-something similar for multi-color as well would be fantastic.
+Applied, thanks!
 
-Sven
+[3/4] arm64: dts: qcom: pm6150l: Add wled node
+      commit: fe508ced49dd51a700c0f9ec7826d523cfe621b2
+[4/4] arm64: dts: qcom: sm7225-fairphone-fp4: Configure WLED
+      commit: 7a52967d9050f3e430373bc51c56865b49a38573
+
+Best regards,
+-- 
+Bjorn Andersson <bjorn.andersson@linaro.org>
