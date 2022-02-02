@@ -2,58 +2,120 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33743C433F5
-	for <linux-leds@archiver.kernel.org>; Wed,  2 Feb 2022 11:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4471C433FE
+	for <linux-leds@archiver.kernel.org>; Wed,  2 Feb 2022 11:03:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343621AbiBBLCM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 2 Feb 2022 06:02:12 -0500
-Received: from mail.profitfirm24.com.pl ([212.237.10.110]:58984 "EHLO
-        mail.profitfirm24.com.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343648AbiBBLCL (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 2 Feb 2022 06:02:11 -0500
-Received: by mail.profitfirm24.com.pl (Postfix, from userid 1001)
-        id 79E60AAB64; Tue,  1 Feb 2022 09:17:48 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=profitfirm24.com.pl;
-        s=mail; t=1643707964;
-        bh=M1ZVeu3q6Upppe+FUx/3rgI7MKJXh389NZDbgCK1SX4=;
-        h=Date:From:To:Subject:From;
-        b=bvJoG05ba461HEaoHUgsKUZQbYLliQeHZNP7uPGsFwNzHCBvMCfRYyAeedjVDTvUI
-         wv8ApEEHq21zcM+gx5z1hjurHPQduyJNtMklqM2dK6vT+SO7qyRaxqa9svKYJZRUcv
-         WbitJQ+5CpEK6jJNNT3KJUeoNwY1ADU6UG8iqTlbYjR4mRNqBTEw2eC4VcPuPEbXxb
-         HsxdRA4VCKWmhV6pr9azS3Yg9sTbG/W5ex9IEGkkUvjvNHZps6r7fKaBzRz2M55dUp
-         SIfzyGtr/QT/Wc6Ptgjq0o9J7QuEr33Moxy10pwvKZPFuv+nT3STc7kdaYihDgdsQS
-         ujjzNgXuyEBIw==
-Received: by profitfirm24.com.pl for <linux-leds@vger.kernel.org>; Tue,  1 Feb 2022 09:17:20 GMT
-Message-ID: <20220201074652-0.1.b.2zkd.0.q7ei4iudda@profitfirm24.com.pl>
-Date:   Tue,  1 Feb 2022 09:17:20 GMT
-From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
-        <arkadiusz.sokolowski@profitfirm24.com.pl>
-To:     <linux-leds@vger.kernel.org>
-Subject: Koszty instalacji fotowoltaicznej
-X-Mailer: mail.profitfirm24.com.pl
+        id S229990AbiBBLDK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 2 Feb 2022 06:03:10 -0500
+Received: from relay08.th.seeweb.it ([5.144.164.169]:35667 "EHLO
+        relay08.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233445AbiBBLDJ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 2 Feb 2022 06:03:09 -0500
+Received: from SoMainline.org (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 76B593F7DF;
+        Wed,  2 Feb 2022 12:03:06 +0100 (CET)
+Date:   Wed, 2 Feb 2022 12:03:05 +0100
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>,
+        Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>
+Subject: Re: [PATCH v10 2/2] leds: Add driver for Qualcomm LPG
+Message-ID: <20220202110305.gbow3e3stolb67v5@SoMainline.org>
+References: <20211010043912.136640-1-bjorn.andersson@linaro.org>
+ <20211010043912.136640-2-bjorn.andersson@linaro.org>
+ <YXL0DyyPkS4/wfB7@ripper>
+ <20211027211928.tjybwy2lokj6eoun@SoMainline.org>
+ <YfSPYkbTXMOUGKkG@yoga>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YfSPYkbTXMOUGKkG@yoga>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On 2022-01-28 18:50:42, Bjorn Andersson wrote:
+> On Wed 27 Oct 16:19 CDT 2021, Marijn Suijten wrote:
+> 
+> > Hi Bjorn,
+> > 
+> > On 2021-10-22 10:25:35, Bjorn Andersson wrote:
+> > > On Sat 09 Oct 21:39 PDT 2021, Bjorn Andersson wrote:
+> > > 
+> > > > The Light Pulse Generator (LPG) is a PWM-block found in a wide range of
+> > > > PMICs from Qualcomm. These PMICs typically comes with 1-8 LPG instances,
+> > > > with their output being routed to various other components, such as
+> > > > current sinks or GPIOs.
+> > > > 
+> > > > Each LPG instance can operate on fixed parameters or based on a shared
+> > > > lookup-table, altering the duty cycle over time. This provides the means
+> > > > for hardware assisted transitions of LED brightness.
+> > > > 
+> > > > A typical use case for the fixed parameter mode is to drive a PWM
+> > > > backlight control signal, the driver therefor allows each LPG instance
+> > > > to be exposed to the kernel either through the LED framework or the PWM
+> > > > framework.
+> > > > 
+> > > > A typical use case for the LED configuration is to drive RGB LEDs in
+> > > > smartphones etc, for which the driver support multiple channels to be
+> > > > ganged up to a MULTICOLOR LED. In this configuration the pattern
+> > > > generators will be synchronized, to allow for multi-color patterns.
+> > > > 
+> > > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > > ---
+> > > 
+> > > Any feedback on this?
+> > 
+> > I asked in #linux-msm whether anything is wrong with the patterns,
+> > since my Sony Discovery (sdm630 with a pm660l) blinks way quicker on a
+> > pattern that's supposed to stay on for 1s and off for 1s:
+> > 
+> >     echo "0 1000 255 1000" > /sys/class/leds/rgb\:status/hw_pattern
+> > 
+> > It however seems to be broken in the same way on an older version now
+> > (this might be v9 or v8) which I don't remember to be the case.  Can you
+> > double-check if this is all working fine on your side?  If so, I'll have
+> > to find some time to debug it on my end.
+> > 
+> 
+> I had missed the fact that LPG_RAMP_DURATION_REG is two registers for
+> msg and lsb, for a total of 9 bits of duration. So what you saw was
+> probably ticking at 232ms.
+> 
+> Note though that the pattern uses the last time as "high pause", so I
+> expect that you should have seen 232 ms of off, followed by 464ms of
+> light.
 
-stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
- obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99. =20
+Visual inspection seems to confirm those numbers indeed!
 
-Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
-acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
-ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
+> I've fixed this for v11, both rejecting invalid input and writing out
+> all 9 bits.
 
-Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
-=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
-=2E
+Doesn't that 512ms limit, together with using only the last value for
+hi_pause (and not the first value for lo_pause) force users to write
+patterns in a certain way which is not easily conveyed to the caller
+except by reading the comment in the driver?  I'd guess lo_pause can be
+used even if not in ping-pong mode, it should just hold at the first
+value for the given duration?
 
-Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
-temacie?
+(That said hw_pattern is anyway already riddled with device-specific
+information, such as only having one `delta_t` which functions as the
+step size for every entry, and with the change above would need to be
+sourced from another step that's not the first.)
 
+Bit of a stretch, but perhaps worth noting anyway: should this be
+written in documentation somewhere, together with pattern examples and
+their desired outcome to function as testcases too?
 
-Pozdrawiam
-Arkadiusz Soko=C5=82owski
+- Marijn
