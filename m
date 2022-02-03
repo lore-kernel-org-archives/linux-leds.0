@@ -2,206 +2,237 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F4BAC433EF
-	for <linux-leds@archiver.kernel.org>; Thu,  3 Feb 2022 08:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD19C433F5
+	for <linux-leds@archiver.kernel.org>; Thu,  3 Feb 2022 10:43:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348022AbiBCIkJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 3 Feb 2022 03:40:09 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44537 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235905AbiBCIkI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 3 Feb 2022 03:40:08 -0500
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nFXWR-0006Rb-VP; Thu, 03 Feb 2022 09:31:20 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nFXWF-00EEGw-Pj; Thu, 03 Feb 2022 09:31:07 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nFXWE-005E44-Cl; Thu, 03 Feb 2022 09:31:06 +0100
-Date:   Thu, 3 Feb 2022 09:31:03 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Satya Priya Kakitapalli <c_skakit@qti.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Luca Weiss <luca@z3ntu.xyz>, Rob Herring <robh+dt@kernel.org>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v11 2/2] leds: Add driver for Qualcomm LPG
-Message-ID: <20220203083103.mqwkjxkgy22jaies@pengutronix.de>
-References: <20220129005429.754727-1-bjorn.andersson@linaro.org>
- <20220129005429.754727-2-bjorn.andersson@linaro.org>
- <20220202162930.24zcediw44t2jzqf@pengutronix.de>
- <Yfr6RQwJMZY5RZGr@ripper>
+        id S230020AbiBCKno (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 3 Feb 2022 05:43:44 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39682 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231520AbiBCKno (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 3 Feb 2022 05:43:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643885023;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kTRlikWNsk8qWf/8PN2xx5z6ktNWL74a8jVFp65fRis=;
+        b=Z+ktYtMiNSa9bC0WePsmexrSsWcmz1tB7oiShOKzvXCa+lXoW8eomk6Rm2mLoq97vJSIY7
+        w0yNBOGJ4Zo/I9JGH7+GE1antPCleevGQfJ+yVhYwhqnEwXWChymtPu74LEw/bbQtxAm0B
+        lsczEdKKTT/3/fpwzUZGIkiKzqMHroI=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-140-AdxcktjNOZKzDiRv7vnqEQ-1; Thu, 03 Feb 2022 05:43:42 -0500
+X-MC-Unique: AdxcktjNOZKzDiRv7vnqEQ-1
+Received: by mail-ed1-f71.google.com with SMTP id k5-20020a508ac5000000b00408dec8390aso1223010edk.13
+        for <linux-leds@vger.kernel.org>; Thu, 03 Feb 2022 02:43:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=kTRlikWNsk8qWf/8PN2xx5z6ktNWL74a8jVFp65fRis=;
+        b=XkJ/xdv/S3sWJ5WhPLiyUsr+8esixStP6H4jhno4PW9Cu2tyklTgSXkAZ6Y47HWI+Y
+         VvF6CVNpS56MgPu6QKVAyvzJAZa/BAk8CuPoJL41iGCrtc5cZHNZZ2kmQKJZMg+9DjUm
+         kX8/XzW6eQO93iWqNQQFRG5rp/ZUsYuZ9SZYaduwZhZuufTEBhIc8BGaUYIgZhTEQMft
+         FHO+VqYicjToPAlxa2zVVDxnWGVhdYqtr18lu95y1+0fOd5WrffcCgP7tNNCb3ZSa6O0
+         okBFK4tvgUTad0Bc/jRRy8cM0jaenBHg16U+GeAa+EER86M7Jb22sncEJnQ3Zh38PDe/
+         9EYw==
+X-Gm-Message-State: AOAM531lgNUTAnf1nHlgsJwg4w7BcXebf95Fp9fimbHUCPXCMP6L7iQm
+        mEK2unEhFsZxFo6x+RfLANRZpJZK/LrZC+p5UoC4GwWmOzShBWX8Fj88Fkby36DsdWVzutUwSRC
+        4DNr7vouPdRgUjKUVIyM5nQ==
+X-Received: by 2002:a50:8a89:: with SMTP id j9mr34362605edj.111.1643885021455;
+        Thu, 03 Feb 2022 02:43:41 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwVTH4x15dn4aMFa48pGSUUvqqopMpy5NaeluMMhNK87FFqVODDlJUFqIS98z58lSbZ2FetAA==
+X-Received: by 2002:a50:8a89:: with SMTP id j9mr34362595edj.111.1643885021226;
+        Thu, 03 Feb 2022 02:43:41 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1? (2001-1c00-0c1e-bf00-1db8-22d3-1bc9-8ca1.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1])
+        by smtp.gmail.com with ESMTPSA id d22sm8582135ejr.138.2022.02.03.02.43.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Feb 2022 02:43:40 -0800 (PST)
+Message-ID: <1f4d4bd7-b9f0-462a-594d-fe677163d876@redhat.com>
+Date:   Thu, 3 Feb 2022 11:43:39 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pmrswpjw2cmgksco"
-Content-Disposition: inline
-In-Reply-To: <Yfr6RQwJMZY5RZGr@ripper>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-leds@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH 2/2] leds: simatic-ipc-leds: Don't directly deref
+ ioremap_resource() returned ptr
+Content-Language: en-US
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     gerd.haeussler.ext@siemens.com, linux-leds@vger.kernel.org,
+        kernel test robot <lkp@intel.com>,
+        Henning Schild <henning.schild@siemens.com>
+References: <20220117112109.215695-1-hdegoede@redhat.com>
+ <20220117112109.215695-2-hdegoede@redhat.com>
+ <20220128102907.2bf438e2@md1za8fc.ad001.siemens.net>
+ <a6c629fa-1b47-803d-9f16-a0d1df70dda9@redhat.com>
+ <20220128162629.27cf98ee@md1za8fc.ad001.siemens.net>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20220128162629.27cf98ee@md1za8fc.ad001.siemens.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Hi,
 
---pmrswpjw2cmgksco
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 1/28/22 16:26, Henning Schild wrote:
+> Am Fri, 28 Jan 2022 10:37:36 +0100
+> schrieb Hans de Goede <hdegoede@redhat.com>:
+> 
+>> Hi Henning,
+>>
+>> On 1/28/22 10:30, Henning Schild wrote:
+>>> Hi Hans,
+>>>
+>>> this looks fine but also looks like someone should test it. What is
+>>> the timeline on that? I would want that tested but will need a few
+>>> more days to actually sit next to boxes and look at LEDs.  
+>>
+>> It would be nice to get this fix in before say 5.17-rc5, so testing
+>> this a couple of days from now is fine.
+> 
+> Gerd was so kind to just it done quickly today. He confirms its working
+> as expected.
+> 
+> Thanks guys. I guess you could add a 
+> 
+> Tested-by: Gerd Haeussler <gerd.haeussler.ext@siemens.com>
+> 
+> if you want.
+> 
+> regards,
+> Henning
+>  
+>> Talking about merging this...
+>>
+>> Pavel, since the original patch has landed through the pdx86 tree
+>> in 5.17-rc1 and since these 2 patches are LED patches I was sorta
+>> expecting you to pick these up.  But if it is easier for you,
+>> I would also happy to make these patches part of a pdx86 fixes
+>> pull-req for 5.17 .
 
-Hello Bjorn,
+Pavel, since this has also been tested now, I would be happy to pick
+this series up as fixes for 5.17 (since the original simatic-ipc-leds
+driver was merged for 5.17 through the pdx86 tree).
 
-On Wed, Feb 02, 2022 at 01:40:21PM -0800, Bjorn Andersson wrote:
-> On Wed 02 Feb 08:29 PST 2022, Uwe Kleine-K?nig wrote:
-> > did you consider my earlier feedback "It would also be good if the PWM
-> > code could live in drivers/pwm"?
-> > (https://lore.kernel.org/r/20210505051958.e5lvwfxuo2skdu2q@pengutronix.=
-de)
->=20
-> Yes, I did consider this. Because the downstream driver is (at least was
-> when I looked at it originally) split like that.
->=20
-> We have a number of different Qualcomm PMICs containing the LPG modules,
-> which consists of N PWM channels, a pattern lookup table and a set of
-> current sinks.
->=20
-> Each PWM channel can either be used as a traditional PWM, a LED or be
-> grouped together with other channels to form a multicolor LED. So we
-> need a design that allows different boards using a particular PMIC to
-> freely use the N channels according to one of these three operational
-> modes.
->=20
-> The pattern lookup table is a shared resource containing duty cycle
-> values and each of the PWM channels can be configured to have their duty
-> cycle modified from the lookup table on some configured cadence.
->=20
-> In the even that multiple PWM channels are ganged together to form a
-> multicolor LED, which is driven by a pattern, the pattern generator for
-> the relevant channels needs to be synchronized.
+Since the original driver is in 5.17-rc1 this could also go upstream
+through the leds tree though. Regardless this should be queued up
+as fixes for 5.17 to fix the sparse warnings introduced by the new
+driver.
 
-Is this some material for the commit log to motivate the design
-decision?
+Pavel, please let me know how you want to proceed with this ?
 
-> If we consider the PWM channel to be the basic primitive we need some
-> mechanism to configure the pattern properties for each of the channels
-> and we need some mechanism to synchronize the pattern generators for
-> some subset of the PWM channels.
->=20
->=20
-> In other words we need some custom API between the LED driver part and
-> the PWM driver, to configure these properties. This was the design
-> of the downstream driver when I started looking at this driver.
->=20
->=20
-> Another alternative that has been considered is to create two
-> independent drivers - for the same hardware. This would allow the system
-> integrator to pick the right driver for each of the channels.
->=20
-> One problem with this strategy is that the DeviceTree description of the
-> LPG hardware will have to be modified depending on the use case. In
-> particular this prevents me from writing a platform dtsi describing the
-> LPG hardware and then describe the LEDs and pwm channels in a board dts.
->=20
-> And we can't express the individual channels, because the multicolor
-> definition needs to span multiple channels.
->=20
->=20
-> So among all the options, implementing the pwm_chip in the LED driver
-> makes it possible for us to describe the LPG as one entity, with
-> board-specific LEDs and a set of PWM channels.
+Regards,
 
-ok.
+Hans
 
-> > At least splitting in two patches would be good IMHO.
->=20
-> I guess I can split out the parts related to the pwmchip in a separate
-> patch. Seems to be a rather small portion of the code though. Is that
-> what you have in mind?
 
-I didn't try to understand the pattern part. I know that for PWMs there
-is no pattern support, wasn't aware it's a thing for LEDs.
 
-Anyhow, not a hard requirement to split from my side.
+>>> Am Mon, 17 Jan 2022 12:21:09 +0100
+>>> schrieb Hans de Goede <hdegoede@redhat.com>:
+>>>   
+>>>> Sparse (rightly) currently gives the following warning:
+>>>>
+>>>> drivers/leds/simple/simatic-ipc-leds.c:155:40:
+>>>>  sparse: sparse: incorrect type in assignment (different address
+>>>> spaces) expected void *static [toplevel] simatic_ipc_led_memory
+>>>>  got void [noderef] __iomem *
+>>>>
+>>>> Fix this by changing the type of simatic_ipc_led_memory to void
+>>>> __iomem * and use readl()/writel() to access it.
+>>>>
+>>>> Cc: Henning Schild <henning.schild@siemens.com>
+>>>> Reported-by: kernel test robot <lkp@intel.com>
+>>>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>>>> ---
+>>>> Note this is not tested on actual hw, since I do not have the hw in
+>>>> question ---
+>>>>  drivers/leds/simple/simatic-ipc-leds.c | 32
+>>>> +++++++++++++++----------- 1 file changed, 18 insertions(+), 14
+>>>> deletions(-)
+>>>>
+>>>> diff --git a/drivers/leds/simple/simatic-ipc-leds.c
+>>>> b/drivers/leds/simple/simatic-ipc-leds.c index
+>>>> 179110448659..078d43f5ba38 100644 ---
+>>>> a/drivers/leds/simple/simatic-ipc-leds.c +++
+>>>> b/drivers/leds/simple/simatic-ipc-leds.c @@ -41,7 +41,7 @@ static
+>>>> struct simatic_ipc_led simatic_ipc_leds_io[] = { /* the actual
+>>>> start will be discovered with PCI, 0 is a placeholder */ static
+>>>> struct resource simatic_ipc_led_mem_res = DEFINE_RES_MEM_NAMED(0,
+>>>> SZ_4K, KBUILD_MODNAME); -static void *simatic_ipc_led_memory;
+>>>> +static void __iomem *simatic_ipc_led_memory;
+>>>>  
+>>>>  static struct simatic_ipc_led simatic_ipc_leds_mem[] = {
+>>>>  	{0x500 + 0x1A0, "red:" LED_FUNCTION_STATUS "-1"},
+>>>> @@ -92,21 +92,22 @@ static void simatic_ipc_led_set_mem(struct
+>>>> led_classdev *led_cd, enum led_brightness brightness)
+>>>>  {
+>>>>  	struct simatic_ipc_led *led = cdev_to_led(led_cd);
+>>>> +	void __iomem *reg = simatic_ipc_led_memory + led->value;
+>>>> +	u32 val;
+>>>>  
+>>>> -	u32 *p;
+>>>> -
+>>>> -	p = simatic_ipc_led_memory + led->value;
+>>>> -	*p = (*p & ~1) | (brightness == LED_OFF);
+>>>> +	val = readl(reg);
+>>>> +	val = (val & ~1) | (brightness == LED_OFF);
+>>>> +	writel(val, reg);
+>>>>  }
+>>>>  
+>>>>  static enum led_brightness simatic_ipc_led_get_mem(struct
+>>>> led_classdev *led_cd) {
+>>>>  	struct simatic_ipc_led *led = cdev_to_led(led_cd);
+>>>> +	void __iomem *reg = simatic_ipc_led_memory + led->value;
+>>>> +	u32 val;
+>>>>  
+>>>> -	u32 *p;
+>>>> -
+>>>> -	p = simatic_ipc_led_memory + led->value;
+>>>> -	return (*p & 1) ? LED_OFF : led_cd->max_brightness;
+>>>> +	val = readl(reg);
+>>>> +	return (val & 1) ? LED_OFF : led_cd->max_brightness;
+>>>>  }
+>>>>  
+>>>>  static int simatic_ipc_leds_probe(struct platform_device *pdev)
+>>>> @@ -116,8 +117,9 @@ static int simatic_ipc_leds_probe(struct
+>>>> platform_device *pdev) struct simatic_ipc_led *ipcled;
+>>>>  	struct led_classdev *cdev;
+>>>>  	struct resource *res;
+>>>> +	void __iomem *reg;
+>>>>  	int err, type;
+>>>> -	u32 *p;
+>>>> +	u32 val;
+>>>>  
+>>>>  	switch (plat->devmode) {
+>>>>  	case SIMATIC_IPC_DEVICE_227D:
+>>>> @@ -157,11 +159,13 @@ static int simatic_ipc_leds_probe(struct
+>>>> platform_device *pdev) return PTR_ERR(simatic_ipc_led_memory);
+>>>>  
+>>>>  		/* initialize power/watchdog LED */
+>>>> -		p = simatic_ipc_led_memory + 0x500 + 0x1D8; /*
+>>>> PM_WDT_OUT */
+>>>> -		*p = (*p & ~1);
+>>>> -		p = simatic_ipc_led_memory + 0x500 + 0x1C0; /*
+>>>> PM_BIOS_BOOT_N */
+>>>> -		*p = (*p | 1);
+>>>> +		reg = simatic_ipc_led_memory + 0x500 + 0x1D8; /*
+>>>> PM_WDT_OUT */
+>>>> +		val = readl(reg);
+>>>> +		writel(val & ~1, reg);
+>>>>  
+>>>> +		reg = simatic_ipc_led_memory + 0x500 + 0x1C0; /*
+>>>> PM_BIOS_BOOT_N */
+>>>> +		val = readl(reg);
+>>>> +		writel(val | 1, reg);
+>>>>  		break;
+>>>>  	default:
+>>>>  		return -ENODEV;  
+>>>   
+>>
+> 
 
-> > > +/*
-> > > + * Limitations:
-> > > + * - Updating both duty and period is not done atomically, so the ou=
-tput signal
-> > > + *   will momentarily be a mix of the settings.
-> >=20
-> > Is the PWM well-behaved? (i.e. does it emit the inactive level when
-> > disabled?)
->=20
-> Yes, a disabled channel outputs a logical 0.
-
-Please add this to the Limitations section. It's not actually a
-limitation, but still this is a good place to put this information.
-
-> > Does it complete a period before switching to the new
-> > setting?
->=20
-> I see nothing indicating the answer to this, in either direction...
-
-Can you test that? It's as easy as configuring a long period with 0%
-relative duty cycle and then immediately a 100% relative duty cycle.
-
-> > > +static void lpg_pwm_get_state(struct pwm_chip *chip, struct pwm_devi=
-ce *pwm,
-> > > +			      struct pwm_state *state)
-> > > +{
-> > > +	struct lpg *lpg =3D container_of(chip, struct lpg, pwm);
-> > > +	struct lpg_channel *chan =3D &lpg->channels[pwm->hwpwm];
-> > > +	u64 duty =3D DIV_ROUND_UP_ULL(chan->pwm_value * chan->period, LPG_R=
-ESOLUTION - 1);
-> > > +
-> > > +	state->period =3D chan->period;
-> > > +	state->duty_cycle =3D duty;
-> > > +	state->polarity =3D PWM_POLARITY_NORMAL;
-> > > +	state->enabled =3D chan->enabled;
-> >=20
-> > This doesn't work if .get_state() is called before .apply() was called,
-> > does it?
-> >=20
->=20
-> You mean that I would return some bogus state and not the actual
-> hardware state?
-
-Yes. At least I only found lpg_calc_freq() assigning chan->period and
-chan->enabled. And unless I missed something this isn't called before
-the pwm core calls .get_state().
-
-> > > +}
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---pmrswpjw2cmgksco
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmH7ksQACgkQwfwUeK3K
-7AlI0wf8CMVIXyyyf7L5TUXfdVoY1v8vu1oPMUeS38RJC1HNbRoSKLZdgBk5boZR
-b3+Of5faEST0BAQ/wf9W4Wef+7GBOV2PgZ9ZJuUu8Xz5/NH3WO3p9Tcy1mDTHR4W
-epKHfi2m558q3j0rg44NfY/Dvw25cE2Sz6kPdM7/H6ux/yTEUfQdKP3Me/VVYs08
-8rn92ceqp+EedjgzzBcCDpE89wqygiwMOzPv2KjlAla96p+0pilpGuWBN/i/sjLc
-v3uh8XAH1yq1yKs1Hsh6GPGX+Q/SSxdWEONUqK7ipNmzTq8y4XAsXWPol9rU19nH
-TnVwfLxfIRKXoRCStc6QHMJHjzYfew==
-=7hTI
------END PGP SIGNATURE-----
-
---pmrswpjw2cmgksco--
