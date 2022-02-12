@@ -2,118 +2,78 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFC6C433EF
-	for <linux-leds@archiver.kernel.org>; Fri, 11 Feb 2022 19:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E37C433F5
+	for <linux-leds@archiver.kernel.org>; Sat, 12 Feb 2022 11:25:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352895AbiBKTh1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 11 Feb 2022 14:37:27 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52032 "EHLO
+        id S234294AbiBLLZo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 12 Feb 2022 06:25:44 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343939AbiBKTh0 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 11 Feb 2022 14:37:26 -0500
-Received: from mail.schwermer.no (mail.schwermer.no [49.12.228.226])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C306ECF2;
-        Fri, 11 Feb 2022 11:37:23 -0800 (PST)
-Message-ID: <94f9ae9d-b048-3b72-970e-9055430ca5f5@svenschwermer.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=svenschwermer.de;
-        s=mail; t=1644608241;
-        bh=IRPnsyxD2CUad11a8uUxAIwhDx7MnWDkdL+tXUo5o6I=;
-        h=Subject:To:References:From:In-Reply-To;
-        b=RD3n5vrRh5wVheBTxyXJfin0WtCrvpa8RjtHbGeUlv9QKcnwJg5zeDFfZD3CY5wAU
-         +cMKfRbadXqZyRkLVsBVtESruzJaaWTkxIxml5vWatcwMUq6CVEQu5B9hVd+Fk787R
-         TfhGyj/QPIPaSasAWj2vTrluUIqbQtAjLLVmOZbbpqZCsahOGUE3qrfk0gVjUexYUQ
-         jSpOrdA3quvvDWKhmo2jBpQdr/fDQWvvqdY4xArJou4JE+r0+jX7ZfIHDZefOUx45Y
-         xYp/xAwO9xoMnzybetv8umEzVA5s6eIH1s2s1aaVB+wbh0/k7kws1JL2L4MPjbSUxP
-         93QIX9NMxXe4A==
-Date:   Fri, 11 Feb 2022 20:37:19 +0100
-Mime-Version: 1.0
-Subject: Re: [PATCH v6 2/3] dt-bindings: leds: Add multicolor PWM LED bindings
-Content-Language: en-US
-To:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pwm@vger.kernel.org, pavel@ucw.cz, robh+dt@kernel.org,
-        thierry.reding@gmail.com, u.kleine-koenig@pengutronix.de,
-        lee.jones@linaro.org, post@lespocky.de, andy.shevchenko@gmail.com,
-        robh@kernel.org
-References: <20220208191236.660172-1-sven@svenschwermer.de>
- <20220208191236.660172-2-sven@svenschwermer.de>
- <YgOGksA8kruvFLY2@ada-deb-carambola.ifak-system.com>
- <2bf7a4c4-1661-d800-51d3-6e6287b5c6fc@svenschwermer.de>
- <YgTb0sRSaO1EPsOW@ada-deb-carambola.ifak-system.com>
-From:   Sven Schwermer <sven@svenschwermer.de>
-In-Reply-To: <YgTb0sRSaO1EPsOW@ada-deb-carambola.ifak-system.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S234250AbiBLLZm (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 12 Feb 2022 06:25:42 -0500
+X-Greylist: delayed 92 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 12 Feb 2022 03:25:39 PST
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4245826562;
+        Sat, 12 Feb 2022 03:25:39 -0800 (PST)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id E28801C0B80; Sat, 12 Feb 2022 12:25:37 +0100 (CET)
+Date:   Sat, 12 Feb 2022 12:25:36 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Javier Martinez Canillas <javier@dowhile0.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: Re: [PATCH v2 0/3] regulator/mfd: dt-bindings: maxim,max77802:
+ convert to dtschema
+Message-ID: <20220212112536.GB20866@duo.ucw.cz>
+References: <20220111175430.224421-1-krzysztof.kozlowski@canonical.com>
+ <f0a9e656-cf18-f212-b701-a1c9d10c4a59@canonical.com>
+ <YgDoG8Xlhq5L3Bii@google.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="neYutvxvOLaeuPCA"
+Content-Disposition: inline
+In-Reply-To: <YgDoG8Xlhq5L3Bii@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Alex,
 
-On 2/10/22 10:33, Alexander Dahl wrote:
->> I don't see how naming them led-{0,1,2} would be better in any way, please
->> elaborate.
-> 
-> - consistency with other LED driver bindings
-> - spot the number of "sub"-LEDs more easily
-> - prevent all kinds of different names people will come up with, if
->    all is allowed instead of a clear scheme
-> 
-> The color is in the color property anyways.
+--neYutvxvOLaeuPCA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Let's hear what others on this list say. I don't feel too strongly about 
-this either way.
+Hi!
 
-> I would have expected something like this:
-> 
->    led-controller-0 {
->        compatible = "pwm-leds-multicolor";
-> 
->        multi-led-0 {
->          color = <LED_COLOR_ID_RGB>;
->          function = LED_FUNCTION_INDICATOR;
->          max-brightness = <65535>;
-> 
->          led-0 {
->              pwms = <&pwm1 0 1000000>;
->              color = <LED_COLOR_ID_RED>;
->          };
-> 
->          led-1 {
->              pwms = <&pwm2 0 1000000>;
->              color = <LED_COLOR_ID_GREEN>;
->          };
-> 
->          led-2 {
->              pwms = <&pwm3 0 1000000>;
->              color = <LED_COLOR_ID_BLUE>;
->          };
->        };
-> 
->        multi-led-1 {
->          color = <LED_COLOR_ID_RGB>;
->          function = LED_FUNCTION_INDICATOR;
->          max-brightness = <65535>;
-> 
->          led-0 {
->              pwms = <&pwm1 0 1000000>;
->              color = <LED_COLOR_ID_RED>;
->          };
-> 
->          led-1 {
->              pwms = <&pwm2 0 1000000>;
->              color = <LED_COLOR_ID_GREEN>;
->          };
-> 
->          led-2 {
->              pwms = <&pwm3 0 1000000>;
->              color = <LED_COLOR_ID_BLUE>;
->          };
->        };
->    };
+> > Dear Lee,
+> >=20
+> > This patchset was reviewed and there are no outstanding issues. Could
+> > you pick up entire set via MFD tree?
+>=20
+> Nothing from LED or Regulator?
 
-That would make the driver more complex. I'm not sure that would be 
-worth it. Additionally, we'd have to change the node name pattern for 
-the multi LED class. Other opinions?
+I took 3/3 separately, as suggested.
 
 Best regards,
-Sven
+								Pavel
+
+--=20
+http://www.livejournal.com/~pavelmachek
+
+--neYutvxvOLaeuPCA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYgeZMAAKCRAw5/Bqldv6
+8oy2AJ9cSaFdxoaoiv60dYQ5ubQK+1vE8ACgrgDOFd06FGAIeeyDOMZ3ok9YyY0=
+=/ZGh
+-----END PGP SIGNATURE-----
+
+--neYutvxvOLaeuPCA--
