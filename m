@@ -2,70 +2,90 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0414FC433F5
-	for <linux-leds@archiver.kernel.org>; Sat, 12 Feb 2022 11:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BE0C433F5
+	for <linux-leds@archiver.kernel.org>; Sat, 12 Feb 2022 11:30:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234450AbiBLL2n (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 12 Feb 2022 06:28:43 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42560 "EHLO
+        id S234614AbiBLLaw (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 12 Feb 2022 06:30:52 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230111AbiBLL2m (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 12 Feb 2022 06:28:42 -0500
+        with ESMTP id S230111AbiBLLau (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 12 Feb 2022 06:30:50 -0500
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E502F26AEA;
-        Sat, 12 Feb 2022 03:28:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC8926AF3;
+        Sat, 12 Feb 2022 03:30:47 -0800 (PST)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 9EE661C0B80; Sat, 12 Feb 2022 12:28:38 +0100 (CET)
-Date:   Sat, 12 Feb 2022 12:28:38 +0100
+        id 125321C0B7A; Sat, 12 Feb 2022 12:24:05 +0100 (CET)
+Date:   Sat, 12 Feb 2022 12:24:03 +0100
 From:   Pavel Machek <pavel@ucw.cz>
-To:     =?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-leds@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 0/3] Add support for ocp8110 flash
-Message-ID: <20220212112838.GC20866@duo.ucw.cz>
-References: <20211117091405.7412-1-git@apitzsch.eu>
- <20220207230638.56730-1-git@apitzsch.eu>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Javier Martinez Canillas <javier@dowhile0.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] dt-bindings: leds: common: fix unit address in
+ max77693 example
+Message-ID: <20220212112403.GA20866@duo.ucw.cz>
+References: <20220111175430.224421-1-krzysztof.kozlowski@canonical.com>
+ <20220111175430.224421-4-krzysztof.kozlowski@canonical.com>
+ <783a67ad-ee7e-c75a-a52c-672cd355bd37@canonical.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="/e2eDi0V/xtL+Mc8"
+        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
 Content-Disposition: inline
-In-Reply-To: <20220207230638.56730-1-git@apitzsch.eu>
+In-Reply-To: <783a67ad-ee7e-c75a-a52c-672cd355bd37@canonical.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---/e2eDi0V/xtL+Mc8
+--x+6KMIRAuhnl3hBn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> The led is used as front flash of BQ Aquaris M5.
+> > The max77693 LED device node should not take an unit address, because it
+> > is instantiated from a max77693 I2C parent device node.  This also
+> > splits all examples to separate DTS examples because they are actually
+> > independent.
+> >=20
+> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> > ---
+> >  Documentation/devicetree/bindings/leds/common.yaml | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> >=20
 >=20
-> https://github.com/bq/aquaris-M5/blob/901d0b2ca05c0b0af49786fb548eb0fc289=
-867ff/arch/arm/boot/dts/qcom/piccolo-msm8939-camera-sensor-qrd.dtsi#L16
+> This should be part of my max77693 patchset:
+> https://lore.kernel.org/lkml/20220111175017.223966-1-krzysztof.kozlowski@=
+canonical.com/
+>=20
+> Nothing actually depends on this patch. It just fixes a warning which
+> will be brought to eyes with mentioned max77693 patchset.
+>=20
+> Pavel, feel free to take it separately via leds tree. Other way is to
+> take it with other max77693 patches (probably via MFD tree).
 
-Thanks for patches, I took 1 and 3/3, waiting for some kind of
-changelog on 2/.
+Ok, let me take it separately. Applied, thanks.
 
 Best regards,
-							Pavel
+								Pavel
 --=20
 http://www.livejournal.com/~pavelmachek
 
---/e2eDi0V/xtL+Mc8
+--x+6KMIRAuhnl3hBn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYgeZ5gAKCRAw5/Bqldv6
-8iP9AJ9X66xk2Tg9z/6xysk98CrX+rL9iQCdGONCiSyzNt3AtW+0Kv2GAxh4PzE=
-=kAce
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYgeY0wAKCRAw5/Bqldv6
+8o0HAJ40rgvnPNaFETKSsK2EgQBHcFZeGgCcCDg/CAOJXwcQ+R3w9N3O8BGULgA=
+=RmPe
 -----END PGP SIGNATURE-----
 
---/e2eDi0V/xtL+Mc8--
+--x+6KMIRAuhnl3hBn--
