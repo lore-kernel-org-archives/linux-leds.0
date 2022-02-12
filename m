@@ -2,90 +2,109 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BE0C433F5
-	for <linux-leds@archiver.kernel.org>; Sat, 12 Feb 2022 11:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD373C433EF
+	for <linux-leds@archiver.kernel.org>; Sat, 12 Feb 2022 11:54:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234614AbiBLLaw (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 12 Feb 2022 06:30:52 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43694 "EHLO
+        id S234185AbiBLLyo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 12 Feb 2022 06:54:44 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230111AbiBLLau (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 12 Feb 2022 06:30:50 -0500
+        with ESMTP id S232024AbiBLLyo (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 12 Feb 2022 06:54:44 -0500
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC8926AF3;
-        Sat, 12 Feb 2022 03:30:47 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25F482613A;
+        Sat, 12 Feb 2022 03:54:41 -0800 (PST)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 125321C0B7A; Sat, 12 Feb 2022 12:24:05 +0100 (CET)
-Date:   Sat, 12 Feb 2022 12:24:03 +0100
+        id BB8191C0B7A; Sat, 12 Feb 2022 12:54:39 +0100 (CET)
+Date:   Sat, 12 Feb 2022 12:54:38 +0100
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: leds: common: fix unit address in
- max77693 example
-Message-ID: <20220212112403.GA20866@duo.ucw.cz>
-References: <20220111175430.224421-1-krzysztof.kozlowski@canonical.com>
- <20220111175430.224421-4-krzysztof.kozlowski@canonical.com>
- <783a67ad-ee7e-c75a-a52c-672cd355bd37@canonical.com>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>,
+        sven@svenschwermer.de, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Sven Schwermer <sven.schwermer@disruptive-technologies.com>,
+        robh+dt@kernel.org, thierry.reding@gmail.com,
+        u.kleine-koenig@pengutronix.de, lee.jones@linaro.org,
+        post@lespocky.de
+Subject: Re: [PATCH v3 1/2] dt-bindings: leds: Add multicolor PWM LED bindings
+Message-ID: <20220212115438.GG20866@duo.ucw.cz>
+References: <20220126104844.246068-1-sven@svenschwermer.de>
+ <20220126104844.246068-2-sven@svenschwermer.de>
+ <00d8de09-360e-4e0f-1496-642ba1cbf863@gmail.com>
+ <20220128213609.7a60e9fe@thinkpad>
+ <09b46d05-5dd0-a585-2ca3-0bc04e613343@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
+        protocol="application/pgp-signature"; boundary="RMedoP2+Pr6Rq0N2"
 Content-Disposition: inline
-In-Reply-To: <783a67ad-ee7e-c75a-a52c-672cd355bd37@canonical.com>
+In-Reply-To: <09b46d05-5dd0-a585-2ca3-0bc04e613343@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---x+6KMIRAuhnl3hBn
+--RMedoP2+Pr6Rq0N2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > The max77693 LED device node should not take an unit address, because it
-> > is instantiated from a max77693 I2C parent device node.  This also
-> > splits all examples to separate DTS examples because they are actually
-> > independent.
+> > > > Signed-off-by: Sven Schwermer <sven.schwermer@disruptive-technologi=
+es.com>
+> > > > ---
+> > > [...]
+> > > > +
+> > > > +additionalProperties: false
+> > > > +
+> > > > +examples:
+> > > > +  - |
+> > > > +    #include <dt-bindings/leds/common.h>
+> > > > +
+> > > > +    rgb-led {
+> > > > +        compatible =3D "pwm-leds-multicolor";
+> > > > +
+> > > > +        multi-led {
+> > > > +          color =3D <LED_COLOR_ID_RGB>;
+> > > > +          function =3D LED_FUNCTION_INDICATOR;
+> > > > +          max-brightness =3D <65535>;
+> > >=20
+> > > It doesn't make much sense to have such a big resolution of global
+> > > multi color brightness. 255 will be sufficient.
 > >=20
-> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> > ---
-> >  Documentation/devicetree/bindings/leds/common.yaml | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> >=20
+> > If the PWM supports it, why not?
+> > On Omnia the default is 255, and since it is PWM, the change from 0/255
+> > to 1/255 is much bigger then from, say, 15/255 to 16/255. So if 1/255
+> > is too bright, you are then unable to set it less bright. I think 1024
+> > or ever 65535 makes sense with PWMs.
 >=20
-> This should be part of my max77693 patchset:
-> https://lore.kernel.org/lkml/20220111175017.223966-1-krzysztof.kozlowski@=
-canonical.com/
->=20
-> Nothing actually depends on this patch. It just fixes a warning which
-> will be brought to eyes with mentioned max77693 patchset.
->=20
-> Pavel, feel free to take it separately via leds tree. Other way is to
-> take it with other max77693 patches (probably via MFD tree).
+> With values other than 255 we will not achieve 24-bit RGB, which is one
+> problem, and the other one is non-linear brightness that can be achieved
+> with PWM. So probably we would need to add an additional note in the
+> documentation [0], saying that changing global brightness allows to
+> preserve combined LED hue only when all sub-leds are linear, and that it
+> will not be the case for PWM LEDs.
 
-Ok, let me take it separately. Applied, thanks.
+I have yet to see a LED that was anything but linear. If we'll want to
+match colorspace of RGB displays, we'll need to do more work. (Often,
+255/255/255 is not white with RGB LEDs, for example).
+
+So 16-bit pwm makes sense to me.
 
 Best regards,
 								Pavel
 --=20
 http://www.livejournal.com/~pavelmachek
 
---x+6KMIRAuhnl3hBn
+--RMedoP2+Pr6Rq0N2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYgeY0wAKCRAw5/Bqldv6
-8o0HAJ40rgvnPNaFETKSsK2EgQBHcFZeGgCcCDg/CAOJXwcQ+R3w9N3O8BGULgA=
-=RmPe
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYgef/gAKCRAw5/Bqldv6
+8mxaAJ9Huuordp8TZqDmLJtJHl/NWt/PIwCgvwg5KEPKBErrbU2khVMFNF0MsCc=
+=oYPN
 -----END PGP SIGNATURE-----
 
---x+6KMIRAuhnl3hBn--
+--RMedoP2+Pr6Rq0N2--
