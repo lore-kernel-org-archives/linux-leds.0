@@ -2,76 +2,69 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3191C433F5
-	for <linux-leds@archiver.kernel.org>; Sun, 13 Mar 2022 20:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3662C433F5
+	for <linux-leds@archiver.kernel.org>; Mon, 14 Mar 2022 12:20:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234548AbiCMUGC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 13 Mar 2022 16:06:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41760 "EHLO
+        id S238224AbiCNMVq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 14 Mar 2022 08:21:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232809AbiCMUGC (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 13 Mar 2022 16:06:02 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97E912AE32
-        for <linux-leds@vger.kernel.org>; Sun, 13 Mar 2022 13:04:51 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id n19so23689870lfh.8
-        for <linux-leds@vger.kernel.org>; Sun, 13 Mar 2022 13:04:51 -0700 (PDT)
+        with ESMTP id S243881AbiCNMVV (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 14 Mar 2022 08:21:21 -0400
+X-Greylist: delayed 1408 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 14 Mar 2022 05:17:34 PDT
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4311610FD
+        for <linux-leds@vger.kernel.org>; Mon, 14 Mar 2022 05:17:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=united-earth-jp.20210112.gappssmtp.com; s=20210112;
-        h=from:mime-version:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=p4fJRngGgpGY7xzOvYB4iVk1ZX8ZWvU9I/UbhByrFZ4=;
-        b=3A4PggXGFYqwrBkMxfRtK7r6iPIEC3BzmlfFDnIO012TqT3Zb3mio20/YxfWoKPjLw
-         cS14lO550TzNMe/oQRiIuJ03EDrkT5nGqX4Yc4fmnYApqwfc7BH1MrCGqVPNwyBLmUyk
-         bZG2N0jtrzwixR16n5EkAroEhVbF6DeM0rLMuXXugmLJbAkqF6JJpGM/R/zGVq9IMCil
-         bL7edChMv6Uvf1UDAW6KtcMGJfmml7JzlGhU9pBOWpCl3/MwwSHhmP2PaBTJ+T6PMvS9
-         SPXoeZUVqf1Y6+04lUY4Nmhqi2jL4u2eJ3VAV/aw7aYC/F3UblwDVc0+b88gPebXgVaL
-         RkOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:mime-version:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=p4fJRngGgpGY7xzOvYB4iVk1ZX8ZWvU9I/UbhByrFZ4=;
-        b=Vy1J5Qpk9igBGIHWfgNMqfgHgdGmlwsaqb7wKc5m/GevPqiPeXN5Z7ml9SDBOPnGfd
-         T1HbaFpsqYm/CaVgdweMW3YRrocDZsPTYmeOvCO/xqNsKKKB2SSaiH8a78RyIwqTvQwz
-         KVQ8WCXjXkH+qxPkOQ/ZBwauW6pQKDsJ6KHMAU/Ooy9iKFSDwTeZMv1G1eE740tbI97R
-         Y3t1RciYMtiV/IooYgXCRfthIcC5NsZZIAs6GKX9O3N8YDGOEhzH7DIENoQBW7PK+7rp
-         MrIdqKu0M0+ohdnfk+0LacgdPd0UHGMB7LYzTSHjJa4MTT7eiKF0oM2SrfJwGrZP9fF1
-         W4/Q==
-X-Gm-Message-State: AOAM5322GuydATyJDDUVvh0zElvV9xsY0VyVOymq1EbKsk0DslE060fu
-        8aQBTnt4xL1jsLaygEtRjYc7xum7btcs5cJtF6dhnB4ZrRWrug==
-X-Google-Smtp-Source: ABdhPJyrYFH/HPoU/rDSaInK7PgVqlVJCr1jq2obUhDyEF/BR0L81lM7dRfV/4LBb5y6FiEOaVdMPoMfSwSv6d8KFMg=
-X-Received: by 2002:a19:6a0e:0:b0:443:3b15:4345 with SMTP id
- u14-20020a196a0e000000b004433b154345mr11767838lfu.388.1647201889907; Sun, 13
- Mar 2022 13:04:49 -0700 (PDT)
-Received: from 601147792955 named unknown by gmailapi.google.com with
- HTTPREST; Sun, 13 Mar 2022 13:04:49 -0700
-From:   =?UTF-8?B?44Om44OK44Kk44OG44OD44OJ44O744Ki44O844K544Ob44O844Og44Oa44O844K4?= 
-        <webpost@united-earth.jp>
-X-Mailer: WPMailSMTP/Mailer/gmail 3.3.0
+  d=inria.fr; s=dc;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=yHuInlLPYPtI5nW4OGH0dkkIEdiHVs1voPfQFQF2pHY=;
+  b=VrmSxakQgGIDKCRASUzXErERNiVN+dY7ummNknm001h+ThPgV64wTc7u
+   N1oqDszfVBOHhyVEKvdL1x77msMSa/h9ndecLXIHPLF0gkXx4vk/GgwaE
+   otvs8qYlMQkMvD/zviv8r4UC3e9Yh4I1Z/b2lmIFZ7v71XxH60x04BvkB
+   c=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
+   d="scan'208";a="25997341"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:53:59 +0100
+From:   Julia Lawall <Julia.Lawall@inria.fr>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     kernel-janitors@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 08/30] leds: pca963x: fix typos in comments
+Date:   Mon, 14 Mar 2022 12:53:32 +0100
+Message-Id: <20220314115354.144023-9-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
+References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Date:   Sun, 13 Mar 2022 13:04:49 -0700
-Message-ID: <CAFsp5GiJ65cMv16KK3v=FJv60EgXp9poeZPE54qhyu2_Y90nrg@mail.gmail.com>
-Subject: =?UTF-8?B?c29tcmFtbU5QT+azleS6uuODpuODiuOCpOODhuODg+ODieODu+OCouODvOOCueOCiOOCig==?=
-        =?UTF-8?B?5o6n44GI44Oh44O844Or44Gn44GZ?=
-To:     linux-leds@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-44GT44Gu5bqm44Gv44CB54m55a6a6Z2e5Za25Yip5rS75YuV5rOV5Lq644Om44OK44Kk44OG44OD
-44OJ44O744Ki44O844K544Gr44GK5ZWP44GE5ZCI44Gb44GE44Gf44Gg44GN44CB6Kqg44Gr44GC
-44KK44GM44Go44GG44GU44GW44GE44G+44GZ44CCDQoNCuS4i+iomOWGheWuueOBq+OBpuaJv+OC
-iuOBvuOBl+OBn+OAgg0KDQrlvozml6XjgIHmi4XlvZPjgojjgorjgZTpgKPntaHjgZXjgZvjgabj
-gYTjgZ/jgaDjgY3jgb7jgZnjga7jgafjgIHku4rjgZfjgbDjgonjgY/jgYrlvoXjgaHkuIvjgZXj
-gYTjgb7jgZvjgIINCg0KDQrjgYrlkI3liY0NCvCfjZMgU2FtYW50aGEgd2FudCB0byBtZWV0IHlv
-dSEgQ2xpY2sgaGVyZTogaHR0cHM6Ly9jbGNrLnJ1L2RtazhBP2RmNW13IPCfjZMNCg0K5LyB5qWt
-5ZCN44O76YOo572y5ZCNDQo4dXRxcXQNCg0K44Oh44O844Or44Ki44OJ44Os44K5DQpsaW51eC1s
-ZWRzQHZnZXIua2VybmVsLm9yZw0KDQrpm7voqbHnlarlj7cNCjIwMzY4MTUxOTIzOA0KDQrlj5bm
-nZDmpoLopoHjg7vjg4bjg7zjg54NCnNvbXJhbW0NCg0K5Y+W5p2Q5YaF5a65DQpbdHlvdXItbWVz
-c2FnZV0NCg0KDQotLQ0K44GT44Gu44Oh44O844Or44GvIOeJueWumumdnuWWtuWIqea0u+WLleaz
-leS6uuODpuODiuOCpOODhuODg+ODieODu+OCouODvOOCuSAoaHR0cHM6Ly91bml0ZWQtZWFydGgu
-anAvd3BzaXRlKSDjga7jgYrllY/jgYTlkIjjgo/jgZvjg5Xjgqnjg7zjg6DjgYvjgonpgIHkv6Hj
-gZXjgozjgb7jgZfjgZ8NCg==
+Various spelling mistakes in comments.
+Detected with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/leds/leds-pca963x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index 00aecd67e348..268c6bea2158 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -249,7 +249,7 @@ static int pca963x_blink_set(struct led_classdev *led_cdev,
+ 
+ 	period = pca963x_period_scale(led, time_on + time_off);
+ 
+-	/* If period not supported by hardware, default to someting sane. */
++	/* If period not supported by hardware, default to something sane. */
+ 	if ((period < PCA963X_BLINK_PERIOD_MIN) ||
+ 	    (period > PCA963X_BLINK_PERIOD_MAX)) {
+ 		time_on = 500;
+
