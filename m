@@ -2,68 +2,108 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6913AC433EF
-	for <linux-leds@archiver.kernel.org>; Sun, 27 Mar 2022 21:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD114C433EF
+	for <linux-leds@archiver.kernel.org>; Mon, 28 Mar 2022 01:22:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234600AbiC0V0t (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 27 Mar 2022 17:26:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54524 "EHLO
+        id S234376AbiC1BYC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 27 Mar 2022 21:24:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235200AbiC0V0p (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 27 Mar 2022 17:26:45 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9CDAE006;
-        Sun, 27 Mar 2022 14:25:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 99EE9B80D17;
-        Sun, 27 Mar 2022 21:25:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 68700C340ED;
-        Sun, 27 Mar 2022 21:25:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648416303;
-        bh=tnsKWkJhSpinbmoqCjsfA1kkYCgz24BvWKYLD0y2TYE=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=Y7IGGOlHJYU+aM05a2OsgAF+r1jF/P/yzP2wjo2Uzhskn3csR1j1Rlt/b5nUSgp0r
-         5azWc4GkNJGnkdczcLoAxMDYQLoIeCmtKukLDR7w5TlzvJ0DUg5q5V2ZXd4ct52due
-         WpV+1RozXHklctWiae/2I0I61zcDbeggmca1tgWmBXqs1XQdYbni7BfltPCMnxCxgT
-         V+8EJFkh/69IoCIju9WCg+3pNSYSbxKf1Ax6zQ7EDIfBW5bmcFBeRChRDr7jjR3nAt
-         Y7X/Ut3SIk4pR5gWXW+0xya1PQ+aUOMTNb4Ki55+M9XROzAsL3sjWaAd/FX+2c+Y1w
-         xqNshaGRW1bNw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 56E95E6D3DD;
-        Sun, 27 Mar 2022 21:25:03 +0000 (UTC)
-Subject: Re: [GIT PULL] LEDs changes for v5.18-rc1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220326235108.GA4456@duo.ucw.cz>
-References: <20220326235108.GA4456@duo.ucw.cz>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220326235108.GA4456@duo.ucw.cz>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-leds.git/ tags/leds-5.18-rc1
-X-PR-Tracked-Commit-Id: e26557a0aa68acfb705b51947b7c756401a1ab71
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dfb0a0b715fdda25a5a1f54cb9c73e1410a868e8
-Message-Id: <164841630335.27961.6657124159573949216.pr-tracker-bot@kernel.org>
-Date:   Sun, 27 Mar 2022 21:25:03 +0000
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org
+        with ESMTP id S229812AbiC1BYB (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 27 Mar 2022 21:24:01 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 085B34F455;
+        Sun, 27 Mar 2022 18:22:20 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id B6C925C00DF;
+        Sun, 27 Mar 2022 21:22:17 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Sun, 27 Mar 2022 21:22:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=cc
+        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
+        :message-id:mime-version:reply-to:sender:subject:subject:to:to;
+         s=fm3; bh=yEJO//k7VFhFrahKidO0x8PMYk2Dpf2cUnMzGo6EOKU=; b=B75mo
+        T+vSPJdV+27dtbB2hrUMO+99edMO+c2w4JakllN88EqlnYj8sb9Xlh8Iplyt5ZGn
+        2pHzztQ/04VzuONHdjK67gNbv/445svfA8+eUMJMJ1m3tIzE4Mar5vZphFX8UQw5
+        MsLNseP1nBYN+OGPLIEMJ3HWtFHQ81urGmKUx+O/LqnVixHVBpjeGhypoUpGlwVU
+        5+aPntpEicUMQGok4izXPamkEfmIL3/jK+E2JAQfY7e9tismDQmqDfJH4g63J7SL
+        pS6UB21YnHqXs/UZfJftgMg2RY6WIHxP+4kPi0EzhxgOaJpYRCb8Ar2GM4h4E4nQ
+        3clxTUoVLnSYNSAaA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
+        :from:from:in-reply-to:message-id:mime-version:reply-to:sender
+        :subject:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=yEJO//k7VFhFrahKidO0x8PMYk2Dp
+        f2cUnMzGo6EOKU=; b=FAdrmKzrEoHdPmqz5XoPKu7VkCm1dDUh/3z29XiGsxpTi
+        44Qbvf84tyeMoKd9oZopVrsRZCK5XNvvlAHSw12CpUisexygY9qr/PJEHhNYnknT
+        BX/okJjZjs9FvW4XzuaR+zs0bk7JxBZ2nbUWAm6P64z2BQrjLLR9looO/QCu9HY2
+        7orZrApc0OMYF4r4T6frsHND2U/rSRQlfeW3FYYRRW3qRzyiSFdYv4IB2n1YH7bK
+        yL71tkIOaVoFWrsVy0AwbpT4NIeyDxeq0kKLcMsiOPdap+MeEWKcA30g26IjtHCI
+        ylbISJnq6VARPfZp7Vm4RRi+UlJpJs7E/cfn9HEcg==
+X-ME-Sender: <xms:yQ1BYqbTBdESdIWAu6-BMOCzQCb4kHI0gouTyaApxT6LH4prDg-9BQ>
+    <xme:yQ1BYtZdoJTZzwHleTSpClzTgYEUFJ4SjOqENFpAXHQlPizZti-92X-M38owGZlgJ
+    uF7bNXV5XPFUHCWwQ>
+X-ME-Received: <xmr:yQ1BYk-QPmk9d3NkVd7F3cyiPpuInuneKiDa77AnH9dp-cQB1Pv1L35nvqqYLnpDIVePtNWAA0Ui1k2O57sGbLmhRJYotux7vUkcVnrFgQ5qlTsCj05UUNy3gQ61qKSgJh3ZA-Yo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudehiedggeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgggfestdekredtre
+    dttdenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceorghnughrvgifsegrjhdr
+    ihgurdgruheqnecuggftrfgrthhtvghrnhepieetheduveelhfdvvdejleeuhfelteevhe
+    ffgfeitdefgeekjeefieevgfehhefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurh
+    gvfiesrghjrdhiugdrrghu
+X-ME-Proxy: <xmx:yQ1BYsrXAdX0Ze1HgG1ILjZZS1FNDZMDoxe_L-R2LPQpkrexNKjrQg>
+    <xmx:yQ1BYlohJLCZWngt62OJzy634itwmH_hXZ3FmZ-Qd7QOXlwKg0U5pg>
+    <xmx:yQ1BYqSrN8HTCHl56c6Y77LbiYNo9064lxLvC16yC8nKoH1paz0quw>
+    <xmx:yQ1BYuDedaL5p3itJGbFL9MscFTDzASDNSJP_PlpWOpuqBGZ_K3rNg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 27 Mar 2022 21:22:14 -0400 (EDT)
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     linux-leds@vger.kernel.org
+Cc:     pavel@ucw.cz, jacek.anaszewski@gmail.com, clg@kaod.org,
+        joel@jms.id.au, linux-kernel@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH] leds: pca955x: Remove unused pca95xx_num_led_regs()
+Date:   Mon, 28 Mar 2022 11:52:05 +1030
+Message-Id: <20220328012205.91454-1-andrew@aj.id.au>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The pull request you sent on Sun, 27 Mar 2022 00:51:08 +0100:
+Commit 561099a1a2e9 ("leds: pca955x: add GPIO support") removed the
+remaining use of pca95xx_num_led_regs(). Recently the kernel test robot
+started complaining about the unused symbol after some patches to the
+driver were merged[1]. Drop the unused function.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-leds.git/ tags/leds-5.18-rc1
+[1] https://lore.kernel.org/all/202203260634.OFB2IPFf-lkp@intel.com/
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dfb0a0b715fdda25a5a1f54cb9c73e1410a868e8
+Fixes: 561099a1a2e9 ("leds: pca955x: add GPIO support")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+---
+ drivers/leds/leds-pca955x.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Thank you!
-
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index 81aaf21212d7..33ec4543fb4f 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -145,12 +145,6 @@ static inline int pca95xx_num_input_regs(int bits)
+ 	return (bits + 7) / 8;
+ }
+ 
+-/* 4 bits per LED selector register */
+-static inline int pca95xx_num_led_regs(int bits)
+-{
+-	return (bits + 3)  / 4;
+-}
+-
+ /*
+  * Return an LED selector register value based on an existing one, with
+  * the appropriate 2-bit state value set for the given LED number (0-3).
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.32.0
+
