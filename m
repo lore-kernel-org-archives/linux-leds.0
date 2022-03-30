@@ -2,99 +2,367 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D69C433EF
-	for <linux-leds@archiver.kernel.org>; Mon, 28 Mar 2022 01:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0592C4167B
+	for <linux-leds@archiver.kernel.org>; Wed, 30 Mar 2022 20:33:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236668AbiC1Bse (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 27 Mar 2022 21:48:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59466 "EHLO
+        id S1351002AbiC3UfZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 30 Mar 2022 16:35:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236140AbiC1Bse (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 27 Mar 2022 21:48:34 -0400
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64BA94FC58;
-        Sun, 27 Mar 2022 18:46:54 -0700 (PDT)
-Received: by mail-qt1-x836.google.com with SMTP id s11so11209766qtc.3;
-        Sun, 27 Mar 2022 18:46:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=67cH1QE0vg460QdF1Ds8AdGczJLr6DnLmE8iSZO1ujs=;
-        b=A7JB/XVw0UT9w6IIs5Klt+1p9jXGtFS1xRgGNL6wbtYUARLZlCQf0eELviKwGuHhKv
-         q3aHhwP5cSSnV8VCN5Bl0SREhwWQ3/1/wBd++peoQ8YDbpjQfDBEI4nzCKLUJLgeLqzk
-         udImF94NYtKW/fvMjphaCD3ox7NogSxAILHwY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=67cH1QE0vg460QdF1Ds8AdGczJLr6DnLmE8iSZO1ujs=;
-        b=cC2yRP8QOR1aACv6B2MZpsmmXspVRdwVK9CuF9Cbh6bVo1jUOArOGrDONVBv8nQdSR
-         rzYvlX/DVSxmwJjDeJgMmmp+5M+bzRpJpW8/zMLdBgorRr2qg+Kpi9XTNVkbxAbVxyN3
-         zj8YpNig4ueUSlpgW3w7k6okqaMk+VVg1oe1gLVAXlxCGgxK5YD8CP5xzSW+QQU0ZPmy
-         ZApV3uDJG9lEXuv3jXgG5qjnPYrqyTlY1OIoQRr0ueMJlu5m/X8VLK0KgcUKco3q39XK
-         jFHjfNCtGFs9JDSyFjSYI8iDpD6vGLN9wX+ugsSXkIRJV1Gzf2dEM7iGsYAkZByrVMV9
-         6RHg==
-X-Gm-Message-State: AOAM5339kI/XHtxYdtDmJudn/4iV4S8Vg+SM9cMx18fttsQfQJlDbwUE
-        80lf5KCKD28eXOu+PVYrLdmgA2bgpZaWtpSpRbo=
-X-Google-Smtp-Source: ABdhPJzZF+DOZf/7yL6b/t0SWJb98IxMQ99154wPILXLwblfo1Q1aUYOE48CprYh/mEGyOgc/+1UzwiH6klt3fR/XOM=
-X-Received: by 2002:a05:622a:60c:b0:2e2:7b3:3231 with SMTP id
- z12-20020a05622a060c00b002e207b33231mr19860099qta.678.1648432013473; Sun, 27
- Mar 2022 18:46:53 -0700 (PDT)
+        with ESMTP id S1351017AbiC3UfY (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Mar 2022 16:35:24 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F086B647D;
+        Wed, 30 Mar 2022 13:33:34 -0700 (PDT)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22UKS7Rp027273;
+        Wed, 30 Mar 2022 20:33:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=kcf/82b6SUQ3yZYUpTVdE9S+6JOprRKCJ8nUpvyBIcw=;
+ b=oNRbIzAN6FMwE49TtF+aJijk/4RR3dxnSVR+B/yNXR1C4OOYeZmMyqbVsc2Qi2IaDFrk
+ ide4JUNQA98JQxHTvEagkP6OaiQZu4IeEfGpdF38SJoxpe7j+0nZ0+wgq+wwxesxz+uJ
+ 6HPPy1hwKh5j6a1IjHJL7j2SSFNvn4C9FHSEI4pfkXG2ITYmlTKojpzWrsj1qKdcCrxg
+ KmjzG3bEf2n77ksbrGvnvJnZjlLcDumtjCNwS0Nwaw+yErliTyAuNDWIqmww/G8czp8y
+ ZBirIDLhq8bFX4uJVqEHaEULVuldm3Kph6dFJAYHMtFSUib5lg/7TZTQ8bNyhBssgt5y Rw== 
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3f4we493wj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Mar 2022 20:33:23 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22UKJfEg029809;
+        Wed, 30 Mar 2022 20:33:22 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma02wdc.us.ibm.com with ESMTP id 3f1tf9qntr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Mar 2022 20:33:22 +0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22UKXLfC19595668
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Mar 2022 20:33:21 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C8F796E04E;
+        Wed, 30 Mar 2022 20:33:21 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7DC9D6E058;
+        Wed, 30 Mar 2022 20:33:21 +0000 (GMT)
+Received: from v0005c16.aus.stglabs.ibm.com (unknown [9.211.74.63])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 30 Mar 2022 20:33:21 +0000 (GMT)
+From:   Eddie James <eajames@linux.ibm.com>
+To:     linux-leds@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, pavel@ucw.cz,
+        openbmc@lists.ozlabs.org, joel@jms.id.au,
+        Eddie James <eajames@linux.ibm.com>
+Subject: [PATCH] leds: pca955x: Add HW blink support
+Date:   Wed, 30 Mar 2022 15:33:18 -0500
+Message-Id: <20220330203318.19225-1-eajames@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <20220328012205.91454-1-andrew@aj.id.au>
-In-Reply-To: <20220328012205.91454-1-andrew@aj.id.au>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Mon, 28 Mar 2022 01:46:41 +0000
-Message-ID: <CACPK8Xc0-VicXV6fG7qMFWsQnf22fccTECZDKf51Aonds8rbVQ@mail.gmail.com>
-Subject: Re: [PATCH] leds: pca955x: Remove unused pca95xx_num_led_regs()
-To:     Andrew Jeffery <andrew@aj.id.au>
-Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        jacek.anaszewski@gmail.com,
-        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: b7kEhhJyvgbQD-VUo789u0T_kJBBwqhK
+X-Proofpoint-GUID: b7kEhhJyvgbQD-VUo789u0T_kJBBwqhK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-30_06,2022-03-30_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
+ mlxscore=0 spamscore=0 malwarescore=0 clxscore=1011 impostorscore=0
+ adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203300099
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, 28 Mar 2022 at 01:22, Andrew Jeffery <andrew@aj.id.au> wrote:
->
-> Commit 561099a1a2e9 ("leds: pca955x: add GPIO support") removed the
-> remaining use of pca95xx_num_led_regs(). Recently the kernel test robot
-> started complaining about the unused symbol after some patches to the
-> driver were merged[1]. Drop the unused function.
->
-> [1] https://lore.kernel.org/all/202203260634.OFB2IPFf-lkp@intel.com/
->
-> Fixes: 561099a1a2e9 ("leds: pca955x: add GPIO support")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+Support blinking using the PCA955x chip. Use PWM0 for blinking
+instead of LED_HALF brightness. Since there is only one frequency
+and brightness register for any blinking LED, all blinked LEDs on
+the chip will have the same frequency and brightness.
 
-Reviewed-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Eddie James <eajames@linux.ibm.com>
+---
+ drivers/leds/leds-pca955x.c | 175 ++++++++++++++++++++++++------------
+ 1 file changed, 120 insertions(+), 55 deletions(-)
 
-> ---
->  drivers/leds/leds-pca955x.c | 6 ------
->  1 file changed, 6 deletions(-)
->
-> diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-> index 81aaf21212d7..33ec4543fb4f 100644
-> --- a/drivers/leds/leds-pca955x.c
-> +++ b/drivers/leds/leds-pca955x.c
-> @@ -145,12 +145,6 @@ static inline int pca95xx_num_input_regs(int bits)
->         return (bits + 7) / 8;
->  }
->
-> -/* 4 bits per LED selector register */
-> -static inline int pca95xx_num_led_regs(int bits)
-> -{
-> -       return (bits + 3)  / 4;
-> -}
-> -
->  /*
->   * Return an LED selector register value based on an existing one, with
->   * the appropriate 2-bit state value set for the given LED number (0-3).
-> --
-> 2.32.0
->
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index 81aaf21212d7..aeddc64e8ecf 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -74,6 +74,7 @@ struct pca955x_chipdef {
+ 	int			bits;
+ 	u8			slv_addr;	/* 7-bit slave address mask */
+ 	int			slv_addr_shift;	/* Number of bits to ignore */
++	int			blink_div;	/* PSC divider */
+ };
+ 
+ static struct pca955x_chipdef pca955x_chipdefs[] = {
+@@ -81,26 +82,31 @@ static struct pca955x_chipdef pca955x_chipdefs[] = {
+ 		.bits		= 2,
+ 		.slv_addr	= /* 110000x */ 0x60,
+ 		.slv_addr_shift	= 1,
++		.blink_div	= 44,
+ 	},
+ 	[pca9551] = {
+ 		.bits		= 8,
+ 		.slv_addr	= /* 1100xxx */ 0x60,
+ 		.slv_addr_shift	= 3,
++		.blink_div	= 38,
+ 	},
+ 	[pca9552] = {
+ 		.bits		= 16,
+ 		.slv_addr	= /* 1100xxx */ 0x60,
+ 		.slv_addr_shift	= 3,
++		.blink_div	= 44,
+ 	},
+ 	[ibm_pca9552] = {
+ 		.bits		= 16,
+ 		.slv_addr	= /* 0110xxx */ 0x30,
+ 		.slv_addr_shift	= 3,
++		.blink_div	= 44,
+ 	},
+ 	[pca9553] = {
+ 		.bits		= 4,
+ 		.slv_addr	= /* 110001x */ 0x62,
+ 		.slv_addr_shift	= 1,
++		.blink_div	= 44,
+ 	},
+ };
+ 
+@@ -163,7 +169,7 @@ static inline u8 pca955x_ledsel(u8 oldval, int led_num, int state)
+ 
+ /*
+  * Write to frequency prescaler register, used to program the
+- * period of the PWM output.  period = (PSCx + 1) / 38
++ * period of the PWM output.  period = (PSCx + 1) / <38 or 44, chip dependent>
+  */
+ static int pca955x_write_psc(struct i2c_client *client, int n, u8 val)
+ {
+@@ -273,13 +279,16 @@ static enum led_brightness pca955x_led_get(struct led_classdev *led_cdev)
+ 		ret = LED_OFF;
+ 		break;
+ 	case PCA955X_LS_BLINK0:
+-		ret = LED_HALF;
++		ret = pca955x_read_pwm(pca955x->client, 0, &pwm);
++		if (ret)
++			return ret;
++		ret = 256 - pwm;
+ 		break;
+ 	case PCA955X_LS_BLINK1:
+ 		ret = pca955x_read_pwm(pca955x->client, 1, &pwm);
+ 		if (ret)
+ 			return ret;
+-		ret = 255 - pwm;
++		ret = 256 - pwm;
+ 		break;
+ 	}
+ 
+@@ -308,32 +317,98 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
+ 	if (ret)
+ 		goto out;
+ 
+-	switch (value) {
+-	case LED_FULL:
+-		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_LED_ON);
+-		break;
+-	case LED_OFF:
++	if (value == LED_OFF) {
+ 		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_LED_OFF);
+-		break;
+-	case LED_HALF:
++	} else {
++		u8 tls = (ls >> (ls_led << 1)) & 0x3;
++
++		if (tls == PCA955X_LS_BLINK0) {
++			ret = pca955x_write_pwm(pca955x->client, 0,
++						256 - value);
++			goto out;
++		} else {
++			if (value == LED_FULL) {
++				ls = pca955x_ledsel(ls, ls_led,
++						    PCA955X_LS_LED_ON);
++			} else {
++				/*
++				 * Use PWM1 for all other values. This has the
++				 * unwanted side effect of making all LEDs on
++				 * the chip share the same brightness level if
++				 * set to a value other than OFF or FULL. But,
++				 * this is probably better than just turning
++				 * off for all other values.
++				 */
++				ret = pca955x_write_pwm(pca955x->client, 1,
++							256 - value);
++				if (ret || tls == PCA955X_LS_BLINK1)
++					goto out;
++				ls = pca955x_ledsel(ls, ls_led,
++						    PCA955X_LS_BLINK1);
++			}
++		}
++	}
++
++	ret = pca955x_write_ls(pca955x->client, chip_ls, ls);
++
++out:
++	mutex_unlock(&pca955x->lock);
++
++	return ret;
++}
++
++static int pca955x_led_blink(struct led_classdev *led_cdev,
++			     unsigned long *delay_on, unsigned long *delay_off)
++{
++	int chip_ls;
++	int ls_led;
++	int ret;
++	u8 ls;
++	struct pca955x_led *pca955x_led = container_of(led_cdev,
++						      struct pca955x_led,
++						      led_cdev);
++	struct pca955x *pca955x = pca955x_led->pca955x;
++	unsigned long p = *delay_on + *delay_off;
++
++	/* 1 Hz default */
++	if (!p)
++		p = 1000;
++
++	p *= (unsigned long)pca955x->chipdef->blink_div;
++	p /= 1000;
++	p -= 1;
++
++	chip_ls = pca955x_led->led_num / 4;
++	ls_led = pca955x_led->led_num % 4;
++
++	mutex_lock(&pca955x->lock);
++
++	ret = pca955x_read_ls(pca955x->client, chip_ls, &ls);
++	if (ret)
++		goto out;
++
++	/*
++	 * All blinking leds on the PCA955x chip will use the same period and
++	 * brightness.
++	 */
++	ret = pca955x_write_psc(pca955x->client, 0, (u8)p);
++	if (ret)
++		goto out;
++
++	if (((ls >> (ls_led << 1)) & 0x3) != PCA955X_LS_BLINK0) {
+ 		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_BLINK0);
+-		break;
+-	default:
+-		/*
+-		 * Use PWM1 for all other values.  This has the unwanted
+-		 * side effect of making all LEDs on the chip share the
+-		 * same brightness level if set to a value other than
+-		 * OFF, HALF, or FULL.  But, this is probably better than
+-		 * just turning off for all other values.
+-		 */
+-		ret = pca955x_write_pwm(pca955x->client, 1, 255 - value);
++		ret = pca955x_write_ls(pca955x->client, chip_ls, ls);
+ 		if (ret)
+ 			goto out;
+-		ls = pca955x_ledsel(ls, ls_led, PCA955X_LS_BLINK1);
+-		break;
+ 	}
+ 
+-	ret = pca955x_write_ls(pca955x->client, chip_ls, ls);
++	p += 1;
++	p *= 1000;
++	p /= (unsigned long)pca955x->chipdef->blink_div;
++	p /= 2;
++
++	*delay_on = p;
++	*delay_off = p;
+ 
+ out:
+ 	mutex_unlock(&pca955x->lock);
+@@ -495,7 +570,6 @@ static int pca955x_probe(struct i2c_client *client)
+ 	int i, err;
+ 	struct pca955x_platform_data *pdata;
+ 	bool set_default_label = false;
+-	bool keep_pwm = false;
+ 	char default_label[8];
+ 	enum pca955x_type chip_type;
+ 	const void *md = device_get_match_data(&client->dev);
+@@ -577,6 +651,7 @@ static int pca955x_probe(struct i2c_client *client)
+ 			led = &pca955x_led->led_cdev;
+ 			led->brightness_set_blocking = pca955x_led_set;
+ 			led->brightness_get = pca955x_led_get;
++			led->blink_set = pca955x_led_blink;
+ 
+ 			if (pdata->leds[i].default_state ==
+ 			    LEDS_GPIO_DEFSTATE_OFF) {
+@@ -585,9 +660,28 @@ static int pca955x_probe(struct i2c_client *client)
+ 					return err;
+ 			} else if (pdata->leds[i].default_state ==
+ 				   LEDS_GPIO_DEFSTATE_ON) {
+-				err = pca955x_led_set(led, LED_FULL);
++				/*
++				 * handle this case specially in order to turn
++				 * off blinking, which pca955x_led_set won't do
++				 */
++				u8 ls;
++				int chip_ls = i / 4;
++				int ls_led = i % 4;
++
++				err = pca955x_read_ls(pca955x->client, chip_ls,
++						      &ls);
+ 				if (err)
+ 					return err;
++
++				if (((ls >> (ls_led << 1)) & 0x3) !=
++				    PCA955X_LS_LED_ON) {
++					ls = pca955x_ledsel(ls, ls_led,
++							    PCA955X_LS_LED_ON);
++					err = pca955x_write_ls(pca955x->client,
++							       chip_ls, ls);
++					if (err)
++						return err;
++				}
+ 			}
+ 
+ 			init_data.fwnode = pdata->leds[i].fwnode;
+@@ -616,39 +710,10 @@ static int pca955x_probe(struct i2c_client *client)
+ 				return err;
+ 
+ 			set_bit(i, &pca955x->active_pins);
+-
+-			/*
+-			 * For default-state == "keep", let the core update the
+-			 * brightness from the hardware, then check the
+-			 * brightness to see if it's using PWM1. If so, PWM1
+-			 * should not be written below.
+-			 */
+-			if (pdata->leds[i].default_state ==
+-			    LEDS_GPIO_DEFSTATE_KEEP) {
+-				if (led->brightness != LED_FULL &&
+-				    led->brightness != LED_OFF &&
+-				    led->brightness != LED_HALF)
+-					keep_pwm = true;
+-			}
+ 		}
+ 	}
+ 
+-	/* PWM0 is used for half brightness or 50% duty cycle */
+-	err = pca955x_write_pwm(client, 0, 255 - LED_HALF);
+-	if (err)
+-		return err;
+-
+-	if (!keep_pwm) {
+-		/* PWM1 is used for variable brightness, default to OFF */
+-		err = pca955x_write_pwm(client, 1, 0);
+-		if (err)
+-			return err;
+-	}
+-
+-	/* Set to fast frequency so we do not see flashing */
+-	err = pca955x_write_psc(client, 0, 0);
+-	if (err)
+-		return err;
++	/* Set PWM1 to fast frequency so we do not see flashing */
+ 	err = pca955x_write_psc(client, 1, 0);
+ 	if (err)
+ 		return err;
+-- 
+2.27.0
+
