@@ -2,176 +2,320 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B770DC4332F
-	for <linux-leds@archiver.kernel.org>; Wed,  6 Apr 2022 17:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5506C433EF
+	for <linux-leds@archiver.kernel.org>; Thu,  7 Apr 2022 07:39:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238906AbiDFRUo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 6 Apr 2022 13:20:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41220 "EHLO
+        id S241975AbiDGHl2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 7 Apr 2022 03:41:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238773AbiDFRU0 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 6 Apr 2022 13:20:26 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFBBE49F36D
-        for <linux-leds@vger.kernel.org>; Wed,  6 Apr 2022 08:18:30 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id bg10so5006542ejb.4
-        for <linux-leds@vger.kernel.org>; Wed, 06 Apr 2022 08:18:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nKwkK10Z219eaNtTvbaclsEiamXSVs+FNo2ty5mHsKo=;
-        b=S1op2j+cyW9lQWw00SOcofbFHdT3E57y5jJKpzzhgK6+y+jrtuTVbjmUjwbeu6IkUN
-         78P1TjwAAvLxVD0Ju8UifXumvgVrNqiVvEIVfizpxQryRR07d2Qkk+VBe+3x9DcvNQhl
-         Lox9myyWXfC5I2yQ9jS5VmipsXUMdqstiVlkA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nKwkK10Z219eaNtTvbaclsEiamXSVs+FNo2ty5mHsKo=;
-        b=jWDpIfdejIuEJHfu2oderRze7GJdCECpzaSsUJFwIxWhUFo/OnLztOu9rKtKbjfnHj
-         T7zLW8jQd2OWzOSgogSsQ4jDK5o/xCJKm1ltDbaFE7Tsnj5vPRxI6cD5LSAjPN/ueYPK
-         6lLfiicGRHvP+LDC3hH71TELG3I04axFjlvNuN7U/bBQm8Ec10YkgLWk7FrQlAB8UATO
-         FHSbT/0AhwhAOQ8uiioSZjWV/CV+INH2B0Tyy+uXiv1W3afuoeVwkQl3/qErb1tr2Nft
-         g3szT0N9eXHy7iJ9rh/ucY2lAFeQQ7EjX37RJfd1+5Uw2N1qRUIaPBnukJmnqqmC1eWO
-         7s2Q==
-X-Gm-Message-State: AOAM533qXOiyjP4v8kXkw/h4eFPx2c92KKzfjvbTGV2fjxabBkjkH7sH
-        Ki39cqVpKeP2u1uQUkg+0br9CCysxKpdYDEhdTk=
-X-Google-Smtp-Source: ABdhPJyBVPZ1ozQ4wVAW5h6ujtv/OE4HO8yXUPeEpOt2GB+3b/qhhWDSOxVZJAOIkTzmA5AzVRueug==
-X-Received: by 2002:a17:907:1c19:b0:6dc:c19e:8cc5 with SMTP id nc25-20020a1709071c1900b006dcc19e8cc5mr8982693ejc.333.1649258309145;
-        Wed, 06 Apr 2022 08:18:29 -0700 (PDT)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
-        by smtp.gmail.com with ESMTPSA id au22-20020a170907093600b006e4ad0bf8f7sm6641119ejc.91.2022.04.06.08.18.26
-        for <linux-leds@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Apr 2022 08:18:27 -0700 (PDT)
-Received: by mail-wr1-f50.google.com with SMTP id m30so3772333wrb.1
-        for <linux-leds@vger.kernel.org>; Wed, 06 Apr 2022 08:18:26 -0700 (PDT)
-X-Received: by 2002:a5d:5551:0:b0:203:f916:e319 with SMTP id
- g17-20020a5d5551000000b00203f916e319mr7123258wrw.422.1649258305814; Wed, 06
- Apr 2022 08:18:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220303214300.59468-1-bjorn.andersson@linaro.org>
- <20220303214300.59468-2-bjorn.andersson@linaro.org> <CAD=FV=WkgcJA6-niUh0L5_jLNSS=Hv0xrR5QZghPmNriekH7XA@mail.gmail.com>
-In-Reply-To: <CAD=FV=WkgcJA6-niUh0L5_jLNSS=Hv0xrR5QZghPmNriekH7XA@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 6 Apr 2022 08:18:13 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Xa4wW2AH1RzwQRiTZt__Eptr2+Li5SmfZyUjTvNTkOcA@mail.gmail.com>
-Message-ID: <CAD=FV=Xa4wW2AH1RzwQRiTZt__Eptr2+Li5SmfZyUjTvNTkOcA@mail.gmail.com>
-Subject: Re: [PATCH v14 2/2] leds: Add driver for Qualcomm LPG
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
-        Luca Weiss <luca@z3ntu.xyz>, Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-leds@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-pwm <linux-pwm@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        with ESMTP id S241989AbiDGHlZ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 7 Apr 2022 03:41:25 -0400
+X-Greylist: delayed 367 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Apr 2022 00:39:17 PDT
+Received: from mail.schwermer.no (mail.schwermer.no [49.12.228.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E76E6326;
+        Thu,  7 Apr 2022 00:39:16 -0700 (PDT)
+From:   sven@svenschwermer.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=svenschwermer.de;
+        s=mail; t=1649316788;
+        bh=YjSfJgahcyOe04pZ9pdE0sp2HmcDXPOk4E4irpcypQo=;
+        h=From:To:Cc:Subject:In-Reply-To:References;
+        b=ltiNNn28VZIHzcG3e0hHpzSyUQcNI0szQihFzwZfoqZsINpTTojHYXOKyhAPL1dWz
+         FiTpa/kFevjGChTDr7HyVNzV+FJfpbxGNJ1ixfRdkDEJl3Hcd+pA0W4hOUvPWwg4VN
+         13tSXaiBxaKifwvOTA/2rxmb77sr8IX0eL37bp0c2lfNZvRdAFc03WVJJVzBxV1khj
+         jVt8lg4UHiVVl76LPGdrOCmG3jmTlT6+F3bBNJwMKWrx8nbNQRvq0fFG/ZZTGLBMye
+         EAFacPWmYa8GQgxLCJv9hRTd2lfIAvVUCHkWI9HJMPs9FYfQvZzUlMAoL7jBa43wyv
+         atGL26wyZq5SA==
+To:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+Cc:     Sven Schwermer <sven.schwermer@disruptive-technologies.com>,
+        pavel@ucw.cz, robh+dt@kernel.org, thierry.reding@gmail.com,
+        u.kleine-koenig@pengutronix.de, lee.jones@linaro.org,
+        post@lespocky.de, andy.shevchenko@gmail.com, robh@kernel.org
+Subject: [PATCH v8 3/3 RESEND] leds: Add PWM multicolor driver
+Date:   Thu,  7 Apr 2022 09:32:25 +0200
+Message-Id: <20220407073225.71605-4-sven@svenschwermer.de>
+In-Reply-To: <20220407073225.71605-1-sven@svenschwermer.de>
+References: <20220407073225.71605-1-sven@svenschwermer.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Pavel,
+From: Sven Schwermer <sven.schwermer@disruptive-technologies.com>
 
-On Thu, Mar 3, 2022 at 2:10 PM Doug Anderson <dianders@chromium.org> wrote:
->
-> Hi,
->
-> On Thu, Mar 3, 2022 at 1:41 PM Bjorn Andersson
-> <bjorn.andersson@linaro.org> wrote:
-> >
-> > The Light Pulse Generator (LPG) is a PWM-block found in a wide range of
-> > PMICs from Qualcomm. These PMICs typically comes with 1-8 LPG instances,
-> > with their output being routed to various other components, such as
-> > current sinks or GPIOs.
-> >
-> > Each LPG instance can operate on fixed parameters or based on a shared
-> > lookup-table, altering the duty cycle over time. This provides the means
-> > for hardware assisted transitions of LED brightness.
-> >
-> > A typical use case for the fixed parameter mode is to drive a PWM
-> > backlight control signal, the driver therefor allows each LPG instance
-> > to be exposed to the kernel either through the LED framework or the PWM
-> > framework.
-> >
-> > A typical use case for the LED configuration is to drive RGB LEDs in
-> > smartphones etc, for which the driver supports multiple channels to be
-> > ganged up to a MULTICOLOR LED. In this configuration the pattern
-> > generators will be synchronized, to allow for multi-color patterns.
-> >
-> > The idea of modelling this as a LED driver ontop of a PWM driver was
-> > considered, but setting the properties related to patterns does not fit
-> > in the PWM API. Similarly the idea of just duplicating the lower bits in
-> > a PWM and LED driver separately was considered, but this would not allow
-> > the PWM channels and LEDs to be configured on a per-board basis. The
-> > driver implements the more complex LED interface, and provides a PWM
-> > interface on the side of that, in the same driver.
-> >
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >
-> > Changes since v13:
-> > - Fixed mixed space/tab indentation in documentation
-> > - Added 0 as to lpg_clk_rates[] to match the hardware state, to avoid + 1 in
-> >   lpg_apply_freq() and - 1 in lpg_pwm_get_state()
-> > - Don't divide with 0 if current clock is 0 in lpg_pwm_get_state(), just return
-> >   period = duty = 0 in this case
-> > - Renamed "clk" in struct lpg_channel to clk_sel
-> > - Renamed "pre_div" in struct lpg_channel to pre_div_sel
-> >
-> > Changes since v12:
-> > - Initialize ret in lpg_pwm_apply()
-> >
-> > Changes since v11:
-> > - Extended commit message to cover decision to put pwm_chip in the LED driver
-> > - Added Documentation, in particular for the hw_pattern format
-> > - Added a lock to synchronize requests from LED and PWM frameworks
-> > - Turned out that the 9bit selector differs per channel in some PMICs, so
-> >   replaced bitmask in lpg_data with lookup based on QPNP SUBTYPE
-> > - Fixed kerneldoc for the struct device pointer in struct lpg
-> > - Rewrote conditional in lut_free() to make it easier to read
-> > - Corrected and deduplicated max_period expression in lpg_calc_freq()
-> > - Extended nom/dom to numerator/denominator in lpg_calc_freq()
-> > - Replaced 1 << 9 with LPG_RESOLUTION in one more place in lpg_calc_freq()
-> > - Use FIELD_PREP() in lpg_apply_freq() as masks was introduced for reading the
-> >   same in get_state()
-> > - Cleaned up the pattern format, to allow specifying both low and high pause
-> >   with and without pingpong mode.
-> > - Only update frequency and pwm_value if PWM channel is enabled in lpg_pwm_apply
-> > - Make lpg_pwm_get_state() read the hardware state, in order to pick up e.g.
-> >   bootloader backlight configuration
-> > - Use devm_bitmap_zalloc() to allocate the lut_bitmap
-> > - Use dev_err_probe() in lpg_probe()
-> > - Extended Kconfig help text to mention module name and satisfy checkpatch
-> >
-> >  Documentation/leds/leds-qcom-lpg.rst |   76 ++
-> >  drivers/leds/Kconfig                 |    3 +
-> >  drivers/leds/Makefile                |    3 +
-> >  drivers/leds/rgb/Kconfig             |   18 +
-> >  drivers/leds/rgb/Makefile            |    3 +
-> >  drivers/leds/rgb/leds-qcom-lpg.c     | 1405 ++++++++++++++++++++++++++
-> >  6 files changed, 1508 insertions(+)
->
-> Gets rid of the KASAN error and PWM still works for me, so happy to add back:
->
-> Tested-by: Douglas Anderson <dianders@chromium.org>
->
-> I haven't done a full review of the driver but I did a once-over of
-> the changes between v12 and v13 and they look good to me.
+By allowing to group multiple monochrome PWM LEDs into multicolor LEDs,
+all involved LEDs can be controlled in-sync. This enables using effects
+using triggers, etc.
 
-With v5.18-rc1 released, this seems like it would be an ideal time to
-land this driver and its bindings in a for-next branch for the leds
-subsystem. Is there anything blocking it? Are you the right person to
-land them? Ideally the bindings / driver (patch #1 and #2) from
-Satya's series [1] could land right atop it since it's ready too?
+Signed-off-by: Sven Schwermer <sven.schwermer@disruptive-technologies.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
 
-[1] https://lore.kernel.org/r/1645509309-16142-1-git-send-email-quic_c_skakit@quicinc.com/
+Notes:
+    Changes in v8:
+    * (no changes)
+    
+    Changes in v7:
+    * (no changes)
+    
+    Changes in v6:
+    * (no changes)
+    
+    Changes in v5:
+    * Factor iteration over subleds out into function
+    
+    Changes in v4:
+    * Remove mutex destruction and remove function
+    * Include missing headers
+    * Use post-increment instead of pre-increment
+    * Variable declarations in reverse xmas tree order
+    * Use dev_err_probe where possible
+    * Return immediately where possible
+    * Cosmetic changes
+    * Document LKM name
+    
+    Changes in v3:
+    * Release fwnode handles
+    * Sort header includes
+    * Remove deprecated device tree properties
+    * Remove deprecated LED_OFF
+    * Remove subled channel assignment
+    * s/pwmstate/state/
 
-Thanks!
+ drivers/leds/Kconfig               |  11 ++
+ drivers/leds/Makefile              |   1 +
+ drivers/leds/leds-pwm-multicolor.c | 186 +++++++++++++++++++++++++++++
+ 3 files changed, 198 insertions(+)
+ create mode 100644 drivers/leds/leds-pwm-multicolor.c
 
--Doug
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 6090e647daee..e70a46704076 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -552,6 +552,17 @@ config LEDS_PWM
+ 	help
+ 	  This option enables support for pwm driven LEDs
+ 
++config LEDS_PWM_MULTICOLOR
++	tristate "PWM driven multi-color LED Support"
++	depends on LEDS_CLASS_MULTICOLOR
++	depends on PWM
++	help
++	  This option enables support for PWM driven monochrome LEDs that are
++	  grouped into multicolor LEDs.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called leds-pwm-multicolor.
++
+ config LEDS_REGULATOR
+ 	tristate "REGULATOR driven LED support"
+ 	depends on LEDS_CLASS
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index e58ecb36360f..ba2c2c1edf12 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -73,6 +73,7 @@ obj-$(CONFIG_LEDS_PCA963X)		+= leds-pca963x.o
+ obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
+ obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
+ obj-$(CONFIG_LEDS_PWM)			+= leds-pwm.o
++obj-$(CONFIG_LEDS_PWM_MULTICOLOR)	+= leds-pwm-multicolor.o
+ obj-$(CONFIG_LEDS_REGULATOR)		+= leds-regulator.o
+ obj-$(CONFIG_LEDS_S3C24XX)		+= leds-s3c24xx.o
+ obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
+diff --git a/drivers/leds/leds-pwm-multicolor.c b/drivers/leds/leds-pwm-multicolor.c
+new file mode 100644
+index 000000000000..45e38708ecb1
+--- /dev/null
++++ b/drivers/leds/leds-pwm-multicolor.c
+@@ -0,0 +1,186 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * PWM-based multi-color LED control
++ *
++ * Copyright 2022 Sven Schwermer <sven.schwermer@disruptive-technologies.com>
++ */
++
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/led-class-multicolor.h>
++#include <linux/leds.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/platform_device.h>
++#include <linux/property.h>
++#include <linux/pwm.h>
++
++struct pwm_led {
++	struct pwm_device *pwm;
++	struct pwm_state state;
++};
++
++struct pwm_mc_led {
++	struct led_classdev_mc mc_cdev;
++	struct mutex lock;
++	struct pwm_led leds[];
++};
++
++static int led_pwm_mc_set(struct led_classdev *cdev,
++			  enum led_brightness brightness)
++{
++	struct led_classdev_mc *mc_cdev = lcdev_to_mccdev(cdev);
++	struct pwm_mc_led *priv = container_of(mc_cdev, struct pwm_mc_led, mc_cdev);
++	unsigned long long duty;
++	int ret = 0;
++	int i;
++
++	led_mc_calc_color_components(mc_cdev, brightness);
++
++	mutex_lock(&priv->lock);
++
++	for (i = 0; i < mc_cdev->num_colors; i++) {
++		duty = priv->leds[i].state.period;
++		duty *= mc_cdev->subled_info[i].brightness;
++		do_div(duty, cdev->max_brightness);
++
++		priv->leds[i].state.duty_cycle = duty;
++		priv->leds[i].state.enabled = duty > 0;
++		ret = pwm_apply_state(priv->leds[i].pwm,
++				      &priv->leds[i].state);
++		if (ret)
++			break;
++	}
++
++	mutex_unlock(&priv->lock);
++
++	return ret;
++}
++
++static int iterate_subleds(struct device *dev, struct pwm_mc_led *priv,
++			   struct fwnode_handle *mcnode)
++{
++	struct mc_subled *subled = priv->mc_cdev.subled_info;
++	struct fwnode_handle *fwnode;
++	struct pwm_led *pwmled;
++	u32 color;
++	int ret;
++
++	/* iterate over the nodes inside the multi-led node */
++	fwnode_for_each_child_node(mcnode, fwnode) {
++		pwmled = &priv->leds[priv->mc_cdev.num_colors];
++		pwmled->pwm = devm_fwnode_pwm_get(dev, fwnode, NULL);
++		if (IS_ERR(pwmled->pwm)) {
++			ret = PTR_ERR(pwmled->pwm);
++			dev_err(dev, "unable to request PWM: %d\n", ret);
++			goto release_fwnode;
++		}
++		pwm_init_state(pwmled->pwm, &pwmled->state);
++
++		ret = fwnode_property_read_u32(fwnode, "color", &color);
++		if (ret) {
++			dev_err(dev, "cannot read color: %d\n", ret);
++			goto release_fwnode;
++		}
++
++		subled[priv->mc_cdev.num_colors].color_index = color;
++		priv->mc_cdev.num_colors++;
++	}
++
++	return 0;
++
++release_fwnode:
++	fwnode_handle_put(fwnode);
++	return ret;
++}
++
++static int led_pwm_mc_probe(struct platform_device *pdev)
++{
++	struct fwnode_handle *mcnode, *fwnode;
++	struct led_init_data init_data = {};
++	struct led_classdev *cdev;
++	struct mc_subled *subled;
++	struct pwm_mc_led *priv;
++	int count = 0;
++	int ret = 0;
++
++	mcnode = device_get_named_child_node(&pdev->dev, "multi-led");
++	if (!mcnode)
++		return dev_err_probe(&pdev->dev, -ENODEV,
++				     "expected multi-led node\n");
++
++	/* count the nodes inside the multi-led node */
++	fwnode_for_each_child_node(mcnode, fwnode)
++		count++;
++
++	priv = devm_kzalloc(&pdev->dev, struct_size(priv, leds, count),
++			    GFP_KERNEL);
++	if (!priv) {
++		ret = -ENOMEM;
++		goto release_mcnode;
++	}
++	mutex_init(&priv->lock);
++
++	subled = devm_kcalloc(&pdev->dev, count, sizeof(*subled), GFP_KERNEL);
++	if (!subled) {
++		ret = -ENOMEM;
++		goto release_mcnode;
++	}
++	priv->mc_cdev.subled_info = subled;
++
++	/* init the multicolor's LED class device */
++	cdev = &priv->mc_cdev.led_cdev;
++	fwnode_property_read_u32(mcnode, "max-brightness",
++				 &cdev->max_brightness);
++	cdev->flags = LED_CORE_SUSPENDRESUME;
++	cdev->brightness_set_blocking = led_pwm_mc_set;
++
++	ret = iterate_subleds(&pdev->dev, priv, mcnode);
++	if (ret)
++		goto release_mcnode;
++
++	init_data.fwnode = mcnode;
++	ret = devm_led_classdev_multicolor_register_ext(&pdev->dev,
++							&priv->mc_cdev,
++							&init_data);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"failed to register multicolor PWM led for %s: %d\n",
++			cdev->name, ret);
++		goto release_mcnode;
++	}
++
++	ret = led_pwm_mc_set(cdev, cdev->brightness);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "failed to set led PWM value for %s: %d",
++				     cdev->name, ret);
++
++	platform_set_drvdata(pdev, priv);
++	return 0;
++
++release_mcnode:
++	fwnode_handle_put(mcnode);
++	return ret;
++}
++
++static const struct of_device_id of_pwm_leds_mc_match[] = {
++	{ .compatible = "pwm-leds-multicolor", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, of_pwm_leds_mc_match);
++
++static struct platform_driver led_pwm_mc_driver = {
++	.probe		= led_pwm_mc_probe,
++	.driver		= {
++		.name	= "leds_pwm_multicolor",
++		.of_match_table = of_pwm_leds_mc_match,
++	},
++};
++module_platform_driver(led_pwm_mc_driver);
++
++MODULE_AUTHOR("Sven Schwermer <sven.schwermer@disruptive-technologies.com>");
++MODULE_DESCRIPTION("multi-color PWM LED driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:leds-pwm-multicolor");
+-- 
+2.35.1
+
