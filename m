@@ -2,51 +2,51 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A09C433F5
-	for <linux-leds@archiver.kernel.org>; Fri,  8 Apr 2022 16:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB11C43219
+	for <linux-leds@archiver.kernel.org>; Fri,  8 Apr 2022 16:34:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232006AbiDHQgJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 8 Apr 2022 12:36:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56212 "EHLO
+        id S232342AbiDHQgQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 8 Apr 2022 12:36:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231303AbiDHQgJ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 8 Apr 2022 12:36:09 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C849724959;
-        Fri,  8 Apr 2022 09:34:04 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id bu29so16107601lfb.0;
-        Fri, 08 Apr 2022 09:34:04 -0700 (PDT)
+        with ESMTP id S232317AbiDHQgP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 8 Apr 2022 12:36:15 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30F0D10A971;
+        Fri,  8 Apr 2022 09:34:11 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id j9so7908763lfe.9;
+        Fri, 08 Apr 2022 09:34:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Pz40nRgvhtcOeXUbzgyo9Hq14GrnezoaHqBr+KLvPIo=;
-        b=NOIUQsr6XphXreR0Ws3aESzt6zh125cSmmUwY+ZOQLs8O6OUb4qHsG8YTp+btiQw3S
-         v6ceYcQ66PpxMlfOA9B1O3YEAvx8LqrXvjN6NrTmrWZwhU/1a2ZrvKyW7SUbW0yDURXY
-         HnF7XNSUNEoPdwlHmVcIvjfGHoiTLwUppVoAIF8JJ/m1m5OTGpCjJ2+vbmLVB4Oo7j0T
-         CmqtGgqhDvLlsNNyJ2k1kc1CDRGTIG3z+BoLPnXJlrcyUGEQ8sy09gkm+XObgLA6h5Bm
-         5gU11d3p60aUF4HiOnVZ/Nc7BXIppHqC8hp5HLQZ9cavka/bgFdYIjMsmLV/5lhvSmKN
-         e11w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=cChhgUxqUquSxt9/MV0hz1DMxqkQELGYSGZGOjKnMXY=;
+        b=XPHg1ZZyWroe2zHgMWYnq2OaPDwRV0W/+Mg6I/WEteIPObhlP7AWhC1Y6tH+wqzwCJ
+         AkbU77JCJfgH5J/b614F3Yk+rYiJ0kkorHjEaW+3ASqerwfjxEJiAGtKznLDdxiCij+/
+         BaUVr8tOs98EREPi7eVoW22wLPimRHKZhWrAiLmgNfnCzirNxbxNj409lA8POvYv5LoU
+         SaLJ5KE3006n8MIq4j5Mvdp/5mO+V83kQMymm/57NU/8j2xC3rf+cGDQpK2GV3e2Kbak
+         jJA/kHEA4Y8hOWKk0vZSchrP8GfNjraBdgPGxZ7iFeKT/HoI7yt7rZNmGzcyUumJajUS
+         o1Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Pz40nRgvhtcOeXUbzgyo9Hq14GrnezoaHqBr+KLvPIo=;
-        b=n9WpLAR2eWd5ryIVGxKrH35c3/SDmCQoaB2ndBl/OOYJxOB1IvDtTTqhaMzUqHzRNW
-         0woyDHxcVw7MQ8+AW5Zpa74vTNmV+gONdu79pxTAvkjIA6m1AVOQHxBZyrzwLQ2B5f69
-         CkkdbXMCkBaDwsury9VJbQa38EVbMmyr7aR9nZngfUsnZMxsXhAS22n1iWuzdXwHLKUO
-         020Vb2Wtri4x35iOnViirzURmmwb1+5h7nxTd1KXHVgM5XPegHX9orpfdMdsp2DBk2wz
-         ldalk0CEfpuVlwygPfJJSnjuG3WkHo2vCGfw+brI0VmftYUwbrpgFKCy0D2pSeuS2uDO
-         F0sQ==
-X-Gm-Message-State: AOAM533+GINLp6m4eAHjrnFfoYlRN0gTsGH9Y/WuRMn8hNNAOoTaA9/2
-        eMpPse70oZWrEfmC2HLqzdC+4yu1wFs=
-X-Google-Smtp-Source: ABdhPJxq6jWHs4Q8uMOLnsxSSSKI55rbTZr/y0gclVa6MyldkPT7fEd3IQU521XN1VdJl8L7ZCJOIg==
-X-Received: by 2002:a05:6512:4002:b0:46b:8490:2ba3 with SMTP id br2-20020a056512400200b0046b84902ba3mr2565733lfb.632.1649435642808;
-        Fri, 08 Apr 2022 09:34:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=cChhgUxqUquSxt9/MV0hz1DMxqkQELGYSGZGOjKnMXY=;
+        b=ID04/VsYg7iRmldIu8VtFhL5xGFhDBlgmIEh50MBMEsoB/KOUnUkPI1otkjY85knkT
+         p2mmJ/Mm9B5ByN8xymV1DUNVxjGUTUd9HfS247vERHQrZOvyu1Pgxhcw5+INV9chfOxQ
+         zHPok3sCE4QRLKvkn9EKFPncOgG45fg3q4cjsABqbET5QwdlaJCK9ScmLOKcvXJ0B4qe
+         E8GEFo16mM9BHLinfx/N+aooJT8QJ4d4AFzVpinCQom7qg0Ij1dhiYPl1QtsEdOfarIO
+         phEaY6fSceyS6LkSLRnZdoQmTP1TQ4FntkEgEly2mKy5ReIvsKzL535kRvV+veXqQf+r
+         T3gw==
+X-Gm-Message-State: AOAM533xyKXh/fusTnRRgymuIwUlr2SI8LcpnTvI1fmdqSezPJMF5KrE
+        2WqDKOnUrOoV3jqVV5PYp1Zh6c4S6N4=
+X-Google-Smtp-Source: ABdhPJzJm9fP7FHt9SJzUQD5SShZf1ryBdWk3MHN43jMhhAgxzXqSMavPhRjqZB0DrekOSSraMeDCA==
+X-Received: by 2002:a05:6512:308a:b0:44a:96cf:7ceb with SMTP id z10-20020a056512308a00b0044a96cf7cebmr13008771lfd.1.1649435649340;
+        Fri, 08 Apr 2022 09:34:09 -0700 (PDT)
 Received: from nergzd-desktop.localdomain ([194.39.226.133])
-        by smtp.gmail.com with ESMTPSA id q4-20020a0565123a8400b0044a27a8c63asm2495403lfu.80.2022.04.08.09.34.01
+        by smtp.gmail.com with ESMTPSA id q4-20020a0565123a8400b0044a27a8c63asm2495403lfu.80.2022.04.08.09.34.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Apr 2022 09:34:02 -0700 (PDT)
+        Fri, 08 Apr 2022 09:34:08 -0700 (PDT)
 From:   Markuss Broks <markuss.broks@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
@@ -55,46 +55,64 @@ Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         Linus Walleij <linus.walleij@linaro.org>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v4 0/2] Make AUX gpio pin optional for ktd2692
-Date:   Fri,  8 Apr 2022 19:33:26 +0300
-Message-Id: <20220408163330.200898-1-markuss.broks@gmail.com>
+Subject: [PATCH v4 2/2] leds: ktd2692: Make aux-gpios optional
+Date:   Fri,  8 Apr 2022 19:33:28 +0300
+Message-Id: <20220408163330.200898-3-markuss.broks@gmail.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220408163330.200898-1-markuss.broks@gmail.com>
+References: <20220408163330.200898-1-markuss.broks@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Some appliances of ktd2692 don't have the AUX pin connected to
-a GPIO. Specifically, Samsung Galaxy J5 (2015), which uses ktd2692
-for driving the front flash LED, has the pin not connected anywhere on
-schematics. Make specifying the AUX pin optional, since it is additional
-functionality and only affects amount of current going through the LED.
+Make the AUX pin optional, since it isn't a core part of functionality,
+and the device is designed to be operational with only one CTRL pin.
 
-Also convert the txt device-tree bindings to yaml and pick up maintenance
-over the yaml binding and the driver itself.
+Also pick up maintenance for the LED driver and the yaml bindings.
 
-v2:
-- fix the dt_binding_check
-v3:
-- set the aux_gpio to NULL to avoid passing ERR_PTR as a gpio
-v4:
-- maintainership -> maintenance (description)
-- remove the if (led->aux_gpio)
-- use devm_gpiod_get_optional for aux gpio
+Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+---
+ MAINTAINERS                       | 6 ++++++
+ drivers/leds/flash/leds-ktd2692.c | 7 +++----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-Markuss Broks (2):
-  dt-bindings: leds: convert ktd2692 bindings to yaml
-  leds: ktd2692: Make aux-gpios optional
-
- .../bindings/leds/kinetic,ktd2692.yaml        | 87 +++++++++++++++++++
- .../devicetree/bindings/leds/leds-ktd2692.txt | 50 -----------
- MAINTAINERS                                   |  6 ++
- drivers/leds/flash/leds-ktd2692.c             | 18 ++--
- 4 files changed, 103 insertions(+), 58 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/kinetic,ktd2692.yaml
- delete mode 100644 Documentation/devicetree/bindings/leds/leds-ktd2692.txt
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2db49ea7ae55..8ef5667a1d98 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10479,6 +10479,12 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/leds/backlight/kinetic,ktd253.yaml
+ F:	drivers/video/backlight/ktd253-backlight.c
+ 
++KTD2692 FLASH LED DRIVER
++M:	Markuss Broks <markuss.broks@gmail.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/leds/backlight/kinetic,ktd2692.yaml
++F:	drivers/leds/flash/leds-ktd2692.yaml
++
+ KTEST
+ M:	Steven Rostedt <rostedt@goodmis.org>
+ M:	John Hawley <warthog9@eaglescrag.net>
+diff --git a/drivers/leds/flash/leds-ktd2692.c b/drivers/leds/flash/leds-ktd2692.c
+index f341da1503a4..26edf41dfa7d 100644
+--- a/drivers/leds/flash/leds-ktd2692.c
++++ b/drivers/leds/flash/leds-ktd2692.c
+@@ -284,10 +284,9 @@ static int ktd2692_parse_dt(struct ktd2692_context *led, struct device *dev,
+ 		return ret;
+ 	}
+ 
+-	led->aux_gpio = devm_gpiod_get(dev, "aux", GPIOD_ASIS);
+-	ret = PTR_ERR_OR_ZERO(led->aux_gpio);
+-	if (ret) {
+-		dev_err(dev, "cannot get aux-gpios %d\n", ret);
++	led->aux_gpio = devm_gpiod_get_optional(dev, "aux", GPIOD_ASIS);
++	if (IS_ERR(led->aux_gpio)) {
++		dev_err(dev, "cannot get aux-gpios: %d\n", ret);
+ 		return ret;
+ 	}
+ 
 -- 
 2.35.1
 
