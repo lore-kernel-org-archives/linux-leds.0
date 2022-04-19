@@ -2,35 +2,35 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC63C352A8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3018C3527E
 	for <linux-leds@archiver.kernel.org>; Tue, 19 Apr 2022 16:46:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355391AbiDSQtj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:49:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55678 "EHLO
+        id S242209AbiDSQti (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:49:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231271AbiDSQrG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:47:06 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC6C339692;
-        Tue, 19 Apr 2022 09:44:22 -0700 (PDT)
+        with ESMTP id S1348967AbiDSQqC (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:46:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 113A5396A3;
+        Tue, 19 Apr 2022 09:43:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 98D31B81BB6;
-        Tue, 19 Apr 2022 16:44:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21D49C385B6;
-        Tue, 19 Apr 2022 16:44:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A15E56145C;
+        Tue, 19 Apr 2022 16:43:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED67C385A9;
+        Tue, 19 Apr 2022 16:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386660;
-        bh=/6iIOutIe2dthl0F9tUwRrWmTz1Y+vHGyZSNFuNK4W0=;
+        s=k20201202; t=1650386598;
+        bh=v2JXUsT+aPSiyV8AWZ0OLtn99RZRKtVDeuty5M4eG68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r9TzRbN2wJ9anV7WP0E3rP1S1Cki++xSivN4dBdyNHhyWwMh/MI+BtyAeqgYlBYXV
-         ItPRfCU6w7MqI+MFhEsR5oorVEigDVDTfLVzE3yCgnLfKVyWW3gfUdTAbpfQ+0xMlv
-         4h+YVQk5XgEEoQXPsOwj0Fou41j1UM7Ct/jvU8LRL/8ndMFQ+B79JydmegZ2DAQ0SW
-         JwbK17hawoV1JcDkXQOweIbtoMS6G5Dy/AtPICtIdIqThqKAcNwIk2Z+V0Gk8YY1UC
-         qolXwRGVZyysQKzmwpm1PVfh5Wsw43vmB7v0Jz+vdy/0bIr6cZp8M8u+LOSFSklyM5
-         I5AkVeQlQC3Hw==
+        b=tt/fiI6JfMKScsjC4gupDTlXwIFAYWcsYENflWn5n3kMrbCN+Y2cCr3glEwE1sItJ
+         cONsIQQLt01Y/qCAeHUUbJd9TpD27gE/DUc3zMZ7c0U2VwpCWQ+qBf7uwrq/GZGzTX
+         3FGOj+knk17r2GSyltkagM0yCF+n9LJkDIwNmtctqNly1C9p720AIevLts/VbLM17G
+         O+4nFGEcvsfnWMk8Au/5OQB6coNhg3LP2cgERB8iHAG0NNlBzSNRpU2laCxc90/bD8
+         8gZIgUWRqfgnaIv2WyLz/01oqgCe1ixn6EBO/7GUMc0aVvmzyH6K1PsZ1Shk5OoOYF
+         /MoVumyBheReg==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -59,9 +59,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH 42/48] ARM: mmp: remove tavorevb board support
-Date:   Tue, 19 Apr 2022 18:38:04 +0200
-Message-Id: <20220419163810.2118169-43-arnd@kernel.org>
+Subject: [PATCH 34/48] ARM: pxa: pcmcia: move smemc configuration back to arch
+Date:   Tue, 19 Apr 2022 18:37:56 +0200
+Message-Id: <20220419163810.2118169-35-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -73,192 +73,193 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-There are two tavorevb boards in the kernel, one using a PXA930 chip in
-mach-pxa, and one using the later PXA910 chip in mach-mmp.  They use the
-same board number, which is generally a bad idea, and in a multiplatform
-kernel, we can end up with funny link errors like this one resulting
-from two boards gettting controlled by the same Kconfig symbol:
+Rather than poking at the smemc registers directly from the
+pcmcia/pxa2xx_base driver, move those bits into machine file
+to have a cleaner interface.
 
-arch/arm/mach-mmp/tavorevb.o: In function `tavorevb_init':
-tavorevb.c:(.init.text+0x4c): undefined reference to `pxa910_device_uart1'
-tavorevb.c:(.init.text+0x50): undefined reference to `pxa910_device_gpio'
-tavorevb.o:(.arch.info.init+0x54): undefined reference to `pxa910_init_irq'
-tavorevb.o:(.arch.info.init+0x58): undefined reference to `pxa910_timer_init'
-
-The mach-pxa TavorEVB seems much more complete than the mach-mmp one
-that supports only uart, gpio and ethernet. Further, I could find no
-information about the board on the internet aside from references to
-the Linux kernel, so I assume this was never available outside of Marvell
-and can be removed entirely.
-
-There is a third board named TavorEVB in the Kconfig description,
-but this refers to the "TTC_DKB" machine. The two are clearly
-related, so I change the Kconfig description to just list both
-names.
-
-Cc: Lubomir Rintel <lkundrak@v3.sk>
-Reviewed-by: Lubomir Rintel <lkundrak@v3.sk>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Link: https://lore.kernel.org/lkml/87d0egjzxk.fsf@belgarion.home/
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-mmp/Kconfig    |  10 +---
- arch/arm/mach-mmp/Makefile   |   1 -
- arch/arm/mach-mmp/tavorevb.c | 113 -----------------------------------
- 3 files changed, 1 insertion(+), 123 deletions(-)
- delete mode 100644 arch/arm/mach-mmp/tavorevb.c
+ arch/arm/mach-pxa/generic.c   | 29 ++++++++++++++++++++++
+ drivers/pcmcia/pxa2xx_base.c  | 46 ++++++++++++-----------------------
+ include/linux/soc/pxa/smemc.h | 10 ++++++++
+ 3 files changed, 55 insertions(+), 30 deletions(-)
+ create mode 100644 include/linux/soc/pxa/smemc.h
 
-diff --git a/arch/arm/mach-mmp/Kconfig b/arch/arm/mach-mmp/Kconfig
-index 0dd999212944..92a730a573b9 100644
---- a/arch/arm/mach-mmp/Kconfig
-+++ b/arch/arm/mach-mmp/Kconfig
-@@ -39,16 +39,8 @@ config MACH_AVENGERS_LITE
- 	  Say 'Y' here if you want to support the Marvell PXA168-based
- 	  Avengers Lite Development Board.
+diff --git a/arch/arm/mach-pxa/generic.c b/arch/arm/mach-pxa/generic.c
+index f9083c4f0aea..fe1d55d328e5 100644
+--- a/arch/arm/mach-pxa/generic.c
++++ b/arch/arm/mach-pxa/generic.c
+@@ -70,6 +70,35 @@ unsigned int get_clk_frequency_khz(int info)
+ }
+ EXPORT_SYMBOL(get_clk_frequency_khz);
  
--config MACH_TAVOREVB
--	bool "Marvell's PXA910 TavorEVB Development Board"
--	depends on ARCH_MULTI_V5
--	select CPU_PXA910
--	help
--	  Say 'Y' here if you want to support the Marvell PXA910-based
--	  TavorEVB Development Board.
++void pxa_smemc_set_pcmcia_timing(int sock, u32 mcmem, u32 mcatt, u32 mcio)
++{
++	__raw_writel(mcmem, MCMEM(sock));
++	__raw_writel(mcatt, MCATT(sock));
++	__raw_writel(mcio, MCIO(sock));
++}
++EXPORT_SYMBOL_GPL(pxa_smemc_set_pcmcia_timing);
++
++void pxa_smemc_set_pcmcia_socket(int nr)
++{
++	switch (nr) {
++	case 0:
++		__raw_writel(0, MECR);
++		break;
++	case 1:
++		/*
++		 * We have at least one socket, so set MECR:CIT
++		 * (Card Is There)
++		 */
++		__raw_writel(MECR_CIT, MECR);
++		break;
++	case 2:
++		/* Set CIT and MECR:NOS (Number Of Sockets) */
++		__raw_writel(MECR_CIT | MECR_NOS, MECR);
++		break;
++	}
++}
++EXPORT_SYMBOL_GPL(pxa_smemc_set_pcmcia_socket);
++
+ /*
+  * Intel PXA2xx internal register mapping.
+  *
+diff --git a/drivers/pcmcia/pxa2xx_base.c b/drivers/pcmcia/pxa2xx_base.c
+index 7cd1375d6087..0ea41f1411e5 100644
+--- a/drivers/pcmcia/pxa2xx_base.c
++++ b/drivers/pcmcia/pxa2xx_base.c
+@@ -24,11 +24,10 @@
+ #include <linux/spinlock.h>
+ #include <linux/platform_device.h>
+ #include <linux/soc/pxa/cpu.h>
++#include <linux/soc/pxa/smemc.h>
+ 
+-#include <mach/smemc.h>
+ #include <asm/io.h>
+ #include <asm/irq.h>
+-#include <mach/pxa2xx-regs.h>
+ #include <asm/mach-types.h>
+ 
+ #include <pcmcia/ss.h>
+@@ -113,7 +112,7 @@ static inline u_int pxa2xx_pcmcia_cmd_time(u_int mem_clk_10khz,
+ 	return (300000 * (pcmcia_mcxx_asst + 1) / mem_clk_10khz);
+ }
+ 
+-static int pxa2xx_pcmcia_set_mcmem( int sock, int speed, int clock )
++static uint32_t pxa2xx_pcmcia_mcmem(int sock, int speed, int clock)
+ {
+ 	uint32_t val;
+ 
+@@ -124,12 +123,10 @@ static int pxa2xx_pcmcia_set_mcmem( int sock, int speed, int clock )
+ 		| ((pxa2xx_mcxx_hold(speed, clock)
+ 		& MCXX_HOLD_MASK) << MCXX_HOLD_SHIFT);
+ 
+-	__raw_writel(val, MCMEM(sock));
 -
- config MACH_TTC_DKB
--	bool "Marvell's PXA910 TavorEVB Development Board"
-+	bool "Marvell's PXA910 TavorEVB/TTC_DKB Development Board"
- 	depends on ARCH_MULTI_V5
- 	select CPU_PXA910
- 	help
-diff --git a/arch/arm/mach-mmp/Makefile b/arch/arm/mach-mmp/Makefile
-index e3758f7e1fe7..81338db77ec7 100644
---- a/arch/arm/mach-mmp/Makefile
-+++ b/arch/arm/mach-mmp/Makefile
-@@ -24,7 +24,6 @@ endif
- obj-$(CONFIG_MACH_ASPENITE)	+= aspenite.o
- obj-$(CONFIG_MACH_ZYLONITE2)	+= aspenite.o
- obj-$(CONFIG_MACH_AVENGERS_LITE)+= avengers_lite.o
--obj-$(CONFIG_MACH_TAVOREVB)	+= tavorevb.o
- obj-$(CONFIG_MACH_TTC_DKB)	+= ttc_dkb.o
- obj-$(CONFIG_MACH_BROWNSTONE)	+= brownstone.o
- obj-$(CONFIG_MACH_FLINT)	+= flint.o
-diff --git a/arch/arm/mach-mmp/tavorevb.c b/arch/arm/mach-mmp/tavorevb.c
-deleted file mode 100644
-index 3261d2322198..000000000000
---- a/arch/arm/mach-mmp/tavorevb.c
-+++ /dev/null
-@@ -1,113 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- *  linux/arch/arm/mach-mmp/tavorevb.c
-- *
-- *  Support for the Marvell PXA910-based TavorEVB Development Platform.
-- */
--#include <linux/gpio.h>
--#include <linux/gpio-pxa.h>
--#include <linux/init.h>
--#include <linux/kernel.h>
--#include <linux/platform_device.h>
--#include <linux/smc91x.h>
--
--#include <asm/mach-types.h>
--#include <asm/mach/arch.h>
--#include "addr-map.h"
--#include "mfp-pxa910.h"
--#include "pxa910.h"
--#include "irqs.h"
--
--#include "common.h"
--
--static unsigned long tavorevb_pin_config[] __initdata = {
--	/* UART2 */
--	GPIO47_UART2_RXD,
--	GPIO48_UART2_TXD,
--
--	/* SMC */
--	SM_nCS0_nCS0,
--	SM_ADV_SM_ADV,
--	SM_SCLK_SM_SCLK,
--	SM_SCLK_SM_SCLK,
--	SM_BE0_SM_BE0,
--	SM_BE1_SM_BE1,
--
--	/* DFI */
--	DF_IO0_ND_IO0,
--	DF_IO1_ND_IO1,
--	DF_IO2_ND_IO2,
--	DF_IO3_ND_IO3,
--	DF_IO4_ND_IO4,
--	DF_IO5_ND_IO5,
--	DF_IO6_ND_IO6,
--	DF_IO7_ND_IO7,
--	DF_IO8_ND_IO8,
--	DF_IO9_ND_IO9,
--	DF_IO10_ND_IO10,
--	DF_IO11_ND_IO11,
--	DF_IO12_ND_IO12,
--	DF_IO13_ND_IO13,
--	DF_IO14_ND_IO14,
--	DF_IO15_ND_IO15,
--	DF_nCS0_SM_nCS2_nCS0,
--	DF_ALE_SM_WEn_ND_ALE,
--	DF_CLE_SM_OEn_ND_CLE,
--	DF_WEn_DF_WEn,
--	DF_REn_DF_REn,
--	DF_RDY0_DF_RDY0,
--};
--
--static struct pxa_gpio_platform_data pxa910_gpio_pdata = {
--	.irq_base	= MMP_GPIO_TO_IRQ(0),
--};
--
--static struct smc91x_platdata tavorevb_smc91x_info = {
--	.flags	= SMC91X_USE_16BIT | SMC91X_NOWAIT,
--};
--
--static struct resource smc91x_resources[] = {
--	[0] = {
--		.start	= SMC_CS1_PHYS_BASE + 0x300,
--		.end	= SMC_CS1_PHYS_BASE + 0xfffff,
--		.flags	= IORESOURCE_MEM,
--	},
--	[1] = {
--		.start	= MMP_GPIO_TO_IRQ(80),
--		.end	= MMP_GPIO_TO_IRQ(80),
--		.flags	= IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHEDGE,
--	}
--};
--
--static struct platform_device smc91x_device = {
--	.name		= "smc91x",
--	.id		= 0,
--	.dev		= {
--		.platform_data = &tavorevb_smc91x_info,
--	},
--	.num_resources	= ARRAY_SIZE(smc91x_resources),
--	.resource	= smc91x_resources,
--};
--
--static void __init tavorevb_init(void)
+-	return 0;
++	return val;
+ }
+ 
+-static int pxa2xx_pcmcia_set_mcio( int sock, int speed, int clock )
++static int pxa2xx_pcmcia_mcio(int sock, int speed, int clock)
+ {
+ 	uint32_t val;
+ 
+@@ -140,12 +137,11 @@ static int pxa2xx_pcmcia_set_mcio( int sock, int speed, int clock )
+ 		| ((pxa2xx_mcxx_hold(speed, clock)
+ 		& MCXX_HOLD_MASK) << MCXX_HOLD_SHIFT);
+ 
+-	__raw_writel(val, MCIO(sock));
+ 
+-	return 0;
++	return val;
+ }
+ 
+-static int pxa2xx_pcmcia_set_mcatt( int sock, int speed, int clock )
++static int pxa2xx_pcmcia_mcatt(int sock, int speed, int clock)
+ {
+ 	uint32_t val;
+ 
+@@ -156,31 +152,26 @@ static int pxa2xx_pcmcia_set_mcatt( int sock, int speed, int clock )
+ 		| ((pxa2xx_mcxx_hold(speed, clock)
+ 		& MCXX_HOLD_MASK) << MCXX_HOLD_SHIFT);
+ 
+-	__raw_writel(val, MCATT(sock));
+ 
+-	return 0;
++	return val;
+ }
+ 
+-static int pxa2xx_pcmcia_set_mcxx(struct soc_pcmcia_socket *skt, unsigned int clk)
++static int pxa2xx_pcmcia_set_timing(struct soc_pcmcia_socket *skt)
+ {
++	unsigned long clk = clk_get_rate(skt->clk) / 10000;
+ 	struct soc_pcmcia_timing timing;
+ 	int sock = skt->nr;
+ 
+ 	soc_common_pcmcia_get_timing(skt, &timing);
+ 
+-	pxa2xx_pcmcia_set_mcmem(sock, timing.mem, clk);
+-	pxa2xx_pcmcia_set_mcatt(sock, timing.attr, clk);
+-	pxa2xx_pcmcia_set_mcio(sock, timing.io, clk);
++	pxa_smemc_set_pcmcia_timing(sock,
++		pxa2xx_pcmcia_mcmem(sock, timing.mem, clk),
++		pxa2xx_pcmcia_mcatt(sock, timing.attr, clk),
++		pxa2xx_pcmcia_mcio(sock, timing.io, clk));
+ 
+ 	return 0;
+ }
+ 
+-static int pxa2xx_pcmcia_set_timing(struct soc_pcmcia_socket *skt)
 -{
--	mfp_config(ARRAY_AND_SIZE(tavorevb_pin_config));
--
--	/* on-chip devices */
--	pxa910_add_uart(1);
--	platform_device_add_data(&pxa910_device_gpio, &pxa910_gpio_pdata,
--				 sizeof(struct pxa_gpio_platform_data));
--	platform_device_register(&pxa910_device_gpio);
--
--	/* off-chip devices */
--	platform_device_register(&smc91x_device);
+-	unsigned long clk = clk_get_rate(skt->clk);
+-	return pxa2xx_pcmcia_set_mcxx(skt, clk / 10000);
 -}
 -
--MACHINE_START(TAVOREVB, "PXA910 Evaluation Board (aka TavorEVB)")
--	.map_io		= mmp_map_io,
--	.nr_irqs	= MMP_NR_IRQS,
--	.init_irq       = pxa910_init_irq,
--	.init_time	= pxa910_timer_init,
--	.init_machine   = tavorevb_init,
--	.restart	= mmp_restart,
--MACHINE_END
+ #ifdef CONFIG_CPU_FREQ
+ 
+ static int
+@@ -215,18 +206,13 @@ pxa2xx_pcmcia_frequency_change(struct soc_pcmcia_socket *skt,
+ 
+ void pxa2xx_configure_sockets(struct device *dev, struct pcmcia_low_level *ops)
+ {
+-	/*
+-	 * We have at least one socket, so set MECR:CIT
+-	 * (Card Is There)
+-	 */
+-	uint32_t mecr = MECR_CIT;
++	int nr = 1;
+ 
+-	/* Set MECR:NOS (Number Of Sockets) */
+ 	if ((ops->first + ops->nr) > 1 ||
+ 	    machine_is_viper() || machine_is_arcom_zeus())
+-		mecr |= MECR_NOS;
++		nr = 2;
+ 
+-	__raw_writel(mecr, MECR);
++	pxa_smemc_set_pcmcia_socket(nr);
+ }
+ EXPORT_SYMBOL(pxa2xx_configure_sockets);
+ 
+diff --git a/include/linux/soc/pxa/smemc.h b/include/linux/soc/pxa/smemc.h
+new file mode 100644
+index 000000000000..cbf1a2d8af29
+--- /dev/null
++++ b/include/linux/soc/pxa/smemc.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#ifndef __PXA_REGS_H
++#define __PXA_REGS_H
++
++#include <linux/types.h>
++
++void pxa_smemc_set_pcmcia_timing(int sock, u32 mcmem, u32 mcatt, u32 mcio);
++void pxa_smemc_set_pcmcia_socket(int nr);
++
++#endif
 -- 
 2.29.2
 
