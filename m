@@ -2,35 +2,35 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D29C4167E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCCCC3527E
 	for <linux-leds@archiver.kernel.org>; Tue, 19 Apr 2022 16:44:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355023AbiDSQot (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:44:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53402 "EHLO
+        id S1355079AbiDSQou (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:44:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242507AbiDSQnM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:43:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10BD617E23;
-        Tue, 19 Apr 2022 09:40:29 -0700 (PDT)
+        with ESMTP id S1355054AbiDSQn0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:43:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4807A2612A;
+        Tue, 19 Apr 2022 09:40:43 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8B4FDB819DE;
-        Tue, 19 Apr 2022 16:40:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDD0FC385A5;
-        Tue, 19 Apr 2022 16:40:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D63E060B34;
+        Tue, 19 Apr 2022 16:40:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4F6BC385A5;
+        Tue, 19 Apr 2022 16:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386426;
-        bh=ptMtOudbQ5loXUIBoTxa9Js2NvWZa4r2mq6O40yUHH0=;
+        s=k20201202; t=1650386442;
+        bh=rF4AqAeeG3pFiw8ba+j1AjJKI0o8rpvYnUVlfmsd5CQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sn7fnX8rRkBuqtQMfRkdqeTmIHa3aEVyEQqy3ea6Rcph7o5+q2+oJQtgfayzkGgGD
-         pBrobPc0a288Jt5l21HSNaRfaU6aAdkHaECQNojqoW85epuPmw1VvMwvkSO6N07k/3
-         115Wizs7BJeOANhRCBPtn5ETmJ1DN/7eD9VqdGz01zYvnNHqGUiTr7Xr5IQ32fnJKz
-         73a5FySo1/OXZDPRM/Hg6r35U+vs89tmssHNWG7O1Y8buOzXQepqwD84VLvP022GvN
-         c6H9ZVfE372WNIs8vRZiLFyLD+Hr6zPSL7rCagmKzA+O8wvtPs7NCaSk+bRoY9berF
-         uj9Ak7o458yOA==
+        b=rZcwYWiPc2XajjwXFY6Hgb0z8xaKQouR3mgetcNfOG0jAxjf+wc+NkAqTEieKNj2K
+         hTb4pSkBn4p6/vPrbGHHFSjrFJKYhOj58gtETWj5zjgxOpUV+N5TFkzWHrEi+oCpGA
+         Z7qHH3Z4/Qz1lfbHK13P/9eVzrzGxLoE72yig5fdPb2W9JmcSPG6EbgjwxoLszNbC8
+         JtYVwf2JvVtYboOyzewKz6pEaGgLg3OpWUMntuI+0iqBattNddhmtXKm3DuOkqoKaX
+         6oeCBZj9AZy/bFRn3L+Ral/WFjNSaI6bmC11HJKF0hZPiK+pyR2FGR0p1wVrtmDFDN
+         RN3P/E7CISDfQ==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -58,10 +58,10 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 12/48] ARM: pxa: make addr-map.h header local
-Date:   Tue, 19 Apr 2022 18:37:34 +0200
-Message-Id: <20220419163810.2118169-13-arnd@kernel.org>
+        alsa-devel@alsa-project.org, stable@vger.kernel.org
+Subject: [PATCH 14/48] ARM: pxa: maybe fix gpio lookup tables
+Date:   Tue, 19 Apr 2022 18:37:36 +0200
+Message-Id: <20220419163810.2118169-15-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -73,205 +73,74 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Drivers should not rely on the contents of this file, so
-move it into the platform directory directly.
+From inspection I found a couple of GPIO lookups that are
+listed with device "gpio-pxa", but actually have a number
+from a different gpio controller.
 
-Cc: Philipp Zabel <philipp.zabel@gmail.com>
-Cc: Paul Parsons <lost.distance@yahoo.com>
+Try to rectify that here, with a guess of what the actual
+device name is.
 
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/lkml/87mudkmx8g.fsf@belgarion.home/
 ---
- arch/arm/mach-pxa/{include/mach => }/addr-map.h | 0
- arch/arm/mach-pxa/generic.c                     | 2 +-
- arch/arm/mach-pxa/hx4700.c                      | 2 +-
- arch/arm/mach-pxa/lpd270.c                      | 2 +-
- arch/arm/mach-pxa/magician.c                    | 2 +-
- arch/arm/mach-pxa/mainstone.c                   | 2 +-
- arch/arm/mach-pxa/pxa25x.c                      | 2 +-
- arch/arm/mach-pxa/pxa25x.h                      | 2 +-
- arch/arm/mach-pxa/pxa27x.c                      | 2 +-
- arch/arm/mach-pxa/pxa27x.h                      | 2 +-
- arch/arm/mach-pxa/pxa3xx.c                      | 2 +-
- arch/arm/mach-pxa/pxa3xx.h                      | 2 +-
- arch/arm/mach-pxa/trizeps4.h                    | 2 +-
- arch/arm/mach-pxa/xcep.c                        | 2 +-
- 14 files changed, 13 insertions(+), 13 deletions(-)
- rename arch/arm/mach-pxa/{include/mach => }/addr-map.h (100%)
+ arch/arm/mach-pxa/cm-x300.c  | 8 ++++----
+ arch/arm/mach-pxa/magician.c | 2 +-
+ arch/arm/mach-pxa/tosa.c     | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/include/mach/addr-map.h b/arch/arm/mach-pxa/addr-map.h
-similarity index 100%
-rename from arch/arm/mach-pxa/include/mach/addr-map.h
-rename to arch/arm/mach-pxa/addr-map.h
-diff --git a/arch/arm/mach-pxa/generic.c b/arch/arm/mach-pxa/generic.c
-index 3c3cd90bb9b4..f9083c4f0aea 100644
---- a/arch/arm/mach-pxa/generic.c
-+++ b/arch/arm/mach-pxa/generic.c
-@@ -22,7 +22,7 @@
- #include <asm/mach/map.h>
- #include <asm/mach-types.h>
- 
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <mach/irqs.h>
- #include <mach/reset.h>
- #include <mach/smemc.h>
-diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
-index 191a6c24fe19..140a44cb2989 100644
---- a/arch/arm/mach-pxa/hx4700.c
-+++ b/arch/arm/mach-pxa/hx4700.c
-@@ -40,7 +40,7 @@
- #include <asm/mach/arch.h>
- 
- #include "pxa27x.h"
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <mach/hx4700.h>
- #include <linux/platform_data/irda-pxaficp.h>
- 
-diff --git a/arch/arm/mach-pxa/lpd270.c b/arch/arm/mach-pxa/lpd270.c
-index 7f10b86f85fd..e03436710752 100644
---- a/arch/arm/mach-pxa/lpd270.c
-+++ b/arch/arm/mach-pxa/lpd270.c
-@@ -38,7 +38,7 @@
- 
- #include "pxa27x.h"
- #include "lpd270.h"
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/video-pxafb.h>
- #include <linux/platform_data/mmc-pxamci.h>
+diff --git a/arch/arm/mach-pxa/cm-x300.c b/arch/arm/mach-pxa/cm-x300.c
+index 09a5264a27c8..01f364a66446 100644
+--- a/arch/arm/mach-pxa/cm-x300.c
++++ b/arch/arm/mach-pxa/cm-x300.c
+@@ -356,13 +356,13 @@ static struct platform_device cm_x300_spi_gpio = {
+ static struct gpiod_lookup_table cm_x300_spi_gpiod_table = {
+ 	.dev_id         = "spi_gpio",
+ 	.table          = {
+-		GPIO_LOOKUP("gpio-pxa", GPIO_LCD_SCL,
++		GPIO_LOOKUP("pca9555.1", GPIO_LCD_SCL - GPIO_LCD_BASE,
+ 			    "sck", GPIO_ACTIVE_HIGH),
+-		GPIO_LOOKUP("gpio-pxa", GPIO_LCD_DIN,
++		GPIO_LOOKUP("pca9555.1", GPIO_LCD_DIN - GPIO_LCD_BASE,
+ 			    "mosi", GPIO_ACTIVE_HIGH),
+-		GPIO_LOOKUP("gpio-pxa", GPIO_LCD_DOUT,
++		GPIO_LOOKUP("pca9555.1", GPIO_LCD_DOUT - GPIO_LCD_BASE,
+ 			    "miso", GPIO_ACTIVE_HIGH),
+-		GPIO_LOOKUP("gpio-pxa", GPIO_LCD_CS,
++		GPIO_LOOKUP("pca9555.1", GPIO_LCD_CS - GPIO_LCD_BASE,
+ 			    "cs", GPIO_ACTIVE_HIGH),
+ 		{ },
+ 	},
 diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
-index 345a44d15a2c..20ca3e28c7fb 100644
+index 20ca3e28c7fb..d105deb1e098 100644
 --- a/arch/arm/mach-pxa/magician.c
 +++ b/arch/arm/mach-pxa/magician.c
-@@ -34,7 +34,7 @@
- #include <asm/system_info.h>
- 
- #include "pxa27x.h"
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <mach/magician.h>
- #include <linux/platform_data/video-pxafb.h>
- #include <linux/platform_data/mmc-pxamci.h>
-diff --git a/arch/arm/mach-pxa/mainstone.c b/arch/arm/mach-pxa/mainstone.c
-index c8200fc2159d..f0072e63b456 100644
---- a/arch/arm/mach-pxa/mainstone.c
-+++ b/arch/arm/mach-pxa/mainstone.c
-@@ -51,7 +51,7 @@
- #include <linux/platform_data/irda-pxaficp.h>
- #include <linux/platform_data/usb-ohci-pxa27x.h>
- #include <linux/platform_data/keypad-pxa27x.h>
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <mach/smemc.h>
- 
- #include "generic.h"
-diff --git a/arch/arm/mach-pxa/pxa25x.c b/arch/arm/mach-pxa/pxa25x.c
-index dfc90b41fba3..8d21c7eef1d2 100644
---- a/arch/arm/mach-pxa/pxa25x.c
-+++ b/arch/arm/mach-pxa/pxa25x.c
-@@ -34,7 +34,7 @@
- #include "pxa25x.h"
- #include <mach/reset.h>
- #include "pm.h"
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <mach/smemc.h>
- 
- #include "generic.h"
-diff --git a/arch/arm/mach-pxa/pxa25x.h b/arch/arm/mach-pxa/pxa25x.h
-index 403bc16c2ed2..4699ebf7b486 100644
---- a/arch/arm/mach-pxa/pxa25x.h
-+++ b/arch/arm/mach-pxa/pxa25x.h
-@@ -2,7 +2,7 @@
- #ifndef __MACH_PXA25x_H
- #define __MACH_PXA25x_H
- 
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <mach/pxa2xx-regs.h>
- #include "mfp-pxa25x.h"
- #include <mach/irqs.h>
-diff --git a/arch/arm/mach-pxa/pxa27x.c b/arch/arm/mach-pxa/pxa27x.c
-index 38fdd22c4dc5..c36a9784fab8 100644
---- a/arch/arm/mach-pxa/pxa27x.c
-+++ b/arch/arm/mach-pxa/pxa27x.c
-@@ -33,7 +33,7 @@
- #include <mach/reset.h>
- #include <linux/platform_data/usb-ohci-pxa27x.h>
- #include "pm.h"
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <mach/smemc.h>
- 
- #include "generic.h"
-diff --git a/arch/arm/mach-pxa/pxa27x.h b/arch/arm/mach-pxa/pxa27x.h
-index 6c99090647d2..bf2755561fe5 100644
---- a/arch/arm/mach-pxa/pxa27x.h
-+++ b/arch/arm/mach-pxa/pxa27x.h
-@@ -3,7 +3,7 @@
- #define __MACH_PXA27x_H
- 
- #include <linux/suspend.h>
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <mach/pxa2xx-regs.h>
- #include "mfp-pxa27x.h"
- #include <mach/irqs.h>
-diff --git a/arch/arm/mach-pxa/pxa3xx.c b/arch/arm/mach-pxa/pxa3xx.c
-index 7c569fa2a6da..7881888107c7 100644
---- a/arch/arm/mach-pxa/pxa3xx.c
-+++ b/arch/arm/mach-pxa/pxa3xx.c
-@@ -32,7 +32,7 @@
- #include <mach/reset.h>
- #include <linux/platform_data/usb-ohci-pxa27x.h>
- #include "pm.h"
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <mach/smemc.h>
- #include <mach/irqs.h>
- 
-diff --git a/arch/arm/mach-pxa/pxa3xx.h b/arch/arm/mach-pxa/pxa3xx.h
-index 22ace053ea25..6b424d328680 100644
---- a/arch/arm/mach-pxa/pxa3xx.h
-+++ b/arch/arm/mach-pxa/pxa3xx.h
-@@ -2,7 +2,7 @@
- #ifndef __MACH_PXA3XX_H	
- #define __MACH_PXA3XX_H
- 
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <mach/pxa3xx-regs.h>
- #include <mach/irqs.h>
- 
-diff --git a/arch/arm/mach-pxa/trizeps4.h b/arch/arm/mach-pxa/trizeps4.h
-index 7597b9de11e2..e0f37c0ff06f 100644
---- a/arch/arm/mach-pxa/trizeps4.h
-+++ b/arch/arm/mach-pxa/trizeps4.h
-@@ -11,7 +11,7 @@
- #ifndef _TRIPEPS4_H_
- #define _TRIPEPS4_H_
- 
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <mach/irqs.h> /* PXA_GPIO_TO_IRQ */
- 
- /* physical memory regions */
-diff --git a/arch/arm/mach-pxa/xcep.c b/arch/arm/mach-pxa/xcep.c
-index e6ab428287ae..7389e0199144 100644
---- a/arch/arm/mach-pxa/xcep.c
-+++ b/arch/arm/mach-pxa/xcep.c
-@@ -25,7 +25,7 @@
- #include <asm/mach/map.h>
- 
- #include "pxa25x.h"
--#include <mach/addr-map.h>
-+#include "addr-map.h"
- #include <mach/smemc.h>
- 
- #include "generic.h"
+@@ -681,7 +681,7 @@ static struct platform_device bq24022 = {
+ static struct gpiod_lookup_table bq24022_gpiod_table = {
+ 	.dev_id = "gpio-regulator",
+ 	.table = {
+-		GPIO_LOOKUP("gpio-pxa", EGPIO_MAGICIAN_BQ24022_ISET2,
++		GPIO_LOOKUP("htc-egpio-0", EGPIO_MAGICIAN_BQ24022_ISET2 - MAGICIAN_EGPIO_BASE,
+ 			    NULL, GPIO_ACTIVE_HIGH),
+ 		GPIO_LOOKUP("gpio-pxa", GPIO30_MAGICIAN_BQ24022_nCHARGE_EN,
+ 			    "enable", GPIO_ACTIVE_LOW),
+diff --git a/arch/arm/mach-pxa/tosa.c b/arch/arm/mach-pxa/tosa.c
+index 5af980d77d39..9476ed0f55e9 100644
+--- a/arch/arm/mach-pxa/tosa.c
++++ b/arch/arm/mach-pxa/tosa.c
+@@ -296,9 +296,9 @@ static struct gpiod_lookup_table tosa_mci_gpio_table = {
+ 	.table = {
+ 		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_nSD_DETECT,
+ 			    "cd", GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_SD_WP,
++		GPIO_LOOKUP("sharp-scoop.0", TOSA_GPIO_SD_WP - TOSA_SCOOP_GPIO_BASE,
+ 			    "wp", GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_PWR_ON,
++		GPIO_LOOKUP("sharp-scoop.0", TOSA_GPIO_PWR_ON - TOSA_SCOOP_GPIO_BASE,
+ 			    "power", GPIO_ACTIVE_HIGH),
+ 		{ },
+ 	},
 -- 
 2.29.2
 
