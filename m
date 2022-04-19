@@ -2,35 +2,35 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F6AC4332F
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Apr 2022 16:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBADC4332F
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Apr 2022 16:44:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232344AbiDSQpe (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:45:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54886 "EHLO
+        id S1354954AbiDSQof (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:44:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344027AbiDSQpX (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:45:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2107F36152;
-        Tue, 19 Apr 2022 09:42:40 -0700 (PDT)
+        with ESMTP id S1354977AbiDSQmt (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:42:49 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AC9BE03D;
+        Tue, 19 Apr 2022 09:40:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A9E7A6145C;
-        Tue, 19 Apr 2022 16:42:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0C57C385AD;
-        Tue, 19 Apr 2022 16:42:31 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 09998B81BEF;
+        Tue, 19 Apr 2022 16:40:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0A57C385B0;
+        Tue, 19 Apr 2022 16:39:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386559;
-        bh=6qz24JeYkT/szoUulUC11ktMbSMxaia2ZM53W0WWa5k=;
+        s=k20201202; t=1650386402;
+        bh=Fa4t+DkHHVinGTfyny9fnUHb+3BmvDV9Sv/bDUMb99g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OQbcZhU1YyaWiVoymRlCpzVRaDV6+oOUhic1Kg4DXMriEEdQTb3Ol248UgeiguRcV
-         AADXBOzx4zqgQNOk8kqSzTZHT8QIWeMxKyU23zO+RJE2VESVS0XI60vTW/g7muIAwS
-         8PC9xUtDQIiLYabZtjUMpFcY4iEN8SE8ABotebLwqZt2mev8Theryu21oiciT6uNJG
-         jkegeWr772BxLlRDA+zY95CIesNGVFaK7EjAjyLas9VMV8jQ2YcKVPWTYE+Of1svA5
-         xXLxVX0vDq/uA9rastXjDbWACQcopxN6Tk8sAWc6oesLyUD/wEISCwtksws8Opfw6K
-         j1eP3Wy/Abdpw==
+        b=j/NCSeP8NzRWUw8W6MpOSbmGTBu7/2YhXCemKDewCPqMH6cwTZLL/oiGN4LpCoujp
+         1SH3dQdFs3D3xtEm0/2uHyHJF7ZmzaRFqw8BaYDXyP6SWjgPPzn/jAQpcq4C1TNBpv
+         thu2mXNQ6U7As7UR42IeQ64eiqae7mP2OoMLr4aAsZgj/eIm4qTKBztmk5D4dhw3th
+         zON/5Z8YRyAnPU6fpP3DtJeivcDYlhBEyShGPle3yivs+DidLS4qH4YNZZ6eCXuSjQ
+         NN99Z6FWIFBg8B1PRrkV9Ov79jsTc8IqXABoKaDE9bpFLy7xgW0qPIU9vBW0RFDG3G
+         QCDqkjxI1s54w==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -58,10 +58,13 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 29/48] Input: wm97xx - switch to using threaded IRQ
-Date:   Tue, 19 Apr 2022 18:37:51 +0200
-Message-Id: <20220419163810.2118169-30-arnd@kernel.org>
+        alsa-devel@alsa-project.org,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-watchdog@vger.kernel.org
+Subject: [PATCH 09/48] watchdog: sa1100: use platform device registration
+Date:   Tue, 19 Apr 2022 18:37:31 +0200
+Message-Id: <20220419163810.2118169-10-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -71,114 +74,354 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Instead of manually disabling and enabling interrupts and scheduling work
-to access the device, let's use threaded oneshot interrupt handler. It
-simplifies things.
+Rather than relying on machine specific headers to
+pass down the reboot status and the register locations,
+use resources and platform_data.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Aside from this, keep the changes to a minimum.
+
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-watchdog@vger.kernel.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/input/touchscreen/wm97xx-core.c | 42 +++++--------------------
- include/linux/wm97xx.h                  |  1 -
- 2 files changed, 7 insertions(+), 36 deletions(-)
+ arch/arm/mach-pxa/devices.c               | 11 +++
+ arch/arm/mach-pxa/include/mach/regs-ost.h |  2 +
+ arch/arm/mach-pxa/include/mach/reset.h    |  2 +-
+ arch/arm/mach-pxa/pxa25x.c                |  2 +-
+ arch/arm/mach-pxa/pxa27x.c                |  2 +-
+ arch/arm/mach-pxa/pxa3xx.c                |  2 +-
+ arch/arm/mach-pxa/reset.c                 |  3 -
+ arch/arm/mach-sa1100/generic.c            |  6 +-
+ arch/arm/mach-sa1100/include/mach/reset.h |  1 -
+ drivers/watchdog/sa1100_wdt.c             | 87 ++++++++++++++++-------
+ 10 files changed, 83 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/input/touchscreen/wm97xx-core.c b/drivers/input/touchscreen/wm97xx-core.c
-index 1b58611c8084..2757c7768ffe 100644
---- a/drivers/input/touchscreen/wm97xx-core.c
-+++ b/drivers/input/touchscreen/wm97xx-core.c
-@@ -285,11 +285,12 @@ void wm97xx_set_suspend_mode(struct wm97xx *wm, u16 mode)
- EXPORT_SYMBOL_GPL(wm97xx_set_suspend_mode);
+diff --git a/arch/arm/mach-pxa/devices.c b/arch/arm/mach-pxa/devices.c
+index 454523237c97..12f78636045f 100644
+--- a/arch/arm/mach-pxa/devices.c
++++ b/arch/arm/mach-pxa/devices.c
+@@ -24,6 +24,8 @@
+ #include <linux/platform_data/mmp_dma.h>
+ #include <linux/platform_data/mtd-nand-pxa3xx.h>
+ 
++#include <mach/regs-ost.h>
++#include <mach/reset.h>
+ #include "devices.h"
+ #include "generic.h"
+ 
+@@ -1118,3 +1120,12 @@ void __init pxa2xx_set_dmac_info(struct mmp_dma_platdata *dma_pdata)
+ {
+ 	pxa_register_device(&pxa2xx_pxa_dma, dma_pdata);
+ }
++
++void __init pxa_register_wdt(unsigned int reset_status)
++{
++	struct resource res = DEFINE_RES_MEM(OST_PHYS, OST_LEN);
++
++	reset_status &= RESET_STATUS_WATCHDOG;
++	platform_device_register_resndata(NULL, "sa1100_wdt", -1, &res, 1,
++					  &reset_status, sizeof(reset_status));
++}
+diff --git a/arch/arm/mach-pxa/include/mach/regs-ost.h b/arch/arm/mach-pxa/include/mach/regs-ost.h
+index 109d0ed264df..c8001cfc8d6b 100644
+--- a/arch/arm/mach-pxa/include/mach/regs-ost.h
++++ b/arch/arm/mach-pxa/include/mach/regs-ost.h
+@@ -7,6 +7,8 @@
+ /*
+  * OS Timer & Match Registers
+  */
++#define OST_PHYS	0x40A00000
++#define OST_LEN		0x00000020
+ 
+ #define OSMR0		io_p2v(0x40A00000)  /* */
+ #define OSMR1		io_p2v(0x40A00004)  /* */
+diff --git a/arch/arm/mach-pxa/include/mach/reset.h b/arch/arm/mach-pxa/include/mach/reset.h
+index e1c4d100fd45..963dd190bc13 100644
+--- a/arch/arm/mach-pxa/include/mach/reset.h
++++ b/arch/arm/mach-pxa/include/mach/reset.h
+@@ -8,8 +8,8 @@
+ #define RESET_STATUS_GPIO	(1 << 3)	/* GPIO Reset */
+ #define RESET_STATUS_ALL	(0xf)
+ 
+-extern unsigned int reset_status;
+ extern void clear_reset_status(unsigned int mask);
++extern void pxa_register_wdt(unsigned int reset_status);
+ 
+ /**
+  * init_gpio_reset() - register GPIO as reset generator
+diff --git a/arch/arm/mach-pxa/pxa25x.c b/arch/arm/mach-pxa/pxa25x.c
+index 305047ebd2f1..dfc90b41fba3 100644
+--- a/arch/arm/mach-pxa/pxa25x.c
++++ b/arch/arm/mach-pxa/pxa25x.c
+@@ -240,7 +240,7 @@ static int __init pxa25x_init(void)
+ 
+ 	if (cpu_is_pxa25x()) {
+ 
+-		reset_status = RCSR;
++		pxa_register_wdt(RCSR);
+ 
+ 		pxa25x_init_pm();
+ 
+diff --git a/arch/arm/mach-pxa/pxa27x.c b/arch/arm/mach-pxa/pxa27x.c
+index a81ac88ecbfd..38fdd22c4dc5 100644
+--- a/arch/arm/mach-pxa/pxa27x.c
++++ b/arch/arm/mach-pxa/pxa27x.c
+@@ -337,7 +337,7 @@ static int __init pxa27x_init(void)
+ 
+ 	if (cpu_is_pxa27x()) {
+ 
+-		reset_status = RCSR;
++		pxa_register_wdt(RCSR);
+ 
+ 		pxa27x_init_pm();
+ 
+diff --git a/arch/arm/mach-pxa/pxa3xx.c b/arch/arm/mach-pxa/pxa3xx.c
+index fc84aed99481..7c569fa2a6da 100644
+--- a/arch/arm/mach-pxa/pxa3xx.c
++++ b/arch/arm/mach-pxa/pxa3xx.c
+@@ -463,7 +463,7 @@ static int __init pxa3xx_init(void)
+ 
+ 	if (cpu_is_pxa3xx()) {
+ 
+-		reset_status = ARSR;
++		pxa_register_wdt(ARSR);
+ 
+ 		/*
+ 		 * clear RDH bit every time after reset
+diff --git a/arch/arm/mach-pxa/reset.c b/arch/arm/mach-pxa/reset.c
+index af78405aa4e9..fcb791c5ae3e 100644
+--- a/arch/arm/mach-pxa/reset.c
++++ b/arch/arm/mach-pxa/reset.c
+@@ -11,9 +11,6 @@
+ #include <mach/reset.h>
+ #include <mach/smemc.h>
+ 
+-unsigned int reset_status;
+-EXPORT_SYMBOL(reset_status);
+-
+ static void do_hw_reset(void);
+ 
+ static int reset_gpio = -1;
+diff --git a/arch/arm/mach-sa1100/generic.c b/arch/arm/mach-sa1100/generic.c
+index 4dfb7554649d..6c21f214cd60 100644
+--- a/arch/arm/mach-sa1100/generic.c
++++ b/arch/arm/mach-sa1100/generic.c
+@@ -39,9 +39,6 @@
+ #include "generic.h"
+ #include <clocksource/pxa.h>
+ 
+-unsigned int reset_status;
+-EXPORT_SYMBOL(reset_status);
+-
+ #define NR_FREQS	16
  
  /*
-- * Handle a pen down interrupt.
-+ * Codec PENDOWN irq handler
-+ *
-  */
--static void wm97xx_pen_irq_worker(struct work_struct *work)
-+static irqreturn_t wm97xx_pen_interrupt(int irq, void *dev_id)
+@@ -319,10 +316,13 @@ static struct platform_device *sa11x0_devices[] __initdata = {
+ 
+ static int __init sa1100_init(void)
  {
--	struct wm97xx *wm = container_of(work, struct wm97xx, pen_event_work);
-+	struct wm97xx *wm = dev_id;
- 	int pen_was_down = wm->pen_is_down;
++	struct resource wdt_res = DEFINE_RES_MEM(0x90000000, 0x20);
+ 	pm_power_off = sa1100_power_off;
  
- 	/* do we need to enable the touch panel reader */
-@@ -343,27 +344,6 @@ static void wm97xx_pen_irq_worker(struct work_struct *work)
- 	if (!wm->pen_is_down && wm->mach_ops->acc_enabled)
- 		wm->mach_ops->acc_pen_up(wm);
+ 	regulator_has_full_constraints();
  
--	wm->mach_ops->irq_enable(wm, 1);
--}
--
--/*
-- * Codec PENDOWN irq handler
-- *
-- * We have to disable the codec interrupt in the handler because it
-- * can take up to 1ms to clear the interrupt source. We schedule a task
-- * in a work queue to do the actual interaction with the chip.  The
-- * interrupt is then enabled again in the slow handler when the source
-- * has been cleared.
-- */
--static irqreturn_t wm97xx_pen_interrupt(int irq, void *dev_id)
--{
--	struct wm97xx *wm = dev_id;
--
--	if (!work_pending(&wm->pen_event_work)) {
--		wm->mach_ops->irq_enable(wm, 0);
--		queue_work(wm->ts_workq, &wm->pen_event_work);
--	}
--
- 	return IRQ_HANDLED;
++	platform_device_register_simple("sa1100_wdt", -1, &wdt_res, 1);
++
+ 	return platform_add_devices(sa11x0_devices, ARRAY_SIZE(sa11x0_devices));
  }
  
-@@ -374,12 +354,9 @@ static int wm97xx_init_pen_irq(struct wm97xx *wm)
+diff --git a/arch/arm/mach-sa1100/include/mach/reset.h b/arch/arm/mach-sa1100/include/mach/reset.h
+index 27695650a567..a6723d45ae2a 100644
+--- a/arch/arm/mach-sa1100/include/mach/reset.h
++++ b/arch/arm/mach-sa1100/include/mach/reset.h
+@@ -10,7 +10,6 @@
+ #define RESET_STATUS_GPIO	(1 << 3)	/* GPIO Reset */
+ #define RESET_STATUS_ALL	(0xf)
+ 
+-extern unsigned int reset_status;
+ static inline void clear_reset_status(unsigned int mask)
  {
- 	u16 reg;
+ 	RCSR = mask;
+diff --git a/drivers/watchdog/sa1100_wdt.c b/drivers/watchdog/sa1100_wdt.c
+index d33f0375112f..2d0a06a158a8 100644
+--- a/drivers/watchdog/sa1100_wdt.c
++++ b/drivers/watchdog/sa1100_wdt.c
+@@ -22,6 +22,7 @@
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+ #include <linux/fs.h>
++#include <linux/platform_device.h>
+ #include <linux/miscdevice.h>
+ #include <linux/watchdog.h>
+ #include <linux/init.h>
+@@ -30,16 +31,42 @@
+ #include <linux/uaccess.h>
+ #include <linux/timex.h>
  
--	/* If an interrupt is supplied an IRQ enable operation must also be
--	 * provided. */
--	BUG_ON(!wm->mach_ops->irq_enable);
--
--	if (request_irq(wm->pen_irq, wm97xx_pen_interrupt, IRQF_SHARED,
--			"wm97xx-pen", wm)) {
-+	if (request_threaded_irq(wm->pen_irq, NULL, wm97xx_pen_interrupt,
-+				 IRQF_SHARED | IRQF_ONESHOT,
-+				 "wm97xx-pen", wm)) {
- 		dev_err(wm->dev,
- 			"Failed to register pen down interrupt, polling");
- 		wm->pen_irq = 0;
-@@ -509,7 +486,6 @@ static int wm97xx_ts_input_open(struct input_dev *idev)
- 	wm->codec->dig_enable(wm, 1);
+-#ifdef CONFIG_ARCH_PXA
+-#include <mach/regs-ost.h>
+-#endif
++#define REG_OSMR0  	0x0000  /* OS timer Match Reg. 0 */
++#define REG_OSMR1  	0x0004  /* OS timer Match Reg. 1 */
++#define REG_OSMR2  	0x0008  /* OS timer Match Reg. 2 */
++#define REG_OSMR3  	0x000c  /* OS timer Match Reg. 3 */
++#define REG_OSCR   	0x0010  /* OS timer Counter Reg. */
++#define REG_OSSR   	0x0014  /* OS timer Status Reg. */
++#define REG_OWER   	0x0018  /* OS timer Watch-dog Enable Reg. */
++#define REG_OIER  	0x001C  /* OS timer Interrupt Enable Reg. */
  
- 	INIT_DELAYED_WORK(&wm->ts_reader, wm97xx_ts_reader);
--	INIT_WORK(&wm->pen_event_work, wm97xx_pen_irq_worker);
+-#include <mach/reset.h>
++#define OSSR_M3		(1 << 3)	/* Match status channel 3 */
++#define OSSR_M2		(1 << 2)	/* Match status channel 2 */
++#define OSSR_M1		(1 << 1)	/* Match status channel 1 */
++#define OSSR_M0		(1 << 0)	/* Match status channel 0 */
++
++#define OWER_WME	(1 << 0)	/* Watchdog Match Enable */
++
++#define OIER_E3		(1 << 3)	/* Interrupt enable channel 3 */
++#define OIER_E2		(1 << 2)	/* Interrupt enable channel 2 */
++#define OIER_E1		(1 << 1)	/* Interrupt enable channel 1 */
++#define OIER_E0		(1 << 0)	/* Interrupt enable channel 0 */
  
- 	wm->ts_reader_min_interval = HZ >= 100 ? HZ / 100 : 1;
- 	if (wm->ts_reader_min_interval < 1)
-@@ -560,10 +536,6 @@ static void wm97xx_ts_input_close(struct input_dev *idev)
+ static unsigned long oscr_freq;
+ static unsigned long sa1100wdt_users;
+ static unsigned int pre_margin;
+ static int boot_status;
++static void __iomem *reg_base;
++
++static inline void sa1100_wr(u32 val, u32 offset)
++{
++	writel_relaxed(val, reg_base + offset);
++}
++
++static inline u32 sa1100_rd(u32 offset)
++{
++	return readl_relaxed(reg_base + offset);
++}
  
- 	wm->pen_is_down = 0;
+ /*
+  *	Allow only one person to hold it open
+@@ -50,10 +77,10 @@ static int sa1100dog_open(struct inode *inode, struct file *file)
+ 		return -EBUSY;
  
--	/* Balance out interrupt disables/enables */
--	if (cancel_work_sync(&wm->pen_event_work))
--		wm->mach_ops->irq_enable(wm, 1);
--
- 	/* ts_reader rearms itself so we need to explicitly stop it
- 	 * before we destroy the workqueue.
- 	 */
-diff --git a/include/linux/wm97xx.h b/include/linux/wm97xx.h
-index 462854f4f286..85bd8dd3caea 100644
---- a/include/linux/wm97xx.h
-+++ b/include/linux/wm97xx.h
-@@ -281,7 +281,6 @@ struct wm97xx {
- 	unsigned long ts_reader_min_interval; /* Minimum interval */
- 	unsigned int pen_irq;		/* Pen IRQ number in use */
- 	struct workqueue_struct *ts_workq;
--	struct work_struct pen_event_work;
- 	u16 acc_slot;			/* AC97 slot used for acc touch data */
- 	u16 acc_rate;			/* acc touch data rate */
- 	unsigned pen_is_down:1;		/* Pen is down */
+ 	/* Activate SA1100 Watchdog timer */
+-	writel_relaxed(readl_relaxed(OSCR) + pre_margin, OSMR3);
+-	writel_relaxed(OSSR_M3, OSSR);
+-	writel_relaxed(OWER_WME, OWER);
+-	writel_relaxed(readl_relaxed(OIER) | OIER_E3, OIER);
++	sa1100_wr(sa1100_rd(REG_OSCR) + pre_margin, REG_OSMR3);
++	sa1100_wr(OSSR_M3, REG_OSSR);
++	sa1100_wr(OWER_WME, REG_OWER);
++	sa1100_wr(sa1100_rd(REG_OIER) | OIER_E3, REG_OIER);
+ 	return stream_open(inode, file);
+ }
+ 
+@@ -61,7 +88,7 @@ static int sa1100dog_open(struct inode *inode, struct file *file)
+  * The watchdog cannot be disabled.
+  *
+  * Previous comments suggested that turning off the interrupt by
+- * clearing OIER[E3] would prevent the watchdog timing out but this
++ * clearing REG_OIER[E3] would prevent the watchdog timing out but this
+  * does not appear to be true (at least on the PXA255).
+  */
+ static int sa1100dog_release(struct inode *inode, struct file *file)
+@@ -76,7 +103,7 @@ static ssize_t sa1100dog_write(struct file *file, const char __user *data,
+ {
+ 	if (len)
+ 		/* Refresh OSMR3 timer. */
+-		writel_relaxed(readl_relaxed(OSCR) + pre_margin, OSMR3);
++		sa1100_wr(sa1100_rd(REG_OSCR) + pre_margin, REG_OSMR3);
+ 	return len;
+ }
+ 
+@@ -110,7 +137,7 @@ static long sa1100dog_ioctl(struct file *file, unsigned int cmd,
+ 		break;
+ 
+ 	case WDIOC_KEEPALIVE:
+-		writel_relaxed(readl_relaxed(OSCR) + pre_margin, OSMR3);
++		sa1100_wr(sa1100_rd(REG_OSCR) + pre_margin, REG_OSMR3);
+ 		ret = 0;
+ 		break;
+ 
+@@ -125,7 +152,7 @@ static long sa1100dog_ioctl(struct file *file, unsigned int cmd,
+ 		}
+ 
+ 		pre_margin = oscr_freq * time;
+-		writel_relaxed(readl_relaxed(OSCR) + pre_margin, OSMR3);
++		sa1100_wr(sa1100_rd(REG_OSCR) + pre_margin, REG_OSMR3);
+ 		fallthrough;
+ 
+ 	case WDIOC_GETTIMEOUT:
+@@ -151,12 +178,22 @@ static struct miscdevice sa1100dog_miscdev = {
+ 	.fops		= &sa1100dog_fops,
+ };
+ 
+-static int margin __initdata = 60;		/* (secs) Default is 1 minute */
++static int margin = 60;		/* (secs) Default is 1 minute */
+ static struct clk *clk;
+ 
+-static int __init sa1100dog_init(void)
++static int sa1100dog_probe(struct platform_device *pdev)
+ {
+ 	int ret;
++	int *platform_data;
++	struct resource *res;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res)
++		return -ENXIO;
++	reg_base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
++	ret = PTR_ERR_OR_ZERO(reg_base);
++	if (ret)
++		return ret;
+ 
+ 	clk = clk_get(NULL, "OSTIMER0");
+ 	if (IS_ERR(clk)) {
+@@ -174,13 +211,9 @@ static int __init sa1100dog_init(void)
+ 
+ 	oscr_freq = clk_get_rate(clk);
+ 
+-	/*
+-	 * Read the reset status, and save it for later.  If
+-	 * we suspend, RCSR will be cleared, and the watchdog
+-	 * reset reason will be lost.
+-	 */
+-	boot_status = (reset_status & RESET_STATUS_WATCHDOG) ?
+-				WDIOF_CARDRESET : 0;
++	platform_data = pdev->dev.platform_data;
++	if (platform_data && *platform_data)
++		boot_status = WDIOF_CARDRESET;
+ 	pre_margin = oscr_freq * margin;
+ 
+ 	ret = misc_register(&sa1100dog_miscdev);
+@@ -196,15 +229,21 @@ static int __init sa1100dog_init(void)
+ 	return ret;
+ }
+ 
+-static void __exit sa1100dog_exit(void)
++static int sa1100dog_remove(struct platform_device *pdev)
+ {
+ 	misc_deregister(&sa1100dog_miscdev);
+ 	clk_disable_unprepare(clk);
+ 	clk_put(clk);
++
++	return 0;
+ }
+ 
+-module_init(sa1100dog_init);
+-module_exit(sa1100dog_exit);
++struct platform_driver sa1100dog_driver = {
++	.driver.name = "sa1100_wdt",
++	.probe	  = sa1100dog_probe,
++	.remove	  = sa1100dog_remove,
++};
++module_platform_driver(sa1100dog_driver);
+ 
+ MODULE_AUTHOR("Oleg Drokin <green@crimea.edu>");
+ MODULE_DESCRIPTION("SA1100/PXA2xx Watchdog");
 -- 
 2.29.2
 
