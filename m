@@ -2,35 +2,35 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E2EC4332F
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Apr 2022 16:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB06C4332F
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Apr 2022 16:41:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354877AbiDSQmW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:42:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51194 "EHLO
+        id S1347355AbiDSQoW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:44:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354835AbiDSQmH (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:42:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 755FC140B0;
-        Tue, 19 Apr 2022 09:39:24 -0700 (PDT)
+        with ESMTP id S1354991AbiDSQmz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:42:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 853C4120BE;
+        Tue, 19 Apr 2022 09:40:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 28DC8B81BEF;
-        Tue, 19 Apr 2022 16:39:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FBC5C385A7;
-        Tue, 19 Apr 2022 16:39:14 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 19B276182B;
+        Tue, 19 Apr 2022 16:40:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 382D7C385A9;
+        Tue, 19 Apr 2022 16:40:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386361;
-        bh=8eNcQvPL/qwAHe1cyIDldIcvo4EcdfaIYnGqLI1GMk8=;
+        s=k20201202; t=1650386410;
+        bh=SGqxTkP4Yr9w+PMtM+j5E4EDpF9DIlOXkFJV7VuUn10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LVWCBec3TOUY0aiyOISATFg6pS9jumUzky+Ehfz7G3cgxF1rj0HVil0+pa2jkeAex
-         +I/kMAz7NPdj5SvpkunSAFKIAEk8QSgdWx+SIEumBcrPnXonnU4eEXHczTJyAamIGW
-         Fqx5TRqKxYXqZIi3auuy03GYtQb1udlODQ45EdRJtZzlua4YntfSSfjlKnwxqVPTK7
-         Sam1zQZYtyCqFeU+De7N+gO0nzM6BEX233RRdS5AuCXB25Nncz35spe45uNkA9vaey
-         log5jNFTz3afoWInaxRTj1U0qhJDCMqiOZM7huV6OxJSkNIfGwYjRhB8fCNmUgag4C
-         qK0Gc9ZA81juQ==
+        b=J476G8whPsWPqoXfmTcW3H66Ko2zlz0uQsZ6TU0EUl86DuSdHIHaObWy3+2ayXbbE
+         9tcrv8iJFW3XB6zGLTjBfOzqzBnUQfcNoxSRwygWz9qRjA/3hvnyrtoJPP+qGM0BUd
+         QFasdm2hnuDiivmBAIAn3V2A2OWHkmQXMD181sPCzI4DKa3YRPRF2a0gu9e56K4g4D
+         6XwLheiqMYZQMPv5KGN+mEayR89GlyjcX44pDKnThzPgmOflGge4QoBkmK2rL2dP0k
+         AzKrkI/o/rO4a5tqIuH5ZjMi0ZlY/2g6UdQC2I5LWcSsp8w0TjU0C0UySK/EATZs+q
+         yA8d0aCgP0Z5A==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -59,9 +59,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH 04/48] ARM: pxa: remove mach/dma.h
-Date:   Tue, 19 Apr 2022 18:37:26 +0200
-Message-Id: <20220419163810.2118169-5-arnd@kernel.org>
+Subject: [PATCH 10/48] ARM: pxa: pxa2xx-ac97-lib: use IRQ resource
+Date:   Tue, 19 Apr 2022 18:37:32 +0200
+Message-Id: <20220419163810.2118169-11-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -73,77 +73,92 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The file no longer contains anything useful, so remove it.
+The pxa2xx-ac97-lib code is the last driver to use mach/irqs.h
+for PXA. Almost everything already passes the interrupt as
+a resource, so use it from there.
 
+The one exception is the mxm8x10 machine, which apparently has
+a resource-less device. Replacing it with the correct one
+enables the driver here as well.
+
+Cc: alsa-devel@alsa-project.org
 Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-pxa/include/mach/dma.h | 17 -----------------
- arch/arm/mach-pxa/pxa25x.c           |  1 -
- arch/arm/mach-pxa/pxa27x.c           |  1 -
- arch/arm/mach-pxa/pxa3xx.c           |  1 -
- 4 files changed, 20 deletions(-)
- delete mode 100644 arch/arm/mach-pxa/include/mach/dma.h
+ arch/arm/mach-pxa/mxm8x10.c |  8 ++------
+ sound/arm/pxa2xx-ac97-lib.c | 10 +++++++---
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/include/mach/dma.h b/arch/arm/mach-pxa/include/mach/dma.h
-deleted file mode 100644
-index 79f9842a7e1c..000000000000
---- a/arch/arm/mach-pxa/include/mach/dma.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- *  arch/arm/mach-pxa/include/mach/dma.h
-- *
-- *  Author:	Nicolas Pitre
-- *  Created:	Jun 15, 2001
-- *  Copyright:	MontaVista Software, Inc.
-- */
--#ifndef __ASM_ARCH_DMA_H
--#define __ASM_ARCH_DMA_H
--
--#include <mach/hardware.h>
--
--/* DMA Controller Registers Definitions */
--#define DMAC_REGS_VIRT	io_p2v(0x40000000)
--
--#endif /* _ASM_ARCH_DMA_H */
-diff --git a/arch/arm/mach-pxa/pxa25x.c b/arch/arm/mach-pxa/pxa25x.c
-index 678641ab46e5..0d25cc45f825 100644
---- a/arch/arm/mach-pxa/pxa25x.c
-+++ b/arch/arm/mach-pxa/pxa25x.c
-@@ -34,7 +34,6 @@
- #include "pxa25x.h"
- #include <mach/reset.h>
- #include "pm.h"
--#include <mach/dma.h>
- #include <mach/smemc.h>
- 
- #include "generic.h"
-diff --git a/arch/arm/mach-pxa/pxa27x.c b/arch/arm/mach-pxa/pxa27x.c
-index f0ba7ed24cb6..f7e89831e85b 100644
---- a/arch/arm/mach-pxa/pxa27x.c
-+++ b/arch/arm/mach-pxa/pxa27x.c
-@@ -33,7 +33,6 @@
- #include <mach/reset.h>
+diff --git a/arch/arm/mach-pxa/mxm8x10.c b/arch/arm/mach-pxa/mxm8x10.c
+index fde386f6cffe..35546b59c88e 100644
+--- a/arch/arm/mach-pxa/mxm8x10.c
++++ b/arch/arm/mach-pxa/mxm8x10.c
+@@ -26,6 +26,7 @@
+ #include <linux/platform_data/video-pxafb.h>
+ #include <linux/platform_data/mmc-pxamci.h>
  #include <linux/platform_data/usb-ohci-pxa27x.h>
- #include "pm.h"
--#include <mach/dma.h>
- #include <mach/smemc.h>
++#include <linux/platform_data/asoc-pxa.h>
+ #include "pxa320.h"
  
- #include "generic.h"
-diff --git a/arch/arm/mach-pxa/pxa3xx.c b/arch/arm/mach-pxa/pxa3xx.c
-index 560160682df6..6eb1c24d7395 100644
---- a/arch/arm/mach-pxa/pxa3xx.c
-+++ b/arch/arm/mach-pxa/pxa3xx.c
-@@ -32,7 +32,6 @@
- #include <mach/reset.h>
- #include <linux/platform_data/usb-ohci-pxa27x.h>
- #include "pm.h"
--#include <mach/dma.h>
- #include <mach/smemc.h>
- #include <mach/irqs.h>
+ #include "mxm8x10.h"
+@@ -356,14 +357,9 @@ void __init mxm_8x10_usb_host_init(void)
+ 	pxa_set_ohci_info(&mxm_8x10_ohci_platform_data);
+ }
  
+-/* AC97 Sound Support */
+-static struct platform_device mxm_8x10_ac97_device = {
+-	.name = "pxa2xx-ac97"
+-};
+-
+ void __init mxm_8x10_ac97_init(void)
+ {
+-	platform_device_register(&mxm_8x10_ac97_device);
++	pxa_set_ac97_info(NULL);
+ }
+ 
+ /* NAND flash Support */
+diff --git a/sound/arm/pxa2xx-ac97-lib.c b/sound/arm/pxa2xx-ac97-lib.c
+index 9b5c1f0f8998..8c79d224f03b 100644
+--- a/sound/arm/pxa2xx-ac97-lib.c
++++ b/sound/arm/pxa2xx-ac97-lib.c
+@@ -21,7 +21,6 @@
+ 
+ #include <sound/pxa2xx-lib.h>
+ 
+-#include <mach/irqs.h>
+ #include <mach/regs-ac97.h>
+ #include <linux/platform_data/asoc-pxa.h>
+ 
+@@ -319,6 +318,7 @@ EXPORT_SYMBOL_GPL(pxa2xx_ac97_hw_resume);
+ int pxa2xx_ac97_hw_probe(struct platform_device *dev)
+ {
+ 	int ret;
++	int irq;
+ 	pxa2xx_audio_ops_t *pdata = dev->dev.platform_data;
+ 
+ 	if (pdata) {
+@@ -387,7 +387,11 @@ int pxa2xx_ac97_hw_probe(struct platform_device *dev)
+ 	if (ret)
+ 		goto err_clk2;
+ 
+-	ret = request_irq(IRQ_AC97, pxa2xx_ac97_irq, 0, "AC97", NULL);
++	irq = platform_get_irq(dev, 0);
++	if (!irq)
++		goto err_irq;
++
++	ret = request_irq(irq, pxa2xx_ac97_irq, 0, "AC97", NULL);
+ 	if (ret < 0)
+ 		goto err_irq;
+ 
+@@ -413,7 +417,7 @@ void pxa2xx_ac97_hw_remove(struct platform_device *dev)
+ 	if (cpu_is_pxa27x())
+ 		gpio_free(reset_gpio);
+ 	GCR |= GCR_ACLINK_OFF;
+-	free_irq(IRQ_AC97, NULL);
++	free_irq(platform_get_irq(dev, 0), NULL);
+ 	if (ac97conf_clk) {
+ 		clk_put(ac97conf_clk);
+ 		ac97conf_clk = NULL;
 -- 
 2.29.2
 
