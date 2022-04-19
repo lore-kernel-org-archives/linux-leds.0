@@ -2,35 +2,35 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD11C352AA
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Apr 2022 16:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E48A0C352A8
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Apr 2022 16:46:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242535AbiDSQtV (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:49:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54976 "EHLO
+        id S1355336AbiDSQtX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:49:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354693AbiDSQpd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:45:33 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0C0F36152;
-        Tue, 19 Apr 2022 09:42:49 -0700 (PDT)
+        with ESMTP id S243093AbiDSQqm (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:46:42 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A49ED3AA45;
+        Tue, 19 Apr 2022 09:43:59 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 59CF9B81BBC;
-        Tue, 19 Apr 2022 16:42:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB59C385AE;
-        Tue, 19 Apr 2022 16:42:39 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 39FE4B81BEF;
+        Tue, 19 Apr 2022 16:43:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EC2BC385A5;
+        Tue, 19 Apr 2022 16:43:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386567;
-        bh=XRVRts6/PmPxgnBeeTopOk8hsXuEnYK24eY44iFBTjY=;
+        s=k20201202; t=1650386637;
+        bh=qlaYFyobKEQjnzQZM9MNp5qNQqkRYezyfa1kDOn31O4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SrYcNU0XHeFfz9FFmwRnhtwk5VI3KPUyVVYDZ1vZsf/9ibd4zLruL0iYjAxUyiwgp
-         zmOuXhLr4WTdOB1309oLHotg6wtk/R/duI+zVweeCWm3uDXswBZIZxB7bVKunqu/CC
-         EdMhLyLGmp315u6yW24LoEVof2mtuD5mi09URRw/1IqaKVlqShBeopuwMcloOvibS8
-         PU5fwThkpiXRfLrjJtNm+iH3D7eSCFQGuRvIg5P1RDAEYLIRMmxDeXbThxhNRZi323
-         coE08BVk9QZsh8XR9qGt6reyxhJbZKJAWfaiL1ui30TgqLeVpFNIO7Y6/vA2Fm0la6
-         XCHr2bVGVwWJA==
+        b=IfCx1sYsItrvvOhd62OVGq73m59nNboCQp/gH4IxEBVU5zCvpQPCNPA7TuLYFXC6C
+         LwaFif0SpZk4iKNSuUv5XERVH3Itoh7apK3zIBcowiSB/8aMiJR+86E55VqZMRViGM
+         vxBgMMnsawZno/joMpTCd+ep1ROboUpME3CMorprNKBdA5wmg9bbhuyypuFsCjLW8G
+         yE/u4h18EsDdKvT5ABnu1pHVnRKTIiK1fqnwH6cD1Nj0kuQJNcwzeZUE12odIw17Nr
+         I4FoURlNeI1+CxCMlSZX0Yt4E6U9SjEz7W8MiBWwtf7IWB7ooRCN+I7IGpKqWmgJa2
+         GROrW1/+TSmQA==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -58,10 +58,10 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org, Manuel Lauss <manuel.lauss@gmail.com>
-Subject: [PATCH 30/48] Input: wm97xx - get rid of irq_enable method in wm97xx_mach_ops
-Date:   Tue, 19 Apr 2022 18:37:52 +0200
-Message-Id: <20220419163810.2118169-31-arnd@kernel.org>
+        alsa-devel@alsa-project.org, Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH 39/48] power: tosa: simplify probe function
+Date:   Tue, 19 Apr 2022 18:38:01 +0200
+Message-Id: <20220419163810.2118169-40-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -71,107 +71,98 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Now that we are using oneshot threaded IRQ this method is not used anymore.
+We have three power supplies that need similar initialization.
+As a preparation for the gpio lookup table conversion, split
+out the initialization into a separate function.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-[arnd: add the db1300 change as well]
-Cc: Manuel Lauss <manuel.lauss@gmail.com>
+Reviewed-by: Sebastian Reichel <sre@kernel.org>
+Acked-by: Sebastian Reichel <sre@kernel.org>
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/mips/alchemy/devboards/db1300.c         | 9 ---------
- drivers/input/touchscreen/mainstone-wm97xx.c | 9 ---------
- drivers/input/touchscreen/zylonite-wm97xx.c  | 9 ---------
- include/linux/wm97xx.h                       | 3 ---
- 4 files changed, 30 deletions(-)
+ drivers/power/supply/tosa_battery.c | 50 ++++++++++++++---------------
+ 1 file changed, 24 insertions(+), 26 deletions(-)
 
-diff --git a/arch/mips/alchemy/devboards/db1300.c b/arch/mips/alchemy/devboards/db1300.c
-index cd72eaa1168f..e70e529ddd91 100644
---- a/arch/mips/alchemy/devboards/db1300.c
-+++ b/arch/mips/alchemy/devboards/db1300.c
-@@ -732,16 +732,7 @@ static struct platform_device db1300_lcd_dev = {
- /**********************************************************************/
+diff --git a/drivers/power/supply/tosa_battery.c b/drivers/power/supply/tosa_battery.c
+index 32cc31cd4761..b26b0eca33e1 100644
+--- a/drivers/power/supply/tosa_battery.c
++++ b/drivers/power/supply/tosa_battery.c
+@@ -343,12 +343,24 @@ static int tosa_bat_resume(struct platform_device *dev)
+ #define tosa_bat_resume NULL
+ #endif
  
- #if IS_ENABLED(CONFIG_TOUCHSCREEN_WM97XX)
--static void db1300_wm97xx_irqen(struct wm97xx *wm, int enable)
--{
--	if (enable)
--		enable_irq(DB1300_AC97_PEN_INT);
--	else
--		disable_irq_nosync(DB1300_AC97_PEN_INT);
--}
++static int tosa_power_supply_register(struct device *dev,
++			struct tosa_bat *bat,
++			const struct power_supply_desc *desc)
++{
++	struct power_supply_config cfg = {
++		.drv_data = bat,
++	};
++
++	mutex_init(&bat->work_lock);
++	bat->psy = power_supply_register(dev, desc, &cfg);
++
++	return PTR_ERR_OR_ZERO(bat->psy);
++}
++
++
+ static int tosa_bat_probe(struct platform_device *dev)
+ {
+ 	int ret;
+-	struct power_supply_config main_psy_cfg = {},
+-				   jacket_psy_cfg = {},
+-				   bu_psy_cfg = {};
+ 
+ 	if (!machine_is_tosa())
+ 		return -ENODEV;
+@@ -357,36 +369,22 @@ static int tosa_bat_probe(struct platform_device *dev)
+ 	if (ret)
+ 		return ret;
+ 
+-	mutex_init(&tosa_bat_main.work_lock);
+-	mutex_init(&tosa_bat_jacket.work_lock);
 -
- static struct wm97xx_mach_ops db1300_wm97xx_ops = {
--	.irq_enable	= db1300_wm97xx_irqen,
- 	.irq_gpio	= WM97XX_GPIO_3,
- };
+ 	INIT_WORK(&bat_work, tosa_bat_work);
  
-diff --git a/drivers/input/touchscreen/mainstone-wm97xx.c b/drivers/input/touchscreen/mainstone-wm97xx.c
-index 8f6fe68f1f99..c39f49720fe4 100644
---- a/drivers/input/touchscreen/mainstone-wm97xx.c
-+++ b/drivers/input/touchscreen/mainstone-wm97xx.c
-@@ -246,21 +246,12 @@ static void wm97xx_acc_shutdown(struct wm97xx *wm)
- 	}
- }
+-	main_psy_cfg.drv_data = &tosa_bat_main;
+-	tosa_bat_main.psy = power_supply_register(&dev->dev,
+-						  &tosa_bat_main_desc,
+-						  &main_psy_cfg);
+-	if (IS_ERR(tosa_bat_main.psy)) {
+-		ret = PTR_ERR(tosa_bat_main.psy);
++	ret = tosa_power_supply_register(&dev->dev, &tosa_bat_main,
++					 &tosa_bat_main_desc);
++	if (ret)
+ 		goto err_psy_reg_main;
+-	}
  
--static void wm97xx_irq_enable(struct wm97xx *wm, int enable)
--{
--	if (enable)
--		enable_irq(wm->pen_irq);
--	else
--		disable_irq_nosync(wm->pen_irq);
--}
--
- static struct wm97xx_mach_ops mainstone_mach_ops = {
- 	.acc_enabled	= 1,
- 	.acc_pen_up	= wm97xx_acc_pen_up,
- 	.acc_pen_down	= wm97xx_acc_pen_down,
- 	.acc_startup	= wm97xx_acc_startup,
- 	.acc_shutdown	= wm97xx_acc_shutdown,
--	.irq_enable	= wm97xx_irq_enable,
- 	.irq_gpio	= WM97XX_GPIO_2,
- };
+-	jacket_psy_cfg.drv_data = &tosa_bat_jacket;
+-	tosa_bat_jacket.psy = power_supply_register(&dev->dev,
+-						    &tosa_bat_jacket_desc,
+-						    &jacket_psy_cfg);
+-	if (IS_ERR(tosa_bat_jacket.psy)) {
+-		ret = PTR_ERR(tosa_bat_jacket.psy);
++	ret = tosa_power_supply_register(&dev->dev, &tosa_bat_jacket,
++					 &tosa_bat_jacket_desc);
++	if (ret)
+ 		goto err_psy_reg_jacket;
+-	}
  
-diff --git a/drivers/input/touchscreen/zylonite-wm97xx.c b/drivers/input/touchscreen/zylonite-wm97xx.c
-index ed7eae638713..a70fe4abe520 100644
---- a/drivers/input/touchscreen/zylonite-wm97xx.c
-+++ b/drivers/input/touchscreen/zylonite-wm97xx.c
-@@ -160,20 +160,11 @@ static int wm97xx_acc_startup(struct wm97xx *wm)
- 	return 0;
- }
+-	bu_psy_cfg.drv_data = &tosa_bat_bu;
+-	tosa_bat_bu.psy = power_supply_register(&dev->dev, &tosa_bat_bu_desc,
+-						&bu_psy_cfg);
+-	if (IS_ERR(tosa_bat_bu.psy)) {
+-		ret = PTR_ERR(tosa_bat_bu.psy);
++	ret = tosa_power_supply_register(&dev->dev, &tosa_bat_bu,
++					 &tosa_bat_bu_desc);
++	if (ret)
+ 		goto err_psy_reg_bu;
+-	}
  
--static void wm97xx_irq_enable(struct wm97xx *wm, int enable)
--{
--	if (enable)
--		enable_irq(wm->pen_irq);
--	else
--		disable_irq_nosync(wm->pen_irq);
--}
--
- static struct wm97xx_mach_ops zylonite_mach_ops = {
- 	.acc_enabled	= 1,
- 	.acc_pen_up	= wm97xx_acc_pen_up,
- 	.acc_pen_down	= wm97xx_acc_pen_down,
- 	.acc_startup	= wm97xx_acc_startup,
--	.irq_enable	= wm97xx_irq_enable,
- 	.irq_gpio	= WM97XX_GPIO_2,
- };
- 
-diff --git a/include/linux/wm97xx.h b/include/linux/wm97xx.h
-index 85bd8dd3caea..332d2b0f29b9 100644
---- a/include/linux/wm97xx.h
-+++ b/include/linux/wm97xx.h
-@@ -254,9 +254,6 @@ struct wm97xx_mach_ops {
- 	int (*acc_startup) (struct wm97xx *);
- 	void (*acc_shutdown) (struct wm97xx *);
- 
--	/* interrupt mask control - required for accelerated operation */
--	void (*irq_enable) (struct wm97xx *, int enable);
--
- 	/* GPIO pin used for accelerated operation */
- 	int irq_gpio;
- 
+ 	ret = request_irq(gpio_to_irq(TOSA_GPIO_BAT0_CRG),
+ 				tosa_bat_gpio_isr,
 -- 
 2.29.2
 
