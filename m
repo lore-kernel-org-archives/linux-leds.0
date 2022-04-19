@@ -2,35 +2,35 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 268FBC35280
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Apr 2022 16:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC62C433F5
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Apr 2022 16:47:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232267AbiDSQts (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:49:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55740 "EHLO
+        id S1355436AbiDSQtw (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:49:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344299AbiDSQrU (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:47:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE7C039692;
-        Tue, 19 Apr 2022 09:44:36 -0700 (PDT)
+        with ESMTP id S1354892AbiDSQpy (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:45:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FDB23A5D6;
+        Tue, 19 Apr 2022 09:43:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7D4B961884;
-        Tue, 19 Apr 2022 16:44:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98879C385B2;
-        Tue, 19 Apr 2022 16:44:28 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E04826187A;
+        Tue, 19 Apr 2022 16:43:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03625C385A7;
+        Tue, 19 Apr 2022 16:43:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386675;
-        bh=E21UhST9fsmcKihylxjEyCuP25oDJbc3hkCHxxEC7Wk=;
+        s=k20201202; t=1650386590;
+        bh=WEWND/5nN7JVYVsbs3tEqP+TiJtxEvfNmON5NFDr+Wk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EB/6DhNFIygUIJNqebbXaCuU1Caq5c1sBLelCq0shsuEm3FRNZV2B59x6I2trbDEc
-         mGp4dOD9Ygy0j8x6aPCdDEEtBsFVyQmwX6Z6ETiwL8f+P+6YAU8qYTWV4eD8Y1tRSO
-         YeNzajYLagp6ruLgMBiU+soJeU4jvRsJU8tDlT8ym5RNBHHt5mLJ6idSKE8ueFa7Fq
-         gHunt4HKHZZrSSLT70Pil89w5mgdiwlO4CenyC2gybqFS5NJ/dJWeID+kklVKdk6Y5
-         Ntms9VwIzEHT/wAhZPE58MouPij2FW+YnFEqM77U/IG+gpakryHwwwc9+78N5VekkF
-         55njOa7JMJYOw==
+        b=uHGRodE/EXFdM5gCt1FI3C9AngGezCvw/LOdpW6FmOvThrp8Nzbk1OoCIgyZAnm4P
+         DV5ooWF+W6FHjQGEJZ8S2bpy0eBIWTMD7QY0jkXk8TtWxIv5xS+tI4gG/Z7OiSqgQb
+         75ZH7V/j5MWfmRA58vS4sk78r9kN9Y3wE+gjDnMBUfklqn2gJiyhmALPPpUESHnDZa
+         kDcxpEil9qeMCFqZJP3I8lSJYj+AxO3e0UYrmycY42VGAI9lAHBkYeFjrFE3ryVbLi
+         Q56ChwU9KjlooXzQ3qp7gKQ6ovYlXwYOxpFEz4bGRzaq1mEizTbhBsg2hJRhmro6Sq
+         bbav6vLtqM/Bg==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -59,9 +59,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH 44/48] ARM: pxa: move plat-pxa to drivers/soc/
-Date:   Tue, 19 Apr 2022 18:38:06 +0200
-Message-Id: <20220419163810.2118169-45-arnd@kernel.org>
+Subject: [PATCH 33/48] ASoC: pxa: i2s: use normal MMIO accessors
+Date:   Tue, 19 Apr 2022 18:37:55 +0200
+Message-Id: <20220419163810.2118169-34-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -73,228 +73,257 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-There are two drivers in arch/arm/plat-pxa: mfp and ssp. Both
-of them should ideally not be needed at all, as there are
-proper subsystems to replace them.
+To avoid dereferencing hardwired constant pointers from a global header
+file, change the driver to use devm_platform_ioremap_resource for getting
+an __iomem pointer, and then using readl/writel on that.
 
-OTOH, they are self-contained and can simply be normal
-SoC drivers, so move them over there to eliminate one more
-of the plat-* directories.
+Each pointer dereference gets changed by a search&replace, which leads
+to a few overlong lines, but seems less risky than trying to clean up
+the code at the same time.
 
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr> (mach-pxa)
-Acked-by: Lubomir Rintel <lkundrak@v3.sk> (mach-mmp)
+Acked-by: Mark Brown <broonie@kernel.org>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: alsa-devel@alsa-project.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/Kconfig                                            | 4 ----
- arch/arm/Makefile                                           | 1 -
- arch/arm/mach-mmp/mfp.h                                     | 2 +-
- arch/arm/mach-pxa/include/mach/mfp.h                        | 2 +-
- arch/arm/mach-pxa/mfp-pxa2xx.h                              | 2 +-
- arch/arm/mach-pxa/mfp-pxa3xx.h                              | 2 +-
- drivers/soc/Kconfig                                         | 1 +
- drivers/soc/Makefile                                        | 1 +
- {arch/arm/plat-pxa => drivers/soc/pxa}/Kconfig              | 5 ++---
- {arch/arm/plat-pxa => drivers/soc/pxa}/Makefile             | 4 ----
- {arch/arm/plat-pxa => drivers/soc/pxa}/mfp.c                | 2 +-
- {arch/arm/plat-pxa => drivers/soc/pxa}/ssp.c                | 0
- .../plat-pxa/include/plat => include/linux/soc/pxa}/mfp.h   | 6 ++----
- 13 files changed, 11 insertions(+), 21 deletions(-)
- rename {arch/arm/plat-pxa => drivers/soc/pxa}/Kconfig (83%)
- rename {arch/arm/plat-pxa => drivers/soc/pxa}/Makefile (51%)
- rename {arch/arm/plat-pxa => drivers/soc/pxa}/mfp.c (99%)
- rename {arch/arm/plat-pxa => drivers/soc/pxa}/ssp.c (100%)
- rename {arch/arm/plat-pxa/include/plat => include/linux/soc/pxa}/mfp.h (98%)
+ sound/soc/pxa/pxa2xx-i2s.c | 110 +++++++++++++++++++++----------------
+ 1 file changed, 62 insertions(+), 48 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 2e8091e2d8a8..eef8cbf20045 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -667,7 +667,6 @@ source "arch/arm/mach-orion5x/Kconfig"
- source "arch/arm/mach-oxnas/Kconfig"
+diff --git a/sound/soc/pxa/pxa2xx-i2s.c b/sound/soc/pxa/pxa2xx-i2s.c
+index 5164c60ba89f..746e6ec9198b 100644
+--- a/sound/soc/pxa/pxa2xx-i2s.c
++++ b/sound/soc/pxa/pxa2xx-i2s.c
+@@ -21,7 +21,6 @@
+ #include <sound/pxa2xx-lib.h>
+ #include <sound/dmaengine_pcm.h>
  
- source "arch/arm/mach-pxa/Kconfig"
--source "arch/arm/plat-pxa/Kconfig"
+-#include <mach/pxa-regs.h>
+ #include <linux/platform_data/asoc-pxa.h>
  
- source "arch/arm/mach-qcom/Kconfig"
- 
-@@ -753,9 +752,6 @@ config PLAT_ORION_LEGACY
- 	bool
- 	select PLAT_ORION
- 
--config PLAT_PXA
--	bool
--
- config PLAT_VERSATILE
- 	bool
- 
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index a2391b8de5a5..206a900fc87c 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -230,7 +230,6 @@ machine-$(CONFIG_PLAT_SPEAR)		+= spear
- # by CONFIG_* macro name.
- plat-$(CONFIG_ARCH_OMAP)	+= omap
- plat-$(CONFIG_PLAT_ORION)	+= orion
--plat-$(CONFIG_PLAT_PXA)		+= pxa
- plat-$(CONFIG_PLAT_VERSATILE)	+= versatile
- 
- # The byte offset of the kernel image in RAM from the start of RAM.
-diff --git a/arch/arm/mach-mmp/mfp.h b/arch/arm/mach-mmp/mfp.h
-index 75a4acb33b1b..6f3057987756 100644
---- a/arch/arm/mach-mmp/mfp.h
-+++ b/arch/arm/mach-mmp/mfp.h
-@@ -2,7 +2,7 @@
- #ifndef __ASM_MACH_MFP_H
- #define __ASM_MACH_MFP_H
- 
--#include <plat/mfp.h>
-+#include <linux/soc/pxa/mfp.h>
- 
+ #include "pxa2xx-i2s.h"
+@@ -29,13 +28,13 @@
  /*
-  * NOTE: the MFPR register bit definitions on PXA168 processor lines are a
-diff --git a/arch/arm/mach-pxa/include/mach/mfp.h b/arch/arm/mach-pxa/include/mach/mfp.h
-index dbb961fb570e..7e0879bd4102 100644
---- a/arch/arm/mach-pxa/include/mach/mfp.h
-+++ b/arch/arm/mach-pxa/include/mach/mfp.h
-@@ -13,6 +13,6 @@
- #ifndef __ASM_ARCH_MFP_H
- #define __ASM_ARCH_MFP_H
+  * I2S Controller Register and Bit Definitions
+  */
+-#define SACR0		__REG(0x40400000)  /* Global Control Register */
+-#define SACR1		__REG(0x40400004)  /* Serial Audio I 2 S/MSB-Justified Control Register */
+-#define SASR0		__REG(0x4040000C)  /* Serial Audio I 2 S/MSB-Justified Interface and FIFO Status Register */
+-#define SAIMR		__REG(0x40400014)  /* Serial Audio Interrupt Mask Register */
+-#define SAICR		__REG(0x40400018)  /* Serial Audio Interrupt Clear Register */
+-#define SADIV		__REG(0x40400060)  /* Audio Clock Divider Register. */
+-#define SADR		__REG(0x40400080)  /* Serial Audio Data Register (TX and RX FIFO access Register). */
++#define SACR0		(0x0000)	/* Global Control Register */
++#define SACR1		(0x0004)	/* Serial Audio I 2 S/MSB-Justified Control Register */
++#define SASR0		(0x000C)	/* Serial Audio I 2 S/MSB-Justified Interface and FIFO Status Register */
++#define SAIMR		(0x0014)	/* Serial Audio Interrupt Mask Register */
++#define SAICR		(0x0018)	/* Serial Audio Interrupt Clear Register */
++#define SADIV		(0x0060)	/* Audio Clock Divider Register. */
++#define SADR		(0x0080)	/* Serial Audio Data Register (TX and RX FIFO access Register). */
  
--#include <plat/mfp.h>
-+#include <linux/soc/pxa/mfp.h>
+ #define SACR0_RFTH(x)	((x) << 12)	/* Rx FIFO Interrupt or DMA Trigger Threshold */
+ #define SACR0_TFTH(x)	((x) << 8)	/* Tx FIFO Interrupt or DMA Trigger Threshold */
+@@ -77,16 +76,15 @@ struct pxa_i2s_port {
+ static struct pxa_i2s_port pxa_i2s;
+ static struct clk *clk_i2s;
+ static int clk_ena = 0;
++static void __iomem *i2s_reg_base;
  
- #endif /* __ASM_ARCH_MFP_H */
-diff --git a/arch/arm/mach-pxa/mfp-pxa2xx.h b/arch/arm/mach-pxa/mfp-pxa2xx.h
-index 980145e7ee99..683a3ea5f154 100644
---- a/arch/arm/mach-pxa/mfp-pxa2xx.h
-+++ b/arch/arm/mach-pxa/mfp-pxa2xx.h
-@@ -2,7 +2,7 @@
- #ifndef __ASM_ARCH_MFP_PXA2XX_H
- #define __ASM_ARCH_MFP_PXA2XX_H
+ static struct snd_dmaengine_dai_dma_data pxa2xx_i2s_pcm_stereo_out = {
+-	.addr		= __PREG(SADR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
+ 	.chan_name	= "tx",
+ 	.maxburst	= 32,
+ };
  
--#include <plat/mfp.h>
-+#include <linux/soc/pxa/mfp.h>
+ static struct snd_dmaengine_dai_dma_data pxa2xx_i2s_pcm_stereo_in = {
+-	.addr		= __PREG(SADR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
+ 	.chan_name	= "rx",
+ 	.maxburst	= 32,
+@@ -102,7 +100,7 @@ static int pxa2xx_i2s_startup(struct snd_pcm_substream *substream,
+ 		return PTR_ERR(clk_i2s);
  
- /*
-  * the following MFP_xxx bit definitions in mfp.h are re-used for pxa2xx:
-diff --git a/arch/arm/mach-pxa/mfp-pxa3xx.h b/arch/arm/mach-pxa/mfp-pxa3xx.h
-index cdd830926d1c..81fec4fa5a0f 100644
---- a/arch/arm/mach-pxa/mfp-pxa3xx.h
-+++ b/arch/arm/mach-pxa/mfp-pxa3xx.h
-@@ -2,7 +2,7 @@
- #ifndef __ASM_ARCH_MFP_PXA3XX_H
- #define __ASM_ARCH_MFP_PXA3XX_H
+ 	if (!snd_soc_dai_active(cpu_dai))
+-		SACR0 = 0;
++		writel(0, i2s_reg_base + SACR0);
  
--#include <plat/mfp.h>
-+#include <linux/soc/pxa/mfp.h>
+ 	return 0;
+ }
+@@ -114,7 +112,7 @@ static int pxa_i2s_wait(void)
  
- #define MFPR_BASE	(0x40e10000)
+ 	/* flush the Rx FIFO */
+ 	for (i = 0; i < 16; i++)
+-		SADR;
++		readl(i2s_reg_base + SADR);
+ 	return 0;
+ }
  
-diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-index c5aae42673d3..86ccf5970bc1 100644
---- a/drivers/soc/Kconfig
-+++ b/drivers/soc/Kconfig
-@@ -14,6 +14,7 @@ source "drivers/soc/ixp4xx/Kconfig"
- source "drivers/soc/litex/Kconfig"
- source "drivers/soc/mediatek/Kconfig"
- source "drivers/soc/microchip/Kconfig"
-+source "drivers/soc/pxa/Kconfig"
- source "drivers/soc/qcom/Kconfig"
- source "drivers/soc/renesas/Kconfig"
- source "drivers/soc/rockchip/Kconfig"
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index 904eec2a7871..fd7717d597fc 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_SOC_XWAY)		+= lantiq/
- obj-$(CONFIG_LITEX_SOC_CONTROLLER) += litex/
- obj-y				+= mediatek/
- obj-y				+= microchip/
-+obj-y				+= pxa/
- obj-y				+= amlogic/
- obj-y				+= qcom/
- obj-y				+= renesas/
-diff --git a/arch/arm/plat-pxa/Kconfig b/drivers/soc/pxa/Kconfig
-similarity index 83%
-rename from arch/arm/plat-pxa/Kconfig
-rename to drivers/soc/pxa/Kconfig
-index 6f7a0a39c2b9..c5c265aa4f07 100644
---- a/arch/arm/plat-pxa/Kconfig
-+++ b/drivers/soc/pxa/Kconfig
-@@ -1,9 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0-only
--if PLAT_PXA
-+config PLAT_PXA
-+	bool
+@@ -174,39 +172,39 @@ static int pxa2xx_i2s_hw_params(struct snd_pcm_substream *substream,
  
- config PXA_SSP
- 	tristate
- 	help
- 	  Enable support for PXA2xx SSP ports
--
--endif
-diff --git a/arch/arm/plat-pxa/Makefile b/drivers/soc/pxa/Makefile
-similarity index 51%
-rename from arch/arm/plat-pxa/Makefile
-rename to drivers/soc/pxa/Makefile
-index 349ea0af8450..413deceddbdd 100644
---- a/arch/arm/plat-pxa/Makefile
-+++ b/drivers/soc/pxa/Makefile
-@@ -1,8 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
--#
--# Makefile for code common across different PXA processor families
--#
--ccflags-$(CONFIG_ARCH_MMP) := -I$(srctree)/$(src)/include
+ 	/* is port used by another stream */
+ 	if (!(SACR0 & SACR0_ENB)) {
+-		SACR0 = 0;
++		writel(0, i2s_reg_base + SACR0);
+ 		if (pxa_i2s.master)
+-			SACR0 |= SACR0_BCKD;
++			writel(readl(i2s_reg_base + SACR0) | (SACR0_BCKD), i2s_reg_base + SACR0);
  
- obj-$(CONFIG_PXA3xx)		+= mfp.o
- obj-$(CONFIG_ARCH_MMP)		+= mfp.o
-diff --git a/arch/arm/plat-pxa/mfp.c b/drivers/soc/pxa/mfp.c
-similarity index 99%
-rename from arch/arm/plat-pxa/mfp.c
-rename to drivers/soc/pxa/mfp.c
-index 17fc4f33f35b..6220ba321cfc 100644
---- a/arch/arm/plat-pxa/mfp.c
-+++ b/drivers/soc/pxa/mfp.c
-@@ -15,7 +15,7 @@
- #include <linux/init.h>
- #include <linux/io.h>
+-		SACR0 |= SACR0_RFTH(14) | SACR0_TFTH(1);
+-		SACR1 |= pxa_i2s.fmt;
++		writel(readl(i2s_reg_base + SACR0) | (SACR0_RFTH(14) | SACR0_TFTH(1)), i2s_reg_base + SACR0);
++		writel(readl(i2s_reg_base + SACR1) | (pxa_i2s.fmt), i2s_reg_base + SACR1);
+ 	}
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+-		SAIMR |= SAIMR_TFS;
++		writel(readl(i2s_reg_base + SAIMR) | (SAIMR_TFS), i2s_reg_base + SAIMR);
+ 	else
+-		SAIMR |= SAIMR_RFS;
++		writel(readl(i2s_reg_base + SAIMR) | (SAIMR_RFS), i2s_reg_base + SAIMR);
  
--#include <plat/mfp.h>
-+#include <linux/soc/pxa/mfp.h>
+ 	switch (params_rate(params)) {
+ 	case 8000:
+-		SADIV = 0x48;
++		writel(0x48, i2s_reg_base + SADIV);
+ 		break;
+ 	case 11025:
+-		SADIV = 0x34;
++		writel(0x34, i2s_reg_base + SADIV);
+ 		break;
+ 	case 16000:
+-		SADIV = 0x24;
++		writel(0x24, i2s_reg_base + SADIV);
+ 		break;
+ 	case 22050:
+-		SADIV = 0x1a;
++		writel(0x1a, i2s_reg_base + SADIV);
+ 		break;
+ 	case 44100:
+-		SADIV = 0xd;
++		writel(0xd, i2s_reg_base + SADIV);
+ 		break;
+ 	case 48000:
+-		SADIV = 0xc;
++		writel(0xc, i2s_reg_base + SADIV);
+ 		break;
+ 	case 96000: /* not in manual and possibly slightly inaccurate */
+-		SADIV = 0x6;
++		writel(0x6, i2s_reg_base + SADIV);
+ 		break;
+ 	}
  
- #define MFPR_SIZE	(PAGE_SIZE)
+@@ -221,10 +219,10 @@ static int pxa2xx_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+ 	switch (cmd) {
+ 	case SNDRV_PCM_TRIGGER_START:
+ 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+-			SACR1 &= ~SACR1_DRPL;
++			writel(readl(i2s_reg_base + SACR1) & (~SACR1_DRPL), i2s_reg_base + SACR1);
+ 		else
+-			SACR1 &= ~SACR1_DREC;
+-		SACR0 |= SACR0_ENB;
++			writel(readl(i2s_reg_base + SACR1) & (~SACR1_DREC), i2s_reg_base + SACR1);
++		writel(readl(i2s_reg_base + SACR0) | (SACR0_ENB), i2s_reg_base + SACR0);
+ 		break;
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+@@ -243,15 +241,15 @@ static void pxa2xx_i2s_shutdown(struct snd_pcm_substream *substream,
+ 				struct snd_soc_dai *dai)
+ {
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		SACR1 |= SACR1_DRPL;
+-		SAIMR &= ~SAIMR_TFS;
++		writel(readl(i2s_reg_base + SACR1) | (SACR1_DRPL), i2s_reg_base + SACR1);
++		writel(readl(i2s_reg_base + SAIMR) & (~SAIMR_TFS), i2s_reg_base + SAIMR);
+ 	} else {
+-		SACR1 |= SACR1_DREC;
+-		SAIMR &= ~SAIMR_RFS;
++		writel(readl(i2s_reg_base + SACR1) | (SACR1_DREC), i2s_reg_base + SACR1);
++		writel(readl(i2s_reg_base + SAIMR) & (~SAIMR_RFS), i2s_reg_base + SAIMR);
+ 	}
  
-diff --git a/arch/arm/plat-pxa/ssp.c b/drivers/soc/pxa/ssp.c
-similarity index 100%
-rename from arch/arm/plat-pxa/ssp.c
-rename to drivers/soc/pxa/ssp.c
-diff --git a/arch/arm/plat-pxa/include/plat/mfp.h b/include/linux/soc/pxa/mfp.h
-similarity index 98%
-rename from arch/arm/plat-pxa/include/plat/mfp.h
-rename to include/linux/soc/pxa/mfp.h
-index 3accaa9ee781..39779cbed0c0 100644
---- a/arch/arm/plat-pxa/include/plat/mfp.h
-+++ b/include/linux/soc/pxa/mfp.h
-@@ -1,7 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * arch/arm/plat-pxa/include/plat/mfp.h
-- *
-  *   Common Multi-Function Pin Definitions
-  *
-  * Copyright (C) 2007 Marvell International Ltd.
-@@ -453,8 +451,8 @@ struct mfp_addr_map {
+-	if ((SACR1 & (SACR1_DREC | SACR1_DRPL)) == (SACR1_DREC | SACR1_DRPL)) {
+-		SACR0 &= ~SACR0_ENB;
++	if ((readl(i2s_reg_base + SACR1) & (SACR1_DREC | SACR1_DRPL)) == (SACR1_DREC | SACR1_DRPL)) {
++		writel(readl(i2s_reg_base + SACR0) & (~SACR0_ENB), i2s_reg_base + SACR0);
+ 		pxa_i2s_wait();
+ 		if (clk_ena) {
+ 			clk_disable_unprepare(clk_i2s);
+@@ -264,13 +262,13 @@ static void pxa2xx_i2s_shutdown(struct snd_pcm_substream *substream,
+ static int pxa2xx_soc_pcm_suspend(struct snd_soc_component *component)
+ {
+ 	/* store registers */
+-	pxa_i2s.sacr0 = SACR0;
+-	pxa_i2s.sacr1 = SACR1;
+-	pxa_i2s.saimr = SAIMR;
+-	pxa_i2s.sadiv = SADIV;
++	pxa_i2s.sacr0 = readl(i2s_reg_base + SACR0);
++	pxa_i2s.sacr1 = readl(i2s_reg_base + SACR1);
++	pxa_i2s.saimr = readl(i2s_reg_base + SAIMR);
++	pxa_i2s.sadiv = readl(i2s_reg_base + SADIV);
  
- #define MFP_ADDR_END	{ MFP_PIN_INVALID, 0 }
+ 	/* deactivate link */
+-	SACR0 &= ~SACR0_ENB;
++	writel(readl(i2s_reg_base + SACR0) & (~SACR0_ENB), i2s_reg_base + SACR0);
+ 	pxa_i2s_wait();
+ 	return 0;
+ }
+@@ -279,12 +277,12 @@ static int pxa2xx_soc_pcm_resume(struct snd_soc_component *component)
+ {
+ 	pxa_i2s_wait();
  
--void __init mfp_init_base(void __iomem *mfpr_base);
--void __init mfp_init_addr(struct mfp_addr_map *map);
-+void mfp_init_base(void __iomem *mfpr_base);
-+void mfp_init_addr(struct mfp_addr_map *map);
+-	SACR0 = pxa_i2s.sacr0 & ~SACR0_ENB;
+-	SACR1 = pxa_i2s.sacr1;
+-	SAIMR = pxa_i2s.saimr;
+-	SADIV = pxa_i2s.sadiv;
++	writel(pxa_i2s.sacr0 & ~SACR0_ENB, i2s_reg_base + SACR0);
++	writel(pxa_i2s.sacr1, i2s_reg_base + SACR1);
++	writel(pxa_i2s.saimr, i2s_reg_base + SAIMR);
++	writel(pxa_i2s.sadiv, i2s_reg_base + SADIV);
  
- /*
-  * mfp_{read, write}()	- for direct read/write access to the MFPR register
+-	SACR0 = pxa_i2s.sacr0;
++	writel(pxa_i2s.sacr0, i2s_reg_base + SACR0);
+ 
+ 	return 0;
+ }
+@@ -306,12 +304,12 @@ static int pxa2xx_i2s_probe(struct snd_soc_dai *dai)
+ 	 * the SACR0[RST] bit must also be set and cleared to reset all
+ 	 * I2S controller registers.
+ 	 */
+-	SACR0 = SACR0_RST;
+-	SACR0 = 0;
++	writel(SACR0_RST, i2s_reg_base + SACR0);
++	writel(0, i2s_reg_base + SACR0);
+ 	/* Make sure RPL and REC are disabled */
+-	SACR1 = SACR1_DRPL | SACR1_DREC;
++	writel(SACR1_DRPL | SACR1_DREC, i2s_reg_base + SACR1);
+ 	/* Along with FIFO servicing */
+-	SAIMR &= ~(SAIMR_RFS | SAIMR_TFS);
++	writel(readl(i2s_reg_base + SAIMR) & (~(SAIMR_RFS | SAIMR_TFS)), i2s_reg_base + SAIMR);
+ 
+ 	snd_soc_dai_init_dma_data(dai, &pxa2xx_i2s_pcm_stereo_out,
+ 		&pxa2xx_i2s_pcm_stereo_in);
+@@ -371,6 +369,22 @@ static const struct snd_soc_component_driver pxa_i2s_component = {
+ 
+ static int pxa2xx_i2s_drv_probe(struct platform_device *pdev)
+ {
++	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++
++	if (!res) {
++		dev_err(&pdev->dev, "missing MMIO resource\n");
++		return -ENXIO;
++	}
++
++	i2s_reg_base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(i2s_reg_base)) {
++		dev_err(&pdev->dev, "ioremap failed\n");
++		return PTR_ERR(i2s_reg_base);
++	}
++
++	pxa2xx_i2s_pcm_stereo_out.addr = res->start + SADR;
++	pxa2xx_i2s_pcm_stereo_in.addr = res->start + SADR;
++
+ 	return devm_snd_soc_register_component(&pdev->dev, &pxa_i2s_component,
+ 					       &pxa_i2s_dai, 1);
+ }
 -- 
 2.29.2
 
