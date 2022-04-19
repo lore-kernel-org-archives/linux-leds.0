@@ -2,35 +2,35 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBADC4332F
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Apr 2022 16:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6D3C4167D
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Apr 2022 16:44:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354954AbiDSQof (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:44:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52812 "EHLO
+        id S1354963AbiDSQog (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:44:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354977AbiDSQmt (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:42:49 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AC9BE03D;
-        Tue, 19 Apr 2022 09:40:05 -0700 (PDT)
+        with ESMTP id S1355085AbiDSQoV (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Apr 2022 12:44:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05AF423BF4;
+        Tue, 19 Apr 2022 09:41:38 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 09998B81BEF;
-        Tue, 19 Apr 2022 16:40:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0A57C385B0;
-        Tue, 19 Apr 2022 16:39:54 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9650C61821;
+        Tue, 19 Apr 2022 16:41:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB721C385AC;
+        Tue, 19 Apr 2022 16:41:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386402;
-        bh=Fa4t+DkHHVinGTfyny9fnUHb+3BmvDV9Sv/bDUMb99g=;
+        s=k20201202; t=1650386497;
+        bh=1O9MwmD3q7Efw0mNmt0vC0FIYvsOfssGwGwAEKA5gxM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j/NCSeP8NzRWUw8W6MpOSbmGTBu7/2YhXCemKDewCPqMH6cwTZLL/oiGN4LpCoujp
-         1SH3dQdFs3D3xtEm0/2uHyHJF7ZmzaRFqw8BaYDXyP6SWjgPPzn/jAQpcq4C1TNBpv
-         thu2mXNQ6U7As7UR42IeQ64eiqae7mP2OoMLr4aAsZgj/eIm4qTKBztmk5D4dhw3th
-         zON/5Z8YRyAnPU6fpP3DtJeivcDYlhBEyShGPle3yivs+DidLS4qH4YNZZ6eCXuSjQ
-         NN99Z6FWIFBg8B1PRrkV9Ov79jsTc8IqXABoKaDE9bpFLy7xgW0qPIU9vBW0RFDG3G
-         QCDqkjxI1s54w==
+        b=RW3t/f0q/W5/dnzfcrtw0I9fhLVY23FDmAPpcSaaDuKEEcmTyf0OhUuVzov6xRtSg
+         8/90KOb8nyH780wMfnvX+HRQ5KfSJ/tj7EytVv1D4e3RaGfAVpd8MdgrryyRnQz5sl
+         tAEHgpltGQpLFkNQV4TvKayphCQEulsFlQIA0f/Mf+RpqX1pdKuTMDiDkHI/8Hxyi7
+         CH4LD6+/aasnihfkDYTekh2dNU8/QkAcdXp4RO1bzn7uBOscXcQCaZqzuz/GBYaM0s
+         q1fLwEh5+e7KJuaGDQ6KO7+wX/GqQHM1/twbQraNRso9SVmFpc0j+LKZPWKG4wAyPe
+         xamlnDN1RvfFw==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -58,13 +58,10 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org
-Subject: [PATCH 09/48] watchdog: sa1100: use platform device registration
-Date:   Tue, 19 Apr 2022 18:37:31 +0200
-Message-Id: <20220419163810.2118169-10-arnd@kernel.org>
+        alsa-devel@alsa-project.org
+Subject: [PATCH 21/48] ARM: pxa: eseries: use gpio lookup for audio
+Date:   Tue, 19 Apr 2022 18:37:43 +0200
+Message-Id: <20220419163810.2118169-22-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -76,352 +73,376 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Rather than relying on machine specific headers to
-pass down the reboot status and the register locations,
-use resources and platform_data.
+The three eseries machines have very similar drivers for audio, all
+using the mach/eseries-gpio.h header for finding the gpio numbers.
 
-Aside from this, keep the changes to a minimum.
+Change these to use gpio descriptors to avoid the header file
+dependency.
 
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-watchdog@vger.kernel.org
+I convert the _OFF gpio numbers into GPIO_ACTIVE_LOW ones for
+consistency here.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Cc: alsa-devel@alsa-project.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-pxa/devices.c               | 11 +++
- arch/arm/mach-pxa/include/mach/regs-ost.h |  2 +
- arch/arm/mach-pxa/include/mach/reset.h    |  2 +-
- arch/arm/mach-pxa/pxa25x.c                |  2 +-
- arch/arm/mach-pxa/pxa27x.c                |  2 +-
- arch/arm/mach-pxa/pxa3xx.c                |  2 +-
- arch/arm/mach-pxa/reset.c                 |  3 -
- arch/arm/mach-sa1100/generic.c            |  6 +-
- arch/arm/mach-sa1100/include/mach/reset.h |  1 -
- drivers/watchdog/sa1100_wdt.c             | 87 ++++++++++++++++-------
- 10 files changed, 83 insertions(+), 35 deletions(-)
+ arch/arm/mach-pxa/eseries.c | 32 ++++++++++++++++++++++++++++++++
+ sound/soc/pxa/e740_wm9705.c | 35 ++++++++++++++++++-----------------
+ sound/soc/pxa/e750_wm9705.c | 31 ++++++++++++++-----------------
+ sound/soc/pxa/e800_wm9712.c | 31 ++++++++++++++-----------------
+ 4 files changed, 78 insertions(+), 51 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/devices.c b/arch/arm/mach-pxa/devices.c
-index 454523237c97..12f78636045f 100644
---- a/arch/arm/mach-pxa/devices.c
-+++ b/arch/arm/mach-pxa/devices.c
-@@ -24,6 +24,8 @@
- #include <linux/platform_data/mmp_dma.h>
- #include <linux/platform_data/mtd-nand-pxa3xx.h>
+diff --git a/arch/arm/mach-pxa/eseries.c b/arch/arm/mach-pxa/eseries.c
+index a8b6483ff665..2643a2a72408 100644
+--- a/arch/arm/mach-pxa/eseries.c
++++ b/arch/arm/mach-pxa/eseries.c
+@@ -24,6 +24,7 @@
+ #include <linux/mtd/rawnand.h>
+ #include <linux/mtd/partitions.h>
+ #include <linux/memblock.h>
++#include <linux/gpio/machine.h>
  
-+#include <mach/regs-ost.h>
-+#include <mach/reset.h>
- #include "devices.h"
- #include "generic.h"
+ #include <video/w100fb.h>
  
-@@ -1118,3 +1120,12 @@ void __init pxa2xx_set_dmac_info(struct mmp_dma_platdata *dma_pdata)
- {
- 	pxa_register_device(&pxa2xx_pxa_dma, dma_pdata);
- }
-+
-+void __init pxa_register_wdt(unsigned int reset_status)
-+{
-+	struct resource res = DEFINE_RES_MEM(OST_PHYS, OST_LEN);
-+
-+	reset_status &= RESET_STATUS_WATCHDOG;
-+	platform_device_register_resndata(NULL, "sa1100_wdt", -1, &res, 1,
-+					  &reset_status, sizeof(reset_status));
-+}
-diff --git a/arch/arm/mach-pxa/include/mach/regs-ost.h b/arch/arm/mach-pxa/include/mach/regs-ost.h
-index 109d0ed264df..c8001cfc8d6b 100644
---- a/arch/arm/mach-pxa/include/mach/regs-ost.h
-+++ b/arch/arm/mach-pxa/include/mach/regs-ost.h
-@@ -7,6 +7,8 @@
- /*
-  * OS Timer & Match Registers
-  */
-+#define OST_PHYS	0x40A00000
-+#define OST_LEN		0x00000020
- 
- #define OSMR0		io_p2v(0x40A00000)  /* */
- #define OSMR1		io_p2v(0x40A00004)  /* */
-diff --git a/arch/arm/mach-pxa/include/mach/reset.h b/arch/arm/mach-pxa/include/mach/reset.h
-index e1c4d100fd45..963dd190bc13 100644
---- a/arch/arm/mach-pxa/include/mach/reset.h
-+++ b/arch/arm/mach-pxa/include/mach/reset.h
-@@ -8,8 +8,8 @@
- #define RESET_STATUS_GPIO	(1 << 3)	/* GPIO Reset */
- #define RESET_STATUS_ALL	(0xf)
- 
--extern unsigned int reset_status;
- extern void clear_reset_status(unsigned int mask);
-+extern void pxa_register_wdt(unsigned int reset_status);
- 
- /**
-  * init_gpio_reset() - register GPIO as reset generator
-diff --git a/arch/arm/mach-pxa/pxa25x.c b/arch/arm/mach-pxa/pxa25x.c
-index 305047ebd2f1..dfc90b41fba3 100644
---- a/arch/arm/mach-pxa/pxa25x.c
-+++ b/arch/arm/mach-pxa/pxa25x.c
-@@ -240,7 +240,7 @@ static int __init pxa25x_init(void)
- 
- 	if (cpu_is_pxa25x()) {
- 
--		reset_status = RCSR;
-+		pxa_register_wdt(RCSR);
- 
- 		pxa25x_init_pm();
- 
-diff --git a/arch/arm/mach-pxa/pxa27x.c b/arch/arm/mach-pxa/pxa27x.c
-index a81ac88ecbfd..38fdd22c4dc5 100644
---- a/arch/arm/mach-pxa/pxa27x.c
-+++ b/arch/arm/mach-pxa/pxa27x.c
-@@ -337,7 +337,7 @@ static int __init pxa27x_init(void)
- 
- 	if (cpu_is_pxa27x()) {
- 
--		reset_status = RCSR;
-+		pxa_register_wdt(RCSR);
- 
- 		pxa27x_init_pm();
- 
-diff --git a/arch/arm/mach-pxa/pxa3xx.c b/arch/arm/mach-pxa/pxa3xx.c
-index fc84aed99481..7c569fa2a6da 100644
---- a/arch/arm/mach-pxa/pxa3xx.c
-+++ b/arch/arm/mach-pxa/pxa3xx.c
-@@ -463,7 +463,7 @@ static int __init pxa3xx_init(void)
- 
- 	if (cpu_is_pxa3xx()) {
- 
--		reset_status = ARSR;
-+		pxa_register_wdt(ARSR);
- 
- 		/*
- 		 * clear RDH bit every time after reset
-diff --git a/arch/arm/mach-pxa/reset.c b/arch/arm/mach-pxa/reset.c
-index af78405aa4e9..fcb791c5ae3e 100644
---- a/arch/arm/mach-pxa/reset.c
-+++ b/arch/arm/mach-pxa/reset.c
-@@ -11,9 +11,6 @@
- #include <mach/reset.h>
- #include <mach/smemc.h>
- 
--unsigned int reset_status;
--EXPORT_SYMBOL(reset_status);
--
- static void do_hw_reset(void);
- 
- static int reset_gpio = -1;
-diff --git a/arch/arm/mach-sa1100/generic.c b/arch/arm/mach-sa1100/generic.c
-index 4dfb7554649d..6c21f214cd60 100644
---- a/arch/arm/mach-sa1100/generic.c
-+++ b/arch/arm/mach-sa1100/generic.c
-@@ -39,9 +39,6 @@
- #include "generic.h"
- #include <clocksource/pxa.h>
- 
--unsigned int reset_status;
--EXPORT_SYMBOL(reset_status);
--
- #define NR_FREQS	16
- 
- /*
-@@ -319,10 +316,13 @@ static struct platform_device *sa11x0_devices[] __initdata = {
- 
- static int __init sa1100_init(void)
- {
-+	struct resource wdt_res = DEFINE_RES_MEM(0x90000000, 0x20);
- 	pm_power_off = sa1100_power_off;
- 
- 	regulator_has_full_constraints();
- 
-+	platform_device_register_simple("sa1100_wdt", -1, &wdt_res, 1);
-+
- 	return platform_add_devices(sa11x0_devices, ARRAY_SIZE(sa11x0_devices));
- }
- 
-diff --git a/arch/arm/mach-sa1100/include/mach/reset.h b/arch/arm/mach-sa1100/include/mach/reset.h
-index 27695650a567..a6723d45ae2a 100644
---- a/arch/arm/mach-sa1100/include/mach/reset.h
-+++ b/arch/arm/mach-sa1100/include/mach/reset.h
-@@ -10,7 +10,6 @@
- #define RESET_STATUS_GPIO	(1 << 3)	/* GPIO Reset */
- #define RESET_STATUS_ALL	(0xf)
- 
--extern unsigned int reset_status;
- static inline void clear_reset_status(unsigned int mask)
- {
- 	RCSR = mask;
-diff --git a/drivers/watchdog/sa1100_wdt.c b/drivers/watchdog/sa1100_wdt.c
-index d33f0375112f..2d0a06a158a8 100644
---- a/drivers/watchdog/sa1100_wdt.c
-+++ b/drivers/watchdog/sa1100_wdt.c
-@@ -22,6 +22,7 @@
- #include <linux/types.h>
- #include <linux/kernel.h>
- #include <linux/fs.h>
-+#include <linux/platform_device.h>
- #include <linux/miscdevice.h>
- #include <linux/watchdog.h>
- #include <linux/init.h>
-@@ -30,16 +31,42 @@
- #include <linux/uaccess.h>
- #include <linux/timex.h>
- 
--#ifdef CONFIG_ARCH_PXA
--#include <mach/regs-ost.h>
--#endif
-+#define REG_OSMR0  	0x0000  /* OS timer Match Reg. 0 */
-+#define REG_OSMR1  	0x0004  /* OS timer Match Reg. 1 */
-+#define REG_OSMR2  	0x0008  /* OS timer Match Reg. 2 */
-+#define REG_OSMR3  	0x000c  /* OS timer Match Reg. 3 */
-+#define REG_OSCR   	0x0010  /* OS timer Counter Reg. */
-+#define REG_OSSR   	0x0014  /* OS timer Status Reg. */
-+#define REG_OWER   	0x0018  /* OS timer Watch-dog Enable Reg. */
-+#define REG_OIER  	0x001C  /* OS timer Interrupt Enable Reg. */
- 
--#include <mach/reset.h>
-+#define OSSR_M3		(1 << 3)	/* Match status channel 3 */
-+#define OSSR_M2		(1 << 2)	/* Match status channel 2 */
-+#define OSSR_M1		(1 << 1)	/* Match status channel 1 */
-+#define OSSR_M0		(1 << 0)	/* Match status channel 0 */
-+
-+#define OWER_WME	(1 << 0)	/* Watchdog Match Enable */
-+
-+#define OIER_E3		(1 << 3)	/* Interrupt enable channel 3 */
-+#define OIER_E2		(1 << 2)	/* Interrupt enable channel 2 */
-+#define OIER_E1		(1 << 1)	/* Interrupt enable channel 1 */
-+#define OIER_E0		(1 << 0)	/* Interrupt enable channel 0 */
- 
- static unsigned long oscr_freq;
- static unsigned long sa1100wdt_users;
- static unsigned int pre_margin;
- static int boot_status;
-+static void __iomem *reg_base;
-+
-+static inline void sa1100_wr(u32 val, u32 offset)
-+{
-+	writel_relaxed(val, reg_base + offset);
-+}
-+
-+static inline u32 sa1100_rd(u32 offset)
-+{
-+	return readl_relaxed(reg_base + offset);
-+}
- 
- /*
-  *	Allow only one person to hold it open
-@@ -50,10 +77,10 @@ static int sa1100dog_open(struct inode *inode, struct file *file)
- 		return -EBUSY;
- 
- 	/* Activate SA1100 Watchdog timer */
--	writel_relaxed(readl_relaxed(OSCR) + pre_margin, OSMR3);
--	writel_relaxed(OSSR_M3, OSSR);
--	writel_relaxed(OWER_WME, OWER);
--	writel_relaxed(readl_relaxed(OIER) | OIER_E3, OIER);
-+	sa1100_wr(sa1100_rd(REG_OSCR) + pre_margin, REG_OSMR3);
-+	sa1100_wr(OSSR_M3, REG_OSSR);
-+	sa1100_wr(OWER_WME, REG_OWER);
-+	sa1100_wr(sa1100_rd(REG_OIER) | OIER_E3, REG_OIER);
- 	return stream_open(inode, file);
- }
- 
-@@ -61,7 +88,7 @@ static int sa1100dog_open(struct inode *inode, struct file *file)
-  * The watchdog cannot be disabled.
-  *
-  * Previous comments suggested that turning off the interrupt by
-- * clearing OIER[E3] would prevent the watchdog timing out but this
-+ * clearing REG_OIER[E3] would prevent the watchdog timing out but this
-  * does not appear to be true (at least on the PXA255).
-  */
- static int sa1100dog_release(struct inode *inode, struct file *file)
-@@ -76,7 +103,7 @@ static ssize_t sa1100dog_write(struct file *file, const char __user *data,
- {
- 	if (len)
- 		/* Refresh OSMR3 timer. */
--		writel_relaxed(readl_relaxed(OSCR) + pre_margin, OSMR3);
-+		sa1100_wr(sa1100_rd(REG_OSCR) + pre_margin, REG_OSMR3);
- 	return len;
- }
- 
-@@ -110,7 +137,7 @@ static long sa1100dog_ioctl(struct file *file, unsigned int cmd,
- 		break;
- 
- 	case WDIOC_KEEPALIVE:
--		writel_relaxed(readl_relaxed(OSCR) + pre_margin, OSMR3);
-+		sa1100_wr(sa1100_rd(REG_OSCR) + pre_margin, REG_OSMR3);
- 		ret = 0;
- 		break;
- 
-@@ -125,7 +152,7 @@ static long sa1100dog_ioctl(struct file *file, unsigned int cmd,
- 		}
- 
- 		pre_margin = oscr_freq * time;
--		writel_relaxed(readl_relaxed(OSCR) + pre_margin, OSMR3);
-+		sa1100_wr(sa1100_rd(REG_OSCR) + pre_margin, REG_OSMR3);
- 		fallthrough;
- 
- 	case WDIOC_GETTIMEOUT:
-@@ -151,12 +178,22 @@ static struct miscdevice sa1100dog_miscdev = {
- 	.fops		= &sa1100dog_fops,
+@@ -520,6 +521,16 @@ static struct platform_device e740_audio_device = {
+ 	.id		= -1,
  };
  
--static int margin __initdata = 60;		/* (secs) Default is 1 minute */
-+static int margin = 60;		/* (secs) Default is 1 minute */
- static struct clk *clk;
- 
--static int __init sa1100dog_init(void)
-+static int sa1100dog_probe(struct platform_device *pdev)
- {
- 	int ret;
-+	int *platform_data;
-+	struct resource *res;
++static struct gpiod_lookup_table e740_audio_gpio_table = {
++	.dev_id = "e740-audio",
++	.table = {
++		GPIO_LOOKUP("gpio-pxa",  GPIO_E740_WM9705_nAVDD2, "Audio power",  GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("gpio-pxa",  GPIO_E740_AMP_ON, "Output amp",  GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("gpio-pxa",  GPIO_E740_MIC_ON, "Mic amp", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -ENXIO;
-+	reg_base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-+	ret = PTR_ERR_OR_ZERO(reg_base);
+ /* ----------------------------------------------------------------------- */
+ 
+ static struct platform_device *e740_devices[] __initdata = {
+@@ -540,6 +551,7 @@ static void __init e740_init(void)
+ 			"UDCCLK", &pxa25x_device_udc.dev),
+ 	eseries_get_tmio_gpios();
+ 	gpiod_add_lookup_table(&e7xx_gpio_vbus_gpiod_table);
++	gpiod_add_lookup_table(&e740_audio_gpio_table);
+ 	platform_add_devices(ARRAY_AND_SIZE(e740_devices));
+ 	pxa_set_ac97_info(NULL);
+ 	pxa_set_ficp_info(&e7xx_ficp_platform_data);
+@@ -716,6 +728,15 @@ static struct platform_device e750_tc6393xb_device = {
+ 	.resource      = eseries_tmio_resources,
+ };
+ 
++static struct gpiod_lookup_table e750_audio_gpio_table = {
++	.dev_id = "e750-audio",
++	.table = {
++		GPIO_LOOKUP("gpio-pxa",  GPIO_E750_HP_AMP_OFF, "Output amp",  GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("gpio-pxa",  GPIO_E750_SPK_AMP_OFF, "Mic amp", GPIO_ACTIVE_LOW),
++		{ },
++	},
++};
++
+ static struct platform_device e750_audio_device = {
+ 	.name		= "e750-audio",
+ 	.id		= -1,
+@@ -740,6 +761,7 @@ static void __init e750_init(void)
+ 			"GPIO11_CLK", NULL),
+ 	eseries_get_tmio_gpios();
+ 	gpiod_add_lookup_table(&e7xx_gpio_vbus_gpiod_table);
++	gpiod_add_lookup_table(&e750_audio_gpio_table);
+ 	platform_add_devices(ARRAY_AND_SIZE(e750_devices));
+ 	pxa_set_ac97_info(NULL);
+ 	pxa_set_ficp_info(&e7xx_ficp_platform_data);
+@@ -935,6 +957,15 @@ static struct platform_device e800_tc6393xb_device = {
+ 	.resource      = eseries_tmio_resources,
+ };
+ 
++static struct gpiod_lookup_table e800_audio_gpio_table = {
++	.dev_id = "e800-audio",
++	.table = {
++		GPIO_LOOKUP("gpio-pxa",  GPIO_E800_HP_AMP_OFF, "Output amp",  GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("gpio-pxa",  GPIO_E800_SPK_AMP_ON, "Mic amp", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ static struct platform_device e800_audio_device = {
+ 	.name		= "e800-audio",
+ 	.id		= -1,
+@@ -959,6 +990,7 @@ static void __init e800_init(void)
+ 			"GPIO11_CLK", NULL),
+ 	eseries_get_tmio_gpios();
+ 	gpiod_add_lookup_table(&e800_gpio_vbus_gpiod_table);
++	gpiod_add_lookup_table(&e800_audio_gpio_table);
+ 	platform_add_devices(ARRAY_AND_SIZE(e800_devices));
+ 	pxa_set_ac97_info(NULL);
+ }
+diff --git a/sound/soc/pxa/e740_wm9705.c b/sound/soc/pxa/e740_wm9705.c
+index f922be7e0016..4e0e9b778d4c 100644
+--- a/sound/soc/pxa/e740_wm9705.c
++++ b/sound/soc/pxa/e740_wm9705.c
+@@ -7,17 +7,19 @@
+ 
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ 
+ #include <sound/core.h>
+ #include <sound/pcm.h>
+ #include <sound/soc.h>
+ 
+ #include <linux/platform_data/asoc-pxa.h>
+-#include <mach/eseries-gpio.h>
+ 
+ #include <asm/mach-types.h>
+ 
++static struct gpio_desc *gpiod_output_amp, *gpiod_input_amp;
++static struct gpio_desc *gpiod_audio_power;
++
+ #define E740_AUDIO_OUT 1
+ #define E740_AUDIO_IN  2
+ 
+@@ -25,9 +27,9 @@ static int e740_audio_power;
+ 
+ static void e740_sync_audio_power(int status)
+ {
+-	gpio_set_value(GPIO_E740_WM9705_nAVDD2, !status);
+-	gpio_set_value(GPIO_E740_AMP_ON, (status & E740_AUDIO_OUT) ? 1 : 0);
+-	gpio_set_value(GPIO_E740_MIC_ON, (status & E740_AUDIO_IN) ? 1 : 0);
++	gpiod_set_value(gpiod_audio_power, !status);
++	gpiod_set_value(gpiod_output_amp, (status & E740_AUDIO_OUT) ? 1 : 0);
++	gpiod_set_value(gpiod_input_amp, (status & E740_AUDIO_IN) ? 1 : 0);
+ }
+ 
+ static int e740_mic_amp_event(struct snd_soc_dapm_widget *w,
+@@ -116,36 +118,35 @@ static struct snd_soc_card e740 = {
+ 	.fully_routed = true,
+ };
+ 
+-static struct gpio e740_audio_gpios[] = {
+-	{ GPIO_E740_MIC_ON, GPIOF_OUT_INIT_LOW, "Mic amp" },
+-	{ GPIO_E740_AMP_ON, GPIOF_OUT_INIT_LOW, "Output amp" },
+-	{ GPIO_E740_WM9705_nAVDD2, GPIOF_OUT_INIT_HIGH, "Audio power" },
+-};
+-
+ static int e740_probe(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = &e740;
+ 	int ret;
+ 
+-	ret = gpio_request_array(e740_audio_gpios,
+-				 ARRAY_SIZE(e740_audio_gpios));
++	gpiod_input_amp  = devm_gpiod_get(&pdev->dev, "Mic amp", GPIOD_OUT_LOW);
++	ret = PTR_ERR_OR_ZERO(gpiod_input_amp);
 +	if (ret)
 +		return ret;
++	gpiod_output_amp  = devm_gpiod_get(&pdev->dev, "Output amp", GPIOD_OUT_LOW);
++	ret = PTR_ERR_OR_ZERO(gpiod_output_amp);
++	if (ret)
++		return ret;
++	gpiod_audio_power = devm_gpiod_get(&pdev->dev, "Audio power", GPIOD_OUT_HIGH);
++	ret = PTR_ERR_OR_ZERO(gpiod_audio_power);
+ 	if (ret)
+ 		return ret;
  
- 	clk = clk_get(NULL, "OSTIMER0");
- 	if (IS_ERR(clk)) {
-@@ -174,13 +211,9 @@ static int __init sa1100dog_init(void)
+ 	card->dev = &pdev->dev;
  
- 	oscr_freq = clk_get_rate(clk);
- 
--	/*
--	 * Read the reset status, and save it for later.  If
--	 * we suspend, RCSR will be cleared, and the watchdog
--	 * reset reason will be lost.
--	 */
--	boot_status = (reset_status & RESET_STATUS_WATCHDOG) ?
--				WDIOF_CARDRESET : 0;
-+	platform_data = pdev->dev.platform_data;
-+	if (platform_data && *platform_data)
-+		boot_status = WDIOF_CARDRESET;
- 	pre_margin = oscr_freq * margin;
- 
- 	ret = misc_register(&sa1100dog_miscdev);
-@@ -196,15 +229,21 @@ static int __init sa1100dog_init(void)
+ 	ret = devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret) {
++	if (ret)
+ 		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n",
+ 			ret);
+-		gpio_free_array(e740_audio_gpios, ARRAY_SIZE(e740_audio_gpios));
+-	}
  	return ret;
  }
  
--static void __exit sa1100dog_exit(void)
-+static int sa1100dog_remove(struct platform_device *pdev)
+ static int e740_remove(struct platform_device *pdev)
  {
- 	misc_deregister(&sa1100dog_miscdev);
- 	clk_disable_unprepare(clk);
- 	clk_put(clk);
-+
-+	return 0;
+-	gpio_free_array(e740_audio_gpios, ARRAY_SIZE(e740_audio_gpios));
+ 	return 0;
  }
  
--module_init(sa1100dog_init);
--module_exit(sa1100dog_exit);
-+struct platform_driver sa1100dog_driver = {
-+	.driver.name = "sa1100_wdt",
-+	.probe	  = sa1100dog_probe,
-+	.remove	  = sa1100dog_remove,
-+};
-+module_platform_driver(sa1100dog_driver);
+diff --git a/sound/soc/pxa/e750_wm9705.c b/sound/soc/pxa/e750_wm9705.c
+index 308828cd736b..7a1e0d8bfd11 100644
+--- a/sound/soc/pxa/e750_wm9705.c
++++ b/sound/soc/pxa/e750_wm9705.c
+@@ -7,24 +7,25 @@
  
- MODULE_AUTHOR("Oleg Drokin <green@crimea.edu>");
- MODULE_DESCRIPTION("SA1100/PXA2xx Watchdog");
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ 
+ #include <sound/core.h>
+ #include <sound/pcm.h>
+ #include <sound/soc.h>
+ 
+ #include <linux/platform_data/asoc-pxa.h>
+-#include <mach/eseries-gpio.h>
+ 
+ #include <asm/mach-types.h>
+ 
++static struct gpio_desc *gpiod_spk_amp, *gpiod_hp_amp;
++
+ static int e750_spk_amp_event(struct snd_soc_dapm_widget *w,
+ 				struct snd_kcontrol *kcontrol, int event)
+ {
+ 	if (event & SND_SOC_DAPM_PRE_PMU)
+-		gpio_set_value(GPIO_E750_SPK_AMP_OFF, 0);
++		gpiod_set_value(gpiod_spk_amp, 1);
+ 	else if (event & SND_SOC_DAPM_POST_PMD)
+-		gpio_set_value(GPIO_E750_SPK_AMP_OFF, 1);
++		gpiod_set_value(gpiod_spk_amp, 0);
+ 
+ 	return 0;
+ }
+@@ -33,9 +34,9 @@ static int e750_hp_amp_event(struct snd_soc_dapm_widget *w,
+ 				struct snd_kcontrol *kcontrol, int event)
+ {
+ 	if (event & SND_SOC_DAPM_PRE_PMU)
+-		gpio_set_value(GPIO_E750_HP_AMP_OFF, 0);
++		gpiod_set_value(gpiod_hp_amp, 1);
+ 	else if (event & SND_SOC_DAPM_POST_PMD)
+-		gpio_set_value(GPIO_E750_HP_AMP_OFF, 1);
++		gpiod_set_value(gpiod_hp_amp, 0);
+ 
+ 	return 0;
+ }
+@@ -100,35 +101,31 @@ static struct snd_soc_card e750 = {
+ 	.fully_routed = true,
+ };
+ 
+-static struct gpio e750_audio_gpios[] = {
+-	{ GPIO_E750_HP_AMP_OFF, GPIOF_OUT_INIT_HIGH, "Headphone amp" },
+-	{ GPIO_E750_SPK_AMP_OFF, GPIOF_OUT_INIT_HIGH, "Speaker amp" },
+-};
+-
+ static int e750_probe(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = &e750;
+ 	int ret;
+ 
+-	ret = gpio_request_array(e750_audio_gpios,
+-				 ARRAY_SIZE(e750_audio_gpios));
++	gpiod_hp_amp  = devm_gpiod_get(&pdev->dev, "Headphone amp", GPIOD_OUT_LOW);
++	ret = PTR_ERR_OR_ZERO(gpiod_hp_amp);
++	if (ret)
++		return ret;
++	gpiod_spk_amp  = devm_gpiod_get(&pdev->dev, "Speaker amp", GPIOD_OUT_LOW);
++	ret = PTR_ERR_OR_ZERO(gpiod_spk_amp);
+ 	if (ret)
+ 		return ret;
+ 
+ 	card->dev = &pdev->dev;
+ 
+ 	ret = devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret) {
++	if (ret)
+ 		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n",
+ 			ret);
+-		gpio_free_array(e750_audio_gpios, ARRAY_SIZE(e750_audio_gpios));
+-	}
+ 	return ret;
+ }
+ 
+ static int e750_remove(struct platform_device *pdev)
+ {
+-	gpio_free_array(e750_audio_gpios, ARRAY_SIZE(e750_audio_gpios));
+ 	return 0;
+ }
+ 
+diff --git a/sound/soc/pxa/e800_wm9712.c b/sound/soc/pxa/e800_wm9712.c
+index d74fcceef687..a39c494127cf 100644
+--- a/sound/soc/pxa/e800_wm9712.c
++++ b/sound/soc/pxa/e800_wm9712.c
+@@ -7,7 +7,7 @@
+ 
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ 
+ #include <sound/core.h>
+ #include <sound/pcm.h>
+@@ -15,15 +15,16 @@
+ 
+ #include <asm/mach-types.h>
+ #include <linux/platform_data/asoc-pxa.h>
+-#include <mach/eseries-gpio.h>
++
++static struct gpio_desc *gpiod_spk_amp, *gpiod_hp_amp;
+ 
+ static int e800_spk_amp_event(struct snd_soc_dapm_widget *w,
+ 				struct snd_kcontrol *kcontrol, int event)
+ {
+ 	if (event & SND_SOC_DAPM_PRE_PMU)
+-		gpio_set_value(GPIO_E800_SPK_AMP_ON, 1);
++		gpiod_set_value(gpiod_spk_amp, 1);
+ 	else if (event & SND_SOC_DAPM_POST_PMD)
+-		gpio_set_value(GPIO_E800_SPK_AMP_ON, 0);
++		gpiod_set_value(gpiod_spk_amp, 0);
+ 
+ 	return 0;
+ }
+@@ -32,9 +33,9 @@ static int e800_hp_amp_event(struct snd_soc_dapm_widget *w,
+ 				struct snd_kcontrol *kcontrol, int event)
+ {
+ 	if (event & SND_SOC_DAPM_PRE_PMU)
+-		gpio_set_value(GPIO_E800_HP_AMP_OFF, 0);
++		gpiod_set_value(gpiod_hp_amp, 1);
+ 	else if (event & SND_SOC_DAPM_POST_PMD)
+-		gpio_set_value(GPIO_E800_HP_AMP_OFF, 1);
++		gpiod_set_value(gpiod_hp_amp, 0);
+ 
+ 	return 0;
+ }
+@@ -100,35 +101,31 @@ static struct snd_soc_card e800 = {
+ 	.num_dapm_routes = ARRAY_SIZE(audio_map),
+ };
+ 
+-static struct gpio e800_audio_gpios[] = {
+-	{ GPIO_E800_SPK_AMP_ON, GPIOF_OUT_INIT_HIGH, "Headphone amp" },
+-	{ GPIO_E800_HP_AMP_OFF, GPIOF_OUT_INIT_HIGH, "Speaker amp" },
+-};
+-
+ static int e800_probe(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = &e800;
+ 	int ret;
+ 
+-	ret = gpio_request_array(e800_audio_gpios,
+-				 ARRAY_SIZE(e800_audio_gpios));
++	gpiod_hp_amp  = devm_gpiod_get(&pdev->dev, "Headphone amp", GPIOD_OUT_LOW);
++	ret = PTR_ERR_OR_ZERO(gpiod_hp_amp);
++	if (ret)
++		return ret;
++	gpiod_spk_amp  = devm_gpiod_get(&pdev->dev, "Speaker amp", GPIOD_OUT_LOW);
++	ret = PTR_ERR_OR_ZERO(gpiod_spk_amp);
+ 	if (ret)
+ 		return ret;
+ 
+ 	card->dev = &pdev->dev;
+ 
+ 	ret = devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret) {
++	if (ret)
+ 		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n",
+ 			ret);
+-		gpio_free_array(e800_audio_gpios, ARRAY_SIZE(e800_audio_gpios));
+-	}
+ 	return ret;
+ }
+ 
+ static int e800_remove(struct platform_device *pdev)
+ {
+-	gpio_free_array(e800_audio_gpios, ARRAY_SIZE(e800_audio_gpios));
+ 	return 0;
+ }
+ 
 -- 
 2.29.2
 
