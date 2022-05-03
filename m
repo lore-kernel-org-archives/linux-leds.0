@@ -2,51 +2,51 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7747C4332F
-	for <linux-leds@archiver.kernel.org>; Tue,  3 May 2022 15:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C06AEC433EF
+	for <linux-leds@archiver.kernel.org>; Tue,  3 May 2022 15:20:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238146AbiECPYT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S238201AbiECPYT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Tue, 3 May 2022 11:24:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51070 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238158AbiECPWG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 3 May 2022 11:22:06 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCF2F3B032;
-        Tue,  3 May 2022 08:18:26 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id g23so20213828edy.13;
-        Tue, 03 May 2022 08:18:26 -0700 (PDT)
+        with ESMTP id S238198AbiECPWL (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 3 May 2022 11:22:11 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3D0F3B284;
+        Tue,  3 May 2022 08:18:30 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id p18so20219595edr.7;
+        Tue, 03 May 2022 08:18:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=tVF3JHqeXvWfPLghH28nep5cSv0CTb1UsfiA1XgSFqA=;
-        b=UDMJD0kZwKXiiM59N3ej5G5K8KwypCLOpZ4d0p571avKyESowbM9YRnpenSxJfPhI1
-         6iOSQ/kl+Yhj3Mf8rlOOo02e0SoTZU6fLV92ZKau6wxltvtLyRiRNAWxV2qiAEu5pjbd
-         Oz4nt1uYTYs4B5zWxHgbqzAxsTBftRj4lFZpeH0Xgtziy99bBxQGKqz9NxnooQ4jaiDB
-         ZuQWc49SPJwTJfK10JgBhuguy9QIwkXIj2dgjfWMDv+eBP5GMIl875NAe3FMjXMOezjj
-         VYsKM0sakh5EQaxtSf7ILRTD61WZJ14bDOjrFFxqdgbSTvEbhTB6OG58t3Tck8v4t3kU
-         EOyQ==
+        bh=4CKD+DKMQd1ZEVY0/Od89OuEu7h6AxtbdaBQHqft0yE=;
+        b=HKihauhgQX2IKgIzKLB0B3T94583zUyrC5ZwDOufzBh1kiCDtyzDhz4oGrE5BVXib0
+         mt/8qujzN+FR+2oAwGydwXS2FXNkBJcww/w3VY8UZtodzt8CB/26N3Vd1gPyP/SMlGUf
+         /4Qgqg51j2lLfcjHYrZTSBA04QEe4SOZQh8NxeUOy84luKqxWpdz26B16/HeCqCdv8Cw
+         jBtURTZVZiUGTqkQnMYuwEhR4hfFrheL1l8NUnNeN5CkGra4D1M65+tLE0/NnAkD/GyW
+         M/vK3eVnoilumQkuDbAvvLhtB3aBXUH56Im+FGuo81WwO8fv+K50j8ObbDVVsGZOo3wT
+         GPyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tVF3JHqeXvWfPLghH28nep5cSv0CTb1UsfiA1XgSFqA=;
-        b=4PIi6u8fpZEjY/Jv9BbvHFVNxpHpV7VNK4S6vGjGZP8jn1RQEBoPXxTXg0DKk+C4uk
-         CHBKeQTz2kHlVCl8lVZrht+9NkMKw8oGd2WCyyf2bRtUUvjEMYaRSUqxgly22Dn33jsi
-         oPHpRSXzx7IiIU+cuQPJumV9mJjMWXXzHpRDRWQplH/I66HcxIFKwDwHaeozvWw5w39x
-         G7YrRZD79xSvncBH3KFl0KaRymu4dMwIQKcHhd5HvylG9l06/cdOi7kNQ/Q3EQmmNtuo
-         hdk1wt3OkPOY9ozQTmRdXHrb7rNmpHXA+IcGbvOWsElV2nIvmFTP23+3cOUUS/+Dswih
-         KUTw==
-X-Gm-Message-State: AOAM532PS4skwS/ljspvspxsq0KsQ42SM4TT8/LuAdDHO2+fENwAvFXJ
-        u4dQiek9dkLCuJmw5lM2QBA=
-X-Google-Smtp-Source: ABdhPJy7Y3NgLHFdEkhOkHD0ngHN0R8VghkVSF2eeoJcxy+lqIB0V3jpm7ftlNWzB/jQW3ars9gXDg==
-X-Received: by 2002:aa7:d350:0:b0:425:e029:da56 with SMTP id m16-20020aa7d350000000b00425e029da56mr18644619edr.296.1651591105246;
-        Tue, 03 May 2022 08:18:25 -0700 (PDT)
+        bh=4CKD+DKMQd1ZEVY0/Od89OuEu7h6AxtbdaBQHqft0yE=;
+        b=e6keluzVr8CeVS+CiQgRrYyKw6LSHcFv5Gj2H8HrpPrZA0op46xp2pd4GQzTo2EAtC
+         FbOBblO3ylx5F+QIhCjwqBu7zroupEE9ymUu2BY6jbP4zwd4Jk6nilkiA2T10cIZECbR
+         ym0vpNFRXCQWMyqsh+1mYUVdYJLnq4oizscMHvfkdaKbS3S3r5hP44cgwQ8EejlZynRn
+         uYe+GiLpiEm1hnLAnkSJuRvaPQ6VBzb2Wn/1jNCsoNWsYn6tbaiqcilt8lADHIz8jLG3
+         Zow3xIcrfRmPuL8OOB9Z4zaI7YuNIiJew0avXyDpKuaoRs4qpvSRa7idKSsv1XmecTPw
+         D1Tg==
+X-Gm-Message-State: AOAM530H5S45Z5E43K3TGuCjv7r5dhaFJAdFPJkkSC/S1t1UxeMnzlp3
+        MRYW7V3ZAU+G5xZl/pMyysE=
+X-Google-Smtp-Source: ABdhPJwNPlohltAOl9bRzLdnMWY8egRON0HXgwdFSqhhIXHwaosoUIwMHnQDOIRpRY8cy3iEWVPrwQ==
+X-Received: by 2002:a05:6402:3586:b0:427:b16e:a191 with SMTP id y6-20020a056402358600b00427b16ea191mr15097225edc.137.1651591109212;
+        Tue, 03 May 2022 08:18:29 -0700 (PDT)
 Received: from localhost.localdomain (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.googlemail.com with ESMTPSA id v3-20020aa7d9c3000000b0042617ba63cesm7947507eds.88.2022.05.03.08.18.23
+        by smtp.googlemail.com with ESMTPSA id v3-20020aa7d9c3000000b0042617ba63cesm7947507eds.88.2022.05.03.08.18.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 May 2022 08:18:24 -0700 (PDT)
+        Tue, 03 May 2022 08:18:28 -0700 (PDT)
 From:   Ansuel Smith <ansuelsmth@gmail.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Vivien Didelot <vivien.didelot@gmail.com>,
@@ -62,9 +62,9 @@ To:     Andrew Lunn <andrew@lunn.ch>,
         John Crispin <john@phrozen.org>, netdev@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: [RFC PATCH v6 08/11] leds: trigger: netdev: add available mode sysfs attr
-Date:   Tue,  3 May 2022 17:16:30 +0200
-Message-Id: <20220503151633.18760-9-ansuelsmth@gmail.com>
+Subject: [RFC PATCH v6 11/11] dt-bindings: net: dsa: qca8k: add LEDs definition example
+Date:   Tue,  3 May 2022 17:16:33 +0200
+Message-Id: <20220503151633.18760-12-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220503151633.18760-1-ansuelsmth@gmail.com>
 References: <20220503151633.18760-1-ansuelsmth@gmail.com>
@@ -74,72 +74,53 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add avaiable_mode sysfs attr to show and give some details about the
-supported modes and how they can be handled by the trigger.
-This is in preparation for hardware only modes that doesn't support
-software fallback.
+Add LEDs definition example for qca8k using the offload trigger as the
+default trigger and add all the supported offload triggers by the
+switch.
 
 Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 ---
- drivers/leds/trigger/ledtrig-netdev.c | 32 +++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ .../devicetree/bindings/net/dsa/qca8k.yaml    | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index a471e0cde836..d88b0c6a910e 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -33,6 +33,8 @@
-  *         (has carrier) or not
-  * tx -  LED blinks on transmitted data
-  * rx -  LED blinks on receive data
-+ * available_mode - Display available mode and how they can be handled
-+ *                  by the LED
-  *
-  */
+diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
+index f3c88371d76c..9b46ef645a2d 100644
+--- a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
++++ b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
+@@ -65,6 +65,8 @@ properties:
+                  internal mdio access is used.
+                  With the legacy mapping the reg corresponding to the internal
+                  mdio is the switch reg with an offset of -1.
++                 Each phy have at least 3 LEDs connected and can be declared
++                 using the standard LEDs structure.
  
-@@ -370,12 +372,42 @@ static ssize_t interval_store(struct device *dev,
+ patternProperties:
+   "^(ethernet-)?ports$":
+@@ -287,6 +289,24 @@ examples:
  
- static DEVICE_ATTR_RW(interval);
+                 internal_phy_port1: ethernet-phy@0 {
+                     reg = <0>;
++
++                    leds {
++                        led@0 {
++                            reg = <0>;
++                            color = <LED_COLOR_ID_WHITE>;
++                            function = LED_FUNCTION_LAN;
++                            function-enumerator = <1>;
++                            linux,default-trigger = "netdev";
++                        };
++
++                        led@1 {
++                            reg = <1>;
++                            color = <LED_COLOR_ID_AMBER>;
++                            function = LED_FUNCTION_LAN;
++                            function-enumerator = <1>;
++                            linux,default-trigger = "netdev";
++                        };
++                    };
+                 };
  
-+static ssize_t available_mode_show(struct device *dev,
-+				      struct device_attribute *attr, char *buf)
-+{
-+	struct led_netdev_data *trigger_data = led_trigger_get_drvdata(dev);
-+	struct netdev_led_attr_detail *detail;
-+	int i, len = 0;
-+
-+	for (i = 0; i < ARRAY_SIZE(attr_details); i++) {
-+		detail = &attr_details[i];
-+
-+		if (led_trigger_blink_mode_is_supported(trigger_data->led_cdev, detail->bit)) {
-+			if (!trigger_data->net_dev) {
-+				if (detail->hardware_only)
-+					len += sprintf(buf+len, "%s [hardware]\n",
-+						       detail->name);
-+				else
-+					len += sprintf(buf+len, "%s [software-hardware]\n",
-+						       detail->name);
-+			}
-+		} else {
-+			len += sprintf(buf+len, "%s [software]\n", detail->name);
-+		}
-+	}
-+
-+	return len;
-+}
-+
-+static DEVICE_ATTR_RO(available_mode);
-+
- static struct attribute *netdev_trig_attrs[] = {
- 	&dev_attr_device_name.attr,
- 	&dev_attr_link.attr,
- 	&dev_attr_rx.attr,
- 	&dev_attr_tx.attr,
- 	&dev_attr_interval.attr,
-+	&dev_attr_available_mode.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(netdev_trig);
+                 internal_phy_port2: ethernet-phy@1 {
 -- 
 2.34.1
 
