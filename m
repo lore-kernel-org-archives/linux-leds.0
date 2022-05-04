@@ -2,34 +2,44 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6850C433EF
-	for <linux-leds@archiver.kernel.org>; Wed,  4 May 2022 18:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D05AC433FE
+	for <linux-leds@archiver.kernel.org>; Wed,  4 May 2022 18:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376484AbiEDSIe (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 4 May 2022 14:08:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47698 "EHLO
+        id S1376457AbiEDSJ1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 4 May 2022 14:09:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376488AbiEDSI0 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 4 May 2022 14:08:26 -0400
+        with ESMTP id S1376718AbiEDSIt (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 4 May 2022 14:08:49 -0400
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 648B5719FF
-        for <linux-leds@vger.kernel.org>; Wed,  4 May 2022 10:23:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6354072E17;
+        Wed,  4 May 2022 10:24:20 -0700 (PDT)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id CB7C11C0BBE; Wed,  4 May 2022 19:23:55 +0200 (CEST)
-Date:   Wed, 4 May 2022 19:23:54 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Uwe Kleine-K??nig <u.kleine-koenig@pengutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel@pengutronix.de, linux-leds@vger.kernel.org
-Subject: Re: [PATCH] leds: trigger/tty: Add knob to blink only for tx or only
- for rx
-Message-ID: <20220504172354.GD1623@bug>
-References: <20220224155655.702255-1-u.kleine-koenig@pengutronix.de>
- <20220420162915.2brgxwkrxwqpw5mr@pengutronix.de>
+        id D5E261C0BBB; Wed,  4 May 2022 19:24:18 +0200 (CEST)
+Date:   Wed, 4 May 2022 19:24:17 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Markuss Broks <markuss.broks@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        phone-devel@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
+        <devicetree@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy
+        Shevchenko <andy.shevchenko@gmail.com>," 
+        <~postmarketos/upstreaming@lists.sr.ht>,
+        Rob Herring <robh+dt@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v6 2/2] leds: ktd2692: Make aux-gpios optional
+Message-ID: <20220504172417.GE1623@bug>
+References: <20220408184104.13665-1-markuss.broks@gmail.com>
+ <20220408184104.13665-3-markuss.broks@gmail.com>
+ <CAHp75VfgSphDN9TVgeiPGdcDVqutcGnTURqu6r143sjJDsPXUA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220420162915.2brgxwkrxwqpw5mr@pengutronix.de>
+In-Reply-To: <CAHp75VfgSphDN9TVgeiPGdcDVqutcGnTURqu6r143sjJDsPXUA@mail.gmail.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
@@ -37,21 +47,24 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 Hi!
 
-> > The newly introduced "triggerevent" attribute allows to restrict
-> > blinking to TX or RX only.
+> > Make the AUX pin optional, since it isn't a core part of functionality,
+> > and the device is designed to be operational with only one CTRL pin.
+> >
+> > Also pick up maintenance for the LED driver and the yaml bindings.
 > 
-> I didn't get any maintainer feedback for this patch since nearly 2
-> months. I assume the problem is missing maintainer time? Or did this
-> fell through the cracks?
+> It's polite to Cc reviewers of your previous versions of the series.
+> 
+> While this patch is fine to me, Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com> 
+> one comment below.
 
-Missing time, or more accurately "went on trip with notebook but not charger". Sorry.
+Thanks for review.
 
-But... I don't think sysfs interface is acceptable due to "one value per file" sysfs rule.
+Markuss, can you collect review tags and post v7?. Please drop MAINTAINERS part for now.
 
-Separate "blink for tx" and "blink for rx" files containing booleans should be acceptable.
+And sorry for delays.
 
 Best regards,
-										Pavel
-
--- (english) http://www.livejournal.com/~pavelmachek (cesky, pictures) 
-http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
