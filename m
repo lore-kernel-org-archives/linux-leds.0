@@ -2,235 +2,96 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B58C433FE
-	for <linux-leds@archiver.kernel.org>; Wed,  4 May 2022 19:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 441BFC433F5
+	for <linux-leds@archiver.kernel.org>; Wed,  4 May 2022 19:45:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377533AbiEDTjJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 4 May 2022 15:39:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39464 "EHLO
+        id S233622AbiEDTtR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 4 May 2022 15:49:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377564AbiEDTjD (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 4 May 2022 15:39:03 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A392E0FD;
-        Wed,  4 May 2022 12:35:24 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id ay11-20020a05600c1e0b00b0038eb92fa965so3829373wmb.4;
-        Wed, 04 May 2022 12:35:24 -0700 (PDT)
+        with ESMTP id S1377848AbiEDTtG (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 4 May 2022 15:49:06 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4892E272E;
+        Wed,  4 May 2022 12:45:28 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id g20so2870495edw.6;
+        Wed, 04 May 2022 12:45:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ZT7VKniHc2GWnckoL6MlPZLbnEyYu3dBdYD4+s+IxsM=;
-        b=Bp58nmH7PUo//wUZc2uhmQN2OX+RZ5aQLpK6AkiBmVXbEzAekaYLhmj3Yih1HanvNT
-         k6YuK85Gjho+Yrn/QAKJG9v6W2N7DDfE+AIDYaBExDlbWgY9NwaUyGXdpyrMn0ojQoIx
-         +VHexJKd2czGapDFNe/UVyD1MCNSM5F/IwjFvt4yKGfF/faiWMzpVglJZ58FkxIuLwFe
-         aSwhc/Msl6oAoyefPqLYYJ7V3aQI/zettQWHEi3kSpafZCPvKHQUhSCYE2C0DOhSxxQT
-         oKWfCsY8nodzf9jHC+1bFubtqxZCTUxBdCWDh6RYaV6sLYovNEOb0zf2itxfUEl34QG+
-         nt5Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Zns0LKPTUPymGAYU2bdItgulZ/f93Vx+6vSdDM7JqFA=;
+        b=CMbI6xK8GCAA6rz7awKw91AvnRgcICsbmW9dluQjGegkZ1oaBiL+xhtJf+yZRg7oOb
+         T4SXaEmvfv/inhlZh2eFG/jU1J8wD96+7QXh+X9PXxtLbf8dcJ2rfDpl/GFsbjGQ06+a
+         AeAlxQ6Hm1tnYUwR2yjolZ6AfDpG9jCM/7a+oaEEpAb1NJ4ToDfhV1f2Sc2sqBDVY/s/
+         PTK7byMw0pt3LPxtVk5KoJ2lxD+2dxwDkOXnVo0ffUXbntNHnrq1lNEVsj1hvatLWNby
+         KaZUhSXwCAB1eIWcaXGq/VYuEbVJuugLFPVWIaSGQUiC+2GzrfdFD1AnC5wdveOqbFP1
+         mE1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZT7VKniHc2GWnckoL6MlPZLbnEyYu3dBdYD4+s+IxsM=;
-        b=Vo0gHYHBspGSAebnM9AdXZntqSDZELLPyS9jqp64s9D0/4/W4/Y99CDod9d/h0LYhh
-         Zm8mrUzT3vBvSN9EnnJX1hXucNHxhh1nto8JzDC8esb0bh9qf6b4c7fqw5Eo7aHhBuaF
-         pwVZk36ImfKsoOZs+uP1l3eR01wSIiZ2/E9Qrjb9jhPBefTAeuPWk7WI00xJhmPJQy/K
-         qJvwYediztxaSZCEWbxyq9aah3CYIdSsR80y+hzfxKnh+BQUBsmGnI/RbhwuEEgV4Tbf
-         OG8wWl4RYHsDgKwFYeW0RFHXBatkdzEbHKWturcFkWYhdrjIewZfzUwxLLaaEM4z3FZM
-         wQAg==
-X-Gm-Message-State: AOAM530+SSpitU90lOYoS05FDCmY+Hwr+8RebVqSWRzpzAaiSJtFddX0
-        0tC3JbodrhRugX9FPva5R+M=
-X-Google-Smtp-Source: ABdhPJw+Kv9dqOx2Wgp0gAQYZHdG6ke4h+kiL7EqNHqEJBn8Z7t0RoZXM5k2Pha5doozf7pbKxfxEg==
-X-Received: by 2002:a05:600c:1ca6:b0:393:eb0e:afd9 with SMTP id k38-20020a05600c1ca600b00393eb0eafd9mr843858wms.87.1651692922999;
-        Wed, 04 May 2022 12:35:22 -0700 (PDT)
-Received: from nergzd-desktop.localdomain ([194.39.226.133])
-        by smtp.gmail.com with ESMTPSA id 67-20020a1c1946000000b003942a244f2csm5519358wmz.5.2022.05.04.12.35.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 12:35:22 -0700 (PDT)
-From:   Markuss Broks <markuss.broks@gmail.com>
-To:     pavel@ucw.cz
-Cc:     Markuss Broks <markuss.broks@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 1/2] dt-bindings: leds: convert ktd2692 bindings to yaml
-Date:   Wed,  4 May 2022 22:34:35 +0300
-Message-Id: <20220504193439.15938-2-markuss.broks@gmail.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220504193439.15938-1-markuss.broks@gmail.com>
-References: <20220504193439.15938-1-markuss.broks@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Zns0LKPTUPymGAYU2bdItgulZ/f93Vx+6vSdDM7JqFA=;
+        b=yQhfRXBQ4njaLfoVSYN4qtM8A8GlWEHrYBbMRgErXshwxBxz1LBpd+VFArG8vCT6za
+         21wX2MX1Pi9H1XVKryVanW2VfwfKJFzkLptHnuE/BLtlAg/JklAsbbOr7RFxX6hZyvkm
+         pNRvFkh7XDEgCYWW0wbrMaGNvH3+h9UzvdWJGSxszaNZAbgoEo2uUTJp0Drd+TKYDShg
+         omhoAMBAZhJ6jvhvgnefFz5iIHDsOc1pSZ9sqaPyY0fIn/NsuTaMu7qth1azGW+xKUAC
+         6hLJuD6rkj7LiSE3rMMzawfaY8w6RuQ+85a3amaWT+7A7EJx2jCQ/KAYZlob2RkXZBns
+         rdLw==
+X-Gm-Message-State: AOAM531dqkFpwAeQ66MlrtZjedyiGYGwAP+4hv8ovQa7HPIChqoGiIlY
+        +IrAv1xCKdpw+xtmEA3r/YaYqy2wj/wbBhqXIGY=
+X-Google-Smtp-Source: ABdhPJyY3FXKKb40yo9NMzwpK2OCm003pCXdK3zIlEoDiapiR82hP9b52sypTg6k4ccA7Lb2mmByV9W1NA6Ke1ndYr0=
+X-Received: by 2002:a50:e696:0:b0:419:998d:5feb with SMTP id
+ z22-20020a50e696000000b00419998d5febmr25431573edm.122.1651693526746; Wed, 04
+ May 2022 12:45:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220504193439.15938-1-markuss.broks@gmail.com>
+In-Reply-To: <20220504193439.15938-1-markuss.broks@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 4 May 2022 21:44:50 +0200
+Message-ID: <CAHp75VeMCiwgTFFy5vGBoWYSw4mGQU6623B1eMr7apJZF_L-kg@mail.gmail.com>
+Subject: Re: [PATCH v7 0/2] Make AUX gpio pin optional for ktd2692
+To:     Markuss Broks <markuss.broks@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This patch converts the leds-ktd2692.txt bindings to modern yaml
-style device-tree bindings.
+On Wed, May 4, 2022 at 9:35 PM Markuss Broks <markuss.broks@gmail.com> wrote:
+>
+> Some appliances of ktd2692 don't have the AUX pin connected to
+> a GPIO. Specifically, Samsung Galaxy J5 (2015), which uses ktd2692
+> for driving the front flash LED, has the pin not connected anywhere on
+> schematics. Make specifying the AUX pin optional, since it is additional
+> functionality and only affects amount of current going through the LED.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
----
- .../bindings/leds/kinetic,ktd2692.yaml        | 87 +++++++++++++++++++
- .../devicetree/bindings/leds/leds-ktd2692.txt | 50 -----------
- 2 files changed, 87 insertions(+), 50 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/kinetic,ktd2692.yaml
- delete mode 100644 Documentation/devicetree/bindings/leds/leds-ktd2692.txt
+the amount
 
-diff --git a/Documentation/devicetree/bindings/leds/kinetic,ktd2692.yaml b/Documentation/devicetree/bindings/leds/kinetic,ktd2692.yaml
-new file mode 100644
-index 000000000000..bac95a51afa1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/kinetic,ktd2692.yaml
-@@ -0,0 +1,87 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/kinetic,ktd2692.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: KTD2692 Flash LED Driver from Kinetic Technologies
-+
-+maintainers:
-+  - Markuss Broks <markuss.broks@gmail.com>
-+
-+description: |
-+  KTD2692 is the ideal power solution for high-power flash LEDs.
-+  It uses ExpressWire single-wire programming for maximum flexibility.
-+
-+  The ExpressWire interface through CTRL pin can control LED on/off and
-+  enable/disable the IC, Movie(max 1/3 of Flash current) / Flash mode current,
-+  Flash timeout, LVP(low voltage protection).
-+
-+  Also, When the AUX pin is pulled high while CTRL pin is high,
-+  LED current will be ramped up to the flash-mode current level.
-+
-+properties:
-+  compatible:
-+    const: kinetic,ktd2692
-+
-+  ctrl-gpios:
-+    maxItems: 1
-+    description: Specifier of the GPIO connected to CTRL pin.
-+
-+  aux-gpios:
-+    maxItems: 1
-+    description: Specifier of the GPIO connected to CTRL pin.
-+
-+  vin-supply:
-+    description: LED supply (2.7V to 5.5V).
-+
-+  led:
-+    type: object
-+    $ref: common.yaml#
-+    description: Properties for the LED.
-+    properties:
-+      function: true
-+      color: true
-+      flash-max-timeout-us:
-+        description: Flash LED maximum timeout.
-+
-+      led-max-microamp:
-+        maximum: 300000
-+        description: Minimum Threshold for Timer protection
-+          is defined internally (Maximum 300mA).
-+
-+      flash-max-microamp:
-+        maximum: 300000
-+        description: Flash LED maximum current
-+          Formula - I(uA) = 15000000 / Rset.
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - ctrl-gpios
-+  - led
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/leds/common.h>
-+
-+    ktd2692 {
-+      compatible = "kinetic,ktd2692";
-+      ctrl-gpios = <&gpc0 1 0>;
-+      aux-gpios = <&gpc0 2 0>;
-+      vin-supply = <&vbat>;
-+
-+      led {
-+        function = LED_FUNCTION_FLASH;
-+        color = <LED_COLOR_ID_WHITE>;
-+        flash-max-timeout-us = <250000>;
-+        flash-max-microamp = <150000>;
-+        led-max-microamp = <25000>;
-+      };
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/leds/leds-ktd2692.txt b/Documentation/devicetree/bindings/leds/leds-ktd2692.txt
-deleted file mode 100644
-index 853737452580..000000000000
---- a/Documentation/devicetree/bindings/leds/leds-ktd2692.txt
-+++ /dev/null
-@@ -1,50 +0,0 @@
--* Kinetic Technologies - KTD2692 Flash LED Driver
--
--KTD2692 is the ideal power solution for high-power flash LEDs.
--It uses ExpressWire single-wire programming for maximum flexibility.
--
--The ExpressWire interface through CTRL pin can control LED on/off and
--enable/disable the IC, Movie(max 1/3 of Flash current) / Flash mode current,
--Flash timeout, LVP(low voltage protection).
--
--Also, When the AUX pin is pulled high while CTRL pin is high,
--LED current will be ramped up to the flash-mode current level.
--
--Required properties:
--- compatible : Should be "kinetic,ktd2692".
--- ctrl-gpios : Specifier of the GPIO connected to CTRL pin.
--- aux-gpios : Specifier of the GPIO connected to AUX pin.
--
--Optional properties:
--- vin-supply : "vin" LED supply (2.7V to 5.5V).
--  See Documentation/devicetree/bindings/regulator/regulator.txt
--
--A discrete LED element connected to the device must be represented by a child
--node - See Documentation/devicetree/bindings/leds/common.txt
--
--Required properties for flash LED child nodes:
--  See Documentation/devicetree/bindings/leds/common.txt
--- led-max-microamp : Minimum Threshold for Timer protection
--  is defined internally (Maximum 300mA).
--- flash-max-microamp : Flash LED maximum current
--  Formula : I(mA) = 15000 / Rset.
--- flash-max-timeout-us : Flash LED maximum timeout.
--
--Optional properties for flash LED child nodes:
--- label : See Documentation/devicetree/bindings/leds/common.txt
--
--Example:
--
--ktd2692 {
--	compatible = "kinetic,ktd2692";
--	ctrl-gpios = <&gpc0 1 0>;
--	aux-gpios = <&gpc0 2 0>;
--	vin-supply = <&vbat>;
--
--	flash-led {
--		label = "ktd2692-flash";
--		led-max-microamp = <300000>;
--		flash-max-microamp = <1500000>;
--		flash-max-timeout-us = <1835000>;
--	};
--};
+> Also convert the txt device-tree bindings to yaml and pick up maintenance
+> over the yaml binding and the driver itself.
+
+...
+
+> v7:
+> - drop the MAINTAINERS part
+
+I'm not sure why it happened.
+
+What I mentioned is to create a series out of 4 (four) patches:
+1) fix the potential issue with the repetitive message;
+2) update DT;
+3) switch to optional GPIO;
+4) update MAINTAINERS.
+
+
 -- 
-2.35.1
-
+With Best Regards,
+Andy Shevchenko
