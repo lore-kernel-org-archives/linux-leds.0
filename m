@@ -2,88 +2,63 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C136C433FE
-	for <linux-leds@archiver.kernel.org>; Wed,  4 May 2022 18:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC2DC433EF
+	for <linux-leds@archiver.kernel.org>; Wed,  4 May 2022 18:41:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353781AbiEDSjj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 4 May 2022 14:39:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36888 "EHLO
+        id S1377079AbiEDSo7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 4 May 2022 14:44:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377480AbiEDSjZ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 4 May 2022 14:39:25 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB1D1AF17
-        for <linux-leds@vger.kernel.org>; Wed,  4 May 2022 11:31:39 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nmJmj-0003sc-D6; Wed, 04 May 2022 20:31:37 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nmJmk-000MYN-2Y; Wed, 04 May 2022 20:31:36 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nmJmh-007Ztu-Rm; Wed, 04 May 2022 20:31:35 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
+        with ESMTP id S237001AbiEDSo6 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 4 May 2022 14:44:58 -0400
+Received: from mail.schwermer.no (mail.schwermer.no [49.12.228.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F6FB645E
+        for <linux-leds@vger.kernel.org>; Wed,  4 May 2022 11:41:20 -0700 (PDT)
+X-Virus-Scanned: Yes
+Message-ID: <8917a521-6d40-7b84-ac1e-fdbeed60eb58@svenschwermer.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=svenschwermer.de;
+        s=mail; t=1651689678;
+        bh=TVBdDSFVESVgYQyHYHy0k+sZREBZ8FExL2Swdn9iIzE=;
+        h=Subject:To:Cc:References:From:In-Reply-To;
+        b=TGBVCVP8MHUpfVv1BAxLlJ0GbLnRAdT0xqJhr2UncO5sak2Ajgr4Y4Lc4pUfTtP7w
+         WUDTwT8pfCe+4Ks3C0FrkOS9QnllhGGYDNjFoMUMbn7OEMuCmQ9VuP5S3ikqSIM155
+         mC3Wk1tVWopJJ7mhiGmLyXMYAisYhB69EECzJcnqZJV7ALs6NcmXwP48R0r1wBau6i
+         Zd4rZ+dyah0knJfHr4zBteJgjyc9RMw+jSAXtUiJXW8rBbrAY8koLGeX3HzvgMWFDS
+         HNqS9bMDlkDqVX4rPKjKIl5EJgXs9eRXllvK/dhrU53/xHjwNzF6WZ1yTzU/L9GkXB
+         EtulKkHcjMRUw==
+Date:   Wed, 4 May 2022 20:41:16 +0200
+Mime-Version: 1.0
+Subject: Re: [PATCH v8 0/3 RESEND] Multicolor PWM LED support
+Content-Language: en-US
 To:     Pavel Machek <pavel@ucw.cz>
-Cc:     linux-leds@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH] leds: is31fl32xx: Improve error reporting in .remove()
-Date:   Wed,  4 May 2022 20:31:31 +0200
-Message-Id: <20220504183131.52728-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.35.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1320; h=from:subject; bh=cJRA3glxO1Ke7ajkhJU/PzZSeqPTk5OSlmeEga+VuP8=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBicsZ/z+WRLs0yy1zUlykzkP1zaNUFCuBnkNjODT9X nLPnR2SJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYnLGfwAKCRDB/BR4rcrsCXysB/ 0XmRYAZ2y+aW9ZsU/vN4x6nPm+jVjDUvuI4BdK2QybVm3LcYqiuFAXBZwGoGoyM+6TZrwh/zUE2hUI pFdutCwmLTbqwuJsQHoBbbF4Y9CYnfZijNmoCZBUpOgLcxzIZQUqpkjoFs0hr/iC0sq21Km4j/x+yL 1EDwhZh9G7gZqN1MIgHppUDqFfldeJf2+5FpF9+nMpcWiFFNhI9a/Q39IC5AEiZq4qpQ3xfHqwlaHP ceNOftWK3A0Yx+osqF0aFVlkr01p40EroBFDNo9U/w8tQaRyzjGvn7A+npyMSWWuxJIKoGBfSGYA01 R/fCpc8p1ReUQyvPE6JTtE71WXv++o
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-leds@vger.kernel.org
+Cc:     linux-leds@vger.kernel.org
+References: <20220407073225.71605-1-sven@svenschwermer.de>
+ <20220504174744.GD8725@duo.ucw.cz>
+From:   Sven Schwermer <sven@svenschwermer.de>
+In-Reply-To: <20220504174744.GD8725@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Returning an error value in an i2c remove callback results in a generic
-error message being emitted by the i2c core, but otherwise it doesn't make
-a difference. The device goes away anyhow and the devm cleanups are
-called.
+Hi,
 
-So instead of triggering the generic i2c error message, emit a more helpful
-message if a problem occurs and return 0 to suppress the generic message.
+On 5/4/22 19:47, Pavel Machek wrote:
+> Hi!
+> 
+>> I believe this patch series is ready for merging.
+>>
+>> Pavel, please let me know if you need more to get this merged.
+> 
+> Thank you, applied.
 
-This patch is a preparation for making i2c remove callbacks return void.
+Thank you!
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/leds/leds-is31fl32xx.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+> Could I get you to submit patch to move this driver into
+> drivers/leds/rgb/ ?
 
-diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
-index 22c092a4394a..fc63fce38c19 100644
---- a/drivers/leds/leds-is31fl32xx.c
-+++ b/drivers/leds/leds-is31fl32xx.c
-@@ -460,8 +460,14 @@ static int is31fl32xx_probe(struct i2c_client *client,
- static int is31fl32xx_remove(struct i2c_client *client)
- {
- 	struct is31fl32xx_priv *priv = i2c_get_clientdata(client);
-+	int ret;
- 
--	return is31fl32xx_reset_regs(priv);
-+	ret = is31fl32xx_reset_regs(priv);
-+	if (ret)
-+		dev_err(&client->dev, "Failed to reset registers on removal (%pe)\n",
-+			ERR_PTR(ret));
-+
-+	return 0;
- }
- 
- /*
+Coming up... :)
 
-base-commit: 3123109284176b1532874591f7c81f3837bbdc17
--- 
-2.35.1
-
+Best regards,
+Sven
