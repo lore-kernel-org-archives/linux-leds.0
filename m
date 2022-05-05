@@ -2,51 +2,51 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0886C433F5
-	for <linux-leds@archiver.kernel.org>; Thu,  5 May 2022 13:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E83C433F5
+	for <linux-leds@archiver.kernel.org>; Thu,  5 May 2022 13:55:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380329AbiEEN7T (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 5 May 2022 09:59:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48990 "EHLO
+        id S1380297AbiEEN7S (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 5 May 2022 09:59:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380276AbiEEN7R (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 5 May 2022 09:59:17 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F071EEDE;
-        Thu,  5 May 2022 06:55:37 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id g23so5294141edy.13;
-        Thu, 05 May 2022 06:55:37 -0700 (PDT)
+        with ESMTP id S1380347AbiEEN7J (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 5 May 2022 09:59:09 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4A5F1834B;
+        Thu,  5 May 2022 06:55:29 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id i19so8873989eja.11;
+        Thu, 05 May 2022 06:55:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=W4OY/JvmasUugHSn3rUmXaSkS514QXA0AsYyOrhfQQg=;
-        b=H8Ao8D+HKPoqzvyk98XDDUx5ZI7tA1FociIFIuzl17MmQWY+/ne9onYEyJ0AYfrm6M
-         WBl8sG1lg7rLJT+ffPgm8+ERj97fPvTeSbCsqbV/h6YlsCvpNUU/SH7E4nWQHwQU8Y0H
-         fQhXJQemxVsnGX6dt0rvSKqm47LDBgg9ByAAs+3RMv0Ot3YFjq3hLRfsG2DPniS3t4tp
-         WhEqGTIecb+TAtoJ4goXvh/SbiMP9gwzm/uIIgPQNy116BtfzSDWWjEaRdRfeoc2C1Te
-         o5Mry/99pzA8YkYpAYviJKCNP97gqiItOI+NtsW6Ppnw9ndyiGrdPcpP2ZSxG1ufiQh+
-         +Aig==
+        bh=ahkARIN+8V3yBAvDKNOhMu072AYtqbFU/lpjoQxJ3Ks=;
+        b=gyhScaHs263fn2FMoFIaeIpmB1OR6lK4hIvTWKMnoqsCeTC4u7f5XlTXbu1qDGT80A
+         7fcgacj4FhqraB8kY6V759+NYx4cX2hkWcGvb32qC9sVoAGgT0c4dRd6y7e+IOJSFnNl
+         PHH4QW2DAEqWANTXLaKCgcW6G7rVVLpcz1Y9yRu2BHdODLKSj7bnvTA+PdIgmneIxKQn
+         oC0YfGZpHfaQqXIvYNm6WzICki7T1sEtt3tFgVSroKZ0jNV5NchrvnoWG+0aocWXlN2T
+         BarZsb5ZxvXwki1O9/qbU1o/HM708vc56H6LtIseoYFnr1ECso98W2oRXzZ4Y6JD/N+5
+         dK2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=W4OY/JvmasUugHSn3rUmXaSkS514QXA0AsYyOrhfQQg=;
-        b=tDfJn+YuPVgaAmVyWZe9n82wFVcEnDpCX+it73cjRR17en3oTWOZxUDwkMsuX0NESr
-         vBqTx11eaPig5HP1RTIk5G4L2yquAqR9eUhhFzcARqAHYv9yd2FGxQNcglOMId3ZLW0Q
-         +XeYpk8Tc36nE0pzDebJPbYbT0FV+1ixP8zoph7p119lUu1ALbMS3l8vNjAO8k8UCnij
-         qcbS4KWDQNs07qsomy26s2SeupEUEotGIc0Wl58LuvLm8fzV5PViPbqYcxUuZTy1Ez6j
-         6LZIK2o+vtkLWIx2Ki55TKerJXMss/7GuvByNtl2TOh1I8NGK7vBWhBibEJ1xIR3ZP9o
-         SzvQ==
-X-Gm-Message-State: AOAM530JLQeWaONohBV7JkkCV9V9eMw0VEgNIJxxMIhcmfhLaP9woxPb
-        vgTkNMxActh+OshNjWGWXKQ=
-X-Google-Smtp-Source: ABdhPJxZtO2nEF1yJ6MjoitOsoR6NiKa4vbJTd4fTbtfyjCPOSo9zQI9bOEoP434SL7qulITdqNiPQ==
-X-Received: by 2002:a05:6402:2741:b0:41f:69dc:9bcd with SMTP id z1-20020a056402274100b0041f69dc9bcdmr30258922edd.239.1651758936244;
-        Thu, 05 May 2022 06:55:36 -0700 (PDT)
+        bh=ahkARIN+8V3yBAvDKNOhMu072AYtqbFU/lpjoQxJ3Ks=;
+        b=D4u2Bx7nQGaPPfrDj3pV00Lmfdiw/k60rB5PoCdnO62pcg9svUDiMyxJO5KZCHoziD
+         kXTcAf0PuHML6/rerD111Bls12pBQEKXC14WCH+nswz4PtiwMrKXwEAHESV03Oe1oncC
+         1JbxO7aVcqoGM0uQLFtHYqU0fqKzPHHEqDvsixxwzmXIsLAimxBbe+1UycAzlxxXTH3W
+         N58PCQQCUM4fOcokmNsoqL6d/ES3tnc+XiHp2ahG5d67nFPG97NzDtpkXtxBuwEnjjZC
+         W5NdspzxS/ccCYLmpUtedlNoF8UiZwx+S2cMW13ztJrynCUtLZEeSES+0l6EMrAgfOtb
+         W3Ng==
+X-Gm-Message-State: AOAM530qkHmiNA+u5cJAL+qMkR0iJ+fele4w1jWwkh8va5ml/G+StHDh
+        IJ6zVwMCtErq0SCwjfJKiq8=
+X-Google-Smtp-Source: ABdhPJzi3vKiAPWHMT0W9f/YUPiDcbp8oCkahrkdy1du7Mdl6X0NgMbhUvQRlzLOh3T78kfW8HG0HA==
+X-Received: by 2002:a17:906:2646:b0:6d5:d889:c92b with SMTP id i6-20020a170906264600b006d5d889c92bmr27143703ejc.696.1651758928315;
+        Thu, 05 May 2022 06:55:28 -0700 (PDT)
 Received: from localhost.lan (ip-194-187-74-233.konfederacka.maverick.com.pl. [194.187.74.233])
-        by smtp.gmail.com with ESMTPSA id e15-20020a50e44f000000b0042617ba63c7sm877949edm.81.2022.05.05.06.55.34
+        by smtp.gmail.com with ESMTPSA id e15-20020a50e44f000000b0042617ba63c7sm877949edm.81.2022.05.05.06.55.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 May 2022 06:55:35 -0700 (PDT)
+        Thu, 05 May 2022 06:55:27 -0700 (PDT)
 From:   =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
@@ -66,9 +66,9 @@ Cc:     Pavel Machek <pavel@ucw.cz>,
         Jonathan Corbet <corbet@lwn.net>,
         John Crispin <john@phrozen.org>, linux-doc@vger.kernel.org,
         =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
-Subject: [PATCH RESEND PoC] leds: trigger: netdev: support DT "trigger-sources" property
-Date:   Thu,  5 May 2022 15:55:12 +0200
-Message-Id: <20220505135512.3486-6-zajec5@gmail.com>
+Subject: [PATCH RESEND 2/5] dt-bindings: net: allow Ethernet devices as LED triggers
+Date:   Thu,  5 May 2022 15:55:09 +0200
+Message-Id: <20220505135512.3486-3-zajec5@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220505135512.3486-1-zajec5@gmail.com>
 References: <20220505135512.3486-1-zajec5@gmail.com>
@@ -81,68 +81,28 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Rafał Miłecki <rafal@milecki.pl>
 
-Parse "trigger-sources", find referenced netdev & use it as default
-trigger source.
+This allows specifying Ethernet interfaces and switch ports as triggers
+for LEDs activity.
 
 Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
 ---
-This is a proof on concept, please don't apply this patch. I'll rework
-this on top of Ansuel's netdev trigger refactoring once it gets accepted
-----
- drivers/leds/trigger/ledtrig-netdev.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ Documentation/devicetree/bindings/net/ethernet-controller.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index d5e774d83021..c036a3671773 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -20,6 +20,8 @@
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/netdevice.h>
-+#include <linux/of.h>
-+#include <linux/of_net.h>
- #include <linux/spinlock.h>
- #include <linux/timer.h>
- #include "../leds.h"
-@@ -389,6 +391,28 @@ static void netdev_trig_work(struct work_struct *work)
- 			(atomic_read(&trigger_data->interval)*2));
- }
+diff --git a/Documentation/devicetree/bindings/net/ethernet-controller.yaml b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
+index 4f15463611f8..ebeb4446d253 100644
+--- a/Documentation/devicetree/bindings/net/ethernet-controller.yaml
++++ b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
+@@ -232,6 +232,9 @@ properties:
+           required:
+             - speed
  
-+static void netdev_trig_of_init(struct led_classdev *led_cdev)
-+{
-+	struct device *dev = led_cdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct of_phandle_args args;
-+	struct net_device *netdev;
-+	int err;
++allOf:
++  - $ref: /schemas/leds/trigger-source.yaml
 +
-+	err = of_parse_phandle_with_args(np, "trigger-sources", "#trigger-source-cells", 0, &args);
-+	if (err || WARN_ON(!args.np)) {
-+		dev_err(dev, "Failed to get trigger source phandle: %d\n", err);
-+		return;
-+	}
-+
-+	netdev = of_find_net_device_by_node(args.np);
-+	if (netdev) {
-+		device_name_store(dev, NULL, netdev->name, strlen(netdev->name) + 1);
-+	}
-+
-+	of_node_put(args.np);
-+}
-+
- static int netdev_trig_activate(struct led_classdev *led_cdev)
- {
- 	struct led_netdev_data *trigger_data;
-@@ -415,6 +439,8 @@ static int netdev_trig_activate(struct led_classdev *led_cdev)
+ additionalProperties: true
  
- 	led_set_trigger_data(led_cdev, trigger_data);
- 
-+	netdev_trig_of_init(led_cdev);
-+
- 	rc = register_netdevice_notifier(&trigger_data->notifier);
- 	if (rc)
- 		kfree(trigger_data);
+ ...
 -- 
 2.34.1
 
