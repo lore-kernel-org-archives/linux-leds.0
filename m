@@ -2,117 +2,85 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E140FC433EF
-	for <linux-leds@archiver.kernel.org>; Thu,  5 May 2022 09:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA3FC4332F
+	for <linux-leds@archiver.kernel.org>; Thu,  5 May 2022 12:17:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354658AbiEEJy0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 5 May 2022 05:54:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37408 "EHLO
+        id S1376481AbiEEMVX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 5 May 2022 08:21:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236532AbiEEJyO (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 5 May 2022 05:54:14 -0400
-Received: from mail.schwermer.no (mail.schwermer.no [49.12.228.226])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE30327FE9;
-        Thu,  5 May 2022 02:50:29 -0700 (PDT)
-X-Virus-Scanned: Yes
-From:   Sven Schwermer <sven@svenschwermer.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=svenschwermer.de;
-        s=mail; t=1651744226;
-        bh=Cju5atHZSKbs0+hWDH/edUW4chChIFgp/6aEsqfLeOU=;
-        h=From:To:Cc:Subject:In-Reply-To:References;
-        b=J8oZofZ/VXB6zqcaglqQeDMRUKvGMGXnmDyYkDb+s2f8YbL04jFqlW52WYzfDa0CL
-         gAnXpZGfEfIUGEEL9jDbKZ5PYWu7zmg0chw9kDmfQZxPxptoTrp1IsqiraBBUIZqK+
-         BfsmvLna9qIFrHSyMe5CndtwmgmdQ/KkIuO8O3VN602skYLZkdKBwUBOWh98+4wdq0
-         wUJ7cx3E5H4Li+kMwkiVFSpbCVjvDtslnIc4CcqRG5cWNLOiFY3MuItM/rJsC0iPkY
-         NPv0sVEHrLLgJ9GnwLa/VePrEisY+83s1S2LqcwPHjmvDTRYkufPhMkOF10BOuhka9
-         3u/gueJt9dr/A==
-To:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pavel@ucw.cz, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org
-Cc:     Sven Schwermer <sven.schwermer@disruptive-technologies.com>,
-        schuchmann@schleissheimer.de
-Subject: [PATCH v3 1/2] dt-bindings: leds: Add multi-color default-intensities property
-Date:   Thu,  5 May 2022 11:50:08 +0200
-Message-Id: <eef2dba9633a860063527628a72f6a4523aaf6cd.1651744128.git.sven.schwermer@disruptive-technologies.com>
-In-Reply-To: <20220502204616.GA27288@ucw.cz>
-References: <20220502204616.GA27288@ucw.cz>
-Mime-Version: 1.0
+        with ESMTP id S1355567AbiEEMVW (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 5 May 2022 08:21:22 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [185.16.172.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DD1E54FB5;
+        Thu,  5 May 2022 05:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+        Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+        In-Reply-To:References; bh=aZq5jO8c2cQjpNu/6cSRu86328iJHgS0Kgbi++2VnQk=; b=t9
+        rEggc8JstJI8HquYLGPX7K2BbrWG3xtlnbc5OBWAZzd6tAddeHR6S3uzlGNzNnpsgY73ujkYD4fd/
+        uo1KRNTnmkYJPUMERaGHOKvsAIS299g2tf1xHtD5/TV7sqtYzry9CVbxv8trMehsTnNzawMVoo4je
+        TzI5G6zMq8PYzt4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1nmaPw-001LnC-7I; Thu, 05 May 2022 14:17:12 +0200
+Date:   Thu, 5 May 2022 14:17:12 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        devicetree@vger.kernel.org, netdev@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        John Crispin <john@phrozen.org>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: net: add bitfield defines for Ethernet
+ speeds
+Message-ID: <YnPASLy4oWJ6BJDq@lunn.ch>
+References: <20220503153613.15320-1-zajec5@gmail.com>
+ <235aa025-7c12-f7e1-d788-9a2ef97f664f@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <235aa025-7c12-f7e1-d788-9a2ef97f664f@gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Sven Schwermer <sven.schwermer@disruptive-technologies.com>
+On Thu, May 05, 2022 at 07:19:41AM +0200, Rafał Miłecki wrote:
+> On 3.05.2022 17:36, Rafał Miłecki wrote:
+> > From: Rafał Miłecki <rafal@milecki.pl>
+> > 
+> > This allows specifying multiple Ethernet speeds in a single DT uint32
+> > value.
+> > 
+> > Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+> 
+> Ansuel please check if my patchset conflicts in any way with your work.
+> 
+> Andrew suggested to combine both but right now I don't see it as
+> necessary.
+> 
+> I'd still appreciate your review of my work. Such binding may be
+> required for some hardware controlled LEDs setup too I guess.
 
-This allows to assign intensity values to the individual sub LEDs
-(colors) at driver probe time, i.e. most commonly at kernel boot time.
-This is crucial for setting a specific color early in the boot process.
+Please look at the LED binding. It is an LED you are trying to
+control, so that is the binding you should be using.  How do you
+describe this functionality using that binding. Ansuel code will give
+you the framework to actually do the implementation within.
 
-Signed-off-by: Sven Schwermer <sven.schwermer@disruptive-technologies.com>
----
-
-Notes:
-    V1->V2: no changes
-    V2->V3:
-    - Use color-intensity mapping instead of simple intensity array
-    - Add example DTS snippet
-
- .../bindings/leds/leds-class-multicolor.yaml  | 37 +++++++++++++++++++
- 1 file changed, 37 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
-index f41d021ed677..41050de496f6 100644
---- a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
-+++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
-@@ -31,6 +31,19 @@ patternProperties:
-           include/linux/leds/common.h.
-         enum: [ 8, 9 ]
- 
-+      default-intensities:
-+        description: |
-+          This parameter, if present, sets the initial intensities of the
-+          individual colors. The format is a list of pairs, mapping an intensity
-+          value to a sub LED identified by its color.
-+        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+        items:
-+          minItems: 2
-+          maxItems: 2
-+          items:
-+            - description: color identifier (LED_COLOR_ID_*)
-+            - description: intensity value
-+
-     $ref: "common.yaml#"
- 
-     required:
-@@ -38,4 +51,28 @@ patternProperties:
- 
- additionalProperties: true
- 
-+examples:
-+  - |
-+    #include <dt-bindings/leds/common.h>
-+
-+    multi-led {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      color = <LED_COLOR_ID_RGB>;
-+      default-intensities = <LED_COLOR_ID_RED 64>,
-+                            <LED_COLOR_ID_BLUE 0>;
-+      led@0 {
-+        reg = <0>;
-+        color = <LED_COLOR_ID_RED>;
-+      };
-+      led@1 {
-+        reg = <1>;
-+        color = <LED_COLOR_ID_GREEN>;
-+      };
-+      led@2 {
-+        reg = <2>;
-+        color = <LED_COLOR_ID_BLUE>;
-+      };
-+    };
- ...
--- 
-2.36.0
-
+    Andrew
