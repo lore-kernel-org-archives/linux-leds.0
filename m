@@ -2,24 +2,24 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82434C4321E
-	for <linux-leds@archiver.kernel.org>; Sat,  7 May 2022 22:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A669AC4167E
+	for <linux-leds@archiver.kernel.org>; Sat,  7 May 2022 22:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1387588AbiEGWPV (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 7 May 2022 18:15:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42366 "EHLO
+        id S1387606AbiEGWPY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 7 May 2022 18:15:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1387598AbiEGWPU (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 7 May 2022 18:15:20 -0400
-Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [5.144.164.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4831F62C;
-        Sat,  7 May 2022 15:11:32 -0700 (PDT)
+        with ESMTP id S1387624AbiEGWPV (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 7 May 2022 18:15:21 -0400
+Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [IPv6:2001:4b7a:2000:18::171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C09A1FA47;
+        Sat,  7 May 2022 15:11:33 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 8C21D3EE89;
-        Sun,  8 May 2022 00:11:29 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 14DB13F367;
+        Sun,  8 May 2022 00:11:31 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
 To:     phone-devel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -34,12 +34,10 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Satya Priya <quic_c_skakit@quicinc.com>
-Subject: [PATCH 2/4] leds: qcom-lpg: Add PM660L configuration and compatible
-Date:   Sun,  8 May 2022 00:11:21 +0200
-Message-Id: <20220507221123.2201668-2-marijn.suijten@somainline.org>
+        Andy Gross <agross@kernel.org>
+Subject: [PATCH 4/4] arm64: dts: qcom: sdm630-nile: Add RGB status LED on the PM660L LPG
+Date:   Sun,  8 May 2022 00:11:23 +0200
+Message-Id: <20220507221123.2201668-4-marijn.suijten@somainline.org>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20220507221123.2201668-1-marijn.suijten@somainline.org>
 References: <20220507221123.2201668-1-marijn.suijten@somainline.org>
@@ -49,52 +47,66 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Inherit PM660L PMIC LPG/triled block configuration from downstream
-drivers and DT sources, consisting of a triled block with automatic
-trickle charge control and source selection, three colored led channels
-belonging to the synchronized triled block and one loose PWM channel.
+The entire Sony Nile and Ganges lineup utilize the first three channels
+(the triled channels) of the LPG block for an RGB (battery) status and
+notification indicator.
 
 Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- drivers/leds/rgb/leds-qcom-lpg.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ .../dts/qcom/sdm630-sony-xperia-nile.dtsi     | 33 +++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-index cfa3362b2457..30c12ac8eed4 100644
---- a/drivers/leds/rgb/leds-qcom-lpg.c
-+++ b/drivers/leds/rgb/leds-qcom-lpg.c
-@@ -1271,6 +1271,23 @@ static int lpg_remove(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile.dtsi b/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile.dtsi
+index 42af1fade461..f42304671520 100644
+--- a/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile.dtsi
+@@ -10,6 +10,7 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/input/gpio-keys.h>
++#include <dt-bindings/leds/common.h>
  
-+static const struct lpg_data pm660l_lpg_data = {
-+	.lut_base = 0xb000,
-+	.lut_size = 0x100,
-+
-+	.triled_base = 0xd000,
-+	.triled_has_atc_ctl = true,
-+	.triled_has_src_sel = true,
-+
-+	.num_channels = 4,
-+	.channels = (struct lpg_channel_data[]) {
-+		{ .base = 0xb100, .triled_mask = BIT(5) },
-+		{ .base = 0xb200, .triled_mask = BIT(6) },
-+		{ .base = 0xb300, .triled_mask = BIT(7) },
-+		{ .base = 0xb400 },
-+	},
-+};
-+
- static const struct lpg_data pm8916_pwm_data = {
- 	.num_channels = 1,
- 	.channels = (const struct lpg_channel_data[]) {
-@@ -1391,6 +1408,7 @@ static const struct lpg_data pm8350c_pwm_data = {
+ / {
+ 	/* required for bootloader to select correct board */
+@@ -214,6 +215,38 @@ &blsp2_uart1 {
+ 	/* HCI Bluetooth */
  };
  
- static const struct of_device_id lpg_of_table[] = {
-+	{ .compatible = "qcom,pm660l-lpg", .data = &pm660l_lpg_data },
- 	{ .compatible = "qcom,pm8150b-lpg", .data = &pm8150b_lpg_data },
- 	{ .compatible = "qcom,pm8150l-lpg", .data = &pm8150l_lpg_data },
- 	{ .compatible = "qcom,pm8350c-pwm", .data = &pm8350c_pwm_data },
++&pm660l_lpg {
++	status = "okay";
++
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	qcom,power-source = <1>;
++
++	multi-led {
++		color = <LED_COLOR_ID_RGB>;
++		function = LED_FUNCTION_STATUS;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		led@1 {
++			reg = <1>;
++			color = <LED_COLOR_ID_BLUE>;
++		};
++
++		led@2 {
++			reg = <2>;
++			color = <LED_COLOR_ID_GREEN>;
++		};
++
++		led@3 {
++			reg = <3>;
++			color = <LED_COLOR_ID_RED>;
++		};
++	};
++};
++
+ &pon_pwrkey {
+ 	status = "okay";
+ };
 -- 
 2.36.0
 
