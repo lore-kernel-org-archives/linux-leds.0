@@ -2,54 +2,23 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B555CC433F5
-	for <linux-leds@archiver.kernel.org>; Fri,  6 May 2022 16:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C2FC433EF
+	for <linux-leds@archiver.kernel.org>; Sat,  7 May 2022 06:37:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1443777AbiEFQ2l (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 6 May 2022 12:28:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34652 "EHLO
+        id S1383494AbiEGGks (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 7 May 2022 02:40:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348275AbiEFQ2k (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 6 May 2022 12:28:40 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A3306EB0A
-        for <linux-leds@vger.kernel.org>; Fri,  6 May 2022 09:24:56 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-edf3b6b0f2so7301509fac.9
-        for <linux-leds@vger.kernel.org>; Fri, 06 May 2022 09:24:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=MJNi1mbSdob7+bt9cuYWkkcjxTPYJe7q5XVeyN3mbE0=;
-        b=hxbKsuJmP/J8sgmfTX8++VCbHxMkma3TtffIjfk/un+FrHSMF/iF8j5Ass5FMe/NBi
-         nPb4sbJeG7pvEDbr5U2Z1uLMlkQ4CXen/ReSeNCjpjj46WW1MKMZyU1unDGH6JZDUzPt
-         5HH1O5CXOIjZqPst9/Vvf6ZSQt7KHZSbZHWPUL53o3tQ8Ra+qG0bUQ3o+64XOEpQ/Vti
-         CHj8Xc5vLsVd6+225+OrnS6K6CPUPIqzTc+tVXwKj6mKDEg+AAh3kkrKe/ez9Xy6gGND
-         6+NdBlwjQXW5yNdLIwICdIUw7JXpLg2YvwXdDfNI1Z6ZhiA8p5tMJCEBw/G6xHYEZ057
-         aT2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=MJNi1mbSdob7+bt9cuYWkkcjxTPYJe7q5XVeyN3mbE0=;
-        b=YXCbMSUJId1970lPjO4BA0qOsAOmWG0X0uvPmyWmcpUSPF1g8Z4oiX/4SIDdlpTHYn
-         u6+aKv0fJFp6jciFuCNnPF61l1kP5sOkNh/tevKIRJVjzawVjUAurReVml8o3kgfaUQz
-         Dusd2/VxZckMuInpiKGp6hKVu+qmWP+3mxqGpaU3mgyVyucq07gARxTsMUEWnO5y0Y+C
-         1UdYycm9syoWdYc1cOreMH218clyjsexy6MJuGSdGoqpBDBUG0SmX3OLPx4wQMtHQ9fM
-         tnMw4kxkdvfmdPNz3BgGfiKdwNccsdcwOBR62jHbUZMxEDbZ+67FKqduHT2lHNsDvJRE
-         VmlA==
-X-Gm-Message-State: AOAM530MkrFGAoA7SpZRrfaIxYdxC+hSiDR4kcOcC/Fceb/tB8KPlEeE
-        r0Fs4n2+4GzesohQnP+SIfXUGw==
-X-Google-Smtp-Source: ABdhPJzRPABBMXOCHct7MUr2JDfjknHPxMsUWZxuLfH7VhK2lkNZtaisjFtIeEQ941TOXMLluM+umQ==
-X-Received: by 2002:a05:6870:414d:b0:ed:5585:7436 with SMTP id r13-20020a056870414d00b000ed55857436mr1682804oad.29.1651854295970;
-        Fri, 06 May 2022 09:24:55 -0700 (PDT)
-Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id a204-20020acab1d5000000b00325643bce40sm1832260oif.0.2022.05.06.09.24.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 May 2022 09:24:55 -0700 (PDT)
-Date:   Fri, 6 May 2022 09:27:29 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Pavel Machek <pavel@ucw.cz>
+        with ESMTP id S229980AbiEGGks (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 7 May 2022 02:40:48 -0400
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39FD940E6B;
+        Fri,  6 May 2022 23:37:02 -0700 (PDT)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 789541C0BA6; Sat,  7 May 2022 08:37:00 +0200 (CEST)
+Date:   Sat, 7 May 2022 08:36:59 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>,
         Lee Jones <lee.jones@linaro.org>, Luca Weiss <luca@z3ntu.xyz>,
@@ -60,86 +29,95 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         linux-doc@vger.kernel.org, linux-pwm@vger.kernel.org,
         linux-arm-msm@vger.kernel.org
 Subject: Re: [PATCH v14 2/2] leds: Add driver for Qualcomm LPG
-Message-ID: <YnVMcaRV86jZslhd@ripper>
+Message-ID: <20220507063659.GA6968@amd>
 References: <20220303214300.59468-1-bjorn.andersson@linaro.org>
  <20220303214300.59468-2-bjorn.andersson@linaro.org>
  <20220504073009.GC8204@duo.ucw.cz>
  <YnKTAvQc6eDxTl14@ripper>
  <20220506160901.GA1199@bug>
+ <YnVMcaRV86jZslhd@ripper>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
 Content-Disposition: inline
-In-Reply-To: <20220506160901.GA1199@bug>
+In-Reply-To: <YnVMcaRV86jZslhd@ripper>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Fri 06 May 09:09 PDT 2022, Pavel Machek wrote:
 
-> Hi!
-> 
-> > > > +    "255 500 0 500"
-> > > > +
-> > > > +        ^
-> > > > +        |
-> > > > +    255 +----+    +----+
-> > > > +        |    |    |    |      ...
-> > > > +      0 |    +----+    +----
-> > > > +        +---------------------->
-> > > > +        0    5   10   15     time (100ms)
-> > > > +
-> > > > +The LPG supports specifying a longer hold-time for the first and last element
-> > > > +in the pattern, the so called "low pause" and "high pause".
-> > > 
-> > > Please see
-> > > Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt . This
-> > > should really be compatible.
-> > 
-> > Unfortunately the LPG hardware only supports fixed duration (except for
-> > the ability to hold/extend the first and last duration in the pattern)
-> > and it also does not support gradual transition between the brightness
-> > levels.
-> 
-> Ok.
-> 
-> > As such the pattern sequence provided to hw_pattern looks to be the
-> > smae, but I don't see that it can be made compatible.
-> > 
-> > > Can I get either patch to disable pattern infrastructure for now or to
-> > > get it compatible?
-> > > 
-> > 
-> > I'd be happy to get this updated to your liking, but this was one of the
-> > drivers we discussed when we introduced the pattern trigger and led to
-> > the conclusion that we need the ability to do hw-specific patterns.
-> > 
-> > As such this document provides the hardware specific documentation, as
-> > we describe under "hw_pattern" in
-> > Documentation/ABI/testing/sysfs-class-led-trigger-pattern.
-> > 
-> > Please advice on what you would like me to do.
-> 
-> I'd like you to use same format leds-trigger-pattern describes.
-> 
-> If someone passes "255 500 0 500", that's requesting gradual transitions and
-> your hw can not do that. You return -EINVAL.
-> 
-> If someone wants that kind of blinking, they need to pass "255 0 255 500 0 0 0 500".
-> 
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So the section under hw_pattern in sysfs-class-led-trigger-pattern that
-says:
+Hi!
 
-"Since different LED hardware can have different semantics of
-hardware patterns, each driver is expected to provide its own
-description for the hardware patterns in their documentation
-file at Documentation/leds/."
+> > > As such the pattern sequence provided to hw_pattern looks to be the
+> > > smae, but I don't see that it can be made compatible.
+> > >=20
+> > > > Can I get either patch to disable pattern infrastructure for now or=
+ to
+> > > > get it compatible?
+> > > >=20
+> > >=20
+> > > I'd be happy to get this updated to your liking, but this was one of =
+the
+> > > drivers we discussed when we introduced the pattern trigger and led to
+> > > the conclusion that we need the ability to do hw-specific patterns.
+> > >=20
+> > > As such this document provides the hardware specific documentation, as
+> > > we describe under "hw_pattern" in
+> > > Documentation/ABI/testing/sysfs-class-led-trigger-pattern.
+> > >=20
+> > > Please advice on what you would like me to do.
+> >=20
+> > I'd like you to use same format leds-trigger-pattern describes.
+> >=20
+> > If someone passes "255 500 0 500", that's requesting gradual transition=
+s and
+> > your hw can not do that. You return -EINVAL.
+> >=20
+> > If someone wants that kind of blinking, they need to pass "255 0 255 50=
+0 0 0 0 500".
+> >=20
+>=20
+> So the section under hw_pattern in sysfs-class-led-trigger-pattern that
+> says:
+>=20
+> "Since different LED hardware can have different semantics of
+> hardware patterns, each driver is expected to provide its own
+> description for the hardware patterns in their documentation
+> file at Documentation/leds/."
+>=20
+> That doesn't apply to this piece of hardware & driver?
 
-That doesn't apply to this piece of hardware & driver?
+It applies: since your hardware can not do arbitrary patterns, you
+need description of what kinds of patterns it can do.
 
+But you should still use compatible format, so that pattern that is
+valid for hw_pattern file is valid for pattern file, too, and produces
+same result.
 
-Or is the sysfs documentation simply not reflecting what has been
-decided of how this interface should look like?
+If you believe documentation implies something else, it may need to be
+clarified.
 
-Regards,
-Bjorn
+Best regards,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--+HP7ph2BbKc20aGI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAmJ2E4sACgkQMOfwapXb+vJMFACgv1L01dasG1ImG6KRZ5gYS2iV
+eHsAn0pdBf62FwAjzmn9R2KEOJoW/1rb
+=zdUZ
+-----END PGP SIGNATURE-----
+
+--+HP7ph2BbKc20aGI--
