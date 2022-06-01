@@ -2,115 +2,82 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36714C43219
-	for <linux-leds@archiver.kernel.org>; Tue, 31 May 2022 22:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1A7C433EF
+	for <linux-leds@archiver.kernel.org>; Wed,  1 Jun 2022 06:37:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348546AbiEaWrK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 31 May 2022 18:47:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49690 "EHLO
+        id S1349925AbiFAGht (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 1 Jun 2022 02:37:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348547AbiEaWrE (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 31 May 2022 18:47:04 -0400
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCDC5AE66;
-        Tue, 31 May 2022 15:47:02 -0700 (PDT)
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-f2bb84f9edso346807fac.10;
-        Tue, 31 May 2022 15:47:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=aprzOwmeu9ofv4NArUYUbqpCw1+7K1N79lDMatDRSxY=;
-        b=0Aks7rQphnx2+d+y09s3vRW7UCMY+73AXOo66/dQo4heq+V9fBF/E+EcL0ZSh7ZibI
-         o0dQ7OOJoTse6he4dsRlxxcPhWmkaCV/z4RLJVKGsmpkTmEtXtZt93BcMZVDcuAs9tP8
-         i9UPIiL58Hikj48zlUzvEHY9DIQNFygHAPhIWvbIo1BX/zUXyib0ZGvMe/6Kb6F3yNVT
-         CHkYcBzJWcLBKQS9DEclknBCpopiqm0k92ybRJOPrRLDktp168ugrL7FHid0PEhIzR7C
-         XeUdRVXN8s11XJrcDAr7YNf8YulEM6jdgVwDGqGbtW3efYRo2qauGQ//on/LUBRxAo3I
-         jjQQ==
-X-Gm-Message-State: AOAM5328PUqGs9AijJIpZ+peD0UDDv5Uy2MgWNAHc9MnSsoggTmoI9GN
-        mQUJA480Tfao7IFGjWzjDA==
-X-Google-Smtp-Source: ABdhPJzrxihBjK98eUTkfRJDT5Ew9e/c5AjwMgz/IhfhSleaQEJbbkcrawGZcg5v4oRO3DRzsYRYvw==
-X-Received: by 2002:a05:6870:8985:b0:da:b3f:3253 with SMTP id f5-20020a056870898500b000da0b3f3253mr14896611oaq.259.1654037221882;
-        Tue, 31 May 2022 15:47:01 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id bo44-20020a05680822ac00b0032af1c6bf02sm84725oib.45.2022.05.31.15.47.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 May 2022 15:47:01 -0700 (PDT)
-Received: (nullmailer pid 2476562 invoked by uid 1000);
-        Tue, 31 May 2022 22:46:54 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     ChiaEn Wu <peterwu.pub@gmail.com>
-Cc:     jic23@kernel.org, gregkh@linuxfoundation.org, sre@kernel.org,
-        jingoohan1@gmail.com, broonie@kernel.org, deller@gmx.de,
-        alice_chen@richtek.com, heikki.krogerus@linux.intel.com,
-        lars@metafoo.de, lee.jones@linaro.org, chunfeng.yun@mediatek.com,
-        linux-pm@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        chiaen_wu@richtek.com, linux-iio@vger.kernel.org,
-        linux@roeck-us.net, daniel.thompson@linaro.org, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        pavel@ucw.cz, linux-usb@vger.kernel.org,
-        linux-leds@vger.kernel.org, matthias.bgg@gmail.com,
-        cy_huang@richtek.com
-In-Reply-To: <20220531111900.19422-7-peterwu.pub@gmail.com>
-References: <20220531111900.19422-1-peterwu.pub@gmail.com> <20220531111900.19422-7-peterwu.pub@gmail.com>
-Subject: Re: [RESEND 06/14] dt-bindings: mfd: Add Mediatek MT6370 binding
-Date:   Tue, 31 May 2022 17:46:54 -0500
-Message-Id: <1654037214.477381.2476559.nullmailer@robh.at.kernel.org>
+        with ESMTP id S1349924AbiFAGhs (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 1 Jun 2022 02:37:48 -0400
+Received: from mail.schwermer.no (mail.schwermer.no [49.12.228.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C41757B16
+        for <linux-leds@vger.kernel.org>; Tue, 31 May 2022 23:37:45 -0700 (PDT)
+X-Virus-Scanned: Yes
+From:   Sven Schwermer <sven@svenschwermer.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=svenschwermer.de;
+        s=mail; t=1654065462;
+        bh=xp7razw0uPvC8xFIGGr8I3jFQ4nfElAHDfBd4aGLeSI=;
+        h=From:To:Cc:Subject;
+        b=cnhvOyeK83flvOwAr7OzAl3KqkJ3LLaZKQK8eyj9iyXK71pplY1K2m+DcLolJzwCU
+         TnT74LAVV8thehm2wBDYma1/m+1D1n9ePaW5+tuHWcL6KXnsIqUVkTblOIm4dCW6G/
+         5q5KWqNLsO3UCEqxonhyH4POcbxXBYYuG/3/QBYIOZ35ctgrQ3yeOY477FqnjgtmTc
+         abVX1Pid79u4imx6qGDU9E50516gYo1+mSlkiOxYHrQyxRFHUnSHv3k4PD5sSZxutN
+         5DpSG6cVfFJGZ890cmbPUzyrdTahPMGWqk0u6bpiQXFoyuSCxEVwrGQI78dreLXwj3
+         jD8CM8pz1r4Ng==
+To:     linux-leds@vger.kernel.org
+Cc:     Sven Schwermer <sven.schwermer@disruptive-technologies.com>,
+        jacek.anaszewski@gmail.com, schuchmann@schleissheimer.de,
+        pavel@ucw.cz
+Subject: [PATCH RESEND v2] led: multicolor: Fix intensity setting while SW blinking
+Date:   Wed,  1 Jun 2022 08:37:35 +0200
+Message-Id: <20220601063735.123863-1-sven@svenschwermer.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Tue, 31 May 2022 19:18:52 +0800, ChiaEn Wu wrote:
-> From: ChiYuan Huang <cy_huang@richtek.com>
-> 
-> Add Mediatek MT6370 binding documentation.
-> 
-> Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
-> ---
->  .../bindings/mfd/mediatek,mt6370.yaml         | 282 ++++++++++++++++++
->  .../dt-bindings/iio/adc/mediatek,mt6370_adc.h |  18 ++
->  include/dt-bindings/mfd/mediatek,mt6370.h     |  83 ++++++
->  3 files changed, 383 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6370.yaml
->  create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6370_adc.h
->  create mode 100644 include/dt-bindings/mfd/mediatek,mt6370.h
-> 
+From: Sven Schwermer <sven.schwermer@disruptive-technologies.com>
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+When writing to the multi_intensity file, don't unconditionally call
+led_set_brightness. By only doing this if blinking is inactive we
+prevent blinking from stopping if the blinking is in its off phase while
+the file is written.
 
-yamllint warnings/errors:
+Instead, if blinking is active, the changed intensity values are applied
+upon the next blink. This is consistent with changing the brightness on
+monochrome LEDs with active blinking.
 
-dtschema/dtc warnings/errors:
-./Documentation/devicetree/bindings/mfd/mediatek,mt6370.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/power/supply/mediatek,mt6370-charger.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/mediatek,mt6370.example.dtb: mt6370@34: charger: False schema does not allow {'compatible': ['mediatek,mt6370-charger'], 'interrupts': [[48], [68], [6]], 'interrupt-names': ['attach_i', 'uvp_d_evt', 'mivr'], 'io-channels': [[1, 5]], 'usb-otg-vbus': {'regulator-compatible': ['mt6370,otg-vbus'], 'regulator-name': ['usb-otg-vbus'], 'regulator-min-microvolt': [[4350000]], 'regulator-max-microvolt': [[5800000]], 'regulator-min-microamp': [[500000]], 'regulator-max-microamp': [[3000000]], 'phandle': [[2]]}}
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/mediatek,mt6370.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/mediatek,mt6370.example.dtb: mt6370@34: tcpc: False schema does not allow {'compatible': ['mediatek,mt6370-tcpc'], 'interrupts-extended': [[4294967295, 4, 8]], 'connector': {'compatible': ['usb-c-connector'], 'label': ['USB-C'], 'vbus-supply': [[2]], 'data-role': ['dual'], 'power-role': ['dual'], 'try-power-role': ['sink'], 'source-pdos': [[570527844]], 'sink-pdos': [[570527944]], 'op-sink-microwatt': [[10000000]], 'ports': {'#address-cells': [[1]], '#size-cells': [[0]], 'port@0': {'reg': [[0]], 'endpoint': {'remote-endpoint': [[4294967295]]}}, 'port@1': {'reg': [[1]], 'endpoint': {'remote-endpoint': [[4294967295]]}}, 'port@2': {'reg': [[2]], 'endpoint': {'remote-endpoint': [[4294967295]]}}}}}
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/mediatek,mt6370.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/mediatek,mt6370.example.dtb: mt6370@34: indicator: False schema does not allow {'compatible': ['mediatek,mt6370-indicator'], '#address-cells': [[1]], '#size-cells': [[0]], 'multi-led@0': {'reg': [[0]], 'function': ['indicator'], 'color': [[9]], 'led-max-microamp': [[24000]], '#address-cells': [[1]], '#size-cells': [[0]], 'mediatek,soft-start': [[3]], 'led@0': {'reg': [[0]], 'color': [[1]]}, 'led@1': {'reg': [[1]], 'color': [[2]]}, 'led@2': {'reg': [[2]], 'color': [[3]]}}, 'led@3': {'reg': [[3]], 'function': ['indicator'], 'color': [[0]], 'led-max-microamp': [[6000]]}}
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/mediatek,mt6370.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/mediatek,mt6370.example.dtb: mt6370@34: flashlight: False schema does not allow {'compatible': ['mediatek,mt6370-flashlight'], '#address-cells': [[1]], '#size-cells': [[0]], 'led@0': {'reg': [[0]], 'led-sources': [[0]], 'function': ['flash'], 'color': [[0]], 'function-enumerator': [[1]], 'led-max-microamp': [[200000]], 'flash-max-microamp': [[500000]], 'flash-max-timeout-us': [[1248000]]}, 'led@1': {'reg': [[1]], 'led-sources': [[1]], 'function': ['flash'], 'color': [[0]], 'function-enumerator': [[2]], 'led-max-microamp': [[200000]], 'flash-max-microamp': [[500000]], 'flash-max-timeout-us': [[1248000]]}}
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/mediatek,mt6370.yaml
-Documentation/devicetree/bindings/mfd/mediatek,mt6370.example.dtb:0:0: /example-0/i2c/mt6370@34/charger: failed to match any schema with compatible: ['mediatek,mt6370-charger']
-Documentation/devicetree/bindings/mfd/mediatek,mt6370.example.dtb:0:0: /example-0/i2c/mt6370@34/indicator: failed to match any schema with compatible: ['mediatek,mt6370-indicator']
-Documentation/devicetree/bindings/mfd/mediatek,mt6370.example.dtb:0:0: /example-0/i2c/mt6370@34/flashlight: failed to match any schema with compatible: ['mediatek,mt6370-flashlight']
-Documentation/devicetree/bindings/mfd/mediatek,mt6370.example.dtb:0:0: /example-0/i2c/mt6370@34/tcpc: failed to match any schema with compatible: ['mediatek,mt6370-tcpc']
+Suggested-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Tested-by: Sven Schuchmann <schuchmann@schleissheimer.de>
+Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Signed-off-by: Sven Schwermer <sven.schwermer@disruptive-technologies.com>
+---
 
-doc reference errors (make refcheckdocs):
+Notes:
+    V1->V2: Change title, add tags
 
-See https://patchwork.ozlabs.org/patch/
+ drivers/leds/led-class-multicolor.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+diff --git a/drivers/leds/led-class-multicolor.c b/drivers/leds/led-class-multicolor.c
+index e317408583df..5b1479b5d32c 100644
+--- a/drivers/leds/led-class-multicolor.c
++++ b/drivers/leds/led-class-multicolor.c
+@@ -59,7 +59,8 @@ static ssize_t multi_intensity_store(struct device *dev,
+ 	for (i = 0; i < mcled_cdev->num_colors; i++)
+ 		mcled_cdev->subled_info[i].intensity = intensity_value[i];
+ 
+-	led_set_brightness(led_cdev, led_cdev->brightness);
++	if (!test_bit(LED_BLINK_SW, &led_cdev->work_flags))
++		led_set_brightness(led_cdev, led_cdev->brightness);
+ 	ret = size;
+ err_out:
+ 	mutex_unlock(&led_cdev->led_access);
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+base-commit: 210e04ff768142b96452030c4c2627512b30ad95
+-- 
+2.36.1
 
