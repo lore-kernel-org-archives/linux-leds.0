@@ -2,138 +2,153 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 976D4CCA473
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Jun 2022 14:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 683C5C43334
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Jun 2022 16:41:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239862AbiFFO32 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 6 Jun 2022 10:29:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35592 "EHLO
+        id S231296AbiFFQl4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 6 Jun 2022 12:41:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239844AbiFFO31 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Jun 2022 10:29:27 -0400
+        with ESMTP id S230514AbiFFQl4 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Jun 2022 12:41:56 -0400
 Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFC5FC7E3D;
-        Mon,  6 Jun 2022 07:29:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E76DF8B;
+        Mon,  6 Jun 2022 09:41:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654525766; x=1686061766;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6gFuK9m/CegkpD/g+gX8hVz/ChSurSOe3kM0kYWm6aE=;
-  b=eMC426nikFbLleMpcDTh7f0evVLQFOc0EOD+mur79kxbvG6TELXmV8Aj
-   nKCCefZWHVfjqCAiqyuxa6AoT7ForInPA8yVKBMPw0N5veqmcsRD0MHpG
-   WfnXh0EIX4qO/xF58JQ14SySJcla3/QhtBM00+2CbGX7MYqJ01fHG4pCM
-   OmHgeLZTj9y3aiEgmKrcwqGTCAd27vIFsy+QS7RkB6xTPSlM/eYjbTEvY
-   jIYL5BuSi5oE4+2LfaM97VvzDcnwrsHa0onSb5vU/EInWkCdLieVMka/T
-   D5FyRsO5GakZz4AcB75dugRKVfr3X7rX7Hio/NQkBb6988DLPTnDDPa6P
+  t=1654533714; x=1686069714;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=RI6UqOh9xYxAqMF8vYRnoqK0g1vUqPho6h1TZ3tsMs0=;
+  b=bKyKxpFTr8JCaLEaBiVouN7EWZFr0Us16prKB3fJBifWg8wFJR6IXnDl
+   lIycI/p1K/l5r062zHjleG0TPR+Mi8sQyzpVGM9xvU525ZR8NPhWZyAx9
+   RCiGVubp0nV5JvoY8rv7/iD5B4yppw0Ps+3RUV0Nq15lWjuWeB+Z6LbjW
+   rqKt90BGoUU+9xacVwwCCcOMqL6ozKBAGtqoMytyg6Cw82tQoPc6fBwCl
+   Gridm6KbiseW3mlYt8WEBnK9iRn9ZbsEE6OZYHsugfH4/Yeyrtt6cRDdv
+   +JMvT39SgGJ7rcG48sZct/kkiFxLEeCH72B425UjKuDXVq2X3ch1pfP4S
    w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10369"; a="275436363"
+X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="275446378"
 X-IronPort-AV: E=Sophos;i="5.91,280,1647327600"; 
-   d="scan'208";a="275436363"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2022 07:29:26 -0700
+   d="scan'208";a="275446378"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2022 09:41:54 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.91,280,1647327600"; 
-   d="scan'208";a="554471422"
-Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 06 Jun 2022 07:29:19 -0700
-Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nyDjK-000Cnd-JV;
-        Mon, 06 Jun 2022 14:29:18 +0000
-Date:   Mon, 6 Jun 2022 22:28:27 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     ChiaEn Wu <peterwu.pub@gmail.com>, lee.jones@linaro.org,
-        daniel.thompson@linaro.org, jingoohan1@gmail.com, pavel@ucw.cz,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        matthias.bgg@gmail.com, sre@kernel.org, chunfeng.yun@mediatek.com,
-        gregkh@linuxfoundation.org, jic23@kernel.org, lars@metafoo.de,
-        lgirdwood@gmail.com, broonie@kernel.org, linux@roeck-us.net,
-        heikki.krogerus@linux.intel.com, deller@gmx.de
-Cc:     kbuild-all@lists.01.org, cy_huang@richtek.com,
-        alice_chen@richtek.com, chiaen_wu@richtek.com,
-        peterwu.pub@gmail.com, dri-devel@lists.freedesktop.org,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-iio@vger.kernel.org
-Subject: Re: [RESEND 12/14] leds: mt6370: Add Mediatek MT6370 Indicator
- support
-Message-ID: <202206062207.q0S8wxpj-lkp@intel.com>
-References: <20220531111900.19422-13-peterwu.pub@gmail.com>
+   d="scan'208";a="906623914"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 06 Jun 2022 09:41:47 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 7CE85A97; Mon,  6 Jun 2022 19:41:50 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Tony Luck <tony.luck@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Wolfram Sang <wsa@kernel.org>, Jean Delvare <jdelvare@suse.de>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Henning Schild <henning.schild@siemens.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Yong <jonathan.yong@intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Tyser <ptyser@xes-inc.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Mark Gross <markgross@kernel.org>
+Subject: [PATCH v6 03/12] mfd: lpc_ich: Factor out lpc_ich_enable_spi_write()
+Date:   Mon,  6 Jun 2022 19:41:29 +0300
+Message-Id: <20220606164138.66535-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220606164138.66535-1-andriy.shevchenko@linux.intel.com>
+References: <20220606164138.66535-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220531111900.19422-13-peterwu.pub@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi ChiaEn,
+Factor out duplicate code to lpc_ich_enable_spi_write() helper function.
 
-Thank you for the patch! Yet something to improve:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Henning Schild <henning.schild@siemens.com>
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/mfd/lpc_ich.c | 31 ++++++++++++++-----------------
+ 1 file changed, 14 insertions(+), 17 deletions(-)
 
-[auto build test ERROR on pavel-leds/for-next]
-[also build test ERROR on lee-mfd/for-mfd-next lee-backlight/for-backlight-next v5.19-rc1 next-20220606]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/ChiaEn-Wu/Add-Mediatek-MT6370-PMIC-support/20220531-211432
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-leds.git for-next
-config: nios2-allyesconfig (https://download.01.org/0day-ci/archive/20220606/202206062207.q0S8wxpj-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 11.3.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/4de9e5ff11aeade155aa744bcaf9efca82b3d4ee
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review ChiaEn-Wu/Add-Mediatek-MT6370-PMIC-support/20220531-211432
-        git checkout 4de9e5ff11aeade155aa744bcaf9efca82b3d4ee
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=nios2 SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   drivers/leds/leds-mt6370.c: In function 'mt6370_check_vendor_info':
->> drivers/leds/leds-mt6370.c:873:15: error: implicit declaration of function 'FIELD_GET'; did you mean 'FOLL_GET'? [-Werror=implicit-function-declaration]
-     873 |         vid = FIELD_GET(MT6370_VENID_MASK, devinfo);
-         |               ^~~~~~~~~
-         |               FOLL_GET
-   cc1: some warnings being treated as errors
-
-
-vim +873 drivers/leds/leds-mt6370.c
-
-   863	
-   864	static int mt6370_check_vendor_info(struct mt6370_priv *priv)
-   865	{
-   866		unsigned int devinfo, vid;
-   867		int ret;
-   868	
-   869		ret = regmap_read(priv->regmap, MT6370_REG_DEV_INFO, &devinfo);
-   870		if (ret)
-   871			return ret;
-   872	
- > 873		vid = FIELD_GET(MT6370_VENID_MASK, devinfo);
-   874		if (vid == 0x9 || vid == 0xb) {
-   875			priv->reg_fields = mt6372_reg_fields;
-   876			priv->ranges = mt6372_led_ranges;
-   877			priv->is_mt6372 = true;
-   878		} else {
-   879			priv->reg_fields = common_reg_fields;
-   880			priv->ranges = common_led_ranges;
-   881		}
-   882	
-   883		return 0;
-   884	}
-   885	
-
+diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich.c
+index 9ffab9aafd81..d9175cb8a2d5 100644
+--- a/drivers/mfd/lpc_ich.c
++++ b/drivers/mfd/lpc_ich.c
+@@ -1100,35 +1100,32 @@ static bool lpc_ich_byt_set_writeable(void __iomem *base, void *data)
+ 	return val & BYT_BCR_WPD;
+ }
+ 
+-static bool lpc_ich_lpt_set_writeable(void __iomem *base, void *data)
++static bool lpc_ich_set_writeable(struct pci_bus *bus, unsigned int devfn)
+ {
+-	struct pci_dev *pdev = data;
+ 	u32 bcr;
+ 
+-	pci_read_config_dword(pdev, BCR, &bcr);
++	pci_bus_read_config_dword(bus, devfn, BCR, &bcr);
+ 	if (!(bcr & BCR_WPD)) {
+ 		bcr |= BCR_WPD;
+-		pci_write_config_dword(pdev, BCR, bcr);
+-		pci_read_config_dword(pdev, BCR, &bcr);
++		pci_bus_write_config_dword(bus, devfn, BCR, bcr);
++		pci_bus_read_config_dword(bus, devfn, BCR, &bcr);
+ 	}
+ 
+ 	return bcr & BCR_WPD;
+ }
+ 
+-static bool lpc_ich_bxt_set_writeable(void __iomem *base, void *data)
++static bool lpc_ich_lpt_set_writeable(void __iomem *base, void *data)
+ {
+-	unsigned int spi = PCI_DEVFN(13, 2);
+-	struct pci_bus *bus = data;
+-	u32 bcr;
++	struct pci_dev *pdev = data;
+ 
+-	pci_bus_read_config_dword(bus, spi, BCR, &bcr);
+-	if (!(bcr & BCR_WPD)) {
+-		bcr |= BCR_WPD;
+-		pci_bus_write_config_dword(bus, spi, BCR, bcr);
+-		pci_bus_read_config_dword(bus, spi, BCR, &bcr);
+-	}
++	return lpc_ich_set_writeable(pdev->bus, pdev->devfn);
++}
+ 
+-	return bcr & BCR_WPD;
++static bool lpc_ich_bxt_set_writeable(void __iomem *base, void *data)
++{
++	struct pci_dev *pdev = data;
++
++	return lpc_ich_set_writeable(pdev->bus, PCI_DEVFN(13, 2));
+ }
+ 
+ static int lpc_ich_init_spi(struct pci_dev *dev)
+@@ -1185,7 +1182,7 @@ static int lpc_ich_init_spi(struct pci_dev *dev)
+ 			res->end = res->start + SPIBASE_APL_SZ - 1;
+ 
+ 			info->set_writeable = lpc_ich_bxt_set_writeable;
+-			info->data = bus;
++			info->data = dev;
+ 		}
+ 
+ 		pci_bus_write_config_byte(bus, p2sb, 0xe1, 0x1);
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.35.1
+
