@@ -2,152 +2,76 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77681C43334
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Jun 2022 17:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD06C433EF
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Jun 2022 19:44:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229471AbiFFROH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 6 Jun 2022 13:14:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56320 "EHLO
+        id S232621AbiFFTos (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 6 Jun 2022 15:44:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229831AbiFFRNs (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Jun 2022 13:13:48 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67B793878A;
-        Mon,  6 Jun 2022 10:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654535076; x=1686071076;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=8B3oBa5J+/nZtfBbVHEcmqTofXo8TT8r9m6GWKF4qqA=;
-  b=VOXLQdbqEmDOjfQLktWJcGsVLYc1dwvVlie7eG5SUvbUDdvn9gyVgaPj
-   NVIJWWV9F6GN8AS54gAf9qZGQdzBEONDo4/LHw125sVOwcugo/sOnV7YD
-   XzwHpbBeKGqMGcVCxRdgN8cED4XCGmPpiiL6OjZKwqgoUqVCGtZmJyF8e
-   n2bE7jOAo3vR9rmJnSsgUqwO+b5tDL9pZjo3wp+BiiZbLwJrYo974aUST
-   0FsnKdTaaVDmmYCtSqFaLd+bpplGAwVxAuJki9f/rK3taaSyfjlLHcEto
-   NAU/lLHBW7DZqQIHply7dTwWsUownZin9C8saFPr/hfOW8LdeBvPEs6ok
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="277055858"
-X-IronPort-AV: E=Sophos;i="5.91,280,1647327600"; 
-   d="scan'208";a="277055858"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2022 09:42:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,280,1647327600"; 
-   d="scan'208";a="709122657"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jun 2022 09:41:55 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E430A11FA; Mon,  6 Jun 2022 19:41:50 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Tony Luck <tony.luck@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Wolfram Sang <wsa@kernel.org>, Jean Delvare <jdelvare@suse.de>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Henning Schild <henning.schild@siemens.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Yong <jonathan.yong@intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Tyser <ptyser@xes-inc.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Mark Gross <markgross@kernel.org>
-Subject: [PATCH v6 11/12] platform/x86: simatic-ipc: drop custom P2SB bar code
-Date:   Mon,  6 Jun 2022 19:41:37 +0300
-Message-Id: <20220606164138.66535-12-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220606164138.66535-1-andriy.shevchenko@linux.intel.com>
-References: <20220606164138.66535-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S232628AbiFFTor (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Jun 2022 15:44:47 -0400
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 926AD26EE
+        for <linux-leds@vger.kernel.org>; Mon,  6 Jun 2022 12:44:45 -0700 (PDT)
+Received: by mail-oi1-x22e.google.com with SMTP id s124so2937599oia.0
+        for <linux-leds@vger.kernel.org>; Mon, 06 Jun 2022 12:44:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
+         :subject:to;
+        bh=G0s9EvK9A5j5jro8iyUi5/Ke5ICziVLB9PSRs9EAj4g=;
+        b=hUP3AyLWcII1jU/38fRFnfKqyqfmKEc9qI+hlI7ikDhyY2bjlVB5vCV7BySY2ktEuL
+         u7EfkpZRlCep9Z/DF440GwsfgW+xQeRzDH3U14cpDxTIgDN/jeJfEhaLdv+uSvSwWJ4N
+         DykcvePs5dV24iZmueaG4njvIBUSWiOmK0vy0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from
+         :user-agent:date:message-id:subject:to;
+        bh=G0s9EvK9A5j5jro8iyUi5/Ke5ICziVLB9PSRs9EAj4g=;
+        b=v+dYgaRNvP+DA+A8YREHDwSAgfdeFXMJTaPsIUkV9bNQjtZYSQa/eqWswJzopA9lB/
+         ZQtS+dwS/RxgGMzX5s0T8v7l9CtN9WV7DLQsAnilBPncBny2UYxor4F9yr60/eCHCu1w
+         68RmLmW5YQhlpwB2eebgPncY3VczoVc4FsC9LK0H+HU6NH2IGc6rL4kQVigN07uPMPQ7
+         saLHs7FKdzOyywq8nb5C0cnOjhIIwUTGcg4oxi0YLCwzbJ0X5EQthfRIjm/oPjzufzLg
+         HLt2TL6a4lR+SYbkuZBJ0DFD3i7mzHJ8RJE2EJnTu67UnPMHgFPOIAH9CpXIHeHb73FO
+         GgVQ==
+X-Gm-Message-State: AOAM530xAsCOxD9ZF2GwYb8hRNodgK4GbRKjJRhdSHuO5wdrK9tpaBTc
+        qrxHkZ8Om7Gc60gN+mdKZZGkbN2LpNhQezlJdlT1Yg==
+X-Google-Smtp-Source: ABdhPJw4SXahKDGiLw6/yFgP9Er4tVXg0tDksdpE//wZ23cot1dq0FtgQ/4rLO8A7BnbpG+36/7yPgXnNjj9X/47njw=
+X-Received: by 2002:a05:6808:1703:b0:32e:851e:7f81 with SMTP id
+ bc3-20020a056808170300b0032e851e7f81mr5204846oib.63.1654544684903; Mon, 06
+ Jun 2022 12:44:44 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 6 Jun 2022 12:44:44 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220601075211.2117596-1-wanjiabing@vivo.com>
+References: <20220601075211.2117596-1-wanjiabing@vivo.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date:   Mon, 6 Jun 2022 12:44:44 -0700
+Message-ID: <CAE-0n51JAxy0_znPeAevrE2MNLpe_rKmL0pcDOu9qApcRB1seQ@mail.gmail.com>
+Subject: Re: [PATCH] leds: Add of_node_put() before return
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
+        Wan Jiabing <wanjiabing@vivo.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Henning Schild <henning.schild@siemens.com>
+Quoting Wan Jiabing (2022-06-01 00:52:03)
+> Fix following coccicheck warning:
+> drivers/leds/rgb/leds-qcom-lpg.c:1107:2-34: WARNING: Function for_each_available_child_of_node should have of_node_put() before return around line 1110.
+> drivers/leds/rgb/leds-qcom-lpg.c:1286:1-33: WARNING: Function for_each_available_child_of_node should have of_node_put() before return around line 1289.
+>
+> Early exits from for_each_available_child_of_node should decrement the
+> node reference counter.
+>
+> Fixes: 24e2d05d1b68 ("leds: Add driver for Qualcomm LPG")
+> Signed-off-by: Wan Jiabing <wanjiabing@vivo.com>
+> ---
 
-The two drivers that used to use this have been switched over to the
-common P2SB accessor, so this code is not needed any longer.
-
-Signed-off-by: Henning Schild <henning.schild@siemens.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/platform/x86/simatic-ipc.c            | 38 -------------------
- .../platform_data/x86/simatic-ipc-base.h      |  2 -
- 2 files changed, 40 deletions(-)
-
-diff --git a/drivers/platform/x86/simatic-ipc.c b/drivers/platform/x86/simatic-ipc.c
-index b599cda5ba3c..26c35e1660cb 100644
---- a/drivers/platform/x86/simatic-ipc.c
-+++ b/drivers/platform/x86/simatic-ipc.c
-@@ -101,44 +101,6 @@ static int register_platform_devices(u32 station_id)
- 	return 0;
- }
- 
--/* FIXME: this should eventually be done with generic P2SB discovery code
-- * the individual drivers for watchdogs and LEDs access memory that implements
-- * GPIO, but pinctrl will not come up because of missing ACPI entries
-- *
-- * While there is no conflict a cleaner solution would be to somehow bring up
-- * pinctrl even with these ACPI entries missing, and base the drivers on pinctrl.
-- * After which the following function could be dropped, together with the code
-- * poking the memory.
-- */
--/*
-- * Get membase address from PCI, used in leds and wdt module. Here we read
-- * the bar0. The final address calculation is done in the appropriate modules
-- */
--u32 simatic_ipc_get_membase0(unsigned int p2sb)
--{
--	struct pci_bus *bus;
--	u32 bar0 = 0;
--	/*
--	 * The GPIO memory is in bar0 of the hidden P2SB device.
--	 * Unhide the device to have a quick look at it, before we hide it
--	 * again.
--	 * Also grab the pci rescan lock so that device does not get discovered
--	 * and remapped while it is visible.
--	 * This code is inspired by drivers/mfd/lpc_ich.c
--	 */
--	bus = pci_find_bus(0, 0);
--	pci_lock_rescan_remove();
--	pci_bus_write_config_byte(bus, p2sb, 0xE1, 0x0);
--	pci_bus_read_config_dword(bus, p2sb, PCI_BASE_ADDRESS_0, &bar0);
--
--	bar0 &= ~0xf;
--	pci_bus_write_config_byte(bus, p2sb, 0xE1, 0x1);
--	pci_unlock_rescan_remove();
--
--	return bar0;
--}
--EXPORT_SYMBOL(simatic_ipc_get_membase0);
--
- static int __init simatic_ipc_init_module(void)
- {
- 	const struct dmi_system_id *match;
-diff --git a/include/linux/platform_data/x86/simatic-ipc-base.h b/include/linux/platform_data/x86/simatic-ipc-base.h
-index 62d2bc774067..39fefd48cf4d 100644
---- a/include/linux/platform_data/x86/simatic-ipc-base.h
-+++ b/include/linux/platform_data/x86/simatic-ipc-base.h
-@@ -24,6 +24,4 @@ struct simatic_ipc_platform {
- 	u8	devmode;
- };
- 
--u32 simatic_ipc_get_membase0(unsigned int p2sb);
--
- #endif /* __PLATFORM_DATA_X86_SIMATIC_IPC_BASE_H */
--- 
-2.35.1
-
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
