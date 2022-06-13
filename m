@@ -2,51 +2,51 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B13CC19F55
-	for <linux-leds@archiver.kernel.org>; Mon, 13 Jun 2022 12:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B80C4CCA481
+	for <linux-leds@archiver.kernel.org>; Mon, 13 Jun 2022 12:56:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356252AbiFMM4K (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 13 Jun 2022 08:56:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43874 "EHLO
+        id S1356295AbiFMM4L (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 13 Jun 2022 08:56:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357799AbiFMMyq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 13 Jun 2022 08:54:46 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 330F33525F;
-        Mon, 13 Jun 2022 04:13:20 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id v4so2817132plp.8;
-        Mon, 13 Jun 2022 04:13:20 -0700 (PDT)
+        with ESMTP id S1357858AbiFMMyr (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 13 Jun 2022 08:54:47 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04F2B66691;
+        Mon, 13 Jun 2022 04:13:30 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id o6-20020a17090a0a0600b001e2c6566046so8546070pjo.0;
+        Mon, 13 Jun 2022 04:13:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3rUrxuCKF0DCyd3JQ6Wgmj/kFWPhmcri1h/drUvO1G8=;
-        b=NScHQfrqgHwP521eCoPQjtpN912OcwnRwu59+PuGaZuK4oKbwDBUjye361SCshH8zi
-         4SJ2YO8q5q3EkiVx1RKPiZIS7NdVKUjk2qFE4UAEA3sSHiOIp/zFNlUlhcAXjgQufbm9
-         ocfc1+l+3Ttl0CHI8diwDwvdw2azU5OqhDmxNJ4M9+LtW4IvMjBeU5etHrDcktDyt6zg
-         DrnbP1mlldUUSTuizOcZ+lP3PYb8RwViliALPBx0lvMCW9rmn/dcBzxSSLYELFg2HqAX
-         nk7KiOFMqZW9rnFKKKPyHlTMzh9pxckh2pgh+kW+K8lqmA9/GL5Bwq65JLNIhCGIEaCb
-         16NA==
+        bh=z5uncPv1fQJ6Inryo/Jxe0YJNsHb/4JMV9KCN0gsmWE=;
+        b=pd73LQObyyEFqF+IG7iiw4+z8grK7IkliFVN1NI1zCSzrpavh92+1xH08I/6z7cWI2
+         DCPEI9Bhi+EC4sBZ3SwlBgFYk2e8i95NAQR+WuhDISBq3/evK394GCwj9fYVtNcPAqb+
+         BU83cxUnGezt+QAS7N3S7M1xZRpLdQ/dyg2JYPdExw/ZDrvwrpgrV8Zao8/WFSRg6Ho8
+         HSzJ4PXQiu3Im7bXCTRnKT5kJ0fNTLJvkqTXtXqn3XMXlJdH8xcFPhVly/H3Tgtk7nfk
+         m9QkQR/GiHRlKD2oZFn20Jt+xkfGt1/+hyL/CeZzCY+VVw+/mylbA1fdtmyOoUqtqGBZ
+         aSew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3rUrxuCKF0DCyd3JQ6Wgmj/kFWPhmcri1h/drUvO1G8=;
-        b=eqowV06bmC59mVFpYD96+msz10hIewD35HU9uqbqx+GLXFhZvLR8ZJOG+Wqtd81B09
-         hxSaz5NkTOdy+VBodwK45OqfyD7xghd/f+iJLNU3gxhh+4qt00W/QSh+E5saU43riPJ9
-         p6zKXGc8lpD17RwqXbdLM96WwLimaCO6tZ4xcJn+HLcbJlJiGLMEno3dTBXqCA62EfWK
-         qc7ocnkSU8u/A591yUkVkvFdh8tr7AYyEQcD/KNE0HXCT/UdBV7y3CqYcJikNfUyn2H9
-         P4KXET09yhpGUn/xIWsLFA+gC17q5TloLnlQlXJBG7SYcgQ/frcNx6ORRk9aSigyKshw
-         XZRw==
-X-Gm-Message-State: AOAM533sjwtDemYsGLmocpLZjcGKZEO9t1JJ5jZQtjmBqv63sKctq203
-        OpTk1/QtbCUqkvAlSPkCi4Q=
-X-Google-Smtp-Source: ABdhPJzprQEZ/2eMk0LM63G+TvmKbqbd13viJt/JjxT5owErHjYPTl3y4hl3Elfxl58+EKnlb+rwDQ==
-X-Received: by 2002:a17:90b:1e0e:b0:1e3:2eee:3ab9 with SMTP id pg14-20020a17090b1e0e00b001e32eee3ab9mr15386632pjb.158.1655118800286;
-        Mon, 13 Jun 2022 04:13:20 -0700 (PDT)
+        bh=z5uncPv1fQJ6Inryo/Jxe0YJNsHb/4JMV9KCN0gsmWE=;
+        b=i4/n+5M/U3OlCnd5j+Z6EDbZYBhiqQPwbTXtG4bLR3Ewg45tGJ9W/w4J6pQ5emOndM
+         YlK6nN8FxhG6mLkPa5hsDdjmOZovY7uFIXWRKubH6lpsvQU2RzeSC/zznSLsmh+2p8mv
+         NwUakGOMOZjEUYaShFH+UE/7RufWV1Mozv37V9KKYlyVDyeW1rS8Zve6t0kzi4BEnDj3
+         n4Bp/w8Dp7vkzS26oGPEy+2j3QB7oD5Y7L1myGJ1X9l5v4BxIEhHUNxBF1G6mzVsAfDT
+         SdrjGaMiTNTeKzcoXHlv+nrsAIDLjxYox8KcQB/XNPtCrdKALkP7qPii0ia5BVpWeUYF
+         CWpA==
+X-Gm-Message-State: AOAM5301DR55WOUPAK6fq+tDjroMgeej0D2iTeFN1yeOpR/uguuyGLYh
+        A7to8P0PZ9B8OcGlPKCK8W0=
+X-Google-Smtp-Source: ABdhPJxtj+t1BFPIao8PMCTn9jkbOr7kv/Nom62g5b2mpLyeeKbxstkd1RZq4PtIsuHU9LA7HOCilA==
+X-Received: by 2002:a17:902:9307:b0:166:41a8:abc0 with SMTP id bc7-20020a170902930700b0016641a8abc0mr55428441plb.135.1655118809203;
+        Mon, 13 Jun 2022 04:13:29 -0700 (PDT)
 Received: from RD-3580-24288.rt.l (42-72-115-109.emome-ip.hinet.net. [42.72.115.109])
-        by smtp.gmail.com with ESMTPSA id g17-20020a056a000b9100b0051b4e53c487sm5199989pfj.45.2022.06.13.04.13.16
+        by smtp.gmail.com with ESMTPSA id g17-20020a056a000b9100b0051b4e53c487sm5199989pfj.45.2022.06.13.04.13.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jun 2022 04:13:20 -0700 (PDT)
+        Mon, 13 Jun 2022 04:13:28 -0700 (PDT)
 From:   ChiaEn Wu <peterwu.pub@gmail.com>
 To:     jic23@kernel.org, lars@metafoo.de, matthias.bgg@gmail.com,
         lee.jones@linaro.org, daniel.thompson@linaro.org,
@@ -58,9 +58,9 @@ Cc:     linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org,
         szunichen@gmail.com, ChiYuan Huang <cy_huang@richtek.com>
-Subject: [PATCH v2 08/15] mfd: mt6370: Add Mediatek MT6370 support
-Date:   Mon, 13 Jun 2022 19:11:39 +0800
-Message-Id: <20220613111146.25221-9-peterwu.pub@gmail.com>
+Subject: [PATCH v2 10/15] regulator: mt6370: Add mt6370 DisplayBias and VibLDO support
+Date:   Mon, 13 Jun 2022 19:11:41 +0800
+Message-Id: <20220613111146.25221-11-peterwu.pub@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220613111146.25221-1-peterwu.pub@gmail.com>
 References: <20220613111146.25221-1-peterwu.pub@gmail.com>
@@ -72,406 +72,440 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: ChiYuan Huang <cy_huang@richtek.com>
 
-Add Mediatek MT6370 MFD support.
+Add mt6370 DisplayBias and VibLDO support.
 
 Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
 ---
- drivers/mfd/Kconfig  |  13 ++
- drivers/mfd/Makefile |   1 +
- drivers/mfd/mt6370.c | 349 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 363 insertions(+)
- create mode 100644 drivers/mfd/mt6370.c
+ drivers/regulator/Kconfig            |   8 +
+ drivers/regulator/Makefile           |   1 +
+ drivers/regulator/mt6370-regulator.c | 388 +++++++++++++++++++++++++++
+ 3 files changed, 397 insertions(+)
+ create mode 100644 drivers/regulator/mt6370-regulator.c
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 3b59456f5545..d9a7524a3e0e 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -937,6 +937,19 @@ config MFD_MT6360
- 	  PMIC part includes 2-channel BUCKs and 2-channel LDOs
- 	  LDO part includes 4-channel LDOs
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index cbe0f96ca342..dcb6866dab53 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -804,6 +804,14 @@ config REGULATOR_MT6360
+ 	  2-channel buck with Thermal Shutdown and Overload Protection
+ 	  6-channel High PSRR and Low Dropout LDO.
  
-+config MFD_MT6370
-+	tristate "Mediatek MT6370 SubPMIC"
-+	select MFD_CORE
-+	select REGMAP_I2C
-+	select REGMAP_IRQ
-+	depends on I2C
++config REGULATOR_MT6370
++	tristate "MT6370 SubPMIC Regulator"
++	depends on MFD_MT6370
 +	help
-+	  Say Y here to enable MT6370 SubPMIC functional support.
-+	  It integrate single cell battery charger with adc monitoring, RGB
-+	  LEDs, dual channel flashlight, WLED backlight driver, display bias
-+	  voltage supply, one general purpose LDO, and cc logic
-+	  controller with USBPD commmunication capable.
++	  Say Y here to enable MT6370 regulator support.
++	  This driver support the control for DisplayBias voltages and one
++	  general purpose LDO which commonly used to drive the vibrator.
 +
- config MFD_MT6397
- 	tristate "MediaTek MT6397 PMIC Support"
- 	select MFD_CORE
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 858cacf659d6..62b27125420e 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -242,6 +242,7 @@ obj-$(CONFIG_INTEL_SOC_PMIC_BXTWC)	+= intel_soc_pmic_bxtwc.o
- obj-$(CONFIG_INTEL_SOC_PMIC_CHTWC)	+= intel_soc_pmic_chtwc.o
- obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)	+= intel_soc_pmic_chtdc_ti.o
- obj-$(CONFIG_MFD_MT6360)	+= mt6360-core.o
-+obj-$(CONFIG_MFD_MT6370)	+= mt6370.o
- mt6397-objs			:= mt6397-core.o mt6397-irq.o mt6358-irq.o
- obj-$(CONFIG_MFD_MT6397)	+= mt6397.o
- obj-$(CONFIG_INTEL_SOC_PMIC_MRFLD)	+= intel_soc_pmic_mrfld.o
-diff --git a/drivers/mfd/mt6370.c b/drivers/mfd/mt6370.c
+ config REGULATOR_MT6380
+ 	tristate "MediaTek MT6380 PMIC"
+ 	depends on MTK_PMIC_WRAP
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 8d3ee8b6d41d..f1cbff21843e 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -97,6 +97,7 @@ obj-$(CONFIG_REGULATOR_MT6323)	+= mt6323-regulator.o
+ obj-$(CONFIG_REGULATOR_MT6358)	+= mt6358-regulator.o
+ obj-$(CONFIG_REGULATOR_MT6359)	+= mt6359-regulator.o
+ obj-$(CONFIG_REGULATOR_MT6360) += mt6360-regulator.o
++obj-$(CONFIG_REGULATOR_MT6370) += mt6370-regulator.o
+ obj-$(CONFIG_REGULATOR_MT6380)	+= mt6380-regulator.o
+ obj-$(CONFIG_REGULATOR_MT6397)	+= mt6397-regulator.o
+ obj-$(CONFIG_REGULATOR_MTK_DVFSRC) += mtk-dvfsrc-regulator.o
+diff --git a/drivers/regulator/mt6370-regulator.c b/drivers/regulator/mt6370-regulator.c
 new file mode 100644
-index 000000000000..6af9f73c9c0c
+index 000000000000..bc356b4bbf22
 --- /dev/null
-+++ b/drivers/mfd/mt6370.c
-@@ -0,0 +1,349 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/regulator/mt6370-regulator.c
+@@ -0,0 +1,388 @@
++// SPDX-License-Identifier: GPL-2.0+
 +
 +#include <linux/bits.h>
-+#include <linux/i2c.h>
++#include <linux/gpio/consumer.h>
 +#include <linux/interrupt.h>
 +#include <linux/kernel.h>
-+#include <linux/mfd/core.h>
 +#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
 +#include <linux/regmap.h>
++#include <linux/regulator/driver.h>
++#include <linux/regulator/machine.h>
 +
 +enum {
-+	MT6370_USBC_I2C = 0,
-+	MT6370_PMU_I2C,
-+	MT6370_MAX_I2C
++	MT6370_IDX_DSVBOOST = 0,
++	MT6370_IDX_DSVPOS,
++	MT6370_IDX_DSVNEG,
++	MT6370_IDX_VIBLDO,
++	MT6370_MAX_IDX
 +};
 +
-+#define MT6370_REG_DEV_INFO	0x100
-+#define MT6370_REG_CHG_IRQ1	0x1C0
-+#define MT6370_REG_CHG_MASK1	0x1E0
++#define MT6370_REG_LDO_CFG	0x180
++#define MT6370_REG_LDO_VOUT	0x181
++#define MT6370_REG_DB_CTRL1	0x1B0
++#define MT6370_REG_DB_CTRL2	0x1B1
++#define MT6370_REG_DB_VBST	0x1B2
++#define MT6370_REG_DB_VPOS	0x1B3
++#define MT6370_REG_DB_VNEG	0x1B4
++#define MT6370_REG_LDO_STAT	0x1DC
++#define MT6370_REG_DB_STAT	0x1DF
 +
-+#define MT6370_VENID_MASK	GENMASK(7, 4)
++#define MT6370_LDOOMS_MASK	BIT(7)
++#define MT6370_LDOEN_MASK	BIT(7)
++#define MT6370_LDOVOUT_MASK	GENMASK(3, 0)
++#define MT6370_DBPERD_MASK	(BIT(7) | BIT(4))
++#define MT6370_DBEXTEN_MASK	BIT(0)
++#define MT6370_DBVPOSEN_MASK	BIT(6)
++#define MT6370_DBVPOSDISG_MASK	BIT(5)
++#define MT6370_DBVNEGEN_MASK	BIT(3)
++#define MT6370_DBVNEGDISG_MASK	BIT(2)
++#define MT6370_DBALLON_MASK	(MT6370_DBVPOSEN_MASK | MT6370_DBVNEGEN_MASK)
++#define MT6370_DBSLEW_MASK	GENMASK(7, 6)
++#define MT6370_DBVOUT_MASK	GENMASK(5, 0)
++#define MT6370_LDOOC_EVT_MASK	BIT(7)
++#define MT6370_POSSCP_EVT_MASK	BIT(7)
++#define MT6370_NEGSCP_EVT_MASK	BIT(6)
++#define MT6370_BSTOCP_EVT_MASK	BIT(5)
++#define MT6370_POSOCP_EVT_MASK	BIT(4)
++#define MT6370_NEGOCP_EVT_MASK	BIT(3)
 +
-+#define MT6370_NUM_IRQREGS	16
-+#define MT6370_USBC_I2CADDR	0x4E
-+#define MT6370_REG_ADDRLEN	2
-+#define MT6370_REG_MAXADDR	0x1FF
++#define MT6370_LDO_MINUV	1600000
++#define MT6370_LDO_STPUV	200000
++#define MT6370_LDO_N_VOLT	13
++#define MT6370_DBVBOOST_MINUV	4000000
++#define MT6370_DBVBOOST_STPUV	50000
++#define MT6370_DBVBOOST_N_VOLT	45
++#define MT6370_DBVOUT_MINUV	4000000
++#define MT6370_DBVOUT_STPUV	50000
++#define MT6370_DBVOUT_N_VOLT	41
 +
-+/* IRQ definitions */
-+#define MT6370_IRQ_DIRCHGON		0
-+#define MT6370_IRQ_CHG_TREG		4
-+#define MT6370_IRQ_CHG_AICR		5
-+#define MT6370_IRQ_CHG_MIVR		6
-+#define MT6370_IRQ_PWR_RDY		7
-+#define MT6370_IRQ_FL_CHG_VINOVP	11
-+#define MT6370_IRQ_CHG_VSYSUV		12
-+#define MT6370_IRQ_CHG_VSYSOV		13
-+#define MT6370_IRQ_CHG_VBATOV		14
-+#define MT6370_IRQ_CHG_VINOVPCHG	15
-+#define MT6370_IRQ_TS_BAT_COLD		20
-+#define MT6370_IRQ_TS_BAT_COOL		21
-+#define MT6370_IRQ_TS_BAT_WARM		22
-+#define MT6370_IRQ_TS_BAT_HOT		23
-+#define MT6370_IRQ_TS_STATC		24
-+#define MT6370_IRQ_CHG_FAULT		25
-+#define MT6370_IRQ_CHG_STATC		26
-+#define MT6370_IRQ_CHG_TMR		27
-+#define MT6370_IRQ_CHG_BATABS		28
-+#define MT6370_IRQ_CHG_ADPBAD		29
-+#define MT6370_IRQ_CHG_RVP		30
-+#define MT6370_IRQ_TSHUTDOWN		31
-+#define MT6370_IRQ_CHG_IINMEAS		32
-+#define MT6370_IRQ_CHG_ICCMEAS		33
-+#define MT6370_IRQ_CHGDET_DONE		34
-+#define MT6370_IRQ_WDTMR		35
-+#define MT6370_IRQ_SSFINISH		36
-+#define MT6370_IRQ_CHG_RECHG		37
-+#define MT6370_IRQ_CHG_TERM		38
-+#define MT6370_IRQ_CHG_IEOC		39
-+#define MT6370_IRQ_ADC_DONE		40
-+#define MT6370_IRQ_PUMPX_DONE		41
-+#define MT6370_IRQ_BST_BATUV		45
-+#define MT6370_IRQ_BST_MIDOV		46
-+#define MT6370_IRQ_BST_OLP		47
-+#define MT6370_IRQ_ATTACH		48
-+#define MT6370_IRQ_DETACH		49
-+#define MT6370_IRQ_HVDCP_STPDONE	51
-+#define MT6370_IRQ_HVDCP_VBUSDET_DONE	52
-+#define MT6370_IRQ_HVDCP_DET		53
-+#define MT6370_IRQ_CHGDET		54
-+#define MT6370_IRQ_DCDT			55
-+#define MT6370_IRQ_DIRCHG_VGOK		59
-+#define MT6370_IRQ_DIRCHG_WDTMR		60
-+#define MT6370_IRQ_DIRCHG_UC		61
-+#define MT6370_IRQ_DIRCHG_OC		62
-+#define MT6370_IRQ_DIRCHG_OV		63
-+#define MT6370_IRQ_OVPCTRL_SWON		67
-+#define MT6370_IRQ_OVPCTRL_UVP_D	68
-+#define MT6370_IRQ_OVPCTRL_UVP		69
-+#define MT6370_IRQ_OVPCTRL_OVP_D	70
-+#define MT6370_IRQ_OVPCTRL_OVP		71
-+#define MT6370_IRQ_FLED_STRBPIN		72
-+#define MT6370_IRQ_FLED_TORPIN		73
-+#define MT6370_IRQ_FLED_TX		74
-+#define MT6370_IRQ_FLED_LVF		75
-+#define MT6370_IRQ_FLED2_SHORT		78
-+#define MT6370_IRQ_FLED1_SHORT		79
-+#define MT6370_IRQ_FLED2_STRB		80
-+#define MT6370_IRQ_FLED1_STRB		81
-+#define mT6370_IRQ_FLED2_STRB_TO	82
-+#define MT6370_IRQ_FLED1_STRB_TO	83
-+#define MT6370_IRQ_FLED2_TOR		84
-+#define MT6370_IRQ_FLED1_TOR		85
-+#define MT6370_IRQ_OTP			93
-+#define MT6370_IRQ_VDDA_OVP		94
-+#define MT6370_IRQ_VDDA_UV		95
-+#define MT6370_IRQ_LDO_OC		103
-+#define MT6370_IRQ_BLED_OCP		118
-+#define MT6370_IRQ_BLED_OVP		119
-+#define MT6370_IRQ_DSV_VNEG_OCP		123
-+#define MT6370_IRQ_DSV_VPOS_OCP		124
-+#define MT6370_IRQ_DSV_BST_OCP		125
-+#define MT6370_IRQ_DSV_VNEG_SCP		126
-+#define MT6370_IRQ_DSV_VPOS_SCP		127
-+
-+struct mt6370_info {
-+	struct i2c_client *i2c[MT6370_MAX_I2C];
++struct mt6370_priv {
 +	struct device *dev;
 +	struct regmap *regmap;
-+	struct regmap_irq_chip_data *irq_data;
++	struct regulator_dev *rdev[MT6370_MAX_IDX];
++	bool use_external_ctrl;
 +};
 +
-+static const struct regmap_irq mt6370_irqs[] = {
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DIRCHGON, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_TREG, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_AICR, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_MIVR, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_PWR_RDY, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FL_CHG_VINOVP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_VSYSUV, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_VSYSOV, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_VBATOV, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_VINOVPCHG, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_TS_BAT_COLD, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_TS_BAT_COOL, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_TS_BAT_WARM, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_TS_BAT_HOT, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_TS_STATC, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_FAULT, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_STATC, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_TMR, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_BATABS, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_ADPBAD, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_RVP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_TSHUTDOWN, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_IINMEAS, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_ICCMEAS, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHGDET_DONE, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_WDTMR, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_SSFINISH, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_RECHG, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_TERM, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHG_IEOC, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_ADC_DONE, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_PUMPX_DONE, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_BST_BATUV, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_BST_MIDOV, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_BST_OLP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_ATTACH, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DETACH, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_HVDCP_STPDONE, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_HVDCP_VBUSDET_DONE, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_HVDCP_DET, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_CHGDET, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DCDT, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DIRCHG_VGOK, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DIRCHG_WDTMR, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DIRCHG_UC, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DIRCHG_OC, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DIRCHG_OV, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_OVPCTRL_SWON, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_OVPCTRL_UVP_D, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_OVPCTRL_UVP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_OVPCTRL_OVP_D, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_OVPCTRL_OVP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED_STRBPIN, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED_TORPIN, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED_TX, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED_LVF, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED2_SHORT, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED1_SHORT, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED2_STRB, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED1_STRB, 8),
-+	REGMAP_IRQ_REG_LINE(mT6370_IRQ_FLED2_STRB_TO, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED1_STRB_TO, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED2_TOR, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED1_TOR, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_OTP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_VDDA_OVP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_VDDA_UV, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_LDO_OC, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_BLED_OCP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_BLED_OVP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DSV_VNEG_OCP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DSV_VPOS_OCP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DSV_BST_OCP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DSV_VNEG_SCP, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_DSV_VPOS_SCP, 8)
-+};
++static const unsigned int mt6370_vpos_ramp_tbl[] = { 8540, 5840, 4830, 3000 };
++static const unsigned int mt6370_vneg_ramp_tbl[] = { 10090, 6310, 5050, 3150 };
 +
-+static const struct regmap_irq_chip mt6370_irq_chip = {
-+	.name		= "mt6370-irqs",
-+	.status_base	= MT6370_REG_CHG_IRQ1,
-+	.mask_base	= MT6370_REG_CHG_MASK1,
-+	.num_regs	= MT6370_NUM_IRQREGS,
-+	.irqs		= mt6370_irqs,
-+	.num_irqs	= ARRAY_SIZE(mt6370_irqs),
-+};
-+
-+static const struct resource mt6370_regulator_irqs[] = {
-+	DEFINE_RES_IRQ_NAMED(MT6370_IRQ_DSV_VPOS_SCP, "db_vpos_scp"),
-+	DEFINE_RES_IRQ_NAMED(MT6370_IRQ_DSV_VNEG_SCP, "db_vneg_scp"),
-+	DEFINE_RES_IRQ_NAMED(MT6370_IRQ_DSV_BST_OCP, "db_vbst_ocp"),
-+	DEFINE_RES_IRQ_NAMED(MT6370_IRQ_DSV_VPOS_OCP, "db_vpos_ocp"),
-+	DEFINE_RES_IRQ_NAMED(MT6370_IRQ_DSV_VNEG_OCP, "db_vneg_ocp"),
-+	DEFINE_RES_IRQ_NAMED(MT6370_IRQ_LDO_OC, "ldo_oc")
-+};
-+
-+static const struct mfd_cell mt6370_devices[] = {
-+	MFD_CELL_OF("adc", NULL, NULL, 0, 0, "mediatek,mt6370-adc"),
-+	MFD_CELL_OF("charger", NULL, NULL, 0, 0, "mediatek,mt6370-charger"),
-+	MFD_CELL_OF("backlight", NULL, NULL, 0, 0, "mediatek,mt6370-backlight"),
-+	MFD_CELL_OF("flashlight", NULL, NULL, 0, 0, "mediatek,mt6370-flashlight"),
-+	MFD_CELL_OF("indicator", NULL, NULL, 0, 0, "mediatek,mt6370-indicator"),
-+	MFD_CELL_OF("tcpc", NULL, NULL, 0, 0, "mediatek,mt6370-tcpc"),
-+	MFD_CELL_RES("regulator", mt6370_regulator_irqs)
-+};
-+
-+static int mt6370_check_vendor_info(struct mt6370_info *info)
++static int mt6370_get_error_flags(struct regulator_dev *rdev,
++				  unsigned int *flags)
 +{
-+	unsigned int devinfo;
-+	int ret;
++	struct regmap *regmap = rdev_get_regmap(rdev);
++	unsigned int stat_reg, stat, rpt_flags = 0;
++	int rid = rdev_get_id(rdev), ret;
 +
-+	ret = regmap_read(info->regmap, MT6370_REG_DEV_INFO, &devinfo);
++	if (rid == MT6370_IDX_VIBLDO)
++		stat_reg = MT6370_REG_LDO_STAT;
++	else
++		stat_reg = MT6370_REG_DB_STAT;
++
++	ret = regmap_read(regmap, stat_reg, &stat);
 +	if (ret)
 +		return ret;
 +
-+	switch (FIELD_GET(MT6370_VENID_MASK, devinfo)) {
-+	case 0x8: /* RT5081 */
-+	case 0xA: /* RT5081A */
-+	case 0xE: /* MT6370 */
-+	case 0xF: /* MT6371 */
-+	case 0x9: /* MT6372P */
-+	case 0xB: /* MT6372CP */
++	switch (rid) {
++	case MT6370_IDX_DSVBOOST:
++		if (stat & MT6370_BSTOCP_EVT_MASK)
++			rpt_flags |= REGULATOR_ERROR_OVER_CURRENT;
++		break;
++	case MT6370_IDX_DSVPOS:
++		if (stat & MT6370_POSSCP_EVT_MASK)
++			rpt_flags |= REGULATOR_ERROR_UNDER_VOLTAGE;
++
++		if (stat & MT6370_POSOCP_EVT_MASK)
++			rpt_flags |= REGULATOR_ERROR_OVER_CURRENT;
++		break;
++	case MT6370_IDX_DSVNEG:
++		if (stat & MT6370_NEGSCP_EVT_MASK)
++			rpt_flags |= REGULATOR_ERROR_UNDER_VOLTAGE;
++
++		if (stat & MT6370_NEGOCP_EVT_MASK)
++			rpt_flags |= REGULATOR_ERROR_OVER_CURRENT;
 +		break;
 +	default:
-+		dev_err(info->dev, "Not invalid value 0x%02x\n", devinfo);
++		if (stat & MT6370_LDOOC_EVT_MASK)
++			rpt_flags |= REGULATOR_ERROR_OVER_CURRENT;
++		break;
++	}
++
++	*flags = rpt_flags;
++	return 0;
++}
++
++static const struct regulator_ops mt6370_dbvboost_ops = {
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.list_voltage = regulator_list_voltage_linear,
++	.get_bypass = regulator_get_bypass_regmap,
++	.set_bypass = regulator_set_bypass_regmap,
++	.get_error_flags = mt6370_get_error_flags,
++};
++
++static const struct regulator_ops mt6370_dbvout_ops = {
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.list_voltage = regulator_list_voltage_linear,
++	.is_enabled = regulator_is_enabled_regmap,
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.set_active_discharge = regulator_set_active_discharge_regmap,
++	.set_ramp_delay = regulator_set_ramp_delay_regmap,
++	.get_error_flags = mt6370_get_error_flags,
++};
++
++static const struct regulator_ops mt6370_ldo_ops = {
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.list_voltage = regulator_list_voltage_linear,
++	.is_enabled = regulator_is_enabled_regmap,
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.set_active_discharge = regulator_set_active_discharge_regmap,
++	.get_error_flags = mt6370_get_error_flags,
++};
++
++static int mt6370_of_parse_cb(struct device_node *np,
++			      const struct regulator_desc *desc,
++			      struct regulator_config *config)
++{
++	struct mt6370_priv *priv = config->driver_data;
++	struct gpio_desc *enable_gpio;
++	int ret;
++
++	enable_gpio = gpiod_get_from_of_node(np, "enable", 0, GPIOD_OUT_HIGH |
++					     GPIOD_FLAGS_BIT_NONEXCLUSIVE,
++					     desc->name);
++	if (IS_ERR(enable_gpio)) {
++		config->ena_gpiod = NULL;
++		return 0;
++	}
++
++	/*
++	 * RG control by default
++	 * Only if all are using external pin, change all by external control
++	 */
++	if (priv->use_external_ctrl) {
++		ret = regmap_update_bits(priv->regmap, MT6370_REG_DB_CTRL1,
++					 MT6370_DBEXTEN_MASK,
++					 MT6370_DBEXTEN_MASK);
++		if (ret)
++			return ret;
++	}
++
++	config->ena_gpiod = enable_gpio;
++	priv->use_external_ctrl = true;
++	return 0;
++}
++
++static const struct regulator_desc mt6370_regulator_descs[] = {
++	{
++		.name = "mt6370-dsv-vbst",
++		.of_match = of_match_ptr("dsvbst"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = MT6370_IDX_DSVBOOST,
++		.type = REGULATOR_VOLTAGE,
++		.owner = THIS_MODULE,
++		.ops = &mt6370_dbvboost_ops,
++		.min_uV = MT6370_DBVBOOST_MINUV,
++		.uV_step = MT6370_DBVBOOST_STPUV,
++		.n_voltages = MT6370_DBVBOOST_N_VOLT,
++		.vsel_reg = MT6370_REG_DB_VBST,
++		.vsel_mask = MT6370_DBVOUT_MASK,
++		.bypass_reg = MT6370_REG_DB_CTRL1,
++		.bypass_mask = MT6370_DBPERD_MASK,
++		.bypass_val_on = MT6370_DBPERD_MASK,
++	},
++	{
++		.name = "mt6370-dsv-vpos",
++		.of_match = of_match_ptr("dsvpos"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = MT6370_IDX_DSVPOS,
++		.type = REGULATOR_VOLTAGE,
++		.owner = THIS_MODULE,
++		.of_parse_cb = mt6370_of_parse_cb,
++		.ops = &mt6370_dbvout_ops,
++		.min_uV = MT6370_DBVOUT_MINUV,
++		.uV_step = MT6370_DBVOUT_STPUV,
++		.n_voltages = MT6370_DBVOUT_N_VOLT,
++		.vsel_reg = MT6370_REG_DB_VPOS,
++		.vsel_mask = MT6370_DBVOUT_MASK,
++		.enable_reg = MT6370_REG_DB_CTRL2,
++		.enable_mask = MT6370_DBVPOSEN_MASK,
++		.ramp_reg = MT6370_REG_DB_VPOS,
++		.ramp_mask = MT6370_DBSLEW_MASK,
++		.ramp_delay_table = mt6370_vpos_ramp_tbl,
++		.n_ramp_values = ARRAY_SIZE(mt6370_vpos_ramp_tbl),
++		.active_discharge_reg = MT6370_REG_DB_CTRL2,
++		.active_discharge_mask = MT6370_DBVPOSDISG_MASK,
++		.active_discharge_on = MT6370_DBVPOSDISG_MASK,
++	},
++	{
++		.name = "mt6370-dsv-vneg",
++		.of_match = of_match_ptr("dsvneg"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = MT6370_IDX_DSVNEG,
++		.type = REGULATOR_VOLTAGE,
++		.owner = THIS_MODULE,
++		.of_parse_cb = mt6370_of_parse_cb,
++		.ops = &mt6370_dbvout_ops,
++		.min_uV = MT6370_DBVOUT_MINUV,
++		.uV_step = MT6370_DBVOUT_STPUV,
++		.n_voltages = MT6370_DBVOUT_N_VOLT,
++		.vsel_reg = MT6370_REG_DB_VNEG,
++		.vsel_mask = MT6370_DBVOUT_MASK,
++		.enable_reg = MT6370_REG_DB_CTRL2,
++		.enable_mask = MT6370_DBVNEGEN_MASK,
++		.ramp_reg = MT6370_REG_DB_VNEG,
++		.ramp_mask = MT6370_DBSLEW_MASK,
++		.ramp_delay_table = mt6370_vneg_ramp_tbl,
++		.n_ramp_values = ARRAY_SIZE(mt6370_vneg_ramp_tbl),
++		.active_discharge_reg = MT6370_REG_DB_CTRL2,
++		.active_discharge_mask = MT6370_DBVNEGDISG_MASK,
++		.active_discharge_on = MT6370_DBVNEGDISG_MASK,
++	},
++	{
++		.name = "mt6370-vib-ldo",
++		.of_match = of_match_ptr("vibldo"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = MT6370_IDX_VIBLDO,
++		.type = REGULATOR_VOLTAGE,
++		.owner = THIS_MODULE,
++		.ops = &mt6370_ldo_ops,
++		.min_uV = MT6370_LDO_MINUV,
++		.uV_step = MT6370_LDO_STPUV,
++		.n_voltages = MT6370_LDO_N_VOLT,
++		.vsel_reg = MT6370_REG_LDO_VOUT,
++		.vsel_mask = MT6370_LDOVOUT_MASK,
++		.enable_reg = MT6370_REG_LDO_VOUT,
++		.enable_mask = MT6370_LDOEN_MASK,
++		.active_discharge_reg = MT6370_REG_LDO_CFG,
++		.active_discharge_mask = MT6370_LDOOMS_MASK,
++		.active_discharge_on = MT6370_LDOOMS_MASK,
++	}
++};
++
++static irqreturn_t mt6370_scp_handler(int irq, void *data)
++{
++	struct regulator_dev *rdev = data;
++
++	regulator_notifier_call_chain(rdev, REGULATOR_EVENT_UNDER_VOLTAGE,
++				      NULL);
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t mt6370_ocp_handler(int irq, void *data)
++{
++	struct regulator_dev *rdev = data;
++
++	regulator_notifier_call_chain(rdev, REGULATOR_EVENT_OVER_CURRENT, NULL);
++	return IRQ_HANDLED;
++}
++
++static int mt6370_regulator_irq_register(struct mt6370_priv *priv)
++{
++	struct platform_device *pdev = to_platform_device(priv->dev);
++	static const struct {
++		const char *name;
++		int rid;
++		irq_handler_t handler;
++	} mt6370_irqs[] = {
++		{ "db_vpos_scp", MT6370_IDX_DSVPOS, mt6370_scp_handler },
++		{ "db_vneg_scp", MT6370_IDX_DSVNEG, mt6370_scp_handler },
++		{ "db_vbst_ocp", MT6370_IDX_DSVBOOST, mt6370_ocp_handler },
++		{ "db_vpos_ocp", MT6370_IDX_DSVPOS,  mt6370_ocp_handler },
++		{ "db_vneg_ocp", MT6370_IDX_DSVNEG, mt6370_ocp_handler },
++		{ "ldo_oc", MT6370_IDX_VIBLDO, mt6370_ocp_handler }
++	};
++	struct regulator_dev *rdev;
++	int i, irq, ret;
++
++	for (i = 0; i < ARRAY_SIZE(mt6370_irqs); i++) {
++		irq = platform_get_irq_byname(pdev, mt6370_irqs[i].name);
++
++		rdev = priv->rdev[mt6370_irqs[i].rid];
++
++		ret = devm_request_threaded_irq(priv->dev, irq, NULL,
++						mt6370_irqs[i].handler, 0,
++						mt6370_irqs[i].name, rdev);
++		if (ret) {
++			dev_err(priv->dev,
++				"Failed to register (%d) interrupt\n", i);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static int mt6370_regualtor_register(struct mt6370_priv *priv)
++{
++	struct regulator_dev *rdev;
++	struct regulator_config cfg = {};
++	struct device *parent = priv->dev->parent;
++	int i;
++
++	cfg.dev = parent;
++	cfg.driver_data = priv;
++
++	for (i = 0; i < MT6370_MAX_IDX; i++) {
++		rdev = devm_regulator_register(priv->dev,
++					       mt6370_regulator_descs + i,
++					       &cfg);
++		if (IS_ERR(rdev)) {
++			dev_err(priv->dev,
++				"Failed to register (%d) regulator\n", i);
++			return PTR_ERR(rdev);
++		}
++
++		priv->rdev[i] = rdev;
++	}
++
++	return 0;
++}
++
++static int mt6370_regulator_probe(struct platform_device *pdev)
++{
++	struct mt6370_priv *priv;
++	int ret;
++
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->dev = &pdev->dev;
++
++	priv->regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!priv->regmap) {
++		dev_err(&pdev->dev, "Failed to init regmap\n");
 +		return -ENODEV;
 +	}
 +
-+	return 0;
++	ret = mt6370_regualtor_register(priv);
++	if (ret)
++		return ret;
++
++	return mt6370_regulator_irq_register(priv);
 +}
 +
-+static int mt6370_regmap_read(void *context, const void *reg_buf,
-+			      size_t reg_size, void *val_buf, size_t val_size)
-+{
-+	struct mt6370_info *info = context;
-+	u8 bank_idx = *(u8 *)reg_buf, bank_addr = *(u8 *)(reg_buf + 1);
-+	int ret;
-+
-+	ret = i2c_smbus_read_i2c_block_data(info->i2c[bank_idx], bank_addr,
-+					    val_size, val_buf);
-+	if (ret != val_size)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int mt6370_regmap_write(void *context, const void *data, size_t count)
-+{
-+	struct mt6370_info *info = context;
-+	u8 bank_idx = *(u8 *)data, bank_addr = *(u8 *)(data + 1);
-+	int len = count - MT6370_REG_ADDRLEN;
-+
-+	return i2c_smbus_write_i2c_block_data(info->i2c[bank_idx], bank_addr,
-+					      len, data + MT6370_REG_ADDRLEN);
-+}
-+
-+static const struct regmap_bus mt6370_regmap_bus = {
-+	.read		= mt6370_regmap_read,
-+	.write		= mt6370_regmap_write,
-+};
-+
-+static const struct regmap_config mt6370_regmap_config = {
-+	.reg_bits		= 16,
-+	.val_bits		= 8,
-+	.reg_format_endian	= REGMAP_ENDIAN_BIG,
-+	.max_register		= MT6370_REG_MAXADDR,
-+};
-+
-+static int mt6370_probe(struct i2c_client *i2c)
-+{
-+	struct mt6370_info *info;
-+	struct i2c_client *usbc_i2c;
-+	int ret;
-+
-+	info = devm_kzalloc(&i2c->dev, sizeof(*info), GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	info->dev = &i2c->dev;
-+
-+	usbc_i2c = devm_i2c_new_dummy_device(&i2c->dev, i2c->adapter,
-+					     MT6370_USBC_I2CADDR);
-+	if (IS_ERR(usbc_i2c)) {
-+		ret = PTR_ERR(usbc_i2c);
-+		dev_err(&i2c->dev, "Failed to register usbc i2c client %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Assign I2C client for PMU and TypeC */
-+	info->i2c[MT6370_PMU_I2C] = i2c;
-+	info->i2c[MT6370_USBC_I2C] = usbc_i2c;
-+
-+	info->regmap = devm_regmap_init(&i2c->dev, &mt6370_regmap_bus, info,
-+					&mt6370_regmap_config);
-+	if (IS_ERR(info->regmap)) {
-+		ret = PTR_ERR(info->regmap);
-+		dev_err(&i2c->dev, "Failed to register regmap (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	ret = mt6370_check_vendor_info(info);
-+	if (ret) {
-+		dev_err(&i2c->dev, "Failed to check vendor info (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	ret = devm_regmap_add_irq_chip(&i2c->dev, info->regmap, i2c->irq,
-+				       IRQF_ONESHOT, -1, &mt6370_irq_chip,
-+				       &info->irq_data);
-+	if (ret) {
-+		dev_err(&i2c->dev, "Failed to add irq chip (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	return devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
-+				    mt6370_devices, ARRAY_SIZE(mt6370_devices),
-+				    NULL, 0,
-+				    regmap_irq_get_domain(info->irq_data));
-+}
-+
-+static const struct of_device_id mt6370_match_table[] = {
-+	{ .compatible = "mediatek,mt6370", },
++static const struct platform_device_id mt6370_devid_table[] = {
++	{ "mt6370-regulator", 0},
 +	{}
 +};
-+MODULE_DEVICE_TABLE(of, mt6370_match_table);
++MODULE_DEVICE_TABLE(platform, mt6370_devid_table);
 +
-+static struct i2c_driver mt6370_driver = {
++static struct platform_driver mt6370_regulator_driver = {
 +	.driver = {
-+		.name = "mt6370",
-+		.of_match_table = mt6370_match_table,
++		.name = "mt6370-regulator",
 +	},
-+	.probe_new = mt6370_probe,
++	.id_table = mt6370_devid_table,
++	.probe = mt6370_regulator_probe,
 +};
-+module_i2c_driver(mt6370_driver);
++module_platform_driver(mt6370_regulator_driver);
 +
 +MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
-+MODULE_DESCRIPTION("MT6370 I2C MFD Driver");
++MODULE_DESCRIPTION("Mediatek MT6370 Regulator Driver");
 +MODULE_LICENSE("GPL v2");
 -- 
 2.25.1
