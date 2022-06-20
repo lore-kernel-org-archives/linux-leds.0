@@ -2,51 +2,51 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C50FC433EF
-	for <linux-leds@archiver.kernel.org>; Mon, 20 Jun 2022 17:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F30C433EF
+	for <linux-leds@archiver.kernel.org>; Mon, 20 Jun 2022 17:50:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243770AbiFTRuk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 20 Jun 2022 13:50:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38694 "EHLO
+        id S239180AbiFTRup (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 20 Jun 2022 13:50:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243697AbiFTRuk (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 20 Jun 2022 13:50:40 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 195ECBE30
-        for <linux-leds@vger.kernel.org>; Mon, 20 Jun 2022 10:50:39 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id s12so22590854ejx.3
-        for <linux-leds@vger.kernel.org>; Mon, 20 Jun 2022 10:50:39 -0700 (PDT)
+        with ESMTP id S241943AbiFTRun (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 20 Jun 2022 13:50:43 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3E7FBF5A
+        for <linux-leds@vger.kernel.org>; Mon, 20 Jun 2022 10:50:40 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id fu3so22575366ejc.7
+        for <linux-leds@vger.kernel.org>; Mon, 20 Jun 2022 10:50:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vGTTZHlQr24mk7rw2kpSOCNl9rG0rfShjLY5RzkauRM=;
-        b=OKVdOylpEHkO3dTs4aJiHn7RMRuX2w9ZQcLfeTU9oNSZEtf6otbNPXufB9xpv92odC
-         btCJtuFmVoLlckuFWAARV0qy7NmgIsAgtu4/3QS7nvmlPGeklsFdZY26QLv2jpDfd5t0
-         WZKkcJQHX9cvj4Mzx2EA15vh6GA64tNEA6ak7KPcXMQoFsa3qlzybFE//ucS+z6EKx7+
-         UorL3KXEGqMIIE+WMhrdGZPEIeQC3al84M1Wh+25ZIlD6I2gcTmAaVdZfmsS5oyabHCo
-         m+/8/8D+MUkFEk7YOQXk6IpqLhPe4HW5zJTeA7tKbODduMe+bVl56l4sB0cbKTjSA77q
-         RhUQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=vawR+AKsr/69UkXXi73qth6MiAdc5ZxxVTAr6kwXEOY=;
+        b=J4yOAnnI91X+Vinzvn0WwG64HhjEEIaLZLVcAXEQP9eVWDDTyo9uudAc8SEK3Msyh9
+         ZxgBvxacfdSKgn9V+y6EMfLDSx31r7gS+JbXmocuUqlEqcHFuWULm/DR/VhgQ1zDbEvh
+         yUiykLGAjjhnuqikmH59MnJERXN/zvkc8U6wKIJICWyXPLRRk6Pp9f4xypyJf7W6r9Zh
+         2IXY9qKReCE7zYW6G6N4++QxVPIPQ7llQMulHDvXXX7S+V0t0i+T5FItVF9+btU0CnYW
+         4Y4yvZm1PUhzLSNRy1QQcNIxOuZZyVf69tPSC2A/CU8P74twQ+8yPTf+tpXQjtmc5enr
+         VBUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vGTTZHlQr24mk7rw2kpSOCNl9rG0rfShjLY5RzkauRM=;
-        b=lAgL7Wjjthj2Revx1/Mv7cykhCfwm0FrXrbxK9kpK4s8gLJ2J03mJsX8aRpLjCWKZt
-         KL6dUjnJJzdXRyvDuaiKpK+GmEr+3q1IkdEheOcUhgbb4g7S12LOSaa5fVKREwUQJBlm
-         JZQR5KTddOiDSJnsNUkmRg54wPMhUBNwmD7ZmWUWPUFJZsU6P3luTAjTytRLKYp6M5hv
-         BEPMUapOnmipHStD3I5sKF0DrCaq9ui+RiGGKJmVfIS8KwhAqBu/ANHrRkjqj3n1s3fy
-         RRzlLMAMLrZSfLHSZY40QmmCHuigjn0pkPiKBE2YU/a9L5M1ukjhww7CshxTFDwR1Qp9
-         IUuA==
-X-Gm-Message-State: AJIora8bbb4f/CulrNztTsNs7RMqbXLsOmNFmKTm1o8wn0j8UzJan742
-        bK518+a3ujrxn5sW4PHrH2C7Kg==
-X-Google-Smtp-Source: AGRyM1tt6WbrQlUjWKpq62Y+60g2hfC12z40MZISM38MBpPEfW0QRdczB8cjytEsStFlFwH9o9WEzA==
-X-Received: by 2002:a17:907:7b86:b0:711:d2c8:ab18 with SMTP id ne6-20020a1709077b8600b00711d2c8ab18mr21704654ejc.580.1655747437601;
-        Mon, 20 Jun 2022 10:50:37 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=vawR+AKsr/69UkXXi73qth6MiAdc5ZxxVTAr6kwXEOY=;
+        b=0O27bveshZ9/iodm/mrzaQicZG/1WiQUpj/IAKBmGhhHcwf8f8AyLqfbDfkq91kxTl
+         zukob/X7VOeRUL2CS4q6pNsZ1EwtSmlZLAut614Hbl3va47+dJ30VUR2Ckm9mEDjVw8B
+         vO0qhCF68ZEs/hWeQz971n51lC13joV4JUwnvKrQv/GQUWZfgpIzeyZsIwHMIk/gz9+v
+         RW+1DPDNBijA4G7VaGYZQJR4mYbYjhuEE7t0INg0OI0EBXZLuuQCgRf/9hbNyxi5DnXK
+         YFd45K7uzA6+bOa3nJDicTYjrDZUzsVreEzgJG7bZPPpx2wOxLAvgTD/v3eFoBBr/3d8
+         YMEA==
+X-Gm-Message-State: AJIora8v7XedEnqFAWFGib4z0Xrde2MFRpIbVeahb6TR6I5etwLMLP5j
+        lUUhOf1dJg8ivyETcEGzP03BVw==
+X-Google-Smtp-Source: AGRyM1t/5tJyjuc7r045NqsNdhCJ7jAP96f2MPgVeZfCzLGEwgBY51/w/4SQBTbISEMawxJtUWfbaw==
+X-Received: by 2002:a17:907:7da8:b0:722:ca29:b58e with SMTP id oz40-20020a1709077da800b00722ca29b58emr3989638ejc.732.1655747440374;
+        Mon, 20 Jun 2022 10:50:40 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id d13-20020a170906304d00b00704757b1debsm6346056ejd.9.2022.06.20.10.50.36
+        by smtp.gmail.com with ESMTPSA id d13-20020a170906304d00b00704757b1debsm6346056ejd.9.2022.06.20.10.50.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jun 2022 10:50:37 -0700 (PDT)
+        Mon, 20 Jun 2022 10:50:39 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -56,44 +56,38 @@ To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 0/3] leds/arm: dts: leds on Samsung Galaxy S3
-Date:   Mon, 20 Jun 2022 19:50:30 +0200
-Message-Id: <20220620175033.130468-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 2/3] ARM: dts: exynos: align aat1290 flash LED node with bindings in Galaxy S3
+Date:   Mon, 20 Jun 2022 19:50:32 +0200
+Message-Id: <20220620175033.130468-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220620175033.130468-1-krzysztof.kozlowski@linaro.org>
+References: <20220620175033.130468-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi,
+The bindings expect aat1290 flash LED child node to be named "led".
 
-Merging
-=======
-1. Bindings patch: via leds tree.
-2. DTS patches: I will take them via Samsung SoC tree.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes since v1
-================
-1. Drop the label from example and DTS, per discussions with Jacek.
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (3):
-  dt-bindings: leds: skyworks,aat1290: convert to dtschema
-  ARM: dts: exynos: align aat1290 flash LED node with bindings in Galaxy
-    S3
-  ARM: dts: exynos: add function and color to aat1290 flash LED node in
-    Galaxy S3
-
- .../devicetree/bindings/leds/leds-aat1290.txt | 77 ---------------
- .../bindings/leds/skyworks,aat1290.yaml       | 95 +++++++++++++++++++
- arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi   |  6 +-
- 3 files changed, 99 insertions(+), 79 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
- create mode 100644 Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml
-
+diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+index aa7de6de8e19..46640b490a8c 100644
+--- a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
++++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+@@ -25,7 +25,7 @@ led-controller {
+ 		pinctrl-1 = <&camera_flash_host>;
+ 		pinctrl-2 = <&camera_flash_isp>;
+ 
+-		flash-led {
++		led {
+ 			label = "flash";
+ 			led-max-microamp = <520833>;
+ 			flash-max-microamp = <1012500>;
 -- 
 2.34.1
 
