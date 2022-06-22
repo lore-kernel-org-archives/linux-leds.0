@@ -2,158 +2,83 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA56C433EF
-	for <linux-leds@archiver.kernel.org>; Tue, 21 Jun 2022 12:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C055BCCA47D
+	for <linux-leds@archiver.kernel.org>; Wed, 22 Jun 2022 08:36:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350395AbiFUMDr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 21 Jun 2022 08:03:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44886 "EHLO
+        id S1355102AbiFVIgT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 22 Jun 2022 04:36:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350387AbiFUMDp (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 21 Jun 2022 08:03:45 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF0C2A96E
-        for <linux-leds@vger.kernel.org>; Tue, 21 Jun 2022 05:03:43 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id cf14so9275071edb.8
-        for <linux-leds@vger.kernel.org>; Tue, 21 Jun 2022 05:03:43 -0700 (PDT)
+        with ESMTP id S1354538AbiFVIgA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 22 Jun 2022 04:36:00 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194D838BFC
+        for <linux-leds@vger.kernel.org>; Wed, 22 Jun 2022 01:35:51 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id eo8so22891725edb.0
+        for <linux-leds@vger.kernel.org>; Wed, 22 Jun 2022 01:35:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=20hOXgHS4fSMKzf2+VEVhuMt/xTY7rwW+BkuR688jQI=;
-        b=G0fDoM6iYkilX2J2us0oDAnu2OXLTFoGwQGcIQ61gW+KroUP3F34RD4BJ1IlsFeOKi
-         8f8+8bvCxI+BjoQhqGDC8Bmih/uM2UMNh0HfP5LHcTP5thFbXw57Wl/JjRk3EIaphPgC
-         /r9iH8r0MZLQ/ZiseG3jh/J+adm1eZ8inUGHNLerNsDK1bRyGyI9t7y5tTAvDDVdeB1B
-         xwLgffZMmNEJhBSsXCtiJaQ53o6MWqYnFwBx1ozBtod/JlyyMz+pR8DZEdtPNbe/8IO5
-         pZskEbg504lpOOtekPsnMcsUaoBfJ2WNfNfE5rDxevNShYsJWXp++OGVY0izxGKuJIRl
-         k4pQ==
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=LKVKNIti1LcRpv/jEhLMMKWh1ADREH2xijbZTCW6Xr4=;
+        b=HTdEvAVx/Nof1YbJwQLyXd8dTkR/+m7SXUfhIdnvWqSKFFHyN4/nJbLZN7l3HUb/VL
+         ejdoskCUL3HevZhUZLkymtquwxhwS0Yyk39d1zwHTft+vMf/6ece6uy7Z576XCZHwjYp
+         gh+L1ynkZnUwloRiWvrQNH8vxZ5jeLFClRX1/m13hbqYB9RRh0PNgKJPNTNd5aHJ58iW
+         NR51sWkbop9/ITHUdhlwLAMIjsnnEKDu1CXoCaNShIrzMmRdGlnwERlp0cTsgoMro4Lb
+         2Q8QzCWCz2XGC/23fXWJrfKQHQpQcvBqVB+4FZAIG+OXNYDWUoh9bR0T7xC8FwWr7OaK
+         htYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=20hOXgHS4fSMKzf2+VEVhuMt/xTY7rwW+BkuR688jQI=;
-        b=kHv3Hk/AFDqVwKO81pMCFaWSy4Ima+G5B9baysNZk6VJqW3HVeRWoPNr/o0gOLudGd
-         fwWaQVIxwj3gibvVYwc3Ev8AIB78bWx6tMTEbAXYOcCAeAmARNsTwSg03ly9QufBuCKi
-         yP6ufFf2+3RTbs8iO0Uz2yvzMSBxP/8+D8R60naNvzrN9iOX9Z9d914s20ZoF4CuhEny
-         ExSs8JBznwMZfQ3Kb8wlK4YHEkqwKQ66LeWSeuOQ23FNuVSg3cL4w03wiDQNT0E7bijU
-         HT9dwebcnBUuWtHOeqT+H3glHyJeGrRohKWrVrZoxC14QEcYYT+glOfOa/rgLwqNa0Gu
-         1caQ==
-X-Gm-Message-State: AJIora98z+MZIVVz1HvLYYFi5fiVBvF6j7XFDLSWjHygcCJ6Er1XP9v1
-        2Xh1ianyaYo62iTXpHoLz6OhjA==
-X-Google-Smtp-Source: AGRyM1vuqpi73lfGfP1AhQV/V6GZDUbkiFuWxRqJMB+M0pVkbVaH3yMP1muhb8X6319Kpo4FNFG3DQ==
-X-Received: by 2002:a05:6402:3689:b0:435:95b0:edf2 with SMTP id ej9-20020a056402368900b0043595b0edf2mr3480378edb.279.1655813021696;
-        Tue, 21 Jun 2022 05:03:41 -0700 (PDT)
-Received: from [192.168.0.220] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id n12-20020a170906840c00b00706c50870a0sm7470520ejx.194.2022.06.21.05.03.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jun 2022 05:03:41 -0700 (PDT)
-Message-ID: <3e02909d-131a-7899-f02b-fa0afcbef1d9@linaro.org>
-Date:   Tue, 21 Jun 2022 14:03:39 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2 03/15] dt-bindings: leds: mt6370: Add Mediatek mt6370
- current sink type LED indicator
-Content-Language: en-US
-To:     szuni chen <szunichen@gmail.com>
-Cc:     ChiaEn Wu <peterwu.pub@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        USB <linux-usb@vger.kernel.org>,
-        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
-        ChiYuan Huang <cy_huang@richtek.com>
-References: <20220613111146.25221-1-peterwu.pub@gmail.com>
- <20220613111146.25221-4-peterwu.pub@gmail.com>
- <91e9e3af-8208-7535-1864-08744f934593@linaro.org>
- <CA+hk2fZbh0=8gurGS95XpXrYyF3NbwFbFMcygcrW_q10m0zinA@mail.gmail.com>
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=LKVKNIti1LcRpv/jEhLMMKWh1ADREH2xijbZTCW6Xr4=;
+        b=eo5kkukEpAhcpu3MsdMYjenXVb70b8O8BxbDV8YrK3lqM+r64ea2+cJlPXwQ+1ZB9m
+         Yv8BL7kjpdp8gGMiBFt9OiYAEtTOvH78KddDERRhKY6FEtDEELOGEGu6AiH51kWaVPHE
+         ZBgpy23YIOgWCDx8I6/ZbzUeCEwqd58iTPAYCWgoBWwDthXNlZUQ4IUcpDY+ECGsq7yD
+         m8fRBpUsHuJmyc8fW80zxzu9F/LRR3W+NB4JILJ3cuz/r328vfGOxpJPbOdodqHvRj6j
+         NQBxt19abeveKle/YEqE7aFJ6hioe04ge62JSnGZXnuFXo4yEi82wsAWk6Su4TQziAK4
+         sP9w==
+X-Gm-Message-State: AJIora9oueOulqsJN9CxJskRXp1ifzzres1cXL0I+dRXG+p8lP8EsH5t
+        IVQtqJk6gT/Z4DkjcdlbcCdqpA==
+X-Google-Smtp-Source: AGRyM1ubdfO8px4g4kpPHR6o6PIPxQqkUkvACkcd7VlHI+hBIgv/8yaZr8ORCW2o1aIa03m0jnMdpQ==
+X-Received: by 2002:a05:6402:358b:b0:435:828a:a403 with SMTP id y11-20020a056402358b00b00435828aa403mr2788497edc.117.1655886949582;
+        Wed, 22 Jun 2022 01:35:49 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id ku10-20020a170907788a00b00722e603c39asm1979733ejc.31.2022.06.22.01.35.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jun 2022 01:35:48 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CA+hk2fZbh0=8gurGS95XpXrYyF3NbwFbFMcygcrW_q10m0zinA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To:     kgunda@codeaurora.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, linux-arm-msm@vger.kernel.org, pavel@ucw.cz,
+        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org, lee.jones@linaro.org,
+        linux-kernel@vger.kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, krzysztof.kozlowski@linaro.org,
+        jingoohan1@gmail.com, linux-leds@vger.kernel.org
+Subject: Re: (subset) [PATCH 2/2] arm64: dts: qcom: correct SPMI WLED register range encoding
+Date:   Wed, 22 Jun 2022 10:35:35 +0200
+Message-Id: <165588692597.15720.6527539957529378086.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220505154702.422108-2-krzysztof.kozlowski@linaro.org>
+References: <20220505154702.422108-1-krzysztof.kozlowski@linaro.org> <20220505154702.422108-2-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 20/06/2022 05:07, szuni chen wrote:
-> Dear Krzysztof,
+On Thu, 5 May 2022 17:47:02 +0200, Krzysztof Kozlowski wrote:
+> On PM660L, PMI8994 and PMI8998, the WLED has two address spaces and with
+> size-cells=0, they should be encoded as two separate items.
 > 
-> Thank you for the valuable command.
 > 
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> 於 2022年6月17日 週五 清晨5:09寫道：
->>
->> On 13/06/2022 04:11, ChiaEn Wu wrote:
->>> From: ChiYuan Huang <cy_huang@richtek.com>
->>>
->>> Add Mediatek mt6370 current sink type LED indicator binding documentation.
->>>
->>> Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
->>> ---
->>>  .../leds/mediatek,mt6370-indicator.yaml       | 48 +++++++++++++++++++
->>>  1 file changed, 48 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/leds/mediatek,mt6370-indicator.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/leds/mediatek,mt6370-indicator.yaml b/Documentation/devicetree/bindings/leds/mediatek,mt6370-indicator.yaml
->>> new file mode 100644
->>> index 000000000000..42b96c8047a3
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/leds/mediatek,mt6370-indicator.yaml
->>> @@ -0,0 +1,48 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/leds/mediatek,mt6370-indicator.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: LED driver for MT6370 PMIC from MediaTek Integrated.
->>> +
->>> +maintainers:
->>> +  - Alice Chen <alice_chen@richtek.com>
->>> +
->>> +description: |
->>> +  This module is part of the MT6370 MFD device.
->>> +  Add MT6370 LED driver include 4-channel RGB LED support Register/PWM/Breath Mode
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: mediatek,mt6370-indicator
->>> +
->>> +  "#address-cells":
->>> +    const: 1
->>> +
->>> +  "#size-cells":
->>> +    const: 0
->>> +
->>> +patternProperties:
->>> +  "^(multi-)?led@[0-3]$":
->>
->> If this is multi-led, then you should reference
->> /schemas/leds/leds-pwm-multicolor.yaml
->>
->> See other examples using it.
-> 
-> In my opinion, leds-pwm-multicolor.yaml is used for external pwm
-> signals, and needs to assign an external pwm property.
-> But our pwm leds use an internal clock to generate the pwm signal. Is
-> leds-class-multicolor.yaml more appropriate?
 
-Yeah, I meant the latter but pasted wrong file.
-/schemas/leds/leds-class-multicolor.yaml#
+Applied, thanks!
+
+[2/2] arm64: dts: qcom: correct SPMI WLED register range encoding
+      https://git.kernel.org/krzk/linux/c/2559f68b5991be168785a16a53f582862cf0063c
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
