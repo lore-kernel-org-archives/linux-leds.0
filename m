@@ -2,74 +2,91 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5E0CCA47F
-	for <linux-leds@archiver.kernel.org>; Fri, 24 Jun 2022 11:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3F1CCA47E
+	for <linux-leds@archiver.kernel.org>; Fri, 24 Jun 2022 17:27:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231634AbiFXLo6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 24 Jun 2022 07:44:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36688 "EHLO
+        id S231196AbiFXR1T (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 24 Jun 2022 13:27:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231598AbiFXLo4 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 24 Jun 2022 07:44:56 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 484337B36C;
-        Fri, 24 Jun 2022 04:44:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1671FB82863;
-        Fri, 24 Jun 2022 11:44:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47759C34114;
-        Fri, 24 Jun 2022 11:44:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1656071093;
-        bh=SXL5zN2nwEilLgVy+817nWe3mGqIkwJPf3KT5KtK610=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QqleerCUtjShMpTKt40R3Xw5bJcBgWctuyJJpVXDDC8yUC+px+coDFuFGOhsDclBm
-         dg838WtwC4BaQ3bpEalZRbi71buK3vIaBJx8ZVhWnGCY1l7wOcJedOmOBaxgTuvbE9
-         l08jW1kWCHcm0hwgtV4GmlCbpSkA1mpGB+nGFXvo=
-Date:   Fri, 24 Jun 2022 13:33:52 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     ChiaEn Wu <peterwu.pub@gmail.com>
-Cc:     lee.jones@linaro.org, daniel.thompson@linaro.org,
-        jingoohan1@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        sre@kernel.org, chunfeng.yun@mediatek.com, jic23@kernel.org,
-        lars@metafoo.de, lgirdwood@gmail.com, broonie@kernel.org,
-        linux@roeck-us.net, heikki.krogerus@linux.intel.com, deller@gmx.de,
-        chiaen_wu@richtek.com, alice_chen@richtek.com,
-        cy_huang@richtek.com, dri-devel@lists.freedesktop.org,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        szunichen@gmail.com
-Subject: Re: [PATCH v3 08/14] usb: typec: tcpci_mt6370: Add Mediatek MT6370
- tcpci driver
-Message-ID: <YrWhIMGjUeRkpHkB@kroah.com>
-References: <20220623115631.22209-1-peterwu.pub@gmail.com>
- <20220623115631.22209-9-peterwu.pub@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220623115631.22209-9-peterwu.pub@gmail.com>
+        with ESMTP id S231821AbiFXR0y (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 24 Jun 2022 13:26:54 -0400
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2012A725;
+        Fri, 24 Jun 2022 10:26:48 -0700 (PDT)
+Received: by mail-io1-f45.google.com with SMTP id r133so3399192iod.3;
+        Fri, 24 Jun 2022 10:26:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=vaHHEauVvqkMWfLMfHxzFvsc9NwJ8Elmx8AaWGts9VE=;
+        b=Bj9LRq4L8uB1RVMnmz5fw/iPvuxMrvnCr6xKyB29bNmdoDq5VRDtIxsie77Ob4O9GW
+         FiiZVc+UHlo8uFoJRWJ8kqVUR441HZMQ3lZSPTRR5kNBvcI3HySOyTl5Bj5kzAUFQKQ2
+         PgCHuN7ilQkj41KZwW6FZbp3xfLjL6ZUoeLDsYvWdLRhmZA4dApSgekidTrYd+27rR56
+         oPjL4b+YHVwHCRc7RtXCkqUV46WZ8Zeos98bJ56haPEk9YedfAOdtXgw1imfI0syjVwu
+         T9d5ZYNd6+Zz7ONpAGRZdEv24358Ki9HY/UCKFzX1FEsR3xYXdStHEgeGnH8OghZxZ5f
+         +46A==
+X-Gm-Message-State: AJIora8tx/NdbkoI/kzOAiaSEE/POnuj31CcVDG9ebyEOL8hZudkw5pi
+        LqJUXAe8HAT3ZZ2mSqppevHU5p6QCw==
+X-Google-Smtp-Source: AGRyM1vRutqEr41mUsHKGNxNx022yDHkG7fL3mpUC1VA5ARhOw6PzXDJLvpfjiu0/6t7pZQ6SdELnw==
+X-Received: by 2002:a02:c942:0:b0:339:ec11:d04e with SMTP id u2-20020a02c942000000b00339ec11d04emr154237jao.174.1656091607954;
+        Fri, 24 Jun 2022 10:26:47 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id b1-20020a5d8041000000b00674f9fb1531sm1433314ior.30.2022.06.24.10.26.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jun 2022 10:26:47 -0700 (PDT)
+Received: (nullmailer pid 146346 invoked by uid 1000);
+        Fri, 24 Jun 2022 17:26:34 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+In-Reply-To: <20220624111325.96478-1-krzysztof.kozlowski@linaro.org>
+References: <20220624111325.96478-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] dt-bindings: leds: lp50xx: fix LED children names
+Date:   Fri, 24 Jun 2022 11:26:34 -0600
+Message-Id: <1656091594.405509.146345.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 07:56:25PM +0800, ChiaEn Wu wrote:
-> --- /dev/null
-> +++ b/drivers/usb/typec/tcpm/tcpci_mt6370.c
-> @@ -0,0 +1,212 @@
-> +// SPDX-License-Identifier: GPL-2.0+
+On Fri, 24 Jun 2022 13:13:25 +0200, Krzysztof Kozlowski wrote:
+> The lp50xx LEDs expects to have single-color LED children with unit
+> addresses.  This is required by the driver and provided by existing
+> DTSes.  Fix the binding to match actual usage.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Fixes: dce1452301e7 ("dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers")
+> ---
+>  Documentation/devicetree/bindings/leds/leds-lp50xx.yaml | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
 
-Are you sure you mean "+" here?
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-I have to ask, sorry.
+yamllint warnings/errors:
 
-And no copyright line?  Your company is ok with that, nice!  :)
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/leds/leds-lp50xx.example.dtb: led-controller@14: multi-led@2:#size-cells:0:0: 0 was expected
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
 
-thanks,
+doc reference errors (make refcheckdocs):
 
-greg k-h
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
