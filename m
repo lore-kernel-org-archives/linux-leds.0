@@ -2,41 +2,42 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C76EC433EF
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Jun 2022 18:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F0CC433EF
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Jun 2022 18:22:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232772AbiF1SDG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 28 Jun 2022 14:03:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47890 "EHLO
+        id S231977AbiF1SWO (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 28 Jun 2022 14:22:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233740AbiF1SCd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jun 2022 14:02:33 -0400
+        with ESMTP id S229654AbiF1SWN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Jun 2022 14:22:13 -0400
 Received: from msg-4.mailo.com (ip-15.mailobj.net [213.182.54.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0AE512AF1;
-        Tue, 28 Jun 2022 11:02:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE63020BD3;
+        Tue, 28 Jun 2022 11:22:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mailoo.org; s=mailo;
-        t=1656438121; bh=BwXMWIySOBrUTHj5EzTw/IjmxzQAGV/KhWD2NQgBX8U=;
-        h=X-EA-Auth:From:To:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
+        t=1656440518; bh=BwXMWIySOBrUTHj5EzTw/IjmxzQAGV/KhWD2NQgBX8U=;
+        h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
          References:MIME-Version:Content-Transfer-Encoding;
-        b=QynlLMBjb1qAeVnlLgKgnZUZX6vSceM1hOwWDYsT3cYvkHmI69ibA99WQXEhIyhOA
-         oP4Qa2tUMM2Zt0J8kINgsT8OocvJS/3zPRfkbpeTn0C4ralr3bibe0EUUojykiiHxw
-         4YR9Lr3Zmi/e6W0POEiHedBunzMIHbtzb99jSqTM=
+        b=dh2quHRrdkd17nyMObFeABozwAa6nmA2E9vHEkyCc8nm7XulgH9bwdik9TltK05c7
+         laE5mQ0U+CLLjVVK54PEtGt5DcnUMfCTFjCHCrUdFWg4nk3NlsbL+WWyxWhvSUrpsR
+         E2nUrumntWXwugrGLy3mEpsZu0UA/lFUvuaiMBpo=
 Received: by b-1.in.mailobj.net [192.168.90.11] with ESMTP
         via [213.182.55.207]
-        Tue, 28 Jun 2022 19:42:01 +0200 (CEST)
-X-EA-Auth: eHiO7pkjdp6iKmf0wfbyHAAfez79KEvdzp+NIk361foUH2t28prp8lfg0M+BeS4IldoZVQVleZ6P0K7Kcat3p3XMaVJjGqosUHYKcLMktzA=
+        Tue, 28 Jun 2022 20:21:58 +0200 (CEST)
+X-EA-Auth: oizRUETPIpBP5pyOwA8CVbiq+6BHYnBPAaeUc57JFlCpERlLazx1GaTQH90VvTnQEro/M/zB7TiyNbI4YflLLsF8c4EZZZJheGDecljj6Ok=
 From:   Vincent Knecht <vincent.knecht@mailoo.org>
 To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Vincent Knecht <vincent.knecht@mailoo.org>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/7] dt-bindings: leds: is31fl319x: Add missing si-en compatibles
-Date:   Tue, 28 Jun 2022 19:41:17 +0200
-Message-Id: <20220628174124.2819238-3-vincent.knecht@mailoo.org>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht
+Subject: [PATCH v1 RESEND 2/7] dt-bindings: leds: is31fl319x: Add missing si-en compatibles
+Date:   Tue, 28 Jun 2022 20:21:40 +0200
+Message-Id: <20220628182147.2837180-3-vincent.knecht@mailoo.org>
 X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20220628174124.2819238-1-vincent.knecht@mailoo.org>
-References: <20220628174124.2819238-1-vincent.knecht@mailoo.org>
+In-Reply-To: <20220628182147.2837180-1-vincent.knecht@mailoo.org>
+References: <20220628182147.2837180-1-vincent.knecht@mailoo.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
