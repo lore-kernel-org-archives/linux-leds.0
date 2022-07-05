@@ -2,184 +2,142 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0631CCA479
-	for <linux-leds@archiver.kernel.org>; Tue,  5 Jul 2022 00:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9BBCCA485
+	for <linux-leds@archiver.kernel.org>; Tue,  5 Jul 2022 10:09:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229456AbiGEAFK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 4 Jul 2022 20:05:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44866 "EHLO
+        id S231331AbiGEKJA (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 5 Jul 2022 06:09:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230240AbiGEAFI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 4 Jul 2022 20:05:08 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42B8CB49D;
-        Mon,  4 Jul 2022 17:05:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S229885AbiGEKI6 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 5 Jul 2022 06:08:58 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9546613F56;
+        Tue,  5 Jul 2022 03:08:56 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ACD04B815D1;
-        Tue,  5 Jul 2022 00:05:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 214DCC3411E;
-        Tue,  5 Jul 2022 00:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656979504;
-        bh=nUuGZzXB3lm/BS5eqFFgRGH6y+AP1FVcEon7bhUr3Hc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OZblpWXWvnI5Ww9hfS92j/UpBX/Fw5JzbrPCSOoZAy8MJpRUEd1Lt5gEjCySPThet
-         2IEk/qgtFzjdcSiryhx/dq4UVwkuEEpeEsbWioc2nOBjtMHVrQhhELWv02us5mcMdw
-         npASJJ2lQQuf8NdaLQGrgzcCW2ULe/8u686ceSozS0iigxEIawtOg3f3Z85RVR22UX
-         NWqosrr8x3xn6Y5k/KYSdNngODhozB7Qdfx13X5D6U+nSkxoybhQ/KLUxd2Oy9AMAb
-         rz9Vwfha+1NCxJxsUChHftUcFQ3/Up7aMa/N7OwnS+U77IR2VdCs1BdP73yIZ2+wNj
-         t5NzZ3aP7lL3Q==
-Received: by pali.im (Postfix)
-        id 10D4079F; Tue,  5 Jul 2022 02:05:01 +0200 (CEST)
-From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
-Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: leds: Add cznic,turris1x-leds.yaml binding
-Date:   Tue,  5 Jul 2022 02:04:47 +0200
-Message-Id: <20220705000448.14337-1-pali@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4BB4A1F91F;
+        Tue,  5 Jul 2022 10:08:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1657015735; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qvMJ4J1/LuqJ2bm7BlZIoOLJOYmWh+4Rpvkk33SZGOA=;
+        b=eByb4sSPqg6rRuVWR7Uyol2qkXUh2FlAJZJl6kQB2+c8EEhcdaxtq/jkX0dVzdvL/5s6D3
+        /efNTsY/bdasP3pVQxu6qP4nvHO+zcS4O9fblGgs1NR89rSYgTvYETM292rGHy3CrhOSj+
+        qGcOFU+GGl+mKHAF54mbZA9ZrTUJOaY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1657015735;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qvMJ4J1/LuqJ2bm7BlZIoOLJOYmWh+4Rpvkk33SZGOA=;
+        b=jKWTp5GMggeoLloojImrUvPvKkYL+8GQzQSR8Qi8VzqCYEK46zUKh7GMjl/cO3qvfPDiP7
+        DHXFfHIde+vxx5CQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2E2AF1339A;
+        Tue,  5 Jul 2022 10:08:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id VBGsCbYNxGK1BQAAMHmgww
+        (envelope-from <jdelvare@suse.de>); Tue, 05 Jul 2022 10:08:54 +0000
+Date:   Tue, 5 Jul 2022 12:08:52 +0200
+From:   Jean Delvare <jdelvare@suse.de>
+To:     Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Wolfram Sang <wsa@kernel.org>, Guenter Roeck <groeck@chromium.org>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, chrome-platform@lists.linux.dev,
+        linux-rpi-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        acpi4asus-user@lists.sourceforge.net, linux-pm@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 6/6] i2c: Make remove callback return void
+Message-ID: <20220705120852.049dc235@endymion.delvare>
+In-Reply-To: <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
+References: <20220628140313.74984-1-u.kleine-koenig@pengutronix.de>
+        <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add device-tree bindings documentation for Turris 1.x RGB LEDs.
+On Tue, 28 Jun 2022 16:03:12 +0200, Uwe Kleine-K=C3=B6nig wrote:
+> From: Uwe Kleine-K=C3=B6nig <uwe@kleine-koenig.org>
+>=20
+> The value returned by an i2c driver's remove function is mostly ignored.
+> (Only an error message is printed if the value is non-zero that the
+> error is ignored.)
+>=20
+> So change the prototype of the remove function to return no value. This
+> way driver authors are not tempted to assume that passing an error to
+> the upper layer is a good idea. All drivers are adapted accordingly.
+> There is no intended change of behaviour, all callbacks were prepared to
+> return 0 before.
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- .../bindings/leds/cznic,turris1x-leds.yaml    | 116 ++++++++++++++++++
- 1 file changed, 116 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/cznic,turris1x-leds.yaml
+That's a huge change for a relatively small benefit, but if this is
+approved by the I2C core maintainer then fine with me. For:
 
-diff --git a/Documentation/devicetree/bindings/leds/cznic,turris1x-leds.yaml b/Documentation/devicetree/bindings/leds/cznic,turris1x-leds.yaml
-new file mode 100644
-index 000000000000..fd09613c8d2d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/cznic,turris1x-leds.yaml
-@@ -0,0 +1,116 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/cznic,turris1x-leds.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: CZ.NIC's Turris 1.x LEDs driver
-+
-+maintainers:
-+  - Pali Rohár <pali@kernel.org>
-+
-+description:
-+  This module adds support for the RGB LEDs found on the front panel of the
-+  Turris 1.x routers. There are 8 RGB LEDs that are controlled by CZ.NIC CPLD
-+  firmware running on Lattice FPGA. Firmware is open source and available at
-+  https://gitlab.nic.cz/turris/hw/turris_cpld/-/blob/master/CZ_NIC_Router_CPLD.v
-+
-+properties:
-+  compatible:
-+    const: cznic,turris1x-leds
-+
-+  reg:
-+    maxItems: 2
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+patternProperties:
-+  "^multi-led@[0-7]$":
-+    type: object
-+    $ref: leds-class-multicolor.yaml#
-+
-+    properties:
-+      reg:
-+        minimum: 0
-+        maximum: 7
-+
-+    required:
-+      - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+
-+    #include <dt-bindings/leds/common.h>
-+
-+    cpld@3,0 {
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        led-controller@13 {
-+            compatible = "cznic,turris1x-leds";
-+            reg = <0x13 0x1d>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            multi-led@0 {
-+                    reg = <0x0>;
-+                    color = <LED_COLOR_ID_RGB>;
-+                    function = LED_FUNCTION_WAN;
-+            };
-+
-+            multi-led@1 {
-+                    reg = <0x1>;
-+                    color = <LED_COLOR_ID_RGB>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <5>;
-+            };
-+
-+            multi-led@2 {
-+                    reg = <0x2>;
-+                    color = <LED_COLOR_ID_RGB>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <4>;
-+            };
-+
-+            multi-led@3 {
-+                    reg = <0x3>;
-+                    color = <LED_COLOR_ID_RGB>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <3>;
-+            };
-+
-+            multi-led@4 {
-+                    reg = <0x4>;
-+                    color = <LED_COLOR_ID_RGB>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <2>;
-+            };
-+
-+            multi-led@5 {
-+                    reg = <0x5>;
-+                    color = <LED_COLOR_ID_RGB>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <1>;
-+            };
-+
-+            multi-led@6 {
-+                    reg = <0x6>;
-+                    color = <LED_COLOR_ID_RGB>;
-+                    function = LED_FUNCTION_WLAN;
-+            };
-+
-+            multi-led@7 {
-+                    reg = <0x7>;
-+                    color = <LED_COLOR_ID_RGB>;
-+                    function = LED_FUNCTION_POWER;
-+            };
-+        };
-+    };
-+
-+...
--- 
-2.20.1
+>  drivers/hwmon/adc128d818.c                                | 4 +---
+>  drivers/hwmon/adt7470.c                                   | 3 +--
+>  drivers/hwmon/asb100.c                                    | 6 ++----
+>  drivers/hwmon/asc7621.c                                   | 4 +---
+>  drivers/hwmon/dme1737.c                                   | 4 +---
+>  drivers/hwmon/f75375s.c                                   | 5 ++---
+>  drivers/hwmon/fschmd.c                                    | 6 ++----
+>  drivers/hwmon/ftsteutates.c                               | 3 +--
+>  drivers/hwmon/ina209.c                                    | 4 +---
+>  drivers/hwmon/ina3221.c                                   | 4 +---
+>  drivers/hwmon/jc42.c                                      | 3 +--
+>  drivers/hwmon/mcp3021.c                                   | 4 +---
+>  drivers/hwmon/occ/p8_i2c.c                                | 4 +---
+>  drivers/hwmon/pcf8591.c                                   | 3 +--
+>  drivers/hwmon/smm665.c                                    | 3 +--
+>  drivers/hwmon/tps23861.c                                  | 4 +---
+>  drivers/hwmon/w83781d.c                                   | 4 +---
+>  drivers/hwmon/w83791d.c                                   | 6 ++----
+>  drivers/hwmon/w83792d.c                                   | 6 ++----
+>  drivers/hwmon/w83793.c                                    | 6 ++----
+>  drivers/hwmon/w83795.c                                    | 4 +---
+>  drivers/hwmon/w83l785ts.c                                 | 6 ++----
+>  drivers/i2c/i2c-core-base.c                               | 6 +-----
+>  drivers/i2c/i2c-slave-eeprom.c                            | 4 +---
+>  drivers/i2c/i2c-slave-testunit.c                          | 3 +--
+>  drivers/i2c/i2c-smbus.c                                   | 3 +--
+>  drivers/i2c/muxes/i2c-mux-ltc4306.c                       | 4 +---
+>  drivers/i2c/muxes/i2c-mux-pca9541.c                       | 3 +--
+>  drivers/i2c/muxes/i2c-mux-pca954x.c                       | 3 +--
 
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+
+--=20
+Jean Delvare
+SUSE L3 Support
