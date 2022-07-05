@@ -2,59 +2,60 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B134CCCA47B
-	for <linux-leds@archiver.kernel.org>; Tue,  5 Jul 2022 21:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD35C433EF
+	for <linux-leds@archiver.kernel.org>; Tue,  5 Jul 2022 21:01:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232213AbiGEVBu (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 5 Jul 2022 17:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40098 "EHLO
+        id S231727AbiGEVBw (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 5 Jul 2022 17:01:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbiGEVBt (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 5 Jul 2022 17:01:49 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15A8CDC5
-        for <linux-leds@vger.kernel.org>; Tue,  5 Jul 2022 14:01:48 -0700 (PDT)
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+        with ESMTP id S229668AbiGEVBv (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 5 Jul 2022 17:01:51 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80894BFB
+        for <linux-leds@vger.kernel.org>; Tue,  5 Jul 2022 14:01:50 -0700 (PDT)
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 498B942430
-        for <linux-leds@vger.kernel.org>; Tue,  5 Jul 2022 21:01:46 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 24B0D40A9E
+        for <linux-leds@vger.kernel.org>; Tue,  5 Jul 2022 21:01:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1657054906;
-        bh=BZ3TTPllU2RNx61rLK2KPq+axv5Y7LrzDROkWqt5HLQ=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=Rls6SjXdQkGc4rLaj7PNxtQH8mOHip+hf3+lfmAtQUkwqXeaJgAz9DUrXmJ+JusTq
-         lVwrxCQ3Js6RxBiBAV3rH2d/hX19Z/L0jZdno/fxvFHjyZXJrE8FH9yTgnRXRO1p9D
-         NxxOUl8invvi/TZFvuhjPE7+0xTxheN01A8JMomX+iufUtLoUVSCrAdnDFps7f+lMy
-         UcLUl1M01KNyuJNF390wnvh56XM71N96cLU0/P8YVHAd+JfSEFY89YawR58rQaX+D4
-         pm1IISnVFxN4FNYQ9ocn+aufJyJJn7mcf6RNsiKRRIyGWcjHhbVYMmUvRgv5pAfnQ/
-         hZaGHcP2oEKmA==
-Received: by mail-wm1-f69.google.com with SMTP id bg6-20020a05600c3c8600b003a03d5d19e4so7300091wmb.1
-        for <linux-leds@vger.kernel.org>; Tue, 05 Jul 2022 14:01:46 -0700 (PDT)
+        s=20210705; t=1657054908;
+        bh=/+iqepEXJiQtf1kCLKBlcRYR4nyv6+zJPzgNc4qYD7Q=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version;
+        b=VmaP1NK0tkVCHB9rqv7w0ZrbbRCvTV+l544xS9i/w0WDfzSWQY3Z2EYqrNejiGhDI
+         276c+QnkwYpWE5mJmtEyGOq+L2ZPVEvB2SJ/bNk2piXVJCgBlOa4qJhA4xwKpx8ek9
+         qyX8y9XJIJGXRsk9EQiaZ1P+vbed8Sa8OD1q+LUFevuTH46lcK7LyZ8WsBpXuHAiEY
+         XYGmL0L5EBBAdWnRQmo8n2+gBbRNPqZjOFkRQxuwRKsZ5WBH7N4fFRazxFI5NUEcCN
+         waDH+9y5ZLKfrF/ZDiMIBEp+2UeJ+QYxRblLIwwlncMvsnYvC/PlDNSGRvLVF/BDtu
+         lwfyxBiIPmZpA==
+Received: by mail-wm1-f71.google.com with SMTP id 6-20020a1c0206000000b003a02cd754d1so5729210wmc.9
+        for <linux-leds@vger.kernel.org>; Tue, 05 Jul 2022 14:01:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BZ3TTPllU2RNx61rLK2KPq+axv5Y7LrzDROkWqt5HLQ=;
-        b=R62aT5xWbeORaqBNk9wLhRpSb5960zGAD7R7YwFTV0tjY17p4uvwsSSxynmkTy0vFN
-         kXxHQxBA10NOCmk0KDs1m2muXzEDzVd6XMEclBgizn3kS63c7IQp1WTQEF+NTMwjAGcq
-         VoKFdKEzrj0F+7nRcJ8HYZXF3bcNTluxkow2VG8nqkArJEQwSFOTHgqinLkaS2dajpOO
-         XWf9Q44aJz8xXw6QqGphNLZbuKno8hZHET3xglWnxTH1UPIyKWQiaZ7tRqNQobvCllIX
-         1bqD0FYs3c7vSlxdEHyycdVMnVWah6BL/RRVwCeAY5OjvRBze6e/3K4cjuvvAflWyWyu
-         fyzw==
-X-Gm-Message-State: AJIora9LlfFU5h44qpdY+wMjyIuVjnZ3KpsFCXCS+6IbhHP4pGXT/R/0
-        6l7w8H0x7rxG0gHn49/AAqfiuspxx7Sj4OTPwkFETTxbXWuggtGtUzKM+S1Ak+TXqEhFNuxMntO
-        v4K7jpetrLlQrnoRRrj6ezAnGGbzIUTgd96oXRZc=
-X-Received: by 2002:adf:d1e9:0:b0:21d:2154:2bc7 with SMTP id g9-20020adfd1e9000000b0021d21542bc7mr32198655wrd.105.1657054905481;
-        Tue, 05 Jul 2022 14:01:45 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1uJ6GR25rmzYj+5MOIYxx8GnVDHsnsL8L8SKcrRNOoJrGmGln63zLuDAwKc99O7ChnLFoDsbg==
-X-Received: by 2002:adf:d1e9:0:b0:21d:2154:2bc7 with SMTP id g9-20020adfd1e9000000b0021d21542bc7mr32198623wrd.105.1657054905236;
-        Tue, 05 Jul 2022 14:01:45 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=/+iqepEXJiQtf1kCLKBlcRYR4nyv6+zJPzgNc4qYD7Q=;
+        b=utRqutCDVEJ2k4+9lNeMBgoBRPohGSCMjhczLB1VpGNRv1kCUK3oqzuICc0Apq7FdU
+         zaULbKEE0BHYhXUFzo8o9FOj0DzCrFZZ/97ZnL3r3EkjGQOpKwTYFUShXS49pz873EiS
+         t7Sy4QwQJbQGz6pfmc56BZ1smeZPkekS59f4FYQMx3Dl4si+50Nu4vm8PcET1bd7m6O+
+         FMg1Cxl7ByPNUJ5ws75zRDEtc4iei33MUnL2iOTtt7F2t+p2QJA0gsvojzAYfKFYbtj/
+         5YxJcsdqA7WbW0wDFy82UmvKi4OXKn4pL1w9pR2eWbc1tYxjJH1Y4XJwjgSQLIK88TOQ
+         h+Ag==
+X-Gm-Message-State: AJIora+1s9s5gOvcxHv08fYAL4guhpRUZFfUmkujATyrpUC71KIvktGI
+        cY79CCXMGj1bWIopTiXzPr9uc3eH+IgmRhYrTTsW0K7TdzNfkZLaKX4MSncEITcr2hERbEbyDik
+        Yu3Tl3SwZrK9qtXqD9PTP9CRNZyUwA7k4yKnjk+Y=
+X-Received: by 2002:a5d:5f05:0:b0:21b:8ca0:6d3d with SMTP id cl5-20020a5d5f05000000b0021b8ca06d3dmr33987904wrb.382.1657054907934;
+        Tue, 05 Jul 2022 14:01:47 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1voNkjmJLsItk4qX2FcCqMMV0I2vwoygxRWgEn1u2iRJAbKSZJmuQVNG8KjvMDWpNkZS4aZLA==
+X-Received: by 2002:a5d:5f05:0:b0:21b:8ca0:6d3d with SMTP id cl5-20020a5d5f05000000b0021b8ca06d3dmr33987869wrb.382.1657054907727;
+        Tue, 05 Jul 2022 14:01:47 -0700 (PDT)
 Received: from stitch.. (80.71.140.73.ipv4.parknet.dk. [80.71.140.73])
-        by smtp.gmail.com with ESMTPSA id r15-20020a0560001b8f00b0021d74906683sm2517667wru.28.2022.07.05.14.01.44
+        by smtp.gmail.com with ESMTPSA id r15-20020a0560001b8f00b0021d74906683sm2517667wru.28.2022.07.05.14.01.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jul 2022 14:01:44 -0700 (PDT)
+        Tue, 05 Jul 2022 14:01:47 -0700 (PDT)
 From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
@@ -75,30 +76,41 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         David Abdurachmanov <davidlt@rivosinc.com>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-riscv@lists.infradead.org
-Subject: [PATCH v1 0/4] Add HiFive Unmatched LEDs
-Date:   Tue,  5 Jul 2022 23:01:39 +0200
-Message-Id: <20220705210143.315151-1-emil.renner.berthing@canonical.com>
+Subject: [PATCH v1 2/4] dt-bindings: leds: pwm-multicolor: Add active-low property
+Date:   Tue,  5 Jul 2022 23:01:41 +0200
+Message-Id: <20220705210143.315151-3-emil.renner.berthing@canonical.com>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220705210143.315151-1-emil.renner.berthing@canonical.com>
+References: <20220705210143.315151-1-emil.renner.berthing@canonical.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This series adds support for the two LEDs on the HiFive Unmatched
-RISC-V board.
+Add the active-low property to LEDs that are part of a multicolor LED
+just like the regular PWM LEDs have.
 
-Emil Renner Berthing (4):
-  leds: pwm-multicolor: Don't show -EPROBE_DEFER as errors
-  dt-bindings: leds: pwm-multicolor: Add active-low property
-  leds: pwm-multicolor: Support active-low LEDs
-  riscv: dts: sifive unmatched: Add PWM controlled LEDs
+Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+---
+ .../devicetree/bindings/leds/leds-pwm-multicolor.yaml         | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- .../bindings/leds/leds-pwm-multicolor.yaml    |  4 ++
- .../boot/dts/sifive/hifive-unmatched-a00.dts  | 42 +++++++++++++++++++
- drivers/leds/rgb/leds-pwm-multicolor.c        |  8 +++-
- 3 files changed, 52 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/leds/leds-pwm-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-pwm-multicolor.yaml
+index 6625a528f727..8d614eaf5c5e 100644
+--- a/Documentation/devicetree/bindings/leds/leds-pwm-multicolor.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-pwm-multicolor.yaml
+@@ -33,6 +33,10 @@ properties:
+ 
+           pwm-names: true
+ 
++          active-low:
++            description: For PWMs where the LED is wired to supply rather than ground.
++            type: boolean
++
+           color: true
+ 
+         required:
 -- 
 2.37.0
 
