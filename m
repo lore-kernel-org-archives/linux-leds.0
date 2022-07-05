@@ -2,102 +2,108 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C45FCCCA485
-	for <linux-leds@archiver.kernel.org>; Tue,  5 Jul 2022 11:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2C5CCA487
+	for <linux-leds@archiver.kernel.org>; Tue,  5 Jul 2022 12:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231960AbiGELyX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 5 Jul 2022 07:54:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33710 "EHLO
+        id S236102AbiGEMU0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 5 Jul 2022 08:20:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232972AbiGELxE (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 5 Jul 2022 07:53:04 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEFCC17A83
-        for <linux-leds@vger.kernel.org>; Tue,  5 Jul 2022 04:53:02 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id c15so14245640ljr.0
-        for <linux-leds@vger.kernel.org>; Tue, 05 Jul 2022 04:53:02 -0700 (PDT)
+        with ESMTP id S236622AbiGEMR7 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 5 Jul 2022 08:17:59 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EC8D193E1
+        for <linux-leds@vger.kernel.org>; Tue,  5 Jul 2022 05:13:09 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id r9so14246661ljp.9
+        for <linux-leds@vger.kernel.org>; Tue, 05 Jul 2022 05:13:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=IbfaXjeOYPk8qrQ6FvKEJiDPLZqhzWiK2mEmdCgaVvk=;
-        b=B4DtRXPpYtc7Jys2RrKIjT7AKP3Cq2mEqDpEzOACwvCZDb77o2+T4h755u44lqfwgP
-         v4Li7tF6UwQtWQ0lA//rN/NYdtZNB0dTA+HcwQ3CRgQE5xx+N4nKDoqtN9y6iHkEeup/
-         YdkZNnjl5Z58di+2anNCAwRIwoLzrJNvq2Xb0c0Ru6dtLmH1QR2udERachuAu2MOXTJl
-         KWkvYf5EB+mX0k7axZ4FUwhcvlTAPffn3D72r33YlkHi/1SgzMQdEXVcmmYyOBtag99J
-         IrZirlPmqptkw8Y6vgrSxrtadQffV6EYlUsra222sQhNAGezLdeBVoHJ9FRGhQImzcgg
-         ewvg==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=UeNH2jSWLV7pgX+9k7Jm7Qrd1Rmj1W872ul3so8oKsg=;
+        b=z8mFZcu8ol2iXYecvxhFYVi1ZxVvlUsA9LO5AkNvxja+k2FsQDGymo6xlhVwgpfHAa
+         IZnKK/XQLW3VNqnYmH1aVoW+TMAqVeQZ8Ia9/maR4izz4q8X9gP7wWoQV8/cjgUC6Q4f
+         L/MSlBfpow9PbpLtZWW95HXO/IAIG2VUsZ05RyWvU5mRTJdyezEz6oEvl4M65oogq60W
+         Fv6fNRQJNaykpYXU/aBizSMBVCSZRUcDmPoiAF1sAKWeDzwtWem5NJnjOz3Mu0KBhNal
+         gPyLFTAAnFxB+R3UjFOQ7gccQ0tXnKh1BvIe8QZiD041AJ8Zj3ZgSVfuuf4f1OTiJvBz
+         UVJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+         :content-language:from:to:cc:references:in-reply-to
          :content-transfer-encoding;
-        bh=IbfaXjeOYPk8qrQ6FvKEJiDPLZqhzWiK2mEmdCgaVvk=;
-        b=z0/IXCAqd3bPPlcUHosqN00QIewYA4JK8cW2Wa6+hn0+rKK+A4h9BPWNA8k+5zDirg
-         v/QeIrhDAWAUDDBJv2IQcGc9onLvA5HaG6z63OWzmFp2pQn6L+46/70kynM1WWwOR1FK
-         NgvSpCXShUSiKmZA05BxLsocMqnqUyLIz1WKXdb8yp6XskZZjiPH+eMPBqbSl5AMKbUA
-         u2khSzoLiHC1OuKI9IZOmUlyCR/ML6sJoViY14AFvDdKI9DU5gglYbYziySZLB9+aCej
-         EPIeTLfJtcGcD7cMhVtUiHW7yia6KiD+K+HWJ8GAqd6obeYRMyAf9g8RXcCaNuMPSH6V
-         M4UQ==
-X-Gm-Message-State: AJIora9s7SjD1wucG2gqMzoyyqmOugSJU9LgV82tiYCb5AZ9QgO8zslX
-        CTQmTcA9Oefi3rDDj7APb5Fe5g==
-X-Google-Smtp-Source: AGRyM1uPETmr+vhZN8KGx7CQ/BROrtMw0EI5i1L+BOd8h4XD5hhpd2Juf1gemkduB7se6umPE1HwyQ==
-X-Received: by 2002:a2e:9547:0:b0:24f:2e31:6078 with SMTP id t7-20020a2e9547000000b0024f2e316078mr18478545ljh.102.1657021981247;
-        Tue, 05 Jul 2022 04:53:01 -0700 (PDT)
+        bh=UeNH2jSWLV7pgX+9k7Jm7Qrd1Rmj1W872ul3so8oKsg=;
+        b=5Kqp3tRdsAUlMVjaSQ1qGRxBGM56ucpUM/SnytiYS4gLHxkqKG6UuoJoj9wG7IRgBb
+         UWLWt7u+wpPHK8HmHgefxzwzcwRKeGZA9i6mJaZAzBLevUOtPBcyhUHitRc2+VzvpqxN
+         Z9p6RzrjQjFjolrucMq/OdT+jk4Gsr351yZjMtAxTs0pZXcBeivL4bsjMWrAkFMciDhD
+         G9UyVvVE/YOI7PteDcGjpVgtIocbnI31qwv02CtHXHYp2dQlQXctv6S4PDyHIxCXfqYE
+         ULb2XtFsIB8SuhDaoSG+kVkJSzJNeqXFq6mvnhFkyKmt0aQw8Htv2Gg2E/7X/Pj5TJKu
+         +JmQ==
+X-Gm-Message-State: AJIora9WIgVtkVu8iruGhyKGJND0mjkUlhtY2Wr048yYi8o8h1swEPG6
+        GYMdMLijzKcFUIRjC5VCB2fzGA==
+X-Google-Smtp-Source: AGRyM1u4eaLpKZopejR3YzQCSTc3vkTgPfGkiK6QtKH02WQO260Dtam/hZsuQzVtqY6jQ39l776M9w==
+X-Received: by 2002:a05:651c:246:b0:25a:3420:735d with SMTP id x6-20020a05651c024600b0025a3420735dmr20556878ljn.515.1657023188027;
+        Tue, 05 Jul 2022 05:13:08 -0700 (PDT)
 Received: from [192.168.1.52] ([84.20.121.239])
-        by smtp.gmail.com with ESMTPSA id 9-20020a2e0509000000b0025538905298sm5487757ljf.123.2022.07.05.04.53.00
+        by smtp.gmail.com with ESMTPSA id v13-20020ac2560d000000b0047f8790085csm5673105lfd.71.2022.07.05.05.13.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Jul 2022 04:53:00 -0700 (PDT)
-Message-ID: <29d1f7a3-e141-270c-9e71-e052fd41dd48@linaro.org>
-Date:   Tue, 5 Jul 2022 13:52:59 +0200
+        Tue, 05 Jul 2022 05:13:06 -0700 (PDT)
+Message-ID: <e5d2d2b9-b346-0481-03be-4a94c87a816f@linaro.org>
+Date:   Tue, 5 Jul 2022 14:13:05 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH] dt-bindings: leds: class-multicolor: reference class
- directly in multi-led node
+Subject: Re: [PATCH] dt-bindings: leds: lp50xx: fix LED children names
 Content-Language: en-US
-To:     Pavel Machek <pavel@ucw.cz>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     ChiaEn Wu <peterwu.pub@gmail.com>,
-        Sven Schwermer <sven.schwermer@disruptive-technologies.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dan Murphy <dmurphy@ti.com>,
-        =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>
-References: <20220624112106.111351-1-krzysztof.kozlowski@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220624112106.111351-1-krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+References: <20220624111325.96478-1-krzysztof.kozlowski@linaro.org>
+ <1656091594.405509.146345.nullmailer@robh.at.kernel.org>
+ <31f5f441-eba3-4ffb-cf68-159cd827ade7@linaro.org>
+In-Reply-To: <31f5f441-eba3-4ffb-cf68-159cd827ade7@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 24/06/2022 13:21, Krzysztof Kozlowski wrote:
-> The leds/common.yaml is referenced directly in each LED node, which
-> leads to people doing the same with leds/leds-class-multicolor.yaml.
-> This is not correct because leds-class-multicolor.yaml defined multi-led
-> property and its children.  Some schemas implemented this incorrect.
+On 24/06/2022 19:31, Krzysztof Kozlowski wrote:
+> On 24/06/2022 19:26, Rob Herring wrote:
+>> On Fri, 24 Jun 2022 13:13:25 +0200, Krzysztof Kozlowski wrote:
+>>> The lp50xx LEDs expects to have single-color LED children with unit
+>>> addresses.  This is required by the driver and provided by existing
+>>> DTSes.  Fix the binding to match actual usage.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> Fixes: dce1452301e7 ("dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers")
+>>> ---
+>>>  Documentation/devicetree/bindings/leds/leds-lp50xx.yaml | 8 +++++++-
+>>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>>
+>>
+>> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+>> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>>
+>> yamllint warnings/errors:
+>>
+>> dtschema/dtc warnings/errors:
+>> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/leds/leds-lp50xx.example.dtb: led-controller@14: multi-led@2:#size-cells:0:0: 0 was expected
+>> 	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
+>>
 > 
-> Rework this to match same behavior common.yaml, so expect the multi-led
-> node to reference the leds-class-multicolor.yaml.  Fixing allows to add
-> unevaluatedProperties:false.
+> This is expected and fixed in:
+> https://lore.kernel.org/all/20220607075247.58048-1-krzysztof.kozlowski@linaro.org/
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> I did not combine this patch with above patchset because this one is a
+> fix and might be backported to stable.
 > 
-> ---
-> 
-> This will conflict with any new users of leds-class-multicolor, e.g.:
-> https://lore.kernel.org/all/20220623115631.22209-4-peterwu.pub@gmail.com/
-> 
-> The new users should be updated to match the usage introduced here.
 
-Pavel,
-
-Any comments from your side? It's waiting for a bit and folks are
-sending more and more wrong multicolor bindings...
+Anyone willing to pick this up? This is a fix.
 
 Best regards,
 Krzysztof
