@@ -2,60 +2,60 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5E3CCA47C
-	for <linux-leds@archiver.kernel.org>; Tue,  5 Jul 2022 21:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DAEC433EF
+	for <linux-leds@archiver.kernel.org>; Tue,  5 Jul 2022 21:02:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232276AbiGEVBx (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 5 Jul 2022 17:01:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40128 "EHLO
+        id S232373AbiGEVCB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 5 Jul 2022 17:02:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231196AbiGEVBv (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 5 Jul 2022 17:01:51 -0400
+        with ESMTP id S231659AbiGEVBy (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 5 Jul 2022 17:01:54 -0400
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 803A92B4
-        for <linux-leds@vger.kernel.org>; Tue,  5 Jul 2022 14:01:50 -0700 (PDT)
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B51D4BFB
+        for <linux-leds@vger.kernel.org>; Tue,  5 Jul 2022 14:01:53 -0700 (PDT)
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 1591540A9B
-        for <linux-leds@vger.kernel.org>; Tue,  5 Jul 2022 21:01:47 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 32F2F40AAC
+        for <linux-leds@vger.kernel.org>; Tue,  5 Jul 2022 21:01:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1657054907;
-        bh=bQMwaeYKMT6usnwDyo75UwU6twU1bHQlELRjvpkCaBs=;
+        s=20210705; t=1657054910;
+        bh=EI3mxEAHkgT2vU1OOl7PeFFTw9+zwdjdFkAEZQkp71M=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=lK1lQTBf8Tbaa1/LDM+pOCGZOUWU0jDHdZUI8aomWLnlYPFkws2WHrFbJzmg7vrL/
-         Uo6Fdp5RdJ/9PVssQQTRd/XJZaGIy6v59KxeSPAtoMEdkb1gogVEdL9JPzQsy8Mb36
-         qVXcw3CRVe2nfP9r9Gdn6ho0CwnrK0AwPcR68p2xnreM4TmxunH8Xdf27KPHIUG9yc
-         HERR+Uts/3wm1dGXYxEzW++XElnWNUBXKYxij4Pt6S357pyPMfdqBcY5Iyv1nkT9kQ
-         yZTokfs+ChLQ90BPp+sBMy7mjKq5illHZtVY7yQDzRaBMYpkv2d6sqtJ9b10MOBh9n
-         iNYfdbx0agCkA==
-Received: by mail-wm1-f72.google.com with SMTP id r206-20020a1c44d7000000b003a2bfaf8d3dso145406wma.0
-        for <linux-leds@vger.kernel.org>; Tue, 05 Jul 2022 14:01:47 -0700 (PDT)
+        b=u2uiyNzKBeWHBRx93ok0aM+Ks+XvGLOuIffSiqZYQQsGTXhUODF3FoiEVeR31zUqy
+         eZ8ZEXlDsHgTUhEq+mtF8db/xzA3cHPx0yKRu9Y+LKzYAjcS36ifIqgypVTy01IC8c
+         5++IY/8LekX+Gvnl80Z/1HYueOGAs1PiKDNtD/UovkUzs9pbxFY4tAfCm2x/L+CG35
+         tpab34MW8ZNz0qkJspgINd7+CM3EagX5nOxTSwz/LxSfSZltMLoz06ZI2u3g0Zgue6
+         rli3NZbZl1VAcACHu9QuVu8snfhxYURkgOjR+pFBjfXeP7l/a67K+ZyoIrplEX8XFA
+         La81Wv4qq0wXA==
+Received: by mail-wm1-f69.google.com with SMTP id t20-20020a1c7714000000b003a032360873so9417547wmi.0
+        for <linux-leds@vger.kernel.org>; Tue, 05 Jul 2022 14:01:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bQMwaeYKMT6usnwDyo75UwU6twU1bHQlELRjvpkCaBs=;
-        b=sQJGjV1TUfDi4VqgBsY91sqa6Z2f1ZtvVjKCXk97ClOG3MvYMfNvCxtyhkgoJlUeVX
-         G+4gf5noEQQQec/WXih/ZHjAJjaBjl9TOqP54XY4pT9vDIkaujhly0GykUvfb4rcuoY6
-         ojesU0ELTjn1x/hu7mqktC38ECOWCDiMGmVOrFvIUGXGd0OOTc4Z1UhJ56TfN6BwyKsj
-         IH821WnPGC1qp7dgj5um2HBxSH9hsTRfQNzsipSah9XlJaO1SR6hun+OEPBF5yscqOX4
-         kfQ+kPPgfeKbvHn3ihpp2tnNNM8qvtAHtsR7/y7rZ3NIinb5kdo27rcAclEeNXDOP97M
-         ydZw==
-X-Gm-Message-State: AJIora+yWdycYcDezWninsPewXa3VibB4/fdjfWSF3ZgHMVaaSRoW6dg
-        9hJV67PfZBKjnRH2+ZvPfpnx5Xb/TrPAcq+v7EdCwEzQTl3Rvr5bbCWcS1ojHMNxUDVJyf44raX
-        8XVsqprKkj4Buuuzx/IcG3q4L4Wy7dDgaKgDOFgM=
-X-Received: by 2002:a05:600c:3caa:b0:394:8fb8:716 with SMTP id bg42-20020a05600c3caa00b003948fb80716mr39682331wmb.105.1657054906761;
-        Tue, 05 Jul 2022 14:01:46 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1tZxXj9wYCQn8xRiwSdoNr+XF9lf5AtfECiLDauDGWvaTlvbMHbvHq3GJc+TGPSmAuxJVR2KQ==
-X-Received: by 2002:a05:600c:3caa:b0:394:8fb8:716 with SMTP id bg42-20020a05600c3caa00b003948fb80716mr39682293wmb.105.1657054906543;
-        Tue, 05 Jul 2022 14:01:46 -0700 (PDT)
+        bh=EI3mxEAHkgT2vU1OOl7PeFFTw9+zwdjdFkAEZQkp71M=;
+        b=Fc4gypa/k+C6j20+GR8enUxff3vrz2wC/fxBeya0kmV1kHX8qEyT6a5ouGk/7ZFnjo
+         TMfR6CwgUsf/+0M8qSMUAUOJtnKC25FUxBswRtWBFQEAeS/j0al6rpwIIXGazpBLCrX6
+         y+AnLesJAc+T6AIecYEB43PSvSgwFAsyyvc7YhPFanyE+J4RgY7d1lOj4jMNocOUgMeK
+         1FKWaXzpdjI4q3vH5ebE2Z4qn7YW7Mg/qsRZBdTq3uJP53e4CvOipAauh9dtBCAIHu3d
+         zdLYbopnTfelMSIzkoHbtSXAhY2Ge9oASqomm1LpcOGnVetxWyx8L5++27u5JADTPoPU
+         tsrA==
+X-Gm-Message-State: AJIora9sKTUdWIoyZwosB1yKvY21MjVJSluBMvBDRlv7RvXMBXgnNtj2
+        MIMhCE3XcVn9W6FlveCzZoc7Gw1mL2btg556SERq8rA4jGSHLZOt1YW0fh4Lch6UlQbRpF9ee6S
+        IheL6/CP+Xfoc1oycAbVGm5MJ4kQpvkV2ORMts/s=
+X-Received: by 2002:a05:6000:1445:b0:21b:a919:7d3 with SMTP id v5-20020a056000144500b0021ba91907d3mr33143885wrx.545.1657054909200;
+        Tue, 05 Jul 2022 14:01:49 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1tpGtr585A4zBiBrqeprE38gSsAvDrw/l/xt/heeVYnerThl9ghX7+cZz4Gy93kTP7evrM9SQ==
+X-Received: by 2002:a05:6000:1445:b0:21b:a919:7d3 with SMTP id v5-20020a056000144500b0021ba91907d3mr33143858wrx.545.1657054908987;
+        Tue, 05 Jul 2022 14:01:48 -0700 (PDT)
 Received: from stitch.. (80.71.140.73.ipv4.parknet.dk. [80.71.140.73])
-        by smtp.gmail.com with ESMTPSA id r15-20020a0560001b8f00b0021d74906683sm2517667wru.28.2022.07.05.14.01.45
+        by smtp.gmail.com with ESMTPSA id r15-20020a0560001b8f00b0021d74906683sm2517667wru.28.2022.07.05.14.01.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jul 2022 14:01:46 -0700 (PDT)
+        Tue, 05 Jul 2022 14:01:48 -0700 (PDT)
 From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
@@ -76,9 +76,9 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         David Abdurachmanov <davidlt@rivosinc.com>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-riscv@lists.infradead.org
-Subject: [PATCH v1 1/4] leds: pwm-multicolor: Don't show -EPROBE_DEFER as errors
-Date:   Tue,  5 Jul 2022 23:01:40 +0200
-Message-Id: <20220705210143.315151-2-emil.renner.berthing@canonical.com>
+Subject: [PATCH v1 3/4] leds: pwm-multicolor: Support active-low LEDs
+Date:   Tue,  5 Jul 2022 23:01:42 +0200
+Message-Id: <20220705210143.315151-4-emil.renner.berthing@canonical.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220705210143.315151-1-emil.renner.berthing@canonical.com>
 References: <20220705210143.315151-1-emil.renner.berthing@canonical.com>
@@ -88,31 +88,44 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-When requesting a PWM it might return -EPROBE_DEFER if it hasn't probed
-yet. This is not an error, so just propagate the -EPROBE_DEFER without
-logging anything. There is already dev_err_probe for exactly this
-situation.
+Add support for LEDs wired up to light when the PWM output is low, just
+like the regular PWM LEDs.
 
-Fixes: 9fa2762110dd ("leds: Add PWM multicolor driver")
 Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 ---
- drivers/leds/rgb/leds-pwm-multicolor.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/leds/rgb/leds-pwm-multicolor.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/leds/rgb/leds-pwm-multicolor.c b/drivers/leds/rgb/leds-pwm-multicolor.c
-index 45e38708ecb1..eb67b89d28e9 100644
+index eb67b89d28e9..da9d2218ae18 100644
 --- a/drivers/leds/rgb/leds-pwm-multicolor.c
 +++ b/drivers/leds/rgb/leds-pwm-multicolor.c
-@@ -72,8 +72,7 @@ static int iterate_subleds(struct device *dev, struct pwm_mc_led *priv,
- 		pwmled = &priv->leds[priv->mc_cdev.num_colors];
- 		pwmled->pwm = devm_fwnode_pwm_get(dev, fwnode, NULL);
- 		if (IS_ERR(pwmled->pwm)) {
--			ret = PTR_ERR(pwmled->pwm);
--			dev_err(dev, "unable to request PWM: %d\n", ret);
-+			ret = dev_err_probe(dev, PTR_ERR(pwmled->pwm), "unable to request PWM\n");
+@@ -19,6 +19,7 @@
+ struct pwm_led {
+ 	struct pwm_device *pwm;
+ 	struct pwm_state state;
++	bool active_low;
+ };
+ 
+ struct pwm_mc_led {
+@@ -45,6 +46,9 @@ static int led_pwm_mc_set(struct led_classdev *cdev,
+ 		duty *= mc_cdev->subled_info[i].brightness;
+ 		do_div(duty, cdev->max_brightness);
+ 
++		if (priv->leds[i].active_low)
++			duty = priv->leds[i].state.period - duty;
++
+ 		priv->leds[i].state.duty_cycle = duty;
+ 		priv->leds[i].state.enabled = duty > 0;
+ 		ret = pwm_apply_state(priv->leds[i].pwm,
+@@ -76,6 +80,7 @@ static int iterate_subleds(struct device *dev, struct pwm_mc_led *priv,
  			goto release_fwnode;
  		}
  		pwm_init_state(pwmled->pwm, &pwmled->state);
++		pwmled->active_low = fwnode_property_read_bool(fwnode, "active-low");
+ 
+ 		ret = fwnode_property_read_u32(fwnode, "color", &color);
+ 		if (ret) {
 -- 
 2.37.0
 
