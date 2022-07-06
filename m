@@ -2,86 +2,86 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C63ECCA480
-	for <linux-leds@archiver.kernel.org>; Wed,  6 Jul 2022 11:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C21CC433EF
+	for <linux-leds@archiver.kernel.org>; Wed,  6 Jul 2022 15:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232329AbiGFL3N (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 6 Jul 2022 07:29:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33196 "EHLO
+        id S232584AbiGFPTx (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 6 Jul 2022 11:19:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230151AbiGFL3M (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 6 Jul 2022 07:29:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 171D225C4B;
-        Wed,  6 Jul 2022 04:29:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C1F5BB81AE0;
-        Wed,  6 Jul 2022 11:29:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56129C3411C;
-        Wed,  6 Jul 2022 11:29:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657106949;
-        bh=GvN3mQgjOamdQTg3riR+7vwKF1Gt9KXU0ujXPuAgHdc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=kQuAJ2oZASoqhrMmZluDfCTX6Gc4LBTwnLXgd3jr6trS7VlhJ2MjyPTUFwqtOrS7j
-         Lly7oWb1/aWEW+FY3vYAcZyfNBn1sGYCuW6miBrKt4UxWOx7X362KGdbAiqnTPuvAs
-         hcolkQNOPGFvaJn/JXp+Y521TSjYF8Ku9I12XDg3MhVSXQQIDO+NqyYXztJVtLeSn+
-         uLmZ+eAVxK+6LosvYK+Z3UV6QmmQpbjOZgM/TPzo8HoGQnL46dlaOiAd7wQlZvLByj
-         3MDlpZJzbYSJabmPmnxZsvsZTn6/FpSyDmnF9SBzReUvak7y8ER2PyKqtHA8LrOPRO
-         ocmU+q46xamFQ==
-Received: by pali.im (Postfix)
-        id BE99E7BA; Wed,  6 Jul 2022 13:29:06 +0200 (CEST)
-From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
-Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: leds: register-bit-led: Add value property
-Date:   Wed,  6 Jul 2022 13:28:27 +0200
-Message-Id: <20220706112828.27278-1-pali@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        with ESMTP id S232562AbiGFPTw (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 6 Jul 2022 11:19:52 -0400
+X-Greylist: delayed 7794 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 06 Jul 2022 08:19:51 PDT
+Received: from 3.mo560.mail-out.ovh.net (3.mo560.mail-out.ovh.net [46.105.58.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19EE4DFE9
+        for <linux-leds@vger.kernel.org>; Wed,  6 Jul 2022 08:19:50 -0700 (PDT)
+Received: from player759.ha.ovh.net (unknown [10.110.115.111])
+        by mo560.mail-out.ovh.net (Postfix) with ESMTP id C48A12401A
+        for <linux-leds@vger.kernel.org>; Wed,  6 Jul 2022 12:54:29 +0000 (UTC)
+Received: from milecki.pl (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
+        (Authenticated sender: rafal@milecki.pl)
+        by player759.ha.ovh.net (Postfix) with ESMTPSA id 23AA82C62D3DC;
+        Wed,  6 Jul 2022 12:54:19 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-98R0021715cc91-ca2c-4e6d-985b-220cb5972dbf,
+                    9C20F4AFB6E1A5C03E66B265D4B61152F87D618A) smtp.auth=rafal@milecki.pl
+X-OVh-ClientIp: 194.187.74.233
+Message-ID: <361c9fc9-e982-55d3-f780-405505fd4389@milecki.pl>
+Date:   Wed, 6 Jul 2022 14:54:15 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:96.0) Gecko/20100101
+ Thunderbird/96.0
+Subject: Re: [PATCH V3 1/2] dt-bindings: leds: add Broadcom's BCM63138
+ controller
+To:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Rob Herring <robh@kernel.org>
+References: <20211227145905.2905-1-zajec5@gmail.com>
+ <1ca1d83d-9803-77a3-e5bb-2380a2dc03b0@gmail.com>
+ <223aabc8-7ec3-2719-866a-8f35ab97a11f@gmail.com>
+ <1273c272-b6fe-2980-ce66-582738722634@gmail.com>
+From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+In-Reply-To: <1273c272-b6fe-2980-ce66-582738722634@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 9657124978954709818
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrudeifedgheejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpeftrghfrghlucfoihhlvggtkhhiuceorhgrfhgrlhesmhhilhgvtghkihdrphhlqeenucggtffrrghtthgvrhhnpeeuleetudfgkeevfffggeffveevleeutdekkeejueekveevtefhhfegveeggefhudenucfkpheptddrtddrtddrtddpudelgedrudekjedrjeegrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrhejheelrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomheprhgrfhgrlhesmhhilhgvtghkihdrphhlpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqlhgvughssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehiedt
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Allow to define inverted logic (0 - enable LED, 1 - disable LED) via value
-property. This property name is already used by other syscon drivers, e.g.
-syscon-reboot.
+Hi Pavel,
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- .../devicetree/bindings/leds/register-bit-led.yaml    | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On 27.04.2022 22:47, Rafał Miłecki wrote:
+> On 27.03.2022 11:28, Rafał Miłecki wrote:
+>> On 7.03.2022 07:27, Rafał Miłecki wrote:
+>>> On 27.12.2021 15:59, Rafał Miłecki wrote:
+>>>> From: Rafał Miłecki <rafal@milecki.pl>
+>>>>
+>>>> Broadcom used 2 LEDs hardware blocks for their BCM63xx SoCs:
+>>>> 1. Older one (BCM6318, BCM6328, BCM6362, BCM63268, BCM6838)
+>>>> 2. Newer one (BCM6848, BCM6858, BCM63138, BCM63148, BCM63381, BCM68360)
+>>>>
+>>>> The newer one was also later also used on BCM4908 SoC.
+>>>>
+>>>> Old block is already documented in the leds-bcm6328.yaml. This binding
+>>>> documents the new one which uses different registers & programming. It's
+>>>> first used in BCM63138 thus the binding name.
+>>>>
+>>>> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+>>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>>> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+>>>
+>>> Pavel: can I get this patchset finally accepted, please?
+>>
+>> It has been 3 months now. I kindly pinged you in January, February and
+>> March. Please let me know how can I get those patches accepted.
+> 
+> did you maybe have a chance to look at my patches?
 
-diff --git a/Documentation/devicetree/bindings/leds/register-bit-led.yaml b/Documentation/devicetree/bindings/leds/register-bit-led.yaml
-index 79b8fc0f9d23..d6054a3f9087 100644
---- a/Documentation/devicetree/bindings/leds/register-bit-led.yaml
-+++ b/Documentation/devicetree/bindings/leds/register-bit-led.yaml
-@@ -43,6 +43,17 @@ properties:
-         0x100000, 0x200000, 0x400000, 0x800000, 0x1000000, 0x2000000, 0x4000000,
-         0x8000000, 0x10000000, 0x20000000, 0x40000000, 0x80000000 ]
- 
-+  value:
-+    description:
-+      bit value of ON state for the bit controlling this LED in the register
-+      when not specified it is same as the mask
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum:
-+      [ 0x0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800,
-+        0x1000, 0x2000, 0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000,
-+        0x100000, 0x200000, 0x400000, 0x800000, 0x1000000, 0x2000000, 0x4000000,
-+        0x8000000, 0x10000000, 0x20000000, 0x40000000, 0x80000000 ]
-+
-   offset:
-     description:
-       register offset to the register controlling this LED
--- 
-2.20.1
-
+I'm asking to get this reviewed / accepted for half a year.
