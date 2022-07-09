@@ -2,29 +2,29 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 172D1C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F0ACCA483
 	for <linux-leds@archiver.kernel.org>; Sat,  9 Jul 2022 09:47:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229491AbiGIJr1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 9 Jul 2022 05:47:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47194 "EHLO
+        id S229614AbiGIJr2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 9 Jul 2022 05:47:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbiGIJr0 (ORCPT
+        with ESMTP id S229513AbiGIJr0 (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Sat, 9 Jul 2022 05:47:26 -0400
-Received: from msg-4.mailo.com (ip-15.mailobj.net [213.182.54.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2682166B9A;
-        Sat,  9 Jul 2022 02:47:23 -0700 (PDT)
+Received: from msg-2.mailo.com (msg-2.mailo.com [213.182.54.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B66F66BA6;
+        Sat,  9 Jul 2022 02:47:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mailoo.org; s=mailo;
-        t=1657360019; bh=PZMiRCw/3zOUWfsTqtEzWFw9v3Kdr/HClpegfsoasT8=;
-        h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-         MIME-Version:Content-Transfer-Encoding;
-        b=H6kPXhS5umLYUmnvzE7s4oh6TYgLNcXqzWySi9SVqPo+sc/EFBfdJDvJy/oKi6Z9s
-         yQbODAJmdywq6e/kQXYgqQvd9v9rySgvpfSKlAoXE+xZ0pzve3N96K8uAo64p+0S6O
-         iGxNc56F+mFcptSgfvIRQZYZPG4Tr2Il855o1968=
+        t=1657360026; bh=OnG6BofeKIcOc3qBoOMQcWAYSD8krtB0UZjVBxSp6Og=;
+        h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
+         References:MIME-Version:Content-Transfer-Encoding;
+        b=Pj9i6paC66x2b0zD6xyvticTGN5/7voy7+qiHLMZu0y5qST2/W74g23eiGzSU4ntD
+         8HccXtKMUlIpYC8kroYAfjeTIB0R784bYUKSrReLSCt+874m/M/QKA4doYDq1WB/Hp
+         BDjIULHbQJboagKsbGwhgCJUQOH+Eeiv6o9IZbaM=
 Received: by b-5.in.mailobj.net [192.168.90.15] with ESMTP
         via [213.182.55.207]
-        Sat,  9 Jul 2022 11:46:58 +0200 (CEST)
-X-EA-Auth: Tq1NwqQf3cKl0ayS9KOZB72Yo48GGq+JVy58jxPysDU38vUqGO++HUGexVYA7WQ3BqUBuAOFhnoOce1EKu46eCBXiu68vm3PCwbN5jhI9kg=
+        Sat,  9 Jul 2022 11:47:06 +0200 (CEST)
+X-EA-Auth: bSHOZVsnFEWLvT3Gads6QOGjTNYV3gJiql3gAC7CRYpJSssPcAaJ+UtSIYel1kGZXH/ZaZDDlMulbSH00loRoEE33fxhCWqxm9XKzaPkPVc=
 From:   Vincent Knecht <vincent.knecht@mailoo.org>
 To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -33,86 +33,51 @@ To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org
 Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         hns@goldelico.com
-Subject: [PATCH v4 0/7] leds: Fix/Add is31fl319{0,1,3} support
-Date:   Sat,  9 Jul 2022 11:46:33 +0200
-Message-Id: <20220709094642.4078222-1-vincent.knecht@mailoo.org>
+Subject: [PATCH v4 3/7] leds: is31fl319x: Add missing si-en compatibles
+Date:   Sat,  9 Jul 2022 11:46:36 +0200
+Message-Id: <20220709094642.4078222-4-vincent.knecht@mailoo.org>
 X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20220709094642.4078222-1-vincent.knecht@mailoo.org>
+References: <20220709094642.4078222-1-vincent.knecht@mailoo.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-v4:
-- took Andy's comments into account
-- add patch 7 for cleanup and formatting fixes
+Add si-en compatibles for all chip variants.
 
-v3:
-- pick up Rob's R-b for patches 1 and 2
-- reinstate bindings docs license and maintainer
-  changes with Nikolaus agreement
-- took Andy's comments on patch 4 into account
+Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
+---
+ drivers/leds/leds-is31fl319x.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-v2:
-- keep original bindings license and maintainer/owner (Rob)
-- squash bindings patches 2 & 4 (Krzysztof)
-
-v1-resend:
-- no change, resending after configuring git to accomodate
-  for smtp provider limit of 5 emails per batch
-- just change cover-letter to mention si-en chip for idol347
-
-
-The is31fl3190, is31fl3191 and is31fl3193 chips (1 or 3 PWM channels)
-cannot be handled the same as is31fl3196 and is31fl3199,
-if only because the register map is different.
-Also:
-- the software shutdown bit is reversed
-- and additional field needs to be set to enable all channels
-- the led-max-microamp current values and setting are not the same
-
-Datasheets:
-https://lumissil.com/assets/pdf/core/IS31FL3190_DS.pdf
-https://lumissil.com/assets/pdf/core/IS31FL3191_DS.pdf
-https://lumissil.com/assets/pdf/core/IS31FL3193_DS.pdf
-https://lumissil.com/assets/pdf/core/IS31FL3196_DS.pdf
-https://lumissil.com/assets/pdf/core/IS31FL3199_DS.pdf
-
-This series:
-
-- converts dt-bindings to dtschema, adding all si-en compatibles
-  for convenience and consistency, and adding constraints on
-  supported values for eg. reg address and led-max-microamp
-
-- changes vars, structs and defines to not use 319X suffix
-  but 3190 for 319{0,1,3} and 3196 for 319{6,9}
-
-- adds fields in chipdef struct for chip-specific values
-
-- only in patch 6, adds is31fl319{0,1,3} specific values
-  so those chips can work.
-
-- patch 7 cleanups parts non touched in previous patches
-
-Tested on msm8916-alcatel-idol347, which probably has an
-si-en,sn3190 or si-en,sn3191 (only one white led indicator).
-
-Vincent Knecht (7):
-  dt-bindings: leds: Convert is31fl319x to dtschema
-  dt-bindings: leds: is31fl319x: Document variants specificities
-  leds: is31fl319x: Add missing si-en compatibles
-  leds: is31fl319x: Use non-wildcard names for vars, structs and defines
-  leds: is31fl319x: Move chipset-specific values in chipdef struct
-  leds: is31fl319x: Add support for is31fl319{0,1,3} chips
-  leds: is31fl319x: Cleanup formatting and dev_dbg calls
-
- .../bindings/leds/issi,is31fl319x.yaml        | 193 ++++++++
- .../bindings/leds/leds-is31fl319x.txt         |  61 ---
- drivers/leds/leds-is31fl319x.c                | 425 +++++++++++++-----
- 3 files changed, 495 insertions(+), 184 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/issi,is31fl319x.yaml
- delete mode 100644 Documentation/devicetree/bindings/leds/leds-is31fl319x.txt
-
+diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
+index 4161b9dd7e48..0db5d4988131 100644
+--- a/drivers/leds/leds-is31fl319x.c
++++ b/drivers/leds/leds-is31fl319x.c
+@@ -102,6 +102,10 @@ static const struct of_device_id of_is31fl319x_match[] = {
+ 	{ .compatible = "issi,is31fl3193", .data = &is31fl3193_cdef, },
+ 	{ .compatible = "issi,is31fl3196", .data = &is31fl3196_cdef, },
+ 	{ .compatible = "issi,is31fl3199", .data = &is31fl3199_cdef, },
++	{ .compatible = "si-en,sn3190",    .data = &is31fl3190_cdef, },
++	{ .compatible = "si-en,sn3191",    .data = &is31fl3190_cdef, },
++	{ .compatible = "si-en,sn3193",    .data = &is31fl3193_cdef, },
++	{ .compatible = "si-en,sn3196",    .data = &is31fl3196_cdef, },
+ 	{ .compatible = "si-en,sn3199",    .data = &is31fl3199_cdef, },
+ 	{ }
+ };
+@@ -432,6 +436,10 @@ static const struct i2c_device_id is31fl319x_id[] = {
+ 	{ "is31fl3193" },
+ 	{ "is31fl3196" },
+ 	{ "is31fl3199" },
++	{ "sn3190" },
++	{ "sn3191" },
++	{ "sn3193" },
++	{ "sn3196" },
+ 	{ "sn3199" },
+ 	{},
+ };
 -- 
 2.35.3
 
