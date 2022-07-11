@@ -2,93 +2,105 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A45CCA482
-	for <linux-leds@archiver.kernel.org>; Mon, 11 Jul 2022 21:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC78CCA47F
+	for <linux-leds@archiver.kernel.org>; Mon, 11 Jul 2022 21:40:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230117AbiGKVfc (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 11 Jul 2022 17:35:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48570 "EHLO
+        id S231998AbiGKVkz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 11 Jul 2022 17:40:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbiGKVf3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 11 Jul 2022 17:35:29 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A82D22717A;
-        Mon, 11 Jul 2022 14:35:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657575328; x=1689111328;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=FQe57KEmBLslNh9Y1duRWYZHRmbKKEi9R/4+thYRIlo=;
-  b=kLeaiXKx50IzQc+Mbyv3KCFxdOz6OOIJMgO56ogzjtLzlAfmAGqw9bE0
-   QhrVzxgcFVqLcLSdvTKZQu7uBgqZVRPDXpAkPtMxURC5Ro5DBo0hwu398
-   oUrjHjmCn3lNNg+EMC7KJv8WNjBm2t9iVIb4j7n6bDUAFIdf/Nk60p9DG
-   2O8DxqEaPctRqBjiyFn+6Q/UGaSZ1SFbCCZHrM5HZu2FHD3WNvmB+7QlE
-   YUJceKE2uxmpLMRGhBxdi1wZC3lTt4dKn2SEf55Jwu3KuHx+n31HGOfSm
-   9nB5uYpX9LqhwTCutdLTIOJFPcPp67p/GC3CpFqUgMqCkXyOZHTFhh2Kc
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10405"; a="310383931"
-X-IronPort-AV: E=Sophos;i="5.92,263,1650956400"; 
-   d="scan'208";a="310383931"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2022 14:35:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,263,1650956400"; 
-   d="scan'208";a="841148414"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 11 Jul 2022 14:35:25 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 90F905AD; Tue, 12 Jul 2022 00:35:33 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Pavel Machek <pavel@ucw.cz>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Vincent Knecht <vincent.knecht@mailoo.org>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 4/5] leds: is31fl319x: use simple i2c probe function
-Date:   Tue, 12 Jul 2022 00:35:23 +0300
-Message-Id: <20220711213524.3587-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220711213524.3587-1-andriy.shevchenko@linux.intel.com>
-References: <20220711213524.3587-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S232233AbiGKVkc (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 11 Jul 2022 17:40:32 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF17B82476;
+        Mon, 11 Jul 2022 14:40:31 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id p129so10903211yba.7;
+        Mon, 11 Jul 2022 14:40:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=WXGVf+2tuAj3uofTzTDl9Nu+93xLPaAii5ahlG7W0MA=;
+        b=POOCRfsPZxxYrEViLeDA3lxLejG8T/bs8vjtPZthkQH8g7i0/vwFTdNeXzQ7QifY/C
+         5Gr7R2TyHHlggPgBbsaXQRvuPiKg/T1/HaAINI0L3+s6/nMaZBtdnszD4QImEZOjB5BE
+         HJflEKUh6+wGJbn1VYqbIVNyDWxMTf1TOtouoQvjzFm0mMhrHc2jKIm9rA7ZzKScFlXx
+         LnWUaxDy8ZB+QIZxugEI5PSw9xUXa9mnNTbWxkrn4LxQghXlvzzLCq1MFtsgrRQVN1lb
+         bNTrcoAdGBcfsQz+J7Sr89Ce676ejI2rw1a2q6FcxdQHZTo2dY7AVNEA6F4mgLKjPkRP
+         iD+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WXGVf+2tuAj3uofTzTDl9Nu+93xLPaAii5ahlG7W0MA=;
+        b=XQSK2Zba4xUM8Vw/e6leXz/YAa9vnM1ihLLRQgs7n1YLfUzVxtzq+WYMgf3MpKYej8
+         M+vsgjMQ8KuMIpmfhVHSaBOxEozrb30fuk22CREcMcFFzWZf3buF5C4XgBFrIWniDEQe
+         DskLO7PQ7bmsjc8pf/lRYw55kK5JkzWynNpCX00qIBGAc9LoxjXrFYcnxQOtrHH9KsBM
+         na6O1ZxoGqfXOnF5x5nVme/rblwjqFu0Sdgsj+FXHVuPbTzO6zMWki/wdjInFyP97/tq
+         0iwzThGiqGtdR7sRWmQ5ZIZou1mIMHf5lMwqFEi1/JikzMaLEL56IMwlWlnAnwta1s+m
+         TFZA==
+X-Gm-Message-State: AJIora92x07Z9Td2mcCnoHTPIOGCH4HjkJ/f40GOvD8CyWjv2yl6zPjJ
+        UHGet1ZDRHlnrL3gNn+gk8yPtCwvhyHB18aq4BHaijh0hvpWRw==
+X-Google-Smtp-Source: AGRyM1vqQ2c8wQbiYnP03ocIErTPk6rkg1tXEoDd7teFxTeS8GknWfw/k0AXbeIbhow9sIlKjeb5s+zx2rD60GED7rQ=
+X-Received: by 2002:a05:6902:1143:b0:66e:eb08:4c23 with SMTP id
+ p3-20020a056902114300b0066eeb084c23mr13930705ybu.570.1657575630059; Mon, 11
+ Jul 2022 14:40:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220705163136.2278662-1-vincent.knecht@mailoo.org>
+ <CAHp75VfwoSqLZVbsN3DduP=SEKvr=tSfmxF1MTnYma0zh-JsXQ@mail.gmail.com> <e17913649e255d91bc357d3ab3e70957d05493e6.camel@mailoo.org>
+In-Reply-To: <e17913649e255d91bc357d3ab3e70957d05493e6.camel@mailoo.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 11 Jul 2022 23:39:53 +0200
+Message-ID: <CAHp75VdcT4TRZU_w-cntTt3jYTnwADcUo055vWLM8xrkWTXChg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] leds: Fix/Add is31fl319{0,1,3} support
+To:     Vincent Knecht <vincent.knecht@mailoo.org>
+Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The i2c probe functions here don't use the id information provided in
-their second argument, so the single-parameter i2c probe function
-("probe_new") can be used instead.
+On Sat, Jul 9, 2022 at 11:51 AM Vincent Knecht
+<vincent.knecht@mailoo.org> wrote:
+> Le mardi 05 juillet 2022 =C3=A0 20:57 +0200, Andy Shevchenko a =C3=A9crit=
+ :
+> > On Tue, Jul 5, 2022 at 6:32 PM Vincent Knecht <vincent.knecht@mailoo.or=
+g> wrote:
+> > >
+> > > v3:
+> > > - pick up Rob's R-b for patches 1 and 2
+> > > - reinstate bindings docs license and maintainer
+> > >   changes with Nikolaus agreement
+> > > - took Andy's comments on patch 4 into account
+> >
+> > Thanks for the update. Nothing serious, but a few comments.
+> >
+> > Also a question here. Do you have plans to convert it to use device pro=
+perties?
+>
+> Hi Andy, and thank you for the reviews.
+> Just sent a v4:
+> https://lore.kernel.org/linux-leds/20220709094642.4078222-1-vincent.knech=
+t@mailoo.org/
+>
+> As for converting to device properties, it will take me some more time
+> since I'm not too familiar with the concepts and how to do it exactly.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/leds/leds-is31fl319x.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+I just sent a series [1] which is based on the top of yours. You can
+rebase it (it fixes a couple of subtle bugs: 1) GPIO error messaging
+during error probe, and 2) mutex destruction is out of order) or
+handle it together with yours. It seems you possess hardware, so I
+assume you at least can test it.
 
-diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
-index 233ed67830a3..52b59b62f437 100644
---- a/drivers/leds/leds-is31fl319x.c
-+++ b/drivers/leds/leds-is31fl319x.c
-@@ -494,8 +494,7 @@ static inline int is31fl3196_db_to_gain(u32 dezibel)
- 	return dezibel / IS31FL3196_AUDIO_GAIN_DB_STEP;
- }
- 
--static int is31fl319x_probe(struct i2c_client *client,
--			    const struct i2c_device_id *id)
-+static int is31fl319x_probe(struct i2c_client *client)
- {
- 	struct is31fl319x_chip *is31;
- 	struct device *dev = &client->dev;
-@@ -597,7 +596,7 @@ static struct i2c_driver is31fl319x_driver = {
- 		.name           = "leds-is31fl319x",
- 		.of_match_table = of_is31fl319x_match,
- 	},
--	.probe    = is31fl319x_probe,
-+	.probe_new = is31fl319x_probe,
- 	.id_table = is31fl319x_id,
- };
- 
--- 
-2.35.1
+> Got some hints from git history, will look into that.
+> Also I'd like to add blink support...
 
+--=20
+With Best Regards,
+Andy Shevchenko
