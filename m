@@ -2,29 +2,29 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3721BC43334
-	for <linux-leds@archiver.kernel.org>; Tue, 12 Jul 2022 10:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5409CCA480
+	for <linux-leds@archiver.kernel.org>; Tue, 12 Jul 2022 10:09:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232719AbiGLKJ2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 12 Jul 2022 06:09:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58090 "EHLO
+        id S232453AbiGLKJw (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 12 Jul 2022 06:09:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232787AbiGLKJ0 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Jul 2022 06:09:26 -0400
-Received: from msg-1.mailo.com (msg-1.mailo.com [213.182.54.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD06833A22;
-        Tue, 12 Jul 2022 03:09:23 -0700 (PDT)
+        with ESMTP id S232902AbiGLKJh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Jul 2022 06:09:37 -0400
+Received: from msg-2.mailo.com (msg-2.mailo.com [213.182.54.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89341AB7EA;
+        Tue, 12 Jul 2022 03:09:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mailoo.org; s=mailo;
-        t=1657620535; bh=SJje1dcWCv/G8FpBckYdZrcvEa/vz+8nzhfkgvQz4vA=;
-        h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-         MIME-Version:Content-Transfer-Encoding;
-        b=WOi1t895EE6OkJH/S8lHwdFiJZPqwQ+EGmcD2pBlhADcMmGoBOONSIDyAcJKdIK+O
-         vZqgTKsuXXQ3sblbdZc6WAuqE5LcU4vs9zZTN+N+TrDt91mB0WogjBW9a9tWFMyytc
-         e0nwwZEjZp+3MgYb0gU6SN5Ty32y9/AuIPQfI+3M=
-Received: by b-1.in.mailobj.net [192.168.90.11] with ESMTP
+        t=1657620559; bh=1+vh9VTFnt5gm/N3KxucKgiPLJLaNPtL9AV0RV0iAcY=;
+        h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
+         References:MIME-Version:Content-Transfer-Encoding;
+        b=hhoK3pYdSUmPw+GbRKoXc9keTXEbAkVpexzqwSamNZpyuCozMRtQ/eJWsi5YXodPZ
+         zRsLSBx4H18274eQY97jroAmFXlCnHmrw/30oRKTFMg/hNuzPOP8GAxz45ynppLS2Y
+         fS3Jxk7Qsjop++s1H8Nr7QTfDZRBG5sPjCyip9dg=
+Received: by b-3.in.mailobj.net [192.168.90.13] with ESMTP
         via [213.182.55.207]
-        Tue, 12 Jul 2022 12:08:55 +0200 (CEST)
-X-EA-Auth: Lakzq13SKui5FfDufYWDeNSfEIECaxJ6n+eBDRF27oEEL78YZNvjGq0P7tqY24Pz1f4tfRG71KDJLGd9kZ+vDSsBlN38KK595l0gppqhmNA=
+        Tue, 12 Jul 2022 12:09:19 +0200 (CEST)
+X-EA-Auth: kZ6iasHQB0VJ/1Bi2wwXhS4gOXMT0+LX3tVwz9tYS5kKj1n8j/m44XridU/C4osPWONqLV9SnIBFWPL+XVuRmiKp+yi9KGZl8T9TJi4qwb0=
 From:   Vincent Knecht <vincent.knecht@mailoo.org>
 To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -33,102 +33,114 @@ To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org
 Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         hns@goldelico.com
-Subject: [PATCH v5 00/12] leds: Fix/Add is31fl319{0,1,3} support
-Date:   Tue, 12 Jul 2022 12:08:26 +0200
-Message-Id: <20220712100841.1538395-1-vincent.knecht@mailoo.org>
+Subject: [PATCH v5 07/12] leds: is31fl319x: Cleanup formatting and dev_dbg calls
+Date:   Tue, 12 Jul 2022 12:08:33 +0200
+Message-Id: <20220712100841.1538395-8-vincent.knecht@mailoo.org>
 X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20220712100841.1538395-1-vincent.knecht@mailoo.org>
+References: <20220712100841.1538395-1-vincent.knecht@mailoo.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-v5:
-- added and tested Andy' series which converts driver to use
-  device properties, dev_err_probe, devm_add_action_or_reset
-  and simple i2c probe_new:
-  https://lore.kernel.org/linux-leds/20220711213524.3587-1-andriy.shevchenko@linux.intel.com/
+Fix remaining non-standard place for comments.
 
-v4:
-- took Andy's comments into account
-- add patch 7 for cleanup and formatting fixes
+Remove remaining dev_dbg after regmap_read in is31fl3196_brightness_set.
 
-v3:
-- pick up Rob's R-b for patches 1 and 2
-- reinstate bindings docs license and maintainer
-  changes with Nikolaus agreement
-- took Andy's comments on patch 4 into account
+Remove __func__ in dev_dbg calls, instead adding "channel" string to
+describe the first displayed value.
 
-v2:
-- keep original bindings license and maintainer/owner (Rob)
-- squash bindings patches 2 & 4 (Krzysztof)
+Change remaining container_of() call to be on one line,
+as well as a few others.
 
-v1-resend:
-- no change, resending after configuring git to accomodate
-  for smtp provider limit of 5 emails per batch
-- just change cover-letter to mention si-en chip for idol347
+Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
+---
+ drivers/leds/leds-is31fl319x.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-
-The is31fl3190, is31fl3191 and is31fl3193 chips (1 or 3 PWM channels)
-cannot be handled the same as is31fl3196 and is31fl3199,
-if only because the register map is different.
-Also:
-- the software shutdown bit is reversed
-- and additional field needs to be set to enable all channels
-- the led-max-microamp current values and setting are not the same
-
-Datasheets:
-https://lumissil.com/assets/pdf/core/IS31FL3190_DS.pdf
-https://lumissil.com/assets/pdf/core/IS31FL3191_DS.pdf
-https://lumissil.com/assets/pdf/core/IS31FL3193_DS.pdf
-https://lumissil.com/assets/pdf/core/IS31FL3196_DS.pdf
-https://lumissil.com/assets/pdf/core/IS31FL3199_DS.pdf
-
-This series:
-
-- converts dt-bindings to dtschema, adding all si-en compatibles
-  for convenience and consistency, and adding constraints on
-  supported values for eg. reg address and led-max-microamp
-
-- changes vars, structs and defines to not use 319X suffix
-  but 3190 for 319{0,1,3} and 3196 for 319{6,9}
-
-- adds fields in chipdef struct for chip-specific values
-
-- only in patch 6, adds is31fl319{0,1,3} specific values
-  so those chips can work.
-
-- patch 7 cleanups parts non touched in previous patches
-
-- patches 8 to 12 are Andy's to modernize the driver
-
-Tested on msm8916-alcatel-idol347, which probably has an
-si-en,sn3190 or si-en,sn3191 (only one white led indicator).
-
-Andy Shevchenko (5):
-  leds: is31fl319x: Make use of device properties
-  leds: is31fl319x: Make use of dev_err_probe()
-  leds: is31fl319x: Fix devm vs. non-devm ordering
-  leds: is31fl319x: use simple i2c probe function
-  leds: is31fl319x: sort header inclusion alphabetically
-
-Vincent Knecht (7):
-  dt-bindings: leds: Convert is31fl319x to dtschema
-  dt-bindings: leds: is31fl319x: Document variants specificities
-  leds: is31fl319x: Add missing si-en compatibles
-  leds: is31fl319x: Use non-wildcard names for vars, structs and defines
-  leds: is31fl319x: Move chipset-specific values in chipdef struct
-  leds: is31fl319x: Add support for is31fl319{0,1,3} chips
-  leds: is31fl319x: Cleanup formatting and dev_dbg calls
-
- .../bindings/leds/issi,is31fl319x.yaml        | 193 +++++++
- .../bindings/leds/leds-is31fl319x.txt         |  61 --
- drivers/leds/Kconfig                          |   2 +-
- drivers/leds/leds-is31fl319x.c                | 533 +++++++++++-------
- 4 files changed, 537 insertions(+), 252 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/issi,is31fl319x.yaml
- delete mode 100644 Documentation/devicetree/bindings/leds/leds-is31fl319x.txt
-
+diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
+index 2314922bc009..056cf3bcffdc 100644
+--- a/drivers/leds/leds-is31fl319x.c
++++ b/drivers/leds/leds-is31fl319x.c
+@@ -198,7 +198,7 @@ static int is31fl3190_brightness_set(struct led_classdev *cdev,
+ 	int i;
+ 	u8 ctrl = 0;
+ 
+-	dev_dbg(&is31->client->dev, "%s %d: %d\n", __func__, chan, brightness);
++	dev_dbg(&is31->client->dev, "channel %d: %d\n", chan, brightness);
+ 
+ 	mutex_lock(&is31->lock);
+ 
+@@ -245,15 +245,14 @@ static int is31fl3190_brightness_set(struct led_classdev *cdev,
+ static int is31fl3196_brightness_set(struct led_classdev *cdev,
+ 				     enum led_brightness brightness)
+ {
+-	struct is31fl319x_led *led = container_of(cdev, struct is31fl319x_led,
+-						  cdev);
++	struct is31fl319x_led *led = container_of(cdev, struct is31fl319x_led, cdev);
+ 	struct is31fl319x_chip *is31 = led->chip;
+ 	int chan = led - is31->leds;
+ 	int ret;
+ 	int i;
+ 	u8 ctrl1 = 0, ctrl2 = 0;
+ 
+-	dev_dbg(&is31->client->dev, "%s %d: %d\n", __func__, chan, brightness);
++	dev_dbg(&is31->client->dev, "channel %d: %d\n", chan, brightness);
+ 
+ 	mutex_lock(&is31->lock);
+ 
+@@ -273,8 +272,6 @@ static int is31fl3196_brightness_set(struct led_classdev *cdev,
+ 		 */
+ 
+ 		ret = regmap_read(is31->regmap, IS31FL3196_PWM(i), &pwm_value);
+-		dev_dbg(&is31->client->dev, "%s read %d: ret=%d: %d\n",
+-			__func__, i, ret, pwm_value);
+ 		on = ret >= 0 && pwm_value > LED_OFF;
+ 
+ 		if (i < 3)
+@@ -404,9 +401,7 @@ static int is31fl319x_parse_dt(struct device *dev,
+ 	if (!np)
+ 		return -ENODEV;
+ 
+-	is31->shutdown_gpio = devm_gpiod_get_optional(dev,
+-						"shutdown",
+-						GPIOD_OUT_HIGH);
++	is31->shutdown_gpio = devm_gpiod_get_optional(dev, "shutdown", GPIOD_OUT_HIGH);
+ 	if (IS_ERR(is31->shutdown_gpio)) {
+ 		ret = PTR_ERR(is31->shutdown_gpio);
+ 		dev_err(dev, "Failed to get shutdown gpio: %d\n", ret);
+@@ -493,7 +488,8 @@ static inline int is31fl3190_microamp_to_cs(struct device *dev, u32 microamp)
+ }
+ 
+ static inline int is31fl3196_microamp_to_cs(struct device *dev, u32 microamp)
+-{ /* round down to nearest supported value (range check done by caller) */
++{
++	/* round down to nearest supported value (range check done by caller) */
+ 	u32 step = microamp / IS31FL3196_CURRENT_uA_STEP;
+ 
+ 	return ((IS31FL3196_CONFIG2_CS_STEP_REF - step) &
+@@ -502,7 +498,8 @@ static inline int is31fl3196_microamp_to_cs(struct device *dev, u32 microamp)
+ }
+ 
+ static inline int is31fl3196_db_to_gain(u32 dezibel)
+-{ /* round down to nearest supported value (range check done by caller) */
++{
++	/* round down to nearest supported value (range check done by caller) */
+ 	return dezibel / IS31FL3196_AUDIO_GAIN_DB_STEP;
+ }
+ 
+@@ -547,8 +544,7 @@ static int is31fl319x_probe(struct i2c_client *client,
+ 	/* check for write-reply from chip (we can't read any registers) */
+ 	err = regmap_write(is31->regmap, is31->cdef->reset_reg, 0x00);
+ 	if (err < 0) {
+-		dev_err(&client->dev, "no response from chip write: err = %d\n",
+-			err);
++		dev_err(&client->dev, "no response from chip write: err = %d\n", err);
+ 		err = -EIO; /* does not answer */
+ 		goto free_mutex;
+ 	}
 -- 
 2.35.3
 
