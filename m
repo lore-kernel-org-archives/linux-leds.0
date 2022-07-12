@@ -2,114 +2,173 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8BECCA47F
-	for <linux-leds@archiver.kernel.org>; Mon, 11 Jul 2022 21:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C28AC433EF
+	for <linux-leds@archiver.kernel.org>; Tue, 12 Jul 2022 10:09:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231310AbiGKVl3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 11 Jul 2022 17:41:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56232 "EHLO
+        id S232554AbiGLKJZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 12 Jul 2022 06:09:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbiGKVl3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 11 Jul 2022 17:41:29 -0400
-Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 997F381499;
-        Mon, 11 Jul 2022 14:41:28 -0700 (PDT)
-Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-31cac89d8d6so62959787b3.2;
-        Mon, 11 Jul 2022 14:41:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MGQCeiIJ9AkmyNDZxDCtYHiqmGwukNQ4DHAac7Z7dc4=;
-        b=Gzf8ZoxNXFao+pfJzNKD/BL7s8RFfEPS4e4a2ewPMQcDpkmcBRIXf3rZ3mDJlZY0N+
-         2AJ92hmYwpdWt17ZJaw7UMDluNKW716g5ZeqTdMR/Dx/cHAyx5O1FdsleAAWA/el1guQ
-         OOYq+1jknAI/bSZyOst3ZKGyvZAab/U05/n16v9ja147pP0pfCzo7slrztjP0TFbCJSF
-         LpWxVp/IIQKZJAerSj4txJMPjq9Zv7kX7SAJ+fjNPt4Y3aik7wXJArELI0HYJiNeNBBf
-         9OlRPAWYtDBKW+ogf742khp9G2FzQbLDf5EjW3SEm66NdSS8yyVz8UVncDyTLOwicFAW
-         mwkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MGQCeiIJ9AkmyNDZxDCtYHiqmGwukNQ4DHAac7Z7dc4=;
-        b=hmmGULRnjeeRnqqZoqGMHrvtIf6JoIaI76Nrs5Q+ZbPVW1Wc3RtBLN/g3/voWsyG9u
-         bQa5XPCIcU/H3tm1hAyk7uoHSiQ/KhE4CUz5vTDLH9Uc9yksHNQRAj72jQUTFWIVGGl+
-         +n4n2Wf/B0XQnLyXIs+e+Fk4Ux69TQHIsai+1Tce67gb3jBE9kPhH/5ZM3XvWTJeqmFE
-         rNtQDLza5mf0nabnuJI5u73XEoIMEDLcXXQ5qrJHFDL/zv5ANELT6qsEW97Jd0q6JjYa
-         rHt8sk+qj+C6ZgtWUJtJbvDBy1ogzwsNFE4m/usg+EAsKNEKUq73uHtNO62u2+yyIXTL
-         P9HQ==
-X-Gm-Message-State: AJIora/ITsoqmrkxDiiLaoMgKooC3peKzqQl7FK8iBjxfjTsk56/VGGh
-        2PPy5HRZMVKc0y7fl/G2UOieGhWKCH5tQcHyDV8=
-X-Google-Smtp-Source: AGRyM1sVCVwsBnMatLyX5AazmHesbMbDuTsAbayrrc0I/ovjc4BUKGYM1zNyjREDPwwKBO2sKj6a5J6SynN049zYr6k=
-X-Received: by 2002:a81:4986:0:b0:31d:388b:d08d with SMTP id
- w128-20020a814986000000b0031d388bd08dmr16920977ywa.185.1657575687825; Mon, 11
- Jul 2022 14:41:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220705163136.2278662-1-vincent.knecht@mailoo.org>
- <CAHp75VfwoSqLZVbsN3DduP=SEKvr=tSfmxF1MTnYma0zh-JsXQ@mail.gmail.com>
- <e17913649e255d91bc357d3ab3e70957d05493e6.camel@mailoo.org> <CAHp75VdcT4TRZU_w-cntTt3jYTnwADcUo055vWLM8xrkWTXChg@mail.gmail.com>
-In-Reply-To: <CAHp75VdcT4TRZU_w-cntTt3jYTnwADcUo055vWLM8xrkWTXChg@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 11 Jul 2022 23:40:50 +0200
-Message-ID: <CAHp75VdNW0v2G=6HSQMkQp7iPNT3Fh8mqT4iuJg44FZmzxAdVg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] leds: Fix/Add is31fl319{0,1,3} support
-To:     Vincent Knecht <vincent.knecht@mailoo.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S232136AbiGLKJZ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 12 Jul 2022 06:09:25 -0400
+Received: from msg-4.mailo.com (ip-15.mailobj.net [213.182.54.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A657AB7CD;
+        Tue, 12 Jul 2022 03:09:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mailoo.org; s=mailo;
+        t=1657620541; bh=Obre5IIa+wQZbNnEgE6NenQzK6E616sCX+q9jkhLXDk=;
+        h=X-EA-Auth:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
+         References:MIME-Version:Content-Transfer-Encoding;
+        b=dcia4nptDEadJ6VnE9bxiXu8IaBt9Sssxcw0jQ0r1NodilfmB/SvTMK58BCGgJDfY
+         qOXZyRg9k3fW8nm38CzvGVDKafz/38/bS7i7n4Gz8nxgqNVyux9IOCJMG4ag4/kyNT
+         mT2rcgTO7GW0jI1zZiT7+2hz6vub/8PkgXg1hqGI=
+Received: by b-1.in.mailobj.net [192.168.90.11] with ESMTP
+        via [213.182.55.207]
+        Tue, 12 Jul 2022 12:09:01 +0200 (CEST)
+X-EA-Auth: W4/N4DzbLXrI9f1mQEmUFubnI1GrnUsm1t2VBR7btUs5J0A7MCDUxNVTZsfweTGHnqfFZvcLtbGaEr5PB9ZThZC3PHpWesKAtHducO/ayIw=
+From:   Vincent Knecht <vincent.knecht@mailoo.org>
+To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Vincent Knecht <vincent.knecht@mailoo.org>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        hns@goldelico.com, Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 02/12] dt-bindings: leds: is31fl319x: Document variants specificities
+Date:   Tue, 12 Jul 2022 12:08:28 +0200
+Message-Id: <20220712100841.1538395-3-vincent.knecht@mailoo.org>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20220712100841.1538395-1-vincent.knecht@mailoo.org>
+References: <20220712100841.1538395-1-vincent.knecht@mailoo.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, Jul 11, 2022 at 11:39 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Sat, Jul 9, 2022 at 11:51 AM Vincent Knecht
-> <vincent.knecht@mailoo.org> wrote:
-> > Le mardi 05 juillet 2022 =C3=A0 20:57 +0200, Andy Shevchenko a =C3=A9cr=
-it :
-> > > On Tue, Jul 5, 2022 at 6:32 PM Vincent Knecht <vincent.knecht@mailoo.=
-org> wrote:
-> > > >
-> > > > v3:
-> > > > - pick up Rob's R-b for patches 1 and 2
-> > > > - reinstate bindings docs license and maintainer
-> > > >   changes with Nikolaus agreement
-> > > > - took Andy's comments on patch 4 into account
-> > >
-> > > Thanks for the update. Nothing serious, but a few comments.
-> > >
-> > > Also a question here. Do you have plans to convert it to use device p=
-roperties?
-> >
-> > Hi Andy, and thank you for the reviews.
-> > Just sent a v4:
-> > https://lore.kernel.org/linux-leds/20220709094642.4078222-1-vincent.kne=
-cht@mailoo.org/
-> >
-> > As for converting to device properties, it will take me some more time
-> > since I'm not too familiar with the concepts and how to do it exactly.
->
-> I just sent a series [1] which is based on the top of yours. You can
-> rebase it (it fixes a couple of subtle bugs: 1) GPIO error messaging
-> during error probe, and 2) mutex destruction is out of order) or
-> handle it together with yours. It seems you possess hardware, so I
-> assume you at least can test it.
+Add si-en compatibles for all chip variants and add conditionals
+depending on compatibles to document variants specs:
+- possible reg addresses
+- whether audio-gain-db is supported or not
+- maximum number of leds
+- led-max-microamp values
 
-...missed link...
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
+---
+ .../bindings/leds/issi,is31fl319x.yaml        | 84 ++++++++++++++++++-
+ 1 file changed, 82 insertions(+), 2 deletions(-)
 
-[1]: https://lore.kernel.org/linux-leds/20220711213524.3587-1-andriy.shevch=
-enko@linux.intel.com/
+diff --git a/Documentation/devicetree/bindings/leds/issi,is31fl319x.yaml b/Documentation/devicetree/bindings/leds/issi,is31fl319x.yaml
+index 0d684aeeb8cd..940333f2d69c 100644
+--- a/Documentation/devicetree/bindings/leds/issi,is31fl319x.yaml
++++ b/Documentation/devicetree/bindings/leds/issi,is31fl319x.yaml
+@@ -28,6 +28,10 @@ properties:
+       - issi,is31fl3193
+       - issi,is31fl3196
+       - issi,is31fl3199
++      - si-en,sn3190
++      - si-en,sn3191
++      - si-en,sn3193
++      - si-en,sn3196
+       - si-en,sn3199
+ 
+   reg:
+@@ -61,8 +65,6 @@ patternProperties:
+         maximum: 9
+ 
+       led-max-microamp:
+-        default: 20000
+-        enum: [5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000]
+         description:
+           Note that a driver will take the lowest of all LED limits
+           since the chip has a single global setting. The lowest value
+@@ -71,6 +73,84 @@ patternProperties:
+           and not the current, which will always have its peak value
+           equal to led-max-microamp.
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - issi,is31fl3190
++              - issi,is31fl3191
++              - issi,is31fl3193
++              - si-en,sn3190
++              - si-en,sn3191
++              - si-en,sn3193
++    then:
++      properties:
++        reg:
++          enum: [0x68, 0x69, 0x6a, 0x6b]
++
++        audio-gain-db: false
++
++      patternProperties:
++        "^led@[1-9]$":
++          properties:
++            led-max-microamp:
++              default: 42000
++              enum: [5000, 10000, 17500, 30000, 42000]
++    else:
++      properties:
++        reg:
++          enum: [0x64, 0x65, 0x66, 0x67]
++
++      patternProperties:
++        "^led@[1-9]$":
++          properties:
++            led-max-microamp:
++              default: 20000
++              enum: [5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000]
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - issi,is31fl3190
++              - issi,is31fl3191
++              - si-en,sn3190
++              - si-en,sn3191
++    then:
++      patternProperties:
++        "^led@[1-9]$":
++          properties:
++            reg:
++              maximum: 1
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - issi,is31fl3193
++              - si-en,sn3193
++    then:
++      patternProperties:
++        "^led@[1-9]$":
++          properties:
++            reg:
++              maximum: 3
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - issi,is31fl3196
++              - si-en,sn3196
++    then:
++      patternProperties:
++        "^led@[1-9]$":
++          properties:
++            reg:
++              maximum: 6
++
+ required:
+   - compatible
+   - reg
+-- 
+2.35.3
 
-> > Got some hints from git history, will look into that.
-> > Also I'd like to add blink support...
 
---=20
-With Best Regards,
-Andy Shevchenko
+
