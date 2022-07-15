@@ -2,42 +2,42 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C44BFCCA47C
-	for <linux-leds@archiver.kernel.org>; Fri, 15 Jul 2022 12:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4226CCA47F
+	for <linux-leds@archiver.kernel.org>; Fri, 15 Jul 2022 12:39:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230478AbiGOMiy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 15 Jul 2022 08:38:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53412 "EHLO
+        id S234783AbiGOMjA (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 15 Jul 2022 08:39:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbiGOMix (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 15 Jul 2022 08:38:53 -0400
+        with ESMTP id S234698AbiGOMi6 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 15 Jul 2022 08:38:58 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7162F13DCC;
-        Fri, 15 Jul 2022 05:38:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 518494BD26;
+        Fri, 15 Jul 2022 05:38:57 -0700 (PDT)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 820746601A60;
-        Fri, 15 Jul 2022 13:38:48 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 798836601A63;
+        Fri, 15 Jul 2022 13:38:54 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1657888730;
-        bh=/TkDguAmwrQGEReJEUwEbAbHZt9Am5gC3Cijy8SnuRk=;
+        s=mail; t=1657888736;
+        bh=4odVySl8pWewK1o1UhRQgFiK9HBU3pt7kkRhWhez+u4=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=VoDxu0JROMcD2NU4mSc6KU2oGQ7nEERAimPhTXO1VD8zFmQrbHNDwrMwNlUWql2ae
-         Zuvmkm0S3xwbgzI0zpP/kz9v3yoK04k3QoNZnwBwykuKhQHbqzG51CGtKCFA96Q6hi
-         SeMAcSwP8M3CnBQZ7d6ejvM7cYBoV2bb/L1QWCeHDzIDpF5HfiphDmwnkVigH/QEC8
-         cacBNFGX1b0Sx2GeWa+fRrekL7Ugtuq2wO6cDNApOe8OIX/YGGcz0ksVK6jkZ1EswM
-         /7iGpFbZ+/xKc21HN8XGBZCqDFsk5RLnoa5rUbp9NV/sxPAYXZ8QaDApGSE/izbOhf
-         dhsY8N99yXETA==
-Message-ID: <ec3bdfb8-0e42-a772-28b1-165811872afa@collabora.com>
-Date:   Fri, 15 Jul 2022 14:38:45 +0200
+        b=GgYqG+SEp90ovJMobU7UHDcMz/224ePRnuaROw6cYe0RF4RO2WU4duXWCpsK2A9YT
+         W71ir2V11ZSRsQAtbgzEfaYlufSOTODqf+fgaMboWPecGBPP+AhvRv2czjOUptz2tN
+         B2urPDynmhRgZqVBZi6QMcrfEALT1Cb91OO+uGXMnnXeAIr6ZFFvuKGXNNaEgktS6o
+         bFGXggJiEX0e0zjeo6a/5xEaCXOpv2rAHb1muKHJLkFX/pVbwRmbFw2wdrOZ3HJ3Bc
+         nQfLwjC3JbL/JjnmpwibGmwnizFwe8TtjNE0aK+ZZKluHsjiQStlZavr5zYazH6Ul4
+         9Cg5NQehNAVBA==
+Message-ID: <c28c6f73-56ce-8f59-a3a7-1c2bd018826e@collabora.com>
+Date:   Fri, 15 Jul 2022 14:38:51 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH v5 13/13] video: backlight: mt6370: Add MediaTek MT6370
- support
+Subject: Re: [PATCH v5 08/13] usb: typec: tcpci_mt6370: Add MediaTek MT6370
+ tcpci driver
 Content-Language: en-US
 To:     ChiaEn Wu <peterwu.pub@gmail.com>, lee.jones@linaro.org,
         daniel.thompson@linaro.org, jingoohan1@gmail.com, pavel@ucw.cz,
@@ -55,10 +55,10 @@ Cc:     chiaen_wu@richtek.com, alice_chen@richtek.com,
         linux-iio@vger.kernel.org, linux-fbdev@vger.kernel.org,
         szunichen@gmail.com
 References: <20220715112607.591-1-peterwu.pub@gmail.com>
- <20220715112607.591-14-peterwu.pub@gmail.com>
+ <20220715112607.591-9-peterwu.pub@gmail.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220715112607.591-14-peterwu.pub@gmail.com>
+In-Reply-To: <20220715112607.591-9-peterwu.pub@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -66,64 +66,18 @@ List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 Il 15/07/22 13:26, ChiaEn Wu ha scritto:
-> From: ChiaEn Wu <chiaen_wu@richtek.com>
+> From: ChiYuan Huang <cy_huang@richtek.com>
 > 
-> MediaTek MT6370 is a SubPMIC consisting of a single cell battery charger
-> with ADC monitoring, RGB LEDs, dual channel flashlight, WLED backlight
-> driver, display bias voltage supply, one general purpose LDO, and the
-> USB Type-C & PD controller complies with the latest USB Type-C and PD
-> standards.
+> The MT6370 is a highly-integrated smart power management IC, which
+> includes a single cell Li-Ion/Li-Polymer switching battery charger,
+> a USB Type-C & Power Delivery (PD) controller, dual Flash LED current
+> sources, a RGB LED driver, a backlight WLED driver, a display bias
+> driver and a general LDO for portable devices.
 > 
-> This adds support for MediaTek MT6370 Backlight driver. It's commonly used
-> to drive the display WLED. There are 4 channels inside, and each channel
-> supports up to 30mA of current capability with 2048 current steps in
-> exponential or linear mapping curves.
+> This commit add support for the Type-C & Power Delivery controller in
+> MediaTek MT6370 IC.
 > 
-> Signed-off-by: ChiaEn Wu <chiaen_wu@richtek.com>
+> Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
 
-Hello ChiaEn,
-
-I propose to move this one to drivers/leds (or drivers/pwm) and, instead of
-registering a backlight device, register a PWM device.
-
-This way you will be able to reuse the generic backlight-pwm driver, as you'd
-be feeding the PWM device exposed by this driver to the generic one: this will
-most importantly make it easy to chain it with MTK_DISP_PWM (mtk-pwm-disp)
-with a devicetree that looks like...
-
-	pwmleds-disp {
-
-		compatible = "pwm-leds";
-
-
-
-		disp_led: disp-pwm {
-
-			label = "backlight-pwm";
-
-			pwms = <&pwm0 0 500000>;
-
-			max-brightness = <1024>;
-
-		};
-
-	};
-
-
-
-	backlight_lcd0: backlight {
-
-		compatible = "led-backlight";
-
-		leds = <&disp_led>, <&pmic_bl_led>;
-
-
-
-		default-brightness-level = <300>;
-
-	};
-
-Regards,
-Angelo
-
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
