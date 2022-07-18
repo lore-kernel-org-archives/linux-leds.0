@@ -2,170 +2,125 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BF5C433EF
-	for <linux-leds@archiver.kernel.org>; Mon, 18 Jul 2022 08:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89358C43334
+	for <linux-leds@archiver.kernel.org>; Mon, 18 Jul 2022 11:17:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232750AbiGRI1c (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 18 Jul 2022 04:27:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36122 "EHLO
+        id S234450AbiGRLR4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 18 Jul 2022 07:17:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbiGRI1b (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 18 Jul 2022 04:27:31 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD70211A0C;
-        Mon, 18 Jul 2022 01:27:30 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 78F986601A08;
-        Mon, 18 Jul 2022 09:27:27 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1658132848;
-        bh=3wSuhWp2P2ZyIQrwtaWVzGC8uMFmX+0xQ1Qp+Gq760s=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=MEYN6sSMnl1b1jGZam3vGPUhszK6Kka5I6EgC7NQr3Q36fJmBTBNdXMzktsez5qIj
-         y+s+XdM0YgKFkp9EXPOn+L1Cz+Oxd1XhKLcE2IBo0ISLE3PVkCNEzlzehYjysaiuWG
-         Zo51GGkWRKk8PczsWqR8TmMapo+ER+hjgV4sjVLPFHsPVY4Qf/tMhapXsuArRIxERi
-         5Mf2Iqmq2tvvOG65/uZIKGF7a1cWG0Qn+VqDzTx0mD+1qYHnorumujxfSLaFnON56Z
-         IAxKex2js5tEg95LQVFjSdehcwbr2FzRLtQrHYbNSh7clnBnGfAggQdU5fxiHr3DM+
-         lRudS6QdbjYdQ==
-Message-ID: <ee88aec0-f6f8-c554-6752-447cb0f34e16@collabora.com>
-Date:   Mon, 18 Jul 2022 10:27:23 +0200
+        with ESMTP id S234213AbiGRLRy (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 18 Jul 2022 07:17:54 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F73A201A6;
+        Mon, 18 Jul 2022 04:17:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1658143073; x=1689679073;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DpqXmie6D9DsH9mDkAnCsfL2eLPGa6h9nC1O717sCwo=;
+  b=cURgWqaW9Lu9LegfsezxykDu/beK25EE3rbW0zMJcqSra9P939iuxMzp
+   0PcP0aOGZUWZyPIQIzTvSlFfkEPQtP/b+Swq40zFTICLPdm7MsFTCRpoq
+   FxlykXm/M79vT9CkFornHOeNs3nfESLH4hXCC5OvijSSk8/W4C0uganuw
+   ZneLsGIR8tddAZw8sD2/Qxv1mFDuOG6NpvQzNy6FUf5GybNIQ/kuU7CF2
+   IXC/zW7olnvselFsidhZCkbeTNxeX7yg33yUjKDotK3Kc2fNWRNYiPQIb
+   /i6BuUvIuRYCQ7erashf3Q3ZK1+VeHAx17M7adMoF6Vh0fVGHX/lIUtH8
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10411"; a="287342817"
+X-IronPort-AV: E=Sophos;i="5.92,280,1650956400"; 
+   d="scan'208";a="287342817"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2022 04:17:52 -0700
+X-IronPort-AV: E=Sophos;i="5.92,280,1650956400"; 
+   d="scan'208";a="686702470"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2022 04:17:46 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1oDOkw-001O8N-2k;
+        Mon, 18 Jul 2022 14:17:42 +0300
+Date:   Mon, 18 Jul 2022 14:17:42 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Tony Luck <tony.luck@intel.com>, Wolfram Sang <wsa@kernel.org>,
+        Jean Delvare <jdelvare@suse.de>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Henning Schild <henning.schild@siemens.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Yong <jonathan.yong@intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Tyser <ptyser@xes-inc.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Mark Gross <markgross@kernel.org>
+Subject: Re: [PATCH v6 00/12] platform/x86: introduce p2sb_bar() helper
+Message-ID: <YtVBViMLFIUfFpXa@smile.fi.intel.com>
+References: <20220606164138.66535-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v5 13/13] video: backlight: mt6370: Add MediaTek MT6370
- support
-Content-Language: en-US
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     ChiaEn Wu <peterwu.pub@gmail.com>, lee.jones@linaro.org,
-        jingoohan1@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        sre@kernel.org, chunfeng.yun@mediatek.com,
-        gregkh@linuxfoundation.org, jic23@kernel.org, lars@metafoo.de,
-        lgirdwood@gmail.com, broonie@kernel.org, linux@roeck-us.net,
-        heikki.krogerus@linux.intel.com, deller@gmx.de,
-        chiaen_wu@richtek.com, alice_chen@richtek.com,
-        cy_huang@richtek.com, dri-devel@lists.freedesktop.org,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        szunichen@gmail.com
-References: <20220715112607.591-1-peterwu.pub@gmail.com>
- <20220715112607.591-14-peterwu.pub@gmail.com>
- <ec3bdfb8-0e42-a772-28b1-165811872afa@collabora.com>
- <20220715162913.5ewxwhv6jtdgt3c2@maple.lan>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220715162913.5ewxwhv6jtdgt3c2@maple.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220606164138.66535-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Il 15/07/22 18:29, Daniel Thompson ha scritto:
-> On Fri, Jul 15, 2022 at 02:38:45PM +0200, AngeloGioacchino Del Regno wrote:
->> Il 15/07/22 13:26, ChiaEn Wu ha scritto:
->>> From: ChiaEn Wu <chiaen_wu@richtek.com>
->>>
->>> MediaTek MT6370 is a SubPMIC consisting of a single cell battery charger
->>> with ADC monitoring, RGB LEDs, dual channel flashlight, WLED backlight
->>> driver, display bias voltage supply, one general purpose LDO, and the
->>> USB Type-C & PD controller complies with the latest USB Type-C and PD
->>> standards.
->>>
->>> This adds support for MediaTek MT6370 Backlight driver. It's commonly used
->>> to drive the display WLED. There are 4 channels inside, and each channel
->>> supports up to 30mA of current capability with 2048 current steps in
->>> exponential or linear mapping curves.
->>>
->>> Signed-off-by: ChiaEn Wu <chiaen_wu@richtek.com>
->>
->> Hello ChiaEn,
->>
->> I propose to move this one to drivers/leds (or drivers/pwm) and, instead of
->> registering a backlight device, register a PWM device.
->>
->> This way you will be able to reuse the generic backlight-pwm driver, as you'd
->> be feeding the PWM device exposed by this driver to the generic one: this will
->> most importantly make it easy to chain it with MTK_DISP_PWM (mtk-pwm-disp)
->> with a devicetree that looks like...
+On Mon, Jun 06, 2022 at 07:41:26PM +0300, Andy Shevchenko wrote:
+> There are a few users that would like to utilize P2SB mechanism of hiding
+> and unhiding a device from the PCI configuration space.
 > 
-> Out of interest, does MT6370 have the same structure for backlights as the prior
-> systems using mtk-pwm-disp or was mtk-pwm-disp simply a normal(-ish) PWM
-> that relied on something on the board for all the constant current
-> driver hardware?
+> Here is the series to consolidate p2sb handling code for existing users
+> and to provide a generic way for new comer(s).
 > 
+> It also includes a patch to enable GPIO controllers on Apollo Lake
+> when it's used with ABL bootloader w/o ACPI support.
 > 
-
-As per my understanding, mtk-pwm-disp is chained to other multimedia features of
-the display block of MediaTek SoCs, such as the AAL (adaptive ambient light),
-CABC (content adaptive backlight control) etc, other than being a normal(ish)
-PWM... that's the reason of my request.
-
-Moreover, in the end, this PMIC's backlight controller is just a "fancy" PWM
-controller, with OCP/OVP.
-
->>
->> 	pwmleds-disp {
->> 		compatible = "pwm-leds";
->>
->> 		disp_led: disp-pwm {
->> 			label = "backlight-pwm";
->> 			pwms = <&pwm0 0 500000>;
->> 			max-brightness = <1024>;
->> 		};
->> 	};
->>
->> 	backlight_lcd0: backlight {
->> 		compatible = "led-backlight";
->> 		leds = <&disp_led>, <&pmic_bl_led>;
->> 		default-brightness-level = <300>;
->> 	};
+> The patch that brings the helper ("platform/x86/intel: Add Primary to
+> Sideband (P2SB) bridge support") has a commit message that sheds a light
+> on what the P2SB is and why this is needed.
 > 
-> I think this proposal has to start with the devicetree bindings rather
-> than the driver. Instead I think the question is: does this proposal
-> result in DT bindings that better describe the underlying hardware?
+> I have tested this on Apollo Lake platform (I'm able to see SPI NOR and
+> since we have an ACPI device for GPIO I do not see any attempts to recreate
+> one).
 > 
-
- From how I understand it - yes: we have a fancy PWM (&pwm0) that we use
-to control display backlight (backlight-pwm)...
-
-Obviously, here we're not talking about OLEDs, but LCDs, where the backlight
-is made of multiple strings of WhiteLED (effectively, a "pwm-leds" controlled
-"led-backlight").
-
-Using PWM will also allow for a little more fine-grained board specific
-configuration, as I think that this PMIC (and/or variants of it) will be
-used in completely different form factors: I think that's going to be both
-smartphones and tablets/laptops... and I want to avoid vendor properties
-to configure the PWM part in a somehow different way.
-
-> This device has lots of backlight centric features (OCP, OVP, single
-> control with multiple outputs, exponential curves, etc) and its not
-> clear where they would fit into the "PWM" bindings.
+> The series is ready to be merged via MFD tree, but see below.
 > 
+> The series also includes updates for Simatic IPC drivers that partially
+> tagged by respective maintainers (the main question is if Pavel is okay
+> with the last three patches, since I believe Hans is okay with removing
+> some code under PDx86). Hence the first 8 patches can be merged right
+> away and the rest when Pavel does his review.
 
-For OCP and OVP, the only bindings that fit would be regulators, but that's
-not a regulator... and that's about it - I don't really have arguments for
-that.
+Kernel test bot seems found an issue with dependencies, because selection
+of P2SB is not enough.
 
-What I really want to see here is usage of "generic" drivers like led_bl
-and/or pwm_bl as to get some "standardization" around with all the benefits
-that this carries.
+There are two solutions that I can see now:
+1) move P2SB out of X86_PLATFORM_DEVICES section (like PMC_ATOM);
+2) add 'depends on X86_PLATFORM_DEVICES' to the affected drivers.
 
-> Come to think of it I'm also a little worried also about the whole linear
-> versus exponential curve thing since I thought LED drivers were required
-> to use exponential curves.
-> 
+I think the first solution cleaner, because it would be strange to have
+the dependency on the drivers that quite unlikely be on server platforms
+(e.g. EDAC).
 
-That probably depends on how the controller interprets the data, I guess,
-but I agree with you on this thought.
+In long term perhaps something like drivers/platform/x86/lib which is for
+platform libraries or so and independent on X86_PLATFORM_DEVICES?
 
-Regards,
-Angelo
+I will send a fix soon as per 1) above, feel free to comment here or there.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
