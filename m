@@ -2,25 +2,25 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 124BFCCA482
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Jul 2022 19:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F4ACCA47F
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Jul 2022 19:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239551AbiGSTSv (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Jul 2022 15:18:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40778 "EHLO
+        id S234838AbiGSTTJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Jul 2022 15:19:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239249AbiGSTSo (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Jul 2022 15:18:44 -0400
-Received: from smtpout1.mo3004.mail-out.ovh.net (smtpout1.mo3004.mail-out.ovh.net [79.137.123.219])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32BA85508D;
-        Tue, 19 Jul 2022 12:18:38 -0700 (PDT)
-Received: from pro2.mail.ovh.net (unknown [10.109.156.240])
-        by mo3004.mail-out.ovh.net (Postfix) with ESMTPS id DC23124311F;
-        Tue, 19 Jul 2022 19:18:36 +0000 (UTC)
+        with ESMTP id S239095AbiGSTS4 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Jul 2022 15:18:56 -0400
+Received: from smtpout1.mo528.mail-out.ovh.net (smtpout1.mo528.mail-out.ovh.net [46.105.34.251])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4993A550BD;
+        Tue, 19 Jul 2022 12:18:55 -0700 (PDT)
+Received: from pro2.mail.ovh.net (unknown [10.108.1.33])
+        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id B3616119C4175;
+        Tue, 19 Jul 2022 21:18:37 +0200 (CEST)
 Received: from localhost.localdomain (88.161.25.233) by DAG1EX1.emp2.local
  (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Tue, 19 Jul
- 2022 21:18:36 +0200
+ 2022 21:18:37 +0200
 From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 To:     <pavel@ucw.cz>, <robh+dt@kernel.org>,
         <sven.schwermer@disruptive-technologies.com>,
@@ -30,9 +30,9 @@ CC:     <johan+linaro@kernel.org>, <marijn.suijten@somainline.org>,
         <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Subject: [PATCH v2 1/4] leds: class: simplify the implementation of devm_of_led_get()
-Date:   Tue, 19 Jul 2022 21:17:58 +0200
-Message-ID: <20220719191801.345773-2-jjhiblot@traphandler.com>
+Subject: [PATCH v2 3/4] dt-bindings: leds: Add binding for a multicolor group of LEDs
+Date:   Tue, 19 Jul 2022 21:18:00 +0200
+Message-ID: <20220719191801.345773-4-jjhiblot@traphandler.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220719191801.345773-1-jjhiblot@traphandler.com>
 References: <20220719191801.345773-1-jjhiblot@traphandler.com>
@@ -42,67 +42,90 @@ Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [88.161.25.233]
 X-ClientProxiedBy: DAG2EX1.emp2.local (172.16.2.11) To DAG1EX1.emp2.local
  (172.16.2.1)
-X-Ovh-Tracer-Id: 255579279406741979
+X-Ovh-Tracer-Id: 255860755238107611
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrudeltddgudefiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhephffvvefufffkofgjfhgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepudetveelveevgffgvdeuffffjefhheehueeitdegtdejgefhheeuuddugeeffeeunecukfhppedtrddtrddtrddtpdekkedrudeiuddrvdehrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehprhhovddrmhgrihhlrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhofedttdeg
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrudeltddgudefiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhephffvvefufffkofgjfhgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnheptddtffevleejteelieejhfffvedtffeljeehjeeigfejledufedvveejuddtjefhnecuffhomhgrihhnpeguvghvihgtvghtrhgvvgdrohhrghenucfkpheptddrtddrtddrtddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehvdek
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Use the devm_add_action_or_reset() helper.
+This allows to group multiple monochromatic LEDs into a multicolor
+LED, e.g. RGB LEDs.
 
 Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 ---
- drivers/leds/led-class.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+ .../bindings/leds/leds-group-multicolor.yaml  | 61 +++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 6a8ea94834fa..2c0d979d0c8a 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -258,11 +258,9 @@ void led_put(struct led_classdev *led_cdev)
- }
- EXPORT_SYMBOL_GPL(led_put);
- 
--static void devm_led_release(struct device *dev, void *res)
-+static void devm_led_release(void *cdev)
- {
--	struct led_classdev **p = res;
--
--	led_put(*p);
-+	led_put(cdev);
- }
- 
- /**
-@@ -280,7 +278,7 @@ struct led_classdev *__must_check devm_of_led_get(struct device *dev,
- 						  int index)
- {
- 	struct led_classdev *led;
--	struct led_classdev **dr;
-+	int ret;
- 
- 	if (!dev)
- 		return ERR_PTR(-EINVAL);
-@@ -289,15 +287,9 @@ struct led_classdev *__must_check devm_of_led_get(struct device *dev,
- 	if (IS_ERR(led))
- 		return led;
- 
--	dr = devres_alloc(devm_led_release, sizeof(struct led_classdev *),
--			  GFP_KERNEL);
--	if (!dr) {
--		led_put(led);
--		return ERR_PTR(-ENOMEM);
--	}
--
--	*dr = led;
--	devres_add(dev, dr);
-+	ret = devm_add_action_or_reset(dev, devm_led_release, led);
-+	if (ret)
-+		return ERR_PTR(ret);
- 
- 	return led;
- }
+diff --git a/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
+new file mode 100644
+index 000000000000..79e5882a08e2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/leds-group-multicolor.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Multi-color LED built with monochromatic LEDs
++
++maintainers:
++  - Jean-Jacques Hiblot <jjhiblot@traphandler.com>
++
++description: |
++  This driver combines several monochromatic LEDs into one multi-color
++  LED using the multicolor LED class.
++
++properties:
++  compatible:
++    const: leds-group-multicolor
++
++  leds:
++    description:
++      An aray of monochromatic leds
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++
++required:
++  - leds
++
++allOf:
++  - $ref: leds-class-multicolor.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/leds/common.h>
++
++    monochromatic-leds {
++        compatible = "gpio-leds";
++
++        led0: led-0 {
++            gpios = <&mcu_pio 0 GPIO_ACTIVE_LOW>;
++        };
++
++        led1: led-1 {
++            gpios = <&mcu_pio 1 GPIO_ACTIVE_HIGH>;
++        };
++
++        led2: led-2 {
++            gpios = <&mcu_pio 1 GPIO_ACTIVE_HIGH>;
++        };
++    };
++
++    multi-led {
++        compatible = "leds-group-multicolor";
++        color = <LED_COLOR_ID_RGB>;
++        function = LED_FUNCTION_INDICATOR;
++        leds = <&led0>, <&led1>, <&led2>;
++    };
++
++...
 -- 
 2.25.1
 
