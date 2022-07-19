@@ -2,121 +2,91 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A116CCA47F
-	for <linux-leds@archiver.kernel.org>; Tue, 19 Jul 2022 21:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E553C43334
+	for <linux-leds@archiver.kernel.org>; Tue, 19 Jul 2022 21:25:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229511AbiGSVY5 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 19 Jul 2022 17:24:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36198 "EHLO
+        id S238782AbiGSVZS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 19 Jul 2022 17:25:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbiGSVY4 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Jul 2022 17:24:56 -0400
-Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [5.144.164.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 393F961B32
-        for <linux-leds@vger.kernel.org>; Tue, 19 Jul 2022 14:24:56 -0700 (PDT)
-Received: from localhost.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 90DD52004B;
-        Tue, 19 Jul 2022 23:19:14 +0200 (CEST)
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     phone-devel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Satya Priya <quic_c_skakit@quicinc.com>
-Subject: [PATCH v4 2/2] leds: qcom-lpg: Add PM660L configuration and compatible
-Date:   Tue, 19 Jul 2022 23:18:48 +0200
-Message-Id: <20220719211848.1653920-2-marijn.suijten@somainline.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220719211848.1653920-1-marijn.suijten@somainline.org>
-References: <20220719211848.1653920-1-marijn.suijten@somainline.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S229616AbiGSVZS (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 19 Jul 2022 17:25:18 -0400
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC8213F62;
+        Tue, 19 Jul 2022 14:25:16 -0700 (PDT)
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-1013ecaf7e0so33684406fac.13;
+        Tue, 19 Jul 2022 14:25:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=J7bWnlAb62adhuxmOvN388c36GLe9YtFfoQRxdiUgOg=;
+        b=yPyhP8MjL1DNDBhEhsytqzIKn3iiCZq+o8QDVRUh0MLMdwt48Sz84L6TDdx0XrqS/h
+         8gA+cAskHsKMLGwEcPzCeJfVUc+G9j/pfZimlScJJ9wZAi/BSo+oFigvNCkMK2oViWNH
+         FwkyCeqvHyTGq1qN2rnlJUG66T/+cLXTwv+D5Rx+hxnw4kOJED8i52/dpJHjEYAzPSnR
+         v82I3+Ro8nj83mxoIafBLOFoUklm0Q226RM8SZVr8SCfJmsCDLLAfu9ENLvQCHPA/O2r
+         ryhqt9Ce2t9rSV30oXjPZfa5pyXMb40mXrJUQ2hbLhPShtJ493oh29M02AcGyp91fHCQ
+         5MIg==
+X-Gm-Message-State: AJIora/SGuyK35tfmXiT3rlZfzHhbDYlOfD6sAPcDdAxA2WJGiO339E7
+        rwNMiMQSsKu4/wSgFNCKbA==
+X-Google-Smtp-Source: AGRyM1vb+1kgnDsEX88q+xu9t0+egT0+ffaB2ygBs86S8RoFNx551NwExi0kKNi868vwpJtvrSYcHg==
+X-Received: by 2002:a05:6870:899d:b0:10c:b531:17b1 with SMTP id f29-20020a056870899d00b0010cb53117b1mr780743oaq.271.1658265916131;
+        Tue, 19 Jul 2022 14:25:16 -0700 (PDT)
+Received: from robh.at.kernel.org ([199.114.228.113])
+        by smtp.gmail.com with ESMTPSA id m5-20020a056870058500b000e686d1386dsm8327938oap.7.2022.07.19.14.25.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Jul 2022 14:25:15 -0700 (PDT)
+Received: (nullmailer pid 1852594 invoked by uid 1000);
+        Tue, 19 Jul 2022 21:25:13 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Cc:     marijn.suijten@somainline.org, krzysztof.kozlowski+dt@linaro.org,
+        sven.schwermer@disruptive-technologies.com,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pavel@ucw.cz,
+        andy.shevchenko@gmail.com, robh+dt@kernel.org,
+        bjorn.andersson@linaro.org, johan+linaro@kernel.org
+In-Reply-To: <20220719191801.345773-4-jjhiblot@traphandler.com>
+References: <20220719191801.345773-1-jjhiblot@traphandler.com> <20220719191801.345773-4-jjhiblot@traphandler.com>
+Subject: Re: [PATCH v2 3/4] dt-bindings: leds: Add binding for a multicolor group of LEDs
+Date:   Tue, 19 Jul 2022 15:25:13 -0600
+Message-Id: <1658265913.899205.1852593.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Inherit PM660L PMIC LPG/triled block configuration from downstream
-drivers and DT sources, consisting of a triled block with automatic
-trickle charge control and source selection, three colored led channels
-belonging to the synchronized triled block and one loose PWM channel.
+On Tue, 19 Jul 2022 21:18:00 +0200, Jean-Jacques Hiblot wrote:
+> This allows to group multiple monochromatic LEDs into a multicolor
+> LED, e.g. RGB LEDs.
+> 
+> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+> ---
+>  .../bindings/leds/leds-group-multicolor.yaml  | 61 +++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
+> 
 
-Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Changes since v3:
-- Rebased on -next;
-- (series) dropped DTS patches that have been applied through the
-  Qualcomm DTS tree, leaving only leds changes (driver and
-  accompanying dt-bindings).
+yamllint warnings/errors:
 
-v3: https://lore.kernel.org/linux-arm-msm/20220511190718.764445-2-marijn.suijten@somainline.org/
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/leds/leds-group-multicolor.example.dtb: multi-led: Unevaluated properties are not allowed ('color', 'function' were unexpected)
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
 
-Changes since v2:
-- Constify channels struct-array (Bjorn);
-- Correct LUT size to 49 slots (Bjorn).
+doc reference errors (make refcheckdocs):
 
-v2: https://lore.kernel.org/linux-leds/20220507221123.2201668-1-marijn.suijten@somainline.org/T/#u
+See https://patchwork.ozlabs.org/patch/
 
-Changes since v1:
-- Rebased to pick up pm8350c in the diff-context (Pavel).
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
-v1: https://lore.kernel.org/linux-leds/20220504205704.699500-1-marijn.suijten@somainline.org/T/#u
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
- drivers/leds/rgb/leds-qcom-lpg.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+pip3 install dtschema --upgrade
 
-diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-index 02f51cc61837..102ab0c33887 100644
---- a/drivers/leds/rgb/leds-qcom-lpg.c
-+++ b/drivers/leds/rgb/leds-qcom-lpg.c
-@@ -1304,6 +1304,23 @@ static int lpg_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct lpg_data pm660l_lpg_data = {
-+	.lut_base = 0xb000,
-+	.lut_size = 49,
-+
-+	.triled_base = 0xd000,
-+	.triled_has_atc_ctl = true,
-+	.triled_has_src_sel = true,
-+
-+	.num_channels = 4,
-+	.channels = (const struct lpg_channel_data[]) {
-+		{ .base = 0xb100, .triled_mask = BIT(5) },
-+		{ .base = 0xb200, .triled_mask = BIT(6) },
-+		{ .base = 0xb300, .triled_mask = BIT(7) },
-+		{ .base = 0xb400 },
-+	},
-+};
-+
- static const struct lpg_data pm8916_pwm_data = {
- 	.num_channels = 1,
- 	.channels = (const struct lpg_channel_data[]) {
-@@ -1424,6 +1441,7 @@ static const struct lpg_data pm8350c_pwm_data = {
- };
- 
- static const struct of_device_id lpg_of_table[] = {
-+	{ .compatible = "qcom,pm660l-lpg", .data = &pm660l_lpg_data },
- 	{ .compatible = "qcom,pm8150b-lpg", .data = &pm8150b_lpg_data },
- 	{ .compatible = "qcom,pm8150l-lpg", .data = &pm8150l_lpg_data },
- 	{ .compatible = "qcom,pm8350c-pwm", .data = &pm8350c_pwm_data },
--- 
-2.37.1
+Please check and re-submit.
 
