@@ -2,135 +2,159 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE53C3F6B0
-	for <linux-leds@archiver.kernel.org>; Fri,  5 Aug 2022 13:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7046C00140
+	for <linux-leds@archiver.kernel.org>; Fri,  5 Aug 2022 15:51:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236440AbiHENKU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 5 Aug 2022 09:10:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33230 "EHLO
+        id S241308AbiHEPv3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 5 Aug 2022 11:51:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229640AbiHENKS (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 5 Aug 2022 09:10:18 -0400
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAEF9F74;
-        Fri,  5 Aug 2022 06:10:16 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id 17so1779884qky.8;
-        Fri, 05 Aug 2022 06:10:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=9J24cDKKqsOduTS9UUyGj2I+dc2JXq9COm3ho1bp/NE=;
-        b=NZ/lhCyR9M4uoWmE11gXdKIY5QHCgnKHevuKo4TMG1DjXmtxuHL9IGeJwZ4LfPJ5Sx
-         An9X10WyEwlH6gobWrRkcQrihAvfFo/NEkJHppMNCjVysFpqBcUQppBPmmWv/gJlRwNJ
-         AJ5R5hBz/6Z6zt3zcMCzNBlOWAFcgddiIbDO26176idaVxtdAeLEwOB83fyRhNgFshT0
-         PgEvwdsJAJBc7N5GmC3tSOdTGVFK5PY33vJvxUo6aKPI13T8ZPWktLxzYyY8DyD7/CRd
-         N6n68KF39/cpPvRO/LCj/Zk8AkuXDm7CeFfWTupOMgC5Oh24O5OoP7ydY1qxP317WUAG
-         zV8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=9J24cDKKqsOduTS9UUyGj2I+dc2JXq9COm3ho1bp/NE=;
-        b=imnwJFAhn0BzI6QmhPhz1U4EMSdkH2oU/MKgzSijN8NrAZvqPsT3SmYCIPaydWTw+W
-         C+GMV4zm+HDbL8yAK3bSXfIH9oCI0N8yLoDGYmil4Wz8nyLAwgQdvPUp0jcy4bCGFVWn
-         M/eCqLghhNqljBSHXy4itcoo9c0RP1CgGUlmLphYsDdQO4cXNKhwpaQGabHvlwHAeyBx
-         nqUHJQV6SGlz35n7NIvlJDDRfxc7pUPy/trsCkmVsxROIUbJKLs1Ry6Rd7oQCbRkWj7I
-         Sv5ATnTjtpPvfwg466Lk7ZGrOlpkE6+NswsjwEE5nYft3EmyxTiMBW2yWaYvaslAAtR2
-         jlrw==
-X-Gm-Message-State: ACgBeo0lApKLBx6Q3ehTsBJXbCCufPGZVxhm/wC5XpLUsJG5WoMhWrea
-        UYfQFHa2ttEgoUSEE/4r8eEwjRgXfaslLWLEAcI=
-X-Google-Smtp-Source: AA6agR6KCeqnEoqyKUTU9bwzHJxmJAXoC1uA/8jBqjS4KNKKgC3bBRK/UzGUzHpzrq29/PrSFNdU8y5czcT3jzWXnGE=
-X-Received: by 2002:a05:620a:254d:b0:6ab:84b8:25eb with SMTP id
- s13-20020a05620a254d00b006ab84b825ebmr5054205qko.383.1659705015729; Fri, 05
- Aug 2022 06:10:15 -0700 (PDT)
+        with ESMTP id S241314AbiHEPvQ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 5 Aug 2022 11:51:16 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E63C5C9F3;
+        Fri,  5 Aug 2022 08:49:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1659714551; x=1691250551;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=LCJNwKIb2JZh9SO69nCDrOY4AomaNFhl38g2hoPWX0w=;
+  b=nxuzY1Tk8GHN4O5v0jAr+WbFxGH1oiuttHAtWEyG1MuxSOzuX3+xhHOW
+   jJCTqa0gOdMVvXSVQommh0Sw59AWEXTfhw1ScVmGCY/ZozADCcKeP3HH/
+   dE9fXG+US/Q9itpjDe0ooQADbYg5eHhjerwDsnlABa5UDF4bxdP7MoEy5
+   Kt1BZF6fFM4LRev18e+krgfAag9W8zlBymw12twP8UE7tzx9gku4M/3yV
+   aShF68WaRyaiczxOrafq8nTvpEsbNtv/+a5xbyamLieEEHRa740zBJC2+
+   51a6ERQ2/hlvlixsY2FMJk+wUsMEho6Qily/7Jj9b4AYyC54XvYHh2DlZ
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10430"; a="269999196"
+X-IronPort-AV: E=Sophos;i="5.93,216,1654585200"; 
+   d="scan'208";a="269999196"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2022 08:49:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,216,1654585200"; 
+   d="scan'208";a="671727790"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga004.fm.intel.com with ESMTP; 05 Aug 2022 08:49:05 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id AFA151DF; Fri,  5 Aug 2022 18:49:16 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Gene Chen <gene_chen@richtek.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Eddie James <eajames@linux.ibm.com>,
+        Denis Osterland-Heim <Denis.Osterland@diehl.com>,
+        linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Kurt Kanzenbach <kurt@linutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH v2 04/11] leds: bcm6328: Get rid of custom led_init_default_state_get()
+Date:   Fri,  5 Aug 2022 18:49:00 +0300
+Message-Id: <20220805154907.32263-5-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220805154907.32263-1-andriy.shevchenko@linux.intel.com>
+References: <20220805154907.32263-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20220805070610.3516-1-peterwu.pub@gmail.com> <20220805070610.3516-13-peterwu.pub@gmail.com>
-In-Reply-To: <20220805070610.3516-13-peterwu.pub@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 5 Aug 2022 15:09:39 +0200
-Message-ID: <CAHp75VcdU6AVdksuhsHkzvD6mOBJ6G=yrmuHA9zAXLroXDFAjg@mail.gmail.com>
-Subject: Re: [PATCH v7 12/13] leds: flash: mt6370: Add MediaTek MT6370
- flashlight support
-To:     ChiaEn Wu <peterwu.pub@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>,
-        Helge Deller <deller@gmx.de>,
-        ChiaEn Wu <chiaen_wu@richtek.com>,
-        Alice Chen <alice_chen@richtek.com>,
-        cy_huang <cy_huang@richtek.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        USB <linux-usb@vger.kernel.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
-        szuni chen <szunichen@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Fri, Aug 5, 2022 at 9:07 AM ChiaEn Wu <peterwu.pub@gmail.com> wrote:
->
-> From: Alice Chen <alice_chen@richtek.com>
->
-> The MediaTek MT6370 is a highly-integrated smart power management IC,
-> which includes a single cell Li-Ion/Li-Polymer switching battery
-> charger, a USB Type-C & Power Delivery (PD) controller, dual Flash
-> LED current sources, a RGB LED driver, a backlight WLED driver,
-> a display bias driver and a general LDO for portable devices.
->
-> Add a support for the MT6370 Flash LED driver. Flash LED in MT6370
-> has 2 channels and support torch/strobe mode.
+LED core provides a helper to parse default state from firmware node.
+Use it instead of custom implementation.
 
-Same comments as per previous LED related patch.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/leds/leds-bcm6328.c | 49 ++++++++++++++++++-------------------
+ 1 file changed, 24 insertions(+), 25 deletions(-)
 
-...
-
-> +       /*
-> +        * For the flash to turn on/off, we need to wait HW ramping up/down time
-> +        * 5ms/500us to prevent the unexpected problem.
-> +        */
-> +       if (!priv->fled_strobe_used && curr)
-> +               usleep_range(5000, 6000);
-> +       else if (priv->fled_strobe_used && !curr)
-> +               usleep_range(500, 600);
-
-Now it's much better!
-
-...
-
-> +       /*
-> +        * Always configure as min level when off to
-> +        * prevent flash current spike
-
-/*
- * You need to check the style
- * of multi-line comments like
- * this one.
- */
-
-> +        */
-
+diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
+index 2d4d87957a30..246f1296ab09 100644
+--- a/drivers/leds/leds-bcm6328.c
++++ b/drivers/leds/leds-bcm6328.c
+@@ -330,7 +330,9 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
+ {
+ 	struct led_init_data init_data = {};
+ 	struct bcm6328_led *led;
+-	const char *state;
++	enum led_default_state state;
++	unsigned long val, shift;
++	void __iomem *mode;
+ 	int rc;
+ 
+ 	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+@@ -346,31 +348,29 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
+ 	if (of_property_read_bool(nc, "active-low"))
+ 		led->active_low = true;
+ 
+-	if (!of_property_read_string(nc, "default-state", &state)) {
+-		if (!strcmp(state, "on")) {
++	init_data.fwnode = of_fwnode_handle(nc);
++
++	state = led_init_default_state_get(init_data.fwnode);
++	switch (state) {
++	case LEDS_DEFSTATE_ON:
++		led->cdev.brightness = LED_FULL;
++		break;
++	case LEDS_DEFSTATE_KEEP:
++		shift = bcm6328_pin2shift(led->pin);
++		if (shift / 16)
++			mode = mem + BCM6328_REG_MODE_HI;
++		else
++			mode = mem + BCM6328_REG_MODE_LO;
++
++		val = bcm6328_led_read(mode) >> BCM6328_LED_SHIFT(shift % 16);
++		val &= BCM6328_LED_MODE_MASK;
++		if ((led->active_low && val == BCM6328_LED_MODE_OFF) ||
++		    (!led->active_low && val == BCM6328_LED_MODE_ON))
+ 			led->cdev.brightness = LED_FULL;
+-		} else if (!strcmp(state, "keep")) {
+-			void __iomem *mode;
+-			unsigned long val, shift;
+-
+-			shift = bcm6328_pin2shift(led->pin);
+-			if (shift / 16)
+-				mode = mem + BCM6328_REG_MODE_HI;
+-			else
+-				mode = mem + BCM6328_REG_MODE_LO;
+-
+-			val = bcm6328_led_read(mode) >>
+-			      BCM6328_LED_SHIFT(shift % 16);
+-			val &= BCM6328_LED_MODE_MASK;
+-			if ((led->active_low && val == BCM6328_LED_MODE_OFF) ||
+-			    (!led->active_low && val == BCM6328_LED_MODE_ON))
+-				led->cdev.brightness = LED_FULL;
+-			else
+-				led->cdev.brightness = LED_OFF;
+-		} else {
++		else
+ 			led->cdev.brightness = LED_OFF;
+-		}
+-	} else {
++		break;
++	default:
+ 		led->cdev.brightness = LED_OFF;
+ 	}
+ 
+@@ -378,7 +378,6 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
+ 
+ 	led->cdev.brightness_set = bcm6328_led_set;
+ 	led->cdev.blink_set = bcm6328_blink_set;
+-	init_data.fwnode = of_fwnode_handle(nc);
+ 
+ 	rc = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
+ 	if (rc < 0)
 -- 
-With Best Regards,
-Andy Shevchenko
+2.35.1
+
