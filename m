@@ -2,43 +2,43 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7046C00140
-	for <linux-leds@archiver.kernel.org>; Fri,  5 Aug 2022 15:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 030C1C25B08
+	for <linux-leds@archiver.kernel.org>; Fri,  5 Aug 2022 15:51:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241308AbiHEPv3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 5 Aug 2022 11:51:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56032 "EHLO
+        id S241318AbiHEPva (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 5 Aug 2022 11:51:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241314AbiHEPvQ (ORCPT
+        with ESMTP id S241315AbiHEPvQ (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Fri, 5 Aug 2022 11:51:16 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E63C5C9F3;
-        Fri,  5 Aug 2022 08:49:11 -0700 (PDT)
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7159C61B2D;
+        Fri,  5 Aug 2022 08:49:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1659714551; x=1691250551;
+  t=1659714552; x=1691250552;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=LCJNwKIb2JZh9SO69nCDrOY4AomaNFhl38g2hoPWX0w=;
-  b=nxuzY1Tk8GHN4O5v0jAr+WbFxGH1oiuttHAtWEyG1MuxSOzuX3+xhHOW
-   jJCTqa0gOdMVvXSVQommh0Sw59AWEXTfhw1ScVmGCY/ZozADCcKeP3HH/
-   dE9fXG+US/Q9itpjDe0ooQADbYg5eHhjerwDsnlABa5UDF4bxdP7MoEy5
-   Kt1BZF6fFM4LRev18e+krgfAag9W8zlBymw12twP8UE7tzx9gku4M/3yV
-   aShF68WaRyaiczxOrafq8nTvpEsbNtv/+a5xbyamLieEEHRa740zBJC2+
-   51a6ERQ2/hlvlixsY2FMJk+wUsMEho6Qily/7Jj9b4AYyC54XvYHh2DlZ
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10430"; a="269999196"
+  bh=b85nclneF9BX61RtcZxdbpTMJV7DSQfjZ+m4p4X2wC0=;
+  b=dgOXyW/Hh6aAEwzSx/hoeQt06N4RLzgUGtxd27m9HmZlyETy+liDnr8s
+   Rl/+38jJYzOaIrK/Mjt3ctyCv74FP3kRrkysXw+GIN9o+ja2XlTy0oJAC
+   i6CnLl4Axb+oAyt9V2S5Lm7vuflzQVYaUCdQ3OnYBq+cP5G8lNAOYw651
+   yM19jzwxLAqywBX694f/cvm79P3nPvlStlmdfL3a5NJDvDJcl6Iai/4dQ
+   LUKiwnaivL4zeDu17ghpxEV9XSYckLbAfcBiRxfLwk6C+JaM7Eui8qk8R
+   x6K/HdzwPcrZBtKg9D9dQTtDlUQumKoFX/cI+THlm758HXREx5Zl6TuZV
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10430"; a="291450564"
 X-IronPort-AV: E=Sophos;i="5.93,216,1654585200"; 
-   d="scan'208";a="269999196"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2022 08:49:11 -0700
+   d="scan'208";a="291450564"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2022 08:49:11 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,216,1654585200"; 
-   d="scan'208";a="671727790"
+   d="scan'208";a="931271130"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 05 Aug 2022 08:49:05 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 05 Aug 2022 08:49:05 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id AFA151DF; Fri,  5 Aug 2022 18:49:16 +0300 (EEST)
+        id 94660D9; Fri,  5 Aug 2022 18:49:16 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Gene Chen <gene_chen@richtek.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -59,9 +59,9 @@ Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH v2 04/11] leds: bcm6328: Get rid of custom led_init_default_state_get()
-Date:   Fri,  5 Aug 2022 18:49:00 +0300
-Message-Id: <20220805154907.32263-5-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 01/11] leds: add missing includes and forward declarations in leds.h
+Date:   Fri,  5 Aug 2022 18:48:57 +0300
+Message-Id: <20220805154907.32263-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220805154907.32263-1-andriy.shevchenko@linux.intel.com>
 References: <20220805154907.32263-1-andriy.shevchenko@linux.intel.com>
@@ -71,90 +71,52 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-LED core provides a helper to parse default state from firmware node.
-Use it instead of custom implementation.
+Add missing includes and forward declarations to leds.h. While at it,
+replace headers by forward declarations and vise versa.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/leds/leds-bcm6328.c | 49 ++++++++++++++++++-------------------
- 1 file changed, 24 insertions(+), 25 deletions(-)
+ include/linux/leds.h | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
-index 2d4d87957a30..246f1296ab09 100644
---- a/drivers/leds/leds-bcm6328.c
-+++ b/drivers/leds/leds-bcm6328.c
-@@ -330,7 +330,9 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
- {
- 	struct led_init_data init_data = {};
- 	struct bcm6328_led *led;
--	const char *state;
-+	enum led_default_state state;
-+	unsigned long val, shift;
-+	void __iomem *mode;
- 	int rc;
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index ba4861ec73d3..499aea1e59b9 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -10,17 +10,21 @@
  
- 	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
-@@ -346,31 +348,29 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
- 	if (of_property_read_bool(nc, "active-low"))
- 		led->active_low = true;
+ #include <dt-bindings/leds/common.h>
+ #include <linux/device.h>
+-#include <linux/kernfs.h>
+-#include <linux/list.h>
+ #include <linux/mutex.h>
+ #include <linux/rwsem.h>
+ #include <linux/spinlock.h>
+ #include <linux/timer.h>
++#include <linux/types.h>
+ #include <linux/workqueue.h>
  
--	if (!of_property_read_string(nc, "default-state", &state)) {
--		if (!strcmp(state, "on")) {
-+	init_data.fwnode = of_fwnode_handle(nc);
+-struct device;
+-struct led_pattern;
++struct attribute_group;
+ struct device_node;
++struct fwnode_handle;
++struct gpio_desc;
++struct kernfs_node;
++struct led_pattern;
++struct platform_device;
 +
-+	state = led_init_default_state_get(init_data.fwnode);
-+	switch (state) {
-+	case LEDS_DEFSTATE_ON:
-+		led->cdev.brightness = LED_FULL;
-+		break;
-+	case LEDS_DEFSTATE_KEEP:
-+		shift = bcm6328_pin2shift(led->pin);
-+		if (shift / 16)
-+			mode = mem + BCM6328_REG_MODE_HI;
-+		else
-+			mode = mem + BCM6328_REG_MODE_LO;
-+
-+		val = bcm6328_led_read(mode) >> BCM6328_LED_SHIFT(shift % 16);
-+		val &= BCM6328_LED_MODE_MASK;
-+		if ((led->active_low && val == BCM6328_LED_MODE_OFF) ||
-+		    (!led->active_low && val == BCM6328_LED_MODE_ON))
- 			led->cdev.brightness = LED_FULL;
--		} else if (!strcmp(state, "keep")) {
--			void __iomem *mode;
--			unsigned long val, shift;
--
--			shift = bcm6328_pin2shift(led->pin);
--			if (shift / 16)
--				mode = mem + BCM6328_REG_MODE_HI;
--			else
--				mode = mem + BCM6328_REG_MODE_LO;
--
--			val = bcm6328_led_read(mode) >>
--			      BCM6328_LED_SHIFT(shift % 16);
--			val &= BCM6328_LED_MODE_MASK;
--			if ((led->active_low && val == BCM6328_LED_MODE_OFF) ||
--			    (!led->active_low && val == BCM6328_LED_MODE_ON))
--				led->cdev.brightness = LED_FULL;
--			else
--				led->cdev.brightness = LED_OFF;
--		} else {
-+		else
- 			led->cdev.brightness = LED_OFF;
--		}
--	} else {
-+		break;
-+	default:
- 		led->cdev.brightness = LED_OFF;
- 	}
+ /*
+  * LED Core
+  */
+@@ -508,7 +512,6 @@ struct led_properties {
+ 	const char	*label;
+ };
  
-@@ -378,7 +378,6 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
- 
- 	led->cdev.brightness_set = bcm6328_led_set;
- 	led->cdev.blink_set = bcm6328_blink_set;
--	init_data.fwnode = of_fwnode_handle(nc);
- 
- 	rc = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
- 	if (rc < 0)
+-struct gpio_desc;
+ typedef int (*gpio_blink_set_t)(struct gpio_desc *desc, int state,
+ 				unsigned long *delay_on,
+ 				unsigned long *delay_off);
 -- 
 2.35.1
 
