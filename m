@@ -2,43 +2,43 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4158C25B07
-	for <linux-leds@archiver.kernel.org>; Fri,  5 Aug 2022 15:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C63C25B0C
+	for <linux-leds@archiver.kernel.org>; Fri,  5 Aug 2022 15:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241315AbiHEPvh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S241337AbiHEPvh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Fri, 5 Aug 2022 11:51:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56110 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241333AbiHEPvS (ORCPT
+        with ESMTP id S241334AbiHEPvS (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Fri, 5 Aug 2022 11:51:18 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29E156612F;
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A7D467154;
         Fri,  5 Aug 2022 08:49:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1659714556; x=1691250556;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=1IsTbKM8jNHxj4ziPqVComygZINDozfOXf+AY99bFeg=;
-  b=T+4kcgxqSchOdDxr/wPUz19NRr7Z7aqqH1IVL+dBpzHnoge9HXdtiCWU
-   fy65ae//p4XQOUgiO414HrLhTtHiOrLQkrYj3m8SUb8JT7Rw8n9hz5TYh
-   uR9Oo2GXLNKTkVSu2ufaDv71DfYHDSDpJuWkxU8HpMQyaED2lSsmFDeT0
-   H2Q2YKNk9lwoEP8eib3S0/hSh1bYPNs6Lecdsvc9ZIUvLMd/u3zeH55a4
-   WZ3AYwF39ukUcR323kGPgWzE3ZjqHbDrkj8W0pBhm/ui0ia+lQI37da0J
-   KxvDujPfMbt3Dg4LhhEODhpSmUY4gck2uyAejyHplxswOjNbt3IWrLtrV
+  bh=jvEYSO7lW++ymJ0bBLH7ZRL0Q9IiAhclprxNUtYU6Os=;
+  b=CIeTUa13qmrJYLXCR/bXJte7ghVZgiyOS45bQEvkweAev+s/FrtbR/tu
+   leu9LBusXYMyeBTx99a3TPkv08gjdRCAogUW7Ugv6UzBPta1jkFh//uDq
+   WlOcIKjKSxbCwZnouPNIcSBlUh/NQQvaZLVVdgEIDTnSagbdivGFjgkPh
+   64KnttAV1PP2bcbdd0TozvreNsgs8zZW0PRVatFw/+hgFVc6iJf5EtYQd
+   GAOa5esY20vvYGbaOCyflXnQhxVAdSyyz2DbR0IscWFfWmRI61VoPSOAB
+   Shsa7Ad0fKwTpJh5rkVFcttN6jwnVBuRGdA7Y20IB7pUUXZe0jXY5TiVW
    g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10430"; a="291450588"
+X-IronPort-AV: E=McAfee;i="6400,9594,10430"; a="277148756"
 X-IronPort-AV: E=Sophos;i="5.93,216,1654585200"; 
-   d="scan'208";a="291450588"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2022 08:49:15 -0700
+   d="scan'208";a="277148756"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2022 08:49:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,216,1654585200"; 
-   d="scan'208";a="931271163"
+   d="scan'208";a="706647818"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 05 Aug 2022 08:49:10 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 05 Aug 2022 08:49:11 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id BCCB5303; Fri,  5 Aug 2022 18:49:16 +0300 (EEST)
+        id 0458B58E; Fri,  5 Aug 2022 18:49:16 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Gene Chen <gene_chen@richtek.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -59,9 +59,9 @@ Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH v2 05/11] leds: bcm6358: Get rid of custom led_init_default_state_get()
-Date:   Fri,  5 Aug 2022 18:49:01 +0300
-Message-Id: <20220805154907.32263-6-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 10/11] leds: syscon: Get rid of custom led_init_default_state_get()
+Date:   Fri,  5 Aug 2022 18:49:06 +0300
+Message-Id: <20220805154907.32263-11-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220805154907.32263-1-andriy.shevchenko@linux.intel.com>
 References: <20220805154907.32263-1-andriy.shevchenko@linux.intel.com>
@@ -76,67 +76,79 @@ Use it instead of custom implementation.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/leds/leds-bcm6358.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/leds/leds-syscon.c | 49 ++++++++++++++++++--------------------
+ 1 file changed, 23 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/leds/leds-bcm6358.c b/drivers/leds/leds-bcm6358.c
-index 9d2e487fa08a..86e51d44a5a7 100644
---- a/drivers/leds/leds-bcm6358.c
-+++ b/drivers/leds/leds-bcm6358.c
-@@ -96,7 +96,8 @@ static int bcm6358_led(struct device *dev, struct device_node *nc, u32 reg,
- {
- 	struct led_init_data init_data = {};
- 	struct bcm6358_led *led;
+diff --git a/drivers/leds/leds-syscon.c b/drivers/leds/leds-syscon.c
+index 7eddb8ecb44e..e38abb5e60c1 100644
+--- a/drivers/leds/leds-syscon.c
++++ b/drivers/leds/leds-syscon.c
+@@ -61,7 +61,8 @@ static int syscon_led_probe(struct platform_device *pdev)
+ 	struct device *parent;
+ 	struct regmap *map;
+ 	struct syscon_led *sled;
 -	const char *state;
 +	enum led_default_state state;
-+	unsigned long val;
- 	int rc;
++	u32 value;
+ 	int ret;
  
- 	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
-@@ -110,29 +111,28 @@ static int bcm6358_led(struct device *dev, struct device_node *nc, u32 reg,
- 	if (of_property_read_bool(nc, "active-low"))
- 		led->active_low = true;
+ 	parent = dev->parent;
+@@ -86,34 +87,30 @@ static int syscon_led_probe(struct platform_device *pdev)
+ 	if (of_property_read_u32(np, "mask", &sled->mask))
+ 		return -EINVAL;
  
--	if (!of_property_read_string(nc, "default-state", &state)) {
--		if (!strcmp(state, "on")) {
-+	init_data.fwnode = of_fwnode_handle(nc);
+-	state = of_get_property(np, "default-state", NULL);
+-	if (state) {
+-		if (!strcmp(state, "keep")) {
+-			u32 val;
+-
+-			ret = regmap_read(map, sled->offset, &val);
+-			if (ret < 0)
+-				return ret;
+-			sled->state = !!(val & sled->mask);
+-		} else if (!strcmp(state, "on")) {
+-			sled->state = true;
+-			ret = regmap_update_bits(map, sled->offset,
+-						 sled->mask,
+-						 sled->mask);
+-			if (ret < 0)
+-				return ret;
+-		} else {
+-			sled->state = false;
+-			ret = regmap_update_bits(map, sled->offset,
+-						 sled->mask, 0);
+-			if (ret < 0)
+-				return ret;
+-		}
++	init_data.fwnode = of_fwnode_handle(np);
 +
 +	state = led_init_default_state_get(init_data.fwnode);
 +	switch (state) {
 +	case LEDS_DEFSTATE_ON:
-+		led->cdev.brightness = LED_FULL;
++		ret = regmap_update_bits(map, sled->offset, sled->mask, sled->mask);
++		if (ret < 0)
++			return ret;
++		sled->state = true;
 +		break;
 +	case LEDS_DEFSTATE_KEEP:
-+		val = bcm6358_led_read(led->mem + BCM6358_REG_MODE);
-+		val &= BIT(led->pin);
-+		if ((led->active_low && !val) || (!led->active_low && val))
- 			led->cdev.brightness = LED_FULL;
--		} else if (!strcmp(state, "keep")) {
--			unsigned long val;
--			val = bcm6358_led_read(led->mem + BCM6358_REG_MODE);
--			val &= BIT(led->pin);
--			if ((led->active_low && !val) ||
--			    (!led->active_low && val))
--				led->cdev.brightness = LED_FULL;
--			else
--				led->cdev.brightness = LED_OFF;
--		} else {
-+		else
- 			led->cdev.brightness = LED_OFF;
--		}
--	} else {
++		ret = regmap_read(map, sled->offset, &value);
++		if (ret < 0)
++			return ret;
++		sled->state = !!(value & sled->mask);
 +		break;
 +	default:
- 		led->cdev.brightness = LED_OFF;
++		ret = regmap_update_bits(map, sled->offset, sled->mask, 0);
++		if (ret < 0)
++			return ret;
++		sled->state = false;
  	}
+ 	sled->cdev.brightness_set = syscon_led_set;
  
- 	bcm6358_led_set(&led->cdev, led->cdev.brightness);
- 
- 	led->cdev.brightness_set = bcm6358_led_set;
--	init_data.fwnode = of_fwnode_handle(nc);
- 
- 	rc = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
- 	if (rc < 0)
+-	init_data.fwnode = of_fwnode_handle(np);
+-
+ 	ret = devm_led_classdev_register_ext(dev, &sled->cdev, &init_data);
+ 	if (ret < 0)
+ 		return ret;
 -- 
 2.35.1
 
