@@ -2,51 +2,51 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88122C3F6B0
-	for <linux-leds@archiver.kernel.org>; Mon,  8 Aug 2022 10:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA9BC25B06
+	for <linux-leds@archiver.kernel.org>; Mon,  8 Aug 2022 10:48:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242813AbiHHKsI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 8 Aug 2022 06:48:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36140 "EHLO
+        id S242787AbiHHKsK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 8 Aug 2022 06:48:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242693AbiHHKrv (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 8 Aug 2022 06:47:51 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CEF613D23
-        for <linux-leds@vger.kernel.org>; Mon,  8 Aug 2022 03:47:49 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id x25so9369045ljm.5
-        for <linux-leds@vger.kernel.org>; Mon, 08 Aug 2022 03:47:49 -0700 (PDT)
+        with ESMTP id S242785AbiHHKr6 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 8 Aug 2022 06:47:58 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CCAB13F4D
+        for <linux-leds@vger.kernel.org>; Mon,  8 Aug 2022 03:47:55 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id z6so4614118lfu.9
+        for <linux-leds@vger.kernel.org>; Mon, 08 Aug 2022 03:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wtlxEtiRF9lqCy5R1k9yAeU8U13bw6nu384fYfSEqBw=;
-        b=jv07OtZt2pyX0cJM44iITqxyodBbbHPDRiX71FoCVjTJ9XCj3HKpzDLaprbvsELIsH
-         8GL8/jtjYb35pkZPiQn9Lrw8gkvIPe6INQik7whWlNe3P5KQeRDPb4WaK57tNa3zLaCA
-         ncJc/TMltNRL+gsmrkJzoK5WLoL6MMGMjq05iKT5IFN8IPyzgHo+sJ9MUEu/A59RWVAm
-         Ws2EiUwUDHptJP9HHb5q1V/fpZXAm6yqLaT3F4zsviTvFNol6Q5gHyV9mt4RpzFMB0AX
-         NdBK/lBDAvz5fQnS2Yac3mIUt+j1+m3t3jp1W5c1zky+9sdQlLU2sKwrN2W4I76YbhVn
-         l+tg==
+        bh=2me5XEAf0ofFirE+9ir/dwTvKRWjjaESV5ln3eJw2Hw=;
+        b=CuVZZAuRK7wnpkN4SgjBYiCNJctDMSXGAa5tukH+acTFa5KoHplR3S6yO3Zg8IsTiK
+         FXfKau4gB1IULpTxjrFJGwFlVnDp2FSRo0mLHy6Rr4Y0fJuivOjbk1wTypPV2+Y8TtNh
+         qXkp3tkgVqzVAbaoGMkBF0u+nLxe4qLWkA1wAjIVCz5MhKCOr4RmSxPKVFcHxPBfzSrI
+         Xy5SMIO5qZja0iBGcYJvDkQuCUEQHuqcneGCV+jiN6MTbhzmsrWKUjlOS1BD+qYyfRxX
+         NOmyfe5nGk1MU7HPF9NGkLXVnPK1QScHtKSpOeih02tYIzIsjds2LJgApgk7bpfbgt0B
+         Vg6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wtlxEtiRF9lqCy5R1k9yAeU8U13bw6nu384fYfSEqBw=;
-        b=3V7UTiQYzx2X34MMEVOAc4nUhY0LsOY1lt2GOXt0I4YPL+Asw+R36FEJ4yB8nNPvBT
-         FZ5SF/Fv69wpspwPmw5ZSK4O1/VeiVdq9rSViq/8bDhUh7pnYFIV6JF5pgNAXdFTPJmy
-         K9j9im4d3eTKB14765JStm6qBuzkk+8XZUsAMIYUKpbEqSaAX78OLH+B3c5YDJayoFUP
-         NJPc4e4wfkCMc+SzpD3zBPd1nPmMicjRVuBHvARkY9ZEFyxv5Nw/QZVaXz0erJ28l7Nh
-         f4h7oNd4oTszPW9TMkLmFrkC/dKTLMl5aJgmbCT5FqnQpxLoD8IxLJvfSPUeI5cuO08j
-         L1dA==
-X-Gm-Message-State: ACgBeo1a4lF+WPhHqBuMb+Rk3qx6uNSub1/WopUz9xUtu3vnrV9576kY
-        64eWeDifDShIJQqpIWpaCfS35w==
-X-Google-Smtp-Source: AA6agR6t9xJZKEAAv4TIEwAFqoquIJFksglsomLyRD3HG8nsDWNUsnErUldbfkSXaP31ifRT7EPZcQ==
-X-Received: by 2002:a2e:9b42:0:b0:25e:59a7:6734 with SMTP id o2-20020a2e9b42000000b0025e59a76734mr5299134ljj.346.1659955667663;
-        Mon, 08 Aug 2022 03:47:47 -0700 (PDT)
+        bh=2me5XEAf0ofFirE+9ir/dwTvKRWjjaESV5ln3eJw2Hw=;
+        b=Uhb1+ARlR3K7LjgMgQIuzblNgQShBjik34o6yBG66k6myszx41S6OhpkhJ+vMMXHLx
+         ijljbvp+M4xykn9o36NUykeKNPQ1I0yOkQX5A61QZ4uvQpFkpPhQZpE69R76Y+RPeDbR
+         IPCNOLFA0f+VRzDuZN4C0xLMwtbGtH9IA3jRloxrayo5d7yrVxNNlufpCaxjx+UYVqqa
+         O2qmPAI/saSMnIQmMfWrU3Ad4PaE8nWp2x/PSYcv/XTiMQbyW28vDCkOzHRtpATLwlEv
+         o+F5sC4mnXzkpTyx36IaI0rwDmYfXQqnUyPEWlApA9dVjr18TAQcV7SfKJSW6lbLW3gg
+         jZVQ==
+X-Gm-Message-State: ACgBeo1UHZiMUjM0Mpg2CKbXWNkdHopAIVEZrLOspGQfIPBu093uUU4X
+        v29GqW3Vbq/VeVdVtGFlIUw+Aw==
+X-Google-Smtp-Source: AA6agR7SHBGl5VdYjMKVL5UzdrTUUcHRsum2qdgVfy4yK3qFurC9b/riPzx+QLdQbigJ4aBmocHf2Q==
+X-Received: by 2002:a05:6512:3d0e:b0:48b:3976:b319 with SMTP id d14-20020a0565123d0e00b0048b3976b319mr5532909lfv.362.1659955673039;
+        Mon, 08 Aug 2022 03:47:53 -0700 (PDT)
 Received: from localhost.localdomain ([83.146.140.105])
-        by smtp.gmail.com with ESMTPSA id l18-20020a2ea312000000b0025e040510e7sm1314321lje.74.2022.08.08.03.47.46
+        by smtp.gmail.com with ESMTPSA id l18-20020a2ea312000000b0025e040510e7sm1314321lje.74.2022.08.08.03.47.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Aug 2022 03:47:47 -0700 (PDT)
+        Mon, 08 Aug 2022 03:47:51 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Michael Hennerich <Michael.Hennerich@analog.com>,
         Jean Delvare <jdelvare@suse.com>,
@@ -73,9 +73,9 @@ To:     Michael Hennerich <Michael.Hennerich@analog.com>,
         netdev@vger.kernel.org, linux-pm@vger.kernel.org,
         alsa-devel@alsa-project.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/5] dt-bindings: iio: Drop Bogdan Pricop
-Date:   Mon,  8 Aug 2022 13:47:09 +0300
-Message-Id: <20220808104712.54315-3-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 4/5] dt-bindings: Drop Robert Jones
+Date:   Mon,  8 Aug 2022 13:47:11 +0300
+Message-Id: <20220808104712.54315-5-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220808104712.54315-1-krzysztof.kozlowski@linaro.org>
 References: <20220808104712.54315-1-krzysztof.kozlowski@linaro.org>
@@ -85,27 +85,40 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Emails to Bogdan Pricop bounce ("550 5.4.1 Recipient address rejected:
-Access denied. AS(201806281)").
+Emails to Robert Jones bounce ("550 5.2.1 The email account that you
+tried to reach is disabled").
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/iio/adc/ti,adc108s102.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml | 2 +-
+ Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml    | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/ti,adc108s102.yaml b/Documentation/devicetree/bindings/iio/adc/ti,adc108s102.yaml
-index 54955f03df93..ae5ce60987fe 100644
---- a/Documentation/devicetree/bindings/iio/adc/ti,adc108s102.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/ti,adc108s102.yaml
+diff --git a/Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml b/Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml
+index 479e7065d4eb..0203b83b8587 100644
+--- a/Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml
++++ b/Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml
 @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Texas Instruments ADC108S102 and ADC128S102
+ title: Freescale FXOS8700 Inertial Measurement Unit
  
  maintainers:
--  - Bogdan Pricop <bogdan.pricop@emutex.com>
+-  - Robert Jones <rjones@gateworks.com>
 +  - Jonathan Cameron <jic23@kernel.org>
  
  description: |
-   Family of 8 channel, 10/12 bit, SPI, single ended ADCs.
+   Accelerometer and magnetometer combo device with an i2c and SPI interface.
+diff --git a/Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml b/Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml
+index 5a1e8d21f7a0..5e0fe3ebe1d2 100644
+--- a/Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml
++++ b/Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml
+@@ -19,7 +19,6 @@ description: |
+ 
+ maintainers:
+   - Tim Harvey <tharvey@gateworks.com>
+-  - Robert Jones <rjones@gateworks.com>
+ 
+ properties:
+   $nodename:
 -- 
 2.34.1
 
