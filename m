@@ -2,778 +2,622 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E36E2C3F6B0
-	for <linux-leds@archiver.kernel.org>; Mon, 15 Aug 2022 08:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A41F9C00140
+	for <linux-leds@archiver.kernel.org>; Mon, 15 Aug 2022 09:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241552AbiHOIDI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 15 Aug 2022 04:03:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60754 "EHLO
+        id S231535AbiHOJBr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 15 Aug 2022 05:01:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241634AbiHOIDG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 15 Aug 2022 04:03:06 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D64FA1B791
-        for <linux-leds@vger.kernel.org>; Mon, 15 Aug 2022 01:03:03 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oNV3q-0001x7-RY; Mon, 15 Aug 2022 10:02:58 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oNV3d-003sOw-Fp; Mon, 15 Aug 2022 10:02:47 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1oNV3e-00BoQi-VL; Mon, 15 Aug 2022 10:02:47 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Wolfram Sang <wsa@kernel.org>
-Cc:     linux-i2c@vger.kernel.org, kernel@pengutronix.de,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, Pavel Machek <pavel@ucw.cz>,
-        linux-leds@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Matt Johnston <matt@codeconstruct.com.au>,
-        Peter Senna Tschudin <peter.senna@gmail.com>,
-        Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-        Crt Mori <cmo@melexis.com>,
-        Jeremy Kerr <jk@codeconstruct.com.au>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
-        Petr Machata <petrm@nvidia.com>,
-        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Ajay Gupta <ajayg@nvidia.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Peter Rosin <peda@axentia.se>,
-        Adrien Grassein <adrien.grassein@gmail.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Corey Minyard <cninyard@mvista.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        =?utf-8?q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
-Subject: [PATCH v2 0/6] i2c: Make remove callback return void
-Date:   Mon, 15 Aug 2022 10:02:24 +0200
-Message-Id: <20220815080230.37408-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.36.1
+        with ESMTP id S230468AbiHOJBq (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 15 Aug 2022 05:01:46 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1E8F205EF;
+        Mon, 15 Aug 2022 02:01:44 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id 13so5836385plo.12;
+        Mon, 15 Aug 2022 02:01:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=FJfewIna3Ib507R/A7jMdp8TpFWTpq/l1JZjoGjf4xY=;
+        b=LrhmmIBT1IN9alApQeIXw8XXjB2a/StrgKLNPxuvGgh0by6k4EagGqVqPtncf4nB2b
+         IibTd1aq/wlR5oQQxknOZFyb0mbJfmA4c224AT4kqAAe5HGORM7Mon0f4cVMhPdDoqHX
+         912GoUnBPVkVO9pOn86dZCZDJ+XJfYzzaxgU3ICrO4YwWPgiM6Gw5502XYjGCgEM4xVZ
+         ixoAQ0dra+XJVE+9rGITxdfZQfSDGAqdfFkWV1nnI38PzT1Y6u8TsjTiH6DV44nk3Gye
+         oPfTj3SsU3KUCSLrkgEshVEVYFdJ3d4po482hBUKPE//tbZQtGL8rkhFRqC9vCN4VH6l
+         aL+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=FJfewIna3Ib507R/A7jMdp8TpFWTpq/l1JZjoGjf4xY=;
+        b=f7UcXFrqV/xPYevrgXllFdqfSE9CFAsQt58MejSt58tVgenTdSJzbBYFxH9GtoAxHX
+         kpc+ZcZwhB8jpB1FK3UjUcfJR8xMAuYAYgKQucJ2nMdjkix3LRRrTNJT6DrGvyGUEf9f
+         G1CGAB72s04ilN6jXW6Wq98y7w1mvxGu/458HxUPAz75HetnrPf4LmbO/oY/90sQv1Fy
+         3TFUnX7LQ9zUemzm1WwHd3gO5s7du+BWMUjZn5SV6dcWrud61AvLPUSHYuzr8BHYaIfd
+         atI9G824ZB/PI6nxLkNLguhRPCv5tmkUU/wpMLTSpejanbhMX3yTaH8YA+wj/rNsZ1C6
+         8qxg==
+X-Gm-Message-State: ACgBeo08u7yP7TGENqQi/2fRFDo5vY+Apzd0OkySDt8vYt1/mQFo9he6
+        2LGjCNMxu6m4dLoG0NOfp5g=
+X-Google-Smtp-Source: AA6agR4i9U6xldbiIpmBJnNEFcpG5XKe02KhOmos8VjB8n8TJwGH9VeK+FnTbFbrGW0qj8Jf4+S2zA==
+X-Received: by 2002:a17:90b:1a81:b0:1f4:f9ff:9028 with SMTP id ng1-20020a17090b1a8100b001f4f9ff9028mr27803616pjb.44.1660554104220;
+        Mon, 15 Aug 2022 02:01:44 -0700 (PDT)
+Received: from DESKTOP-IBN2BAQ.localdomain ([123.110.155.185])
+        by smtp.gmail.com with ESMTPSA id a17-20020a656411000000b00412a708f38asm5491612pgv.35.2022.08.15.02.01.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Aug 2022 02:01:43 -0700 (PDT)
+From:   ChiaEn Wu <peterwu.pub@gmail.com>
+To:     lee@kernel.org, daniel.thompson@linaro.org, jingoohan1@gmail.com,
+        pavel@ucw.cz, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        sre@kernel.org, chunfeng.yun@mediatek.com,
+        gregkh@linuxfoundation.org, jic23@kernel.org, lars@metafoo.de,
+        linux@roeck-us.net, heikki.krogerus@linux.intel.com, deller@gmx.de,
+        broonie@kernel.org, mazziesaccount@gmail.com, lgirdwood@gmail.com,
+        andriy.shevchenko@linux.intel.com
+Cc:     chiaen_wu@richtek.com, alice_chen@richtek.com,
+        cy_huang@richtek.com, dri-devel@lists.freedesktop.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        szunichen@gmail.com
+Subject: [RESEND PATCH v8 00/12] Add MediaTek MT6370 PMIC support
+Date:   Mon, 15 Aug 2022 17:01:13 +0800
+Message-Id: <20220815090125.27705-1-peterwu.pub@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=42748; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=WfzNKSAvcD8ESvQ0gW8qlHrHG9KQEDqqS0z04EsRtTo=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBi+f13L0thgWx4wph2doosIn5qnlBD9TNvaEsEtwxs BTaIelCJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYvn9dwAKCRDB/BR4rcrsCe+KB/ 4/icbk/by4r7RGuwj916hIhQtJSu7gzKPwsNmK8QafqDPh8oRNUFAZ0iBdEAP1KIjC2XEdrjytUkk6 7ErFg2Lg+j53bOR+tnG0LBJiHV1KmFnCvzrryMCoKe5GiruQ+JXEqiKGNJ962r5aPagN8myxgkUsAS BD21UJ+h0eeDQuqS22WNcShQv5lP0+mub2X+GUzei8ObQ/6YTwrF/36GKUIm+3AbZAv1udD7I7vRXi 11LObChdrXxpvD4q+ZceUDDyPH8I1MABUomgZw+g7zSfhiakTZYjmNdM+ul78LwPRlzr9nF3CWjxyr V0icGUfonu/p1hM+UR0fh9GNbhjRyg
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hello,
+From: ChiaEn Wu <chiaen_wu@richtek.com>
 
-as promised there comes the series that does
+I apologize for using the wrong mail list to send the wrong emails
+for the last v8 patchset...
 
--       int (*remove)(struct i2c_client *client);
-+       void (*remove)(struct i2c_client *client);
+This patch series add MediaTek MT6370 PMIC support and add a index macro
+to <linear_range.h>. The MT6370 is a highly-integrated smart power management
+IC, which includes a single cell Li-Ion/Li-Polymer switching battery charger,
+a USB Type-C & Power Delivery (PD) controller, dual Flash LED current sources,
+a RGB LED driver, a backlight WLED driver, a display bias driver and a
+general LDO for portable devices.
 
-in struct i2c_driver. Returning an error code has no (relevant) effect,
-as in the Linux device model removal cannot be stopped. So the
-possibility to return a value is prone to trouble because driver authors
-might assume it does stop the process and .remove is called again at a
-later point again. A few errors like these were fixed preparing this
-change. See commit bbc126ae381c ("usb: typec: tcpci: Don't skip cleanup
-in .remove() on error") for an example.
+First, in this series of patches,
+'dt-binding: mfd', 'mfd driver' has been applied by Lee in the v7.
+https://lore.kernel.org/all/YvJdpq0MWNPQZw5c@google.com/
+https://lore.kernel.org/all/YvJdxEpC2cB58Bq9@google.com/
 
-To prevent such errors in the future, .remove() is changed to return
-void which leaves no doubt about its semantics.
+Second, the LED RGB driver is based on Andy Shevchenko's patch which moves
+led_init_default_state_get() to the global header.
+https://lore.kernel.org/all/20220805154907.32263-3-andriy.shevchenko@linux.intel.com/
 
-This series is build-tested on arm64, m68k, powerpc, riscv, s390, sparc64 and
-x86_64 using allmodconfig.
+In addition, we added a macro to the <<linear_range.h> for declaring the
+linear_range struct simply (see patch v8-0006) and made some changes for
+MT6370 drivers (see v8 section of the change log below).
 
-As some conflicts are expected I sent this early after -rc1 such that it
-can be included early into next and be put on an immutable branch for
-subsystems to resolve merge conflicts.
+Thank you,
+ChiaEn Wu
+---
+Changes in v8:
+- In Patch 06/12:
+	- Add linear_range_idx macro for declaring the linear_range
+	  struct simply.
 
-The first 5 patches in this series are preparatory work with the goal
-that the final patch just drops "return 0" (or changes them to a plain
-"return"). The three led patches got an Ack by Pavel (= led maintainer),
-the other two didn't get final maintainer feedback. See
+- In Patch 09/12:
+	- Remove MT6370_CHG_LINEAR_RANGE() macro, and change to use
+	  LINEAR_RANGE_IDX() macro
 
-	https://lore.kernel.org/dri-devel/20220526202538.1723142-1-u.kleine-koenig@pengutronix.de
-	https://lore.kernel.org/linux-gpio/20220502170555.51183-1-u.kleine-koenig@pengutronix.de
+- In Patch 10/12:
+	- Add include header file <linux/leds.h>
+	- Remove useless 'enum mt6370_state' because of using 'enum led_default_state'
+	- Revise the calculation of 'val' in 'mt6370_gen_breath_pattern()'
+	- Replace the medthod of getting default-state by using
+	  led_init_default_state_get()
 
-for the "discussions" about these two.
+- In Patch 11/12:
+	- Add missing 'dependency config' in Kconfig
+	- Revise all multi-line comments
 
-The changes since the first submission were already summarized in
-https://lore.kernel.org/r/20220811124029.usxahk5nvfgqsm42@pengutronix.de
-in detail, the only change since then is that the changes to
-drivers/input/keyboard/adp5588-keys.c were merged, so additionally to
-the changes described before, the change to that driver was adapted
-accordingly. To summarize it's just:
+- In Patch 12/12:
+	- Add missing header file <linux/property.h>
+	- Remove useledd header file <linux/of_device.h>
+	- Revise the comment of 'mt6370_check_vendor_info()'
 
- - The preparing patches (#1 - #5) are unchanged
 
- - Remove a comment form drivers/net/mctp/mctp-i2c.c that doesn't match
-   any more in #6. (Noticed by Matt Johnston and independently by Jeremy Kerr)
+Changes in v7:
+- In Patch 05/13:
+	- Add the second compatible string for 'mt6372'
+	- Add 'mediatek,bled-exponential-mode-enable' property for enable the
+	  exponential mode of backlight brightness
+	- Add validation for the maximum value of 'default-brightness' and
+	  'max-brightness'
 
- - Removed a stray change to lib/Kconfig.kasan that I needed for build
-   testing but that wasn't ment to be included; also in patch #6.
-   (Noticed by Andrey Ryabinin).
+- In Patch 07/13:
+	- Move '#define MT6370_REG_MAXADDR' to the next line of
+	  '#define MT6370_REG_CHG_MASK1'
+	- Rename 'MT6370_REG_ADDRLEN' to 'MT6370_MAX_ADDRLEN'
 
- - Rebase v5.19-rc4 -> 6.0-rc1 and adapt for dropped and new drivers.
+- In Patch 08/13:
+	- Revise 'devm_add_action_or_reset(dev, ...)' to one line
+	- Revise 'return regmap_update_bits(...)' with using positive
+	  conditional
 
-The patches are also available at
+- In Patch 09/13:
+	- Add AICR(100mA ~ 350mA), ICHG(100mA ~ 800mA) macros
+	- Remove 400mA AICR and 900mA ICHG macros
+	- Revise using 'if-else' to 'switch-case' in mt6370_adc_read_scale()
+	  where the adc channel is ibus or ibat
 
-        https://git.pengutronix.de/git/ukl/linux i2c-remove-void
+- In Patch 10/13:
+	- Revise the method to enable/disable irq
+	- Revise all 'if (ret < 0)' to 'if (ret)' after using
+	  mt6370_chg_field_set/get()
+	- Revise all 'OTG' text again
 
-Thanks
-Uwe
+- In Patch 11/13:
+	- Add the comment for the union of 'struct mt6370_led'
+	- Revise the wrong description of 'Authors'
+	- Revise some typos (e.g. led --> LED)
+	- Revise 'if (!fwnode_property_read_string())' to
+	  'ret = fwnode_property_read_string()'
+	- Replace 'memcpy(...)' with 'put_unaligned_be24()' in
+	  mt6370_gen_breath_pattern()
+	- Replace all 'LED_OFF' with 0
+	- Remove the redundant assignment in mt6370_mc_pattern_clear()
 
-Uwe Kleine-König (6):
-  drm/i2c/sil164: Drop no-op remove function
-  leds: lm3697: Remove duplicated error reporting in .remove()
-  leds: lm3601x: Don't use mutex after it was destroyed
-  leds: lm3601x: Improve error reporting for problems during .remove()
-  gpio: pca953x: Make platform teardown callback return void
-  i2c: Make remove callback return void
+- In Patch 12/13:
+	- Fix the indentation.
+	- For the well defined macro, the parenthesis is needed for input parameters.
+	- Replace some dev_warn to dev_info in 'init_flash_properties'.
+	- Add sentinel comment for the terminator entry of of_device_id.
+	- Use priv->fled_torch_used directly.
+	- Delete 0 in {}.
+	- Use _uA instead of _UA in definition.
+	- Refine the description.
+	- Use usleep_range instead of udelay.
+	- Rename config to LEDS_MT6370_FLASH.
+	- Add missing ">" in copyright.
+	- Change the Kconfig order
 
- Documentation/i2c/writing-clients.rst               |  2 +-
- arch/arm/mach-davinci/board-da850-evm.c             | 12 ++++--------
- arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c      |  3 +--
- drivers/auxdisplay/ht16k33.c                        |  4 +---
- drivers/auxdisplay/lcd2s.c                          |  3 +--
- drivers/char/ipmi/ipmb_dev_int.c                    |  4 +---
- drivers/char/ipmi/ipmi_ipmb.c                       |  4 +---
- drivers/char/ipmi/ipmi_ssif.c                       |  6 ++----
- drivers/char/tpm/st33zp24/i2c.c                     |  4 +---
- drivers/char/tpm/tpm_i2c_atmel.c                    |  3 +--
- drivers/char/tpm/tpm_i2c_infineon.c                 |  4 +---
- drivers/char/tpm/tpm_i2c_nuvoton.c                  |  3 +--
- drivers/char/tpm/tpm_tis_i2c.c                      |  3 +--
- drivers/char/tpm/tpm_tis_i2c_cr50.c                 |  6 ++----
- drivers/clk/clk-cdce706.c                           |  3 +--
- drivers/clk/clk-cs2000-cp.c                         |  4 +---
- drivers/clk/clk-si514.c                             |  3 +--
- drivers/clk/clk-si5341.c                            |  4 +---
- drivers/clk/clk-si5351.c                            |  4 +---
- drivers/clk/clk-si570.c                             |  3 +--
- drivers/clk/clk-versaclock5.c                       |  4 +---
- drivers/crypto/atmel-ecc.c                          |  6 ++----
- drivers/crypto/atmel-sha204a.c                      |  6 ++----
- drivers/extcon/extcon-rt8973a.c                     |  4 +---
- drivers/gpio/gpio-adp5588.c                         |  4 +---
- drivers/gpio/gpio-max7300.c                         |  4 +---
- drivers/gpio/gpio-pca953x.c                         | 13 +++----------
- drivers/gpio/gpio-pcf857x.c                         |  4 +---
- drivers/gpio/gpio-tpic2810.c                        |  4 +---
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c        |  4 +---
- drivers/gpu/drm/bridge/analogix/analogix-anx6345.c  |  4 +---
- drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c  |  4 +---
- drivers/gpu/drm/bridge/analogix/anx7625.c           |  4 +---
- drivers/gpu/drm/bridge/chrontel-ch7033.c            |  4 +---
- drivers/gpu/drm/bridge/cros-ec-anx7688.c            |  4 +---
- drivers/gpu/drm/bridge/ite-it6505.c                 |  4 +---
- drivers/gpu/drm/bridge/ite-it66121.c                |  4 +---
- drivers/gpu/drm/bridge/lontium-lt8912b.c            |  3 +--
- drivers/gpu/drm/bridge/lontium-lt9211.c             |  4 +---
- drivers/gpu/drm/bridge/lontium-lt9611.c             |  4 +---
- drivers/gpu/drm/bridge/lontium-lt9611uxc.c          |  4 +---
- .../drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c    |  8 ++------
- drivers/gpu/drm/bridge/nxp-ptn3460.c                |  4 +---
- drivers/gpu/drm/bridge/parade-ps8622.c              |  4 +---
- drivers/gpu/drm/bridge/sii902x.c                    |  4 +---
- drivers/gpu/drm/bridge/sii9234.c                    |  4 +---
- drivers/gpu/drm/bridge/sil-sii8620.c                |  4 +---
- drivers/gpu/drm/bridge/tc358767.c                   |  4 +---
- drivers/gpu/drm/bridge/tc358768.c                   |  4 +---
- drivers/gpu/drm/bridge/tc358775.c                   |  4 +---
- drivers/gpu/drm/bridge/ti-dlpc3433.c                |  4 +---
- drivers/gpu/drm/bridge/ti-sn65dsi83.c               |  4 +---
- drivers/gpu/drm/bridge/ti-tfp410.c                  |  4 +---
- drivers/gpu/drm/i2c/ch7006_drv.c                    |  4 +---
- drivers/gpu/drm/i2c/sil164_drv.c                    |  7 -------
- drivers/gpu/drm/i2c/tda9950.c                       |  4 +---
- drivers/gpu/drm/i2c/tda998x_drv.c                   |  3 +--
- drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c  |  4 +---
- .../gpu/drm/panel/panel-raspberrypi-touchscreen.c   |  4 +---
- drivers/gpu/drm/solomon/ssd130x-i2c.c               |  4 +---
- drivers/hid/i2c-hid/i2c-hid-core.c                  |  4 +---
- drivers/hid/i2c-hid/i2c-hid.h                       |  2 +-
- drivers/hwmon/adc128d818.c                          |  4 +---
- drivers/hwmon/adt7470.c                             |  3 +--
- drivers/hwmon/asb100.c                              |  6 ++----
- drivers/hwmon/asc7621.c                             |  4 +---
- drivers/hwmon/dme1737.c                             |  4 +---
- drivers/hwmon/f75375s.c                             |  5 ++---
- drivers/hwmon/fschmd.c                              |  6 ++----
- drivers/hwmon/ftsteutates.c                         |  3 +--
- drivers/hwmon/ina209.c                              |  4 +---
- drivers/hwmon/ina3221.c                             |  4 +---
- drivers/hwmon/jc42.c                                |  3 +--
- drivers/hwmon/occ/p8_i2c.c                          |  4 +---
- drivers/hwmon/pcf8591.c                             |  3 +--
- drivers/hwmon/smm665.c                              |  3 +--
- drivers/hwmon/tps23861.c                            |  4 +---
- drivers/hwmon/w83781d.c                             |  4 +---
- drivers/hwmon/w83791d.c                             |  6 ++----
- drivers/hwmon/w83792d.c                             |  6 ++----
- drivers/hwmon/w83793.c                              |  6 ++----
- drivers/hwmon/w83795.c                              |  4 +---
- drivers/hwmon/w83l785ts.c                           |  6 ++----
- drivers/i2c/i2c-core-base.c                         |  6 +-----
- drivers/i2c/i2c-slave-eeprom.c                      |  4 +---
- drivers/i2c/i2c-slave-testunit.c                    |  3 +--
- drivers/i2c/i2c-smbus.c                             |  3 +--
- drivers/i2c/muxes/i2c-mux-ltc4306.c                 |  4 +---
- drivers/i2c/muxes/i2c-mux-pca9541.c                 |  3 +--
- drivers/i2c/muxes/i2c-mux-pca954x.c                 |  3 +--
- drivers/iio/accel/bma180.c                          |  4 +---
- drivers/iio/accel/bmc150-accel-i2c.c                |  4 +---
- drivers/iio/accel/kxcjk-1013.c                      |  4 +---
- drivers/iio/accel/kxsd9-i2c.c                       |  4 +---
- drivers/iio/accel/mc3230.c                          |  4 +---
- drivers/iio/accel/mma7455_i2c.c                     |  4 +---
- drivers/iio/accel/mma7660.c                         |  4 +---
- drivers/iio/accel/mma8452.c                         |  4 +---
- drivers/iio/accel/mma9551.c                         |  4 +---
- drivers/iio/accel/mma9553.c                         |  4 +---
- drivers/iio/accel/stk8312.c                         |  4 +---
- drivers/iio/accel/stk8ba50.c                        |  4 +---
- drivers/iio/adc/ad799x.c                            |  4 +---
- drivers/iio/adc/ina2xx-adc.c                        |  4 +---
- drivers/iio/adc/ltc2497.c                           |  4 +---
- drivers/iio/adc/ti-ads1015.c                        |  4 +---
- drivers/iio/chemical/atlas-sensor.c                 |  4 +---
- drivers/iio/chemical/ccs811.c                       |  4 +---
- drivers/iio/chemical/sgp30.c                        |  4 +---
- drivers/iio/dac/ad5380.c                            |  4 +---
- drivers/iio/dac/ad5446.c                            |  4 +---
- drivers/iio/dac/ad5593r.c                           |  4 +---
- drivers/iio/dac/ad5696-i2c.c                        |  4 +---
- drivers/iio/dac/ds4424.c                            |  4 +---
- drivers/iio/dac/m62332.c                            |  4 +---
- drivers/iio/dac/mcp4725.c                           |  4 +---
- drivers/iio/dac/ti-dac5571.c                        |  4 +---
- drivers/iio/gyro/bmg160_i2c.c                       |  4 +---
- drivers/iio/gyro/fxas21002c_i2c.c                   |  4 +---
- drivers/iio/gyro/itg3200_core.c                     |  4 +---
- drivers/iio/gyro/mpu3050-i2c.c                      |  4 +---
- drivers/iio/health/afe4404.c                        |  4 +---
- drivers/iio/health/max30100.c                       |  4 +---
- drivers/iio/health/max30102.c                       |  4 +---
- drivers/iio/humidity/hdc2010.c                      |  4 +---
- drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c           |  4 +---
- drivers/iio/imu/kmx61.c                             |  4 +---
- drivers/iio/light/apds9300.c                        |  4 +---
- drivers/iio/light/apds9960.c                        |  4 +---
- drivers/iio/light/bh1750.c                          |  4 +---
- drivers/iio/light/bh1780.c                          |  4 +---
- drivers/iio/light/cm3232.c                          |  4 +---
- drivers/iio/light/cm36651.c                         |  4 +---
- drivers/iio/light/gp2ap002.c                        |  4 +---
- drivers/iio/light/gp2ap020a00f.c                    |  4 +---
- drivers/iio/light/isl29028.c                        |  4 +---
- drivers/iio/light/isl29125.c                        |  4 +---
- drivers/iio/light/jsa1212.c                         |  4 +---
- drivers/iio/light/ltr501.c                          |  4 +---
- drivers/iio/light/opt3001.c                         |  6 ++----
- drivers/iio/light/pa12203001.c                      |  4 +---
- drivers/iio/light/rpr0521.c                         |  4 +---
- drivers/iio/light/stk3310.c                         |  4 +---
- drivers/iio/light/tcs3472.c                         |  4 +---
- drivers/iio/light/tsl2563.c                         |  4 +---
- drivers/iio/light/tsl2583.c                         |  4 +---
- drivers/iio/light/tsl4531.c                         |  4 +---
- drivers/iio/light/us5182d.c                         |  4 +---
- drivers/iio/light/vcnl4000.c                        |  4 +---
- drivers/iio/light/vcnl4035.c                        |  4 +---
- drivers/iio/light/veml6070.c                        |  4 +---
- drivers/iio/magnetometer/ak8974.c                   |  4 +---
- drivers/iio/magnetometer/ak8975.c                   |  4 +---
- drivers/iio/magnetometer/bmc150_magn_i2c.c          |  4 +---
- drivers/iio/magnetometer/hmc5843_i2c.c              |  4 +---
- drivers/iio/magnetometer/mag3110.c                  |  4 +---
- drivers/iio/magnetometer/yamaha-yas530.c            |  4 +---
- drivers/iio/potentiostat/lmp91000.c                 |  4 +---
- drivers/iio/pressure/mpl3115.c                      |  4 +---
- drivers/iio/pressure/ms5611_i2c.c                   |  4 +---
- drivers/iio/pressure/zpa2326_i2c.c                  |  4 +---
- drivers/iio/proximity/pulsedlight-lidar-lite-v2.c   |  4 +---
- drivers/iio/proximity/sx9500.c                      |  4 +---
- drivers/iio/temperature/mlx90614.c                  |  4 +---
- drivers/iio/temperature/mlx90632.c                  |  4 +---
- drivers/input/joystick/as5011.c                     |  4 +---
- drivers/input/keyboard/adp5588-keys.c               |  3 +--
- drivers/input/keyboard/lm8323.c                     |  4 +---
- drivers/input/keyboard/lm8333.c                     |  4 +---
- drivers/input/keyboard/mcs_touchkey.c               |  4 +---
- drivers/input/keyboard/qt1070.c                     |  4 +---
- drivers/input/keyboard/qt2160.c                     |  4 +---
- drivers/input/keyboard/tca6416-keypad.c             |  4 +---
- drivers/input/misc/adxl34x-i2c.c                    |  4 +---
- drivers/input/misc/bma150.c                         |  4 +---
- drivers/input/misc/cma3000_d0x_i2c.c                |  4 +---
- drivers/input/misc/pcf8574_keypad.c                 |  4 +---
- drivers/input/mouse/synaptics_i2c.c                 |  4 +---
- drivers/input/rmi4/rmi_smbus.c                      |  4 +---
- drivers/input/touchscreen/atmel_mxt_ts.c            |  4 +---
- drivers/input/touchscreen/bu21013_ts.c              |  4 +---
- drivers/input/touchscreen/cyttsp4_i2c.c             |  4 +---
- drivers/input/touchscreen/edt-ft5x06.c              |  4 +---
- drivers/input/touchscreen/goodix.c                  |  4 +---
- drivers/input/touchscreen/migor_ts.c                |  4 +---
- drivers/input/touchscreen/s6sy761.c                 |  4 +---
- drivers/input/touchscreen/stmfts.c                  |  4 +---
- drivers/input/touchscreen/tsc2004.c                 |  4 +---
- drivers/leds/flash/leds-as3645a.c                   |  4 +---
- drivers/leds/flash/leds-lm3601x.c                   | 13 +++++++------
- drivers/leds/flash/leds-rt4505.c                    |  3 +--
- drivers/leds/leds-an30259a.c                        |  4 +---
- drivers/leds/leds-aw2013.c                          |  4 +---
- drivers/leds/leds-bd2802.c                          |  4 +---
- drivers/leds/leds-blinkm.c                          |  3 +--
- drivers/leds/leds-is31fl32xx.c                      |  4 +---
- drivers/leds/leds-lm3530.c                          |  3 +--
- drivers/leds/leds-lm3532.c                          |  4 +---
- drivers/leds/leds-lm355x.c                          |  4 +---
- drivers/leds/leds-lm3642.c                          |  3 +--
- drivers/leds/leds-lm3692x.c                         |  4 +---
- drivers/leds/leds-lm3697.c                          |  8 ++------
- drivers/leds/leds-lp3944.c                          |  4 +---
- drivers/leds/leds-lp3952.c                          |  4 +---
- drivers/leds/leds-lp50xx.c                          |  4 +---
- drivers/leds/leds-lp5521.c                          |  4 +---
- drivers/leds/leds-lp5523.c                          |  4 +---
- drivers/leds/leds-lp5562.c                          |  4 +---
- drivers/leds/leds-lp8501.c                          |  4 +---
- drivers/leds/leds-lp8860.c                          |  4 +---
- drivers/leds/leds-pca9532.c                         |  6 ++----
- drivers/leds/leds-tca6507.c                         |  4 +---
- drivers/leds/leds-turris-omnia.c                    |  4 +---
- drivers/macintosh/ams/ams-i2c.c                     |  4 +---
- drivers/macintosh/therm_adt746x.c                   |  4 +---
- drivers/macintosh/therm_windtunnel.c                |  4 +---
- drivers/macintosh/windfarm_ad7417_sensor.c          |  4 +---
- drivers/macintosh/windfarm_fcu_controls.c           |  3 +--
- drivers/macintosh/windfarm_lm75_sensor.c            |  4 +---
- drivers/macintosh/windfarm_lm87_sensor.c            |  4 +---
- drivers/macintosh/windfarm_max6690_sensor.c         |  4 +---
- drivers/macintosh/windfarm_smu_sat.c                |  4 +---
- drivers/media/cec/i2c/ch7322.c                      |  4 +---
- drivers/media/dvb-frontends/a8293.c                 |  3 +--
- drivers/media/dvb-frontends/af9013.c                |  4 +---
- drivers/media/dvb-frontends/af9033.c                |  4 +---
- drivers/media/dvb-frontends/au8522_decoder.c        |  3 +--
- drivers/media/dvb-frontends/cxd2099.c               |  4 +---
- drivers/media/dvb-frontends/cxd2820r_core.c         |  4 +---
- drivers/media/dvb-frontends/dvb-pll.c               |  3 +--
- drivers/media/dvb-frontends/lgdt3306a.c             |  4 +---
- drivers/media/dvb-frontends/lgdt330x.c              |  4 +---
- drivers/media/dvb-frontends/m88ds3103.c             |  3 +--
- drivers/media/dvb-frontends/mn88443x.c              |  4 +---
- drivers/media/dvb-frontends/mn88472.c               |  4 +---
- drivers/media/dvb-frontends/mn88473.c               |  4 +---
- drivers/media/dvb-frontends/mxl692.c                |  4 +---
- drivers/media/dvb-frontends/rtl2830.c               |  4 +---
- drivers/media/dvb-frontends/rtl2832.c               |  4 +---
- drivers/media/dvb-frontends/si2165.c                |  3 +--
- drivers/media/dvb-frontends/si2168.c                |  4 +---
- drivers/media/dvb-frontends/sp2.c                   |  3 +--
- drivers/media/dvb-frontends/stv090x.c               |  3 +--
- drivers/media/dvb-frontends/stv6110x.c              |  3 +--
- drivers/media/dvb-frontends/tc90522.c               |  3 +--
- drivers/media/dvb-frontends/tda10071.c              |  3 +--
- drivers/media/dvb-frontends/ts2020.c                |  3 +--
- drivers/media/i2c/ad5820.c                          |  3 +--
- drivers/media/i2c/ad9389b.c                         |  3 +--
- drivers/media/i2c/adp1653.c                         |  4 +---
- drivers/media/i2c/adv7170.c                         |  3 +--
- drivers/media/i2c/adv7175.c                         |  3 +--
- drivers/media/i2c/adv7180.c                         |  4 +---
- drivers/media/i2c/adv7183.c                         |  3 +--
- drivers/media/i2c/adv7343.c                         |  4 +---
- drivers/media/i2c/adv7393.c                         |  4 +---
- drivers/media/i2c/adv748x/adv748x-core.c            |  4 +---
- drivers/media/i2c/adv7511-v4l2.c                    |  3 +--
- drivers/media/i2c/adv7604.c                         |  3 +--
- drivers/media/i2c/adv7842.c                         |  3 +--
- drivers/media/i2c/ak7375.c                          |  4 +---
- drivers/media/i2c/ak881x.c                          |  4 +---
- drivers/media/i2c/ar0521.c                          |  3 +--
- drivers/media/i2c/bt819.c                           |  3 +--
- drivers/media/i2c/bt856.c                           |  3 +--
- drivers/media/i2c/bt866.c                           |  3 +--
- drivers/media/i2c/ccs/ccs-core.c                    |  4 +---
- drivers/media/i2c/cs3308.c                          |  3 +--
- drivers/media/i2c/cs5345.c                          |  3 +--
- drivers/media/i2c/cs53l32a.c                        |  3 +--
- drivers/media/i2c/cx25840/cx25840-core.c            |  3 +--
- drivers/media/i2c/dw9714.c                          |  4 +---
- drivers/media/i2c/dw9768.c                          |  4 +---
- drivers/media/i2c/dw9807-vcm.c                      |  4 +---
- drivers/media/i2c/et8ek8/et8ek8_driver.c            |  4 +---
- drivers/media/i2c/hi556.c                           |  4 +---
- drivers/media/i2c/hi846.c                           |  4 +---
- drivers/media/i2c/hi847.c                           |  4 +---
- drivers/media/i2c/imx208.c                          |  4 +---
- drivers/media/i2c/imx214.c                          |  4 +---
- drivers/media/i2c/imx219.c                          |  4 +---
- drivers/media/i2c/imx258.c                          |  4 +---
- drivers/media/i2c/imx274.c                          |  3 +--
- drivers/media/i2c/imx290.c                          |  4 +---
- drivers/media/i2c/imx319.c                          |  4 +---
- drivers/media/i2c/imx334.c                          |  4 +---
- drivers/media/i2c/imx335.c                          |  4 +---
- drivers/media/i2c/imx355.c                          |  4 +---
- drivers/media/i2c/imx412.c                          |  4 +---
- drivers/media/i2c/ir-kbd-i2c.c                      |  4 +---
- drivers/media/i2c/isl7998x.c                        |  4 +---
- drivers/media/i2c/ks0127.c                          |  3 +--
- drivers/media/i2c/lm3560.c                          |  4 +---
- drivers/media/i2c/lm3646.c                          |  4 +---
- drivers/media/i2c/m52790.c                          |  3 +--
- drivers/media/i2c/m5mols/m5mols_core.c              |  4 +---
- drivers/media/i2c/max2175.c                         |  4 +---
- drivers/media/i2c/max9286.c                         |  4 +---
- drivers/media/i2c/ml86v7667.c                       |  4 +---
- drivers/media/i2c/msp3400-driver.c                  |  3 +--
- drivers/media/i2c/mt9m001.c                         |  4 +---
- drivers/media/i2c/mt9m032.c                         |  3 +--
- drivers/media/i2c/mt9m111.c                         |  4 +---
- drivers/media/i2c/mt9p031.c                         |  4 +---
- drivers/media/i2c/mt9t001.c                         |  3 +--
- drivers/media/i2c/mt9t112.c                         |  4 +---
- drivers/media/i2c/mt9v011.c                         |  4 +---
- drivers/media/i2c/mt9v032.c                         |  4 +---
- drivers/media/i2c/mt9v111.c                         |  4 +---
- drivers/media/i2c/noon010pc30.c                     |  4 +---
- drivers/media/i2c/og01a1b.c                         |  4 +---
- drivers/media/i2c/ov02a10.c                         |  4 +---
- drivers/media/i2c/ov08d10.c                         |  4 +---
- drivers/media/i2c/ov13858.c                         |  4 +---
- drivers/media/i2c/ov13b10.c                         |  4 +---
- drivers/media/i2c/ov2640.c                          |  3 +--
- drivers/media/i2c/ov2659.c                          |  4 +---
- drivers/media/i2c/ov2680.c                          |  4 +---
- drivers/media/i2c/ov2685.c                          |  4 +---
- drivers/media/i2c/ov2740.c                          |  4 +---
- drivers/media/i2c/ov5640.c                          |  4 +---
- drivers/media/i2c/ov5645.c                          |  4 +---
- drivers/media/i2c/ov5647.c                          |  4 +---
- drivers/media/i2c/ov5648.c                          |  4 +---
- drivers/media/i2c/ov5670.c                          |  4 +---
- drivers/media/i2c/ov5675.c                          |  4 +---
- drivers/media/i2c/ov5693.c                          |  4 +---
- drivers/media/i2c/ov5695.c                          |  4 +---
- drivers/media/i2c/ov6650.c                          |  3 +--
- drivers/media/i2c/ov7251.c                          |  4 +---
- drivers/media/i2c/ov7640.c                          |  4 +---
- drivers/media/i2c/ov7670.c                          |  3 +--
- drivers/media/i2c/ov772x.c                          |  4 +---
- drivers/media/i2c/ov7740.c                          |  3 +--
- drivers/media/i2c/ov8856.c                          |  4 +---
- drivers/media/i2c/ov8865.c                          |  4 +---
- drivers/media/i2c/ov9282.c                          |  4 +---
- drivers/media/i2c/ov9640.c                          |  4 +---
- drivers/media/i2c/ov9650.c                          |  4 +---
- drivers/media/i2c/ov9734.c                          |  4 +---
- drivers/media/i2c/rdacm20.c                         |  4 +---
- drivers/media/i2c/rdacm21.c                         |  4 +---
- drivers/media/i2c/rj54n1cb0c.c                      |  4 +---
- drivers/media/i2c/s5c73m3/s5c73m3-core.c            |  4 +---
- drivers/media/i2c/s5k4ecgx.c                        |  4 +---
- drivers/media/i2c/s5k5baf.c                         |  4 +---
- drivers/media/i2c/s5k6a3.c                          |  3 +--
- drivers/media/i2c/s5k6aa.c                          |  4 +---
- drivers/media/i2c/saa6588.c                         |  4 +---
- drivers/media/i2c/saa6752hs.c                       |  3 +--
- drivers/media/i2c/saa7110.c                         |  3 +--
- drivers/media/i2c/saa7115.c                         |  3 +--
- drivers/media/i2c/saa7127.c                         |  3 +--
- drivers/media/i2c/saa717x.c                         |  3 +--
- drivers/media/i2c/saa7185.c                         |  3 +--
- drivers/media/i2c/sony-btf-mpx.c                    |  4 +---
- drivers/media/i2c/sr030pc30.c                       |  3 +--
- drivers/media/i2c/st-mipid02.c                      |  4 +---
- drivers/media/i2c/tc358743.c                        |  4 +---
- drivers/media/i2c/tda1997x.c                        |  4 +---
- drivers/media/i2c/tda7432.c                         |  3 +--
- drivers/media/i2c/tda9840.c                         |  3 +--
- drivers/media/i2c/tea6415c.c                        |  3 +--
- drivers/media/i2c/tea6420.c                         |  3 +--
- drivers/media/i2c/ths7303.c                         |  4 +---
- drivers/media/i2c/ths8200.c                         |  4 +---
- drivers/media/i2c/tlv320aic23b.c                    |  3 +--
- drivers/media/i2c/tvaudio.c                         |  3 +--
- drivers/media/i2c/tvp514x.c                         |  3 +--
- drivers/media/i2c/tvp5150.c                         |  4 +---
- drivers/media/i2c/tvp7002.c                         |  3 +--
- drivers/media/i2c/tw2804.c                          |  3 +--
- drivers/media/i2c/tw9903.c                          |  3 +--
- drivers/media/i2c/tw9906.c                          |  3 +--
- drivers/media/i2c/tw9910.c                          |  4 +---
- drivers/media/i2c/uda1342.c                         |  3 +--
- drivers/media/i2c/upd64031a.c                       |  3 +--
- drivers/media/i2c/upd64083.c                        |  3 +--
- drivers/media/i2c/video-i2c.c                       |  4 +---
- drivers/media/i2c/vp27smpx.c                        |  3 +--
- drivers/media/i2c/vpx3220.c                         |  4 +---
- drivers/media/i2c/vs6624.c                          |  3 +--
- drivers/media/i2c/wm8739.c                          |  3 +--
- drivers/media/i2c/wm8775.c                          |  3 +--
- drivers/media/radio/radio-tea5764.c                 |  3 +--
- drivers/media/radio/saa7706h.c                      |  3 +--
- drivers/media/radio/si470x/radio-si470x-i2c.c       |  3 +--
- drivers/media/radio/si4713/si4713.c                 |  4 +---
- drivers/media/radio/tef6862.c                       |  3 +--
- drivers/media/test-drivers/vidtv/vidtv_demod.c      |  4 +---
- drivers/media/test-drivers/vidtv/vidtv_tuner.c      |  4 +---
- drivers/media/tuners/e4000.c                        |  4 +---
- drivers/media/tuners/fc2580.c                       |  3 +--
- drivers/media/tuners/m88rs6000t.c                   |  4 +---
- drivers/media/tuners/mt2060.c                       |  4 +---
- drivers/media/tuners/mxl301rf.c                     |  3 +--
- drivers/media/tuners/qm1d1b0004.c                   |  3 +--
- drivers/media/tuners/qm1d1c0042.c                   |  3 +--
- drivers/media/tuners/si2157.c                       |  4 +---
- drivers/media/tuners/tda18212.c                     |  4 +---
- drivers/media/tuners/tda18250.c                     |  4 +---
- drivers/media/tuners/tua9001.c                      |  3 +--
- drivers/media/usb/go7007/s2250-board.c              |  3 +--
- drivers/media/v4l2-core/tuner-core.c                |  3 +--
- drivers/mfd/88pm800.c                               |  4 +---
- drivers/mfd/88pm805.c                               |  4 +---
- drivers/mfd/88pm860x-core.c                         |  3 +--
- drivers/mfd/acer-ec-a500.c                          |  4 +---
- drivers/mfd/arizona-i2c.c                           |  4 +---
- drivers/mfd/axp20x-i2c.c                            |  4 +---
- drivers/mfd/da903x.c                                |  3 +--
- drivers/mfd/da9052-i2c.c                            |  3 +--
- drivers/mfd/da9055-i2c.c                            |  4 +---
- drivers/mfd/da9062-core.c                           |  4 +---
- drivers/mfd/da9150-core.c                           |  4 +---
- drivers/mfd/dm355evm_msp.c                          |  3 +--
- drivers/mfd/ene-kb3930.c                            |  4 +---
- drivers/mfd/gateworks-gsc.c                         |  4 +---
- drivers/mfd/intel_soc_pmic_core.c                   |  4 +---
- drivers/mfd/iqs62x.c                                |  4 +---
- drivers/mfd/lm3533-core.c                           |  4 +---
- drivers/mfd/lp8788.c                                |  3 +--
- drivers/mfd/madera-i2c.c                            |  4 +---
- drivers/mfd/max14577.c                              |  4 +---
- drivers/mfd/max77693.c                              |  4 +---
- drivers/mfd/max8907.c                               |  4 +---
- drivers/mfd/max8925-i2c.c                           |  3 +--
- drivers/mfd/mc13xxx-i2c.c                           |  3 +--
- drivers/mfd/menelaus.c                              |  3 +--
- drivers/mfd/ntxec.c                                 |  4 +---
- drivers/mfd/palmas.c                                |  4 +---
- drivers/mfd/pcf50633-core.c                         |  4 +---
- drivers/mfd/retu-mfd.c                              |  4 +---
- drivers/mfd/rk808.c                                 |  4 +---
- drivers/mfd/rn5t618.c                               |  4 +---
- drivers/mfd/rsmu_i2c.c                              |  4 +---
- drivers/mfd/rt4831.c                                |  4 +---
- drivers/mfd/si476x-i2c.c                            |  4 +---
- drivers/mfd/stmfx.c                                 |  4 +---
- drivers/mfd/stmpe-i2c.c                             |  4 +---
- drivers/mfd/tc3589x.c                               |  4 +---
- drivers/mfd/tps6105x.c                              |  4 +---
- drivers/mfd/tps65010.c                              |  3 +--
- drivers/mfd/tps65086.c                              |  4 +---
- drivers/mfd/tps65217.c                              |  4 +---
- drivers/mfd/tps6586x.c                              |  3 +--
- drivers/mfd/tps65912-i2c.c                          |  4 +---
- drivers/mfd/twl-core.c                              |  3 +--
- drivers/mfd/twl6040.c                               |  4 +---
- drivers/mfd/wm8994-core.c                           |  4 +---
- drivers/misc/ad525x_dpot-i2c.c                      |  3 +--
- drivers/misc/apds9802als.c                          |  3 +--
- drivers/misc/apds990x.c                             |  3 +--
- drivers/misc/bh1770glc.c                            |  4 +---
- drivers/misc/ds1682.c                               |  3 +--
- drivers/misc/eeprom/at24.c                          |  4 +---
- drivers/misc/eeprom/ee1004.c                        |  4 +---
- drivers/misc/eeprom/eeprom.c                        |  4 +---
- drivers/misc/eeprom/idt_89hpesx.c                   |  4 +---
- drivers/misc/eeprom/max6875.c                       |  4 +---
- drivers/misc/hmc6352.c                              |  3 +--
- drivers/misc/ics932s401.c                           |  5 ++---
- drivers/misc/isl29003.c                             |  3 +--
- drivers/misc/isl29020.c                             |  3 +--
- drivers/misc/lis3lv02d/lis3lv02d_i2c.c              |  3 +--
- drivers/misc/tsl2550.c                              |  4 +---
- drivers/mtd/maps/pismo.c                            |  4 +---
- drivers/net/dsa/lan9303_i2c.c                       |  6 ++----
- drivers/net/dsa/microchip/ksz9477_i2c.c             |  4 +---
- drivers/net/dsa/xrs700x/xrs700x_i2c.c               |  6 ++----
- drivers/net/ethernet/mellanox/mlxsw/i2c.c           |  4 +---
- drivers/net/mctp/mctp-i2c.c                         |  4 +---
- drivers/nfc/fdp/i2c.c                               |  4 +---
- drivers/nfc/microread/i2c.c                         |  4 +---
- drivers/nfc/nfcmrvl/i2c.c                           |  4 +---
- drivers/nfc/nxp-nci/i2c.c                           |  4 +---
- drivers/nfc/pn533/i2c.c                             |  4 +---
- drivers/nfc/pn544/i2c.c                             |  4 +---
- drivers/nfc/s3fwrn5/i2c.c                           |  4 +---
- drivers/nfc/st-nci/i2c.c                            |  4 +---
- drivers/nfc/st21nfca/i2c.c                          |  4 +---
- drivers/of/unittest.c                               |  6 ++----
- drivers/platform/chrome/cros_ec_i2c.c               |  4 +---
- drivers/platform/surface/surface3_power.c           |  4 +---
- drivers/platform/x86/asus-tf103c-dock.c             |  4 +---
- drivers/platform/x86/intel/int3472/tps68470.c       |  4 +---
- drivers/power/supply/bq2415x_charger.c              |  4 +---
- drivers/power/supply/bq24190_charger.c              |  4 +---
- drivers/power/supply/bq24257_charger.c              |  4 +---
- drivers/power/supply/bq25890_charger.c              |  4 +---
- drivers/power/supply/bq27xxx_battery_i2c.c          |  4 +---
- drivers/power/supply/cw2015_battery.c               |  3 +--
- drivers/power/supply/ds2782_battery.c               |  4 +---
- drivers/power/supply/lp8727_charger.c               |  3 +--
- drivers/power/supply/rt5033_battery.c               |  4 +---
- drivers/power/supply/rt9455_charger.c               |  4 +---
- drivers/power/supply/smb347-charger.c               |  4 +---
- drivers/power/supply/z2_battery.c                   |  4 +---
- drivers/pwm/pwm-pca9685.c                           |  4 +---
- drivers/regulator/da9121-regulator.c                |  3 +--
- drivers/regulator/lp8755.c                          |  4 +---
- drivers/regulator/rpi-panel-attiny-regulator.c      |  4 +---
- drivers/rtc/rtc-bq32k.c                             |  4 +---
- drivers/rtc/rtc-ds1374.c                            |  4 +---
- drivers/rtc/rtc-isl12026.c                          |  3 +--
- drivers/rtc/rtc-m41t80.c                            |  4 +---
- drivers/rtc/rtc-rs5c372.c                           |  3 +--
- drivers/rtc/rtc-x1205.c                             |  3 +--
- drivers/staging/media/atomisp/i2c/atomisp-gc0310.c  |  4 +---
- drivers/staging/media/atomisp/i2c/atomisp-gc2235.c  |  4 +---
- drivers/staging/media/atomisp/i2c/atomisp-lm3554.c  |  4 +---
- drivers/staging/media/atomisp/i2c/atomisp-mt9m114.c |  3 +--
- drivers/staging/media/atomisp/i2c/atomisp-ov2680.c  |  4 +---
- drivers/staging/media/atomisp/i2c/atomisp-ov2722.c  |  4 +---
- .../media/atomisp/i2c/ov5693/atomisp-ov5693.c       |  4 +---
- drivers/staging/media/max96712/max96712.c           |  4 +---
- drivers/staging/most/i2c/i2c.c                      |  4 +---
- drivers/staging/olpc_dcon/olpc_dcon.c               |  4 +---
- drivers/tty/serial/max310x.c                        |  4 +---
- drivers/tty/serial/sc16is7xx.c                      |  4 +---
- drivers/usb/misc/usb3503.c                          |  4 +---
- drivers/usb/phy/phy-isp1301-omap.c                  |  4 +---
- drivers/usb/phy/phy-isp1301.c                       |  4 +---
- drivers/usb/typec/anx7411.c                         |  4 +---
- drivers/usb/typec/hd3ss3220.c                       |  4 +---
- drivers/usb/typec/mux/fsa4480.c                     |  4 +---
- drivers/usb/typec/mux/pi3usb30532.c                 |  3 +--
- drivers/usb/typec/rt1719.c                          |  4 +---
- drivers/usb/typec/stusb160x.c                       |  4 +---
- drivers/usb/typec/tcpm/fusb302.c                    |  4 +---
- drivers/usb/typec/tcpm/tcpci.c                      |  4 +---
- drivers/usb/typec/tcpm/tcpci_maxim.c                |  4 +---
- drivers/usb/typec/tcpm/tcpci_rt1711h.c              |  3 +--
- drivers/usb/typec/tipd/core.c                       |  4 +---
- drivers/usb/typec/ucsi/ucsi_ccg.c                   |  4 +---
- drivers/usb/typec/ucsi/ucsi_stm32g0.c               |  4 +---
- drivers/usb/typec/wusb3801.c                        |  4 +---
- drivers/video/backlight/adp8860_bl.c                |  4 +---
- drivers/video/backlight/adp8870_bl.c                |  4 +---
- drivers/video/backlight/arcxcnn_bl.c                |  4 +---
- drivers/video/backlight/bd6107.c                    |  4 +---
- drivers/video/backlight/lm3630a_bl.c                |  3 +--
- drivers/video/backlight/lm3639_bl.c                 |  3 +--
- drivers/video/backlight/lp855x_bl.c                 |  4 +---
- drivers/video/backlight/lv5207lp.c                  |  4 +---
- drivers/video/backlight/tosa_bl.c                   |  3 +--
- drivers/video/fbdev/matrox/matroxfb_maven.c         |  3 +--
- drivers/video/fbdev/ssd1307fb.c                     |  4 +---
- drivers/w1/masters/ds2482.c                         |  3 +--
- drivers/watchdog/ziirave_wdt.c                      |  4 +---
- include/linux/i2c.h                                 |  2 +-
- include/linux/platform_data/pca953x.h               |  2 +-
- sound/aoa/codecs/onyx.c                             |  3 +--
- sound/aoa/codecs/tas.c                              |  3 +--
- sound/pci/hda/cs35l41_hda_i2c.c                     |  4 +---
- sound/ppc/keywest.c                                 |  6 ++----
- sound/soc/codecs/adau1761-i2c.c                     |  3 +--
- sound/soc/codecs/adau1781-i2c.c                     |  3 +--
- sound/soc/codecs/ak4375.c                           |  4 +---
- sound/soc/codecs/ak4458.c                           |  4 +---
- sound/soc/codecs/ak4641.c                           |  4 +---
- sound/soc/codecs/ak5558.c                           |  4 +---
- sound/soc/codecs/cs35l32.c                          |  4 +---
- sound/soc/codecs/cs35l33.c                          |  4 +---
- sound/soc/codecs/cs35l34.c                          |  4 +---
- sound/soc/codecs/cs35l35.c                          |  4 +---
- sound/soc/codecs/cs35l36.c                          |  4 +---
- sound/soc/codecs/cs35l41-i2c.c                      |  4 +---
- sound/soc/codecs/cs35l45-i2c.c                      |  4 +---
- sound/soc/codecs/cs4234.c                           |  4 +---
- sound/soc/codecs/cs4265.c                           |  4 +---
- sound/soc/codecs/cs4270.c                           |  4 +---
- sound/soc/codecs/cs42l42.c                          |  4 +---
- sound/soc/codecs/cs42l51-i2c.c                      |  4 +---
- sound/soc/codecs/cs42l56.c                          |  3 +--
- sound/soc/codecs/cs42xx8-i2c.c                      |  4 +---
- sound/soc/codecs/cs43130.c                          |  4 +---
- sound/soc/codecs/cs4349.c                           |  4 +---
- sound/soc/codecs/cs53l30.c                          |  4 +---
- sound/soc/codecs/cx2072x.c                          |  3 +--
- sound/soc/codecs/max98090.c                         |  4 +---
- sound/soc/codecs/max9860.c                          |  3 +--
- sound/soc/codecs/max98927.c                         |  4 +---
- sound/soc/codecs/mt6660.c                           |  3 +--
- sound/soc/codecs/nau8825.c                          |  6 ++----
- sound/soc/codecs/pcm1789-i2c.c                      |  4 +---
- sound/soc/codecs/pcm3168a-i2c.c                     |  4 +---
- sound/soc/codecs/pcm512x-i2c.c                      |  3 +--
- sound/soc/codecs/rt274.c                            |  4 +---
- sound/soc/codecs/rt286.c                            |  4 +---
- sound/soc/codecs/rt298.c                            |  4 +---
- sound/soc/codecs/rt5616.c                           |  6 ++----
- sound/soc/codecs/rt5631.c                           |  6 ++----
- sound/soc/codecs/rt5645.c                           |  4 +---
- sound/soc/codecs/rt5663.c                           |  4 +---
- sound/soc/codecs/rt5670.c                           |  4 +---
- sound/soc/codecs/rt5677.c                           |  4 +---
- sound/soc/codecs/rt5682-i2c.c                       |  4 +---
- sound/soc/codecs/rt5682s.c                          |  4 +---
- sound/soc/codecs/rt9120.c                           |  3 +--
- sound/soc/codecs/sgtl5000.c                         |  4 +---
- sound/soc/codecs/sta350.c                           |  6 ++----
- sound/soc/codecs/tas2552.c                          |  3 +--
- sound/soc/codecs/tas5086.c                          |  6 ++----
- sound/soc/codecs/tas571x.c                          |  4 +---
- sound/soc/codecs/tas5805m.c                         |  3 +--
- sound/soc/codecs/tas6424.c                          |  4 +---
- sound/soc/codecs/tlv320adc3xxx.c                    |  3 +--
- sound/soc/codecs/tlv320aic32x4-i2c.c                |  4 +---
- sound/soc/codecs/tlv320aic3x-i2c.c                  |  4 +---
- sound/soc/codecs/tlv320dac33.c                      |  4 +---
- sound/soc/codecs/wm1250-ev1.c                       |  4 +---
- sound/soc/codecs/wm2200.c                           |  4 +---
- sound/soc/codecs/wm5100.c                           |  4 +---
- sound/soc/codecs/wm8804-i2c.c                       |  3 +--
- sound/soc/codecs/wm8900.c                           |  6 ++----
- sound/soc/codecs/wm8903.c                           |  4 +---
- sound/soc/codecs/wm8960.c                           |  6 ++----
- sound/soc/codecs/wm8962.c                           |  3 +--
- sound/soc/codecs/wm8993.c                           |  4 +---
- sound/soc/codecs/wm8996.c                           |  4 +---
- sound/soc/codecs/wm9081.c                           |  6 ++----
- 622 files changed, 660 insertions(+), 1762 deletions(-)
+- In Patch 13/13:
+	- Add support 'exponential mode' property parsing
+	- Add 'return dev_err_probe()' after 'if (IS_ERR(priv->enable_gpio))'
+	- Add 'mt6372' compatible string
+	- Revise Kconfig help text
+	- Revise update()/get() for supporting 16384 steps (MT6372)
+	- Revise all shift usages form using 'ffs() and fls()' to defining the
+	  _SHIFT macros.
+	- Revise 'brightness ? 1 : 0' to '!!brightness' in gpiod_set_value()
 
-base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
+
+Changes in v6:
+- In Patch 03/13:
+	- Add 'reg' property of led of multi-led to prevent checking
+	  error.
+
+- In Patch 08/13:
+	- Convert tcpci as device resource managed with
+	  'devm_add_action_or_reset' api.
+	- Refine remvoe callback.
+	- Refine the commit text from 'this commit add' to 'add'.
+
+- In Patch 09/13:
+	- Using 'struct device *dev = &pdev->dev' in probe()
+	- Revise the sixth parameter of regmap_read_poll_timeout() by
+	  Replacing '1000' with 'MILLI'
+	- Revise the units of three macros
+	- MT6370_AICR_400MA --> MT6370_AICR_400_mA
+	- MT6370_ICHG_500MA --> MT6370_ICHG_500_mA
+	- MT6370_ICHG_900MA --> MT6370_ICHG_900_mA
+
+- In patch 10/13:
+	- Remove the varable (*psy_desc) of struct mt6370_priv
+	- Remove the deprecated usb type (POWER_SUPPLY_TYPE_USB_CDP and
+	  POWER_SUPPLY_TYPE_USB_DCP)
+	- Remove useless remove()
+	- Revise all units from mini- to micro-
+	- Revise get/set power_supply_prop (change to directly return get/set
+	  regmap_field)
+	- Revise probe() and use devm_add_action_or_reset() for handling of the
+	  workqueue/delayed_work/mutex
+	- Revise mt6370_chg_psy_desc
+		- Add '.name = "mt6370-charger"'
+		- Use 'static const'
+
+- In patch 11/13:
+	- Remove the 'ko' from mt6370 led Kconfig description.
+	- Add both authors for Alice and ChiYuan.
+	- Use pdata to distinguish the code from mt6370/71 to mt6372.
+	- Instead of 'state' define, use the 'state' enum.
+	- Fix the typo for 'MT6372_PMW_DUTY'.
+	- For pwm_duty define, replace with bit macro - 1.
+	- Refine all the labels from 'out' to 'out_unlock'.
+	- Use struct 'dev' variable and 'dev_err_probe' to optimize the LOC.
+	- Revise for the array initialization from {0} to {}.
+	- Move into rgb folder and rename file name to 'leds-mt6370-rgb'.
+	- Refine the 'comma' usage in struct/enum.
+
+- In patch 12/13:
+	- Use 'GENMASK' instead of 'BIT'.
+	- Use dev_err_probe to decrease LOC.
+	- Use 'dev' variable to make probe function more clean.
+	- Refine the return of _mt6370_flash_brightness_set function.
+	- Refine the descriptions.
+	- Use mt6370_clamp() instead of clamp_align().
+	- Use device resource managed API for v4l2 flash_release.
+
+
+Changes in v5:
+- In patch 07/13:
+	- Add the comma in the last REGMAP_IRQ_REG_LINE(),
+	  DEFINE_RES_IRQ_NAMED() and MFD_CELL_RES()
+	- Add the prefix in the first parameter of all mfd_cell
+	- Move enum and struct mt6370_info to mt6370.h
+	- Remove struct device *dev in struct mt6370_info
+	- Revise the description of Kconfig help text
+	- Revise MODULE_DESCRIPTION()
+
+- In patch 08/13:
+	- Add comma for the last index of mt6370_reg_init.
+	- Use dev_err_probe to decrease LOC.
+	- Use 'dev' variable to make probe function more clean.
+	- Refine kconfig text.
+	- Remove both 'else' in set_vbus callback.
+	- Remove comma for of_device_id if the assigned member is only one.
+
+- In patch 09/13:
+	- Replace using snprintf() with sysfs_emit() in mt6370_adc_read_label()
+	- Remove macro ADC_CONV_TIME_US
+	- Revise all variable ordering
+	- Revise the description of Kconfig help text
+	- Revise MODULE_DESCRIPTION()
+
+- In patch 10/13:
+	- Replace unsigned int type of pwr_rdy with bool in
+	  mt6370_chg_set_online()
+	- Remove redundant 'else' in mt6370_chg_field_get()
+	- Revise 'if-else' in mt6370_chg_field_set()
+	- Revise 'if' condition in mt6370_chg_enable_irq()
+	- Revise all text 'otg' --> 'OTG'
+	- Revise MT6370_MIVR_IBUS_TH_100_MA --> MT6370_MIVR_IBUS_TH_100_mA
+	- Revise the description of Kconfig help text
+
+- In patch 12/13:
+	- Refine the coding style.
+	- Use "dev" instead of "&pdev->dev".
+
+- In patch 13/13:
+	- Add missed <mod_devicetable.h>
+	- Add struct device *dev in probe() to make code cleaning
+	- Remove useless including header file <gpio/driver.h>, <of.h>
+	- Remove useless variable uasage in mt6370_init_backlight_properties()
+	- Remove redundant checking enable_gpio in mt6370_bl_update_status()
+	- Remove redundant parentheses in mt6370_bl_get_brightness()
+	- Revise the description of Kconfig help text
+	- Revise the calculation of hys_th_steps
+
+
+Changes in v4:
+- In patch 02/13:
+	- Add minItems of "io-channel-names"
+	- Replace text "Mediatek" with "MediaTek"
+
+- In patch 06/13:
+	- Roll back all "$ref: " to v2 patch style (using "/schemas/...")
+
+- In patch 07/13:
+	- Replace text "Mediatek" with "MediaTek" in Kconfig
+	- Replace "first break and then return" with "return directly"
+	  in "mt6370_check_vendor_info()"
+	- Add module name related description in Kconfig helptext
+	- Add Copyright in the source code
+	- Add header file "mt6370.h" for all "#define IRQ"
+	- Adjust Makefile order of MT6370
+	- Refine "bank_idx" and "bank_addr" in
+	  "mt6375_regmap_read()" / "mt6375_regmap_write()"
+	- Refine redundant "else if" in "mt6370_regmap_read()"
+
+- In patch 08/13:
+	- Replace text "Mediatek" with "MediaTek" in Kconfig
+	- Replace "first ret=regulator_(dis/en)able and then return"
+	  with "return directly" in "mt6370_tcpc_set_vbus()"
+	- Replace header file <linux/of.h> with <linux/mod_devicetable.h>
+	- Add Copyright in the source code
+	- Add module name related description in Kconfig helptext
+	- Remove header file <linux/of.h>
+	- Refine all probe error by using dev_err_probe()
+
+- In patch 09/13:
+	- Replace text "Mediatek" with "MediaTek"
+	- Replace all "first dev_err() and then return" with
+	  "return dev_err_probe()"
+	- Add Copyright in the source code
+	- Add module name related description in Kconfig
+	- Add unit suffix of macro "ADC_CONV_POLLING_TIME"
+	- Add new macro "ADC_CONV_TIME_MS"
+	- Adjust the position of include file <mediatek,mt6370_adc.h>
+	- Adjust the postions between <linux/module.h> and
+	   <linux/mod_devicetable.h>
+	- Fix some incorrect characters
+
+- In patch 10/13:
+	- Replace text "Mediatek" with "MediaTek" in Kconfig and
+	  MODULE_DESCRIPTION()
+	- Replace "mt6370_chg_val_to_reg" and "mt6370_chg_reg_to_val"
+	  with "linear_range" API
+	- Replace "first break and then return" with "return directly"
+	  in all cases of get/set power_supply_property
+	- Replace all "first dev_err() and then return" with "return
+	  dev_err_probe()"
+	- Replace all "return IS_ERR(priv->rdev) ? PTR_ERR(priv->rdev) : 0"
+	  with "PTR_ERR_OR_ZERO()"
+	- Replace "priv->dev->of_node" with "dev_of_node()"
+	- Add Copyright in the source code
+	- Add module name related description in Kconfig helptext
+	- Add proper unit of "MT6370_MIVR_IBUS_TH"
+	- Add error check in "mt6370_chg_get_status"
+	- Remove including <mediatek,mt6370_adc.h> header file
+	- Remove redundant comma of every enum terminator line
+	- Remove unwanted blank lines
+	- Remove the useless label (toggle_cfo_exit:)
+	- Remove using atomic
+	- Remove using of_match_ptr()
+	- Fix some incorrect characters
+	- Fix updating wrong bits when using ena_gpiod of OTG regulator
+	- Adjust the probe order in probe()
+
+- In patch 11/13:
+	- Replace text "Mediatek" with "MediaTek" in Kconfig
+	- Replace text "const" with "constant" in Kconfig
+	- Add Copyright in the source code
+
+- In patch 12/13:
+	- Replace text "Mediatek" with "MediaTek" in Kconfig
+	- Add Copyright in the source code
+
+- In patch 13/13:
+	- Replace text "Mediatek" with "MediaTek" in Kconfig
+	- Add Copyright in the source code
+	- Revise the comment of "PWM HYS STEPS"
+
+
+Changes in v3:
+- Remove ADC ABI file, which is added in v2 Patch 7
+- In patch 02/14:
+	- Add items and remove maxItems of io-channels
+	- Add io-channel-names and describe each item
+	- Add "unevaluatedProperties: false" in "usb-otg-vbus-regulator"
+	- Rename "enable-gpio" to "enable-gpios" in "usb-otg-vbus-regulator"
+
+- In patch 03/14:
+	- Use leds-class-multicolor.yaml instead of common.yaml.
+	- Split multi-led and led node.
+	- Add subdevice "led" in "multi-led".
+
+- In patch 04/14:
+	- Remove the description of enum.
+
+- In patch 05/14:
+	- Rename "mediatek,bled-pwm-hys-input-threshold-steps" to
+	  "mediatek,bled-pwm-hys-input-th-steps"
+	- Refine "bled-pwm-hys-input-th-steps", "bled-ovp-microvolt",
+	  "bled-ocp-microamp" enum values
+
+- In patch 06/14:
+	- Use " in entire patchset
+	- Refine ADC description
+	- Rename "enable-gpio" to "enable-gpios" in "regualtor"
+
+- In patch 07/14:
+	- Refine Kconfig help text
+	- Refine error message of unknown vendor ID in
+	  mt6370_check_vendor_info()
+	- Refine return value handling of mt6370_regmap_read()
+	- Refine all probe error by using dev_err_probe()
+	- Refine "bank_idx" and "bank_addr" in mt6370_regmap_read() and
+	  mt6370_regmap_write()
+	- Add "#define VENID*" and drop the comments in
+	  mt6370_check_vendor_info()
+	- Drop "MFD" in MODULE_DESCRIPTION()
+
+- In patch 09/14:
+	- Refine Kconfig help text
+
+- In patch 10/14:
+	- Refine Kconfig help text
+	- Refine all channel value in read_scale()
+		a. current: uA --> mA
+		b. voltage: uV --> mV
+		c. temperature: degrees Celsius --> milli degrees Celsius
+	- Add "default:" condition of switch statement in read_scale() and read_raw()
+	- Add error message for reading ADC register failed
+	- Add the comment for adc_lock
+	- Add <linux/mod_devicetable.h> header file for struct of_device_id
+	- Replace "adc" text with "ADC" in all of the error messages
+
+- In patch 12/14:
+	- Refine the grammer of the Kconfig.
+	- Change reg mode to the const current mode.
+
+- In patch 14/14:
+	- Refine bool properties parsing (pwm-enable, ovp-shutdown, ocp-shutdown) in DT
+	  parsing function
+	- Refine u32 and u8 properties parsing (pwm-hys-input-th-steps, ovp-microvolt,
+	  ocp-microamp), from using register value to using actual value
+	- Refine error string of "channle-use" parsing failed
+	- Refine Kconfig help text
+
+
+Changes in v2:
+- In patch 01/15:
+	- Add "unevaluatedProperties: false".
+	- Delete "DT bindings".
+	- Refine the description to fit in 80 columns.
+	- Skip the connector description.
+
+- In patch 02/15:
+	- Refine items description of interrupt-name
+	- Rename "usb-otg-vbus" to "usb-otg-vbus-regulator"
+	- Add constraint properties for ADC
+
+- In patch 03/15:
+	- Skip not useful description of "^(multi-)?led@[0-3]$"
+	  and reg.
+	- Due to the dependency, remove the mention of mfd
+	  document directory.
+	- Delete Soft-start property. In design aspect, we think
+	  soft-restart should always be enabled, our new chip
+	  has deleted the related setting register , also, we don’t
+	  allow user adjust this parameter in this chip.
+	- Refine the commit message.
+
+- In patch 04/15:
+	- Skip not useful description of "^led@[0-1]$" and reg.
+	- Add apace after '#'.
+	- Refine the commit message.
+
+- In patch 05/15:
+	- Remove "binding documentation" in subject title
+	- Refine description of mt6370 backlight binding
+	  document
+	- Refine properties name(bled-pwm-hys-input-bit,
+	  bled-ovp-microvolt, bled-ocp-microamp) and their
+	  description
+
+- In patch 06/15:
+	- Refine ADC and Regulator descriptions
+	- Refine include header usage in example
+	- Refine node name to generic node name("pmic@34")
+	- Refine led example indentation
+	- Refine license of mediatek,mt6370_adc.h
+	- Rename the dts example from IRQ define to number.
+	- Remove mediatek,mt6370.h
+
+- In patch 07/15:
+	- Add ABI documentation for mt6370 non-standard ADC
+	  sysfs interfaces.
+
+- In patch 08/15:
+	- Add all IRQ define into mt6370.c.
+	- Refine include header usage
+
+- In patch 09/15:
+	- No changes.
+
+- In patch 10/15:
+	- Use 'gpiod_get_from_of_node' to replace
+	  'fwnode_gpiod_get_index'.
+
+- In patch 11/15:
+	- Refine Kconfig mt6370 help text
+	- Refine mask&shift to FIELD_PREP()
+	- Refine mutex lock name ("lock" -> "adc_lock")
+	- Refine mt6370_adc_read_scale()
+	- Refine mt6370_adc_read_offset()
+	- Refine mt6370_channel_labels[] by using enum to index
+	  chan spec
+	- Refine MT6370_ADC_CHAN()
+	- Refine indio_dev->name
+	- Remove useless include header files
+
+- In patch 12/15:
+	- Refine mt6370_chg_otg_rdesc.of_match
+	  ("mt6370,otg-vbus" -> "usb-otg-vbus-regulator") to match
+	  DT binding
+
+- In patch 13/15:
+	- Refine Kconfig description.
+	- Remove include "linux/of.h" and use
+	  "linux/mod_devicetable.h".
+	- Place a comma for the last element of the const
+	  unsigned int array.
+	- Add a comment line for the mutex 'lock'.
+	- In probe function, use 'dev_err_probe' in some
+	  judgement to reduce the LOC.
+	- Refine include header usage.
+	  BIT/GENMASK -> linux/bits.h
+	  FIELD_GET -> linux/bitfield.h
+
+- In patch 14/15:
+	- Add blank line.
+	- Replace container_of() with to_mt6370_led() .
+	- Refine description of ramping.
+	- Refine the mt6370_init_common_properties function.
+	- Refine the probe return.
+
+- In patch 15/15:
+	- Refine MT6370 help text in Kconfig
+	- Refine DT Parse function
+	- Remove useless enum
+	- Add comment for 6372 backward compatible in
+	  bl_update_status() and
+	  check_vendor_info()
+	- Using dev_err_probe(); insteads dev_err()&return; in
+	  the probe()
+
+
+Alice Chen (2):
+  dt-bindings: leds: Add MediaTek MT6370 flashlight
+  leds: flash: mt6370: Add MediaTek MT6370 flashlight support
+
+ChiYuan Huang (5):
+  dt-bindings: usb: Add MediaTek MT6370 TCPC
+  dt-bindings: leds: mt6370: Add MediaTek MT6370 current sink type LED
+    indicator
+  dt-bindings: backlight: Add MediaTek MT6370 backlight
+  usb: typec: tcpci_mt6370: Add MediaTek MT6370 tcpci driver
+  leds: rgb: mt6370: Add MediaTek MT6370 current sink type LED Indicator
+    support
+
+ChiaEn Wu (5):
+  dt-bindings: power: supply: Add MediaTek MT6370 Charger
+  lib: add linear range index macro
+  iio: adc: mt6370: Add MediaTek MT6370 support
+  power: supply: mt6370: Add MediaTek MT6370 charger driver
+  video: backlight: mt6370: Add MediaTek MT6370 support
+
+ .../backlight/mediatek,mt6370-backlight.yaml  |  121 ++
+ .../leds/mediatek,mt6370-flashlight.yaml      |   41 +
+ .../leds/mediatek,mt6370-indicator.yaml       |   81 ++
+ .../power/supply/mediatek,mt6370-charger.yaml |   88 ++
+ .../bindings/usb/mediatek,mt6370-tcpc.yaml    |   36 +
+ drivers/iio/adc/Kconfig                       |   12 +
+ drivers/iio/adc/Makefile                      |    1 +
+ drivers/iio/adc/mt6370-adc.c                  |  305 +++++
+ drivers/leds/flash/Kconfig                    |   14 +
+ drivers/leds/flash/Makefile                   |    1 +
+ drivers/leds/flash/leds-mt6370-flash.c        |  632 +++++++++++
+ drivers/leds/rgb/Kconfig                      |   13 +
+ drivers/leds/rgb/Makefile                     |    1 +
+ drivers/leds/rgb/leds-mt6370-rgb.c            | 1010 +++++++++++++++++
+ drivers/power/supply/Kconfig                  |   14 +
+ drivers/power/supply/Makefile                 |    1 +
+ drivers/power/supply/mt6370-charger.c         |  957 ++++++++++++++++
+ drivers/usb/typec/tcpm/Kconfig                |   11 +
+ drivers/usb/typec/tcpm/Makefile               |    1 +
+ drivers/usb/typec/tcpm/tcpci_mt6370.c         |  207 ++++
+ drivers/video/backlight/Kconfig               |   13 +
+ drivers/video/backlight/Makefile              |    1 +
+ drivers/video/backlight/mt6370-backlight.c    |  351 ++++++
+ include/linux/linear_range.h                  |    8 +
+ 24 files changed, 3920 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/mediatek,mt6370-backlight.yaml
+ create mode 100644 Documentation/devicetree/bindings/leds/mediatek,mt6370-flashlight.yaml
+ create mode 100644 Documentation/devicetree/bindings/leds/mediatek,mt6370-indicator.yaml
+ create mode 100644 Documentation/devicetree/bindings/power/supply/mediatek,mt6370-charger.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/mediatek,mt6370-tcpc.yaml
+ create mode 100644 drivers/iio/adc/mt6370-adc.c
+ create mode 100644 drivers/leds/flash/leds-mt6370-flash.c
+ create mode 100644 drivers/leds/rgb/leds-mt6370-rgb.c
+ create mode 100644 drivers/power/supply/mt6370-charger.c
+ create mode 100644 drivers/usb/typec/tcpm/tcpci_mt6370.c
+ create mode 100644 drivers/video/backlight/mt6370-backlight.c
+
 -- 
-2.36.1
+2.34.1
 
