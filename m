@@ -2,132 +2,79 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BACC00140
-	for <linux-leds@archiver.kernel.org>; Sun, 21 Aug 2022 18:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E321C28D13
+	for <linux-leds@archiver.kernel.org>; Mon, 22 Aug 2022 06:19:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231652AbiHUSSq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 21 Aug 2022 14:18:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60416 "EHLO
+        id S232775AbiHVGTz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 22 Aug 2022 02:19:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231631AbiHUSSp (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 21 Aug 2022 14:18:45 -0400
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B62415FF5
-        for <linux-leds@vger.kernel.org>; Sun, 21 Aug 2022 11:18:42 -0700 (PDT)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id C693B1C0005; Sun, 21 Aug 2022 20:18:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-        t=1661105920;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5wcTNVffofuWj+bAe1yLcENMfVZbc12q4CcwXswKT2I=;
-        b=D5biLc4IjjbE8UdbtRQDfroehoqI5FZZ3haSfKljnlFWK2Hh9Z//F7hRRUD7RxCFcHl0PT
-        BZgS8L+gD4TX1HCcb/T+5ZgOFt4Nor+/jxfE5ddSAts876dokzaVZGMP+R3Z6sERYJkZaa
-        beBQM2+EScVnkw1h0oLA7TPlV/nA2XA=
-Date:   Sun, 21 Aug 2022 20:18:40 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Werner Sembach <wse@tuxedocomputers.com>
-Cc:     linux-leds@vger.kernel.org
-Subject: Re: Clarification questions regarding multicolor leds
-Message-ID: <20220821181840.GA19796@duo.ucw.cz>
-References: <30cbbf20-08cf-a69b-4f58-359a9802e86f@tuxedocomputers.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
-Content-Disposition: inline
-In-Reply-To: <30cbbf20-08cf-a69b-4f58-359a9802e86f@tuxedocomputers.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        with ESMTP id S232762AbiHVGTz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 22 Aug 2022 02:19:55 -0400
+X-Greylist: delayed 66 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 21 Aug 2022 23:19:51 PDT
+Received: from atl4mhfb01.myregisteredsite.com (atl4mhfb01.myregisteredsite.com [209.17.115.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D815F2529A
+        for <linux-leds@vger.kernel.org>; Sun, 21 Aug 2022 23:19:51 -0700 (PDT)
+Received: from atl4mhob07.registeredsite.com (atl4mhob07.registeredsite.com [209.17.115.45])
+        by atl4mhfb01.myregisteredsite.com (8.14.4/8.14.4) with ESMTP id 27M6IjFI005666
+        for <linux-leds@vger.kernel.org>; Mon, 22 Aug 2022 02:18:45 -0400
+Received: from mailpod.hostingplatform.com ([10.30.71.204])
+        by atl4mhob07.registeredsite.com (8.14.4/8.14.4) with ESMTP id 27M6Ihqa016192
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
+        for <linux-leds@vger.kernel.org>; Mon, 22 Aug 2022 02:18:43 -0400
+Received: (qmail 3384 invoked by uid 0); 22 Aug 2022 06:18:43 -0000
+X-TCPREMOTEIP: 81.173.50.109
+X-Authenticated-UID: mike@milosoftware.com
+Received: from unknown (HELO phenom.domain?not?set.invalid) (mike@milosoftware.com@81.173.50.109)
+  by 0 with ESMTPA; 22 Aug 2022 06:18:42 -0000
+From:   Mike Looijmans <mike.looijmans@topic.nl>
+To:     linux-leds@vger.kernel.org
+Cc:     Mike Looijmans <mike.looijmans@topic.nl>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        p.meerwald@bct-electronic.com
+Subject: [PATCH 2/2] dt-bindings: leds: pca963x: Add support for PCA962x chips
+Date:   Mon, 22 Aug 2022 08:18:38 +0200
+Message-Id: <20220822061838.8212-2-mike.looijmans@topic.nl>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220822061838.8212-1-mike.looijmans@topic.nl>
+References: <20220822061838.8212-1-mike.looijmans@topic.nl>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+The PCA962x family shares the same I2C register layout and functionality.
+This adds support for the following chips:
+PCA9623 4-channel
+PCA9624 8-channel
+PCA9622 16-channel
+PCA9626 24-channel
 
---9jxsPFA5p3P2qPhR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tested only the PCA9624. Other devices based on datasheet information.
 
-Hi!
->=20
-> I'm currently implementing the multicolors sysfs leds interface for sever=
-al
-> Clevo and Tongfang barebones, but I'm unsure how to actually map the leds=
- to
-> the multicolor interface:
->=20
-> The keyboards come in 5 variants:
->=20
-> Single zone RGB + Brightness
->=20
-> Single Zone RGB
->=20
-> 3 Zone RGB + Shared Brightness
->=20
-> Per Key RGB
->=20
-> Per Key RGB + Shared Brightness
->=20
-> First question: How do I map multiple zones or per-key leds?
->=20
-> Should I register a seperate ::kbd_backlight for zone/key? resulting in
-> ::kbd_backlight, ::kbd_backlight_1, ::kbd_backlight_2, ::kbd_backlight_3,
-> etc?
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 
-For a zone, yes.
+---
 
-> Should I give them more desciptive names like ::kbd_backlight_left,
-> ::kbd_backlight_center, ::kbd_backlight_right, ::kbd_backlight_a,
-> ::kbd_backlight_b, ::kbd_backlight_enter?
->=20
-> Or Should I only create a single ::kbd_backlight instance and map the
-> different zones to subleds? So there are number of zones * 3 subleds, with
-> each tripplet controlling the rgb values of one zone/key? This would help
-> performance, as for the per-key backlight, the firmware in the backend wa=
-nts
-> an array for all keys at once. So setting each key seperatly would mean
-> sending the whole array for each key individually. And I think what most
-> people want to do is to set the whole keyboard at once anyway and nit key=
- by
-> key.
+ Documentation/devicetree/bindings/leds/leds-pca9532.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Not sure what to do there. And not sure if LED subsystem is suitable
-for this, actually. This starts to look like a display...
+diff --git a/Documentation/devicetree/bindings/leds/leds-pca9532.txt b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+index f769c52e3643..50a340cbbb49 100644
+--- a/Documentation/devicetree/bindings/leds/leds-pca9532.txt
++++ b/Documentation/devicetree/bindings/leds/leds-pca9532.txt
+@@ -5,6 +5,10 @@ The PWM support 256 steps.
+ 
+ Required properties:
+ 	- compatible:
++		"nxp,pca9522"
++		"nxp,pca9523"
++		"nxp,pca9524"
++		"nxp,pca9526"
+ 		"nxp,pca9530"
+ 		"nxp,pca9531"
+ 		"nxp,pca9532"
+-- 
+2.17.1
 
-> Second question: For the keyboards with shared brightness, is it ok to ha=
-ve
-> the brightness values of ::kbd_backlight, ::kbd_backlight_1 etc. just in
-> sync? I did not see a way to have a ::kbd_backlight without the brightness
-> sysfs entry (then I would have just given the brightness switch to
-> ::kbd_backlight and not to ::kbd_backlight_1 and ::kbd_backlight_2)
-
-Can we simply ignore shared brightness to get reasonable API?
-
-> Third question: The 3 zone RGB and the per-key keyboards have firmware
-> accelerated modes, like breathing and rainbow. How do I make them accessi=
-ble
-> via the multicolor leds interface? the blinking pattern interface does not
-> really match the usecase as these modes are a simple single value toggle
-> (0=3Dstatic color, 1=3Dbreathing, 2=3Dignore color settings and play pred=
-efined
-> moving rainbow pattern, etc).
-
-Take a look at drivers/leds/trigger/ledtrig-pattern.c . That's
-interface we'd like.
-
-Best regards,
-								Pavel
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
-
---9jxsPFA5p3P2qPhR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYwJ3AAAKCRAw5/Bqldv6
-8mQdAJ4uokCHdl8lZsHLM6zGCcro3wsnZwCePrhiaBmyaM8cCCYCvJylvtWZgt8=
-=w/iL
------END PGP SIGNATURE-----
-
---9jxsPFA5p3P2qPhR--
