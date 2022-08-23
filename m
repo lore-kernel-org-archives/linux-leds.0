@@ -2,73 +2,266 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E46FEC32774
-	for <linux-leds@archiver.kernel.org>; Tue, 23 Aug 2022 17:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 589F7C32772
+	for <linux-leds@archiver.kernel.org>; Tue, 23 Aug 2022 17:22:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245654AbiHWRBz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 23 Aug 2022 13:01:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54992 "EHLO
+        id S232067AbiHWRW0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 23 Aug 2022 13:22:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244744AbiHWQ7V (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 23 Aug 2022 12:59:21 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8057CC2766;
-        Tue, 23 Aug 2022 07:13:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661264029; x=1692800029;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7APbvX2V8uAvesMiYvjU1K7Y7LesFT1rI+JPouLO254=;
-  b=bY2blsMw1SZqai+YTHYcfeTOeGNyfdQ0qomYKxFwvjpHI9fof6UtLWTE
-   iGZvrfFuCjIDR9r6VJvvPW1VPho0AIVCNiXZaJFfBcOQY/8aZzq2t1oSq
-   BaaN1t/1Xa2boIqPqfAmez3NpOhzAy3p4U20/Q6MAIEf9fv0Y8BN6K7vl
-   wVmomaAmqZtATKUeCUCkLFJ2gIOQc4+1NZAvmXZSb/Q0D2AhxwlcMfVgx
-   inTOJKkhs3Li5uMPj0Z1ch4DvYIKkq+ikOzac9oBrqgfAx5A2y61/EUFS
-   udGB/Vyov56AAHVPHx3iWIaGZRc89Ktiqrg2xXH0eO+9/mRkfBui0hcje
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10448"; a="379986975"
-X-IronPort-AV: E=Sophos;i="5.93,257,1654585200"; 
-   d="scan'208";a="379986975"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2022 07:13:49 -0700
-X-IronPort-AV: E=Sophos;i="5.93,257,1654585200"; 
-   d="scan'208";a="612419046"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2022 07:13:47 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1oQUf3-002TBG-1W;
-        Tue, 23 Aug 2022 17:13:45 +0300
-Date:   Tue, 23 Aug 2022 17:13:45 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Henning Schild <henning.schild@siemens.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
+        with ESMTP id S242294AbiHWRVV (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 23 Aug 2022 13:21:21 -0400
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13A1BAC254;
+        Tue, 23 Aug 2022 07:57:38 -0700 (PDT)
+Received: by mail-oo1-f44.google.com with SMTP id g5-20020a4ac4c5000000b0044af7c8c4b3so2383350ooq.1;
+        Tue, 23 Aug 2022 07:57:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=ZKzyS+QHTXVC7BDw1OAebS/EBaC9dZMOK/D2B0whWOI=;
+        b=DpSgolFuedOKR7ZeH9ZgOox03O3VKsuxPuiIxXhModRrJIjInHEpw2rjoSYmQVyTrk
+         CgCdHiQKlQc2guHHGMExs1HbSd6uAMame403DMkl5NK3pyKHymyRtXd3kX43/aZExINa
+         +QFkODTnjTje10kTU1Bslovr9ioBhOQQCbOhbPygG7CBQDXDOYv3QtyhJdX8hdVvhC66
+         RfgFl2Rai12+VjZXNqp/+Dz+qTgGzQ+AVmWCoX6Vt0Lb8jetwkYRbew9uSpN2TDodRbf
+         G5namBWj9tDDVormW6/dXXIYVb5Fbf7/ZUG7MwKAuXvNBn6Q3QLrFYY0/H6Wa0miJfwW
+         OIjw==
+X-Gm-Message-State: ACgBeo1P6JU7117ZIb82T/Wx6Z5hs/RDwUtjY+pS8px54gzEmDhZqG8E
+        nCETKAgeVv/8Zka6Ie+fWq2tQYR3UQ==
+X-Google-Smtp-Source: AA6agR7IHw/8Bk3ruADMSCqp1/dFX6q7yLZ/8KGTPHZ0Fm3Cc51EjnpGlEW/s13N0YY5zenpVebTeg==
+X-Received: by 2002:a4a:5e82:0:b0:44a:fe22:baff with SMTP id h124-20020a4a5e82000000b0044afe22baffmr7600316oob.86.1661266657256;
+        Tue, 23 Aug 2022 07:57:37 -0700 (PDT)
+Received: from xps15.. (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.googlemail.com with ESMTPSA id t1-20020a056870600100b0011c65559b04sm3840637oaa.34.2022.08.23.07.57.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Aug 2022 07:57:36 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Vincent Knecht <vincent.knecht@mailoo.org>,
+        Nikita Travkin <nikitos.tr@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Yi Xin <Yixin.zhu@intel.com>,
+        Mallikarjuna reddy <mallikarjunax.reddy@intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        - NeilBrown <neilb@suse.de>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: simatic-ipc-leds-gpio: make sure we have the GPIO
- providing driver
-Message-ID: <YwTgmSwTo8d3ihWj@smile.fi.intel.com>
-References: <20220805120343.5027-1-henning.schild@siemens.com>
- <20220805141920.78967d15@md1za8fc.ad001.siemens.net>
+Subject: [PATCH] dt-bindings: leds: Add missing (unevaluated|additional)Properties on child nodes
+Date:   Tue, 23 Aug 2022 09:56:44 -0500
+Message-Id: <20220823145649.3118479-13-robh@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220805141920.78967d15@md1za8fc.ad001.siemens.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Fri, Aug 05, 2022 at 02:19:20PM +0200, Henning Schild wrote:
-> This applies on top of
-> "[PATCH v6 00/12] platform/x86: introduce p2sb_bar() helper"
-> 
-> where it could also be squashed into p12.
+In order to ensure only documented properties are present, node schemas
+must have unevaluatedProperties or additionalProperties set to false
+(typically).
 
-Can't be squashed, since P2SB series is now part of upstream.
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/leds/issi,is31fl319x.yaml           |  1 +
+ .../devicetree/bindings/leds/leds-aw2013.yaml    |  1 +
+ .../devicetree/bindings/leds/leds-gpio.yaml      |  1 +
+ .../devicetree/bindings/leds/leds-lgm.yaml       | 10 +++++++---
+ .../devicetree/bindings/leds/leds-max77650.yaml  |  9 ++-------
+ .../devicetree/bindings/leds/leds-pwm.yaml       |  1 +
+ .../devicetree/bindings/leds/leds-qcom-lpg.yaml  |  6 ++++++
+ .../bindings/leds/rohm,bd71828-leds.yaml         | 16 +++-------------
+ .../devicetree/bindings/leds/ti,tca6507.yaml     |  1 +
+ 9 files changed, 23 insertions(+), 23 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/leds/issi,is31fl319x.yaml b/Documentation/devicetree/bindings/leds/issi,is31fl319x.yaml
+index 940333f2d69c..2929382625b6 100644
+--- a/Documentation/devicetree/bindings/leds/issi,is31fl319x.yaml
++++ b/Documentation/devicetree/bindings/leds/issi,is31fl319x.yaml
+@@ -57,6 +57,7 @@ patternProperties:
+   "^led@[1-9]$":
+     type: object
+     $ref: common.yaml#
++    unevaluatedProperties: false
+ 
+     properties:
+       reg:
+diff --git a/Documentation/devicetree/bindings/leds/leds-aw2013.yaml b/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
+index e24b0d15ef01..6c3ea0f06cef 100644
+--- a/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
+@@ -33,6 +33,7 @@ patternProperties:
+   "^led@[0-2]$":
+     type: object
+     $ref: common.yaml#
++    unevaluatedProperties: false
+ 
+     properties:
+       reg:
+diff --git a/Documentation/devicetree/bindings/leds/leds-gpio.yaml b/Documentation/devicetree/bindings/leds/leds-gpio.yaml
+index 7ad2baeda0b0..f156d3e47b71 100644
+--- a/Documentation/devicetree/bindings/leds/leds-gpio.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-gpio.yaml
+@@ -25,6 +25,7 @@ patternProperties:
+     type: object
+ 
+     $ref: common.yaml#
++    unevaluatedProperties: false
+ 
+     properties:
+       gpios:
+diff --git a/Documentation/devicetree/bindings/leds/leds-lgm.yaml b/Documentation/devicetree/bindings/leds/leds-lgm.yaml
+index f8d7963c3a13..8b3b3bf1eaf2 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lgm.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-lgm.yaml
+@@ -56,7 +56,8 @@ properties:
+ 
+     patternProperties:
+       "^led@[0-2]$":
+-        type: object
++        $ref: common.yaml#
++        unevaluatedProperties: false
+ 
+         properties:
+           reg:
+@@ -64,6 +65,9 @@ properties:
+             minimum: 0
+             maximum: 2
+ 
++          led-gpios:
++            maxItems: 1
++
+           intel,sso-hw-trigger:
+             type: boolean
+             description: This property indicates Hardware driven/control LED.
+@@ -118,14 +122,14 @@ examples:
+           reg = <0>;
+           function = "gphy";
+           color = <LED_COLOR_ID_GREEN>;
+-          led-gpio = <&ssogpio 0 0>;
++          led-gpios = <&ssogpio 0 0>;
+         };
+ 
+         led@2 {
+           reg = <2>;
+           function = LED_FUNCTION_POWER;
+           color = <LED_COLOR_ID_GREEN>;
+-          led-gpio = <&ssogpio 23 0>;
++          led-gpios = <&ssogpio 23 0>;
+         };
+       };
+     };
+diff --git a/Documentation/devicetree/bindings/leds/leds-max77650.yaml b/Documentation/devicetree/bindings/leds/leds-max77650.yaml
+index c6f96cabd4d1..fdb08f44a45d 100644
+--- a/Documentation/devicetree/bindings/leds/leds-max77650.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-max77650.yaml
+@@ -30,9 +30,8 @@ properties:
+ 
+ patternProperties:
+   "^led@[0-2]$":
+-    type: object
+-    description: |
+-      Properties for a single LED.
++    $ref: common.yaml#
++    unevaluatedProperties: false
+ 
+     properties:
+       reg:
+@@ -41,10 +40,6 @@ patternProperties:
+         minimum: 0
+         maximum: 2
+ 
+-      label: true
+-
+-      linux,default-trigger: true
+-
+ required:
+   - compatible
+   - "#address-cells"
+diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.yaml b/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+index fe4d5fd25913..e60009863d07 100644
+--- a/Documentation/devicetree/bindings/leds/leds-pwm.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+@@ -22,6 +22,7 @@ patternProperties:
+     type: object
+ 
+     $ref: common.yaml#
++    unevaluatedProperties: false
+ 
+     properties:
+       pwms:
+diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
+index 497db289169d..6f43aadea3be 100644
+--- a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
+@@ -72,11 +72,17 @@ properties:
+       "^led@[0-9a-f]$":
+         type: object
+         $ref: common.yaml#
++        unevaluatedProperties: false
++
++        properties:
++          reg:
++            maxItems: 1
+ 
+ patternProperties:
+   "^led@[0-9a-f]$":
+     type: object
+     $ref: common.yaml#
++    unevaluatedProperties: false
+ 
+     properties:
+       reg: true
+diff --git a/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml b/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
+index 86a37c92b834..ca92cea56a6f 100644
+--- a/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
++++ b/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
+@@ -26,26 +26,16 @@ properties:
+ 
+ patternProperties:
+   "^led-[1-2]$":
+-    type: object
+-    description:
+-      Properties for a single LED.
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
+     properties:
+-      #allOf:
+-        #- $ref: "common.yaml#"
+       rohm,led-compatible:
+         description: LED identification string
+         $ref: "/schemas/types.yaml#/definitions/string"
+         enum:
+           - bd71828-ambled
+           - bd71828-grnled
+-      function:
+-        description:
+-          Purpose of LED as defined in dt-bindings/leds/common.h
+-        $ref: "/schemas/types.yaml#/definitions/string"
+-      color:
+-        description:
+-          LED colour as defined in dt-bindings/leds/common.h
+-        $ref: "/schemas/types.yaml#/definitions/uint32"
+ 
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/leds/ti,tca6507.yaml b/Documentation/devicetree/bindings/leds/ti,tca6507.yaml
+index 32c600387895..e83964600993 100644
+--- a/Documentation/devicetree/bindings/leds/ti,tca6507.yaml
++++ b/Documentation/devicetree/bindings/leds/ti,tca6507.yaml
+@@ -40,6 +40,7 @@ patternProperties:
+     type: object
+ 
+     $ref: common.yaml#
++    unevaluatedProperties: false
+ 
+     properties:
+       reg:
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
