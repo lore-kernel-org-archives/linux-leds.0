@@ -2,106 +2,94 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EECBECAAD5
-	for <linux-leds@archiver.kernel.org>; Mon,  5 Sep 2022 15:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C41C6FA83
+	for <linux-leds@archiver.kernel.org>; Mon,  5 Sep 2022 15:17:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235786AbiIEPNj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 5 Sep 2022 11:13:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59868 "EHLO
+        id S237224AbiIEPRR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 5 Sep 2022 11:17:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238683AbiIEPNK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 5 Sep 2022 11:13:10 -0400
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9507D1B7A1;
-        Mon,  5 Sep 2022 08:12:47 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.143])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4MLsRR6mDYzkq6l;
-        Mon,  5 Sep 2022 23:11:15 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.102.38])
-        by APP2 (Coremail) with SMTP id Syh0CgBH53DtERZj1M+nAQ--.47246S4;
-        Mon, 05 Sep 2022 23:12:45 +0800 (CST)
-From:   Wei Yongjun <weiyongjun@huaweicloud.com>
-To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Christian Mauderer <oss@c-mauderer.de>
-Cc:     Wei Yongjun <weiyongjun1@huawei.com>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] leds: spi-byte: fix unbalanced of_node_get()/of_node_put()
-Date:   Mon,  5 Sep 2022 15:30:23 +0000
-Message-Id: <20220905153023.4152525-1-weiyongjun@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S236173AbiIEPRQ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 5 Sep 2022 11:17:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F5B918E3B;
+        Mon,  5 Sep 2022 08:17:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A16AF61326;
+        Mon,  5 Sep 2022 15:17:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 024F9C433D6;
+        Mon,  5 Sep 2022 15:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662391035;
+        bh=+1JZVikczD6oMQstBHmmQ6IUy+FzfgWRuCZFth/S+Dw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JjbTx5WsrgNdOUEf0hAeeafisFv1eS6CmLwbhpwQvtLdLcpPH1peisZcFAhR5xTMZ
+         Nr4nbdRktkjImvMIYnfyYcT33pNCCM3qy0U4PiMeM8ynYP5oJ+KgoPe17ExxQuily0
+         tuXegK4H++l+ffyv6CWE6+VOanhV082OMtBVim7GWweaeUqFYPPg4bxuYsLCZJHgiR
+         LMucXbg1Wtj5poQ9yZfXbhK2vKTi8Kg4rNguspyeq+PiRQ2kPg1AoV3EVK7HDAbA12
+         XAj9zaehTm2IRrCSqw09jRmL4FnEoTSRxBteU8pTg1Fs8qL0kVnXQcNwPC8c7Nhqxb
+         p3KAfpKGDnoJQ==
+Date:   Mon, 5 Sep 2022 16:17:03 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     ChiaEn Wu <peterwu.pub@gmail.com>
+Cc:     daniel.thompson@linaro.org, jingoohan1@gmail.com, pavel@ucw.cz,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        matthias.bgg@gmail.com, sre@kernel.org, jic23@kernel.org,
+        lars@metafoo.de, deller@gmx.de, broonie@kernel.org,
+        mazziesaccount@gmail.com, andriy.shevchenko@linux.intel.com,
+        chiaen_wu@richtek.com, alice_chen@richtek.com,
+        cy_huang@richtek.com, dri-devel@lists.freedesktop.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, szunichen@gmail.com,
+        andy.shevchenko@gmail.com
+Subject: Re: [PATCH v9 10/10] video: backlight: mt6370: Add MediaTek MT6370
+ support
+Message-ID: <YxYS7/dZI69lMXeh@google.com>
+References: <20220830034042.9354-2-peterwu.pub@gmail.com>
+ <20220830034042.9354-11-peterwu.pub@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Syh0CgBH53DtERZj1M+nAQ--.47246S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7uryUGr4DZFW5ZFy3XF4UXFb_yoW8AF1fpF
-        WYk343Aw43W3yxua1FyFykXFyDKa18KFWUJFWxuay5Zw1DZ34UX3WxAFyUAa47ZFyfu3WF
-        vF1UJa47ZF48ZFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgCb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6r1j6r18M7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
-        z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
-        AF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
-        IxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr
-        1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsG
-        vfC2KfnxnUUI43ZEXa7IU189N3UUUUU==
-X-CM-SenderInfo: 5zhl50pqjm3046kxt4xhlfz01xgou0bp/
-X-CFilter-Loop: Reflected
+In-Reply-To: <20220830034042.9354-11-peterwu.pub@gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On Tue, 30 Aug 2022, ChiaEn Wu wrote:
 
-Enabling CONFIG_OF_DYNAMIC triggers the following error at device remove:
+> From: ChiaEn Wu <chiaen_wu@richtek.com>
+> 
+> MediaTek MT6370 is a SubPMIC consisting of a single cell battery charger
+> with ADC monitoring, RGB LEDs, dual channel flashlight, WLED backlight
+> driver, display bias voltage supply, one general purpose LDO, and the
+> USB Type-C & PD controller complies with the latest USB Type-C and PD
+> standards.
+> 
+> Add support for the MediaTek MT6370 backlight driver.
+> It controls 4 channels of 8 series WLEDs in
+> 2048 (only for MT6370/MT6371) / 16384 (only for MT6372)
+> current steps (30 mA) in exponential or linear mapping curves.
+> 
+> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Signed-off-by: ChiaEn Wu <chiaen_wu@richtek.com>
+> ---
+> 
+> v9
+> - Revise the format of the comments.
+> ---
+>  drivers/video/backlight/Kconfig            |  13 ++
+>  drivers/video/backlight/Makefile           |   1 +
+>  drivers/video/backlight/mt6370-backlight.c | 351 +++++++++++++++++++++++++++++
+>  3 files changed, 365 insertions(+)
+>  create mode 100644 drivers/video/backlight/mt6370-backlight.c
 
-OF: ERROR: memory leak, expected refcount 1 instead of 2, \
- of_node_get()/of_node_put() unbalanced - destroy cset entry: \
- attach overlay node /spi/led-controller@0/led
+Applied, thanks.
 
-of_get_next_available_child() is used to get child node with refcount
-incremented in spi_byte_probe(), but missing of_node_put() on it when
-done. This patch fix it.
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/leds/leds-spi-byte.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/leds/leds-spi-byte.c b/drivers/leds/leds-spi-byte.c
-index 9d23dc9e7639..eaad227b4542 100644
---- a/drivers/leds/leds-spi-byte.c
-+++ b/drivers/leds/leds-spi-byte.c
-@@ -91,12 +91,12 @@ static int spi_byte_probe(struct spi_device *spi)
- 		dev_err(dev, "Device must have exactly one LED sub-node.");
- 		return -EINVAL;
- 	}
--	child = of_get_next_available_child(dev_of_node(dev), NULL);
- 
- 	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
- 	if (!led)
- 		return -ENOMEM;
- 
-+	child = of_get_next_available_child(dev_of_node(dev), NULL);
- 	of_property_read_string(child, "label", &name);
- 	strlcpy(led->name, name, sizeof(led->name));
- 	led->spi = spi;
-@@ -113,10 +113,12 @@ static int spi_byte_probe(struct spi_device *spi)
- 			led->ldev.brightness = led->ldev.max_brightness;
- 		} else if (strcmp(state, "off")) {
- 			/* all other cases except "off" */
-+			of_node_put(child);
- 			dev_err(dev, "default-state can only be 'on' or 'off'");
- 			return -EINVAL;
- 		}
- 	}
-+	of_node_put(child);
- 	spi_byte_brightness_set_blocking(&led->ldev,
- 					 led->ldev.brightness);
- 
 -- 
-2.34.1
-
+Lee Jones [李琼斯]
