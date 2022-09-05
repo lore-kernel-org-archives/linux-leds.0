@@ -2,106 +2,91 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FBBECAAD5
-	for <linux-leds@archiver.kernel.org>; Mon,  5 Sep 2022 14:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADC3ECAAD5
+	for <linux-leds@archiver.kernel.org>; Mon,  5 Sep 2022 15:10:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230122AbiIEOKI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 5 Sep 2022 10:10:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56900 "EHLO
+        id S238808AbiIEPKc (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 5 Sep 2022 11:10:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236412AbiIEOKG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 5 Sep 2022 10:10:06 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79A8724BD5
-        for <linux-leds@vger.kernel.org>; Mon,  5 Sep 2022 07:10:04 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id s15so9373347ljp.5
-        for <linux-leds@vger.kernel.org>; Mon, 05 Sep 2022 07:10:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=FKN1JOpDZtlbeNH8OIC4d4elRGYKKYcfRFewHUVoXLQ=;
-        b=nhCfu42JMTUoCYmeHuznAOkwdGoFHHmYtyOQsi0ncymt29bL0tZXsWJUKM6d96wpre
-         VgluOotao0toEOAe1h3R7rChL5HrvPKvMtHLTznzsBbbLvZ0gQY6jKVLtXt1FDquRtHV
-         kaSi4FGa2RH9Mz9rbtg4T02rAsO8vjxfMN4rQBAUSSLMMX3ki5DqgvO9BTnfeCv4zoOB
-         ai2E5pPSDB2wvgPGRV7W6pPcqb9JchZ6vHz3MwEtJomobJ3GL++ImY+OpWL1eByTLnns
-         0CNMzvPPK5JZiCwo+tpOpUNpiIohfNjeMAo7OtjbzZEEiAVlPdONjEjMAQ74qaaW2WGg
-         3hmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=FKN1JOpDZtlbeNH8OIC4d4elRGYKKYcfRFewHUVoXLQ=;
-        b=5PCumpRfL8bL3Z/3tz9YJHCOaDUg6WaweipCcjo6c1lmkdY70D5qsi4x1gGThwRB1M
-         Th0bDsQOvH9LhoxZDJbRTZ3IGgN+SGpND082I6tZ6zV0IQOmRZ0uV0lalmi389Y37Ekt
-         r/Zy5dJTcQAii2i/kqEF7N32RKOk9DjjLAvqarnfZz/9YKRupfFbDgz2K9115IvmvErC
-         Q6fbY3CL5BlMB7835kohXdgz+rMlaWn00dLE2MtDwbaSSFCqT1TxVQJ5HijcGE/IBmuf
-         QTITvgax9k9/SfV+iPVD9vKdySEW3awNcYXoiDicy4UyXRdjBFKGbVn0otbFuiFKp1tS
-         xUEg==
-X-Gm-Message-State: ACgBeo2jwoluDyTMNAumDAdFMgGrz4B6qOFE6/omaPtZVAogQgIVokr8
-        /o5a7wZTvAyHjgjZeuy3FS2onQ==
-X-Google-Smtp-Source: AA6agR4El7y4IT4lAlgQXtAOsrOIz7IkrRHCkD/A2S4p+/9tQvKZXU0lvZ2Q4JJsjuVfDdd/htYFGg==
-X-Received: by 2002:a2e:b5d3:0:b0:267:4da0:ce3b with SMTP id g19-20020a2eb5d3000000b002674da0ce3bmr8215983ljn.420.1662387002553;
-        Mon, 05 Sep 2022 07:10:02 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id e27-20020a05651c039b00b00264bb2351e8sm1436823ljp.7.2022.09.05.07.10.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Sep 2022 07:10:02 -0700 (PDT)
-Message-ID: <1ea02712-eb1e-ca68-b954-c7d59a74926d@linaro.org>
-Date:   Mon, 5 Sep 2022 16:10:00 +0200
+        with ESMTP id S238774AbiIEPKT (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 5 Sep 2022 11:10:19 -0400
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 185B7273C;
+        Mon,  5 Sep 2022 08:09:25 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4MLsMF4Tcxz6S312;
+        Mon,  5 Sep 2022 23:07:37 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.102.38])
+        by APP2 (Coremail) with SMTP id Syh0CgC3VW8hERZjhLKnAQ--.57944S5;
+        Mon, 05 Sep 2022 23:09:22 +0800 (CST)
+From:   Wei Yongjun <weiyongjun@huaweicloud.com>
+To:     Pavel Machek <pavel@ucw.cz>, Oleh Kravchenko <oleg@kaa.org.ua>
+Cc:     Wei Yongjun <weiyongjun1@huawei.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] leds: el15203000: silent no spi_device_id warning
+Date:   Mon,  5 Sep 2022 15:26:58 +0000
+Message-Id: <20220905152659.4152483-2-weiyongjun@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220905152659.4152483-1-weiyongjun@huaweicloud.com>
+References: <20220905152659.4152483-1-weiyongjun@huaweicloud.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH RESEND] dt-bindings: leds: qcom-wled: fix number of
- addresses
-Content-Language: en-US
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kiran Gunda <kgunda@codeaurora.org>,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>, Lee Jones <lee@kernel.org>
-References: <20220720163720.7099-1-krzysztof.kozlowski@linaro.org>
- <5db5da26-3689-928b-433e-72c690014b64@linaro.org>
- <YxYACwJmo/FlbVgk@google.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <YxYACwJmo/FlbVgk@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: Syh0CgC3VW8hERZjhLKnAQ--.57944S5
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw4kCryrtrykCw13XryfXrb_yoWDurg_ua
+        4UXr4xWrWUGa1Fy3Wqvr45Zwn5uw42gr1DGr429ay5Zr1fXr1rGw4DAFWkAw18W3WxJFn8
+        CFn3XF18Cry7KjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbskYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Jr0_Jr4l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r18M2
+        8IrcIa0xkI8VCY1x0267AKxVWUXVWUCwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK
+        021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F
+        4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
+        oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7V
+        C0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j
+        6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+        4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+        67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+        x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+        z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73Uj
+        IFyTuYvjxUrg4SDUUUU
+X-CM-SenderInfo: 5zhl50pqjm3046kxt4xhlfz01xgou0bp/
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 05/09/2022 15:56, Lee Jones wrote:
-> On Thu, 25 Aug 2022, Krzysztof Kozlowski wrote:
-> 
->> On 20/07/2022 19:37, Krzysztof Kozlowski wrote:
->>> On PM660L, PMI8994 and PMI8998, the WLED has two address spaces.  This
->>> also fixes dtbs_check warnings like:
->>>
->>>   arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dtb: leds@d800: reg: [[55296], [55552]] is too long
->>>
->>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>> Reviewed-by: Rob Herring <robh@kernel.org>
->>> ---
->>>  .../devicetree/bindings/leds/backlight/qcom-wled.yaml    | 9 ++++++++-
->>>  1 file changed, 8 insertions(+), 1 deletion(-)
->>
->>
->> The resent was a month ago. I assume this won't go via LEDs tree, so I
->> will resend (again) without Rob's review, so it could go via Rob's tree.
-> 
-> If you have not already done so, please resend this and Cc my
-> kernel.org address, as per MAINTAINERS.  Thanks Krzysztof.
-> 
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Thanks, I resent and Rob already took it.
+Add spi_device_id entries to silent following SPI warning:
 
-Best regards,
-Krzysztof
+SPI driver leds_el15203000 has no spi_device_id for crane,el15203000
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/leds/leds-el15203000.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/leds/leds-el15203000.c b/drivers/leds/leds-el15203000.c
+index 7e7b617bcd56..e24b4399176e 100644
+--- a/drivers/leds/leds-el15203000.c
++++ b/drivers/leds/leds-el15203000.c
+@@ -329,9 +329,16 @@ static const struct of_device_id el15203000_dt_ids[] = {
+ 
+ MODULE_DEVICE_TABLE(of, el15203000_dt_ids);
+ 
++static const struct spi_device_id el15203000_spi_ids[] = {
++	{ "el15203000" },
++	{ },
++};
++MODULE_DEVICE_TABLE(spi, el15203000_spi_ids);
++
+ static struct spi_driver el15203000_driver = {
+ 	.probe		= el15203000_probe,
+ 	.remove		= el15203000_remove,
++	.id_table	= el15203000_spi_ids,
+ 	.driver = {
+ 		.name		= KBUILD_MODNAME,
+ 		.of_match_table	= el15203000_dt_ids,
+-- 
+2.34.1
+
