@@ -2,43 +2,43 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A79C2C6FA86
-	for <linux-leds@archiver.kernel.org>; Tue,  6 Sep 2022 14:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E186CECAAD5
+	for <linux-leds@archiver.kernel.org>; Tue,  6 Sep 2022 14:26:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241427AbiIFOW3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 6 Sep 2022 10:22:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40052 "EHLO
+        id S238202AbiIFOZv (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 6 Sep 2022 10:25:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241415AbiIFOU1 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 6 Sep 2022 10:20:27 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 470CB8B99F;
-        Tue,  6 Sep 2022 06:51:45 -0700 (PDT)
+        with ESMTP id S241802AbiIFOWK (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 6 Sep 2022 10:22:10 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A583F8B9B9;
+        Tue,  6 Sep 2022 06:52:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662472305; x=1694008305;
+  t=1662472320; x=1694008320;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=jvEYSO7lW++ymJ0bBLH7ZRL0Q9IiAhclprxNUtYU6Os=;
-  b=KLGWLfnHRuig99RWDZNPGKU2dL+zB2AEGaVtVh/ZEq6nDXUoop6a1BYf
-   s2aMBtJxybALI9X1JddH6KkMZ0knE8VAHW2GT9MgN1jtdxYqe5tob+fo1
-   VBWwPheCLiQbTrvt3pi8VZw/EfYxdmJyGQLNrHgA4wl1dvZ/6v0ODyJZz
-   IYyLlXXNS391QwUdAQKeo+DwrxPsLiVj1mOvU4cUSBxYY5I8KRIiVU8HL
-   /s8fBGG7uKLq+pW3IqdN0TTPO1fOvs4nRju0SIjjrH6UR8B7XZQesR8fI
-   fPdELs43FsoI+VGJb/mjuiG98veeGtqSSgcprWx59mWfyhuOZKAoIDS0O
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10462"; a="297380987"
+  bh=b85nclneF9BX61RtcZxdbpTMJV7DSQfjZ+m4p4X2wC0=;
+  b=PFnp4etxuMfRKm6Gohpt9to0dyMpl4kB8NmA2jDUuKfDJzLiUYtlIo/Q
+   wGkdCbPF4M748vBPFoeTIO0x+y6mn+wmKZWT/rvlzxqC9SlKrErGvjL/P
+   sWJfXyoUrty7tSz5qn5Xdn7Awou5R0rwQ0dsbZax3S6uMrBeRkP+F673Q
+   xAaASbbMcU9qnDPZtUoXnhFZjQvS7E7eNLDjqCi3QvUHbwq0RaLZbhL4w
+   +YomzI3LvfGz2++I0xb+zy+TGO+dF0pnGf0RgblER3FOqLM3EKtXqJq3j
+   usSz7lntR/NV8DCPzqQW1EFP4uizV1WShNLVzxnCzZXbldV1QiJmhPwDu
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10462"; a="297908809"
 X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
-   d="scan'208";a="297380987"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 06:50:06 -0700
+   d="scan'208";a="297908809"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 06:50:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
-   d="scan'208";a="859264825"
+   d="scan'208";a="756372522"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Sep 2022 06:50:00 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 06 Sep 2022 06:49:54 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id C9088725; Tue,  6 Sep 2022 16:50:10 +0300 (EEST)
+        id 5469186; Tue,  6 Sep 2022 16:50:10 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Gene Chen <gene_chen@richtek.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -58,9 +58,9 @@ Cc:     Pavel Machek <pavel@ucw.cz>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>, Lee Jones <lee@kernel.org>
-Subject: [PATCH v3 10/11] leds: syscon: Get rid of custom led_init_default_state_get()
-Date:   Tue,  6 Sep 2022 16:50:03 +0300
-Message-Id: <20220906135004.14885-11-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 01/11] leds: add missing includes and forward declarations in leds.h
+Date:   Tue,  6 Sep 2022 16:49:54 +0300
+Message-Id: <20220906135004.14885-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220906135004.14885-1-andriy.shevchenko@linux.intel.com>
 References: <20220906135004.14885-1-andriy.shevchenko@linux.intel.com>
@@ -70,84 +70,52 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-LED core provides a helper to parse default state from firmware node.
-Use it instead of custom implementation.
+Add missing includes and forward declarations to leds.h. While at it,
+replace headers by forward declarations and vise versa.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/leds/leds-syscon.c | 49 ++++++++++++++++++--------------------
- 1 file changed, 23 insertions(+), 26 deletions(-)
+ include/linux/leds.h | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/leds/leds-syscon.c b/drivers/leds/leds-syscon.c
-index 7eddb8ecb44e..e38abb5e60c1 100644
---- a/drivers/leds/leds-syscon.c
-+++ b/drivers/leds/leds-syscon.c
-@@ -61,7 +61,8 @@ static int syscon_led_probe(struct platform_device *pdev)
- 	struct device *parent;
- 	struct regmap *map;
- 	struct syscon_led *sled;
--	const char *state;
-+	enum led_default_state state;
-+	u32 value;
- 	int ret;
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index ba4861ec73d3..499aea1e59b9 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -10,17 +10,21 @@
  
- 	parent = dev->parent;
-@@ -86,34 +87,30 @@ static int syscon_led_probe(struct platform_device *pdev)
- 	if (of_property_read_u32(np, "mask", &sled->mask))
- 		return -EINVAL;
+ #include <dt-bindings/leds/common.h>
+ #include <linux/device.h>
+-#include <linux/kernfs.h>
+-#include <linux/list.h>
+ #include <linux/mutex.h>
+ #include <linux/rwsem.h>
+ #include <linux/spinlock.h>
+ #include <linux/timer.h>
++#include <linux/types.h>
+ #include <linux/workqueue.h>
  
--	state = of_get_property(np, "default-state", NULL);
--	if (state) {
--		if (!strcmp(state, "keep")) {
--			u32 val;
--
--			ret = regmap_read(map, sled->offset, &val);
--			if (ret < 0)
--				return ret;
--			sled->state = !!(val & sled->mask);
--		} else if (!strcmp(state, "on")) {
--			sled->state = true;
--			ret = regmap_update_bits(map, sled->offset,
--						 sled->mask,
--						 sled->mask);
--			if (ret < 0)
--				return ret;
--		} else {
--			sled->state = false;
--			ret = regmap_update_bits(map, sled->offset,
--						 sled->mask, 0);
--			if (ret < 0)
--				return ret;
--		}
-+	init_data.fwnode = of_fwnode_handle(np);
+-struct device;
+-struct led_pattern;
++struct attribute_group;
+ struct device_node;
++struct fwnode_handle;
++struct gpio_desc;
++struct kernfs_node;
++struct led_pattern;
++struct platform_device;
 +
-+	state = led_init_default_state_get(init_data.fwnode);
-+	switch (state) {
-+	case LEDS_DEFSTATE_ON:
-+		ret = regmap_update_bits(map, sled->offset, sled->mask, sled->mask);
-+		if (ret < 0)
-+			return ret;
-+		sled->state = true;
-+		break;
-+	case LEDS_DEFSTATE_KEEP:
-+		ret = regmap_read(map, sled->offset, &value);
-+		if (ret < 0)
-+			return ret;
-+		sled->state = !!(value & sled->mask);
-+		break;
-+	default:
-+		ret = regmap_update_bits(map, sled->offset, sled->mask, 0);
-+		if (ret < 0)
-+			return ret;
-+		sled->state = false;
- 	}
- 	sled->cdev.brightness_set = syscon_led_set;
+ /*
+  * LED Core
+  */
+@@ -508,7 +512,6 @@ struct led_properties {
+ 	const char	*label;
+ };
  
--	init_data.fwnode = of_fwnode_handle(np);
--
- 	ret = devm_led_classdev_register_ext(dev, &sled->cdev, &init_data);
- 	if (ret < 0)
- 		return ret;
+-struct gpio_desc;
+ typedef int (*gpio_blink_set_t)(struct gpio_desc *desc, int state,
+ 				unsigned long *delay_on,
+ 				unsigned long *delay_off);
 -- 
 2.35.1
 
