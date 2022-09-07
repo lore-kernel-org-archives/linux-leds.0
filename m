@@ -2,121 +2,112 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2ADDC38145
-	for <linux-leds@archiver.kernel.org>; Wed,  7 Sep 2022 12:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7004C54EE9
+	for <linux-leds@archiver.kernel.org>; Wed,  7 Sep 2022 15:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229770AbiIGMQP (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 7 Sep 2022 08:16:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53856 "EHLO
+        id S229967AbiIGPMA (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 7 Sep 2022 11:12:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229730AbiIGMQO (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 7 Sep 2022 08:16:14 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799C3AFAF4;
-        Wed,  7 Sep 2022 05:16:13 -0700 (PDT)
-Received: from smtp102.mailbox.org (unknown [10.196.197.102])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4MN1SP2TzJz9sQ8;
-        Wed,  7 Sep 2022 14:16:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1662552965;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Yu0YYVQDoYE6h44bljdx59LHutNAwWTa6raWx+wgdJY=;
-        b=kTqf0AbE7OoeDFyfj4tPj9eCngCfCk48PBitWUWKhtb5MbsvOQCDuUmSEKdwBhdHr6HB8N
-        FFnbWibYDy83/AT7Ot9iStqXx6MfzvAGXqW/II4iUf6AXLx9Fw9lbwnQ58uDRWCnPwRXdo
-        1B2cdwISNDzxZx6+Zd+OSJW93xLsQ4aq/NWAaio8E1VJnyJVxKUbDAJObHhrFUF4tagBW1
-        oFzc1buzxnF1zsoYN3lB8PbHMF7L7IHBtHM3ur045a6FJmVOWdkX31gc1O+AI5Pf2MDsuC
-        sFN6i8yAeWX3mebZifdZQZpo0i0qtgB7FvtSEemC1a1tVf604/UJALULCquNTg==
-Date:   Wed, 7 Sep 2022 14:16:04 +0200 (CEST)
-From:   torvic9@mailbox.org
-To:     "arequipeno@gmail.com" <arequipeno@gmail.com>
+        with ESMTP id S229831AbiIGPL7 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 7 Sep 2022 11:11:59 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6223F303D7;
+        Wed,  7 Sep 2022 08:11:58 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id 6-20020a9d0106000000b0063963134d04so10487940otu.3;
+        Wed, 07 Sep 2022 08:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=wDtnxWX9qH0SSn7z37VDylIPQhTtMeAWDDFIYde2ERM=;
+        b=nZqw9OO01h+bN8a7lUuJNisfk4bwlZA1AnnNYpcpySnF7hBTYT8K36NVMXOm2pEcjw
+         0/eWNhoPo/UuX2ho3uPqHee4L1EebC505c3Z9CV8c0QF/kXPbivYvxeUz1Ef+OxXt59o
+         l38gmpmYekBNesuAXu9/sM3Ut4VcfjIAqB7glYR/tjsmrJ6q0hNUaOOfezCC4pqh/vHe
+         hsNbPguIbqIXsZlwD25n62o6a/LOLwhE92RPW0WWQosX2jVo3puO9bbln6NdiddqyyNN
+         YjApCdHlS1O8O582u/rch7EtjRRXUgtv/r+MevTY6rrElqQIwCUGEy6Z/262mtHeXTc8
+         /TeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=wDtnxWX9qH0SSn7z37VDylIPQhTtMeAWDDFIYde2ERM=;
+        b=U+BDHMXSWaRkvputIzNh6c2x6bX7n4cm4rYUhWJMrGShvSiPyykSyUFWc2YfEAHx41
+         l3Xo/J3Jakm1rKwE5iS4+E6tiPkwjxeSSRTtnNO9wKESSfmh3fibvKiT9w16blDhMswu
+         vRHNfgJI314naZUo7ugSpo9LLwpTLor+AhXvsoJWD4OYdMdh/GvV647vsYw0V08McuVC
+         QRq8A4u/+f2/xPBf3A/pIATtf3dqLhvCC+VlsAwmZFiEugRjpX2DcVKfsDNQTNi3VP3+
+         jkAH2+S0kRBhKKG0yrdZKTOnvBzxD20Y1kWn8ObChC58kJ2USYTrzv0TRy6AgRdtSwkD
+         Edbg==
+X-Gm-Message-State: ACgBeo1S1v/jPKeZabBPG2uF/YJE0miaitnFaB2CAPLBXCgPF9T3vZpB
+        g0LDyFu1OdyRSrU5wlbs5KrPCnQ7pMU=
+X-Google-Smtp-Source: AA6agR49JXgz8161h9dV2enWeSGpFBSuIfyjFOTru7WIIt69r/JS20Cv9Xke1P6aRnU8kO1o0Dw+1A==
+X-Received: by 2002:a9d:6391:0:b0:651:26ae:3604 with SMTP id w17-20020a9d6391000000b0065126ae3604mr1349204otk.311.1662563517598;
+        Wed, 07 Sep 2022 08:11:57 -0700 (PDT)
+Received: from [172.31.250.1] ([47.184.51.90])
+        by smtp.gmail.com with ESMTPSA id 101-20020a9d086e000000b0063696cbb6bdsm7165899oty.62.2022.09.07.08.11.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Sep 2022 08:11:57 -0700 (PDT)
+Message-ID: <3097d4b8-a9d0-878c-3b95-5499ed943576@gmail.com>
+Date:   Wed, 7 Sep 2022 10:11:56 -0500
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.1
+Subject: Re: [PATCH v10 0/2] Introduce block device LED trigger
+Content-Language: en-US
+To:     torvic9@mailbox.org
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-Message-ID: <2047607620.67144.1662552964865@office.mailbox.org>
-Subject: Re: [PATCH v10 0/2] Introduce block device LED trigger
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <2047607620.67144.1662552964865@office.mailbox.org>
+From:   Ian Pilcher <arequipeno@gmail.com>
+In-Reply-To: <2047607620.67144.1662552964865@office.mailbox.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-MBO-RS-ID: c254649fcc8c57e5546
-X-MBO-RS-META: 3meupxmoo81x8pbr15p4aja9n8y1isna
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Ian,
+On 9/7/22 07:16, torvic9@mailbox.org wrote:
+> Hi Ian,
+> 
+> with a heavily patched Linux 6.0-rc4 with kfence, kmemleak and slub_debug I get the
+> following splat at boot:
 
-with a heavily patched Linux 6.0-rc4 with kfence, kmemleak and slub_debug I get the
-following splat at boot:
+Sorry about that!  I'm not sure how that slipped throgh, as I was sure
+that I tested the new version before I sent it off.
 
-Sep 07 11:33:11 kernel: =============================================================================
-Sep 07 11:33:11 kernel: BUG kmalloc-16 (Not tainted): Object already free
-Sep 07 11:33:11 kernel: -----------------------------------------------------------------------------
-Sep 07 11:33:11 kernel: Allocated in kernfs_fop_write_iter+0x178/0x200 age=1 cpu=0 pid=453
-Sep 07 11:33:11 kernel:  __slab_alloc.constprop.0+0x42/0x80
-Sep 07 11:33:11 kernel:  __kmalloc+0x334/0x3a0
-Sep 07 11:33:11 kernel:  kernfs_fop_write_iter+0x178/0x200
-Sep 07 11:33:11 kernel:  vfs_write+0x268/0x430
-Sep 07 11:33:11 kernel:  ksys_write+0x6f/0xf0
-Sep 07 11:33:11 kernel:  do_syscall_64+0x5c/0x90
-Sep 07 11:33:11 kernel:  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-Sep 07 11:33:11 kernel: Freed in blkdev_trig_get_bdev+0x47/0x60 [ledtrig_blkdev] age=1 cpu=0 pid=453
-Sep 07 11:33:11 kernel:  kfree+0x374/0x3b0
-Sep 07 11:33:11 kernel:  blkdev_trig_get_bdev+0x47/0x60 [ledtrig_blkdev]
-Sep 07 11:33:11 kernel:  link_dev_by_path_store+0x5c/0x3f0 [ledtrig_blkdev]
-Sep 07 11:33:11 kernel:  kernfs_fop_write_iter+0x11f/0x200
-Sep 07 11:33:11 kernel:  vfs_write+0x268/0x430
-Sep 07 11:33:11 kernel:  ksys_write+0x6f/0xf0
-Sep 07 11:33:11 kernel:  do_syscall_64+0x5c/0x90
-Sep 07 11:33:11 kernel:  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-Sep 07 11:33:11 kernel: Slab 0xffffeb91446ad1c0 objects=32 used=31 fp=0xffff912c1ab47b10 flags=0x4000000000000201(locked|slab|zone=2)
-Sep 07 11:33:11 kernel: Object 0xffff912c1ab47b10 @offset=2832 fp=0x0000000000000000
-Sep 07 11:33:11 kernel: Redzone  ffff912c1ab47b00: bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-Sep 07 11:33:11 kernel: Object   ffff912c1ab47b10: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b a5  kkkkkkkkkkkkkkk.
-Sep 07 11:33:11 kernel: Redzone  ffff912c1ab47b20: bb bb bb bb bb bb bb bb                          ........
-Sep 07 11:33:11 kernel: Padding  ffff912c1ab47b70: 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  ZZZZZZZZZZZZZZZZ
-[...]
-Sep 07 11:33:11 kernel: Call Trace:
-Sep 07 11:33:11 kernel:  <TASK>
-Sep 07 11:33:11 kernel:  dump_stack_lvl+0x37/0x4a
-Sep 07 11:33:11 kernel:  object_err+0x2f/0x42
-Sep 07 11:33:11 kernel:  free_debug_processing.cold+0x9c/0x126
-Sep 07 11:33:11 kernel:  ? kernfs_fop_write_iter+0xa0/0x200
-Sep 07 11:33:11 kernel:  __slab_free+0x265/0x450
-Sep 07 11:33:11 kernel:  ? _raw_spin_lock_irqsave+0x1b/0x50
-Sep 07 11:33:11 kernel:  ? _raw_spin_unlock_irqrestore+0x22/0x40
-Sep 07 11:33:11 kernel:  ? kernfs_fop_write_iter+0xa0/0x200
-Sep 07 11:33:11 kernel:  kfree+0x374/0x3b0
-Sep 07 11:33:11 kernel:  kernfs_fop_write_iter+0xa0/0x200
-Sep 07 11:33:11 kernel:  vfs_write+0x268/0x430
-Sep 07 11:33:11 kernel:  ksys_write+0x6f/0xf0
-Sep 07 11:33:11 kernel:  do_syscall_64+0x5c/0x90
-Sep 07 11:33:11 kernel:  ? do_syscall_64+0x6b/0x90
-Sep 07 11:33:11 kernel:  ? do_syscall_64+0x6b/0x90
-Sep 07 11:33:11 kernel:  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-Sep 07 11:33:11 kernel: RIP: 0033:0x74dc50050e94
-Sep 07 11:33:11 kernel: Code: 15 f9 0e 0e 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f 1e fa 80 3d 8d 96 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3>
-Sep 07 11:33:11 kernel: RSP: 002b:00007fff526d4058 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-Sep 07 11:33:11 kernel: RAX: ffffffffffffffda RBX: 000000000000000c RCX: 000074dc50050e94
-Sep 07 11:33:11 kernel: RDX: 000000000000000c RSI: 0000620ac0072430 RDI: 0000000000000005
-Sep 07 11:33:11 kernel: RBP: 0000620ac0072430 R08: 0000620ac00852a0 R09: 007265776f703a3a
-Sep 07 11:33:11 kernel: R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000005
-Sep 07 11:33:11 kernel: R13: 0000000000000000 R14: 0000000000000005 R15: 0000620ac00852a0
-Sep 07 11:33:11 kernel:  </TASK>
-Sep 07 11:33:11 kernel: Disabling lock debugging due to kernel taint
-Sep 07 11:33:11 kernel: FIX kmalloc-16: Object at 0xffff912c1ab47b10 not freed
+Basically, I messed up while cleaning up the function parameter names,
+so you need to apply this:
 
-I'm not 100% sure if this is an issue with ledtrig_blkdev or something else,
-but I thought I'll let you know about it.
-I have not been able to test this on a vanilla kernel yet.
+--- drivers/leds/trigger/ledtrig-blkdev.c.old   2022-09-07 
+10:00:26.194484681 -0500
++++ drivers/leds/trigger/ledtrig-blkdev.c       2022-09-04 
+11:36:16.107690614 -0500
+@@ -540,7 +540,7 @@
+                 return ERR_PTR(-ENOMEM);
 
-Other than that, I hope this patchset gets included in upstream.
-I have been using it for a long time now and found it very useful.
+         bdev = blkdev_get_by_path(strim(buf), BLKDEV_TRIG_FMODE, 
+THIS_MODULE);
+-       kfree(path);
++       kfree(buf);
+         return bdev;
+  }
 
-Cheers,
-Tor
+> I'm not 100% sure if this is an issue with ledtrig_blkdev or something else,
+> but I thought I'll let you know about it.
+> I have not been able to test this on a vanilla kernel yet.
+
+Defnintely my fault.
+
+> Other than that, I hope this patchset gets included in upstream.
+> I have been using it for a long time now and found it very useful.
+
+It's really hard to know if anyone is interested in/using this, so
+that's great to hear.
+
+-- 
+========================================================================
+Google                                      Where SkyNet meets Idiocracy
+========================================================================
+
