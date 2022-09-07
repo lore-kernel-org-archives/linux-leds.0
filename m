@@ -2,276 +2,101 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 886F0C38145
-	for <linux-leds@archiver.kernel.org>; Tue,  6 Sep 2022 21:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0138C6FA8C
+	for <linux-leds@archiver.kernel.org>; Wed,  7 Sep 2022 07:00:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229996AbiIFV7L (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 6 Sep 2022 17:59:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40620 "EHLO
+        id S230097AbiIGHA5 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 7 Sep 2022 03:00:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229903AbiIFV7K (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 6 Sep 2022 17:59:10 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817CF93523;
-        Tue,  6 Sep 2022 14:59:06 -0700 (PDT)
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 286LHrg3005585;
-        Tue, 6 Sep 2022 21:59:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=4ZTgSP8sSg2HzxmPMppgD2GrrgaljwOOobch62PJdhA=;
- b=LVVLU6DGMU3ZBZvNpAOUdtb4njo4x+UjghZ0HOkuAeJZ0awL+9cNeoZVqIrvHT7nL59j
- QZREpHo7mQBEZH5AL00RbXUf3HGQYhI9ZBTbxueKPsLwcwNFNbLr4jGROyI1NVGtHxuT
- UjGhL/jhqJkYKNnA7GQB2rmEjHYWG86XKHnBBrc9vyYpSdMWAJTAIiGTPb36c89E+PrF
- dJrXGijG8dsci/Fus5A27zTvdCc8Dc1LOdsbRAyp6lCaV3w2s8sUTE1Kzy6bxNzzDF4l
- v1LN6fDP7CgeMbGRND7Clkrleb32AGCRVBd28utWwSsVuE8yJ7kIY99DdqgMjzen3lp9 ew== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jee0f8x41-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 06 Sep 2022 21:59:00 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 286LQUtx028948;
-        Tue, 6 Sep 2022 21:59:00 GMT
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jee0f8x3j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 06 Sep 2022 21:59:00 +0000
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 286Lo1eN028139;
-        Tue, 6 Sep 2022 21:58:58 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma03wdc.us.ibm.com with ESMTP id 3jbxj9e2fp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 06 Sep 2022 21:58:58 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 286LwwHt2032368
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 6 Sep 2022 21:58:58 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5DACEB2065;
-        Tue,  6 Sep 2022 21:58:58 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C4804B205F;
-        Tue,  6 Sep 2022 21:58:57 +0000 (GMT)
-Received: from slate16.aus.stglabs.ibm.com (unknown [9.160.74.237])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  6 Sep 2022 21:58:57 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     pavel@ucw.cz
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andy.shevchenko@gmail.com, joel@jms.id.au,
-        dan.carpenter@oracle.com, eajames@linux.ibm.com
-Subject: [PATCH v6 2/4] leds: pca955x: Use pointers to driver data rather than I2C client
-Date:   Tue,  6 Sep 2022 16:58:53 -0500
-Message-Id: <20220906215855.1937331-3-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220906215855.1937331-1-eajames@linux.ibm.com>
-References: <20220906215855.1937331-1-eajames@linux.ibm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: JC_KXOwSq2W8MUTbfJvIQgEYPjVadxIw
-X-Proofpoint-GUID: 4A5_wSs2iJUD96bPlmMaseKNQcQt4lTU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-06_09,2022-09-06_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=788 clxscore=1015
- impostorscore=0 phishscore=0 mlxscore=0 spamscore=0 priorityscore=1501
- bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2207270000 definitions=main-2209060100
+        with ESMTP id S229994AbiIGHAz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 7 Sep 2022 03:00:55 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ED0F73313;
+        Wed,  7 Sep 2022 00:00:46 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id k9so18860191wri.0;
+        Wed, 07 Sep 2022 00:00:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=3AbvUXReTTM4AVHYC5kqdjEokxzgC2ZBAFH06E7ehB4=;
+        b=ZPpmg8pzNU8yYuXM43od2R3D7UP/i+w7igE0ilaWfjoec8donbztt98TfGszzzHHTE
+         63iquvB1JlvDtHVQbLOvvqqytHTeYP/Vdthz6z9V/Ryh4IE+iLk0HjCT9ERWikzkzqrg
+         ntvR5YV5kIZwFt6Cq4KoI/tLeiaTFFlFZjQgoW4yBOThDDR/RVpBHeXwCSffmWIzMwnL
+         t7TrKsg4wJRzWHi+2Yod/R2b3xCE1HgwRlwDR+XOYFFYCmdhiZUkeGyS6ScHYzeb1Xkg
+         pBp3S6iI2sXAdKd5vDyLcmr51GnfPWbZUiUHMk33py4d9kjP1sNPBvNGN/7o3OlQvFDh
+         3RGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=3AbvUXReTTM4AVHYC5kqdjEokxzgC2ZBAFH06E7ehB4=;
+        b=QbQNmcqGd2ohEpeQLlLlCOr8yZswWO84Zy4hyYblqCuHptcr3IPrAvmV8wk+vWTcMb
+         Hu1BmhZXVeK0ZPnMbxTPw0k6BXcIJD6n6o/C4Y+IkyC08zdQNoj+pMaaUHfpPBGU0YB6
+         VTCS8aNVNfi/f7gmzbbf+xnfgCG6v0XEUHhOyoBZ8IOwptHMveSRSOXPSXV/dQFwG8zp
+         dlrRS3hnyPHN+M2Rv7bvJsW/s5dHjTdw3bhNmA4KRaSv+v30Vwongqt1nE8sRBCyZuI3
+         IfydQPtAfOgRd7fUtMisTTVFSCo9jjo38eWWLd0pn1ZJ5pRvVKbAE1+XF5Lf2dDtjTNi
+         708w==
+X-Gm-Message-State: ACgBeo05MW4gHTAVIgmd757Nq4aWJ9MnZVNJxT4+CERtt+j5xr6Hr5Yk
+        UV6aLTVRE4I2TryKj9EjDIc=
+X-Google-Smtp-Source: AA6agR4lbx546dnFZXjh/JPS+dXfFLv+RB2Q2d+U/Cx+nWVHSNR4c6WQDWULzEuim6fgFJbC3a1D8g==
+X-Received: by 2002:a5d:5c08:0:b0:228:e139:43f3 with SMTP id cc8-20020a5d5c08000000b00228e13943f3mr1004599wrb.396.1662534044533;
+        Wed, 07 Sep 2022 00:00:44 -0700 (PDT)
+Received: from felia.fritz.box (200116b826d16800c8aacf399f0c2a06.dip.versatel-1u1.de. [2001:16b8:26d1:6800:c8aa:cf39:9f0c:2a06])
+        by smtp.gmail.com with ESMTPSA id e18-20020a5d5012000000b00226dedf1ab7sm10576303wrt.76.2022.09.07.00.00.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Sep 2022 00:00:43 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Pavel Machek <pavel@ucw.cz>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-leds@vger.kernel.org
+Cc:     William Zhang <william.zhang@broadcom.com>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] leds: bcm63138: refer to ARCH_BCMBCA instead of ARCH_BCM4908
+Date:   Wed,  7 Sep 2022 09:00:01 +0200
+Message-Id: <20220907070001.19867-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-As a minor clean up item, pass the driver data pointer instead of the
-I2C client to the reader and writer helper functions. Now the PCA
-driver data doesn't have to be looked up again in the I2C client data
+Commit dd5c672d7ca9 ("arm64: bcmbca: Merge ARCH_BCM4908 to ARCH_BCMBCA")
+removes config ARCH_BCM4908 as config ARCH_BCMBCA has the same intent.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Probably due to concurrent development, commit a0ba692072d8 ("leds:
+bcm63138: add support for BCM63138 controller") introduces 'LED Support
+for Broadcom BCM63138 SoC' that depends on ARCH_BCM4908, but this use was
+not visible during the config refactoring from the commit above. Hence,
+these two changes create a reference to a non-existing config symbol.
+
+Adjust the LEDS_BCM63138 definition to refer to ARCH_BCMBCA instead of
+ARCH_BCM4908 to remove the reference to the non-existing config symbol
+ARCH_BCM4908.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/leds/leds-pca955x.c | 61 ++++++++++++++++---------------------
- 1 file changed, 27 insertions(+), 34 deletions(-)
+ drivers/leds/blink/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-index a683c872e1ff..cb1895b79eab 100644
---- a/drivers/leds/leds-pca955x.c
-+++ b/drivers/leds/leds-pca955x.c
-@@ -172,16 +172,15 @@ static inline int pca955x_ledstate(u8 ls, int led_num)
-  * Write to frequency prescaler register, used to program the
-  * period of the PWM output.  period = (PSCx + 1) / 38
-  */
--static int pca955x_write_psc(struct i2c_client *client, int n, u8 val)
-+static int pca955x_write_psc(struct pca955x *pca955x, int n, u8 val)
- {
--	struct pca955x *pca955x = i2c_get_clientdata(client);
- 	u8 cmd = pca955x_num_input_regs(pca955x->chipdef->bits) + (2 * n);
- 	int ret;
- 
--	ret = i2c_smbus_write_byte_data(client, cmd, val);
-+	ret = i2c_smbus_write_byte_data(pca955x->client, cmd, val);
- 	if (ret < 0)
--		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
--			__func__, n, val, ret);
-+		dev_err(&pca955x->client->dev, "%s: reg 0x%x, val 0x%x, err %d\n", __func__, n,
-+			val, ret);
- 	return ret;
- }
- 
-@@ -192,16 +191,15 @@ static int pca955x_write_psc(struct i2c_client *client, int n, u8 val)
-  *
-  * Duty cycle is (256 - PWMx) / 256
-  */
--static int pca955x_write_pwm(struct i2c_client *client, int n, u8 val)
-+static int pca955x_write_pwm(struct pca955x *pca955x, int n, u8 val)
- {
--	struct pca955x *pca955x = i2c_get_clientdata(client);
- 	u8 cmd = pca955x_num_input_regs(pca955x->chipdef->bits) + 1 + (2 * n);
- 	int ret;
- 
--	ret = i2c_smbus_write_byte_data(client, cmd, val);
-+	ret = i2c_smbus_write_byte_data(pca955x->client, cmd, val);
- 	if (ret < 0)
--		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
--			__func__, n, val, ret);
-+		dev_err(&pca955x->client->dev, "%s: reg 0x%x, val 0x%x, err %d\n", __func__, n,
-+			val, ret);
- 	return ret;
- }
- 
-@@ -209,16 +207,15 @@ static int pca955x_write_pwm(struct i2c_client *client, int n, u8 val)
-  * Write to LED selector register, which determines the source that
-  * drives the LED output.
-  */
--static int pca955x_write_ls(struct i2c_client *client, int n, u8 val)
-+static int pca955x_write_ls(struct pca955x *pca955x, int n, u8 val)
- {
--	struct pca955x *pca955x = i2c_get_clientdata(client);
- 	u8 cmd = pca955x_num_input_regs(pca955x->chipdef->bits) + 4 + n;
- 	int ret;
- 
--	ret = i2c_smbus_write_byte_data(client, cmd, val);
-+	ret = i2c_smbus_write_byte_data(pca955x->client, cmd, val);
- 	if (ret < 0)
--		dev_err(&client->dev, "%s: reg 0x%x, val 0x%x, err %d\n",
--			__func__, n, val, ret);
-+		dev_err(&pca955x->client->dev, "%s: reg 0x%x, val 0x%x, err %d\n", __func__, n,
-+			val, ret);
- 	return ret;
- }
- 
-@@ -226,32 +223,28 @@ static int pca955x_write_ls(struct i2c_client *client, int n, u8 val)
-  * Read the LED selector register, which determines the source that
-  * drives the LED output.
-  */
--static int pca955x_read_ls(struct i2c_client *client, int n, u8 *val)
-+static int pca955x_read_ls(struct pca955x *pca955x, int n, u8 *val)
- {
--	struct pca955x *pca955x = i2c_get_clientdata(client);
- 	u8 cmd = pca955x_num_input_regs(pca955x->chipdef->bits) + 4 + n;
- 	int ret;
- 
--	ret = i2c_smbus_read_byte_data(client, cmd);
-+	ret = i2c_smbus_read_byte_data(pca955x->client, cmd);
- 	if (ret < 0) {
--		dev_err(&client->dev, "%s: reg 0x%x, err %d\n",
--			__func__, n, ret);
-+		dev_err(&pca955x->client->dev, "%s: reg 0x%x, err %d\n", __func__, n, ret);
- 		return ret;
- 	}
- 	*val = (u8)ret;
- 	return 0;
- }
- 
--static int pca955x_read_pwm(struct i2c_client *client, int n, u8 *val)
-+static int pca955x_read_pwm(struct pca955x *pca955x, int n, u8 *val)
- {
--	struct pca955x *pca955x = i2c_get_clientdata(client);
- 	u8 cmd = pca955x_num_input_regs(pca955x->chipdef->bits) + 1 + (2 * n);
- 	int ret;
- 
--	ret = i2c_smbus_read_byte_data(client, cmd);
-+	ret = i2c_smbus_read_byte_data(pca955x->client, cmd);
- 	if (ret < 0) {
--		dev_err(&client->dev, "%s: reg 0x%x, err %d\n",
--			__func__, n, ret);
-+		dev_err(&pca955x->client->dev, "%s: reg 0x%x, err %d\n", __func__, n, ret);
- 		return ret;
- 	}
- 	*val = (u8)ret;
-@@ -265,7 +258,7 @@ static enum led_brightness pca955x_led_get(struct led_classdev *led_cdev)
- 	u8 ls, pwm;
- 	int ret;
- 
--	ret = pca955x_read_ls(pca955x->client, pca955x_led->led_num / 4, &ls);
-+	ret = pca955x_read_ls(pca955x, pca955x_led->led_num / 4, &ls);
- 	if (ret)
- 		return ret;
- 
-@@ -280,7 +273,7 @@ static enum led_brightness pca955x_led_get(struct led_classdev *led_cdev)
- 		ret = LED_HALF;
- 		break;
- 	case PCA955X_LS_BLINK1:
--		ret = pca955x_read_pwm(pca955x->client, 1, &pwm);
-+		ret = pca955x_read_pwm(pca955x, 1, &pwm);
- 		if (ret)
- 			return ret;
- 		ret = 255 - pwm;
-@@ -302,7 +295,7 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
- 
- 	mutex_lock(&pca955x->lock);
- 
--	ret = pca955x_read_ls(pca955x->client, chip_ls, &ls);
-+	ret = pca955x_read_ls(pca955x, reg, &ls);
- 	if (ret)
- 		goto out;
- 
-@@ -324,14 +317,14 @@ static int pca955x_led_set(struct led_classdev *led_cdev,
- 		 * OFF, HALF, or FULL.  But, this is probably better than
- 		 * just turning off for all other values.
- 		 */
--		ret = pca955x_write_pwm(pca955x->client, 1, 255 - value);
-+		ret = pca955x_write_pwm(pca955x, 1, 255 - value);
- 		if (ret)
- 			goto out;
- 		ls = pca955x_ledsel(ls, bit, PCA955X_LS_BLINK1);
- 		break;
- 	}
- 
--	ret = pca955x_write_ls(pca955x->client, chip_ls, ls);
-+	ret = pca955x_write_ls(pca955x, reg, ls);
- 
- out:
- 	mutex_unlock(&pca955x->lock);
-@@ -632,22 +625,22 @@ static int pca955x_probe(struct i2c_client *client)
- 	}
- 
- 	/* PWM0 is used for half brightness or 50% duty cycle */
--	err = pca955x_write_pwm(client, 0, 255 - LED_HALF);
-+	err = pca955x_write_pwm(pca955x, 0, 255 - LED_HALF);
- 	if (err)
- 		return err;
- 
- 	if (!keep_pwm) {
- 		/* PWM1 is used for variable brightness, default to OFF */
--		err = pca955x_write_pwm(client, 1, 0);
-+		err = pca955x_write_pwm(pca955x, 1, 0);
- 		if (err)
- 			return err;
- 	}
- 
- 	/* Set to fast frequency so we do not see flashing */
--	err = pca955x_write_psc(client, 0, 0);
-+	err = pca955x_write_psc(pca955x, 0, 0);
- 	if (err)
- 		return err;
--	err = pca955x_write_psc(client, 1, 0);
-+	err = pca955x_write_psc(pca955x, 1, 0);
- 	if (err)
- 		return err;
- 
+diff --git a/drivers/leds/blink/Kconfig b/drivers/leds/blink/Kconfig
+index 945c84286a4e..bdcb7377cd4e 100644
+--- a/drivers/leds/blink/Kconfig
++++ b/drivers/leds/blink/Kconfig
+@@ -1,10 +1,10 @@
+ config LEDS_BCM63138
+ 	tristate "LED Support for Broadcom BCM63138 SoC"
+ 	depends on LEDS_CLASS
+-	depends on ARCH_BCM4908 || ARCH_BCM_5301X || BCM63XX || COMPILE_TEST
++	depends on ARCH_BCMBCA || ARCH_BCM_5301X || BCM63XX || COMPILE_TEST
+ 	depends on HAS_IOMEM
+ 	depends on OF
+-	default ARCH_BCM4908
++	default ARCH_BCMBCA
+ 	help
+ 	  This option enables support for LED controller that is part of
+ 	  BCM63138 SoC. The same hardware block is known to be also used
 -- 
-2.31.1
+2.17.1
 
