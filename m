@@ -2,52 +2,52 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E1EC6FA8B
-	for <linux-leds@archiver.kernel.org>; Thu, 15 Sep 2022 09:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 042A7ECAAA1
+	for <linux-leds@archiver.kernel.org>; Thu, 15 Sep 2022 09:52:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230298AbiIOJwB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 15 Sep 2022 05:52:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57564 "EHLO
+        id S230317AbiIOJwJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 15 Sep 2022 05:52:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230224AbiIOJv3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Sep 2022 05:51:29 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A91E9AF8D;
-        Thu, 15 Sep 2022 02:49:21 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id fv3so17264528pjb.0;
-        Thu, 15 Sep 2022 02:49:21 -0700 (PDT)
+        with ESMTP id S230015AbiIOJvd (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Sep 2022 05:51:33 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA9C1DEA;
+        Thu, 15 Sep 2022 02:49:31 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id w13so2171291plp.1;
+        Thu, 15 Sep 2022 02:49:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=YJZ/oJ0LmKZrFDGAJdP7uLjsccIJ2kxypc2pDmCPi/o=;
-        b=lV4OkWpt12wnKoW6s9O6R47dmV7GKJ+iG+pGU7p74u5q2X3CI8u2yC5cfNBZDr5xVk
-         NhI0HVs8Rt1TNXdPbeMySKU/ke7pEumaRcZxVnglYXFtoip8JAzZ4yf8LfM2QcTcLAHN
-         ntCsrvh6V5OfR20wilfrZ+U+1oq2EyL+QlKMvIwQqkKUdhUJPPGvSnS6kVNbVYvjqSf8
-         3Dtwej4d347LB/nG58FmnvKfH61oTjTra2szZp4C+w2lzslZ6gwheua6khZrzyJcfoqS
-         0PUxaO1VnEinq6vfAxm+v6EQI5NKdZ5a9TXfT5w3O9yyvdx+lYUuRnwCVDNXeSsmS1n5
-         R+PA==
+        bh=BLldUmawu01GzUZglxj6MBSK7Wi8J1495Ow2vHiQCbA=;
+        b=mWs3Joq2+U9sk0TTku4uVfHfyJi54bqPrLJdN+GMWioKOLnEkyRHTv5xRQa+u2QYdw
+         dV95RVVDRAFNhd4CPJ8CDqlym//oYKusNe9pE+0UGlurC7GX9j8A0Jv5IGrQxD/r4B/t
+         X13xnw9hl7TkRq7NoOqQaN5jnWFHhwLI7Auvg/P63ImdtomryUyEtHnnuVHpewnd0ZoO
+         LCFMNAIQACzoLpPObHtHKsS0aYUS7SoFHipgKt6I9xIK+3iAKZeC3j0BoBAU2najHWr6
+         Ss9mWYWzKs3SgdP2noEt8mTzKzK7+QiBVL63MfrogRCkmxX0O33J6DOrFKmGE2fz5bDu
+         YZOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=YJZ/oJ0LmKZrFDGAJdP7uLjsccIJ2kxypc2pDmCPi/o=;
-        b=iyN0RgSHtQkvxUSfs43kUZ7+WdbCtM97VdnCn0pzlIqcdxOE/WILNFwpYw+cWE9SrW
-         hnwR1+F7mRAjiU4e5tTMBwowiSIjxd4HzKUTvcO/c/6VY033T20gI+FG3ApUIkr3y0Vq
-         BOEJT8dWJxaDAuzaIQFd/6HI9WBNP4GYsqQt3aUV0P6qHoyh1jQAfutrf4MNuDzjXiRy
-         TWSM/fBlu3hNKxVIaVkgOTQM7SL/S/P+uc0zrYwT9HgX9mKgHCyvaQUOabnfph0mW0bU
-         0NmImwQtIZfL1erdmHVsc+2oMQ/WQnx1FWWWPTAwnaDWV5y/7bGx2aAUtk8AerqxAI4j
-         AT6g==
-X-Gm-Message-State: ACrzQf0TR3yInOPDgslAAGl7+BIN1DFOZRcnioRAZFTBCQ5DC86gHFIW
-        GFDg1JO7dLNZA2VDTrgTV9Y=
-X-Google-Smtp-Source: AMsMyM7Km2Yy5YowQOjMN6xN5IT17fSs/eADlQaLVHxDP0xjYVs6KZ6Q/fgN4nx4cDUhd2TCHtu8Ng==
-X-Received: by 2002:a17:90b:4f89:b0:202:8e4a:addd with SMTP id qe9-20020a17090b4f8900b002028e4aadddmr9622786pjb.131.1663235336027;
-        Thu, 15 Sep 2022 02:48:56 -0700 (PDT)
+        bh=BLldUmawu01GzUZglxj6MBSK7Wi8J1495Ow2vHiQCbA=;
+        b=xeUkZfJZl4iab4Jn4PwF7VJ6xC4YlXYCutT02DRfI2PzSEu6+xs4I+gwPkaEDj5Q6K
+         iGmZ4qtQbIRXbUXPhPlHMQuzE5KvNg7mO33B8OyibqQiqi4YzBMHBcVX2MEh+URYIK1y
+         /q+/JZzFmxCG8MgwsdiOPguxH7mIN0S9sSWRODGVFdpOZ4ssfXh5mmtkysCznEcoJLiM
+         lpOwOr98i2kZiCb5A4swgf/Vb58TXH62AbHfWwKk83eBfI4QD6zFA2CFQPnG2VjnfBvt
+         bCHidlMm3A8Rw05+TmQ6AxaNZlVYJW7R2ccGfYK5wliRsbpEjpV623DM64aT1CvqzgB2
+         WjRg==
+X-Gm-Message-State: ACrzQf1drRg31aqY/6NZHZmaV35QW2F1fsJGXLVPt3KNT/BChg6VcnOR
+        9uW1mpxkcWDdg2pW7qFkAGY=
+X-Google-Smtp-Source: AA6agR6yi0j1GpLpIKM8QQVsHOeuU4zo8E/AA6tf+Pawbf6kZNb9CUcIHt39amXLj4c6P9ph2VToYw==
+X-Received: by 2002:a17:90b:4d12:b0:202:e772:fa09 with SMTP id mw18-20020a17090b4d1200b00202e772fa09mr10042498pjb.30.1663235366651;
+        Thu, 15 Sep 2022 02:49:26 -0700 (PDT)
 Received: from RD-3580-24288.rt.l (114-137-177-189.emome-ip.hinet.net. [114.137.177.189])
-        by smtp.gmail.com with ESMTPSA id n4-20020a170903110400b00176675adbe1sm12669010plh.208.2022.09.15.02.48.52
+        by smtp.gmail.com with ESMTPSA id n4-20020a170903110400b00176675adbe1sm12669010plh.208.2022.09.15.02.49.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Sep 2022 02:48:55 -0700 (PDT)
+        Thu, 15 Sep 2022 02:49:26 -0700 (PDT)
 From:   ChiaEn Wu <peterwu.pub@gmail.com>
 To:     pavel@ucw.cz, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
@@ -59,11 +59,10 @@ Cc:     chiaen_wu@richtek.com, alice_chen@richtek.com,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-iio@vger.kernel.org,
-        szunichen@gmail.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v11 1/8] dt-bindings: power: supply: Add MediaTek MT6370 Charger
-Date:   Thu, 15 Sep 2022 17:47:29 +0800
-Message-Id: <9382254831bb6ed8c228398a68896b0e8e61c7c4.1663254344.git.chiaen_wu@richtek.com>
+        szunichen@gmail.com
+Subject: [PATCH v11 4/8] lib: add linear range index macro
+Date:   Thu, 15 Sep 2022 17:47:32 +0800
+Message-Id: <0418eade65d434a25d304eaa804b34f92318be87.1663254344.git.chiaen_wu@richtek.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1663254344.git.chiaen_wu@richtek.com>
 References: <cover.1663254344.git.chiaen_wu@richtek.com>
@@ -75,121 +74,36 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: ChiaEn Wu <chiaen_wu@richtek.com>
 
-Add MediaTek MT6370 Charger binding documentation.
+Add linear_range_idx macro for declaring the linear_range struct simply.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 Signed-off-by: ChiaEn Wu <chiaen_wu@richtek.com>
 ---
-v11
-- Add more detailed description of irqs.
-- Adujust the order of irqs
----
- .../power/supply/mediatek,mt6370-charger.yaml      | 96 ++++++++++++++++++++++
- 1 file changed, 96 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/supply/mediatek,mt6370-charger.yaml
+ include/linux/linear_range.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/mediatek,mt6370-charger.yaml b/Documentation/devicetree/bindings/power/supply/mediatek,mt6370-charger.yaml
-new file mode 100644
-index 0000000..fd491c5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/supply/mediatek,mt6370-charger.yaml
-@@ -0,0 +1,96 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/power/supply/mediatek,mt6370-charger.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/include/linux/linear_range.h b/include/linux/linear_range.h
+index fd3d0b3..2e4f4c3 100644
+--- a/include/linux/linear_range.h
++++ b/include/linux/linear_range.h
+@@ -26,6 +26,17 @@ struct linear_range {
+ 	unsigned int step;
+ };
+ 
++#define LINEAR_RANGE(_min, _min_sel, _max_sel, _step)		\
++	{							\
++		.min = _min,					\
++		.min_sel = _min_sel,				\
++		.max_sel = _max_sel,				\
++		.step = _step,					\
++	}
 +
-+title: MediaTek MT6370 Battery Charger
++#define LINEAR_RANGE_IDX(_idx, _min, _min_sel, _max_sel, _step)	\
++	[_idx] = LINEAR_RANGE(_min, _min_sel, _max_sel, _step)
 +
-+maintainers:
-+  - ChiaEn Wu <chiaen_wu@richtek.com>
-+
-+description: |
-+  This module is part of the MT6370 MFD device.
-+  Provides Battery Charger, Boost for OTG devices and BC1.2 detection.
-+
-+properties:
-+  compatible:
-+    const: mediatek,mt6370-charger
-+
-+  interrupts:
-+    description: |
-+      Specify what irqs are needed to be handled by MT6370 Charger driver.
-+      We need to use the IRQ "MT6370_IRQ_OVPCTRL_UVP_D" to know when USB
-+      is plugged in, and then the driver will enable BC1.2 detection.
-+      After the hardware of MT6370 completes the BC1.2 detection,
-+      IRQ "MT6370_IRQ_ATTACH" will be triggered, and the driver will know
-+      the result of BC1.2 detection.
-+      When the IRQ "MT6370_IRQ_CHG_MIVR" is triggered, it means that the
-+      hardware enters the "Minimum Input Voltage Regulation loop" and
-+      a workaround needs to be applied at this time.
-+      In summary, "MT6370_IRQ_OVPCTRL_UVP_D", "MT6370_IRQ_ATTACH" and
-+      "MT6370_IRQ_CHG_MIVR" are required in this charger driver.
-+    items:
-+      - description: irq of "USB is plugged in"
-+      - description: irq of "BC1.2 is done"
-+      - description: irq of "Minimum Input Voltage Regulation loop is active"
-+
-+  interrupt-names:
-+    items:
-+      - const: uvp_d_evt
-+      - const: attach_i
-+      - const: mivr
-+
-+  io-channels:
-+    description: |
-+      Use ADC channel to read VBUS, IBUS, IBAT, etc., info.
-+    minItems: 1
-+    items:
-+      - description: |
-+          VBUS voltage with lower accuracy (+-75mV) but higher measure
-+          range (1~22V)
-+      - description: |
-+          VBUS voltage with higher accuracy (+-30mV) but lower measure
-+          range (1~9.76V)
-+      - description: the main system input voltage
-+      - description: battery voltage
-+      - description: battery temperature-sense input voltage
-+      - description: IBUS current (required)
-+      - description: battery current
-+      - description: |
-+          regulated output voltage to supply for the PWM low-side gate driver
-+          and the bootstrap capacitor
-+      - description: IC junction temperature
-+
-+  io-channel-names:
-+    minItems: 1
-+    items:
-+      - const: vbusdiv5
-+      - const: vbusdiv2
-+      - const: vsys
-+      - const: vbat
-+      - const: ts_bat
-+      - const: ibus
-+      - const: ibat
-+      - const: chg_vddp
-+      - const: temp_jc
-+
-+  usb-otg-vbus-regulator:
-+    type: object
-+    description: OTG boost regulator.
-+    unevaluatedProperties: false
-+    $ref: /schemas/regulator/regulator.yaml#
-+
-+    properties:
-+      enable-gpios:
-+        maxItems: 1
-+
-+required:
-+  - compatible
-+  - interrupts
-+  - interrupt-names
-+  - io-channels
-+
-+additionalProperties: false
-+
-+...
+ unsigned int linear_range_values_in_range(const struct linear_range *r);
+ unsigned int linear_range_values_in_range_array(const struct linear_range *r,
+ 						int ranges);
 -- 
 2.7.4
 
