@@ -2,35 +2,35 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A81C6C6FA86
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05379C6FA8B
 	for <linux-leds@archiver.kernel.org>; Thu, 15 Sep 2022 09:13:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbiIOJNI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 15 Sep 2022 05:13:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49762 "EHLO
+        id S229796AbiIOJNH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 15 Sep 2022 05:13:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229809AbiIOJM3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Sep 2022 05:12:29 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D16EE98A64;
-        Thu, 15 Sep 2022 02:12:26 -0700 (PDT)
+        with ESMTP id S229822AbiIOJM1 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Sep 2022 05:12:27 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9111998A44;
+        Thu, 15 Sep 2022 02:12:25 -0700 (PDT)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id F2B656601FF1;
-        Thu, 15 Sep 2022 10:12:24 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7F6F56601FC3;
+        Thu, 15 Sep 2022 10:12:23 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1663233145;
-        bh=6jfqnEPzdQK2D+P1O+BfVEHosUL5CKX6vJs+oxLvAN0=;
+        s=mail; t=1663233144;
+        bh=8fx/KPlLmnPAbcJz0uLlLUOKmFnlLf43xmpaEp+yAcI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CvXgwQLs7+WFiAzDX95/l5PyPWVW9J1v9nvmZId0/+ryl+WEeZHyqYR8Jlem7nh36
-         GjJeNXrqEsCiDKW8Q53RNhykS0yrcLqOTyFlpFmgqfrwmg0qPeVUNgo4zXxToIXnGt
-         aow3xlT+9URCTAn9O5PmSUkjSj94cJZlq5oBViefIFAYE+HtBTDw2/juUTOZTtpgO8
-         oUL0lAYe5yLbP9ZhjbrvE/Lc/v1ffgYTSsW4sanVLdhULHmP/jJ6wD8nrPcWt4stIz
-         VGNsCvFTGd1sqdEfuhyFB5tN+PswXhXKNs4pNTzWa7M48WgrvFXCqGRomLqieYu2dj
-         TzN/juGL7ivQw==
+        b=Q16pttDvcRQRFWuV4vPBcLX2poT3NPfuKpYd9y0U0aIuiP9vu6l4v8GAQmiJYfl8z
+         gp3iAlSF1rNimwF0N/Go5jJ91DMfMykMlimY4C46WfM0urELFIBpTcC23CebyrOZHV
+         JzMkTSQEc8C1EYWnoJTTe0QhfjD2QUyuvRlMbfoeFzIeMMT8411p8GQp5rQVLjnXcL
+         HPKPwt2gswWCOgIHwjKTPaMZfzdDKwKUr3tf4FEQliiKNJpbHxLGibopowUQh147vJ
+         xuzhp3ZaZ1PusfBLpJfEemg1GYWo0sFlY9B7ijk7r41zDuXRqORvRFH/rpxDggikft
+         7nYs1/0lXlQow==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     sean.wang@mediatek.com
@@ -41,9 +41,9 @@ Cc:     pavel@ucw.cz, robh+dt@kernel.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH 4/7] dt-bindings: leds: leds-mt6323: Document mt6331 compatible
-Date:   Thu, 15 Sep 2022 11:12:11 +0200
-Message-Id: <20220915091214.59673-5-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH 2/7] leds: leds-mt6323: Open code and drop MT6323_CAL_HW_DUTY macro
+Date:   Thu, 15 Sep 2022 11:12:09 +0200
+Message-Id: <20220915091214.59673-3-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20220915091214.59673-1-angelogioacchino.delregno@collabora.com>
 References: <20220915091214.59673-1-angelogioacchino.delregno@collabora.com>
@@ -53,29 +53,40 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add mediatek,mt6331-led compatible for the LED controller found
-in the MT6331 PMIC.
+There is only one instance of using this macro and it's anyway not
+simplifying the flow, or increasing the readability of this driver.
+
+Drop this macro by open coding it in mt6323_led_set_blink().
+
+No functional changes.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- Documentation/devicetree/bindings/leds/leds-mt6323.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/leds/leds-mt6323.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-mt6323.txt b/Documentation/devicetree/bindings/leds/leds-mt6323.txt
-index 45bf9f7d85f3..08dcb237a8c2 100644
---- a/Documentation/devicetree/bindings/leds/leds-mt6323.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-mt6323.txt
-@@ -12,7 +12,9 @@ For MediaTek PMIC wrapper bindings see:
- Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+diff --git a/drivers/leds/leds-mt6323.c b/drivers/leds/leds-mt6323.c
+index a7d1ed370969..fa9d251e9efa 100644
+--- a/drivers/leds/leds-mt6323.c
++++ b/drivers/leds/leds-mt6323.c
+@@ -62,8 +62,6 @@
+ #define MT6323_ISINK_CH_EN(i)		BIT(i)
  
- Required properties:
--- compatible : Must be "mediatek,mt6323-led"
-+- compatible : Must be one of
-+  - "mediatek,mt6323-led"
-+  - "mediatek,mt6331-led"
- - address-cells : Must be 1
- - size-cells : Must be 0
+ #define MAX_SUPPORTED_LEDS		8
+-#define MT6323_CAL_HW_DUTY(o, p, u)	DIV_ROUND_CLOSEST((o) * 100000ul,\
+-					(p) * (u))
  
+ struct mt6323_leds;
+ 
+@@ -321,7 +319,7 @@ static int mt6323_led_set_blink(struct led_classdev *cdev,
+ 	 * Calculate duty_hw based on the percentage of period during
+ 	 * which the led is ON.
+ 	 */
+-	duty_hw = MT6323_CAL_HW_DUTY(*delay_on, period, spec->unit_duty);
++	duty_hw = DIV_ROUND_CLOSEST(*delay_on * 100000ul, period * spec->unit_duty);
+ 
+ 	/* hardware doesn't support zero duty cycle. */
+ 	if (!duty_hw)
 -- 
 2.37.2
 
