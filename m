@@ -2,227 +2,113 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 382B9C6FA91
-	for <linux-leds@archiver.kernel.org>; Fri, 16 Sep 2022 14:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5750CECAAA1
+	for <linux-leds@archiver.kernel.org>; Fri, 16 Sep 2022 15:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231660AbiIPOS5 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 16 Sep 2022 10:18:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60912 "EHLO
+        id S230483AbiIPPPj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 16 Sep 2022 11:15:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231588AbiIPOSx (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Sep 2022 10:18:53 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30618B1B83;
-        Fri, 16 Sep 2022 07:18:52 -0700 (PDT)
-Received: from mercury (unknown [82.141.252.181])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0DC40660203B;
-        Fri, 16 Sep 2022 15:18:50 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1663337930;
-        bh=ZLM9d9F/EoTTN2+Qe1HJE5YhJNqZQ6yu6k4zqiLIIBk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=huXbpgc/7LoK2ak5zlFNwWRCFsHcpe2bvGGx7ThsS5scPh6K7Fn0mt0lww5ikW0tG
-         w0W/TaSEUrdjnfXJU8qjV+68/ExoMY52Kws5VvW/BCO+6tArhHngiPcH4NBl3H+RTH
-         c0xBYC3GDN149VGjFUkBwDt+WnI0ptKn5t4NETAyuVEjcqPW6vZN4h9I4WJ+Yas3JC
-         9uH0NuLiXVeVIHCEP8xYnsVEXs2VHh9h5ffDKRi30kq53g33MQIcHyxyd368LUStkZ
-         q8GZBebRE7ZX41GTnUzM7MSfD5TapID8gkOSVUFYc+q/Xbmibv8taKed8TLIThv0cq
-         qxwNucN8tKQnw==
-Received: by mercury (Postfix, from userid 1000)
-        id BA4751060849; Fri, 16 Sep 2022 16:18:43 +0200 (CEST)
-Date:   Fri, 16 Sep 2022 16:18:43 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     ChiaEn Wu <peterwu.pub@gmail.com>
-Cc:     pavel@ucw.cz, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        jic23@kernel.org, lars@metafoo.de, broonie@kernel.org,
-        mazziesaccount@gmail.com, andriy.shevchenko@linux.intel.com,
-        chiaen_wu@richtek.com, alice_chen@richtek.com,
-        cy_huang@richtek.com, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-iio@vger.kernel.org,
-        szunichen@gmail.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v11 1/8] dt-bindings: power: supply: Add MediaTek MT6370
- Charger
-Message-ID: <20220916141843.pmlg3x7yrnkdr26r@mercury.elektranox.org>
-References: <cover.1663254344.git.chiaen_wu@richtek.com>
- <9382254831bb6ed8c228398a68896b0e8e61c7c4.1663254344.git.chiaen_wu@richtek.com>
+        with ESMTP id S229714AbiIPPPi (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Sep 2022 11:15:38 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC974B49D
+        for <linux-leds@vger.kernel.org>; Fri, 16 Sep 2022 08:15:37 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oZD3p-0003yS-JO; Fri, 16 Sep 2022 17:15:21 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oZD3l-0016t7-EM; Fri, 16 Sep 2022 17:15:15 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oZD3i-001KHo-TK; Fri, 16 Sep 2022 17:15:14 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     linux-pwm@vger.kernel.org, kernel@pengutronix.de,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Douglas Anderson <dianders@chromium.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-leds@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH 3/3] pwm: Handle .get_state() failures
+Date:   Fri, 16 Sep 2022 17:15:06 +0200
+Message-Id: <20220916151506.298488-3-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20220916151506.298488-1-u.kleine-koenig@pengutronix.de>
+References: <20220916151506.298488-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fwbn4zdugcfjfhv7"
-Content-Disposition: inline
-In-Reply-To: <9382254831bb6ed8c228398a68896b0e8e61c7c4.1663254344.git.chiaen_wu@richtek.com>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1545; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=yRNfMNUl3EWYauPtdr8Q5dOzGtnTvg1riQcLCuuQwro=; b=owGbwMvMwMV48I9IxdpTbzgZT6slMSSrTPrubcN224Djq8gEu7yr52o0UwQV7R/Utndef8XX9eqM vVpYJ6MxCwMjF4OsmCJLXZGW2ASJNf/tSpZwwwxiZQKZwsDFKQAT2VnM/ldO1MlmZQ/n5hm5UtwfTH 8fCnMs39J9X7n78UVRDgvGxNL8i+28bXlJ89Lrje8ziYtWJX786VL0v0L10faISEar+B1fBTdJ2nse V4378K1D00X0w7SdZu/5yt7mrz+lbTjb7LtA4t25N4MOcj7imWo6sTeL61d6JeP07zMro5vZpRoX/w o0+388Nedof5/BrWcesx8u/mml27D0wSaOrSpOv+3+HKgRMtSUkGdMv6s4VU8gZ8om49sVpd0LnWRu 9+ke2XBHvU5Jku1O9q/SX4eeGjdXM822MOnmdI2z23gtZLHgXDnO/ZZsV0RzhL3i7h0OcO2+LxnG9Z lJsfD54uKICL5LOuLqttPttVwB
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+This suppresses diagnosis for PWM_DEBUG routines and makes sure that
+pwm->state isn't modified in pwm_device_request() if .get_state() fails.
 
---fwbn4zdugcfjfhv7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pwm/core.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Hi,
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 381db04cfa00..421573590613 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -108,9 +108,14 @@ static int pwm_device_request(struct pwm_device *pwm, const char *label)
+ 	}
+ 
+ 	if (pwm->chip->ops->get_state) {
+-		err = pwm->chip->ops->get_state(pwm->chip, pwm, &pwm->state);
++		struct pwm_state state;
++
++		err = pwm->chip->ops->get_state(pwm->chip, pwm, &state);
+ 		trace_pwm_get(pwm, &pwm->state, err);
+ 
++		if (!err)
++			pwm->state = state;
++
+ 		if (IS_ENABLED(CONFIG_PWM_DEBUG))
+ 			pwm->last = pwm->state;
+ 	}
+@@ -459,6 +464,9 @@ static void pwm_apply_state_debug(struct pwm_device *pwm,
+ 
+ 	err = chip->ops->get_state(chip, pwm, &s1);
+ 	trace_pwm_get(pwm, &s1, err);
++	if (err)
++		/* If that failed there isn't much to debug */
++		return;
+ 
+ 	/*
+ 	 * The lowlevel driver either ignored .polarity (which is a bug) or as
+@@ -523,6 +531,8 @@ static void pwm_apply_state_debug(struct pwm_device *pwm,
+ 
+ 	err = chip->ops->get_state(chip, pwm, last);
+ 	trace_pwm_get(pwm, last, err);
++	if (err)
++		return;
+ 
+ 	/* reapplication of the current state should give an exact match */
+ 	if (s1.enabled != last->enabled ||
+-- 
+2.37.2
 
-On Thu, Sep 15, 2022 at 05:47:29PM +0800, ChiaEn Wu wrote:
-> From: ChiaEn Wu <chiaen_wu@richtek.com>
->=20
-> Add MediaTek MT6370 Charger binding documentation.
->=20
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: ChiaEn Wu <chiaen_wu@richtek.com>
-> ---
-> v11
-> - Add more detailed description of irqs.
-> - Adujust the order of irqs
-> ---
-
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-
--- Sebastian
-
->  .../power/supply/mediatek,mt6370-charger.yaml      | 96 ++++++++++++++++=
-++++++
->  1 file changed, 96 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/supply/mediat=
-ek,mt6370-charger.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/power/supply/mediatek,mt63=
-70-charger.yaml b/Documentation/devicetree/bindings/power/supply/mediatek,m=
-t6370-charger.yaml
-> new file mode 100644
-> index 0000000..fd491c5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/supply/mediatek,mt6370-char=
-ger.yaml
-> @@ -0,0 +1,96 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/power/supply/mediatek,mt6370-charger.=
-yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek MT6370 Battery Charger
-> +
-> +maintainers:
-> +  - ChiaEn Wu <chiaen_wu@richtek.com>
-> +
-> +description: |
-> +  This module is part of the MT6370 MFD device.
-> +  Provides Battery Charger, Boost for OTG devices and BC1.2 detection.
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt6370-charger
-> +
-> +  interrupts:
-> +    description: |
-> +      Specify what irqs are needed to be handled by MT6370 Charger drive=
-r.
-> +      We need to use the IRQ "MT6370_IRQ_OVPCTRL_UVP_D" to know when USB
-> +      is plugged in, and then the driver will enable BC1.2 detection.
-> +      After the hardware of MT6370 completes the BC1.2 detection,
-> +      IRQ "MT6370_IRQ_ATTACH" will be triggered, and the driver will know
-> +      the result of BC1.2 detection.
-> +      When the IRQ "MT6370_IRQ_CHG_MIVR" is triggered, it means that the
-> +      hardware enters the "Minimum Input Voltage Regulation loop" and
-> +      a workaround needs to be applied at this time.
-> +      In summary, "MT6370_IRQ_OVPCTRL_UVP_D", "MT6370_IRQ_ATTACH" and
-> +      "MT6370_IRQ_CHG_MIVR" are required in this charger driver.
-> +    items:
-> +      - description: irq of "USB is plugged in"
-> +      - description: irq of "BC1.2 is done"
-> +      - description: irq of "Minimum Input Voltage Regulation loop is ac=
-tive"
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: uvp_d_evt
-> +      - const: attach_i
-> +      - const: mivr
-> +
-> +  io-channels:
-> +    description: |
-> +      Use ADC channel to read VBUS, IBUS, IBAT, etc., info.
-> +    minItems: 1
-> +    items:
-> +      - description: |
-> +          VBUS voltage with lower accuracy (+-75mV) but higher measure
-> +          range (1~22V)
-> +      - description: |
-> +          VBUS voltage with higher accuracy (+-30mV) but lower measure
-> +          range (1~9.76V)
-> +      - description: the main system input voltage
-> +      - description: battery voltage
-> +      - description: battery temperature-sense input voltage
-> +      - description: IBUS current (required)
-> +      - description: battery current
-> +      - description: |
-> +          regulated output voltage to supply for the PWM low-side gate d=
-river
-> +          and the bootstrap capacitor
-> +      - description: IC junction temperature
-> +
-> +  io-channel-names:
-> +    minItems: 1
-> +    items:
-> +      - const: vbusdiv5
-> +      - const: vbusdiv2
-> +      - const: vsys
-> +      - const: vbat
-> +      - const: ts_bat
-> +      - const: ibus
-> +      - const: ibat
-> +      - const: chg_vddp
-> +      - const: temp_jc
-> +
-> +  usb-otg-vbus-regulator:
-> +    type: object
-> +    description: OTG boost regulator.
-> +    unevaluatedProperties: false
-> +    $ref: /schemas/regulator/regulator.yaml#
-> +
-> +    properties:
-> +      enable-gpios:
-> +        maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - interrupts
-> +  - interrupt-names
-> +  - io-channels
-> +
-> +additionalProperties: false
-> +
-> +...
-> --=20
-> 2.7.4
->=20
-
---fwbn4zdugcfjfhv7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmMkhcAACgkQ2O7X88g7
-+prLghAAgaMdleTOkYQYJw7BnJdS13FoSXBt0v+LtednJi/uKwwDFWX9R6t04m4c
-fxSU/K1LiIkUQWw/iT0YXM5m2xl2tbFwTYq7fUwj6soTbHjCuv5ii6b2cQw5+bTe
-SBRQWf4OJqqU0Wo2IpjdsVQeKSCpCoUUjgAf1VWwGh80SH4lXdpKlNuZIlYo6m4R
-S86iaJLgM1Zaf1y4xV1MBoVyhC4peHPlcYl+zqTalN9tRXthDjEbGKsodbxSv3yX
-tVAYuY3YXLmmHfCASxbaFeDxW7GzgmQiHV1a7c5rjvaPqpO1lFJ4+sl04mFPQ+u/
-ZkvT9Dw8SawWQOUa4S/myktxiUrZlEaIVCj+iW0yE0yN03ARG2Le6n3JSFE2Spt5
-4jUjo3VFyFFJNrRzFS00lO8Pwrs143mvKuD28Dh6g4Gdi7IJz6aRZdM2fx9SwwS9
-iQn4Hp/0lrdhpmecZZSS2awHnuGv+wi++Jpx4/GDhE7OMHjWX+pZA7spNJZhb/e6
-DwbIo8zM+y3wosRM8kcxR9PPmLaPpMsP6WkUHDuSaiCzzYPxEWA8g276IUjCtWUs
-gCqHcb7/a+CuMKbVwmqemzhaxcekH5fqdpTqIWEA+QkxCOqCqG5KqK7tw/tg5fYe
-6DUSkNR6hysUsU6DgjeopXNXhPhyE7F8odG1MkFPFcw2EDNskxU=
-=KswM
------END PGP SIGNATURE-----
-
---fwbn4zdugcfjfhv7--
