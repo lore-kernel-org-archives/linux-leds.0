@@ -2,25 +2,25 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F635C6FA86
-	for <linux-leds@archiver.kernel.org>; Sat, 17 Sep 2022 08:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40598C6FA94
+	for <linux-leds@archiver.kernel.org>; Sat, 17 Sep 2022 08:14:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbiIQIOT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 17 Sep 2022 04:14:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48706 "EHLO
+        id S229714AbiIQIOV (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 17 Sep 2022 04:14:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229618AbiIQIOR (ORCPT
+        with ESMTP id S229591AbiIQIOR (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Sat, 17 Sep 2022 04:14:17 -0400
 Received: from smtpout1.mo528.mail-out.ovh.net (smtpout1.mo528.mail-out.ovh.net [46.105.34.251])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CB913F1C9;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14CC93E740;
         Sat, 17 Sep 2022 01:14:15 -0700 (PDT)
 Received: from pro2.mail.ovh.net (unknown [10.109.156.240])
-        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id 3A39B128726F8;
-        Sat, 17 Sep 2022 10:13:56 +0200 (CEST)
+        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id DED98128726EB;
+        Sat, 17 Sep 2022 10:13:54 +0200 (CEST)
 Received: from localhost.localdomain (88.161.25.233) by DAG1EX1.emp2.local
  (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.12; Sat, 17 Sep
- 2022 10:13:55 +0200
+ 2022 10:13:54 +0200
 From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 To:     <pavel@ucw.cz>, <robh+dt@kernel.org>,
         <sven.schwermer@disruptive-technologies.com>,
@@ -29,108 +29,72 @@ CC:     <johan+linaro@kernel.org>, <marijn.suijten@somainline.org>,
         <bjorn.andersson@linaro.org>, <andy.shevchenko@gmail.com>,
         <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <sha@pengutronix.de>,
-        Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [RESEND PATCH v3 3/4] dt-bindings: leds: Add binding for a multicolor group of LEDs
-Date:   Sat, 17 Sep 2022 10:13:38 +0200
-Message-ID: <20220917081339.3354075-4-jjhiblot@traphandler.com>
+        Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Subject: [RESEND PATCH v3 0/4] Add a multicolor LED driver for groups of monochromatic LEDs
+Date:   Sat, 17 Sep 2022 10:13:35 +0200
+Message-ID: <20220917081339.3354075-1-jjhiblot@traphandler.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220917081339.3354075-1-jjhiblot@traphandler.com>
-References: <20220917081339.3354075-1-jjhiblot@traphandler.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [88.161.25.233]
 X-ClientProxiedBy: DAG1EX2.emp2.local (172.16.2.2) To DAG1EX1.emp2.local
  (172.16.2.1)
-X-Ovh-Tracer-Id: 9350598729395747281
+X-Ovh-Tracer-Id: 9350317254453311767
 X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrfedvvddgtddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnheptddtffevleejteelieejhfffvedtffeljeehjeeigfejledufedvveejuddtjefhnecuffhomhgrihhnpeguvghvihgtvghtrhgvvgdrohhrghenucfkpheptddrtddrtddrtddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhohedvke
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrfedvvddgtddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucenucfjughrpefhvfevufffkffoggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeejuefhkeelgffhlefhtefhgeektdevvdfgkeeltdehgeeujeeutdehkeeuhffftdenucfkpheptddrtddrtddrtddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtohepshhhrgesphgvnhhguhhtrhhonhhigidruggvpdfovfetjfhoshhtpehmohehvdek
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This allows to group multiple monochromatic LEDs into a multicolor
-LED, e.g. RGB LEDs.
+Hi,
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/leds/leds-group-multicolor.yaml  | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
+Resending this series with only a minor modification in the binding
+example after the comments from Sascha Hauer.
+
+Thanks,
+JJ
+
+
+Original v3 message:
+
+Some HW design implement multicolor LEDs with several monochromatic LEDs.
+Grouping the monochromatic LEDs allows to configure them in sync and use
+the triggers.
+The PWM multicolor LED driver implements such grouping but only for
+PWM-based LEDs. As this feature is also desirable for the other types of
+LEDs, this series implements it for any kind of LED device.
+
+changes v2->v3, only minor changes:
+ - rephrased the Kconfig descritpion
+ - make the sysfs interface of underlying LEDs read-only only if the probe
+   is successful.
+ - sanitize the header files
+ - removed the useless call to dev_set_drvdata()
+ - use dev_fwnode() to get the fwnode to the device.
+
+changes v1->v2:
+ - Followed Rob Herrings's suggestion to make the dt binding much simpler.
+ - Added a patch to store the color property of a LED in its class
+   structure (struct led_classdev).
+
+Jean-Jacques Hiblot (4):
+  leds: class: simplify the implementation of devm_of_led_get()
+  leds: class: store the color index in struct led_classdev
+  dt-bindings: leds: Add binding for a multicolor group of LEDs
+  leds: Add a multicolor LED driver to group monochromatic LEDs
+
+ .../bindings/leds/leds-group-multicolor.yaml  |  64 ++++++++
+ drivers/leds/led-class.c                      |  27 ++--
+ drivers/leds/rgb/Kconfig                      |   6 +
+ drivers/leds/rgb/Makefile                     |   1 +
+ drivers/leds/rgb/leds-group-multicolor.c      | 153 ++++++++++++++++++
+ include/linux/leds.h                          |   1 +
+ 6 files changed, 238 insertions(+), 14 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
+ create mode 100644 drivers/leds/rgb/leds-group-multicolor.c
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
-new file mode 100644
-index 000000000000..8ed059a5a724
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/leds-group-multicolor.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Multi-color LED built with monochromatic LEDs
-+
-+maintainers:
-+  - Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-+
-+description: |
-+  This driver combines several monochromatic LEDs into one multi-color
-+  LED using the multicolor LED class.
-+
-+properties:
-+  compatible:
-+    const: leds-group-multicolor
-+
-+  leds:
-+    description:
-+      An aray of monochromatic leds
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+
-+required:
-+  - leds
-+
-+allOf:
-+  - $ref: leds-class-multicolor.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/leds/common.h>
-+
-+    monochromatic-leds {
-+        compatible = "gpio-leds";
-+
-+        led0: led-0 {
-+            gpios = <&mcu_pio 0 GPIO_ACTIVE_LOW>;
-+            color = <LED_COLOR_ID_RED>;
-+        };
-+
-+        led1: led-1 {
-+            gpios = <&mcu_pio 1 GPIO_ACTIVE_HIGH>;
-+            color = <LED_COLOR_ID_GREEN>;
-+        };
-+
-+        led2: led-2 {
-+            gpios = <&mcu_pio 2 GPIO_ACTIVE_HIGH>;
-+            color = <LED_COLOR_ID_BLUE>;
-+        };
-+    };
-+
-+    multi-led {
-+        compatible = "leds-group-multicolor";
-+        color = <LED_COLOR_ID_RGB>;
-+        function = LED_FUNCTION_INDICATOR;
-+        leds = <&led0>, <&led1>, <&led2>;
-+    };
-+
-+...
 -- 
 2.25.1
 
