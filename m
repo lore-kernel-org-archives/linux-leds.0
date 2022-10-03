@@ -2,129 +2,97 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C96C7C433F5
-	for <linux-leds@archiver.kernel.org>; Sun,  2 Oct 2022 10:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3886C433FE
+	for <linux-leds@archiver.kernel.org>; Mon,  3 Oct 2022 08:06:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229716AbiJBK2D (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 2 Oct 2022 06:28:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38416 "EHLO
+        id S229608AbiJCIGk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 3 Oct 2022 04:06:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbiJBK2C (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 2 Oct 2022 06:28:02 -0400
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E8782251E;
-        Sun,  2 Oct 2022 03:28:01 -0700 (PDT)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 0F3701C0016; Sun,  2 Oct 2022 12:27:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-        t=1664706479;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jvZgthEJP+YUFpM1NKQE14RzS8WRZddp0iBihRnoGqg=;
-        b=V0PLPr9cI8oYbw626i1labAMiQpwPOehBW4npn4Ks8qh2PqeIonA7pr4I1yK5tfbyX5coh
-        nSbWv6wxI3KJs1SkRYPCq3u2Xke4Bq88QRGzhu8zKKNEh41U0+LzLbU8DF5ASX+WJC7NYO
-        i75BVmMDiTP9tkixOnA6pfEu0RMMAWg=
-Date:   Sun, 2 Oct 2022 12:26:59 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Daniel Palmer <daniel@0x0f.com>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-leds@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 07/11] ARM: dts: mstar: unitv2: Wire up LEDs
-Message-ID: <20211202191904.GA3286@duo.ucw.cz>
-References: <20210923065500.2284347-1-daniel@0x0f.com>
- <20210923065500.2284347-8-daniel@0x0f.com>
- <20211130185558.GD30113@duo.ucw.cz>
- <CAFr9PX=TFBGSbZV+hHB4SO5LLmxPXHGXub4RTR36g6yDi5o0kg@mail.gmail.com>
+        with ESMTP id S229612AbiJCIGR (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 3 Oct 2022 04:06:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D45555081;
+        Mon,  3 Oct 2022 00:41:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D8D760FAC;
+        Mon,  3 Oct 2022 07:39:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E71BC4347C;
+        Mon,  3 Oct 2022 07:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664782787;
+        bh=WmLowgdJ78JbzqOin+NSgjpKieVp5BaTxeF9w0oXdZE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uhyNmavZ1vg0OArINdCF5kljFRVfUbEssRnchDtZ3L3eOQZGdA12yuwgn8pgJL5sa
+         GaJzf18B1ThrBg71RYuekgdA2B2nHv2N1ExKUtc2GeY2awxZiG/K95KAOap/CmzlPC
+         vpD0bL9SbCJDIVXmUzg1hdV8jP4jYPj4pVPo+6VxJZ1Y7OyEhUfmI2BkQoRxk8GLAJ
+         US5bR6dYewzuVkfRrWOG/nkPct6ypvO1p4hFqw1y9C9JN3WoNZSpPosCYDCNgjs4I/
+         8V6cy/YPC3QEb4xf1tW5N2bFvmrgkeC/0awpmP7qJm9+mUdWP0GG1LkZEhpARCzrYq
+         IrGa94uIWGquQ==
+Date:   Mon, 3 Oct 2022 08:39:42 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     chengwei <foxfly.lai.tw@gmail.com>
+Cc:     pavel@ucw.cz, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, GaryWang@aaeon.com.tw,
+        musa.lin@yunjingtech.com, jack.chang@yunjingtech.com,
+        chengwei <larry.lai@yunjingtech.com>,
+        Javier Arteaga <javier@emutex.com>,
+        Nicola Lunghi <nicola.lunghi@emutex.com>
+Subject: Re: [PATCH] mfd: Add support for UP board CPLD/FPGA
+Message-ID: <YzqRvsfsREslOuW2@google.com>
+References: <20221001090547.24899-1-larry.lai@yunjingtech.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Y7xTucakfITjPcLV"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAFr9PX=TFBGSbZV+hHB4SO5LLmxPXHGXub4RTR36g6yDi5o0kg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221001090547.24899-1-larry.lai@yunjingtech.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+On Sat, 01 Oct 2022, chengwei wrote:
 
---Y7xTucakfITjPcLV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The UP Squared board <http://www.upboard.com> implements certain
+> features (pin control, onboard LEDs or CEC) through an on-board FPGA.
+> 
+> This mfd driver implements the line protocol to read and write registers
+> from the FPGA through regmap. The register address map is also included.
+> 
+> The UP boards come with a few FPGA-controlled onboard LEDs:
+> * UP Board: yellow, green, red
+> * UP Squared: blue, yellow, green, red
+> 
+> The UP Boards provide a few I/O pin headers (for both GPIO and
+> functions), including a 40-pin Raspberry Pi compatible header.
+> 
+> This patch implements support for the FPGA-based pin controller that
+> manages direction and enable state for those header pins.
+> 
+> Partial support UP boards:
+> * UP core + CREX
+> * UP core + CRST02
+> 
+> Signed-off-by: Javier Arteaga <javier@emutex.com>
+> [merge various fixes]
+> Signed-off-by: Nicola Lunghi <nicola.lunghi@emutex.com>
+> Signed-off-by: chengwei <larry.lai@yunjingtech.com>
+> ---
+>  drivers/leds/Kconfig             |  10 +
+>  drivers/leds/Makefile            |   1 +
+>  drivers/leds/leds-upboard.c      |  90 ++++++
+>  drivers/mfd/Kconfig              |   9 +
+>  drivers/mfd/Makefile             |   1 +
+>  drivers/mfd/upboard-fpga.c       | 486 +++++++++++++++++++++++++++++++
+>  include/linux/mfd/upboard-fpga.h |  53 ++++
 
-Hi!
+Please separate the LED and MFD changes into their own patches.
 
-> > > Add the red and white leds present on the unitv2.
-> >
-> > Thanks for cc-ing me.
-> >
-> > > @@ -18,6 +20,18 @@ aliases {
-> > >       chosen {
-> > >               stdout-path =3D "serial0:115200n8";
-> > >       };
-> > > +
-> > > +     leds {
-> > > +             compatible =3D "gpio-leds";
-> > > +             led-white {
-> > > +                     gpios =3D <&gpio SSD20XD_GPIO_GPIO0 GPIO_ACTIVE=
-_LOW>;
-> > > +                     linux,default-trigger =3D "activity";
-> > > +             };
-> > > +             led-red {
-> > > +                     gpios =3D <&gpio SSD20XD_GPIO_GPIO1 GPIO_ACTIVE=
-_LOW>;
-> > > +                     linux,default-trigger =3D "heartbeat";
-> > > +             };
-> > > +     };
-> >
-> > How do these look in userspace (ls /sys/class/leds)?
->=20
-> >From what I remember the above results in /sys/class/leds/red and
-> /sys/class/leds/white.
-> I'll check though. Is there something wrong with that? :)
+>  7 files changed, 650 insertions(+)
+>  create mode 100644 drivers/leds/leds-upboard.c
+>  create mode 100644 drivers/mfd/upboard-fpga.c
+>  create mode 100644 include/linux/mfd/upboard-fpga.h
 
-Yes.
-
-LEDs are supposed to be named device:color:function. Did manufacturer
-somehow label them? See also Documentation/leds/well-known-leds.txt .
-
-> >Should the first one be disk-activity?
->=20
-> Good question. My personal preference was for some sort of load
-> indicator as it helped me when debugging. That's why I have heartbeat
-> and activity. An "I'm alive signal" and some indication of how much is
-> going on.
-> I'm not sure if disk-activity is too useful with these devices as they
-> usually have everything in a very small rootfs and don't do lots of
-> disk io because they have pretty small SPI NAND flash for local
-> storage. Also there isn't anything in mainline that'll trigger the
-> disk-activity trigger at the moment.
-> As "activity" isn't documented in the bindings and I don't think I got
-> an answer from Rob about it, maybe I'll just drop the trigger for now.
-
-CPU activity is fine, too, but we want that option documented as you
-did later in the series.
-
-Best regards,
-								Pavel
-
---=20
-http://www.livejournal.com/~pavelmachek
-
---Y7xTucakfITjPcLV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYzlncwAKCRAw5/Bqldv6
-8jMfAJ9RmK1MaZ/5/NvDAf0Gj+2v5pstGgCeKVzf6/js5whdZv0zuxE/m2iZ1Rg=
-=T9CO
------END PGP SIGNATURE-----
-
---Y7xTucakfITjPcLV--
+-- 
+Lee Jones [李琼斯]
