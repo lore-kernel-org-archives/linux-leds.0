@@ -2,198 +2,144 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB77C433F5
-	for <linux-leds@archiver.kernel.org>; Fri,  7 Oct 2022 05:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 716C3C433FE
+	for <linux-leds@archiver.kernel.org>; Fri,  7 Oct 2022 06:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229494AbiJGF2b (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 7 Oct 2022 01:28:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51830 "EHLO
+        id S229445AbiJGGe2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 7 Oct 2022 02:34:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229614AbiJGF23 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 7 Oct 2022 01:28:29 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E26112ABE;
-        Thu,  6 Oct 2022 22:28:27 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id d10so4005379pfh.6;
-        Thu, 06 Oct 2022 22:28:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=thpcfEjkT6M3Cbh0jMprMM++zM74T/WSw+KO6E7QZfI=;
-        b=LTLotsrqQ2qF/sXGSK6TJc78Hy1yiwmf6pRPUuSSkYY5WFOsBaUFlxEgEq+SYEiuab
-         egwmVz8eZJj05RP1tv6+nYgfdag0PtQ/z5PX8bFZ7U3wipPaQajcwg3nDILFud5bl38E
-         1GyhI9TfrTeo9/hdPx4hIGI2J6+04CPBlg5PYML2gqEA4SytIxgjAk0waedyiXwXZbSW
-         AXvE2P5R4pbGMv0YotmMRPqqP1CzMOVYf3PrO1YWJqlNQ6HCJZXQbUTJCy/RZk7uuoaB
-         DeTywHb7Zp3B69IYFS57fcQLtkUbihxZICal7sQ1k/DxQPoJzw04qwySlwBPl1xm8alV
-         h4yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=thpcfEjkT6M3Cbh0jMprMM++zM74T/WSw+KO6E7QZfI=;
-        b=BSj1LG0CqywLxDqmbmOzc+/+lva9HcP11SpGbv7xmX6CPk80Cd1pIqJNsjEDyDu7Df
-         LvRQSJx3Bjfo6IsAOgKcGng3pYXY1KsAR+4Rj4SlHvZ74Y/WwFlUbz+lINFAKj1fahZ2
-         GnEe/6+TZN5BsELP+j/Kpff6KxOyZ+Lvbwsb1fKygOhXgCBg1mELbfCKguzKI3hoGAna
-         WeyZZDxd5H7b/6nuwJbn2dEB9OGyXWNDKJfWUycFzkIXh64BnJV5qi5YWPNCdw+9DJ7u
-         cZuiBY1mfklXpzpjHTZ/iWN5A0eQ0q0zlMexjwf+Ml3wAti3pJt2C4H17yR53IKWJTZK
-         dQJg==
-X-Gm-Message-State: ACrzQf2WUkQlSRmgyIbE+MxZvK2/jqc4xkDjEVU7HC9A8upNTfLo5yH6
-        8h7bbqMEvf0fOjoqIvUFbQ==
-X-Google-Smtp-Source: AMsMyM75g+l0cB8G8yFdl9SOfT+lBxZly/DZD7cuEs6EYFKpkOCkVZ2eDaqWBPjti3iul/NjQBsoHQ==
-X-Received: by 2002:a63:90c8:0:b0:458:b70b:b16d with SMTP id a191-20020a6390c8000000b00458b70bb16dmr3058112pge.366.1665120507073;
-        Thu, 06 Oct 2022 22:28:27 -0700 (PDT)
-Received: from localhost.localdomain ([106.104.115.142])
-        by smtp.gmail.com with ESMTPSA id f12-20020a170902860c00b00176c0e055f8sm579480plo.64.2022.10.06.22.28.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Oct 2022 22:28:26 -0700 (PDT)
-From:   chengwei <foxfly.lai.tw@gmail.com>
-X-Google-Original-From: chengwei <larry.lai@yunjingtech.com>
-To:     pavel@ucw.cz, lee@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        GaryWang@aaeon.com.tw, musa.lin@yunjingtech.com,
-        jack.chang@yunjingtech.com, chengwei <larry.lai@yunjingtech.com>
-Subject: [PATCH v2 2/2] leds: Add support for UP board CPLD onboard LEDS
-Date:   Fri,  7 Oct 2022 13:25:30 +0800
-Message-Id: <20221007052530.31621-3-larry.lai@yunjingtech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20221007052530.31621-1-larry.lai@yunjingtech.com>
-References: <20221007052530.31621-1-larry.lai@yunjingtech.com>
+        with ESMTP id S229459AbiJGGe1 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 7 Oct 2022 02:34:27 -0400
+X-Greylist: delayed 272 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 06 Oct 2022 23:34:26 PDT
+Received: from smtpout1.mo3004.mail-out.ovh.net (smtpout1.mo3004.mail-out.ovh.net [79.137.123.219])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28997112A95;
+        Thu,  6 Oct 2022 23:34:25 -0700 (PDT)
+Received: from pro2.mail.ovh.net (unknown [10.108.16.48])
+        by mo3004.mail-out.ovh.net (Postfix) with ESMTPS id 939F12430FC;
+        Fri,  7 Oct 2022 06:34:24 +0000 (UTC)
+Received: from [192.168.1.41] (88.161.25.233) by DAG1EX1.emp2.local
+ (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.12; Fri, 7 Oct
+ 2022 08:34:24 +0200
+Message-ID: <6d3d2dfd-4d44-c91a-2145-bae624926259@traphandler.com>
+Date:   Fri, 7 Oct 2022 08:34:23 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [RESEND PATCH v3 4/4] leds: Add a multicolor LED driver to group
+ monochromatic LEDs
+Content-Language: en-US
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <sven.schwermer@disruptive-technologies.com>,
+        <krzysztof.kozlowski+dt@linaro.org>, <johan+linaro@kernel.org>,
+        <marijn.suijten@somainline.org>, <bjorn.andersson@linaro.org>,
+        <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sha@pengutronix.de>
+References: <20220917081339.3354075-1-jjhiblot@traphandler.com>
+ <20220917081339.3354075-5-jjhiblot@traphandler.com>
+ <CAHp75VeAnJQt7kS8UE+OKcqnScYnmHnVvL+QNW6jR=yF0=oMAA@mail.gmail.com>
+From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+In-Reply-To: <CAHp75VeAnJQt7kS8UE+OKcqnScYnmHnVvL+QNW6jR=yF0=oMAA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [88.161.25.233]
+X-ClientProxiedBy: DAG8EX2.emp2.local (172.16.2.82) To DAG1EX1.emp2.local
+ (172.16.2.1)
+X-Ovh-Tracer-Id: 14443044004980013335
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrfeeiiedguddutdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfhisehtkeertddtfeejnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpedvfeekudegkeeuuedvueeuveejffdtvdethfelkefhfefftdetteffiefgvddtieenucfkpheptddrtddrtddrtddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtohepshhhrgesphgvnhhguhhtrhhonhhigidruggvpdfovfetjfhoshhtpehmoheftddtge
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The UP boards come with a few FPGA-controlled onboard LEDs:
-* UP Board: yellow, green, red
-* UP Squared: blue, yellow, green, red
 
-this patch depends on patch "mfd: Add support for UP board CPLD/FPGA"
+On 17/09/2022 10:37, Andy Shevchenko wrote:
+> On Sat, Sep 17, 2022 at 11:14 AM Jean-Jacques Hiblot
+> <jjhiblot@traphandler.com> wrote:
+>> By allowing to group multiple monochrome LED into multicolor LEDs,
+>> all involved LEDs can be controlled in-sync. This enables using effects
+>> using triggers, etc.
+> ...
+>
+>> +config LEDS_GRP_MULTICOLOR
+>> +       tristate "Multi-color LED grouping support"
+>> +       help
+>> +         This option enables support for monochrome LEDs that are
+>> +         grouped into multicolor LEDs.
+> What will be the module name in case of "m" choice?
+>
+> ...
+>
+>> +       struct led_mcg_priv *priv =
+>> +               container_of(mc_cdev, struct led_mcg_priv, mc_cdev);
+> One line?
+>
+> ...
+>
+>> +               /*
+>> +                * Scale the intensity according the max brightness of the
+>> +                * monochromatic LED
+> Usually we put a grammar period at the end of sentences in multi-line comments.
+>
+>> +                */
+> ...
+>
+>> +               actual_led_brightness = DIV_ROUND_CLOSEST(
+>> +                       mono->max_brightness * mc_cdev->subled_info[i].brightness,
+>> +                       mc_cdev->led_cdev.max_brightness);
+> Can you fix an indentation, so it won't leave the line ending by open
+> parenthesis? I believe with the help of a temporary variable it can be
+> easily achieved.
+Could be done but I have no good name for the variable and I think it 
+would just make things harder to understand. In that form I think it is 
+clear that this is a cross-multiplication.
+>
+> ...
+>
+>> +       for (;;) {
+>> +               struct led_classdev *led_cdev;
+>> +               led_cdev = devm_of_led_get(dev, count);
+> Why _of_ variant? Please, make this OF independent since it's
+> pretending to cover not only OF-based systems.
 
-Signed-off-by: chengwei <larry.lai@yunjingtech.com>
----
- drivers/leds/Kconfig        | 10 +++++
- drivers/leds/Makefile       |  1 +
- drivers/leds/leds-upboard.c | 78 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 89 insertions(+)
- create mode 100644 drivers/leds/leds-upboard.c
+This is not OF independent. It could be, but that will wait until 
+someone needs it. I don't know much about ACPI and have no hardware to 
+test it on.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 499d0f215a8b..80b9c394c5b6 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -872,6 +872,16 @@ source "drivers/leds/flash/Kconfig"
- comment "RGB LED drivers"
- source "drivers/leds/rgb/Kconfig"
- 
-+config LEDS_UPBOARD
-+	tristate "LED support for the UP board"
-+	depends on LEDS_CLASS
-+	depends on MFD_UPBOARD_FPGA
-+	help
-+	  This option enables support for the UP board LEDs.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called leds-upboard.
-+
- comment "LED Triggers"
- source "drivers/leds/trigger/Kconfig"
- 
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 4fd2f92cd198..e72956645646 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -83,6 +83,7 @@ obj-$(CONFIG_LEDS_TI_LMU_COMMON)	+= leds-ti-lmu-common.o
- obj-$(CONFIG_LEDS_TLC591XX)		+= leds-tlc591xx.o
- obj-$(CONFIG_LEDS_TPS6105X)		+= leds-tps6105x.o
- obj-$(CONFIG_LEDS_TURRIS_OMNIA)		+= leds-turris-omnia.o
-+obj-$(CONFIG_LEDS_UPBOARD)		+= leds-upboard.o
- obj-$(CONFIG_LEDS_WM831X_STATUS)	+= leds-wm831x-status.o
- obj-$(CONFIG_LEDS_WM8350)		+= leds-wm8350.o
- obj-$(CONFIG_LEDS_WRAP)			+= leds-wrap.o
-diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
-new file mode 100644
-index 000000000000..214325442f3b
---- /dev/null
-+++ b/drivers/leds/leds-upboard.c
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * UP Board FPGA-based LED driver
-+ *
-+ * Copyright (c) 2017, Emutex Ltd. All rights reserved.
-+ *
-+ * Author: Javier Arteaga <javier@emutex.com>
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/leds.h>
-+#include <linux/mfd/upboard-fpga.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+struct upboard_led {
-+	struct led_classdev cdev;
-+	struct regmap_field *field;
-+};
-+
-+static enum led_brightness upboard_led_brightness_get(struct led_classdev *cdev)
-+{
-+	struct upboard_led *led = container_of(cdev, struct upboard_led, cdev);
-+	int brightness = 0;
-+
-+	regmap_field_read(led->field, &brightness);
-+
-+	return brightness;
-+};
-+
-+static void upboard_led_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
-+{
-+	struct upboard_led *led = container_of(cdev, struct upboard_led, cdev);
-+
-+	regmap_field_write(led->field, brightness != LED_OFF);
-+};
-+
-+static int __init upboard_led_probe(struct platform_device *pdev)
-+{
-+	struct upboard_fpga * const up_fpga = dev_get_drvdata(pdev->dev.parent);
-+	struct reg_field fldconf = {
-+		.reg = UPFPGA_REG_FUNC_EN0,
-+	};
-+	struct upboard_led_data * const pdata = pdev->dev.platform_data;
-+	struct upboard_led *led;
-+
-+	led = devm_kzalloc(&pdev->dev, sizeof(*led), GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	fldconf.lsb = pdata->bit;
-+	fldconf.msb = pdata->bit;
-+	led->field = devm_regmap_field_alloc(&pdev->dev, up_fpga->regmap, fldconf);
-+	if (IS_ERR(led->field))
-+		return PTR_ERR(led->field);
-+
-+	led->cdev.brightness_get = upboard_led_brightness_get;
-+	led->cdev.brightness_set = upboard_led_brightness_set;
-+	led->cdev.name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "upboard:%s:",
-+					pdata->colour);
-+	if (!led->cdev.name)
-+		return -ENOMEM;
-+
-+	return devm_led_classdev_register(&pdev->dev, &led->cdev);
-+};
-+
-+static struct platform_driver upboard_led_driver = {
-+	.driver = {
-+		.name = "upboard-led",
-+	},
-+};
-+module_platform_driver_probe(upboard_led_driver, upboard_led_probe);
-+
-+MODULE_AUTHOR("Javier Arteaga <javier@emutex.com>");
-+MODULE_DESCRIPTION("UP Board LED driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:upboard-led");
--- 
-2.17.1
+I'll add the missing  dependency on OF in the Kconfig.
 
+>
+>
+>> +               if (IS_ERR(led_cdev)) {
+>> +                       /* Reached the end of the list ? */
+>> +                       if (PTR_ERR(led_cdev) == -ENOENT)
+>> +                               break;
+> Looks like the above needs an _optional() variant
+>
+>> +                       return dev_err_probe(dev, PTR_ERR(led_cdev),
+>> +                                            "Unable to get led #%d", count);
+>> +               }
+> ...
+>
+>> +               priv->monochromatics = devm_krealloc(dev, priv->monochromatics,
+>> +                                       count * sizeof(*priv->monochromatics),
+>> +                                       GFP_KERNEL);
+> This needs at minimum to use one of the helpers from overflow.h,
+> ideally you may implement devm_krealloc_array() as a suitable wrapper
+> for that.
+>
+>> +               if (!priv->monochromatics)
+>> +                       return -ENOMEM;
+> ...
+>
+>> +       subled = devm_kzalloc(dev, count * sizeof(*subled), GFP_KERNEL);
+> NIH devm_kcalloc()
+>
+>> +       if (!subled)
+>> +               return -ENOMEM;
+> --
+> With Best Regards,
+> Andy Shevchenko
