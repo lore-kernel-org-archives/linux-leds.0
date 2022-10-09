@@ -2,25 +2,26 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9A6C4321E
-	for <linux-leds@archiver.kernel.org>; Sun,  9 Oct 2022 12:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 636C7C4167B
+	for <linux-leds@archiver.kernel.org>; Sun,  9 Oct 2022 12:36:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbiJIMgt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 9 Oct 2022 08:36:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52060 "EHLO
+        id S230042AbiJIMgv (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 9 Oct 2022 08:36:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbiJIMgr (ORCPT
+        with ESMTP id S229721AbiJIMgr (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Sun, 9 Oct 2022 08:36:47 -0400
+X-Greylist: delayed 581 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 09 Oct 2022 05:36:45 PDT
 Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D9D29C8E;
-        Sun,  9 Oct 2022 05:36:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8507329817;
+        Sun,  9 Oct 2022 05:36:45 -0700 (PDT)
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id E7884FB04;
-        Sun,  9 Oct 2022 14:27:02 +0200 (CEST)
+        by honk.sigxcpu.org (Postfix) with ESMTP id 0AE71FB06;
+        Sun,  9 Oct 2022 14:27:00 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id adMfwQC8mj8s; Sun,  9 Oct 2022 14:27:01 +0200 (CEST)
+        with ESMTP id dtKqRKRmQbxk; Sun,  9 Oct 2022 14:26:58 +0200 (CEST)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -41,12 +42,10 @@ To:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
         phone-devel@vger.kernel.org, kernel@puri.sm
-Subject: [PATCH v1 3/3] arm64: dts: librem5-devkit: Use function and color rather than label
-Date:   Sun,  9 Oct 2022 14:26:55 +0200
-Message-Id: <2d249e5fbb3a77a6ca8eb6ecbbf97ac8ce3ef371.1665318256.git.agx@sigxcpu.org>
+Subject: [PATCH v1 0/3] librem5-devkit: Let LED use PWM
+Date:   Sun,  9 Oct 2022 14:26:52 +0200
+Message-Id: <cover.1665318256.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <cover.1665318256.git.agx@sigxcpu.org>
-References: <cover.1665318256.git.agx@sigxcpu.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -54,35 +53,21 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Use predefined colors and function rather than making up a random label.
+So far it used plain GPIO but we can use PWM for brightness control.
+While at that use function and color (it's a single color LED) and
+enable the pattern led trigger to make it more useful.
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
- arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-index 7e4b6d65fd89..4c8904fba1c1 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-@@ -7,6 +7,7 @@
- 
- #include "dt-bindings/input/input.h"
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/leds/common.h>
- #include "dt-bindings/pwm/pwm.h"
- #include "dt-bindings/usb/pd.h"
- #include "imx8mq.dtsi"
-@@ -64,7 +65,8 @@ leds {
- 		compatible = "pwm-leds";
- 
- 		led1 {
--			label = "LED 1";
-+			function = LED_FUNCTION_STATUS;
-+			color = <LED_COLOR_ID_RED>;
- 			max-brightness = <248>;
- 			pwms = <&pwm2 0 50000 0>;
- 		};
+
+Guido Günther (3):
+  arm64: defconfig: Enable pattern LED trigger
+  arm64: dts: librem5-devkit: Make LED use PWM
+  arm64: dts: librem5-devkit: Use function and color rather than label
+
+ .../dts/freescale/imx8mq-librem5-devkit.dts   | 22 ++++++++++++-------
+ arch/arm64/configs/defconfig                  |  1 +
+ 2 files changed, 15 insertions(+), 8 deletions(-)
+
 -- 
 2.35.1
 
