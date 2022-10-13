@@ -2,92 +2,62 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF225C433FE
-	for <linux-leds@archiver.kernel.org>; Tue, 11 Oct 2022 15:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E26C4332F
+	for <linux-leds@archiver.kernel.org>; Thu, 13 Oct 2022 08:11:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231330AbiJKPVE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 11 Oct 2022 11:21:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41128 "EHLO
+        id S229583AbiJMILY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 13 Oct 2022 04:11:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231601AbiJKPUf (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 11 Oct 2022 11:20:35 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08AC3103256;
-        Tue, 11 Oct 2022 08:11:57 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id q18so4523518ils.12;
-        Tue, 11 Oct 2022 08:11:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fPE6YdNFJsCUZV13UErdIMhOkN77t2xv9mCekbIvVC4=;
-        b=KMbLMUFn2VG2LYiJ9W+PH/gy7unQGvh0Sk2YyWuHznrOzChG0yaQ9ttfckmaSQSsw6
-         ESisG+fDNFzIrQL9GcFN94565ygmXQWMZvr5oOaOJfQjJtV3Ve/hgFT41XY8vXdHyD0Q
-         lnF5TatTcRdAExFlGHvy10ELWeJV6HYQ2uT5RQgg7w+mUgwNhMSuiI7UkOq7HL8blqI9
-         U3c+Bhcx45li1nGx1zT4KgVbZEEY0YeiHbmbVfbCTarBAuNCg7iX2+cOfiwvj1sERKzI
-         WTL6zvcrzfY3CJ2DCasLRpReWcqG7o3FKda0u6fibVWSQAF4trBqSayRgN1dUuDJ6bre
-         nuug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fPE6YdNFJsCUZV13UErdIMhOkN77t2xv9mCekbIvVC4=;
-        b=zQLIwdG7egDeKGcEse7ylJgaRDa8lusCusiJjWlxc9190pikcXQaOI3Edru47Hi6/z
-         N88CySm/st6YtzHUdsGP6e0DuZdmtYWLLhxb7yyCmmmGi5afuqCDbRr6ykwOT4gMFomO
-         WqMl0/+hmV9I6srPh3gycJ3KW7WDPIaabb8KUt2HNP7DnPt1O5mXr+v9n1A7kRO3AJsB
-         bsw6l1ecZD4+/GaknmLJ1e2/LC4aalnqcxH2yrZvn0N8HR8Xa4MdkqsGEhyuV6dQkj0f
-         CfY1y2StBBzsLfuwoFwT2Abb7Renx1fpU4lfsFQGcD8hHyhulgu0P/nU2eUX+aRd+OwV
-         CIrA==
-X-Gm-Message-State: ACrzQf0q23GO/2+IqAs5Ru6LrSRPEvTnfSVB8p37QDEqqS+CAcTTT3iQ
-        MlnYn4MXXczMZAIBTjfeZkNDc7Z7cg==
-X-Google-Smtp-Source: AMsMyM4EE7sMIFNWaZrnrcHXc6jDmk7iKy/pADzdJbni79SBqoGzipTTmyPoVFvvSVWAR1svCbQ4XQ==
-X-Received: by 2002:a63:fd09:0:b0:464:4ec8:89b3 with SMTP id d9-20020a63fd09000000b004644ec889b3mr3689583pgh.175.1665500498032;
-        Tue, 11 Oct 2022 08:01:38 -0700 (PDT)
-Received: from localhost.localdomain ([106.104.115.142])
-        by smtp.gmail.com with ESMTPSA id b5-20020a1709027e0500b001754064ac31sm8746695plm.280.2022.10.11.08.01.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Oct 2022 08:01:37 -0700 (PDT)
-From:   chengwei <foxfly.lai.tw@gmail.com>
-X-Google-Original-From: chengwei <larry.lai@yunjingtech.com>
-To:     pavel@ucw.cz, lee@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        GaryWang@aaeon.com.tw, musa.lin@yunjingtech.com,
-        jack.chang@yunjingtech.com, chengwei <larry.lai@yunjingtech.com>
-Subject: [PATCH v3 0/2] Add support control UP board CPLD onboard LEDS
-Date:   Tue, 11 Oct 2022 23:00:58 +0800
-Message-Id: <20221011150100.10195-1-larry.lai@yunjingtech.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S229615AbiJMILX (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Oct 2022 04:11:23 -0400
+Received: from mail.fadrush.pl (mail.fadrush.pl [54.37.225.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3BECD2CD7
+        for <linux-leds@vger.kernel.org>; Thu, 13 Oct 2022 01:11:22 -0700 (PDT)
+Received: by mail.fadrush.pl (Postfix, from userid 1002)
+        id 63DE223C6C; Thu, 13 Oct 2022 08:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fadrush.pl; s=mail;
+        t=1665648681; bh=bD6j9gIFU6CLTaCGl0Ow9oeIxtirvTfMeNZSfLEZQ+I=;
+        h=Date:From:To:Subject:From;
+        b=Ew6ZMTW13wiR882DW0WEPYk2ixyZF08mfsqeHT6C7sFpgsLOdxcLcoT3w9Tyk23bM
+         IkDPns0F98D0orQ+OdHx92kqEt5bZOp7bomvpGsA/zDp780hGNKbMytMHwxc8N5tDl
+         2glRvULJReKbHHwy4E2v62PKCWVR3tcO20eb160HOC8ow6oCTgAcKCnAb9DlD2LDeI
+         NfCo2/9fgxFWDceiNidT+PALCO2jx0nZJvtwdCaj+ib6MAcLJlb14RJpD86bgn5N3z
+         1CkqYCLh6hzpN7jnNGOEcHMqguNxGhFk/Gu3Qd98eJM5ZLR9D/8uZAnTYQ3ou4baxN
+         yzazOx/jEgGYQ==
+Received: by mail.fadrush.pl for <linux-leds@vger.kernel.org>; Thu, 13 Oct 2022 08:11:04 GMT
+Message-ID: <20221013064500-0.1.27.lxkw.0.enhk6rfqh8@fadrush.pl>
+Date:   Thu, 13 Oct 2022 08:11:04 GMT
+From:   "Jakub Olejniczak" <jakub.olejniczak@fadrush.pl>
+To:     <linux-leds@vger.kernel.org>
+Subject: =?UTF-8?Q?Zwi=C4=99kszenie_p=C5=82ynno=C5=9Bci_finansowej?=
+X-Mailer: mail.fadrush.pl
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The UP board <http://www.upboard.com> is the computer board for 
-Professional Makers and Industrial Applications. We want to upstream 
-the UP board 40-pin GP-bus Kernel driver for giving the users better 
-experience on the software release. (not just download from UP board 
-github)
+Dzie=C5=84 dobry,
 
-These patches are generated from the Linux kernel mainline tag v6.0.
-PATCH v3 fixed the auto build test ERROR on ARCH=arm64 or ARCH=mips.
+kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC chcia=C5=82bym za=
+proponowa=C4=87 wygodne rozwi=C4=85zanie, kt=C3=B3re umo=C5=BCliwi Pa=C5=84=
+stwa firmie stabilny rozw=C3=B3j.=20
 
-chengwei (2):
-  mfd: Add support for UP board CPLD/FPGA
-  leds: Add support for UP board CPLD onboard LEDS
+Konkurencyjne otoczenie wymaga ci=C4=85g=C5=82ego ulepszania i poszerzeni=
+a oferty, co z kolei wi=C4=85=C5=BCe si=C4=99 z konieczno=C5=9Bci=C4=85 i=
+nwestowania. Brak odpowiedniego kapita=C5=82u powa=C5=BCnie ogranicza tem=
+po rozwoju firmy.
 
- drivers/leds/Kconfig             |  11 +
- drivers/leds/Makefile            |   1 +
- drivers/leds/leds-upboard.c      |  78 +++++
- drivers/mfd/Kconfig              |  12 +
- drivers/mfd/Makefile             |   1 +
- drivers/mfd/upboard-fpga.c       | 482 +++++++++++++++++++++++++++++++
- include/linux/mfd/upboard-fpga.h |  49 ++++
- 7 files changed, 634 insertions(+)
- create mode 100644 drivers/leds/leds-upboard.c
- create mode 100644 drivers/mfd/upboard-fpga.c
- create mode 100644 include/linux/mfd/upboard-fpga.h
+Od wielu lat z powodzeniem pomagam firmom w uzyskaniu najlepszej formy fi=
+nansowania z banku oraz UE. Mam sta=C5=82ych Klient=C3=B3w, kt=C3=B3rzy n=
+adal ch=C4=99tnie korzystaj=C4=85 z moich us=C5=82ug, a tak=C5=BCe poleca=
+j=C4=85 je innym.
+
+Czy chcieliby Pa=C5=84stwo skorzysta=C4=87 z pomocy wykwalifikowanego i d=
+o=C5=9Bwiadczonego doradcy finansowego?
 
 
-base-commit: 4fe89d07dcc2804c8b562f6c7896a45643d34b2f
--- 
-2.17.1
-
+Pozdrawiam
+Jakub Olejniczak
