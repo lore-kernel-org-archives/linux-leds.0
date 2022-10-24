@@ -2,108 +2,116 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5D6ECAAA1
-	for <linux-leds@archiver.kernel.org>; Mon, 24 Oct 2022 13:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87707C38A2D
+	for <linux-leds@archiver.kernel.org>; Mon, 24 Oct 2022 14:30:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235476AbiJXNIY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 24 Oct 2022 09:08:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58538 "EHLO
+        id S236184AbiJXOag (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 24 Oct 2022 10:30:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235480AbiJXNH0 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 24 Oct 2022 09:07:26 -0400
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22DC79AFFB;
-        Mon, 24 Oct 2022 05:21:09 -0700 (PDT)
-Received: by mail-pg1-f173.google.com with SMTP id r18so8498272pgr.12;
-        Mon, 24 Oct 2022 05:21:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HjYrkoNn/w9eCU7yrVbjTDIZhBvPD6ZScXpgw+5hr9c=;
-        b=jmeE2A9PVXonUBLYE7PJ3793dNwil86xAYE9ljfjd4t7qocg4X07EmUOSvkoi4GWGg
-         3j7buNCyCfdU5fd4gxgIr6A7CxvUQbD/Zx1vuS2ckTB8oZxX4qQf9zGjUtYY8MuHN2NG
-         KsByZ0HVvYKE6ftkVe10Iydy36VWtFpm4iwamAw4tUPqdUzqLF8xPEAro1qVFWflaBX2
-         e94veiUelAor5mzz64bjMgHnN6tXsJBP6hApA2LPApkRiMHl44NyQUR/zmZ7edBiaLoF
-         WU6zsVkKbCV1MyLiT+x7ZXHIaw7e68CK+CjLXpn0zFsTXD6Z/nswLva84gPZ47LRHqkX
-         diSg==
+        with ESMTP id S234904AbiJXO2v (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 24 Oct 2022 10:28:51 -0400
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ED92D73C2;
+        Mon, 24 Oct 2022 06:02:17 -0700 (PDT)
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-13b23e29e36so10999254fac.8;
+        Mon, 24 Oct 2022 06:02:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HjYrkoNn/w9eCU7yrVbjTDIZhBvPD6ZScXpgw+5hr9c=;
-        b=Zyqg3oLXaCc20ECid6x4dwOrAAXNDSBlpKkr0qFw50QRitZ9/SgZfrfQq8SzBdspZM
-         joVYb6/djrw9Tu4kzksBQUAE8E3FwqiXiE+RwfLhYFJl1yKACIQJFZ9NQ5ZZz/GLgSyk
-         VW0inUQSDx+Z8ZpuJZzNYnu7FCtkGkhp1rgUwo2uRzut2IxJWIZn4BlG16/PMXoYNqJ9
-         +rXauJ2Jpu/CDgPQKDmiXlZS/koKkG9uKzaNKDy/WYxmtaCLb0YIjR9b1Y7aLN/ZJ58f
-         Hs1MjbavJAyqdfZmEVIY3Vh8zVs3KB4Zv/q9o4YtIabVgNH7eq38U8WE3BsaOtg1aDvM
-         XbMg==
-X-Gm-Message-State: ACrzQf1dCUM3YM+MQeC8or7JtEma/+jG3vdcuHASMKo8HPeuOmkF5MbA
-        u0mdgT8MDhMLS1dmbL6LlOI=
-X-Google-Smtp-Source: AMsMyM7OHnkxizf4KJ+aeemoWL1KT/VYuEttV1wJurdoHjrLQOkzJDccbujMlxPQq6ufJAVJVVSMIQ==
-X-Received: by 2002:a05:6a00:891:b0:565:85a7:a6e with SMTP id q17-20020a056a00089100b0056585a70a6emr32632316pfj.21.1666613891886;
-        Mon, 24 Oct 2022 05:18:11 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:3698:60f8:9964:1fb4])
-        by smtp.gmail.com with ESMTPSA id y9-20020aa793c9000000b0056bfd387c97sm549994pff.39.2022.10.24.05.18.10
+        bh=p+x9joGdXdBFLPPxN1p6d7/jrm+b1E7zu0ZikUl9XbM=;
+        b=kN4xIs/QEGJ+oT9qrn2OjPi/N6FcvGH6BvACP76blbVF103TXYi+7qEU5tINWQ+OJz
+         dApYzrcvxoO2ZIXOFTxb7h3JgOvX67e53Ux9I2wwMvKPIJrbpeDZZobSiNgXQhwqMaF/
+         R3ztR06WTPRqxKei/NzyOWyK9tZuNZ0Cm15uInIPmFb7tUxRSre+3lm52uo1EfezpHK9
+         o9VNCRaweqKifLKL/48NiILy3trNo3072uYGiXhEVisoQwGcZ30ghYt4hAv1vlMBiN/X
+         ltLvQXpHTYGfKkWtuOvorD19U4Zbzkwzp6qZaLG5THbYH133b9fRVRaPubb8xH2WHVbL
+         oPdg==
+X-Gm-Message-State: ACrzQf3i7XkzH7UpZj1xKGIMrADeoCGwSUDmJj0hXhqGuTa4oC2Svjr2
+        vms3XoPp+qtUCiVrBxssV68CXNLJaw==
+X-Google-Smtp-Source: AMsMyM4RB1x55W7tWXLqKMCfn9+yNGKoyP28eeDXqoWuK46CSg7FurAIxSSG6961lNUtLuCZU2W88g==
+X-Received: by 2002:a05:6870:e9a8:b0:133:223f:49a1 with SMTP id r40-20020a056870e9a800b00133223f49a1mr38235091oao.114.1666616434841;
+        Mon, 24 Oct 2022 06:00:34 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id g20-20020a056870c15400b0012796e8033dsm2716705oad.57.2022.10.24.06.00.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 05:18:11 -0700 (PDT)
-Date:   Mon, 24 Oct 2022 05:18:08 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] Get rid of
- devm_fwnode_get_[index_]gpiod_from_child()
-Message-ID: <Y1aCgJihNIqExUR2@google.com>
-References: <20220902-get_gpiod_from_child-remove-v1-0-1e47125df20f@gmail.com>
- <YyzYKmsjKflqT1xZ@google.com>
+        Mon, 24 Oct 2022 06:00:34 -0700 (PDT)
+Received: (nullmailer pid 1652638 invoked by uid 1000);
+        Mon, 24 Oct 2022 13:00:35 -0000
+Date:   Mon, 24 Oct 2022 08:00:35 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        patches@opensource.cirrus.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-watchdog@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 00/21] ARM: s3c: clean out obsolete platforms
+Message-ID: <20221024130035.GA1645003-robh@kernel.org>
+References: <20221021202254.4142411-1-arnd@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YyzYKmsjKflqT1xZ@google.com>
+In-Reply-To: <20221021202254.4142411-1-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, Sep 22, 2022 at 02:48:26PM -0700, Dmitry Torokhov wrote:
-> Hi Pavel, Marek,
+On Fri, Oct 21, 2022 at 10:22:28PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> On Fri, Sep 02, 2022 at 05:55:24PM -0700, Dmitry Torokhov wrote:
-> > This drops the last uses of devm_fwnode_get_[index_]gpiod_from_child()
-> > from the tree and drops the stubs implementing this API on top of
-> > devm_fwnode_gpiod_get_index().
-> > 
-> > Note that the bulk of users were converted in 2019, the couple of LED
-> > drivers are all that have remained.
-> > 
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > 
-> > ---
-> > Dmitry Torokhov (3):
-> >       leds: gpio: switch to using devm_fwnode_gpiod_get()
-> >       leds: lgm-sso: switch to using devm_fwnode_gpiod_get()
-> >       gpiolib: remove devm_fwnode_get_[index_]gpiod_from_child()
-> > 
-> >  drivers/leds/blink/leds-lgm-sso.c |  5 ++---
-> >  drivers/leds/leds-gpio.c          |  5 ++---
-> >  include/linux/gpio/consumer.h     | 21 ---------------------
-> >  3 files changed, 4 insertions(+), 27 deletions(-)
-> > ---
-> > base-commit: 7fd22855300e693668c3397771b3a2b3948f827a
-> > change-id: 20220902-get_gpiod_from_child-remove-a62638849e91
-> > 
+> The s3c24xx platform was marked as deprecated a while ago,
+> and for the s3c64xx platform, we marked all except one legacy
+> board file as unused.
 > 
-> Could you please consider picking this up for 6.1? Or would you be OK
-> with this going through other tree (GPIO maybe)?
+> This series removes all of those, leaving only s3c64xx support
+> for DT based boots as well as the cragg6410 board file.
+> 
+> About half of the s3c specific drivers were only used on
+> the now removed machines, so these drivers can be retired
+> as well. I can either merge the driver removal patches through
+> the soc tree along with the board file patches, or subsystem
+> maintainers can pick them up into their own trees, whichever
+> they prefer.
 
-*ping* Could this go through GPIO tree? Dropping this API helps with
-some outstanding work that I have...
+[...]
 
-Thanks.
+>  Documentation/arm/index.rst                   |    1 -
+>  Documentation/arm/samsung-s3c24xx/cpufreq.rst |   77 -
+>  .../arm/samsung-s3c24xx/eb2410itx.rst         |   59 -
+>  Documentation/arm/samsung-s3c24xx/gpio.rst    |  172 --
+>  Documentation/arm/samsung-s3c24xx/h1940.rst   |   41 -
+>  Documentation/arm/samsung-s3c24xx/index.rst   |   20 -
+>  Documentation/arm/samsung-s3c24xx/nand.rst    |   30 -
+>  .../arm/samsung-s3c24xx/overview.rst          |  311 ---
+>  Documentation/arm/samsung-s3c24xx/s3c2412.rst |  121 -
+>  Documentation/arm/samsung-s3c24xx/s3c2413.rst |   22 -
+>  .../arm/samsung-s3c24xx/smdk2440.rst          |   57 -
+>  Documentation/arm/samsung-s3c24xx/suspend.rst |  137 --
+>  .../arm/samsung-s3c24xx/usb-host.rst          |   91 -
+>  Documentation/arm/samsung/overview.rst        |   13 -
 
--- 
-Dmitry
+What about?:
+
+Documentation/devicetree/bindings/clock/samsung,s3c2410-clock.txt
+Documentation/devicetree/bindings/interrupt-controller/samsung,s3c24xx-irq.txt
+Documentation/devicetree/bindings/mmc/samsung,s3cmci.txt
+Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+Documentation/devicetree/bindings/usb/s3c2410-usb.txt
+
+Rob
