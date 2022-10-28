@@ -2,149 +2,101 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84CE2FA3748
-	for <linux-leds@archiver.kernel.org>; Fri, 28 Oct 2022 17:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 636F1C38A02
+	for <linux-leds@archiver.kernel.org>; Fri, 28 Oct 2022 22:07:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231225AbiJ1REn (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 28 Oct 2022 13:04:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43432 "EHLO
+        id S229959AbiJ1WHd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 28 Oct 2022 18:07:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231277AbiJ1REM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 28 Oct 2022 13:04:12 -0400
-Received: from smtpout1.mo528.mail-out.ovh.net (smtpout1.mo528.mail-out.ovh.net [46.105.34.251])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3C9918B19;
-        Fri, 28 Oct 2022 10:03:28 -0700 (PDT)
-Received: from pro2.mail.ovh.net (unknown [10.108.20.246])
-        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id CFFAD136331AA;
-        Fri, 28 Oct 2022 19:03:26 +0200 (CEST)
-Received: from localhost.localdomain (88.161.25.233) by DAG1EX1.emp2.local
- (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.13; Fri, 28 Oct
- 2022 19:03:26 +0200
-From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-To:     <lee.jones@linaro.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <sven.schwermer@disruptive-technologies.com>,
-        <krzysztof.kozlowski+dt@linaro.org>
-CC:     <johan+linaro@kernel.org>, <marijn.suijten@somainline.org>,
-        <bjorn.andersson@linaro.org>, <andy.shevchenko@gmail.com>,
-        <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Subject: [PATCH v5 4/6] leds: class: store the color index in struct led_classdev
-Date:   Fri, 28 Oct 2022 19:03:06 +0200
-Message-ID: <20221028170308.2676734-5-jjhiblot@traphandler.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221028170308.2676734-1-jjhiblot@traphandler.com>
-References: <20221028170308.2676734-1-jjhiblot@traphandler.com>
+        with ESMTP id S230037AbiJ1WHU (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 28 Oct 2022 18:07:20 -0400
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B39A224D880
+        for <linux-leds@vger.kernel.org>; Fri, 28 Oct 2022 15:07:19 -0700 (PDT)
+Received: by mail-qv1-xf2c.google.com with SMTP id mi9so4962774qvb.8
+        for <linux-leds@vger.kernel.org>; Fri, 28 Oct 2022 15:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l4Zjzz+NmO6ZHHFaizEHCjrG04Xj0VbUFmDsHVrZ9aU=;
+        b=c4nDWMablbhQJCxDEPvgkxypSIQLq4xcT3gmYe+nK6OTGhNY2Zs7Bgsqtm4O/X4ARV
+         yyIfgh3doG28AvK52GL9kW1jyEs5Y/yCN9afEoKZ/sXD/M4/L96Idojf52gCL86lqnzi
+         ilK/0+BQGchPX2PRvQMgnbaryCSBhc78Jf+rHpsR1PlHxuAh4DxSV+YvqMd3NNR5kldW
+         Ij+Ffn3jV7ZGomF3l7PRSZLyzmsdl/pPCblv8Fr4gWHOZa0x1k2lvwugbULp/Z+MkJWw
+         smF6wiUEMmDg7MguA6JBrvarjDBgF4+oVgVYE9o24y+bmYUWgrV5sYpiIXJbrVjkMuKi
+         Fixw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l4Zjzz+NmO6ZHHFaizEHCjrG04Xj0VbUFmDsHVrZ9aU=;
+        b=UoJ+Wp9xOyBIhKOrkFfigYO1QO1cB7soOGvCzJoXxS8wXdQZ8c0xEmRvo9PWKHw1v+
+         GwMJYmwCPsXV/H4CAk/QimSkXNs+ArerqXJ+yAJfWmR2DsmxsohihEBtqPFUBmZmp0C2
+         qTD+b2IrusrF6O0c6KUJr4VqLCjZxePzKr0EhvQEzgO8/EVk5xe4jJ1AplGW5BqiDppa
+         BiUSH52xKZ/gu/vnnSuIKLkJbAbUpw/sv7dLPI0q412DvKLrHhDSFCQ/o5OIMyPR5b9P
+         Lx7c1jYdvYLfUdVl5c1XZ6Ou0lvrEwiZealbqKe/8VmlSL0A1EBx4XrsEdkADu5XxA3J
+         B6Vw==
+X-Gm-Message-State: ACrzQf0eBj2WVv1UBnWA7KIVMupcVbSlfhjQPwtMvmNOHD+CW09shONC
+        jaDdixPLYzgcbFkMsmbrs9/3EQ==
+X-Google-Smtp-Source: AMsMyM7qdsCaCR3n2UT1c8MifaiLfbwiITEqLguFAdOAnkkneQ5LNEJtabdAtXUtryo2KVicgQHefA==
+X-Received: by 2002:a05:6214:c2a:b0:4ba:170c:1929 with SMTP id a10-20020a0562140c2a00b004ba170c1929mr1435139qvd.21.1666994838746;
+        Fri, 28 Oct 2022 15:07:18 -0700 (PDT)
+Received: from [192.168.1.11] ([64.57.193.93])
+        by smtp.gmail.com with ESMTPSA id br16-20020a05620a461000b006bbb07ebd83sm3701555qkb.108.2022.10.28.15.07.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Oct 2022 15:07:18 -0700 (PDT)
+Message-ID: <34c4037b-d152-412d-e551-dd3ea27b6b46@linaro.org>
+Date:   Fri, 28 Oct 2022 18:07:16 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [88.161.25.233]
-X-ClientProxiedBy: DAG2EX2.emp2.local (172.16.2.12) To DAG1EX1.emp2.local
- (172.16.2.1)
-X-Ovh-Tracer-Id: 819092182736124379
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvgedrtdeigddutdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucenucfjughrpefhvfevufffkffojghfggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeduteevleevvefggfdvueffffejhfehheeuiedtgedtjeeghfehueduudegfeefueenucfkphepuddvjedrtddrtddruddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhgvvgdrjhhonhgvsheslhhinhgrrhhordhorhhgpdhprghvvghlsehutgifrdgtiidprhhosghhodgutheskhgvrhhnvghlrdhorhhgpdhsvhgvnhdrshgthhifvghrmhgvrhesughishhruhhpthhivhgvqdhtvggthhhnohhlohhgihgvshdrtghomhdpkhhriiihshiithhofhdrkhhoiihlohifshhkihdoughtsehlihhnrghrohdrohhrghdpjhhohhgrnhdolhhinhgrrhhosehkvghrnhgvlhdrohhrghdpmhgrrhhijhhnrdhsuhhijhhtvghnsehsohhmrg
- hinhhlihhnvgdrohhrghdpsghjohhrnhdrrghnuggvrhhsshhonheslhhinhgrrhhordhorhhgpdgrnhguhidrshhhvghvtghhvghnkhhosehgmhgrihhlrdgtohhmpdhjrggtvghkrdgrnhgrshiivgifshhkihesghhmrghilhdrtghomhdplhhinhhugidqlhgvughssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehvdekpdhmohguvgepshhmthhpohhuth
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH 1/2] dt-bindings: leds-lp55xx: add ti,disable-charge-pump
+Content-Language: en-US
+To:     Maarten Zanders <maarten.zanders@mind.be>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20221028133501.95833-1-maarten.zanders@mind.be>
+ <20221028133501.95833-2-maarten.zanders@mind.be>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221028133501.95833-2-maarten.zanders@mind.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This information might be useful for more than only deriving the led's
-name. And since we have this information, we can expose it in the sysfs.
+On 28/10/2022 09:34, Maarten Zanders wrote:
+> Add a binding to disable the internal charge pump for lp55xx.
+> 
+> Signed-off-by: Maarten Zanders <maarten.zanders@mind.be>
+> ---
+>  Documentation/devicetree/bindings/leds/leds-lp55xx.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+> index 7ec676e53851..9eb8d1017402 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+> +++ b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+> @@ -64,6 +64,11 @@ properties:
+>    '#size-cells':
+>      const: 0
+>  
+> +  ti,disable-charge-pump:
+> +    description: |
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
----
- Documentation/ABI/testing/sysfs-class-led |  9 +++++++++
- drivers/leds/led-class.c                  | 20 ++++++++++++++++++++
- include/linux/leds.h                      |  1 +
- 3 files changed, 30 insertions(+)
+Drop |
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 2e24ac3bd7ef..e3ae9111b70d 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -59,6 +59,15 @@ Description:
- 		brightness. Reading this file when no hw brightness change
- 		event has happened will return an ENODATA error.
- 
-+What:		/sys/class/leds/<led>/color
-+Date:		October 2022
-+KernelVersion:	6.1
-+Description:
-+		Color of the led.
-+
-+		This is a read-only file. Reading this file returns the color
-+		of the led as a string (ex: "red", "green").
-+
- What:		/sys/class/leds/<led>/trigger
- Date:		March 2006
- KernelVersion:	2.6.17
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 9cddcd908bce..4432e85a5fc6 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -74,6 +74,18 @@ static ssize_t max_brightness_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(max_brightness);
- 
-+static ssize_t color_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	const char *color_text = "invalid";
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+
-+	if (led_cdev->color < LED_COLOR_ID_MAX)
-+		color_text = led_colors[led_cdev->color];
-+	return sysfs_emit(buf, "%s\n", color_text);
-+}
-+static DEVICE_ATTR_RO(color);
-+
- #ifdef CONFIG_LEDS_TRIGGERS
- static BIN_ATTR(trigger, 0644, led_trigger_read, led_trigger_write, 0);
- static struct bin_attribute *led_trigger_bin_attrs[] = {
-@@ -88,6 +100,7 @@ static const struct attribute_group led_trigger_group = {
- static struct attribute *led_class_attrs[] = {
- 	&dev_attr_brightness.attr,
- 	&dev_attr_max_brightness.attr,
-+	&dev_attr_color.attr,
- 	NULL,
- };
- 
-@@ -375,6 +388,10 @@ int led_classdev_register_ext(struct device *parent,
- 			if (fwnode_property_present(init_data->fwnode,
- 						    "retain-state-shutdown"))
- 				led_cdev->flags |= LED_RETAIN_AT_SHUTDOWN;
-+
-+			if (fwnode_property_present(init_data->fwnode, "color"))
-+				fwnode_property_read_u32(init_data->fwnode, "color",
-+							 &led_cdev->color);
- 		}
- 	} else {
- 		proposed_name = led_cdev->name;
-@@ -384,6 +401,9 @@ int led_classdev_register_ext(struct device *parent,
- 	if (ret < 0)
- 		return ret;
- 
-+	if (led_cdev->color >= LED_COLOR_ID_MAX)
-+		dev_warn(parent, "LED %s color identifier out of range\n", final_name);
-+
- 	mutex_init(&led_cdev->led_access);
- 	mutex_lock(&led_cdev->led_access);
- 	led_cdev->dev = device_create_with_groups(leds_class, parent, 0,
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 41df18f42d00..9d38cb90331d 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -71,6 +71,7 @@ struct led_classdev {
- 	const char		*name;
- 	unsigned int brightness;
- 	unsigned int max_brightness;
-+	unsigned int color;
- 	int			 flags;
- 
- 	/* Lower 16 bits reflect status */
--- 
-2.25.1
+> +      Disable the internal charge pump.
+
+Does it mean that it is enabled by default?
+
+Best regards,
+Krzysztof
 
