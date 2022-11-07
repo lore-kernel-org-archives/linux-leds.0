@@ -2,74 +2,57 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE33C43219
-	for <linux-leds@archiver.kernel.org>; Mon,  7 Nov 2022 09:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31169C4332F
+	for <linux-leds@archiver.kernel.org>; Mon,  7 Nov 2022 09:22:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230449AbiKGJTq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 7 Nov 2022 04:19:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47176 "EHLO
+        id S231700AbiKGJWh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 7 Nov 2022 04:22:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230340AbiKGJTp (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 7 Nov 2022 04:19:45 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB5466477;
-        Mon,  7 Nov 2022 01:19:44 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6ACB960F46;
-        Mon,  7 Nov 2022 09:19:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2455C433D6;
-        Mon,  7 Nov 2022 09:19:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667812783;
-        bh=6Nx7JDwmY/apf1WMX6YISTNpp3UAtiSL9C8XwycAYTU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lO0/lhqbioWDTQ/5vtK84wlT34ZgObkWs9sKdEuTkY8BNneqaclvfW3i3qsuPEXyp
-         bMl6PpxFyQU1l8pfYzdAthVgWTQVgd1CUFOuom31C2owGUBUbctk9cmQRQHwv/o6Wj
-         +Cdh7jISPD2SWN4GZfCuaoIIvUFrFZ5pVw0un7uhoygpZLLfMx2C75dwYMDpFBQObW
-         UMMXML2+UoRUX1Fujk1WhMTrGBlMX45qcOEFuc5IxIvixDO0aBwE3q3J7ZYPVYty9H
-         g8ZPR9if40EI8Dx9dZaJhGZQRcMbR2olZ7MejPt72Z9j55X+gOOVnshEJEHU0Ul3kN
-         r+LCCU5RQBkpw==
-Date:   Mon, 7 Nov 2022 09:19:36 +0000
-From:   Lee Jones <lee@kernel.org>
-To:     Luca Weiss <luca@z3ntu.xyz>
-Cc:     linux-arm-msm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Kiran Gunda <kgunda@codeaurora.org>,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: backlight: qcom-wled: Add PMI8950
- compatible
-Message-ID: <Y2jNqChLjixM9grL@google.com>
-References: <20221101161801.1058969-1-luca@z3ntu.xyz>
+        with ESMTP id S231751AbiKGJWa (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 7 Nov 2022 04:22:30 -0500
+X-Greylist: delayed 986 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Nov 2022 01:22:23 PST
+Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7660F1758D
+        for <linux-leds@vger.kernel.org>; Mon,  7 Nov 2022 01:22:23 -0800 (PST)
+Received: by mail.lokoho.com (Postfix, from userid 1001)
+        id A12E9824CD; Mon,  7 Nov 2022 09:05:54 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
+        t=1667811955; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
+        h=Date:From:To:Subject:From;
+        b=HlSB3bws4G2LpW+6OqPwE80f4u6ZpchPA3hFdcPEaYUYXu5olX+6mrgXjR/fyUL9I
+         G4FWAW3iJbB4gCFaK2H5dUrHndb6y5timKigvT1r3NEd0/WwZFBneHwijnuqP6s6tt
+         UV3vVSvZ/ZJAxJOJIPmdUBBULVCGkITjANzemVuiBGS5riqeT+LiVRLl+uANKiTe4r
+         1WXfWX7znnd8FBNV36IYlDhgCCaZ2kyvWDduHWOwbyOKo26vxSslR8FRku55Jtntw7
+         Hk8YUfyk5BvV+tZpaN4LZNnyhZ09BCQZZXfvIt12HJqLahBAK8CblEB978D+3M6gXy
+         2OVtODYWjNwDA==
+Received: by mail.lokoho.com for <linux-leds@vger.kernel.org>; Mon,  7 Nov 2022 09:05:51 GMT
+Message-ID: <20221107074500-0.1.23.5lb1.0.0fjnc7ojba@lokoho.com>
+Date:   Mon,  7 Nov 2022 09:05:51 GMT
+From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
+To:     <linux-leds@vger.kernel.org>
+Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
+X-Mailer: mail.lokoho.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221101161801.1058969-1-luca@z3ntu.xyz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Tue, 01 Nov 2022, Luca Weiss wrote:
+Dzie=C5=84 dobry,
 
-> Document the compatible for the wled block found in PMI8950.
-> 
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> ---
-> Changes since v2:
-> * New patch
-> 
->  Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml | 1 +
->  1 file changed, 1 insertion(+)
+zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
+=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
+o dalszych rozm=C3=B3w.=20
 
-Applied, thanks.
+Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
+=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
+=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
+strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
 
--- 
-Lee Jones [李琼斯]
+Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
+
+
+Pozdrawiam
+Adam Charachuta
