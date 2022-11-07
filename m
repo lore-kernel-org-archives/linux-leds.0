@@ -2,152 +2,74 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240E6C4332F
-	for <linux-leds@archiver.kernel.org>; Mon,  7 Nov 2022 05:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE33C43219
+	for <linux-leds@archiver.kernel.org>; Mon,  7 Nov 2022 09:19:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230371AbiKGFc7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 7 Nov 2022 00:32:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51914 "EHLO
+        id S230449AbiKGJTq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 7 Nov 2022 04:19:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230373AbiKGFc4 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 7 Nov 2022 00:32:56 -0500
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69E3E11C3A;
-        Sun,  6 Nov 2022 21:32:54 -0800 (PST)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id C0C7B5C009C;
-        Mon,  7 Nov 2022 00:32:53 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Mon, 07 Nov 2022 00:32:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1667799173; x=1667885573; bh=1R
-        1DZWFpevQOPZqRZc5KNPqt9efV8bhbezth/9NJtpE=; b=Gg+w8T8k542hNjDfF+
-        Y4Qam2g8iLx0wbeCR7AvL3JyAwDPhRo8yifrbgPx5OoN7qdeNEA52OdrSyt9exzh
-        W4je62AQhNBiSxwvJYa3clzYqgkV5wu/OqRZKA+kHW7XbhnReavPCv/usrrHp/Nv
-        be2WMq1fL36YaWte0wtoCC8srPWOYUXdgKzXcOdyatG7xyEjt5EaGKOy8a45nLzD
-        FsSkikp9z1jD6fuxk5Awgy/suGvO4dce3h3J7tifdFaQJ7VQ1hRSgL5B/UYFiuP7
-        Xd31l8zHD58qDNkqx296Sby1ZQArlWDH8mvziZc9FhemxO1UVHhtQNBPQAN3Z79J
-        zHWw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1667799173; x=1667885573; bh=1R1DZWFpevQOP
-        ZqRZc5KNPqt9efV8bhbezth/9NJtpE=; b=rdSZ54j03yQXR0iGz2I46xGiiN/ik
-        +cfFAJfVs63SKGunbM2NN6CagaPr9UQfhszcSjsGLeH+6bULAQEiSwXFHtNcF0f+
-        nnHhhTh/58bAFThEbZm54STILR/rLIh7FItj+RerUp3XQyuL0ucY3TwPRfy9J8XD
-        rgWrFG8D4iiSdZqLVCrdJMbs4a8kbaJ0+lU6cA29P2Wr+9iWB+P1yRNlrwr44y0e
-        mYrplczkCHrdc+2nBp7dB3qtn+nLsi/H//Wv1oLjdVIlwf2AFVX6HQO/UCggKSqb
-        50h+XNUcgYTxB6Qb60ch98Bnm4JfxhsRmvgtT7LP5Ebel9cG+xPPk3D2Q==
-X-ME-Sender: <xms:hZhoY874sQhBxAyrd3mxeMVIIpAIdYZIBphdGkdAZVv3OdQ2w5HXkA>
-    <xme:hZhoY94fLuNpR77jXw9Byh7N7QJXs_4nJcVtQkwL8_e6fNfbmk0UMVDSvAvdhM9ss
-    sQuus3QFm72OULfkw>
-X-ME-Received: <xmr:hZhoY7ddTQfVid788C0M7kHcjA6gbLxOgyNSKpVNaqkivA6oUB7nK7RRQt12Rz5HO0W5n5a4Fgi-rtNsFFeITN_Znu5cLwvpK6OaEJOJXNInIYtk0yYTQ5OIvuVlfkbe_SbJEQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrvdejgdekgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtf
-    frrghtthgvrhhnpedukeetueduhedtleetvefguddvvdejhfefudelgfduveeggeehgfdu
-    feeitdevteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:hZhoYxK9uvmz--Yi5iye4BRUxnrwpyZhO1fdGqjBEaKbzbTUsemfAg>
-    <xmx:hZhoYwJxPD-IRbarLtBLMJenVKw4K2-2ey4ywbV60_JyUbS9cIu1kQ>
-    <xmx:hZhoYyyGAqX8ITqrrY4uRKOwhiSXjpvim7MOmYshwum7texqQGvHpw>
-    <xmx:hZhoY5pd963Yrtfe8AfbWYSgdLCdPEtXDFyObVKUhosuP6khnIQPZQ>
-Feedback-ID: i0ad843c9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 7 Nov 2022 00:32:53 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v6 5/5] riscv: dts: allwinner: d1: Add RGB LEDs to boards
-Date:   Sun,  6 Nov 2022 23:32:46 -0600
-Message-Id: <20221107053247.1180-6-samuel@sholland.org>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20221107053247.1180-1-samuel@sholland.org>
-References: <20221107053247.1180-1-samuel@sholland.org>
+        with ESMTP id S230340AbiKGJTp (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 7 Nov 2022 04:19:45 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB5466477;
+        Mon,  7 Nov 2022 01:19:44 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6ACB960F46;
+        Mon,  7 Nov 2022 09:19:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2455C433D6;
+        Mon,  7 Nov 2022 09:19:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667812783;
+        bh=6Nx7JDwmY/apf1WMX6YISTNpp3UAtiSL9C8XwycAYTU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lO0/lhqbioWDTQ/5vtK84wlT34ZgObkWs9sKdEuTkY8BNneqaclvfW3i3qsuPEXyp
+         bMl6PpxFyQU1l8pfYzdAthVgWTQVgd1CUFOuom31C2owGUBUbctk9cmQRQHwv/o6Wj
+         +Cdh7jISPD2SWN4GZfCuaoIIvUFrFZ5pVw0un7uhoygpZLLfMx2C75dwYMDpFBQObW
+         UMMXML2+UoRUX1Fujk1WhMTrGBlMX45qcOEFuc5IxIvixDO0aBwE3q3J7ZYPVYty9H
+         g8ZPR9if40EI8Dx9dZaJhGZQRcMbR2olZ7MejPt72Z9j55X+gOOVnshEJEHU0Ul3kN
+         r+LCCU5RQBkpw==
+Date:   Mon, 7 Nov 2022 09:19:36 +0000
+From:   Lee Jones <lee@kernel.org>
+To:     Luca Weiss <luca@z3ntu.xyz>
+Cc:     linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Kiran Gunda <kgunda@codeaurora.org>,
+        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: backlight: qcom-wled: Add PMI8950
+ compatible
+Message-ID: <Y2jNqChLjixM9grL@google.com>
+References: <20221101161801.1058969-1-luca@z3ntu.xyz>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221101161801.1058969-1-luca@z3ntu.xyz>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Some D1-based boards feature an onboard RGB LED. Enable them.
+On Tue, 01 Nov 2022, Luca Weiss wrote:
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
+> Document the compatible for the wled block found in PMI8950.
+> 
+> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> ---
+> Changes since v2:
+> * New patch
+> 
+>  Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-(no changes since v5)
+Applied, thanks.
 
-Changes in v5:
- - New patch for v5
-
- .../boot/dts/allwinner/sun20i-d1-lichee-rv-dock.dts | 12 ++++++++++++
- arch/riscv/boot/dts/allwinner/sun20i-d1-nezha.dts   | 13 +++++++++++++
- 2 files changed, 25 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/allwinner/sun20i-d1-lichee-rv-dock.dts b/arch/riscv/boot/dts/allwinner/sun20i-d1-lichee-rv-dock.dts
-index ca36a5d75a7f..02d13e987e02 100644
---- a/arch/riscv/boot/dts/allwinner/sun20i-d1-lichee-rv-dock.dts
-+++ b/arch/riscv/boot/dts/allwinner/sun20i-d1-lichee-rv-dock.dts
-@@ -25,6 +25,18 @@ &ehci1 {
- 	status = "okay";
- };
- 
-+&ledc {
-+	pinctrl-0 = <&ledc_pc0_pin>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	multi-led@0 {
-+		reg = <0x0>;
-+		color = <LED_COLOR_ID_RGB>;
-+		function = LED_FUNCTION_STATUS;
-+	};
-+};
-+
- &lradc {
- 	status = "okay";
- 
-diff --git a/arch/riscv/boot/dts/allwinner/sun20i-d1-nezha.dts b/arch/riscv/boot/dts/allwinner/sun20i-d1-nezha.dts
-index df865ee15fcf..099075462998 100644
---- a/arch/riscv/boot/dts/allwinner/sun20i-d1-nezha.dts
-+++ b/arch/riscv/boot/dts/allwinner/sun20i-d1-nezha.dts
-@@ -5,6 +5,7 @@
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
- 
- #include "sun20i-d1.dtsi"
- #include "sun20i-d1-common-regulators.dtsi"
-@@ -90,6 +91,18 @@ pcf8574a: gpio@38 {
- 	};
- };
- 
-+&ledc {
-+	pinctrl-0 = <&ledc_pc0_pin>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	multi-led@0 {
-+		reg = <0x0>;
-+		color = <LED_COLOR_ID_RGB>;
-+		function = LED_FUNCTION_STATUS;
-+	};
-+};
-+
- &lradc {
- 	status = "okay";
- 
 -- 
-2.37.3
-
+Lee Jones [李琼斯]
