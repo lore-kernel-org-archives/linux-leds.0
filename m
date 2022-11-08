@@ -2,113 +2,96 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7650EC4332F
-	for <linux-leds@archiver.kernel.org>; Tue,  8 Nov 2022 10:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EE6C4332F
+	for <linux-leds@archiver.kernel.org>; Tue,  8 Nov 2022 12:42:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233643AbiKHKyG (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 8 Nov 2022 05:54:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42672 "EHLO
+        id S233749AbiKHMmt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 8 Nov 2022 07:42:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233763AbiKHKyF (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 8 Nov 2022 05:54:05 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BC2E45A15
-        for <linux-leds@vger.kernel.org>; Tue,  8 Nov 2022 02:54:03 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id n12so37454728eja.11
-        for <linux-leds@vger.kernel.org>; Tue, 08 Nov 2022 02:54:03 -0800 (PST)
+        with ESMTP id S233613AbiKHMms (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 8 Nov 2022 07:42:48 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF0F50F38
+        for <linux-leds@vger.kernel.org>; Tue,  8 Nov 2022 04:42:46 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id a67so22239656edf.12
+        for <linux-leds@vger.kernel.org>; Tue, 08 Nov 2022 04:42:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=u8F2u7XnHXSi02ZUPPzRhyN9LzC+uyXpgjAwUMrqCak=;
-        b=gD3OYiXGpaEE83Zt07u3m3HEcjDa0jisiiEZhbfrrX1/Kc5NTf4xodx4W7Z9IbRN9N
-         YjrviVX5NrAc+NH3m0ChzppmMKfsi72Kgvms+j08FWYT75M/DZ7+Y9i5VJXLjK9Z/cQH
-         6Bxd3vwj+yn9tPyeg01cB6mSD72Jat9Ig1/96Uy8iFXjsdvZUKZqOZ6GY2B6CnVirLL2
-         YIO+/CM3j4o4na7Zurq0hnV64f3E3O61UwnRaA2hXVAB/5cpmlPxWI5F/YxYcbAQv75G
-         madN9Z+sLRnNCwhLbpPKES4kvN15zXxnue3LZKkswKUXPYYdQmUGUz0Syv0H2/nxFvUI
-         GW9w==
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1NAwkd5gvafBd9aj3NDsmPd7fQCXQtLGmi5pO3EUXBs=;
+        b=eEG90ipC8yImPAY3uFD8QLSUoEXgAoFv6K64zitJ8kXVIrIgC6p1DWoWSiXZwHsN4L
+         3dq1PuI+nuTyhq4v7byubmLh2P9/WixKct1VKlitOiryyDcIUUUBTtoazFf/m3Go+CjR
+         4cGAyhkanz+alVEidSSPNzWLyGiagwm8ywpjZQLI4uM0KqsqSENxHFqk3zXeQpzAmhbn
+         MNfmsCdmX6JsWJFjPYV3X68XjKlu2nnZM2xDyYDzjx2MEiDMJjcAHRicUyZe2DxeYjNb
+         K5IjjDvS32KrnkY63tSQGpk2lGrSdu6kgAbXXWIU5iQeNIvMFkV8eTO9tozBWWX+wTld
+         6meQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u8F2u7XnHXSi02ZUPPzRhyN9LzC+uyXpgjAwUMrqCak=;
-        b=TdJZwbBxf4AduFsz/TKNZY1JNLLRmekP0aMNQv9RjkOo96D6V8foojPGmYqoGLVkXj
-         79uhpFNT7k7qiGnSEvJj0g9t/5eMl6ZYQ16ZKDXJelTOt8/Fi3zTPdZCvI3T80DmUhU7
-         rRes0X7+XVdClTG0xOF2p8hMDXh+PqP8oCvHJsd7Zrx0nVcVqGso9Xsh52BZkKY+GJ63
-         ZAiq3NOOBq6ztQqIPPXYY55SsvDqBExRWAXOEwqnog5qX8IkiL6HV3rosiOXz+O5pQMA
-         1WPJ7anDTRvvrTv7WhsLK9nEhVYSVRD4E+rLjWL4TujxrFPkRVicXBw19LimGpVNcILo
-         RYDA==
-X-Gm-Message-State: ACrzQf1mwEZ1clvVZ+RH969qxdK4um+xv5g2tn0CTrIzCk0yZ6S4YJqV
-        2SPOCIkzVskC6vgH+6Giojoffe5v7sCI5gZOFHckNQ==
-X-Google-Smtp-Source: AMsMyM6nL/sRXxi8Er3YBIrohBZBjtg7i8lTHUQTzLz+CTq7An/c8884aPIg9B8VfXWHYn1xJt/hK/lhb337tElLW/8=
-X-Received: by 2002:a17:907:c1e:b0:7ae:31a0:571e with SMTP id
- ga30-20020a1709070c1e00b007ae31a0571emr20575365ejc.690.1667904841694; Tue, 08
- Nov 2022 02:54:01 -0800 (PST)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1NAwkd5gvafBd9aj3NDsmPd7fQCXQtLGmi5pO3EUXBs=;
+        b=0gbhY9NxWPpLM9XHby4PB2xNT6Yvh8YVvbRDPB5XUwnXthFE9y8c0MZf5P7twlxtUz
+         HtAEokP5brftvdIfvQG6y0GZDrCS+dHRRwxItkPBRy1k98Pyj+RAKcX20pvFLFcwicR8
+         1fOaw4U8ybGLhx5JytGdX6OilrMXuabI4dkWN1uRLDc7GVuYAEZTosywgrHCso7bU2wh
+         UZajwAK65Sdf5x6aMGBkrRkn0IcEbZDCmPqQP8Q3R0ynh+v305+1Qr5SwJ6Mt4B8etHL
+         6+B186Xeb9r0g/dPbbe66s4iCsbteYGFGjXUYxp7VhwSUmRTToGf5UEztQPbVf66bdQI
+         ooNQ==
+X-Gm-Message-State: ACrzQf2eI4VmUKCGDAgFFyxFt34sagWowJY8uGqegwCFFQjGXAe/hDbu
+        U65r7oJbI/QXXE4gQfGvIrwqyxYCnhA9NR/4Zdd+SQ==
+X-Google-Smtp-Source: AMsMyM4X463PCUWbCEJ9/WMIHfY6oheXBJQ6mxshnNqJwtlvyN0tlU11yHLyFhWP5bFEE6kg2MWl76/sJjnM1TB+FC4=
+X-Received: by 2002:a05:6402:d0b:b0:458:a244:4e99 with SMTP id
+ eb11-20020a0564020d0b00b00458a2444e99mr55679890edb.46.1667911365383; Tue, 08
+ Nov 2022 04:42:45 -0800 (PST)
 MIME-Version: 1.0
-References: <20220902-get_gpiod_from_child-remove-v1-0-1e47125df20f@gmail.com>
- <YyzYKmsjKflqT1xZ@google.com> <Y1aCgJihNIqExUR2@google.com> <CAMRc=McvJ7AvhKdP7cv8K1+rzMf8-ptg2SnU+XOAwERhRx1Eyw@mail.gmail.com>
-In-Reply-To: <CAMRc=McvJ7AvhKdP7cv8K1+rzMf8-ptg2SnU+XOAwERhRx1Eyw@mail.gmail.com>
+References: <20220818172528.23062-1-pali@kernel.org> <20220818172528.23062-2-pali@kernel.org>
+ <CACRpkdYWQVW_akJS7hvtU2=c063LCMfjN22X-neTfuTZRbt+yw@mail.gmail.com>
+ <20220831114936.vukjsovdxw3cmj6h@pali> <20221009114043.6rdgpgzkngd527o7@pali> <20221101223255.rhzerarzld45xfjh@pali>
+In-Reply-To: <20221101223255.rhzerarzld45xfjh@pali>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 8 Nov 2022 11:53:50 +0100
-Message-ID: <CACRpkdaPDXBWKQgNnmBLBmaXDo6roEDSpe1wrvMi_aG5F52K4g@mail.gmail.com>
-Subject: Re: [PATCH v1 0/3] Get rid of devm_fwnode_get_[index_]gpiod_from_child()
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
+Date:   Tue, 8 Nov 2022 13:42:34 +0100
+Message-ID: <CACRpkdad6WDo7rGfa4MW8zz0mLXmcPHo+SEC-yLQnRz_kdrryA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] leds: syscon: Implement support for active-low property
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Tue, Oct 25, 2022 at 5:48 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-
-> On Mon, Oct 24, 2022 at 2:18 PM Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> >
-> > On Thu, Sep 22, 2022 at 02:48:26PM -0700, Dmitry Torokhov wrote:
-> > > Hi Pavel, Marek,
+On Tue, Nov 1, 2022 at 11:33 PM Pali Roh=C3=A1r <pali@kernel.org> wrote:
+> On Sunday 09 October 2022 13:40:43 Pali Roh=C3=A1r wrote:
+> > On Wednesday 31 August 2022 13:49:36 Pali Roh=C3=A1r wrote:
+> > > On Friday 26 August 2022 10:05:26 Linus Walleij wrote:
+> > > > On Thu, Aug 18, 2022 at 7:25 PM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
+> > > >
+> > > > > This new active-low property specify that LED has inverted logic
+> > > > > (0 - enable LED, 1 - disable LED).
+> > > > >
+> > > > > Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
+> > > >
+> > > > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > > >
+> > > > Yours,
+> > > > Linus Walleij
 > > >
-> > > On Fri, Sep 02, 2022 at 05:55:24PM -0700, Dmitry Torokhov wrote:
-> > > > This drops the last uses of devm_fwnode_get_[index_]gpiod_from_child()
-> > > > from the tree and drops the stubs implementing this API on top of
-> > > > devm_fwnode_gpiod_get_index().
-> > > >
-> > > > Note that the bulk of users were converted in 2019, the couple of LED
-> > > > drivers are all that have remained.
-> > > >
-> > > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > >
-> > > > ---
-> > > > Dmitry Torokhov (3):
-> > > >       leds: gpio: switch to using devm_fwnode_gpiod_get()
-> > > >       leds: lgm-sso: switch to using devm_fwnode_gpiod_get()
-> > > >       gpiolib: remove devm_fwnode_get_[index_]gpiod_from_child()
-> > > >
-> > > >  drivers/leds/blink/leds-lgm-sso.c |  5 ++---
-> > > >  drivers/leds/leds-gpio.c          |  5 ++---
-> > > >  include/linux/gpio/consumer.h     | 21 ---------------------
-> > > >  3 files changed, 4 insertions(+), 27 deletions(-)
-> > > > ---
-> > > > base-commit: 7fd22855300e693668c3397771b3a2b3948f827a
-> > > > change-id: 20220902-get_gpiod_from_child-remove-a62638849e91
-> > > >
-> > >
-> > > Could you please consider picking this up for 6.1? Or would you be OK
-> > > with this going through other tree (GPIO maybe)?
+> > > Is something else needed for this patch series?
 > >
-> > *ping* Could this go through GPIO tree? Dropping this API helps with
-> > some outstanding work that I have...
-> >
+> > PING?
 >
-> Sure! I'll let it wait for another week - it would be great to get an
-> ack from Pavel - but in case of no response I'll take it through my
-> tree.
+> PING?
 
-I'd say just apply it at this point.
+If the LED subsystem isn't working consider sending the patch to the
+SoC tree with a notice that they apply it instead and why.
 
 Yours,
 Linus Walleij
