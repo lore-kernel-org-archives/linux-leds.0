@@ -2,32 +2,32 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3591C4332F
-	for <linux-leds@archiver.kernel.org>; Wed,  9 Nov 2022 08:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A1AC43219
+	for <linux-leds@archiver.kernel.org>; Wed,  9 Nov 2022 08:28:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229645AbiKII17 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 9 Nov 2022 03:27:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40126 "EHLO
+        id S229907AbiKII2A (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 9 Nov 2022 03:28:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229851AbiKII1x (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2022 03:27:53 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62B4A13DFC;
-        Wed,  9 Nov 2022 00:27:52 -0800 (PST)
-Received: from canpemm500010.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N6dPn5PQlzRp6f;
-        Wed,  9 Nov 2022 16:27:41 +0800 (CST)
+        with ESMTP id S229863AbiKII1y (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2022 03:27:54 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5F0E13D52;
+        Wed,  9 Nov 2022 00:27:53 -0800 (PST)
+Received: from canpemm500010.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4N6dPl12WNzmVnl;
+        Wed,  9 Nov 2022 16:27:39 +0800 (CST)
 Received: from localhost.localdomain (10.175.112.70) by
  canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 9 Nov 2022 16:27:50 +0800
+ 15.1.2375.31; Wed, 9 Nov 2022 16:27:51 +0800
 From:   Wang Yufen <wangyufen@huawei.com>
 To:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     <pavel@ucw.cz>, Wang Yufen <wangyufen@huawei.com>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 05/13] leds: lm3697: Fix devm vs. non-devm ordering
-Date:   Wed, 9 Nov 2022 16:48:06 +0800
-Message-ID: <1667983694-15040-6-git-send-email-wangyufen@huawei.com>
+        Vadim Pasternak <vadimp@mellanox.com>
+Subject: [PATCH 08/13] leds: mlxreg: Fix devm vs. non-devm ordering
+Date:   Wed, 9 Nov 2022 16:48:09 +0800
+Message-ID: <1667983694-15040-9-git-send-email-wangyufen@huawei.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1667983694-15040-1-git-send-email-wangyufen@huawei.com>
 References: <1667983694-15040-1-git-send-email-wangyufen@huawei.com>
@@ -46,52 +46,63 @@ allocations, otherwise it will break the tear down ordering and might
 lead to crashes or other bugs during ->remove() stage. Fix this by
 wrapping mutex_destroy() call with devm_add_action_or_reset().
 
-Fixes: 5c1d824cda9f ("leds: lm3697: Introduce the lm3697 driver")
+Fixes: 386570d76f2f ("leds: add driver for support Mellanox regmap LEDs for BMC and x86 platform")
 Signed-off-by: Wang Yufen <wangyufen@huawei.com>
-Cc: Dan Murphy <dmurphy@ti.com>
+Cc: Vadim Pasternak <vadimp@mellanox.com>
 ---
- drivers/leds/leds-lm3697.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/leds/leds-mlxreg.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3697.c b/drivers/leds/leds-lm3697.c
-index 71231a6..a345333 100644
---- a/drivers/leds/leds-lm3697.c
-+++ b/drivers/leds/leds-lm3697.c
-@@ -299,6 +299,11 @@ static int lm3697_probe_dt(struct lm3697 *priv)
- 	return ret;
+diff --git a/drivers/leds/leds-mlxreg.c b/drivers/leds/leds-mlxreg.c
+index b7855c9..b7c58fb 100644
+--- a/drivers/leds/leds-mlxreg.c
++++ b/drivers/leds/leds-mlxreg.c
+@@ -254,10 +254,16 @@ static int mlxreg_led_config(struct mlxreg_led_priv_data *priv)
+ 	return 0;
  }
  
-+static void lm3697_mutex_destroy(void *lock)
++static void mlxreg_led_mutex_destroy(void *lock)
 +{
 +	mutex_destroy(lock);
 +}
 +
- static int lm3697_probe(struct i2c_client *client,
- 			const struct i2c_device_id *id)
+ static int mlxreg_led_probe(struct platform_device *pdev)
  {
-@@ -318,8 +323,12 @@ static int lm3697_probe(struct i2c_client *client,
- 		return -ENOMEM;
+ 	struct mlxreg_core_platform_data *led_pdata;
+ 	struct mlxreg_led_priv_data *priv;
++	int ret;
  
- 	mutex_init(&led->lock);
--	i2c_set_clientdata(client, led);
-+	ret = devm_add_action_or_reset(&client->dev, lm3697_mutex_destroy,
-+				       &led->lock);
+ 	led_pdata = dev_get_platdata(&pdev->dev);
+ 	if (!led_pdata) {
+@@ -273,24 +279,18 @@ static int mlxreg_led_probe(struct platform_device *pdev)
+ 	priv->pdev = pdev;
+ 	priv->pdata = led_pdata;
+ 
++	ret = devm_add_action_or_reset(&pdev->dev, mlxreg_led_mutex_destroy,
++				       &priv->access_lock);
 +	if (ret)
 +		return ret;
- 
-+	i2c_set_clientdata(client, led);
- 	led->client = client;
- 	led->dev = dev;
- 	led->num_banks = count;
-@@ -356,8 +365,6 @@ static void lm3697_remove(struct i2c_client *client)
- 		if (ret)
- 			dev_err(dev, "Failed to disable regulator\n");
- 	}
--
--	mutex_destroy(&led->lock);
+ 	return mlxreg_led_config(priv);
  }
  
- static const struct i2c_device_id lm3697_id[] = {
+-static int mlxreg_led_remove(struct platform_device *pdev)
+-{
+-	struct mlxreg_led_priv_data *priv = dev_get_drvdata(&pdev->dev);
+-
+-	mutex_destroy(&priv->access_lock);
+-
+-	return 0;
+-}
+-
+ static struct platform_driver mlxreg_led_driver = {
+ 	.driver = {
+ 	    .name = "leds-mlxreg",
+ 	},
+ 	.probe = mlxreg_led_probe,
+-	.remove = mlxreg_led_remove,
+ };
+ 
+ module_platform_driver(mlxreg_led_driver);
 -- 
 1.8.3.1
 
