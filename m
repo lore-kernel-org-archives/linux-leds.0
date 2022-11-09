@@ -2,21 +2,21 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3754CC43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90184C4167B
 	for <linux-leds@archiver.kernel.org>; Wed,  9 Nov 2022 08:28:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229948AbiKII2J (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S229955AbiKII2J (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Wed, 9 Nov 2022 03:28:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40162 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229879AbiKII1z (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2022 03:27:55 -0500
+        with ESMTP id S229899AbiKII14 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2022 03:27:56 -0500
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F355213DFC;
-        Wed,  9 Nov 2022 00:27:54 -0800 (PST)
-Received: from canpemm500010.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N6dPX5JqSzHvkj;
-        Wed,  9 Nov 2022 16:27:28 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9DDF1B9F5;
+        Wed,  9 Nov 2022 00:27:55 -0800 (PST)
+Received: from canpemm500010.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N6dPs10w4zRp7v;
+        Wed,  9 Nov 2022 16:27:45 +0800 (CST)
 Received: from localhost.localdomain (10.175.112.70) by
  canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
@@ -24,10 +24,10 @@ Received: from localhost.localdomain (10.175.112.70) by
 From:   Wang Yufen <wangyufen@huawei.com>
 To:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     <pavel@ucw.cz>, Wang Yufen <wangyufen@huawei.com>,
-        Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH 11/13] leds: sc27xx: Fix devm vs. non-devm ordering
-Date:   Wed, 9 Nov 2022 16:48:12 +0800
-Message-ID: <1667983694-15040-12-git-send-email-wangyufen@huawei.com>
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 13/13] leds: rt8515: Fix devm vs. non-devm ordering
+Date:   Wed, 9 Nov 2022 16:48:14 +0800
+Message-ID: <1667983694-15040-14-git-send-email-wangyufen@huawei.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1667983694-15040-1-git-send-email-wangyufen@huawei.com>
 References: <1667983694-15040-1-git-send-email-wangyufen@huawei.com>
@@ -46,84 +46,55 @@ allocations, otherwise it will break the tear down ordering and might
 lead to crashes or other bugs during ->remove() stage. Fix this by
 wrapping mutex_destroy() call with devm_add_action_or_reset().
 
-Fixes: e081c49e30ec ("leds: Add Spreadtrum SC27xx breathing light controller driver")
+Fixes: e1c6edcbea13 ("leds: rt8515: Add Richtek RT8515 LED driver")
 Signed-off-by: Wang Yufen <wangyufen@huawei.com>
-Cc: Baolin Wang <baolin.wang@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/leds/leds-sc27xx-bltc.c | 27 +++++++++++----------------
- 1 file changed, 11 insertions(+), 16 deletions(-)
+ drivers/leds/flash/leds-rt8515.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index e199ea1..43a821c 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -273,6 +273,11 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- 	return 0;
+diff --git a/drivers/leds/flash/leds-rt8515.c b/drivers/leds/flash/leds-rt8515.c
+index 44904fde..f2d92ea 100644
+--- a/drivers/leds/flash/leds-rt8515.c
++++ b/drivers/leds/flash/leds-rt8515.c
+@@ -273,6 +273,11 @@ static void rt8515_determine_max_intensity(struct rt8515 *rt,
+ 	*max_intensity_setting = max_intensity;
  }
  
-+static void sc27xx_led_mutex_destroy(void *lock)
++static void rt8515_mutex_destroy(void *lock)
 +{
 +	mutex_destroy(lock);
 +}
 +
- static int sc27xx_led_probe(struct platform_device *pdev)
+ static int rt8515_probe(struct platform_device *pdev)
  {
  	struct device *dev = &pdev->dev;
-@@ -297,6 +302,11 @@ static int sc27xx_led_probe(struct platform_device *pdev)
+@@ -338,13 +343,16 @@ static int rt8515_probe(struct platform_device *pdev)
+ 	led->flags |= LED_CORE_SUSPENDRESUME | LED_DEV_CAP_FLASH;
  
- 	platform_set_drvdata(pdev, priv);
- 	mutex_init(&priv->lock);
-+	err = devm_add_action_or_reset(dev, sc27xx_led_mutex_destroy,
-+				       &priv->lock);
-+	if (err)
-+		return err;
-+
- 	priv->base = base;
- 	priv->regmap = dev_get_regmap(dev->parent, NULL);
- 	if (!priv->regmap) {
-@@ -309,13 +319,11 @@ static int sc27xx_led_probe(struct platform_device *pdev)
- 		err = of_property_read_u32(child, "reg", &reg);
- 		if (err) {
- 			of_node_put(child);
--			mutex_destroy(&priv->lock);
- 			return err;
- 		}
+ 	mutex_init(&rt->lock);
++	ret = devm_add_action_or_reset(dev, rt8515_mutex_destroy,
++				       &rt->lock);
++	if (ret)
++		return ret;
  
- 		if (reg >= SC27XX_LEDS_MAX || priv->leds[reg].active) {
- 			of_node_put(child);
--			mutex_destroy(&priv->lock);
- 			return -EINVAL;
- 		}
+ 	platform_set_drvdata(pdev, rt);
  
-@@ -323,19 +331,7 @@ static int sc27xx_led_probe(struct platform_device *pdev)
- 		priv->leds[reg].active = true;
+ 	ret = devm_led_classdev_flash_register_ext(dev, fled, &init_data);
+ 	if (ret) {
+ 		fwnode_handle_put(child);
+-		mutex_destroy(&rt->lock);
+ 		dev_err(dev, "can't register LED %s\n", led->name);
+ 		return ret;
  	}
+@@ -373,7 +381,6 @@ static int rt8515_remove(struct platform_device *pdev)
  
--	err = sc27xx_led_register(dev, priv);
--	if (err)
--		mutex_destroy(&priv->lock);
--
--	return err;
--}
--
--static int sc27xx_led_remove(struct platform_device *pdev)
--{
--	struct sc27xx_led_priv *priv = platform_get_drvdata(pdev);
--
--	mutex_destroy(&priv->lock);
--	return 0;
-+	return sc27xx_led_register(dev, priv);
+ 	rt8515_v4l2_flash_release(rt);
+ 	del_timer_sync(&rt->powerdown_timer);
+-	mutex_destroy(&rt->lock);
+ 
+ 	return 0;
  }
- 
- static const struct of_device_id sc27xx_led_of_match[] = {
-@@ -350,7 +346,6 @@ static int sc27xx_led_remove(struct platform_device *pdev)
- 		.of_match_table = sc27xx_led_of_match,
- 	},
- 	.probe = sc27xx_led_probe,
--	.remove = sc27xx_led_remove,
- };
- 
- module_platform_driver(sc27xx_led_driver);
 -- 
 1.8.3.1
 
