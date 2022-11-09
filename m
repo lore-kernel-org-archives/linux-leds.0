@@ -2,161 +2,96 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E42C433FE
-	for <linux-leds@archiver.kernel.org>; Wed,  9 Nov 2022 09:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDF5C43217
+	for <linux-leds@archiver.kernel.org>; Wed,  9 Nov 2022 09:40:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbiKIJ2N (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 9 Nov 2022 04:28:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33256 "EHLO
+        id S230029AbiKIJkp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 9 Nov 2022 04:40:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbiKIJ2M (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2022 04:28:12 -0500
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F6EA140F2
-        for <linux-leds@vger.kernel.org>; Wed,  9 Nov 2022 01:28:11 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id t25so45034492ejb.8
-        for <linux-leds@vger.kernel.org>; Wed, 09 Nov 2022 01:28:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TUxkeYIU9Al/BJEtghySGhHTa8YoG9twnWemYdaKDpY=;
-        b=KaUw1Egs6jWdeGwemMMj53SNGL4t1gHJ8bEuXCeBXh7kQVxNOLrzu2p5pqGKhGfkep
-         6qucWyjUG0AjThMPSi8EGYGccQyp3LzQTvjIxQE4HHbsuwZ+HiNvjDibuA83BI7fziOs
-         skSspvXnuXlXOF9EWkNj/J3N+Gp+NDGcfZfUrHw6WhuXuRtGa+4rmCpr+CcTS32dgr9W
-         R5wJD+rvqqn7VGyTDah8XMEvwBiTSsX8bWgOcwtXzCEaNqRVPYfGtX39SiHmwzKcDBP/
-         44FVJBxGm7ic2SqUWzoME1VTVxa4FfuNEVVmqKvX0prCakVmLopUcQmBzoHjB/J8OS0s
-         U+iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TUxkeYIU9Al/BJEtghySGhHTa8YoG9twnWemYdaKDpY=;
-        b=yJO7jj0rbJ5UMtb9MNf/msWqpLVUCOqjOMt+UQgzM0gg0QpFveUylxjVsvVZtRkwUl
-         A6j3cIcqgzaDXTty0hyh80AdXwfCJHGutppI34ljgNaHgLfArHCfxjj8EjagWRGeGSJD
-         XRh3cYSgbfrhs3guWV+MY/xWJhHp5jR+5zPKUivCQhg0a/1aotzB0KCNuN0m39J/zReO
-         MemvsqPE/D5UM0Zy/A6khayA3Zx+nLwpVYP3UC34boT5c5LGrFsXlzRFbe4CLE+nRbrg
-         HXVbLSoJF5jlqk4QiMBLwlFIB+uuurREoXCEK8AnXy7UuO1r1f2g9PKkIU85RnwoDqz7
-         J5CA==
-X-Gm-Message-State: ANoB5pkaPtcKdpqVXia2EQB6b0RiE537fDI7Rtpk+Pysggn9AmJWz7OW
-        1R2ANKiP6H8W12gMmYXkIzfDnrR7xCabyh/GsYg4+Q==
-X-Google-Smtp-Source: AA0mqf52kGsf1GPuFDL2NY4eVqhzFBFtgSx5PbdFgLKE+mwz4vKzKVE/ISxz7TDEZVwaHE102YOoWTaMG4rshx8YJVU=
-X-Received: by 2002:a17:906:6acc:b0:7ae:658c:ee45 with SMTP id
- q12-20020a1709066acc00b007ae658cee45mr14533582ejs.190.1667986090153; Wed, 09
- Nov 2022 01:28:10 -0800 (PST)
+        with ESMTP id S229638AbiKIJko (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2022 04:40:44 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 261D8FACC;
+        Wed,  9 Nov 2022 01:40:44 -0800 (PST)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B14506602905;
+        Wed,  9 Nov 2022 09:40:41 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1667986842;
+        bh=5+SECJlEo7BQZC8NrHGOWqaaKAjZ2nnSt35XWUVSojo=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=m8CVH8yhd5O27fE9M+b+hAoSLn0wY/5h5thZ5FV8UPovCxAeZQ+5jtr6gPslB4iwx
+         NtS0elb1yU0JrNGd5hdeB6yV/rMkFGDWbTgOcIExtCcrGc8HmUjrAa/KOxtbzC08u5
+         z20f+G969MK/0qw7PAzfVnO0lbhUUPtW2LnnGDUPyjGNH5QPspKvYdNkXq5y/qM0yn
+         +RSNRIhZDLKxQACTEZbOA5FXlELCewvDPqe0ZcFvccwqyUcPXfpPP0TQdyyf3iSPjM
+         F7w91uU1YlabydGsQcuP+NsObKyEJ3UlIbbJEEIeK/v0yVE9YdIbNEi/5mJ1TMbaYP
+         tYaJHd8s9hOSA==
+Message-ID: <ed298a3e-25dd-af19-437c-f27c160788b3@collabora.com>
+Date:   Wed, 9 Nov 2022 10:40:39 +0100
 MIME-Version: 1.0
-References: <20221109090957.13167-1-larry.lai@yunjingtech.com> <20221109090957.13167-3-larry.lai@yunjingtech.com>
-In-Reply-To: <20221109090957.13167-3-larry.lai@yunjingtech.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 9 Nov 2022 10:27:59 +0100
-Message-ID: <CACRpkdZQ7FCtLPEioWXn+MXQhnpuu-EY+CjhEeKqBe=Bvq777g@mail.gmail.com>
-Subject: Re: [PATCH V3 2/3] pinctrl: Add support pin control for UP board CPLD/FPGA
-To:     chengwei <larry.lai@yunjingtech.com>
-Cc:     lee@kernel.org, andriy.shevchenko@linux.intel.com, pavel@ucw.cz,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org, GaryWang@aaeon.com.tw,
-        musa.lin@yunjingtech.com, jack.chang@yunjingtech.com,
-        noah.hung@yunjingtech.com, Javier Arteaga <javier@emutex.com>,
-        Nicola Lunghi <nicola.lunghi@emutex.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.3
+Subject: Re: [PATCH v4 2/9] dt-bindings: rtc: mediatek: convert MT6397 rtc
+ documentation
+Content-Language: en-US
+To:     Alexandre Mergnat <amergnat@baylibre.com>,
+        Fabien Parent <fabien.parent@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Lee Jones <lee@kernel.org>,
+        Chen Zhong <chen.zhong@mediatek.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        Fabien Parent <fparent@baylibre.com>,
+        linux-rtc@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        Mattijs Korpershoek <mkorpershoek@baylibre.com>
+References: <20221005-mt6357-support-v4-0-5d2bb58e6087@baylibre.com>
+ <20221005-mt6357-support-v4-2-5d2bb58e6087@baylibre.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221005-mt6357-support-v4-2-5d2bb58e6087@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Wed, Nov 9, 2022 at 10:11 AM chengwei <larry.lai@yunjingtech.com> wrote:
+Il 08/11/22 19:43, Alexandre Mergnat ha scritto:
+> - Convert rtc/rtc-mt6397.txt to rtc/mt6397-rtc.yaml
+> - Add mediatek,mt6357-rtc compatible.
+> - Add maintainer
+> - Remove the .txt binding file
+> 
+> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> ---
+>   Documentation/devicetree/bindings/mfd/mt6397.txt   |  2 +-
+>   .../bindings/rtc/mediatek,mt6397-rtc.yaml          | 40 ++++++++++++++++++++++
+>   .../devicetree/bindings/rtc/rtc-mt6397.txt         | 31 -----------------
+>   3 files changed, 41 insertions(+), 32 deletions(-)
+> 
 
-> +config PINCTRL_UPBOARD
-> +       tristate "UP board FPGA pin controller"
-> +       depends on ACPI
-> +       depends on MFD_UPBOARD_FPGA
-> +       depends on X86
+Please split the txt->yaml conversion in one commit and the addition of the
+new mt6357-rtc compatible in another commit.
 
-This is Andy territory as it is x86 and ACPI but...
+Also, isn't the original maintainer of rtc-mt6397 supposed to be...
+Tianping Fang <tianping.fang@mediatek.com> ?
 
-> +/*
-> + * Init patches applied to the registers until the BIOS sets proper defaults
-> + */
-> +static const struct reg_sequence upboard_upcore_crex_reg_patches[] __initconst = {
-> +       // enable I2C voltage-level shifters
-> +       { UPFPGA_REG_FUNC_EN0,
-> +               BIT(UPFPGA_I2C0_EN) |
-> +               BIT(UPFPGA_I2C1_EN)
-> +       },
-> +       // HAT function pins initially set as inputs
-> +       { UPFPGA_REG_GPIO_DIR0,
-> +               BIT(UPFPGA_UPCORE_CREX_SPI2_MISO) |
-> +               BIT(UPFPGA_UPCORE_CREX_UART1_RXD) |
-> +               BIT(UPFPGA_UPCORE_CREX_I2S2_FRM) |
-> +               BIT(UPFPGA_UPCORE_CREX_I2S2_CLK) |
-> +               BIT(UPFPGA_UPCORE_CREX_I2S2_RX)
-> +       },
-> +};
-> +
-> +static const struct upboard_bios upboard_upcore_crex_bios_info __initconst = {
-> +       .patches = upboard_upcore_crex_reg_patches,
-> +       .npatches = ARRAY_SIZE(upboard_upcore_crex_reg_patches),
-> +};
+You can add yourself to the list of maintainers, though, unless Tianping
+explicitly says that he doesn't want to maintain this driver anymore?
 
-This "patches" terminology is quite confusing for kernel developers.
-Writing some sequence of numbers into some registers at init is called
-a "jam table" a term from Bunnie Huang (in his book "Hacking the Xbox" IIRC)
+Regards,
+Angelo
 
-> +static int upboard_get_functions_count(struct pinctrl_dev *pctldev)
-> +{
-> +       //dev_info(pctldev->dev,"upboard_get_functions_count");
-> +       return 0;
-> +}
-> +
-> +static const char *upboard_get_function_name(struct pinctrl_dev *pctldev,
-> +                                            unsigned int selector)
-> +{
-> +       //dev_info(pctldev->dev,"upboard_get_function_name:%d",selector);
-> +       return NULL;
-> +}
-
-Don't leave this kind of commented out debug code around
-in upstream submissions. Delete or use dev_dbg(), actually
-dev_dbg() is pretty easy to use, just put an extra flag -DDEBUG
-into your Makefile and the debug prints come out.
-
-> +               //of_pinctrl_get(gc->parent->of_node);
-
-What is this even? A commented out call to an OF function in an ACPI driver?
-
-> +       switch (irqd_get_trigger_type(d)) {
-> +       case IRQ_TYPE_LEVEL_HIGH:
-> +               //value |= BYT_TRIG_LVL;
-> +               fallthrough;
-> +       case IRQ_TYPE_EDGE_RISING:
-> +               //value |= BYT_TRIG_POS;
-> +               break;
-> +       case IRQ_TYPE_LEVEL_LOW:
-> +               //value |= BYT_TRIG_LVL;
-> +               fallthrough;
-> +       case IRQ_TYPE_EDGE_FALLING:
-> +               //value |= BYT_TRIG_NEG;
-> +               break;
-> +       case IRQ_TYPE_EDGE_BOTH:
-> +               //value |= (BYT_TRIG_NEG | BYT_TRIG_POS);
-> +               break;
-> +       }
-
-So this looks like it should be uncommented and used or deleted?
-It just looks unfinished, and this patch is not an RFC.
-
-> +       //display mapping info.
-> +       //for(i=0;i<pctldesc->npins;i++){
-> +       //      dev_info(&pdev->dev,"Name:%s, GPIO:%d, IRQ:%d, regs:0x%08x",
-> +       //      pctldesc->pins[i].name,pins[i].gpio, pins[i].irq, pins[i].regs);
-> +       //      if(pins[i].regs)
-> +       //              dev_info(&pdev->dev,"val:%pS", readl(pins[i].regs));
-> +       //}
-
-This isn't helpful, also there are existing debugfs hooks to be used
-for exactly this kind of stuff.
-
-The driver looks a bit unfinished.
-
-Yours,
-Linus Walleij
