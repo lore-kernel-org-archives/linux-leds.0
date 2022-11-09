@@ -2,114 +2,125 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12182C433FE
-	for <linux-leds@archiver.kernel.org>; Wed,  9 Nov 2022 09:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AA9C4332F
+	for <linux-leds@archiver.kernel.org>; Wed,  9 Nov 2022 10:25:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbiKIJz4 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 9 Nov 2022 04:55:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55652 "EHLO
+        id S230311AbiKIKZS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 9 Nov 2022 05:25:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230458AbiKIJzt (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2022 04:55:49 -0500
-X-Greylist: delayed 600 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 09 Nov 2022 01:55:48 PST
-Received: from smtp.220.in.ua (smtp.220.in.ua [89.184.67.205])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D1BD02529D;
-        Wed,  9 Nov 2022 01:55:48 -0800 (PST)
-Received: from smtpclient.apple (unknown [95.67.115.55])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp.220.in.ua (Postfix) with ESMTPSA id 7EED31A21FD2;
-        Wed,  9 Nov 2022 11:39:29 +0200 (EET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.200.110.1.12\))
+        with ESMTP id S230009AbiKIKZQ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2022 05:25:16 -0500
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFC3E12635;
+        Wed,  9 Nov 2022 02:25:14 -0800 (PST)
+Received: from canpemm500010.china.huawei.com (unknown [172.30.72.53])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4N6h183jKCz15MSf;
+        Wed,  9 Nov 2022 18:25:00 +0800 (CST)
+Received: from [10.174.179.191] (10.174.179.191) by
+ canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Wed, 9 Nov 2022 18:25:12 +0800
+Message-ID: <bbd67e6a-8ce0-dbe8-6ab1-9d4a015f4ee9@huawei.com>
+Date:   Wed, 9 Nov 2022 18:25:12 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
 Subject: Re: [PATCH 02/13] leds: el15203000: Fix devm vs. non-devm ordering
-From:   Oleh Kravchenko <oleg@kaa.org.ua>
-In-Reply-To: <1667983694-15040-3-git-send-email-wangyufen@huawei.com>
-Date:   Wed, 9 Nov 2022 11:39:14 +0200
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pavel@ucw.cz
-Content-Transfer-Encoding: 8BIT
-Message-Id: <5D15416B-1866-4031-9958-7CD763C0BD6E@kaa.org.ua>
+To:     Oleh Kravchenko <oleg@kaa.org.ua>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <pavel@ucw.cz>
 References: <1667983694-15040-1-git-send-email-wangyufen@huawei.com>
  <1667983694-15040-3-git-send-email-wangyufen@huawei.com>
-To:     Wang Yufen <wangyufen@huawei.com>
-X-Mailer: Apple Mail (2.3731.200.110.1.12)
+ <5D15416B-1866-4031-9958-7CD763C0BD6E@kaa.org.ua>
+From:   wangyufen <wangyufen@huawei.com>
+In-Reply-To: <5D15416B-1866-4031-9958-7CD763C0BD6E@kaa.org.ua>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.179.191]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ canpemm500010.china.huawei.com (7.192.105.118)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hello all!
 
-> 9 лист. 2022 р. о 10:48 Wang Yufen <wangyufen@huawei.com> написав(ла):
-> 
-> When non-devm resources are allocated they mustn't be followed by devm
-> allocations, otherwise it will break the tear down ordering and might
-> lead to crashes or other bugs during ->remove() stage. Fix this by
-> wrapping mutex_destroy() call with devm_add_action_or_reset().
-> 
-> Fixes: fc19967bcb8f ("leds: add LED driver for EL15203000 board")
-> Signed-off-by: Wang Yufen <wangyufen@huawei.com>
-> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
-> ---
-> drivers/leds/leds-el15203000.c | 18 +++++++++++-------
-> 1 file changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-el15203000.c b/drivers/leds/leds-el15203000.c
-> index 7e7b617..9be934e 100644
-> --- a/drivers/leds/leds-el15203000.c
-> +++ b/drivers/leds/leds-el15203000.c
-> @@ -287,10 +287,16 @@ static int el15203000_probe_dt(struct el15203000 *priv)
-> return ret;
-> }
-> 
-> +static void el15203000_mutex_destroy(void *lock)
-> +{
-> + mutex_destroy(lock);
-> +}
-> +
-> static int el15203000_probe(struct spi_device *spi)
-> {
-> struct el15203000 *priv;
-> size_t count;
-> + int ret;
-> 
-> count = device_get_child_node_count(&spi->dev);
-> if (!count) {
-> @@ -312,15 +318,14 @@ static int el15203000_probe(struct spi_device *spi)
-> 
-> spi_set_drvdata(spi, priv);
-> 
-> + ret = devm_add_action_or_reset(&spi->dev, el15203000_mutex_destroy,
-> +       &priv->lock);
-> + if (ret)
-> + return ret;
-> +
-> return el15203000_probe_dt(priv);
-> }
-> 
-> -static void el15203000_remove(struct spi_device *spi)
+在 2022/11/9 17:39, Oleh Kravchenko 写道:
+> Hello all!
+>
+>> 9 лист. 2022 р. о 10:48 Wang Yufen <wangyufen@huawei.com> написав(ла):
+>>
+>> When non-devm resources are allocated they mustn't be followed by devm
+>> allocations, otherwise it will break the tear down ordering and might
+>> lead to crashes or other bugs during ->remove() stage. Fix this by
+>> wrapping mutex_destroy() call with devm_add_action_or_reset().
+>>
+>> Fixes: fc19967bcb8f ("leds: add LED driver for EL15203000 board")
+>> Signed-off-by: Wang Yufen <wangyufen@huawei.com>
+>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+>> ---
+>> drivers/leds/leds-el15203000.c | 18 +++++++++++-------
+>> 1 file changed, 11 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/leds/leds-el15203000.c b/drivers/leds/leds-el15203000.c
+>> index 7e7b617..9be934e 100644
+>> --- a/drivers/leds/leds-el15203000.c
+>> +++ b/drivers/leds/leds-el15203000.c
+>> @@ -287,10 +287,16 @@ static int el15203000_probe_dt(struct el15203000 *priv)
+>> return ret;
+>> }
+>>
+>> +static void el15203000_mutex_destroy(void *lock)
+>> +{
+>> + mutex_destroy(lock);
+>> +}
+>> +
+>> static int el15203000_probe(struct spi_device *spi)
+>> {
+>> struct el15203000 *priv;
+>> size_t count;
+>> + int ret;
+>>
+>> count = device_get_child_node_count(&spi->dev);
+>> if (!count) {
+>> @@ -312,15 +318,14 @@ static int el15203000_probe(struct spi_device *spi)
+>>
+>> spi_set_drvdata(spi, priv);
+>>
+>> + ret = devm_add_action_or_reset(&spi->dev, el15203000_mutex_destroy,
+>> +       &priv->lock);
+>> + if (ret)
+>> + return ret;
+>> +
+>> return el15203000_probe_dt(priv);
+>> }
+>>
+>> -static void el15203000_remove(struct spi_device *spi)
+> Is remove() callback from struct spi_driver deprecated?
 
-Is remove() callback from struct spi_driver deprecated?
+It is not that remove() callback is deprecated,
+it's that after wrapping mutex_destroy() call with devm_add_action_or_reset(),
+remove() callback is unnecessary here.
 
-> -{
-> - struct el15203000 *priv = spi_get_drvdata(spi);
-> -
-> - mutex_destroy(&priv->lock);
-> -}
-> 
-> static const struct of_device_id el15203000_dt_ids[] = {
-> { .compatible = "crane,el15203000", },
-> @@ -331,7 +336,6 @@ static void el15203000_remove(struct spi_device *spi)
-> 
-> static struct spi_driver el15203000_driver = {
-> .probe = el15203000_probe,
-> - .remove = el15203000_remove,
-> .driver = {
-> .name = KBUILD_MODNAME,
-> .of_match_table = el15203000_dt_ids,
-> -- 
-> 1.8.3.1
-> 
-
+>
+>> -{
+>> - struct el15203000 *priv = spi_get_drvdata(spi);
+>> -
+>> - mutex_destroy(&priv->lock);
+>> -}
+>>
+>> static const struct of_device_id el15203000_dt_ids[] = {
+>> { .compatible = "crane,el15203000", },
+>> @@ -331,7 +336,6 @@ static void el15203000_remove(struct spi_device *spi)
+>>
+>> static struct spi_driver el15203000_driver = {
+>> .probe = el15203000_probe,
+>> - .remove = el15203000_remove,
+>> .driver = {
+>> .name = KBUILD_MODNAME,
+>> .of_match_table = el15203000_dt_ids,
+>> -- 
+>> 1.8.3.1
+>>
+>
