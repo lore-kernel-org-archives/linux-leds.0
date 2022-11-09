@@ -2,32 +2,32 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68066C433FE
-	for <linux-leds@archiver.kernel.org>; Wed,  9 Nov 2022 08:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DC8C4332F
+	for <linux-leds@archiver.kernel.org>; Wed,  9 Nov 2022 08:28:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbiKII14 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S229903AbiKII14 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Wed, 9 Nov 2022 03:27:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40106 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229794AbiKII1w (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2022 03:27:52 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D646E13D16;
-        Wed,  9 Nov 2022 00:27:50 -0800 (PST)
-Received: from canpemm500010.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N6dPS2L5VzHvg6;
-        Wed,  9 Nov 2022 16:27:24 +0800 (CST)
+        with ESMTP id S229850AbiKII1x (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2022 03:27:53 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07D8013D63;
+        Wed,  9 Nov 2022 00:27:52 -0800 (PST)
+Received: from canpemm500010.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4N6dPj35N4zmVlR;
+        Wed,  9 Nov 2022 16:27:37 +0800 (CST)
 Received: from localhost.localdomain (10.175.112.70) by
  canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 9 Nov 2022 16:27:48 +0800
+ 15.1.2375.31; Wed, 9 Nov 2022 16:27:49 +0800
 From:   Wang Yufen <wangyufen@huawei.com>
 To:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     <pavel@ucw.cz>, Wang Yufen <wangyufen@huawei.com>,
-        Oleh Kravchenko <oleg@kaa.org.ua>
-Subject: [PATCH 01/13] leds: cr0014114: Fix devm vs. non-devm ordering
-Date:   Wed, 9 Nov 2022 16:48:02 +0800
-Message-ID: <1667983694-15040-2-git-send-email-wangyufen@huawei.com>
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH 04/13] leds: lm3692x: Fix devm vs. non-devm ordering
+Date:   Wed, 9 Nov 2022 16:48:05 +0800
+Message-ID: <1667983694-15040-5-git-send-email-wangyufen@huawei.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1667983694-15040-1-git-send-email-wangyufen@huawei.com>
 References: <1667983694-15040-1-git-send-email-wangyufen@huawei.com>
@@ -46,49 +46,49 @@ allocations, otherwise it will break the tear down ordering and might
 lead to crashes or other bugs during ->remove() stage. Fix this by
 wrapping mutex_destroy() call with devm_add_action_or_reset().
 
-Fixes: 9e50d5fb0d18 ("leds: add LED driver for CR0014114 board")
+Fixes: 9699cb6bbef2 ("leds: lm3692x: Introduce LM3692x dual string driver")
 Signed-off-by: Wang Yufen <wangyufen@huawei.com>
-Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+Cc: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-cr0014114.c | 11 ++++++++++-
+ drivers/leds/leds-lm3692x.c | 11 ++++++++++-
  1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-cr0014114.c b/drivers/leds/leds-cr0014114.c
-index c87686b..f3a0320 100644
---- a/drivers/leds/leds-cr0014114.c
-+++ b/drivers/leds/leds-cr0014114.c
-@@ -211,6 +211,11 @@ static int cr0014114_probe_dt(struct cr0014114 *priv)
- 	return 0;
+diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+index 54b4662..aa1b0cc 100644
+--- a/drivers/leds/leds-lm3692x.c
++++ b/drivers/leds/leds-lm3692x.c
+@@ -456,6 +456,11 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+ 	return ret;
  }
  
-+static void cr0014114_mutex_destroy(void *lock)
++static void lm3692x_mutex_destroy(void *lock)
 +{
 +	mutex_destroy(lock);
 +}
 +
- static int cr0014114_probe(struct spi_device *spi)
+ static int lm3692x_probe(struct i2c_client *client,
+ 			const struct i2c_device_id *id)
  {
- 	struct cr0014114	*priv;
-@@ -240,6 +245,11 @@ static int cr0014114_probe(struct spi_device *spi)
- 	priv->delay	= jiffies -
- 			  msecs_to_jiffies(CR_FW_DELAY_MSEC);
+@@ -472,6 +477,11 @@ static int lm3692x_probe(struct i2c_client *client,
+ 	led->model_id = id->driver_data;
+ 	i2c_set_clientdata(client, led);
  
-+	ret = devm_add_action_or_reset(&spi->dev, cr0014114_mutex_destroy,
-+				       &priv->lock);
++	ret = devm_add_action_or_reset(&client->dev, lm3692x_mutex_destroy,
++				       &led->lock);
 +	if (ret)
 +		return ret;
 +
- 	priv->do_recount = true;
- 	ret = cr0014114_sync(priv);
- 	if (ret) {
-@@ -271,7 +281,6 @@ static void cr0014114_remove(struct spi_device *spi)
- 	struct cr0014114 *priv = spi_get_drvdata(spi);
+ 	led->regmap = devm_regmap_init_i2c(client, &lm3692x_regmap_config);
+ 	if (IS_ERR(led->regmap)) {
+ 		ret = PTR_ERR(led->regmap);
+@@ -496,7 +506,6 @@ static void lm3692x_remove(struct i2c_client *client)
+ 	struct lm3692x_led *led = i2c_get_clientdata(client);
  
- 	cancel_delayed_work_sync(&priv->work);
--	mutex_destroy(&priv->lock);
+ 	lm3692x_leds_disable(led);
+-	mutex_destroy(&led->lock);
  }
  
- static const struct of_device_id cr0014114_dt_ids[] = {
+ static const struct i2c_device_id lm3692x_id[] = {
 -- 
 1.8.3.1
 
