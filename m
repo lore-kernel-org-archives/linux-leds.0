@@ -2,20 +2,20 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A1AC43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B21CC43217
 	for <linux-leds@archiver.kernel.org>; Wed,  9 Nov 2022 08:28:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229907AbiKII2A (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 9 Nov 2022 03:28:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40140 "EHLO
+        id S229911AbiKII2D (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 9 Nov 2022 03:28:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229863AbiKII1y (ORCPT
+        with ESMTP id S229861AbiKII1y (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2022 03:27:54 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5F0E13D52;
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DCB513E9E;
         Wed,  9 Nov 2022 00:27:53 -0800 (PST)
 Received: from canpemm500010.china.huawei.com (unknown [172.30.72.57])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4N6dPl12WNzmVnl;
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4N6dPl0SP1z15MVD;
         Wed,  9 Nov 2022 16:27:39 +0800 (CST)
 Received: from localhost.localdomain (10.175.112.70) by
  canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
@@ -24,10 +24,10 @@ Received: from localhost.localdomain (10.175.112.70) by
 From:   Wang Yufen <wangyufen@huawei.com>
 To:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     <pavel@ucw.cz>, Wang Yufen <wangyufen@huawei.com>,
-        Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH 08/13] leds: mlxreg: Fix devm vs. non-devm ordering
-Date:   Wed, 9 Nov 2022 16:48:09 +0800
-Message-ID: <1667983694-15040-9-git-send-email-wangyufen@huawei.com>
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH 06/13] leds: lp50xx: Fix devm vs. non-devm ordering
+Date:   Wed, 9 Nov 2022 16:48:07 +0800
+Message-ID: <1667983694-15040-7-git-send-email-wangyufen@huawei.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1667983694-15040-1-git-send-email-wangyufen@huawei.com>
 References: <1667983694-15040-1-git-send-email-wangyufen@huawei.com>
@@ -46,63 +46,50 @@ allocations, otherwise it will break the tear down ordering and might
 lead to crashes or other bugs during ->remove() stage. Fix this by
 wrapping mutex_destroy() call with devm_add_action_or_reset().
 
-Fixes: 386570d76f2f ("leds: add driver for support Mellanox regmap LEDs for BMC and x86 platform")
+Fixes: 242b81170fb8 ("leds: lp50xx: Add the LP50XX family of the RGB LED driver")
 Signed-off-by: Wang Yufen <wangyufen@huawei.com>
-Cc: Vadim Pasternak <vadimp@mellanox.com>
+Cc: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/leds/leds-mlxreg.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/leds/leds-lp50xx.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-mlxreg.c b/drivers/leds/leds-mlxreg.c
-index b7855c9..b7c58fb 100644
---- a/drivers/leds/leds-mlxreg.c
-+++ b/drivers/leds/leds-mlxreg.c
-@@ -254,10 +254,16 @@ static int mlxreg_led_config(struct mlxreg_led_priv_data *priv)
- 	return 0;
+diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
+index 28d6b39..fcec568e 100644
+--- a/drivers/leds/leds-lp50xx.c
++++ b/drivers/leds/leds-lp50xx.c
+@@ -521,6 +521,11 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
+ 	return ret;
  }
  
-+static void mlxreg_led_mutex_destroy(void *lock)
++static void lp50xx_mutex_destroy(void *lock)
 +{
 +	mutex_destroy(lock);
 +}
 +
- static int mlxreg_led_probe(struct platform_device *pdev)
+ static int lp50xx_probe(struct i2c_client *client)
  {
- 	struct mlxreg_core_platform_data *led_pdata;
- 	struct mlxreg_led_priv_data *priv;
-+	int ret;
+ 	struct lp50xx *led;
+@@ -539,6 +544,11 @@ static int lp50xx_probe(struct i2c_client *client)
+ 		return -ENOMEM;
  
- 	led_pdata = dev_get_platdata(&pdev->dev);
- 	if (!led_pdata) {
-@@ -273,24 +279,18 @@ static int mlxreg_led_probe(struct platform_device *pdev)
- 	priv->pdev = pdev;
- 	priv->pdata = led_pdata;
- 
-+	ret = devm_add_action_or_reset(&pdev->dev, mlxreg_led_mutex_destroy,
-+				       &priv->access_lock);
+ 	mutex_init(&led->lock);
++	ret = devm_add_action_or_reset(&client->dev, lp50xx_mutex_destroy,
++				       &led->lock);
 +	if (ret)
 +		return ret;
- 	return mlxreg_led_config(priv);
++
+ 	led->client = client;
+ 	led->dev = &client->dev;
+ 	led->chip_info = device_get_match_data(&client->dev);
+@@ -577,8 +587,6 @@ static void lp50xx_remove(struct i2c_client *client)
+ 		if (ret)
+ 			dev_err(led->dev, "Failed to disable regulator\n");
+ 	}
+-
+-	mutex_destroy(&led->lock);
  }
  
--static int mlxreg_led_remove(struct platform_device *pdev)
--{
--	struct mlxreg_led_priv_data *priv = dev_get_drvdata(&pdev->dev);
--
--	mutex_destroy(&priv->access_lock);
--
--	return 0;
--}
--
- static struct platform_driver mlxreg_led_driver = {
- 	.driver = {
- 	    .name = "leds-mlxreg",
- 	},
- 	.probe = mlxreg_led_probe,
--	.remove = mlxreg_led_remove,
- };
- 
- module_platform_driver(mlxreg_led_driver);
+ static const struct i2c_device_id lp50xx_id[] = {
 -- 
 1.8.3.1
 
