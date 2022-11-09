@@ -2,21 +2,21 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90184C4167B
-	for <linux-leds@archiver.kernel.org>; Wed,  9 Nov 2022 08:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5111DC433FE
+	for <linux-leds@archiver.kernel.org>; Wed,  9 Nov 2022 08:28:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbiKII2J (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 9 Nov 2022 03:28:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40174 "EHLO
+        id S229935AbiKII2K (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 9 Nov 2022 03:28:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229899AbiKII14 (ORCPT
+        with ESMTP id S229898AbiKII14 (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Wed, 9 Nov 2022 03:27:56 -0500
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9DDF1B9F5;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6522913F99;
         Wed,  9 Nov 2022 00:27:55 -0800 (PST)
-Received: from canpemm500010.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N6dPs10w4zRp7v;
-        Wed,  9 Nov 2022 16:27:45 +0800 (CST)
+Received: from canpemm500010.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N6dPr56sDzRnvt;
+        Wed,  9 Nov 2022 16:27:44 +0800 (CST)
 Received: from localhost.localdomain (10.175.112.70) by
  canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
@@ -24,10 +24,10 @@ Received: from localhost.localdomain (10.175.112.70) by
 From:   Wang Yufen <wangyufen@huawei.com>
 To:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     <pavel@ucw.cz>, Wang Yufen <wangyufen@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 13/13] leds: rt8515: Fix devm vs. non-devm ordering
-Date:   Wed, 9 Nov 2022 16:48:14 +0800
-Message-ID: <1667983694-15040-14-git-send-email-wangyufen@huawei.com>
+        Christian Mauderer <oss@c-mauderer.de>
+Subject: [PATCH 12/13] leds: spi-byte: Fix devm vs. non-devm ordering
+Date:   Wed, 9 Nov 2022 16:48:13 +0800
+Message-ID: <1667983694-15040-13-git-send-email-wangyufen@huawei.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1667983694-15040-1-git-send-email-wangyufen@huawei.com>
 References: <1667983694-15040-1-git-send-email-wangyufen@huawei.com>
@@ -46,55 +46,67 @@ allocations, otherwise it will break the tear down ordering and might
 lead to crashes or other bugs during ->remove() stage. Fix this by
 wrapping mutex_destroy() call with devm_add_action_or_reset().
 
-Fixes: e1c6edcbea13 ("leds: rt8515: Add Richtek RT8515 LED driver")
+Fixes: e9a804d7a428 ("leds: spi-byte: add single byte SPI LED driver")
 Signed-off-by: Wang Yufen <wangyufen@huawei.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Christian Mauderer <oss@c-mauderer.de>
 ---
- drivers/leds/flash/leds-rt8515.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/leds/leds-spi-byte.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/leds/flash/leds-rt8515.c b/drivers/leds/flash/leds-rt8515.c
-index 44904fde..f2d92ea 100644
---- a/drivers/leds/flash/leds-rt8515.c
-+++ b/drivers/leds/flash/leds-rt8515.c
-@@ -273,6 +273,11 @@ static void rt8515_determine_max_intensity(struct rt8515 *rt,
- 	*max_intensity_setting = max_intensity;
+diff --git a/drivers/leds/leds-spi-byte.c b/drivers/leds/leds-spi-byte.c
+index 2bc5c99..a169780 100644
+--- a/drivers/leds/leds-spi-byte.c
++++ b/drivers/leds/leds-spi-byte.c
+@@ -78,6 +78,11 @@ static int spi_byte_brightness_set_blocking(struct led_classdev *dev,
+ 	return ret;
  }
  
-+static void rt8515_mutex_destroy(void *lock)
++static void spi_byte_mutex_destroy(void *lock)
 +{
 +	mutex_destroy(lock);
 +}
 +
- static int rt8515_probe(struct platform_device *pdev)
+ static int spi_byte_probe(struct spi_device *spi)
  {
- 	struct device *dev = &pdev->dev;
-@@ -338,13 +343,16 @@ static int rt8515_probe(struct platform_device *pdev)
- 	led->flags |= LED_CORE_SUSPENDRESUME | LED_DEV_CAP_FLASH;
- 
- 	mutex_init(&rt->lock);
-+	ret = devm_add_action_or_reset(dev, rt8515_mutex_destroy,
-+				       &rt->lock);
+ 	struct device_node *child;
+@@ -101,6 +106,10 @@ static int spi_byte_probe(struct spi_device *spi)
+ 	strlcpy(led->name, name, sizeof(led->name));
+ 	led->spi = spi;
+ 	mutex_init(&led->mutex);
++	ret = devm_add_action_or_reset(dev, spi_byte_mutex_destroy,
++				       &led->mutex);
 +	if (ret)
 +		return ret;
+ 	led->cdef = device_get_match_data(dev);
+ 	led->ldev.name = led->name;
+ 	led->ldev.brightness = LED_OFF;
+@@ -121,25 +130,15 @@ static int spi_byte_probe(struct spi_device *spi)
+ 					 led->ldev.brightness);
  
- 	platform_set_drvdata(pdev, rt);
- 
- 	ret = devm_led_classdev_flash_register_ext(dev, fled, &init_data);
- 	if (ret) {
- 		fwnode_handle_put(child);
--		mutex_destroy(&rt->lock);
- 		dev_err(dev, "can't register LED %s\n", led->name);
+ 	ret = devm_led_classdev_register(&spi->dev, &led->ldev);
+-	if (ret) {
+-		mutex_destroy(&led->mutex);
++	if (ret)
  		return ret;
- 	}
-@@ -373,7 +381,6 @@ static int rt8515_remove(struct platform_device *pdev)
- 
- 	rt8515_v4l2_flash_release(rt);
- 	del_timer_sync(&rt->powerdown_timer);
--	mutex_destroy(&rt->lock);
+-	}
+ 	spi_set_drvdata(spi, led);
  
  	return 0;
  }
+ 
+-static void spi_byte_remove(struct spi_device *spi)
+-{
+-	struct spi_byte_led	*led = spi_get_drvdata(spi);
+-
+-	mutex_destroy(&led->mutex);
+-}
+-
+ static struct spi_driver spi_byte_driver = {
+ 	.probe		= spi_byte_probe,
+-	.remove		= spi_byte_remove,
+ 	.driver = {
+ 		.name		= KBUILD_MODNAME,
+ 		.of_match_table	= spi_byte_dt_ids,
 -- 
 1.8.3.1
 
