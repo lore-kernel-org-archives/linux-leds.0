@@ -2,841 +2,149 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 702C2C43219
-	for <linux-leds@archiver.kernel.org>; Thu, 10 Nov 2022 06:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F23BC4332F
+	for <linux-leds@archiver.kernel.org>; Thu, 10 Nov 2022 09:24:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232651AbiKJGzo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 10 Nov 2022 01:55:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57334 "EHLO
+        id S229723AbiKJJYC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 10 Nov 2022 04:24:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232432AbiKJGzj (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 10 Nov 2022 01:55:39 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AD3E2F38F;
-        Wed,  9 Nov 2022 22:55:37 -0800 (PST)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AA6TRE6019719;
-        Thu, 10 Nov 2022 06:55:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=70Gor8lDvP2I0dBZNDLxk5vOFocEPjvWblG9oU+jOsU=;
- b=Z9cIohPdF1qOJ4iJeIa5HqASDq8lp6jyg+Iq/mxdn2TN4P1+Uka+8oUluyisQB7fyJpK
- MSoDlObrwZvKh1RmHHVx7+vy4jczidJh0Z6fECFLr0Ka92TeqxxwvNodchDTkAGFksiA
- nS7M2I4kJHvEv5sq5GCU7mWjRPQJoGxC3iURm4vYa2oeAmWRj2onPLIgotlp5AGe7uDr
- DxDZY+6TO/WcwZLXYEUJkVJNhQh6qo/NK9l4esNBrH2LVSSZ7EOYsAK2pjmK6FkRgZqM
- Ct696Qd/ZMO1wdHNnNl7jZoeZqIO300MMO3ngSJSKARIiIxXKmvrMkogQf+URePdyUk2 FA== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3kruprg2wg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Nov 2022 06:55:22 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2AA6tMZf022305
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Nov 2022 06:55:22 GMT
-Received: from fenglinw2-gv.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Wed, 9 Nov 2022 22:55:18 -0800
-From:   Fenglin Wu <quic_fenglinw@quicinc.com>
-To:     <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <krzysztof.kozlowski@linaro.org>, Pavel Machek <pavel@ucw.cz>,
-        Gene Chen <gene_chen@richtek.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Fenglin Wu <quic_fenglinw@quicinc.com>,
-        <linux-leds@vger.kernel.org>
-CC:     <quic_collinsd@quicinc.com>, <quic_subbaram@quicinc.com>,
-        Luca Weiss <luca.weiss@fairphone.com>
-Subject: [PATCH v5 1/2] leds: flash: add driver to support flash LED module in QCOM PMICs
-Date:   Thu, 10 Nov 2022 14:54:18 +0800
-Message-ID: <20221110065420.2451436-2-quic_fenglinw@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221110065420.2451436-1-quic_fenglinw@quicinc.com>
-References: <20221110065420.2451436-1-quic_fenglinw@quicinc.com>
+        with ESMTP id S229850AbiKJJYA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 10 Nov 2022 04:24:00 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65B9C6A6AD
+        for <linux-leds@vger.kernel.org>; Thu, 10 Nov 2022 01:23:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668072182;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YX8VazdZMuqZXYpMnkdqn7btKqnT2/oiOnOG0HPFf+w=;
+        b=D9gzsdSUilHc7hNyXul+C92VqwIO71C5krHOUNqaXmb98k0eny6PcBaNfb5zQXztbEVbIu
+        Ot0vl2jgeQujmaC+Ck2SnbhJ/lHKi8CJsoGguJ825F4g/mKWG9x54Zkcak2nVGA9CqDs90
+        /sl9TRVoENMAzzx3MEJPALNlAFJc0pg=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-387-dBA7CaAxN0ioX4RVbNfn2Q-1; Thu, 10 Nov 2022 04:23:00 -0500
+X-MC-Unique: dBA7CaAxN0ioX4RVbNfn2Q-1
+Received: by mail-pj1-f72.google.com with SMTP id pq17-20020a17090b3d9100b0020a4c65c3a9so889826pjb.0
+        for <linux-leds@vger.kernel.org>; Thu, 10 Nov 2022 01:23:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YX8VazdZMuqZXYpMnkdqn7btKqnT2/oiOnOG0HPFf+w=;
+        b=i2KEiV0YLTGT4w4KIYViR6kc5a/ourVhbbABFV+kySWD66SRLeMkEvvA4Wxcs0VHp5
+         xopw6sv0uj7CAXNseWasRJ08VmtIrcA/VxOqqyIrffTfAqFFnvqAwdeLpHl5jws3nh8a
+         KTxvKCngocE+E5i4OdEqgA+zPsy6MojpxS0XeVYZrvOv7uDEJJ6HkUVTScwatw+2sdjT
+         KHCsP2eWKwgwlQl7DPlmPQ/yE9I3wAe3jRzGzlBt3XZCqgGRiSdA5IxSv7RRzKlO+FgQ
+         C/ACPpvc0CuZ9gCPV1b4Kf4kS7f3Q7l/x5QINinroFPDx1jrptIW6FEQ6jpdEoQpPKTy
+         WEjw==
+X-Gm-Message-State: ACrzQf3wX/DxRRjRhe8eZxlagd0A6rl1lJeJarWg9zmOnCivYKQV8No3
+        CnaekM5KwW909VO7WMLl+I4csWkGML+uryQVnFF1Zh6h0AVOo71OrcegxeNIdnzbIeb58UUSkMK
+        T8dEllzIB9O13LqgTAdF1+2HGCfWA28AArSRF1A==
+X-Received: by 2002:a05:6a00:18a1:b0:56c:411f:b699 with SMTP id x33-20020a056a0018a100b0056c411fb699mr2196441pfh.48.1668072179842;
+        Thu, 10 Nov 2022 01:22:59 -0800 (PST)
+X-Google-Smtp-Source: AMsMyM4KIbM4VvR/7LBUPVhwAai8DfJ25QJwPeo5ONkjBoS1/2YMcYTA7TPGpDiUkLFcCBrXfD11HSisIX7/iTURTLc=
+X-Received: by 2002:a05:6a00:18a1:b0:56c:411f:b699 with SMTP id
+ x33-20020a056a0018a100b0056c411fb699mr2196432pfh.48.1668072179550; Thu, 10
+ Nov 2022 01:22:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ls7htSPzkKhQWU9_qDOPs8cUmrK_TCiO
-X-Proofpoint-GUID: ls7htSPzkKhQWU9_qDOPs8cUmrK_TCiO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-09_06,2022-11-09_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- adultscore=0 clxscore=1015 priorityscore=1501 impostorscore=0 mlxscore=0
- suspectscore=0 mlxlogscore=999 lowpriorityscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211100051
+References: <Y1AVDck5sQf8+QFX@rowland.harvard.edu> <CABfF9mPU52OXTGcsbatJCG4nbP4zaPN3iJnttMg+xRyGY6dUEQ@mail.gmail.com>
+ <CAO-hwJJ7cF-4kd8Mi6bb5n-k5LuMrWbpdMqFs82y7iQOscr-7g@mail.gmail.com>
+ <CABfF9mNfU=swmpVXfVr7pYWs72jrd-HDY8+_NXyBDAKa4CWG5Q@mail.gmail.com>
+ <CAO-hwJ+i3zd=CyU0T+Nb1vGfZfenMBH16ern_ncTTKEpyGAuBA@mail.gmail.com>
+ <CABfF9mNrMx2BzU5tbBeapY15M4Ls_5xYBGfVB=Up5TJu=eWCcg@mail.gmail.com>
+ <CAO-hwJJGAWkhZgGeLBruqCoskY5PBP-STs4kh-P6fBvpuSgpUw@mail.gmail.com>
+ <CABfF9mO3SQZvkQGOC09H5s7EEd2UGhpE=GYB46g_zF3aEOVn=Q@mail.gmail.com> <CABfF9mNbpTdAnChkZNKFed6C7n=Hyq-69rMUeDENE8ptLjJMSw@mail.gmail.com>
+In-Reply-To: <CABfF9mNbpTdAnChkZNKFed6C7n=Hyq-69rMUeDENE8ptLjJMSw@mail.gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Thu, 10 Nov 2022 10:22:45 +0100
+Message-ID: <CAO-hwJ+PysPKFG=a9+L8vwhiw4uY3F3DZmg4FwgPWGZ7LPt4EA@mail.gmail.com>
+Subject: Re: Litra Glow on Linux
+To:     Andreas Bergmeier <abergmeier@gmx.net>
+Cc:     linux-input@vger.kernel.org,
+        USB mailing list <linux-usb@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jiri Kosina <jikos@kernel.org>, linux-leds@vger.kernel.org,
+        Nestor Lopez Casado <nlopezcasad@logitech.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add initial driver to support flash LED module found in Qualcomm
-Technologies, Inc. PMICs. The flash module can have 3 or 4 channels
-and each channel can be controlled indepedently and support full scale
-current up to 1.5 A. It also supports connecting two channels together
-to supply one LED component with full scale current up to 2 A. In that
-case, the current will be split on each channel symmetrically and the
-channels will be enabled and disabled at the same time.
+On Thu, Nov 10, 2022 at 4:29 AM Andreas Bergmeier <abergmeier@gmx.net> wrote:
+>
+> On Wed, 9 Nov 2022 at 21:27, Andreas Bergmeier <abergmeier@gmx.net> wrote:
+> >
+> > Finally I have an environment where I can test my kernel code.
+> >
+> > On Mon, 31 Oct 2022 at 10:29, Benjamin Tissoires
+> > <benjamin.tissoires@redhat.com> wrote:
+> > > For identifying the GLOW device you should be adding an id in the
+> > > table of hid-logitech-hidpp, with a driver data that tells the driver
+> > > to look for 0x1990.
+> > >
+> > > >
+> > > > > - you need to add a hook in connect_event to register the led class
+> > > > > device that will hook on to the actual LED of the device
+> > Sadly my tests did not go very far. The code fails already when
+> > calling the `probe` callback (`hidpp_probe`).
+> > When it calls into `hidpp_root_get_protocol_version` it seems to
+> > receive `HIDPP_ERROR_RESOURCE_ERROR`.
+> > Which then leads to an error message: Device not connected
+> > Upon looking at `HIDPP_ERROR_RESOURCE_ERROR` (9) there is no
+> > documentation what it means in code.
+> > From a look into the docs it says that 9 is UNSUPPORTED error for 2.0
+> > devices. Thus I am wondering how the code knows
+> > that it is a problem with connectivity.
 
-Signed-off-by: Fenglin Wu <quic_fenglinw@quicinc.com>
-Tested-by: Luca Weiss <luca.weiss@fairphone.com> # sm7225-fairphone-fp4 + pm6150l
----
- drivers/leds/flash/Kconfig           |  15 +
- drivers/leds/flash/Makefile          |   1 +
- drivers/leds/flash/leds-qcom-flash.c | 701 +++++++++++++++++++++++++++
- 3 files changed, 717 insertions(+)
- create mode 100644 drivers/leds/flash/leds-qcom-flash.c
+From the top of my memory, this was told to us that this is the way we
+detect if the device was connected or not in the unifying case. Though
+in your case, it's a USB device, so there is no such thing as "not
+connected"...
 
-diff --git a/drivers/leds/flash/Kconfig b/drivers/leds/flash/Kconfig
-index d3eb689b193c..f36a60409290 100644
---- a/drivers/leds/flash/Kconfig
-+++ b/drivers/leds/flash/Kconfig
-@@ -61,6 +61,21 @@ config LEDS_MT6360
- 	  Independent current sources supply for each flash LED support torch
- 	  and strobe mode.
- 
-+config LEDS_QCOM_FLASH
-+	tristate "LED support for flash module inside Qualcomm Technologies, Inc. PMIC"
-+	depends on MFD_SPMI_PMIC || COMPILE_TEST
-+	depends on LEDS_CLASS && OF
-+	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
-+	select REGMAP
-+	help
-+	  This option enables support for the flash module found in Qualcomm
-+	  Technologies, Inc. PMICs. The flash module can have 3 or 4 flash LED
-+	  channels and each channel is programmable to support up to 1.5 A full
-+	  scale current. It also supports connecting two channels' output together
-+	  to supply one LED component to achieve current up to 2 A. In such case,
-+	  the total LED current will be split symmetrically on each channel and
-+	  they will be enabled/disabled at the same time.
-+
- config LEDS_RT4505
- 	tristate "LED support for RT4505 flashlight controller"
- 	depends on I2C && OF
-diff --git a/drivers/leds/flash/Makefile b/drivers/leds/flash/Makefile
-index 0acbddc0b91b..8a60993f1a25 100644
---- a/drivers/leds/flash/Makefile
-+++ b/drivers/leds/flash/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_LEDS_AS3645A)	+= leds-as3645a.o
- obj-$(CONFIG_LEDS_KTD2692)	+= leds-ktd2692.o
- obj-$(CONFIG_LEDS_LM3601X)	+= leds-lm3601x.o
- obj-$(CONFIG_LEDS_MAX77693)	+= leds-max77693.o
-+obj-$(CONFIG_LEDS_QCOM_FLASH)	+= leds-qcom-flash.o
- obj-$(CONFIG_LEDS_RT4505)	+= leds-rt4505.o
- obj-$(CONFIG_LEDS_RT8515)	+= leds-rt8515.o
- obj-$(CONFIG_LEDS_SGM3140)	+= leds-sgm3140.o
-diff --git a/drivers/leds/flash/leds-qcom-flash.c b/drivers/leds/flash/leds-qcom-flash.c
-new file mode 100644
-index 000000000000..3735282b77e9
---- /dev/null
-+++ b/drivers/leds/flash/leds-qcom-flash.c
-@@ -0,0 +1,701 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+#include <linux/leds.h>
-+#include <linux/led-class-flash.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
-+#include <media/v4l2-flash-led-class.h>
-+
-+/* registers definitions */
-+#define FLASH_TYPE_REG			0x04
-+#define FLASH_TYPE_VAL			0x18
-+
-+#define FLASH_SUBTYPE_REG		0x05
-+#define FLASH_SUBTYPE_3CH_VAL		0x04
-+#define FLASH_SUBTYPE_4CH_VAL		0x07
-+
-+#define FLASH_TIMER_EN_BIT		BIT(7)
-+#define FLASH_TIMER_VAL_MASK		GENMASK(6, 0)
-+#define FLASH_TIMER_STEP_MS		10
-+
-+#define FLASH_STROBE_HW_SW_SEL_BIT	BIT(2)
-+#define SW_STROBE_VAL			0
-+#define HW_STROBE_VAL			1
-+#define FLASH_HW_STROBE_TRIGGER_SEL_BIT	BIT(1)
-+#define STROBE_LEVEL_TRIGGER_VAL	0
-+#define STROBE_EDGE_TRIGGER_VAL		1
-+#define FLASH_STROBE_POLARITY_BIT	BIT(0)
-+#define STROBE_ACTIVE_HIGH_VAL		1
-+
-+#define FLASH_IRES_MASK_4CH		BIT(0)
-+#define FLASH_IRES_MASK_3CH		GENMASK(1, 0)
-+#define FLASH_IRES_12P5MA_VAL		0
-+#define FLASH_IRES_5MA_VAL_4CH		1
-+#define FLASH_IRES_5MA_VAL_3CH		3
-+
-+/* constants */
-+#define FLASH_CURRENT_MAX_UA		1500000
-+#define TORCH_CURRENT_MAX_UA		500000
-+#define FLASH_TOTAL_CURRENT_MAX_UA	2000000
-+#define FLASH_CURRENT_DEFAULT_UA	1000000
-+#define TORCH_CURRENT_DEFAULT_UA	200000
-+
-+#define TORCH_IRES_UA			5000
-+#define FLASH_IRES_UA			12500
-+
-+#define FLASH_TIMEOUT_MAX_US		1280000
-+#define FLASH_TIMEOUT_STEP_US		10000
-+
-+enum hw_type {
-+	QCOM_MVFLASH_3CH,
-+	QCOM_MVFLASH_4CH,
-+};
-+
-+enum led_mode {
-+	FLASH_MODE,
-+	TORCH_MODE,
-+};
-+
-+enum led_strobe {
-+	SW_STROBE,
-+	HW_STROBE,
-+};
-+
-+enum {
-+	REG_STATUS1,
-+	REG_STATUS2,
-+	REG_STATUS3,
-+	REG_CHAN_TIMER,
-+	REG_ITARGET,
-+	REG_MODULE_EN,
-+	REG_IRESOLUTION,
-+	REG_CHAN_STROBE,
-+	REG_CHAN_EN,
-+	REG_MAX_COUNT,
-+};
-+
-+struct reg_field mvflash_3ch_regs[REG_MAX_COUNT] = {
-+	REG_FIELD(0x08, 0, 7),			/* status1	*/
-+	REG_FIELD(0x09, 0, 7),                  /* status2	*/
-+	REG_FIELD(0x0a, 0, 7),                  /* status3	*/
-+	REG_FIELD_ID(0x40, 0, 7, 3, 1),         /* chan_timer	*/
-+	REG_FIELD_ID(0x43, 0, 6, 3, 1),         /* itarget	*/
-+	REG_FIELD(0x46, 7, 7),                  /* module_en	*/
-+	REG_FIELD(0x47, 0, 5),                  /* iresolution	*/
-+	REG_FIELD_ID(0x49, 0, 2, 3, 1),         /* chan_strobe	*/
-+	REG_FIELD(0x4c, 0, 2),                  /* chan_en	*/
-+};
-+
-+struct reg_field mvflash_4ch_regs[REG_MAX_COUNT] = {
-+	REG_FIELD(0x06, 0, 7),			/* status1	*/
-+	REG_FIELD(0x07, 0, 6),			/* status2	*/
-+	REG_FIELD(0x09, 0, 7),			/* status3	*/
-+	REG_FIELD_ID(0x3e, 0, 7, 4, 1),		/* chan_timer	*/
-+	REG_FIELD_ID(0x42, 0, 6, 4, 1),		/* itarget	*/
-+	REG_FIELD(0x46, 7, 7),			/* module_en	*/
-+	REG_FIELD(0x49, 0, 3),			/* iresolution	*/
-+	REG_FIELD_ID(0x4a, 0, 6, 4, 1),		/* chan_strobe	*/
-+	REG_FIELD(0x4e, 0, 3),			/* chan_en	*/
-+};
-+
-+struct qcom_flash_led {
-+	struct qcom_flash_chip		*chip;
-+	struct led_classdev_flash	flash;
-+	struct v4l2_flash		*v4l2_flash;
-+	u32				max_flash_current_ma;
-+	u32				max_torch_current_ma;
-+	u32				max_timeout_ms;
-+	u32				flash_current_ma;
-+	u32				flash_timeout_ms;
-+	u8				*chan_id;
-+	u8				chan_count;
-+	bool				enabled;
-+};
-+
-+struct qcom_flash_chip {
-+	struct qcom_flash_led	*leds;
-+	struct regmap_field     *r_fields[REG_MAX_COUNT];
-+	struct device		*dev;
-+	struct mutex		lock;
-+	enum hw_type		hw_type;
-+	u8			leds_count;
-+	u8			max_channels;
-+	u8			chan_en_bits;
-+};
-+
-+static int set_flash_module_en(struct qcom_flash_led *led, bool en)
-+{
-+	struct qcom_flash_chip *chip = led->chip;
-+	u8 led_mask = 0, val;
-+	int i, rc;
-+
-+	for (i = 0; i < led->chan_count; i++)
-+		led_mask |= BIT(led->chan_id[i] - 1);
-+
-+	mutex_lock(&chip->lock);
-+	if (en)
-+		chip->chan_en_bits |= led_mask;
-+	else
-+		chip->chan_en_bits &= ~led_mask;
-+
-+	val = !!chip->chan_en_bits;
-+	rc = regmap_field_write(chip->r_fields[REG_MODULE_EN], val);
-+	if (rc < 0)
-+		dev_err(chip->dev, "write module_en failed, rc=%d\n", rc);
-+	mutex_unlock(&chip->lock);
-+
-+	return rc;
-+}
-+
-+static int set_flash_current(struct qcom_flash_led *led, u32 current_ma, enum led_mode mode)
-+{
-+	struct qcom_flash_chip *chip = led->chip;
-+	u32 itarg_ua = current_ma * 1000 / led->chan_count + 1;
-+	u32 ires_ua = (mode == FLASH_MODE) ? FLASH_IRES_UA : TORCH_IRES_UA;
-+	u8 val, shift, ires_mask = 0, ires_val = 0, chan_id;
-+	int i, rc;
-+
-+	/*
-+	 * Split the current across the channels and set the
-+	 * IRESOLUTION and ITARGET registers accordingly.
-+	 */
-+	for (i = 0; i < led->chan_count; i++) {
-+		chan_id = led->chan_id[i];
-+		if (itarg_ua < ires_ua)
-+			val = 0;
-+		else
-+			val = itarg_ua / ires_ua - 1;
-+
-+		rc = regmap_fields_write(chip->r_fields[REG_ITARGET], chan_id - 1, val);
-+		if (rc < 0)
-+			return rc;
-+
-+		if (chip->hw_type == QCOM_MVFLASH_3CH) {
-+			shift = (chan_id - 1) * 2;
-+			ires_mask |= FLASH_IRES_MASK_3CH << shift;
-+			ires_val |= ((mode == FLASH_MODE) ?
-+				(FLASH_IRES_12P5MA_VAL << shift) :
-+				(FLASH_IRES_5MA_VAL_3CH << shift));
-+		} else if (chip->hw_type == QCOM_MVFLASH_4CH) {
-+			shift = chan_id - 1;
-+			ires_mask |= FLASH_IRES_MASK_4CH << shift;
-+			ires_val |= ((mode == FLASH_MODE) ?
-+				(FLASH_IRES_12P5MA_VAL << shift) :
-+				(FLASH_IRES_5MA_VAL_4CH << shift));
-+		}
-+	}
-+
-+	return regmap_field_update_bits(chip->r_fields[REG_IRESOLUTION], ires_mask, ires_val);
-+}
-+
-+static int set_flash_timeout(struct qcom_flash_led *led, u32 timeout_ms)
-+{
-+	struct qcom_flash_chip *chip = led->chip;
-+	u8 val, chan_id;
-+	int rc, i;
-+
-+	/* set SAFETY_TIMER for all the channels connected to the same LED */
-+	timeout_ms = min_t(u32, timeout_ms, led->max_timeout_ms);
-+	for (i = 0; i < led->chan_count; i++) {
-+		chan_id = led->chan_id[i];
-+		val = timeout_ms / FLASH_TIMER_STEP_MS;
-+		val = clamp_t(u8, val, 0, FLASH_TIMER_VAL_MASK);
-+		if (timeout_ms)
-+			val |= FLASH_TIMER_EN_BIT;
-+
-+		rc = regmap_fields_write(chip->r_fields[REG_CHAN_TIMER], chan_id - 1, val);
-+		if (rc < 0)
-+			return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+static int set_flash_strobe(struct qcom_flash_led *led, enum led_strobe strobe, bool state)
-+{
-+	struct qcom_flash_chip *chip = led->chip;
-+	u8 mask, val, chan_id = 0, chan_mask = 0;
-+	int rc, i;
-+
-+	/* Set SW strobe config for all channels connected to the LED */
-+	for (i = 0; i < led->chan_count; i++) {
-+		chan_id = led->chan_id[i];
-+		if (strobe == SW_STROBE)
-+			val = FIELD_PREP(FLASH_STROBE_HW_SW_SEL_BIT, SW_STROBE_VAL);
-+		else
-+			val = FIELD_PREP(FLASH_STROBE_HW_SW_SEL_BIT, HW_STROBE_VAL);
-+
-+		val |= FIELD_PREP(FLASH_HW_STROBE_TRIGGER_SEL_BIT, STROBE_LEVEL_TRIGGER_VAL) |
-+			FIELD_PREP(FLASH_STROBE_POLARITY_BIT, STROBE_ACTIVE_HIGH_VAL);
-+		rc = regmap_fields_write(chip->r_fields[REG_CHAN_STROBE], chan_id - 1, val);
-+		if (rc < 0)
-+			return rc;
-+
-+		chan_mask |= BIT(chan_id - 1);
-+	}
-+
-+	/* enable/disable flash channels */
-+	mask = chan_mask;
-+	val = state ? mask : 0;
-+	rc = regmap_field_update_bits(chip->r_fields[REG_CHAN_EN], mask, val);
-+	if (rc < 0)
-+		return rc;
-+
-+	led->enabled = state;
-+	return 0;
-+}
-+
-+static int qcom_flash_brightness_set(struct led_classdev_flash *fled_cdev, u32 brightness)
-+{
-+	struct qcom_flash_led *led = container_of(fled_cdev, struct qcom_flash_led, flash);
-+
-+	led->flash_current_ma = min_t(u32, led->max_flash_current_ma, brightness / 1000);
-+	return 0;
-+}
-+
-+static int qcom_flash_timeout_set(struct led_classdev_flash *fled_cdev, u32 timeout)
-+{
-+	struct qcom_flash_led *led = container_of(fled_cdev, struct qcom_flash_led, flash);
-+
-+	led->flash_timeout_ms = timeout / 1000;
-+	return 0;
-+}
-+
-+static int qcom_flash_strobe_set(struct led_classdev_flash *fled_cdev, bool state)
-+{
-+	struct qcom_flash_led *led = container_of(fled_cdev, struct qcom_flash_led, flash);
-+	int rc;
-+
-+	rc = set_flash_current(led, led->flash_current_ma, FLASH_MODE);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = set_flash_timeout(led, led->flash_timeout_ms);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = set_flash_module_en(led, state);
-+	if (rc < 0)
-+		return rc;
-+
-+	return set_flash_strobe(led, SW_STROBE, state);
-+}
-+
-+static int qcom_flash_strobe_get(struct led_classdev_flash *fled_cdev, bool *state)
-+{
-+	struct qcom_flash_led *led = container_of(fled_cdev, struct qcom_flash_led, flash);
-+
-+	*state = led->enabled;
-+	return 0;
-+}
-+
-+static int qcom_flash_fault_get(struct led_classdev_flash *fled_cdev, u32 *fault)
-+{
-+	struct qcom_flash_led *led = container_of(fled_cdev, struct qcom_flash_led, flash);
-+	struct qcom_flash_chip *chip = led->chip;
-+	u8 shift, chan_id = 0, chan_mask = 0;
-+	u8 ot_mask = 0, oc_mask = 0, uv_mask = 0;
-+	u32 val, fault_sts = 0;
-+	int i, rc;
-+
-+	rc = regmap_field_read(chip->r_fields[REG_STATUS1], &val);
-+	if (rc < 0)
-+		return rc;
-+
-+	for (i = 0; i < led->chan_count; i++) {
-+		chan_id = led->chan_id[i];
-+		shift = (chan_id - 1) * 2;
-+		if (val & BIT(shift))
-+			fault_sts |= LED_FAULT_SHORT_CIRCUIT;
-+		chan_mask |= BIT(chan_id - 1);
-+	}
-+
-+	rc = regmap_field_read(chip->r_fields[REG_STATUS2], &val);
-+	if (rc < 0)
-+		return rc;
-+
-+	if (chip->hw_type == QCOM_MVFLASH_3CH) {
-+		ot_mask = 0x0f;
-+		oc_mask = 0xe0;
-+		uv_mask = 0x10;
-+	} else if (chip->hw_type == QCOM_MVFLASH_4CH) {
-+		ot_mask = 0x70;
-+		oc_mask = 0x0e;
-+		uv_mask = 0x01;
-+	}
-+
-+	if (val & ot_mask)
-+		fault_sts |= LED_FAULT_OVER_TEMPERATURE;
-+	if (val & oc_mask)
-+		fault_sts |= LED_FAULT_OVER_CURRENT;
-+	if (val & uv_mask)
-+		fault_sts |= LED_FAULT_INPUT_VOLTAGE;
-+
-+	rc = regmap_field_read(chip->r_fields[REG_STATUS3], &val);
-+	if (rc < 0)
-+		return rc;
-+
-+	if (chip->hw_type == QCOM_MVFLASH_3CH) {
-+		if (val & chan_mask)
-+			fault_sts |= LED_FAULT_TIMEOUT;
-+	} else if (chip->hw_type == QCOM_MVFLASH_4CH) {
-+		for (i = 0; i < led->chan_count; i++) {
-+			chan_id = led->chan_id[i];
-+			shift = (chan_id - 1) * 2;
-+			if (val & BIT(shift))
-+				fault_sts |= LED_FAULT_TIMEOUT;
-+		}
-+	}
-+
-+	*fault = fault_sts;
-+	return 0;
-+}
-+
-+static int qcom_flash_led_brightness_set(struct led_classdev *led_cdev,
-+					enum led_brightness brightness)
-+{
-+	struct led_classdev_flash *fled_cdev =
-+		container_of(led_cdev, struct led_classdev_flash, led_cdev);
-+	struct qcom_flash_led *led =
-+		container_of(fled_cdev, struct qcom_flash_led, flash);
-+	u32 current_ma = brightness * led->max_torch_current_ma / LED_FULL;
-+	bool enable = !!brightness;
-+	int rc;
-+
-+	rc = set_flash_current(led, current_ma, TORCH_MODE);
-+	if (rc < 0)
-+		return rc;
-+
-+	/* disable flash timeout for torch LED */
-+	rc = set_flash_timeout(led, 0);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = set_flash_module_en(led, enable);
-+	if (rc < 0)
-+		return rc;
-+
-+	return set_flash_strobe(led, SW_STROBE, enable);
-+}
-+
-+static const struct led_flash_ops qcom_flash_ops = {
-+	.flash_brightness_set = qcom_flash_brightness_set,
-+	.strobe_set = qcom_flash_strobe_set,
-+	.strobe_get = qcom_flash_strobe_get,
-+	.timeout_set = qcom_flash_timeout_set,
-+	.fault_get = qcom_flash_fault_get,
-+};
-+
-+#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
-+static int qcom_flash_external_strobe_set(struct v4l2_flash *v4l2_flash, bool enable)
-+{
-+	struct led_classdev_flash *flash = v4l2_flash->fled_cdev;
-+	struct qcom_flash_led *led = container_of(flash, struct qcom_flash_led, flash);
-+	int rc;
-+
-+	rc = set_flash_module_en(led, enable);
-+	if (rc < 0)
-+		return rc;
-+
-+	if (enable)
-+		return set_flash_strobe(led, HW_STROBE, true);
-+	else
-+		return set_flash_strobe(led, SW_STROBE, false);
-+}
-+
-+static enum led_brightness qcom_flash_intensity_to_led_brightness(
-+		struct v4l2_flash *v4l2_flash, s32 intensity)
-+{
-+	struct led_classdev_flash *flash = v4l2_flash->fled_cdev;
-+	struct qcom_flash_led *led = container_of(flash, struct qcom_flash_led, flash);
-+	u32 current_ma = intensity / 1000;
-+
-+	current_ma = min_t(u32, current_ma, led->max_torch_current_ma);
-+	if (!current_ma)
-+		return LED_OFF;
-+
-+	return current_ma * LED_FULL / led->max_torch_current_ma;
-+}
-+
-+static s32 qcom_flash_brightness_to_led_intensity(struct v4l2_flash *v4l2_flash,
-+					enum led_brightness brightness)
-+{
-+	struct led_classdev_flash *flash = v4l2_flash->fled_cdev;
-+	struct qcom_flash_led *led = container_of(flash, struct qcom_flash_led, flash);
-+
-+	return (brightness * led->max_torch_current_ma * 1000) / LED_FULL;
-+}
-+
-+static const struct v4l2_flash_ops qcom_v4l2_flash_ops = {
-+	.external_strobe_set = qcom_flash_external_strobe_set,
-+	.intensity_to_led_brightness = qcom_flash_intensity_to_led_brightness,
-+	.led_brightness_to_intensity = qcom_flash_brightness_to_led_intensity,
-+};
-+
-+static int qcom_flash_v4l2_init(struct qcom_flash_led *led, struct fwnode_handle *fwnode)
-+{
-+	struct v4l2_flash_config v4l2_cfg = {0};
-+	struct led_flash_setting *s = &v4l2_cfg.intensity;
-+
-+	if (!(led->flash.led_cdev.flags & LED_DEV_CAP_FLASH))
-+		return 0;
-+
-+	s->min = s->step = TORCH_IRES_UA * led->chan_count;
-+	s->max = led->max_torch_current_ma * 1000;
-+	s->val = min_t(u32, s->max, TORCH_CURRENT_DEFAULT_UA);
-+
-+	strscpy(v4l2_cfg.dev_name, led->flash.led_cdev.dev->kobj.name,
-+					sizeof(v4l2_cfg.dev_name));
-+	v4l2_cfg.has_external_strobe = 1;
-+	v4l2_cfg.flash_faults = LED_FAULT_INPUT_VOLTAGE | LED_FAULT_OVER_CURRENT |
-+		LED_FAULT_SHORT_CIRCUIT | LED_FAULT_OVER_TEMPERATURE | LED_FAULT_TIMEOUT;
-+
-+	led->v4l2_flash = v4l2_flash_init(led->chip->dev, fwnode, &led->flash,
-+					&qcom_v4l2_flash_ops, &v4l2_cfg);
-+	return PTR_ERR_OR_ZERO(led->v4l2_flash);
-+}
-+# else
-+static int qcom_flash_v4l2_init(struct qcom_flash_led *led, struct fwnode_handle *fwnode)
-+{
-+	return 0;
-+}
-+#endif
-+
-+static int qcom_flash_register_led_device(struct device *parent,
-+		struct fwnode_handle *node, struct qcom_flash_led *led)
-+{
-+	struct qcom_flash_chip *chip = led->chip;
-+	struct led_init_data init_data;
-+	struct led_classdev_flash *flash;
-+	struct led_flash_setting *s;
-+	u32 count, val;
-+	u32 channels[4];
-+	int i, rc;
-+
-+	flash = &led->flash;
-+	count = fwnode_property_count_u32(node, "led-sources");
-+	if (count <= 0) {
-+		dev_err(chip->dev, "No led-sources specified\n");
-+		return -ENODEV;
-+	}
-+
-+	if (count > chip->max_channels) {
-+		dev_err(chip->dev, "led-sources count %u exceeds maximum channel count %u\n",
-+				count, chip->max_channels);
-+		return -EINVAL;
-+	}
-+
-+	rc = fwnode_property_read_u32_array(node, "led-sources", channels, count);
-+	if (rc < 0) {
-+		dev_err(chip->dev, "get led-sources failed, rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	led->chan_count = count;
-+	led->chan_id = devm_kcalloc(chip->dev, count, sizeof(u8), GFP_KERNEL);
-+	if (!led->chan_id)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < count; i++) {
-+		if (channels[i] > chip->max_channels) {
-+			dev_err(chip->dev, "led-source out of HW support range [1-%u]\n",
-+					chip->max_channels);
-+			return -EINVAL;
-+		}
-+
-+		led->chan_id[i] = channels[i];
-+	}
-+
-+	rc = fwnode_property_read_u32(node, "led-max-microamp", &val);
-+	if (rc < 0) {
-+		dev_err(chip->dev, "Get led-max-microamp failed, rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	if (!val) {
-+		dev_err(chip->dev, "led-max-microamp shouldn't be 0\n");
-+		return -EINVAL;
-+	}
-+
-+	val = min_t(u32, val, TORCH_CURRENT_MAX_UA * led->chan_count);
-+	led->max_torch_current_ma = val / 1000;
-+
-+	if (fwnode_property_present(node, "flash-max-microamp")) {
-+		flash->led_cdev.flags |= LED_DEV_CAP_FLASH;
-+		rc = fwnode_property_read_u32(node, "flash-max-microamp", &val);
-+		if (rc < 0) {
-+			dev_err(chip->dev, "Get flash-max-microamp failed, rc=%d\n", rc);
-+			return rc;
-+		}
-+
-+		val = min_t(u32, val, FLASH_CURRENT_MAX_UA * led->chan_count);
-+		val = min_t(u32, val, FLASH_TOTAL_CURRENT_MAX_UA);
-+		s = &flash->brightness;
-+		s->min = s->step = FLASH_IRES_UA * led->chan_count;
-+		s->max = val;
-+		s->val = min_t(u32, val, FLASH_CURRENT_DEFAULT_UA);
-+		led->max_flash_current_ma = val / 1000;
-+		led->flash_current_ma = s->val / 1000;
-+
-+		rc = fwnode_property_read_u32(node, "flash-max-timeout-us", &val);
-+		if (rc < 0) {
-+			dev_err(chip->dev, "Get flash-max-timeout-us failed, rc=%d\n", rc);
-+			return rc;
-+		}
-+
-+		val = min_t(u32, val, FLASH_TIMEOUT_MAX_US);
-+		s = &flash->timeout;
-+		s->min = s->step = FLASH_TIMEOUT_STEP_US;
-+		s->val = s->max = val;
-+		led->max_timeout_ms = led->flash_timeout_ms = val / 1000;
-+
-+		flash->ops = &qcom_flash_ops;
-+	}
-+
-+	flash->led_cdev.brightness_set_blocking = qcom_flash_led_brightness_set;
-+	init_data.fwnode = node;
-+	init_data.devicename = NULL;
-+	init_data.default_label = NULL;
-+	init_data.devname_mandatory = false;
-+	rc = devm_led_classdev_flash_register_ext(parent, flash, &init_data);
-+	if (rc < 0) {
-+		dev_err(chip->dev, "Register flash LED classdev failed, rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	return qcom_flash_v4l2_init(led, node);
-+}
-+
-+static int qcom_flash_led_probe(struct platform_device *pdev)
-+{
-+	struct qcom_flash_chip *chip;
-+	struct qcom_flash_led *led;
-+	struct fwnode_handle *child;
-+	struct device *dev = &pdev->dev;
-+	struct regmap *map;
-+	struct reg_field *regs;
-+	int count, i, rc;
-+	u32 val, reg_base;
-+
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	map = dev_get_regmap(dev->parent, NULL);
-+	if (!map) {
-+		dev_err(dev, "Failed to get parent regmap\n");
-+		return -EINVAL;
-+	}
-+
-+	rc = fwnode_property_read_u32(dev->fwnode, "reg", &reg_base);
-+	if (rc < 0) {
-+		dev_err(dev, "Failed to get register base address, rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	rc = regmap_read(map, reg_base + FLASH_TYPE_REG, &val);
-+	if (rc < 0) {
-+		dev_err(dev, "Read flash module type failed, rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	if (val != FLASH_TYPE_VAL) {
-+		dev_err(dev, "type %#x is not a flash module\n", val);
-+		return -ENODEV;
-+	}
-+
-+	rc = regmap_read(map, reg_base + FLASH_SUBTYPE_REG, &val);
-+	if (rc < 0) {
-+		dev_err(dev, "Read flash module subtype failed, rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	if (val == FLASH_SUBTYPE_3CH_VAL) {
-+		chip->hw_type = QCOM_MVFLASH_3CH;
-+		chip->max_channels = 3;
-+		regs = mvflash_3ch_regs;
-+	} else if (val == FLASH_SUBTYPE_4CH_VAL) {
-+		chip->hw_type = QCOM_MVFLASH_4CH;
-+		chip->max_channels = 4;
-+		regs = mvflash_4ch_regs;
-+	} else {
-+		dev_err(dev, "flash subtype %#x is not yet supported\n", val);
-+		return -ENODEV;
-+	}
-+
-+	for (i = 0; i < REG_MAX_COUNT; i++)
-+		regs[i].reg += reg_base;
-+
-+	rc = devm_regmap_field_bulk_alloc(dev, map, chip->r_fields, regs, REG_MAX_COUNT);
-+	if (rc < 0) {
-+		dev_err(dev, "failed to alloc regmap filed, rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	chip->dev = dev;
-+	platform_set_drvdata(pdev, chip);
-+	mutex_init(&chip->lock);
-+	count = device_get_child_node_count(dev);
-+	if (count == 0 || count > chip->max_channels) {
-+		dev_err(dev, "No child or child count exceeds %d\n", chip->max_channels);
-+		return -EINVAL;
-+	}
-+
-+	chip->leds = devm_kcalloc(dev, count, sizeof(*chip->leds), GFP_KERNEL);
-+	if (!chip->leds)
-+		return -ENOMEM;
-+
-+	device_for_each_child_node(dev, child) {
-+		led = &chip->leds[chip->leds_count];
-+		led->chip = chip;
-+		rc = qcom_flash_register_led_device(dev, child, led);
-+		if (rc < 0)
-+			goto release;
-+
-+		chip->leds_count++;
-+	}
-+
-+	return 0;
-+release:
-+	while (chip->leds && chip->leds_count--)
-+		v4l2_flash_release(chip->leds[chip->leds_count].v4l2_flash);
-+	return rc;
-+}
-+
-+static int qcom_flash_led_remove(struct platform_device *pdev)
-+{
-+	struct qcom_flash_chip *chip = platform_get_drvdata(pdev);
-+
-+	while (chip->leds_count--)
-+		v4l2_flash_release(chip->leds[chip->leds_count].v4l2_flash);
-+
-+	mutex_destroy(&chip->lock);
-+	return 0;
-+}
-+
-+static const struct of_device_id qcom_flash_led_match_table[] = {
-+	{ .compatible = "qcom,spmi-flash-led" },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, qcom_flash_led_match_table);
-+static struct platform_driver qcom_flash_led_driver = {
-+	.driver = {
-+		.name = "leds-qcom-flash",
-+		.of_match_table = qcom_flash_led_match_table,
-+	},
-+	.probe = qcom_flash_led_probe,
-+	.remove = qcom_flash_led_remove,
-+};
-+
-+module_platform_driver(qcom_flash_led_driver);
-+
-+MODULE_DESCRIPTION("QCOM Flash LED driver");
-+MODULE_LICENSE("GPL");
--- 
-2.25.1
+> > Couldn't it also mean that the
+> > device is not supporting getting the protocol version?
+
+Probably. What happens if you comment out that protocol version
+request and force connected to be true?
+
+> > And why is protocol version only enforced for non unifying devices?
+
+Unifying devices are wireless, and when we probe the device, we are
+actually talking to the receiver. So The device might not be
+connected, and we should wait for the device to be present and not
+reject it. On non unifying devices, if the device is not connected,
+this likely means that the device is not behaving properly, and so we
+can not handle it in the driver.
+
+In your case though, it would be interesting to know if we should
+bypass that verification.
+
+> Also, looking into `supported_reports` turned out to be 2 (very long).
+
+Oops, you mistook the bit definition with the value:
+#define HIDPP_REPORT_SHORT_SUPPORTED  BIT(0)  -> value of 1
+#define HIDPP_REPORT_LONG_SUPPORTED  BIT(1)  -> value of 2
+#define HIDPP_REPORT_VERY_LONG_SUPPORTED  BIT(2)  -> value of 4
+
+Which is coherent with what your device exports: only one report ID of
+value 0x11, HIDPP_REPORT_LONG.
+
+> Inside of `hidpp_root_get_protocol_version` it does upgrade SHORT to
+> LONG if the former is not supported.
+
+Yep, this should be good for your device.
+
+> On a whim I then added upgrade of LONG to VERY LONG if the former is
+> not supported. Sadly, the results stayed the same.
+>
+
+And this is expected because you don't have VERY_LONG support on your device.
+
+Cheers,
+Benjamin
 
