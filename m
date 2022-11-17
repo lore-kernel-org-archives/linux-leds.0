@@ -2,25 +2,25 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26483C433FE
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Nov 2022 16:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E36C4332F
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Nov 2022 16:05:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234673AbiKQQE7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 17 Nov 2022 11:04:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42392 "EHLO
+        id S233899AbiKQQFD (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 17 Nov 2022 11:05:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233899AbiKQQE6 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 17 Nov 2022 11:04:58 -0500
+        with ESMTP id S234769AbiKQQFA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 17 Nov 2022 11:05:00 -0500
 Received: from smtpout1.mo528.mail-out.ovh.net (smtpout1.mo528.mail-out.ovh.net [46.105.34.251])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05CF345096;
-        Thu, 17 Nov 2022 08:04:56 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA8510EF;
+        Thu, 17 Nov 2022 08:04:57 -0800 (PST)
 Received: from pro2.mail.ovh.net (unknown [10.109.143.168])
-        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id E290813CAD67E;
-        Thu, 17 Nov 2022 17:04:54 +0100 (CET)
+        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id CFDFC13CAD68C;
+        Thu, 17 Nov 2022 17:04:55 +0100 (CET)
 Received: from localhost.localdomain (88.161.25.233) by DAG1EX1.emp2.local
  (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.16; Thu, 17 Nov
- 2022 17:04:54 +0100
+ 2022 17:04:55 +0100
 From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 To:     <lee.jones@linaro.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
         <sven.schwermer@disruptive-technologies.com>,
@@ -30,79 +30,81 @@ CC:     <johan+linaro@kernel.org>, <marijn.suijten@somainline.org>,
         <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Subject: [PATCH v6 0/6] Add a multicolor LED driver for groups of monochromatic LEDs
-Date:   Thu, 17 Nov 2022 17:04:41 +0100
-Message-ID: <20221117160447.294491-1-jjhiblot@traphandler.com>
+Subject: [PATCH v6 2/6] leds: class: simplify the implementation of devm_of_led_get()
+Date:   Thu, 17 Nov 2022 17:04:43 +0100
+Message-ID: <20221117160447.294491-3-jjhiblot@traphandler.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221117160447.294491-1-jjhiblot@traphandler.com>
+References: <20221117160447.294491-1-jjhiblot@traphandler.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [88.161.25.233]
 X-ClientProxiedBy: DAG1EX1.emp2.local (172.16.2.1) To DAG1EX1.emp2.local
  (172.16.2.1)
-X-Ovh-Tracer-Id: 6604247379627555291
+X-Ovh-Tracer-Id: 6604247381599926747
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvgedrgeekgdekvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhephffvvefufffkofgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepjeeuhfeklefghfelhfethfegkedtvedvgfekledtheegueejuedtheekuefhffdtnecukfhppeduvdejrddtrddtrddupdekkedrudeiuddrvdehrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpeeojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqedpnhgspghrtghpthhtohepuddprhgtphhtthhopehlvggvrdhjohhnvghssehlihhnrghrohdrohhrghdpphgrvhgvlhesuhgtfidrtgiipdhrohgshhdoughtsehkvghrnhgvlhdrohhrghdpshhvvghnrdhstghhfigvrhhmvghrseguihhsrhhuphhtihhvvgdqthgvtghhnhholhhoghhivghsrdgtohhmpdhkrhiihihsiihtohhfrdhkohiilhhofihskhhiodgutheslhhinhgrrhhordhorhhgpdhjohhhrghnodhlihhnrghroheskhgvrhhnvghlrdhorhhgpdhmrghrihhjnhdrshhuihhjthgvnhesshhomhgrihhnlh
- hinhgvrdhorhhgpdgsjhhorhhnrdgrnhguvghrshhsohhnsehlihhnrghrohdrohhrghdprghnugihrdhshhgvvhgthhgvnhhkohesghhmrghilhdrtghomhdpjhgrtggvkhdrrghnrghsiigvfihskhhisehgmhgrihhlrdgtohhmpdhlihhnuhigqdhlvggushesvhhgvghrrdhkvghrnhgvlhdrohhrghdpuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhohedvkedpmhhouggvpehsmhhtphhouhht
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvgedrgeekgdekvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhephffvvefufffkofgjfhgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepudetveelveevgffgvdeuffffjefhheehueeitdegtdejgefhheeuuddugeeffeeunecukfhppeduvdejrddtrddtrddupdekkedrudeiuddrvdehrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpeeojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqedpnhgspghrtghpthhtohepuddprhgtphhtthhopehlvggvrdhjohhnvghssehlihhnrghrohdrohhrghdpphgrvhgvlhesuhgtfidrtgiipdhrohgshhdoughtsehkvghrnhgvlhdrohhrghdpshhvvghnrdhstghhfigvrhhmvghrseguihhsrhhuphhtihhvvgdqthgvtghhnhholhhoghhivghsrdgtohhmpdhkrhiihihsiihtohhfrdhkohiilhhofihskhhiodgutheslhhinhgrrhhordhorhhgpdhjohhhrghnodhlihhnrghroheskhgvrhhnvghlrdhorhhgpdhmrghrihhjnhdrshhuihhjthgvnhesshhomhgrih
+ hnlhhinhgvrdhorhhgpdgsjhhorhhnrdgrnhguvghrshhsohhnsehlihhnrghrohdrohhrghdprghnugihrdhshhgvvhgthhgvnhhkohesghhmrghilhdrtghomhdpjhgrtggvkhdrrghnrghsiigvfihskhhisehgmhgrihhlrdgtohhmpdhlihhnuhigqdhlvggushesvhhgvghrrdhkvghrnhgvlhdrohhrghdpuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhohedvkedpmhhouggvpehsmhhtphhouhht
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Use the devm_add_action_or_reset() helper.
 
-Some HW design implement multicolor LEDs with several monochromatic LEDs.
-Grouping the monochromatic LEDs allows to configure them in sync and use
-the triggers.
-The PWM multicolor LED driver implements such grouping but only for
-PWM-based LEDs. As this feature is also desirable for the other types of
-LEDs, this series implements it for any kind of LED device.
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ drivers/leds/led-class.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
-changes v5->v6:
- - restore sysfs access to the leds when the device is removed
-
-changes v4->v5:
- - Use "depends on COMPILE_TEST || OF" in Kconfig to indicate that OF
-   is a functional requirement, not just a requirement for the
-   compilation.
- - in led_mcg_probe() check if devm_of_led_get_optional() returns an
-   error before testing for the end of the list.
- - use sysfs_emit() instead of sprintf() in color_show().
- - some grammar fixes in the comments and the commit logs.
-
-changes v2->v3, only minor changes:
- - rephrased the Kconfig descritpion
- - make the sysfs interface of underlying LEDs read-only only if the probe
-   is successful.
- - sanitize the header files
- - removed the useless call to dev_set_drvdata()
- - use dev_fwnode() to get the fwnode to the device.
-
-changes v1->v2:
- - Followed Rob Herrings's suggestion to make the dt binding much simpler.
- - Added a patch to store the color property of a LED in its class
-   structure (struct led_classdev).
-
-
-Jean-Jacques Hiblot (6):
-  devres: provide devm_krealloc_array()
-  leds: class: simplify the implementation of devm_of_led_get()
-  leds: provide devm_of_led_get_optional()
-  leds: class: store the color index in struct led_classdev
-  dt-bindings: leds: Add binding for a multicolor group of LEDs
-  leds: Add a multicolor LED driver to group monochromatic LEDs
-
- Documentation/ABI/testing/sysfs-class-led     |   9 +
- .../bindings/leds/leds-group-multicolor.yaml  |  64 +++++++
- drivers/leds/led-class.c                      |  65 +++++--
- drivers/leds/rgb/Kconfig                      |  10 ++
- drivers/leds/rgb/Makefile                     |   1 +
- drivers/leds/rgb/leds-group-multicolor.c      | 168 ++++++++++++++++++
- include/linux/device.h                        |  13 ++
- include/linux/leds.h                          |   3 +
- 8 files changed, 319 insertions(+), 14 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
- create mode 100644 drivers/leds/rgb/leds-group-multicolor.c
-
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 6a8ea94834fa..2c0d979d0c8a 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -258,11 +258,9 @@ void led_put(struct led_classdev *led_cdev)
+ }
+ EXPORT_SYMBOL_GPL(led_put);
+ 
+-static void devm_led_release(struct device *dev, void *res)
++static void devm_led_release(void *cdev)
+ {
+-	struct led_classdev **p = res;
+-
+-	led_put(*p);
++	led_put(cdev);
+ }
+ 
+ /**
+@@ -280,7 +278,7 @@ struct led_classdev *__must_check devm_of_led_get(struct device *dev,
+ 						  int index)
+ {
+ 	struct led_classdev *led;
+-	struct led_classdev **dr;
++	int ret;
+ 
+ 	if (!dev)
+ 		return ERR_PTR(-EINVAL);
+@@ -289,15 +287,9 @@ struct led_classdev *__must_check devm_of_led_get(struct device *dev,
+ 	if (IS_ERR(led))
+ 		return led;
+ 
+-	dr = devres_alloc(devm_led_release, sizeof(struct led_classdev *),
+-			  GFP_KERNEL);
+-	if (!dr) {
+-		led_put(led);
+-		return ERR_PTR(-ENOMEM);
+-	}
+-
+-	*dr = led;
+-	devres_add(dev, dr);
++	ret = devm_add_action_or_reset(dev, devm_led_release, led);
++	if (ret)
++		return ERR_PTR(ret);
+ 
+ 	return led;
+ }
 -- 
 2.25.1
 
