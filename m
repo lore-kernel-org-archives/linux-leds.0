@@ -2,79 +2,92 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E53C4167E
-	for <linux-leds@archiver.kernel.org>; Thu, 17 Nov 2022 16:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83440C433FE
+	for <linux-leds@archiver.kernel.org>; Thu, 17 Nov 2022 16:07:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240267AbiKQQGH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 17 Nov 2022 11:06:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43352 "EHLO
+        id S234890AbiKQQFF (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 17 Nov 2022 11:05:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240297AbiKQQFu (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 17 Nov 2022 11:05:50 -0500
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C09E78D5A;
-        Thu, 17 Nov 2022 08:05:45 -0800 (PST)
-Received: from fraeml710-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4NCl7n0MzWz67n0t;
-        Fri, 18 Nov 2022 00:03:17 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
- fraeml710-chm.china.huawei.com (10.206.15.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Thu, 17 Nov 2022 17:05:43 +0100
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Thu, 17 Nov
- 2022 16:05:42 +0000
-Date:   Thu, 17 Nov 2022 16:05:41 +0000
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-mips@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-can@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-pwm@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-spi@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>,
-        <linux-watchdog@vger.kernel.org>
-Subject: Re: [RFC PATCH 9/9] dt-bindings: drop redundant part of title
- (manual)
-Message-ID: <20221117160541.000024cb@Huawei.com>
-In-Reply-To: <20221117123850.368213-10-krzysztof.kozlowski@linaro.org>
-References: <20221117123850.368213-1-krzysztof.kozlowski@linaro.org>
-        <20221117123850.368213-10-krzysztof.kozlowski@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+        with ESMTP id S239183AbiKQQFA (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 17 Nov 2022 11:05:00 -0500
+Received: from smtpout1.mo528.mail-out.ovh.net (smtpout1.mo528.mail-out.ovh.net [46.105.34.251])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB115FA7;
+        Thu, 17 Nov 2022 08:04:57 -0800 (PST)
+Received: from pro2.mail.ovh.net (unknown [10.109.143.168])
+        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id 714C813CAD686;
+        Thu, 17 Nov 2022 17:04:55 +0100 (CET)
+Received: from localhost.localdomain (88.161.25.233) by DAG1EX1.emp2.local
+ (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.16; Thu, 17 Nov
+ 2022 17:04:54 +0100
+From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+To:     <lee.jones@linaro.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <sven.schwermer@disruptive-technologies.com>,
+        <krzysztof.kozlowski+dt@linaro.org>
+CC:     <johan+linaro@kernel.org>, <marijn.suijten@somainline.org>,
+        <bjorn.andersson@linaro.org>, <andy.shevchenko@gmail.com>,
+        <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Subject: [PATCH v6 1/6] devres: provide devm_krealloc_array()
+Date:   Thu, 17 Nov 2022 17:04:42 +0100
+Message-ID: <20221117160447.294491-2-jjhiblot@traphandler.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221117160447.294491-1-jjhiblot@traphandler.com>
+References: <20221117160447.294491-1-jjhiblot@traphandler.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.76]
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [88.161.25.233]
+X-ClientProxiedBy: DAG1EX1.emp2.local (172.16.2.1) To DAG1EX1.emp2.local
+ (172.16.2.1)
+X-Ovh-Tracer-Id: 6604247379654228443
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvgedrgeekgdekvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhephffvvefufffkofgjfhgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepudetveelveevgffgvdeuffffjefhheehueeitdegtdejgefhheeuuddugeeffeeunecukfhppeduvdejrddtrddtrddupdekkedrudeiuddrvdehrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpeeojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqedpnhgspghrtghpthhtohepuddprhgtphhtthhopehlvggvrdhjohhnvghssehlihhnrghrohdrohhrghdpphgrvhgvlhesuhgtfidrtgiipdhrohgshhdoughtsehkvghrnhgvlhdrohhrghdpshhvvghnrdhstghhfigvrhhmvghrseguihhsrhhuphhtihhvvgdqthgvtghhnhholhhoghhivghsrdgtohhmpdhkrhiihihsiihtohhfrdhkohiilhhofihskhhiodgutheslhhinhgrrhhordhorhhgpdhjohhhrghnodhlihhnrghroheskhgvrhhnvghlrdhorhhgpdhmrghrihhjnhdrshhuihhjthgvnhesshhomhgrih
+ hnlhhinhgvrdhorhhgpdgsjhhorhhnrdgrnhguvghrshhsohhnsehlihhnrghrohdrohhrghdprghnugihrdhshhgvvhgthhgvnhhkohesghhmrghilhdrtghomhdpjhgrtggvkhdrrghnrghsiigvfihskhhisehgmhgrihhlrdgtohhmpdhlihhnuhigqdhlvggushesvhhgvghrrdhkvghrnhgvlhdrohhrghdpuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhohedvkedpmhhouggvpehsmhhtphhouhht
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, 17 Nov 2022 13:38:50 +0100
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+Implement the managed variant of krealloc_array().
+This internally uses devm_krealloc() and as such is usable with all memory
+allocated by devm_kmalloc() (or devres functions using it implicitly like
+devm_kmemdup(), devm_kstrdup() etc.).
 
-> The Devicetree bindings document does not have to say in the title that
-> it is a "Devicetree binding", but instead just describe the hardware.
-> 
-> Manual updates to various binding titles.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Managed realloc'ed chunks can be manually released with devm_kfree().
 
-FWIW looked at this one for completeness sake.
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ include/linux/device.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 424b55df0272..3b472df6c6cd 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -223,6 +223,19 @@ static inline void *devm_kcalloc(struct device *dev,
+ {
+ 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+ }
++static inline void *devm_krealloc_array(struct device *dev,
++					void *p,
++					size_t new_n,
++					size_t new_size,
++					gfp_t flags)
++{
++	size_t bytes;
++
++	if (unlikely(check_mul_overflow(new_n, new_size, &bytes)))
++		return NULL;
++
++	return devm_krealloc(dev, p, bytes, flags);
++}
+ void devm_kfree(struct device *dev, const void *p);
+ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
+ const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp);
+-- 
+2.25.1
 
