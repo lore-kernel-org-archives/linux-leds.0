@@ -2,43 +2,42 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA39C433FE
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Nov 2022 00:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E71DCC43219
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Nov 2022 00:36:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235743AbiKSAf1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 18 Nov 2022 19:35:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58442 "EHLO
+        id S235756AbiKSAgg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 18 Nov 2022 19:36:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232146AbiKSAe7 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Nov 2022 19:34:59 -0500
+        with ESMTP id S236465AbiKSAfm (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Nov 2022 19:35:42 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB416B3B8
-        for <linux-leds@vger.kernel.org>; Fri, 18 Nov 2022 15:42:56 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC1161165BC
+        for <linux-leds@vger.kernel.org>; Fri, 18 Nov 2022 15:43:17 -0800 (PST)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1owA8h-0002bn-Da; Fri, 18 Nov 2022 23:47:15 +0100
+        id 1owA8d-0002V7-JC; Fri, 18 Nov 2022 23:47:11 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1owA8e-0058US-6Z; Fri, 18 Nov 2022 23:47:13 +0100
+        id 1owA8b-0058TM-B1; Fri, 18 Nov 2022 23:47:10 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1owA8e-0000A7-9t; Fri, 18 Nov 2022 23:47:12 +0100
+        id 1owA8b-00009D-6K; Fri, 18 Nov 2022 23:47:09 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
 To:     Angel Iglesias <ang.iglesiasg@gmail.com>,
         Lee Jones <lee.jones@linaro.org>,
         Grant Likely <grant.likely@linaro.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>
+        Wolfram Sang <wsa@kernel.org>, Pavel Machek <pavel@ucw.cz>
 Cc:     linux-i2c@vger.kernel.org, kernel@pengutronix.de,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>, linux-leds@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 284/606] leds: pca9532: Convert to i2c's .probe_new()
-Date:   Fri, 18 Nov 2022 23:40:18 +0100
-Message-Id: <20221118224540.619276-285-uwe@kleine-koenig.org>
+Subject: [PATCH 270/606] leds: is31fl32xx: Convert to i2c's .probe_new()
+Date:   Fri, 18 Nov 2022 23:40:04 +0100
+Message-Id: <20221118224540.619276-271-uwe@kleine-koenig.org>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221118224540.619276-1-uwe@kleine-koenig.org>
 References: <20221118224540.619276-1-uwe@kleine-koenig.org>
@@ -55,49 +54,37 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-.probe_new() doesn't get the i2c_device_id * parameter, so determine
-that explicitly in the probe function.
+The probe function doesn't make use of the i2c_device_id * parameter so it
+can be trivially converted.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/leds/leds-pca9532.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/leds/leds-is31fl32xx.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index df83d97cb479..15b1acfa442e 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -50,8 +50,7 @@ struct pca9532_data {
- 	u8 psc[2];
- };
+diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
+index 0d219c1ac3b5..799191859ce0 100644
+--- a/drivers/leds/leds-is31fl32xx.c
++++ b/drivers/leds/leds-is31fl32xx.c
+@@ -422,8 +422,7 @@ static const struct of_device_id of_is31fl32xx_match[] = {
  
--static int pca9532_probe(struct i2c_client *client,
--	const struct i2c_device_id *id);
-+static int pca9532_probe(struct i2c_client *client);
- static void pca9532_remove(struct i2c_client *client);
+ MODULE_DEVICE_TABLE(of, of_is31fl32xx_match);
  
- enum {
-@@ -103,7 +102,7 @@ static struct i2c_driver pca9532_driver = {
- 		.name = "leds-pca953x",
- 		.of_match_table = of_match_ptr(of_pca9532_leds_match),
- 	},
--	.probe = pca9532_probe,
-+	.probe_new = pca9532_probe,
- 	.remove = pca9532_remove,
- 	.id_table = pca9532_id,
- };
-@@ -504,9 +503,9 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
- 	return pdata;
- }
- 
--static int pca9532_probe(struct i2c_client *client,
--	const struct i2c_device_id *id)
-+static int pca9532_probe(struct i2c_client *client)
+-static int is31fl32xx_probe(struct i2c_client *client,
+-			    const struct i2c_device_id *id)
++static int is31fl32xx_probe(struct i2c_client *client)
  {
-+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
- 	int devid;
- 	struct pca9532_data *data = i2c_get_clientdata(client);
- 	struct pca9532_platform_data *pca9532_pdata =
+ 	const struct is31fl32xx_chipdef *cdef;
+ 	struct device *dev = &client->dev;
+@@ -489,7 +488,7 @@ static struct i2c_driver is31fl32xx_driver = {
+ 		.name	= "is31fl32xx",
+ 		.of_match_table = of_is31fl32xx_match,
+ 	},
+-	.probe		= is31fl32xx_probe,
++	.probe_new	= is31fl32xx_probe,
+ 	.remove		= is31fl32xx_remove,
+ 	.id_table	= is31fl32xx_id,
+ };
 -- 
 2.38.1
 
