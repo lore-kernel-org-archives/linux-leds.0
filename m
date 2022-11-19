@@ -2,91 +2,79 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4ADC433FE
-	for <linux-leds@archiver.kernel.org>; Sat, 19 Nov 2022 00:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56197C433FE
+	for <linux-leds@archiver.kernel.org>; Sat, 19 Nov 2022 02:36:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235529AbiKSAkC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 18 Nov 2022 19:40:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41010 "EHLO
+        id S235573AbiKSCgX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 18 Nov 2022 21:36:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235952AbiKSAiz (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Nov 2022 19:38:55 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FF2511865C
-        for <linux-leds@vger.kernel.org>; Fri, 18 Nov 2022 15:44:20 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1owA8e-0002Vs-CS; Fri, 18 Nov 2022 23:47:12 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1owA8b-0058TW-Mp; Fri, 18 Nov 2022 23:47:10 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1owA8b-00009P-Tx; Fri, 18 Nov 2022 23:47:09 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
-To:     Angel Iglesias <ang.iglesiasg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Grant Likely <grant.likely@linaro.org>,
-        Wolfram Sang <wsa@kernel.org>, Pavel Machek <pavel@ucw.cz>
-Cc:     linux-i2c@vger.kernel.org, kernel@pengutronix.de,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-leds@vger.kernel.org,
+        with ESMTP id S235241AbiKSCgC (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Nov 2022 21:36:02 -0500
+Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 397C77C027;
+        Fri, 18 Nov 2022 18:22:43 -0800 (PST)
+Received: from pride-PowerEdge-R740.. ([172.16.0.254])
+        (user=dzm91@hust.edu.cn mech=LOGIN bits=0)
+        by mx1.hust.edu.cn  with ESMTP id 2AJ2MJj5008882-2AJ2MJj8008882
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 19 Nov 2022 10:22:24 +0800
+From:   Dongliang Mu <dzm91@hust.edu.cn>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Dongliang Mu <dzm91@hust.edu.cn>, linux-leds@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 273/606] leds: lm355x: Convert to i2c's .probe_new()
-Date:   Fri, 18 Nov 2022 23:40:07 +0100
-Message-Id: <20221118224540.619276-274-uwe@kleine-koenig.org>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221118224540.619276-1-uwe@kleine-koenig.org>
-References: <20221118224540.619276-1-uwe@kleine-koenig.org>
+Subject: [PATCH] leds: leds-lp5521/3: fix uninitialized variable ret
+Date:   Sat, 19 Nov 2022 10:22:16 +0800
+Message-Id: <20221119022217.2474222-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-leds@vger.kernel.org
+X-FEAS-AUTH-USER: dzm91@hust.edu.cn
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Smatch reports the following uninitialized symbols:
 
-.probe_new() doesn't get the i2c_device_id * parameter, so determine
-that explicitly in the probe function.
+drivers/leds/leds-lp5521.c:368 lp5521_multicolor_brightness()
+error: uninitialized symbol 'ret'.
+drivers/leds/leds-lp5523.c:811 lp5523_multicolor_brightness()
+error: uninitialized symbol 'ret'.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Fix these issues by initializing ret with zero value.
+
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 ---
- drivers/leds/leds-lm355x.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/leds/leds-lp5521.c | 2 +-
+ drivers/leds/leds-lp5523.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-lm355x.c b/drivers/leds/leds-lm355x.c
-index daa35927b301..612873070ca4 100644
---- a/drivers/leds/leds-lm355x.c
-+++ b/drivers/leds/leds-lm355x.c
-@@ -396,9 +396,9 @@ static const struct regmap_config lm355x_regmap = {
- };
- 
- /* module initialize */
--static int lm355x_probe(struct i2c_client *client,
--				  const struct i2c_device_id *id)
-+static int lm355x_probe(struct i2c_client *client)
+diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+index 7ff20c260504..cef46a8b4cab 100644
+--- a/drivers/leds/leds-lp5521.c
++++ b/drivers/leds/leds-lp5521.c
+@@ -352,7 +352,7 @@ static int lp5521_run_selftest(struct lp55xx_chip *chip, char *buf)
+ static int lp5521_multicolor_brightness(struct lp55xx_led *led)
  {
-+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
- 	struct lm355x_platform_data *pdata = dev_get_platdata(&client->dev);
- 	struct lm355x_chip_data *chip;
+ 	struct lp55xx_chip *chip = led->chip;
+-	int ret;
++	int ret = 0;
+ 	int i;
  
-@@ -516,7 +516,7 @@ static struct i2c_driver lm355x_i2c_driver = {
- 		   .name = LM355x_NAME,
- 		   .pm = NULL,
- 		   },
--	.probe = lm355x_probe,
-+	.probe_new = lm355x_probe,
- 	.remove = lm355x_remove,
- 	.id_table = lm355x_id,
- };
+ 	mutex_lock(&chip->lock);
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index 369d40b0b65b..e0387639946e 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -795,7 +795,7 @@ static ssize_t store_master_fader_leds(struct device *dev,
+ static int lp5523_multicolor_brightness(struct lp55xx_led *led)
+ {
+ 	struct lp55xx_chip *chip = led->chip;
+-	int ret;
++	int ret = 0;
+ 	int i;
+ 
+ 	mutex_lock(&chip->lock);
 -- 
-2.38.1
+2.34.1
 
