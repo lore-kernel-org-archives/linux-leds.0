@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72035C46467
-	for <linux-leds@archiver.kernel.org>; Sun, 27 Nov 2022 20:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D48F5C4321E
+	for <linux-leds@archiver.kernel.org>; Sun, 27 Nov 2022 20:41:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229709AbiK0UlP (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 27 Nov 2022 15:41:15 -0500
+        id S229731AbiK0UlW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 27 Nov 2022 15:41:22 -0500
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229708AbiK0UlI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 27 Nov 2022 15:41:08 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D37DFBD
-        for <linux-leds@vger.kernel.org>; Sun, 27 Nov 2022 12:41:07 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id a7so11022601ljq.12
-        for <linux-leds@vger.kernel.org>; Sun, 27 Nov 2022 12:41:07 -0800 (PST)
+        with ESMTP id S229730AbiK0UlP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 27 Nov 2022 15:41:15 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 128D1DFF2
+        for <linux-leds@vger.kernel.org>; Sun, 27 Nov 2022 12:41:10 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id f13so14541815lfa.6
+        for <linux-leds@vger.kernel.org>; Sun, 27 Nov 2022 12:41:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fOZoVt4W+lcxF9f/uabO01wFDTt/KZZXxvtLpd6GcEU=;
-        b=OFOl6Tiuk2EJnZ+H7210boETaHKYs5EM+OlbSujUfTjA3Blu82yWfJYE7AOXExUQDA
-         cf14LqDa7er8/vucmRje1ik314TFQI053W14ZScQBqJnx/YopkUQKKcIY469gCMRPLwC
-         +Um+QoGkb0LY1F28qYshrA2sRIWl60kKjoSx0PyQ9C0SFN4uiBHbCdx6OEVkq/qUu/id
-         yZH8svuG6lP2jIQ16SWBrbACLs6jdjeCJrV5uoikCWqfxofjy6jHZOTpqBMd1M6IcoI5
-         5fpWncOz9Sa3qNXHR6LngkYFqdQtCzX00c1+g0fXWuXydxC0vZCW7LtQdDfVss4VN13m
-         A3wQ==
+        bh=CaRc1qhxO0e/vPCyLXyooIUxaaj3mmT/bRHWf+I1C6o=;
+        b=YaaN2RQTcFm9ehc3OomVgPJID3UUmIVjbjh+CTy6n8rddMuHsrrJsVgFupJb4bX7dn
+         OLgeT30j5o+6DcuTUYFXzHkp9Hnht5ZLR+alchUwHgR9ci7BwLM5uDNkCEX3a5mpuOtN
+         g4/rwHTJf+gyxhEG5Y7aIztzRsuOwurKdYyxElv2li+qa1X5f0XR7xflznYRwWnYeWCN
+         XrBq2JFslCK+FoN86SML1aRbr//ngmo2/Tu+zJ5BF79vwreaIQ1zb2F+VlJIH2zFex5V
+         a3i1f2crNl8u+BfLIOfkcnqy/Wurrj7XUWtXIVqZZkp9q52QwNzHQCukzdikgcvIxUQR
+         5xpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fOZoVt4W+lcxF9f/uabO01wFDTt/KZZXxvtLpd6GcEU=;
-        b=RBc/VZhKvXjQyDsEO7+pdmTMYHELdi0fHliLXkdiRbQla0Gty6/ScvngzJ91TW0LtV
-         AEnWrPYggukAgOZj15Sfjp276bHORpFP+uqRoS3/DI9P7/37qsuPmfSRABl0VGLFmTJx
-         2875pvd9qIGV6d7HOuVVW4mMk1u/Tqsc1Axga1xBn46xiJWXmfjdJi8wFEbXE4bNW00G
-         FsYfbK+h6dsP9K6WfT293UsAXIc7XuSJeT7u1dPuxmgisERbles5MV4UIaWDWlhxS0NM
-         ZeXAAyT/Rw7W5BNCkDMBq8mIUv0FlVUrvxbwP1yCbKhOxbql/u0GLJBmYdv5KUz14thy
-         50sg==
-X-Gm-Message-State: ANoB5pkzoJZ7zi45YggGuF8UOl7ieT9b2waxOptVNEo8vcIVZn+8vbtL
-        m/lV5+k9TYbdl8FupGg/mYX67g==
-X-Google-Smtp-Source: AA0mqf4PbVbjiI63poW81OvqdUlewSeDUZ8M7xGwA3CsG0+c4K+ZxOuzuyxbwV+a7yxTRjNplz75kA==
-X-Received: by 2002:a05:651c:1551:b0:277:6132:ec9b with SMTP id y17-20020a05651c155100b002776132ec9bmr14385014ljp.466.1669581665800;
-        Sun, 27 Nov 2022 12:41:05 -0800 (PST)
+        bh=CaRc1qhxO0e/vPCyLXyooIUxaaj3mmT/bRHWf+I1C6o=;
+        b=B3Jvle0S9pWizlbgDyr68Et0W3sHbfbJKY6ovMb4zvFq869NkYZowO5r0CoV4BzpUc
+         y8GFZv4Ffap91XmUSl3olZ1O69SY5V6WktexFUJEUu+Hedo7RQ4jQbTDqb0R2VBQvLuy
+         XTLsfX1K1dq3B4OnrsWGIfpmKtAZMjLy0FKRAZnybMmD77fs2GhCEr8ia069bO09mJ92
+         wKDPefdq8VceVV7G7zYjOsUyTI2lCYoVOBwaFewsPw3TIj4Ag5dwEs2MWd1YaPE94Uww
+         MTS3yF71EJMoHNeVMpHyYNL9H/7DPAfSyEuayeuZS8ofxn2F0u0lXcm/ukTknmTsmq9m
+         OmVA==
+X-Gm-Message-State: ANoB5pne86viMQNSt6wihlrTBg6oo3t0GvmxPjmxaquGjTh+cf+p4zXy
+        1H5r4zHqjbx24Qe2WKP2EXo79Q==
+X-Google-Smtp-Source: AA0mqf4kiCEQv/GcWeelmFXWf1koVqKb26tmeRxQzTIETfLrfZpwkqyCr2NjkWpbblurW2uvjucVtQ==
+X-Received: by 2002:a19:5f03:0:b0:4a2:67ea:a06 with SMTP id t3-20020a195f03000000b004a267ea0a06mr15601668lfb.580.1669581668369;
+        Sun, 27 Nov 2022 12:41:08 -0800 (PST)
 Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id bi39-20020a05651c232700b002773ac59697sm644607ljb.0.2022.11.27.12.41.04
+        by smtp.gmail.com with ESMTPSA id bi39-20020a05651c232700b002773ac59697sm644607ljb.0.2022.11.27.12.41.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Nov 2022 12:41:05 -0800 (PST)
+        Sun, 27 Nov 2022 12:41:08 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -64,9 +64,9 @@ To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 3/6] dt-bindings: leds: lp55xx: switch to preferred 'gpios' suffix
-Date:   Sun, 27 Nov 2022 21:40:55 +0100
-Message-Id: <20221127204058.57111-4-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 5/6] dt-bindings: leds: mt6360: rework to match multi-led
+Date:   Sun, 27 Nov 2022 21:40:57 +0100
+Message-Id: <20221127204058.57111-6-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221127204058.57111-1-krzysztof.kozlowski@linaro.org>
 References: <20221127204058.57111-1-krzysztof.kozlowski@linaro.org>
@@ -76,30 +76,76 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The preferred name suffix for properties with single and multiple GPIOs
-is "gpios".  Linux GPIO core code supports both.  The DTS has mixed
-usage, so switch to preferred naming:
-
-  omap3-n900.dtb: lp5523@32: 'enable-gpios' does not match any of the regexes: '^led@[0-8]$', '^multi-led@[0-8]$', 'pinctrl-[0-9]+'
+The binding allows two type of LEDs - single and multi-color.  They
+differ with properties, so fix the bindings to accept both cases.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/leds/leds-lp55xx.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/leds/leds-mt6360.yaml | 43 +++++++++++++++++--
+ 1 file changed, 39 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
-index dfaa957eee74..9a38e5ee43fe 100644
---- a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
-+++ b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
-@@ -43,7 +43,7 @@ properties:
-       - 1 # internal
-       - 2 # external
+diff --git a/Documentation/devicetree/bindings/leds/leds-mt6360.yaml b/Documentation/devicetree/bindings/leds/leds-mt6360.yaml
+index 69e579226d9b..d84e28e616d7 100644
+--- a/Documentation/devicetree/bindings/leds/leds-mt6360.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-mt6360.yaml
+@@ -26,11 +26,10 @@ properties:
+     const: 0
  
--  enable-gpio:
-+  enable-gpios:
-     maxItems: 1
-     description: |
-       GPIO attached to the chip's enable pin
+ patternProperties:
+-  "^(multi-)?led@[0-5]$":
++  "^multi-led@[0-5]$":
+     type: object
+-    $ref: common.yaml#
+-    description:
+-      Properties for a single LED.
++    $ref: leds-class-multicolor.yaml#
++    unevaluatedProperties: false
+ 
+     properties:
+       reg:
+@@ -43,6 +42,42 @@ patternProperties:
+           - 4 # LED output FLASH1
+           - 5 # LED output FLASH2
+ 
++      "#address-cells":
++        const: 1
++
++      "#size-cells":
++        const: 0
++
++    patternProperties:
++      "^led@[0-2]$":
++        type: object
++        $ref: common.yaml#
++        unevaluatedProperties: false
++
++        properties:
++          reg:
++            enum: [0, 1, 2]
++
++        required:
++          - reg
++          - color
++
++    required:
++      - reg
++      - "#address-cells"
++      - "#size-cells"
++
++  "^led@[0-5]$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++    description:
++      Properties for a single LED.
++
++    properties:
++      reg:
++        enum: [0, 1, 2, 3, 4, 5]
++
+ required:
+   - compatible
+   - "#address-cells"
 -- 
 2.34.1
 
