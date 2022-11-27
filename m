@@ -2,52 +2,53 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE64C4321E
-	for <linux-leds@archiver.kernel.org>; Sun, 27 Nov 2022 20:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA75C4321E
+	for <linux-leds@archiver.kernel.org>; Sun, 27 Nov 2022 20:41:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229518AbiK0UlF (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 27 Nov 2022 15:41:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44290 "EHLO
+        id S229688AbiK0UlI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 27 Nov 2022 15:41:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiK0UlE (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 27 Nov 2022 15:41:04 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F35FD47
-        for <linux-leds@vger.kernel.org>; Sun, 27 Nov 2022 12:41:03 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id g12so14564018lfh.3
-        for <linux-leds@vger.kernel.org>; Sun, 27 Nov 2022 12:41:03 -0800 (PST)
+        with ESMTP id S229682AbiK0UlH (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 27 Nov 2022 15:41:07 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DFD8C741
+        for <linux-leds@vger.kernel.org>; Sun, 27 Nov 2022 12:41:06 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id bp15so14491764lfb.13
+        for <linux-leds@vger.kernel.org>; Sun, 27 Nov 2022 12:41:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fnqM8n9PGKGOvzAFEIiFMORJd4lJURGGn2BL+kEfNIQ=;
-        b=vs2qhd9D4zvjiwLqg3Vfjy1XJCOSrrmrj9Fm4gBeZv2riWyP8Sbzb/j6TDcAv3txKL
-         /Ojqg6f2+NrgPtRI5vVr8cTH/7W4ZEoNEc/9r2uJ1FKQDTK7Lehoj2VsgMh4wJQiUQie
-         14qb2VlBUnJhmJ5CxVhjDeUBlLSWNhR646cAGp9fmymUw5Fw/jIKd/7bTrwCHLr6HS/I
-         LIeXh09TwEVuvfCo3E6RpwDl2VGeEFUrI1ouKieKaLg4u+Du1U/WPLV46T2L6XapopGE
-         o2wUlBgL2md+QslIWkOPzmqVhdRm+HuJqVbvgMrRMud6AEfJ4oA4AOevIHIj5qLL3F+s
-         Y59A==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VxlrZWPFCrFQp2sHfL4Kx3y4fi4AGKGpCjaVKusjlG8=;
+        b=d3jnqhwgV+iA6GcPuBtwyOCQEQeVQuXMje2Yq8vUbum5/zrwX0DR68A9MpR0kFimOo
+         Qrygewdp7nUvUyCGwliIOgQ4Ys8ZY0ElyLOK7Rdhdvs9LnOCp61rabMG4vRkHT19AoXQ
+         A46i6yJijhds8JhaIvGE5C61lbWI3DGbJlXAAqI/it2mH83OBqa6+IeVWuByIoNUK16v
+         qpRqZCD6rst1XD9MfGfUzMl/oQbrS4nF0joWUJwDg6+1uolP/FrOx+MQwyPY4pcOghFd
+         X1inSMEpy8Pn3FHOG2Sw7Yk5vB/0DU054+J7hhPQ3t3EehRQBgPOgnVjDbbAtQnnZSMX
+         YU/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fnqM8n9PGKGOvzAFEIiFMORJd4lJURGGn2BL+kEfNIQ=;
-        b=g1v3bQL53EH5RM8Zu1N9xy/9hHzB8hSwr7By69PuG30F8bUdfSvstrA5myzx1O164R
-         Hb3WNvQHIpZTSFgy35Bun71tNq5sURz8J98+3dy2n8uF/wz8v92AxbtIgJNKv4JVpcko
-         zCne1d8b/C51rfyWarp3b2TTA6v1V46lI3LHug88+TnjsilmX5j8PpiaMKWPfxQqKVtv
-         GChMQR9BFOdub9cSPCkxcnX5apmcGDwP+RO4lDGd9HX6TaR+UCvLiwjiLMcPuI0TuoOG
-         jVmFtS3+rKVnybtEQw8zMiBVJOtupOvVxz9c8AlZ+mKbZFSCV+Uz0dIfP3R1x0aAi+IU
-         f0SA==
-X-Gm-Message-State: ANoB5pmhxvlW04hXP3UBtOK7UF/k1l7/x+uu84622NmalaodTM4BY6mE
-        fK7HqwCdeGGk9XKhp3+oC7gmNDFUNXrSmLGx
-X-Google-Smtp-Source: AA0mqf6p5Yvfm9RBuO07olapiME1mbnRSXDUX3FGr319MQtgH4Z6VWefEbtTH5wZlK3lshfJ9H7zGQ==
-X-Received: by 2002:a05:6512:e9d:b0:4b1:8698:9f3e with SMTP id bi29-20020a0565120e9d00b004b186989f3emr15263055lfb.421.1669581661879;
-        Sun, 27 Nov 2022 12:41:01 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VxlrZWPFCrFQp2sHfL4Kx3y4fi4AGKGpCjaVKusjlG8=;
+        b=CXKn/UAOyqseZaHxxgeHnaIgZdxCfLC/1UCGdzEpemwBhmrcADPF1IeNdcfzTn8X9p
+         Hm+KbEQNaH3rEFoBzRYUTBlf+gh96vPFbMYa059KzAWhPiSGCDhM817xWCm1UqTVh/1T
+         3WagakgSqDU2GcvyncoLqsG4v/Sm97C4RHmLQ5wK3ADzC2kCSAS5DtMxj9DUlXJt+fDR
+         ybU47RSks5qZLfmIr/z7h0JIFUyX6puUWJfDASlLDK+5IqOITIiBoiwpet5Itva13E0U
+         GbQyByA/I7OiSoinCNZ7wcpspbTChyfWwuLhStfA2NCsPdQaZN5dVx5fkRF27bpkokv8
+         JDig==
+X-Gm-Message-State: ANoB5pnWio+6e2pTY56vw+l8LKe8YGjxFIMYmRvnWguTLz6Gk9OAuuQm
+        g4vn1hDUcxqhpSUzyMdJJUgiDA==
+X-Google-Smtp-Source: AA0mqf4MIUAbuFwcGvYcH41oYYkbfEqD9y1cRNS51qz0kBy2pxfU9tMJMCGRZHdofLv65jWUGuSiZw==
+X-Received: by 2002:a05:6512:692:b0:4a2:58f0:c0df with SMTP id t18-20020a056512069200b004a258f0c0dfmr14940029lfe.268.1669581664453;
+        Sun, 27 Nov 2022 12:41:04 -0800 (PST)
 Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id bi39-20020a05651c232700b002773ac59697sm644607ljb.0.2022.11.27.12.41.00
+        by smtp.gmail.com with ESMTPSA id bi39-20020a05651c232700b002773ac59697sm644607ljb.0.2022.11.27.12.41.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Nov 2022 12:41:01 -0800 (PST)
+        Sun, 27 Nov 2022 12:41:04 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -63,52 +64,40 @@ To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 0/6] leds: dt-bindings: use unevaluatedProperties:false and few fixes
-Date:   Sun, 27 Nov 2022 21:40:52 +0100
-Message-Id: <20221127204058.57111-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 2/6] dt-bindings: leds: lp55xx: allow label
+Date:   Sun, 27 Nov 2022 21:40:54 +0100
+Message-Id: <20221127204058.57111-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221127204058.57111-1-krzysztof.kozlowski@linaro.org>
+References: <20221127204058.57111-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi,
+The Linux driver and at least one upstream board use 'label' property:
 
-Changes since v1
-================
-1. New patch #3: dt-bindings: leds: lp55xx: switch to preferred 'gpios' suffix
-   (Fixing DTS in separate patches, see [1] [2] which superseded [3])
-2. New patch #6: dt-bindings: leds: ti,tca6507: correct Neil's name
+  qcom/msm8996-xiaomi-gemini.dtb: lp5562@30: 'label' does not match any of the regexes: '^led@[0-8]$', '^multi-led@[0-8]$', 'pinctrl-[0-9]+'
 
-[1] https://lore.kernel.org/linux-devicetree/20221127203240.54955-1-krzysztof.kozlowski@linaro.org/T/#md1ccb03ee81f820e0c7b8043111d56b5ed0d1e2f
-[2] https://lore.kernel.org/linux-devicetree/20221127203034.54092-1-krzysztof.kozlowski@linaro.org/T/#m17f1d2f79a35fce43509edc351a84bc9dab980c1
-[3] https://lore.kernel.org/linux-devicetree/20221125173602.cnipos5oo4ncxsac@mercury.elektranox.org/
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/leds/leds-lp55xx.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (6):
-  dt-bindings: leds: use unevaluatedProperties for common.yaml
-  dt-bindings: leds: lp55xx: allow label
-  dt-bindings: leds: lp55xx: switch to preferred 'gpios' suffix
-  dt-bindings: leds: lp55xx: rework to match multi-led
-  dt-bindings: leds: mt6360: rework to match multi-led
-  dt-bindings: leds: ti,tca6507: correct Neil's name
-
- .../bindings/leds/issi,is31fl319x.yaml        |  1 +
- .../devicetree/bindings/leds/leds-aw2013.yaml |  1 +
- .../devicetree/bindings/leds/leds-gpio.yaml   |  2 +-
- .../devicetree/bindings/leds/leds-lp50xx.yaml |  8 ++++
- .../devicetree/bindings/leds/leds-lp55xx.yaml | 47 ++++++++++++++++++-
- .../devicetree/bindings/leds/leds-mt6360.yaml | 43 +++++++++++++++--
- .../devicetree/bindings/leds/leds-pwm.yaml    |  2 +-
- .../bindings/leds/leds-qcom-lpg.yaml          | 12 ++++-
- .../devicetree/bindings/leds/leds-rt4505.yaml |  1 +
- .../bindings/leds/leds-sgm3140.yaml           |  1 +
- .../devicetree/bindings/leds/ti,tca6507.yaml  |  4 +-
- 11 files changed, 111 insertions(+), 11 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+index 7ec676e53851..dfaa957eee74 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+@@ -48,6 +48,8 @@ properties:
+     description: |
+       GPIO attached to the chip's enable pin
+ 
++  label: true
++
+   pwr-sel:
+     $ref: /schemas/types.yaml#/definitions/uint8
+     description: |
 -- 
 2.34.1
 
