@@ -2,60 +2,60 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 516B2C4167B
-	for <linux-leds@archiver.kernel.org>; Tue, 29 Nov 2022 15:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 229BCC4708A
+	for <linux-leds@archiver.kernel.org>; Tue, 29 Nov 2022 15:57:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236073AbiK2P5Z (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 29 Nov 2022 10:57:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52692 "EHLO
+        id S236121AbiK2P5k (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 29 Nov 2022 10:57:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235906AbiK2P5O (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 29 Nov 2022 10:57:14 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12B0151C33
-        for <linux-leds@vger.kernel.org>; Tue, 29 Nov 2022 07:57:13 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id h131-20020a1c2189000000b003d02dd48c45so8858121wmh.0
-        for <linux-leds@vger.kernel.org>; Tue, 29 Nov 2022 07:57:12 -0800 (PST)
+        with ESMTP id S236071AbiK2P5Q (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 29 Nov 2022 10:57:16 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B5ED3C6FC
+        for <linux-leds@vger.kernel.org>; Tue, 29 Nov 2022 07:57:14 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id j5-20020a05600c410500b003cfa9c0ea76so11156486wmi.3
+        for <linux-leds@vger.kernel.org>; Tue, 29 Nov 2022 07:57:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wK0CnlZOX9M/iM8SewTczZ0sLEDRfVMf5U5O9npWUVY=;
-        b=JZYlyDFZIHL8IN5vKdYIEr5dUASpUp0vEDyjxnBcVUE74KxJZvLGc1l+HVVa4wxmQc
-         9RV2HD4J/oDUTFKz85hFMmcASWjWIc4NncKVFMQc3hR6E6fja7s50VJDzGAs3wiR45Pa
-         VYacBV16Jar0NvqE0Oji7OGdx8w6cvkQNLPnrpGiA9cTRLynX+C62BYesPjRzAqd3W+f
-         xzhA/6YGBZ18DYTMnkGFsIDBEOpUO+ZMib3SdBkjB6pNDyogEMjT7bJ+ylbAtikRWr+1
-         N92X3Z1AVQv11/tUukZ/8PmpZ4JP9jRn3A3Hs787C3texHFYFsPSbW9k8npA8RVzpQWs
-         d1MA==
+        bh=GI9uwBLCvWR3OgOlMBN6oypd3UQ7AbJ0Dp0NjT4lxFo=;
+        b=q5AMfXNq+uEIyJlBR4JMMkREhMsydwCzKt+PI6ZOWnuCDxDC46sM+LhYOuqjwz3EnD
+         MvIvJWH0uX5OqoygLr59MVBrhBGn4zxNvOBAmGOxJCWtvSlfFyAbKjzocozW2irPiXj6
+         R137SUWyTFtJnCd79bN+9OmhsWSWnsZ6V3zvd4pHkctIuP/JE3QjpnroKOi/jLUBKLWE
+         TlK7K35lzOrtnX9XMPQ4vA2AWzPUfT0sgc4WuV/SBrB/XQ5eHfuyi2B2If8p7yqJHTwY
+         qwIRtHF1onChLN7ImTbtjmWCDrVMyCzrh4sRT368ZeiOC2wxS7ftcqYQQ8VoEisKtkOL
+         6EEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wK0CnlZOX9M/iM8SewTczZ0sLEDRfVMf5U5O9npWUVY=;
-        b=NBQwIAOU6Tad1+zZ6lJSIGjieMUB8g3cKgh/qsQuQFwXd/9GMEXbeajT30uY+DCLZ8
-         wlXplR6hc6mGfbuFoT7EsB2mMe196m4YDoHULnZB1vs0uIn0SsE9S/y1rZJt4AdPRNxQ
-         sJ/OmRB+nP5uEz7H6WyQaTnEqAO7Tq+2cg6KDCrcpXZmx9jUCMdsu3v6ZjtV+1/0U6zw
-         RYn3TWC3qAJ0cYCoXOauksepvEOtB4Br1OlGOhvpgLdXmA9TDrbRkBiBo2iUoNxcCbb2
-         CnS6r0fPM4V2qvefS77Dsg+qJlkKkI2Tg+Ssp+2odZqhYKcl+pLa9fwq2LAKrEmT+9Eq
-         5+iQ==
-X-Gm-Message-State: ANoB5pkjHWoa2HHOihoJdEc3f98Jsj0qCEqDTk3HL72J0f9CWySpF2zO
-        g37aN2zFHG4s4UKmBKzY82FcKA==
-X-Google-Smtp-Source: AA0mqf6PuzacnzmyesbE6G1qQRnWsrIiu2CVIsNSFXBXVf21Oc/ouJD0AhoC2g+HlvFkvpsbuMRu5w==
-X-Received: by 2002:a05:600c:92a:b0:3cf:69d4:72ee with SMTP id m42-20020a05600c092a00b003cf69d472eemr28401740wmp.122.1669737431630;
-        Tue, 29 Nov 2022 07:57:11 -0800 (PST)
+        bh=GI9uwBLCvWR3OgOlMBN6oypd3UQ7AbJ0Dp0NjT4lxFo=;
+        b=wF9uiMqZxW5/DUYRjtKY9QB7o9rABp/OFhTc8ul9iebwWCFdrhCZVO5RZC7MG3874x
+         ZPQ84RWt6mumTr+av31L4ZAj1i6HZqWHcEExmsAnVa00wR4iSBZnxjPJAUHmyaz20idp
+         gyeElbgsZ8EIxQsyIpDIOk+TYrRe/4FuQlxT8U1TJXtR3KTXHdWAxj9eP/0jOTtkvia7
+         cMbMe4v8nifGBFc9bfgZuVIdqba8/2ZL2S3+DjPk3nbCZL1SNEfqFjsPwotTmd5YAT55
+         OAPI62M1drY1OLTPQMHgVU1PsDbfabLSUtUM3bRuJSoCkPCRiHvKf8b32e7i0W4o8Xm1
+         yTDA==
+X-Gm-Message-State: ANoB5plWrP5nZoxJDGCumwnAJCFbi6TfgDkiGikES0o6H57uyM1LTLwG
+        4DBXrjMzLlF5vHNXqiLQaJLx9g==
+X-Google-Smtp-Source: AA0mqf7sdZ4IIewi7If1cBDpEQXvuDOrlh8xL7AZnFA8/lhkuWPov7WbfLsNIp8x1bWjFHnFCxtv5A==
+X-Received: by 2002:a05:600c:554d:b0:3cf:af66:e5b9 with SMTP id iz13-20020a05600c554d00b003cfaf66e5b9mr28316339wmb.107.1669737434173;
+        Tue, 29 Nov 2022 07:57:14 -0800 (PST)
 Received: from [127.0.1.1] (158.22.5.93.rev.sfr.net. [93.5.22.158])
-        by smtp.googlemail.com with ESMTPSA id f2-20020a7bc8c2000000b003cfb7c02542sm2601550wml.11.2022.11.29.07.57.10
+        by smtp.googlemail.com with ESMTPSA id f2-20020a7bc8c2000000b003cfb7c02542sm2601550wml.11.2022.11.29.07.57.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Nov 2022 07:57:11 -0800 (PST)
+        Tue, 29 Nov 2022 07:57:13 -0800 (PST)
 From:   Alexandre Mergnat <amergnat@baylibre.com>
-Date:   Tue, 29 Nov 2022 16:57:05 +0100
-Subject: [PATCH v7 6/8] arm64: dts: mt8173: change node name
+Date:   Tue, 29 Nov 2022 16:57:07 +0100
+Subject: [PATCH v7 8/8] Input: mtk-pmic-keys: add MT6357 support
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20221005-mt6357-support-v7-6-477e60126749@baylibre.com>
+Message-Id: <20221005-mt6357-support-v7-8-477e60126749@baylibre.com>
 References: <20221005-mt6357-support-v7-0-477e60126749@baylibre.com>
 In-Reply-To: <20221005-mt6357-support-v7-0-477e60126749@baylibre.com>
 To:     Mark Brown <broonie@kernel.org>,
@@ -84,60 +84,80 @@ Cc:     linux-mediatek@lists.infradead.org,
         Fabien Parent <fparent@baylibre.com>,
         linux-leds@vger.kernel.org
 X-Mailer: b4 0.10.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1289; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=sciAdvxNeIHiHj/noxHzFC381BQRCLfnWiRAfVX/Ztg=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBjhivPlrcjP7DysJg2iocsnLcP01P6bHyqXN9tUGhS
- kubYFiyJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCY4YrzwAKCRArRkmdfjHURevgEA
- DA8oW2+nxfgPT9x8H9Bn4iUpI7bpkr6XZ99iu7hXpzTRIlGEg8U2XCyw+BrT4hDzCodYnUCtWnu846
- QEPZCcrbCbZOD3rTa+3zC/DdkEWWkYrRDiKoD1FEyVBJ19v72revWuJ5oJIkNRRacwK3FY04vxHna8
- a9NFhD0UaMvj49AYSoFAvu4Z/JBtmqXHhfTsXTzOAcpoS45vt1CiTL6Z+SelAsEX9+gMMb8OZNr3em
- UlmJmaAsVn9yEFqxz1IoR8gBJKrEMZXWYYOXtbPASyezGBx/VBXQZU3aTOxH7xRyTxfWHbAFjmKjCX
- jkN6QGK/Zb9sml8JPQQrW5ttJS9dzl7afKbWM2Tr0crppiHlJXjIlpvVFkdeTM8G4owMRkk0PZZhtI
- EpHPPeJeIuBkJpYyIE2pzAbGXK5v6DjvBJviOoIl5loMeKQM3uy6XrtxFbiPOFF9XVI+SfQIkIkSuk
- lFUbVksNCfloxBbqA6XGeHmlTSmG72+tWeN1yy0M7evha9O9rHQ2uW6zXWqE85kd2OJiBiwJr/jGds
- 7JUKyqg2XxFbRFXqsFkXGBMGLDRmeQaR4b8A1kyTA36UDHhpppjz1r7H+hKVVCjTa9ixlykag/cSGR
- nlfwFnv+PmQEmaqe5uNy83u0YLnSHr1HeBji++LkIRKFDu6X6A9IYggPHpIQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2028; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=K2/LktiwnSqpYUY/NYDB7cyyBwW4Kzl5Gx1VcVhpHIg=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBjhivPU87+tCEsv9wKvjsTZ/yHirCJ7tdj091I6KFc
+ cLYo/HOJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCY4YrzwAKCRArRkmdfjHURcWdD/
+ 48EXWvZZB8DrLR5D/bQxn+KzLEixITXwKeF9W7VwgXTaLu/tau7GP4Ufn0nxnCLdAsDrpdsvzJq0QK
+ /v65pGhFyzpnPLEYjjeTH3EOPNut6s/b3hrBjy6ifTG+FPpGc2Kw5An18Yu3zeyyE/ZNOZ+cRtjzWZ
+ mIRgdaQ1A1RBphVGCo/V85j69rx5o4bpiO0lG5/824rP0PL0tIY3fEczhcRMdRkjoZh2N3jifZ8bjo
+ ydip/Z9ZRBnxUo60n4aBEOPDt4MyyICRaPZxeJPEJMEazM+Lx6uab+GsJfyPsqcVVSoGxfbJh26cL2
+ k1qUigspT56CISzWQLajPdY8qfP3Sq7sdXNh7Dn0RirWU4S2sIR6RYqOUyv3+rUL7scCWnyLNyGDM0
+ mvNQcd9sJZUS7YDR1Dv5KvUYicEY85mEQkSrXZgWesitz774zn9kJHwY1hnjoojtNbdWzClYFyTOIE
+ ptNZy/QSdq7si5NhnoF8R8KxsjuCvjAfCLKVWrTtbmePCfCF2S6z8aH8DkwN+QUH/IJoG0zBlVwJCs
+ poPK2zFmYYl7K2/fDUi1GS92cg+3jyLgNC07KZ/vJV1ucdGnfrVt6ZJDziMbBV8Wygk4aOiidIVOSp
+ K1AbxZ1piDeC7nz4xEQxNl09oM/hvoJJvFOpjN1OjWNHEouWgkGFmXtLb2IQ==
 X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
  fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-- Change the node name from "mt6397" to "pmic" to be consistent
-with the generic names recommendation.
+From: Fabien Parent <fparent@baylibre.com>
 
+Add PMIC Keys support on MT6357 SoC.
+
+Signed-off-by: Fabien Parent <fparent@baylibre.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi | 2 +-
- arch/arm64/boot/dts/mediatek/mt8173-evb.dts  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/keyboard/mtk-pmic-keys.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-index e21feb85d822..a8f5c48e1782 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-@@ -913,7 +913,7 @@ &pwm0 {
+diff --git a/drivers/input/keyboard/mtk-pmic-keys.c b/drivers/input/keyboard/mtk-pmic-keys.c
+index 9b34da0ec260..2a63e0718eb6 100644
+--- a/drivers/input/keyboard/mtk-pmic-keys.c
++++ b/drivers/input/keyboard/mtk-pmic-keys.c
+@@ -10,6 +10,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mfd/mt6323/registers.h>
+ #include <linux/mfd/mt6331/registers.h>
++#include <linux/mfd/mt6357/registers.h>
+ #include <linux/mfd/mt6358/registers.h>
+ #include <linux/mfd/mt6397/core.h>
+ #include <linux/mfd/mt6397/registers.h>
+@@ -90,6 +91,19 @@ static const struct mtk_pmic_regs mt6331_regs = {
+ 	.rst_lprst_mask = MTK_PMIC_MT6331_RST_DU_MASK,
  };
  
- &pwrap {
--	pmic: mt6397 {
-+	pmic: pmic {
- 		compatible = "mediatek,mt6397";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173-evb.dts b/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
-index 0b5f154007be..755df5694234 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
-@@ -300,7 +300,7 @@ &pwrap {
- 	/* Only MT8173 E1 needs USB power domain */
- 	power-domains = <&spm MT8173_POWER_DOMAIN_USB>;
- 
--	pmic: mt6397 {
-+	pmic: pmic {
- 		compatible = "mediatek,mt6397";
- 		interrupt-parent = <&pio>;
- 		interrupts = <11 IRQ_TYPE_LEVEL_HIGH>;
++static const struct mtk_pmic_regs mt6357_regs = {
++	.keys_regs[MTK_PMIC_PWRKEY_INDEX] =
++		MTK_PMIC_KEYS_REGS(MT6357_TOPSTATUS,
++				   0x2, MT6357_PSC_TOP_INT_CON0, 0x5,
++				   MTK_PMIC_PWRKEY_RST),
++	.keys_regs[MTK_PMIC_HOMEKEY_INDEX] =
++		MTK_PMIC_KEYS_REGS(MT6357_TOPSTATUS,
++				   0x8, MT6357_PSC_TOP_INT_CON0, 0xa,
++				   MTK_PMIC_HOMEKEY_INDEX),
++	.pmic_rst_reg = MT6357_TOP_RST_MISC,
++	.rst_lprst_mask = MTK_PMIC_RST_DU_MASK,
++};
++
+ static const struct mtk_pmic_regs mt6358_regs = {
+ 	.keys_regs[MTK_PMIC_PWRKEY_INDEX] =
+ 		MTK_PMIC_KEYS_REGS(MT6358_TOPSTATUS,
+@@ -276,6 +290,9 @@ static const struct of_device_id of_mtk_pmic_keys_match_tbl[] = {
+ 	}, {
+ 		.compatible = "mediatek,mt6331-keys",
+ 		.data = &mt6331_regs,
++	}, {
++		.compatible = "mediatek,mt6357-keys",
++		.data = &mt6357_regs,
+ 	}, {
+ 		.compatible = "mediatek,mt6358-keys",
+ 		.data = &mt6358_regs,
 
 -- 
 b4 0.10.1
