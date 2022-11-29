@@ -2,61 +2,60 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB93C4708C
-	for <linux-leds@archiver.kernel.org>; Tue, 29 Nov 2022 15:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F235FC47090
+	for <linux-leds@archiver.kernel.org>; Tue, 29 Nov 2022 15:57:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236056AbiK2P5O (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 29 Nov 2022 10:57:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52674 "EHLO
+        id S236117AbiK2P5P (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 29 Nov 2022 10:57:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236117AbiK2P5K (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 29 Nov 2022 10:57:10 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BECBA5133A
-        for <linux-leds@vger.kernel.org>; Tue, 29 Nov 2022 07:57:08 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id bs21so22806758wrb.4
-        for <linux-leds@vger.kernel.org>; Tue, 29 Nov 2022 07:57:08 -0800 (PST)
+        with ESMTP id S236122AbiK2P5L (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 29 Nov 2022 10:57:11 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EED5245A11
+        for <linux-leds@vger.kernel.org>; Tue, 29 Nov 2022 07:57:09 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id x5so22824699wrt.7
+        for <linux-leds@vger.kernel.org>; Tue, 29 Nov 2022 07:57:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EaP34wv8cHsMbN5b2lelNoPsr3chehdl/q6+cIBNPQg=;
-        b=Ldzl0Yp438arqXsgUSMh6kL7BW0sfLyySZqZp7wTrUK11oRDB28BDiyJOPatPacDhG
-         bKRo8qiMFtmS16NFqHJsavf3p6hNxYYUjiHt/qLJ+7LFZLCDWcctwtBtb2EPJMhiUe3g
-         3lKs/EUjmkEjksuydnFKSsMqPTuuCJe3ESSUOkSqcQ2051c+Qi2JeUy15X/6FeQlbYu0
-         RGkBtfosQQCk8WZcvvJnhhUMrU8BWEVXeZMMw6/giwPVBrEDFzsWfVnN83Ruszq12wOx
-         +MnJYW2COaGOT6Jmx1cdxiWdGhhBzRlXXq6XK1zbT9/wvMNWxo/QmTztwt6m+aH0w7Cq
-         mrDw==
+        bh=ZBEMKkU5Jf78zjhTP42yrtwbbgdcFAxazcCxLhs1i2o=;
+        b=xfoOuWSZqyMyOIKY7rBPH2i53/duEI2uIFWNKjRjVItORcEK8rKcU1KWrMr3TUqU9P
+         6za0UXBiEETgq6pAAVVTQK2yxf4nZXUyJPpazSZot8DWo4dglWmkKVfQI9/zTFMVd/yr
+         Zcu/X/LPEFXwzyGtGmhKXZwbXYLtXtLyPhqzwIwk+c8REy9btGh6MWQHUHuQ5cSKWNO2
+         GmhnqZoM3gzNEQzPzR6R6vWOTkbbtsZRYlEzb6GMUXCDJb8w9ZfpjDaE1bEvVyxAZsII
+         bnB+T7+ZvXya0+HIrI4t2Vu/mBinhRzmAjZaomsyWrXvzaY7Kzc8YjU/e2enHw89L3X6
+         dYKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EaP34wv8cHsMbN5b2lelNoPsr3chehdl/q6+cIBNPQg=;
-        b=FX0873RN1KzqbftzWPu92GRUfOxDYMjp7oL8tlcsFxAxTA60PF4uWA2FGamfjcpxy4
-         XU4qE+P7be+Vel8fIE2kp2YGdAOCwWck4lTqv1ZYEk+4gBg/fMm4tjtgFbo9LJVZTdQY
-         Wxdt6TlfjykVBzZd3sZ05aXx1eW6YrK1oN/X+KVeT/REUOHMx8O4Wa/C5ipaebNRWxTN
-         33/F0ag4XtT+nLfDMJP1ukDdoyQnDcWj2H/QLRSNgeR+JArk37MnhCm2CL/uDjvw3NoC
-         Xmy77z6UK2GTWANHF4YMu7PRN/H902t9EJWuA68Lj3zwW47KHhPAacXcpciXZNRiI777
-         wgXg==
-X-Gm-Message-State: ANoB5pmiP3htZx2c5m7d05qYphz64yoVUDy78dwtlwhsw5BlLBVtaOQd
-        cvOwG5WOp6SQgfdGjMbkhk6FyQ==
-X-Google-Smtp-Source: AA0mqf5bQqqQYKnc/Htz/mz3qMfx6JmcNzPTQySDIH7fNPhMLdpc1Y8P9+f7xMl1tbosD4i+BiDd6w==
-X-Received: by 2002:a5d:4fd0:0:b0:241:fdb9:c7b9 with SMTP id h16-20020a5d4fd0000000b00241fdb9c7b9mr16275175wrw.46.1669737427214;
-        Tue, 29 Nov 2022 07:57:07 -0800 (PST)
+        bh=ZBEMKkU5Jf78zjhTP42yrtwbbgdcFAxazcCxLhs1i2o=;
+        b=q+mT/JpD22xQMUUl6ylQ55Fm/A217N+UOnL35kOtcDxVRhveboZeUn11HTNQuZQR/d
+         ibtRBkbool5COE6hasB0mFjX9E9VXuhVjqNjrmWT+df83C2bq0VseCazRiVujSrLqeQc
+         iifYVLg8CHmcYg4eRo7YiezVhaOHFylcX7KUBQ/HCouCMjJUsT8BFWOVtq8LsFvb0KoL
+         +mmZX+iugXOm+9IeIsyl/TCBKJ6oKElyLclxr83qVoflUJv+YKnbEkKmW73sClTxLvX2
+         8GPdyh6S1ITKk+8wWtKkQnHHPq4WBsupFaGJldFkgRM6lvgLsOPVKGQFEEbXaidHNvro
+         Ol9w==
+X-Gm-Message-State: ANoB5pmBlChossJ6bqqiTp66OnjTD04KlZe6YLi51QjofKl0IF/Y/3G2
+        4uv9/AXW8uHHH+M3zRwocleiOQ==
+X-Google-Smtp-Source: AA0mqf4On90wvRcTiqcwXp55MGsSJPFm/4r9Mi8bAqomdqBkBCRU3ZBB9nFMyyRw6wQhVjCuIVuBQQ==
+X-Received: by 2002:a5d:484d:0:b0:242:22a9:ff72 with SMTP id n13-20020a5d484d000000b0024222a9ff72mr2178802wrs.281.1669737429509;
+        Tue, 29 Nov 2022 07:57:09 -0800 (PST)
 Received: from [127.0.1.1] (158.22.5.93.rev.sfr.net. [93.5.22.158])
-        by smtp.googlemail.com with ESMTPSA id f2-20020a7bc8c2000000b003cfb7c02542sm2601550wml.11.2022.11.29.07.57.06
+        by smtp.googlemail.com with ESMTPSA id f2-20020a7bc8c2000000b003cfb7c02542sm2601550wml.11.2022.11.29.07.57.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Nov 2022 07:57:06 -0800 (PST)
+        Tue, 29 Nov 2022 07:57:09 -0800 (PST)
 From:   Alexandre Mergnat <amergnat@baylibre.com>
-Date:   Tue, 29 Nov 2022 16:57:01 +0100
-Subject: [PATCH v7 2/8] regulator: dt-bindings: Add binding schema for mt6357
- regulators
+Date:   Tue, 29 Nov 2022 16:57:03 +0100
+Subject: [PATCH v7 4/8] dt-bindings: mfd: mediatek: Add bindings for MT6357 PMIC
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20221005-mt6357-support-v7-2-477e60126749@baylibre.com>
+Message-Id: <20221005-mt6357-support-v7-4-477e60126749@baylibre.com>
 References: <20221005-mt6357-support-v7-0-477e60126749@baylibre.com>
 In-Reply-To: <20221005-mt6357-support-v7-0-477e60126749@baylibre.com>
 To:     Mark Brown <broonie@kernel.org>,
@@ -85,337 +84,158 @@ Cc:     linux-mediatek@lists.infradead.org,
         Fabien Parent <fparent@baylibre.com>,
         linux-leds@vger.kernel.org
 X-Mailer: b4 0.10.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11440;
- i=amergnat@baylibre.com; h=from:subject:message-id;
- bh=y+MiriLy7hAWFi7TI2kfD8KqIfIYGSLRk1pCtSC2vQw=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBjhivPOwe6FK/kl/cWy442z70L2njtgfriUnqKopX/
- Mn3GwLeJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCY4YrzwAKCRArRkmdfjHURZQQD/
- 44BnMtUfMf4bChIsh8QEcmTsD5ggkhQEYvVPVTZt2gBVQ/HqI13GKvwGXcDkmYYDyw1gWEHY9uxB4H
- WxMLJ+elqgRXLqpt43Ii1dO7yXBqDdg89KrfsL+bKZ1GiTzBg4MtrR4DUavnmqTeh+EvXgwRAkOOPn
- Iiuxm1/kZB/xLcEIauxpCVzpSthTm5cie+3Q8czSZgX3ap1IW7v6krltw1JrfyO6lQMWT4BXqrn7CP
- 21vOm6hGmcfqaS+lygcl6muadO7JDe1h0jWSHLMHrXxLS7PVMrAQaNYE3ymnnPftj8DC3vmgBAnvx8
- uaRSJi2VLMrWpOGbJhrUexqd42VS6QnQGcatfSVZm4NLUaUnAZJjdupqqUTee500Y2ug3rZ3nZWFdZ
- pzPcq0tkLJsRz4ccFXJnY/mTAhfbPTtlApmIIPtCulHBN594Sx02iw5cxhwlQ4SMA3NAmFCJCE6pkB
- c0n7zEwxO7U/cmwNqcJKtstN3/RRrr5XdLSu3WfQ0TRUdrBwzeHqUl+5T3hc9C7VWcwNPGu/TlVg7J
- BmR2EE2ghVwc7bQ48gcImL7sItzE7gaPxGcWij1gnTBWsHNLEzksxjXy0n6H3N//BWUB8Ljjv7E+Y8
- F2EUiClbIgaeUQKHLkiHnIUQzCZFvUHKnpm25xi2ZvHrZvj2Q7U9Dk5A0S0A==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4049; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=uKuF7biK8c+btRJLJuyALjWX3u9C1resjYMNnQJShXI=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBjhivPLKePPwTHV0AdahqJYOr6Gp1yZ4zFY/+8aXs5
+ BT/1numJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCY4YrzwAKCRArRkmdfjHURQbTD/
+ 9RPSSL0Wgi+YOM6r71qng1P22fsNB2SFQdxmBjBByjd2CgLjrcaF1fezd0rnelnS6HrY6WGuV3FpBW
+ kUNsmGg8FYuIhTtrTyp3S+ox/xsDbN23JPNu1fFPoHpja4RF4ma6FbVLXP2Oll9E/9Qt2nZazj5Qtj
+ EG5MUiNNlZ4zOi1z3/ZBtO8PHKvg1IoBcVV1uRmbDP9y5B8LuvwUBNA0hUJP9ELcmjPpL96TnA9Rp3
+ Ohg4KtnRgvkG0JL1NarIFtRNQmvDcxScct41LzweaF1ByHW4sQYZYaun167CrnuH5cqmdw61ARByAT
+ nvX/9Xyc67AmcL+ilu7eODGT53kc+9tjjO1s+vfUhvh57Hb97UVdiS/0sKQrY08x4j+hD8mw7/fVjB
+ +nU4MQ0QaugC92B2UqhbfZJF48BT6ctIKOlSHKoLN5IMV16BiFrVchG0YNmL11D1NJi4Z1S4zW2Dqi
+ +7tpinHG8E6lhz6muNSg9xDx4xWr6TPtM+OSg4c3Qum9BdrUYCeoGgdy5HESuM9/ILf8bWtHciZfjO
+ AjfI387TL6lruRpVcJ0+xEboaL6HKyXsMiTR2ZroEzjISA/DFTXl0Yl9Tk32cpwRBuA51/vKXq51mD
+ 53Wb39apPijHJIpYf0CIi0+3/jon2b+kKvo4HSnMGHaq9DSrQGXFluOFmDoA==
 X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
  fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Fabien Parent <fparent@baylibre.com>
+Currently, almost all MT63XX PMIC are documented mfd/mt6397.txt.
+Unfortunately, the PMICs haven't always similar HW sub-features.
+To have a better human readable schema, I chose to make one PMIC schema
+to match the exact HW capabilities instead of convert mt6397.txt to
+mediatek,mt63xx.yaml and put a bunch of properties behind
+"if contain ... then ..."
 
-Add YAML schema for the MediaTek MT6357 regulators.
+- add interrupt property
+- change property refs to match with new yaml documentation
 
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 ---
- .../regulator/mediatek,mt6357-regulator.yaml       | 294 +++++++++++++++++++++
- 1 file changed, 294 insertions(+)
+ .../devicetree/bindings/mfd/mediatek,mt6357.yaml   | 111 +++++++++++++++++++++
+ 1 file changed, 111 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/regulator/mediatek,mt6357-regulator.yaml b/Documentation/devicetree/bindings/regulator/mediatek,mt6357-regulator.yaml
+diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
 new file mode 100644
-index 000000000000..6327bb2f6ee0
+index 000000000000..837a77013d57
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/mediatek,mt6357-regulator.yaml
-@@ -0,0 +1,294 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
+@@ -0,0 +1,111 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/regulator/mediatek,mt6357-regulator.yaml#
++$id: http://devicetree.org/schemas/mfd/mediatek,mt6357.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: MediaTek MT6357 Regulators
++title: MediaTek MT6357 PMIC
 +
 +maintainers:
-+  - Chen Zhong <chen.zhong@mediatek.com>
-+  - Fabien Parent <fabien.parent@linaro.org>
++  - Flora Fu <flora.fu@mediatek.com>
 +  - Alexandre Mergnat <amergnat@baylibre.com>
 +
 +description: |
-+  The MT6357 PMIC provides 5 BUCK and 29 LDO.
-+  Regulators and nodes are named according to the regulator type:
-+  - buck-<name>
-+  - ldo-<name>.
-+  MT6357 regulators node should be sub node of the MT6397 MFD node.
++  MT6357 is a power management system chip containing 5 buck
++  converters and 29 LDOs. Supported features are audio codec,
++  USB battery charging, fuel gauge, RTC
 +
-+patternProperties:
-+  "^buck-v(core|modem|pa|proc|s1)$":
++  This is a multifunction device with the following sub modules:
++  - Regulator
++  - RTC
++  - Keys
++
++  It is interfaced to host controller using SPI interface by a proprietary hardware
++  called PMIC wrapper or pwrap. This MFD is a child device of pwrap.
++  See the following for pwrap node definitions:
++  Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml
++
++properties:
++  compatible:
++    const: mediatek,mt6357
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 2
++
++  regulators:
 +    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
++    $ref: /schemas/regulator/mediatek,mt6357-regulator.yaml
 +    description:
-+      Properties for single BUCK regulator.
++      List of MT6357 BUCKs and LDOs regulators.
 +
-+    required:
-+      - regulator-name
-+      - regulator-min-microvolt
-+      - regulator-max-microvolt
-+
-+  "^ldo-v(camio18|aud28|aux18|io18|io28|rf12|rf18|cn18|cn28|fe28)$":
++  rtc:
 +    type: object
-+    $ref: fixed-regulator.yaml#
-+    unevaluatedProperties: false
++    $ref: /schemas/rtc/rtc.yaml#
 +    description:
-+      Properties for single fixed LDO regulator.
-+
++      MT6357 Real Time Clock.
++    properties:
++      compatible:
++        const: mediatek,mt6357-rtc
++      start-year: true
 +    required:
-+      - regulator-name
-+      - regulator-min-microvolt
-+      - regulator-max-microvolt
++      - compatible
 +
-+  "^ldo-v(efuse|ibr|ldo28|mch|cama|camd|cn33-bt|cn33-wifi)$":
++  keys:
 +    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
++    $ref: /schemas/input/mediatek,pmic-keys.yaml
 +    description:
-+      Properties for single LDO regulator.
++      MT6357 power and home keys.
 +
-+    required:
-+      - regulator-name
-+      - regulator-min-microvolt
-+      - regulator-max-microvolt
-+
-+  "^ldo-v(xo22|emc|mc|sim1|sim2|sram-others|sram-proc|dram|usb33)$":
-+    type: object
-+    $ref: regulator.yaml#
-+    unevaluatedProperties: false
-+    description:
-+      Properties for single LDO regulator.
-+
-+    required:
-+      - regulator-name
-+      - regulator-min-microvolt
-+      - regulator-max-microvolt
++required:
++  - compatible
++  - regulators
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    pmic {
-+      regulators {
-+        mt6357_vproc_reg: buck-vproc {
-+          regulator-name = "vproc";
-+          regulator-min-microvolt = <518750>;
-+          regulator-max-microvolt = <1312500>;
-+          regulator-ramp-delay = <6250>;
-+          regulator-enable-ramp-delay = <220>;
-+          regulator-always-on;
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    pwrap {
++        pmic {
++            compatible = "mediatek,mt6357";
++
++            interrupt-parent = <&pio>;
++            interrupts = <145 IRQ_TYPE_LEVEL_HIGH>;
++            interrupt-controller;
++            #interrupt-cells = <2>;
++
++            regulators {
++                mt6357_vproc_reg: buck-vproc {
++                    regulator-name = "vproc";
++                    regulator-min-microvolt = <518750>;
++                    regulator-max-microvolt = <1312500>;
++                    regulator-ramp-delay = <6250>;
++                    regulator-enable-ramp-delay = <220>;
++                    regulator-always-on;
++                };
++
++                // ...
++
++                mt6357_vusb33_reg: ldo-vusb33 {
++                    regulator-name = "vusb33";
++                    regulator-min-microvolt = <3000000>;
++                    regulator-max-microvolt = <3100000>;
++                    regulator-enable-ramp-delay = <264>;
++                };
++            };
++
++            rtc {
++                compatible = "mediatek,mt6357-rtc";
++            };
++
++            keys {
++                compatible = "mediatek,mt6357-keys";
++            };
 +        };
-+        mt6357_vcore_reg: buck-vcore {
-+          regulator-name = "vcore";
-+          regulator-min-microvolt = <518750>;
-+          regulator-max-microvolt = <1312500>;
-+          regulator-ramp-delay = <6250>;
-+          regulator-enable-ramp-delay = <220>;
-+          regulator-always-on;
-+        };
-+        mt6357_vmodem_reg: buck-vmodem {
-+          regulator-name = "vmodem";
-+          regulator-min-microvolt = <500000>;
-+          regulator-max-microvolt = <1193750>;
-+          regulator-ramp-delay = <6250>;
-+          regulator-enable-ramp-delay = <220>;
-+        };
-+        mt6357_vs1_reg: buck-vs1 {
-+          regulator-name = "vs1";
-+          regulator-min-microvolt = <1200000>;
-+          regulator-max-microvolt = <2200000>;
-+          regulator-ramp-delay = <12500>;
-+          regulator-enable-ramp-delay = <220>;
-+          regulator-always-on;
-+        };
-+        mt6357_vpa_reg: buck-vpa {
-+          regulator-name = "vpa";
-+          regulator-min-microvolt = <500000>;
-+          regulator-max-microvolt = <3650000>;
-+          regulator-ramp-delay = <50000>;
-+          regulator-enable-ramp-delay = <220>;
-+        };
-+        mt6357_vfe28_reg: ldo-vfe28 {
-+          compatible = "regulator-fixed";
-+          regulator-name = "vfe28";
-+          regulator-min-microvolt = <2800000>;
-+          regulator-max-microvolt = <2800000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vxo22_reg: ldo-vxo22 {
-+          regulator-name = "vxo22";
-+          regulator-min-microvolt = <2200000>;
-+          regulator-max-microvolt = <2400000>;
-+          regulator-enable-ramp-delay = <110>;
-+        };
-+        mt6357_vrf18_reg: ldo-vrf18 {
-+          compatible = "regulator-fixed";
-+          regulator-name = "vrf18";
-+          regulator-min-microvolt = <1800000>;
-+          regulator-max-microvolt = <1800000>;
-+          regulator-enable-ramp-delay = <110>;
-+        };
-+        mt6357_vrf12_reg: ldo-vrf12 {
-+          compatible = "regulator-fixed";
-+          regulator-name = "vrf12";
-+          regulator-min-microvolt = <1200000>;
-+          regulator-max-microvolt = <1200000>;
-+          regulator-enable-ramp-delay = <110>;
-+        };
-+        mt6357_vefuse_reg: ldo-vefuse {
-+          regulator-name = "vefuse";
-+          regulator-min-microvolt = <1200000>;
-+          regulator-max-microvolt = <3300000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vcn33_bt_reg: ldo-vcn33-bt {
-+          regulator-name = "vcn33-bt";
-+          regulator-min-microvolt = <3300000>;
-+          regulator-max-microvolt = <3500000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vcn33_wifi_reg: ldo-vcn33-wifi {
-+          regulator-name = "vcn33-wifi";
-+          regulator-min-microvolt = <3300000>;
-+          regulator-max-microvolt = <3500000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vcn28_reg: ldo-vcn28 {
-+          compatible = "regulator-fixed";
-+          regulator-name = "vcn28";
-+          regulator-min-microvolt = <2800000>;
-+          regulator-max-microvolt = <2800000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vcn18_reg: ldo-vcn18 {
-+          compatible = "regulator-fixed";
-+          regulator-name = "vcn18";
-+          regulator-min-microvolt = <1800000>;
-+          regulator-max-microvolt = <1800000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vcama_reg: ldo-vcama {
-+          regulator-name = "vcama";
-+          regulator-min-microvolt = <2500000>;
-+          regulator-max-microvolt = <2800000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vcamd_reg: ldo-vcamd {
-+          regulator-name = "vcamd";
-+          regulator-min-microvolt = <1000000>;
-+          regulator-max-microvolt = <1800000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vcamio_reg: ldo-vcamio18 {
-+          compatible = "regulator-fixed";
-+          regulator-name = "vcamio";
-+          regulator-min-microvolt = <1800000>;
-+          regulator-max-microvolt = <1800000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vldo28_reg: ldo-vldo28 {
-+          regulator-name = "vldo28";
-+          regulator-min-microvolt = <2800000>;
-+          regulator-max-microvolt = <3000000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vsram_others_reg: ldo-vsram-others {
-+          regulator-name = "vsram-others";
-+          regulator-min-microvolt = <518750>;
-+          regulator-max-microvolt = <1312500>;
-+          regulator-ramp-delay = <6250>;
-+          regulator-enable-ramp-delay = <110>;
-+          regulator-always-on;
-+        };
-+        mt6357_vsram_proc_reg: ldo-vsram-proc {
-+          regulator-name = "vsram-proc";
-+          regulator-min-microvolt = <518750>;
-+          regulator-max-microvolt = <1312500>;
-+          regulator-ramp-delay = <6250>;
-+          regulator-enable-ramp-delay = <110>;
-+          regulator-always-on;
-+        };
-+        mt6357_vaux18_reg: ldo-vaux18 {
-+          compatible = "regulator-fixed";
-+          regulator-name = "vaux18";
-+          regulator-min-microvolt = <1800000>;
-+          regulator-max-microvolt = <1800000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vaud28_reg: ldo-vaud28 {
-+          compatible = "regulator-fixed";
-+          regulator-name = "vaud28";
-+          regulator-min-microvolt = <2800000>;
-+          regulator-max-microvolt = <2800000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vio28_reg: ldo-vio28 {
-+          compatible = "regulator-fixed";
-+          regulator-name = "vio28";
-+          regulator-min-microvolt = <2800000>;
-+          regulator-max-microvolt = <2800000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vio18_reg: ldo-vio18 {
-+          compatible = "regulator-fixed";
-+          regulator-name = "vio18";
-+          regulator-min-microvolt = <1800000>;
-+          regulator-max-microvolt = <1800000>;
-+          regulator-enable-ramp-delay = <264>;
-+          regulator-always-on;
-+        };
-+        mt6357_vdram_reg: ldo-vdram {
-+          regulator-name = "vdram";
-+          regulator-min-microvolt = <1100000>;
-+          regulator-max-microvolt = <1200000>;
-+          regulator-enable-ramp-delay = <3300>;
-+        };
-+        mt6357_vmc_reg: ldo-vmc {
-+          regulator-name = "vmc";
-+          regulator-min-microvolt = <1800000>;
-+          regulator-max-microvolt = <3300000>;
-+          regulator-enable-ramp-delay = <44>;
-+        };
-+        mt6357_vmch_reg: ldo-vmch {
-+          regulator-name = "vmch";
-+          regulator-min-microvolt = <2900000>;
-+          regulator-max-microvolt = <3300000>;
-+          regulator-enable-ramp-delay = <44>;
-+        };
-+        mt6357_vemc_reg: ldo-vemc {
-+          regulator-name = "vemc";
-+          regulator-min-microvolt = <2900000>;
-+          regulator-max-microvolt = <3300000>;
-+          regulator-enable-ramp-delay = <44>;
-+          regulator-always-on;
-+        };
-+        mt6357_vsim1_reg: ldo-vsim1 {
-+          regulator-name = "vsim1";
-+          regulator-min-microvolt = <1700000>;
-+          regulator-max-microvolt = <3100000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vsim2_reg: ldo-vsim2 {
-+          regulator-name = "vsim2";
-+          regulator-min-microvolt = <1700000>;
-+          regulator-max-microvolt = <3100000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+        mt6357_vibr_reg: ldo-vibr {
-+          regulator-name = "vibr";
-+          regulator-min-microvolt = <1200000>;
-+          regulator-max-microvolt = <3300000>;
-+          regulator-enable-ramp-delay = <44>;
-+        };
-+        mt6357_vusb33_reg: ldo-vusb33 {
-+          regulator-name = "vusb33";
-+          regulator-min-microvolt = <3000000>;
-+          regulator-max-microvolt = <3100000>;
-+          regulator-enable-ramp-delay = <264>;
-+        };
-+      };
 +    };
-+...
 
 -- 
 b4 0.10.1
