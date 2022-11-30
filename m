@@ -2,142 +2,103 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC65C352A1
-	for <linux-leds@archiver.kernel.org>; Wed, 30 Nov 2022 12:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBDE3C4332F
+	for <linux-leds@archiver.kernel.org>; Wed, 30 Nov 2022 15:22:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234231AbiK3MAB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 30 Nov 2022 07:00:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51002 "EHLO
+        id S229693AbiK3PWN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 30 Nov 2022 10:22:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235150AbiK3L75 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Nov 2022 06:59:57 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76B9270445
-        for <linux-leds@vger.kernel.org>; Wed, 30 Nov 2022 03:59:54 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id b9so20605067ljr.5
-        for <linux-leds@vger.kernel.org>; Wed, 30 Nov 2022 03:59:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2ON5FjK+dwOvFBeCLYK/IKSJQsVy9DHwVDaXKHa528g=;
-        b=PYyOAVgjg/t20ES1VyJBna5xfttRfQZyFma2PetyzaUUMFovuqyOqC37rxYmVZS3T5
-         XzUUsfM55bd83svQTtQhOL35wFLBjt8xG/ABvgyj8kPaw+RvBpcyr+Cwm4kftK8VT4dm
-         l/YYoFOWSuPkeaHkii4vJLLiH/SMkXNkH7h6f8ME05L+8O5q0IZtlHWhFp5xnmZpvayp
-         AP+g+g8KDKLKLv5Ol4TsDX8r3DLRJ9VIfCpvLlufCQBBSQzoP2EGXsxWRTfv+oGnLXyZ
-         nW95Xk6BdkduGqvqrTa4iPR6XbAPxJ1IzyTC+8Lda2MuxVRa3VWzy3R+CfuqHDyxlq/s
-         G9Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2ON5FjK+dwOvFBeCLYK/IKSJQsVy9DHwVDaXKHa528g=;
-        b=mu4tFJZPNuT1zvRzrkc4H8pxSdR9o+8sXNc6nviMe4a9lHw98uwHmitThhINWdGc7+
-         zZ2Qv1TX6n0DnthhM8n/ZWTQEARcobenXX/u1viphcsLuMC6h0adACTeV0KyGXEJUs2l
-         dqz1/cCybQ5JfWeOwrVWcdEg8qldRMUJn2fKV/9YrZUNybBIe4cD5K3jnt2Y8xzfek5B
-         wY1v/PSRE1gYZuZVkkTfwQN5B+JJdhKrjIxdnFzl9w/HYsCPhUiSRO0OHaAi35lzxZCR
-         m/b2Mp2R9HfHKqftTqxzkpZ1gIzhbuvIeUsr81fudkZtfSbIxNMaXAV1ZS3YS9HUi6K+
-         WiYg==
-X-Gm-Message-State: ANoB5pk6YK2kzPP5LxffW5q6tKn/LLNGQ0HG5Xznw21ygOnvB01ta1Bv
-        m4iLJZGAUEYfe0X/wnzLFm6VWg==
-X-Google-Smtp-Source: AA0mqf7XGjB6Ub5eyCrIcgsZktv4Dekz8D+amikQ5Wy4MCraS2xhaXmVl57rBX08PU0lRnRGqazSSg==
-X-Received: by 2002:a2e:aaa1:0:b0:277:7678:60dd with SMTP id bj33-20020a2eaaa1000000b00277767860ddmr18323523ljb.147.1669809592747;
-        Wed, 30 Nov 2022 03:59:52 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id b4-20020a2eb904000000b00279cbcfd7dbsm62226ljb.30.2022.11.30.03.59.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Nov 2022 03:59:52 -0800 (PST)
-Message-ID: <c13b67ec-c030-302a-6315-fad18323923a@linaro.org>
-Date:   Wed, 30 Nov 2022 12:59:51 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH 2/3] dt-bindings: leds: add dt schema for
- worldsemi,ws2812b-spi
-Content-Language: en-US
-To:     Chuanhong Guo <gch981213@gmail.com>
-Cc:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Stanislav Jakubek <stano.jakubek@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
+        with ESMTP id S229682AbiK3PWM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Nov 2022 10:22:12 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AD197E40A
+        for <linux-leds@vger.kernel.org>; Wed, 30 Nov 2022 07:22:10 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1p0OuN-00009x-8E; Wed, 30 Nov 2022 16:21:59 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1p0OuK-001Ldc-Dn; Wed, 30 Nov 2022 16:21:57 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1p0OuK-001Vql-Hb; Wed, 30 Nov 2022 16:21:56 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Conor Dooley <conor.dooley@microchip.com>,
+        Pavel Machek <pavel@ucw.cz>,
         Bjorn Andersson <andersson@kernel.org>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
         Marijn Suijten <marijn.suijten@somainline.org>,
-        Sven Schwermer <sven.schwermer@disruptive-technologies.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20221129140955.137361-1-gch981213@gmail.com>
- <20221129140955.137361-3-gch981213@gmail.com>
- <98b72494-3188-76d5-2e24-9dc127a8b31a@linaro.org>
- <CAJsYDVJknDWKMW1tH0M=85tJOPG-HngxhhMzvJpk5qn_Q9mzAg@mail.gmail.com>
- <7b3f97f9-34af-413c-aaad-9108b4f36c51@linaro.org>
- <CAJsYDVKXvJZaqCBx7RSsfVZkKTGdbp78GHA4mvmUdQwyEyGkBQ@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAJsYDVKXvJZaqCBx7RSsfVZkKTGdbp78GHA4mvmUdQwyEyGkBQ@mail.gmail.com>
+        linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: [PATCH v2 04/11] leds: qcom-lpg: Propagate errors in .get_state() to the caller
+Date:   Wed, 30 Nov 2022 16:21:41 +0100
+Message-Id: <20221130152148.2769768-5-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20221130152148.2769768-1-u.kleine-koenig@pengutronix.de>
+References: <20221130152148.2769768-1-u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1689; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=rTgdm7QcRlAMP1sQaYC5ejnejFtK5h3Bb5Wbh9vWlBY=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBjh3TsyoxxNhNODW0uhVVOPMVUxb7Ug9yLEluTeZZZ taGw4tyJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCY4d07AAKCRDB/BR4rcrsCYrRB/ 98SOdKJxqHQqepn7vCvWI5RREAncDY4tG2CtWL68mXstJCkkBz377zQSvR6KSUlf7nCOnGN1W1qcPu Zrkr+U1+h0RFnnRIbJAl29PjaOPvANnFdKCkSIc08ZNuCQMCk+W3nJOsvSvBmMefUTs2B1Nr7TR73r TMbQCysmrf9tajNzNmHy8PJLbtw78zV4Jf90cZr/bQelQLcC++Mhz4ODltKSdW+50REPOKlwr+Ebez FhjgfZchCl2pBFG1gpW8vptAF9yl6vqnY94Wc+hN8ksj1nJlNNkzsuTXXea4taZHYipN0cyr2w4t8S cKT5SUD/YP5nGMv1+eJSXDH+IJx5vq
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 30/11/2022 10:25, Chuanhong Guo wrote:
-> Hi!
-> 
-> On Wed, Nov 30, 2022 at 5:08 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->> And that's exactly what I said - the compatibles should not include bus
->> information. The bus information comes from... the bus!
-> 
-> Oh. I thought there will be a conflict if there is a SPI driver and
-> , say, an I2C driver with the same compatible string.
+.get_state() can return an error indication. Make use of it to propagate
+failing hardware accesses.
 
-We already have such. For example: adi,adxl312
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/leds/rgb/leds-qcom-lpg.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> 
->> [...]
->>>>
->>>> Why unit address is optional?
->>>
->>> It isn't. I copy-pasted it from led-class-multicolor.yaml and
->>> didn't check the exact regex.
->>> I'll fix it in the next version.
->>
->> Make it required and matching your case.
-> 
-> Got it.
-> 
->> [...]
->>>>> +      default-intensity:
->>>>> +        description: |
->>>>> +          An array of 3 integer specifying the default intensity of each color
->>>>> +          components in this LED. <255 255 255> if unspecified.
->>>>> +        $ref: /schemas/types.yaml#/definitions/uint32-array
->>>>> +        minItems: 3
->> [...]
->> So this is brightness of each color...
-> 
-> I don't think so.
-> See the kernel doc for multicolor LED:
-> https://docs.kernel.org/leds/leds-class-multicolor.html
-> This property sets the sysfs file multi_intensity while the
-> actual LED brightness is controlled with another sysfs
-> file called 'brightness'.
-> Setting multi_intensity alone doesn't change the LED
-> brightness at all.
-
-If you had brightness, that would be correct. But you do not have
-brightness, right? Therefore the final brightness is always:
-
-subled[i].brightness = 255 * subled[i].intensity / max_brightness (also
-255);
-
-Or your bindings are incomplete...
-
-Best regards,
-Krzysztof
+diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
+index 741cc2fd817d..0dcc046a9a19 100644
+--- a/drivers/leds/rgb/leds-qcom-lpg.c
++++ b/drivers/leds/rgb/leds-qcom-lpg.c
+@@ -982,20 +982,20 @@ static int lpg_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+ 
+ 	ret = regmap_read(lpg->map, chan->base + LPG_SIZE_CLK_REG, &val);
+ 	if (ret)
+-		return 0;
++		return ret;
+ 
+ 	refclk = lpg_clk_rates[val & PWM_CLK_SELECT_MASK];
+ 	if (refclk) {
+ 		ret = regmap_read(lpg->map, chan->base + LPG_PREDIV_CLK_REG, &val);
+ 		if (ret)
+-			return 0;
++			return ret;
+ 
+ 		pre_div = lpg_pre_divs[FIELD_GET(PWM_FREQ_PRE_DIV_MASK, val)];
+ 		m = FIELD_GET(PWM_FREQ_EXP_MASK, val);
+ 
+ 		ret = regmap_bulk_read(lpg->map, chan->base + PWM_VALUE_REG, &pwm_value, sizeof(pwm_value));
+ 		if (ret)
+-			return 0;
++			return ret;
+ 
+ 		state->period = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC * LPG_RESOLUTION * pre_div * (1 << m), refclk);
+ 		state->duty_cycle = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC * pwm_value * pre_div * (1 << m), refclk);
+@@ -1006,7 +1006,7 @@ static int lpg_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+ 
+ 	ret = regmap_read(lpg->map, chan->base + PWM_ENABLE_CONTROL_REG, &val);
+ 	if (ret)
+-		return 0;
++		return ret;
+ 
+ 	state->enabled = FIELD_GET(LPG_ENABLE_CONTROL_OUTPUT, val);
+ 	state->polarity = PWM_POLARITY_NORMAL;
+-- 
+2.38.1
 
