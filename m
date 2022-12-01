@@ -2,100 +2,115 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA4A7C63715
-	for <linux-leds@archiver.kernel.org>; Thu,  1 Dec 2022 20:21:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EDAC4321E
+	for <linux-leds@archiver.kernel.org>; Thu,  1 Dec 2022 21:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230348AbiLAUV5 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 1 Dec 2022 15:21:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50454 "EHLO
+        id S229890AbiLAVrz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 1 Dec 2022 16:47:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231226AbiLAUVx (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Dec 2022 15:21:53 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8057DBFCE1
-        for <linux-leds@vger.kernel.org>; Thu,  1 Dec 2022 12:21:50 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id x11so3180784ljh.7
-        for <linux-leds@vger.kernel.org>; Thu, 01 Dec 2022 12:21:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KOGoCPWDALPa2Pn54w5yy0V+BqkFOIiPQ9fSx1bZOe4=;
-        b=QkPgXYPjcWSWFOxI5ebsaCNFMaSTtxcgIpfa3mjByTZbLwPKMFxPwS52osFDkwjWu5
-         VTcCFeKD/yI9O8E2t81MLCmFuqngk5XkdF44zWuO61F+xtEmWbz04VakNpX4zLCP7alK
-         C3MRC4OMRzm8AlesA9e6YoMoaRf6B23TG44ntUFdyoz0MxkKYc1KG3w16BGQexiyg0/h
-         7LEkWNsfz+am7lz7WxttOYlSVSj/N/0+wLvmnU9TJNX+Q1Pgh+SZt8XBmh9OBqv3MtlK
-         ipP2/pp/93xxoi5J9Y5BaRtofgnfQ2tvg+fEB+SUou3A3m6+TjhC7FBvoJY6xlRAOFan
-         2ZsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KOGoCPWDALPa2Pn54w5yy0V+BqkFOIiPQ9fSx1bZOe4=;
-        b=FiljYOTFX9yWU5Ocj6rcxcnUu/VyXTY6V/68R3Q6zJO15/+vFXzjQm4WPlYyUJAJtv
-         6DcjubPIGttdz7lXmMgvQ66iLpK2zGMVcl3Zhg65UqMZGzRGy8htQmcNiaFefINkXX38
-         s2+dNU9Kwby6LeqfEQCruwQA+5s4o/Dv1jT4RdgHSztK3mcQiVwrzn5BMKSZIo0jbLdx
-         4pxNTl7kshezBIz86Yvp2wgjNzwoWkt/df/8pWP/Fa+4G6pexFdgOs1ZLC36vKuyS0nC
-         UZg8miSWBj+pZZF0ugttbGJOXEynm9u+fJk7+r6DnepHlX0faPispHD0wnco+T7SbK9u
-         +kcQ==
-X-Gm-Message-State: ANoB5pnnZI/B6vssHEN3c903p4WS2NnO0nSvthXktreBziNXVbwh7jCt
-        szcybMsoeMkZN92WvUR1GmWTDg==
-X-Google-Smtp-Source: AA0mqf5TxP6WaF0o+U4NiNXlu8EtcmUEFeSlfgVwckTpt54cPkirMYrGHO0Tj662tdspAcAEphY18Q==
-X-Received: by 2002:a2e:b0ef:0:b0:279:be29:cb69 with SMTP id h15-20020a2eb0ef000000b00279be29cb69mr4288321ljl.482.1669926108878;
-        Thu, 01 Dec 2022 12:21:48 -0800 (PST)
-Received: from eriador.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id l30-20020a19495e000000b004b514b27c86sm769679lfj.13.2022.12.01.12.21.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Dec 2022 12:21:48 -0800 (PST)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-iio@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        linux-leds@vger.kernel.org
-Subject: [PATCH 4/5] dt-bindings: iio: adc: qcom,pm8018-adc: allow specifying MPP channels
-Date:   Thu,  1 Dec 2022 22:21:43 +0200
-Message-Id: <20221201202144.448694-5-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221201202144.448694-1-dmitry.baryshkov@linaro.org>
-References: <20221201202144.448694-1-dmitry.baryshkov@linaro.org>
+        with ESMTP id S229823AbiLAVrx (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Dec 2022 16:47:53 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 881F9286EC;
+        Thu,  1 Dec 2022 13:47:50 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2AC69B81FC9;
+        Thu,  1 Dec 2022 21:47:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7C51C433C1;
+        Thu,  1 Dec 2022 21:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669931267;
+        bh=FjbFtLjBLre2tSCiguVTfVS1YZts86UT4GzrvZvOP1s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=obbEMI0pt92dyFY5lpuQCgceXgDkxlEE2ShYPoEdc/P426CsVWIcjgmPMRYswwxgn
+         BBKnCfXgIGQsI4jOuJoKrp3Ja8dmaTFE7Me83kMEUPF+o5H9yPyzkv/+WCtOgDl3eT
+         40/icYTQMJaWGEwD4/A71vGI9u/VAv3oJqrkGT69GpH8hUbPveWgpDfYnjVf+aSaw6
+         cejkxr92dmMRtNcXwAigI8fg+Qp6sClCNdN2t28Qatkbsfy5rkES8UNWlCLkNoLZOt
+         T0pZtA/BBdgpUK0HN3UC1q4NWqmROmKjQEU/taTOc6yoxPDg8bisJuN2645mBteL2G
+         vUlDuhLjreExg==
+Received: by mail-vs1-f47.google.com with SMTP id g65so2941919vsc.11;
+        Thu, 01 Dec 2022 13:47:47 -0800 (PST)
+X-Gm-Message-State: ANoB5plQm2qxDMkF3lRiVXLbdaDjtb7j/tN9jehRCdKnwO5+H0Je8Hy7
+        dPjd0RRsBLz/y4Oa3ee1jWz6t0aLp/OufBdRJg==
+X-Google-Smtp-Source: AA0mqf7Jigle0AWJmRQV95TfPPYMJwWCAq6GVDzxqoXbAPteNeIVtf7Q/Eo7yOqALF6yuk+EjekPrVDjoTXS2VUmpVc=
+X-Received: by 2002:a05:6102:5f7:b0:3af:68c0:1c2e with SMTP id
+ w23-20020a05610205f700b003af68c01c2emr30953439vsf.26.1669931266812; Thu, 01
+ Dec 2022 13:47:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221122111124.6828-1-cniedermaier@dh-electronics.com>
+ <Y3y/S5COG7VPbsqL@duo.ucw.cz> <3f4c89a3-8955-ce41-ac2a-cee9b0ed5210@denx.de>
+ <20221130191905.GA2631320-robh@kernel.org> <Y4eufPCzKbfp9k3z@duo.ucw.cz>
+In-Reply-To: <Y4eufPCzKbfp9k3z@duo.ucw.cz>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 1 Dec 2022 15:47:35 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK6+Yyn29QNV2tjUM-zm9WbuW57Jb=LKmqCLXHmvEoJYA@mail.gmail.com>
+Message-ID: <CAL_JsqK6+Yyn29QNV2tjUM-zm9WbuW57Jb=LKmqCLXHmvEoJYA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: leds: Mark label property as deprecated
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Marek Vasut <marex@denx.de>,
+        Christoph Niedermaier <cniedermaier@dh-electronics.com>,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        kernel@dh-electronics.com, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Several ADC channels are bound to the Multi Purpose Pins (MPPs). Allow
-specifying such channels using the mppN device node (as used on apq8060
-dragonboard).
+On Wed, Nov 30, 2022 at 1:27 PM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> On Wed 2022-11-30 13:19:05, Rob Herring wrote:
+> > On Fri, Nov 25, 2022 at 10:26:30PM +0100, Marek Vasut wrote:
+> > > On 11/22/22 13:23, Pavel Machek wrote:
+> > > > Hi!
+> > >
+> > > Hi,
+> > >
+> > > > > Mark the label property as deprecated as it is mentioned
+> > > > > in the description.
+> > > >
+> > > > Lets do it the other way around. Functions (etc) don't really provide
+> > > > good enough description of LED, and label is still needed.
+> > >
+> > > Can you please provide a clear explanation which property or approach is the
+> > > correct one for new DTs ?
+> > >
+> > > So far, the documentation states that "label" is deprecated, and users
+> > > should replace it with "function" and "color".
+> >
+> > 'function' is what activity/operation the LED is associated with. It is
+> > a fixed set of strings which s/w may use. It is a replacement for
+> > 'linux,default-trigger'.
+> >
+> > 'label' is what is printed next to the LED for a human to read. 'label'
+> > can be anything and the OS shouldn't care what it is.
+>
+> Unfortunately, no.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- Documentation/devicetree/bindings/iio/adc/qcom,pm8018-adc.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That's why I said 'shouldn't care', not 'doesn't care'.
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,pm8018-adc.yaml b/Documentation/devicetree/bindings/iio/adc/qcom,pm8018-adc.yaml
-index d186b713d6a7..fee30e6ddd62 100644
---- a/Documentation/devicetree/bindings/iio/adc/qcom,pm8018-adc.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/qcom,pm8018-adc.yaml
-@@ -64,7 +64,7 @@ required:
-   - adc-channel@f
- 
- patternProperties:
--  "^(adc-channel@)[0-9a-f]$":
-+  "^(adc-channel|mpp[0-9]+)@[0-9a-f]$":
-     type: object
-     description: |
-       ADC channel specific configuration.
--- 
-2.35.1
+'label' is also not just an LED property. It's used elsewhere, but
+unfortunately the LED subsystem makes more use of it than it perhaps
+should.
 
+> We use label as a path in /sys/class/leds.
+
+Yes, or node name if no label. That's still not really caring what the
+value of label is. At least the kernel doesn't. A well behaved
+userspace wouldn't either and doesn't for most classes.
+
+> And it looks like integer
+> "function" is not really adequate for describing what LED does. There
+> are too many LEDs and not enough integers, and it is common to have
+> same function ("activity") on multiple devices ("wifi", "mmc", "eth").
+
+Whatever the problems are, 'label' is not the solution.
+
+There is a way to associate leds with devices. 'trigger-source' IIRC.
+
+Rob
