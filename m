@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5E3C47088
-	for <linux-leds@archiver.kernel.org>; Thu,  1 Dec 2022 20:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C62C6C63708
+	for <linux-leds@archiver.kernel.org>; Thu,  1 Dec 2022 20:21:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231225AbiLAUVx (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 1 Dec 2022 15:21:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50424 "EHLO
+        id S230359AbiLAUVz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 1 Dec 2022 15:21:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230338AbiLAUVu (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Dec 2022 15:21:50 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69A89BFCC4
-        for <linux-leds@vger.kernel.org>; Thu,  1 Dec 2022 12:21:48 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id g7so4265420lfv.5
-        for <linux-leds@vger.kernel.org>; Thu, 01 Dec 2022 12:21:48 -0800 (PST)
+        with ESMTP id S231154AbiLAUVv (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 1 Dec 2022 15:21:51 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D3DBFCDB
+        for <linux-leds@vger.kernel.org>; Thu,  1 Dec 2022 12:21:49 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id s8so4248257lfc.8
+        for <linux-leds@vger.kernel.org>; Thu, 01 Dec 2022 12:21:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kKmE+hFlJHqtMdmJeHcqNG8xf2z5C60unLxtWG9reKY=;
-        b=FIlJT4UOMxpVeTMNkDTF5t1/AcPzkI+FSl0RPjV6dxXpMaAj9fb2E7ZSNQgpPZBS6I
-         B6mzXmsxSja4MRXmcDF3xqVTjTDyYKuVG/Wg9sCL/ep3Gr9/DSn7TZOzSzmMJSyJcT9Y
-         iDIOwRYXuMiUno86NoRRL8sLZw+DRKgZ8lGkoNASu0DtGEyV8PHGbCSA85+F/emlKZux
-         EWOKF5s33qgjRAaoFd/dZZ4QmjAuJxdOtSC0WKSLbjAES767RyZwwH3kSxzukqLkB7+w
-         VlnjJByHFb77e5momqQ4YQcmnA2TCFrfhMZUTmXEp8QF6A+88GNWFg3MiwHNMeARNrIu
-         GbtA==
+        bh=HQjrFotBvEBOjNlq+Pe1FPAQOv2mAv4xa7xl6UXuL2g=;
+        b=NxTSDW0W3fMh/uuCjr+FjJDpQWcA3hwPTYJexj6jKHSPbTfD3cYbNTTtTzZffgw0w9
+         EJ8Pu62yqOlCu6C6Dm+vb58xgMzq0lfrKz+k657UFjifz7esjHICuY9zK/gl4nhxjoJb
+         Yw6y4AYs5R3LMI/CZ7weCsDJLSrqlXDNASgt8iPCNlGoCpPyyULYwuWK6DA6HocXfgaL
+         cxUvzb+s6rcljcS9Hv2tBL5l1+hB6orDDbmhKkGHDytnTQ/pMFJQYzVGPwaa/T7XvdIo
+         oyOUH4Tgz9VPccGzW7ONkZ+esTUNZBEkHFe/SvCIvtwHtWgvrkbcObSaikovn8V79foJ
+         ZeWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kKmE+hFlJHqtMdmJeHcqNG8xf2z5C60unLxtWG9reKY=;
-        b=aHxufGxoy4ARcYXGUTKYbDNqsEm1Uo+M1zkPF6RXcfDDDHP1wDInhMBW8+la/pqyON
-         tp1GMOcP0NI7DZ+9zm0MIoA8KSjZajTbi7sZl5/KA9R14d/3Sj4CbS19K0kItUVtCFdZ
-         Y2LGUNNHtYg62A5hZywif8QatWk2ayFUYYj6vfLMUBcUAM7omTsiAxeaUHBE0RqfbtlG
-         y7Ct9WUVKW/MhSay7yxvJ7UgVzbsYXqIPPY13Dnbdfy/fBuOwyDx3ynG3tbz+qMgj4wI
-         Uj2z5r5BC3fG0bgnJcypvt4EcsMB4CLtgTd4p2sItkuEAhdtb6vK3vuG0QejY9wi1HiQ
-         LiEw==
-X-Gm-Message-State: ANoB5pnOoVW07GWVyp7XWl6QkMxKY+/drzCfpoQFtOHxL0W7Q/fZepHd
-        DoQtbXDKHxYgxotccCDIRK0log==
-X-Google-Smtp-Source: AA0mqf6L9JV+4Ro/rEOmcVfPDkvXeOBOcRhjeHdJgMFhGMM9OGSAR3CK+yyYK5LzRL8Fi5f7cHblhw==
-X-Received: by 2002:a05:6512:786:b0:4a2:44c7:ee58 with SMTP id x6-20020a056512078600b004a244c7ee58mr22190725lfr.127.1669926106648;
-        Thu, 01 Dec 2022 12:21:46 -0800 (PST)
+        bh=HQjrFotBvEBOjNlq+Pe1FPAQOv2mAv4xa7xl6UXuL2g=;
+        b=aQc/cpf9vdLcQnmF+YnRYTG9tN1ffz8636FXDcke4FBPOWdWOohXwdMHA6LRBhl5X+
+         wW/IcGWPx2mN8w5U1vSccMtfQ2FYbTC8EzTnxED5h59V2/xE8Mia8xqKfLQ5DdzuZNWX
+         IpdD9CgAD8Bnkyp97y0tgOj9SN3644bGJhrJmAMKKqDmf5BT8W/lskat9Y/ic4QwsXiu
+         6//E1mg071d/y5BXfpNttuTBcn+cJfh062YmJc/kvzarCAqYRXWH/yckU7nEZLr1vf0J
+         wot5RsH5O/bwJvWurAjnFBpj0xbeKPcPg8+w2MUaWm7NAceAsFYkHqhJS6b1CestNj/x
+         UCow==
+X-Gm-Message-State: ANoB5pn4QKeG0VbntP0NFVNzdymFUrEpJZ4D0VfpRlE7WGqn0K2TXiFY
+        TlatYRhoAMJnZh5R53ZTM9nBsA==
+X-Google-Smtp-Source: AA0mqf5XaqmygrYenKVm7zbx77hIMWaGfCxDJmVverxZqSnyHnlczTbAjKIgC9NiUS/rR5AbTt3OKQ==
+X-Received: by 2002:a19:5215:0:b0:4aa:4da0:f8a5 with SMTP id m21-20020a195215000000b004aa4da0f8a5mr21605502lfb.288.1669926108212;
+        Thu, 01 Dec 2022 12:21:48 -0800 (PST)
 Received: from eriador.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id l30-20020a19495e000000b004b514b27c86sm769679lfj.13.2022.12.01.12.21.45
+        by smtp.gmail.com with ESMTPSA id l30-20020a19495e000000b004b514b27c86sm769679lfj.13.2022.12.01.12.21.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Dec 2022 12:21:46 -0800 (PST)
+        Thu, 01 Dec 2022 12:21:47 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -62,9 +62,9 @@ Cc:     Andy Gross <agross@kernel.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
         linux-leds@vger.kernel.org
-Subject: [PATCH 1/5] dt-bindings: input: qcom,pm8921-keypad: convert to YAML format
-Date:   Thu,  1 Dec 2022 22:21:40 +0200
-Message-Id: <20221201202144.448694-2-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 3/5] dt-bindings: mfd: qcom-pm8xxx: add missing child nodes
+Date:   Thu,  1 Dec 2022 22:21:42 +0200
+Message-Id: <20221201202144.448694-4-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221201202144.448694-1-dmitry.baryshkov@linaro.org>
 References: <20221201202144.448694-1-dmitry.baryshkov@linaro.org>
@@ -74,216 +74,57 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Convert the bindings for the keypad subdevices of Qualcomm PM8921 and
-PM8058 PMICs from text to YAML format.
-
-While doing the conversion also change linux,keypad-no-autorepeat
-property to linux,input-no-autorepeat. The former property was never
-used by DT and was never handled by the driver.
+Add gpio, keypad, led, mpps, pwrkey, vibrator and xoadc as possible
+child nodes of qcom,pm8xxx, referencing existint schema files.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../bindings/input/qcom,pm8921-keypad.yaml    | 93 +++++++++++++++++++
- .../bindings/input/qcom,pm8xxx-keypad.txt     | 90 ------------------
- 2 files changed, 93 insertions(+), 90 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/input/qcom,pm8921-keypad.yaml
- delete mode 100644 Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
+ .../devicetree/bindings/mfd/qcom-pm8xxx.yaml  | 30 ++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/input/qcom,pm8921-keypad.yaml b/Documentation/devicetree/bindings/input/qcom,pm8921-keypad.yaml
-new file mode 100644
-index 000000000000..e3c53a8234c5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/qcom,pm8921-keypad.yaml
-@@ -0,0 +1,93 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/input/qcom,pm8921-keypad.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/mfd/qcom-pm8xxx.yaml b/Documentation/devicetree/bindings/mfd/qcom-pm8xxx.yaml
+index 84b87f01e029..1513fe4edad9 100644
+--- a/Documentation/devicetree/bindings/mfd/qcom-pm8xxx.yaml
++++ b/Documentation/devicetree/bindings/mfd/qcom-pm8xxx.yaml
+@@ -43,9 +43,37 @@ properties:
+   interrupt-controller: true
+ 
+ patternProperties:
++  "gpio@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/pinctrl/qcom,pmic-gpio.yaml#
 +
-+title: Qualcomm PM8921 PMIC KeyPad
++  "keypad@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/input/qcom,pm8921-keypad.yaml#
 +
-+maintainers:
-+  - Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
++  "led@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/leds/leds-pm8058.yaml#
 +
-+allOf:
-+  - $ref: input.yaml#
-+  - $ref: matrix-keymap.yaml#
++  "mpps@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/pinctrl/qcom,pmic-mpp.yaml#
 +
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,pm8058-keypad
-+      - qcom,pm8921-keypad
++  "pwrkey@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/input/qcom,pm8921-pwrkey.yaml#
 +
-+  reg:
-+    maxItems: 1
+   "rtc@[0-9a-f]+$":
+     type: object
+-    $ref: "../rtc/qcom-pm8xxx-rtc.yaml"
++    $ref: /schemas/rtc/qcom-pm8xxx-rtc.yaml#
 +
-+  interrupts:
-+    items:
-+      - description: key sense
-+      - description: key stuck
++  "vibrator@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/input/qcom,pm8xxx-vib.yaml#
 +
-+  linux,input-no-autorepeat:
-+    type: boolean
-+    description: don't enable autorepeat feature.
-+
-+  wakeup-source:
-+    type: boolean
-+    description: use any event on keypad as wakeup event
-+
-+  linux,keypad-wakeup:
-+    type: boolean
-+    deprecated: true
-+    description: legacy version of the wakeup-source property
-+
-+  debounce:
-+    description:
-+      Time in microseconds that key must be pressed or
-+      released for state change interrupt to trigger.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  scan-delay:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: time in microseconds to pause between successive scans of the
-+      matrix array
-+
-+  row-hold:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: time in nanoseconds to pause between scans of each row in the
-+      matrix array.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - linux,keymap
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+   #include <dt-bindings/input/input.h>
-+   #include <dt-bindings/interrupt-controller/irq.h>
-+   pmic {
-+       #address-cells = <1>;
-+       #size-cells = <0>;
-+
-+       keypad@148 {
-+           compatible = "qcom,pm8921-keypad";
-+           reg = <0x148>;
-+           interrupt-parent = <&pmicintc>;
-+           interrupts = <74 IRQ_TYPE_EDGE_RISING>, <75 IRQ_TYPE_EDGE_RISING>;
-+           linux,keymap = <
-+               MATRIX_KEY(0, 0, KEY_VOLUMEUP)
-+               MATRIX_KEY(0, 1, KEY_VOLUMEDOWN)
-+               MATRIX_KEY(0, 2, KEY_CAMERA_FOCUS)
-+               MATRIX_KEY(0, 3, KEY_CAMERA)
-+           >;
-+           keypad,num-rows = <1>;
-+           keypad,num-columns = <5>;
-+           debounce = <15>;
-+           scan-delay = <32>;
-+           row-hold = <91500>;
-+       };
-+   };
-+...
-diff --git a/Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt b/Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
-deleted file mode 100644
-index 4a9dc6ba96b1..000000000000
---- a/Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
-+++ /dev/null
-@@ -1,90 +0,0 @@
--Qualcomm PM8xxx PMIC Keypad
--
--PROPERTIES
--
--- compatible:
--	Usage: required
--	Value type: <string>
--	Definition: must be one of:
--		    "qcom,pm8058-keypad"
--		    "qcom,pm8921-keypad"
--
--- reg:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: address of keypad control register
--
--- interrupts:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: the first interrupt specifies the key sense interrupt
--		    and the second interrupt specifies the key stuck interrupt.
--		    The format of the specifier is defined by the binding
--		    document describing the node's interrupt parent.
--
--- linux,keymap:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: the linux keymap. More information can be found in
--		    input/matrix-keymap.txt.
--
--- linux,keypad-no-autorepeat:
--	Usage: optional
--	Value type: <bool>
--	Definition: don't enable autorepeat feature.
--
--- wakeup-source:
--	Usage: optional
--	Value type: <bool>
--	Definition: use any event on keypad as wakeup event.
--		    (Legacy property supported: "linux,keypad-wakeup")
--
--- keypad,num-rows:
--	Usage: required
--	Value type: <u32>
--	Definition: number of rows in the keymap. More information can be found
--		    in input/matrix-keymap.txt.
--
--- keypad,num-columns:
--	Usage: required
--	Value type: <u32>
--	Definition: number of columns in the keymap. More information can be
--		    found in input/matrix-keymap.txt.
--
--- debounce:
--	Usage: optional
--	Value type: <u32>
--	Definition: time in microseconds that key must be pressed or release
--		    for key sense interrupt to trigger.
--
--- scan-delay:
--	Usage: optional
--	Value type: <u32>
--	Definition: time in microseconds to pause between successive scans
--		    of the matrix array.
--
--- row-hold:
--	Usage: optional
--	Value type: <u32>
--	Definition: time in nanoseconds to pause between scans of each row in
--		    the matrix array.
--
--EXAMPLE
--
--	keypad@148 {
--		compatible = "qcom,pm8921-keypad";
--		reg = <0x148>;
--		interrupt-parent = <&pmicintc>;
--		interrupts = <74 1>, <75 1>;
--		linux,keymap = <
--			MATRIX_KEY(0, 0, KEY_VOLUMEUP)
--			MATRIX_KEY(0, 1, KEY_VOLUMEDOWN)
--			MATRIX_KEY(0, 2, KEY_CAMERA_FOCUS)
--			MATRIX_KEY(0, 3, KEY_CAMERA)
--			>;
--		keypad,num-rows = <1>;
--		keypad,num-columns = <5>;
--		debounce = <15>;
--		scan-delay = <32>;
--		row-hold = <91500>;
--	};
++  "xoadc@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/iio/adc/qcom,pm8018-adc.yaml#
+ 
+ required:
+   - compatible
 -- 
 2.35.1
 
