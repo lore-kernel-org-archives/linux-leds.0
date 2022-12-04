@@ -2,154 +2,121 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AA2C47090
-	for <linux-leds@archiver.kernel.org>; Sun,  4 Dec 2022 10:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF813C4321E
+	for <linux-leds@archiver.kernel.org>; Sun,  4 Dec 2022 14:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230158AbiLDKne (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 4 Dec 2022 05:43:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36124 "EHLO
+        id S229973AbiLDO1z (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 4 Dec 2022 09:27:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230120AbiLDKnd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 4 Dec 2022 05:43:33 -0500
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA9B7E0E8
-        for <linux-leds@vger.kernel.org>; Sun,  4 Dec 2022 02:43:31 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id a19so10429426ljk.0
-        for <linux-leds@vger.kernel.org>; Sun, 04 Dec 2022 02:43:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vUtAt+SuxLZPa/RB4QNwZAEnF/ypq5aNumvuCyCA9xc=;
-        b=b13/F8a+rUqvNZ/XYyBYbeH+jtIJ+hV+icTub0e55c0B1U8hk+1IIlKae3gTssRMZm
-         0Vpyp4gKhqCxneqz0Iz9Vjop23XhBF9VKCDhfNeAoMRTgXlzFcAFTrOWmSDaETLAwsDw
-         EpjoigAnFinTxpZrrU2YHxR5iA6OrnnkQzqYkVrEmidIy9AASxwyu4ZR9QL8U4x95FfW
-         wB6dECAuda6SZgu5CiKnwVJSBmpN+p66EHu0a6Tkx2fNZiugxyyZnQreZRsoT1Mr3eDJ
-         dwIUmoROfqCAHTKo8d2oMhuZYD2O9uwQHlF5BGvTdTl5X8OVYaWIAZI8PnI8k9Q2bEyF
-         596w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vUtAt+SuxLZPa/RB4QNwZAEnF/ypq5aNumvuCyCA9xc=;
-        b=DsivKgJxXv48k4jcDYfSXwmEQvg1vR5bmDbxxprpu7z8xyL6TxctxYybOW0ceMBtUg
-         jynmVAAE+mHGlUsR0pYXdgc4FpXEa+bPdAHB184jTwbDv9+LQaiBisiEnl1yScDrV36v
-         w8kkqLbAkPW79KYXruzWi7QzEa7DPpnhcyL/gvvUOWNxkOj52C9UtD6uziSu6Z3OKfZU
-         JGEIhQmIiezKE/keVq0wt0aj+MGHrmzbSivXFj/K60nOlj1PA44bbpTdJyhKfxZi9sSj
-         ldlI8+MTX3wkTBa+OzxBAUNC9U0kKFY8ugEEE3weHLOk1ayVw302xwM4jDNHI6P/477u
-         t+jw==
-X-Gm-Message-State: ANoB5pl+W5E2HFC5YNcVSKjQe8lRNDkQKHzlNwsqYHEK4+Gai323GJrv
-        s663vi2JSRFKeZ4Fl0ES/mcW3A==
-X-Google-Smtp-Source: AA0mqf5CakR+0IBuMADjv7++aDidoKZ/7nREP95nHQ81sJ0Lmx7kjfFKOT4CS7bPA6s5DVuYJuRRnw==
-X-Received: by 2002:a2e:b0fb:0:b0:279:9db3:7e58 with SMTP id h27-20020a2eb0fb000000b002799db37e58mr9729626ljl.341.1670150610240;
-        Sun, 04 Dec 2022 02:43:30 -0800 (PST)
-Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id w13-20020a05651c118d00b0026c42f67eb8sm893318ljo.7.2022.12.04.02.43.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Dec 2022 02:43:29 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S229875AbiLDO1y (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 4 Dec 2022 09:27:54 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7089D7643;
+        Sun,  4 Dec 2022 06:27:53 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6BC3B60D2F;
+        Sun,  4 Dec 2022 14:27:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D9F6C433C1;
+        Sun,  4 Dec 2022 14:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670164071;
+        bh=XSvIDwN3cWxgy86D24e4+Qi0IcagP/e6rbFBtLjZs4Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=grS+Bad4FUKjFI0t2w/D+Rsgr66JLR6vlXdvUDvKT0A+H5hqnZ53coFGu9+kAWqVN
+         yIDbtf6XUrDOLyb5YK6gQbyLm8vhe6BZv+F9YQXgC6k+HuJ10Ac9bL41bMh25LAPc1
+         8TxcoRXp4VWJlD5N7VKeHiE5hvDcV9DZlZE3Ig4mlPju2ifK9GEh/xXPcUjy43XIBM
+         9/HCbsSlIFvrzQ1KNrRZJ5rj1ABmwIfM5P7rayvqMaHFy249OubTjpOoHjlA0PhTQH
+         Y/d/kcnepV+fbYIIPtkRyThsv78hVL8C/CPoInFBkuxYwilsSgDGVZzZaJaISx1yCD
+         0ciNd21PRjNxw==
+Date:   Sun, 4 Dec 2022 14:40:36 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sean Young <sean@mess.org>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/3] dt-bindings: leds: irled: pwm-ir-tx: convert to DT schema
-Date:   Sun,  4 Dec 2022 11:43:22 +0100
-Message-Id: <20221204104323.117974-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221204104323.117974-1-krzysztof.kozlowski@linaro.org>
-References: <20221204104323.117974-1-krzysztof.kozlowski@linaro.org>
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] dt-bindings: mfd: qcom-pm8xxx: add missing child
+ nodes
+Message-ID: <20221204144036.25da4490@jic23-huawei>
+In-Reply-To: <20221204061555.1355453-3-dmitry.baryshkov@linaro.org>
+References: <20221204061555.1355453-1-dmitry.baryshkov@linaro.org>
+        <20221204061555.1355453-3-dmitry.baryshkov@linaro.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Convert the PWM IR LED bindings to DT schema.
+On Sun,  4 Dec 2022 08:15:53 +0200
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/leds/irled/pwm-ir-tx.txt         | 13 -------
- .../bindings/leds/irled/pwm-ir-tx.yaml        | 34 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 3 files changed, 35 insertions(+), 13 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.txt
- create mode 100644 Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml
+> Add gpio, keypad, led, mpps, pwrkey, vibrator and xoadc as possible
+> child nodes of qcom,pm8xxx, referencing existint schema files.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../devicetree/bindings/mfd/qcom-pm8xxx.yaml  | 26 ++++++++++++++++++-
+>  1 file changed, 25 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/qcom-pm8xxx.yaml b/Documentation/devicetree/bindings/mfd/qcom-pm8xxx.yaml
+> index 9acad9d326eb..7fe3875a5996 100644
+> --- a/Documentation/devicetree/bindings/mfd/qcom-pm8xxx.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/qcom-pm8xxx.yaml
+> @@ -43,13 +43,37 @@ properties:
+>    interrupt-controller: true
+>  
+>  patternProperties:
+> +  "gpio@[0-9a-f]+$":
+> +    type: object
+> +    $ref: /schemas/pinctrl/qcom,pmic-gpio.yaml#
+> +
+> +  "keypad@[0-9a-f]+$":
+> +    type: object
+> +    $ref: /schemas/input/qcom,pm8921-keypad.yaml#
+> +
+>    "led@[0-9a-f]+$":
+>      type: object
+>      $ref: /schemas/leds/qcom,pm8058-led.yaml#
+>  
+> +  "mpps@[0-9a-f]+$":
+> +    type: object
+> +    $ref: /schemas/pinctrl/qcom,pmic-mpp.yaml#
+> +
+> +  "pwrkey@[0-9a-f]+$":
+> +    type: object
+> +    $ref: /schemas/input/qcom,pm8921-pwrkey.yaml#
+> +
+>    "rtc@[0-9a-f]+$":
+>      type: object
+> -    $ref: "../rtc/qcom-pm8xxx-rtc.yaml"
+> +    $ref: /schemas/rtc/qcom-pm8xxx-rtc.yaml#
+> +
+> +  "vibrator@[0-9a-f]+$":
+> +    type: object
+> +    $ref: /schemas/input/qcom,pm8xxx-vib.yaml#
+> +
+> +  "xoadc@[0-9a-f]+$":
 
-diff --git a/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.txt b/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.txt
-deleted file mode 100644
-index 66e5672c2e3d..000000000000
---- a/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.txt
-+++ /dev/null
-@@ -1,13 +0,0 @@
--Device tree bindings for IR LED connected through pwm pin which is used as
--remote controller transmitter.
--
--Required properties:
--	- compatible: should be "pwm-ir-tx".
--	- pwms : PWM property to point to the PWM device (phandle)/port (id)
--	  and to specify the period time to be used: <&phandle id period_ns>;
--
--Example:
--	irled {
--		compatible = "pwm-ir-tx";
--		pwms = <&pwm0 0 10000000>;
--	};
-diff --git a/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml b/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml
-new file mode 100644
-index 000000000000..f2a6fa140f38
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml
-@@ -0,0 +1,34 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/irled/pwm-ir-tx.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: IR LED connected through PWM pin
-+
-+maintainers:
-+  - Sean Young <sean@mess.org>
-+
-+description:
-+  IR LED connected through PWM pin which is used as remote controller
-+  transmitter.
-+
-+properties:
-+  compatible:
-+    const: pwm-ir-tx
-+
-+  pwms:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - pwms
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    irled {
-+        compatible = "pwm-ir-tx";
-+        pwms = <&pwm0 0 10000000>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 25b7fbf09e7b..e3f3c3e53f77 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16960,6 +16960,7 @@ PWM IR Transmitter
- M:	Sean Young <sean@mess.org>
- L:	linux-media@vger.kernel.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml
- F:	drivers/media/rc/pwm-ir-tx.c
- 
- PWM SUBSYSTEM
--- 
-2.34.1
+Should probably have a generic node name of
+adc@...
+
+
+> +    type: object
+> +    $ref: /schemas/iio/adc/qcom,pm8018-adc.yaml#
+>  
+>  required:
+>    - compatible
 
