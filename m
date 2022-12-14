@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE6DC3DA6E
-	for <linux-leds@archiver.kernel.org>; Wed, 14 Dec 2022 23:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A5A0C10F31
+	for <linux-leds@archiver.kernel.org>; Thu, 15 Dec 2022 00:00:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229732AbiLNX7k (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 14 Dec 2022 18:59:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53618 "EHLO
+        id S230017AbiLOAAg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 14 Dec 2022 19:00:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229913AbiLNX6t (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Dec 2022 18:58:49 -0500
+        with ESMTP id S229614AbiLNX71 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 14 Dec 2022 18:59:27 -0500
 Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE74A5D6A8;
-        Wed, 14 Dec 2022 15:55:45 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id u12so1427819wrr.11;
-        Wed, 14 Dec 2022 15:55:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E5EFCED;
+        Wed, 14 Dec 2022 15:55:56 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id h16so1420268wrz.12;
+        Wed, 14 Dec 2022 15:55:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ERnunlg4Are2RjzI+mRhVTdhmnhLu7rf9W2UfAXj16A=;
-        b=Y5c1IhUoOOWervZyFKkPlyf3ICr6PsF7TStOeqbI7ka4EtTbxdISRWxmia6va6VoVz
-         aH9sxUTaGNziC4i8fyV6SDtgbFhnwbamFZmDP4QESPZLoCaF+4fcGuf4Xcj3QqHpIwIP
-         Rs3XRlVQKHd5qI7HOmqaVPrELXMYZwL6OrQBC8RGTCtRwqGAN9XXLUXyi4kU6uJEWuSd
-         nA9xwruhPfwGZUkFtALC3fYsap7QZ2ckrXHK6zb28SF76pRomJJ/MgTRduwWDntrOL5S
-         eaO+LDRuNMecENWWEUcjP2rBydr6jlI+l3UCqOdjTlvi9C/LUB53DGTMjJmMO5/BEzpI
-         mpag==
+        bh=9MMLnTteUrqIxH9MlpZEihuzNBu6Jv5Ux8kWMNNeLhU=;
+        b=CrDS8suCiCLiSApldYHkNJ+1wtFo6lr4JJPQz5VoMWHZs9D6CTZgBtF4OlJz8Ud5ya
+         2WF+NYj2sT6AnHKaDPVhyoGUi8qHDcuK2lFrGKKo1DvBdKWWadt3IkM1T4EFgIb+HVIN
+         j6TLXcYr0Pf2fiJE9v8cPKuuTlbpPyPezXCuxcK3FlQEolAj3fr1TZ79YzF19dXeFVr8
+         vy0dVJ9Xw2N0LVnwqVBEEpKoKSUBYFqqqAJ77o1aFKnvafR/ASU7tJosZNhoowkaZY03
+         Rl+Abn1keOOLj0fWgroz8ylRmPPsm/7XRTtwc2eKBdXMLb8PwHCczJ5j6HW0Nk/ogExc
+         UinA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ERnunlg4Are2RjzI+mRhVTdhmnhLu7rf9W2UfAXj16A=;
-        b=zAwl59Y1RDs/zz3sXNeA7886IS7GFuAu9+yy7+vy926NnElG/NxFbAyiYBp3C61Cmx
-         2YOMOLmKF6+CAEWgDKin6nOA0WWc/OQPLLyVdvFXw8NhBvTRZE+hL3mHPGKntTVQT9ml
-         GB/j/sxjOoLUaLfNfKdGbsvrDOurpfTkuS19jg077gcGJAIa6mx71K58jN4tsQmWAW53
-         BWdHcgOjBLV9UXJ+YAuYS1HgtloBAJBYcgJ1rZeasl12g9udmYa6boi1PJ53jr2AkRh9
-         7wCSFCLrmTh/L2x49aCujw87Ne9mO71GcvNZyg27llLAHn6KyESa80yyLTAwMBE/kyfg
-         bYfA==
-X-Gm-Message-State: ANoB5plUdD2Kl04TbXxWglLce1Cxzt1P/KwF4AqDb1W1kOiYfQrhwCRe
-        gnbfa82+9h17qrHPznZoOnw=
-X-Google-Smtp-Source: AA0mqf4GXLQZX1ebAeL145nIzjkfwLXs43y5ktVVWt+Z3d+aqkhYIKbFZY9Vemcm3a+rJoRtw3vmYQ==
-X-Received: by 2002:adf:ea0d:0:b0:242:b6a:1c9b with SMTP id q13-20020adfea0d000000b002420b6a1c9bmr15565115wrm.59.1671062114938;
-        Wed, 14 Dec 2022 15:55:14 -0800 (PST)
+        bh=9MMLnTteUrqIxH9MlpZEihuzNBu6Jv5Ux8kWMNNeLhU=;
+        b=H1MOk6fTFK34FYlo9JpJHPLrCJceJ2uu0uG4pEYrMsPzQxEK8LJyO/ZrH+Zqa8lbUO
+         JOxvMftUu8GdH8wDs6Fh6n9XtVIlNNP1eBXkhhEYbQDGI6NJxl9191zFXvrSZttsmHJM
+         vay2+z4S7/jK8hxp29B79rXGdj2eZGtzLTOqJo+/k24PWK/o0uoL/Gok8cZlhGvx+EY2
+         1YlKSo05AOS2Ov2BQBM2UphmFSJog6MMTscTnJxY3RR3Xxd5WrlcRvGRQwGPDqdNTg7j
+         NbKSipf8Dz04f575R79ZEAkAw1EkEkGthc0S5t4eZYBEU8QEQDl8+rX0Yu15MCkbfvx7
+         diCg==
+X-Gm-Message-State: ANoB5plzZcsRDlUGpnBLhCGUtNWlasKlJ9roQbLDAKrp4HVRpbPuYfpW
+        CUGbsCbBqyaa2DWVU9boZLM=
+X-Google-Smtp-Source: AA0mqf5Lkgg/dpJOYekqqk1uqf9OtMA0S0/LY06DpNjzTwpWpcoCyaCWhMtE0+2jpAlCx+WxnORkUw==
+X-Received: by 2002:adf:ec05:0:b0:242:5ceb:fafa with SMTP id x5-20020adfec05000000b002425cebfafamr16573139wrn.34.1671062120107;
+        Wed, 14 Dec 2022 15:55:20 -0800 (PST)
 Received: from localhost.localdomain (93-42-71-18.ip85.fastwebnet.it. [93.42.71.18])
-        by smtp.googlemail.com with ESMTPSA id u2-20020adff882000000b00241d21d4652sm4163549wrp.21.2022.12.14.15.55.13
+        by smtp.googlemail.com with ESMTPSA id u2-20020adff882000000b00241d21d4652sm4163549wrp.21.2022.12.14.15.55.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Dec 2022 15:55:14 -0800 (PST)
+        Wed, 14 Dec 2022 15:55:19 -0800 (PST)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -68,9 +68,9 @@ To:     Andrew Lunn <andrew@lunn.ch>,
         Tim Harvey <tharvey@gateworks.com>,
         Alexander Stein <alexander.stein@ew.tq-group.com>,
         Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: [PATCH v7 05/11] leds: trigger: netdev: convert device attr to macro
-Date:   Thu, 15 Dec 2022 00:54:32 +0100
-Message-Id: <20221214235438.30271-6-ansuelsmth@gmail.com>
+Subject: [PATCH v7 08/11] leds: trigger: netdev: add available mode sysfs attr
+Date:   Thu, 15 Dec 2022 00:54:35 +0100
+Message-Id: <20221214235438.30271-9-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20221214235438.30271-1-ansuelsmth@gmail.com>
 References: <20221214235438.30271-1-ansuelsmth@gmail.com>
@@ -80,82 +80,72 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Convert link tx and rx device attr to a common macro to reduce common
-code and in preparation for additional attr.
+Add avaiable_mode sysfs attr to show and give some details about the
+supported modes and how they can be handled by the trigger.
+This is in preparation for hardware only modes that doesn't support
+software fallback.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/leds/trigger/ledtrig-netdev.c | 57 ++++++++-------------------
- 1 file changed, 16 insertions(+), 41 deletions(-)
+ drivers/leds/trigger/ledtrig-netdev.c | 32 +++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
 diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index 6872da08676b..dd63cadb896e 100644
+index a471e0cde836..3a3b77bb41fb 100644
 --- a/drivers/leds/trigger/ledtrig-netdev.c
 +++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -189,47 +189,22 @@ static ssize_t netdev_led_attr_store(struct device *dev, const char *buf,
- 	return size;
- }
+@@ -33,6 +33,8 @@
+  *         (has carrier) or not
+  * tx -  LED blinks on transmitted data
+  * rx -  LED blinks on receive data
++ * available_mode - Display available mode and how they can be handled
++ *                  by the LED
+  *
+  */
  
--static ssize_t link_show(struct device *dev,
--	struct device_attribute *attr, char *buf)
--{
--	return netdev_led_attr_show(dev, buf, NETDEV_ATTR_LINK);
--}
--
--static ssize_t link_store(struct device *dev,
--	struct device_attribute *attr, const char *buf, size_t size)
--{
--	return netdev_led_attr_store(dev, buf, size, NETDEV_ATTR_LINK);
--}
--
--static DEVICE_ATTR_RW(link);
--
--static ssize_t tx_show(struct device *dev,
--	struct device_attribute *attr, char *buf)
--{
--	return netdev_led_attr_show(dev, buf, NETDEV_ATTR_TX);
--}
--
--static ssize_t tx_store(struct device *dev,
--	struct device_attribute *attr, const char *buf, size_t size)
--{
--	return netdev_led_attr_store(dev, buf, size, NETDEV_ATTR_TX);
--}
--
--static DEVICE_ATTR_RW(tx);
--
--static ssize_t rx_show(struct device *dev,
--	struct device_attribute *attr, char *buf)
--{
--	return netdev_led_attr_show(dev, buf, NETDEV_ATTR_RX);
--}
--
--static ssize_t rx_store(struct device *dev,
--	struct device_attribute *attr, const char *buf, size_t size)
--{
--	return netdev_led_attr_store(dev, buf, size, NETDEV_ATTR_RX);
--}
--
--static DEVICE_ATTR_RW(rx);
-+#define DEFINE_NETDEV_TRIGGER(trigger_name, trigger) \
-+	static ssize_t trigger_name##_show(struct device *dev, \
-+		struct device_attribute *attr, char *buf) \
-+	{ \
-+		return netdev_led_attr_show(dev, buf, trigger); \
-+	} \
-+	static ssize_t trigger_name##_store(struct device *dev, \
-+		struct device_attribute *attr, const char *buf, size_t size) \
-+	{ \
-+		return netdev_led_attr_store(dev, buf, size, trigger); \
-+	} \
-+	static DEVICE_ATTR_RW(trigger_name)
+@@ -370,12 +372,42 @@ static ssize_t interval_store(struct device *dev,
+ 
+ static DEVICE_ATTR_RW(interval);
+ 
++static ssize_t available_mode_show(struct device *dev,
++				   struct device_attribute *attr, char *buf)
++{
++	struct led_netdev_data *trigger_data = led_trigger_get_drvdata(dev);
++	struct netdev_led_attr_detail *detail;
++	int i, len = 0;
 +
-+DEFINE_NETDEV_TRIGGER(link, TRIGGER_NETDEV_LINK);
-+DEFINE_NETDEV_TRIGGER(tx, TRIGGER_NETDEV_TX);
-+DEFINE_NETDEV_TRIGGER(rx, TRIGGER_NETDEV_RX);
- 
- static ssize_t interval_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
++	for (i = 0; i < ARRAY_SIZE(attr_details); i++) {
++		detail = &attr_details[i];
++
++		if (led_trigger_blink_mode_is_supported(trigger_data->led_cdev, detail->bit)) {
++			if (!trigger_data->net_dev) {
++				if (detail->hardware_only)
++					len += sprintf(buf + len, "%s [hardware]\n",
++						       detail->name);
++				else
++					len += sprintf(buf + len, "%s [software-hardware]\n",
++						       detail->name);
++			}
++		} else {
++			len += sprintf(buf + len, "%s [software]\n", detail->name);
++		}
++	}
++
++	return len;
++}
++
++static DEVICE_ATTR_RO(available_mode);
++
+ static struct attribute *netdev_trig_attrs[] = {
+ 	&dev_attr_device_name.attr,
+ 	&dev_attr_link.attr,
+ 	&dev_attr_rx.attr,
+ 	&dev_attr_tx.attr,
+ 	&dev_attr_interval.attr,
++	&dev_attr_available_mode.attr,
+ 	NULL
+ };
+ ATTRIBUTE_GROUPS(netdev_trig);
 -- 
 2.37.2
 
