@@ -2,41 +2,41 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D21C3DA7B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E145AC3DA7D
 	for <linux-leds@archiver.kernel.org>; Fri, 16 Dec 2022 11:32:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231215AbiLPLcY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 16 Dec 2022 06:32:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38548 "EHLO
+        id S231233AbiLPLcZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 16 Dec 2022 06:32:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231245AbiLPLbs (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Dec 2022 06:31:48 -0500
+        with ESMTP id S231281AbiLPLby (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Dec 2022 06:31:54 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACFFC5EDD9
-        for <linux-leds@vger.kernel.org>; Fri, 16 Dec 2022 03:30:56 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78B22120AD
+        for <linux-leds@vger.kernel.org>; Fri, 16 Dec 2022 03:31:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671190255;
+        s=mimecast20190719; t=1671190263;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ep+NQiJNyXyBDUvTEHyTQG143L3pVbrdPkkn+VsxuwE=;
-        b=eZ6KhO3ugt67kC+hWT3hmPw63HaUe9sqVBCiBo7k7l4AWQcK79APSMoZ9+U5Dwf+48EO9n
-        xdq0QQig8hLmPpjHwOdXvinYJMcFnkBG8+MZwv3bR98UvOJHUxRkTZaFSdpxNM3nYcjVGw
-        zQGUBp5zt2NJ8O3N9l0215mPIW0o5fs=
+        bh=y834GAxRKn5+OpUpqY+9Rv+UYa5f79tnm5XUB6lv/5M=;
+        b=WFlGqJgF/mrru8oDf0QctpUHr7x9EnAeekWcRHJmjPK1z5BHWqQV896jIaZpltaPMBvK5s
+        huXbGGV1p/lUrjuiUTACbTYmSVN+AUryco81nJ4n9qYKEI1F6mAHBlpNoOVa9kt6KAdQAF
+        2Jf3PZal5OZUbz+8zWDfJGrhasB2IsI=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-479-Ju-agYNFOk29tmXjT6ZjrA-1; Fri, 16 Dec 2022 06:30:49 -0500
-X-MC-Unique: Ju-agYNFOk29tmXjT6ZjrA-1
+ us-mta-497-Q2IFN6HvM-60Tv1M7plb9w-1; Fri, 16 Dec 2022 06:31:00 -0500
+X-MC-Unique: Q2IFN6HvM-60Tv1M7plb9w-1
 Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3CA7B802C1B;
-        Fri, 16 Dec 2022 11:30:48 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9DBE487B2A0;
+        Fri, 16 Dec 2022 11:30:59 +0000 (UTC)
 Received: from shalem.redhat.com (unknown [10.39.194.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A1760400F58;
-        Fri, 16 Dec 2022 11:30:44 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 69AEA49BB6A;
+        Fri, 16 Dec 2022 11:30:56 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
 To:     Mark Gross <markgross@kernel.org>,
         Andy Shevchenko <andy@kernel.org>, Pavel Machek <pavel@ucw.cz>,
@@ -52,9 +52,9 @@ Cc:     Hans de Goede <hdegoede@redhat.com>,
         Mark Pearson <markpearson@lenovo.com>,
         Andy Yeh <andy.yeh@intel.com>, Yao Hao <yao.hao@intel.com>,
         linux-media@vger.kernel.org
-Subject: [PATCH v3 08/11] platform/x86: int3472/discrete: Create a LED class device for the privacy LED
-Date:   Fri, 16 Dec 2022 12:30:10 +0100
-Message-Id: <20221216113013.126881-9-hdegoede@redhat.com>
+Subject: [PATCH v3 11/11] platform/x86: int3472/discrete: Get the polarity from the _DSM entry
+Date:   Fri, 16 Dec 2022 12:30:13 +0100
+Message-Id: <20221216113013.126881-12-hdegoede@redhat.com>
 In-Reply-To: <20221216113013.126881-1-hdegoede@redhat.com>
 References: <20221216113013.126881-1-hdegoede@redhat.com>
 MIME-Version: 1.0
@@ -64,286 +64,112 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On some systems, e.g. the Lenovo ThinkPad X1 Yoga gen 7 and the ThinkPad
-X1 Nano gen 2 there is no clock-enable pin, triggering the:
-"No clk GPIO. The privacy LED won't work" warning and causing the privacy
-LED to not work.
+According to:
+https://github.com/intel/ipu6-drivers/blob/master/patch/int3472-support-independent-clock-and-LED-gpios-5.17%2B.patch
 
-Fix this by modeling the privacy LED as a LED class device rather then
-integrating it with the registered clock.
+Bits 31-24 of the _DSM pin entry integer value codes the active-value,
+that is the actual physical signal (0 or 1) which needs to be output on
+the pin to turn the sensor chip on (to make it active).
 
-Note this relies on media subsys changes to actually turn the LED on/off
-when the sensor's v4l2_subdev's s_stream() operand gets called.
+So if bits 31-24 are 0 for a reset pin, then the actual value of the reset
+pin needs to be 0 to take the chip out of reset. IOW in this case the reset
+signal is active-high rather then the default active-low.
+
+And if bits 31-24 are 0 for a clk-en pin then the actual value of the clk
+pin needs to be 0 to enable the clk. So in this case the clk-en signal
+is active-low rather then the default active-high.
+
+IOW if bits 31-24 are 0 for a pin, then the default polarity of the pin
+is inverted.
+
+Add a check for this and also propagate this new polarity to the clock
+registration.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/platform/x86/intel/int3472/Makefile   |  2 +-
- .../x86/intel/int3472/clk_and_regulator.c     |  3 -
- drivers/platform/x86/intel/int3472/common.h   | 15 +++-
- drivers/platform/x86/intel/int3472/discrete.c | 52 ++++--------
- drivers/platform/x86/intel/int3472/led.c      | 79 +++++++++++++++++++
- 5 files changed, 108 insertions(+), 43 deletions(-)
- create mode 100644 drivers/platform/x86/intel/int3472/led.c
+ .../platform/x86/intel/int3472/clk_and_regulator.c  |  5 ++++-
+ drivers/platform/x86/intel/int3472/common.h         |  2 +-
+ drivers/platform/x86/intel/int3472/discrete.c       | 13 +++++++++++--
+ 3 files changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/platform/x86/intel/int3472/Makefile b/drivers/platform/x86/intel/int3472/Makefile
-index cfec7784c5c9..9f16cb514397 100644
---- a/drivers/platform/x86/intel/int3472/Makefile
-+++ b/drivers/platform/x86/intel/int3472/Makefile
-@@ -1,4 +1,4 @@
- obj-$(CONFIG_INTEL_SKL_INT3472)		+= intel_skl_int3472_discrete.o \
- 					   intel_skl_int3472_tps68470.o
--intel_skl_int3472_discrete-y		:= discrete.o clk_and_regulator.o common.o
-+intel_skl_int3472_discrete-y		:= discrete.o clk_and_regulator.o led.o common.o
- intel_skl_int3472_tps68470-y		:= tps68470.o tps68470_board_data.o common.o
 diff --git a/drivers/platform/x86/intel/int3472/clk_and_regulator.c b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-index 1cf958983e86..e61119b17677 100644
+index 15a8bff645f7..2b81066b024e 100644
 --- a/drivers/platform/x86/intel/int3472/clk_and_regulator.c
 +++ b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-@@ -23,8 +23,6 @@ static int skl_int3472_clk_prepare(struct clk_hw *hw)
- 	struct int3472_gpio_clock *clk = to_int3472_clk(hw);
+@@ -87,7 +87,7 @@ static const struct clk_ops skl_int3472_clock_ops = {
+ };
  
- 	gpiod_set_value_cansleep(clk->ena_gpio, 1);
--	gpiod_set_value_cansleep(clk->led_gpio, 1);
--
- 	return 0;
- }
- 
-@@ -33,7 +31,6 @@ static void skl_int3472_clk_unprepare(struct clk_hw *hw)
- 	struct int3472_gpio_clock *clk = to_int3472_clk(hw);
- 
- 	gpiod_set_value_cansleep(clk->ena_gpio, 0);
--	gpiod_set_value_cansleep(clk->led_gpio, 0);
- }
- 
- static int skl_int3472_clk_enable(struct clk_hw *hw)
-diff --git a/drivers/platform/x86/intel/int3472/common.h b/drivers/platform/x86/intel/int3472/common.h
-index 53270d19c73a..e106bbfe8ffa 100644
---- a/drivers/platform/x86/intel/int3472/common.h
-+++ b/drivers/platform/x86/intel/int3472/common.h
-@@ -6,6 +6,7 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/gpio/machine.h>
-+#include <linux/leds.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- #include <linux/types.h>
-@@ -28,6 +29,8 @@
- #define GPIO_REGULATOR_NAME_LENGTH				21
- #define GPIO_REGULATOR_SUPPLY_NAME_LENGTH			9
- 
-+#define INT3472_LED_MAX_NAME_LEN				32
-+
- #define CIO2_SENSOR_SSDB_MCLKSPEED_OFFSET			86
- 
- #define INT3472_REGULATOR(_name, _supply, _ops)			\
-@@ -96,10 +99,16 @@ struct int3472_discrete_device {
- 		struct clk_hw clk_hw;
- 		struct clk_lookup *cl;
- 		struct gpio_desc *ena_gpio;
--		struct gpio_desc *led_gpio;
- 		u32 frequency;
- 	} clock;
- 
-+	struct int3472_pled {
-+		char name[INT3472_LED_MAX_NAME_LEN];
-+		struct led_lookup_data lookup;
-+		struct led_classdev classdev;
-+		struct gpio_desc *gpio;
-+	} pled;
-+
- 	unsigned int ngpios; /* how many GPIOs have we seen */
- 	unsigned int n_sensor_gpios; /* how many have we mapped to sensor */
- 	struct gpiod_lookup_table gpios;
-@@ -119,4 +128,8 @@ int skl_int3472_register_regulator(struct int3472_discrete_device *int3472,
- 				   struct acpi_resource_gpio *agpio);
- void skl_int3472_unregister_regulator(struct int3472_discrete_device *int3472);
- 
-+int skl_int3472_register_pled(struct int3472_discrete_device *int3472,
-+			      struct acpi_resource_gpio *agpio, u32 polarity);
-+void skl_int3472_unregister_pled(struct int3472_discrete_device *int3472);
-+
- #endif
-diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
-index bd3797ce64bf..1a1e0b196bfa 100644
---- a/drivers/platform/x86/intel/int3472/discrete.c
-+++ b/drivers/platform/x86/intel/int3472/discrete.c
-@@ -155,33 +155,19 @@ static int skl_int3472_map_gpio_to_sensor(struct int3472_discrete_device *int347
- }
- 
- static int skl_int3472_map_gpio_to_clk(struct int3472_discrete_device *int3472,
--				       struct acpi_resource_gpio *agpio, u8 type)
-+				       struct acpi_resource_gpio *agpio)
+ int skl_int3472_register_clock(struct int3472_discrete_device *int3472,
+-			       struct acpi_resource_gpio *agpio)
++			       struct acpi_resource_gpio *agpio, u32 polarity)
  {
  	char *path = agpio->resource_source.string_ptr;
- 	u16 pin = agpio->pin_table[0];
- 	struct gpio_desc *gpio;
+ 	struct clk_init_data init = {
+@@ -106,6 +106,9 @@ int skl_int3472_register_clock(struct int3472_discrete_device *int3472,
+ 		return dev_err_probe(int3472->dev, ret, "getting regulator GPIO\n");
+ 	}
  
--	switch (type) {
--	case INT3472_GPIO_TYPE_CLK_ENABLE:
--		gpio = acpi_get_and_request_gpiod(path, pin, "int3472,clk-enable");
--		if (IS_ERR(gpio))
--			return (PTR_ERR(gpio));
--
--		int3472->clock.ena_gpio = gpio;
--		break;
--	case INT3472_GPIO_TYPE_PRIVACY_LED:
--		gpio = acpi_get_and_request_gpiod(path, pin, "int3472,privacy-led");
--		if (IS_ERR(gpio))
--			return (PTR_ERR(gpio));
-+	gpio = acpi_get_and_request_gpiod(path, pin, "int3472,clk-enable");
-+	if (IS_ERR(gpio))
-+		return (PTR_ERR(gpio));
++	if (polarity == GPIO_ACTIVE_LOW)
++		gpiod_toggle_active_low(int3472->clock.ena_gpio);
++
+ 	/* Ensure the pin is in output mode and non-active state */
+ 	gpiod_direction_output(int3472->clock.ena_gpio, 0);
  
--		int3472->clock.led_gpio = gpio;
--		break;
--	default:
--		dev_err(int3472->dev, "Invalid GPIO type 0x%02x for clock\n", type);
--		break;
--	}
-+	int3472->clock.ena_gpio = gpio;
+diff --git a/drivers/platform/x86/intel/int3472/common.h b/drivers/platform/x86/intel/int3472/common.h
+index 5ec89038ae07..4317c77e53d1 100644
+--- a/drivers/platform/x86/intel/int3472/common.h
++++ b/drivers/platform/x86/intel/int3472/common.h
+@@ -122,7 +122,7 @@ int skl_int3472_get_sensor_adev_and_name(struct device *dev,
+ 					 const char **name_ret);
  
--	return 0;
-+	return skl_int3472_register_clock(int3472);
- }
+ int skl_int3472_register_clock(struct int3472_discrete_device *int3472,
+-			       struct acpi_resource_gpio *agpio);
++			       struct acpi_resource_gpio *agpio, u32 polarity);
+ void skl_int3472_unregister_clock(struct int3472_discrete_device *int3472);
  
- static void int3472_get_func_and_polarity(u8 type, const char **func, u32 *polarity)
-@@ -289,11 +275,16 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
+ int skl_int3472_register_regulator(struct int3472_discrete_device *int3472,
+diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
+index b7752c2b798d..96963e30ab6c 100644
+--- a/drivers/platform/x86/intel/int3472/discrete.c
++++ b/drivers/platform/x86/intel/int3472/discrete.c
+@@ -220,11 +220,11 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
+ 	struct int3472_discrete_device *int3472 = data;
+ 	struct acpi_resource_gpio *agpio;
+ 	union acpi_object *obj;
++	u8 active_value, type;
+ 	const char *err_msg;
+ 	const char *func;
+ 	u32 polarity;
+ 	int ret;
+-	u8 type;
+ 
+ 	if (!acpi_gpio_get_io_resource(ares, &agpio))
+ 		return 1;
+@@ -248,6 +248,15 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
+ 
+ 	int3472_get_func_and_polarity(type, &func, &polarity);
+ 
++	/* If bits 31-24 of the _DSM entry are all 0 then the signal is inverted */
++	active_value = obj->integer.value >> 24;
++	if (!active_value)
++		polarity ^= GPIO_ACTIVE_LOW;
++
++	dev_dbg(int3472->dev, "%s %s pin %d active-%s\n", func,
++		agpio->resource_source.string_ptr, agpio->pin_table[0],
++		(polarity == GPIO_ACTIVE_HIGH) ? "high" : "low");
++
+ 	switch (type) {
+ 	case INT3472_GPIO_TYPE_RESET:
+ 	case INT3472_GPIO_TYPE_POWERDOWN:
+@@ -257,7 +266,7 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
  
  		break;
  	case INT3472_GPIO_TYPE_CLK_ENABLE:
--	case INT3472_GPIO_TYPE_PRIVACY_LED:
--		ret = skl_int3472_map_gpio_to_clk(int3472, agpio, type);
-+		ret = skl_int3472_map_gpio_to_clk(int3472, agpio);
+-		ret = skl_int3472_register_clock(int3472, agpio);
++		ret = skl_int3472_register_clock(int3472, agpio, polarity);
  		if (ret)
- 			err_msg = "Failed to map GPIO to clock\n";
+ 			err_msg = "Failed to register clock\n";
  
-+		break;
-+	case INT3472_GPIO_TYPE_PRIVACY_LED:
-+		ret = skl_int3472_register_pled(int3472, agpio, polarity);
-+		if (ret)
-+			err_msg = "Failed to register LED\n";
-+
- 		break;
- 	case INT3472_GPIO_TYPE_POWER_ENABLE:
- 		ret = skl_int3472_register_regulator(int3472, agpio);
-@@ -337,21 +328,6 @@ static int skl_int3472_parse_crs(struct int3472_discrete_device *int3472)
- 
- 	acpi_dev_free_resource_list(&resource_list);
- 
--	/*
--	 * If we find no clock enable GPIO pin then the privacy LED won't work.
--	 * We've never seen that situation, but it's possible. Warn the user so
--	 * it's clear what's happened.
--	 */
--	if (int3472->clock.ena_gpio) {
--		ret = skl_int3472_register_clock(int3472);
--		if (ret)
--			return ret;
--	} else {
--		if (int3472->clock.led_gpio)
--			dev_warn(int3472->dev,
--				 "No clk GPIO. The privacy LED won't work\n");
--	}
--
- 	int3472->gpios.dev_id = int3472->sensor_name;
- 	gpiod_add_lookup_table(&int3472->gpios);
- 
-@@ -368,8 +344,8 @@ static int skl_int3472_discrete_remove(struct platform_device *pdev)
- 		skl_int3472_unregister_clock(int3472);
- 
- 	gpiod_put(int3472->clock.ena_gpio);
--	gpiod_put(int3472->clock.led_gpio);
- 
-+	skl_int3472_unregister_pled(int3472);
- 	skl_int3472_unregister_regulator(int3472);
- 
- 	return 0;
-diff --git a/drivers/platform/x86/intel/int3472/led.c b/drivers/platform/x86/intel/int3472/led.c
-new file mode 100644
-index 000000000000..05c58ba23570
---- /dev/null
-+++ b/drivers/platform/x86/intel/int3472/led.c
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Author: Hans de Goede <hdegoede@redhat.com> */
-+
-+#include <linux/acpi.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/leds.h>
-+#include "common.h"
-+
-+static int int3472_register_pled_set(struct led_classdev *led_cdev,
-+				     enum led_brightness brightness)
-+{
-+	struct int3472_discrete_device *int3472 =
-+		container_of(led_cdev, struct int3472_discrete_device, pled.classdev);
-+
-+	gpiod_set_value_cansleep(int3472->pled.gpio, brightness);
-+	return 0;
-+}
-+
-+int skl_int3472_register_pled(struct int3472_discrete_device *int3472,
-+			      struct acpi_resource_gpio *agpio, u32 polarity)
-+{
-+	char *path = agpio->resource_source.string_ptr;
-+	int i, ret;
-+
-+	if (int3472->pled.classdev.dev)
-+		return -EBUSY;
-+
-+	int3472->pled.gpio = acpi_get_and_request_gpiod(path, agpio->pin_table[0],
-+							     "int3472,privacy-led");
-+	if (IS_ERR(int3472->pled.gpio)) {
-+		ret = PTR_ERR(int3472->pled.gpio);
-+		return dev_err_probe(int3472->dev, ret, "getting privacy LED GPIO\n");
-+	}
-+
-+	if (polarity == GPIO_ACTIVE_LOW)
-+		gpiod_toggle_active_low(int3472->pled.gpio);
-+
-+	/* Ensure the pin is in output mode and non-active state */
-+	gpiod_direction_output(int3472->pled.gpio, 0);
-+
-+	/* Generate the name, replacing the ':' in the ACPI devname with '_' */
-+	snprintf(int3472->pled.name, sizeof(int3472->pled.name),
-+		 "%s::privacy_led", acpi_dev_name(int3472->sensor));
-+	for (i = 0; int3472->pled.name[i]; i++) {
-+		if (int3472->pled.name[i] == ':') {
-+			int3472->pled.name[i] = '_';
-+			break;
-+		}
-+	}
-+
-+	int3472->pled.classdev.name = int3472->pled.name;
-+	int3472->pled.classdev.max_brightness = 1;
-+	int3472->pled.classdev.brightness_set_blocking = int3472_register_pled_set;
-+
-+	ret = led_classdev_register(int3472->dev, &int3472->pled.classdev);
-+	if (ret)
-+		goto err_free_gpio;
-+
-+	int3472->pled.lookup.led_name = int3472->pled.name;
-+	int3472->pled.lookup.consumer_dev_name = int3472->sensor_name;
-+	int3472->pled.lookup.consumer_function = "privacy-led";
-+	led_add_lookup(&int3472->pled.lookup);
-+
-+	return 0;
-+
-+err_free_gpio:
-+	gpiod_put(int3472->pled.gpio);
-+	return ret;
-+}
-+
-+void skl_int3472_unregister_pled(struct int3472_discrete_device *int3472)
-+{
-+	if (IS_ERR_OR_NULL(int3472->pled.classdev.dev))
-+		return;
-+
-+	led_remove_lookup(&int3472->pled.lookup);
-+	led_classdev_unregister(&int3472->pled.classdev);
-+	gpiod_put(int3472->pled.gpio);
-+}
 -- 
 2.38.1
 
