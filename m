@@ -2,41 +2,41 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DEBC3DA7B
-	for <linux-leds@archiver.kernel.org>; Fri, 16 Dec 2022 11:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8CAC4167B
+	for <linux-leds@archiver.kernel.org>; Fri, 16 Dec 2022 11:31:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230022AbiLPLbk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 16 Dec 2022 06:31:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38588 "EHLO
+        id S231204AbiLPLbm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 16 Dec 2022 06:31:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231204AbiLPLbi (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Dec 2022 06:31:38 -0500
+        with ESMTP id S230049AbiLPLbl (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Dec 2022 06:31:41 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141481408E
-        for <linux-leds@vger.kernel.org>; Fri, 16 Dec 2022 03:30:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B03328E32
+        for <linux-leds@vger.kernel.org>; Fri, 16 Dec 2022 03:30:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671190241;
+        s=mimecast20190719; t=1671190251;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Yvf6qZW2ovKLOTQd2ZUlYb1ftgRwQmzMm5+ccXiLrCI=;
-        b=CmrE1qzMuJmFmD6/RCJvgwTO6qwX3p6OcldV0Tuov+ePNywP/IkOcNbocVwOzV8gyt8Rdq
-        D8oMF0F1wNvZ6K/ZWwUw+Lold75VN2fRPvUoTO3jg9zPSRp0dPc7YcyP1KDXtXS+FgFeyH
-        zKiiGAVB0aj0weN+mdZ/E/U+IAp3ouU=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=KiCmfUSpeS3krB0D4YqUnOO5gwR6DyO5yEIgMS1Acbc=;
+        b=ds5ghaC0kSNvJZZKd5XP8vvX2jL2rGX2Evd72QJ5UXfcPVwxTSkyPFAkNN8qVHJfBOWkzJ
+        KiKOk5hb5bv5e17l0RuhMb5Eu0mtfNgjhHeMO9PAK0JQJjkG9LZ5GwpuIQ7puXv8wGrprS
+        EbxilZXvn32d43KsFM7GEbDRqRPQ6KU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-112-XklrP0VSM6SvzpUJwpvEqA-1; Fri, 16 Dec 2022 06:30:38 -0500
-X-MC-Unique: XklrP0VSM6SvzpUJwpvEqA-1
+ us-mta-526-dREOfn2HNM6wSGcj-AxVIw-1; Fri, 16 Dec 2022 06:30:45 -0500
+X-MC-Unique: dREOfn2HNM6wSGcj-AxVIw-1
 Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5DD0E1C02D52;
-        Fri, 16 Dec 2022 11:30:37 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4AA9E85A588;
+        Fri, 16 Dec 2022 11:30:44 +0000 (UTC)
 Received: from shalem.redhat.com (unknown [10.39.194.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ED2D3400F58;
-        Fri, 16 Dec 2022 11:30:33 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2A42A400F58;
+        Fri, 16 Dec 2022 11:30:41 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
 To:     Mark Gross <markgross@kernel.org>,
         Andy Shevchenko <andy@kernel.org>, Pavel Machek <pavel@ucw.cz>,
@@ -52,9 +52,9 @@ Cc:     Hans de Goede <hdegoede@redhat.com>,
         Mark Pearson <markpearson@lenovo.com>,
         Andy Yeh <andy.yeh@intel.com>, Yao Hao <yao.hao@intel.com>,
         linux-media@vger.kernel.org
-Subject: [PATCH v3 05/11] leds: led-class: Add generic [devm_]led_get()
-Date:   Fri, 16 Dec 2022 12:30:07 +0100
-Message-Id: <20221216113013.126881-6-hdegoede@redhat.com>
+Subject: [PATCH v3 07/11] platform/x86: int3472/discrete: Refactor GPIO to sensor mapping
+Date:   Fri, 16 Dec 2022 12:30:09 +0100
+Message-Id: <20221216113013.126881-8-hdegoede@redhat.com>
 In-Reply-To: <20221216113013.126881-1-hdegoede@redhat.com>
 References: <20221216113013.126881-1-hdegoede@redhat.com>
 MIME-Version: 1.0
@@ -64,174 +64,100 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add a generic [devm_]led_get() method which can be used on both devicetree
-and non devicetree platforms to get a LED classdev associated with
-a specific function on a specific device, e.g. the privacy LED associated
-with a specific camera sensor.
+Add a helper function to map the type returned by the _DSM
+method to a function name + the default polarity for that function.
 
-Note unlike of_led_get() this takes a string describing the function
-rather then an index. This is done because e.g. camera sensors might
-have a privacy LED, or a flash LED, or both and using an index
-approach leaves it unclear what the function of index 0 is if there is
-only 1 LED. The existing of support is extended to also support
-getting a LED by function-name using the standard devicetree pattern
-of adding a -names string array to map names to the indexes.
+And fold the INT3472_GPIO_TYPE_RESET and INT3472_GPIO_TYPE_POWERDOWN
+cases into a single generic case.
 
-For non devicetree platforms a lookup-table mechanism is added to
-allow the platform code to map specific LED class_dev-s to specific
-device,function combinations this way.
+This is a preparation patch for further GPIO mapping changes.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/leds/led-class.c | 91 ++++++++++++++++++++++++++++++++++++++++
- include/linux/leds.h     | 18 ++++++++
- 2 files changed, 109 insertions(+)
+Changes in v3:
+- Add break to default case
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 6e25c411ba35..76b3ab66eb88 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -23,6 +23,8 @@
- #include "leds.h"
- 
- static struct class *leds_class;
-+static DEFINE_MUTEX(leds_lookup_lock);
-+static LIST_HEAD(leds_lookup_list);
- 
- static ssize_t brightness_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
-@@ -329,6 +331,95 @@ struct led_classdev *__must_check devm_of_led_get(struct device *dev,
+Changes in v2:
+- Make the helper function doing the type -> function mapping,
+  also return a default polarity for the function.
+---
+ drivers/platform/x86/intel/int3472/discrete.c | 45 +++++++++++++++----
+ 1 file changed, 36 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
+index 974a132db651..bd3797ce64bf 100644
+--- a/drivers/platform/x86/intel/int3472/discrete.c
++++ b/drivers/platform/x86/intel/int3472/discrete.c
+@@ -184,6 +184,36 @@ static int skl_int3472_map_gpio_to_clk(struct int3472_discrete_device *int3472,
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(devm_of_led_get);
  
-+/**
-+ * led_get() - request a LED device via the LED framework
-+ * @dev: device for which to get the LED device
-+ * @function: string describing the function of the LED device
-+ *
-+ * @return a pointer to a LED device or ERR_PTR(errno) on failure.
-+ */
-+struct led_classdev *led_get(struct device *dev, char *function)
++static void int3472_get_func_and_polarity(u8 type, const char **func, u32 *polarity)
 +{
-+	struct led_lookup_data *lookup;
-+	struct led_classdev *led_cdev;
-+	const char *led_name = NULL;
-+	struct device *led_dev;
-+
-+	if (dev->of_node) {
-+		led_cdev = __of_led_get(dev->of_node, -1, function);
-+		if (!IS_ERR(led_cdev) || PTR_ERR(led_cdev) != -ENOENT)
-+			return led_cdev;
++	switch (type) {
++	case INT3472_GPIO_TYPE_RESET:
++		*func = "reset";
++		*polarity = GPIO_ACTIVE_LOW;
++		break;
++	case INT3472_GPIO_TYPE_POWERDOWN:
++		*func = "powerdown";
++		*polarity = GPIO_ACTIVE_LOW;
++		break;
++	case INT3472_GPIO_TYPE_CLK_ENABLE:
++		*func = "clk-enable";
++		*polarity = GPIO_ACTIVE_HIGH;
++		break;
++	case INT3472_GPIO_TYPE_PRIVACY_LED:
++		*func = "privacy-led";
++		*polarity = GPIO_ACTIVE_HIGH;
++		break;
++	case INT3472_GPIO_TYPE_POWER_ENABLE:
++		*func = "power-enable";
++		*polarity = GPIO_ACTIVE_HIGH;
++		break;
++	default:
++		*func = "unknown";
++		*polarity = GPIO_ACTIVE_HIGH;
++		break;
 +	}
-+
-+	mutex_lock(&leds_lookup_lock);
-+	list_for_each_entry(lookup, &leds_lookup_list, list) {
-+		if (!strcmp(lookup->consumer_dev_name, dev_name(dev)) &&
-+		    !strcmp(lookup->consumer_function, function)) {
-+			led_name = kstrdup(lookup->led_name, GFP_KERNEL);
-+			break;
-+		}
-+	}
-+	mutex_unlock(&leds_lookup_lock);
-+
-+	if (!led_name)
-+		return ERR_PTR(-ENOENT);
-+
-+	led_dev = class_find_device_by_name(leds_class, led_name);
-+	kfree(led_name);
-+
-+	return __led_get(led_dev);
 +}
-+EXPORT_SYMBOL_GPL(led_get);
 +
-+/**
-+ * devm_led_get() - request a LED device via the LED framework
-+ * @dev: device for which to get the LED device
-+ * @function: string describing the function of the LED device
-+ *
-+ * The LED device returned from this function is automatically released
-+ * on driver detach.
-+ *
-+ * @return a pointer to a LED device or ERR_PTR(errno) on failure.
-+ */
-+struct led_classdev *devm_led_get(struct device *dev, char *function)
-+{
-+	struct led_classdev *led;
-+
-+	led = led_get(dev, function);
-+	if (IS_ERR(led))
-+		return led;
-+
-+	return __devm_led_get(dev, led);
-+}
-+EXPORT_SYMBOL_GPL(devm_led_get);
-+
-+/**
-+ * led_add_lookup() - Add a LED lookup table entry
-+ * @led_lookup: the lookup table entry to add
-+ *
-+ * Add a LED lookup table entry. On systems without devicetree the lookup table
-+ * is used by led_get() to find LEDs.
-+ */
-+void led_add_lookup(struct led_lookup_data *led_lookup)
-+{
-+	mutex_lock(&leds_lookup_lock);
-+	list_add_tail(&led_lookup->list, &leds_lookup_list);
-+	mutex_unlock(&leds_lookup_lock);
-+}
-+EXPORT_SYMBOL_GPL(led_add_lookup);
-+
-+/**
-+ * led_remove_lookup() - Remove a LED lookup table entry
-+ * @led_lookup: the lookup table entry to remove
-+ */
-+void led_remove_lookup(struct led_lookup_data *led_lookup)
-+{
-+	mutex_lock(&leds_lookup_lock);
-+	list_del(&led_lookup->list);
-+	mutex_unlock(&leds_lookup_lock);
-+}
-+EXPORT_SYMBOL_GPL(led_remove_lookup);
-+
- static int led_classdev_next_name(const char *init_name, char *name,
- 				  size_t len)
- {
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index ba4861ec73d3..e44fc5ec7c9a 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -39,6 +39,18 @@ enum led_default_state {
- 	LEDS_DEFSTATE_KEEP	= 2,
- };
+ /**
+  * skl_int3472_handle_gpio_resources: Map PMIC resources to consuming sensor
+  * @ares: A pointer to a &struct acpi_resource
+@@ -223,6 +253,8 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
+ 	struct acpi_resource_gpio *agpio;
+ 	union acpi_object *obj;
+ 	const char *err_msg;
++	const char *func;
++	u32 polarity;
+ 	int ret;
+ 	u8 type;
  
-+/*
-+ * This is used to tell led_get() device which led_classdev to return for
-+ * a specific consumer device-name, function pair on non devicetree platforms.
-+ * Note all strings must be set.
-+ */
-+struct led_lookup_data {
-+	struct list_head list;
-+	const char *led_name;
-+	const char *consumer_dev_name;
-+	const char *consumer_function;
-+};
-+
- struct led_init_data {
- 	/* device fwnode handle */
- 	struct fwnode_handle *fwnode;
-@@ -211,6 +223,12 @@ void devm_led_classdev_unregister(struct device *parent,
- void led_classdev_suspend(struct led_classdev *led_cdev);
- void led_classdev_resume(struct led_classdev *led_cdev);
+@@ -246,19 +278,14 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
  
-+void led_add_lookup(struct led_lookup_data *led_lookup);
-+void led_remove_lookup(struct led_lookup_data *led_lookup);
+ 	type = obj->integer.value & 0xff;
+ 
++	int3472_get_func_and_polarity(type, &func, &polarity);
 +
-+struct led_classdev *__must_check led_get(struct device *dev, char *function);
-+struct led_classdev *__must_check devm_led_get(struct device *dev, char *function);
-+
- extern struct led_classdev *of_led_get(struct device_node *np, int index);
- extern void led_put(struct led_classdev *led_cdev);
- struct led_classdev *__must_check devm_of_led_get(struct device *dev,
+ 	switch (type) {
+ 	case INT3472_GPIO_TYPE_RESET:
+-		ret = skl_int3472_map_gpio_to_sensor(int3472, agpio, "reset",
+-						     GPIO_ACTIVE_LOW);
+-		if (ret)
+-			err_msg = "Failed to map reset pin to sensor\n";
+-
+-		break;
+ 	case INT3472_GPIO_TYPE_POWERDOWN:
+-		ret = skl_int3472_map_gpio_to_sensor(int3472, agpio, "powerdown",
+-						     GPIO_ACTIVE_LOW);
++		ret = skl_int3472_map_gpio_to_sensor(int3472, agpio, func, polarity);
+ 		if (ret)
+-			err_msg = "Failed to map powerdown pin to sensor\n";
++			err_msg = "Failed to map GPIO pin to sensor\n";
+ 
+ 		break;
+ 	case INT3472_GPIO_TYPE_CLK_ENABLE:
 -- 
 2.38.1
 
