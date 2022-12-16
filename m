@@ -2,41 +2,41 @@ Return-Path: <linux-leds-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A978C4167B
-	for <linux-leds@archiver.kernel.org>; Fri, 16 Dec 2022 11:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBAEC46467
+	for <linux-leds@archiver.kernel.org>; Fri, 16 Dec 2022 11:31:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231211AbiLPLbe (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 16 Dec 2022 06:31:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38636 "EHLO
+        id S229726AbiLPLbf (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 16 Dec 2022 06:31:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231213AbiLPLbd (ORCPT
+        with ESMTP id S229680AbiLPLbd (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Dec 2022 06:31:33 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C15FC1BEB2
-        for <linux-leds@vger.kernel.org>; Fri, 16 Dec 2022 03:30:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B3360D1
+        for <linux-leds@vger.kernel.org>; Fri, 16 Dec 2022 03:30:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671190244;
+        s=mimecast20190719; t=1671190239;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=TPZAvcSWa7ZoNFdQlUVFBketRAGJW/SHrz8gHWtEsVk=;
-        b=epxTdkP8dEEFbmQnN+WG6tFJFY9N1pqPKWWBrt0DzTPDuB21fwlCcV5y9lFPXTRKS5XDTv
-        ozgG6uRuj6Z1o+dycqe+GlfrDbfLgDFcWhTf8Lo6YLV75Tqudq83O5sjs4w1zLnArBdO/H
-        sMjAapYyl23su8La7UtnEQOk7tYmcU0=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=sAl39Z6AEqSrHeI6c9Vv6HFTQQXfYrzGF6CUbFXOW8k=;
+        b=IlQ6fzfP8kmjxAOGcP0QRhYfbmkMZsGtFV5pX0SMLkKxVsDsf/EgLvPWAHNLKqYKc1EP/g
+        //AZHCwo0HQ75dDKCzmYUO6/jQRgLpaj4Pe5YSuLLSGw+joroBe44J0llGip640uOaYxRe
+        Hk4xuCF2jc7NnFs65irChehPUmaXKJY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-633--hl6y3gGP2q5TlEBpBCLwQ-1; Fri, 16 Dec 2022 06:30:41 -0500
-X-MC-Unique: -hl6y3gGP2q5TlEBpBCLwQ-1
+ us-mta-583-Ef1JArXbPuStcB8-bzwTWg-1; Fri, 16 Dec 2022 06:30:34 -0500
+X-MC-Unique: Ef1JArXbPuStcB8-bzwTWg-1
 Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E25BA3814595;
-        Fri, 16 Dec 2022 11:30:40 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 96DFD858F09;
+        Fri, 16 Dec 2022 11:30:33 +0000 (UTC)
 Received: from shalem.redhat.com (unknown [10.39.194.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B3A3C400F58;
-        Fri, 16 Dec 2022 11:30:37 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 961D349BB6A;
+        Fri, 16 Dec 2022 11:30:30 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
 To:     Mark Gross <markgross@kernel.org>,
         Andy Shevchenko <andy@kernel.org>, Pavel Machek <pavel@ucw.cz>,
@@ -52,9 +52,9 @@ Cc:     Hans de Goede <hdegoede@redhat.com>,
         Mark Pearson <markpearson@lenovo.com>,
         Andy Yeh <andy.yeh@intel.com>, Yao Hao <yao.hao@intel.com>,
         linux-media@vger.kernel.org
-Subject: [PATCH v3 06/11] v4l: subdev: Make the v4l2-subdev core code enable/disable the privacy LED if present
-Date:   Fri, 16 Dec 2022 12:30:08 +0100
-Message-Id: <20221216113013.126881-7-hdegoede@redhat.com>
+Subject: [PATCH v3 04/11] leds: led-class: Add __devm_led_get() helper
+Date:   Fri, 16 Dec 2022 12:30:06 +0100
+Message-Id: <20221216113013.126881-5-hdegoede@redhat.com>
 In-Reply-To: <20221216113013.126881-1-hdegoede@redhat.com>
 References: <20221216113013.126881-1-hdegoede@redhat.com>
 MIME-Version: 1.0
@@ -64,107 +64,71 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Extend the call_s_stream() wrapper to enable/disable sensor privacy LEDs
-for sensors with a privacy LED, rather then having to duplicate this code
-in all the sensor drivers.
+Add a __devm_led_get() helper which registers a passed in led_classdev
+with devm for unregistration.
 
-Suggested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+This is a preparation patch for adding a generic (non devicetree specific)
+devm_led_get() function.
+
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/media/v4l2-core/v4l2-subdev.c | 40 +++++++++++++++++++++++++++
- include/media/v4l2-subdev.h           |  3 ++
- 2 files changed, 43 insertions(+)
+ drivers/leds/led-class.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-index 4988a25bd8f4..7344f6cd58b7 100644
---- a/drivers/media/v4l2-core/v4l2-subdev.c
-+++ b/drivers/media/v4l2-core/v4l2-subdev.c
-@@ -318,10 +318,44 @@ static int call_get_mbus_config(struct v4l2_subdev *sd, unsigned int pad,
- 	       sd->ops->pad->get_mbus_config(sd, pad, config);
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 1dd421ca56c1..6e25c411ba35 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -286,6 +286,22 @@ static void devm_led_release(struct device *dev, void *res)
+ 	led_put(*p);
  }
  
-+#if IS_REACHABLE(CONFIG_LEDS_CLASS)
-+#include <linux/leds.h>
-+
-+static void call_s_stream_update_pled(struct v4l2_subdev *sd, int enable)
++static struct led_classdev *__devm_led_get(struct device *dev, struct led_classdev *led)
 +{
-+	if (!sd->dev)
-+		return;
++	struct led_classdev **dr;
 +
-+	/* Try to get privacy-led once, at first s_stream() */
-+	if (!sd->privacy_led)
-+		sd->privacy_led = led_get(sd->dev, "privacy-led");
-+
-+	if (IS_ERR(sd->privacy_led))
-+		return;
-+
-+	mutex_lock(&sd->privacy_led->led_access);
-+
-+	if (enable) {
-+		led_sysfs_disable(sd->privacy_led);
-+		led_trigger_remove(sd->privacy_led);
-+		led_set_brightness(sd->privacy_led, sd->privacy_led->max_brightness);
-+	} else {
-+		led_set_brightness(sd->privacy_led, 0);
-+		led_sysfs_enable(sd->privacy_led);
++	dr = devres_alloc(devm_led_release, sizeof(struct led_classdev *), GFP_KERNEL);
++	if (!dr) {
++		led_put(led);
++		return ERR_PTR(-ENOMEM);
 +	}
 +
-+	mutex_unlock(&sd->privacy_led->led_access);
++	*dr = led;
++	devres_add(dev, dr);
++
++	return led;
 +}
-+#else
-+static void call_s_stream_update_pled(struct v4l2_subdev *sd, int enable) {}
-+#endif
 +
- static int call_s_stream(struct v4l2_subdev *sd, int enable)
- {
- 	int ret;
- 
-+	call_s_stream_update_pled(sd, enable);
-+
- 	ret = sd->ops->video->s_stream(sd, enable);
- 
- 	if (!enable && ret < 0) {
-@@ -1050,6 +1084,11 @@ EXPORT_SYMBOL_GPL(__v4l2_subdev_init_finalize);
- 
- void v4l2_subdev_cleanup(struct v4l2_subdev *sd)
- {
-+#if IS_REACHABLE(CONFIG_LEDS_CLASS)
-+	if (!IS_ERR_OR_NULL(sd->privacy_led))
-+		led_put(sd->privacy_led);
-+#endif
-+
- 	__v4l2_subdev_state_free(sd->active_state);
- 	sd->active_state = NULL;
- }
-@@ -1090,6 +1129,7 @@ void v4l2_subdev_init(struct v4l2_subdev *sd, const struct v4l2_subdev_ops *ops)
- 	sd->grp_id = 0;
- 	sd->dev_priv = NULL;
- 	sd->host_priv = NULL;
-+	sd->privacy_led = NULL;
- #if defined(CONFIG_MEDIA_CONTROLLER)
- 	sd->entity.name = sd->name;
- 	sd->entity.obj_type = MEDIA_ENTITY_TYPE_V4L2_SUBDEV;
-diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-index b15fa9930f30..0547313f98cc 100644
---- a/include/media/v4l2-subdev.h
-+++ b/include/media/v4l2-subdev.h
-@@ -38,6 +38,7 @@ struct v4l2_subdev;
- struct v4l2_subdev_fh;
- struct tuner_setup;
- struct v4l2_mbus_frame_desc;
-+struct led_classdev;
- 
  /**
-  * struct v4l2_decode_vbi_line - used to decode_vbi_line
-@@ -982,6 +983,8 @@ struct v4l2_subdev {
- 	 * appropriate functions.
- 	 */
+  * devm_of_led_get - Resource-managed request of a LED device
+  * @dev:	LED consumer
+@@ -301,7 +317,6 @@ struct led_classdev *__must_check devm_of_led_get(struct device *dev,
+ 						  int index)
+ {
+ 	struct led_classdev *led;
+-	struct led_classdev **dr;
  
-+	struct led_classdev *privacy_led;
-+
- 	/*
- 	 * TODO: active_state should most likely be changed from a pointer to an
- 	 * embedded field. For the time being it's kept as a pointer to more
+ 	if (!dev)
+ 		return ERR_PTR(-EINVAL);
+@@ -310,17 +325,7 @@ struct led_classdev *__must_check devm_of_led_get(struct device *dev,
+ 	if (IS_ERR(led))
+ 		return led;
+ 
+-	dr = devres_alloc(devm_led_release, sizeof(struct led_classdev *),
+-			  GFP_KERNEL);
+-	if (!dr) {
+-		led_put(led);
+-		return ERR_PTR(-ENOMEM);
+-	}
+-
+-	*dr = led;
+-	devres_add(dev, dr);
+-
+-	return led;
++	return __devm_led_get(dev, led);
+ }
+ EXPORT_SYMBOL_GPL(devm_of_led_get);
+ 
 -- 
 2.38.1
 
