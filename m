@@ -2,70 +2,93 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E02C7C10F1B
-	for <linux-leds@archiver.kernel.org>; Tue, 27 Dec 2022 09:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDDF7C4332F
+	for <linux-leds@archiver.kernel.org>; Tue, 27 Dec 2022 10:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbiL0Jrm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 27 Dec 2022 04:47:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56072 "EHLO
+        id S229567AbiL0KNx (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 27 Dec 2022 05:13:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229929AbiL0Jrg (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 27 Dec 2022 04:47:36 -0500
+        with ESMTP id S229445AbiL0KNw (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 27 Dec 2022 05:13:52 -0500
+X-Greylist: delayed 403 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 27 Dec 2022 02:13:51 PST
 Received: from smtpout1.mo528.mail-out.ovh.net (smtpout1.mo528.mail-out.ovh.net [46.105.34.251])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76CC26467
-        for <linux-leds@vger.kernel.org>; Tue, 27 Dec 2022 01:47:35 -0800 (PST)
-Received: from pro2.mail.ovh.net (unknown [10.109.156.173])
-        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id 82551147C04F3;
-        Tue, 27 Dec 2022 10:47:33 +0100 (CET)
-Received: from [192.168.1.41] (88.161.25.233) by DAG1EX1.emp2.local
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B65526E8;
+        Tue, 27 Dec 2022 02:13:50 -0800 (PST)
+Received: from pro2.mail.ovh.net (unknown [10.108.1.71])
+        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id 38B5D147C1BEC;
+        Tue, 27 Dec 2022 11:07:06 +0100 (CET)
+Received: from localhost.localdomain (88.161.25.233) by DAG1EX1.emp2.local
  (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.16; Tue, 27 Dec
- 2022 10:47:33 +0100
-Message-ID: <e188c3e1-8068-91fc-4fe4-b0c65fcb7ec1@traphandler.com>
-Date:   Tue, 27 Dec 2022 10:47:32 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v6 4/6] leds: class: store the color index in struct
- led_classdev
-To:     Lee Jones <lee@kernel.org>
-CC:     Linux LED Subsystem <linux-leds@vger.kernel.org>
-References: <20221117160447.294491-1-jjhiblot@traphandler.com>
- <20221117160447.294491-5-jjhiblot@traphandler.com>
- <CAHp75VfMdGRz5mqhQDZT3ozwmYF2OmT8uk1yGMHXLf5Z-m_tUw@mail.gmail.com>
- <662ed1bc-c513-fb58-9f74-060a2bc4c3f4@traphandler.com>
- <Y6WkWUIZe1YLQIFO@google.com>
-Content-Language: en-US
+ 2022 11:07:05 +0100
 From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-In-Reply-To: <Y6WkWUIZe1YLQIFO@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+To:     <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <sven.schwermer@disruptive-technologies.com>,
+        <krzysztof.kozlowski+dt@linaro.org>
+CC:     <johan+linaro@kernel.org>, <marijn.suijten@somainline.org>,
+        <bjorn.andersson@linaro.org>, <andy.shevchenko@gmail.com>,
+        <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Subject: [RESEND PATCH v6 1/6] devres: provide devm_krealloc_array()
+Date:   Tue, 27 Dec 2022 11:06:54 +0100
+Message-ID: <20221227100659.157071-2-jjhiblot@traphandler.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221227100659.157071-1-jjhiblot@traphandler.com>
+References: <20221227100659.157071-1-jjhiblot@traphandler.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [88.161.25.233]
-X-ClientProxiedBy: DAG4EX2.emp2.local (172.16.2.32) To DAG1EX1.emp2.local
+X-ClientProxiedBy: DAG3EX1.emp2.local (172.16.2.21) To DAG1EX1.emp2.local
  (172.16.2.1)
-X-Ovh-Tracer-Id: 13777918638329838065
+X-Ovh-Tracer-Id: 14108088786527009243
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedriedtgddtiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhepkfffgggfuffvvehfhfgjtgfgihesthekredttdefjeenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepvdefkedugeekueeuvdeuueevjefftddvtefhleekhfefffdtteetffeigfdvtdeinecukfhppeduvdejrddtrddtrddupdekkedrudeiuddrvdehrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpeeojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqedpnhgspghrtghpthhtohepuddprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdplhhinhhugidqlhgvughssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehvdekpdhmohguvgepshhmthhpohhuth
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedriedtgdduudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhephffvvefufffkofgjfhgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepudetveelveevgffgvdeuffffjefhheehueeitdegtdejgefhheeuuddugeeffeeunecukfhppeduvdejrddtrddtrddupdekkedrudeiuddrvdehrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpeeojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqedpnhgspghrtghpthhtohepuddprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdpphgrvhgvlhesuhgtfidrtgiipdhrohgshhdoughtsehkvghrnhgvlhdrohhrghdpshhvvghnrdhstghhfigvrhhmvghrseguihhsrhhuphhtihhvvgdqthgvtghhnhholhhoghhivghsrdgtohhmpdhkrhiihihsiihtohhfrdhkohiilhhofihskhhiodgutheslhhinhgrrhhordhorhhgpdhjohhhrghnodhlihhnrghroheskhgvrhhnvghlrdhorhhgpdhmrghrihhjnhdrshhuihhjthgvnhesshhomhgrihhnlhhinhgvrd
+ horhhgpdgsjhhorhhnrdgrnhguvghrshhsohhnsehlihhnrghrohdrohhrghdprghnugihrdhshhgvvhgthhgvnhhkohesghhmrghilhdrtghomhdpjhgrtggvkhdrrghnrghsiigvfihskhhisehgmhgrihhlrdgtohhmpdhlihhnuhigqdhlvggushesvhhgvghrrdhkvghrnhgvlhdrohhrghdpuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhohedvkedpmhhouggvpehsmhhtphhouhht
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Implement the managed variant of krealloc_array().
+This internally uses devm_krealloc() and as such is usable with all memory
+allocated by devm_kmalloc() (or devres functions using it implicitly like
+devm_kmemdup(), devm_kstrdup() etc.).
 
-On 23/12/2022 13:51, Lee Jones wrote:
-> On Fri, 09 Dec 2022, Jean-Jacques Hiblot wrote:
->
->> Hello Pavel,
->>
->> I haven't had feedback on this series from the maintainers for some time
->> now.
->>
->> I understand that you're quite busy, but I'd appreciate if you could have a
->> look at it.
-> Not in my inbox.  Would you be kind enough to submit a [RESEND] please?
+Managed realloc'ed chunks can be manually released with devm_kfree().
 
-Certainly. I'll do it right away.
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ include/linux/device.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-  Thanks
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 424b55df0272..3b472df6c6cd 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -223,6 +223,19 @@ static inline void *devm_kcalloc(struct device *dev,
+ {
+ 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+ }
++static inline void *devm_krealloc_array(struct device *dev,
++					void *p,
++					size_t new_n,
++					size_t new_size,
++					gfp_t flags)
++{
++	size_t bytes;
++
++	if (unlikely(check_mul_overflow(new_n, new_size, &bytes)))
++		return NULL;
++
++	return devm_krealloc(dev, p, bytes, flags);
++}
+ void devm_kfree(struct device *dev, const void *p);
+ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
+ const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp);
+-- 
+2.25.1
 
->
