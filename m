@@ -2,44 +2,44 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53648C3DA7D
-	for <linux-leds@archiver.kernel.org>; Tue,  3 Jan 2023 13:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F67BC46467
+	for <linux-leds@archiver.kernel.org>; Tue,  3 Jan 2023 13:13:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237765AbjACNNh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 3 Jan 2023 08:13:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53410 "EHLO
+        id S237776AbjACNNi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 3 Jan 2023 08:13:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237730AbjACNNM (ORCPT
+        with ESMTP id S237731AbjACNNM (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Tue, 3 Jan 2023 08:13:12 -0500
 Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2994F10FCA;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 299E011149;
         Tue,  3 Jan 2023 05:12:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1672751564; x=1704287564;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=9YAyO0NuKkjE8s2MjpGiLsRbRFZd9cli0OG3nOsmD+I=;
-  b=MuDNEBmli6TnNdQW14WCV4+aEE0WA9x1pYBpWmgz0R5onaKmxBMsocwg
-   OBU1ChFtkiedbTFmseOiVEFfQqDAdJlf3T4hUYLxhTbr0wnmwk5inLsXz
-   nzn6KVgxSUihqkrl+cgAYzMqShvJL2whKOAZLiy4bHqypjUbeui8e/jX7
-   1Vhgz5p/nyAL+3WUurV5er3JBFeKf+6/QepwI09K/ng9bq0dGo8CmYsxE
-   cTqMdkvfOKNHkC8tMyndnpPeJrymrkHJ/Lazx1YSuzfoRYj3zJ4NrCbwJ
-   RTTFl7TinoHYOsBD8ZI0HQbTCgDTF4ttawY9RFeiPV9TlL8jJDqSY0Upa
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10579"; a="322887989"
+  bh=7p6zWbQRFO6BWGKdmzxHibs27PU9es81+rcbWbLCG20=;
+  b=j722cG7A2lXzw/ka6jI1UYD83qpkWlRMTyb/+mfQJwHTjYrJiRIt1ngc
+   mB+xPxgwjsgNCrNpXXUcY2kgrXbVG5olZbG2VhkQ8EiUqNR2prKGlkKmI
+   Z21JqNnLBGOys8YQG+4TApLmTOSjlML1vZIOrfcD/Qtf6kB+dSx3oiM8F
+   HJm6L/YUTkc6A6bmEDZg+ivX9aKIFHOJYxsRdzh5YbemjJ6ZxfIgnHzEH
+   Rzqixq7bv9Pm5xxfKPGL1mnmkWM7dfgawQch8EqQlImC33+54tqqCb3o+
+   VWE/PCRSGjZdRnmfYQsv3ZvcAiJCVMdpjDwOmXDtYl2fvkcgq8GZMDa1a
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10579"; a="322887977"
 X-IronPort-AV: E=Sophos;i="5.96,297,1665471600"; 
-   d="scan'208";a="322887989"
+   d="scan'208";a="322887977"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
   by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jan 2023 05:12:39 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10579"; a="685397942"
+X-IronPort-AV: E=McAfee;i="6500,9779,10579"; a="685397941"
 X-IronPort-AV: E=Sophos;i="5.96,297,1665471600"; 
-   d="scan'208";a="685397942"
+   d="scan'208";a="685397941"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orsmga008.jf.intel.com with ESMTP; 03 Jan 2023 05:12:33 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id B095E2AD; Tue,  3 Jan 2023 15:13:00 +0200 (EET)
+        id A5E0C2AA; Tue,  3 Jan 2023 15:13:00 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Gene Chen <gene_chen@richtek.com>, linux-leds@vger.kernel.org,
@@ -56,12 +56,10 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH v4 06/11] leds: mt6323: Get rid of custom led_init_default_state_get()
-Date:   Tue,  3 Jan 2023 15:12:51 +0200
-Message-Id: <20230103131256.33894-7-andriy.shevchenko@linux.intel.com>
+        Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH v4 05/11] leds: bcm6358: Get rid of custom led_init_default_state_get()
+Date:   Tue,  3 Jan 2023 15:12:50 +0200
+Message-Id: <20230103131256.33894-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20230103131256.33894-1-andriy.shevchenko@linux.intel.com>
 References: <20230103131256.33894-1-andriy.shevchenko@linux.intel.com>
@@ -75,54 +73,69 @@ LED core provides a helper to parse default state from firmware node.
 Use it instead of custom implementation.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/leds/leds-mt6323.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ drivers/leds/leds-bcm6358.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/leds/leds-mt6323.c b/drivers/leds/leds-mt6323.c
-index f59e0e8bda8b..17ee88043f52 100644
---- a/drivers/leds/leds-mt6323.c
-+++ b/drivers/leds/leds-mt6323.c
-@@ -339,23 +339,23 @@ static int mt6323_led_set_dt_default(struct led_classdev *cdev,
- 				     struct device_node *np)
+diff --git a/drivers/leds/leds-bcm6358.c b/drivers/leds/leds-bcm6358.c
+index 9d2e487fa08a..86e51d44a5a7 100644
+--- a/drivers/leds/leds-bcm6358.c
++++ b/drivers/leds/leds-bcm6358.c
+@@ -96,7 +96,8 @@ static int bcm6358_led(struct device *dev, struct device_node *nc, u32 reg,
  {
- 	struct mt6323_led *led = container_of(cdev, struct mt6323_led, cdev);
+ 	struct led_init_data init_data = {};
+ 	struct bcm6358_led *led;
 -	const char *state;
 +	enum led_default_state state;
- 	int ret = 0;
++	unsigned long val;
+ 	int rc;
  
--	state = of_get_property(np, "default-state", NULL);
--	if (state) {
--		if (!strcmp(state, "keep")) {
--			ret = mt6323_get_led_hw_brightness(cdev);
--			if (ret < 0)
--				return ret;
--			led->current_brightness = ret;
--			ret = 0;
--		} else if (!strcmp(state, "on")) {
--			ret =
--			mt6323_led_set_brightness(cdev, cdev->max_brightness);
--		} else  {
--			ret = mt6323_led_set_brightness(cdev, LED_OFF);
--		}
-+	state = led_init_default_state_get(of_fwnode_handle(np));
+ 	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+@@ -110,29 +111,28 @@ static int bcm6358_led(struct device *dev, struct device_node *nc, u32 reg,
+ 	if (of_property_read_bool(nc, "active-low"))
+ 		led->active_low = true;
+ 
+-	if (!of_property_read_string(nc, "default-state", &state)) {
+-		if (!strcmp(state, "on")) {
++	init_data.fwnode = of_fwnode_handle(nc);
++
++	state = led_init_default_state_get(init_data.fwnode);
 +	switch (state) {
 +	case LEDS_DEFSTATE_ON:
-+		ret = mt6323_led_set_brightness(cdev, cdev->max_brightness);
++		led->cdev.brightness = LED_FULL;
 +		break;
 +	case LEDS_DEFSTATE_KEEP:
-+		ret = mt6323_get_led_hw_brightness(cdev);
-+		if (ret < 0)
-+			return ret;
-+		led->current_brightness = ret;
-+		ret = 0;
++		val = bcm6358_led_read(led->mem + BCM6358_REG_MODE);
++		val &= BIT(led->pin);
++		if ((led->active_low && !val) || (!led->active_low && val))
+ 			led->cdev.brightness = LED_FULL;
+-		} else if (!strcmp(state, "keep")) {
+-			unsigned long val;
+-			val = bcm6358_led_read(led->mem + BCM6358_REG_MODE);
+-			val &= BIT(led->pin);
+-			if ((led->active_low && !val) ||
+-			    (!led->active_low && val))
+-				led->cdev.brightness = LED_FULL;
+-			else
+-				led->cdev.brightness = LED_OFF;
+-		} else {
++		else
+ 			led->cdev.brightness = LED_OFF;
+-		}
+-	} else {
 +		break;
 +	default:
-+		ret = mt6323_led_set_brightness(cdev, LED_OFF);
+ 		led->cdev.brightness = LED_OFF;
  	}
  
- 	return ret;
+ 	bcm6358_led_set(&led->cdev, led->cdev.brightness);
+ 
+ 	led->cdev.brightness_set = bcm6358_led_set;
+-	init_data.fwnode = of_fwnode_handle(nc);
+ 
+ 	rc = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
+ 	if (rc < 0)
 -- 
 2.35.1
 
