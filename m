@@ -2,44 +2,44 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12076C46467
-	for <linux-leds@archiver.kernel.org>; Tue,  3 Jan 2023 13:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80461C3DA7D
+	for <linux-leds@archiver.kernel.org>; Tue,  3 Jan 2023 13:13:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237677AbjACNMk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 3 Jan 2023 08:12:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52562 "EHLO
+        id S237662AbjACNNL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 3 Jan 2023 08:13:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237662AbjACNMh (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 3 Jan 2023 08:12:37 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10429FD3E;
-        Tue,  3 Jan 2023 05:12:36 -0800 (PST)
+        with ESMTP id S237676AbjACNMn (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 3 Jan 2023 08:12:43 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DACD10B70;
+        Tue,  3 Jan 2023 05:12:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1672751557; x=1704287557;
+  t=1672751560; x=1704287560;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=b85nclneF9BX61RtcZxdbpTMJV7DSQfjZ+m4p4X2wC0=;
-  b=And5CoS5AYO+F1LcLzpVB1+b6JPQ9qKguZD102C7kdEMHGTNk3g+RmKh
-   34ZrnkRi88Dw+qBYXi5TfADU44h4cmT/ySKDxRVdAU/miISoamFS+STkU
-   mgRqfUBOu3M5BI8OUcE4EStmS64hhaiEWyPslf5ZKJ4kQudQvUEq9j028
-   UCRGVPVlfzgJOGjA6tMkbKYRgNwnaPUAtLVb3FXxWFjF3mQPtQVvk5SE4
-   yfp0gS9lnbi0tRIFvtuOMqn1xk9u/1f8Duea5tLWY+Pg9p2UMGc8vElAY
-   fnTdTY61mKMyA3c2B9YrZ8nl3PFZaYRE8LASk86VLN7FgADN2G0eX31jr
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10579"; a="322887924"
+  bh=hvI26OhQ+1E3Y1b+RrDqvUOiyVnslqAALa2RhHdwGbY=;
+  b=m2K9HbaXlAohLwUKkPBF8jj3ww+UpveJ7AB21Q5apwPCGrvhNPPqL5FV
+   Zq2lES0nJIYwFPlnNCfoJYoGTzyZnYCwUJxqt3ObNKBy/cDnOvYpVXr5t
+   xUplS96h3LU07X5+gGnSEB8P/fTuy3v0oh36zCFf9B4CDXjprJTe+v79V
+   Nzn+K2eSa6bEI9gA3grxxE9vN7p37GGmGPcLLpdCSWe/hcHu/ZXALoawE
+   06a+PXvtCOhfaR+y/E68aRdEMvWxWNwBXAIXuhNXIuccP0tMvk+1ibkWU
+   KDRHgCYYXBa4kkrTavlHe8fUnYc5RO9XrofVjuH9bIoxpFVQWCMx2OyIk
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10579"; a="320367274"
 X-IronPort-AV: E=Sophos;i="5.96,297,1665471600"; 
-   d="scan'208";a="322887924"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jan 2023 05:12:33 -0800
+   d="scan'208";a="320367274"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jan 2023 05:12:39 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10579"; a="685397926"
+X-IronPort-AV: E=McAfee;i="6500,9779,10579"; a="654781148"
 X-IronPort-AV: E=Sophos;i="5.96,297,1665471600"; 
-   d="scan'208";a="685397926"
+   d="scan'208";a="654781148"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 03 Jan 2023 05:12:28 -0800
+  by orsmga002.jf.intel.com with ESMTP; 03 Jan 2023 05:12:34 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 79000F4; Tue,  3 Jan 2023 15:13:00 +0200 (EET)
+        id D30BE3FD; Tue,  3 Jan 2023 15:13:00 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Gene Chen <gene_chen@richtek.com>, linux-leds@vger.kernel.org,
@@ -57,9 +57,9 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH v4 01/11] leds: add missing includes and forward declarations in leds.h
-Date:   Tue,  3 Jan 2023 15:12:46 +0200
-Message-Id: <20230103131256.33894-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 09/11] leds: pm8058: Get rid of custom led_init_default_state_get()
+Date:   Tue,  3 Jan 2023 15:12:54 +0200
+Message-Id: <20230103131256.33894-10-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20230103131256.33894-1-andriy.shevchenko@linux.intel.com>
 References: <20230103131256.33894-1-andriy.shevchenko@linux.intel.com>
@@ -69,52 +69,68 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add missing includes and forward declarations to leds.h. While at it,
-replace headers by forward declarations and vise versa.
+LED core provides a helper to parse default state from firmware node.
+Use it instead of custom implementation.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- include/linux/leds.h | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/leds/leds-pm8058.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index ba4861ec73d3..499aea1e59b9 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -10,17 +10,21 @@
+diff --git a/drivers/leds/leds-pm8058.c b/drivers/leds/leds-pm8058.c
+index fb2ab72c0c40..b9233f14b646 100644
+--- a/drivers/leds/leds-pm8058.c
++++ b/drivers/leds/leds-pm8058.c
+@@ -93,8 +93,8 @@ static int pm8058_led_probe(struct platform_device *pdev)
+ 	struct device_node *np;
+ 	int ret;
+ 	struct regmap *map;
+-	const char *state;
+ 	enum led_brightness maxbright;
++	enum led_default_state state;
  
- #include <dt-bindings/leds/common.h>
- #include <linux/device.h>
--#include <linux/kernfs.h>
--#include <linux/list.h>
- #include <linux/mutex.h>
- #include <linux/rwsem.h>
- #include <linux/spinlock.h>
- #include <linux/timer.h>
-+#include <linux/types.h>
- #include <linux/workqueue.h>
+ 	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+ 	if (!led)
+@@ -125,25 +125,26 @@ static int pm8058_led_probe(struct platform_device *pdev)
+ 		maxbright = 15; /* 4 bits */
+ 	led->cdev.max_brightness = maxbright;
  
--struct device;
--struct led_pattern;
-+struct attribute_group;
- struct device_node;
-+struct fwnode_handle;
-+struct gpio_desc;
-+struct kernfs_node;
-+struct led_pattern;
-+struct platform_device;
+-	state = of_get_property(np, "default-state", NULL);
+-	if (state) {
+-		if (!strcmp(state, "keep")) {
+-			led->cdev.brightness = pm8058_led_get(&led->cdev);
+-		} else if (!strcmp(state, "on")) {
+-			led->cdev.brightness = maxbright;
+-			pm8058_led_set(&led->cdev, maxbright);
+-		} else {
+-			led->cdev.brightness = LED_OFF;
+-			pm8058_led_set(&led->cdev, LED_OFF);
+-		}
++	init_data.fwnode = of_fwnode_handle(np);
 +
- /*
-  * LED Core
-  */
-@@ -508,7 +512,6 @@ struct led_properties {
- 	const char	*label;
- };
++	state = led_init_default_state_get(init_data.fwnode);
++	switch (state) {
++	case LEDS_DEFSTATE_ON:
++		led->cdev.brightness = maxbright;
++		pm8058_led_set(&led->cdev, maxbright);
++		break;
++	case LEDS_DEFSTATE_KEEP:
++		led->cdev.brightness = pm8058_led_get(&led->cdev);
++		break;
++	default:
++		led->cdev.brightness = LED_OFF;
++		pm8058_led_set(&led->cdev, LED_OFF);
+ 	}
  
--struct gpio_desc;
- typedef int (*gpio_blink_set_t)(struct gpio_desc *desc, int state,
- 				unsigned long *delay_on,
- 				unsigned long *delay_off);
+ 	if (led->ledtype == PM8058_LED_TYPE_KEYPAD ||
+ 	    led->ledtype == PM8058_LED_TYPE_FLASH)
+ 		led->cdev.flags	= LED_CORE_SUSPENDRESUME;
+ 
+-	init_data.fwnode = of_fwnode_handle(np);
+-
+ 	ret = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
+ 	if (ret)
+ 		dev_err(dev, "Failed to register LED for %pOF\n", np);
 -- 
 2.35.1
 
