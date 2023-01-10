@@ -2,268 +2,84 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E88EC54EBE
-	for <linux-leds@archiver.kernel.org>; Tue, 10 Jan 2023 09:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9B0C46467
+	for <linux-leds@archiver.kernel.org>; Tue, 10 Jan 2023 09:52:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232137AbjAJJZO (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 10 Jan 2023 04:25:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39054 "EHLO
+        id S236528AbjAJJwS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 10 Jan 2023 04:52:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238114AbjAJJY4 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 10 Jan 2023 04:24:56 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B15C564D0
-        for <linux-leds@vger.kernel.org>; Tue, 10 Jan 2023 01:24:53 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id g10so8297653wmo.1
-        for <linux-leds@vger.kernel.org>; Tue, 10 Jan 2023 01:24:53 -0800 (PST)
+        with ESMTP id S238328AbjAJJwC (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 10 Jan 2023 04:52:02 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D335004F
+        for <linux-leds@vger.kernel.org>; Tue, 10 Jan 2023 01:52:00 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id p1-20020a05600c1d8100b003d8c9b191e0so9373273wms.4
+        for <linux-leds@vger.kernel.org>; Tue, 10 Jan 2023 01:52:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mind.be; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/dh0bQBvL1MAQ79eqgTbgReBtIQtpA+XQbsleX01n6Q=;
-        b=OYRLNBuMGyBJ1A3K7H9KUEr8xAGnzk1e4IUwZTWWAvxYhrvkniINIi83jyqFxY+yfj
-         wdCs/lCSWTL1kTtYDlCgy3CcugbQuztkSPMVN5a56RPhvwOOuRGO+5bG4noqypRQDfd7
-         k8X64xyiMmipBva84Xm/qZxbPIa8qbcqTQb4mexEbdpXYDneJv7ivfUh037XcK1XYVQT
-         L4w2W2bywLJoiTCEzdJODxL56dtMncw9bV7AXmlS5pPZH49Ty16Y00cUIGk2Ckcd9pPM
-         aYu7qdz0YKMb0NnHD0Ecetw2DDQU0ic0QjN0t4kBhcZQAYJU7SaPk8qpJnA4CYC4yzPW
-         fgzg==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/mL52V0hiw5s6j6RURYRdd0rmxiZQUXrI8X6eC4ie48=;
+        b=LrbCjKFnuKo7ttwtUPe/asf9UwwYtRprFGZoK+iZhqpwGmGkG30XJY9dHAMYsJ11xx
+         qejyK+59PToQMIvBa7xXtwubyIjBkvX3qRCGMeBGsT2Eqjqo1bxOYE/fdSKx2c5HLZBU
+         UGoF/J9O5MlTCxGwzOytiGfPj0M3wznDqYJ5UC+Q6N56abtOyinWJQRG7GWKEJalhm0y
+         mTeki1m3UihKztFZt6lsj3Y8x776bpM46JsLiH6tbmTapg0WS0Lxpvk0ggpbepx4lfix
+         a2lrYiR70ZO+GPjByFHg+I7uxd1jzH+DoGUVHUfy52ABId5a8Be14IHU+FS1c3mOSy3Z
+         dRMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/dh0bQBvL1MAQ79eqgTbgReBtIQtpA+XQbsleX01n6Q=;
-        b=jVxvG/5I9UvTNi9YkrJZVuxAWqvqPEwybaCecAZ6yWdeE8NFgB50xje5uiA31vQd6/
-         PuhkMJEM+sfh/9HAE1TmO6bfie9BS2JhcFLSNYHBR4RGE6jqg1b/vC03Rb5OUtCkLjt1
-         a06N4LqIk1Ilf0sOxTUA0qPZMz9CX2du8xddZhue8FlSMv8y2+nZb/5dl1UgfWvros6w
-         BQeujzAXBeCqYPXDongS146mjyOr3hpHnHfdt5RJDzSrTD6KTouuZrNSzwm+griZWXWG
-         TjiwG3ErgCRFjudZNFN7Yhsc5axCuM5q+c/zyrR8UH2WsohqknVYfcSxY6Gd2l8DDa65
-         50Ww==
-X-Gm-Message-State: AFqh2kriwQBJ1kSun1wYgz3alXXHRsSgReu+BXx2Ouvunldxg7kRZIZC
-        4Cd6PhCJl/DNWVGdEoboWc+bfQ==
-X-Google-Smtp-Source: AMrXdXvVoqwbfGrAsP31naQgCw5Qa0w/8stg6QtFGNNAJFN2gwLKUBpHMpY7azUp5IPwZq4Hs2byjA==
-X-Received: by 2002:a05:600c:4da0:b0:3d3:5027:4cce with SMTP id v32-20020a05600c4da000b003d350274ccemr50798040wmp.10.1673342692099;
-        Tue, 10 Jan 2023 01:24:52 -0800 (PST)
-Received: from dtpc.zanders.be (78-22-137-109.access.telenet.be. [78.22.137.109])
-        by smtp.gmail.com with ESMTPSA id q22-20020a05600c331600b003d9dd62deedsm13149433wmp.30.2023.01.10.01.24.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jan 2023 01:24:51 -0800 (PST)
-From:   Maarten Zanders <maarten.zanders@mind.be>
-To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-Cc:     krzysztof.kozlowski@linaro.org,
-        Maarten Zanders <maarten.zanders@mind.be>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] leds: lp55xx: configure internal charge pump
-Date:   Tue, 10 Jan 2023 10:23:40 +0100
-Message-Id: <20230110092342.24132-3-maarten.zanders@mind.be>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20230110092342.24132-1-maarten.zanders@mind.be>
-References: <20230110092342.24132-1-maarten.zanders@mind.be>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/mL52V0hiw5s6j6RURYRdd0rmxiZQUXrI8X6eC4ie48=;
+        b=ZK0Yb2lmiLPlLw/XWmw/aTJIuICcHo6x6FL85spXcGfsII7DX227K7qjTu0s4Qt+N0
+         s6JmCSiKIi5hR4EwgaLOBe2HFbqIKetiPIlE0HFGopzvawVOqGOkPfrT7bnJ4dnknb91
+         KDhDayMNksnQV/ZBPs0hQl28fl5/JvgE+59OEUgdCe4FZyd8fdzxpZmhXitMpAIpe9fO
+         Tzgwe2prsidpE2p2dKoswfx8+MMvArLL9X76dJw6GMF4DIyxzNdmzgi2Zl1koU3JPoGx
+         unN31RHkZW5CB/P6io7vqfjGTKnzwFnRpxsX6RWTHukwVYtr8k7Y7YwVOt/EuQM2K0wu
+         n26Q==
+X-Gm-Message-State: AFqh2kre74VQVY2L0rH1HlMDeeDCYs4Ud5Ir/Y15S4WFM74TiEs0638o
+        VB89IWVHarmMlNf1tBgqXI8bFw==
+X-Google-Smtp-Source: AMrXdXu3no3DhuE6ENuZRZq3ejegxmFk49fvykU744b3FH9Ql5EQKUYEFWmXG3shvtWLjIfuMsF3LQ==
+X-Received: by 2002:a05:600c:248:b0:3d3:5d47:271c with SMTP id 8-20020a05600c024800b003d35d47271cmr47807041wmj.12.1673344318932;
+        Tue, 10 Jan 2023 01:51:58 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id m7-20020a05600c3b0700b003cfd4cf0761sm21094739wms.1.2023.01.10.01.51.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jan 2023 01:51:58 -0800 (PST)
+Message-ID: <6d8bd401-db46-f0b6-4944-a7ede13d64e3@linaro.org>
+Date:   Tue, 10 Jan 2023 10:51:56 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v2 0/2] leds: lp55xx: configure internal charge pump
+Content-Language: en-US
+To:     Maarten Zanders <maarten.zanders@mind.be>
+Cc:     devicetree@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        Pavel Machek <pavel@ucw.cz>
+References: <20230110092342.24132-1-maarten.zanders@mind.be>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230110092342.24132-1-maarten.zanders@mind.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The LP55xx range of devices have an internal charge pump which
-can (automatically) increase the output voltage towards the
-LED's, boosting the output voltage to 4.5V.
+On 10/01/2023 10:23, Maarten Zanders wrote:
+> A new option in the devicetree "ti,charge-pump-mode" allows the user to
+> configure the charge pump in a certain mode. Previously it was defaulting
+> to automatic mode.
 
-Implement this option from the devicetree. When the setting
-is not present it will operate in automatic mode as before.
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC.  It might happen, that command when run on an older
+kernel, gives you outdated entries.  Therefore please be sure you base
+your patches on recent Linux kernel.
 
-Tested on LP55231. Datasheet analysis shows that LP5521, LP5523
-and LP8501 are identical in topology and are modified in the
-same way.
-
-Signed-off-by: Maarten Zanders <maarten.zanders@mind.be>
----
- drivers/leds/leds-lp5521.c                | 12 ++++++------
- drivers/leds/leds-lp5523.c                | 18 +++++++++++++-----
- drivers/leds/leds-lp55xx-common.c         | 22 ++++++++++++++++++++++
- drivers/leds/leds-lp8501.c                |  8 ++++++--
- include/linux/platform_data/leds-lp55xx.h |  9 +++++++++
- 5 files changed, 56 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
-index 19478d9c19a7..ee1c72cffdab 100644
---- a/drivers/leds/leds-lp5521.c
-+++ b/drivers/leds/leds-lp5521.c
-@@ -58,14 +58,11 @@
- /* CONFIG register */
- #define LP5521_PWM_HF			0x40	/* PWM: 0 = 256Hz, 1 = 558Hz */
- #define LP5521_PWRSAVE_EN		0x20	/* 1 = Power save mode */
--#define LP5521_CP_MODE_OFF		0	/* Charge pump (CP) off */
--#define LP5521_CP_MODE_BYPASS		8	/* CP forced to bypass mode */
--#define LP5521_CP_MODE_1X5		0x10	/* CP forced to 1.5x mode */
--#define LP5521_CP_MODE_AUTO		0x18	/* Automatic mode selection */
-+#define LP5521_CP_MODE_MASK		0x18	/* Charge pump mode */
-+#define LP5521_CP_MODE_SHIFT		3
- #define LP5521_R_TO_BATT		0x04	/* R out: 0 = CP, 1 = Vbat */
- #define LP5521_CLK_INT			0x01	/* Internal clock */
--#define LP5521_DEFAULT_CFG		\
--	(LP5521_PWM_HF | LP5521_PWRSAVE_EN | LP5521_CP_MODE_AUTO)
-+#define LP5521_DEFAULT_CFG		(LP5521_PWM_HF | LP5521_PWRSAVE_EN)
- 
- /* Status */
- #define LP5521_EXT_CLK_USED		0x08
-@@ -310,6 +307,9 @@ static int lp5521_post_init_device(struct lp55xx_chip *chip)
- 	if (!lp55xx_is_extclk_used(chip))
- 		val |= LP5521_CLK_INT;
- 
-+	val |= (chip->pdata->charge_pump_mode << LP5521_CP_MODE_SHIFT) &
-+	       LP5521_CP_MODE_MASK;
-+
- 	ret = lp55xx_write(chip, LP5521_REG_CONFIG, val);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index e08e3de1428d..b5d10d4252e6 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -57,8 +57,12 @@
- #define LP5523_AUTO_INC			0x40
- #define LP5523_PWR_SAVE			0x20
- #define LP5523_PWM_PWR_SAVE		0x04
--#define LP5523_CP_AUTO			0x18
-+#define LP5523_CP_MODE_MASK		0x18
-+#define LP5523_CP_MODE_SHIFT		3
- #define LP5523_AUTO_CLK			0x02
-+#define LP5523_DEFAULT_CONFIG	\
-+	(LP5523_AUTO_INC | LP5523_PWR_SAVE |\
-+	 LP5523_AUTO_CLK | LP5523_PWM_PWR_SAVE)
- 
- #define LP5523_EN_LEDTEST		0x80
- #define LP5523_LEDTEST_DONE		0x80
-@@ -125,6 +129,7 @@ static void lp5523_set_led_current(struct lp55xx_led *led, u8 led_current)
- static int lp5523_post_init_device(struct lp55xx_chip *chip)
- {
- 	int ret;
-+	int val;
- 
- 	ret = lp55xx_write(chip, LP5523_REG_ENABLE, LP5523_ENABLE);
- 	if (ret)
-@@ -133,10 +138,13 @@ static int lp5523_post_init_device(struct lp55xx_chip *chip)
- 	/* Chip startup time is 500 us, 1 - 2 ms gives some margin */
- 	usleep_range(1000, 2000);
- 
--	ret = lp55xx_write(chip, LP5523_REG_CONFIG,
--			    LP5523_AUTO_INC | LP5523_PWR_SAVE |
--			    LP5523_CP_AUTO | LP5523_AUTO_CLK |
--			    LP5523_PWM_PWR_SAVE);
-+	val = LP5523_DEFAULT_CONFIG;
-+
-+	val |= (chip->pdata->charge_pump_mode << LP5523_CP_MODE_SHIFT) &
-+	       LP5523_CP_MODE_MASK;
-+
-+	ret = lp55xx_write(chip, LP5523_REG_CONFIG, val);
-+
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index c1940964067a..a690a484fd7b 100644
---- a/drivers/leds/leds-lp55xx-common.c
-+++ b/drivers/leds/leds-lp55xx-common.c
-@@ -653,6 +653,13 @@ static int lp55xx_parse_logical_led(struct device_node *np,
- 	return ret;
- }
- 
-+static const char * const charge_pump_modes[] = {
-+	[LP55XX_CP_OFF] = "off",
-+	[LP55XX_CP_BYPASS] = "bypass",
-+	[LP55XX_CP_BOOST] = "boost",
-+	[LP55XX_CP_AUTO] = "auto",
-+};
-+
- struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 						      struct device_node *np,
- 						      struct lp55xx_chip *chip)
-@@ -661,6 +668,8 @@ struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 	struct lp55xx_platform_data *pdata;
- 	struct lp55xx_led_config *cfg;
- 	int num_channels;
-+	enum lp55xx_charge_pump_mode cp_mode;
-+	const char *pm;
- 	int i = 0;
- 	int ret;
- 
-@@ -691,6 +700,19 @@ struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 		i++;
- 	}
- 
-+	pdata->charge_pump_mode = LP55XX_CP_AUTO;
-+	ret = of_property_read_string(np, "ti,charge-pump-mode", &pm);
-+	if (!ret) {
-+		for (cp_mode = LP55XX_CP_OFF;
-+		     cp_mode < ARRAY_SIZE(charge_pump_modes);
-+		     cp_mode++) {
-+			if (!strcasecmp(pm, charge_pump_modes[cp_mode])) {
-+				pdata->charge_pump_mode = cp_mode;
-+				break;
-+			}
-+		}
-+	}
-+
- 	of_property_read_string(np, "label", &pdata->label);
- 	of_property_read_u8(np, "clock-mode", &pdata->clock_mode);
- 
-diff --git a/drivers/leds/leds-lp8501.c b/drivers/leds/leds-lp8501.c
-index ae11a02c0ab2..f0e70e116919 100644
---- a/drivers/leds/leds-lp8501.c
-+++ b/drivers/leds/leds-lp8501.c
-@@ -53,10 +53,11 @@
- #define LP8501_PWM_PSAVE		BIT(7)
- #define LP8501_AUTO_INC			BIT(6)
- #define LP8501_PWR_SAVE			BIT(5)
--#define LP8501_CP_AUTO			0x18
-+#define LP8501_CP_MODE_MASK		0x18
-+#define LP8501_CP_MODE_SHIFT		3
- #define LP8501_INT_CLK			BIT(0)
- #define LP8501_DEFAULT_CFG	\
--	(LP8501_PWM_PSAVE | LP8501_AUTO_INC | LP8501_PWR_SAVE | LP8501_CP_AUTO)
-+	(LP8501_PWM_PSAVE | LP8501_AUTO_INC | LP8501_PWR_SAVE)
- 
- #define LP8501_REG_RESET		0x3D
- #define LP8501_RESET			0xFF
-@@ -102,6 +103,9 @@ static int lp8501_post_init_device(struct lp55xx_chip *chip)
- 	if (chip->pdata->clock_mode != LP55XX_CLOCK_EXT)
- 		val |= LP8501_INT_CLK;
- 
-+	val |= (chip->pdata->charge_pump_mode << LP8501_CP_MODE_SHIFT) &
-+	       LP8501_CP_MODE_MASK;
-+
- 	ret = lp55xx_write(chip, LP8501_REG_CONFIG, val);
- 	if (ret)
- 		return ret;
-diff --git a/include/linux/platform_data/leds-lp55xx.h b/include/linux/platform_data/leds-lp55xx.h
-index 3441064713a3..6ea1a74f94e4 100644
---- a/include/linux/platform_data/leds-lp55xx.h
-+++ b/include/linux/platform_data/leds-lp55xx.h
-@@ -50,6 +50,13 @@ enum lp8501_pwr_sel {
- 	LP8501_ALL_VOUT,	/* D1~9 are connected to VOUT */
- };
- 
-+enum lp55xx_charge_pump_mode {
-+	LP55XX_CP_OFF = 0,
-+	LP55XX_CP_BYPASS = 1,
-+	LP55XX_CP_BOOST = 2,
-+	LP55XX_CP_AUTO = 3,
-+};
-+
- /*
-  * struct lp55xx_platform_data
-  * @led_config        : Configurable led class device
-@@ -73,6 +80,8 @@ struct lp55xx_platform_data {
- 	/* Clock configuration */
- 	u8 clock_mode;
- 
-+	enum lp55xx_charge_pump_mode charge_pump_mode;
-+
- 	/* optional enable GPIO */
- 	struct gpio_desc *enable_gpiod;
- 
--- 
-2.37.3
+Best regards,
+Krzysztof
 
