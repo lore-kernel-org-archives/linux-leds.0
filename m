@@ -2,225 +2,160 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C192FC5479D
-	for <linux-leds@archiver.kernel.org>; Wed, 11 Jan 2023 11:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43DD9C54EBC
+	for <linux-leds@archiver.kernel.org>; Wed, 11 Jan 2023 16:35:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238368AbjAKLkI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 11 Jan 2023 06:40:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37544 "EHLO
+        id S232094AbjAKQfK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 11 Jan 2023 11:35:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238525AbjAKLjk (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 11 Jan 2023 06:39:40 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F286ABC06
-        for <linux-leds@vger.kernel.org>; Wed, 11 Jan 2023 03:35:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673436937;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=aHM2nrq0s6Ww2GRqx6ysR7XCOFH9LRjdLLMrpgZ0h6U=;
-        b=GszriPKtmEULQZmluhbNQItDIFMwAxXPGUtMt5oENiSais9Szn5v6Hqd/pNE1uyx3rXtK1
-        zS7gSSNHJ4c3NW+xuQ5MO8jUvL5IECsp2yIbCDDa0H83ZcB4App1FGKYOFxF/waK/3g0bw
-        QcHt3erf+BerfahFKfT0GTIvrLgFPhQ=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-675-wkLzWkOqNOOlE21ARJi3jw-1; Wed, 11 Jan 2023 06:35:36 -0500
-X-MC-Unique: wkLzWkOqNOOlE21ARJi3jw-1
-Received: by mail-ej1-f70.google.com with SMTP id hr34-20020a1709073fa200b0083a60c1d7abso10076489ejc.13
-        for <linux-leds@vger.kernel.org>; Wed, 11 Jan 2023 03:35:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aHM2nrq0s6Ww2GRqx6ysR7XCOFH9LRjdLLMrpgZ0h6U=;
-        b=wrrbBISIStrJ9hjTuqUa15Mw1tb49XVqCJb0NaLwsQvQW/hDvH3w7BaOV7WHfWZo8d
-         /uhTkUuTQy18C52AJkQ6Is7G/rG8Nlk3kM35PfvxGohJeGoq/NVySxPtPZWD4g6ZQwa7
-         N4CirRIxOpgLkFDXLH3Exhhaj6I1OM6b4yw5S/PIYeFFOd/8T5Fzaj7jkbhYwgikNmtF
-         h1Nx+UOfis2+zet0R5Eno+KST2UiM8WyCaoVLNXJmHFqm7Bcf4+EQlqve5BGFJDqdljJ
-         HycgGrpg2OYeZnfbTZsOM+G0cmoiMz4ZLudZ3j4ttCXP0DZQvZlCtOiuTnmm1KSVRfDN
-         bH6g==
-X-Gm-Message-State: AFqh2kqh0yxYmcdMK3129CmNV3lb0C9GjCfixkBnHLhZDXDx4N9YO566
-        Cj8Y7+Vu5GlhidBtb7rPHsM4gErEbHxRZT6zsh67AsWFKlxAQDLrx/2DafYBHCISGUi+x5G84bV
-        edjM9kcNLuWRlhFongMBDpg==
-X-Received: by 2002:a17:906:a19a:b0:7c1:6d65:4718 with SMTP id s26-20020a170906a19a00b007c16d654718mr62940121ejy.33.1673436935055;
-        Wed, 11 Jan 2023 03:35:35 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXugso+wPAehAcdGPV3PaQJQuAyz1wjv3Cn6uo0v71xo5Wz6pAe3kQp44xPM4llry88QH/tdnQ==
-X-Received: by 2002:a17:906:a19a:b0:7c1:6d65:4718 with SMTP id s26-20020a170906a19a00b007c16d654718mr62940100ejy.33.1673436934864;
-        Wed, 11 Jan 2023 03:35:34 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a3-20020aa7cf03000000b0049019b48373sm5959303edy.85.2023.01.11.03.35.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jan 2023 03:35:34 -0800 (PST)
-Message-ID: <7bd5d013-d0d8-8020-d91a-39917fa61f33@redhat.com>
-Date:   Wed, 11 Jan 2023 12:35:33 +0100
+        with ESMTP id S238854AbjAKQee (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 11 Jan 2023 11:34:34 -0500
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12CF765DF
+        for <linux-leds@vger.kernel.org>; Wed, 11 Jan 2023 08:34:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+        q=dns/txt; i=@phytec.de; t=1673454852; x=1676046852;
+        h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=C4kvWi4nYSn0kSIK0WvaQkfls0F7UuJxhBfke5JCvQE=;
+        b=GSjL3laUR3wL5q5WR1mBIqYvHmXfwkHxALnFu4n2tILDVvtsIyCTlERpiQrFIJyM
+        dpVj3K+99Tdk3iWnSC4FdzZZjGK5gHXT4nSyePL1W9vWz9Ub3lMFs0azHx5Deat/
+        b2dQvhWeRUn4aKS9Uv/+8Xqw0wqElU5LsgLFlxEZOH8=;
+X-AuditID: ac14000a-923ff70000007ecb-a5-63bee504219b
+Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
+        (using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id B2.F6.32459.405EEB36; Wed, 11 Jan 2023 17:34:12 +0100 (CET)
+Received: from augenblix2.phytec.de (172.25.0.11) by Berlix.phytec.de
+ (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Wed, 11 Jan
+ 2023 17:34:11 +0100
+From:   Wadim Egorov <w.egorov@phytec.de>
+To:     <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <upstream@lists.phytec.de>
+CC:     <riku.voipio@iki.fi>, <alexandre.belloni@bootlin.com>,
+        <a.zummo@towertech.it>, <krzysztof.kozlowski+dt@linaro.org>,
+        <robh+dt@kernel.org>, <lee@kernel.org>, <pavel@ucw.cz>
+Subject: [PATCH v2 2/2] dt-bindings: rtc: Move rv3028 from trivial-rtc.yaml into own schema file
+Date:   Wed, 11 Jan 2023 17:34:04 +0100
+Message-ID: <20230111163404.3526248-2-w.egorov@phytec.de>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230111163404.3526248-1-w.egorov@phytec.de>
+References: <20230111163404.3526248-1-w.egorov@phytec.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v3 08/11] platform/x86: int3472/discrete: Create a LED
- class device for the privacy LED
-Content-Language: en-US, nl
-To:     Andy Shevchenko <andy@kernel.org>
-Cc:     Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Kate Hsuan <hpa@redhat.com>,
-        Mark Pearson <markpearson@lenovo.com>,
-        Andy Yeh <andy.yeh@intel.com>, Yao Hao <yao.hao@intel.com>,
-        linux-media@vger.kernel.org
-References: <20221216113013.126881-1-hdegoede@redhat.com>
- <20221216113013.126881-9-hdegoede@redhat.com>
- <Y5x9uHm8NnVHc0Lv@smile.fi.intel.com>
- <d3d28b30-a364-66eb-7870-06c43d683bb7@redhat.com>
- <Y5ynWBqkhLB2cHYU@smile.fi.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <Y5ynWBqkhLB2cHYU@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.25.0.11]
+X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
+ (172.25.0.12)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmkeLIzCtJLcpLzFFi42JZI8nAo8vydF+yweYGZoslF6+yW7S/W8Zu
+        Mf/IOVaLvhcPmS12tC1ksbi8aw6bxdY36xgtjq2+wmZx99RRNouTGy6xWbTuPcJu0f1O3YHH
+        Y96aao/DXxeyeGxa1cnmcefaHjaP/u4WVo/p834yeaxY/Z3d4/MmuQCOKC6blNSczLLUIn27
+        BK6MK6sa2Av+C1fMWHKTsYHxDn8XIyeHhICJxL/uz6xdjFwcQgKLmSQebN/DBOE8YZTobtrM
+        BlLFJqAucWfDN7AqEYHZjBIdbzcwgzjMApsYJabcPM4CUiUskCCx6eoHMJtFQFWiY+EbJhCb
+        V8BSYtaf0ywQ++QlZl76zg5icwpYSTw5+4kZxBYCqnl1+yYrRL2gxMmZT8DqmYHqm7fOZoaw
+        JSQOvngBVS8v8eLScriZ0869ZoawQyW2ftnONIFRaBaSUbOQjJqFZNQCRuZVjEK5mcnZqUWZ
+        2XoFGZUlqcl6KambGEERJsLAtYOxb47HIUYmDsZDjBIczEoivCs59yQL8aYkVlalFuXHF5Xm
+        pBYfYpTmYFES573fw5QoJJCeWJKanZpakFoEk2Xi4JRqYFTgaY1W/lihLDWtejGn2haOlcnn
+        nv457CuT/E58Q8yM3YkP+dhPb5ppJqPkpnW98Xf43pp3SezRdQsMZ0imRz/59uL4xdBZtomZ
+        XEIB+zPkdPnPtR8MLTj0/uxlA52y3JxE9Yhin/3qnc+6TdkZmf9Na/E8K+vEoP094XylkKrU
+        EgWH029WKrEUZyQaajEXFScCAEX6bHeeAgAA
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi,
+Move RV3028 RTC bindings from trivial-rtc.yaml into microcrystal,rv3032.yaml.
 
-On 12/16/22 18:14, Andy Shevchenko wrote:
-> On Fri, Dec 16, 2022 at 05:29:13PM +0100, Hans de Goede wrote:
->> On 12/16/22 15:16, Andy Shevchenko wrote:
->>> On Fri, Dec 16, 2022 at 12:30:10PM +0100, Hans de Goede wrote:
-> 
-> ...
-> 
->>>> +	if (IS_ERR(int3472->pled.gpio)) {
->>>> +		ret = PTR_ERR(int3472->pled.gpio);
->>>> +		return dev_err_probe(int3472->dev, ret, "getting privacy LED GPIO\n");
->>>
->>> 	return dev_err_probe(...);
->>
->> That goes over 100 chars.
-> 
-> The point is you don't need ret to be initialized. Moreover, no-one prevents
-> you to split the line to two.
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+---
+v2:
+  - Update subject 
+  - Remove not needed quotes
+  - Remove start-year
+  - Use unevaluatedProperties instead of additionalProperties
+---
+ .../bindings/rtc/microcrystal,rv3028.yaml     | 54 +++++++++++++++++++
+ .../devicetree/bindings/rtc/trivial-rtc.yaml  |  2 -
+ 2 files changed, 54 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml
 
-The compiler is perfectly capable of optimizing away the store
-in ret if that is not necessary; and splitting the line instead
-of doing it above will just make the code harder to read.
-
-Also this really is bikeshedding...
-
-> 
->>>> +	}
-> 
-> ...
-> 
->>>> +	/* Generate the name, replacing the ':' in the ACPI devname with '_' */
->>>> +	snprintf(int3472->pled.name, sizeof(int3472->pled.name),
->>>> +		 "%s::privacy_led", acpi_dev_name(int3472->sensor));
->>>
->>>> +	for (i = 0; int3472->pled.name[i]; i++) {
->>>> +		if (int3472->pled.name[i] == ':') {
->>>> +			int3472->pled.name[i] = '_';
->>>> +			break;
->>>> +		}
->>>> +	}
->>>
->>> NIH strreplace().
->>
->> Please look more careful, quoting from the strreplace() docs:
->>
->>  * strreplace - Replace all occurrences of character in string.
->>
->> Notice the *all* and we only want to replace the first ':' here,
->> because the ':' char has a special meaning in LED class-device-names.
-> 
-> It's still possible to use that, but anyway, the above is still
-> something NIH.
-> 
-> 	char *p;
-> 
-> 	p = strchr(name, ':');
-> 	*p = '_';
-
-Ok, In will switch to this for the next version.
-
-> But either code has an issue if by some reason you need to check if : is ever
-> present in acpi_dev_name().
-
-acpi device names are set by this code:
-
-        result = ida_alloc(instance_ida, GFP_KERNEL);
-        if (result < 0)
-                return result;
-
-        device->pnp.instance_no = result;
-        dev_set_name(&device->dev, "%s:%02x", acpi_device_bus_id->bus_id, result);
-
-And the bus_id cannot have a : in it, so there always is a single :.
-
-
-> 
-> The more robust is either to copy acpi_dev_name(), call strreplace(), so you
-> will be sure that _all_ : from ACPI device name will be covered and then attach
-> the rest.
-> 
-> ...
-> 
->>>> +void skl_int3472_unregister_pled(struct int3472_discrete_device *int3472)
->>>> +{
->>>> +	if (IS_ERR_OR_NULL(int3472->pled.classdev.dev))
->>>> +		return;
->>>
->>> This dups the check inside the _unregister() below, right?
->>
->> Right.
->>
->>>> +	led_remove_lookup(&int3472->pled.lookup);
->>>
->>> With list_del_init() I believe the above check can be droped.
->>
->> No it cannot, list_del_init() inside led_remove_lookup() would
->> protect against double led_remove_lookup() calls.
->>
->> But here we may have a completely uninitialized list_head on
->> devices without an INT3472 privacy-led, which will trigger
->> either __list_del_entry_valid() errors or lead to NULL
->> pointer derefs.
-> 
-> But we can initialize that as well...
-
-The standard pattern in the kernel is that INIT_LIST_HEAD()
-is only used for list_head-s which are actually used as the head
-of the list. list_head-s used to track members of the list are
-usually not initialized until they are added to the list.
-
-Doing multiple list-init-s in multiple cases, including
-one in *subsystem core code* just to drop an if here seems
-counter productive.
-
-Also checking that we can move forward with the unregister
-is a good idea regardless of all the called functions being
-able to run safely if the register never happened, because
-future changes to the unregister function might end up
-doing something which is unsafe when the LED was never
-registered in the first place.
-
-Regards,
-
-Hans
-
-
-
-
-> 
->>>> +	led_classdev_unregister(&int3472->pled.classdev);
->>>> +	gpiod_put(int3472->pled.gpio);
->>>> +}
-> 
+diff --git a/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml b/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml
+new file mode 100644
+index 000000000000..5ade5dfad048
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rtc/microcrystal,rv3028.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Microchip RV-3028 RTC
++
++allOf:
++  - $ref: rtc.yaml#
++
++maintainers:
++  - Alexandre Belloni <alexandre.belloni@bootlin.com>
++
++properties:
++  compatible:
++    const: microcrystal,rv3028
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  trickle-resistor-ohms:
++    enum:
++      - 3000
++      - 5000
++      - 9000
++      - 15000
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        rtc@51 {
++            compatible = "microcrystal,rv3028";
++            reg = <0x51>;
++            pinctrl-0 = <&rtc_nint_pins>;
++            interrupts-extended = <&gpio1 16 IRQ_TYPE_LEVEL_HIGH>;
++            trickle-resistor-ohms = <3000>;
++        };
++    };
++
++...
+diff --git a/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml b/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
+index d9fc120c61cc..84cce1f0ca0c 100644
+--- a/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
++++ b/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
+@@ -48,8 +48,6 @@ properties:
+       # Intersil ISL12022 Real-time Clock
+       - isil,isl12022
+       # Real Time Clock Module with I2C-Bus
+-      - microcrystal,rv3028
+-      # Real Time Clock Module with I2C-Bus
+       - microcrystal,rv3029
+       # Real Time Clock
+       - microcrystal,rv8523
+-- 
+2.34.1
 
