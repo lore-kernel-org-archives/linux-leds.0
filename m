@@ -2,36 +2,36 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8C5C678D6
-	for <linux-leds@archiver.kernel.org>; Fri, 20 Jan 2023 05:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0C1C678DF
+	for <linux-leds@archiver.kernel.org>; Fri, 20 Jan 2023 05:29:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231397AbjATF0O (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 20 Jan 2023 00:26:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56198 "EHLO
+        id S229458AbjATF3X (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 20 Jan 2023 00:29:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230512AbjATF0C (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 20 Jan 2023 00:26:02 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AC224CE77;
-        Thu, 19 Jan 2023 21:18:23 -0800 (PST)
+        with ESMTP id S229769AbjATF2r (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 20 Jan 2023 00:28:47 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B5084B898;
+        Thu, 19 Jan 2023 21:23:46 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2AEF9B825E3;
-        Thu, 19 Jan 2023 16:22:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44106C433EF;
-        Thu, 19 Jan 2023 16:21:56 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 10604B82201;
+        Thu, 19 Jan 2023 16:24:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F5BDC433F1;
+        Thu, 19 Jan 2023 16:24:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674145320;
-        bh=lYW4XXPu/4M0mVDoNevIYpipR/KmVNL/JlKftb1SEaY=;
+        s=k20201202; t=1674145450;
+        bh=NFTHn/7vSxjzDGwGqFQCBJWVrTJ8XQAglJR613dQjEY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HSLIvmR/6lbKxtNEGDKqFJHpYJrHXPVXBb5eKJEaxAKzlWVtnlNO5VR0D/m4BNqh4
-         VQNjcq/k8Wwitf12CSgVQwAU6sxWHvQJaFtDM+W1lZk3QCZarlHP6ZoTuNtHIRusGg
-         9nvqPV7lBz0XgTHOIm/Oe8tSJG9/r9uagCEmixAJRa6G111CMCYn0+vNUC3PsD7OUu
-         OmHlL7rq24an7huWcZcyMrk5M//6ecRx3bJTgXeRRJeuRgSaXS05NNXHIQhnaVdpeU
-         WEXs1WWcgjuha62levsHsaBs9VszzQiiP3PrcbSEKJwGz7XqIKWy+7lXGSeYuwfZ4a
-         JxUGk1vGQazzA==
-Date:   Thu, 19 Jan 2023 16:21:52 +0000
+        b=MKzgIOCTg3d6qedJUWFgL4KWQ03dALduzZCSqvSiW85t/TK3CiCbIOAaLjO+sWW/t
+         WRGcqG7JcfjP15EOy6TCWFWEOZxwZ/qBdJbIQS8SfjkkipjKRLrRCkZqNsMLrJdcY6
+         uWoKnkmgK0qkYw5WCYKUkxfpELNhv4B8p8AIGAK5VtqCOSsnmHgBQyhIVvKBmOozWA
+         Di2Im6ZMZlNWbOHF2a5LZMvs10ny24cBZ4MAZSl1u5aDDRVhj2fS51Nv0RWDPj1XrR
+         VajHmdobA7iGplscGnOyNFpC4exF3GWKjFa0GdxMnlDJDJXU98X0Xy8Z3dnit2Bnli
+         TaFo5S8QsMstA==
+Date:   Thu, 19 Jan 2023 16:24:02 +0000
 From:   Lee Jones <lee@kernel.org>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     Gene Chen <gene_chen@richtek.com>, linux-leds@vger.kernel.org,
@@ -47,19 +47,17 @@ Cc:     Gene Chen <gene_chen@richtek.com>, linux-leds@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v4 06/11] leds: mt6323: Get rid of custom
+        Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH v4 10/11] leds: syscon: Get rid of custom
  led_init_default_state_get()
-Message-ID: <Y8luIOy4bbBu5OGr@google.com>
+Message-ID: <Y8luolbdQoOZtPrn@google.com>
 References: <20230103131256.33894-1-andriy.shevchenko@linux.intel.com>
- <20230103131256.33894-7-andriy.shevchenko@linux.intel.com>
+ <20230103131256.33894-11-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230103131256.33894-7-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20230103131256.33894-11-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
@@ -70,10 +68,9 @@ On Tue, 03 Jan 2023, Andy Shevchenko wrote:
 > Use it instead of custom implementation.
 > 
 > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
->  drivers/leds/leds-mt6323.c | 30 +++++++++++++++---------------
->  1 file changed, 15 insertions(+), 15 deletions(-)
+>  drivers/leds/leds-syscon.c | 49 ++++++++++++++++++--------------------
+>  1 file changed, 23 insertions(+), 26 deletions(-)
 
 Applied, thanks
 
