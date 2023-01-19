@@ -2,36 +2,36 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6227CC00A5A
-	for <linux-leds@archiver.kernel.org>; Thu, 19 Jan 2023 16:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6824AC46467
+	for <linux-leds@archiver.kernel.org>; Thu, 19 Jan 2023 16:20:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229954AbjASQUW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 19 Jan 2023 11:20:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44514 "EHLO
+        id S230092AbjASQUb (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 19 Jan 2023 11:20:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230356AbjASQTx (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 19 Jan 2023 11:19:53 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 545965C0EF;
-        Thu, 19 Jan 2023 08:19:32 -0800 (PST)
+        with ESMTP id S229899AbjASQUP (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 19 Jan 2023 11:20:15 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBDAE8A0CB;
+        Thu, 19 Jan 2023 08:20:13 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 2B976CE24C8;
-        Thu, 19 Jan 2023 16:19:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B973C433EF;
-        Thu, 19 Jan 2023 16:19:24 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 43AD8CE24C4;
+        Thu, 19 Jan 2023 16:20:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 919C2C433F0;
+        Thu, 19 Jan 2023 16:20:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674145168;
-        bh=IMLrxZxWaYCzpGqEBY+yM8xhvFB/xzDgIWYBYHHskLw=;
+        s=k20201202; t=1674145210;
+        bh=rtqy/4jzWUKYzufv20wtz3Q4NRBKbXZ0tWFYpyC86SE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SZQiTsvESJOuHyvw3KdDpnIrGIlPCsrH2JdzfdFiId4lUHXr/ernvzN23/jChwVBN
-         yeTBJfguripySoWqml+eB3PFquRSAhHZW5tbDRJk35OPqgR0XwEJB42kErus3sQHfO
-         9QYrYA0r+EnjoC4w4xcle+FHaMROuJTnGjx4xI5umlweOTtntOO9u6P/K0vtdX36+S
-         Z6lque8e7pu3dd6DrnbjMN7ESbFCiwmenOlqBmKIUAAVr2IsTldcB4RMKjpUjHorJ0
-         gw+RIBX5zvr/DoscGBOqtT/CHtdCKXoGFZHlcaKkDUp1E2iJi+MbYpPeVGcThPX4Ym
-         VeZbU4eR9+NNw==
-Date:   Thu, 19 Jan 2023 16:19:20 +0000
+        b=VQoFOGi7OdAifp5AcLc3j3TfX3u3pABncPkLJ7uhzc9S7buteUyqpaM7r+fwN31Fx
+         7FwT9y4UgsktGOa0c5BEwEKOq6IMBVdSIMar4nWZumQ3/5nGK7E2n7dvyZQ1LMyaxG
+         xxYZqiiBXRt05tPS4troo2WsU8Rz1fqzoPGtHP3Z4Pw8zNWHF+QF4jrY+Wu/OWAlVd
+         DYbFfFMDMp9HQfKtPgPwBYhN8VAFT+BHaz3ODidaGTXuePCoCwJn8yK83cUpKLcfUQ
+         TYvBFXPqrxYvgMm2XGPQCRb3YScL6A4Ro4F2RtCmlHfpTvDJW9JhfGe3Ik9WUT+AHu
+         hqWoqd+lqnecA==
+Date:   Thu, 19 Jan 2023 16:20:02 +0000
 From:   Lee Jones <lee@kernel.org>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     Gene Chen <gene_chen@richtek.com>, linux-leds@vger.kernel.org,
@@ -48,16 +48,16 @@ Cc:     Gene Chen <gene_chen@richtek.com>, linux-leds@vger.kernel.org,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH v4 04/11] leds: bcm6328: Get rid of custom
+Subject: Re: [PATCH v4 05/11] leds: bcm6358: Get rid of custom
  led_init_default_state_get()
-Message-ID: <Y8ltiLGDxcZVh4Aq@google.com>
+Message-ID: <Y8ltsrSpD4bMT+qz@google.com>
 References: <20230103131256.33894-1-andriy.shevchenko@linux.intel.com>
- <20230103131256.33894-5-andriy.shevchenko@linux.intel.com>
+ <20230103131256.33894-6-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230103131256.33894-5-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20230103131256.33894-6-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
@@ -70,8 +70,8 @@ On Tue, 03 Jan 2023, Andy Shevchenko wrote:
 > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 > ---
->  drivers/leds/leds-bcm6328.c | 49 ++++++++++++++++++-------------------
->  1 file changed, 24 insertions(+), 25 deletions(-)
+>  drivers/leds/leds-bcm6358.c | 32 ++++++++++++++++----------------
+>  1 file changed, 16 insertions(+), 16 deletions(-)
 
 Applied, thanks
 
