@@ -2,41 +2,41 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10365C25B4E
-	for <linux-leds@archiver.kernel.org>; Fri, 20 Jan 2023 11:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BACFEC27C7C
+	for <linux-leds@archiver.kernel.org>; Fri, 20 Jan 2023 11:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229479AbjATLrs (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 20 Jan 2023 06:47:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55504 "EHLO
+        id S229983AbjATLru (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 20 Jan 2023 06:47:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229950AbjATLrq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 20 Jan 2023 06:47:46 -0500
+        with ESMTP id S229981AbjATLrr (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 20 Jan 2023 06:47:47 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21AF0917D3
-        for <linux-leds@vger.kernel.org>; Fri, 20 Jan 2023 03:46:15 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB377B1EE5
+        for <linux-leds@vger.kernel.org>; Fri, 20 Jan 2023 03:46:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674215174;
+        s=mimecast20190719; t=1674215163;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=t8pkRpYxQG7YN/2WXtUxtIg0UmiLyobevTL6sxTA+9w=;
-        b=PiN7kuFk1VITGdGkryXrfnWNpg5LYBHB3b2ROqwOMgfh2JhC1ztaAPjcS5jZbtsgSuMW0k
-        K8rXduuW+vNcueV4xGGokp/YBBItNLZGL3oEgk16hFcpxou6QyLH5OJoTagzssTZ9WuXTR
-        dgeMvIAs/v49Q8CSAi1eSetFOTiPUUQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=eMy2u3fS8UlwWS+/xo+vJepWt/qH7+/2b1RLoZSn4uU=;
+        b=Uhhqp/U62Bv57Zte/DlQn4OD/tWvUmSjoPdbC2BGL1sXlqTM+XwN/Kz468cJOC7rWT+0/b
+        aBGrvjXWkoMucalHWsi4ffm/gqD1fvepx0BZJXBOC6Q3tbqFHg9dY3wgyOWefc+ggv8icx
+        FDtEetNGiNyPaZstroNOi7lI88ozado=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-619-Nv6iatZiOHOlVe0Meas6Sw-1; Fri, 20 Jan 2023 06:46:09 -0500
-X-MC-Unique: Nv6iatZiOHOlVe0Meas6Sw-1
+ us-mta-211-XN4TBbSaNgyh0dyB5D4tag-1; Fri, 20 Jan 2023 06:45:59 -0500
+X-MC-Unique: XN4TBbSaNgyh0dyB5D4tag-1
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 54C9B85A588;
-        Fri, 20 Jan 2023 11:46:08 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8B51B29AB3FF;
+        Fri, 20 Jan 2023 11:45:58 +0000 (UTC)
 Received: from shalem.redhat.com (unknown [10.39.195.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CF6C1140EBF6;
-        Fri, 20 Jan 2023 11:46:05 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B339140EBF6;
+        Fri, 20 Jan 2023 11:45:55 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
 To:     Mark Gross <markgross@kernel.org>,
         Andy Shevchenko <andy@kernel.org>, Pavel Machek <pavel@ucw.cz>,
@@ -52,9 +52,9 @@ Cc:     Hans de Goede <hdegoede@redhat.com>,
         Mark Pearson <markpearson@lenovo.com>,
         Andy Yeh <andy.yeh@intel.com>, Hao Yao <hao.yao@intel.com>,
         linux-media@vger.kernel.org
-Subject: [PATCH v5 09/11] platform/x86: int3472/discrete: Create a LED class device for the privacy LED
-Date:   Fri, 20 Jan 2023 12:45:22 +0100
-Message-Id: <20230120114524.408368-10-hdegoede@redhat.com>
+Subject: [PATCH v5 06/11] media: v4l2-core: Built async and fwnode code into videodev.ko
+Date:   Fri, 20 Jan 2023 12:45:19 +0100
+Message-Id: <20230120114524.408368-7-hdegoede@redhat.com>
 In-Reply-To: <20230120114524.408368-1-hdegoede@redhat.com>
 References: <20230120114524.408368-1-hdegoede@redhat.com>
 MIME-Version: 1.0
@@ -64,291 +64,243 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On some systems, e.g. the Lenovo ThinkPad X1 Yoga gen 7 and the ThinkPad
-X1 Nano gen 2 there is no clock-enable pin, triggering the:
-"No clk GPIO. The privacy LED won't work" warning and causing the privacy
-LED to not work.
+Currently the videodev.ko code may be builtin while e.g. v4l2-fwnode.ko
+is build as a module.
 
-Fix this by modeling the privacy LED as a LED class device rather then
-integrating it with the registered clock.
+This makes it hard to add code depending on other subsystems spanning
+both videodev.ko and v4l2-fwnode.ko. Specifically this block adding code
+depending on the LED subsystem.
 
-Note this relies on media subsys changes to actually turn the LED on/off
-when the sensor's v4l2_subdev's s_stream() operand gets called.
+This is made even harder because CONFIG_V4L2_FWNODE is selected,
+not depended on so it itself cannot depend on another subsystem without
+editing all the Kconfig symbols selecting it to also list the dependency
+and there are many of such symbols.
 
+Adding a "select LED_CLASS if NEW_LEDS" to CONFIG_V4L2_FWNODE leads
+to Kconfig erroring out with "error: recursive dependency detected!".
+
+To fix this dependency mess, change the V4L2_FWNODE and V4L2_ASYNC
+(which V4L2_FWNODE selects) Kconfig symbols from tristate to bools and
+link their code into videodev.ko instead of making them separate modules.
+
+This will allow using IS_REACHABLE(LED_CLASS) for the new LED integration
+code without needing to worry that it expands to 0 in some places and
+1 in other places because some of the code being builtin vs modular.
+
+On x86_64 this leads to the following size changes for videodev.ko
+
+[hans@shalem linux]$ size drivers/media/v4l2-core/videodev.ko
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+ 218206	  14395	   2448	 235049	  39629 drivers/media/v4l2-core/videodev.ko
+After:
+   text	   data	    bss	    dec	    hex	filename
+ 243213	  17615	   2456	 263284	  40474	drivers/media/v4l2-core/videodev.ko
+
+So (as expected) there is some increase in size here, but it
+really is not that much.
+
+And the uncompressed no-debuginfo .ko file disk-usage actually shrinks
+by 17 KiB (comparing the slightly larger videodev.ko against the
+3 original modules) and loading time will also be better.
+
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
-Changes in v4:
-- Make struct led_classdev the first member of the pled struct
-- Use strchr to replace the : with _ in the acpi_dev_name()
----
- drivers/platform/x86/intel/int3472/Makefile   |  2 +-
- .../x86/intel/int3472/clk_and_regulator.c     |  3 -
- drivers/platform/x86/intel/int3472/common.h   | 15 +++-
- drivers/platform/x86/intel/int3472/discrete.c | 58 ++++-----------
- drivers/platform/x86/intel/int3472/led.c      | 74 +++++++++++++++++++
- 5 files changed, 105 insertions(+), 47 deletions(-)
- create mode 100644 drivers/platform/x86/intel/int3472/led.c
+Changes in v5:
+- Add a new v4l2-dev-priv.h for the async debugfs prototypes and add
+  static inline wrappers there when CONFIG_V4L2_ASYNC is not enabled
 
-diff --git a/drivers/platform/x86/intel/int3472/Makefile b/drivers/platform/x86/intel/int3472/Makefile
-index cfec7784c5c9..9f16cb514397 100644
---- a/drivers/platform/x86/intel/int3472/Makefile
-+++ b/drivers/platform/x86/intel/int3472/Makefile
-@@ -1,4 +1,4 @@
- obj-$(CONFIG_INTEL_SKL_INT3472)		+= intel_skl_int3472_discrete.o \
- 					   intel_skl_int3472_tps68470.o
--intel_skl_int3472_discrete-y		:= discrete.o clk_and_regulator.o common.o
-+intel_skl_int3472_discrete-y		:= discrete.o clk_and_regulator.o led.o common.o
- intel_skl_int3472_tps68470-y		:= tps68470.o tps68470_board_data.o common.o
-diff --git a/drivers/platform/x86/intel/int3472/clk_and_regulator.c b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-index 74dc2cff799e..e3b597d93388 100644
---- a/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-+++ b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-@@ -23,8 +23,6 @@ static int skl_int3472_clk_prepare(struct clk_hw *hw)
- 	struct int3472_gpio_clock *clk = to_int3472_clk(hw);
+Changes in v4:
+- New patch in v4 of this patch-set
+---
+ drivers/media/v4l2-core/Kconfig         |  4 ++--
+ drivers/media/v4l2-core/Makefile        |  4 ++--
+ drivers/media/v4l2-core/v4l2-async.c    | 17 ++++-------------
+ drivers/media/v4l2-core/v4l2-dev-priv.h | 19 +++++++++++++++++++
+ drivers/media/v4l2-core/v4l2-dev.c      |  8 ++++++++
+ drivers/media/v4l2-core/v4l2-fwnode.c   |  6 ------
+ 6 files changed, 35 insertions(+), 23 deletions(-)
+ create mode 100644 drivers/media/v4l2-core/v4l2-dev-priv.h
+
+diff --git a/drivers/media/v4l2-core/Kconfig b/drivers/media/v4l2-core/Kconfig
+index 348559bc2468..73574d946010 100644
+--- a/drivers/media/v4l2-core/Kconfig
++++ b/drivers/media/v4l2-core/Kconfig
+@@ -68,11 +68,11 @@ config V4L2_FLASH_LED_CLASS
+ 	  When in doubt, say N.
  
- 	gpiod_set_value_cansleep(clk->ena_gpio, 1);
--	gpiod_set_value_cansleep(clk->led_gpio, 1);
--
- 	return 0;
- }
+ config V4L2_FWNODE
+-	tristate
++	bool
+ 	select V4L2_ASYNC
  
-@@ -33,7 +31,6 @@ static void skl_int3472_clk_unprepare(struct clk_hw *hw)
- 	struct int3472_gpio_clock *clk = to_int3472_clk(hw);
+ config V4L2_ASYNC
+-	tristate
++	bool
  
- 	gpiod_set_value_cansleep(clk->ena_gpio, 0);
--	gpiod_set_value_cansleep(clk->led_gpio, 0);
- }
+ # Used by drivers that need Videobuf modules
+ config VIDEOBUF_GEN
+diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
+index 41d91bd10cf2..8c5a1ab8d939 100644
+--- a/drivers/media/v4l2-core/Makefile
++++ b/drivers/media/v4l2-core/Makefile
+@@ -15,7 +15,9 @@ videodev-objs	:=	v4l2-dev.o v4l2-ioctl.o v4l2-device.o v4l2-fh.o \
  
- static int skl_int3472_clk_enable(struct clk_hw *hw)
-diff --git a/drivers/platform/x86/intel/int3472/common.h b/drivers/platform/x86/intel/int3472/common.h
-index 53270d19c73a..82dc37e08882 100644
---- a/drivers/platform/x86/intel/int3472/common.h
-+++ b/drivers/platform/x86/intel/int3472/common.h
-@@ -6,6 +6,7 @@
+ # Please keep it alphabetically sorted by Kconfig name
+ # (e. g. LC_ALL=C sort Makefile)
++videodev-$(CONFIG_V4L2_ASYNC) += v4l2-async.o
+ videodev-$(CONFIG_COMPAT) += v4l2-compat-ioctl32.o
++videodev-$(CONFIG_V4L2_FWNODE) += v4l2-fwnode.o
+ videodev-$(CONFIG_MEDIA_CONTROLLER) += v4l2-mc.o
+ videodev-$(CONFIG_SPI) += v4l2-spi.o
+ videodev-$(CONFIG_TRACEPOINTS) += v4l2-trace.o
+@@ -24,9 +26,7 @@ videodev-$(CONFIG_VIDEO_V4L2_I2C) += v4l2-i2c.o
+ # Please keep it alphabetically sorted by Kconfig name
+ # (e. g. LC_ALL=C sort Makefile)
  
- #include <linux/clk-provider.h>
- #include <linux/gpio/machine.h>
-+#include <linux/leds.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- #include <linux/types.h>
-@@ -28,6 +29,8 @@
- #define GPIO_REGULATOR_NAME_LENGTH				21
- #define GPIO_REGULATOR_SUPPLY_NAME_LENGTH			9
+-obj-$(CONFIG_V4L2_ASYNC) += v4l2-async.o
+ obj-$(CONFIG_V4L2_FLASH_LED_CLASS) += v4l2-flash-led-class.o
+-obj-$(CONFIG_V4L2_FWNODE) += v4l2-fwnode.o
+ obj-$(CONFIG_V4L2_H264) += v4l2-h264.o
+ obj-$(CONFIG_V4L2_JPEG_HELPER) += v4l2-jpeg.o
+ obj-$(CONFIG_V4L2_MEM2MEM_DEV) += v4l2-mem2mem.o
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index 2f1b718a9189..024d6b82b50a 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -11,7 +11,6 @@
+ #include <linux/i2c.h>
+ #include <linux/list.h>
+ #include <linux/mm.h>
+-#include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+@@ -24,6 +23,8 @@
+ #include <media/v4l2-fwnode.h>
+ #include <media/v4l2-subdev.h>
  
-+#define INT3472_LED_MAX_NAME_LEN				32
++#include "v4l2-dev-priv.h"
 +
- #define CIO2_SENSOR_SSDB_MCLKSPEED_OFFSET			86
+ static int v4l2_async_nf_call_bound(struct v4l2_async_notifier *n,
+ 				    struct v4l2_subdev *subdev,
+ 				    struct v4l2_async_subdev *asd)
+@@ -900,25 +901,15 @@ DEFINE_SHOW_ATTRIBUTE(pending_subdevs);
  
- #define INT3472_REGULATOR(_name, _supply, _ops)			\
-@@ -96,10 +99,16 @@ struct int3472_discrete_device {
- 		struct clk_hw clk_hw;
- 		struct clk_lookup *cl;
- 		struct gpio_desc *ena_gpio;
--		struct gpio_desc *led_gpio;
- 		u32 frequency;
- 	} clock;
+ static struct dentry *v4l2_async_debugfs_dir;
  
-+	struct int3472_pled {
-+		struct led_classdev classdev;
-+		struct led_lookup_data lookup;
-+		char name[INT3472_LED_MAX_NAME_LEN];
-+		struct gpio_desc *gpio;
-+	} pled;
-+
- 	unsigned int ngpios; /* how many GPIOs have we seen */
- 	unsigned int n_sensor_gpios; /* how many have we mapped to sensor */
- 	struct gpiod_lookup_table gpios;
-@@ -119,4 +128,8 @@ int skl_int3472_register_regulator(struct int3472_discrete_device *int3472,
- 				   struct acpi_resource_gpio *agpio);
- void skl_int3472_unregister_regulator(struct int3472_discrete_device *int3472);
- 
-+int skl_int3472_register_pled(struct int3472_discrete_device *int3472,
-+			      struct acpi_resource_gpio *agpio, u32 polarity);
-+void skl_int3472_unregister_pled(struct int3472_discrete_device *int3472);
-+
- #endif
-diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
-index 708d51f9b41d..38b1372e0745 100644
---- a/drivers/platform/x86/intel/int3472/discrete.c
-+++ b/drivers/platform/x86/intel/int3472/discrete.c
-@@ -155,37 +155,21 @@ static int skl_int3472_map_gpio_to_sensor(struct int3472_discrete_device *int347
- }
- 
- static int skl_int3472_map_gpio_to_clk(struct int3472_discrete_device *int3472,
--				       struct acpi_resource_gpio *agpio, u8 type)
-+				       struct acpi_resource_gpio *agpio)
+-static int __init v4l2_async_init(void)
++void __init v4l2_async_debugfs_init(void)
  {
- 	char *path = agpio->resource_source.string_ptr;
- 	u16 pin = agpio->pin_table[0];
- 	struct gpio_desc *gpio;
- 
--	switch (type) {
--	case INT3472_GPIO_TYPE_CLK_ENABLE:
--		gpio = acpi_get_and_request_gpiod(path, pin, "int3472,clk-enable");
--		if (IS_ERR(gpio))
--			return (PTR_ERR(gpio));
+ 	v4l2_async_debugfs_dir = debugfs_create_dir("v4l2-async", NULL);
+ 	debugfs_create_file("pending_async_subdevices", 0444,
+ 			    v4l2_async_debugfs_dir, NULL,
+ 			    &pending_subdevs_fops);
 -
--		int3472->clock.ena_gpio = gpio;
--		/* Ensure the pin is in output mode and non-active state */
--		gpiod_direction_output(int3472->clock.ena_gpio, 0);
--		break;
--	case INT3472_GPIO_TYPE_PRIVACY_LED:
--		gpio = acpi_get_and_request_gpiod(path, pin, "int3472,privacy-led");
--		if (IS_ERR(gpio))
--			return (PTR_ERR(gpio));
-+	gpio = acpi_get_and_request_gpiod(path, pin, "int3472,clk-enable");
-+	if (IS_ERR(gpio))
-+		return (PTR_ERR(gpio));
- 
--		int3472->clock.led_gpio = gpio;
--		/* Ensure the pin is in output mode and non-active state */
--		gpiod_direction_output(int3472->clock.led_gpio, 0);
--		break;
--	default:
--		dev_err(int3472->dev, "Invalid GPIO type 0x%02x for clock\n", type);
--		break;
--	}
-+	int3472->clock.ena_gpio = gpio;
-+	/* Ensure the pin is in output mode and non-active state */
-+	gpiod_direction_output(int3472->clock.ena_gpio, 0);
- 
 -	return 0;
-+	return skl_int3472_register_clock(int3472);
  }
  
- static void int3472_get_func_and_polarity(u8 type, const char **func, u32 *polarity)
-@@ -293,11 +277,16 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
- 
- 		break;
- 	case INT3472_GPIO_TYPE_CLK_ENABLE:
--	case INT3472_GPIO_TYPE_PRIVACY_LED:
--		ret = skl_int3472_map_gpio_to_clk(int3472, agpio, type);
-+		ret = skl_int3472_map_gpio_to_clk(int3472, agpio);
- 		if (ret)
- 			err_msg = "Failed to map GPIO to clock\n";
- 
-+		break;
-+	case INT3472_GPIO_TYPE_PRIVACY_LED:
-+		ret = skl_int3472_register_pled(int3472, agpio, polarity);
-+		if (ret)
-+			err_msg = "Failed to register LED\n";
-+
- 		break;
- 	case INT3472_GPIO_TYPE_POWER_ENABLE:
- 		ret = skl_int3472_register_regulator(int3472, agpio);
-@@ -341,21 +330,6 @@ static int skl_int3472_parse_crs(struct int3472_discrete_device *int3472)
- 
- 	acpi_dev_free_resource_list(&resource_list);
- 
--	/*
--	 * If we find no clock enable GPIO pin then the privacy LED won't work.
--	 * We've never seen that situation, but it's possible. Warn the user so
--	 * it's clear what's happened.
--	 */
--	if (int3472->clock.ena_gpio) {
--		ret = skl_int3472_register_clock(int3472);
--		if (ret)
--			return ret;
--	} else {
--		if (int3472->clock.led_gpio)
--			dev_warn(int3472->dev,
--				 "No clk GPIO. The privacy LED won't work\n");
--	}
+-static void __exit v4l2_async_exit(void)
++void __exit v4l2_async_debugfs_exit(void)
+ {
+ 	debugfs_remove_recursive(v4l2_async_debugfs_dir);
+ }
 -
- 	int3472->gpios.dev_id = int3472->sensor_name;
- 	gpiod_add_lookup_table(&int3472->gpios);
- 
-@@ -372,8 +346,8 @@ static int skl_int3472_discrete_remove(struct platform_device *pdev)
- 		skl_int3472_unregister_clock(int3472);
- 
- 	gpiod_put(int3472->clock.ena_gpio);
--	gpiod_put(int3472->clock.led_gpio);
- 
-+	skl_int3472_unregister_pled(int3472);
- 	skl_int3472_unregister_regulator(int3472);
- 
- 	return 0;
-diff --git a/drivers/platform/x86/intel/int3472/led.c b/drivers/platform/x86/intel/int3472/led.c
+-subsys_initcall(v4l2_async_init);
+-module_exit(v4l2_async_exit);
+-
+-MODULE_AUTHOR("Guennadi Liakhovetski <g.liakhovetski@gmx.de>");
+-MODULE_AUTHOR("Sakari Ailus <sakari.ailus@linux.intel.com>");
+-MODULE_AUTHOR("Ezequiel Garcia <ezequiel@collabora.com>");
+-MODULE_LICENSE("GPL");
+diff --git a/drivers/media/v4l2-core/v4l2-dev-priv.h b/drivers/media/v4l2-core/v4l2-dev-priv.h
 new file mode 100644
-index 000000000000..251c6524458e
+index 000000000000..b5b1ee78be20
 --- /dev/null
-+++ b/drivers/platform/x86/intel/int3472/led.c
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Author: Hans de Goede <hdegoede@redhat.com> */
++++ b/drivers/media/v4l2-core/v4l2-dev-priv.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Video capture interface for Linux version 2 private header.
++ *
++ * Copyright (C) 2023 Hans de Goede <hdegoede@redhat.com>
++ */
 +
-+#include <linux/acpi.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/leds.h>
-+#include "common.h"
++#ifndef _V4L2_DEV_PRIV_H_
++#define _V4L2_DEV_PRIV_H_
 +
-+static int int3472_pled_set(struct led_classdev *led_cdev,
-+				     enum led_brightness brightness)
-+{
-+	struct int3472_discrete_device *int3472 =
-+		container_of(led_cdev, struct int3472_discrete_device, pled.classdev);
++#if IS_ENABLED(CONFIG_V4L2_ASYNC)
++void v4l2_async_debugfs_init(void);
++void v4l2_async_debugfs_exit(void);
++#else
++static inline void v4l2_async_debugfs_init(void) {}
++static inline void v4l2_async_debugfs_exit(void) {}
++#endif
 +
-+	gpiod_set_value_cansleep(int3472->pled.gpio, brightness);
-+	return 0;
-+}
++#endif
+diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
+index 397d553177fa..10ba2e4196a6 100644
+--- a/drivers/media/v4l2-core/v4l2-dev.c
++++ b/drivers/media/v4l2-core/v4l2-dev.c
+@@ -31,6 +31,8 @@
+ #include <media/v4l2-ioctl.h>
+ #include <media/v4l2-event.h>
+ 
++#include "v4l2-dev-priv.h"
 +
-+int skl_int3472_register_pled(struct int3472_discrete_device *int3472,
-+			      struct acpi_resource_gpio *agpio, u32 polarity)
-+{
-+	char *p, *path = agpio->resource_source.string_ptr;
-+	int ret;
-+
-+	if (int3472->pled.classdev.dev)
-+		return -EBUSY;
-+
-+	int3472->pled.gpio = acpi_get_and_request_gpiod(path, agpio->pin_table[0],
-+							     "int3472,privacy-led");
-+	if (IS_ERR(int3472->pled.gpio))
-+		return dev_err_probe(int3472->dev, PTR_ERR(int3472->pled.gpio),
-+				     "getting privacy LED GPIO\n");
-+
-+	if (polarity == GPIO_ACTIVE_LOW)
-+		gpiod_toggle_active_low(int3472->pled.gpio);
-+
-+	/* Ensure the pin is in output mode and non-active state */
-+	gpiod_direction_output(int3472->pled.gpio, 0);
-+
-+	/* Generate the name, replacing the ':' in the ACPI devname with '_' */
-+	snprintf(int3472->pled.name, sizeof(int3472->pled.name),
-+		 "%s::privacy_led", acpi_dev_name(int3472->sensor));
-+	p = strchr(int3472->pled.name, ':');
-+	*p = '_';
-+
-+	int3472->pled.classdev.name = int3472->pled.name;
-+	int3472->pled.classdev.max_brightness = 1;
-+	int3472->pled.classdev.brightness_set_blocking = int3472_pled_set;
-+
-+	ret = led_classdev_register(int3472->dev, &int3472->pled.classdev);
-+	if (ret)
-+		goto err_free_gpio;
-+
-+	int3472->pled.lookup.provider = int3472->pled.name;
-+	int3472->pled.lookup.dev_id = int3472->sensor_name;
-+	int3472->pled.lookup.con_id = "privacy-led";
-+	led_add_lookup(&int3472->pled.lookup);
-+
-+	return 0;
-+
-+err_free_gpio:
-+	gpiod_put(int3472->pled.gpio);
-+	return ret;
-+}
-+
-+void skl_int3472_unregister_pled(struct int3472_discrete_device *int3472)
-+{
-+	if (IS_ERR_OR_NULL(int3472->pled.classdev.dev))
-+		return;
-+
-+	led_remove_lookup(&int3472->pled.lookup);
-+	led_classdev_unregister(&int3472->pled.classdev);
-+	gpiod_put(int3472->pled.gpio);
-+}
+ #define VIDEO_NUM_DEVICES	256
+ #define VIDEO_NAME              "video4linux"
+ 
+@@ -1190,6 +1192,7 @@ static int __init videodev_init(void)
+ 		return -EIO;
+ 	}
+ 
++	v4l2_async_debugfs_init();
+ 	return 0;
+ }
+ 
+@@ -1197,6 +1200,7 @@ static void __exit videodev_exit(void)
+ {
+ 	dev_t dev = MKDEV(VIDEO_MAJOR, 0);
+ 
++	v4l2_async_debugfs_exit();
+ 	class_unregister(&video_class);
+ 	unregister_chrdev_region(dev, VIDEO_NUM_DEVICES);
+ }
+@@ -1205,6 +1209,10 @@ subsys_initcall(videodev_init);
+ module_exit(videodev_exit)
+ 
+ MODULE_AUTHOR("Alan Cox, Mauro Carvalho Chehab <mchehab@kernel.org>, Bill Dirks, Justin Schoeman, Gerd Knorr");
++MODULE_AUTHOR("Guennadi Liakhovetski <g.liakhovetski@gmx.de>");
++MODULE_AUTHOR("Sakari Ailus <sakari.ailus@linux.intel.com>");
++MODULE_AUTHOR("Ezequiel Garcia <ezequiel@collabora.com>");
++MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
+ MODULE_DESCRIPTION("Video4Linux2 core driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS_CHARDEV_MAJOR(VIDEO_MAJOR);
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index 3d9533c1b202..c8a2264262bc 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -17,7 +17,6 @@
+ #include <linux/acpi.h>
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
+-#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/property.h>
+ #include <linux/slab.h>
+@@ -1328,8 +1327,3 @@ int v4l2_async_register_subdev_sensor(struct v4l2_subdev *sd)
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(v4l2_async_register_subdev_sensor);
+-
+-MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("Sakari Ailus <sakari.ailus@linux.intel.com>");
+-MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
+-MODULE_AUTHOR("Guennadi Liakhovetski <g.liakhovetski@gmx.de>");
 -- 
 2.39.0
 
