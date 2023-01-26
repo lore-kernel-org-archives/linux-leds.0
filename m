@@ -2,80 +2,158 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD34C54EAA
-	for <linux-leds@archiver.kernel.org>; Thu, 26 Jan 2023 20:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 494D1C05027
+	for <linux-leds@archiver.kernel.org>; Thu, 26 Jan 2023 20:47:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230433AbjAZUHm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 26 Jan 2023 15:07:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59484 "EHLO
+        id S231809AbjAZUrM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 26 Jan 2023 15:47:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232716AbjAZUHm (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 26 Jan 2023 15:07:42 -0500
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19EEA3E095
-        for <linux-leds@vger.kernel.org>; Thu, 26 Jan 2023 12:07:40 -0800 (PST)
-Received: by mail-yb1-xb29.google.com with SMTP id a9so3446907ybb.3
-        for <linux-leds@vger.kernel.org>; Thu, 26 Jan 2023 12:07:40 -0800 (PST)
+        with ESMTP id S230371AbjAZUrK (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 26 Jan 2023 15:47:10 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F9E24C95;
+        Thu, 26 Jan 2023 12:46:34 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id j15so2377945ljg.8;
+        Thu, 26 Jan 2023 12:46:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FLvduNoOt8LztTYVpuNMVnPelMmnqyRxqRLyg6HGxcg=;
-        b=H+6SnUs6VnnGPZqMii9E04B2jZbdPO8JEzKwKb/AJ8KxiwwnK2MNII3exjLOSl5gid
-         77VoL20WxdjPiAd6mM/Frt++DnvRBGeYkCnMZxJPaMaSvtgB/RUnrDdxLVgKkeveSvqV
-         LrzyjFLEy9Ju1waaH1L59m7AUNdOGsFP/ugRIHnpl2AenIYyj6LEgFSvN6LFq6cNKlEq
-         E2X18z1uBxOTst1xMvqGuCwKxTd4bVYXZAD93G/mIzNmkdajWluOkGUV1vYYnY3i2Fdw
-         fllbaK801dFQ1i7INkpwSx52GZBr7tIxG6tWtQsCZln8/tPnjiETmnRpLougqogGIAL/
-         B/Cg==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e8JRQs423qpWUog+nHFrhwfEo9FGIHhJlHpgtXHnAI8=;
+        b=CsuY8hOc0S6TR3cGDg1ExGVIPOKn+OqJ1OwxwuO0c8Gdz2WpuxTlcEP+ZPFz3Khu5F
+         475ELIhic+XXrq8MLA7tnMYq0CUF/u/GlT7ksJOKJ+9SF8OzL7cikSLpwu+vlDbPo/+v
+         o4EuGtkgRM1pipK8GTVOHiRBBm8I26P6qj66tdVgOb5Py5a7Xnz+q/qIjkt11N2zpMRk
+         xN/7D0VapK/jGTPA1fxq0lNuyZoliqV296SJh01eyNJvVjfwE6kjR69QdrmEEWNtAHP6
+         FV6cMMcQe0mHT0U22M/B9oceNBLNeLuwNd9o64spofEtq2H02/uA+JpZQT+o0gpoNMbs
+         6CCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FLvduNoOt8LztTYVpuNMVnPelMmnqyRxqRLyg6HGxcg=;
-        b=rO7ul722zG8Vadc2noqBwJWTaVt5C9I8IzDdwCZuNnXZimI0LmgjZUSoKnfZ7ghHP2
-         zQ66OVpMKvtCUy29vHmtUHXjaB+X8gXdxpeE+oKoQ2CwS5MzwI/WWvsyNYd37j0yN9EU
-         XxGcjuTqrtAlr3GFjIt1KHe63lPDtciOwtIH+35+TinML8TVBic/eNTrXhsLy3P8eqSR
-         vvDZTFaxI3fBTo1KNtZmmHfXUVOoFhnh9W6w/yIoN29E6avqh47Jm15/kmDbVdaom1lV
-         t+Uv+Ci4GEtAxiNsMrEndHvtdmtviyFOCn1cFVysNLHXmNOwr/lKWrm9pAkDHQMYvYM9
-         9NwA==
-X-Gm-Message-State: AO0yUKUrJyVHT7jR1Xl61aWOgvsOL2WyZ+NKH1TRJOuYskCJukF6IR1H
-        1LrkReYq5Pb9xb/eO/rP/ALi2DV33Z5NNmsd869tMw==
-X-Google-Smtp-Source: AK7set+RXU546bCG2ieA1RNematBemc4AFyAycDDxbMQYNdnjp7iUSmTGAk1mBuk641lDSfvZ/bqCOrkZeydPqsG8fw=
-X-Received: by 2002:a25:f81b:0:b0:80b:821f:b621 with SMTP id
- u27-20020a25f81b000000b0080b821fb621mr881734ybd.24.1674763659341; Thu, 26 Jan
- 2023 12:07:39 -0800 (PST)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e8JRQs423qpWUog+nHFrhwfEo9FGIHhJlHpgtXHnAI8=;
+        b=UIHs2FlG/AwJbe8bCVB1CKtACCL0AIA1YzjhTC6I8qb+WKPeoAWcBpiqFcNynVmjiM
+         7bD/LeObK29mjgpy3KX3jv7zK5c82l8VNUYY8bbvD6wNUo6vV0dKLaL3z9Y1XXWDmNQB
+         rJG/598q9JIc7++zX9ziuTAXGnBLBWdbRFyeTLEGYt1A+MYxTIL5VWVowpNr5i0Mepuu
+         aKxua3UQ8mIoTj+wxHwHCUnZ9uzWvokFBXATTKEGXMSts4Bf+1dg9U3sjj6ajExayMsG
+         caOnpxzkXhZ7gUkzDgbNj6EZHvUm4SPLrWvZ5uiQ09OFZ1IsY6KJ5Ir9q96tQ7FiN57D
+         ExkQ==
+X-Gm-Message-State: AFqh2kriAy5jud22BVB3t/ASu4f1BhZeABoXI6pQJYgZdWCjiQEZF2Dr
+        5P88w6q4VkqhQMV1D14twaNX+FxhK2l5BfZ6KmKfWCpVOrk=
+X-Google-Smtp-Source: AMrXdXu5PjFxdJB5hjmPujykCvCLIaf5NB7r9JeAmJ8eyeje/IITqH8iAEreW99bV6+d700rH1R32SF16e+bCJKaYpY=
+X-Received: by 2002:a2e:8e84:0:b0:289:ae03:644b with SMTP id
+ z4-20020a2e8e84000000b00289ae03644bmr2348689ljk.66.1674765981705; Thu, 26 Jan
+ 2023 12:46:21 -0800 (PST)
 MIME-Version: 1.0
-References: <20221226123630.6515-1-pali@kernel.org> <db008af4-2918-4458-aa68-2392674475c8@app.fastmail.com>
- <Y8rMJcX0cqThKj2N@google.com>
-In-Reply-To: <Y8rMJcX0cqThKj2N@google.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 26 Jan 2023 21:07:27 +0100
-Message-ID: <CACRpkdZrL3Wpk6_Pka_Ye-9C0Ewx5ULZ8pt396kO-e95kqku_A@mail.gmail.com>
-Subject: Re: [PATCH RESEND 0/8] Resend LED patches
+References: <0d0de1bc949d24e08174205c13c0b59bd73c1ea8.1674384302.git.geert+renesas@glider.be>
+ <167460363944.4058.4676712965831302643.git-patchwork-notify@kernel.org>
+ <Y9FG5Wg0PmP4zfV6@google.com> <CABBYNZJEU-GD5J6K8_Ur4PWLvP10VNJGP7e_43H0=W3DOS=PNw@mail.gmail.com>
+ <Y9IzMWnOq+r2/4V2@google.com>
+In-Reply-To: <Y9IzMWnOq+r2/4V2@google.com>
+From:   Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date:   Thu, 26 Jan 2023 12:46:09 -0800
+Message-ID: <CABBYNZ+Na7os7D_C_iV22UhyhobxiETjKkngPWVr14QAph6DfQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: leds: Document Bluetooth and WLAN triggers
 To:     Lee Jones <lee@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, soc@kernel.org,
-        linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        linux-leds@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org
+Cc:     patchwork-bot+bluetooth@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>, pavel@ucw.cz,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        robh@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Fri, Jan 20, 2023 at 6:15 PM Lee Jones <lee@kernel.org> wrote:
+Hi Lee,
 
-> If everyone is convinced that applying these drivers is the correct
-> thing to do, I'd be happy to (rather) take them via LEDs.
+On Thu, Jan 26, 2023 at 12:00 AM Lee Jones <lee@kernel.org> wrote:
+>
+> On Wed, 25 Jan 2023, Luiz Augusto von Dentz wrote:
+>
+> > Hi Lee,
+> >
+> > On Wed, Jan 25, 2023 at 7:16 AM Lee Jones <lee@kernel.org> wrote:
+> > >
+> > > On Tue, 24 Jan 2023, patchwork-bot+bluetooth@kernel.org wrote:
+> > >
+> > > > Hello:
+> > > >
+> > > > This patch was applied to bluetooth/bluetooth-next.git (master)
+> > > > by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+> > > >
+> > > > On Sun, 22 Jan 2023 11:47:27 +0100 you wrote:
+> > > > > Add the missing trigger patterns for Bluetooth and WLAN activity,=
+ which
+> > > > > are already in active use.
+> > > > >
+> > > > > While at it, move the mmc pattern comment where it belongs, and r=
+estore
+> > > > > alphabetical sort order.
+> > > > >
+> > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > > >
+> > > > > [...]
+> > > >
+> > > > Here is the summary with links:
+> > > >   - [v2] dt-bindings: leds: Document Bluetooth and WLAN triggers
+> > > >     https://git.kernel.org/bluetooth/bluetooth-next/c/ef017002b93b
+> > >
+> > > Why are you taking LED patches through the Bluetooth tree?
+> >
+> > I assume there isn't a tree dedicated to dt-bindings/leds
+>
+> % ./scripts/get_maintainer.pl -f Documentation/devicetree/bindings/leds/c=
+ommon.yaml
+>  Pavel Machek <pavel@ucw.cz> (maintainer:LED SUBSYSTEM,in file)
+>  Lee Jones <lee@kernel.org> (maintainer:LED SUBSYSTEM)
+>  Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED=
+ DEVICE TREE BINDINGS)
+>  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org> (maintainer:OPEN=
+ FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+>  Jacek Anaszewski <jacek.anaszewski@gmail.com> (in file)
+>  linux-leds@vger.kernel.org (open list:LED SUBSYSTEM)
+>  devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE=
+ TREE BINDINGS)
+>  linux-kernel@vger.kernel.org (open list)
 
-Oh you are co-maintainer of the LED subsystem since a month!
+Well this doesn't tell us what parts of the dt_bindings have a
+dedicated tree and which doesn't, anyway this doesn't show
+linux-bluetooth so I wonder why people are CCing it.
 
-Sadly this series stalled way before that, so that's why we didn't notice.
+> > not to mention this was submitted to linux-bluetooth and nobody else
+> > other than Rob reviewed it,
+>
+> To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+>     Rob Herring <robh+dt@kernel.org>,
+>     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+>     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+>     linux-wireless@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+>     linux-renesas-soc@vger.kernel.org,
+>     Geert Uytterhoeven <geert+renesas@glider.be>,
+>     Rob Herring <robh@kernel.org>
+>
+> > anyway I'd be happy if the dt-bindings patches
+> > would be handled elsewhere.
+>
+> Yep, we got this. :)
 
-By all means, pick it up!
+So if it starts with dt-binding: prefix shall we ignore? Or is just
+for dt-bindings: leds? Or perhaps we can just ignore patches received
+as CC: rather than directly To: field.
 
-Yours,
-Linus Walleij
+>
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+
+
+
+--=20
+Luiz Augusto von Dentz
