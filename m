@@ -2,56 +2,113 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A6A3C636D3
-	for <linux-leds@archiver.kernel.org>; Tue, 31 Jan 2023 08:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 966DEC636D3
+	for <linux-leds@archiver.kernel.org>; Tue, 31 Jan 2023 13:09:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229468AbjAaIcg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 31 Jan 2023 03:32:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45316 "EHLO
+        id S231947AbjAaNJH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 31 Jan 2023 08:09:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbjAaIcf (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 31 Jan 2023 03:32:35 -0500
-Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 343EF45F71
-        for <linux-leds@vger.kernel.org>; Tue, 31 Jan 2023 00:32:35 -0800 (PST)
-Received: by mail.lokoho.com (Postfix, from userid 1001)
-        id F3825837FE; Tue, 31 Jan 2023 08:31:57 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
-        t=1675153953; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
-        h=Date:From:To:Subject:From;
-        b=RkRADcOyz15U12+Y6E01tdsUNLGqMuLrkiDE8q7Y4nuzsC5Sfm+5X4/kNZO1uqQHQ
-         +egnDfR9yugeCtb3zbcAPFCaQ0x02kXxYSUteBvAaT2GhitZNtbpxDtF25EEEnQNie
-         joUpNYfBvL27PESqyHjJXpZRo0C+UurHH73wLT8Sbs0URTLx/VCoqPzd/nmhYx7pbq
-         MK0DZHLmeFGpU/1cypp2ksnb+xH9F3WySGSbS/hov4lyWMs7R/4nD4lbUx+SihLZ7G
-         im1pI33NBWQtp1pB9EtC4SlwrjOVMNwu1adTdXJmgPFHAn9Ud26VuQcSqk8f4ByaNy
-         PcGxr50OmIYKw==
-Received: by mail.lokoho.com for <linux-leds@vger.kernel.org>; Tue, 31 Jan 2023 08:30:34 GMT
-Message-ID: <20230131074501-0.1.3q.w0xd.0.j5y7r6awbv@lokoho.com>
-Date:   Tue, 31 Jan 2023 08:30:34 GMT
-From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
-To:     <linux-leds@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.lokoho.com
+        with ESMTP id S232022AbjAaNJG (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 31 Jan 2023 08:09:06 -0500
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FFDE22A09
+        for <linux-leds@vger.kernel.org>; Tue, 31 Jan 2023 05:09:03 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id p26so30208356ejx.13
+        for <linux-leds@vger.kernel.org>; Tue, 31 Jan 2023 05:09:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=diag.uniroma1.it; s=google;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uOYadJvP8u49K2x2oSYl+EYqiXssZ4idBGq/e4Tz9NY=;
+        b=KDEKy6z9clzZ/yt+Ugm+vcRRWzEj90+XlSFk9eYXi6IC5nH1Ekl2y3Hm9QX1/VOyg6
+         KoU6Bt2QbVi12p9NEJGHVLQti9laMQw3q0XhRpn8RudSITu6ZnOGgKHs7nTwUuFy4XOk
+         N1Lq/Rl18bZd0+9UEdChBzxmYVa5FEhjARYR8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uOYadJvP8u49K2x2oSYl+EYqiXssZ4idBGq/e4Tz9NY=;
+        b=RVRP2hOJVA+H+ZRprD/lc7uc3yhw2wHyKIPybttAzH6Jj6m/uEKBzgXhSXS6mmeOwu
+         nUudhC2NgN/b6psEnpRGdDzbe3CcqruPQv3S5TCQRone3SN/dLcxaB8WWZOlOOAJwbyb
+         nypeIbtHWW2FMKlsMmLekttmNoGzve1cqNRFJ5RKIbkUIccJZNRAgtV3A3Bxex9oXT0V
+         hNR7ZRPHtcxF+oOcNwVjLUEjUKEB+p4iTfuGm6rKhKuieG8Ld0tk28Xh1kJmWpRLVScI
+         T/+08NdJnHV4JSzaM0uRJxKWrELRtwQ0Ppz3bd8GXR6LjYFN9qk/xX2q/6vpc3goXaOW
+         g2Rw==
+X-Gm-Message-State: AO0yUKXNpQXAp0RRGaTIbzNrWIgFKxYhHk7wsOioB0Qze0A82UNocOHh
+        hOWdWVDD8n312ujLjov2EQeF4A==
+X-Google-Smtp-Source: AK7set+TLo90zN/rggXs78IMqKvdRPq3UMM97//YKxvo/gz4hPVpUrCvA/s+uzGixpW4LfOqI22Pzg==
+X-Received: by 2002:a17:907:da1:b0:888:7ce4:1dc1 with SMTP id go33-20020a1709070da100b008887ce41dc1mr10015780ejc.26.1675170541590;
+        Tue, 31 Jan 2023 05:09:01 -0800 (PST)
+Received: from [192.168.17.2] (wolkje-127.labs.vu.nl. [130.37.198.127])
+        by smtp.gmail.com with ESMTPSA id f19-20020a170906391300b0088452ca0666sm4898956eje.196.2023.01.31.05.09.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Jan 2023 05:09:01 -0800 (PST)
+From:   Pietro Borrello <borrello@diag.uniroma1.it>
+Date:   Tue, 31 Jan 2023 13:08:45 +0000
+Subject: [PATCH v2 1/5] HID: bigben_remove: manually unregister leds
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230125-hid-unregister-leds-v2-1-689cc62fc878@diag.uniroma1.it>
+References: <20230125-hid-unregister-leds-v2-0-689cc62fc878@diag.uniroma1.it>
+In-Reply-To: <20230125-hid-unregister-leds-v2-0-689cc62fc878@diag.uniroma1.it>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Hanno Zulla <kontakt@hanno.de>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee@kernel.org>,
+        Roderick Colenbrander <roderick.colenbrander@sony.com>,
+        Sven Eckelmann <sven@narfation.org>
+Cc:     linux-leds@vger.kernel.org,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        "Bos, H.J." <h.j.bos@vu.nl>, Jakob Koschel <jkl820.git@gmail.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiri Kosina <jkosina@suse.cz>,
+        Roderick Colenbrander <roderick@gaikai.com>,
+        Pietro Borrello <borrello@diag.uniroma1.it>
+X-Mailer: b4 0.11.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1675170540; l=1037;
+ i=borrello@diag.uniroma1.it; s=20221223; h=from:subject:message-id;
+ bh=wlU1zbXd7qFTSbVqYvqS9BOVrqglVS3eHD1ePCtISHc=;
+ b=1S4dFJ6YtEJ88InQZSjBIJqgxbqXt+T9JIgkqoLWq0NtwsubGN/Fl9VW6G07oKHBAzx9ClO/JaNt
+ v2JlPGwtCuiFqrHoLk9QBHzG1Seo6N4LHcIZ7c4vooOoJ+dx5t6/
+X-Developer-Key: i=borrello@diag.uniroma1.it; a=ed25519;
+ pk=4xRQbiJKehl7dFvrG33o2HpveMrwQiUPKtIlObzKmdY=
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Unregister the LED controllers before device removal, as
+bigben_set_led() may schedule bigben->worker after the structure has
+been freed, causing a use-after-free.
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+Fixes: 4eb1b01de5b9 ("HID: hid-bigbenff: fix race condition for scheduled work during removal")
+Signed-off-by: Pietro Borrello <borrello@diag.uniroma1.it>
+---
+ drivers/hid/hid-bigbenff.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+diff --git a/drivers/hid/hid-bigbenff.c b/drivers/hid/hid-bigbenff.c
+index e8b16665860d..d3201b755595 100644
+--- a/drivers/hid/hid-bigbenff.c
++++ b/drivers/hid/hid-bigbenff.c
+@@ -306,9 +306,14 @@ static enum led_brightness bigben_get_led(struct led_classdev *led)
+ 
+ static void bigben_remove(struct hid_device *hid)
+ {
++	int n;
+ 	struct bigben_device *bigben = hid_get_drvdata(hid);
+ 
+ 	bigben->removed = true;
++	for (n = 0; n < NUM_LEDS; n++) {
++		if (bigben->leds[n])
++			devm_led_classdev_unregister(&hid->dev, bigben->leds[n]);
++	}
+ 	cancel_work_sync(&bigben->worker);
+ 	hid_hw_stop(hid);
+ }
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
-
-
-Pozdrawiam
-Adam Charachuta
+-- 
+2.25.1
