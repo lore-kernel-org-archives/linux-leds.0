@@ -2,165 +2,141 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC86C636CC
-	for <linux-leds@archiver.kernel.org>; Mon, 13 Feb 2023 07:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7B2C636D7
+	for <linux-leds@archiver.kernel.org>; Mon, 13 Feb 2023 10:20:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229588AbjBMHXW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 13 Feb 2023 02:23:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34630 "EHLO
+        id S231190AbjBMKUz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 13 Feb 2023 05:20:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbjBMHXV (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 13 Feb 2023 02:23:21 -0500
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0B8BB752
-        for <linux-leds@vger.kernel.org>; Sun, 12 Feb 2023 23:23:20 -0800 (PST)
-Received: by mail-pj1-x1031.google.com with SMTP id w14-20020a17090a5e0e00b00233d3b9650eso3545008pjf.4
-        for <linux-leds@vger.kernel.org>; Sun, 12 Feb 2023 23:23:20 -0800 (PST)
+        with ESMTP id S231163AbjBMKUy (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 13 Feb 2023 05:20:54 -0500
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3F40F742
+        for <linux-leds@vger.kernel.org>; Mon, 13 Feb 2023 02:20:36 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id c26so25771970ejz.10
+        for <linux-leds@vger.kernel.org>; Mon, 13 Feb 2023 02:20:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=28rplcL4D/qDPmWP5rk6Z+mEUTNmDCqkcOMS7T2tEO8=;
-        b=yggaRBvwQEynN+qw8PEhbFMx25K9uho58IDv63QptVNsQxcLpTwzn9vf14Y/oF8VW9
-         9oLGvt6aH3k+OH2rWpQLqqc2z5W7Ste/PUTj7m9XFQ0CinC1ZQzJIAQH7jOfBWeMHc+X
-         /egFqJLireBHpqH2ENmfZp+Ivu2mglivq7pDHJ42pcnOInRdFUeAYMIBQmXz43yFktjC
-         yytLVAXL1pHd0iSga8zq51EXUSsQ+XrLrAU1j4Jzxh6WIf98J+bzJSqdfR6Biv5H0odu
-         TkJLNvf0scuaNRkIhDpvn4sUD3HtAhpk0KEAupj+LmcbUf11MGwyGljbvZaGIw7KZFEC
-         fDtw==
+        d=mind.be; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hcdi8yudCq01YRZ7n/hBjJ5nuYzLbluvZbFoBNJpLKc=;
+        b=IMHpDCxhKL9WyyEsWWaDeFfXqqj+Jq/HX73Urr5gos5F+ufXCev3/IU6mtUmj401yE
+         AZ2MdkBSz+2IroMqQ/kRteMJz+NxEywGH3pgSXdWocfiZbeq5SJCxY1lhZLBGEMT6HfJ
+         gco0fl7eVDwOzyzXK/B8dcZWcMEgboPsltKHASG0Pc8XyZFwb+r4A6zzDVte+42Op/Vj
+         k9Cm16iAbWkjpqnmcCQTG88tkRjLTln63ecq2U3o7L1QWpb/9TK9dA0trbHmbIXJaLzY
+         0zCGVLhHqVLMOV9S8IzZtxU6FbxV6K16dlZh7QOmUD2whUAsiXjCNq5iblqYPGJC1PJk
+         SobA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=28rplcL4D/qDPmWP5rk6Z+mEUTNmDCqkcOMS7T2tEO8=;
-        b=sGYRt4HDqq8rBCpQI8hKr3qRSyjPGkncKJivBRCFBsDVwiWCMU7igRNpiye/HgltyZ
-         VPJa8to9sH03+jVt6FI0juyaozXL2fmq8DzOU/CmQMNn//8/KiWP7G3s5h32U3nIL0rC
-         toxiFxCiISBhtUbHYfvjdVqTsVnTa3BVs954f6VKUTJQB0XolWCkkGfmnb+BcEepnLFi
-         rKtmpAJCHFfheUUqvkJJwTAzSUBsNXdOqP7cbwXOequld9Q9W0cPdnnYJDblmkvyq79x
-         JgZEkfAS39C0Fr9bFz27HdnI5VPjnViI4zDO1WoWbg2vyKqaVjzy6emV2hyiaA/gRXfs
-         rtMA==
-X-Gm-Message-State: AO0yUKULmxjC2EXV+IOSGGggVeO5h/kk6Vb1rS5BAqYu1jrDI0lz2R48
-        Dv5+PAyDg8cHpSUCJJ8FBPgwXoweW6NB5hU=
-X-Google-Smtp-Source: AK7set9MfNTrMMkgBAI61iSDCPJH69eVWMRxjJs/L6IPDCjCYbfxzdtAOVWwWqDZe3fAi56VXOcLaA==
-X-Received: by 2002:a05:6a20:3c92:b0:c0:be63:75e5 with SMTP id b18-20020a056a203c9200b000c0be6375e5mr27450255pzj.33.1676273000175;
-        Sun, 12 Feb 2023 23:23:20 -0800 (PST)
-Received: from thinkpad ([117.217.182.252])
-        by smtp.gmail.com with ESMTPSA id y21-20020a634b15000000b004eca54eab50sm5763991pga.28.2023.02.12.23.23.15
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hcdi8yudCq01YRZ7n/hBjJ5nuYzLbluvZbFoBNJpLKc=;
+        b=Cm0Ui99WIi26ExqJX/XejIt+9c7dFigxk5+gbvxI4lJ6Mj9KYW194hlZdZblmJ+zpT
+         HCT+eH5bQsoUiAsu/BgAJeEDy1rWqrvSLvC8IXb7PoVecLldaYdLYQ6aKCAQ14bEF53Z
+         Ud71Rm1LJJPEmW8CrOCd25BXpSRqRdx+W9UsHGVm1172eBLdCyjlNQ+xZwMmqyeLD5zZ
+         Bm50RYHRXhNBOos8heV211xVcjr/SpC9zI/hhzq2cHRmOO/Rhh5RxtW15rDiea13GLaL
+         Cwoe5pfTps+PSRUC/BF04ywrdpsxN/av2cylKBlAtSR3Kz5U1MW6YdD2MlMIg5inl9yy
+         cijw==
+X-Gm-Message-State: AO0yUKX9/6Dk4yE51JHmp4gqkINM/DWdKvyY1lYZf758ik0tedYw6zTq
+        ckqB7yEqonTiEBlNYYZizYkreQ==
+X-Google-Smtp-Source: AK7set+hrztEjBcXIEHC44xkN9i2Kk8qkVj30qAy1pJKLtuuGXyyeQaBLTh8jtw7DPSatvdxYVqb7w==
+X-Received: by 2002:a17:906:d051:b0:86f:3dfa:4016 with SMTP id bo17-20020a170906d05100b0086f3dfa4016mr22553813ejb.7.1676283633613;
+        Mon, 13 Feb 2023 02:20:33 -0800 (PST)
+Received: from dtpc.zanders.be (78-22-137-109.access.telenet.be. [78.22.137.109])
+        by smtp.gmail.com with ESMTPSA id f13-20020a170906c08d00b00878003adeeesm6564552ejz.23.2023.02.13.02.20.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Feb 2023 23:23:19 -0800 (PST)
-Date:   Mon, 13 Feb 2023 12:53:11 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, thunder.leizhen@huawei.com,
-        festevam@gmail.com, lee@kernel.org
-Subject: Re: [PATCH v5] dt-bindings: leds: Document commonly used LED triggers
-Message-ID: <20230213072311.GC4375@thinkpad>
-References: <20230213070827.5085-1-manivannan.sadhasivam@linaro.org>
+        Mon, 13 Feb 2023 02:20:33 -0800 (PST)
+From:   Maarten Zanders <maarten.zanders@mind.be>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Maarten Zanders <maarten.zanders@mind.be>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 1/2] dt-bindings: leds-lp55xx: add ti,charge-pump-mode
+Date:   Mon, 13 Feb 2023 11:20:26 +0100
+Message-Id: <20230213102027.29961-2-maarten.zanders@mind.be>
+X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20230213102027.29961-1-maarten.zanders@mind.be>
+References: <20230213102027.29961-1-maarten.zanders@mind.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230213070827.5085-1-manivannan.sadhasivam@linaro.org>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, Feb 13, 2023 at 12:38:27PM +0530, Manivannan Sadhasivam wrote:
-> Document the commonly used LED triggers by the SoCs. Not all triggers
-> are documented as some of them are very application specific. Most of the
-> triggers documented here are currently used in devicetrees of many SoCs.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
-> 
-> Changes in v5:
-> 
-> * Rebased on top of v6.2-rc1
+Add a binding to configure the internal charge pump for lp55xx.
 
-Noticed that Lee is now maintaining LED subsystem after sending v5.
-So rebased the patch on top of lee/for-leds-next branch and sent v6.
+Signed-off-by: Maarten Zanders <maarten.zanders@mind.be>
+---
 
-Thanks,
-Mani
+Notes:
+    v1: implement as bool to disable charge pump
+    v2: rewrite to use string configuration, supporting all modes
+    v3: simplification by replacing string option by u8 constant,
+        removing previous Reviewed-by tags as it's a complete
+        rewrite of the patch.
+    v4: added notes
+    v5: dual license, change property type to u32
 
-> 
-> Changes in v4:
-> 
-> * Removed the sorting of triggers
-> * Removed the "items" as they were not needed
-> * Reworded the description
-> * Dropped Zhen Lei's tested-by tag as the patch has changed
-> * Added kbd-capslock trigger
-> 
-> Changes in v3:
-> 
-> * Rebased on top of v6.1-rc1
-> * Added WLAN Rx trigger
-> * Added tested tag from Zhen Lei
-> 
-> Changes in v2:
-> 
-> * Added more triggers, fixed the regex
-> * Sorted triggers in ascending order
-> 
->  .../devicetree/bindings/leds/common.yaml      | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
-> index f5c57a580078..d01a52e9e982 100644
-> --- a/Documentation/devicetree/bindings/leds/common.yaml
-> +++ b/Documentation/devicetree/bindings/leds/common.yaml
-> @@ -98,9 +98,44 @@ properties:
->              # LED alters the brightness for the specified duration with one software
->              # timer (requires "led-pattern" property)
->            - pattern
-> +            # LED indicates mic mute state
-> +          - audio-micmute
-> +            # LED indicates audio mute state
-> +          - audio-mute
-> +            # LED indicates bluetooth power state
-> +          - bluetooth-power
-> +            # LED indicates activity of all CPUs
-> +          - cpu
-> +            # LED indicates disk read activity
-> +          - disk-read
-> +            # LED indicates disk write activity
-> +          - disk-write
-> +            # LED indicates camera flash state
-> +          - flash
-> +            # LED indicated keyboard capslock
-> +          - kbd-capslock
-> +            # LED indicates MTD memory activity
-> +          - mtd
-> +            # LED indicates NAND memory activity (deprecated),
-> +            # in new implementations use "mtd"
-> +          - nand-disk
-> +            # No trigger assigned to the LED. This is the default mode
-> +            # if trigger is absent
-> +          - none
-> +            # LED indicates camera torch state
-> +          - torch
-> +            # LED indicates USB gadget activity
-> +          - usb-gadget
-> +            # LED indicates USB host activity
-> +          - usb-host
->          # LED is triggered by SD/MMC activity
->        - pattern: "^mmc[0-9]+$"
-> +        # LED is triggered by CPU activity
->        - pattern: "^cpu[0-9]*$"
-> +        # LED indicates power status of [N]th Bluetooth HCI device
-> +      - pattern: "^hci[0-9]{1,2}-power$"
-> +        # LED indicates [N]th WLAN Tx/Rx activity
-> +      - pattern: "^phy[0-9]{1,2}(tx|rx)$"
->  
->    led-pattern:
->      description: |
-> -- 
-> 2.25.1
-> 
+ .../devicetree/bindings/leds/leds-lp55xx.yaml          |  8 ++++++++
+ include/dt-bindings/leds/leds-lp55xx.h                 | 10 ++++++++++
+ 2 files changed, 18 insertions(+)
+ create mode 100644 include/dt-bindings/leds/leds-lp55xx.h
 
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+index ae607911f1db..ede9cb9ca175 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-lp55xx.yaml
+@@ -66,6 +66,12 @@ properties:
+   '#size-cells':
+     const: 0
+ 
++  ti,charge-pump-mode:
++    description:
++      Set the operating mode of the internal charge pump as defined in
++      <dt-bindings/leds/leds-lp55xx.h>. Defaults to auto.
++    $ref: /schemas/types.yaml#/definitions/uint32
++
+ patternProperties:
+   '^multi-led@[0-8]$':
+     type: object
+@@ -152,6 +158,7 @@ additionalProperties: false
+ examples:
+   - |
+     #include <dt-bindings/leds/common.h>
++    #include <dt-bindings/leds/leds-lp55xx.h>
+ 
+     i2c {
+         #address-cells = <1>;
+@@ -164,6 +171,7 @@ examples:
+             reg = <0x32>;
+             clock-mode = /bits/ 8 <2>;
+             pwr-sel = /bits/ 8 <3>;	/* D1~9 connected to VOUT */
++            ti,charge-pump-mode = <LP55XX_CP_BYPASS>;
+ 
+             led@0 {
+                 reg = <0>;
+diff --git a/include/dt-bindings/leds/leds-lp55xx.h b/include/dt-bindings/leds/leds-lp55xx.h
+new file mode 100644
+index 000000000000..e2256312714b
+--- /dev/null
++++ b/include/dt-bindings/leds/leds-lp55xx.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++#ifndef _DT_BINDINGS_LEDS_LP55XX_H
++#define _DT_BINDINGS_LEDS_LP55XX_H
++
++#define LP55XX_CP_OFF		0
++#define LP55XX_CP_BYPASS	1
++#define LP55XX_CP_BOOST		2
++#define LP55XX_CP_AUTO		3
++
++#endif /* _DT_BINDINGS_LEDS_LP55XX_H */
 -- 
-மணிவண்ணன் சதாசிவம்
+2.37.3
+
