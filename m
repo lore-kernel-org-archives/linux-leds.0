@@ -2,78 +2,105 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 690B3C636D4
-	for <linux-leds@archiver.kernel.org>; Wed, 15 Feb 2023 17:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB103C636D4
+	for <linux-leds@archiver.kernel.org>; Wed, 15 Feb 2023 19:26:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbjBORFb (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 15 Feb 2023 12:05:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46088 "EHLO
+        id S229553AbjBOT0w (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 15 Feb 2023 14:26:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229949AbjBORFa (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 15 Feb 2023 12:05:30 -0500
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43BF23669D;
-        Wed, 15 Feb 2023 09:05:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1676480721; x=1708016721;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=EkzFT1Nke/B9I8aR5SnJ8afv1Mh9pNWCQQ/xa3G/7d0=;
-  b=Wr3rTZrgtWAfhc8fKQGgLyULBK9/YwycvUcEcVr2JL9ONLxdBHpoKgWe
-   USUlaEhtjpyw4u0J4OpmvVaiUBulH/C1OxB1RleNn7aPWhJo0pYy5xANk
-   hBx3ProW6Xg/FzReNWh+9X0zzBPP+QE+jgDOQfNlDw0/9TSqF6RkbRha7
-   UIAJS86O7l0saapAAxrAgKFheAjrAxbYHIZOwCdOo/mS2uTqo0LEUXyRL
-   W4oNGjTxShP8ZmMfmNb7U1/cq4hclNdcw/RYFSsRh3kihkjNbZjlhesja
-   rVhRhgI/++TgAdJ1812pD6vhNZyithFr+GgvkKYTDcimDIiLga3YicWG/
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10622"; a="393886453"
-X-IronPort-AV: E=Sophos;i="5.97,300,1669104000"; 
-   d="scan'208";a="393886453"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2023 09:03:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10622"; a="647262367"
-X-IronPort-AV: E=Sophos;i="5.97,300,1669104000"; 
-   d="scan'208";a="647262367"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 15 Feb 2023 09:03:27 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 2070B1A6; Wed, 15 Feb 2023 19:04:07 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-Subject: [PATCH v1 1/2] leds: lp8860: Remove unused of_gpio,h
-Date:   Wed, 15 Feb 2023 19:04:02 +0200
-Message-Id: <20230215170403.84449-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.39.1
+        with ESMTP id S229493AbjBOT0v (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 15 Feb 2023 14:26:51 -0500
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C4413B659;
+        Wed, 15 Feb 2023 11:26:51 -0800 (PST)
+Received: by mail-oi1-f169.google.com with SMTP id n132so16732564oih.7;
+        Wed, 15 Feb 2023 11:26:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=syPlRWp1XLJqpKi4d2zS5tmfk5ekFo7ezxwYvPO/kOc=;
+        b=P/OKmeMQGJfB3/Pfti9Vj83VJr3uuVprthBG3zeYFemOa7DH+ElRm6asiT4xZ8VBah
+         K2HcejL/eIgQr46ROGTUjXxSL42HshYvJ8g3OiCYzfGpKx6CC/zhmauoQERfxgM9tsiY
+         H/LDveKmsb4EFDvKZAJ4AzARzzcvMcI7/z9hIVto0ZN1xnhKaEIB8wu11RKwQn4pvXi6
+         3o9+ZSnhtZbsq0rIRAn+fcrwH3R951owvgV+Sai83ohInRCKWor7eHRVG8PGxJDM0J4P
+         DJnS9Kzyh+vs3+GOuXIGseCywI5r15/M18NRXIDbrDYQncnkHZ6FFLO5bVHOfRApjwh4
+         35oQ==
+X-Gm-Message-State: AO0yUKW9ZGiLUegvcMVm3k7scXbdR4/orsIkFTbzJvQDXPbNeqGGzjts
+        4ddVlv+QbcFfLG8EfXLSHEkmyCKcZQ==
+X-Google-Smtp-Source: AK7set+vLM9YaNIGwhZ6i/Qg//cSFLo/sNWhut07J5qaCIhhqGgnWCLhu3wZ5SddiuKUfEH8hx+zrA==
+X-Received: by 2002:aca:280b:0:b0:364:7541:f9cd with SMTP id 11-20020aca280b000000b003647541f9cdmr1550479oix.21.1676489210299;
+        Wed, 15 Feb 2023 11:26:50 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id q185-20020acac0c2000000b0035a9003b8edsm7549366oif.40.2023.02.15.11.26.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Feb 2023 11:26:49 -0800 (PST)
+Received: (nullmailer pid 435570 invoked by uid 1000);
+        Wed, 15 Feb 2023 19:26:49 -0000
+Date:   Wed, 15 Feb 2023 13:26:49 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, pavel@ucw.cz, lee@kernel.org,
+        thunder.leizhen@huawei.com, festevam@gmail.com,
+        jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] dt-bindings: leds: Document commonly used LED triggers
+Message-ID: <167648920872.435515.7644991846450817906.robh@kernel.org>
+References: <20230213072133.5977-1-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230213072133.5977-1-manivannan.sadhasivam@linaro.org>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-of_gpio.h provides a single function, which is not used in this driver.
-Remove unused header.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/leds/leds-lp8860.c | 1 -
- 1 file changed, 1 deletion(-)
+On Mon, 13 Feb 2023 12:51:33 +0530, Manivannan Sadhasivam wrote:
+> Document the commonly used LED triggers by the SoCs. Not all triggers
+> are documented as some of them are very application specific. Most of the
+> triggers documented here are currently used in devicetrees of many SoCs.
+> 
+> While at it, also place the comment above the triggers (hci, mmc, wlan)
+> to match the rest of the binding.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+> 
+> Changes in v6:
+> 
+> * Rebased on top of lee/for-leds-next branch
+> * Fixed the comment location for few triggers
+> 
+> Changes in v5:
+> 
+> * Rebased on top of v6.2-rc1
+> 
+> Changes in v4:
+> 
+> * Removed the sorting of triggers
+> * Removed the "items" as they were not needed
+> * Reworded the description
+> * Dropped Zhen Lei's tested-by tag as the patch has changed
+> * Added kbd-capslock trigger
+> 
+> Changes in v3:
+> 
+> * Rebased on top of v6.1-rc1
+> * Added WLAN Rx trigger
+> * Added tested tag from Zhen Lei
+> 
+> Changes in v2:
+> 
+> * Added more triggers, fixed the regex
+> * Sorted triggers in ascending order
+> 
+>  .../devicetree/bindings/leds/common.yaml      | 37 +++++++++++++++++--
+>  1 file changed, 34 insertions(+), 3 deletions(-)
+> 
 
-diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-index b66ed5ac1aa5..666f4d38214f 100644
---- a/drivers/leds/leds-lp8860.c
-+++ b/drivers/leds/leds-lp8860.c
-@@ -15,7 +15,6 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
--#include <linux/of_gpio.h>
- #include <linux/gpio/consumer.h>
- #include <linux/slab.h>
- 
--- 
-2.39.1
+Reviewed-by: Rob Herring <robh@kernel.org>
 
