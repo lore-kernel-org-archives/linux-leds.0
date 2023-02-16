@@ -2,148 +2,118 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 848A9C636D6
-	for <linux-leds@archiver.kernel.org>; Thu, 16 Feb 2023 01:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D43C636D4
+	for <linux-leds@archiver.kernel.org>; Thu, 16 Feb 2023 02:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229893AbjBPBiC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 15 Feb 2023 20:38:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41302 "EHLO
+        id S229506AbjBPCcP (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 15 Feb 2023 21:32:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229896AbjBPBh3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 15 Feb 2023 20:37:29 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C86F945F70;
-        Wed, 15 Feb 2023 17:36:43 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id y1so453699wru.2;
-        Wed, 15 Feb 2023 17:36:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+hZ4FOjKbPsdT5yxQsZyvCeHCblBaNw+opiskrre9LM=;
-        b=Yzxas/XGAd0Vjd5xG2zHPk0/D0Hqne4JUyQ7KRQRg8tNWAXYVRsMePCDehMzhoAkS6
-         8Ul/yMSUhyVWmtdD+SzVGafo6NCDiZYWVD+BNFHNBvw6gIDuun04iBt6hyyD1vIYB0e8
-         4P81uWP50PllM0TETSnQmswhQeKQSLFV89NkjUD5h6EZ7xfMd+rtypMB0HJDkKwvV6WB
-         iidWN59UyrS+sxjq0cZNthJMKmGTWV2I2kzGRW85e7g2MnHVv/BRIO4opKcXmwlGjwd9
-         7SLG/OJWtVNB6VNnE5sNMOJUpHoSZIhQ9rrpH67e/2/ujkv9cQm13nvXU4+y7ARgKm0e
-         YFuw==
+        with ESMTP id S229460AbjBPCcO (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 15 Feb 2023 21:32:14 -0500
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF4636472;
+        Wed, 15 Feb 2023 18:32:13 -0800 (PST)
+Received: by mail-oi1-f172.google.com with SMTP id bj22so416395oib.11;
+        Wed, 15 Feb 2023 18:32:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+hZ4FOjKbPsdT5yxQsZyvCeHCblBaNw+opiskrre9LM=;
-        b=1rkQrUGL4rpW56tIFnAVxrOoIzcG4F+JY07hVrqhmM0DXB3I4ee1xHCNk9+gBCIfBF
-         i6Cp89Ds103wWqyBADAqcguLrGOXzTOGmflf9HaHCkmIDnSHV6d7qR/dEkuPsMkYD5fo
-         Ww+rsMkgdbqzz8jEuXqW7+XHNUcoYB28XavcXyxSxv6xTUZFl7aN6c2of0L7wEdDXghl
-         FnO05EMZJgMyOIIOHYL1NozNo8pttLrs5+6QN4fPT/il6MkDDlQyhh+bXWn1NDhsj8vD
-         Adglu03DfslEeF0RtQvO3qyap6w3cg2nLKaGLhRFzJ6D3/j0uQ8Q9czRr+bECLEoGfAK
-         4vxA==
-X-Gm-Message-State: AO0yUKW3McdwoFpiyx9Rrb+r2+IJ3JfP1FS0klfkElvvh+UnkwB/GE32
-        WnXvpDoFUfEoSsoGPM+P2VM=
-X-Google-Smtp-Source: AK7set9cbwieqzJnsPgi/x1zFPNxp18QtOCEuGPVY3+sNpAUi4rY3xICSmOKfVUyElsilvF1C2mM/g==
-X-Received: by 2002:adf:fa4d:0:b0:2c5:4ffa:ba62 with SMTP id y13-20020adffa4d000000b002c54ffaba62mr2990533wrr.17.1676511394561;
-        Wed, 15 Feb 2023 17:36:34 -0800 (PST)
-Received: from localhost.localdomain (93-34-91-73.ip49.fastwebnet.it. [93.34.91.73])
-        by smtp.googlemail.com with ESMTPSA id v15-20020a05600c214f00b003e1fb31fc2bsm64189wml.37.2023.02.15.17.36.33
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KOuLr4scIF1NfqJ8T0M99xrYHbB7KQ22DgnSgEZbsMk=;
+        b=c4PkKwkHgI//2uC5MFjnlmtuMa7Y2BImiCAfOfbklBahuvHPM72G7NpUMN80YI2gqV
+         CayArmTfDAUadfY/x/ASQFrnjZWwt3sUhJOcUllJVTmpVrJ/k+EgXV0e0PN8mtS/jeXu
+         uZAowfhOy3Dn7Gvu27YDt5+4glkS3gXzSulmDPIDQnYRY/ClJhrWaMQW/9Fve1+ai8cE
+         QCs1Mw9n7kIwF89KIdjySd4GE6cvedl0j05yaMynt4HAqzTue3/Qsm9l8W+hhPGWMaCE
+         VEDXseR3Ovi2n65+7roMXXjCPd43FGNJA45KTPOjY81KTDZP7z6CDGMJB2K7QmMhk0IB
+         ou5A==
+X-Gm-Message-State: AO0yUKULKz/xQw+1Sj5+uALtfWxDbq8YSWKK7LkAdSeYDUoXAXt41pHJ
+        dwYjomT4hIMBECI8eE7ZOg==
+X-Google-Smtp-Source: AK7set/YKv86MiKqaVAX4xz6xbPDlGpjyc03s+rvbI5f7CRlAlu6x8dJZTXBA89nFKc+/LzMvuW88A==
+X-Received: by 2002:aca:2213:0:b0:35a:d192:9a53 with SMTP id b19-20020aca2213000000b0035ad1929a53mr1864308oic.41.1676514732936;
+        Wed, 15 Feb 2023 18:32:12 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id f9-20020a05680814c900b0037d59e90a07sm48171oiw.55.2023.02.15.18.32.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Feb 2023 17:36:34 -0800 (PST)
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
+        Wed, 15 Feb 2023 18:32:12 -0800 (PST)
+Received: (nullmailer pid 1200075 invoked by uid 1000);
+        Thu, 16 Feb 2023 02:32:11 -0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Rob Herring <robh@kernel.org>
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
         Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
+        devicetree@vger.kernel.org, John Crispin <john@phrozen.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
         Russell King <linux@armlinux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        John Crispin <john@phrozen.org>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Tim Harvey <tharvey@gateworks.com>,
         Alexander Stein <alexander.stein@ew.tq-group.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Arun.Ramadoss@microchip.com
-Subject: [PATCH v8 13/13] dt-bindings: net: dsa: qca8k: add LEDs definition example
-Date:   Thu, 16 Feb 2023 02:32:30 +0100
-Message-Id: <20230216013230.22978-14-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20230216013230.22978-1-ansuelsmth@gmail.com>
+        netdev@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>, Arun.Ramadoss@microchip.com
+In-Reply-To: <20230216013230.22978-13-ansuelsmth@gmail.com>
 References: <20230216013230.22978-1-ansuelsmth@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20230216013230.22978-13-ansuelsmth@gmail.com>
+Message-Id: <167651373836.1183034.17900591036429665419.robh@kernel.org>
+Subject: Re: [PATCH v8 12/13] dt-bindings: net: phy: Document support for
+ leds node
+Date:   Wed, 15 Feb 2023 20:32:11 -0600
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add LEDs definition example for qca8k using the offload trigger as the
-default trigger and add all the supported offload triggers by the
-switch.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- .../devicetree/bindings/net/dsa/qca8k.yaml    | 24 +++++++++++++++++++
- 1 file changed, 24 insertions(+)
+On Thu, 16 Feb 2023 02:32:29 +0100, Christian Marangi wrote:
+> Document support for leds node in phy and add an example for it.
+> Phy led will have to match led-phy pattern and should be treated as a
+> generic led.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../devicetree/bindings/net/ethernet-phy.yaml | 22 +++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
 
-diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
-index 389892592aac..ba3821364039 100644
---- a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
-@@ -18,6 +18,8 @@ description:
-   PHY it is connected to. In this config, an internal mdio-bus is registered and
-   the MDIO master is used for communication. Mixed external and internal
-   mdio-bus configurations are not supported by the hardware.
-+  Each phy have at least 3 LEDs connected and can be declared
-+  using the standard LEDs structure.
- 
- properties:
-   compatible:
-@@ -117,6 +119,7 @@ unevaluatedProperties: false
- examples:
-   - |
-     #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/leds/common.h>
- 
-     mdio {
-         #address-cells = <1>;
-@@ -276,6 +279,27 @@ examples:
- 
-                 internal_phy_port1: ethernet-phy@0 {
-                     reg = <0>;
-+
-+                    leds {
-+                        #address-cells = <1>;
-+                        #size-cells = <0>;
-+
-+                        led@0 {
-+                            reg = <0>;
-+                            color = <LED_COLOR_ID_WHITE>;
-+                            function = LED_FUNCTION_LAN;
-+                            function-enumerator = <1>;
-+                            linux,default-trigger = "netdev";
-+                        };
-+
-+                        led@1 {
-+                            reg = <1>;
-+                            color = <LED_COLOR_ID_AMBER>;
-+                            function = LED_FUNCTION_LAN;
-+                            function-enumerator = <1>;
-+                            linux,default-trigger = "netdev";
-+                        };
-+                    };
-                 };
- 
-                 internal_phy_port2: ethernet-phy@1 {
--- 
-2.38.1
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/ethernet-phy.example.dtb: ethernet-phy@0: leds:led-phy@0:linux,default-trigger: 'oneOf' conditional failed, one must be fixed:
+	'netdev' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'ide-disk', 'timer', 'pattern']
+	'netdev' does not match '^mmc[0-9]+$'
+	'netdev' does not match '^cpu[0-9]*$'
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230216013230.22978-13-ansuelsmth@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
