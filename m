@@ -2,32 +2,57 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 407FEC05027
-	for <linux-leds@archiver.kernel.org>; Fri, 17 Feb 2023 14:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74EDC05027
+	for <linux-leds@archiver.kernel.org>; Fri, 17 Feb 2023 22:13:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbjBQOa2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 17 Feb 2023 09:30:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58976 "EHLO
+        id S229765AbjBQWNU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 17 Feb 2023 17:13:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbjBQOa1 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 17 Feb 2023 09:30:27 -0500
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3439453EF4;
-        Fri, 17 Feb 2023 06:30:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=0X0KR6KIImr3njb+LcrxRAY3MAezNWa9+WxGiZCAfFY=; b=OVX7E88fSsqCYEc24Kk1hDFXHj
-        wm1BdCUL//jetXaQ2r1z+pF+T1VopwmP3V6brnWEntKic/aa4w2rsfbJptPh9BsuaBHKUmqFXVkrY
-        vaRfdU5qLhuqWyqjBDATAERpW+yYtZ2omr+Mz6IHeuD6MuXjO0FYEgcOFvry8xqg+NZk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1pT1kb-005IF6-GM; Fri, 17 Feb 2023 15:30:13 +0100
-Date:   Fri, 17 Feb 2023 15:30:13 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Christian Marangi <ansuelsmth@gmail.com>
+        with ESMTP id S229539AbjBQWNT (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 17 Feb 2023 17:13:19 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3456F53EEF;
+        Fri, 17 Feb 2023 14:13:18 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id e4-20020a05600c4e4400b003dc4050c94aso1939522wmq.4;
+        Fri, 17 Feb 2023 14:13:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=s8Cs+D1dNRVvU5FZhA9NdvKWxN01yyeYmicSt7fW840=;
+        b=ZtOpor/tIoioJVDeaEsupf5C46Ca+I22u8Zl620GFn4Yfyzx4z61zXzY2BzQv8fJQ4
+         YZ+a3oTwU/d5AMztC924vr8S6e7d6ZKdnMPnw1fz9PjxMhYXH1IbZyuQ0/lw4jQbw3EF
+         swOeB9owdWhyT9ISN5fLmRFuXeWL49A4KpBZxrgTgLGrYXjvBwswiQ3H0IgcOui8KqF5
+         75TR+lUllD2cRT/vNOMJjzXEP4b6qZch0blElpQpNtli9bzAcCG5DLvEZ0QY1wt7jWRq
+         e6tJ6jvqZac8igTHvxo6K0LBP649TpUyPC6NoGwB23h/LnkzisjEgG7L2kSTq4+LmWws
+         A61Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s8Cs+D1dNRVvU5FZhA9NdvKWxN01yyeYmicSt7fW840=;
+        b=1hojA0cRBf8NsT7EJ6wHSNu0aRBuQys5W26MazJoV3nBuZydQCRzIGthZe9w2Rc72w
+         zLF3nP32hmlLMhsym5A6Tb1xUpCqQP5KPwhMFa5IoU94PJ6SBaVQSaSmCanckFuLfy9T
+         zz5STCsjdu+N9IMYOV0wjQvbgPnxEl9j2jGTQxsFSBd6I9OyjzqZfyWI0C4i620QXDDN
+         0DdZ1pL7G8YJ9OmrPPI0MVvFvgK0YZHlke+u2k0XSEtNs1XFzX6Y4Pcr35yp5TJsJ2bp
+         /W29xhVBOK/F7Hx4ORidBAN5Ij8Foc8elBlptBKN3hHpko4oqylg2UkRt/FY41IWm2Uh
+         syxg==
+X-Gm-Message-State: AO0yUKWxLdcxncZ5ecvJ59QvH2UTWxs77dzZV0bh5ofMWVPHJ5I22M3P
+        R914IOi1ciOQsgmlBexpEflQvqDa3UM=
+X-Google-Smtp-Source: AK7set+qH0WimBUCqvuGrBjkIyVNTwjx96FysdQp2U2Hu7V5sBpkmHWGms50WTRGDkiqauhQIzzXsA==
+X-Received: by 2002:a05:600c:43c5:b0:3dc:557f:6129 with SMTP id f5-20020a05600c43c500b003dc557f6129mr2099290wmn.2.1676671996347;
+        Fri, 17 Feb 2023 14:13:16 -0800 (PST)
+Received: from Ansuel-xps. (93-34-91-73.ip49.fastwebnet.it. [93.34.91.73])
+        by smtp.gmail.com with ESMTPSA id n6-20020a05600c500600b003dc433355aasm6479927wmr.18.2023.02.17.14.13.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Feb 2023 14:13:15 -0800 (PST)
+Message-ID: <63effbfb.050a0220.3dc6e.3732@mx.google.com>
+X-Google-Original-Message-ID: <Y+8KOiu8UqQ2DZHR@Ansuel-xps.>
+Date:   Fri, 17 Feb 2023 06:01:46 +0100
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Andrew Lunn <andrew@lunn.ch>
 Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -51,29 +76,34 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Bagas Sanjaya <bagasdotme@gmail.com>,
         Arun.Ramadoss@microchip.com
 Subject: Re: [PATCH v8 00/13] Adds support for PHY LEDs with offload triggers
-Message-ID: <Y++PdVq+DlzdotMq@lunn.ch>
 References: <20230216013230.22978-1-ansuelsmth@gmail.com>
+ <Y++PdVq+DlzdotMq@lunn.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230216013230.22978-1-ansuelsmth@gmail.com>
+In-Reply-To: <Y++PdVq+DlzdotMq@lunn.ch>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, Feb 16, 2023 at 02:32:17AM +0100, Christian Marangi wrote:
-> This is another attempt on adding this feature on LEDs, hoping this is
-> the right time and someone finally notice this.
+On Fri, Feb 17, 2023 at 03:30:13PM +0100, Andrew Lunn wrote:
+> On Thu, Feb 16, 2023 at 02:32:17AM +0100, Christian Marangi wrote:
+> > This is another attempt on adding this feature on LEDs, hoping this is
+> > the right time and someone finally notice this.
+> 
+> Hi Christian
+> 
+> Thanks for keeping working on this.
+> 
+> I want to review it, and maybe implement LED support in a PHY
+> driver. But i'm busy with reworking EEE at the moment.
+> 
+> The merge window is about to open, so patches are not going to be
+> accepted for the next two weeks. So i will take a look within that
+> time and give you feedback.
+> 
 
-Hi Christian
+Sure take your time happy to discuss any improvement to this.
 
-Thanks for keeping working on this.
-
-I want to review it, and maybe implement LED support in a PHY
-driver. But i'm busy with reworking EEE at the moment.
-
-The merge window is about to open, so patches are not going to be
-accepted for the next two weeks. So i will take a look within that
-time and give you feedback.
-
-     Andrew
+-- 
+	Ansuel
