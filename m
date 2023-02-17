@@ -2,60 +2,49 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A74EDC05027
-	for <linux-leds@archiver.kernel.org>; Fri, 17 Feb 2023 22:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 171A3C05027
+	for <linux-leds@archiver.kernel.org>; Fri, 17 Feb 2023 23:03:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbjBQWNU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 17 Feb 2023 17:13:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44206 "EHLO
+        id S229669AbjBQXDu (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 17 Feb 2023 18:03:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbjBQWNT (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 17 Feb 2023 17:13:19 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3456F53EEF;
-        Fri, 17 Feb 2023 14:13:18 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id e4-20020a05600c4e4400b003dc4050c94aso1939522wmq.4;
-        Fri, 17 Feb 2023 14:13:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=s8Cs+D1dNRVvU5FZhA9NdvKWxN01yyeYmicSt7fW840=;
-        b=ZtOpor/tIoioJVDeaEsupf5C46Ca+I22u8Zl620GFn4Yfyzx4z61zXzY2BzQv8fJQ4
-         YZ+a3oTwU/d5AMztC924vr8S6e7d6ZKdnMPnw1fz9PjxMhYXH1IbZyuQ0/lw4jQbw3EF
-         swOeB9owdWhyT9ISN5fLmRFuXeWL49A4KpBZxrgTgLGrYXjvBwswiQ3H0IgcOui8KqF5
-         75TR+lUllD2cRT/vNOMJjzXEP4b6qZch0blElpQpNtli9bzAcCG5DLvEZ0QY1wt7jWRq
-         e6tJ6jvqZac8igTHvxo6K0LBP649TpUyPC6NoGwB23h/LnkzisjEgG7L2kSTq4+LmWws
-         A61Q==
+        with ESMTP id S229475AbjBQXDt (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 17 Feb 2023 18:03:49 -0500
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6614F42BE5;
+        Fri, 17 Feb 2023 15:03:48 -0800 (PST)
+Received: by mail-oi1-f176.google.com with SMTP id i4so2567205oiy.4;
+        Fri, 17 Feb 2023 15:03:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=s8Cs+D1dNRVvU5FZhA9NdvKWxN01yyeYmicSt7fW840=;
-        b=1hojA0cRBf8NsT7EJ6wHSNu0aRBuQys5W26MazJoV3nBuZydQCRzIGthZe9w2Rc72w
-         zLF3nP32hmlLMhsym5A6Tb1xUpCqQP5KPwhMFa5IoU94PJ6SBaVQSaSmCanckFuLfy9T
-         zz5STCsjdu+N9IMYOV0wjQvbgPnxEl9j2jGTQxsFSBd6I9OyjzqZfyWI0C4i620QXDDN
-         0DdZ1pL7G8YJ9OmrPPI0MVvFvgK0YZHlke+u2k0XSEtNs1XFzX6Y4Pcr35yp5TJsJ2bp
-         /W29xhVBOK/F7Hx4ORidBAN5Ij8Foc8elBlptBKN3hHpko4oqylg2UkRt/FY41IWm2Uh
-         syxg==
-X-Gm-Message-State: AO0yUKWxLdcxncZ5ecvJ59QvH2UTWxs77dzZV0bh5ofMWVPHJ5I22M3P
-        R914IOi1ciOQsgmlBexpEflQvqDa3UM=
-X-Google-Smtp-Source: AK7set+qH0WimBUCqvuGrBjkIyVNTwjx96FysdQp2U2Hu7V5sBpkmHWGms50WTRGDkiqauhQIzzXsA==
-X-Received: by 2002:a05:600c:43c5:b0:3dc:557f:6129 with SMTP id f5-20020a05600c43c500b003dc557f6129mr2099290wmn.2.1676671996347;
-        Fri, 17 Feb 2023 14:13:16 -0800 (PST)
-Received: from Ansuel-xps. (93-34-91-73.ip49.fastwebnet.it. [93.34.91.73])
-        by smtp.gmail.com with ESMTPSA id n6-20020a05600c500600b003dc433355aasm6479927wmr.18.2023.02.17.14.13.14
+        bh=aLSLgiQSCVvjkCIXz0HVyuRV1cGMyEHUbSRIVO4Q6fk=;
+        b=zckX/gUD8Zwmih0E2FsM6rp+I8sBqw0TFV5vjAJCLaesA8ElwtomhKCMZQ4Kc2R7cV
+         7HxWtseWkOja2e/1XULar3ewfD37oXC6dBttntaIo3Q/OPKdTxgBT8+KaLEttXpcXdVx
+         edVkwH7P8pLjhDNWVBsJq0/s3BHBc8k8muYsaVFvwXPb3wJfPDBLFSRZf1OznDTt7V31
+         gWF/Ryl2jtPvJcEmqZZwuBeepRURqgsISJwOQTX+3HDF3lvwM2WjCBFpCOhLO3ISCfG8
+         qVEPCRyPg6v9ZxdXhzEajOHXB80JjsMREpHPjOkSe+7nK9+53P0KUts+drlrEQGbwH4k
+         vZig==
+X-Gm-Message-State: AO0yUKVS0wLiGXD5hJdsQDKN3SUH50Rei7Ko1tvo+ABZsnpe+q47rkna
+        m4KIarY009tOhfsFIW2gIX0XZguP1A==
+X-Google-Smtp-Source: AK7set/0/4JrsjWas4uVRGEoFcvaUWkmE547q5kQSBLJyFr90e8HYEdwMd78yhQfUNqXTDvnFXzuXg==
+X-Received: by 2002:a05:6808:7cd:b0:360:e1dc:8b18 with SMTP id f13-20020a05680807cd00b00360e1dc8b18mr1094554oij.20.1676675027590;
+        Fri, 17 Feb 2023 15:03:47 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id m1-20020a05680806c100b0037d7c3cfac7sm2320897oih.15.2023.02.17.15.03.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Feb 2023 14:13:15 -0800 (PST)
-Message-ID: <63effbfb.050a0220.3dc6e.3732@mx.google.com>
-X-Google-Original-Message-ID: <Y+8KOiu8UqQ2DZHR@Ansuel-xps.>
-Date:   Fri, 17 Feb 2023 06:01:46 +0100
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Andrew Lunn <andrew@lunn.ch>
+        Fri, 17 Feb 2023 15:03:47 -0800 (PST)
+Received: (nullmailer pid 2227917 invoked by uid 1000);
+        Fri, 17 Feb 2023 23:03:46 -0000
+Date:   Fri, 17 Feb 2023 17:03:46 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Christian Marangi <ansuelsmth@gmail.com>
 Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Vladimir Oltean <olteanv@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -75,35 +64,45 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
         Bagas Sanjaya <bagasdotme@gmail.com>,
         Arun.Ramadoss@microchip.com
-Subject: Re: [PATCH v8 00/13] Adds support for PHY LEDs with offload triggers
+Subject: Re: [PATCH v8 11/13] dt-bindings: leds: Document netdev trigger
+Message-ID: <20230217230346.GA2217008-robh@kernel.org>
 References: <20230216013230.22978-1-ansuelsmth@gmail.com>
- <Y++PdVq+DlzdotMq@lunn.ch>
+ <20230216013230.22978-12-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y++PdVq+DlzdotMq@lunn.ch>
+In-Reply-To: <20230216013230.22978-12-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Fri, Feb 17, 2023 at 03:30:13PM +0100, Andrew Lunn wrote:
-> On Thu, Feb 16, 2023 at 02:32:17AM +0100, Christian Marangi wrote:
-> > This is another attempt on adding this feature on LEDs, hoping this is
-> > the right time and someone finally notice this.
-> 
-> Hi Christian
-> 
-> Thanks for keeping working on this.
-> 
-> I want to review it, and maybe implement LED support in a PHY
-> driver. But i'm busy with reworking EEE at the moment.
-> 
-> The merge window is about to open, so patches are not going to be
-> accepted for the next two weeks. So i will take a look within that
-> time and give you feedback.
-> 
+On Thu, Feb 16, 2023 at 02:32:28AM +0100, Christian Marangi wrote:
+> Document the netdev trigger that makes the LED blink or turn on based on
+> switch/phy events or an attached network interface.
 
-Sure take your time happy to discuss any improvement to this.
+NAK. What is netdev?
 
--- 
-	Ansuel
+Don't add new linux,default-trigger entries either. We have better ways 
+to define trigger sources, namely 'trigger-sources'.
+
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/leds/common.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+> index d34bb58c0037..6e016415a4d8 100644
+> --- a/Documentation/devicetree/bindings/leds/common.yaml
+> +++ b/Documentation/devicetree/bindings/leds/common.yaml
+> @@ -98,6 +98,8 @@ properties:
+>              # LED alters the brightness for the specified duration with one software
+>              # timer (requires "led-pattern" property)
+>            - pattern
+> +            # LED blink and turns on based on netdev events
+> +          - netdev
+>        - pattern: "^cpu[0-9]*$"
+>        - pattern: "^hci[0-9]+-power$"
+>          # LED is triggered by Bluetooth activity
+> -- 
+> 2.38.1
+> 
