@@ -2,130 +2,130 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A7C6C61DA3
-	for <linux-leds@archiver.kernel.org>; Tue, 21 Feb 2023 01:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B34C9C6379F
+	for <linux-leds@archiver.kernel.org>; Tue, 21 Feb 2023 08:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232990AbjBUBsb (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 20 Feb 2023 20:48:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37566 "EHLO
+        id S232682AbjBUITk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 21 Feb 2023 03:19:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232357AbjBUBsa (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 20 Feb 2023 20:48:30 -0500
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D4099EDA;
-        Mon, 20 Feb 2023 17:48:29 -0800 (PST)
-Received: by mail-ot1-f51.google.com with SMTP id bh19-20020a056830381300b00690bf2011b2so532580otb.6;
-        Mon, 20 Feb 2023 17:48:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ccmohlnNuK61Zq2Pm+AusM0j8iaM96OwWbVNxMu3hkQ=;
-        b=yTDAcaW99eOWSlDGU/HK3rR57Ywc8D5FxsfXpIO5zP38/j0JFDrYyX9LsOYyxat1k9
-         CGZF9iaNcm4fl1i8dSyNXMhtcNz9UzFOsLms2D7CBHtvT7Y7OZd12mdp/Zv9e+DtYeY7
-         V6MwhIOEpwPTrmrnRp9/PHGf/Lp4602S3OngUQcXwyZ8YAC5QxkILLJLxLE3Iw1+AE64
-         fJ/67xaICvB2BqrHVJAreq25JEVaPNsjYNphW8e5wnLQ1EXkf2Kx6SVuUS8t5Kc7hxk+
-         3qtn6mBecjRyhlHE7Rompb4rfEH9qrhjHGQzDXjRTK5nr52LDAHNY3b2r0+gFNP6iK3X
-         Ic3Q==
-X-Gm-Message-State: AO0yUKX5URc66REuplorlBbsS3irp9E5D415xRfJ3y88nyPcoHTDr6sP
-        8HRAS3TbWaeLVGz07yCAng==
-X-Google-Smtp-Source: AK7set9YtYnryjeiLQnpZZHbAsYom5BpzmXxxi7u+CjIiNWfvZSix0P7dzN0AkCl9ByBwf/Vbv+A/w==
-X-Received: by 2002:a05:6830:2a11:b0:693:bdd8:62a9 with SMTP id y17-20020a0568302a1100b00693bdd862a9mr764204otu.7.1676944108672;
-        Mon, 20 Feb 2023 17:48:28 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id l11-20020a9d7a8b000000b0068bd5af9b82sm5597945otn.43.2023.02.20.17.48.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Feb 2023 17:48:28 -0800 (PST)
-Received: (nullmailer pid 790312 invoked by uid 1000);
-        Tue, 21 Feb 2023 01:48:27 -0000
-Date:   Mon, 20 Feb 2023 19:48:27 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        John Crispin <john@phrozen.org>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-        Tim Harvey <tharvey@gateworks.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Arun.Ramadoss@microchip.com
-Subject: Re: [PATCH v8 13/13] dt-bindings: net: dsa: qca8k: add LEDs
- definition example
-Message-ID: <20230221014827.GA784986-robh@kernel.org>
-References: <20230216013230.22978-1-ansuelsmth@gmail.com>
- <20230216013230.22978-14-ansuelsmth@gmail.com>
+        with ESMTP id S233236AbjBUITj (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 21 Feb 2023 03:19:39 -0500
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A963902D;
+        Tue, 21 Feb 2023 00:19:18 -0800 (PST)
+Received: from [127.0.0.1] (helo=localhost)
+        by relay.expurgate.net with smtp (Exim 4.92)
+        (envelope-from <prvs=943053c9ff=fe@dev.tdt.de>)
+        id 1pUNrj-000TK5-Ng; Tue, 21 Feb 2023 09:19:11 +0100
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+        by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <fe@dev.tdt.de>)
+        id 1pUNri-000NzJ-8x; Tue, 21 Feb 2023 09:19:10 +0100
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+        by securemail.tdt.de (Postfix) with ESMTP id F1CBF240040;
+        Tue, 21 Feb 2023 09:19:09 +0100 (CET)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+        by securemail.tdt.de (Postfix) with ESMTP id 4E35D240049;
+        Tue, 21 Feb 2023 09:19:09 +0100 (CET)
+Received: from localhost.localdomain (unknown [10.2.3.40])
+        by mail.dev.tdt.de (Postfix) with ESMTPSA id 19B892DCC9;
+        Tue, 21 Feb 2023 09:19:09 +0100 (CET)
+From:   Florian Eckert <fe@dev.tdt.de>
+To:     u.kleine-koenig@pengutronix.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, pavel@ucw.cz, lee@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        Eckert.Florian@googlemail.com
+Subject: [PATCH v5 1/2] tty: new helper function tty_get_mget
+Date:   Tue, 21 Feb 2023 09:19:00 +0100
+Message-ID: <20230221081901.15557-2-fe@dev.tdt.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230221081901.15557-1-fe@dev.tdt.de>
+References: <20230221081901.15557-1-fe@dev.tdt.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230216013230.22978-14-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-purgate-ID: 151534::1676967550-729991EA-E8DF2B21/0/0
+X-purgate-type: clean
+X-purgate: clean
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, Feb 16, 2023 at 02:32:30AM +0100, Christian Marangi wrote:
-> Add LEDs definition example for qca8k using the offload trigger as the
-> default trigger and add all the supported offload triggers by the
-> switch.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../devicetree/bindings/net/dsa/qca8k.yaml    | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
-> index 389892592aac..ba3821364039 100644
-> --- a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
-> +++ b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
-> @@ -18,6 +18,8 @@ description:
->    PHY it is connected to. In this config, an internal mdio-bus is registered and
->    the MDIO master is used for communication. Mixed external and internal
->    mdio-bus configurations are not supported by the hardware.
-> +  Each phy have at least 3 LEDs connected and can be declared
-> +  using the standard LEDs structure.
->  
->  properties:
->    compatible:
-> @@ -117,6 +119,7 @@ unevaluatedProperties: false
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/leds/common.h>
->  
->      mdio {
->          #address-cells = <1>;
-> @@ -276,6 +279,27 @@ examples:
->  
->                  internal_phy_port1: ethernet-phy@0 {
->                      reg = <0>;
-> +
-> +                    leds {
-> +                        #address-cells = <1>;
-> +                        #size-cells = <0>;
-> +
-> +                        led@0 {
-> +                            reg = <0>;
-> +                            color = <LED_COLOR_ID_WHITE>;
-> +                            function = LED_FUNCTION_LAN;
-> +                            function-enumerator = <1>;
-> +                            linux,default-trigger = "netdev";
+For a given struct tty_struct, this provides the appropriate tty line
+state flags needed to add more modes to the ledtrig-tty trigger.
 
-Wouldn't the default for an ethernet phy controlled LED always be 
-"netdev"? If a PHY has LED nodes, then just always set it to "netdev" 
-unless something else is selected.
+The new function is then used to get via tty_tiocmget() the different tty
+line states.
 
-Rob
+Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+---
+ drivers/tty/tty_io.c | 28 ++++++++++++++++++++++------
+ include/linux/tty.h  |  1 +
+ 2 files changed, 23 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 3149114bf130..a068b03a0828 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2493,6 +2493,24 @@ static int send_break(struct tty_struct *tty, unsi=
+gned int duration)
+ 	return retval;
+ }
+=20
++/**
++ * tty_get_mget		-	get modem status
++ * @tty: tty device
++ *
++ * Obtain the modem status bits from the tty driver if the feature
++ * is supported. Return -%ENOTTY if it is not available.
++ */
++int tty_get_mget(struct tty_struct *tty)
++{
++	int retval =3D -ENOTTY;
++
++	if (tty->ops->tiocmget)
++		retval =3D tty->ops->tiocmget(tty);
++
++	return retval;
++}
++EXPORT_SYMBOL_GPL(tty_get_mget);
++
+ /**
+  * tty_tiocmget		-	get modem status
+  * @tty: tty device
+@@ -2505,14 +2523,12 @@ static int send_break(struct tty_struct *tty, uns=
+igned int duration)
+  */
+ static int tty_tiocmget(struct tty_struct *tty, int __user *p)
+ {
+-	int retval =3D -ENOTTY;
++	int retval;
+=20
+-	if (tty->ops->tiocmget) {
+-		retval =3D tty->ops->tiocmget(tty);
++	retval =3D tty_get_mget(tty);
++	if (retval >=3D 0)
++		retval =3D put_user(retval, p);
+=20
+-		if (retval >=3D 0)
+-			retval =3D put_user(retval, p);
+-	}
+ 	return retval;
+ }
+=20
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index 730c3301d710..825186c0fec1 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -421,6 +421,7 @@ int tty_unthrottle_safe(struct tty_struct *tty);
+ int tty_do_resize(struct tty_struct *tty, struct winsize *ws);
+ int tty_get_icount(struct tty_struct *tty,
+ 		struct serial_icounter_struct *icount);
++int tty_get_mget(struct tty_struct *tty);
+ int is_current_pgrp_orphaned(void);
+ void tty_hangup(struct tty_struct *tty);
+ void tty_vhangup(struct tty_struct *tty);
+--=20
+2.30.2
+
