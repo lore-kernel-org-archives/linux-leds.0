@@ -2,94 +2,130 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A510C61DA4
-	for <linux-leds@archiver.kernel.org>; Wed, 22 Feb 2023 07:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 840C0C677F1
+	for <linux-leds@archiver.kernel.org>; Wed, 22 Feb 2023 07:56:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbjBVHVW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 22 Feb 2023 02:21:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47358 "EHLO
+        id S231239AbjBVHz7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 22 Feb 2023 02:55:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjBVHVV (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 22 Feb 2023 02:21:21 -0500
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 007BD3609F;
-        Tue, 21 Feb 2023 23:21:19 -0800 (PST)
-Received: by mail-ed1-f41.google.com with SMTP id f13so26020100edz.6;
-        Tue, 21 Feb 2023 23:21:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nwN0t4GS2EA37bAfRFwPBrirPEBoDMe7YD2TezLxAi0=;
-        b=FKLbeo8NLw7wJDT2fj8wIp8ydE+AUaZ2SrgB5ozc82gC0eobx+JNqHK6QIS/Rxw6D1
-         gRgAI3Avqls9lJlwvRGLL/SdmNZ6A6ZQT4wtEi2kEc4VwTZ+m/Fb3Q7whCstEwTfI2in
-         lzvHZNnMcbRS3ax7gY97tjh02Ibd5MNFDobd/isDbLdSHqsVad13CynBlY6m0M6tJ2a8
-         rthhnyw2IBHj9q88yuLHHJoNG9Bv5E6dFgJ0NIT36NAHVuX/za4JEBpCpmi0loxojXPu
-         ryKFf5itYTFt0uDaA9XwGYJyipj2hMPEoUM0gKghCZm1LA/NYTH2N7l5JTXc477lAyyv
-         239w==
-X-Gm-Message-State: AO0yUKW1LZlXSTuMvslwkDZUU0PJolAO4Ex2SYBKiKfk7uEGhpdW25Yk
-        7ugX02Y4cnKNqXcqPnQk4co=
-X-Google-Smtp-Source: AK7set9yNxckoSkCYTPYdKTJJUBJYr1kPiQN1t7uibrIpStAS6OhXwXiDtMdwPWeYydOuwGwOMqJFw==
-X-Received: by 2002:a17:906:9497:b0:8b1:9e47:9101 with SMTP id t23-20020a170906949700b008b19e479101mr17194785ejx.12.1677050478502;
-        Tue, 21 Feb 2023 23:21:18 -0800 (PST)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:49? ([2a0b:e7c0:0:107::aaaa:49])
-        by smtp.gmail.com with ESMTPSA id kk17-20020a170907767100b008d3abe8726bsm3517242ejc.154.2023.02.21.23.21.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Feb 2023 23:21:18 -0800 (PST)
-Message-ID: <b130702a-9886-f18f-c377-489db1cee067@kernel.org>
-Date:   Wed, 22 Feb 2023 08:21:16 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v5 2/2] trigger: ledtrig-tty: add additional modes
-Content-Language: en-US
-From:   Jiri Slaby <jirislaby@kernel.org>
-To:     Florian Eckert <fe@dev.tdt.de>, kernel test robot <lkp@intel.com>
-Cc:     u.kleine-koenig@pengutronix.de, gregkh@linuxfoundation.org,
-        pavel@ucw.cz, lee@kernel.org, oe-kbuild-all@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        with ESMTP id S230109AbjBVHz6 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 22 Feb 2023 02:55:58 -0500
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC98D2C646;
+        Tue, 21 Feb 2023 23:55:56 -0800 (PST)
+Received: from [127.0.0.1] (helo=localhost)
+        by relay.expurgate.net with smtp (Exim 4.92)
+        (envelope-from <prvs=9431929e93=fe@dev.tdt.de>)
+        id 1pUjyg-000UiF-M2; Wed, 22 Feb 2023 08:55:50 +0100
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+        by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <fe@dev.tdt.de>)
+        id 1pUjyf-000RDd-PC; Wed, 22 Feb 2023 08:55:49 +0100
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+        by securemail.tdt.de (Postfix) with ESMTP id 67DF0240040;
+        Wed, 22 Feb 2023 08:55:49 +0100 (CET)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+        by securemail.tdt.de (Postfix) with ESMTP id C515E240049;
+        Wed, 22 Feb 2023 08:55:48 +0100 (CET)
+Received: from localhost.localdomain (unknown [10.2.3.40])
+        by mail.dev.tdt.de (Postfix) with ESMTPSA id 8ED8C2DD5B;
+        Wed, 22 Feb 2023 08:55:48 +0100 (CET)
+From:   Florian Eckert <fe@dev.tdt.de>
+To:     u.kleine-koenig@pengutronix.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, pavel@ucw.cz, lee@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
         Eckert.Florian@googlemail.com
-References: <20230221081901.15557-3-fe@dev.tdt.de>
- <202302220740.2RKDHnof-lkp@intel.com>
- <deee30ef43e397233dd15d11b86ae91a@dev.tdt.de>
- <4e5aeac3-2a99-8fd5-cf1d-a35870ecd807@kernel.org>
-In-Reply-To: <4e5aeac3-2a99-8fd5-cf1d-a35870ecd807@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH v6 1/2] tty: new helper function tty_get_mget
+Date:   Wed, 22 Feb 2023 08:55:38 +0100
+Message-ID: <20230222075539.484878-2-fe@dev.tdt.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230222075539.484878-1-fe@dev.tdt.de>
+References: <20230222075539.484878-1-fe@dev.tdt.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-purgate-ID: 151534::1677052550-71E671EA-380A5996/0/0
+X-purgate-type: clean
+X-purgate: clean
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 22. 02. 23, 8:16, Jiri Slaby wrote:
->>> vim +9 Documentation/ABI/testing/sysfs-class-led-trigger-tty
->>>
->>>    > 9    Date:        January 2023
->>
->> I apologies for the question! But I don't know what the test buildbot 
->> here wants from me.
->> I've looked at the other files and I can't find anything that stands out.
-> 
-> sphinx is always misleading.
-> 
-> It's the indentation of all "LED on if ...".
+For a given struct tty_struct, this provides the appropriate tty line
+state flags needed to add more modes to the ledtrig-tty trigger.
 
-So this should work:
+The new function is then used to get via tty_tiocmget() the different tty
+line states.
 
-                 Specifies the operating to trigger the LED.
-                 The following operating modes are supported:
+Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+---
+ drivers/tty/tty_io.c | 28 ++++++++++++++++++++++------
+ include/linux/tty.h  |  1 +
+ 2 files changed, 23 insertions(+), 6 deletions(-)
 
-                 * Tx/Rx: Flash LED on data transmission (default)
-                 * CTS:   DCE Ready to accept data from the DTE.
-                   LED on if line is high.
-                 * DSR:   DCE is ready to receive and send data.
-                   LED on if line is high.
-                 * CAR:   DCE is receiving a carrier from a remote DTE.
-                   LED on if line is high.
-                 * RNG:   DCE has detected an incoming ring signal.
-                   LED on if line is high.
-
--- 
-js
-suse labs
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 3149114bf130..a068b03a0828 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2493,6 +2493,24 @@ static int send_break(struct tty_struct *tty, unsi=
+gned int duration)
+ 	return retval;
+ }
+=20
++/**
++ * tty_get_mget		-	get modem status
++ * @tty: tty device
++ *
++ * Obtain the modem status bits from the tty driver if the feature
++ * is supported. Return -%ENOTTY if it is not available.
++ */
++int tty_get_mget(struct tty_struct *tty)
++{
++	int retval =3D -ENOTTY;
++
++	if (tty->ops->tiocmget)
++		retval =3D tty->ops->tiocmget(tty);
++
++	return retval;
++}
++EXPORT_SYMBOL_GPL(tty_get_mget);
++
+ /**
+  * tty_tiocmget		-	get modem status
+  * @tty: tty device
+@@ -2505,14 +2523,12 @@ static int send_break(struct tty_struct *tty, uns=
+igned int duration)
+  */
+ static int tty_tiocmget(struct tty_struct *tty, int __user *p)
+ {
+-	int retval =3D -ENOTTY;
++	int retval;
+=20
+-	if (tty->ops->tiocmget) {
+-		retval =3D tty->ops->tiocmget(tty);
++	retval =3D tty_get_mget(tty);
++	if (retval >=3D 0)
++		retval =3D put_user(retval, p);
+=20
+-		if (retval >=3D 0)
+-			retval =3D put_user(retval, p);
+-	}
+ 	return retval;
+ }
+=20
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index 730c3301d710..825186c0fec1 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -421,6 +421,7 @@ int tty_unthrottle_safe(struct tty_struct *tty);
+ int tty_do_resize(struct tty_struct *tty, struct winsize *ws);
+ int tty_get_icount(struct tty_struct *tty,
+ 		struct serial_icounter_struct *icount);
++int tty_get_mget(struct tty_struct *tty);
+ int is_current_pgrp_orphaned(void);
+ void tty_hangup(struct tty_struct *tty);
+ void tty_vhangup(struct tty_struct *tty);
+--=20
+2.30.2
 
