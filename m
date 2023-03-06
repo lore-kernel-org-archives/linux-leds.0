@@ -2,104 +2,86 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0A7C678D4
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Mar 2023 10:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92792C61DA4
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Mar 2023 15:54:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231197AbjCFKa5 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 6 Mar 2023 05:30:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57628 "EHLO
+        id S229640AbjCFPys (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 6 Mar 2023 10:54:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231207AbjCFKa3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Mar 2023 05:30:29 -0500
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F3362365B;
-        Mon,  6 Mar 2023 02:29:59 -0800 (PST)
-Received: from [127.0.0.1] (helo=localhost)
-        by relay.expurgate.net with smtp (Exim 4.92)
-        (envelope-from <prvs=0443564136=fe@dev.tdt.de>)
-        id 1pZ7pZ-0008Sa-Ue; Mon, 06 Mar 2023 11:12:33 +0100
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-        by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <fe@dev.tdt.de>)
-        id 1pZ7pZ-000KIO-5R; Mon, 06 Mar 2023 11:12:33 +0100
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-        by securemail.tdt.de (Postfix) with ESMTP id B9CB8240049;
-        Mon,  6 Mar 2023 11:12:32 +0100 (CET)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-        by securemail.tdt.de (Postfix) with ESMTP id 30F6D240040;
-        Mon,  6 Mar 2023 11:12:32 +0100 (CET)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-        by mail.dev.tdt.de (Postfix) with ESMTP id E542B20806;
-        Mon,  6 Mar 2023 11:12:31 +0100 (CET)
+        with ESMTP id S229556AbjCFPyr (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Mar 2023 10:54:47 -0500
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0462E23669;
+        Mon,  6 Mar 2023 07:54:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678118086; x=1709654086;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nqBEyqCxPf0CdDuSxcYS7HYgQHSI7GNHr2exg16wCz4=;
+  b=jVQzGY7cm78n24RleIe4Y3IOOs3UvWUJWxBpsB/poUmwiF9/IrOrNKZM
+   OD+iw8EXaul0+YEKyD++alUsF8rrZaLXwZMBqO6v5iUz9O+Ifd1btlGPa
+   3gegQYjR+fJPu8tu63x4Fw3C3HDl/HpPjVOCDftObd0Cf+McdcLyiQwJr
+   SZymu+KeyZnGzYLPIvkO1vYi5VFyfxB+B3827udan9BaXt0wN5mvJisGp
+   o8ACMGyZtn9lsB9bTVxO+Sxi4lLIsXmEAKeGeM0A3O1mbK4gPyhq9Oqjf
+   yC1KptYpTosbjzUQA4ux1R5xkslaiLHrxQEKCz6OBmOJMrNMVGQXW+Alz
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="400411726"
+X-IronPort-AV: E=Sophos;i="5.98,238,1673942400"; 
+   d="scan'208";a="400411726"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2023 07:54:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="850346560"
+X-IronPort-AV: E=Sophos;i="5.98,238,1673942400"; 
+   d="scan'208";a="850346560"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga005.jf.intel.com with ESMTP; 06 Mar 2023 07:54:40 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1pZDAc-00GVWx-0e;
+        Mon, 06 Mar 2023 17:54:38 +0200
+Date:   Mon, 6 Mar 2023 17:54:37 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Gene Chen <gene_chen@richtek.com>, linux-leds@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Kurt Kanzenbach <kurt@linutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH v4 11/11] net: dsa: hellcreek: Get rid of custom
+ led_init_default_state_get()
+Message-ID: <ZAYMvVR+6eQ9qjAk@smile.fi.intel.com>
+References: <20230103131256.33894-1-andriy.shevchenko@linux.intel.com>
+ <20230103131256.33894-12-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 06 Mar 2023 11:12:31 +0100
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     gregkh@linuxfoundation.org, jirislaby@kernel.org, pavel@ucw.cz,
-        lee@kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, Eckert.Florian@googlemail.com
-Subject: Re: [PATCH v7 2/2] trigger: ledtrig-tty: add additional modes
-In-Reply-To: <20230306093524.amm7o4ppa7gon4ew@pengutronix.de>
-References: <20230222083335.847655-1-fe@dev.tdt.de>
- <20230222083335.847655-3-fe@dev.tdt.de>
- <20230306093524.amm7o4ppa7gon4ew@pengutronix.de>
-Message-ID: <706dcb23af15223489dd7d0d34f5a64c@dev.tdt.de>
-X-Sender: fe@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate: clean
-X-purgate-ID: 151534::1678097553-AA6876AC-A6198408/0/0
-X-purgate-type: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230103131256.33894-12-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hello Uwe,
+On Tue, Jan 03, 2023 at 03:12:56PM +0200, Andy Shevchenko wrote:
+> LED core provides a helper to parse default state from firmware node.
+> Use it instead of custom implementation.
 
->> +		  LED on if line is high.
->> +		* RNG:   DCE has detected an incoming ring signal.
->> +		  LED on if line is high.
-> 
-> Something I (still) don't like about this approach is that you cannot
-> make the LED flash on TX only (or CAR and DSR). Something like:
-> 
-> 	led=/sys/class/leds/<led>/
-> 	echo 1 > $led/TX
-> 	echo 0 > $led/RX
-> 	echo 1 > $led/CAR
-> 
-> would be a more flexible and IMHO nicer interface. (Maybe with improved
-> file names.)
+Jakub, if you are okay with thi, it may be applied now
+(Lee hadn't taken it in via LEDS subsystem for v6.3-rc1).
 
-The question is whether it makes sense to combine several states on one
-LED. We can add TTY_LED_RX or TTY_LED_TX to meet your requirements.
-The only led trigger I know that combines multiple states is 
-ledtrig-netdev.
-
-If so, I can only imagine that we handle it the same way as with
-ledtrig-netdev. For the states CTS/DSR/CAR/RNG, the LED goes on or off
-and when data is transmitted (rx/tx), the LED flashes.
-
-I have personally have a usecase where I need to indicate whether
-I am getting CTS from the mode or not.
-
-If that's how we want to do it, then I can only imagine that:
-
-led=/sys/class/leds/<led>/
-  	echo 1 > $led/rx
-  	echo 0 > $led/tx
-  	echo <CTS|DSR|CAR|RNG> > $led/tty_led_mode
-
-I think it only makes sense to always display only one mode
-
-This are "CTS|DSR|CAR|RNG".
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Personally, I think
-it complicates things because the LED shows several states.
-
-Best regards
-Florian
