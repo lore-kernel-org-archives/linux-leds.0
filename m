@@ -2,139 +2,122 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0183C6FD20
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Mar 2023 09:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53197C61DA4
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Mar 2023 09:41:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230051AbjCFJfk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 6 Mar 2023 04:35:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45936 "EHLO
+        id S229740AbjCFJld (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 6 Mar 2023 04:41:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230056AbjCFJfj (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Mar 2023 04:35:39 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00BF1BB9A
-        for <linux-leds@vger.kernel.org>; Mon,  6 Mar 2023 01:35:36 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        with ESMTP id S229749AbjCFJlc (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Mar 2023 04:41:32 -0500
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20C94233CB;
+        Mon,  6 Mar 2023 01:41:28 -0800 (PST)
+Received: from [127.0.0.1] (helo=localhost)
+        by relay.expurgate.net with smtp (Exim 4.92)
+        (envelope-from <prvs=0443564136=fe@dev.tdt.de>)
+        id 1pZ7LQ-0002zt-Da; Mon, 06 Mar 2023 10:41:24 +0100
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+        by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZ7Fe-0002CZ-NM; Mon, 06 Mar 2023 10:35:26 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZ7Fd-002DDT-NV; Mon, 06 Mar 2023 10:35:25 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pZ7Fc-002cuf-Ph; Mon, 06 Mar 2023 10:35:24 +0100
-Date:   Mon, 6 Mar 2023 10:35:24 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Florian Eckert <fe@dev.tdt.de>
-Cc:     gregkh@linuxfoundation.org, jirislaby@kernel.org, pavel@ucw.cz,
-        lee@kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, Eckert.Florian@googlemail.com
-Subject: Re: [PATCH v7 2/2] trigger: ledtrig-tty: add additional modes
-Message-ID: <20230306093524.amm7o4ppa7gon4ew@pengutronix.de>
-References: <20230222083335.847655-1-fe@dev.tdt.de>
- <20230222083335.847655-3-fe@dev.tdt.de>
+        (envelope-from <fe@dev.tdt.de>)
+        id 1pZ7LP-000Ran-Mq; Mon, 06 Mar 2023 10:41:23 +0100
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+        by securemail.tdt.de (Postfix) with ESMTP id 53421240049;
+        Mon,  6 Mar 2023 10:41:23 +0100 (CET)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+        by securemail.tdt.de (Postfix) with ESMTP id BB57A24004D;
+        Mon,  6 Mar 2023 10:41:22 +0100 (CET)
+Received: from localhost.localdomain (unknown [10.2.3.40])
+        by mail.dev.tdt.de (Postfix) with ESMTPSA id 8346A2E30C;
+        Mon,  6 Mar 2023 10:41:22 +0100 (CET)
+From:   Florian Eckert <fe@dev.tdt.de>
+To:     u.kleine-koenig@pengutronix.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, pavel@ucw.cz, lee@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        Eckert.Florian@googlemail.com
+Subject: [PATCH v8 3/3] ledtrig-tty: call correct brightness set function
+Date:   Mon,  6 Mar 2023 10:41:13 +0100
+Message-ID: <20230306094113.273988-4-fe@dev.tdt.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230306094113.273988-1-fe@dev.tdt.de>
+References: <20230306094113.273988-1-fe@dev.tdt.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="svip3mvpinfoukkq"
-Content-Disposition: inline
-In-Reply-To: <20230222083335.847655-3-fe@dev.tdt.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-leds@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+X-purgate-ID: 151534::1678095684-535C951F-3B7F81B3/0/0
+X-purgate-type: clean
+X-purgate: clean
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+The problem is, however, that with LEDs that are connected directly to
+the SOC via a GPIO, the LED cannot be switched on or off.
+Because the 'leds-gpio' device driver does not need a delayed work.
 
---svip3mvpinfoukkq
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If we look at the callstack for the function 'led_set_brightness_sync',
+then at the end it is checked whether the LED device driver has the
+function 'brightness_set_blocking' implemented. This is not the case for
+the 'leds-gpio' device.
 
-On Wed, Feb 22, 2023 at 09:33:35AM +0100, Florian Eckert wrote:
-> Add additional modes to trigger the selected LED.
-> The following modes are supported:
->=20
-> Tx/Rx:	Flash LED on data transmission (default)
-> CTS:	DCE Ready to accept data from the DTE.
-> DSR:	DCE is ready to receive and send data.
-> CAR:	DCE is receiving a carrier from a remote DTE.
-> RNG:	DCE has detected an incoming ring signal.
->=20
-> The mode can be changed for example with the following command:
-> echo "CTS" > /sys/class/leds/<led>/mode
->=20
-> This would turn on the LED, when the DTE(modem) signals the DCE that it
-> is ready to accept data.
->=20
-> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
-> ---
->  .../ABI/testing/sysfs-class-led-trigger-tty   |  17 ++
->  drivers/leds/trigger/ledtrig-tty.c            | 145 ++++++++++++++++--
->  2 files changed, 147 insertions(+), 15 deletions(-)
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-tty b/Docu=
-mentation/ABI/testing/sysfs-class-led-trigger-tty
-> index 2bf6b24e781b..1c28e6c61d19 100644
-> --- a/Documentation/ABI/testing/sysfs-class-led-trigger-tty
-> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-tty
-> @@ -4,3 +4,20 @@ KernelVersion:	5.10
->  Contact:	linux-leds@vger.kernel.org
->  Description:
->  		Specifies the tty device name of the triggering tty
-> +
-> +What:		/sys/class/leds/<led>/mode
-> +Date:		January 2023
-> +KernelVersion:	6.3
-> +Description:
-> +		Specifies the operating to trigger the LED.
-> +		The following operating modes are supported:
-> +
-> +		* Tx/Rx: Flash LED on data transmission (default)
-> +		* CTS:   DCE Ready to accept data from the DTE.
-> +		  LED on if line is high.
-> +		* DSR:   DCE is ready to receive and send data.
-> +		  LED on if line is high.
-> +		* CAR:   DCE has detected a carrier from a remote DTE.
-> +		  LED on if line is high.
-> +		* RNG:   DCE has detected an incoming ring signal.
-> +		  LED on if line is high.
+The function 'brightness_set_blocking' returns LED devices -ENOTSUPP.
+This is not evaluated in 'ledtrig-tty' trigger.
 
-Something I (still) don't like about this approach is that you cannot
-make the LED flash on TX only (or CAR and DSR). Something like:
+In order for the trigger to also work with LED that does not have the
+'brightness_set_blocking' function implemented, we must therefore use the
+internal API of the LED subsystem and use the function
+'led_set_brightness_nosleep'.
 
-	led=3D/sys/class/leds/<led>/
-	echo 1 > $led/TX
-	echo 0 > $led/RX
-	echo 1 > $led/CAR
+Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+---
+ drivers/leds/trigger/ledtrig-tty.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-would be a more flexible and IMHO nicer interface. (Maybe with improved
-file names.)
-
-Best regards
-Uwe
-
+diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/le=
+dtrig-tty.c
+index d3407830fa69..132e809898a7 100644
+--- a/drivers/leds/trigger/ledtrig-tty.c
++++ b/drivers/leds/trigger/ledtrig-tty.c
+@@ -7,6 +7,8 @@
+ #include <linux/tty.h>
+ #include <uapi/linux/serial.h>
+=20
++#include "../leds.h"
++
+ enum tty_led_mode {
+ 	TTY_LED_RXTX,
+ 	TTY_LED_CTS,
+@@ -164,9 +166,9 @@ static void ledtrig_tty_flags(struct ledtrig_tty_data=
+ *trigger_data, unsigned in
+=20
+ 	status =3D tty_get_mget(trigger_data->tty);
+ 	if (status & flag)
+-		led_set_brightness_sync(trigger_data->led_cdev, LED_ON);
++		led_set_brightness_nosleep(trigger_data->led_cdev, LED_ON);
+ 	else
+-		led_set_brightness_sync(trigger_data->led_cdev, LED_OFF);
++		led_set_brightness_nosleep(trigger_data->led_cdev, LED_OFF);
+ }
+=20
+ static void ledtrig_tty_work(struct work_struct *work)
+@@ -229,12 +231,12 @@ static void ledtrig_tty_work(struct work_struct *wo=
+rk)
+ 		}
+=20
+ 		if (icount.rx !=3D trigger_data->rx || icount.tx !=3D trigger_data->tx=
+) {
+-			led_set_brightness_sync(trigger_data->led_cdev, LED_ON);
++			led_set_brightness_nosleep(trigger_data->led_cdev, LED_ON);
+=20
+ 			trigger_data->rx =3D icount.rx;
+ 			trigger_data->tx =3D icount.tx;
+ 		} else {
+-			led_set_brightness_sync(trigger_data->led_cdev, LED_OFF);
++			led_set_brightness_nosleep(trigger_data->led_cdev, LED_OFF);
+ 		}
+ 		break;
+ 	}
 --=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+2.30.2
 
---svip3mvpinfoukkq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmQFs9kACgkQwfwUeK3K
-7An5+gf8CoSOdxVO4N/QvSBqybrroQFb5PRh/T6Ud7r/5xd6UhmJjbGZHbWpyvaA
-aWBySQuXPGxh9hlnb57c2BI0q5/hHnpTl8yMy7tPg3pYKGNhVHi+O7b+74szedj1
-IGYfPP16ViEdVlz1nkPLtUNzJd0817jw6nzCQBuFmoiPK3nXyb2LCznYSVWYLcGR
-Y85+HG1NOLOAiGYcXM6qhcC5/WUOhxhV78Ue1Kuwn81FMTYnScj2lYQ4eHYX63nq
-1p1IabLzorNtVKhs4FMce86+SdpBM2m5lcmnJJCAV/m7KFQnBGe9faMAXC4avztb
-Ts4+Uqip8Dcur3EyByxXbkdGmZwtLA==
-=yTDj
------END PGP SIGNATURE-----
-
---svip3mvpinfoukkq--
