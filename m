@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6F8C678D5
-	for <linux-leds@archiver.kernel.org>; Tue,  7 Mar 2023 22:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 176CFC6FA99
+	for <linux-leds@archiver.kernel.org>; Tue,  7 Mar 2023 22:34:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231519AbjCGWdy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 7 Mar 2023 17:33:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39822 "EHLO
+        id S231659AbjCGWd6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 7 Mar 2023 17:33:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230263AbjCGWdk (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Mar 2023 17:33:40 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1131F9E51E;
-        Tue,  7 Mar 2023 14:33:34 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id l7-20020a05600c1d0700b003eb5e6d906bso81284wms.5;
-        Tue, 07 Mar 2023 14:33:33 -0800 (PST)
+        with ESMTP id S231196AbjCGWdx (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Mar 2023 17:33:53 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 723679F236;
+        Tue,  7 Mar 2023 14:33:36 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id e13so13627961wro.10;
+        Tue, 07 Mar 2023 14:33:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678228412;
+        d=gmail.com; s=20210112; t=1678228415;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gFKfyegjpAF6RoRRpVAGQR9empILN5kAdm3BJUNpaCg=;
-        b=OGx0YwG2swcAIAnRSezmOEktltT4pyXlqAQVZzO0srWnoD9MU8CV+V5a8eG06lFMZH
-         hc2X/JqbmpuDT363nP+d1w6jpjNWUsquAtRUCAmj6dwSd5k9r/wiMzybfvLiHPk6bCDM
-         jT4kGExubAq8c+23XTyKYB+j2bJ5Picl2zHlb11xU2rtZBh6ai1IlcKwmdi/qOT99IKk
-         817yXxA013zL0FHereOgrheqMuOr/PipPswHWBOvavzLUr+7bM5F5sQeJGoKWkY1X+ca
-         G7QI3g4o4aqlvNehyZx9AL/iZBefsI9a8gbVE40YapR8vxH/gLx6tckPBYjq3YDNGerI
-         5m9w==
+        bh=UQIxIQuz0qPop1m1y23AzYKP3fZZBi9ehi2OyfR3U2Q=;
+        b=cwcFaL0DuRkZrkzWch+9kpLs9Wii5t1UBkhgiD976XDnd47PibX6P7HJsDNWhXQsAC
+         yK4CJfDw2KR/e437kocckaAIzfj9Ahv14eVJ4UPd+TDydp/KPkT6s8g9jzO9nNh9zm+D
+         T9mqGjK4siRrXX0ATVbAuDnQ4H7aPHmErXadXCgiWcCU7y25EMeDgFrAnhAsZ8StsyDn
+         e5tHs/beIz2yXZ+BKseSarX41+9wVQ3yVRUjNpTwauMDqRhG3wo1gUPpzrMqRYAZcaCB
+         8R2V0JQ9XIbKVx20qF+iGRTbZD5hxhAeKxO70O23L66l5dTMjzipRCCCnS/InsBkyPse
+         HRbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678228412;
+        d=1e100.net; s=20210112; t=1678228415;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gFKfyegjpAF6RoRRpVAGQR9empILN5kAdm3BJUNpaCg=;
-        b=pUlI0i0OUCqRwTYMcdMT4hj1xIJDRIFp4vzOZcoHb5WX2RCT8arMtTYxjfDmuTdqaV
-         OYblffIaZTSQUyH9HZC9flUDchVzLGxwRaUh8geQjyWSPPcHcF6h9CkD954M+f8qhv2q
-         SWiZ6PF9USOSVd+O5FH4n3tOh4eyBgKpkb9rsMYoIzRNG/fCharhnwnD0yiReukekSa+
-         apThzsJMcA1TVUCisASFAlDhApreSYt4cDV6dPxkgCjUmmdgd3Qk8v9X69CErWGc0BSH
-         AvWVyaURJbOwMhK0ZUkA0EcmpD/i3DSSlZs2ZAM7uP2Ucs5uIl8cfIz0XgBIAgKiaDoY
-         mdVw==
-X-Gm-Message-State: AO0yUKWXZVWiqOFBXb6CSyUdmji2Db/A7U7BrneZ4o/2xM5YGtFOY/0T
-        D3LsFqhMrvQDpvqPwIrAx8A=
-X-Google-Smtp-Source: AK7set/dV5nZ+FNI2b7VXbj45v+N2uFo+8OdCBTd8TWevumfE0EUKAdS4gIC3ZFzOO/T1LNL/84COA==
-X-Received: by 2002:a05:600c:a0b:b0:3ea:fca4:8c48 with SMTP id z11-20020a05600c0a0b00b003eafca48c48mr13505083wmp.23.1678228412313;
-        Tue, 07 Mar 2023 14:33:32 -0800 (PST)
+        bh=UQIxIQuz0qPop1m1y23AzYKP3fZZBi9ehi2OyfR3U2Q=;
+        b=WcaHnF97wdC6C91TY/pkZJTPNN5Bg68V+Dgt6ikvj4VX4X0+u9rVwBfNTPxxC6Kk2r
+         KBOk8gXAlKBaIKGUFOMCCS8X23Dk6XSwTDhepYkBaQZsEOm91yJwCGZ9Ouox8oNzbltX
+         TUZWNdCo/j2+tdQO1CCEUz2mfj3MVJ+SIA6J3xBA7gydHJAjkxeE9VUKv8uy8i4DbJia
+         gj79OsSgdIexOPP7pcdW3fRjSiEnexf37vTCbFqKAaLv4X19ZnZbfzB/viNQOQ/7Wywg
+         KvFR4iK3mmiGwawgRuBBRYyYTe4Rv5ZDC1KqZGPLJU1jyRcCbWjMxxMVk8Zh38Zb0XqU
+         ZHHA==
+X-Gm-Message-State: AO0yUKXuEU5uKamh2/FtPCqcVOFTPt0/L2MdNta5iklXK+IlwSOLCsHX
+        Jhwf2s9NNH67dCQQF+wqZzI=
+X-Google-Smtp-Source: AK7set8Wl4lcBFilSaNGdtaALA6G8nL1wzO5CN2w3YjhPhV1YzjrNrqemmLvOfIeYIGIGEPNl2oS1g==
+X-Received: by 2002:adf:e68e:0:b0:2ce:35d9:76ea with SMTP id r14-20020adfe68e000000b002ce35d976eamr9590187wrm.54.1678228414791;
+        Tue, 07 Mar 2023 14:33:34 -0800 (PST)
 Received: from localhost.localdomain (93-34-89-197.ip49.fastwebnet.it. [93.34.89.197])
-        by smtp.googlemail.com with ESMTPSA id q11-20020a05600c46cb00b003dc1d668866sm19233101wmo.10.2023.03.07.14.33.31
+        by smtp.googlemail.com with ESMTPSA id q11-20020a05600c46cb00b003dc1d668866sm19233101wmo.10.2023.03.07.14.33.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 14:33:31 -0800 (PST)
+        Tue, 07 Mar 2023 14:33:34 -0800 (PST)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -68,9 +68,9 @@ To:     Andrew Lunn <andrew@lunn.ch>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, Lee Jones <lee@kernel.org>,
         linux-leds@vger.kernel.org
-Subject: [net-next PATCH 06/11] net: phy: phy_device: Call into the PHY driver to set LED blinking.
-Date:   Tue,  7 Mar 2023 18:00:41 +0100
-Message-Id: <20230307170046.28917-7-ansuelsmth@gmail.com>
+Subject: [net-next PATCH 08/11] dt-bindings: net: dsa: dsa-port: Document support for LEDs node
+Date:   Tue,  7 Mar 2023 18:00:43 +0100
+Message-Id: <20230307170046.28917-9-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230307170046.28917-1-ansuelsmth@gmail.com>
 References: <20230307170046.28917-1-ansuelsmth@gmail.com>
@@ -80,72 +80,33 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+Document support for LEDs node in dsa port.
+Switch may support different LEDs that can be configured for different
+operation like blinking on traffic event or port link.
 
-Linux LEDs can be requested to perform hardware accelerated
-blinking. Pass this to the PHY driver, if it implements the op.
-
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/net/phy/phy_device.c | 18 ++++++++++++++++++
- include/linux/phy.h          |  8 ++++++++
- 2 files changed, 26 insertions(+)
+ Documentation/devicetree/bindings/net/dsa/dsa-port.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index e4df4fcb6b05..ae8ec721353d 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -2981,6 +2981,22 @@ static int phy_led_set_brightness(struct led_classdev *led_cdev,
- 	return err;
- }
+diff --git a/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml b/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
+index 480120469953..f813e1f64f75 100644
+--- a/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
++++ b/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
+@@ -59,6 +59,13 @@ properties:
+       - rtl8_4t
+       - seville
  
-+static int phy_led_blink_set(struct led_classdev *led_cdev,
-+			     unsigned long *delay_on,
-+			     unsigned long *delay_off)
-+{
-+	struct phy_led *phyled = to_phy_led(led_cdev);
-+	struct phy_device *phydev = phyled->phydev;
-+	int err;
++  leds:
++    type: object
 +
-+	mutex_lock(&phydev->lock);
-+	err = phydev->drv->led_blink_set(phydev, phyled->index,
-+					 delay_on, delay_off);
-+	mutex_unlock(&phydev->lock);
++    patternProperties:
++      '^led(@[a-f0-9]+)?$':
++        $ref: /schemas/leds/common.yaml#
 +
-+	return err;
-+}
-+
- static int of_phy_led(struct phy_device *phydev,
- 		      struct device_node *led)
- {
-@@ -3004,6 +3020,8 @@ static int of_phy_led(struct phy_device *phydev,
- 
- 	if (phydev->drv->led_brightness_set)
- 		cdev->brightness_set_blocking = phy_led_set_brightness;
-+	if (phydev->drv->led_blink_set)
-+		cdev->blink_set = phy_led_blink_set;
- 	cdev->max_brightness = 1;
- 	init_data.devicename = dev_name(&phydev->mdio.dev);
- 	init_data.fwnode = of_fwnode_handle(led);
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 83d3ed7485e0..b1ac3c8a97e6 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -1072,6 +1072,14 @@ struct phy_driver {
- 	 */
- 	int (*led_brightness_set)(struct phy_device *dev,
- 				  u32 index, enum led_brightness value);
-+	/* Activate hardware accelerated blink, delays are in milliseconds
-+	 * and if both are zero then a sensible default should be chosen.
-+	 * The call should adjust the timings in that case and if it can't
-+	 * match the values specified exactly.
-+	 */
-+	int (*led_blink_set)(struct phy_device *dev, u32 index,
-+			     unsigned long *delay_on,
-+			     unsigned long *delay_off);
- };
- #define to_phy_driver(d) container_of(to_mdio_common_driver(d),		\
- 				      struct phy_driver, mdiodrv)
+ # CPU and DSA ports must have phylink-compatible link descriptions
+ if:
+   oneOf:
 -- 
 2.39.2
 
