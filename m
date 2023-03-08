@@ -2,109 +2,136 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B218AC678D5
-	for <linux-leds@archiver.kernel.org>; Tue,  7 Mar 2023 23:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F12A8C678D5
+	for <linux-leds@archiver.kernel.org>; Wed,  8 Mar 2023 00:41:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbjCGX1X (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 7 Mar 2023 18:27:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34840 "EHLO
+        id S229922AbjCHAly (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 7 Mar 2023 19:41:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbjCGX1W (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Mar 2023 18:27:22 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFCC1A76A8;
-        Tue,  7 Mar 2023 15:27:20 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id g3so13741735wri.6;
-        Tue, 07 Mar 2023 15:27:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678231639;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=K+UgCiSf5tvja4WISBu0Ta5QgChkgCAANPe7dzhw5bU=;
-        b=kCz/N25pmJ5A1YBfpdlM80BJCQzCzFxI0ec1N42sO+yTjzBKAqeeB7rE4DYtnxUsH0
-         zvxkZTIjnHn4xAr6fcAIZTGcjEg9iNtZBGWy1KXzFwbz4PjUrp3zqEIcmnvklKRh4/K+
-         u4slt4gkAaZfZreX90uPnd+olGHNicQGHnovFqDAJqczafcCI76oPZfT+nfGHElCr2Vn
-         VkNchbe1LdS1ZIwgTxVTYWQ49wFVlMM01VOtU6YY0loOKa6GIT/ycJo9mCzb80Ej2GHe
-         gFdkvhW0d2w9WitjC3HtdU+UIyvriL0m6v3mDcEKzyA+imw7WFMi5+ZCvwGm0copO78o
-         aWGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678231639;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K+UgCiSf5tvja4WISBu0Ta5QgChkgCAANPe7dzhw5bU=;
-        b=u9MHdk9QSYMD+6X0SYRQ7LKby/tcCkSinLb6jce29XRqeVhLswkIypQ/Zmitm66jJl
-         ZcWuqgPB8KTI79OJpITFTdcD9yWCBrGlYHtsZp/FRY99paIMYlDqwgcDS8lXzWebOJUx
-         67oNdFnA0Vh/Q/lugrOZ6dyRvb5QHkxxDGodYd5LxtGZ4GDIVoiVz4YMEphOiRFK7yy0
-         wSQtjrz9Rbx3kG8qK2q3zjB/uqIutvMtY99X6YfU7B2oc7WkgE247iRzUbHUsmz+5+lh
-         D0EKjtDxtc/a4tKW0C1U2skbEbCnVD2rh8MLfBbfU0VRG9uJlREwQJwW6r9x21ZLUJGC
-         9CDA==
-X-Gm-Message-State: AO0yUKVqJPxhFw8zUzQZtQ9JtR1ivOEWTAFIvZYir/BiF3E0vn9wioN3
-        Z0k0wncxtrLrbFeu/Rqh7R0=
-X-Google-Smtp-Source: AK7set9aVNolSfZ5B7wY+yU2TBtltPuGvaaQxhNm58gbkUNfVSUWQzncSkD6DTmMoniaMFroX1++Pw==
-X-Received: by 2002:adf:e9d0:0:b0:2c9:12dc:260 with SMTP id l16-20020adfe9d0000000b002c912dc0260mr9447826wrn.33.1678231639172;
-        Tue, 07 Mar 2023 15:27:19 -0800 (PST)
-Received: from Ansuel-xps. (93-34-89-197.ip49.fastwebnet.it. [93.34.89.197])
-        by smtp.gmail.com with ESMTPSA id e5-20020a5d5945000000b002c3f9404c45sm13575585wri.7.2023.03.07.15.27.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 15:27:18 -0800 (PST)
-Message-ID: <6407c856.5d0a0220.af5c8.50f9@mx.google.com>
-X-Google-Original-Message-ID: <ZAd8geYgWGbGfmQo@Ansuel-xps.>
-Date:   Tue, 7 Mar 2023 19:03:45 +0100
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        John Crispin <john@phrozen.org>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Lee Jones <lee@kernel.org>,
-        linux-leds@vger.kernel.org
-Subject: Re: [net-next PATCH 11/11] arm: mvebu: dt: Add PHY LED support for
- 370-rd WAN port
-References: <20230307170046.28917-1-ansuelsmth@gmail.com>
- <20230307170046.28917-12-ansuelsmth@gmail.com>
- <70a38eb2-7ade-4474-8e1a-f18e99d45977@lunn.ch>
+        with ESMTP id S230106AbjCHAlh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Mar 2023 19:41:37 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C50725957;
+        Tue,  7 Mar 2023 16:41:09 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 62FD3615EA;
+        Wed,  8 Mar 2023 00:41:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8533C433A1;
+        Wed,  8 Mar 2023 00:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678236068;
+        bh=o6oymGlNZn9vDlwDU5TMp4b7cedwP3h4tMfW8EXhk2o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ZQPsUcbkLcyEXTXfq+Nao3GpaXmXnIPvAGeNgirhDyYI56iqcnt343/NHoHyaD+Qs
+         zEJrMhLU+arKs/rVgV7Jnobo5mXwVJiAmckFtSfzGVX3aDkSmYVcsm3QEjPFbCwG4G
+         Y9MHqu6OI42lnWx0+7vIah/Dz0ymoZp8FmPO8rMk8hO+ny1rHcidSgH8sBaizPYxy3
+         ZzqWRn+etpruOgVb+9QFG5sx5itoG5FsqJbGBzL/RhVtkJzJauYTe+W0rjqW1gNn39
+         hQ7+9uvUAHI8zXG1f144KJ0Sj0jQXxIx5OtuKRf2cqm9C90C0u4QEN0y6WZomUfWYE
+         pQ1ePcfA8Mg4A==
+Received: by mail-ua1-f54.google.com with SMTP id n4so10159026ual.13;
+        Tue, 07 Mar 2023 16:41:08 -0800 (PST)
+X-Gm-Message-State: AO0yUKUOF1jweinMK/PcCeagWLBBw+Ekibx4VoovmGJT1grpUCcD0+Gf
+        THp/mOaM8OsWAc8TXmWERqvvAxN0e+BZ4nVtcQ==
+X-Google-Smtp-Source: AK7set9RI8+fXQrMZpu1a+zBN6uy8yor6esY2D86sYIG43cMSpIAPTyJ3NJ1TroFDWRrpuB8sEBTOPFe88V5ct9AJ8A=
+X-Received: by 2002:a9f:3102:0:b0:6cd:2038:4911 with SMTP id
+ m2-20020a9f3102000000b006cd20384911mr11052030uab.1.1678236067609; Tue, 07 Mar
+ 2023 16:41:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <70a38eb2-7ade-4474-8e1a-f18e99d45977@lunn.ch>
+References: <20230228144933.22614-1-zajec5@gmail.com> <20230301000236.GA20893-robh@kernel.org>
+ <e3b20703-f2d4-76b8-ccfb-11cf42d459fd@gmail.com> <CAL_JsqJzrgS1PH77RkAiqAs=QqXPGG04sCG3X_i-GKWSqPORSQ@mail.gmail.com>
+ <6426345d-783e-007d-79db-2b376bcea12d@gmail.com>
+In-Reply-To: <6426345d-783e-007d-79db-2b376bcea12d@gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 7 Mar 2023 18:40:56 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJkpGhaWxv9b8D2DtiE1YUWUdDE67k4=JE_EsTh4754NQ@mail.gmail.com>
+Message-ID: <CAL_JsqJkpGhaWxv9b8D2DtiE1YUWUdDE67k4=JE_EsTh4754NQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: leds: add "usbport" trigger
+To:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Wed, Mar 08, 2023 at 12:20:17AM +0100, Andrew Lunn wrote:
-> On Tue, Mar 07, 2023 at 06:00:46PM +0100, Christian Marangi wrote:
-> > From: Andrew Lunn <andrew@lunn.ch>
-> > 
-> > The WAN port of the 370-RD has a Marvell PHY, with one LED on
-> > the front panel. List this LED in the device tree.
-> > 
-> > Set the LED default state to "keep" to not change any blink rule
-> > set by default.
-> 
-> Hi Christian
-> 
-> What board are you using for testing? It would be good to patch its
-> .dts file to enable its LEDs. We don't normally had new code without a
-> user.
-> 
+On Wed, Mar 1, 2023 at 7:52=E2=80=AFAM Rafa=C5=82 Mi=C5=82ecki <zajec5@gmai=
+l.com> wrote:
+>
+> On 1.03.2023 14:43, Rob Herring wrote:
+> > On Wed, Mar 1, 2023 at 1:27=E2=80=AFAM Rafa=C5=82 Mi=C5=82ecki <zajec5@=
+gmail.com> wrote:
+> >>
+> >> On 1.03.2023 01:02, Rob Herring wrote:
+> >>> On Tue, Feb 28, 2023 at 03:49:33PM +0100, Rafa=C5=82 Mi=C5=82ecki wro=
+te:
+> >>>> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+> >>>>
+> >>>> It's a trigger used on many home routers that have LEDs to indicate
+> >>>> specific USB port state.
+> >>>>
+> >>>> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+> >>>> ---
+> >>>>    Documentation/devicetree/bindings/leds/common.yaml | 1 +
+> >>>>    1 file changed, 1 insertion(+)
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Do=
+cumentation/devicetree/bindings/leds/common.yaml
+> >>>> index 15e3f6645682..95b316ee3146 100644
+> >>>> --- a/Documentation/devicetree/bindings/leds/common.yaml
+> >>>> +++ b/Documentation/devicetree/bindings/leds/common.yaml
+> >>>> @@ -99,6 +99,7 @@ properties:
+> >>>>              - pattern
+> >>>>              - usb-gadget
+> >>>>              - usb-host
+> >>>> +          - usbport
+> >>>
+> >>> Can we stop adding entries which are clearly likely to have multiple
+> >>> instances. We have a better binding to map the trigger source...
+> >>
+> >> I'm sorry, I really don't understand this.
+> >> I'm not sure what do you mean by multuple "usbport" instances.
+> >> Could you point me to that better place, please?
+> >
+> > Suppose I have a device with 4 USB ports and 4 LEDs for each one. How
+> > would one define the connection of LEDs to USB ports? Extend this to
+> > usbport[0-9]? No.
+> >
+> >> This is probably something obvious but I really can't figure it out
+> >> since yesterday.
+> >
+> > "trigger-sources"
+>
+> Ah, I suppose that "usbport" LED trigger in Linux can be confusing.
+>
+> So: no matter how many USB ports you have, Linux *doesn't* create one
+> trigger per USB port. There is only one trigger. It's called exactly
+> "usbport".
+>
+> Once you choose "usbport" trigger in Linux, you can choose which ports
+> should it "monitor". That can be done using procfs (ABI). The default
+> set of ports to monitor can be specified using "trigger-sources".
+>
+> For decision details behind this see 0f247626cbbf ("usb: core: Introduce
+> a USB port LED trigger").
+>
+> So Linux on home routers needs both:
+> 1. linux,default-trigger (for selecting default trigger)
+> 2. trigger-sources (for providing default set of ports to monitor)
 
-ipq806x, my specific device is not present upstream but we have a rb3011
-that currently use the qca8k dsa switch upstream.
-If needed I can add support there by checking the leds supported...
+I still don't understand why defining a trigger source doesn't also
+set the default. It is after all just the default. The DT should have
+how the LEDs are intended to be used by the design, not what a user
+wants. A user should change that from userspace.
 
-Also looking at the dt I think I need to use "port - 1" after all since
-it does use legacy way... Sad me...
+In any case, just make the commit message clear this is not a new
+trigger, but one that has been in use for some time.
 
--- 
-	Ansuel
+Rob
