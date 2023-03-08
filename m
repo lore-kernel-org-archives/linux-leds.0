@@ -2,57 +2,32 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE31C678D5
-	for <linux-leds@archiver.kernel.org>; Wed,  8 Mar 2023 00:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A4EC678D5
+	for <linux-leds@archiver.kernel.org>; Wed,  8 Mar 2023 01:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229872AbjCHA6A (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 7 Mar 2023 19:58:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33164 "EHLO
+        id S229913AbjCHBAU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 7 Mar 2023 20:00:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbjCHA57 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Mar 2023 19:57:59 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69EB721961;
-        Tue,  7 Mar 2023 16:57:58 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id t15so13880352wrz.7;
-        Tue, 07 Mar 2023 16:57:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678237077;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=HS6FPXIvmqqNsIYAM5JYJ/QIONzW3Nl9HxNsbGlenoM=;
-        b=XEYOm62uQkBq9a1kTtaYUa/sXQmdDN1evfVVkYdRuHIlDQocAZ/DVDu/t7HoxxJAzU
-         sdG/iNf/SqbSE1smhqUQ1e/KdDdMiX5bRgrFL/iRpuVmhAzZ8eO8QrEHRqhJ4X6Zqkg7
-         jHtArVRmnWuTOiZWEQEKL+Z+32WIKouf+jG+4l7YrXjStuvpeLHadXReq0IuhYxTgjqw
-         URMCAAEe70JWXIfxeUsF+lFjbB3soaxGW2fxNC+OYtbuEt0+ybv+2RpoGMKdvrw5DY8Z
-         fxRwqsFh1hy/Kokpd8xvtii6H9uJ3+H7vn0y7IjwKjKMobxdIwpiVRoGGfAsHJb2pJQ+
-         7Pbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678237077;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HS6FPXIvmqqNsIYAM5JYJ/QIONzW3Nl9HxNsbGlenoM=;
-        b=t4CwKAGQyK8ao1Am3y/uaAU3xMked+E4goiyGpdJxLwIsLNq6Fwq9Y3NT80+QuWsxI
-         qrO4B2ZSUdFysaH/QWxZYft2HvNOpGcFBAY8WC0alwt2Wa03Ub+vX/17zn6IHcvYaYbd
-         slipAGoa+UEKiySLr7iP4lJFwkN/tVFFPvM7/Cf+gozixRodFetJgQNe3ipvrqmt2QQY
-         m8jQ2cD0iVE1S2bzeTXPPvtVCnsSfW+Xf51U98T6C1XOfmzUEbkJ84mce669IN9RAdJC
-         R6pfs/1n3/ZQRmviHu2rPN54nOxF/PYUbIZTp2cEMEt/sOjvVROTz56GZMiEXzN7ayoq
-         +U1A==
-X-Gm-Message-State: AO0yUKUoRDsyKxJjTHcuHKiBt65N+IZYIpYVpL1Jbv22OuITKlXyDstK
-        4WdYBZ4owPow08O/iG5+pK0=
-X-Google-Smtp-Source: AK7set9tO5H/alRCXfzjN/mP1zUeZLrxFfo+KwylfdU81WRcdlFvzou1cKKbs+HkFxOzr2ExWYrOAw==
-X-Received: by 2002:adf:f30f:0:b0:2cb:f4:e5a2 with SMTP id i15-20020adff30f000000b002cb00f4e5a2mr12312806wro.14.1678237076605;
-        Tue, 07 Mar 2023 16:57:56 -0800 (PST)
-Received: from Ansuel-xps. (93-34-89-197.ip49.fastwebnet.it. [93.34.89.197])
-        by smtp.gmail.com with ESMTPSA id f2-20020adfdb42000000b002c54fb024b2sm13605789wrj.61.2023.03.07.16.57.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 16:57:56 -0800 (PST)
-Message-ID: <6407dd94.df0a0220.b4618.52e4@mx.google.com>
-X-Google-Original-Message-ID: <ZAeTg7Tb41tmut7q@Ansuel-xps.>
-Date:   Tue, 7 Mar 2023 20:41:55 +0100
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Andrew Lunn <andrew@lunn.ch>
+        with ESMTP id S229484AbjCHBAT (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 7 Mar 2023 20:00:19 -0500
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A03B3A2F03;
+        Tue,  7 Mar 2023 17:00:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=9LsH9bxzQxRa6XexS31QUN8oGOV4DBd08pYx72IfCSE=; b=v0epGVOXepxg708DlevkutYezC
+        kG9fLvN/P/6txPYPf2coA24dGvs4WwFfKs8vAJ+SLxK1/JHjJQJPz8o5BfOc46kBhg3zgiTLIuNJZ
+        33t4cZAFGk7ALxv4/CqvEQX2CxtSrnXbujpQ0lpFAuvV6IO96ep3fC5kHwCDDCQY0M5U=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1pZiA2-006iu2-Sl; Wed, 08 Mar 2023 02:00:06 +0100
+Date:   Wed, 8 Mar 2023 02:00:06 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Christian Marangi <ansuelsmth@gmail.com>
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         Vladimir Oltean <olteanv@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -69,95 +44,49 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, Lee Jones <lee@kernel.org>,
         linux-leds@vger.kernel.org
-Subject: Re: [net-next PATCH 01/11] net: dsa: qca8k: add LEDs basic support
+Subject: Re: [net-next PATCH 08/11] dt-bindings: net: dsa: dsa-port: Document
+ support for LEDs node
+Message-ID: <33c40401-b9a9-456c-a1ae-f1fd2f0bb8d5@lunn.ch>
 References: <20230307170046.28917-1-ansuelsmth@gmail.com>
- <20230307170046.28917-2-ansuelsmth@gmail.com>
- <b03334df-4389-44b5-ac85-8b0878c64512@lunn.ch>
- <6407c6ea.050a0220.7c931.824f@mx.google.com>
- <d1226e21-8150-4959-95b0-e9df2c460b81@lunn.ch>
+ <20230307170046.28917-9-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d1226e21-8150-4959-95b0-e9df2c460b81@lunn.ch>
+In-Reply-To: <20230307170046.28917-9-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Wed, Mar 08, 2023 at 01:49:55AM +0100, Andrew Lunn wrote:
-> On Tue, Mar 07, 2023 at 06:57:10PM +0100, Christian Marangi wrote:
-> > On Wed, Mar 08, 2023 at 12:16:13AM +0100, Andrew Lunn wrote:
-> > > > +qca8k_setup_led_ctrl(struct qca8k_priv *priv)
-> > > > +{
-> > > > +	struct fwnode_handle *ports, *port;
-> > > > +	int port_num;
-> > > > +	int ret;
-> > > > +
-> > > > +	ports = device_get_named_child_node(priv->dev, "ports");
-> > > > +	if (!ports) {
-> > > > +		dev_info(priv->dev, "No ports node specified in device tree!\n");
-> > > > +		return 0;
-> > > > +	}
-> > > > +
-> > > > +	fwnode_for_each_child_node(ports, port) {
-> > > > +		struct fwnode_handle *phy_node, *reg_port_node = port;
-> > > > +
-> > > > +		phy_node = fwnode_find_reference(port, "phy-handle", 0);
-> > > > +		if (!IS_ERR(phy_node))
-> > > > +			reg_port_node = phy_node;
-> > > 
-> > > I don't understand this bit. Why are you looking at the phy-handle?
-> > > 
-> > > > +
-> > > > +		if (fwnode_property_read_u32(reg_port_node, "reg", &port_num))
-> > > > +			continue;
-> > > 
-> > > I would of expect port, not reg_port_node. I'm missing something
-> > > here....
-> > > 
-> > 
-> > It's really not to implement ugly things like "reg - 1"
-> > 
-> > On qca8k the port index goes from 0 to 6.
-> > 0 is cpu port 1
-> > 1 is port0 at mdio reg 0
-> > 2 is port1 at mdio reg 1
-> > ...
-> > 6 is cpu port 2
-> > 
-> > Each port have a phy-handle that refer to a phy node with the correct
-> > reg and that reflect the correct port index.
-> > 
-> > Tell me if this looks wrong, for qca8k we have qca8k_port_to_phy() and
-> > at times we introduced the mdio thing to describe the port - 1 directly
-> > in DT. If needed I can drop the additional fwnode and use this function
-> > but I would love to use what is defined in DT thatn a simple - 1.
+On Tue, Mar 07, 2023 at 06:00:43PM +0100, Christian Marangi wrote:
+> Document support for LEDs node in dsa port.
+> Switch may support different LEDs that can be configured for different
+> operation like blinking on traffic event or port link.
 > 
-> This comes back to the off list discussion earlier today. What you
-> actually have here are MAC LEDs, not PHY LEDs. They are implemented in
-> the MAC, not the PHY. To the end user, it should not matter, they
-> blink when you would expect.
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/net/dsa/dsa-port.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> So your addressing should be based around the MAC port number, not the
-> PHY.
+> diff --git a/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml b/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
+> index 480120469953..f813e1f64f75 100644
+> --- a/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
+> +++ b/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
+> @@ -59,6 +59,13 @@ properties:
+>        - rtl8_4t
+>        - seville
+>  
+> +  leds:
+> +    type: object
+> +
+> +    patternProperties:
+> +      '^led(@[a-f0-9]+)?$':
+> +        $ref: /schemas/leds/common.yaml#
 
-Ok will drop this.
+Please could you add a description here documenting that these are
+LEDs the switch controls in its MACs. They are not LEDs in the
+possibly integrated PHY, which the PHY driver controls.
 
-> 
-> Also, at the moment, all we are adding are a bunch of LEDs. There is
-> no link to a netdev at this point. At least, i don't see one. Be once
-> we start using ledtrig-netdev we will need that link to a netdev. Take
-> a look in my git tree at the last four patch. They add an additional
-> call to get the device an LED is attached to.
-> 
+We got this wrong, so i'm sure others will as well. So a bit of
+documentation should help avoid this.
 
-No currently we have no link for netdev, hence we are setting keep and
-not setting a default trigger in DT.
-Just checked them, interesting concept, guess we can think of something
-also for the interval setting. That would effectively make all the
-setting of the trigger set. Just my concern is that they may be too much
-specific to netdev trigger and may be problematic for other kind of hw
-control. (one main argument that was made for this feature was that some
-stuff were too much specific and actually not that generic)
-
--- 
-	Ansuel
+	Andrew
