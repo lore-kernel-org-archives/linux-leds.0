@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36773C64EC4
-	for <linux-leds@archiver.kernel.org>; Thu,  9 Mar 2023 22:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A99C64EC4
+	for <linux-leds@archiver.kernel.org>; Thu,  9 Mar 2023 22:38:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231442AbjCIWiK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 9 Mar 2023 17:38:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57750 "EHLO
+        id S231449AbjCIWiZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 9 Mar 2023 17:38:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231324AbjCIWiE (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Mar 2023 17:38:04 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 575D8E04A;
-        Thu,  9 Mar 2023 14:38:01 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id az36so2260695wmb.1;
-        Thu, 09 Mar 2023 14:38:01 -0800 (PST)
+        with ESMTP id S231383AbjCIWiG (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Mar 2023 17:38:06 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F3E51EBCF;
+        Thu,  9 Mar 2023 14:38:04 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id k37so2272155wms.0;
+        Thu, 09 Mar 2023 14:38:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678401480;
+        d=gmail.com; s=20210112; t=1678401482;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=R5QIXccLdikooU31j6nPRcsueMUDtDT9gBbA9i0LLOw=;
-        b=hyiqtzUHkKxK5qITEC2ExCwbO7etmiwEJRdZv/bDnD4lDt7DcGMPy1+riGhcyYQoKW
-         s9D1GTuANvS5wP6cW0cemOmA03pN2DCFwQAAQdMcdIstSLfsbmmo6hVWMyJhuoljsIdY
-         rElcbjIFyhBTi+4vWOtmJq5bvl9FZEX2BFEVDSGmkVe/afQMu3jcdNsEFxLBYA5Cq06H
-         vbDH6EAIou+zyfSX8k8uVeFnlToEYs2FrIvBkhwxOMGTmhSwqQUDyEdEgfq7Qw9k36qC
-         l/Kbqa44Y250pBck8UTPr3cr6yXgeZZyWVGU/JCwTPPTTxHDctDkoJfeneHJaZPbfEjQ
-         Z/Mw==
+        bh=qIIOBe7NJABZRFq7ORmufJwFdwVU7XOjO161+6pddBo=;
+        b=Masif1S0fO/HzOLeFOFiB9wUaUzXk71R88G2gPdZjJOK5uH7CWdu2lBiNDXnyYp6zF
+         n7t04tdzPXMANF8t5p84W2pDfBQ2cp72X675hEbOWpVJgmhDeGEIBnvNXowmvt67F6h0
+         hybKlXa6QDci/obN006XsN6Hzzu2yMQ4NP1kRZusuXpu8YXRSNHM3O6BEO3dc7KAxVdw
+         McBM9zkQtrGpPI1MeiZWhQ00w3M+uggIZRENPh/RHFIwYiow9lY69eakYR2DYR3YPWi6
+         mFBZS98oPPz2Gj9JnHv2k4IOcQN8Z8aUQ3ibxasgWPDItTWmTDLvyUUOZxmFhxAoWeue
+         Ri+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678401480;
+        d=1e100.net; s=20210112; t=1678401482;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=R5QIXccLdikooU31j6nPRcsueMUDtDT9gBbA9i0LLOw=;
-        b=isoc2QQ+t4jKZDPCh0Nq/GRQIg3w2GhOEzHy0QhweqohHpxvQeL6UW2razToIHhp3B
-         KiUEtOtsTVdZmftTWbhgdPvnrW6yv0uu35NmVTeVlWteAzP5N1eukZb75Wt8MbmVQi8B
-         /vFeAv1y6S4tEQiZhVeYxzPHOfDdRjfIF+moexV8xgcANuepUeuB1ZL//9abuI7aOHH1
-         clOaK/34YLkTUpCCJnHy8f0Xj22qYl3qLE6f9FlMR6AXyQlZ4jwhnXf9hpui2EJ36SiR
-         iN9sbyLUedoI4ZSHCcvYfX/mt+L9yWMSmtbi9XHiuRBBl7IHcmbjBcaeG3Q54bIW+HJv
-         DiFg==
-X-Gm-Message-State: AO0yUKUu3XW78alXwbRU4G86lC01BoBG6TKr1GJsm6IGFsaw7XJOeLLY
-        KbLOzKcmwbY53KKQaYT0Tvs=
-X-Google-Smtp-Source: AK7set9pXgrXzyocUt3lH/KcvxRN+a0Mj4VnKztqTI4wOEIddln0TDHObVZSm8TiWhoASFZjvbVJBA==
-X-Received: by 2002:a05:600c:4746:b0:3dc:58a2:3900 with SMTP id w6-20020a05600c474600b003dc58a23900mr682560wmo.29.1678401479592;
-        Thu, 09 Mar 2023 14:37:59 -0800 (PST)
+        bh=qIIOBe7NJABZRFq7ORmufJwFdwVU7XOjO161+6pddBo=;
+        b=3NNfRL00EYiIUaziTZJuABEKle0j+887UmK8iUNqk7s0Yw2lYHSaVeNmzxI6+wetj2
+         f+EmbjmfwhSI7fouO6NYJdCwI0OMFlOMAKHkK3suytqAKwCeNscunl6Tl1w42KItrN3L
+         jt6rpDSJIiPSb/RL1C7Ar3TPR/rT3BRRQyAOSK8DU5Lx24jrCeMdRxzGWaHNYL2xILbw
+         excj5gt52X/QOS1/TFo0Js+M4Vwhy9uwPaazOp7crznXtBCgJeulXTdgzr7hhYRDh1DP
+         phZP20eDi3CoajtyVV2YSSmdnE4Mit56bQXvyzs6PIJff1Y19n2ZsCA1K4CxvgWq4yBt
+         ofKA==
+X-Gm-Message-State: AO0yUKXwlammP1besmYQVrJ03qHEX6GXPUCEmYhhkby3Y7pcrZGhc4Vj
+        6KqQzLcyMUTl4NSgknpCi8E5+tetbAE=
+X-Google-Smtp-Source: AK7set+N4R2+01z1KbaHdN1M9tD7U5yAg6dKml60CuDgMfBht104JcXqKrgXqU3A8xPp93h4w6z0kA==
+X-Received: by 2002:a05:600c:1d84:b0:3eb:2de8:b72a with SMTP id p4-20020a05600c1d8400b003eb2de8b72amr769570wms.7.1678401482398;
+        Thu, 09 Mar 2023 14:38:02 -0800 (PST)
 Received: from localhost.localdomain (93-34-89-197.ip49.fastwebnet.it. [93.34.89.197])
-        by smtp.googlemail.com with ESMTPSA id g12-20020a05600c310c00b003e209b45f6bsm1183981wmo.29.2023.03.09.14.37.58
+        by smtp.googlemail.com with ESMTPSA id g12-20020a05600c310c00b003e209b45f6bsm1183981wmo.29.2023.03.09.14.38.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Mar 2023 14:37:59 -0800 (PST)
+        Thu, 09 Mar 2023 14:38:02 -0800 (PST)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -72,9 +72,9 @@ To:     Andrew Lunn <andrew@lunn.ch>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, Lee Jones <lee@kernel.org>,
         linux-leds@vger.kernel.org
-Subject: [net-next PATCH v2 02/14] net: dsa: qca8k: add LEDs basic support
-Date:   Thu,  9 Mar 2023 23:35:12 +0100
-Message-Id: <20230309223524.23364-3-ansuelsmth@gmail.com>
+Subject: [net-next PATCH v2 04/14] net: phy: Add a binding for PHY LEDs
+Date:   Thu,  9 Mar 2023 23:35:14 +0100
+Message-Id: <20230309223524.23364-5-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230309223524.23364-1-ansuelsmth@gmail.com>
 References: <20230309223524.23364-1-ansuelsmth@gmail.com>
@@ -84,379 +84,201 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add LEDs basic support for qca8k Switch Family by adding basic
-brightness_set() and brightness_get() support.
+From: Andrew Lunn <andrew@lunn.ch>
 
-Since these LEDs refelect port status, the default label is set to
-":port". DT binding should describe the color, function and number of
-the leds using standard LEDs api.
+Define common binding parsing for all PHY drivers with LEDs using
+phylib. Parse the DT as part of the phy_probe and add LEDs to the
+linux LED class infrastructure. For the moment, provide a dummy
+brightness function, which will later be replaced with a call into the
+PHY driver.
 
-These LEDs supports only blocking variant of the brightness_set()
-function since they can sleep during access of the switch leds to set
-the brightness.
-
-While at it add to the qca8k header file each mode defined by the Switch
-Documentation for future use.
-
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/net/dsa/qca/Kconfig      |   7 ++
- drivers/net/dsa/qca/Makefile     |   1 +
- drivers/net/dsa/qca/qca8k-8xxx.c |   4 +
- drivers/net/dsa/qca/qca8k-leds.c | 198 +++++++++++++++++++++++++++++++
- drivers/net/dsa/qca/qca8k.h      |  69 +++++++++++
- 5 files changed, 279 insertions(+)
- create mode 100644 drivers/net/dsa/qca/qca8k-leds.c
+ drivers/net/phy/phy_device.c | 89 ++++++++++++++++++++++++++++++++++++
+ include/linux/phy.h          | 16 +++++++
+ 2 files changed, 105 insertions(+)
 
-diff --git a/drivers/net/dsa/qca/Kconfig b/drivers/net/dsa/qca/Kconfig
-index ba339747362c..dab648f88391 100644
---- a/drivers/net/dsa/qca/Kconfig
-+++ b/drivers/net/dsa/qca/Kconfig
-@@ -15,3 +15,10 @@ config NET_DSA_QCA8K
- 	help
- 	  This enables support for the Qualcomm Atheros QCA8K Ethernet
- 	  switch chips.
-+
-+config NET_DSA_QCA8K_LEDS_SUPPORT
-+	tristate "Qualcomm Atheros QCA8K Ethernet switch family LEDs support"
-+	depends on NET_DSA_QCA8K
-+	help
-+	  This enabled support for LEDs present on the Qualcomm Atheros
-+	  QCA8K Ethernet switch chips.
-diff --git a/drivers/net/dsa/qca/Makefile b/drivers/net/dsa/qca/Makefile
-index 701f1d199e93..330ae389e489 100644
---- a/drivers/net/dsa/qca/Makefile
-+++ b/drivers/net/dsa/qca/Makefile
-@@ -2,3 +2,4 @@
- obj-$(CONFIG_NET_DSA_AR9331)	+= ar9331.o
- obj-$(CONFIG_NET_DSA_QCA8K)	+= qca8k.o
- qca8k-y 			+= qca8k-common.o qca8k-8xxx.o
-+obj-$(CONFIG_NET_DSA_QCA8K_LEDS_SUPPORT) += qca8k-leds.o
-diff --git a/drivers/net/dsa/qca/qca8k-8xxx.c b/drivers/net/dsa/qca/qca8k-8xxx.c
-index 8dfc5db84700..fe68ac7e4030 100644
---- a/drivers/net/dsa/qca/qca8k-8xxx.c
-+++ b/drivers/net/dsa/qca/qca8k-8xxx.c
-@@ -1727,6 +1727,10 @@ qca8k_setup(struct dsa_switch *ds)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 9ba8f973f26f..8acade42615c 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -19,10 +19,12 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
++#include <linux/list.h>
+ #include <linux/mdio.h>
+ #include <linux/mii.h>
+ #include <linux/mm.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/netdevice.h>
+ #include <linux/phy.h>
+ #include <linux/phy_led_triggers.h>
+@@ -658,6 +660,7 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, u32 phy_id,
+ 	device_initialize(&mdiodev->dev);
  
-+	ret = qca8k_setup_led_ctrl(priv);
-+	if (ret)
-+		return ret;
-+
- 	qca8k_setup_pcs(priv, &priv->pcs_port_0, 0);
- 	qca8k_setup_pcs(priv, &priv->pcs_port_6, 6);
+ 	dev->state = PHY_DOWN;
++	INIT_LIST_HEAD(&dev->led_list);
  
-diff --git a/drivers/net/dsa/qca/qca8k-leds.c b/drivers/net/dsa/qca/qca8k-leds.c
-new file mode 100644
-index 000000000000..7ae2ea082aae
---- /dev/null
-+++ b/drivers/net/dsa/qca/qca8k-leds.c
-@@ -0,0 +1,198 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/regmap.h>
-+#include <net/dsa.h>
-+
-+#include "qca8k.h"
-+
-+static int
-+qca8k_get_enable_led_reg(int port_num, int led_num, struct qca8k_led_pattern_en *reg_info)
+ 	mutex_init(&dev->lock);
+ 	INIT_DELAYED_WORK(&dev->state_queue, phy_state_machine);
+@@ -2964,6 +2967,85 @@ static bool phy_drv_supports_irq(struct phy_driver *phydrv)
+ 	return phydrv->config_intr && phydrv->handle_interrupt;
+ }
+ 
++/* Dummy implementation until calls into PHY driver are added */
++static int phy_led_set_brightness(struct led_classdev *led_cdev,
++				  enum led_brightness value)
 +{
-+	switch (port_num) {
-+	case 0:
-+		reg_info->reg = QCA8K_LED_CTRL_REG(led_num);
-+		reg_info->shift = QCA8K_LED_PHY0123_CONTROL_RULE_SHIFT;
-+		break;
-+	case 1:
-+	case 2:
-+	case 3:
-+		/* Port 123 are controlled on a different reg */
-+		reg_info->reg = QCA8K_LED_CTRL_REG(3);
-+		reg_info->shift = QCA8K_LED_PHY123_PATTERN_EN_SHIFT(port_num, led_num);
-+		break;
-+	case 4:
-+		reg_info->reg = QCA8K_LED_CTRL_REG(led_num);
-+		reg_info->shift = QCA8K_LED_PHY4_CONTROL_RULE_SHIFT;
-+		break;
-+	default:
-+		return -EINVAL;
++	return 0;
++}
++
++static int of_phy_led(struct phy_device *phydev,
++		      struct device_node *led)
++{
++	struct device *dev = &phydev->mdio.dev;
++	struct led_init_data init_data = {};
++	struct led_classdev *cdev;
++	struct phy_led *phyled;
++	int err;
++
++	phyled = devm_kzalloc(dev, sizeof(*phyled), GFP_KERNEL);
++	if (!phyled)
++		return -ENOMEM;
++
++	phyled->phydev = phydev;
++	cdev = &phyled->led_cdev;
++	INIT_LIST_HEAD(&phyled->led_list);
++
++	err = of_property_read_u32(led, "reg", &phyled->index);
++	if (err)
++		return err;
++
++	cdev->brightness_set_blocking = phy_led_set_brightness;
++	cdev->max_brightness = 1;
++	init_data.devicename = dev_name(&phydev->mdio.dev);
++	init_data.fwnode = of_fwnode_handle(led);
++
++	err = devm_led_classdev_register_ext(dev, cdev, &init_data);
++	if (err)
++		return err;
++
++	list_add(&phyled->led_list, &phydev->led_list);
++
++	return 0;
++}
++
++static int of_phy_leds(struct phy_device *phydev)
++{
++	struct device_node *node = phydev->mdio.dev.of_node;
++	struct device_node *leds, *led;
++	int err;
++
++	if (!IS_ENABLED(CONFIG_OF_MDIO))
++		return 0;
++
++	if (!node)
++		return 0;
++
++	leds = of_get_child_by_name(node, "leds");
++	if (!leds)
++		return 0;
++
++	for_each_available_child_of_node(leds, led) {
++		err = of_phy_led(phydev, led);
++		if (err)
++			return err;
 +	}
 +
 +	return 0;
 +}
 +
-+static int
-+qca8k_led_brightness_set(struct qca8k_led *led,
-+			 enum led_brightness brightness)
++static void phy_leds_remove(struct phy_device *phydev)
 +{
-+	struct qca8k_led_pattern_en reg_info;
-+	struct qca8k_priv *priv = led->priv;
-+	u32 mask, val = QCA8K_LED_ALWAYS_OFF;
++	struct device *dev = &phydev->mdio.dev;
++	struct led_classdev *cdev;
++	struct phy_led *phyled;
 +
-+	qca8k_get_enable_led_reg(led->port_num, led->led_num, &reg_info);
-+
-+	if (brightness)
-+		val = QCA8K_LED_ALWAYS_ON;
-+
-+	if (led->port_num == 0 || led->port_num == 4) {
-+		mask = QCA8K_LED_PATTERN_EN_MASK;
-+		val <<= QCA8K_LED_PATTERN_EN_SHIFT;
-+	} else {
-+		mask = QCA8K_LED_PHY123_PATTERN_EN_MASK;
++	list_for_each_entry(phyled, &phydev->led_list, led_list) {
++		cdev = &phyled->led_cdev;
++		devm_led_classdev_unregister(dev, cdev);
 +	}
-+
-+	return regmap_update_bits(priv->regmap, reg_info.reg,
-+				  mask << reg_info.shift,
-+				  val << reg_info.shift);
 +}
 +
-+static int
-+qca8k_cled_brightness_set_blocking(struct led_classdev *ldev,
-+				   enum led_brightness brightness)
-+{
-+	struct qca8k_led *led = container_of(ldev, struct qca8k_led, cdev);
+ /**
+  * fwnode_mdio_find_device - Given a fwnode, find the mdio_device
+  * @fwnode: pointer to the mdio_device's fwnode
+@@ -3142,6 +3224,11 @@ static int phy_probe(struct device *dev)
+ 	/* Set the state to READY by default */
+ 	phydev->state = PHY_READY;
+ 
++	/* Get the LEDs from the device tree, and instantiate standard
++	 * LEDs for them.
++	 */
++	of_phy_leds(phydev);
 +
-+	return qca8k_led_brightness_set(led, brightness);
-+}
+ out:
+ 	/* Assert the reset signal */
+ 	if (err)
+@@ -3156,6 +3243,8 @@ static int phy_remove(struct device *dev)
+ {
+ 	struct phy_device *phydev = to_phy_device(dev);
+ 
++	phy_leds_remove(phydev);
 +
-+static enum led_brightness
-+qca8k_led_brightness_get(struct qca8k_led *led)
-+{
-+	struct qca8k_led_pattern_en reg_info;
-+	struct qca8k_priv *priv = led->priv;
-+	u32 val;
-+	int ret;
-+
-+	qca8k_get_enable_led_reg(led->port_num, led->led_num, &reg_info);
-+
-+	ret = regmap_read(priv->regmap, reg_info.reg, &val);
-+	if (ret)
-+		return 0;
-+
-+	val >>= reg_info.shift;
-+
-+	if (led->port_num == 0 || led->port_num == 4) {
-+		val &= QCA8K_LED_PATTERN_EN_MASK;
-+		val >>= QCA8K_LED_PATTERN_EN_SHIFT;
-+	} else {
-+		val &= QCA8K_LED_PHY123_PATTERN_EN_MASK;
-+	}
-+
-+	return val > 0 ? 1 : 0;
-+}
-+
-+static enum led_brightness
-+qca8k_cled_brightness_get(struct led_classdev *ldev)
-+{
-+	struct qca8k_led *led = container_of(ldev, struct qca8k_led, cdev);
-+
-+	return qca8k_led_brightness_get(led);
-+}
-+
-+static int
-+qca8k_parse_port_leds(struct qca8k_priv *priv, struct fwnode_handle *port, int port_num)
-+{
-+	struct fwnode_handle *led = NULL, *leds = NULL;
-+	struct led_init_data init_data = { };
-+	struct qca8k_led *port_led;
-+	int led_num, port_index;
-+	const char *state;
-+	int ret;
-+
-+	leds = fwnode_get_named_child_node(port, "leds");
-+	if (!leds) {
-+		dev_dbg(priv->dev, "No Leds node specified in device tree for port %d!\n",
-+			port_num);
-+		return 0;
-+	}
-+
-+	fwnode_for_each_child_node(leds, led) {
-+		/* Reg represent the led number of the port.
-+		 * Each port can have at least 3 leds attached
-+		 * Commonly:
-+		 * 1. is gigabit led
-+		 * 2. is mbit led
-+		 * 3. additional status led
-+		 */
-+		if (fwnode_property_read_u32(led, "reg", &led_num))
-+			continue;
-+
-+		if (led_num >= QCA8K_LED_PORT_COUNT) {
-+			dev_warn(priv->dev, "Invalid LED reg defined %d", port_num);
-+			continue;
-+		}
-+
-+		port_index = 3 * port_num + led_num;
-+
-+		port_led = &priv->ports_led[port_index];
-+		port_led->port_num = port_num;
-+		port_led->led_num = led_num;
-+		port_led->priv = priv;
-+
-+		ret = fwnode_property_read_string(led, "default-state", &state);
-+		if (!ret) {
-+			if (!strcmp(state, "on")) {
-+				port_led->cdev.brightness = 1;
-+				qca8k_led_brightness_set(port_led, 1);
-+			} else if (!strcmp(state, "off")) {
-+				port_led->cdev.brightness = 0;
-+				qca8k_led_brightness_set(port_led, 0);
-+			} else if (!strcmp(state, "keep")) {
-+				port_led->cdev.brightness =
-+					qca8k_led_brightness_get(port_led);
-+			}
-+		}
-+
-+		port_led->cdev.max_brightness = 1;
-+		port_led->cdev.brightness_set_blocking = qca8k_cled_brightness_set_blocking;
-+		port_led->cdev.brightness_get = qca8k_cled_brightness_get;
-+		init_data.default_label = ":port";
-+		init_data.devicename = "qca8k";
-+		init_data.fwnode = led;
-+
-+		ret = devm_led_classdev_register_ext(priv->dev, &port_led->cdev, &init_data);
-+		if (ret)
-+			dev_warn(priv->dev, "Failed to int led");
-+	}
-+
-+	return 0;
-+}
-+
-+int
-+qca8k_setup_led_ctrl(struct qca8k_priv *priv)
-+{
-+	struct fwnode_handle *ports, *port;
-+	int port_num;
-+	int ret;
-+
-+	ports = device_get_named_child_node(priv->dev, "ports");
-+	if (!ports) {
-+		dev_info(priv->dev, "No ports node specified in device tree!\n");
-+		return 0;
-+	}
-+
-+	fwnode_for_each_child_node(ports, port) {
-+		if (fwnode_property_read_u32(port, "reg", &port_num))
-+			continue;
-+
-+		/* Each port can have at least 3 different leds attached.
-+		 * Switch port starts from 0 to 6, but port 0 and 6 are CPU
-+		 * port. The port index needs to be decreased by one to identify
-+		 * the correct port for LED setup.
-+		 */
-+		ret = qca8k_parse_port_leds(priv, port, qca8k_port_to_phy(port_num));
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/net/dsa/qca/qca8k.h b/drivers/net/dsa/qca/qca8k.h
-index 4e48e4dd8b0f..25fab385f0f7 100644
---- a/drivers/net/dsa/qca/qca8k.h
-+++ b/drivers/net/dsa/qca/qca8k.h
-@@ -11,6 +11,7 @@
- #include <linux/delay.h>
- #include <linux/regmap.h>
- #include <linux/gpio.h>
+ 	cancel_delayed_work_sync(&phydev->state_queue);
+ 
+ 	mutex_lock(&phydev->lock);
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index fbeba4fee8d4..1b1efe120f0f 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -14,6 +14,7 @@
+ #include <linux/compiler.h>
+ #include <linux/spinlock.h>
+ #include <linux/ethtool.h>
 +#include <linux/leds.h>
- #include <linux/dsa/tag_qca.h>
+ #include <linux/linkmode.h>
+ #include <linux/netlink.h>
+ #include <linux/mdio.h>
+@@ -595,6 +596,7 @@ struct macsec_ops;
+  * @phy_num_led_triggers: Number of triggers in @phy_led_triggers
+  * @led_link_trigger: LED trigger for link up/down
+  * @last_triggered: last LED trigger for link speed
++ * @led_list: list of PHY LED structures
+  * @master_slave_set: User requested master/slave configuration
+  * @master_slave_get: Current master/slave advertisement
+  * @master_slave_state: Current master/slave configuration
+@@ -690,6 +692,7 @@ struct phy_device {
  
- #define QCA8K_ETHERNET_MDIO_PRIORITY			7
-@@ -85,6 +86,50 @@
- #define   QCA8K_MDIO_MASTER_DATA(x)			FIELD_PREP(QCA8K_MDIO_MASTER_DATA_MASK, x)
- #define   QCA8K_MDIO_MASTER_MAX_PORTS			5
- #define   QCA8K_MDIO_MASTER_MAX_REG			32
-+
-+/* LED control register */
-+#define QCA8K_LED_COUNT					15
-+#define QCA8K_LED_PORT_COUNT				3
-+#define QCA8K_LED_RULE_COUNT				6
-+#define QCA8K_LED_RULE_MAX				11
-+
-+#define QCA8K_LED_PHY123_PATTERN_EN_SHIFT(_phy, _led)	((((_phy) - 1) * 6) + 8 + (2 * (_led)))
-+#define QCA8K_LED_PHY123_PATTERN_EN_MASK		GENMASK(1, 0)
-+
-+#define QCA8K_LED_PHY0123_CONTROL_RULE_SHIFT		0
-+#define QCA8K_LED_PHY4_CONTROL_RULE_SHIFT		16
-+
-+#define QCA8K_LED_CTRL_REG(_i)				(0x050 + (_i) * 4)
-+#define QCA8K_LED_CTRL0_REG				0x50
-+#define QCA8K_LED_CTRL1_REG				0x54
-+#define QCA8K_LED_CTRL2_REG				0x58
-+#define QCA8K_LED_CTRL3_REG				0x5C
-+#define   QCA8K_LED_CTRL_SHIFT(_i)			(((_i) % 2) * 16)
-+#define   QCA8K_LED_CTRL_MASK				GENMASK(15, 0)
-+#define QCA8K_LED_RULE_MASK				GENMASK(13, 0)
-+#define QCA8K_LED_BLINK_FREQ_MASK			GENMASK(1, 0)
-+#define QCA8K_LED_BLINK_FREQ_SHITF			0
-+#define   QCA8K_LED_BLINK_2HZ				0
-+#define   QCA8K_LED_BLINK_4HZ				1
-+#define   QCA8K_LED_BLINK_8HZ				2
-+#define   QCA8K_LED_BLINK_AUTO				3
-+#define QCA8K_LED_LINKUP_OVER_MASK			BIT(2)
-+#define QCA8K_LED_TX_BLINK_MASK				BIT(4)
-+#define QCA8K_LED_RX_BLINK_MASK				BIT(5)
-+#define QCA8K_LED_COL_BLINK_MASK			BIT(7)
-+#define QCA8K_LED_LINK_10M_EN_MASK			BIT(8)
-+#define QCA8K_LED_LINK_100M_EN_MASK			BIT(9)
-+#define QCA8K_LED_LINK_1000M_EN_MASK			BIT(10)
-+#define QCA8K_LED_POWER_ON_LIGHT_MASK			BIT(11)
-+#define QCA8K_LED_HALF_DUPLEX_MASK			BIT(12)
-+#define QCA8K_LED_FULL_DUPLEX_MASK			BIT(13)
-+#define QCA8K_LED_PATTERN_EN_MASK			GENMASK(15, 14)
-+#define QCA8K_LED_PATTERN_EN_SHIFT			14
-+#define   QCA8K_LED_ALWAYS_OFF				0
-+#define   QCA8K_LED_ALWAYS_BLINK_4HZ			1
-+#define   QCA8K_LED_ALWAYS_ON				2
-+#define   QCA8K_LED_RULE_CONTROLLED			3
-+
- #define QCA8K_GOL_MAC_ADDR0				0x60
- #define QCA8K_GOL_MAC_ADDR1				0x64
- #define QCA8K_MAX_FRAME_SIZE				0x78
-@@ -383,6 +428,19 @@ struct qca8k_pcs {
- 	int port;
+ 	struct phy_led_trigger *led_link_trigger;
+ #endif
++	struct list_head led_list;
+ 
+ 	/*
+ 	 * Interrupt number for this PHY
+@@ -825,6 +828,19 @@ struct phy_plca_status {
+ 	bool pst;
  };
  
-+struct qca8k_led_pattern_en {
-+	u32 reg;
-+	u8 shift;
++/* phy_led: An LED driven by the PHY
++ *
++ * phydev: Pointer to the PHY this LED belongs to
++ * led_cdev: Standard LED class structure
++ * index: Number of the LED
++ */
++struct phy_led {
++	struct list_head led_list;
++	struct phy_device *phydev;
++	struct led_classdev led_cdev;
++	u32 index;
 +};
 +
-+struct qca8k_led {
-+	u8 port_num;
-+	u8 led_num;
-+	u16 old_rule;
-+	struct qca8k_priv *priv;
-+	struct led_classdev cdev;
-+};
-+
- struct qca8k_priv {
- 	u8 switch_id;
- 	u8 switch_revision;
-@@ -407,6 +465,7 @@ struct qca8k_priv {
- 	struct qca8k_pcs pcs_port_0;
- 	struct qca8k_pcs pcs_port_6;
- 	const struct qca8k_match_data *info;
-+	struct qca8k_led ports_led[QCA8K_LED_COUNT];
- };
- 
- struct qca8k_mib_desc {
-@@ -526,4 +585,14 @@ int qca8k_port_lag_join(struct dsa_switch *ds, int port, struct dsa_lag lag,
- int qca8k_port_lag_leave(struct dsa_switch *ds, int port,
- 			 struct dsa_lag lag);
- 
-+/* Leds Support function */
-+#ifdef CONFIG_NET_DSA_QCA8K_LEDS_SUPPORT
-+int qca8k_setup_led_ctrl(struct qca8k_priv *priv);
-+#else
-+static inline int qca8k_setup_led_ctrl(struct qca8k_priv *priv)
-+{
-+	return 0;
-+}
-+#endif
-+
- #endif /* __QCA8K_H */
+ /**
+  * struct phy_driver - Driver structure for a particular PHY type
+  *
 -- 
 2.39.2
 
