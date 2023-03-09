@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A2BC74A5B
-	for <linux-leds@archiver.kernel.org>; Thu,  9 Mar 2023 22:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE8D0C6FD1F
+	for <linux-leds@archiver.kernel.org>; Thu,  9 Mar 2023 22:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231267AbjCIWiC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 9 Mar 2023 17:38:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57206 "EHLO
+        id S231410AbjCIWiK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 9 Mar 2023 17:38:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230190AbjCIWiB (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Mar 2023 17:38:01 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCFA27A84;
-        Thu,  9 Mar 2023 14:37:59 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id j19-20020a05600c1c1300b003e9b564fae9so4765614wms.2;
-        Thu, 09 Mar 2023 14:37:59 -0800 (PST)
+        with ESMTP id S231338AbjCIWiE (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Mar 2023 17:38:04 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C12A81913D;
+        Thu,  9 Mar 2023 14:38:02 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id bg16-20020a05600c3c9000b003eb34e21bdfso4792713wmb.0;
+        Thu, 09 Mar 2023 14:38:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678401478;
+        d=gmail.com; s=20210112; t=1678401481;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=76LV00udkXPQUwmYWl6PMAZgt1+JmaJY28CfXEIfxZA=;
-        b=kGmrRGymM4KXv3p2daK6qNA4CyjMECD39z2HhDe0pT7ZEek364CCVqdK+HgebbR3dV
-         ISnvWARvuOTIyQNnslRwauZjxVg10QJFNfnZhnLLkbJ6b9BHrTG+lKRxlHN2SIws9ZZf
-         H9fvOwlf43/Vtja+WL+PfrX9PThWjAu3H4BXXtjTLtBM1m8N4XvDYFKrDhXf3Jj2N+3j
-         VppzFhHXUx39g9BXVmliwyz4EujqWhRDv1k9LwgasM4ZFzq3ScpBu513mI9xiW411MVY
-         KFSXf7MxNJwwKtuZtZjd1cAeJGJA85tEpLspSJ490jXw9n6cHCwpaMywLIPAu7jdZ0Ij
-         t9+A==
+        bh=jAjYaCokdDFeoHBYZ8ajEHyinrj2ay5j+y5y2pyEMkc=;
+        b=DirXdVf5HBsEqP0FuGmWmFyGILlI68FKvJs+WbmYdTMj7rBphcg5E+Js76FQF1gUvb
+         3md+bEy9mi1Y90r1AWW7kvFU1Sixd0spfyHx8GPIG4OyAZzIs1j2n7rQc8qB8g//bO7w
+         wzcebbNtq0XnDQgIA/mE4x8YUyBa2odPk2sv4tFY5VwdpFTI9XeUN8cWtVuhgog28LvS
+         LCiuBLPF984KdIKG+IrrXPkJxHWAShwTN/Zz0vuIFIYWw55WrbIKWGu0Mu3sxJlm4nLC
+         dhfrUHJGta0K0B+Yrw+r2BRAxL/eeBMycB2kyFT8RapdCLkTY6KsFbFxO7Ytjd+HMr/z
+         PxWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678401478;
+        d=1e100.net; s=20210112; t=1678401481;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=76LV00udkXPQUwmYWl6PMAZgt1+JmaJY28CfXEIfxZA=;
-        b=L6C/v3aQPyzALM/Iu+4OKavvU+8pxwmRKDXNnTzV7VY6vL6VwIuJXUrCjerpZCRfyp
-         gFXH/+H0sZwbNz8hA8dCCwSKOFTvsKCvynutg3yCEja7IDI8RC62d46OdVX0cPce4+sr
-         eOI7lADWwiSly0QX3poWO8cSBUZHA+FPrceqJ9kvp4NqkOniELPf1OQegJWHZsc+0gDk
-         q0T3giJ/dyWGWx+RGupK1ijfuVjOoO25B3IHbCRRXyDrZ6uenzu+nKT/P8qr9BjaGvVc
-         AcGkt649SFAc8exZAnC+uo64+1pS8moJvsnsLBD3ZjhwXofkuRtQywXVjv9cjAwChiKH
-         er3w==
-X-Gm-Message-State: AO0yUKWU+z9UkuS7Xm/7GIxAvvH4XRMZeIPMJONscfE9RbxzAUFu0x02
-        L3dRn8Mj6mxxvK8vKhM8xcMWB9KkEkA=
-X-Google-Smtp-Source: AK7set8JVwiOkfqLtU4wZgr4GnlFSjgxwHxCtSXt+MOW7NV3SQg1oWLTsIOhL2hlU1AkKo44Z9o14g==
-X-Received: by 2002:a05:600c:3ca7:b0:3da:2ba4:b97 with SMTP id bg39-20020a05600c3ca700b003da2ba40b97mr120602wmb.19.1678401478052;
-        Thu, 09 Mar 2023 14:37:58 -0800 (PST)
+        bh=jAjYaCokdDFeoHBYZ8ajEHyinrj2ay5j+y5y2pyEMkc=;
+        b=iWGta3DBc5fIpBcmPeNQ2dsu938DKN12L07bflPaImz69FtnVlnLqDC1uPNyV/D2Hl
+         ykJT0EfNu/mb10LFp5EQkMM6fujTpzNOOWYd/MMfsHQlW2egF+GkrEZyDfDc7NBo950o
+         DxoMTuP4Xm86GapGxfQLAmEw7nUoXLSjj4hxkareF5Z1G7k2Ut06rpEiJDbJBV07gSGu
+         rEVKxfHoXYElRN0M6WvcDcafT4Oe3fCb2c+TfmfbOvE/ySBeWPk03ZroYtuDgqNakYet
+         y5e+oksuPL4sTz/EdYtoAP4HmVqz3sv9dRxefeJiMq5OfOnJ4kaa4W3SD+S9o7w9tMiQ
+         3dYg==
+X-Gm-Message-State: AO0yUKW2iwOr7g+UkupD/2UdzKCUoFpD7dVqYz5VHmJzu0Yht2iuMvne
+        0Pj5e0gMPW6Tnptejaf2kqc=
+X-Google-Smtp-Source: AK7set8B6B4IHkmMi9Kt2of4xqwy/XP6aBgiq1LT9tStWRvZb5Tsu0Dn84Waf2UQyEWVDGHPKTq5YA==
+X-Received: by 2002:a05:600c:1553:b0:3d9:f769:2115 with SMTP id f19-20020a05600c155300b003d9f7692115mr752038wmg.26.1678401481047;
+        Thu, 09 Mar 2023 14:38:01 -0800 (PST)
 Received: from localhost.localdomain (93-34-89-197.ip49.fastwebnet.it. [93.34.89.197])
-        by smtp.googlemail.com with ESMTPSA id g12-20020a05600c310c00b003e209b45f6bsm1183981wmo.29.2023.03.09.14.37.56
+        by smtp.googlemail.com with ESMTPSA id g12-20020a05600c310c00b003e209b45f6bsm1183981wmo.29.2023.03.09.14.37.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Mar 2023 14:37:57 -0800 (PST)
+        Thu, 09 Mar 2023 14:38:00 -0800 (PST)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -72,9 +72,9 @@ To:     Andrew Lunn <andrew@lunn.ch>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, Lee Jones <lee@kernel.org>,
         linux-leds@vger.kernel.org
-Subject: [net-next PATCH v2 01/14] net: dsa: qca8k: move qca8k_port_to_phy() to header
-Date:   Thu,  9 Mar 2023 23:35:11 +0100
-Message-Id: <20230309223524.23364-2-ansuelsmth@gmail.com>
+Subject: [net-next PATCH v2 03/14] net: dsa: qca8k: add LEDs blink_set() support
+Date:   Thu,  9 Mar 2023 23:35:13 +0100
+Message-Id: <20230309223524.23364-4-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230309223524.23364-1-ansuelsmth@gmail.com>
 References: <20230309223524.23364-1-ansuelsmth@gmail.com>
@@ -84,68 +84,74 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Move qca8k_port_to_phy() to qca8k header as it's useful for future
-reference in Switch LEDs module since the same logic is applied to get
-the right index of the switch port.
-Make it inline as it's simple function that just decrease the port.
+Add LEDs blink_set() support to qca8k Switch Family.
+These LEDs support hw accellerated blinking at a fixed rate
+of 4Hz.
+
+Reject any other value since not supported by the LEDs switch.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- drivers/net/dsa/qca/qca8k-8xxx.c | 15 ---------------
- drivers/net/dsa/qca/qca8k.h      | 14 ++++++++++++++
- 2 files changed, 14 insertions(+), 15 deletions(-)
+ drivers/net/dsa/qca/qca8k-leds.c | 38 ++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/drivers/net/dsa/qca/qca8k-8xxx.c b/drivers/net/dsa/qca/qca8k-8xxx.c
-index 2f224b166bbb..8dfc5db84700 100644
---- a/drivers/net/dsa/qca/qca8k-8xxx.c
-+++ b/drivers/net/dsa/qca/qca8k-8xxx.c
-@@ -716,21 +716,6 @@ qca8k_phy_eth_command(struct qca8k_priv *priv, bool read, int phy,
- 	return ret;
+diff --git a/drivers/net/dsa/qca/qca8k-leds.c b/drivers/net/dsa/qca/qca8k-leds.c
+index 7ae2ea082aae..df7106d498db 100644
+--- a/drivers/net/dsa/qca/qca8k-leds.c
++++ b/drivers/net/dsa/qca/qca8k-leds.c
+@@ -98,6 +98,43 @@ qca8k_cled_brightness_get(struct led_classdev *ldev)
+ 	return qca8k_led_brightness_get(led);
  }
  
--static u32
--qca8k_port_to_phy(int port)
--{
--	/* From Andrew Lunn:
--	 * Port 0 has no internal phy.
--	 * Port 1 has an internal PHY at MDIO address 0.
--	 * Port 2 has an internal PHY at MDIO address 1.
--	 * ...
--	 * Port 5 has an internal PHY at MDIO address 4.
--	 * Port 6 has no internal PHY.
--	 */
--
--	return port - 1;
--}
--
- static int
- qca8k_mdio_busy_wait(struct mii_bus *bus, u32 reg, u32 mask)
- {
-diff --git a/drivers/net/dsa/qca/qca8k.h b/drivers/net/dsa/qca/qca8k.h
-index 03514f7a20be..4e48e4dd8b0f 100644
---- a/drivers/net/dsa/qca/qca8k.h
-+++ b/drivers/net/dsa/qca/qca8k.h
-@@ -422,6 +422,20 @@ struct qca8k_fdb {
- 	u8 mac[6];
- };
- 
-+static inline u32 qca8k_port_to_phy(int port)
++static int
++qca8k_cled_blink_set(struct led_classdev *ldev,
++		     unsigned long *delay_on,
++		     unsigned long *delay_off)
 +{
-+	/* From Andrew Lunn:
-+	 * Port 0 has no internal phy.
-+	 * Port 1 has an internal PHY at MDIO address 0.
-+	 * Port 2 has an internal PHY at MDIO address 1.
-+	 * ...
-+	 * Port 5 has an internal PHY at MDIO address 4.
-+	 * Port 6 has no internal PHY.
-+	 */
++	struct qca8k_led *led = container_of(ldev, struct qca8k_led, cdev);
++	u32 mask, val = QCA8K_LED_ALWAYS_BLINK_4HZ;
++	struct qca8k_led_pattern_en reg_info;
++	struct qca8k_priv *priv = led->priv;
 +
-+	return port - 1;
++	if (*delay_on == 0 && *delay_off == 0) {
++		*delay_on = 125;
++		*delay_off = 125;
++	}
++
++	if (*delay_on != 125 || *delay_off != 125) {
++		/* The hardware only supports blinking at 4Hz. Fall back
++		 * to software implementation in other cases.
++		 */
++		return -EINVAL;
++	}
++
++	qca8k_get_enable_led_reg(led->port_num, led->led_num, &reg_info);
++
++	if (led->port_num == 0 || led->port_num == 4) {
++		mask = QCA8K_LED_PATTERN_EN_MASK;
++		val <<= QCA8K_LED_PATTERN_EN_SHIFT;
++	} else {
++		mask = QCA8K_LED_PHY123_PATTERN_EN_MASK;
++	}
++
++	regmap_update_bits(priv->regmap, reg_info.reg, mask << reg_info.shift,
++			   val << reg_info.shift);
++
++	return 0;
 +}
 +
- /* Common setup function */
- extern const struct qca8k_mib_desc ar8327_mib[];
- extern const struct regmap_access_table qca8k_readable_table;
+ static int
+ qca8k_parse_port_leds(struct qca8k_priv *priv, struct fwnode_handle *port, int port_num)
+ {
+@@ -155,6 +192,7 @@ qca8k_parse_port_leds(struct qca8k_priv *priv, struct fwnode_handle *port, int p
+ 		port_led->cdev.max_brightness = 1;
+ 		port_led->cdev.brightness_set_blocking = qca8k_cled_brightness_set_blocking;
+ 		port_led->cdev.brightness_get = qca8k_cled_brightness_get;
++		port_led->cdev.blink_set = qca8k_cled_blink_set;
+ 		init_data.default_label = ":port";
+ 		init_data.devicename = "qca8k";
+ 		init_data.fwnode = led;
 -- 
 2.39.2
 
