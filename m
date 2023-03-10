@@ -2,17 +2,17 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F35FC742A7
-	for <linux-leds@archiver.kernel.org>; Fri, 10 Mar 2023 06:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2647CC6FD19
+	for <linux-leds@archiver.kernel.org>; Fri, 10 Mar 2023 06:56:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229928AbjCJG4m (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 10 Mar 2023 01:56:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54270 "EHLO
+        id S229954AbjCJG4n (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 10 Mar 2023 01:56:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbjCJG4k (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 10 Mar 2023 01:56:40 -0500
+        with ESMTP id S229900AbjCJG4m (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 10 Mar 2023 01:56:42 -0500
 Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0C259F7ECE;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0CEF8F7ED5;
         Thu,  9 Mar 2023 22:56:35 -0800 (PST)
 X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
         LIVER,40,3)
@@ -22,10 +22,10 @@ Received: from 192.168.10.46
 Received: from ex3.rt.l (192.168.10.46) by ex3.rt.l (192.168.10.46) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.25; Fri, 10 Mar
- 2023 14:56:01 +0800
+ 2023 14:56:02 +0800
 Received: from linuxcarl2.richtek.com (192.168.10.154) by ex3.rt.l
  (192.168.10.45) with Microsoft SMTP Server id 15.2.1118.25 via Frontend
- Transport; Fri, 10 Mar 2023 14:56:01 +0800
+ Transport; Fri, 10 Mar 2023 14:56:02 +0800
 From:   ChiaEn Wu <chiaen_wu@richtek.com>
 To:     <corbet@lwn.net>, <pavel@ucw.cz>, <lee@kernel.org>,
         <matthias.bgg@gmail.com>, <andriy.shevchenko@linux.intel.com>,
@@ -36,674 +36,663 @@ CC:     <linux-doc@vger.kernel.org>, <peterwu.pub@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <szunichen@gmail.com>,
+        Alice Chen <alice_chen@richtek.com>,
         ChiaEn Wu <chiaen_wu@richtek.com>
-Subject: [PATCH v18 0/3] Add MediaTek MT6370 PMIC support
-Date:   Fri, 10 Mar 2023 14:55:54 +0800
-Message-ID: <cover.1678430444.git.chiaen_wu@richtek.com>
+Subject: [PATCH v18 2/3] leds: flash: mt6370: Add MediaTek MT6370 flashlight support
+Date:   Fri, 10 Mar 2023 14:55:56 +0800
+Message-ID: <52480420a160e5a4c71715fbbf105e684a16e7c2.1678430444.git.chiaen_wu@richtek.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <cover.1678430444.git.chiaen_wu@richtek.com>
+References: <cover.1678430444.git.chiaen_wu@richtek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This patch series add MediaTek MT6370 LED indicator and flashlight support.
-The MT6370 is a highly-integrated smart power management IC, which includes
-a single cell Li-Ion/Li-Polymer switching battery charger, a
-USB Type-C & Power Delivery (PD) controller, dual Flash LED current
-sources, a RGB LED driver, a backlight WLED driver, a display bias
-driver and a general LDO for portable devices.
+From: ChiYuan Huang <cy_huang@richtek.com>
 
-In this series, the following patches have been applied,
-- 'dt-binding: mfd' and 'mfd driver' have been applied by Lee in v7.
-  https://lore.kernel.org/all/YvJdpq0MWNPQZw5c@google.com/
-  https://lore.kernel.org/all/YvJdxEpC2cB58Bq9@google.com/
+The MediaTek MT6370 is a highly-integrated smart power management IC,
+which includes a single cell Li-Ion/Li-Polymer switching battery
+charger, a USB Type-C & Power Delivery (PD) controller, dual Flash
+LED current sources, a RGB LED driver, a backlight WLED driver,
+a display bias driver and a general LDO for portable devices.
 
-- 'tcpci driver' has been applied by Greg in v8.
-  https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/commit/?h=usb-next&id=c2a8ea5997fdfeb43eda259d5533234c3cae05d7
+Add support for the MT6370 Flash LED driver. Flash LED in MT6370
+has 2 channels and support torch/strobe mode.
 
-- 'dt-binding: backlight' and 'backlight driver' have been applied
-  by Lee in v9.
-  https://lore.kernel.org/all/YxYSDSlnOELL2mPF@google.com/
-  https://lore.kernel.org/all/YxYS7%2FdZI69lMXeh@google.com/
-
-- 'dt-binding: charger', 'charger driver' and 'linear_range.h' patch have
-  been applied by Sebastian in v11.
-  https://lore.kernel.org/all/20220920160857.6qfi66gtmgwesq7g@mercury.elektranox.org/
-  https://lore.kernel.org/all/20220920161218.dkkfvfomrruebahi@mercury.elektranox.org/
-  https://lore.kernel.org/all/20220920161238.dswtmyon462324dm@mercury.elektranox.org/
-
-- 'dt-binding: leds: LED Indicator' and 'dt-binding: leds: LED Flash' have
-  been applied by Rob in v12.
-  https://lore.kernel.org/all/166480917702.2250974.12439864185418442009.robh@kernel.org/
-
-- 'ADC driver' has been applied by Jonathan in v14.
-  https://lore.kernel.org/all/20221015162217.41c4c112@jic23-huawei/
-
-In addition, we made some changes for MT6370 Flash/RGB drivers and document.
-(see v18 section of the change log below).
-
-Thank you,
-ChiaEn Wu
+Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Co-developed-by: Alice Chen <alice_chen@richtek.com>
+Signed-off-by: Alice Chen <alice_chen@richtek.com>
+Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+Signed-off-by: ChiaEn Wu <chiaen_wu@richtek.com>
 ---
-Change in v18:
-- In Patch 1/3 (MT6370 LED Indicator):
-	- Rename 'MT6370_VENID_MASK' to more human readable
-	  'MT6370_VENDOR_ID_MASK'
-	- Define the const number vid.
-	- Unwrap each line by 100 chars limit.
-	- Remove the redudant space in 'mt6370_gen_breath_pattern()' comment for
-	  patterh data allocation.
-	- Define a sub function 'mt6370_assign_multicolor_info()' to tidy up
-	  'mt6370_init_led_properties()' for multicolor case.
-	- Define a sub function 'mt6370_multicolor_led_register' to tidy up
-	  'mt6370_led_register()' for multicolor case.
-	- Refine 'fwnode_handle_put' in probe function with 'goto'.
-
-- In Patch 2/3 (MT6370 Flash):
-	- Unwrap each line by 100 chars limit.
-	- For joint flash, add more comments above the source code.
-	- Remove 'sentinel' comment in of_device_id table declaration.
-
-- In Patch 3/3 (Document of MT6370 LED Indicator):
-	- Revise the text in document title and description.
-
-
-Change in v17:
-- In Patch 1/3 (MT6370 LED Indicator):
-	- Update the year of Copyright from 2022 to 2023
-
-- In Patch 2/3 (MT6370 Flash):
-	- Update the year of Copyright from 2022 to 2023
-
-- In Patch 3/3 (Document of MT6370 LED Indicator):
-	- Add MT6370 RGB LED document for describing how the pattern works,
-	  each timing period, and the pattern diagram.
-
-
-Change in v16:
-- In Patch 1/2 (MT6370 LED Indicator):
-	- Remove blank line in the head text.
-	- Move 'pwm_duty' to descrease the size of struct mt6370_pdata.
-	- Move the field 'F_RGB_EN' write out from if/else in
-	  'mt6370_isnk_brightness_set'.
-	- Remove 'dev' in struct mt6370_priv.
-	- Remove the proprety reading for 'linux,default-trigger', led core
-	  already did it.
-	- Change the module license from 'GPL v2' to 'GPL'
-	  In the head text, already deslcred SPDX license as 'GPL-2.0-only'.
-
-- In Patch 2/2 (MT6370 Flash):
-	- Remove blank line in the head text.
-	- For enum, declared the first element as 0
-	- Remove unusd default state and state define.
-	- For mt6370_priv, 'dev' member only be used once. Remove it.
-	- Refine assign operator for '?:', no need to use brackets for the
-	  judgement.
-	- Refine '_mt6370_flash_brightness_set' function for else case.
-	- Modify 'struct led_flash_setting *setting' to 'struct
-	  led_flash_setting *s'. This can reduce line count.
-	- Remove the revert logic in 'mt6370_strobe_set' function.
-	  No need to do it.
-	- Remove mutex usage in timeout_set and fault_get.
-	  Regmap lock already protect it.
-	- Add default label for switch case in fault_get.
-	- Directly assign fwnode as the parameter for 'mt6370_led_register' and
-	  'mt6370_init_flash_config'.
-	- Due to struct mt6370_priv 'dev' member removed, pass 'dev' as the
-	  input parameter for 'mt6370_init_flash_config'.
-	- For some if judgement, remove 'num > MT6370_MAX_LEDS'.
-	  There's no need to check it. The below code already protect it.
-	- Group mt6360 and mt6370 in Makefile.
-	- SPDX already declared as 'GPL v2-only', change MODULE_LICENSE to
-	  'GPL'.
-	- Add one more author for ChiYuan Huang.
-
-
-Change in v15:
-- In Patch 2/2 (MT6370 Flash):
-        - Remove 'depends on LEDS_CLASS_FLASH || !LEDS_CLASS_FLASH' in Kconfig
-
-
-Change in v14:
-- In Patch 3/3 (MT6370 Flash):
-        - Remove unused 'depend on OF' in Kconfig
-
-
-Change in v13:
-- In Patch 1/5 (dt-bindings: MT6370 LED Indicator):
-        - Remove 'allOf' property
-        - Add '$ref' and 'unevaluatedProperties: false' in 'multi-led'
-
-
-Change in v12:
-- In Patch 5/5 (MT6370 Flash):
-        - Rename all 'led_flash_setting *s' --> 'led_flash_setting *setting'
-        - Rename 'max_uA' --> 'max_ua' in mt6370_init_flash_properties()
-
-
-Change in v11:
-- In Patch 1/8 (dt-bindings: MT6370 Charger):
-        - Add more detailed description of irqs.
-        - Adujust the order of irqs
-
-
-Change in v10:
-- In Patch 6/8 (MT6370 Charger):
-        - Add a feature (disable input current limit) in
-          'mt6370_chg_init_setting()'
-        - Add the header file <linux/devm-helpers.h> for using
-          'devm_work_autocancel()' and 'devm_delayed_work_autocancel()
-        - Rename 'pwr_rdy' to 'opposite_pwr_rdy' in
-          'mt6370_chg_pwr_rdy_check()'
-        - Rename enum elements
-          ('MT6370_ATTACH_STAT_ATTACH_BC12_NOT_DONE' -->
-           'MT6370_ATTACH_STAT_ATTACH_WAIT_FOR_BC12')
-        - Revise the assignment value of 'val.intval' in
-          'mt6370_chg_pwr_rdy_check()' to make the code easy to read.
-        - Revise the initialization of bc12_work (INIT_WORK() -->
-          using devm_work_autocancel()) and mivr_dwork
-          (INIT_DELAYED_WORK + devm_add_action_or_reset() -->
-           devm_delayed_work_autocancel())
-
-- In Patch 8/8 (MT6370 LED Flashlight):
-        - Add the revert code when '__mt6370_flash_brightness_set()'
-          return failed.
-        - Revise type of 'led_no' (u32 -> u8)
-        - Revise type of 'default_state' (u32 -> enum led_default_state)
-        - Revise the return value of '_mt6370_flash_brightness_set()'
-        - Remove the useless function 'mt6370_init_common_properties()'
-        - Use 'led_init_default_state_get()' to init 'led->default_state'
-
-
-Changes in v9:
-- In Patch 05/10:
-        - Revise LINEAR_RANGE() and LINEAR_RANGE_IDX()
-
-- In Patch 07/10:
-        - Fix wrong 'F_IINLMTSEL' setting in 'mt6370_chg_init_setting()'
-        - Revise the usage of LINEAR_RANGE_IDX()
-
-- In Patch 09/10:
-        - Revise the format of the comments.
-
-- In Patch 10/10:
-        - Revise the format of the comments.
-
-
-Changes in v8:
-- In Patch 06/12:
-        - Add linear_range_idx macro for declaring the linear_range
-          struct simply.
-
-- In Patch 09/12:
-        - Remove MT6370_CHG_LINEAR_RANGE() macro, and change to use
-          LINEAR_RANGE_IDX() macro
-
-- In Patch 10/12:
-        - Add include header file <linux/leds.h>
-        - Remove useless 'enum mt6370_state' because of using 'enum led_default_state'
-        - Revise the calculation of 'val' in 'mt6370_gen_breath_pattern()'
-        - Replace the medthod of getting default-state by using
-          led_init_default_state_get()
-
-- In Patch 11/12:
-        - Add missing 'dependency config' in Kconfig
-        - Revise all multi-line comments
-
-- In Patch 12/12:
-        - Add missing header file <linux/property.h>
-        - Remove useledd header file <linux/of_device.h>
-        - Revise the comment of 'mt6370_check_vendor_info()'
-
-
-Changes in v7:
-- In Patch 05/13:
-        - Add the second compatible string for 'mt6372'
-        - Add 'mediatek,bled-exponential-mode-enable' property for enable the
-          exponential mode of backlight brightness
-        - Add validation for the maximum value of 'default-brightness' and
-          'max-brightness'
-
-- In Patch 07/13:
-        - Move '#define MT6370_REG_MAXADDR' to the next line of
-          '#define MT6370_REG_CHG_MASK1'
-        - Rename 'MT6370_REG_ADDRLEN' to 'MT6370_MAX_ADDRLEN'
-
-- In Patch 08/13:
-        - Revise 'devm_add_action_or_reset(dev, ...)' to one line
-        - Revise 'return regmap_update_bits(...)' with using positive
-          conditional
-
-- In Patch 09/13:
-        - Add AICR(100mA ~ 350mA), ICHG(100mA ~ 800mA) macros
-        - Remove 400mA AICR and 900mA ICHG macros
-        - Revise using 'if-else' to 'switch-case' in mt6370_adc_read_scale()
-          where the adc channel is ibus or ibat
-
-- In Patch 10/13:
-        - Revise the method to enable/disable irq
-        - Revise all 'if (ret < 0)' to 'if (ret)' after using
-          mt6370_chg_field_set/get()
-        - Revise all 'OTG' text again
-
-- In Patch 11/13:
-        - Add the comment for the union of 'struct mt6370_led'
-        - Revise the wrong description of 'Authors'
-        - Revise some typos (e.g. led --> LED)
-        - Revise 'if (!fwnode_property_read_string())' to
-          'ret = fwnode_property_read_string()'
-        - Replace 'memcpy(...)' with 'put_unaligned_be24()' in
-          mt6370_gen_breath_pattern()
-        - Replace all 'LED_OFF' with 0
-        - Remove the redundant assignment in mt6370_mc_pattern_clear()
-
-- In Patch 12/13:
-        - Fix the indentation.
-        - For the well defined macro, the parenthesis is needed for input parameters.
-        - Replace some dev_warn to dev_info in 'init_flash_properties'.
-        - Add sentinel comment for the terminator entry of of_device_id.
-        - Use priv->fled_torch_used directly.
-        - Delete 0 in {}.
-        - Use _uA instead of _UA in definition.
-        - Refine the description.
-        - Use usleep_range instead of udelay.
-        - Rename config to LEDS_MT6370_FLASH.
-        - Add missing ">" in copyright.
-        - Change the Kconfig order
-
-- In Patch 13/13:
-        - Add support 'exponential mode' property parsing
-        - Add 'return dev_err_probe()' after 'if (IS_ERR(priv->enable_gpio))'
-        - Add 'mt6372' compatible string
-        - Revise Kconfig help text
-        - Revise update()/get() for supporting 16384 steps (MT6372)
-        - Revise all shift usages form using 'ffs() and fls()' to defining the
-          _SHIFT macros.
-        - Revise 'brightness ? 1 : 0' to '!!brightness' in gpiod_set_value()
-
-
-Changes in v6:
-- In Patch 03/13:
-        - Add 'reg' property of led of multi-led to prevent checking
-          error.
-
-- In Patch 08/13:
-        - Convert tcpci as device resource managed with
-          'devm_add_action_or_reset' api.
-        - Refine remvoe callback.
-        - Refine the commit text from 'this commit add' to 'add'.
-
-- In Patch 09/13:
-        - Using 'struct device *dev = &pdev->dev' in probe()
-        - Revise the sixth parameter of regmap_read_poll_timeout() by
-          Replacing '1000' with 'MILLI'
-        - Revise the units of three macros
-        - MT6370_AICR_400MA --> MT6370_AICR_400_mA
-        - MT6370_ICHG_500MA --> MT6370_ICHG_500_mA
-        - MT6370_ICHG_900MA --> MT6370_ICHG_900_mA
-
-- In patch 10/13:
-        - Remove the varable (*psy_desc) of struct mt6370_priv
-        - Remove the deprecated usb type (POWER_SUPPLY_TYPE_USB_CDP and
-          POWER_SUPPLY_TYPE_USB_DCP)
-        - Remove useless remove()
-        - Revise all units from mini- to micro-
-        - Revise get/set power_supply_prop (change to directly return get/set
-          regmap_field)
-        - Revise probe() and use devm_add_action_or_reset() for handling of the
-          workqueue/delayed_work/mutex
-        - Revise mt6370_chg_psy_desc
-                - Add '.name = "mt6370-charger"'
-                - Use 'static const'
-
-- In patch 11/13:
-        - Remove the 'ko' from mt6370 led Kconfig description.
-        - Add both authors for Alice and ChiYuan.
-        - Use pdata to distinguish the code from mt6370/71 to mt6372.
-        - Instead of 'state' define, use the 'state' enum.
-        - Fix the typo for 'MT6372_PMW_DUTY'.
-        - For pwm_duty define, replace with bit macro - 1.
-        - Refine all the labels from 'out' to 'out_unlock'.
-        - Use struct 'dev' variable and 'dev_err_probe' to optimize the LOC.
-        - Revise for the array initialization from {0} to {}.
-        - Move into rgb folder and rename file name to 'leds-mt6370-rgb'.
-        - Refine the 'comma' usage in struct/enum.
-
-- In patch 12/13:
-        - Use 'GENMASK' instead of 'BIT'.
-        - Use dev_err_probe to decrease LOC.
-        - Use 'dev' variable to make probe function more clean.
-        - Refine the return of _mt6370_flash_brightness_set function.
-        - Refine the descriptions.
-        - Use mt6370_clamp() instead of clamp_align().
-        - Use device resource managed API for v4l2 flash_release.
-
-
-Changes in v5:
-- In patch 07/13:
-        - Add the comma in the last REGMAP_IRQ_REG_LINE(),
-          DEFINE_RES_IRQ_NAMED() and MFD_CELL_RES()
-        - Add the prefix in the first parameter of all mfd_cell
-        - Move enum and struct mt6370_info to mt6370.h
-        - Remove struct device *dev in struct mt6370_info
-        - Revise the description of Kconfig help text
-        - Revise MODULE_DESCRIPTION()
-
-- In patch 08/13:
-        - Add comma for the last index of mt6370_reg_init.
-        - Use dev_err_probe to decrease LOC.
-        - Use 'dev' variable to make probe function more clean.
-        - Refine kconfig text.
-        - Remove both 'else' in set_vbus callback.
-        - Remove comma for of_device_id if the assigned member is only one.
-
-- In patch 09/13:
-        - Replace using snprintf() with sysfs_emit() in mt6370_adc_read_label()
-        - Remove macro ADC_CONV_TIME_US
-        - Revise all variable ordering
-        - Revise the description of Kconfig help text
-        - Revise MODULE_DESCRIPTION()
-
-- In patch 10/13:
-        - Replace unsigned int type of pwr_rdy with bool in
-          mt6370_chg_set_online()
-        - Remove redundant 'else' in mt6370_chg_field_get()
-        - Revise 'if-else' in mt6370_chg_field_set()
-        - Revise 'if' condition in mt6370_chg_enable_irq()
-        - Revise all text 'otg' --> 'OTG'
-        - Revise MT6370_MIVR_IBUS_TH_100_MA --> MT6370_MIVR_IBUS_TH_100_mA
-        - Revise the description of Kconfig help text
-
-- In patch 12/13:
-        - Refine the coding style.
-        - Use "dev" instead of "&pdev->dev".
-
-- In patch 13/13:
-        - Add missed <mod_devicetable.h>
-        - Add struct device *dev in probe() to make code cleaning
-        - Remove useless including header file <gpio/driver.h>, <of.h>
-        - Remove useless variable uasage in mt6370_init_backlight_properties()
-        - Remove redundant checking enable_gpio in mt6370_bl_update_status()
-        - Remove redundant parentheses in mt6370_bl_get_brightness()
-        - Revise the description of Kconfig help text
-        - Revise the calculation of hys_th_steps
-
-
-Changes in v4:
-- In patch 02/13:
-        - Add minItems of "io-channel-names"
-        - Replace text "Mediatek" with "MediaTek"
-
-- In patch 06/13:
-        - Roll back all "$ref: " to v2 patch style (using "/schemas/...")
-
-- In patch 07/13:
-        - Replace text "Mediatek" with "MediaTek" in Kconfig
-        - Replace "first break and then return" with "return directly"
-          in "mt6370_check_vendor_info()"
-        - Add module name related description in Kconfig helptext
-        - Add Copyright in the source code
-        - Add header file "mt6370.h" for all "#define IRQ"
-        - Adjust Makefile order of MT6370
-        - Refine "bank_idx" and "bank_addr" in
-          "mt6375_regmap_read()" / "mt6375_regmap_write()"
-        - Refine redundant "else if" in "mt6370_regmap_read()"
-
-- In patch 08/13:
-        - Replace text "Mediatek" with "MediaTek" in Kconfig
-        - Replace "first ret=regulator_(dis/en)able and then return"
-          with "return directly" in "mt6370_tcpc_set_vbus()"
-        - Replace header file <linux/of.h> with <linux/mod_devicetable.h>
-        - Add Copyright in the source code
-        - Add module name related description in Kconfig helptext
-        - Remove header file <linux/of.h>
-        - Refine all probe error by using dev_err_probe()
-
-- In patch 09/13:
-        - Replace text "Mediatek" with "MediaTek"
-        - Replace all "first dev_err() and then return" with
-          "return dev_err_probe()"
-        - Add Copyright in the source code
-        - Add module name related description in Kconfig
-        - Add unit suffix of macro "ADC_CONV_POLLING_TIME"
-        - Add new macro "ADC_CONV_TIME_MS"
-        - Adjust the position of include file <mediatek,mt6370_adc.h>
-        - Adjust the postions between <linux/module.h> and
-           <linux/mod_devicetable.h>
-        - Fix some incorrect characters
-
-- In patch 10/13:
-        - Replace text "Mediatek" with "MediaTek" in Kconfig and
-          MODULE_DESCRIPTION()
-        - Replace "mt6370_chg_val_to_reg" and "mt6370_chg_reg_to_val"
-          with "linear_range" API
-        - Replace "first break and then return" with "return directly"
-          in all cases of get/set power_supply_property
-        - Replace all "first dev_err() and then return" with "return
-          dev_err_probe()"
-        - Replace all "return IS_ERR(priv->rdev) ? PTR_ERR(priv->rdev) : 0"
-          with "PTR_ERR_OR_ZERO()"
-        - Replace "priv->dev->of_node" with "dev_of_node()"
-        - Add Copyright in the source code
-        - Add module name related description in Kconfig helptext
-        - Add proper unit of "MT6370_MIVR_IBUS_TH"
-        - Add error check in "mt6370_chg_get_status"
-        - Remove including <mediatek,mt6370_adc.h> header file
-        - Remove redundant comma of every enum terminator line
-        - Remove unwanted blank lines
-        - Remove the useless label (toggle_cfo_exit:)
-        - Remove using atomic
-        - Remove using of_match_ptr()
-        - Fix some incorrect characters
-        - Fix updating wrong bits when using ena_gpiod of OTG regulator
-        - Adjust the probe order in probe()
-
-- In patch 11/13:
-        - Replace text "Mediatek" with "MediaTek" in Kconfig
-        - Replace text "const" with "constant" in Kconfig
-        - Add Copyright in the source code
-
-- In patch 12/13:
-        - Replace text "Mediatek" with "MediaTek" in Kconfig
-        - Add Copyright in the source code
-
-- In patch 13/13:
-        - Replace text "Mediatek" with "MediaTek" in Kconfig
-        - Add Copyright in the source code
-        - Revise the comment of "PWM HYS STEPS"
-
-
-Changes in v3:
-- Remove ADC ABI file, which is added in v2 Patch 7
-- In patch 02/14:
-        - Add items and remove maxItems of io-channels
-        - Add io-channel-names and describe each item
-        - Add "unevaluatedProperties: false" in "usb-otg-vbus-regulator"
-        - Rename "enable-gpio" to "enable-gpios" in "usb-otg-vbus-regulator"
-
-- In patch 03/14:
-        - Use leds-class-multicolor.yaml instead of common.yaml.
-        - Split multi-led and led node.
-        - Add subdevice "led" in "multi-led".
-
-- In patch 04/14:
-        - Remove the description of enum.
-
-- In patch 05/14:
-        - Rename "mediatek,bled-pwm-hys-input-threshold-steps" to
-          "mediatek,bled-pwm-hys-input-th-steps"
-        - Refine "bled-pwm-hys-input-th-steps", "bled-ovp-microvolt",
-          "bled-ocp-microamp" enum values
-
-- In patch 06/14:
-        - Use " in entire patchset
-        - Refine ADC description
-        - Rename "enable-gpio" to "enable-gpios" in "regualtor"
-
-- In patch 07/14:
-        - Refine Kconfig help text
-        - Refine error message of unknown vendor ID in
-          mt6370_check_vendor_info()
-        - Refine return value handling of mt6370_regmap_read()
-        - Refine all probe error by using dev_err_probe()
-        - Refine "bank_idx" and "bank_addr" in mt6370_regmap_read() and
-          mt6370_regmap_write()
-        - Add "#define VENID*" and drop the comments in
-          mt6370_check_vendor_info()
-        - Drop "MFD" in MODULE_DESCRIPTION()
-
-- In patch 09/14:
-        - Refine Kconfig help text
-
-- In patch 10/14:
-        - Refine Kconfig help text
-        - Refine all channel value in read_scale()
-                a. current: uA --> mA
-                b. voltage: uV --> mV
-                c. temperature: degrees Celsius --> milli degrees Celsius
-        - Add "default:" condition of switch statement in read_scale() and read_raw()
-        - Add error message for reading ADC register failed
-        - Add the comment for adc_lock
-        - Add <linux/mod_devicetable.h> header file for struct of_device_id
-        - Replace "adc" text with "ADC" in all of the error messages
-
-- In patch 12/14:
-        - Refine the grammer of the Kconfig.
-        - Change reg mode to the const current mode.
-
-- In patch 14/14:
-        - Refine bool properties parsing (pwm-enable, ovp-shutdown, ocp-shutdown) in DT
-          parsing function
-        - Refine u32 and u8 properties parsing (pwm-hys-input-th-steps, ovp-microvolt,
-          ocp-microamp), from using register value to using actual value
-        - Refine error string of "channle-use" parsing failed
-        - Refine Kconfig help text
-
-
-Changes in v2:
-- In patch 01/15:
-        - Add "unevaluatedProperties: false".
-        - Delete "DT bindings".
-        - Refine the description to fit in 80 columns.
-        - Skip the connector description.
-
-- In patch 02/15:
-        - Refine items description of interrupt-name
-        - Rename "usb-otg-vbus" to "usb-otg-vbus-regulator"
-        - Add constraint properties for ADC
-
-- In patch 03/15:
-        - Skip not useful description of "^(multi-)?led@[0-3]$"
-          and reg.
-        - Due to the dependency, remove the mention of mfd
-          document directory.
-        - Delete Soft-start property. In design aspect, we think
-          soft-restart should always be enabled, our new chip
-          has deleted the related setting register , also, we don’t
-          allow user adjust this parameter in this chip.
-        - Refine the commit message.
-
-- In patch 04/15:
-        - Skip not useful description of "^led@[0-1]$" and reg.
-        - Add apace after '#'.
-        - Refine the commit message.
-
-- In patch 05/15:
-        - Remove "binding documentation" in subject title
-        - Refine description of mt6370 backlight binding
-          document
-        - Refine properties name(bled-pwm-hys-input-bit,
-          bled-ovp-microvolt, bled-ocp-microamp) and their
-          description
-
-- In patch 06/15:
-        - Refine ADC and Regulator descriptions
-        - Refine include header usage in example
-        - Refine node name to generic node name("pmic@34")
-        - Refine led example indentation
-        - Refine license of mediatek,mt6370_adc.h
-        - Rename the dts example from IRQ define to number.
-        - Remove mediatek,mt6370.h
-
-- In patch 07/15:
-        - Add ABI documentation for mt6370 non-standard ADC
-          sysfs interfaces.
-
-- In patch 08/15:
-        - Add all IRQ define into mt6370.c.
-        - Refine include header usage
-
-- In patch 09/15:
-        - No changes.
-
-- In patch 10/15:
-        - Use 'gpiod_get_from_of_node' to replace
-          'fwnode_gpiod_get_index'.
-
-- In patch 11/15:
-        - Refine Kconfig mt6370 help text
-        - Refine mask&shift to FIELD_PREP()
-        - Refine mutex lock name ("lock" -> "adc_lock")
-        - Refine mt6370_adc_read_scale()
-        - Refine mt6370_adc_read_offset()
-        - Refine mt6370_channel_labels[] by using enum to index
-          chan spec
-        - Refine MT6370_ADC_CHAN()
-        - Refine indio_dev->name
-        - Remove useless include header files
-
-- In patch 12/15:
-        - Refine mt6370_chg_otg_rdesc.of_match
-          ("mt6370,otg-vbus" -> "usb-otg-vbus-regulator") to match
-          DT binding
-
-- In patch 13/15:
-        - Refine Kconfig description.
-        - Remove include "linux/of.h" and use
-          "linux/mod_devicetable.h".
-        - Place a comma for the last element of the const
-          unsigned int array.
-        - Add a comment line for the mutex 'lock'.
-        - In probe function, use 'dev_err_probe' in some
-          judgement to reduce the LOC.
-        - Refine include header usage.
-          BIT/GENMASK -> linux/bits.h
-          FIELD_GET -> linux/bitfield.h
-
-- In patch 14/15:
-        - Add blank line.
-        - Replace container_of() with to_mt6370_led() .
-        - Refine description of ramping.
-        - Refine the mt6370_init_common_properties function.
-        - Refine the probe return.
-
-- In patch 15/15:
-        - Refine MT6370 help text in Kconfig
-        - Refine DT Parse function
-        - Remove useless enum
-        - Add comment for 6372 backward compatible in
-          bl_update_status() and
-          check_vendor_info()
-        - Using dev_err_probe(); insteads dev_err()&return; in
-          the probe()
-
-
-
-
- Documentation/leds/leds-mt6370-rgb.rst |   64 ++
- drivers/leds/flash/Kconfig             |   13 +
- drivers/leds/flash/Makefile            |    1 +
- drivers/leds/flash/leds-mt6370-flash.c |  573 ++++++++++++++++++
- drivers/leds/rgb/Kconfig               |   13 +
- drivers/leds/rgb/Makefile              |    1 +
- drivers/leds/rgb/leds-mt6370-rgb.c     | 1010 ++++++++++++++++++++++++++++++++
- 7 files changed, 1675 insertions(+)
- create mode 100644 Documentation/leds/leds-mt6370-rgb.rst
+v18:
+- Unwrap each line by 100 chars limit.
+- For joint flash, add more comments above the source code.
+- Remove 'sentinel' comment in of_device_id table declaration.
+---
+ drivers/leds/flash/Kconfig             |  13 +
+ drivers/leds/flash/Makefile            |   1 +
+ drivers/leds/flash/leds-mt6370-flash.c | 573 +++++++++++++++++++++++++++++++++
+ 3 files changed, 587 insertions(+)
  create mode 100644 drivers/leds/flash/leds-mt6370-flash.c
- create mode 100644 drivers/leds/rgb/leds-mt6370-rgb.c
 
+diff --git a/drivers/leds/flash/Kconfig b/drivers/leds/flash/Kconfig
+index d3eb689..49d8922 100644
+--- a/drivers/leds/flash/Kconfig
++++ b/drivers/leds/flash/Kconfig
+@@ -61,6 +61,19 @@ config LEDS_MT6360
+ 	  Independent current sources supply for each flash LED support torch
+ 	  and strobe mode.
+ 
++config LEDS_MT6370_FLASH
++	tristate "Flash LED Support for MediaTek MT6370 PMIC"
++	depends on LEDS_CLASS
++	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
++	depends on MFD_MT6370
++	help
++	  Support 2 channels and torch/strobe mode.
++	  Say Y here to enable support for
++	  MT6370_FLASH_LED device.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called "leds-mt6370-flash".
++
+ config LEDS_RT4505
+ 	tristate "LED support for RT4505 flashlight controller"
+ 	depends on I2C && OF
+diff --git a/drivers/leds/flash/Makefile b/drivers/leds/flash/Makefile
+index 0acbddc..4665e8e 100644
+--- a/drivers/leds/flash/Makefile
++++ b/drivers/leds/flash/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ obj-$(CONFIG_LEDS_MT6360)	+= leds-mt6360.o
++obj-$(CONFIG_LEDS_MT6370_FLASH)	+= leds-mt6370-flash.o
+ obj-$(CONFIG_LEDS_AAT1290)	+= leds-aat1290.o
+ obj-$(CONFIG_LEDS_AS3645A)	+= leds-as3645a.o
+ obj-$(CONFIG_LEDS_KTD2692)	+= leds-ktd2692.o
+diff --git a/drivers/leds/flash/leds-mt6370-flash.c b/drivers/leds/flash/leds-mt6370-flash.c
+new file mode 100644
+index 00000000..dc00c33
+--- /dev/null
++++ b/drivers/leds/flash/leds-mt6370-flash.c
+@@ -0,0 +1,573 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2023 Richtek Technology Corp.
++ *
++ * Authors:
++ *   Alice Chen <alice_chen@richtek.com>
++ *   ChiYuan Huang <cy_huang@richtek.com>
++ */
++
++#include <linux/bitops.h>
++#include <linux/delay.h>
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/led-class-flash.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/platform_device.h>
++#include <linux/property.h>
++#include <linux/regmap.h>
++
++#include <media/v4l2-flash-led-class.h>
++
++enum {
++	MT6370_LED_FLASH1 = 0,
++	MT6370_LED_FLASH2,
++	MT6370_MAX_LEDS
++};
++
++/* Virtual definition for multicolor */
++
++#define MT6370_REG_FLEDEN		0x17E
++#define MT6370_REG_STRBTO		0x173
++#define MT6370_REG_CHGSTAT2		0x1D1
++#define MT6370_REG_FLEDSTAT1		0x1D9
++#define MT6370_REG_FLEDISTRB(_id)	(0x174 + 4 * (_id))
++#define MT6370_REG_FLEDITOR(_id)	(0x175 + 4 * (_id))
++#define MT6370_ITORCH_MASK		GENMASK(4, 0)
++#define MT6370_ISTROBE_MASK		GENMASK(6, 0)
++#define MT6370_STRBTO_MASK		GENMASK(6, 0)
++#define MT6370_TORCHEN_MASK		BIT(3)
++#define MT6370_STROBEN_MASK		BIT(2)
++#define MT6370_FLCSEN_MASK(_id)		BIT(MT6370_LED_FLASH2 - (_id))
++#define MT6370_FLCSEN_MASK_ALL		GENMASK(1, 0)
++#define MT6370_FLEDCHGVINOVP_MASK	BIT(3)
++#define MT6370_FLED1STRBTO_MASK		BIT(11)
++#define MT6370_FLED2STRBTO_MASK		BIT(10)
++#define MT6370_FLED1STRB_MASK		BIT(9)
++#define MT6370_FLED2STRB_MASK		BIT(8)
++#define MT6370_FLED1SHORT_MASK		BIT(7)
++#define MT6370_FLED2SHORT_MASK		BIT(6)
++#define MT6370_FLEDLVF_MASK		BIT(3)
++
++#define MT6370_LED_JOINT		2
++#define MT6370_RANGE_FLED_REG		4
++#define MT6370_ITORCH_MIN_uA		25000
++#define MT6370_ITORCH_STEP_uA		12500
++#define MT6370_ITORCH_MAX_uA		400000
++#define MT6370_ITORCH_DOUBLE_MAX_uA	800000
++#define MT6370_ISTRB_MIN_uA		50000
++#define MT6370_ISTRB_STEP_uA		12500
++#define MT6370_ISTRB_MAX_uA		1500000
++#define MT6370_ISTRB_DOUBLE_MAX_uA	3000000
++#define MT6370_STRBTO_MIN_US		64000
++#define MT6370_STRBTO_STEP_US		32000
++#define MT6370_STRBTO_MAX_US		2432000
++
++#define to_mt6370_led(ptr, member) container_of(ptr, struct mt6370_led, member)
++
++struct mt6370_led {
++	struct led_classdev_flash flash;
++	struct v4l2_flash *v4l2_flash;
++	struct mt6370_priv *priv;
++	u8 led_no;
++};
++
++struct mt6370_priv {
++	struct regmap *regmap;
++	struct mutex lock;
++	unsigned int fled_strobe_used;
++	unsigned int fled_torch_used;
++	unsigned int leds_active;
++	unsigned int leds_count;
++	struct mt6370_led leds[];
++};
++
++static int mt6370_torch_brightness_set(struct led_classdev *lcdev, enum led_brightness level)
++{
++	struct mt6370_led *led = to_mt6370_led(lcdev, flash.led_cdev);
++	struct mt6370_priv *priv = led->priv;
++	u32 led_enable_mask = led->led_no == MT6370_LED_JOINT ? MT6370_FLCSEN_MASK_ALL :
++			      MT6370_FLCSEN_MASK(led->led_no);
++	u32 enable_mask = MT6370_TORCHEN_MASK | led_enable_mask;
++	u32 val = level ? led_enable_mask : 0;
++	u32 curr;
++	int ret, i;
++
++	mutex_lock(&priv->lock);
++
++	/*
++	 * There is only one set of flash control logic, and this flag is used to check if 'strobe'
++	 * is currently being used.
++	 */
++	if (priv->fled_strobe_used) {
++		dev_warn(lcdev->dev, "Please disable strobe first [%d]\n", priv->fled_strobe_used);
++		ret = -EBUSY;
++		goto unlock;
++	}
++
++	if (level)
++		curr = priv->fled_torch_used | BIT(led->led_no);
++	else
++		curr = priv->fled_torch_used & ~BIT(led->led_no);
++
++	if (curr)
++		val |= MT6370_TORCHEN_MASK;
++
++	if (level) {
++		level -= 1;
++		if (led->led_no == MT6370_LED_JOINT) {
++			u32 flevel[MT6370_MAX_LEDS];
++
++			/*
++			 * There're two flash channels in MT6370. If joint flash output is used,
++			 * torch current will be averaged output from both channels.
++			 */
++			flevel[0] = level / 2;
++			flevel[1] = level - flevel[0];
++			for (i = 0; i < MT6370_MAX_LEDS; i++) {
++				ret = regmap_update_bits(priv->regmap, MT6370_REG_FLEDITOR(i),
++							 MT6370_ITORCH_MASK, flevel[i]);
++				if (ret)
++					goto unlock;
++			}
++		} else {
++			ret = regmap_update_bits(priv->regmap, MT6370_REG_FLEDITOR(led->led_no),
++						 MT6370_ITORCH_MASK, level);
++			if (ret)
++				goto unlock;
++		}
++	}
++
++	ret = regmap_update_bits(priv->regmap, MT6370_REG_FLEDEN, enable_mask, val);
++	if (ret)
++		goto unlock;
++
++	priv->fled_torch_used = curr;
++
++unlock:
++	mutex_unlock(&priv->lock);
++	return ret;
++}
++
++static int mt6370_flash_brightness_set(struct led_classdev_flash *fl_cdev, u32 brightness)
++{
++	/*
++	 * Because of the current spikes when turning on the flash, the brightness should be kept
++	 * by the LED framework. This empty function is used to prevent checking failure when
++	 * led_classdev_flash registers ops.
++	 */
++	return 0;
++}
++
++static int _mt6370_flash_brightness_set(struct led_classdev_flash *fl_cdev, u32 brightness)
++{
++	struct mt6370_led *led = to_mt6370_led(fl_cdev, flash);
++	struct mt6370_priv *priv = led->priv;
++	struct led_flash_setting *setting = &fl_cdev->brightness;
++	u32 val = (brightness - setting->min) / setting->step;
++	int ret, i;
++
++	if (led->led_no == MT6370_LED_JOINT) {
++		u32 flevel[MT6370_MAX_LEDS];
++
++		/*
++		 * There're two flash channels in MT6370. If joint flash output is used, storbe
++		 * current will be averaged output from both channels.
++		 */
++		flevel[0] = val / 2;
++		flevel[1] = val - flevel[0];
++		for (i = 0; i < MT6370_MAX_LEDS; i++) {
++			ret = regmap_update_bits(priv->regmap, MT6370_REG_FLEDISTRB(i),
++						 MT6370_ISTROBE_MASK, flevel[i]);
++			if (ret)
++				break;
++		}
++	} else
++		ret = regmap_update_bits(priv->regmap, MT6370_REG_FLEDISTRB(led->led_no),
++					 MT6370_ISTROBE_MASK, val);
++
++	return ret;
++}
++
++static int mt6370_strobe_set(struct led_classdev_flash *fl_cdev, bool state)
++{
++	struct mt6370_led *led = to_mt6370_led(fl_cdev, flash);
++	struct mt6370_priv *priv = led->priv;
++	struct led_classdev *lcdev = &fl_cdev->led_cdev;
++	struct led_flash_setting *s = &fl_cdev->brightness;
++	u32 led_enable_mask = led->led_no == MT6370_LED_JOINT ? MT6370_FLCSEN_MASK_ALL :
++			      MT6370_FLCSEN_MASK(led->led_no);
++	u32 enable_mask = MT6370_STROBEN_MASK | led_enable_mask;
++	u32 val = state ? led_enable_mask : 0;
++	u32 curr;
++	int ret;
++
++	mutex_lock(&priv->lock);
++
++	/*
++	 * There is only one set of flash control logic, and this flag is used to check if 'torch'
++	 * is currently being used.
++	 */
++	if (priv->fled_torch_used) {
++		dev_warn(lcdev->dev, "Please disable torch first [0x%x]\n", priv->fled_torch_used);
++		ret = -EBUSY;
++		goto unlock;
++	}
++
++	if (state)
++		curr = priv->fled_strobe_used | BIT(led->led_no);
++	else
++		curr = priv->fled_strobe_used & ~BIT(led->led_no);
++
++	if (curr)
++		val |= MT6370_STROBEN_MASK;
++
++	ret = regmap_update_bits(priv->regmap, MT6370_REG_FLEDEN, enable_mask, val);
++	if (ret) {
++		dev_err(lcdev->dev, "[%d] control current source %d fail\n", led->led_no, state);
++		goto unlock;
++	}
++
++	/*
++	 * If the flash needs to turn on, configure the flash current to ramp up to the setting
++	 * value. Otherwise, always revert to the minimum one.
++	 */
++	ret = _mt6370_flash_brightness_set(fl_cdev, state ? s->val : s->min);
++	if (ret) {
++		dev_err(lcdev->dev, "[%d] Failed to set brightness\n", led->led_no);
++		goto unlock;
++	}
++
++	/*
++	 * For the flash to turn on/off, we must wait for HW ramping up/down time 5ms/500us to
++	 * prevent the unexpected problem.
++	 */
++	if (!priv->fled_strobe_used && curr)
++		usleep_range(5000, 6000);
++	else if (priv->fled_strobe_used && !curr)
++		usleep_range(500, 600);
++
++	priv->fled_strobe_used = curr;
++
++unlock:
++	mutex_unlock(&priv->lock);
++	return ret;
++}
++
++static int mt6370_strobe_get(struct led_classdev_flash *fl_cdev, bool *state)
++{
++	struct mt6370_led *led = to_mt6370_led(fl_cdev, flash);
++	struct mt6370_priv *priv = led->priv;
++
++	mutex_lock(&priv->lock);
++	*state = !!(priv->fled_strobe_used & BIT(led->led_no));
++	mutex_unlock(&priv->lock);
++
++	return 0;
++}
++
++static int mt6370_timeout_set(struct led_classdev_flash *fl_cdev, u32 timeout)
++{
++	struct mt6370_led *led = to_mt6370_led(fl_cdev, flash);
++	struct mt6370_priv *priv = led->priv;
++	struct led_flash_setting *s = &fl_cdev->timeout;
++	u32 val = (timeout - s->min) / s->step;
++
++	return regmap_update_bits(priv->regmap, MT6370_REG_STRBTO, MT6370_STRBTO_MASK, val);
++}
++
++static int mt6370_fault_get(struct led_classdev_flash *fl_cdev, u32 *fault)
++{
++	struct mt6370_led *led = to_mt6370_led(fl_cdev, flash);
++	struct mt6370_priv *priv = led->priv;
++	u16 fled_stat;
++	unsigned int chg_stat, strobe_timeout_mask, fled_short_mask;
++	u32 rfault = 0;
++	int ret;
++
++	ret = regmap_read(priv->regmap, MT6370_REG_CHGSTAT2, &chg_stat);
++	if (ret)
++		return ret;
++
++	ret = regmap_raw_read(priv->regmap, MT6370_REG_FLEDSTAT1, &fled_stat, sizeof(fled_stat));
++	if (ret)
++		return ret;
++
++	switch (led->led_no) {
++	case MT6370_LED_FLASH1:
++		strobe_timeout_mask = MT6370_FLED1STRBTO_MASK;
++		fled_short_mask = MT6370_FLED1SHORT_MASK;
++		break;
++
++	case MT6370_LED_FLASH2:
++		strobe_timeout_mask = MT6370_FLED2STRBTO_MASK;
++		fled_short_mask = MT6370_FLED2SHORT_MASK;
++		break;
++
++	case MT6370_LED_JOINT:
++		strobe_timeout_mask = MT6370_FLED1STRBTO_MASK | MT6370_FLED2STRBTO_MASK;
++		fled_short_mask = MT6370_FLED1SHORT_MASK | MT6370_FLED2SHORT_MASK;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	if (chg_stat & MT6370_FLEDCHGVINOVP_MASK)
++		rfault |= LED_FAULT_INPUT_VOLTAGE;
++
++	if (fled_stat & strobe_timeout_mask)
++		rfault |= LED_FAULT_TIMEOUT;
++
++	if (fled_stat & fled_short_mask)
++		rfault |= LED_FAULT_SHORT_CIRCUIT;
++
++	if (fled_stat & MT6370_FLEDLVF_MASK)
++		rfault |= LED_FAULT_UNDER_VOLTAGE;
++
++	*fault = rfault;
++	return ret;
++}
++
++static const struct led_flash_ops mt6370_flash_ops = {
++	.flash_brightness_set = mt6370_flash_brightness_set,
++	.strobe_set = mt6370_strobe_set,
++	.strobe_get = mt6370_strobe_get,
++	.timeout_set = mt6370_timeout_set,
++	.fault_get = mt6370_fault_get,
++};
++
++#if IS_ENABLED(CONFIG_V4L2_FLASH_LED_CLASS)
++static int mt6370_flash_external_strobe_set(struct v4l2_flash *v4l2_flash,
++					    bool enable)
++{
++	struct led_classdev_flash *flash = v4l2_flash->fled_cdev;
++	struct mt6370_led *led = to_mt6370_led(flash, flash);
++	struct mt6370_priv *priv = led->priv;
++	u32 mask = led->led_no == MT6370_LED_JOINT ? MT6370_FLCSEN_MASK_ALL :
++		   MT6370_FLCSEN_MASK(led->led_no);
++	u32 val = enable ? mask : 0;
++	int ret;
++
++	mutex_lock(&priv->lock);
++
++	ret = regmap_update_bits(priv->regmap, MT6370_REG_FLEDEN, mask, val);
++	if (ret)
++		goto unlock;
++
++	if (enable)
++		priv->fled_strobe_used |= BIT(led->led_no);
++	else
++		priv->fled_strobe_used &= ~BIT(led->led_no);
++
++unlock:
++	mutex_unlock(&priv->lock);
++	return ret;
++}
++
++static const struct v4l2_flash_ops v4l2_flash_ops = {
++	.external_strobe_set = mt6370_flash_external_strobe_set,
++};
++
++static void mt6370_init_v4l2_flash_config(struct mt6370_led *led, struct v4l2_flash_config *cfg)
++{
++	struct led_classdev *lcdev;
++	struct led_flash_setting *s = &cfg->intensity;
++
++	lcdev = &led->flash.led_cdev;
++
++	s->min = MT6370_ITORCH_MIN_uA;
++	s->step = MT6370_ITORCH_STEP_uA;
++	s->val = s->max = s->min + (lcdev->max_brightness - 1) * s->step;
++
++	cfg->has_external_strobe = 1;
++	strscpy(cfg->dev_name, dev_name(lcdev->dev), sizeof(cfg->dev_name));
++
++	cfg->flash_faults = LED_FAULT_SHORT_CIRCUIT | LED_FAULT_TIMEOUT |
++			    LED_FAULT_INPUT_VOLTAGE | LED_FAULT_UNDER_VOLTAGE;
++}
++#else
++static const struct v4l2_flash_ops v4l2_flash_ops;
++static void mt6370_init_v4l2_flash_config(struct mt6370_led *led, struct v4l2_flash_config *cfg)
++{
++}
++#endif
++
++static void mt6370_v4l2_flash_release(void *v4l2_flash)
++{
++	v4l2_flash_release(v4l2_flash);
++}
++
++static int mt6370_led_register(struct device *parent, struct mt6370_led *led,
++			       struct fwnode_handle *fwnode)
++{
++	struct led_init_data init_data = { .fwnode = fwnode };
++	struct v4l2_flash_config v4l2_config = {};
++	int ret;
++
++	ret = devm_led_classdev_flash_register_ext(parent, &led->flash, &init_data);
++	if (ret)
++		return dev_err_probe(parent, ret, "Couldn't register flash %d\n", led->led_no);
++
++	mt6370_init_v4l2_flash_config(led, &v4l2_config);
++	led->v4l2_flash = v4l2_flash_init(parent, fwnode, &led->flash, &v4l2_flash_ops,
++					  &v4l2_config);
++	if (IS_ERR(led->v4l2_flash))
++		return dev_err_probe(parent, PTR_ERR(led->v4l2_flash),
++				     "Failed to register %d v4l2 sd\n", led->led_no);
++
++	return devm_add_action_or_reset(parent, mt6370_v4l2_flash_release, led->v4l2_flash);
++}
++
++static u32 mt6370_clamp(u32 val, u32 min, u32 max, u32 step)
++{
++	u32 retval;
++
++	retval = clamp_val(val, min, max);
++	if (step > 1)
++		retval = rounddown(retval - min, step) + min;
++
++	return retval;
++}
++
++static int mt6370_init_flash_properties(struct device *dev, struct mt6370_led *led,
++					struct fwnode_handle *fwnode)
++{
++	struct led_classdev_flash *flash = &led->flash;
++	struct led_classdev *lcdev = &flash->led_cdev;
++	struct mt6370_priv *priv = led->priv;
++	struct led_flash_setting *s;
++	u32 sources[MT6370_MAX_LEDS];
++	u32 max_ua, val;
++	int i, ret, num;
++
++	num = fwnode_property_count_u32(fwnode, "led-sources");
++	if (num < 1)
++		return dev_err_probe(dev, -EINVAL,
++				     "Not specified or wrong number of led-sources\n");
++
++	ret = fwnode_property_read_u32_array(fwnode, "led-sources", sources, num);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < num; i++) {
++		if (sources[i] >= MT6370_MAX_LEDS)
++			return -EINVAL;
++		if (priv->leds_active & BIT(sources[i]))
++			return -EINVAL;
++		priv->leds_active |= BIT(sources[i]);
++	}
++
++	/* If both channels are specified in 'led-sources', joint flash output mode is used */
++	led->led_no = num == 2 ? MT6370_LED_JOINT : sources[0];
++
++	max_ua = num == 2 ? MT6370_ITORCH_DOUBLE_MAX_uA : MT6370_ITORCH_MAX_uA;
++	val = MT6370_ITORCH_MIN_uA;
++	ret = fwnode_property_read_u32(fwnode, "led-max-microamp", &val);
++	if (!ret)
++		val = mt6370_clamp(val, MT6370_ITORCH_MIN_uA, max_ua, MT6370_ITORCH_STEP_uA);
++
++	lcdev->max_brightness = (val - MT6370_ITORCH_MIN_uA) / MT6370_ITORCH_STEP_uA + 1;
++	lcdev->brightness_set_blocking = mt6370_torch_brightness_set;
++	lcdev->flags |= LED_DEV_CAP_FLASH;
++
++	max_ua = num == 2 ? MT6370_ISTRB_DOUBLE_MAX_uA : MT6370_ISTRB_MAX_uA;
++	val = MT6370_ISTRB_MIN_uA;
++	ret = fwnode_property_read_u32(fwnode, "flash-max-microamp", &val);
++	if (!ret)
++		val = mt6370_clamp(val, MT6370_ISTRB_MIN_uA, max_ua, MT6370_ISTRB_STEP_uA);
++
++	s = &flash->brightness;
++	s->min = MT6370_ISTRB_MIN_uA;
++	s->step = MT6370_ISTRB_STEP_uA;
++	s->val = s->max = val;
++
++	/* Always configure to the minimum level when off to prevent flash current spikes. */
++	ret = _mt6370_flash_brightness_set(flash, s->min);
++	if (ret)
++		return ret;
++
++
++	val = MT6370_STRBTO_MIN_US;
++	ret = fwnode_property_read_u32(fwnode, "flash-max-timeout-us", &val);
++	if (!ret)
++		val = mt6370_clamp(val, MT6370_STRBTO_MIN_US, MT6370_STRBTO_MAX_US,
++				   MT6370_STRBTO_STEP_US);
++
++	s = &flash->timeout;
++	s->min = MT6370_STRBTO_MIN_US;
++	s->step = MT6370_STRBTO_STEP_US;
++	s->val = s->max = val;
++
++	flash->ops = &mt6370_flash_ops;
++
++	return 0;
++}
++
++static int mt6370_led_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct mt6370_priv *priv;
++	struct fwnode_handle *child;
++	size_t count;
++	int i = 0, ret;
++
++	count = device_get_child_node_count(dev);
++	if (!count || count > MT6370_MAX_LEDS)
++		return dev_err_probe(dev, -EINVAL,
++		       "No child node or node count over max led number %zu\n", count);
++
++	priv = devm_kzalloc(dev, struct_size(priv, leds, count), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->leds_count = count;
++	mutex_init(&priv->lock);
++
++	priv->regmap = dev_get_regmap(dev->parent, NULL);
++	if (!priv->regmap)
++		return dev_err_probe(dev, -ENODEV, "Failed to get parent regmap\n");
++
++	device_for_each_child_node(dev, child) {
++		struct mt6370_led *led = priv->leds + i;
++
++		led->priv = priv;
++
++		ret = mt6370_init_flash_properties(dev, led, child);
++		if (ret) {
++			fwnode_handle_put(child);
++			return ret;
++		}
++
++		ret = mt6370_led_register(dev, led, child);
++		if (ret) {
++			fwnode_handle_put(child);
++			return ret;
++		}
++
++		i++;
++	}
++
++	return 0;
++}
++
++static const struct of_device_id mt6370_led_of_id[] = {
++	{ .compatible = "mediatek,mt6370-flashlight" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, mt6370_led_of_id);
++
++static struct platform_driver mt6370_led_driver = {
++	.driver = {
++		.name = "mt6370-flashlight",
++		.of_match_table = mt6370_led_of_id,
++	},
++	.probe = mt6370_led_probe,
++};
++module_platform_driver(mt6370_led_driver);
++
++MODULE_AUTHOR("Alice Chen <alice_chen@richtek.com>");
++MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
++MODULE_DESCRIPTION("MT6370 FLASH LED Driver");
++MODULE_LICENSE("GPL");
 -- 
 2.7.4
 
