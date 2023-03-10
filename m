@@ -2,121 +2,140 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F3BC6FD1F
-	for <linux-leds@archiver.kernel.org>; Fri, 10 Mar 2023 00:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FBDC64EC4
+	for <linux-leds@archiver.kernel.org>; Fri, 10 Mar 2023 06:56:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbjCJA6X (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 9 Mar 2023 19:58:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60054 "EHLO
+        id S229523AbjCJG4k (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 10 Mar 2023 01:56:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbjCJA6W (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Mar 2023 19:58:22 -0500
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817DC27D5A;
-        Thu,  9 Mar 2023 16:58:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=vjW6QtxHv/QHaq/NXjZ9ZAchd2L2TcgKdY+7ifJRM3o=; b=3jinkUGJMgNUX/yYpsH83fW+B8
-        ltXGet1yysa3E0N5nzid+/80PNSR/J8Dp59mC0596V1lKD0sW7hj2IWonzUq4B7bF+N/7LVbaBns3
-        bvRP2gpMwcsa4NG6vWVCfZwN1WQ1mKvO4KVKGsG1dHMge4QL1dJ8y7xzuARPhC6b5qBU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1paR5F-006viw-J1; Fri, 10 Mar 2023 01:58:09 +0100
-Date:   Fri, 10 Mar 2023 01:58:09 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        John Crispin <john@phrozen.org>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, Lee Jones <lee@kernel.org>,
-        linux-leds@vger.kernel.org
-Subject: Re: [net-next PATCH v2 02/14] net: dsa: qca8k: add LEDs basic support
-Message-ID: <98054351-b124-467c-9be6-d8a7c357c268@lunn.ch>
-References: <20230309223524.23364-1-ansuelsmth@gmail.com>
- <20230309223524.23364-3-ansuelsmth@gmail.com>
- <a8c60aa6-2a89-4b2e-b773-224c6a5b03c0@lunn.ch>
- <640a7775.5d0a0220.110eb.3e41@mx.google.com>
+        with ESMTP id S229602AbjCJG4j (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 10 Mar 2023 01:56:39 -0500
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0A482F7ECC;
+        Thu,  9 Mar 2023 22:56:35 -0800 (PST)
+X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
+        LIVER,40,3)
+Received: from 192.168.10.46
+        by mg.richtek.com with MailGates ESMTP Server V5.0(20043:0:AUTH_RELAY)
+        (envelope-from <chiaen_wu@richtek.com>); Fri, 10 Mar 2023 14:56:02 +0800 (CST)
+Received: from ex3.rt.l (192.168.10.46) by ex3.rt.l (192.168.10.46) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.25; Fri, 10 Mar
+ 2023 14:56:02 +0800
+Received: from linuxcarl2.richtek.com (192.168.10.154) by ex3.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1118.25 via Frontend
+ Transport; Fri, 10 Mar 2023 14:56:02 +0800
+From:   ChiaEn Wu <chiaen_wu@richtek.com>
+To:     <corbet@lwn.net>, <pavel@ucw.cz>, <lee@kernel.org>,
+        <matthias.bgg@gmail.com>, <andriy.shevchenko@linux.intel.com>,
+        <jacek.anaszewski@gmail.com>,
+        <angelogioacchino.delregno@collabora.com>
+CC:     <linux-doc@vger.kernel.org>, <peterwu.pub@gmail.com>,
+        <cy_huang@richtek.com>, <linux-leds@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <szunichen@gmail.com>,
+        ChiaEn Wu <chiaen_wu@richtek.com>
+Subject: [PATCH v18 3/3] docs: leds: Add MT6370 RGB LED pattern document
+Date:   Fri, 10 Mar 2023 14:55:57 +0800
+Message-ID: <38f1e863b0f099158a63fb6f95056a1cb30d80a0.1678430444.git.chiaen_wu@richtek.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <cover.1678430444.git.chiaen_wu@richtek.com>
+References: <cover.1678430444.git.chiaen_wu@richtek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <640a7775.5d0a0220.110eb.3e41@mx.google.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-> > > +static enum led_brightness
-> > > +qca8k_led_brightness_get(struct qca8k_led *led)
-> > > +{
-> > > +	struct qca8k_led_pattern_en reg_info;
-> > > +	struct qca8k_priv *priv = led->priv;
-> > > +	u32 val;
-> > > +	int ret;
-> > > +
-> > > +	qca8k_get_enable_led_reg(led->port_num, led->led_num, &reg_info);
-> > > +
-> > > +	ret = regmap_read(priv->regmap, reg_info.reg, &val);
-> > > +	if (ret)
-> > > +		return 0;
-> > > +
-> > > +	val >>= reg_info.shift;
-> > > +
-> > > +	if (led->port_num == 0 || led->port_num == 4) {
-> > > +		val &= QCA8K_LED_PATTERN_EN_MASK;
-> > > +		val >>= QCA8K_LED_PATTERN_EN_SHIFT;
-> > > +	} else {
-> > > +		val &= QCA8K_LED_PHY123_PATTERN_EN_MASK;
-> > > +	}
-> > > +
-> > > +	return val > 0 ? 1 : 0;
-> > > +}
-> > 
-> > What will this return when in the future you add hardware offload, and
-> > the LED is actually blinking because of frames being sent etc?
-> > 
-> > Is it better to not implement _get() when it is unclear what it should
-> > return when offload is in operation?
-> > 
-> 
-> My idea was that anything that is not 'always off' will have brightness
-> 1. So also in accelerated blink brightness should be 1.
-> 
-> My idea of get was that it should reflect if the led is active or always
-> off. Is it wrong?
- 
-brigntness_get seems to be used in two situations:
+From: ChiYuan Huang <cy_huang@richtek.com>
 
-When the LED is first registered, it can be called to get the current
-state of the LED. This then initialized cdev->brightness.
+Document the MT6370 RGB LED pattern trigger.
 
-When the brightness sysfs file is read, there is first a call to
-brightness_get to allow it to update the value in cdev->brightness
-before returning the value in the read.
+This simply describe how the pattern works, each timing period, and the
+pattern diagram for MT6370 RGB LED.
 
-I think always returning 1 could be confusing. Take the example that
-the LED is indicating link, there is no link, so it is off. Yet a read
-of the brightness sysfs file will return 1?
+Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+Signed-off-by: ChiaEn Wu <chiaen_wu@richtek.com>
+---
+v18:
+- Revise the text in document title and description.
+---
+ Documentation/leds/leds-mt6370-rgb.rst | 64 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100644 Documentation/leds/leds-mt6370-rgb.rst
 
-I would say, it either needs to return the instantaneous brightness,
-or it should not be implemented at all. When we come to implement
-offloading, we might want to consider hiding the brightness sysfs
-file. But we can solve that later.
+diff --git a/Documentation/leds/leds-mt6370-rgb.rst b/Documentation/leds/leds-mt6370-rgb.rst
+new file mode 100644
+index 00000000..abf739e
+--- /dev/null
++++ b/Documentation/leds/leds-mt6370-rgb.rst
+@@ -0,0 +1,64 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=========================================
++The device for Mediatek MT6370 RGB LED
++=========================================
++
++Description
++-----------
++
++The MT6370 integrates a four-channel RGB LED driver, designed to provide a
++variety of lighting effect for mobile device applications. The RGB LED devices
++includes a smart LED string controller and it can drive 3 channels of LEDs with
++a sink current up to 24mA and a CHG_VIN power good indicator LED with sink
++current up to 6mA. It provides three operation modes for RGB LEDs:
++PWM Dimming mode, breath pattern mode, and constant current mode. The device
++can increase or decrease the brightness of the RGB LED via an I2C interface.
++
++The breath pattern for a channel can be programmed using the "pattern" trigger,
++using the hw_pattern attribute.
++
++/sys/class/leds/<led>/hw_pattern
++--------------------------------
++
++Specify a hardware breath pattern for a MT6370 RGB LED.
++
++The breath pattern is a series of timing pairs, with the hold-time expressed in
++milliseconds. And the brightness is controlled by
++'/sys/class/leds/<led>/brightness'. The pattern doesn't include the brightness
++setting. Hardware pattern only controls the timing for each pattern stage
++depending on the current brightness setting.
++
++Pattern diagram::
++
++     "0 Tr1 0 Tr2 0 Tf1 0 Tf2 0 Ton 0 Toff" --> '0' for dummy brightness code
++
++      ^
++      |           ============
++      |          /            \                                /
++Icurr |         /              \                              /
++      |        /                \                            /
++      |       /                  \                          /   .....repeat
++      |      /                    \                        /
++      |   ---                      ---                  ---
++      |---                            ---            ---
++      +----------------------------------============------------> Time
++       < Tr1><Tr2><   Ton    ><Tf1><Tf2 ><  Toff    >< Tr1><Tr2>
++
++Timing description::
++
++Tr1:    First rising time for duty 0 to 30%.
++Tr2:    Second rising time for duty 31% to 100%.
++Ton:    On time for duty 100%.
++Tf1:    First falling time for duty 100% to 31%.
++Tf2:    Second falling time for duty 30% to 0%.
++Toff:   Off time for duty 0%.
++
++Tr1/Tr2/Tf1/Tf2/Ton: 125ms to 3125ms, 200ms per step.
++Toff: 250ms to 6250ms, 400ms per step.
++
++Pattern example::
++
++       "0 125 0 125 0 125 0 125 0 625 0 1050"
++
++This Will configure Tr1/Tr2/Tf1/Tf2 to 125m, Ton to 625ms, and Toff to 1050ms.
+-- 
+2.7.4
 
-      Andrew
