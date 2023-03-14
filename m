@@ -2,34 +2,34 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DE7C6FD1C
-	for <linux-leds@archiver.kernel.org>; Tue, 14 Mar 2023 12:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE27C74A5B
+	for <linux-leds@archiver.kernel.org>; Tue, 14 Mar 2023 14:30:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231156AbjCNMfW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 14 Mar 2023 08:35:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44148 "EHLO
+        id S231370AbjCNOa5 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 14 Mar 2023 10:30:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231234AbjCNMfU (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 14 Mar 2023 08:35:20 -0400
+        with ESMTP id S231343AbjCNOaa (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 14 Mar 2023 10:30:30 -0400
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D9BB85B02;
-        Tue, 14 Mar 2023 05:34:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73DE22C654;
+        Tue, 14 Mar 2023 07:30:24 -0700 (PDT)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 338435FD63;
-        Tue, 14 Mar 2023 15:03:01 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id C80C55FD62;
+        Tue, 14 Mar 2023 15:03:00 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1678795381;
-        bh=PoZz0esBDhQdtYMPU1nKPBm2tPVfWXQDEO6hXS1I7Xo=;
+        s=mail; t=1678795380;
+        bh=jjpy6DCx05VoZ+mAapsIt74dyDOi6BiXXaYW1L+8OeA=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-        b=oP3rJmKu7dg8gB8bsu3WIWJpxE36wsNc+W+Cf5oVA/vp1VYj/IzwRA9qyHGNhHWBr
-         ZBrs6r6KHa/qhv8j6YYzEJG8TWckiBX4zeAvwFUcD9q0mMrlhTZF/FBtLLoODYwgTH
-         +fNKPS3nEIlVSxNIkRyMvK7R8MtbAa+xTbHp3+MmhiVY4bwjAdRSMXJJWeodPX8oSB
-         CnI1BQLlZumBFLwzuyO7Q/uEafxt/XXPxiES0yHy7lm+sdMreur9x02+zpMB50VEqY
-         CEwEX3IfW3dpJLX6BV5/NKfIpRB7jYM9gcJKpA6iY/ccu8Uu0UFh3fl+2LiO4JGpxH
-         Y6YjauHAMPN/w==
+        b=BO+/6xXjLHbfTrjKomCsZYI90orCZj9neHT8C1hHGvIPQ5VW71qVlKae+s2OlRSaJ
+         a77fNW+BdVVSDx9ad7XeSr3DN/cUkRcKSmlZbwk9VA1eXJAhH2YaNprKhqOCQ1VoIC
+         b4zH7dn25Jpa5xOpzTKBu/n7J6QlCb+8S8SCgYrotnX6xe4kfd+Fm2cBHE0BgAEGh6
+         5kxd3g+/dswG4DrB1W1wXilDCLpmXuGYh2TfarTplCgw8h3odAe7JFS7CXc2iO9xOQ
+         hagpVkJeCAeWaMRC/Lccm4toesY7/6czghogjLGpr4ZEFA3DjZ4SoJL9yaMcsbiqQz
+         oJKpbcfXTJn1g==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Tue, 14 Mar 2023 15:03:01 +0300 (MSK)
+        Tue, 14 Mar 2023 15:02:59 +0300 (MSK)
 From:   Martin Kurbanov <mmkurbanov@sberdevices.ru>
 To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -38,12 +38,10 @@ To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <kernel@sberdevices.ru>, <devicetree@vger.kernel.org>,
         Martin Kurbanov <mmkurbanov@sberdevices.ru>
-Subject: [PATCH v3 1/2] dt-bindings: leds: add binding for aw200xx
-Date:   Tue, 14 Mar 2023 15:02:51 +0300
-Message-ID: <20230314120252.48263-2-mmkurbanov@sberdevices.ru>
+Subject: [PATCH v3 0/2] leds: add aw20xx driver
+Date:   Tue, 14 Mar 2023 15:02:50 +0300
+Message-ID: <20230314120252.48263-1-mmkurbanov@sberdevices.ru>
 X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20230314120252.48263-1-mmkurbanov@sberdevices.ru>
-References: <20230314120252.48263-1-mmkurbanov@sberdevices.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -61,147 +59,44 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add YAML devicetree binding for AWINIC AW20036/AW20052/AW20074
-led driver.
+This patch series adds support for AWINIC AW20036/AW20054/AW20072 LED
+driver programmed via an I2C interface.
 
-Signed-off-by: Martin Kurbanov <mmkurbanov@sberdevices.ru>
----
- .../bindings/leds/awinic,aw200xx.yaml         | 126 ++++++++++++++++++
- 1 file changed, 126 insertions(+)
+This driver supports following AW200XX features:
+  - Individual 64-level DIM currents
+
+Datasheet:
+  aw20036 - https://www.awinic.com/en/productDetail/AW20036QNR#tech-docs
+  aw20054 - https://www.awinic.com/en/productDetail/AW20054QNR#tech-docs
+  aw20072 - https://www.awinic.com/en/productDetail/AW20072QNR#tech-docs
+
+Add YAML dt-binding schema for AW200XX.
+
+Changelog:
+v2 -> v3:
+  - Update datasheet links
+  - Make cosmetic changes as Andy suggested at [1]
+
+v1 -> v2:
+  - Remove the hardware pattern support (I will send a separate patch)
+  - Support the 'led-max-microamp' property
+
+[1] https://lore.kernel.org/all/20230228211046.109693-1-mmkurbanov@sberdevices.ru/
+
+Martin Kurbanov (2):
+  dt-bindings: leds: add binding for aw200xx
+  leds: add aw20xx driver
+
+ .../testing/sysfs-class-led-driver-aw200xx    |   5 +
+ .../bindings/leds/awinic,aw200xx.yaml         | 126 ++++
+ drivers/leds/Kconfig                          |  14 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-aw200xx.c                   | 638 ++++++++++++++++++
+ 5 files changed, 784 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-aw200xx
  create mode 100644 Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
+ create mode 100644 drivers/leds/leds-aw200xx.c
 
-diff --git a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-new file mode 100644
-index 000000000000..feb5febaf361
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-@@ -0,0 +1,126 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/awinic,aw200xx.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: AWINIC AW200XX LED
-+
-+maintainers:
-+  - Martin Kurbanov <mmkurbanov@sberdevices.ru>
-+
-+description: |
-+  This controller is present on AW20036/AW20054/AW20072.
-+  It is a 3x12/6x9/6x12 matrix LED programmed via
-+  an I2C interface, up to 36/54/72 LEDs or 12/18/24 RGBs,
-+  3 pattern controllers for auto breathing or group dimming control.
-+
-+  For more product information please see the link below:
-+  aw20036 - https://www.awinic.com/en/productDetail/AW20036QNR#tech-docs
-+  aw20054 - https://www.awinic.com/en/productDetail/AW20054QNR#tech-docs
-+  aw20072 - https://www.awinic.com/en/productDetail/AW20072QNR#tech-docs
-+
-+properties:
-+  compatible:
-+    enum:
-+      - awinic,aw20036
-+      - awinic,aw20054
-+      - awinic,aw20072
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+  awinic,display-rows:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Leds matrix size
-+
-+patternProperties:
-+  "^led@[0-9a-f]$":
-+    type: object
-+    $ref: common.yaml#
-+    unevaluatedProperties: false
-+
-+    properties:
-+      reg:
-+        description:
-+          LED number
-+        maxItems: 1
-+
-+      led-max-microamp:
-+        default: 9780
-+        description: |
-+          Note that a driver will take the minimum of all LED limits
-+          since the chip has a single global setting.
-+          The maximum output current of each LED is calculated by the
-+          following formula:
-+            IMAXled = 160000 * (592 / 600.5) * (1 / display-rows)
-+          And the minimum output current formula:
-+            IMINled = 3300 * (592 / 600.5) * (1 / display-rows)
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#address-cells"
-+  - "#size-cells"
-+  - awinic,display-rows
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: awinic,aw20036
-+    then:
-+      properties:
-+        awinic,display-rows:
-+          enum: [1, 2, 3]
-+    else:
-+      properties:
-+        awinic,display-rows:
-+          enum: [1, 2, 3, 4, 5, 6, 7]
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/leds/common.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        led-controller@3a {
-+            compatible = "awinic,aw20036";
-+            reg = <0x3a>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+            awinic,display-rows = <3>;
-+
-+            led@0 {
-+                reg = <0x0>;
-+                color = <LED_COLOR_ID_RED>;
-+                led-max-microamp = <9780>;
-+            };
-+
-+            led@1 {
-+                reg = <0x1>;
-+                color = <LED_COLOR_ID_GREEN>;
-+                led-max-microamp = <9780>;
-+            };
-+
-+            led@2 {
-+                reg = <0x2>;
-+                color = <LED_COLOR_ID_BLUE>;
-+                led-max-microamp = <9780>;
-+            };
-+        };
-+    };
-+
-+...
 --
 2.37.2
 
