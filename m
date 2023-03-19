@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D405C761AF
-	for <linux-leds@archiver.kernel.org>; Sun, 19 Mar 2023 19:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAFDC6FD1F
+	for <linux-leds@archiver.kernel.org>; Sun, 19 Mar 2023 19:20:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229788AbjCSTUN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 19 Mar 2023 15:20:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51766 "EHLO
+        id S229885AbjCSTUX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 19 Mar 2023 15:20:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230058AbjCSTT2 (ORCPT
+        with ESMTP id S230070AbjCSTT2 (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Sun, 19 Mar 2023 15:19:28 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A71B1421D;
-        Sun, 19 Mar 2023 12:18:54 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id i9so8531111wrp.3;
-        Sun, 19 Mar 2023 12:18:53 -0700 (PDT)
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A430615161;
+        Sun, 19 Mar 2023 12:18:56 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id o7so8528636wrg.5;
+        Sun, 19 Mar 2023 12:18:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679253531;
+        d=gmail.com; s=20210112; t=1679253534;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y2fNz2U3Pb1myw1nW6JzmHX3WnYBSrD+c2lY+3aHW8M=;
-        b=d1ZVZcTj1LPbhIOYtLntFoqX0VTsDE05zKvaqALog6jvGiqCywjPne8LoKvI2qrDAd
-         kCsKwPYoPCLwTHOrpCfHlNJmPYKqiNfPGS7c1bLQ/6s4lPzVL8Pw3skHVQWFXa0Pv061
-         XiYvFj90z1+4XfvFVTm1jiyPGb2npdlAR5D52cCAxpiYr75unrLycHKDzxlYC5taY+ru
-         nmHF2KoCgHsQ7cGShMge6RRhCb7/LzSpeYxzt5nDxsfTSwMLDPHMsd/aom6lhh6fHZvq
-         2dlnrYoTFFIW1VmuR4U6JwQ2sg0Zban4OA8FAQAx8H21c0hlml94GpOq34qlFoJaNXuh
-         cCFg==
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NdFLu8rYGgfYob/UUJ7xHBPYmBqXvfPClb24ZxTT2Ls=;
+        b=Y66KPWA5vwHugBdTXrY7CbixTqvqjjH7vT61EExGPAvQRGNeJNyQoafpa1X3zexgtC
+         SwiR7QybF7NLHUNAGaDn2E3ZT2YRT8vGI3AXgIWL1wnnQDtKUrX5V5ESdNKC1zQOm7r/
+         8q5zm9oNoAC+FcUGuaJjsZbWpCC/wzdK0VS6ogdK6CxOSLOqR1P1yEEM6IGB9I/DuEZC
+         gk1h6lf/IljiB3orML6t4l5G5x06pfqdBLq2Dw3f55HkJiIhfBDKEE+gQxwP2HlRhEr4
+         hNe2uCvwwIo9Pi8FH4a1DZZJQQVbXxvdlFRFlNNuS06pNPhaMITN3QzskZxfhbapK/iJ
+         0lhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679253531;
+        d=1e100.net; s=20210112; t=1679253534;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=y2fNz2U3Pb1myw1nW6JzmHX3WnYBSrD+c2lY+3aHW8M=;
-        b=ZPSdi35tuSqAqhqQZuTpDB9Y3G+OTKOGbWO3NHlT0SXLB27AB6hJuW+BjFIjSheO+d
-         Cp3UGAjJ44gYWbH6DOLR8O7nkJoanC4XqzhmnYWThPXvaiWFHvFMLcQZSRkVBuXRkmIY
-         ReO+tIREQ84XPMfjHwRlwaJoMGbN7WXj/yEbOlfS/ACed8k+PMJFPk4PCoecM0IdP6mv
-         1T3fNxNMQQY//Duygu6i8KiCzbjDAeipdsfxKSFG0fruLt6G3YZ8jt8AIBdsnwj7t6fK
-         hYMdUX143nUz6OfCmOm2fLJOkc3oPs2E8Tjb/qKG0G95DZh9KKgJSuehPg3SIVvp1vC6
-         cBbA==
-X-Gm-Message-State: AO0yUKUiK0cUBzwiTrFYt4Zu36l85I287biYf1P7uBHmVngQMctZkrxU
-        BwUHbFIyLV100TmRA5/o87CA9MnnCwA=
-X-Google-Smtp-Source: AK7set/3O7C3Es1N1wEdf1ZRK3axSCJX4Dfqg2I56oADb/R8Vu/tWsJomc3xnKQ6cwcdy4GspqURZg==
-X-Received: by 2002:adf:d0cb:0:b0:2ce:aa69:c9a7 with SMTP id z11-20020adfd0cb000000b002ceaa69c9a7mr11490176wrh.8.1679253531529;
-        Sun, 19 Mar 2023 12:18:51 -0700 (PDT)
+        bh=NdFLu8rYGgfYob/UUJ7xHBPYmBqXvfPClb24ZxTT2Ls=;
+        b=aEfE/T2Cv7KwLNOHzIqqZzgzylQGCqnSsvkGUAqHDddvUsYR0AQwY6ssC6ujLAxIM2
+         NpAslFVkTsOj1TWLXXfRZb5zpUtBQeN/oU0futsgqTl7ACntweMpKAQeFlr5p2zjYUid
+         aZKNZVtGNgjTJx08Er2Wfd+nAV/dSAd+I1OHfqqFNPuQuyj9o1u4ZuwnXY4HOarBCS+s
+         8o6eretUZmCEebncv7kcMNQKwWJ32isGlz9aChoCVW3kt1+kf+AXf9LlH0zGMqR0IGzg
+         9rtbjq781GCoAwlPh2Xclp8BfxRXlEHeTR5nOl/BmL0FHtZ7IQkYunR0GVdStKleoBLG
+         Jufw==
+X-Gm-Message-State: AO0yUKUGZKLgx0KePsfdzqeknVT8xuW8tadpVYWq8jrquaDL15DpHYd1
+        AB6M5tVGqXExRXim1mM6NVk=
+X-Google-Smtp-Source: AK7set+g4djahWrxlbAtNWVp0F2JcTlFwac90ayuwSosW7HTFtGReZoUT/EVNakWZkSBm/GoZfBXKA==
+X-Received: by 2002:a5d:4dd1:0:b0:2ce:a250:df68 with SMTP id f17-20020a5d4dd1000000b002cea250df68mr12280592wru.28.1679253534443;
+        Sun, 19 Mar 2023 12:18:54 -0700 (PDT)
 Received: from localhost.localdomain (93-34-89-197.ip49.fastwebnet.it. [93.34.89.197])
-        by smtp.googlemail.com with ESMTPSA id b7-20020a5d4b87000000b002cfe0ab1246sm7165167wrt.20.2023.03.19.12.18.50
+        by smtp.googlemail.com with ESMTPSA id b7-20020a5d4b87000000b002cfe0ab1246sm7165167wrt.20.2023.03.19.12.18.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Mar 2023 12:18:51 -0700 (PDT)
+        Sun, 19 Mar 2023 12:18:54 -0700 (PDT)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -72,10 +72,9 @@ To:     Andrew Lunn <andrew@lunn.ch>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org
-Cc:     Jonathan McDowell <noodles@earth.li>
-Subject: [net-next PATCH v5 12/15] arm: qcom: dt: Drop unevaluated properties in switch nodes for rb3011
-Date:   Sun, 19 Mar 2023 20:18:11 +0100
-Message-Id: <20230319191814.22067-13-ansuelsmth@gmail.com>
+Subject: [net-next PATCH v5 14/15] dt-bindings: net: phy: Document support for LEDs node
+Date:   Sun, 19 Mar 2023 20:18:13 +0100
+Message-Id: <20230319191814.22067-15-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230319191814.22067-1-ansuelsmth@gmail.com>
 References: <20230319191814.22067-1-ansuelsmth@gmail.com>
@@ -85,42 +84,71 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-IPQ8064 MikroTik RB3011UiAS-RM DT have currently unevaluted properties
-in the 2 switch nodes. The bindings #address-cells and #size-cells are
-redundant and cause warning for 'Unevaluated properties are not
-allowed'.
+Document support for LEDs node in phy and add an example for it.
+PHY LED will have to match led pattern and should be treated as a
+generic led.
 
-Drop these bindings to mute these warning as they should not be there
-from the start.
-
-Cc: Jonathan McDowell <noodles@earth.li>
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- arch/arm/boot/dts/qcom-ipq8064-rb3011.dts | 4 ----
- 1 file changed, 4 deletions(-)
+ .../devicetree/bindings/net/ethernet-phy.yaml | 31 +++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/arch/arm/boot/dts/qcom-ipq8064-rb3011.dts b/arch/arm/boot/dts/qcom-ipq8064-rb3011.dts
-index f908889c4f95..47a5d1849c72 100644
---- a/arch/arm/boot/dts/qcom-ipq8064-rb3011.dts
-+++ b/arch/arm/boot/dts/qcom-ipq8064-rb3011.dts
-@@ -38,8 +38,6 @@ mdio0: mdio-0 {
+diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+index 1327b81f15a2..84e15cee27c7 100644
+--- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
++++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+@@ -197,6 +197,22 @@ properties:
+       PHY's that have configurable TX internal delays. If this property is
+       present then the PHY applies the TX delay.
  
- 		switch0: switch@10 {
- 			compatible = "qca,qca8337";
--			#address-cells = <1>;
--			#size-cells = <0>;
++  leds:
++    type: object
++
++    properties:
++      '#address-cells':
++        const: 1
++
++      '#size-cells':
++        const: 0
++
++    patternProperties:
++      '^led(@[a-f0-9]+)?$':
++        $ref: /schemas/leds/common.yaml#
++
++    additionalProperties: false
++
+ required:
+   - reg
  
- 			dsa,member = <0 0>;
+@@ -204,6 +220,8 @@ additionalProperties: true
  
-@@ -105,8 +103,6 @@ mdio1: mdio-1 {
- 
- 		switch1: switch@14 {
- 			compatible = "qca,qca8337";
--			#address-cells = <1>;
--			#size-cells = <0>;
- 
- 			dsa,member = <1 0>;
- 
+ examples:
+   - |
++    #include <dt-bindings/leds/common.h>
++
+     ethernet {
+         #address-cells = <1>;
+         #size-cells = <0>;
+@@ -219,5 +237,18 @@ examples:
+             reset-gpios = <&gpio1 4 1>;
+             reset-assert-us = <1000>;
+             reset-deassert-us = <2000>;
++
++            leds {
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                led@0 {
++                    reg = <0>;
++                    color = <LED_COLOR_ID_WHITE>;
++                    function = LED_FUNCTION_LAN;
++                    function-enumerator = <1>;
++                    default-state = "keep";
++                };
++            };
+         };
+     };
 -- 
 2.39.2
 
