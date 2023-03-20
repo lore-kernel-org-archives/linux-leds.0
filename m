@@ -2,30 +2,31 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8036DC7618A
-	for <linux-leds@archiver.kernel.org>; Mon, 20 Mar 2023 18:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78427C76195
+	for <linux-leds@archiver.kernel.org>; Mon, 20 Mar 2023 18:02:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230326AbjCTSC3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 20 Mar 2023 14:02:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33506 "EHLO
+        id S230457AbjCTSCk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 20 Mar 2023 14:02:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230341AbjCTSCB (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 20 Mar 2023 14:02:01 -0400
-Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59B1A2D14D
-        for <linux-leds@vger.kernel.org>; Mon, 20 Mar 2023 10:56:28 -0700 (PDT)
-Date:   Mon, 20 Mar 2023 17:50:53 +0000
+        with ESMTP id S230478AbjCTSCJ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 20 Mar 2023 14:02:09 -0400
+Received: from mail-4318.protonmail.ch (mail-4318.protonmail.ch [185.70.43.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBECC7690
+        for <linux-leds@vger.kernel.org>; Mon, 20 Mar 2023 10:56:33 -0700 (PDT)
+Date:   Mon, 20 Mar 2023 17:55:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail3; t=1679334907; x=1679594107;
-        bh=YpXUHqN2Bflx7amgdjF7iQaRJLpF7PEzy98FHyuD0aY=;
-        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-         Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-        b=VrdyxyrTwRIEZRFp9QwPilHeKxV6/JjzQWzvIs3DEBp2q648vKCWJY01kD4TYKakz
-         7a//Vx2jgfdCzSE5TyCh4bcRJFkk4bkGS9MBptePOIafA9V3aZ6pnqvEsv+D8rK+6o
-         zxkSl04b/OHsOHd03uTLIAFadqluHuhuiBYb64EROZQUqjJXnXIoSKMT81xtZRR9Ro
-         1YfabfyIi/hdMx9Ua059ZdIUEb3P6PIl0AcOfOoOmKYQJcSFqtww8VqWzW7IjAUtlq
-         GTonx01y22Vu6GOoOceufrl1eER9igxfedbAORtqppTFoxDsVOGMdSAFVX/n4Wqvb7
-         mj24XM5EONGZg==
+        s=protonmail3; t=1679334933; x=1679594133;
+        bh=FAkqOD8kiqkTEaAEfEctBYZB4b4Y94ELoYgOe0EWWpk=;
+        h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+         Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+         Message-ID:BIMI-Selector;
+        b=ZMhAHgPg6OUDCGsoHzTQSoirpDB1jUXVGQCPGqI8sxUuA4OBl8bdZ/YxSxXofUTF4
+         dHBuRkWVrF1MbyOggw/Qx2i7/IZHBkxZ01EkOTinpD2jUp8Mf85eiRk9bHJnRt2loF
+         ZoiOARjYnSd2A+Abk0wVkuwjEXtVTYAf4tf/AfP6hTcdcQMaZIsxWNwrgimNeGLO92
+         gdDDg0i/W/vZUcc61XgjatznxWorG2NNFH3L9msrdfaTlVPetnEIE5NeJfYY4G5m+Y
+         uUMlqnaOjUz3n3FKsndqNq3G/f71uQ/zfxoxlS57W6kOiBBQ6mHZNksr08M4fUgDin
+         JLVtV5Tl854/w==
 To:     linux-kernel@vger.kernel.org
 From:   "Lin, Meng-Bo" <linmengbo0689@protonmail.com>
 Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
@@ -35,8 +36,10 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Stephan Gerhold <stephan@gerhold.net>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht
-Subject: [PATCH v2 0/2] leds: aw2013: Add vddio regulator
-Message-ID: <20230320174949.174600-1-linmengbo0689@protonmail.com>
+Subject: [PATCH v2 1/2] dt-bindings: leds: aw2013: Document vddio-supply
+Message-ID: <20230320175131.174657-1-linmengbo0689@protonmail.com>
+In-Reply-To: <20230320174949.174600-1-linmengbo0689@protonmail.com>
+References: <20230320174949.174600-1-linmengbo0689@protonmail.com>
 Feedback-ID: 40467236:user:proton
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -45,13 +48,37 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-v2: Rename vdd to vddio and reword
-
 Some LEDs controllers are used with external pull-up for the interrupt
 line and the I2C lines, so we might need to enable a regulator to bring
 the lines into usable state. Otherwise, this might cause spurious
 interrupts and reading from I2C will fail.
 
-Implement support for "vddio-supply" that is enabled by the aw2013 driver
+Document support for "vddio-supply" that is enabled by the aw2013 driver
 so that the regulator gets enabled when needed.
+
+Signed-off-by: Lin, Meng-Bo <linmengbo0689@protonmail.com>
+---
+ Documentation/devicetree/bindings/leds/leds-aw2013.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-aw2013.yaml b/Docu=
+mentation/devicetree/bindings/leds/leds-aw2013.yaml
+index 08f3e1cfc1b1..79b69cf1d1fe 100644
+--- a/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
+@@ -23,6 +23,11 @@ properties:
+   vcc-supply:
+     description: Regulator providing power to the "VCC" pin.
+=20
++  vddio-supply:
++    description: |
++      Optional regulator that provides digital I/O voltage,
++      e.g. for pulling up the interrupt line or the I2C pins.
++
+   "#address-cells":
+     const: 1
+=20
+--=20
+2.30.2
+
 
