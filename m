@@ -2,93 +2,82 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5192C74A5B
-	for <linux-leds@archiver.kernel.org>; Tue, 21 Mar 2023 15:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5078EC6FD1D
+	for <linux-leds@archiver.kernel.org>; Tue, 21 Mar 2023 15:58:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231756AbjCUPjZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 21 Mar 2023 11:39:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42820 "EHLO
+        id S231337AbjCUP6r (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 21 Mar 2023 11:58:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231783AbjCUPjP (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 21 Mar 2023 11:39:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C3741ABEF
-        for <linux-leds@vger.kernel.org>; Tue, 21 Mar 2023 08:38:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679413103;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fMjdN/anu6prOaMTJhrn3iWHC5IdbBmbiG6Sm0CP7Vg=;
-        b=dCoHA+MJd0fvkIUVcy7qLL89oR21c6qELoggaMpHdMKNfNBfN/wC9OmSULVhjb8hXZIggo
-        ZBIfeCbr7h2X6SHeb5it/y+W50y09mj+x3EEkQQS1MpFC7xhdjUGcYOVrFHS7jT/0QuXGb
-        GkCs2LsRNTr6KeEDEO8R6NjD6VHhqF4=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-398-MpwZUU6SO66gHFFJbQOvQA-1; Tue, 21 Mar 2023 11:38:13 -0400
-X-MC-Unique: MpwZUU6SO66gHFFJbQOvQA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9F17E1C16410;
-        Tue, 21 Mar 2023 15:38:04 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.67.24.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7047140BC798;
-        Tue, 21 Mar 2023 15:38:00 +0000 (UTC)
-From:   Kate Hsuan <hpa@redhat.com>
-To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Mark Gross <markgross@kernel.org>
-Cc:     Kate Hsuan <hpa@redhat.com>,
-        Daniel Scally <dan.scally@ideasonboard.com>
-Subject: [PATCH v3 2/3] include: mfd: tps68470: Add masks for LEDA and LEDB
-Date:   Tue, 21 Mar 2023 23:37:17 +0800
-Message-Id: <20230321153718.1355511-3-hpa@redhat.com>
-In-Reply-To: <20230321153718.1355511-1-hpa@redhat.com>
-References: <20230321153718.1355511-1-hpa@redhat.com>
+        with ESMTP id S229744AbjCUP6q (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 21 Mar 2023 11:58:46 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3914010A8D;
+        Tue, 21 Mar 2023 08:58:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=URL1tZO+Mirs0erydKMklYrp3ZSfkDqzdADLJvizp6w=; b=6O7pbXHfrDLF1ERdKmcEt4/wro
+        CWPWCweOhhbqISBnDZYDjlM9/2ETuYnwCYE6KeGvbwKEi8GamEsBa8qyrD1gVIb6Q184e92b1noDZ
+        viurRXe3X38vQUeoz2nv+b7oD4Gt/tEjp4su8bZwanLZprQygZpFo48rLfs8OCZCWQvw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1peeNR-007yuF-79; Tue, 21 Mar 2023 16:58:21 +0100
+Date:   Tue, 21 Mar 2023 16:58:21 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        John Crispin <john@phrozen.org>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [net-next PATCH v5 04/15] leds: Provide stubs for when CLASS_LED
+ is disabled
+Message-ID: <32202a37-270f-4503-9147-55aa2615116a@lunn.ch>
+References: <20230319191814.22067-1-ansuelsmth@gmail.com>
+ <20230319191814.22067-5-ansuelsmth@gmail.com>
+ <aa2d0a8b-b98b-4821-9413-158be578e8e0@lunn.ch>
+ <64189d72.190a0220.8d965.4a1c@mx.google.com>
+ <5ee3c2cf-8100-4f35-a2df-b379846a8736@lunn.ch>
+ <6419c60e.df0a0220.1949a.c432@mx.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6419c60e.df0a0220.1949a.c432@mx.google.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add flags for both LEDA(TPS68470_ILEDCTL_ENA), LEDB
-(TPS68470_ILEDCTL_ENB), and current control mask for LEDB
-(TPS68470_ILEDCTL_CTRLB)
+> Also why IS_ENABLED instead of a simple ifdef? (in leds.h there is a mix
+> of both so I wonder if we should use one or the other)
 
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Kate Hsuan <hpa@redhat.com>
----
- include/linux/mfd/tps68470.h | 5 +++++
- 1 file changed, 5 insertions(+)
+/*
+ * IS_ENABLED(CONFIG_FOO) evaluates to 1 if CONFIG_FOO is set to 'y' or 'm',
+ * 0 otherwise.  Note that CONFIG_FOO=y results in "#define CONFIG_FOO 1" in
+ * autoconf.h, while CONFIG_FOO=m results in "#define CONFIG_FOO_MODULE 1".
+ */
+#define IS_ENABLED(option) __or(IS_BUILTIN(option), IS_MODULE(option))
 
-diff --git a/include/linux/mfd/tps68470.h b/include/linux/mfd/tps68470.h
-index 7807fa329db0..2d2abb25b944 100644
---- a/include/linux/mfd/tps68470.h
-+++ b/include/linux/mfd/tps68470.h
-@@ -34,6 +34,7 @@
- #define TPS68470_REG_SGPO		0x22
- #define TPS68470_REG_GPDI		0x26
- #define TPS68470_REG_GPDO		0x27
-+#define TPS68470_REG_ILEDCTL		0x28
- #define TPS68470_REG_VCMVAL		0x3C
- #define TPS68470_REG_VAUX1VAL		0x3D
- #define TPS68470_REG_VAUX2VAL		0x3E
-@@ -94,4 +95,8 @@
- #define TPS68470_GPIO_MODE_OUT_CMOS	2
- #define TPS68470_GPIO_MODE_OUT_ODRAIN	3
- 
-+#define TPS68470_ILEDCTL_ENA		BIT(2)
-+#define TPS68470_ILEDCTL_ENB		BIT(6)
-+#define TPS68470_ILEDCTL_CTRLB		GENMASK(5, 4)
-+
- #endif /* __LINUX_MFD_TPS68470_H */
--- 
-2.39.2
+It cleanly handles the module case, which i guess most people would
+get wrong.
+
+    Andrew
+
 
