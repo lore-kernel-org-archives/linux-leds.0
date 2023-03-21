@@ -2,139 +2,77 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBD6C6FD1D
-	for <linux-leds@archiver.kernel.org>; Tue, 21 Mar 2023 14:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AA6C6FD1D
+	for <linux-leds@archiver.kernel.org>; Tue, 21 Mar 2023 15:38:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229873AbjCUO62 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 21 Mar 2023 10:58:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36548 "EHLO
+        id S229879AbjCUPif (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 21 Mar 2023 11:38:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230219AbjCUO61 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 21 Mar 2023 10:58:27 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AF45231CD;
-        Tue, 21 Mar 2023 07:58:24 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id l27so5687298wrb.2;
-        Tue, 21 Mar 2023 07:58:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679410703;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=bgXEnYwzn/S6BlOb++Eaqru+i6YXyzKGwwPJBmaxtD4=;
-        b=ga4YMD0irqHN4ilQrJ2QMVEbWHArwcWv2PG1FGLGI3et3uRUC94zk6BZpYLXtYwFfq
-         Ww9fw7+pA7jFvc7QMMl9umhdWEA/kXceI4gCT4ZS+u6cf5+k8wZDH1mBjOQF2IZwG0eP
-         BbF2RgvFUaLtqL8bqcA2Zc3372cO+99MGl3tVQ4B1oDiwwkK2/0cyJ9S8MYkfaLa2oaM
-         7HxJWl67A3Jb7WSMyAi9EIoCBfiTwvWCOacUirjCW8pP1pNszz6QJU7mkI3miHldqUgt
-         Enrh0ZOQr8wcVepDFsJOkm3WoNuy9MeBo+P0WBP6DG/Eu1lLdMhF71YyTtIOzp8Xc7lc
-         HGpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679410703;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bgXEnYwzn/S6BlOb++Eaqru+i6YXyzKGwwPJBmaxtD4=;
-        b=a9+x/9qzfIRngLeOzY0OOHw89nWNN+4oMrkdQvKAF5yUi7l1bg19op5s0SYepETJje
-         WjHnneGUlA8BmvxJJe8wqu2ieCTcT4vIAltxMS/ltRpPiV4aaaBSSJ1JJGGTvCGNLRoZ
-         VayF6L6FRRHAn9UKu53tpC5Ah48XHQZsZhGjTNuRaOHFVYnogAbTgQeZEhYXnl9osOMC
-         uMcNCgHHyeM1fMrkv2OU/GQzSXF+B1ML31ODcf9L3/Vb1/NBecwYoYl3G4iLber+i7Ns
-         TMlM9lGg2OLx5kEjfYvI+B0rOw8iAE5N84xI3bFNhgyFy6kvo2QcszpVol6YWDwoiFD9
-         ylDw==
-X-Gm-Message-State: AO0yUKXtikfmCn0WNPInC3gW7PD0+wszW8t7AYz7KrNxzyxvU3o+IJBA
-        ieZ6m2SVz+bOw18eECYPDZ8=
-X-Google-Smtp-Source: AK7set+K7ppr5kVHCtHkrUaYjB+7uxp7G1eEctUkA+c9/tYtmX8WRNtLlnpL/VsrO7ZBl1mm/ABfEA==
-X-Received: by 2002:adf:f2c8:0:b0:2d2:22eb:824a with SMTP id d8-20020adff2c8000000b002d222eb824amr2419295wrp.34.1679410702538;
-        Tue, 21 Mar 2023 07:58:22 -0700 (PDT)
-Received: from Ansuel-xps. (93-34-89-197.ip49.fastwebnet.it. [93.34.89.197])
-        by smtp.gmail.com with ESMTPSA id d5-20020adfef85000000b002cfed482e9asm11556989wro.61.2023.03.21.07.58.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Mar 2023 07:58:22 -0700 (PDT)
-Message-ID: <6419c60e.df0a0220.1949a.c432@mx.google.com>
-X-Google-Original-Message-ID: <ZBli4hn6oPZzQZk0@Ansuel-xps.>
-Date:   Tue, 21 Mar 2023 08:55:14 +0100
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        John Crispin <john@phrozen.org>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [net-next PATCH v5 04/15] leds: Provide stubs for when CLASS_LED
- is disabled
-References: <20230319191814.22067-1-ansuelsmth@gmail.com>
- <20230319191814.22067-5-ansuelsmth@gmail.com>
- <aa2d0a8b-b98b-4821-9413-158be578e8e0@lunn.ch>
- <64189d72.190a0220.8d965.4a1c@mx.google.com>
- <5ee3c2cf-8100-4f35-a2df-b379846a8736@lunn.ch>
+        with ESMTP id S230351AbjCUPie (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 21 Mar 2023 11:38:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FD0A3BDBB
+        for <linux-leds@vger.kernel.org>; Tue, 21 Mar 2023 08:37:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679413070;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=BSu+HBn+v8KiJF9EJk6suuV05tJHsOmrbCuOwtMzHAc=;
+        b=dvP+7NFmOmj86xlFAN/PHthDi3zEqjMsXIJx5COxaj5S+YR/NY4f9d/nDLTjfTy/D8Y4Mf
+        KvTO2DJ5E1W+ty+BljdjVvqpDJHslp4f3a0aMkS1h951PR/jbv+FXKAm4csglQLQXPiIX1
+        JOPYsiMd+V0AEZWM6DsSdxyCCcjkg+Y=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-516-wi4KaI6mPcCVBwAL9wvmkg-1; Tue, 21 Mar 2023 11:37:46 -0400
+X-MC-Unique: wi4KaI6mPcCVBwAL9wvmkg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 27CBB884340;
+        Tue, 21 Mar 2023 15:37:46 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.67.24.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D4A1F40BC797;
+        Tue, 21 Mar 2023 15:37:41 +0000 (UTC)
+From:   Kate Hsuan <hpa@redhat.com>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Daniel Scally <djrscally@gmail.com>,
+        Mark Gross <markgross@kernel.org>
+Cc:     Kate Hsuan <hpa@redhat.com>
+Subject: [PATCH v3 0/3] leds: tps68470: LED driver for TPS68470
+Date:   Tue, 21 Mar 2023 23:37:15 +0800
+Message-Id: <20230321153718.1355511-1-hpa@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ee3c2cf-8100-4f35-a2df-b379846a8736@lunn.ch>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, Mar 20, 2023 at 08:31:36PM +0100, Andrew Lunn wrote:
-> On Mon, Mar 20, 2023 at 06:52:47PM +0100, Christian Marangi wrote:
-> > On Sun, Mar 19, 2023 at 11:49:02PM +0100, Andrew Lunn wrote:
-> > > > +#if IS_ENABLED(CONFIG_LEDS_CLASS)
-> > > >  enum led_default_state led_init_default_state_get(struct fwnode_handle *fwnode);
-> > > > +#else
-> > > > +static inline enum led_default_state
-> > > > +led_init_default_state_get(struct fwnode_handle *fwnode)
-> > > > +{
-> > > > +	return LEDS_DEFSTATE_OFF;
-> > > > +}
-> > > > +#endif
-> > > 
-> > > 0-day is telling me i have this wrong. The function is in led-core.c,
-> > > so this should be CONFIG_NEW_LEDS, not CONFIG_LEDS_CLASS.
-> > > 
-> > 
-> > Any idea why? NEW_LEDS just enable LEDS_CLASS selection so why we need
-> > to use that? Should not make a difference (in theory)
-> 
-> 0-day came up with a configuration which resulted in NEW_LEDS enabled
-> but LEDS_CLASS disabled. That then resulted in multiple definitions of 
-> led_init_default_state_get() when linking.
-> 
-> I _guess_ this is because select is used, which is not mandatory. So
-> randconfig can turn off something which is enabled by select.
-> 
-> I updated my tree, and so far 0-day has not complained, but it can
-> take a few days when it is busy.
-> 
+The v3 patch includes:
+1. Move the LEDB current setting to a function and also assume the value
+of the current setting is based on tps68470 datasheet.
+2. Alphabetical order.
+3. Return -ENOMEM when memory allocation returns an error.
 
-BTW yes I repro the problem.
 
-Checked the makefile and led-core.c is compiled with NEW_LEDS and
-led-class is compiled with LEDS_CLASS.
+Kate Hsuan (3):
+  platform: x86: int3472: Add MFD cell for tps68470 LED
+  include: mfd: tps68470: Add masks for LEDA and LEDB
+  leds: tps68470: Add LED control for tps68470
 
-led_init_default_state_get is in led-core.c and this is the problem with
-using LEDS_CLASS instead of NEW_LEDS...
-
-But actually why we are putting led_init_default_state_get behind a
-config? IMHO we should compile it anyway.
-
-So my suggestion is to keep the LEDS_CLASS and just remove the part for 
-led_init_default_state_get.
-
-Also why IS_ENABLED instead of a simple ifdef? (in leds.h there is a mix
-of both so I wonder if we should use one or the other)
+ drivers/leds/Kconfig                          |  12 ++
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-tps68470.c                  | 185 ++++++++++++++++++
+ drivers/platform/x86/intel/int3472/tps68470.c |   5 +-
+ include/linux/mfd/tps68470.h                  |   5 +
+ 5 files changed, 206 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/leds/leds-tps68470.c
 
 -- 
-	Ansuel
+2.39.2
+
