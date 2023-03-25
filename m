@@ -2,72 +2,73 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D40C6FD1F
-	for <linux-leds@archiver.kernel.org>; Sat, 25 Mar 2023 16:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85424C6FD1F
+	for <linux-leds@archiver.kernel.org>; Sat, 25 Mar 2023 16:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231960AbjCYQMC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 25 Mar 2023 12:12:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34890 "EHLO
+        id S230399AbjCYQUD (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 25 Mar 2023 12:20:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229600AbjCYQMB (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 25 Mar 2023 12:12:01 -0400
-X-Greylist: delayed 600 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 25 Mar 2023 09:11:59 PDT
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [IPv6:2001:67c:2050:0:465::103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AAF6E192;
-        Sat, 25 Mar 2023 09:11:58 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4PkNt02rTGz9sSP;
-        Sat, 25 Mar 2023 16:54:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1679759640;
+        with ESMTP id S229600AbjCYQUC (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 25 Mar 2023 12:20:02 -0400
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24CAE46B6;
+        Sat, 25 Mar 2023 09:20:01 -0700 (PDT)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id DFCCE1C0AB2; Sat, 25 Mar 2023 17:19:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+        t=1679761199;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=0TYQawUAqRpI2Fv/GPDX28AxWWdreTmSldYYgDDUG0I=;
-        b=alBFC/JmyiMbU7N7uiCj0ObhfIIoqEXq5wCZ2KBYvgn37TOTTwKVwQctlx9SXb6AN7UY+U
-        OzAGirY7JxcW6D49j1j/oeCjE+13w9bJu95CCJEMYDk8IXBaf8HyM9101XKykBmhiv1UpA
-        GznyaPrdvGXyIH4FVqZdgTOoBJGPb3yqsMfwXWRLAKDrEpIHIB/hQGzSuAA+K1CVk9Yz+e
-        D2MReC4MZ5AhnPzLkJpwClPylsMCgjzFxhXy7XRcBzVL+oQbW22jt3P7ODYIWVzeQUV7/z
-        Psi8AKtAaFxv4IpMRHhgq2+KXZ81WISz46kOuQsRbU0sMcMTn7Gz7V+gji2q5g==
-Date:   Sat, 25 Mar 2023 10:53:55 -0500
-From:   Joseph Strauss <jstrauss@mailbox.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     lee@kernel.org, jansimon.moeller@gmx.de, conor@kernel.org,
-        christophe.jaillet@wanadoo.fr, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Add multicolor support to BlinkM LED driver
-Message-ID: <20230325155355.gxnjpyl3mnyq2lst@libretux>
-References: <20221228010958.9670-1-jstrauss@mailbox.org>
- <ZBw5E4ecNvfgd0RB@duo.ucw.cz>
+        bh=YRwPfaYaywOmrK6OfSfiS8RmP4MmRbWuSvlWBa58fnQ=;
+        b=jmjiScV6hbfNDIw7nnqPvflBDUvKMRJ2P54KtG57X4ZcC7qauUjo645tI568VgvxLSmfeH
+        adH6yfiTHSbNaPwcdQy6EBDmYADimIllnK+o6Q1PDASbHhLhp8nHCSupSwcJuy7ZZAs3u5
+        Kajr7eSMnto69No4DkvoumkEx5sY/xU=
+Date:   Sat, 25 Mar 2023 17:19:56 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-leds@vger.kernel.org,
+        William Zhang <william.zhang@broadcom.com>,
+        Rafa?? Mi??ecki <rafal@milecki.pl>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: bcm63138: refer to ARCH_BCMBCA instead of
+ ARCH_BCM4908
+Message-ID: <20230325161955.GE1820@bug>
+References: <20230307082936.16631-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZBw5E4ecNvfgd0RB@duo.ucw.cz>
-X-MBO-RS-ID: 072ee88ef689a48dbea
-X-MBO-RS-META: 9rbinopkeat1hthumqcbdhzex87iqowh
+In-Reply-To: <20230307082936.16631-1-lukas.bulwahn@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 23/03/23 12:33PM, Pavel Machek wrote:
-> Hi!
+On Tue 2023-03-07 09:29:36, Lukas Bulwahn wrote:
+> Commit dd5c672d7ca9 ("arm64: bcmbca: Merge ARCH_BCM4908 to ARCH_BCMBCA")
+> removes config ARCH_BCM4908 as config ARCH_BCMBCA has the same intent.
 > 
-> > In the blinkm_probe function, the multicolor LED class is registered
-> > after the regular LED classes. The blinkm_set_mc_brightness() function
-> > had to be added to calculate the three color components and then set the
-> > fields of the blinkm_data structure accordingly.
+> Probably due to concurrent development, commit a0ba692072d8 ("leds:
+> bcm63138: add support for BCM63138 controller") introduces 'LED Support
+> for Broadcom BCM63138 SoC' that depends on ARCH_BCM4908, but this use was
+> not visible during the config refactoring from the commit above. Hence,
+> these two changes create a reference to a non-existing config symbol.
 > 
-> It needs to be either single multicolor LED or three separate
-> LEDs. But not both at the same time.
+> Adjust the LEDS_BCM63138 definition to refer to ARCH_BCMBCA instead of
+> ARCH_BCM4908 to remove the reference to the non-existing config symbol
+> ARCH_BCM4908.
 > 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Thank you for the feedback! How would you suggest I go about handling
-this? Is there a preferred way to ask the user which way they want to
-control the LED (Kconfig?), or should I remove the code for three
-separate LEDs entirely? Originally, I didn't delete the code because I
-thought it would be bad to remove the existing interface.
+Do we really want this "default Y" on those architectures? I'd understand
+it for something critical but LED is not, and if it is not even present on
+all such machines...
 
-Joe Strauss
+BR,
+									Pavel
+
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
