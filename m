@@ -2,32 +2,31 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 930E4C761AF
-	for <linux-leds@archiver.kernel.org>; Tue, 28 Mar 2023 16:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ABDDC76196
+	for <linux-leds@archiver.kernel.org>; Tue, 28 Mar 2023 16:34:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233067AbjC1QY7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 28 Mar 2023 12:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35048 "EHLO
+        id S229806AbjC1Qex (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 28 Mar 2023 12:34:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233228AbjC1QYy (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Mar 2023 12:24:54 -0400
-X-Greylist: delayed 535 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 28 Mar 2023 09:24:53 PDT
-Received: from 4.mo562.mail-out.ovh.net (4.mo562.mail-out.ovh.net [46.105.38.146])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DD1FE3B4
-        for <linux-leds@vger.kernel.org>; Tue, 28 Mar 2023 09:24:53 -0700 (PDT)
-Received: from director2.derp.mail-out.ovh.net (director2.derp.mail-out.ovh.net [79.137.60.36])
-        by mo562.mail-out.ovh.net (Postfix) with ESMTPS id F181E23E07;
-        Tue, 28 Mar 2023 16:15:55 +0000 (UTC)
-Received: from director2.derp.mail-out.ovh.net (director2.derp.mail-out.ovh.net. [127.0.0.1])
-        by director2.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <sven.schwermer@disruptive-technologies.com>; Tue, 28 Mar 2023 16:15:55 +0000 (UTC)
-Received: from pro2.mail.ovh.net (unknown [10.108.4.231])
-        by director2.derp.mail-out.ovh.net (Postfix) with ESMTPS id DA6FE1FE9A;
-        Tue, 28 Mar 2023 16:15:55 +0000 (UTC)
+        with ESMTP id S231435AbjC1Qev (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 28 Mar 2023 12:34:51 -0400
+Received: from 9.mo562.mail-out.ovh.net (9.mo562.mail-out.ovh.net [46.105.72.114])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC88AA5F5
+        for <linux-leds@vger.kernel.org>; Tue, 28 Mar 2023 09:34:49 -0700 (PDT)
+Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net [79.137.60.37])
+        by mo562.mail-out.ovh.net (Postfix) with ESMTPS id C5D3223DF9;
+        Tue, 28 Mar 2023 16:15:56 +0000 (UTC)
+Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net. [127.0.0.1])
+        by director4.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <sven.schwermer@disruptive-technologies.com>; Tue, 28 Mar 2023 16:15:56 +0000 (UTC)
+Received: from pro2.mail.ovh.net (unknown [10.108.16.78])
+        by director4.derp.mail-out.ovh.net (Postfix) with ESMTPS id ADE4D1FE53;
+        Tue, 28 Mar 2023 16:15:56 +0000 (UTC)
 Received: from localhost.localdomain (88.161.25.233) by DAG1EX1.emp2.local
  (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.23; Tue, 28 Mar
- 2023 18:15:55 +0200
+ 2023 18:15:56 +0200
 From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 To:     <lee.jones@linaro.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
         <sven.schwermer@disruptive-technologies.com>,
@@ -37,9 +36,9 @@ CC:     <johan+linaro@kernel.org>, <marijn.suijten@somainline.org>,
         <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Subject: [PATCH v8 4/6] leds: class: store the color index in struct led_classdev
-Date:   Tue, 28 Mar 2023 18:15:39 +0200
-Message-ID: <20230328161541.599463-5-jjhiblot@traphandler.com>
+Subject: [PATCH v8 6/6] leds: Add a multicolor LED driver to group monochromatic LEDs
+Date:   Tue, 28 Mar 2023 18:15:41 +0200
+Message-ID: <20230328161541.599463-7-jjhiblot@traphandler.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230328161541.599463-1-jjhiblot@traphandler.com>
 References: <20230328161541.599463-1-jjhiblot@traphandler.com>
@@ -49,108 +48,234 @@ Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [88.161.25.233]
 X-ClientProxiedBy: DAG8EX1.emp2.local (172.16.2.81) To DAG1EX1.emp2.local
  (172.16.2.1)
-X-Ovh-Tracer-Id: 1349672516321163739
+X-Ovh-Tracer-Id: 1349953989888522715
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrvdehgedgleekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucenucfjughrpefhvfevufffkffojghfggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeduteevleevvefggfdvueffffejhfehheeuiedtgedtjeeghfehueduudegfeefueenucfkpheptddrtddrtddrtddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepughirhgvtghtohhrvddruggvrhhprdhmrghilhdqohhuthdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqlhgvughssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehiedv
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrvdehgedgleekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucenucfjughrpefhvfevufffkffojghfggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeduteevleevvefggfdvueffffejhfehheeuiedtgedtjeeghfehueduudegfeefueenucfkpheptddrtddrtddrtddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepughirhgvtghtohhrgedruggvrhhprdhmrghilhdqohhuthdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqlhgvughssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehiedv
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This information might be useful for more than only deriving the led's
-name. And since we have this information, we can expose it in the sysfs.
+Grouping multiple monochrome LEDs into a multicolor LED device has a few
+benefits over handling the group in user-space:
+- The state of the LEDs relative to each other is consistent. In other
+  words, if 2 threads competes to set the LED to green and red, the
+  end-result cannot be black or yellow.
+- The multicolor LED as a whole can be driven through the sysfs LED
+  interface.
 
 Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 ---
- Documentation/ABI/testing/sysfs-class-led |  9 +++++++++
- drivers/leds/led-class.c                  | 20 ++++++++++++++++++++
- include/linux/leds.h                      |  1 +
- 3 files changed, 30 insertions(+)
+ drivers/leds/rgb/Kconfig                 |  13 ++
+ drivers/leds/rgb/Makefile                |   1 +
+ drivers/leds/rgb/leds-group-multicolor.c | 164 +++++++++++++++++++++++
+ 3 files changed, 178 insertions(+)
+ create mode 100644 drivers/leds/rgb/leds-group-multicolor.c
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 2e24ac3bd7ef..c6e53213b1e7 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -59,6 +59,15 @@ Description:
- 		brightness. Reading this file when no hw brightness change
- 		event has happened will return an ENODATA error.
+diff --git a/drivers/leds/rgb/Kconfig b/drivers/leds/rgb/Kconfig
+index 204cf470beae..1f85df5b691d 100644
+--- a/drivers/leds/rgb/Kconfig
++++ b/drivers/leds/rgb/Kconfig
+@@ -2,6 +2,19 @@
  
-+What:		/sys/class/leds/<led>/color
-+Date:		March 2023
-+KernelVersion:	6.3
-+Description:
-+		Color of the led.
-+
-+		This is a read-only file. Reading this file returns the color
-+		of the led as a string (ex: "red", "green").
-+
- What:		/sys/class/leds/<led>/trigger
- Date:		March 2006
- KernelVersion:	2.6.17
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 9cddcd908bce..4432e85a5fc6 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -74,6 +74,18 @@ static ssize_t max_brightness_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(max_brightness);
+ if LEDS_CLASS_MULTICOLOR
  
-+static ssize_t color_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
++config LEDS_GROUP_MULTICOLOR
++	tristate "LEDs group multi-color support"
++	depends on OF || COMPILE_TEST
++	help
++	  This option enables support for monochrome LEDs that are
++	  grouped into multicolor LEDs.
++	  This useful in the case where LEDs of different colors are
++	  physically grouped in a single multi-color LED and driven
++	  by a controller that doesn't have multi-color support.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called leds-group-multicolor.
++
+ config LEDS_PWM_MULTICOLOR
+ 	tristate "PWM driven multi-color LED Support"
+ 	depends on PWM
+diff --git a/drivers/leds/rgb/Makefile b/drivers/leds/rgb/Makefile
+index 0675bc0f6e18..64d0d7ad5341 100644
+--- a/drivers/leds/rgb/Makefile
++++ b/drivers/leds/rgb/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
++obj-$(CONFIG_LEDS_GROUP_MULTICOLOR)	+= leds-group-multicolor.o
+ obj-$(CONFIG_LEDS_PWM_MULTICOLOR)	+= leds-pwm-multicolor.o
+ obj-$(CONFIG_LEDS_QCOM_LPG)		+= leds-qcom-lpg.o
+diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/leds-group-multicolor.c
+new file mode 100644
+index 000000000000..27c80c84de88
+--- /dev/null
++++ b/drivers/leds/rgb/leds-group-multicolor.c
+@@ -0,0 +1,164 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * multi-color LED built with monochromatic LED devices
++ *
++ * This driver groups several monochromatic LED devices in a single multicolor LED device.
++ * Compared to handling this grouping in the user-space, the benefits are:
++ * - The state of the monochromatic LED relative to each other is always consistent.
++ * - the sysfs interface of the LEDs can be used for the group as a whole.
++ *
++ * Copyright 2023 Jean-Jacques Hiblot <jjhiblot@traphandler.com>
++ */
++
++#include <linux/err.h>
++#include <linux/leds.h>
++#include <linux/led-class-multicolor.h>
++#include <linux/math.h>
++#include <linux/module.h>
++#include <linux/mod_devicetable.h>
++#include <linux/platform_device.h>
++#include <linux/property.h>
++
++struct leds_multicolor {
++	struct led_classdev_mc mc_cdev;
++	struct led_classdev **monochromatics;
++};
++
++static int led_mcg_set(struct led_classdev *cdev, enum led_brightness brightness)
 +{
-+	const char *color_text = "invalid";
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct led_classdev_mc *mc_cdev = lcdev_to_mccdev(cdev);
++	struct leds_multicolor *priv = container_of(mc_cdev, struct leds_multicolor, mc_cdev);
++	const unsigned int group_max_brightness = mc_cdev->led_cdev.max_brightness;
++	int i;
 +
-+	if (led_cdev->color < LED_COLOR_ID_MAX)
-+		color_text = led_colors[led_cdev->color];
-+	return sysfs_emit(buf, "%s\n", color_text);
++	for (i = 0; i < mc_cdev->num_colors; i++) {
++		struct led_classdev *mono = priv->monochromatics[i];
++		const unsigned int mono_max_brightness = mono->max_brightness;
++		unsigned int intensity = mc_cdev->subled_info[i].intensity;
++		int mono_brightness;
++
++		/*
++		 * Scale the brightness according to relative intensity of the
++		 * color AND the max brightness of the monochromatic LED.
++		 */
++		mono_brightness = DIV_ROUND_CLOSEST(brightness * intensity * mono_max_brightness,
++						    group_max_brightness * group_max_brightness);
++
++		led_set_brightness(mono, mono_brightness);
++	}
++
++	return 0;
 +}
-+static DEVICE_ATTR_RO(color);
 +
- #ifdef CONFIG_LEDS_TRIGGERS
- static BIN_ATTR(trigger, 0644, led_trigger_read, led_trigger_write, 0);
- static struct bin_attribute *led_trigger_bin_attrs[] = {
-@@ -88,6 +100,7 @@ static const struct attribute_group led_trigger_group = {
- static struct attribute *led_class_attrs[] = {
- 	&dev_attr_brightness.attr,
- 	&dev_attr_max_brightness.attr,
-+	&dev_attr_color.attr,
- 	NULL,
- };
- 
-@@ -375,6 +388,10 @@ int led_classdev_register_ext(struct device *parent,
- 			if (fwnode_property_present(init_data->fwnode,
- 						    "retain-state-shutdown"))
- 				led_cdev->flags |= LED_RETAIN_AT_SHUTDOWN;
++static void restore_sysfs_access(void *data)
++{
++	struct led_classdev *led_cdev = data;
 +
-+			if (fwnode_property_present(init_data->fwnode, "color"))
-+				fwnode_property_read_u32(init_data->fwnode, "color",
-+							 &led_cdev->color);
- 		}
- 	} else {
- 		proposed_name = led_cdev->name;
-@@ -384,6 +401,9 @@ int led_classdev_register_ext(struct device *parent,
- 	if (ret < 0)
- 		return ret;
- 
-+	if (led_cdev->color >= LED_COLOR_ID_MAX)
-+		dev_warn(parent, "LED %s color identifier out of range\n", final_name);
++	mutex_lock(&led_cdev->led_access);
++	led_sysfs_enable(led_cdev);
++	mutex_unlock(&led_cdev->led_access);
++}
 +
- 	mutex_init(&led_cdev->led_access);
- 	mutex_lock(&led_cdev->led_access);
- 	led_cdev->dev = device_create_with_groups(leds_class, parent, 0,
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 41df18f42d00..9d38cb90331d 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -71,6 +71,7 @@ struct led_classdev {
- 	const char		*name;
- 	unsigned int brightness;
- 	unsigned int max_brightness;
-+	unsigned int color;
- 	int			 flags;
- 
- 	/* Lower 16 bits reflect status */
++static int led_mcg_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct led_init_data init_data = {};
++	struct led_classdev *cdev;
++	struct mc_subled *subled;
++	struct leds_multicolor *priv;
++	unsigned int max_brightness = 0;
++	int i, ret, count = 0;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	for (;;) {
++		struct led_classdev *led_cdev;
++
++		led_cdev = devm_of_led_get_optional(dev, count);
++		if (IS_ERR(led_cdev))
++			return dev_err_probe(dev, PTR_ERR(led_cdev), "Unable to get LED #%d",
++					     count);
++		if (!led_cdev)
++			break;
++
++		priv->monochromatics = devm_krealloc_array(dev, priv->monochromatics,
++					count + 1, sizeof(*priv->monochromatics),
++					GFP_KERNEL);
++		if (!priv->monochromatics)
++			return -ENOMEM;
++
++		priv->monochromatics[count] = led_cdev;
++
++		max_brightness = max(max_brightness, led_cdev->max_brightness);
++
++		count++;
++	}
++
++	subled = devm_kcalloc(dev, count, sizeof(*subled), GFP_KERNEL);
++	if (!subled)
++		return -ENOMEM;
++	priv->mc_cdev.subled_info = subled;
++
++	for (i = 0; i < count; i++) {
++		struct led_classdev *led_cdev = priv->monochromatics[i];
++
++		subled[i].color_index = led_cdev->color;
++
++		/* Configure the LED intensity to its maximum */
++		subled[i].intensity = max_brightness;
++	}
++
++	/* Initialise the multicolor's LED class device */
++	cdev = &priv->mc_cdev.led_cdev;
++	cdev->flags = LED_CORE_SUSPENDRESUME;
++	cdev->brightness_set_blocking = led_mcg_set;
++	cdev->max_brightness = max_brightness;
++	cdev->color = LED_COLOR_ID_MULTI;
++	priv->mc_cdev.num_colors = count;
++
++	init_data.fwnode = dev_fwnode(dev);
++	ret = devm_led_classdev_multicolor_register_ext(dev, &priv->mc_cdev, &init_data);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to register multicolor LED for %s.\n",
++				     cdev->name);
++
++	ret = led_mcg_set(cdev, cdev->brightness);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to set LED value for %s.", cdev->name);
++
++	for (i = 0; i < count; i++) {
++		struct led_classdev *led_cdev = priv->monochromatics[i];
++
++		/* Make the sysfs of the monochromatic LED read-only */
++		mutex_lock(&led_cdev->led_access);
++		led_sysfs_disable(led_cdev);
++		mutex_unlock(&led_cdev->led_access);
++
++		/* Restore sysfs access when the multicolor LED is released */
++		devm_add_action_or_reset(dev, restore_sysfs_access, led_cdev);
++	}
++
++	return 0;
++}
++
++static const struct of_device_id of_led_group_multicolor_match[] = {
++	{ .compatible = "leds-group-multicolor" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, of_led_group_multicolor_match);
++
++static struct platform_driver led_group_multicolor_driver = {
++	.probe		= led_mcg_probe,
++	.driver		= {
++		.name	= "leds_group_multicolor",
++		.of_match_table = of_led_group_multicolor_match,
++	}
++};
++module_platform_driver(led_group_multicolor_driver);
++
++MODULE_AUTHOR("Jean-Jacques Hiblot <jjhiblot@traphandler.com>");
++MODULE_DESCRIPTION("LEDs group multicolor driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:leds-group-multicolor");
 -- 
 2.25.1
 
