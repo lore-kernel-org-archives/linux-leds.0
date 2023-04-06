@@ -2,107 +2,147 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAD9C7619A
-	for <linux-leds@archiver.kernel.org>; Wed,  5 Apr 2023 16:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3B1C76196
+	for <linux-leds@archiver.kernel.org>; Thu,  6 Apr 2023 06:08:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232951AbjDEQun (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 5 Apr 2023 12:50:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57288 "EHLO
+        id S233790AbjDFGIy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 6 Apr 2023 02:08:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231967AbjDEQun (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 5 Apr 2023 12:50:43 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472D43AAB;
-        Wed,  5 Apr 2023 09:50:42 -0700 (PDT)
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 335FmPfs027578;
-        Wed, 5 Apr 2023 16:50:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=UXgOY7AuIGFAsaQsdgBTKV+Xqw3tw6NbkRPvrtDm+Qg=;
- b=bs+K18wZUVZVwZhNBYTGkjwVJE+XPMMdCMmdj/sYkV4zbEfz10aiO6v5lxG++wFy3BMK
- uAoP1nD1R1AbH1SKC8UrI+IjjVu+xFhGUhfbyD5Cbk/gmYoWoACPPGukQqiQkHLgWiU8
- wx/ggv8qeTvmaM930ySsngJh4MkZ2Keb26hWVD1t3GObXhTs0Ar8oDjAy/R6vm/20jwJ
- FBDC0A9aCYVtzqPvBJl40bB10AuYsHSg/pNDHpM6UXdsEJ4y5WobK4J4XmvrOCb+b8iM
- 3BZH/gBvzL7CK69SaPpSr26//UC8bfOD0MgF48ivSi7y9NTgOq979Ta9CIBjybGSvq4a 4g== 
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3psaamvqa1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Apr 2023 16:50:36 +0000
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 335F9JNE017698;
-        Wed, 5 Apr 2023 16:50:35 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([9.208.129.117])
-        by ppma03wdc.us.ibm.com (PPS) with ESMTPS id 3ppc87y75p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Apr 2023 16:50:35 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-        by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 335GoYnd24576592
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Apr 2023 16:50:34 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 89BD258054;
-        Wed,  5 Apr 2023 16:50:34 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A2FAD5803F;
-        Wed,  5 Apr 2023 16:50:33 +0000 (GMT)
-Received: from slate16.aus.stglabs.ibm.com (unknown [9.160.127.161])
-        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed,  5 Apr 2023 16:50:33 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-leds@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, lee@kernel.org, pavel@ucw.cz,
-        Eddie James <eajames@linux.ibm.com>
-Subject: [RESEND] leds: Ensure hardware blinking turns off when requested
-Date:   Wed,  5 Apr 2023 11:50:28 -0500
-Message-Id: <20230405165028.73579-1-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.31.1
+        with ESMTP id S229608AbjDFGIx (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 6 Apr 2023 02:08:53 -0400
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a01:238:4321:8900:456f:ecd6:43e:202c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7458C7ED6;
+        Wed,  5 Apr 2023 23:08:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:
+        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=q1rNeif5SglXwNm5q9Xo+iYAlYdCJQhUEhbhkizzO3M=; b=RWFEyK5gSMfWrjS/dEpaxjljgr
+        +ieanTeHqt8w7otVnaTWT7gn2n7mbvORdC9ojpR3POd9rONjYO0U/Dvv2FzcpEYUlvWRR09qJ3L5f
+        vChwtZlIjLWLQLBuVxuHoYp30pChWgEZgtUTMBKF9sFsBm36rumBvEmiaAn7JUAHx5UIG61VczevX
+        TF0DGYtWZA45+HUXJMkyD000hv5g91xqv5KhWt/fndb08Ydw5bRxRux00eSIkEU3RMsgSrRxQukCW
+        rCTDpG+fC7yjSNottwVnd09RzmjY7fi33+aWTt0xnnSnElb/otM+rUFfQSL/y07XtkCRKZ8DPmufC
+        6Nl5CWrg==;
+Received: from p200300ccff190e001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff19:e00:1a3d:a2ff:febf:d33a] helo=aktux)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1pkInc-0001dk-U8; Thu, 06 Apr 2023 08:08:45 +0200
+Received: from andi by aktux with local (Exim 4.96)
+        (envelope-from <andreas@kemnade.info>)
+        id 1pkInc-000Qqe-22;
+        Thu, 06 Apr 2023 08:08:44 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     pavel@ucw.cz, lee@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, andreas@kemnade.info,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mazziesaccount@gmail.com,
+        hns@goldelico.com
+Subject: [PATCH 1/2] dt-bindings: leds: ROHM BD2606MVV LED driver
+Date:   Thu,  6 Apr 2023 08:08:24 +0200
+Message-Id: <20230406060825.103187-2-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230406060825.103187-1-andreas@kemnade.info>
+References: <20230406060825.103187-1-andreas@kemnade.info>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: PvPSYGVOZCqw9KDxnNvoCOsffa5zoKz2
-X-Proofpoint-ORIG-GUID: PvPSYGVOZCqw9KDxnNvoCOsffa5zoKz2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-05_11,2023-04-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 clxscore=1011
- spamscore=0 suspectscore=0 phishscore=0 mlxlogscore=584 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2304050149
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-If an LED is blinking through the hardware and the trigger is deactivated,
-the driver will set the brightness to 0 to disable blinking. However, if
-the LED driver doesn't support non-blocking operations, the request for
-setting brightness to 0 will get queued. Then if a user requests a new
-non-zero brightness before the request for 0 brightness is executed, the
-LED blinking will not get disabled since the brightness will simply be
-updated.
-Fix this by flushing the workqueue before updating the requested
-brightness.
+Document ROHM BD2606MVV LED driver devicetree bindings.
 
-Fixes: 4d71a4a12b13 ("leds: Add support for setting brightness in a synchronous way")
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
- drivers/leds/led-class.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/leds/rohm,bd2606mvv.yaml         | 76 +++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/rohm,bd2606mvv.yaml
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 9255bc11f99d..78a270300d30 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -57,6 +57,8 @@ static ssize_t brightness_store(struct device *dev,
- 
- 	if (state == LED_OFF)
- 		led_trigger_remove(led_cdev);
-+	/* flush out any request to disable blinking */
-+	flush_work(&led_cdev->set_brightness_work);
- 	led_set_brightness(led_cdev, state);
- 	flush_work(&led_cdev->set_brightness_work);
- 
+diff --git a/Documentation/devicetree/bindings/leds/rohm,bd2606mvv.yaml b/Documentation/devicetree/bindings/leds/rohm,bd2606mvv.yaml
+new file mode 100644
+index 0000000000000..6d4ddd8d31162
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/rohm,bd2606mvv.yaml
+@@ -0,0 +1,76 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/rohm,bd2606mvv.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: BD2606MVV LED controller
++
++maintainers:
++  - Andreas Kemnade <andreas@kemnade.info>
++
++description:
++  The BD2606 MVV is a programmable LED controller connected via I2C that can
++  drive 6 separate lines. Each of them can be individually switched on and off
++  but the brightness setting is shared between two of them.
++
++properties:
++  compatible:
++    const: rohm,bd2606mvv
++
++  reg:
++    description: I2C slave address of the controller.
++    maxItems: 1
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++patternProperties:
++  "^led@[0-6]$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        minimum: 0
++        maximum: 6
++
++    required:
++      - reg
++
++additionalProperties: false
++
++examples:
++  - |
++
++    #include <dt-bindings/leds/common.h>
++
++    i2c0 {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@66 {
++            compatible = "rohm,bd2606mvv";
++            #address-cells = <1>;
++            #size-cells = <0>;
++            reg = <0x66>;
++
++            led@0 {
++                color = <LED_COLOR_ID_RED>;
++                function = LED_FUNCTION_POWER;
++                reg = <0x0>;
++            };
++
++            led@2 {
++                color = <LED_COLOR_ID_WHITE>;
++                function = LED_FUNCTION_STATUS;
++                reg = <0x2>;
++            };
++        };
++    };
++
++...
 -- 
-2.31.1
+2.39.2
 
