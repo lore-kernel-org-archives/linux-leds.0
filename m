@@ -2,101 +2,107 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6AD3C76196
-	for <linux-leds@archiver.kernel.org>; Thu,  6 Apr 2023 07:10:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB89C76196
+	for <linux-leds@archiver.kernel.org>; Thu,  6 Apr 2023 08:28:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235895AbjDFHKk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 6 Apr 2023 03:10:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53596 "EHLO
+        id S236117AbjDFI2t (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 6 Apr 2023 04:28:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235835AbjDFHKd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 6 Apr 2023 03:10:33 -0400
-Received: from 9.mo562.mail-out.ovh.net (9.mo562.mail-out.ovh.net [46.105.72.114])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C321F213B
-        for <linux-leds@vger.kernel.org>; Thu,  6 Apr 2023 00:10:11 -0700 (PDT)
-Received: from director2.derp.mail-out.ovh.net (director2.derp.mail-out.ovh.net [79.137.60.36])
-        by mo562.mail-out.ovh.net (Postfix) with ESMTPS id 930A82455D;
-        Thu,  6 Apr 2023 06:52:32 +0000 (UTC)
-Received: from director2.derp.mail-out.ovh.net (director2.derp.mail-out.ovh.net. [127.0.0.1])
-        by director2.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <sven.schwermer@disruptive-technologies.com>; Thu,  6 Apr 2023 06:52:32 +0000 (UTC)
-Received: from pro2.mail.ovh.net (unknown [10.108.1.244])
-        by director2.derp.mail-out.ovh.net (Postfix) with ESMTPS id 6A5C51FE27;
-        Thu,  6 Apr 2023 06:52:32 +0000 (UTC)
-Received: from [192.168.1.41] (88.161.25.233) by DAG1EX1.emp2.local
- (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.23; Thu, 6 Apr
- 2023 08:52:31 +0200
-Message-ID: <f4616854-a0eb-9abe-e411-402c91cab43d@traphandler.com>
-Date:   Thu, 6 Apr 2023 08:52:31 +0200
+        with ESMTP id S235716AbjDFI2s (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 6 Apr 2023 04:28:48 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A03E844B6
+        for <linux-leds@vger.kernel.org>; Thu,  6 Apr 2023 01:28:45 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9341434fe3cso114161166b.1
+        for <linux-leds@vger.kernel.org>; Thu, 06 Apr 2023 01:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mind.be; s=google; t=1680769724;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=20coA4glkdpOkZOcWK/cfFVjecshS2DyrEnIOMLBfXs=;
+        b=fG9Oec8fFAktEZy9s0Bjlye2DO74mjUPYSB2HhLP1kpvMKjH1Wq7+lOy+HdpXjHAbw
+         JYngnqiVxaMuAEm7crsLXZWcMhQJzj5zTLKWYVkMslBRRVWV9f07s0l3Vu73eqbzuzHC
+         h4V9pJn83impfmYkIlth4CaQCVKLF3h9dnIUz+lQWc8AFBe5MiEwoH+StUDkcYzWUPBo
+         +822andwpq5ju15VUDstlvj4wUUYIlzK16mjfVbrnxPZmdJwYjyNqr4Lb5sbVbsLoO9f
+         9bS96PznUv7vaW1N+EPK1lrqTLuxApEJuEWqjMcaHYO0+kfhEFTa0+C/MQStsW0l6Exo
+         M4Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680769724;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=20coA4glkdpOkZOcWK/cfFVjecshS2DyrEnIOMLBfXs=;
+        b=lV9Ci9cJOR2JYvtrRpHY+TyR4pamALgaoMihRgoud6XtukfH5XE5Q4pGHnInBjahNy
+         KDfeyOF30BVrz8I9q1LA8WcU/RNnzVYGvDblZ1m/vS0vjTvJjuEq1ftuq5Y39ovFFd4H
+         Ox2BcEYaw4VoFqzfJB/pGz5XxWuyqL4GJIqZKB6s0d1so6pnRatYESUIrxZZ9n1K4hQV
+         QmMCDs/Oep0vchQDenFOLgNETh1c8wQnLcjm+oqrq+fSlZ9VtVd8bPx91fmsTBcGvRS3
+         Sr1Zlt8qPt6cPvb+vqjrrpmTD+tChqjA8zwTImCvX9axxlLjmnbhNHTPAVsHj7IIfDtF
+         LhXQ==
+X-Gm-Message-State: AAQBX9dCi/chJ/q1Bl0ghQiyw5ZWNNP9laBEJ3TA72O+sRcAogjyoqZV
+        idp/VG+wCnYYLOusEw/FgubwW9wxOtOLDG/RpQI=
+X-Google-Smtp-Source: AKy350alUEuW7MUoCbOTgUwV8VD7WVrguT6Wesjzfgmmw0tCYJxCkMvhqRVh6CFt5sUSX/ls27qBgQ==
+X-Received: by 2002:a05:6402:148:b0:502:32ae:14fb with SMTP id s8-20020a056402014800b0050232ae14fbmr4101278edu.5.1680769724141;
+        Thu, 06 Apr 2023 01:28:44 -0700 (PDT)
+Received: from [192.168.2.9] (78-22-137-109.access.telenet.be. [78.22.137.109])
+        by smtp.gmail.com with ESMTPSA id 26-20020a508e5a000000b004fcd78d1215sm418780edx.36.2023.04.06.01.28.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Apr 2023 01:28:43 -0700 (PDT)
+Message-ID: <32c0a958-58bd-7476-c276-94c8f33ffbb3@mind.be>
+Date:   Thu, 6 Apr 2023 10:28:42 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v8 4/6] leds: class: store the color index in struct
- led_classdev
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-CC:     <lee.jones@linaro.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <sven.schwermer@disruptive-technologies.com>,
-        <krzysztof.kozlowski+dt@linaro.org>, <johan+linaro@kernel.org>,
-        <marijn.suijten@somainline.org>, <jacek.anaszewski@gmail.com>,
-        <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20230328161541.599463-1-jjhiblot@traphandler.com>
- <20230328161541.599463-5-jjhiblot@traphandler.com>
- <CAHp75Ve_=Gzpg9GO=2dqTKWuyU-Podezv_YSwHLqFPHXk1DUxg@mail.gmail.com>
+ Thunderbird/102.4.1
+Subject: Re: [PATCH v6 2/2] leds: lp55xx: configure internal charge pump
+To:     Lee Jones <lee@kernel.org>
+Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230331114610.48111-1-maarten.zanders@mind.be>
+ <20230331114610.48111-3-maarten.zanders@mind.be>
+ <20230405152627.GO8371@google.com>
 Content-Language: en-US
-From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-In-Reply-To: <CAHp75Ve_=Gzpg9GO=2dqTKWuyU-Podezv_YSwHLqFPHXk1DUxg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [88.161.25.233]
-X-ClientProxiedBy: DAG2EX2.emp2.local (172.16.2.12) To DAG1EX1.emp2.local
- (172.16.2.1)
-X-Ovh-Tracer-Id: 7795730958712781275
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrvdejvddgudduhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfhisehtkeertddtfeejnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpedvfeekudegkeeuuedvueeuveejffdtvdethfelkefhfefftdetteffiefgvddtieenucfkpheptddrtddrtddrtddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepughirhgvtghtohhrvddruggvrhhprdhmrghilhdqohhuthdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqlhgvughssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehiedv
+From:   Maarten Zanders <maarten.zanders@mind.be>
+In-Reply-To: <20230405152627.GO8371@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
+> Sorry Maarten, just a couple of small nits.
 
-On 28/03/2023 19:15, Andy Shevchenko wrote:
-> On Tue, Mar 28, 2023 at 7:15 PM Jean-Jacques Hiblot
-> <jjhiblot@traphandler.com> wrote:
+No need to be sorry.
+
+
+> This fits on one line, no?  < 100-chars?
+
+I thought the line length was meant to be <80 chars according to:
+
+https://www.kernel.org/doc/html/latest/process/coding-style.html#breaking-long-lines-and-strings
+
+Happy to adapt if this shouldn't be taken as strict as I tried to do. 
+Either way I'll post an update with a cleanup.
+
+>
+>> --- a/include/linux/platform_data/leds-lp55xx.h
+>> +++ b/include/linux/platform_data/leds-lp55xx.h
+>> @@ -73,6 +73,9 @@ struct lp55xx_platform_data {
+>>   	/* Clock configuration */
+>>   	u8 clock_mode;
 >>
->> This information might be useful for more than only deriving the led's
->> name. And since we have this information, we can expose it in the sysfs.
-> 
-> ...
-> 
->> +Date:          March 2023
->> +KernelVersion: 6.3
-> 
-> Outdated version.
-> 
-> ...
-> 
->> +               Color of the led.
->> +
->> +               This is a read-only file. Reading this file returns the color
->> +               of the led as a string (ex: "red", "green").
-> 
-> There are no strict rules about colour and I don't think it's a good
-> idea. Why in such a case is it different to label? My proposal here at
-> least documenting that the colour must follow one of the existing
-> naming standards (like RGB in hex, HTML, or name in accordance with
-> chosen standard).
-Actually the colors are defined in an array: led_colors (led-core.c: 88)
-So the color is one of the following: white, red, reen, blue, amber, 
-violet, yellow, ir, multicolor, rgb
+>> +	/* Charge pump mode */
+>> +	u32 charge_pump_mode;
+> That's a lot of data.  Does it need to be u32?
 
-There is mention in the TODO file of changing the way RGB leds are 
-handled and the RGB leds would probably show the hex RGB values here.
+No, it luckily doesn't get that big. This is to avoid an intermediate 
+variable & casting as the DT parameter has to be 32bit (which I learned 
+from an earlier comment). It was changed from u8 in v5 of the patch.
 
-> 
-> Yet, it won't technically prevent abusing that, but at least will show
-> the intention and allow pointing out to the bugs or develop user space
-> tooling based on existing parsers (if any).
-> 
+Thanks for the review,
+Maarten
+
