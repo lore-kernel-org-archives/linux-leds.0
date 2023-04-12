@@ -2,63 +2,58 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCC9C77B61
-	for <linux-leds@archiver.kernel.org>; Thu, 13 Apr 2023 13:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE86FC77B6E
+	for <linux-leds@archiver.kernel.org>; Thu, 13 Apr 2023 14:01:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231669AbjDMN7R (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 13 Apr 2023 09:59:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60530 "EHLO
+        id S231514AbjDMOBr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 13 Apr 2023 10:01:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231675AbjDMN7P (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Apr 2023 09:59:15 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A164AF28;
-        Thu, 13 Apr 2023 06:58:56 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id ke16so14995933plb.6;
-        Thu, 13 Apr 2023 06:58:56 -0700 (PDT)
+        with ESMTP id S230010AbjDMOBq (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Apr 2023 10:01:46 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEBA211A;
+        Thu, 13 Apr 2023 07:01:45 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id v14-20020a05600c470e00b003f06520825fso13663741wmo.0;
+        Thu, 13 Apr 2023 07:01:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681394336; x=1683986336;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EIBJr1yufy6BuzFLpVBVtJzIO8GguQyHLaPLBtr50HQ=;
-        b=Q7AIrgTu+81ekKSSdKHYO9laRyCzCRqlaYGh0zPj/+T+kSewctEjMQSIayqjFDV1hG
-         GnCCKe8VcSjyBaPjn/n0e7/E0ZtFaAWEP4CFTrttVyj9kdLlhWnTPJuPOI+UXORvS7ZK
-         wxTSKM8ewLrdcNwAe2dyml7jtS8BB9Kxtr/dbg9REQYePzWvlC4jMi0ux/E60l2BAcNC
-         ZZ19z5pJrzBNsn8JGDamf95/fMePQexIk5rMMfvclvTgTq6C6x0eSNPh8sKx7qYTOiaM
-         QTpBs4/gDGNa/9JydQ7gj1aBnFaGKx8zTS0Q9z9uTF3c/c//4+jQMMqlL9itGGIYsgwM
-         ajmA==
+        d=gmail.com; s=20221208; t=1681394504; x=1683986504;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=uOHTamwKNL40GhmSChgfj+zLAbo8CbA29L61cgq0bpE=;
+        b=G845KAhU6xI8AzEGleuaSgyKc/tkw+0l10Pgl2ql2iERI016euWl0ztj2Jtku9EWjE
+         XzgnPXYm2rJ5Z6MWj7nAYfC0TKlTVvu7bv4z2MqcWqrmetcjpIngUnp/cep2byHpZyYy
+         wlgwVKJvF7k2/EDrncZLO2rFwkZAogjbddoEBeGYvu6o0Qt2ztmcWk4RNW8DLOcKnIK3
+         wfWN5QSsuK82eE17Ihl+xdy7oZFgAyCUMSRmAUTwxWQ7A1LgOU7NiKfhUcyIPRxR7+WT
+         w79ZWayhGjAHDH+kh6FgI26OuDeliCOPiPiMeY81WyzZd8y0tmrAOQb0oo6BPUmj+3d6
+         OJ4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681394336; x=1683986336;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EIBJr1yufy6BuzFLpVBVtJzIO8GguQyHLaPLBtr50HQ=;
-        b=Gc5L/6sfwFSn1a7JQf1ieurEj9J/pa+v8tglfwd//4KU8jhZgZsOU0R39qjFq01KaJ
-         oEzeY5ZjOJhZae/VTl0R7q8VsPgzp0HIiUPPk0VJVhzUFU6mWdFVoU8tp3fYmlIHi6aP
-         +sl2dwz+6C9lGd/7pzfJH8fCVLradCohjcRarMGGHHmsRtsp6SJT5PzqEtyJlfEYjLSI
-         GIUhv4wlxHJNkqA8Gep+1HV5YqkdWXs3//4xawAp7VrPbRqn0rRL6dWS1LYg7TKljG+E
-         oByDYiBTTMR14VC/U+xjroK7bwo78MJiohbWqU13nkbp4NH747N2W4xm0Z+UAsOWe/TV
-         vQHA==
-X-Gm-Message-State: AAQBX9cpZYvTyOa+mIKiI2lN5fJdUjq75BxIZD5ZaL2bPHxrD6nD3zsD
-        19UkugW+fEjFVyd1NtvYZJ8=
-X-Google-Smtp-Source: AKy350ZyPHBtAqnyEv4vH3Tgl4GK/qO0Xki6GrxO/YiX9qjACkK7FndwctAOx/7ZGURs6pPtIP1ZUA==
-X-Received: by 2002:a05:6a20:428c:b0:ec:6f00:1a47 with SMTP id o12-20020a056a20428c00b000ec6f001a47mr1910236pzj.32.1681394335816;
-        Thu, 13 Apr 2023 06:58:55 -0700 (PDT)
-Received: from [192.168.1.105] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
-        by smtp.gmail.com with ESMTPSA id a13-20020a62e20d000000b00587fda4a260sm1459711pfi.9.2023.04.13.06.58.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Apr 2023 06:58:55 -0700 (PDT)
-Message-ID: <6e62d6d8-54b0-858e-4e80-030136601270@gmail.com>
-Date:   Thu, 13 Apr 2023 06:58:52 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [net-next PATCH v6 09/16] net: phy: marvell: Implement
- led_blink_set()
-Content-Language: en-US
-To:     Christian Marangi <ansuelsmth@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        d=1e100.net; s=20221208; t=1681394504; x=1683986504;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uOHTamwKNL40GhmSChgfj+zLAbo8CbA29L61cgq0bpE=;
+        b=AthJ9/Sotjs+isjPGgkGbArTZNjrRsrD+9EBCQqbz+b5/KRqULw8Bkihm8OZMdckgr
+         qLGfvHVz4S87cBU3bUwWbA6WYmN5Xh7Qw5CQ3k1ixDDlNwQe40Plgp3tWGd6jVwV3rLy
+         kyW5nfe/k4KtcLRejrkAiDcxnRZQB92mQeCvEhVWXIb+e29Hk4L6ER5FODtm8vTyfMsO
+         trrQ1wg5O1OtZhpKidxtbk303ClWXZkh3SvWkHctDTvAnvcsVITSb0PT+UafeMPF5WCT
+         5TndlXBy6EK1AkwABqsy7ZILNmNSxhM01K6dJOdbgp5btEEW6ePLesOmso5g0kP9KHfI
+         356A==
+X-Gm-Message-State: AAQBX9c/O4odkYGUSvMy/hzMFeeNBCWBVlhxkJXCPTzMUmO4vLYqJnix
+        50uYQYFxFfQ1EqYbfF1onns=
+X-Google-Smtp-Source: AKy350aCOeLGVdCGwcMkMytZAVJF3k2hKosfOFGhq5NwBEjscTYcs49JjHc5JD4A851zKXAccyv3nw==
+X-Received: by 2002:a05:600c:2304:b0:3f0:7f07:e617 with SMTP id 4-20020a05600c230400b003f07f07e617mr1969779wmo.8.1681394503378;
+        Thu, 13 Apr 2023 07:01:43 -0700 (PDT)
+Received: from Ansuel-xps. (host-87-7-13-196.retail.telecomitalia.it. [87.7.13.196])
+        by smtp.gmail.com with ESMTPSA id k17-20020a7bc411000000b003f09fe8312csm1909489wmi.20.2023.04.13.07.01.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Apr 2023 07:01:42 -0700 (PDT)
+Message-ID: <64380b46.7b0a0220.978a.1eb4@mx.google.com>
+X-Google-Original-Message-ID: <ZDc6lf4+qd0Fm2j+@Ansuel-xps.>
+Date:   Thu, 13 Apr 2023 01:11:17 +0200
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Andrew Lunn <andrew@lunn.ch>,
@@ -78,29 +73,43 @@ To:     Christian Marangi <ansuelsmth@gmail.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org
+Subject: Re: [net-next PATCH v6 06/16] net: phy: phy_device: Call into the
+ PHY driver to set LED brightness
 References: <20230327141031.11904-1-ansuelsmth@gmail.com>
- <20230327141031.11904-10-ansuelsmth@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20230327141031.11904-10-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <20230327141031.11904-7-ansuelsmth@gmail.com>
+ <202ae4b9-8995-474a-1282-876078e15e47@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202ae4b9-8995-474a-1282-876078e15e47@gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-
-
-On 3/27/2023 7:10 AM, Christian Marangi wrote:
-> From: Andrew Lunn <andrew@lunn.ch>
+On Thu, Apr 13, 2023 at 06:57:51AM -0700, Florian Fainelli wrote:
 > 
-> The Marvell PHY can blink the LEDs, simple on/off. All LEDs blink at
-> the same rate, and the reset default is 84ms per blink, which is
-> around 12Hz.
 > 
-> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> Reviewed-by: Pavel Machek <pavel@ucw.cz>
+> On 3/27/2023 7:10 AM, Christian Marangi wrote:
+> > From: Andrew Lunn <andrew@lunn.ch>
+> > 
+> > Linux LEDs can be software controlled via the brightness file in /sys.
+> > LED drivers need to implement a brightness_set function which the core
+> > will call. Implement an intermediary in phy_device, which will call
+> > into the phy driver if it implements the necessary function.
+> > 
+> > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> 
+> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+> 
+> > +	int (*led_brightness_set)(struct phy_device *dev,
+> > +				  u32 index, enum led_brightness value);
+> 
+> I think I would have made this an u8, 4 billion LEDs, man, that's a lot!
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+If andrew is ok we can still consider to reduce it. (but just to joke
+about it... A MAN CAN DREAM OF A FULL HD SCREEN ON THEIR OWN SPECIAL
+PORT)
+
 -- 
-Florian
+	Ansuel
