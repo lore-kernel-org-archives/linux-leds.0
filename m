@@ -2,30 +2,30 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F100C77B61
-	for <linux-leds@archiver.kernel.org>; Thu, 13 Apr 2023 10:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4332DC77B61
+	for <linux-leds@archiver.kernel.org>; Thu, 13 Apr 2023 10:50:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231274AbjDMKsg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 13 Apr 2023 06:48:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58356 "EHLO
+        id S230219AbjDMKuH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 13 Apr 2023 06:50:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231332AbjDMKsW (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Apr 2023 06:48:22 -0400
+        with ESMTP id S229819AbjDMKuF (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Apr 2023 06:50:05 -0400
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27E6AA25C;
-        Thu, 13 Apr 2023 03:47:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A9E47EC7;
+        Thu, 13 Apr 2023 03:49:42 -0700 (PDT)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 1C4611C0AB2; Thu, 13 Apr 2023 12:47:51 +0200 (CEST)
+        id E6DA41C0AB3; Thu, 13 Apr 2023 12:49:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-        t=1681382871;
+        t=1681382954;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=GaICdUhTrdW8msGc/teUrPPVU5nEdQr+/RnX/1kxoqg=;
-        b=OrM1r28tp3q+WpY2mygdm6kfgJmi3iLfNFh08tehdsqY2l+I7F2/frwWb7bBLfjeycSe15
-        eR+H9PD0sBp9c/KqOkCRXbuWdydiItsyCK1yMi+cEAc9f/8dmptUVDl8nh8Le3INaPqpUn
-        v/KDmhVkTXh/15LG6F1mENWJTv3MH4s=
-Date:   Thu, 13 Apr 2023 12:47:50 +0200
+        bh=8W9jtbqN6xKguBZ7APq038DUQHbwahDOenGO1VwnTr8=;
+        b=RcUTqGeIixkfZkvr1yDh2531IFYd43KtEPj7Qbv8znxrAvCtVYgEnnZsfUUT0Se2NzBfkH
+        xpa5IiBS7pdnKSPoUlQvmzxua3xJwJ8KswTSL2kij/5pCjozvgriT0/H09d07VO0VqqtLi
+        qh1EZ2CaOFA8IsBpwoNm5xImBZzW7zk=
+Date:   Thu, 13 Apr 2023 12:49:14 +0200
 From:   Pavel Machek <pavel@ucw.cz>
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
@@ -34,52 +34,67 @@ Cc:     lee@kernel.org, sean.wang@mediatek.com, robh+dt@kernel.org,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 2/7] dt-bindings: leds: leds-mt6323: Document mt6332
- compatible
-Message-ID: <ZDfd1jutBeuJhk/R@duo.ucw.cz>
+        kernel@collabora.com
+Subject: Re: [PATCH v2 0/7] Add support for MT6331 and MT6332 LEDs
+Message-ID: <ZDfeKhUvo5a9jd9E@duo.ucw.cz>
 References: <20230412153310.241046-1-angelogioacchino.delregno@collabora.com>
- <20230412153310.241046-3-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="JsiLXC6MGPwjPQAP"
+        protocol="application/pgp-signature"; boundary="/vFl9uYmCyb8SBnI"
 Content-Disposition: inline
-In-Reply-To: <20230412153310.241046-3-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230412153310.241046-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---JsiLXC6MGPwjPQAP
+--/vFl9uYmCyb8SBnI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2023-04-12 17:33:05, AngeloGioacchino Del Regno wrote:
-> Add support for MT6332 LEDs/WLEDs with compatible "mediatek,mt6332-led".
+Hi!
+
+> Changes in v2:
+>  - Rebase over next-20230412
 >=20
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> NOTE: Since v1 of this series was sent in Semptember 2022 and got
+> ignored for *7 months* with no feedback, I'm retrying the upstreaming
+> of this same series.
+> There are no changes, if not just a simple rebase and another test
+> run on the same hardware.
+>=20
+>=20
+> MT6323 is not the only PMIC that has a LEDs controller IP and it was
+> found that the others do have a compatible register layout, except
+> for some register offsets.
+> The logic contained in this driver can be totally reused for other
+> PMICs as well, so I can't see any reason to keep this specific to
+> the MT6323 part.
+>=20
+> This series brings meaningful platform data to this driver, giving
+> it flexibility and adding support for LED controllers found in the
+> MT6331 and MT6332 PMICs.
+>=20
+> Tested on MT6795 Sony Xperia M5 smartphone.
 
-1,2: I'd not mind them merged into single patch.
+Please cc phone-devel with phone related stuff.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Can I get ls /sys/class/leds on that machine?
 
 BR,
-									Pavel
+								Pavel
 --=20
 People of Russia, stop Putin before his war on Ukraine escalates.
 
---JsiLXC6MGPwjPQAP
+--/vFl9uYmCyb8SBnI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZDfd1gAKCRAw5/Bqldv6
-8t9nAJ9acR9003RcdeYoSBiGIuiGoFEn/wCeN2Ei2RynFMkjHD+HdevILECr/ps=
-=hAqz
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZDfeKgAKCRAw5/Bqldv6
+8m7nAKCkhsGoT6c46SC0+xG2IjFSQVUhGQCcD9A0Yf4QeIcQ0stgUpEYAsAYh5I=
+=5q7a
 -----END PGP SIGNATURE-----
 
---JsiLXC6MGPwjPQAP--
+--/vFl9uYmCyb8SBnI--
