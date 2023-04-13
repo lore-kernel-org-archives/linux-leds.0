@@ -2,165 +2,91 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B92C77B61
-	for <linux-leds@archiver.kernel.org>; Thu, 13 Apr 2023 13:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF395C77B6F
+	for <linux-leds@archiver.kernel.org>; Thu, 13 Apr 2023 13:43:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231499AbjDMNil (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 13 Apr 2023 09:38:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37492 "EHLO
+        id S230242AbjDMNne (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 13 Apr 2023 09:43:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229835AbjDMNiJ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Apr 2023 09:38:09 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1A6AF0E;
-        Thu, 13 Apr 2023 06:35:37 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id o6-20020a05600c4fc600b003ef6e6754c5so6187642wmq.5;
-        Thu, 13 Apr 2023 06:35:37 -0700 (PDT)
+        with ESMTP id S231673AbjDMNnS (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Apr 2023 09:43:18 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1338BAF17
+        for <linux-leds@vger.kernel.org>; Thu, 13 Apr 2023 06:41:39 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id v10so1876192wmn.5
+        for <linux-leds@vger.kernel.org>; Thu, 13 Apr 2023 06:41:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681392925; x=1683984925;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8TjBZzOOiUgO+kPtxRd7fVCLfb724PvO409lq7nUTs0=;
-        b=FVXnBRXb6Z6XxnsBV+IeLPfjsgEtX82YOBpUOZdObpHAP4HsohkezHyCZJxpgOHOqs
-         Dh5XK/yLHqpR2Etxy2llHaDk+ECBj5vcr4OiyCpeQpBw4Xcr/v6g5MQfVxMW6B2KXsrN
-         1JOzNg5YQGuQT8IJPwyBxKRJGsT2pTy8CXPYLd0NishC7i1X6PyBdYUcAdXXO/iaezOg
-         AILWSLTWY6sB2awEkx2MAj71vUCpqpN1qMwQFyXSMaoZzkNENBZhulOincOb8snUHrsY
-         pRc4zpV8kSUzVZrbb84dp7jObIGZEFoqNOUweYZ27i/rUQYr1OgOfwaUmowTKc86jJ9j
-         Hocg==
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1681393287; x=1683985287;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o/uJoEfdBrHkM8umj9Qzq6MjpEIPQ75HXLhRcJDJNhI=;
+        b=qSaoqkqkXL6KGFFgIvLODD2VAFqyodvQSgU3JqfWiN448FpeIYuzdy7SuHZZEsBeFR
+         Qj5dZ7MZ/gFqSKI5yYikfFNmI/SFl3LnEbdxO1Kh5l27EFL5y00P0ts79XVTatBUjxMd
+         X9PqfQqBaa0dp2JARMfHxT5hwo+Ru0T25lpk+MtMnJ1Gri/TqB+K4rck/fANnMKJGSDi
+         G11D7L8Ds7426Iya87fZYsH1rIFI0NwD5eoF9mUqkR70pO/hYdDGOuN1PWGQUnQw2q1i
+         zexerlbyF6t9bADh1BfBpoSK960IU68mOsrjJySi0NI44F5PMhX0837tf5z5l77jg+GJ
+         tBRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681392925; x=1683984925;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8TjBZzOOiUgO+kPtxRd7fVCLfb724PvO409lq7nUTs0=;
-        b=R1F3J9p1skX1L8vWN/BcU7azO1pnpqyW3+yuWn7/E4S3rNI454jBFg4OsfOC2ne+Eu
-         XmDb8zxdbsdtsabGpN6WnGiIvJDqZnJY8uVcTKF18N6cmpJvyNqaxY3u1H5MEw54cOUX
-         m0GqART0/AHOPe0MnxmhDjEs9QL9/Iv7iQF/h5nMfanUCDEQHXd9eNCtM6B1C9hUUmTF
-         RJ7z6qq465odWPZFa58GeTuz3kCcLKS3uB8Mk4Y9qgd6FJ36BPL1vPi1NOgpGaGTbwt/
-         Fa6W890iSJeO9vRxf8yGJ+dyhWmGPPM8HtU3xm1C++jd2WyhKmWjc8H+Yl9evMCy/WiH
-         B/NQ==
-X-Gm-Message-State: AAQBX9cXKw5oy8PubAxcqnWBYTSFK9oBE2eywjZG47FbxJs9rpEMb9ub
-        pff2h9SdrCq/zE/1YXcP1ys=
-X-Google-Smtp-Source: AKy350YJ2r3wCl95kUb5MnB+RTinXg4FYMSNGuFQm03tfAqvfcmOAHrPbsmhYq/PWiUf5132l7aRRg==
-X-Received: by 2002:a1c:6a0d:0:b0:3ed:377b:19cc with SMTP id f13-20020a1c6a0d000000b003ed377b19ccmr1849363wmc.0.1681392925135;
-        Thu, 13 Apr 2023 06:35:25 -0700 (PDT)
-Received: from Ansuel-xps. (host-87-7-13-196.retail.telecomitalia.it. [87.7.13.196])
-        by smtp.gmail.com with ESMTPSA id h15-20020a05600c350f00b003ee9f396dcesm5585905wmq.30.2023.04.13.06.35.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Apr 2023 06:35:24 -0700 (PDT)
-Message-ID: <6438051c.050a0220.d7db1.e1f7@mx.google.com>
-X-Google-Original-Message-ID: <ZDcz55wimhKW+jN3@Ansuel-xps.>
-Date:   Thu, 13 Apr 2023 00:42:47 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        John Crispin <john@phrozen.org>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [net-next PATCH v6 12/16] dt-bindings: net: dsa: qca8k: add LEDs
- definition example
-References: <20230327141031.11904-1-ansuelsmth@gmail.com>
- <20230327141031.11904-13-ansuelsmth@gmail.com>
- <20230406141018.GA2956156-robh@kernel.org>
+        d=1e100.net; s=20221208; t=1681393287; x=1683985287;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o/uJoEfdBrHkM8umj9Qzq6MjpEIPQ75HXLhRcJDJNhI=;
+        b=doCmwQIN6W+LsyeZ5w/fV5a0M90ItuB/pHuEQCq8bBYiqwXyhAZXQlPaFg41/i0oL7
+         hmmvBfFr02W2yA/kqkjSlwyDnKR/SgtDPfACGzJ7Vtr06BP20ZqcLvC6hpPc5ECB3eTx
+         AyfsusTx7Bg1lS2FK2ai/Rey21cjO+feVvA3FJHzVi5AwlifC9Y7qnMhN5JO8btH34CF
+         7SM/Jig0+8jfxb8WxXzI2ngu9RmXjsHiQiQTLWTrpqJgXbgIW1y8DHVCiYf3g41YXbst
+         t/aQCbuDf4A4qLx1uSkfzqY8zgHU4T1HU6HuMj1ZmkFmoAEPq+MTbbD6tqlK2h5mVf9V
+         r8dg==
+X-Gm-Message-State: AAQBX9ekB9PWPKmYYcrArRen9ysHn70o2d6MSRHJi/KjOXNXN5xgOgWK
+        mZa1sTV4ABEufa8cf/rmVLDSYw==
+X-Google-Smtp-Source: AKy350ZTQwiWfW3YM7pVVGvdZnslX3wudj8JovNDzaTTKOlXEzGpDqVhqmlxUMJSphB5wrVujBhi6w==
+X-Received: by 2002:a7b:cb06:0:b0:3f0:9564:f4f6 with SMTP id u6-20020a7bcb06000000b003f09564f4f6mr1908290wmj.1.1681393286675;
+        Thu, 13 Apr 2023 06:41:26 -0700 (PDT)
+Received: from [10.1.3.59] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id p8-20020a7bcc88000000b003f04f0c5a6fsm1837156wma.26.2023.04.13.06.41.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Apr 2023 06:41:26 -0700 (PDT)
+Message-ID: <f4ffb7ab-7f61-df0a-fca8-54585fca16d2@baylibre.com>
+Date:   Thu, 13 Apr 2023 15:41:25 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230406141018.GA2956156-robh@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2 5/7] leds: leds-mt6323: Drop MT6323_ prefix from macros
+ and defines
+Content-Language: en-US
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, pavel@ucw.cz
+Cc:     lee@kernel.org, sean.wang@mediatek.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+References: <20230412153310.241046-1-angelogioacchino.delregno@collabora.com>
+ <20230412153310.241046-6-angelogioacchino.delregno@collabora.com>
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <20230412153310.241046-6-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 09:10:18AM -0500, Rob Herring wrote:
-> On Mon, Mar 27, 2023 at 04:10:27PM +0200, Christian Marangi wrote:
-> > Add LEDs definition example for qca8k Switch Family to describe how they
-> > should be defined for a correct usage.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  .../devicetree/bindings/net/dsa/qca8k.yaml    | 24 +++++++++++++++++++
-> >  1 file changed, 24 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
-> > index 389892592aac..ad354864187a 100644
-> > --- a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
-> > +++ b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
-> > @@ -18,6 +18,8 @@ description:
-> >    PHY it is connected to. In this config, an internal mdio-bus is registered and
-> >    the MDIO master is used for communication. Mixed external and internal
-> >    mdio-bus configurations are not supported by the hardware.
-> > +  Each phy has at most 3 LEDs connected and can be declared
-> > +  using the standard LEDs structure.
-> >  
-> >  properties:
-> >    compatible:
-> > @@ -117,6 +119,7 @@ unevaluatedProperties: false
-> >  examples:
-> >    - |
-> >      #include <dt-bindings/gpio/gpio.h>
-> > +    #include <dt-bindings/leds/common.h>
-> >  
-> >      mdio {
-> >          #address-cells = <1>;
-> > @@ -226,6 +229,27 @@ examples:
-> >                      label = "lan1";
-> >                      phy-mode = "internal";
-> >                      phy-handle = <&internal_phy_port1>;
-> > +
-> > +                    leds {
-> > +                        #address-cells = <1>;
-> > +                        #size-cells = <0>;
-> > +
-> > +                        led@0 {
-> > +                            reg = <0>;
-> > +                            color = <LED_COLOR_ID_WHITE>;
-> > +                            function = LED_FUNCTION_LAN;
-> > +                            function-enumerator = <1>;
-> > +                            default-state = "keep";
-> > +                        };
-> > +
-> > +                        led@1 {
-> > +                            reg = <1>;
-> > +                            color = <LED_COLOR_ID_AMBER>;
-> > +                            function = LED_FUNCTION_LAN;
-> > +                            function-enumerator = <1>;
+On 12/04/2023 17:33, AngeloGioacchino Del Regno wrote:
+> This renames all definitions and macros to drop the MT6323_ prefix,
+> since it is now possible to easily add support to more PMICs in
+> this driver.
+> While at it, also fix related formatting where possible.
 > 
-> Isn't function-enumerator supposed to be unique within a given 
-> 'function'?
->
+> This commit brings no functional changes.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno<angelogioacchino.delregno@collabora.com>
 
-In the following example the output would be:
-- amber:lan-1
-- white:lan-1
+Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
 
-So in theory it's unique for the same color and function. Is it
-acceptable? Seems sane that there may be multiple color for the same
-function (and enum)
+Regards,
+Alexandre
 
-> > +                            default-state = "keep";
-> > +                        };
-> > +                    };
-> >                  };
-> >  
-> >                  port@2 {
-> > -- 
-> > 2.39.2
-> > 
-
--- 
-	Ansuel
