@@ -2,95 +2,138 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3D2C77B6E
-	for <linux-leds@archiver.kernel.org>; Thu, 13 Apr 2023 14:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AFDFC77B61
+	for <linux-leds@archiver.kernel.org>; Thu, 13 Apr 2023 15:18:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231417AbjDMOso (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 13 Apr 2023 10:48:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45018 "EHLO
+        id S231367AbjDMPS4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 13 Apr 2023 11:18:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230134AbjDMOsi (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Apr 2023 10:48:38 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 803A4A253;
-        Thu, 13 Apr 2023 07:48:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=I1L0Qp2sckfsIBhqUGSZAv87RBu9UChWVeSXNNEVCCg=; b=qjqaLyGI7RXtv0daQN4+J6UUp6
-        vjFwp9dg0vL6T9I+80Ockz/HfJhyoSXUn3hPGg1ig8MOC178Gpj0MrxrcBxzf/+2bovLIfMl/Ja2R
-        FyRQk/E4CFAp1EXQjDYFAzqvTSuP+2dDLG7ccH23GOZ+bOCsGA0q4XO6rgCQjMYcbWXQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1pmyFJ-00ACLu-AF; Thu, 13 Apr 2023 16:48:21 +0200
-Date:   Thu, 13 Apr 2023 16:48:21 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Christian Marangi <ansuelsmth@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        John Crispin <john@phrozen.org>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [net-next PATCH v6 06/16] net: phy: phy_device: Call into the
- PHY driver to set LED brightness
-Message-ID: <9603636f-3296-4c6a-96ca-c522e91c1c4c@lunn.ch>
-References: <20230327141031.11904-1-ansuelsmth@gmail.com>
- <20230327141031.11904-7-ansuelsmth@gmail.com>
- <202ae4b9-8995-474a-1282-876078e15e47@gmail.com>
+        with ESMTP id S229938AbjDMPS4 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Apr 2023 11:18:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A88FE7D8E
+        for <linux-leds@vger.kernel.org>; Thu, 13 Apr 2023 08:18:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681399097;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nJ47cVJlHnKJwn62y6tFjxdmA7al47zHicuz/WaXQ8o=;
+        b=GDE+hGISw25mJuxS8BaM9A4BS7th/j0RL/ieCk9NznjlChflvMIbVgpWfz1d9PMYTJhPwj
+        pS6R8asYSN05THABa9ELlwKEJ79uFHbK6eBPCTGriHAPlYVoNtY2/sYzA78AReAu7WgQk+
+        wmPoNsCSdwsqEdcgw0kwE/Q6x7sUZTc=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-636-x33vrFJIPIihpLOvwaxW3w-1; Thu, 13 Apr 2023 11:18:14 -0400
+X-MC-Unique: x33vrFJIPIihpLOvwaxW3w-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1D8CD1C00ABD;
+        Thu, 13 Apr 2023 15:18:14 +0000 (UTC)
+Received: from x1.nl (unknown [10.39.192.251])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EB2FE141511D;
+        Thu, 13 Apr 2023 15:18:12 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Yauhen Kharuzhy <jekhor@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-leds@vger.kernel.org
+Subject: [PATCH 2/5] leds: cht-wcove: Add suspend/resume handling
+Date:   Thu, 13 Apr 2023 17:18:05 +0200
+Message-Id: <20230413151808.20900-3-hdegoede@redhat.com>
+In-Reply-To: <20230413151808.20900-1-hdegoede@redhat.com>
+References: <20230413151808.20900-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202ae4b9-8995-474a-1282-876078e15e47@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, Apr 13, 2023 at 06:57:51AM -0700, Florian Fainelli wrote:
-> 
-> 
-> On 3/27/2023 7:10 AM, Christian Marangi wrote:
-> > From: Andrew Lunn <andrew@lunn.ch>
-> > 
-> > Linux LEDs can be software controlled via the brightness file in /sys.
-> > LED drivers need to implement a brightness_set function which the core
-> > will call. Implement an intermediary in phy_device, which will call
-> > into the phy driver if it implements the necessary function.
-> > 
-> > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> 
-> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-> 
-> > +	int (*led_brightness_set)(struct phy_device *dev,
-> > +				  u32 index, enum led_brightness value);
-> 
-> I think I would have made this an u8, 4 billion LEDs, man, that's a lot!
+When LED1 is showing the tablet is charging and then the device gets
+suspended followed by unplugging the charger, then it will incorrectly
+still show it is charging.
 
-That can be done. We need to change:
+To avoid this turn both LEDs off on suspend, just like the PMIC always
+turns them off when the tablet is powered off (even if the tablet is
+charging). If hw-control is supported for LED1, then restore the
+initial hw-control settings to let the hw control LED1 while suspended.
 
-        err = of_property_read_u32(led, "reg", &phyled->index);
-        if (err)
-                return err;
+To restore the state the LEDs had before suspending, save it before
+turning the LEDs off and restore it on resume.
 
-to a u8, to avoid overflow problems in other places. It looks like
-of_property_read_u8() does the correct thing if somebody tried to use
-4 billion - 1.
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/leds/leds-cht-wcove.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-  Andrew
+diff --git a/drivers/leds/leds-cht-wcove.c b/drivers/leds/leds-cht-wcove.c
+index 06447804d050..2d968ddd18c5 100644
+--- a/drivers/leds/leds-cht-wcove.c
++++ b/drivers/leds/leds-cht-wcove.c
+@@ -15,6 +15,7 @@
+ #include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/suspend.h>
+ 
+ #define CHT_WC_LED1_CTRL		0x5e1f
+ #define CHT_WC_LED1_FSM			0x5e20
+@@ -69,6 +70,7 @@ struct cht_wc_led {
+ 	const struct cht_wc_led_regs *regs;
+ 	struct regmap *regmap;
+ 	struct mutex mutex;
++	struct cht_wc_led_saved_regs saved_regs;
+ };
+ 
+ struct cht_wc_leds {
+@@ -352,12 +354,43 @@ static void cht_wc_leds_disable(struct platform_device *pdev)
+ 		cht_wc_led_restore_regs(&leds->leds[0], &leds->led1_initial_regs);
+ }
+ 
++/* On suspend save current settings and turn LEDs off */
++static int cht_wc_leds_suspend(struct device *dev)
++{
++	struct cht_wc_leds *leds = dev_get_drvdata(dev);
++	int i, ret;
++
++	for (i = 0; i < CHT_WC_LED_COUNT; i++) {
++		ret = cht_wc_led_save_regs(&leds->leds[i], &leds->leds[i].saved_regs);
++		if (ret < 0)
++			return ret;
++	}
++
++	cht_wc_leds_disable(to_platform_device(dev));
++	return 0;
++}
++
++/* On resume restore the saveds settings */
++static int cht_wc_leds_resume(struct device *dev)
++{
++	struct cht_wc_leds *leds = dev_get_drvdata(dev);
++	int i;
++
++	for (i = 0; i < CHT_WC_LED_COUNT; i++)
++		cht_wc_led_restore_regs(&leds->leds[i], &leds->leds[i].saved_regs);
++
++	return 0;
++}
++
++static DEFINE_SIMPLE_DEV_PM_OPS(cht_wc_leds_pm, cht_wc_leds_suspend, cht_wc_leds_resume);
++
+ static struct platform_driver cht_wc_leds_driver = {
+ 	.probe = cht_wc_leds_probe,
+ 	.remove_new = cht_wc_leds_remove,
+ 	.shutdown = cht_wc_leds_disable,
+ 	.driver = {
+ 		.name = "cht_wcove_leds",
++		.pm = pm_sleep_ptr(&cht_wc_leds_pm),
+ 	},
+ };
+ module_platform_driver(cht_wc_leds_driver);
+-- 
+2.39.1
+
