@@ -2,86 +2,118 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A0BC77B6E
-	for <linux-leds@archiver.kernel.org>; Thu, 13 Apr 2023 16:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B85AC77B7C
+	for <linux-leds@archiver.kernel.org>; Thu, 13 Apr 2023 23:18:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229904AbjDMQqN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 13 Apr 2023 12:46:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50616 "EHLO
+        id S230503AbjDMXST (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 13 Apr 2023 19:18:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbjDMQqK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Apr 2023 12:46:10 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB53F9019
-        for <linux-leds@vger.kernel.org>; Thu, 13 Apr 2023 09:46:05 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id xd13so5067699ejb.4
-        for <linux-leds@vger.kernel.org>; Thu, 13 Apr 2023 09:46:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681404364; x=1683996364;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DJjsgRCQD3nGxpiqV9+CyK3OuB9Sivj/PeOsh4G53K0=;
-        b=tbTLXzbzcv/o5pdEVu8hXh8qsR/QKdo5wTXCVHdcMPRA2kdNFcqA8au3eexDMx1JtQ
-         phFtLfgut2lwbhtF6krr/JIpgqpGdAI9Vmo5kwKuAJxPI9vgkzdknD9H4dX/2Yu7/5uM
-         gwc0sYHNp31yNLVSAa9s10Y8oEhrZcNAQXDH2XvPu0OYyFSQb15Ke44yPJ6t/PYj+Nfu
-         s9rXhfcULJiNnCnyFmB2A6KaXxGHn1DfCnSpj8qe4bPN+Vi3foSuqn1KP/BENfKWSYWq
-         vqpyNstVNGuFoJUGURqB6J3Nagl7KMU7xsUTqaQB/R4ReJL7qLuSnS1VqT8uB9wm7TAo
-         8u4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681404364; x=1683996364;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DJjsgRCQD3nGxpiqV9+CyK3OuB9Sivj/PeOsh4G53K0=;
-        b=EUKpmdPsZudv6f6D5NYbQ5jd8UHsEc924FZCjgJAGNrGJCGv5GdRd6fuvGdbYfPNio
-         64gyvO8J70D1oPcJhXq/pyVuIL0LuZjt+cuBHG714YXtyc3Mi7jLfCQj4i11hmmrug/n
-         WKJhRfYfEJajZWSlyJP6GS59u0hWfS2S4cnuHcqZZTnTFYzCYXzhgPFuNW7PKKNFruIK
-         wSQzWI+vucT099XMBJPmWovBXkrugfO5seTChqLKzEozVhuN+2KN8opValOd6PJWoklQ
-         TkVUL/vrcNfj2UAZ+wHrdTNrU76cTa7N2aILcp0FyqsxPVzOIkYp3OB2GXU4SFvLS4BW
-         9Ejg==
-X-Gm-Message-State: AAQBX9fer+qJVGcafABHnrA0plkEPcCZeVYJpkll/Tal7LOSJm8Tf6JB
-        +qXMY5LC1V0I7VtirHb6XpmWrw==
-X-Google-Smtp-Source: AKy350b86CRvvHjujWrh5zEZaxFDPZ1LMnS6r8Jmu7VbtmHIdAhO4+sD9YnyfvCTt1v+etjXJVIQ2w==
-X-Received: by 2002:a17:907:3a03:b0:94c:784f:7569 with SMTP id fb3-20020a1709073a0300b0094c784f7569mr3282936ejc.30.1681404364433;
-        Thu, 13 Apr 2023 09:46:04 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:5032:d2d4:ece5:b035? ([2a02:810d:15c0:828:5032:d2d4:ece5:b035])
-        by smtp.gmail.com with ESMTPSA id x6-20020a170906b08600b0094e6db4d4a1sm1198394ejy.186.2023.04.13.09.46.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Apr 2023 09:46:03 -0700 (PDT)
-Message-ID: <24c6d4fe-128a-2fe1-1e35-d124e5f9c265@linaro.org>
-Date:   Thu, 13 Apr 2023 18:46:03 +0200
+        with ESMTP id S229820AbjDMXSR (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Apr 2023 19:18:17 -0400
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C908BE1;
+        Thu, 13 Apr 2023 16:18:15 -0700 (PDT)
+Received: from [192.168.178.23] (unknown [62.108.10.64])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 24979D0C50;
+        Thu, 13 Apr 2023 23:18:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1681427894; bh=4Q57cOxz+lYlEwmm+I38ufedAPx45aCnfTXWfnz7tmk=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc;
+        b=f7MmPelu/Wcs3poFCFUUu097g5/9nFwaDFVTgboDcju6vZdRrKVGG9m9gJnjgvbeZ
+         uJPFt2bPIJd4j9eMdhzrZT+ic2amVkoK8G73P9taVa3Ltab9jLJaNKlZE2YNa/esEe
+         JUxPDoOyOYgox8zDypDP7fbzGlTENRL9DdA+Cx90=
+From:   Luca Weiss <luca@z3ntu.xyz>
+Date:   Fri, 14 Apr 2023 01:17:48 +0200
+Subject: [PATCH 4/8] leds: qcom-lpg: Add support for PMI632 LPG
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v3] dt-bindings: leds: Convert PCA9532 to dtschema
-Content-Language: en-US
-To:     Wadim Egorov <w.egorov@phytec.de>, upstream@lists.phytec.de,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Cc:     riku.voipio@iki.fi, krzysztof.kozlowski+dt@linaro.org,
-        robh+dt@kernel.org, lee@kernel.org, pavel@ucw.cz
-References: <20230412140552.451527-1-w.egorov@phytec.de>
- <20230412140552.451527-2-w.egorov@phytec.de>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230412140552.451527-2-w.egorov@phytec.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20230414-pmi632-v1-4-fe94dc414832@z3ntu.xyz>
+References: <20230414-pmi632-v1-0-fe94dc414832@z3ntu.xyz>
+In-Reply-To: <20230414-pmi632-v1-0-fe94dc414832@z3ntu.xyz>
+To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-iio@vger.kernel.org,
+        Luca Weiss <luca@z3ntu.xyz>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1771; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=4Q57cOxz+lYlEwmm+I38ufedAPx45aCnfTXWfnz7tmk=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkOI2w4ji/JSdN8pwMAx9rdvdxYBMkGFfcSN6T+
+ RbXbb6fs16JAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZDiNsAAKCRBy2EO4nU3X
+ Vu5xEACAExu0wzlBGq2iCUgTIGmn2DnQNk7ea59TuiJ2A0KhXIDascR0hbVtdKLJbEV1YNR813D
+ FcuEOBioCmY+yMNpnm0RvBnbM1GMQH98Q4vCyxc79RD5itEFQAMmezyjlrohgBRXctoZxFrc9K4
+ FxWyf267gY2rOYEmplFo6bUD+qNfnzDySEV1K0a/6Y/RLHzt8vh7YwS7I7R/6O5xY6m+eiYDxSE
+ VGsNAfd965WGdmXhCrrAI/VmrC6A7gwgKs01Xm7f4qulWROck+O6UwIi/AqD8DnO6AYvD9bYoGV
+ rnf3J7ZvymqNX2ab21zlEZFNAoB18i4Ni57gV28Wijfaif1CFTeLM2NCX3zYYImtnlzGxwZkBKB
+ ZTaclMDPVEgYHAkMVVHPwm0skb5Wu8r6yd4gaRhPbqJnwO31CKqyp5K36tONqEcKKgo1E9TofiE
+ +FsHqY4QhoF1hw6OoPW9UguFDekvst6yR55tpGhfShND4HHTGgQqKtUr/MuD2x8sYUYq3+TCPxa
+ rDNXprHv9j9gvem0nggjUiMcq6fidHdXdE6ReBdk6AwK+hn3MMWQgBT3k1tXN2uIS637eCWwv8n
+ 1S8rlmTTXLn/C7qilIcv9VNkEHSgiQr73X3s5vXgxyjc1kxUU8RRttmujZuH1UqPOlxdNa2Tbzf
+ EJPEzySAQu1fyQQ==
+X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 12/04/2023 16:05, Wadim Egorov wrote:
-> Convert the PCA9532 LED Dimmer to dtschema.
-> While at it, update the example to match recommended node names and
-> the link to the product datasheet. Also add GPIO properties since
-> the driver allows to use unused pins as GPIOs.
-> 
-> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-> ---
+The PMI632 PMIC contains 5 PWM channels, 3 of which can be used for
+LEDs.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+For the LED pattern it doesn't have LUT like other PMICs but uses SDAM
+instead. This is not currently implemented in the driver but since LPG
+works fine without it, add support for the PMIC now.
 
-Best regards,
-Krzysztof
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+---
+ drivers/leds/rgb/leds-qcom-lpg.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
+index 67f48f222109..51763ecb8c1e 100644
+--- a/drivers/leds/rgb/leds-qcom-lpg.c
++++ b/drivers/leds/rgb/leds-qcom-lpg.c
+@@ -1353,6 +1353,20 @@ static const struct lpg_data pm8994_lpg_data = {
+ 	},
+ };
+ 
++/* PMI632 uses SDAM instead of LUT for pattern */
++static const struct lpg_data pmi632_lpg_data = {
++	.triled_base = 0xd000,
++
++	.num_channels = 5,
++	.channels = (const struct lpg_channel_data[]) {
++		{ .base = 0xb300, .triled_mask = BIT(7) },
++		{ .base = 0xb400, .triled_mask = BIT(6) },
++		{ .base = 0xb500, .triled_mask = BIT(5) },
++		{ .base = 0xb600 },
++		{ .base = 0xb700 },
++	},
++};
++
+ static const struct lpg_data pmi8994_lpg_data = {
+ 	.lut_base = 0xb000,
+ 	.lut_size = 24,
+@@ -1436,6 +1450,7 @@ static const struct of_device_id lpg_of_table[] = {
+ 	{ .compatible = "qcom,pm8916-pwm", .data = &pm8916_pwm_data },
+ 	{ .compatible = "qcom,pm8941-lpg", .data = &pm8941_lpg_data },
+ 	{ .compatible = "qcom,pm8994-lpg", .data = &pm8994_lpg_data },
++	{ .compatible = "qcom,pmi632-lpg", .data = &pmi632_lpg_data },
+ 	{ .compatible = "qcom,pmi8994-lpg", .data = &pmi8994_lpg_data },
+ 	{ .compatible = "qcom,pmi8998-lpg", .data = &pmi8998_lpg_data },
+ 	{ .compatible = "qcom,pmc8180c-lpg", .data = &pm8150l_lpg_data },
+
+-- 
+2.40.0
 
