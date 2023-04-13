@@ -2,57 +2,62 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE86FC77B6E
-	for <linux-leds@archiver.kernel.org>; Thu, 13 Apr 2023 14:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C0DC77B61
+	for <linux-leds@archiver.kernel.org>; Thu, 13 Apr 2023 14:05:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231514AbjDMOBr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 13 Apr 2023 10:01:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35356 "EHLO
+        id S230315AbjDMOFI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 13 Apr 2023 10:05:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230010AbjDMOBq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Apr 2023 10:01:46 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEBA211A;
-        Thu, 13 Apr 2023 07:01:45 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id v14-20020a05600c470e00b003f06520825fso13663741wmo.0;
-        Thu, 13 Apr 2023 07:01:45 -0700 (PDT)
+        with ESMTP id S231760AbjDMOFG (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Apr 2023 10:05:06 -0400
+Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C39DB19B7;
+        Thu, 13 Apr 2023 07:04:51 -0700 (PDT)
+Received: by mail-qt1-x836.google.com with SMTP id gb12so13363263qtb.6;
+        Thu, 13 Apr 2023 07:04:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681394504; x=1683986504;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=uOHTamwKNL40GhmSChgfj+zLAbo8CbA29L61cgq0bpE=;
-        b=G845KAhU6xI8AzEGleuaSgyKc/tkw+0l10Pgl2ql2iERI016euWl0ztj2Jtku9EWjE
-         XzgnPXYm2rJ5Z6MWj7nAYfC0TKlTVvu7bv4z2MqcWqrmetcjpIngUnp/cep2byHpZyYy
-         wlgwVKJvF7k2/EDrncZLO2rFwkZAogjbddoEBeGYvu6o0Qt2ztmcWk4RNW8DLOcKnIK3
-         wfWN5QSsuK82eE17Ihl+xdy7oZFgAyCUMSRmAUTwxWQ7A1LgOU7NiKfhUcyIPRxR7+WT
-         w79ZWayhGjAHDH+kh6FgI26OuDeliCOPiPiMeY81WyzZd8y0tmrAOQb0oo6BPUmj+3d6
-         OJ4Q==
+        d=gmail.com; s=20221208; t=1681394691; x=1683986691;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NawhwqeTpbHH9NZVueC607f+P3eR2lIHqHXJApMeoUE=;
+        b=E31Mscy3zzm+DMmohqB3G633x/K1cYFdPBNlXFMZSL8BF4rbjEl9heOImx+L8132Gk
+         2t4M0+8oUmgmqMyjlR8B5ekq6sLOF5A782LTcE7Pff9bYFJmKZKz+i8uhkA2Ld40DnfO
+         7SHYovtdDJ+G5aiQlEtaz7bVuyaXSuoLWFScrIgsVlUpunifiLAVzYYit2Qozuai5KWW
+         0Ii1dkeEPJdhIz9sAwN6DSeK2gZ1ral3fXf8V2ACr/zWVhGyIBlpHnYKna6esyR8Q0LN
+         xqJ7OMikXxXPCb3wpqpypYOWqWa468Xy504dGsNPCeHpk4hS7XA5sgzpkVtotHPcChN8
+         n5gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681394504; x=1683986504;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uOHTamwKNL40GhmSChgfj+zLAbo8CbA29L61cgq0bpE=;
-        b=AthJ9/Sotjs+isjPGgkGbArTZNjrRsrD+9EBCQqbz+b5/KRqULw8Bkihm8OZMdckgr
-         qLGfvHVz4S87cBU3bUwWbA6WYmN5Xh7Qw5CQ3k1ixDDlNwQe40Plgp3tWGd6jVwV3rLy
-         kyW5nfe/k4KtcLRejrkAiDcxnRZQB92mQeCvEhVWXIb+e29Hk4L6ER5FODtm8vTyfMsO
-         trrQ1wg5O1OtZhpKidxtbk303ClWXZkh3SvWkHctDTvAnvcsVITSb0PT+UafeMPF5WCT
-         5TndlXBy6EK1AkwABqsy7ZILNmNSxhM01K6dJOdbgp5btEEW6ePLesOmso5g0kP9KHfI
-         356A==
-X-Gm-Message-State: AAQBX9c/O4odkYGUSvMy/hzMFeeNBCWBVlhxkJXCPTzMUmO4vLYqJnix
-        50uYQYFxFfQ1EqYbfF1onns=
-X-Google-Smtp-Source: AKy350aCOeLGVdCGwcMkMytZAVJF3k2hKosfOFGhq5NwBEjscTYcs49JjHc5JD4A851zKXAccyv3nw==
-X-Received: by 2002:a05:600c:2304:b0:3f0:7f07:e617 with SMTP id 4-20020a05600c230400b003f07f07e617mr1969779wmo.8.1681394503378;
-        Thu, 13 Apr 2023 07:01:43 -0700 (PDT)
-Received: from Ansuel-xps. (host-87-7-13-196.retail.telecomitalia.it. [87.7.13.196])
-        by smtp.gmail.com with ESMTPSA id k17-20020a7bc411000000b003f09fe8312csm1909489wmi.20.2023.04.13.07.01.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Apr 2023 07:01:42 -0700 (PDT)
-Message-ID: <64380b46.7b0a0220.978a.1eb4@mx.google.com>
-X-Google-Original-Message-ID: <ZDc6lf4+qd0Fm2j+@Ansuel-xps.>
-Date:   Thu, 13 Apr 2023 01:11:17 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
+        d=1e100.net; s=20221208; t=1681394691; x=1683986691;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NawhwqeTpbHH9NZVueC607f+P3eR2lIHqHXJApMeoUE=;
+        b=A78g7b7hDcu97Wac130R3w3hhoRqdwEYklEbNCeOwkC8kx4RyYMcivEgpdHaDVERt1
+         eNMIzfklsXEUb9luNepPvKVtLN7FUdgfCfDP34H0npfbq1dbgmtjbhNV0VjCMpxFC8D0
+         apisRVdI0ABzUcP0yFL+xvIbR1KWzTsPYkN5QaQnP5CMYlF/bZ2GbCoTfC/0k2POMJYK
+         PuIBBwXzLMfTGhSkd2skl/nhjMAelNwBahhTAPOkGzfBLhvAfioHBIksJMUrjp1My41A
+         jcxspW/d7JgkGj32qMSzvJhgzzTgBfiemiuzUQIlkhDJ4OiMCsFniRDvDi5+a3KXN/vz
+         DlIg==
+X-Gm-Message-State: AAQBX9fevqkZaa2VAtuOp65TjB8zwU1QLctboV4gSldn47ktKzXtNeCP
+        TEtxXfCNKROyCwmhPRRvsZTyQmm6Yv8f1w==
+X-Google-Smtp-Source: AKy350arbkApYkL1K/TFNHHma7RYJY4EiMcNJOjiKfGB43WxSYDcmb48Ung3kqgX+Ba2+AKfHBgLeQ==
+X-Received: by 2002:a05:622a:1a18:b0:3e1:7bb5:f0c5 with SMTP id f24-20020a05622a1a1800b003e17bb5f0c5mr3164054qtb.58.1681394690852;
+        Thu, 13 Apr 2023 07:04:50 -0700 (PDT)
+Received: from [192.168.1.105] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
+        by smtp.gmail.com with ESMTPSA id d7-20020ac800c7000000b003e29583cf22sm500347qtg.91.2023.04.13.07.04.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Apr 2023 07:04:50 -0700 (PDT)
+Message-ID: <7ea465d9-95eb-d158-632a-a2aa892fd2bf@gmail.com>
+Date:   Thu, 13 Apr 2023 07:04:46 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [net-next PATCH v6 06/16] net: phy: phy_device: Call into the PHY
+ driver to set LED brightness
+Content-Language: en-US
+To:     Christian Marangi <ansuelsmth@gmail.com>
 Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -73,43 +78,48 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org
-Subject: Re: [net-next PATCH v6 06/16] net: phy: phy_device: Call into the
- PHY driver to set LED brightness
 References: <20230327141031.11904-1-ansuelsmth@gmail.com>
  <20230327141031.11904-7-ansuelsmth@gmail.com>
  <202ae4b9-8995-474a-1282-876078e15e47@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202ae4b9-8995-474a-1282-876078e15e47@gmail.com>
+ <64380b46.7b0a0220.978a.1eb4@mx.google.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <64380b46.7b0a0220.978a.1eb4@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, Apr 13, 2023 at 06:57:51AM -0700, Florian Fainelli wrote:
-> 
-> 
-> On 3/27/2023 7:10 AM, Christian Marangi wrote:
-> > From: Andrew Lunn <andrew@lunn.ch>
-> > 
-> > Linux LEDs can be software controlled via the brightness file in /sys.
-> > LED drivers need to implement a brightness_set function which the core
-> > will call. Implement an intermediary in phy_device, which will call
-> > into the phy driver if it implements the necessary function.
-> > 
-> > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> 
-> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-> 
-> > +	int (*led_brightness_set)(struct phy_device *dev,
-> > +				  u32 index, enum led_brightness value);
-> 
-> I think I would have made this an u8, 4 billion LEDs, man, that's a lot!
 
-If andrew is ok we can still consider to reduce it. (but just to joke
-about it... A MAN CAN DREAM OF A FULL HD SCREEN ON THEIR OWN SPECIAL
-PORT)
 
+On 4/12/2023 4:11 PM, Christian Marangi wrote:
+> On Thu, Apr 13, 2023 at 06:57:51AM -0700, Florian Fainelli wrote:
+>>
+>>
+>> On 3/27/2023 7:10 AM, Christian Marangi wrote:
+>>> From: Andrew Lunn <andrew@lunn.ch>
+>>>
+>>> Linux LEDs can be software controlled via the brightness file in /sys.
+>>> LED drivers need to implement a brightness_set function which the core
+>>> will call. Implement an intermediary in phy_device, which will call
+>>> into the phy driver if it implements the necessary function.
+>>>
+>>> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+>>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+>>
+>> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+>>
+>>> +	int (*led_brightness_set)(struct phy_device *dev,
+>>> +				  u32 index, enum led_brightness value);
+>>
+>> I think I would have made this an u8, 4 billion LEDs, man, that's a lot!
+> 
+> If andrew is ok we can still consider to reduce it. (but just to joke
+> about it... A MAN CAN DREAM OF A FULL HD SCREEN ON THEIR OWN SPECIAL
+> PORT)
+
+Humm just thought of something else, is it OK for led_brightness_set and 
+led_blink_set to call into functions that might require sleeping (MDIO, 
+I2C, SPI, etc.)?
 -- 
-	Ansuel
+Florian
