@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A2DC77B7E
-	for <linux-leds@archiver.kernel.org>; Mon, 17 Apr 2023 15:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA724C77B76
+	for <linux-leds@archiver.kernel.org>; Mon, 17 Apr 2023 15:23:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231280AbjDQPWp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 17 Apr 2023 11:22:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45808 "EHLO
+        id S230481AbjDQPXJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 17 Apr 2023 11:23:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231288AbjDQPWM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 Apr 2023 11:22:12 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBDC6C649;
-        Mon, 17 Apr 2023 08:21:20 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id v3so961272wml.0;
-        Mon, 17 Apr 2023 08:21:20 -0700 (PDT)
+        with ESMTP id S230428AbjDQPWd (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 Apr 2023 11:22:33 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 370AEC67B;
+        Mon, 17 Apr 2023 08:21:36 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3f09f954af5so11043765e9.0;
+        Mon, 17 Apr 2023 08:21:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681744879; x=1684336879;
+        d=gmail.com; s=20221208; t=1681744889; x=1684336889;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cMovAHVkjGy+uoUm4sFkhEHcZFqfs7jnbrYZOptwaFE=;
-        b=GEyCjFMs6FDONVol7pOzUDp+XIe04EwVoxuXi0pS0E7bTDjH8aGGxA1Myzn7vGb+UJ
-         V1qlLOh+Bo194NEzxtaZFkoZ0t5HVyAbAcutsaq31GpjfMkzq3bpYEWE7KwxoBDcKQOf
-         nML5RiLR9iODUfE191pPUP+Emj8dBrChuRPXkqjzaY45ZfeeRL5NokjC6ROW3GKDOm7b
-         MXDTbCWSu0FJmPHbBDBBEZIxOwIKJ1kHnbKpu2GXnqL7HNWMPOSBrIdBkHZRMdZFM2/2
-         TwvBPV3+JY0EA3+MQdIcwsZndaDAqZB/KSAuF0xGPBqX6V3enF/6P9fMyKga5COgsOVn
-         9A0A==
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uTKNAaQmPuBEEmm7r0M/hJa5foC7EUK457tHpsrXZIU=;
+        b=Pz1ZG12LAfMDtTVcvyrH73KzKnUfvemue6XOc7e28NCjE+syX1XIim9sSnblhUIm6f
+         JaTXeEhStfPUql4+uio4lJkx7Ft4iVyR1TeaQzwA9iwyq1+EBNzaTgJ9InZ1fY2rfC8i
+         DXHcLrlFtN+h/bNxpvEdaxl6uBvCZKLmMrD5NTT52dExjMz6w90uajm60OSHuegjjGz0
+         QLNDyfAsRQLjwK2yb5Z1ohuG90csdSkzrXlpobdskkviPEz1fP4JIkd67FugeRJMr+w4
+         4iGk+Jfvhea1tf2J2rY6l8kOPc0OknFwc64yxh2e1dTjSMwqlU9qd/XXgq/Pn7SFF31L
+         l5WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681744879; x=1684336879;
+        d=1e100.net; s=20221208; t=1681744889; x=1684336889;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cMovAHVkjGy+uoUm4sFkhEHcZFqfs7jnbrYZOptwaFE=;
-        b=M0ToPNkIbkiQ6Ns0YHvhd/f3UB5VjqVHv5oRgP62c+JscHtjvfO3Xg6FljAKJJf6Sr
-         EhdyrNFcr3AsFT3T1NhnC/37Jm2bc2rs19M7WRQ8/oLzElpRwZNgLPGSxd34XbOVDN2T
-         ywSCYxHD9o1ZWfVFL2hFmTWlxTP0jV88Kw8SO4ldO6eD0hxbaXonGzea62EGLamd6rba
-         9UJS3PbBAEEk7igiMp/kujcWEyhsPYFlzk76y0w2BkJr6L5/rpAoYC0LnHxOV4Kiv1if
-         0VigDaJNrzzgXNDovGit+xwF1G7YJ8Z4EzQKU8Zz9NvsnwlZamq9A2s/xWB4q4rMLDrU
-         5peg==
-X-Gm-Message-State: AAQBX9ejszUDpLnTWV3g5zn72Y/0J0Dswxs9UrdcVKf93FWuuJSNP2Hf
-        oBKEZMLGlM5zQ1LF3DjJkP0=
-X-Google-Smtp-Source: AKy350ZIJ+TrDF82kD2yC1FZXavbmN7VsLgQmu6R1Y9UZwTNr/oSShLvVRM30x8ovWzrSNBY8bb06w==
-X-Received: by 2002:a7b:c8c9:0:b0:3f1:727d:77a6 with SMTP id f9-20020a7bc8c9000000b003f1727d77a6mr3917296wml.3.1681744878520;
-        Mon, 17 Apr 2023 08:21:18 -0700 (PDT)
+        bh=uTKNAaQmPuBEEmm7r0M/hJa5foC7EUK457tHpsrXZIU=;
+        b=UefPB8xYGXzyjngququWsNpx0l9aUyPNTndeqQkF9cgms9JXUb3jNtxXR7YJ3dnbu3
+         onPWN9auHB8Ck9CE/hPBAPLNACUtOHHDmvQdYbHa41EeXtp4kYJPmV5cC00xGQYdXcOh
+         0b12/mvzF63jsf+7hleV9lHGGmfOvXgtKV9I9pREprVr69mlNxQcpIi4kNy0mdQHRXcB
+         tKZCn5t5lGmjVQABtZ11JIysGFrn0FT9q7uPtv9DukGght10DLFyxZ0DZ0GEm+PGy5HN
+         NVdFpxhgiFXrA1rKng74fwRdBNhuu+EhM94FDk+4E6EIxtZK+MV57WryqM03mtZqH9XN
+         beiw==
+X-Gm-Message-State: AAQBX9c656HtqRi1kxAYRKVgbRbhlay8IG1R2v9883u6ri5Wcp6IAZzo
+        fL2BcF/0MiKenhjMpf1keZs=
+X-Google-Smtp-Source: AKy350Z1zkLcEctazd0wxeEfObLTI20cnhzReBwbbWQ5c6DqPtLWI6i51ks402Gf4aqHkIzDMBeZbw==
+X-Received: by 2002:adf:e54e:0:b0:2e4:abb1:3e8b with SMTP id z14-20020adfe54e000000b002e4abb13e8bmr5261848wrm.25.1681744889263;
+        Mon, 17 Apr 2023 08:21:29 -0700 (PDT)
 Received: from localhost.localdomain (host-87-7-13-196.retail.telecomitalia.it. [87.7.13.196])
-        by smtp.googlemail.com with ESMTPSA id j15-20020a05600c1c0f00b003f173be2ccfsm3501354wms.2.2023.04.17.08.21.14
+        by smtp.googlemail.com with ESMTPSA id j15-20020a05600c1c0f00b003f173be2ccfsm3501354wms.2.2023.04.17.08.21.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Apr 2023 08:21:16 -0700 (PDT)
+        Mon, 17 Apr 2023 08:21:27 -0700 (PDT)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -73,9 +73,10 @@ To:     Andrew Lunn <andrew@lunn.ch>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: [net-next PATCH v7 10/16] dt-bindings: net: ethernet-controller: Document support for LEDs node
-Date:   Mon, 17 Apr 2023 17:17:32 +0200
-Message-Id: <20230417151738.19426-11-ansuelsmth@gmail.com>
+Cc:     Jonathan McDowell <noodles@earth.li>
+Subject: [net-next PATCH v7 12/16] ARM: dts: qcom: ipq8064-rb3011: Drop unevaluated properties in switch nodes
+Date:   Mon, 17 Apr 2023 17:17:34 +0200
+Message-Id: <20230417151738.19426-13-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230417151738.19426-1-ansuelsmth@gmail.com>
 References: <20230417151738.19426-1-ansuelsmth@gmail.com>
@@ -85,65 +86,43 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Document support for LEDs node in ethernet-controller.
-Ethernet Controller may support different LEDs that can be configured
-for different operation like blinking on traffic event or port link.
+IPQ8064 MikroTik RB3011UiAS-RM DT have currently unevaluted properties
+in the 2 switch nodes. The bindings #address-cells and #size-cells are
+redundant and cause warning for 'Unevaluated properties are not
+allowed'.
 
-Also add some Documentation to describe the difference of these nodes
-compared to PHY LEDs, since ethernet-controller LEDs are controllable
-by the ethernet controller regs and the possible intergated PHY doesn't
-have control on them.
+Drop these bindings to mute these warning as they should not be there
+from the start.
 
+Cc: Jonathan McDowell <noodles@earth.li>
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Reviewed-by: Jonathan McDowell <noodles@earth.li>
+Tested-by: Jonathan McDowell <noodles@earth.li>
 ---
- .../bindings/net/ethernet-controller.yaml     | 35 +++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ arch/arm/boot/dts/qcom-ipq8064-rb3011.dts | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/ethernet-controller.yaml b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-index 00be387984ac..ebc2646ab5ff 100644
---- a/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-@@ -222,6 +222,41 @@ properties:
-         required:
-           - speed
+diff --git a/arch/arm/boot/dts/qcom-ipq8064-rb3011.dts b/arch/arm/boot/dts/qcom-ipq8064-rb3011.dts
+index f908889c4f95..47a5d1849c72 100644
+--- a/arch/arm/boot/dts/qcom-ipq8064-rb3011.dts
++++ b/arch/arm/boot/dts/qcom-ipq8064-rb3011.dts
+@@ -38,8 +38,6 @@ mdio0: mdio-0 {
  
-+  leds:
-+    description:
-+      Describes the LEDs associated by Ethernet Controller.
-+      These LEDs are not integrated in the PHY and PHY doesn't have any
-+      control on them. Ethernet Controller regs are used to control
-+      these defined LEDs.
-+
-+    type: object
-+
-+    properties:
-+      '#address-cells':
-+        const: 1
-+
-+      '#size-cells':
-+        const: 0
-+
-+    patternProperties:
-+      '^led@[a-f0-9]+$':
-+        $ref: /schemas/leds/common.yaml#
-+
-+        properties:
-+          reg:
-+            maxItems: 1
-+            description:
-+              This define the LED index in the PHY or the MAC. It's really
-+              driver dependent and required for ports that define multiple
-+              LED for the same port.
-+
-+        required:
-+          - reg
-+
-+        unevaluatedProperties: false
-+
-+    additionalProperties: false
-+
- dependencies:
-   pcs-handle-names: [pcs-handle]
+ 		switch0: switch@10 {
+ 			compatible = "qca,qca8337";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+ 
+ 			dsa,member = <0 0>;
+ 
+@@ -105,8 +103,6 @@ mdio1: mdio-1 {
+ 
+ 		switch1: switch@14 {
+ 			compatible = "qca,qca8337";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+ 
+ 			dsa,member = <1 0>;
  
 -- 
 2.39.2
