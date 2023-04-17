@@ -2,126 +2,85 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD34C77B72
-	for <linux-leds@archiver.kernel.org>; Mon, 17 Apr 2023 11:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E3FC77B72
+	for <linux-leds@archiver.kernel.org>; Mon, 17 Apr 2023 12:29:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbjDQL1n (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 17 Apr 2023 07:27:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49564 "EHLO
+        id S229717AbjDQM3G (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 17 Apr 2023 08:29:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbjDQL1m (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 Apr 2023 07:27:42 -0400
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 756E24C1C;
-        Mon, 17 Apr 2023 04:26:51 -0700 (PDT)
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        id 1poMyw-0000Lo-Iw; Mon, 17 Apr 2023 13:25:14 +0200
-Message-ID: <69602f1b-4afa-d864-b6d3-d8237f81a51d@leemhuis.info>
-Date:   Mon, 17 Apr 2023 13:25:13 +0200
+        with ESMTP id S229685AbjDQM3F (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 Apr 2023 08:29:05 -0400
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F17910E4
+        for <linux-leds@vger.kernel.org>; Mon, 17 Apr 2023 05:28:55 -0700 (PDT)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 4A6E11C0AB3; Mon, 17 Apr 2023 14:28:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+        t=1681734533;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kzbramfxCpHXyy8XYkUSHXABg/3RmZFK4egZ21qgwRk=;
+        b=BRZVyHL1jynvBf/MrdvDZdY2ruRAMcKfjnhORH76GUiawJ96q/MSpfTbNMRhCUBDKgnuXz
+        8dw9EnMMdkSAk9LbDK5gVUHxZbxMXbT9CZQRHdvJV821VFs/e82seDw7LBoeJ+mOxnM/B6
+        gPC1VC97RzbEaw8PZl0ZWeGjxthZS/8=
+Date:   Mon, 17 Apr 2023 14:28:52 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Florian Eckert <fe@dev.tdt.de>
+Subject: Re: [PATCH] leds: trigger/tty: Use led_set_brightness_nosleep() to
+ set brightness
+Message-ID: <ZD07hLV1gs+gw26s@duo.ucw.cz>
+References: <20230414164853.3668229-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: kernel error at led trigger "phy0tpt"
-Content-Language: en-US, de-DE
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Tobias Dahms <dahms.tobias@web.de>,
-        Sean Wang <sean.wang@mediatek.com>
-Cc:     stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        Linux regressions mailing list <regressions@lists.linux.dev>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-References: <91feceb2-0df4-19b9-5ffa-d37e3d344fdf@web.de>
- <3fcc707b-f757-e74b-2800-3b6314217868@leemhuis.info>
- <fcecf6fc-bf18-73a0-9fc1-6850e183323a@web.de>
- <d14fb08c-70e3-4cc7-caf9-87e73eab9194@gmail.com>
- <8b07ead5-f105-da86-e7da-ee49616f7c1d@collabora.com>
-From:   "Linux regression tracking (Thorsten Leemhuis)" 
-        <regressions@leemhuis.info>
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <8b07ead5-f105-da86-e7da-ee49616f7c1d@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1681730811;1bf629c5;
-X-HE-SMSGID: 1poMyw-0000Lo-Iw
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="QadF/vCVPG5uFgpZ"
+Content-Disposition: inline
+In-Reply-To: <20230414164853.3668229-1-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-[adding Matthias to the list of recipients, who back then applied to
-culprit]
 
-Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-for once, to make this easily accessible to everyone.
+--QadF/vCVPG5uFgpZ
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-AngeloGioacchino, Has any progress been made to fix below regression? It
-doesn't look like it from here, hence I wondered if it fall through the
-cracks.
+Hi!
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+> After commit ba8a86e4dadb ("leds: trigger/tty: Use
+> led_set_brightness_sync() from workqueue") this is the second try to
+> pick the right function to set the LED brightness from a trigger.
+>=20
+> led_set_brightness_sync() has the problem that it doesn't work for LEDs
+> without a .brightness_set_blocking() callback. This is (among others)
+> the case for LEDs connected to non-sleeping GPIOs.
+>=20
+> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
-#regzbot poke
+I don't think this is right.
 
-On 27.03.23 10:23, AngeloGioacchino Del Regno wrote:
-> Il 26/03/23 15:23, Bagas Sanjaya ha scritto:
->> On 3/26/23 02:20, Tobias Dahms wrote:
->>> Hello,
->>>
->>> the bisection gives following result:
->>> --------------------------------------------------------------------
->>> 18c7deca2b812537aa4d928900e208710f1300aa is the first bad commit
->>> commit 18c7deca2b812537aa4d928900e208710f1300aa
->>> Author: AngeloGioacchino Del Regno
->>> <angelogioacchino.delregno@collabora.com>
->>> Date:   Tue May 17 12:47:08 2022 +0200
->>>
->>>      soc: mediatek: pwrap: Use readx_poll_timeout() instead of custom
->>> function
->>>
->>>      Function pwrap_wait_for_state() is a function that polls an address
->>>      through a helper function, but this is the very same operation that
->>>      the readx_poll_timeout macro means to do.
->>>      Convert all instances of calling pwrap_wait_for_state() to instead
->>>      use the read_poll_timeout macro.
->>>
->>>      Signed-off-by: AngeloGioacchino Del Regno
->>> <angelogioacchino.delregno@collabora.com>
->>>      Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>>      Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>>      Link:
->>> https://lore.kernel.org/r/20220517104712.24579-2-angelogioacchino.delregno@collabora.com
->>>      Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
->>>
->>>   drivers/soc/mediatek/mtk-pmic-wrap.c | 60
->>> ++++++++++++++++++++----------------
->>>   1 file changed, 33 insertions(+), 27 deletions(-)
->>> --------------------------------------------------------------------
->>>
->>
->> OK, I'm updating the regression status:
->>
->> #regzbot introduced: 18c7deca2b8125
->>
->> And for replying, don't top-post, but rather reply inline with
->> appropriate context instead; hence I cut the replied context.
->>
-> 
-> There are two possible solutions to that, specifically, either:
->  1. Change readx_poll_timeout() to readx_poll_timeout_atomic(); or
->  2. Fix the mt6323-led driver so that this operation gets done
->     out of atomic context, which is IMO the option to prefer.
-> 
-> Ideas?
-> 
-> Regards,
-> Angelo
-> 
-> 
+_nosleep calls _nopm, which assmues it can't sleep, and schedules
+another workqueue to set the LED.
+
+Best regards,
+									Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--QadF/vCVPG5uFgpZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZD07hAAKCRAw5/Bqldv6
+8gqdAJoDNx8mJSmI5JK//0RgIcmX9H9HGQCfY2h9xbhdcFB0fj2P93oGoZPSS0M=
+=xByx
+-----END PGP SIGNATURE-----
+
+--QadF/vCVPG5uFgpZ--
