@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9717DC77B7A
-	for <linux-leds@archiver.kernel.org>; Mon, 17 Apr 2023 15:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4636C77B7D
+	for <linux-leds@archiver.kernel.org>; Mon, 17 Apr 2023 15:22:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229977AbjDQPWi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 17 Apr 2023 11:22:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45732 "EHLO
+        id S229685AbjDQPWo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 17 Apr 2023 11:22:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231273AbjDQPWL (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 Apr 2023 11:22:11 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6090EC152;
-        Mon, 17 Apr 2023 08:21:16 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id q5so13977442wmo.4;
-        Mon, 17 Apr 2023 08:21:16 -0700 (PDT)
+        with ESMTP id S231307AbjDQPWN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 Apr 2023 11:22:13 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51DE2C65B;
+        Mon, 17 Apr 2023 08:21:25 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f0aabd1040so44214175e9.1;
+        Mon, 17 Apr 2023 08:21:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681744874; x=1684336874;
+        d=gmail.com; s=20221208; t=1681744884; x=1684336884;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=E1ISj2J2PV03tP4krHTpRHjfXqHsXcJJVLFtazUDZkU=;
-        b=B93Ol3o2J5Ek8f9qxd0WyFR5pu8RcoK4bPoIaVzz5FOjINaPjMdIqbXFz/hDOyjnQR
-         MJEuYDi+D6GP3/bkUGLMAQ7/pvBFY5xCfKj0p8hvE0WdEJff8qg2h7oWbLrK8frRhnuC
-         t6GZAhlfrz0wzhNoJn94qXxc3R0YsqYNiwEpOOd11FLdpWKCUqTx82VjZSpVsrZSIKiO
-         hpmg4bKHhgPr7UI6i+gQS9NfZoHu/0MdCUZnv6VHmQB0uOBv6h4LrMsOhJy7nORod0nd
-         PcOAF9O5iaNOzLzL6vLISO+FtlM1W4r7gEr/oiQ8GFpjMRl50gjBC5hny9DuEGza4Av8
-         tstg==
+        bh=rV9EcelsXiO5njlxQQAeC/3UMAuEjghxynP/HIeqk7E=;
+        b=Xo1Et9VzokF1Un+UBViXcsNEPqexZ3w1hh+5Ne5SfV/nSjtC0VD80dSqt7r8D6kF01
+         tlhx2suXoiUoRp3QpQPBAw+u6ZSpF893YWiaMcIASTRxLFaYVJn9TYyYLAozz8127kd7
+         8dZz4rltnsJncm167nLsmlNOiCAElrM/o8tAJNqRdZ6HbQkxjS7WTvnfDyDN70y0sk7i
+         uMmsOv2tmeAuaUifBkxWvckJ+biyn4S3gAGCT1lpDcb44fVmink6yBF2XzGnuQGFhAwT
+         m+e0OFcfiBGd/RLlpRYMo39eOig1+Wf5mx9Rgc9RoLEuar5g0a1RxlMP3qYdFR4BJUi5
+         Cmmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681744874; x=1684336874;
+        d=1e100.net; s=20221208; t=1681744884; x=1684336884;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E1ISj2J2PV03tP4krHTpRHjfXqHsXcJJVLFtazUDZkU=;
-        b=bjkWMjcwKgc6SUxxgcvaOsCpf0e6Mt79/eW/NhdzMZ7hVuD41cWlE7OGsgeozCG0yF
-         1qV7zXxrBRJ+S3roNLMCEtxveJF21vrl84vx7PGyKDTL+dDUDUbjFoiGBClXL4QWmmMj
-         yJb1RuBixr2vOacd5VtcgBxY47bI+XIxMO+2WW+OyCDFFGSaVRN+5nHpYisFTzz1+nqW
-         0v7etSOV/RsWEwem8//4OBswta2qIELs3F4nZuKNEq+jYn26oI88RZNX9yUdjo8s/BGk
-         UqtolbdS5l9GV3MrmXYYAJjgo6H6lr3Cd42ZslKNjDixepVcVY3QMXWzIFw9BSXvijsx
-         zJ4g==
-X-Gm-Message-State: AAQBX9dBF7Gsj/aRUznFoQM06f44G8UxRTyM/sqVuszdRBJ5VzJEwLJy
-        W3qanLBHV+w5MISrW32v2Sk=
-X-Google-Smtp-Source: AKy350aEvCB4SkeGEMEgvBixg+WJApsZ++SBQQbR/m8GUqCbS1JahWn+Vkxap90hMcHbMQihvoCB/A==
-X-Received: by 2002:a7b:ce10:0:b0:3ed:2606:d236 with SMTP id m16-20020a7bce10000000b003ed2606d236mr11175269wmc.38.1681744874295;
-        Mon, 17 Apr 2023 08:21:14 -0700 (PDT)
+        bh=rV9EcelsXiO5njlxQQAeC/3UMAuEjghxynP/HIeqk7E=;
+        b=e+fV0OkGPgSqyhnvqak0I43z9I7ELZo2OaDzjDzaxXwFgp0bGhy9EbtoYvPeB3pNoR
+         GcyBQOQwOBONKLMzDDTYaOwwGLk8a69mE2WBg6DdHMljOnF97GmkylEsO4GWpQsBgX7h
+         HC4KGF612bo3onsIQ6+s+n2kWCu/PMKRm4124thRQ94gTq5NgNmYOdB4JZPq8Tp/bSf6
+         V1ftWpRtQJiuc2dzbsglCnTktGzfLmGtqJLyS0bda/OOGmek11ajoDs6668fb5+Ktnb4
+         4Q04Hq0QR8XYMXi7ri3+tPepq8EvUJACTT1DB7Sv6KxmS8YTAA5WM4WCZf0xJ44GjAto
+         lZnw==
+X-Gm-Message-State: AAQBX9dv2p6tiIjP9ROfQ7J5SKmVs9Fb9nhbDB6ecMoLYNOa6qoOKRAr
+        pmEyn1G0nHGgJAqH58r4PNQ=
+X-Google-Smtp-Source: AKy350bxMNBPUgNwgAazK2IDboqf6/FlMetlBFozI9HUlvAID5orG7cGpsyH5XC2K1T8JmHvma6H2g==
+X-Received: by 2002:adf:e702:0:b0:2fb:b869:bc08 with SMTP id c2-20020adfe702000000b002fbb869bc08mr683848wrm.23.1681744883644;
+        Mon, 17 Apr 2023 08:21:23 -0700 (PDT)
 Received: from localhost.localdomain (host-87-7-13-196.retail.telecomitalia.it. [87.7.13.196])
-        by smtp.googlemail.com with ESMTPSA id j15-20020a05600c1c0f00b003f173be2ccfsm3501354wms.2.2023.04.17.08.21.10
+        by smtp.googlemail.com with ESMTPSA id j15-20020a05600c1c0f00b003f173be2ccfsm3501354wms.2.2023.04.17.08.21.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Apr 2023 08:21:13 -0700 (PDT)
+        Mon, 17 Apr 2023 08:21:22 -0700 (PDT)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -73,9 +73,9 @@ To:     Andrew Lunn <andrew@lunn.ch>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: [net-next PATCH v7 09/16] net: phy: marvell: Implement led_blink_set()
-Date:   Mon, 17 Apr 2023 17:17:31 +0200
-Message-Id: <20230417151738.19426-10-ansuelsmth@gmail.com>
+Subject: [net-next PATCH v7 11/16] dt-bindings: net: dsa: qca8k: add LEDs definition example
+Date:   Mon, 17 Apr 2023 17:17:33 +0200
+Message-Id: <20230417151738.19426-12-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230417151738.19426-1-ansuelsmth@gmail.com>
 References: <20230417151738.19426-1-ansuelsmth@gmail.com>
@@ -85,108 +85,61 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+Add LEDs definition example for qca8k Switch Family to describe how they
+should be defined for a correct usage.
 
-The Marvell PHY can blink the LEDs, simple on/off. All LEDs blink at
-the same rate, and the reset default is 84ms per blink, which is
-around 12Hz.
-
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/net/phy/marvell.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ .../devicetree/bindings/net/dsa/qca8k.yaml    | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
-index 8d1eb4c4e1ab..cd5d0ed9c5e5 100644
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@ -147,6 +147,8 @@
- #define MII_88E1318S_PHY_LED_FUNC		0x10
- #define MII_88E1318S_PHY_LED_FUNC_OFF		(0x8)
- #define MII_88E1318S_PHY_LED_FUNC_ON		(0x9)
-+#define MII_88E1318S_PHY_LED_FUNC_HI_Z		(0xa)
-+#define MII_88E1318S_PHY_LED_FUNC_BLINK		(0xb)
- #define MII_88E1318S_PHY_LED_TCR		0x12
- #define MII_88E1318S_PHY_LED_TCR_FORCE_INT	BIT(15)
- #define MII_88E1318S_PHY_LED_TCR_INTn_ENABLE	BIT(7)
-@@ -2862,6 +2864,35 @@ static int m88e1318_led_brightness_set(struct phy_device *phydev,
- 			       MII_88E1318S_PHY_LED_FUNC, reg);
- }
+diff --git a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
+index fe9ebe285938..df64eebebe18 100644
+--- a/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
++++ b/Documentation/devicetree/bindings/net/dsa/qca8k.yaml
+@@ -18,6 +18,8 @@ description:
+   PHY it is connected to. In this config, an internal mdio-bus is registered and
+   the MDIO master is used for communication. Mixed external and internal
+   mdio-bus configurations are not supported by the hardware.
++  Each phy has at most 3 LEDs connected and can be declared
++  using the standard LEDs structure.
  
-+static int m88e1318_led_blink_set(struct phy_device *phydev, u8 index,
-+				  unsigned long *delay_on,
-+				  unsigned long *delay_off)
-+{
-+	int reg;
-+
-+	reg = phy_read_paged(phydev, MII_MARVELL_LED_PAGE,
-+			     MII_88E1318S_PHY_LED_FUNC);
-+	if (reg < 0)
-+		return reg;
-+
-+	switch (index) {
-+	case 0:
-+	case 1:
-+	case 2:
-+		reg &= ~(0xf << (4 * index));
-+			reg |= MII_88E1318S_PHY_LED_FUNC_BLINK << (4 * index);
-+			/* Reset default is 84ms */
-+			*delay_on = 84 / 2;
-+			*delay_off = 84 / 2;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return phy_write_paged(phydev, MII_MARVELL_LED_PAGE,
-+			       MII_88E1318S_PHY_LED_FUNC, reg);
-+}
-+
- static int marvell_probe(struct phy_device *phydev)
- {
- 	struct marvell_priv *priv;
-@@ -3112,6 +3143,7 @@ static struct phy_driver marvell_drivers[] = {
- 		.get_strings = marvell_get_strings,
- 		.get_stats = marvell_get_stats,
- 		.led_brightness_set = m88e1318_led_brightness_set,
-+		.led_blink_set = m88e1318_led_blink_set,
- 	},
- 	{
- 		.phy_id = MARVELL_PHY_ID_88E1145,
-@@ -3219,6 +3251,7 @@ static struct phy_driver marvell_drivers[] = {
- 		.cable_test_tdr_start = marvell_vct5_cable_test_tdr_start,
- 		.cable_test_get_status = marvell_vct7_cable_test_get_status,
- 		.led_brightness_set = m88e1318_led_brightness_set,
-+		.led_blink_set = m88e1318_led_blink_set,
- 	},
- 	{
- 		.phy_id = MARVELL_PHY_ID_88E1540,
-@@ -3246,6 +3279,7 @@ static struct phy_driver marvell_drivers[] = {
- 		.cable_test_tdr_start = marvell_vct5_cable_test_tdr_start,
- 		.cable_test_get_status = marvell_vct7_cable_test_get_status,
- 		.led_brightness_set = m88e1318_led_brightness_set,
-+		.led_blink_set = m88e1318_led_blink_set,
- 	},
- 	{
- 		.phy_id = MARVELL_PHY_ID_88E1545,
-@@ -3273,6 +3307,7 @@ static struct phy_driver marvell_drivers[] = {
- 		.cable_test_tdr_start = marvell_vct5_cable_test_tdr_start,
- 		.cable_test_get_status = marvell_vct7_cable_test_get_status,
- 		.led_brightness_set = m88e1318_led_brightness_set,
-+		.led_blink_set = m88e1318_led_blink_set,
- 	},
- 	{
- 		.phy_id = MARVELL_PHY_ID_88E3016,
-@@ -3415,6 +3450,7 @@ static struct phy_driver marvell_drivers[] = {
- 		.get_tunable = m88e1540_get_tunable,
- 		.set_tunable = m88e1540_set_tunable,
- 		.led_brightness_set = m88e1318_led_brightness_set,
-+		.led_blink_set = m88e1318_led_blink_set,
- 	},
- };
+ properties:
+   compatible:
+@@ -117,6 +119,7 @@ unevaluatedProperties: false
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/leds/common.h>
  
+     mdio {
+         #address-cells = <1>;
+@@ -226,6 +229,25 @@ examples:
+                     label = "lan1";
+                     phy-mode = "internal";
+                     phy-handle = <&internal_phy_port1>;
++
++                    leds {
++                        #address-cells = <1>;
++                        #size-cells = <0>;
++
++                        led@0 {
++                            reg = <0>;
++                            color = <LED_COLOR_ID_WHITE>;
++                            function = LED_FUNCTION_LAN;
++                            default-state = "keep";
++                        };
++
++                        led@1 {
++                            reg = <1>;
++                            color = <LED_COLOR_ID_AMBER>;
++                            function = LED_FUNCTION_LAN;
++                            default-state = "keep";
++                        };
++                    };
+                 };
+ 
+                 port@2 {
 -- 
 2.39.2
 
