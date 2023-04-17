@@ -2,85 +2,105 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E3FC77B72
-	for <linux-leds@archiver.kernel.org>; Mon, 17 Apr 2023 12:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4430BC77B70
+	for <linux-leds@archiver.kernel.org>; Mon, 17 Apr 2023 12:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229717AbjDQM3G (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 17 Apr 2023 08:29:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49114 "EHLO
+        id S229988AbjDQMcQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 17 Apr 2023 08:32:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229685AbjDQM3F (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 Apr 2023 08:29:05 -0400
+        with ESMTP id S230125AbjDQMcO (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 17 Apr 2023 08:32:14 -0400
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F17910E4
-        for <linux-leds@vger.kernel.org>; Mon, 17 Apr 2023 05:28:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CF6D40C8;
+        Mon, 17 Apr 2023 05:31:54 -0700 (PDT)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 4A6E11C0AB3; Mon, 17 Apr 2023 14:28:53 +0200 (CEST)
+        id E58441C0AAC; Mon, 17 Apr 2023 14:22:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-        t=1681734533;
+        t=1681734138;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=kzbramfxCpHXyy8XYkUSHXABg/3RmZFK4egZ21qgwRk=;
-        b=BRZVyHL1jynvBf/MrdvDZdY2ruRAMcKfjnhORH76GUiawJ96q/MSpfTbNMRhCUBDKgnuXz
-        8dw9EnMMdkSAk9LbDK5gVUHxZbxMXbT9CZQRHdvJV821VFs/e82seDw7LBoeJ+mOxnM/B6
-        gPC1VC97RzbEaw8PZl0ZWeGjxthZS/8=
-Date:   Mon, 17 Apr 2023 14:28:52 +0200
+        bh=TMSz1lAK35MpBVUGidPj7aPRPLhQxtWZ8osEdlLH4+I=;
+        b=n7jAYTwnbWSKqJatEkhXvM+uj3RNwd5yZMMxFPzMGMwcVAns3ZEg76o9o5yjmNNWGMdVQC
+        mi3qoED20xTPUnSr46I4ugZyyAIhF+EItPklUMDiOe5R1lrN+J7J0Ta9TLF+J/BGnZuIdz
+        kGY1aZbWK+iAM375/jgC7/d4TwC9lLw=
+Date:   Mon, 17 Apr 2023 14:22:18 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Florian Eckert <fe@dev.tdt.de>
-Subject: Re: [PATCH] leds: trigger/tty: Use led_set_brightness_nosleep() to
- set brightness
-Message-ID: <ZD07hLV1gs+gw26s@duo.ucw.cz>
-References: <20230414164853.3668229-1-u.kleine-koenig@pengutronix.de>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     lee@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matti Vaittinen <mazziesaccount@gmail.com>
+Subject: Re: [PATCH v5 2/2] leds: bd2606mvv: Driver for the Rohm 6 Channel
+ i2c LED driver
+Message-ID: <ZD05+hsRy14semza@duo.ucw.cz>
+References: <20230416211550.903240-1-andreas@kemnade.info>
+ <20230416211550.903240-3-andreas@kemnade.info>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="QadF/vCVPG5uFgpZ"
+        protocol="application/pgp-signature"; boundary="CavukPz3qjkkik6i"
 Content-Disposition: inline
-In-Reply-To: <20230414164853.3668229-1-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20230416211550.903240-3-andreas@kemnade.info>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
---QadF/vCVPG5uFgpZ
-Content-Type: text/plain; charset=iso-8859-1
+--CavukPz3qjkkik6i
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> After commit ba8a86e4dadb ("leds: trigger/tty: Use
-> led_set_brightness_sync() from workqueue") this is the second try to
-> pick the right function to set the LED brightness from a trigger.
+> The device provides 6 channels which can be individually
+> turned off and on but groups of two channels share a common brightness
+> register.
 >=20
-> led_set_brightness_sync() has the problem that it doesn't work for LEDs
-> without a .brightness_set_blocking() callback. This is (among others)
-> the case for LEDs connected to non-sleeping GPIOs.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> Limitation: The GPIO to enable the device is not used yet.
 
-I don't think this is right.
+(I'd expect some explanation how you dealt with the brigthness pairing
+here. I can figure it out from the fcode, but... I guess you should
+state it at the begining of driver in a comment at least.).
 
-_nosleep calls _nopm, which assmues it can't sleep, and schedules
-another workqueue to set the LED.
+> +++ b/drivers/leds/Kconfig
+> @@ -551,6 +551,17 @@ config LEDS_REGULATOR
+>  	help
+>  	  This option enables support for regulator driven LEDs.
+> =20
+> +config LEDS_BD2606MVV
+> +	tristate "LED driver for BD2606MVV"
+> +	depends on LEDS_CLASS
+> +	depends on I2C
+> +	select REGMAP_I2C
+> +	help
+> +	  This option enables support for BD2606MVV LED driver chips
+> +	  accessed via the I2C bus. It supports setting brightness, with
+> +	  the limitiation that there are groups of two channels sharing
+> +	  a brightness setting, but not the on/off setting.
 
-Best regards,
-									Pavel
+Add the usual note about modules here.
+
+Rest looks ok.
+
+With that fixed:
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+BR,
+								Pavel
 --=20
 People of Russia, stop Putin before his war on Ukraine escalates.
 
---QadF/vCVPG5uFgpZ
+--CavukPz3qjkkik6i
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZD07hAAKCRAw5/Bqldv6
-8gqdAJoDNx8mJSmI5JK//0RgIcmX9H9HGQCfY2h9xbhdcFB0fj2P93oGoZPSS0M=
-=xByx
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZD05+gAKCRAw5/Bqldv6
+8szwAJwJ3gPBrUGUJrvKe/X53Q+8LFQapQCdGmCdEGSLf2q4zh/17voy5bfHfZg=
+=AO+P
 -----END PGP SIGNATURE-----
 
---QadF/vCVPG5uFgpZ--
+--CavukPz3qjkkik6i--
