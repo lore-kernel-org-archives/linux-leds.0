@@ -2,147 +2,155 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A04E5C77B75
-	for <linux-leds@archiver.kernel.org>; Wed, 19 Apr 2023 10:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE32C77B73
+	for <linux-leds@archiver.kernel.org>; Wed, 19 Apr 2023 11:19:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231844AbjDSK2r (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 19 Apr 2023 06:28:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40806 "EHLO
+        id S232819AbjDSLS7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 19 Apr 2023 07:18:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232199AbjDSK2o (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 19 Apr 2023 06:28:44 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B07E55B5
-        for <linux-leds@vger.kernel.org>; Wed, 19 Apr 2023 03:28:42 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4ec816d64afso12952104e87.1
-        for <linux-leds@vger.kernel.org>; Wed, 19 Apr 2023 03:28:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681900120; x=1684492120;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/VybvqKxQBBjDVUhiroFfMYUdC6zzghkLtNDu/WEbXQ=;
-        b=F1g1LfaupkHvYGX4hXRemCRjRdU9QpJizHsTb6EnZ7xTEl05oERKa1+MylQD+Ud17I
-         3s609V08kX1xd6CeIueDdxQwHlujSJIKLLCmtbycbPoMyhi7imo87c07ekSD7YDpihwv
-         gNbPYVGLXRGd008MdDx7rkJFBD7ojIgbzqt7NCAMmqtlqnyUFQrsbWXNnlk7/B6e9IN/
-         PyQQ2WBqMAB1fC07FGM+vvnjRhmhuEINNqbZILQJZvCYgiWS/skaT+N7v2O4WJR4/yXU
-         1Or1Om0Gg4u4fh88HKcZAUdeMTusLaV6fKMnpXghFi2yA378BoyAedaxKo3/HsqcAvid
-         obKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681900120; x=1684492120;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/VybvqKxQBBjDVUhiroFfMYUdC6zzghkLtNDu/WEbXQ=;
-        b=A38xT/xUbVqR7kYxH1loI8da6+egtnVqn3pCz9Ag+8J6pnSIXUq8fOpF87GPdlMqqL
-         qcdo88OyNu2CuKakzWtBQAMAIhIjRe5GMLzMAzQXeQlgz0iDvQCGvuIBB9VedquJ9wes
-         fg8RKaxEqmZIrG/aCfYXWH/z78Uxp0LjPXk28ZGC8/+sefUYeBk2a/PG9e9G9HL9Mqfw
-         dBPpTW3/A1ICAtdlN9wIo/1ELm6c++f6DP8GdrR7sQ3i4RComVHxVvsvLgRysWYAQZBB
-         bBvo03VC1ctq1yY7sXPD+0GlIe2JqUc8zIZJdXnMW6G+k3UwLy7kZKNCFS/ZSh+NSRlH
-         Zc+w==
-X-Gm-Message-State: AAQBX9eXRdnKcAiZ6ST4caxL0rRPAiHmNYV4itmU6l4MS9BDj4aktA0J
-        6QYCjjp+5mPY/EL+EQiTZeTBlA==
-X-Google-Smtp-Source: AKy350bR2i4Ob8duVzV3tJMTy/E3Eui8ihwuBJFLOmUXsND88vLrHCUaWPcS+3HzXFhjrd13jx5MGg==
-X-Received: by 2002:ac2:55b2:0:b0:4ec:7973:1ac with SMTP id y18-20020ac255b2000000b004ec797301acmr777061lfg.22.1681900120711;
-        Wed, 19 Apr 2023 03:28:40 -0700 (PDT)
-Received: from [192.168.1.101] (abyj144.neoplus.adsl.tpnet.pl. [83.9.29.144])
-        by smtp.gmail.com with ESMTPSA id p11-20020ac246cb000000b004edd84f4646sm194670lfo.91.2023.04.19.03.28.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Apr 2023 03:28:40 -0700 (PDT)
-Message-ID: <4b9e8dba-aeb7-092b-ebec-6c1fd7bbaa12@linaro.org>
-Date:   Wed, 19 Apr 2023 12:28:38 +0200
+        with ESMTP id S232513AbjDSLS4 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 19 Apr 2023 07:18:56 -0400
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a01:238:4321:8900:456f:ecd6:43e:202c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A2C17AA1;
+        Wed, 19 Apr 2023 04:18:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=GxoL6tO1Zq0juEHHSsvGqzAN/qq1uUn2OC9lAgzkTGc=; b=fzp2Hjjip9Ylpj6H1CkC9whP+Z
+        SPha8dwHW8nZno5sr5qHMFp4kY7iZ4mTpvbLApIWDtgeSliIEEnk8tw+gcBAGDOXWqlLskuz+0D24
+        IoXhJzZeAGQvRaeQPMhMVYJq1y2UoWrDKzCVq0Yi5eHQdsZMPEHeVUmSXT+KfXYGycRBci4W1J7TC
+        WbdMk2uiZqQ/LQEqfbyFktAHcvwSOYPD/4nsnl/ySeELF1spCV6cvaW4hVidSQR7CIDlHVRw7FkUi
+        5ldiBWuuXGmIgHjPxliTKwfPBRGB3CFqtQcX1JPVCNoIamqGi7FrUF11aV/FSA+ocO3LQTL9x26aS
+        /jC3CJvA==;
+Received: from p200300ccff0a67001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff0a:6700:1a3d:a2ff:febf:d33a] helo=aktux)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1pp5pG-00085s-LQ; Wed, 19 Apr 2023 13:18:15 +0200
+Received: from andi by aktux with local (Exim 4.96)
+        (envelope-from <andreas@kemnade.info>)
+        id 1pp5pG-004cHL-1G;
+        Wed, 19 Apr 2023 13:18:14 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     pavel@ucw.cz, lee@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, andreas@kemnade.info,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Matti Vaittinen <mazziesaccount@gmail.com>
+Cc:     Rob Herring <robh@kernel.org>
+Subject: [PATCH v6 1/2] dt-bindings: leds: Add ROHM BD2606MVV LED
+Date:   Wed, 19 Apr 2023 13:18:05 +0200
+Message-Id: <20230419111806.1100437-2-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230419111806.1100437-1-andreas@kemnade.info>
+References: <20230419111806.1100437-1-andreas@kemnade.info>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v2 7/8] arm64: dts: qcom: sdm632-fairphone-fp3: Add
- notification LED
-Content-Language: en-US
-To:     Luca Weiss <luca@z3ntu.xyz>, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-doc@vger.kernel.org
-References: <20230414-pmi632-v2-0-98bafa909c36@z3ntu.xyz>
- <20230414-pmi632-v2-7-98bafa909c36@z3ntu.xyz>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230414-pmi632-v2-7-98bafa909c36@z3ntu.xyz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Document ROHM BD2606MVV LED driver devicetree bindings.
 
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/leds/rohm,bd2606mvv.yaml         | 81 +++++++++++++++++++
+ 1 file changed, 81 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/rohm,bd2606mvv.yaml
 
-On 18.04.2023 18:43, Luca Weiss wrote:
-> The phone features a notification LED connected to the pmi632. Configure
-> the RGB led found on it.
-> 
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+diff --git a/Documentation/devicetree/bindings/leds/rohm,bd2606mvv.yaml b/Documentation/devicetree/bindings/leds/rohm,bd2606mvv.yaml
+new file mode 100644
+index 0000000000000..14700a2e5feaa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/rohm,bd2606mvv.yaml
+@@ -0,0 +1,81 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/rohm,bd2606mvv.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ROHM BD2606MVV LED controller
++
++maintainers:
++  - Andreas Kemnade <andreas@kemnade.info>
++
++description:
++  The BD2606 MVV is a programmable LED controller connected via I2C that can
++  drive 6 separate lines. Each of them can be individually switched on and off,
++  but the brightness setting is shared between pairs of them.
++
++  Datasheet is available at
++  https://fscdn.rohm.com/en/products/databook/datasheet/ic/power/led_driver/bd2606mvv_1-e.pdf
++
++properties:
++  compatible:
++    const: rohm,bd2606mvv
++
++  reg:
++    maxItems: 1
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  enable-gpios:
++    maxItems: 1
++    description: GPIO pin to enable/disable the device.
++
++patternProperties:
++  "^led@[0-6]$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        minimum: 0
++        maximum: 6
++
++    required:
++      - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@66 {
++            compatible = "rohm,bd2606mvv";
++            reg = <0x66>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            led@0 {
++                reg = <0x0>;
++                color = <LED_COLOR_ID_RED>;
++                function = LED_FUNCTION_POWER;
++            };
++
++            led@2 {
++                reg = <0x2>;
++                color = <LED_COLOR_ID_WHITE>;
++                function = LED_FUNCTION_STATUS;
++            };
++        };
++    };
++
++...
+-- 
+2.39.2
 
-Konrad
->  arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts | 29 +++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-> index 70e683b7e4fc..301eca9a4f31 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-> @@ -4,8 +4,10 @@
->   */
->  /dts-v1/;
->  
-> +#include <dt-bindings/leds/common.h>
->  #include "sdm632.dtsi"
->  #include "pm8953.dtsi"
-> +#include "pmi632.dtsi"
->  
->  / {
->  	model = "Fairphone 3";
-> @@ -83,6 +85,33 @@ &pm8953_resin {
->  	linux,code = <KEY_VOLUMEDOWN>;
->  };
->  
-> +&pmi632_lpg {
-> +	status = "okay";
-> +
-> +	multi-led {
-> +		color = <LED_COLOR_ID_RGB>;
-> +		function = LED_FUNCTION_STATUS;
-> +
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		led@1 {
-> +			reg = <1>;
-> +			color = <LED_COLOR_ID_RED>;
-> +		};
-> +
-> +		led@2 {
-> +			reg = <2>;
-> +			color = <LED_COLOR_ID_GREEN>;
-> +		};
-> +
-> +		led@3 {
-> +			reg = <3>;
-> +			color = <LED_COLOR_ID_BLUE>;
-> +		};
-> +	};
-> +};
-> +
->  &sdhc_1 {
->  	status = "okay";
->  	vmmc-supply = <&pm8953_l8>;
-> 
