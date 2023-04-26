@@ -2,174 +2,201 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A00C77B7F
-	for <linux-leds@archiver.kernel.org>; Wed, 26 Apr 2023 00:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E2BC77B60
+	for <linux-leds@archiver.kernel.org>; Wed, 26 Apr 2023 09:22:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236933AbjDZAkL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 25 Apr 2023 20:40:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50988 "EHLO
+        id S240173AbjDZJWC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 26 Apr 2023 05:22:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbjDZAkK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 25 Apr 2023 20:40:10 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80D3B49DF
-        for <linux-leds@vger.kernel.org>; Tue, 25 Apr 2023 17:40:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1682469609; x=1714005609;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=8vKZNmbZWWb/Oq7XvmHv+nSs1EigZDl1Pv7nsunv/fE=;
-  b=aVYIZQxlGyhLMWFWwhd+cZx+36BZl74FAwsZkq+io/yQuqX9UAVaE8Na
-   x2VNSpiTTMaq2FAfz6jhhksxntNDd2LFv9J9dzAtFg9raJ4nAK8+lri3u
-   jziGF1xK5QtnGYxWZtN0dkoLl5izW/MC8KcMKBETDldAVFQb3et+XEZDy
-   fYqZ4WY3KeR5rW1Uf3yrBlw/AgSW8BL8saa1kwTLwyk7jNxnkQhKWpoQF
-   wIm5Itdneh1AiPAvif0DzeGrCs8aaTLjrteU+34StI3Efpvtz1pOgI6tW
-   Da1iSa2lRpWBMSPY+5JcaMQQt8Y6HE6+1WHwL4Fltr+ZKGOcSj5qEq/zZ
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10691"; a="345700092"
-X-IronPort-AV: E=Sophos;i="5.99,227,1677571200"; 
-   d="scan'208";a="345700092"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2023 17:40:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10691"; a="817918761"
-X-IronPort-AV: E=Sophos;i="5.99,227,1677571200"; 
-   d="scan'208";a="817918761"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 25 Apr 2023 17:40:07 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1prTCY-000juh-2N;
-        Wed, 26 Apr 2023 00:40:06 +0000
-Date:   Wed, 26 Apr 2023 08:39:38 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Lee Jones <lee@kernel.org>
-Cc:     linux-leds@vger.kernel.org
-Subject: [lee-leds:for-leds-next-next] BUILD SUCCESS
- fea27b037127c924221325d65c7966cb4c8c3603
-Message-ID: <644872ca.mLC2YUZ2RQCNFTKn%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S240087AbjDZJWB (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 26 Apr 2023 05:22:01 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4F5B3A87
+        for <linux-leds@vger.kernel.org>; Wed, 26 Apr 2023 02:21:26 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id 41be03b00d2f7-51b33c72686so5099838a12.1
+        for <linux-leds@vger.kernel.org>; Wed, 26 Apr 2023 02:21:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1682500883; x=1685092883;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GxCxYUQlhPobw2YaHoERc69tjdRgnWZj+VY019M7IAU=;
+        b=bvIR4KnC6Zzuh+3JQCJs7pwK+l2c7ezp/MVII5CzoKt4+A0E4ZCFlR3a0kINPtS4fV
+         wVp3TgxR2yflOIBxLS54ClrNOoCyuLo8DjlI27JjjGofJTPkxXV3lt6/3eImb3oNB1e7
+         /tTiuHOD91z6eabm5UZDAS6MhKxEDAharqs0EDXaiA7EeOu2nemA1yso+E3ylmi0Z3OB
+         HUD4AHDkUNOWWW+NosZX3VFbqHzw52V1wH0h2cumFO2J1Bd79VUORFfRPo82UqBI6gLZ
+         16kiRHo47w92iCszX7j/YxJRJENN/qDaFty7iUHaRDH1od8Qa6/HHsNW5Wk9aZBHhEaT
+         SBYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682500883; x=1685092883;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GxCxYUQlhPobw2YaHoERc69tjdRgnWZj+VY019M7IAU=;
+        b=XjoaS2yPAgUMZChF7mbSV1MWj9tPdYTrz3hdTQQxA23705Eg/pEgNrxfjysbOy8lL2
+         aU81eWRqhq2P1/exCLmgu41LXzVFn3RhyqCri7xMF4Iz2gHTGpIQdHHdB013C0VG1i4C
+         MlFoj7OMWW/jdOlUZrqCF5+iun+XhE6MPCU1oa60OOWTpx8cfQyFYwYBrlitksnzcRQG
+         7CyH9K1bb5WSiPbWmPVisu+nxtwbZsjESZrbMEIhEDx+UHOwBw9Rlyot8QsCtF3Mq3XE
+         djW/XwTD994gUTXpsyt8iZLg2lMwcMeZhxn4Yultosfp4PtS1tktTqOqG61zd9Sfner7
+         lYvw==
+X-Gm-Message-State: AAQBX9eSBlBYdOLM5nYfVidPhiHoBpHSJLroXzug9qqGtxqWMmLWO9WB
+        p0jOUHSc0Tn13WgFh8JQzAIwg2L9oYd9C6BN/0DeRQ==
+X-Google-Smtp-Source: AKy350YkLfCKdwJFqWdBbiclvdhiSi9Ia1cb+z/3icUJQz9gfl++MYJ55Q6nVFyZ75K6+8fIBbqF/Q==
+X-Received: by 2002:a05:6a20:8e10:b0:f3:168f:4c52 with SMTP id y16-20020a056a208e1000b000f3168f4c52mr17386642pzj.25.1682500883243;
+        Wed, 26 Apr 2023 02:21:23 -0700 (PDT)
+Received: from ?IPV6:2405:201:d02f:d855:461d:14be:2cce:b776? ([2405:201:d02f:d855:461d:14be:2cce:b776])
+        by smtp.gmail.com with ESMTPSA id q22-20020a63e956000000b005033e653a17sm9384884pgj.85.2023.04.26.02.21.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Apr 2023 02:21:22 -0700 (PDT)
+Message-ID: <f966a8df-6998-f6f1-cc3c-fa92e1d5d34b@9elements.com>
+Date:   Wed, 26 Apr 2023 14:51:20 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v5] leds: max597x: Add support for max597x
+From:   Naresh Solanki <naresh.solanki@9elements.com>
+To:     Lee Jones <lee@kernel.org>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Patrick Rudolph <patrick.rudolph@9elements.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+References: <20230417094035.998965-1-Naresh.Solanki@9elements.com>
+ <20230420115035.GE970483@google.com>
+ <079eca63-54f5-7a4b-3b1c-e2515ceae9cc@9elements.com>
+ <20230420135428.GD996918@google.com>
+ <40b72025-16a8-1af5-d69f-659d37cdeab9@9elements.com>
+ <20230421071921.GI996918@google.com>
+ <03f1691e-bdc2-90cc-4014-585703d2cf4e@9elements.com>
+Content-Language: en-US
+In-Reply-To: <03f1691e-bdc2-90cc-4014-585703d2cf4e@9elements.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next-next
-branch HEAD: fea27b037127c924221325d65c7966cb4c8c3603  leds: bd2606mvv: Driver for the Rohm 6 Channel i2c LED driver
+Hi Lee,
 
-elapsed time: 724m
+On 24-04-2023 03:10 pm, Naresh Solanki wrote:
+> Hi,
+> 
+> On 21-04-2023 12:49 pm, Lee Jones wrote:
+>> On Thu, 20 Apr 2023, Naresh Solanki wrote:
+>>
+>>> Hi Lee,
+>>>
+>>> On 20-04-2023 07:24 pm, Lee Jones wrote:
+>>>> On Thu, 20 Apr 2023, Naresh Solanki wrote:
+>>>>
+>>>>> Hi Lee,
+>>>>>
+>>>>> On 20-04-2023 05:20 pm, Lee Jones wrote:
+>>>>>> On Mon, 17 Apr 2023, Naresh Solanki wrote:
+>>>>>>
+>>>>>>> From: Patrick Rudolph <patrick.rudolph@9elements.com>
+>>>>>>>
+>>>>>>> max597x is hot swap controller with indicator LED support.
+>>>>>>> This driver uses DT property to configure led during boot time &
+>>>>>>> also provide the LED control in sysfs.
+>>>>>>>
+>>>>>>> DTS example:
+>>>>>>>        i2c {
+>>>>>>>            #address-cells = <1>;
+>>>>>>>            #size-cells = <0>;
+>>>>>>>            regulator@3a {
+>>>>>>>                compatible = "maxim,max5978";
+>>>>>>>                reg = <0x3a>;
+>>>>>>>                vss1-supply = <&p3v3>;
+>>>>>>>
+>>>>>>>                regulators {
+>>>>>>>                    sw0_ref_0: sw0 {
+>>>>>>>                        shunt-resistor-micro-ohms = <12000>;
+>>>>>>>                    };
+>>>>>>>                };
+>>>>>>>
+>>>>>>>                leds {
+>>>>>>>                    #address-cells = <1>;
+>>>>>>>                    #size-cells = <0>;
+>>>>>>>                    led@0 {
+>>>>>>>                        reg = <0>;
+>>>>>>>                        label = "ssd0:green";
+>>>>>>>                        default-state = "on";
+>>>>>>>                    };
+>>>>>>>                    led@1 {
+>>>>>>>                        reg = <1>;
+>>>>>>>                        label = "ssd1:green";
+>>>>>>>                        default-state = "on";
+>>>>>>>                    };
+>>>>>>>                };
+>>>>>>>            };
+>>>>>>>        };
+>>>>>>
+>>>>>> Where is the DT binding document for this?
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/tree/Documentation/devicetree/bindings/mfd/maxim,max5970.yaml?h=for-mfd-next
+>>
+>> You need to update it.  It is different to the one you supplied here.
+> Ack.
+>>
+>>>>>>> Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+>>>>>>> Signed-off-by: Naresh Solanki <Naresh.Solanki@9elements.com>
+>>>>>>> ...
+>>>>>>> Changes in V5:
+>>>>>>> - Update commit message
+>>>>>>> - Fix comments
+>>>>>>> - Add necessary new line
+>>>>>>> Changes in V4:
+>>>>>>> - Remove unwanted preinitialise
+>>>>>>> - Remove unneeded line breaks
+>>>>>>> - Fix variable name to avoid confusion
+>>>>>>> - Update module description to mention LED driver.
+>>>>>>> Changes in V3:
+>>>>>>> - Remove of_node_put as its handled by for loop
+>>>>>>> - Print error if an LED fails to register.
+>>>>>>> - Update driver name in Kconfig description
+>>>>>>> - Remove unneeded variable assignment
+>>>>>>> - Use devm_led_classdev_register to reget led
+>>>>>>> Changes in V2:
+>>>>>>> - Fix regmap update
+>>>>>>> - Remove devm_kfree
+>>>>>>> - Remove default-state
+>>>>>>> - Add example dts in commit message
+>>>>>>> - Fix whitespace in Kconfig
+>>>>>>> - Fix comment
+>>>>>>> ---
+>>>>>>>     drivers/leds/Kconfig        |  11 ++++
+>>>>>>>     drivers/leds/Makefile       |   1 +
+>>>>>>>     drivers/leds/leds-max597x.c | 115 
+>>>>>>> ++++++++++++++++++++++++++++++++++++
+>>>>>>>     3 files changed, 127 insertions(+)
+>>>>>>>     create mode 100644 drivers/leds/leds-max597x.c
+>>
+>> [...]
+>>
+>>>>>> +    led_node = of_get_child_by_name(np, "leds");
+>>>>>>> +    if (!led_node)
+>>>>>>> +        return -ENODEV;
+>>>>
+>>>> It's odd for a device to be referring to itself as the "child".
+>>> As this is leaf driver, LED specific info is present in "leds" node 
+>>> in DT.
+>>
+>> I'm aware of the architecture.
+>>
+>> If you give the LEDs driver it's own compatible you don't need to keep
+>> doing this self->parent->child level-jumping craziness to obtain
+>> resources.
+>  From my understanding, it is preferable to have only one compatible per 
+> chip(in this case MFD driver), and the leaf driver can leverage it 
+> unless it is not serving the purpose/breaks something.
+> I think this is acceptable as long as it doesn't creates any 
+> issue/breaks anything.
+I just wanted to kindly follow up and check if we are aligned with the 
+approach. And kindly let me know if you have any concerns regarding this.
 
-configs tested: 100
-configs skipped: 6
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-alpha                randconfig-r005-20230423   gcc  
-alpha                randconfig-r022-20230424   gcc  
-arc                              allyesconfig   gcc  
-arc          buildonly-randconfig-r006-20230423   gcc  
-arc                                 defconfig   gcc  
-arc                  randconfig-r001-20230423   gcc  
-arc                  randconfig-r001-20230424   gcc  
-arc                  randconfig-r022-20230423   gcc  
-arc                  randconfig-r043-20230425   gcc  
-arm                              allmodconfig   gcc  
-arm                              allyesconfig   gcc  
-arm          buildonly-randconfig-r004-20230424   clang
-arm                                 defconfig   gcc  
-arm                  randconfig-r006-20230423   clang
-arm                  randconfig-r046-20230425   gcc  
-arm64                            allyesconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                randconfig-r023-20230424   gcc  
-csky         buildonly-randconfig-r005-20230424   gcc  
-csky         buildonly-randconfig-r006-20230424   gcc  
-csky                                defconfig   gcc  
-hexagon      buildonly-randconfig-r004-20230423   clang
-hexagon              randconfig-r006-20230424   clang
-hexagon              randconfig-r021-20230423   clang
-hexagon              randconfig-r041-20230425   clang
-hexagon              randconfig-r045-20230425   clang
-i386                             allyesconfig   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                 randconfig-a011-20230424   gcc  
-i386                 randconfig-a012-20230424   gcc  
-i386                 randconfig-a013-20230424   gcc  
-i386                 randconfig-a014-20230424   gcc  
-i386                 randconfig-a015-20230424   gcc  
-i386                 randconfig-a016-20230424   gcc  
-ia64                             allmodconfig   gcc  
-ia64                                defconfig   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch    buildonly-randconfig-r005-20230423   gcc  
-loongarch                           defconfig   gcc  
-loongarch            randconfig-r024-20230423   gcc  
-m68k                             allmodconfig   gcc  
-m68k         buildonly-randconfig-r001-20230423   gcc  
-m68k                                defconfig   gcc  
-m68k                 randconfig-r004-20230424   gcc  
-microblaze   buildonly-randconfig-r002-20230424   gcc  
-microblaze           randconfig-r002-20230423   gcc  
-microblaze           randconfig-r002-20230424   gcc  
-mips                             allmodconfig   gcc  
-mips                             allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                randconfig-r023-20230423   gcc  
-openrisc     buildonly-randconfig-r003-20230423   gcc  
-openrisc     buildonly-randconfig-r003-20230424   gcc  
-parisc       buildonly-randconfig-r002-20230423   gcc  
-parisc                              defconfig   gcc  
-parisc               randconfig-r004-20230423   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv                               defconfig   gcc  
-riscv                randconfig-r025-20230423   clang
-riscv                randconfig-r042-20230425   clang
-riscv                          rv32_defconfig   gcc  
-s390                             allmodconfig   gcc  
-s390                             allyesconfig   gcc  
-s390         buildonly-randconfig-r001-20230424   gcc  
-s390                                defconfig   gcc  
-s390                 randconfig-r044-20230425   clang
-sh                               allmodconfig   gcc  
-sh                   randconfig-r026-20230424   gcc  
-sparc                               defconfig   gcc  
-sparc64              randconfig-r003-20230423   gcc  
-sparc64              randconfig-r025-20230424   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64                              defconfig   gcc  
-x86_64                                  kexec   gcc  
-x86_64               randconfig-a001-20230424   clang
-x86_64               randconfig-a002-20230424   clang
-x86_64               randconfig-a003-20230424   clang
-x86_64               randconfig-a004-20230424   clang
-x86_64               randconfig-a005-20230424   clang
-x86_64               randconfig-a006-20230424   clang
-x86_64               randconfig-a011-20230424   gcc  
-x86_64               randconfig-a012-20230424   gcc  
-x86_64               randconfig-a013-20230424   gcc  
-x86_64               randconfig-a014-20230424   gcc  
-x86_64               randconfig-a015-20230424   gcc  
-x86_64               randconfig-a016-20230424   gcc  
-x86_64                               rhel-8.3   gcc  
-xtensa               randconfig-r003-20230424   gcc  
-xtensa               randconfig-r021-20230424   gcc  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Thank you very much for your time and I look forward to hearing back 
+from you soon :)
+>>
+> 
+> 
+> Regards,
+> Naresh
