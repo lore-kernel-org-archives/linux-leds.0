@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB313C7EE23
-	for <linux-leds@archiver.kernel.org>; Thu, 27 Apr 2023 00:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9704C7618E
+	for <linux-leds@archiver.kernel.org>; Thu, 27 Apr 2023 00:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242895AbjD0ATK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 26 Apr 2023 20:19:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44546 "EHLO
+        id S242955AbjD0ATM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 26 Apr 2023 20:19:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242838AbjD0ATB (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 26 Apr 2023 20:19:01 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 704D33AA4;
-        Wed, 26 Apr 2023 17:19:00 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-304935cc79bso2319355f8f.2;
-        Wed, 26 Apr 2023 17:19:00 -0700 (PDT)
+        with ESMTP id S242885AbjD0ATJ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 26 Apr 2023 20:19:09 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC13940E1;
+        Wed, 26 Apr 2023 17:19:02 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f09b4a1584so53770885e9.2;
+        Wed, 26 Apr 2023 17:19:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682554739; x=1685146739;
+        d=gmail.com; s=20221208; t=1682554741; x=1685146741;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OIYgyKuwJ81AtZBMq4tmKJvwseDK3tdRGQbYOLsgLaU=;
-        b=FNrRHJ0CJc/JgCz6dzu63p8tEJuFeVraat6eKkWBCSpEn+CoNPs8GwOh7FEnXrz6O+
-         IFr/z44PHwDIcubxHV8A33yhPHrLrCrE+DM1OeTspj5frHImfD9d2Ql5hI9qI92O9XtR
-         lYuaxiK3Wix7uw9GIzRzhJNvzgO3j8AdWkYl1U+DYpx+2dfWSaMnWFWMpWnfon8P8N5o
-         +8a4D6EgxHufaMOEcA9h0ZggMZ9sIYuldb002HUfvc7MBU9SDZzXYfrJtTQaBObF5Tw2
-         6d6JqvfpJVFDvrGN9VSBNiwIcAiqq2apsQuDQqe05B35ao8OIUhZ1kcbDUUz4Q8j+rHn
-         Y86g==
+        bh=usUz5vlQbTcVSoDq5iitXuZZP0qB/F/micaPhHdJRQ4=;
+        b=rhvFV/yg6ZRaZnKZM7MPdqK+NrxfCdyeyryRM0A0ga6PbXhRGUD14cj4SnxxqK1dLy
+         WlA4KbDfzX855D+EMp5fm2efW7yc+9KjH7dl2xSQIhQjAFYYvFvhsLfzYzD4zM5fllxm
+         nN2wF8v6y+76FnCxN6gMf+XTs+mySyY/7M6A7M6DHHjfxjHGR8q28wXOInmqSWca2fIV
+         8WBHIfTkIMJMwwts3Ovwo7ovCuP68dQWbkjtvYnvgdlbRGJ/Rhqicps9Ffe7mEYAGm0w
+         Fq++HwDl810G+1UEwMcvzgOW88V3F33dXokgIIgt0zcISLmEe9symdxMj6JoatDiDW+I
+         ywkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682554739; x=1685146739;
+        d=1e100.net; s=20221208; t=1682554741; x=1685146741;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OIYgyKuwJ81AtZBMq4tmKJvwseDK3tdRGQbYOLsgLaU=;
-        b=RSC1Nxde7Ab9zYICq4p65Jj6KhOwC/ESLEK1609b1Y1eFRMO6xa1jVwc1DXTPLbRN0
-         +eY5WG1Rl6yEmQ4si+9lMu1B1h0ZSjXA921nfEZtipGtB+AuLG8VuZRg2+TkINT5p8sV
-         PySLNG33clMpOmLEmhvxromII7YHWbUUebIjzCYLSdt7pZsjCWbwQ5VmH9pz8AZpoxQG
-         c41GteY5aT7uMPud4F6Zsr7QCeNJEr/+9kZVzw+jrcJose0rxgg/xvKLNpKZW5fNekL7
-         n665lSrY7dntc1g6jyS6iqwy9ml9nMzYPj3ss/nzPzBPmg8FPsUcO6BKIli5wrj0Bsso
-         bRhQ==
-X-Gm-Message-State: AAQBX9fs+UUbOaeWOS1hCyO+/U5pGjDaJXEbAH2fXvWEesNVqOwvZEJ3
-        YgUO6zonEqUdyR4EC4XHAgCtEnlhar4=
-X-Google-Smtp-Source: AKy350YguoO64iuBT7gwcB9I2x9HOcGE8lI0Yxmk1eIsZ6Z8JsEtzxCo55nMUg5XkeXSk9FSKiEGNQ==
-X-Received: by 2002:adf:dd8b:0:b0:2fe:605e:c77a with SMTP id x11-20020adfdd8b000000b002fe605ec77amr18006477wrl.52.1682554738696;
-        Wed, 26 Apr 2023 17:18:58 -0700 (PDT)
+        bh=usUz5vlQbTcVSoDq5iitXuZZP0qB/F/micaPhHdJRQ4=;
+        b=eAYmMZg44czM4U1bLEB8X8FXpqHDnHoU3XfREVfC8Lbo83qSyW4Jj59uzGuhQ6/hm0
+         2qxLtYA3v4cnvz4vDDvihqGczTFRgciZQqqBmxQ816rorIt/azUZ53nN9CzpU1pKD6Fb
+         K1ViYVN1+0QnggbT9w2ReefBx+C5/Nn1raSeuNkQpWy97TxRFfeZ7vHzK5EhpBwrP44t
+         TPGZYUmLISvZsZuslGyMEgXbD39sDmI/LJKcq7E4utb9upKUYa6iJar8XMCHFztqV8q1
+         Wiy3830o/3jguGMcRYFEJQ4GouJpJitVE/vqjAIushtMjs4gtnR1STGXzCbLIhVAQ9zY
+         2uaA==
+X-Gm-Message-State: AAQBX9eb3Lmc93IvmrXHZmR64M6WTRoKGhGr6tF/EQfJziPE0dP+pV8q
+        mS1KYV8cXH7eHd91DmZaO4g=
+X-Google-Smtp-Source: AKy350bhRhJTpCjZ0jujDv77toVWCpdHbxLyDIW42UiZwgRtJb1aZu/bMxDwMRrVvGZQ0tUzK2RKhg==
+X-Received: by 2002:a7b:c408:0:b0:3f0:9c6c:54a0 with SMTP id k8-20020a7bc408000000b003f09c6c54a0mr14138139wmi.2.1682554740926;
+        Wed, 26 Apr 2023 17:19:00 -0700 (PDT)
 Received: from localhost.localdomain (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
-        by smtp.googlemail.com with ESMTPSA id r3-20020adfda43000000b003047ae72b14sm8624916wrl.82.2023.04.26.17.18.57
+        by smtp.googlemail.com with ESMTPSA id r3-20020adfda43000000b003047ae72b14sm8624916wrl.82.2023.04.26.17.18.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Apr 2023 17:18:58 -0700 (PDT)
+        Wed, 26 Apr 2023 17:19:00 -0700 (PDT)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Jonathan Corbet <corbet@lwn.net>, Pavel Machek <pavel@ucw.cz>,
         Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
@@ -61,9 +61,9 @@ To:     Jonathan Corbet <corbet@lwn.net>, Pavel Machek <pavel@ucw.cz>,
         Christian Marangi <ansuelsmth@gmail.com>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-leds@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH 05/11] leds: trigger: netdev: introduce validating requested mode
-Date:   Thu, 27 Apr 2023 02:15:35 +0200
-Message-Id: <20230427001541.18704-6-ansuelsmth@gmail.com>
+Subject: [PATCH 07/11] leds: trigger: netdev: reject interval and device store for hw_control
+Date:   Thu, 27 Apr 2023 02:15:37 +0200
+Message-Id: <20230427001541.18704-8-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230427001541.18704-1-ansuelsmth@gmail.com>
 References: <20230427001541.18704-1-ansuelsmth@gmail.com>
@@ -73,67 +73,62 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Introduce function to validate the requested mode in preparation for
-hw control support. Currently everything is handled in software so
-every mode is validated and accepted.
-
-Requested mode are always validated before making any change, to follow
-this rework the attr_store function to set the mode to a temp variable
-and then apply the new mode only if accepted and validated.
+Reject interval and device store with hw_control enabled. They are
+currently not supported and MUST be empty with hw_control enabled.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/leds/trigger/ledtrig-netdev.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ drivers/leds/trigger/ledtrig-netdev.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index 115f2bae9eee..81e0b0083f2f 100644
+index 28c4465a2584..8cd876647a27 100644
 --- a/drivers/leds/trigger/ledtrig-netdev.c
 +++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -91,6 +91,12 @@ static void set_baseline_state(struct led_netdev_data *trigger_data)
- 	}
- }
+@@ -124,6 +124,11 @@ static ssize_t device_name_store(struct device *dev,
  
-+static int validate_requested_mode(struct led_netdev_data *trigger_data,
-+				   unsigned long mode)
-+{
-+	return 0;
-+}
-+
- static ssize_t device_name_show(struct device *dev,
- 				struct device_attribute *attr, char *buf)
- {
-@@ -168,7 +174,7 @@ static ssize_t netdev_led_attr_store(struct device *dev, const char *buf,
- 				     size_t size, enum led_trigger_netdev_modes attr)
- {
- 	struct led_netdev_data *trigger_data = led_trigger_get_drvdata(dev);
--	unsigned long state;
-+	unsigned long state, new_mode = trigger_data->mode;
- 	int ret;
- 	int bit;
+ 	mutex_lock(&trigger_data->lock);
  
-@@ -186,12 +192,18 @@ static ssize_t netdev_led_attr_store(struct device *dev, const char *buf,
- 		return -EINVAL;
- 	}
- 
--	cancel_delayed_work_sync(&trigger_data->work);
--
- 	if (state)
--		set_bit(bit, &trigger_data->mode);
-+		set_bit(bit, &new_mode);
- 	else
--		clear_bit(bit, &trigger_data->mode);
-+		clear_bit(bit, &new_mode);
++	if (trigger_data->hw_control) {
++		size = -EINVAL;
++		goto out;
++	}
 +
-+	ret = validate_requested_mode(trigger_data, new_mode);
-+	if (ret)
-+		return ret;
-+
-+	cancel_delayed_work_sync(&trigger_data->work);
-+
-+	trigger_data->mode = new_mode;
+ 	if (trigger_data->net_dev) {
+ 		dev_put(trigger_data->net_dev);
+ 		trigger_data->net_dev = NULL;
+@@ -145,6 +150,8 @@ static ssize_t device_name_store(struct device *dev,
+ 	trigger_data->last_activity = 0;
  
  	set_baseline_state(trigger_data);
++
++out:
+ 	mutex_unlock(&trigger_data->lock);
+ 
+ 	return size;
+@@ -248,6 +255,13 @@ static ssize_t interval_store(struct device *dev,
+ 	unsigned long value;
+ 	int ret;
+ 
++	mutex_lock(&trigger_data->lock);
++
++	if (trigger_data->hw_control) {
++		size = -EINVAL;
++		goto out;
++	}
++
+ 	ret = kstrtoul(buf, 0, &value);
+ 	if (ret)
+ 		return ret;
+@@ -260,6 +274,9 @@ static ssize_t interval_store(struct device *dev,
+ 		set_baseline_state(trigger_data);	/* resets timer */
+ 	}
+ 
++out:
++	mutex_unlock(&trigger_data->lock);
++
+ 	return size;
+ }
  
 -- 
 2.39.2
