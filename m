@@ -2,74 +2,70 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22979C77B7C
-	for <linux-leds@archiver.kernel.org>; Sun,  7 May 2023 17:32:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E67BC77B7C
+	for <linux-leds@archiver.kernel.org>; Sun,  7 May 2023 23:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231686AbjEGRcN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 7 May 2023 13:32:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58368 "EHLO
+        id S231961AbjEGXLh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 7 May 2023 19:11:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231771AbjEGRcG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 7 May 2023 13:32:06 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91DFC9018
-        for <linux-leds@vger.kernel.org>; Sun,  7 May 2023 10:32:03 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        with ESMTP id S229716AbjEGXLg (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 7 May 2023 19:11:36 -0400
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 502E67ED1
+        for <linux-leds@vger.kernel.org>; Sun,  7 May 2023 16:11:34 -0700 (PDT)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
         (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4QDs144nl0z9sTS;
-        Sun,  7 May 2023 19:31:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dylanvanassche.be;
-        s=MBO0001; t=1683480712;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=RQPVnOmT5Rx6sI76v3BMcGlgaIUBrNyVx3grvraWAAE=;
-        b=mArWJN/XkWGwWEminCzDSpCuEYz3WmdnYbQch6QNsnn5d/AJsz4sGEOWyHD8Rr2erguK4f
-        te9rOhRgpcPlhl6P/anviRThQ7J+hkEOsMenVTU6MGu/VboJu2nqFJm0a5OCP8qXu4KEBI
-        q4mtiR/qTzMfyCoJ0qW0Pft394kBxeqzcrasWUNBdomM9s8AGAvz0KegHs20+aL6km6fDd
-        hfsZve6VNxAcuaRo2Hj8vC3suHfYoxT2B1C6MHfdJ/SzCLWil/CxWWgMvs+x0HrX1o3t+5
-        idPs0lUsFQriX3hJV+EeuBZaaaaY8enWOKOcxdtZxSbhHzMaeCcr29PFedkxJA==
-From:   Dylan Van Assche <me@dylanvanassche.be>
-To:     pavel@ucw.cz, quic_fenglinw@quicinc.com, lee@kernel.org
-Cc:     trix@redhat.com, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Dylan Van Assche <me@dylanvanassche.be>
-Subject: [PATCH 0/2] leds: flash: leds-qcom-flash: add PMI8998 support
-Date:   Sun,  7 May 2023 19:29:39 +0200
-Message-Id: <20230507172941.364852-1-me@dylanvanassche.be>
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 72335846E0;
+        Mon,  8 May 2023 01:11:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1683501091;
+        bh=XClQi6IV1faU3jsFLMw7HbLhHvx9X66EMVK8G+WqV0A=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=ePLw1lWLH48/rRggi0CZQHbOrrrI0GUULM12/0xxiFJTzkuuIMWjobhWSsppEcOU8
+         dWEolwUVdevLLheYGZcStugKqQl8ISP/7bHDim1MDzawYQwqjH3FUYbb8dwXTH9NcM
+         sJYgHfQO6yv2OGue/dF4Bt184wgn+eihzVcQ29ZH0i9bOD6A/jSBQEaZjF9PDGZQSU
+         NuUSQENPWNWmAVqZLDlNFpIvho8VROGQWw1x4duH8YfZzirVvM2TnwtaeZcPPQ9NYn
+         QKfiV2IYtUebMELOCxY3hKM47bzRaJFbefjq1HnnYdubrCYy+RMKUh6643MXxyTSsk
+         OsCUmhwN38FCQ==
+Message-ID: <1e22f00a-490a-503d-463c-d7d4df1da64e@denx.de>
+Date:   Mon, 8 May 2023 01:11:30 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] leds: gpio: Configure per-LED pin control
+From:   Marek Vasut <marex@denx.de>
+To:     Pavel Machek <pavel@ucw.cz>, lee.jones@linaro.org
+Cc:     linux-leds@vger.kernel.org,
+        Christoph Niedermaier <cniedermaier@dh-electronics.com>
+References: <20221107003133.377704-1-marex@denx.de>
+ <ZCGE/6hzeJNeJKTj@duo.ucw.cz> <5156c474-9f44-6cda-6090-c3e58f7459f0@denx.de>
+Content-Language: en-US
+In-Reply-To: <5156c474-9f44-6cda-6090-c3e58f7459f0@denx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This patchserie adds support for the Qualcomm PMI8998 PMIC to the 
-pending leds-qcom-flash LED driver (v8) [1]. The following changes 
-are necessary to support the Qualcomm PMI8998 PMIC:
+On 4/2/23 23:58, Marek Vasut wrote:
+> On 3/27/23 13:58, Pavel Machek wrote:
+>> Hi!
+>>
+>>> Each gpio-leds DT node DT subnode can have a pinctrl property assigned
+>>> to it, parse the DT subnode pinctrl properties and configure each pin
+>>> accordingly.
+>>
+>> Do we need update to
+>> Documentation/devicetree/bindings/leds/leds-gpio.yaml ?
+> 
+> As far as I can tell, no. The pinctrl properties are generic and outside 
+> of the leds-gpio yaml schema.
 
-- Add subtype 0x3 for the Qualcomm PMI8998 PMIC.
-- Disable LED when changing the brightness to make brightness changes
-propagate when the LED was already enabled.
+Are there any further concerns or can this patch be applied now ?
 
-@Fenglin Wu: Feel free to pull these patches in with your v9 if you like them.
-We discussed support for this PMIC in the past around v3, but never could make
-it work until now.
-
-[1] https://lore.kernel.org/all/20230303095023.538917-1-quic_fenglinw@quicinc.com/
-
-Kind regards,
-Dylan Van Assche
-
-Dylan Van Assche (2):
-  leds: flash: leds-qcom-flash: add PMI8998 support
-  leds: flash: leds-qcom-flash: disable LED when changing brightness
-
- drivers/leds/flash/leds-qcom-flash.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
--- 
-2.40.1
-
+Thanks!
