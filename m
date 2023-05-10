@@ -2,40 +2,41 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579A4C7EE26
-	for <linux-leds@archiver.kernel.org>; Wed, 10 May 2023 16:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F42C7EE23
+	for <linux-leds@archiver.kernel.org>; Wed, 10 May 2023 16:25:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230472AbjEJQXa (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 10 May 2023 12:23:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48070 "EHLO
+        id S229555AbjEJQYh (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 10 May 2023 12:24:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjEJQX3 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 May 2023 12:23:29 -0400
+        with ESMTP id S235593AbjEJQYQ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 May 2023 12:24:16 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0CC37AAA
-        for <linux-leds@vger.kernel.org>; Wed, 10 May 2023 09:22:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D09097DB0
+        for <linux-leds@vger.kernel.org>; Wed, 10 May 2023 09:22:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1683735763;
+        s=mimecast20190719; t=1683735771;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=7LdhAJieegVHrXtma/ffaQ+dm+tSLZToc/pLp+pQaYE=;
-        b=DRap2P0jwgZVnoAfEJwN9DN3rlX/wWAiyyuqn4S7Ht8LXRD38k6EBabomer4nziip6vDSr
-        GaLn5MQPoZZ4eVpQm/ntP8PadHb4fRyH/kC9xLDGWFwCSRWjelo3nBJkigP4OOMP64RX3g
-        dR0hwSftqLFg/Z3PVArpFtPzbrJy3GU=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bmFE/obqR+JSVry8KVLBdovb1+Ke/0GWPdt6GSde0jc=;
+        b=gWls+ZNQbq+HVYLE7ZajGIsCVESXLx8WiCynsPJDkgK3w+bvDQIZAZ2+0pDYEFqtf+DJnK
+        gzW8pHw4uKesNeCSgfk3qNQ7a6JjONn5jEn+0Ugm8aZrkf7L1zRC4hxcuiXNzAbYvLfs2r
+        Ni1Rm8RPeDZ/LnN4G8fLgITzNgOZTxg=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-318-Ay-rr86bMduvR9CcyruC3w-1; Wed, 10 May 2023 12:22:39 -0400
-X-MC-Unique: Ay-rr86bMduvR9CcyruC3w-1
+ us-mta-6-gxXNVDeNM8qqHmY3rKli0w-1; Wed, 10 May 2023 12:22:48 -0400
+X-MC-Unique: gxXNVDeNM8qqHmY3rKli0w-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 55D54863E8A;
-        Wed, 10 May 2023 16:22:37 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C2B05863E8F;
+        Wed, 10 May 2023 16:22:46 +0000 (UTC)
 Received: from shalem.redhat.com (unknown [10.39.195.159])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2B9004078906;
-        Wed, 10 May 2023 16:22:34 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A82564078906;
+        Wed, 10 May 2023 16:22:44 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
 To:     Pavel Machek <pavel@ucw.cz>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
@@ -48,10 +49,12 @@ To:     Pavel Machek <pavel@ucw.cz>,
 Cc:     Hans de Goede <hdegoede@redhat.com>, linux-leds@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
         netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org
-Subject: [PATCH RESEND 0/4] Fix oops about sleeping in led_trigger_blink()
-Date:   Wed, 10 May 2023 18:22:30 +0200
-Message-Id: <20230510162234.291439-1-hdegoede@redhat.com>
+        coreteam@netfilter.org, Yauhen Kharuzhy <jekhor@gmail.com>
+Subject: [PATCH RESEND 4/4] leds: Clear LED_INIT_DEFAULT_TRIGGER when clearing current trigger
+Date:   Wed, 10 May 2023 18:22:34 +0200
+Message-Id: <20230510162234.291439-5-hdegoede@redhat.com>
+In-Reply-To: <20230510162234.291439-1-hdegoede@redhat.com>
+References: <20230510162234.291439-1-hdegoede@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
@@ -59,54 +62,37 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi All,
+Not all triggers use LED_INIT_DEFAULT_TRIGGER, which means that it
+will not get cleared when the default trigger is a trigger which
+does not use it such as "default-on".
 
-This is a resend with al the subsys maintainers of files touched
-by the small led_trigger_blink() / led_trigger_blink_oneshot()
-API/prototype change in the first patch in this series.
+If the default trigger then later gets replaced by a trigger which
+does check LED_INIT_DEFAULT_TRIGGER, such as "timer" then that trigger
+will behave as if it is the default trigger which it should not do.
 
-ARCNet, power-supply, USB, MAC80211 and netfilter maintainers,
-may we please have your ack for merging patch 1/4 through Lee's
-LED tree: https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git/
-?
+To fix this clear the LED_INIT_DEFAULT_TRIGGER flag when clearing
+the current trigger, so that it will not be set for any subsequently
+set (non default) triggers.
 
-Orginal cover letter:
+Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Tested-by: Yauhen Kharuzhy <jekhor@gmail.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/leds/led-triggers.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Here is a patch series to fix an oops about sleeping in led_trigger_blink()
-+ one other small bugfix.
-
-Fixes: 0b9536c95709 ("leds: Add ability to blink via simple trigger")
-
-tag, but Fixes tags tend to lead to patches getting automatically added
-to the stable series and I would prefer to see this series get some
-significant testing time in mainline first, so I have chosen to omit
-the tag.
-
-Regards,
-
-Hans
-
-
-Hans de Goede (4):
-  leds: Change led_trigger_blink[_oneshot]() delay parameters to
-    pass-by-value
-  leds: Fix set_brightness_delayed() race
-  leds: Fix oops about sleeping in led_trigger_blink()
-  leds: Clear LED_INIT_DEFAULT_TRIGGER when clearing current trigger
-
- drivers/leds/led-core.c                  | 81 ++++++++++++++++++++----
- drivers/leds/led-triggers.c              | 17 ++---
- drivers/leds/trigger/ledtrig-disk.c      |  9 +--
- drivers/leds/trigger/ledtrig-mtd.c       |  8 +--
- drivers/net/arcnet/arcnet.c              |  8 +--
- drivers/power/supply/power_supply_leds.c |  5 +-
- drivers/usb/common/led.c                 |  4 +-
- include/linux/leds.h                     | 43 ++++++++++---
- net/mac80211/led.c                       |  2 +-
- net/mac80211/led.h                       |  8 +--
- net/netfilter/xt_LED.c                   |  3 +-
- 11 files changed, 125 insertions(+), 63 deletions(-)
-
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 8214d3f7bc5f..6a5e1f41f9a4 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -185,6 +185,7 @@ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ 		led_cdev->trigger = NULL;
+ 		led_cdev->trigger_data = NULL;
+ 		led_cdev->activated = false;
++		led_cdev->flags &= ~LED_INIT_DEFAULT_TRIGGER;
+ 		led_set_brightness(led_cdev, LED_OFF);
+ 	}
+ 	if (trig) {
 -- 
 2.40.1
 
