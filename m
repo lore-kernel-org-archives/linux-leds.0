@@ -2,138 +2,203 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 708A9C77B7C
-	for <linux-leds@archiver.kernel.org>; Wed, 10 May 2023 15:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B10D5C77B7C
+	for <linux-leds@archiver.kernel.org>; Wed, 10 May 2023 16:23:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237102AbjEJPdS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 10 May 2023 11:33:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51852 "EHLO
+        id S229490AbjEJQX1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 10 May 2023 12:23:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236614AbjEJPdR (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 May 2023 11:33:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF2262D66
-        for <linux-leds@vger.kernel.org>; Wed, 10 May 2023 08:32:32 -0700 (PDT)
+        with ESMTP id S229468AbjEJQX0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 10 May 2023 12:23:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE0F7AB7
+        for <linux-leds@vger.kernel.org>; Wed, 10 May 2023 09:22:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1683732751;
+        s=mimecast20190719; t=1683735764;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PVPBBjq6P+tiwQGILvj6w7+GEWzPDfiBOGoUCj76Gy0=;
-        b=KnGnbAUz5BBbzA0htrGHCtpE/vKZcEGuCb9eUjDj8lzB/br2oeQr+upH5KoxUHqiJbG7Vm
-        fttF+J5m7X8Bj1nqfT+dooqYJQt/waazypp2Ksro8IpHjN2Q4UaGXDXkEJwQu+CY9elQIs
-        PbpnXZ9nkt+M9XlrZAGgBKFgwp0q/4U=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-583-qM6T4vQONiuu_nYfGHxAiQ-1; Wed, 10 May 2023 11:32:30 -0400
-X-MC-Unique: qM6T4vQONiuu_nYfGHxAiQ-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-94a355c9028so847331066b.3
-        for <linux-leds@vger.kernel.org>; Wed, 10 May 2023 08:32:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683732749; x=1686324749;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PVPBBjq6P+tiwQGILvj6w7+GEWzPDfiBOGoUCj76Gy0=;
-        b=k4TaRpZww6kR78qWbW9oq3C4UgUIs/n+CO1z0fDyeEItZoBFCtHG7gRTrqPcwh1zJC
-         eA1BSIVYVvUahigTWWM+D7Z2SMRTPi6j1GdTro7cYSHGFV3IIV+0mkXKdo7eO07/yTbG
-         Mw+fVd1tkyftfybfQhBUsxOr5dpc+DMydJ4I+yZpvwQQfS1TtyQgfmyEcpyXwurGkP7Z
-         u8eoH4Jhu2KQ/2DkAF2zQmxgnqIl6f7OQ/O07NT8PhT8a5oR5U5Bhorx3SwNI0hIQlEz
-         JqrUPCz2OESBQ6phOTYXRtOqX7DyHfyqW5geNHZjhTmVGx9KZgPINzfllWINq9T8NGzC
-         UG3Q==
-X-Gm-Message-State: AC+VfDwC8MIq2s0t0+EEQ2waiG7J4dPE4P9Q6cCgWqD5RCkNpwVJnDEa
-        MleCvgz4VahU3ekDvEJf4bCMcPHmUmQY6RvTnEiOWEJ72eDTnrFfsKrFM/PTjuxd4EN9i1oAIKJ
-        1ptJUZTWbsrKFLSAlM+9T1Q==
-X-Received: by 2002:a17:907:2689:b0:961:272d:bda5 with SMTP id bn9-20020a170907268900b00961272dbda5mr15791428ejc.49.1683732749037;
-        Wed, 10 May 2023 08:32:29 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ4uhlMfAFj9sJuB1p/1rvB+DicqV2eSRBx/uyLFMpnHJc5QIalosGey+Xrc5jQBRLaOTsDT9w==
-X-Received: by 2002:a17:907:2689:b0:961:272d:bda5 with SMTP id bn9-20020a170907268900b00961272dbda5mr15791409ejc.49.1683732748720;
-        Wed, 10 May 2023 08:32:28 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id v21-20020a1709060b5500b00965e68b8df5sm2786656ejg.76.2023.05.10.08.32.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 May 2023 08:32:28 -0700 (PDT)
-Message-ID: <9b2e2363-8f32-ee58-0585-3531bce2f8c4@redhat.com>
-Date:   Wed, 10 May 2023 17:32:27 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 1/4] leds: Change led_trigger_blink[_oneshot]() delay
- parameters to pass-by-value
-Content-Language: en-US, nl
-To:     Lee Jones <lee@kernel.org>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-leds@vger.kernel.org
-References: <20230412215855.593541-1-hdegoede@redhat.com>
- <20230412215855.593541-2-hdegoede@redhat.com>
- <20230510115730.GA8963@google.com>
+        bh=MrfAzzTvSr4NM9cjx9eZc8ahJ2DJ06vyc3zvAB2kHlk=;
+        b=gLaIyvKuHc+QXGmYTVsQz7ca0S3Ht9Mvqcxm4D2zYEWwR2JqMKfN4zPf9nycPGheRBsPdA
+        6yLowaFV6kntFAVPak04S88QHw6q47zWbl4Fb7FC+09Rlt3Ftvh7aa2jRN0TyR22xQLLoS
+        TcejRIUarxglRtEINiZ/R4/eXNjm8A0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-358-XwFgT2OJMhOo4rseUA0DJw-1; Wed, 10 May 2023 12:22:43 -0400
+X-MC-Unique: XwFgT2OJMhOo4rseUA0DJw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 27A46185A79C;
+        Wed, 10 May 2023 16:22:42 +0000 (UTC)
+Received: from shalem.redhat.com (unknown [10.39.195.159])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 106334078906;
+        Wed, 10 May 2023 16:22:39 +0000 (UTC)
 From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20230510115730.GA8963@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-leds@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, Yauhen Kharuzhy <jekhor@gmail.com>
+Subject: [PATCH RESEND 2/4] leds: Fix set_brightness_delayed() race
+Date:   Wed, 10 May 2023 18:22:32 +0200
+Message-Id: <20230510162234.291439-3-hdegoede@redhat.com>
+In-Reply-To: <20230510162234.291439-1-hdegoede@redhat.com>
+References: <20230510162234.291439-1-hdegoede@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi,
+When a trigger wants to switch from blinking to LED on it needs to call:
+	led_set_brightness(LED_OFF);
+	led_set_brightness(LED_FULL);
 
-On 5/10/23 13:57, Lee Jones wrote:
-> On Wed, 12 Apr 2023, Hans de Goede wrote:
-> 
->> led_blink_set[_oneshot]()'s delay_on and delay_off function parameters
->> are pass by reference, so that hw-blink implementations can report
->> back the actual achieved delays when the values have been rounded
->> to something the hw supports.
->>
->> This is really only interesting for the sysfs API / the timer trigger.
->> Other triggers don't really care about this and none of the callers of
->> led_trigger_blink[_oneshot]() do anything with the returned delay values.
->>
->> Change the led_trigger_blink[_oneshot]() delay parameters to pass-by-value,
->> there are 2 reasons for this:
->>
->> 1. led_cdev->blink_set() may sleep, while led_trigger_blink() may not.
->> So on hw where led_cdev->blink_set() sleeps the call needs to be deferred
->> to a workqueue, in which case the actual achieved delays are unknown
->> (this is a preparation patch for the deferring).
->>
->> 2. Since the callers don't care about the actual achieved delays, allowing
->> callers to directly pass a value leads to simpler code for most callers.
->>
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> ---
->>  drivers/leds/led-triggers.c              | 16 ++++++++--------
->>  drivers/leds/trigger/ledtrig-disk.c      |  9 +++------
->>  drivers/leds/trigger/ledtrig-mtd.c       |  8 ++------
->>  drivers/net/arcnet/arcnet.c              |  8 ++------
->>  drivers/power/supply/power_supply_leds.c |  5 +----
->>  drivers/usb/common/led.c                 |  4 +---
->>  include/linux/leds.h                     | 16 ++++++++--------
->>  net/mac80211/led.c                       |  2 +-
->>  net/mac80211/led.h                       |  8 ++------
->>  net/netfilter/xt_LED.c                   |  3 +--
->>  10 files changed, 29 insertions(+), 50 deletions(-)
-> 
-> Just came to apply this and realised that you have touched other
-> subsystems without Cc'ing the appropriate maintainers.
+To first call disables blinking and the second then turns the LED on
+(the power-supply charging-blink-full-solid triggers do this).
 
-Good point, sorry about that.
+These calls happen immediately after each other, so it is possible
+that set_brightness_delayed() from the first call has not run yet
+when the led_set_brightness(LED_FULL) call finishes.
 
-> Please can you [RESEND] this set and include them please?
+If this race hits then this is causing problems for both
+sw- and hw-blinking:
 
-Ack, I'm rebasing them on 6.4-rc1, checking no new
-users of led_trigger_blink() / led_trigger_blink_oneshot()
-(which this set changes the prototype of) have shown up
-and then I'll do a resend.
+For sw-blinking set_brightness_delayed() clears delayed_set_value
+when LED_BLINK_DISABLE is set causing the led_set_brightness(LED_FULL)
+call effects to get lost when hitting the race, resulting in the LED
+turning off instead of on.
 
-(if I have to make any changes other then the plain rebase
-I'll make it a version 2 set instead.)
+For hw-blinking if the race hits delayed_set_value has been
+set to LED_FULL by the time set_brightness_delayed() runs.
+So led_cdev->brightness_set_blocking() is never called with
+LED_OFF as argument and the hw-blinking is never disabled leaving
+the LED blinking instead of on.
 
-Regards,
+Fix both issues by adding LED_SET_BRIGHTNESS and LED_SET_BRIGHTNESS_OFF
+work_flags making this 2 separate actions to be run by
+set_brightness_delayed().
 
-Hans
+Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Tested-by: Yauhen Kharuzhy <jekhor@gmail.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/leds/led-core.c | 57 +++++++++++++++++++++++++++++++----------
+ include/linux/leds.h    |  3 +++
+ 2 files changed, 47 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index 4a97cb745788..e61acc785410 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -114,21 +114,14 @@ static void led_timer_function(struct timer_list *t)
+ 	mod_timer(&led_cdev->blink_timer, jiffies + msecs_to_jiffies(delay));
+ }
+ 
+-static void set_brightness_delayed(struct work_struct *ws)
++static void set_brightness_delayed_set_brightness(struct led_classdev *led_cdev,
++						  unsigned int value)
+ {
+-	struct led_classdev *led_cdev =
+-		container_of(ws, struct led_classdev, set_brightness_work);
+ 	int ret = 0;
+ 
+-	if (test_and_clear_bit(LED_BLINK_DISABLE, &led_cdev->work_flags)) {
+-		led_cdev->delayed_set_value = LED_OFF;
+-		led_stop_software_blink(led_cdev);
+-	}
+-
+-	ret = __led_set_brightness(led_cdev, led_cdev->delayed_set_value);
++	ret = __led_set_brightness(led_cdev, value);
+ 	if (ret == -ENOTSUPP)
+-		ret = __led_set_brightness_blocking(led_cdev,
+-					led_cdev->delayed_set_value);
++		ret = __led_set_brightness_blocking(led_cdev, value);
+ 	if (ret < 0 &&
+ 	    /* LED HW might have been unplugged, therefore don't warn */
+ 	    !(ret == -ENODEV && (led_cdev->flags & LED_UNREGISTERING) &&
+@@ -137,6 +130,30 @@ static void set_brightness_delayed(struct work_struct *ws)
+ 			"Setting an LED's brightness failed (%d)\n", ret);
+ }
+ 
++static void set_brightness_delayed(struct work_struct *ws)
++{
++	struct led_classdev *led_cdev =
++		container_of(ws, struct led_classdev, set_brightness_work);
++
++	if (test_and_clear_bit(LED_BLINK_DISABLE, &led_cdev->work_flags)) {
++		led_stop_software_blink(led_cdev);
++		set_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags);
++	}
++
++	/*
++	 * Triggers may call led_set_brightness(LED_OFF),
++	 * led_set_brightness(LED_FULL) in quick succession to disable blinking
++	 * and turn the LED on. Both actions may have been scheduled to run
++	 * before this work item runs once. To make sure this works properly
++	 * handle LED_SET_BRIGHTNESS_OFF first.
++	 */
++	if (test_and_clear_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags))
++		set_brightness_delayed_set_brightness(led_cdev, LED_OFF);
++
++	if (test_and_clear_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags))
++		set_brightness_delayed_set_brightness(led_cdev, led_cdev->delayed_set_value);
++}
++
+ static void led_set_software_blink(struct led_classdev *led_cdev,
+ 				   unsigned long delay_on,
+ 				   unsigned long delay_off)
+@@ -271,8 +288,22 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev, unsigned int value)
+ 	if (!__led_set_brightness(led_cdev, value))
+ 		return;
+ 
+-	/* If brightness setting can sleep, delegate it to a work queue task */
+-	led_cdev->delayed_set_value = value;
++	/*
++	 * Brightness setting can sleep, delegate it to a work queue task.
++	 * value 0 / LED_OFF is special, since it also disables hw-blinking
++	 * (sw-blink disable is handled in led_set_brightness()).
++	 * To avoid a hw-blink-disable getting lost when a second brightness
++	 * change is done immediately afterwards (before the work runs),
++	 * it uses a separate work_flag.
++	 */
++	if (value) {
++		led_cdev->delayed_set_value = value;
++		set_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
++	} else {
++		clear_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
++		set_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags);
++	}
++
+ 	schedule_work(&led_cdev->set_brightness_work);
+ }
+ EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index c3dc22d184e2..de813fe96a20 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -124,6 +124,9 @@ struct led_classdev {
+ #define LED_BLINK_INVERT		3
+ #define LED_BLINK_BRIGHTNESS_CHANGE 	4
+ #define LED_BLINK_DISABLE		5
++	/* Brightness off also disables hw-blinking so it is a separate action */
++#define LED_SET_BRIGHTNESS_OFF		6
++#define LED_SET_BRIGHTNESS		7
+ 
+ 	/* Set LED brightness level
+ 	 * Must not sleep. Use brightness_set_blocking for drivers
+-- 
+2.40.1
 
