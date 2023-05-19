@@ -2,127 +2,208 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BC4C77B7D
-	for <linux-leds@archiver.kernel.org>; Thu, 18 May 2023 14:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E6BCC77B7A
+	for <linux-leds@archiver.kernel.org>; Fri, 19 May 2023 13:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230247AbjEROG1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 18 May 2023 10:06:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43608 "EHLO
+        id S231820AbjESNFI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 19 May 2023 09:05:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231499AbjEROG1 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 18 May 2023 10:06:27 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4488910D9
-        for <linux-leds@vger.kernel.org>; Thu, 18 May 2023 07:06:25 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-3078aa0b152so1390520f8f.3
-        for <linux-leds@vger.kernel.org>; Thu, 18 May 2023 07:06:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684418784; x=1687010784;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=azqpCVnd/614+AfKRHDl6hN6ez5a51IoobwFr9W5qBQ=;
-        b=h+GRLvpVsV6qF+yhQyC+9b89tOnb+IO73WPsf/PENnlj/jBn9IHDnS3KG2cpxTAoSi
-         ix13lFUJ/6yah6rp5/iuHqJzworFHDCDRWlmVTJfPoIyi/b8ZQWsq7QGGwXxS3MgKR5b
-         lxVSwmnxQIbRUscKxLYp1u/pdm+ggnBOTSW6oFHFM6nnLsAoAL8a3GI8E3kjQK+xlHIo
-         eNomgcLsFD3Byhthgx2JOBp3d81/Qf2/lXHfkszJkGuHG0EovhpGJeXYXJ16T8GiKbaF
-         JTwccEgIFv27bd9bxEelXasc/qEmPjALXS/fhVMT625offvc0Gb7VwOivbAqiwudCXRu
-         7iYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684418784; x=1687010784;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=azqpCVnd/614+AfKRHDl6hN6ez5a51IoobwFr9W5qBQ=;
-        b=EeEElfNZ/JYBfAOANV8XO5DD3tHe/TAyOtyH3Qm5ib5iw+mMI7hyb/uSEZAssbcnRi
-         1pUR4Xy7goRQ7FqUyiA7pPF9mBQC7Qz/4cKA4NLfjKgo6MxvDe4Fg5Kp5CeW2Jdc8Vfe
-         Hl0uQ05bUTng6XX5CxO+FML5BkKWfgatLE4TVR4ksq22rd2OWfb1a0lRA+WCORUGM+t4
-         gsTcYzJ4Dffe/KcYflh4xUf27PmYXV6KCkIfZkO7uO2BVTD4LSggAMgoL5jXIA1pGd9J
-         ZZkpCkWqioMSUPWWYAFE7+2X24TlV14rSEUPfupCC+GDEHSYJE0qRNV00aBOAEyeV2ax
-         1fsg==
-X-Gm-Message-State: AC+VfDySOb9WnCrGKUKk8jQPC/2lIo4+5PQD9wfqeyUe+sst1c40WKi7
-        WQCmjuDbqarlyU261yJ6tCKKOA==
-X-Google-Smtp-Source: ACHHUZ7G56jeX+RtKQ3jgdBRAl+/CNsoOO6ryL3IsYzeTnzcHLO0SRpVzbHO+rNNmTHmhy28FkvR+w==
-X-Received: by 2002:a05:6000:1245:b0:2ef:b19f:b24c with SMTP id j5-20020a056000124500b002efb19fb24cmr2059445wrx.0.1684418783660;
-        Thu, 18 May 2023 07:06:23 -0700 (PDT)
-Received: from localhost (cpc76484-cwma10-2-0-cust274.7-3.cable.virginm.net. [82.31.201.19])
-        by smtp.gmail.com with ESMTPSA id n16-20020a1c7210000000b003f19b3d89e9sm5389587wmc.33.2023.05.18.07.06.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 May 2023 07:06:23 -0700 (PDT)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Thu, 18 May 2023 15:06:22 +0100
-Message-Id: <CSPGMHY9BH1S.J16A0P4WUJ9V@lion>
-Cc:     <linux-arm-msm@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <~postmarketos/upstreaming@lists.sr.ht>,
-        <phone-devel@vger.kernel.org>, <amartinz@shiftphones.com>
-Subject: Re: [PATCH v3 3/3] arm64: dts: qcom: sdm845-shift-axolotl: enable
- flash LEDs
-From:   "Caleb Connolly" <caleb.connolly@linaro.org>
-To:     "Dylan Van Assche" <me@dylanvanassche.be>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <pavel@ucw.cz>,
-        <lee@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <quic_fenglinw@quicinc.com>
-X-Mailer: aerc 0.15.1
-References: <20230518133113.273880-1-me@dylanvanassche.be>
- <20230518133113.273880-4-me@dylanvanassche.be>
-In-Reply-To: <20230518133113.273880-4-me@dylanvanassche.be>
+        with ESMTP id S231923AbjESNEu (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 19 May 2023 09:04:50 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD733D2;
+        Fri, 19 May 2023 06:04:46 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 575765FFE8;
+        Fri, 19 May 2023 16:04:43 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1684501483;
+        bh=I7/4CVIoC9+TGp8GwFUh+0busZ3FOuWXAFKMy9pjxXo=;
+        h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+        b=I8ZTx9177EAVj7bGxAQygZyLc0cWXMHPMsnmYho+pLFvRxdsWJ3dDa6DFGFOJ5s33
+         YKoDfC4yommZeaJJpoLfDEEtx+AHLXPlOAhc5Ay9yo32kQE8m0GxgwqwZqyIckBAqV
+         hHWFkjnIh0KuaQnO4aGEKutbToBp8wvoqwNhJK584z17v66rvxsQYTOQKT+MG3Eymi
+         A7SAdDZwybJJUN3B/W66L7yeRhQh1Eotwp96hBAv44k3F4FR4JRvym/y6Gufrh4mGP
+         dBUu7w/ffkIfOyaEigoN7H4pE2FyQwktIE1HfJ+csGIUZH3LNmtP2iYnXU0UjKE5WF
+         ttTt4PtJJzhqQ==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Fri, 19 May 2023 16:04:42 +0300 (MSK)
+From:   Martin Kurbanov <mmkurbanov@sberdevices.ru>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <kernel@sberdevices.ru>,
+        Martin Kurbanov <mmkurbanov@sberdevices.ru>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v5 1/2] dt-bindings: leds: add binding for aw200xx
+Date:   Fri, 19 May 2023 16:04:02 +0300
+Message-ID: <20230519130403.212479-2-mmkurbanov@sberdevices.ru>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <20230519130403.212479-1-mmkurbanov@sberdevices.ru>
+References: <20230519130403.212479-1-mmkurbanov@sberdevices.ru>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/19 06:43:00 #21342157
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu May 18, 2023 at 2:31 PM BST, Dylan Van Assche wrote:
-> The SHIFT6mq (axolotl) is an SDM845-based smartphone with 2 flash LEDs.
-> One LED is white, the other one is yellow. Define both LEDs in the DTS
-> so they can be used as flash or torch and enable the flash LED
-> controller to control them in PMI8998.
->
-> Signed-off-by: Dylan Van Assche <me@dylanvanassche.be>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Add YAML devicetree binding for AWINIC AW20036/AW20052/AW20074
+led driver.
 
-Reviewed-by: Caleb Connolly <caleb.connolly@linaro.org>
+Signed-off-by: Martin Kurbanov <mmkurbanov@sberdevices.ru>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/leds/awinic,aw200xx.yaml         | 126 ++++++++++++++++++
+ 1 file changed, 126 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
 
-// Caleb (they/them)
-
-> ---
->  .../boot/dts/qcom/sdm845-shift-axolotl.dts    | 22 +++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts b/arch/arm=
-64/boot/dts/qcom/sdm845-shift-axolotl.dts
-> index 0ad891348e0c..1eaff964b202 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
-> @@ -554,6 +554,28 @@ led@5 {
->  	};
->  };
-> =20
-> +&pmi8998_flash {
-> +	status =3D "okay";
-> +
-> +	led-0 {
-> +		function =3D LED_FUNCTION_FLASH;
-> +		color =3D <LED_COLOR_ID_WHITE>;
-> +		led-sources =3D <1>;
-> +		led-max-microamp =3D <100000>;
-> +		flash-max-microamp =3D <1100000>;
-> +		flash-max-timeout-us =3D <1280000>;
-> +	};
-> +
-> +	led-1 {
-> +		function =3D LED_FUNCTION_FLASH;
-> +		color =3D <LED_COLOR_ID_YELLOW>;
-> +		led-sources =3D <2>;
-> +		led-max-microamp =3D <100000>;
-> +		flash-max-microamp =3D <1100000>;
-> +		flash-max-timeout-us =3D <1280000>;
-> +	};
-> +};
-> +
->  &qup_uart9_rx {
->  	drive-strength =3D <2>;
->  	bias-pull-up;
+diff --git a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
+new file mode 100644
+index 000000000000..feb5febaf361
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
+@@ -0,0 +1,126 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/awinic,aw200xx.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: AWINIC AW200XX LED
++
++maintainers:
++  - Martin Kurbanov <mmkurbanov@sberdevices.ru>
++
++description: |
++  This controller is present on AW20036/AW20054/AW20072.
++  It is a 3x12/6x9/6x12 matrix LED programmed via
++  an I2C interface, up to 36/54/72 LEDs or 12/18/24 RGBs,
++  3 pattern controllers for auto breathing or group dimming control.
++
++  For more product information please see the link below:
++  aw20036 - https://www.awinic.com/en/productDetail/AW20036QNR#tech-docs
++  aw20054 - https://www.awinic.com/en/productDetail/AW20054QNR#tech-docs
++  aw20072 - https://www.awinic.com/en/productDetail/AW20072QNR#tech-docs
++
++properties:
++  compatible:
++    enum:
++      - awinic,aw20036
++      - awinic,aw20054
++      - awinic,aw20072
++
++  reg:
++    maxItems: 1
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  awinic,display-rows:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Leds matrix size
++
++patternProperties:
++  "^led@[0-9a-f]$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        description:
++          LED number
++        maxItems: 1
++
++      led-max-microamp:
++        default: 9780
++        description: |
++          Note that a driver will take the minimum of all LED limits
++          since the chip has a single global setting.
++          The maximum output current of each LED is calculated by the
++          following formula:
++            IMAXled = 160000 * (592 / 600.5) * (1 / display-rows)
++          And the minimum output current formula:
++            IMINled = 3300 * (592 / 600.5) * (1 / display-rows)
++
++required:
++  - compatible
++  - reg
++  - "#address-cells"
++  - "#size-cells"
++  - awinic,display-rows
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: awinic,aw20036
++    then:
++      properties:
++        awinic,display-rows:
++          enum: [1, 2, 3]
++    else:
++      properties:
++        awinic,display-rows:
++          enum: [1, 2, 3, 4, 5, 6, 7]
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@3a {
++            compatible = "awinic,aw20036";
++            reg = <0x3a>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++            awinic,display-rows = <3>;
++
++            led@0 {
++                reg = <0x0>;
++                color = <LED_COLOR_ID_RED>;
++                led-max-microamp = <9780>;
++            };
++
++            led@1 {
++                reg = <0x1>;
++                color = <LED_COLOR_ID_GREEN>;
++                led-max-microamp = <9780>;
++            };
++
++            led@2 {
++                reg = <0x2>;
++                color = <LED_COLOR_ID_BLUE>;
++                led-max-microamp = <9780>;
++            };
++        };
++    };
++
++...
+-- 
+2.40.0
 
