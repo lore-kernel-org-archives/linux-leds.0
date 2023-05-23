@@ -2,111 +2,134 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33839C77B75
-	for <linux-leds@archiver.kernel.org>; Tue, 23 May 2023 18:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C15C7EE31
+	for <linux-leds@archiver.kernel.org>; Tue, 23 May 2023 20:41:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237420AbjEWScI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 23 May 2023 14:32:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40262 "EHLO
+        id S238532AbjEWUlq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 23 May 2023 16:41:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230283AbjEWScH (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 23 May 2023 14:32:07 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 917638F
-        for <linux-leds@vger.kernel.org>; Tue, 23 May 2023 11:32:05 -0700 (PDT)
-Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 1CA3785723;
-        Tue, 23 May 2023 20:32:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1684866723;
-        bh=MzDtpJzrkToYeVBVUyTXcAqZcnZVI5/3Hk+liskeBoE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=wGocq2oxHKztHfPUJl0XN5usNG6XoR9BYSnMyYFTmLAyLxLZFOGLlJaQUj7YkY6At
-         gDTvoAUq9CQAA04/DlKdzflx24fA19Ngr2LY/039H+Np8JW6JV214gpF/0M4A9reXN
-         cY5tLWzfzSfoFpr4Ge3C5SHYq2YB2pWyTr+2u8FsAHVXxDentJOh+gEafyj07cfra+
-         ZRwtTuVTDdJfU+ZnSEUeA6v2SXw/NMcIh1RPDbrViDUFpLvLSgw8Fq2HOeAMunt5+P
-         9vrYzuoB41GRMhQtBfLu2Y3kW/9fe0CKK4wsdTsLGDTTTOiD/fsffiKnwY/57yot1d
-         KVb1RfyHvmB0w==
-From:   Marek Vasut <marex@denx.de>
-To:     linux-leds@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>,
-        Christoph Niedermaier <cniedermaier@dh-electronics.com>,
-        Lee Jones <lee@kernel.org>, Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v2] leds: gpio: Configure per-LED pin control
-Date:   Tue, 23 May 2023 20:31:51 +0200
-Message-Id: <20230523183151.5460-1-marex@denx.de>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S230031AbjEWUlo (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 23 May 2023 16:41:44 -0400
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21BFFCA;
+        Tue, 23 May 2023 13:41:43 -0700 (PDT)
+Received: from [192.168.122.1] (84-115-214-73.cable.dynamic.surfer.at [84.115.214.73])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id CC7EFCFBBC;
+        Tue, 23 May 2023 20:41:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1684874501; bh=TJ542YLeCftA/8fhg2JNrraJTBnWbaZkPbFnUwRol6g=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc;
+        b=R2/gMkK/PfFPy6GWRI1+HF3H+f1tCi0OIO/sVowniDPPouJuJwQ9Qg02BT4pFZNTQ
+         62RRBGYRz2pLtyJFGo+PBzLQRcF/MLppm9OenHSBXUgru6Tp7BE7Oj1xjko+vPGopx
+         /dpPFtqNduCw67zrz2vMp1t7+yuRcQ4/hPHDjisE=
+From:   Luca Weiss <luca@z3ntu.xyz>
+Date:   Tue, 23 May 2023 22:41:29 +0200
+Subject: [PATCH v3 2/3] arm64: dts: qcom: sdm632-fairphone-fp3: Add
+ notification LED
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230414-pmi632-v3-2-079d2cada699@z3ntu.xyz>
+References: <20230414-pmi632-v3-0-079d2cada699@z3ntu.xyz>
+In-Reply-To: <20230414-pmi632-v3-0-079d2cada699@z3ntu.xyz>
+To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-doc@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1343; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=TJ542YLeCftA/8fhg2JNrraJTBnWbaZkPbFnUwRol6g=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkbSUAAyJdMMoOpSMaz9C3Sn99T7YCw8ToXq945
+ 4IsslXJObKJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZG0lAAAKCRBy2EO4nU3X
+ VkJVD/9YaYeyX9jGqe7/y/4fgdOOuMfD8EwIgbX9nwu5DF5ZjmGZB+zBdyGMWhQhLbw7PBh7QYb
+ qIUjbeCRp6yhQUDaQmx7dLIW8EkhYtFnWnpPuZoeJuathLOggZ1LelZn9yoIGSEKNurIL6ZmK9D
+ hg5lRqs5DAmrz7j9MJNLkXad/UoBWdZcyAxUrUOWd3UX2haujPhVkgg7K23qt+hpLKD0TyoBWvU
+ WnYHJ7QME34UHsR0CXpkmVTfIZAugH4gwBgY3joI3S4ejXy/LVU8ibpmMUGdAyG7kgymVqHYmzr
+ gRuW0FH44DHpcNL2ZYZUwbkfnZfHgQyC3gAhPkMvrnJI0Nw8H/DO9ZpqU77uKPsQ40sbKDBgCZ1
+ Y5D7pO1e4kNu9e5cgfK1NoL7GP7YotlpUtWghsrBwfTA9oUedPcKieCFpC2Tktu9jWNTCCA/3z5
+ 4bdNf6/SjiEpypd3+XcJsBuumnPgsjJRNS2qUvT6ebEO7QFiF8YoXad28bEdo1D7HbkA9MyceAr
+ DG3hujx4NyOiqcsG29b58fvG9HIscwL2U08/E3CRUPkMwg8sDsYsc3Mit31pRYxFo+4NIo2r7QK
+ qrdedQ6cMy9rL3rLtagFVgBf2UKuVNpAeDxhXINoG17ON54iHyAFXygKvT+bBNq5+g33ZzaoUmK
+ wjTL3OqBuLjqB1w==
+X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Each gpio-leds DT node DT subnode can have a pinctrl property assigned
-to it, parse the DT subnode pinctrl properties and configure each pin
-accordingly.
+The phone features a notification LED connected to the pmi632. Configure
+the RGB led found on it.
 
-Tested-by: Christoph Niedermaier <cniedermaier@dh-electronics.com>
-Signed-off-by: Marek Vasut <marex@denx.de>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 ---
-Cc: Christoph Niedermaier <cniedermaier@dh-electronics.com>
-Cc: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-To: linux-leds@vger.kernel.org
----
-V2: Cc Lee
----
- drivers/leds/leds-gpio.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts | 29 +++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index ce4e79939731d..7bfe40a6bfddf 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -13,6 +13,7 @@
- #include <linux/leds.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
- #include <linux/slab.h>
-@@ -77,6 +78,7 @@ static int create_gpio_led(const struct gpio_led *template,
- 	struct fwnode_handle *fwnode, gpio_blink_set_t blink_set)
- {
- 	struct led_init_data init_data = {};
-+	struct pinctrl *pinctrl;
- 	int ret, state;
+diff --git a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
+index 70e683b7e4fc..301eca9a4f31 100644
+--- a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
++++ b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
+@@ -4,8 +4,10 @@
+  */
+ /dts-v1/;
  
- 	led_dat->cdev.default_trigger = template->default_trigger;
-@@ -119,6 +121,22 @@ static int create_gpio_led(const struct gpio_led *template,
- 						     &init_data);
- 	}
++#include <dt-bindings/leds/common.h>
+ #include "sdm632.dtsi"
+ #include "pm8953.dtsi"
++#include "pmi632.dtsi"
  
-+	if (ret)
-+		return ret;
+ / {
+ 	model = "Fairphone 3";
+@@ -83,6 +85,33 @@ &pm8953_resin {
+ 	linux,code = <KEY_VOLUMEDOWN>;
+ };
+ 
++&pmi632_lpg {
++	status = "okay";
 +
-+	pinctrl = devm_pinctrl_get_select_default(led_dat->cdev.dev);
-+	if (IS_ERR(pinctrl)) {
-+		ret = PTR_ERR(pinctrl);
-+		if (ret != -ENODEV) {
-+			dev_warn(led_dat->cdev.dev,
-+				 "Failed to select %pOF pinctrl: %d\n",
-+				 to_of_node(fwnode), ret);
-+		} else {
-+			/* pinctrl-%d not present, not an error */
-+			ret = 0;
-+		}
-+	}
++	multi-led {
++		color = <LED_COLOR_ID_RGB>;
++		function = LED_FUNCTION_STATUS;
 +
- 	return ret;
- }
- 
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		led@1 {
++			reg = <1>;
++			color = <LED_COLOR_ID_RED>;
++		};
++
++		led@2 {
++			reg = <2>;
++			color = <LED_COLOR_ID_GREEN>;
++		};
++
++		led@3 {
++			reg = <3>;
++			color = <LED_COLOR_ID_BLUE>;
++		};
++	};
++};
++
+ &sdhc_1 {
+ 	status = "okay";
+ 	vmmc-supply = <&pm8953_l8>;
+
 -- 
-2.39.2
+2.40.1
 
