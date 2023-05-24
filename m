@@ -2,62 +2,62 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A917C7EE2D
-	for <linux-leds@archiver.kernel.org>; Wed, 24 May 2023 12:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF1FC7EE2C
+	for <linux-leds@archiver.kernel.org>; Wed, 24 May 2023 12:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234369AbjEXMqr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S234303AbjEXMqr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Wed, 24 May 2023 08:46:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33246 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233822AbjEXMqq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 24 May 2023 08:46:46 -0400
-Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01on2077.outbound.protection.outlook.com [40.107.13.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A4F012F;
-        Wed, 24 May 2023 05:46:44 -0700 (PDT)
+        with ESMTP id S232032AbjEXMqp (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 24 May 2023 08:46:45 -0400
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2080.outbound.protection.outlook.com [40.107.6.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E809C99;
+        Wed, 24 May 2023 05:46:43 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JYQJjE29Aq+Yw3U2ogQHvmG6h1SRGPVXjJfOCKlXnTTP1Ius78DK56CwWj9GrMCHiwGHg4vKdqxaLwxo46CDNt/ydigcbuEhd47JIk0LrL3+OCfXyvMA0pRmk+hOE6o2W+2V19T8INDv0sE3ZzH7ZIAR9UsfexARnBFDh+xol/cLqq9WZ2vNYblCzsZhk7/qi9e4HLfEFrVA8SYvFhH7bmgTPEkq8pKdpZjwjiNIdiM0i+2DSxdApBW1trjCMB5BN8CD7a/pOt+2cy+lB2J1WdAHVR5vx+g1ZB97FYrsKXzev4qdes59DXvw65taKGC7Wkk7ml5ysHRTnTwM0rIXtA==
+ b=fTkpBNpw1lhOuVVd6LfXkn+rP+FP14UnBW+sVwjoJgzPRsH7/YeDg+FZ4imhdSyOeea89DnPqjxFWvDwQwV+3ibaM2O001I7mVWjc3zALqJLCVIwtsPBoZ6HUIrf87JFiHme3PjxE1grtOhjJR2d8RB6I4X/dsPsYhgFksa+Ft1A2+1UpTEWNUE0gCCUW0HAXrEG9+/UE5AxoejMGPovDmOavIdhCp+VokAQ2Ob6kJIEjd5jEeuK97d52mWDqfVuiCR6bjY/k7kCsa5ynrTKXKFm+GAD8Y1Q9C4kPKxC/Vd9omvlqP3qclbGdC9k+dAWEe0HfnFe4VzDmM6d2R5E3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qRxZG0wjqpJdFYaOzUsk4ho9pjKMROxBDe6+yzl9xvs=;
- b=kFOummxUgL/pl3368b9TSeMaETYfhXZuDXJW9oR8JJeOoE5ZackaO1vMH93IgMXEXw5DiI2ctiPa1XtgZfjSuXoCFZgSgFSkVgo9roxu5WTRGxoo09FqK88czSlVZysaLJQBnECi5Yy7c46kBju2YLXsbz1xbkuLIt5cXC7pj+iiGnS4VeIBjIi1qpljfOWNa3EiX/gCQ+LMza0QfWxgzEwv9sbzKFvOqRApLRac4/iVOAnkdr6InFGfNBT19+xomzMsQ1BbLxTNl26L1/8+cYonUakQlS31Orzeyh4LRD7ne+9TS23xxBeq7W8FD9L/wXgEsAuzioQ3Uy7Y1VRArQ==
+ bh=dh3TbW4YErS+bBUZE1cA52kD2hjgiMDDXP+wCSGt0C4=;
+ b=ndWZWKuaEm0iiGLMSgpCDNEa1WM/JU+tH7F28yZTUhTbuJqcVPMfDlvIrYXEmzqNfIXuuJdWV4VZ1Z6jui/BSAuvEm9h7avHtWQ85Yq5DVhev7yDkhCawOBI0aOPx2BNa2tFencg42OfiCs+z+O7OWYa35c5RoA6CjsFZVU7FY54Nxptan3JhNcF48NbZl9lGulbR34tp49LkZxT/TM39QlQXv+Jqjm3WT3buCjOt9m6MrIKOY+I6kfCMMcy/GUeV8xOa3BeKfKJf6qUUBkKP5XmCY6b0Y5djLR2wGvB+6of3WIq/at2dY2KdByGdqhtqTPqQkD9a/Mhbm7mAezYJg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.76) smtp.rcpttodomain=ucw.cz smtp.mailfrom=siemens.com; dmarc=pass
+ 194.138.21.74) smtp.rcpttodomain=ucw.cz smtp.mailfrom=siemens.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=siemens.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qRxZG0wjqpJdFYaOzUsk4ho9pjKMROxBDe6+yzl9xvs=;
- b=HyX5rmF00KJVYar9so7MBiwTVS7i/fvqQ7alKqoHoItC2r3omj+POKrqJFfL/vd0THw9W6yA0KnA5EqIr/vPzZ4TrgHe6RHc7whmBesav/96i0zGXu4AyBULDJ3SrRBGxpOGtQ3HRQDSHVeYIXVC/61aqIOPE+yxjr7udZrYxzpySz3gZ2N3PtrFQE0xmIdfKV9yknC4d8eB0CSoc41JsNkYeQSHGxwzTWNzymc/+xtK22WBAF4QrGb7s5tAONIKV+pnFSvkgSxkfH2RzoKZk6bnRS0ZBkMmAwJ27QYeTiXX3aPvMlxivz+F1yR4xwJ/yN6EbWrnfoW5xAXwyFdqEg==
-Received: from FR3P281CA0206.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:a5::10)
- by DU0PR10MB7118.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:42d::20) with
+ bh=dh3TbW4YErS+bBUZE1cA52kD2hjgiMDDXP+wCSGt0C4=;
+ b=NhajjtMEJSeGN9+MBpr1kqjNkP6w6XTF1tymHC6rB/QC5F2lkM5uS20H8nUKj1tACWPFRe/fLhxiKyqBkoP4ceM8SkU5LuDttajz5Ro1rdhisS0P2/gJejDs/R2YEHPY72MTCBfr3D8F2Id+yQI4luGxb9lvMFUtkHYEYrJsyvw5sJSSOo0YgnC7uA7Ih9ElpoLbOoBZ7YBQRiLJRHao9f13IuvxdqrCi/v5TA9HggQiAZAKQv0BjO3lE/yb4LDVcihlsBEt7tDmLTne0nBK1xRTONdkxc7Zijd2gMWVWRPKVDalzYjsJOJz0NHBBfyWrG6WlEmixydNtdb8EACS6A==
+Received: from GVYP280CA0038.SWEP280.PROD.OUTLOOK.COM (2603:10a6:150:f9::15)
+ by DU2PR10MB7882.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:46e::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.28; Wed, 24 May
- 2023 12:46:41 +0000
-Received: from VE1EUR01FT089.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:d10:a5:cafe::21) by FR3P281CA0206.outlook.office365.com
- (2603:10a6:d10:a5::10) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 12:46:42 +0000
+Received: from HE1EUR01FT095.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:150:f9:cafe::5e) by GVYP280CA0038.outlook.office365.com
+ (2603:10a6:150:f9::15) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.15 via Frontend
- Transport; Wed, 24 May 2023 12:46:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.76)
+ Transport; Wed, 24 May 2023 12:46:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.74)
  smtp.mailfrom=siemens.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=siemens.com;
 Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.76 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.76; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.76) by
- VE1EUR01FT089.mail.protection.outlook.com (10.152.3.107) with Microsoft SMTP
+ 194.138.21.74 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.74; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.74) by
+ HE1EUR01FT095.mail.protection.outlook.com (10.152.1.8) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6433.15 via Frontend Transport; Wed, 24 May 2023 12:46:40 +0000
+ 15.20.6433.15 via Frontend Transport; Wed, 24 May 2023 12:46:41 +0000
 Received: from DEMCHDC8WBA.ad011.siemens.net (139.25.226.105) by
- DEMCHDC8VSA.ad011.siemens.net (194.138.21.76) with Microsoft SMTP Server
+ DEMCHDC8VQA.ad011.siemens.net (194.138.21.74) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1118.25; Wed, 24 May 2023 14:46:40 +0200
 Received: from localhost.localdomain (139.22.37.129) by
  DEMCHDC8WBA.ad011.siemens.net (139.25.226.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.25; Wed, 24 May 2023 14:46:39 +0200
+ 15.2.1118.25; Wed, 24 May 2023 14:46:40 +0200
 From:   Henning Schild <henning.schild@siemens.com>
 To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Hans de Goede <hdegoede@redhat.com>,
@@ -66,10 +66,12 @@ To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
         <platform-driver-x86@vger.kernel.org>
 CC:     Henning Schild <henning.schild@siemens.com>
-Subject: [PATCH v4 0/4] leds: simatic-ipc-leds-gpio: split up
-Date:   Wed, 24 May 2023 14:46:24 +0200
-Message-ID: <20230524124628.32295-1-henning.schild@siemens.com>
+Subject: [PATCH v4 2/4] leds: simatic-ipc-leds-gpio: move two extra gpio pins into another table
+Date:   Wed, 24 May 2023 14:46:26 +0200
+Message-ID: <20230524124628.32295-3-henning.schild@siemens.com>
 X-Mailer: git-send-email 2.39.3
+In-Reply-To: <20230524124628.32295-1-henning.schild@siemens.com>
+References: <20230524124628.32295-1-henning.schild@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -78,73 +80,134 @@ X-ClientProxiedBy: DEMCHDC8WBA.ad011.siemens.net (139.25.226.105) To
  DEMCHDC8WBA.ad011.siemens.net (139.25.226.105)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VE1EUR01FT089:EE_|DU0PR10MB7118:EE_
-X-MS-Office365-Filtering-Correlation-Id: 63bae83e-3353-4d12-fc6f-08db5c54ebd3
+X-MS-TrafficTypeDiagnostic: HE1EUR01FT095:EE_|DU2PR10MB7882:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9bd9f38b-c7e3-4357-3b3d-08db5c54ec64
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: prioT+yZhv5F1w/JU4mhzpuNlZ9tkRimAmlSV5/pqtDO40eAIipeuCchwL4p53mUFl2ms26SWImwRpzU2asycgnBqQeYPV0DZLZLcE8gElkFWfpZRrppHXQi7teiVBn/LSoNtuawQAM1s7uyRZ2WbBE37c6mnQoi6QzFqf0RF0T7mmXXed3VH4rIr4fg7dHB7d4sHQNGyDJkStO78Rd2xsv5JUEbQTre3tENE0nMpWpHX7jQR6uOVAWsQy+GLcpzwHiSp3Pd8sd432+j5hGJ5SQLr1oYXvoly3GGg+MUJPRSUkoG08ovKjQWiabGcttFHe3PFCLSl6oG6/VFTL9EGxDm0RVRhWW5Q7tCX02fUdRkCY3VXt7I3RRYY1zLR5x6EYYEp5bBBycdGyBzfYqXUzkjaLc9OUgABNK5qEUTJDvcm4tBPHxlTCug3iAfamvdFwuSVWWxiectWMvw2mHVHj9wOwsrGs0MmiQK9+atSnTxXaiS9Z3QMU6ZF/tYtZJ6cj3V/8yUrg87pPn1mLZW6iDYAlKmfCO6TpanGMZyafK9CBN0TTiMazbUnYlC9vO5Uy+BngyJ5n6FDtKdhhN9XcD4z0m8WdnzJvfFA7G2jbxUloO70vrosEmoPPYhGtD1TNVIbz4cfG/aYlk0aBGB9V94nPaVUIRsgsM0XXmhyOtWvVEpGriCfuPdViFTLdazaUjFQdlPZdjgdH+jBc4DLtADW4mFidcpUepEA+VS+z9/klHXSMZk4ZoMsSQJSuqQGlQVqSgWBfQSOws96paFpw==
-X-Forefront-Antispam-Report: CIP:194.138.21.76;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(136003)(376002)(396003)(346002)(39860400002)(451199021)(40470700004)(36840700001)(46966006)(47076005)(86362001)(82740400003)(82960400001)(36860700001)(2906002)(2616005)(956004)(336012)(478600001)(8936002)(8676002)(316002)(36756003)(16526019)(1076003)(44832011)(4326008)(5660300002)(40480700001)(110136005)(107886003)(356005)(81166007)(6666004)(83380400001)(186003)(40460700003)(82310400005)(26005)(66899021)(70206006)(41300700001)(70586007)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: sQgwHxigQ0Gi+DRwIcl0hsym7SukLO3/TgLAy4UMrxHoBph1ed3HRQt0MobPxgnFqum/EgwJT2Bo3lt/jGeJxVwUPflLrzrQeKRDzKoxOoOvZoW9YJUQABFRBgr+Mc1U6lCY34lJJxiqgxmdkA5L7TOeK0/ravqwfzWp2xRTNaoOJegFkqIZkz0AKr+slZnLjmkFWmSGHfVKi0lYlkQLUcoUhjjmVnwYLPIKRQ9q2etH6AlqXRdMV8AJKslMGZTorV9VqRfkz8q2xQ6K4oXWFXz7QhNJhvowhnZk+HWi6bwmj+D41RscPKP7gGACJW49MZcpL8OH+hPgSAEXtkSIAfDeC0ZGzZ23Ffn4Bga7PLnYF29Z59dGzo1azMP99CzIjgsXuMHN3cMLdSmhtlzxe39Qxxl4N0YnKbyhjjNzGUzpZFT6hZ+zBxIngKfsuzoE3A+6VtJs11Xx/WV4cHbT32b/Coq5PBHl2CcSF+69mgU2opd0at3DzhvdfruEUIG91IbasoxX9WGB4KxmTbPVKoWK11zHfKLGfTdkRwj3+pbPpI584GRIgMcwgmZt9l/Yy4mq12Mkqxzi8WJFBJKo6w2dS7e+4SjTh8xtHIAxn/AFnZx2WzSYpEzpRC0ufNc8X98huTtXXYAE/dUPAyQEpK0OI0qxb6BoGsL9b+KV4VKaQngWC0c0H2Em760skwoF27e1wfTFPqaiuH8At45KB3Ehm5bZRkUtZtX7CTrFdCBkcsK+PxWiN+GikSIqI1Sf
+X-Forefront-Antispam-Report: CIP:194.138.21.74;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(376002)(136003)(39860400002)(396003)(451199021)(36840700001)(40470700004)(46966006)(82740400003)(82960400001)(4326008)(47076005)(36860700001)(70586007)(70206006)(40480700001)(316002)(7596003)(356005)(7636003)(110136005)(478600001)(6666004)(41300700001)(40460700003)(956004)(26005)(86362001)(5660300002)(336012)(107886003)(82310400005)(1076003)(2906002)(36756003)(44832011)(2616005)(8676002)(16526019)(186003)(83380400001)(8936002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2023 12:46:40.6135
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2023 12:46:41.4963
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63bae83e-3353-4d12-fc6f-08db5c54ebd3
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9bd9f38b-c7e3-4357-3b3d-08db5c54ec64
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.76];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: VE1EUR01FT089.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.74];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: HE1EUR01FT095.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7118
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR10MB7882
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-changes since v3:
- - add terminator entries to all gpio lookup tables as new p1
+There are two special pins needed to init the LEDs. We used to have them
+at the end of the gpiod_lookup table to give to "leds-gpio". A cleaner
+way is to have a dedicated table for the special pins.
 
-changes since v2:
- - some more style changes from review
+Signed-off-by: Henning Schild <henning.schild@siemens.com>
+---
+ drivers/leds/simple/simatic-ipc-leds-gpio.c | 28 ++++++++++++++++++---
+ 1 file changed, 25 insertions(+), 3 deletions(-)
 
-changes since v1:
- - move from header- to -core.c-based implementation
- - style changes from review
-
-This series mainly splits the one GPIO driver into two. The split allows
-to clearly model runtime and compile time dependencies on the GPIO chip
-drivers.
-
-p2 is kind of not too related to that split but also prepares for more
-GPIO based drivers to come.
-
-p3 takes the driver we had and puts some of its content into a -core,
-to be used by the two drivers.
-
-p4 deals with more fine-grained configuration posibilities and compile
-time dependencies.
-
-Henning Schild (4):
-  leds: simatic-ipc-leds-gpio: add terminating entries to gpio tables
-  leds: simatic-ipc-leds-gpio: move two extra gpio pins into another
-    table
-  leds: simatic-ipc-leds-gpio: split up into multiple drivers
-  leds: simatic-ipc-leds-gpio: introduce more Kconfig switches
-
- drivers/leds/simple/Kconfig                   |  31 +++-
- drivers/leds/simple/Makefile                  |   5 +-
- .../simple/simatic-ipc-leds-gpio-apollolake.c |  66 +++++++++
- .../leds/simple/simatic-ipc-leds-gpio-core.c  | 104 +++++++++++++
- .../simple/simatic-ipc-leds-gpio-f7188x.c     |  66 +++++++++
- drivers/leds/simple/simatic-ipc-leds-gpio.c   | 139 ------------------
- drivers/leds/simple/simatic-ipc-leds-gpio.h   |  22 +++
- drivers/leds/simple/simatic-ipc-leds.c        |   1 -
- drivers/platform/x86/simatic-ipc.c            |   7 +-
- 9 files changed, 293 insertions(+), 148 deletions(-)
- create mode 100644 drivers/leds/simple/simatic-ipc-leds-gpio-apollolake.c
- create mode 100644 drivers/leds/simple/simatic-ipc-leds-gpio-core.c
- create mode 100644 drivers/leds/simple/simatic-ipc-leds-gpio-f7188x.c
- delete mode 100644 drivers/leds/simple/simatic-ipc-leds-gpio.c
- create mode 100644 drivers/leds/simple/simatic-ipc-leds-gpio.h
-
+diff --git a/drivers/leds/simple/simatic-ipc-leds-gpio.c b/drivers/leds/simple/simatic-ipc-leds-gpio.c
+index 1a1cfdad6218..0f1fde44e8d9 100644
+--- a/drivers/leds/simple/simatic-ipc-leds-gpio.c
++++ b/drivers/leds/simple/simatic-ipc-leds-gpio.c
+@@ -16,6 +16,7 @@
+ #include <linux/platform_data/x86/simatic-ipc-base.h>
+ 
+ static struct gpiod_lookup_table *simatic_ipc_led_gpio_table;
++static struct gpiod_lookup_table *simatic_ipc_led_gpio_table_extra;
+ 
+ static struct gpiod_lookup_table simatic_ipc_led_gpio_table_127e = {
+ 	.dev_id = "leds-gpio",
+@@ -26,6 +27,13 @@ static struct gpiod_lookup_table simatic_ipc_led_gpio_table_127e = {
+ 		GPIO_LOOKUP_IDX("apollolake-pinctrl.0", 58, NULL, 3, GPIO_ACTIVE_LOW),
+ 		GPIO_LOOKUP_IDX("apollolake-pinctrl.0", 60, NULL, 4, GPIO_ACTIVE_LOW),
+ 		GPIO_LOOKUP_IDX("apollolake-pinctrl.0", 51, NULL, 5, GPIO_ACTIVE_LOW),
++		{} /* Terminating entry */
++	},
++};
++
++static struct gpiod_lookup_table simatic_ipc_led_gpio_table_127e_extra = {
++	.dev_id = NULL, /* Filled during initialization */
++	.table = {
+ 		GPIO_LOOKUP_IDX("apollolake-pinctrl.0", 56, NULL, 6, GPIO_ACTIVE_LOW),
+ 		GPIO_LOOKUP_IDX("apollolake-pinctrl.0", 59, NULL, 7, GPIO_ACTIVE_HIGH),
+ 		{} /* Terminating entry */
+@@ -41,10 +49,17 @@ static struct gpiod_lookup_table simatic_ipc_led_gpio_table_227g = {
+ 		GPIO_LOOKUP_IDX("gpio-f7188x-2", 3, NULL, 3, GPIO_ACTIVE_LOW),
+ 		GPIO_LOOKUP_IDX("gpio-f7188x-2", 4, NULL, 4, GPIO_ACTIVE_LOW),
+ 		GPIO_LOOKUP_IDX("gpio-f7188x-2", 5, NULL, 5, GPIO_ACTIVE_LOW),
++		{} /* Terminating entry */
++	},
++};
++
++static struct gpiod_lookup_table simatic_ipc_led_gpio_table_227g_extra = {
++	.dev_id = NULL, /* Filled during initialization */
++	.table = {
+ 		GPIO_LOOKUP_IDX("gpio-f7188x-3", 6, NULL, 6, GPIO_ACTIVE_HIGH),
+ 		GPIO_LOOKUP_IDX("gpio-f7188x-3", 7, NULL, 7, GPIO_ACTIVE_HIGH),
+ 		{} /* Terminating entry */
+-	}
++	},
+ };
+ 
+ static const struct gpio_led simatic_ipc_gpio_leds[] = {
+@@ -66,6 +81,7 @@ static struct platform_device *simatic_leds_pdev;
+ static int simatic_ipc_leds_gpio_remove(struct platform_device *pdev)
+ {
+ 	gpiod_remove_lookup_table(simatic_ipc_led_gpio_table);
++	gpiod_remove_lookup_table(simatic_ipc_led_gpio_table_extra);
+ 	platform_device_unregister(simatic_leds_pdev);
+ 
+ 	return 0;
+@@ -74,6 +90,7 @@ static int simatic_ipc_leds_gpio_remove(struct platform_device *pdev)
+ static int simatic_ipc_leds_gpio_probe(struct platform_device *pdev)
+ {
+ 	const struct simatic_ipc_platform *plat = pdev->dev.platform_data;
++	struct device *dev = &pdev->dev;
+ 	struct gpio_desc *gpiod;
+ 	int err;
+ 
+@@ -82,12 +99,14 @@ static int simatic_ipc_leds_gpio_probe(struct platform_device *pdev)
+ 		if (!IS_ENABLED(CONFIG_PINCTRL_BROXTON))
+ 			return -ENODEV;
+ 		simatic_ipc_led_gpio_table = &simatic_ipc_led_gpio_table_127e;
++		simatic_ipc_led_gpio_table_extra = &simatic_ipc_led_gpio_table_127e_extra;
+ 		break;
+ 	case SIMATIC_IPC_DEVICE_227G:
+ 		if (!IS_ENABLED(CONFIG_GPIO_F7188X))
+ 			return -ENODEV;
+ 		request_module("gpio-f7188x");
+ 		simatic_ipc_led_gpio_table = &simatic_ipc_led_gpio_table_227g;
++		simatic_ipc_led_gpio_table_extra = &simatic_ipc_led_gpio_table_227g_extra;
+ 		break;
+ 	default:
+ 		return -ENODEV;
+@@ -103,8 +122,11 @@ static int simatic_ipc_leds_gpio_probe(struct platform_device *pdev)
+ 		goto out;
+ 	}
+ 
++	simatic_ipc_led_gpio_table_extra->dev_id = dev_name(dev);
++	gpiod_add_lookup_table(simatic_ipc_led_gpio_table_extra);
++
+ 	/* PM_BIOS_BOOT_N */
+-	gpiod = gpiod_get_index(&simatic_leds_pdev->dev, NULL, 6, GPIOD_OUT_LOW);
++	gpiod = gpiod_get_index(dev, NULL, 6, GPIOD_OUT_LOW);
+ 	if (IS_ERR(gpiod)) {
+ 		err = PTR_ERR(gpiod);
+ 		goto out;
+@@ -112,7 +134,7 @@ static int simatic_ipc_leds_gpio_probe(struct platform_device *pdev)
+ 	gpiod_put(gpiod);
+ 
+ 	/* PM_WDT_OUT */
+-	gpiod = gpiod_get_index(&simatic_leds_pdev->dev, NULL, 7, GPIOD_OUT_LOW);
++	gpiod = gpiod_get_index(dev, NULL, 7, GPIOD_OUT_LOW);
+ 	if (IS_ERR(gpiod)) {
+ 		err = PTR_ERR(gpiod);
+ 		goto out;
 -- 
 2.39.3
 
