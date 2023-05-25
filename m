@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 100AEC7EE2F
-	for <linux-leds@archiver.kernel.org>; Thu, 25 May 2023 14:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CD7C7EE32
+	for <linux-leds@archiver.kernel.org>; Thu, 25 May 2023 14:55:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241724AbjEYOzf (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 25 May 2023 10:55:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38116 "EHLO
+        id S241483AbjEYOzi (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 25 May 2023 10:55:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241730AbjEYOzX (ORCPT
+        with ESMTP id S241721AbjEYOzX (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Thu, 25 May 2023 10:55:23 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AF68E5B;
-        Thu, 25 May 2023 07:55:07 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-30abe551605so571687f8f.0;
-        Thu, 25 May 2023 07:55:07 -0700 (PDT)
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B7F5E4F;
+        Thu, 25 May 2023 07:55:05 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f6042d605dso5344265e9.2;
+        Thu, 25 May 2023 07:55:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685026506; x=1687618506;
+        d=gmail.com; s=20221208; t=1685026504; x=1687618504;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2brWjtv6jnUkszMlshgHY3ZyYZyBqSw+5iV+JVswSb0=;
-        b=ATW5FjSkc8+LeJen8N96L64Cv/XuM3/+5piHXR5L9DCEwvhve894Mj3u9Lq4qXpl/R
-         Escdv7P9zeYiO0rcIcXpExtAXBYESfM5e4Nrn8bVIfkLBX4A9EAfeP1gfWR1qnxW70jz
-         uVpJeJ/eT05fcOzj2TYh3g77krIItZfH1omqVZy84vdbA9YDOPsdcUlwpYSpx/G5qZpE
-         LHKrB3Sc+sogLi69zxFail268I2eanBEQLm6yf3/4yVicFoYFnLcXsFqKiOQFwfoS1pF
-         ZskHcC6tob4Cn9xsAsFVDSepvUMDBB+X4ocpU27Vf+d7c4tEPDXO1KhzRG7NxgKR3Scb
-         VMBQ==
+        bh=KxSZPUywOkLEyYIsTb69Uiy6IYUweaN3dPoh9bCN08U=;
+        b=gbDuAeAounTF7FAEjlshh/hIMWkWCmhJabp/xwtY206Lc+GTbH/8lthE+qx+E6b1vz
+         l9kSa4irHdr+JbZCfx+OEWmfBIVcEOYiSeb0nD9M7ti56XPIPyRHtPI0fafvSkRNejS+
+         CabEkgo4/kvnublJ6Gknq2T4FlfbHBSOTwL/XPWKkT2e/V3O5UXj7RbNliDQ/iZX6TY6
+         +KqkyBfCLd+MGt7ysR+dnLSmGcu/WHKryBUjtuOrJsHlYc0YsOc6dc13B6ZJoitAioLW
+         x6ZU8l0Mggd1ciZp/u83qepmQco91QdWHYz8E4MsVOzHEMibxmM4l/+2gWvwivlzb9in
+         kGIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685026506; x=1687618506;
+        d=1e100.net; s=20221208; t=1685026504; x=1687618504;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2brWjtv6jnUkszMlshgHY3ZyYZyBqSw+5iV+JVswSb0=;
-        b=Yjud0isSa43NSAnxfdi2Csdz2XfUT4o6nMmmrdQwaoNG/ZlxzyEnrcPat4ngw4E5V1
-         OT0s2bmx7SXykaMgFgM6UPP0tEeaA7XEsVIxULSLxoHC+r12C9jq3bIkguwDK/Ej5PZe
-         G7lekALOtxpDHdwnjGsRAPejx3495jK7A0ljk37dZsmwUf4JNul13/ov4qUB/Ek6he3/
-         Hy4GFDTrESsb6SLjkUpdzR1eCbQIfvNqx6HIwyA/ZZiu8BJvH8yAP+FlwiSaGEw4uYoS
-         h43w0dAOJc94iODSdrAayoC4XSXZYhFFGDYEdy9lS4R1oRu9/FbddKnkqMcwSxKucwHm
-         /J9A==
-X-Gm-Message-State: AC+VfDwu9D/Bxq19PIf6UV6sBKhrgTh5p2QrB4kIeUDtnTSErxn/4FVD
-        csSpGuEUAjTnKg8HJDqhXlg=
-X-Google-Smtp-Source: ACHHUZ58P0U9MxDchr+fThvUXgeeJk51K21NM20v427978A+OBHbHJ9eKQ3aZ9NHaULcDORs4dHUYQ==
-X-Received: by 2002:a5d:550e:0:b0:30a:8999:3b9 with SMTP id b14-20020a5d550e000000b0030a899903b9mr2375180wrv.28.1685026505540;
-        Thu, 25 May 2023 07:55:05 -0700 (PDT)
+        bh=KxSZPUywOkLEyYIsTb69Uiy6IYUweaN3dPoh9bCN08U=;
+        b=h79XPZh7Ub9CsfzvuIaiXKuCedgizzuEcs/brK6tnRUdkyZj0JCfD0+BI5zPVuamvB
+         CcpG06aP8o1SaRsnco6e9wn70ALNbWP8hf2fOJwFjz08krfh/Bf0ls+RwslsRTRAII1+
+         z3SRDowwfqVK4MlWX9ggWjlIsZGB70ZvV56JCdsKlJgo/iPmye+BW3Eyn/Fefqeqq3CM
+         eOYwN3xYMQo7DL0QXTw7PHCYtuYbc9ywfwI8ZiRU2lJlLJFqyX/yb0LjzgWWAgG485tA
+         EUWDaOnNeFbqhrQt16PVY7mdYPk5PEn1gupsH69PYwLldxFMnrBJ58jt7G4MR+ZoddZb
+         0wNQ==
+X-Gm-Message-State: AC+VfDxKHZG/XF9M6Tm2OCVy0TXXAejuenEUoz4cR/iGO0w+3lfv/LeS
+        TiXQcdgYp+YgwWheqxLNuSs=
+X-Google-Smtp-Source: ACHHUZ77bqRckmaPsw145x7H7sVy/IGAsadgOLDj1wInpboGicuy+OTGdAqe1zsgJN3gJiG4LWwCuA==
+X-Received: by 2002:a7b:ce94:0:b0:3f4:2492:a91f with SMTP id q20-20020a7bce94000000b003f42492a91fmr2716489wmj.27.1685026503262;
+        Thu, 25 May 2023 07:55:03 -0700 (PDT)
 Received: from localhost.localdomain (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
-        by smtp.googlemail.com with ESMTPSA id t11-20020a5d49cb000000b0030732d6e104sm2048043wrs.105.2023.05.25.07.55.04
+        by smtp.googlemail.com with ESMTPSA id t11-20020a5d49cb000000b0030732d6e104sm2048043wrs.105.2023.05.25.07.55.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 May 2023 07:55:05 -0700 (PDT)
+        Thu, 25 May 2023 07:55:02 -0700 (PDT)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew@lunn.ch>,
@@ -61,9 +61,9 @@ To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Christian Marangi <ansuelsmth@gmail.com>,
         linux-leds@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: [net-next PATCH v2 13/13] net: dsa: qca8k: add op to get ports netdev
-Date:   Thu, 25 May 2023 16:54:01 +0200
-Message-Id: <20230525145401.27007-14-ansuelsmth@gmail.com>
+Subject: [net-next PATCH v2 11/13] leds: trigger: netdev: expose netdev trigger modes in linux include
+Date:   Thu, 25 May 2023 16:53:59 +0200
+Message-Id: <20230525145401.27007-12-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230525145401.27007-1-ansuelsmth@gmail.com>
 References: <20230525145401.27007-1-ansuelsmth@gmail.com>
@@ -73,74 +73,56 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+Expose netdev trigger modes to make them accessible by LED driver that
+will support netdev trigger for hw control.
 
-In order that the LED trigger can blink the switch MAC ports LED, it
-needs to know the netdev associated to the port. Add the callback to
-return the struct device of the netdev.
-
-Add an helper function qca8k_phy_to_port() to convert the phy back to
-dsa_port index, as we reference LED port based on the internal PHY
-index and needs to be converted back.
-
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/net/dsa/qca/qca8k-leds.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ drivers/leds/trigger/ledtrig-netdev.c |  9 ---------
+ include/linux/leds.h                  | 10 ++++++++++
+ 2 files changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/dsa/qca/qca8k-leds.c b/drivers/net/dsa/qca/qca8k-leds.c
-index 1e0c61726487..6f02029b454b 100644
---- a/drivers/net/dsa/qca/qca8k-leds.c
-+++ b/drivers/net/dsa/qca/qca8k-leds.c
-@@ -5,6 +5,18 @@
- #include "qca8k.h"
- #include "qca8k_leds.h"
+diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
+index b0cab2b84ce2..8fbca94edfce 100644
+--- a/drivers/leds/trigger/ledtrig-netdev.c
++++ b/drivers/leds/trigger/ledtrig-netdev.c
+@@ -54,15 +54,6 @@ struct led_netdev_data {
+ 	bool hw_control;
+ };
  
-+static u32 qca8k_phy_to_port(int phy)
-+{
-+	/* Internal PHY 0 has port at index 1.
-+	 * Internal PHY 1 has port at index 2.
-+	 * Internal PHY 2 has port at index 3.
-+	 * Internal PHY 3 has port at index 4.
-+	 * Internal PHY 4 has port at index 5.
-+	 */
-+
-+	return phy + 1;
-+}
-+
- static int
- qca8k_get_enable_led_reg(int port_num, int led_num, struct qca8k_led_pattern_en *reg_info)
+-enum led_trigger_netdev_modes {
+-	TRIGGER_NETDEV_LINK = 0,
+-	TRIGGER_NETDEV_TX,
+-	TRIGGER_NETDEV_RX,
+-
+-	/* Keep last */
+-	__TRIGGER_NETDEV_MAX,
+-};
+-
+ static void set_baseline_state(struct led_netdev_data *trigger_data)
  {
-@@ -314,6 +326,20 @@ qca8k_cled_hw_control_get(struct led_classdev *ldev, unsigned long *rules)
- 	return 0;
- }
+ 	int current_brightness;
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 3268b4e789d6..8af62ff431f0 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -552,6 +552,16 @@ static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
  
-+static struct device *qca8k_cled_hw_control_get_device(struct led_classdev *ldev)
-+{
-+	struct qca8k_led *led = container_of(ldev, struct qca8k_led, cdev);
-+	struct qca8k_priv *priv = led->priv;
-+	struct dsa_port *dp;
+ #endif /* CONFIG_LEDS_TRIGGERS */
+ 
++/* Trigger specific enum */
++enum led_trigger_netdev_modes {
++	TRIGGER_NETDEV_LINK = 0,
++	TRIGGER_NETDEV_TX,
++	TRIGGER_NETDEV_RX,
 +
-+	dp = dsa_to_port(priv->ds, qca8k_phy_to_port(led->port_num));
-+	if (!dp)
-+		return NULL;
-+	if (dp->slave)
-+		return &dp->slave->dev;
-+	return NULL;
-+}
++	/* Keep last */
++	__TRIGGER_NETDEV_MAX,
++};
 +
- static int
- qca8k_parse_port_leds(struct qca8k_priv *priv, struct fwnode_handle *port, int port_num)
- {
-@@ -377,6 +403,7 @@ qca8k_parse_port_leds(struct qca8k_priv *priv, struct fwnode_handle *port, int p
- 		port_led->cdev.hw_control_is_supported = qca8k_cled_hw_control_is_supported;
- 		port_led->cdev.hw_control_set = qca8k_cled_hw_control_set;
- 		port_led->cdev.hw_control_get = qca8k_cled_hw_control_get;
-+		port_led->cdev.hw_control_get_device = qca8k_cled_hw_control_get_device;
- 		port_led->cdev.hw_control_trigger = "netdev";
- 		init_data.default_label = ":port";
- 		init_data.fwnode = led;
+ /* Trigger specific functions */
+ #ifdef CONFIG_LEDS_TRIGGER_DISK
+ void ledtrig_disk_activity(bool write);
 -- 
 2.39.2
 
