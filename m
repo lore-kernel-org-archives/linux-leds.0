@@ -2,126 +2,146 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B2BC7EE29
-	for <linux-leds@archiver.kernel.org>; Thu, 25 May 2023 13:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 281E7C7EE29
+	for <linux-leds@archiver.kernel.org>; Thu, 25 May 2023 14:54:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241405AbjEYNzL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 25 May 2023 09:55:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36970 "EHLO
+        id S241666AbjEYOy4 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 25 May 2023 10:54:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241117AbjEYNzK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 25 May 2023 09:55:10 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3080A18C
-        for <linux-leds@vger.kernel.org>; Thu, 25 May 2023 06:55:09 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-30ab3a2c4efso1150672f8f.3
-        for <linux-leds@vger.kernel.org>; Thu, 25 May 2023 06:55:08 -0700 (PDT)
+        with ESMTP id S241428AbjEYOyz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 25 May 2023 10:54:55 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9226D19A;
+        Thu, 25 May 2023 07:54:53 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-309d3e8777cso851758f8f.0;
+        Thu, 25 May 2023 07:54:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685022907; x=1687614907;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:reply-to:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=SEZJCXMSQqlp8stHQkF/ljMn24gR/Y9f2yo63+7SOx0=;
-        b=p4D1SBp6bV3z0IL/+HxCX4230NXblHrZu/8ZqYbxnb3drbecRE20BEaaPoFSj9c/p+
-         w9fEJLA5TZoi8aMvhfeSW3a8caAY4edvduFBqd7NeRTg8PFqQ+E18Ouo9UaO1abeRu5I
-         NYntVwdCdx/BWmuwW1qEh9G09GXUxBYZANUAWbpEKaHKcyULFhsDXenqpcOHEEm+wqyP
-         waZ1vltpLFTZEQuppLJ30e5iEx7rC4sNHo9YrujvNRNe64qY9S49O8d25RBG195NOt04
-         ibwfYkl6WPTWgivRv7VsEcp8qW/caRB3IJDFZaGqDE+zZFg7pP0ZbVvkDq+Y7R0EUkT/
-         34ww==
+        d=gmail.com; s=20221208; t=1685026492; x=1687618492;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cKIEgFgmjScZJvZv6lwQPPIWSzDEZLIyZZgdXEW7tPM=;
+        b=bEpsUQez/S+BHTLLATX9nnqT+iAwWcmnFR/F5Zrz+j9NgVCyzD/nbmVJR8gSou9Uu/
+         R5fG3EH/BRx0T1NwikoNCjAoehM82y1mDUiP8Rb9GLsfEtSiqQJNDkxuDvV9Rb5We5fa
+         x9qZR7MkCnf5a8Z0fyaI5HsevZ21YMq30yLr7QBspRcsTK77bn+NK6YIu9vzzMpbJbSC
+         kSq3n0gclNrP0eotH/usPYVQ37ZP6rbbdfYYta9v6SgQMKToesvNHaE+3y/02uxCkVmk
+         VpkpkTmyNMD5e2peNEvVOpJYKzKtqAFLXF2lDywEA9U8K8B/0YpR5fo0pyRXRoRVk1Ef
+         AhtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685022907; x=1687614907;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:reply-to:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SEZJCXMSQqlp8stHQkF/ljMn24gR/Y9f2yo63+7SOx0=;
-        b=XbQuCWh7IL45pNTpG9TmKDsOE0H/4imUezBnFKrrQY/ghWPyFQc/COasWwd613dmgf
-         24Rs0WffQw7YoTHM+vrD0ucqVNOo3knVLIOe53ZWCYcXMjKjvs4a3mYrPYrUKeppTSqZ
-         v7g173HnZQOwf5OyUNWTYG76tQp1V4tD/joJHyKjz6mc/akdnTewNGE3IUFrn1G9H6Hz
-         bw/9TKe/gNpMmjt3Zpk2yu0qy/Esn3HuKDLu5J3BH1TLqEw8GqAqlgsGm4GM0g51HhLL
-         U3aa3Yazryq+Uu0wPC70m5xXJzlqwtfyw900xwId2AJKFvhsgbpfVEfqUK4fg5lhgjZD
-         RCiQ==
-X-Gm-Message-State: AC+VfDze/kYGVbJnFh76aEQwICRbHlD0ibTUIfYf9Rtw9ksBXbt9+nZ3
-        tftDw5QhX0N0v6ncljafXiq1lg==
-X-Google-Smtp-Source: ACHHUZ4WwILC7yUs0IdTplb2eMuxUsV0OBnFfxuT0cIn9Ltph5Cv3TSQ7lVTwXE7NmuIaz/4zNvWFQ==
-X-Received: by 2002:a5d:4150:0:b0:2fa:631a:9f23 with SMTP id c16-20020a5d4150000000b002fa631a9f23mr3258315wrq.2.1685022907504;
-        Thu, 25 May 2023 06:55:07 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:5cdb:105b:7481:b0e6? ([2a01:e0a:982:cbb0:5cdb:105b:7481:b0e6])
-        by smtp.gmail.com with ESMTPSA id e8-20020a5d65c8000000b0030649242b72sm1822343wrw.113.2023.05.25.06.55.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 May 2023 06:55:07 -0700 (PDT)
-Message-ID: <9f24396a-7a1e-012e-35e2-1e055941e87e@linaro.org>
-Date:   Thu, 25 May 2023 15:55:05 +0200
+        d=1e100.net; s=20221208; t=1685026492; x=1687618492;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cKIEgFgmjScZJvZv6lwQPPIWSzDEZLIyZZgdXEW7tPM=;
+        b=bO+SvyPQzjVEZNbaobBZti7PSFUlUND6ETfztUlCVwYM8/ucF+IFRdcKDZwRxLs2Pk
+         Nx56b9MuYcbbPomq407iTxTV9irb5dXYDcXHYYzfa4OK55DMr1uh3edo9owXp15DutDH
+         amzoSwW98VLDax6mOjfLRqCCoV2vQtIWFHjFxVVCma3VZVLxV3VNGtNk9xGh/20zhF3U
+         Su7RZX7T+RUnCPOaeJUmIj8T9qNMEobn98Hk/IsvSPa9aGVJMHtgrVYjn4scJy7uGoIM
+         dHRa9zC6jj2y7Y4m2X8WJLrAbhorZsDF1D3LaX18pT9pVxRzoyxVIB5saAly/RnU4owC
+         CNLg==
+X-Gm-Message-State: AC+VfDytL3JwxuxRjgDjw/Vw2bkbqDfcmS9r34dwUmFK7gy6t1I+ryRH
+        aDuHW0faViW1WvAjfQYXkao=
+X-Google-Smtp-Source: ACHHUZ5nP5jh06kC6rateL9FNiX9agRpIylAkfx0EYikYnq9vnhtH8p81SosuYRCxtGgECF7+k0XZQ==
+X-Received: by 2002:a5d:51c7:0:b0:309:596f:e5a8 with SMTP id n7-20020a5d51c7000000b00309596fe5a8mr2326033wrv.4.1685026491665;
+        Thu, 25 May 2023 07:54:51 -0700 (PDT)
+Received: from localhost.localdomain (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
+        by smtp.googlemail.com with ESMTPSA id t11-20020a5d49cb000000b0030732d6e104sm2048043wrs.105.2023.05.25.07.54.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 May 2023 07:54:51 -0700 (PDT)
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        linux-leds@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: [net-next PATCH v2 01/13] leds: add APIs for LEDs hw control
+Date:   Thu, 25 May 2023 16:53:49 +0200
+Message-Id: <20230525145401.27007-2-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230525145401.27007-1-ansuelsmth@gmail.com>
+References: <20230525145401.27007-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2] leds: qcom-lpg: Fix PWM period limits
-Content-Language: en-US
-To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Anjelique Melendez <quic_amelende@quicinc.com>
-Cc:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Caleb Connolly <caleb.connolly@linaro.org>,
-        Steev Klimaszewski <steev@kali.org>
-References: <20230515162604.649203-1-quic_bjorande@quicinc.com>
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Organization: Linaro Developer Services
-In-Reply-To: <20230515162604.649203-1-quic_bjorande@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 15/05/2023 18:26, Bjorn Andersson wrote:
-> The introduction of high resolution PWM support changed the order of the
-> operations in the calculation of min and max period. The result in both
-> divisions is in most cases a truncation to 0, which limits the period to
-> the range of [0, 0].
-> 
-> Both numerators (and denominators) are within 64 bits, so the whole
-> expression can be put directly into the div64_u64, instead of doing it
-> partially.
-> 
-> Fixes: b00d2ed37617 ("leds: rgb: leds-qcom-lpg: Add support for high resolution PWM")
-> Reviewed-by: Caleb Connolly <caleb.connolly@linaro.org>
-> Tested-by: Steev Klimaszewski <steev@kali.org>
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> ---
-> 
-> Changes since v1:
-> - Reworded first sentence to express that it's the order and not the
->    previously non-existent parenthesis that changed...
-> - Picked up review tags.
-> 
->   drivers/leds/rgb/leds-qcom-lpg.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-> index c9cea797a697..7287fadc00df 100644
-> --- a/drivers/leds/rgb/leds-qcom-lpg.c
-> +++ b/drivers/leds/rgb/leds-qcom-lpg.c
-> @@ -312,14 +312,14 @@ static int lpg_calc_freq(struct lpg_channel *chan, uint64_t period)
->   		max_res = LPG_RESOLUTION_9BIT;
->   	}
->   
-> -	min_period = (u64)NSEC_PER_SEC *
-> -			div64_u64((1 << pwm_resolution_arr[0]), clk_rate_arr[clk_len - 1]);
-> +	min_period = div64_u64((u64)NSEC_PER_SEC * (1 << pwm_resolution_arr[0]),
-> +			       clk_rate_arr[clk_len - 1]);
->   	if (period <= min_period)
->   		return -EINVAL;
->   
->   	/* Limit period to largest possible value, to avoid overflows */
-> -	max_period = (u64)NSEC_PER_SEC * max_res * LPG_MAX_PREDIV *
-> -			div64_u64((1 << LPG_MAX_M), 1024);
-> +	max_period = div64_u64((u64)NSEC_PER_SEC * max_res * LPG_MAX_PREDIV * (1 << LPG_MAX_M),
-> +			       1024);
->   	if (period > max_period)
->   		period = max_period;
->   
+Add an option to permit LED driver to declare support for a specific
+trigger to use hw control and setup the LED to blink based on specific
+provided modes.
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+Add APIs for LEDs hw control. These functions will be used to activate
+hardware control where a LED will use the provided flags, from an
+unique defined supported trigger, to setup the LED to be driven by
+hardware.
+
+Add hw_control_is_supported() to ask the LED driver if the requested
+mode by the trigger are supported and the LED can be setup to follow
+the requested modes.
+
+Deactivate hardware blink control by setting brightness to LED_OFF via
+the brightness_set() callback.
+
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ include/linux/leds.h | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index c39bbf17a25b..4caf559b1922 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -183,6 +183,43 @@ struct led_classdev {
+ 
+ 	/* LEDs that have private triggers have this set */
+ 	struct led_hw_trigger_type	*trigger_type;
++
++	/* Unique trigger name supported by LED set in hw control mode */
++	const char		*hw_control_trigger;
++	/*
++	 * Check if the LED driver supports the requested mode provided by the
++	 * defined supported trigger to setup the LED to hw control mode.
++	 *
++	 * Return 0 on success. Return -EOPNOTSUPP when the passed flags are not
++	 * supported and software fallback needs to be used.
++	 * Return a negative error number on any other case  for check fail due
++	 * to various reason like device not ready or timeouts.
++	 */
++	int			(*hw_control_is_supported)(struct led_classdev *led_cdev,
++							   unsigned long flags);
++	/*
++	 * Activate hardware control, LED driver will use the provided flags
++	 * from the supported trigger and setup the LED to be driven by hardware
++	 * following the requested mode from the trigger flags.
++	 * Deactivate hardware blink control by setting brightness to LED_OFF via
++	 * the brightness_set() callback.
++	 *
++	 * Return 0 on success, a negative error number on flags apply fail.
++	 */
++	int			(*hw_control_set)(struct led_classdev *led_cdev,
++						  unsigned long flags);
++	/*
++	 * Get from the LED driver the current mode that the LED is set in hw
++	 * control mode and put them in flags.
++	 * Trigger can use this to get the initial state of a LED already set in
++	 * hardware blink control.
++	 *
++	 * Return 0 on success, a negative error number on failing parsing the
++	 * initial mode. Error from this function is NOT FATAL as the device
++	 * may be in a not supported initial state by the attached LED trigger.
++	 */
++	int			(*hw_control_get)(struct led_classdev *led_cdev,
++						  unsigned long *flags);
+ #endif
+ 
+ #ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
+-- 
+2.39.2
+
