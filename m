@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D64C7EE2C
-	for <linux-leds@archiver.kernel.org>; Sat, 27 May 2023 11:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04036C77B7E
+	for <linux-leds@archiver.kernel.org>; Sat, 27 May 2023 11:30:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231620AbjE0LaA (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 27 May 2023 07:30:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56532 "EHLO
+        id S232641AbjE0LaC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 27 May 2023 07:30:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232486AbjE0L3c (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 27 May 2023 07:29:32 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A34E10E;
-        Sat, 27 May 2023 04:29:29 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3f68fc6b479so17456815e9.2;
-        Sat, 27 May 2023 04:29:29 -0700 (PDT)
+        with ESMTP id S231806AbjE0L3e (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 27 May 2023 07:29:34 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB65219D;
+        Sat, 27 May 2023 04:29:30 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f61530506aso17404315e9.1;
+        Sat, 27 May 2023 04:29:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685186966; x=1687778966;
+        d=gmail.com; s=20221208; t=1685186969; x=1687778969;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=t032UqrKs2qK0Tmykkb/w0e10wBacVTlNSbQa7zNqmM=;
-        b=BtKLeJJ6fl8D8E5IMrP9Oxr77Zt7QurslcYfR5GljVurKTTc5GRZccpr08y8UpmThl
-         nQPxCuHPMkmroDFGSw/qNAU+qYz1bJy+klGJi5JgtZ1ETqGzKVzkRD27PT7r5Eb51y18
-         VT3xrNliCqVXK11joOG10TLSdMqyAXmOLslC0XWsHTDsx8FA0j2zTOicl9EVM37wBXdx
-         aCuBAGkNU6gA2v83VqEEpjtW3Tt3IP/jgDRB27bMkaoaC/Gs1YjPHIrD8dDA4c/0usDr
-         Bdo++hH7aVn9irKHKFtbp/R8im7SpHkb9KnpwnOd0x47R8fXofYkA2BsaTfnnq4nJ9NE
-         J1PQ==
+        bh=GnV/8Q85nSdt4bY7Mc+wPerU54KxDdRii/0bQKKOJsU=;
+        b=Cvry0QwO/7FtlBntWYzJ+RNBOP+bZSHRxMAwp9KlNvxM53sQsjVafOkk837ZEjPTzF
+         1BlhbKzj0sID078z3sFSQy7/qW+HIHsYakYeJQdYfrlhw+Dd1GoHh/+mooix+j1yybOW
+         xxxx5eehHQUrfD0ZDvJIiSajYg+2it6VGHmJsRnRV58j6XnpHXRWVuy90ZyuvhBdGHu/
+         ea7EKy+Zg3qeoIh4PY3xg85mqRFBUj0GOXN45B3xpMQXkrJVgV8iHtS7CKxJ8zF/LP9H
+         RvP33zLZZrZ3wgbMNQzYb2WsTcFNwLmsY89/zpc+vMqQOQdAKvhSiJs8C3c0zzFOpat0
+         Xf4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685186966; x=1687778966;
+        d=1e100.net; s=20221208; t=1685186969; x=1687778969;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=t032UqrKs2qK0Tmykkb/w0e10wBacVTlNSbQa7zNqmM=;
-        b=V2qAHIPDinPCz+1nSmlhD3XQXNKNy7Vdx45VspTKaCTJYXNi3U5YI/mYejmKS7sSU8
-         aK3D3aVrJwfruPwbriJM8LzaiFKcebjAgrZgI5fo4jxK0fY1XMYxCghN8gCv4E7SC9Oq
-         e8A8vOVw88euRK5WZ9ZHsz4YGcatslAYnmkuxX4gtVhGX62rrBbIDc65orraS+PeZvJf
-         +gs2NT6npe/XAbYDCbJ50/lgmgJ7vJzWZr+jLoVInmjqC23VIhlKG+4ccRAt05fyHJTa
-         lr90h0aVj5t+cIY62prlRc1VGSfLoDQf9kY5haIYntHnbo2BhoOmyiGvD5snYNOBoALk
-         +GbQ==
-X-Gm-Message-State: AC+VfDzics8kJqJVFQwwdUWjxmb/hqNKJ6W3PIq+GlXn7FZEKiKXTTZH
-        wfwYMk3xHFn6e/swwdHoO2E=
-X-Google-Smtp-Source: ACHHUZ42ImUe7BEsBhYL4fF76zPWy0NTUQC2m5IjDGbQpJKn6UtUD18UbfN/McWUMIzEQH5gAzpVdA==
-X-Received: by 2002:a05:600c:2209:b0:3f6:15f:e401 with SMTP id z9-20020a05600c220900b003f6015fe401mr3869447wml.37.1685186966404;
-        Sat, 27 May 2023 04:29:26 -0700 (PDT)
+        bh=GnV/8Q85nSdt4bY7Mc+wPerU54KxDdRii/0bQKKOJsU=;
+        b=IVGVf5aOUyr1x5pOvqjg99eEXZOYRqdXM/c+xscD5tqTNipR2e+QVx2y3+//9RKVQK
+         Uev6hae4S98JQ2/jQmGFvmF17mEjTiBVrHsTqf5GZSAyumvGfVvwRJIcI4pAmY2YJxUs
+         3H8XUD3fv/T+CVwWbKR+9k2jcCeByFGVK6BDeCsip9XYJmcLe1SrwJo7M/wteHE6r+s/
+         nd8bYmozGKc/ddN2I8hHfmewPxdrPJAkPXhpfU8cPZAzmzd9heY61lxmS77HuRcSJY+p
+         DgHQ+IuBBvaSIIKtsPv5/aIWM2RfIZcHlGlMIzb9W8vs3O0aWo7ANbFsnMGA/vcwHs7P
+         EmUg==
+X-Gm-Message-State: AC+VfDzWEmeSjINH7q0Rx5O4BMCKzfDuJ+K/iCXRe3Onztr37iU3rfa8
+        ZZoAwYyaqp129twiP8p5RD4=
+X-Google-Smtp-Source: ACHHUZ4hswjD9cILRUip9nHXWfWl4eUGTxVYNWiek6bwGLt4YdkqCJ8x/+ojN2JXxCVXmL7RkuxRwg==
+X-Received: by 2002:a1c:ed0b:0:b0:3f4:2174:b29d with SMTP id l11-20020a1ced0b000000b003f42174b29dmr4146853wmh.1.1685186968963;
+        Sat, 27 May 2023 04:29:28 -0700 (PDT)
 Received: from localhost.localdomain (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
-        by smtp.googlemail.com with ESMTPSA id q13-20020a7bce8d000000b003f43f82001asm11711000wmj.31.2023.05.27.04.29.25
+        by smtp.googlemail.com with ESMTPSA id q13-20020a7bce8d000000b003f43f82001asm11711000wmj.31.2023.05.27.04.29.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 May 2023 04:29:25 -0700 (PDT)
+        Sat, 27 May 2023 04:29:28 -0700 (PDT)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew@lunn.ch>,
@@ -61,9 +61,9 @@ To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Christian Marangi <ansuelsmth@gmail.com>,
         linux-leds@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: [net-next PATCH v3 10/13] leds: trigger: netdev: init mode if hw control already active
-Date:   Sat, 27 May 2023 13:28:51 +0200
-Message-Id: <20230527112854.2366-11-ansuelsmth@gmail.com>
+Subject: [net-next PATCH v3 12/13] net: dsa: qca8k: implement hw_control ops
+Date:   Sat, 27 May 2023 13:28:53 +0200
+Message-Id: <20230527112854.2366-13-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230527112854.2366-1-ansuelsmth@gmail.com>
 References: <20230527112854.2366-1-ansuelsmth@gmail.com>
@@ -73,54 +73,201 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On netdev trigger activation, hw control may be already active by
-default. If this is the case and a device is actually provided by
-hw_control_get_device(), init the already active mode and set the
-bool to hw_control bool to true to reflect the already set mode in the
-trigger_data.
+Implement hw_control ops to drive Switch LEDs based on hardware events.
 
-Co-developed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Netdev trigger is the declared supported trigger for hw control
+operation and supports the following mode:
+- tx
+- rx
+
+When hw_control_set is called, LEDs are set to follow the requested
+mode.
+Each LEDs will blink at 4Hz by default.
+
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/leds/trigger/ledtrig-netdev.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/net/dsa/qca/qca8k-leds.c | 154 +++++++++++++++++++++++++++++++
+ 1 file changed, 154 insertions(+)
 
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index 5b59441fc415..b0cab2b84ce2 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -452,6 +452,8 @@ static void netdev_trig_work(struct work_struct *work)
- static int netdev_trig_activate(struct led_classdev *led_cdev)
- {
- 	struct led_netdev_data *trigger_data;
-+	unsigned long mode;
-+	struct device *dev;
- 	int rc;
+diff --git a/drivers/net/dsa/qca/qca8k-leds.c b/drivers/net/dsa/qca/qca8k-leds.c
+index b883692b7d86..1e0c61726487 100644
+--- a/drivers/net/dsa/qca/qca8k-leds.c
++++ b/drivers/net/dsa/qca/qca8k-leds.c
+@@ -31,6 +31,43 @@ qca8k_get_enable_led_reg(int port_num, int led_num, struct qca8k_led_pattern_en
+ 	return 0;
+ }
  
- 	trigger_data = kzalloc(sizeof(struct led_netdev_data), GFP_KERNEL);
-@@ -473,6 +475,21 @@ static int netdev_trig_activate(struct led_classdev *led_cdev)
- 	atomic_set(&trigger_data->interval, msecs_to_jiffies(50));
- 	trigger_data->last_activity = 0;
- 
-+	/* Check if hw control is active by default on the LED.
-+	 * Init already enabled mode in hw control.
-+	 */
-+	if (supports_hw_control(led_cdev) &&
-+	    !led_cdev->hw_control_get(led_cdev, &mode)) {
-+		dev = led_cdev->hw_control_get_device(led_cdev);
-+		if (dev) {
-+			const char *name = dev_name(dev);
++static int
++qca8k_get_control_led_reg(int port_num, int led_num, struct qca8k_led_pattern_en *reg_info)
++{
++	reg_info->reg = QCA8K_LED_CTRL_REG(led_num);
 +
-+			set_device_name(trigger_data, name, strlen(name));
-+			trigger_data->hw_control = true;
-+			trigger_data->mode = mode;
-+		}
++	/* 6 total control rule:
++	 * 3 control rules for phy0-3 that applies to all their leds
++	 * 3 control rules for phy4
++	 */
++	if (port_num == 4)
++		reg_info->shift = QCA8K_LED_PHY4_CONTROL_RULE_SHIFT;
++	else
++		reg_info->shift = QCA8K_LED_PHY0123_CONTROL_RULE_SHIFT;
++
++	return 0;
++}
++
++static int
++qca8k_parse_netdev(unsigned long rules, u32 *offload_trigger)
++{
++	/* Parsing specific to netdev trigger */
++	if (test_bit(TRIGGER_NETDEV_TX, &rules))
++		*offload_trigger |= QCA8K_LED_TX_BLINK_MASK;
++	if (test_bit(TRIGGER_NETDEV_RX, &rules))
++		*offload_trigger |= QCA8K_LED_RX_BLINK_MASK;
++
++	if (rules && !*offload_trigger)
++		return -EOPNOTSUPP;
++
++	/* Enable some default rule by default to the requested mode:
++	 * - Blink at 4Hz by default
++	 */
++	*offload_trigger |= QCA8K_LED_BLINK_4HZ;
++
++	return 0;
++}
++
+ static int
+ qca8k_led_brightness_set(struct qca8k_led *led,
+ 			 enum led_brightness brightness)
+@@ -164,6 +201,119 @@ qca8k_cled_blink_set(struct led_classdev *ldev,
+ 	return 0;
+ }
+ 
++static int
++qca8k_cled_trigger_offload(struct led_classdev *ldev, bool enable)
++{
++	struct qca8k_led *led = container_of(ldev, struct qca8k_led, cdev);
++
++	struct qca8k_led_pattern_en reg_info;
++	struct qca8k_priv *priv = led->priv;
++	u32 mask, val = QCA8K_LED_ALWAYS_OFF;
++
++	qca8k_get_enable_led_reg(led->port_num, led->led_num, &reg_info);
++
++	if (enable)
++		val = QCA8K_LED_RULE_CONTROLLED;
++
++	if (led->port_num == 0 || led->port_num == 4) {
++		mask = QCA8K_LED_PATTERN_EN_MASK;
++		val <<= QCA8K_LED_PATTERN_EN_SHIFT;
++	} else {
++		mask = QCA8K_LED_PHY123_PATTERN_EN_MASK;
 +	}
 +
- 	led_set_trigger_data(led_cdev, trigger_data);
- 
- 	rc = register_netdevice_notifier(&trigger_data->notifier);
++	return regmap_update_bits(priv->regmap, reg_info.reg, mask << reg_info.shift,
++				  val << reg_info.shift);
++}
++
++static bool
++qca8k_cled_hw_control_status(struct led_classdev *ldev)
++{
++	struct qca8k_led *led = container_of(ldev, struct qca8k_led, cdev);
++
++	struct qca8k_led_pattern_en reg_info;
++	struct qca8k_priv *priv = led->priv;
++	u32 val;
++
++	qca8k_get_enable_led_reg(led->port_num, led->led_num, &reg_info);
++
++	regmap_read(priv->regmap, reg_info.reg, &val);
++
++	val >>= reg_info.shift;
++
++	if (led->port_num == 0 || led->port_num == 4) {
++		val &= QCA8K_LED_PATTERN_EN_MASK;
++		val >>= QCA8K_LED_PATTERN_EN_SHIFT;
++	} else {
++		val &= QCA8K_LED_PHY123_PATTERN_EN_MASK;
++	}
++
++	return val == QCA8K_LED_RULE_CONTROLLED;
++}
++
++static int
++qca8k_cled_hw_control_is_supported(struct led_classdev *ldev, unsigned long rules)
++{
++	u32 offload_trigger = 0;
++
++	return qca8k_parse_netdev(rules, &offload_trigger);
++}
++
++static int
++qca8k_cled_hw_control_set(struct led_classdev *ldev, unsigned long rules)
++{
++	struct qca8k_led *led = container_of(ldev, struct qca8k_led, cdev);
++	struct qca8k_led_pattern_en reg_info;
++	struct qca8k_priv *priv = led->priv;
++	u32 offload_trigger = 0;
++	int ret;
++
++	ret = qca8k_parse_netdev(rules, &offload_trigger);
++	if (ret)
++		return ret;
++
++	ret = qca8k_cled_trigger_offload(ldev, true);
++	if (ret)
++		return ret;
++
++	qca8k_get_control_led_reg(led->port_num, led->led_num, &reg_info);
++
++	return regmap_update_bits(priv->regmap, reg_info.reg,
++				  QCA8K_LED_RULE_MASK << reg_info.shift,
++				  offload_trigger << reg_info.shift);
++}
++
++static int
++qca8k_cled_hw_control_get(struct led_classdev *ldev, unsigned long *rules)
++{
++	struct qca8k_led *led = container_of(ldev, struct qca8k_led, cdev);
++	struct qca8k_led_pattern_en reg_info;
++	struct qca8k_priv *priv = led->priv;
++	u32 val;
++	int ret;
++
++	/* With hw control not active return err */
++	if (!qca8k_cled_hw_control_status(ldev))
++		return -EINVAL;
++
++	qca8k_get_control_led_reg(led->port_num, led->led_num, &reg_info);
++
++	ret = regmap_read(priv->regmap, reg_info.reg, &val);
++	if (ret)
++		return ret;
++
++	val >>= reg_info.shift;
++	val &= QCA8K_LED_RULE_MASK;
++
++	/* Parsing specific to netdev trigger */
++	if (val & QCA8K_LED_TX_BLINK_MASK)
++		set_bit(TRIGGER_NETDEV_TX, rules);
++	if (val & QCA8K_LED_RX_BLINK_MASK)
++		set_bit(TRIGGER_NETDEV_RX, rules);
++
++	return 0;
++}
++
+ static int
+ qca8k_parse_port_leds(struct qca8k_priv *priv, struct fwnode_handle *port, int port_num)
+ {
+@@ -224,6 +374,10 @@ qca8k_parse_port_leds(struct qca8k_priv *priv, struct fwnode_handle *port, int p
+ 		port_led->cdev.max_brightness = 1;
+ 		port_led->cdev.brightness_set_blocking = qca8k_cled_brightness_set_blocking;
+ 		port_led->cdev.blink_set = qca8k_cled_blink_set;
++		port_led->cdev.hw_control_is_supported = qca8k_cled_hw_control_is_supported;
++		port_led->cdev.hw_control_set = qca8k_cled_hw_control_set;
++		port_led->cdev.hw_control_get = qca8k_cled_hw_control_get;
++		port_led->cdev.hw_control_trigger = "netdev";
+ 		init_data.default_label = ":port";
+ 		init_data.fwnode = led;
+ 		init_data.devname_mandatory = true;
 -- 
 2.39.2
 
