@@ -2,128 +2,68 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F162C77B7E
-	for <linux-leds@archiver.kernel.org>; Mon, 29 May 2023 16:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7730AC7EE23
+	for <linux-leds@archiver.kernel.org>; Mon, 29 May 2023 17:07:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbjE2Qgw (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 29 May 2023 12:36:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37360 "EHLO
+        id S229472AbjE2RHu (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 29 May 2023 13:07:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229759AbjE2Qe5 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 29 May 2023 12:34:57 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDD58B0;
-        Mon, 29 May 2023 09:34:55 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f6a6b9c079so22898505e9.1;
-        Mon, 29 May 2023 09:34:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685378094; x=1687970094;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dc67GAn2fJGstQiSCO2huhEWgnflOmkWInsUSV0fyQU=;
-        b=HtD8ukpkJm7ageW0ELl1AjOj0plsNq59OVhG4gSvsUopOWZMMAEX6sHSiTW3SfAK9r
-         BC05rFDRldcvf+O5rSCJDV+KIGZW/Mc+1GIy4RmBXCswoW3u/sRl47JxSlfNXze17e//
-         xNH2yN5lkjqgWNVqXU4evOBQoj8YgisymN4YPn1UgUqMtnccfFSk+GCvWvrk7EYsIK5I
-         diegWn76BFsZRBCGCzERkczc3rT2CyrJ6Y363/mPiyV92NG7/erVpCJlm3YdwAF9AkOn
-         /Fghu+OAgwdTZ/SuZCBW2dwGL9cFW7TJby2Te0RIFMaMqytFpEE09/3sEJbclh62tlT6
-         5QXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685378094; x=1687970094;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dc67GAn2fJGstQiSCO2huhEWgnflOmkWInsUSV0fyQU=;
-        b=KdwFK5HCjIoyv9+yENfCz4qmIJtm/cZbdkELGgZ8Xri0THB3d+cexGjA4AhKvDOKvU
-         3/Sm1gBkhLCwe8B5STVh6hU0jP7KKCJVMlgY7tPN5FrSysTRT++ccELF3nurrHUZFzZf
-         ua9Z9mII7E1elbaHvS8TIA5nYsSCwhCkzuiNd1U8hkS6O4w0HDQIr4SCH2qjK128GlRU
-         5C6zDpVMa/js5seWDxMC9GB0XOyJ5zPCGb08doDYR4RQYe0RlcR1SXKkL5wu8MckUZ/8
-         7wWmmWBwdZ+rVeEmCh1qWzlsevLNiEliDT2hsDQDF45PgcKg2ypF0MC+KqBn/X28jEia
-         xhEw==
-X-Gm-Message-State: AC+VfDzekLoKX/SX4d5vls8uj9IoOg/L+L7sUKGQ/SrbRJJ4OvhB3q4P
-        zD+pe9bG/nTrn71IvlmyGSM=
-X-Google-Smtp-Source: ACHHUZ5vIWhmzR24SFs1pnI0binXdaFcvbL+XPYCEoHFZokd79N85S56OtjbUcAuRkUyfOOVgYLcKQ==
-X-Received: by 2002:a5d:4089:0:b0:306:28f4:963c with SMTP id o9-20020a5d4089000000b0030628f4963cmr9487862wrp.23.1685378093966;
-        Mon, 29 May 2023 09:34:53 -0700 (PDT)
-Received: from localhost.localdomain (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
-        by smtp.googlemail.com with ESMTPSA id h14-20020a5d6e0e000000b002ff2c39d072sm417513wrz.104.2023.05.29.09.34.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 May 2023 09:34:53 -0700 (PDT)
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew@lunn.ch>,
+        with ESMTP id S229494AbjE2RHt (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 29 May 2023 13:07:49 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D57DBE;
+        Mon, 29 May 2023 10:07:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=ctAn0AM1Vo5Aq8eCIhGC4WHg91BjrPdeqG9a05gQ9v4=; b=tk43u7gI1eHeQ16EAYoaZmTk70
+        GAsIPIOCiKZFDwokn88VKJslyoyuNaZRZ+efWs/zqHnAE6+5BPVFpfcU52Yo/0IIHOPdxi9spogjr
+        7SwEN1SxrWEF8HcwAuftKT1+aGJk/ECacrLHJBXjdrstJvqWQTEXcRYCV4zFNgra2HO4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1q3gLI-00EFbZ-E3; Mon, 29 May 2023 19:07:36 +0200
+Date:   Mon, 29 May 2023 19:07:36 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Vladimir Oltean <olteanv@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        linux-leds@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: [net-next PATCH v4 11/13] leds: trigger: netdev: expose netdev trigger modes in linux include
-Date:   Mon, 29 May 2023 18:32:41 +0200
-Message-Id: <20230529163243.9555-12-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230529163243.9555-1-ansuelsmth@gmail.com>
+        Paolo Abeni <pabeni@redhat.com>, linux-leds@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [net-next PATCH v4 03/13] Documentation: leds: leds-class:
+ Document new Hardware driven LEDs APIs
+Message-ID: <dc8c8a5b-8922-4c0e-95d8-7914ea6272d3@lunn.ch>
 References: <20230529163243.9555-1-ansuelsmth@gmail.com>
+ <20230529163243.9555-4-ansuelsmth@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230529163243.9555-4-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Expose netdev trigger modes to make them accessible by LED driver that
-will support netdev trigger for hw control.
+On Mon, May 29, 2023 at 06:32:33PM +0200, Christian Marangi wrote:
+> Document new Hardware driven LEDs APIs.
+> 
+> Some LEDs can be programmed to be driven by hardware. This is not
+> limited to blink but also to turn off or on autonomously.
+> To support this feature, a LED needs to implement various additional
+> ops and needs to declare specific support for the supported triggers.
+> 
+> Add documentation for each required value and API to make hw control
+> possible and implementable by both LEDs and triggers.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
- drivers/leds/trigger/ledtrig-netdev.c |  9 ---------
- include/linux/leds.h                  | 10 ++++++++++
- 2 files changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index e8bb9d0f85c0..b0a6f2749552 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -56,15 +56,6 @@ struct led_netdev_data {
- 	bool hw_control;
- };
- 
--enum led_trigger_netdev_modes {
--	TRIGGER_NETDEV_LINK = 0,
--	TRIGGER_NETDEV_TX,
--	TRIGGER_NETDEV_RX,
--
--	/* Keep last */
--	__TRIGGER_NETDEV_MAX,
--};
--
- static void set_baseline_state(struct led_netdev_data *trigger_data)
- {
- 	int current_brightness;
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 3268b4e789d6..8af62ff431f0 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -552,6 +552,16 @@ static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
- 
- #endif /* CONFIG_LEDS_TRIGGERS */
- 
-+/* Trigger specific enum */
-+enum led_trigger_netdev_modes {
-+	TRIGGER_NETDEV_LINK = 0,
-+	TRIGGER_NETDEV_TX,
-+	TRIGGER_NETDEV_RX,
-+
-+	/* Keep last */
-+	__TRIGGER_NETDEV_MAX,
-+};
-+
- /* Trigger specific functions */
- #ifdef CONFIG_LEDS_TRIGGER_DISK
- void ledtrig_disk_activity(bool write);
--- 
-2.39.2
-
+    Andrew
