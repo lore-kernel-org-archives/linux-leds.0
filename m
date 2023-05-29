@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC4FC77B7E
-	for <linux-leds@archiver.kernel.org>; Mon, 29 May 2023 16:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBE0C77B7A
+	for <linux-leds@archiver.kernel.org>; Mon, 29 May 2023 16:35:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229739AbjE2QfC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 29 May 2023 12:35:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37300 "EHLO
+        id S229552AbjE2QfD (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 29 May 2023 12:35:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229625AbjE2Qev (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 29 May 2023 12:34:51 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B055B2;
-        Mon, 29 May 2023 09:34:50 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f6d3f83d0cso36417315e9.2;
-        Mon, 29 May 2023 09:34:50 -0700 (PDT)
+        with ESMTP id S229691AbjE2Qez (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 29 May 2023 12:34:55 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B45C3E4;
+        Mon, 29 May 2023 09:34:53 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3f6a6b9c079so22898335e9.1;
+        Mon, 29 May 2023 09:34:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685378089; x=1687970089;
+        d=gmail.com; s=20221208; t=1685378092; x=1687970092;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IlQrvGRD4ZHltBpv2SQtNiv0lfrM6U3jabiv2fdlEjA=;
-        b=DtHAc0glKUPrO98buFtsgCTz1Ie8aLDtveoXlqHpy4/v/pzDmV6NkXceOfvN2VkKJO
-         Mzlc6eKDDreLC9/+0Klduzktr30qbdTdYjpLA6b/rpcTluYntiEhyO0pX8otblRuioJK
-         e39c9hD4rORHrGO4IhsWDGn4p1+bGbOzmtiBfxnuywI9eUiZkKO80S5gleEdSnt+qmED
-         Xd/o8iF/f8TgMtkhdnG/s5eFksnFMGOPHBlG9y3SEdgP9Kfug33ktmKDKIGN+0zhowYZ
-         E1g2czs++O2e+XgfIG6G1bFZ+QZpOvRgZ/9oEC0pdwJxPftpAIIaR6KRzJujsufgu0bX
-         DyIg==
+        bh=oXdnCyspEAq8AAhyVqhCs6kBBPc1hkVJYJIy6Md5CI4=;
+        b=lkOnQVzBPdRH8/Nv2j5AFDxm8M4Adtic9A52/87JrFWw4lb3jSVuFUfQwO0DUjEuM0
+         vgeuHA2KtHfXxjKdbz+WgWPFSKBsR28f1ydXaUm22KrCT+xI7u1rTwBmic+fuJj9WuUG
+         kMWXW5U1R3dJtGVgaaJnSJMuePK3lreYxTd7/CWWAcSf2l6Bw/4e7y0vg5aSWBYUHe2B
+         AoTIt6EmFblw3xkxb3o6BRoRGD5dHuspKMLxmdf5DApF/8y8bFko1RNjNquOSuK2jXKM
+         agNh9ScnILi4enQpYNQviO40o2ZfGKO3TfdNPKeNFkEgpO0x4Ja94oLD/xuvkEXFY6um
+         jHRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685378089; x=1687970089;
+        d=1e100.net; s=20221208; t=1685378092; x=1687970092;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IlQrvGRD4ZHltBpv2SQtNiv0lfrM6U3jabiv2fdlEjA=;
-        b=MWzqKmbOiWFBaA14h1wNDITl/ZiMp+082HMNCEU7rCnHbxjKvo8uvDdAU8ZkcOuFhF
-         BBmTieuoLAuPibM8sWCqeO5jrpRxoNOstSrIS8ijYR+PwcZPXG2IU3XLtn2t+J9LARzj
-         +ian8QOnHkannScAtSoPMOSdp9Dl6/Kxs27XEOY0kflqJUR0maz3k7Dm3OX6FVDnEKdM
-         QTrz7FS+pAhhP0ad+mUXvRJcRu4G0vw2/7fUFMzKNSLzmC+T4Jp5uZxly9LGDVVfYvzF
-         ZzGtCdnYY4tzu8FX5BZypp4eo5UJc3iCqPy8ZPBsvMfdneyi0VYc2mKlebj3wHl9DBZ4
-         IVvw==
-X-Gm-Message-State: AC+VfDwRawo7OFOA+mjjrs9SPHYaNvsSCoao2eiBR/jIrszuMRfWHqTT
-        NvDNl5OinFpCoKCBWqGHeUc=
-X-Google-Smtp-Source: ACHHUZ641zKVt+dvxchLwmAXeTl3o99OfbAJcCRE4+hN+GQzUQzNx2B0Z3gWlYjxdlQlll5hmeYOkA==
-X-Received: by 2002:a05:600c:d5:b0:3f5:ce2:9c82 with SMTP id u21-20020a05600c00d500b003f50ce29c82mr10531066wmm.32.1685378088594;
-        Mon, 29 May 2023 09:34:48 -0700 (PDT)
+        bh=oXdnCyspEAq8AAhyVqhCs6kBBPc1hkVJYJIy6Md5CI4=;
+        b=lEbNPYU5etMY4M1HMKSpDosCS8NXF0PF2QYCQbexLUt8atthoe+Jmgpfljt5w3zO2N
+         +R/5aZIiwnOrDsEYOdpWePesf7fpTy+brcmceMBsCGF4N6heV0zWQ4QN4tkAaxuBjmSy
+         n2kN1TraJpWfQq5xyUb8Y/nM4x8U6vm3gjgAlqW/f1SoGTyATbTc+qe7XxYwV/GQpKp5
+         jFDav3SA/stm33gtrbv8IHY1mMk+EBSLPtXL+6GfDCf9BAkVeSPC5SQ684HRthD+YCKC
+         kTX54NqQLLyyPM+xUfY0vqgPIg39W1gVgz/Muo2h+DfaBX4De/JIH6tyc4Vv561A+pv4
+         VgcQ==
+X-Gm-Message-State: AC+VfDzdIxR5cq+Y/U534cgA6iIXVA2Kk6gjHboMWlEmwwJ0ekR4fcgS
+        xvF2DdsV9u4z6Niv0paL1GQ=
+X-Google-Smtp-Source: ACHHUZ46PXEr+fp6kcMm5T7lr5uu8Qi5+YIdKuudLNN1ssmWGLZUc7rEucyhIi2gPF0cMsxa0o4lCg==
+X-Received: by 2002:a05:600c:2316:b0:3f6:15c:96fc with SMTP id 22-20020a05600c231600b003f6015c96fcmr10069687wmo.17.1685378091818;
+        Mon, 29 May 2023 09:34:51 -0700 (PDT)
 Received: from localhost.localdomain (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
-        by smtp.googlemail.com with ESMTPSA id h14-20020a5d6e0e000000b002ff2c39d072sm417513wrz.104.2023.05.29.09.34.47
+        by smtp.googlemail.com with ESMTPSA id h14-20020a5d6e0e000000b002ff2c39d072sm417513wrz.104.2023.05.29.09.34.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 May 2023 09:34:48 -0700 (PDT)
+        Mon, 29 May 2023 09:34:51 -0700 (PDT)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew@lunn.ch>,
@@ -61,9 +61,9 @@ To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Christian Marangi <ansuelsmth@gmail.com>,
         linux-leds@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: [net-next PATCH v4 06/13] leds: trigger: netdev: add basic check for hw control support
-Date:   Mon, 29 May 2023 18:32:36 +0200
-Message-Id: <20230529163243.9555-7-ansuelsmth@gmail.com>
+Subject: [net-next PATCH v4 09/13] leds: trigger: netdev: validate configured netdev
+Date:   Mon, 29 May 2023 18:32:39 +0200
+Message-Id: <20230529163243.9555-10-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230529163243.9555-1-ansuelsmth@gmail.com>
 References: <20230529163243.9555-1-ansuelsmth@gmail.com>
@@ -73,43 +73,62 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add basic check for hw control support. Check if the required API are
-defined and check if the defined trigger supported in hw control for the
-LED driver match netdev.
+From: Andrew Lunn <andrew@lunn.ch>
 
+The netdev which the LED should blink for is configurable in
+/sys/class/led/foo/device_name. Ensure when offloading that the
+configured netdev is the same as the netdev the LED is associated
+with. If it is not, only perform software blinking.
+
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- drivers/leds/trigger/ledtrig-netdev.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/leds/trigger/ledtrig-netdev.c | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index e1f3cedd5d57..2101cbbda707 100644
+index 8f592a77cbef..0f3c2ace408d 100644
 --- a/drivers/leds/trigger/ledtrig-netdev.c
 +++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -92,8 +92,22 @@ static void set_baseline_state(struct led_netdev_data *trigger_data)
- 	}
+@@ -110,6 +110,24 @@ static bool supports_hw_control(struct led_classdev *led_cdev)
+ 	return !strcmp(led_cdev->hw_control_trigger, led_cdev->trigger->name);
  }
  
-+static bool supports_hw_control(struct led_classdev *led_cdev)
++/*
++ * Validate the configured netdev is the same as the one associated with
++ * the LED driver in hw control.
++ */
++static bool validate_net_dev(struct led_classdev *led_cdev,
++			     struct net_device *net_dev)
 +{
-+	if (!led_cdev->hw_control_get || !led_cdev->hw_control_set ||
-+	    !led_cdev->hw_control_is_supported)
++	struct device *dev = led_cdev->hw_control_get_device(led_cdev);
++	struct net_device *ndev;
++
++	if (!dev)
 +		return false;
 +
-+	return !strcmp(led_cdev->hw_control_trigger, led_cdev->trigger->name);
++	ndev = to_net_dev(dev);
++
++	return ndev == net_dev;
 +}
 +
  static bool can_hw_control(struct led_netdev_data *trigger_data)
  {
-+	struct led_classdev *led_cdev = trigger_data->led_cdev;
-+
-+	if (!supports_hw_control(led_cdev))
-+		return false;
-+
- 	return false;
- }
+ 	unsigned long default_interval = msecs_to_jiffies(NETDEV_LED_DEFAULT_INTERVAL);
+@@ -131,9 +149,11 @@ static bool can_hw_control(struct led_netdev_data *trigger_data)
+ 	/*
+ 	 * net_dev must be set with hw control, otherwise no
+ 	 * blinking can be happening and there is nothing to
+-	 * offloaded.
++	 * offloaded. Additionally, for hw control to be
++	 * valid, the configured netdev must be the same as
++	 * netdev associated to the LED.
+ 	 */
+-	if (!trigger_data->net_dev)
++	if (!validate_net_dev(led_cdev, trigger_data->net_dev))
+ 		return false;
  
+ 	/* Check if the requested mode is supported */
 -- 
 2.39.2
 
